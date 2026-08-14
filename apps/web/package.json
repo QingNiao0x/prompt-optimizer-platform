@@ -1,0 +1,38 @@
+{
+  "name": "@prompt-optimizer/web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "typecheck": "vue-tsc -b",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed --project=desktop-chrome",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
+    "@fontsource/jetbrains-mono": "^5.2.5",
+    "@fontsource/space-grotesk": "^5.2.5",
+    "axios": "^1.8.4",
+    "element-plus": "^2.9.7",
+    "pinia": "^3.0.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@tsconfig/node22": "^22.0.1",
+    "@types/node": "^22.13.14",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "~5.7.3",
+    "vite": "^6.2.4",
+    "vitest": "^3.1.1",
+    "vue-tsc": "^2.2.8"
+  }
+}

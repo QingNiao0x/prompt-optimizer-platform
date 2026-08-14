@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: sample-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sample_db
+    username: sample_user
+    password: ${SAMPLE_DB_PASSWORD:change-me}
+  data:
+    redis:
+      host: localhost
+      port: 6379

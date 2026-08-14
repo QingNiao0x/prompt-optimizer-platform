@@ -1,0 +1,27 @@
+package com.promptoptimizer.context.api;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
+
+import java.util.List;
+
+/**
+ * 上下文分析请求模型。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
+public record ContextAnalysisRequest(
+        @Size(max = 4_000, message = "项目描述不能超过 4,000 个字符")
+        String customDescription,
+        @Size(max = 200, message = "单次最多分析 200 个文件")
+        List<@Valid ContextFileInput> files
+) {
+
+    /**
+     * 文件列表为空时统一转为不可变空列表。
+     */
+    public ContextAnalysisRequest {
+        files = files == null ? List.of() : List.copyOf(files);
+    }
+}

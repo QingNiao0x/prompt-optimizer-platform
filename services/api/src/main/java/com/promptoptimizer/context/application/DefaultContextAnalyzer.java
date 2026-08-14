@@ -1,0 +1,484 @@
+package com.promptoptimizer.context.application;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.context.api.ContextAnalysisRequest;
+import com.promptoptimizer.context.api.ContextFileInput;
+import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.context.domain.DependencyItem;
+import com.promptoptimizer.context.domain.FileSnippet;
+import com.promptoptimizer.context.domain.TechnologyStackItem;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * 默认上下文分析器：识别技术栈、依赖、目录结构和文件片段，并对敏感内容脱敏。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
+@Service
+public class DefaultContextAnalyzer implements ContextAnalyzer {
+
+    private static final String ANALYSIS_VERSION = "v1";
+    private static final int MAX_TOTAL_BYTES = 5 * 1024 * 1024;
+    private static final int MAX_FILE_BYTES = 256 * 1024;
+    private static final int MAX_DIRECTORY_ENTRIES = 100;
+    private static final int MAX_SNIPPETS = 20;
+    private static final int MAX_SNIPPET_CHARS = 4_000;
+    private static final int MAX_SNIPPET_TOTAL_CHARS = 32_000;
+
+    private static final Set<String> IGNORED_SEGMENTS = Set.of(
+            ".git", "node_modules", "target", "build", "dist", ".idea", ".vscode"
+    );
+
+    private static final Pattern WINDOWS_ABSOLUTE_PATH = Pattern.compile("^[A-Za-z]:[\\\\/].*");
+    private static final Pattern UNIX_ABSOLUTE_PATH = Pattern.compile("^/.*");
+    private static final Pattern TRAVERSAL_PATH = Pattern.compile("(^|/)\\.\\.($|/)");
+    private static final Pattern POM_DEPENDENCY = Pattern.compile(
+            "<dependency>\\s*.*?<groupId>\\s*([^<]+)\\s*</groupId>\\s*<artifactId>\\s*([^<]+)\\s*</artifactId>(?:\\s*<version>\\s*([^<]+)\\s*</version>)?.*?</dependency>",
+            Pattern.DOTALL
+    );
+    private static final Pattern REQUIREMENT = Pattern.compile(
+            "^([A-Za-z0-9_.-]+)\\s*(?:[=<>!~]+\\s*([^;\\s]+))?.*$"
+    );
+    private static final Pattern GO_MODULE = Pattern.compile(
+            "^\\s*([A-Za-z0-9_./-]+)\\s+v([A-Za-z0-9.+-]+)\\s*$"
+    );
+    private static final Pattern SECRET_VALUE = Pattern.compile(
+            "(?i)(api[_-]?key|secret|password|token)\\s*[:=]\\s*[\\\"']?([A-Za-z0-9_./+=-]{8,})"
+    );
+    private static final Pattern PRIVATE_KEY = Pattern.compile("-----BEGIN .* PRIVATE KEY-----");
+    private static final Pattern OPENAI_STYLE_KEY = Pattern.compile("sk-[A-Za-z0-9_-]{10,}");
+
+    private final ObjectMapper objectMapper;
+
+    public DefaultContextAnalyzer(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    /**
+     * 分析请求中的项目描述和文件内容，返回本次请求可用的上下文快照。
+     */
+    @Override
+    public ContextSnapshot analyze(ContextAnalysisRequest request) {
+        List<String> warnings = new ArrayList<>();
+        List<String> redactions = new ArrayList<>();
+        Map<String, AnalyzedFile> files = collectFiles(request, warnings, redactions);
+        Map<String, TechnologyStackItem> stack = new LinkedHashMap<>();
+        List<DependencyItem> dependencies = new ArrayList<>();
+
+        for (AnalyzedFile file : files.values()) {
+            detectTechnology(file, stack);
+            extractDependencies(file, dependencies, warnings);
+        }
+
+        return new ContextSnapshot(
+                sanitizeDescription(request.customDescription(), warnings, redactions),
+                new ArrayList<>(stack.values()),
+                deduplicateDependencies(dependencies),
+                buildDirectoryTree(files.keySet(), warnings),
+                buildSnippets(files.values(), warnings),
+                warnings,
+                redactions,
+                ANALYSIS_VERSION
+        );
+    }
+
+    /**
+     * 收集并校验用户提交的文件，按大小、路径和敏感内容规则过滤。
+     */
+    private Map<String, AnalyzedFile> collectFiles(
+            ContextAnalysisRequest request,
+            List<String> warnings,
+            List<String> redactions
+    ) {
+        Map<String, AnalyzedFile> files = new LinkedHashMap<>();
+        Set<String> seenPaths = new HashSet<>();
+        int totalBytes = 0;
+
+        for (ContextFileInput input : request.files()) {
+            String path = normalizePath(input.path());
+            if (path == null) {
+                warnings.add("已忽略不安全或无效路径：" + input.path());
+                continue;
+            }
+            if (isIgnoredPath(path)) {
+                warnings.add("已忽略生成目录或工具目录：" + path);
+                continue;
+            }
+            if (!seenPaths.add(path)) {
+                warnings.add("已忽略重复文件：" + path);
+                continue;
+            }
+
+            String content = input.content() == null ? "" : input.content();
+            int bytes = content.getBytes(StandardCharsets.UTF_8).length;
+            if (bytes > MAX_FILE_BYTES) {
+                content = truncateByBytes(content, MAX_FILE_BYTES);
+                bytes = content.getBytes(StandardCharsets.UTF_8).length;
+                warnings.add("文件内容已截断：" + path);
+            }
+            if (totalBytes + bytes > MAX_TOTAL_BYTES) {
+                warnings.add("已达到上下文总大小上限，后续文件未分析：" + path);
+                break;
+            }
+            totalBytes += bytes;
+
+            if (containsBinaryMarker(content)) {
+                warnings.add("已跳过疑似二进制文件：" + path);
+                continue;
+            }
+
+            boolean sensitive = containsSecret(content);
+            if (sensitive) {
+                redactions.add(path);
+            }
+            files.put(path, new AnalyzedFile(
+                    path,
+                    sensitive ? "[CONTENT REDACTED: sensitive material detected]" : content,
+                    languageOf(path, input.language()),
+                    bytes >= MAX_FILE_BYTES
+            ));
+        }
+        return files;
+    }
+
+    /**
+     * 根据文件路径和内容关键词识别技术栈，保留置信度更高的结果。
+     */
+    private void detectTechnology(AnalyzedFile file, Map<String, TechnologyStackItem> stack) {
+        String path = file.path().toLowerCase(Locale.ROOT);
+        String content = file.content().toLowerCase(Locale.ROOT);
+        if (path.endsWith("pom.xml") || path.endsWith("build.gradle") || path.endsWith("build.gradle.kts")) {
+            addStack(stack, "Java", file.path(), 0.95);
+        }
+        if (path.endsWith("pom.xml") && content.contains("spring-boot")) {
+            addStack(stack, "Spring Boot", file.path(), 0.98);
+        }
+        if (path.endsWith("package.json")) {
+            addStack(stack, "Node.js", file.path(), 0.9);
+            if (content.contains("\"vue\"")) {
+                addStack(stack, "Vue", file.path(), 0.98);
+            }
+            if (content.contains("typescript")) {
+                addStack(stack, "TypeScript", file.path(), 0.95);
+            }
+            if (content.contains("\"vite\"")) {
+                addStack(stack, "Vite", file.path(), 0.95);
+            }
+        }
+        if (path.endsWith(".vue")) {
+            addStack(stack, "Vue", file.path(), 0.9);
+        }
+        if (path.endsWith(".ts") || path.endsWith(".tsx")) {
+            addStack(stack, "TypeScript", file.path(), 0.9);
+        }
+        if (path.endsWith("requirements.txt") || path.endsWith("pyproject.toml")) {
+            addStack(stack, "Python", file.path(), 0.95);
+        }
+        if (path.endsWith("go.mod")) {
+            addStack(stack, "Go", file.path(), 0.98);
+        }
+        if (path.endsWith("cargo.toml")) {
+            addStack(stack, "Rust", file.path(), 0.98);
+        }
+        if (content.contains("postgresql") || content.contains("postgres")) {
+            addStack(stack, "PostgreSQL", file.path(), 0.82);
+        }
+        if (content.contains("redis")) {
+            addStack(stack, "Redis", file.path(), 0.82);
+        }
+    }
+
+    /**
+     * 根据文件类型提取 Maven、npm、Python 或 Go 依赖。
+     */
+    private void extractDependencies(
+            AnalyzedFile file,
+            List<DependencyItem> dependencies,
+            List<String> warnings
+    ) {
+        String path = file.path().toLowerCase(Locale.ROOT);
+        if (path.endsWith("pom.xml")) {
+            Matcher matcher = POM_DEPENDENCY.matcher(file.content());
+            while (matcher.find()) {
+                dependencies.add(new DependencyItem(
+                        "maven",
+                        matcher.group(1).trim() + ":" + matcher.group(2).trim(),
+                        optionalTrim(matcher.group(3)),
+                        file.path()
+                ));
+            }
+            return;
+        }
+        if (path.endsWith("package.json")) {
+            extractNodeDependencies(file, dependencies, warnings);
+            return;
+        }
+        if (path.endsWith("requirements.txt")) {
+            for (String line : file.content().lines().toList()) {
+                String candidate = line.trim();
+                if (candidate.isEmpty() || candidate.startsWith("#")) {
+                    continue;
+                }
+                Matcher matcher = REQUIREMENT.matcher(candidate);
+                if (matcher.matches()) {
+                    dependencies.add(new DependencyItem(
+                            "python",
+                            matcher.group(1),
+                            optionalTrim(matcher.group(2)),
+                            file.path()
+                    ));
+                }
+            }
+            return;
+        }
+        if (path.endsWith("go.mod")) {
+            for (String line : file.content().lines().toList()) {
+                Matcher matcher = GO_MODULE.matcher(line);
+                if (matcher.matches()) {
+                    dependencies.add(new DependencyItem("go", matcher.group(1), matcher.group(2), file.path()));
+                }
+            }
+        }
+    }
+
+    /**
+     * 解析 package.json 中的 dependencies 和 devDependencies。
+     */
+    private void extractNodeDependencies(
+            AnalyzedFile file,
+            List<DependencyItem> dependencies,
+            List<String> warnings
+    ) {
+        try {
+            JsonNode root = objectMapper.readTree(file.content());
+            addNodeDependencyGroup(root.path("dependencies"), file.path(), dependencies);
+            addNodeDependencyGroup(root.path("devDependencies"), file.path(), dependencies);
+        } catch (IOException | RuntimeException exception) {
+            warnings.add("无法解析 package.json：" + file.path());
+        }
+    }
+
+    /**
+     * 将一组 npm 依赖写入依赖列表。
+     */
+    private void addNodeDependencyGroup(JsonNode group, String source, List<DependencyItem> dependencies) {
+        if (!group.isObject()) {
+            return;
+        }
+        group.fields().forEachRemaining(entry -> dependencies.add(new DependencyItem(
+                "npm",
+                entry.getKey(),
+                entry.getValue().asText(null),
+                source
+        )));
+    }
+
+    /**
+     * 按生态和名称去重，保留首次出现的依赖。
+     */
+    private List<DependencyItem> deduplicateDependencies(List<DependencyItem> dependencies) {
+        Map<String, DependencyItem> unique = new LinkedHashMap<>();
+        for (DependencyItem dependency : dependencies) {
+            unique.putIfAbsent(
+                    dependency.ecosystem() + ":" + dependency.name(),
+                    dependency
+            );
+        }
+        return new ArrayList<>(unique.values());
+    }
+
+    /**
+     * 从文件路径构建目录树摘要，并按数量上限截断。
+     */
+    private List<String> buildDirectoryTree(Set<String> paths, List<String> warnings) {
+        Set<String> entries = new LinkedHashSet<>();
+        for (String path : paths) {
+            String[] segments = path.split("/");
+            StringBuilder directory = new StringBuilder();
+            for (int index = 0; index < segments.length - 1; index++) {
+                if (directory.length() > 0) {
+                    directory.append('/');
+                }
+                directory.append(segments[index]);
+                entries.add(directory + "/");
+            }
+            entries.add(path);
+        }
+        List<String> result = entries.stream().sorted().limit(MAX_DIRECTORY_ENTRIES).toList();
+        if (entries.size() > MAX_DIRECTORY_ENTRIES) {
+            warnings.add("目录结构摘要已截断");
+        }
+        return result;
+    }
+
+    /**
+     * 构建文件内容片段列表，同时受文件数量、单文件和总字符预算限制。
+     */
+    private List<FileSnippet> buildSnippets(
+            Iterable<AnalyzedFile> files,
+            List<String> warnings
+    ) {
+        List<FileSnippet> snippets = new ArrayList<>();
+        int totalCharacters = 0;
+        for (AnalyzedFile file : files) {
+            if (snippets.size() >= MAX_SNIPPETS) {
+                warnings.add("文件摘要数量已达到上限");
+                break;
+            }
+            if (file.content().isBlank()) {
+                continue;
+            }
+            int remaining = MAX_SNIPPET_TOTAL_CHARS - totalCharacters;
+            if (remaining <= 0) {
+                warnings.add("文件内容摘要已达到 Token 预算");
+                break;
+            }
+            int length = Math.min(Math.min(file.content().length(), MAX_SNIPPET_CHARS), remaining);
+            boolean truncated = length < file.content().length();
+            snippets.add(new FileSnippet(file.path(), file.language(), file.content().substring(0, length), truncated));
+            totalCharacters += length;
+        }
+        return snippets;
+    }
+
+    /**
+     * 清理项目描述，命中敏感规则时整段脱敏。
+     */
+    private String sanitizeDescription(String description, List<String> warnings, List<String> redactions) {
+        if (description == null || description.isBlank()) {
+            return "";
+        }
+        String normalized = description.trim();
+        if (containsSecret(normalized)) {
+            warnings.add("项目描述疑似包含敏感信息，已脱敏");
+            redactions.add("customDescription");
+            return "[DESCRIPTION REDACTED: sensitive material detected]";
+        }
+        return normalized;
+    }
+
+    /**
+     * 写入技术栈条目，已有更高置信度结果时保留原值。
+     */
+    private void addStack(Map<String, TechnologyStackItem> stack, String name, String source, double confidence) {
+        TechnologyStackItem current = stack.get(name);
+        if (current == null || confidence > current.confidence()) {
+            stack.put(name, new TechnologyStackItem(name, source, confidence));
+        }
+    }
+
+    /**
+     * 规范化相对路径，拒绝绝对路径和目录穿越。
+     */
+    private String normalizePath(String rawPath) {
+        if (rawPath == null) {
+            return null;
+        }
+        String path = rawPath.trim().replace('\\', '/');
+        while (path.startsWith("./")) {
+            path = path.substring(2);
+        }
+        if (path.isBlank() || WINDOWS_ABSOLUTE_PATH.matcher(path).matches()
+                || UNIX_ABSOLUTE_PATH.matcher(path).matches() || TRAVERSAL_PATH.matcher(path).find()) {
+            return null;
+        }
+        return path;
+    }
+
+    /**
+     * 判断路径是否命中应忽略的生成目录或工具目录。
+     */
+    private boolean isIgnoredPath(String path) {
+        for (String segment : path.split("/")) {
+            if (IGNORED_SEGMENTS.contains(segment)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 通过空字符标记判断内容是否疑似二进制。
+     */
+    private boolean containsBinaryMarker(String content) {
+        return content.indexOf('\u0000') >= 0;
+    }
+
+    /**
+     * 判断内容是否包含常见密钥、私钥或 API Key 形态的敏感信息。
+     */
+    private boolean containsSecret(String content) {
+        return SECRET_VALUE.matcher(content).find()
+                || PRIVATE_KEY.matcher(content).find()
+                || OPENAI_STYLE_KEY.matcher(content).find();
+    }
+
+    /**
+     * 根据扩展名或用户显式指定的语言推断文件语言。
+     */
+    private String languageOf(String path, String explicitLanguage) {
+        if (explicitLanguage != null && !explicitLanguage.isBlank()) {
+            return explicitLanguage.trim();
+        }
+        String lowerPath = path.toLowerCase(Locale.ROOT);
+        if (lowerPath.endsWith(".java")) return "java";
+        if (lowerPath.endsWith(".ts") || lowerPath.endsWith(".tsx")) return "typescript";
+        if (lowerPath.endsWith(".vue")) return "vue";
+        if (lowerPath.endsWith(".py")) return "python";
+        if (lowerPath.endsWith(".go")) return "go";
+        if (lowerPath.endsWith(".rs")) return "rust";
+        if (lowerPath.endsWith(".json")) return "json";
+        if (lowerPath.endsWith(".xml")) return "xml";
+        if (lowerPath.endsWith(".yml") || lowerPath.endsWith(".yaml")) return "yaml";
+        return "text";
+    }
+
+    /**
+     * 按 UTF-8 字节数截断内容，避免截断多字节字符。
+     */
+    private String truncateByBytes(String content, int maxBytes) {
+        StringBuilder result = new StringBuilder();
+        int bytes = 0;
+        for (int offset = 0; offset < content.length();) {
+            int codePoint = content.codePointAt(offset);
+            String character = new String(Character.toChars(codePoint));
+            int characterBytes = character.getBytes(StandardCharsets.UTF_8).length;
+            if (bytes + characterBytes > maxBytes) {
+                break;
+            }
+            result.append(character);
+            bytes += characterBytes;
+            offset += Character.charCount(codePoint);
+        }
+        return result.toString();
+    }
+
+    /**
+     * 返回去空格后的可选值，空值统一转为空字符串。
+     */
+    private String optionalTrim(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    /**
+     * 内部使用的文件分析载体。
+     */
+    private record AnalyzedFile(String path, String content, String language, boolean truncated) {
+    }
+}

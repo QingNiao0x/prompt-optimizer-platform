@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: prompt-optimizer-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/prompt_optimizer}
+    username: ${DB_USERNAME:prompt_optimizer}
+    password: ${DB_PASSWORD:Admin@123}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:10}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: ${FLYWAY_ENABLED:true}
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+logging:
+  pattern:
+    level: "%5p [requestId:%X{requestId}]"
+
+app:
+  demo:
+    # 未实现登录鉴权前，接口使用固定的本地演示上下文；后续由真实用户体系替换。
+    tenant-id: ${DEMO_TENANT_ID:00000000-0000-0000-0000-000000000001}
+    user-id: ${DEMO_USER_ID:00000000-0000-0000-0000-000000000002}
+    workspace-id: ${DEMO_WORKSPACE_ID:00000000-0000-0000-0000-000000000003}
+  security:
+    # API Key 加密主密钥，由运行环境注入，禁止写入源码或提交到 Git。
+    api-key-encryption-secret: ${API_KEY_ENCRYPTION_SECRET:}
+  provider:
+    mode: ${MODEL_PROVIDER_MODE:openai-compatible}
+    openai-compatible:
+      provider-name: ${MODEL_PROVIDER_NAME:deepseek}
+      # 当前适配器会直接 POST 到该地址，不会自动拼接 /chat/completions。
+      endpoint: ${MODEL_ENDPOINT:https://api.deepseek.com/chat/completions}
+      api-key: ${MODEL_API_KEY:}
+      model: ${MODEL_NAME:deepseek-chat}
+      temperature: ${MODEL_TEMPERATURE:0.2}
+      max-tokens: ${MODEL_MAX_TOKENS:3000}
+      connect-timeout: ${MODEL_CONNECT_TIMEOUT:3s}
+      # 结构化提示词生成偶尔会超过 30 秒；浏览器端等待 70 秒，必须留出错误响应返回的时间。
+      read-timeout: ${MODEL_READ_TIMEOUT:60s}
+      json-response-format-enabled: ${MODEL_JSON_RESPONSE_FORMAT_ENABLED:true}

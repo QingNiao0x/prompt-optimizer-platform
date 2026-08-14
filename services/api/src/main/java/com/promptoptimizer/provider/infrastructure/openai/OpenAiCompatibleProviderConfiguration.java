@@ -1,0 +1,80 @@
+package com.promptoptimizer.provider.infrastructure.openai;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.provider.application.PromptEnhancementProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.RestClient;
+
+import java.net.URI;
+import java.time.Duration;
+import java.util.Set;
+
+/**
+ * OpenAI 兼容 Provider 的 Spring 装配配置。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
+@Configuration(proxyBeanMethods = false)
+@ConditionalOnProperty(prefix = "app.provider", name = "mode", havingValue = "openai-compatible")
+@EnableConfigurationProperties(OpenAiCompatibleProperties.class)
+public class OpenAiCompatibleProviderConfiguration {
+
+    private static final Set<String> SUPPORTED_SCHEMES = Set.of("http", "https");
+
+    /**
+     * 创建带连接和读取超时的 RestClient。
+     */
+    @Bean
+    RestClient openAiCompatibleRestClient(
+            RestClient.Builder builder,
+            OpenAiCompatibleProperties properties
+    ) {
+        validateEndpoint(properties.getEndpoint());
+        validateTimeout("connect-timeout", properties.getConnectTimeout());
+        validateTimeout("read-timeout", properties.getReadTimeout());
+
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(properties.getConnectTimeout());
+        requestFactory.setReadTimeout(properties.getReadTimeout());
+        return builder.requestFactory(requestFactory).build();
+    }
+
+    /**
+     * 注册 OpenAI 兼容 Provider 实现。
+     */
+    @Bean
+    PromptEnhancementProvider openAiCompatiblePromptEnhancementProvider(
+            RestClient openAiCompatibleRestClient,
+            ObjectMapper objectMapper,
+            OpenAiCompatibleProperties properties
+    ) {
+        return new OpenAiCompatiblePromptEnhancementProvider(
+                openAiCompatibleRestClient,
+                objectMapper,
+                properties
+        );
+    }
+
+    /**
+     * 校验模型端点协议。
+     */
+    private void validateEndpoint(URI endpoint) {
+        if (endpoint.getScheme() == null || !SUPPORTED_SCHEMES.contains(endpoint.getScheme().toLowerCase())) {
+            throw new IllegalStateException("模型端点仅支持 http 或 https 协议");
+        }
+    }
+
+    /**
+     * 校验超时配置必须大于 0。
+     */
+    private void validateTimeout(String propertyName, Duration timeout) {
+        if (timeout.isZero() || timeout.isNegative()) {
+            throw new IllegalStateException(propertyName + " 必须大于 0");
+        }
+    }
+}
