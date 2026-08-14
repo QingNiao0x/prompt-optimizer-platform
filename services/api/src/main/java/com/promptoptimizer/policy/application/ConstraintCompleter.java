@@ -42,7 +42,7 @@ public class ConstraintCompleter {
                 .map(item -> item.name().toLowerCase())
                 .collect(java.util.stream.Collectors.toSet());
         if (stackNames.contains("java")) {
-            constraints.add("使用 Java 17 兼容语法，遵循清晰分层、单一职责和不可变数据优先原则。");
+        constraints.add("使用 Java 21 兼容语法，遵循清晰分层、单一职责和不可变数据优先原则。");
         }
         if (stackNames.contains("spring boot")) {
             constraints.add("遵循 Spring Boot 3 约定，Controller 负责协议转换，业务逻辑放在应用服务中。");

@@ -1,5 +1,7 @@
 package com.promptoptimizer.settings.application;
 
+import com.promptoptimizer.common.exception.EncryptionSecretMissingException;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -31,7 +33,7 @@ public final class ApiKeyCipher {
      */
     public ApiKeyCipher(String encryptionSecret) {
         if (encryptionSecret == null || encryptionSecret.isBlank()) {
-            throw new IllegalStateException("API_KEY_ENCRYPTION_SECRET 未配置，无法加密或解密 API Key");
+            throw new EncryptionSecretMissingException();
         }
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

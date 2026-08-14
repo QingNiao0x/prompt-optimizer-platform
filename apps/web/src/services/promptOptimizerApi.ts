@@ -4,8 +4,11 @@ import type {
   ApiResponse,
   ContextAnalysisRequest,
   ContextSnapshot,
+  OptimizationHistoryDetail,
+  OptimizationHistoryPage,
   OptimizationRequest,
   OptimizationResult,
+  ReoptimizationResult,
 } from '@/types/api';
 
 export const analyzeContext = async (
@@ -24,6 +27,42 @@ export const optimizePrompt = async (
   const response = await httpClient.post<ApiResponse<OptimizationResult>>(
     '/api/v1/optimizations',
     request,
+  );
+  return response.data;
+};
+
+export const listHistory = async (
+  page = 0,
+  size = 20,
+): Promise<ApiResponse<OptimizationHistoryPage>> => {
+  const response = await httpClient.get<ApiResponse<OptimizationHistoryPage>>(
+    '/api/v1/optimization-history',
+    { params: { page, size } },
+  );
+  return response.data;
+};
+
+export const getHistory = async (
+  id: string,
+): Promise<ApiResponse<OptimizationHistoryDetail>> => {
+  const response = await httpClient.get<ApiResponse<OptimizationHistoryDetail>>(
+    `/api/v1/optimization-history/${id}`,
+  );
+  return response.data;
+};
+
+export const deleteHistory = async (id: string): Promise<ApiResponse<null>> => {
+  const response = await httpClient.delete<ApiResponse<null>>(
+    `/api/v1/optimization-history/${id}`,
+  );
+  return response.data;
+};
+
+export const reoptimizeHistory = async (
+  id: string,
+): Promise<ApiResponse<ReoptimizationResult>> => {
+  const response = await httpClient.post<ApiResponse<ReoptimizationResult>>(
+    `/api/v1/optimization-history/${id}/re-optimize`,
   );
   return response.data;
 };

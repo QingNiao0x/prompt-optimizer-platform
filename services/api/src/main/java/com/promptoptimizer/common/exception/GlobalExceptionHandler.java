@@ -107,6 +107,24 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理加密主密钥未配置的情况，给出可操作的配置提示。
+     */
+    @ExceptionHandler(EncryptionSecretMissingException.class)
+    public ResponseEntity<ApiErrorResponse> handleEncryptionSecretMissing(
+            EncryptionSecretMissingException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(
+                request,
+                HttpStatus.SERVICE_UNAVAILABLE,
+                "SERVICE_CONFIGURATION_ERROR",
+                "服务端尚未配置 API Key 加密主密钥，请联系管理员。",
+                false,
+                Map.of()
+        );
+    }
+
+    /**
      * 兜底处理未预期异常，避免向客户端暴露内部堆栈。
      */
     @ExceptionHandler(Exception.class)

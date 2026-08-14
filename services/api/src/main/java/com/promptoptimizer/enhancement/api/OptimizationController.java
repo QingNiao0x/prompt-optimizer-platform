@@ -4,6 +4,7 @@ import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.web.RequestIdFilter;
 import com.promptoptimizer.enhancement.application.EnhancementOrchestrator;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
+import com.promptoptimizer.history.application.OptimizationHistoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,9 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class OptimizationController {
 
     private final EnhancementOrchestrator enhancementOrchestrator;
+    private final OptimizationHistoryService optimizationHistoryService;
 
-    public OptimizationController(EnhancementOrchestrator enhancementOrchestrator) {
+    public OptimizationController(
+            EnhancementOrchestrator enhancementOrchestrator,
+            OptimizationHistoryService optimizationHistoryService
+    ) {
         this.enhancementOrchestrator = enhancementOrchestrator;
+        this.optimizationHistoryService = optimizationHistoryService;
     }
 
     /**
@@ -36,6 +42,8 @@ public class OptimizationController {
             HttpServletRequest httpRequest
     ) {
         String requestId = (String) httpRequest.getAttribute(RequestIdFilter.REQUEST_ID_ATTRIBUTE);
-        return ApiResponse.success(requestId, enhancementOrchestrator.optimize(request));
+        OptimizationResult result = enhancementOrchestrator.optimize(request);
+        optimizationHistoryService.save(request, result);
+        return ApiResponse.success(requestId, result);
     }
 }

@@ -4,8 +4,7 @@
 
 当前样例：
 
-- `sample-spring-vue-project/backend`：Java 17 + Spring Boot + PostgreSQL + Redis
+- `sample-spring-vue-project/backend`：Java 21 + Spring Boot + PostgreSQL + Redis
 - `sample-spring-vue-project/frontend`：Vue 3 + TypeScript + Vite
 
 这些文件不包含真实密钥、密码或本机绝对路径。后续前端实现文件选择器后，可以选择 `test-fixtures/sample-spring-vue-project` 目录进行测试。
-

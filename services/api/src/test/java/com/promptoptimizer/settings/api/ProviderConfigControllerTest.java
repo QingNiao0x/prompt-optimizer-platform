@@ -1,6 +1,7 @@
 package com.promptoptimizer.settings.api;
 
 import com.promptoptimizer.common.web.RequestIdFilter;
+import com.promptoptimizer.common.exception.EncryptionSecretMissingException;
 import com.promptoptimizer.settings.application.ProviderConfigService;
 import com.promptoptimizer.settings.domain.ProviderConfigSummary;
 import org.junit.jupiter.api.Test;
@@ -106,6 +107,27 @@ class ProviderConfigControllerTest {
                                 """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.code").value("INVALID_ARGUMENT"));
+    }
+
+    @Test
+    void shouldReturnConfigurationErrorWhenEncryptionSecretIsMissing() throws Exception {
+        when(providerConfigService.create(any()))
+                .thenThrow(new EncryptionSecretMissingException());
+
+        mockMvc.perform(post("/api/v1/provider-configs")
+                        .contentType(APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "providerType": "DEEPSEEK",
+                                  "displayName": "DeepSeek",
+                                  "endpointUrl": "https://api.deepseek.com/chat/completions",
+                                  "modelName": "deepseek-chat",
+                                  "apiKey": "sk-test-only"
+                                }
+                                """))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.error.code").value("SERVICE_CONFIGURATION_ERROR"))
+                .andExpect(jsonPath("$.error.retryable").value(false));
     }
 
     private ProviderConfigSummary summary() {

@@ -9,7 +9,7 @@ import type {
 const contextSnapshot: ContextSnapshot = {
   customDescription: 'Spring Boot 3 模块化单体，使用 PostgreSQL。',
   technologyStack: [
-    { name: 'Java 17', source: 'pom.xml', confidence: 1 },
+    { name: 'Java 21', source: 'pom.xml', confidence: 1 },
     { name: 'Spring Boot 3', source: 'pom.xml', confidence: 1 },
   ],
   dependencies: [
@@ -119,7 +119,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await languageSelect.press('ArrowDown');
   await page.getByRole('option', { name: 'Java', exact: true }).click();
   await page.getByPlaceholder('粘贴与当前任务相关的代码片段…').fill([
-    '<properties><java.version>17</java.version></properties>',
+    '<properties><java.version>21</java.version></properties>',
     '<dependency><artifactId>spring-boot-starter-web</artifactId></dependency>',
   ].join('\n'));
   await page.getByRole('button', { name: '加入上下文' }).click();

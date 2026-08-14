@@ -1,6 +1,6 @@
 # API 后端
 
-技术栈：Java 17、Spring Boot 3、Spring MVC、Spring Data JPA、Flyway、PostgreSQL Driver、Spring Data Redis。
+技术栈：Java 21、Spring Boot 3、Spring MVC、Spring Data JPA、Flyway、PostgreSQL Driver、Spring Data Redis。
 
 当前已完成后端核心 MVP：基础工程、统一响应与错误模型、上下文分析、提示词增强编排、Mock Provider、可切换的 OpenAI 兼容 Provider，以及 Provider 配置管理基础 CRUD。
 
@@ -19,11 +19,22 @@ API Key 使用 AES-256-GCM 加密后写入 `provider_config.api_key_ciphertext`�
 API_KEY_ENCRYPTION_SECRET=<由运行环境注入的加密主密钥>
 ```
 
+优化历史接口：
+
+```text
+GET    /api/v1/optimization-history?page=0&size=20
+GET    /api/v1/optimization-history/{id}
+DELETE /api/v1/optimization-history/{id}
+POST   /api/v1/optimization-history/{id}/re-optimize
+```
+
+每次 `POST /api/v1/optimizations` 成功后会自动保存一条历史记录。记录只保存脱敏后的上下文摘要，不保存上传文件的正文；重新优化使用保存的原始提示词和脱敏摘要再次调用增强流程，并生成一条新记录。
+
 在登录鉴权实现前，接口使用固定的本地演示上下文（租户、用户、工作区），由 `V3__demo_bootstrap.sql` 和 `app.demo.*` 配置提供；接入真实用户体系后替换该上下文来源。
 
 ## 本地启动
 
-需要 Java 17 和 Maven 3.9+：
+需要 JDK 21 和 Maven 3.9+：
 
 先在项目根目录启动 PostgreSQL 和 Redis：
 
@@ -111,7 +122,7 @@ mvn -s ..\..\.mvn\settings.xml test
 
 测试使用模拟 HTTP 服务，不会调用真实模型，也不需要 API Key。当前测试通过排除数据库和 Redis 自动配置运行；接入本地基础设施后，再增加真实连接测试。
 
-后续实现顺序：Vue 主界面 → 历史与设置 → PostgreSQL/Redis → 鉴权、额度与计费。
+后续实现顺序：鉴权、额度与计费 → 通用场景动态输出 → 图片/PDF 能力检测与提取。
 
 ## 仅验证核心接口的本地 Mock 模式
 
@@ -121,7 +132,7 @@ mvn -s ..\..\.mvn\settings.xml test
 mvn -s ..\..\.mvn\settings.xml spring-boot:run '-Dspring-boot.run.profiles=local-mock'
 ```
 
-该配置会关闭数据库、Flyway 和 Redis 自动装配，只启用 Mock Provider；完整本地环境仍应先启动 PostgreSQL 和 Redis。
+该配置会关闭数据库、Flyway、Redis 自动装配和历史持久化，只启用 Mock Provider；完整本地环境仍应先启动 PostgreSQL 和 Redis。
 
 ## Windows 启动排查
 
@@ -134,13 +145,8 @@ java.net.SocketException: Invalid argument: connect
 
 先确认进程是否运行在受沙箱限制的执行环境中。Java NIO 在 Windows 上创建回环管道（`Pipe.open()`）时，如果沙箱或安全软件拦截了 AF_UNIX 套接字，就会在 Tomcat 启动前报上述异常，此时项目代码、数据库、Redis 和 API Key 都正常。遇到这种情况，优先直接从 IDEA、正常 PowerShell 或不受限的终端启动。
 
-本机已验证：使用已安装的 JDK 17（版本输出为 `17+35`）在非受限环境直接运行打包后的 JAR，`local-mock` 配置可以正常启动并完成冒烟测试。
+本项目使用 JDK 21 LTS。启动前请确认 `java -version` 和 `mvn -version` 都指向 JDK 21，并在 IDEA 中将项目 SDK 和运行配置的 JRE 切换为同一个 JDK 21。
 
-如果在不受限环境中仍复现该异常，再检查 Java 版本。JDK 17.0.0（版本输出通常为 `17+35`，发布日期为 2021-09-14）在部分 Windows 环境中存在 Java NIO 回环管道缺陷，处理方式如下：
+本机已验证：使用 JDK 21 在非受限环境直接运行打包后的 JAR，`local-mock` 配置可以正常启动并完成冒烟测试。
 
-1. 安装当前可用的 JDK 17 LTS 更新版，不需要更换 Java 大版本。
-2. 在 IDEA 中将项目 SDK 和运行配置的 JRE 都切换到新 JDK。
-3. 在启动后端的 PowerShell 中确认 `java -version` 不再显示 `17+35`。
-4. 重新打包并使用 Mock Provider 启动，再执行项目根目录的 `scripts\local-smoke-test.ps1`。
-
-如果更新 JDK 后仍无法启动，再检查 Docker Desktop 是否已启动；Docker 负责 PostgreSQL 和 Redis 容器，但 `local-mock` 模式本身不依赖这两个服务。
+如果使用 JDK 21 后仍无法启动，再检查 Docker Desktop 是否已启动；Docker 负责 PostgreSQL 和 Redis 容器，但 `local-mock` 模式本身不依赖这两个服务。

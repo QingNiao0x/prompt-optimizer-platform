@@ -33,7 +33,7 @@
     ],
     "projectSummary": {
       "rootName": "demo-service",
-      "technologyStack": ["Java 17", "Spring Boot 3", "PostgreSQL", "Redis"],
+    "technologyStack": ["Java 21", "Spring Boot 3", "PostgreSQL", "Redis"],
       "importantDirectories": ["src/main", "src/test"]
     }
   },

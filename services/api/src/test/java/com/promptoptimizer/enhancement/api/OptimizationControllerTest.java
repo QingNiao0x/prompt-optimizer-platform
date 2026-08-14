@@ -8,6 +8,7 @@ import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.ProviderMetadata;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
+import com.promptoptimizer.history.application.OptimizationHistoryService;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ class OptimizationControllerTest {
 
     @MockBean
     private EnhancementOrchestrator orchestrator;
+
+    @MockBean
+    private OptimizationHistoryService optimizationHistoryService;
 
     @Test
     void shouldReturnStructuredOptimizationResult() throws Exception {

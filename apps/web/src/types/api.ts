@@ -111,3 +111,81 @@ export interface OptimizationResult {
   provider: ProviderMetadata;
   latencyMs: number;
 }
+
+export interface OptimizationHistorySummary {
+  id: string;
+  templateCode: TemplateCode;
+  rawPromptPreview: string;
+  providerName: string;
+  modelName: string;
+  mock: boolean;
+  latencyMs: number | null;
+  createdAt: string;
+}
+
+export interface OptimizationHistoryPage {
+  items: OptimizationHistorySummary[];
+  page: number;
+  size: number;
+  totalItems: number;
+  totalPages: number;
+}
+
+export interface OptimizationHistoryDetail {
+  id: string;
+  rawPrompt: string;
+  optimizedPrompt: string;
+  sections: PromptSection[];
+  contextSummary: Record<string, unknown>;
+  ambiguities: string[];
+  appliedConstraints: string[];
+  templateCode: TemplateCode;
+  providerName: string;
+  modelName: string;
+  mock: boolean;
+  latencyMs: number | null;
+  createdAt: string;
+  includePermissionBoundaries: boolean;
+  includeExamples: boolean;
+  conversationHistory: [];
+  permissionPolicy: Record<string, unknown>;
+}
+
+export interface ReoptimizationResult {
+  recordId: string;
+  result: OptimizationResult;
+}
+
+export type ProviderType = 'OPENAI' | 'ANTHROPIC' | 'DEEPSEEK' | 'CUSTOM';
+
+export interface ProviderConfigSummary {
+  id: string;
+  providerType: ProviderType;
+  displayName: string;
+  endpointUrl: string;
+  modelName: string;
+  apiKeyLast4: string;
+  parameters: Record<string, unknown>;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProviderConfigSavePayload {
+  providerType: ProviderType;
+  displayName: string;
+  endpointUrl: string;
+  modelName: string;
+  apiKey: string;
+  parameters: Record<string, unknown>;
+  enabled: boolean;
+}
+
+export interface ProviderConfigUpdatePayload {
+  displayName?: string;
+  endpointUrl?: string;
+  modelName?: string;
+  apiKey?: string;
+  parameters?: Record<string, unknown>;
+  enabled?: boolean;
+}

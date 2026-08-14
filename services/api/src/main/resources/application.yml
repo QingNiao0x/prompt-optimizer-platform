@@ -44,6 +44,9 @@ app:
   security:
     # API Key 加密主密钥，由运行环境注入，禁止写入源码或提交到 Git。
     api-key-encryption-secret: ${API_KEY_ENCRYPTION_SECRET:}
+  history:
+    # local-mock 无数据库模式下关闭历史持久化，避免启动失败。
+    enabled: ${HISTORY_ENABLED:true}
   provider:
     mode: ${MODEL_PROVIDER_MODE:openai-compatible}
     openai-compatible:

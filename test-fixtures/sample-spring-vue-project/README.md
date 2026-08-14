@@ -4,7 +4,7 @@
 
 ## 技术栈
 
-- Backend: Java 17, Spring Boot 3, Spring Web, Spring Data JPA, PostgreSQL, Redis
+- Backend: Java 21, Spring Boot 3, Spring Web, Spring Data JPA, PostgreSQL, Redis
 - Frontend: Vue 3, TypeScript, Vite, Element Plus
 
 ## 目录
@@ -18,4 +18,3 @@ sample-spring-vue-project/
    ├─ package.json
    └─ src/
 ```
-

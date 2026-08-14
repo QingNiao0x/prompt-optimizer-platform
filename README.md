@@ -164,7 +164,7 @@ Prompt Optimizer Platform 通过“一键增强”能力，结合用户提供的
 | --- | --- | --- |
 | Web 前端 | Vue 3 + Vite + TypeScript + Element Plus | 开发效率高、组件生态成熟、适合后台型 SaaS |
 | 前端状态 | Pinia + Vue Router + Axios | 状态边界清晰，便于后续接入权限和多工作区 |
-| 后端 | Java 17 + Spring Boot 3 + Spring MVC | 长期维护、企业生态成熟，适合模块化单体起步 |
+| 后端 | Java 21 + Spring Boot 3 + Spring MVC | 长期维护、企业生态成熟，适合模块化单体起步 |
 | 安全 | Spring Security + JWT（可选） | 便于从匿名试用过渡到登录、团队和 API Token |
 | 数据库 | PostgreSQL 16 | 事务、JSONB、全文检索和扩展能力适合提示词与用量数据 |
 | 缓存 | Redis 7 | 限流、短时上下文缓存、会话和异步任务状态 |
@@ -214,7 +214,7 @@ prompt-optimizer-platform/
 - 不让 Web 后端直接读取用户电脑任意路径；浏览器版仅支持用户主动选择/上传的文件或目录摘要。
 - 不默认把项目源码、完整上下文或 API Key 写入数据库。
 - Provider 配置管理已实现基础 CRUD：API Key 使用 AES-256-GCM 加密存储，接口只返回末四位，不返回明文。
-- 历史记录、用户管理、额度与计费仍待实现。
+- 优化历史已实现自动保存、分页查询、详情、删除和重新优化；用户管理、额度与计费仍待实现。
 - 不在第一阶段拆分微服务；采用模块化单体，等用量和团队边界稳定后再拆分。
 
 后端启动与 Provider 配置见 [services/api/README.md](./services/api/README.md)。

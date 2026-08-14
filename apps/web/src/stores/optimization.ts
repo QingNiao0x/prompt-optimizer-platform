@@ -7,7 +7,9 @@ import { analyzeContext, optimizePrompt } from '@/services/promptOptimizerApi';
 import type {
   ContextFileInput,
   ContextSnapshot,
+  OptimizationHistoryDetail,
   OptimizationResult,
+  ReoptimizationResult,
   TemplateCode,
 } from '@/types/api';
 
@@ -104,6 +106,32 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
   };
 
+  // 从历史详情恢复工作台输入，让用户能在原需求基础上继续修改。
+  // 历史记录不保存文件正文，因此文件列表会清空，只恢复描述和选项。
+  const loadFromHistory = (detail: OptimizationHistoryDetail): void => {
+    rawPrompt.value = detail.rawPrompt;
+    customDescription.value =
+      typeof detail.contextSummary?.customDescription === 'string'
+        ? detail.contextSummary.customDescription
+        : '';
+    templateCode.value = detail.templateCode;
+    includePermissionBoundaries.value = detail.includePermissionBoundaries;
+    includeExamples.value = detail.includeExamples;
+    files.value = [];
+    contextSnapshot.value = undefined;
+    result.value = undefined;
+    requestId.value = '';
+    errorMessage.value = '';
+  };
+
+  // 服务端重新优化完成后，直接把新结果放回工作台结果区。
+  const applyReoptimized = (payload: ReoptimizationResult): void => {
+    result.value = payload.result;
+    contextSnapshot.value = payload.result.contextReport;
+    requestId.value = '';
+    errorMessage.value = '';
+  };
+
   return {
     rawPrompt,
     customDescription,
@@ -124,5 +152,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     clearFiles,
     runContextAnalysis,
     runOptimization,
+    loadFromHistory,
+    applyReoptimized,
   };
 });
