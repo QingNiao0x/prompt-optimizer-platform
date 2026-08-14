@@ -217,11 +217,10 @@ prompt-optimizer-platform/
 - 历史记录、用户管理、额度与计费仍待实现。
 - 不在第一阶段拆分微服务；采用模块化单体，等用量和团队边界稳定后再拆分。
 
-## 6. 下一开发里程碑
-
-1. 完成本地基础设施、健康检查和真实 Provider 联调。
-2. 实现历史记录与 Provider 配置管理。
-3. 接入 PostgreSQL、Redis、限流和短时上下文缓存。
-4. 增加登录、工作区、额度和商业化计量能力。
-
 后端启动与 Provider 配置见 [services/api/README.md](./services/api/README.md)。
+
+## 6. 版权与许可
+
+Copyright © 2026 QingNiao0x
+
+本项目按 [PolyForm Noncommercial License 1.0.0](./LICENSE) 发布：允许个人学习、研究和非商业使用；未经作者书面许可，禁止商业使用。
