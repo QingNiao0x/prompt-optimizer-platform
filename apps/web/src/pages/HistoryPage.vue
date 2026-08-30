@@ -104,7 +104,7 @@ const reoptimize = async (id: string): Promise<void> => {
   try {
     const response = await reoptimizeHistory(id);
     store.applyReoptimized(response.data);
-    ElMessage.success('重新优化完成，结果已放回工作台。');
+    ElMessage.success('重新优化完成，请在工作台确认是否应用结果。');
     await router.push('/');
   } catch (error: unknown) {
     ElMessage.error(getApiErrorMessage(error));

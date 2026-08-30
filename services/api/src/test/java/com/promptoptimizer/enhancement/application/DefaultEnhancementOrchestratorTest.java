@@ -3,6 +3,7 @@ package com.promptoptimizer.enhancement.application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.api.ContextAnalysisRequest;
 import com.promptoptimizer.context.api.ContextFileInput;
+import com.promptoptimizer.context.application.BinaryContentExtractor;
 import com.promptoptimizer.context.application.DefaultContextAnalyzer;
 import com.promptoptimizer.enhancement.api.EnhancementOptions;
 import com.promptoptimizer.enhancement.api.OptimizationRequest;
@@ -25,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DefaultEnhancementOrchestratorTest {
 
     private final DefaultEnhancementOrchestrator orchestrator = new DefaultEnhancementOrchestrator(
-            new DefaultContextAnalyzer(new ObjectMapper()),
+            new DefaultContextAnalyzer(new ObjectMapper(), new BinaryContentExtractor()),
             new AmbiguityDetector(),
             new PromptTemplateRegistry(),
             new ConstraintCompleter(),

@@ -203,3 +203,134 @@ focusRelatedListenerRegistrations: 2 项
 - 用户反馈：未执行 8.6 的 InPrivate 对照测试，但在日常使用中该问题已不再复现。
 - 由于缺少“禁用扩展 / 关闭 DevTools / 重启浏览器”的对照记录，本次恢复的具体原因尚未确认。
 - 临时探针脚本 `E:\tmp\focus-steal-probe.mjs` 仍保留；若问题复现，可先按 8.6 执行对照测试，再决定是否深入定位具体扩展。
+
+## 9. 2026-08-14 全面复查与防御性修改
+
+### 9.1 复查范围
+
+本次按窗口管理异常重新审查以下文件：
+
+- `apps/web/src/pages/PromptWorkbenchPage.vue`
+- `apps/web/src/components/prompt/PromptComposer.vue`
+- `apps/web/src/App.vue`
+- `apps/web/vite.config.ts`
+- `apps/web/index.html`
+- `apps/web/e2e/prompt-workbench.spec.ts`
+
+并全量搜索 `window.focus`、`element.focus()`、`autofocus`、`requestFullscreen`、`fullscreenElement`、`moveTo`、`resizeTo`、`setInterval`、`requestAnimationFrame`、`serviceWorker`、`beforeunload`、`visibilitychange`、全局 `addEventListener` 等模式。
+
+### 9.2 复查结果
+
+| 检查项 | 结果 |
+| --- | --- |
+| 窗口 API（focus/moveTo/resizeTo/open/close） | 应用代码未使用 |
+| 全屏 API | 未使用 |
+| 定时器与动画循环 | 未使用 `setInterval`，未使用 `requestAnimationFrame` 循环 |
+| Service Worker / PWA Manifest | 未配置 |
+| 全局键盘监听与 `preventDefault` | 不存在；仅文本域内的 `Ctrl/⌘ + Enter` 快捷提交 |
+| 全屏遮罩、整页固定定位接管鼠标 | 不存在 |
+| E2E 自动化对窗口的调用 | 仅测试内对下拉框执行一次 `focus()`，不进入生产页面 |
+| `document.title` 修改 | 仅路由切换时更新标题，不涉及窗口管理 |
+
+结论：与 2026-08-11、2026-08-12 两次排查一致，业务代码中不存在能够阻止 Windows 最小化或 `Win+D` 的窗口/焦点/全屏逻辑。浏览器内容区无法可靠接管操作系统级窗口管理。
+
+### 9.3 唯一页面级焦点管理因素与防御性修改
+
+Element Plus 的确认弹窗默认启用：
+
+- 模态遮罩；
+- 焦点陷阱（Focus Trap）；
+- `lock-scroll`，即打开时给 `body` 设置 `overflow: hidden`。
+
+这是页面内唯一主动改变全局焦点和滚动状态的机制。为排除“弹窗打开期间焦点陷阱干扰 Edge 窗口焦点”的可能性，已将 [PromptWorkbenchPage.vue](../../apps/web/src/pages/PromptWorkbenchPage.vue) 的确认弹窗改为非模态：
+
+```vue
+:modal="false"
+:lock-scroll="false"
+:append-to-body="false"
+```
+
+该修改不改变“应用/放弃”确认交互，只移除遮罩、焦点陷阱和全局滚动锁。若异常仅在确认弹窗打开时出现，此修改可消除页面侧变量；若与弹窗无关，则问题仍位于 Edge 扩展、Edge 启动模式或 Windows 窗口管理环境。
+
+### 9.4 现场复现与定位要求
+
+代码侧无法在自动化环境复现 Windows 最小化/Win+D 的故障窗口行为。请在异常发生时按第 8.6 节执行最小对照测试，并补充以下任一材料：
+
+- `edge://version` 截图（重点记录“命令行”一栏）；
+- `edge://extensions` 截图；
+- 从打开页面到点击最小化、再执行 `Win+D` 的录屏；
+- 异常时刻 Edge 开发者工具 Console/Network 面板截图。
+
+得到上述材料后，才能区分扩展注入脚本、Edge 应用模式或系统窗口管理，避免把环境问题归因于项目代码。
+
+### 9.5 2026-08-15 补充：InPrivate 正常、Chrome 正常、普通 Edge 仍异常
+
+用户补充对照结果：
+
+- InPrivate 窗口打开本页面：最小化与 Win+D 正常；
+- Chrome 打开本页面：正常；
+- 普通 Edge 即使禁用全部扩展：仍然异常。
+
+该结果把问题范围缩小到“普通 Edge 配置/资料”，而不是页面业务代码。为兼容用户脚本或注入逻辑在页面失焦后调用 `window.focus/open/alert/confirm/prompt` 重新唤起窗口的行为，前端增加了页面隐藏期间的原生调用防护：
+
+- 新增 `apps/web/src/windowFocusGuard.ts`；
+- 在 `apps/web/src/main.ts` 中于应用挂载前加载；
+- 页面 `document.hidden` 为真时吞掉上述原生调用；页面可见时行为不变。
+
+该防护只能拦截页面同源世界里的调用，无法拦截浏览器扩展的隔离世界（Isolated World）调用。若修改后仍复现，优先执行下列普通 Edge 资料级修复：
+
+1. 完全退出 Edge，并在任务管理器中确认没有 `msedge.exe` 残留后重新打开；扩展停用需要完整重启才彻底生效。
+2. 打开 `edge://flags`，点击“重置所有设置”后重启 Edge。
+3. 在“设置 → 系统与性能”中关闭：启动加速、关闭 Edge 后继续运行后台扩展和应用、效率模式；并在“保存资源”中把 `127.0.0.1` 加入“从不睡眠”列表。
+4. 在 `edge://settings/content/all` 中分别清除 `http://127.0.0.1:5173` 与 `http://localhost:5173` 的站点数据。
+5. 打开 `edge://apps`，确认本页面没有以 Edge 应用窗口方式安装。
+6. 打开 `edge://version`，记录“命令行”一栏，确认没有 `--app`、`--kiosk`、`--fullscreen` 参数。
+7. 用 `npm run preview` 打开生产构建再做一次对照，排除 Vite 开发服务器热更新客户端的影响。
+
+复现时保持开发者工具 Console 打开：若出现 `[window-focus-guard] ignored window.xxx while page hidden`，说明确实有脚本在页面隐藏后尝试抢焦点，防护已将其拦截；若没有该日志但窗口仍恢复，则属于 Edge 资料级或系统级窗口管理问题，需要提供 `edge://version` 截图继续定位。
+
+### 9.6 2026-08-15 暴力猴根因确认
+
+用户对照测试确认：禁用 Violentmonkey（暴力猴）后，最小化和 Win+D 恢复正常；Chrome 无此问题；InPrivate 正常。
+
+对 Edge 默认资料中的暴力猴扩展 `eeagobfjdenkkddmbclomhiblgggliao`（版本 2.46.0）进行只读检查，得到以下证据：
+
+| 项目 | 结果 |
+| --- | --- |
+| `manifest.json` 的 `content_scripts` | `matches: <all_urls>`，`run_at: document_start` |
+| 注入文件 | `injected-web.js`、`injected.js` |
+| `injected-web.js` 对 `window.focus` 的处理 | 将其替换为向扩展后台发送 `TabFocus` 消息的桥接函数 |
+| 已启用的用户脚本 | “解除网站不允许复制限制 1.1.7”（greasyfork 549231）、“全网VIP 3.1.9”（greasyfork 537189） |
+| 上述脚本对 `localhost` / `127.0.0.1` / `5173` 的匹配 | 无匹配规则 |
+
+结论：不是这两个用户脚本注入到本项目页面，而是暴力猴扩展本体在每个页面注入全局桥接。该桥接把 `window.focus` 转发为 `TabFocus` 消息；页面失焦后若发生一次 `window.focus` 调用，扩展后台可能重新激活标签页窗口，与“最小化后 1-2 秒窗口自动恢复”的现象吻合。
+
+项目侧已通过 `windowFocusGuard.ts` 在页面隐藏时吞掉 `window.focus` 等原生调用，阻止桥接消息发出。开发模式下被拦截时会连同调用栈打印到 Console：
+
+```text
+[window-focus-guard] ignored window.focus while page hidden
+```
+
+验证方法：
+
+1. 保持暴力猴启用，刷新本项目页面（确保使用最新构建）。
+2. 打开 F12 Console，复现“点击最小化后窗口自动恢复”。
+3. 若 Console 出现上述拦截日志，即证明桥接链路已被页面防护切断。
+4. 若没有日志但窗口仍恢复，说明调用发生在暴力猴的隔离世界，页面无法拦截；此时处理方式是更新暴力猴，或在暴力猴设置中把 `127.0.0.1` / `localhost` 加入站点排除，而不是要求用户禁用插件。
+
+### 9.7 2026-08-15 补充：隔离世界结论与边界
+
+用户复测结果：启用暴力猴并加载最新页面后，Console 没有出现 `[window-focus-guard]` 拦截日志，但窗口仍会恢复。
+
+该结果与扩展架构一致：
+
+- Violentmonkey 的 `injected-web.js`、`injected.js` 是 Manifest V3 的 Content Script，默认运行在 Isolated World。
+- `window.focus` 的重写和 `TabFocus` 消息桥接发生在 Isolated World；页面主世界（Main World）的 `windowFocusGuard.ts` 无法观察或拦截该世界里的调用，因此不会打印日志。
+- 网页代码也没有权限调用 `chrome.tabs.update` 等扩展后台 API，因此无法阻止扩展后台重新激活窗口。
+
+结论：
+
+1. 项目业务代码仍不是根因；根因是 Violentmonkey 2.46.0 的全局注入桥接与 Edge 窗口焦点管理之间的交互。
+2. 页面侧防护只能覆盖 Main World；Isolated World 与扩展后台行为超出网页能力边界，任何网站都无法“彻底修复”该类扩展行为。
+3. 对本机的兼容处理是：更新 Violentmonkey；或在 Violentmonkey 的站点规则中为 `http://127.0.0.1:5173`、`http://localhost:5173` 增加排除，不需要整体禁用扩展。
+4. 对最终用户：生产域名与本地开发地址不同，且页面侧防护会在 Main World 生效；若个别用户因同类扩展复现，仍应引导其更新扩展，而不是修改网站代码。

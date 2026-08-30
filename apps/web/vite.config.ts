@@ -10,6 +10,10 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [vue()],
+    worker: {
+      // 文件读取 Worker 使用 module 方式创建，输出 ES module 才能支持按需加载 xlsx。
+      format: 'es',
+    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -19,7 +23,7 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       proxy: {
         '/api': {
-          target: env.VITE_API_PROXY_TARGET ?? 'http://localhost:8080',
+          target: env.VITE_API_PROXY_TARGET ?? 'http://localhost:9000',
           changeOrigin: true,
         },
       },

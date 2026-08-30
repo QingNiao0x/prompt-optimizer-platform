@@ -1,183 +1,199 @@
-import { readonly, ref } from 'vue';
+import { nextTick, readonly, ref } from 'vue';
 
 import type { ContextFileInput } from '@/types/api';
+import {
+  collectCandidateFiles,
+  MAX_FILES,
+  readProjectFiles,
+  type FileProcessingProgress,
+  type ProjectFileSelection,
+} from '@/workers/fileReaderCore';
 
-const MAX_FILES = 200;
-const MAX_FILE_BYTES = 300_000;
-const MAX_SPREADSHEET_SHEETS = 8;
-const MAX_SPREADSHEET_ROWS = 200;
-const MAX_SPREADSHEET_COLUMNS = 30;
-const MAX_SPREADSHEET_CHARACTERS = 120_000;
-const SUPPORTED_EXTENSIONS = new Set([
-  'css', 'env.example', 'go', 'gradle', 'html', 'java', 'js', 'json', 'jsx',
-  'kt', 'md', 'properties', 'py', 'rs', 'scss', 'sql', 'ts', 'tsx', 'txt',
-  'vue', 'xls', 'xlsx', 'xml', 'yaml', 'yml',
-]);
+export {
+  MAX_FILES,
+  UNSUPPORTED_EXTENSIONS,
+  readProjectFiles,
+} from '@/workers/fileReaderCore';
+export type { FileProcessingProgress, ProjectFileSelection } from '@/workers/fileReaderCore';
 
-const LANGUAGE_BY_EXTENSION: Record<string, string> = {
-  css: 'css',
-  go: 'go',
-  gradle: 'gradle',
-  html: 'html',
-  java: 'java',
-  js: 'javascript',
-  json: 'json',
-  jsx: 'javascript',
-  kt: 'kotlin',
-  md: 'markdown',
-  properties: 'properties',
-  py: 'python',
-  rs: 'rust',
-  scss: 'scss',
-  sql: 'sql',
-  ts: 'typescript',
-  tsx: 'typescript',
-  txt: 'text',
-  vue: 'vue',
-  xls: 'spreadsheet',
-  xlsx: 'spreadsheet',
-  xml: 'xml',
-  yaml: 'yaml',
-  yml: 'yaml',
-};
+type WorkerResponse =
+  | { type: 'progress'; progress: FileProcessingProgress }
+  | { type: 'done'; files: ProjectFileSelection['files']; warnings: string[] }
+  | { type: 'error'; message: string };
 
-export interface ProjectFileSelection {
-  files: ContextFileInput[];
-  warnings: string[];
+interface WorkerRequest {
+  files: File[];
 }
 
-type SupportedFileList = FileList | readonly File[];
-
-const getExtension = (fileName: string): string => {
-  const normalizedName = fileName.toLowerCase();
-  if (normalizedName.endsWith('.env.example')) {
-    return 'env.example';
-  }
-  const separatorIndex = normalizedName.lastIndexOf('.');
-  return separatorIndex >= 0 ? normalizedName.slice(separatorIndex + 1) : '';
-};
-
-/**
- * 将表格的前几张工作表转换为纯文本，让后端上下文分析器可以像处理代码文件一样处理表格内容。
- *
- * 不直接上传二进制内容；行、列、工作表和总字符数均有限制，避免大型导出表拖慢浏览器或模型请求。
- */
-const readSpreadsheetContent = async (file: File): Promise<string> => {
-  // 表格解析库体积较大，只有用户实际选择 Excel 文件时才下载，避免影响普通代码文件场景的首屏加载。
-  const XLSX = await import('xlsx');
-  const workbook = XLSX.read(await file.arrayBuffer(), { type: 'array', cellText: true });
-  const sections: string[] = [`# 表格文件：${file.name}`];
-  let remainingCharacters = MAX_SPREADSHEET_CHARACTERS;
-
-  for (const sheetName of workbook.SheetNames.slice(0, MAX_SPREADSHEET_SHEETS)) {
-    if (remainingCharacters <= 0) {
-      break;
-    }
-
-    const worksheet = workbook.Sheets[sheetName];
-    if (!worksheet) {
-      continue;
-    }
-    const rows = XLSX.utils.sheet_to_json<unknown[]>(worksheet, {
-      header: 1,
-      raw: false,
-      blankrows: false,
-      defval: '',
-    });
-    const tableText = rows
-      .slice(0, MAX_SPREADSHEET_ROWS)
-      .map((row) => row
-        .slice(0, MAX_SPREADSHEET_COLUMNS)
-        .map((cell) => String(cell).replace(/[\t\r\n]+/g, ' ').trim())
-        .join('\t'))
-      .filter((row) => row.trim().length > 0)
-      .join('\n')
-      .slice(0, remainingCharacters);
-
-    if (tableText) {
-      sections.push(`## 工作表：${sheetName}\n${tableText}`);
-      remainingCharacters -= tableText.length;
-    }
-  }
-
-  return sections.join('\n\n');
-};
-
-const readSupportedFileContent = async (file: File, extension: string): Promise<string> => {
-  if (extension === 'xls' || extension === 'xlsx') {
-    return readSpreadsheetContent(file);
-  }
-  return file.text();
-};
-
-export const readProjectFiles = async (fileList: SupportedFileList): Promise<ProjectFileSelection> => {
-  const candidates = Array.from(fileList).slice(0, MAX_FILES);
-  const warnings: string[] = [];
-  const acceptedFiles: ContextFileInput[] = [];
-  let unsupportedCount = 0;
-  let oversizedCount = 0;
-  let failedCount = 0;
-
-  for (const file of candidates) {
-    const extension = getExtension(file.name);
-    if (!SUPPORTED_EXTENSIONS.has(extension)) {
-      unsupportedCount += 1;
-      continue;
-    }
-    if (file.size > MAX_FILE_BYTES) {
-      oversizedCount += 1;
-      continue;
-    }
-
-    try {
-      acceptedFiles.push({
-        path: file.webkitRelativePath || file.name,
-        content: await readSupportedFileContent(file, extension),
-        language: LANGUAGE_BY_EXTENSION[extension] ?? 'text',
-      });
-    } catch {
-      failedCount += 1;
-    }
-  }
-
-  if (fileList.length > MAX_FILES) {
-    warnings.push(`一次最多读取 ${MAX_FILES} 个文件，其余文件已忽略。`);
-  }
-  if (unsupportedCount > 0) {
-    warnings.push(`已忽略 ${unsupportedCount} 个二进制或暂不支持的文件。`);
-  }
-  if (oversizedCount > 0) {
-    warnings.push(`已忽略 ${oversizedCount} 个超过 300 KB 的文件。`);
-  }
-  if (failedCount > 0) {
-    warnings.push(`有 ${failedCount} 个文件读取失败，请重新选择。`);
-  }
-
-  return { files: acceptedFiles, warnings };
-};
+const readFilesInWorker = (
+  files: File[],
+  onProgress: (progress: FileProcessingProgress) => void,
+): Promise<ProjectFileSelection> =>
+  new Promise((resolve, reject) => {
+    const worker = new Worker(
+      new URL('../workers/fileReader.worker.ts', import.meta.url),
+      { type: 'module' },
+    );
+    worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
+      const message = event.data;
+      if (message.type === 'progress') {
+        onProgress(message.progress);
+        return;
+      }
+      worker.terminate();
+      if (message.type === 'done') {
+        resolve({ files: message.files, warnings: message.warnings });
+      } else {
+        reject(new Error(message.message));
+      }
+    };
+    worker.onerror = (event) => {
+      worker.terminate();
+      reject(new Error(event.message || '文件读取线程启动失败'));
+    };
+    worker.postMessage({ files } satisfies WorkerRequest);
+  });
 
 export const useProjectFiles = () => {
   const isReading = ref(false);
   const warnings = ref<string[]>([]);
+  const progress = ref<FileProcessingProgress | null>(null);
+
+  // 让出主线程，给浏览器一次重绘机会，避免界面在大量文件时看起来没有响应。
+  const yieldToBrowser = (): Promise<void> =>
+    new Promise((resolve) => setTimeout(resolve, 0));
 
   const selectFiles = async (fileList: FileList | null): Promise<ContextFileInput[]> => {
     if (!fileList || fileList.length === 0) {
       warnings.value = [];
+      progress.value = null;
       return [];
     }
+
     isReading.value = true;
+    progress.value = {
+      current: 0,
+      total: fileList.length,
+      fileName: '',
+      percent: 0,
+      accepted: 0,
+      skipped: 0,
+      phase: 'scan',
+    };
+    if (import.meta.env.DEV) {
+      console.info('[file-upload] start', {
+        total: fileList.length,
+        at: new Date().toISOString(),
+      });
+    }
+
     try {
-      const selection = await readProjectFiles(fileList);
-      warnings.value = selection.warnings;
+      // 第一阶段只扫描文件名和大小，绝不全量复制或克隆十六万文件。
+      // 扫描分片执行，每 500 条让出一次主线程；FileList 由 ContextPanel 延迟清空，保证扫描期间有效。
+      const scanWarnings: string[] = [];
+      const scanStartedAt = performance.now();
+      const { files: candidates, stats } = await collectCandidateFiles(
+        fileList,
+        MAX_FILES,
+        async (scanned, total, selected) => {
+          progress.value = {
+            current: scanned,
+            total,
+            fileName: '',
+            percent: total === 0 ? 100 : Math.round((scanned / total) * 100),
+            accepted: selected,
+            skipped: 0,
+            phase: 'scan',
+          };
+          await yieldToBrowser();
+        },
+      );
+      if (import.meta.env.DEV) {
+        console.info('[file-upload] scan finished', {
+          fileListLength: fileList.length,
+          scanned: stats.total,
+          selected: stats.selected,
+          pathIgnored: stats.pathIgnored,
+          unsupported: stats.unsupported,
+          oversized: stats.oversized,
+          tookMs: Math.round(performance.now() - scanStartedAt),
+        });
+      }
+      progress.value = {
+        current: stats.total,
+        total: stats.total,
+        fileName: '',
+        percent: stats.total === 0 ? 100 : 100,
+        accepted: stats.selected,
+        skipped: stats.pathIgnored + stats.unsupported + stats.oversized,
+        phase: 'scan',
+      };
+
+      // 先渲染出进度条容器，再开始读取。
+      await nextTick();
+      await yieldToBrowser();
+
+      if (stats.pathIgnored > 0) {
+        scanWarnings.push(`已跳过 ${stats.pathIgnored} 个依赖目录、构建产物或扫描范围外的文件。`);
+      }
+      if (stats.unsupported > 0) {
+        scanWarnings.push(`已跳过 ${stats.unsupported} 个暂不支持的文件。`);
+      }
+      if (stats.oversized > 0) {
+        scanWarnings.push(`已跳过 ${stats.oversized} 个超过大小限制的文件。`);
+      }
+      if (candidates.length === 0) {
+        scanWarnings.push('没有找到可读取的文件。');
+        warnings.value = scanWarnings;
+        return [];
+      }
+
+      // 第二阶段只把候选文件发给 Worker，主线程保持响应。
+      const readStartedAt = performance.now();
+      progress.value = {
+        current: 0,
+        total: candidates.length,
+        fileName: '',
+        percent: 0,
+        accepted: 0,
+        skipped: 0,
+        phase: 'read',
+      };
+      await yieldToBrowser();
+
+      let selection: ProjectFileSelection;
+      try {
+        // 优先在 Web Worker 中解析，主线程保持响应；Worker 不可用时回退到主线程时间切片。
+        selection = await readFilesInWorker(candidates, (next) => {
+          progress.value = next;
+        });
+      } catch (workerError) {
+        if (import.meta.env.DEV) {
+          console.info('[file-reader] worker unavailable, fallback to main thread', workerError);
+        }
+        selection = await readProjectFiles(candidates, async (next) => {
+          progress.value = next;
+          await yieldToBrowser();
+        });
+      }
+      if (import.meta.env.DEV) {
+        console.info('[file-upload] read finished', {
+          files: selection.files.length,
+          tookMs: Math.round(performance.now() - readStartedAt),
+        });
+      }
+      warnings.value = [...scanWarnings, ...selection.warnings];
       return selection.files;
     } finally {
       isReading.value = false;
+      progress.value = null;
     }
   };
 
   return {
     isReading: readonly(isReading),
     warnings: readonly(warnings),
+    progress: readonly(progress),
     selectFiles,
   };
 };

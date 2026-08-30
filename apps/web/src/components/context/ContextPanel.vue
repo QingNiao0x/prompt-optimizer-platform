@@ -12,12 +12,22 @@ import {
   ElInput,
   ElMessage,
   ElOption,
+  ElProgress,
   ElScrollbar,
   ElSelect,
   ElTag,
 } from 'element-plus';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
+import {
+  UNSUPPORTED_EXTENSIONS,
+  type FileProcessingProgress,
+} from '@/composables/useProjectFiles';
+import type {
+  ProjectContextRetrievalResult,
+  ProjectIndexProgress,
+  ProjectIndexSummary,
+} from '@/features/project-index/projectIndexer';
 import type { ContextFileInput, ContextSnapshot } from '@/types/api';
 
 interface Props {
@@ -27,6 +37,14 @@ interface Props {
   snapshot?: ContextSnapshot;
   isReading: boolean;
   isAnalyzing: boolean;
+  progress?: FileProcessingProgress | null;
+  supportsDirectoryPicker: boolean;
+  isSelectingDirectory: boolean;
+  isIndexing: boolean;
+  isPausing: boolean;
+  indexProgress?: ProjectIndexProgress;
+  projectIndex?: ProjectIndexSummary;
+  contextRetrieval?: ProjectContextRetrievalResult;
 }
 
 interface Emits {
@@ -36,12 +54,18 @@ interface Emits {
   (event: 'remove-file', path: string): void;
   (event: 'clear-files'): void;
   (event: 'analyze'): void;
+  (event: 'index-project'): void;
+  (event: 'pause-index'): void;
+  (event: 'resume-index'): void;
+  (event: 'refresh-index'): void;
+  (event: 'cancel-index'): void;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const folderInput = ref<HTMLInputElement>();
+const selecting = ref(false);
 const manualPath = ref('src/example.ts');
 const manualLanguage = ref('typescript');
 const manualContent = ref('');
@@ -51,15 +75,63 @@ const descriptionModel = computed({
   set: (value: string): void => emit('update:custom-description', value),
 });
 
+const readingLabel = computed(() => {
+  if (!props.progress) {
+    return '正在读取文件…';
+  }
+  if (props.progress.phase === 'scan') {
+    return `正在扫描目录（${props.progress.current}/${props.progress.total}）· 已选 ${props.progress.accepted}`;
+  }
+  if (props.progress.total === 0) {
+    return '正在读取文件…';
+  }
+  const summary = `已读取 ${props.progress.accepted} · 已跳过 ${props.progress.skipped}`;
+  return `正在读取 ${props.progress.fileName}（${props.progress.current}/${props.progress.total}）· ${summary}`;
+});
+
+const indexingLabel = computed(() => {
+  if (props.isPausing) {
+    return '正在保存当前批次和暂停检查点…';
+  }
+  if (!props.indexProgress) {
+    return '正在初始化本地索引…';
+  }
+  const progress = props.indexProgress;
+  return `已发现 ${progress.discoveredFiles} · 已索引 ${progress.indexedFiles} · 已忽略 ${progress.ignoredFiles}`;
+});
+
+const isProjectBusy = computed(() =>
+  props.isReading || props.isIndexing || props.isSelectingDirectory || selecting.value);
+
 const openFolderPicker = (): void => {
+  if (props.supportsDirectoryPicker) {
+    emit('index-project');
+    return;
+  }
+  selecting.value = true;
   folderInput.value?.click();
 };
 
 const handleFolderChange = (event: Event): void => {
+  selecting.value = false;
   const input = event.target as HTMLInputElement;
   emit('files-selected', input.files);
-  input.value = '';
 };
+
+const handleFolderCancel = (): void => {
+  selecting.value = false;
+};
+
+// 读取是异步分片执行的，不能在事件处理器里立即清空 FileList；
+// 等 isReading 结束后再清理输入框，既保证 FileList 有效，也允许下次选择同一目录。
+watch(
+  () => props.isReading,
+  (reading) => {
+    if (!reading && folderInput.value) {
+      folderInput.value.value = '';
+    }
+  },
+);
 
 const addManualFile = (): void => {
   if (!manualPath.value.trim() || !manualContent.value.trim()) {
@@ -106,11 +178,11 @@ const addManualFile = (): void => {
     <section class="context-section">
       <div class="section-title-row">
         <div>
-          <span class="field-label">选择项目文件夹</span>
-          <p class="field-help">文件只在本次请求中读取，不会获取电脑上的任意路径。</p>
+          <span class="field-label">上传项目文件夹</span>
+          <p class="field-help">源码索引按隐私设置保存在本浏览器，仅把当前任务相关片段发送到后端。</p>
         </div>
         <ElButton
-          v-if="files.length"
+          v-if="files.length || projectIndex"
           text
           size="small"
           type="danger"
@@ -127,18 +199,141 @@ const addManualFile = (): void => {
         multiple
         webkitdirectory
         @change="handleFolderChange"
+        @cancel="handleFolderCancel"
       />
-      <button class="folder-dropzone" type="button" @click="openFolderPicker">
+      <button
+        class="folder-dropzone"
+        type="button"
+        :disabled="isProjectBusy"
+        @click="openFolderPicker"
+      >
         <span class="dropzone-icon"><FolderOpened /></span>
-        <span>
-          <strong>{{ isReading ? '正在读取文件…' : '选择本地项目文件夹' }}</strong>
-          <small>最多 200 个文本或 Excel 文件，单文件不超过 300 KB</small>
+        <span class="dropzone-copy">
+          <strong>
+            {{ isIndexing
+              ? '正在建立本地项目索引'
+              : isReading
+                ? '正在处理项目文件'
+                : isSelectingDirectory || selecting
+                  ? '正在等待目录授权…'
+                  : '选择本地项目文件夹' }}
+          </strong>
+          <small v-if="!isProjectBusy">
+            支持的浏览器会流式扫描并把项目索引保存在本机；其他浏览器回退到普通文件夹上传
+          </small>
+          <template v-else>
+            <ElProgress
+              class="read-progress"
+              :percentage="isReading && progress?.phase === 'read' ? progress.percent : undefined"
+              :indeterminate="isIndexing || !isReading || progress?.phase !== 'read'"
+              :duration="3"
+              :stroke-width="8"
+              :show-text="!isIndexing && isReading && progress?.phase === 'read'"
+              aria-label="项目文件处理进度"
+            />
+            <small class="reading-meta" aria-live="polite">
+              {{ isIndexing
+                ? indexingLabel
+                : isReading
+                  ? readingLabel
+                  : '请选择需要授权的项目目录…' }}
+            </small>
+          </template>
         </span>
       </button>
+
+      <div v-if="isIndexing" class="index-actions">
+        <ElButton
+          data-testid="pause-index"
+          plain
+          size="small"
+          :loading="isPausing"
+          @click="emit('pause-index')"
+        >
+          {{ isPausing ? '正在暂停' : '暂停索引' }}
+        </ElButton>
+        <ElButton text size="small" type="danger" @click="emit('cancel-index')">
+          取消并删除索引
+        </ElButton>
+      </div>
+
+      <div v-else-if="projectIndex" class="index-actions">
+        <ElButton
+          v-if="projectIndex.status === 'PAUSED'"
+          plain
+          size="small"
+          type="primary"
+          @click="emit('resume-index')"
+        >
+          继续索引
+        </ElButton>
+        <ElButton
+          v-if="projectIndex.status === 'READY'"
+          plain
+          size="small"
+          @click="emit('refresh-index')"
+        >
+          增量更新
+        </ElButton>
+        <ElButton text size="small" type="danger" @click="emit('cancel-index')">
+          删除本地索引
+        </ElButton>
+      </div>
+
+      <div class="unsupported-note" role="note" aria-label="暂不支持的文件格式">
+        <span class="unsupported-title">暂不支持</span>
+        <div class="unsupported-tags">
+          <ElTag
+            v-for="suffix in UNSUPPORTED_EXTENSIONS"
+            :key="suffix"
+            size="small"
+            type="info"
+            effect="plain"
+            round
+          >
+            {{ suffix }}
+          </ElTag>
+        </div>
+      </div>
 
       <ul v-if="warnings.length" class="warning-list" aria-live="polite">
         <li v-for="warning in warnings" :key="warning">{{ warning }}</li>
       </ul>
+
+      <div v-if="projectIndex" class="project-index-summary">
+        <strong>{{ projectIndex.rootName }}</strong>
+        <span v-if="projectIndex.status === 'PAUSED'">
+          已暂停，检查点位于 {{ projectIndex.lastCheckpointPath || '目录起点' }}
+        </span>
+        <span v-else>{{ projectIndex.indexedFiles }} 个源码文件已建立本地索引</span>
+        <small>
+          {{ projectIndex.chunkCount }} 个代码块 ·
+          {{ projectIndex.ignoredFiles }} 个文件已忽略 ·
+          {{ projectIndex.metadataOnlyFiles }} 个超大文件仅保留元数据
+        </small>
+        <small v-if="projectIndex.status === 'READY'">
+          本轮新增 {{ projectIndex.addedFiles }} · 更新 {{ projectIndex.updatedFiles }} ·
+          未变化 {{ projectIndex.unchangedFiles }} · 删除 {{ projectIndex.removedFiles }}
+        </small>
+        <details
+          v-if="contextRetrieval?.selections.length"
+          class="retrieval-report"
+        >
+          <summary>
+            查看本次代码选择依据（{{ contextRetrieval.selections.length }} 段，
+            {{ contextRetrieval.totalCharacters.toLocaleString('zh-CN') }} 字符）
+          </summary>
+          <ul>
+            <li
+              v-for="selection in contextRetrieval.selections.slice(0, 8)"
+              :key="`${selection.path}-${selection.chunkIndex}`"
+            >
+              <span :title="selection.path">{{ selection.path }}</span>
+              <small>{{ selection.reasons.join('、') }}</small>
+            </li>
+          </ul>
+        </details>
+      </div>
 
       <div v-if="files.length" class="file-summary">
         <div class="file-count">
@@ -309,6 +504,11 @@ h2 {
   transform: translateY(-1px);
 }
 
+.folder-dropzone:disabled {
+  cursor: progress;
+  opacity: 0.75;
+}
+
 .dropzone-icon {
   display: grid;
   flex: 0 0 38px;
@@ -328,6 +528,11 @@ h2 {
   display: block;
 }
 
+.dropzone-copy {
+  min-width: 0;
+  flex: 1;
+}
+
 .folder-dropzone strong {
   color: var(--ink-strong);
   font-size: 12px;
@@ -338,12 +543,144 @@ h2 {
   font-size: 10px;
 }
 
+.read-progress {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.index-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.index-actions :deep(.el-button) {
+  flex: 1;
+  margin-left: 0;
+}
+
+.unsupported-note {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 8px;
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  max-height: 96px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid var(--line-subtle);
+  border-radius: 10px;
+  background: var(--surface-elevated);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.unsupported-title {
+  color: var(--ink-soft);
+  font-size: 10px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.unsupported-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+.read-progress :deep(.el-progress__text) {
+  min-width: 38px;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.reading-meta {
+  overflow: hidden;
+  color: var(--accent-blue) !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .warning-list {
   margin: 10px 0 0;
   padding-left: 18px;
   color: var(--warning);
   font-size: 11px;
   line-height: 1.6;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.project-index-summary {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--success) 30%, var(--line-subtle));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--success) 5%, var(--surface-elevated));
+}
+
+.project-index-summary strong {
+  overflow: hidden;
+  color: var(--ink-strong);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-index-summary span {
+  color: var(--success);
+  font-size: 11px;
+}
+
+.project-index-summary small {
+  color: var(--ink-soft);
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.retrieval-report {
+  margin-top: 4px;
+  padding-top: 7px;
+  border-top: 1px solid var(--line-subtle);
+}
+
+.retrieval-report summary {
+  color: var(--accent-blue);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.retrieval-report ul {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.retrieval-report li {
+  display: grid;
+  min-width: 0;
+}
+
+.retrieval-report li > span {
+  overflow: hidden;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.retrieval-report li > small {
+  color: var(--ink-soft);
 }
 
 .file-summary {

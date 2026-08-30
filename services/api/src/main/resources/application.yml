@@ -18,8 +18,11 @@ spring:
       url: ${REDIS_URL:redis://localhost:6379}
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT:9000}
   shutdown: graceful
+  tomcat:
+    # 大项目上下文可能一次性提交数百个文件，放宽默认 2MB 请求体限制。
+    max-swallow-size: 8MB
 
 management:
   endpoints:

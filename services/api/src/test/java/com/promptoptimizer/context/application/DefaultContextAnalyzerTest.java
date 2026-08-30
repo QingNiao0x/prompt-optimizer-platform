@@ -4,15 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.api.ContextAnalysisRequest;
 import com.promptoptimizer.context.api.ContextFileInput;
 import com.promptoptimizer.context.domain.ContextSnapshot;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultContextAnalyzerTest {
 
-    private final DefaultContextAnalyzer analyzer = new DefaultContextAnalyzer(new ObjectMapper());
+    private final DefaultContextAnalyzer analyzer = new DefaultContextAnalyzer(
+            new ObjectMapper(),
+            new BinaryContentExtractor()
+    );
 
     @Test
     void shouldDetectStackDependenciesAndDirectoryTree() {
@@ -74,5 +80,27 @@ class DefaultContextAnalyzerTest {
         assertThat(snapshot.redactions()).contains("customDescription");
         assertThat(snapshot.warnings()).anyMatch(message -> message.contains("不安全或无效路径"));
         assertThat(snapshot.warnings()).anyMatch(message -> message.contains("生成目录或工具目录"));
+    }
+
+    @Test
+    void shouldExtractWordTextFromBase64Document() throws Exception {
+        XWPFDocument document = new XWPFDocument();
+        document.createParagraph().createRun().setText("登录接口必须校验空值和重复用户名。");
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        document.write(output);
+        document.close();
+        String base64 = Base64.getEncoder().encodeToString(output.toByteArray());
+
+        ContextAnalysisRequest request = new ContextAnalysisRequest(
+                "",
+                List.of(new ContextFileInput("docs/登录需求.docx", base64, "docx"))
+        );
+
+        ContextSnapshot snapshot = analyzer.analyze(request);
+
+        assertThat(snapshot.fileSnippets()).hasSize(1);
+        assertThat(snapshot.fileSnippets().get(0).language()).isEqualTo("docx");
+        assertThat(snapshot.fileSnippets().get(0).content()).contains("登录接口");
+        assertThat(snapshot.warnings()).isEmpty();
     }
 }

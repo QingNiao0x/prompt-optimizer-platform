@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,8 +35,9 @@ import java.util.regex.Pattern;
 public class DefaultContextAnalyzer implements ContextAnalyzer {
 
     private static final String ANALYSIS_VERSION = "v1";
-    private static final int MAX_TOTAL_BYTES = 5 * 1024 * 1024;
+    private static final int MAX_TOTAL_BYTES = 8 * 1024 * 1024;
     private static final int MAX_FILE_BYTES = 256 * 1024;
+    private static final int MAX_BINARY_FILE_BYTES = 1024 * 1024;
     private static final int MAX_DIRECTORY_ENTRIES = 100;
     private static final int MAX_SNIPPETS = 20;
     private static final int MAX_SNIPPET_CHARS = 4_000;
@@ -65,9 +67,14 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
     private static final Pattern OPENAI_STYLE_KEY = Pattern.compile("sk-[A-Za-z0-9_-]{10,}");
 
     private final ObjectMapper objectMapper;
+    private final BinaryContentExtractor binaryContentExtractor;
 
-    public DefaultContextAnalyzer(ObjectMapper objectMapper) {
+    public DefaultContextAnalyzer(
+            ObjectMapper objectMapper,
+            BinaryContentExtractor binaryContentExtractor
+    ) {
         this.objectMapper = objectMapper;
+        this.binaryContentExtractor = binaryContentExtractor;
     }
 
     /**
@@ -125,7 +132,13 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                 continue;
             }
 
+            String language = languageOf(path, input.language());
             String content = input.content() == null ? "" : input.content();
+            if (binaryContentExtractor.supports(language)) {
+                totalBytes = collectBinaryFile(path, language, content, files, warnings, redactions, totalBytes);
+                continue;
+            }
+
             int bytes = content.getBytes(StandardCharsets.UTF_8).length;
             if (bytes > MAX_FILE_BYTES) {
                 content = truncateByBytes(content, MAX_FILE_BYTES);
@@ -150,11 +163,57 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             files.put(path, new AnalyzedFile(
                     path,
                     sensitive ? "[CONTENT REDACTED: sensitive material detected]" : content,
-                    languageOf(path, input.language()),
+                    language,
                     bytes >= MAX_FILE_BYTES
             ));
         }
         return files;
+    }
+
+    /**
+     * 解码并解析 Word 或图片文件，把提取文本计入上下文总预算。
+     */
+    private int collectBinaryFile(
+            String path,
+            String language,
+            String base64Content,
+            Map<String, AnalyzedFile> files,
+            List<String> warnings,
+            List<String> redactions,
+            int totalBytes
+    ) {
+        byte[] decoded;
+        try {
+            decoded = Base64.getDecoder().decode(base64Content.trim());
+        } catch (IllegalArgumentException exception) {
+            warnings.add("无法解析文件编码：" + path);
+            return totalBytes;
+        }
+        if (decoded.length > MAX_BINARY_FILE_BYTES) {
+            warnings.add("已忽略超过 1 MB 的二进制文件：" + path);
+            return totalBytes;
+        }
+        if (totalBytes + decoded.length > MAX_TOTAL_BYTES) {
+            warnings.add("已达到上下文总大小上限，后续文件未分析：" + path);
+            return totalBytes;
+        }
+        try {
+            BinaryContentExtractor.ExtractedText extracted = binaryContentExtractor.extract(path, language, decoded);
+            boolean sensitive = containsSecret(extracted.content());
+            if (sensitive) {
+                redactions.add(path);
+            }
+            files.put(path, new AnalyzedFile(
+                    path,
+                    sensitive ? "[CONTENT REDACTED: sensitive material detected]" : extracted.content(),
+                    language,
+                    extracted.truncated()
+            ));
+            return totalBytes + decoded.length;
+        } catch (IllegalArgumentException exception) {
+            warnings.add("无法解析文件：" + path);
+            return totalBytes;
+        }
     }
 
     /**

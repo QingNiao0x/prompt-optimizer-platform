@@ -126,15 +126,131 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await expect(page.getByText('pom.xml', { exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: '分析项目上下文' }).click();
+  await expect(page.getByRole('dialog', { name: '确认发送项目代码' })).toBeVisible();
+  await page.getByRole('button', { name: '确认发送' }).click();
   await expect(page.getByText('Spring Boot 3', { exact: true })).toBeVisible();
   await expect(page.getByText('1 个依赖 · 3 个目录节点')).toBeVisible();
 
   await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
+  await expect(page.getByRole('dialog', { name: '确认发送项目代码' })).toBeVisible();
+  await page.getByRole('button', { name: '确认发送' }).click();
 
   await expect(page.getByText('deepseek', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: '任务目标' })).toBeVisible();
   await expect(page.getByRole('heading', { name: '输入输出' })).toBeVisible();
   await expect(page.getByRole('heading', { name: '约束条件' })).toBeVisible();
   await expect(page.getByText('系统识别到 1 个待确认点')).toBeVisible();
+});
+
+test('用户可以通过 File System Access API 建立本地项目索引', async ({ page }) => {
+  await page.route('**/api/v1/optimizations', async (route) => {
+    const requestBody = route.request().postDataJSON() as {
+      context?: { files?: Array<{ path: string }> };
+    };
+    expect(requestBody.context?.files?.some((file) => file.path.includes('src/main.ts'))).toBe(true);
+    await route.fulfill({ status: 200, json: optimizationResponse });
+  });
+
+  await page.addInitScript(async () => {
+    const storageManager = navigator.storage as StorageManager & {
+      getDirectory(): Promise<FileSystemDirectoryHandle>;
+    };
+    const storageRoot = await storageManager.getDirectory();
+    const projectRoot = await storageRoot.getDirectoryHandle('project-index-e2e', { create: true });
+    const sourceDirectory = await projectRoot.getDirectoryHandle('src', { create: true });
+    const sourceHandle = await sourceDirectory.getFileHandle('main.ts', { create: true });
+    const sourceWriter = await sourceHandle.createWritable();
+    await sourceWriter.write('export const projectName = "prompt-optimizer";');
+    await sourceWriter.close();
+
+    const packageHandle = await projectRoot.getFileHandle('package.json', { create: true });
+    const packageWriter = await packageHandle.createWritable();
+    await packageWriter.write('{"dependencies":{"vue":"3.5.0"}}');
+    await packageWriter.close();
+
+    const dependencyDirectory = await projectRoot.getDirectoryHandle('node_modules', { create: true });
+    const dependencyHandle = await dependencyDirectory.getFileHandle('ignored.js', { create: true });
+    const dependencyWriter = await dependencyHandle.createWritable();
+    await dependencyWriter.write('window.thirdParty = true;');
+    await dependencyWriter.close();
+
+    Object.defineProperty(window, 'showDirectoryPicker', {
+      configurable: true,
+      value: async () => projectRoot,
+    });
+  });
+
+  await page.goto('/');
+  await page.getByRole('button', { name: '选择本地项目文件夹' }).click();
+
+  await expect(page.getByText('2 个源码文件已建立本地索引')).toBeVisible();
+  await expect(page.getByText(/2 个代码块/)).toBeVisible();
+
+  await page.getByLabel('原始提示词').fill('修改 projectName 常量');
+  await page.getByRole('button', { name: '一键增强提示词' }).click();
+  await page.getByRole('button', { name: '确认发送' }).click();
+  await page.getByText(/查看本次代码选择依据/).click();
+  await expect(page.getByText('src/main.ts', { exact: true })).toBeVisible();
+  await expect(page.getByText(/任务中的符号/).first()).toBeVisible();
+
+  await page.evaluate(async () => {
+    const storageManager = navigator.storage as StorageManager & {
+      getDirectory(): Promise<FileSystemDirectoryHandle>;
+    };
+    const storageRoot = await storageManager.getDirectory();
+    const projectRoot = await storageRoot.getDirectoryHandle('project-index-e2e');
+    const sourceDirectory = await projectRoot.getDirectoryHandle('src');
+    const sourceHandle = await sourceDirectory.getFileHandle('main.ts');
+    const sourceWriter = await sourceHandle.createWritable();
+    await sourceWriter.write('export const projectName = "prompt-optimizer-updated";');
+    await sourceWriter.close();
+
+    const readmeHandle = await projectRoot.getFileHandle('README.md', { create: true });
+    const readmeWriter = await readmeHandle.createWritable();
+    await readmeWriter.write('# Prompt Optimizer');
+    await readmeWriter.close();
+    await projectRoot.removeEntry('package.json');
+  });
+
+  await page.getByRole('button', { name: '增量更新' }).click();
+  await expect(page.getByText(/本轮新增 1 · 更新 1 · 未变化 0 · 删除 1/)).toBeVisible();
+});
+
+test('用户可以暂停并继续本地项目索引', async ({ page }) => {
+  await page.addInitScript(async () => {
+    const storageManager = navigator.storage as StorageManager & {
+      getDirectory(): Promise<FileSystemDirectoryHandle>;
+    };
+    const storageRoot = await storageManager.getDirectory();
+    const projectRoot = await storageRoot.getDirectoryHandle('project-index-pause-e2e', {
+      create: true,
+    });
+    const sourceHandle = await projectRoot.getFileHandle('main.ts', { create: true });
+    const sourceWriter = await sourceHandle.createWritable();
+    await sourceWriter.write('export const pauseAndResume = true;');
+    await sourceWriter.close();
+
+    Object.defineProperty(window, 'showDirectoryPicker', {
+      configurable: true,
+      value: async () => projectRoot,
+    });
+  });
+
+  await page.goto('/');
+  await page.evaluate(() => {
+    const observer = new MutationObserver(() => {
+      const pauseButton = document.querySelector<HTMLButtonElement>('[data-testid="pause-index"]');
+      if (pauseButton) {
+        pauseButton.click();
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  });
+  await page.getByRole('button', { name: '选择本地项目文件夹' }).click();
+
+  await expect(page.getByText(/已暂停，检查点位于/)).toBeVisible();
+  await page.getByRole('button', { name: '继续索引' }).click();
+  await expect(page.getByText('1 个源码文件已建立本地索引')).toBeVisible();
 });

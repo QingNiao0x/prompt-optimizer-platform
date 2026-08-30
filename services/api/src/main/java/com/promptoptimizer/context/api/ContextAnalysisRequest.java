@@ -14,7 +14,7 @@ import java.util.List;
 public record ContextAnalysisRequest(
         @Size(max = 4_000, message = "项目描述不能超过 4,000 个字符")
         String customDescription,
-        @Size(max = 200, message = "单次最多分析 200 个文件")
+        @Size(max = 1_000, message = "单次最多分析 1,000 个文件")
         List<@Valid ContextFileInput> files
 ) {
 
