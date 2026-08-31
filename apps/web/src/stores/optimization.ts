@@ -267,6 +267,11 @@ export const useOptimizationStore = defineStore('optimization', () => {
 
 const normalizePath = (path: string): string => path.replace(/\\/g, '/').toLowerCase();
 
+const BINARY_CONTEXT_LANGUAGES = new Set([
+  'bmp', 'doc', 'docx', 'dps', 'et', 'gif', 'jpeg', 'jpg', 'odt', 'ods', 'odp', 'pdf',
+  'png', 'ppt', 'pptx', 'webp', 'wps',
+]);
+
 const fitFilesWithinBudget = (
   candidates: ContextFileInput[],
   maxCharacters: number,
@@ -275,8 +280,16 @@ const fitFilesWithinBudget = (
   const selected: ContextFileInput[] = [];
   let remainingCharacters = maxCharacters;
   for (const file of candidates) {
-    if (selected.length >= maxFiles || remainingCharacters <= 0) {
+    if (selected.length >= maxFiles) {
       break;
+    }
+    if (BINARY_CONTEXT_LANGUAGES.has(file.language.toLowerCase())) {
+      // Base64 二进制必须完整发送给后端解析，截断会破坏 Office、PDF 和图片文件。
+      selected.push(file);
+      continue;
+    }
+    if (remainingCharacters <= 0) {
+      continue;
     }
     const content = file.content.slice(0, remainingCharacters);
     if (!content) {

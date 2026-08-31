@@ -35,16 +35,18 @@ import java.util.regex.Pattern;
 public class DefaultContextAnalyzer implements ContextAnalyzer {
 
     private static final String ANALYSIS_VERSION = "v1";
-    private static final int MAX_TOTAL_BYTES = 8 * 1024 * 1024;
-    private static final int MAX_FILE_BYTES = 256 * 1024;
-    private static final int MAX_BINARY_FILE_BYTES = 1024 * 1024;
+    private static final int MAX_TOTAL_BYTES = 32 * 1024 * 1024;
+    private static final int MAX_FILE_BYTES = 1024 * 1024;
+    private static final int MAX_BINARY_FILE_BYTES = 10 * 1024 * 1024;
     private static final int MAX_DIRECTORY_ENTRIES = 100;
-    private static final int MAX_SNIPPETS = 20;
-    private static final int MAX_SNIPPET_CHARS = 4_000;
-    private static final int MAX_SNIPPET_TOTAL_CHARS = 32_000;
+    private static final int MAX_SNIPPETS = 40;
+    private static final int MAX_SNIPPET_CHARS = 60_000;
+    private static final int MAX_SNIPPET_TOTAL_CHARS = 120_000;
 
     private static final Set<String> IGNORED_SEGMENTS = Set.of(
-            ".git", "node_modules", "target", "build", "dist", ".idea", ".vscode"
+            ".git", "node_modules", "target", "build", "dist", "out", ".idea", ".vscode",
+            "logs", "log", "coverage", "__pycache__", ".venv", "venv", "vendor",
+            ".cache", ".parcel-cache", ".turbo", "tmp", "temp"
     );
 
     private static final Pattern WINDOWS_ABSOLUTE_PATH = Pattern.compile("^[A-Za-z]:[\\\\/].*");
@@ -171,7 +173,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
     }
 
     /**
-     * 解码并解析 Word 或图片文件，把提取文本计入上下文总预算。
+     * 解码并解析 Office、PDF、WPS/OpenDocument 或图片文件，把提取文本计入上下文总预算。
      */
     private int collectBinaryFile(
             String path,
@@ -190,7 +192,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             return totalBytes;
         }
         if (decoded.length > MAX_BINARY_FILE_BYTES) {
-            warnings.add("已忽略超过 1 MB 的二进制文件：" + path);
+            warnings.add("已忽略超过 10 MB 的 Office、PDF、WPS 或图片文件：" + path);
             return totalBytes;
         }
         if (totalBytes + decoded.length > MAX_TOTAL_BYTES) {
@@ -199,6 +201,9 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
         }
         try {
             BinaryContentExtractor.ExtractedText extracted = binaryContentExtractor.extract(path, language, decoded);
+            if (Set.of("jpeg", "png", "gif", "webp", "bmp").contains(language)) {
+                warnings.add("图片当前仅提取元数据，尚未进行 OCR 或视觉识别：" + path);
+            }
             boolean sensitive = containsSecret(extracted.content());
             if (sensitive) {
                 redactions.add(path);
@@ -211,7 +216,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             ));
             return totalBytes + decoded.length;
         } catch (IllegalArgumentException exception) {
-            warnings.add("无法解析文件：" + path);
+            warnings.add("无法解析文件：" + path + "（" + exception.getMessage() + "）");
             return totalBytes;
         }
     }
@@ -498,10 +503,25 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
         String lowerPath = path.toLowerCase(Locale.ROOT);
         if (lowerPath.endsWith(".java")) return "java";
         if (lowerPath.endsWith(".ts") || lowerPath.endsWith(".tsx")) return "typescript";
+        if (lowerPath.endsWith(".mjs") || lowerPath.endsWith(".cjs")) return "javascript";
+        if (lowerPath.endsWith(".mts") || lowerPath.endsWith(".cts")) return "typescript";
         if (lowerPath.endsWith(".vue")) return "vue";
         if (lowerPath.endsWith(".py")) return "python";
+        if (lowerPath.endsWith(".pyi") || lowerPath.endsWith(".pyx")) return "python";
         if (lowerPath.endsWith(".go")) return "go";
         if (lowerPath.endsWith(".rs")) return "rust";
+        if (lowerPath.endsWith(".csproj") || lowerPath.endsWith(".xaml")) return "xml";
+        if (lowerPath.endsWith(".razor") || lowerPath.endsWith(".cshtml")) return "razor";
+        if (lowerPath.endsWith(".pptx")) return "pptx";
+        if (lowerPath.endsWith(".ppt")) return "ppt";
+        if (lowerPath.endsWith(".pdf")) return "pdf";
+        if (lowerPath.endsWith(".docx")) return "docx";
+        if (lowerPath.endsWith(".doc")) return "doc";
+        if (lowerPath.endsWith(".xlsx")) return "xlsx";
+        if (lowerPath.endsWith(".xls")) return "xls";
+        if (lowerPath.endsWith(".et")) return "et";
+        if (lowerPath.endsWith(".dps")) return "dps";
+        if (lowerPath.endsWith(".wps")) return "wps";
         if (lowerPath.endsWith(".json")) return "json";
         if (lowerPath.endsWith(".xml")) return "xml";
         if (lowerPath.endsWith(".yml") || lowerPath.endsWith(".yaml")) return "yaml";

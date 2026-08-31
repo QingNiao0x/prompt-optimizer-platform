@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QingNiao UI Style Preview</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1015;
+      --panel: #151a22;
+      --panel-strong: #1b222c;
+      --line: #303947;
+      --text: #f0f3f7;
+      --muted: #9ba5b4;
+      --brand: #6f7cff;
+      --brand-strong: #5364f5;
+      --success: #47c98b;
+      --warning: #e5b85c;
+      --danger: #f27878;
+      --mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+      --sans: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+    }
+    button, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+
+    .app-shell { min-height: 100vh; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: 72px;
+      padding: 0 34px;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter: blur(16px);
+    }
+    .brand-lockup { display: flex; align-items: center; gap: 12px; min-width: max-content; }
+    .bird-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid color-mix(in srgb, var(--brand) 55%, transparent);
+      border-radius: 50%;
+      color: var(--brand);
+      font-weight: 700;
+      box-shadow: 0 0 22px color-mix(in srgb, var(--brand) 20%, transparent);
+    }
+    .brand-name { font-weight: 650; letter-spacing: .01em; }
+    .brand-sub { color: var(--muted); font: 11px var(--mono); }
+    .topnav { display: flex; gap: 5px; padding: 4px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); }
+    .topnav button {
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 14px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 13px;
+    }
+    .topnav button.active { color: var(--text); background: var(--panel-strong); }
+    .source-link { color: var(--muted); font-size: 12px; text-decoration: none; }
+    .source-link:hover { color: var(--text); }
+
+    .intro { max-width: 1180px; margin: 0 auto; padding: 58px 32px 34px; }
+    .eyebrow { color: var(--brand); font: 11px var(--mono); letter-spacing: .13em; text-transform: uppercase; }
+    h1 { max-width: 780px; margin: 16px 0 14px; font-size: clamp(34px, 6vw, 68px); font-weight: 560; line-height: .99; letter-spacing: -.045em; }
+    .intro p { max-width: 720px; margin: 0; color: var(--muted); font-size: 16px; line-height: 1.65; }
+    .intro-note { display: inline-flex; align-items: center; gap: 8px; margin-top: 22px; color: var(--muted); font: 12px var(--mono); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 12px var(--success); }
+
+    .content { max-width: 1180px; margin: 0 auto; padding: 0 32px 70px; }
+    .candidate-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .candidate {
+      position: relative;
+      min-height: 238px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .candidate:hover, .candidate.selected { transform: translateY(-3px); border-color: color-mix(in srgb, var(--brand) 70%, var(--line)); background: var(--panel-strong); }
+    .candidate-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .candidate h2 { margin: 18px 0 8px; font-size: 19px; font-weight: 600; }
+    .candidate p { min-height: 60px; margin: 0 0 18px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .candidate .source { color: var(--muted); font-size: 11px; text-decoration: none; }
+    .candidate .source:hover { color: var(--text); text-decoration: underline; }
+    .tag { display: inline-flex; align-items: center; min-height: 23px; padding: 0 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font: 10px var(--mono); }
+    .tag.recommended { border-color: color-mix(in srgb, var(--brand) 70%, transparent); color: #cbd0ff; }
+    .palette { display: flex; gap: 5px; margin: 14px 0; }
+    .swatch { width: 24px; height: 24px; border: 1px solid rgba(255,255,255,.16); border-radius: 7px; }
+    .select-style { width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px; color: var(--text); background: transparent; font-size: 12px; }
+
+    .preview-wrap { display: grid; grid-template-columns: 280px 1fr; gap: 18px; margin-top: 34px; }
+    .style-rail { padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.025); }
+    .style-rail h3 { margin: 0 0 7px; font-size: 14px; }
+    .style-rail p { margin: 0 0 18px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .rail-button { width: 100%; margin-top: 8px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; color: var(--muted); background: transparent; text-align: left; font-size: 12px; }
+    .rail-button.active { border-color: var(--brand); color: var(--text); background: color-mix(in srgb, var(--brand) 12%, transparent); }
+    .rail-meta { display: grid; gap: 9px; margin-top: 23px; padding-top: 17px; border-top: 1px solid var(--line); }
+    .meta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 11px; }
+    .meta-row strong { color: var(--text); font: 11px var(--mono); text-align: right; }
+
+    .preview {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #101216;
+    }
+    .preview-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 19px; border-bottom: 1px solid var(--line); }
+    .preview-title { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600; }
+    .preview-state { color: var(--success); font: 10px var(--mono); }
+    .workbench { display: grid; grid-template-columns: 190px 1fr 1fr; min-height: 525px; }
+    .context-panel, .editor-panel, .result-panel { min-width: 0; padding: 18px; }
+    .context-panel { border-right: 1px solid var(--line); background: rgba(0,0,0,.12); }
+    .editor-panel { border-right: 1px solid var(--line); }
+    .panel-label { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; color: var(--muted); font: 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .count { color: var(--text); }
+    .folder { display: flex; align-items: center; gap: 7px; margin: 15px 0 11px; color: var(--text); font-size: 12px; }
+    .tree { display: grid; gap: 7px; color: var(--muted); font: 11px var(--mono); }
+    .tree-item { overflow: hidden; padding: 7px 8px; border-radius: 7px; text-overflow: ellipsis; white-space: nowrap; }
+    .tree-item.active { color: #dce0ff; background: color-mix(in srgb, var(--brand) 14%, transparent); }
+    .progress-label { display: flex; justify-content: space-between; margin: 24px 0 7px; color: var(--muted); font-size: 10px; }
+    .progress { height: 5px; overflow: hidden; border-radius: 99px; background: #272d38; }
+    .progress span { display: block; width: 78%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--brand-strong), var(--brand)); box-shadow: 0 0 12px color-mix(in srgb, var(--brand) 65%, transparent); }
+    .helper { margin-top: 13px; color: var(--muted); font-size: 10px; line-height: 1.55; }
+    textarea { width: 100%; resize: vertical; outline: none; }
+    .prompt-input, .result-box { min-height: 300px; padding: 15px; border: 1px solid var(--line); border-radius: 11px; color: #e9edf4; background: #0c0f14; font-size: 13px; line-height: 1.7; }
+    .prompt-input:focus, .result-box:focus { border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 16%, transparent); }
+    .result-box { overflow: auto; font-family: var(--sans); white-space: pre-wrap; }
+    .result-box .result-heading { color: #c8ceff; font-weight: 650; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 9px; margin-top: 12px; }
+    .button-primary, .button-ghost { padding: 9px 13px; border-radius: 9px; font-size: 12px; }
+    .button-primary { border: 0; color: #fff; background: linear-gradient(135deg, var(--brand-strong), var(--brand)); box-shadow: 0 7px 22px color-mix(in srgb, var(--brand) 22%, transparent); }
+    .button-ghost { border: 1px solid var(--line); color: var(--muted); background: transparent; }
+    .button-primary:hover, .button-ghost:hover { filter: brightness(1.1); }
+    .copy-state { min-height: 16px; color: var(--success); font-size: 10px; }
+
+    .comparison { display: none; margin-top: 34px; padding-top: 28px; border-top: 1px solid var(--line); }
+    .comparison.visible { display: block; }
+    .section-title { display: flex; align-items: end; justify-content: space-between; gap: 15px; margin-bottom: 16px; }
+    .section-title h2 { margin: 0; font-size: 20px; }
+    .section-title p { margin: 0; color: var(--muted); font-size: 12px; }
+    .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .pros-cons article { padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.025); }
+    .pros-cons h3 { margin: 0 0 10px; font-size: 13px; }
+    .pros-cons ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .pros h3 { color: var(--success); }
+    .cons h3 { color: var(--warning); }
+    .footer-note { max-width: 1180px; margin: 0 auto; padding: 0 32px 45px; color: var(--muted); font-size: 11px; line-height: 1.65; }
+    .footer-note strong { color: var(--text); }
+
+    /* Candidate-specific visual treatments. The structure stays the same so the comparison is fair. */
+    body[data-style="langbase"] { --bg: #232324; --panel: #181818; --panel-strong: #2a2a2b; --line: #454546; --brand: #c7b8f5; --brand-strong: #fafafa; }
+    body[data-style="github"] { --bg: #0d1117; --panel: #151a22; --panel-strong: #202832; --line: #303943; --brand: #8dd6ff; --brand-strong: #08872b; }
+    body[data-style="dimension"] { --bg: #0a0a0a; --panel: #161616; --panel-strong: #242424; --line: #e5e5e533; --brand: #8e88ff; --brand-strong: #ffffff; }
+    body[data-style="launchdarkly"] { --bg: #0e0e0e; --panel: #191919; --panel-strong: #414042; --line: #58595b; --brand: #7084ff; --brand-strong: #405bff; }
+    body[data-style="recommended"] { --bg: #101216; --panel: #191b20; --panel-strong: #23262d; --line: #3a3f49; --brand: #6f7cff; --brand-strong: #5364f5; }
+    body[data-style="langbase"] .button-primary { color: #0e0e10; background: #fafafa; box-shadow: none; }
+    body[data-style="github"] .button-primary { background: #08872b; box-shadow: none; }
+    body[data-style="dimension"] .button-primary { color: #161616; background: #fff; box-shadow: none; }
+    body[data-style="langbase"] .preview { background: #232324; }
+    body[data-style="github"] .bird-mark { color: #5fed83; }
+    body[data-style="dimension"] .bird-mark { border-radius: 12px; }
+    body[data-style="launchdarkly"] .prompt-input:focus, body[data-style="launchdarkly"] .result-box:focus { box-shadow: 0 0 25px rgba(64,91,255,.25); }
+
+    @media (max-width: 930px) {
+      .candidate-grid { grid-template-columns: repeat(2, 1fr); }
+      .preview-wrap { grid-template-columns: 1fr; }
+      .style-rail { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .style-rail h3, .style-rail p, .rail-meta { grid-column: 1 / -1; }
+      .rail-button { margin: 0; }
+    }
+    @media (max-width: 700px) {
+      .topbar { align-items: flex-start; flex-direction: column; gap: 12px; padding: 17px 20px; }
+      .topnav { width: 100%; overflow-x: auto; }
+      .topnav button { flex: 1; white-space: nowrap; }
+      .source-link { display: none; }
+      .intro, .content, .footer-note { padding-right: 20px; padding-left: 20px; }
+      .candidate-grid { grid-template-columns: 1fr; }
+      .style-rail { display: block; }
+      .rail-button { margin-top: 8px; }
+      .workbench { grid-template-columns: 1fr; }
+      .context-panel, .editor-panel { border-right: 0; border-bottom: 1px solid var(--line); }
+      .context-panel { min-height: auto; }
+      .prompt-input, .result-box { min-height: 230px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body data-style="recommended">
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-lockup">
+        <div class="bird-mark" aria-hidden="true">Q</div>
+        <div>
+          <div class="brand-name">QingNiao Midnight Workbench</div>
+          <div class="brand-sub">UI STYLE PREVIEW / 2026.08</div>
+        </div>
+      </div>
+      <nav class="topnav" aria-label="预览页面切换">
+        <button class="active" data-view="styles">风格候选</button>
+        <button data-view="workbench">推荐工作台</button>
+      </nav>
+      <a class="source-link" href="https://styles.refero.design/?q=dark+canvas" target="_blank" rel="noreferrer">来源：Refero Styles ↗</a>
+    </header>
+
+    <main>
+      <section class="intro">
+        <div class="eyebrow">Dark canvas / developer workflow</div>
+        <h1>让提示词像代码一样，<br>清晰、可读、可继续修改。</h1>
+        <p>这是一个用于比较 UI 方向的静态预览。候选风格来自 Refero 的实际搜索结果；推荐工作台将控制台秩序、工程信息层级和蓝紫品牌强调融合为 QingNiao 自己的界面方向。</p>
+        <div class="intro-note"><span class="dot"></span>当前预览不会连接 API，也不会读取或上传本地项目文件</div>
+      </section>
+
+      <section class="content" id="styles-view">
+        <div class="candidate-grid">
+          <article class="candidate selected" data-style-card="recommended">
+            <div class="candidate-top"><span class="tag recommended">推荐融合</span><span class="tag">QingNiao</span></div>
+            <h2>Midnight Workbench</h2>
+            <p>深灰控制台、蓝紫主操作色、细线面板和清晰的原始输入 / 增强结果关系。</p>
+            <div class="palette"><span class="swatch" style="background:#101216"></span><span class="swatch" style="background:#191b20"></span><span class="swatch" style="background:#5364f5"></span><span class="swatch" style="background:#47c98b"></span></div>
+            <button class="select-style" data-select="recommended">查看推荐方案</button>
+          </article>
+          <article class="candidate" data-style-card="langbase">
+            <div class="candidate-top"><span class="tag">AI</span><span class="tag">控制台</span></div>
+            <h2>Langbase</h2>
+            <p>午夜极光控制台。4px 节奏、Mono 技术信息、细线结构和克制的装饰渐变。</p>
+            <div class="palette"><span class="swatch" style="background:#232324"></span><span class="swatch" style="background:#fafafa"></span><span class="swatch" style="background:#c7b8f5"></span><span class="swatch" style="background:#a7eadc"></span></div>
+            <button class="select-style" data-select="langbase">查看此风格</button>
+          </article>
+          <article class="candidate" data-style-card="github">
+            <div class="candidate-top"><span class="tag">Devtools</span><span class="tag">工程化</span></div>
+            <h2>GitHub</h2>
+            <p>深色工程玻璃面板。代码标签、Mono 微文案、透明表面和单一高意图主操作。</p>
+            <div class="palette"><span class="swatch" style="background:#0d1117"></span><span class="swatch" style="background:#151a22"></span><span class="swatch" style="background:#08872b"></span><span class="swatch" style="background:#8dd6ff"></span></div>
+            <button class="select-style" data-select="github">查看此风格</button>
+          </article>
+          <article class="candidate" data-style-card="dimension">
+            <div class="candidate-top"><span class="tag">AI</span><span class="tag">工作区</span></div>
+            <h2>Dimension</h2>
+            <p>暮色玻璃工作区。双栏编辑、留白、编号列表和少量紫色渐变强调。</p>
+            <div class="palette"><span class="swatch" style="background:#0a0a0a"></span><span class="swatch" style="background:#161616"></span><span class="swatch" style="background:#ededed"></span><span class="swatch" style="background:#6b62f2"></span></div>
+            <button class="select-style" data-select="dimension">查看此风格</button>
+          </article>
+          <article class="candidate" data-style-card="launchdarkly">
+            <div class="candidate-top"><span class="tag">Devtools</span><span class="tag">控制室</span></div>
+            <h2>LaunchDarkly</h2>
+            <p>霓虹工程控制室。蓝紫渐变、分段标签、代码块和输入区域的轻微聚焦光晕。</p>
+            <div class="palette"><span class="swatch" style="background:#0e0e0e"></span><span class="swatch" style="background:#191919"></span><span class="swatch" style="background:#405bff"></span><span class="swatch" style="background:#7084ff"></span></div>
+            <button class="select-style" data-select="launchdarkly">查看此风格</button>
+          </article>
+        </div>
+
+        <div class="preview-wrap">
+          <aside class="style-rail">
+            <h3>正在预览</h3>
+            <p>点击左侧方案切换同一工作台结构的不同视觉语言。</p>
+            <button class="rail-button active" data-select="recommended">QingNiao 融合方案</button>
+            <button class="rail-button" data-select="langbase">Langbase 控制台</button>
+            <button class="rail-button" data-select="github">GitHub 工程面板</button>
+            <button class="rail-button" data-select="dimension">Dimension 工作区</button>
+            <button class="rail-button" data-select="launchdarkly">LaunchDarkly 控制室</button>
+            <div class="rail-meta">
+              <div class="meta-row"><span>当前画布</span><strong id="canvas-value">#101216</strong></div>
+              <div class="meta-row"><span>主操作色</span><strong id="brand-value">#5364F5</strong></div>
+              <div class="meta-row"><span>代码字体</span><strong>JetBrains Mono</strong></div>
+              <div class="meta-row"><span>建议圆角</span><strong id="radius-value">10–14px</strong></div>
+            </div>
+          </aside>
+
+          <section class="preview" aria-label="提示词优化工作台预览">
+            <div class="preview-header">
+              <div class="preview-title"><span class="dot"></span>Prompt Workbench <span class="tag">本地预览</span></div>
+              <div class="preview-state">INDEX READY · 18,426 FILES</div>
+            </div>
+            <div class="workbench">
+              <aside class="context-panel">
+                <div class="panel-label"><span>Project context</span><span class="count">01</span></div>
+                <div class="folder">⌁ sample-spring-vue</div>
+                <div class="tree">
+                  <div class="tree-item active">src/main/java/...</div>
+                  <div class="tree-item">src/views/Workbench.vue</div>
+                  <div class="tree-item">pom.xml</div>
+                  <div class="tree-item">package.json</div>
+                  <div class="tree-item">README.md</div>
+                </div>
+                <div class="progress-label"><span>本地索引</span><span>78%</span></div>
+                <div class="progress"><span></span></div>
+                <div class="helper">完整项目在浏览器本地索引。模型只接收与当前任务相关的片段。</div>
+              </aside>
+              <section class="editor-panel">
+                <div class="panel-label"><span>Raw prompt</span><span class="count">02</span></div>
+                <textarea class="prompt-input" aria-label="原始提示词">给这个项目添加一个工单升级功能，先分析一下应该怎么做。</textarea>
+                <div class="toolbar">
+                  <span class="copy-state" id="copy-state"></span>
+                  <button class="button-primary" id="enhance-button">一键增强 ↗</button>
+                </div>
+              </section>
+              <section class="result-panel">
+                <div class="panel-label"><span>Enhanced result</span><span class="count">03</span></div>
+                <div class="result-box" id="result-box" tabindex="0"><span class="result-heading">任务目标</span>
+基于当前 Spring Boot + Vue 项目，设计并实现工单升级功能。
+
+<span class="result-heading">需要分析</span>
+1. 检查现有工单实体、状态流转和权限模型。
+2. 确认后端接口、数据库字段和前端页面的改动范围。
+3. 识别与现有通知、审计和历史记录模块的关联。
+
+<span class="result-heading">约束条件</span>
+- 保持现有 API 兼容，不覆盖原始提示词。
+- 明确普通用户、处理人和管理员的操作权限。
+- 补充异常处理、重复升级、越权访问和审计记录。
+
+<span class="result-heading">输出要求</span>
+先给出改造方案和涉及文件，再分步骤提供实现建议。</div>
+                <div class="toolbar">
+                  <span class="copy-state">● 已检索 12 个相关片段</span>
+                  <button class="button-ghost" id="copy-button">复制结果</button>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+
+        <section class="comparison visible" id="comparison">
+          <div class="section-title">
+            <div><h2 id="comparison-title">QingNiao Midnight Workbench</h2><p id="comparison-subtitle">推荐融合方案：为长文本和开发者工作流保留稳定的阅读秩序。</p></div>
+            <a class="source-link" id="style-source" href="https://styles.refero.design/?q=dark+canvas" target="_blank" rel="noreferrer">查看 Refero 来源 ↗</a>
+          </div>
+          <div class="pros-cons">
+            <article class="pros"><h3>适合本项目的地方</h3><ul id="pros-list"><li>深灰画布适合长时间阅读提示词和代码。</li><li>蓝紫色突出一键增强，不和 GitHub 绿色混淆。</li><li>输入、输出、项目上下文三块区域职责清楚。</li></ul></article>
+            <article class="cons"><h3>落地时需要控制</h3><ul id="cons-list"><li>不要把渐变和发光铺满长文本区域。</li><li>复杂文件树和表单使用 10–14px 圆角。</li><li>成功、警告、错误需要独立功能色。</li></ul></article>
+          </div>
+        </section>
+      </section>
+      <section class="footer-note"><strong>说明：</strong>本页面使用 Refero 公开案例中可核验的颜色、字体、间距和组件描述进行风格比较。推荐方案是针对 Prompt Optimizer Platform 的重新组合，不复制原网站的 Logo、插画、文案、完整页面结构或受限制的字体文件。</section>
+    </main>
+  </div>
+
+  <script>
+    const styleData = {
+      recommended: {
+        canvas: '#101216', brand: '#5364F5', radius: '10–14px', title: 'QingNiao Midnight Workbench', subtitle: '推荐融合方案：为长文本和开发者工作流保留稳定的阅读秩序。', source: 'https://styles.refero.design/?q=dark+canvas',
+        pros: ['深灰画布适合长时间阅读提示词和代码。', '蓝紫色突出一键增强，不和 GitHub 绿色混淆。', '输入、输出、项目上下文三块区域职责清楚。'],
+        cons: ['不要把渐变和发光铺满长文本区域。', '复杂文件树和表单使用 10–14px 圆角。', '成功、警告、错误需要独立功能色。']
+      },
+      langbase: {
+        canvas: '#232324', brand: '#FAFAFA', radius: '4px / pill', title: 'Langbase · Midnight aurora console', subtitle: '来自 Refero 的 AI 控制台方向：秩序感强，技术信息清楚。', source: 'https://styles.refero.design/styles/ad48f4ad-42c0-4c91-a189-fa7a73a7a9e9',
+        pros: ['4px 间距体系和 Mono 信息适合工程状态。', '细线分隔能让面板保持轻量。', '极光渐变可以成为 QingNiao 的小范围品牌点缀。'],
+        cons: ['所有按钮都使用药丸会削弱表单层级。', '功能色不足，需要额外设计状态颜色。', '终端式大标题不适合工作台主体。']
+      },
+      github: {
+        canvas: '#0D1117', brand: '#08872B', radius: '6px / 24px', title: 'GitHub · Engineering glass panels', subtitle: '来自 Refero 的 Devtools 方向：工程信息组织最成熟。', source: 'https://styles.refero.design/styles/c3ceca5c-d329-4559-b947-016172941ba2',
+        pros: ['开发者工具语义最直接。', 'Mono 标签适合路径、模型、字符统计。', '透明面板能区分输入、结果和检索报告。'],
+        cons: ['不能直接沿用 GitHub 绿色和品牌资产。', '玻璃模糊过多会影响低性能设备。', '24px 大卡片圆角不适合密集配置。']
+      },
+      dimension: {
+        canvas: '#0A0A0A', brand: '#FFFFFF', radius: '10px / 24px', title: 'Dimension · Dusk-lit workspace', subtitle: '来自 Refero 的 AI 工作区方向：最适合输入与输出的双栏关系。', source: 'https://styles.refero.design/styles/fbcf9cbb-7c6b-449d-862a-bce521a8ab1d',
+        pros: ['双栏布局天然适合原始提示词和增强结果对照。', '适度留白能降低复杂信息的压迫感。', '编号结构适合展示结构化提示词模块。'],
+        cons: ['纯黑背景长时间阅读容易产生眩光。', '毛玻璃不适合文件树和长代码列表。', '白色主按钮需要与品牌色重新组合。']
+      },
+      launchdarkly: {
+        canvas: '#0E0E0E', brand: '#405BFF', radius: '10px / pill', title: 'LaunchDarkly · Neon control room', subtitle: '来自 Refero 的 Devtools 方向：适合强调增强动作和处理中状态。', source: 'https://styles.refero.design/styles/18a75348-513a-49d8-94f5-e2df8c118b6b',
+        pros: ['蓝紫强调色容易形成独立品牌识别。', '分段标签适合上下文、结果和检索依据切换。', '代码块和轻微焦点光晕能强调主要操作。'],
+        cons: ['发光和渐变过多会分散长文本注意力。', '30px 圆角偏营销页，需要降低。', '蓝紫色不能同时承担所有功能状态。']
+      }
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => [...document.querySelectorAll(selector)];
+    function selectStyle(name) {
+      const data = styleData[name];
+      document.body.dataset.style = name;
+      $$('#styles-view [data-select]').forEach((button) => button.classList.toggle('active', button.dataset.select === name));
+      $$('[data-style-card]').forEach((card) => card.classList.toggle('selected', card.dataset.styleCard === name));
+      $('#canvas-value').textContent = data.canvas;
+      $('#brand-value').textContent = data.brand;
+      $('#radius-value').textContent = data.radius;
+      $('#comparison-title').textContent = data.title;
+      $('#comparison-subtitle').textContent = data.subtitle;
+      $('#style-source').href = data.source;
+      $('#pros-list').innerHTML = data.pros.map((item) => '<li>' + item + '</li>').join('');
+      $('#cons-list').innerHTML = data.cons.map((item) => '<li>' + item + '</li>').join('');
+    }
+
+    $$('[data-select]').forEach((button) => button.addEventListener('click', () => selectStyle(button.dataset.select)));
+    $$('[data-view]').forEach((button) => button.addEventListener('click', () => {
+      $$('[data-view]').forEach((item) => item.classList.toggle('active', item === button));
+      if (button.dataset.view === 'workbench') {
+        $('#comparison').classList.add('visible');
+        document.querySelector('.preview-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        document.querySelector('.candidate-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }));
+    $('#enhance-button').addEventListener('click', () => {
+      const button = $('#enhance-button');
+      button.textContent = '已生成 ✓';
+      $('#copy-state').textContent = '增强结果已更新（静态演示）';
+      setTimeout(() => { button.textContent = '一键增强 ↗'; }, 1600);
+    });
+    $('#copy-button').addEventListener('click', async () => {
+      const state = $('.result-panel .copy-state');
+      try { await navigator.clipboard.writeText($('#result-box').innerText); state.textContent = '● 已复制到剪贴板'; }
+      catch { state.textContent = '● 浏览器禁止复制，请手动选择'; }
+      setTimeout(() => { state.textContent = '● 已检索 12 个相关片段'; }, 1800);
+    });
+    selectStyle('recommended');
+  </script>
+</body>
+</html>

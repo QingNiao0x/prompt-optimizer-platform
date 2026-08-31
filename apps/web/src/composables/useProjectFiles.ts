@@ -112,8 +112,9 @@ export const useProjectFiles = () => {
         console.info('[file-upload] scan finished', {
           fileListLength: fileList.length,
           scanned: stats.total,
-          selected: stats.selected,
-          pathIgnored: stats.pathIgnored,
+           selected: stats.selected,
+           pathIgnored: stats.pathIgnored,
+           sensitive: stats.sensitive,
           unsupported: stats.unsupported,
           oversized: stats.oversized,
           tookMs: Math.round(performance.now() - scanStartedAt),
@@ -125,7 +126,7 @@ export const useProjectFiles = () => {
         fileName: '',
         percent: stats.total === 0 ? 100 : 100,
         accepted: stats.selected,
-        skipped: stats.pathIgnored + stats.unsupported + stats.oversized,
+         skipped: stats.pathIgnored + stats.sensitive + stats.unsupported + stats.oversized,
         phase: 'scan',
       };
 
@@ -135,6 +136,9 @@ export const useProjectFiles = () => {
 
       if (stats.pathIgnored > 0) {
         scanWarnings.push(`已跳过 ${stats.pathIgnored} 个依赖目录、构建产物或扫描范围外的文件。`);
+      }
+      if (stats.sensitive > 0) {
+        scanWarnings.push(`已跳过 ${stats.sensitive} 个敏感文件（密钥、私钥、.env 或凭据文件），不会上传。`);
       }
       if (stats.unsupported > 0) {
         scanWarnings.push(`已跳过 ${stats.unsupported} 个暂不支持的文件。`);

@@ -58,9 +58,11 @@ const examplesModel = computed({
     <div class="composer-heading">
       <div>
         <span class="step-label">02 / Intent</span>
-        <h1>把想法写下来，工程细节交给上下文。</h1>
+        <h1 class="prompt-title">
+          <span class="prompt-title-primary">把想法写下来。</span>
+          <span class="prompt-title-secondary">工程细节，交给上下文。</span>
+        </h1>
       </div>
-      <span class="keyboard-hint">⌘ / Ctrl + Enter</span>
     </div>
 
     <form @submit.prevent="emit('optimize')">
@@ -126,11 +128,12 @@ const examplesModel = computed({
 .composer-card {
   position: relative;
   overflow: hidden;
-  padding: clamp(26px, 4vw, 42px);
+  min-height: 100%;
+  padding: clamp(22px, 3vw, 30px);
   border: 1px solid var(--line-subtle);
   border-radius: var(--radius-large);
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--accent-blue) 5%, transparent), transparent 44%),
+    linear-gradient(135deg, rgba(111, 124, 255, 0.12), transparent 40%),
     var(--surface-panel);
   box-shadow: var(--shadow-panel);
 }
@@ -141,7 +144,7 @@ const examplesModel = computed({
   right: -64px;
   width: 220px;
   height: 220px;
-  border: 1px solid color-mix(in srgb, var(--accent-cyan) 24%, transparent);
+  border: 1px solid rgba(101, 216, 208, 0.22);
   border-radius: 50%;
   content: '';
   pointer-events: none;
@@ -166,25 +169,39 @@ const examplesModel = computed({
 }
 
 h1 {
-  max-width: 680px;
+  display: grid;
+  max-width: 560px;
+  gap: 7px;
   margin: 10px 0 0;
-  color: var(--ink-strong);
   font-family: var(--font-display);
-  font-size: clamp(30px, 4vw, 48px);
+  font-size: clamp(28px, 3vw, 36px);
   font-weight: 600;
-  line-height: 1.08;
-  letter-spacing: -0.06em;
+  line-height: 1.16;
+  letter-spacing: 0;
 }
 
-.keyboard-hint {
-  flex: 0 0 auto;
-  padding: 6px 9px;
-  border: 1px solid var(--line-subtle);
-  border-radius: 7px;
-  color: var(--ink-soft);
-  font-family: var(--font-mono);
-  font-size: 9px;
-  background: var(--surface-elevated);
+.prompt-title span {
+  display: block;
+}
+
+.prompt-title-primary,
+.prompt-title-secondary {
+  -webkit-text-stroke-width: 0.45px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.prompt-title-primary {
+  color: var(--ink-strong);
+  -webkit-text-stroke-color: var(--title-stroke-primary);
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 18px var(--title-glow);
+}
+
+.prompt-title-secondary {
+  color: var(--ink-muted);
+  -webkit-text-stroke-color: var(--title-stroke-secondary);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--title-stroke-secondary) 32%, transparent);
 }
 
 .prompt-input {
@@ -193,15 +210,15 @@ h1 {
 }
 
 .prompt-input :deep(.el-textarea__inner) {
-  min-height: 190px !important;
-  padding: 20px;
+  min-height: 260px !important;
+  padding: 18px;
   border: 1px solid var(--line-strong);
-  border-radius: 15px;
+  border-radius: 10px;
   color: var(--ink-strong);
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.75;
-  background: var(--surface-elevated);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  background: var(--surface-code);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
 }
 
 .prompt-input :deep(.el-textarea__inner:focus) {
@@ -211,17 +228,17 @@ h1 {
 
 .composer-controls {
   display: grid;
-  grid-template-columns: minmax(150px, 0.7fr) minmax(240px, 1fr) auto;
+  grid-template-columns: minmax(130px, 0.8fr) minmax(210px, 1fr);
   align-items: end;
-  gap: 20px;
-  margin-top: 20px;
+  gap: 14px;
+  margin-top: 16px;
 }
 
 .control-group label {
   display: block;
   margin-bottom: 7px;
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .template-select {
@@ -231,8 +248,9 @@ h1 {
 .switches {
   display: flex;
   align-items: center;
-  gap: 18px;
-  min-height: 40px;
+  gap: 12px;
+  min-height: 38px;
+  grid-column: 1 / 2;
 }
 
 .switch-control {
@@ -240,21 +258,24 @@ h1 {
   align-items: center;
   gap: 8px;
   color: var(--ink-muted);
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
 }
 
 .optimize-button {
-  min-width: 180px;
+  grid-column: 2 / 3;
+  grid-row: 1 / 3;
+  min-width: 160px;
+  min-height: 76px;
   border: 0;
-  border-radius: 12px;
-  background: var(--ink-strong);
-  box-shadow: 0 10px 24px rgba(19, 31, 54, 0.16);
+  border-radius: 10px;
+  background: linear-gradient(145deg, var(--accent-blue), #5364f5);
+  box-shadow: 0 14px 30px rgba(83, 100, 245, 0.22);
 }
 
 .optimize-button:hover,
 .optimize-button:focus-visible {
-  background: var(--accent-blue);
+  background: linear-gradient(145deg, #8290ff, #6878ff);
 }
 
 @media (max-width: 760px) {
@@ -262,12 +283,14 @@ h1 {
     display: block;
   }
 
-  .keyboard-hint {
-    display: none;
-  }
-
   .composer-controls {
     grid-template-columns: 1fr;
+  }
+
+  .switches,
+  .optimize-button {
+    grid-column: auto;
+    grid-row: auto;
   }
 
   .switches {

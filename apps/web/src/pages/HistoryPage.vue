@@ -274,7 +274,7 @@ h1 {
 }
 
 .history-card {
-  padding: 8px;
+  padding: 0;
   border: 1px solid var(--line-subtle);
   border-radius: var(--radius-large);
   background: var(--surface-panel);
@@ -283,6 +283,20 @@ h1 {
 
 .history-table {
   width: 100%;
+}
+
+.history-table :deep(.el-table__header-wrapper th) {
+  height: 46px;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.history-table :deep(.el-table__body-wrapper td) {
+  height: 58px;
 }
 
 .preview-cell {
@@ -302,7 +316,8 @@ h1 {
 .pagination-row {
   display: flex;
   justify-content: flex-end;
-  padding: 16px 8px 4px;
+  padding: 16px 18px 18px;
+  border-top: 1px solid var(--line-subtle);
 }
 
 .detail-body {
@@ -331,7 +346,7 @@ h1 {
   font-size: 12px;
   line-height: 1.7;
   white-space: pre-wrap;
-  background: var(--surface-elevated);
+  background: var(--surface-code);
 }
 
 .section-item {

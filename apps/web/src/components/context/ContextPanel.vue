@@ -50,6 +50,7 @@ interface Props {
 interface Emits {
   (event: 'update:custom-description', value: string): void;
   (event: 'files-selected', value: FileList | null): void;
+  (event: 'documents-selected', value: FileList | null): void;
   (event: 'add-manual-file', value: ContextFileInput): void;
   (event: 'remove-file', path: string): void;
   (event: 'clear-files'): void;
@@ -65,6 +66,7 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const folderInput = ref<HTMLInputElement>();
+const documentInput = ref<HTMLInputElement>();
 const selecting = ref(false);
 const manualPath = ref('src/example.ts');
 const manualLanguage = ref('typescript');
@@ -122,6 +124,15 @@ const handleFolderCancel = (): void => {
   selecting.value = false;
 };
 
+const openDocumentPicker = (): void => {
+  documentInput.value?.click();
+};
+
+const handleDocumentChange = (event: Event): void => {
+  const input = event.target as HTMLInputElement;
+  emit('documents-selected', input.files);
+};
+
 // 读取是异步分片执行的，不能在事件处理器里立即清空 FileList；
 // 等 isReading 结束后再清理输入框，既保证 FileList 有效，也允许下次选择同一目录。
 watch(
@@ -129,6 +140,9 @@ watch(
   (reading) => {
     if (!reading && folderInput.value) {
       folderInput.value.value = '';
+    }
+    if (!reading && documentInput.value) {
+      documentInput.value.value = '';
     }
   },
 );
@@ -178,8 +192,8 @@ const addManualFile = (): void => {
     <section class="context-section">
       <div class="section-title-row">
         <div>
-          <span class="field-label">上传项目文件夹</span>
-          <p class="field-help">源码索引按隐私设置保存在本浏览器，仅把当前任务相关片段发送到后端。</p>
+          <span class="field-label">项目与文档上下文</span>
+          <p class="field-help">可建立项目索引，也可单独上传报告、论文、表格、演示文稿和图片。</p>
         </div>
         <ElButton
           v-if="files.length || projectIndex"
@@ -200,6 +214,14 @@ const addManualFile = (): void => {
         webkitdirectory
         @change="handleFolderChange"
         @cancel="handleFolderCancel"
+      />
+      <input
+        ref="documentInput"
+        class="visually-hidden"
+        type="file"
+        multiple
+        accept=".txt,.md,.rst,.tex,.csv,.tsv,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.wps,.et,.dps,.odt,.ods,.odp,.png,.jpg,.jpeg,.gif,.webp,.bmp,.svg"
+        @change="handleDocumentChange"
       />
       <button
         class="folder-dropzone"
@@ -241,6 +263,16 @@ const addManualFile = (): void => {
           </template>
         </span>
       </button>
+
+      <ElButton
+        class="document-upload-button"
+        :icon="DocumentAdd"
+        :disabled="isProjectBusy"
+        plain
+        @click="openDocumentPicker"
+      >
+        添加文档、表格、演示稿或图片
+      </ElButton>
 
       <div v-if="isIndexing" class="index-actions">
         <ElButton
@@ -426,7 +458,7 @@ const addManualFile = (): void => {
   position: sticky;
   top: 108px;
   align-self: start;
-  padding: 24px;
+  padding: 20px;
   border: 1px solid var(--line-subtle);
   border-radius: var(--radius-large);
   background: var(--surface-panel);
@@ -453,7 +485,7 @@ h2 {
   margin: 6px 0 0;
   color: var(--ink-strong);
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 23px;
   letter-spacing: -0.04em;
 }
 
@@ -477,10 +509,10 @@ h2 {
 }
 
 .field-help {
-  margin: 5px 0 10px;
+  margin: 6px 0 11px;
   color: var(--ink-soft);
-  font-size: 11px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.65;
 }
 
 .folder-dropzone {
@@ -490,17 +522,17 @@ h2 {
   gap: 14px;
   padding: 16px;
   border: 1px dashed var(--line-strong);
-  border-radius: 13px;
+  border-radius: 10px;
   color: var(--ink-muted);
   text-align: left;
-  background: var(--surface-elevated);
+  background: var(--surface-code);
   cursor: pointer;
   transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
 .folder-dropzone:hover {
   border-color: var(--accent-blue);
-  background: color-mix(in srgb, var(--accent-blue) 5%, var(--surface-elevated));
+  background: rgba(111, 124, 255, 0.08);
   transform: translateY(-1px);
 }
 
@@ -514,9 +546,9 @@ h2 {
   flex: 0 0 38px;
   height: 38px;
   place-items: center;
-  border-radius: 11px;
+  border-radius: 9px;
   color: var(--accent-blue);
-  background: color-mix(in srgb, var(--accent-blue) 10%, transparent);
+  background: rgba(111, 124, 255, 0.12);
 }
 
 .dropzone-icon svg {
@@ -540,10 +572,16 @@ h2 {
 
 .folder-dropzone small {
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 11px;
+  line-height: 1.55;
 }
 
 .read-progress {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.document-upload-button {
   width: 100%;
   margin-top: 8px;
 }
@@ -573,14 +611,14 @@ h2 {
   overflow-y: auto;
   border: 1px solid var(--line-subtle);
   border-radius: 10px;
-  background: var(--surface-elevated);
+  background: var(--surface-code);
   word-break: break-word;
   overflow-wrap: anywhere;
 }
 
 .unsupported-title {
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.6;
   white-space: nowrap;
 }
@@ -602,6 +640,8 @@ h2 {
 .reading-meta {
   overflow: hidden;
   color: var(--accent-blue) !important;
+  font-size: 11px;
+  line-height: 1.55;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -610,8 +650,8 @@ h2 {
   margin: 10px 0 0;
   padding-left: 18px;
   color: var(--warning);
-  font-size: 11px;
-  line-height: 1.6;
+  font-size: 12px;
+  line-height: 1.65;
   word-break: break-word;
   overflow-wrap: anywhere;
 }
@@ -621,9 +661,9 @@ h2 {
   gap: 4px;
   margin-top: 12px;
   padding: 12px;
-  border: 1px solid color-mix(in srgb, var(--success) 30%, var(--line-subtle));
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--success) 5%, var(--surface-elevated));
+  border: 1px solid rgba(81, 201, 154, 0.3);
+  border-radius: 10px;
+  background: rgba(81, 201, 154, 0.07);
 }
 
 .project-index-summary strong {
@@ -641,8 +681,8 @@ h2 {
 
 .project-index-summary small {
   color: var(--ink-soft);
-  font-size: 9px;
-  line-height: 1.6;
+  font-size: 10px;
+  line-height: 1.65;
 }
 
 .retrieval-report {
@@ -653,7 +693,7 @@ h2 {
 
 .retrieval-report summary {
   color: var(--accent-blue);
-  font-size: 10px;
+  font-size: 11px;
   cursor: pointer;
 }
 
@@ -674,20 +714,21 @@ h2 {
   overflow: hidden;
   color: var(--ink-muted);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .retrieval-report li > small {
   color: var(--ink-soft);
+  font-size: 10px;
 }
 
 .file-summary {
   margin-top: 12px;
   overflow: hidden;
   border: 1px solid var(--line-subtle);
-  border-radius: 12px;
+  border-radius: 10px;
 }
 
 .file-count {
@@ -696,7 +737,7 @@ h2 {
   gap: 7px;
   padding: 10px 12px;
   border-bottom: 1px solid var(--line-subtle);
-  background: var(--surface-elevated);
+  background: var(--surface-code);
 }
 
 .file-count span {
@@ -707,7 +748,7 @@ h2 {
 
 .file-count small {
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .file-list {
@@ -726,13 +767,13 @@ h2 {
 }
 
 .file-list li:hover {
-  background: var(--surface-elevated);
+  background: rgba(111, 124, 255, 0.08);
 }
 
 .file-language,
 .file-path {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .file-language {
@@ -761,7 +802,7 @@ h2 {
 
 .file-list button:hover {
   color: var(--danger);
-  background: color-mix(in srgb, var(--danger) 8%, transparent);
+  background: rgba(241, 123, 138, 0.1);
 }
 
 .file-list button svg {
@@ -809,9 +850,9 @@ h2 {
 .analysis-result {
   margin-top: 18px;
   padding: 14px;
-  border: 1px solid color-mix(in srgb, var(--success) 30%, var(--line-subtle));
-  border-radius: 13px;
-  background: color-mix(in srgb, var(--success) 4%, var(--surface-elevated));
+  border: 1px solid rgba(81, 201, 154, 0.3);
+  border-radius: 10px;
+  background: rgba(81, 201, 154, 0.06);
 }
 
 .analysis-title {
@@ -839,7 +880,7 @@ h2 {
   margin: 11px 0 0;
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .analyze-button {

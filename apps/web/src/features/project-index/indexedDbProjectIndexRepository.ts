@@ -23,6 +23,7 @@ interface ProjectSourceRecord {
  */
 export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   private databasePromise?: Promise<IDBDatabase>;
+  private activeDatabase?: IDBDatabase;
 
   async beginProject(summary: ProjectIndexSummary): Promise<void> {
     await this.putProject(summary);
@@ -32,8 +33,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     if (paths.length === 0) {
       return [];
     }
-    const database = await this.openDatabase();
-    const transaction = database.transaction(FILE_STORE, 'readonly');
+    const transaction = await this.createTransaction(FILE_STORE, 'readonly');
     const completion = transactionComplete(transaction);
     const index = transaction.objectStore(FILE_STORE).index('projectPath');
     const requests = paths.map((path) =>
@@ -51,8 +51,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     if (files.length === 0 && chunks.length === 0 && replacedPaths.length === 0) {
       return;
     }
-    const database = await this.openDatabase();
-    const transaction = database.transaction([FILE_STORE, CHUNK_STORE], 'readwrite');
+    const transaction = await this.createTransaction([FILE_STORE, CHUNK_STORE], 'readwrite');
     const completion = transactionComplete(transaction);
     const fileStore = transaction.objectStore(FILE_STORE);
     const chunkStore = transaction.objectStore(CHUNK_STORE);
@@ -80,8 +79,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   }
 
   async removeUnseenFiles(projectId: string, scanId: string): Promise<number> {
-    const database = await this.openDatabase();
-    const transaction = database.transaction([FILE_STORE, CHUNK_STORE], 'readwrite');
+    const transaction = await this.createTransaction([FILE_STORE, CHUNK_STORE], 'readwrite');
     const completion = transactionComplete(transaction);
     const fileStore = transaction.objectStore(FILE_STORE);
     const chunkStore = transaction.objectStore(CHUNK_STORE);
@@ -151,8 +149,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     if (paths.length === 0 || limit <= 0) {
       return [];
     }
-    const database = await this.openDatabase();
-    const transaction = database.transaction(CHUNK_STORE, 'readonly');
+    const transaction = await this.createTransaction(CHUNK_STORE, 'readonly');
     const completion = transactionComplete(transaction);
     const index = transaction.objectStore(CHUNK_STORE).index('projectPath');
     const requests = paths.map((path) =>
@@ -165,12 +162,11 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   }
 
   async deleteProject(projectId: string): Promise<void> {
-    const database = await this.openDatabase();
     await Promise.all([
       this.deleteRecordsByProject(FILE_STORE, projectId),
       this.deleteRecordsByProject(CHUNK_STORE, projectId),
     ]);
-    const transaction = database.transaction([PROJECT_STORE, SOURCE_STORE], 'readwrite');
+    const transaction = await this.createTransaction([PROJECT_STORE, SOURCE_STORE], 'readwrite');
     const completion = transactionComplete(transaction);
     transaction.objectStore(PROJECT_STORE).delete(projectId);
     transaction.objectStore(SOURCE_STORE).delete(projectId);
@@ -178,16 +174,14 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   }
 
   async saveProjectSource(projectId: string, rootHandle: DirectoryHandleLike): Promise<void> {
-    const database = await this.openDatabase();
-    const transaction = database.transaction(SOURCE_STORE, 'readwrite');
+    const transaction = await this.createTransaction(SOURCE_STORE, 'readwrite');
     const completion = transactionComplete(transaction);
     transaction.objectStore(SOURCE_STORE).put({ projectId, rootHandle } satisfies ProjectSourceRecord);
     await completion;
   }
 
   async findProjectSource(projectId: string): Promise<DirectoryHandleLike | undefined> {
-    const database = await this.openDatabase();
-    const transaction = database.transaction(SOURCE_STORE, 'readonly');
+    const transaction = await this.createTransaction(SOURCE_STORE, 'readonly');
     const completion = transactionComplete(transaction);
     const source = await requestResult<ProjectSourceRecord | undefined>(
       transaction.objectStore(SOURCE_STORE).get(projectId),
@@ -197,8 +191,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   }
 
   async findProject(projectId: string): Promise<ProjectIndexSummary | undefined> {
-    const database = await this.openDatabase();
-    const transaction = database.transaction(PROJECT_STORE, 'readonly');
+    const transaction = await this.createTransaction(PROJECT_STORE, 'readonly');
     const completion = transactionComplete(transaction);
     const result = await requestResult<ProjectIndexSummary | undefined>(
       transaction.objectStore(PROJECT_STORE).get(projectId),
@@ -224,8 +217,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   }
 
   async deleteAllProjects(): Promise<void> {
-    const database = await this.openDatabase();
-    const transaction = database.transaction(
+    const transaction = await this.createTransaction(
       [PROJECT_STORE, FILE_STORE, CHUNK_STORE, SOURCE_STORE],
       'readwrite',
     );
@@ -238,16 +230,14 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   }
 
   private async putProject(summary: ProjectIndexSummary): Promise<void> {
-    const database = await this.openDatabase();
-    const transaction = database.transaction(PROJECT_STORE, 'readwrite');
+    const transaction = await this.createTransaction(PROJECT_STORE, 'readwrite');
     const completion = transactionComplete(transaction);
     transaction.objectStore(PROJECT_STORE).put(summary);
     await completion;
   }
 
   private async listProjects(): Promise<ProjectIndexSummary[]> {
-    const database = await this.openDatabase();
-    const transaction = database.transaction(PROJECT_STORE, 'readonly');
+    const transaction = await this.createTransaction(PROJECT_STORE, 'readonly');
     const completion = transactionComplete(transaction);
     const result = await requestResult<ProjectIndexSummary[]>(
       transaction.objectStore(PROJECT_STORE).getAll(),
@@ -283,8 +273,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     query: IDBValidKey | IDBKeyRange,
     limit: number,
   ): Promise<IndexedProjectChunk[]> {
-    const database = await this.openDatabase();
-    const transaction = database.transaction(CHUNK_STORE, 'readonly');
+    const transaction = await this.createTransaction(CHUNK_STORE, 'readonly');
     const completion = transactionComplete(transaction);
     const result = await requestResult<IndexedProjectChunk[]>(
       transaction.objectStore(CHUNK_STORE).index(indexName).getAll(query, limit),
@@ -294,8 +283,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   }
 
   private async deleteRecordsByProject(storeName: string, projectId: string): Promise<void> {
-    const database = await this.openDatabase();
-    const transaction = database.transaction(storeName, 'readwrite');
+    const transaction = await this.createTransaction(storeName, 'readwrite');
     const completion = transactionComplete(transaction);
     const request = transaction
       .objectStore(storeName)
@@ -313,9 +301,31 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     await completion;
   }
 
+  /**
+   * 创建事务时如果浏览器正在关闭旧连接，则清除缓存并自动重连一次。
+   */
+  private async createTransaction(
+    storeNames: string | string[],
+    mode: IDBTransactionMode,
+  ): Promise<IDBTransaction> {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const database = await this.openDatabase();
+      try {
+        return database.transaction(storeNames, mode);
+      } catch (error) {
+        if (attempt > 0 || !isClosingConnectionError(error)) {
+          throw error;
+        }
+        this.invalidateDatabase(database);
+      }
+    }
+    throw new Error('无法创建本地项目索引事务');
+  }
+
   private openDatabase(): Promise<IDBDatabase> {
     if (!this.databasePromise) {
-      this.databasePromise = new Promise((resolve, reject) => {
+      let openingPromise: Promise<IDBDatabase>;
+      openingPromise = new Promise((resolve, reject) => {
         const request = indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
         request.onupgradeneeded = () => {
           const database = request.result;
@@ -338,12 +348,48 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
             database.createObjectStore(SOURCE_STORE, { keyPath: 'projectId' });
           }
         };
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error ?? new Error('无法打开本地项目索引'));
-        request.onblocked = () => reject(new Error('本地项目索引正在被其他页面占用'));
+        request.onsuccess = () => {
+          const database = request.result;
+          this.activeDatabase = database;
+          database.onversionchange = () => this.invalidateDatabase(database);
+          database.onclose = () => this.clearDatabaseCache(database, openingPromise);
+          resolve(database);
+        };
+        request.onerror = () => {
+          this.clearDatabaseCache(undefined, openingPromise);
+          reject(request.error ?? new Error('无法打开本地项目索引'));
+        };
+        request.onblocked = () => {
+          this.clearDatabaseCache(undefined, openingPromise);
+          reject(new Error('本地项目索引正在被其他页面占用'));
+        };
       });
+      this.databasePromise = openingPromise;
     }
     return this.databasePromise;
+  }
+
+  private invalidateDatabase(database: IDBDatabase): void {
+    this.clearDatabaseCache(database);
+    try {
+      database.close();
+    } catch {
+      // 连接可能已经被浏览器关闭，无需再次处理。
+    }
+  }
+
+  private clearDatabaseCache(
+    database?: IDBDatabase,
+    openingPromise?: Promise<IDBDatabase>,
+  ): void {
+    if (database && this.activeDatabase !== database) {
+      return;
+    }
+    if (openingPromise && this.databasePromise !== openingPromise) {
+      return;
+    }
+    this.activeDatabase = undefined;
+    this.databasePromise = undefined;
   }
 }
 
@@ -384,5 +430,8 @@ const transactionComplete = (transaction: IDBTransaction): Promise<void> =>
     transaction.onerror = () => reject(transaction.error ?? new Error('本地索引事务失败'));
     transaction.onabort = () => reject(transaction.error ?? new Error('本地索引事务已取消'));
   });
+
+const isClosingConnectionError = (error: unknown): boolean =>
+  error instanceof DOMException && error.name === 'InvalidStateError';
 
 export const projectIndexRepository = new IndexedDbProjectIndexRepository();

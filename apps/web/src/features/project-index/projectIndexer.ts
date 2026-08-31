@@ -1,10 +1,9 @@
 import type { ContextFileInput } from '@/types/api';
 
 export const INDEX_CHUNK_CHARACTERS = 6_000;
-export const INDEX_CHUNK_OVERLAP = 400;
 export const MAX_INDEXABLE_FILE_BYTES = 50 * 1024 * 1024;
 export const DEFAULT_CONTEXT_CHARACTERS = 120_000;
-const INDEX_FORMAT_VERSION = 2;
+const INDEX_FORMAT_VERSION = 3;
 
 const DEFAULT_INDEX_LIMITS: ProjectIndexLimits = {
   maxScanFiles: 1_000_000,
@@ -41,6 +40,7 @@ export const DYNAMIC_CHUNK_LIMITS = {
 } as const;
 const SECRET_ASSIGNMENT_PATTERN = /((?:api[_-]?key|secret|password|token|authorization)\s*[:=]\s*["']?)([^\s"',;]{8,})/gi;
 const PRIVATE_KEY_BLOCK_PATTERN = /-----BEGIN [^-]*PRIVATE KEY-----[\s\S]*?-----END [^-]*PRIVATE KEY-----/gi;
+const SENSITIVE_NPMRC_PATTERN = /^\s*(?:_auth|_authToken|password|username)\s*=|:_authToken\s*=/im;
 
 const IGNORED_FILE_SUFFIXES = [
   '.log', '.tmp', '.temp', '.cache', '.pid', '.seed', '.trace', '.dump',
@@ -62,7 +62,7 @@ const PRIORITY_FILE_NAMES = new Set([
   'go.mod', 'go.sum', 'cargo.toml', 'cargo.lock', 'composer.json', 'gemfile',
   'dockerfile', 'docker-compose.yml', 'docker-compose.yaml', 'compose.yml', 'compose.yaml',
   'makefile', 'jenkinsfile', 'readme.md', 'tsconfig.json', 'vite.config.ts',
-  '.gitignore', '.editorconfig', '.env.example',
+  '.gitignore', '.editorconfig', '.npmrc', '.prettierrc', '.eslintrc', '.env.example',
 ]);
 
 const LANGUAGE_BY_EXTENSION: Record<string, string> = {
@@ -89,7 +89,8 @@ const LANGUAGE_BY_EXTENSION: Record<string, string> = {
 
 const LANGUAGE_BY_FILE_NAME: Record<string, string> = {
   dockerfile: 'dockerfile', gemfile: 'ruby', jenkinsfile: 'groovy', makefile: 'makefile',
-  pipfile: 'toml', procfile: 'text', rakefile: 'ruby',
+  pipfile: 'toml', procfile: 'text', rakefile: 'ruby', '.gitignore': 'gitignore',
+  '.editorconfig': 'editorconfig', '.npmrc': 'ini', '.prettierrc': 'json', '.eslintrc': 'json',
 };
 
 export type ProjectIndexStatus = 'INDEXING' | 'PAUSED' | 'READY' | 'FAILED';
@@ -453,7 +454,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         let limitedByStorage = false;
         const fileSymbols = new Set<string>();
         const fileImports = new Set<string>();
-        for await (const content of streamTextChunks(entry.file)) {
+        for await (const content of streamTextChunks(entry.file, classification.language)) {
           const codeMetadata = extractCodeMetadata(content, classification.language);
           codeMetadata.symbols.forEach((symbol) => fileSymbols.add(symbol));
           codeMetadata.imports.forEach((reference) => fileImports.add(reference));
@@ -677,16 +678,19 @@ const classifyFile = async (
   if (isSensitiveFile(fileName) || isIgnoredFile(normalizedPath)) {
     return { action: 'IGNORE', language: 'binary', priority: 100 };
   }
+  if (fileName === '.npmrc' && await containsSensitiveConfiguration(file)) {
+    return { action: 'IGNORE', language: 'sensitive', priority: 100 };
+  }
 
   const language = languageOf(fileName);
-  if (file.size > maxIndexableFileBytes) {
-    return { action: 'METADATA_ONLY', language: language ?? 'text', priority: priorityOf(fileName) };
-  }
   if (!language && !(await looksLikeText(file))) {
     return { action: 'IGNORE', language: 'binary', priority: 100 };
   }
   if (language && !(await looksLikeText(file))) {
     return { action: 'IGNORE', language: 'binary', priority: 100 };
+  }
+  if (file.size > maxIndexableFileBytes && !language) {
+    return { action: 'METADATA_ONLY', language: 'text', priority: priorityOf(fileName) };
   }
   return {
     action: 'INDEX',
@@ -804,10 +808,51 @@ const looksLikeText = async (file: File): Promise<boolean> => {
   return suspiciousBytes / sample.length < 0.08;
 };
 
-const streamTextChunks = async function* (file: File): AsyncGenerator<string> {
+const containsSensitiveConfiguration = async (file: File): Promise<boolean> => {
+  const sample = await file.slice(0, 64 * 1024).text();
+  return SENSITIVE_NPMRC_PATTERN.test(sample);
+};
+
+const STRUCTURED_CHUNK_LANGUAGES = new Set([
+  'c', 'cpp', 'csharp', 'fsharp', 'go', 'java', 'javascript', 'kotlin', 'php', 'python',
+  'ruby', 'rust', 'scala', 'swift', 'typescript', 'vue', 'xml', 'yaml', 'json', 'toml',
+  'ini', 'sql', 'hcl', 'razor', 'jsp', 'pug', 'less', 'sass',
+]);
+
+const STRUCTURED_BOUNDARY_PATTERN = /^(?:\s*)(?:class|interface|enum|record|struct|function|async\s+function|def|async\s+def|func|fn|public|private|protected|export|import|package|module|\b[A-Za-z_$][\w$]*\s*[:=]|[-#]{2,}|<\/?[A-Za-z])/;
+
+/**
+ * 优先在声明、函数、类和配置边界切块；当单块超过两倍窗口仍没有边界时强制切块。
+ * 这是一种无 AST 依赖的启发式策略，保证浏览器本地索引不因某种语言解析失败而丢失正文。
+ */
+const streamTextChunks = async function* (
+  file: File,
+  language: string,
+): AsyncGenerator<string> {
   const reader = file.stream().getReader();
   const decoder = new TextDecoder('utf-8', { fatal: false });
   let buffer = '';
+  let chunk = '';
+  const structured = STRUCTURED_CHUNK_LANGUAGES.has(language);
+
+  const flushAtLineBoundary = function* (): Generator<string> {
+    const lines = buffer.split(/(?<=\n)/);
+    buffer = lines.pop() ?? '';
+    for (const line of lines) {
+      const atBoundary = structured && STRUCTURED_BOUNDARY_PATTERN.test(line);
+      const reachedWindow = chunk.length >= INDEX_CHUNK_CHARACTERS;
+      if (reachedWindow && (atBoundary || !structured)) {
+        yield chunk;
+        chunk = '';
+      }
+      chunk += line;
+      if (chunk.length >= INDEX_CHUNK_CHARACTERS * 2) {
+        yield chunk;
+        chunk = '';
+      }
+    }
+  };
+
   try {
     while (true) {
       const result = await reader.read();
@@ -815,14 +860,12 @@ const streamTextChunks = async function* (file: File): AsyncGenerator<string> {
         break;
       }
       buffer += decoder.decode(result.value, { stream: true });
-      while (buffer.length >= INDEX_CHUNK_CHARACTERS) {
-        yield buffer.slice(0, INDEX_CHUNK_CHARACTERS);
-        buffer = buffer.slice(INDEX_CHUNK_CHARACTERS - INDEX_CHUNK_OVERLAP);
-      }
+      yield* flushAtLineBoundary();
     }
     buffer += decoder.decode();
-    if (buffer.length > 0) {
-      yield buffer;
+    chunk += buffer;
+    if (chunk.length > 0) {
+      yield chunk;
     }
   } finally {
     reader.releaseLock();

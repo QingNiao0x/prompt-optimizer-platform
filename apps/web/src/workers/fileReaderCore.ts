@@ -1,8 +1,8 @@
 import type { ContextFileInput } from '@/types/api';
 
 export const MAX_FILES = 1_000;
-export const MAX_FILE_BYTES = 300_000;
-export const MAX_BINARY_FILE_BYTES = 1_000_000;
+export const MAX_FILE_BYTES = 1_000_000;
+export const MAX_BINARY_FILE_BYTES = 10_000_000;
 export const MAX_TOTAL_CHARACTERS = 4_000_000;
 // 单个文件读取阶段最多保留的字符数；构建锁文件和超大源码只截断，不整文件丢弃。
 export const MAX_READ_CHARS_PER_FILE = 64_000;
@@ -13,6 +13,7 @@ export const MAX_SPREADSHEET_SHEETS = 8;
 export const MAX_SPREADSHEET_ROWS = 200;
 export const MAX_SPREADSHEET_COLUMNS = 30;
 export const MAX_SPREADSHEET_CHARACTERS = 120_000;
+export const MAX_TOTAL_BINARY_BYTES = 20_000_000;
 
 const SUPPORTED_EXTENSIONS = new Set([
   'bmp', 'css', 'doc', 'docx', 'env.example', 'gif', 'go', 'gradle', 'html',
@@ -25,9 +26,23 @@ const SUPPORTED_EXTENSIONS = new Set([
   'groovy', 'toml', 'ini', 'cfg', 'conf', 'env', 'dotenv', 'csv', 'tsv',
   'graphql', 'gql', 'prisma', 'proto', 'thrift', 'tf', 'hcl', 'nix', 'lock',
   'mod', 'sum', 'work', 'svelte', 'astro', 'mdx', 'ipynb', 'rst', 'tex', 'adoc',
+  'cjs', 'mjs', 'mts', 'cts', 'less', 'sass', 'pug', 'hbs', 'ejs', 'jsp', 'tag', 'ftl', 'vm',
+  'pyi', 'pyx', 'csproj', 'sln', 'razor', 'cshtml', 'xaml', 'erb', 'phtml', 'svg',
+  'pdf', 'ppt', 'pptx', 'et', 'dps', 'wps', 'odt', 'ods', 'odp',
+  'gitignore', 'editorconfig', 'npmrc', 'prettierrc', 'eslintrc', 'pipfile', 'poetry.lock',
+  'blade.php',
 ]);
 
-const BINARY_EXTENSIONS = new Set(['bmp', 'doc', 'docx', 'gif', 'jpeg', 'jpg', 'png', 'webp']);
+const BINARY_EXTENSIONS = new Set([
+  'bmp', 'doc', 'docx', 'dps', 'et', 'gif', 'jpeg', 'jpg', 'odt', 'ods', 'odp', 'pdf',
+  'png', 'ppt', 'pptx', 'webp', 'wps', 'xls', 'xlsx',
+]);
+
+// Excel 在浏览器端已经被转换为表格文本；其余 Office/PDF/WPS/图片才走 Base64 传输。
+const BINARY_TRANSPORT_EXTENSIONS = new Set([
+  'bmp', 'doc', 'docx', 'dps', 'et', 'gif', 'jpeg', 'jpg', 'odt', 'ods', 'odp', 'pdf',
+  'png', 'ppt', 'pptx', 'webp', 'wps',
+]);
 
 // 这些文件最能代表技术栈和工程约束，扫描时排在最前，保证不会被后面的文件挤掉。
 const PRIORITY_FILE_NAMES = new Set([
@@ -36,23 +51,24 @@ const PRIORITY_FILE_NAMES = new Set([
   'cargo.toml', 'cargo.lock', 'composer.json', 'gemfile', 'pubspec.yaml',
   'dockerfile', 'docker-compose.yml', 'docker-compose.yaml', 'compose.yml', 'compose.yaml',
   'readme.md', 'tsconfig.json', 'vite.config.ts', 'vue.config.js', '.env.example',
+  '.gitignore', '.editorconfig', '.npmrc', '.prettierrc', '.eslintrc', 'pipfile', 'poetry.lock',
 ]);
 
-const SOURCE_EXTENSION_PATTERN = /\.(ts|tsx|js|jsx|vue|svelte|astro|java|kt|kts|py|go|rs|c|cpp|h|hpp|cs|rb|php|swift|scala|dart|sh|ps1|ex|exs|clj|hs|ml|fs)$/i;
+const SOURCE_EXTENSION_PATTERN = /\.(ts|tsx|mts|cts|js|jsx|mjs|cjs|vue|svelte|astro|java|kt|kts|jsp|tag|ftl|vm|py|pyi|pyx|go|rs|c|cc|cpp|cxx|h|hh|hpp|hxx|cs|razor|cshtml|rb|erb|php|phtml|swift|scala|dart|sh|ps1|ex|exs|clj|hs|ml|fs)$/i;
 
 // 大型前端项目里这些目录往往包含海量第三方或构建产物，默认跳过可显著提升可用文件的命中率。
 export const IGNORED_PATH_SEGMENTS = new Set([
   '.git', 'node_modules', 'target', 'build', 'dist', 'out', '.idea', '.vscode',
   '.next', '.nuxt', 'coverage', '__pycache__', '.venv', 'venv', 'vendor',
+  'logs', 'log', '.cache', '.parcel-cache', '.turbo', 'tmp', 'temp',
 ]);
 
 // 明确暂不支持的后缀，供界面和用户文档展示，帮助用户提前了解限制。
 export const UNSUPPORTED_EXTENSIONS = [
-  '.pdf', '.ppt', '.pptx', '.odt', '.ods', '.odp',
-  '.wps', '.et', '.dps', '.zip', '.rar', '.7z', '.tar', '.gz',
+  '.zip', '.rar', '.7z', '.tar', '.gz',
   '.exe', '.dll', '.so', '.dylib', '.jar', '.class', '.bin',
   '.mp3', '.wav', '.mp4', '.avi', '.mkv', '.mov', '.flv',
-  '.ttf', '.otf', '.woff', '.woff2', '.ico', '.svg', '.psd',
+  '.ttf', '.otf', '.woff', '.woff2', '.ico', '.psd',
 ] as const;
 
 const LANGUAGE_BY_EXTENSION: Record<string, string> = {
@@ -160,6 +176,46 @@ const LANGUAGE_BY_EXTENSION: Record<string, string> = {
   rst: 'restructuredtext',
   tex: 'latex',
   adoc: 'asciidoc',
+  cjs: 'javascript',
+  mjs: 'javascript',
+  mts: 'typescript',
+  cts: 'typescript',
+  less: 'less',
+  sass: 'sass',
+  pug: 'pug',
+  hbs: 'handlebars',
+  ejs: 'html',
+  jsp: 'jsp',
+  tag: 'jsp',
+  ftl: 'freemarker',
+  vm: 'velocity',
+  pyi: 'python',
+  pyx: 'python',
+  csproj: 'xml',
+  sln: 'text',
+  razor: 'razor',
+  cshtml: 'razor',
+  xaml: 'xml',
+  erb: 'html',
+  phtml: 'php',
+  svg: 'xml',
+  pdf: 'pdf',
+  ppt: 'ppt',
+  pptx: 'pptx',
+  et: 'et',
+  dps: 'dps',
+  wps: 'wps',
+  odt: 'odt',
+  ods: 'ods',
+  odp: 'odp',
+  gitignore: 'gitignore',
+  editorconfig: 'editorconfig',
+  npmrc: 'ini',
+  prettierrc: 'json',
+  eslintrc: 'json',
+  pipfile: 'toml',
+  'poetry.lock': 'lockfile',
+  'blade.php': 'php',
 };
 
 export interface ProjectFileSelection {
@@ -182,6 +238,7 @@ export type FileProgressCallback = (progress: FileProcessingProgress) => void;
 export interface FileScanStats {
   total: number;
   pathIgnored: number;
+  sensitive: number;
   unsupported: number;
   oversized: number;
   selected: number;
@@ -191,6 +248,15 @@ const getExtension = (fileName: string): string => {
   const normalizedName = fileName.toLowerCase();
   if (normalizedName.endsWith('.env.example')) {
     return 'env.example';
+  }
+  if (normalizedName.endsWith('.blade.php')) {
+    return 'blade.php';
+  }
+  if (normalizedName.endsWith('.prettierrc') || normalizedName.endsWith('.eslintrc')) {
+    return normalizedName.slice(normalizedName.lastIndexOf('.') + 1);
+  }
+  if (normalizedName === 'pipfile' || normalizedName === 'poetry.lock') {
+    return normalizedName;
   }
   const separatorIndex = normalizedName.lastIndexOf('.');
   return separatorIndex >= 0 ? normalizedName.slice(separatorIndex + 1) : '';
@@ -209,6 +275,7 @@ export const collectCandidateFiles = async (
   const stats: FileScanStats = {
     total: scanEnd,
     pathIgnored: 0,
+    sensitive: 0,
     unsupported: 0,
     oversized: 0,
     selected: 0,
@@ -228,6 +295,10 @@ export const collectCandidateFiles = async (
     // 手动扫描路径分隔符，避免每个文件都创建 split 数组，降低十六万文件扫描的开销。
     if (hasIgnoredSegment(relativePath)) {
       stats.pathIgnored += 1;
+      continue;
+    }
+    if (isSensitiveFile(relativePath)) {
+      stats.sensitive += 1;
       continue;
     }
     const extension = getExtension(file.name);
@@ -277,6 +348,28 @@ const hasIgnoredSegment = (relativePath: string): boolean => {
     segmentStart = index + 1;
   }
   return false;
+};
+
+const SENSITIVE_FILE_NAMES = new Set([
+  '.env', '.env.local', '.env.development', '.env.production',
+  'id_rsa', 'id_ed25519', 'credentials', 'credentials.json',
+]);
+
+const SENSITIVE_NPMRC_PATTERN = /^\s*(?:_auth|_authToken|password|username)\s*=|:_authToken\s*=/im;
+
+const isSensitiveFile = (relativePath: string): boolean => {
+  const fileName = relativePath.slice(relativePath.lastIndexOf('/') + 1).toLowerCase();
+  return SENSITIVE_FILE_NAMES.has(fileName)
+    || (fileName.startsWith('.env.') && fileName !== '.env.example')
+    || fileName.endsWith('.pem')
+    || fileName.endsWith('.key')
+    || fileName.endsWith('.p12')
+    || fileName.endsWith('.jks');
+};
+
+const containsSensitiveConfiguration = (relativePath: string, content: string): boolean => {
+  const fileName = relativePath.slice(relativePath.lastIndexOf('/') + 1).toLowerCase();
+  return fileName === '.npmrc' && SENSITIVE_NPMRC_PATTERN.test(content);
 };
 
 /**
@@ -362,9 +455,11 @@ export const readProjectFiles = async (
   let unsupportedCount = 0;
   let oversizedCount = 0;
   let failedCount = 0;
+  let sensitiveCount = 0;
   let totalCharacters = 0;
   let truncatedCount = 0;
   let skippedLargeBinaryCount = 0;
+  let totalBinaryBytes = 0;
 
   const report = (current: number, fileName: string): void => {
     const percent = total === 0 ? 100 : Math.round((current / total) * 100);
@@ -374,7 +469,7 @@ export const readProjectFiles = async (
       fileName,
       percent,
       accepted: acceptedFiles.length,
-      skipped: unsupportedCount + oversizedCount + failedCount,
+      skipped: unsupportedCount + oversizedCount + failedCount + sensitiveCount,
       phase: 'read',
     });
   };
@@ -383,6 +478,11 @@ export const readProjectFiles = async (
   for (let index = 0; index < candidates.length; index += 1) {
     const file = candidates[index];
     report(index, file.name);
+    const relativePath = file.webkitRelativePath || file.name;
+    if (isSensitiveFile(relativePath)) {
+      sensitiveCount += 1;
+      continue;
+    }
     const extension = getExtension(file.name);
     if (!SUPPORTED_EXTENSIONS.has(extension)) {
       unsupportedCount += 1;
@@ -399,7 +499,24 @@ export const readProjectFiles = async (
 
     try {
       const rawContent = await readSupportedFileContent(file, extension);
-      const isBinary = BINARY_EXTENSIONS.has(extension);
+      if (containsSensitiveConfiguration(relativePath, rawContent)) {
+        sensitiveCount += 1;
+        continue;
+      }
+      const isBinary = BINARY_TRANSPORT_EXTENSIONS.has(extension);
+      if (isBinary) {
+        if (totalBinaryBytes + file.size > MAX_TOTAL_BINARY_BYTES) {
+          skippedLargeBinaryCount += 1;
+          continue;
+        }
+        totalBinaryBytes += file.size;
+        acceptedFiles.push({
+          path: file.webkitRelativePath || file.name,
+          content: rawContent,
+          language: LANGUAGE_BY_EXTENSION[extension] ?? extension,
+        });
+        continue;
+      }
       // 动态分配剩余字符预算，保证 1,000 个候选文件都能进入上下文，
       // 而不是先读大文件、后把剩余候选全部丢弃。
       const remainingFiles = candidates.length - index;
@@ -410,15 +527,10 @@ export const readProjectFiles = async (
           Math.floor((MAX_TOTAL_CHARACTERS - totalCharacters) / remainingFiles),
         ),
       );
-      if (isBinary && rawContent.length > perFileAllowance) {
-        // 截断 Base64 会破坏二进制解析，超大二进制文件直接跳过而不是产生坏数据。
-        skippedLargeBinaryCount += 1;
-        continue;
-      }
-      const content = !isBinary && rawContent.length > perFileAllowance
+      const content = rawContent.length > perFileAllowance
         ? rawContent.slice(0, perFileAllowance)
         : rawContent;
-      if (!isBinary && rawContent.length > perFileAllowance) {
+      if (rawContent.length > perFileAllowance) {
         truncatedCount += 1;
       }
       totalCharacters += content.length;
@@ -447,10 +559,13 @@ export const readProjectFiles = async (
     warnings.push(`已忽略 ${unsupportedCount} 个暂不支持的文件（${suffixList}）。`);
   }
   if (oversizedCount > 0) {
-    warnings.push(`已忽略 ${oversizedCount} 个超过大小限制的文件（文本/表格 300 KB，Word/图片 1 MB）。`);
+    warnings.push(`已忽略 ${oversizedCount} 个超过大小限制的文件（文本/表格 1 MB，Office/PDF/图片 10 MB）。`);
   }
   if (failedCount > 0) {
     warnings.push(`有 ${failedCount} 个文件读取失败，请重新选择。`);
+  }
+  if (sensitiveCount > 0) {
+    warnings.push(`已忽略 ${sensitiveCount} 个敏感文件（密钥、私钥、.env 或凭据文件），不会上传。`);
   }
 
   return { files: acceptedFiles, warnings };

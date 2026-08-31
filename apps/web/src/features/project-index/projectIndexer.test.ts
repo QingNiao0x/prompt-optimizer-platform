@@ -195,6 +195,50 @@ describe('indexProject', () => {
     });
   });
 
+  it('should preserve all large source content while preferring declaration boundaries', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const sections = Array.from({ length: 80 }, (_, index) =>
+      `public class Module${index} {\n  public String value() { return "${'x'.repeat(160)}"; }\n}\n`,
+    );
+    const content = `package sample;\nimport java.util.List;\n${sections.join('')}`;
+
+    await indexProject({
+      projectId: 'project-structured-chunks',
+      rootName: 'structured-project',
+      entries: sourceOf([sourceFile('src/Modules.java', content)]),
+      repository,
+    });
+
+    const chunks = repository.chunks
+      .filter((chunk) => chunk.path === 'src/Modules.java')
+      .sort((left, right) => left.chunkIndex - right.chunkIndex);
+    expect(chunks.length).toBeGreaterThan(1);
+    expect(chunks.map((chunk) => chunk.content).join('')).toBe(content);
+    expect(chunks.slice(1).every((chunk) => chunk.content.trimStart().startsWith('public class')))
+      .toBe(true);
+  });
+
+  it('should index known source files even when they exceed the per-file soft limit', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const content = `export const header = true;\n${'export function work() { return true; }\n'.repeat(200)}`;
+
+    const summary = await indexProject({
+      projectId: 'project-large-known-source',
+      rootName: 'large-known-source',
+      entries: sourceOf([sourceFile('src/large.ts', content)]),
+      repository,
+      limits: {
+        maxScanFiles: 10,
+        maxIndexBytes: 10 * 1024 * 1024,
+        maxIndexableFileBytes: 100,
+      },
+    });
+
+    expect(summary.indexedFiles).toBe(1);
+    expect(summary.metadataOnlyFiles).toBe(0);
+    expect(repository.chunks.map((chunk) => chunk.content).join('')).toBe(content);
+  });
+
   it('should split large source files into overlapping chunks instead of truncating the tail', async () => {
     const repository = new MemoryProjectIndexRepository();
     const markerAtTail = 'TAIL_METHOD_SHOULD_BE_INDEXED';

@@ -118,9 +118,9 @@ const copyPrompt = async (content: string): Promise<void> => {
 
 <style scoped>
 .result-panel {
-  min-height: 380px;
-  margin-top: 22px;
-  padding: clamp(24px, 3vw, 34px);
+  min-height: 100%;
+  margin-top: 0;
+  padding: clamp(22px, 3vw, 30px);
   border: 1px solid var(--line-subtle);
   border-radius: var(--radius-large);
   background: var(--surface-panel);
@@ -138,7 +138,7 @@ const copyPrompt = async (content: string): Promise<void> => {
 .meta-label {
   color: var(--accent-blue);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -147,13 +147,13 @@ h2 {
   margin: 6px 0 0;
   color: var(--ink-strong);
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 23px;
   letter-spacing: -0.045em;
 }
 
 .empty-result {
   display: grid;
-  min-height: 280px;
+  min-height: 430px;
   place-content: center;
   justify-items: center;
   text-align: center;
@@ -184,7 +184,7 @@ h2 {
   color: var(--ink-soft);
   font-family: var(--font-mono);
   font-size: 9px;
-  background: var(--surface-elevated);
+  background: var(--surface-code);
 }
 
 .signal-target {
@@ -192,11 +192,11 @@ h2 {
   align-items: center;
   gap: 8px;
   padding: 10px 13px;
-  border: 1px solid color-mix(in srgb, var(--accent-blue) 32%, var(--line-subtle));
+  border: 1px solid rgba(111, 124, 255, 0.38);
   border-radius: 10px;
   color: var(--ink-strong);
   font-size: 11px;
-  background: color-mix(in srgb, var(--accent-blue) 6%, var(--surface-elevated));
+  background: rgba(111, 124, 255, 0.1);
 }
 
 .signal-target svg {
@@ -208,19 +208,19 @@ h2 {
   margin: 0 0 8px;
   color: var(--ink-strong);
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 19px;
 }
 
 .empty-result p {
   max-width: 510px;
   margin: 0;
   color: var(--ink-soft);
-  font-size: 12px;
-  line-height: 1.7;
+  font-size: 13px;
+  line-height: 1.8;
 }
 
 .result-content {
-  margin-top: 24px;
+  margin-top: 22px;
 }
 
 .result-meta {
@@ -229,8 +229,8 @@ h2 {
   overflow: hidden;
   margin-bottom: 28px;
   border: 1px solid var(--line-subtle);
-  border-radius: 13px;
-  background: var(--surface-elevated);
+  border-radius: 10px;
+  background: var(--surface-code);
 }
 
 .result-meta > div {
@@ -260,7 +260,7 @@ h2 {
 .result-meta small {
   margin-top: 3px;
   color: var(--ink-soft);
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .section-list {
@@ -308,8 +308,8 @@ h2 {
   margin-bottom: 15px;
   padding: 16px 18px;
   border: 1px solid var(--line-subtle);
-  border-radius: 13px;
-  background: var(--surface-elevated);
+  border-radius: 10px;
+  background: var(--surface-code);
 }
 
 .section-title,
@@ -341,8 +341,8 @@ h2 {
 .section-text {
   margin-top: 12px;
   color: var(--ink-muted);
-  font-size: 12px;
-  line-height: 1.8;
+  font-size: 13px;
+  line-height: 1.85;
   white-space: pre-wrap;
 }
 
@@ -355,7 +355,7 @@ h2 {
   border-left: 3px solid var(--warning);
   color: var(--ink-muted);
   font-size: 11px;
-  background: color-mix(in srgb, var(--warning) 7%, transparent);
+  background: rgba(232, 180, 92, 0.08);
 }
 
 .ambiguity-note strong {

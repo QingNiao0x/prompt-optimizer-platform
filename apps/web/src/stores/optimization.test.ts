@@ -1,5 +1,5 @@
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ProjectIndexSummary } from '@/features/project-index/projectIndexer';
 
@@ -38,6 +38,13 @@ const readyIndex = (): ProjectIndexSummary => ({
 describe('optimization store project context', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    vi.stubGlobal('window', {
+      localStorage: {
+        getItem: () => null,
+        setItem: () => undefined,
+        removeItem: () => undefined,
+      },
+    });
   });
 
   it('should retain a manually supplied active file after refreshing the same index', () => {
@@ -58,5 +65,20 @@ describe('optimization store project context', () => {
 
     expect(store.files).toHaveLength(1);
     expect(store.activeFilePath).toBe('src/main.ts');
+  });
+
+  it('should preserve complete binary payloads before backend document extraction', async () => {
+    const store = useOptimizationStore();
+    const base64 = 'A'.repeat(180_000);
+    store.addFile({
+      path: 'docs/report.pdf',
+      language: 'pdf',
+      content: base64,
+    });
+
+    const files = await store.prepareContextFiles('总结报告');
+
+    expect(files).toHaveLength(1);
+    expect(files[0]?.content).toHaveLength(base64.length);
   });
 });

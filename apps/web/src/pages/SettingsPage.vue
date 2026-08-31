@@ -531,7 +531,7 @@ h1 {
 }
 
 .settings-card {
-  padding: 8px;
+  padding: 0;
   border: 1px solid var(--line-subtle);
   border-radius: var(--radius-large);
   background: var(--surface-panel);
@@ -663,6 +663,19 @@ h1 {
 
 .provider-settings-card {
   overflow-x: auto;
+}
+
+.provider-settings-card :deep(.el-table__header-wrapper th) {
+  height: 46px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.provider-settings-card :deep(.el-table__body-wrapper td) {
+  height: 56px;
 }
 
 .provider-settings-card :deep(.el-table) {

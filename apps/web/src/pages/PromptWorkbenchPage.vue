@@ -134,6 +134,18 @@ const handleFilesSelected = async (fileList: FileList | null): Promise<void> => 
   }
 };
 
+const handleDocumentsSelected = async (fileList: FileList | null): Promise<void> => {
+  try {
+    const selectedFiles = await selectFiles(fileList);
+    selectedFiles.forEach((file) => store.addFile(file));
+    if (selectedFiles.length > 0) {
+      ElMessage.success(`已加入 ${selectedFiles.length} 个文档或辅助文件。`);
+    }
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '文档读取失败，请重新选择。');
+  }
+};
+
 const handleAddManualFile = (file: ContextFileInput): void => {
   store.addFile(file);
 };
@@ -273,6 +285,7 @@ onMounted(async () => {
         :index-progress="indexProgress"
         @update:custom-description="customDescription = $event"
         @files-selected="handleFilesSelected"
+        @documents-selected="handleDocumentsSelected"
         @add-manual-file="handleAddManualFile"
         @remove-file="store.removeFile"
         @clear-files="handleClearContextFiles"
@@ -314,13 +327,13 @@ onMounted(async () => {
   align-items: flex-end;
   justify-content: space-between;
   gap: 30px;
-  margin-bottom: 22px;
-  padding: 0 4px;
+  margin-bottom: 24px;
+  padding: 0 6px;
 }
 
 .intro-kicker {
-  margin: 0 0 6px;
-  color: var(--accent-blue) !important;
+  margin: 0 0 8px;
+  color: var(--accent-cyan) !important;
   font-family: var(--font-mono);
   font-size: 9px !important;
   letter-spacing: 0.13em;
@@ -330,7 +343,7 @@ onMounted(async () => {
 .page-intro p {
   margin: 0;
   color: var(--ink-muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .pipeline-note {
@@ -339,7 +352,8 @@ onMounted(async () => {
   gap: 9px;
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
+  white-space: nowrap;
 }
 
 .pipeline-note i {
@@ -359,18 +373,36 @@ onMounted(async () => {
 
 .workbench-grid {
   display: grid;
-  grid-template-columns: minmax(310px, 0.74fr) minmax(0, 1.8fr);
+  grid-template-columns: minmax(290px, 0.62fr) minmax(0, 1.8fr);
   align-items: start;
-  gap: 22px;
+  gap: 16px;
 }
 
 .prompt-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
   min-width: 0;
+}
+
+@media (max-width: 1280px) {
+  .prompt-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .prompt-workspace :deep(.result-panel) {
+    margin-top: 0;
+  }
 }
 
 @media (max-width: 1080px) {
   .workbench-grid {
     grid-template-columns: 1fr;
+  }
+
+  :deep(.context-panel) {
+    position: static;
   }
 }
 

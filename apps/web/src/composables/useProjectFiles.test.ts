@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx';
 import { describe, expect, it } from 'vitest';
 
+import { collectCandidateFiles } from '../workers/fileReaderCore';
 import { readProjectFiles } from './useProjectFiles';
 
 describe('readProjectFiles', () => {
@@ -48,12 +49,49 @@ describe('readProjectFiles', () => {
     expect(selection.warnings).toEqual([]);
   });
 
-  it('should list ignored unsupported suffixes in the warning', async () => {
+  it('should pass pdf bytes to the backend parser instead of rejecting the file in the browser', async () => {
     const pdf = new File(['%PDF-1.4'], '旧文档.pdf', { type: 'application/pdf' });
 
     const selection = await readProjectFiles([pdf]);
 
+    expect(selection.files).toHaveLength(1);
+    expect(selection.files[0]).toMatchObject({
+      path: '旧文档.pdf',
+      language: 'pdf',
+    });
+    expect(selection.warnings).toEqual([]);
+  });
+
+  it('should exclude credentials and environment files before reading their content', async () => {
+    const envFile = new File(['MODEL_API_KEY=secret-value'], '.env.local', { type: 'text/plain' });
+    const credentialsFile = new File(['{"token":"secret-value"}'], 'credentials.json', {
+      type: 'application/json',
+    });
+
+    const fileList = {
+      0: envFile,
+      1: credentialsFile,
+      length: 2,
+      item: (index: number) => index === 0 ? envFile : index === 1 ? credentialsFile : null,
+    } as unknown as FileList;
+    const selection = await collectCandidateFiles(fileList, 1_000);
+
     expect(selection.files).toHaveLength(0);
-    expect(selection.warnings[0]).toContain('.pdf');
+    expect(selection.stats.sensitive).toBe(2);
+  });
+
+  it('should accept a registry-only npmrc and reject one containing an auth token', async () => {
+    const safe = new File(['registry=https://registry.npmjs.org/'], '.npmrc', { type: 'text/plain' });
+    const secret = new File(['//registry.npmjs.org/:_authToken=secret-token'], '.npmrc', {
+      type: 'text/plain',
+    });
+
+    const selection = await readProjectFiles([safe, secret]);
+
+    expect(selection.files).toHaveLength(1);
+    expect(selection.files[0]?.content).toContain('registry.npmjs.org');
+    expect(selection.warnings).toContain(
+      '已忽略 1 个敏感文件（密钥、私钥、.env 或凭据文件），不会上传。',
+    );
   });
 });
