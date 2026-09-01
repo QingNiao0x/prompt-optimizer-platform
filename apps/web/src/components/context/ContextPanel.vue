@@ -17,8 +17,9 @@ import {
   ElSelect,
   ElTag,
 } from 'element-plus';
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
+import { collectDroppedFiles, type DroppedFileCollection } from '@/composables/fileDrop';
 import {
   UNSUPPORTED_EXTENSIONS,
   type FileProcessingProgress,
@@ -51,6 +52,7 @@ interface Emits {
   (event: 'update:custom-description', value: string): void;
   (event: 'files-selected', value: FileList | null): void;
   (event: 'documents-selected', value: FileList | null): void;
+  (event: 'files-dropped', value: DroppedFileCollection): void;
   (event: 'add-manual-file', value: ContextFileInput): void;
   (event: 'remove-file', path: string): void;
   (event: 'clear-files'): void;
@@ -71,6 +73,7 @@ const selecting = ref(false);
 const manualPath = ref('src/example.ts');
 const manualLanguage = ref('typescript');
 const manualContent = ref('');
+const isDragActive = ref(false);
 
 const descriptionModel = computed({
   get: (): string => props.customDescription,
@@ -132,6 +135,59 @@ const handleDocumentChange = (event: Event): void => {
   const input = event.target as HTMLInputElement;
   emit('documents-selected', input.files);
 };
+
+const isFileDrag = (event: DragEvent): boolean =>
+  Array.from(event.dataTransfer?.types ?? []).includes('Files');
+
+const handleDragOver = (event: DragEvent): void => {
+  if (!isFileDrag(event) || isProjectBusy.value) {
+    return;
+  }
+  event.preventDefault();
+  event.stopPropagation();
+  isDragActive.value = true;
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'copy';
+  }
+};
+
+const handleDragLeave = (event: DragEvent): void => {
+  if (!event.currentTarget || (event.relatedTarget instanceof Node
+    && (event.currentTarget as HTMLElement).contains(event.relatedTarget))) {
+    return;
+  }
+  isDragActive.value = false;
+};
+
+const handleDrop = async (event: DragEvent): Promise<void> => {
+  event.preventDefault();
+  event.stopPropagation();
+  isDragActive.value = false;
+  if (isProjectBusy.value || !event.dataTransfer) {
+    return;
+  }
+  try {
+    emit('files-dropped', await collectDroppedFiles(event.dataTransfer));
+  } catch {
+    ElMessage.error('拖拽文件读取失败，请改用选择文件或文件夹。');
+  }
+};
+
+const preventFileNavigation = (event: DragEvent): void => {
+  if (isFileDrag(event)) {
+    event.preventDefault();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('dragover', preventFileNavigation);
+  window.addEventListener('drop', preventFileNavigation);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('dragover', preventFileNavigation);
+  window.removeEventListener('drop', preventFileNavigation);
+});
 
 // 读取是异步分片执行的，不能在事件处理器里立即清空 FileList；
 // 等 isReading 结束后再清理输入框，既保证 FileList 有效，也允许下次选择同一目录。
@@ -225,9 +281,14 @@ const addManualFile = (): void => {
       />
       <button
         class="folder-dropzone"
+        :class="{ 'is-drag-active': isDragActive }"
         type="button"
         :disabled="isProjectBusy"
         @click="openFolderPicker"
+        @dragenter.prevent.stop="isDragActive = true"
+        @dragover.prevent.stop="handleDragOver"
+        @dragleave.prevent.stop="handleDragLeave"
+        @drop.prevent.stop="handleDrop"
       >
         <span class="dropzone-icon"><FolderOpened /></span>
         <span class="dropzone-copy">
@@ -238,10 +299,10 @@ const addManualFile = (): void => {
                 ? '正在处理项目文件'
                 : isSelectingDirectory || selecting
                   ? '正在等待目录授权…'
-                  : '选择本地项目文件夹' }}
+                   : '选择本地项目文件夹，或拖入文件/文件夹' }}
           </strong>
           <small v-if="!isProjectBusy">
-            支持的浏览器会流式扫描并把项目索引保存在本机；其他浏览器回退到普通文件夹上传
+             支持点击选择，也支持将单个文件或文件夹拖到这里
           </small>
           <template v-else>
             <ElProgress
@@ -534,6 +595,12 @@ h2 {
   border-color: var(--accent-blue);
   background: rgba(111, 124, 255, 0.08);
   transform: translateY(-1px);
+}
+
+.folder-dropzone.is-drag-active {
+  border-color: var(--accent-cyan);
+  background: color-mix(in srgb, var(--accent-cyan) 12%, var(--surface-code));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-cyan) 16%, transparent);
 }
 
 .folder-dropzone:disabled {

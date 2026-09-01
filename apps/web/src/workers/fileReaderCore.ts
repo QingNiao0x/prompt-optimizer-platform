@@ -267,11 +267,12 @@ const getExtension = (fileName: string): string => {
  * 不读取内容、不创建超大数组，因此十几万甚至上百万文件也能快速扫描。
  */
 export const collectCandidateFiles = async (
-  fileList: FileList,
+  fileList: FileList | readonly File[],
   limit: number,
   onProgress?: (scanned: number, total: number, selected: number) => void | Promise<void>,
 ): Promise<{ files: File[]; stats: FileScanStats }> => {
-  const scanEnd = Math.min(fileList.length, MAX_SCAN_FILES);
+  const files = Array.isArray(fileList) ? fileList : Array.from(fileList);
+  const scanEnd = Math.min(files.length, MAX_SCAN_FILES);
   const stats: FileScanStats = {
     total: scanEnd,
     pathIgnored: 0,
@@ -290,7 +291,7 @@ export const collectCandidateFiles = async (
       await onProgress?.(index, scanEnd, stats.selected);
       break;
     }
-    const file = fileList[index];
+    const file = files[index];
     const relativePath = (file.webkitRelativePath || file.name).replace(/\\/g, '/');
     // 手动扫描路径分隔符，避免每个文件都创建 split 数组，降低十六万文件扫描的开销。
     if (hasIgnoredSegment(relativePath)) {
@@ -325,8 +326,8 @@ export const collectCandidateFiles = async (
     }
   }
 
-  if (fileList.length > scanEnd) {
-    stats.pathIgnored += fileList.length - scanEnd;
+  if (files.length > scanEnd) {
+    stats.pathIgnored += files.length - scanEnd;
   }
 
   return { files: [...priorityFiles, ...sourceFiles, ...otherFiles].slice(0, limit), stats };

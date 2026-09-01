@@ -7,6 +7,7 @@ import { computed, onMounted } from 'vue';
 import ContextPanel from '@/components/context/ContextPanel.vue';
 import OptimizationResultPanel from '@/components/prompt/OptimizationResultPanel.vue';
 import PromptComposer from '@/components/prompt/PromptComposer.vue';
+import type { DroppedFileCollection } from '@/composables/fileDrop';
 import { useProjectIndex } from '@/composables/useProjectIndex';
 import { useProjectFiles } from '@/composables/useProjectFiles';
 import { useOptimizationStore } from '@/stores/optimization';
@@ -37,7 +38,7 @@ const {
   canOptimize,
 } = storeToRefs(store);
 
-const { isReading, warnings, progress, selectFiles } = useProjectFiles();
+const { isReading, warnings, progress, selectFiles, selectFileArray } = useProjectFiles();
 const {
   isSupported: supportsDirectoryPicker,
   isSelecting: isSelectingDirectory,
@@ -143,6 +144,30 @@ const handleDocumentsSelected = async (fileList: FileList | null): Promise<void>
     }
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : '文档读取失败，请重新选择。');
+  }
+};
+
+const handleFilesDropped = async ({ files: droppedFiles, hasDirectory }: DroppedFileCollection): Promise<void> => {
+  if (droppedFiles.length === 0) {
+    ElMessage.warning('未读取到可处理的文件，请重新拖入文件或文件夹。');
+    return;
+  }
+  try {
+    const selectedFiles = await selectFileArray(droppedFiles);
+    if (hasDirectory) {
+      store.setFiles(selectedFiles);
+    } else {
+      selectedFiles.forEach((file) => store.addFile(file));
+    }
+    if (selectedFiles.length > 0) {
+      ElMessage.success(
+        hasDirectory
+          ? `已读取拖入文件夹中的 ${selectedFiles.length} 个文件。`
+          : `已加入拖入的 ${selectedFiles.length} 个文件。`,
+      );
+    }
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '拖拽文件读取失败，请重试。');
   }
 };
 
@@ -286,6 +311,7 @@ onMounted(async () => {
         @update:custom-description="customDescription = $event"
         @files-selected="handleFilesSelected"
         @documents-selected="handleDocumentsSelected"
+        @files-dropped="handleFilesDropped"
         @add-manual-file="handleAddManualFile"
         @remove-file="store.removeFile"
         @clear-files="handleClearContextFiles"

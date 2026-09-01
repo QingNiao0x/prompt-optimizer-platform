@@ -63,8 +63,8 @@ export const useProjectFiles = () => {
   const yieldToBrowser = (): Promise<void> =>
     new Promise((resolve) => setTimeout(resolve, 0));
 
-  const selectFiles = async (fileList: FileList | null): Promise<ContextFileInput[]> => {
-    if (!fileList || fileList.length === 0) {
+  const selectFileArray = async (fileArray: readonly File[]): Promise<ContextFileInput[]> => {
+    if (fileArray.length === 0) {
       warnings.value = [];
       progress.value = null;
       return [];
@@ -73,7 +73,7 @@ export const useProjectFiles = () => {
     isReading.value = true;
     progress.value = {
       current: 0,
-      total: fileList.length,
+      total: fileArray.length,
       fileName: '',
       percent: 0,
       accepted: 0,
@@ -82,7 +82,7 @@ export const useProjectFiles = () => {
     };
     if (import.meta.env.DEV) {
       console.info('[file-upload] start', {
-        total: fileList.length,
+        total: fileArray.length,
         at: new Date().toISOString(),
       });
     }
@@ -93,7 +93,7 @@ export const useProjectFiles = () => {
       const scanWarnings: string[] = [];
       const scanStartedAt = performance.now();
       const { files: candidates, stats } = await collectCandidateFiles(
-        fileList,
+        fileArray,
         MAX_FILES,
         async (scanned, total, selected) => {
           progress.value = {
@@ -110,7 +110,7 @@ export const useProjectFiles = () => {
       );
       if (import.meta.env.DEV) {
         console.info('[file-upload] scan finished', {
-          fileListLength: fileList.length,
+          fileListLength: fileArray.length,
           scanned: stats.total,
            selected: stats.selected,
            pathIgnored: stats.pathIgnored,
@@ -194,10 +194,14 @@ export const useProjectFiles = () => {
     }
   };
 
+  const selectFiles = async (fileList: FileList | null): Promise<ContextFileInput[]> =>
+    selectFileArray(fileList ? Array.from(fileList) : []);
+
   return {
     isReading: readonly(isReading),
     warnings: readonly(warnings),
     progress: readonly(progress),
     selectFiles,
+    selectFileArray,
   };
 };
