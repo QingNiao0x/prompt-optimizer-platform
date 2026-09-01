@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { WarningFilled } from '@element-plus/icons-vue';
-import { ElAlert, ElMessage, ElMessageBox } from 'element-plus';
+import { ElAlert, ElButton, ElDialog, ElMessage, ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import ContextPanel from '@/components/context/ContextPanel.vue';
 import OptimizationResultPanel from '@/components/prompt/OptimizationResultPanel.vue';
@@ -53,6 +53,21 @@ const {
   pauseIndexing,
   cancelIndexing,
 } = useProjectIndex();
+
+const reviewDialogVisible = ref(false);
+
+const reviewSections = computed(() => {
+  const currentResult = result.value;
+  const sectionContent = (type: 'CONSTRAINTS' | 'ACCEPTANCE'): string =>
+    currentResult?.sections.find((section) => section.type === type)?.content?.trim() ?? '';
+
+  return {
+    constraints: currentResult?.appliedConstraints ?? [],
+    constraintsContent: sectionContent('CONSTRAINTS'),
+    pendingItems: currentResult?.ambiguities ?? [],
+    acceptanceContent: sectionContent('ACCEPTANCE'),
+  };
+});
 
 const contextWarnings = computed(() => [
   ...warnings.value,
@@ -205,6 +220,7 @@ const handleOptimize = async (): Promise<void> => {
   }
   const succeeded = await store.runOptimization(contextFiles);
   if (succeeded) {
+    reviewDialogVisible.value = true;
     ElMessage.success('提示词增强完成，结果已展示在下方。');
   }
 };
@@ -340,6 +356,79 @@ onMounted(async () => {
         <OptimizationResultPanel :result="result" />
       </div>
     </div>
+
+    <ElDialog
+      v-model="reviewDialogVisible"
+      class="optimization-review-dialog"
+      width="min(920px, calc(100vw - 32px))"
+      top="7vh"
+      destroy-on-close
+    >
+      <template #header>
+        <div class="review-dialog-heading">
+          <div>
+            <span class="review-dialog-kicker">04 / Review before use</span>
+            <h2>请先复核这三个关键部分</h2>
+          </div>
+          <span class="review-dialog-status">ENHANCEMENT READY</span>
+        </div>
+      </template>
+
+      <p class="review-dialog-intro">
+        优化结果已经生成。请检查约束、待确认项和验收标准，再决定是否交给其他模型继续执行。
+      </p>
+
+      <div class="review-grid">
+        <section class="review-card review-card--constraint">
+          <div class="review-card-heading">
+            <span class="review-card-index">01</span>
+            <div>
+              <span class="review-card-kicker">Constraint</span>
+              <h3>约束条件</h3>
+            </div>
+          </div>
+          <div v-if="reviewSections.constraints.length" class="review-list">
+            <p v-for="constraint in reviewSections.constraints" :key="constraint">{{ constraint }}</p>
+          </div>
+          <p v-else class="review-empty">模型未单独返回约束条件，请查看增强结果中的“约束”段落。</p>
+          <p v-if="reviewSections.constraintsContent" class="review-card-detail">
+            {{ reviewSections.constraintsContent }}
+          </p>
+        </section>
+
+        <section class="review-card review-card--pending">
+          <div class="review-card-heading">
+            <span class="review-card-index">02</span>
+            <div>
+              <span class="review-card-kicker">Pending Confirmation Items</span>
+              <h3>待确认项</h3>
+            </div>
+          </div>
+          <div v-if="reviewSections.pendingItems.length" class="review-list">
+            <p v-for="item in reviewSections.pendingItems" :key="item">{{ item }}</p>
+          </div>
+          <p v-else class="review-empty">暂未识别到待确认项，但仍建议人工检查关键假设。</p>
+        </section>
+
+        <section class="review-card review-card--acceptance">
+          <div class="review-card-heading">
+            <span class="review-card-index">03</span>
+            <div>
+              <span class="review-card-kicker">Acceptance Criteria</span>
+              <h3>验收标准</h3>
+            </div>
+          </div>
+          <p v-if="reviewSections.acceptanceContent" class="review-card-detail review-card-detail--alone">
+            {{ reviewSections.acceptanceContent }}
+          </p>
+          <p v-else class="review-empty">模型未单独返回验收标准，请查看增强结果中的结构化内容。</p>
+        </section>
+      </div>
+
+      <template #footer>
+        <ElButton type="primary" @click="reviewDialogVisible = false">我已查看，继续使用</ElButton>
+      </template>
+    </ElDialog>
   </div>
 </template>
 
@@ -397,6 +486,143 @@ onMounted(async () => {
   font-size: 10px;
 }
 
+.review-dialog-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.review-dialog-kicker,
+.review-card-kicker {
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.review-dialog-heading h2 {
+  margin: 8px 0 0;
+  color: var(--ink-strong);
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1.25;
+}
+
+.review-dialog-status {
+  padding: 6px 8px;
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 35%, var(--line-subtle));
+  border-radius: 7px;
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.review-dialog-intro {
+  margin: 0 0 18px;
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  max-height: 58vh;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.review-card {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line-subtle);
+  border-radius: 10px;
+  background: var(--surface-code);
+}
+
+.review-card--constraint {
+  border-color: color-mix(in srgb, var(--accent-blue) 35%, var(--line-subtle));
+}
+
+.review-card--pending {
+  border-color: color-mix(in srgb, var(--warning) 35%, var(--line-subtle));
+}
+
+.review-card--acceptance {
+  border-color: color-mix(in srgb, var(--success) 35%, var(--line-subtle));
+}
+
+.review-card-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.review-card-index {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  color: var(--accent-blue);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.review-card h3 {
+  margin: 5px 0 0;
+  color: var(--ink-strong);
+  font-size: 15px;
+}
+
+.review-list {
+  display: grid;
+  gap: 8px;
+}
+
+.review-list p,
+.review-card-detail,
+.review-empty {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.review-list p {
+  padding-left: 12px;
+  border-left: 2px solid var(--accent-blue);
+}
+
+.review-card--pending .review-list p {
+  border-left-color: var(--warning);
+}
+
+.review-card-detail {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-subtle);
+}
+
+.review-card-detail--alone {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.review-empty {
+  color: var(--ink-soft);
+}
+
 .workbench-grid {
   display: grid;
   grid-template-columns: minmax(290px, 0.62fr) minmax(0, 1.8fr);
@@ -445,6 +671,20 @@ onMounted(async () => {
 @media (max-width: 480px) {
   .pipeline-note {
     display: none;
+  }
+
+  .review-dialog-heading {
+    display: block;
+  }
+
+  .review-dialog-status {
+    display: inline-block;
+    margin-top: 12px;
+  }
+
+  .review-grid {
+    grid-template-columns: 1fr;
+    max-height: 62vh;
   }
 }
 </style>
