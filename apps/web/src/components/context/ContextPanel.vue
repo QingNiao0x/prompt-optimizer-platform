@@ -749,12 +749,12 @@ h2 {
 }
 
 .reading-meta {
-  overflow: hidden;
   color: var(--accent-blue) !important;
+  display: block;
   font-size: 11px;
   line-height: 1.55;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .warning-list {

@@ -58,12 +58,15 @@ export const useProjectFiles = () => {
   const isReading = ref(false);
   const warnings = ref<string[]>([]);
   const progress = ref<FileProcessingProgress | null>(null);
+  let operationVersion = 0;
 
   // 让出主线程，给浏览器一次重绘机会，避免界面在大量文件时看起来没有响应。
   const yieldToBrowser = (): Promise<void> =>
     new Promise((resolve) => setTimeout(resolve, 0));
 
   const selectFileArray = async (fileArray: readonly File[]): Promise<ContextFileInput[]> => {
+    const currentOperation = ++operationVersion;
+    const isCurrentOperation = (): boolean => currentOperation === operationVersion;
     if (fileArray.length === 0) {
       warnings.value = [];
       progress.value = null;
@@ -96,6 +99,9 @@ export const useProjectFiles = () => {
         fileArray,
         MAX_FILES,
         async (scanned, total, selected) => {
+          if (!isCurrentOperation()) {
+            return;
+          }
           progress.value = {
             current: scanned,
             total,
@@ -108,6 +114,9 @@ export const useProjectFiles = () => {
           await yieldToBrowser();
         },
       );
+      if (!isCurrentOperation()) {
+        return [];
+      }
       if (import.meta.env.DEV) {
         console.info('[file-upload] scan finished', {
           fileListLength: fileArray.length,
@@ -169,16 +178,27 @@ export const useProjectFiles = () => {
       try {
         // 优先在 Web Worker 中解析，主线程保持响应；Worker 不可用时回退到主线程时间切片。
         selection = await readFilesInWorker(candidates, (next) => {
-          progress.value = next;
+          if (isCurrentOperation()) {
+            progress.value = next;
+          }
         });
       } catch (workerError) {
+        if (!isCurrentOperation()) {
+          return [];
+        }
         if (import.meta.env.DEV) {
           console.info('[file-reader] worker unavailable, fallback to main thread', workerError);
         }
         selection = await readProjectFiles(candidates, async (next) => {
+          if (!isCurrentOperation()) {
+            return;
+          }
           progress.value = next;
           await yieldToBrowser();
         });
+      }
+      if (!isCurrentOperation()) {
+        return [];
       }
       if (import.meta.env.DEV) {
         console.info('[file-upload] read finished', {
@@ -189,13 +209,22 @@ export const useProjectFiles = () => {
       warnings.value = [...scanWarnings, ...selection.warnings];
       return selection.files;
     } finally {
-      isReading.value = false;
-      progress.value = null;
+      if (isCurrentOperation()) {
+        isReading.value = false;
+        progress.value = null;
+      }
     }
   };
 
   const selectFiles = async (fileList: FileList | null): Promise<ContextFileInput[]> =>
     selectFileArray(fileList ? Array.from(fileList) : []);
+
+  const reset = (): void => {
+    operationVersion += 1;
+    isReading.value = false;
+    warnings.value = [];
+    progress.value = null;
+  };
 
   return {
     isReading: readonly(isReading),
@@ -203,5 +232,6 @@ export const useProjectFiles = () => {
     progress: readonly(progress),
     selectFiles,
     selectFileArray,
+    reset,
   };
 };

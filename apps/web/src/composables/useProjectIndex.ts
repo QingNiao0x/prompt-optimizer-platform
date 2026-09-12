@@ -40,7 +40,7 @@ export interface ProjectIndexStartOptions {
 }
 
 const SESSION_ID_KEY = 'prompt-optimizer.project-index-session.v1';
-const CURRENT_PROJECT_KEY = 'prompt-optimizer.current-project-index.v1';
+const LEGACY_CURRENT_PROJECT_KEY = 'prompt-optimizer.current-project-index.v1';
 
 export const useProjectIndex = () => {
   const isSelecting = ref(false);
@@ -135,7 +135,6 @@ export const useProjectIndex = () => {
         mode,
       });
       summary.value = result;
-      rememberCurrentProject(result.id);
       return result;
     } catch (error) {
       if (error instanceof ProjectIndexCancelledError) {
@@ -197,32 +196,6 @@ export const useProjectIndex = () => {
       }
     });
 
-  const restoreCurrentIndex = async (): Promise<ProjectIndexSummary | undefined> => {
-    await projectIndexRepository.cleanupProjects();
-    const projectId = readCurrentProjectId();
-    if (!projectId) {
-      return undefined;
-    }
-    let restored = await projectIndexRepository.findProject(projectId);
-    if (!restored || (restored.status !== 'READY' && restored.status !== 'PAUSED'
-      && restored.status !== 'INDEXING')) {
-      forgetCurrentProject();
-      return undefined;
-    }
-    // 页面意外关闭时 Worker 无法写入最后状态，已提交的批次仍可作为恢复检查点。
-    if (restored.status === 'INDEXING') {
-      restored = {
-        ...restored,
-        status: 'PAUSED',
-        pausedAt: new Date().toISOString(),
-      };
-      await projectIndexRepository.pauseProject(restored);
-    }
-    summary.value = restored;
-    currentRootHandle = await projectIndexRepository.findProjectSource(projectId);
-    return restored;
-  };
-
   const pauseIndexing = (): void => {
     if (!isIndexing.value || isPausing.value) {
       return;
@@ -247,16 +220,29 @@ export const useProjectIndex = () => {
     isPausing.value = false;
     progress.value = undefined;
     if (projectId) {
-      forgetCurrentProject(projectId);
       await projectIndexRepository.deleteProject(projectId);
     }
   };
 
-  onScopeDispose(() => {
-    // 组件卸载不删除已提交批次；下次进入工作台时会把中断任务恢复为暂停状态。
+  const resetPageState = (): void => {
+    // 页面离开时只终止当前任务并清空内存引用，不主动删除 IndexedDB 中的索引数据。
     operationVersion += 1;
     activeWorker?.terminate();
+    activeWorker = undefined;
     activeWorkerReject?.(new ProjectIndexCancelledError());
+    activeWorkerReject = undefined;
+    activeProjectId = '';
+    currentRootHandle = undefined;
+    isSelecting.value = false;
+    isIndexing.value = false;
+    isPausing.value = false;
+    progress.value = undefined;
+    summary.value = undefined;
+    errorMessage.value = '';
+  };
+
+  onScopeDispose(() => {
+    resetPageState();
   });
 
   return {
@@ -270,7 +256,8 @@ export const useProjectIndex = () => {
     indexDirectory,
     resumeIndexing,
     refreshIndex,
-    restoreCurrentIndex,
+    clearPersistedProjectSelection,
+    resetPageState,
     pauseIndexing,
     cancelIndexing,
   };
@@ -338,29 +325,12 @@ const createExpiryDate = (days: number): string => {
   return expiresAt.toISOString();
 };
 
-const rememberCurrentProject = (projectId: string): void => {
+export const clearPersistedProjectSelection = (): void => {
   try {
-    window.localStorage.setItem(CURRENT_PROJECT_KEY, projectId);
+    // 兼容旧版本：只移除用于恢复左侧列表的指针，不删除用户电脑中的任何源文件。
+    window.localStorage.removeItem(LEGACY_CURRENT_PROJECT_KEY);
   } catch {
-    // 浏览器禁用本地存储时仍允许当前页面继续使用刚建立的索引。
-  }
-};
-
-const readCurrentProjectId = (): string => {
-  try {
-    return window.localStorage.getItem(CURRENT_PROJECT_KEY) ?? '';
-  } catch {
-    return '';
-  }
-};
-
-const forgetCurrentProject = (projectId?: string): void => {
-  try {
-    if (!projectId || readCurrentProjectId() === projectId) {
-      window.localStorage.removeItem(CURRENT_PROJECT_KEY);
-    }
-  } catch {
-    // 清理指针失败不会影响 IndexedDB 中源码索引的删除。
+    // 浏览器禁用本地存储时，新页面的 Pinia 状态仍然默认为空。
   }
 };
 

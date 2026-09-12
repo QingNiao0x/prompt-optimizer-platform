@@ -2,7 +2,7 @@
 import { WarningFilled } from '@element-plus/icons-vue';
 import { ElAlert, ElButton, ElDialog, ElMessage, ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import ContextPanel from '@/components/context/ContextPanel.vue';
 import OptimizationResultPanel from '@/components/prompt/OptimizationResultPanel.vue';
@@ -38,7 +38,14 @@ const {
   canOptimize,
 } = storeToRefs(store);
 
-const { isReading, warnings, progress, selectFiles, selectFileArray } = useProjectFiles();
+const {
+  isReading,
+  warnings,
+  progress,
+  selectFiles,
+  selectFileArray,
+  reset: resetProjectFiles,
+} = useProjectFiles();
 const {
   isSupported: supportsDirectoryPicker,
   isSelecting: isSelectingDirectory,
@@ -49,13 +56,15 @@ const {
   indexDirectory,
   resumeIndexing,
   refreshIndex,
-  restoreCurrentIndex,
+  clearPersistedProjectSelection,
+  resetPageState: resetProjectIndexPageState,
   pauseIndexing,
   cancelIndexing,
 } = useProjectIndex();
 
 const reviewDialogVisible = ref(false);
 const isClearingIndex = ref(false);
+let pageLifecycleVersion = 0;
 
 const reviewSections = computed(() => {
   const currentResult = result.value;
@@ -90,6 +99,7 @@ const handleRefreshProject = async (): Promise<void> => {
 const runProjectIndexOperation = async (
   mode: 'FULL' | 'INCREMENTAL' | 'RESUME',
 ): Promise<void> => {
+  const currentLifecycle = pageLifecycleVersion;
   try {
     const options = {
       limits: effectiveIndexLimits.value,
@@ -101,7 +111,7 @@ const runProjectIndexOperation = async (
       : mode === 'RESUME'
         ? await resumeIndexing(options)
         : await refreshIndex(options);
-    if (!summary) {
+    if (!summary || currentLifecycle !== pageLifecycleVersion) {
       return;
     }
     store.setProjectIndex(summary);
@@ -122,6 +132,9 @@ const runProjectIndexOperation = async (
       );
     }
   } catch (error: unknown) {
+    if (currentLifecycle !== pageLifecycleVersion) {
+      return;
+    }
     ElMessage.error(error instanceof Error ? error.message : '本地项目索引失败，请重试。');
   }
 };
@@ -164,25 +177,39 @@ const handleClearContextFiles = async (): Promise<void> => {
 };
 
 const handleFilesSelected = async (fileList: FileList | null): Promise<void> => {
+  const currentLifecycle = pageLifecycleVersion;
   try {
     const selectedFiles = await selectFiles(fileList);
+    if (currentLifecycle !== pageLifecycleVersion) {
+      return;
+    }
     store.setFiles(selectedFiles);
     if (selectedFiles.length > 0) {
       ElMessage.success(`已读取 ${selectedFiles.length} 个项目文件。`);
     }
   } catch (error: unknown) {
+    if (currentLifecycle !== pageLifecycleVersion) {
+      return;
+    }
     ElMessage.error(error instanceof Error ? error.message : '文件读取失败，请重新选择。');
   }
 };
 
 const handleDocumentsSelected = async (fileList: FileList | null): Promise<void> => {
+  const currentLifecycle = pageLifecycleVersion;
   try {
     const selectedFiles = await selectFiles(fileList);
+    if (currentLifecycle !== pageLifecycleVersion) {
+      return;
+    }
     selectedFiles.forEach((file) => store.addFile(file));
     if (selectedFiles.length > 0) {
       ElMessage.success(`已加入 ${selectedFiles.length} 个文档或辅助文件。`);
     }
   } catch (error: unknown) {
+    if (currentLifecycle !== pageLifecycleVersion) {
+      return;
+    }
     ElMessage.error(error instanceof Error ? error.message : '文档读取失败，请重新选择。');
   }
 };
@@ -192,8 +219,12 @@ const handleFilesDropped = async ({ files: droppedFiles, hasDirectory }: Dropped
     ElMessage.warning('未读取到可处理的文件，请重新拖入文件或文件夹。');
     return;
   }
+  const currentLifecycle = pageLifecycleVersion;
   try {
     const selectedFiles = await selectFileArray(droppedFiles);
+    if (currentLifecycle !== pageLifecycleVersion) {
+      return;
+    }
     if (hasDirectory) {
       store.setFiles(selectedFiles);
     } else {
@@ -207,6 +238,9 @@ const handleFilesDropped = async ({ files: droppedFiles, hasDirectory }: Dropped
       );
     }
   } catch (error: unknown) {
+    if (currentLifecycle !== pageLifecycleVersion) {
+      return;
+    }
     ElMessage.error(error instanceof Error ? error.message : '拖拽文件读取失败，请重试。');
   }
 };
@@ -287,19 +321,21 @@ const prepareContextTransmission = async (
   }
 };
 
-onMounted(async () => {
+const handlePageHide = (): void => {
+  pageLifecycleVersion += 1;
+  resetProjectFiles();
+  resetProjectIndexPageState();
+  store.clearFiles();
+};
+
+onMounted(() => {
+  clearPersistedProjectSelection();
   void projectContextSettingsStore.refreshStorageStatus();
-  if (projectIndex.value) {
-    return;
-  }
-  try {
-    const restored = await restoreCurrentIndex();
-    if (restored) {
-      store.setProjectIndex(restored);
-    }
-  } catch {
-    // 恢复失败不阻塞工作台，用户仍可重新选择项目目录。
-  }
+  window.addEventListener('pagehide', handlePageHide);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('pagehide', handlePageHide);
 });
 </script>
 

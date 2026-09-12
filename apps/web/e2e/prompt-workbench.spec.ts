@@ -266,7 +266,7 @@ test('用户可以暂停并继续本地项目索引', async ({ page }) => {
   await expect(page.getByText('1 个源码文件已建立本地索引')).toBeVisible();
 });
 
-test('旧版本本地索引升级后仍可按扫描批次清理', async ({ page }) => {
+test('重新打开页面后不恢复之前选择的项目文件夹', async ({ page }) => {
   await page.addInitScript(async () => {
     await new Promise<void>((resolve, reject) => {
       const request = indexedDB.open('prompt-optimizer-project-index', 2);
@@ -333,23 +333,29 @@ test('旧版本本地索引升级后仍可按扫描批次清理', async ({ page 
   });
 
   await page.goto('/');
-  await expect(page.getByText('1 个源码文件已建立本地索引')).toBeVisible();
-  const scanId = await page.evaluate(async () => new Promise<string | undefined>((resolve, reject) => {
-    const request = indexedDB.open('prompt-optimizer-project-index', 3);
-    request.onsuccess = () => {
-      const database = request.result;
-      const transaction = database.transaction('files', 'readonly');
-      const fileRequest = transaction.objectStore('files').get(
-        'legacy-project\u0000src/main.ts',
-      );
-      fileRequest.onsuccess = () => {
-        resolve((fileRequest.result as { lastSeenScanId?: string } | undefined)?.lastSeenScanId);
-        database.close();
-      };
-      fileRequest.onerror = () => reject(fileRequest.error);
-    };
-    request.onerror = () => reject(request.error);
-  }));
+  // 全量并发运行时工作台是懒加载页面，以核心控件出现作为初始化完成标志。
+  await expect(
+    page.getByRole('button', { name: '添加文档、表格、演示稿或图片' }),
+  ).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText('1 个源码文件已建立本地索引')).not.toBeVisible();
+  await expect.poll(() => page.evaluate(() =>
+    localStorage.getItem('prompt-optimizer.current-project-index.v1'))).toBeNull();
+});
 
-  expect(scanId).toBe('');
+test('重新打开页面后不保留之前上传的单个文件', async ({ page }) => {
+  await page.goto('/');
+  const fileChooserPromise = page.waitForEvent('filechooser');
+  await page.getByRole('button', { name: '添加文档、表格、演示稿或图片' }).click();
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles({
+    name: '临时需求说明.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('只用于当前页面的需求说明。', 'utf8'),
+  });
+
+  await expect(page.getByText('临时需求说明.txt', { exact: true })).toBeVisible();
+  await page.reload();
+
+  await expect(page.getByText('临时需求说明.txt', { exact: true })).not.toBeVisible();
+  await expect(page.getByRole('button', { name: '添加文档、表格、演示稿或图片' })).toBeVisible();
 });
