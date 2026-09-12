@@ -11,9 +11,9 @@
   --surface-panel: #191b20;
   --surface-elevated: #20232a;
   --surface-code: #0c0f14;
-  --ink-strong: #dce1ea;
-  --ink-muted: #a6afbd;
-  --ink-soft: #8993a3;
+  --ink-strong: #d5dbe5;
+  --ink-muted: #aab3c1;
+  --ink-soft: #8d97a7;
   --line-subtle: #303640;
   --line-strong: #414957;
   --accent-blue: #6f7cff;
@@ -29,6 +29,8 @@
   --title-stroke-primary: rgba(111, 124, 255, 0.42);
   --title-stroke-secondary: rgba(101, 216, 208, 0.34);
   --title-glow: rgba(111, 124, 255, 0.08);
+  --selection-background: #2a3a55;
+  --selection-foreground: #f5f7fb;
 
   --el-color-primary: var(--accent-blue);
   --el-color-success: var(--success);
@@ -58,9 +60,9 @@
   --surface-panel: #151923;
   --surface-elevated: #1d2431;
   --surface-code: #080b10;
-  --ink-strong: #dce8ef;
-  --ink-muted: #a5b5c4;
-  --ink-soft: #8192a3;
+  --ink-strong: #d5e0e8;
+  --ink-muted: #a9b8c5;
+  --ink-soft: #8798a8;
   --line-subtle: #2b3746;
   --line-strong: #43566a;
   --accent-blue: #a38bff;
@@ -76,6 +78,8 @@
   --title-stroke-primary: rgba(163, 139, 255, 0.5);
   --title-stroke-secondary: rgba(82, 228, 208, 0.42);
   --title-glow: rgba(163, 139, 255, 0.12);
+  --selection-background: #30305e;
+  --selection-foreground: #faf8ff;
 }
 
 [data-ui-theme='dusk-glass'] {
@@ -83,9 +87,9 @@
   --surface-panel: rgba(32, 36, 50, 0.76);
   --surface-elevated: rgba(53, 58, 78, 0.78);
   --surface-code: rgba(14, 18, 28, 0.82);
-  --ink-strong: #e1e2ef;
-  --ink-muted: #b2b5c8;
-  --ink-soft: #9197ad;
+  --ink-strong: #d9dbea;
+  --ink-muted: #b0b5c8;
+  --ink-soft: #969caf;
   --line-subtle: rgba(169, 160, 239, 0.2);
   --line-strong: rgba(190, 181, 255, 0.38);
   --accent-blue: #b39cff;
@@ -101,6 +105,8 @@
   --title-stroke-primary: rgba(179, 156, 255, 0.42);
   --title-stroke-secondary: rgba(123, 212, 255, 0.34);
   --title-glow: rgba(198, 157, 255, 0.08);
+  --selection-background: #3a355b;
+  --selection-foreground: #fffaff;
 }
 
 * {
@@ -118,7 +124,9 @@ body {
   min-height: 100vh;
   margin: 0;
   color: var(--ink-muted);
-  line-height: 1.55;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.65;
   background-color: var(--surface-page);
   background-image: radial-gradient(
     circle at 76% -10%,
@@ -141,9 +149,31 @@ summary:focus-visible {
   outline-offset: 2px;
 }
 
-::selection {
-  color: var(--ink-strong);
-  background: color-mix(in srgb, var(--accent-cyan) 45%, white);
+::selection,
+::-moz-selection {
+  color: var(--selection-foreground);
+  background: var(--selection-background);
+  text-shadow: none;
+}
+
+h1,
+h2,
+h3,
+p,
+label,
+button,
+input,
+textarea,
+select,
+td,
+th {
+  letter-spacing: 0;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
 }
 
 .visually-hidden {
@@ -179,11 +209,11 @@ summary:focus-visible {
 
 .el-textarea__inner::placeholder,
 .el-input__inner::placeholder {
-  color: #7a8494;
+  color: #7f8999;
 }
 
 .el-input__count {
-  color: #7a8494;
+  color: #7f8999;
 }
 
 .el-button {

@@ -42,6 +42,7 @@ interface Props {
   supportsDirectoryPicker: boolean;
   isSelectingDirectory: boolean;
   isIndexing: boolean;
+  isClearingIndex?: boolean;
   isPausing: boolean;
   indexProgress?: ProjectIndexProgress;
   projectIndex?: ProjectIndexSummary;
@@ -102,11 +103,48 @@ const indexingLabel = computed(() => {
     return '正在初始化本地索引…';
   }
   const progress = props.indexProgress;
-  return `已发现 ${progress.discoveredFiles} · 已索引 ${progress.indexedFiles} · 已忽略 ${progress.ignoredFiles}`;
+  const speed = progress.filesPerSecond > 0
+    ? `${Math.round(progress.filesPerSecond).toLocaleString()} 文件/秒`
+    : '正在计算速度';
+  if (progress.phase === 'SCANNING') {
+    return `正在统计文件 · 已发现 ${progress.discoveredFiles.toLocaleString()} · ${speed}`;
+  }
+  const total = progress.totalFiles === undefined
+    ? progress.processedFiles.toLocaleString()
+    : `${progress.processedFiles.toLocaleString()} / ${progress.totalFiles.toLocaleString()}`;
+  const eta = progress.etaMs === undefined
+    ? '剩余时间计算中'
+    : `预计剩余 ${formatDuration(progress.etaMs)}`;
+  return `${total} · 已索引 ${progress.indexedFiles.toLocaleString()} · ${speed} · ${eta}`;
 });
 
 const isProjectBusy = computed(() =>
-  props.isReading || props.isIndexing || props.isSelectingDirectory || selecting.value);
+  props.isReading
+  || props.isIndexing
+  || props.isClearingIndex
+  || props.isSelectingDirectory
+  || selecting.value);
+
+const displayedProgressPercentage = computed(() => {
+  if (props.isIndexing) {
+    return props.indexProgress?.percent;
+  }
+  return props.isReading && props.progress?.phase === 'read'
+    ? props.progress.percent
+    : undefined;
+});
+
+const isProgressIndeterminate = computed(() => displayedProgressPercentage.value === undefined);
+
+const formatDuration = (milliseconds: number): string => {
+  const totalSeconds = Math.max(1, Math.round(milliseconds / 1_000));
+  if (totalSeconds < 60) {
+    return `${totalSeconds} 秒`;
+  }
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return seconds > 0 ? `${minutes} 分 ${seconds} 秒` : `${minutes} 分钟`;
+};
 
 const openFolderPicker = (): void => {
   if (props.supportsDirectoryPicker) {
@@ -256,6 +294,8 @@ const addManualFile = (): void => {
           text
           size="small"
           type="danger"
+          :loading="isClearingIndex"
+          :disabled="isClearingIndex"
           @click="emit('clear-files')"
         >
           清空
@@ -293,7 +333,9 @@ const addManualFile = (): void => {
         <span class="dropzone-icon"><FolderOpened /></span>
         <span class="dropzone-copy">
           <strong>
-            {{ isIndexing
+            {{ isClearingIndex
+              ? '正在清理本地索引'
+              : isIndexing
               ? '正在建立本地项目索引'
               : isReading
                 ? '正在处理项目文件'
@@ -307,11 +349,11 @@ const addManualFile = (): void => {
           <template v-else>
             <ElProgress
               class="read-progress"
-              :percentage="isReading && progress?.phase === 'read' ? progress.percent : undefined"
-              :indeterminate="isIndexing || !isReading || progress?.phase !== 'read'"
+              :percentage="displayedProgressPercentage"
+              :indeterminate="isProgressIndeterminate"
               :duration="3"
               :stroke-width="8"
-              :show-text="!isIndexing && isReading && progress?.phase === 'read'"
+              :show-text="displayedProgressPercentage !== undefined"
               aria-label="项目文件处理进度"
             />
             <small class="reading-meta" aria-live="polite">
@@ -319,7 +361,9 @@ const addManualFile = (): void => {
                 ? indexingLabel
                 : isReading
                   ? readingLabel
-                  : '请选择需要授权的项目目录…' }}
+                  : isClearingIndex
+                    ? '上下文已清空，正在删除浏览器中的本地数据…'
+                    : '请选择需要授权的项目目录…' }}
             </small>
           </template>
         </span>

@@ -55,6 +55,7 @@ const {
 } = useProjectIndex();
 
 const reviewDialogVisible = ref(false);
+const isClearingIndex = ref(false);
 
 const reviewSections = computed(() => {
   const currentResult = result.value;
@@ -126,16 +127,40 @@ const runProjectIndexOperation = async (
 };
 
 const handleCancelIndex = async (): Promise<void> => {
-  await cancelIndexing();
+  if (isClearingIndex.value) {
+    return;
+  }
+  isClearingIndex.value = true;
+  const deletion = cancelIndexing();
   store.clearFiles();
-  ElMessage.info('本地项目索引已删除。');
+  try {
+    await deletion;
+    ElMessage.success('本地项目索引已删除。');
+  } catch {
+    ElMessage.error('索引已从当前上下文移除，但本地数据清理失败，请在设置页重试。');
+  } finally {
+    isClearingIndex.value = false;
+  }
 };
 
 const handleClearContextFiles = async (): Promise<void> => {
-  if (projectIndex.value) {
-    await cancelIndexing();
+  if (isClearingIndex.value) {
+    return;
   }
+  const shouldDeleteIndex = Boolean(projectIndex.value || isIndexing.value);
+  const deletion = shouldDeleteIndex ? cancelIndexing() : Promise.resolve();
   store.clearFiles();
+  if (!shouldDeleteIndex) {
+    return;
+  }
+  isClearingIndex.value = true;
+  try {
+    await deletion;
+  } catch {
+    ElMessage.error('上下文已清空，但本地索引数据清理失败，请在设置页重试。');
+  } finally {
+    isClearingIndex.value = false;
+  }
 };
 
 const handleFilesSelected = async (fileList: FileList | null): Promise<void> => {
@@ -322,6 +347,7 @@ onMounted(async () => {
         :supports-directory-picker="supportsDirectoryPicker"
         :is-selecting-directory="isSelectingDirectory"
         :is-indexing="isIndexing"
+        :is-clearing-index="isClearingIndex"
         :is-pausing="isPausing"
         :index-progress="indexProgress"
         @update:custom-description="customDescription = $event"

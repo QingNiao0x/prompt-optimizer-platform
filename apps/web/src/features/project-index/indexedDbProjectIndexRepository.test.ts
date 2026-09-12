@@ -24,6 +24,29 @@ describe('IndexedDbProjectIndexRepository connection recovery', () => {
     await expect(repository.findProject('project-1')).resolves.toBeUndefined();
     expect(openCount).toBe(2);
   });
+
+  it('should delete a project with one atomic key-range transaction', async () => {
+    const deleted = new Map<string, unknown[]>();
+    vi.stubGlobal('IDBKeyRange', {
+      bound: (lower: string, upper: string) => ({ lower, upper }),
+    });
+    vi.stubGlobal('indexedDB', {
+      open: () => createOpenRequest(createDeleteDatabase(deleted)),
+    } satisfies Pick<IDBFactory, 'open'>);
+    const repository = new IndexedDbProjectIndexRepository();
+
+    await repository.deleteProject('project-1');
+
+    expect(Array.from(deleted.keys()).sort()).toEqual(['chunks', 'files', 'projects', 'sources']);
+    expect(deleted.get('files')).toEqual([
+      { lower: 'project-1\u0000', upper: 'project-1\u0000\uffff' },
+    ]);
+    expect(deleted.get('chunks')).toEqual([
+      { lower: 'project-1\u0000', upper: 'project-1\u0000\uffff' },
+    ]);
+    expect(deleted.get('projects')).toEqual(['project-1']);
+    expect(deleted.get('sources')).toEqual(['project-1']);
+  });
 });
 
 const createClosingDatabase = (): IDBDatabase => ({
@@ -59,6 +82,31 @@ const createHealthyDatabase = (): IDBDatabase => {
     }),
   } as unknown as IDBTransaction;
 
+  return {
+    close: vi.fn(),
+    transaction: () => transaction,
+  } as unknown as IDBDatabase;
+};
+
+const createDeleteDatabase = (deleted: Map<string, unknown[]>): IDBDatabase => {
+  let deleteCount = 0;
+  const transaction = {
+    oncomplete: null,
+    onerror: null,
+    onabort: null,
+    error: null,
+    objectStore: (name: string) => ({
+      delete: (query: unknown) => {
+        const queries = deleted.get(name) ?? [];
+        queries.push(query);
+        deleted.set(name, queries);
+        deleteCount += 1;
+        if (deleteCount === 4) {
+          queueMicrotask(() => transaction.oncomplete?.(new Event('complete')));
+        }
+      },
+    }),
+  } as unknown as IDBTransaction;
   return {
     close: vi.fn(),
     transaction: () => transaction,

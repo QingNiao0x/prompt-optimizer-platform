@@ -7,7 +7,7 @@ import type {
 import type { DirectoryHandleLike } from './fileSystemDirectorySource';
 
 const DATABASE_NAME = 'prompt-optimizer-project-index';
-const DATABASE_VERSION = 2;
+const DATABASE_VERSION = 3;
 const PROJECT_STORE = 'projects';
 const FILE_STORE = 'files';
 const CHUNK_STORE = 'chunks';
@@ -83,22 +83,36 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     const completion = transactionComplete(transaction);
     const fileStore = transaction.objectStore(FILE_STORE);
     const chunkStore = transaction.objectStore(CHUNK_STORE);
-    const request = fileStore.index('projectId').openCursor(IDBKeyRange.only(projectId));
+    const index = fileStore.index('projectScan');
     let removedFiles = 0;
-    request.onsuccess = () => {
-      const cursor = request.result;
-      if (!cursor) {
-        return;
-      }
-      const file = cursor.value as IndexedProjectFile;
-      if (file.lastSeenScanId !== scanId) {
+
+    const removeFromCursor = (request: IDBRequest<IDBCursorWithValue | null>): void => {
+      request.onsuccess = () => {
+        const cursor = request.result;
+        if (!cursor) {
+          return;
+        }
+        const file = cursor.value as IndexedProjectFile;
         cursor.delete();
         chunkStore.delete(chunkIdRange(projectId, file.path));
         removedFiles += 1;
-      }
-      cursor.continue();
+        cursor.continue();
+      };
+      request.onerror = () => transaction.abort();
     };
-    request.onerror = () => transaction.abort();
+
+    removeFromCursor(index.openCursor(IDBKeyRange.bound(
+      [projectId, ''],
+      [projectId, scanId],
+      false,
+      true,
+    )));
+    removeFromCursor(index.openCursor(IDBKeyRange.bound(
+      [projectId, scanId],
+      [projectId, '\uffff'],
+      true,
+      false,
+    )));
     await completion;
     return removedFiles;
   }
@@ -162,12 +176,13 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   }
 
   async deleteProject(projectId: string): Promise<void> {
-    await Promise.all([
-      this.deleteRecordsByProject(FILE_STORE, projectId),
-      this.deleteRecordsByProject(CHUNK_STORE, projectId),
-    ]);
-    const transaction = await this.createTransaction([PROJECT_STORE, SOURCE_STORE], 'readwrite');
+    const transaction = await this.createTransaction(
+      [PROJECT_STORE, FILE_STORE, CHUNK_STORE, SOURCE_STORE],
+      'readwrite',
+    );
     const completion = transactionComplete(transaction);
+    transaction.objectStore(FILE_STORE).delete(projectRecordRange(projectId));
+    transaction.objectStore(CHUNK_STORE).delete(projectRecordRange(projectId));
     transaction.objectStore(PROJECT_STORE).delete(projectId);
     transaction.objectStore(SOURCE_STORE).delete(projectId);
     await completion;
@@ -282,25 +297,6 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     return result.map(normalizeChunk);
   }
 
-  private async deleteRecordsByProject(storeName: string, projectId: string): Promise<void> {
-    const transaction = await this.createTransaction(storeName, 'readwrite');
-    const completion = transactionComplete(transaction);
-    const request = transaction
-      .objectStore(storeName)
-      .index('projectId')
-      .openKeyCursor(IDBKeyRange.only(projectId));
-    request.onsuccess = () => {
-      const cursor = request.result;
-      if (!cursor) {
-        return;
-      }
-      transaction.objectStore(storeName).delete(cursor.primaryKey);
-      cursor.continue();
-    };
-    request.onerror = () => transaction.abort();
-    await completion;
-  }
-
   /**
    * 创建事务时如果浏览器正在关闭旧连接，则清除缓存并自动重连一次。
    */
@@ -327,15 +323,24 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
       let openingPromise: Promise<IDBDatabase>;
       openingPromise = new Promise((resolve, reject) => {
         const request = indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
-        request.onupgradeneeded = () => {
+        request.onupgradeneeded = (event) => {
           const database = request.result;
           if (!database.objectStoreNames.contains(PROJECT_STORE)) {
             database.createObjectStore(PROJECT_STORE, { keyPath: 'id' });
           }
+          let fileStore: IDBObjectStore;
           if (!database.objectStoreNames.contains(FILE_STORE)) {
-            const fileStore = database.createObjectStore(FILE_STORE, { keyPath: 'id' });
+            fileStore = database.createObjectStore(FILE_STORE, { keyPath: 'id' });
             fileStore.createIndex('projectId', 'projectId');
             fileStore.createIndex('projectPath', ['projectId', 'path'], { unique: true });
+          } else {
+            fileStore = request.transaction!.objectStore(FILE_STORE);
+          }
+          if (!fileStore.indexNames.contains('projectScan')) {
+            fileStore.createIndex('projectScan', ['projectId', 'lastSeenScanId']);
+          }
+          if ((event as IDBVersionChangeEvent).oldVersion < 3) {
+            migrateLegacyFileScanIds(fileStore);
           }
           if (!database.objectStoreNames.contains(CHUNK_STORE)) {
             const chunkStore = database.createObjectStore(CHUNK_STORE, { keyPath: 'id' });
@@ -396,6 +401,30 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
 const chunkIdRange = (projectId: string, path: string): IDBKeyRange => {
   const prefix = `${projectId}\u0000${path}\u0000`;
   return IDBKeyRange.bound(prefix, `${prefix}\uffff`);
+};
+
+const projectRecordRange = (projectId: string): IDBKeyRange => {
+  const prefix = `${projectId}\u0000`;
+  return IDBKeyRange.bound(prefix, `${prefix}\uffff`);
+};
+
+/**
+ * 旧版本记录可能没有 lastSeenScanId。补空值后，新复合索引才能找到并清理这些记录。
+ */
+const migrateLegacyFileScanIds = (fileStore: IDBObjectStore): void => {
+  const request = fileStore.openCursor();
+  request.onsuccess = () => {
+    const cursor = request.result;
+    if (!cursor) {
+      return;
+    }
+    const file = cursor.value as IndexedProjectFile;
+    if (typeof file.lastSeenScanId !== 'string') {
+      cursor.update({ ...file, lastSeenScanId: '' });
+    }
+    cursor.continue();
+  };
+  request.onerror = () => fileStore.transaction.abort();
 };
 
 /**

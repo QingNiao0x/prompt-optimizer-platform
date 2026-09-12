@@ -171,6 +171,41 @@ describe('indexProject', () => {
     expect(repository.files).toHaveLength(1_205);
   });
 
+  it('should report indexing progress before a small batch has completely finished', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const progress: number[] = [];
+    const entries = Array.from({ length: 100 }, (_, index) =>
+      sourceFile(`src/progress-${index}.ts`, `export const value${index} = ${index};`));
+
+    await indexProject({
+      projectId: 'project-progress',
+      rootName: 'progress-project',
+      entries: sourceOf(entries),
+      repository,
+      onProgress: (snapshot) => {
+        if (snapshot.phase === 'INDEXING') {
+          progress.push(snapshot.processedFiles);
+        }
+      },
+    });
+
+    expect(progress.some((processed) => processed > 0 && processed < entries.length)).toBe(true);
+  });
+
+  it('should keep search index terms bounded for each source chunk', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const vocabulary = Array.from({ length: 300 }, (_, index) => `identifier${index}`).join(' ');
+
+    await indexProject({
+      projectId: 'project-search-term-budget',
+      rootName: 'search-term-project',
+      entries: sourceOf([sourceFile('src/vocabulary.ts', vocabulary)]),
+      repository,
+    });
+
+    expect(repository.chunks[0]?.searchTerms.length).toBeLessThanOrEqual(40);
+  });
+
   it('should index unknown text and exclude logs while recording ignored directories', async () => {
     const repository = new MemoryProjectIndexRepository();
     const entries: ProjectSourceEntry[] = [

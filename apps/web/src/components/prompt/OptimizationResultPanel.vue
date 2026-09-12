@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Check, CopyDocument, DataAnalysis, Right } from '@element-plus/icons-vue';
+import { Check, CopyDocument, DataAnalysis, Right, WarningFilled } from '@element-plus/icons-vue';
 import { ElButton, ElMessage, ElTag } from 'element-plus';
+import { computed, toRefs } from 'vue';
 
 import type { OptimizationResult, PromptSectionType } from '@/types/api';
 
@@ -8,7 +9,12 @@ interface Props {
   result?: OptimizationResult;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+const { result } = toRefs(props);
+
+const displaySections = computed(() =>
+  result.value?.sections.filter((section) => section.type !== 'CLARIFICATIONS') ?? [],
+);
 
 const SECTION_TONE: Record<PromptSectionType, string> = {
   BACKGROUND: '背景',
@@ -23,7 +29,7 @@ const SECTION_TONE: Record<PromptSectionType, string> = {
 const copyPrompt = async (content: string): Promise<void> => {
   try {
     await navigator.clipboard.writeText(content);
-    ElMessage.success('优化后的提示词已复制。');
+    ElMessage.success('优化后的提示词已复制，待确认事项未包含在剪贴板中。');
   } catch {
     ElMessage.error('复制失败，请手动选择文本复制。');
   }
@@ -32,6 +38,28 @@ const copyPrompt = async (content: string): Promise<void> => {
 
 <template>
   <section class="result-panel">
+    <div
+      v-if="result?.ambiguities.length"
+      class="ambiguity-note ambiguity-note--top"
+      role="status"
+      aria-live="polite"
+    >
+      <div class="ambiguity-heading">
+        <div class="ambiguity-title">
+          <WarningFilled aria-hidden="true" />
+          <strong>待确认事项</strong>
+          <span class="ambiguity-count">{{ result.ambiguities.length }} 项</span>
+        </div>
+        <span class="ambiguity-label">需要人工核对</span>
+      </div>
+      <p class="ambiguity-description">
+        以下内容只用于复核，不属于可直接复制的核心提示词。
+      </p>
+      <ul class="ambiguity-list">
+        <li v-for="item in result.ambiguities" :key="item">{{ item }}</li>
+      </ul>
+    </div>
+
     <div class="result-heading">
       <div>
         <span class="step-label">03 / Structured prompt</span>
@@ -64,7 +92,12 @@ const copyPrompt = async (content: string): Promise<void> => {
       <p>输入一个简短需求并点击“一键增强”，系统会结合项目技术栈生成可直接交给 AI 执行的任务说明。</p>
     </div>
 
-    <div v-else class="result-content">
+    <div
+      v-else
+      class="result-content result-content--scrollable"
+      tabindex="0"
+      aria-label="增强结果内容，可滚动查看完整提示词"
+    >
       <div class="result-meta">
         <div>
           <span class="meta-label">Provider</span>
@@ -85,7 +118,7 @@ const copyPrompt = async (content: string): Promise<void> => {
 
       <article class="section-list">
         <section
-          v-for="(section, index) in result.sections"
+          v-for="(section, index) in displaySections"
           :key="section.type"
           class="prompt-section"
         >
@@ -108,16 +141,17 @@ const copyPrompt = async (content: string): Promise<void> => {
         </section>
       </article>
 
-      <div v-if="result.ambiguities.length" class="ambiguity-note">
-        <strong>系统识别到 {{ result.ambiguities.length }} 个待确认点</strong>
-        <span>这些内容已写入增强提示词，执行前仍建议人工确认。</span>
-      </div>
     </div>
   </section>
 </template>
 
 <style scoped>
 .result-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+  max-height: min(760px, calc(100dvh - 148px));
   min-height: 100%;
   margin-top: 0;
   padding: clamp(22px, 3vw, 30px);
@@ -125,6 +159,7 @@ const copyPrompt = async (content: string): Promise<void> => {
   border-radius: var(--radius-large);
   background: var(--surface-panel);
   box-shadow: var(--shadow-panel);
+  overflow: hidden;
 }
 
 .result-heading {
@@ -153,6 +188,7 @@ h2 {
 
 .empty-result {
   display: grid;
+  flex: 1;
   min-height: 430px;
   place-content: center;
   justify-items: center;
@@ -220,7 +256,23 @@ h2 {
 }
 
 .result-content {
+  min-width: 0;
   margin-top: 22px;
+}
+
+/* 长结果只在结果面板内部滚动，避免撑开工作台布局。 */
+.result-content--scrollable {
+  min-height: 0;
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 6px 8px 0;
+  scrollbar-gutter: stable;
+}
+
+.result-content--scrollable:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent-blue) 72%, transparent);
+  outline-offset: 3px;
 }
 
 .result-meta {
@@ -265,6 +317,7 @@ h2 {
 
 .section-list {
   display: grid;
+  min-width: 0;
   gap: 0;
 }
 
@@ -305,6 +358,7 @@ h2 {
 }
 
 .section-body {
+  min-width: 0;
   margin-bottom: 15px;
   padding: 16px 18px;
   border: 1px solid var(--line-subtle);
@@ -339,17 +393,17 @@ h2 {
 }
 
 .section-text {
+  max-width: 100%;
   margin-top: 12px;
   color: var(--ink-muted);
   font-size: 13px;
   line-height: 1.85;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .ambiguity-note {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 14px;
   margin-top: 14px;
   padding: 13px 15px;
   border-left: 3px solid var(--warning);
@@ -358,11 +412,90 @@ h2 {
   background: rgba(232, 180, 92, 0.08);
 }
 
-.ambiguity-note strong {
+.ambiguity-note--top {
+  flex: 0 0 auto;
+  margin: 0 0 18px;
+  padding: 15px 16px;
+  border: 1px solid color-mix(in srgb, var(--warning) 35%, var(--line-subtle));
+  border-left: 4px solid var(--warning);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--warning) 9%, var(--surface-code));
+}
+
+.ambiguity-heading,
+.ambiguity-title {
+  display: flex;
+  align-items: center;
+}
+
+.ambiguity-heading {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ambiguity-title {
+  gap: 8px;
+}
+
+.ambiguity-title svg {
+  width: 16px;
+  color: var(--warning);
+}
+
+.ambiguity-title strong {
   color: var(--ink-strong);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ambiguity-count,
+.ambiguity-label {
+  color: var(--warning);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.ambiguity-count {
+  padding: 3px 7px;
+  border: 1px solid color-mix(in srgb, var(--warning) 38%, var(--line-subtle));
+  border-radius: 999px;
+}
+
+.ambiguity-label {
+  white-space: nowrap;
+}
+
+.ambiguity-description {
+  margin: 9px 0 0;
+  color: var(--ink-muted);
+  line-height: 1.6;
+}
+
+.ambiguity-list {
+  display: grid;
+  width: 100%;
+  gap: 6px;
+  margin: 11px 0 0;
+  padding: 10px 0 0 18px;
+  border-top: 1px solid color-mix(in srgb, var(--warning) 24%, var(--line-subtle));
+  color: var(--ink-muted);
+  line-height: 1.65;
+}
+
+.ambiguity-list li::marker {
+  color: var(--warning);
 }
 
 @media (max-width: 640px) {
+  .ambiguity-heading {
+    align-items: flex-start;
+  }
+
+  .ambiguity-label {
+    white-space: normal;
+    text-align: right;
+  }
+
   .result-meta {
     grid-template-columns: 1fr;
   }

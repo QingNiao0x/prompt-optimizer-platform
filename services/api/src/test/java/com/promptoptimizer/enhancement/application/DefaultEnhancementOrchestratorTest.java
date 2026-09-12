@@ -76,7 +76,10 @@ class DefaultEnhancementOrchestratorTest {
                         PromptSectionType.EXAMPLES
                 );
         assertThat(result.optimizedPrompt())
-                .contains("Spring Boot", "Bean Validation", "SQL 注入", "config/prod.yml", "待确认项");
+                .contains("Spring Boot", "Bean Validation", "SQL 注入", "config/prod.yml")
+                .doesNotContain("待确认项", "确认下方待确认项");
+        assertThat(result.sections()).extracting("type")
+                .contains(PromptSectionType.CLARIFICATIONS);
         assertThat(result.contextReport().technologyStack()).extracting("name")
                 .contains("Java", "Spring Boot", "PostgreSQL");
     }

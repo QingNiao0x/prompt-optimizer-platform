@@ -54,7 +54,6 @@ export const useProjectIndex = () => {
   let activeProjectId = '';
   let currentRootHandle: DirectoryHandleLike | undefined;
   let operationVersion = 0;
-  let deleteCancelledProject = false;
 
   const indexDirectory = async (
     options: ProjectIndexStartOptions,
@@ -112,7 +111,6 @@ export const useProjectIndex = () => {
     mode: ProjectIndexMode,
   ): Promise<ProjectIndexSummary | undefined> => {
     const operationId = ++operationVersion;
-    deleteCancelledProject = false;
     activeProjectId = projectId;
     isIndexing.value = true;
     isPausing.value = false;
@@ -141,9 +139,6 @@ export const useProjectIndex = () => {
       return result;
     } catch (error) {
       if (error instanceof ProjectIndexCancelledError) {
-        if (deleteCancelledProject) {
-          await projectIndexRepository.deleteProject(projectId).catch(() => undefined);
-        }
         return undefined;
       }
       errorMessage.value = error instanceof Error ? error.message : '本地项目索引失败';
@@ -237,17 +232,12 @@ export const useProjectIndex = () => {
   };
 
   const cancelIndexing = async (): Promise<void> => {
-    deleteCancelledProject = true;
     operationVersion += 1;
     const projectId = activeProjectId || summary.value?.id || '';
     activeWorker?.terminate();
     activeWorker = undefined;
     activeWorkerReject?.(new ProjectIndexCancelledError());
     activeWorkerReject = undefined;
-    if (projectId) {
-      await projectIndexRepository.deleteProject(projectId);
-      forgetCurrentProject(projectId);
-    }
     if (summary.value?.id === projectId) {
       summary.value = undefined;
     }
@@ -256,12 +246,15 @@ export const useProjectIndex = () => {
     isIndexing.value = false;
     isPausing.value = false;
     progress.value = undefined;
+    if (projectId) {
+      forgetCurrentProject(projectId);
+      await projectIndexRepository.deleteProject(projectId);
+    }
   };
 
   onScopeDispose(() => {
     // 组件卸载不删除已提交批次；下次进入工作台时会把中断任务恢复为暂停状态。
     operationVersion += 1;
-    deleteCancelledProject = false;
     activeWorker?.terminate();
     activeWorkerReject?.(new ProjectIndexCancelledError());
   });
@@ -286,6 +279,9 @@ export const useProjectIndex = () => {
 const emptyProgress = (): ProjectIndexProgress => ({
   phase: 'SCANNING',
   currentPath: '',
+  processedFiles: 0,
+  filesPerSecond: 0,
+  elapsedMs: 0,
   discoveredFiles: 0,
   eligibleFiles: 0,
   indexedFiles: 0,

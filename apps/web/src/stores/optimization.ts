@@ -91,9 +91,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   };
 
   const clearFiles = (): void => {
-    if (projectIndex.value) {
-      void projectIndexRepository.deleteProject(projectIndex.value.id).catch(() => undefined);
-    }
+    // 本地索引的物理删除由 useProjectIndex 统一负责，避免同一项目被重复删除。
     projectIndex.value = undefined;
     files.value = [];
     activeFilePath.value = '';

@@ -125,6 +125,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
      */
     private String renderPrompt(List<PromptSection> sections) {
         return sections.stream()
+                .filter(section -> section.type() != com.promptoptimizer.enhancement.domain.PromptSectionType.CLARIFICATIONS)
                 .map(section -> "## " + section.title() + "\n" + section.content())
                 .collect(Collectors.joining("\n\n"));
     }

@@ -13,9 +13,13 @@ const DEFAULT_INDEX_LIMITS: ProjectIndexLimits = {
 
 const FILE_BATCH_SIZE = 200;
 const CHUNK_BATCH_SIZE = 300;
+const MAX_PENDING_BATCH_BYTES = 4 * 1024 * 1024;
 const TEXT_SAMPLE_BYTES = 8_192;
-const MAX_SEARCH_TERMS_PER_CHUNK = 128;
+const MAX_SEARCH_TERMS_PER_CHUNK = 40;
 const MAX_RECORDED_CHANGED_PATHS = 500;
+const PROGRESS_FILE_INTERVAL = 32;
+const PROGRESS_TIME_INTERVAL_MS = 150;
+const PROGRESS_BYTE_INTERVAL = 2 * 1024 * 1024;
 const RETRIEVAL_SCORE = {
   activeFile: 10_000,
   pinnedFile: 8_000,
@@ -135,6 +139,14 @@ export interface ProjectIndexSummary {
 export interface ProjectIndexProgress {
   phase: 'SCANNING' | 'INDEXING' | 'PAUSED' | 'COMPLETED';
   currentPath: string;
+  processedFiles: number;
+  totalFiles?: number;
+  percent?: number;
+  filesPerSecond: number;
+  elapsedMs: number;
+  etaMs?: number;
+  currentFileBytesRead?: number;
+  currentFileSize?: number;
   discoveredFiles: number;
   eligibleFiles: number;
   indexedFiles: number;
@@ -219,6 +231,7 @@ export interface IndexProjectOptions {
   retention?: 'SESSION' | 'PERSISTENT';
   sessionId?: string;
   expiresAt?: string;
+  totalFiles?: number;
   shouldPause?: () => boolean;
   onProgress?: (progress: ProjectIndexProgress) => void;
 }
@@ -302,8 +315,12 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
   const pendingChunks: IndexedProjectChunk[] = [];
   const replacedPaths = new Set<string>();
   let sourceBatch: Extract<ProjectSourceEntry, { kind: 'file' }>[] = [];
+  let pendingBatchBytes = 0;
   let lastReportedFiles = -1;
   let lastReportedAt = 0;
+  let lastReportedFileBytes = 0;
+  let lastReportedPath = '';
+  const indexingStartedAt = performance.now();
 
   const flush = async (): Promise<void> => {
     if (pendingFiles.length === 0 && pendingChunks.length === 0 && replacedPaths.size === 0) {
@@ -315,30 +332,68 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
       Array.from(replacedPaths),
     );
     replacedPaths.clear();
+    pendingBatchBytes = 0;
   };
 
   const flushIfNeeded = async (): Promise<void> => {
-    if (pendingFiles.length >= FILE_BATCH_SIZE || pendingChunks.length >= CHUNK_BATCH_SIZE) {
+    if (
+      pendingFiles.length >= FILE_BATCH_SIZE
+      || pendingChunks.length >= CHUNK_BATCH_SIZE
+      || pendingBatchBytes >= MAX_PENDING_BATCH_BYTES
+    ) {
       await flush();
     }
   };
 
-  const report = (phase: ProjectIndexProgress['phase'], currentPath: string): void => {
-    const now = Date.now();
-    const processedFiles = summary.discoveredFiles + summary.ignoredDirectories;
+  const report = (
+    phase: ProjectIndexProgress['phase'],
+    currentPath: string,
+    currentFileBytesRead?: number,
+    currentFileSize?: number,
+  ): void => {
+    const now = performance.now();
+    const progressUnits = summary.discoveredFiles + summary.ignoredDirectories;
+    const processedFiles = summary.discoveredFiles;
+    const samePath = currentPath === lastReportedPath;
+    const advancedBytes = samePath && currentFileBytesRead !== undefined
+      ? currentFileBytesRead - lastReportedFileBytes
+      : 0;
     if (
       phase !== 'COMPLETED'
       && lastReportedFiles >= 0
-      && processedFiles - lastReportedFiles < 200
-      && now - lastReportedAt < 100
+      && progressUnits - lastReportedFiles < PROGRESS_FILE_INTERVAL
+      && now - lastReportedAt < PROGRESS_TIME_INTERVAL_MS
+      && advancedBytes < PROGRESS_BYTE_INTERVAL
     ) {
       return;
     }
-    lastReportedFiles = processedFiles;
+    lastReportedFiles = progressUnits;
     lastReportedAt = now;
+    lastReportedPath = currentPath;
+    lastReportedFileBytes = currentFileBytesRead ?? 0;
+    const elapsedMs = Math.max(0, now - indexingStartedAt);
+    const filesPerSecond = elapsedMs > 0 ? processedFiles * 1_000 / elapsedMs : 0;
+    const totalFiles = options.totalFiles;
+    const percent = totalFiles !== undefined && totalFiles > 0
+      ? Math.min(100, Math.round((summary.discoveredFiles / totalFiles) * 100))
+      : undefined;
+    const remainingFiles = totalFiles === undefined
+      ? undefined
+      : Math.max(0, totalFiles - summary.discoveredFiles);
+    const etaMs = remainingFiles !== undefined && filesPerSecond > 0
+      ? remainingFiles / filesPerSecond * 1_000
+      : undefined;
     options.onProgress?.({
       phase,
       currentPath,
+      processedFiles,
+      totalFiles,
+      percent,
+      filesPerSecond,
+      elapsedMs,
+      etaMs,
+      currentFileBytesRead,
+      currentFileSize,
       discoveredFiles: summary.discoveredFiles,
       eligibleFiles: summary.eligibleFiles,
       indexedFiles: summary.indexedFiles,
@@ -392,6 +447,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
           imports: existing.imports ?? [],
           lastSeenScanId: scanId,
         });
+        pendingBatchBytes += estimateFileMetadataBytes(entry.path);
         summary.eligibleFiles += 1;
         summary.unchangedFiles += 1;
         summary.chunkCount += existing.chunkCount;
@@ -402,6 +458,8 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         } else {
           summary.indexedFiles += 1;
         }
+        await flushIfNeeded();
+        report('INDEXING', entry.path);
         continue;
       }
 
@@ -412,6 +470,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
       );
       if (classification.action === 'IGNORE') {
         summary.ignoredFiles += 1;
+        report('INDEXING', entry.path);
         continue;
       }
 
@@ -442,8 +501,10 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
           [],
           [],
         ));
+        pendingBatchBytes += metadataBytes;
         summary.estimatedIndexBytes += metadataBytes;
         await flushIfNeeded();
+        report('INDEXING', entry.path);
         continue;
       }
 
@@ -454,7 +515,11 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         let limitedByStorage = false;
         const fileSymbols = new Set<string>();
         const fileImports = new Set<string>();
-        for await (const content of streamTextChunks(entry.file, classification.language)) {
+        for await (const content of streamTextChunks(
+          entry.file,
+          classification.language,
+          (bytesRead) => report('INDEXING', entry.path, bytesRead, entry.file.size),
+        )) {
           const codeMetadata = extractCodeMetadata(content, classification.language);
           codeMetadata.symbols.forEach((symbol) => fileSymbols.add(symbol));
           codeMetadata.imports.forEach((reference) => fileImports.add(reference));
@@ -483,6 +548,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
             symbols: codeMetadata.symbols,
             imports: codeMetadata.imports,
           });
+          pendingBatchBytes += estimatedChunkBytes;
           chunkCount += 1;
           fileCharacters += content.length;
           fileEstimatedBytes += estimatedChunkBytes;
@@ -500,6 +566,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
           Array.from(fileSymbols),
           Array.from(fileImports),
         ));
+        pendingBatchBytes += metadataBytes;
         summary.chunkCount += chunkCount;
         summary.indexedCharacters += fileCharacters;
         summary.estimatedIndexBytes += fileEstimatedBytes;
@@ -512,6 +579,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         summary.failedFiles += 1;
       }
       await flushIfNeeded();
+      report('INDEXING', entry.path);
     }
 
     await flush();
@@ -828,12 +896,14 @@ const STRUCTURED_BOUNDARY_PATTERN = /^(?:\s*)(?:class|interface|enum|record|stru
 const streamTextChunks = async function* (
   file: File,
   language: string,
+  onBytesRead?: (bytesRead: number) => void,
 ): AsyncGenerator<string> {
   const reader = file.stream().getReader();
   const decoder = new TextDecoder('utf-8', { fatal: false });
   let buffer = '';
   let chunk = '';
   const structured = STRUCTURED_CHUNK_LANGUAGES.has(language);
+  let bytesRead = 0;
 
   const flushAtLineBoundary = function* (): Generator<string> {
     const lines = buffer.split(/(?<=\n)/);
@@ -859,6 +929,8 @@ const streamTextChunks = async function* (
       if (result.done) {
         break;
       }
+      bytesRead += result.value.byteLength;
+      onBytesRead?.(bytesRead);
       buffer += decoder.decode(result.value, { stream: true });
       yield* flushAtLineBoundary();
     }

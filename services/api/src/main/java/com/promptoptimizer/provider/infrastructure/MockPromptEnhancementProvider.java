@@ -94,15 +94,11 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
     }
 
     /**
-     * 组装任务目标段落，保留原始需求并提示待确认项。
+     * 组装纯净的任务目标段落；待确认项由独立的 CLARIFICATIONS 段承载。
      */
     private String buildTask(EnhancementProviderRequest request) {
-        StringBuilder task = new StringBuilder("将以下原始需求落实为具体、可执行且可验证的开发任务：\n")
-                .append(request.rawPrompt().trim());
-        if (!request.ambiguities().isEmpty()) {
-            task.append("\n在开始实现前，优先确认下方待确认项；若采用默认假设，必须明确写出假设。");
-        }
-        return task.toString();
+        return "将以下原始需求落实为具体、可执行且可验证的开发任务：\n"
+                + request.rawPrompt().trim();
     }
 
     /**

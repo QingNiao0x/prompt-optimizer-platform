@@ -2,6 +2,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ProjectIndexSummary } from '@/features/project-index/projectIndexer';
+import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
 
 import { useOptimizationStore } from './optimization';
 
@@ -80,5 +81,16 @@ describe('optimization store project context', () => {
 
     expect(files).toHaveLength(1);
     expect(files[0]?.content).toHaveLength(base64.length);
+  });
+
+  it('should clear view state without starting a second project-index deletion', () => {
+    const deleteProject = vi.spyOn(projectIndexRepository, 'deleteProject');
+    const store = useOptimizationStore();
+    store.setProjectIndex(readyIndex());
+
+    store.clearFiles();
+
+    expect(store.projectIndex).toBeUndefined();
+    expect(deleteProject).not.toHaveBeenCalled();
   });
 });

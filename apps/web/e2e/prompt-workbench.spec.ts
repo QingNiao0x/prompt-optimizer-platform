@@ -109,7 +109,8 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
 
   await page.goto('/');
   await page.waitForLoadState('networkidle');
-  await expect(page.getByRole('heading', { name: '把想法写下来，工程细节交给上下文。' })).toBeVisible();
+  await expect(page.getByText('把想法写下来。', { exact: true })).toBeVisible();
+  await expect(page.getByText('工程细节，交给上下文。', { exact: true })).toBeVisible();
 
   await page.getByLabel('自定义项目描述').fill('Spring Boot 3 模块化单体，使用 PostgreSQL。');
   await page.getByText('粘贴当前打开文件').click();
@@ -135,12 +136,18 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await page.getByRole('button', { name: '一键增强提示词' }).click();
   await expect(page.getByRole('dialog', { name: '确认发送项目代码' })).toBeVisible();
   await page.getByRole('button', { name: '确认发送' }).click();
+  const reviewDialog = page.getByRole('dialog');
+  await expect(
+    reviewDialog.getByRole('heading', { name: '请先复核这三个关键部分' }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: '我已查看，继续使用' }).click();
 
   await expect(page.getByText('deepseek', { exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: '任务目标' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: '输入输出' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: '约束条件' })).toBeVisible();
-  await expect(page.getByText('系统识别到 1 个待确认点')).toBeVisible();
+  const resultContent = page.getByLabel('增强结果内容，可滚动查看完整提示词');
+  await expect(resultContent.getByRole('heading', { name: '任务目标' })).toBeVisible();
+  await expect(resultContent.getByRole('heading', { name: '输入输出' })).toBeVisible();
+  await expect(resultContent.getByRole('heading', { name: '约束条件' })).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: '待确认事项' })).toBeVisible();
 });
 
 test('用户可以通过 File System Access API 建立本地项目索引', async ({ page }) => {
@@ -190,6 +197,7 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
   await page.getByLabel('原始提示词').fill('修改 projectName 常量');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
   await page.getByRole('button', { name: '确认发送' }).click();
+  await page.getByRole('button', { name: '我已查看，继续使用' }).click();
   await page.getByText(/查看本次代码选择依据/).click();
   await expect(page.getByText('src/main.ts', { exact: true })).toBeVisible();
   await expect(page.getByText(/任务中的符号/).first()).toBeVisible();
@@ -215,6 +223,9 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
 
   await page.getByRole('button', { name: '增量更新' }).click();
   await expect(page.getByText(/本轮新增 1 · 更新 1 · 未变化 0 · 删除 1/)).toBeVisible();
+
+  await page.getByRole('button', { name: '清空', exact: true }).click();
+  await expect(page.getByText(/个源码文件已建立本地索引/)).not.toBeVisible({ timeout: 1_000 });
 });
 
 test('用户可以暂停并继续本地项目索引', async ({ page }) => {
@@ -253,4 +264,92 @@ test('用户可以暂停并继续本地项目索引', async ({ page }) => {
   await expect(page.getByText(/已暂停，检查点位于/)).toBeVisible();
   await page.getByRole('button', { name: '继续索引' }).click();
   await expect(page.getByText('1 个源码文件已建立本地索引')).toBeVisible();
+});
+
+test('旧版本本地索引升级后仍可按扫描批次清理', async ({ page }) => {
+  await page.addInitScript(async () => {
+    await new Promise<void>((resolve, reject) => {
+      const request = indexedDB.open('prompt-optimizer-project-index', 2);
+      request.onupgradeneeded = () => {
+        const database = request.result;
+        database.createObjectStore('projects', { keyPath: 'id' });
+        const fileStore = database.createObjectStore('files', { keyPath: 'id' });
+        fileStore.createIndex('projectId', 'projectId');
+        fileStore.createIndex('projectPath', ['projectId', 'path'], { unique: true });
+        const chunkStore = database.createObjectStore('chunks', { keyPath: 'id' });
+        chunkStore.createIndex('projectId', 'projectId');
+        chunkStore.createIndex('projectPath', ['projectId', 'path']);
+        chunkStore.createIndex('projectPriority', ['projectId', 'priority']);
+        chunkStore.createIndex('searchTerms', 'searchTerms', { multiEntry: true });
+        database.createObjectStore('sources', { keyPath: 'projectId' });
+      };
+      request.onsuccess = () => {
+        const database = request.result;
+        const transaction = database.transaction(['projects', 'files'], 'readwrite');
+        transaction.objectStore('projects').put({
+          id: 'legacy-project',
+          name: 'legacy-project',
+          rootDirectory: 'legacy-project',
+          status: 'READY',
+          discoveredFiles: 1,
+          eligibleFiles: 1,
+          indexedFiles: 1,
+          metadataOnlyFiles: 0,
+          ignoredFiles: 0,
+          ignoredDirectories: 0,
+          failedFiles: 0,
+          addedFiles: 1,
+          updatedFiles: 0,
+          unchangedFiles: 0,
+          removedFiles: 0,
+          changedPaths: ['src/main.ts'],
+          chunkCount: 0,
+          indexedCharacters: 0,
+          estimatedIndexBytes: 512,
+          scanLimitReached: false,
+          storageLimitReached: false,
+          retention: 'PERSISTENT',
+          sessionId: '',
+          expiresAt: '',
+          scanId: 'legacy-scan',
+          lastCheckpointPath: 'src/main.ts',
+          startedAt: new Date().toISOString(),
+          completedAt: new Date().toISOString(),
+        });
+        transaction.objectStore('files').put({
+          id: 'legacy-project\u0000src/main.ts',
+          projectId: 'legacy-project',
+          path: 'src/main.ts',
+        });
+        transaction.oncomplete = () => {
+          database.close();
+          resolve();
+        };
+        transaction.onerror = () => reject(transaction.error);
+      };
+      request.onerror = () => reject(request.error);
+    });
+    localStorage.setItem('prompt-optimizer.current-project-index.v1', 'legacy-project');
+  });
+
+  await page.goto('/');
+  await expect(page.getByText('1 个源码文件已建立本地索引')).toBeVisible();
+  const scanId = await page.evaluate(async () => new Promise<string | undefined>((resolve, reject) => {
+    const request = indexedDB.open('prompt-optimizer-project-index', 3);
+    request.onsuccess = () => {
+      const database = request.result;
+      const transaction = database.transaction('files', 'readonly');
+      const fileRequest = transaction.objectStore('files').get(
+        'legacy-project\u0000src/main.ts',
+      );
+      fileRequest.onsuccess = () => {
+        resolve((fileRequest.result as { lastSeenScanId?: string } | undefined)?.lastSeenScanId);
+        database.close();
+      };
+      fileRequest.onerror = () => reject(fileRequest.error);
+    };
+    request.onerror = () => reject(request.error);
+  }));
+
+  expect(scanId).toBe('');
 });
