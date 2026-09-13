@@ -26,6 +26,8 @@ export const buildOptimizationRequest = (
       path: file.path.trim(),
       content: file.content,
       language: file.language.trim(),
+      ...(file.documentId ? { documentId: file.documentId } : {}),
+      ...(file.sizeBytes !== undefined ? { sizeBytes: file.sizeBytes } : {}),
     })),
   },
   enhancement: {

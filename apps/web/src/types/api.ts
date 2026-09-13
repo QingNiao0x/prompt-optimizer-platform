@@ -17,6 +17,10 @@ export interface ContextFileInput {
   path: string;
   content: string;
   language: string;
+  /** 大型文档完成分片解析后生成的临时索引编号。 */
+  documentId?: string;
+  /** 原始文件字节数，仅用于展示本次发送范围，不包含文件正文。 */
+  sizeBytes?: number;
 }
 
 export interface ContextAnalysisRequest {
@@ -41,6 +45,7 @@ export interface FileSnippet {
   path: string;
   language: string;
   content: string;
+  summary: string;
   truncated: boolean;
 }
 
@@ -50,9 +55,52 @@ export interface ContextSnapshot {
   dependencies: DependencyItem[];
   directoryTree: string[];
   fileSnippets: FileSnippet[];
+  /** COMPLETE 表示所有文件完成解析；PARTIAL/FAILED 会同时给出原因。 */
+  analysisStatus?: 'EMPTY' | 'COMPLETE' | 'PARTIAL' | 'FAILED';
+  fileCoverage?: FileAnalysisCoverage[];
   warnings: string[];
   redactions: string[];
   analysisVersion: string;
+}
+
+export interface FileAnalysisCoverage {
+  path: string;
+  extractionStatus: 'COMPLETE' | 'PARTIAL' | 'FAILED';
+  sourceBytes: number;
+  extractedCharacters: number;
+  indexedChunks: number;
+  selectedChunks: number;
+  selectedCharacters: number;
+  contextLimited: boolean;
+  message: string;
+}
+
+export type DocumentProcessingPhase =
+  | 'UPLOADING'
+  | 'QUEUED'
+  | 'EXTRACTING'
+  | 'INDEXING'
+  | 'SUMMARIZING'
+  | 'READY'
+  | 'PARTIAL'
+  | 'FAILED'
+  | 'CANCELLED';
+
+export interface DocumentUploadStatus {
+  documentId: string;
+  path: string;
+  language: string;
+  phase: DocumentProcessingPhase;
+  fileSizeBytes: number;
+  uploadedBytes: number;
+  progressPercent: number;
+  extractedCharacters: number;
+  chunkCount: number;
+  summary: string;
+  warnings: string[];
+  errorMessage: string;
+  expiresAt: string;
+  chunkSizeBytes: number;
 }
 
 export type TemplateCode =

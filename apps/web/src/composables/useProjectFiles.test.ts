@@ -1,7 +1,10 @@
 import * as XLSX from 'xlsx';
 import { describe, expect, it } from 'vitest';
 
-import { collectCandidateFiles } from '../workers/fileReaderCore';
+import {
+  collectCandidateFiles,
+  shouldUseTemporaryDocumentIndex,
+} from '../workers/fileReaderCore';
 import { readProjectFiles } from './useProjectFiles';
 
 describe('readProjectFiles', () => {
@@ -24,10 +27,20 @@ describe('readProjectFiles', () => {
     expect(selection.files).toHaveLength(1);
     expect(selection.files[0]).toMatchObject({
       path: '需求清单.xlsx',
-      language: 'spreadsheet',
+      language: 'xlsx',
     });
     expect(selection.files[0]?.content).toContain('工作表：需求清单');
     expect(selection.files[0]?.content).toContain('提示词增强\tQingNiao');
+  });
+
+  it('should route office files and large text documents to the temporary full-text index', () => {
+    const docx = new File(['PK'], '需求说明.docx');
+    const largeText = new File([new Uint8Array(1_000_001)], '论文.txt');
+    const source = new File(['class Demo {}'], 'Demo.java');
+
+    expect(shouldUseTemporaryDocumentIndex(docx)).toBe(true);
+    expect(shouldUseTemporaryDocumentIndex(largeText)).toBe(true);
+    expect(shouldUseTemporaryDocumentIndex(source)).toBe(false);
   });
 
   it('should encode docx files as base64 so the backend can extract text', async () => {

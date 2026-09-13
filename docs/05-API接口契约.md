@@ -3,7 +3,7 @@
 ## 1. 通用约定
 
 - 基础路径：`/api/v1`。
-- 内容类型：`application/json`；文件上传使用 `multipart/form-data`。
+- 内容类型：业务请求使用 `application/json`；大型文档分片使用 `application/octet-stream`。
 - 时间：ISO-8601 UTC。
 - ID：UUID 字符串。
 - 所有需要工作区的数据都携带 `workspaceId`，不从客户端传入任意 `tenantId`。
@@ -169,15 +169,50 @@
 }
 ```
 
-响应中的 `technologyStack`、`dependencies`、`directoryTree`、`fileSnippets`、`warnings` 和 `redactions` 均为分析结果；原始内容不默认持久化。
+响应中的 `technologyStack`、`dependencies`、`directoryTree`、`fileSnippets`、`warnings` 和 `redactions` 均为分析结果；原始内容不默认持久化。`technologyStack` 的每一项包含识别名称、来源文件和置信度，`fileSnippets` 的每一项包含路径、语言、短时内容片段、独立内容摘要和截断状态。图片只返回元数据摘要，并通过 `warnings` 明确提示尚未进行 OCR 或视觉识别。
 
-当一次 JSON 请求不足以承载文件时使用：
+响应还包含：
 
-- `POST /api/v1/context-snapshots`：上传用户主动选择的文件集合，返回短时 `snapshotId`。
-- `GET /api/v1/context-snapshots/{id}`：获取识别报告，不返回超出权限的原始内容。
-- `DELETE /api/v1/context-snapshots/{id}`：提前释放短时上下文。
+- `analysisStatus`：`EMPTY`、`COMPLETE`、`PARTIAL` 或 `FAILED`。
+- `fileCoverage`：每个文件的原始大小、提取字符数、索引片段数、本次选取片段数和不完整原因。
 
-`snapshotId` 应设置短 TTL，并与用户、工作区和请求绑定，不能作为长期项目文件存储 ID 使用。
+### 大型文档分片上传与临时全文索引
+
+Office、PDF、图片以及超过 1 MB 的普通文档不再编码成超大 Base64 JSON。前端先创建上传任务，再按服务端返回的 1 MiB 分片大小上传原始字节：
+
+| 方法 | 路径 | 内容类型 | 用途 |
+| --- | --- | --- | --- |
+| `POST` | `/api/v1/context/documents` | `application/json` | 创建上传任务并返回 `documentId`、分片大小和状态 |
+| `PUT` | `/api/v1/context/documents/{documentId}/chunks/{chunkIndex}` | `application/octet-stream` | 上传固定编号分片；相同编号允许安全重试 |
+| `POST` | `/api/v1/context/documents/{documentId}/complete` | `application/json` | 校验分片完整性并启动异步解析 |
+| `GET` | `/api/v1/context/documents/{documentId}` | `application/json` | 查询上传、排队、解析、索引和摘要进度 |
+| `DELETE` | `/api/v1/context/documents/{documentId}` | `application/json` | 取消处理并提前清除临时文件和索引 |
+
+创建任务示例：
+
+```json
+{
+  "path": "docs/大型研究报告.docx",
+  "language": "docx",
+  "sizeBytes": 31457280
+}
+```
+
+解析完成后，`POST /api/v1/context/analyze` 和 `POST /api/v1/optimizations` 只携带轻量引用：
+
+```json
+{
+  "path": "docs/大型研究报告.docx",
+  "content": "",
+  "language": "docx",
+  "documentId": "4f83b5e8-...",
+  "sizeBytes": 31457280
+}
+```
+
+后端会为“分析上下文”选择全文均匀分布的代表片段，为“一键增强”按照原始提示词检索相关片段；当提示词没有字面命中或命中不足时，剩余名额也会从全文均匀补位，避免泛化任务偏向文档开头。单个文档当前上限为 50 MiB，提取内容安全上限为 100,000,000 字符，临时索引 TTL 为 2 小时；源文件在解析结束后立即删除，索引只保存在服务端临时目录，不写入 PostgreSQL 或优化历史。
+
+当前 `documentId` 是进程内短时引用，不是长期项目文件 ID。用户清空文件、关闭页面或任务到期时会清理；生产环境增加用户登录后，还必须把该 ID 与用户、租户和工作区绑定。
 
 ## 6. 错误模型
 

@@ -1,0 +1,736 @@
+package com.promptoptimizer.context.application;
+
+import com.promptoptimizer.context.api.DocumentUploadCreateRequest;
+import com.promptoptimizer.context.domain.DocumentProcessingPhase;
+import com.promptoptimizer.context.domain.DocumentSelection;
+import com.promptoptimizer.context.domain.DocumentUploadStatus;
+import jakarta.annotation.PreDestroy;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+/**
+ * @DateTime: 2026-09-12
+ * @Author: QingNiao
+ * @ProjectName: prompt-optimizer-platform
+ * @Description: 接收大型文档分片，在临时目录完成异步解析和全文分块索引，并按任务检索相关片段。
+ */
+@Service
+public class TemporaryDocumentIndexService implements DocumentIndexLookup {
+
+    public static final int UPLOAD_CHUNK_BYTES = 1024 * 1024;
+    public static final long MAX_DOCUMENT_BYTES = 50L * 1024 * 1024;
+
+    private static final long MAX_ACTIVE_SOURCE_BYTES = 512L * 1024 * 1024;
+    private static final int MAX_ACTIVE_DOCUMENTS = 100;
+    private static final int INDEX_CHUNK_CHARACTERS = 6_000;
+    private static final int INDEX_CHUNK_OVERLAP = 400;
+    private static final Duration DOCUMENT_TTL = Duration.ofHours(2);
+    private static final Pattern WINDOWS_ABSOLUTE_PATH = Pattern.compile("^[A-Za-z]:[\\\\/].*");
+    private static final Pattern TRAVERSAL_PATH = Pattern.compile("(^|/)\\.\\.($|/)");
+    private static final Set<String> SENSITIVE_FILE_NAMES = Set.of(
+            ".env", ".env.local", ".env.development", ".env.production",
+            "id_rsa", "id_ed25519", "credentials", "credentials.json"
+    );
+    private static final Set<String> SUPPORTED_LANGUAGES = Set.of(
+            "text", "txt", "markdown", "restructuredtext", "latex", "asciidoc", "csv", "tsv",
+            "doc", "docx", "wps", "odt", "ppt", "pptx", "dps", "odp",
+            "xls", "xlsx", "et", "ods", "pdf", "jpeg", "jpg", "png", "gif", "webp", "bmp"
+    );
+
+    private final StreamingDocumentExtractor documentExtractor;
+    private final FileContentSummarizer fileContentSummarizer;
+    private final ContentChunkSelector contentChunkSelector = new ContentChunkSelector();
+    private final Map<String, UploadSession> sessions = new ConcurrentHashMap<>();
+    private final ExecutorService executor;
+    private final Path rootDirectory;
+
+    public TemporaryDocumentIndexService(
+            StreamingDocumentExtractor documentExtractor,
+            FileContentSummarizer fileContentSummarizer
+    ) {
+        this.documentExtractor = documentExtractor;
+        this.fileContentSummarizer = fileContentSummarizer;
+        this.executor = Executors.newFixedThreadPool(
+                Math.max(2, Math.min(4, Runtime.getRuntime().availableProcessors() / 2)),
+                Thread.ofPlatform().name("document-index-", 0).factory()
+        );
+        try {
+            this.rootDirectory = Files.createTempDirectory("prompt-optimizer-documents-")
+                    .toAbsolutePath()
+                    .normalize();
+        } catch (IOException exception) {
+            throw new IllegalStateException("无法创建大型文档临时目录", exception);
+        }
+    }
+
+    /**
+     * 创建上传会话。这里只保存文件元数据，不接收浏览器真实绝对路径。
+     */
+    public DocumentUploadStatus create(DocumentUploadCreateRequest request) {
+        cleanupExpired();
+        String path = normalizeAndValidatePath(request.path());
+        String language = normalizeLanguage(request.language());
+        if (request.sizeBytes() > MAX_DOCUMENT_BYTES) {
+            throw new DocumentUploadException(
+                    DocumentUploadException.Reason.PAYLOAD_TOO_LARGE,
+                    "单个文档不能超过 50 MB"
+            );
+        }
+        if (sessions.size() >= MAX_ACTIVE_DOCUMENTS || activeSourceBytes() + request.sizeBytes() > MAX_ACTIVE_SOURCE_BYTES) {
+            throw new DocumentUploadException(
+                    DocumentUploadException.Reason.CAPACITY_EXCEEDED,
+                    "当前正在处理的文档较多，请稍后重试"
+            );
+        }
+
+        String documentId = UUID.randomUUID().toString();
+        Path directory = rootDirectory.resolve(documentId).normalize();
+        assertInsideRoot(directory);
+        try {
+            Files.createDirectory(directory);
+            Path sourceFile = directory.resolve("source.upload");
+            Files.createFile(sourceFile);
+            UploadSession session = new UploadSession(
+                    documentId,
+                    path,
+                    language,
+                    request.sizeBytes(),
+                    directory,
+                    sourceFile,
+                    directory.resolve("chunks.data"),
+                    Instant.now().plus(DOCUMENT_TTL)
+            );
+            sessions.put(documentId, session);
+            return statusOf(session);
+        } catch (IOException exception) {
+            deleteDirectoryQuietly(directory);
+            throw new DocumentUploadException(
+                    DocumentUploadException.Reason.CONFLICT,
+                    "无法创建文档上传任务",
+                    exception
+            );
+        }
+    }
+
+    /**
+     * 写入一个固定大小分片。相同编号可安全重试，后一次内容会覆盖同一文件区间。
+     */
+    public DocumentUploadStatus appendChunk(String documentId, int chunkIndex, byte[] content) {
+        UploadSession session = requireSession(documentId);
+        synchronized (session.monitor) {
+            assertPhase(session, DocumentProcessingPhase.UPLOADING);
+            if (chunkIndex < 0 || chunkIndex >= session.expectedChunks) {
+                throw invalid("分片编号超出范围");
+            }
+            int expectedLength = expectedChunkLength(session, chunkIndex);
+            if (content == null || content.length != expectedLength) {
+                throw invalid("分片大小不正确，期望 " + expectedLength + " 字节");
+            }
+            long offset = (long) chunkIndex * UPLOAD_CHUNK_BYTES;
+            try (FileChannel channel = FileChannel.open(
+                    session.sourceFile,
+                    StandardOpenOption.WRITE
+            )) {
+                channel.position(offset);
+                ByteBuffer buffer = ByteBuffer.wrap(content);
+                while (buffer.hasRemaining()) {
+                    channel.write(buffer);
+                }
+            } catch (IOException exception) {
+                throw new DocumentUploadException(
+                        DocumentUploadException.Reason.CONFLICT,
+                        "文档分片写入失败，请重试当前分片",
+                        exception
+                );
+            }
+            if (!session.receivedChunks.get(chunkIndex)) {
+                session.receivedChunks.set(chunkIndex);
+                session.uploadedBytes += content.length;
+            }
+            session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
+            session.progressPercent = uploadPercent(session);
+            return statusOf(session);
+        }
+    }
+
+    /**
+     * 校验所有分片并启动受限线程池中的解析任务。
+     */
+    public DocumentUploadStatus completeUpload(String documentId) {
+        UploadSession session = requireSession(documentId);
+        synchronized (session.monitor) {
+            assertPhase(session, DocumentProcessingPhase.UPLOADING);
+            if (session.receivedChunks.cardinality() != session.expectedChunks
+                    || session.uploadedBytes != session.fileSizeBytes) {
+                throw new DocumentUploadException(
+                        DocumentUploadException.Reason.CONFLICT,
+                        "文件分片尚未上传完整"
+                );
+            }
+            session.phase = DocumentProcessingPhase.QUEUED;
+            session.progressPercent = 41;
+            session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
+            session.task = executor.submit(() -> process(session));
+            return statusOf(session);
+        }
+    }
+
+    public DocumentUploadStatus getStatus(String documentId) {
+        UploadSession session = requireSession(documentId);
+        session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
+        return statusOf(session);
+    }
+
+    /**
+     * 删除用户不再使用的临时文档。处理中任务先取消，再清理临时文件。
+     */
+    public void delete(String documentId) {
+        UploadSession session = sessions.remove(documentId);
+        if (session == null) {
+            return;
+        }
+        synchronized (session.monitor) {
+            session.cancelled = true;
+            session.phase = DocumentProcessingPhase.CANCELLED;
+            if (session.task != null) {
+                session.task.cancel(true);
+            }
+        }
+        deleteDirectoryQuietly(session.directory);
+    }
+
+    /**
+     * 从全文索引选取与提示词相关的片段，并同时保留均匀分布的代表片段。
+     */
+    @Override
+    public Optional<DocumentSelection> retrieve(
+            String documentId,
+            String query,
+            int maxCharacters,
+            int maxChunks
+    ) {
+        if (documentId == null || documentId.isBlank()) {
+            return Optional.empty();
+        }
+        UploadSession session = sessions.get(documentId);
+        if (session == null) {
+            return Optional.empty();
+        }
+        synchronized (session.monitor) {
+            if (session.phase != DocumentProcessingPhase.READY
+                    && session.phase != DocumentProcessingPhase.PARTIAL) {
+                return Optional.empty();
+            }
+            session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
+            List<ChunkRecord> selectedRecords = selectRecords(session, query, maxChunks);
+            StringBuilder content = new StringBuilder();
+            int selectedCharacters = 0;
+            int selectedChunks = 0;
+            for (ChunkRecord record : selectedRecords) {
+                int remaining = maxCharacters - selectedCharacters;
+                if (remaining <= 0) {
+                    break;
+                }
+                String chunk = readChunk(session, record);
+                String value = chunk.length() > remaining ? chunk.substring(0, remaining) : chunk;
+                if (!content.isEmpty()) {
+                    content.append("\n\n");
+                }
+                content.append("[文档片段 ")
+                        .append(record.index() + 1)
+                        .append('/')
+                        .append(session.chunks.size())
+                        .append(" · ")
+                        .append(record.label())
+                        .append("]\n")
+                        .append(value);
+                selectedCharacters += value.length();
+                selectedChunks++;
+            }
+            return Optional.of(new DocumentSelection(
+                    session.path,
+                    session.language,
+                    content.toString(),
+                    session.summary,
+                    session.fileSizeBytes,
+                    session.extractedCharacters,
+                    session.chunks.size(),
+                    selectedChunks,
+                    selectedCharacters,
+                    session.extractionComplete,
+                    session.warnings
+            ));
+        }
+    }
+
+    private void process(UploadSession session) {
+        try {
+            synchronized (session.monitor) {
+                if (session.cancelled) {
+                    return;
+                }
+                session.phase = DocumentProcessingPhase.EXTRACTING;
+                session.progressPercent = 45;
+            }
+            try (DocumentChunkWriter writer = new DocumentChunkWriter(session)) {
+                StreamingDocumentExtractor.ExtractionReport report = documentExtractor.extract(
+                        session.sourceFile,
+                        session.path,
+                        session.language,
+                        writer::append,
+                        (processed, total) -> updateExtractionProgress(session, processed, total)
+                );
+                synchronized (session.monitor) {
+                    session.phase = DocumentProcessingPhase.INDEXING;
+                    session.progressPercent = 88;
+                }
+                writer.finish();
+                synchronized (session.monitor) {
+                    session.extractedCharacters = report.extractedCharacters();
+                    session.extractionComplete = report.complete();
+                    session.warnings = new ArrayList<>(report.warnings());
+                    session.phase = DocumentProcessingPhase.SUMMARIZING;
+                    session.progressPercent = 95;
+                    session.summary = buildSummary(session);
+                    session.phase = report.complete()
+                            ? DocumentProcessingPhase.READY
+                            : DocumentProcessingPhase.PARTIAL;
+                    session.progressPercent = 100;
+                    session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
+                }
+            }
+        } catch (Exception exception) {
+            synchronized (session.monitor) {
+                if (!session.cancelled) {
+                    session.phase = DocumentProcessingPhase.FAILED;
+                    session.errorMessage = safeErrorMessage(exception);
+                    session.progressPercent = 100;
+                }
+            }
+            deleteFileQuietly(session.chunkFile);
+        } finally {
+            deleteFileQuietly(session.sourceFile);
+        }
+    }
+
+    private void updateExtractionProgress(UploadSession session, long processed, long total) {
+        synchronized (session.monitor) {
+            if (session.cancelled || Thread.currentThread().isInterrupted()) {
+                throw new DocumentUploadException(
+                        DocumentUploadException.Reason.CONFLICT,
+                        "文档处理已取消"
+                );
+            }
+            double ratio = total <= 0 ? 0 : Math.min(1D, (double) processed / total);
+            session.progressPercent = 45 + (int) Math.round(ratio * 40);
+        }
+    }
+
+    private String buildSummary(UploadSession session) {
+        if (session.chunks.isEmpty()) {
+            return "";
+        }
+        LinkedHashSet<Integer> indexes = representativeIndexes(session.chunks.size(), 5);
+        StringBuilder representativeContent = new StringBuilder();
+        for (Integer index : indexes) {
+            if (!representativeContent.isEmpty()) {
+                representativeContent.append("\n");
+            }
+            representativeContent.append(readChunk(session, session.chunks.get(index)));
+        }
+        return fileContentSummarizer.summarize(
+                session.path,
+                session.language,
+                representativeContent.toString()
+        );
+    }
+
+    private List<ChunkRecord> selectRecords(UploadSession session, String query, int maxChunks) {
+        int limit = Math.max(1, Math.min(maxChunks, session.chunks.size()));
+        Set<String> queryTerms = contentChunkSelector.extractSearchTerms(query);
+        LinkedHashSet<Integer> selected = new LinkedHashSet<>();
+        // 为文档首部、正文中部和结尾预留位置，再补充任务相关片段。
+        // 这样即便大量段落都命中同一关键词，结论与验收部分也不会被完全挤出。
+        representativeIndexes(session.chunks.size(), Math.min(3, limit)).forEach(selected::add);
+        if (!queryTerms.isEmpty()) {
+            session.chunks.stream()
+                    .map(record -> new ScoredRecord(record, score(record, queryTerms)))
+                    .filter(item -> item.score() > 0)
+                    .sorted(Comparator.comparingInt(ScoredRecord::score).reversed()
+                            .thenComparingInt(item -> item.record().index()))
+                    .forEach(item -> {
+                        if (selected.size() < limit) {
+                            selected.add(item.record().index());
+                        }
+                    });
+        }
+        // 泛化任务可能与正文没有字面关键词，剩余名额使用均匀样本覆盖全文。
+        representativeIndexes(session.chunks.size(), limit).forEach(selected::add);
+        for (int index = 0; selected.size() < limit && index < session.chunks.size(); index++) {
+            selected.add(index);
+        }
+        return selected.stream()
+                .limit(limit)
+                .sorted()
+                .map(index -> session.chunks.get(index))
+                .toList();
+    }
+
+    private int score(ChunkRecord record, Set<String> queryTerms) {
+        int score = 0;
+        for (String term : queryTerms) {
+            if (record.searchTerms().contains(term)) {
+                score += Math.min(20, 2 + term.length());
+            }
+            if (record.label().toLowerCase(Locale.ROOT).contains(term)) {
+                score += 8;
+            }
+        }
+        return score;
+    }
+
+    private LinkedHashSet<Integer> representativeIndexes(int chunkCount, int limit) {
+        LinkedHashSet<Integer> indexes = new LinkedHashSet<>();
+        int count = Math.min(limit, chunkCount);
+        if (count == 1) {
+            indexes.add(0);
+            return indexes;
+        }
+        for (int position = 0; position < count; position++) {
+            indexes.add(Math.round((float) position * (chunkCount - 1) / (count - 1)));
+        }
+        return indexes;
+    }
+
+    private String readChunk(UploadSession session, ChunkRecord record) {
+        ByteBuffer buffer = ByteBuffer.allocate(record.byteLength());
+        try (FileChannel channel = FileChannel.open(session.chunkFile, StandardOpenOption.READ)) {
+            channel.position(record.byteOffset());
+            while (buffer.hasRemaining() && channel.read(buffer) >= 0) {
+                // FileChannel 可能分多次返回，持续读取到当前块结束。
+            }
+        } catch (IOException exception) {
+            throw new DocumentUploadException(
+                    DocumentUploadException.Reason.CONFLICT,
+                    "临时文档索引读取失败，请重新上传文件",
+                    exception
+            );
+        }
+        buffer.flip();
+        return StandardCharsets.UTF_8.decode(buffer).toString();
+    }
+
+    private DocumentUploadStatus statusOf(UploadSession session) {
+        synchronized (session.monitor) {
+            return new DocumentUploadStatus(
+                    session.documentId,
+                    session.path,
+                    session.language,
+                    session.phase,
+                    session.fileSizeBytes,
+                    session.uploadedBytes,
+                    session.progressPercent,
+                    session.extractedCharacters,
+                    session.chunks.size(),
+                    session.summary,
+                    session.warnings,
+                    session.errorMessage,
+                    session.expiresAt,
+                    UPLOAD_CHUNK_BYTES
+            );
+        }
+    }
+
+    private UploadSession requireSession(String documentId) {
+        cleanupExpired();
+        UploadSession session = sessions.get(documentId);
+        if (session == null) {
+            throw new DocumentUploadException(
+                    DocumentUploadException.Reason.NOT_FOUND,
+                    "文档上传任务不存在或已过期"
+            );
+        }
+        return session;
+    }
+
+    private void assertPhase(UploadSession session, DocumentProcessingPhase expected) {
+        if (session.phase != expected) {
+            throw new DocumentUploadException(
+                    DocumentUploadException.Reason.CONFLICT,
+                    "当前文档状态不允许执行该操作：" + session.phase
+            );
+        }
+    }
+
+    private int expectedChunkLength(UploadSession session, int chunkIndex) {
+        long offset = (long) chunkIndex * UPLOAD_CHUNK_BYTES;
+        return Math.toIntExact(Math.min(UPLOAD_CHUNK_BYTES, session.fileSizeBytes - offset));
+    }
+
+    private int uploadPercent(UploadSession session) {
+        return Math.min(40, (int) Math.round((double) session.uploadedBytes / session.fileSizeBytes * 40));
+    }
+
+    private long activeSourceBytes() {
+        return sessions.values().stream()
+                .filter(session -> session.phase == DocumentProcessingPhase.UPLOADING
+                        || session.phase == DocumentProcessingPhase.QUEUED
+                        || session.phase == DocumentProcessingPhase.EXTRACTING)
+                .mapToLong(session -> session.fileSizeBytes)
+                .sum();
+    }
+
+    private String normalizeAndValidatePath(String rawPath) {
+        String path = rawPath == null ? "" : rawPath.trim().replace('\\', '/');
+        while (path.startsWith("./")) {
+            path = path.substring(2);
+        }
+        String fileName = path.substring(path.lastIndexOf('/') + 1).toLowerCase(Locale.ROOT);
+        if (path.isBlank() || path.startsWith("/") || WINDOWS_ABSOLUTE_PATH.matcher(path).matches()
+                || TRAVERSAL_PATH.matcher(path).find()) {
+            throw invalid("只能上传相对路径，不能包含目录穿越");
+        }
+        if (SENSITIVE_FILE_NAMES.contains(fileName)
+                || (fileName.startsWith(".env.") && !".env.example".equals(fileName))
+                || fileName.endsWith(".pem") || fileName.endsWith(".key")
+                || fileName.endsWith(".p12") || fileName.endsWith(".jks")) {
+            throw invalid("受保护文件不能进入文档索引");
+        }
+        return path;
+    }
+
+    private String normalizeLanguage(String language) {
+        String normalized = language == null ? "" : language.trim().toLowerCase(Locale.ROOT);
+        if (!SUPPORTED_LANGUAGES.contains(normalized)) {
+            throw invalid("暂不支持该大型文档类型：" + normalized);
+        }
+        return normalized;
+    }
+
+    private void assertInsideRoot(Path path) {
+        if (!path.startsWith(rootDirectory)) {
+            throw invalid("临时文档路径无效");
+        }
+    }
+
+    private DocumentUploadException invalid(String message) {
+        return new DocumentUploadException(DocumentUploadException.Reason.INVALID_ARGUMENT, message);
+    }
+
+    private String safeErrorMessage(Exception exception) {
+        String message = exception.getMessage();
+        return message == null || message.isBlank() ? "文档解析失败，请检查文件是否损坏" : message;
+    }
+
+    private void cleanupExpired() {
+        Instant now = Instant.now();
+        sessions.values().stream()
+                .filter(session -> session.expiresAt.isBefore(now))
+                .map(session -> session.documentId)
+                .toList()
+                .forEach(this::delete);
+    }
+
+    private void deleteFileQuietly(Path path) {
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException ignored) {
+            // 由会话到期清理再次尝试，不能因为临时文件占用覆盖主要处理结果。
+        }
+    }
+
+    private void deleteDirectoryQuietly(Path directory) {
+        if (directory == null || !directory.normalize().startsWith(rootDirectory)) {
+            return;
+        }
+        try (Stream<Path> paths = Files.walk(directory)) {
+            paths.sorted(Comparator.reverseOrder()).forEach(this::deleteFileQuietly);
+        } catch (IOException ignored) {
+            // 临时目录清理失败不向客户端暴露本机路径。
+        }
+    }
+
+    @PreDestroy
+    public void close() {
+        executor.shutdownNow();
+        sessions.clear();
+        deleteDirectoryQuietly(rootDirectory);
+    }
+
+    private final class DocumentChunkWriter implements AutoCloseable {
+
+        private final UploadSession session;
+        private final FileChannel channel;
+        private final StringBuilder pending = new StringBuilder(INDEX_CHUNK_CHARACTERS * 2);
+        private String currentLabel = "文档正文";
+
+        private DocumentChunkWriter(UploadSession session) throws IOException {
+            this.session = session;
+            this.channel = FileChannel.open(
+                    session.chunkFile,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING,
+                    StandardOpenOption.WRITE
+            );
+        }
+
+        private void append(String label, String content) throws IOException {
+            if (session.cancelled || Thread.currentThread().isInterrupted()) {
+                throw new DocumentUploadException(
+                        DocumentUploadException.Reason.CONFLICT,
+                        "文档处理已取消"
+                );
+            }
+            currentLabel = label;
+            appendBounded("## " + label + '\n', label);
+            appendBounded(content, label);
+            appendBounded("\n", label);
+        }
+
+        /**
+         * 分段追加正文，确保 pending 始终只保留一个索引块和重叠区。
+         * PDF 单页或 Word 单段可能非常长，不能先把整段复制到 StringBuilder 再切分。
+         */
+        private void appendBounded(String value, String label) throws IOException {
+            int offset = 0;
+            while (offset < value.length()) {
+                int available = INDEX_CHUNK_CHARACTERS - pending.length();
+                int end = Math.min(value.length(), offset + Math.max(1, available));
+                pending.append(value, offset, end);
+                offset = end;
+                if (pending.length() < INDEX_CHUNK_CHARACTERS) {
+                    continue;
+                }
+
+                writeChunk(pending.substring(0, INDEX_CHUNK_CHARACTERS), label);
+                String overlap = pending.substring(INDEX_CHUNK_CHARACTERS - INDEX_CHUNK_OVERLAP);
+                pending.setLength(0);
+                pending.append(overlap);
+            }
+        }
+
+        private void finish() throws IOException {
+            if (!pending.isEmpty()
+                    && (session.chunks.isEmpty() || pending.length() > INDEX_CHUNK_OVERLAP)) {
+                writeChunk(pending.toString(), currentLabel);
+                pending.setLength(0);
+            }
+            channel.force(false);
+        }
+
+        private void writeChunk(String content, String label) throws IOException {
+            byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
+            long offset = channel.position();
+            ByteBuffer buffer = ByteBuffer.wrap(bytes);
+            while (buffer.hasRemaining()) {
+                channel.write(buffer);
+            }
+            synchronized (session.monitor) {
+                int index = session.chunks.size();
+                session.chunks.add(new ChunkRecord(
+                        index,
+                        label,
+                        offset,
+                        bytes.length,
+                        contentChunkSelector.extractSearchTerms(content)
+                ));
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            channel.close();
+        }
+    }
+
+    private static final class UploadSession {
+
+        private final Object monitor = new Object();
+        private final String documentId;
+        private final String path;
+        private final String language;
+        private final long fileSizeBytes;
+        private final int expectedChunks;
+        private final Path directory;
+        private final Path sourceFile;
+        private final Path chunkFile;
+        private final BitSet receivedChunks;
+        private final List<ChunkRecord> chunks = new ArrayList<>();
+
+        private volatile DocumentProcessingPhase phase = DocumentProcessingPhase.UPLOADING;
+        private volatile long uploadedBytes;
+        private volatile int progressPercent;
+        private volatile long extractedCharacters;
+        private volatile boolean extractionComplete;
+        private volatile String summary = "";
+        private volatile List<String> warnings = List.of();
+        private volatile String errorMessage = "";
+        private volatile Instant expiresAt;
+        private volatile boolean cancelled;
+        private volatile Future<?> task;
+
+        private UploadSession(
+                String documentId,
+                String path,
+                String language,
+                long fileSizeBytes,
+                Path directory,
+                Path sourceFile,
+                Path chunkFile,
+                Instant expiresAt
+        ) {
+            this.documentId = documentId;
+            this.path = path;
+            this.language = language;
+            this.fileSizeBytes = fileSizeBytes;
+            this.expectedChunks = Math.toIntExact(
+                    (fileSizeBytes + UPLOAD_CHUNK_BYTES - 1) / UPLOAD_CHUNK_BYTES
+            );
+            this.directory = directory;
+            this.sourceFile = sourceFile;
+            this.chunkFile = chunkFile;
+            this.receivedChunks = new BitSet(expectedChunks);
+            this.expiresAt = expiresAt;
+        }
+    }
+
+    private record ChunkRecord(
+            int index,
+            String label,
+            long byteOffset,
+            int byteLength,
+            Set<String> searchTerms
+    ) {
+        private ChunkRecord {
+            searchTerms = Set.copyOf(searchTerms);
+        }
+    }
+
+    private record ScoredRecord(ChunkRecord record, int score) {
+    }
+}

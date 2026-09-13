@@ -2,6 +2,7 @@ package com.promptoptimizer.common.exception;
 
 import com.promptoptimizer.common.api.ApiError;
 import com.promptoptimizer.common.api.ApiErrorResponse;
+import com.promptoptimizer.context.application.DocumentUploadException;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
 import jakarta.servlet.http.HttpServletRequest;
@@ -120,6 +121,32 @@ public class GlobalExceptionHandler {
                 "SERVICE_CONFIGURATION_ERROR",
                 "服务端尚未配置 API Key 加密主密钥，请联系管理员。",
                 false,
+                Map.of()
+        );
+    }
+
+    /**
+     * 将大型文档上传中的可预期错误转换为稳定状态码，不暴露临时文件路径或异常堆栈。
+     */
+    @ExceptionHandler(DocumentUploadException.class)
+    public ResponseEntity<ApiErrorResponse> handleDocumentUploadException(
+            DocumentUploadException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = switch (exception.getReason()) {
+            case INVALID_ARGUMENT -> HttpStatus.BAD_REQUEST;
+            case NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case CONFLICT -> HttpStatus.CONFLICT;
+            case PAYLOAD_TOO_LARGE -> HttpStatus.PAYLOAD_TOO_LARGE;
+            case CAPACITY_EXCEEDED -> HttpStatus.TOO_MANY_REQUESTS;
+        };
+        return buildResponse(
+                request,
+                status,
+                "DOCUMENT_PROCESSING_ERROR",
+                exception.getMessage(),
+                exception.getReason() == DocumentUploadException.Reason.CONFLICT
+                        || exception.getReason() == DocumentUploadException.Reason.CAPACITY_EXCEEDED,
                 Map.of()
         );
     }

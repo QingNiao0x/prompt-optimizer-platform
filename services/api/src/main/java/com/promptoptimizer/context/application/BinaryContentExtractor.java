@@ -53,7 +53,10 @@ public class BinaryContentExtractor {
             "odt", "ods", "odp", "jpeg", "png", "gif", "webp", "bmp"
     );
 
-    private static final int MAX_EXTRACTED_CHARS = 60_000;
+    /**
+     * Base64 兼容接口的提取保护上限。大型文件走分片上传和临时全文索引，不受该值限制。
+     */
+    private static final int MAX_EXTRACTED_CHARS = 5_000_000;
 
     /**
      * 判断语言标识是否属于当前支持的二进制文件。
@@ -183,16 +186,14 @@ public class BinaryContentExtractor {
             for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
                 result.append("## 工作表：").append(workbook.getSheetName(sheetIndex)).append('\n');
                 var sheet = workbook.getSheetAt(sheetIndex);
-                int rowCount = 0;
                 for (var row : sheet) {
-                    if (rowCount++ >= 200) {
-                        break;
-                    }
-                    for (int column = 0; column < 30; column++) {
-                        if (column > 0) {
+                    boolean firstCell = true;
+                    for (var cell : row) {
+                        if (!firstCell) {
                             result.append('\t');
                         }
-                        result.append(formatter.formatCellValue(row.getCell(column)));
+                        result.append(formatter.formatCellValue(cell));
+                        firstCell = false;
                     }
                     result.append('\n');
                     if (result.length() >= MAX_EXTRACTED_CHARS) {

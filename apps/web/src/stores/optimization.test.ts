@@ -83,6 +83,27 @@ describe('optimization store project context', () => {
     expect(files[0]?.content).toHaveLength(base64.length);
   });
 
+  it('should keep a temporary document reference even when the inline character budget is empty', async () => {
+    const store = useOptimizationStore();
+    store.addFile({
+      path: 'docs/long-report.docx',
+      language: 'docx',
+      content: '',
+      documentId: 'document-123',
+      sizeBytes: 40_000_000,
+    });
+
+    const files = await store.prepareContextFiles('查找验收标准');
+
+    expect(files).toEqual([{
+      path: 'docs/long-report.docx',
+      language: 'docx',
+      content: '',
+      documentId: 'document-123',
+      sizeBytes: 40_000_000,
+    }]);
+  });
+
   it('should clear view state without starting a second project-index deletion', () => {
     const deleteProject = vi.spyOn(projectIndexRepository, 'deleteProject');
     const store = useOptimizationStore();

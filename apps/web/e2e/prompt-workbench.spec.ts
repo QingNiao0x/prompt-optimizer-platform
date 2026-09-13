@@ -26,9 +26,27 @@ const contextSnapshot: ContextSnapshot = {
       path: 'pom.xml',
       language: 'xml',
       content: '<artifactId>spring-boot-starter-web</artifactId>',
+      summary: 'Maven 项目配置，使用 Spring Boot Web。',
       truncated: false,
     },
   ],
+  warnings: [],
+  redactions: [],
+  analysisVersion: '1.0',
+};
+
+const documentContextSnapshot: ContextSnapshot = {
+  customDescription: '',
+  technologyStack: [],
+  dependencies: [],
+  directoryTree: ['docs/', 'docs/季度报告.txt'],
+  fileSnippets: [{
+    path: 'docs/季度报告.txt',
+    language: 'text',
+    content: '本季度完成核心功能交付，下一季度将重点改善用户体验。',
+    summary: '文档概述本季度交付情况和下一季度的用户体验改进计划。',
+    truncated: false,
+  }],
   warnings: [],
   redactions: [],
   analysisVersion: '1.0',
@@ -129,7 +147,13 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await page.getByRole('button', { name: '分析项目上下文' }).click();
   await expect(page.getByRole('dialog', { name: '确认发送项目代码' })).toBeVisible();
   await page.getByRole('button', { name: '确认发送' }).click();
+  await expect(page.getByText('代码项目', { exact: true })).toBeVisible();
+  await expect(page.getByText('项目概要', { exact: true })).toBeVisible();
+  await expect(page.getByText('功能模块', { exact: true })).toBeVisible();
+  await expect(page.getByText('依赖信息', { exact: true })).toBeVisible();
+  await expect(page.getByText('目录结构', { exact: true })).toBeVisible();
   await expect(page.getByText('Spring Boot 3', { exact: true })).toBeVisible();
+  await expect(page.getByText('Maven 项目配置，使用 Spring Boot Web。')).toBeVisible();
   await expect(page.getByText('1 个依赖 · 3 个目录节点')).toBeVisible();
 
   await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
@@ -148,6 +172,78 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await expect(resultContent.getByRole('heading', { name: '输入输出' })).toBeVisible();
   await expect(resultContent.getByRole('heading', { name: '约束条件' })).toBeVisible();
   await expect(page.getByRole('status').filter({ hasText: '待确认事项' })).toBeVisible();
+});
+
+test('普通文档分析只展示内容概要，不套用代码项目信息', async ({ page }) => {
+  await page.route('**/api/v1/context/analyze', async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: {
+        requestId: 'e2e-document-context-request',
+        data: documentContextSnapshot,
+      } satisfies ApiResponse<ContextSnapshot>,
+    });
+  });
+
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  await page.locator('input[type="file"]').nth(1).setInputFiles({
+    name: '季度报告.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('本季度完成核心功能交付，下一季度将重点改善用户体验。'),
+  });
+  await expect(page.getByText('个文件已加入上下文', { exact: false })).toBeVisible();
+
+  await page.getByRole('button', { name: '分析项目上下文' }).click();
+  await expect(page.getByRole('dialog', { name: '确认发送项目代码' })).toBeVisible();
+  await page.getByRole('button', { name: '确认发送' }).click();
+
+  await expect(page.getByText('普通文档', { exact: true })).toBeVisible();
+  await expect(page.getByText('文件内容概要', { exact: true })).toBeVisible();
+  await expect(page.getByText(documentContextSnapshot.fileSnippets[0]?.summary ?? '')).toBeVisible();
+  await expect(page.getByText('项目概要', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('功能模块', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('技术栈', { exact: true })).toHaveCount(0);
+});
+
+test('未单独分析上下文时，一键增强仍返回并展示项目分析结果', async ({ page }) => {
+  let contextAnalyzeCalls = 0;
+  await page.route('**/api/v1/context/analyze', async (route) => {
+    contextAnalyzeCalls += 1;
+    await route.fulfill({ status: 200, json: contextResponse });
+  });
+  await page.route('**/api/v1/optimizations', async (route) => {
+    const requestBody: unknown = route.request().postDataJSON();
+    expect(requestBody).toMatchObject({
+      rawPrompt: '为示例项目补充健康检查接口',
+      context: {
+        files: [expect.objectContaining({ path: 'pom.xml' })],
+      },
+    });
+    await route.fulfill({ status: 200, json: optimizationResponse });
+  });
+
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  await page.getByText('粘贴当前打开文件').click();
+  await page.getByLabel('文件相对路径').fill('pom.xml');
+  await page.getByPlaceholder('粘贴与当前任务相关的代码片段…').fill(
+    '<dependency><artifactId>spring-boot-starter-web</artifactId></dependency>',
+  );
+  await page.getByRole('button', { name: '加入上下文' }).click();
+  await page.getByLabel('原始提示词').fill('为示例项目补充健康检查接口');
+  await page.getByRole('button', { name: '一键增强提示词' }).click();
+  await expect(page.getByRole('dialog', { name: '确认发送项目代码' })).toBeVisible();
+  await page.getByRole('button', { name: '确认发送' }).click();
+  await expect(
+    page.getByRole('heading', { name: '请先复核这三个关键部分' }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: '我已查看，继续使用' }).click();
+
+  expect(contextAnalyzeCalls).toBe(0);
+  await expect(page.getByText('代码项目', { exact: true })).toBeVisible();
+  await expect(page.getByText('项目概要', { exact: true })).toBeVisible();
+  await expect(page.getByText('功能模块', { exact: true })).toBeVisible();
 });
 
 test('用户可以通过 File System Access API 建立本地项目索引', async ({ page }) => {

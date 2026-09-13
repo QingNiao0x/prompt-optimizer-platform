@@ -79,7 +79,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
     @Override
     public OptimizationResult optimize(OptimizationRequest request) {
         long startedAt = clock.millis();
-        ContextSnapshot context = contextAnalyzer.analyze(request.context());
+        ContextSnapshot context = contextAnalyzer.analyze(request.context(), request.rawPrompt());
         List<String> ambiguities = ambiguityDetector.detect(request.rawPrompt());
         PromptTemplate template = templateRegistry.resolve(
                 request.enhancement().templateCode(),

@@ -13,6 +13,7 @@ import {
   type ProjectIndexSummary,
 } from '@/features/project-index/projectIndexer';
 import { getApiErrorMessage, getApiErrorRequestId } from '@/services/http';
+import { deleteDocumentUpload } from '@/services/documentUploadApi';
 import { analyzeContext, optimizePrompt } from '@/services/promptOptimizerApi';
 import { MAX_FILES } from '@/workers/fileReaderCore';
 import type {
@@ -49,7 +50,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
       void projectIndexRepository.deleteProject(projectIndex.value.id).catch(() => undefined);
       projectIndex.value = undefined;
     }
-    files.value = selectedFiles.slice(0, MAX_FILES);
+    const nextFiles = selectedFiles.slice(0, MAX_FILES);
+    cleanupUnusedDocumentReferences(files.value, nextFiles);
+    files.value = nextFiles;
     activeFilePath.value = '';
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
@@ -62,6 +65,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
     projectIndex.value = summary;
     if (!keepsCurrentProject) {
+      cleanupUnusedDocumentReferences(files.value, []);
       files.value = [];
       activeFilePath.value = '';
     }
@@ -72,6 +76,10 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const addFile = (file: ContextFileInput): void => {
     const existingIndex = files.value.findIndex((item) => item.path === file.path);
     if (existingIndex >= 0) {
+      const existingFile = files.value[existingIndex];
+      if (existingFile) {
+        cleanupUnusedDocumentReferences([existingFile], [file]);
+      }
       files.value.splice(existingIndex, 1, file);
     } else if (files.value.length < MAX_FILES) {
       files.value.push(file);
@@ -82,6 +90,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   };
 
   const removeFile = (path: string): void => {
+    cleanupUnusedDocumentReferences(files.value.filter((file) => file.path === path), []);
     files.value = files.value.filter((file) => file.path !== path);
     if (activeFilePath.value === path) {
       activeFilePath.value = files.value.at(-1)?.path ?? '';
@@ -93,6 +102,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const clearFiles = (): void => {
     // 本地索引的物理删除由 useProjectIndex 统一负责，避免同一项目被重复删除。
     projectIndex.value = undefined;
+    cleanupUnusedDocumentReferences(files.value, []);
     files.value = [];
     activeFilePath.value = '';
     contextRetrieval.value = undefined;
@@ -216,6 +226,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
       void projectIndexRepository.deleteProject(projectIndex.value.id).catch(() => undefined);
     }
     projectIndex.value = undefined;
+    cleanupUnusedDocumentReferences(files.value, []);
     files.value = [];
     activeFilePath.value = '';
     contextRetrieval.value = undefined;
@@ -281,6 +292,11 @@ const fitFilesWithinBudget = (
     if (selected.length >= maxFiles) {
       break;
     }
+    if (file.documentId) {
+      // 大型文档正文保存在后端临时索引中，请求只携带轻量引用，不消耗前端字符预算。
+      selected.push({ ...file, content: '' });
+      continue;
+    }
     if (BINARY_CONTEXT_LANGUAGES.has(file.language.toLowerCase())) {
       // Base64 二进制必须完整发送给后端解析，截断会破坏 Office、PDF 和图片文件。
       selected.push(file);
@@ -297,4 +313,21 @@ const fitFilesWithinBudget = (
     remainingCharacters -= content.length;
   }
   return selected;
+};
+
+const cleanupUnusedDocumentReferences = (
+  previousFiles: readonly ContextFileInput[],
+  nextFiles: readonly ContextFileInput[],
+): void => {
+  const retainedIds = new Set(
+    nextFiles.map((file) => file.documentId).filter((id): id is string => Boolean(id)),
+  );
+  const staleIds = new Set(
+    previousFiles
+      .map((file) => file.documentId)
+      .filter((id): id is string => id !== undefined && id.length > 0 && !retainedIds.has(id)),
+  );
+  staleIds.forEach((documentId) => {
+    void deleteDocumentUpload(documentId).catch(() => undefined);
+  });
 };

@@ -66,6 +66,13 @@ const reviewDialogVisible = ref(false);
 const isClearingIndex = ref(false);
 let pageLifecycleVersion = 0;
 
+// 分析按钮需要抽取项目画像，而不是只围绕某个业务提示词检索。
+// 将常见分层目录放在查询前部，可以让本地索引同时召回构建清单和代表性模块源码。
+const PROJECT_OVERVIEW_RETRIEVAL_QUERY = [
+  'pom package controller service repository domain entity view page component store router',
+  '技术栈 依赖 项目结构 配置 功能模块 模块职责',
+].join(' ');
+
 const reviewSections = computed(() => {
   const currentResult = result.value;
   const sectionContent = (type: 'CONSTRAINTS' | 'ACCEPTANCE'): string =>
@@ -79,10 +86,11 @@ const reviewSections = computed(() => {
   };
 });
 
-const contextWarnings = computed(() => [
+const contextWarnings = computed(() => Array.from(new Set([
   ...warnings.value,
+  ...(contextSnapshot.value?.warnings ?? []),
   ...(indexErrorMessage.value ? [indexErrorMessage.value] : []),
-]);
+])));
 
 const handleIndexProject = async (): Promise<void> => {
   await runProjectIndexOperation('FULL');
@@ -251,7 +259,7 @@ const handleAddManualFile = (file: ContextFileInput): void => {
 
 const handleAnalyze = async (): Promise<void> => {
   const contextFiles = await prepareContextTransmission(
-    `${customDescription.value} 技术栈 依赖 项目结构 配置`,
+    `${PROJECT_OVERVIEW_RETRIEVAL_QUERY} ${customDescription.value}`,
     '分析项目上下文',
     false,
   );
@@ -299,11 +307,18 @@ const prepareContextTransmission = async (
       return contextFiles;
     }
     const characters = contextFiles.reduce((total, file) => total + file.content.length, 0);
+    const indexedDocuments = contextFiles.filter((file) => file.documentId);
+    const indexedDocumentBytes = indexedDocuments.reduce(
+      (total, file) => total + (file.sizeBytes ?? 0),
+      0,
+    );
     const destination = willCallModel
       ? '本项目后端，并由后端转发给当前配置的大模型服务'
       : '本项目 Spring Boot 后端进行上下文分析';
     await ElMessageBox.confirm(
-      `${operationName}将发送 ${contextFiles.length} 个相关代码片段，共 ${characters.toLocaleString('zh-CN')} 个字符，到${destination}。完整本地索引不会上传。`,
+      `${operationName}将发送 ${contextFiles.length} 项上下文到${destination}：${characters.toLocaleString('zh-CN')} 个内联字符${indexedDocuments.length > 0
+        ? `，另引用 ${indexedDocuments.length} 份已解析文档（原文件共 ${formatBytes(indexedDocumentBytes)}）`
+        : ''}。项目的完整浏览器本地索引不会上传；已解析文档只会选取与本次任务相关的片段。`,
       '确认发送项目代码',
       {
         type: 'warning',
@@ -319,6 +334,12 @@ const prepareContextTransmission = async (
     ElMessage.error(error instanceof Error ? error.message : '读取本地项目上下文失败。');
     return undefined;
   }
+};
+
+const formatBytes = (bytes: number): string => {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 };
 
 const handlePageHide = (): void => {

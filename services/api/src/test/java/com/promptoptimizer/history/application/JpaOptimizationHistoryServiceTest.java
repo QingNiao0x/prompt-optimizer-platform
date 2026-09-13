@@ -199,7 +199,13 @@ class JpaOptimizationHistoryServiceTest {
                         List.of(),
                         List.of(),
                         List.of("src/main/java/UserController.java"),
-                        List.of(new FileSnippet("src/main/java/UserController.java", "java", "class App {}", false)),
+                        List.of(new FileSnippet(
+                                "src/main/java/UserController.java",
+                                "java",
+                                "class App {}",
+                                "Java 源码，定义 App 类。",
+                                false
+                        )),
                         List.of(),
                         List.of(),
                         "v1"

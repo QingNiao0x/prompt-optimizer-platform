@@ -6,8 +6,11 @@ import com.promptoptimizer.context.api.ContextAnalysisRequest;
 import com.promptoptimizer.context.api.ContextFileInput;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.context.domain.DependencyItem;
+import com.promptoptimizer.context.domain.DocumentSelection;
+import com.promptoptimizer.context.domain.FileAnalysisCoverage;
 import com.promptoptimizer.context.domain.FileSnippet;
 import com.promptoptimizer.context.domain.TechnologyStackItem;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -34,19 +37,24 @@ import java.util.regex.Pattern;
 @Service
 public class DefaultContextAnalyzer implements ContextAnalyzer {
 
-    private static final String ANALYSIS_VERSION = "v1";
-    private static final int MAX_TOTAL_BYTES = 32 * 1024 * 1024;
-    private static final int MAX_FILE_BYTES = 1024 * 1024;
-    private static final int MAX_BINARY_FILE_BYTES = 10 * 1024 * 1024;
+    private static final String ANALYSIS_VERSION = "v3";
+    private static final int MAX_TOTAL_BYTES = 64 * 1024 * 1024;
+    private static final int MAX_FILE_BYTES = 5 * 1024 * 1024;
+    private static final int MAX_BINARY_FILE_BYTES = 25 * 1024 * 1024;
     private static final int MAX_DIRECTORY_ENTRIES = 100;
     private static final int MAX_SNIPPETS = 40;
     private static final int MAX_SNIPPET_CHARS = 60_000;
     private static final int MAX_SNIPPET_TOTAL_CHARS = 120_000;
+    private static final int MAX_CHUNKS_PER_FILE = 10;
 
     private static final Set<String> IGNORED_SEGMENTS = Set.of(
             ".git", "node_modules", "target", "build", "dist", "out", ".idea", ".vscode",
             "logs", "log", "coverage", "__pycache__", ".venv", "venv", "vendor",
             ".cache", ".parcel-cache", ".turbo", "tmp", "temp"
+    );
+    private static final Set<String> SENSITIVE_FILE_NAMES = Set.of(
+            ".env", ".env.local", ".env.development", ".env.production",
+            "id_rsa", "id_ed25519", "credentials", "credentials.json"
     );
 
     private static final Pattern WINDOWS_ABSOLUTE_PATH = Pattern.compile("^[A-Za-z]:[\\\\/].*");
@@ -67,16 +75,38 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
     );
     private static final Pattern PRIVATE_KEY = Pattern.compile("-----BEGIN .* PRIVATE KEY-----");
     private static final Pattern OPENAI_STYLE_KEY = Pattern.compile("sk-[A-Za-z0-9_-]{10,}");
+    private static final Pattern INDEX_CHUNK_SUFFIX = Pattern.compile("#chunk-\\d+$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PRODUCTION_CONFIG_PATH = Pattern.compile(
+            "(?i)(?:^|/)(?:application[-.](?:prod|production)|config/(?:prod|production))"
+                    + "\\.(?:yml|yaml|properties|json|toml)$"
+    );
 
     private final ObjectMapper objectMapper;
     private final BinaryContentExtractor binaryContentExtractor;
+    private final FileContentSummarizer fileContentSummarizer;
+    private final ContentChunkSelector contentChunkSelector;
+    private final DocumentIndexLookup documentIndexLookup;
 
+    @Autowired
     public DefaultContextAnalyzer(
             ObjectMapper objectMapper,
-            BinaryContentExtractor binaryContentExtractor
+            BinaryContentExtractor binaryContentExtractor,
+            FileContentSummarizer fileContentSummarizer,
+            DocumentIndexLookup documentIndexLookup
     ) {
         this.objectMapper = objectMapper;
         this.binaryContentExtractor = binaryContentExtractor;
+        this.fileContentSummarizer = fileContentSummarizer;
+        this.contentChunkSelector = new ContentChunkSelector();
+        this.documentIndexLookup = documentIndexLookup;
+    }
+
+    public DefaultContextAnalyzer(
+            ObjectMapper objectMapper,
+            BinaryContentExtractor binaryContentExtractor,
+            FileContentSummarizer fileContentSummarizer
+    ) {
+        this(objectMapper, binaryContentExtractor, fileContentSummarizer, DocumentIndexLookup.empty());
     }
 
     /**
@@ -84,9 +114,18 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
      */
     @Override
     public ContextSnapshot analyze(ContextAnalysisRequest request) {
+        return analyze(request, "");
+    }
+
+    /**
+     * 分析文件并根据当前任务从长内容中选择相关片段；全文摘要仍覆盖文件首、中、尾。
+     */
+    @Override
+    public ContextSnapshot analyze(ContextAnalysisRequest request, String query) {
         List<String> warnings = new ArrayList<>();
         List<String> redactions = new ArrayList<>();
-        Map<String, AnalyzedFile> files = collectFiles(request, warnings, redactions);
+        List<FileAnalysisCoverage> fileCoverage = new ArrayList<>();
+        Map<String, AnalyzedFile> files = collectFiles(request, query, warnings, redactions, fileCoverage);
         Map<String, TechnologyStackItem> stack = new LinkedHashMap<>();
         List<DependencyItem> dependencies = new ArrayList<>();
 
@@ -100,7 +139,9 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                 new ArrayList<>(stack.values()),
                 deduplicateDependencies(dependencies),
                 buildDirectoryTree(files.keySet(), warnings),
-                buildSnippets(files.values(), warnings),
+                buildSnippets(files.values(), warnings, query),
+                resolveAnalysisStatus(request, files, fileCoverage),
+                fileCoverage,
                 warnings,
                 redactions,
                 ANALYSIS_VERSION
@@ -112,8 +153,10 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
      */
     private Map<String, AnalyzedFile> collectFiles(
             ContextAnalysisRequest request,
+            String query,
             List<String> warnings,
-            List<String> redactions
+            List<String> redactions,
+            List<FileAnalysisCoverage> fileCoverage
     ) {
         Map<String, AnalyzedFile> files = new LinkedHashMap<>();
         Set<String> seenPaths = new HashSet<>();
@@ -129,12 +172,30 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                 warnings.add("已忽略生成目录或工具目录：" + path);
                 continue;
             }
+            if (isProtectedPath(path)) {
+                String sourcePath = sourcePathOf(path);
+                warnings.add("已忽略受保护文件：" + sourcePath);
+                redactions.add(sourcePath);
+                continue;
+            }
             if (!seenPaths.add(path)) {
                 warnings.add("已忽略重复文件：" + path);
                 continue;
             }
 
             String language = languageOf(path, input.language());
+            if (input.documentId() != null && !input.documentId().isBlank()) {
+                collectIndexedDocument(
+                        input.documentId(),
+                        path,
+                        query,
+                        files,
+                        warnings,
+                        redactions,
+                        fileCoverage
+                );
+                continue;
+            }
             String content = input.content() == null ? "" : input.content();
             if (binaryContentExtractor.supports(language)) {
                 totalBytes = collectBinaryFile(path, language, content, files, warnings, redactions, totalBytes);
@@ -166,7 +227,8 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                     path,
                     sensitive ? "[CONTENT REDACTED: sensitive material detected]" : content,
                     language,
-                    bytes >= MAX_FILE_BYTES
+                    bytes >= MAX_FILE_BYTES,
+                    ""
             ));
         }
         return files;
@@ -192,7 +254,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             return totalBytes;
         }
         if (decoded.length > MAX_BINARY_FILE_BYTES) {
-            warnings.add("已忽略超过 10 MB 的 Office、PDF、WPS 或图片文件：" + path);
+            warnings.add("已忽略超过 25 MB 的兼容上传文件，请使用分片上传：" + path);
             return totalBytes;
         }
         if (totalBytes + decoded.length > MAX_TOTAL_BYTES) {
@@ -212,7 +274,8 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                     path,
                     sensitive ? "[CONTENT REDACTED: sensitive material detected]" : extracted.content(),
                     language,
-                    extracted.truncated()
+                    extracted.truncated(),
+                    ""
             ));
             return totalBytes + decoded.length;
         } catch (IllegalArgumentException exception) {
@@ -222,49 +285,176 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
     }
 
     /**
+     * 读取已完成分片解析的临时文档索引。索引不存在或尚未就绪时返回明确警告。
+     */
+    private void collectIndexedDocument(
+            String documentId,
+            String requestedPath,
+            String query,
+            Map<String, AnalyzedFile> files,
+            List<String> warnings,
+            List<String> redactions,
+            List<FileAnalysisCoverage> fileCoverage
+    ) {
+        DocumentSelection selection = documentIndexLookup.retrieve(
+                documentId,
+                query,
+                MAX_SNIPPET_CHARS,
+                MAX_CHUNKS_PER_FILE
+        ).orElse(null);
+        if (selection == null) {
+            warnings.add("文档索引不存在、尚未完成或已经过期：" + requestedPath);
+            fileCoverage.add(new FileAnalysisCoverage(
+                    requestedPath,
+                    "FAILED",
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    false,
+                    "请重新上传并等待文档解析完成"
+            ));
+            return;
+        }
+
+        String indexedPath = normalizePath(selection.path());
+        if (indexedPath == null || !indexedPath.equals(requestedPath)) {
+            warnings.add("文档索引与请求路径不匹配：" + requestedPath);
+            fileCoverage.add(new FileAnalysisCoverage(
+                    requestedPath,
+                    "FAILED",
+                    selection.sourceBytes(),
+                    selection.extractedCharacters(),
+                    selection.totalChunks(),
+                    0,
+                    0,
+                    false,
+                    "文档引用校验失败"
+            ));
+            return;
+        }
+        selection.warnings().forEach(message -> warnings.add(requestedPath + "：" + message));
+        boolean sensitive = containsSecret(selection.content()) || containsSecret(selection.summary());
+        if (sensitive) {
+            redactions.add(requestedPath);
+        }
+        String content = sensitive
+                ? "[CONTENT REDACTED: sensitive material detected]"
+                : selection.content();
+        files.put(requestedPath, new AnalyzedFile(
+                requestedPath,
+                content,
+                selection.language(),
+                !selection.completelyParsed(),
+                sensitive ? "" : selection.summary()
+        ));
+        boolean contextLimited = selection.selectedChunks() < selection.totalChunks()
+                || selection.selectedCharacters() < selection.extractedCharacters();
+        fileCoverage.add(new FileAnalysisCoverage(
+                requestedPath,
+                selection.completelyParsed() ? "COMPLETE" : "PARTIAL",
+                selection.sourceBytes(),
+                selection.extractedCharacters(),
+                selection.totalChunks(),
+                selection.selectedChunks(),
+                selection.selectedCharacters(),
+                contextLimited,
+                contextLimited
+                        ? "全文已建立临时索引，本次只发送与任务相关的片段"
+                        : "本次已使用全部提取内容"
+        ));
+        if (contextLimited) {
+            warnings.add(
+                    "文档全文已建立临时索引，本次从 "
+                            + selection.totalChunks()
+                            + " 个片段中选取 "
+                            + selection.selectedChunks()
+                            + " 个相关片段："
+                            + requestedPath
+            );
+        }
+    }
+
+    private String resolveAnalysisStatus(
+            ContextAnalysisRequest request,
+            Map<String, AnalyzedFile> files,
+            List<FileAnalysisCoverage> fileCoverage
+    ) {
+        if (request.files().isEmpty() && (request.customDescription() == null
+                || request.customDescription().isBlank())) {
+            return "EMPTY";
+        }
+        if (files.isEmpty() && !request.files().isEmpty()) {
+            return "FAILED";
+        }
+        boolean partial = fileCoverage.stream()
+                .anyMatch(item -> !"COMPLETE".equals(item.extractionStatus()));
+        return partial ? "PARTIAL" : "COMPLETE";
+    }
+
+    /**
      * 根据文件路径和内容关键词识别技术栈，保留置信度更高的结果。
      */
     private void detectTechnology(AnalyzedFile file, Map<String, TechnologyStackItem> stack) {
-        String path = file.path().toLowerCase(Locale.ROOT);
+        String source = sourcePathOf(file.path());
+        String path = source.toLowerCase(Locale.ROOT);
         String content = file.content().toLowerCase(Locale.ROOT);
+        String language = file.language().toLowerCase(Locale.ROOT);
         if (path.endsWith("pom.xml") || path.endsWith("build.gradle") || path.endsWith("build.gradle.kts")) {
-            addStack(stack, "Java", file.path(), 0.95);
+            addStack(stack, "Java", source, 0.95);
         }
-        if (path.endsWith("pom.xml") && content.contains("spring-boot")) {
-            addStack(stack, "Spring Boot", file.path(), 0.98);
+        if ("java".equals(language) || path.endsWith(".java")) {
+            addStack(stack, "Java", source, 0.9);
+        }
+        if (content.contains("spring-boot") || content.contains("org.springframework.boot")
+                || content.contains("@springbootapplication")) {
+            addStack(stack, "Spring Boot", source, path.endsWith("pom.xml") ? 0.98 : 0.94);
         }
         if (path.endsWith("package.json")) {
-            addStack(stack, "Node.js", file.path(), 0.9);
+            addStack(stack, "Node.js", source, 0.9);
             if (content.contains("\"vue\"")) {
-                addStack(stack, "Vue", file.path(), 0.98);
+                addStack(stack, "Vue", source, 0.98);
             }
             if (content.contains("typescript")) {
-                addStack(stack, "TypeScript", file.path(), 0.95);
+                addStack(stack, "TypeScript", source, 0.95);
             }
             if (content.contains("\"vite\"")) {
-                addStack(stack, "Vite", file.path(), 0.95);
+                addStack(stack, "Vite", source, 0.95);
+            }
+            if (content.contains("\"react\"")) {
+                addStack(stack, "React", source, 0.98);
             }
         }
-        if (path.endsWith(".vue")) {
-            addStack(stack, "Vue", file.path(), 0.9);
+        if ("vue".equals(language) || path.endsWith(".vue")) {
+            addStack(stack, "Vue", source, 0.9);
+            if (content.contains("lang=\"ts\"") || content.contains("lang='ts'")) {
+                addStack(stack, "TypeScript", source, 0.88);
+            }
         }
-        if (path.endsWith(".ts") || path.endsWith(".tsx")) {
-            addStack(stack, "TypeScript", file.path(), 0.9);
+        if ("typescript".equals(language) || path.endsWith(".ts") || path.endsWith(".tsx")) {
+            addStack(stack, "TypeScript", source, 0.9);
         }
         if (path.endsWith("requirements.txt") || path.endsWith("pyproject.toml")) {
-            addStack(stack, "Python", file.path(), 0.95);
+            addStack(stack, "Python", source, 0.95);
+        } else if ("python".equals(language)) {
+            addStack(stack, "Python", source, 0.9);
         }
         if (path.endsWith("go.mod")) {
-            addStack(stack, "Go", file.path(), 0.98);
+            addStack(stack, "Go", source, 0.98);
+        } else if ("go".equals(language)) {
+            addStack(stack, "Go", source, 0.9);
         }
         if (path.endsWith("cargo.toml")) {
-            addStack(stack, "Rust", file.path(), 0.98);
+            addStack(stack, "Rust", source, 0.98);
+        } else if ("rust".equals(language)) {
+            addStack(stack, "Rust", source, 0.9);
         }
         if (content.contains("postgresql") || content.contains("postgres")) {
-            addStack(stack, "PostgreSQL", file.path(), 0.82);
+            addStack(stack, "PostgreSQL", source, 0.82);
         }
         if (content.contains("redis")) {
-            addStack(stack, "Redis", file.path(), 0.82);
+            addStack(stack, "Redis", source, 0.82);
         }
     }
 
@@ -276,7 +466,8 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             List<DependencyItem> dependencies,
             List<String> warnings
     ) {
-        String path = file.path().toLowerCase(Locale.ROOT);
+        String source = sourcePathOf(file.path());
+        String path = source.toLowerCase(Locale.ROOT);
         if (path.endsWith("pom.xml")) {
             Matcher matcher = POM_DEPENDENCY.matcher(file.content());
             while (matcher.find()) {
@@ -284,13 +475,13 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                         "maven",
                         matcher.group(1).trim() + ":" + matcher.group(2).trim(),
                         optionalTrim(matcher.group(3)),
-                        file.path()
+                        source
                 ));
             }
             return;
         }
         if (path.endsWith("package.json")) {
-            extractNodeDependencies(file, dependencies, warnings);
+            extractNodeDependencies(file, source, dependencies, warnings);
             return;
         }
         if (path.endsWith("requirements.txt")) {
@@ -305,7 +496,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                             "python",
                             matcher.group(1),
                             optionalTrim(matcher.group(2)),
-                            file.path()
+                            source
                     ));
                 }
             }
@@ -315,7 +506,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             for (String line : file.content().lines().toList()) {
                 Matcher matcher = GO_MODULE.matcher(line);
                 if (matcher.matches()) {
-                    dependencies.add(new DependencyItem("go", matcher.group(1), matcher.group(2), file.path()));
+                    dependencies.add(new DependencyItem("go", matcher.group(1), matcher.group(2), source));
                 }
             }
         }
@@ -326,15 +517,16 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
      */
     private void extractNodeDependencies(
             AnalyzedFile file,
+            String source,
             List<DependencyItem> dependencies,
             List<String> warnings
     ) {
         try {
             JsonNode root = objectMapper.readTree(file.content());
-            addNodeDependencyGroup(root.path("dependencies"), file.path(), dependencies);
-            addNodeDependencyGroup(root.path("devDependencies"), file.path(), dependencies);
+            addNodeDependencyGroup(root.path("dependencies"), source, dependencies);
+            addNodeDependencyGroup(root.path("devDependencies"), source, dependencies);
         } catch (IOException | RuntimeException exception) {
-            warnings.add("无法解析 package.json：" + file.path());
+            warnings.add("无法解析 package.json：" + source);
         }
     }
 
@@ -372,7 +564,8 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
      */
     private List<String> buildDirectoryTree(Set<String> paths, List<String> warnings) {
         Set<String> entries = new LinkedHashSet<>();
-        for (String path : paths) {
+        for (String indexedPath : paths) {
+            String path = sourcePathOf(indexedPath);
             String[] segments = path.split("/");
             StringBuilder directory = new StringBuilder();
             for (int index = 0; index < segments.length - 1; index++) {
@@ -396,16 +589,23 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
      */
     private List<FileSnippet> buildSnippets(
             Iterable<AnalyzedFile> files,
-            List<String> warnings
+            List<String> warnings,
+            String query
     ) {
         List<FileSnippet> snippets = new ArrayList<>();
+        Set<String> includedPaths = new HashSet<>();
         int totalCharacters = 0;
         for (AnalyzedFile file : files) {
             if (snippets.size() >= MAX_SNIPPETS) {
                 warnings.add("文件摘要数量已达到上限");
                 break;
             }
+            String sourcePath = sourcePathOf(file.path());
             if (file.content().isBlank()) {
+                warnings.add("文件内容为空，无法生成摘要：" + sourcePath);
+                continue;
+            }
+            if (!includedPaths.add(sourcePath)) {
                 continue;
             }
             int remaining = MAX_SNIPPET_TOTAL_CHARS - totalCharacters;
@@ -413,10 +613,28 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                 warnings.add("文件内容摘要已达到 Token 预算");
                 break;
             }
-            int length = Math.min(Math.min(file.content().length(), MAX_SNIPPET_CHARS), remaining);
-            boolean truncated = length < file.content().length();
-            snippets.add(new FileSnippet(file.path(), file.language(), file.content().substring(0, length), truncated));
-            totalCharacters += length;
+            int allowance = Math.min(MAX_SNIPPET_CHARS, remaining);
+            ContentChunkSelector.Selection selection = contentChunkSelector.select(
+                    file.content(),
+                    query,
+                    allowance,
+                    MAX_CHUNKS_PER_FILE
+            );
+            boolean truncated = file.truncated() || selection.contextLimited();
+            String summary = file.summary().isBlank()
+                    ? fileContentSummarizer.summarize(sourcePath, file.language(), file.content())
+                    : file.summary();
+            snippets.add(new FileSnippet(
+                    sourcePath,
+                    file.language(),
+                    selection.content(),
+                    summary,
+                    truncated
+            ));
+            totalCharacters += selection.selectedCharacters();
+            if (selection.contextLimited() && !file.truncated()) {
+                warnings.add("文件已完整解析，本次上下文仅选取相关片段：" + sourcePath);
+            }
         }
         return snippets;
     }
@@ -470,11 +688,26 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
      */
     private boolean isIgnoredPath(String path) {
         for (String segment : path.split("/")) {
-            if (IGNORED_SEGMENTS.contains(segment)) {
+            if (IGNORED_SEGMENTS.contains(segment.toLowerCase(Locale.ROOT))) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * 在后端再次拦截环境变量、密钥和明确的生产配置文件，防止绕过前端直接提交。
+     */
+    private boolean isProtectedPath(String indexedPath) {
+        String path = sourcePathOf(indexedPath).toLowerCase(Locale.ROOT);
+        String fileName = path.substring(path.lastIndexOf('/') + 1);
+        return SENSITIVE_FILE_NAMES.contains(fileName)
+                || (fileName.startsWith(".env.") && !".env.example".equals(fileName))
+                || fileName.endsWith(".pem")
+                || fileName.endsWith(".key")
+                || fileName.endsWith(".p12")
+                || fileName.endsWith(".jks")
+                || PRODUCTION_CONFIG_PATH.matcher(path).find();
     }
 
     /**
@@ -500,7 +733,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
         if (explicitLanguage != null && !explicitLanguage.isBlank()) {
             return explicitLanguage.trim();
         }
-        String lowerPath = path.toLowerCase(Locale.ROOT);
+        String lowerPath = sourcePathOf(path).toLowerCase(Locale.ROOT);
         if (lowerPath.endsWith(".java")) return "java";
         if (lowerPath.endsWith(".ts") || lowerPath.endsWith(".tsx")) return "typescript";
         if (lowerPath.endsWith(".mjs") || lowerPath.endsWith(".cjs")) return "javascript";
@@ -556,8 +789,21 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
     }
 
     /**
+     * 本地索引会在原路径后附加代码块编号；分析与展示时恢复为真实源文件路径。
+     */
+    private String sourcePathOf(String indexedPath) {
+        return INDEX_CHUNK_SUFFIX.matcher(indexedPath).replaceFirst("");
+    }
+
+    /**
      * 内部使用的文件分析载体。
      */
-    private record AnalyzedFile(String path, String content, String language, boolean truncated) {
+    private record AnalyzedFile(
+            String path,
+            String content,
+            String language,
+            boolean truncated,
+            String summary
+    ) {
     }
 }

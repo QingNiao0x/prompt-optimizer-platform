@@ -50,6 +50,32 @@ class BinaryContentExtractorTest {
     }
 
     @Test
+    void shouldKeepDocumentTailWhenDocxTextExceedsLegacySnippetLimit() throws Exception {
+        XWPFDocument document = new XWPFDocument();
+        document.createParagraph().createRun().setText("文档开头：大型需求说明。");
+        StringBuilder body = new StringBuilder();
+        for (int index = 0; index < 12_000; index++) {
+            body.append("中间正文-").append(index).append('。');
+        }
+        document.createParagraph().createRun().setText(body.toString());
+        document.createParagraph().createRun().setText("文档结尾标记：TAIL-ACCEPTANCE-2026");
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        document.write(output);
+        document.close();
+
+        BinaryContentExtractor.ExtractedText result = extractor.extract(
+                "docs/大型需求说明.docx",
+                "docx",
+                output.toByteArray()
+        );
+
+        assertThat(result.content())
+                .contains("文档开头")
+                .contains("TAIL-ACCEPTANCE-2026");
+        assertThat(result.truncated()).isFalse();
+    }
+
+    @Test
     void shouldExtractPngMetadataWithoutSendingPixels() throws Exception {
         BufferedImage image = new BufferedImage(120, 80, BufferedImage.TYPE_INT_RGB);
         ByteArrayOutputStream output = new ByteArrayOutputStream();

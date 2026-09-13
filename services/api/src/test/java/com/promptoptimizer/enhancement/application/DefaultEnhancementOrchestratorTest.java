@@ -5,6 +5,7 @@ import com.promptoptimizer.context.api.ContextAnalysisRequest;
 import com.promptoptimizer.context.api.ContextFileInput;
 import com.promptoptimizer.context.application.BinaryContentExtractor;
 import com.promptoptimizer.context.application.DefaultContextAnalyzer;
+import com.promptoptimizer.context.application.FileContentSummarizer;
 import com.promptoptimizer.enhancement.api.EnhancementOptions;
 import com.promptoptimizer.enhancement.api.OptimizationRequest;
 import com.promptoptimizer.enhancement.api.PermissionPolicyInput;
@@ -26,7 +27,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DefaultEnhancementOrchestratorTest {
 
     private final DefaultEnhancementOrchestrator orchestrator = new DefaultEnhancementOrchestrator(
-            new DefaultContextAnalyzer(new ObjectMapper(), new BinaryContentExtractor()),
+            new DefaultContextAnalyzer(
+                    new ObjectMapper(),
+                    new BinaryContentExtractor(),
+                    new FileContentSummarizer()
+            ),
             new AmbiguityDetector(),
             new PromptTemplateRegistry(),
             new ConstraintCompleter(),

@@ -48,4 +48,29 @@ describe('buildOptimizationRequest', () => {
     expect(request.permissionPolicy.protectedPaths).toEqual([]);
     expect(request.permissionPolicy.requireConfirmationFor).toEqual([]);
   });
+
+  it('should preserve a temporary document reference without embedding its source content', () => {
+    const request = buildOptimizationRequest({
+      rawPrompt: '根据论文改进摘要',
+      customDescription: '',
+      files: [{
+        path: '论文.docx',
+        language: 'docx',
+        content: '',
+        documentId: 'document-123',
+        sizeBytes: 12_345_678,
+      }],
+      templateCode: 'AUTO',
+      includePermissionBoundaries: false,
+      includeExamples: false,
+    });
+
+    expect(request.context.files[0]).toEqual({
+      path: '论文.docx',
+      language: 'docx',
+      content: '',
+      documentId: 'document-123',
+      sizeBytes: 12_345_678,
+    });
+  });
 });

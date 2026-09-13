@@ -2,7 +2,9 @@ import type { ContextFileInput } from '@/types/api';
 
 export const MAX_FILES = 1_000;
 export const MAX_FILE_BYTES = 1_000_000;
-export const MAX_BINARY_FILE_BYTES = 10_000_000;
+// Office、PDF、图片及大型普通文档改走后端分片上传，不再受旧版 10 MB Base64 限制。
+export const MAX_DOCUMENT_FILE_BYTES = 50 * 1024 * 1024;
+export const MAX_BINARY_FILE_BYTES = MAX_DOCUMENT_FILE_BYTES;
 export const MAX_TOTAL_CHARACTERS = 4_000_000;
 // 单个文件读取阶段最多保留的字符数；构建锁文件和超大源码只截断，不整文件丢弃。
 export const MAX_READ_CHARS_PER_FILE = 64_000;
@@ -36,6 +38,10 @@ const SUPPORTED_EXTENSIONS = new Set([
 const BINARY_EXTENSIONS = new Set([
   'bmp', 'doc', 'docx', 'dps', 'et', 'gif', 'jpeg', 'jpg', 'odt', 'ods', 'odp', 'pdf',
   'png', 'ppt', 'pptx', 'webp', 'wps', 'xls', 'xlsx',
+]);
+
+const DOCUMENT_TEXT_EXTENSIONS = new Set([
+  'txt', 'md', 'rst', 'tex', 'adoc', 'csv', 'tsv',
 ]);
 
 // Excel 在浏览器端已经被转换为表格文本；其余 Office/PDF/WPS/图片才走 Base64 传输。
@@ -100,8 +106,8 @@ const LANGUAGE_BY_EXTENSION: Record<string, string> = {
   txt: 'text',
   vue: 'vue',
   webp: 'webp',
-  xls: 'spreadsheet',
-  xlsx: 'spreadsheet',
+  xls: 'xls',
+  xlsx: 'xlsx',
   xml: 'xml',
   yaml: 'yaml',
   yml: 'yaml',
@@ -230,7 +236,11 @@ export interface FileProcessingProgress {
   percent: number;
   accepted: number;
   skipped: number;
-  phase: 'scan' | 'read';
+  phase: 'scan' | 'read' | 'upload' | 'queue' | 'extract' | 'index' | 'summarize';
+  uploadedBytes?: number;
+  totalBytes?: number;
+  extractedCharacters?: number;
+  indexedChunks?: number;
 }
 
 export type FileProgressCallback = (progress: FileProcessingProgress) => void;
@@ -244,7 +254,7 @@ export interface FileScanStats {
   selected: number;
 }
 
-const getExtension = (fileName: string): string => {
+export const getExtension = (fileName: string): string => {
   const normalizedName = fileName.toLowerCase();
   if (normalizedName.endsWith('.env.example')) {
     return 'env.example';
@@ -260,6 +270,24 @@ const getExtension = (fileName: string): string => {
   }
   const separatorIndex = normalizedName.lastIndexOf('.');
   return separatorIndex >= 0 ? normalizedName.slice(separatorIndex + 1) : '';
+};
+
+export const getProjectFilePath = (file: File): string =>
+  (file.webkitRelativePath || file.name).replace(/\\/g, '/');
+
+export const getProjectFileLanguage = (file: File): string => {
+  const extension = getExtension(file.name);
+  return LANGUAGE_BY_EXTENSION[extension] ?? (extension || 'text');
+};
+
+/**
+ * 二进制文档始终在后端安全解析；大型纯文本文档也采用同一路径，确保全文能够建立索引。
+ * 小型源码和普通文本仍由 Worker 读取，避免为常规项目增加网络开销。
+ */
+export const shouldUseTemporaryDocumentIndex = (file: File): boolean => {
+  const extension = getExtension(file.name);
+  return BINARY_EXTENSIONS.has(extension)
+    || (DOCUMENT_TEXT_EXTENSIONS.has(extension) && file.size > MAX_FILE_BYTES);
 };
 
 /**
@@ -292,7 +320,7 @@ export const collectCandidateFiles = async (
       break;
     }
     const file = files[index];
-    const relativePath = (file.webkitRelativePath || file.name).replace(/\\/g, '/');
+    const relativePath = getProjectFilePath(file);
     // 手动扫描路径分隔符，避免每个文件都创建 split 数组，降低十六万文件扫描的开销。
     if (hasIgnoredSegment(relativePath)) {
       stats.pathIgnored += 1;
@@ -307,7 +335,9 @@ export const collectCandidateFiles = async (
       stats.unsupported += 1;
       continue;
     }
-    const maxBytes = BINARY_EXTENSIONS.has(extension) ? MAX_BINARY_FILE_BYTES : MAX_FILE_BYTES;
+    const maxBytes = shouldUseTemporaryDocumentIndex(file)
+      ? MAX_DOCUMENT_FILE_BYTES
+      : MAX_FILE_BYTES;
     if (file.size > maxBytes) {
       stats.oversized += 1;
       continue;
@@ -560,7 +590,7 @@ export const readProjectFiles = async (
     warnings.push(`已忽略 ${unsupportedCount} 个暂不支持的文件（${suffixList}）。`);
   }
   if (oversizedCount > 0) {
-    warnings.push(`已忽略 ${oversizedCount} 个超过大小限制的文件（文本/表格 1 MB，Office/PDF/图片 10 MB）。`);
+    warnings.push(`已忽略 ${oversizedCount} 个超过大小限制的文件（源码 1 MB，大型文档 50 MB）。`);
   }
   if (failedCount > 0) {
     warnings.push(`有 ${failedCount} 个文件读取失败，请重新选择。`);
