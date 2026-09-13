@@ -93,6 +93,56 @@ class TemporaryDocumentIndexServiceTest {
     }
 
     @Test
+    void shouldRetrieveSemanticallyRelatedChunkWithoutLiteralKeywordMatch() throws Exception {
+        TextEmbeddingModel embeddingModel = inputs -> new TextEmbeddingModel.EmbeddingBatch(
+                "test-semantic-model",
+                inputs.stream()
+                        .map(value -> value.contains("车辆保养章节") || value.contains("SEMANTIC-VEHICLE-TARGET")
+                                ? new float[]{1F, 0F}
+                                : new float[]{0F, 1F})
+                        .toList()
+        );
+        SemanticVectorIndex semanticIndex = new SemanticVectorIndex(
+                embeddingModel,
+                new SemanticVectorIndexOptions(true, 4, 24_000)
+        );
+        TemporaryDocumentIndexService service = createService(semanticIndex);
+        try {
+            StringBuilder document = new StringBuilder();
+            for (int section = 0; section < 12; section++) {
+                document.append("普通资料段落-").append(section).append('：')
+                        .append("这是与当前任务无关的常规记录。".repeat(450))
+                        .append('\n');
+                if (section == 3) {
+                    document.append("SEMANTIC-VEHICLE-TARGET：定期检查制动系统并更换磨损部件。\n");
+                }
+            }
+            byte[] bytes = document.toString().getBytes(StandardCharsets.UTF_8);
+
+            DocumentUploadStatus created = service.create(new DocumentUploadCreateRequest(
+                    "docs/设备说明.txt",
+                    "text",
+                    bytes.length
+            ));
+            uploadAllChunks(service, created.documentId(), bytes, created.chunkSizeBytes());
+            service.completeUpload(created.documentId());
+            awaitTerminalStatus(service, created.documentId());
+
+            DocumentSelection selection = service.retrieve(
+                    created.documentId(),
+                    "请找到车辆保养章节",
+                    24_000,
+                    4
+            ).orElseThrow();
+
+            assertThat(selection.content()).contains("SEMANTIC-VEHICLE-TARGET");
+            assertThat(selection.warnings()).doesNotContain("语义检索暂时不可用，本次已使用关键词检索。");
+        } finally {
+            service.close();
+        }
+    }
+
+    @Test
     void shouldRejectProtectedFileBeforeCreatingUpload() {
         TemporaryDocumentIndexService service = createService();
         try {
@@ -108,9 +158,20 @@ class TemporaryDocumentIndexServiceTest {
     }
 
     private TemporaryDocumentIndexService createService() {
+        TextEmbeddingModel unusedModel = inputs -> {
+            throw new AssertionError("语义检索关闭时不应调用向量模型");
+        };
+        return createService(new SemanticVectorIndex(
+                unusedModel,
+                new SemanticVectorIndexOptions(false, 16, 48_000)
+        ));
+    }
+
+    private TemporaryDocumentIndexService createService(SemanticVectorIndex semanticVectorIndex) {
         BinaryContentExtractor binaryExtractor = new BinaryContentExtractor();
         return new TemporaryDocumentIndexService(
                 new StreamingDocumentExtractor(binaryExtractor),
+                semanticVectorIndex,
                 new FileContentSummarizer()
         );
     }

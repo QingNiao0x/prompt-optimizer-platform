@@ -19,6 +19,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -63,6 +64,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
     );
 
     private final StreamingDocumentExtractor documentExtractor;
+    private final SemanticVectorIndex semanticVectorIndex;
     private final FileContentSummarizer fileContentSummarizer;
     private final ContentChunkSelector contentChunkSelector = new ContentChunkSelector();
     private final Map<String, UploadSession> sessions = new ConcurrentHashMap<>();
@@ -71,9 +73,11 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
 
     public TemporaryDocumentIndexService(
             StreamingDocumentExtractor documentExtractor,
+            SemanticVectorIndex semanticVectorIndex,
             FileContentSummarizer fileContentSummarizer
     ) {
         this.documentExtractor = documentExtractor;
+        this.semanticVectorIndex = semanticVectorIndex;
         this.fileContentSummarizer = fileContentSummarizer;
         this.executor = Executors.newFixedThreadPool(
                 Math.max(2, Math.min(4, Runtime.getRuntime().availableProcessors() / 2)),
@@ -123,6 +127,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                     directory,
                     sourceFile,
                     directory.resolve("chunks.data"),
+                    directory.resolve("vectors.data"),
                     Instant.now().plus(DOCUMENT_TTL)
             );
             sessions.put(documentId, session);
@@ -241,13 +246,26 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         if (session == null) {
             return Optional.empty();
         }
+
+        // 向量查询可能访问外部或本地模型，不能占用会话锁，否则状态查询和取消操作会被阻塞。
+        SemanticVectorIndex.SearchResult semanticResult = semanticVectorIndex.search(
+                session.vectorFile,
+                query,
+                Math.max(64, maxChunks * 8)
+        );
         synchronized (session.monitor) {
-            if (session.phase != DocumentProcessingPhase.READY
-                    && session.phase != DocumentProcessingPhase.PARTIAL) {
+            if (sessions.get(documentId) != session
+                    || (session.phase != DocumentProcessingPhase.READY
+                    && session.phase != DocumentProcessingPhase.PARTIAL)) {
                 return Optional.empty();
             }
             session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
-            List<ChunkRecord> selectedRecords = selectRecords(session, query, maxChunks);
+            List<ChunkRecord> selectedRecords = selectRecords(
+                    session,
+                    query,
+                    maxChunks,
+                    semanticResult.scores()
+            );
             StringBuilder content = new StringBuilder();
             int selectedCharacters = 0;
             int selectedChunks = 0;
@@ -272,6 +290,8 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 selectedCharacters += value.length();
                 selectedChunks++;
             }
+            List<String> selectionWarnings = new ArrayList<>(session.warnings);
+            addWarning(selectionWarnings, semanticResult.warning());
             return Optional.of(new DocumentSelection(
                     session.path,
                     session.language,
@@ -283,7 +303,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                     selectedChunks,
                     selectedCharacters,
                     session.extractionComplete,
-                    session.warnings
+                    selectionWarnings
             ));
         }
     }
@@ -297,32 +317,44 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 session.phase = DocumentProcessingPhase.EXTRACTING;
                 session.progressPercent = 45;
             }
+            StreamingDocumentExtractor.ExtractionReport report;
             try (DocumentChunkWriter writer = new DocumentChunkWriter(session)) {
-                StreamingDocumentExtractor.ExtractionReport report = documentExtractor.extract(
+                report = documentExtractor.extract(
                         session.sourceFile,
                         session.path,
                         session.language,
                         writer::append,
                         (processed, total) -> updateExtractionProgress(session, processed, total)
                 );
-                synchronized (session.monitor) {
-                    session.phase = DocumentProcessingPhase.INDEXING;
-                    session.progressPercent = 88;
-                }
                 writer.finish();
-                synchronized (session.monitor) {
-                    session.extractedCharacters = report.extractedCharacters();
-                    session.extractionComplete = report.complete();
-                    session.warnings = new ArrayList<>(report.warnings());
-                    session.phase = DocumentProcessingPhase.SUMMARIZING;
-                    session.progressPercent = 95;
-                    session.summary = buildSummary(session);
-                    session.phase = report.complete()
-                            ? DocumentProcessingPhase.READY
-                            : DocumentProcessingPhase.PARTIAL;
-                    session.progressPercent = 100;
-                    session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
+            }
+            synchronized (session.monitor) {
+                session.phase = DocumentProcessingPhase.INDEXING;
+                session.progressPercent = 88;
+                session.extractedCharacters = report.extractedCharacters();
+                session.extractionComplete = report.complete();
+                session.warnings = new ArrayList<>(report.warnings());
+            }
+
+            SemanticVectorIndex.BuildReport semanticReport = semanticVectorIndex.build(
+                    session.vectorFile,
+                    session.chunks.size(),
+                    (offset, limit) -> readChunkBatch(session, offset, limit),
+                    indexedChunks -> updateSemanticIndexProgress(session, indexedChunks)
+            );
+            synchronized (session.monitor) {
+                if (session.cancelled || Thread.currentThread().isInterrupted()) {
+                    return;
                 }
+                addWarning(session.warnings, semanticReport.warning());
+                session.phase = DocumentProcessingPhase.SUMMARIZING;
+                session.progressPercent = 95;
+                session.summary = buildSummary(session);
+                session.phase = report.complete()
+                        ? DocumentProcessingPhase.READY
+                        : DocumentProcessingPhase.PARTIAL;
+                session.progressPercent = 100;
+                session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
             }
         } catch (Exception exception) {
             synchronized (session.monitor) {
@@ -333,6 +365,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 }
             }
             deleteFileQuietly(session.chunkFile);
+            deleteFileQuietly(session.vectorFile);
         } finally {
             deleteFileQuietly(session.sourceFile);
         }
@@ -348,6 +381,21 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
             }
             double ratio = total <= 0 ? 0 : Math.min(1D, (double) processed / total);
             session.progressPercent = 45 + (int) Math.round(ratio * 40);
+        }
+    }
+
+    private void updateSemanticIndexProgress(UploadSession session, int indexedChunks) {
+        synchronized (session.monitor) {
+            if (session.cancelled || Thread.currentThread().isInterrupted()) {
+                throw new DocumentUploadException(
+                        DocumentUploadException.Reason.CONFLICT,
+                        "文档处理已取消"
+                );
+            }
+            double ratio = session.chunks.isEmpty()
+                    ? 1D
+                    : Math.min(1D, (double) indexedChunks / session.chunks.size());
+            session.progressPercent = 88 + (int) Math.round(ratio * 6);
         }
     }
 
@@ -370,18 +418,43 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         );
     }
 
-    private List<ChunkRecord> selectRecords(UploadSession session, String query, int maxChunks) {
+    private List<ChunkRecord> selectRecords(
+            UploadSession session,
+            String query,
+            int maxChunks,
+            Map<Integer, Double> semanticScores
+    ) {
         int limit = Math.max(1, Math.min(maxChunks, session.chunks.size()));
         Set<String> queryTerms = contentChunkSelector.extractSearchTerms(query);
         LinkedHashSet<Integer> selected = new LinkedHashSet<>();
-        // 为文档首部、正文中部和结尾预留位置，再补充任务相关片段。
-        // 这样即便大量段落都命中同一关键词，结论与验收部分也不会被完全挤出。
-        representativeIndexes(session.chunks.size(), Math.min(3, limit)).forEach(selected::add);
-        if (!queryTerms.isEmpty()) {
+        // 代表片段只占约三分之一名额，给关键词和语义结果保留足够空间。
+        // 最终仍会均匀补位，因此泛化分析不会丢失文档中部和结尾。
+        int reservedRepresentatives = Math.min(3, Math.max(1, (limit + 2) / 3));
+        representativeIndexes(session.chunks.size(), reservedRepresentatives).forEach(selected::add);
+        if (!queryTerms.isEmpty() || !semanticScores.isEmpty()) {
+            Map<Integer, Integer> lexicalScores = new LinkedHashMap<>();
+            int maxLexicalScore = 0;
+            for (ChunkRecord record : session.chunks) {
+                int lexicalScore = score(record, queryTerms);
+                lexicalScores.put(record.index(), lexicalScore);
+                maxLexicalScore = Math.max(maxLexicalScore, lexicalScore);
+            }
+            int highestLexicalScore = maxLexicalScore;
             session.chunks.stream()
-                    .map(record -> new ScoredRecord(record, score(record, queryTerms)))
-                    .filter(item -> item.score() > 0)
-                    .sorted(Comparator.comparingInt(ScoredRecord::score).reversed()
+                    .map(record -> new ScoredRecord(
+                            record,
+                            lexicalScores.getOrDefault(record.index(), 0),
+                            semanticScores.getOrDefault(record.index(), 0D),
+                            hybridScore(
+                                    lexicalScores.getOrDefault(record.index(), 0),
+                                    highestLexicalScore,
+                                    semanticScores.getOrDefault(record.index(), 0D),
+                                    !semanticScores.isEmpty()
+                            )
+                    ))
+                    .filter(item -> item.lexicalScore() > 0 || item.semanticScore() > 0D)
+                    .sorted(Comparator.comparingDouble(ScoredRecord::combinedScore).reversed()
+                            .thenComparing(Comparator.comparingInt(ScoredRecord::lexicalScore).reversed())
                             .thenComparingInt(item -> item.record().index()))
                     .forEach(item -> {
                         if (selected.size() < limit) {
@@ -399,6 +472,23 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 .sorted()
                 .map(index -> session.chunks.get(index))
                 .toList();
+    }
+
+    private double hybridScore(
+            int lexicalScore,
+            int maxLexicalScore,
+            double semanticScore,
+            boolean semanticAvailable
+    ) {
+        if (!semanticAvailable) {
+            return lexicalScore;
+        }
+        double normalizedLexical = maxLexicalScore <= 0
+                ? 0D
+                : (double) lexicalScore / maxLexicalScore;
+        // 字面命中更适合类名、字段名和编号，语义相似度更适合自然语言改写。
+        // 55/45 的权重优先保证精确命中，同时允许无共同词的相关段落进入结果。
+        return normalizedLexical * 0.55D + semanticScore * 0.45D;
     }
 
     private int score(ChunkRecord record, Set<String> queryTerms) {
@@ -428,12 +518,8 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
     }
 
     private String readChunk(UploadSession session, ChunkRecord record) {
-        ByteBuffer buffer = ByteBuffer.allocate(record.byteLength());
         try (FileChannel channel = FileChannel.open(session.chunkFile, StandardOpenOption.READ)) {
-            channel.position(record.byteOffset());
-            while (buffer.hasRemaining() && channel.read(buffer) >= 0) {
-                // FileChannel 可能分多次返回，持续读取到当前块结束。
-            }
+            return readChunk(channel, record);
         } catch (IOException exception) {
             throw new DocumentUploadException(
                     DocumentUploadException.Reason.CONFLICT,
@@ -441,8 +527,42 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                     exception
             );
         }
+    }
+
+    private List<String> readChunkBatch(UploadSession session, int offset, int limit) {
+        int end = Math.min(session.chunks.size(), offset + limit);
+        if (offset < 0 || offset >= end) {
+            return List.of();
+        }
+        try (FileChannel channel = FileChannel.open(session.chunkFile, StandardOpenOption.READ)) {
+            List<String> content = new ArrayList<>(end - offset);
+            for (int index = offset; index < end; index++) {
+                content.add(readChunk(channel, session.chunks.get(index)));
+            }
+            return content;
+        } catch (IOException exception) {
+            throw new DocumentUploadException(
+                    DocumentUploadException.Reason.CONFLICT,
+                    "临时文档索引读取失败，请重新上传文件",
+                    exception
+            );
+        }
+    }
+
+    private String readChunk(FileChannel channel, ChunkRecord record) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(record.byteLength());
+        channel.position(record.byteOffset());
+        while (buffer.hasRemaining() && channel.read(buffer) >= 0) {
+            // FileChannel 可能分多次返回，持续读取到当前块结束。
+        }
         buffer.flip();
         return StandardCharsets.UTF_8.decode(buffer).toString();
+    }
+
+    private void addWarning(List<String> warnings, String warning) {
+        if (warning != null && !warning.isBlank() && !warnings.contains(warning)) {
+            warnings.add(warning);
+        }
     }
 
     private DocumentUploadStatus statusOf(UploadSession session) {
@@ -679,6 +799,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         private final Path directory;
         private final Path sourceFile;
         private final Path chunkFile;
+        private final Path vectorFile;
         private final BitSet receivedChunks;
         private final List<ChunkRecord> chunks = new ArrayList<>();
 
@@ -702,6 +823,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 Path directory,
                 Path sourceFile,
                 Path chunkFile,
+                Path vectorFile,
                 Instant expiresAt
         ) {
             this.documentId = documentId;
@@ -714,6 +836,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
             this.directory = directory;
             this.sourceFile = sourceFile;
             this.chunkFile = chunkFile;
+            this.vectorFile = vectorFile;
             this.receivedChunks = new BitSet(expectedChunks);
             this.expiresAt = expiresAt;
         }
@@ -731,6 +854,11 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
     }
 
-    private record ScoredRecord(ChunkRecord record, int score) {
+    private record ScoredRecord(
+            ChunkRecord record,
+            int lexicalScore,
+            double semanticScore,
+            double combinedScore
+    ) {
     }
 }

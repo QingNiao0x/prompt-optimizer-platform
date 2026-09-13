@@ -2,7 +2,7 @@
 
 技术栈：Java 21、Spring Boot 3、Spring MVC、Spring Data JPA、Flyway、PostgreSQL Driver、Spring Data Redis。
 
-当前已完成后端核心 MVP：基础工程、统一响应与错误模型、上下文分析、提示词增强编排、Mock Provider、可切换的 OpenAI 兼容 Provider，以及 Provider 配置管理基础 CRUD。
+当前已完成后端核心 MVP：基础工程、统一响应与错误模型、上下文分析、提示词增强编排、Mock Provider、可切换的 OpenAI 兼容 Provider、语义向量检索，以及 Provider 配置管理基础 CRUD。
 
 Provider 配置管理接口：
 

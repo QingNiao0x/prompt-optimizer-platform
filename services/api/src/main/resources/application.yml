@@ -50,6 +50,18 @@ app:
   history:
     # local-mock 无数据库模式下关闭历史持久化，避免启动失败。
     enabled: ${HISTORY_ENABLED:true}
+  retrieval:
+    semantic:
+      # 语义向量模型与聊天模型相互独立。默认关闭，未配置时继续使用现有关键词检索。
+      enabled: ${SEMANTIC_RETRIEVAL_ENABLED:false}
+      # 默认指向本机 OpenAI 兼容端点；使用远程服务前需要确认项目内容传输与隐私策略。
+      endpoint: ${EMBEDDING_ENDPOINT:http://localhost:11434/v1/embeddings}
+      api-key: ${EMBEDDING_API_KEY:}
+      model: ${EMBEDDING_MODEL:embeddinggemma}
+      batch-size: ${EMBEDDING_BATCH_SIZE:16}
+      max-batch-characters: ${EMBEDDING_MAX_BATCH_CHARACTERS:48000}
+      connect-timeout: ${EMBEDDING_CONNECT_TIMEOUT:3s}
+      read-timeout: ${EMBEDDING_READ_TIMEOUT:45s}
   provider:
     mode: ${MODEL_PROVIDER_MODE:openai-compatible}
     openai-compatible:
