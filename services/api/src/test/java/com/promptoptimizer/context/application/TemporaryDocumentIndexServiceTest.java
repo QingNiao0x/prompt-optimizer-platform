@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -143,6 +144,49 @@ class TemporaryDocumentIndexServiceTest {
     }
 
     @Test
+    void shouldStoreMapReduceSummaryAfterIndexingCompletes() throws Exception {
+        TextEmbeddingModel unusedEmbeddingModel = inputs -> {
+            throw new AssertionError("语义检索关闭时不应调用向量模型");
+        };
+        SemanticVectorIndex semanticIndex = new SemanticVectorIndex(
+                unusedEmbeddingModel,
+                new SemanticVectorIndexOptions(false, 16, 48_000)
+        );
+        DocumentSummaryModel summaryModel = request -> new DocumentSummaryModel.SummaryResult(
+                request.stage() == DocumentSummaryModel.SummaryStage.MAP
+                        ? "当前批次说明业务目标和验收要求。"
+                        : "全文分层摘要：文档说明业务目标、实施步骤和验收要求。",
+                "test-summary-model"
+        );
+        MapReduceDocumentSummarizer mapReduceSummarizer = new MapReduceDocumentSummarizer(
+                new FileContentSummarizer(),
+                Optional.of(summaryModel),
+                new MapReduceSummaryOptions(true, 2, 8, 48_000, 1_200, 1_800, 32, 8)
+        );
+        TemporaryDocumentIndexService service = createService(semanticIndex, mapReduceSummarizer);
+        try {
+            byte[] bytes = "业务说明：实现批量处理。\n验收要求：所有章节都应参与摘要。\n"
+                    .repeat(2_000)
+                    .getBytes(StandardCharsets.UTF_8);
+            DocumentUploadStatus created = service.create(new DocumentUploadCreateRequest(
+                    "docs/业务需求.txt",
+                    "text",
+                    bytes.length
+            ));
+            uploadAllChunks(service, created.documentId(), bytes, created.chunkSizeBytes());
+            service.completeUpload(created.documentId());
+
+            DocumentUploadStatus completed = awaitTerminalStatus(service, created.documentId());
+
+            assertThat(completed.phase()).isEqualTo(DocumentProcessingPhase.READY);
+            assertThat(completed.summary()).contains("全文分层摘要").contains("验收要求");
+            assertThat(completed.progressPercent()).isEqualTo(100);
+        } finally {
+            service.close();
+        }
+    }
+
+    @Test
     void shouldRejectProtectedFileBeforeCreatingUpload() {
         TemporaryDocumentIndexService service = createService();
         try {
@@ -168,11 +212,23 @@ class TemporaryDocumentIndexServiceTest {
     }
 
     private TemporaryDocumentIndexService createService(SemanticVectorIndex semanticVectorIndex) {
+        MapReduceDocumentSummarizer disabledSummarizer = new MapReduceDocumentSummarizer(
+                new FileContentSummarizer(),
+                Optional.empty(),
+                new MapReduceSummaryOptions(false, 8, 24, 48_000, 1_200, 1_800, 256, 32)
+        );
+        return createService(semanticVectorIndex, disabledSummarizer);
+    }
+
+    private TemporaryDocumentIndexService createService(
+            SemanticVectorIndex semanticVectorIndex,
+            MapReduceDocumentSummarizer documentSummarizer
+    ) {
         BinaryContentExtractor binaryExtractor = new BinaryContentExtractor();
         return new TemporaryDocumentIndexService(
                 new StreamingDocumentExtractor(binaryExtractor),
                 semanticVectorIndex,
-                new FileContentSummarizer()
+                documentSummarizer
         );
     }
 

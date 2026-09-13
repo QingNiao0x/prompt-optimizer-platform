@@ -1,6 +1,7 @@
 package com.promptoptimizer.provider.infrastructure.openai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.context.application.DocumentSummaryModel;
 import com.promptoptimizer.provider.application.PromptEnhancementProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -54,6 +55,22 @@ public class OpenAiCompatibleProviderConfiguration {
             OpenAiCompatibleProperties properties
     ) {
         return new OpenAiCompatiblePromptEnhancementProvider(
+                openAiCompatibleRestClient,
+                objectMapper,
+                properties
+        );
+    }
+
+    /**
+     * 复用当前聊天模型、端点和运行环境密钥，为大型文档提供 Map-Reduce 摘要能力。
+     */
+    @Bean
+    DocumentSummaryModel openAiCompatibleDocumentSummaryModel(
+            RestClient openAiCompatibleRestClient,
+            ObjectMapper objectMapper,
+            OpenAiCompatibleProperties properties
+    ) {
+        return new OpenAiCompatibleDocumentSummaryModel(
                 openAiCompatibleRestClient,
                 objectMapper,
                 properties

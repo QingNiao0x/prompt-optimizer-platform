@@ -1,5 +1,6 @@
 package com.promptoptimizer.provider.infrastructure.openai;
 
+import com.promptoptimizer.context.application.DocumentSummaryModel;
 import com.promptoptimizer.provider.application.PromptEnhancementProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -28,6 +29,7 @@ class OpenAiCompatibleProviderConfigurationTest {
                 )
                 .run(context -> {
                     assertThat(context).hasSingleBean(PromptEnhancementProvider.class);
+                    assertThat(context).hasSingleBean(DocumentSummaryModel.class);
                     assertThat(context.getBean(PromptEnhancementProvider.class))
                             .isInstanceOf(OpenAiCompatiblePromptEnhancementProvider.class);
                 });

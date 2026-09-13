@@ -65,7 +65,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
 
     private final StreamingDocumentExtractor documentExtractor;
     private final SemanticVectorIndex semanticVectorIndex;
-    private final FileContentSummarizer fileContentSummarizer;
+    private final MapReduceDocumentSummarizer documentSummarizer;
     private final ContentChunkSelector contentChunkSelector = new ContentChunkSelector();
     private final Map<String, UploadSession> sessions = new ConcurrentHashMap<>();
     private final ExecutorService executor;
@@ -74,11 +74,11 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
     public TemporaryDocumentIndexService(
             StreamingDocumentExtractor documentExtractor,
             SemanticVectorIndex semanticVectorIndex,
-            FileContentSummarizer fileContentSummarizer
+            MapReduceDocumentSummarizer documentSummarizer
     ) {
         this.documentExtractor = documentExtractor;
         this.semanticVectorIndex = semanticVectorIndex;
-        this.fileContentSummarizer = fileContentSummarizer;
+        this.documentSummarizer = documentSummarizer;
         this.executor = Executors.newFixedThreadPool(
                 Math.max(2, Math.min(4, Runtime.getRuntime().availableProcessors() / 2)),
                 Thread.ofPlatform().name("document-index-", 0).factory()
@@ -349,7 +349,24 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 addWarning(session.warnings, semanticReport.warning());
                 session.phase = DocumentProcessingPhase.SUMMARIZING;
                 session.progressPercent = 95;
-                session.summary = buildSummary(session);
+            }
+
+            // 模型摘要可能耗时较长，必须在会话锁外执行，确保状态轮询和取消请求不被阻塞。
+            MapReduceDocumentSummarizer.SummaryReport summaryReport = documentSummarizer.summarize(
+                    new MapReduceDocumentSummarizer.SummarySource(
+                            session.path,
+                            session.language,
+                            session.chunks.size(),
+                            (offset, limit) -> readSummaryChunkBatch(session, offset, limit)
+                    ),
+                    completionRatio -> updateSummaryProgress(session, completionRatio)
+            );
+            synchronized (session.monitor) {
+                if (session.cancelled || Thread.currentThread().isInterrupted()) {
+                    return;
+                }
+                summaryReport.warnings().forEach(warning -> addWarning(session.warnings, warning));
+                session.summary = summaryReport.summary();
                 session.phase = report.complete()
                         ? DocumentProcessingPhase.READY
                         : DocumentProcessingPhase.PARTIAL;
@@ -399,23 +416,17 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
     }
 
-    private String buildSummary(UploadSession session) {
-        if (session.chunks.isEmpty()) {
-            return "";
-        }
-        LinkedHashSet<Integer> indexes = representativeIndexes(session.chunks.size(), 5);
-        StringBuilder representativeContent = new StringBuilder();
-        for (Integer index : indexes) {
-            if (!representativeContent.isEmpty()) {
-                representativeContent.append("\n");
+    private void updateSummaryProgress(UploadSession session, double completionRatio) {
+        synchronized (session.monitor) {
+            if (session.cancelled || Thread.currentThread().isInterrupted()) {
+                throw new DocumentUploadException(
+                        DocumentUploadException.Reason.CONFLICT,
+                        "文档处理已取消"
+                );
             }
-            representativeContent.append(readChunk(session, session.chunks.get(index)));
+            double boundedRatio = Math.max(0D, Math.min(1D, completionRatio));
+            session.progressPercent = 95 + (int) Math.round(boundedRatio * 4D);
         }
-        return fileContentSummarizer.summarize(
-                session.path,
-                session.language,
-                representativeContent.toString()
-        );
     }
 
     private List<ChunkRecord> selectRecords(
@@ -538,6 +549,35 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
             List<String> content = new ArrayList<>(end - offset);
             for (int index = offset; index < end; index++) {
                 content.add(readChunk(channel, session.chunks.get(index)));
+            }
+            return content;
+        } catch (IOException exception) {
+            throw new DocumentUploadException(
+                    DocumentUploadException.Reason.CONFLICT,
+                    "临时文档索引读取失败，请重新上传文件",
+                    exception
+            );
+        }
+    }
+
+    private List<MapReduceDocumentSummarizer.SourceChunk> readSummaryChunkBatch(
+            UploadSession session,
+            int offset,
+            int limit
+    ) {
+        int end = Math.min(session.chunks.size(), offset + limit);
+        if (offset < 0 || offset >= end) {
+            return List.of();
+        }
+        try (FileChannel channel = FileChannel.open(session.chunkFile, StandardOpenOption.READ)) {
+            List<MapReduceDocumentSummarizer.SourceChunk> content = new ArrayList<>(end - offset);
+            for (int index = offset; index < end; index++) {
+                ChunkRecord record = session.chunks.get(index);
+                content.add(new MapReduceDocumentSummarizer.SourceChunk(
+                        record.index(),
+                        record.label(),
+                        readChunk(channel, record)
+                ));
             }
             return content;
         } catch (IOException exception) {

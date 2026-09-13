@@ -2,7 +2,7 @@
 
 技术栈：Java 21、Spring Boot 3、Spring MVC、Spring Data JPA、Flyway、PostgreSQL Driver、Spring Data Redis。
 
-当前已完成后端核心 MVP：基础工程、统一响应与错误模型、上下文分析、提示词增强编排、Mock Provider、可切换的 OpenAI 兼容 Provider、语义向量检索，以及 Provider 配置管理基础 CRUD。
+当前已完成后端核心 MVP：基础工程、统一响应与错误模型、上下文分析、提示词增强编排、Mock Provider、可切换的 OpenAI 兼容 Provider、语义向量检索、可选的 Map-Reduce 全文摘要，以及 Provider 配置管理基础 CRUD。
 
 Provider 配置管理接口：
 
@@ -98,6 +98,21 @@ MODEL_JSON_RESPONSE_FORMAT_ENABLED=true
 
 `MODEL_ENDPOINT` 应填写完整的 Chat Completions 请求地址。部分自定义兼容端点不接受 `response_format` 参数，此时可设置
 `MODEL_JSON_RESPONSE_FORMAT_ENABLED=false`；系统提示词仍会要求返回严格 JSON。
+
+大型文档默认使用零费用的本地规则摘要。需要让当前聊天模型对全部已索引文本执行分批 Map 和分层 Reduce 时，可以显式启用：
+
+```text
+MAP_REDUCE_SUMMARY_ENABLED=true
+MAP_REDUCE_MAP_BATCH_SIZE=8
+MAP_REDUCE_REDUCE_BATCH_SIZE=24
+MAP_REDUCE_MAX_BATCH_CHARACTERS=48000
+MAP_REDUCE_INTERMEDIATE_CHARACTERS=1200
+MAP_REDUCE_FINAL_CHARACTERS=1800
+MAP_REDUCE_MAX_MAP_CALLS=256
+MAP_REDUCE_MAX_REDUCE_CALLS=32
+```
+
+Map-Reduce 复用 `MODEL_ENDPOINT`、`MODEL_NAME` 和 `MODEL_API_KEY`，不需要把密钥再写入配置文件。开启后会增加模型请求次数和费用；某个批次请求失败或达到调用保护上限时，系统会把该部分降级为本地规则摘要，全文索引和后续检索仍然可用。
 
 如需在没有 API Key 的情况下进行本地页面或接口联调，可显式设置 `MODEL_PROVIDER_MODE=mock`。Mock 只生成确定性的测试结果，不会访问任何外部模型。
 

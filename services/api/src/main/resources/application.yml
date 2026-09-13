@@ -62,6 +62,18 @@ app:
       max-batch-characters: ${EMBEDDING_MAX_BATCH_CHARACTERS:48000}
       connect-timeout: ${EMBEDDING_CONNECT_TIMEOUT:3s}
       read-timeout: ${EMBEDDING_READ_TIMEOUT:45s}
+  summary:
+    map-reduce:
+      # 会对全文分批调用当前聊天模型，默认关闭以避免用户上传文件时产生意外费用。
+      enabled: ${MAP_REDUCE_SUMMARY_ENABLED:false}
+      map-batch-size: ${MAP_REDUCE_MAP_BATCH_SIZE:8}
+      reduce-batch-size: ${MAP_REDUCE_REDUCE_BATCH_SIZE:24}
+      max-batch-characters: ${MAP_REDUCE_MAX_BATCH_CHARACTERS:48000}
+      intermediate-summary-characters: ${MAP_REDUCE_INTERMEDIATE_CHARACTERS:1200}
+      final-summary-characters: ${MAP_REDUCE_FINAL_CHARACTERS:1800}
+      # 超大文档超过调用保护上限后继续使用本地规则摘要，不跳过剩余全文块。
+      max-map-calls: ${MAP_REDUCE_MAX_MAP_CALLS:256}
+      max-reduce-calls: ${MAP_REDUCE_MAX_REDUCE_CALLS:32}
   provider:
     mode: ${MODEL_PROVIDER_MODE:openai-compatible}
     openai-compatible:
