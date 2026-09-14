@@ -3,6 +3,7 @@ package com.promptoptimizer.provider.domain;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.api.ConversationMessage;
 import com.promptoptimizer.enhancement.api.EnhancementOptions;
+import com.promptoptimizer.enhancement.api.PlanAnswer;
 import com.promptoptimizer.template.domain.PromptTemplate;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public record EnhancementProviderRequest(
         ContextSnapshot context,
         PromptTemplate template,
         List<String> ambiguities,
+        List<PlanAnswer> planAnswers,
+        boolean planConfirmed,
         List<String> constraints,
         List<ConversationMessage> conversationHistory,
         EnhancementOptions options
@@ -28,7 +31,33 @@ public record EnhancementProviderRequest(
      */
     public EnhancementProviderRequest {
         ambiguities = List.copyOf(ambiguities);
+        planAnswers = List.copyOf(planAnswers);
         constraints = List.copyOf(constraints);
         conversationHistory = List.copyOf(conversationHistory);
+    }
+
+    /**
+     * 兼容计划模式上线前的测试和适配调用。
+     */
+    public EnhancementProviderRequest(
+            String rawPrompt,
+            ContextSnapshot context,
+            PromptTemplate template,
+            List<String> ambiguities,
+            List<String> constraints,
+            List<ConversationMessage> conversationHistory,
+            EnhancementOptions options
+    ) {
+        this(
+                rawPrompt,
+                context,
+                template,
+                ambiguities,
+                List.of(),
+                false,
+                constraints,
+                conversationHistory,
+                options
+        );
     }
 }

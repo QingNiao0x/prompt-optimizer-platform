@@ -3,6 +3,7 @@ package com.promptoptimizer.enhancement.api;
 import com.promptoptimizer.context.api.ContextAnalysisRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
@@ -20,8 +21,9 @@ public record OptimizationRequest(
         @Valid ContextAnalysisRequest context,
         @Valid EnhancementOptions enhancement,
         @Size(max = 20, message = "单次最多携带 20 条会话消息")
-        List<@Valid ConversationMessage> conversationHistory,
-        @Valid PermissionPolicyInput permissionPolicy
+        List<@NotNull(message = "会话消息不能为空") @Valid ConversationMessage> conversationHistory,
+        @Valid PermissionPolicyInput permissionPolicy,
+        @Valid PlanConfirmation planConfirmation
 ) {
 
     /**
@@ -32,5 +34,18 @@ public record OptimizationRequest(
         enhancement = enhancement == null ? EnhancementOptions.defaults() : enhancement;
         conversationHistory = conversationHistory == null ? List.of() : List.copyOf(conversationHistory);
         permissionPolicy = permissionPolicy == null ? PermissionPolicyInput.empty() : permissionPolicy;
+    }
+
+    /**
+     * 兼容计划模式上线前的服务内构造调用。
+     */
+    public OptimizationRequest(
+            String rawPrompt,
+            ContextAnalysisRequest context,
+            EnhancementOptions enhancement,
+            List<ConversationMessage> conversationHistory,
+            PermissionPolicyInput permissionPolicy
+    ) {
+        this(rawPrompt, context, enhancement, conversationHistory, permissionPolicy, null);
     }
 }

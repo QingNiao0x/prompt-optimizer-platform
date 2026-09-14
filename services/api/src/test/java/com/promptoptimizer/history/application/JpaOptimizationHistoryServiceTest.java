@@ -7,6 +7,7 @@ import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.context.domain.FileSnippet;
 import com.promptoptimizer.enhancement.api.EnhancementOptions;
 import com.promptoptimizer.enhancement.api.OptimizationRequest;
+import com.promptoptimizer.enhancement.api.PlanAnswer;
 import com.promptoptimizer.enhancement.api.PermissionPolicyInput;
 import com.promptoptimizer.enhancement.application.EnhancementOrchestrator;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
@@ -170,6 +171,25 @@ class JpaOptimizationHistoryServiceTest {
     }
 
     @Test
+    void shouldReplayConfirmedPlanAnswersWhenReoptimizingARecord() {
+        OptimizationRecordEntity source = recordEntityWithPlan();
+        when(recordRepository.findByIdAndTenantIdAndWorkspaceId(source.getId(), TENANT_ID, WORKSPACE_ID))
+                .thenReturn(Optional.of(source));
+        when(orchestrator.optimize(any())).thenReturn(resultWithoutFiles());
+        when(sessionRepository.findFirstByTenantIdAndWorkspaceIdAndStatusOrderByCreatedAtAsc(
+                eq(TENANT_ID), eq(WORKSPACE_ID), eq("ACTIVE")
+        )).thenReturn(Optional.of(sessionEntity()));
+
+        service.reoptimize(source.getId());
+
+        ArgumentCaptor<OptimizationRequest> requestCaptor = ArgumentCaptor.forClass(OptimizationRequest.class);
+        verify(orchestrator).optimize(requestCaptor.capture());
+        assertThat(requestCaptor.getValue().planConfirmation()).isNotNull();
+        assertThat(requestCaptor.getValue().planConfirmation().answers())
+                .containsExactly(new PlanAnswer("research-region", "研究覆盖哪个地区？", "广东省"));
+    }
+
+    @Test
     void shouldDeleteRecordInCurrentWorkspace() {
         OptimizationRecordEntity entity = recordEntity();
         when(recordRepository.findByIdAndTenantIdAndWorkspaceId(entity.getId(), TENANT_ID, WORKSPACE_ID))
@@ -281,6 +301,20 @@ class JpaOptimizationHistoryServiceTest {
         ));
         entity.setLatencyMs(12);
         entity.setCreatedAt(OffsetDateTime.now(ZoneOffset.UTC));
+        return entity;
+    }
+
+    private OptimizationRecordEntity recordEntityWithPlan() {
+        OptimizationRecordEntity entity = recordEntity();
+        Map<String, Object> metadata = new java.util.LinkedHashMap<>(entity.getResultMetadata());
+        metadata.put("planConfirmation", Map.of(
+                "answers", List.of(Map.of(
+                        "questionId", "research-region",
+                        "question", "研究覆盖哪个地区？",
+                        "answer", "广东省"
+                ))
+        ));
+        entity.setResultMetadata(metadata);
         return entity;
     }
 }

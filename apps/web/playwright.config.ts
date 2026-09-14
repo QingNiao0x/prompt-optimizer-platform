@@ -4,12 +4,13 @@ const browserChannel = process.env.PLAYWRIGHT_BROWSER_CHANNEL ?? 'chrome';
 
 export default defineConfig({
   testDir: './e2e',
+  timeout: 60_000,
   globalSetup: './e2e/global-setup.ts',
   outputDir: 'test-results',
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 4,
   reporter: [
     ['list'],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],

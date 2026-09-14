@@ -1,7 +1,10 @@
 import { defineStore } from 'pinia';
 import { computed, ref, shallowRef } from 'vue';
 
-import { buildOptimizationRequest } from '@/features/optimization/optimizationRequest';
+import {
+  buildOptimizationPlanRequest,
+  buildOptimizationRequest,
+} from '@/features/optimization/optimizationRequest';
 import {
   loadProjectContextSettings,
   resolveProjectContextProfile,
@@ -14,13 +17,20 @@ import {
 } from '@/features/project-index/projectIndexer';
 import { getApiErrorMessage, getApiErrorRequestId } from '@/services/http';
 import { deleteDocumentUpload } from '@/services/documentUploadApi';
-import { analyzeContext, optimizePrompt } from '@/services/promptOptimizerApi';
+import {
+  analyzeContext,
+  createOptimizationPlan as requestOptimizationPlan,
+  optimizePrompt,
+} from '@/services/promptOptimizerApi';
 import { MAX_FILES } from '@/workers/fileReaderCore';
 import type {
   ContextFileInput,
   ContextSnapshot,
   OptimizationHistoryDetail,
+  OptimizationPlan,
   OptimizationResult,
+  PlanConfirmation,
+  PromptSection,
   ReoptimizationResult,
   TemplateCode,
 } from '@/types/api';
@@ -37,13 +47,19 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const contextRetrieval = shallowRef<ProjectContextRetrievalResult>();
   const activeFilePath = ref('');
   const contextSnapshot = ref<ContextSnapshot>();
+  const plan = ref<OptimizationPlan>();
   const result = ref<OptimizationResult>();
+  const resultUndoStack = ref<OptimizationResult[]>([]);
   const requestId = ref('');
   const errorMessage = ref('');
   const isAnalyzing = ref(false);
+  const isPlanning = ref(false);
   const isOptimizing = ref(false);
 
-  const canOptimize = computed(() => rawPrompt.value.trim().length > 0 && !isOptimizing.value);
+  const canOptimize = computed(() => rawPrompt.value.trim().length > 0
+    && !isPlanning.value
+    && !isOptimizing.value);
+  const canUndoResult = computed(() => resultUndoStack.value.length > 0);
 
   const setFiles = (selectedFiles: ContextFileInput[]): void => {
     if (projectIndex.value) {
@@ -177,27 +193,64 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
   };
 
+  const createOptimizationPlan = async (sourcePrompt = rawPrompt.value): Promise<boolean> => {
+    if (!sourcePrompt.trim()) {
+      errorMessage.value = '请先输入需要增强的内容。';
+      return false;
+    }
+    if (isPlanning.value || isOptimizing.value) {
+      return false;
+    }
+    isPlanning.value = true;
+    errorMessage.value = '';
+    try {
+      const response = await requestOptimizationPlan(
+        buildOptimizationPlanRequest(sourcePrompt, customDescription.value),
+      );
+      plan.value = response.data;
+      templateCode.value = response.data.templateCode;
+      requestId.value = response.requestId;
+      return true;
+    } catch (error: unknown) {
+      errorMessage.value = getApiErrorMessage(error);
+      requestId.value = getApiErrorRequestId(error);
+      return false;
+    } finally {
+      isPlanning.value = false;
+    }
+  };
+
   const runOptimization = async (
     preparedFiles?: ContextFileInput[],
+    options: {
+      rawPrompt?: string;
+      planConfirmation?: PlanConfirmation;
+    } = {},
   ): Promise<boolean> => {
-    if (!canOptimize.value) {
-      errorMessage.value = '请先输入需要增强的原始提示词。';
+    const sourcePrompt = options.rawPrompt ?? rawPrompt.value;
+    if (!sourcePrompt.trim()) {
+      errorMessage.value = '请先输入需要增强的内容。';
+      return false;
+    }
+    if (isPlanning.value || isOptimizing.value) {
       return false;
     }
 
     isOptimizing.value = true;
     errorMessage.value = '';
     try {
-      const contextFiles = preparedFiles ?? await resolveContextFiles(rawPrompt.value);
+      const contextFiles = preparedFiles ?? await resolveContextFiles(sourcePrompt);
       const response = await optimizePrompt(buildOptimizationRequest({
-        rawPrompt: rawPrompt.value,
+        rawPrompt: sourcePrompt,
         customDescription: customDescription.value,
         files: contextFiles,
         templateCode: templateCode.value,
-        includePermissionBoundaries: includePermissionBoundaries.value,
+        includePermissionBoundaries: true,
         includeExamples: includeExamples.value,
+        planConfirmation: options.planConfirmation,
       }));
       // 直接展示增强结果；用户输入的原始提示词保持不变，不做覆盖。
+      rememberCurrentResult();
       result.value = response.data;
       contextSnapshot.value = response.data.contextReport;
       requestId.value = response.requestId;
@@ -208,6 +261,62 @@ export const useOptimizationStore = defineStore('optimization', () => {
       return false;
     } finally {
       isOptimizing.value = false;
+    }
+  };
+
+  const saveEditedSections = (sections: PromptSection[]): boolean => {
+    if (!result.value || sections.some((section) => !section.title.trim() || !section.content.trim())) {
+      errorMessage.value = '结构段落的标题和内容不能为空。';
+      return false;
+    }
+    const normalizedSections = sections.map((section) => {
+      if (section.type !== 'CONSTRAINTS') {
+        return { ...section };
+      }
+      const requiredConstraints = result.value?.appliedConstraints ?? [];
+      const missingConstraints = requiredConstraints.filter((constraint) =>
+        !section.content.includes(constraint));
+      if (missingConstraints.length === 0) {
+        return { ...section };
+      }
+      const marker = '平台强制约束（不得删除或弱化）：';
+      const separator = section.content.includes(marker) ? '\n' : `\n\n${marker}\n`;
+      return {
+        ...section,
+        content: `${section.content.trim()}${separator}${missingConstraints
+          .map((constraint) => `- ${constraint}`)
+          .join('\n')}`,
+      };
+    });
+    const optimizedPrompt = normalizedSections
+      .filter((section) => section.type !== 'CLARIFICATIONS')
+      .map((section) => `## ${section.title}\n${section.content}`)
+      .join('\n\n');
+    if (optimizedPrompt === result.value.optimizedPrompt) {
+      return true;
+    }
+    rememberCurrentResult();
+    result.value = { ...result.value, sections: normalizedSections, optimizedPrompt };
+    errorMessage.value = '';
+    return true;
+  };
+
+  const undoResult = (): boolean => {
+    const previous = resultUndoStack.value.at(-1);
+    if (!previous) {
+      return false;
+    }
+    result.value = previous;
+    contextSnapshot.value = previous.contextReport;
+    templateCode.value = previous.templateCode;
+    resultUndoStack.value = resultUndoStack.value.slice(0, -1);
+    errorMessage.value = '';
+    return true;
+  };
+
+  const rememberCurrentResult = (): void => {
+    if (result.value) {
+      resultUndoStack.value = [...resultUndoStack.value, result.value].slice(-20);
     }
   };
 
@@ -231,13 +340,16 @@ export const useOptimizationStore = defineStore('optimization', () => {
     activeFilePath.value = '';
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
+    plan.value = undefined;
     result.value = undefined;
+    resultUndoStack.value = [];
     requestId.value = '';
     errorMessage.value = '';
   };
 
   // 服务端重新优化完成后，直接把新结果放回工作台结果区。
   const applyReoptimized = (payload: ReoptimizationResult): void => {
+    rememberCurrentResult();
     result.value = payload.result;
     contextSnapshot.value = payload.result.contextReport;
     requestId.value = '';
@@ -255,12 +367,15 @@ export const useOptimizationStore = defineStore('optimization', () => {
     contextRetrieval,
     activeFilePath,
     contextSnapshot,
+    plan,
     result,
     requestId,
     errorMessage,
     isAnalyzing,
+    isPlanning,
     isOptimizing,
     canOptimize,
+    canUndoResult,
     setFiles,
     setProjectIndex,
     addFile,
@@ -268,7 +383,10 @@ export const useOptimizationStore = defineStore('optimization', () => {
     clearFiles,
     prepareContextFiles,
     runContextAnalysis,
+    createOptimizationPlan,
     runOptimization,
+    saveEditedSections,
+    undoResult,
     loadFromHistory,
     applyReoptimized,
   };

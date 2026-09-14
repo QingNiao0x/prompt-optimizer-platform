@@ -297,7 +297,7 @@ const addManualFile = (): void => {
     <div class="panel-heading">
       <div>
         <span class="step-label">01 / Context</span>
-        <h2>项目上下文</h2>
+        <h2>上下文资料</h2>
       </div>
       <ElTag v-if="snapshot" type="success" effect="plain" round>
         <CircleCheck /> 已分析
@@ -305,8 +305,8 @@ const addManualFile = (): void => {
     </div>
 
     <section class="context-section">
-      <label class="field-label" for="project-description">自定义项目描述</label>
-      <p class="field-help">描述当前项目、架构偏好或团队约束，不是产品公告。</p>
+      <label class="field-label" for="project-description">背景说明</label>
+      <p class="field-help">补充研究、学习、业务或项目背景，以及必须遵守的偏好与限制。</p>
       <ElInput
         id="project-description"
         v-model="descriptionModel"
@@ -315,14 +315,14 @@ const addManualFile = (): void => {
         maxlength="4000"
         show-word-limit
         resize="none"
-        placeholder="例如：Spring Boot 3 模块化单体，使用 PostgreSQL；优先保证可读性和自动化测试。"
+        placeholder="例如：公共卫生研究，数据来自年度死因登记；或 Spring Boot 3 项目，使用 PostgreSQL。"
       />
     </section>
 
     <section class="context-section">
       <div class="section-title-row">
         <div>
-          <span class="field-label">项目与文档上下文</span>
+          <span class="field-label">本地资料与项目文件</span>
           <p class="field-help">可建立项目索引，也可单独上传报告、论文、表格、演示文稿和图片。</p>
         </div>
         <ElButton
@@ -720,7 +720,7 @@ const addManualFile = (): void => {
       plain
       @click="emit('analyze')"
     >
-      {{ snapshot ? '重新分析上下文' : '分析项目上下文' }}
+      {{ snapshot ? '重新分析上下文' : '分析上下文资料' }}
     </ElButton>
   </aside>
 </template>

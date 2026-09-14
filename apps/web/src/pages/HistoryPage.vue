@@ -19,7 +19,6 @@ import {
   deleteHistory,
   getHistory,
   listHistory,
-  reoptimizeHistory,
 } from '@/services/promptOptimizerApi';
 import { useOptimizationStore } from '@/stores/optimization';
 import type {
@@ -43,6 +42,8 @@ const detail = ref<OptimizationHistoryDetail>();
 
 const TEMPLATE_LABELS: Record<TemplateCode, string> = {
   AUTO: '自动识别',
+  GENERAL: '通用任务',
+  RESEARCH_ANALYSIS: '研究分析',
   FEATURE_DEVELOPMENT: '新功能开发',
   BUG_FIX: 'Bug 修复',
   REFACTORING: '代码重构',
@@ -92,20 +93,9 @@ const loadToWorkbench = async (id: string): Promise<void> => {
 
 const reoptimize = async (id: string): Promise<void> => {
   try {
-    await ElMessageBox.confirm(
-      '将使用保存的原始输入和脱敏上下文再次优化，并生成一条新历史记录。',
-      '重新优化',
-      { type: 'warning', confirmButtonText: '开始', cancelButtonText: '取消' },
-    );
-  } catch {
-    return;
-  }
-
-  try {
-    const response = await reoptimizeHistory(id);
-    store.applyReoptimized(response.data);
-    ElMessage.success('重新优化完成，请在工作台确认是否应用结果。');
-    await router.push('/');
+    const response = await getHistory(id);
+    store.loadFromHistory(response.data);
+    await router.push({ path: '/', query: { plan: '1' } });
   } catch (error: unknown) {
     ElMessage.error(getApiErrorMessage(error));
   }

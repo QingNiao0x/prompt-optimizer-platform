@@ -1,20 +1,24 @@
 <script setup lang="ts">
 import { WarningFilled } from '@element-plus/icons-vue';
-import { ElAlert, ElButton, ElDialog, ElMessage, ElMessageBox } from 'element-plus';
+import { ElAlert, ElMessage, ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import ContextPanel from '@/components/context/ContextPanel.vue';
 import OptimizationResultPanel from '@/components/prompt/OptimizationResultPanel.vue';
+import PlanQuestionDialog from '@/components/prompt/PlanQuestionDialog.vue';
 import PromptComposer from '@/components/prompt/PromptComposer.vue';
 import type { DroppedFileCollection } from '@/composables/fileDrop';
 import { useProjectIndex } from '@/composables/useProjectIndex';
 import { useProjectFiles } from '@/composables/useProjectFiles';
 import { useOptimizationStore } from '@/stores/optimization';
 import { useProjectContextSettingsStore } from '@/stores/projectContextSettings';
-import type { ContextFileInput, TemplateCode } from '@/types/api';
+import type { ContextFileInput, PlanConfirmation, PromptSection } from '@/types/api';
 
 const store = useOptimizationStore();
+const route = useRoute();
+const router = useRouter();
 const projectContextSettingsStore = useProjectContextSettingsStore();
 const {
   settings: projectContextSettings,
@@ -24,18 +28,19 @@ const {
   rawPrompt,
   customDescription,
   files,
-  templateCode,
-  includePermissionBoundaries,
   includeExamples,
   projectIndex,
   contextRetrieval,
   contextSnapshot,
+  plan,
   result,
   requestId,
   errorMessage,
   isAnalyzing,
+  isPlanning,
   isOptimizing,
   canOptimize,
+  canUndoResult,
 } = storeToRefs(store);
 
 const {
@@ -62,7 +67,8 @@ const {
   cancelIndexing,
 } = useProjectIndex();
 
-const reviewDialogVisible = ref(false);
+const planDialogVisible = ref(false);
+const pendingPrompt = ref('');
 const isClearingIndex = ref(false);
 let pageLifecycleVersion = 0;
 
@@ -72,19 +78,6 @@ const PROJECT_OVERVIEW_RETRIEVAL_QUERY = [
   'pom package controller service repository domain entity view page component store router',
   '技术栈 依赖 项目结构 配置 功能模块 模块职责',
 ].join(' ');
-
-const reviewSections = computed(() => {
-  const currentResult = result.value;
-  const sectionContent = (type: 'CONSTRAINTS' | 'ACCEPTANCE'): string =>
-    currentResult?.sections.find((section) => section.type === type)?.content?.trim() ?? '';
-
-  return {
-    constraints: currentResult?.appliedConstraints ?? [],
-    constraintsContent: sectionContent('CONSTRAINTS'),
-    pendingItems: currentResult?.ambiguities ?? [],
-    acceptanceContent: sectionContent('ACCEPTANCE'),
-  };
-});
 
 const contextWarnings = computed(() => Array.from(new Set([
   ...warnings.value,
@@ -260,7 +253,7 @@ const handleAddManualFile = (file: ContextFileInput): void => {
 const handleAnalyze = async (): Promise<void> => {
   const contextFiles = await prepareContextTransmission(
     `${PROJECT_OVERVIEW_RETRIEVAL_QUERY} ${customDescription.value}`,
-    '分析项目上下文',
+    '分析上下文资料',
     false,
   );
   if (contextFiles === undefined) {
@@ -268,32 +261,75 @@ const handleAnalyze = async (): Promise<void> => {
   }
   const succeeded = await store.runContextAnalysis(contextFiles);
   if (succeeded) {
-    ElMessage.success('项目上下文分析完成。');
+    ElMessage.success('上下文资料分析完成。');
   }
 };
 
 const handleOptimize = async (): Promise<void> => {
   if (!canOptimize.value) {
-    await store.runOptimization();
     return;
   }
+  pendingPrompt.value = rawPrompt.value.trim();
+  const succeeded = await store.createOptimizationPlan(pendingPrompt.value);
+  if (!succeeded) {
+    return;
+  }
+  if ((plan.value?.questions.length ?? 0) > 0) {
+    planDialogVisible.value = true;
+    return;
+  }
+  await generateFinalPrompt({ answers: [] });
+};
+
+const generateFinalPrompt = async (confirmation: PlanConfirmation): Promise<void> => {
   const contextFiles = await prepareContextTransmission(
-    rawPrompt.value,
+    pendingPrompt.value,
     '一键增强提示词',
     true,
   );
   if (contextFiles === undefined) {
     return;
   }
-  const succeeded = await store.runOptimization(contextFiles);
+  const succeeded = await store.runOptimization(contextFiles, {
+    rawPrompt: pendingPrompt.value,
+    planConfirmation: confirmation,
+  });
   if (succeeded) {
-    reviewDialogVisible.value = true;
-    ElMessage.success('提示词增强完成，结果已展示在下方。');
+    planDialogVisible.value = false;
+    ElMessage.success('最终提示词已生成。');
   }
 };
 
-const updateTemplateCode = (value: TemplateCode): void => {
-  templateCode.value = value;
+const handlePlanConfirmed = async (confirmation: PlanConfirmation): Promise<void> => {
+  await generateFinalPrompt(confirmation);
+};
+
+const handleSaveResult = (sections: PromptSection[]): void => {
+  if (store.saveEditedSections(sections)) {
+    ElMessage.success('修改已保存。');
+  }
+};
+
+const handleUndoResult = (): void => {
+  if (store.undoResult()) {
+    ElMessage.success('已撤销上一次修改。');
+  }
+};
+
+const handleReEnhance = async (): Promise<void> => {
+  if (!result.value || isPlanning.value || isOptimizing.value) {
+    return;
+  }
+  pendingPrompt.value = result.value.optimizedPrompt;
+  const succeeded = await store.createOptimizationPlan(pendingPrompt.value);
+  if (!succeeded) {
+    return;
+  }
+  if ((plan.value?.questions.length ?? 0) > 0) {
+    planDialogVisible.value = true;
+    return;
+  }
+  await generateFinalPrompt({ answers: [] });
 };
 
 const prepareContextTransmission = async (
@@ -319,7 +355,7 @@ const prepareContextTransmission = async (
       `${operationName}将发送 ${contextFiles.length} 项上下文到${destination}：${characters.toLocaleString('zh-CN')} 个内联字符${indexedDocuments.length > 0
         ? `，另引用 ${indexedDocuments.length} 份已解析文档（原文件共 ${formatBytes(indexedDocumentBytes)}）`
         : ''}。项目的完整浏览器本地索引不会上传；已解析文档只会选取与本次任务相关的片段。`,
-      '确认发送项目代码',
+      '确认发送上下文',
       {
         type: 'warning',
         confirmButtonText: '确认发送',
@@ -331,7 +367,7 @@ const prepareContextTransmission = async (
     if (error === 'cancel' || error === 'close') {
       return undefined;
     }
-    ElMessage.error(error instanceof Error ? error.message : '读取本地项目上下文失败。');
+    ElMessage.error(error instanceof Error ? error.message : '读取本地上下文失败。');
     return undefined;
   }
 };
@@ -353,6 +389,9 @@ onMounted(() => {
   clearPersistedProjectSelection();
   void projectContextSettingsStore.refreshStorageStatus();
   window.addEventListener('pagehide', handlePageHide);
+  if (route.query.plan === '1') {
+    void router.replace({ path: '/', query: {} }).then(() => handleOptimize());
+  }
 });
 
 onBeforeUnmount(() => {
@@ -365,12 +404,12 @@ onBeforeUnmount(() => {
     <header class="page-intro">
       <div>
         <p class="intro-kicker">Context-aware prompt engineering</p>
-        <p>让模型先理解你的工程，再理解你的要求。</p>
+        <p>先补齐真正影响结果的细节，再一次生成可直接使用的提示词。</p>
       </div>
       <div class="pipeline-note" aria-label="处理流程">
-        <span>项目事实</span>
+        <span>原始目标</span>
         <i></i>
-        <span>需求明确化</span>
+        <span>关键确认</span>
         <i></i>
         <span>结构化输出</span>
       </div>
@@ -425,93 +464,32 @@ onBeforeUnmount(() => {
       <div class="prompt-workspace">
         <PromptComposer
           :raw-prompt="rawPrompt"
-          :template-code="templateCode"
-          :include-permission-boundaries="includePermissionBoundaries"
           :include-examples="includeExamples"
+          :is-planning="isPlanning"
           :is-optimizing="isOptimizing"
           :can-optimize="canOptimize"
           @update:raw-prompt="rawPrompt = $event"
-          @update:template-code="updateTemplateCode"
-          @update:permission-boundaries="includePermissionBoundaries = $event"
           @update:include-examples="includeExamples = $event"
           @optimize="handleOptimize"
         />
-        <OptimizationResultPanel :result="result" />
+        <OptimizationResultPanel
+          :result="result"
+          :busy="isPlanning || isOptimizing"
+          :can-undo="canUndoResult"
+          @save="handleSaveResult"
+          @undo="handleUndoResult"
+          @re-enhance="handleReEnhance"
+        />
       </div>
     </div>
 
-    <ElDialog
-      v-model="reviewDialogVisible"
-      class="optimization-review-dialog"
-      width="min(920px, calc(100vw - 32px))"
-      top="7vh"
-      destroy-on-close
-    >
-      <template #header>
-        <div class="review-dialog-heading">
-          <div>
-            <span class="review-dialog-kicker">04 / Review before use</span>
-            <h2>请先复核这三个关键部分</h2>
-          </div>
-          <span class="review-dialog-status">ENHANCEMENT READY</span>
-        </div>
-      </template>
-
-      <p class="review-dialog-intro">
-        优化结果已经生成。请检查约束、待确认项和验收标准，再决定是否交给其他模型继续执行。
-      </p>
-
-      <div class="review-grid">
-        <section class="review-card review-card--constraint">
-          <div class="review-card-heading">
-            <span class="review-card-index">01</span>
-            <div>
-              <span class="review-card-kicker">Constraint</span>
-              <h3>约束条件</h3>
-            </div>
-          </div>
-          <div v-if="reviewSections.constraints.length" class="review-list">
-            <p v-for="constraint in reviewSections.constraints" :key="constraint">{{ constraint }}</p>
-          </div>
-          <p v-else class="review-empty">模型未单独返回约束条件，请查看增强结果中的“约束”段落。</p>
-          <p v-if="reviewSections.constraintsContent" class="review-card-detail">
-            {{ reviewSections.constraintsContent }}
-          </p>
-        </section>
-
-        <section class="review-card review-card--pending">
-          <div class="review-card-heading">
-            <span class="review-card-index">02</span>
-            <div>
-              <span class="review-card-kicker">Pending Confirmation Items</span>
-              <h3>待确认项</h3>
-            </div>
-          </div>
-          <div v-if="reviewSections.pendingItems.length" class="review-list">
-            <p v-for="item in reviewSections.pendingItems" :key="item">{{ item }}</p>
-          </div>
-          <p v-else class="review-empty">暂未识别到待确认项，但仍建议人工检查关键假设。</p>
-        </section>
-
-        <section class="review-card review-card--acceptance">
-          <div class="review-card-heading">
-            <span class="review-card-index">03</span>
-            <div>
-              <span class="review-card-kicker">Acceptance Criteria</span>
-              <h3>验收标准</h3>
-            </div>
-          </div>
-          <p v-if="reviewSections.acceptanceContent" class="review-card-detail review-card-detail--alone">
-            {{ reviewSections.acceptanceContent }}
-          </p>
-          <p v-else class="review-empty">模型未单独返回验收标准，请查看增强结果中的结构化内容。</p>
-        </section>
-      </div>
-
-      <template #footer>
-        <ElButton type="primary" @click="reviewDialogVisible = false">我已查看，继续使用</ElButton>
-      </template>
-    </ElDialog>
+    <PlanQuestionDialog
+      v-model="planDialogVisible"
+      :plan="plan"
+      :is-generating="isOptimizing"
+      :error-message="errorMessage"
+      @confirm="handlePlanConfirmed"
+    />
   </div>
 </template>
 
@@ -569,143 +547,6 @@ onBeforeUnmount(() => {
   font-size: 10px;
 }
 
-.review-dialog-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.review-dialog-kicker,
-.review-card-kicker {
-  color: var(--accent-cyan);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.review-dialog-heading h2 {
-  margin: 8px 0 0;
-  color: var(--ink-strong);
-  font-family: var(--font-display);
-  font-size: 24px;
-  line-height: 1.25;
-}
-
-.review-dialog-status {
-  padding: 6px 8px;
-  border: 1px solid color-mix(in srgb, var(--accent-cyan) 35%, var(--line-subtle));
-  border-radius: 7px;
-  color: var(--accent-cyan);
-  font-family: var(--font-mono);
-  font-size: 9px;
-  white-space: nowrap;
-}
-
-.review-dialog-intro {
-  margin: 0 0 18px;
-  color: var(--ink-muted);
-  font-size: 13px;
-  line-height: 1.7;
-}
-
-.review-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  max-height: 58vh;
-  overflow-y: auto;
-  padding: 2px;
-}
-
-.review-card {
-  min-width: 0;
-  padding: 16px;
-  border: 1px solid var(--line-subtle);
-  border-radius: 10px;
-  background: var(--surface-code);
-}
-
-.review-card--constraint {
-  border-color: color-mix(in srgb, var(--accent-blue) 35%, var(--line-subtle));
-}
-
-.review-card--pending {
-  border-color: color-mix(in srgb, var(--warning) 35%, var(--line-subtle));
-}
-
-.review-card--acceptance {
-  border-color: color-mix(in srgb, var(--success) 35%, var(--line-subtle));
-}
-
-.review-card-heading {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.review-card-index {
-  display: grid;
-  width: 25px;
-  height: 25px;
-  flex: 0 0 25px;
-  place-items: center;
-  border: 1px solid var(--line-strong);
-  border-radius: 7px;
-  color: var(--accent-blue);
-  font-family: var(--font-mono);
-  font-size: 9px;
-}
-
-.review-card h3 {
-  margin: 5px 0 0;
-  color: var(--ink-strong);
-  font-size: 15px;
-}
-
-.review-list {
-  display: grid;
-  gap: 8px;
-}
-
-.review-list p,
-.review-card-detail,
-.review-empty {
-  margin: 0;
-  color: var(--ink-muted);
-  font-size: 12px;
-  line-height: 1.75;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.review-list p {
-  padding-left: 12px;
-  border-left: 2px solid var(--accent-blue);
-}
-
-.review-card--pending .review-list p {
-  border-left-color: var(--warning);
-}
-
-.review-card-detail {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--line-subtle);
-}
-
-.review-card-detail--alone {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: 0;
-}
-
-.review-empty {
-  color: var(--ink-soft);
-}
-
 .workbench-grid {
   display: grid;
   grid-template-columns: minmax(290px, 0.62fr) minmax(0, 1.8fr);
@@ -754,20 +595,6 @@ onBeforeUnmount(() => {
 @media (max-width: 480px) {
   .pipeline-note {
     display: none;
-  }
-
-  .review-dialog-heading {
-    display: block;
-  }
-
-  .review-dialog-status {
-    display: inline-block;
-    margin-top: 12px;
-  }
-
-  .review-grid {
-    grid-template-columns: 1fr;
-    max-height: 62vh;
   }
 }
 </style>

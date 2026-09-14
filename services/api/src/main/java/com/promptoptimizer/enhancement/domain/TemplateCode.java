@@ -8,6 +8,8 @@ package com.promptoptimizer.enhancement.domain;
  */
 public enum TemplateCode {
     AUTO,
+    GENERAL,
+    RESEARCH_ANALYSIS,
     FEATURE_DEVELOPMENT,
     BUG_FIX,
     REFACTORING,

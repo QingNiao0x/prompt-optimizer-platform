@@ -9,6 +9,7 @@ import com.promptoptimizer.enhancement.api.ConversationMessage;
 import com.promptoptimizer.enhancement.api.EnhancementOptions;
 import com.promptoptimizer.enhancement.api.OptimizationRequest;
 import com.promptoptimizer.enhancement.api.PermissionPolicyInput;
+import com.promptoptimizer.enhancement.api.PlanConfirmation;
 import com.promptoptimizer.enhancement.application.EnhancementOrchestrator;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
 import com.promptoptimizer.enhancement.domain.PromptSection;
@@ -257,7 +258,15 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
                 "includePermissionBoundaries", Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()),
                 "includeExamples", Boolean.TRUE.equals(request.enhancement().includeExamples())
         ));
-        metadata.put("conversationHistory", toList(request.conversationHistory()));
+        metadata.put(
+                "conversationHistory",
+                Boolean.TRUE.equals(request.enhancement().includeConversationHistory())
+                        ? toList(request.conversationHistory())
+                        : List.of()
+        );
+        if (request.planConfirmation() != null) {
+            metadata.put("planConfirmation", toMap(request.planConfirmation()));
+        }
         return metadata;
     }
 
@@ -302,13 +311,17 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
                 entity.getPermissionPolicy(),
                 PermissionPolicyInput.class
         );
+        PlanConfirmation planConfirmation = metadata.containsKey("planConfirmation")
+                ? objectMapper.convertValue(metadata.get("planConfirmation"), PlanConfirmation.class)
+                : null;
 
         return new OptimizationRequest(
                 entity.getRawPrompt(),
                 new ContextAnalysisRequest(stringValue(context.get("customDescription")), List.of()),
                 enhancement,
                 conversation,
-                policy == null ? PermissionPolicyInput.empty() : policy
+                policy == null ? PermissionPolicyInput.empty() : policy,
+                planConfirmation
         );
     }
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildOptimizationRequest } from './optimizationRequest';
+import { buildOptimizationPlanRequest, buildOptimizationRequest } from './optimizationRequest';
 
 describe('buildOptimizationRequest', () => {
   it('should normalize editable text without changing source content', () => {
@@ -71,6 +71,34 @@ describe('buildOptimizationRequest', () => {
       content: '',
       documentId: 'document-123',
       sizeBytes: 12_345_678,
+    });
+  });
+
+  it('should send confirmed plan answers with the final request', () => {
+    const request = buildOptimizationRequest({
+      rawPrompt: '分析某地区死亡率',
+      customDescription: '公共卫生研究',
+      files: [],
+      templateCode: 'RESEARCH_ANALYSIS',
+      includePermissionBoundaries: true,
+      includeExamples: false,
+      planConfirmation: {
+        answers: [{
+          questionId: 'research-region',
+          question: '这项研究具体覆盖哪个地区？',
+          answer: '广东省',
+        }],
+      },
+    });
+
+    expect(request.planConfirmation?.answers[0]?.answer).toBe('广东省');
+  });
+
+  it('should keep project files out of the planning request', () => {
+    expect(buildOptimizationPlanRequest('  分析死亡率  ', '  公共卫生研究  ')).toEqual({
+      rawPrompt: '分析死亡率',
+      contextDescription: '公共卫生研究',
+      conversationHistory: [],
     });
   });
 });

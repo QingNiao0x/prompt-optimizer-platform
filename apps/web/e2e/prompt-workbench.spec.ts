@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import type {
   ApiResponse,
   ContextSnapshot,
+  OptimizationPlan,
   OptimizationResult,
 } from '../src/types/api';
 
@@ -60,6 +61,11 @@ const optimizationResult: OptimizationResult = {
   ].join('\n'),
   sections: [
     {
+      type: 'BACKGROUND',
+      title: '背景',
+      content: 'Spring Boot 用户服务。',
+    },
+    {
       type: 'TASK',
       title: '任务目标',
       content: '为现有 Spring Boot 用户模块增加登录接口。',
@@ -76,7 +82,7 @@ const optimizationResult: OptimizationResult = {
     },
   ],
   contextReport: contextSnapshot,
-  ambiguities: ['需要确认登录令牌的有效期。'],
+  ambiguities: [],
   appliedConstraints: ['不记录明文密码'],
   templateCode: 'FEATURE_DEVELOPMENT',
   provider: {
@@ -97,6 +103,62 @@ const optimizationResponse: ApiResponse<OptimizationResult> = {
   data: optimizationResult,
 };
 
+const directPlanResponse: ApiResponse<OptimizationPlan> = {
+  requestId: 'e2e-plan-direct',
+  data: {
+    summary: '需求已经足够明确，可以直接生成最终提示词。',
+    questions: [],
+    templateCode: 'FEATURE_DEVELOPMENT',
+    provider: { provider: 'mock', model: 'deterministic-planner-v2', mock: true },
+    latencyMs: 8,
+  },
+};
+
+const loginPlanResponse: ApiResponse<OptimizationPlan> = {
+  requestId: 'e2e-plan-login',
+  data: {
+    summary: '还需要确认登录方式和完成标准，之后会直接生成最终提示词。',
+    questions: [
+      {
+        id: 'software-login-mode',
+        question: '登录成功后采用哪种身份保持方式？',
+        hint: '如果项目已有认证方式，优先沿用现有实现。',
+        type: 'SINGLE_CHOICE',
+        options: [
+          {
+            id: 'existing',
+            label: '沿用项目现有方式',
+            description: '先检查现有认证代码',
+            answer: '先检查并沿用项目现有的认证与会话机制。',
+            recommended: true,
+          },
+          {
+            id: 'jwt',
+            label: 'JWT',
+            description: '使用访问令牌和刷新令牌',
+            answer: '采用 JWT，包含访问令牌、刷新令牌和退出处理。',
+            recommended: false,
+          },
+        ],
+        examples: [],
+        allowCustomAnswer: true,
+      },
+      {
+        id: 'software-done',
+        question: '达到什么结果时，你会认为这项任务已经完成？',
+        hint: '填写最关键的可验证结果即可。',
+        type: 'FREE_TEXT',
+        options: [],
+        examples: ['接口正常返回并覆盖异常场景'],
+        allowCustomAnswer: true,
+      },
+    ],
+    templateCode: 'FEATURE_DEVELOPMENT',
+    provider: { provider: 'mock', model: 'deterministic-planner-v2', mock: true },
+    latencyMs: 9,
+  },
+};
+
 test('用户可以分析项目上下文并生成结构化提示词', async ({ page }) => {
   // 端到端测试只验证浏览器交互和前端请求格式。固定接口响应可以避免消耗模型额度，
   // 也不会因为本地后端、网络或 API Key 状态不同而产生偶发失败。
@@ -114,6 +176,16 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
     await route.fulfill({ status: 200, json: contextResponse });
   });
 
+  await page.route('**/api/v1/optimizations/plan', async (route) => {
+    const requestBody: unknown = route.request().postDataJSON();
+    expect(requestBody).toMatchObject({
+      rawPrompt: '给用户模块增加登录功能',
+      contextDescription: 'Spring Boot 3 模块化单体，使用 PostgreSQL。',
+    });
+    expect(requestBody).not.toHaveProperty('files');
+    await route.fulfill({ status: 200, json: loginPlanResponse });
+  });
+
   await page.route('**/api/v1/optimizations', async (route) => {
     const requestBody: unknown = route.request().postDataJSON();
     expect(requestBody).toMatchObject({
@@ -121,16 +193,22 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
       enhancement: {
         includePermissionBoundaries: true,
       },
+      planConfirmation: {
+        answers: [
+          expect.objectContaining({ questionId: 'software-login-mode' }),
+          expect.objectContaining({ questionId: 'software-done' }),
+        ],
+      },
     });
     await route.fulfill({ status: 200, json: optimizationResponse });
   });
 
   await page.goto('/');
   await page.waitForLoadState('networkidle');
-  await expect(page.getByText('把想法写下来。', { exact: true })).toBeVisible();
-  await expect(page.getByText('工程细节，交给上下文。', { exact: true })).toBeVisible();
+  await expect(page.getByText('把目标写下来。', { exact: true })).toBeVisible();
+  await expect(page.getByText('关键细节，我们一起补全。', { exact: true })).toBeVisible();
 
-  await page.getByLabel('自定义项目描述').fill('Spring Boot 3 模块化单体，使用 PostgreSQL。');
+  await page.getByLabel('背景说明').fill('Spring Boot 3 模块化单体，使用 PostgreSQL。');
   await page.getByText('粘贴当前打开文件').click();
   await page.getByLabel('文件相对路径').fill('pom.xml');
   const languageSelect = page.getByRole('combobox', { name: '代码语言' });
@@ -144,8 +222,8 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await page.getByRole('button', { name: '加入上下文' }).click();
   await expect(page.getByText('pom.xml', { exact: true })).toBeVisible();
 
-  await page.getByRole('button', { name: '分析项目上下文' }).click();
-  await expect(page.getByRole('dialog', { name: '确认发送项目代码' })).toBeVisible();
+  await page.getByRole('button', { name: '分析上下文资料' }).click();
+  await expect(page.getByRole('dialog', { name: '确认发送上下文' })).toBeVisible();
   await page.getByRole('button', { name: '确认发送' }).click();
   await expect(page.getByText('代码项目', { exact: true })).toBeVisible();
   await expect(page.getByText('项目概要', { exact: true })).toBeVisible();
@@ -158,20 +236,136 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
 
   await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
-  await expect(page.getByRole('dialog', { name: '确认发送项目代码' })).toBeVisible();
+  const planDialog = page.getByRole('dialog', { name: '确认关键细节' });
+  await expect(planDialog.getByRole('heading', { name: '把关键细节确认清楚' })).toBeVisible();
+  await expect(planDialog.getByText('登录成功后采用哪种身份保持方式？')).toBeVisible();
+  await expect(planDialog.getByText('选择任务模板')).toHaveCount(0);
+  await expect(planDialog.getByText('确认缺失维度')).toHaveCount(0);
+  await planDialog.getByRole('button', { name: /JWT/ }).click();
+  await planDialog.getByRole('button', { name: '下一题' }).click();
+  await planDialog.getByLabel('填写回答').fill('登录成功、失败和令牌刷新场景都有自动化测试。');
+  await planDialog.getByRole('button', { name: '生成最终提示词' }).click();
+  await expect(page.getByRole('dialog', { name: '确认发送上下文' })).toBeVisible();
   await page.getByRole('button', { name: '确认发送' }).click();
-  const reviewDialog = page.getByRole('dialog');
-  await expect(
-    reviewDialog.getByRole('heading', { name: '请先复核这三个关键部分' }),
-  ).toBeVisible();
-  await page.getByRole('button', { name: '我已查看，继续使用' }).click();
 
   await expect(page.getByText('deepseek', { exact: true })).toBeVisible();
   const resultContent = page.getByLabel('增强结果内容，可滚动查看完整提示词');
   await expect(resultContent.getByRole('heading', { name: '任务目标' })).toBeVisible();
   await expect(resultContent.getByRole('heading', { name: '输入输出' })).toBeVisible();
   await expect(resultContent.getByRole('heading', { name: '约束条件' })).toBeVisible();
-  await expect(page.getByRole('status').filter({ hasText: '待确认事项' })).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: '待确认事项' })).toHaveCount(0);
+});
+
+test('科研需求会逐项询问业务细节并在全部回答后生成结果', async ({ page }) => {
+  const researchPrompt = '分析2015-2025年某地区心脑血管疾病死亡率，比较不同人群并进行YLL和Arriaga分解';
+  const researchPlan: ApiResponse<OptimizationPlan> = {
+    requestId: 'research-plan',
+    data: {
+      summary: '我已理解你的研究目标。还需要确认研究范围、数据口径和交付方式。',
+      questions: [
+        {
+          id: 'research-region',
+          question: '这项研究具体覆盖哪个地区？',
+          hint: '请填写明确的省、市、国家或区域名称。',
+          type: 'FREE_TEXT',
+          options: [],
+          examples: ['广东省', '北京市'],
+          allowCustomAnswer: true,
+        },
+        {
+          id: 'research-tool',
+          question: '你希望使用哪种分析工具？',
+          hint: '系统会据此调整代码和图表实现。',
+          type: 'SINGLE_CHOICE',
+          options: [
+            { id: 'r', label: 'R', description: '适合流行病学统计', answer: '使用 R 完成全部分析。', recommended: true },
+            { id: 'python', label: 'Python', description: '适合自动化分析', answer: '使用 Python 完成全部分析。', recommended: false },
+          ],
+          examples: [],
+          allowCustomAnswer: true,
+        },
+      ],
+      templateCode: 'RESEARCH_ANALYSIS',
+      provider: { provider: 'mock', model: 'deterministic-planner-v2', mock: true },
+      latencyMs: 10,
+    },
+  };
+  const researchResult: OptimizationResult = {
+    ...optimizationResult,
+    optimizedPrompt: '## 背景\n广东省心脑血管疾病死亡率研究\n\n## 任务\n完成趋势、YLL和Arriaga分解',
+    sections: [
+      { type: 'BACKGROUND', title: '背景', content: '广东省心脑血管疾病死亡率研究' },
+      { type: 'TASK', title: '任务', content: '完成趋势、YLL和Arriaga分解' },
+      { type: 'OUTPUT', title: '输出', content: '输出表格、图表和 R 代码' },
+      { type: 'CONSTRAINTS', title: '约束', content: '不得编造数据' },
+    ],
+    templateCode: 'RESEARCH_ANALYSIS',
+  };
+
+  await page.route('**/api/v1/optimizations/plan', async (route) => {
+    await route.fulfill({ status: 200, json: researchPlan });
+  });
+  await page.route('**/api/v1/optimizations', async (route) => {
+    const requestBody = route.request().postDataJSON() as {
+      planConfirmation?: { answers?: Array<{ questionId: string; answer: string }> };
+    };
+    expect(requestBody.planConfirmation?.answers).toEqual([
+      expect.objectContaining({ questionId: 'research-region', answer: '广东省' }),
+      expect.objectContaining({ questionId: 'research-tool', answer: '使用 R 完成全部分析。' }),
+    ]);
+    await route.fulfill({ status: 200, json: { requestId: 'research-final', data: researchResult } });
+  });
+
+  await page.goto('/');
+  await page.getByLabel('原始提示词').fill(researchPrompt);
+  await page.getByRole('button', { name: '一键增强提示词' }).click();
+  const dialog = page.getByRole('dialog', { name: '确认关键细节' });
+  await dialog.getByLabel('填写回答').fill('广东省');
+  await dialog.getByRole('button', { name: '下一题' }).click();
+  await dialog.getByRole('button', { name: /^R/ }).click();
+  await dialog.getByRole('button', { name: '生成最终提示词' }).click();
+
+  await expect(page.getByText('最终提示词已生成。')).toBeVisible();
+  await expect(page.getByText('广东省心脑血管疾病死亡率研究')).toBeVisible();
+  await expect(page.getByText('RESEARCH_ANALYSIS')).toHaveCount(0);
+});
+
+test('最终生成失败时在计划弹窗内显示可读错误并保留回答', async ({ page }) => {
+  const oneQuestionPlan: ApiResponse<OptimizationPlan> = {
+    requestId: 'error-plan',
+    data: {
+      ...loginPlanResponse.data,
+      questions: [loginPlanResponse.data.questions[1]!],
+    },
+  };
+  await page.route('**/api/v1/optimizations/plan', async (route) => {
+    await route.fulfill({ status: 200, json: oneQuestionPlan });
+  });
+  await page.route('**/api/v1/optimizations', async (route) => {
+    await route.fulfill({
+      status: 503,
+      json: {
+        requestId: 'failed-final-request',
+        error: {
+          code: 'PROVIDER_RATE_LIMITED',
+          message: '模型服务当前请求繁忙，请稍后重试。',
+          retryable: true,
+          details: {},
+        },
+      },
+    });
+  });
+
+  await page.goto('/');
+  await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
+  await page.getByRole('button', { name: '一键增强提示词' }).click();
+  const dialog = page.getByRole('dialog', { name: '确认关键细节' });
+  const answer = dialog.getByLabel('填写回答');
+  await answer.fill('正常和异常登录场景都有自动化测试。');
+  await dialog.getByRole('button', { name: '生成最终提示词' }).click();
+
+  await expect(dialog.getByRole('alert')).toContainText('模型服务当前请求繁忙，请稍后重试。');
+  await expect(answer).toHaveValue('正常和异常登录场景都有自动化测试。');
 });
 
 test('普通文档分析只展示内容概要，不套用代码项目信息', async ({ page }) => {
@@ -194,8 +388,8 @@ test('普通文档分析只展示内容概要，不套用代码项目信息', as
   });
   await expect(page.getByText('个文件已加入上下文', { exact: false })).toBeVisible();
 
-  await page.getByRole('button', { name: '分析项目上下文' }).click();
-  await expect(page.getByRole('dialog', { name: '确认发送项目代码' })).toBeVisible();
+  await page.getByRole('button', { name: '分析上下文资料' }).click();
+  await expect(page.getByRole('dialog', { name: '确认发送上下文' })).toBeVisible();
   await page.getByRole('button', { name: '确认发送' }).click();
 
   await expect(page.getByText('普通文档', { exact: true })).toBeVisible();
@@ -211,6 +405,9 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
   await page.route('**/api/v1/context/analyze', async (route) => {
     contextAnalyzeCalls += 1;
     await route.fulfill({ status: 200, json: contextResponse });
+  });
+  await page.route('**/api/v1/optimizations/plan', async (route) => {
+    await route.fulfill({ status: 200, json: directPlanResponse });
   });
   await page.route('**/api/v1/optimizations', async (route) => {
     const requestBody: unknown = route.request().postDataJSON();
@@ -233,13 +430,8 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
   await page.getByRole('button', { name: '加入上下文' }).click();
   await page.getByLabel('原始提示词').fill('为示例项目补充健康检查接口');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
-  await expect(page.getByRole('dialog', { name: '确认发送项目代码' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: '确认发送上下文' })).toBeVisible();
   await page.getByRole('button', { name: '确认发送' }).click();
-  await expect(
-    page.getByRole('heading', { name: '请先复核这三个关键部分' }),
-  ).toBeVisible();
-  await page.getByRole('button', { name: '我已查看，继续使用' }).click();
-
   expect(contextAnalyzeCalls).toBe(0);
   await expect(page.getByText('代码项目', { exact: true })).toBeVisible();
   await expect(page.getByText('项目概要', { exact: true })).toBeVisible();
@@ -247,6 +439,9 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
 });
 
 test('用户可以通过 File System Access API 建立本地项目索引', async ({ page }) => {
+  await page.route('**/api/v1/optimizations/plan', async (route) => {
+    await route.fulfill({ status: 200, json: directPlanResponse });
+  });
   await page.route('**/api/v1/optimizations', async (route) => {
     const requestBody = route.request().postDataJSON() as {
       context?: { files?: Array<{ path: string }> };
@@ -293,7 +488,6 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
   await page.getByLabel('原始提示词').fill('修改 projectName 常量');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
   await page.getByRole('button', { name: '确认发送' }).click();
-  await page.getByRole('button', { name: '我已查看，继续使用' }).click();
   await page.getByText(/查看本次代码选择依据/).click();
   await expect(page.getByText('src/main.ts', { exact: true })).toBeVisible();
   await expect(page.getByText(/任务中的符号/).first()).toBeVisible();
@@ -449,7 +643,7 @@ test('重新打开页面后不保留之前上传的单个文件', async ({ page 
     buffer: Buffer.from('只用于当前页面的需求说明。', 'utf8'),
   });
 
-  await expect(page.getByText('临时需求说明.txt', { exact: true })).toBeVisible();
+  await expect(page.getByText('临时需求说明.txt', { exact: true })).toBeVisible({ timeout: 15_000 });
   await page.reload();
 
   await expect(page.getByText('临时需求说明.txt', { exact: true })).not.toBeVisible();

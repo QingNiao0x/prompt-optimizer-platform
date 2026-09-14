@@ -2,7 +2,6 @@ package com.promptoptimizer.provider.infrastructure.openai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.application.DocumentSummaryModel;
-import com.promptoptimizer.provider.application.PromptEnhancementProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -49,7 +48,7 @@ public class OpenAiCompatibleProviderConfiguration {
      * 注册 OpenAI 兼容 Provider 实现。
      */
     @Bean
-    PromptEnhancementProvider openAiCompatiblePromptEnhancementProvider(
+    OpenAiCompatiblePromptEnhancementProvider openAiCompatiblePromptEnhancementProvider(
             RestClient openAiCompatibleRestClient,
             ObjectMapper objectMapper,
             OpenAiCompatibleProperties properties

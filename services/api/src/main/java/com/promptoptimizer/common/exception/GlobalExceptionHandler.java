@@ -27,6 +27,24 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     /**
+     * 处理跨字段业务校验失败。
+     */
+    @ExceptionHandler(InvalidOptimizationRequestException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidOptimizationRequest(
+            InvalidOptimizationRequestException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(
+                request,
+                HttpStatus.BAD_REQUEST,
+                "INVALID_ARGUMENT",
+                exception.getMessage(),
+                false,
+                Map.of()
+        );
+    }
+
+    /**
      * 处理模型供应商异常，并映射为稳定的平台错误码。
      */
     @ExceptionHandler(ProviderException.class)

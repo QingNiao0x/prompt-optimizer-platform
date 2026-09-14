@@ -1,16 +1,35 @@
 <script setup lang="ts">
-import { Check, CopyDocument, DataAnalysis, Right, WarningFilled } from '@element-plus/icons-vue';
-import { ElButton, ElMessage, ElTag } from 'element-plus';
-import { computed, toRefs } from 'vue';
+import {
+  Check,
+  CopyDocument,
+  DataAnalysis,
+  EditPen,
+  RefreshRight,
+  Right,
+  WarningFilled,
+} from '@element-plus/icons-vue';
+import { ElButton, ElInput, ElMessage, ElTag } from 'element-plus';
+import { computed, ref, toRefs, watch } from 'vue';
 
-import type { OptimizationResult, PromptSectionType } from '@/types/api';
+import type { OptimizationResult, PromptSection, PromptSectionType } from '@/types/api';
 
 interface Props {
   result?: OptimizationResult;
+  busy: boolean;
+  canUndo: boolean;
+}
+
+interface Emits {
+  (event: 'save', sections: PromptSection[]): void;
+  (event: 'undo'): void;
+  (event: 're-enhance'): void;
 }
 
 const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 const { result } = toRefs(props);
+const editing = ref(false);
+const draftSections = ref<PromptSection[]>([]);
 
 const displaySections = computed(() =>
   result.value?.sections.filter((section) => section.type !== 'CLARIFICATIONS') ?? [],
@@ -29,10 +48,33 @@ const SECTION_TONE: Record<PromptSectionType, string> = {
 const copyPrompt = async (content: string): Promise<void> => {
   try {
     await navigator.clipboard.writeText(content);
-    ElMessage.success('优化后的提示词已复制，待确认事项未包含在剪贴板中。');
+    ElMessage.success('最终提示词已复制。');
   } catch {
     ElMessage.error('复制失败，请手动选择文本复制。');
   }
+};
+
+watch(result, () => {
+  editing.value = false;
+  draftSections.value = [];
+});
+
+const startEditing = (): void => {
+  if (!result.value) return;
+  draftSections.value = result.value.sections
+    .filter((section) => section.type !== 'CLARIFICATIONS')
+    .map((section) => ({ ...section }));
+  editing.value = true;
+};
+
+const cancelEditing = (): void => {
+  editing.value = false;
+  draftSections.value = [];
+};
+
+const saveEditing = (): void => {
+  emit('save', draftSections.value.map((section) => ({ ...section })));
+  editing.value = false;
 };
 </script>
 
@@ -53,7 +95,7 @@ const copyPrompt = async (content: string): Promise<void> => {
         <span class="ambiguity-label">需要人工核对</span>
       </div>
       <p class="ambiguity-description">
-        以下内容只用于复核，不属于可直接复制的核心提示词。
+        这些信息尚未经过计划确认。可以再次增强，由系统重新向你提问。
       </p>
       <ul class="ambiguity-list">
         <li v-for="item in result.ambiguities" :key="item">{{ item }}</li>
@@ -65,14 +107,27 @@ const copyPrompt = async (content: string): Promise<void> => {
         <span class="step-label">03 / Structured prompt</span>
         <h2>增强结果</h2>
       </div>
-      <ElButton
-        v-if="result"
-        :icon="CopyDocument"
-        round
-        @click="copyPrompt(result.optimizedPrompt)"
-      >
-        复制全部
-      </ElButton>
+      <div v-if="result" class="result-actions">
+        <template v-if="editing">
+          <ElButton :disabled="busy" @click="cancelEditing">取消</ElButton>
+          <ElButton type="primary" :disabled="busy" @click="saveEditing">保存修改</ElButton>
+        </template>
+        <template v-else>
+          <ElButton :icon="CopyDocument" round @click="copyPrompt(result.optimizedPrompt)">
+            复制全部
+          </ElButton>
+          <ElButton :icon="EditPen" round :disabled="busy" @click="startEditing">编辑</ElButton>
+          <ElButton round :disabled="busy || !canUndo" @click="emit('undo')">撤销</ElButton>
+          <ElButton
+            :icon="RefreshRight"
+            round
+            :loading="busy"
+            @click="emit('re-enhance')"
+          >
+            再次增强
+          </ElButton>
+        </template>
+      </div>
     </div>
 
     <div v-if="!result" class="empty-result">
@@ -89,7 +144,7 @@ const copyPrompt = async (content: string): Promise<void> => {
         </div>
       </div>
       <h3>结果会在这里展开</h3>
-      <p>输入一个简短需求并点击“一键增强”，系统会结合项目技术栈生成可直接交给 AI 执行的任务说明。</p>
+      <p>输入一个简短需求并点击“一键增强”，系统会结合你提供的背景与资料生成可直接交给 AI 使用的任务说明。</p>
     </div>
 
     <div
@@ -105,9 +160,9 @@ const copyPrompt = async (content: string): Promise<void> => {
           <small>{{ result.provider.model }}</small>
         </div>
         <div>
-          <span class="meta-label">Template</span>
-          <strong>{{ result.templateCode }}</strong>
-          <small>{{ result.sections.length }} 个结构段落</small>
+          <span class="meta-label">Structure</span>
+          <strong>{{ result.sections.length }} 个段落</strong>
+          <small>背景、任务、输出与约束</small>
         </div>
         <div>
           <span class="meta-label">Latency</span>
@@ -116,7 +171,7 @@ const copyPrompt = async (content: string): Promise<void> => {
         </div>
       </div>
 
-      <article class="section-list">
+      <article v-if="!editing" class="section-list">
         <section
           v-for="(section, index) in displaySections"
           :key="section.type"
@@ -140,6 +195,21 @@ const copyPrompt = async (content: string): Promise<void> => {
           </div>
         </section>
       </article>
+
+      <div v-else class="edit-section-list">
+        <section v-for="section in draftSections" :key="section.type" class="edit-section">
+          <label :for="`section-${section.type}`">{{ SECTION_TONE[section.type] }} · {{ section.title }}</label>
+          <ElInput
+            :id="`section-${section.type}`"
+            v-model="section.content"
+            type="textarea"
+            :rows="6"
+            resize="vertical"
+            maxlength="12000"
+            show-word-limit
+          />
+        </section>
+      </div>
 
     </div>
   </section>
@@ -167,6 +237,17 @@ const copyPrompt = async (content: string): Promise<void> => {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+}
+
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.result-actions :deep(.el-button + .el-button) {
+  margin-left: 0;
 }
 
 .step-label,
@@ -319,6 +400,26 @@ h2 {
   display: grid;
   min-width: 0;
   gap: 0;
+}
+
+.edit-section-list {
+  display: grid;
+  gap: 14px;
+}
+
+.edit-section label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--ink-muted);
+  font-size: 11px;
+}
+
+.edit-section :deep(.el-textarea__inner) {
+  border: 1px solid var(--line-strong);
+  color: var(--ink-strong);
+  line-height: 1.7;
+  background: var(--surface-input);
+  box-shadow: none;
 }
 
 .prompt-section {

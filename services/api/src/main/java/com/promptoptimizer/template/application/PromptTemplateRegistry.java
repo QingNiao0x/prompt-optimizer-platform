@@ -24,6 +24,18 @@ public class PromptTemplateRegistry {
      */
     public PromptTemplateRegistry() {
         EnumMap<TemplateCode, PromptTemplate> values = new EnumMap<>(TemplateCode.class);
+        values.put(TemplateCode.GENERAL, new PromptTemplate(
+                TemplateCode.GENERAL,
+                "围绕用户目标给出清晰的执行步骤、交付内容、必要依据和可复核结果。",
+                "结果完整回应用户目标，明确事实、假设、限制与判断依据，并可直接使用。",
+                "在示例有助于理解时，提供一个最小示例和对应结果。"
+        ));
+        values.put(TemplateCode.RESEARCH_ANALYSIS, new PromptTemplate(
+                TemplateCode.RESEARCH_ANALYSIS,
+                "明确研究对象、时间与空间范围、数据来源、指标定义、分层方法、统计方法和结果呈现方式。",
+                "研究口径可复现，数据来源可追溯，方法选择有依据，并说明缺失数据、偏倚和不确定性。",
+                "提供分析表结构、图表清单或关键计算示例。"
+        ));
         values.put(TemplateCode.FEATURE_DEVELOPMENT, new PromptTemplate(
                 TemplateCode.FEATURE_DEVELOPMENT,
                 "给出实现方案、需要新增或修改的模块、关键代码、接口契约和测试方案。",
@@ -60,16 +72,19 @@ public class PromptTemplateRegistry {
      */
     public PromptTemplate resolve(TemplateCode requestedTemplate, String rawPrompt) {
         TemplateCode code = requestedTemplate == null || requestedTemplate == TemplateCode.AUTO
-                ? inferTemplate(rawPrompt)
+                ? infer(rawPrompt)
                 : requestedTemplate;
         return templates.get(code);
     }
 
     /**
-     * 根据原始需求关键词推断模板类型，未命中时默认功能开发。
+     * 根据原始需求关键词推断内部生成策略，未命中时使用通用策略。
      */
-    private TemplateCode inferTemplate(String rawPrompt) {
+    public TemplateCode infer(String rawPrompt) {
         String prompt = rawPrompt.toLowerCase(Locale.ROOT);
+        if (containsAny(prompt, "研究", "论文", "文献", "死亡率", "发病率", "时间序列", "回归分析", "统计分析", "arriaga", "yll")) {
+            return TemplateCode.RESEARCH_ANALYSIS;
+        }
         if (containsAny(prompt, "修复", "bug", "异常", "报错", "失败")) {
             return TemplateCode.BUG_FIX;
         }
@@ -79,7 +94,10 @@ public class PromptTemplateRegistry {
         if (containsAny(prompt, "测试", "test", "覆盖率", "用例")) {
             return TemplateCode.TESTING;
         }
-        return TemplateCode.FEATURE_DEVELOPMENT;
+        if (containsAny(prompt, "开发", "实现", "接口", "代码", "模块", "功能", "数据库", "前端", "后端")) {
+            return TemplateCode.FEATURE_DEVELOPMENT;
+        }
+        return TemplateCode.GENERAL;
     }
 
     /**

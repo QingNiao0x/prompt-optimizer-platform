@@ -7,7 +7,7 @@ vi.mock('./http', () => ({
 }));
 
 import { httpClient } from './http';
-import { optimizePrompt } from './promptOptimizerApi';
+import { createOptimizationPlan, optimizePrompt } from './promptOptimizerApi';
 
 describe('optimizePrompt', () => {
   it('should call the backend optimization endpoint without an accidental suffix', async () => {
@@ -36,6 +36,25 @@ describe('optimizePrompt', () => {
     expect(httpClient.post).toHaveBeenCalledWith(
       '/api/v1/optimizations',
       expect.any(Object),
+    );
+  });
+});
+
+describe('createOptimizationPlan', () => {
+  it('should call the planning endpoint before final optimization', async () => {
+    vi.mocked(httpClient.post).mockResolvedValue({
+      data: { requestId: 'plan-request', data: { questions: [] } },
+    } as never);
+
+    await createOptimizationPlan({
+      rawPrompt: '分析某地区心脑血管疾病死亡率',
+      contextDescription: '公共卫生研究',
+      conversationHistory: [],
+    });
+
+    expect(httpClient.post).toHaveBeenCalledWith(
+      '/api/v1/optimizations/plan',
+      expect.objectContaining({ rawPrompt: '分析某地区心脑血管疾病死亡率' }),
     );
   });
 });

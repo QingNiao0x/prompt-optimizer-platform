@@ -1,5 +1,8 @@
 package com.promptoptimizer.enhancement.api;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
@@ -12,9 +15,15 @@ import java.util.List;
  */
 public record PermissionPolicyInput(
         @Size(max = 50, message = "受保护路径不能超过 50 条")
-        List<@Size(max = 256, message = "受保护路径不能超过 256 个字符") String> protectedPaths,
+        List<@NotNull(message = "受保护路径不能为空")
+                @NotBlank(message = "受保护路径不能为空")
+                @Size(max = 256, message = "受保护路径不能超过 256 个字符")
+                @Pattern(regexp = "[^\\r\\n]+", message = "受保护路径不能包含换行") String> protectedPaths,
         @Size(max = 50, message = "人工确认动作不能超过 50 条")
-        List<@Size(max = 64, message = "动作名称不能超过 64 个字符") String> requireConfirmationFor
+        List<@NotNull(message = "人工确认动作不能为空")
+                @NotBlank(message = "人工确认动作不能为空")
+                @Size(max = 64, message = "动作名称不能超过 64 个字符")
+                @Pattern(regexp = "[^\\r\\n]+", message = "动作名称不能包含换行") String> requireConfirmationFor
 ) {
 
     public PermissionPolicyInput {

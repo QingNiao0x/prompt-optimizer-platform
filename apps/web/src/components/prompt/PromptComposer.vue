@@ -3,28 +3,21 @@ import { MagicStick } from '@element-plus/icons-vue';
 import {
   ElButton,
   ElInput,
-  ElOption,
-  ElSelect,
   ElSwitch,
   ElTooltip,
 } from 'element-plus';
 import { computed } from 'vue';
 
-import type { TemplateCode } from '@/types/api';
-
 interface Props {
   rawPrompt: string;
-  templateCode: TemplateCode;
-  includePermissionBoundaries: boolean;
   includeExamples: boolean;
+  isPlanning: boolean;
   isOptimizing: boolean;
   canOptimize: boolean;
 }
 
 interface Emits {
   (event: 'update:raw-prompt', value: string): void;
-  (event: 'update:template-code', value: TemplateCode): void;
-  (event: 'update:permission-boundaries', value: boolean): void;
   (event: 'update:include-examples', value: boolean): void;
   (event: 'optimize'): void;
 }
@@ -35,16 +28,6 @@ const emit = defineEmits<Emits>();
 const rawPromptModel = computed({
   get: (): string => props.rawPrompt,
   set: (value: string): void => emit('update:raw-prompt', value),
-});
-
-const templateModel = computed({
-  get: (): TemplateCode => props.templateCode,
-  set: (value: TemplateCode): void => emit('update:template-code', value),
-});
-
-const permissionModel = computed({
-  get: (): boolean => props.includePermissionBoundaries,
-  set: (value: boolean): void => emit('update:permission-boundaries', value),
 });
 
 const examplesModel = computed({
@@ -59,8 +42,8 @@ const examplesModel = computed({
       <div>
         <span class="step-label">02 / Intent</span>
         <h1 class="prompt-title">
-          <span class="prompt-title-primary">把想法写下来。</span>
-          <span class="prompt-title-secondary">工程细节，交给上下文。</span>
+          <span class="prompt-title-primary">把目标写下来。</span>
+          <span class="prompt-title-secondary">关键细节，我们一起补全。</span>
         </h1>
       </div>
     </div>
@@ -76,30 +59,21 @@ const examplesModel = computed({
         maxlength="8000"
         show-word-limit
         resize="vertical"
-        placeholder="例如：给用户模块增加登录功能"
+        placeholder="例如：分析 2015—2025 年某地区心脑血管疾病死亡率，并比较不同人群的变化趋势"
         @keydown.ctrl.enter.prevent="emit('optimize')"
         @keydown.meta.enter.prevent="emit('optimize')"
       />
 
       <div class="composer-controls">
-        <div class="control-group">
-          <label for="template-code">任务模板</label>
-          <ElSelect id="template-code" v-model="templateModel" class="template-select">
-            <ElOption label="自动识别" value="AUTO" />
-            <ElOption label="新功能开发" value="FEATURE_DEVELOPMENT" />
-            <ElOption label="Bug 修复" value="BUG_FIX" />
-            <ElOption label="代码重构" value="REFACTORING" />
-            <ElOption label="测试补充" value="TESTING" />
-          </ElSelect>
+        <div class="plan-note">
+          <i aria-hidden="true"></i>
+          <div>
+            <strong>先确认，再生成</strong>
+            <span>系统只询问会明显影响结果的细节</span>
+          </div>
         </div>
 
         <div class="switches">
-          <ElTooltip content="自动加入文件保护、密钥安全和人工确认要求" placement="top">
-            <label class="switch-control">
-              <span>权限红线</span>
-              <ElSwitch v-model="permissionModel" />
-            </label>
-          </ElTooltip>
           <ElTooltip content="要求模型给出输入与预期输出示例" placement="top">
             <label class="switch-control">
               <span>示例参考</span>
@@ -114,10 +88,10 @@ const examplesModel = computed({
           type="primary"
           size="large"
           :icon="MagicStick"
-          :loading="isOptimizing"
+          :loading="isPlanning || isOptimizing"
           :disabled="!canOptimize"
         >
-          {{ isOptimizing ? '正在增强…' : '一键增强提示词' }}
+          {{ isPlanning ? '正在理解需求…' : isOptimizing ? '正在生成最终提示词…' : '一键增强提示词' }}
         </ElButton>
       </div>
     </form>
@@ -228,21 +202,41 @@ h1 {
 
 .composer-controls {
   display: grid;
-  grid-template-columns: minmax(130px, 0.8fr) minmax(210px, 1fr);
+  grid-template-columns: minmax(240px, 1fr) auto;
   align-items: end;
   gap: 14px;
   margin-top: 16px;
 }
 
-.control-group label {
-  display: block;
-  margin-bottom: 7px;
-  color: var(--ink-soft);
-  font-size: 11px;
+.plan-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
 }
 
-.template-select {
-  width: 100%;
+.plan-note > i {
+  width: 8px;
+  height: 8px;
+  border: 2px solid color-mix(in srgb, var(--accent-cyan) 38%, transparent);
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-cyan) 55%, transparent);
+}
+
+.plan-note div {
+  display: grid;
+  gap: 2px;
+}
+
+.plan-note strong {
+  color: var(--ink-strong);
+  font-size: 12px;
+}
+
+.plan-note span {
+  color: var(--ink-soft);
+  font-size: 10px;
 }
 
 .switches {
@@ -250,7 +244,7 @@ h1 {
   align-items: center;
   gap: 12px;
   min-height: 38px;
-  grid-column: 1 / 2;
+  justify-content: flex-end;
 }
 
 .switch-control {
@@ -264,9 +258,8 @@ h1 {
 
 .optimize-button {
   grid-column: 2 / 3;
-  grid-row: 1 / 3;
   min-width: 160px;
-  min-height: 76px;
+  min-height: 62px;
   border: 0;
   border-radius: 10px;
   background: linear-gradient(145deg, var(--accent-blue), #5364f5);
@@ -288,6 +281,7 @@ h1 {
   }
 
   .switches,
+  .plan-note,
   .optimize-button {
     grid-column: auto;
     grid-row: auto;

@@ -105,6 +105,8 @@ export interface DocumentUploadStatus {
 
 export type TemplateCode =
   | 'AUTO'
+  | 'GENERAL'
+  | 'RESEARCH_ANALYSIS'
   | 'FEATURE_DEVELOPMENT'
   | 'BUG_FIX'
   | 'REFACTORING'
@@ -117,15 +119,65 @@ export interface EnhancementOptions {
   includeExamples: boolean;
 }
 
+export interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 export interface OptimizationRequest {
   rawPrompt: string;
   context: ContextAnalysisRequest;
   enhancement: EnhancementOptions;
-  conversationHistory: [];
+  conversationHistory: ConversationMessage[];
   permissionPolicy: {
     protectedPaths: string[];
     requireConfirmationFor: string[];
   };
+  planConfirmation?: PlanConfirmation | null;
+}
+
+export type PlanQuestionType = 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'FREE_TEXT';
+
+export interface PlanOption {
+  id: string;
+  label: string;
+  description: string;
+  answer: string;
+  recommended: boolean;
+}
+
+export interface PlanQuestion {
+  id: string;
+  question: string;
+  hint: string;
+  type: PlanQuestionType;
+  options: PlanOption[];
+  examples: string[];
+  allowCustomAnswer: boolean;
+}
+
+export interface OptimizationPlanRequest {
+  rawPrompt: string;
+  contextDescription: string;
+  conversationHistory: ConversationMessage[];
+}
+
+export interface OptimizationPlan {
+  summary: string;
+  questions: PlanQuestion[];
+  templateCode: TemplateCode;
+  provider: ProviderMetadata;
+  latencyMs: number;
+}
+
+export interface PlanAnswer {
+  questionId: string;
+  question: string;
+  answer: string;
+}
+
+export interface PlanConfirmation {
+  answers: PlanAnswer[];
 }
 
 export type PromptSectionType =
@@ -195,7 +247,7 @@ export interface OptimizationHistoryDetail {
   createdAt: string;
   includePermissionBoundaries: boolean;
   includeExamples: boolean;
-  conversationHistory: [];
+  conversationHistory: ConversationMessage[];
   permissionPolicy: Record<string, unknown>;
 }
 

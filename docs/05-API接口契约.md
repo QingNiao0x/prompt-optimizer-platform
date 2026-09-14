@@ -12,114 +12,62 @@
 
 ## 2. 优化接口
 
+优化采用“计划确认 + 最终生成”两个接口。完整字段、上下限和科研示例见[内置 Plan Mode](./12-内置Plan-Mode交互与接口.md)。
+
+### `POST /api/v1/optimizations/plan`
+
+用途：识别真正影响结果的业务问题并返回候选答案。计划阶段不接收项目文件正文，也不保存历史。
+
+```json
+{
+  "rawPrompt": "分析2015-2025年某地区心脑血管疾病死亡率",
+  "contextDescription": "公共卫生研究",
+  "conversationHistory": []
+}
+```
+
+响应中的 `questions` 最多 8 个，回答方式为 `FREE_TEXT`、`SINGLE_CHOICE` 或 `MULTIPLE_CHOICE`。当 `questions` 为空时，前端直接进入最终生成。`templateCode` 是服务端内部生成策略，工作台不向用户展示模板选择。
+
 ### `POST /api/v1/optimizations`
 
-用途：基于原始提示词、项目上下文和用户偏好创建一次优化请求。
-
-请求示例：
+用途：在用户完成计划确认后，基于原始目标、上下文、确认答案和平台约束生成最终结构化提示词并保存历史。
 
 ```json
 {
-  "workspaceId": "8b1f2c50-2b7f-4f20-94b0-1f2e6d1d9a10",
-  "rawPrompt": "帮我给这个项目增加登录功能",
-  "context": {
-    "customDescription": "这是一个 Spring Boot 微服务项目，使用 PostgreSQL 和 Redis。",
-    "files": [
-      {
-        "path": "pom.xml",
-        "content": "<project>...</project>",
-        "language": "xml"
-      }
-    ],
-    "projectSummary": {
-      "rootName": "demo-service",
-    "technologyStack": ["Java 21", "Spring Boot 3", "PostgreSQL", "Redis"],
-      "importantDirectories": ["src/main", "src/test"]
-    }
-  },
-  "preferences": {
-    "style": "readable",
-    "includeExamples": true,
-    "outputLanguage": "zh-CN"
-  },
-  "options": {
-    "providerConfigId": "6ec5bd9a-2c4d-4d28-b1f5-58ab3a4f7a91",
-    "saveHistory": true
-  }
-}
-```
-
-响应示例：
-
-```json
-{
-  "requestId": "req_01J...",
-  "data": {
-    "recordId": "c99b19d0-7a1d-4b61-ae36-c37d59e0f2f1",
-    "optimizedPrompt": "你是一名资深 Java 后端工程师……",
-    "sections": [
-      "任务目标",
-      "项目背景",
-      "输入输出",
-      "约束条件",
-      "实施步骤",
-      "验收标准"
-    ],
-    "contextReport": {
-      "detectedStack": ["Java", "Spring Boot", "PostgreSQL", "Redis"],
-      "filesAnalyzed": 2,
-      "warnings": ["部分源码因上下文预算被截断"]
-    },
-    "usage": {
-      "inputTokens": 1200,
-      "outputTokens": 850,
-      "latencyMs": 3200
-    }
-  }
-}
-```
-
-### 增强请求的关键字段
-
-优化请求应支持以下扩展字段：
-
-```json
-{
+  "rawPrompt": "分析2015-2025年某地区心脑血管疾病死亡率",
+  "context": {"customDescription": "公共卫生研究", "files": []},
   "enhancement": {
-    "oneClick": true,
-    "templateCode": "FEATURE_DEVELOPMENT",
-    "includeConversationHistory": true,
+    "templateCode": "RESEARCH_ANALYSIS",
+    "includeConversationHistory": false,
     "includePermissionBoundaries": true,
-    "includeExamples": true,
-    "outputSections": ["BACKGROUND", "TASK", "OUTPUT", "CONSTRAINTS", "ACCEPTANCE"]
+    "includeExamples": false
   },
-  "conversationHistory": [
-    {
-      "role": "user",
-      "content": "当前用户模块已经支持邮箱登录"
-    }
-  ],
-  "permissionPolicy": {
-    "protectedPaths": [".env", "**/*.pem"],
-    "requireConfirmationFor": ["DELETE_FILE", "DATABASE_MIGRATION", "PRODUCTION_DEPLOY"]
+  "conversationHistory": [],
+  "permissionPolicy": {"protectedPaths": [], "requireConfirmationFor": []},
+  "planConfirmation": {
+    "answers": [{
+      "questionId": "research-region",
+      "question": "这项研究具体覆盖哪个地区？",
+      "answer": "广东省"
+    }]
   }
 }
 ```
 
-这些字段不要求用户全部填写：模板、结构和通用安全约束可以由系统默认提供；用户只需输入原始提示词，并可选补充项目背景、会话历史和自定义规则。
+响应包含 `optimizedPrompt`、`sections`、`contextReport`、`ambiguities`、`appliedConstraints`、`templateCode`、`provider` 和 `latencyMs`。`sections` 至少包含 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`；完成计划确认后 `ambiguities` 为空，不再要求用户修改待确认项。
+
+兼容旧客户端时可以省略 `planConfirmation`，此时服务端仍保留原有模糊点检测。平台默认权限红线不能通过 `includePermissionBoundaries=false` 关闭，用户规则只能追加。
 
 ## 3. 历史接口
 
-> 实现状态：历史接口尚未实现，先完成 Provider 配置管理后再进入本模块。
+> 实现状态：分页、详情、删除和重新优化已实现；最终优化自动保存，计划接口不保存。
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
-| `GET` | `/api/v1/optimization-records?workspaceId=&page=&size=` | 分页查询历史 |
-| `GET` | `/api/v1/optimization-records/{id}` | 查询详情 |
-| `DELETE` | `/api/v1/optimization-records/{id}` | 删除用户可见历史 |
-| `POST` | `/api/v1/optimization-records/{id}/reoptimize` | 用原始输入重新优化 |
-| `GET` | `/api/v1/optimization-records/{id}/revisions` | 查看增强结果版本 |
-| `POST` | `/api/v1/optimization-records/{id}/revisions` | 保存用户编辑后的版本 |
+| `GET` | `/api/v1/optimization-history?page=&size=` | 分页查询历史，`size` 限制为 1—50 |
+| `GET` | `/api/v1/optimization-history/{id}` | 查询详情 |
+| `DELETE` | `/api/v1/optimization-history/{id}` | 删除当前工作区历史 |
+| `POST` | `/api/v1/optimization-history/{id}/re-optimize` | 恢复原始输入和确认答案，生成一条新记录 |
 
 ## 4. Provider 配置接口
 

@@ -6,10 +6,22 @@ import type {
   ContextSnapshot,
   OptimizationHistoryDetail,
   OptimizationHistoryPage,
+  OptimizationPlan,
+  OptimizationPlanRequest,
   OptimizationRequest,
   OptimizationResult,
   ReoptimizationResult,
 } from '@/types/api';
+
+export const createOptimizationPlan = async (
+  request: OptimizationPlanRequest,
+): Promise<ApiResponse<OptimizationPlan>> => {
+  const response = await httpClient.post<ApiResponse<OptimizationPlan>>(
+    '/api/v1/optimizations/plan',
+    request,
+  );
+  return response.data;
+};
 
 export const analyzeContext = async (
   request: ContextAnalysisRequest,

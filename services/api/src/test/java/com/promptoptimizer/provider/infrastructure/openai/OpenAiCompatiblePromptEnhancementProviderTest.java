@@ -9,6 +9,7 @@ import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
+import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -143,6 +144,47 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                     assertThat(exception.getFailureType()).isEqualTo(ProviderFailureType.INVALID_RESPONSE);
                     assertThat(exception.isRetryable()).isFalse();
                 });
+        server.verify();
+    }
+
+    @Test
+    void shouldGenerateDomainSpecificPlanningQuestions() throws Exception {
+        String responseBody = objectMapper.writeValueAsString(Map.of(
+                "model", "resolved-model",
+                "choices", List.of(Map.of(
+                        "message", Map.of(
+                                "role", "assistant",
+                                "content", """
+                                        {"summary":"还需要确认研究地区。","questions":[{
+                                          "id":"research-region",
+                                          "question":"这项研究具体覆盖哪个地区？",
+                                          "hint":"请填写省、市或区域名称。",
+                                          "type":"FREE_TEXT",
+                                          "options":[],
+                                          "examples":["广东省"],
+                                          "allowCustomAnswer":true
+                                        }]}
+                                        """
+                        )
+                ))
+        ));
+        server.expect(requestTo(ENDPOINT))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(jsonPath("$.messages[0].content")
+                        .value(org.hamcrest.Matchers.containsString("科研、教育、写作")))
+                .andExpect(jsonPath("$.messages[1].content")
+                        .value(org.hamcrest.Matchers.containsString("心脑血管疾病死亡率")))
+                .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
+
+        var response = provider.plan(new PlanningProviderRequest(
+                "分析某地区心脑血管疾病死亡率",
+                "公共卫生研究",
+                List.of()
+        ));
+
+        assertThat(response.questions()).hasSize(1);
+        assertThat(response.questions().get(0).question()).isEqualTo("这项研究具体覆盖哪个地区？");
+        assertThat(response.questions().get(0).type()).isEqualTo(com.promptoptimizer.enhancement.domain.PlanQuestionType.FREE_TEXT);
         server.verify();
     }
 

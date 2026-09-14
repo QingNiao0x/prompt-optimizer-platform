@@ -34,7 +34,7 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
         List<PromptSection> sections = new ArrayList<>();
         sections.add(new PromptSection(PromptSectionType.BACKGROUND, "背景", buildBackground(request)));
         sections.add(new PromptSection(PromptSectionType.TASK, "任务目标", buildTask(request)));
-        sections.add(new PromptSection(PromptSectionType.OUTPUT, "输入输出", request.template().outputGuidance()));
+        sections.add(new PromptSection(PromptSectionType.OUTPUT, "期望输出", request.template().outputGuidance()));
         sections.add(new PromptSection(PromptSectionType.CONSTRAINTS, "约束条件", toMarkdownList(request.constraints())));
 
         if (!request.ambiguities().isEmpty()) {
@@ -80,7 +80,7 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
                     .limit(8)
                     .collect(Collectors.joining("、"));
             if (!files.isBlank()) {
-                parts.add("相关项目文件：" + files + "。");
+                parts.add("相关资料或项目文件：" + files + "。");
             }
         }
         if (Boolean.TRUE.equals(request.options().includeConversationHistory())
@@ -88,7 +88,7 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
             parts.add("当前会话补充：" + summarizeConversation(request.conversationHistory()));
         }
         if (parts.isEmpty()) {
-            return "未提供项目上下文；不得臆造技术栈、业务规则或现有文件。";
+            return "未提供额外上下文；不得臆造研究口径、业务规则、技术栈或现有文件。";
         }
         return String.join("\n", parts);
     }
@@ -97,7 +97,7 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
      * 组装纯净的任务目标段落；待确认项由独立的 CLARIFICATIONS 段承载。
      */
     private String buildTask(EnhancementProviderRequest request) {
-        return "将以下原始需求落实为具体、可执行且可验证的开发任务：\n"
+        return "将以下原始需求落实为具体、可执行且可验证的任务说明：\n"
                 + request.rawPrompt().trim();
     }
 

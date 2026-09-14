@@ -4,10 +4,11 @@ import com.promptoptimizer.context.application.ContextAnalyzer;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.api.ConversationMessage;
 import com.promptoptimizer.enhancement.api.OptimizationRequest;
+import com.promptoptimizer.enhancement.api.PlanAnswer;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
-import com.promptoptimizer.enhancement.domain.PromptSection;
-import com.promptoptimizer.enhancement.domain.ProviderMetadata;
+import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.policy.application.ConstraintCompleter;
+import com.promptoptimizer.policy.application.ProtectedContextFilter;
 import com.promptoptimizer.provider.application.PromptEnhancementProvider;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
@@ -18,7 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 默认提示词增强编排器。
@@ -37,6 +39,9 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
     private final PromptTemplateRegistry templateRegistry;
     private final ConstraintCompleter constraintCompleter;
     private final PromptEnhancementProvider enhancementProvider;
+    private final OptimizationResultAssembler resultAssembler;
+    private final ProtectedContextFilter protectedContextFilter;
+    private final SensitiveValueDetector sensitiveValueDetector;
     private final Clock clock;
 
     @Autowired
@@ -45,7 +50,9 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
             AmbiguityDetector ambiguityDetector,
             PromptTemplateRegistry templateRegistry,
             ConstraintCompleter constraintCompleter,
-            PromptEnhancementProvider enhancementProvider
+            PromptEnhancementProvider enhancementProvider,
+            OptimizationResultAssembler resultAssembler,
+            ProtectedContextFilter protectedContextFilter
     ) {
         this(
                 contextAnalyzer,
@@ -53,6 +60,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 templateRegistry,
                 constraintCompleter,
                 enhancementProvider,
+                resultAssembler,
+                protectedContextFilter,
                 Clock.systemUTC()
         );
     }
@@ -65,11 +74,36 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
             PromptEnhancementProvider enhancementProvider,
             Clock clock
     ) {
+        this(
+                contextAnalyzer,
+                ambiguityDetector,
+                templateRegistry,
+                constraintCompleter,
+                enhancementProvider,
+                new OptimizationResultAssembler(),
+                new ProtectedContextFilter(),
+                clock
+        );
+    }
+
+    DefaultEnhancementOrchestrator(
+            ContextAnalyzer contextAnalyzer,
+            AmbiguityDetector ambiguityDetector,
+            PromptTemplateRegistry templateRegistry,
+            ConstraintCompleter constraintCompleter,
+            PromptEnhancementProvider enhancementProvider,
+            OptimizationResultAssembler resultAssembler,
+            ProtectedContextFilter protectedContextFilter,
+            Clock clock
+    ) {
         this.contextAnalyzer = contextAnalyzer;
         this.ambiguityDetector = ambiguityDetector;
         this.templateRegistry = templateRegistry;
         this.constraintCompleter = constraintCompleter;
         this.enhancementProvider = enhancementProvider;
+        this.resultAssembler = resultAssembler;
+        this.protectedContextFilter = protectedContextFilter;
+        this.sensitiveValueDetector = new SensitiveValueDetector();
         this.clock = clock;
     }
 
@@ -79,8 +113,20 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
     @Override
     public OptimizationResult optimize(OptimizationRequest request) {
         long startedAt = clock.millis();
-        ContextSnapshot context = contextAnalyzer.analyze(request.context(), request.rawPrompt());
-        List<String> ambiguities = ambiguityDetector.detect(request.rawPrompt());
+        validateTextInputs(request);
+        ProtectedContextFilter.FilteredContext filteredContext = protectedContextFilter.filter(
+                request.context(),
+                request.permissionPolicy()
+        );
+        ContextSnapshot context = protectedContextFilter.attachReport(
+                contextAnalyzer.analyze(filteredContext.request(), request.rawPrompt()),
+                filteredContext
+        );
+        boolean planConfirmed = request.planConfirmation() != null;
+        List<PlanAnswer> planAnswers = planConfirmed
+                ? validatePlanAnswers(request.planConfirmation().answers())
+                : List.of();
+        List<String> ambiguities = planConfirmed ? List.of() : ambiguityDetector.detect(request.rawPrompt());
         PromptTemplate template = templateRegistry.resolve(
                 request.enhancement().templateCode(),
                 request.rawPrompt()
@@ -88,7 +134,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         List<String> constraints = constraintCompleter.complete(
                 context,
                 request.permissionPolicy(),
-                Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries())
+                Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()),
+                template.code()
         );
         List<ConversationMessage> conversation = Boolean.TRUE.equals(request.enhancement().includeConversationHistory())
                 ? request.conversationHistory()
@@ -99,34 +146,61 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 context,
                 template,
                 ambiguities,
+                planAnswers,
+                planConfirmed,
                 constraints,
                 conversation,
                 request.enhancement()
         ));
 
-        return new OptimizationResult(
-                renderPrompt(providerResponse.sections()),
-                providerResponse.sections(),
+        return resultAssembler.assemble(
+                providerResponse,
                 context,
+                template,
                 ambiguities,
+                planAnswers,
+                planConfirmed,
                 constraints,
-                template.code(),
-                new ProviderMetadata(
-                        providerResponse.provider(),
-                        providerResponse.model(),
-                        providerResponse.mock()
-                ),
+                Boolean.TRUE.equals(request.enhancement().includeExamples()),
                 Math.max(0, clock.millis() - startedAt)
         );
     }
 
     /**
-     * 将结构化段落渲染为可直接阅读的 Markdown 提示词。
+     * 计划回答必须完整且问题编号唯一，避免同一事实出现相互冲突的答案。
      */
-    private String renderPrompt(List<PromptSection> sections) {
-        return sections.stream()
-                .filter(section -> section.type() != com.promptoptimizer.enhancement.domain.PromptSectionType.CLARIFICATIONS)
-                .map(section -> "## " + section.title() + "\n" + section.content())
-                .collect(Collectors.joining("\n\n"));
+    private List<PlanAnswer> validatePlanAnswers(List<PlanAnswer> answers) {
+        Set<String> ids = new HashSet<>();
+        for (PlanAnswer answer : answers) {
+            if (answer == null || answer.questionId() == null || answer.questionId().isBlank()
+                    || answer.question() == null || answer.question().isBlank()
+                    || answer.answer() == null || answer.answer().isBlank()) {
+                throw new InvalidOptimizationRequestException("计划确认包含未回答的问题。");
+            }
+            if (!ids.add(answer.questionId())) {
+                throw new InvalidOptimizationRequestException("同一个计划问题不能重复回答。");
+            }
+        }
+        return List.copyOf(answers);
+    }
+
+    private void validateTextInputs(OptimizationRequest request) {
+        rejectCredential(request.rawPrompt());
+        rejectCredential(request.context().customDescription());
+        request.conversationHistory().forEach(message -> rejectCredential(message.content()));
+        if (request.planConfirmation() != null) {
+            request.planConfirmation().answers().forEach(answer -> {
+                if (answer != null) {
+                    rejectCredential(answer.question());
+                    rejectCredential(answer.answer());
+                }
+            });
+        }
+    }
+
+    private void rejectCredential(String value) {
+        if (sensitiveValueDetector.containsCredential(value)) {
+            throw new InvalidOptimizationRequestException("输入中疑似包含真实凭据，请移除后重试。");
+        }
     }
 }

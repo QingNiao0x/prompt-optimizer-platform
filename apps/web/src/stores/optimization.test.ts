@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ProjectIndexSummary } from '@/features/project-index/projectIndexer';
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
+import type { OptimizationResult } from '@/types/api';
 
 import { useOptimizationStore } from './optimization';
 
@@ -114,4 +115,60 @@ describe('optimization store project context', () => {
     expect(store.projectIndex).toBeUndefined();
     expect(deleteProject).not.toHaveBeenCalled();
   });
+
+  it('should restore a removed platform constraint and allow undoing the edit', () => {
+    const store = useOptimizationStore();
+    const original = resultFixture();
+    store.result = original;
+
+    const saved = store.saveEditedSections(original.sections.map((section) =>
+      section.type === 'CONSTRAINTS'
+        ? {
+            ...section,
+            content: '保留用户约束。\n\n平台强制约束（不得删除或弱化）：\n- 不得泄露 Token。',
+          }
+        : { ...section }));
+
+    expect(saved).toBe(true);
+    expect(store.result?.optimizedPrompt).toContain('禁止读取受保护路径。');
+    expect(store.canUndoResult).toBe(true);
+
+    expect(store.undoResult()).toBe(true);
+    expect(store.result).toEqual(original);
+  });
+});
+
+const resultFixture = (): OptimizationResult => ({
+  optimizedPrompt: '原始最终提示词',
+  sections: [
+    { type: 'BACKGROUND', title: '背景', content: '研究背景。' },
+    { type: 'TASK', title: '任务', content: '完成分析。' },
+    { type: 'OUTPUT', title: '输出', content: '输出报告。' },
+    {
+      type: 'CONSTRAINTS',
+      title: '约束',
+      content: [
+        '保留用户约束。',
+        '',
+        '平台强制约束（不得删除或弱化）：',
+        '- 不得泄露 Token。',
+        '- 禁止读取受保护路径。',
+      ].join('\n'),
+    },
+  ],
+  contextReport: {
+    customDescription: '',
+    technologyStack: [],
+    dependencies: [],
+    directoryTree: [],
+    fileSnippets: [],
+    warnings: [],
+    redactions: [],
+    analysisVersion: 'v1',
+  },
+  ambiguities: [],
+  appliedConstraints: ['不得泄露 Token。', '禁止读取受保护路径。'],
+  templateCode: 'RESEARCH_ANALYSIS',
+  provider: { provider: 'mock', model: 'model', mock: true },
+  latencyMs: 1,
 });
