@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.api.EnhancementOptions;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
+import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
@@ -174,12 +175,24 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                         .value(org.hamcrest.Matchers.containsString("科研、教育、写作")))
                 .andExpect(jsonPath("$.messages[1].content")
                         .value(org.hamcrest.Matchers.containsString("心脑血管疾病死亡率")))
+                .andExpect(jsonPath("$.messages[1].content")
+                        .value(org.hamcrest.Matchers.containsString("Spring Boot 3")))
                 .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
         var response = provider.plan(new PlanningProviderRequest(
                 "分析某地区心脑血管疾病死亡率",
                 "公共卫生研究",
-                List.of()
+                List.of(),
+                new PlanningContextDigest(
+                        "Spring Boot 服务",
+                        List.of("Spring Boot 3"),
+                        List.of(),
+                        List.of("pom.xml"),
+                        List.of("pom.xml：Maven 项目配置"),
+                        "COMPLETE",
+                        1,
+                        List.of()
+                )
         ));
 
         assertThat(response.questions()).hasSize(1);

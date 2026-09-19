@@ -1,6 +1,7 @@
 package com.promptoptimizer.provider.domain;
 
 import com.promptoptimizer.enhancement.api.ConversationMessage;
+import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
 
 import java.util.List;
 
@@ -13,11 +14,20 @@ import java.util.List;
 public record PlanningProviderRequest(
         String rawPrompt,
         String contextDescription,
-        List<ConversationMessage> conversationHistory
+        List<ConversationMessage> conversationHistory,
+        PlanningContextDigest planningContext
 ) {
 
     public PlanningProviderRequest {
         contextDescription = contextDescription == null ? "" : contextDescription;
         conversationHistory = conversationHistory == null ? List.of() : List.copyOf(conversationHistory);
+    }
+
+    public PlanningProviderRequest(
+            String rawPrompt,
+            String contextDescription,
+            List<ConversationMessage> conversationHistory
+    ) {
+        this(rawPrompt, contextDescription, conversationHistory, null);
     }
 }

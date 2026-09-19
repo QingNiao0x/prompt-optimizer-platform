@@ -39,7 +39,7 @@ public class OptimizationController {
     }
 
     /**
-     * 识别真正影响结果的业务问题，不读取项目文件，也不保存历史记录。
+     * 识别真正影响结果的业务问题；可引用预先生成的安全上下文摘要，不接收文件正文，也不保存历史记录。
      */
     @PostMapping("/plan")
     public ApiResponse<OptimizationPlan> plan(

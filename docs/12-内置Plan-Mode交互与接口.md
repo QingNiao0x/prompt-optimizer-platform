@@ -2,7 +2,7 @@
 
 ## 1. 目标与交互原则
 
-一键增强采用两阶段流程：系统先理解用户目标并提出少量业务问题，用户逐项回答后，系统一次生成可复制、可编辑的最终提示词。用户不需要在生成结果里寻找“待确认项”，也不需要反复手工改写原始提示词。
+一键增强采用“上下文准备、计划确认、最终生成”三阶段流程。没有上传资料时，系统直接根据需求提出少量业务问题；已经上传文件或建立本地目录索引时，系统先分析初步相关资料，再结合需求与安全摘要提问。用户逐项回答后，系统按确认后的信息再次检索上下文，并一次生成可复制、可编辑的最终提示词。
 
 用户界面遵循以下原则：
 
@@ -10,6 +10,7 @@
 - 问题使用用户所在领域的自然语言。例如科研任务询问地区、数据来源和统计工具，软件任务询问运行环境和验收结果。
 - 一次只展示一个问题，给出进度、候选答案和自定义输入。
 - 只询问答案会明显改变最终结果的问题；已明确的信息不重复询问。
+- 文件已经说明的技术栈、数据格式、目录结构或既有实现不重复询问。
 - 全部问题回答完成后才调用最终生成接口。
 - 需求已经足够完整时不弹窗，直接生成最终提示词。
 
@@ -17,6 +18,9 @@
 
 | 模块 | 主要职责 |
 | --- | --- |
+| `PlanningContextController` | 接收初步相关文件，返回可引用的短期上下文分析结果 |
+| `PlanningSessionService` | 生成上下文版本、绑定计划问题与用户回答、判断最终阶段能否复用快照 |
+| `PlanningSessionStore` | 以 30 分钟 TTL 保存上下文与计划；优先 Redis，本地联调可降级到进程内存储 |
 | `OptimizationPlanningService` | 调用计划 Provider、校验问题数量与可读性、拦截内部术语和疑似凭据 |
 | `PromptPlanningProvider` | 隔离计划生成能力，Mock 与 OpenAI 兼容实现共享契约 |
 | `MockPromptPlanningProvider` | 为本地联调提供科研、软件、写作和通用场景的确定性问题 |
@@ -26,32 +30,150 @@
 | `OptimizationResultAssembler` | 强制四要素完整，合并确认答案和平台红线，渲染 `optimizedPrompt` |
 | `ProtectedContextFilter` | 在上下文分析和模型调用前移除默认及用户追加的受保护路径 |
 | `PlanQuestionDialog.vue` | 在工作台中逐题展示问题、候选答案、自定义回答和生成入口 |
-| `optimization` Pinia Store | 维护计划、最终结果、编辑撤销栈与再次增强输入 |
+| `optimization` Pinia Store | 维护上下文引用、计划、最终结果、编辑撤销栈与再次增强输入 |
+| `optimizationRequest.ts` | 统一构建上下文准备请求、计划请求、最终请求和包含确认答案的二次检索词 |
 
 ## 3. 调用流程
+
+下面的流程图展示上下文感知 Plan Mode 的主决策。无文件时直接根据需求提问；有文件时先分析安全摘要，再提问；用户回答后始终用确认信息构造最终检索词。
+
+```mermaid
+flowchart LR
+    A[输入需求] --> B{存在文件或<br/>可用本地索引？}
+    B -- 否 --> E[Plan Mode 提问]
+    B -- 是 --> C[第一次检索相关文件]
+    C --> D[后端分析并生成安全摘要]
+    D --> E
+    E --> F{需要用户确认？}
+    F -- 是 --> G[弹窗逐题回答]
+    F -- 否 --> H[创建空确认]
+    G --> I[原始需求 + 问题 + 答案]
+    H --> I
+    I --> J{包含文件上下文？}
+    J -- 是 --> K[第二次检索并分析最终上下文]
+    J -- 否 --> L[直接进入最终生成]
+    K --> L
+    L --> M[返回最终结构化提示词]
+```
+
+### 接口时序图
 
 ```mermaid
 sequenceDiagram
     actor U as 用户
     participant W as Web 工作台
+    participant I as 浏览器本地索引
+    participant C as POST /context/planning
     participant P as POST /optimizations/plan
     participant O as POST /optimizations
 
-    U->>W: 输入原始目标并点击一键增强
-    W->>P: rawPrompt + 背景描述 + 可选会话
+    U->>W: 选择文件或目录并输入原始目标
+    W->>I: 按原始目标初步检索相关文件
+    alt 存在文件或已完成的本地索引
+        W->>U: 确认发送本次选中的上下文
+        U-->>W: 同意
+        W->>C: rawPrompt + 初步相关文件 + 权限策略
+        C->>C: 过滤受保护路径、分析技术栈和内容摘要
+        C-->>W: contextId + version + 安全摘要 + contextReport
+    end
+    W->>P: rawPrompt + 背景描述 + 可选 contextId/version
     P-->>W: 自然语言问题和候选答案
     alt 存在关键问题
         W->>U: 逐题弹窗确认
         U->>W: 完成全部回答
     end
-    W->>O: 原始目标 + 上下文 + 全部确认答案
+    W->>I: 使用原始目标 + 全部确认答案再次检索
+    W->>U: 确认发送最终选中的上下文
+    U-->>W: 同意
+    W->>O: 原始目标 + 最终上下文 + planId + 全部确认答案
+    O->>O: 校验计划绑定；复用相同快照或按新查询重新分析
     O-->>W: 最终 optimizedPrompt + sections
     W->>U: 展示复制、编辑、撤销和再次增强操作
 ```
 
-计划阶段不会接收项目文件正文。文件只在最终生成前按现有“确认发送项目代码”规则选取并发送，受保护路径会先在服务端过滤。
+这里采用方案 B：**先分析用户主动提供的相关上下文，再基于上下文发起 Plan Mode，最后生成结果**。`/optimizations/plan` 本身仍不接收文件正文，只接收 `/context/planning` 返回的短期引用；计划 Provider 只看到裁剪后的 `PlanningContextDigest`。未过滤的原始文件正文和完整本地索引不会写入计划请求、Redis 或优化历史；Redis 上下文会话只短期保存分析后已脱敏、受预算限制的 `ContextSnapshot`。
 
-## 4. 计划接口
+第二次检索使用“原始需求 + 服务端校验后的问题文本 + 用户答案”。这对两类索引都生效：浏览器本地项目索引会重新选择代码块，后端大型文档索引会用同一组合查询重新召回相关片段。若没有确认问题且文件集合、内容和查询均未变化，最终编排器直接复用首次 `ContextSnapshot`；否则重新分析，避免把过期或不相关的快照当作最终依据。
+
+## 4. Plan 前上下文准备接口
+
+### `POST /api/v1/context/planning`
+
+只有用户已经选择文件、文档或已完成本地目录索引时，工作台才调用该接口。前端先按原始需求检索一批初步相关文件，并按隐私设置要求用户确认本次发送范围。后端随后执行受保护路径过滤、文档片段检索、技术栈识别、摘要和完整度分析。
+
+请求示例：
+
+```json
+{
+  "rawPrompt": "给用户模块添加登录功能",
+  "context": {
+    "customDescription": "Spring Boot 用户服务",
+    "files": [
+      {
+        "path": "pom.xml",
+        "content": "<project>...</project>",
+        "language": "xml"
+      }
+    ]
+  },
+  "permissionPolicy": {
+    "protectedPaths": [],
+    "requireConfirmationFor": []
+  }
+}
+```
+
+响应示例：
+
+```json
+{
+  "requestId": "req_context_01",
+  "data": {
+    "contextId": "ea9d3453-5bd7-487b-bafb-5ef608dfd895",
+    "version": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "digest": {
+      "description": "Spring Boot 用户服务",
+      "technologies": ["Java 21", "Spring Boot 3"],
+      "dependencies": ["maven:spring-boot-starter-web@3.3.13"],
+      "directoryOverview": ["pom.xml", "src/main/java/"],
+      "fileSummaries": ["pom.xml：Maven 项目配置"],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": []
+    },
+    "contextReport": {
+      "customDescription": "Spring Boot 用户服务",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": ["pom.xml", "src/main/java/"],
+      "fileSnippets": [],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-09-14T08:30:00Z",
+    "latencyMs": 12
+  }
+}
+```
+
+| 字段 | 必填 | 默认值 | 范围与含义 |
+| --- | --- | --- | --- |
+| `rawPrompt` | 是 | 无 | 非空，最多 8,000 个字符；也是首次大型文档检索词 |
+| `context` | 否 | 空描述与空文件 | 与普通上下文分析契约相同；文件最多 1,000 项 |
+| `permissionPolicy` | 否 | 空的用户追加规则 | 平台默认受保护路径始终生效，用户规则只能追加 |
+| `contextId` | 响应 | 无 | UUID；后续计划和最终确认引用这次短期分析 |
+| `version` | 响应 | 无 | `sha256:` 加 64 位十六进制摘要；绑定过滤后的文件、内容引用和首次分析查询 |
+| `digest` | 响应 | 无 | 只含描述、技术栈、依赖、目录概览、文件摘要、完整度和非敏感警告；计划 Provider 只能看到这一部分 |
+| `contextReport` | 响应 | 无 | 返回给工作台展示的完整脱敏分析报告，不直接传给计划 Provider |
+| `expiresAt` | 响应 | 无 | 默认创建后 30 分钟；过期后必须重新准备上下文和计划 |
+| `latencyMs` | 响应 | 无 | 本次过滤与分析耗时，单位毫秒 |
+
+`PlanningSessionStore` 会保存脱敏后的 `ContextSnapshot` 和摘要，以便相同输入在最终阶段复用。Redis 可用时写入带 TTL 的键；Redis 未配置或临时不可用时，本地 MVP 降级到当前 Java 进程内存。多实例部署必须保证 Redis 可用，否则后续请求落到其他实例时会找不到 `contextId`。
+
+## 5. 计划接口
 
 ### `POST /api/v1/optimizations/plan`
 
@@ -61,7 +183,11 @@ sequenceDiagram
 {
   "rawPrompt": "分析2015-2025年某地区心脑血管疾病死亡率，并进行YLL和Arriaga分解",
   "contextDescription": "公共卫生研究",
-  "conversationHistory": []
+  "conversationHistory": [],
+  "planningContext": {
+    "contextId": "ea9d3453-5bd7-487b-bafb-5ef608dfd895",
+    "version": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
 }
 ```
 
@@ -72,6 +198,7 @@ sequenceDiagram
 | `rawPrompt` | 是 | 无 | 非空，最多 8,000 个字符；用户本次真实目标 |
 | `contextDescription` | 否 | `""` | 最多 4,000 个字符；用户主动填写的领域或项目背景 |
 | `conversationHistory` | 否 | `[]` | 最多 20 条；每条 `role` 为 `user` 或 `assistant`，`content` 最多 4,000 个字符 |
+| `planningContext` | 否 | `null` | 有上传资料时传入 `/context/planning` 返回的 `contextId` 和 `version`；无资料时省略 |
 
 响应：
 
@@ -121,7 +248,13 @@ sequenceDiagram
       "model": "deterministic-planner-v2",
       "mock": true
     },
-    "latencyMs": 9
+    "latencyMs": 9,
+    "planId": "d53d3b67-62b2-4505-89dd-4ca88f837391",
+    "planningContext": {
+      "contextId": "ea9d3453-5bd7-487b-bafb-5ef608dfd895",
+      "version": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "expiresAt": "2026-09-14T08:30:00Z"
   }
 }
 ```
@@ -142,10 +275,15 @@ sequenceDiagram
 | `templateCode` | 服务端内部生成策略，用于最终调用和追踪；工作台不向用户展示模板选择 |
 | `provider` | 计划生成所用 Provider、模型和是否为 Mock |
 | `latencyMs` | 计划阶段服务端耗时，非负整数，单位毫秒 |
+| `planId` | 服务端生成的 UUID；最终请求用它证明回答属于本次实际展示的问题 |
+| `planningContext` | 本计划使用的上下文引用；无文件时为 `null` |
+| `expiresAt` | 计划默认在创建后 30 分钟过期，与上下文会话使用同一时限 |
 
 `templateCode` 当前取值为 `AUTO`、`GENERAL`、`RESEARCH_ANALYSIS`、`FEATURE_DEVELOPMENT`、`BUG_FIX`、`REFACTORING`、`TESTING`。`AUTO` 只用于兼容直接调用最终接口的客户端；标准工作台采用计划接口返回的内部策略。未命中研究或软件场景时使用 `GENERAL`。
 
-## 5. 最终生成接口
+服务端用需求文本、背景描述和会话历史的指纹绑定 `planId`，并保存实际展示的问题。最终请求不能少答、多答或重复回答，也不能替换问题文本；写入最终提示词时使用服务端保存的问题文案，只接受客户端提供的答案。
+
+## 6. 最终生成接口
 
 ### `POST /api/v1/optimizations`
 
@@ -156,7 +294,15 @@ sequenceDiagram
   "rawPrompt": "分析2015-2025年某地区心脑血管疾病死亡率，并进行YLL和Arriaga分解",
   "context": {
     "customDescription": "公共卫生研究",
-    "files": []
+    "files": [
+      {
+        "path": "data/广东省死因登记.xlsx",
+        "content": "",
+        "language": "xlsx",
+        "documentId": "doc_7f7d8c9a",
+        "sizeBytes": 2483200
+      }
+    ]
   },
   "enhancement": {
     "templateCode": "RESEARCH_ANALYSIS",
@@ -170,6 +316,11 @@ sequenceDiagram
     "requireConfirmationFor": []
   },
   "planConfirmation": {
+    "planId": "d53d3b67-62b2-4505-89dd-4ca88f837391",
+    "planningContext": {
+      "contextId": "ea9d3453-5bd7-487b-bafb-5ef608dfd895",
+      "version": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
     "answers": [
       {
         "questionId": "research-region",
@@ -190,16 +341,31 @@ sequenceDiagram
 
 | 字段 | 必填 | 默认值 | 范围与含义 |
 | --- | --- | --- | --- |
-| `planConfirmation` | 否 | `null` | 非空表示计划确认已完成；计划返回空问题时传 `{"answers":[]}` |
+| `planConfirmation` | 否 | `null` | 非空表示计划确认已完成；标准工作台始终回传计划编号和上下文引用 |
+| `planConfirmation.planId` | 新客户端必填 | 无 | 必须是 `/optimizations/plan` 返回的 UUID；兼容旧历史调用时允许省略 |
+| `planConfirmation.planningContext` | 条件必填 | `null` | 计划使用过文件上下文时必须与计划响应完全一致；无文件时为 `null` |
 | `planConfirmation.answers` | 条件必填 | `[]` | 最多 8 条；弹窗有问题时必须全部回答，问题编号不得重复 |
 | `answers[].questionId` | 是 | 无 | 1—64 位安全编号 |
-| `answers[].question` | 是 | 无 | 原问题，最多 300 个字符，用于把答案作为可读事实写入最终结果 |
+| `answers[].question` | 是 | 无 | 最多 300 个字符；服务端会用计划会话中的原问题替换该值，防止篡改问题语义 |
 | `answers[].answer` | 是 | 无 | 用户选择或填写的答案，最多 1,500 个字符 |
-| `context.files` | 否 | `[]` | 最多 1,000 项；受保护路径在分析前过滤，不进入 Provider |
+| `context.files` | 否 | `[]` | 回答完成后按“原始需求 + 问题 + 答案”再次检索得到的最终文件集合，最多 1,000 项；受保护路径在分析前过滤，不进入 Provider |
 | `permissionPolicy.protectedPaths` | 否 | `[]` | 最多 50 条，每条最多 256 个字符；只能追加平台默认规则 |
 | `permissionPolicy.requireConfirmationFor` | 否 | `[]` | 最多 50 条，每条最多 64 个字符；只能追加平台默认规则 |
 
 `includePermissionBoundaries` 是向后兼容字段，不能关闭平台默认红线。默认受保护路径包括 `.env`、`**/*.pem`、`**/*.key` 和生产配置；删除或覆盖文件、数据库结构迁移、升级核心依赖和生产部署必须人工确认。
+
+最终阶段先把已确认答案规范化，再用以下规则构造上下文查询：
+
+```text
+原始需求
+问题 1
+答案 1
+问题 2
+答案 2
+...
+```
+
+浏览器用该查询再次检索本地项目索引；后端也用同一查询检索 `documentId` 指向的大型文档临时索引。`version` 同时覆盖文件输入和分析查询，因此只有“零问题或零答案、文件未变、查询未变”时才会命中首次快照。只要答案、代码块、文件内容、文档引用或项目描述发生变化，最终阶段就重新分析。
 
 最终响应：
 
@@ -243,16 +409,16 @@ sequenceDiagram
 
 `sections` 至少包含 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`，可包含 `ACCEPTANCE` 和 `EXAMPLES`。完成计划确认后不会返回 `CLARIFICATIONS`，`ambiguities` 为空。兼容旧客户端直接调用最终接口且不传 `planConfirmation` 时，服务端仍可返回 `ambiguities`。
 
-## 6. 编辑、撤销、再次增强与历史
+## 7. 编辑、撤销、再次增强与历史
 
 - 编辑：前端以 `sections` 为权威数据重新组装 `optimizedPrompt`；缺失的平台强制约束会自动补回。
 - 复制：复制当前编辑后的完整 `optimizedPrompt`。
 - 撤销：浏览器内保存最近 20 个结果版本，可撤销上一次编辑或再次增强结果。
 - 再次增强：以当前编辑后的 `optimizedPrompt` 重新进入计划阶段；新的最终调用自动生成一条新历史记录，原记录不被覆盖。
-- 历史重试：后端把 `planConfirmation` 存入现有结果元数据，重新优化时恢复已确认答案；不需要数据库结构迁移。
+- 历史重试：后端保存已确认答案；重新优化时保留这些事实，但移除已经过期的 `planId/contextId` 绑定，不依赖短期会话继续存在；不需要数据库结构迁移。
 - 隐私：历史只保存脱敏上下文摘要，不保存文件正文。
 
-## 7. 校验与错误
+## 8. 校验与错误
 
 | 场景 | HTTP | 错误码或处理 |
 | --- | --- | --- |
@@ -260,18 +426,24 @@ sequenceDiagram
 | 会话超过 20 条、问题回答超过 8 条 | 400 | `INVALID_ARGUMENT` |
 | 受保护路径或人工确认动作超过 50 条 | 400 | `INVALID_ARGUMENT` |
 | 回答为空或问题编号重复 | 400 | `INVALID_ARGUMENT`，给出可读原因 |
+| `contextId/version` 不存在、过期或被替换 | 400 | 要求重新分析文件上下文 |
+| `planId` 过期，或需求、背景、会话与计划不一致 | 400 | 要求重新生成确认问题 |
+| 回答集合与服务端计划问题不完全一致 | 400 | 要求完成本次计划中的全部问题 |
 | 输入疑似包含真实密码、Token、API Key 或私钥 | 400 | `INVALID_ARGUMENT`，要求移除凭据 |
 | Provider 超时、限流或不可用 | 504、503 或 502 | 稳定错误码与 `retryable`，不返回上游敏感详情 |
 | Provider 返回无效问题或缺少必需段落 | 502 | `RESULT_INVALID` |
 | 上下文为空 | 继续生成 | `contextReport` 明确为空，不伪造项目事实 |
 | 文档解析或检索部分失败 | 降级生成 | 在 `contextReport.warnings` 和覆盖报告中说明原因 |
 
-## 8. 测试范围
+## 9. 测试范围
 
 - `OptimizationPlanningServiceTest`：科研六类问题、内部术语拦截、问题数量上限。
+- `PlanningSessionServiceTest`：受保护文件过滤、摘要隔离、需求与上下文绑定、问题防篡改、完整回答和快照复用规则。
+- `PlanningContextControllerTest`：上下文准备接口正常响应与 Bean Validation 异常。
 - `OptimizationControllerTest`：计划与最终接口、空输入、长度、会话、回答和权限列表上限、Provider 异常。
-- `DefaultEnhancementOrchestratorTest`：确认答案进入最终结果且不再出现待确认项。
+- `DefaultEnhancementOrchestratorTest`：确认答案进入最终结果且不再出现待确认项；大型文档会按确认答案重新检索。
 - `OptimizationResultAssemblerTest`：四要素、答案合并、权限红线和 `CLARIFICATIONS` 清理。
 - `ProtectedContextFilterTest`、`SensitiveValueDetectorTest`：受保护路径前置过滤和凭据检测。
 - `JpaOptimizationHistoryServiceTest`：确认答案随历史重新优化恢复。
-- `prompt-workbench.spec.ts`：开发与科研场景的“计划弹窗 → 全部回答 → 最终结果”浏览器链路。
+- `optimizationRequest.test.ts`、`optimization.test.ts`：上下文准备引用和二次检索词的前端单元测试。
+- `prompt-workbench.spec.ts`：开发与科研场景的“上下文准备 → 计划弹窗 → 二次检索 → 最终结果”浏览器链路与请求时序断言。

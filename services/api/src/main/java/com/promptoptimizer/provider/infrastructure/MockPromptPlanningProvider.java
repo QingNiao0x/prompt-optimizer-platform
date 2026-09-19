@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * 本地联调使用的确定性计划 Provider。
@@ -25,12 +26,23 @@ import java.util.Locale;
 @ConditionalOnProperty(prefix = "app.provider", name = "mode", havingValue = "mock", matchIfMissing = true)
 public class MockPromptPlanningProvider implements PromptPlanningProvider {
 
+    private static final Pattern CONCRETE_REGION = Pattern.compile(
+            "(?<!某)[\\p{IsHan}A-Za-z]{1,20}(?:省|市|自治区|特别行政区|国家)|长三角|珠三角|京津冀|全国|中国"
+    );
+
     @Override
     public PlanningProviderResponse plan(PlanningProviderRequest request) {
         StringBuilder input = new StringBuilder(request.rawPrompt())
                 .append(' ')
                 .append(request.contextDescription());
         request.conversationHistory().forEach(message -> input.append(' ').append(message.content()));
+        if (request.planningContext() != null) {
+            input.append(' ').append(request.planningContext().description());
+            request.planningContext().technologies().forEach(value -> input.append(' ').append(value));
+            request.planningContext().dependencies().forEach(value -> input.append(' ').append(value));
+            request.planningContext().directoryOverview().forEach(value -> input.append(' ').append(value));
+            request.planningContext().fileSummaries().forEach(value -> input.append(' ').append(value));
+        }
         String prompt = input.toString().toLowerCase(Locale.ROOT);
         List<PlanQuestion> questions;
         String summary;
@@ -39,7 +51,9 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
             summary = "我已理解你的研究目标。还需要确认研究范围、数据口径和交付方式，之后会直接生成完整提示词。";
         } else if (containsAny(prompt, "开发", "代码", "接口", "功能", "bug", "报错", "重构")) {
             questions = softwareQuestions(prompt, request.contextDescription());
-            summary = "我已理解你要完成的软件任务。补充下面几个会影响实现方案的细节后，就可以生成最终提示词。";
+            summary = request.planningContext() == null
+                    ? "我已理解你要完成的软件任务。补充下面几个会影响实现方案的细节后，就可以生成最终提示词。"
+                    : "我已结合现有项目资料理解这项软件任务。再确认少量无法从文件中确定的细节后，就可以生成最终提示词。";
         } else if (containsAny(prompt, "写作", "文章", "报告", "演讲", "课程", "作业")) {
             questions = writingQuestions(prompt);
             summary = "我已理解你的内容目标。确认受众和交付形式后，就可以生成最终提示词。";
@@ -58,7 +72,7 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
 
     private List<PlanQuestion> researchQuestions(String prompt) {
         List<PlanQuestion> questions = new ArrayList<>();
-        if (prompt.contains("某地区") || !containsAny(prompt, "省", "市", "自治区", "国家")) {
+        if (!hasConcreteRegion(prompt)) {
             questions.add(freeText(
                     "research-region",
                     "这项研究具体覆盖哪个地区？",
@@ -230,5 +244,9 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
             }
         }
         return false;
+    }
+
+    private boolean hasConcreteRegion(String value) {
+        return CONCRETE_REGION.matcher(value).find();
     }
 }

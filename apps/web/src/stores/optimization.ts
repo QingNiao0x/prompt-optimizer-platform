@@ -4,6 +4,7 @@ import { computed, ref, shallowRef } from 'vue';
 import {
   buildOptimizationPlanRequest,
   buildOptimizationRequest,
+  buildPlanningContextRequest,
 } from '@/features/optimization/optimizationRequest';
 import {
   loadProjectContextSettings,
@@ -21,6 +22,7 @@ import {
   analyzeContext,
   createOptimizationPlan as requestOptimizationPlan,
   optimizePrompt,
+  preparePlanningContext as requestPlanningContext,
 } from '@/services/promptOptimizerApi';
 import { MAX_FILES } from '@/workers/fileReaderCore';
 import type {
@@ -30,6 +32,7 @@ import type {
   OptimizationPlan,
   OptimizationResult,
   PlanConfirmation,
+  PlanningContextPreparation,
   PromptSection,
   ReoptimizationResult,
   TemplateCode,
@@ -47,6 +50,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const contextRetrieval = shallowRef<ProjectContextRetrievalResult>();
   const activeFilePath = ref('');
   const contextSnapshot = ref<ContextSnapshot>();
+  const planningContext = ref<PlanningContextPreparation>();
   const plan = ref<OptimizationPlan>();
   const result = ref<OptimizationResult>();
   const resultUndoStack = ref<OptimizationResult[]>([]);
@@ -57,6 +61,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const isOptimizing = ref(false);
 
   const canOptimize = computed(() => rawPrompt.value.trim().length > 0
+    && !isAnalyzing.value
     && !isPlanning.value
     && !isOptimizing.value);
   const canUndoResult = computed(() => resultUndoStack.value.length > 0);
@@ -72,6 +77,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     activeFilePath.value = '';
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
+    planningContext.value = undefined;
   };
 
   const setProjectIndex = (summary: ProjectIndexSummary): void => {
@@ -87,6 +93,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
+    planningContext.value = undefined;
   };
 
   const addFile = (file: ContextFileInput): void => {
@@ -103,6 +110,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     activeFilePath.value = file.path;
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
+    planningContext.value = undefined;
   };
 
   const removeFile = (path: string): void => {
@@ -113,6 +121,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
+    planningContext.value = undefined;
   };
 
   const clearFiles = (): void => {
@@ -123,6 +132,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     activeFilePath.value = '';
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
+    planningContext.value = undefined;
   };
 
   const resolveContextFiles = async (query: string): Promise<ContextFileInput[]> => {
@@ -193,6 +203,40 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
   };
 
+  const preparePlanningContext = async (
+    sourcePrompt: string,
+    preparedFiles: ContextFileInput[],
+  ): Promise<boolean> => {
+    if (!sourcePrompt.trim()) {
+      planningContext.value = undefined;
+      errorMessage.value = '请先输入需要增强的内容。';
+      return false;
+    }
+    if (isAnalyzing.value || isPlanning.value || isOptimizing.value) {
+      return false;
+    }
+    isAnalyzing.value = true;
+    errorMessage.value = '';
+    try {
+      const response = await requestPlanningContext(buildPlanningContextRequest(
+        sourcePrompt,
+        customDescription.value,
+        preparedFiles,
+      ));
+      planningContext.value = response.data;
+      contextSnapshot.value = response.data.contextReport;
+      requestId.value = response.requestId;
+      return true;
+    } catch (error: unknown) {
+      planningContext.value = undefined;
+      errorMessage.value = getApiErrorMessage(error);
+      requestId.value = getApiErrorRequestId(error);
+      return false;
+    } finally {
+      isAnalyzing.value = false;
+    }
+  };
+
   const createOptimizationPlan = async (sourcePrompt = rawPrompt.value): Promise<boolean> => {
     if (!sourcePrompt.trim()) {
       errorMessage.value = '请先输入需要增强的内容。';
@@ -205,7 +249,16 @@ export const useOptimizationStore = defineStore('optimization', () => {
     errorMessage.value = '';
     try {
       const response = await requestOptimizationPlan(
-        buildOptimizationPlanRequest(sourcePrompt, customDescription.value),
+        buildOptimizationPlanRequest(
+          sourcePrompt,
+          customDescription.value,
+          planningContext.value
+            ? {
+                contextId: planningContext.value.contextId,
+                version: planningContext.value.version,
+              }
+            : undefined,
+        ),
       );
       plan.value = response.data;
       templateCode.value = response.data.templateCode;
@@ -340,6 +393,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     activeFilePath.value = '';
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
+    planningContext.value = undefined;
     plan.value = undefined;
     result.value = undefined;
     resultUndoStack.value = [];
@@ -367,6 +421,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     contextRetrieval,
     activeFilePath,
     contextSnapshot,
+    planningContext,
     plan,
     result,
     requestId,
@@ -383,6 +438,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     clearFiles,
     prepareContextFiles,
     runContextAnalysis,
+    preparePlanningContext,
     createOptimizationPlan,
     runOptimization,
     saveEditedSections,

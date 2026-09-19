@@ -3,6 +3,8 @@ package com.promptoptimizer.enhancement.application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.api.ContextAnalysisRequest;
 import com.promptoptimizer.context.api.ContextFileInput;
+import com.promptoptimizer.context.api.PlanningContextRequest;
+import com.promptoptimizer.context.application.ContextAnalyzer;
 import com.promptoptimizer.context.application.BinaryContentExtractor;
 import com.promptoptimizer.context.application.DefaultContextAnalyzer;
 import com.promptoptimizer.context.application.FileContentSummarizer;
@@ -11,10 +13,15 @@ import com.promptoptimizer.enhancement.api.OptimizationRequest;
 import com.promptoptimizer.enhancement.api.PermissionPolicyInput;
 import com.promptoptimizer.enhancement.api.PlanAnswer;
 import com.promptoptimizer.enhancement.api.PlanConfirmation;
+import com.promptoptimizer.enhancement.api.PlanningContextReference;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
+import com.promptoptimizer.enhancement.domain.PlanQuestion;
+import com.promptoptimizer.enhancement.domain.PlanQuestionType;
+import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.policy.application.ConstraintCompleter;
+import com.promptoptimizer.policy.application.ProtectedContextFilter;
 import com.promptoptimizer.provider.infrastructure.MockPromptEnhancementProvider;
 import com.promptoptimizer.template.application.PromptTemplateRegistry;
 import org.junit.jupiter.api.Test;
@@ -23,6 +30,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -130,5 +138,112 @@ class DefaultEnhancementOrchestratorTest {
         assertThat(result.optimizedPrompt())
                 .contains("广东省", "使用 R 完成分析", "数据来源", "偏倚", "不确定性")
                 .doesNotContain("需求描述较短", "尚未明确输入", "开发任务", "未提供项目上下文");
+    }
+
+    @Test
+    void shouldRequeryServerSideDocumentsWithConfirmedAnswersBeforeFinalGeneration() {
+        Clock clock = Clock.fixed(Instant.parse("2026-09-14T08:00:00Z"), ZoneOffset.UTC);
+        List<String> analysisQueries = new ArrayList<>();
+        ContextAnalyzer contextAnalyzer = new ContextAnalyzer() {
+            @Override
+            public com.promptoptimizer.context.domain.ContextSnapshot analyze(ContextAnalysisRequest request) {
+                return snapshot(request);
+            }
+
+            @Override
+            public com.promptoptimizer.context.domain.ContextSnapshot analyze(
+                    ContextAnalysisRequest request,
+                    String query
+            ) {
+                analysisQueries.add(query);
+                return snapshot(request);
+            }
+
+            private com.promptoptimizer.context.domain.ContextSnapshot snapshot(ContextAnalysisRequest request) {
+                return new com.promptoptimizer.context.domain.ContextSnapshot(
+                        request.customDescription(),
+                        List.of(),
+                        List.of(),
+                        List.of("研究资料.pdf"),
+                        List.of(),
+                        List.of(),
+                        List.of(),
+                        "test-v1"
+                );
+            }
+        };
+        ProtectedContextFilter contextFilter = new ProtectedContextFilter();
+        PlanningSessionService sessions = new PlanningSessionService(
+                new InMemoryPlanningSessionStore(clock),
+                contextAnalyzer,
+                contextFilter,
+                clock
+        );
+        ContextAnalysisRequest contextRequest = new ContextAnalysisRequest(
+                "心脑血管疾病研究",
+                List.of(new ContextFileInput(
+                        "研究资料.pdf",
+                        "",
+                        "pdf",
+                        "document-123",
+                        1_024L
+                ))
+        );
+        String rawPrompt = "分析某地区心脑血管疾病死亡率";
+        PlanningContextPreparation preparation = sessions.prepareContext(new PlanningContextRequest(
+                rawPrompt,
+                contextRequest,
+                PermissionPolicyInput.empty()
+        ));
+        PlanningContextReference contextReference = new PlanningContextReference(
+                preparation.contextId(),
+                preparation.version()
+        );
+        PlanQuestion question = new PlanQuestion(
+                "research-region",
+                "这项研究具体覆盖哪个地区？",
+                "填写实际地区。",
+                PlanQuestionType.FREE_TEXT,
+                List.of(),
+                List.of("广东省"),
+                true
+        );
+        PlanningSessionService.PlanRegistration plan = sessions.registerPlan(
+                rawPrompt,
+                contextRequest.customDescription(),
+                List.of(),
+                sessions.resolveForPlan(contextReference, rawPrompt, contextRequest.customDescription()),
+                List.of(question)
+        );
+        DefaultEnhancementOrchestrator contextAwareOrchestrator = new DefaultEnhancementOrchestrator(
+                contextAnalyzer,
+                new AmbiguityDetector(),
+                new PromptTemplateRegistry(),
+                new ConstraintCompleter(),
+                new MockPromptEnhancementProvider(),
+                new OptimizationResultAssembler(),
+                contextFilter,
+                sessions,
+                clock
+        );
+
+        OptimizationResult result = contextAwareOrchestrator.optimize(new OptimizationRequest(
+                rawPrompt,
+                contextRequest,
+                EnhancementOptions.defaults(),
+                List.of(),
+                PermissionPolicyInput.empty(),
+                new PlanConfirmation(
+                        plan.planId(),
+                        contextReference,
+                        List.of(new PlanAnswer(question.id(), question.question(), "广东省"))
+                )
+        ));
+
+        assertThat(analysisQueries).containsExactly(
+                rawPrompt,
+                rawPrompt + "\n" + question.question() + "\n广东省"
+        );
+        assertThat(result.optimizedPrompt()).contains("广东省");
     }
 }

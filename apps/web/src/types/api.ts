@@ -63,6 +63,38 @@ export interface ContextSnapshot {
   analysisVersion: string;
 }
 
+export interface PlanningContextReference {
+  contextId: string;
+  version: string;
+}
+
+export interface PlanningContextDigest {
+  description: string;
+  technologies: string[];
+  dependencies: string[];
+  directoryOverview: string[];
+  fileSummaries: string[];
+  analysisStatus: string;
+  analyzedFileCount: number;
+  warnings: string[];
+}
+
+export interface PlanningContextPreparation extends PlanningContextReference {
+  digest: PlanningContextDigest;
+  contextReport: ContextSnapshot;
+  expiresAt: string;
+  latencyMs: number;
+}
+
+export interface PlanningContextRequest {
+  rawPrompt: string;
+  context: ContextAnalysisRequest;
+  permissionPolicy: {
+    protectedPaths: string[];
+    requireConfirmationFor: string[];
+  };
+}
+
 export interface FileAnalysisCoverage {
   path: string;
   extractionStatus: 'COMPLETE' | 'PARTIAL' | 'FAILED';
@@ -160,6 +192,7 @@ export interface OptimizationPlanRequest {
   rawPrompt: string;
   contextDescription: string;
   conversationHistory: ConversationMessage[];
+  planningContext?: PlanningContextReference | null;
 }
 
 export interface OptimizationPlan {
@@ -168,6 +201,9 @@ export interface OptimizationPlan {
   templateCode: TemplateCode;
   provider: ProviderMetadata;
   latencyMs: number;
+  planId?: string | null;
+  planningContext?: PlanningContextReference | null;
+  expiresAt?: string | null;
 }
 
 export interface PlanAnswer {
@@ -177,6 +213,8 @@ export interface PlanAnswer {
 }
 
 export interface PlanConfirmation {
+  planId?: string | null;
+  planningContext?: PlanningContextReference | null;
   answers: PlanAnswer[];
 }
 

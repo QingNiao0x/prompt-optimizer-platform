@@ -12,21 +12,42 @@
 
 ## 2. 优化接口
 
-优化采用“计划确认 + 最终生成”两个接口。完整字段、上下限和科研示例见[内置 Plan Mode](./12-内置Plan-Mode交互与接口.md)。
+优化采用“可选上下文准备 + 计划确认 + 最终生成”流程。完整字段、上下限和科研示例见[内置 Plan Mode](./12-内置Plan-Mode交互与接口.md)。
+
+### `POST /api/v1/context/planning`
+
+用途：当用户已经上传文件或建立本地目录索引时，先过滤并分析初步相关上下文，返回 30 分钟有效的 `contextId/version`、供计划模型使用的安全摘要，以及供工作台展示的 `contextReport`。计划模型只接收摘要，不接收该接口中的文件正文。
+
+```json
+{
+  "rawPrompt": "给用户模块添加登录功能",
+  "context": {
+    "customDescription": "Spring Boot 用户服务",
+    "files": [{"path": "pom.xml", "content": "<project>...</project>", "language": "xml"}]
+  },
+  "permissionPolicy": {"protectedPaths": [], "requireConfirmationFor": []}
+}
+```
+
+响应关键字段为 `contextId`、`version`、`digest`、`contextReport`、`expiresAt` 和 `latencyMs`。Redis 可用时短期会话写入 Redis 并设置 30 分钟 TTL；本地联调可降级为进程内存储。
 
 ### `POST /api/v1/optimizations/plan`
 
-用途：识别真正影响结果的业务问题并返回候选答案。计划阶段不接收项目文件正文，也不保存历史。
+用途：识别真正影响结果的业务问题并返回候选答案。计划阶段不接收项目文件正文；有文件时只引用上一步产生的安全摘要，也不保存优化历史。
 
 ```json
 {
   "rawPrompt": "分析2015-2025年某地区心脑血管疾病死亡率",
   "contextDescription": "公共卫生研究",
-  "conversationHistory": []
+  "conversationHistory": [],
+  "planningContext": {
+    "contextId": "ea9d3453-5bd7-487b-bafb-5ef608dfd895",
+    "version": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
 }
 ```
 
-响应中的 `questions` 最多 8 个，回答方式为 `FREE_TEXT`、`SINGLE_CHOICE` 或 `MULTIPLE_CHOICE`。当 `questions` 为空时，前端直接进入最终生成。`templateCode` 是服务端内部生成策略，工作台不向用户展示模板选择。
+响应中的 `questions` 最多 8 个，回答方式为 `FREE_TEXT`、`SINGLE_CHOICE` 或 `MULTIPLE_CHOICE`。响应还返回 `planId`、本次使用的 `planningContext` 和 `expiresAt`。当 `questions` 为空时，前端携带空答案和计划编号直接进入最终生成。`templateCode` 是服务端内部生成策略，工作台不向用户展示模板选择。
 
 ### `POST /api/v1/optimizations`
 
@@ -45,6 +66,11 @@
   "conversationHistory": [],
   "permissionPolicy": {"protectedPaths": [], "requireConfirmationFor": []},
   "planConfirmation": {
+    "planId": "d53d3b67-62b2-4505-89dd-4ca88f837391",
+    "planningContext": {
+      "contextId": "ea9d3453-5bd7-487b-bafb-5ef608dfd895",
+      "version": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
     "answers": [{
       "questionId": "research-region",
       "question": "这项研究具体覆盖哪个地区？",
@@ -53,6 +79,8 @@
   }
 }
 ```
+
+服务端校验计划编号、需求指纹、上下文版本和完整答案集合，并以服务端保存的问题文本为准。确认答案会加入第二次上下文检索查询；文件或查询变化时重新分析，完全一致时复用首次快照。
 
 响应包含 `optimizedPrompt`、`sections`、`contextReport`、`ambiguities`、`appliedConstraints`、`templateCode`、`provider` 和 `latencyMs`。`sections` 至少包含 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`；完成计划确认后 `ambiguities` 为空，不再要求用户修改待确认项。
 

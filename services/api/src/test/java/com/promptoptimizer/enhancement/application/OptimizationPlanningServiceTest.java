@@ -1,5 +1,6 @@
 package com.promptoptimizer.enhancement.application;
 
+import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.api.OptimizationPlanRequest;
 import com.promptoptimizer.enhancement.domain.OptimizationPlan;
 import com.promptoptimizer.enhancement.domain.PlanOption;
@@ -9,6 +10,7 @@ import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.infrastructure.MockPromptPlanningProvider;
+import com.promptoptimizer.policy.application.ProtectedContextFilter;
 import com.promptoptimizer.template.application.PromptTemplateRegistry;
 import org.junit.jupiter.api.Test;
 
@@ -23,10 +25,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OptimizationPlanningServiceTest {
 
+    private static final Clock CLOCK = Clock.fixed(
+            Instant.parse("2026-09-13T12:00:00Z"),
+            ZoneOffset.UTC
+    );
+
     private final OptimizationPlanningService service = new OptimizationPlanningService(
             new MockPromptPlanningProvider(),
             new PromptTemplateRegistry(),
-            Clock.fixed(Instant.parse("2026-09-13T12:00:00Z"), ZoneOffset.UTC)
+            planningSessions(CLOCK),
+            CLOCK
     );
 
     @Test
@@ -69,6 +77,7 @@ class OptimizationPlanningServiceTest {
                         true
                 ),
                 new PromptTemplateRegistry(),
+                planningSessions(Clock.systemUTC()),
                 Clock.systemUTC()
         );
 
@@ -96,6 +105,7 @@ class OptimizationPlanningServiceTest {
         OptimizationPlanningService invalidService = new OptimizationPlanningService(
                 request -> new PlanningProviderResponse("还需要确认一些信息。", questions, "mock", "planner", true),
                 new PromptTemplateRegistry(),
+                planningSessions(Clock.systemUTC()),
                 Clock.systemUTC()
         );
 
@@ -138,6 +148,7 @@ class OptimizationPlanningServiceTest {
                         true
                 ),
                 new PromptTemplateRegistry(),
+                planningSessions(Clock.systemUTC()),
                 Clock.systemUTC()
         );
 
@@ -147,5 +158,23 @@ class OptimizationPlanningServiceTest {
 
     private OptimizationPlanRequest request(String prompt) {
         return new OptimizationPlanRequest(prompt, "", List.of());
+    }
+
+    private static PlanningSessionService planningSessions(Clock clock) {
+        return new PlanningSessionService(
+                new InMemoryPlanningSessionStore(clock),
+                request -> new ContextSnapshot(
+                        request.customDescription(),
+                        List.of(),
+                        List.of(),
+                        List.of(),
+                        List.of(),
+                        List.of(),
+                        List.of(),
+                        "test-v1"
+                ),
+                new ProtectedContextFilter(),
+                clock
+        );
     }
 }

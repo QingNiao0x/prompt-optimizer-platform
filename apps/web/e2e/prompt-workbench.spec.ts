@@ -1,10 +1,11 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import type {
   ApiResponse,
   ContextSnapshot,
   OptimizationPlan,
   OptimizationResult,
+  PlanningContextPreparation,
 } from '../src/types/api';
 
 const contextSnapshot: ContextSnapshot = {
@@ -103,6 +104,39 @@ const optimizationResponse: ApiResponse<OptimizationResult> = {
   data: optimizationResult,
 };
 
+const planningContextReference = {
+  contextId: 'ea9d3453-5bd7-487b-bafb-5ef608dfd895',
+  version: `sha256:${'a'.repeat(64)}`,
+};
+
+const planningContextResponse: ApiResponse<PlanningContextPreparation> = {
+  requestId: 'e2e-planning-context-request',
+  data: {
+    ...planningContextReference,
+    digest: {
+      description: contextSnapshot.customDescription,
+      technologies: ['Java 21', 'Spring Boot 3'],
+      dependencies: ['maven:spring-boot-starter-web@3.3.13'],
+      directoryOverview: contextSnapshot.directoryTree,
+      fileSummaries: ['pom.xml：Maven 项目配置，使用 Spring Boot Web。'],
+      analysisStatus: 'COMPLETE',
+      analyzedFileCount: 1,
+      warnings: [],
+    },
+    contextReport: contextSnapshot,
+    expiresAt: '2026-09-14T08:30:00Z',
+    latencyMs: 12,
+  },
+};
+
+const confirmContextTransmission = async (page: Page, operationName: string): Promise<void> => {
+  const dialog = page.getByRole('dialog', { name: '确认发送上下文' }).filter({
+    hasText: operationName,
+  });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: '确认发送' }).click();
+};
+
 const directPlanResponse: ApiResponse<OptimizationPlan> = {
   requestId: 'e2e-plan-direct',
   data: {
@@ -162,6 +196,7 @@ const loginPlanResponse: ApiResponse<OptimizationPlan> = {
 test('用户可以分析项目上下文并生成结构化提示词', async ({ page }) => {
   // 端到端测试只验证浏览器交互和前端请求格式。固定接口响应可以避免消耗模型额度，
   // 也不会因为本地后端、网络或 API Key 状态不同而产生偶发失败。
+  const optimizationRequestOrder: string[] = [];
   await page.route('**/api/v1/context/analyze', async (route) => {
     const requestBody: unknown = route.request().postDataJSON();
     expect(requestBody).toMatchObject({
@@ -177,16 +212,43 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   });
 
   await page.route('**/api/v1/optimizations/plan', async (route) => {
+    optimizationRequestOrder.push('plan');
     const requestBody: unknown = route.request().postDataJSON();
     expect(requestBody).toMatchObject({
       rawPrompt: '给用户模块增加登录功能',
       contextDescription: 'Spring Boot 3 模块化单体，使用 PostgreSQL。',
+      planningContext: planningContextReference,
     });
     expect(requestBody).not.toHaveProperty('files');
-    await route.fulfill({ status: 200, json: loginPlanResponse });
+    await route.fulfill({
+      status: 200,
+      json: {
+        ...loginPlanResponse,
+        data: {
+          ...loginPlanResponse.data,
+          planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391',
+          planningContext: planningContextReference,
+          expiresAt: '2026-09-14T08:30:00Z',
+        },
+      },
+    });
+  });
+
+  await page.route('**/api/v1/context/planning', async (route) => {
+    optimizationRequestOrder.push('context');
+    const requestBody: unknown = route.request().postDataJSON();
+    expect(requestBody).toMatchObject({
+      rawPrompt: '给用户模块增加登录功能',
+      context: {
+        customDescription: 'Spring Boot 3 模块化单体，使用 PostgreSQL。',
+        files: [expect.objectContaining({ path: 'pom.xml' })],
+      },
+    });
+    await route.fulfill({ status: 200, json: planningContextResponse });
   });
 
   await page.route('**/api/v1/optimizations', async (route) => {
+    optimizationRequestOrder.push('final');
     const requestBody: unknown = route.request().postDataJSON();
     expect(requestBody).toMatchObject({
       rawPrompt: '给用户模块增加登录功能',
@@ -194,6 +256,8 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
         includePermissionBoundaries: true,
       },
       planConfirmation: {
+        planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391',
+        planningContext: planningContextReference,
         answers: [
           expect.objectContaining({ questionId: 'software-login-mode' }),
           expect.objectContaining({ questionId: 'software-done' }),
@@ -223,8 +287,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await expect(page.getByText('pom.xml', { exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: '分析上下文资料' }).click();
-  await expect(page.getByRole('dialog', { name: '确认发送上下文' })).toBeVisible();
-  await page.getByRole('button', { name: '确认发送' }).click();
+  await confirmContextTransmission(page, '分析上下文资料');
   await expect(page.getByText('代码项目', { exact: true })).toBeVisible();
   await expect(page.getByText('项目概要', { exact: true })).toBeVisible();
   await expect(page.getByText('功能模块', { exact: true })).toBeVisible();
@@ -236,6 +299,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
 
   await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
+  await confirmContextTransmission(page, '生成确认问题前分析上下文');
   const planDialog = page.getByRole('dialog', { name: '确认关键细节' });
   await expect(planDialog.getByRole('heading', { name: '把关键细节确认清楚' })).toBeVisible();
   await expect(planDialog.getByText('登录成功后采用哪种身份保持方式？')).toBeVisible();
@@ -245,8 +309,9 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await planDialog.getByRole('button', { name: '下一题' }).click();
   await planDialog.getByLabel('填写回答').fill('登录成功、失败和令牌刷新场景都有自动化测试。');
   await planDialog.getByRole('button', { name: '生成最终提示词' }).click();
-  await expect(page.getByRole('dialog', { name: '确认发送上下文' })).toBeVisible();
-  await page.getByRole('button', { name: '确认发送' }).click();
+  await confirmContextTransmission(page, '一键增强提示词');
+
+  expect(optimizationRequestOrder).toEqual(['context', 'plan', 'final']);
 
   await expect(page.getByText('deepseek', { exact: true })).toBeVisible();
   const resultContent = page.getByLabel('增强结果内容，可滚动查看完整提示词');
@@ -389,8 +454,7 @@ test('普通文档分析只展示内容概要，不套用代码项目信息', as
   await expect(page.getByText('个文件已加入上下文', { exact: false })).toBeVisible();
 
   await page.getByRole('button', { name: '分析上下文资料' }).click();
-  await expect(page.getByRole('dialog', { name: '确认发送上下文' })).toBeVisible();
-  await page.getByRole('button', { name: '确认发送' }).click();
+  await confirmContextTransmission(page, '分析上下文资料');
 
   await expect(page.getByText('普通文档', { exact: true })).toBeVisible();
   await expect(page.getByText('文件内容概要', { exact: true })).toBeVisible();
@@ -402,12 +466,30 @@ test('普通文档分析只展示内容概要，不套用代码项目信息', as
 
 test('未单独分析上下文时，一键增强仍返回并展示项目分析结果', async ({ page }) => {
   let contextAnalyzeCalls = 0;
+  let planningContextCalls = 0;
   await page.route('**/api/v1/context/analyze', async (route) => {
     contextAnalyzeCalls += 1;
     await route.fulfill({ status: 200, json: contextResponse });
   });
   await page.route('**/api/v1/optimizations/plan', async (route) => {
-    await route.fulfill({ status: 200, json: directPlanResponse });
+    const requestBody: unknown = route.request().postDataJSON();
+    expect(requestBody).toMatchObject({ planningContext: planningContextReference });
+    await route.fulfill({
+      status: 200,
+      json: {
+        ...directPlanResponse,
+        data: {
+          ...directPlanResponse.data,
+          planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391',
+          planningContext: planningContextReference,
+          expiresAt: '2026-09-14T08:30:00Z',
+        },
+      },
+    });
+  });
+  await page.route('**/api/v1/context/planning', async (route) => {
+    planningContextCalls += 1;
+    await route.fulfill({ status: 200, json: planningContextResponse });
   });
   await page.route('**/api/v1/optimizations', async (route) => {
     const requestBody: unknown = route.request().postDataJSON();
@@ -430,9 +512,10 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
   await page.getByRole('button', { name: '加入上下文' }).click();
   await page.getByLabel('原始提示词').fill('为示例项目补充健康检查接口');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
-  await expect(page.getByRole('dialog', { name: '确认发送上下文' })).toBeVisible();
-  await page.getByRole('button', { name: '确认发送' }).click();
+  await confirmContextTransmission(page, '生成确认问题前分析上下文');
+  await confirmContextTransmission(page, '一键增强提示词');
   expect(contextAnalyzeCalls).toBe(0);
+  expect(planningContextCalls).toBe(1);
   await expect(page.getByText('代码项目', { exact: true })).toBeVisible();
   await expect(page.getByText('项目概要', { exact: true })).toBeVisible();
   await expect(page.getByText('功能模块', { exact: true })).toBeVisible();
@@ -440,7 +523,25 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
 
 test('用户可以通过 File System Access API 建立本地项目索引', async ({ page }) => {
   await page.route('**/api/v1/optimizations/plan', async (route) => {
-    await route.fulfill({ status: 200, json: directPlanResponse });
+    await route.fulfill({
+      status: 200,
+      json: {
+        ...directPlanResponse,
+        data: {
+          ...directPlanResponse.data,
+          planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391',
+          planningContext: planningContextReference,
+          expiresAt: '2026-09-14T08:30:00Z',
+        },
+      },
+    });
+  });
+  await page.route('**/api/v1/context/planning', async (route) => {
+    const requestBody = route.request().postDataJSON() as {
+      context?: { files?: Array<{ path: string }> };
+    };
+    expect(requestBody.context?.files?.some((file) => file.path.includes('src/main.ts'))).toBe(true);
+    await route.fulfill({ status: 200, json: planningContextResponse });
   });
   await page.route('**/api/v1/optimizations', async (route) => {
     const requestBody = route.request().postDataJSON() as {
@@ -487,7 +588,8 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
 
   await page.getByLabel('原始提示词').fill('修改 projectName 常量');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
-  await page.getByRole('button', { name: '确认发送' }).click();
+  await confirmContextTransmission(page, '生成确认问题前分析上下文');
+  await confirmContextTransmission(page, '一键增强提示词');
   await page.getByText(/查看本次代码选择依据/).click();
   await expect(page.getByText('src/main.ts', { exact: true })).toBeVisible();
   await expect(page.getByText(/任务中的符号/).first()).toBeVisible();

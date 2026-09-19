@@ -3,6 +3,8 @@ import type {
   OptimizationPlanRequest,
   OptimizationRequest,
   PlanConfirmation,
+  PlanningContextReference,
+  PlanningContextRequest,
   TemplateCode,
 } from '@/types/api';
 
@@ -53,8 +55,37 @@ export const buildOptimizationRequest = (
 export const buildOptimizationPlanRequest = (
   rawPrompt: string,
   contextDescription: string,
+  planningContext?: PlanningContextReference,
 ): OptimizationPlanRequest => ({
   rawPrompt: rawPrompt.trim(),
   contextDescription: contextDescription.trim(),
   conversationHistory: [],
+  planningContext: planningContext ?? null,
 });
+
+export const buildPlanningContextRequest = (
+  rawPrompt: string,
+  customDescription: string,
+  files: ContextFileInput[],
+): PlanningContextRequest => ({
+  rawPrompt: rawPrompt.trim(),
+  context: {
+    customDescription: customDescription.trim(),
+    files,
+  },
+  permissionPolicy: {
+    protectedPaths: [],
+    requireConfirmationFor: [],
+  },
+});
+
+/**
+ * 用户确认的业务事实必须参与第二次文件召回，否则 Plan Mode 不会改善最终上下文精度。
+ */
+export const buildRefinedContextQuery = (
+  rawPrompt: string,
+  confirmation: PlanConfirmation,
+): string => [
+  rawPrompt.trim(),
+  ...confirmation.answers.map((answer) => `${answer.question}\n${answer.answer}`),
+].filter(Boolean).join('\n');

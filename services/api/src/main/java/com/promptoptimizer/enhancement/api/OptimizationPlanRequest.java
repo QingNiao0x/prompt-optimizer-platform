@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 生成需求确认问题的请求。
  *
- * <p>计划阶段不接收项目文件正文，只使用需求、用户主动填写的背景和短期会话。</p>
+ * <p>计划阶段不接收项目文件正文。存在文件时只引用服务端已过滤的短期上下文摘要。</p>
  *
  * @author QingNiao
  * @since 0.1.0
@@ -22,11 +22,23 @@ public record OptimizationPlanRequest(
         @Size(max = 4_000, message = "背景描述不能超过 4,000 个字符")
         String contextDescription,
         @Size(max = 20, message = "单次最多携带 20 条会话消息")
-        List<@NotNull(message = "会话消息不能为空") @Valid ConversationMessage> conversationHistory
+        List<@NotNull(message = "会话消息不能为空") @Valid ConversationMessage> conversationHistory,
+        @Valid PlanningContextReference planningContext
 ) {
 
     public OptimizationPlanRequest {
         contextDescription = contextDescription == null ? "" : contextDescription;
         conversationHistory = conversationHistory == null ? List.of() : List.copyOf(conversationHistory);
+    }
+
+    /**
+     * 兼容未提供上下文引用的文本计划调用。
+     */
+    public OptimizationPlanRequest(
+            String rawPrompt,
+            String contextDescription,
+            List<ConversationMessage> conversationHistory
+    ) {
+        this(rawPrompt, contextDescription, conversationHistory, null);
     }
 }

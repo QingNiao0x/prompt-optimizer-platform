@@ -1,8 +1,19 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('@/services/promptOptimizerApi', () => ({
+  analyzeContext: vi.fn(),
+  createOptimizationPlan: vi.fn(),
+  optimizePrompt: vi.fn(),
+  preparePlanningContext: vi.fn(),
+}));
+
 import type { ProjectIndexSummary } from '@/features/project-index/projectIndexer';
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
+import {
+  createOptimizationPlan,
+  preparePlanningContext,
+} from '@/services/promptOptimizerApi';
 import type { OptimizationResult } from '@/types/api';
 
 import { useOptimizationStore } from './optimization';
@@ -39,6 +50,7 @@ const readyIndex = (): ProjectIndexSummary => ({
 
 describe('optimization store project context', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     setActivePinia(createPinia());
     vi.stubGlobal('window', {
       localStorage: {
@@ -103,6 +115,60 @@ describe('optimization store project context', () => {
       documentId: 'document-123',
       sizeBytes: 40_000_000,
     }]);
+  });
+
+  it('should prepare context first and pass its reference into the plan request', async () => {
+    const contextId = 'ea9d3453-5bd7-487b-bafb-5ef608dfd895';
+    const version = `sha256:${'a'.repeat(64)}`;
+    vi.mocked(preparePlanningContext).mockResolvedValue({
+      requestId: 'context-request',
+      data: {
+        contextId,
+        version,
+        digest: {
+          description: 'Spring Boot 用户服务',
+          technologies: ['Spring Boot 3'],
+          dependencies: [],
+          directoryOverview: ['pom.xml'],
+          fileSummaries: ['pom.xml：Maven 项目配置'],
+          analysisStatus: 'COMPLETE',
+          analyzedFileCount: 1,
+          warnings: [],
+        },
+        contextReport: resultFixture().contextReport,
+        expiresAt: '2026-09-14T08:30:00Z',
+        latencyMs: 12,
+      },
+    });
+    vi.mocked(createOptimizationPlan).mockResolvedValue({
+      requestId: 'plan-request',
+      data: {
+        summary: '请确认登录方式。',
+        questions: [],
+        templateCode: 'FEATURE_DEVELOPMENT',
+        provider: { provider: 'mock', model: 'planner', mock: true },
+        latencyMs: 4,
+        planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391',
+        planningContext: { contextId, version },
+        expiresAt: '2026-09-14T08:30:00Z',
+      },
+    });
+    const store = useOptimizationStore();
+    store.customDescription = 'Spring Boot 用户服务';
+    const files = [{ path: 'pom.xml', content: '<project />', language: 'xml' }];
+
+    expect(await store.preparePlanningContext('添加登录功能', files)).toBe(true);
+    expect(await store.createOptimizationPlan('添加登录功能')).toBe(true);
+
+    expect(preparePlanningContext).toHaveBeenCalledWith(expect.objectContaining({
+      rawPrompt: '添加登录功能',
+      context: expect.objectContaining({ files }),
+    }));
+    expect(createOptimizationPlan).toHaveBeenCalledWith(expect.objectContaining({
+      rawPrompt: '添加登录功能',
+      planningContext: { contextId, version },
+    }));
+    expect(store.contextSnapshot).toEqual(resultFixture().contextReport);
   });
 
   it('should clear view state without starting a second project-index deletion', () => {

@@ -131,7 +131,11 @@ const continueFlow = (): void => {
     showValidation.value = true;
     return;
   }
-  emit('confirm', { answers: questions.value.map(toAnswer) });
+  emit('confirm', {
+    planId: props.plan?.planId,
+    planningContext: props.plan?.planningContext,
+    answers: questions.value.map(toAnswer),
+  });
 };
 
 const previousQuestion = (): void => {

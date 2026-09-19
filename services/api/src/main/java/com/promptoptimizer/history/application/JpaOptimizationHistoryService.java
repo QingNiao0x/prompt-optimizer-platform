@@ -311,9 +311,13 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
                 entity.getPermissionPolicy(),
                 PermissionPolicyInput.class
         );
-        PlanConfirmation planConfirmation = metadata.containsKey("planConfirmation")
+        PlanConfirmation savedPlanConfirmation = metadata.containsKey("planConfirmation")
                 ? objectMapper.convertValue(metadata.get("planConfirmation"), PlanConfirmation.class)
                 : null;
+        // 历史重新优化保留已确认事实，但不复用已经过期的短期 planId/contextId。
+        PlanConfirmation planConfirmation = savedPlanConfirmation == null
+                ? null
+                : new PlanConfirmation(savedPlanConfirmation.answers());
 
         return new OptimizationRequest(
                 entity.getRawPrompt(),

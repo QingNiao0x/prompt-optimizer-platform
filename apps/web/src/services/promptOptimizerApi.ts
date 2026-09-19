@@ -10,8 +10,20 @@ import type {
   OptimizationPlanRequest,
   OptimizationRequest,
   OptimizationResult,
+  PlanningContextPreparation,
+  PlanningContextRequest,
   ReoptimizationResult,
 } from '@/types/api';
+
+export const preparePlanningContext = async (
+  request: PlanningContextRequest,
+): Promise<ApiResponse<PlanningContextPreparation>> => {
+  const response = await httpClient.post<ApiResponse<PlanningContextPreparation>>(
+    '/api/v1/context/planning',
+    request,
+  );
+  return response.data;
+};
 
 export const createOptimizationPlan = async (
   request: OptimizationPlanRequest,

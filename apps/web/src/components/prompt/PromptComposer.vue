@@ -11,6 +11,7 @@ import { computed } from 'vue';
 interface Props {
   rawPrompt: string;
   includeExamples: boolean;
+  isAnalyzing: boolean;
   isPlanning: boolean;
   isOptimizing: boolean;
   canOptimize: boolean;
@@ -88,10 +89,16 @@ const examplesModel = computed({
           type="primary"
           size="large"
           :icon="MagicStick"
-          :loading="isPlanning || isOptimizing"
+          :loading="isAnalyzing || isPlanning || isOptimizing"
           :disabled="!canOptimize"
         >
-          {{ isPlanning ? '正在理解需求…' : isOptimizing ? '正在生成最终提示词…' : '一键增强提示词' }}
+          {{ isAnalyzing
+            ? '正在分析上下文…'
+            : isPlanning
+              ? '正在理解需求…'
+              : isOptimizing
+                ? '正在生成最终提示词…'
+                : '一键增强提示词' }}
         </ElButton>
       </div>
     </form>

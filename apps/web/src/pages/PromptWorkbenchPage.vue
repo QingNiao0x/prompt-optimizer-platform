@@ -12,6 +12,7 @@ import PromptComposer from '@/components/prompt/PromptComposer.vue';
 import type { DroppedFileCollection } from '@/composables/fileDrop';
 import { useProjectIndex } from '@/composables/useProjectIndex';
 import { useProjectFiles } from '@/composables/useProjectFiles';
+import { buildRefinedContextQuery } from '@/features/optimization/optimizationRequest';
 import { useOptimizationStore } from '@/stores/optimization';
 import { useProjectContextSettingsStore } from '@/stores/projectContextSettings';
 import type { ContextFileInput, PlanConfirmation, PromptSection } from '@/types/api';
@@ -84,6 +85,8 @@ const contextWarnings = computed(() => Array.from(new Set([
   ...(contextSnapshot.value?.warnings ?? []),
   ...(indexErrorMessage.value ? [indexErrorMessage.value] : []),
 ])));
+const hasContextSource = computed(() => files.value.length > 0
+  || projectIndex.value?.status === 'READY');
 
 const handleIndexProject = async (): Promise<void> => {
   await runProjectIndexOperation('FULL');
@@ -270,6 +273,10 @@ const handleOptimize = async (): Promise<void> => {
     return;
   }
   pendingPrompt.value = rawPrompt.value.trim();
+  const contextPrepared = await prepareContextForPlan(pendingPrompt.value);
+  if (!contextPrepared) {
+    return;
+  }
   const succeeded = await store.createOptimizationPlan(pendingPrompt.value);
   if (!succeeded) {
     return;
@@ -278,12 +285,32 @@ const handleOptimize = async (): Promise<void> => {
     planDialogVisible.value = true;
     return;
   }
-  await generateFinalPrompt({ answers: [] });
+  await generateFinalPrompt(createPlanConfirmation([]));
+};
+
+const prepareContextForPlan = async (sourcePrompt: string): Promise<boolean> => {
+  if (projectIndex.value && projectIndex.value.status !== 'READY') {
+    ElMessage.warning('本地项目索引尚未完成，请等待索引完成后再生成确认问题。');
+    return false;
+  }
+  if (!hasContextSource.value) {
+    return true;
+  }
+  const contextFiles = await prepareContextTransmission(
+    `${sourcePrompt}\n${PROJECT_OVERVIEW_RETRIEVAL_QUERY}`,
+    '生成确认问题前分析上下文',
+    true,
+    true,
+  );
+  if (contextFiles === undefined) {
+    return false;
+  }
+  return store.preparePlanningContext(sourcePrompt, contextFiles);
 };
 
 const generateFinalPrompt = async (confirmation: PlanConfirmation): Promise<void> => {
   const contextFiles = await prepareContextTransmission(
-    pendingPrompt.value,
+    buildRefinedContextQuery(pendingPrompt.value, confirmation),
     '一键增强提示词',
     true,
   );
@@ -304,6 +331,12 @@ const handlePlanConfirmed = async (confirmation: PlanConfirmation): Promise<void
   await generateFinalPrompt(confirmation);
 };
 
+const createPlanConfirmation = (answers: PlanConfirmation['answers']): PlanConfirmation => ({
+  planId: plan.value?.planId,
+  planningContext: plan.value?.planningContext,
+  answers,
+});
+
 const handleSaveResult = (sections: PromptSection[]): void => {
   if (store.saveEditedSections(sections)) {
     ElMessage.success('修改已保存。');
@@ -321,6 +354,10 @@ const handleReEnhance = async (): Promise<void> => {
     return;
   }
   pendingPrompt.value = result.value.optimizedPrompt;
+  const contextPrepared = await prepareContextForPlan(pendingPrompt.value);
+  if (!contextPrepared) {
+    return;
+  }
   const succeeded = await store.createOptimizationPlan(pendingPrompt.value);
   if (!succeeded) {
     return;
@@ -329,13 +366,14 @@ const handleReEnhance = async (): Promise<void> => {
     planDialogVisible.value = true;
     return;
   }
-  await generateFinalPrompt({ answers: [] });
+  await generateFinalPrompt(createPlanConfirmation([]));
 };
 
 const prepareContextTransmission = async (
   query: string,
   operationName: string,
   willCallModel: boolean,
+  planningDigestOnly = false,
 ): Promise<ContextFileInput[] | undefined> => {
   try {
     const contextFiles = await store.prepareContextFiles(query);
@@ -348,7 +386,9 @@ const prepareContextTransmission = async (
       (total, file) => total + (file.sizeBytes ?? 0),
       0,
     );
-    const destination = willCallModel
+    const destination = planningDigestOnly
+      ? '本项目后端进行安全分析，并仅将裁剪后的上下文摘要提供给当前配置的大模型服务'
+      : willCallModel
       ? '本项目后端，并由后端转发给当前配置的大模型服务'
       : '本项目 Spring Boot 后端进行上下文分析';
     await ElMessageBox.confirm(
@@ -465,6 +505,7 @@ onBeforeUnmount(() => {
         <PromptComposer
           :raw-prompt="rawPrompt"
           :include-examples="includeExamples"
+          :is-analyzing="isAnalyzing"
           :is-planning="isPlanning"
           :is-optimizing="isOptimizing"
           :can-optimize="canOptimize"
@@ -474,7 +515,7 @@ onBeforeUnmount(() => {
         />
         <OptimizationResultPanel
           :result="result"
-          :busy="isPlanning || isOptimizing"
+          :busy="isAnalyzing || isPlanning || isOptimizing"
           :can-undo="canUndoResult"
           @save="handleSaveResult"
           @undo="handleUndoResult"

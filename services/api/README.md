@@ -2,7 +2,7 @@
 
 技术栈：Java 21、Spring Boot 3、Spring MVC、Spring Data JPA、Flyway、PostgreSQL Driver、Spring Data Redis。
 
-当前已完成后端核心 MVP：基础工程、统一响应与错误模型、上下文分析、提示词增强编排、Mock Provider、可切换的 OpenAI 兼容 Provider、语义向量检索、可选的 Map-Reduce 全文摘要，以及 Provider 配置管理基础 CRUD。
+当前已完成后端核心 MVP：基础工程、统一响应与错误模型、上下文感知 Plan Mode、提示词增强编排、Mock Provider、可切换的 OpenAI 兼容 Provider、语义向量检索、可选的 Map-Reduce 全文摘要，以及 Provider 配置管理基础 CRUD。
 
 Provider 配置管理接口：
 
@@ -65,15 +65,19 @@ GET http://localhost:8080/actuator/health
 
 ```text
 POST http://localhost:8080/api/v1/context/analyze
+POST http://localhost:8080/api/v1/context/planning
 ```
 
-请求体传入用户主动选择的相对文件路径、文件内容和可选项目描述；接口不会读取用户电脑上的绝对路径。
+请求体传入用户主动选择的相对文件路径、文件内容和可选项目描述；接口不会读取用户电脑上的绝对路径。`/context/planning` 会额外返回 30 分钟有效的 `contextId/version`，供计划接口引用；计划 Provider 只接收裁剪摘要。
 
 提示词增强接口：
 
 ```text
+POST http://localhost:8080/api/v1/optimizations/plan
 POST http://localhost:8080/api/v1/optimizations
 ```
+
+有文件时调用顺序为 `/context/planning → /optimizations/plan → /optimizations`。短期上下文和计划优先保存在 Redis，Redis 未配置或暂时不可用时只在当前进程中降级保存；两类会话默认 TTL 都是 30 分钟。
 
 项目默认通过 OpenAI 兼容协议调用 DeepSeek。启动前必须设置自己的 DeepSeek API Key：
 

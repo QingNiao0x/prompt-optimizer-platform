@@ -7,10 +7,12 @@ export default defineConfig({
   timeout: 60_000,
   globalSetup: './e2e/global-setup.ts',
   outputDir: 'test-results',
-  fullyParallel: true,
+  // 目录索引用例会在同一 Vite 源上操作 IndexedDB 与 OPFS。串行执行可以避免
+  // Windows 本地联调时多个浏览器上下文争用存储和懒加载资源，保证默认命令稳定。
+  fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : 4,
+  workers: 1,
   reporter: [
     ['list'],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],

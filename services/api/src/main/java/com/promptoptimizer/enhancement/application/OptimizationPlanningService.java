@@ -49,24 +49,28 @@ public class OptimizationPlanningService {
 
     private final PromptPlanningProvider planningProvider;
     private final PromptTemplateRegistry templateRegistry;
+    private final PlanningSessionService planningSessionService;
     private final SensitiveValueDetector sensitiveValueDetector;
     private final Clock clock;
 
     @Autowired
     public OptimizationPlanningService(
             PromptPlanningProvider planningProvider,
-            PromptTemplateRegistry templateRegistry
+            PromptTemplateRegistry templateRegistry,
+            PlanningSessionService planningSessionService
     ) {
-        this(planningProvider, templateRegistry, Clock.systemUTC());
+        this(planningProvider, templateRegistry, planningSessionService, Clock.systemUTC());
     }
 
     OptimizationPlanningService(
             PromptPlanningProvider planningProvider,
             PromptTemplateRegistry templateRegistry,
+            PlanningSessionService planningSessionService,
             Clock clock
     ) {
         this.planningProvider = planningProvider;
         this.templateRegistry = templateRegistry;
+        this.planningSessionService = planningSessionService;
         this.sensitiveValueDetector = new SensitiveValueDetector();
         this.clock = clock;
     }
@@ -79,10 +83,16 @@ public class OptimizationPlanningService {
         rejectCredentials(request.rawPrompt());
         rejectCredentials(request.contextDescription());
         request.conversationHistory().forEach(message -> rejectCredentials(message.content()));
+        PlanningSessionService.ResolvedPlanningContext planningContext = planningSessionService.resolveForPlan(
+                request.planningContext(),
+                request.rawPrompt(),
+                request.contextDescription()
+        );
         PlanningProviderResponse response = planningProvider.plan(new PlanningProviderRequest(
                 request.rawPrompt().trim(),
                 request.contextDescription().trim(),
-                request.conversationHistory()
+                request.conversationHistory(),
+                planningContext.digest()
         ));
         PlanningProviderResponse validated = validate(response);
         StringBuilder inferenceInput = new StringBuilder(request.rawPrompt())
@@ -91,12 +101,26 @@ public class OptimizationPlanningService {
         request.conversationHistory().forEach(message -> inferenceInput
                 .append('\n')
                 .append(message.content()));
+        if (planningContext.digest() != null) {
+            planningContext.digest().technologies().forEach(value -> inferenceInput.append('\n').append(value));
+            planningContext.digest().fileSummaries().forEach(value -> inferenceInput.append('\n').append(value));
+        }
+        PlanningSessionService.PlanRegistration registration = planningSessionService.registerPlan(
+                request.rawPrompt(),
+                request.contextDescription(),
+                request.conversationHistory(),
+                planningContext,
+                validated.questions()
+        );
         return new OptimizationPlan(
                 validated.summary(),
                 validated.questions(),
                 templateRegistry.infer(inferenceInput.toString()),
                 new ProviderMetadata(validated.provider(), validated.model(), validated.mock()),
-                Math.max(0, clock.millis() - startedAt)
+                Math.max(0, clock.millis() - startedAt),
+                registration.planId(),
+                registration.planningContext(),
+                registration.expiresAt()
         );
     }
 

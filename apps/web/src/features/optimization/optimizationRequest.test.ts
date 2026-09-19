@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildOptimizationPlanRequest, buildOptimizationRequest } from './optimizationRequest';
+import {
+  buildOptimizationPlanRequest,
+  buildOptimizationRequest,
+  buildPlanningContextRequest,
+  buildRefinedContextQuery,
+} from './optimizationRequest';
 
 describe('buildOptimizationRequest', () => {
   it('should normalize editable text without changing source content', () => {
@@ -83,6 +88,11 @@ describe('buildOptimizationRequest', () => {
       includePermissionBoundaries: true,
       includeExamples: false,
       planConfirmation: {
+        planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391',
+        planningContext: {
+          contextId: 'ea9d3453-5bd7-487b-bafb-5ef608dfd895',
+          version: `sha256:${'a'.repeat(64)}`,
+        },
         answers: [{
           questionId: 'research-region',
           question: '这项研究具体覆盖哪个地区？',
@@ -92,13 +102,64 @@ describe('buildOptimizationRequest', () => {
     });
 
     expect(request.planConfirmation?.answers[0]?.answer).toBe('广东省');
+    expect(request.planConfirmation?.planId).toBe('d53d3b67-62b2-4505-89dd-4ca88f837391');
   });
 
-  it('should keep project files out of the planning request', () => {
+  it('should keep project files out of the planning request and pass only its reference', () => {
+    const planningContext = {
+      contextId: 'ea9d3453-5bd7-487b-bafb-5ef608dfd895',
+      version: `sha256:${'b'.repeat(64)}`,
+    };
     expect(buildOptimizationPlanRequest('  分析死亡率  ', '  公共卫生研究  ')).toEqual({
       rawPrompt: '分析死亡率',
       contextDescription: '公共卫生研究',
       conversationHistory: [],
+      planningContext: null,
     });
+    expect(buildOptimizationPlanRequest(
+      '分析死亡率',
+      '公共卫生研究',
+      planningContext,
+    )).toEqual({
+      rawPrompt: '分析死亡率',
+      contextDescription: '公共卫生研究',
+      conversationHistory: [],
+      planningContext,
+    });
+  });
+
+  it('should build the planning-context request before asking questions', () => {
+    expect(buildPlanningContextRequest(
+      '  修复登录问题  ',
+      '  Spring Boot 服务  ',
+      [{ path: 'pom.xml', content: '<project />', language: 'xml' }],
+    )).toEqual({
+      rawPrompt: '修复登录问题',
+      context: {
+        customDescription: 'Spring Boot 服务',
+        files: [{ path: 'pom.xml', content: '<project />', language: 'xml' }],
+      },
+      permissionPolicy: {
+        protectedPaths: [],
+        requireConfirmationFor: [],
+      },
+    });
+  });
+
+  it('should include confirmed answers in the second context retrieval query', () => {
+    expect(buildRefinedContextQuery('分析死亡率', {
+      answers: [
+        {
+          questionId: 'research-region',
+          question: '研究地区？',
+          answer: '广东省',
+        },
+        {
+          questionId: 'research-tool',
+          question: '分析工具？',
+          answer: 'R',
+        },
+      ],
+    })).toBe('分析死亡率\n研究地区？\n广东省\n分析工具？\nR');
   });
 });
