@@ -17,13 +17,11 @@ import type { OptimizationResult, PromptSection, PromptSectionType } from '@/typ
 interface Props {
   result?: OptimizationResult;
   busy: boolean;
-  canUndo: boolean;
   planModeEnabled: boolean;
 }
 
 interface Emits {
   (event: 'save', sections: PromptSection[]): void;
-  (event: 'undo'): void;
   (event: 're-enhance'): void;
 }
 
@@ -119,9 +117,6 @@ const saveEditing = (): void => {
           </ElButton>
           <ElButton size="small" :icon="EditPen" :disabled="busy" @click="startEditing">
             编辑
-          </ElButton>
-          <ElButton size="small" :disabled="busy || !canUndo" @click="emit('undo')">
-            撤销
           </ElButton>
         </template>
       </div>

@@ -44,7 +44,6 @@ const {
   isPlanning,
   isOptimizing,
   canOptimize,
-  canUndoResult,
 } = storeToRefs(store);
 
 const {
@@ -454,12 +453,6 @@ const handleSaveResult = (sections: PromptSection[]): void => {
   }
 };
 
-const handleUndoResult = (): void => {
-  if (store.undoResult()) {
-    ElMessage.success('已撤销上一次修改。');
-  }
-};
-
 const prepareContextTransmission = async (
   query: string,
   operationName: string,
@@ -631,10 +624,8 @@ onBeforeUnmount(() => {
         class="glass-panel result-column"
         :result="result"
         :busy="isAnalyzing || isPlanning || isOptimizing"
-        :can-undo="canUndoResult"
         :plan-mode-enabled="planModeEnabled"
         @save="handleSaveResult"
-        @undo="handleUndoResult"
         @re-enhance="handleReEnhance"
       />
     </div>
