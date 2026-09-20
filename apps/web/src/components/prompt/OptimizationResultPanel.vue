@@ -10,7 +10,7 @@ import {
 import { ElButton, ElInput, ElMessage } from 'element-plus';
 import { computed, ref, toRefs, watch } from 'vue';
 
-import PromptSectionCard from '@/components/prompt/PromptSectionCard.vue';
+import ResultCard from '@/components/prompt/ResultCard.vue';
 import ResultMetaBar from '@/components/prompt/ResultMetaBar.vue';
 import type { OptimizationResult, PromptSection, PromptSectionType } from '@/types/api';
 
@@ -164,7 +164,7 @@ const saveEditing = (): void => {
       <ResultMetaBar :result="result" />
 
       <article v-if="!editing" class="section-list">
-        <PromptSectionCard
+        <ResultCard
           v-for="(section, index) in displaySections"
           :key="section.type"
           :section="section"
@@ -213,7 +213,7 @@ const saveEditing = (): void => {
   padding-top: 4px;
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -241,7 +241,7 @@ h2 {
   margin: 8px 0 12px;
   color: var(--text-primary);
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
 }
 

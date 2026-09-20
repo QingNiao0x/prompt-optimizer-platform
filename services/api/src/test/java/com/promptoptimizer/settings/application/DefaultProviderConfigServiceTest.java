@@ -1,6 +1,8 @@
 package com.promptoptimizer.settings.application;
 
 import com.promptoptimizer.common.exception.ResourceNotFoundException;
+import com.promptoptimizer.identity.application.ActorIdentity;
+import com.promptoptimizer.identity.application.CurrentActor;
 import com.promptoptimizer.settings.api.ProviderConfigSaveRequest;
 import com.promptoptimizer.settings.api.ProviderConfigUpdateRequest;
 import com.promptoptimizer.settings.domain.ProviderConfigSummary;
@@ -35,16 +37,22 @@ class DefaultProviderConfigServiceTest {
     private ProviderConfigRepository repository;
 
     @Mock
-    private DemoContextProvider demoContextProvider;
+    private CurrentActor currentActor;
 
     private DefaultProviderConfigService service;
 
     @BeforeEach
     void setUp() {
-        when(demoContextProvider.current()).thenReturn(new DemoContext(TENANT_ID, USER_ID, WORKSPACE_ID));
+        when(currentActor.require()).thenReturn(new ActorIdentity(
+                USER_ID,
+                TENANT_ID,
+                WORKSPACE_ID,
+                "demo@local",
+                "Local Demo User"
+        ));
         service = new DefaultProviderConfigService(
                 repository,
-                demoContextProvider,
+                currentActor,
                 new com.fasterxml.jackson.databind.ObjectMapper(),
                 "unit-test-encryption-secret"
         );

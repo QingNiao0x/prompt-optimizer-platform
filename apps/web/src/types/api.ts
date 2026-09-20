@@ -63,6 +63,25 @@ export interface ContextSnapshot {
   analysisVersion: string;
 }
 
+export interface AuthenticatedUser {
+  userId: string;
+  tenantId: string;
+  workspaceId: string;
+  email: string;
+  displayName: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface CsrfTokenMetadata {
+  headerName: string;
+  parameterName: string;
+  token: string;
+}
+
 export interface PlanningContextReference {
   contextId: string;
   version: string;

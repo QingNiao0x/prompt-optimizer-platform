@@ -22,8 +22,8 @@ import com.promptoptimizer.history.infrastructure.OptimizationRecordEntity;
 import com.promptoptimizer.history.infrastructure.OptimizationRecordRepository;
 import com.promptoptimizer.history.infrastructure.OptimizationSessionEntity;
 import com.promptoptimizer.history.infrastructure.OptimizationSessionRepository;
-import com.promptoptimizer.settings.application.DemoContext;
-import com.promptoptimizer.settings.application.DemoContextProvider;
+import com.promptoptimizer.identity.application.ActorIdentity;
+import com.promptoptimizer.identity.application.CurrentActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -60,7 +60,7 @@ class JpaOptimizationHistoryServiceTest {
     private final OptimizationRecordRepository recordRepository = mock(OptimizationRecordRepository.class);
     private final OptimizationSessionRepository sessionRepository = mock(OptimizationSessionRepository.class);
     private final EnhancementOrchestrator orchestrator = mock(EnhancementOrchestrator.class);
-    private final DemoContextProvider demoContextProvider = mock(DemoContextProvider.class);
+    private final CurrentActor currentActor = mock(CurrentActor.class);
     private final ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
 
     private JpaOptimizationHistoryService service;
@@ -71,10 +71,16 @@ class JpaOptimizationHistoryServiceTest {
                 recordRepository,
                 sessionRepository,
                 orchestrator,
-                demoContextProvider,
+                currentActor,
                 objectMapper
         );
-        when(demoContextProvider.current()).thenReturn(new DemoContext(TENANT_ID, USER_ID, WORKSPACE_ID));
+        when(currentActor.require()).thenReturn(new ActorIdentity(
+                USER_ID,
+                TENANT_ID,
+                WORKSPACE_ID,
+                "demo@local",
+                "Local Demo User"
+        ));
         when(sessionRepository.save(any(OptimizationSessionEntity.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
         when(recordRepository.save(any(OptimizationRecordEntity.class)))

@@ -20,6 +20,13 @@ spring:
 server:
   port: ${SERVER_PORT:9000}
   shutdown: graceful
+  servlet:
+    session:
+      timeout: ${AUTH_SESSION_TIMEOUT:8h}
+      cookie:
+        http-only: true
+        secure: ${AUTH_COOKIE_SECURE:false}
+        same-site: lax
   tomcat:
     # 大项目上下文可能一次性提交数百个文件，放宽默认 2MB 请求体限制。
     max-swallow-size: 8MB
@@ -40,13 +47,22 @@ logging:
 
 app:
   demo:
-    # 未实现登录鉴权前，接口使用固定的本地演示上下文；后续由真实用户体系替换。
+    # 仅供数据库演示种子和显式 local-mock profile 使用；普通请求身份来自 Spring Security。
     tenant-id: ${DEMO_TENANT_ID:00000000-0000-0000-0000-000000000001}
     user-id: ${DEMO_USER_ID:00000000-0000-0000-0000-000000000002}
     workspace-id: ${DEMO_WORKSPACE_ID:00000000-0000-0000-0000-000000000003}
   security:
     # API Key 加密主密钥，由运行环境注入，禁止写入源码或提交到 Git。
     api-key-encryption-secret: ${API_KEY_ENCRYPTION_SECRET:}
+    # 完整数据库模式首次启动时，只在种子账户尚无密码哈希的情况下写入一次。
+    bootstrap-user:
+      email: ${BOOTSTRAP_USER_EMAIL:demo@local}
+      password: ${BOOTSTRAP_USER_PASSWORD:}
+    # local-mock 不连接数据库，但仍要求显式密码，避免退化为匿名固定用户。
+    local-user:
+      email: ${LOCAL_AUTH_EMAIL:demo@local}
+      password: ${LOCAL_AUTH_PASSWORD:}
+      display-name: ${LOCAL_AUTH_DISPLAY_NAME:Local Demo User}
   history:
     # local-mock 无数据库模式下关闭历史持久化，避免启动失败。
     enabled: ${HISTORY_ENABLED:true}

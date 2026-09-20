@@ -55,7 +55,7 @@ const sectionCount = computed(() =>
 dt {
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -72,7 +72,7 @@ dd {
   margin: 4px 0 0;
   color: var(--text-primary);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
 }
 

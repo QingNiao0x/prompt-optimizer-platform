@@ -28,6 +28,7 @@ import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.enhancement.api.OptimizationController;
 import com.promptoptimizer.common.exception.GlobalExceptionHandler;
 import com.promptoptimizer.history.application.OptimizationHistoryService;
+import com.promptoptimizer.identity.support.TestActors;
 import com.promptoptimizer.template.application.PromptTemplateRegistry;
 import org.junit.jupiter.api.Test;
 
@@ -59,6 +60,7 @@ class DefaultEnhancementOrchestratorTest {
             new PromptTemplateRegistry(),
             new ConstraintCompleter(),
             new MockPromptEnhancementProvider(),
+            TestActors.currentActor(),
             Clock.fixed(Instant.parse("2026-08-10T12:00:00Z"), ZoneOffset.UTC)
     );
 
@@ -113,7 +115,7 @@ class DefaultEnhancementOrchestratorTest {
                     var draft = new MockPromptEnhancementProvider().enhance(request);
                     return new EnhancementProviderResponse(draft.sections(), "test", "semantic", false,
                             List.of("OrderStatus 中 PAID 订单取消后是否需要退款，还是只允许未支付订单取消？"));
-                }, Clock.systemUTC());
+                }, TestActors.currentActor(), Clock.systemUTC());
         var result = semantic.optimize(new OptimizationRequest("为订单服务增加取消功能",
                 new ContextAnalysisRequest("Spring Boot 订单服务", List.of(new ContextFileInput(
                         "src/OrderStatus.java", "enum OrderStatus { PENDING, PAID, CANCELLED }", "java"))),
@@ -251,6 +253,7 @@ class DefaultEnhancementOrchestratorTest {
                 new InMemoryPlanningSessionStore(clock),
                 contextAnalyzer,
                 contextFilter,
+                TestActors.currentActor(),
                 clock
         );
         ContextAnalysisRequest contextRequest = new ContextAnalysisRequest(

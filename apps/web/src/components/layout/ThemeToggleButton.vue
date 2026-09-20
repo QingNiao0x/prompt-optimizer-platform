@@ -34,7 +34,7 @@ const buttonLabel = computed(() => isDark.value ? '切换为浅蓝主题' : '切
   position: fixed;
   right: 24px;
   bottom: 24px;
-  z-index: 80;
+  z-index: 300;
   display: grid;
   width: 48px;
   height: 48px;
@@ -49,7 +49,10 @@ const buttonLabel = computed(() => isDark.value ? '切换为浅蓝主题' : '切
   backdrop-filter: blur(16px) saturate(1.5);
   -webkit-backdrop-filter: blur(16px) saturate(1.5);
   cursor: pointer;
-  transition: transform 180ms ease, color 180ms ease, box-shadow 180ms ease;
+  transition:
+    transform var(--duration-ui) var(--ease-standard),
+    color var(--duration-ui) var(--ease-standard),
+    box-shadow var(--duration-ui) var(--ease-standard);
 }
 
 .theme-toggle::before {
@@ -86,8 +89,6 @@ const buttonLabel = computed(() => isDark.value ? '切换为浅蓝主题' : '切
   .theme-toggle:not(.theme-toggle--compact) {
     right: max(16px, env(safe-area-inset-right, 0px));
     bottom: max(16px, env(safe-area-inset-bottom, 0px));
-    width: 44px;
-    height: 44px;
   }
 }
 </style>

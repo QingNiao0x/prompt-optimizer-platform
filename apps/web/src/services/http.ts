@@ -4,6 +4,10 @@ import type { ApiErrorPayload } from '@/types/api';
 
 export const httpClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? '',
+  withCredentials: true,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+  withXSRFToken: true,
   // 后端会在模型读取超时后返回可区分的错误；这里必须比后端时间略长，
   // 否则浏览器会先中断请求，用户只能看到笼统的前端超时提示。
   timeout: 70_000,
@@ -11,6 +15,10 @@ export const httpClient = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+export const isAuthenticationRequired = (error: unknown): boolean => (
+  error instanceof AxiosError && error.response?.status === 401
+);
 
 /**
  * 将后端统一错误和网络异常转换为用户可执行的提示，不暴露上游模型原始响应。

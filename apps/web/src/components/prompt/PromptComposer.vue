@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { MagicStick } from '@element-plus/icons-vue';
 import {
   ElButton,
   ElInput,
@@ -8,6 +7,7 @@ import {
 } from 'element-plus';
 import { computed } from 'vue';
 
+import SparklesIcon from '@/components/brand/SparklesIcon.vue';
 import { usePlanModePreference } from '@/composables/usePlanModePreference';
 
 interface Props {
@@ -106,7 +106,7 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
           native-type="submit"
           type="primary"
           size="large"
-          :icon="MagicStick"
+          :icon="SparklesIcon"
           :loading="isAnalyzing || isPlanning || isOptimizing"
           :disabled="!canOptimize"
         >
@@ -142,7 +142,7 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
 .step-label {
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -153,7 +153,7 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
   gap: 2px;
   margin: 12px 0 0;
   font-family: var(--font-display);
-  font-size: clamp(26px, 2.4vw, 30px);
+  font-size: 28px;
   font-weight: 700;
   line-height: 1.28;
 }
@@ -229,7 +229,7 @@ form {
 
 .plan-note strong {
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
 }
 
@@ -244,7 +244,7 @@ form {
 
 .plan-note span {
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -269,7 +269,7 @@ form {
   align-items: center;
   gap: 8px;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
 }
 
@@ -288,21 +288,28 @@ form {
   min-width: 200px;
   min-height: 48px;
   border: 0;
-  border-radius: 14px;
+  border-radius: var(--radius-pill);
   color: #fff;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  background: linear-gradient(135deg, var(--accent), #38bdf8);
+  background: var(--accent);
   box-shadow: 0 4px 20px color-mix(in srgb, var(--accent) 28%, transparent);
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition:
+    transform var(--duration-ui) var(--ease-standard),
+    box-shadow var(--duration-ui) var(--ease-standard),
+    background-color var(--duration-ui) var(--ease-standard);
+}
+
+.optimize-button :deep(.el-icon) {
+  font-size: 18px;
 }
 
 .optimize-button:hover,
 .optimize-button:focus-visible {
   color: #fff;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 88%, white), #38bdf8);
+  background: color-mix(in srgb, var(--accent) 88%, white);
   box-shadow: 0 6px 30px color-mix(in srgb, var(--accent) 38%, transparent);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 @media (max-width: 900px) {

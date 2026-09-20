@@ -2,7 +2,6 @@
 import { Clock, HomeFilled, MagicStick, Setting } from '@element-plus/icons-vue';
 
 import BrandMark from '@/components/brand/BrandMark.vue';
-import ThemeToggleButton from '@/components/layout/ThemeToggleButton.vue';
 
 const navigation = [
   { to: '/', label: '首页', icon: HomeFilled },
@@ -39,7 +38,6 @@ const navigation = [
         <span class="status-dot" aria-hidden="true"></span>
         <span><b>LOCAL</b> · DeepSeek 默认</span>
       </div>
-      <ThemeToggleButton compact class="topbar-theme" />
     </div>
   </header>
 </template>
@@ -100,11 +98,13 @@ const navigation = [
   align-items: center;
   gap: 6px;
   padding: 7px 16px;
-  border-radius: 10px;
+  border-radius: var(--radius-pill);
   color: var(--text-secondary);
   font-size: 13px;
   text-decoration: none;
-  transition: color 180ms ease, background 180ms ease;
+  transition:
+    color var(--duration-ui) var(--ease-standard),
+    background-color var(--duration-ui) var(--ease-standard);
 }
 
 .nav-link svg {
@@ -123,10 +123,6 @@ const navigation = [
   align-items: center;
   justify-self: end;
   gap: 12px;
-}
-
-.topbar-theme {
-  display: none;
 }
 
 .provider-status {
@@ -157,10 +153,6 @@ const navigation = [
     grid-template-columns: minmax(0, 1fr) auto auto;
     padding: 0 16px;
   }
-
-  .topbar-theme {
-    display: grid;
-  }
 }
 
 @media (max-width: 640px) {
@@ -179,10 +171,6 @@ const navigation = [
   .topbar-tools {
     display: flex;
     gap: 0;
-  }
-
-  .topbar-theme {
-    display: grid;
   }
 
   .main-nav {

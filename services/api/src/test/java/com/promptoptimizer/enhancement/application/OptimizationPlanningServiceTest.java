@@ -7,6 +7,7 @@ import com.promptoptimizer.enhancement.domain.PlanOption;
 import com.promptoptimizer.enhancement.domain.PlanQuestion;
 import com.promptoptimizer.enhancement.domain.PlanQuestionType;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
+import com.promptoptimizer.identity.support.TestActors;
 import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.infrastructure.MockPromptPlanningProvider;
@@ -174,6 +175,7 @@ class OptimizationPlanningServiceTest {
                         "test-v1"
                 ),
                 new ProtectedContextFilter(),
+                TestActors.currentActor(),
                 clock
         );
     }

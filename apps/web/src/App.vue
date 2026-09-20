@@ -2,17 +2,19 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
-import AppTopbar from '@/components/layout/AppTopbar.vue';
-import ThemeToggleButton from '@/components/layout/ThemeToggleButton.vue';
+import ThemeToggle from '@/components/layout/ThemeToggle.vue';
+import WorkbenchTopBar from '@/components/layout/WorkbenchTopBar.vue';
+import { useUiTheme } from '@/composables/useUiTheme';
 
 const route = useRoute();
 const isWorkbench = computed(() => route.name === 'workbench');
 const isHome = computed(() => route.name === 'home');
+useUiTheme();
 </script>
 
 <template>
   <div class="app-shell">
-    <AppTopbar v-if="!isHome" />
+    <WorkbenchTopBar v-if="!isHome" />
     <main
       class="app-main"
       :class="{
@@ -22,13 +24,14 @@ const isHome = computed(() => route.name === 'home');
     >
       <RouterView />
     </main>
-    <ThemeToggleButton />
+    <ThemeToggle />
   </div>
 </template>
 
 <style scoped>
 .app-shell {
   min-height: 100vh;
+  background: transparent;
 }
 
 .app-main {
@@ -67,9 +70,4 @@ const isHome = computed(() => route.name === 'home');
 
 }
 
-@media (max-width: 900px) {
-  .app-shell:has(.topbar) :deep(.theme-toggle:not(.theme-toggle--compact)) {
-    display: none;
-  }
-}
 </style>

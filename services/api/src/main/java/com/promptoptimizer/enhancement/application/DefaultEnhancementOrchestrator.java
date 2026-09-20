@@ -7,6 +7,7 @@ import com.promptoptimizer.enhancement.api.OptimizationRequest;
 import com.promptoptimizer.enhancement.api.PlanAnswer;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
+import com.promptoptimizer.identity.application.CurrentActor;
 import com.promptoptimizer.policy.application.ConstraintCompleter;
 import com.promptoptimizer.policy.application.ProtectedContextFilter;
 import com.promptoptimizer.provider.application.PromptEnhancementProvider;
@@ -73,6 +74,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
             PromptTemplateRegistry templateRegistry,
             ConstraintCompleter constraintCompleter,
             PromptEnhancementProvider enhancementProvider,
+            CurrentActor currentActor,
             Clock clock
     ) {
         this(
@@ -87,6 +89,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                         new InMemoryPlanningSessionStore(clock),
                         contextAnalyzer,
                         new ProtectedContextFilter(),
+                        currentActor,
                         clock
                 ),
                 clock
@@ -101,6 +104,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
             PromptEnhancementProvider enhancementProvider,
             OptimizationResultAssembler resultAssembler,
             ProtectedContextFilter protectedContextFilter,
+            CurrentActor currentActor,
             Clock clock
     ) {
         this(
@@ -115,6 +119,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                         new InMemoryPlanningSessionStore(clock),
                         contextAnalyzer,
                         protectedContextFilter,
+                        currentActor,
                         clock
                 ),
                 clock

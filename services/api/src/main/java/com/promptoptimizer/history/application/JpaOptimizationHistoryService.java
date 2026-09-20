@@ -22,8 +22,8 @@ import com.promptoptimizer.history.infrastructure.OptimizationRecordEntity;
 import com.promptoptimizer.history.infrastructure.OptimizationRecordRepository;
 import com.promptoptimizer.history.infrastructure.OptimizationSessionEntity;
 import com.promptoptimizer.history.infrastructure.OptimizationSessionRepository;
-import com.promptoptimizer.settings.application.DemoContext;
-import com.promptoptimizer.settings.application.DemoContextProvider;
+import com.promptoptimizer.identity.application.ActorIdentity;
+import com.promptoptimizer.identity.application.CurrentActor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,23 +51,23 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
     private final OptimizationRecordRepository recordRepository;
     private final OptimizationSessionRepository sessionRepository;
     private final EnhancementOrchestrator orchestrator;
-    private final DemoContextProvider demoContextProvider;
+    private final CurrentActor currentActor;
     private final ObjectMapper objectMapper;
 
     /**
-     * 注入历史仓库、增强编排器和演示上下文。
+     * 注入历史仓库、增强编排器和当前认证主体。
      */
     public JpaOptimizationHistoryService(
             OptimizationRecordRepository recordRepository,
             OptimizationSessionRepository sessionRepository,
             EnhancementOrchestrator orchestrator,
-            DemoContextProvider demoContextProvider,
+            CurrentActor currentActor,
             ObjectMapper objectMapper
     ) {
         this.recordRepository = recordRepository;
         this.sessionRepository = sessionRepository;
         this.orchestrator = orchestrator;
-        this.demoContextProvider = demoContextProvider;
+        this.currentActor = currentActor;
         this.objectMapper = objectMapper;
     }
 
@@ -76,7 +76,7 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
      */
     @Override
     public OptimizationHistoryPage list(int page, int size) {
-        DemoContext context = demoContextProvider.current();
+        ActorIdentity context = currentActor.require();
         Page<OptimizationRecordEntity> records = recordRepository
                 .findByTenantIdAndWorkspaceIdOrderByCreatedAtDesc(
                         context.tenantId(),
@@ -117,7 +117,7 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
      */
     @Override
     public UUID save(OptimizationRequest request, OptimizationResult result) {
-        DemoContext context = demoContextProvider.current();
+        ActorIdentity context = currentActor.require();
 
         OptimizationRecordEntity entity = new OptimizationRecordEntity();
         entity.setId(UUID.randomUUID());
@@ -152,7 +152,7 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
      * 查找当前工作区内的记录，找不到时返回统一的资源不存在错误。
      */
     private OptimizationRecordEntity findRecord(UUID id) {
-        DemoContext context = demoContextProvider.current();
+        ActorIdentity context = currentActor.require();
         return recordRepository.findByIdAndTenantIdAndWorkspaceId(
                         id,
                         context.tenantId(),
@@ -164,7 +164,7 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
     /**
      * 复用工作区默认会话，不存在时创建一个。
      */
-    private UUID ensureSession(DemoContext context) {
+    private UUID ensureSession(ActorIdentity context) {
         return sessionRepository
                 .findFirstByTenantIdAndWorkspaceIdAndStatusOrderByCreatedAtAsc(
                         context.tenantId(),
@@ -178,7 +178,7 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
     /**
      * 创建 MVP 阶段的默认优化会话。
      */
-    private UUID createDefaultSession(DemoContext context) {
+    private UUID createDefaultSession(ActorIdentity context) {
         OptimizationSessionEntity session = new OptimizationSessionEntity();
         session.setId(UUID.randomUUID());
         session.setTenantId(context.tenantId());

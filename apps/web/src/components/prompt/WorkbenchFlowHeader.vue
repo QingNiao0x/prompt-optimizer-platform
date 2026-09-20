@@ -111,7 +111,19 @@ const activeIndex = computed(() => stages.findIndex((stage) => stage.id === prop
 
 @media (max-width: 900px) {
   .workbench-header {
+    min-height: 40px;
+    padding: 8px 16px 0;
+  }
+
+  .header-label,
+  .header-description {
     display: none;
+  }
+
+  .flow-indicator {
+    width: 100%;
+    justify-content: center;
+    font-size: 12px;
   }
 }
 

@@ -19,6 +19,7 @@ import com.promptoptimizer.enhancement.domain.OptimizationPlan;
 import com.promptoptimizer.enhancement.domain.PlanQuestion;
 import com.promptoptimizer.enhancement.domain.PlanQuestionType;
 import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
+import com.promptoptimizer.identity.support.TestActors;
 import com.promptoptimizer.policy.application.ProtectedContextFilter;
 import com.promptoptimizer.provider.infrastructure.MockPromptPlanningProvider;
 import com.promptoptimizer.template.application.PromptTemplateRegistry;
@@ -30,6 +31,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -212,6 +214,45 @@ class PlanningSessionServiceTest {
     }
 
     @Test
+    void shouldRejectContextAndPlanOwnedByAnotherAuthenticatedUser() {
+        AtomicReference<UUID> authenticatedUserId = new AtomicReference<>(TestActors.USER_ID);
+        PlanningSessionService service = new PlanningSessionService(
+                new InMemoryPlanningSessionStore(CLOCK),
+                PlanningSessionServiceTest::snapshot,
+                new ProtectedContextFilter(),
+                () -> TestActors.identity(authenticatedUserId.get()),
+                CLOCK
+        );
+        PlanningContextPreparation preparation = prepare(service);
+        PlanningContextReference reference = reference(preparation);
+        PlanningSessionService.PlanRegistration registration = service.registerPlan(
+                "给用户模块添加登录功能",
+                "Spring Boot 用户服务",
+                List.of(),
+                service.resolveForPlan(reference, "给用户模块添加登录功能", "Spring Boot 用户服务"),
+                List.of()
+        );
+
+        authenticatedUserId.set(UUID.fromString("00000000-0000-0000-0000-000000000202"));
+
+        assertThatThrownBy(() -> service.resolveForPlan(
+                reference,
+                "给用户模块添加登录功能",
+                "Spring Boot 用户服务"
+        ))
+                .isInstanceOf(InvalidOptimizationRequestException.class)
+                .hasMessageContaining("文件上下文已过期");
+        assertThatThrownBy(() -> service.confirm(
+                "给用户模块添加登录功能",
+                "Spring Boot 用户服务",
+                List.of(),
+                new PlanConfirmation(registration.planId(), reference, List.of())
+        ))
+                .isInstanceOf(InvalidOptimizationRequestException.class)
+                .hasMessageContaining("确认问题已过期");
+    }
+
+    @Test
     void shouldAskQuestionsFromTheAnalyzedContextInsteadOfRepeatingKnownFacts() {
         PlanningSessionService sessions = service(PlanningSessionServiceTest::snapshot);
         PlanningContextPreparation preparation = sessions.prepareContext(new PlanningContextRequest(
@@ -299,6 +340,7 @@ class PlanningSessionServiceTest {
                 new InMemoryPlanningSessionStore(clock),
                 PlanningSessionServiceTest::snapshot,
                 new ProtectedContextFilter(),
+                TestActors.currentActor(),
                 clock
         );
         PlanningContextPreparation preparation = service.prepareContext(new PlanningContextRequest(
@@ -342,6 +384,7 @@ class PlanningSessionServiceTest {
                 new InMemoryPlanningSessionStore(CLOCK),
                 analyzer,
                 new ProtectedContextFilter(),
+                TestActors.currentActor(),
                 CLOCK
         );
     }

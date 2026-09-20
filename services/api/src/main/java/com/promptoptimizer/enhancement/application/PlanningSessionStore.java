@@ -7,7 +7,9 @@ import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 保存短期计划上下文和计划问题的最小持久化接口。
@@ -27,15 +29,21 @@ public interface PlanningSessionStore {
 
     record ContextSession(
             PlanningContextReference reference,
+            UUID ownerUserId,
             String requestFingerprint,
             PlanningContextDigest digest,
             ContextSnapshot snapshot,
             Instant expiresAt
     ) {
+
+        public ContextSession {
+            Objects.requireNonNull(ownerUserId, "ownerUserId must not be null");
+        }
     }
 
     record PlanSession(
             String planId,
+            UUID ownerUserId,
             String requestFingerprint,
             PlanningContextReference planningContext,
             List<PlanQuestion> questions,
@@ -43,6 +51,7 @@ public interface PlanningSessionStore {
     ) {
 
         public PlanSession {
+            Objects.requireNonNull(ownerUserId, "ownerUserId must not be null");
             questions = List.copyOf(questions);
         }
     }

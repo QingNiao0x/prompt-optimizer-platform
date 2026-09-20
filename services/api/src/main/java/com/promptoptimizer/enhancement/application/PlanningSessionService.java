@@ -13,6 +13,8 @@ import com.promptoptimizer.enhancement.api.PlanningContextReference;
 import com.promptoptimizer.enhancement.domain.PlanQuestion;
 import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
 import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
+import com.promptoptimizer.identity.application.ActorIdentity;
+import com.promptoptimizer.identity.application.CurrentActor;
 import com.promptoptimizer.policy.application.ProtectedContextFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,7 @@ public class PlanningSessionService {
     private final PlanningSessionStore store;
     private final ContextAnalyzer contextAnalyzer;
     private final ProtectedContextFilter protectedContextFilter;
+    private final CurrentActor currentActor;
     private final SensitiveValueDetector sensitiveValueDetector;
     private final Clock clock;
 
@@ -60,20 +63,23 @@ public class PlanningSessionService {
     public PlanningSessionService(
             PlanningSessionStore store,
             ContextAnalyzer contextAnalyzer,
-            ProtectedContextFilter protectedContextFilter
+            ProtectedContextFilter protectedContextFilter,
+            CurrentActor currentActor
     ) {
-        this(store, contextAnalyzer, protectedContextFilter, Clock.systemUTC());
+        this(store, contextAnalyzer, protectedContextFilter, currentActor, Clock.systemUTC());
     }
 
     PlanningSessionService(
             PlanningSessionStore store,
             ContextAnalyzer contextAnalyzer,
             ProtectedContextFilter protectedContextFilter,
+            CurrentActor currentActor,
             Clock clock
     ) {
         this.store = store;
         this.contextAnalyzer = contextAnalyzer;
         this.protectedContextFilter = protectedContextFilter;
+        this.currentActor = currentActor;
         this.sensitiveValueDetector = new SensitiveValueDetector();
         this.clock = clock;
     }
@@ -83,6 +89,7 @@ public class PlanningSessionService {
      */
     public PlanningContextPreparation prepareContext(PlanningContextRequest request) {
         long startedAt = clock.millis();
+        ActorIdentity actor = currentActor.require();
         rejectCredential(request.rawPrompt());
         rejectCredential(request.context().customDescription());
 
@@ -102,6 +109,7 @@ public class PlanningSessionService {
         PlanningContextDigest digest = buildDigest(snapshot);
         store.saveContext(new PlanningSessionStore.ContextSession(
                 reference,
+                actor.userId(),
                 fingerprintContextOwner(
                         request.rawPrompt(),
                         request.context().customDescription()
@@ -151,10 +159,12 @@ public class PlanningSessionService {
             ResolvedPlanningContext planningContext,
             List<PlanQuestion> questions
     ) {
+        ActorIdentity actor = currentActor.require();
         String planId = UUID.randomUUID().toString();
         Instant expiresAt = clock.instant().plus(SESSION_TTL);
         store.savePlan(new PlanningSessionStore.PlanSession(
                 planId,
+                actor.userId(),
                 fingerprintPlanInput(rawPrompt, contextDescription, conversationHistory),
                 planningContext.reference(),
                 questions,
@@ -182,8 +192,7 @@ public class PlanningSessionService {
             return new ConfirmedPlan(validateLegacyAnswers(confirmation.answers()), null, false);
         }
 
-        PlanningSessionStore.PlanSession plan = store.findPlan(confirmation.planId())
-                .orElseThrow(() -> new InvalidOptimizationRequestException("确认问题已过期，请重新生成。"));
+        PlanningSessionStore.PlanSession plan = requirePlan(confirmation.planId());
         if (!Objects.equals(
                 plan.requestFingerprint(),
                 fingerprintPlanInput(rawPrompt, contextDescription, conversationHistory)
@@ -238,10 +247,24 @@ public class PlanningSessionService {
     private PlanningSessionStore.ContextSession requireContext(PlanningContextReference reference) {
         PlanningSessionStore.ContextSession context = store.findContext(reference.contextId())
                 .orElseThrow(() -> new InvalidOptimizationRequestException("文件上下文已过期，请重新分析。"));
+        if (!Objects.equals(context.ownerUserId(), currentActor.require().userId())) {
+            // 与不存在或过期使用同一提示，避免向其他用户泄露资源是否存在。
+            throw new InvalidOptimizationRequestException("文件上下文已过期，请重新分析。");
+        }
         if (!Objects.equals(context.reference().version(), reference.version())) {
             throw new InvalidOptimizationRequestException("文件上下文版本无效，请重新分析。");
         }
         return context;
+    }
+
+    private PlanningSessionStore.PlanSession requirePlan(String planId) {
+        PlanningSessionStore.PlanSession plan = store.findPlan(planId)
+                .orElseThrow(() -> new InvalidOptimizationRequestException("确认问题已过期，请重新生成。"));
+        if (!Objects.equals(plan.ownerUserId(), currentActor.require().userId())) {
+            // 与不存在或过期使用同一提示，避免向其他用户泄露资源是否存在。
+            throw new InvalidOptimizationRequestException("确认问题已过期，请重新生成。");
+        }
+        return plan;
     }
 
     private List<PlanAnswer> validateLegacyAnswers(List<PlanAnswer> answers) {

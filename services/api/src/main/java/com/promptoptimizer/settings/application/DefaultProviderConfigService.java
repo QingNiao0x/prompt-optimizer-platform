@@ -2,6 +2,8 @@ package com.promptoptimizer.settings.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.common.exception.ResourceNotFoundException;
+import com.promptoptimizer.identity.application.ActorIdentity;
+import com.promptoptimizer.identity.application.CurrentActor;
 import com.promptoptimizer.settings.api.ProviderConfigSaveRequest;
 import com.promptoptimizer.settings.api.ProviderConfigUpdateRequest;
 import com.promptoptimizer.settings.domain.ProviderConfigSummary;
@@ -28,29 +30,29 @@ public class DefaultProviderConfigService implements ProviderConfigService {
     private static final String KEY_VERSION = "v1";
 
     private final ProviderConfigRepository repository;
-    private final DemoContextProvider demoContextProvider;
+    private final CurrentActor currentActor;
     private final ObjectMapper objectMapper;
     private final String encryptionSecret;
 
     public DefaultProviderConfigService(
             ProviderConfigRepository repository,
-            DemoContextProvider demoContextProvider,
+            CurrentActor currentActor,
             ObjectMapper objectMapper,
             @Value("${app.security.api-key-encryption-secret:}") String encryptionSecret
     ) {
         this.repository = repository;
-        this.demoContextProvider = demoContextProvider;
+        this.currentActor = currentActor;
         this.objectMapper = objectMapper;
         this.encryptionSecret = encryptionSecret;
     }
 
     /**
-     * 查询当前演示工作区下的配置摘要列表。
+     * 查询当前认证主体默认工作区下的配置摘要列表。
      */
     @Override
     @Transactional(readOnly = true)
     public List<ProviderConfigSummary> list() {
-        DemoContext context = demoContextProvider.current();
+        ActorIdentity context = currentActor.require();
         return repository.findByTenantIdAndWorkspaceIdOrderByUpdatedAtDesc(
                         context.tenantId(),
                         context.workspaceId()
@@ -65,7 +67,7 @@ public class DefaultProviderConfigService implements ProviderConfigService {
     @Override
     @Transactional
     public ProviderConfigSummary create(ProviderConfigSaveRequest request) {
-        DemoContext context = demoContextProvider.current();
+        ActorIdentity context = currentActor.require();
         ApiKeyCipher cipher = cipher();
 
         ProviderConfigEntity entity = new ProviderConfigEntity();
@@ -92,7 +94,7 @@ public class DefaultProviderConfigService implements ProviderConfigService {
     @Override
     @Transactional
     public ProviderConfigSummary update(UUID id, ProviderConfigUpdateRequest request) {
-        DemoContext context = demoContextProvider.current();
+        ActorIdentity context = currentActor.require();
         ProviderConfigEntity entity = repository.findByIdAndTenantIdAndWorkspaceId(
                         id,
                         context.tenantId(),
@@ -131,7 +133,7 @@ public class DefaultProviderConfigService implements ProviderConfigService {
     @Override
     @Transactional
     public void delete(UUID id) {
-        DemoContext context = demoContextProvider.current();
+        ActorIdentity context = currentActor.require();
         ProviderConfigEntity entity = repository.findByIdAndTenantIdAndWorkspaceId(
                         id,
                         context.tenantId(),

@@ -38,7 +38,7 @@ withDefaults(
   place-items: center;
   border-radius: 10px;
   color: #fff;
-  background: linear-gradient(135deg, var(--accent), #38bdf8);
+  background: linear-gradient(135deg, var(--accent), var(--accent-cyan-bright));
   box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 

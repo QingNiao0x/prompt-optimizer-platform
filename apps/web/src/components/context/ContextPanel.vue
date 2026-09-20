@@ -356,6 +356,7 @@ const addManualFile = (): void => {
         @dragleave.prevent.stop="handleDragLeave"
         @drop.prevent.stop="handleDrop"
       >
+        <span v-if="isDragActive" class="dropzone-overlay">松开即可加入项目上下文</span>
         <span class="dropzone-icon"><FolderOpened /></span>
         <span class="dropzone-copy">
           <strong>
@@ -613,7 +614,7 @@ const addManualFile = (): void => {
 .step-label {
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -622,7 +623,7 @@ h2 {
   margin: 8px 0 0;
   color: var(--text-primary);
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
 }
 
@@ -653,18 +654,22 @@ h2 {
 }
 
 .folder-dropzone {
+  position: relative;
   display: flex;
   align-items: center;
   width: 100%;
   gap: 14px;
   padding: 16px;
   border: 1px dashed var(--glass-border);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   color: var(--text-secondary);
   text-align: left;
   background: var(--glass-bg-subtle);
   cursor: pointer;
-  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+  transition:
+    border-color var(--duration-ui) var(--ease-standard),
+    background-color var(--duration-ui) var(--ease-standard),
+    transform var(--duration-ui) var(--ease-standard);
 }
 
 .folder-dropzone:hover {
@@ -674,9 +679,22 @@ h2 {
 }
 
 .folder-dropzone.is-drag-active {
-  border-color: var(--accent-cyan);
-  background: color-mix(in srgb, var(--accent-cyan) 12%, var(--surface-code));
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-cyan) 16%, transparent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.dropzone-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--accent-soft) 88%, var(--glass-bg-strong));
 }
 
 .folder-dropzone:disabled {

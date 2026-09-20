@@ -6,10 +6,10 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import ContextPanel from '@/components/context/ContextPanel.vue';
-import OptimizationResultPanel from '@/components/prompt/OptimizationResultPanel.vue';
 import PlanModeIntroDialog from '@/components/prompt/PlanModeIntroDialog.vue';
 import PlanQuestionDialog from '@/components/prompt/PlanQuestionDialog.vue';
-import PromptComposer from '@/components/prompt/PromptComposer.vue';
+import IntentComposer from '@/components/prompt/IntentComposer.vue';
+import ResultPanel from '@/components/prompt/ResultPanel.vue';
 import WorkbenchFlowHeader from '@/components/prompt/WorkbenchFlowHeader.vue';
 import type { DroppedFileCollection } from '@/composables/fileDrop';
 import { usePlanModePreference } from '@/composables/usePlanModePreference';
@@ -606,7 +606,7 @@ onBeforeUnmount(() => {
         @cancel-index="handleCancelIndex"
       />
 
-      <PromptComposer
+      <IntentComposer
         v-show="showIntentPane"
         class="glass-panel intent-column"
         :raw-prompt="rawPrompt"
@@ -619,7 +619,7 @@ onBeforeUnmount(() => {
         @update:include-examples="includeExamples = $event"
         @optimize="handleOptimize"
       />
-      <OptimizationResultPanel
+      <ResultPanel
         v-show="showResultPane"
         class="glass-panel result-column"
         :result="result"
@@ -673,7 +673,7 @@ onBeforeUnmount(() => {
   min-height: 0;
   flex: 1;
   align-items: stretch;
-  gap: 14px;
+  gap: 16px;
   padding: 10px 20px 16px;
 }
 
@@ -694,13 +694,10 @@ onBeforeUnmount(() => {
   }
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 1100px) {
   .workbench-grid {
-    grid-template-columns:
-      minmax(220px, 0.7fr)
-      minmax(320px, 1.28fr)
-      minmax(260px, 0.96fr);
-    gap: 12px;
+    grid-template-columns: 260px minmax(0, 1fr) 300px;
+    gap: 16px;
     padding-inline: 16px;
   }
 }

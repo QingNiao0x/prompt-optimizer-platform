@@ -28,7 +28,11 @@ const displayIndex = computed(() => String(props.index + 1).padStart(2, '0'));
 </script>
 
 <template>
-  <section class="prompt-section" :class="{ 'is-last': isLast }">
+  <section
+    class="prompt-section"
+    :class="{ 'is-last': isLast }"
+    :style="{ animationDelay: `${(index + 1) * 0.1}s` }"
+  >
     <div class="section-rail" aria-hidden="true">
       <span>{{ displayIndex }}</span>
       <i></i>
@@ -51,6 +55,7 @@ const displayIndex = computed(() => String(props.index + 1).padStart(2, '0'));
   display: grid;
   grid-template-columns: 26px minmax(0, 1fr);
   gap: 8px;
+  animation: fade-in-up 0.6s ease-out both;
 }
 
 .section-rail {
@@ -119,7 +124,7 @@ const displayIndex = computed(() => String(props.index + 1).padStart(2, '0'));
   margin: 0;
   overflow: hidden;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -134,43 +139,43 @@ const displayIndex = computed(() => String(props.index + 1).padStart(2, '0'));
 .section-tag {
   flex: 0 0 auto;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--accent);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   background: var(--accent-soft);
 }
 
 .section-tag.is-task {
-  color: var(--success);
-  background: color-mix(in srgb, var(--success) 12%, transparent);
+  color: var(--green);
+  background: var(--green-soft);
 }
 
 .section-tag.is-output {
-  color: var(--accent-cyan);
-  background: color-mix(in srgb, var(--accent-cyan) 12%, transparent);
+  color: var(--blue);
+  background: var(--blue-soft);
 }
 
 .section-tag.is-constraints {
-  color: var(--warning);
-  background: color-mix(in srgb, var(--warning) 12%, transparent);
+  color: var(--orange);
+  background: var(--orange-soft);
 }
 
 .section-tag.is-acceptance {
-  color: #c2256f;
-  background: rgba(194, 37, 111, 0.1);
+  color: var(--pink);
+  background: var(--pink-soft);
 }
 
 .section-tag.is-examples {
-  color: #7c5ad5;
-  background: rgba(124, 90, 213, 0.11);
+  color: var(--blue);
+  background: var(--blue-soft);
 }
 
 .section-text {
   max-width: 100%;
   margin-top: 10px;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.75;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
