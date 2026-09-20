@@ -2,10 +2,12 @@
 
 ## 1. 目标与交互原则
 
-一键增强采用“上下文准备、计划确认、最终生成”三阶段流程。没有上传资料时，系统直接根据需求提出少量业务问题；已经上传文件或建立本地目录索引时，系统先分析初步相关资料，再结合需求与安全摘要提问。用户逐项回答后，系统按确认后的信息再次检索上下文，并一次生成可复制、可编辑的最终提示词。
+工作台默认关闭 Plan 确认，用户点击“直接增强提示词”后只准备一次最终上下文，并直接生成结果。用户主动打开“Plan 确认”后，流程变为“上下文准备、计划确认、最终生成”三阶段：没有上传资料时根据需求提出少量业务问题；已经上传文件或建立本地目录索引时，先分析初步相关资料，再结合需求与安全摘要提问。用户逐项回答后，系统按确认信息再次检索上下文，并一次生成可复制、可编辑的最终提示词。
 
 用户界面遵循以下原则：
 
+- Plan 确认默认关闭，开关状态保存在当前浏览器；首次开启先展示用途说明，用户可以接受，也可以改为直接增强。
+- 主按钮明确显示当前动作：关闭时为“直接增强提示词”，开启时为“先确认并增强”；生成期间禁止切换模式。
 - 不展示 `TemplateCode`、字段名、缺失维度或内部分类依据。
 - 问题使用用户所在领域的自然语言。例如科研任务询问地区、数据来源和统计工具，软件任务询问运行环境和验收结果。
 - 一次只展示一个问题，给出进度、候选答案和自定义输入。
@@ -35,13 +37,17 @@
 
 ## 3. 调用流程
 
-下面的流程图展示上下文感知 Plan Mode 的主决策。无文件时直接根据需求提问；有文件时先分析安全摘要，再提问；用户回答后始终用确认信息构造最终检索词。
+下面的流程图同时展示直接增强与上下文感知 Plan 两条路径。直接增强跳过 `/context/planning` 和 `/optimizations/plan`；Plan 路径在有文件时先分析安全摘要，再提问，并在用户回答后用确认信息构造最终检索词。
 
 ```mermaid
 flowchart LR
-    A[输入需求] --> B{存在文件或<br/>可用本地索引？}
-    B -- 否 --> E[Plan Mode 提问]
-    B -- 是 --> C[第一次检索相关文件]
+    A[输入需求] --> B{是否开启 Plan 确认？}
+    B -- 否 --> N[按原始需求检索一次最终文件]
+    N --> O[POST /optimizations<br/>templateCode=AUTO<br/>planConfirmation=null]
+    O --> M[返回最终结构化提示词<br/>可包含 ambiguities]
+    B -- 是 --> P{存在文件或<br/>可用本地索引？}
+    P -- 否 --> E[Plan Mode 提问]
+    P -- 是 --> C[第一次检索相关文件]
     C --> D[后端分析并生成安全摘要]
     D --> E
     E --> F{需要用户确认？}
@@ -56,7 +62,7 @@ flowchart LR
     L --> M[返回最终结构化提示词]
 ```
 
-### 接口时序图
+### Plan 路径接口时序图
 
 ```mermaid
 sequenceDiagram
@@ -67,7 +73,7 @@ sequenceDiagram
     participant P as POST /optimizations/plan
     participant O as POST /optimizations
 
-    U->>W: 选择文件或目录并输入原始目标
+    U->>W: 选择文件或目录、输入目标并开启 Plan
     W->>I: 按原始目标初步检索相关文件
     alt 存在文件或已完成的本地索引
         W->>U: 确认发送本次选中的上下文
@@ -91,7 +97,9 @@ sequenceDiagram
     W->>U: 展示复制、编辑、撤销和再次增强操作
 ```
 
-这里采用方案 B：**先分析用户主动提供的相关上下文，再基于上下文发起 Plan Mode，最后生成结果**。`/optimizations/plan` 本身仍不接收文件正文，只接收 `/context/planning` 返回的短期引用；计划 Provider 只看到裁剪后的 `PlanningContextDigest`。未过滤的原始文件正文和完整本地索引不会写入计划请求、Redis 或优化历史；Redis 上下文会话只短期保存分析后已脱敏、受预算限制的 `ContextSnapshot`。
+Plan 路径采用方案 B：**先分析用户主动提供的相关上下文，再基于上下文发起 Plan Mode，最后生成结果**。`/optimizations/plan` 本身仍不接收文件正文，只接收 `/context/planning` 返回的短期引用；计划 Provider 只看到裁剪后的 `PlanningContextDigest`。未过滤的原始文件正文和完整本地索引不会写入计划请求、Redis 或优化历史；Redis 上下文会话只短期保存分析后已脱敏、受预算限制的 `ContextSnapshot`。
+
+直接增强不会创建 `contextId` 或 `planId`。有文件时，浏览器按原始需求检索一次并在用户确认发送后随 `/optimizations` 提交；后端仍执行受保护路径过滤、上下文分析、模板推断、权限红线和结果校验。两条路径共享最终生成接口与安全边界。
 
 第二次检索使用“原始需求 + 服务端校验后的问题文本 + 用户答案”。这对两类索引都生效：浏览器本地项目索引会重新选择代码块，后端大型文档索引会用同一组合查询重新召回相关片段。若没有确认问题且文件集合、内容和查询均未变化，最终编排器直接复用首次 `ContextSnapshot`；否则重新分析，避免把过期或不相关的快照当作最终依据。
 
@@ -279,7 +287,7 @@ sequenceDiagram
 | `planningContext` | 本计划使用的上下文引用；无文件时为 `null` |
 | `expiresAt` | 计划默认在创建后 30 分钟过期，与上下文会话使用同一时限 |
 
-`templateCode` 当前取值为 `AUTO`、`GENERAL`、`RESEARCH_ANALYSIS`、`FEATURE_DEVELOPMENT`、`BUG_FIX`、`REFACTORING`、`TESTING`。`AUTO` 只用于兼容直接调用最终接口的客户端；标准工作台采用计划接口返回的内部策略。未命中研究或软件场景时使用 `GENERAL`。
+`templateCode` 当前取值为 `AUTO`、`GENERAL`、`RESEARCH_ANALYSIS`、`FEATURE_DEVELOPMENT`、`BUG_FIX`、`REFACTORING`、`TESTING`。工作台直接增强时始终发送 `AUTO`，避免沿用上一次 Plan 或历史记录留下的模板；Plan 路径采用计划接口返回的内部策略。未命中研究或软件场景时使用 `GENERAL`。
 
 服务端用需求文本、背景描述和会话历史的指纹绑定 `planId`，并保存实际展示的问题。最终请求不能少答、多答或重复回答，也不能替换问题文本；写入最终提示词时使用服务端保存的问题文案，只接受客户端提供的答案。
 
@@ -287,7 +295,7 @@ sequenceDiagram
 
 ### `POST /api/v1/optimizations`
 
-用户完成全部问题后的最小请求：
+Plan 路径中用户完成全部问题后的请求：
 
 ```json
 {
@@ -337,18 +345,36 @@ sequenceDiagram
 }
 ```
 
+直接增强路径不创建计划，最小差异如下。若有文件，`context.files` 是浏览器按原始需求一次检索得到并经用户同意发送的集合。
+
+```json
+{
+  "rawPrompt": "给用户模块添加登录功能",
+  "context": {"customDescription": "Spring Boot 用户服务", "files": []},
+  "enhancement": {
+    "templateCode": "AUTO",
+    "includeConversationHistory": false,
+    "includePermissionBoundaries": true,
+    "includeExamples": false
+  },
+  "conversationHistory": [],
+  "permissionPolicy": {"protectedPaths": [], "requireConfirmationFor": []},
+  "planConfirmation": null
+}
+```
+
 新增与关键字段：
 
 | 字段 | 必填 | 默认值 | 范围与含义 |
 | --- | --- | --- | --- |
-| `planConfirmation` | 否 | `null` | 非空表示计划确认已完成；标准工作台始终回传计划编号和上下文引用 |
-| `planConfirmation.planId` | 新客户端必填 | 无 | 必须是 `/optimizations/plan` 返回的 UUID；兼容旧历史调用时允许省略 |
+| `planConfirmation` | 否 | `null` | 直接增强为 `null`；Plan 路径非空并回传计划编号、上下文引用和答案 |
+| `planConfirmation.planId` | Plan 路径必填 | 无 | 必须是 `/optimizations/plan` 返回的 UUID；兼容旧历史调用时允许省略 |
 | `planConfirmation.planningContext` | 条件必填 | `null` | 计划使用过文件上下文时必须与计划响应完全一致；无文件时为 `null` |
 | `planConfirmation.answers` | 条件必填 | `[]` | 最多 8 条；弹窗有问题时必须全部回答，问题编号不得重复 |
 | `answers[].questionId` | 是 | 无 | 1—64 位安全编号 |
 | `answers[].question` | 是 | 无 | 最多 300 个字符；服务端会用计划会话中的原问题替换该值，防止篡改问题语义 |
 | `answers[].answer` | 是 | 无 | 用户选择或填写的答案，最多 1,500 个字符 |
-| `context.files` | 否 | `[]` | 回答完成后按“原始需求 + 问题 + 答案”再次检索得到的最终文件集合，最多 1,000 项；受保护路径在分析前过滤，不进入 Provider |
+| `context.files` | 否 | `[]` | Plan 路径按“原始需求 + 问题 + 答案”再次检索；直接路径按原始需求检索一次。最多 1,000 项；受保护路径在分析前过滤，不进入 Provider |
 | `permissionPolicy.protectedPaths` | 否 | `[]` | 最多 50 条，每条最多 256 个字符；只能追加平台默认规则 |
 | `permissionPolicy.requireConfirmationFor` | 否 | `[]` | 最多 50 条，每条最多 64 个字符；只能追加平台默认规则 |
 
@@ -407,14 +433,14 @@ sequenceDiagram
 }
 ```
 
-`sections` 至少包含 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`，可包含 `ACCEPTANCE` 和 `EXAMPLES`。完成计划确认后不会返回 `CLARIFICATIONS`，`ambiguities` 为空。兼容旧客户端直接调用最终接口且不传 `planConfirmation` 时，服务端仍可返回 `ambiguities`。
+`sections` 至少包含 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`，可包含 `ACCEPTANCE` 和 `EXAMPLES`。完成 Plan 确认后不会返回 `CLARIFICATIONS`，`ambiguities` 为空。工作台直接增强时没有确认答案，服务端会保留模糊点检测，因而可以返回 `CLARIFICATIONS` 与 `ambiguities`；界面会提示用户可开启 Plan 后再次增强。
 
 ## 7. 编辑、撤销、再次增强与历史
 
 - 编辑：前端以 `sections` 为权威数据重新组装 `optimizedPrompt`；缺失的平台强制约束会自动补回。
 - 复制：复制当前编辑后的完整 `optimizedPrompt`。
 - 撤销：浏览器内保存最近 20 个结果版本，可撤销上一次编辑或再次增强结果。
-- 再次增强：以当前编辑后的 `optimizedPrompt` 重新进入计划阶段；新的最终调用自动生成一条新历史记录，原记录不被覆盖。
+- 再次增强：以当前编辑后的 `optimizedPrompt` 作为新输入，并遵循当前 Plan 开关；开启时重新进入计划阶段，关闭时直接增强。新的最终调用自动生成一条新历史记录，原记录不被覆盖。
 - 历史重试：后端保存已确认答案；重新优化时保留这些事实，但移除已经过期的 `planId/contextId` 绑定，不依赖短期会话继续存在；不需要数据库结构迁移。
 - 隐私：历史只保存脱敏上下文摘要，不保存文件正文。
 
@@ -445,5 +471,6 @@ sequenceDiagram
 - `OptimizationResultAssemblerTest`：四要素、答案合并、权限红线和 `CLARIFICATIONS` 清理。
 - `ProtectedContextFilterTest`、`SensitiveValueDetectorTest`：受保护路径前置过滤和凭据检测。
 - `JpaOptimizationHistoryServiceTest`：确认答案随历史重新优化恢复。
-- `optimizationRequest.test.ts`、`optimization.test.ts`：上下文准备引用和二次检索词的前端单元测试。
-- `prompt-workbench.spec.ts`：开发与科研场景的“上下文准备 → 计划弹窗 → 二次检索 → 最终结果”浏览器链路与请求时序断言。
+- `optimizationRequest.test.ts`、`optimization.test.ts`：上下文准备引用、二次检索词，以及直接增强强制使用 `AUTO` 且清理旧 Plan 状态的前端单元测试。
+- `usePlanModePreference.test.ts`：默认关闭、偏好持久化和异常存储值回退。
+- `prompt-workbench.spec.ts`：Plan 路径的“上下文准备 → 计划弹窗 → 二次检索 → 最终结果”，以及默认直接增强、首次开启说明、拒绝说明、刷新后保持偏好、再次增强分流和计划过期后重新创建。

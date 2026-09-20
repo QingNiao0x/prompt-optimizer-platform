@@ -24,7 +24,7 @@ const features: readonly FeatureDefinition[] = [
   },
   {
     title: '一键增强',
-    description: '输入原始想法后一键增强，AI 自动补全缺失维度、优化表述结构，支持多轮迭代直到满意为止。',
+    description: '输入原始想法后直接生成结构化提示词；复杂需求可主动开启 Plan，先确认关键细节再生成。',
     icon: Clock,
     tone: 'warning',
   },

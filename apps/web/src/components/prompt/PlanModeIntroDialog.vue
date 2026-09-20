@@ -31,14 +31,14 @@ const emit = defineEmits<Emits>();
       <p class="intro-kicker">Plan 模式</p>
       <h2>系统会先询问关键细节，确保生成的提示词更精准</h2>
       <p>
-        开启后，一键增强会先问少量会改变结果的问题，确认后再生成最终提示词，减少返工和歧义。
+        开启后，“先确认并增强”会先问少量会改变结果的问题，确认后再生成最终提示词，减少返工和歧义。
         需求已经写清楚时，也可能不问、直接生成。
       </p>
     </div>
 
     <template #footer>
       <div class="intro-actions">
-        <ElButton @click="emit('dismiss')">暂不启用</ElButton>
+        <ElButton @click="emit('dismiss')">不启用，直接增强</ElButton>
         <ElButton type="primary" @click="emit('accept')">立即体验</ElButton>
       </div>
     </template>

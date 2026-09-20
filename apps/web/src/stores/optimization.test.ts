@@ -12,6 +12,7 @@ import type { ProjectIndexSummary } from '@/features/project-index/projectIndexe
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
 import {
   createOptimizationPlan,
+  optimizePrompt,
   preparePlanningContext,
 } from '@/services/promptOptimizerApi';
 import type { OptimizationResult } from '@/types/api';
@@ -169,6 +170,39 @@ describe('optimization store project context', () => {
       planningContext: { contextId, version },
     }));
     expect(store.contextSnapshot).toEqual(resultFixture().contextReport);
+  });
+
+  it('should use AUTO instead of reusing the previous plan template for direct enhancement', async () => {
+    vi.mocked(createOptimizationPlan).mockResolvedValue({
+      requestId: 'research-plan',
+      data: {
+        summary: '请确认研究范围。',
+        questions: [],
+        templateCode: 'RESEARCH_ANALYSIS',
+        provider: { provider: 'mock', model: 'planner', mock: true },
+        latencyMs: 4,
+      },
+    });
+    vi.mocked(optimizePrompt).mockResolvedValue({
+      requestId: 'direct-result',
+      data: {
+        ...resultFixture(),
+        templateCode: 'FEATURE_DEVELOPMENT',
+      },
+    });
+    const store = useOptimizationStore();
+
+    expect(await store.createOptimizationPlan('分析死亡率趋势')).toBe(true);
+    expect(store.templateCode).toBe('RESEARCH_ANALYSIS');
+    expect(await store.runOptimization([], { rawPrompt: '给用户模块增加登录功能' })).toBe(true);
+
+    expect(optimizePrompt).toHaveBeenCalledWith(expect.objectContaining({
+      enhancement: expect.objectContaining({ templateCode: 'AUTO' }),
+      planConfirmation: null,
+    }));
+    expect(store.plan).toBeUndefined();
+    expect(store.planningContext).toBeUndefined();
+    expect(store.templateCode).toBe('FEATURE_DEVELOPMENT');
   });
 
   it('should clear view state without starting a second project-index deletion', () => {

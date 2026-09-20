@@ -95,7 +95,7 @@ const reoptimize = async (id: string): Promise<void> => {
   try {
     const response = await getHistory(id);
     store.loadFromHistory(response.data);
-    await router.push({ path: '/workbench', query: { plan: '1' } });
+    await router.push({ path: '/workbench', query: { enhance: '1' } });
   } catch (error: unknown) {
     ElMessage.error(getApiErrorMessage(error));
   }

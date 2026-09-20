@@ -289,6 +289,14 @@ export const useOptimizationStore = defineStore('optimization', () => {
       return false;
     }
 
+    const planConfirmed = options.planConfirmation !== undefined;
+    if (!planConfirmed) {
+      // 直接增强必须让服务端重新推断策略，不能沿用上一次 Plan 或历史记录留下的模板。
+      planningContext.value = undefined;
+      plan.value = undefined;
+      templateCode.value = 'AUTO';
+    }
+
     isOptimizing.value = true;
     errorMessage.value = '';
     try {
@@ -306,6 +314,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
       rememberCurrentResult();
       result.value = response.data;
       contextSnapshot.value = response.data.contextReport;
+      templateCode.value = response.data.templateCode;
       requestId.value = response.requestId;
       return true;
     } catch (error: unknown) {

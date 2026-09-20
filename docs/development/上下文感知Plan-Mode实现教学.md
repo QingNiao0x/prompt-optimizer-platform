@@ -2,11 +2,11 @@
 
 ## 1. 要解决的问题
 
-旧流程先根据用户输入的需求文本提问，等用户回答后才读取文件。这样会出现两类重复问题：项目文件已经明确使用 Spring Boot，系统仍询问技术环境；研究数据已经是 Excel，系统仍询问数据格式。
+旧流程一律先根据用户输入的需求文本提问，等用户回答后才读取文件。这样既会强制不需要澄清的用户进入 Plan，也会出现两类重复问题：项目文件已经明确使用 Spring Boot，系统仍询问技术环境；研究数据已经是 Excel，系统仍询问数据格式。
 
-当前实现采用方案 B：有文件时先分析上下文，再生成确认问题。这里的“先分析”不是把整个目录直接发给模型，而是先在浏览器或临时文档索引中选出初步相关内容，由后端过滤、解析和摘要，再把安全摘要交给计划模型。
+当前实现把 Plan 改为用户主动开启，首次访问默认关闭并直接增强。用户开启 Plan 后采用方案 B：有文件时先分析上下文，再生成确认问题。这里的“先分析”不是把整个目录直接发给模型，而是先在浏览器或临时文档索引中选出初步相关内容，由后端过滤、解析和摘要，再把安全摘要交给计划模型。
 
-没有上传资料时，流程保持轻量：直接根据需求和背景生成确认问题，不调用上下文准备接口。
+关闭 Plan 时，无论是否有上传资料，都不会调用上下文准备接口和计划接口；有文件时按原始需求检索一次，用户同意发送后由最终接口完成分析。开启 Plan 但没有上传资料时，流程保持轻量：直接根据需求和背景生成确认问题，不调用上下文准备接口。
 
 ## 2. 上下文感知处理流程
 
@@ -14,10 +14,18 @@
 
 ```mermaid
 flowchart TD
-    A([用户输入需求，可选文件或目录]) --> B{存在手动文件或<br/>READY 状态的本地索引？}
+    A([用户输入需求，可选文件或目录]) --> B{用户是否开启 Plan 确认？}
+    B -- 否 --> B1[按原始需求检索一次最终文件]
+    B1 --> B2{存在文件且需要发送确认？}
+    B2 -- 否 --> B4[调用最终接口<br/>AUTO + planConfirmation=null]
+    B2 -- 是 --> B3{用户同意发送？}
+    B3 -- 否 --> X([取消本次增强])
+    B3 -- 是 --> B4
+    B4 --> Y[生成最终结构化提示词<br/>允许返回 ambiguities]
 
-    B -- 否 --> C[按需求文本和背景创建 Plan]
-    B -- 是 --> D[按原始需求和项目概览词<br/>第一次检索相关文件]
+    B -- 是 --> C0{存在手动文件或<br/>READY 状态的本地索引？}
+    C0 -- 否 --> C[按需求文本和背景创建 Plan]
+    C0 -- 是 --> D[按原始需求和项目概览词<br/>第一次检索相关文件]
     D --> E{用户同意发送<br/>初步上下文？}
     E -- 否 --> X([取消本次增强])
     E -- 是 --> F[后端过滤受保护路径<br/>解析文件并生成安全摘要]
@@ -50,7 +58,7 @@ flowchart TD
     Y --> Z([展示、复制、编辑、撤销或再次增强])
 ```
 
-流程中的第一次检索服务于 Plan Mode，目标是让系统避免重复询问文件中已经明确的信息；第二次检索服务于最终生成，必须纳入用户刚刚确认的答案。只有查询、文件集合和上下文版本都没有变化时，后端才会复用首次分析快照。
+直接增强只检索一次。Plan 路径中的第一次检索服务于提问，目标是让系统避免重复询问文件中已经明确的信息；第二次检索服务于最终生成，必须纳入用户刚刚确认的答案。只有查询、文件集合和上下文版本都没有变化时，后端才会复用首次分析快照。
 
 ### 2.2 完整执行时序
 
@@ -68,46 +76,72 @@ sequenceDiagram
 
     User->>Page: 选择文件或文件夹
     Page->>Store: setFiles / setProjectIndex
-    User->>Page: 输入需求并点击一键增强
-    Page->>Store: prepareContextFiles(原始需求 + 项目概览词)
-    Store->>Local: 检索相关代码块
-    Local-->>Store: 初步相关文件
-    Page->>User: 确认本次上下文发送范围
-    User-->>Page: 同意
-    Page->>Store: preparePlanningContext
-    Store->>ContextApi: rawPrompt + context + permissionPolicy
-    ContextApi-->>Store: contextId/version + digest + contextReport
-    Page->>Store: createOptimizationPlan
-    Store->>PlanApi: rawPrompt + contextDescription + contextId/version
-    PlanApi-->>Store: planId + questions + contextId/version
-    Store-->>Dialog: 显示仍需用户决定的问题
-    User->>Dialog: 逐项回答
-    Dialog-->>Page: planId + contextId/version + answers
-    Page->>Store: prepareContextFiles(原始需求 + 问题 + 答案)
-    Store->>Local: 第二次检索
-    Local-->>Store: 最终相关文件
-    Page->>User: 确认最终上下文发送范围
-    User-->>Page: 同意
-    Page->>Store: runOptimization
-    Store->>FinalApi: 最终上下文 + 计划确认
-    FinalApi-->>Page: optimizedPrompt + sections + contextReport
+    User->>Page: 输入需求并点击当前增强按钮
+    alt Plan 关闭
+        Page->>Store: prepareContextFiles(原始需求)
+        Store->>Local: 检索一次最终相关文件
+        Local-->>Store: 最终相关文件
+        Page->>User: 有文件时确认发送范围
+        User-->>Page: 同意
+        Page->>Store: runOptimization
+        Store->>FinalApi: templateCode=AUTO + planConfirmation=null
+        FinalApi-->>Page: optimizedPrompt + sections + ambiguities
+    else Plan 开启
+        Page->>Store: prepareContextFiles(原始需求 + 项目概览词)
+        Store->>Local: 第一次检索相关代码块
+        Local-->>Store: 初步相关文件
+        Page->>User: 确认本次上下文发送范围
+        User-->>Page: 同意
+        Page->>Store: preparePlanningContext
+        Store->>ContextApi: rawPrompt + context + permissionPolicy
+        ContextApi-->>Store: contextId/version + digest + contextReport
+        Page->>Store: createOptimizationPlan
+        Store->>PlanApi: rawPrompt + contextDescription + contextId/version
+        PlanApi-->>Store: planId + questions + contextId/version
+        Store-->>Dialog: 显示仍需用户决定的问题
+        User->>Dialog: 逐项回答
+        Dialog-->>Page: planId + contextId/version + answers
+        Page->>Store: prepareContextFiles(原始需求 + 问题 + 答案)
+        Store->>Local: 第二次检索
+        Local-->>Store: 最终相关文件
+        Page->>User: 确认最终上下文发送范围
+        User-->>Page: 同意
+        Page->>Store: runOptimization
+        Store->>FinalApi: 最终上下文 + 计划确认
+        FinalApi-->>Page: optimizedPrompt + sections + contextReport
+    end
 ```
 
 ## 3. 前端代码如何串起来
 
 入口位于 `apps/web/src/pages/PromptWorkbenchPage.vue`。
 
-### 3.1 第一次上下文检索
+### 3.1 手动模式分流
 
-`handleOptimize()` 先保存本次固定的 `pendingPrompt`，然后调用 `prepareContextForPlan()`：
+`usePlanModePreference.ts` 用共享响应式状态和 `localStorage` 保存 `{ enabled, introSeen }`。默认值都是 `false`。首次主动开启后，`beginEnhancement()` 先显示用途说明；接受后进入 Plan，拒绝后关闭开关并立即直接增强。
+
+`handleOptimize()` 和 `handleReEnhance()` 都先固定本次 `pendingPrompt`，再由 `continueEnhancement()` 根据当前开关分流：
 
 ```ts
-pendingPrompt.value = rawPrompt.value.trim();
+if (planModeEnabled.value) {
+  await runPlannedEnhancement();
+  return;
+}
+await runDirectEnhancement();
+```
 
+因此“再次增强”也遵循当时的开关，而不是固定进入 Plan。生成期间开关被禁用，避免一次请求中途改变模式。
+
+直接增强调用 `prepareContextTransmission(pendingPrompt, '直接增强提示词', true)`，然后执行 `runOptimization()`。Store 会清除旧的 `plan/planningContext`，将模板重置为 `AUTO`，并发送 `planConfirmation: null`，防止复用上一次 Plan 或历史记录中的模板。
+
+### 3.2 第一次上下文检索
+
+`runPlannedEnhancement()` 先调用 `prepareContextForPlan()`，成功后才创建计划：
+
+```ts
 if (!await prepareContextForPlan(pendingPrompt.value)) {
   return;
 }
-
 if (!await store.createOptimizationPlan(pendingPrompt.value)) {
   return;
 }
@@ -123,7 +157,7 @@ if (!await store.createOptimizationPlan(pendingPrompt.value)) {
 
 第一次发送的目的文案明确为：后端先做安全分析，计划模型只看到裁剪摘要。
 
-### 3.2 保存上下文引用
+### 3.3 保存上下文引用
 
 `apps/web/src/stores/optimization.ts` 中的 `preparePlanningContext()` 调用：
 
@@ -138,7 +172,7 @@ POST /api/v1/context/planning
 
 添加、替换、删除或清空文件，以及替换项目索引时，Store 会清除旧的 `planningContext`，避免下一次增强误用旧引用。
 
-### 3.3 计划请求不重复发送文件
+### 3.4 计划请求不重复发送文件
 
 `buildOptimizationPlanRequest()` 只组装：
 
@@ -153,7 +187,7 @@ POST /api/v1/context/planning
 
 文件正文不会出现在 `/optimizations/plan` 请求中。后端根据引用取得已经分析过的安全摘要，再把摘要放进 `PlanningProviderRequest`。
 
-### 3.4 第二次检索为什么必须包含答案
+### 3.5 第二次检索为什么必须包含答案
 
 用户回答后，`buildRefinedContextQuery()` 按以下顺序拼接查询：
 
@@ -262,17 +296,22 @@ prompt-optimizer:plan:{planId}
 
 进程内降级适合单实例本地联调。生产多实例环境如果没有 Redis，请求可能被负载均衡到另一实例并收到“上下文已过期”或“确认问题已过期”，因此生产部署应把 Redis 视为该功能的必要依赖，并继续增加用户、租户和工作区绑定。
 
-## 6. 两种路径的伪代码
+## 6. 两种模式的伪代码
 
-### 无文件
+### 默认直接增强
 
 ```text
-plan = POST /optimizations/plan(rawPrompt, description, planningContext=null)
-answers = questions 为空 ? [] : 弹窗逐项收集
-result = POST /optimizations(rawPrompt, files=[], planId, answers)
+finalFiles = localIndex.retrieve(rawPrompt)  // 有文件或 READY 索引时
+userConfirms(finalFiles)                    // 有发送确认设置且文件非空时
+result = POST /optimizations(
+  rawPrompt,
+  finalFiles,
+  templateCode = AUTO,
+  planConfirmation = null
+)
 ```
 
-### 有文件或目录索引
+### 开启 Plan（有文件或目录索引）
 
 ```text
 initialFiles = localIndex.retrieve(rawPrompt + projectOverviewTerms)
@@ -296,6 +335,8 @@ result = POST /optimizations(
   planConfirmation = plan.planId + plan.planningContext + answers
 )
 ```
+
+开启 Plan 但没有文件时，跳过 `initialFiles`、`/context/planning` 和两次文件发送确认，直接创建 Plan；最终请求仍必须携带 `planId` 和完整答案。
 
 ## 7. 错误与降级判断
 
@@ -338,6 +379,8 @@ npm.cmd run typecheck
 ```
 
 同时检查计划请求只含 `contextId/version`，最终请求含 `planId`、同一个上下文引用和全部回答。对于带 `documentId` 的大型文档，还要验证最终后端分析查询中出现用户确认答案。
+
+直接增强还应断言：不会调用 `/context/planning` 和 `/optimizations/plan`，最终请求使用 `templateCode=AUTO`、`planConfirmation=null`；首次开启说明可接受或拒绝，偏好在刷新后保留，再次增强跟随当前开关。
 
 ## 9. 后续演进边界
 

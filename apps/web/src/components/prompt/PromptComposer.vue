@@ -43,6 +43,7 @@ const planModeModel = computed({
   get: (): boolean => planModeEnabled.value,
   set: (value: boolean): void => setPlanModeEnabled(value),
 });
+const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isOptimizing);
 </script>
 
 <template>
@@ -89,13 +90,13 @@ const planModeModel = computed({
             <label class="switch-control">
               <span>Plan 确认</span>
               <em v-if="planModeEnabled" class="plan-badge" aria-hidden="true">Plan</em>
-              <ElSwitch v-model="planModeModel" aria-label="Plan 确认" />
+              <ElSwitch v-model="planModeModel" aria-label="Plan 确认" :disabled="isBusy" />
             </label>
           </ElTooltip>
           <ElTooltip content="要求模型给出输入与预期输出示例" placement="top">
             <label class="switch-control">
               <span>示例参考</span>
-              <ElSwitch v-model="examplesModel" />
+              <ElSwitch v-model="examplesModel" :disabled="isBusy" />
             </label>
           </ElTooltip>
         </div>
@@ -114,8 +115,10 @@ const planModeModel = computed({
             : isPlanning
               ? '正在理解需求…'
               : isOptimizing
-                ? '正在生成最终提示词…'
-                : '一键增强提示词' }}
+              ? '正在生成最终提示词…'
+                : planModeEnabled
+                  ? '先确认并增强'
+                  : '直接增强提示词' }}
         </ElButton>
       </div>
     </form>

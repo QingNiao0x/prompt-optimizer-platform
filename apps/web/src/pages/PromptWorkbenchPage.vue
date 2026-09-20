@@ -384,7 +384,7 @@ const runPlannedEnhancement = async (): Promise<void> => {
 const runDirectEnhancement = async (): Promise<void> => {
   const contextFiles = await prepareContextTransmission(
     pendingPrompt.value,
-    '一键增强提示词',
+    '直接增强提示词',
     true,
   );
   if (contextFiles === undefined) {
@@ -422,7 +422,7 @@ const prepareContextForPlan = async (sourcePrompt: string): Promise<boolean> => 
 const generateFinalPrompt = async (confirmation: PlanConfirmation): Promise<void> => {
   const contextFiles = await prepareContextTransmission(
     buildRefinedContextQuery(pendingPrompt.value, confirmation),
-    '一键增强提示词',
+    '生成最终提示词',
     true,
   );
   if (contextFiles === undefined) {
@@ -529,7 +529,7 @@ onMounted(() => {
   mobilePaneQuery = window.matchMedia(MOBILE_PANE_QUERY);
   syncNarrowWorkbench();
   mobilePaneQuery.addEventListener('change', syncNarrowWorkbench);
-  if (route.query.plan === '1') {
+  if (route.query.enhance === '1') {
     void router.replace({ path: '/workbench', query: {} }).then(() => handleOptimize());
   }
 });
@@ -632,6 +632,7 @@ onBeforeUnmount(() => {
         :result="result"
         :busy="isAnalyzing || isPlanning || isOptimizing"
         :can-undo="canUndoResult"
+        :plan-mode-enabled="planModeEnabled"
         @save="handleSaveResult"
         @undo="handleUndoResult"
         @re-enhance="handleReEnhance"

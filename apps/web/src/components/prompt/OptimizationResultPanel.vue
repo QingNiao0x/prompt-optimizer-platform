@@ -18,6 +18,7 @@ interface Props {
   result?: OptimizationResult;
   busy: boolean;
   canUndo: boolean;
+  planModeEnabled: boolean;
 }
 
 interface Emits {
@@ -97,7 +98,7 @@ const saveEditing = (): void => {
         </div>
         <small>需要人工核对</small>
       </div>
-      <p>这些信息尚未经过方案确认。可以再次增强，由系统重新向你提问。</p>
+      <p>这些信息尚未经过方案确认。开启 Plan 确认后再次增强，系统会逐项向你提问。</p>
       <ul>
         <li v-for="item in result.ambiguities" :key="item">{{ item }}</li>
       </ul>
@@ -136,7 +137,7 @@ const saveEditing = (): void => {
       :loading="busy"
       @click="emit('re-enhance')"
     >
-      再次增强
+      {{ planModeEnabled ? '先确认并再次增强' : '直接再次增强' }}
     </ElButton>
 
     <div v-if="!result" class="empty-result">
@@ -153,7 +154,10 @@ const saveEditing = (): void => {
         </div>
       </div>
       <h3>结果会在这里展开</h3>
-      <p>输入一个简短需求并点击“一键增强”，系统会结合背景与资料生成可直接使用的任务说明。</p>
+      <p>
+        输入一个简短需求并点击“{{ planModeEnabled ? '先确认并增强' : '直接增强提示词' }}”，
+        系统会结合背景与资料生成可直接使用的任务说明。
+      </p>
     </div>
 
     <div

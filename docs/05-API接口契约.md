@@ -12,7 +12,7 @@
 
 ## 2. 优化接口
 
-优化采用“可选上下文准备 + 计划确认 + 最终生成”流程。完整字段、上下限和科研示例见[内置 Plan Mode](./12-内置Plan-Mode交互与接口.md)。
+最终生成接口支持两种前端路径：默认的“直接增强”和用户主动开启的“可选上下文准备 + Plan 确认 + 最终生成”。完整字段、上下限和科研示例见[内置 Plan Mode](./12-内置Plan-Mode交互与接口.md)。
 
 ### `POST /api/v1/context/planning`
 
@@ -51,7 +51,7 @@
 
 ### `POST /api/v1/optimizations`
 
-用途：在用户完成计划确认后，基于原始目标、上下文、确认答案和平台约束生成最终结构化提示词并保存历史。
+用途：基于原始目标、上下文和平台约束生成最终结构化提示词并保存历史。Plan 路径还会携带并校验确认答案；直接增强路径发送 `planConfirmation: null`。
 
 ```json
 {
@@ -84,7 +84,7 @@
 
 响应包含 `optimizedPrompt`、`sections`、`contextReport`、`ambiguities`、`appliedConstraints`、`templateCode`、`provider` 和 `latencyMs`。`sections` 至少包含 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`；完成计划确认后 `ambiguities` 为空，不再要求用户修改待确认项。
 
-兼容旧客户端时可以省略 `planConfirmation`，此时服务端仍保留原有模糊点检测。平台默认权限红线不能通过 `includePermissionBoundaries=false` 关闭，用户规则只能追加。
+工作台直接增强时明确发送 `planConfirmation: null`，并把 `enhancement.templateCode` 重置为 `AUTO`，由服务端根据本次输入重新推断策略；此时服务端保留模糊点检测，响应可能包含 `ambiguities`。其他兼容客户端也可以省略 `planConfirmation`。平台默认权限红线不能通过 `includePermissionBoundaries=false` 关闭，用户规则只能追加。
 
 ## 3. 历史接口
 

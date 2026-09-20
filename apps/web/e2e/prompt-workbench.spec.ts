@@ -9,14 +9,23 @@ import type {
 } from '../src/types/api';
 import { openWorkbenchPane } from './workbenchPanes';
 
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify({
-      enabled: true,
-      introSeen: true,
-    }));
-  });
-});
+const PLAN_MODE_STORAGE_KEY = 'prompt-optimizer.plan-mode.v1';
+const PLANNED_ENHANCE_BUTTON = '先确认并增强';
+const DIRECT_ENHANCE_BUTTON = '直接增强提示词';
+
+interface PlanModePreference {
+  enabled: boolean;
+  introSeen: boolean;
+}
+
+const configurePlanMode = async (
+  page: Page,
+  preference: PlanModePreference,
+): Promise<void> => {
+  await page.addInitScript((value) => {
+    localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify(value));
+  }, preference);
+};
 
 const contextSnapshot: ContextSnapshot = {
   customDescription: 'Spring Boot 3 模块化单体，使用 PostgreSQL。',
@@ -204,6 +213,7 @@ const loginPlanResponse: ApiResponse<OptimizationPlan> = {
 };
 
 test('用户可以分析项目上下文并生成结构化提示词', async ({ page }) => {
+  await configurePlanMode(page, { enabled: true, introSeen: true });
   // 端到端测试只验证浏览器交互和前端请求格式。固定接口响应可以避免消耗模型额度，
   // 也不会因为本地后端、网络或 API Key 状态不同而产生偶发失败。
   const optimizationRequestOrder: string[] = [];
@@ -315,7 +325,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
 
   await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
-  await page.getByRole('button', { name: '一键增强提示词' }).click();
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
   await confirmContextTransmission(page, '生成确认问题前分析上下文');
   const planDialog = page.getByRole('dialog', { name: '确认关键细节' });
   await expect(planDialog.getByRole('heading', { name: '把关键细节确认清楚' })).toBeVisible();
@@ -326,7 +336,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await planDialog.getByRole('button', { name: '下一题' }).click();
   await planDialog.getByLabel('填写回答').fill('登录成功、失败和令牌刷新场景都有自动化测试。');
   await planDialog.getByRole('button', { name: '生成最终提示词' }).click();
-  await confirmContextTransmission(page, '一键增强提示词');
+  await confirmContextTransmission(page, '生成最终提示词');
 
   expect(optimizationRequestOrder).toEqual(['context', 'plan', 'final']);
 
@@ -340,6 +350,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
 });
 
 test('科研需求会逐项询问业务细节并在全部回答后生成结果', async ({ page }) => {
+  await configurePlanMode(page, { enabled: true, introSeen: true });
   const researchPrompt = '分析2015-2025年某地区心脑血管疾病死亡率，比较不同人群并进行YLL和Arriaga分解';
   const researchPlan: ApiResponse<OptimizationPlan> = {
     requestId: 'research-plan',
@@ -402,7 +413,7 @@ test('科研需求会逐项询问业务细节并在全部回答后生成结果',
   await page.goto('/workbench');
   await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill(researchPrompt);
-  await page.getByRole('button', { name: '一键增强提示词' }).click();
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
   const dialog = page.getByRole('dialog', { name: '确认关键细节' });
   await dialog.getByLabel('填写回答').fill('广东省');
   await dialog.getByRole('button', { name: '下一题' }).click();
@@ -416,6 +427,7 @@ test('科研需求会逐项询问业务细节并在全部回答后生成结果',
 });
 
 test('最终生成失败时在计划弹窗内显示可读错误并保留回答', async ({ page }) => {
+  await configurePlanMode(page, { enabled: true, introSeen: true });
   const oneQuestionPlan: ApiResponse<OptimizationPlan> = {
     requestId: 'error-plan',
     data: {
@@ -444,7 +456,7 @@ test('最终生成失败时在计划弹窗内显示可读错误并保留回答',
   await page.goto('/workbench');
   await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
-  await page.getByRole('button', { name: '一键增强提示词' }).click();
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
   const dialog = page.getByRole('dialog', { name: '确认关键细节' });
   const answer = dialog.getByLabel('填写回答');
   await answer.fill('正常和异常登录场景都有自动化测试。');
@@ -452,6 +464,74 @@ test('最终生成失败时在计划弹窗内显示可读错误并保留回答',
 
   await expect(dialog.getByRole('alert')).toContainText('模型服务当前请求繁忙，请稍后重试。');
   await expect(answer).toHaveValue('正常和异常登录场景都有自动化测试。');
+});
+
+test('计划会话过期后可以重新生成问题并完成增强', async ({ page }) => {
+  await configurePlanMode(page, { enabled: true, introSeen: true });
+  let planCalls = 0;
+  let finalCalls = 0;
+  await page.route('**/api/v1/optimizations/plan', async (route) => {
+    planCalls += 1;
+    await route.fulfill({
+      status: 200,
+      json: {
+        requestId: `expiry-plan-${planCalls}`,
+        data: {
+          ...loginPlanResponse.data,
+          questions: [loginPlanResponse.data.questions[1]!],
+          planId: planCalls === 1
+            ? 'd53d3b67-62b2-4505-89dd-4ca88f837391'
+            : '3a0e2ec5-1898-4b10-85ac-a9be1268ea1a',
+          planningContext: null,
+          expiresAt: '2026-09-20T12:30:00Z',
+        },
+      } satisfies ApiResponse<OptimizationPlan>,
+    });
+  });
+  await page.route('**/api/v1/optimizations', async (route) => {
+    finalCalls += 1;
+    const requestBody = route.request().postDataJSON() as {
+      planConfirmation?: { planId?: string };
+    };
+    if (finalCalls === 1) {
+      expect(requestBody.planConfirmation?.planId).toBe('d53d3b67-62b2-4505-89dd-4ca88f837391');
+      await route.fulfill({
+        status: 400,
+        json: {
+          requestId: 'expired-final-request',
+          error: {
+            code: 'INVALID_ARGUMENT',
+            message: '确认问题已过期，请重新生成。',
+            retryable: false,
+            details: {},
+          },
+        },
+      });
+      return;
+    }
+    expect(requestBody.planConfirmation?.planId).toBe('3a0e2ec5-1898-4b10-85ac-a9be1268ea1a');
+    await route.fulfill({ status: 200, json: optimizationResponse });
+  });
+
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
+  await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
+
+  let dialog = page.getByRole('dialog', { name: '确认关键细节' });
+  await dialog.getByLabel('填写回答').fill('覆盖正常和异常登录场景。');
+  await dialog.getByRole('button', { name: '生成最终提示词' }).click();
+  await expect(dialog.getByRole('alert')).toContainText('确认问题已过期，请重新生成。');
+  await dialog.getByRole('button', { name: '返回修改需求' }).click();
+
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
+  dialog = page.getByRole('dialog', { name: '确认关键细节' });
+  await dialog.getByLabel('填写回答').fill('覆盖正常和异常登录场景。');
+  await dialog.getByRole('button', { name: '生成最终提示词' }).click();
+
+  await expect(page.getByText('最终提示词已生成。')).toBeVisible();
+  expect(planCalls).toBe(2);
+  expect(finalCalls).toBe(2);
 });
 
 test('普通文档分析只展示内容概要，不套用代码项目信息', async ({ page }) => {
@@ -487,6 +567,7 @@ test('普通文档分析只展示内容概要，不套用代码项目信息', as
 });
 
 test('未单独分析上下文时，一键增强仍返回并展示项目分析结果', async ({ page }) => {
+  await configurePlanMode(page, { enabled: true, introSeen: true });
   let contextAnalyzeCalls = 0;
   let planningContextCalls = 0;
   await page.route('**/api/v1/context/analyze', async (route) => {
@@ -535,9 +616,9 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
   await page.getByRole('button', { name: '加入上下文' }).click();
   await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('为示例项目补充健康检查接口');
-  await page.getByRole('button', { name: '一键增强提示词' }).click();
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
   await confirmContextTransmission(page, '生成确认问题前分析上下文');
-  await confirmContextTransmission(page, '一键增强提示词');
+  await confirmContextTransmission(page, '生成最终提示词');
   expect(contextAnalyzeCalls).toBe(0);
   expect(planningContextCalls).toBe(1);
   await openWorkbenchPane(page, 'context');
@@ -547,6 +628,7 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
 });
 
 test('用户可以通过 File System Access API 建立本地项目索引', async ({ page }) => {
+  await configurePlanMode(page, { enabled: true, introSeen: true });
   await page.route('**/api/v1/optimizations/plan', async (route) => {
     await route.fulfill({
       status: 200,
@@ -614,9 +696,9 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
 
   await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('修改 projectName 常量');
-  await page.getByRole('button', { name: '一键增强提示词' }).click();
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
   await confirmContextTransmission(page, '生成确认问题前分析上下文');
-  await confirmContextTransmission(page, '一键增强提示词');
+  await confirmContextTransmission(page, '生成最终提示词');
   await openWorkbenchPane(page, 'context');
   await page.getByText(/查看本次代码选择依据/).click();
   await expect(page.getByText('src/main.ts', { exact: true })).toBeVisible();
@@ -786,20 +868,27 @@ test('重新打开页面后不保留之前上传的单个文件', async ({ page 
 });
 
 test('关闭 Plan 确认后直接生成，不进入方案确认', async ({ page }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify({
-      enabled: false,
-      introSeen: true,
-    }));
-  });
   let planCalls = 0;
+  let planningContextCalls = 0;
   await page.route('**/api/v1/optimizations/plan', async (route) => {
     planCalls += 1;
     await route.abort();
   });
+  await page.route('**/api/v1/context/planning', async (route) => {
+    planningContextCalls += 1;
+    await route.abort();
+  });
   await page.route('**/api/v1/optimizations', async (route) => {
-    const requestBody = route.request().postDataJSON() as { planConfirmation?: unknown };
+    const requestBody = route.request().postDataJSON() as {
+      context?: { files?: Array<{ path: string }> };
+      enhancement?: { templateCode?: string };
+      planConfirmation?: unknown;
+    };
     expect(requestBody.planConfirmation).toBeNull();
+    expect(requestBody.enhancement?.templateCode).toBe('AUTO');
+    expect(requestBody.context?.files).toEqual([
+      expect.objectContaining({ path: 'requirements.md' }),
+    ]);
     await route.fulfill({
       status: 200,
       json: {
@@ -813,14 +902,113 @@ test('关闭 Plan 确认后直接生成，不进入方案确认', async ({ page 
   });
 
   await page.goto('/workbench');
+  await openWorkbenchPane(page, 'context');
+  await page.getByText('粘贴当前打开文件').click();
+  await page.getByLabel('文件相对路径').fill('requirements.md');
+  await page.getByPlaceholder('粘贴与当前任务相关的代码片段…').fill('登录接口需要返回明确错误码。');
+  await page.getByRole('button', { name: '加入上下文' }).click();
   await openWorkbenchPane(page, 'intent');
   await expect(page.getByText('将直接生成最终提示词。若关键事实不足，结果中会列出待确认事项。')).toBeVisible();
   await expect(page.getByText('Plan', { exact: true })).toHaveCount(0);
   await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
-  await page.getByRole('button', { name: '一键增强提示词' }).click();
+  await page.getByRole('button', { name: DIRECT_ENHANCE_BUTTON }).click();
+  await confirmContextTransmission(page, '直接增强提示词');
 
   await expect(page.getByRole('dialog', { name: '确认关键细节' })).toHaveCount(0);
   await expect(page.getByRole('dialog', { name: '先确认关键细节' })).toHaveCount(0);
   await expect(page.getByText('待确认事项', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: '直接再次增强' })).toBeVisible();
   expect(planCalls).toBe(0);
+  expect(planningContextCalls).toBe(0);
+});
+
+test('首次主动开启 Plan 后显示说明并记住选择', async ({ page }) => {
+  let planCalls = 0;
+  let finalCalls = 0;
+  await page.route('**/api/v1/optimizations/plan', async (route) => {
+    planCalls += 1;
+    await route.fulfill({
+      status: 200,
+      json: {
+        ...directPlanResponse,
+        data: {
+          ...directPlanResponse.data,
+          planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391',
+          planningContext: null,
+          expiresAt: '2026-09-14T08:30:00Z',
+        },
+      } satisfies ApiResponse<OptimizationPlan>,
+    });
+  });
+  await page.route('**/api/v1/optimizations', async (route) => {
+    finalCalls += 1;
+    const requestBody = route.request().postDataJSON() as {
+      enhancement?: { templateCode?: string };
+      planConfirmation?: { planId?: string };
+    };
+    expect(requestBody.enhancement?.templateCode).toBe('FEATURE_DEVELOPMENT');
+    expect(requestBody.planConfirmation?.planId).toBe('d53d3b67-62b2-4505-89dd-4ca88f837391');
+    await route.fulfill({ status: 200, json: optimizationResponse });
+  });
+
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
+  const planSwitch = page.getByLabel('Plan 确认');
+  await expect(planSwitch).toHaveAttribute('aria-checked', 'false');
+  await expect(page.getByRole('button', { name: DIRECT_ENHANCE_BUTTON })).toBeVisible();
+
+  await page.locator('label.switch-control').filter({ hasText: 'Plan 确认' }).click();
+  await expect(planSwitch).toHaveAttribute('aria-checked', 'true');
+  await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
+
+  const introDialog = page.getByRole('dialog', { name: '先确认关键细节' });
+  await expect(introDialog).toBeVisible();
+  await introDialog.getByRole('button', { name: '立即体验' }).click();
+  await expect(page.getByText('最终提示词已生成。')).toBeVisible();
+  await expect(page.getByRole('button', { name: '先确认并再次增强' })).toBeVisible();
+  expect(planCalls).toBe(1);
+  expect(finalCalls).toBe(1);
+
+  await page.getByRole('button', { name: '先确认并再次增强' }).click();
+  await expect.poll(() => planCalls).toBe(2);
+  await expect.poll(() => finalCalls).toBe(2);
+
+  await page.reload();
+  await openWorkbenchPane(page, 'intent');
+  await expect(page.getByLabel('Plan 确认')).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: '先确认关键细节' })).toHaveCount(0);
+});
+
+test('首次说明中拒绝 Plan 后立即直接增强并记住选择', async ({ page }) => {
+  let planCalls = 0;
+  await page.route('**/api/v1/optimizations/plan', async (route) => {
+    planCalls += 1;
+    await route.abort();
+  });
+  await page.route('**/api/v1/optimizations', async (route) => {
+    const requestBody = route.request().postDataJSON() as {
+      enhancement?: { templateCode?: string };
+      planConfirmation?: unknown;
+    };
+    expect(requestBody.enhancement?.templateCode).toBe('AUTO');
+    expect(requestBody.planConfirmation).toBeNull();
+    await route.fulfill({ status: 200, json: optimizationResponse });
+  });
+
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
+  await page.locator('label.switch-control').filter({ hasText: 'Plan 确认' }).click();
+  await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
+
+  const introDialog = page.getByRole('dialog', { name: '先确认关键细节' });
+  await introDialog.getByRole('button', { name: '不启用，直接增强' }).click();
+  await expect(page.getByText('最终提示词已生成。')).toBeVisible();
+  await openWorkbenchPane(page, 'intent');
+  await expect(page.getByRole('button', { name: DIRECT_ENHANCE_BUTTON })).toBeVisible();
+  expect(planCalls).toBe(0);
+  await expect.poll(() => page.evaluate((key) => localStorage.getItem(key), PLAN_MODE_STORAGE_KEY))
+    .toBe(JSON.stringify({ enabled: false, introSeen: true }));
 });
