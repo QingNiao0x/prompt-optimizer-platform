@@ -13,6 +13,7 @@ import com.promptoptimizer.enhancement.api.OptimizationRequest;
 import com.promptoptimizer.enhancement.api.PermissionPolicyInput;
 import com.promptoptimizer.enhancement.api.PlanAnswer;
 import com.promptoptimizer.enhancement.api.PlanConfirmation;
+import com.promptoptimizer.enhancement.api.ConversationMessage;
 import com.promptoptimizer.enhancement.api.PlanningContextReference;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
 import com.promptoptimizer.enhancement.domain.PlanQuestion;
@@ -23,6 +24,10 @@ import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.policy.application.ConstraintCompleter;
 import com.promptoptimizer.policy.application.ProtectedContextFilter;
 import com.promptoptimizer.provider.infrastructure.MockPromptEnhancementProvider;
+import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
+import com.promptoptimizer.enhancement.api.OptimizationController;
+import com.promptoptimizer.common.exception.GlobalExceptionHandler;
+import com.promptoptimizer.history.application.OptimizationHistoryService;
 import com.promptoptimizer.template.application.PromptTemplateRegistry;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +38,14 @@ import java.util.List;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.http.MediaType;
 
 class DefaultEnhancementOrchestratorTest {
 
@@ -48,6 +61,67 @@ class DefaultEnhancementOrchestratorTest {
             new MockPromptEnhancementProvider(),
             Clock.fixed(Instant.parse("2026-08-10T12:00:00Z"), ZoneOffset.UTC)
     );
+
+    @Test
+    void shouldExposeContextAwareAmbiguitiesThroughDirectEndpointAndSaveHistory() throws Exception {
+        var history = mock(OptimizationHistoryService.class);
+        var mvc = MockMvcBuilders.standaloneSetup(new OptimizationController(orchestrator,
+                        mock(OptimizationPlanningService.class), history))
+                .setControllerAdvice(new GlobalExceptionHandler()).build();
+        mvc.perform(post("/api/v1/optimizations").contentType(MediaType.APPLICATION_JSON).content("""
+                {"rawPrompt":"给用户模块添加登录功能","planConfirmation":null,
+                 "context":{"files":[{"path":"src/security/LoginService.java","language":"java",
+                   "content":"public void login(HttpServletRequest request) { request.getSession().setAttribute(userId, user); }"}]}}
+                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.ambiguities").isEmpty())
+                .andExpect(jsonPath("$.data.sections[?(@.type == 'CLARIFICATIONS')]").isEmpty())
+                .andExpect(jsonPath("$.data.sections[?(@.type == 'CONSTRAINTS')]").isNotEmpty());
+        verify(history).save(any(), any());
+
+        mvc.perform(post("/api/v1/optimizations").contentType(MediaType.APPLICATION_JSON).content("""
+                {"rawPrompt":"给用户模块添加登录功能","planConfirmation":null,
+                 "context":{"customDescription":"Spring Boot 用户服务","files":[]}}
+                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.ambiguities.length()").value(1))
+                .andExpect(jsonPath("$.data.ambiguities[0]").value(org.hamcrest.Matchers.containsString("认证与会话")));
+    }
+
+    @Test
+    void shouldNotUseDisabledConversationOrProtectedFilesAsBusinessEvidence() {
+        var input = new ContextAnalysisRequest("", List.of(new ContextFileInput(
+                "private/auth.md", "登录采用 JWT", "markdown")));
+        var history = List.of(new ConversationMessage("user", "登录采用 JWT"));
+        var policy = new PermissionPolicyInput(List.of("private/auth.md"), List.of());
+        var withoutHistory = orchestrator.optimize(new OptimizationRequest("添加登录功能", input,
+                new EnhancementOptions(TemplateCode.AUTO, false, true, false), history, policy));
+        assertThat(withoutHistory.ambiguities()).hasSize(1);
+        assertThat(withoutHistory.contextReport().fileSnippets()).isEmpty();
+        var withHistory = orchestrator.optimize(new OptimizationRequest("添加登录功能", input,
+                new EnhancementOptions(TemplateCode.AUTO, true, true, false), history, policy));
+        assertThat(withHistory.ambiguities()).isEmpty();
+    }
+
+    @Test
+    void shouldPassRealFileContentAndUseProviderBusinessAssessmentWithoutAnotherPlanningCall() {
+        var analyzer = new DefaultContextAnalyzer(new ObjectMapper(), new BinaryContentExtractor(), new FileContentSummarizer());
+        var semantic = new DefaultEnhancementOrchestrator(analyzer, new AmbiguityDetector(),
+                new PromptTemplateRegistry(), new ConstraintCompleter(), request -> {
+                    assertThat(request.context().fileSnippets()).anySatisfy(file ->
+                            assertThat(file.content()).contains("PAID", "CANCELLED"));
+                    var draft = new MockPromptEnhancementProvider().enhance(request);
+                    return new EnhancementProviderResponse(draft.sections(), "test", "semantic", false,
+                            List.of("OrderStatus 中 PAID 订单取消后是否需要退款，还是只允许未支付订单取消？"));
+                }, Clock.systemUTC());
+        var result = semantic.optimize(new OptimizationRequest("为订单服务增加取消功能",
+                new ContextAnalysisRequest("Spring Boot 订单服务", List.of(new ContextFileInput(
+                        "src/OrderStatus.java", "enum OrderStatus { PENDING, PAID, CANCELLED }", "java"))),
+                EnhancementOptions.defaults(), List.of(), PermissionPolicyInput.empty()));
+        assertThat(result.ambiguities()).containsExactly(
+                "OrderStatus 中 PAID 订单取消后是否需要退款，还是只允许未支付订单取消？");
+        assertThat(result.provider().model()).isEqualTo("semantic");
+    }
 
     @Test
     void shouldEnhancePromptWithJavaContextAndSafetyConstraints() {

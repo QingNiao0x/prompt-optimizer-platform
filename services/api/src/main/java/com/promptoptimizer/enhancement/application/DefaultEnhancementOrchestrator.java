@@ -173,7 +173,11 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                         contextAnalyzer.analyze(filteredContext.request(), contextQuery),
                         filteredContext
                 ));
-        List<String> ambiguities = planConfirmed ? List.of() : ambiguityDetector.detect(request.rawPrompt());
+        List<ConversationMessage> conversation = Boolean.TRUE.equals(request.enhancement().includeConversationHistory())
+                ? request.conversationHistory()
+                : List.of();
+        List<String> ambiguities = planConfirmed ? List.of()
+                : ambiguityDetector.detect(request.rawPrompt(), context, conversation);
         PromptTemplate template = templateRegistry.resolve(
                 request.enhancement().templateCode(),
                 request.rawPrompt()
@@ -184,9 +188,6 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()),
                 template.code()
         );
-        List<ConversationMessage> conversation = Boolean.TRUE.equals(request.enhancement().includeConversationHistory())
-                ? request.conversationHistory()
-                : List.of();
 
         EnhancementProviderResponse providerResponse = enhancementProvider.enhance(new EnhancementProviderRequest(
                 request.rawPrompt(),

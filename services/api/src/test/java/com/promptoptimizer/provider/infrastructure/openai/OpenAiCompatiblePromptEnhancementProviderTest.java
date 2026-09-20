@@ -14,6 +14,9 @@ import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import com.promptoptimizer.context.domain.FileSnippet;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -207,7 +210,9 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 List.of(),
                 List.of(),
                 List.of("src/main/java/UserController.java"),
-                List.of(),
+                List.of(new FileSnippet("src/main/java/UserController.java", "java",
+                        "@PostMapping(\"/login\") public User login(LoginRequest input) { return service.login(input); }",
+                        "登录控制器", false)),
                 List.of(),
                 List.of(),
                 "v1"
@@ -227,5 +232,45 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 List.of(),
                 EnhancementOptions.defaults()
         );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"[]", "[\"登录接口是否需要支持同一账号多设备同时在线？\"]"})
+    void shouldAssessContextAndReturnFindingsInTheSameEnhancementCall(String findings) throws Exception {
+        server.expect(once(), requestTo(ENDPOINT))
+                .andExpect(jsonPath("$.messages[0].content").value(org.hamcrest.Matchers.containsString("不得重复询问")))
+                .andExpect(jsonPath("$.messages[0].content").value(org.hamcrest.Matchers.containsString("不得因为没有")))
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.containsString("@PostMapping")))
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.containsString("Spring Boot")))
+                .andRespond(withSuccess(completionWithFindings(findings), MediaType.APPLICATION_JSON));
+
+        var response = provider.enhance(createRequest());
+        assertThat(objectMapper.writeValueAsString(response.ambiguities())).isEqualTo(findings);
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"null", "{}", "\"问题\"", "[3]", "[null]", "[\" \" ]",
+            "[\"一\",\"二\",\"三\",\"四\",\"五\",\"六\",\"七\",\"八\",\"九\"]"})
+    void shouldRejectMalformedAmbiguityArrayInsteadOfCoercingOrHidingIt(String findings) throws Exception {
+        server.expect(requestTo(ENDPOINT))
+                .andRespond(withSuccess(completionWithFindings(findings), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(createRequest()))
+                .isInstanceOfSatisfying(ProviderException.class,
+                        error -> assertThat(error.getFailureType()).isEqualTo(ProviderFailureType.INVALID_RESPONSE));
+        server.verify();
+    }
+
+    private String completionWithFindings(String findings) throws Exception {
+        String content = """
+                {"sections":[
+                  {"type":"BACKGROUND","title":"背景","content":"Spring Boot 用户服务"},
+                  {"type":"TASK","title":"任务","content":"补充登录能力"},
+                  {"type":"OUTPUT","title":"输出","content":"保持接口兼容并补充测试"},
+                  {"type":"CONSTRAINTS","title":"约束","content":"保留安全边界"}
+                ],"ambiguities":%s}
+                """.formatted(findings);
+        return objectMapper.writeValueAsString(Map.of("model", MODEL, "choices",
+                List.of(Map.of("message", Map.of("role", "assistant", "content", content)))));
     }
 }

@@ -56,7 +56,8 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
                     request.template().exampleGuidance()
             ));
         }
-        return new EnhancementProviderResponse(sections, "mock", "deterministic-enhancer-v1", true);
+        return new EnhancementProviderResponse(sections, "mock", "deterministic-enhancer-v1", true,
+                request.ambiguities());
     }
 
     /**

@@ -35,6 +35,13 @@ public class OptimizationResultAssembler {
             PromptSectionType.CONSTRAINTS
     );
     private final SensitiveValueDetector sensitiveValueDetector = new SensitiveValueDetector();
+    private static final Set<String> GENERIC_WARNINGS = Set.of(
+            "尚未明确输入来源、参数格式或调用方式",
+            "尚未明确输出内容、输出格式或错误返回方式",
+            "尚未给出可验证的验收标准",
+            "需求描述较短，需要确认具体业务目标和完成标准",
+            "存在模糊动作，需要确认算法、实现范围或期望行为"
+    );
 
     public OptimizationResult assemble(
             EnhancementProviderResponse providerResponse,
@@ -57,8 +64,15 @@ public class OptimizationResultAssembler {
 
         appendConfirmedAnswers(sections, planAnswers);
         appendConstraints(sections, constraints);
-        if (planConfirmed) {
-            sections.remove(PromptSectionType.CLARIFICATIONS);
+        List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities);
+        List<String> remainingAmbiguities = planConfirmed ? List.of() : assessed;
+        // 一个权威列表同时驱动 API 与段落，避免 UI 与模型返回的旧 CLARIFICATIONS 互相矛盾。
+        sections.remove(PromptSectionType.CLARIFICATIONS);
+        if (!remainingAmbiguities.isEmpty()) {
+            sections.put(PromptSectionType.CLARIFICATIONS, new PromptSection(
+                    PromptSectionType.CLARIFICATIONS, "待确认事项",
+                    remainingAmbiguities.stream().map(value -> "- " + value).collect(Collectors.joining("\n"))
+            ));
         }
         sections.computeIfAbsent(
                 PromptSectionType.ACCEPTANCE,
@@ -77,7 +91,6 @@ public class OptimizationResultAssembler {
                 .map(sections::get)
                 .filter(section -> section != null)
                 .toList();
-        List<String> remainingAmbiguities = planConfirmed ? List.of() : List.copyOf(ambiguities);
         return new OptimizationResult(
                 renderPrompt(ordered),
                 ordered,
@@ -92,6 +105,31 @@ public class OptimizationResultAssembler {
                 ),
                 Math.max(0, latencyMs)
         );
+    }
+
+    private List<String> resolveAmbiguities(EnhancementProviderResponse response,
+                                           Map<PromptSectionType, PromptSection> sections,
+                                           List<String> candidates) {
+        List<String> findings = response.ambiguities();
+        if (findings == null) {
+            PromptSection legacy = sections.get(PromptSectionType.CLARIFICATIONS);
+            findings = legacy == null ? candidates : legacy.content().lines()
+                    .map(String::trim).filter(value -> !value.isEmpty())
+                    .map(value -> value.replaceFirst("^(?:[-*•]\\s+|\\d+[.)、]\\s*)", ""))
+                    .toList();
+        }
+        if (findings == null || findings.size() > 8) {
+            throw invalidResponse("模型待确认事项数量无效");
+        }
+        for (String finding : findings) {
+            if (finding == null || finding.isBlank() || finding.length() > 500
+                    || sensitiveValueDetector.containsCredential(finding)) {
+                throw invalidResponse("模型待确认事项包含无效或敏感内容");
+            }
+        }
+        return findings.stream().map(String::trim)
+                .filter(value -> !GENERIC_WARNINGS.contains(value.replaceAll("[。.!！]+$", "")))
+                .distinct().toList();
     }
 
     private Map<PromptSectionType, PromptSection> collectSections(List<PromptSection> values) {

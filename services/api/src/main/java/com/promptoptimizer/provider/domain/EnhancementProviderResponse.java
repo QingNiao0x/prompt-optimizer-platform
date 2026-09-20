@@ -14,7 +14,8 @@ public record EnhancementProviderResponse(
         List<PromptSection> sections,
         String provider,
         String model,
-        boolean mock
+        boolean mock,
+        List<String> ambiguities
 ) {
 
     /**
@@ -22,5 +23,12 @@ public record EnhancementProviderResponse(
      */
     public EnhancementProviderResponse {
         sections = List.copyOf(sections);
+        // null 表示旧 Provider 未提供判断；空列表表示已分析且没有歧义，二者不能混用。
+        ambiguities = ambiguities == null ? null
+                : java.util.Collections.unmodifiableList(new java.util.ArrayList<>(ambiguities));
+    }
+
+    public EnhancementProviderResponse(List<PromptSection> sections, String provider, String model, boolean mock) {
+        this(sections, provider, model, mock, null);
     }
 }
