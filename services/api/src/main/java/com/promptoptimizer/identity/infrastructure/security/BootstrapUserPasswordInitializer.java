@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 只在数据库中的演示账户尚无密码时，用环境变量完成一次性初始化。
@@ -59,8 +60,8 @@ public class BootstrapUserPasswordInitializer implements ApplicationRunner {
             LOGGER.warn("登录账户尚无密码；请设置 BOOTSTRAP_USER_PASSWORD 后重启服务完成一次性初始化");
             return;
         }
-        if (password.length() < 12 || password.length() > 200) {
-            throw new IllegalStateException("BOOTSTRAP_USER_PASSWORD 长度必须在 12 到 200 个字符之间");
+        if (password.length() < 12 || password.getBytes(StandardCharsets.UTF_8).length > 72) {
+            throw new IllegalStateException("BOOTSTRAP_USER_PASSWORD 至少 12 个字符且 UTF-8 编码不能超过 72 字节");
         }
         account.setPasswordHash(passwordEncoder.encode(password));
         repository.save(account);

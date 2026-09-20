@@ -28,9 +28,8 @@ export const useAuthStore = defineStore('auth', () => {
       if (!isAuthenticationRequired(error)) {
         throw error;
       }
-    } finally {
-      initialized.value = true;
     }
+    initialized.value = true;
   };
 
   const login = async (payload: LoginPayload): Promise<void> => {
@@ -42,10 +41,13 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = async (): Promise<void> => {
     try {
       await logoutRequest();
-    } finally {
-      user.value = undefined;
-      initialized.value = true;
+    } catch (error: unknown) {
+      if (!isAuthenticationRequired(error)) {
+        throw error;
+      }
     }
+    user.value = undefined;
+    initialized.value = true;
   };
 
   return {

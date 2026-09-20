@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @Description: 验证大型文档分片上传接口的请求格式、状态码和统一响应结构。
  */
 @WebMvcTest(DocumentUploadController.class)
-@Import(RequestIdFilter.class)
+@Import({RequestIdFilter.class, com.promptoptimizer.identity.support.AuthenticatedMvcTestConfiguration.class})
 class DocumentUploadControllerTest {
 
     @Autowired

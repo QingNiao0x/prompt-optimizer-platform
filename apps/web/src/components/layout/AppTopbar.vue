@@ -2,6 +2,7 @@
 import { Clock, HomeFilled, MagicStick, Setting } from '@element-plus/icons-vue';
 
 import BrandMark from '@/components/brand/BrandMark.vue';
+import AccountMenu from '@/components/layout/AccountMenu.vue';
 
 const navigation = [
   { to: '/', label: '首页', icon: HomeFilled },
@@ -34,6 +35,7 @@ const navigation = [
     </nav>
 
     <div class="topbar-tools">
+      <AccountMenu />
       <div class="provider-status" title="模型由后端安全配置">
         <span class="status-dot" aria-hidden="true"></span>
         <span><b>LOCAL</b> · DeepSeek 默认</span>

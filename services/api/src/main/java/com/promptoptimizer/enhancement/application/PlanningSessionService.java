@@ -136,6 +136,7 @@ public class PlanningSessionService {
             String rawPrompt,
             String contextDescription
     ) {
+        currentActor.require();
         if (reference == null) {
             return new ResolvedPlanningContext(null, null);
         }
@@ -160,6 +161,7 @@ public class PlanningSessionService {
             List<PlanQuestion> questions
     ) {
         ActorIdentity actor = currentActor.require();
+        resolveForPlan(planningContext.reference(), rawPrompt, contextDescription);
         String planId = UUID.randomUUID().toString();
         Instant expiresAt = clock.instant().plus(SESSION_TTL);
         store.savePlan(new PlanningSessionStore.PlanSession(
@@ -182,6 +184,7 @@ public class PlanningSessionService {
             List<ConversationMessage> conversationHistory,
             PlanConfirmation confirmation
     ) {
+        currentActor.require();
         if (confirmation == null) {
             return new ConfirmedPlan(List.of(), null, false);
         }
@@ -201,6 +204,9 @@ public class PlanningSessionService {
         }
         if (!Objects.equals(plan.planningContext(), confirmation.planningContext())) {
             throw new InvalidOptimizationRequestException("文件上下文版本与确认问题不一致，请重新分析。");
+        }
+        if (plan.planningContext() != null) {
+            requireContext(plan.planningContext());
         }
 
         Map<String, PlanAnswer> submitted = validateLegacyAnswers(confirmation.answers()).stream()
@@ -245,9 +251,10 @@ public class PlanningSessionService {
     }
 
     private PlanningSessionStore.ContextSession requireContext(PlanningContextReference reference) {
+        UUID ownerId = currentActor.require().userId();
         PlanningSessionStore.ContextSession context = store.findContext(reference.contextId())
                 .orElseThrow(() -> new InvalidOptimizationRequestException("文件上下文已过期，请重新分析。"));
-        if (!Objects.equals(context.ownerUserId(), currentActor.require().userId())) {
+        if (!Objects.equals(context.ownerUserId(), ownerId)) {
             // 与不存在或过期使用同一提示，避免向其他用户泄露资源是否存在。
             throw new InvalidOptimizationRequestException("文件上下文已过期，请重新分析。");
         }
@@ -258,9 +265,10 @@ public class PlanningSessionService {
     }
 
     private PlanningSessionStore.PlanSession requirePlan(String planId) {
+        UUID ownerId = currentActor.require().userId();
         PlanningSessionStore.PlanSession plan = store.findPlan(planId)
                 .orElseThrow(() -> new InvalidOptimizationRequestException("确认问题已过期，请重新生成。"));
-        if (!Objects.equals(plan.ownerUserId(), currentActor.require().userId())) {
+        if (!Objects.equals(plan.ownerUserId(), ownerId)) {
             // 与不存在或过期使用同一提示，避免向其他用户泄露资源是否存在。
             throw new InvalidOptimizationRequestException("确认问题已过期，请重新生成。");
         }

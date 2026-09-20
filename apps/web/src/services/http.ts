@@ -7,7 +7,6 @@ export const httpClient = axios.create({
   withCredentials: true,
   xsrfCookieName: 'XSRF-TOKEN',
   xsrfHeaderName: 'X-XSRF-TOKEN',
-  withXSRFToken: true,
   // 后端会在模型读取超时后返回可区分的错误；这里必须比后端时间略长，
   // 否则浏览器会先中断请求，用户只能看到笼统的前端超时提示。
   timeout: 70_000,
@@ -19,6 +18,17 @@ export const httpClient = axios.create({
 export const isAuthenticationRequired = (error: unknown): boolean => (
   error instanceof AxiosError && error.response?.status === 401
 );
+
+// 会话失效时重新装载公开页面，清除当前页面内存中的文件、计划和回答。
+// 不重放失败的写请求，避免重复提交；登录/身份探测的 401 由调用方处理。
+httpClient.interceptors.response.use(undefined, (error: unknown) => {
+  if (isAuthenticationRequired(error) && error instanceof AxiosError
+      && !error.config?.url?.startsWith('/api/v1/auth/')
+      && ['/workbench', '/history', '/settings'].includes(window.location.pathname)) {
+    window.location.replace('/login?expired=1');
+  }
+  return Promise.reject(error);
+});
 
 /**
  * 将后端统一错误和网络异常转换为用户可执行的提示，不暴露上游模型原始响应。

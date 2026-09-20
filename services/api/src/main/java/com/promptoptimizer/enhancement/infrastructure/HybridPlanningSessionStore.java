@@ -24,8 +24,9 @@ import java.util.Optional;
 public class HybridPlanningSessionStore implements PlanningSessionStore {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HybridPlanningSessionStore.class);
-    private static final String CONTEXT_KEY_PREFIX = "prompt-optimizer:planning-context:";
-    private static final String PLAN_KEY_PREFIX = "prompt-optimizer:plan:";
+    // 不读取上线认证前没有所有者的缓存；旧记录由原 TTL 自然清理。
+    private static final String CONTEXT_KEY_PREFIX = "prompt-optimizer:planning-context:v2:";
+    private static final String PLAN_KEY_PREFIX = "prompt-optimizer:plan:v2:";
 
     private final ObjectMapper objectMapper;
     private final StringRedisTemplate redisTemplate;

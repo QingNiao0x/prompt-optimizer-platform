@@ -18,21 +18,19 @@ public interface UserAccountRepository extends JpaRepository<UserAccountEntity, 
     Optional<UserAccountEntity> findByEmailIgnoreCase(String email);
 
     /**
-     * 只从服务端成员关系选择同租户的有效工作区，不能接受客户端工作区标识。
+     * 当前只开放个人所有者工作区；团队角色授权上线前不把 EDITOR/VIEWER 当成所有者。
      */
     @Query(value = """
             SELECT wm.workspace_id
             FROM workspace_member wm
             JOIN workspace w ON w.id = wm.workspace_id
+            JOIN tenant t ON t.id = w.tenant_id
             WHERE wm.user_id = :userId
               AND w.tenant_id = :tenantId
               AND w.status = 'ACTIVE'
-            ORDER BY CASE wm.role
-                         WHEN 'OWNER' THEN 0
-                         WHEN 'EDITOR' THEN 1
-                         ELSE 2
-                     END,
-                     wm.joined_at ASC
+              AND t.status = 'ACTIVE'
+              AND wm.role = 'OWNER'
+            ORDER BY wm.joined_at ASC, wm.workspace_id ASC
             LIMIT 1
             """, nativeQuery = true)
     Optional<UUID> findDefaultWorkspaceId(

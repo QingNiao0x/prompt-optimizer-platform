@@ -8,6 +8,9 @@ import type {
   PlanningContextPreparation,
 } from '../src/types/api';
 import { openWorkbenchPane } from './workbenchPanes';
+import { mockAuthentication } from './authFixture';
+
+test.beforeEach(async ({ page }) => { await mockAuthentication(page); });
 
 const PLAN_MODE_STORAGE_KEY = 'prompt-optimizer.plan-mode.v1';
 const PLANNED_ENHANCE_BUTTON = '先确认并增强';

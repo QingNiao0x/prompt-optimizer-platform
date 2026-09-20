@@ -5,6 +5,7 @@ import FeatureCards from '@/components/home/FeatureCards.vue';
 import HeroSection from '@/components/home/HeroSection.vue';
 import LandingNav from '@/components/home/LandingNav.vue';
 import LoginModal from '@/components/home/LoginModal.vue';
+import HomeValueProposition from '@/components/home/HomeValueProposition.vue';
 import type { AuthModalMode } from '@/components/home/LoginModal.vue';
 
 const authOpen = ref(false);
@@ -20,6 +21,7 @@ const openAuth = (mode: AuthModalMode): void => {
   <div class="home-page">
     <LandingNav @login="openAuth('login')" @register="openAuth('register')" />
     <HeroSection />
+    <HomeValueProposition />
     <FeatureCards />
 
     <section id="pricing" class="home-pricing" aria-labelledby="pricing-title">

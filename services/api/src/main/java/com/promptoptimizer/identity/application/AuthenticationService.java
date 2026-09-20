@@ -5,6 +5,7 @@ import com.promptoptimizer.identity.api.LoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -14,6 +15,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.stereotype.Service;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 登录、当前用户读取和退出的应用模块。
@@ -52,6 +54,9 @@ public class AuthenticationService {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
+        if (loginRequest.password().getBytes(StandardCharsets.UTF_8).length > 72) {
+            throw new BadCredentialsException("无效凭据");
+        }
         Authentication authentication = authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken.unauthenticated(
                         loginRequest.email().trim(),

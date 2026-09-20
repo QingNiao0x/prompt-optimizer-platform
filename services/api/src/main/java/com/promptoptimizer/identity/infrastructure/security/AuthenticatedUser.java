@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -29,7 +30,7 @@ public final class AuthenticatedUser implements UserDetails, CredentialsContaine
     private final String displayName;
     private final String status;
     private final List<GrantedAuthority> authorities;
-    private String passwordHash;
+    private transient String passwordHash;
 
     public AuthenticatedUser(
             UUID userId,
@@ -44,7 +45,7 @@ public final class AuthenticatedUser implements UserDetails, CredentialsContaine
         this.userId = Objects.requireNonNull(userId, "userId must not be null");
         this.tenantId = Objects.requireNonNull(tenantId, "tenantId must not be null");
         this.workspaceId = Objects.requireNonNull(workspaceId, "workspaceId must not be null");
-        this.email = Objects.requireNonNull(email, "email must not be null").trim().toLowerCase();
+        this.email = Objects.requireNonNull(email, "email must not be null").trim().toLowerCase(Locale.ROOT);
         this.displayName = Objects.requireNonNull(displayName, "displayName must not be null").trim();
         this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash must not be null");
         this.status = Objects.requireNonNull(status, "status must not be null");

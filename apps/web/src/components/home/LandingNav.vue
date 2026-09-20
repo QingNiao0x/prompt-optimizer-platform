@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import BrandMark from '@/components/brand/BrandMark.vue';
+import AccountMenu from '@/components/layout/AccountMenu.vue';
+import { useAuthStore } from '@/stores/auth';
+
+const auth = useAuthStore();
+onMounted(() => { void auth.initialize().catch(() => undefined); });
 
 interface Emits {
   (event: 'login'): void;
@@ -32,7 +37,9 @@ const closeMenu = (): void => {
     </div>
 
     <div class="landing-nav__actions">
+      <AccountMenu />
       <button
+        v-if="!auth.isAuthenticated"
         class="landing-nav__auth-btn landing-nav__auth-btn--ghost"
         type="button"
         @click="emit('login')"
@@ -40,6 +47,7 @@ const closeMenu = (): void => {
         登录
       </button>
       <button
+        v-if="!auth.isAuthenticated"
         class="landing-nav__auth-btn landing-nav__auth-btn--accent"
         type="button"
         @click="emit('register')"
@@ -58,7 +66,6 @@ const closeMenu = (): void => {
         <span></span>
         <span></span>
       </button>
-      <RouterLink class="landing-nav__start-cta" to="/workbench">免费开始</RouterLink>
     </div>
   </nav>
 
@@ -205,32 +212,6 @@ const closeMenu = (): void => {
   transform: translateY(-1px);
 }
 
-.landing-nav__start-cta {
-  display: inline-flex;
-  align-items: center;
-  min-height: 36px;
-  padding: 0 18px;
-  border-radius: var(--radius-pill);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  background: var(--accent);
-  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 25%, transparent);
-  transition:
-    transform var(--duration-ui) var(--ease-standard),
-    box-shadow var(--duration-ui) var(--ease-standard);
-}
-
-.landing-nav__start-cta:hover {
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 38%, transparent);
-  transform: translateY(-1px);
-}
-
-.landing-nav__start-cta:active {
-  transform: scale(0.97);
-}
-
 .landing-nav__menu {
   display: none;
   width: 40px;
@@ -257,8 +238,7 @@ const closeMenu = (): void => {
 
 @media (hover: hover) and (pointer: fine) {
   .landing-nav__auth-btn--ghost:hover,
-  .landing-nav__auth-btn--accent:hover,
-  .landing-nav__start-cta:hover {
+  .landing-nav__auth-btn--accent:hover {
     transform: translateY(-1px);
   }
 }
@@ -295,12 +275,6 @@ const closeMenu = (): void => {
     border-radius: var(--radius-sm);
     color: var(--text-primary);
     text-decoration: none;
-  }
-}
-
-@media (max-width: 720px) {
-  .landing-nav__start-cta {
-    display: none;
   }
 }
 

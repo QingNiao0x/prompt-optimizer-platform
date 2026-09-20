@@ -1,6 +1,7 @@
 package com.promptoptimizer.identity.application;
 
 import java.util.Objects;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -23,7 +24,7 @@ public record ActorIdentity(
         Objects.requireNonNull(userId, "userId must not be null");
         Objects.requireNonNull(tenantId, "tenantId must not be null");
         Objects.requireNonNull(workspaceId, "workspaceId must not be null");
-        email = Objects.requireNonNull(email, "email must not be null").trim().toLowerCase();
+        email = Objects.requireNonNull(email, "email must not be null").trim().toLowerCase(Locale.ROOT);
         displayName = Objects.requireNonNull(displayName, "displayName must not be null").trim();
     }
 }

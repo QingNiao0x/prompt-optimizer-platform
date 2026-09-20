@@ -11,6 +11,7 @@ import com.promptoptimizer.settings.infrastructure.ProviderConfigEntity;
 import com.promptoptimizer.settings.infrastructure.ProviderConfigRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
@@ -25,6 +26,7 @@ import java.util.UUID;
  * @since 0.1.0
  */
 @Service
+@Profile("!local-mock")
 public class DefaultProviderConfigService implements ProviderConfigService {
 
     private static final String KEY_VERSION = "v1";

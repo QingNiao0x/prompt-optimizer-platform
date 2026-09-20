@@ -235,6 +235,15 @@ class PlanningSessionServiceTest {
 
         authenticatedUserId.set(UUID.fromString("00000000-0000-0000-0000-000000000202"));
 
+        assertThatThrownBy(() -> service.registerPlan(
+                "给用户模块添加登录功能", "Spring Boot 用户服务", List.of(),
+                new PlanningSessionService.ResolvedPlanningContext(reference, preparation.digest()), List.of()))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        assertThatThrownBy(() -> service.reusableContext(
+                new PlanningSessionService.ConfirmedPlan(List.of(), reference, true),
+                new ContextAnalysisRequest("Spring Boot 用户服务", List.of()), "给用户模块添加登录功能"))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+
         assertThatThrownBy(() -> service.resolveForPlan(
                 reference,
                 "给用户模块添加登录功能",

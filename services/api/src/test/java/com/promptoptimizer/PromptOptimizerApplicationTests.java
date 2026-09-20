@@ -17,6 +17,9 @@ class PromptOptimizerApplicationTests {
     @MockBean
     private ProviderConfigRepository providerConfigRepository;
 
+    @MockBean
+    private com.promptoptimizer.identity.infrastructure.persistence.UserAccountRepository userAccountRepository;
+
     @Test
     void contextLoads() {
     }

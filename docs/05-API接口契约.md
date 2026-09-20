@@ -6,9 +6,15 @@
 - 内容类型：业务请求使用 `application/json`；大型文档分片使用 `application/octet-stream`。
 - 时间：ISO-8601 UTC。
 - ID：UUID 字符串。
-- 所有需要工作区的数据都携带 `workspaceId`，不从客户端传入任意 `tenantId`。
+- 当前用户、租户和默认工作区从服务端认证上下文获取，不接受客户端自行指定作用域。
 - 建议通过 `Idempotency-Key` 支持优化请求重试。
 - 成功响应和错误响应均应包含 `requestId`。
+
+### 当前认证约定
+
+业务 API 必须登录；浏览器使用 HttpOnly Session Cookie。先调用 `GET /api/v1/auth/csrf`，再用 `email`、`password` 调用 `POST /api/v1/auth/login`；写请求将 `XSRF-TOKEN` Cookie 的值通过 `X-XSRF-TOKEN` 请求头回传。`GET /api/v1/auth/me` 读取当前身份，`POST /api/v1/auth/logout` 退出。健康检查和 CSRF 初始化可匿名访问，登录本身也必须校验 CSRF。
+
+`contextId` 和 `planId` 只能由创建它们的用户使用。跨用户引用与不存在/过期使用相同错误；不能将前端回传的 ID 视为授权。完整配置和错误约定见[最小认证与 Plan 会话所有权](./development/最小认证与Plan会话所有权.md)。
 
 ## 2. 优化接口
 

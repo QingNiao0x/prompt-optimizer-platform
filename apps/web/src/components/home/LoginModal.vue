@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { getApiErrorMessage } from '@/services/http';
 
 export type AuthModalMode = 'login' | 'register';
 type AuthView = 'qr' | 'password' | 'register';
@@ -16,7 +18,10 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const view = ref<AuthView>('qr');
+const view = ref<AuthView>(props.mode === 'register' ? 'register' : 'password');
+const auth = useAuthStore();
+const submitting = ref(false);
+const errorMessage = ref('');
 const account = ref('');
 const password = ref('');
 const confirmPassword = ref('');
@@ -29,6 +34,8 @@ const title = computed((): string => {
 });
 
 const close = (): void => {
+  password.value = '';
+  confirmPassword.value = '';
   emit('update:modelValue', false);
 };
 
@@ -36,10 +43,11 @@ const resetFields = (): void => {
   account.value = '';
   password.value = '';
   confirmPassword.value = '';
+  errorMessage.value = '';
 };
 
 const syncView = (): void => {
-  view.value = props.mode === 'register' ? 'register' : 'qr';
+  view.value = props.mode === 'register' ? 'register' : 'password';
   resetFields();
 };
 
@@ -50,8 +58,23 @@ watch(() => props.modelValue, (open) => {
   }
 });
 
-const handleSubmit = (event: Event): void => {
+const handleSubmit = async (event: Event): Promise<void> => {
   event.preventDefault();
+  if (view.value !== 'password' || submitting.value) {
+    return;
+  }
+  submitting.value = true;
+  errorMessage.value = '';
+  try {
+    await auth.login({ email: account.value.trim(), password: password.value });
+    // 新身份始终从干净的应用内存开始，不复用另一账号的计划和文件。
+    window.location.replace('/workbench');
+  } catch (error: unknown) {
+    errorMessage.value = getApiErrorMessage(error);
+  } finally {
+    password.value = '';
+    submitting.value = false;
+  }
 };
 </script>
 
@@ -71,7 +94,11 @@ const handleSubmit = (event: Event): void => {
         @click="close"
       ></button>
 
-      <section class="login-modal__panel" role="document">
+      <section
+        class="login-modal__panel"
+        :class="{ 'login-modal__panel--register': view === 'register' }"
+        role="document"
+      >
         <header class="login-modal__header">
           <div>
             <p class="login-modal__eyebrow">PromptOptimizer</p>
@@ -108,42 +135,103 @@ const handleSubmit = (event: Event): void => {
           <small>当前为界面占位，不会发起登录请求。</small>
         </div>
 
-        <form v-else class="login-modal__form" @submit="handleSubmit">
-          <label>
-            邮箱 / 手机号
-            <input
-              v-model="account"
-              type="text"
-              name="account"
-              autocomplete="username"
-              placeholder="请输入邮箱或手机号"
+        <div
+          v-else
+          class="login-modal__account-layout"
+          :class="{ 'login-modal__account-layout--register': view === 'register' }"
+        >
+          <form class="login-modal__form" @submit="handleSubmit">
+            <label>
+              {{ view === 'register' ? '手机号或邮箱' : '邮箱' }}
+              <input
+                v-model="account"
+                :type="view === 'register' ? 'text' : 'email'"
+                required
+                maxlength="320"
+                name="account"
+                autocomplete="username"
+                :placeholder="view === 'register' ? '请输入手机号或邮箱地址' : '请输入邮箱'"
+              >
+            </label>
+            <label>
+              密码
+              <input
+                v-model="password"
+                type="password"
+                required
+                maxlength="200"
+                name="password"
+                :autocomplete="view === 'register' ? 'new-password' : 'current-password'"
+                placeholder="请输入密码"
+              >
+            </label>
+            <label v-if="view === 'register'">
+              确认密码
+              <input
+                v-model="confirmPassword"
+                type="password"
+                required
+                maxlength="200"
+                name="confirmPassword"
+                autocomplete="new-password"
+                placeholder="请再次输入密码"
+              >
+            </label>
+            <label v-if="view === 'register'" class="login-modal__agreement">
+              <input type="checkbox" required>
+              <span>
+                我已阅读并同意
+                <strong>用户协议</strong>
+                与
+                <strong>隐私政策</strong>
+              </span>
+            </label>
+            <p v-if="errorMessage" role="alert">{{ errorMessage }}</p>
+            <button
+              class="login-modal__submit"
+              type="submit"
+              :disabled="submitting || view === 'register'"
             >
-          </label>
-          <label>
-            密码
-            <input
-              v-model="password"
-              type="password"
-              name="password"
-              autocomplete="current-password"
-              placeholder="请输入密码"
-            >
-          </label>
-          <label v-if="view === 'register'">
-            确认密码
-            <input
-              v-model="confirmPassword"
-              type="password"
-              name="confirmPassword"
-              autocomplete="new-password"
-              placeholder="再次输入密码"
-            >
-          </label>
-          <button class="login-modal__submit" type="submit">
-            {{ view === 'register' ? '注册' : '登录' }}
-          </button>
-          <small>按钮仅用于界面演示，不会提交到后端。</small>
-        </form>
+              {{ view === 'register' ? '创建账号' : submitting ? '登录中…' : '登录' }}
+            </button>
+            <small v-if="view === 'register'" id="register-preview-note">
+              当前仅完成注册界面，手机号、邮箱注册接口将在下一步接入。
+            </small>
+            <small v-else>请使用管理员配置的邮箱和密码登录。</small>
+          </form>
+
+          <aside v-if="view === 'register'" class="login-modal__wechat" aria-label="微信扫码登录">
+            <p class="login-modal__wechat-title">
+              <span class="login-modal__wechat-mark" aria-hidden="true">
+                <i></i><i></i>
+              </span>
+              微信扫码登录
+            </p>
+            <div class="login-modal__qr-frame" aria-hidden="true">
+              <svg viewBox="0 0 120 120" fill="none">
+                <rect width="120" height="120" rx="8" fill="white" />
+                <rect x="10" y="10" width="28" height="28" stroke="currentColor" stroke-width="6" />
+                <rect x="82" y="10" width="28" height="28" stroke="currentColor" stroke-width="6" />
+                <rect x="10" y="82" width="28" height="28" stroke="currentColor" stroke-width="6" />
+                <rect x="18" y="18" width="12" height="12" fill="currentColor" />
+                <rect x="90" y="18" width="12" height="12" fill="currentColor" />
+                <rect x="18" y="90" width="12" height="12" fill="currentColor" />
+                <rect x="52" y="16" width="8" height="8" fill="currentColor" />
+                <rect x="68" y="16" width="8" height="8" fill="currentColor" />
+                <rect x="52" y="32" width="8" height="8" fill="currentColor" />
+                <rect x="84" y="52" width="8" height="8" fill="currentColor" />
+                <rect x="52" y="52" width="24" height="24" fill="currentColor" />
+                <rect x="84" y="68" width="8" height="8" fill="currentColor" />
+                <rect x="52" y="84" width="8" height="8" fill="currentColor" />
+                <rect x="68" y="100" width="8" height="8" fill="currentColor" />
+                <rect x="100" y="84" width="8" height="8" fill="currentColor" />
+                <rect x="36" y="52" width="8" height="8" fill="currentColor" />
+              </svg>
+            </div>
+            <p>打开微信扫一扫</p>
+            <small>扫码能力将在微信开放平台接入后启用</small>
+          </aside>
+        </div>
 
         <footer class="login-modal__footer">
           <button
@@ -158,14 +246,14 @@ const handleSubmit = (event: Event): void => {
             type="button"
             @click="view = 'qr'"
           >
-            返回扫码登录
+            查看扫码登录（暂未开通）
           </button>
           <button
             v-else
             type="button"
-            @click="view = 'qr'"
+            @click="view = 'password'"
           >
-            返回扫码登录
+            已有账号？使用邮箱密码登录
           </button>
         </footer>
       </section>
@@ -208,6 +296,10 @@ const handleSubmit = (event: Event): void => {
   backdrop-filter: blur(16px) saturate(1.5);
   -webkit-backdrop-filter: blur(16px) saturate(1.5);
   animation: fade-in-up 0.6s ease-out;
+}
+
+.login-modal__panel--register {
+  width: min(100%, 760px);
 }
 
 .login-modal__panel::before {
@@ -266,7 +358,7 @@ h2 {
   padding: 12px;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
-  color: var(--text-primary);
+  color: #111315;
   background: var(--glass-bg);
 }
 
@@ -294,6 +386,13 @@ h2 {
   gap: 12px;
 }
 
+.login-modal__account-layout--register {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 28px;
+  align-items: stretch;
+}
+
 .login-modal__form label {
   display: grid;
   gap: 6px;
@@ -311,6 +410,34 @@ h2 {
   background: var(--glass-bg);
 }
 
+.login-modal__form input:focus-visible {
+  border-color: var(--accent);
+  outline: 3px solid var(--accent-soft);
+}
+
+.login-modal__form .login-modal__agreement {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.login-modal__agreement input {
+  width: 16px;
+  min-height: 16px;
+  margin-top: 2px;
+  padding: 0;
+  accent-color: var(--accent);
+}
+
+.login-modal__agreement strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 .login-modal__submit {
   min-height: 44px;
   border: 0;
@@ -320,6 +447,74 @@ h2 {
   font-weight: 600;
   background: var(--accent);
   cursor: pointer;
+}
+
+.login-modal__submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.78;
+}
+
+.login-modal__wechat {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  min-height: 320px;
+  padding: 24px 20px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  text-align: center;
+  background: var(--glass-bg-subtle);
+}
+
+.login-modal__wechat p,
+.login-modal__wechat small {
+  margin: 0;
+}
+
+.login-modal__wechat-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.login-modal__wechat-mark {
+  position: relative;
+  width: 21px;
+  height: 16px;
+}
+
+.login-modal__wechat-mark i {
+  position: absolute;
+  width: 13px;
+  height: 11px;
+  border-radius: 55%;
+  background: #16c65b;
+}
+
+.login-modal__wechat-mark i:first-child {
+  top: 0;
+  left: 0;
+}
+
+.login-modal__wechat-mark i:last-child {
+  right: 0;
+  bottom: 0;
+  background: #0faf4d;
+}
+
+.login-modal__wechat > p:not(.login-modal__wechat-title) {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.login-modal__wechat small {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.5;
 }
 
 .login-modal__footer {
@@ -343,6 +538,21 @@ h2 {
 
   .login-modal__panel {
     width: 100%;
+  }
+}
+
+@media (max-width: 720px) {
+  .login-modal__panel--register {
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+  }
+
+  .login-modal__account-layout--register {
+    grid-template-columns: 1fr;
+  }
+
+  .login-modal__wechat {
+    min-height: auto;
   }
 }
 </style>

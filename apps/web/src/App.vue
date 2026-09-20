@@ -8,7 +8,7 @@ import { useUiTheme } from '@/composables/useUiTheme';
 
 const route = useRoute();
 const isWorkbench = computed(() => route.name === 'workbench');
-const isHome = computed(() => route.name === 'home');
+const isHome = computed(() => route.name === 'home' || route.name === 'login');
 useUiTheme();
 </script>
 

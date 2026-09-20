@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -35,9 +36,9 @@ public class LocalMockUserDetailsConfiguration {
             @Value("${app.demo.tenant-id}") String tenantId,
             @Value("${app.demo.workspace-id}") String workspaceId
     ) {
-        if (password == null || password.length() < 12) {
+        if (password == null || password.length() < 12 || password.getBytes(StandardCharsets.UTF_8).length > 72) {
             throw new IllegalStateException(
-                    "local-mock 模式必须通过 LOCAL_AUTH_PASSWORD 配置至少 12 位的登录密码"
+                    "LOCAL_AUTH_PASSWORD 至少 12 个字符且 UTF-8 编码不能超过 72 字节"
             );
         }
         String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);

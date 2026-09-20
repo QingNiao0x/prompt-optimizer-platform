@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @Description: 历史接口控制器测试，验证分页、详情、删除和重新优化的响应结构。
  */
 @WebMvcTest(OptimizationHistoryController.class)
-@Import(RequestIdFilter.class)
+@Import({RequestIdFilter.class, com.promptoptimizer.identity.support.AuthenticatedMvcTestConfiguration.class})
 class OptimizationHistoryControllerTest {
 
     @Autowired

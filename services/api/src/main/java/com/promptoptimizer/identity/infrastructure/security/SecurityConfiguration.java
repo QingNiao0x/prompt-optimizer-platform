@@ -3,6 +3,7 @@ package com.promptoptimizer.identity.infrastructure.security;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -108,9 +109,10 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    CsrfTokenRepository csrfTokenRepository() {
+    CsrfTokenRepository csrfTokenRepository(@Value("${server.servlet.session.cookie.secure:false}") boolean secure) {
         CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         repository.setCookiePath("/");
+        repository.setCookieCustomizer(cookie -> cookie.sameSite("Lax").secure(secure));
         return repository;
     }
 

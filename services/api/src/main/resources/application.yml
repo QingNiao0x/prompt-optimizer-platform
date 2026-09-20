@@ -22,6 +22,7 @@ server:
   shutdown: graceful
   servlet:
     session:
+      tracking-modes: cookie
       timeout: ${AUTH_SESSION_TIMEOUT:8h}
       cookie:
         http-only: true

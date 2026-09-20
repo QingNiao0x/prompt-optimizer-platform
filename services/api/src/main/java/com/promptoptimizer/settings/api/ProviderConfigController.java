@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.Profile;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import java.util.UUID;
  * @since 0.1.0
  */
 @RestController
+@Profile("!local-mock")
 @RequestMapping("/api/v1/provider-configs")
 public class ProviderConfigController {
 

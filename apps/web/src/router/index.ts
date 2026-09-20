@@ -1,8 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/pages/LoginPage.vue'),
+      meta: { title: '登录' },
+    },
     {
       path: '/',
       name: 'home',
@@ -28,6 +35,19 @@ const router = createRouter({
       meta: { title: '设置' },
     },
   ],
+});
+
+router.beforeEach(async (to) => {
+  if (to.name === 'home' || to.name === 'login') {
+    return true;
+  }
+  const auth = useAuthStore();
+  try {
+    await auth.initialize();
+  } catch {
+    return { name: 'login', query: { unavailable: '1' } };
+  }
+  return auth.isAuthenticated ? true : { name: 'login' };
 });
 
 router.afterEach((to) => {
