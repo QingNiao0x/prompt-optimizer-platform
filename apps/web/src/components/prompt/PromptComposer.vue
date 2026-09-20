@@ -8,6 +8,8 @@ import {
 } from 'element-plus';
 import { computed } from 'vue';
 
+import { usePlanModePreference } from '@/composables/usePlanModePreference';
+
 interface Props {
   rawPrompt: string;
   includeExamples: boolean;
@@ -25,6 +27,7 @@ interface Emits {
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
+const { enabled: planModeEnabled, setEnabled: setPlanModeEnabled } = usePlanModePreference();
 
 const rawPromptModel = computed({
   get: (): string => props.rawPrompt,
@@ -35,18 +38,21 @@ const examplesModel = computed({
   get: (): boolean => props.includeExamples,
   set: (value: boolean): void => emit('update:include-examples', value),
 });
+
+const planModeModel = computed({
+  get: (): boolean => planModeEnabled.value,
+  set: (value: boolean): void => setPlanModeEnabled(value),
+});
 </script>
 
 <template>
   <section class="composer-card">
     <div class="composer-heading">
-      <div>
-        <span class="step-label">02 / Intent</span>
-        <h1 class="prompt-title">
-          <span class="prompt-title-primary">把目标写下来。</span>
-          <span class="prompt-title-secondary">关键细节，我们一起补全。</span>
-        </h1>
-      </div>
+      <span class="step-label">02 / Intent</span>
+      <h1 class="prompt-title">
+        <span class="prompt-title-primary">把想法写下来。</span>
+        <span class="prompt-title-secondary">工程细节，交给上下文。</span>
+      </h1>
     </div>
 
     <form @submit.prevent="emit('optimize')">
@@ -59,22 +65,33 @@ const examplesModel = computed({
         :rows="8"
         maxlength="8000"
         show-word-limit
-        resize="vertical"
-        placeholder="例如：分析 2015—2025 年某地区心脑血管疾病死亡率，并比较不同人群的变化趋势"
+        resize="none"
+        placeholder="请帮我查询全球使用AI最多的职业/行业"
         @keydown.ctrl.enter.prevent="emit('optimize')"
         @keydown.meta.enter.prevent="emit('optimize')"
       />
 
-      <div class="composer-controls">
-        <div class="plan-note">
-          <i aria-hidden="true"></i>
-          <div>
-            <strong>先确认，再生成</strong>
-            <span>系统只询问会明显影响结果的细节</span>
-          </div>
-        </div>
+      <div class="plan-note" :class="{ 'is-active': planModeEnabled }">
+        <strong>{{ planModeEnabled ? '下一步：方案确认' : '直接生成' }}</strong>
+        <span>
+          {{ planModeEnabled
+            ? '系统只询问会明显影响结果的细节，再生成最终提示词。'
+            : '将直接生成最终提示词。若关键事实不足，结果中会列出待确认事项。' }}
+        </span>
+      </div>
 
-        <div class="switches">
+      <div class="composer-controls">
+        <div class="composer-options">
+          <ElTooltip
+            content="生成前先确认会影响结果的关键细节。关闭后将直接生成，结果中可能出现待确认事项。"
+            placement="top"
+          >
+            <label class="switch-control">
+              <span>Plan 确认</span>
+              <em v-if="planModeEnabled" class="plan-badge" aria-hidden="true">Plan</em>
+              <ElSwitch v-model="planModeModel" aria-label="Plan 确认" />
+            </label>
+          </ElTooltip>
           <ElTooltip content="要求模型给出输入与预期输出示例" placement="top">
             <label class="switch-control">
               <span>示例参考</span>
@@ -107,199 +124,218 @@ const examplesModel = computed({
 
 <style scoped>
 .composer-card {
-  position: relative;
-  overflow: hidden;
-  min-height: 100%;
-  padding: clamp(22px, 3vw, 30px);
-  border: 1px solid var(--line-subtle);
-  border-radius: var(--radius-large);
-  background:
-    linear-gradient(135deg, rgba(111, 124, 255, 0.12), transparent 40%),
-    var(--surface-panel);
-  box-shadow: var(--shadow-panel);
-}
-
-.composer-card::after {
-  position: absolute;
-  top: -88px;
-  right: -64px;
-  width: 220px;
-  height: 220px;
-  border: 1px solid rgba(101, 216, 208, 0.22);
-  border-radius: 50%;
-  content: '';
-  pointer-events: none;
+  display: flex;
+  min-height: 0;
+  height: 100%;
+  flex-direction: column;
+  padding: 22px 22px 18px;
 }
 
 .composer-heading {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 28px;
-  margin-bottom: 28px;
+  flex: 0 0 auto;
+  margin-bottom: 16px;
 }
 
 .step-label {
-  color: var(--accent-blue);
+  color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.12em;
+  font-weight: 500;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
-h1 {
+.prompt-title {
   display: grid;
-  max-width: 560px;
-  gap: 7px;
-  margin: 10px 0 0;
+  gap: 2px;
+  margin: 12px 0 0;
   font-family: var(--font-display);
-  font-size: clamp(28px, 3vw, 36px);
-  font-weight: 600;
-  line-height: 1.16;
-  letter-spacing: 0;
+  font-size: clamp(26px, 2.4vw, 30px);
+  font-weight: 700;
+  line-height: 1.28;
 }
 
 .prompt-title span {
   display: block;
 }
 
-.prompt-title-primary,
-.prompt-title-secondary {
-  -webkit-text-stroke-width: 0.45px;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
 .prompt-title-primary {
-  color: var(--ink-strong);
-  -webkit-text-stroke-color: var(--title-stroke-primary);
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 18px var(--title-glow);
+  color: var(--text-primary);
 }
 
 .prompt-title-secondary {
-  color: var(--ink-muted);
-  -webkit-text-stroke-color: var(--title-stroke-secondary);
-  text-shadow: 0 0 14px color-mix(in srgb, var(--title-stroke-secondary) 32%, transparent);
+  color: var(--text-muted);
+}
+
+form {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
 }
 
 .prompt-input {
-  position: relative;
-  z-index: 1;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+}
+
+.prompt-input :deep(.el-textarea) {
+  display: flex;
+  min-height: 0;
+  height: 100%;
+  flex: 1;
 }
 
 .prompt-input :deep(.el-textarea__inner) {
-  min-height: 260px !important;
-  padding: 18px;
-  border: 1px solid var(--line-strong);
-  border-radius: 10px;
-  color: var(--ink-strong);
-  font-size: 15px;
+  min-height: 0 !important;
+  height: 100% !important;
+  flex: 1;
+  padding: 16px 18px 34px;
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 14px;
+  color: var(--text-primary);
+  font-size: 14px;
   line-height: 1.75;
-  background: var(--surface-code);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  background: var(--glass-bg-subtle);
+  box-shadow: none;
 }
 
 .prompt-input :deep(.el-textarea__inner:focus) {
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-blue) 12%, transparent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
-.composer-controls {
-  display: grid;
-  grid-template-columns: minmax(240px, 1fr) auto;
-  align-items: end;
-  gap: 14px;
-  margin-top: 16px;
+.prompt-input :deep(.el-input__count) {
+  right: 12px;
+  bottom: 8px;
+  color: var(--text-muted);
+  background: transparent;
 }
 
 .plan-note {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 38px;
-}
-
-.plan-note > i {
-  width: 8px;
-  height: 8px;
-  border: 2px solid color-mix(in srgb, var(--accent-cyan) 38%, transparent);
-  border-radius: 50%;
-  background: var(--accent-cyan);
-  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-cyan) 55%, transparent);
-}
-
-.plan-note div {
   display: grid;
-  gap: 2px;
+  flex: 0 0 auto;
+  gap: 3px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 10px;
+  background: var(--glass-bg-subtle);
 }
 
 .plan-note strong {
-  color: var(--ink-strong);
+  color: var(--text-secondary);
   font-size: 12px;
+  font-weight: 500;
+}
+
+.plan-note.is-active {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+.plan-note.is-active strong {
+  color: var(--accent);
 }
 
 .plan-note span {
-  color: var(--ink-soft);
-  font-size: 10px;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.5;
 }
 
-.switches {
+.composer-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-height: 38px;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.composer-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
 }
 
 .switch-control {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--ink-muted);
+  color: var(--text-secondary);
   font-size: 12px;
   cursor: pointer;
 }
 
+.plan-badge {
+  padding: 1px 6px;
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: var(--accent-soft);
+}
+
 .optimize-button {
-  grid-column: 2 / 3;
-  min-width: 160px;
-  min-height: 62px;
+  min-width: 200px;
+  min-height: 48px;
   border: 0;
-  border-radius: 10px;
-  background: linear-gradient(145deg, var(--accent-blue), #5364f5);
-  box-shadow: 0 14px 30px rgba(83, 100, 245, 0.22);
+  border-radius: 14px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--accent), #38bdf8);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--accent) 28%, transparent);
+  transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
 .optimize-button:hover,
 .optimize-button:focus-visible {
-  background: linear-gradient(145deg, #8290ff, #6878ff);
+  color: #fff;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 88%, white), #38bdf8);
+  box-shadow: 0 6px 30px color-mix(in srgb, var(--accent) 38%, transparent);
+  transform: translateY(-1px);
 }
 
-@media (max-width: 760px) {
-  .composer-heading {
-    display: block;
+@media (max-width: 900px) {
+  .composer-card {
+    min-height: 0;
+    padding: 18px 16px 16px;
+  }
+
+  .prompt-title {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .composer-card {
+    padding: 16px 14px 14px;
   }
 
   .composer-controls {
-    grid-template-columns: 1fr;
+    align-items: stretch;
+    flex-direction: column;
   }
 
-  .switches,
-  .plan-note,
-  .optimize-button {
-    grid-column: auto;
-    grid-row: auto;
+  .composer-options,
+  .switch-control {
+    width: 100%;
   }
 
-  .switches {
+  .switch-control {
     justify-content: space-between;
+    min-height: 44px;
   }
 
   .optimize-button {
     width: 100%;
+    min-height: 48px;
   }
 }
 </style>

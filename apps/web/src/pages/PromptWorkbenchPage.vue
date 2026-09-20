@@ -2,14 +2,17 @@
 import { WarningFilled } from '@element-plus/icons-vue';
 import { ElAlert, ElMessage, ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import ContextPanel from '@/components/context/ContextPanel.vue';
 import OptimizationResultPanel from '@/components/prompt/OptimizationResultPanel.vue';
+import PlanModeIntroDialog from '@/components/prompt/PlanModeIntroDialog.vue';
 import PlanQuestionDialog from '@/components/prompt/PlanQuestionDialog.vue';
 import PromptComposer from '@/components/prompt/PromptComposer.vue';
+import WorkbenchFlowHeader from '@/components/prompt/WorkbenchFlowHeader.vue';
 import type { DroppedFileCollection } from '@/composables/fileDrop';
+import { usePlanModePreference } from '@/composables/usePlanModePreference';
 import { useProjectIndex } from '@/composables/useProjectIndex';
 import { useProjectFiles } from '@/composables/useProjectFiles';
 import { buildRefinedContextQuery } from '@/features/optimization/optimizationRequest';
@@ -69,9 +72,16 @@ const {
 } = useProjectIndex();
 
 const planDialogVisible = ref(false);
+const planIntroVisible = ref(false);
 const pendingPrompt = ref('');
 const isClearingIndex = ref(false);
 let pageLifecycleVersion = 0;
+const {
+  enabled: planModeEnabled,
+  introSeen: planIntroSeen,
+  acceptIntro: acceptPlanIntro,
+  dismissIntro: dismissPlanIntro,
+} = usePlanModePreference();
 
 // 分析按钮需要抽取项目画像，而不是只围绕某个业务提示词检索。
 // 将常见分层目录放在查询前部，可以让本地索引同时召回构建清单和代表性模块源码。
@@ -87,6 +97,37 @@ const contextWarnings = computed(() => Array.from(new Set([
 ])));
 const hasContextSource = computed(() => files.value.length > 0
   || projectIndex.value?.status === 'READY');
+type WorkbenchStage = 'context' | 'clarify' | 'result';
+type WorkbenchPane = 'context' | 'intent' | 'result';
+
+const MOBILE_PANE_QUERY = '(max-width: 900px)';
+const mobilePanes = [
+  { id: 'context', label: '上下文', ariaLabel: '项目上下文' },
+  { id: 'intent', label: '写想法', ariaLabel: '写想法' },
+  { id: 'result', label: '结果', ariaLabel: '增强结果' },
+] as const;
+
+const isNarrowWorkbench = ref(false);
+const activeMobilePane = ref<WorkbenchPane>('intent');
+let mobilePaneQuery: MediaQueryList | undefined;
+
+const syncNarrowWorkbench = (): void => {
+  isNarrowWorkbench.value = Boolean(mobilePaneQuery?.matches);
+};
+
+const showContextPane = computed(() => !isNarrowWorkbench.value || activeMobilePane.value === 'context');
+const showIntentPane = computed(() => !isNarrowWorkbench.value || activeMobilePane.value === 'intent');
+const showResultPane = computed(() => !isNarrowWorkbench.value || activeMobilePane.value === 'result');
+
+const workbenchStage = computed<WorkbenchStage>(() => {
+  if (result.value) {
+    return 'result';
+  }
+  if (isPlanning.value || isOptimizing.value || plan.value || planDialogVisible.value) {
+    return 'clarify';
+  }
+  return 'context';
+});
 
 const handleIndexProject = async (): Promise<void> => {
   await runProjectIndexOperation('FULL');
@@ -269,10 +310,62 @@ const handleAnalyze = async (): Promise<void> => {
 };
 
 const handleOptimize = async (): Promise<void> => {
-  if (!canOptimize.value) {
+  if (!beginEnhancement('optimize')) {
     return;
   }
-  pendingPrompt.value = rawPrompt.value.trim();
+  await continueEnhancement();
+};
+
+const handleReEnhance = async (): Promise<void> => {
+  if (!beginEnhancement('reenhance')) {
+    return;
+  }
+  await continueEnhancement();
+};
+
+const beginEnhancement = (intent: 'optimize' | 'reenhance'): boolean => {
+  if (intent === 'optimize') {
+    if (!canOptimize.value) {
+      return false;
+    }
+    pendingPrompt.value = rawPrompt.value.trim();
+  } else if (!result.value || isPlanning.value || isOptimizing.value) {
+    return false;
+  } else {
+    pendingPrompt.value = result.value.optimizedPrompt;
+  }
+  if (projectIndex.value && projectIndex.value.status !== 'READY') {
+    ElMessage.warning('本地项目索引尚未完成，请等待索引完成后再增强提示词。');
+    return false;
+  }
+  if (planModeEnabled.value && !planIntroSeen.value) {
+    planIntroVisible.value = true;
+    return false;
+  }
+  return true;
+};
+
+const continueEnhancement = async (): Promise<void> => {
+  if (planModeEnabled.value) {
+    await runPlannedEnhancement();
+    return;
+  }
+  await runDirectEnhancement();
+};
+
+const handlePlanIntroAccepted = async (): Promise<void> => {
+  acceptPlanIntro();
+  planIntroVisible.value = false;
+  await runPlannedEnhancement();
+};
+
+const handlePlanIntroDismissed = async (): Promise<void> => {
+  dismissPlanIntro();
+  planIntroVisible.value = false;
+  await runDirectEnhancement();
+};
+
+const runPlannedEnhancement = async (): Promise<void> => {
   const contextPrepared = await prepareContextForPlan(pendingPrompt.value);
   if (!contextPrepared) {
     return;
@@ -286,6 +379,24 @@ const handleOptimize = async (): Promise<void> => {
     return;
   }
   await generateFinalPrompt(createPlanConfirmation([]));
+};
+
+const runDirectEnhancement = async (): Promise<void> => {
+  const contextFiles = await prepareContextTransmission(
+    pendingPrompt.value,
+    '一键增强提示词',
+    true,
+  );
+  if (contextFiles === undefined) {
+    return;
+  }
+  const succeeded = await store.runOptimization(contextFiles, {
+    rawPrompt: pendingPrompt.value,
+  });
+  if (succeeded) {
+    planDialogVisible.value = false;
+    ElMessage.success('最终提示词已生成。');
+  }
 };
 
 const prepareContextForPlan = async (sourcePrompt: string): Promise<boolean> => {
@@ -349,26 +460,6 @@ const handleUndoResult = (): void => {
   }
 };
 
-const handleReEnhance = async (): Promise<void> => {
-  if (!result.value || isPlanning.value || isOptimizing.value) {
-    return;
-  }
-  pendingPrompt.value = result.value.optimizedPrompt;
-  const contextPrepared = await prepareContextForPlan(pendingPrompt.value);
-  if (!contextPrepared) {
-    return;
-  }
-  const succeeded = await store.createOptimizationPlan(pendingPrompt.value);
-  if (!succeeded) {
-    return;
-  }
-  if ((plan.value?.questions.length ?? 0) > 0) {
-    planDialogVisible.value = true;
-    return;
-  }
-  await generateFinalPrompt(createPlanConfirmation([]));
-};
-
 const prepareContextTransmission = async (
   query: string,
   operationName: string,
@@ -425,35 +516,33 @@ const handlePageHide = (): void => {
   store.clearFiles();
 };
 
+watch(result, (value) => {
+  if (value && isNarrowWorkbench.value) {
+    activeMobilePane.value = 'result';
+  }
+});
+
 onMounted(() => {
   clearPersistedProjectSelection();
   void projectContextSettingsStore.refreshStorageStatus();
   window.addEventListener('pagehide', handlePageHide);
+  mobilePaneQuery = window.matchMedia(MOBILE_PANE_QUERY);
+  syncNarrowWorkbench();
+  mobilePaneQuery.addEventListener('change', syncNarrowWorkbench);
   if (route.query.plan === '1') {
-    void router.replace({ path: '/', query: {} }).then(() => handleOptimize());
+    void router.replace({ path: '/workbench', query: {} }).then(() => handleOptimize());
   }
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('pagehide', handlePageHide);
+  mobilePaneQuery?.removeEventListener('change', syncNarrowWorkbench);
 });
 </script>
 
 <template>
   <div class="workbench-page">
-    <header class="page-intro">
-      <div>
-        <p class="intro-kicker">Context-aware prompt engineering</p>
-        <p>先补齐真正影响结果的细节，再一次生成可直接使用的提示词。</p>
-      </div>
-      <div class="pipeline-note" aria-label="处理流程">
-        <span>原始目标</span>
-        <i></i>
-        <span>关键确认</span>
-        <i></i>
-        <span>结构化输出</span>
-      </div>
-    </header>
+    <WorkbenchFlowHeader :stage="workbenchStage" />
 
     <ElAlert
       v-if="errorMessage"
@@ -469,8 +558,31 @@ onBeforeUnmount(() => {
       </template>
     </ElAlert>
 
-    <div class="workbench-grid">
+    <nav
+      v-show="isNarrowWorkbench"
+      class="workbench-pane-switch"
+      role="tablist"
+      aria-label="工作台分区"
+    >
+      <button
+        v-for="pane in mobilePanes"
+        :key="pane.id"
+        type="button"
+        role="tab"
+        :aria-label="pane.ariaLabel"
+        :aria-selected="activeMobilePane === pane.id"
+        :tabindex="activeMobilePane === pane.id ? 0 : -1"
+        :class="{ 'is-active': activeMobilePane === pane.id }"
+        @click="activeMobilePane = pane.id"
+      >
+        {{ pane.label }}
+      </button>
+    </nav>
+
+    <div class="workbench-grid" :data-mobile-pane="activeMobilePane">
       <ContextPanel
+        v-show="showContextPane"
+        class="glass-panel context-column"
         :custom-description="customDescription"
         :files="files"
         :warnings="contextWarnings"
@@ -501,27 +613,29 @@ onBeforeUnmount(() => {
         @cancel-index="handleCancelIndex"
       />
 
-      <div class="prompt-workspace">
-        <PromptComposer
-          :raw-prompt="rawPrompt"
-          :include-examples="includeExamples"
-          :is-analyzing="isAnalyzing"
-          :is-planning="isPlanning"
-          :is-optimizing="isOptimizing"
-          :can-optimize="canOptimize"
-          @update:raw-prompt="rawPrompt = $event"
-          @update:include-examples="includeExamples = $event"
-          @optimize="handleOptimize"
-        />
-        <OptimizationResultPanel
-          :result="result"
-          :busy="isAnalyzing || isPlanning || isOptimizing"
-          :can-undo="canUndoResult"
-          @save="handleSaveResult"
-          @undo="handleUndoResult"
-          @re-enhance="handleReEnhance"
-        />
-      </div>
+      <PromptComposer
+        v-show="showIntentPane"
+        class="glass-panel intent-column"
+        :raw-prompt="rawPrompt"
+        :include-examples="includeExamples"
+        :is-analyzing="isAnalyzing"
+        :is-planning="isPlanning"
+        :is-optimizing="isOptimizing"
+        :can-optimize="canOptimize"
+        @update:raw-prompt="rawPrompt = $event"
+        @update:include-examples="includeExamples = $event"
+        @optimize="handleOptimize"
+      />
+      <OptimizationResultPanel
+        v-show="showResultPane"
+        class="glass-panel result-column"
+        :result="result"
+        :busy="isAnalyzing || isPlanning || isOptimizing"
+        :can-undo="canUndoResult"
+        @save="handleSaveResult"
+        @undo="handleUndoResult"
+        @re-enhance="handleReEnhance"
+      />
     </div>
 
     <PlanQuestionDialog
@@ -531,56 +645,26 @@ onBeforeUnmount(() => {
       :error-message="errorMessage"
       @confirm="handlePlanConfirmed"
     />
+    <PlanModeIntroDialog
+      v-model="planIntroVisible"
+      @accept="handlePlanIntroAccepted"
+      @dismiss="handlePlanIntroDismissed"
+    />
   </div>
 </template>
 
 <style scoped>
 .workbench-page {
+  display: flex;
   min-width: 0;
-}
-
-.page-intro {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 24px;
-  padding: 0 6px;
-}
-
-.intro-kicker {
-  margin: 0 0 8px;
-  color: var(--accent-cyan) !important;
-  font-family: var(--font-mono);
-  font-size: 9px !important;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
-.page-intro p {
-  margin: 0;
-  color: var(--ink-muted);
-  font-size: 14px;
-}
-
-.pipeline-note {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--ink-soft);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  white-space: nowrap;
-}
-
-.pipeline-note i {
-  width: 30px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--line-strong), var(--accent-cyan));
+  height: calc(100vh - 56px);
+  height: calc(100dvh - 56px);
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .error-alert {
-  margin-bottom: 18px;
+  margin: 8px 24px 0;
 }
 
 .error-alert code {
@@ -590,52 +674,119 @@ onBeforeUnmount(() => {
 
 .workbench-grid {
   display: grid;
-  grid-template-columns: minmax(290px, 0.62fr) minmax(0, 1.8fr);
-  align-items: start;
-  gap: 16px;
+  grid-template-columns:
+    minmax(248px, 0.72fr)
+    minmax(420px, 1.48fr)
+    minmax(300px, 1.04fr);
+  min-height: 0;
+  flex: 1;
+  align-items: stretch;
+  gap: 14px;
+  padding: 10px 20px 16px;
 }
 
-.prompt-workspace {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: start;
-  gap: 16px;
+.context-column,
+.intent-column,
+.result-column {
   min-width: 0;
+  min-height: 0;
+  height: 100%;
 }
 
-@media (max-width: 1280px) {
-  .prompt-workspace {
-    grid-template-columns: 1fr;
-  }
-
-  .prompt-workspace :deep(.result-panel) {
-    margin-top: 0;
+@media (max-width: 1440px) {
+  .workbench-grid {
+    grid-template-columns:
+      minmax(240px, 0.76fr)
+      minmax(380px, 1.4fr)
+      minmax(280px, 1fr);
   }
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 1180px) {
+  .workbench-grid {
+    grid-template-columns:
+      minmax(220px, 0.7fr)
+      minmax(320px, 1.28fr)
+      minmax(260px, 0.96fr);
+    gap: 12px;
+    padding-inline: 16px;
+  }
+}
+
+.workbench-pane-switch {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .workbench-page {
+    height: calc(100vh - 56px);
+    height: calc(100dvh - 56px);
+    overflow: hidden;
+  }
+
+  .workbench-pane-switch {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    flex: 0 0 auto;
+    gap: 4px;
+    margin: 8px 16px 0;
+    padding: 4px;
+    border: 1px solid var(--glass-border-subtle);
+    border-radius: 14px;
+    background: var(--glass-bg-subtle);
+  }
+
+  .workbench-pane-switch button {
+    min-height: 44px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .workbench-pane-switch button.is-active {
+    color: var(--text-primary);
+    background: var(--glass-bg-strong);
+    box-shadow: 0 1px 0 var(--glass-border-subtle);
+  }
+
   .workbench-grid {
     grid-template-columns: 1fr;
+    gap: 0;
+    padding: 8px 16px 16px;
   }
 
-  :deep(.context-panel) {
-    position: static;
-  }
-}
-
-@media (max-width: 720px) {
-  .page-intro {
-    display: block;
-  }
-
-  .pipeline-note {
-    margin-top: 12px;
+  .context-column,
+  .intent-column,
+  .result-column {
+    height: 100%;
+    min-height: 0;
   }
 }
 
-@media (max-width: 480px) {
-  .pipeline-note {
-    display: none;
+@media (max-width: 640px) {
+  .workbench-page {
+    height: calc(100vh - 52px - env(safe-area-inset-top, 0px));
+    height: calc(100dvh - 52px - env(safe-area-inset-top, 0px));
+  }
+}
+
+@media (max-width: 600px) {
+  .error-alert {
+    margin-inline: 12px;
+  }
+
+  .workbench-pane-switch,
+  .workbench-grid {
+    margin-inline: 12px;
+  }
+
+  .workbench-grid {
+    padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px));
   }
 }
 </style>

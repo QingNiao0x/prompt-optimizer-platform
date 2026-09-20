@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  Check,
   CopyDocument,
   DataAnalysis,
   EditPen,
@@ -8,9 +7,11 @@ import {
   Right,
   WarningFilled,
 } from '@element-plus/icons-vue';
-import { ElButton, ElInput, ElMessage, ElTag } from 'element-plus';
+import { ElButton, ElInput, ElMessage } from 'element-plus';
 import { computed, ref, toRefs, watch } from 'vue';
 
+import PromptSectionCard from '@/components/prompt/PromptSectionCard.vue';
+import ResultMetaBar from '@/components/prompt/ResultMetaBar.vue';
 import type { OptimizationResult, PromptSection, PromptSectionType } from '@/types/api';
 
 interface Props {
@@ -35,7 +36,7 @@ const displaySections = computed(() =>
   result.value?.sections.filter((section) => section.type !== 'CLARIFICATIONS') ?? [],
 );
 
-const SECTION_TONE: Record<PromptSectionType, string> = {
+const SECTION_LABELS: Record<PromptSectionType, string> = {
   BACKGROUND: '背景',
   TASK: '任务',
   OUTPUT: '输出',
@@ -60,7 +61,9 @@ watch(result, () => {
 });
 
 const startEditing = (): void => {
-  if (!result.value) return;
+  if (!result.value) {
+    return;
+  }
   draftSections.value = result.value.sections
     .filter((section) => section.type !== 'CLARIFICATIONS')
     .map((section) => ({ ...section }));
@@ -82,7 +85,7 @@ const saveEditing = (): void => {
   <section class="result-panel">
     <div
       v-if="result?.ambiguities.length"
-      class="ambiguity-note ambiguity-note--top"
+      class="ambiguity-note"
       role="status"
       aria-live="polite"
     >
@@ -90,45 +93,51 @@ const saveEditing = (): void => {
         <div class="ambiguity-title">
           <WarningFilled aria-hidden="true" />
           <strong>待确认事项</strong>
-          <span class="ambiguity-count">{{ result.ambiguities.length }} 项</span>
+          <span>{{ result.ambiguities.length }} 项</span>
         </div>
-        <span class="ambiguity-label">需要人工核对</span>
+        <small>需要人工核对</small>
       </div>
-      <p class="ambiguity-description">
-        这些信息尚未经过计划确认。可以再次增强，由系统重新向你提问。
-      </p>
-      <ul class="ambiguity-list">
+      <p>这些信息尚未经过方案确认。可以再次增强，由系统重新向你提问。</p>
+      <ul>
         <li v-for="item in result.ambiguities" :key="item">{{ item }}</li>
       </ul>
     </div>
 
     <div class="result-heading">
-      <div>
-        <span class="step-label">03 / Structured prompt</span>
-        <h2>增强结果</h2>
-      </div>
+      <span class="step-label">03 / Structured prompt</span>
       <div v-if="result" class="result-actions">
         <template v-if="editing">
-          <ElButton :disabled="busy" @click="cancelEditing">取消</ElButton>
-          <ElButton type="primary" :disabled="busy" @click="saveEditing">保存修改</ElButton>
+          <ElButton size="small" :disabled="busy" @click="cancelEditing">取消</ElButton>
+          <ElButton size="small" type="primary" :disabled="busy" @click="saveEditing">
+            保存修改
+          </ElButton>
         </template>
         <template v-else>
-          <ElButton :icon="CopyDocument" round @click="copyPrompt(result.optimizedPrompt)">
-            复制全部
+          <ElButton size="small" :icon="CopyDocument" @click="copyPrompt(result.optimizedPrompt)">
+            复制
           </ElButton>
-          <ElButton :icon="EditPen" round :disabled="busy" @click="startEditing">编辑</ElButton>
-          <ElButton round :disabled="busy || !canUndo" @click="emit('undo')">撤销</ElButton>
-          <ElButton
-            :icon="RefreshRight"
-            round
-            :loading="busy"
-            @click="emit('re-enhance')"
-          >
-            再次增强
+          <ElButton size="small" :icon="EditPen" :disabled="busy" @click="startEditing">
+            编辑
+          </ElButton>
+          <ElButton size="small" :disabled="busy || !canUndo" @click="emit('undo')">
+            撤销
           </ElButton>
         </template>
       </div>
     </div>
+
+    <h2>增强结果</h2>
+
+    <ElButton
+      v-if="result && !editing"
+      class="re-enhance-button"
+      :icon="RefreshRight"
+      size="small"
+      :loading="busy"
+      @click="emit('re-enhance')"
+    >
+      再次增强
+    </ElButton>
 
     <div v-if="!result" class="empty-result">
       <div class="signal-flow" aria-hidden="true">
@@ -144,61 +153,32 @@ const saveEditing = (): void => {
         </div>
       </div>
       <h3>结果会在这里展开</h3>
-      <p>输入一个简短需求并点击“一键增强”，系统会结合你提供的背景与资料生成可直接交给 AI 使用的任务说明。</p>
+      <p>输入一个简短需求并点击“一键增强”，系统会结合背景与资料生成可直接使用的任务说明。</p>
     </div>
 
     <div
       v-else
-      class="result-content result-content--scrollable"
+      class="result-content"
       tabindex="0"
       aria-label="增强结果内容，可滚动查看完整提示词"
     >
-      <div class="result-meta">
-        <div>
-          <span class="meta-label">Provider</span>
-          <strong>{{ result.provider.provider }}</strong>
-          <small>{{ result.provider.model }}</small>
-        </div>
-        <div>
-          <span class="meta-label">Structure</span>
-          <strong>{{ result.sections.length }} 个段落</strong>
-          <small>背景、任务、输出与约束</small>
-        </div>
-        <div>
-          <span class="meta-label">Latency</span>
-          <strong>{{ result.latencyMs }} ms</strong>
-          <small>{{ result.provider.mock ? 'Mock 结果' : '模型生成' }}</small>
-        </div>
-      </div>
+      <ResultMetaBar :result="result" />
 
       <article v-if="!editing" class="section-list">
-        <section
+        <PromptSectionCard
           v-for="(section, index) in displaySections"
           :key="section.type"
-          class="prompt-section"
-        >
-          <div class="section-rail">
-            <span>{{ String(index + 1).padStart(2, '0') }}</span>
-            <i></i>
-          </div>
-          <div class="section-body">
-            <div class="section-title">
-              <div>
-                <ElTag size="small" effect="plain" round>
-                  {{ SECTION_TONE[section.type] }}
-                </ElTag>
-                <h3>{{ section.title }}</h3>
-              </div>
-              <Check aria-hidden="true" />
-            </div>
-            <div class="section-text">{{ section.content }}</div>
-          </div>
-        </section>
+          :section="section"
+          :index="index"
+          :is-last="index === displaySections.length - 1"
+        />
       </article>
 
       <div v-else class="edit-section-list">
         <section v-for="section in draftSections" :key="section.type" class="edit-section">
-          <label :for="`section-${section.type}`">{{ SECTION_TONE[section.type] }} · {{ section.title }}</label>
+          <label :for="`section-${section.type}`">
+            {{ SECTION_LABELS[section.type] }} · {{ section.title }}
+          </label>
           <ElInput
             :id="`section-${section.type}`"
             v-model="section.content"
@@ -210,7 +190,6 @@ const saveEditing = (): void => {
           />
         </section>
       </div>
-
     </div>
   </section>
 </template>
@@ -218,309 +197,183 @@ const saveEditing = (): void => {
 <style scoped>
 .result-panel {
   display: flex;
+  min-height: 0;
+  height: 100%;
   flex-direction: column;
-  min-width: 0;
-  max-width: 100%;
-  max-height: min(760px, calc(100dvh - 148px));
-  min-height: 100%;
-  margin-top: 0;
-  padding: clamp(22px, 3vw, 30px);
-  border: 1px solid var(--line-subtle);
-  border-radius: var(--radius-large);
-  background: var(--surface-panel);
-  box-shadow: var(--shadow-panel);
-  overflow: hidden;
+  padding: 22px 20px 18px;
 }
 
 .result-heading {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 20px;
+  gap: 12px;
+}
+
+.step-label {
+  padding-top: 4px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 
 .result-actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 7px;
+  gap: 5px;
 }
 
 .result-actions :deep(.el-button + .el-button) {
   margin-left: 0;
 }
 
-.step-label,
-.meta-label {
-  color: var(--accent-blue);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.result-actions :deep(.el-button) {
+  padding: 5px 9px;
+  border-color: var(--glass-border-subtle);
+  color: var(--text-secondary);
+  background: var(--glass-bg-subtle);
 }
 
 h2 {
-  margin: 6px 0 0;
-  color: var(--ink-strong);
+  margin: 8px 0 12px;
+  color: var(--text-primary);
   font-family: var(--font-display);
-  font-size: 23px;
-  letter-spacing: -0.045em;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.re-enhance-button {
+  align-self: flex-start;
+  margin-bottom: 18px;
+  border-color: var(--accent-border);
+  border-radius: 999px;
+  color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .empty-result {
   display: grid;
+  min-height: 0;
   flex: 1;
-  min-height: 430px;
   place-content: center;
   justify-items: center;
+  padding: 12px 6px 8px;
   text-align: center;
 }
 
 .signal-flow {
   display: flex;
   align-items: center;
-  gap: 18px;
-  margin-bottom: 24px;
+  gap: 12px;
+  margin-bottom: 22px;
 }
 
 .signal-flow > svg {
-  width: 20px;
-  color: var(--accent-blue);
+  width: 18px;
+  color: var(--accent);
 }
 
 .signal-source {
   display: grid;
   grid-template-columns: repeat(3, auto);
-  gap: 5px;
+  gap: 4px;
 }
 
 .signal-source span {
-  padding: 7px 9px;
-  border: 1px solid var(--line-subtle);
+  padding: 6px 8px;
+  border: 1px solid var(--glass-border-subtle);
   border-radius: 8px;
-  color: var(--ink-soft);
+  color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 9px;
-  background: var(--surface-code);
+  font-size: 8px;
+  background: var(--glass-bg-subtle);
 }
 
 .signal-target {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 13px;
-  border: 1px solid rgba(111, 124, 255, 0.38);
+  gap: 7px;
+  padding: 9px 11px;
+  border: 1px solid var(--accent-border);
   border-radius: 10px;
-  color: var(--ink-strong);
-  font-size: 11px;
-  background: rgba(111, 124, 255, 0.1);
+  color: var(--text-primary);
+  font-size: 10px;
+  background: var(--accent-soft);
 }
 
 .signal-target svg {
-  width: 16px;
-  color: var(--accent-blue);
+  width: 15px;
+  color: var(--accent);
 }
 
 .empty-result h3 {
   margin: 0 0 8px;
-  color: var(--ink-strong);
-  font-family: var(--font-display);
-  font-size: 19px;
+  color: var(--text-primary);
+  font-size: 17px;
 }
 
 .empty-result p {
-  max-width: 510px;
+  max-width: 380px;
   margin: 0;
-  color: var(--ink-soft);
-  font-size: 13px;
-  line-height: 1.8;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.7;
 }
 
 .result-content {
   min-width: 0;
-  margin-top: 22px;
-}
-
-/* 长结果只在结果面板内部滚动，避免撑开工作台布局。 */
-.result-content--scrollable {
   min-height: 0;
   flex: 1;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 0 6px 8px 0;
+  padding: 0 5px 8px 0;
   scrollbar-gutter: stable;
 }
 
-.result-content--scrollable:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--accent-blue) 72%, transparent);
+.result-content:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent);
   outline-offset: 3px;
 }
 
-.result-meta {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  overflow: hidden;
-  margin-bottom: 28px;
-  border: 1px solid var(--line-subtle);
-  border-radius: 10px;
-  background: var(--surface-code);
-}
-
-.result-meta > div {
-  padding: 13px 15px;
-  border-right: 1px solid var(--line-subtle);
-}
-
-.result-meta > div:last-child {
-  border-right: 0;
-}
-
-.result-meta strong,
-.result-meta small {
-  display: block;
-}
-
-.result-meta strong {
-  overflow: hidden;
-  margin-top: 5px;
-  color: var(--ink-strong);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.result-meta small {
-  margin-top: 3px;
-  color: var(--ink-soft);
-  font-size: 10px;
-}
-
-.section-list {
+.section-list,
+.edit-section-list {
   display: grid;
   min-width: 0;
-  gap: 0;
 }
 
 .edit-section-list {
-  display: grid;
   gap: 14px;
 }
 
 .edit-section label {
   display: block;
   margin-bottom: 7px;
-  color: var(--ink-muted);
+  color: var(--text-secondary);
   font-size: 11px;
 }
 
 .edit-section :deep(.el-textarea__inner) {
-  border: 1px solid var(--line-strong);
-  color: var(--ink-strong);
+  border: 1px solid var(--glass-border-subtle);
+  color: var(--text-primary);
   line-height: 1.7;
-  background: var(--surface-input);
+  background: var(--glass-bg-subtle);
   box-shadow: none;
 }
 
-.prompt-section {
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
-  gap: 10px;
-}
-
-.section-rail {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.section-rail span {
-  display: grid;
-  width: 28px;
-  height: 28px;
-  place-items: center;
-  border: 1px solid var(--line-strong);
-  border-radius: 50%;
-  color: var(--accent-blue);
-  font-family: var(--font-mono);
-  font-size: 9px;
-  background: var(--surface-panel);
-}
-
-.section-rail i {
-  width: 1px;
-  min-height: 32px;
-  flex: 1;
-  background: var(--line-subtle);
-}
-
-.prompt-section:last-child .section-rail i {
-  background: transparent;
-}
-
-.section-body {
-  min-width: 0;
-  margin-bottom: 15px;
-  padding: 16px 18px;
-  border: 1px solid var(--line-subtle);
-  border-radius: 10px;
-  background: var(--surface-code);
-}
-
-.section-title,
-.section-title > div {
-  display: flex;
-  align-items: center;
-}
-
-.section-title {
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.section-title > div {
-  gap: 10px;
-}
-
-.section-title h3 {
-  margin: 0;
-  color: var(--ink-strong);
-  font-size: 13px;
-}
-
-.section-title > svg {
-  width: 15px;
-  color: var(--success);
-}
-
-.section-text {
-  max-width: 100%;
-  margin-top: 12px;
-  color: var(--ink-muted);
-  font-size: 13px;
-  line-height: 1.85;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
 .ambiguity-note {
-  margin-top: 14px;
-  padding: 13px 15px;
-  border-left: 3px solid var(--warning);
-  color: var(--ink-muted);
-  font-size: 11px;
-  background: rgba(232, 180, 92, 0.08);
-}
-
-.ambiguity-note--top {
   flex: 0 0 auto;
-  margin: 0 0 18px;
-  padding: 15px 16px;
-  border: 1px solid color-mix(in srgb, var(--warning) 35%, var(--line-subtle));
+  margin-bottom: 16px;
+  padding: 13px 14px;
+  border: 1px solid color-mix(in srgb, var(--warning) 34%, var(--glass-border-subtle));
   border-left: 4px solid var(--warning);
   border-radius: 10px;
-  background: color-mix(in srgb, var(--warning) 9%, var(--surface-code));
+  color: var(--text-secondary);
+  font-size: 11px;
+  background: color-mix(in srgb, var(--warning) 8%, var(--glass-bg-subtle));
 }
 
 .ambiguity-heading,
@@ -531,87 +384,69 @@ h2 {
 
 .ambiguity-heading {
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 }
 
 .ambiguity-title {
-  gap: 8px;
+  gap: 7px;
 }
 
 .ambiguity-title svg {
-  width: 16px;
+  width: 15px;
   color: var(--warning);
 }
 
 .ambiguity-title strong {
-  color: var(--ink-strong);
-  font-size: 13px;
-  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 12px;
 }
 
-.ambiguity-count,
-.ambiguity-label {
+.ambiguity-title span,
+.ambiguity-heading small {
   color: var(--warning);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9px;
 }
 
-.ambiguity-count {
-  padding: 3px 7px;
-  border: 1px solid color-mix(in srgb, var(--warning) 38%, var(--line-subtle));
-  border-radius: 999px;
+.ambiguity-note p {
+  margin: 8px 0 0;
 }
 
-.ambiguity-label {
-  white-space: nowrap;
-}
-
-.ambiguity-description {
-  margin: 9px 0 0;
-  color: var(--ink-muted);
-  line-height: 1.6;
-}
-
-.ambiguity-list {
+.ambiguity-note ul {
   display: grid;
-  width: 100%;
-  gap: 6px;
-  margin: 11px 0 0;
-  padding: 10px 0 0 18px;
-  border-top: 1px solid color-mix(in srgb, var(--warning) 24%, var(--line-subtle));
-  color: var(--ink-muted);
-  line-height: 1.65;
+  gap: 5px;
+  margin: 9px 0 0;
+  padding: 9px 0 0 17px;
+  border-top: 1px solid color-mix(in srgb, var(--warning) 22%, var(--glass-border-subtle));
 }
 
-.ambiguity-list li::marker {
-  color: var(--warning);
+@media (max-width: 900px) {
+  .result-panel {
+    min-height: 0;
+    padding: 18px 16px 16px;
+  }
 }
 
-@media (max-width: 640px) {
-  .ambiguity-heading {
-    align-items: flex-start;
+@media (max-width: 600px) {
+  .result-panel {
+    padding: 16px 14px 14px;
   }
 
-  .ambiguity-label {
-    white-space: normal;
-    text-align: right;
+  .result-heading {
+    display: grid;
   }
 
-  .result-meta {
-    grid-template-columns: 1fr;
-  }
-
-  .result-meta > div {
-    border-right: 0;
-    border-bottom: 1px solid var(--line-subtle);
-  }
-
-  .result-meta > div:last-child {
-    border-bottom: 0;
+  .result-actions {
+    justify-content: flex-start;
   }
 
   .signal-source {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, auto);
+  }
+
+  .signal-flow {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
 </style>

@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const browserChannel = process.env.PLAYWRIGHT_BROWSER_CHANNEL ?? 'chrome';
+const configuredE2ePort = Number.parseInt(process.env.PROMPT_OPTIMIZER_E2E_PORT ?? '5175', 10);
+const e2ePort = Number.isFinite(configuredE2ePort) ? configuredE2ePort : 5175;
 
 export default defineConfig({
   testDir: './e2e',
@@ -18,7 +20,7 @@ export default defineConfig({
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
   ],
   use: {
-    baseURL: 'http://127.0.0.1:5173',
+    baseURL: `http://127.0.0.1:${e2ePort}`,
     locale: 'zh-CN',
     screenshot: 'only-on-failure',
     trace: 'on-first-retry',

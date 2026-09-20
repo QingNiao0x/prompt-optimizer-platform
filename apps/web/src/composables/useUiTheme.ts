@@ -1,41 +1,36 @@
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 
-export type UiThemeId = 'midnight' | 'neon-control-room' | 'dusk-glass';
+export type UiThemeId = 'glass-light' | 'glass-dark';
 
 export interface UiThemeDefinition {
   id: UiThemeId;
   label: string;
-  shortLabel: string;
   description: string;
 }
 
 export const UI_THEMES: readonly UiThemeDefinition[] = [
   {
-    id: 'midnight',
-    label: '午夜工作台',
-    shortLabel: '午夜工作台',
-    description: '克制的深色画布，适合长时间编写和阅读提示词。',
+    id: 'glass-light',
+    label: '浅蓝玻璃',
+    description: '通透的浅蓝背景与柔和高光，适合日间使用。',
   },
   {
-    id: 'neon-control-room',
-    label: '霓虹工程控制室',
-    shortLabel: '霓虹控制室',
-    description: '蓝紫主控色配合青色状态，强调工程流程和操作反馈。',
-  },
-  {
-    id: 'dusk-glass',
-    label: '暮色玻璃工作区',
-    shortLabel: '暮色玻璃区',
-    description: '低饱和紫灰与半透明面板，适合沉浸式整理和复盘。',
+    id: 'glass-dark',
+    label: '深色玻璃',
+    description: '低亮度深蓝背景与克制高光，适合长时间工作。',
   },
 ];
 
 const STORAGE_KEY = 'prompt-optimizer.ui-theme';
-const activeThemeId = ref<UiThemeId>('midnight');
+const activeThemeId = ref<UiThemeId>('glass-light');
 let initialized = false;
 
 const isUiThemeId = (value: string | null): value is UiThemeId =>
   UI_THEMES.some((theme) => theme.id === value);
+
+const resolveStoredTheme = (value: string | null): UiThemeId => {
+  return isUiThemeId(value) ? value : 'glass-light';
+};
 
 const applyTheme = (themeId: UiThemeId): void => {
   activeThemeId.value = themeId;
@@ -62,65 +57,34 @@ const initializeTheme = (): void => {
     try {
       storedTheme = window.localStorage.getItem(STORAGE_KEY);
     } catch {
-      // 无法读取站点存储时使用默认主题。
+      // 无法读取站点存储时使用浅蓝玻璃主题。
     }
   }
-  applyTheme(isUiThemeId(storedTheme) ? storedTheme : 'midnight');
+  applyTheme(resolveStoredTheme(storedTheme));
 };
 
 export const useUiTheme = () => {
   initializeTheme();
 
-  const isMenuOpen = ref(false);
   const currentTheme = computed(() =>
     UI_THEMES.find((theme) => theme.id === activeThemeId.value) ?? UI_THEMES[0],
   );
-
-  const closeMenu = (): void => {
-    isMenuOpen.value = false;
-  };
-
-  const toggleMenu = (): void => {
-    isMenuOpen.value = !isMenuOpen.value;
-  };
+  const isDark = computed(() => activeThemeId.value === 'glass-dark');
 
   const selectTheme = (themeId: UiThemeId): void => {
     applyTheme(themeId);
-    closeMenu();
   };
 
-  const handleDocumentPointerDown = (event: PointerEvent): void => {
-    if (!(event.target instanceof Element)) {
-      return;
-    }
-    if (!event.target.closest('[data-theme-switcher]')) {
-      closeMenu();
-    }
+  const toggleTheme = (): void => {
+    applyTheme(isDark.value ? 'glass-light' : 'glass-dark');
   };
-
-  const handleDocumentKeydown = (event: KeyboardEvent): void => {
-    if (event.key === 'Escape') {
-      closeMenu();
-    }
-  };
-
-  onMounted(() => {
-    document.addEventListener('pointerdown', handleDocumentPointerDown);
-    document.addEventListener('keydown', handleDocumentKeydown);
-  });
-
-  onBeforeUnmount(() => {
-    document.removeEventListener('pointerdown', handleDocumentPointerDown);
-    document.removeEventListener('keydown', handleDocumentKeydown);
-  });
 
   return {
     activeThemeId,
     currentTheme,
-    isMenuOpen,
+    isDark,
     themes: UI_THEMES,
-    closeMenu,
-    toggleMenu,
     selectTheme,
+    toggleTheme,
   };
 };

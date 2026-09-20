@@ -5,6 +5,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'home',
+      component: () => import('@/pages/HomePage.vue'),
+      meta: { title: '首页' },
+    },
+    {
+      path: '/workbench',
       name: 'workbench',
       component: () => import('@/pages/PromptWorkbenchPage.vue'),
       meta: { title: '提示词工作台' },

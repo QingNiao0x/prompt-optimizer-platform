@@ -7,6 +7,16 @@ import type {
   OptimizationResult,
   PlanningContextPreparation,
 } from '../src/types/api';
+import { openWorkbenchPane } from './workbenchPanes';
+
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify({
+      enabled: true,
+      introSeen: true,
+    }));
+  });
+});
 
 const contextSnapshot: ContextSnapshot = {
   customDescription: 'Spring Boot 3 模块化单体，使用 PostgreSQL。',
@@ -267,12 +277,18 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
     await route.fulfill({ status: 200, json: optimizationResponse });
   });
 
-  await page.goto('/');
+  await page.goto('/workbench');
   await page.waitForLoadState('networkidle');
-  await expect(page.getByText('把目标写下来。', { exact: true })).toBeVisible();
-  await expect(page.getByText('关键细节，我们一起补全。', { exact: true })).toBeVisible();
+  await openWorkbenchPane(page, 'intent');
+  await expect(page.getByText('把想法写下来。', { exact: true })).toBeVisible();
+  await expect(page.getByText('工程细节，交给上下文。', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('原始提示词')).toHaveAttribute(
+    'placeholder',
+    '请帮我查询全球使用AI最多的职业/行业',
+  );
 
-  await page.getByLabel('背景说明').fill('Spring Boot 3 模块化单体，使用 PostgreSQL。');
+  await openWorkbenchPane(page, 'context');
+  await page.getByLabel('自定义项目描述').fill('Spring Boot 3 模块化单体，使用 PostgreSQL。');
   await page.getByText('粘贴当前打开文件').click();
   await page.getByLabel('文件相对路径').fill('pom.xml');
   const languageSelect = page.getByRole('combobox', { name: '代码语言' });
@@ -297,6 +313,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await expect(page.getByText('Maven 项目配置，使用 Spring Boot Web。')).toBeVisible();
   await expect(page.getByText('1 个依赖 · 3 个目录节点')).toBeVisible();
 
+  await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
   await confirmContextTransmission(page, '生成确认问题前分析上下文');
@@ -313,6 +330,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
 
   expect(optimizationRequestOrder).toEqual(['context', 'plan', 'final']);
 
+  await openWorkbenchPane(page, 'result');
   await expect(page.getByText('deepseek', { exact: true })).toBeVisible();
   const resultContent = page.getByLabel('增强结果内容，可滚动查看完整提示词');
   await expect(resultContent.getByRole('heading', { name: '任务目标' })).toBeVisible();
@@ -381,7 +399,8 @@ test('科研需求会逐项询问业务细节并在全部回答后生成结果',
     await route.fulfill({ status: 200, json: { requestId: 'research-final', data: researchResult } });
   });
 
-  await page.goto('/');
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill(researchPrompt);
   await page.getByRole('button', { name: '一键增强提示词' }).click();
   const dialog = page.getByRole('dialog', { name: '确认关键细节' });
@@ -391,8 +410,9 @@ test('科研需求会逐项询问业务细节并在全部回答后生成结果',
   await dialog.getByRole('button', { name: '生成最终提示词' }).click();
 
   await expect(page.getByText('最终提示词已生成。')).toBeVisible();
+  await openWorkbenchPane(page, 'result');
   await expect(page.getByText('广东省心脑血管疾病死亡率研究')).toBeVisible();
-  await expect(page.getByText('RESEARCH_ANALYSIS')).toHaveCount(0);
+  await expect(page.getByText('RESEARCH_ANALYSIS', { exact: true })).toBeVisible();
 });
 
 test('最终生成失败时在计划弹窗内显示可读错误并保留回答', async ({ page }) => {
@@ -421,7 +441,8 @@ test('最终生成失败时在计划弹窗内显示可读错误并保留回答',
     });
   });
 
-  await page.goto('/');
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
   const dialog = page.getByRole('dialog', { name: '确认关键细节' });
@@ -444,8 +465,9 @@ test('普通文档分析只展示内容概要，不套用代码项目信息', as
     });
   });
 
-  await page.goto('/');
+  await page.goto('/workbench');
   await page.waitForLoadState('networkidle');
+  await openWorkbenchPane(page, 'context');
   await page.locator('input[type="file"]').nth(1).setInputFiles({
     name: '季度报告.txt',
     mimeType: 'text/plain',
@@ -502,20 +524,23 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
     await route.fulfill({ status: 200, json: optimizationResponse });
   });
 
-  await page.goto('/');
+  await page.goto('/workbench');
   await page.waitForLoadState('networkidle');
+  await openWorkbenchPane(page, 'context');
   await page.getByText('粘贴当前打开文件').click();
   await page.getByLabel('文件相对路径').fill('pom.xml');
   await page.getByPlaceholder('粘贴与当前任务相关的代码片段…').fill(
     '<dependency><artifactId>spring-boot-starter-web</artifactId></dependency>',
   );
   await page.getByRole('button', { name: '加入上下文' }).click();
+  await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('为示例项目补充健康检查接口');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
   await confirmContextTransmission(page, '生成确认问题前分析上下文');
   await confirmContextTransmission(page, '一键增强提示词');
   expect(contextAnalyzeCalls).toBe(0);
   expect(planningContextCalls).toBe(1);
+  await openWorkbenchPane(page, 'context');
   await expect(page.getByText('代码项目', { exact: true })).toBeVisible();
   await expect(page.getByText('项目概要', { exact: true })).toBeVisible();
   await expect(page.getByText('功能模块', { exact: true })).toBeVisible();
@@ -580,16 +605,19 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
     });
   });
 
-  await page.goto('/');
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'context');
   await page.getByRole('button', { name: '选择本地项目文件夹' }).click();
 
   await expect(page.getByText('2 个源码文件已建立本地索引')).toBeVisible();
   await expect(page.getByText(/2 个代码块/)).toBeVisible();
 
+  await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('修改 projectName 常量');
   await page.getByRole('button', { name: '一键增强提示词' }).click();
   await confirmContextTransmission(page, '生成确认问题前分析上下文');
   await confirmContextTransmission(page, '一键增强提示词');
+  await openWorkbenchPane(page, 'context');
   await page.getByText(/查看本次代码选择依据/).click();
   await expect(page.getByText('src/main.ts', { exact: true })).toBeVisible();
   await expect(page.getByText(/任务中的符号/).first()).toBeVisible();
@@ -613,6 +641,7 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
     await projectRoot.removeEntry('package.json');
   });
 
+  await openWorkbenchPane(page, 'context');
   await page.getByRole('button', { name: '增量更新' }).click();
   await expect(page.getByText(/本轮新增 1 · 更新 1 · 未变化 0 · 删除 1/)).toBeVisible();
 
@@ -640,7 +669,8 @@ test('用户可以暂停并继续本地项目索引', async ({ page }) => {
     });
   });
 
-  await page.goto('/');
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'context');
   await page.evaluate(() => {
     const observer = new MutationObserver(() => {
       const pauseButton = document.querySelector<HTMLButtonElement>('[data-testid="pause-index"]');
@@ -724,7 +754,8 @@ test('重新打开页面后不恢复之前选择的项目文件夹', async ({ pa
     localStorage.setItem('prompt-optimizer.current-project-index.v1', 'legacy-project');
   });
 
-  await page.goto('/');
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'context');
   // 全量并发运行时工作台是懒加载页面，以核心控件出现作为初始化完成标志。
   await expect(
     page.getByRole('button', { name: '添加文档、表格、演示稿或图片' }),
@@ -735,7 +766,8 @@ test('重新打开页面后不恢复之前选择的项目文件夹', async ({ pa
 });
 
 test('重新打开页面后不保留之前上传的单个文件', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'context');
   const fileChooserPromise = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: '添加文档、表格、演示稿或图片' }).click();
   const fileChooser = await fileChooserPromise;
@@ -747,7 +779,48 @@ test('重新打开页面后不保留之前上传的单个文件', async ({ page 
 
   await expect(page.getByText('临时需求说明.txt', { exact: true })).toBeVisible({ timeout: 15_000 });
   await page.reload();
+  await openWorkbenchPane(page, 'context');
 
   await expect(page.getByText('临时需求说明.txt', { exact: true })).not.toBeVisible();
   await expect(page.getByRole('button', { name: '添加文档、表格、演示稿或图片' })).toBeVisible();
+});
+
+test('关闭 Plan 确认后直接生成，不进入方案确认', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify({
+      enabled: false,
+      introSeen: true,
+    }));
+  });
+  let planCalls = 0;
+  await page.route('**/api/v1/optimizations/plan', async (route) => {
+    planCalls += 1;
+    await route.abort();
+  });
+  await page.route('**/api/v1/optimizations', async (route) => {
+    const requestBody = route.request().postDataJSON() as { planConfirmation?: unknown };
+    expect(requestBody.planConfirmation).toBeNull();
+    await route.fulfill({
+      status: 200,
+      json: {
+        requestId: 'direct-optimization',
+        data: {
+          ...optimizationResult,
+          ambiguities: ['登录方式尚未确认。'],
+        },
+      } satisfies ApiResponse<OptimizationResult>,
+    });
+  });
+
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
+  await expect(page.getByText('将直接生成最终提示词。若关键事实不足，结果中会列出待确认事项。')).toBeVisible();
+  await expect(page.getByText('Plan', { exact: true })).toHaveCount(0);
+  await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
+  await page.getByRole('button', { name: '一键增强提示词' }).click();
+
+  await expect(page.getByRole('dialog', { name: '确认关键细节' })).toHaveCount(0);
+  await expect(page.getByRole('dialog', { name: '先确认关键细节' })).toHaveCount(0);
+  await expect(page.getByText('待确认事项', { exact: true })).toBeVisible();
+  expect(planCalls).toBe(0);
 });

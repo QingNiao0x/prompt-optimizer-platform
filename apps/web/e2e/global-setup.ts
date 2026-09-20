@@ -3,6 +3,9 @@ import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
 
 const WEB_ROOT = fileURLToPath(new URL('..', import.meta.url));
+const configuredE2ePort = Number.parseInt(process.env.PROMPT_OPTIMIZER_E2E_PORT ?? '5175', 10);
+const e2ePort = Number.isFinite(configuredE2ePort) ? configuredE2ePort : 5175;
+const e2eBaseUrl = `http://127.0.0.1:${e2ePort}`;
 
 /**
  * 在测试进程内启动 Vite，测试结束后由 Playwright 调用返回的清理函数。
@@ -10,9 +13,9 @@ const WEB_ROOT = fileURLToPath(new URL('..', import.meta.url));
  */
 export default async function globalSetup(): Promise<() => Promise<void>> {
   if (process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER === 'true') {
-    const response = await fetch('http://127.0.0.1:5173');
+    const response = await fetch(e2eBaseUrl);
     if (!response.ok || !(await response.text()).includes('<title>Prompt Optimizer</title>')) {
-      throw new Error('5173 端口上的服务不是可用的 Prompt Optimizer 前端');
+      throw new Error(`${e2ePort} 端口上的服务不是可用的 Prompt Optimizer 前端`);
     }
     return async (): Promise<void> => undefined;
   }
@@ -22,7 +25,7 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
     logLevel: 'warn',
     server: {
       host: '127.0.0.1',
-      port: 5173,
+      port: e2ePort,
       strictPort: true,
     },
   });

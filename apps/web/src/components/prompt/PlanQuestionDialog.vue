@@ -157,8 +157,8 @@ const close = (): void => {
     :model-value="modelValue"
     title="确认关键细节"
     class="plan-question-dialog"
-    width="min(760px, calc(100vw - 28px))"
-    top="8vh"
+    width="min(760px, calc(100vw - 24px))"
+    top="max(12px, env(safe-area-inset-top, 0px))"
     :close-on-click-modal="false"
     :close-on-press-escape="!isGenerating"
     :show-close="!isGenerating"
@@ -569,8 +569,8 @@ const close = (): void => {
 
 @media (max-width: 600px) {
   .question-sheet {
-    min-height: 360px;
-    padding: 18px;
+    min-height: 0;
+    padding: 16px;
   }
 
   .dialog-actions {

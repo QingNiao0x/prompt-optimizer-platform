@@ -18,6 +18,7 @@ import {
 } from 'element-plus';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
+import ContextAnalysisSummary from '@/components/context/ContextAnalysisSummary.vue';
 import { collectDroppedFiles, type DroppedFileCollection } from '@/composables/fileDrop';
 import {
   UNSUPPORTED_EXTENSIONS,
@@ -28,7 +29,6 @@ import type {
   ProjectIndexProgress,
   ProjectIndexSummary,
 } from '@/features/project-index/projectIndexer';
-import { buildContextPresentation } from '@/features/context-analysis/contextPresentation';
 import type { ContextFileInput, ContextSnapshot } from '@/types/api';
 
 interface Props {
@@ -75,12 +75,6 @@ const manualPath = ref('src/example.ts');
 const manualLanguage = ref('typescript');
 const manualContent = ref('');
 const isDragActive = ref(false);
-
-const contextPresentation = computed(() =>
-  props.snapshot ? buildContextPresentation(props.snapshot) : undefined);
-
-const isCodeProject = computed(() =>
-  contextPresentation.value?.mode === 'CODE_PROJECT');
 
 const descriptionModel = computed({
   get: (): string => props.customDescription,
@@ -175,11 +169,6 @@ const formatBytes = (bytes: number): string => {
   const unitIndex = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
   const value = bytes / (1024 ** unitIndex);
   return `${value >= 10 || unitIndex === 0 ? value.toFixed(0) : value.toFixed(1)} ${units[unitIndex]}`;
-};
-
-const formatConfidence = (confidence: number): string => {
-  const normalizedConfidence = Math.max(0, Math.min(1, confidence));
-  return `${Math.round(normalizedConfidence * 100)}%`;
 };
 
 const openFolderPicker = (): void => {
@@ -297,16 +286,17 @@ const addManualFile = (): void => {
     <div class="panel-heading">
       <div>
         <span class="step-label">01 / Context</span>
-        <h2>上下文资料</h2>
+        <h2>项目上下文</h2>
       </div>
       <ElTag v-if="snapshot" type="success" effect="plain" round>
         <CircleCheck /> 已分析
       </ElTag>
     </div>
 
+    <div class="context-body">
     <section class="context-section">
-      <label class="field-label" for="project-description">背景说明</label>
-      <p class="field-help">补充研究、学习、业务或项目背景，以及必须遵守的偏好与限制。</p>
+      <label class="field-label" for="project-description">自定义项目描述</label>
+      <p class="field-help">描述当前项目、架构偏好或团队约束，不是产品公告。</p>
       <ElInput
         id="project-description"
         v-model="descriptionModel"
@@ -565,153 +555,8 @@ const addManualFile = (): void => {
       </div>
     </details>
 
-    <section v-if="snapshot" class="analysis-result">
-      <div class="analysis-title">
-        <span class="analysis-title-main">
-          <Search />
-          <span>识别结果</span>
-        </span>
-        <ElTag class="analysis-mode-tag" size="small" effect="plain" round>
-          {{ contextPresentation?.modeLabel }}
-        </ElTag>
-      </div>
-
-      <div
-        v-if="snapshot.fileCoverage?.length"
-        class="analysis-coverage"
-        :class="`is-${(snapshot.analysisStatus ?? 'complete').toLowerCase()}`"
-      >
-        <strong>
-          {{ snapshot.analysisStatus === 'COMPLETE' ? '文件解析完整' : '部分内容需要留意' }}
-        </strong>
-        <span>
-          已检查 {{ snapshot.fileCoverage.length }} 个文件；模型请求只使用相关片段，不代表源文件未完整索引。
-        </span>
-        <details>
-          <summary>查看解析与选取范围</summary>
-          <ul>
-            <li v-for="coverage in snapshot.fileCoverage" :key="coverage.path">
-              <span :title="coverage.path">{{ coverage.path }}</span>
-              <small>
-                {{ coverage.extractionStatus }} · 已提取 {{ coverage.extractedCharacters.toLocaleString('zh-CN') }} 字符 ·
-                本次选取 {{ coverage.selectedChunks }}/{{ coverage.indexedChunks }} 段
-              </small>
-            </li>
-          </ul>
-        </details>
-      </div>
-
-      <template v-if="isCodeProject && contextPresentation">
-        <section class="project-overview-card">
-          <h3>项目概要</h3>
-          <p>{{ contextPresentation.overview }}</p>
-        </section>
-
-        <section v-if="snapshot.technologyStack.length" class="project-result-section">
-          <div class="result-section-heading">
-            <span>技术栈</span>
-            <span>{{ snapshot.technologyStack.length }} 项</span>
-          </div>
-          <div class="technology-list">
-            <article
-              v-for="item in snapshot.technologyStack"
-              :key="`${item.name}-${item.source}`"
-              class="technology-item"
-            >
-              <div class="technology-heading">
-                <ElTag effect="plain" round>{{ item.name }}</ElTag>
-                <span>{{ formatConfidence(item.confidence) }}</span>
-              </div>
-              <p :title="item.source">来源：{{ item.source }}</p>
-            </article>
-          </div>
-        </section>
-
-        <section v-if="contextPresentation.modules.length" class="project-result-section">
-          <div class="result-section-heading">
-            <span>功能模块</span>
-            <span>{{ contextPresentation.modules.length }} 个</span>
-          </div>
-          <ElScrollbar max-height="260px" always>
-            <ul class="module-summary-list">
-              <li
-                v-for="module in contextPresentation.modules"
-                :key="module.id"
-                class="module-summary-item"
-              >
-                <div class="module-summary-heading">
-                  <strong>{{ module.name }}</strong>
-                  <span>{{ module.sourceFileCount }} 个来源文件</span>
-                </div>
-                <code :title="module.path">{{ module.path }}</code>
-                <p>{{ module.description }}</p>
-              </li>
-            </ul>
-          </ElScrollbar>
-        </section>
-
-        <details v-if="snapshot.dependencies.length" class="project-result-details">
-          <summary>
-            <span>依赖信息</span>
-            <span>{{ snapshot.dependencies.length }} 项</span>
-          </summary>
-          <ElScrollbar max-height="180px" always>
-            <ul class="compact-result-list">
-              <li
-                v-for="dependency in snapshot.dependencies"
-                :key="`${dependency.ecosystem}-${dependency.name}-${dependency.source}`"
-              >
-                <strong>{{ dependency.name }}</strong>
-                <span>
-                  {{ dependency.ecosystem }}{{ dependency.version ? ` · ${dependency.version}` : '' }}
-                </span>
-              </li>
-            </ul>
-          </ElScrollbar>
-        </details>
-
-        <details v-if="snapshot.directoryTree.length" class="project-result-details">
-          <summary>
-            <span>目录结构</span>
-            <span>{{ snapshot.directoryTree.length }} 个节点</span>
-          </summary>
-          <ElScrollbar max-height="180px" always>
-            <ul class="directory-result-list">
-              <li v-for="path in snapshot.directoryTree" :key="path">{{ path }}</li>
-            </ul>
-          </ElScrollbar>
-        </details>
-      </template>
-
-      <div v-if="snapshot.fileSnippets.length" class="file-summary-section">
-        <div class="file-summary-heading">
-          <span>{{ isCodeProject ? '代码文件摘要' : '文件内容概要' }}</span>
-          <span>{{ snapshot.fileSnippets.length }} 个文件</span>
-        </div>
-        <ElScrollbar max-height="320px" always>
-          <ul class="file-summary-list">
-            <li
-              v-for="snippet in snapshot.fileSnippets"
-              :key="snippet.path"
-              class="file-summary-item"
-            >
-              <div class="file-summary-meta">
-                <strong :title="snippet.path">{{ snippet.path }}</strong>
-                <ElTag size="small" effect="plain">{{ snippet.language }}</ElTag>
-              </div>
-              <p>{{ snippet.summary || '未提取到可概括的文本内容。' }}</p>
-              <span v-if="snippet.truncated" class="truncated-hint">内容已按当前分析预算截断</span>
-            </li>
-          </ul>
-        </ElScrollbar>
-      </div>
-      <p v-else class="analysis-empty">当前没有可展示的文件内容摘要。</p>
-
-      <p v-if="isCodeProject" class="analysis-meta">
-        {{ snapshot.dependencies.length }} 个依赖 ·
-        {{ snapshot.directoryTree.length }} 个目录节点
-      </p>
-    </section>
+    <ContextAnalysisSummary v-if="snapshot" :snapshot="snapshot" />
+    </div>
 
     <ElButton
       class="analyze-button"
@@ -727,14 +572,30 @@ const addManualFile = (): void => {
 
 <style scoped>
 .context-panel {
-  position: sticky;
-  top: 108px;
-  align-self: start;
-  padding: 20px;
-  border: 1px solid var(--line-subtle);
-  border-radius: var(--radius-large);
-  background: var(--surface-panel);
-  box-shadow: var(--shadow-panel);
+  position: relative;
+  top: auto;
+  display: flex;
+  min-height: 0;
+  height: 100%;
+  align-self: stretch;
+  flex-direction: column;
+  padding: 20px 16px 16px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  background: var(--glass-bg);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(16px) saturate(1.25);
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+}
+
+.context-body {
+  min-height: 0;
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 2px;
+  scrollbar-gutter: stable;
 }
 
 .panel-heading,
@@ -745,8 +606,12 @@ const addManualFile = (): void => {
   gap: 16px;
 }
 
+.panel-heading {
+  flex: 0 0 auto;
+}
+
 .step-label {
-  color: var(--accent-blue);
+  color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.12em;
@@ -754,11 +619,11 @@ const addManualFile = (): void => {
 }
 
 h2 {
-  margin: 6px 0 0;
-  color: var(--ink-strong);
+  margin: 8px 0 0;
+  color: var(--text-primary);
   font-family: var(--font-display);
-  font-size: 23px;
-  letter-spacing: -0.04em;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .panel-heading :deep(.el-tag) {
@@ -770,19 +635,19 @@ h2 {
 }
 
 .context-section {
-  margin-top: 26px;
+  margin-top: 24px;
 }
 
 .field-label {
   display: block;
-  color: var(--ink-strong);
+  color: var(--text-primary);
   font-size: 13px;
   font-weight: 600;
 }
 
 .field-help {
   margin: 6px 0 11px;
-  color: var(--ink-soft);
+  color: var(--text-muted);
   font-size: 12px;
   line-height: 1.65;
 }
@@ -793,18 +658,18 @@ h2 {
   width: 100%;
   gap: 14px;
   padding: 16px;
-  border: 1px dashed var(--line-strong);
-  border-radius: 10px;
-  color: var(--ink-muted);
+  border: 1px dashed var(--glass-border);
+  border-radius: 14px;
+  color: var(--text-secondary);
   text-align: left;
-  background: var(--surface-code);
+  background: var(--glass-bg-subtle);
   cursor: pointer;
   transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
 .folder-dropzone:hover {
-  border-color: var(--accent-blue);
-  background: rgba(111, 124, 255, 0.08);
+  border-color: var(--accent);
+  background: var(--accent-soft);
   transform: translateY(-1px);
 }
 
@@ -825,8 +690,8 @@ h2 {
   height: 38px;
   place-items: center;
   border-radius: 9px;
-  color: var(--accent-blue);
-  background: rgba(111, 124, 255, 0.12);
+  color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .dropzone-icon svg {
@@ -844,7 +709,7 @@ h2 {
 }
 
 .folder-dropzone strong {
-  color: var(--ink-strong);
+  color: var(--text-primary);
   font-size: 12px;
 }
 
@@ -914,6 +779,16 @@ h2 {
   flex-wrap: wrap;
   gap: 4px;
   min-width: 0;
+}
+
+.unsupported-tags :deep(.el-tag) {
+  height: 20px;
+  padding: 0 7px;
+  border-color: var(--glass-border-subtle);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  background: var(--glass-bg-subtle);
 }
 
 .read-progress :deep(.el-progress__text) {
@@ -1131,6 +1006,12 @@ h2 {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 126px;
   gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .snippet-meta {
+    grid-template-columns: 1fr;
+  }
 }
 
 .analysis-result {
@@ -1512,13 +1393,33 @@ h2 {
 }
 
 .analyze-button {
+  flex: 0 0 auto;
   width: 100%;
-  margin-top: 18px;
+  margin-top: 14px;
 }
 
 @media (max-width: 1080px) {
   .context-panel {
     position: static;
+  }
+}
+
+@media (max-width: 900px) {
+  .context-panel {
+    height: 100%;
+    padding: 16px 14px 14px;
+    overflow: hidden;
+  }
+
+  .context-body {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .folder-dropzone,
+  .document-upload-button,
+  .analyze-button {
+    min-height: 48px;
   }
 }
 </style>

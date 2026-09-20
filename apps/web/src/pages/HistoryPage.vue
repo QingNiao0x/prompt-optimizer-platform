@@ -85,7 +85,7 @@ const loadToWorkbench = async (id: string): Promise<void> => {
     const response = await getHistory(id);
     store.loadFromHistory(response.data);
     ElMessage.success('已载入工作台，可以继续修改后重新增强。');
-    await router.push('/');
+    await router.push('/workbench');
   } catch (error: unknown) {
     ElMessage.error(getApiErrorMessage(error));
   }
@@ -95,7 +95,7 @@ const reoptimize = async (id: string): Promise<void> => {
   try {
     const response = await getHistory(id);
     store.loadFromHistory(response.data);
-    await router.push({ path: '/', query: { plan: '1' } });
+    await router.push({ path: '/workbench', query: { plan: '1' } });
   } catch (error: unknown) {
     ElMessage.error(getApiErrorMessage(error));
   }
@@ -150,7 +150,33 @@ onMounted(loadPage);
       </div>
     </header>
 
-    <div class="history-card">
+    <div v-loading="loading" class="history-card">
+      <p v-if="!loading && items.length === 0" class="history-card-list history-card-list--empty">
+        还没有优化历史
+      </p>
+      <ul v-else-if="items.length" class="history-card-list">
+        <li v-for="row in items" :key="row.id" class="history-mobile-card">
+          <div class="history-mobile-card__meta">
+            <time>{{ formatDate(row.createdAt) }}</time>
+            <ElTag size="small" effect="plain">{{ templateLabel(row.templateCode) }}</ElTag>
+          </div>
+          <p class="history-mobile-card__preview">{{ row.rawPromptPreview }}</p>
+          <span class="history-mobile-card__model">{{ row.providerName }} / {{ row.modelName }}</span>
+          <div class="history-mobile-card__actions">
+            <ElButton text size="small" :icon="View" @click="openDetail(row.id)">查看</ElButton>
+            <ElButton text size="small" :icon="Upload" @click="loadToWorkbench(row.id)">
+              载入
+            </ElButton>
+            <ElButton text size="small" :icon="RefreshRight" @click="reoptimize(row.id)">
+              重新优化
+            </ElButton>
+            <ElButton text size="small" type="danger" :icon="Delete" @click="remove(row.id)">
+              删除
+            </ElButton>
+          </div>
+        </li>
+      </ul>
+
       <ElTable v-loading="loading" :data="items" row-key="id" class="history-table">
         <ElTableColumn label="创建时间" width="150">
           <template #default="{ row }">{{ formatDate(row.createdAt) }}</template>
@@ -308,6 +334,75 @@ h1 {
   justify-content: flex-end;
   padding: 16px 18px 18px;
   border-top: 1px solid var(--line-subtle);
+}
+
+.history-card-list {
+  display: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-card-list--empty {
+  padding: 48px 16px;
+  color: var(--ink-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.history-mobile-card {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-bottom: 1px solid var(--line-subtle);
+}
+
+.history-mobile-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.history-mobile-card__preview {
+  margin: 0;
+  color: var(--ink-strong);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.history-mobile-card__model {
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.history-mobile-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px -8px 0;
+}
+
+@media (max-width: 720px) {
+  .history-table {
+    display: none;
+  }
+
+  .history-card-list {
+    display: grid;
+  }
+
+  .pagination-row {
+    justify-content: center;
+  }
+
+  .pagination-row :deep(.el-pagination) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 
 .detail-body {

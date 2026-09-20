@@ -708,12 +708,28 @@ h1 {
 }
 
 @media (max-width: 560px) {
+  .page-heading,
   .section-heading {
     display: grid;
   }
 
+  .page-heading :deep(.el-button),
+  .section-heading :deep(.el-button) {
+    width: 100%;
+  }
+
   .limit-grid {
     grid-template-columns: 1fr;
+  }
+
+  .provider-settings-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .profile-notes > div {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 </style>
