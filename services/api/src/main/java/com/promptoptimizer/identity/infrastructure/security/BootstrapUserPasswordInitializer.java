@@ -1,7 +1,10 @@
 package com.promptoptimizer.identity.infrastructure.security;
 
+import com.promptoptimizer.identity.domain.UserIdentityKey;
+import com.promptoptimizer.identity.domain.UserIdentityStatus;
 import com.promptoptimizer.identity.infrastructure.persistence.UserAccountEntity;
 import com.promptoptimizer.identity.infrastructure.persistence.UserAccountRepository;
+import com.promptoptimizer.identity.infrastructure.persistence.UserIdentityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Locale;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -28,17 +30,20 @@ public class BootstrapUserPasswordInitializer implements ApplicationRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(BootstrapUserPasswordInitializer.class);
 
     private final UserAccountRepository repository;
+    private final UserIdentityRepository identityRepository;
     private final PasswordEncoder passwordEncoder;
     private final String email;
     private final String password;
 
     public BootstrapUserPasswordInitializer(
             UserAccountRepository repository,
+            UserIdentityRepository identityRepository,
             PasswordEncoder passwordEncoder,
             @Value("${app.security.bootstrap-user.email:demo@local}") String email,
             @Value("${app.security.bootstrap-user.password:}") String password
     ) {
         this.repository = repository;
+        this.identityRepository = identityRepository;
         this.passwordEncoder = passwordEncoder;
         this.email = email;
         this.password = password;
@@ -47,8 +52,22 @@ public class BootstrapUserPasswordInitializer implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments arguments) {
-        String normalizedEmail = email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
-        UserAccountEntity account = repository.findByEmailIgnoreCase(normalizedEmail).orElse(null);
+        UserIdentityKey key;
+        try {
+            key = UserIdentityKey.email(email);
+        } catch (IllegalArgumentException exception) {
+            LOGGER.warn("初始化登录邮箱配置无效，请检查 BOOTSTRAP_USER_EMAIL");
+            return;
+        }
+        UserAccountEntity account = identityRepository
+                .findByIdentityTypeAndIssuerAndNormalizedIdentifierAndStatus(
+                        key.type(),
+                        key.issuer(),
+                        key.normalizedIdentifier(),
+                        UserIdentityStatus.ACTIVE
+                )
+                .flatMap(identity -> repository.findById(identity.getUserId()))
+                .orElse(null);
         if (account == null) {
             LOGGER.warn("未找到初始化登录账户，请先通过受控迁移或后续注册流程创建账户");
             return;

@@ -27,7 +27,8 @@ public class UserAccountEntity {
     @Column(name = "tenant_id", nullable = false)
     private UUID tenantId;
 
-    @Column(name = "email", nullable = false, length = 320)
+    // 兼容当前前端展示的联系邮箱；认证查找已经迁移到 user_identity。
+    @Column(name = "email", length = 320)
     private String email;
 
     @Column(name = "display_name", nullable = false, length = 80)

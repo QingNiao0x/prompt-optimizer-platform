@@ -1,7 +1,11 @@
 package com.promptoptimizer.identity.infrastructure.security;
 
+import com.promptoptimizer.identity.domain.UserIdentityStatus;
+import com.promptoptimizer.identity.domain.UserIdentityType;
 import com.promptoptimizer.identity.infrastructure.persistence.UserAccountEntity;
 import com.promptoptimizer.identity.infrastructure.persistence.UserAccountRepository;
+import com.promptoptimizer.identity.infrastructure.persistence.UserIdentityEntity;
+import com.promptoptimizer.identity.infrastructure.persistence.UserIdentityRepository;
 import com.promptoptimizer.identity.support.TestActors;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +26,7 @@ import static org.mockito.Mockito.*;
 
 class IdentitySecurityTest {
     private final UserAccountRepository repository = mock(UserAccountRepository.class);
+    private final UserIdentityRepository identityRepository = mock(UserIdentityRepository.class);
 
     @AfterEach
     void clearSecurityContext() { SecurityContextHolder.clearContext(); }
@@ -41,10 +46,13 @@ class IdentitySecurityTest {
     @Test
     void databaseIdentityComesFromAccountAndMembershipNotRequestIds() {
         UserAccountEntity account = account();
-        when(repository.findByEmailIgnoreCase("alice@example.com")).thenReturn(Optional.of(account));
+        when(identityRepository.findByIdentityTypeAndIssuerAndNormalizedIdentifierAndStatus(
+                UserIdentityType.EMAIL, "local", "alice@example.com", UserIdentityStatus.ACTIVE
+        )).thenReturn(Optional.of(emailIdentity()));
+        when(repository.findById(TestActors.USER_ID)).thenReturn(Optional.of(account));
         when(repository.findDefaultWorkspaceId(TestActors.USER_ID, TestActors.TENANT_ID))
                 .thenReturn(Optional.of(TestActors.WORKSPACE_ID));
-        DatabaseUserDetailsService service = new DatabaseUserDetailsService(repository);
+        DatabaseUserDetailsService service = new DatabaseUserDetailsService(repository, identityRepository);
         AuthenticatedUser user = (AuthenticatedUser) service.loadUserByUsername(" ALICE@EXAMPLE.COM ");
         assertThat(user.actorIdentity().userId()).isEqualTo(TestActors.USER_ID);
         assertThat(user.actorIdentity().workspaceId()).isEqualTo(TestActors.WORKSPACE_ID);
@@ -57,12 +65,22 @@ class IdentitySecurityTest {
     }
 
     @Test
+    void databaseIdentityRejectsUnknownOrRevokedIdentityBeforeLoadingAccount() {
+        DatabaseUserDetailsService service = new DatabaseUserDetailsService(repository, identityRepository);
+
+        assertThatThrownBy(() -> service.loadUserByUsername("revoked@example.com"))
+                .isInstanceOf(UsernameNotFoundException.class);
+        verifyNoInteractions(repository);
+    }
+
+    @Test
     void bootstrapNeverOverwritesExistingPasswordAndHashesOnlyOnce() {
         UserAccountEntity account = account();
-        when(repository.findByEmailIgnoreCase("alice@example.com")).thenReturn(Optional.of(account));
+        stubEmailIdentity(account);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(4);
-        BootstrapUserPasswordInitializer initializer = new BootstrapUserPasswordInitializer(repository, encoder,
-                "alice@example.com", "test-only-password");
+        BootstrapUserPasswordInitializer initializer = new BootstrapUserPasswordInitializer(
+                repository, identityRepository, encoder, "alice@example.com", "test-only-password"
+        );
         initializer.run(null);
         verify(repository, never()).save(any());
         account.setPasswordHash(null);
@@ -76,9 +94,9 @@ class IdentitySecurityTest {
     void bootstrapRejectsPasswordThatBcryptWouldTruncate() {
         UserAccountEntity account = account();
         account.setPasswordHash(null);
-        when(repository.findByEmailIgnoreCase("alice@example.com")).thenReturn(Optional.of(account));
+        stubEmailIdentity(account);
         BootstrapUserPasswordInitializer initializer = new BootstrapUserPasswordInitializer(repository,
-                new BCryptPasswordEncoder(4), "alice@example.com", "密".repeat(25));
+                identityRepository, new BCryptPasswordEncoder(4), "alice@example.com", "密".repeat(25));
         assertThatThrownBy(() -> initializer.run(null)).isInstanceOf(IllegalStateException.class);
         verify(repository, never()).save(any());
     }
@@ -92,5 +110,24 @@ class IdentitySecurityTest {
         account.setPasswordHash("already-configured");
         account.setStatus("ACTIVE");
         return account;
+    }
+
+    private UserIdentityEntity emailIdentity() {
+        UserIdentityEntity identity = new UserIdentityEntity();
+        identity.setId(TestActors.USER_ID);
+        identity.setUserId(TestActors.USER_ID);
+        identity.setIdentityType(UserIdentityType.EMAIL);
+        identity.setIssuer("local");
+        identity.setIdentifier("alice@example.com");
+        identity.setNormalizedIdentifier("alice@example.com");
+        identity.setStatus(UserIdentityStatus.ACTIVE);
+        return identity;
+    }
+
+    private void stubEmailIdentity(UserAccountEntity account) {
+        when(identityRepository.findByIdentityTypeAndIssuerAndNormalizedIdentifierAndStatus(
+                UserIdentityType.EMAIL, "local", "alice@example.com", UserIdentityStatus.ACTIVE
+        )).thenReturn(Optional.of(emailIdentity()));
+        when(repository.findById(TestActors.USER_ID)).thenReturn(Optional.of(account));
     }
 }

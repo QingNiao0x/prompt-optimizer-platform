@@ -15,8 +15,6 @@ import java.util.UUID;
  */
 public interface UserAccountRepository extends JpaRepository<UserAccountEntity, UUID> {
 
-    Optional<UserAccountEntity> findByEmailIgnoreCase(String email);
-
     /**
      * 当前只开放个人所有者工作区；团队角色授权上线前不把 EDITOR/VIEWER 当成所有者。
      */

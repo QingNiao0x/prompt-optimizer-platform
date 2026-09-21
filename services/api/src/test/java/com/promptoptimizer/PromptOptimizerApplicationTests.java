@@ -20,6 +20,9 @@ class PromptOptimizerApplicationTests {
     @MockBean
     private com.promptoptimizer.identity.infrastructure.persistence.UserAccountRepository userAccountRepository;
 
+    @MockBean
+    private com.promptoptimizer.identity.infrastructure.persistence.UserIdentityRepository userIdentityRepository;
+
     @Test
     void contextLoads() {
     }

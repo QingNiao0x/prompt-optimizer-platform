@@ -1,6 +1,6 @@
 # 最小认证与 Plan 会话所有权
 
-本轮实现邮箱密码登录、退出、当前用户读取，以及 `contextId` / `planId` 的服务端所有权绑定。没有实现公开注册、微信登录、找回密码、团队邀请或角色管理后台。
+当前已实现邮箱密码登录、退出、当前用户读取，以及 `contextId` / `planId` 的服务端所有权绑定。登录标识已从账户资料中拆分为通用 `user_identity` 模型，但还没有实现公开注册、手机号验证码、微信 OAuth、找回密码、团队邀请或角色管理后台。
 
 ## 1. 为什么目前不需要复杂权限系统
 
@@ -13,18 +13,18 @@
 ## 2. 认证链路
 
 ```text
-邮箱密码 → Spring Security / BCrypt → 服务端 HttpSession
-                                      ↓
-                             SecurityContextCurrentActor
-                                      ↓
-                    ActorIdentity(userId, tenantId, workspaceId)
-                                      ↓
-                    PlanningSessionService 所有权与版本校验
+邮箱 → user_identity(EMAIL / local) → user_account → BCrypt → 服务端 HttpSession
+                                                              ↓
+                                                     SecurityContextCurrentActor
+                                                              ↓
+                                            ActorIdentity(userId, tenantId, workspaceId)
+                                                              ↓
+                                            PlanningSessionService 所有权与版本校验
 ```
 
 - `identity/application/CurrentActor.java`：唯一业务身份入口，`require()` 没有匿名降级身份。
 - `identity/infrastructure/security/SecurityContextCurrentActor.java`：只接受已认证的 `AuthenticatedUser`，不信任请求中的 `userId`、`tenantId` 或自定义身份请求头。
-- `DatabaseUserDetailsService`：按规范化邮箱查账户，并从数据库成员关系选择工作区；无密码、锁定、禁用账户不能登录。
+- `DatabaseUserDetailsService`：先按规范化邮箱查找有效身份，再用稳定 `userId` 加载账户和默认工作区；无密码、锁定、禁用账户不能登录。
 - `AuthenticationService`：校验密码后轮换已有 Session ID，显式保存 SecurityContext；退出时使当前 Session 失效。
 - `SecurityConfiguration`：除登录、CSRF 初始化和健康检查外，API 必须登录；写请求还必须通过 CSRF 校验。
 
@@ -39,7 +39,7 @@
 1. 启动现有 PostgreSQL / Redis 基础设施。
 2. 在启动后端的进程环境中设置 `BOOTSTRAP_USER_PASSWORD`；不要把真实密码提交到 Git。
 3. 默认初始化邮箱为 `demo@local`，对应 V3 已有的种子账户。`BOOTSTRAP_USER_EMAIL` 只能选择已存在账户，不会自动创建任意邮箱。
-4. 启动后端。Flyway V4 为邮箱增加全局忽略大小写唯一约束，确保无需客户端提供租户 ID 就能确定登录身份。
+4. 启动后端。Flyway V5 创建 `user_identity`、迁移已有邮箱身份，并把身份唯一性从 `user_account.email` 转移到身份表。
 5. 初始化器仅在账户没有密码哈希时写入密码。再次设置环境变量不会覆盖既有密码，也不是重置密码接口。
 6. 前端点击“登录”，输入邮箱和设置的密码；访问工作台、历史或设置时也会先要求登录。
 
@@ -53,7 +53,34 @@ mvn.cmd spring-boot:run
 
 这里的 `-MaskInput` 需要 PowerShell 7；其他终端请使用 IDE 的受控环境配置。首次写入成功后可从运行配置中移除初始化密码。账户缺失或未配置密码会记录不含密码的提醒，不会生成通用默认密码。
 
-如果历史数据库已经存在跨租户重复邮箱，V4 会失败而不是任意选择一个用户。应先审计并明确处理重复账户，不要自动删除或合并用户。
+如果历史数据库曾经存在跨租户重复邮箱，V4 已经会失败而不是任意选择一个用户；V5 因此可以安全地为每个已有账户创建唯一邮箱身份。应先审计并明确处理重复账户，不要自动删除或合并用户。
+
+### 通用登录身份模型
+
+`user_account.id` 仍是业务授权和资源所有权使用的稳定用户标识；邮箱、手机号和微信都只是找到该用户的登录身份。一个用户可以绑定多条身份，但同一个身份不能同时属于两个用户：
+
+```text
+user_account
+  └── user_identity
+        ├── EMAIL  / issuer=local / normalized_identifier=小写邮箱
+        ├── PHONE  / issuer=local / normalized_identifier=E.164 手机号
+        └── WECHAT / issuer=AppID / normalized_identifier=UnionID 或应用内 OpenID
+```
+
+身份表的重要字段：
+
+| 字段 | 规则 |
+| --- | --- |
+| `identity_type` | 当前只允许 `EMAIL`、`PHONE`、`WECHAT` |
+| `issuer` | 本地身份使用 `local`；微信身份使用实际开放平台应用标识，避免不同应用的 OpenID 冲突 |
+| `identifier` | 身份标识的标准展示值，不保存 access token、验证码或 AppSecret |
+| `normalized_identifier` | 登录查找和唯一约束使用的值；邮箱转小写，手机号必须先转 E.164，微信标识保持大小写 |
+| `status` | `ACTIVE` 身份可用于认证，`REVOKED` 身份不可登录 |
+| `verified_at` | 记录完成邮箱、短信或第三方授权验证的时间；历史种子账户迁移时为空 |
+
+唯一索引覆盖 `(identity_type, issuer, normalized_identifier)`。这意味着同一邮箱或手机号不能注册两个平台用户，同一微信应用下的同一微信身份也不能重复绑定。`user_account.email` 暂时作为当前 API 的联系邮箱兼容字段保留，但已经允许为空，也不再承担认证唯一性；新增注册流程必须同时写入账户和身份，不能只写该兼容字段。
+
+`UserIdentityKey` 集中定义身份规范化：邮箱去除首尾空白并转小写，手机号拒绝非 E.164 值，微信的签发方和用户标识去除首尾空白但保留大小写。后续绑定接口仍必须先完成验证码或 OAuth 回调验证，再持久化身份；仓库层没有对外暴露“未经验证直接绑定”的 HTTP 接口。
 
 ### 无数据库 local-mock 模式
 
@@ -121,7 +148,8 @@ npm.cmd run test:e2e
 ```
 
 - `AuthenticationIntegrationTest`：实际 BCrypt 认证、Session 轮换、凭据擦除、CSRF、退出、伪造身份、两个同工作区账号的 Plan 越权拒绝，以及同账号重新登录后可继续使用。
-- `IdentitySecurityTest`：身份来源、账户/工作区缺失、初始化幂等、超长密码拒绝。
+- `IdentitySecurityTest`：通过身份表加载账户、账户/工作区缺失、初始化幂等、超长密码拒绝。
+- `UserIdentityKeyTest`：邮箱、E.164 手机号、微信签发方与第三方主体的规范化边界。
 - `PlanningSessionServiceTest`：所有者、需求、版本、TTL、注册和快照复用边界。
 - 原有 Controller 契约测试加载真实安全过滤链，显式提供测试身份和 CSRF，没有禁用过滤器。
 - 前端 auth store / Playwright：匿名路由、错误密码重试、刷新、退出、后端不可用，以及现有工作台流程。

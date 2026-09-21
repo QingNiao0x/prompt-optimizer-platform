@@ -1,7 +1,11 @@
 package com.promptoptimizer.identity.infrastructure.security;
 
+import com.promptoptimizer.identity.domain.UserIdentityKey;
+import com.promptoptimizer.identity.domain.UserIdentityStatus;
 import com.promptoptimizer.identity.infrastructure.persistence.UserAccountEntity;
 import com.promptoptimizer.identity.infrastructure.persistence.UserAccountRepository;
+import com.promptoptimizer.identity.infrastructure.persistence.UserIdentityEntity;
+import com.promptoptimizer.identity.infrastructure.persistence.UserIdentityRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -25,16 +28,34 @@ import java.util.UUID;
 public class DatabaseUserDetailsService implements UserDetailsService {
 
     private final UserAccountRepository repository;
+    private final UserIdentityRepository identityRepository;
 
-    public DatabaseUserDetailsService(UserAccountRepository repository) {
+    public DatabaseUserDetailsService(
+            UserAccountRepository repository,
+            UserIdentityRepository identityRepository
+    ) {
         this.repository = repository;
+        this.identityRepository = identityRepository;
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        String email = normalizeEmail(username);
-        UserAccountEntity account = repository.findByEmailIgnoreCase(email)
+        UserIdentityKey key;
+        try {
+            key = UserIdentityKey.email(username);
+        } catch (IllegalArgumentException exception) {
+            throw notFound();
+        }
+        UserIdentityEntity identity = identityRepository
+                .findByIdentityTypeAndIssuerAndNormalizedIdentifierAndStatus(
+                        key.type(),
+                        key.issuer(),
+                        key.normalizedIdentifier(),
+                        UserIdentityStatus.ACTIVE
+                )
+                .orElseThrow(this::notFound);
+        UserAccountEntity account = repository.findById(identity.getUserId())
                 .orElseThrow(this::notFound);
         if (account.getPasswordHash() == null || account.getPasswordHash().isBlank()) {
             throw notFound();
@@ -51,10 +72,6 @@ public class DatabaseUserDetailsService implements UserDetailsService {
                 account.getStatus(),
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
-    }
-
-    private String normalizeEmail(String email) {
-        return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
     }
 
     private UsernameNotFoundException notFound() {
