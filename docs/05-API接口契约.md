@@ -12,7 +12,7 @@
 
 ### 当前认证约定
 
-业务 API 必须登录；浏览器使用 HttpOnly Session Cookie。先调用 `GET /api/v1/auth/csrf`，再用 `email`、`password` 调用 `POST /api/v1/auth/login`；写请求将 `XSRF-TOKEN` Cookie 的值通过 `X-XSRF-TOKEN` 请求头回传。`GET /api/v1/auth/me` 读取当前身份，`POST /api/v1/auth/logout` 退出。健康检查和 CSRF 初始化可匿名访问，登录本身也必须校验 CSRF。
+业务 API 必须登录；浏览器使用 HttpOnly Session Cookie。先调用 `GET /api/v1/auth/csrf`，再用 `email`、`password` 调用 `POST /api/v1/auth/login`；邮箱注册先调用 `POST /api/v1/auth/registration-code`，再向 `POST /api/v1/auth/register` 提交 `email`、`verificationCode` 和 `password`。注册成功会直接建立登录 Session。所有写请求都将 `XSRF-TOKEN` Cookie 的值通过 `X-XSRF-TOKEN` 请求头回传。`GET /api/v1/auth/me` 读取当前身份，`POST /api/v1/auth/logout` 退出。健康检查、CSRF 初始化、登录和注册接口可匿名访问，但写接口仍必须校验 CSRF。
 
 `contextId` 和 `planId` 只能由创建它们的用户使用。跨用户引用与不存在/过期使用相同错误；不能将前端回传的 ID 视为授权。完整配置和错误约定见[最小认证与 Plan 会话所有权](./development/最小认证与Plan会话所有权.md)。
 

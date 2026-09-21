@@ -3,10 +3,12 @@ package com.promptoptimizer.common.exception;
 import com.promptoptimizer.common.api.ApiError;
 import com.promptoptimizer.common.api.ApiErrorResponse;
 import com.promptoptimizer.context.application.DocumentUploadException;
+import com.promptoptimizer.identity.application.RegistrationException;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
@@ -26,6 +28,32 @@ import java.util.Map;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    /** 将注册冲突、验证码错误和限流结果映射为稳定的公开错误。 */
+    @ExceptionHandler(RegistrationException.class)
+    public ResponseEntity<ApiErrorResponse> handleRegistrationException(
+            RegistrationException exception,
+            HttpServletRequest request
+    ) {
+        RegistrationErrorMapping mapping = mapRegistrationError(exception.getReason());
+        Map<String, Object> details = exception.getRetryAfterSeconds() > 0
+                ? Map.of("retryAfterSeconds", exception.getRetryAfterSeconds())
+                : Map.of();
+        ResponseEntity.BodyBuilder response = ResponseEntity.status(mapping.status());
+        if (exception.getRetryAfterSeconds() > 0) {
+            response.header(HttpHeaders.RETRY_AFTER, Long.toString(exception.getRetryAfterSeconds()));
+        }
+        String requestId = (String) request.getAttribute(
+                com.promptoptimizer.common.web.RequestIdFilter.REQUEST_ID_ATTRIBUTE
+        );
+        ApiError error = new ApiError(
+                mapping.code(),
+                exception.getMessage(),
+                mapping.retryable(),
+                details
+        );
+        return response.body(new ApiErrorResponse(requestId, error));
+    }
 
     /**
      * 登录接口中的认证失败统一返回模糊提示，避免泄露账户是否存在或被锁定。
@@ -265,9 +293,47 @@ public class GlobalExceptionHandler {
         };
     }
 
+    private RegistrationErrorMapping mapRegistrationError(RegistrationException.Reason reason) {
+        return switch (reason) {
+            case EMAIL_ALREADY_REGISTERED -> new RegistrationErrorMapping(
+                    HttpStatus.CONFLICT, "EMAIL_ALREADY_REGISTERED", false
+            );
+            case RESEND_TOO_SOON -> new RegistrationErrorMapping(
+                    HttpStatus.TOO_MANY_REQUESTS, "VERIFICATION_CODE_RESEND_TOO_SOON", true
+            );
+            case EMAIL_RATE_LIMITED -> new RegistrationErrorMapping(
+                    HttpStatus.TOO_MANY_REQUESTS, "EMAIL_RATE_LIMITED", true
+            );
+            case IP_RATE_LIMITED -> new RegistrationErrorMapping(
+                    HttpStatus.TOO_MANY_REQUESTS, "IP_RATE_LIMITED", true
+            );
+            case CODE_INVALID -> new RegistrationErrorMapping(
+                    HttpStatus.BAD_REQUEST, "VERIFICATION_CODE_INVALID", false
+            );
+            case CODE_EXPIRED -> new RegistrationErrorMapping(
+                    HttpStatus.BAD_REQUEST, "VERIFICATION_CODE_EXPIRED", false
+            );
+            case CODE_ATTEMPTS_EXHAUSTED -> new RegistrationErrorMapping(
+                    HttpStatus.BAD_REQUEST, "VERIFICATION_CODE_ATTEMPTS_EXHAUSTED", false
+            );
+            case PASSWORD_INVALID -> new RegistrationErrorMapping(
+                    HttpStatus.BAD_REQUEST, "PASSWORD_INVALID", false
+            );
+            case DELIVERY_UNAVAILABLE -> new RegistrationErrorMapping(
+                    HttpStatus.SERVICE_UNAVAILABLE, "EMAIL_DELIVERY_UNAVAILABLE", true
+            );
+            case SERVICE_UNAVAILABLE -> new RegistrationErrorMapping(
+                    HttpStatus.SERVICE_UNAVAILABLE, "REGISTRATION_SERVICE_UNAVAILABLE", true
+            );
+        };
+    }
+
     /**
      * Provider 错误映射的内部载体。
      */
     private record ProviderErrorMapping(HttpStatus status, String code, String message) {
+    }
+
+    private record RegistrationErrorMapping(HttpStatus status, String code, boolean retryable) {
     }
 }

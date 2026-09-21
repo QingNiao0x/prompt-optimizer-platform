@@ -4,6 +4,9 @@ import type {
   ApiResponse,
   AuthenticatedUser,
   CsrfTokenMetadata,
+  EmailRegistrationCodePayload,
+  EmailRegistrationCodeStatus,
+  EmailRegistrationPayload,
   LoginPayload,
 } from '@/types/api';
 
@@ -19,6 +22,28 @@ export const login = async (
   await initializeCsrf();
   const response = await httpClient.post<ApiResponse<AuthenticatedUser>>(
     '/api/v1/auth/login',
+    payload,
+  );
+  return response.data;
+};
+
+export const requestRegistrationCode = async (
+  payload: EmailRegistrationCodePayload,
+): Promise<ApiResponse<EmailRegistrationCodeStatus>> => {
+  await initializeCsrf();
+  const response = await httpClient.post<ApiResponse<EmailRegistrationCodeStatus>>(
+    '/api/v1/auth/registration-code',
+    payload,
+  );
+  return response.data;
+};
+
+export const register = async (
+  payload: EmailRegistrationPayload,
+): Promise<ApiResponse<AuthenticatedUser>> => {
+  await initializeCsrf();
+  const response = await httpClient.post<ApiResponse<AuthenticatedUser>>(
+    '/api/v1/auth/register',
     payload,
   );
   return response.data;

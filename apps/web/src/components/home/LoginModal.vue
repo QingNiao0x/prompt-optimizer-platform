@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onScopeDispose, ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { getApiErrorMessage } from '@/services/http';
+import { requestRegistrationCode } from '@/services/authApi';
 
 export type AuthModalMode = 'login' | 'register';
 type AuthView = 'qr' | 'password' | 'register';
@@ -22,9 +23,24 @@ const view = ref<AuthView>(props.mode === 'register' ? 'register' : 'password');
 const auth = useAuthStore();
 const submitting = ref(false);
 const errorMessage = ref('');
+const statusMessage = ref('');
 const account = ref('');
 const password = ref('');
 const confirmPassword = ref('');
+const verificationCode = ref('');
+const agreementAccepted = ref(false);
+const requestingCode = ref(false);
+const resendAfterSeconds = ref(0);
+const accountInput = ref<HTMLInputElement>();
+let resendTimer: number | undefined;
+
+const canSubmitRegistration = computed((): boolean => (
+  account.value.trim().length > 0
+  && /^\d{6}$/.test(verificationCode.value)
+  && password.value.length >= 12
+  && password.value === confirmPassword.value
+  && agreementAccepted.value
+));
 
 const title = computed((): string => {
   if (view.value === 'register') {
@@ -34,16 +50,40 @@ const title = computed((): string => {
 });
 
 const close = (): void => {
+  stopResendTimer();
   password.value = '';
   confirmPassword.value = '';
   emit('update:modelValue', false);
 };
 
 const resetFields = (): void => {
+  stopResendTimer();
   account.value = '';
   password.value = '';
   confirmPassword.value = '';
+  verificationCode.value = '';
+  agreementAccepted.value = false;
   errorMessage.value = '';
+  statusMessage.value = '';
+};
+
+function stopResendTimer(): void {
+  if (resendTimer !== undefined) {
+    window.clearInterval(resendTimer);
+    resendTimer = undefined;
+  }
+  resendAfterSeconds.value = 0;
+}
+
+const startResendTimer = (seconds: number): void => {
+  stopResendTimer();
+  resendAfterSeconds.value = Math.max(1, Math.ceil(seconds));
+  resendTimer = window.setInterval(() => {
+    resendAfterSeconds.value -= 1;
+    if (resendAfterSeconds.value <= 0) {
+      stopResendTimer();
+    }
+  }, 1_000);
 };
 
 const syncView = (): void => {
@@ -58,15 +98,52 @@ watch(() => props.modelValue, (open) => {
   }
 });
 
+onScopeDispose(stopResendTimer);
+
+const handleRequestCode = async (): Promise<void> => {
+  if (requestingCode.value || resendAfterSeconds.value > 0) {
+    return;
+  }
+  if (!accountInput.value?.reportValidity()) {
+    return;
+  }
+  requestingCode.value = true;
+  errorMessage.value = '';
+  statusMessage.value = '';
+  try {
+    const response = await requestRegistrationCode({ email: account.value.trim() });
+    startResendTimer(response.data.resendAfterSeconds);
+    statusMessage.value = `验证码已发送，${Math.ceil(response.data.expiresInSeconds / 60)} 分钟内有效。`;
+  } catch (error: unknown) {
+    errorMessage.value = getApiErrorMessage(error);
+  } finally {
+    requestingCode.value = false;
+  }
+};
+
 const handleSubmit = async (event: Event): Promise<void> => {
   event.preventDefault();
-  if (view.value !== 'password' || submitting.value) {
+  if (submitting.value || view.value === 'qr') {
     return;
+  }
+  if (view.value === 'register') {
+    if (!canSubmitRegistration.value) {
+      errorMessage.value = '请填写有效验证码、至少 12 位且一致的密码，并同意用户协议与隐私政策。';
+      return;
+    }
   }
   submitting.value = true;
   errorMessage.value = '';
   try {
-    await auth.login({ email: account.value.trim(), password: password.value });
+    if (view.value === 'register') {
+      await auth.register({
+        email: account.value.trim(),
+        verificationCode: verificationCode.value,
+        password: password.value,
+      });
+    } else {
+      await auth.login({ email: account.value.trim(), password: password.value });
+    }
     // 新身份始终从干净的应用内存开始，不复用另一账号的计划和文件。
     window.location.replace('/workbench');
   } catch (error: unknown) {
@@ -142,16 +219,40 @@ const handleSubmit = async (event: Event): Promise<void> => {
         >
           <form class="login-modal__form" @submit="handleSubmit">
             <label>
-              {{ view === 'register' ? '手机号或邮箱' : '邮箱' }}
+              邮箱
               <input
+                ref="accountInput"
                 v-model="account"
-                :type="view === 'register' ? 'text' : 'email'"
+                type="email"
                 required
                 maxlength="320"
                 name="account"
                 autocomplete="username"
-                :placeholder="view === 'register' ? '请输入手机号或邮箱地址' : '请输入邮箱'"
+                placeholder="请输入邮箱"
               >
+            </label>
+            <label v-if="view === 'register'">
+              邮箱验证码
+              <span class="login-modal__code-row">
+                <input
+                  v-model="verificationCode"
+                  type="text"
+                  required
+                  inputmode="numeric"
+                  pattern="[0-9]{6}"
+                  maxlength="6"
+                  name="verificationCode"
+                  autocomplete="one-time-code"
+                  placeholder="请输入 6 位验证码"
+                >
+                <button
+                  type="button"
+                  :disabled="requestingCode || resendAfterSeconds > 0"
+                  @click="handleRequestCode"
+                >
+                  {{ requestingCode ? '发送中…' : resendAfterSeconds > 0 ? `${resendAfterSeconds} 秒后重发` : '获取验证码' }}
+                </button>
+              </span>
             </label>
             <label>
               密码
@@ -159,6 +260,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
                 v-model="password"
                 type="password"
                 required
+                :minlength="view === 'register' ? 12 : undefined"
                 maxlength="200"
                 name="password"
                 :autocomplete="view === 'register' ? 'new-password' : 'current-password'"
@@ -178,7 +280,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
               >
             </label>
             <label v-if="view === 'register'" class="login-modal__agreement">
-              <input type="checkbox" required>
+              <input v-model="agreementAccepted" type="checkbox" required>
               <span>
                 我已阅读并同意
                 <strong>用户协议</strong>
@@ -187,15 +289,16 @@ const handleSubmit = async (event: Event): Promise<void> => {
               </span>
             </label>
             <p v-if="errorMessage" role="alert">{{ errorMessage }}</p>
+            <p v-if="statusMessage" class="login-modal__status" role="status">{{ statusMessage }}</p>
             <button
               class="login-modal__submit"
               type="submit"
-              :disabled="submitting || view === 'register'"
+              :disabled="submitting || (view === 'register' && !canSubmitRegistration)"
             >
-              {{ view === 'register' ? '创建账号' : submitting ? '登录中…' : '登录' }}
+              {{ submitting ? (view === 'register' ? '创建中…' : '登录中…') : view === 'register' ? '创建账号' : '登录' }}
             </button>
             <small v-if="view === 'register'" id="register-preview-note">
-              当前仅完成注册界面，手机号、邮箱注册接口将在下一步接入。
+              验证码 5 分钟内有效，60 秒后可重发；密码至少 12 个字符。
             </small>
             <small v-else>请使用管理员配置的邮箱和密码登录。</small>
           </form>
@@ -413,6 +516,37 @@ h2 {
 .login-modal__form input:focus-visible {
   border-color: var(--accent);
   outline: 3px solid var(--accent-soft);
+}
+
+.login-modal__code-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.login-modal__code-row button {
+  min-width: 112px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  font-weight: 600;
+  background: var(--glass-bg);
+  cursor: pointer;
+}
+
+.login-modal__code-row button:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.login-modal__form > p {
+  margin: 0;
+  color: var(--danger, #d14343);
+  font-size: 12px;
+}
+
+.login-modal__form > .login-modal__status {
+  color: var(--text-secondary);
 }
 
 .login-modal__form .login-modal__agreement {

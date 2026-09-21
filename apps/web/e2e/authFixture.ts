@@ -14,6 +14,19 @@ export const mockAuthentication = async (page: Page, initiallyAuthenticated = tr
     const path = new URL(route.request().url()).pathname;
     if (path.endsWith('/csrf')) {
       await route.fulfill({ status: 200, json: { data: { token: 'test-csrf' } } });
+    } else if (path.endsWith('/registration-code')) {
+      await route.fulfill({
+        status: 200,
+        json: { data: { resendAfterSeconds: 60, expiresInSeconds: 300 } },
+      });
+    } else if (path.endsWith('/register')) {
+      const body = route.request().postDataJSON();
+      if (body.verificationCode !== '123456') {
+        await route.fulfill({ status: 400, json: { error: { message: '验证码错误。' } } });
+        return;
+      }
+      authenticated = true;
+      await route.fulfill({ status: 200, json: { data: { ...testUser, email: body.email } } });
     } else if (path.endsWith('/login')) {
       if (route.request().postDataJSON().password !== 'test-password') {
         await route.fulfill({ status: 401, json: { error: { message: '邮箱或密码不正确。' } } });

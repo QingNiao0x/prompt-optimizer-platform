@@ -1,0 +1,69 @@
+package com.promptoptimizer.identity.api;
+
+import com.promptoptimizer.common.api.ApiResponse;
+import com.promptoptimizer.common.web.RequestIdFilter;
+import com.promptoptimizer.identity.application.AuthenticationService;
+import com.promptoptimizer.identity.application.EmailRegistrationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import org.springframework.context.annotation.Profile;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 无需预先登录的邮箱注册接口；仍受 CSRF 保护。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
+@RestController
+@RequestMapping("/api/v1/auth")
+@Profile("!local-mock")
+public class RegistrationController {
+
+    private final EmailRegistrationService registrationService;
+    private final AuthenticationService authenticationService;
+
+    public RegistrationController(
+            EmailRegistrationService registrationService,
+            AuthenticationService authenticationService
+    ) {
+        this.registrationService = registrationService;
+        this.authenticationService = authenticationService;
+    }
+
+    @PostMapping("/registration-code")
+    public ApiResponse<EmailRegistrationCodeView> requestRegistrationCode(
+            @Valid @RequestBody EmailRegistrationCodeRequest body,
+            HttpServletRequest request
+    ) {
+        return ApiResponse.success(
+                requestId(request),
+                registrationService.requestCode(body, request.getRemoteAddr())
+        );
+    }
+
+    @PostMapping("/register")
+    public ApiResponse<AuthenticatedUserView> register(
+            @Valid @RequestBody EmailRegistrationRequest body,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        EmailRegistrationService.RegisteredEmail registered = registrationService.register(body);
+        return ApiResponse.success(
+                requestId(request),
+                authenticationService.login(
+                        new LoginRequest(registered.email(), body.password()),
+                        request,
+                        response
+                )
+        );
+    }
+
+    private String requestId(HttpServletRequest request) {
+        return (String) request.getAttribute(RequestIdFilter.REQUEST_ID_ATTRIBUTE);
+    }
+}

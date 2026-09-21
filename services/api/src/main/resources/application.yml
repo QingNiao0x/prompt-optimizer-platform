@@ -16,6 +16,20 @@ spring:
   data:
     redis:
       url: ${REDIS_URL:redis://localhost:6379}
+  mail:
+    host: ${SMTP_HOST:}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${SMTP_AUTH:true}
+          starttls:
+            enable: ${SMTP_STARTTLS:true}
+          connectiontimeout: ${SMTP_CONNECTION_TIMEOUT_MS:5000}
+          timeout: ${SMTP_READ_TIMEOUT_MS:10000}
+          writetimeout: ${SMTP_WRITE_TIMEOUT_MS:10000}
 
 server:
   port: ${SERVER_PORT:9000}
@@ -64,6 +78,19 @@ app:
       email: ${LOCAL_AUTH_EMAIL:demo@local}
       password: ${LOCAL_AUTH_PASSWORD:}
       display-name: ${LOCAL_AUTH_DISPLAY_NAME:Local Demo User}
+    registration:
+      enabled: ${EMAIL_REGISTRATION_ENABLED:true}
+      # disabled / log / smtp。log 会输出验证码，只允许本地开发显式启用。
+      delivery-mode: ${EMAIL_DELIVERY_MODE:disabled}
+      verification-secret: ${EMAIL_VERIFICATION_SECRET:}
+      from-address: ${EMAIL_FROM_ADDRESS:${SMTP_USERNAME:}}
+      code-ttl: ${EMAIL_CODE_TTL:5m}
+      resend-interval: ${EMAIL_CODE_RESEND_INTERVAL:60s}
+      max-attempts: ${EMAIL_CODE_MAX_ATTEMPTS:5}
+      email-hourly-limit: ${EMAIL_CODE_EMAIL_HOURLY_LIMIT:5}
+      ip-hourly-limit: ${EMAIL_CODE_IP_HOURLY_LIMIT:20}
+      # 多实例或公网环境必须保持 true，避免 Redis 故障时各实例分别放宽限流。
+      require-redis: ${EMAIL_VERIFICATION_REQUIRE_REDIS:true}
   history:
     # local-mock 无数据库模式下关闭历史持久化，避免启动失败。
     enabled: ${HISTORY_ENABLED:true}

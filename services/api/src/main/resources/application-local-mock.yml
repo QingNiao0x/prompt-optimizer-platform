@@ -12,5 +12,9 @@ spring:
 app:
   history:
     enabled: false
+  security:
+    registration:
+      enabled: false
+      require-redis: false
   provider:
     mode: mock

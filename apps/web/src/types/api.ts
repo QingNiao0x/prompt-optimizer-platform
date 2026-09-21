@@ -76,6 +76,21 @@ export interface LoginPayload {
   password: string;
 }
 
+export interface EmailRegistrationCodePayload {
+  email: string;
+}
+
+export interface EmailRegistrationCodeStatus {
+  resendAfterSeconds: number;
+  expiresInSeconds: number;
+}
+
+export interface EmailRegistrationPayload {
+  email: string;
+  verificationCode: string;
+  password: string;
+}
+
 export interface CsrfTokenMetadata {
   headerName: string;
   parameterName: string;

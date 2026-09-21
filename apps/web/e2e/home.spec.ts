@@ -32,10 +32,20 @@ test('首页提供与工作台一致的玻璃主题入口', async ({ page }) => 
 
   await page.getByRole('button', { name: '注册' }).first().click();
   await expect(page.getByRole('heading', { name: '创建账号' })).toBeVisible();
-  await expect(page.getByPlaceholder('请输入手机号或邮箱地址')).toBeVisible();
+  await expect(page.getByPlaceholder('请输入邮箱')).toBeVisible();
+  await expect(page.getByPlaceholder('请输入 6 位验证码')).toBeVisible();
   await expect(page.getByPlaceholder('请再次输入密码')).toBeVisible();
   await expect(page.getByRole('complementary', { name: '微信扫码登录' })).toBeVisible();
   await expect(page.getByRole('button', { name: '创建账号' })).toBeDisabled();
+  await page.getByPlaceholder('请输入邮箱').fill('new@example.com');
+  await page.getByRole('button', { name: '获取验证码' }).click();
+  await expect(page.getByRole('status')).toContainText('验证码已发送');
+  await expect(page.getByRole('button', { name: /秒后重发/ })).toBeDisabled();
+  await page.getByPlaceholder('请输入 6 位验证码').fill('123456');
+  await page.getByPlaceholder('请输入密码').fill('test-password-123');
+  await page.getByPlaceholder('请再次输入密码').fill('test-password-123');
+  await page.getByRole('checkbox').check();
+  await expect(page.getByRole('button', { name: '创建账号' })).toBeEnabled();
   await page.getByRole('button', { name: '关闭', exact: true }).click();
 
   await page.getByRole('button', { name: '切换为深色主题' }).click();

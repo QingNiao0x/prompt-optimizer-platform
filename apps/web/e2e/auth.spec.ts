@@ -2,6 +2,21 @@ import { expect, test } from '@playwright/test';
 import { mockAuthentication } from './authFixture';
 import { openWorkbenchPane } from './workbenchPanes';
 
+test('邮箱验证码注册成功后自动登录并进入工作台', async ({ page }) => {
+  await mockAuthentication(page, false);
+  await page.goto('/');
+  await page.getByRole('button', { name: '注册' }).first().click();
+  await page.getByPlaceholder('请输入邮箱').fill('new@example.com');
+  await page.getByRole('button', { name: '获取验证码' }).click();
+  await page.getByPlaceholder('请输入 6 位验证码').fill('123456');
+  await page.getByPlaceholder('请输入密码').fill('test-password-123');
+  await page.getByPlaceholder('请再次输入密码').fill('test-password-123');
+  await page.getByRole('checkbox').check();
+  await page.getByRole('button', { name: '创建账号' }).click();
+  await expect(page).toHaveURL(/\/workbench$/);
+  await expect(page.getByRole('button', { name: '退出登录' })).toBeVisible();
+});
+
 test('未登录不能挂载工作台，错误密码可重试，登录后可刷新和退出', async ({ page }) => {
   await mockAuthentication(page, false);
   await page.goto('/workbench');

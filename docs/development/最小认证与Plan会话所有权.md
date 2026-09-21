@@ -1,6 +1,6 @@
 # 最小认证与 Plan 会话所有权
 
-当前已实现邮箱密码登录、退出、当前用户读取，以及 `contextId` / `planId` 的服务端所有权绑定。登录标识已从账户资料中拆分为通用 `user_identity` 模型，但还没有实现公开注册、手机号验证码、微信 OAuth、找回密码、团队邀请或角色管理后台。
+当前已实现邮箱验证码注册、邮箱密码登录、退出、当前用户读取，以及 `contextId` / `planId` 的服务端所有权绑定。登录标识已从账户资料中拆分为通用 `user_identity` 模型。手机号验证码、微信 OAuth、找回密码、团队邀请和角色管理后台仍未实现。
 
 ## 1. 为什么目前不需要复杂权限系统
 
@@ -26,6 +26,9 @@
 - `identity/infrastructure/security/SecurityContextCurrentActor.java`：只接受已认证的 `AuthenticatedUser`，不信任请求中的 `userId`、`tenantId` 或自定义身份请求头。
 - `DatabaseUserDetailsService`：先按规范化邮箱查找有效身份，再用稳定 `userId` 加载账户和默认工作区；无密码、锁定、禁用账户不能登录。
 - `AuthenticationService`：校验密码后轮换已有 Session ID，显式保存 SecurityContext；退出时使当前 Session 失效。
+- `EmailRegistrationService`：申请验证码、验证验证码、创建账户并在成功后消费验证码；不保存验证码明文。
+- `HybridEmailVerificationStore`：使用 Redis Lua 脚本原子执行冷却、邮箱/IP 小时限流和尝试次数限制；生产配置下 Redis 故障会拒绝发码。
+- `JdbcAccountRegistrationGateway`：在同一事务中创建个人租户、账户、默认工作区、OWNER 成员关系和已验证邮箱身份。
 - `SecurityConfiguration`：除登录、CSRF 初始化和健康检查外，API 必须登录；写请求还必须通过 CSRF 校验。
 
 使用 HttpOnly 的 `JSESSIONID` 保存浏览器会话标识，不把登录凭据或认证 Token 存入 localStorage。密码只以 BCrypt 哈希保存，登录成功后 Principal 中的哈希也会被擦除。初始化密码至少 12 个字符，且 UTF-8 编码不超过 BCrypt 的 72 字节上限。登录输入超过该字节上限会被拒绝，避免截断导致不同密码被视为相同。
@@ -42,6 +45,27 @@
 4. 启动后端。Flyway V5 创建 `user_identity`、迁移已有邮箱身份，并把身份唯一性从 `user_account.email` 转移到身份表。
 5. 初始化器仅在账户没有密码哈希时写入密码。再次设置环境变量不会覆盖既有密码，也不是重置密码接口。
 6. 前端点击“登录”，输入邮箱和设置的密码；访问工作台、历史或设置时也会先要求登录。
+
+### 启用邮箱验证码注册
+
+完整数据库模式需要 PostgreSQL 和 Redis。至少配置：
+
+```text
+EMAIL_REGISTRATION_ENABLED=true
+EMAIL_VERIFICATION_SECRET=<至少 32 字节的随机密钥>
+EMAIL_DELIVERY_MODE=smtp
+EMAIL_FROM_ADDRESS=<发件邮箱>
+SMTP_HOST=<SMTP 主机>
+SMTP_PORT=587
+SMTP_USERNAME=<SMTP 用户名>
+SMTP_PASSWORD=<SMTP 密码或授权码>
+```
+
+本机调试可将 `EMAIL_DELIVERY_MODE=log`，验证码会写入后端警告日志；该模式不得用于公网。默认 `disabled` 会明确拒绝发码。SMTP 可以使用已有企业邮箱或邮件服务商提供的 SMTP，不要求绑定某一家验证码平台。
+
+默认规则为同一邮箱 60 秒后才能重发、验证码 5 分钟过期、最多错误 5 次、同一邮箱每小时最多发 5 次、同一来源 IP 每小时最多发 20 次。所有规则由服务端执行。Redis 中只保存验证码的 HMAC 摘要和邮箱/IP 的 SHA-256 指纹，不保存验证码明文；账户创建成功后才消费验证码。
+
+公网部署保持 `EMAIL_VERIFICATION_REQUIRE_REDIS=true`。只有明确的单实例开发环境才可设为 `false` 以使用内存降级。IP 限流读取 Servlet 解析后的远端地址；部署在反向代理后必须只信任受控代理并正确配置 forwarded-header 处理，不能直接信任任意客户端传入的 `X-Forwarded-For`。
 
 Spring Boot 不会自动把仓库根目录 `.env` 作为进程环境加载。使用 IDE 时在运行配置中设置环境变量；PowerShell 可以安全读取密码后启动：
 
@@ -103,6 +127,8 @@ HTTPS 部署必须设置 `AUTH_COOKIE_SECURE=true`，同时保证代理配置正
 | 接口 | 是否需要登录 | 说明 |
 | --- | --- | --- |
 | `GET /api/v1/auth/csrf` | 否 | 生成 CSRF Cookie，返回 `headerName`、`parameterName`、`token` |
+| `POST /api/v1/auth/registration-code` | 否，但需要 CSRF | JSON：`email`；发送 6 位验证码并返回重发/过期秒数 |
+| `POST /api/v1/auth/register` | 否，但需要 CSRF | JSON：`email`、`verificationCode`、`password`；成功后自动登录 |
 | `POST /api/v1/auth/login` | 否，但需要 CSRF | JSON：`email`、`password`；成功返回当前用户并保存 Session |
 | `GET /api/v1/auth/me` | 是 | 返回 `userId`、`tenantId`、`workspaceId`、`email`、`displayName` |
 | `POST /api/v1/auth/logout` | 是，且需要 CSRF | 使当前 Session 失效并清除 CSRF Cookie |
@@ -111,6 +137,9 @@ HTTPS 部署必须设置 `AUTH_COOKIE_SECURE=true`，同时保证代理配置正
 
 - 未登录访问受保护接口：`401 AUTHENTICATION_REQUIRED`。
 - 邮箱密码错误或账户不可登录：`401 AUTHENTICATION_FAILED`，不披露账户状态细节。
+- 重复发码、邮箱小时限流或 IP 小时限流：`429`，响应含 `Retry-After` 和 `details.retryAfterSeconds`。
+- 验证码错误、过期或尝试次数用尽：`400`；邮箱已经注册：`409 EMAIL_ALREADY_REGISTERED`。
+- 邮件投递或生产 Redis 不可用：`503`，不会绕过限流继续注册。
 - CSRF 缺失或不匹配：`403 ACCESS_DENIED`。
 - 写请求同时缺失认证和 CSRF 时，安全链可能先返回 403；不要仅凭该状态判断账号是否登录。
 - 前端遇到业务接口 401 会重新加载登录页，清除页面内存，不自动重放失败请求。未提交草稿不会自动恢复；Plan 的 30 分钟过期恢复不属于本轮。
@@ -150,6 +179,8 @@ npm.cmd run test:e2e
 - `AuthenticationIntegrationTest`：实际 BCrypt 认证、Session 轮换、凭据擦除、CSRF、退出、伪造身份、两个同工作区账号的 Plan 越权拒绝，以及同账号重新登录后可继续使用。
 - `IdentitySecurityTest`：通过身份表加载账户、账户/工作区缺失、初始化幂等、超长密码拒绝。
 - `UserIdentityKeyTest`：邮箱、E.164 手机号、微信签发方与第三方主体的规范化边界。
+- `InMemoryEmailVerificationStoreTest`：重发间隔、过期、最大尝试次数、邮箱/IP 小时限流与投递失败回滚。
+- `EmailRegistrationServiceTest`：发码、邮箱规范化、事务网关调用、验证码消费和 BCrypt 长度边界。
 - `PlanningSessionServiceTest`：所有者、需求、版本、TTL、注册和快照复用边界。
 - 原有 Controller 契约测试加载真实安全过滤链，显式提供测试身份和 CSRF，没有禁用过滤器。
 - 前端 auth store / Playwright：匿名路由、错误密码重试、刷新、退出、后端不可用，以及现有工作台流程。
@@ -177,7 +208,7 @@ npm.cmd run test:e2e -- auth-real.spec.ts
 - 分布式登录 Session、会话撤销和账户禁用后的即时失效。目前已有 Session 不会逐请求重查账户状态，紧急禁用需同时撤销会话。
 - 上传文档 `documentId` 等其他临时资源的完整所有权审计；不能从 Plan ID 已隔离推导全部资源均已隔离。
 - 团队角色、邀请、工作区切换和跨成员资源共享策略。
-- 公开注册、邮箱验证、改密、找回密码。
+- 改密、找回密码、邮箱换绑与登录防暴力破解；注册验证码限流不能替代登录接口限流。
 
 历史记录和 Provider 配置已从固定演示身份切换到 `CurrentActor` 的默认租户/工作区作用域，但仍是工作区资源，不应当作逐记录私有权限系统。
 

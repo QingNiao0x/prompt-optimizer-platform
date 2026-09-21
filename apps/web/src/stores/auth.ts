@@ -6,9 +6,10 @@ import {
   initializeCsrf,
   login as loginRequest,
   logout as logoutRequest,
+  register as registerRequest,
 } from '@/services/authApi';
 import { isAuthenticationRequired } from '@/services/http';
-import type { AuthenticatedUser, LoginPayload } from '@/types/api';
+import type { AuthenticatedUser, EmailRegistrationPayload, LoginPayload } from '@/types/api';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<AuthenticatedUser>();
@@ -38,6 +39,12 @@ export const useAuthStore = defineStore('auth', () => {
     initialized.value = true;
   };
 
+  const register = async (payload: EmailRegistrationPayload): Promise<void> => {
+    const response = await registerRequest(payload);
+    user.value = response.data;
+    initialized.value = true;
+  };
+
   const logout = async (): Promise<void> => {
     try {
       await logoutRequest();
@@ -56,6 +63,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     initialize,
     login,
+    register,
     logout,
   };
 });

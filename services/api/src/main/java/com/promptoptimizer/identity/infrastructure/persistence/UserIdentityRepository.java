@@ -23,6 +23,12 @@ public interface UserIdentityRepository extends JpaRepository<UserIdentityEntity
             UserIdentityStatus status
     );
 
+    boolean existsByIdentityTypeAndIssuerAndNormalizedIdentifier(
+            UserIdentityType identityType,
+            String issuer,
+            String normalizedIdentifier
+    );
+
     List<UserIdentityEntity> findAllByUserIdAndStatusOrderByCreatedAtAsc(
             UUID userId,
             UserIdentityStatus status

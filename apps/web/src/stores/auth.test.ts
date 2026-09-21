@@ -2,11 +2,11 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AxiosError, AxiosHeaders } from 'axios';
 import { useAuthStore } from './auth';
-import { getCurrentUser, initializeCsrf, login, logout } from '@/services/authApi';
+import { getCurrentUser, initializeCsrf, login, logout, register } from '@/services/authApi';
 import type { ApiResponse, AuthenticatedUser } from '@/types/api';
 
 vi.mock('@/services/authApi', () => ({
-  getCurrentUser: vi.fn(), initializeCsrf: vi.fn(), login: vi.fn(), logout: vi.fn(),
+  getCurrentUser: vi.fn(), initializeCsrf: vi.fn(), login: vi.fn(), logout: vi.fn(), register: vi.fn(),
 }));
 
 const response: ApiResponse<AuthenticatedUser> = {
@@ -24,6 +24,7 @@ describe('auth store', () => {
     setActivePinia(createPinia());
     vi.mocked(getCurrentUser).mockResolvedValue(response);
     vi.mocked(login).mockResolvedValue(response);
+    vi.mocked(register).mockResolvedValue(response);
   });
 
   it('requires a server identity and initializes CSRF', async () => {
@@ -56,5 +57,21 @@ describe('auth store', () => {
     vi.mocked(logout).mockRejectedValueOnce(unauthorized());
     await auth.logout();
     expect(auth.isAuthenticated).toBe(false);
+  });
+
+  it('stores the authenticated user after email registration', async () => {
+    const auth = useAuthStore();
+    await auth.register({
+      email: 'a@example.com',
+      verificationCode: '123456',
+      password: 'test-password-123',
+    });
+    expect(register).toHaveBeenCalledWith({
+      email: 'a@example.com',
+      verificationCode: '123456',
+      password: 'test-password-123',
+    });
+    expect(auth.user?.userId).toBe('user-a');
+    expect(auth.isAuthenticated).toBe(true);
   });
 });
