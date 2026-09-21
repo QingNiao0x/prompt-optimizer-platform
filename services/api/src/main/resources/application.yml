@@ -41,7 +41,7 @@ server:
       cookie:
         http-only: true
         secure: ${AUTH_COOKIE_SECURE:false}
-        same-site: lax
+        same-site: ${AUTH_COOKIE_SAME_SITE:Lax}
   tomcat:
     # 大项目上下文可能一次性提交数百个文件，放宽默认 2MB 请求体限制。
     max-swallow-size: 8MB
@@ -69,6 +69,9 @@ app:
   security:
     # API Key 加密主密钥，由运行环境注入，禁止写入源码或提交到 Git。
     api-key-encryption-secret: ${API_KEY_ENCRYPTION_SECRET:}
+    cors:
+      # 仅为跨域前端显式配置；留空时不开放跨域请求。
+      allowed-origin: ${AUTH_CORS_ALLOWED_ORIGIN:}
     # 完整数据库模式首次启动时，只在种子账户尚无密码哈希的情况下写入一次。
     bootstrap-user:
       email: ${BOOTSTRAP_USER_EMAIL:demo@local}

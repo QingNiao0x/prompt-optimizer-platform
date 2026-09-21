@@ -53,8 +53,8 @@ FROM user_account
 WHERE email IS NOT NULL AND btrim(email) <> '';
 
 -- 邮箱唯一性从账户资料迁移到身份表；账户资料列暂时保留，兼容当前 API 与旧数据。
-DROP INDEX uq_user_account_email_global;
-DROP INDEX uq_user_account_tenant_email;
+DROP INDEX IF EXISTS uq_user_account_email_global;
+DROP INDEX IF EXISTS uq_user_account_tenant_email;
 ALTER TABLE user_account ALTER COLUMN email DROP NOT NULL;
 
 COMMENT ON TABLE user_identity IS '用户可用于认证的外部身份；一个用户可以绑定邮箱、手机号和微信等多个身份';

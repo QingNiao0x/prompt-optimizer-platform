@@ -22,7 +22,7 @@ public record EmailRegistrationRequest(
         String verificationCode,
 
         @NotBlank(message = "密码不能为空")
-        @Size(min = 12, max = 200, message = "密码长度必须在 12 到 200 个字符之间")
+        @Size(min = 8, max = 200, message = "密码长度必须在 8 到 200 个字符之间")
         String password
 ) {
 }

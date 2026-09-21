@@ -79,8 +79,8 @@ public class BootstrapUserPasswordInitializer implements ApplicationRunner {
             LOGGER.warn("登录账户尚无密码；请设置 BOOTSTRAP_USER_PASSWORD 后重启服务完成一次性初始化");
             return;
         }
-        if (password.length() < 12 || password.getBytes(StandardCharsets.UTF_8).length > 72) {
-            throw new IllegalStateException("BOOTSTRAP_USER_PASSWORD 至少 12 个字符且 UTF-8 编码不能超过 72 字节");
+        if (password.length() < 8 || password.getBytes(StandardCharsets.UTF_8).length > 72) {
+            throw new IllegalStateException("BOOTSTRAP_USER_PASSWORD 至少 8 个字符且 UTF-8 编码不能超过 72 字节");
         }
         account.setPasswordHash(passwordEncoder.encode(password));
         repository.save(account);

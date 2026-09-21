@@ -36,9 +36,9 @@ public class LocalMockUserDetailsConfiguration {
             @Value("${app.demo.tenant-id}") String tenantId,
             @Value("${app.demo.workspace-id}") String workspaceId
     ) {
-        if (password == null || password.length() < 12 || password.getBytes(StandardCharsets.UTF_8).length > 72) {
+        if (password == null || password.length() < 8 || password.getBytes(StandardCharsets.UTF_8).length > 72) {
             throw new IllegalStateException(
-                    "LOCAL_AUTH_PASSWORD 至少 12 个字符且 UTF-8 编码不能超过 72 字节"
+                    "LOCAL_AUTH_PASSWORD 至少 8 个字符且 UTF-8 编码不能超过 72 字节"
             );
         }
         String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);

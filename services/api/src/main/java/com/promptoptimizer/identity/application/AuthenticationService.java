@@ -54,7 +54,8 @@ public class AuthenticationService {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        if (loginRequest.password().getBytes(StandardCharsets.UTF_8).length > 72) {
+        if (loginRequest.password().length() < 8
+                || loginRequest.password().getBytes(StandardCharsets.UTF_8).length > 72) {
             throw new BadCredentialsException("无效凭据");
         }
         Authentication authentication = authenticationManager.authenticate(

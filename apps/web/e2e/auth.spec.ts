@@ -6,7 +6,7 @@ test('邮箱验证码注册成功后自动登录并进入工作台', async ({ pa
   await mockAuthentication(page, false);
   await page.goto('/');
   await page.getByRole('button', { name: '注册' }).first().click();
-  await page.getByPlaceholder('请输入邮箱').fill('new@example.com');
+  await page.getByPlaceholder('请输入邮箱地址或手机号').fill('new@example.com');
   await page.getByRole('button', { name: '获取验证码' }).click();
   await page.getByPlaceholder('请输入 6 位验证码').fill('123456');
   await page.getByPlaceholder('请输入密码').fill('test-password-123');

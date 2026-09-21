@@ -16,6 +16,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.List;
 import java.util.Optional;
@@ -99,6 +101,15 @@ class IdentitySecurityTest {
                 identityRepository, new BCryptPasswordEncoder(4), "alice@example.com", "密".repeat(25));
         assertThatThrownBy(() -> initializer.run(null)).isInstanceOf(IllegalStateException.class);
         verify(repository, never()).save(any());
+    }
+
+    @Test
+    void corsIsDisabledWhenNoAllowedOriginIsConfigured() {
+        CorsConfigurationSource source = new SecurityConfiguration().corsConfigurationSource("");
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Origin", "http://localhost:5173");
+
+        assertThat(source.getCorsConfiguration(request)).isNull();
     }
 
     private UserAccountEntity account() {

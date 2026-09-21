@@ -30,6 +30,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.client.ExpectedCount.once;
+import static org.springframework.test.web.client.ExpectedCount.twice;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -140,7 +141,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                         )
                 ))
         ));
-        server.expect(requestTo(ENDPOINT))
+        server.expect(twice(), requestTo(ENDPOINT))
                 .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
         assertThatThrownBy(() -> provider.enhance(createRequest()))
@@ -204,6 +205,31 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         server.verify();
     }
 
+    @Test
+    void shouldRetryOnceWhenFirstEnhancementResponseIsInvalid() throws Exception {
+        String invalidResponse = objectMapper.writeValueAsString(Map.of(
+                "model", MODEL,
+                "choices", List.of(Map.of(
+                        "message", Map.of(
+                                "role", "assistant",
+                                "content", "{\"sections\":[{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"缺少必要段落\"}]}"
+                        )
+                ))
+        ));
+        String validResponse = completionWithFindings("[]");
+        server.expect(once(), requestTo(ENDPOINT))
+                .andRespond(withSuccess(invalidResponse, MediaType.APPLICATION_JSON));
+        server.expect(once(), requestTo(ENDPOINT))
+                .andRespond(withSuccess(validResponse, MediaType.APPLICATION_JSON));
+
+        EnhancementProviderResponse response = provider.enhance(createRequest());
+
+        assertThat(response.sections()).extracting("type")
+                .contains(PromptSectionType.BACKGROUND, PromptSectionType.TASK,
+                        PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS);
+        server.verify();
+    }
+
     private EnhancementProviderRequest createRequest() {
         ContextSnapshot context = new ContextSnapshot(
                 "Spring Boot 用户服务",
@@ -253,7 +279,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
     @ValueSource(strings = {"null", "{}", "\"问题\"", "[3]", "[null]", "[\" \" ]",
             "[\"一\",\"二\",\"三\",\"四\",\"五\",\"六\",\"七\",\"八\",\"九\"]"})
     void shouldRejectMalformedAmbiguityArrayInsteadOfCoercingOrHidingIt(String findings) throws Exception {
-        server.expect(requestTo(ENDPOINT))
+        server.expect(twice(), requestTo(ENDPOINT))
                 .andRespond(withSuccess(completionWithFindings(findings), MediaType.APPLICATION_JSON));
         assertThatThrownBy(() -> provider.enhance(createRequest()))
                 .isInstanceOfSatisfying(ProviderException.class,

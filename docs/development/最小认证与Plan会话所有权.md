@@ -31,9 +31,11 @@
 - `JdbcAccountRegistrationGateway`：在同一事务中创建个人租户、账户、默认工作区、OWNER 成员关系和已验证邮箱身份。
 - `SecurityConfiguration`：除登录、CSRF 初始化和健康检查外，API 必须登录；写请求还必须通过 CSRF 校验。
 
-使用 HttpOnly 的 `JSESSIONID` 保存浏览器会话标识，不把登录凭据或认证 Token 存入 localStorage。密码只以 BCrypt 哈希保存，登录成功后 Principal 中的哈希也会被擦除。初始化密码至少 12 个字符，且 UTF-8 编码不超过 BCrypt 的 72 字节上限。登录输入超过该字节上限会被拒绝，避免截断导致不同密码被视为相同。
+使用 HttpOnly 的 `JSESSIONID` 保存浏览器会话标识，不把登录凭据或认证 Token 存入 localStorage。注册、登录和启动配置密码均至少 8 个字符，且 UTF-8 编码不超过 BCrypt 的 72 字节上限。登录输入超过该字节上限会被拒绝，避免截断导致不同密码被视为相同。
 
 默认 Session 空闲超时 8 小时，可通过 `AUTH_SESSION_TIMEOUT` 调整；这不是固定的绝对有效期。当前为单实例 Servlet Session，重启后需要重新登录。
+
+如果前端和 API 部署在不同域名，必须将 `AUTH_CORS_ALLOWED_ORIGIN` 设置为完整的前端 Origin，并在 HTTPS 环境设置 `AUTH_COOKIE_SECURE=true`、`AUTH_COOKIE_SAME_SITE=None`，否则浏览器不会携带登录 Session 和 CSRF Cookie。不要使用 `*` 作为允许来源。
 
 ## 3. 如何启动和登录
 
@@ -65,7 +67,7 @@ SMTP_PASSWORD=<SMTP 密码或授权码>
 
 默认规则为同一邮箱 60 秒后才能重发、验证码 5 分钟过期、最多错误 5 次、同一邮箱每小时最多发 5 次、同一来源 IP 每小时最多发 20 次。所有规则由服务端执行。Redis 中只保存验证码的 HMAC 摘要和邮箱/IP 的 SHA-256 指纹，不保存验证码明文；账户创建成功后才消费验证码。
 
-公网部署保持 `EMAIL_VERIFICATION_REQUIRE_REDIS=true`。只有明确的单实例开发环境才可设为 `false` 以使用内存降级。IP 限流读取 Servlet 解析后的远端地址；部署在反向代理后必须只信任受控代理并正确配置 forwarded-header 处理，不能直接信任任意客户端传入的 `X-Forwarded-For`。
+公网部署保持 `EMAIL_VERIFICATION_REQUIRE_REDIS=true`。只有明确的单实例开发环境才可设为 `false`；当邮件投递模式同时为 `log` 时，验证码生命周期直接使用进程内存，不连接 Redis，应用重启后验证码失效。IP 限流读取 Servlet 解析后的远端地址；部署在反向代理后必须只信任受控代理并正确配置 forwarded-header 处理，不能直接信任任意客户端传入的 `X-Forwarded-For`。
 
 Spring Boot 不会自动把仓库根目录 `.env` 作为进程环境加载。使用 IDE 时在运行配置中设置环境变量；PowerShell 可以安全读取密码后启动：
 

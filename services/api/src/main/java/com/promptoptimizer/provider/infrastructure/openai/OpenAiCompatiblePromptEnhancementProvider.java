@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * 使用 Chat Completions 风格协议调用 OpenAI 兼容端点的提示词增强 Provider。
@@ -142,6 +143,10 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         Objects.requireNonNull(request, "request must not be null");
         ChatCompletionRequest requestBody = buildRequest(request);
 
+        return retryOnceWhenResponseIsInvalid(() -> requestEnhancement(requestBody));
+    }
+
+    private EnhancementProviderResponse requestEnhancement(ChatCompletionRequest requestBody) {
         try {
             ChatCompletionResponse response = restClient.post()
                     .uri(properties.getEndpoint())
@@ -174,6 +179,10 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         Objects.requireNonNull(request, "request must not be null");
         ChatCompletionRequest requestBody = buildPlanningRequest(request);
 
+        return retryOnceWhenResponseIsInvalid(() -> requestPlanning(requestBody));
+    }
+
+    private PlanningProviderResponse requestPlanning(ChatCompletionRequest requestBody) {
         try {
             ChatCompletionResponse response = restClient.post()
                     .uri(properties.getEndpoint())
@@ -195,6 +204,22 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                     true,
                     exception
             );
+        }
+    }
+
+    /**
+     * 模型偶尔会返回可解析但不满足平台结构约束的内容。仅对此类无效响应重试一次；
+     * 鉴权、限流、超时和连接错误保留原始失败语义，避免放大上游压力。
+     */
+    private <T> T retryOnceWhenResponseIsInvalid(Supplier<T> request) {
+        try {
+            return request.get();
+        } catch (ProviderException exception) {
+            if (exception.getFailureType() != ProviderFailureType.INVALID_RESPONSE) {
+                throw exception;
+            }
+            LOGGER.warn("模型首次返回的结构化结果无效，将受控重试一次");
+            return request.get();
         }
     }
 

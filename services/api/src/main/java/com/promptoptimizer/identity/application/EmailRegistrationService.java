@@ -151,10 +151,10 @@ public class EmailRegistrationService {
 
     private void validatePassword(String password) {
         int byteLength = password.getBytes(StandardCharsets.UTF_8).length;
-        if (password.length() < 12 || byteLength > MAX_BCRYPT_PASSWORD_BYTES) {
+        if (password.length() < 8 || byteLength > MAX_BCRYPT_PASSWORD_BYTES) {
             throw new RegistrationException(
                     RegistrationException.Reason.PASSWORD_INVALID,
-                    "密码至少 12 个字符，且 UTF-8 编码后不能超过 72 字节。"
+                    "密码至少 8 个字符，且 UTF-8 编码后不能超过 72 字节。"
             );
         }
     }

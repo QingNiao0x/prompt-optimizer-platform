@@ -94,6 +94,9 @@ public class HybridEmailVerificationStore implements EmailVerificationStore {
             String codeDigest,
             EmailVerificationPolicy policy
     ) {
+        if (usesLocalMemoryStore()) {
+            return fallback.issue(emailFingerprint, ipFingerprint, codeDigest, policy);
+        }
         if (redisTemplate == null) {
             return fallbackOrFail(() -> fallback.issue(
                     emailFingerprint,
@@ -127,6 +130,9 @@ public class HybridEmailVerificationStore implements EmailVerificationStore {
 
     @Override
     public VerificationResult verify(String emailFingerprint, String codeDigest) {
+        if (usesLocalMemoryStore()) {
+            return fallback.verify(emailFingerprint, codeDigest);
+        }
         if (redisTemplate == null) {
             return fallbackOrFail(() -> fallback.verify(emailFingerprint, codeDigest));
         }
@@ -150,6 +156,10 @@ public class HybridEmailVerificationStore implements EmailVerificationStore {
 
     @Override
     public void consume(String emailFingerprint, String codeDigest) {
+        if (usesLocalMemoryStore()) {
+            fallback.consume(emailFingerprint, codeDigest);
+            return;
+        }
         if (redisTemplate == null) {
             fallbackOrFail(() -> {
                 fallback.consume(emailFingerprint, codeDigest);
@@ -174,6 +184,10 @@ public class HybridEmailVerificationStore implements EmailVerificationStore {
 
     @Override
     public void cancelIssue(String emailFingerprint, String ipFingerprint, String codeDigest) {
+        if (usesLocalMemoryStore()) {
+            fallback.cancelIssue(emailFingerprint, ipFingerprint, codeDigest);
+            return;
+        }
         if (redisTemplate == null) {
             fallbackOrFail(() -> {
                 fallback.cancelIssue(emailFingerprint, ipFingerprint, codeDigest);
@@ -209,6 +223,12 @@ public class HybridEmailVerificationStore implements EmailVerificationStore {
         return KEY_PREFIX + "challenge:" + emailFingerprint;
     }
 
+    /** 本地日志投递明确允许无 Redis 时，保持整个验证码生命周期在同一内存存储中。 */
+    private boolean usesLocalMemoryStore() {
+        return !properties.isRequireRedis()
+                && "log".equalsIgnoreCase(properties.getDeliveryMode().trim());
+    }
+
     private IssueDecision mapIssueResult(Long result, EmailVerificationPolicy policy) {
         return switch (result == null ? 0 : result.intValue()) {
             case 1 -> new IssueDecision(IssueResult.ISSUED, policy.resendInterval().toSeconds());
@@ -231,9 +251,14 @@ public class HybridEmailVerificationStore implements EmailVerificationStore {
     }
 
     private void logRedisFailure(RuntimeException exception) {
+        Throwable rootCause = exception;
+        while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+            rootCause = rootCause.getCause();
+        }
         LOGGER.warn(
-                "邮箱验证码 Redis 操作失败；原因类型：{}",
-                exception.getClass().getSimpleName()
+                "邮箱验证码 Redis 操作失败；包装异常：{}；根因类型：{}",
+                exception.getClass().getSimpleName(),
+                rootCause.getClass().getSimpleName()
         );
     }
 

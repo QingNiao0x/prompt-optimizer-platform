@@ -3,6 +3,7 @@ import { computed, onScopeDispose, ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { getApiErrorMessage } from '@/services/http';
 import { requestRegistrationCode } from '@/services/authApi';
+import { validateRegistrationAccount } from '@/features/auth/registrationAccount';
 
 export type AuthModalMode = 'login' | 'register';
 type AuthView = 'qr' | 'password' | 'register';
@@ -27,20 +28,54 @@ const statusMessage = ref('');
 const account = ref('');
 const password = ref('');
 const confirmPassword = ref('');
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 const verificationCode = ref('');
 const agreementAccepted = ref(false);
 const requestingCode = ref(false);
 const resendAfterSeconds = ref(0);
+const verificationRecipient = ref('');
 const accountInput = ref<HTMLInputElement>();
 let resendTimer: number | undefined;
 
-const canSubmitRegistration = computed((): boolean => (
-  account.value.trim().length > 0
-  && /^\d{6}$/.test(verificationCode.value)
-  && password.value.length >= 12
-  && password.value === confirmPassword.value
-  && agreementAccepted.value
-));
+const registrationAccount = computed(() => validateRegistrationAccount(account.value));
+const registrationBlockReason = computed((): string => {
+  if (registrationAccount.value.kind === 'empty') {
+    return '请先填写邮箱地址；手机号短信注册将在接入短信服务后开放。';
+  }
+  if (registrationAccount.value.kind === 'invalid') {
+    return registrationAccount.value.message;
+  }
+  if (registrationAccount.value.kind === 'phone') {
+    return registrationAccount.value.message;
+  }
+  if (verificationRecipient.value !== registrationAccount.value.normalized) {
+    return '请先向当前邮箱获取验证码。';
+  }
+  if (!/^\d{6}$/.test(verificationCode.value)) {
+    return '请输入邮件中的 6 位验证码。';
+  }
+  if (password.value.length < 8) {
+    return '密码至少需要 8 个字符。';
+  }
+  if (password.value !== confirmPassword.value) {
+    return '两次输入的密码不一致。';
+  }
+  if (!agreementAccepted.value) {
+    return '请先同意用户协议与隐私政策。';
+  }
+  return '';
+});
+const canSubmitRegistration = computed((): boolean => registrationBlockReason.value === '');
+const codeButtonLabel = computed((): string => {
+  if (requestingCode.value) {
+    return '发送中…';
+  }
+  if (resendAfterSeconds.value > 0) {
+    return `${resendAfterSeconds.value} 秒后重发`;
+  }
+  return registrationAccount.value.kind === 'phone' ? '短信注册待开通' : '获取验证码';
+});
 
 const title = computed((): string => {
   if (view.value === 'register') {
@@ -53,6 +88,8 @@ const close = (): void => {
   stopResendTimer();
   password.value = '';
   confirmPassword.value = '';
+  showPassword.value = false;
+  showConfirmPassword.value = false;
   emit('update:modelValue', false);
 };
 
@@ -61,7 +98,10 @@ const resetFields = (): void => {
   account.value = '';
   password.value = '';
   confirmPassword.value = '';
+  showPassword.value = false;
+  showConfirmPassword.value = false;
   verificationCode.value = '';
+  verificationRecipient.value = '';
   agreementAccepted.value = false;
   errorMessage.value = '';
   statusMessage.value = '';
@@ -97,6 +137,18 @@ watch(() => props.modelValue, (open) => {
     syncView();
   }
 });
+watch(account, () => {
+  if (
+    view.value === 'register'
+    && verificationRecipient.value
+    && registrationAccount.value.normalized !== verificationRecipient.value
+  ) {
+    stopResendTimer();
+    verificationCode.value = '';
+    verificationRecipient.value = '';
+    statusMessage.value = '';
+  }
+});
 
 onScopeDispose(stopResendTimer);
 
@@ -104,14 +156,17 @@ const handleRequestCode = async (): Promise<void> => {
   if (requestingCode.value || resendAfterSeconds.value > 0) {
     return;
   }
-  if (!accountInput.value?.reportValidity()) {
+  if (registrationAccount.value.kind !== 'email') {
+    errorMessage.value = registrationAccount.value.message;
+    accountInput.value?.focus();
     return;
   }
   requestingCode.value = true;
   errorMessage.value = '';
   statusMessage.value = '';
   try {
-    const response = await requestRegistrationCode({ email: account.value.trim() });
+    const response = await requestRegistrationCode({ email: registrationAccount.value.normalized });
+    verificationRecipient.value = registrationAccount.value.normalized;
     startResendTimer(response.data.resendAfterSeconds);
     statusMessage.value = `验证码已发送，${Math.ceil(response.data.expiresInSeconds / 60)} 分钟内有效。`;
   } catch (error: unknown) {
@@ -128,7 +183,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
   }
   if (view.value === 'register') {
     if (!canSubmitRegistration.value) {
-      errorMessage.value = '请填写有效验证码、至少 12 位且一致的密码，并同意用户协议与隐私政策。';
+      errorMessage.value = '请填写有效验证码、至少 8 位且一致的密码，并同意用户协议与隐私政策。';
       return;
     }
   }
@@ -137,7 +192,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
   try {
     if (view.value === 'register') {
       await auth.register({
-        email: account.value.trim(),
+        email: registrationAccount.value.normalized,
         verificationCode: verificationCode.value,
         password: password.value,
       });
@@ -149,7 +204,9 @@ const handleSubmit = async (event: Event): Promise<void> => {
   } catch (error: unknown) {
     errorMessage.value = getApiErrorMessage(error);
   } finally {
-    password.value = '';
+    if (view.value === 'password') {
+      password.value = '';
+    }
     submitting.value = false;
   }
 };
@@ -219,20 +276,32 @@ const handleSubmit = async (event: Event): Promise<void> => {
         >
           <form class="login-modal__form" @submit="handleSubmit">
             <label>
-              邮箱
+              {{ view === 'register' ? '邮箱/手机号' : '邮箱' }}
               <input
                 ref="accountInput"
                 v-model="account"
-                type="email"
+                :type="view === 'register' ? 'text' : 'email'"
                 required
                 maxlength="320"
                 name="account"
                 autocomplete="username"
-                placeholder="请输入邮箱"
+                :placeholder="view === 'register' ? '请输入邮箱地址或手机号' : '请输入邮箱'"
               >
+              <small
+                v-if="view === 'register'"
+                class="login-modal__field-hint"
+                :class="{
+                  'login-modal__field-hint--error': registrationAccount.kind === 'invalid',
+                  'login-modal__field-hint--notice': registrationAccount.kind === 'phone',
+                }"
+              >
+                {{ registrationAccount.kind === 'empty'
+                  ? '支持邮箱和手机号格式；当前先开放邮箱验证码注册。'
+                  : registrationAccount.message }}
+              </small>
             </label>
             <label v-if="view === 'register'">
-              邮箱验证码
+              {{ registrationAccount.kind === 'phone' ? '短信验证码' : '邮箱验证码' }}
               <span class="login-modal__code-row">
                 <input
                   v-model="verificationCode"
@@ -247,37 +316,85 @@ const handleSubmit = async (event: Event): Promise<void> => {
                 >
                 <button
                   type="button"
-                  :disabled="requestingCode || resendAfterSeconds > 0"
+                  :disabled="requestingCode || resendAfterSeconds > 0 || registrationAccount.kind !== 'email'"
                   @click="handleRequestCode"
                 >
-                  {{ requestingCode ? '发送中…' : resendAfterSeconds > 0 ? `${resendAfterSeconds} 秒后重发` : '获取验证码' }}
+                  {{ codeButtonLabel }}
                 </button>
               </span>
             </label>
             <label>
               密码
-              <input
-                v-model="password"
-                type="password"
-                required
-                :minlength="view === 'register' ? 12 : undefined"
-                maxlength="200"
-                name="password"
-                :autocomplete="view === 'register' ? 'new-password' : 'current-password'"
-                placeholder="请输入密码"
+              <span class="login-modal__password-field">
+                <input
+                  v-model="password"
+                  :type="view === 'register' && showPassword ? 'text' : 'password'"
+                  required
+                  :minlength="view === 'register' ? 8 : undefined"
+                  maxlength="200"
+                  name="password"
+                  :autocomplete="view === 'register' ? 'new-password' : 'current-password'"
+                  placeholder="请输入密码"
+                >
+                <button
+                  v-if="view === 'register'"
+                  type="button"
+                  :aria-label="showPassword ? '隐藏密码' : '显示密码'"
+                  :title="showPassword ? '隐藏密码' : '显示密码'"
+                  @click="showPassword = !showPassword"
+                >
+                  <svg v-if="showPassword" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.9 4.2A10.8 10.8 0 0 1 12 4c5.5 0 9 5.2 9 5.2a14 14 0 0 1-2.2 2.8M6.2 6.2A15.8 15.8 0 0 0 3 9.2s3.5 5.2 9 5.2c1 0 2-.2 2.8-.5" />
+                  </svg>
+                  <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 12s3.5-5.2 9-5.2 9 5.2 9 5.2-3.5 5.2-9 5.2S3 12 3 12Z" />
+                    <circle cx="12" cy="12" r="2.5" />
+                  </svg>
+                </button>
+              </span>
+              <small
+                v-if="view === 'register'"
+                class="login-modal__password-hint"
+                :class="{ 'login-modal__password-hint--error': password.length > 0 && password.length < 8 }"
+                aria-live="polite"
               >
+                已输入 {{ password.length }} 个字符，至少需要 8 个字符。
+              </small>
             </label>
             <label v-if="view === 'register'">
               确认密码
-              <input
-                v-model="confirmPassword"
-                type="password"
-                required
-                maxlength="200"
-                name="confirmPassword"
-                autocomplete="new-password"
-                placeholder="请再次输入密码"
+              <span class="login-modal__password-field">
+                <input
+                  v-model="confirmPassword"
+                  :type="showConfirmPassword ? 'text' : 'password'"
+                  required
+                  maxlength="200"
+                  name="confirmPassword"
+                  autocomplete="new-password"
+                  placeholder="请再次输入密码"
+                >
+                <button
+                  type="button"
+                  :aria-label="showConfirmPassword ? '隐藏确认密码' : '显示确认密码'"
+                  :title="showConfirmPassword ? '隐藏确认密码' : '显示确认密码'"
+                  @click="showConfirmPassword = !showConfirmPassword"
+                >
+                  <svg v-if="showConfirmPassword" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.9 4.2A10.8 10.8 0 0 1 12 4c5.5 0 9 5.2 9 5.2a14 14 0 0 1-2.2 2.8M6.2 6.2A15.8 15.8 0 0 0 3 9.2s3.5 5.2 9 5.2c1 0 2-.2 2.8-.5" />
+                  </svg>
+                  <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 12s3.5-5.2 9-5.2 9 5.2 9 5.2-3.5 5.2-9 5.2S3 12 3 12Z" />
+                    <circle cx="12" cy="12" r="2.5" />
+                  </svg>
+                </button>
+              </span>
+              <small
+                v-if="confirmPassword && password !== confirmPassword"
+                class="login-modal__password-hint login-modal__password-hint--error"
+                aria-live="polite"
               >
+                两次输入的密码不一致。
+              </small>
             </label>
             <label v-if="view === 'register'" class="login-modal__agreement">
               <input v-model="agreementAccepted" type="checkbox" required>
@@ -297,8 +414,15 @@ const handleSubmit = async (event: Event): Promise<void> => {
             >
               {{ submitting ? (view === 'register' ? '创建中…' : '登录中…') : view === 'register' ? '创建账号' : '登录' }}
             </button>
+            <small
+              v-if="view === 'register' && registrationBlockReason"
+              class="login-modal__submit-hint"
+              aria-live="polite"
+            >
+              创建账号前：{{ registrationBlockReason }}
+            </small>
             <small v-if="view === 'register'" id="register-preview-note">
-              验证码 5 分钟内有效，60 秒后可重发；密码至少 12 个字符。
+              验证码 5 分钟内有效，60 秒后可重发；密码至少 8 个字符。
             </small>
             <small v-else>请使用管理员配置的邮箱和密码登录。</small>
           </form>
@@ -518,6 +642,60 @@ h2 {
   outline: 3px solid var(--accent-soft);
 }
 
+.login-modal__password-field {
+  position: relative;
+  display: block;
+}
+
+.login-modal__password-field input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.login-modal__password-field button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  background: transparent;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.login-modal__password-field button:hover,
+.login-modal__password-field button:focus-visible {
+  color: var(--accent);
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.login-modal__password-field svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.login-modal__form .login-modal__password-hint {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.login-modal__form .login-modal__password-hint--error {
+  color: var(--danger, #d14343);
+}
+
 .login-modal__code-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -546,6 +724,22 @@ h2 {
 }
 
 .login-modal__form > .login-modal__status {
+  color: var(--text-secondary);
+}
+
+.login-modal__form .login-modal__field-hint,
+.login-modal__form .login-modal__submit-hint {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.login-modal__form .login-modal__field-hint--error {
+  color: var(--danger, #d14343);
+}
+
+.login-modal__form .login-modal__field-hint--notice {
   color: var(--text-secondary);
 }
 

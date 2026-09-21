@@ -70,6 +70,23 @@ class EmailRegistrationServiceTest {
     }
 
     @Test
+    void rejectsPasswordsShorterThanEightCharactersBeforeCreatingAccount() {
+        EmailRegistrationService service = service((recipient, code, validFor) -> deliveredCode.set(code));
+        service.requestCode(new EmailRegistrationCodeRequest("new@example.com"), "127.0.0.1");
+
+        assertThatThrownBy(() -> service.register(new EmailRegistrationRequest(
+                "new@example.com",
+                deliveredCode.get(),
+                "1234567"
+        ))).isInstanceOf(RegistrationException.class)
+                .extracting(exception -> ((RegistrationException) exception).getReason())
+                .isEqualTo(RegistrationException.Reason.PASSWORD_INVALID);
+        verify(registrationGateway, never()).createPersonalAccount(
+                anyString(), anyString(), anyString(), any()
+        );
+    }
+
+    @Test
     void rejectsPasswordsLongerThanBcryptLimitBeforeCreatingAccount() {
         EmailRegistrationService service = service((recipient, code, validFor) -> deliveredCode.set(code));
         service.requestCode(new EmailRegistrationCodeRequest("new@example.com"), "127.0.0.1");
