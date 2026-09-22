@@ -49,4 +49,32 @@ class OpenAiCompatibleProviderConfigurationTest {
                     assertThat(context.getStartupFailure()).hasMessageContaining("http 或 https");
                 });
     }
+
+    @Test
+    void shouldBindDeepSeekAndTokenHubRoutesTogether() {
+        contextRunner
+                .withPropertyValues(
+                        "app.provider.mode=openai-compatible",
+                        "app.provider.openai-compatible.multi-provider-enabled=true",
+                        "app.provider.openai-compatible.default-provider=tokenhub",
+                        "app.provider.openai-compatible.providers.deepseek.provider-name=deepseek",
+                        "app.provider.openai-compatible.providers.deepseek.endpoint=https://deepseek.example.com/chat/completions",
+                        "app.provider.openai-compatible.providers.deepseek.api-key=deepseek-secret",
+                        "app.provider.openai-compatible.providers.deepseek.model=deepseek-chat",
+                        "app.provider.openai-compatible.providers.deepseek.models=deepseek-chat",
+                        "app.provider.openai-compatible.providers.tokenhub.provider-name=tokenhub",
+                        "app.provider.openai-compatible.providers.tokenhub.endpoint=https://tokenhub.example.com/v1/chat/completions",
+                        "app.provider.openai-compatible.providers.tokenhub.api-key=tokenhub-secret",
+                        "app.provider.openai-compatible.providers.tokenhub.model=glm-5.3-flashx",
+                        "app.provider.openai-compatible.providers.tokenhub.models=glm-5.3-flashx,kimi-k3"
+                )
+                .run(context -> {
+                    assertThat(context).hasSingleBean(PromptEnhancementProvider.class);
+                    OpenAiCompatibleProperties properties = context.getBean(OpenAiCompatibleProperties.class);
+                    assertThat(properties.getAvailableModelDescriptors())
+                            .extracting(OpenAiCompatibleProperties.ModelDescriptor::id)
+                            .containsExactly("deepseek:deepseek-chat", "tokenhub:glm-5.3-flashx", "tokenhub:kimi-k3");
+                    assertThat(properties.getDefaultRoute().providerName()).isEqualTo("tokenhub");
+                });
+    }
 }

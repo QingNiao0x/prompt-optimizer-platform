@@ -507,8 +507,8 @@ onMounted(() => {
 .eyebrow {
   color: var(--accent-blue);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
+  font-size: 12px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
@@ -523,7 +523,7 @@ h1 {
 .page-heading p {
   margin: 0;
   color: var(--ink-muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .security-note {
@@ -562,7 +562,7 @@ h1 {
 .section-heading p {
   margin: 0;
   color: var(--ink-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .setting-block,
@@ -575,7 +575,7 @@ h1 {
   display: block;
   margin-bottom: 7px;
   color: var(--ink-strong);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -594,8 +594,8 @@ h1 {
   align-items: center;
   gap: 8px;
   color: var(--ink-soft);
-  font-size: 11px;
-  line-height: 1.5;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .limit-grid {
@@ -619,14 +619,14 @@ h1 {
 .storage-status small,
 .switch-setting small {
   color: var(--ink-soft);
-  font-size: 10px;
-  line-height: 1.5;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .limit-grid strong {
   color: var(--ink-strong);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .privacy-grid {
@@ -668,7 +668,7 @@ h1 {
 .provider-settings-card :deep(.el-table__header-wrapper th) {
   height: 46px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -687,7 +687,7 @@ h1 {
   overflow: hidden;
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

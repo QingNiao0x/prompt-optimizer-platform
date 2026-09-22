@@ -74,7 +74,7 @@ const openAuth = (mode: AuthModalMode): void => {
   padding: 40px 24px;
   border-top: 1px solid var(--glass-border-subtle);
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 14px;
   text-align: center;
 }
 

@@ -29,7 +29,7 @@ const logout = async (): Promise<void> => {
 </template>
 
 <style scoped>
-.account-menu { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.account-menu { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .account-menu > span:first-child { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 button { padding: 6px 10px; border: 1px solid var(--glass-border); border-radius: var(--radius-pill); background: var(--glass-bg); color: var(--text-primary); cursor: pointer; }
 [role='alert'] { max-width: 180px; }

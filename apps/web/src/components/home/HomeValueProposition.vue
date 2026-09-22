@@ -50,9 +50,9 @@
   position: relative;
   margin: 0 0 14px;
   color: var(--accent);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.8px;
 }
 
 h2 {

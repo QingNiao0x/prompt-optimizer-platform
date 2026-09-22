@@ -15,7 +15,8 @@ public record PlanningProviderRequest(
         String rawPrompt,
         String contextDescription,
         List<ConversationMessage> conversationHistory,
-        PlanningContextDigest planningContext
+        PlanningContextDigest planningContext,
+        String model
 ) {
 
     public PlanningProviderRequest {
@@ -26,8 +27,17 @@ public record PlanningProviderRequest(
     public PlanningProviderRequest(
             String rawPrompt,
             String contextDescription,
+            List<ConversationMessage> conversationHistory,
+            PlanningContextDigest planningContext
+    ) {
+        this(rawPrompt, contextDescription, conversationHistory, planningContext, null);
+    }
+
+    public PlanningProviderRequest(
+            String rawPrompt,
+            String contextDescription,
             List<ConversationMessage> conversationHistory
     ) {
-        this(rawPrompt, contextDescription, conversationHistory, null);
+        this(rawPrompt, contextDescription, conversationHistory, null, null);
     }
 }

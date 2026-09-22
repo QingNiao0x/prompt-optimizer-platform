@@ -66,14 +66,14 @@ const displayIndex = computed(() => String(props.index + 1).padStart(2, '0'));
 
 .section-rail span {
   display: grid;
-  width: 22px;
-  height: 22px;
-  flex: 0 0 22px;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
   place-items: center;
   border-radius: 50%;
   color: var(--accent);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
   background: var(--accent-soft);
 }
@@ -138,10 +138,10 @@ const displayIndex = computed(() => String(props.index + 1).padStart(2, '0'));
 
 .section-tag {
   flex: 0 0 auto;
-  padding: 2px 8px;
+  padding: 4px 10px;
   border-radius: var(--radius-pill);
   color: var(--accent);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   background: var(--accent-soft);
 }
@@ -175,7 +175,7 @@ const displayIndex = computed(() => String(props.index + 1).padStart(2, '0'));
   max-width: 100%;
   margin-top: 10px;
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.75;
   overflow-wrap: anywhere;
   white-space: pre-wrap;

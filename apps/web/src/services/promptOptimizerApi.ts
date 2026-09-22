@@ -2,6 +2,7 @@ import { httpClient } from './http';
 
 import type {
   ApiResponse,
+  AvailableModel,
   ContextAnalysisRequest,
   ContextSnapshot,
   OptimizationHistoryDetail,
@@ -14,6 +15,11 @@ import type {
   PlanningContextRequest,
   ReoptimizationResult,
 } from '@/types/api';
+
+export const listAvailableModels = async (): Promise<ApiResponse<AvailableModel[]>> => {
+  const response = await httpClient.get<ApiResponse<AvailableModel[]>>('/api/v1/models');
+  return response.data;
+};
 
 export const preparePlanningContext = async (
   request: PlanningContextRequest,

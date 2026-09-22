@@ -72,8 +72,9 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
         ResponseFormat responseFormat = properties.isJsonResponseFormatEnabled()
                 ? new ResponseFormat("json_object")
                 : null;
+        OpenAiCompatibleRoute route = properties.getDefaultRoute();
         ChatCompletionRequest requestBody = new ChatCompletionRequest(
-                properties.getModel(),
+                route.model(),
                 List.of(
                         new ChatMessage("system", SYSTEM_PROMPT),
                         new ChatMessage("user", userMessage)
@@ -85,14 +86,14 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
 
         try {
             ChatCompletionResponse response = restClient.post()
-                    .uri(properties.getEndpoint())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + properties.getApiKey())
+                    .uri(route.endpoint())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + route.apiKey())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .body(requestBody)
                     .retrieve()
                     .body(ChatCompletionResponse.class);
-            return mapResponse(response);
+            return mapResponse(response, route.model());
         } catch (RestClientResponseException exception) {
             throw new DocumentSummaryModelException(
                     "摘要模型拒绝请求，HTTP " + exception.getStatusCode().value(),
@@ -105,7 +106,7 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
         }
     }
 
-    private SummaryResult mapResponse(ChatCompletionResponse response) {
+    private SummaryResult mapResponse(ChatCompletionResponse response, String requestedModel) {
         if (response == null || response.choices() == null || response.choices().isEmpty()) {
             throw new DocumentSummaryModelException("摘要模型响应未包含候选结果");
         }
@@ -123,7 +124,7 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
                 throw new DocumentSummaryModelException("摘要模型响应未包含 summary 字段");
             }
             String model = response.model() == null || response.model().isBlank()
-                    ? properties.getModel()
+                    ? requestedModel
                     : response.model();
             return new SummaryResult(summaryResponse.summary(), model);
         } catch (JsonProcessingException exception) {

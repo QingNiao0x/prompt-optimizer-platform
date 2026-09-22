@@ -2,6 +2,8 @@
 import {
   ElButton,
   ElInput,
+  ElOption,
+  ElSelect,
   ElSwitch,
   ElTooltip,
 } from 'element-plus';
@@ -9,10 +11,13 @@ import { computed } from 'vue';
 
 import SparklesIcon from '@/components/brand/SparklesIcon.vue';
 import { usePlanModePreference } from '@/composables/usePlanModePreference';
+import type { AvailableModel } from '@/types/api';
 
 interface Props {
   rawPrompt: string;
   includeExamples: boolean;
+  model: string;
+  modelOptions: AvailableModel[];
   isAnalyzing: boolean;
   isPlanning: boolean;
   isOptimizing: boolean;
@@ -22,6 +27,7 @@ interface Props {
 interface Emits {
   (event: 'update:raw-prompt', value: string): void;
   (event: 'update:include-examples', value: boolean): void;
+  (event: 'update:model', value: string): void;
   (event: 'optimize'): void;
 }
 
@@ -38,6 +44,17 @@ const examplesModel = computed({
   get: (): boolean => props.includeExamples,
   set: (value: boolean): void => emit('update:include-examples', value),
 });
+
+const modelModel = computed({
+  get: (): string => props.model,
+  set: (value: string): void => emit('update:model', value),
+});
+
+const modelCode = (model: AvailableModel): string => {
+  const separator = model.id.indexOf(':');
+  const code = (separator >= 0 ? model.id.slice(separator + 1) : model.id).trim();
+  return code || model.displayName;
+};
 
 const planModeModel = computed({
   get: (): boolean => planModeEnabled.value,
@@ -101,25 +118,49 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
           </ElTooltip>
         </div>
 
-        <ElButton
-          class="optimize-button"
-          native-type="submit"
-          type="primary"
-          size="large"
-          :icon="SparklesIcon"
-          :loading="isAnalyzing || isPlanning || isOptimizing"
-          :disabled="!canOptimize"
-        >
-          {{ isAnalyzing
-            ? '正在分析上下文…'
-            : isPlanning
-              ? '正在理解需求…'
-              : isOptimizing
-              ? '正在生成最终提示词…'
-                : planModeEnabled
-                  ? '先确认并增强'
-                  : '直接增强提示词' }}
-        </ElButton>
+        <div class="composer-actions">
+          <label class="model-control">
+            <span>模型</span>
+            <ElSelect
+              v-model="modelModel"
+              class="model-select"
+              size="small"
+              :disabled="isBusy || modelOptions.length === 0"
+              :aria-label="modelOptions.length > 0 ? '选择模型' : '当前无可用模型'"
+            >
+              <ElOption
+                v-for="modelOption in modelOptions"
+                :key="modelOption.id"
+                :label="modelCode(modelOption)"
+                :value="modelOption.id"
+              >
+                <span class="model-option">
+                  <strong>{{ modelCode(modelOption) }}</strong>
+                  <small v-if="modelOption.provider">{{ modelOption.provider }}</small>
+                </span>
+              </ElOption>
+            </ElSelect>
+          </label>
+          <ElButton
+            class="optimize-button"
+            native-type="submit"
+            type="primary"
+            size="large"
+            :icon="SparklesIcon"
+            :loading="isAnalyzing || isPlanning || isOptimizing"
+            :disabled="!canOptimize"
+          >
+            {{ isAnalyzing
+              ? '正在分析上下文…'
+              : isPlanning
+                ? '正在理解需求…'
+                : isOptimizing
+                  ? '正在生成最终提示词…'
+                  : planModeEnabled
+                    ? '先确认并增强'
+                    : '直接增强提示词' }}
+          </ElButton>
+        </div>
       </div>
     </form>
   </section>
@@ -142,9 +183,9 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
 .step-label {
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
@@ -229,7 +270,7 @@ form {
 
 .plan-note strong {
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -244,8 +285,8 @@ form {
 
 .plan-note span {
   color: var(--text-muted);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .composer-controls {
@@ -269,15 +310,57 @@ form {
   align-items: center;
   gap: 8px;
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
 }
 
+.model-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.composer-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.model-select {
+  width: 220px;
+}
+
+.model-option {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.model-option strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.model-option small {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.model-select :deep(.el-input__wrapper) {
+  border-radius: 999px;
+  background: var(--glass-bg-subtle);
+  box-shadow: 0 0 0 1px var(--glass-border-subtle) inset;
+}
+
 .plan-badge {
-  padding: 1px 6px;
+  padding: 4px 10px;
   border-radius: 999px;
   color: var(--accent);
-  font-size: 10px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -333,14 +416,27 @@ form {
     flex-direction: column;
   }
 
+  .composer-actions {
+    width: 100%;
+    margin-left: 0;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .composer-options,
-  .switch-control {
+  .switch-control,
+  .model-control {
     width: 100%;
   }
 
-  .switch-control {
+  .switch-control,
+  .model-control {
     justify-content: space-between;
     min-height: 44px;
+  }
+
+  .model-select {
+    width: min(70%, 240px);
   }
 
   .optimize-button {

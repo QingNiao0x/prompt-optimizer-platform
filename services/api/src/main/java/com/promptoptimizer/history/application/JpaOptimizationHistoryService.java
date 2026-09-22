@@ -325,7 +325,8 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
                 enhancement,
                 conversation,
                 policy == null ? PermissionPolicyInput.empty() : policy,
-                planConfirmation
+                planConfirmation,
+                stringValue(metadata.get("model"))
         );
     }
 

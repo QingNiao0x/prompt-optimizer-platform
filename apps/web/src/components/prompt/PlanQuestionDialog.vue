@@ -2,6 +2,8 @@
 import { ArrowLeft, ArrowRight, Check, MagicStick } from '@element-plus/icons-vue';
 import { ElButton, ElDialog, ElInput } from 'element-plus';
 import { computed, ref, watch } from 'vue';
+import { recoverPlanDrafts } from '@/features/optimization/planDraftRecovery';
+import { recordPlanningEvent } from '@/services/planningMetrics';
 
 import type {
   OptimizationPlan,
@@ -16,6 +18,7 @@ interface Props {
   plan?: OptimizationPlan;
   isGenerating: boolean;
   errorMessage?: string;
+  recoveryRevision?: number;
 }
 
 interface Emits {
@@ -34,6 +37,9 @@ const emit = defineEmits<Emits>();
 const currentIndex = ref(0);
 const draftAnswers = ref<Record<string, DraftAnswer>>({});
 const showValidation = ref(false);
+const unmatchedDrafts = ref<string[]>([]);
+let previousQuestions: PlanQuestion[] = [];
+let lastRecoveryRevision = 0;
 
 const questions = computed(() => props.plan?.questions ?? []);
 const currentQuestion = computed(() => questions.value[currentIndex.value]);
@@ -41,7 +47,7 @@ const currentDraft = computed(() => {
   const question = currentQuestion.value;
   return question ? draftAnswers.value[question.id] : undefined;
 });
-const isLastQuestion = computed(() => currentIndex.value === questions.value.length - 1);
+const isLastQuestion = computed(() => questions.value.length === 0 || currentIndex.value === questions.value.length - 1);
 const completedCount = computed(() => questions.value.filter(isQuestionAnswered).length);
 const currentAnswered = computed(() => {
   const question = currentQuestion.value;
@@ -56,10 +62,19 @@ watch(
     }
     currentIndex.value = 0;
     showValidation.value = false;
-    draftAnswers.value = Object.fromEntries(props.plan.questions.map((question) => [
+    if ((props.recoveryRevision ?? 0) > lastRecoveryRevision) {
+      const recovered = recoverPlanDrafts(previousQuestions, props.plan.questions, draftAnswers.value);
+      draftAnswers.value = recovered.answers;
+      unmatchedDrafts.value = [...unmatchedDrafts.value, ...recovered.unmatched];
+    } else {
+      unmatchedDrafts.value = [];
+      draftAnswers.value = Object.fromEntries(props.plan.questions.map((question) => [
       question.id,
       { selectedOptionIds: [], customAnswer: '' },
-    ]));
+      ]));
+    }
+    previousQuestions = props.plan.questions;
+    lastRecoveryRevision = props.recoveryRevision ?? 0;
   },
 );
 
@@ -114,6 +129,11 @@ const toAnswer = (question: PlanQuestion): PlanAnswer => {
 };
 
 const continueFlow = (): void => {
+  if (props.isGenerating) return;
+  if (questions.value.length === 0) {
+    emit('confirm', { planId: props.plan?.planId, planningContext: props.plan?.planningContext, answers: [] });
+    return;
+  }
   const question = currentQuestion.value;
   if (!question || !isQuestionAnswered(question)) {
     showValidation.value = true;
@@ -131,6 +151,10 @@ const continueFlow = (): void => {
     showValidation.value = true;
     return;
   }
+  recordPlanningEvent(props.plan?.planId, 'CONFIRMED');
+  if (Object.values(draftAnswers.value).some((draft) => draft.customAnswer.trim())) {
+    recordPlanningEvent(props.plan?.planId, 'CUSTOM_ANSWER');
+  }
   emit('confirm', {
     planId: props.plan?.planId,
     planningContext: props.plan?.planningContext,
@@ -147,6 +171,7 @@ const previousQuestion = (): void => {
 
 const close = (): void => {
   if (!props.isGenerating) {
+    if (props.modelValue) recordPlanningEvent(props.plan?.planId, 'CANCELLED');
     emit('update:modelValue', false);
   }
 };
@@ -173,6 +198,11 @@ const close = (): void => {
       </div>
     </template>
 
+    <p v-if="recoveryRevision" role="status">确认问题已更新，请核对保留的答案后重新确认。</p>
+    <details v-if="unmatchedDrafts.length">
+      <summary>上次回答草稿（问题有变化，未自动填入）</summary>
+      <p v-for="draft in unmatchedDrafts" :key="draft">{{ draft }}</p>
+    </details>
     <template v-if="currentQuestion">
       <div class="question-progress" aria-label="回答进度">
         <div class="progress-copy">
@@ -301,8 +331,8 @@ const close = (): void => {
   margin: 0 0 7px !important;
   color: var(--accent-cyan) !important;
   font-family: var(--font-mono);
-  font-size: 10px !important;
-  letter-spacing: 0.12em;
+  font-size: 12px !important;
+  letter-spacing: 0.8px;
 }
 
 .dialog-heading h2 {
@@ -316,7 +346,7 @@ const close = (): void => {
 .dialog-heading > p:last-child {
   margin: 11px 0 0;
   color: var(--ink-muted);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.7;
 }
 
@@ -330,7 +360,7 @@ const close = (): void => {
   margin-bottom: 8px;
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .progress-track {
@@ -398,7 +428,7 @@ const close = (): void => {
 .question-copy p {
   margin: 9px 0 0;
   color: var(--ink-muted);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.7;
 }
 
@@ -477,24 +507,24 @@ const close = (): void => {
 
 .option-title strong {
   color: var(--ink-strong);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .option-title em {
-  padding: 2px 6px;
+  padding: 4px 10px;
   border-radius: 999px;
   color: var(--accent-cyan);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
   font-style: normal;
   background: color-mix(in srgb, var(--accent-cyan) 10%, transparent);
 }
 
 .option-copy small {
   color: var(--ink-soft);
-  font-size: 11px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .free-answer,
@@ -519,7 +549,7 @@ const close = (): void => {
 .answer-examples {
   margin: 10px 0 0;
   color: var(--ink-soft);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.65;
 }
 
@@ -527,7 +557,7 @@ const close = (): void => {
   margin-right: 7px;
   color: var(--accent-cyan);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.08em;
 }
 
@@ -535,13 +565,13 @@ const close = (): void => {
   display: block;
   margin-bottom: 7px;
   color: var(--ink-soft);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .validation-message {
   margin: 12px 0 0;
   color: var(--danger, #ff7d8a);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .generation-error {
@@ -550,7 +580,7 @@ const close = (): void => {
   border: 1px solid color-mix(in srgb, var(--danger, #ff7d8a) 42%, var(--line-subtle));
   border-radius: 8px;
   color: var(--danger, #ff7d8a);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.6;
   background: color-mix(in srgb, var(--danger, #ff7d8a) 8%, transparent);
 }

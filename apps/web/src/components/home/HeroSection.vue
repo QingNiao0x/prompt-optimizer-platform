@@ -56,7 +56,7 @@ import WandSparklesIcon from '@/components/brand/WandSparklesIcon.vue';
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-pill);
   color: var(--accent);
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 0.08em;
   background: var(--glass-bg);
   backdrop-filter: blur(16px) saturate(1.5);

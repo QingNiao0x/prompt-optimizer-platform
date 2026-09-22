@@ -34,7 +34,7 @@ public class OpenAiCompatibleProviderConfiguration {
             RestClient.Builder builder,
             OpenAiCompatibleProperties properties
     ) {
-        validateEndpoint(properties.getEndpoint());
+        validateRoutes(properties);
         validateTimeout("connect-timeout", properties.getConnectTimeout());
         validateTimeout("read-timeout", properties.getReadTimeout());
 
@@ -80,9 +80,33 @@ public class OpenAiCompatibleProviderConfiguration {
      * 校验模型端点协议。
      */
     private void validateEndpoint(URI endpoint) {
+        if (endpoint == null) {
+            throw new IllegalStateException("模型端点不能为空");
+        }
         if (endpoint.getScheme() == null || !SUPPORTED_SCHEMES.contains(endpoint.getScheme().toLowerCase())) {
             throw new IllegalStateException("模型端点仅支持 http 或 https 协议");
         }
+    }
+
+    /**
+     * 在创建 HTTP 客户端前校验所有已启用路由，避免请求运行到一半才发现密钥或 endpoint 缺失。
+     */
+    private void validateRoutes(OpenAiCompatibleProperties properties) {
+        var routes = properties.getConfiguredRoutes();
+        if (routes.isEmpty()) {
+            throw new IllegalStateException("至少需要配置一条可用的模型供应商路由");
+        }
+        routes.forEach(route -> {
+            validateEndpoint(route.endpoint());
+            if (route.apiKey() == null || route.apiKey().isBlank()) {
+                throw new IllegalStateException("模型供应商 API Key 未配置：" + route.providerName());
+            }
+            if (route.model() == null || route.model().isBlank()) {
+                throw new IllegalStateException("模型默认名称未配置：" + route.providerName());
+            }
+        });
+        // 触发 default-provider 的存在性校验，同时保持错误在启动阶段暴露。
+        properties.getDefaultRoute();
     }
 
     /**

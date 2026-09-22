@@ -193,7 +193,7 @@ const formatConfidence = (confidence: number): string => {
 .analysis-title-main {
   gap: 6px;
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -224,15 +224,15 @@ const formatConfidence = (confidence: number): string => {
 
 .analysis-coverage > strong {
   color: var(--text-primary);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .analysis-coverage > span,
 .analysis-coverage summary,
 .analysis-coverage small {
   color: var(--text-muted);
-  font-size: 9px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .analysis-coverage details {
@@ -260,7 +260,7 @@ const formatConfidence = (confidence: number): string => {
   overflow: hidden;
   color: var(--text-secondary);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -282,7 +282,7 @@ const formatConfidence = (confidence: number): string => {
 .project-overview-card h3 {
   margin: 0;
   color: var(--text-primary);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .project-overview-card p,
@@ -291,7 +291,7 @@ const formatConfidence = (confidence: number): string => {
 .file-summary-item > p {
   margin: 6px 0 0;
   color: var(--text-secondary);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.65;
   overflow-wrap: anywhere;
 }
@@ -308,7 +308,7 @@ const formatConfidence = (confidence: number): string => {
 .file-summary-heading {
   margin-bottom: 8px;
   color: var(--text-primary);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -319,7 +319,7 @@ const formatConfidence = (confidence: number): string => {
 .technology-heading > span {
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 400;
 }
 
@@ -356,7 +356,7 @@ const formatConfidence = (confidence: number): string => {
   min-width: 0;
   overflow: hidden;
   color: var(--text-primary);
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -367,7 +367,7 @@ const formatConfidence = (confidence: number): string => {
   overflow: hidden;
   color: var(--accent);
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -381,7 +381,7 @@ const formatConfidence = (confidence: number): string => {
 .project-result-details summary {
   display: flex;
   color: var(--text-primary);
-  font-size: 10px;
+  font-size: 12px;
   cursor: pointer;
   list-style: none;
 }
@@ -401,21 +401,21 @@ const formatConfidence = (confidence: number): string => {
 
 .compact-result-list strong {
   color: var(--text-primary);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .compact-result-list span,
 .directory-result-list li {
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .analysis-empty,
 .analysis-meta {
   margin: 11px 0 0;
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .analysis-meta {
@@ -426,6 +426,6 @@ const formatConfidence = (confidence: number): string => {
   display: block;
   margin-top: 5px;
   color: var(--warning);
-  font-size: 8px;
+  font-size: 12px;
 }
 </style>

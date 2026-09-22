@@ -17,6 +17,7 @@ import { useProjectIndex } from '@/composables/useProjectIndex';
 import { useProjectFiles } from '@/composables/useProjectFiles';
 import { buildRefinedContextQuery } from '@/features/optimization/optimizationRequest';
 import { useOptimizationStore } from '@/stores/optimization';
+import { recordPlanningEvent } from '@/services/planningMetrics';
 import { useProjectContextSettingsStore } from '@/stores/projectContextSettings';
 import type { ContextFileInput, PlanConfirmation, PromptSection } from '@/types/api';
 
@@ -33,6 +34,8 @@ const {
   customDescription,
   files,
   includeExamples,
+  availableModels,
+  selectedModel,
   projectIndex,
   contextRetrieval,
   contextSnapshot,
@@ -73,6 +76,8 @@ const {
 const planDialogVisible = ref(false);
 const planIntroVisible = ref(false);
 const pendingPrompt = ref('');
+const recoveryRevision = ref(0);
+const isRecoveringPlan = ref(false);
 const isClearingIndex = ref(false);
 let pageLifecycleVersion = 0;
 const {
@@ -365,12 +370,14 @@ const handlePlanIntroDismissed = async (): Promise<void> => {
 };
 
 const runPlannedEnhancement = async (): Promise<void> => {
+  recoveryRevision.value = 0;
   const contextPrepared = await prepareContextForPlan(pendingPrompt.value);
   if (!contextPrepared) {
     return;
   }
   const succeeded = await store.createOptimizationPlan(pendingPrompt.value);
   if (!succeeded) {
+    if (store.planningSessionExpired) await recoverExpiredPlan();
     return;
   }
   if ((plan.value?.questions.length ?? 0) > 0) {
@@ -434,6 +441,24 @@ const generateFinalPrompt = async (confirmation: PlanConfirmation): Promise<void
   if (succeeded) {
     planDialogVisible.value = false;
     ElMessage.success('最终提示词已生成。');
+  } else if (store.planningSessionExpired) {
+    await recoverExpiredPlan();
+  }
+};
+
+const recoverExpiredPlan = async (): Promise<void> => {
+  if (isRecoveringPlan.value) return;
+  isRecoveringPlan.value = true;
+  try {
+    // 重新经过文件发送确认；用户取消时保留旧对话框和草稿，不绕过发送许可。
+    if (!await prepareContextForPlan(pendingPrompt.value)) return;
+    recoveryRevision.value += 1;
+    if (!await store.createOptimizationPlan(pendingPrompt.value)) return;
+    planDialogVisible.value = true;
+    recordPlanningEvent(plan.value?.planId, 'EXPIRED_RECOVERED');
+    ElMessage.info('确认已过期，已重新生成问题。请核对答案后再次确认。');
+  } finally {
+    isRecoveringPlan.value = false;
   }
 };
 
@@ -449,6 +474,7 @@ const createPlanConfirmation = (answers: PlanConfirmation['answers']): PlanConfi
 
 const handleSaveResult = (sections: PromptSection[]): void => {
   if (store.saveEditedSections(sections)) {
+    recordPlanningEvent(plan.value?.planId, 'RESULT_EDITED');
     ElMessage.success('修改已保存。');
   }
 };
@@ -517,6 +543,7 @@ watch(result, (value) => {
 
 onMounted(() => {
   clearPersistedProjectSelection();
+  void store.loadAvailableModels();
   void projectContextSettingsStore.refreshStorageStatus();
   window.addEventListener('pagehide', handlePageHide);
   mobilePaneQuery = window.matchMedia(MOBILE_PANE_QUERY);
@@ -611,12 +638,15 @@ onBeforeUnmount(() => {
         class="glass-panel intent-column"
         :raw-prompt="rawPrompt"
         :include-examples="includeExamples"
+        :model="selectedModel"
+        :model-options="availableModels"
         :is-analyzing="isAnalyzing"
         :is-planning="isPlanning"
         :is-optimizing="isOptimizing"
         :can-optimize="canOptimize"
         @update:raw-prompt="rawPrompt = $event"
         @update:include-examples="includeExamples = $event"
+        @update:model="selectedModel = $event"
         @optimize="handleOptimize"
       />
       <ResultPanel
@@ -633,7 +663,8 @@ onBeforeUnmount(() => {
     <PlanQuestionDialog
       v-model="planDialogVisible"
       :plan="plan"
-      :is-generating="isOptimizing"
+      :recovery-revision="recoveryRevision"
+      :is-generating="isOptimizing || isPlanning || isAnalyzing || isRecoveringPlan"
       :error-message="errorMessage"
       @confirm="handlePlanConfirmed"
     />
@@ -661,7 +692,7 @@ onBeforeUnmount(() => {
 
 .error-alert code {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .workbench-grid {
@@ -731,7 +762,7 @@ onBeforeUnmount(() => {
     border: 0;
     border-radius: 10px;
     color: var(--text-secondary);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     background: transparent;
     cursor: pointer;

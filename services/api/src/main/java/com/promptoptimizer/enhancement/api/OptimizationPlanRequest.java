@@ -23,7 +23,9 @@ public record OptimizationPlanRequest(
         String contextDescription,
         @Size(max = 20, message = "单次最多携带 20 条会话消息")
         List<@NotNull(message = "会话消息不能为空") @Valid ConversationMessage> conversationHistory,
-        @Valid PlanningContextReference planningContext
+        @Valid PlanningContextReference planningContext,
+        @Size(max = 120, message = "模型 ID 不能超过 120 个字符")
+        String model
 ) {
 
     public OptimizationPlanRequest {
@@ -37,8 +39,17 @@ public record OptimizationPlanRequest(
     public OptimizationPlanRequest(
             String rawPrompt,
             String contextDescription,
+            List<ConversationMessage> conversationHistory,
+            PlanningContextReference planningContext
+    ) {
+        this(rawPrompt, contextDescription, conversationHistory, planningContext, null);
+    }
+
+    public OptimizationPlanRequest(
+            String rawPrompt,
+            String contextDescription,
             List<ConversationMessage> conversationHistory
     ) {
-        this(rawPrompt, contextDescription, conversationHistory, null);
+        this(rawPrompt, contextDescription, conversationHistory, null, null);
     }
 }

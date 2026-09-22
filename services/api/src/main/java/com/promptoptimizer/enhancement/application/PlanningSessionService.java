@@ -106,7 +106,7 @@ public class PlanningSessionService {
                 fingerprintContext(filtered.request(), request.rawPrompt())
         );
         Instant expiresAt = clock.instant().plus(SESSION_TTL);
-        PlanningContextDigest digest = buildDigest(snapshot);
+        PlanningContextDigest digest = buildDigest(snapshot, request.rawPrompt());
         store.saveContext(new PlanningSessionStore.ContextSession(
                 reference,
                 actor.userId(),
@@ -164,6 +164,10 @@ public class PlanningSessionService {
         resolveForPlan(planningContext.reference(), rawPrompt, contextDescription);
         String planId = UUID.randomUUID().toString();
         Instant expiresAt = clock.instant().plus(SESSION_TTL);
+        if (planningContext.reference() != null) {
+            Instant contextExpiry = requireContext(planningContext.reference()).expiresAt();
+            if (contextExpiry.isBefore(expiresAt)) expiresAt = contextExpiry;
+        }
         store.savePlan(new PlanningSessionStore.PlanSession(
                 planId,
                 actor.userId(),
@@ -253,10 +257,10 @@ public class PlanningSessionService {
     private PlanningSessionStore.ContextSession requireContext(PlanningContextReference reference) {
         UUID ownerId = currentActor.require().userId();
         PlanningSessionStore.ContextSession context = store.findContext(reference.contextId())
-                .orElseThrow(() -> new InvalidOptimizationRequestException("文件上下文已过期，请重新分析。"));
-        if (!Objects.equals(context.ownerUserId(), ownerId)) {
+                .orElseThrow(() -> new PlanningSessionExpiredException("文件上下文已过期，请重新分析。"));
+        if (!Objects.equals(context.ownerUserId(), ownerId) || !context.expiresAt().isAfter(clock.instant())) {
             // 与不存在或过期使用同一提示，避免向其他用户泄露资源是否存在。
-            throw new InvalidOptimizationRequestException("文件上下文已过期，请重新分析。");
+            throw new PlanningSessionExpiredException("文件上下文已过期，请重新分析。");
         }
         if (!Objects.equals(context.reference().version(), reference.version())) {
             throw new InvalidOptimizationRequestException("文件上下文版本无效，请重新分析。");
@@ -264,13 +268,15 @@ public class PlanningSessionService {
         return context;
     }
 
+    public void assertAccessible(String planId) { requirePlan(planId); }
+
     private PlanningSessionStore.PlanSession requirePlan(String planId) {
         UUID ownerId = currentActor.require().userId();
         PlanningSessionStore.PlanSession plan = store.findPlan(planId)
-                .orElseThrow(() -> new InvalidOptimizationRequestException("确认问题已过期，请重新生成。"));
-        if (!Objects.equals(plan.ownerUserId(), ownerId)) {
+                .orElseThrow(() -> new PlanningSessionExpiredException("确认问题已过期，请重新生成。"));
+        if (!Objects.equals(plan.ownerUserId(), ownerId) || !plan.expiresAt().isAfter(clock.instant())) {
             // 与不存在或过期使用同一提示，避免向其他用户泄露资源是否存在。
-            throw new InvalidOptimizationRequestException("确认问题已过期，请重新生成。");
+            throw new PlanningSessionExpiredException("确认问题已过期，请重新生成。");
         }
         return plan;
     }
@@ -289,7 +295,7 @@ public class PlanningSessionService {
         return List.copyOf(unique.values());
     }
 
-    private PlanningContextDigest buildDigest(ContextSnapshot snapshot) {
+    private PlanningContextDigest buildDigest(ContextSnapshot snapshot, String query) {
         List<String> technologies = snapshot.technologyStack().stream()
                 .limit(20)
                 .map(item -> truncate(item.name()))
@@ -303,17 +309,20 @@ public class PlanningSessionService {
                 .limit(80)
                 .map(this::truncate)
                 .toList();
-        List<String> fileSummaries = snapshot.fileSnippets().stream()
-                .limit(30)
+        List<String> fileSummaries = PlanningDigestSelector.select(snapshot.fileSnippets(), query, 30).stream()
                 .map(file -> truncate(file.path() + "：" + (isBlank(file.summary())
                         ? "已识别为 " + file.language() + " 文件"
                         : file.summary())))
                 .toList();
-        List<String> warnings = snapshot.warnings().stream()
+        List<String> warnings = new ArrayList<>(snapshot.warnings().stream()
                 .filter(value -> !containsSensitiveWarning(value))
-                .limit(20)
+                .limit(19)
                 .map(this::truncate)
-                .toList();
+                .toList());
+        if (snapshot.fileSnippets().size() > fileSummaries.size()) {
+            warnings.add("计划摘要仅覆盖 " + fileSummaries.size() + "/" + snapshot.fileSnippets().size()
+                    + " 个已提取文件，按需求相关性和目录多样性选择；未覆盖内容不能视为不存在。");
+        }
         int analyzedFileCount = snapshot.fileCoverage().isEmpty()
                 ? snapshot.fileSnippets().size()
                 : (int) snapshot.fileCoverage().stream()

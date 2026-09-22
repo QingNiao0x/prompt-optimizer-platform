@@ -25,12 +25,13 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.client.ExpectedCount.once;
-import static org.springframework.test.web.client.ExpectedCount.twice;
+import static org.springframework.test.web.client.ExpectedCount.times;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -43,20 +44,24 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
     private static final String ENDPOINT = "https://model.example.com/v1/chat/completions";
     private static final String API_KEY = "test-api-key";
     private static final String MODEL = "test-model";
+    private static final String TOKENHUB_ENDPOINT = "https://tokenhub.example.com/v1/chat/completions";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private RestClient.Builder builder;
     private MockRestServiceServer server;
+    private OpenAiCompatibleProperties properties;
     private OpenAiCompatiblePromptEnhancementProvider provider;
 
     @BeforeEach
     void setUp() {
-        RestClient.Builder builder = RestClient.builder();
+        builder = RestClient.builder();
         server = MockRestServiceServer.bindTo(builder).build();
 
-        OpenAiCompatibleProperties properties = new OpenAiCompatibleProperties();
+        properties = new OpenAiCompatibleProperties();
         properties.setEndpoint(java.net.URI.create(ENDPOINT));
         properties.setApiKey(API_KEY);
         properties.setModel(MODEL);
+        properties.setModels(List.of(MODEL, "tokenhub-model"));
         properties.setProviderName("test-provider");
         provider = new OpenAiCompatiblePromptEnhancementProvider(
                 builder.build(),
@@ -92,6 +97,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + API_KEY))
                 .andExpect(jsonPath("$.model").value(MODEL))
+                .andExpect(jsonPath("$.stream").value(false))
                 .andExpect(jsonPath("$.messages[0].role").value("system"))
                 .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.containsString("增加登录功能")))
                 .andExpect(jsonPath("$.max_tokens").value(3000))
@@ -141,7 +147,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                         )
                 ))
         ));
-        server.expect(twice(), requestTo(ENDPOINT))
+        server.expect(times(3), requestTo(ENDPOINT))
                 .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
         assertThatThrownBy(() -> provider.enhance(createRequest()))
@@ -206,7 +212,65 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
     }
 
     @Test
-    void shouldRetryOnceWhenFirstEnhancementResponseIsInvalid() throws Exception {
+    void shouldUseTheRequestedModelWhenItIsInTheServerAllowList() throws Exception {
+        String responseBody = completionWithFindings("[]");
+        server.expect(once(), requestTo(ENDPOINT))
+                .andExpect(jsonPath("$.model").value("tokenhub-model"))
+                .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
+
+        EnhancementProviderResponse response = provider.enhance(createRequest("tokenhub-model"));
+
+        assertThat(response.model()).isEqualTo(MODEL);
+        server.verify();
+    }
+
+    @Test
+    void shouldRouteAQualifiedTokenHubModelToTheTokenHubEndpoint() throws Exception {
+        OpenAiCompatibleRouteProperties deepseek = route(
+                "deepseek",
+                "https://deepseek.example.com/v1/chat/completions",
+                "deepseek-secret",
+                "deepseek-chat",
+                List.of("deepseek-chat")
+        );
+        OpenAiCompatibleRouteProperties tokenhub = route(
+                "tokenhub",
+                TOKENHUB_ENDPOINT,
+                "tokenhub-secret",
+                "glm-5.3-flashx",
+                List.of("glm-5.3-flashx")
+        );
+        LinkedHashMap<String, OpenAiCompatibleRouteProperties> routes = new LinkedHashMap<>();
+        routes.put("deepseek", deepseek);
+        routes.put("tokenhub", tokenhub);
+        properties.setMultiProviderEnabled(true);
+        properties.setDefaultProvider("deepseek");
+        properties.setProviders(routes);
+        provider = new OpenAiCompatiblePromptEnhancementProvider(builder.build(), objectMapper, properties);
+
+        server.expect(once(), requestTo(TOKENHUB_ENDPOINT))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer tokenhub-secret"))
+                .andExpect(jsonPath("$.model").value("glm-5.3-flashx"))
+                .andRespond(withSuccess(completionWithFindings("[]"), MediaType.APPLICATION_JSON));
+
+        EnhancementProviderResponse response = provider.enhance(createRequest("tokenhub:glm-5.3-flashx"));
+
+        assertThat(response.provider()).isEqualTo("tokenhub");
+        assertThat(response.model()).isEqualTo("tokenhub:glm-5.3-flashx");
+        server.verify();
+    }
+
+    @Test
+    void shouldRejectARequestedModelOutsideTheServerAllowList() {
+        assertThatThrownBy(() -> provider.enhance(createRequest("not-configured")))
+                .isInstanceOfSatisfying(ProviderException.class, exception -> {
+                    assertThat(exception.getFailureType()).isEqualTo(ProviderFailureType.REQUEST_REJECTED);
+                    assertThat(exception.isRetryable()).isFalse();
+                });
+    }
+
+    @Test
+    void shouldRepairStructuredRequestWhenFirstEnhancementResponseIsInvalid() throws Exception {
         String invalidResponse = objectMapper.writeValueAsString(Map.of(
                 "model", MODEL,
                 "choices", List.of(Map.of(
@@ -220,6 +284,9 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         server.expect(once(), requestTo(ENDPOINT))
                 .andRespond(withSuccess(invalidResponse, MediaType.APPLICATION_JSON));
         server.expect(once(), requestTo(ENDPOINT))
+                .andExpect(jsonPath("$.max_tokens").value(6000))
+                .andExpect(jsonPath("$.messages[2].content")
+                        .value(org.hamcrest.Matchers.containsString("平台结构化输出修复要求")))
                 .andRespond(withSuccess(validResponse, MediaType.APPLICATION_JSON));
 
         EnhancementProviderResponse response = provider.enhance(createRequest());
@@ -230,7 +297,32 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         server.verify();
     }
 
+    @Test
+    void shouldRetryWithLargerOutputBudgetWhenModelReportsLengthLimit() throws Exception {
+        String truncatedResponse = objectMapper.writeValueAsString(Map.of(
+                "model", MODEL,
+                "choices", List.of(Map.of(
+                        "finish_reason", "length",
+                        "message", Map.of("role", "assistant", "content", "{}")
+                ))
+        ));
+        server.expect(once(), requestTo(ENDPOINT))
+                .andRespond(withSuccess(truncatedResponse, MediaType.APPLICATION_JSON));
+        server.expect(once(), requestTo(ENDPOINT))
+                .andExpect(jsonPath("$.max_tokens").value(6000))
+                .andRespond(withSuccess(completionWithFindings("[]"), MediaType.APPLICATION_JSON));
+
+        EnhancementProviderResponse response = provider.enhance(createRequest());
+
+        assertThat(response.sections()).hasSize(4);
+        server.verify();
+    }
+
     private EnhancementProviderRequest createRequest() {
+        return createRequest(null);
+    }
+
+    private EnhancementProviderRequest createRequest(String model) {
         ContextSnapshot context = new ContextSnapshot(
                 "Spring Boot 用户服务",
                 List.of(),
@@ -256,7 +348,8 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 List.of("登录方式未明确"),
                 List.of("不得读取生产环境密钥"),
                 List.of(),
-                EnhancementOptions.defaults()
+                EnhancementOptions.defaults(),
+                model
         );
     }
 
@@ -279,7 +372,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
     @ValueSource(strings = {"null", "{}", "\"问题\"", "[3]", "[null]", "[\" \" ]",
             "[\"一\",\"二\",\"三\",\"四\",\"五\",\"六\",\"七\",\"八\",\"九\"]"})
     void shouldRejectMalformedAmbiguityArrayInsteadOfCoercingOrHidingIt(String findings) throws Exception {
-        server.expect(twice(), requestTo(ENDPOINT))
+        server.expect(times(3), requestTo(ENDPOINT))
                 .andRespond(withSuccess(completionWithFindings(findings), MediaType.APPLICATION_JSON));
         assertThatThrownBy(() -> provider.enhance(createRequest()))
                 .isInstanceOfSatisfying(ProviderException.class,
@@ -298,5 +391,21 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 """.formatted(findings);
         return objectMapper.writeValueAsString(Map.of("model", MODEL, "choices",
                 List.of(Map.of("message", Map.of("role", "assistant", "content", content)))));
+    }
+
+    private OpenAiCompatibleRouteProperties route(
+            String providerName,
+            String endpoint,
+            String apiKey,
+            String model,
+            List<String> models
+    ) {
+        OpenAiCompatibleRouteProperties properties = new OpenAiCompatibleRouteProperties();
+        properties.setProviderName(providerName);
+        properties.setEndpoint(java.net.URI.create(endpoint));
+        properties.setApiKey(apiKey);
+        properties.setModel(model);
+        properties.setModels(models);
+        return properties;
     }
 }

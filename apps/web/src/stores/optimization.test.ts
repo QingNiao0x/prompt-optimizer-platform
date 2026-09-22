@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('@/services/promptOptimizerApi', () => ({
   analyzeContext: vi.fn(),
   createOptimizationPlan: vi.fn(),
+  listAvailableModels: vi.fn(),
   optimizePrompt: vi.fn(),
   preparePlanningContext: vi.fn(),
 }));
@@ -12,6 +13,7 @@ import type { ProjectIndexSummary } from '@/features/project-index/projectIndexe
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
 import {
   createOptimizationPlan,
+  listAvailableModels,
   optimizePrompt,
   preparePlanningContext,
 } from '@/services/promptOptimizerApi';
@@ -116,6 +118,35 @@ describe('optimization store project context', () => {
       documentId: 'document-123',
       sizeBytes: 40_000_000,
     }]);
+  });
+
+  it('should preserve provider-qualified model ids returned by the server catalog', async () => {
+    vi.mocked(listAvailableModels).mockResolvedValue({
+      requestId: 'models-request',
+      data: [
+        {
+          id: 'deepseek:deepseek-chat',
+          displayName: 'DeepSeek Chat · deepseek',
+          provider: 'deepseek',
+          defaultModel: true,
+        },
+        {
+          id: 'tokenhub:glm-5.3-flashx',
+          displayName: 'GLM-5.3-FlashX · tokenhub',
+          provider: 'tokenhub',
+          defaultModel: false,
+        },
+      ],
+    });
+    const store = useOptimizationStore();
+
+    await store.loadAvailableModels();
+
+    expect(store.availableModels.map((model) => model.id)).toEqual([
+      'deepseek:deepseek-chat',
+      'tokenhub:glm-5.3-flashx',
+    ]);
+    expect(store.selectedModel).toBe('deepseek:deepseek-chat');
   });
 
   it('should prepare context first and pass its reference into the plan request', async () => {

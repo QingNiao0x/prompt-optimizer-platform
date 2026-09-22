@@ -29,6 +29,22 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(com.promptoptimizer.enhancement.application.PlanningSessionExpiredException.class)
+    public ResponseEntity<ApiErrorResponse> handlePlanningExpiry(
+            com.promptoptimizer.enhancement.application.PlanningSessionExpiredException exception,
+            HttpServletRequest request) {
+        return buildResponse(request, HttpStatus.CONFLICT, "PLANNING_SESSION_EXPIRED",
+                exception.getMessage(), false, Map.of());
+    }
+
+    @ExceptionHandler(com.promptoptimizer.enhancement.application.PlanningStoreUnavailableException.class)
+    public ResponseEntity<ApiErrorResponse> handlePlanningStoreUnavailable(
+            com.promptoptimizer.enhancement.application.PlanningStoreUnavailableException exception,
+            HttpServletRequest request) {
+        return buildResponse(request, HttpStatus.SERVICE_UNAVAILABLE, "PLANNING_STORE_UNAVAILABLE",
+                exception.getMessage(), true, Map.of());
+    }
+
     /** 将注册冲突、验证码错误和限流结果映射为稳定的公开错误。 */
     @ExceptionHandler(RegistrationException.class)
     public ResponseEntity<ApiErrorResponse> handleRegistrationException(

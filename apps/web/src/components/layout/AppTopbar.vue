@@ -83,8 +83,8 @@ const navigation = [
 
 .brand-copy small {
   color: var(--text-muted);
-  font-size: 9px;
-  letter-spacing: 0.12em;
+  font-size: 12px;
+  letter-spacing: 0.8px;
   line-height: 1.2;
   text-transform: uppercase;
 }
@@ -102,7 +102,7 @@ const navigation = [
   padding: 7px 16px;
   border-radius: var(--radius-pill);
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 14px;
   text-decoration: none;
   transition:
     color var(--duration-ui) var(--ease-standard),
@@ -133,7 +133,7 @@ const navigation = [
   gap: 7px;
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .provider-status b {

@@ -59,16 +59,16 @@ const activeIndex = computed(() => stages.findIndex((stage) => stage.id === prop
 .header-label {
   color: var(--accent);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
 .header-description {
   margin-top: 2px !important;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .flow-indicator {
@@ -78,7 +78,7 @@ const activeIndex = computed(() => stages.findIndex((stage) => stage.id === prop
   margin: 0;
   padding: 0;
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 12px;
   list-style: none;
 }
 
@@ -123,7 +123,7 @@ const activeIndex = computed(() => stages.findIndex((stage) => stage.id === prop
   .flow-indicator {
     width: 100%;
     justify-content: center;
-    font-size: 12px;
+    font-size: 13px;
   }
 }
 

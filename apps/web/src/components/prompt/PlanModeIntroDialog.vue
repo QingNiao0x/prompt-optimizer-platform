@@ -50,8 +50,8 @@ const emit = defineEmits<Emits>();
   margin: 0 0 8px;
   color: var(--accent);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
+  font-size: 12px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 

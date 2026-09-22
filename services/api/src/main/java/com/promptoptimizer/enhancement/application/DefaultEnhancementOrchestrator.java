@@ -203,7 +203,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 planConfirmed,
                 constraints,
                 conversation,
-                request.enhancement()
+                request.enhancement(),
+                request.model()
         ));
 
         return resultAssembler.assemble(

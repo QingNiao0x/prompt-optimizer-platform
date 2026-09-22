@@ -52,6 +52,11 @@ public class OptimizationPlanningService {
     private final PlanningSessionService planningSessionService;
     private final SensitiveValueDetector sensitiveValueDetector;
     private final Clock clock;
+    private final PlanQuestionFilter questionFilter = new PlanQuestionFilter();
+    private PlanQualityMetrics metrics = new PlanQualityMetrics(new io.micrometer.core.instrument.simple.SimpleMeterRegistry());
+
+    @Autowired
+    public void setMetrics(PlanQualityMetrics metrics) { this.metrics = metrics; }
 
     @Autowired
     public OptimizationPlanningService(
@@ -88,13 +93,16 @@ public class OptimizationPlanningService {
                 request.rawPrompt(),
                 request.contextDescription()
         );
-        PlanningProviderResponse response = planningProvider.plan(new PlanningProviderRequest(
+        PlanningProviderRequest providerRequest = new PlanningProviderRequest(
                 request.rawPrompt().trim(),
                 request.contextDescription().trim(),
                 request.conversationHistory(),
-                planningContext.digest()
-        ));
-        PlanningProviderResponse validated = validate(response);
+                planningContext.digest(),
+                request.model()
+        );
+        PlanningProviderResponse validated = requestValidatedPlan(providerRequest);
+        List<PlanQuestion> questions = questionFilter.filter(validated.questions(), providerRequest);
+        metrics.generated(validated.questions().size(), questions.size());
         StringBuilder inferenceInput = new StringBuilder(request.rawPrompt())
                 .append('\n')
                 .append(request.contextDescription());
@@ -110,11 +118,11 @@ public class OptimizationPlanningService {
                 request.contextDescription(),
                 request.conversationHistory(),
                 planningContext,
-                validated.questions()
+                questions
         );
         return new OptimizationPlan(
                 validated.summary(),
-                validated.questions(),
+                questions,
                 templateRegistry.infer(inferenceInput.toString()),
                 new ProviderMetadata(validated.provider(), validated.model(), validated.mock()),
                 Math.max(0, clock.millis() - startedAt),
@@ -122,6 +130,17 @@ public class OptimizationPlanningService {
                 registration.planningContext(),
                 registration.expiresAt()
         );
+    }
+
+    private PlanningProviderResponse requestValidatedPlan(PlanningProviderRequest request) {
+        try {
+            return validate(planningProvider.plan(request));
+        } catch (ProviderException exception) {
+            // 只为无效结构重试一次；认证、限流、网络超时不叠加调用和费用。
+            if (exception.getFailureType() != ProviderFailureType.INVALID_RESPONSE) throw exception;
+            metrics.retry();
+            return validate(planningProvider.plan(request));
+        }
     }
 
     /**
@@ -202,6 +221,7 @@ public class OptimizationPlanningService {
                 .map(String::trim)
                 .filter(example -> !example.isBlank())
                 .peek(example -> {
+                    rejectProviderCredential(example);
                     if (example.length() > 120 || containsInternalTerm(example)) {
                         throw invalidResponse();
                     }

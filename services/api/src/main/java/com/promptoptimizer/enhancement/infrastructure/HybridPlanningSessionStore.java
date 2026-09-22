@@ -7,6 +7,9 @@ import com.promptoptimizer.enhancement.application.PlanningSessionStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import com.promptoptimizer.enhancement.application.PlanningStoreUnavailableException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -31,23 +34,35 @@ public class HybridPlanningSessionStore implements PlanningSessionStore {
     private final ObjectMapper objectMapper;
     private final StringRedisTemplate redisTemplate;
     private final InMemoryPlanningSessionStore fallback = new InMemoryPlanningSessionStore();
+    public enum Mode { LOCAL_FALLBACK, REDIS_REQUIRED }
+    private final Mode mode;
 
     public HybridPlanningSessionStore(
             ObjectMapper objectMapper,
             ObjectProvider<StringRedisTemplate> redisTemplateProvider
     ) {
+        this(objectMapper, redisTemplateProvider, Mode.LOCAL_FALLBACK);
+    }
+
+    @Autowired
+    public HybridPlanningSessionStore(ObjectMapper objectMapper,
+            ObjectProvider<StringRedisTemplate> redisTemplateProvider,
+            @Value("${app.planning.store-mode:LOCAL_FALLBACK}") Mode mode) {
         this.objectMapper = objectMapper;
         this.redisTemplate = redisTemplateProvider.getIfAvailable();
+        this.mode = mode;
     }
 
     @Override
     public void saveContext(ContextSession context) {
-        fallback.saveContext(context);
         write(CONTEXT_KEY_PREFIX + context.reference().contextId(), context, context.expiresAt());
+        if (mode == Mode.LOCAL_FALLBACK) fallback.saveContext(context);
     }
 
     @Override
     public Optional<ContextSession> findContext(String contextId) {
+        if (mode == Mode.REDIS_REQUIRED) return read(CONTEXT_KEY_PREFIX + contextId, ContextSession.class)
+                .filter(value -> value.expiresAt().isAfter(Instant.now()));
         Optional<ContextSession> local = fallback.findContext(contextId);
         return local.isPresent()
                 ? local
@@ -60,12 +75,14 @@ public class HybridPlanningSessionStore implements PlanningSessionStore {
 
     @Override
     public void savePlan(PlanSession plan) {
-        fallback.savePlan(plan);
         write(PLAN_KEY_PREFIX + plan.planId(), plan, plan.expiresAt());
+        if (mode == Mode.LOCAL_FALLBACK) fallback.savePlan(plan);
     }
 
     @Override
     public Optional<PlanSession> findPlan(String planId) {
+        if (mode == Mode.REDIS_REQUIRED) return read(PLAN_KEY_PREFIX + planId, PlanSession.class)
+                .filter(value -> value.expiresAt().isAfter(Instant.now()));
         Optional<PlanSession> local = fallback.findPlan(planId);
         return local.isPresent()
                 ? local
@@ -78,6 +95,7 @@ public class HybridPlanningSessionStore implements PlanningSessionStore {
 
     private void write(String key, Object value, Instant expiresAt) {
         if (redisTemplate == null) {
+            if (mode == Mode.REDIS_REQUIRED) throw new PlanningStoreUnavailableException();
             return;
         }
         Duration ttl = Duration.between(Instant.now(), expiresAt);
@@ -87,6 +105,7 @@ public class HybridPlanningSessionStore implements PlanningSessionStore {
         try {
             redisTemplate.opsForValue().set(key, objectMapper.writeValueAsString(value), ttl);
         } catch (RuntimeException | JsonProcessingException exception) {
+            if (mode == Mode.REDIS_REQUIRED) throw new PlanningStoreUnavailableException();
             LOGGER.warn(
                     "Redis 计划会话写入失败，当前请求继续使用进程内短期存储；原因类型：{}",
                     exception.getClass().getSimpleName()
@@ -96,6 +115,7 @@ public class HybridPlanningSessionStore implements PlanningSessionStore {
 
     private <T> Optional<T> read(String key, Class<T> type) {
         if (redisTemplate == null) {
+            if (mode == Mode.REDIS_REQUIRED) throw new PlanningStoreUnavailableException();
             return Optional.empty();
         }
         try {
@@ -105,6 +125,7 @@ public class HybridPlanningSessionStore implements PlanningSessionStore {
             }
             return Optional.of(objectMapper.readValue(json, type));
         } catch (RuntimeException | JsonProcessingException exception) {
+            if (mode == Mode.REDIS_REQUIRED) throw new PlanningStoreUnavailableException();
             LOGGER.warn(
                     "Redis 计划会话读取失败，当前请求继续使用进程内短期存储；原因类型：{}",
                     exception.getClass().getSimpleName()

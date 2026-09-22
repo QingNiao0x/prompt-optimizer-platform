@@ -77,6 +77,12 @@ POST http://localhost:8080/api/v1/optimizations/plan
 POST http://localhost:8080/api/v1/optimizations
 ```
 
+模型目录接口（需要登录）：
+
+```text
+GET http://localhost:8080/api/v1/models
+```
+
 有文件时调用顺序为 `/context/planning → /optimizations/plan → /optimizations`。短期上下文和计划优先保存在 Redis，Redis 未配置或暂时不可用时只在当前进程中降级保存；两类会话默认 TTL 都是 30 分钟。
 
 项目默认通过 OpenAI 兼容协议调用 DeepSeek。启动前必须设置自己的 DeepSeek API Key：
@@ -93,6 +99,8 @@ MODEL_PROVIDER_NAME=deepseek
 MODEL_ENDPOINT=https://api.deepseek.com/chat/completions
 MODEL_API_KEY=替换为运行环境中的密钥
 MODEL_NAME=deepseek-chat
+# 可选模型白名单（逗号分隔）；留空时只显示 MODEL_NAME
+MODEL_MODELS=deepseek-chat
 MODEL_TEMPERATURE=0.2
 MODEL_MAX_TOKENS=3000
 MODEL_CONNECT_TIMEOUT=3s
@@ -102,6 +110,48 @@ MODEL_JSON_RESPONSE_FORMAT_ENABLED=true
 
 `MODEL_ENDPOINT` 应填写完整的 Chat Completions 请求地址。部分自定义兼容端点不接受 `response_format` 参数，此时可设置
 `MODEL_JSON_RESPONSE_FORMAT_ENABLED=false`；系统提示词仍会要求返回严格 JSON。
+
+### TokenHub 多模型配置
+
+腾讯云 TokenHub 使用 OpenAI 兼容 Chat Completions 协议。只使用 TokenHub 时，可以覆盖下面配置；API Key
+只放在 API 服务的环境变量（或 IDEA 的 Run Configuration）中，浏览器不会收到明文密钥；`MODEL_MODELS` 是
+服务端白名单，工作台会从 `/api/v1/models` 读取并允许用户选择其中一个模型。
+
+```dotenv
+MODEL_PROVIDER_MODE=openai-compatible
+MODEL_PROVIDER_NAME=tokenhub
+MODEL_ENDPOINT=https://tokenhub.tencentmaas.com/v1/chat/completions
+MODEL_API_KEY=替换为你的 TokenHub API Key
+MODEL_NAME=glm-5.3-flashx
+MODEL_MODELS=glm-5.3-flashx,deepseek-v4-pro-0813,kimi-k3,minimax-m3
+```
+
+如果 TokenHub 账号的兼容端点不接受 `response_format`，再将 `MODEL_JSON_RESPONSE_FORMAT_ENABLED` 设为
+`false`；平台仍会在服务端校验模型返回的结构化 JSON。修改 IDEA 环境变量后需要重启 Spring Boot。
+
+### DeepSeek 与 TokenHub 同时启用
+
+如果需要让用户在不同供应商之间切换，不要把两个供应商的模型 ID 填入同一个 `MODEL_MODELS`。启用服务端
+多供应商路由，并分别配置两套密钥：
+
+```dotenv
+MODEL_MULTI_PROVIDER_ENABLED=true
+MODEL_DEFAULT_PROVIDER=deepseek
+
+MODEL_DEEPSEEK_API_KEY=你的 DeepSeek API Key
+MODEL_DEEPSEEK_ENDPOINT=https://api.deepseek.com/chat/completions
+MODEL_DEEPSEEK_NAME=deepseek-chat
+MODEL_DEEPSEEK_MODELS=deepseek-chat
+
+MODEL_TOKENHUB_API_KEY=你的 TokenHub API Key
+MODEL_TOKENHUB_ENDPOINT=https://tokenhub.tencentmaas.com/v1/chat/completions
+MODEL_TOKENHUB_NAME=glm-5.3-flashx
+MODEL_TOKENHUB_MODELS=glm-5.3-flashx,deepseek-v4-pro-0813,kimi-k3,minimax-m3
+```
+
+接口返回的模型 ID 会带供应商前缀，例如 `deepseek:deepseek-chat`、`tokenhub:kimi-k3`。前端只提交这个
+公开 ID，后端根据服务端白名单选择 endpoint 和 API Key；密钥不会进入浏览器请求、历史记录或模型目录。
+`MODEL_API_KEY` 仍作为旧版单供应商配置的兼容回退值，多供应商模式建议使用上面的两套专用变量。
 
 大型文档默认使用零费用的本地规则摘要。需要让当前聊天模型对全部已索引文本执行分批 Map 和分层 Reduce 时，可以显式启用：
 
@@ -116,11 +166,11 @@ MAP_REDUCE_MAX_MAP_CALLS=256
 MAP_REDUCE_MAX_REDUCE_CALLS=32
 ```
 
-Map-Reduce 复用 `MODEL_ENDPOINT`、`MODEL_NAME` 和 `MODEL_API_KEY`，不需要把密钥再写入配置文件。开启后会增加模型请求次数和费用；某个批次请求失败或达到调用保护上限时，系统会把该部分降级为本地规则摘要，全文索引和后续检索仍然可用。
+Map-Reduce 使用当前默认供应商路由（单供应商模式下为 `MODEL_ENDPOINT`、`MODEL_NAME` 和 `MODEL_API_KEY`，多供应商模式下为 `MODEL_DEFAULT_PROVIDER` 对应路由），不需要把密钥再写入配置文件。开启后会增加模型请求次数和费用；某个批次请求失败或达到调用保护上限时，系统会把该部分降级为本地规则摘要，全文索引和后续检索仍然可用。
 
 如需在没有 API Key 的情况下进行本地页面或接口联调，可显式设置 `MODEL_PROVIDER_MODE=mock`。Mock 只生成确定性的测试结果，不会访问任何外部模型。
 
-真实 Provider 会校验 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`、`ACCEPTANCE` 五个必需段落，并将上游鉴权失败、限流、超时、服务不可用和无效响应转换为稳定的平台错误码。当前不会自动重试，避免单次请求产生不可控的重复费用；后续将结合总耗时预算和幂等策略增加有限重试。
+真实 Provider 会校验 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS` 四个必需段落（`ACCEPTANCE` 按任务需要输出），并将上游鉴权失败、限流、超时、服务不可用和无效响应转换为稳定的平台错误码。结构化响应无效时最多执行两次受控修复重试：追加结构约束并逐步提高输出预算；其他错误不重试，避免放大上游压力和费用。
 
 默认数据库和 Redis 配置通过环境变量覆盖：
 

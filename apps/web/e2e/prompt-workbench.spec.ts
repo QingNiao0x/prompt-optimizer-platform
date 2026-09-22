@@ -1015,3 +1015,85 @@ test('首次说明中拒绝 Plan 后立即直接增强并记住选择', async ({
   await expect.poll(() => page.evaluate((key) => localStorage.getItem(key), PLAN_MODE_STORAGE_KEY))
     .toBe(JSON.stringify({ enabled: false, introSeen: true }));
 });
+
+test('未开启 Plan 时待确认事项折叠，增强结果保持在视口内', async ({ page }) => {
+  await configurePlanMode(page, { enabled: false, introSeen: true });
+  const ambiguities = Array.from({ length: 8 }, (_, index) =>
+    `待确认事项 ${index + 1}：需要核对登录、权限、错误处理和验收口径，这段说明故意写长以便占满结果列。`,
+  );
+  await page.route('**/api/v1/models', async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: {
+        requestId: 'models',
+        data: [{
+          id: 'deepseek-chat',
+          displayName: 'DeepSeek',
+          provider: 'deepseek',
+          defaultModel: true,
+        }],
+      },
+    });
+  });
+  await page.route('**/api/v1/optimizations', async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: {
+        requestId: 'ambiguity-layout',
+        data: {
+          ...optimizationResult,
+          ambiguities,
+        },
+      } satisfies ApiResponse<OptimizationResult>,
+    });
+  });
+
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
+  await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
+  await page.getByRole('button', { name: DIRECT_ENHANCE_BUTTON }).click();
+  await expect(page.getByText('最终提示词已生成。')).toBeVisible();
+  await openWorkbenchPane(page, 'result');
+
+  const toggle = page.getByRole('button', { name: '待确认事项，8 项，需要人工核对' });
+  const resultContent = page.getByLabel('增强结果内容，可滚动查看完整提示词');
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByRole('heading', { name: '增强结果' })).toBeInViewport();
+  await expect(page.getByRole('button', { name: '复制' })).toBeInViewport();
+  await expect(page.getByRole('button', { name: '编辑' })).toBeInViewport();
+  await expect(page.getByRole('button', { name: '直接再次增强' })).toBeInViewport();
+  await expect(resultContent).toBeInViewport();
+  await expect(page.locator('#ambiguity-details')).toBeHidden();
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  const details = page.locator('#ambiguity-details');
+  await expect(details).toBeVisible();
+  await expect(details).toContainText(ambiguities[7]);
+
+  const viewport = page.viewportSize();
+  const detailsBox = await details.boundingBox();
+  const expandedResult = await resultContent.boundingBox();
+  const toggleBox = await toggle.boundingBox();
+  expect(viewport).not.toBeNull();
+  expect(detailsBox).not.toBeNull();
+  expect(expandedResult).not.toBeNull();
+  expect(toggleBox).not.toBeNull();
+  if (!viewport || !detailsBox || !expandedResult || !toggleBox) {
+    return;
+  }
+  expect(toggleBox.height).toBeGreaterThanOrEqual(44);
+  expect(expandedResult.height).toBeGreaterThan(120);
+  expect(expandedResult.y + expandedResult.height).toBeLessThanOrEqual(viewport.height + 1);
+  expect(detailsBox.y + detailsBox.height).toBeLessThanOrEqual(expandedResult.y + 2);
+  if (viewport.width <= 900) {
+    expect(detailsBox.height).toBeLessThanOrEqual(viewport.height * 0.4 + 8);
+  }
+
+  await page.getByRole('button', { name: '编辑' }).click();
+  await expect(toggle).toHaveCount(0);
+  await expect(page.locator('.edit-section-list textarea').first()).toBeVisible();
+  await page.getByRole('button', { name: '取消' }).click();
+  await expect(page.getByRole('button', { name: '待确认事项，8 项，需要人工核对' }))
+    .toHaveAttribute('aria-expanded', 'false');
+});

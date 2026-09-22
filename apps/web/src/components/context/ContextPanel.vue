@@ -614,8 +614,8 @@ const addManualFile = (): void => {
 .step-label {
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 12px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
@@ -642,14 +642,14 @@ h2 {
 .field-label {
   display: block;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .field-help {
   margin: 6px 0 11px;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.65;
 }
 
@@ -692,7 +692,7 @@ h2 {
   place-items: center;
   border-radius: inherit;
   color: var(--accent);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   background: color-mix(in srgb, var(--accent-soft) 88%, var(--glass-bg-strong));
 }
@@ -728,13 +728,13 @@ h2 {
 
 .folder-dropzone strong {
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .folder-dropzone small {
   margin-top: 4px;
-  font-size: 11px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .read-progress {
@@ -750,7 +750,7 @@ h2 {
 .document-upload-help {
   margin: 6px 2px 0;
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
@@ -787,7 +787,7 @@ h2 {
 
 .unsupported-title {
   color: var(--ink-soft);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.6;
   white-space: nowrap;
 }
@@ -800,12 +800,13 @@ h2 {
 }
 
 .unsupported-tags :deep(.el-tag) {
-  height: 20px;
-  padding: 0 7px;
+  height: auto;
+  padding: 4px 10px;
   border-color: var(--glass-border-subtle);
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
+  line-height: 1.6;
   background: var(--glass-bg-subtle);
 }
 
@@ -813,14 +814,14 @@ h2 {
   min-width: 38px;
   color: var(--ink-muted);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .reading-meta {
   color: var(--accent-blue) !important;
   display: block;
-  font-size: 11px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.6;
   overflow-wrap: anywhere;
   white-space: normal;
 }
@@ -829,7 +830,7 @@ h2 {
   margin: 10px 0 0;
   padding-left: 18px;
   color: var(--warning);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.65;
   word-break: break-word;
   overflow-wrap: anywhere;
@@ -848,19 +849,19 @@ h2 {
 .project-index-summary strong {
   overflow: hidden;
   color: var(--ink-strong);
-  font-size: 12px;
+  font-size: 13px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .project-index-summary span {
   color: var(--success);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .project-index-summary small {
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.65;
 }
 
@@ -872,7 +873,7 @@ h2 {
 
 .retrieval-report summary {
   color: var(--accent-blue);
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
 }
 
@@ -893,14 +894,14 @@ h2 {
   overflow: hidden;
   color: var(--ink-muted);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .retrieval-report li > small {
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .file-summary {
@@ -927,7 +928,7 @@ h2 {
 
 .file-count small {
   color: var(--ink-soft);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .file-list {
@@ -952,7 +953,7 @@ h2 {
 .file-language,
 .file-path {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .file-language {
@@ -1000,7 +1001,7 @@ h2 {
   gap: 8px;
   padding: 13px 2px;
   color: var(--ink-muted);
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
   list-style: none;
 }
@@ -1047,7 +1048,7 @@ h2 {
   gap: 7px;
   margin-bottom: 10px;
   color: var(--ink-strong);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -1055,7 +1056,7 @@ h2 {
   margin-left: 6px;
   color: var(--success);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
@@ -1088,14 +1089,14 @@ h2 {
 
 .analysis-coverage > strong {
   color: var(--ink-strong);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .analysis-coverage > span,
 .analysis-coverage summary,
 .analysis-coverage small {
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.6;
 }
 
@@ -1126,7 +1127,7 @@ h2 {
   overflow: hidden;
   color: var(--ink-normal);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1145,14 +1146,14 @@ h2 {
 .project-overview-card h3 {
   margin: 0;
   color: var(--ink-strong);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 650;
 }
 
 .project-overview-card p {
   margin: 7px 0 0;
   color: var(--ink-normal);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.75;
   overflow-wrap: anywhere;
 }
@@ -1176,7 +1177,7 @@ h2 {
 .result-section-heading {
   margin-bottom: 8px;
   color: var(--ink-strong);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -1185,7 +1186,7 @@ h2 {
 .project-result-details summary > span:last-child {
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 400;
 }
 
@@ -1214,7 +1215,7 @@ h2 {
 
 .module-summary-heading strong {
   color: var(--ink-strong);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -1223,21 +1224,21 @@ h2 {
   margin-top: 5px;
   color: var(--accent-blue);
   font-family: var(--font-mono);
-  font-size: 9px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
 .module-summary-item p {
   margin: 5px 0 0;
   color: var(--ink-normal);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.65;
 }
 
 .project-result-details summary {
   color: var(--ink-strong);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   list-style: none;
@@ -1276,7 +1277,7 @@ h2 {
 .compact-result-list strong {
   color: var(--ink-normal);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
   overflow-wrap: anywhere;
 }
 
@@ -1284,8 +1285,8 @@ h2 {
 .directory-result-list li {
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 9px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
@@ -1316,22 +1317,22 @@ h2 {
   flex: 0 0 auto;
   color: var(--success);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .technology-item p {
   margin: 6px 0 0;
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
 .analysis-empty {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.65;
 }
 
@@ -1344,14 +1345,14 @@ h2 {
 .file-summary-heading {
   margin-bottom: 8px;
   color: var(--ink-strong);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .file-summary-heading > span:last-child {
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 400;
 }
 
@@ -1375,7 +1376,7 @@ h2 {
   min-width: 0;
   color: var(--ink-strong);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1390,7 +1391,7 @@ h2 {
 .file-summary-item > p {
   margin: 7px 0 0;
   color: var(--ink-normal);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.7;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
@@ -1400,14 +1401,14 @@ h2 {
   display: block;
   margin-top: 6px;
   color: var(--warning);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .analysis-meta {
   margin: 11px 0 0;
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .analyze-button {

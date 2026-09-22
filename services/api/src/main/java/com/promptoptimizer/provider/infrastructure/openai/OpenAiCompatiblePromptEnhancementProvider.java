@@ -1,5 +1,6 @@
 package com.promptoptimizer.provider.infrastructure.openai;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -41,7 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 /**
  * 使用 Chat Completions 风格协议调用 OpenAI 兼容端点的提示词增强 Provider。
@@ -61,6 +62,23 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             PromptSectionType.OUTPUT,
             PromptSectionType.CONSTRAINTS
     );
+    /**
+     * 结构化响应最多尝试三次（首次请求加两次受控修复）。过多重试会放大模型费用和上游压力。
+     */
+    private static final int MAX_INVALID_RESPONSE_ATTEMPTS = 3;
+    /**
+     * 截断响应通常需要更多输出预算，但不能无限放大单次请求的成本。
+     */
+    private static final int RETRY_MAX_TOKENS_CAP = 8_192;
+    private static final String STRUCTURED_REPAIR_MARKER = "平台结构化输出修复要求：";
+    private static final String ENHANCEMENT_REPAIR_INSTRUCTION = """
+            平台结构化输出修复要求：上一次响应未通过校验。请基于前面的原始输入重新生成，且只返回一个 JSON 对象，不要 Markdown 代码围栏、解释或额外字段。
+            顶层必须包含 sections 和 ambiguities：sections 必须包含且各出现一次 BACKGROUND、TASK、OUTPUT、CONSTRAINTS；每个段落的 title 与 content 都必须是非空字符串；ambiguities 必须是 0 至 8 个字符串的数组。
+            """;
+    private static final String PLANNING_REPAIR_INSTRUCTION = """
+            平台结构化输出修复要求：上一次响应未通过校验。请基于前面的原始输入重新生成，且只返回一个 JSON 对象，不要 Markdown 代码围栏、解释或额外字段。
+            顶层必须包含 summary（字符串）和 questions（数组）；每个问题必须包含 id、question、hint、type、options、examples、allowCustomAnswer，type 只能是 SINGLE_CHOICE、MULTIPLE_CHOICE 或 FREE_TEXT。
+            """;
     private static final String SYSTEM_PROMPT = """
             你是跨领域的提示词优化专家。你的职责是把科研、学习、写作、分析、产品或软件开发需求重构为具体、可执行、可验证的提示词。
 
@@ -143,20 +161,25 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         Objects.requireNonNull(request, "request must not be null");
         ChatCompletionRequest requestBody = buildRequest(request);
 
-        return retryOnceWhenResponseIsInvalid(() -> requestEnhancement(requestBody));
+        return retryWhenResponseIsInvalid(
+                requestBody,
+                this::requestEnhancement,
+                ENHANCEMENT_REPAIR_INSTRUCTION
+        );
     }
 
     private EnhancementProviderResponse requestEnhancement(ChatCompletionRequest requestBody) {
+        OpenAiCompatibleRoute route = requestBody.route();
         try {
             ChatCompletionResponse response = restClient.post()
-                    .uri(properties.getEndpoint())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + properties.getApiKey())
+                    .uri(route.endpoint())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + route.apiKey())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .body(requestBody)
                     .retrieve()
                     .body(ChatCompletionResponse.class);
-            return mapResponse(response);
+            return mapResponse(response, requestBody);
         } catch (RestClientResponseException exception) {
             throw mapHttpException(exception);
         } catch (ResourceAccessException exception) {
@@ -179,20 +202,25 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         Objects.requireNonNull(request, "request must not be null");
         ChatCompletionRequest requestBody = buildPlanningRequest(request);
 
-        return retryOnceWhenResponseIsInvalid(() -> requestPlanning(requestBody));
+        return retryWhenResponseIsInvalid(
+                requestBody,
+                this::requestPlanning,
+                PLANNING_REPAIR_INSTRUCTION
+        );
     }
 
     private PlanningProviderResponse requestPlanning(ChatCompletionRequest requestBody) {
+        OpenAiCompatibleRoute route = requestBody.route();
         try {
             ChatCompletionResponse response = restClient.post()
-                    .uri(properties.getEndpoint())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + properties.getApiKey())
+                    .uri(route.endpoint())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + route.apiKey())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .body(requestBody)
                     .retrieve()
                     .body(ChatCompletionResponse.class);
-            return mapPlanningResponse(response);
+            return mapPlanningResponse(response, requestBody);
         } catch (RestClientResponseException exception) {
             throw mapHttpException(exception);
         } catch (ResourceAccessException exception) {
@@ -208,18 +236,84 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     }
 
     /**
-     * 模型偶尔会返回可解析但不满足平台结构约束的内容。仅对此类无效响应重试一次；
+     * 模型偶尔会返回可解析但不满足平台结构约束的内容。仅对此类无效响应进行有限次数的修复重试；
+     * 重试时追加明确的结构约束，并逐步提高输出预算，以覆盖模型随机格式偏差和输出截断两类常见原因。
      * 鉴权、限流、超时和连接错误保留原始失败语义，避免放大上游压力。
      */
-    private <T> T retryOnceWhenResponseIsInvalid(Supplier<T> request) {
-        try {
-            return request.get();
-        } catch (ProviderException exception) {
-            if (exception.getFailureType() != ProviderFailureType.INVALID_RESPONSE) {
-                throw exception;
+    private <T> T retryWhenResponseIsInvalid(
+            ChatCompletionRequest initialRequest,
+            Function<ChatCompletionRequest, T> request,
+            String repairInstruction
+    ) {
+        ChatCompletionRequest currentRequest = initialRequest;
+        for (int attempt = 1; attempt <= MAX_INVALID_RESPONSE_ATTEMPTS; attempt++) {
+            try {
+                return request.apply(currentRequest);
+            } catch (ProviderException exception) {
+                if (exception.getFailureType() != ProviderFailureType.INVALID_RESPONSE
+                        || attempt == MAX_INVALID_RESPONSE_ATTEMPTS) {
+                    throw exception;
+                }
+                LOGGER.warn(
+                        "模型第 {} 次返回的结构化结果无效，将进行第 {} 次受控修复；原因：{}",
+                        attempt,
+                        attempt + 1,
+                        exception.getMessage()
+                );
+                currentRequest = withRepairInstruction(currentRequest, repairInstruction);
             }
-            LOGGER.warn("模型首次返回的结构化结果无效，将受控重试一次");
-            return request.get();
+        }
+        throw new IllegalStateException("结构化响应重试流程未返回结果");
+    }
+
+    /**
+     * 构造下一次修复请求：替换上一条修复提示，避免重试次数增加导致上下文无界膨胀。
+     */
+    private ChatCompletionRequest withRepairInstruction(
+            ChatCompletionRequest request,
+            String repairInstruction
+    ) {
+        List<ChatMessage> messages = new ArrayList<>(request.messages());
+        if (!messages.isEmpty()) {
+            ChatMessage lastMessage = messages.get(messages.size() - 1);
+            if ("user".equals(lastMessage.role())
+                    && lastMessage.content() != null
+                    && lastMessage.content().startsWith(STRUCTURED_REPAIR_MARKER)) {
+                messages.remove(messages.size() - 1);
+            }
+        }
+        messages.add(new ChatMessage("user", repairInstruction));
+        return new ChatCompletionRequest(
+                request.model(),
+                List.copyOf(messages),
+                request.temperature(),
+                nextRetryMaxTokens(request.maxTokens()),
+                request.responseFormat(),
+                false,
+                request.route()
+        );
+    }
+
+    private int nextRetryMaxTokens(int currentMaxTokens) {
+        if (currentMaxTokens >= RETRY_MAX_TOKENS_CAP) {
+            return currentMaxTokens;
+        }
+        return Math.min(RETRY_MAX_TOKENS_CAP, Math.max(currentMaxTokens + 1, currentMaxTokens * 2));
+    }
+
+    /**
+     * 将前端选择限制在服务端白名单内，避免用户借模型选择参数绕过平台的供应商策略。
+     */
+    private OpenAiCompatibleProperties.ModelSelection resolveModel(String requestedModel) {
+        try {
+            return properties.resolveModel(requestedModel);
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            throw new ProviderException(
+                    ProviderFailureType.REQUEST_REJECTED,
+                    "所选模型不可用，请从当前模型列表中重新选择",
+                    false,
+                    exception
+            );
         }
     }
 
@@ -254,15 +348,18 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         ResponseFormat responseFormat = properties.isJsonResponseFormatEnabled()
                 ? new ResponseFormat("json_object")
                 : null;
+        OpenAiCompatibleProperties.ModelSelection selection = resolveModel(request.model());
         return new ChatCompletionRequest(
-                properties.getModel(),
+                selection.model(),
                 List.of(
                         new ChatMessage("system", SYSTEM_PROMPT),
                         new ChatMessage("user", userMessage)
                 ),
                 properties.getTemperature(),
                 properties.getMaxTokens(),
-                responseFormat
+                responseFormat,
+                false,
+                selection.route()
         );
     }
 
@@ -291,26 +388,33 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         ResponseFormat responseFormat = properties.isJsonResponseFormatEnabled()
                 ? new ResponseFormat("json_object")
                 : null;
+        OpenAiCompatibleProperties.ModelSelection selection = resolveModel(request.model());
         return new ChatCompletionRequest(
-                properties.getModel(),
+                selection.model(),
                 List.of(
                         new ChatMessage("system", PLAN_SYSTEM_PROMPT),
                         new ChatMessage("user", userMessage)
                 ),
                 Math.min(0.3D, properties.getTemperature()),
                 properties.getMaxTokens(),
-                responseFormat
+                responseFormat,
+                false,
+                selection.route()
         );
     }
 
     /**
      * 把上游响应映射为统一结果，并校验内容是否可用。
      */
-    private EnhancementProviderResponse mapResponse(ChatCompletionResponse response) {
+    private EnhancementProviderResponse mapResponse(
+            ChatCompletionResponse response,
+            ChatCompletionRequest request
+    ) {
         if (response == null || response.choices() == null || response.choices().isEmpty()) {
             throw invalidResponse("模型响应未包含候选结果", null);
         }
         Choice firstChoice = response.choices().get(0);
+        rejectUnsupportedFinishReason(firstChoice);
         if (firstChoice == null || firstChoice.message() == null
                 || firstChoice.message().content() == null
                 || firstChoice.message().content().isBlank()) {
@@ -328,12 +432,14 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         }
 
         List<PromptSection> sections = validateAndMapSections(structuredResponse);
-        String responseModel = response.model() == null || response.model().isBlank()
-                ? properties.getModel()
+        String responseModel = properties.isMultiProviderEnabled()
+                ? properties.publicModelId(request.route(), request.model())
+                : response.model() == null || response.model().isBlank()
+                ? request.model()
                 : response.model();
         return new EnhancementProviderResponse(
                 sections,
-                properties.getProviderName(),
+                request.route().providerName(),
                 responseModel,
                 false,
                 mapAmbiguities(structuredResponse.ambiguities())
@@ -343,7 +449,10 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     /**
      * 将模型返回的计划 JSON 映射为统一问题模型。
      */
-    private PlanningProviderResponse mapPlanningResponse(ChatCompletionResponse response) {
+    private PlanningProviderResponse mapPlanningResponse(
+            ChatCompletionResponse response,
+            ChatCompletionRequest request
+    ) {
         String content = responseContent(response);
         StructuredPlanResponse structuredResponse;
         try {
@@ -360,13 +469,15 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         List<PlanQuestion> questions = structuredResponse.questions().stream()
                 .map(this::mapPlanQuestion)
                 .toList();
-        String responseModel = response.model() == null || response.model().isBlank()
-                ? properties.getModel()
+        String responseModel = properties.isMultiProviderEnabled()
+                ? properties.publicModelId(request.route(), request.model())
+                : response.model() == null || response.model().isBlank()
+                ? request.model()
                 : response.model();
         return new PlanningProviderResponse(
                 structuredResponse.summary(),
                 questions,
-                properties.getProviderName(),
+                request.route().providerName(),
                 responseModel,
                 false
         );
@@ -432,12 +543,22 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             throw invalidResponse("模型响应未包含候选结果", null);
         }
         Choice firstChoice = response.choices().get(0);
+        rejectUnsupportedFinishReason(firstChoice);
         if (firstChoice == null || firstChoice.message() == null
                 || firstChoice.message().content() == null
                 || firstChoice.message().content().isBlank()) {
             throw invalidResponse("模型响应内容为空", null);
         }
         return firstChoice.message().content();
+    }
+
+    /**
+     * 输出达到令牌上限时，响应往往仍是合法 JSON 的前缀；必须走修复重试而不是继续解析不完整内容。
+     */
+    private void rejectUnsupportedFinishReason(Choice choice) {
+        if (choice != null && "length".equalsIgnoreCase(choice.finishReason())) {
+            throw invalidResponse("模型输出达到长度上限", null);
+        }
     }
 
     /**
@@ -631,7 +752,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             List<ChatMessage> messages,
             double temperature,
             @JsonProperty("max_tokens") int maxTokens,
-            @JsonProperty("response_format") ResponseFormat responseFormat
+            @JsonProperty("response_format") ResponseFormat responseFormat,
+            boolean stream,
+            @JsonIgnore OpenAiCompatibleRoute route
     ) {
     }
 
@@ -658,7 +781,10 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
      * 单条候选结果。
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record Choice(ChatMessage message) {
+    private record Choice(
+            ChatMessage message,
+            @JsonProperty("finish_reason") String finishReason
+    ) {
     }
 
     /**

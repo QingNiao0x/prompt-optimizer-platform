@@ -16,6 +16,7 @@ export interface OptimizationDraft {
   includePermissionBoundaries: boolean;
   includeExamples: boolean;
   planConfirmation?: PlanConfirmation;
+  model?: string;
 }
 
 /**
@@ -47,6 +48,7 @@ export const buildOptimizationRequest = (
     requireConfirmationFor: [],
   },
   planConfirmation: draft.planConfirmation ?? null,
+  ...(draft.model?.trim() ? { model: draft.model.trim() } : {}),
 });
 
 /**
@@ -56,11 +58,13 @@ export const buildOptimizationPlanRequest = (
   rawPrompt: string,
   contextDescription: string,
   planningContext?: PlanningContextReference,
+  model?: string,
 ): OptimizationPlanRequest => ({
   rawPrompt: rawPrompt.trim(),
   contextDescription: contextDescription.trim(),
   conversationHistory: [],
   planningContext: planningContext ?? null,
+  ...(model?.trim() ? { model: model.trim() } : {}),
 });
 
 export const buildPlanningContextRequest = (

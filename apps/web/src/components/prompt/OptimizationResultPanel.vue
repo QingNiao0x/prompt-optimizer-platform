@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  ArrowDown,
   CopyDocument,
   DataAnalysis,
   EditPen,
@@ -29,11 +30,14 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 const { result } = toRefs(props);
 const editing = ref(false);
+const ambiguitiesOpen = ref(false);
 const draftSections = ref<PromptSection[]>([]);
 
 const displaySections = computed(() =>
   result.value?.sections.filter((section) => section.type !== 'CLARIFICATIONS') ?? [],
 );
+
+const ambiguityPreview = computed(() => result.value?.ambiguities[0] ?? '');
 
 const SECTION_LABELS: Record<PromptSectionType, string> = {
   BACKGROUND: '背景',
@@ -56,8 +60,13 @@ const copyPrompt = async (content: string): Promise<void> => {
 
 watch(result, () => {
   editing.value = false;
+  ambiguitiesOpen.value = false;
   draftSections.value = [];
 });
+
+const toggleAmbiguities = (): void => {
+  ambiguitiesOpen.value = !ambiguitiesOpen.value;
+};
 
 const startEditing = (): void => {
   if (!result.value) {
@@ -66,6 +75,7 @@ const startEditing = (): void => {
   draftSections.value = result.value.sections
     .filter((section) => section.type !== 'CLARIFICATIONS')
     .map((section) => ({ ...section }));
+  ambiguitiesOpen.value = false;
   editing.value = true;
 };
 
@@ -82,26 +92,6 @@ const saveEditing = (): void => {
 
 <template>
   <section class="result-panel">
-    <div
-      v-if="result?.ambiguities.length"
-      class="ambiguity-note"
-      role="status"
-      aria-live="polite"
-    >
-      <div class="ambiguity-heading">
-        <div class="ambiguity-title">
-          <WarningFilled aria-hidden="true" />
-          <strong>待确认事项</strong>
-          <span>{{ result.ambiguities.length }} 项</span>
-        </div>
-        <small>需要人工核对</small>
-      </div>
-      <p>这些信息尚未经过方案确认。开启 Plan 确认后再次增强，系统会逐项向你提问。</p>
-      <ul>
-        <li v-for="item in result.ambiguities" :key="item">{{ item }}</li>
-      </ul>
-    </div>
-
     <div class="result-heading">
       <span class="step-label">03 / Structured prompt</span>
       <div v-if="result" class="result-actions">
@@ -155,39 +145,74 @@ const saveEditing = (): void => {
       </p>
     </div>
 
-    <div
-      v-else
-      class="result-content"
-      tabindex="0"
-      aria-label="增强结果内容，可滚动查看完整提示词"
-    >
-      <ResultMetaBar :result="result" />
+    <div v-else class="result-stage">
+      <div
+        v-if="result.ambiguities.length && !editing"
+        class="ambiguity-note"
+        :class="{ 'is-open': ambiguitiesOpen }"
+      >
+        <button
+          type="button"
+          class="ambiguity-toggle"
+          :aria-expanded="ambiguitiesOpen"
+          aria-controls="ambiguity-details"
+          :aria-label="`待确认事项，${result.ambiguities.length} 项，需要人工核对`"
+          @click="toggleAmbiguities"
+        >
+          <span class="ambiguity-title" role="status">
+            <WarningFilled aria-hidden="true" />
+            <strong>待确认事项</strong>
+            <span>{{ result.ambiguities.length }} 项</span>
+          </span>
+          <span class="ambiguity-meta">
+            <small>需要人工核对</small>
+            <ArrowDown class="ambiguity-chevron" :class="{ 'is-open': ambiguitiesOpen }" aria-hidden="true" />
+          </span>
+          <span v-if="!ambiguitiesOpen" class="ambiguity-preview">{{ ambiguityPreview }}</span>
+        </button>
+        <div v-show="ambiguitiesOpen" id="ambiguity-details" class="ambiguity-body">
+          <p class="ambiguity-summary">
+            这些信息尚未经过方案确认。开启 Plan 确认后再次增强，系统会逐项向你提问。
+          </p>
+          <ul class="ambiguity-list">
+            <li v-for="(item, index) in result.ambiguities" :key="`${index}-${item}`">{{ item }}</li>
+          </ul>
+        </div>
+      </div>
 
-      <article v-if="!editing" class="section-list">
-        <ResultCard
-          v-for="(section, index) in displaySections"
-          :key="section.type"
-          :section="section"
-          :index="index"
-          :is-last="index === displaySections.length - 1"
-        />
-      </article>
+      <div
+        class="result-content"
+        tabindex="0"
+        aria-label="增强结果内容，可滚动查看完整提示词"
+      >
+        <ResultMetaBar :result="result" />
 
-      <div v-else class="edit-section-list">
-        <section v-for="section in draftSections" :key="section.type" class="edit-section">
-          <label :for="`section-${section.type}`">
-            {{ SECTION_LABELS[section.type] }} · {{ section.title }}
-          </label>
-          <ElInput
-            :id="`section-${section.type}`"
-            v-model="section.content"
-            type="textarea"
-            :rows="6"
-            resize="vertical"
-            maxlength="12000"
-            show-word-limit
+        <article v-if="!editing" class="section-list">
+          <ResultCard
+            v-for="(section, index) in displaySections"
+            :key="section.type"
+            :section="section"
+            :index="index"
+            :is-last="index === displaySections.length - 1"
           />
-        </section>
+        </article>
+
+        <div v-else class="edit-section-list">
+          <section v-for="section in draftSections" :key="section.type" class="edit-section">
+            <label :for="`section-${section.type}`">
+              {{ SECTION_LABELS[section.type] }} · {{ section.title }}
+            </label>
+            <ElInput
+              :id="`section-${section.type}`"
+              v-model="section.content"
+              type="textarea"
+              :rows="6"
+              resize="vertical"
+              maxlength="12000"
+              show-word-limit
+            />
+          </section>
+        </div>
       </div>
     </div>
   </section>
@@ -213,9 +238,9 @@ const saveEditing = (): void => {
   padding-top: 4px;
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
@@ -283,12 +308,12 @@ h2 {
 }
 
 .signal-source span {
-  padding: 6px 8px;
+  padding: 6px 10px;
   border: 1px solid var(--glass-border-subtle);
   border-radius: 8px;
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 12px;
   background: var(--glass-bg-subtle);
 }
 
@@ -300,7 +325,7 @@ h2 {
   border: 1px solid var(--accent-border);
   border-radius: 10px;
   color: var(--text-primary);
-  font-size: 10px;
+  font-size: 12px;
   background: var(--accent-soft);
 }
 
@@ -319,18 +344,27 @@ h2 {
   max-width: 380px;
   margin: 0;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.7;
+}
+
+.result-stage {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
 }
 
 .result-content {
   min-width: 0;
   min-height: 0;
-  flex: 1;
+  flex: 1 1 58%;
   overflow-x: hidden;
   overflow-y: auto;
   padding: 0 5px 8px 0;
   scrollbar-gutter: stable;
+  overscroll-behavior: contain;
 }
 
 .result-content:focus-visible {
@@ -352,7 +386,7 @@ h2 {
   display: block;
   margin-bottom: 7px;
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .edit-section :deep(.el-textarea__inner) {
@@ -364,65 +398,152 @@ h2 {
 }
 
 .ambiguity-note {
-  flex: 0 0 auto;
-  margin-bottom: 16px;
-  padding: 13px 14px;
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--warning) 34%, var(--glass-border-subtle));
   border-left: 4px solid var(--warning);
   border-radius: 10px;
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: 12px;
   background: color-mix(in srgb, var(--warning) 8%, var(--glass-bg-subtle));
 }
 
-.ambiguity-heading,
-.ambiguity-title {
+.ambiguity-note.is-open {
+  max-height: 42%;
+}
+
+.ambiguity-toggle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 6px;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.ambiguity-toggle:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--warning) 72%, transparent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.ambiguity-title,
+.ambiguity-meta {
   display: flex;
   align-items: center;
 }
 
-.ambiguity-heading {
-  justify-content: space-between;
-  gap: 10px;
-}
-
 .ambiguity-title {
+  min-width: 0;
   gap: 7px;
 }
 
-.ambiguity-title svg {
+.ambiguity-meta {
+  gap: 6px;
+}
+
+.ambiguity-title svg,
+.ambiguity-chevron {
   width: 15px;
+  flex: none;
   color: var(--warning);
+}
+
+.ambiguity-chevron {
+  transition: transform 0.18s ease;
+}
+
+.ambiguity-chevron.is-open {
+  transform: rotate(180deg);
 }
 
 .ambiguity-title strong {
+  min-width: 0;
+  overflow: hidden;
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ambiguity-title span,
-.ambiguity-heading small {
+.ambiguity-meta small {
+  flex: none;
   color: var(--warning);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
 }
 
-.ambiguity-note p {
+.ambiguity-preview {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.6;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ambiguity-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.ambiguity-note.is-open .ambiguity-body {
+  flex: 1 1 auto;
+}
+
+.ambiguity-summary {
   margin: 8px 0 0;
+  line-height: 1.6;
 }
 
-.ambiguity-note ul {
+.ambiguity-list {
   display: grid;
-  gap: 5px;
+  gap: 6px;
   margin: 9px 0 0;
-  padding: 9px 0 0 17px;
+  padding: 9px 2px 2px 17px;
   border-top: 1px solid color-mix(in srgb, var(--warning) 22%, var(--glass-border-subtle));
+  line-height: 1.6;
 }
 
 @media (max-width: 900px) {
   .result-panel {
     min-height: 0;
     padding: 18px 16px 16px;
+  }
+
+  .re-enhance-button {
+    margin-bottom: 10px;
+  }
+
+  .ambiguity-note.is-open {
+    max-height: min(40vh, 42%);
+  }
+
+  .ambiguity-list {
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambiguity-chevron {
+    transition: none;
   }
 }
 

@@ -200,6 +200,7 @@ export interface OptimizationRequest {
     requireConfirmationFor: string[];
   };
   planConfirmation?: PlanConfirmation | null;
+  model?: string | null;
 }
 
 export type PlanQuestionType = 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'FREE_TEXT';
@@ -227,6 +228,7 @@ export interface OptimizationPlanRequest {
   contextDescription: string;
   conversationHistory: ConversationMessage[];
   planningContext?: PlanningContextReference | null;
+  model?: string | null;
 }
 
 export interface OptimizationPlan {
@@ -271,6 +273,13 @@ export interface ProviderMetadata {
   provider: string;
   model: string;
   mock: boolean;
+}
+
+export interface AvailableModel {
+  id: string;
+  displayName: string;
+  provider: string;
+  defaultModel: boolean;
 }
 
 export interface OptimizationResult {

@@ -125,8 +125,8 @@ const closeMenu = (): void => {
 
 .landing-nav small {
   color: var(--text-muted);
-  font-size: 11px;
-  letter-spacing: 0.15em;
+  font-size: 12px;
+  letter-spacing: 0.8px;
   line-height: 1.25;
 }
 
@@ -170,7 +170,7 @@ const closeMenu = (): void => {
   min-height: 36px;
   padding: 0 16px;
   border-radius: var(--radius-pill);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition:
@@ -291,7 +291,7 @@ const closeMenu = (): void => {
   .landing-nav__auth-btn {
     min-height: 34px;
     padding: 0 12px;
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .landing-nav__drawer {

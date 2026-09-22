@@ -129,6 +129,27 @@ app:
       endpoint: ${MODEL_ENDPOINT:https://api.deepseek.com/chat/completions}
       api-key: ${MODEL_API_KEY:}
       model: ${MODEL_NAME:deepseek-chat}
+      # 逗号分隔的服务端模型白名单；例如 TokenHub 可填写四个模型 ID。
+      models: ${MODEL_MODELS:}
+      # 是否启用按模型路由到不同 endpoint/API Key 的模式
+      multi-provider-enabled: ${MODEL_MULTI_PROVIDER_ENABLED:true}
+      default-provider: ${MODEL_DEFAULT_PROVIDER:}
+      # 多供应商路由配置
+      providers:
+        deepseek:
+          provider-name: ${MODEL_DEEPSEEK_PROVIDER_NAME:deepseek}
+          endpoint: ${MODEL_DEEPSEEK_ENDPOINT:${MODEL_ENDPOINT:https://api.deepseek.com/chat/completions}}
+          # 兼容原有单供应商配置；多供应商模式下建议显式设置 MODEL_DEEPSEEK_API_KEY。
+          api-key: ${MODEL_DEEPSEEK_API_KEY:${MODEL_API_KEY:}}
+          model: ${MODEL_DEEPSEEK_NAME:${MODEL_NAME:deepseek-chat}}
+          models: ${MODEL_DEEPSEEK_MODELS:${MODEL_MODELS:}}
+
+        tokenhub:
+          provider-name: ${MODEL_TOKENHUB_PROVIDER_NAME:tokenhub}
+          endpoint: ${MODEL_TOKENHUB_ENDPOINT:https://tokenhub.tencentmaas.com/v1/chat/completions}
+          api-key: ${MODEL_TOKENHUB_API_KEY:${MODEL_API_KEY2:}}
+          model: ${MODEL_TOKENHUB_NAME:glm-5.3-flashx}
+          models: ${MODEL_TOKENHUB_MODELS:glm-5.3-flashx,deepseek-v4-pro-0813,kimi-k3,minimax-m3}
       temperature: ${MODEL_TEMPERATURE:0.2}
       max-tokens: ${MODEL_MAX_TOKENS:3000}
       connect-timeout: ${MODEL_CONNECT_TIMEOUT:3s}

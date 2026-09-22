@@ -270,8 +270,8 @@ onMounted(loadPage);
 .eyebrow {
   color: var(--accent-blue);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
+  font-size: 12px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
@@ -286,7 +286,7 @@ h1 {
 .page-heading p {
   margin: 0;
   color: var(--ink-muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .history-card {
@@ -305,7 +305,7 @@ h1 {
   height: 46px;
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -326,7 +326,7 @@ h1 {
 .model-cell {
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .pagination-row {
@@ -363,20 +363,20 @@ h1 {
   justify-content: space-between;
   gap: 10px;
   color: var(--ink-soft);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .history-mobile-card__preview {
   margin: 0;
   color: var(--ink-strong);
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 .history-mobile-card__model {
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .history-mobile-card__actions {
@@ -416,7 +416,7 @@ h1 {
 .detail-block h3 {
   margin: 0 0 8px;
   color: var(--ink-strong);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .detail-block pre {
@@ -428,7 +428,7 @@ h1 {
   border-radius: 11px;
   color: var(--ink-muted);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.7;
   white-space: pre-wrap;
   background: var(--surface-code);
@@ -442,7 +442,7 @@ h1 {
 .section-item p {
   margin: 8px 0 0;
   color: var(--ink-muted);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.7;
   white-space: pre-wrap;
 }

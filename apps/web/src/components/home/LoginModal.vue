@@ -547,7 +547,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
 .login-modal__eyebrow {
   margin: 0 0 4px;
   color: var(--accent);
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.08em;
 }
 
@@ -605,7 +605,7 @@ h2 {
 .login-modal__qr small,
 .login-modal__form small {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .login-modal__form {
@@ -624,7 +624,7 @@ h2 {
   display: grid;
   gap: 6px;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -688,7 +688,7 @@ h2 {
 
 .login-modal__form .login-modal__password-hint {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
 }
 
@@ -720,7 +720,7 @@ h2 {
 .login-modal__form > p {
   margin: 0;
   color: var(--danger, #d14343);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .login-modal__form > .login-modal__status {
@@ -730,9 +730,9 @@ h2 {
 .login-modal__form .login-modal__field-hint,
 .login-modal__form .login-modal__submit-hint {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .login-modal__form .login-modal__field-hint--error {
@@ -748,7 +748,7 @@ h2 {
   align-items: flex-start;
   gap: 8px;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 1.6;
 }
@@ -836,13 +836,13 @@ h2 {
 
 .login-modal__wechat > p:not(.login-modal__wechat-title) {
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .login-modal__wechat small {
   color: var(--text-muted);
-  font-size: 11px;
-  line-height: 1.5;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .login-modal__footer {

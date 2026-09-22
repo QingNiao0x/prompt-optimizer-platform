@@ -63,3 +63,9 @@ export const getApiErrorRequestId = (error: unknown): string => {
   const payload = error.response?.data as ApiErrorPayload | undefined;
   return payload?.requestId ?? '';
 };
+
+export const getApiErrorCode = (error: unknown): string => {
+  if (!(error instanceof AxiosError)) return '';
+  const payload = error.response?.data as ApiErrorPayload | undefined;
+  return payload?.error?.code ?? '';
+};

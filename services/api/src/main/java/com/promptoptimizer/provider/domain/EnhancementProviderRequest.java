@@ -23,7 +23,8 @@ public record EnhancementProviderRequest(
         boolean planConfirmed,
         List<String> constraints,
         List<ConversationMessage> conversationHistory,
-        EnhancementOptions options
+        EnhancementOptions options,
+        String model
 ) {
 
     /**
@@ -34,6 +35,61 @@ public record EnhancementProviderRequest(
         planAnswers = List.copyOf(planAnswers);
         constraints = List.copyOf(constraints);
         conversationHistory = List.copyOf(conversationHistory);
+    }
+
+    /**
+     * 兼容计划模式上线前的测试和适配调用。
+     */
+    public EnhancementProviderRequest(
+            String rawPrompt,
+            ContextSnapshot context,
+            PromptTemplate template,
+            List<String> ambiguities,
+            List<String> constraints,
+            List<ConversationMessage> conversationHistory,
+            EnhancementOptions options,
+            String model
+    ) {
+        this(
+                rawPrompt,
+                context,
+                template,
+                ambiguities,
+                List.of(),
+                false,
+                constraints,
+                conversationHistory,
+                options,
+                model
+        );
+    }
+
+    /**
+     * 兼容计划模式上线前的测试和适配调用。
+     */
+    public EnhancementProviderRequest(
+            String rawPrompt,
+            ContextSnapshot context,
+            PromptTemplate template,
+            List<String> ambiguities,
+            List<PlanAnswer> planAnswers,
+            boolean planConfirmed,
+            List<String> constraints,
+            List<ConversationMessage> conversationHistory,
+            EnhancementOptions options
+    ) {
+        this(
+                rawPrompt,
+                context,
+                template,
+                ambiguities,
+                planAnswers,
+                planConfirmed,
+                constraints,
+                conversationHistory,
+                options,
+                null
+        );
     }
 
     /**
@@ -57,7 +113,8 @@ public record EnhancementProviderRequest(
                 false,
                 constraints,
                 conversationHistory,
-                options
+                options,
+                null
         );
     }
 }
