@@ -20,11 +20,39 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.IntStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OptimizationPlanningServiceTest {
+
+    @Test
+    void shouldRetryInvalidPlanExactlyOnceAndPreserveValidQuestions() {
+        AtomicInteger calls = new AtomicInteger();
+        OptimizationPlanningService service = new OptimizationPlanningService(request -> {
+            if (calls.incrementAndGet() == 1) {
+                return new PlanningProviderResponse("", List.of(), "mock", "planner", true);
+            }
+            return new PlanningProviderResponse("请确认关键问题", List.of(new PlanQuestion(
+                    "region", "研究地区是哪里？", "", PlanQuestionType.FREE_TEXT,
+                    List.of(), List.of(), true)), "mock", "planner", true);
+        }, new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+        assertThat(service.plan(request("研究死亡率" )).questions()).hasSize(1);
+        assertThat(calls).hasValue(2);
+    }
+
+    @Test
+    void shouldNotRetryNetworkOrCredentialFailures() {
+        AtomicInteger calls = new AtomicInteger();
+        OptimizationPlanningService service = new OptimizationPlanningService(request -> {
+            calls.incrementAndGet();
+            throw new ProviderException(com.promptoptimizer.provider.domain.ProviderFailureType.UPSTREAM_UNAVAILABLE,
+                    "连接失败", true);
+        }, new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+        assertThatThrownBy(() -> service.plan(request("研究死亡率"))).isInstanceOf(ProviderException.class);
+        assertThat(calls).hasValue(1);
+    }
 
     private static final Clock CLOCK = Clock.fixed(
             Instant.parse("2026-09-13T12:00:00Z"),

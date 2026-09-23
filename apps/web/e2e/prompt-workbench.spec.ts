@@ -429,6 +429,62 @@ test('科研需求会逐项询问业务细节并在全部回答后生成结果',
   await expect(page.getByText('RESEARCH_ANALYSIS', { exact: true })).toBeVisible();
 });
 
+test('Plan 过期后重新提问并保留仍相同的问题答案', async ({ page }) => {
+  await configurePlanMode(page, { enabled: true, introSeen: true });
+  await page.route('**/api/v1/models', async (route) => {
+    await route.fulfill({ status: 200, json: { requestId: 'models', data: [] } });
+  });
+  await page.route('**/api/v1/optimizations/plan-events', async (route) => {
+    await route.fulfill({ status: 204 });
+  });
+  let planCalls = 0;
+  let finalCalls = 0;
+  await page.route('**/api/v1/optimizations/plan', async (route) => {
+    planCalls += 1;
+    await route.fulfill({ status: 200, json: {
+      ...loginPlanResponse,
+      data: {
+        ...loginPlanResponse.data,
+        planId: `plan-${planCalls}`,
+        questions: [
+          { ...loginPlanResponse.data.questions[1]!, id: `done-${planCalls}` },
+        ],
+      },
+    } });
+  });
+  await page.route('**/api/v1/optimizations', async (route) => {
+    finalCalls += 1;
+    const confirmation = route.request().postDataJSON() as {
+      planConfirmation?: { planId?: string; answers?: Array<{ answer: string }> };
+    };
+    if (finalCalls === 1) {
+      expect(confirmation.planConfirmation?.answers?.[0]?.answer).toBe('登录成功且覆盖错误场景');
+      await route.fulfill({ status: 409, json: {
+        requestId: 'expired-plan',
+        error: { code: 'PLANNING_SESSION_EXPIRED', message: '确认问题已过期，请重新生成。', retryable: false },
+      } });
+      return;
+    }
+    expect(confirmation.planConfirmation?.planId).toBe('plan-2');
+    expect(confirmation.planConfirmation?.answers?.[0]?.answer).toBe('登录成功且覆盖错误场景');
+    await route.fulfill({ status: 200, json: optimizationResponse });
+  });
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
+  await page.getByLabel('原始提示词').fill('为用户模块增加登录功能');
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
+  const dialog = page.getByRole('dialog', { name: '确认关键细节' });
+  await dialog.getByLabel('填写回答').fill('登录成功且覆盖错误场景');
+  await dialog.getByRole('button', { name: '生成最终提示词' }).click();
+  await expect(dialog.getByText('确认问题已更新，请核对保留的答案后重新确认。')).toBeVisible();
+  await expect(dialog.getByLabel('填写回答')).toHaveValue('登录成功且覆盖错误场景');
+  expect(planCalls).toBe(2);
+  expect(finalCalls).toBe(1);
+  await dialog.getByRole('button', { name: '生成最终提示词' }).click();
+  await expect(page.getByText('最终提示词已生成。')).toBeVisible();
+  expect(finalCalls).toBe(2);
+});
+
 test('最终生成失败时在计划弹窗内显示可读错误并保留回答', async ({ page }) => {
   await configurePlanMode(page, { enabled: true, introSeen: true });
   const oneQuestionPlan: ApiResponse<OptimizationPlan> = {

@@ -61,6 +61,8 @@ logging:
     level: "%5p [requestId:%X{requestId}]"
 
 app:
+  planning:
+    store-mode: ${PLANNING_STORE_MODE:LOCAL_FALLBACK}
   demo:
     # 仅供数据库演示种子和显式 local-mock profile 使用；普通请求身份来自 Spring Security。
     tenant-id: ${DEMO_TENANT_ID:00000000-0000-0000-0000-000000000001}

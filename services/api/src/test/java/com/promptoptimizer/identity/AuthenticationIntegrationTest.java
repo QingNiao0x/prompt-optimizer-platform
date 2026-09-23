@@ -138,8 +138,15 @@ class AuthenticationIntegrationTest {
                 "userId", TestActors.USER_ID));
         JsonNode plan = data(mvc.perform(write("/api/v1/optimizations/plan", alice).content(request))
                 .andExpect(status().isOk()).andReturn());
+        String eventBody = mapper.writeValueAsString(Map.of(
+                "planId", plan.path("planId").asText(), "event", "CANCELLED"));
+        mvc.perform(write("/api/v1/optimizations/plan-events", bob).content(eventBody))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.error.code").value("PLANNING_SESSION_EXPIRED"));
+        mvc.perform(write("/api/v1/optimizations/plan-events", alice).content(eventBody))
+                .andExpect(status().isNoContent());
         mvc.perform(write("/api/v1/optimizations/plan", bob).content(request))
-                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("文件上下文已过期，请重新分析。"));
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.error.code").value("PLANNING_SESSION_EXPIRED"))
+                .andExpect(jsonPath("$.error.message").value("文件上下文已过期，请重新分析。"));
         ObjectNode confirmation = mapper.createObjectNode();
         confirmation.put("planId", plan.path("planId").asText());
         confirmation.set("planningContext", mapper.valueToTree(reference));
@@ -152,7 +159,8 @@ class AuthenticationIntegrationTest {
         optimize.set("planConfirmation", confirmation);
         String body = mapper.writeValueAsString(optimize);
         mvc.perform(write("/api/v1/optimizations", bob).content(body))
-                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("确认问题已过期，请重新生成。"));
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.error.code").value("PLANNING_SESSION_EXPIRED"))
+                .andExpect(jsonPath("$.error.message").value("确认问题已过期，请重新生成。"));
         mvc.perform(write("/api/v1/optimizations", alice).content(body)).andExpect(status().isOk());
         // 新会话仍以稳定 userId 认领，不能把会话 cookie 本身当作资源所有者。
         Login aliceAgain = login("alice@example.com", new MockHttpSession());

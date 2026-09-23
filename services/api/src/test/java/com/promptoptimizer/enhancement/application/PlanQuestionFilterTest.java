@@ -1,6 +1,7 @@
 package com.promptoptimizer.enhancement.application;
 
 import com.promptoptimizer.enhancement.domain.*;
+import com.promptoptimizer.enhancement.api.ConversationMessage;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,6 +39,16 @@ class PlanQuestionFilterTest {
     void shouldDeduplicateTextWithoutDependingOnModelQuestionIds() {
         assertThat(filter.filter(List.of(question("one", "研究地区是哪里？"),
                 question("two", "研究地区是哪里?")), input("死亡率分析"))).hasSize(1);
+    }
+
+    @Test
+    void shouldTrustOnlyUserHistoryAndExplicitSafeDigestFacts() {
+        var userHistory = new PlanningProviderRequest("分析死亡率", "",
+                List.of(new ConversationMessage("user", "研究范围：广东省")));
+        var assistantHistory = new PlanningProviderRequest("分析死亡率", "",
+                List.of(new ConversationMessage("assistant", "研究范围：广东省")));
+        assertThat(filter.filter(List.of(question("region", "研究地区是哪里？")), userHistory)).isEmpty();
+        assertThat(filter.filter(List.of(question("region", "研究地区是哪里？")), assistantHistory)).hasSize(1);
     }
 
     private PlanningProviderRequest input(String text) { return new PlanningProviderRequest(text, "", List.of()); }

@@ -285,16 +285,20 @@ documentId
 
 ## 5. Redis 与本地降级
 
-`HybridPlanningSessionStore` 总是保存一份进程内短期副本；存在 `StringRedisTemplate` 时，同时写入 Redis：
+`HybridPlanningSessionStore` 根据 `app.planning.store-mode` 工作。本地默认 `LOCAL_FALLBACK`：保留进程内副本，有 Redis 时也写入 Redis；多实例应设置 `REDIS_REQUIRED`：只以 Redis 为权威存储，读写失败返回 `503 PLANNING_STORE_UNAVAILABLE`，不能回退到其他实例无法读取的本地副本。
 
 ```text
-prompt-optimizer:planning-context:{contextId}
-prompt-optimizer:plan:{planId}
+prompt-optimizer:planning-context:v2:{contextId}
+prompt-optimizer:plan:v2:{planId}
 ```
 
 两类键的 TTL 都按会话 `expiresAt` 设置，默认 30 分钟。Redis 读写失败时日志只记录异常类型，不记录连接字符串、凭据或上游响应正文。
 
-进程内降级适合单实例本地联调。生产多实例环境如果没有 Redis，请求可能被负载均衡到另一实例并收到“上下文已过期”或“确认问题已过期”，因此生产部署应把 Redis 视为该功能的必要依赖，并继续增加用户、租户和工作区绑定。
+进程内降级仅适合单实例本地联调。生产多实例使用 `REDIS_REQUIRED`，同一个 `contextId`／`planId` 在任意实例读取相同 Redis 记录。登录用户所有权已由服务端 `CurrentActor.userId` 校验；不同登录用户无法读取对方的短期会话。计划有效期不超过其引用的上下文有效期。
+
+生成问题时，摘要会先按原始需求与文件摘要的相关性排序，再留出部分位置给不同目录；仍限制最多 30 条并报告覆盖不足。Provider 问题通过格式校验后，会按明确字段事实保守过滤重复提问，规范化去除完全重复的文案，最终只保存并展示过滤后的问题。对冲突、复合问题或模糊表述保留提问。兼容 Provider 已有自己的结构修复上限；应用层只对 Provider 成功返回但应用层校验失败的结果额外重试一次，认证、限流和上游不可用不会按结构错误重试。
+
+过期的标准请求返回 `409 PLANNING_SESSION_EXPIRED`。工作台重新请求上下文和问题，匹配完全相同的问题文案及选项后恢复草稿；有变化的旧问题答案单独展示供核对，新问题仍需用户再次确认。重新获取文件需重新经过原有发送确认。匿名草稿不会提交到旧计划。监控只记录问题数、过滤数、受控重试次数和交互事件枚举，不把正文作为指标标签。指标在本机进程中聚合；多实例需要统一采集 Micrometer 指标。
 
 ## 6. 两种模式的伪代码
 
@@ -345,12 +349,12 @@ result = POST /optimizations(
 | 本地项目索引尚未 `READY` | 前端停止流程并提示等待，不生成缺少上下文的计划 |
 | 用户取消首次发送 | 不调用上下文准备和计划接口 |
 | 上下文为空 | 后端返回明确的空分析状态，计划仍可根据文本继续 |
-| `contextId/version` 过期或不匹配 | 返回 400，要求重新分析上下文 |
-| `planId` 过期 | 返回 400，保留当前输入，要求重新生成问题 |
+| `contextId/version` 过期 | 返回 409 与 `PLANNING_SESSION_EXPIRED`，重新分析上下文；版本不匹配仍返回 400 |
+| `planId` 过期 | 返回 409 与 `PLANNING_SESSION_EXPIRED`，工作台重新生成问题并供用户核对旧答案 |
 | 少答、多答或重复回答 | 返回 400，不进入 Provider |
 | 语义检索失败 | 保留关键词检索或代表片段，并在 `contextReport.warnings` 中说明 |
 | 最终检索与首次输入不同 | 重新分析，不复用旧快照 |
-| Redis 不可用 | 单实例内继续使用内存会话；多实例限制需由部署层处理 |
+| Redis 不可用 | `LOCAL_FALLBACK` 可单实例降级；`REDIS_REQUIRED` 返回 503，不保存不可跨实例读取的计划 |
 | Provider 失败 | 返回稳定错误码，弹窗保留用户回答以便重试 |
 
 ## 8. 如何验证实现
@@ -384,4 +388,4 @@ npm.cmd run typecheck
 
 ## 9. 后续演进边界
 
-当前短期 ID 还没有绑定登录用户、租户和工作区。加入认证后，应在 `ContextSession` 和 `PlanSession` 中加入所有者信息，并在每次读取时校验。生产环境还应限制同一用户并发会话数、记录不含正文的审计事件，并监控 Redis 命中率、过期错误率、首次与二次检索差异以及计划问题数量。
+短期 ID 已绑定登录用户并在每次读取时校验。多租户团队上线前仍需按实际成员关系补充租户和工作区授权。生产环境还应限制同一用户并发会话数，并统一采集 Redis 命中率、过期错误率、首次与二次检索差异和 Plan 问题质量指标。

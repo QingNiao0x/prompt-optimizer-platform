@@ -22,7 +22,9 @@
 | --- | --- |
 | `PlanningContextController` | 接收初步相关文件，返回可引用的短期上下文分析结果 |
 | `PlanningSessionService` | 生成上下文版本、绑定计划问题与用户回答、判断最终阶段能否复用快照 |
-| `PlanningSessionStore` | 以 30 分钟 TTL 保存上下文与计划；优先 Redis，本地联调可降级到进程内存储 |
+| `PlanningSessionStore` | 以最长 30 分钟 TTL 保存上下文与计划；本地可降级到内存，多实例必须配置 `REDIS_REQUIRED` |
+| `PlanQuestionFilter` | 对服务端已校验问题去除完全重复及明确事实已回答的问题；无法判断或存在冲突时保留问题 |
+| `PlanQualityMetrics` | 记录问题数、过滤数、受控重试和交互事件；指标不包含需求、答案或文件正文 |
 | `OptimizationPlanningService` | 调用计划 Provider、校验问题数量与可读性、拦截内部术语和疑似凭据 |
 | `PromptPlanningProvider` | 隔离计划生成能力，Mock 与 OpenAI 兼容实现共享契约 |
 | `MockPromptPlanningProvider` | 为本地联调提供科研、软件、写作和通用场景的确定性问题 |
@@ -179,7 +181,11 @@ Plan 路径采用方案 B：**先分析用户主动提供的相关上下文，�
 | `expiresAt` | 响应 | 无 | 默认创建后 30 分钟；过期后必须重新准备上下文和计划 |
 | `latencyMs` | 响应 | 无 | 本次过滤与分析耗时，单位毫秒 |
 
-`PlanningSessionStore` 会保存脱敏后的 `ContextSnapshot` 和摘要，以便相同输入在最终阶段复用。Redis 可用时写入带 TTL 的键；Redis 未配置或临时不可用时，本地 MVP 降级到当前 Java 进程内存。多实例部署必须保证 Redis 可用，否则后续请求落到其他实例时会找不到 `contextId`。
+`PlanningSessionStore` 会保存脱敏后的 `ContextSnapshot` 和摘要，以便相同输入在最终阶段复用。默认 `LOCAL_FALLBACK` 允许本地单实例回退内存；多实例部署设置 `PLANNING_STORE_MODE=REDIS_REQUIRED`，此时只从 Redis 读取，Redis 故障返回 503，避免请求落到其他实例时找不到计划。
+
+计划阶段返回的问题已经由服务端做保守相关性过滤，并与短期计划会话中保存的问题完全一致。服务端仅在资料明确给出研究地区、分析工具、读者、输出格式或法域等字段时，删除对应单一事实提问；冲突、复合问题和模糊信息继续保留。最终确认仍须使用当前问题 ID，不能提交旧计划的答案。
+
+工作台收到 `409 PLANNING_SESSION_EXPIRED` 后重新经过原有上下文发送确认、准备摘要、生成计划。文案及选项没有变化的问题可恢复回答草稿；变化的问题显示旧回答供参考，用户必须再次确认。交互计数通过 `POST /api/v1/optimizations/plan-events` 发送 `{ "planId": "...", "event": "CANCELLED" }`，枚举限于 `CANCELLED`、`CONFIRMED`、`CUSTOM_ANSWER`、`RESULT_EDITED`、`EXPIRED_RECOVERED`；接口先校验当前用户拥有的有效计划，最多按事件类型记一次，不接收回答正文。事件发送失败不阻止业务流程。
 
 ## 5. 计划接口
 
@@ -285,7 +291,7 @@ Plan 路径采用方案 B：**先分析用户主动提供的相关上下文，�
 | `latencyMs` | 计划阶段服务端耗时，非负整数，单位毫秒 |
 | `planId` | 服务端生成的 UUID；最终请求用它证明回答属于本次实际展示的问题 |
 | `planningContext` | 本计划使用的上下文引用；无文件时为 `null` |
-| `expiresAt` | 计划默认在创建后 30 分钟过期，与上下文会话使用同一时限 |
+| `expiresAt` | 计划最长在创建后 30 分钟过期；引用的上下文更早到期时，以其到期时间为准 |
 
 `templateCode` 当前取值为 `AUTO`、`GENERAL`、`RESEARCH_ANALYSIS`、`FEATURE_DEVELOPMENT`、`BUG_FIX`、`REFACTORING`、`TESTING`。工作台直接增强时始终发送 `AUTO`，避免沿用上一次 Plan 或历史记录留下的模板；Plan 路径采用计划接口返回的内部策略。未命中研究或软件场景时使用 `GENERAL`。
 
@@ -479,8 +485,9 @@ flowchart TD
 | 会话超过 20 条、问题回答超过 8 条 | 400 | `INVALID_ARGUMENT` |
 | 受保护路径或人工确认动作超过 50 条 | 400 | `INVALID_ARGUMENT` |
 | 回答为空或问题编号重复 | 400 | `INVALID_ARGUMENT`，给出可读原因 |
-| `contextId/version` 不存在、过期或被替换 | 400 | 要求重新分析文件上下文 |
-| `planId` 过期，或需求、背景、会话与计划不一致 | 400 | 要求重新生成确认问题 |
+| `contextId` 不存在、过期或不属于当前用户 | 409 | `PLANNING_SESSION_EXPIRED`，重新分析文件上下文 |
+| `planId` 不存在、过期或不属于当前用户 | 409 | `PLANNING_SESSION_EXPIRED`，重新生成问题并核对旧答案 |
+| 上下文版本、需求、背景或会话与计划不一致 | 400 | `INVALID_ARGUMENT`，重新生成匹配当前需求的问题 |
 | 回答集合与服务端计划问题不完全一致 | 400 | 要求完成本次计划中的全部问题 |
 | 输入疑似包含真实密码、Token、API Key 或私钥 | 400 | `INVALID_ARGUMENT`，要求移除凭据 |
 | Provider 超时、限流或不可用 | 504、503 或 502 | 稳定错误码与 `retryable`，不返回上游敏感详情 |

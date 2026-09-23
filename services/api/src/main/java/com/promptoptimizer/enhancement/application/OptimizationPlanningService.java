@@ -133,10 +133,11 @@ public class OptimizationPlanningService {
     }
 
     private PlanningProviderResponse requestValidatedPlan(PlanningProviderRequest request) {
+        PlanningProviderResponse response = planningProvider.plan(request);
         try {
-            return validate(planningProvider.plan(request));
+            return validate(response);
         } catch (ProviderException exception) {
-            // 只为无效结构重试一次；认证、限流、网络超时不叠加调用和费用。
+            // 仅重试应用层额外发现的结构问题；Provider 自身已有受控重试，不叠加调用。
             if (exception.getFailureType() != ProviderFailureType.INVALID_RESPONSE) throw exception;
             metrics.retry();
             return validate(planningProvider.plan(request));

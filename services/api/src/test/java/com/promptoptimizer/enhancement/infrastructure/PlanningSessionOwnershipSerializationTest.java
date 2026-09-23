@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.api.PlanningContextReference;
 import com.promptoptimizer.enhancement.application.PlanningSessionStore;
+import com.promptoptimizer.enhancement.application.PlanningStoreUnavailableException;
 import com.promptoptimizer.identity.support.TestActors;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
@@ -24,6 +25,34 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class PlanningSessionOwnershipSerializationTest {
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void requiredRedisModeFailsClosedInsteadOfServingLocalCopy() {
+        ObjectProvider<StringRedisTemplate> provider = mock(ObjectProvider.class);
+        when(provider.getIfAvailable()).thenReturn(null);
+        HybridPlanningSessionStore store = new HybridPlanningSessionStore(mapper, provider,
+                HybridPlanningSessionStore.Mode.REDIS_REQUIRED);
+        assertThatThrownBy(() -> store.savePlan(plan())).isInstanceOf(PlanningStoreUnavailableException.class);
+        assertThatThrownBy(() -> store.findPlan("plan-test")).isInstanceOf(PlanningStoreUnavailableException.class);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void requiredRedisModeDoesNotUseStaleLocalCopyWhenRedisFailsAfterSave() {
+        ObjectProvider<StringRedisTemplate> provider = mock(ObjectProvider.class);
+        StringRedisTemplate redis = mock(StringRedisTemplate.class);
+        ValueOperations<String, String> values = mock(ValueOperations.class);
+        when(provider.getIfAvailable()).thenReturn(redis);
+        when(redis.opsForValue()).thenReturn(values);
+        HybridPlanningSessionStore store = new HybridPlanningSessionStore(mapper, provider,
+                HybridPlanningSessionStore.Mode.REDIS_REQUIRED);
+        store.savePlan(plan());
+        when(values.get(anyString())).thenThrow(new IllegalStateException("storage unavailable"));
+        assertThatThrownBy(() -> store.findPlan("plan-test"))
+                .isInstanceOf(PlanningStoreUnavailableException.class)
+                .hasMessageNotContaining("storage unavailable");
+    }
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
     @Test

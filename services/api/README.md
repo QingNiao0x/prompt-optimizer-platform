@@ -83,7 +83,7 @@ POST http://localhost:8080/api/v1/optimizations
 GET http://localhost:8080/api/v1/models
 ```
 
-有文件时调用顺序为 `/context/planning → /optimizations/plan → /optimizations`。短期上下文和计划优先保存在 Redis，Redis 未配置或暂时不可用时只在当前进程中降级保存；两类会话默认 TTL 都是 30 分钟。
+有文件时调用顺序为 `/context/planning → /optimizations/plan → /optimizations`。短期上下文和计划的 TTL 最多 30 分钟。`app.planning.store-mode=LOCAL_FALLBACK`（默认）用于本地单实例；多实例部署需设置 `PLANNING_STORE_MODE=REDIS_REQUIRED`，并保证共享 Redis 可用，否则返回 503 而不创建不可跨实例读取的会话。计划过期返回 `409 PLANNING_SESSION_EXPIRED`，可重新准备上下文并生成问题。
 
 项目默认通过 OpenAI 兼容协议调用 DeepSeek。启动前必须设置自己的 DeepSeek API Key：
 
