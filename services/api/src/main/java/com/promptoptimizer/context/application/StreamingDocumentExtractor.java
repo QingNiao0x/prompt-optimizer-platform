@@ -132,6 +132,7 @@ public class StreamingDocumentExtractor {
         );
     }
 
+    /** 按文本块读取 UTF-8 文件并汇报进度，避免将整个正文一次性放入内存。 */
     private void extractText(
             Path source,
             BoundedSectionSink sink,
@@ -162,6 +163,7 @@ public class StreamingDocumentExtractor {
         progressListener.onProgress(fileSize, Math.max(fileSize, 1));
     }
 
+    /** 按页提取 PDF 文本层；扫描版 PDF 不在这里执行 OCR。 */
     private void extractPdf(
             Path source,
             BoundedSectionSink sink,
@@ -180,6 +182,7 @@ public class StreamingDocumentExtractor {
         }
     }
 
+    /** 按工作表和行组织单元格文本；达到提取预算后停止继续发送内容。 */
     private void extractSpreadsheet(
             Path source,
             BoundedSectionSink sink,
@@ -223,6 +226,7 @@ public class StreamingDocumentExtractor {
         }
     }
 
+    /** 逐段读取旧版 Word 文本，并把段落交给有界接收器。 */
     private void extractLegacyWord(
             Path source,
             BoundedSectionSink sink,
@@ -241,6 +245,7 @@ public class StreamingDocumentExtractor {
         }
     }
 
+    /** 逐张幻灯片提取旧版演示文件中的文本，并按页汇报处理进度。 */
     private void extractLegacyPresentation(
             Path source,
             BoundedSectionSink sink,
@@ -264,6 +269,7 @@ public class StreamingDocumentExtractor {
         }
     }
 
+    /** 从 WPS 文档包中选择正文条目，交由安全的 XML 提取器处理。 */
     private void extractWpsDocument(
             Path source,
             BoundedSectionSink sink,
@@ -282,6 +288,7 @@ public class StreamingDocumentExtractor {
         extractLegacyWord(source, sink, progressListener);
     }
 
+    /** 从 WPS 演示文稿包中提取幻灯片正文。 */
     private void extractWpsPresentation(
             Path source,
             BoundedSectionSink sink,
@@ -300,6 +307,7 @@ public class StreamingDocumentExtractor {
         extractLegacyPresentation(source, sink, progressListener);
     }
 
+    /** 从 WPS 表格包中提取工作表文本。 */
     private void extractWpsSpreadsheet(
             Path source,
             BoundedSectionSink sink,
@@ -315,6 +323,7 @@ public class StreamingDocumentExtractor {
         }
     }
 
+    /** 图片目前仅提取格式与尺寸等元数据，不把像素内容当成已识别正文。 */
     private void extractImage(
             Path source,
             String logicalPath,
@@ -331,6 +340,7 @@ public class StreamingDocumentExtractor {
         progressListener.onProgress(1, 1);
     }
 
+    /** 仅处理指定 XML 条目；先检查压缩包规模，再逐条流式提取正文。 */
     private void extractZipXml(
             Path source,
             Predicate<String> entryFilter,
@@ -354,6 +364,7 @@ public class StreamingDocumentExtractor {
         }
     }
 
+    /** 筛选并排序允许读取的 XML 条目，不遍历包内其他资源。 */
     private List<? extends ZipEntry> xmlEntries(
             ZipFile zipFile,
             Predicate<String> entryFilter
@@ -371,6 +382,7 @@ public class StreamingDocumentExtractor {
         return entries;
     }
 
+    /** 限制文档包内条目数和声明的展开大小，拒绝明显超出预算的压缩包。 */
     private void validateArchive(List<? extends ZipEntry> entries) {
         if (entries.size() > MAX_ARCHIVE_ENTRIES) {
             throw new IllegalArgumentException("文档内部文件数量超过安全上限");
@@ -385,6 +397,7 @@ public class StreamingDocumentExtractor {
         }
     }
 
+    /** 关闭 DTD 与外部实体后逐段读取 Office/WPS XML，避免实体展开读取外部资源。 */
     private void extractXmlBlocks(
             InputStream input,
             String label,
@@ -453,6 +466,7 @@ public class StreamingDocumentExtractor {
      */
     @FunctionalInterface
     public interface SectionConsumer {
+        /** 立即消费一个已提取段落，避免在提取器中积累全文。 */
         void accept(String label, String content) throws IOException;
     }
 
@@ -461,9 +475,16 @@ public class StreamingDocumentExtractor {
      */
     @FunctionalInterface
     public interface ProgressListener {
+        /** 按当前文件格式的页、工作表或字节单位报告处理进度。 */
         void onProgress(long processed, long total);
     }
 
+    /**
+     * 提取后的段落数、字符量、完整性及可读警告。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record ExtractionReport(
             int sectionCount,
             long extractedCharacters,

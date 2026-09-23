@@ -132,6 +132,7 @@ public class OptimizationPlanningService {
         );
     }
 
+    /** 仅对额外结构校验发现的无效模型响应再试一次，不叠加 Provider 自身重试。 */
     private PlanningProviderResponse requestValidatedPlan(PlanningProviderRequest request) {
         PlanningProviderResponse response = planningProvider.plan(request);
         try {
@@ -182,6 +183,9 @@ public class OptimizationPlanningService {
         );
     }
 
+    /**
+     * 校验模型候选项的 ID、长度、推荐数量与敏感内容，拒绝内部术语后返回可展示问题。
+     */
     private PlanQuestion normalizeQuestion(PlanQuestion question) {
         Set<String> optionIds = new HashSet<>();
         int recommended = 0;

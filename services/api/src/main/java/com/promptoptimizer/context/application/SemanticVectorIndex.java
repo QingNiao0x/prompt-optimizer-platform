@@ -121,6 +121,7 @@ public class SemanticVectorIndex {
         }
     }
 
+    /** 限制单批片段数量和字符数；超长首段裁剪后仍保证至少有一段可送向量模型。 */
     private List<String> loadBoundedBatch(
             ChunkBatchSource source,
             int offset,
@@ -151,6 +152,7 @@ public class SemanticVectorIndex {
         return batch;
     }
 
+    /** 校验向量数量、维度与模型一致性，防止损坏的批次写入磁盘索引。 */
     private void validateBatch(
             TextEmbeddingModel.EmbeddingBatch batch,
             int expectedSize,
@@ -206,6 +208,7 @@ public class SemanticVectorIndex {
         }
     }
 
+    /** 单位化向量，使后续点积可用于比较余弦相似度。 */
     private float[] normalize(float[] vector) {
         double squaredLength = 0D;
         for (float value : vector) {
@@ -222,6 +225,7 @@ public class SemanticVectorIndex {
         return normalized;
     }
 
+    /** 读取磁盘索引头并验证格式标记、模型、维度与块数量。 */
     private IndexHeader readHeader(Path indexFile) throws IOException {
         try (DataInputStream input = new DataInputStream(
                 new BufferedInputStream(Files.newInputStream(indexFile)))) {
@@ -240,6 +244,7 @@ public class SemanticVectorIndex {
         }
     }
 
+    /** 顺序扫描磁盘向量并用有界优先队列保留最高分片段，避免加载整个索引。 */
     private Map<Integer, Double> scanTopMatches(
             Path indexFile,
             IndexHeader expectedHeader,
@@ -316,6 +321,7 @@ public class SemanticVectorIndex {
         }
     }
 
+    /** 清理失败或取消后的临时向量文件，不让清理异常覆盖原始错误。 */
     private void deleteQuietly(Path path) {
         try {
             Files.deleteIfExists(path);
@@ -330,6 +336,7 @@ public class SemanticVectorIndex {
     @FunctionalInterface
     public interface ChunkBatchSource {
 
+        /** 按偏移返回有限个原始片段，顺序须与待建立索引的编号一致。 */
         List<String> read(int offset, int limit);
     }
 

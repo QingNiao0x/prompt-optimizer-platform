@@ -39,6 +39,7 @@ public class RegistrationProperties {
 
     private boolean requireRedis = true;
 
+    /** 将配置属性整理成发码与校验共用的不可变策略。 */
     public EmailVerificationPolicy policy() {
         return new EmailVerificationPolicy(
                 codeTtl,

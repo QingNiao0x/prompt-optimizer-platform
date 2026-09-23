@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @DateTime: 2026-09-12
- * @Author: QingNiao
- * @ProjectName: prompt-optimizer-platform
- * @Description: 提供大型文档分片上传、异步解析进度查询和临时索引清理接口。
+ * 提供大型文档分片上传、异步解析进度查询和临时索引清理接口。
+ *
+ * @author QingNiao
+ * @since 0.1.0
  */
 @RestController
 @RequestMapping("/api/v1/context/documents")
@@ -34,6 +34,7 @@ public class DocumentUploadController {
         this.documentIndexService = documentIndexService;
     }
 
+    /** 创建一次临时文档上传会话，并返回分片上传所需的标识。 */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<DocumentUploadStatus> create(
@@ -43,6 +44,7 @@ public class DocumentUploadController {
         return ApiResponse.success(requestId(httpRequest), documentIndexService.create(request));
     }
 
+    /** 按分片序号写入二进制内容；服务层负责序号、大小和会话状态校验。 */
     @PutMapping(
             value = "/{documentId}/chunks/{chunkIndex}",
             consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE
@@ -59,6 +61,7 @@ public class DocumentUploadController {
         );
     }
 
+    /** 标记所有分片上传完成，启动后续解析与索引流程。 */
     @PostMapping("/{documentId}/complete")
     public ApiResponse<DocumentUploadStatus> complete(
             @PathVariable String documentId,
@@ -67,6 +70,7 @@ public class DocumentUploadController {
         return ApiResponse.success(requestId(httpRequest), documentIndexService.completeUpload(documentId));
     }
 
+    /** 查询文档解析状态，供前端展示异步进度及错误。 */
     @GetMapping("/{documentId}")
     public ApiResponse<DocumentUploadStatus> status(
             @PathVariable String documentId,
@@ -75,6 +79,7 @@ public class DocumentUploadController {
         return ApiResponse.success(requestId(httpRequest), documentIndexService.getStatus(documentId));
     }
 
+    /** 清理指定临时文档及其索引。 */
     @DeleteMapping("/{documentId}")
     public ApiResponse<Void> delete(
             @PathVariable String documentId,

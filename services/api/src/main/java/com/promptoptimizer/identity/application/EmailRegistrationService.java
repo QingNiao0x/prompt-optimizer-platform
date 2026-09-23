@@ -58,6 +58,9 @@ public class EmailRegistrationService {
         this.secureRandom = new SecureRandom();
     }
 
+    /**
+     * 校验注册资格并按邮箱、来源地址限流后发送验证码；邮件投递失败会撤销本次发码状态。
+     */
     public EmailRegistrationCodeView requestCode(EmailRegistrationCodeRequest request, String remoteAddress) {
         ensureAvailable();
         UserIdentityKey emailKey = UserIdentityKey.email(request.email());
@@ -96,6 +99,7 @@ public class EmailRegistrationService {
         );
     }
 
+    /** 验证一次性代码后创建账户与默认工作区，成功后消费验证码。 */
     public RegisteredEmail register(EmailRegistrationRequest request) {
         ensureAvailable();
         UserIdentityKey emailKey = UserIdentityKey.email(request.email());
@@ -149,6 +153,7 @@ public class EmailRegistrationService {
         );
     }
 
+    /** BCrypt 只处理前 72 字节；按 UTF-8 字节数限制，避免长密码被静默截断。 */
     private void validatePassword(String password) {
         int byteLength = password.getBytes(StandardCharsets.UTF_8).length;
         if (password.length() < 8 || byteLength > MAX_BCRYPT_PASSWORD_BYTES) {
@@ -159,6 +164,7 @@ public class EmailRegistrationService {
         }
     }
 
+    /** 将发码限流结果转成可读错误，并保留建议重试等待时间。 */
     private void enforceIssueDecision(EmailVerificationStore.IssueDecision decision) {
         switch (decision.result()) {
             case ISSUED -> {
@@ -182,6 +188,7 @@ public class EmailRegistrationService {
         }
     }
 
+    /** 区分无效、过期和尝试次数耗尽的验证码，避免注册流程继续执行。 */
     private void enforceVerificationResult(EmailVerificationStore.VerificationResult result) {
         switch (result) {
             case VALID -> {
@@ -202,6 +209,7 @@ public class EmailRegistrationService {
         }
     }
 
+    /** 以服务端密钥对邮箱与验证码计算 HMAC，存储层无需保存明文验证码。 */
     private String codeDigest(String normalizedEmail, String code) {
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
@@ -220,6 +228,7 @@ public class EmailRegistrationService {
         }
     }
 
+    /** 把邮箱或来源地址转为固定长度摘要，避免它们直接出现在限流键中。 */
     private String fingerprint(String value) {
         try {
             return HexFormat.of().formatHex(
@@ -241,6 +250,12 @@ public class EmailRegistrationService {
         return localPart.length() <= 80 ? localPart : localPart.substring(0, 80);
     }
 
+    /**
+     * 注册成功后用于建立会话的规范化邮箱，不包含明文密码或验证码。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record RegisteredEmail(String email) {
     }
 }

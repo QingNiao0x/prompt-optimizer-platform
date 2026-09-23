@@ -6,6 +6,7 @@ import com.promptoptimizer.context.api.ContextFileInput;
 import com.promptoptimizer.context.api.PlanningContextRequest;
 import com.promptoptimizer.context.application.ContextAnalyzer;
 import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.context.domain.FileSnippet;
 import com.promptoptimizer.enhancement.api.ConversationMessage;
 import com.promptoptimizer.enhancement.api.PlanAnswer;
 import com.promptoptimizer.enhancement.api.PlanConfirmation;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
 /**
  * 管理“上下文准备 → 计划提问 → 最终确认”之间的短期一致性。
  *
- * <p>该模块只向计划 Provider 暴露裁剪摘要，完整的脱敏上下文快照保存在带 TTL 的服务端会话中。</p>
+ * <p>该模块只向计划 Provider 暴露裁剪摘要及有限的业务文档摘录；完整的脱敏上下文快照保存在带 TTL 的服务端会话中。</p>
  *
  * @author QingNiao
  * @since 0.1.0
@@ -51,6 +52,7 @@ public class PlanningSessionService {
 
     private static final Duration SESSION_TTL = Duration.ofMinutes(30);
     private static final int MAX_DIGEST_ITEM_CHARACTERS = 400;
+    private static final int MAX_DOCUMENT_DIGEST_CHARACTERS = 1_000;
 
     private final PlanningSessionStore store;
     private final ContextAnalyzer contextAnalyzer;
@@ -98,7 +100,7 @@ public class PlanningSessionService {
                 request.permissionPolicy()
         );
         ContextSnapshot snapshot = protectedContextFilter.attachReport(
-                contextAnalyzer.analyze(filtered.request(), request.rawPrompt()),
+                contextAnalyzer.analyze(prioritizeDocuments(filtered.request()), request.rawPrompt()),
                 filtered
         );
         PlanningContextReference reference = new PlanningContextReference(
@@ -126,6 +128,19 @@ public class PlanningSessionService {
                 expiresAt,
                 Math.max(0, clock.millis() - startedAt)
         );
+    }
+
+    /** 把少量文档放到分析队列前部，避免代码文件先占满本次摘要预算。 */
+    private ContextAnalysisRequest prioritizeDocuments(ContextAnalysisRequest request) {
+        List<ContextFileInput> documents = request.files().stream()
+                .filter(PlanningDigestSelector::isDocument).toList();
+        if (documents.isEmpty()) return request;
+        List<ContextFileInput> prioritized = new ArrayList<>(request.files().size());
+        documents.stream().limit(4).forEach(prioritized::add);
+        request.files().stream().filter(file -> !PlanningDigestSelector.isDocument(file))
+                .forEach(prioritized::add);
+        documents.stream().skip(4).forEach(prioritized::add);
+        return new ContextAnalysisRequest(request.customDescription(), prioritized);
     }
 
     /**
@@ -254,6 +269,7 @@ public class PlanningSessionService {
                 : Optional.empty();
     }
 
+    /** 校验上下文引用的所有者、有效期和版本，不向其他用户透露资源是否存在。 */
     private PlanningSessionStore.ContextSession requireContext(PlanningContextReference reference) {
         UUID ownerId = currentActor.require().userId();
         PlanningSessionStore.ContextSession context = store.findContext(reference.contextId())
@@ -268,6 +284,7 @@ public class PlanningSessionService {
         return context;
     }
 
+    /** 验证计划存在、尚未过期且属于当前登录用户，不返回计划中的问题或答案。 */
     public void assertAccessible(String planId) { requirePlan(planId); }
 
     private PlanningSessionStore.PlanSession requirePlan(String planId) {
@@ -281,6 +298,7 @@ public class PlanningSessionService {
         return plan;
     }
 
+    /** 拒绝重复或无效的旧版回答，避免一次计划问题被多次覆盖。 */
     private List<PlanAnswer> validateLegacyAnswers(List<PlanAnswer> answers) {
         List<PlanAnswer> safeAnswers = answers == null ? List.of() : answers;
         Map<String, PlanAnswer> unique = new LinkedHashMap<>();
@@ -295,6 +313,10 @@ public class PlanningSessionService {
         return List.copyOf(unique.values());
     }
 
+    /**
+     * 从完整分析快照选取与当前任务相关且有数量上限的安全摘要；未覆盖文件会生成提示，
+     * 避免模型把摘要中的缺席误判为项目中不存在。
+     */
     private PlanningContextDigest buildDigest(ContextSnapshot snapshot, String query) {
         List<String> technologies = snapshot.technologyStack().stream()
                 .limit(20)
@@ -309,11 +331,13 @@ public class PlanningSessionService {
                 .limit(80)
                 .map(this::truncate)
                 .toList();
-        List<String> fileSummaries = PlanningDigestSelector.select(snapshot.fileSnippets(), query, 30).stream()
-                .map(file -> truncate(file.path() + "：" + (isBlank(file.summary())
-                        ? "已识别为 " + file.language() + " 文件"
-                        : file.summary())))
-                .toList();
+        List<String> fileSummaries = new ArrayList<>();
+        int detailedDocuments = 0;
+        for (FileSnippet file : PlanningDigestSelector.select(snapshot.fileSnippets(), query, 30)) {
+            boolean includeExcerpt = PlanningDigestSelector.isDocument(file) && detailedDocuments < 4;
+            fileSummaries.add(planningFileSummary(file, query, includeExcerpt));
+            if (includeExcerpt) detailedDocuments++;
+        }
         List<String> warnings = new ArrayList<>(snapshot.warnings().stream()
                 .filter(value -> !containsSensitiveWarning(value))
                 .limit(19)
@@ -340,6 +364,21 @@ public class PlanningSessionService {
         );
     }
 
+    private String planningFileSummary(FileSnippet file, String query, boolean includeExcerpt) {
+        String description = file.path() + "：" + (isBlank(file.summary())
+                ? "已识别为 " + file.language() + " 文件"
+                : file.summary());
+        if (!includeExcerpt
+                || sensitiveValueDetector.containsCredential(file.content())) {
+            return truncate(description);
+        }
+        String excerpt = PlanningDocumentExcerpt.select(file.content(), query, 600);
+        if (excerpt.isBlank()) return truncate(description);
+        return truncate(truncate(description, 300) + "；业务摘录：" + excerpt,
+                MAX_DOCUMENT_DIGEST_CHARACTERS);
+    }
+
+    /** 按稳定的字段和文件顺序计算输入摘要，用于绑定短期引用而不在标识中暴露正文。 */
     private String fingerprintContext(ContextAnalysisRequest request, String analysisQuery) {
         MessageDigest digest = sha256();
         update(digest, safe(analysisQuery).trim());
@@ -363,6 +402,7 @@ public class PlanningSessionService {
         return HexFormat.of().formatHex(digest.digest());
     }
 
+    /** 将原始任务、描述与用户对话纳入计划指纹，防止计划被用于不同输入。 */
     private String fingerprintPlanInput(
             String rawPrompt,
             String contextDescription,
@@ -395,10 +435,14 @@ public class PlanningSessionService {
     }
 
     private String truncate(String value) {
+        return truncate(value, MAX_DIGEST_ITEM_CHARACTERS);
+    }
+
+    private String truncate(String value, int limit) {
         String safeValue = safe(value).trim();
-        return safeValue.length() <= MAX_DIGEST_ITEM_CHARACTERS
+        return safeValue.length() <= limit
                 ? safeValue
-                : safeValue.substring(0, MAX_DIGEST_ITEM_CHARACTERS) + "…";
+                : safeValue.substring(0, limit) + "…";
     }
 
     private boolean containsSensitiveWarning(String value) {
@@ -421,12 +465,24 @@ public class PlanningSessionService {
         return value == null ? "" : value;
     }
 
+    /**
+     * 已通过所有权和有效期校验的上下文引用及安全摘要。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record ResolvedPlanningContext(
             PlanningContextReference reference,
             PlanningContextDigest digest
     ) {
     }
 
+    /**
+     * 新计划标识、关联上下文和过期时间。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record PlanRegistration(
             String planId,
             PlanningContextReference planningContext,
@@ -434,6 +490,12 @@ public class PlanningSessionService {
     ) {
     }
 
+    /**
+     * 用户确认后供最终增强流程消费的计划数据。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record ConfirmedPlan(
             List<PlanAnswer> answers,
             PlanningContextReference planningContext,

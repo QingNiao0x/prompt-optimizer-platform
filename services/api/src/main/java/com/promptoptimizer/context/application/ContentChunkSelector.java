@@ -119,6 +119,7 @@ public class ContentChunkSelector {
         return chunks;
     }
 
+    /** 在文档首尾及中部均匀选取代表片段，为无关键词命中的任务保留覆盖面。 */
     private void addRepresentativeIndexes(Set<Integer> indexes, int chunkCount, int limit) {
         if (chunkCount <= 0 || limit <= 0) {
             return;

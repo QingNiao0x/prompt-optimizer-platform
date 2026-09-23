@@ -106,6 +106,7 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
         }
     }
 
+    /** 校验结构化摘要响应；缺失 summary 或无效 JSON 均显式报错，不伪装成成功摘要。 */
     private SummaryResult mapResponse(ChatCompletionResponse response, String requestedModel) {
         if (response == null || response.choices() == null || response.choices().isEmpty()) {
             throw new DocumentSummaryModelException("摘要模型响应未包含候选结果");

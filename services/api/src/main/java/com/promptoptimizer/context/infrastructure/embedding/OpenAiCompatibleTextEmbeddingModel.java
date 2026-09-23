@@ -65,6 +65,7 @@ public class OpenAiCompatibleTextEmbeddingModel implements TextEmbeddingModel {
         }
     }
 
+    /** 按上游索引还原输入顺序，并拒绝缺项、重复索引及非有限向量值。 */
     private EmbeddingBatch mapResponse(EmbeddingResponse response, int expectedSize) {
         if (response == null || response.data() == null || response.data().size() != expectedSize) {
             throw new EmbeddingProviderException("向量模型响应数量与请求不一致");

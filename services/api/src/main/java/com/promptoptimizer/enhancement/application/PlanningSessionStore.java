@@ -19,12 +19,16 @@ import java.util.UUID;
  */
 public interface PlanningSessionStore {
 
+    /** 保存带所有者与过期时间的短期上下文，不持久化为用户历史。 */
     void saveContext(ContextSession context);
 
+    /** 根据上下文 ID 查找尚可用的会话；所有权由调用方校验。 */
     Optional<ContextSession> findContext(String contextId);
 
+    /** 保存待用户确认的问题及其所属用户。 */
     void savePlan(PlanSession plan);
 
+    /** 根据计划 ID 查找尚可用的计划；所有权由调用方校验。 */
     Optional<PlanSession> findPlan(String planId);
 
     record ContextSession(

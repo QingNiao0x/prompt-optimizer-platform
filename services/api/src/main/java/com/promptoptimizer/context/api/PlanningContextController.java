@@ -27,6 +27,7 @@ public class PlanningContextController {
         this.planningSessionService = planningSessionService;
     }
 
+    /** 对本次请求上下文生成安全摘要与短期引用，供后续计划流程使用。 */
     @PostMapping
     public ApiResponse<PlanningContextPreparation> prepare(
             @Valid @RequestBody PlanningContextRequest request,

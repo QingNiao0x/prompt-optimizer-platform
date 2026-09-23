@@ -11,5 +11,11 @@ import com.promptoptimizer.provider.domain.PlanningProviderResponse;
  */
 public interface PromptPlanningProvider {
 
+    /**
+     * 根据请求中的任务与上下文提出需要用户确认的问题；不得把问题当作已确认事实。
+     *
+     * @param request 已过滤敏感信息的计划输入
+     * @return 供用户确认的候选问题
+     */
     PlanningProviderResponse plan(PlanningProviderRequest request);
 }

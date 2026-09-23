@@ -10,6 +10,14 @@ import java.time.OffsetDateTime;
  */
 public interface AccountRegistrationGateway {
 
+    /**
+     * 原子地创建个人账户及默认工作区，避免注册只完成一部分。
+     *
+     * @param normalizedEmail 已规范化并完成验证码校验的邮箱
+     * @param displayName 用户显示名称
+     * @param passwordHash 单向哈希后的密码，不得传入明文
+     * @param verifiedAt 邮箱完成验证的时间
+     */
     void createPersonalAccount(
             String normalizedEmail,
             String displayName,

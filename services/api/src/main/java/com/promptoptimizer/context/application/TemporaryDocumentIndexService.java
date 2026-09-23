@@ -308,6 +308,10 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
     }
 
+    /**
+     * 在后台依次提取全文、建立向量索引并生成摘要；耗时模型调用不持有会话锁，
+     * 使进度查询和取消请求仍能及时响应。
+     */
     private void process(UploadSession session) {
         try {
             synchronized (session.monitor) {
@@ -401,6 +405,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
     }
 
+    /** 把向量索引已处理块数映射到索引阶段进度，不倒退已展示的百分比。 */
     private void updateSemanticIndexProgress(UploadSession session, int indexedChunks) {
         synchronized (session.monitor) {
             if (session.cancelled || Thread.currentThread().isInterrupted()) {
@@ -416,6 +421,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
     }
 
+    /** 将摘要进度映射到最后阶段，并保持进度比例在有效范围内。 */
     private void updateSummaryProgress(UploadSession session, double completionRatio) {
         synchronized (session.monitor) {
             if (session.cancelled || Thread.currentThread().isInterrupted()) {
@@ -429,6 +435,9 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
     }
 
+    /**
+     * 混合代表性片段、关键词与语义得分选取上下文；不足时均匀补位，避免只覆盖文档开头。
+     */
     private List<ChunkRecord> selectRecords(
             UploadSession session,
             String query,
@@ -485,6 +494,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 .toList();
     }
 
+    /** 合并精确关键词与语义相似度，优先保留代码符号和字段名等字面命中。 */
     private double hybridScore(
             int lexicalScore,
             int maxLexicalScore,
@@ -540,6 +550,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
     }
 
+    /** 按索引偏移分批读取全文片段，为向量构建提供有界输入。 */
     private List<String> readChunkBatch(UploadSession session, int offset, int limit) {
         int end = Math.min(session.chunks.size(), offset + limit);
         if (offset < 0 || offset >= end) {
@@ -560,6 +571,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
     }
 
+    /** 为分层摘要读取带原始顺序与标签的片段，不把整个文档载入内存。 */
     private List<MapReduceDocumentSummarizer.SourceChunk> readSummaryChunkBatch(
             UploadSession session,
             int offset,
@@ -605,6 +617,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
     }
 
+    /** 从会话当前状态构造可轮询进度快照，避免暴露内部文件句柄。 */
     private DocumentUploadStatus statusOf(UploadSession session) {
         synchronized (session.monitor) {
             return new DocumentUploadStatus(
@@ -626,6 +639,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
     }
 
+    /** 查找上传会话前先清理过期任务，避免继续操作已失效的临时数据。 */
     private UploadSession requireSession(String documentId) {
         cleanupExpired();
         UploadSession session = sessions.get(documentId);
@@ -665,6 +679,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 .sum();
     }
 
+    /** 只接受非敏感相对路径，拒绝绝对路径、目录穿越与密钥文件进入临时索引。 */
     private String normalizeAndValidatePath(String rawPath) {
         String path = rawPath == null ? "" : rawPath.trim().replace('\\', '/');
         while (path.startsWith("./")) {
@@ -692,6 +707,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         return normalized;
     }
 
+    /** 确认临时文件仍位于服务管理的索引根目录内。 */
     private void assertInsideRoot(Path path) {
         if (!path.startsWith(rootDirectory)) {
             throw invalid("临时文档路径无效");
@@ -707,6 +723,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         return message == null || message.isBlank() ? "文档解析失败，请检查文件是否损坏" : message;
     }
 
+    /** 清理过期上传任务及其临时数据，控制磁盘和内存占用。 */
     private void cleanupExpired() {
         Instant now = Instant.now();
         sessions.values().stream()
@@ -724,6 +741,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
     }
 
+    /** 仅在临时索引根目录内递归清理，清理失败不向客户端暴露本地路径。 */
     private void deleteDirectoryQuietly(Path directory) {
         if (directory == null || !directory.normalize().startsWith(rootDirectory)) {
             return;

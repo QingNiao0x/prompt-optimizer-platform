@@ -79,6 +79,7 @@ public class AmbiguityDetector {
         return List.copyOf(findings);
     }
 
+    /** 仅汇集与主题相关的资料和用户对话，并排除带否定或待定语义的句子。 */
     private String evidence(String prompt, ContextSnapshot context, List<ConversationMessage> conversation,
                             String... topic) {
         StringBuilder text = new StringBuilder(prompt);

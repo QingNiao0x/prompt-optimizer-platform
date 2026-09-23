@@ -6,7 +6,12 @@ import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/** 保守过滤重复文本及有明确字段证据的事实问题；无法确定的业务选择仍保留。 */
+/**
+ * 保守过滤重复文本及有明确字段证据的事实问题；无法确定的业务选择仍保留。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
 public final class PlanQuestionFilter {
     private record FactRule(Pattern question, Pattern fact) { }
     private static final List<FactRule> RULES = List.of(
@@ -17,6 +22,7 @@ public final class PlanQuestionFilter {
             rule("(?:适用|涉及).*(?:法域|司法辖区)|(?:法域|司法辖区).*(?:什么|哪个)", "(?:适用法域|司法辖区)\\s*[:：=]\\s*([^\\n。；;]{2,80})")
     );
 
+    /** 根据用户原始需求、对话和安全上下文去重；仅移除已被明确事实回答的问题。 */
     public List<PlanQuestion> filter(List<PlanQuestion> questions, PlanningProviderRequest input) {
         StringBuilder evidence = new StringBuilder(input.rawPrompt()).append('\n').append(input.contextDescription());
         input.conversationHistory().stream().filter(message -> "user".equals(message.role()))
@@ -30,6 +36,7 @@ public final class PlanQuestionFilter {
                 .filter(question -> !resolved(question.question(), evidence.toString())).toList();
     }
 
+    /** 混合问题与冲突选择必须留给用户确认，单一明确字段才能判定为已解决。 */
     private boolean resolved(String question, String evidence) {
         // 混合问题、变更要求与确认冲突不能因命中某个已知字段而整题删除。
         if (question.matches(".*(以及|和|与|是否|更换|调整|迁移|冲突|还是).*")) return false;

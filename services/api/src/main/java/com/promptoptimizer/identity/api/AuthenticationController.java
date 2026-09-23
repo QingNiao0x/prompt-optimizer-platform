@@ -37,6 +37,7 @@ public class AuthenticationController {
         return ApiResponse.success(requestId(request), CsrfTokenView.from(csrfToken));
     }
 
+    /** 验证邮箱与密码，建立浏览器登录会话。 */
     @PostMapping("/login")
     public ApiResponse<AuthenticatedUserView> login(
             @Valid @RequestBody LoginRequest loginRequest,
@@ -49,11 +50,13 @@ public class AuthenticationController {
         );
     }
 
+    /** 返回当前已认证用户的公开资料，不包含密码或密钥。 */
     @GetMapping("/me")
     public ApiResponse<AuthenticatedUserView> me(HttpServletRequest request) {
         return ApiResponse.success(requestId(request), authenticationService.currentUser());
     }
 
+    /** 注销当前浏览器会话并清除认证状态。 */
     @PostMapping("/logout")
     public ApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response) {
         authenticationService.logout(request, response);

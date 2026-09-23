@@ -29,6 +29,7 @@ public class SecurityErrorWriter {
         this.objectMapper = objectMapper;
     }
 
+    /** 将过滤器链中的安全错误写为统一 JSON，并沿用或生成请求标识。 */
     public void write(
             HttpServletRequest request,
             HttpServletResponse response,

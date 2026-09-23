@@ -51,6 +51,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const rawPrompt = ref('');
   const customDescription = ref('');
   const files = ref<ContextFileInput[]>([]);
+  // 通过“添加文档/文件”单独加入的资料独立于项目目录，重新选择或完成索引时仍应保留。
+  const supplementalFiles = ref<ContextFileInput[]>([]);
   const templateCode = ref<TemplateCode>('AUTO');
   const includePermissionBoundaries = ref(true);
   const includeExamples = ref(false);
@@ -95,18 +97,23 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
   };
 
-  const setFiles = (selectedFiles: ContextFileInput[]): void => {
+  const setFiles = (selectedFiles: ContextFileInput[]): number => {
     if (projectIndex.value) {
       void projectIndexRepository.deleteProject(projectIndex.value.id).catch(() => undefined);
       projectIndex.value = undefined;
     }
-    const nextFiles = selectedFiles.slice(0, MAX_FILES);
+    const supplementalPaths = new Set(supplementalFiles.value.map((file) => normalizePath(file.path)));
+    const nextFiles = [
+      ...supplementalFiles.value,
+      ...selectedFiles.filter((file) => !supplementalPaths.has(normalizePath(file.path))),
+    ].slice(0, MAX_FILES);
     cleanupUnusedDocumentReferences(files.value, nextFiles);
     files.value = nextFiles;
     activeFilePath.value = '';
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
     planningContext.value = undefined;
+    return nextFiles.length - supplementalFiles.value.length;
   };
 
   const setProjectIndex = (summary: ProjectIndexSummary): void => {
@@ -116,35 +123,43 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
     projectIndex.value = summary;
     if (!keepsCurrentProject) {
-      cleanupUnusedDocumentReferences(files.value, []);
-      files.value = [];
-      activeFilePath.value = '';
+      cleanupUnusedDocumentReferences(files.value, supplementalFiles.value);
+      files.value = [...supplementalFiles.value];
+      activeFilePath.value = files.value.at(-1)?.path ?? '';
     }
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
     planningContext.value = undefined;
   };
 
-  const addFile = (file: ContextFileInput): void => {
-    const existingIndex = files.value.findIndex((item) => item.path === file.path);
-    if (existingIndex >= 0) {
-      const existingFile = files.value[existingIndex];
-      if (existingFile) {
-        cleanupUnusedDocumentReferences([existingFile], [file]);
-      }
-      files.value.splice(existingIndex, 1, file);
-    } else if (files.value.length < MAX_FILES) {
-      files.value.push(file);
+  const addFile = (file: ContextFileInput): boolean => {
+    const supplementalIndex = supplementalFiles.value.findIndex((item) => normalizePath(item.path) === normalizePath(file.path));
+    if (supplementalIndex < 0 && supplementalFiles.value.length >= MAX_FILES) {
+      cleanupUnusedDocumentReferences([file], files.value);
+      return false;
     }
+    const nextSupplemental = [...supplementalFiles.value];
+    if (supplementalIndex >= 0) nextSupplemental.splice(supplementalIndex, 1, file);
+    else nextSupplemental.push(file);
+    const supplementalPaths = new Set(nextSupplemental.map((item) => normalizePath(item.path)));
+    const nextFiles = [
+      ...nextSupplemental,
+      ...files.value.filter((item) => !supplementalPaths.has(normalizePath(item.path))),
+    ].slice(0, MAX_FILES);
+    cleanupUnusedDocumentReferences(files.value, nextFiles);
+    supplementalFiles.value = nextSupplemental;
+    files.value = nextFiles;
     activeFilePath.value = file.path;
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
     planningContext.value = undefined;
+    return true;
   };
 
   const removeFile = (path: string): void => {
     cleanupUnusedDocumentReferences(files.value.filter((file) => file.path === path), []);
     files.value = files.value.filter((file) => file.path !== path);
+    supplementalFiles.value = supplementalFiles.value.filter((file) => file.path !== path);
     if (activeFilePath.value === path) {
       activeFilePath.value = files.value.at(-1)?.path ?? '';
     }
@@ -158,6 +173,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     projectIndex.value = undefined;
     cleanupUnusedDocumentReferences(files.value, []);
     files.value = [];
+    supplementalFiles.value = [];
     activeFilePath.value = '';
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;

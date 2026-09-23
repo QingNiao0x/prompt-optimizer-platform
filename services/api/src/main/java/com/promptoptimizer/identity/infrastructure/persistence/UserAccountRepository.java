@@ -16,6 +16,7 @@ import java.util.UUID;
 public interface UserAccountRepository extends JpaRepository<UserAccountEntity, UUID> {
 
     /**
+     * 查询用户在租户内的默认可用工作区。
      * 当前只开放个人所有者工作区；团队角色授权上线前不把 EDITOR/VIEWER 当成所有者。
      */
     @Query(value = """

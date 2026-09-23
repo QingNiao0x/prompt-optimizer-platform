@@ -64,6 +64,7 @@ public class FileContentSummarizer {
         return limit(fileTypeLabel(normalizedLanguage) + "摘要：" + summarizeDocument(content));
     }
 
+    /** 提取有限数量的代码符号与 Vue 区块，再拼接可阅读的关键内容摘要。 */
     private String summarizeCode(String language, String content) {
         Set<String> symbols = new LinkedHashSet<>();
         Matcher matcher = DECLARATION_PATTERN.matcher(content);
@@ -127,6 +128,7 @@ public class FileContentSummarizer {
         return String.join("；", selected);
     }
 
+    /** 从文本开头选择不重复的语句，并同时限制片段数与摘要字符数。 */
     private String joinSegments(String content, int maxSegments) {
         String normalized = content
                 .replace('\r', '\n')

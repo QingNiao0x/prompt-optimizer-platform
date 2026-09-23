@@ -52,6 +52,7 @@ public final class AuthenticatedUser implements UserDetails, CredentialsContaine
         this.authorities = List.copyOf(authorities);
     }
 
+    /** 向业务层提供不含密码哈希和授权实现细节的认证主体。 */
     public ActorIdentity actorIdentity() {
         return new ActorIdentity(userId, tenantId, workspaceId, email, displayName);
     }

@@ -18,6 +18,7 @@ public record AuthenticatedUserView(
         String displayName
 ) {
 
+    /** 只暴露当前认证主体的公开身份与工作区标识。 */
     public static AuthenticatedUserView from(ActorIdentity actor) {
         return new AuthenticatedUserView(
                 actor.userId(),

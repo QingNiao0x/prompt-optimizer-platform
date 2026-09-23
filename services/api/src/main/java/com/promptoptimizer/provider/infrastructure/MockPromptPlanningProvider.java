@@ -70,6 +70,7 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
         );
     }
 
+    /** 仅对研究需求中未明确的地区、数据、分组和工具提出确定性示例问题。 */
     private List<PlanQuestion> researchQuestions(String prompt) {
         List<PlanQuestion> questions = new ArrayList<>();
         if (!hasConcreteRegion(prompt)) {
@@ -147,6 +148,7 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
         return questions;
     }
 
+    /** 结合项目描述补齐软件任务的环境、认证方式与完成标准问题。 */
     private List<PlanQuestion> softwareQuestions(String prompt, String contextDescription) {
         List<PlanQuestion> questions = new ArrayList<>();
         if (contextDescription.isBlank() && !containsAny(prompt, "java", "spring", "vue", "react", "python", "go", "rust", "node")) {

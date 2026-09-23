@@ -10,5 +10,6 @@ import java.time.Duration;
  */
 public interface VerificationEmailSender {
 
+    /** 向已验证格式的收件地址投递一次性验证码；邮件中不记录明文密码。 */
     void send(String recipient, String code, Duration validFor);
 }

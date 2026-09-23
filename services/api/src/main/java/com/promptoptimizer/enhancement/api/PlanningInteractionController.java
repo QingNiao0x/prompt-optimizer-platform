@@ -10,7 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** 最佳努力的交互统计，不接收或保存回答正文。 */
+/**
+ * 收集最佳努力的 Plan 交互统计，不接收或保存回答正文。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
 @RestController
 @RequestMapping("/api/v1/optimizations/plan-events")
 public class PlanningInteractionController {
@@ -21,6 +26,9 @@ public class PlanningInteractionController {
         this.sessions = sessions;
         this.metrics = metrics;
     }
+    /**
+     * 校验计划可访问性后去重计数；过期键和容量上限限制统计状态的内存占用。
+     */
     @PostMapping
     @ResponseStatus(org.springframework.http.HttpStatus.NO_CONTENT)
     public synchronized void record(@Valid @RequestBody Interaction request) {
@@ -32,6 +40,12 @@ public class PlanningInteractionController {
             metrics.event(request.event());
         }
     }
+    /**
+     * 仅包含计划标识与有限枚举事件，不接收用户回答正文。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record Interaction(@NotBlank @Size(max = 64) String planId,
                               @NotNull PlanQualityMetrics.Event event) { }
 }

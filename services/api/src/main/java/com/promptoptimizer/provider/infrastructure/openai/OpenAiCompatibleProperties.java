@@ -284,6 +284,7 @@ public class OpenAiCompatibleProperties {
         return List.copyOf(descriptors);
     }
 
+    /** 多供应商模式下为公开模型名加路由前缀，避免不同供应商的同名模型发生冲突。 */
     public String publicModelId(OpenAiCompatibleRoute route, String modelName) {
         return multiProviderEnabled ? route.key() + ":" + modelName : modelName;
     }
@@ -296,9 +297,21 @@ public class OpenAiCompatibleProperties {
         return value == null || value.isBlank();
     }
 
+    /**
+     * 客户端公开模型名解析后的服务端路由与上游模型名。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record ModelSelection(OpenAiCompatibleRoute route, String model, String publicModelId) {
     }
 
+    /**
+     * 可返回给客户端的模型目录条目，不包含 endpoint 或 API Key。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record ModelDescriptor(String id, String provider, String model, boolean defaultModel) {
     }
 

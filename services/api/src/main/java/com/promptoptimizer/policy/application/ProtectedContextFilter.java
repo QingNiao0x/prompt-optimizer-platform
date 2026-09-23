@@ -25,6 +25,9 @@ public class ProtectedContextFilter {
 
     private static final Pattern CHUNK_SUFFIX = Pattern.compile("#chunk-\\d+$", Pattern.CASE_INSENSITIVE);
 
+    /**
+     * 在上下文分析前剔除受保护路径；返回被过滤路径供用户查看覆盖率与脱敏报告。
+     */
     public FilteredContext filter(ContextAnalysisRequest request, PermissionPolicyInput permissionPolicy) {
         List<PathRule> rules = rules(permissionPolicy);
         List<ContextFileInput> allowed = new ArrayList<>();
@@ -43,6 +46,7 @@ public class ProtectedContextFilter {
         );
     }
 
+    /** 将未读取的受保护文件标记为部分覆盖，避免误报为完整分析。 */
     public ContextSnapshot attachReport(ContextSnapshot snapshot, FilteredContext filtered) {
         if (filtered.protectedPaths().isEmpty()) {
             return snapshot;
@@ -89,6 +93,7 @@ public class ProtectedContextFilter {
                 .toList();
     }
 
+    /** 把权限规则转为路径匹配器，支持 globstar 与仅文件名规则。 */
     private PathRule compileRule(String value) {
         if ("生产环境配置".equals(value)) {
             return path -> path.matches(".*(?:application[-.](?:prod|production)|config/(?:prod|production))\\.(?:yml|yaml|properties|json|toml)$");
@@ -144,6 +149,12 @@ public class ProtectedContextFilter {
         boolean matches(String path);
     }
 
+    /**
+     * 可继续分析的请求及本次被拦截的受保护路径。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record FilteredContext(ContextAnalysisRequest request, List<String> protectedPaths) {
 
         public FilteredContext {

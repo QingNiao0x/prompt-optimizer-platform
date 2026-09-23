@@ -686,6 +686,69 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
   await expect(page.getByText('功能模块', { exact: true })).toBeVisible();
 });
 
+test('项目代码与单独上传的方案文件一起进入 Plan 上下文准备', async ({ page }) => {
+  await configurePlanMode(page, { enabled: true, introSeen: true });
+  await page.route('**/api/v1/models', async (route) => {
+    await route.fulfill({ status: 200, json: { requestId: 'models', data: [] } });
+  });
+  await page.route('**/api/v1/optimizations/plan-events', async (route) => {
+    await route.fulfill({ status: 204 });
+  });
+  let mixedPreparationCalls = 0;
+  await page.route('**/api/v1/context/planning', async (route) => {
+    const body = route.request().postDataJSON() as {
+      context?: { files?: Array<{ path: string; content: string }> };
+    };
+    expect(body.context?.files?.map((file) => file.path))
+      .toEqual(expect.arrayContaining(['pom.xml', '审批方案.txt']));
+    expect(body.context?.files).toHaveLength(2);
+    expect(body.context?.files?.find((file) => file.path === '审批方案.txt')?.content)
+      .toContain('订单超过五万元须财务复核');
+    mixedPreparationCalls += 1;
+    await route.fulfill({ status: 200, json: planningContextResponse });
+  });
+  await page.route('**/api/v1/optimizations/plan', async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: { ...directPlanResponse, data: {
+        ...directPlanResponse.data,
+        planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391',
+        planningContext: planningContextReference,
+      } },
+    });
+  });
+  await page.route('**/api/v1/optimizations', async (route) => {
+    const body = route.request().postDataJSON() as {
+      context?: { files?: Array<{ path: string }> };
+    };
+    expect(body.context?.files?.map((file) => file.path))
+      .toEqual(expect.arrayContaining(['pom.xml', '审批方案.txt']));
+    await route.fulfill({ status: 200, json: optimizationResponse });
+  });
+
+  await page.goto('/workbench');
+  await page.waitForLoadState('networkidle');
+  await openWorkbenchPane(page, 'context');
+  await page.getByText('粘贴当前打开文件').click();
+  await page.getByLabel('文件相对路径').fill('pom.xml');
+  await page.getByPlaceholder('粘贴与当前任务相关的代码片段…')
+    .fill('<artifactId>spring-boot-starter-web</artifactId>');
+  await page.getByRole('button', { name: '加入上下文' }).click();
+  await page.locator('input[type="file"]').nth(1).setInputFiles({
+    name: '审批方案.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('订单超过五万元须财务复核。', 'utf8'),
+  });
+  await expect(page.getByText('审批方案.txt', { exact: true })).toBeVisible();
+  await openWorkbenchPane(page, 'intent');
+  await page.getByLabel('原始提示词').fill('按上传的方案文件实现订单审批');
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
+  await confirmContextTransmission(page, '生成确认问题前分析上下文');
+  await confirmContextTransmission(page, '生成最终提示词');
+
+  expect(mixedPreparationCalls).toBe(1);
+});
+
 test('用户可以通过 File System Access API 建立本地项目索引', async ({ page }) => {
   await configurePlanMode(page, { enabled: true, introSeen: true });
   await page.route('**/api/v1/optimizations/plan', async (route) => {

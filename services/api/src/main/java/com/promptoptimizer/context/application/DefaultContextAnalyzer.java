@@ -376,6 +376,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
         }
     }
 
+    /** 结合上传输入和逐文件覆盖率确定 EMPTY、FAILED、PARTIAL 或 COMPLETE。 */
     private String resolveAnalysisStatus(
             ContextAnalysisRequest request,
             Map<String, AnalyzedFile> files,

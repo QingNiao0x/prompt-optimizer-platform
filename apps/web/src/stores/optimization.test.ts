@@ -84,6 +84,75 @@ describe('optimization store project context', () => {
     expect(store.activeFilePath).toBe('src/main.ts');
   });
 
+  it('should retain an uploaded solution document when a code folder is selected or indexed', async () => {
+    const store = useOptimizationStore();
+    const solution = {
+      path: '方案/订单审批方案.txt',
+      language: 'text',
+      content: '订单超过五万元须由财务复核。',
+    };
+    store.addFile(solution);
+    store.setFiles([{ path: 'backend/pom.xml', language: 'xml', content: '<project />' }]);
+
+    const preparedFiles = await store.prepareContextFiles('按方案实现订单审批');
+    expect(preparedFiles.map((file) => file.path))
+      .toEqual(['方案/订单审批方案.txt', 'backend/pom.xml']);
+    vi.mocked(preparePlanningContext).mockResolvedValue({
+      requestId: 'mixed-context',
+      data: {
+        contextId: 'mixed-context-id',
+        version: `sha256:${'b'.repeat(64)}`,
+        digest: {
+          description: '',
+          technologies: ['Spring Boot'],
+          dependencies: [],
+          directoryOverview: ['backend/', '方案/'],
+          fileSummaries: ['方案/订单审批方案.txt：订单超过五万元须由财务复核。'],
+          analysisStatus: 'COMPLETE',
+          analyzedFileCount: 2,
+          warnings: [],
+        },
+        contextReport: resultFixture().contextReport,
+        expiresAt: '2026-09-14T08:30:00Z',
+        latencyMs: 1,
+      },
+    });
+    expect(await store.preparePlanningContext('按方案实现订单审批', preparedFiles)).toBe(true);
+    expect(preparePlanningContext).toHaveBeenCalledWith(expect.objectContaining({
+      context: expect.objectContaining({ files: preparedFiles }),
+    }));
+
+    store.setProjectIndex(readyIndex());
+    expect(store.files).toContainEqual(solution);
+  });
+
+  it('should give a separately uploaded solution document a slot when the code folder reaches the file cap', () => {
+    const store = useOptimizationStore();
+    store.setFiles(Array.from({ length: 1_000 }, (_, index) => ({
+      path: `src/Module${index}.java`, language: 'java', content: 'class Module {}',
+    })));
+
+    store.addFile({
+      path: '方案/审批方案.txt', language: 'text', content: '超过五万元须财务复核。',
+    });
+
+    expect(store.files).toHaveLength(1_000);
+    expect(store.files.some((file) => file.path === '方案/审批方案.txt')).toBe(true);
+  });
+
+  it('should send a solution added after a large code folder before code fills backend snippet slots', async () => {
+    const store = useOptimizationStore();
+    store.setFiles(Array.from({ length: 45 }, (_, index) => ({
+      path: `src/Module${index}.java`, language: 'java', content: 'class Module {}',
+    })));
+    store.addFile({ path: '审批方案.txt', language: 'text', content: '审批超过五万元须财务复核。' });
+
+    const prepared = await store.prepareContextFiles('按方案实现审批');
+
+    expect(prepared[0]?.path).toBe('审批方案.txt');
+    expect(prepared).toHaveLength(46);
+  });
+
   it('should preserve complete binary payloads before backend document extraction', async () => {
     const store = useOptimizationStore();
     const base64 = 'A'.repeat(180_000);

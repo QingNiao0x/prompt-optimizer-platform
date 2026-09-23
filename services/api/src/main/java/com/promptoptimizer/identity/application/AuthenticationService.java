@@ -74,6 +74,7 @@ public class AuthenticationService {
         return AuthenticatedUserView.from(currentActor.require());
     }
 
+    /** 由服务端认证上下文读取当前用户，不接受客户端自报身份。 */
     public AuthenticatedUserView currentUser() {
         return AuthenticatedUserView.from(currentActor.require());
     }

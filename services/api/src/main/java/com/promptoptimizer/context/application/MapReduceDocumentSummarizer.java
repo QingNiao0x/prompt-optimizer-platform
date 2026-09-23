@@ -80,6 +80,7 @@ public class MapReduceDocumentSummarizer {
         );
     }
 
+    /** 单批 Map 摘要受调用次数与输出长度保护；模型失败时退回本地规则摘要。 */
     private String mapGroup(
             SummarySource source,
             List<SourceChunk> chunks,
@@ -116,6 +117,7 @@ public class MapReduceDocumentSummarizer {
         }
     }
 
+    /** 逐层归并中间摘要；当无法继续收敛或达到轮次上限时改用本地归并。 */
     private String reduce(
             SummarySource source,
             List<String> mappedSummaries,
@@ -160,6 +162,7 @@ public class MapReduceDocumentSummarizer {
         return level.isEmpty() ? "" : level.get(0);
     }
 
+    /** 对一组中间摘要执行 Reduce；模型不可用或超过预算时保持可用的本地结果。 */
     private String reduceGroup(
             SummarySource source,
             List<String> summaries,
@@ -194,6 +197,7 @@ public class MapReduceDocumentSummarizer {
         }
     }
 
+    /** 模型摘要未启用或未装配时用分布式代表片段生成本地概览，并标记模型调用数为零。 */
     private SummaryReport fallbackReport(
             SummarySource source,
             ProgressListener progress,
@@ -241,6 +245,7 @@ public class MapReduceDocumentSummarizer {
         return summarizeLocally(source, chunks, maxCharacters);
     }
 
+    /** 先拆分超过单批预算的原始块，再按字符预算重新分组，避免 Map 请求遗漏长块。 */
     private List<List<SourceChunk>> partitionSourceChunks(List<SourceChunk> chunks) {
         List<SourceChunk> expanded = new ArrayList<>();
         for (SourceChunk chunk : chunks) {
@@ -277,6 +282,7 @@ public class MapReduceDocumentSummarizer {
         return groups;
     }
 
+    /** 同时按中间摘要数量和字符预算分组，避免单次 Reduce 请求过大。 */
     private List<List<String>> partitionSummaries(List<String> summaries) {
         List<List<String>> groups = new ArrayList<>();
         List<String> current = new ArrayList<>();
@@ -334,6 +340,7 @@ public class MapReduceDocumentSummarizer {
         return normalized.substring(0, Math.max(1, maxCharacters - 1)).stripTrailing() + "…";
     }
 
+    /** 响应取消信号，防止后台摘要任务继续消耗模型额度。 */
     private void assertNotInterrupted() {
         if (Thread.currentThread().isInterrupted()) {
             throw new DocumentUploadException(
@@ -343,21 +350,42 @@ public class MapReduceDocumentSummarizer {
         }
     }
 
+    /**
+     * 按需读取有限数量的全文片段，供 Map 阶段分批处理。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     @FunctionalInterface
     public interface ChunkBatchReader {
+        /** 按偏移读取指定数量的全文片段，返回结果须保持原始顺序。 */
         List<SourceChunk> read(int offset, int limit);
     }
 
+    /**
+     * 接收本次分层摘要的进度更新。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     @FunctionalInterface
     public interface ProgressListener {
+        /** 发布 0 到 1 之间的摘要完成比例。 */
         void onProgress(double completionRatio);
 
+        /** 返回无需处理进度事件的监听器。 */
         static ProgressListener none() {
             return completionRatio -> {
             };
         }
     }
 
+    /**
+     * 文档元数据和可分批读取的全文索引入口。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record SummarySource(
             String path,
             String language,
@@ -375,6 +403,12 @@ public class MapReduceDocumentSummarizer {
         }
     }
 
+    /**
+     * 保留原始块序号、标签及正文的摘要输入片段。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record SourceChunk(
             int index,
             String label,
@@ -390,6 +424,12 @@ public class MapReduceDocumentSummarizer {
         }
     }
 
+    /**
+     * 最终摘要及覆盖量、模型使用情况和降级警告。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public record SummaryReport(
             String summary,
             List<String> warnings,

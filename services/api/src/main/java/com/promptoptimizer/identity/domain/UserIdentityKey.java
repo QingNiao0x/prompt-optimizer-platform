@@ -27,14 +27,17 @@ public record UserIdentityKey(
         normalizedIdentifier = normalize(type, requireText(normalizedIdentifier, "identifier"));
     }
 
+    /** 构造本地邮箱身份键；邮箱规范化在记录构造时统一完成。 */
     public static UserIdentityKey email(String email) {
         return new UserIdentityKey(UserIdentityType.EMAIL, LOCAL_ISSUER, email);
     }
 
+    /** 构造本地手机号身份键，拒绝不符合 E.164 格式的号码。 */
     public static UserIdentityKey phone(String e164PhoneNumber) {
         return new UserIdentityKey(UserIdentityType.PHONE, LOCAL_ISSUER, e164PhoneNumber);
     }
 
+    /** 构造第三方身份键，保留提供方主体标识的大小写。 */
     public static UserIdentityKey wechat(String appId, String providerSubject) {
         return new UserIdentityKey(UserIdentityType.WECHAT, appId, providerSubject);
     }

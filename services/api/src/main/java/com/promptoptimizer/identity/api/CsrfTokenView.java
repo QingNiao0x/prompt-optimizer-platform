@@ -14,6 +14,7 @@ public record CsrfTokenView(
         String token
 ) {
 
+    /** 将服务端 CSRF Token 转为前端所需的请求头与参数信息。 */
     public static CsrfTokenView from(CsrfToken csrfToken) {
         return new CsrfTokenView(
                 csrfToken.getHeaderName(),

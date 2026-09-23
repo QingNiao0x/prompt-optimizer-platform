@@ -243,6 +243,7 @@ public class HybridEmailVerificationStore implements EmailVerificationStore {
         return Long.toString(Math.max(1, duration.toSeconds()));
     }
 
+    /** 多实例强制 Redis 时直接失败；仅在明确允许单机模式时执行本地降级操作。 */
     private <T> T fallbackOrFail(java.util.function.Supplier<T> operation) {
         if (properties.isRequireRedis()) {
             throw unavailable();
@@ -250,6 +251,7 @@ public class HybridEmailVerificationStore implements EmailVerificationStore {
         return operation.get();
     }
 
+    /** 日志只记录异常类型，不写入验证码、邮箱或 Redis 键。 */
     private void logRedisFailure(RuntimeException exception) {
         Throwable rootCause = exception;
         while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {

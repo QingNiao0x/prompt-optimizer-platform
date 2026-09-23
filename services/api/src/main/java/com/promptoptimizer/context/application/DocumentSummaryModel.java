@@ -10,6 +10,7 @@ import java.util.List;
  */
 public interface DocumentSummaryModel {
 
+    /** 按 Map 或 Reduce 阶段生成摘要；调用方负责控制批次和输出预算。 */
     SummaryResult summarize(SummaryRequest request);
 
     enum SummaryStage {

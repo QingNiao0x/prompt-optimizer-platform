@@ -5,6 +5,9 @@ import java.util.List;
 
 /**
  * 已解析的供应商路由。真实 API Key 只在服务端内存中存在，且不会出现在 {@link #toString()} 中。
+ *
+ * @author QingNiao
+ * @since 0.1.0
  */
 public final class OpenAiCompatibleRoute {
 
@@ -62,6 +65,7 @@ public final class OpenAiCompatibleRoute {
         return legacy;
     }
 
+    /** 仅接受该路由显式配置的模型名称，避免请求被转发到未授权模型。 */
     public boolean supportsModel(String requestedModel) {
         return models.contains(requestedModel);
     }

@@ -17,4 +17,18 @@ class PlanningDigestSelectorTest {
         assertThat(selected).hasSize(30);
         assertThat(selected).extracting(FileSnippet::path).contains("research/研究方案.md", "docs/readme.md");
     }
+
+    @Test
+    void shouldReserveDigestSpaceForAnUploadedSolutionDocumentWhenCodeMatchesQueryBetter() {
+        var files = new ArrayList<>(IntStream.range(0, 40).mapToObj(i ->
+                new FileSnippet("module-" + i + "/OrderApproval.java", "java", "",
+                        "订单审批代码", false)).toList());
+        files.add(new FileSnippet("attachments/solution.txt", "text", "",
+                "业务方案，含金额阈值和财务复核规则", false));
+
+        var selected = PlanningDigestSelector.select(files, "实现订单审批", 30);
+
+        assertThat(selected).hasSize(30);
+        assertThat(selected).extracting(FileSnippet::path).contains("attachments/solution.txt");
+    }
 }

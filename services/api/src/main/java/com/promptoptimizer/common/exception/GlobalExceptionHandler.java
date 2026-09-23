@@ -29,6 +29,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /** 计划过期时返回冲突状态，提示客户端重新准备上下文和确认问题。 */
     @ExceptionHandler(com.promptoptimizer.enhancement.application.PlanningSessionExpiredException.class)
     public ResponseEntity<ApiErrorResponse> handlePlanningExpiry(
             com.promptoptimizer.enhancement.application.PlanningSessionExpiredException exception,
@@ -37,6 +38,7 @@ public class GlobalExceptionHandler {
                 exception.getMessage(), false, Map.of());
     }
 
+    /** 共享计划存储不可用时返回可重试错误，避免创建无法跨实例读取的会话。 */
     @ExceptionHandler(com.promptoptimizer.enhancement.application.PlanningStoreUnavailableException.class)
     public ResponseEntity<ApiErrorResponse> handlePlanningStoreUnavailable(
             com.promptoptimizer.enhancement.application.PlanningStoreUnavailableException exception,
@@ -309,6 +311,7 @@ public class GlobalExceptionHandler {
         };
     }
 
+    /** 把注册业务原因映射为固定的 HTTP 状态和错误码，避免直接暴露内部异常类型。 */
     private RegistrationErrorMapping mapRegistrationError(RegistrationException.Reason reason) {
         return switch (reason) {
             case EMAIL_ALREADY_REGISTERED -> new RegistrationErrorMapping(

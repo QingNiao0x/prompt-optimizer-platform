@@ -29,6 +29,12 @@ public class RegistrationException extends RuntimeException {
         return retryAfterSeconds;
     }
 
+    /**
+     * 邮箱注册失败的稳定业务原因，供统一错误映射使用。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public enum Reason {
         EMAIL_ALREADY_REGISTERED,
         RESEND_TOO_SOON,

@@ -32,6 +32,7 @@ public record DocumentUploadStatus(
         errorMessage = errorMessage == null ? "" : errorMessage;
     }
 
+    /** READY 与 PARTIAL 均可供分析；PARTIAL 的遗漏仍需通过警告告知用户。 */
     public boolean readyForAnalysis() {
         return phase == DocumentProcessingPhase.READY || phase == DocumentProcessingPhase.PARTIAL;
     }

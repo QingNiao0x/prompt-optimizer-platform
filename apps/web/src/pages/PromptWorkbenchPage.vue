@@ -232,10 +232,9 @@ const handleFilesSelected = async (fileList: FileList | null): Promise<void> => 
     if (currentLifecycle !== pageLifecycleVersion) {
       return;
     }
-    store.setFiles(selectedFiles);
-    if (selectedFiles.length > 0) {
-      ElMessage.success(`已读取 ${selectedFiles.length} 个项目文件。`);
-    }
+    const added = store.setFiles(selectedFiles);
+    if (added > 0) ElMessage.success(`已读取 ${added} 个项目文件。`);
+    if (added < selectedFiles.length) ElMessage.warning('上下文文件数量已达上限，部分项目文件未加入。');
   } catch (error: unknown) {
     if (currentLifecycle !== pageLifecycleVersion) {
       return;
@@ -251,10 +250,12 @@ const handleDocumentsSelected = async (fileList: FileList | null): Promise<void>
     if (currentLifecycle !== pageLifecycleVersion) {
       return;
     }
-    selectedFiles.forEach((file) => store.addFile(file));
-    if (selectedFiles.length > 0) {
-      ElMessage.success(`已加入 ${selectedFiles.length} 个文档或辅助文件。`);
+    let added = 0;
+    for (const file of selectedFiles) {
+      if (store.addFile(file)) added += 1;
     }
+    if (added > 0) ElMessage.success(`已加入 ${added} 个文档或辅助文件。`);
+    if (added < selectedFiles.length) ElMessage.warning('上下文文件数量已达上限，部分文档未加入。');
   } catch (error: unknown) {
     if (currentLifecycle !== pageLifecycleVersion) {
       return;
@@ -274,18 +275,23 @@ const handleFilesDropped = async ({ files: droppedFiles, hasDirectory }: Dropped
     if (currentLifecycle !== pageLifecycleVersion) {
       return;
     }
+    let added = selectedFiles.length;
     if (hasDirectory) {
-      store.setFiles(selectedFiles);
+      added = store.setFiles(selectedFiles);
     } else {
-      selectedFiles.forEach((file) => store.addFile(file));
+      added = 0;
+      for (const file of selectedFiles) {
+        if (store.addFile(file)) added += 1;
+      }
     }
-    if (selectedFiles.length > 0) {
+    if (added > 0) {
       ElMessage.success(
         hasDirectory
-          ? `已读取拖入文件夹中的 ${selectedFiles.length} 个文件。`
-          : `已加入拖入的 ${selectedFiles.length} 个文件。`,
+          ? `已读取拖入文件夹中的 ${added} 个文件。`
+          : `已加入拖入的 ${added} 个文件。`,
       );
     }
+    if (added < selectedFiles.length) ElMessage.warning('上下文文件数量已达上限，部分文件未加入。');
   } catch (error: unknown) {
     if (currentLifecycle !== pageLifecycleVersion) {
       return;
@@ -295,7 +301,7 @@ const handleFilesDropped = async ({ files: droppedFiles, hasDirectory }: Dropped
 };
 
 const handleAddManualFile = (file: ContextFileInput): void => {
-  store.addFile(file);
+  if (!store.addFile(file)) ElMessage.warning('上下文文件数量已达上限，请先移除一个文件。');
 };
 
 const handleAnalyze = async (): Promise<void> => {

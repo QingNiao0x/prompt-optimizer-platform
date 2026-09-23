@@ -48,6 +48,7 @@ public class InMemoryPlanningSessionStore implements PlanningSessionStore {
         return active(plans, planId);
     }
 
+    /** 只返回未过期的短期会话；发现过期时立即从内存中移除。 */
     private <T> Optional<T> active(Map<String, T> values, String id) {
         T value = values.get(id);
         if (value == null) {

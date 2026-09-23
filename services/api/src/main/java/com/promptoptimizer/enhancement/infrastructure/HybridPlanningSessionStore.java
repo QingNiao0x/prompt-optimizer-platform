@@ -34,6 +34,12 @@ public class HybridPlanningSessionStore implements PlanningSessionStore {
     private final ObjectMapper objectMapper;
     private final StringRedisTemplate redisTemplate;
     private final InMemoryPlanningSessionStore fallback = new InMemoryPlanningSessionStore();
+    /**
+     * 单机可降级与多实例强制共享两种计划会话存储模式。
+     *
+     * @author QingNiao
+     * @since 0.1.0
+     */
     public enum Mode { LOCAL_FALLBACK, REDIS_REQUIRED }
     private final Mode mode;
 
@@ -93,6 +99,7 @@ public class HybridPlanningSessionStore implements PlanningSessionStore {
                         });
     }
 
+    /** 按会话剩余寿命写入 Redis；强制共享模式失败时显式报错，单机模式允许本地降级。 */
     private void write(String key, Object value, Instant expiresAt) {
         if (redisTemplate == null) {
             if (mode == Mode.REDIS_REQUIRED) throw new PlanningStoreUnavailableException();
@@ -113,6 +120,7 @@ public class HybridPlanningSessionStore implements PlanningSessionStore {
         }
     }
 
+    /** 读取并反序列化短期会话；强制共享模式不把 Redis 故障伪装成会话不存在。 */
     private <T> Optional<T> read(String key, Class<T> type) {
         if (redisTemplate == null) {
             if (mode == Mode.REDIS_REQUIRED) throw new PlanningStoreUnavailableException();

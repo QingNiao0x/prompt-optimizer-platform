@@ -23,6 +23,9 @@ public final class SensitiveValueDetector {
             "placeholder", "replace", "example", "your-", "your_", "test-", "test_", "redacted", "xxxx"
     );
 
+    /**
+     * 检测疑似真实凭据；常见示例占位符不视为泄露，降低误报。
+     */
     public boolean containsCredential(String value) {
         if (value == null || value.isBlank()) {
             return false;

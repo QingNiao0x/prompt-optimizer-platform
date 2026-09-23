@@ -145,6 +145,7 @@ public class InMemoryEmailVerificationStore implements EmailVerificationStore {
         return Math.max(1, Duration.between(now, expiresAt).toSeconds());
     }
 
+    /** 以固定时间字节比较验证码摘要，避免普通字符串比较产生明显的时序差异。 */
     private boolean secureEquals(String left, String right) {
         return MessageDigest.isEqual(
                 left.getBytes(StandardCharsets.US_ASCII),

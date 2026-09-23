@@ -43,6 +43,10 @@ public class OptimizationResultAssembler {
             "存在模糊动作，需要确认算法、实现范围或期望行为"
     );
 
+    /**
+     * 校验模型返回的必需段落和敏感内容，合并用户确认信息与平台约束后生成最终结果。
+     * 模型提供的待确认段落不是权威来源，由本方法统一重建。
+     */
     public OptimizationResult assemble(
             EnhancementProviderResponse providerResponse,
             ContextSnapshot context,
@@ -107,6 +111,7 @@ public class OptimizationResultAssembler {
         );
     }
 
+    /** 兼容旧版待确认段落，同时过滤泛化提示和疑似凭据。 */
     private List<String> resolveAmbiguities(EnhancementProviderResponse response,
                                            Map<PromptSectionType, PromptSection> sections,
                                            List<String> candidates) {
@@ -132,6 +137,7 @@ public class OptimizationResultAssembler {
                 .distinct().toList();
     }
 
+    /** 拒绝重复、空白和疑似含凭据的模型段落，再转换为按类型索引的结果。 */
     private Map<PromptSectionType, PromptSection> collectSections(List<PromptSection> values) {
         if (values == null || values.isEmpty()) {
             throw invalidResponse("模型响应未包含提示词段落");
@@ -149,6 +155,7 @@ public class OptimizationResultAssembler {
         return sections;
     }
 
+    /** 将用户确认答案写入背景段落，明确它们高于模型的未确认猜测。 */
     private void appendConfirmedAnswers(
             Map<PromptSectionType, PromptSection> sections,
             List<PlanAnswer> answers
@@ -167,6 +174,7 @@ public class OptimizationResultAssembler {
         ));
     }
 
+    /** 合并平台约束并删除模型内容中完全重复的约束行，避免最终提示词重复。 */
     private void appendConstraints(
             Map<PromptSectionType, PromptSection> sections,
             List<String> constraints

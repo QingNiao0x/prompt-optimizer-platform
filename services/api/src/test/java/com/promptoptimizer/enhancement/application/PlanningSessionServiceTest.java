@@ -1,10 +1,14 @@
 package com.promptoptimizer.enhancement.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.context.api.ContextAnalysisRequest;
 import com.promptoptimizer.context.api.ContextFileInput;
 import com.promptoptimizer.context.api.PlanningContextRequest;
 import com.promptoptimizer.context.application.ContextAnalyzer;
+import com.promptoptimizer.context.application.BinaryContentExtractor;
+import com.promptoptimizer.context.application.DefaultContextAnalyzer;
+import com.promptoptimizer.context.application.FileContentSummarizer;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.context.domain.DependencyItem;
 import com.promptoptimizer.context.domain.FileSnippet;
@@ -22,6 +26,8 @@ import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
 import com.promptoptimizer.identity.support.TestActors;
 import com.promptoptimizer.policy.application.ProtectedContextFilter;
 import com.promptoptimizer.provider.infrastructure.MockPromptPlanningProvider;
+import com.promptoptimizer.provider.domain.PlanningProviderRequest;
+import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import com.promptoptimizer.template.application.PromptTemplateRegistry;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +36,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -340,6 +348,93 @@ class PlanningSessionServiceTest {
         assertThat(plan.questions()).extracting(PlanQuestion::id)
                 .doesNotContain("research-region", "research-data")
                 .contains("research-tool", "research-code");
+    }
+
+    @Test
+    void shouldCarryBusinessRulesFromSolutionDocumentAlongsideProjectStackIntoPlanDigest() {
+        String rawPrompt = "按上传的方案文件在现有 Spring Boot 项目实现订单审批";
+        PlanningSessionService sessions = service(request -> new ContextSnapshot(
+                request.customDescription(),
+                List.of(new TechnologyStackItem("Spring Boot 3", "backend/pom.xml", 1)),
+                List.of(),
+                List.of("backend/pom.xml", "docs/订单审批方案.txt"),
+                List.of(
+                        new FileSnippet("backend/pom.xml", "xml", "<project />", "Maven 项目配置", false),
+                        new FileSnippet("docs/订单审批方案.txt", "text",
+                                "订单审批流程：普通订单由部门负责人批准。订单金额超过五万元时，必须先由财务复核，再交主管批准。",
+                                "订单审批方案，描述审批流程。", false)
+                ),
+                List.of(),
+                List.of(),
+                "test-v1"
+        ));
+        PlanningContextPreparation preparation = sessions.prepareContext(new PlanningContextRequest(
+                rawPrompt,
+                new ContextAnalysisRequest("", List.of(
+                        new ContextFileInput("backend/pom.xml", "<project />", "xml"),
+                        new ContextFileInput("docs/订单审批方案.txt", "订单金额超过五万元时，必须先由财务复核。", "text")
+                )),
+                PermissionPolicyInput.empty()
+        ));
+
+        assertThat(preparation.digest().technologies()).contains("Spring Boot 3");
+        assertThat(preparation.digest().fileSummaries())
+                .anySatisfy(summary -> assertThat(summary)
+                        .contains("订单审批方案.txt", "超过五万元", "财务复核"));
+        assertThat(sessions.resolveForPlan(reference(preparation), rawPrompt, "").digest())
+                .isEqualTo(preparation.digest());
+    }
+
+    @Test
+    void shouldAnalyzeMixedCodeAndSolutionFilesBeforeSendingTheirSafeDigestToPlanningProvider() {
+        ContextAnalyzer analyzer = new DefaultContextAnalyzer(
+                new ObjectMapper(), new BinaryContentExtractor(), new FileContentSummarizer());
+        PlanningSessionService sessions = service(analyzer);
+        String rawPrompt = "按上传的方案文件在现有项目实现订单审批";
+        PlanningContextPreparation preparation = sessions.prepareContext(new PlanningContextRequest(
+                rawPrompt,
+                new ContextAnalysisRequest("", List.of(
+                        new ContextFileInput("backend/pom.xml",
+                                "<project><artifactId>spring-boot-starter-parent</artifactId></project>", "xml"),
+                        new ContextFileInput("docs/订单审批方案.txt",
+                                "审批流程：普通订单由部门负责人批准。订单金额超过五万元时，必须先由财务复核。", "text")
+                )),
+                PermissionPolicyInput.empty()
+        ));
+        AtomicReference<PlanningProviderRequest> sent = new AtomicReference<>();
+        OptimizationPlanningService planner = new OptimizationPlanningService(request -> {
+            sent.set(request);
+            return new PlanningProviderResponse("已阅读项目和审批方案。", List.of(), "test", "planner", true);
+        }, new PromptTemplateRegistry(), sessions, CLOCK);
+
+        planner.plan(new OptimizationPlanRequest(rawPrompt, "", List.of(), reference(preparation)));
+
+        assertThat(preparation.contextReport().fileSnippets()).extracting(FileSnippet::path)
+                .contains("backend/pom.xml", "docs/订单审批方案.txt");
+        assertThat(sent.get().planningContext().technologies()).contains("Spring Boot");
+        assertThat(sent.get().planningContext().fileSummaries())
+                .anySatisfy(summary -> assertThat(summary).contains("订单审批方案.txt", "五万元", "财务复核"));
+    }
+
+    @Test
+    void shouldKeepSolutionDocumentWhenManyCodeFilesAppearBeforeItInTheRequest() {
+        ContextAnalyzer analyzer = new DefaultContextAnalyzer(
+                new ObjectMapper(), new BinaryContentExtractor(), new FileContentSummarizer());
+        PlanningSessionService sessions = service(analyzer);
+        List<ContextFileInput> files = new ArrayList<>(IntStream.range(0, 45)
+                .mapToObj(index -> new ContextFileInput(
+                        "src/Module" + index + ".java", "class Module" + index + " {}", "java"))
+                .toList());
+        files.add(new ContextFileInput("docs/审批方案.txt",
+                "订单金额超过五万元时必须由财务复核。", "text"));
+
+        PlanningContextPreparation preparation = sessions.prepareContext(new PlanningContextRequest(
+                "按方案实现订单审批", new ContextAnalysisRequest("", files), PermissionPolicyInput.empty()));
+
+        assertThat(preparation.contextReport().fileSnippets()).extracting(FileSnippet::path)
+                .contains("docs/审批方案.txt");
+        assertThat(preparation.digest().fileSummaries())
+                .anySatisfy(summary -> assertThat(summary).contains("审批方案.txt", "财务复核"));
     }
 
     @Test
