@@ -40,6 +40,10 @@ const BINARY_EXTENSIONS = new Set([
   'png', 'ppt', 'pptx', 'webp', 'wps', 'xls', 'xlsx',
 ]);
 
+/** 目录索引不读取这些附件的正文，需在用户确认后交给临时文档索引解析。 */
+export const isBinaryDocumentFile = (file: File): boolean =>
+  BINARY_EXTENSIONS.has(getExtension(file.name));
+
 const DOCUMENT_TEXT_EXTENSIONS = new Set([
   'txt', 'md', 'rst', 'tex', 'adoc', 'csv', 'tsv',
 ]);

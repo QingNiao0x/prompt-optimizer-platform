@@ -85,7 +85,7 @@ const readFileEntry = (entry: FileSystemFileEntryLike): Promise<File> =>
 const readDirectoryBatch = (reader: FileSystemDirectoryReaderLike): Promise<FileSystemEntryLike[]> =>
   new Promise((resolve, reject) => reader.readEntries(resolve, reject));
 
-const withRelativePath = (file: File, relativePath: string): File => {
+export const withRelativePath = (file: File, relativePath: string): File => {
   try {
     Object.defineProperty(file, 'webkitRelativePath', { configurable: true, value: relativePath });
     return file;

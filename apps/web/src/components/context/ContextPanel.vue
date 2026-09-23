@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  ArrowDown,
   CircleCheck,
   Close,
   DocumentAdd,
@@ -8,6 +9,9 @@ import {
 } from '@element-plus/icons-vue';
 import {
   ElButton,
+  ElDropdown,
+  ElDropdownItem,
+  ElDropdownMenu,
   ElInput,
   ElMessage,
   ElOption,
@@ -16,7 +20,7 @@ import {
   ElSelect,
   ElTag,
 } from 'element-plus';
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import ContextAnalysisSummary from '@/components/context/ContextAnalysisSummary.vue';
 import { collectDroppedFiles, type DroppedFileCollection } from '@/composables/fileDrop';
@@ -70,7 +74,6 @@ const emit = defineEmits<Emits>();
 
 const folderInput = ref<HTMLInputElement>();
 const documentInput = ref<HTMLInputElement>();
-const documentFolderInput = ref<HTMLInputElement>();
 const selecting = ref(false);
 const manualPath = ref('src/example.ts');
 const manualLanguage = ref('typescript');
@@ -185,6 +188,8 @@ const handleFolderChange = (event: Event): void => {
   selecting.value = false;
   const input = event.target as HTMLInputElement;
   emit('files-selected', input.files);
+  // 页面监听器已同步复制 FileList；清空选择值允许取消上传后再次选择同一目录。
+  input.value = '';
 };
 
 const handleFolderCancel = (): void => {
@@ -195,16 +200,31 @@ const openDocumentPicker = (): void => {
   documentInput.value?.click();
 };
 
+const handleAddContextCommand = (command: string): void => {
+  if (command === 'folder') openFolderPicker();
+  if (command === 'file') openDocumentPicker();
+};
+
 const handleDocumentChange = (event: Event): void => {
   const input = event.target as HTMLInputElement;
   emit('documents-selected', input.files);
+  input.value = '';
 };
 
 const isFileDrag = (event: DragEvent): boolean =>
   Array.from(event.dataTransfer?.types ?? []).includes('Files');
 
+const handleDragEnter = (event: DragEvent): void => {
+  if (!isFileDrag(event) || isProjectBusy.value) {
+    isDragActive.value = false;
+    return;
+  }
+  isDragActive.value = true;
+};
+
 const handleDragOver = (event: DragEvent): void => {
   if (!isFileDrag(event) || isProjectBusy.value) {
+    isDragActive.value = false;
     return;
   }
   event.preventDefault();
@@ -227,7 +247,11 @@ const handleDrop = async (event: DragEvent): Promise<void> => {
   event.preventDefault();
   event.stopPropagation();
   isDragActive.value = false;
-  if (isProjectBusy.value || !event.dataTransfer) {
+  if (isProjectBusy.value) {
+    ElMessage.warning('正在处理已选内容，请稍后再拖入。');
+    return;
+  }
+  if (!event.dataTransfer) {
     return;
   }
   try {
@@ -252,23 +276,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('dragover', preventFileNavigation);
   window.removeEventListener('drop', preventFileNavigation);
 });
-
-// 读取是异步分片执行的，不能在事件处理器里立即清空 FileList；
-// 等 isReading 结束后再清理输入框，既保证 FileList 有效，也允许下次选择同一目录。
-watch(
-  () => props.isReading,
-  (reading) => {
-    if (!reading && folderInput.value) {
-      folderInput.value.value = '';
-    }
-    if (!reading && documentInput.value) {
-      documentInput.value.value = '';
-    }
-    if (!reading && documentFolderInput.value) {
-      documentFolderInput.value.value = '';
-    }
-  },
-);
 
 const addManualFile = (): void => {
   if (!manualPath.value.trim() || !manualContent.value.trim()) {
@@ -315,10 +322,7 @@ const addManualFile = (): void => {
 
     <section class="context-section">
       <div class="section-title-row">
-        <div>
-          <span class="field-label">本地资料与项目文件</span>
-          <p class="field-help">可建立项目索引，也可单独上传报告、论文、表格、演示文稿和图片。</p>
-        </div>
+        <span class="field-label">本地资料与项目文件</span>
         <ElButton
           v-if="files.length || projectIndex"
           text
@@ -343,32 +347,37 @@ const addManualFile = (): void => {
       />
       <input
         ref="documentInput"
+        data-testid="context-file-input"
         class="visually-hidden"
         type="file"
         multiple
-        accept=".txt,.md,.rst,.tex,.csv,.tsv,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.wps,.et,.dps,.odt,.ods,.odp,.png,.jpg,.jpeg,.gif,.webp,.bmp,.svg"
         @change="handleDocumentChange"
       />
-      <input
-        ref="documentFolderInput"
-        data-testid="document-folder-input"
-        class="visually-hidden"
-        type="file"
-        multiple
-        webkitdirectory
-        @change="handleDocumentChange"
-      />
-      <button
-        class="folder-dropzone"
-        :class="{ 'is-drag-active': isDragActive }"
-        type="button"
-        :disabled="isProjectBusy"
-        @click="openFolderPicker"
-        @dragenter.prevent.stop="isDragActive = true"
-        @dragover.prevent.stop="handleDragOver"
-        @dragleave.prevent.stop="handleDragLeave"
-        @drop.prevent.stop="handleDrop"
-      >
+      <div class="context-intake">
+        <div class="add-context-row">
+          <ElDropdown :disabled="isProjectBusy" trigger="click" @command="handleAddContextCommand">
+            <ElButton class="add-context-button" type="primary" :icon="DocumentAdd" :disabled="isProjectBusy">
+              添加上下文
+              <ArrowDown class="add-context-caret" aria-hidden="true" />
+            </ElButton>
+            <template #dropdown>
+              <ElDropdownMenu>
+                <ElDropdownItem command="file">选择文件</ElDropdownItem>
+                <ElDropdownItem command="folder">选择文件夹</ElDropdownItem>
+              </ElDropdownMenu>
+            </template>
+          </ElDropdown>
+        </div>
+        <div
+          class="folder-dropzone"
+          :class="{ 'is-drag-active': isDragActive, 'is-busy': isProjectBusy }"
+          role="region"
+          aria-label="拖入文件或文件夹添加上下文"
+          @dragenter.prevent.stop="handleDragEnter"
+          @dragover.prevent.stop="handleDragOver"
+          @dragleave.prevent.stop="handleDragLeave"
+          @drop.prevent.stop="handleDrop"
+        >
         <span v-if="isDragActive" class="dropzone-overlay">松开即可加入项目上下文</span>
         <span class="dropzone-icon"><FolderOpened /></span>
         <span class="dropzone-copy">
@@ -381,10 +390,10 @@ const addManualFile = (): void => {
                 ? '正在处理项目文件'
                 : isSelectingDirectory || selecting
                   ? '正在等待目录授权…'
-                   : '选择本地项目文件夹，或拖入文件/文件夹' }}
+                   : '也可将文件或文件夹拖到这里' }}
           </strong>
           <small v-if="!isProjectBusy">
-             支持点击选择，也支持将单个文件或文件夹拖到这里
+             拖入后自动识别可用内容，需上传解析的文档会先请你确认
           </small>
           <template v-else>
             <ElProgress
@@ -407,25 +416,16 @@ const addManualFile = (): void => {
             </small>
           </template>
         </span>
-      </button>
-
-      <ElButton
-        class="document-upload-button"
-        :icon="DocumentAdd"
-        :disabled="isProjectBusy"
-        plain
-        @click="openDocumentPicker"
-      >
-        添加文档、表格、演示稿或图片
-      </ElButton>
-      <ElButton :disabled="isProjectBusy" @click="documentFolderInput?.click()">
-        添加文档文件夹
-      </ElButton>
-      <p class="document-upload-help">
-        项目本地索引不解析 Word、PDF 等办公文件；包含这些资料时请使用“添加文档文件夹”，支持子目录。
-        大型文档将按 1 MiB 分片发送至本项目后端，解析后只保留最长 2 小时的临时全文索引；
-        一键增强时仅选取与当前任务相关的片段。
-      </p>
+        </div>
+        <div class="context-notes">
+          <p class="field-help">可建立项目索引，也可单独上传报告、论文、表格、演示文稿和图片。</p>
+          <p class="field-help">可添加代码、Word、Excel、PPT、PDF 等文件或整个文件夹；支持的浏览器会在本地索引文件夹中的代码，办公文档上传解析前会先请你确认。</p>
+          <p class="document-upload-help">
+            确认上传后，文档按 1 MiB 分片发送至本项目后端，解析后只保留最长 2 小时的临时全文索引；
+            一键增强时仅选取与当前任务相关的片段。
+          </p>
+        </div>
+      </div>
 
       <div v-if="isIndexing" class="index-actions">
         <ElButton
@@ -682,17 +682,10 @@ h2 {
   color: var(--text-secondary);
   text-align: left;
   background: var(--glass-bg-subtle);
-  cursor: pointer;
   transition:
     border-color var(--duration-ui) var(--ease-standard),
     background-color var(--duration-ui) var(--ease-standard),
     transform var(--duration-ui) var(--ease-standard);
-}
-
-.folder-dropzone:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  transform: translateY(-1px);
 }
 
 .folder-dropzone.is-drag-active {
@@ -714,9 +707,45 @@ h2 {
   background: color-mix(in srgb, var(--accent-soft) 88%, var(--glass-bg-strong));
 }
 
-.folder-dropzone:disabled {
-  cursor: progress;
-  opacity: 0.75;
+.context-intake {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.context-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.context-notes .field-help,
+.context-notes .document-upload-help {
+  margin: 0;
+}
+
+.add-context-row {
+  display: flex;
+}
+
+.add-context-row :deep(.el-dropdown),
+.add-context-row :deep(.el-tooltip__trigger) {
+  display: flex;
+  width: 100%;
+}
+
+.add-context-button {
+  width: 100%;
+}
+
+.add-context-caret {
+  width: 14px;
+  margin-left: 6px;
+}
+
+.folder-dropzone.is-busy {
+  opacity: 0.72;
 }
 
 .dropzone-icon {
@@ -755,11 +784,6 @@ h2 {
 }
 
 .read-progress {
-  width: 100%;
-  margin-top: 8px;
-}
-
-.document-upload-button {
   width: 100%;
   margin-top: 8px;
 }
@@ -1453,7 +1477,7 @@ h2 {
   }
 
   .folder-dropzone,
-  .document-upload-button,
+  .add-context-button,
   .analyze-button {
     min-height: 48px;
   }

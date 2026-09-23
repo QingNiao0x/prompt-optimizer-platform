@@ -166,7 +166,8 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
 
   await page.goto('/workbench');
   await openWorkbenchPane(page, 'context');
-  await page.getByRole('button', { name: '选择本地项目文件夹' }).click();
+  await page.getByRole('button', { name: '添加上下文' }).click();
+  await page.getByRole('menuitem', { name: '选择文件夹' }).click();
   await expect(page.getByText('9 个源码文件已建立本地索引')).toBeVisible();
   await expect(page.locator('.warning-list')).toHaveCount(0);
   const indexedPaths = await page.evaluate(async () => {
@@ -186,7 +187,7 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
   });
   expect(indexedPaths).toEqual([...fixturePaths].sort());
 
-  await page.locator('input[type="file"]').nth(1).setInputFiles({
+  await page.getByTestId('context-file-input').setInputFiles({
     name: '审批方案.txt', mimeType: 'text/plain', buffer: Buffer.from(solution, 'utf8'),
   });
   await expect(page.getByText('审批方案.txt', { exact: true })).toBeVisible();

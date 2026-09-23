@@ -10,7 +10,12 @@ import type {
 import { openWorkbenchPane } from './workbenchPanes';
 import { mockAuthentication } from './authFixture';
 
-test.beforeEach(async ({ page }) => { await mockAuthentication(page); });
+test.beforeEach(async ({ page }) => {
+  await mockAuthentication(page);
+  // 工作台挂载会加载模型列表；用固定响应避免未启动的后端返回 401 并触发登录跳转。
+  await page.route('**/api/v1/models', (route) => route.fulfill({ json: { data: [] } }));
+  await page.route('**/api/v1/optimizations/plan-events', (route) => route.fulfill({ status: 204 }));
+});
 
 const PLAN_MODE_STORAGE_KEY = 'prompt-optimizer.plan-mode.v1';
 const PLANNED_ENHANCE_BUTTON = '先确认并增强';
@@ -344,8 +349,8 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   expect(optimizationRequestOrder).toEqual(['context', 'plan', 'final']);
 
   await openWorkbenchPane(page, 'result');
-  await expect(page.getByText('deepseek', { exact: true })).toBeVisible();
   const resultContent = page.getByLabel('增强结果内容，可滚动查看完整提示词');
+  await expect(resultContent.getByText('deepseek', { exact: true })).toBeVisible();
   await expect(resultContent.getByRole('heading', { name: '任务目标' })).toBeVisible();
   await expect(resultContent.getByRole('heading', { name: '输入输出' })).toBeVisible();
   await expect(resultContent.getByRole('heading', { name: '约束条件' })).toBeVisible();
@@ -811,7 +816,8 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
 
   await page.goto('/workbench');
   await openWorkbenchPane(page, 'context');
-  await page.getByRole('button', { name: '选择本地项目文件夹' }).click();
+  await page.getByRole('button', { name: '添加上下文' }).click();
+  await page.getByRole('menuitem', { name: '选择文件夹' }).click();
 
   await expect(page.getByText('2 个源码文件已建立本地索引')).toBeVisible();
   await expect(page.getByText(/2 个代码块/)).toBeVisible();
@@ -885,7 +891,8 @@ test('用户可以暂停并继续本地项目索引', async ({ page }) => {
     });
     observer.observe(document.body, { childList: true, subtree: true });
   });
-  await page.getByRole('button', { name: '选择本地项目文件夹' }).click();
+  await page.getByRole('button', { name: '添加上下文' }).click();
+  await page.getByRole('menuitem', { name: '选择文件夹' }).click();
 
   await expect(page.getByText(/已暂停，检查点位于/)).toBeVisible();
   await page.getByRole('button', { name: '继续索引' }).click();
@@ -962,7 +969,7 @@ test('重新打开页面后不恢复之前选择的项目文件夹', async ({ pa
   await openWorkbenchPane(page, 'context');
   // 全量并发运行时工作台是懒加载页面，以核心控件出现作为初始化完成标志。
   await expect(
-    page.getByRole('button', { name: '添加文档、表格、演示稿或图片' }),
+    page.getByRole('button', { name: '添加上下文' }),
   ).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText('1 个源码文件已建立本地索引')).not.toBeVisible();
   await expect.poll(() => page.evaluate(() =>
@@ -973,7 +980,8 @@ test('重新打开页面后不保留之前上传的单个文件', async ({ page 
   await page.goto('/workbench');
   await openWorkbenchPane(page, 'context');
   const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.getByRole('button', { name: '添加文档、表格、演示稿或图片' }).click();
+  await page.getByRole('button', { name: '添加上下文' }).click();
+  await page.getByRole('menuitem', { name: '选择文件', exact: true }).click();
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles({
     name: '临时需求说明.txt',
@@ -986,7 +994,7 @@ test('重新打开页面后不保留之前上传的单个文件', async ({ page 
   await openWorkbenchPane(page, 'context');
 
   await expect(page.getByText('临时需求说明.txt', { exact: true })).not.toBeVisible();
-  await expect(page.getByRole('button', { name: '添加文档、表格、演示稿或图片' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '添加上下文' })).toBeVisible();
 });
 
 test('关闭 Plan 确认后直接生成，不进入方案确认', async ({ page }) => {

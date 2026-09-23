@@ -6,12 +6,13 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import ContextPanel from '@/components/context/ContextPanel.vue';
+import ContextUploadConfirmDialog, { type UploadCandidate } from '@/components/context/ContextUploadConfirmDialog.vue';
 import PlanModeIntroDialog from '@/components/prompt/PlanModeIntroDialog.vue';
 import PlanQuestionDialog from '@/components/prompt/PlanQuestionDialog.vue';
 import IntentComposer from '@/components/prompt/IntentComposer.vue';
 import ResultPanel from '@/components/prompt/ResultPanel.vue';
 import WorkbenchFlowHeader from '@/components/prompt/WorkbenchFlowHeader.vue';
-import type { DroppedFileCollection } from '@/composables/fileDrop';
+import { withRelativePath, type DroppedFileCollection } from '@/composables/fileDrop';
 import { usePlanModePreference } from '@/composables/usePlanModePreference';
 import { useProjectIndex } from '@/composables/useProjectIndex';
 import { useProjectFiles } from '@/composables/useProjectFiles';
@@ -20,6 +21,14 @@ import { useOptimizationStore } from '@/stores/optimization';
 import { recordPlanningEvent } from '@/services/planningMetrics';
 import { useProjectContextSettingsStore } from '@/stores/projectContextSettings';
 import type { ContextFileInput, PlanConfirmation, PromptSection } from '@/types/api';
+import {
+  collectCandidateFiles,
+  getProjectFilePath,
+  MAX_FILES,
+  MAX_READ_CHARS_PER_FILE,
+  MAX_TOTAL_CHARACTERS,
+  shouldUseTemporaryDocumentIndex,
+} from '@/workers/fileReaderCore';
 
 const store = useOptimizationStore();
 const route = useRoute();
@@ -53,7 +62,6 @@ const {
   isReading,
   warnings,
   progress,
-  selectFiles,
   selectFileArray,
   reset: resetProjectFiles,
 } = useProjectFiles();
@@ -79,7 +87,12 @@ const pendingPrompt = ref('');
 const recoveryRevision = ref(0);
 const isRecoveringPlan = ref(false);
 const isClearingIndex = ref(false);
+const uploadCandidates = ref<UploadCandidate[]>([]);
+const omittedUploadCandidates = ref(0);
+const uploadConfirmVisible = ref(false);
+const selectionWarnings = ref<string[]>([]);
 let pageLifecycleVersion = 0;
+let contextSelectionVersion = 0;
 const {
   enabled: planModeEnabled,
   introSeen: planIntroSeen,
@@ -96,6 +109,7 @@ const PROJECT_OVERVIEW_RETRIEVAL_QUERY = [
 
 const contextWarnings = computed(() => Array.from(new Set([
   ...warnings.value,
+  ...selectionWarnings.value,
   ...(contextSnapshot.value?.warnings ?? []),
   ...(indexErrorMessage.value ? [indexErrorMessage.value] : []),
 ])));
@@ -149,11 +163,24 @@ const runProjectIndexOperation = async (
   mode: 'FULL' | 'INCREMENTAL' | 'RESUME',
 ): Promise<void> => {
   const currentLifecycle = pageLifecycleVersion;
+  uploadCandidates.value = [];
+  omittedUploadCandidates.value = 0;
+  selectionWarnings.value = [];
   try {
     const options = {
       limits: effectiveIndexLimits.value,
       retention: projectContextSettings.value.retention,
       autoCleanupDays: projectContextSettings.value.autoCleanupDays,
+      onDocumentsDiscovered: (documents: UploadCandidate[], omitted: number): void => {
+        // Worker 仅交回附件引用；先显示索引结果，再请用户决定上传哪些文档。
+        uploadCandidates.value = documents
+          .filter((document) => !files.value.some((file) => file.path === document.path))
+          .map((document) => ({
+            path: document.path,
+            file: withRelativePath(document.file, document.path),
+          }));
+        omittedUploadCandidates.value = omitted;
+      },
     };
     const summary = mode === 'FULL'
       ? await indexDirectory(options)
@@ -164,6 +191,10 @@ const runProjectIndexOperation = async (
       return;
     }
     store.setProjectIndex(summary);
+    if (uploadCandidates.value.length > 0) uploadConfirmVisible.value = true;
+    if (omittedUploadCandidates.value > 0) {
+      selectionWarnings.value = [`已跳过 ${omittedUploadCandidates.value} 个超出大小、数量限制或安全规则的文档。`];
+    }
     if (summary.status === 'PAUSED') {
       ElMessage.info(`索引已暂停，已保存 ${summary.discoveredFiles} 个文件的扫描检查点。`);
       return;
@@ -225,79 +256,96 @@ const handleClearContextFiles = async (): Promise<void> => {
   }
 };
 
-const handleFilesSelected = async (fileList: FileList | null): Promise<void> => {
+/** 所有文件选择与拖入共用安全预检；后一次选择会取消尚未完成的前一次，确认后的上传不受影响。需后端解析的文件在确认前绝不上传。 */
+const handleSelectedContextFiles = async (selected: readonly File[]): Promise<void> => {
+  if (selected.length === 0) return;
   const currentLifecycle = pageLifecycleVersion;
+  const selectionVersion = ++contextSelectionVersion;
+  const isCurrentSelection = (): boolean =>
+    currentLifecycle === pageLifecycleVersion && selectionVersion === contextSelectionVersion;
   try {
-    const selectedFiles = await selectFiles(fileList);
-    if (currentLifecycle !== pageLifecycleVersion) {
+    const { files: candidates, stats } = await collectCandidateFiles(selected, MAX_FILES);
+    if (!isCurrentSelection()) {
       return;
     }
-    const added = store.setFiles(selectedFiles);
-    if (added > 0) ElMessage.success(`已读取 ${added} 个项目文件。`);
-    if (added < selectedFiles.length) ElMessage.warning('上下文文件数量已达上限，部分项目文件未加入。');
+    const skipped = stats.pathIgnored + stats.sensitive + stats.unsupported + stats.oversized;
+    selectionWarnings.value = skipped > 0
+      ? [`已跳过 ${skipped} 个不支持、超限或敏感文件；这些文件不会上传。`]
+      : [];
+    const inlineBudget = Math.min(MAX_READ_CHARS_PER_FILE,
+      Math.max(1_024, Math.floor(MAX_TOTAL_CHARACTERS / Math.max(1, candidates.length))));
+    const immediate = candidates.filter((file) => !shouldUseTemporaryDocumentIndex(file, inlineBudget));
+    const documents = candidates.filter((file) => shouldUseTemporaryDocumentIndex(file, inlineBudget));
+    if (immediate.length > 0) await addSelectedFiles(immediate, currentLifecycle, selectionVersion);
+    if (documents.length > 0 && isCurrentSelection()) {
+      uploadCandidates.value = documents.map((file) => ({ path: getProjectFilePath(file), file }));
+      omittedUploadCandidates.value = 0;
+      uploadConfirmVisible.value = true;
+    }
+    if (candidates.length === 0 && isCurrentSelection()) {
+      ElMessage.warning('没有找到可读取的文件。');
+    }
   } catch (error: unknown) {
-    if (currentLifecycle !== pageLifecycleVersion) {
+    if (!isCurrentSelection()) {
       return;
     }
     ElMessage.error(error instanceof Error ? error.message : '文件读取失败，请重新选择。');
   }
 };
 
-const handleDocumentsSelected = async (fileList: FileList | null): Promise<void> => {
-  const currentLifecycle = pageLifecycleVersion;
-  try {
-    const selectedFiles = await selectFiles(fileList);
-    if (currentLifecycle !== pageLifecycleVersion) {
-      return;
-    }
-    let added = 0;
-    for (const file of selectedFiles) {
-      if (store.addFile(file)) added += 1;
-    }
-    if (added > 0) ElMessage.success(`已加入 ${added} 个文档或辅助文件。`);
-    if (added < selectedFiles.length) ElMessage.warning('上下文文件数量已达上限，部分文档未加入。');
-  } catch (error: unknown) {
-    if (currentLifecycle !== pageLifecycleVersion) {
-      return;
-    }
-    ElMessage.error(error instanceof Error ? error.message : '文档读取失败，请重新选择。');
+const addSelectedFiles = async (
+  selected: readonly File[],
+  currentLifecycle: number,
+  selectionVersion?: number,
+): Promise<void> => {
+  const selectedFiles = await selectFileArray(selected);
+  if (currentLifecycle !== pageLifecycleVersion) return;
+  if (selectionVersion !== undefined && selectionVersion !== contextSelectionVersion) return;
+  let added = 0;
+  for (const file of selectedFiles) {
+    if (store.addFile(file)) added += 1;
   }
+  if (added > 0) ElMessage.success(`已加入 ${added} 个上下文文件。`);
+  if (added < selectedFiles.length) ElMessage.warning('上下文文件数量已达上限，部分文件未加入。');
 };
 
-const handleFilesDropped = async ({ files: droppedFiles, hasDirectory }: DroppedFileCollection): Promise<void> => {
+const handleFilesSelected = (fileList: FileList | null): Promise<void> =>
+  handleSelectedContextFiles(Array.from(fileList ?? []));
+
+const handleDocumentsSelected = (fileList: FileList | null): Promise<void> =>
+  handleSelectedContextFiles(Array.from(fileList ?? []));
+
+const handleFilesDropped = async ({ files: droppedFiles }: DroppedFileCollection): Promise<void> => {
   if (droppedFiles.length === 0) {
     ElMessage.warning('未读取到可处理的文件，请重新拖入文件或文件夹。');
     return;
   }
+  await handleSelectedContextFiles(droppedFiles);
+};
+
+const handleUploadConfirmed = async (indices: number[]): Promise<void> => {
   const currentLifecycle = pageLifecycleVersion;
+  const selected = indices.map((index) => uploadCandidates.value[index]?.file)
+    .filter((file): file is File => Boolean(file));
+  uploadCandidates.value = [];
   try {
-    const selectedFiles = await selectFileArray(droppedFiles);
-    if (currentLifecycle !== pageLifecycleVersion) {
-      return;
-    }
-    let added = selectedFiles.length;
-    if (hasDirectory) {
-      added = store.setFiles(selectedFiles);
-    } else {
-      added = 0;
-      for (const file of selectedFiles) {
-        if (store.addFile(file)) added += 1;
-      }
-    }
-    if (added > 0) {
-      ElMessage.success(
-        hasDirectory
-          ? `已读取拖入文件夹中的 ${added} 个文件。`
-          : `已加入拖入的 ${added} 个文件。`,
-      );
-    }
-    if (added < selectedFiles.length) ElMessage.warning('上下文文件数量已达上限，部分文件未加入。');
+    await addSelectedFiles(selected, currentLifecycle);
   } catch (error: unknown) {
     if (currentLifecycle !== pageLifecycleVersion) {
       return;
     }
-    ElMessage.error(error instanceof Error ? error.message : '拖拽文件读取失败，请重试。');
+    ElMessage.error(error instanceof Error ? error.message : '文档上传或解析失败，请重试。');
   }
+};
+
+const handleUploadDialogVisibility = (visible: boolean): void => {
+  if (!visible && uploadCandidates.value.length > 0) {
+    selectionWarnings.value = [
+      `已发现 ${uploadCandidates.value.length} 个文档但未上传，Plan Mode 和最终增强不会使用其正文。`,
+    ];
+    uploadCandidates.value = [];
+  }
+  uploadConfirmVisible.value = visible;
 };
 
 const handleAddManualFile = (file: ContextFileInput): void => {
@@ -666,6 +714,13 @@ onBeforeUnmount(() => {
       />
     </div>
 
+    <ContextUploadConfirmDialog
+      :model-value="uploadConfirmVisible"
+      :candidates="uploadCandidates"
+      :omitted-count="omittedUploadCandidates"
+      @confirm="handleUploadConfirmed"
+      @update:model-value="handleUploadDialogVisibility"
+    />
     <PlanQuestionDialog
       v-model="planDialogVisible"
       :plan="plan"

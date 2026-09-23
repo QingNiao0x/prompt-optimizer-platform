@@ -6,11 +6,23 @@ import {
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
 import {
   indexProject,
+  type ProjectSourceEntry,
   type ProjectIndexMode,
   type ProjectIndexLimits,
   type ProjectIndexProgress,
   type ProjectIndexSummary,
 } from '@/features/project-index/projectIndexer';
+import {
+  isBinaryDocumentFile,
+  isSafeRelativeFilePath,
+  isSensitiveFile,
+  MAX_DOCUMENT_FILE_BYTES,
+} from '@/workers/fileReaderCore';
+
+export interface DiscoveredDocument {
+  path: string;
+  file: File;
+}
 
 interface StartProjectIndexRequest {
   type: 'start';
@@ -27,8 +39,8 @@ type ProjectIndexWorkerRequest = StartProjectIndexRequest | { type: 'pause' };
 
 type ProjectIndexWorkerResponse =
   | { type: 'progress'; progress: ProjectIndexProgress }
-  | { type: 'paused'; summary: ProjectIndexSummary }
-  | { type: 'done'; summary: ProjectIndexSummary }
+  | { type: 'paused'; summary: ProjectIndexSummary; documents: DiscoveredDocument[]; omittedDocuments: number }
+  | { type: 'done'; summary: ProjectIndexSummary; documents: DiscoveredDocument[]; omittedDocuments: number }
   | { type: 'error'; message: string };
 
 const scope = self as unknown as {
@@ -56,6 +68,22 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
   pauseRequested = false;
   isRunning = true;
   try {
+    const documents: DiscoveredDocument[] = [];
+    let omittedDocuments = 0;
+    // 与源码索引共用一次目录遍历，只收集安全文件的元数据和 File 引用，不读取附件正文。
+    const entries = async function* (): AsyncGenerator<ProjectSourceEntry> {
+      for await (const entry of streamDirectoryEntries(rootHandle)) {
+        if (entry.kind === 'file' && isBinaryDocumentFile(entry.file)) {
+          if (!isSafeRelativeFilePath(entry.path) || isSensitiveFile(entry.path)
+              || entry.file.size > MAX_DOCUMENT_FILE_BYTES || documents.length >= 100) {
+            omittedDocuments += 1;
+          } else {
+            documents.push({ path: entry.path, file: entry.file });
+          }
+        }
+        yield entry;
+      }
+    };
     const countingStartedAt = performance.now();
     const directorySummary = await countDirectoryEntries(rootHandle, (progress) => {
       const elapsedMs = Math.max(0, performance.now() - countingStartedAt);
@@ -83,7 +111,7 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
     const summary = await indexProject({
       projectId,
       rootName: rootHandle.name,
-      entries: streamDirectoryEntries(rootHandle),
+      entries: entries(),
       repository: projectIndexRepository,
       limits,
       retention,
@@ -97,6 +125,8 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
     scope.postMessage({
       type: summary.status === 'PAUSED' ? 'paused' : 'done',
       summary,
+      documents,
+      omittedDocuments,
     });
   } catch (error) {
     scope.postMessage({

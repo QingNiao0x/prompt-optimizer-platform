@@ -15,11 +15,18 @@ import {
   type ProjectIndexProgress,
   type ProjectIndexSummary,
 } from '@/features/project-index/projectIndexer';
+import type { DiscoveredDocument } from '@/workers/projectIndex.worker';
+
+interface WorkerIndexResult {
+  summary: ProjectIndexSummary;
+  documents: DiscoveredDocument[];
+  omittedDocuments: number;
+}
 
 type WorkerResponse =
   | { type: 'progress'; progress: ProjectIndexProgress }
-  | { type: 'paused'; summary: ProjectIndexSummary }
-  | { type: 'done'; summary: ProjectIndexSummary }
+  | ({ type: 'paused' } & WorkerIndexResult)
+  | ({ type: 'done' } & WorkerIndexResult)
   | { type: 'error'; message: string };
 
 interface WorkerStartRequest {
@@ -37,6 +44,7 @@ export interface ProjectIndexStartOptions {
   limits: EffectiveProjectIndexLimits;
   retention: ProjectIndexRetention;
   autoCleanupDays: number;
+  onDocumentsDiscovered?: (documents: DiscoveredDocument[], omittedDocuments: number) => void;
 }
 
 const SESSION_ID_KEY = 'prompt-optimizer.project-index-session.v1';
@@ -134,8 +142,9 @@ export const useProjectIndex = () => {
         expiresAt: createExpiryDate(options.autoCleanupDays),
         mode,
       });
-      summary.value = result;
-      return result;
+      summary.value = result.summary;
+      options.onDocumentsDiscovered?.(result.documents, result.omittedDocuments);
+      return result.summary;
     } catch (error) {
       if (error instanceof ProjectIndexCancelledError) {
         return undefined;
@@ -156,7 +165,7 @@ export const useProjectIndex = () => {
     projectId: string,
     rootHandle: DirectoryHandleLike,
     options: Omit<WorkerStartRequest, 'type' | 'projectId' | 'rootHandle'>,
-  ): Promise<ProjectIndexSummary> =>
+  ): Promise<WorkerIndexResult> =>
     new Promise((resolve, reject) => {
       const worker = new Worker(
         new URL('../workers/projectIndex.worker.ts', import.meta.url),
@@ -174,7 +183,11 @@ export const useProjectIndex = () => {
         activeWorker = undefined;
         activeWorkerReject = undefined;
         if (message.type === 'done' || message.type === 'paused') {
-          resolve(message.summary);
+          resolve({
+            summary: message.summary,
+            documents: message.documents,
+            omittedDocuments: message.omittedDocuments,
+          });
         } else {
           reject(new Error(message.message));
         }
