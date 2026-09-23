@@ -8,6 +8,8 @@ import {
   getProjectFileLanguage,
   getProjectFilePath,
   MAX_FILES,
+  MAX_READ_CHARS_PER_FILE,
+  MAX_TOTAL_CHARACTERS,
   readProjectFiles,
   shouldUseTemporaryDocumentIndex,
   type FileProcessingProgress,
@@ -199,8 +201,11 @@ export const useProjectFiles = () => {
       const documentCandidates: File[] = [];
       let selectedDocumentBytes = 0;
       let skippedDocumentBudget = 0;
+      // 使用候选总数保守估算 Worker 的最低均摊额度；分流后剩余文件可用额度只会增加。
+      const inlineBudget = Math.min(MAX_READ_CHARS_PER_FILE,
+        Math.max(1_024, Math.floor(MAX_TOTAL_CHARACTERS / candidates.length)));
       for (const candidate of candidates) {
-        if (!shouldUseTemporaryDocumentIndex(candidate)) {
+        if (!shouldUseTemporaryDocumentIndex(candidate, inlineBudget)) {
           inlineCandidates.push(candidate);
           continue;
         }

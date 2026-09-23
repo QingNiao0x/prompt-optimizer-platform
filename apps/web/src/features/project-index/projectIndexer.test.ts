@@ -153,6 +153,17 @@ const versionedSourceFile = (
 });
 
 describe('indexProject', () => {
+  it('should reject unsafe paths and protected files before reading their content', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const paths = ['../report.txt', 'C:report.txt', '/report.txt', 'config/application-prod.yml',
+      'docs/.env', 'docs/id_rsa'];
+    const result = await indexProject({
+      projectId: 'unsafe-paths', rootName: 'fixture', repository,
+      entries: sourceOf(paths.map((path) => sourceFile(path, 'synthetic content'))),
+    });
+    expect(repository.files).toHaveLength(0);
+    expect(result.ignoredFiles).toBe(paths.length);
+  });
   it('should stream every eligible source file without stopping at one thousand files', async () => {
     const repository = new MemoryProjectIndexRepository();
     const entries = Array.from({ length: 1_205 }, (_, index) =>

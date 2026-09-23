@@ -140,25 +140,16 @@ public class StreamingDocumentExtractor {
     ) throws IOException {
         long fileSize = Files.size(source);
         long processedCharacters = 0;
-        int blockNumber = 1;
-        StringBuilder block = new StringBuilder(TEXT_BLOCK_CHARACTERS);
         try (BufferedReader reader = Files.newBufferedReader(source, StandardCharsets.UTF_8)) {
-            String line;
-            while (!sink.limitReached() && (line = reader.readLine()) != null) {
-                block.append(line).append('\n');
-                processedCharacters += line.length() + 1L;
-                if (block.length() >= TEXT_BLOCK_CHARACTERS) {
-                    sink.accept("文本块 " + blockNumber++, block.toString());
-                    block.setLength(0);
-                    progressListener.onProgress(
-                            Math.min(fileSize, processedCharacters),
-                            Math.max(fileSize, 1)
-                    );
-                }
+            char[] buffer = new char[TEXT_BLOCK_CHARACTERS];
+            int count;
+            while (!sink.limitReached() && (count = reader.read(buffer)) != -1) {
+                // 不依赖换行符，防止单行文档占用与文件大小相同的额外内存。
+                // 相同标签表示连续正文，索引器不能在读取块之间注入标题而打断原文词组。
+                sink.accept("文本正文", new String(buffer, 0, count));
+                processedCharacters += count;
+                progressListener.onProgress(Math.min(fileSize, processedCharacters), Math.max(fileSize, 1));
             }
-        }
-        if (!block.isEmpty() && !sink.limitReached()) {
-            sink.accept("文本块 " + blockNumber, block.toString());
         }
         progressListener.onProgress(fileSize, Math.max(fileSize, 1));
     }
@@ -409,19 +400,31 @@ public class StreamingDocumentExtractor {
         XMLStreamReader reader = factory.createXMLStreamReader(input, StandardCharsets.UTF_8.name());
         StringBuilder block = new StringBuilder();
         int blockNumber = 1;
+        boolean inTextRun = false;
         try {
             while (reader.hasNext() && !sink.limitReached()) {
                 int event = reader.next();
                 if (event == XMLStreamConstants.CHARACTERS || event == XMLStreamConstants.CDATA) {
                     String text = reader.getText();
-                    if (text != null && !text.isBlank()) {
-                        block.append(text.strip()).append(' ');
+                    if (text != null && (!text.isBlank() || inTextRun)) {
+                        // XML 文本事件和 Word run 边界不代表词边界，不能插入空格或 strip。
+                        block.append(text);
+                        while (block.length() >= TEXT_BLOCK_CHARACTERS) {
+                            sink.accept(label + " · 段 " + blockNumber, block.substring(0, TEXT_BLOCK_CHARACTERS));
+                            block.delete(0, TEXT_BLOCK_CHARACTERS);
+                        }
                     }
+                } else if (event == XMLStreamConstants.START_ELEMENT) {
+                    String localName = reader.getLocalName();
+                    if ("t".equals(localName)) inTextRun = true;
+                    if ("tab".equals(localName)) block.append('\t');
+                    if ("br".equals(localName) || "cr".equals(localName)) block.append('\n');
                 } else if (event == XMLStreamConstants.END_ELEMENT) {
                     String localName = reader.getLocalName();
-                    if (("p".equals(localName) || "tr".equals(localName) || "h".equals(localName))
-                            && !block.isEmpty()) {
-                        sink.accept(label + " · 段 " + blockNumber++, block.toString());
+                    if ("t".equals(localName)) inTextRun = false;
+                    if ("p".equals(localName) || "tr".equals(localName) || "h".equals(localName)) {
+                        if (!block.isEmpty()) sink.accept(label + " · 段 " + blockNumber, block.toString());
+                        blockNumber++;
                         block.setLength(0);
                     }
                 }
@@ -516,7 +519,7 @@ public class StreamingDocumentExtractor {
                 limitReached = true;
                 return;
             }
-            String normalized = content.strip();
+            String normalized = content;
             String accepted = normalized.length() > remaining
                     ? normalized.substring(0, Math.toIntExact(remaining))
                     : normalized;

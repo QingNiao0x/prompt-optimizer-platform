@@ -282,12 +282,23 @@ export const getProjectFileLanguage = (file: File): string => {
 
 /**
  * 二进制文档始终在后端安全解析；大型纯文本文档也采用同一路径，确保全文能够建立索引。
- * 小型源码和普通文本仍由 Worker 读取，避免为常规项目增加网络开销。
+ * 按本批次内联预算提前分流，避免不足 1 MB 的文档先被 Worker 截去尾部。
  */
-export const shouldUseTemporaryDocumentIndex = (file: File): boolean => {
+export const shouldUseTemporaryDocumentIndex = (
+  file: File,
+  inlineCharacterBudget = MAX_READ_CHARS_PER_FILE,
+): boolean => {
   const extension = getExtension(file.name);
   return BINARY_EXTENSIONS.has(extension)
-    || (DOCUMENT_TEXT_EXTENSIONS.has(extension) && file.size > MAX_FILE_BYTES);
+    || (DOCUMENT_TEXT_EXTENSIONS.has(extension) && file.size > inlineCharacterBudget);
+};
+
+/** 在读取文件之前拒绝绝对路径、目录穿越、控制字符及 Windows 盘符/数据流语法。 */
+export const isSafeRelativeFilePath = (path: string): boolean => {
+  const normalized = path.trim().replace(/\\/g, '/');
+  return normalized.length > 0 && !normalized.startsWith('/')
+    && !/[\u0000-\u001f:]/.test(normalized)
+    && !normalized.split('/').includes('..');
 };
 
 /**
@@ -322,7 +333,7 @@ export const collectCandidateFiles = async (
     const file = files[index];
     const relativePath = getProjectFilePath(file);
     // 手动扫描路径分隔符，避免每个文件都创建 split 数组，降低十六万文件扫描的开销。
-    if (hasIgnoredSegment(relativePath)) {
+    if (!isSafeRelativeFilePath(relativePath) || hasIgnoredSegment(relativePath)) {
       stats.pathIgnored += 1;
       continue;
     }
@@ -388,14 +399,16 @@ const SENSITIVE_FILE_NAMES = new Set([
 
 const SENSITIVE_NPMRC_PATTERN = /^\s*(?:_auth|_authToken|password|username)\s*=|:_authToken\s*=/im;
 
-const isSensitiveFile = (relativePath: string): boolean => {
+/** 与后端相同的敏感文件规则，同时用于手动上传和本地项目扫描。 */
+export const isSensitiveFile = (relativePath: string): boolean => {
   const fileName = relativePath.slice(relativePath.lastIndexOf('/') + 1).toLowerCase();
   return SENSITIVE_FILE_NAMES.has(fileName)
     || (fileName.startsWith('.env.') && fileName !== '.env.example')
     || fileName.endsWith('.pem')
     || fileName.endsWith('.key')
     || fileName.endsWith('.p12')
-    || fileName.endsWith('.jks');
+    || fileName.endsWith('.jks')
+    || /(?:^|\/)(?:application[-.](?:prod|production)|config\/(?:prod|production))\.(?:yml|yaml|properties|json|toml)$/i.test(relativePath);
 };
 
 const containsSensitiveConfiguration = (relativePath: string, content: string): boolean => {
@@ -509,7 +522,11 @@ export const readProjectFiles = async (
   for (let index = 0; index < candidates.length; index += 1) {
     const file = candidates[index];
     report(index, file.name);
-    const relativePath = file.webkitRelativePath || file.name;
+    const relativePath = getProjectFilePath(file);
+    if (!isSafeRelativeFilePath(relativePath)) {
+      warnings.push('已忽略不安全或无效的文件路径。');
+      continue;
+    }
     if (isSensitiveFile(relativePath)) {
       sensitiveCount += 1;
       continue;

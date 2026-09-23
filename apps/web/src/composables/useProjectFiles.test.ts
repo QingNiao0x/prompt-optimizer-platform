@@ -43,6 +43,39 @@ describe('readProjectFiles', () => {
     expect(shouldUseTemporaryDocumentIndex(source)).toBe(false);
   });
 
+  it('should index text documents before the inline reader can discard their tail', () => {
+    const text = new File(['前言'.repeat(32_001), '尾部：退费规则为三个工作日'], '方案.txt');
+    expect(shouldUseTemporaryDocumentIndex(text)).toBe(true);
+  });
+
+  it.each(['../方案.txt', '资料/../../方案.txt', 'C:方案.txt', '/资料/方案.txt'])
+    ('should reject unsafe relative paths before reading: %s', async (path) => {
+      const file = new File(['无需读取'], '方案.txt');
+      Object.defineProperty(file, 'webkitRelativePath', { value: path });
+      const selection = await collectCandidateFiles([file], 1_000);
+      expect(selection.files).toHaveLength(0);
+      expect(selection.stats.pathIgnored).toBe(1);
+    });
+
+  it('should retain nested mixed office files and exclude sensitive files in a folder', async () => {
+    const paths = ['资料/说明.txt', '资料/子目录/方案.docx', '资料/子目录/报告.pdf',
+      '资料/.env', '资料/id_rsa'];
+    const files = paths.map((path) => {
+      const file = new File(['合成测试内容'], path.split('/').at(-1)!);
+      Object.defineProperty(file, 'webkitRelativePath', { value: path });
+      return file;
+    });
+    const selection = await collectCandidateFiles(files, 1_000);
+    expect(selection.files.map((file) => file.webkitRelativePath)).toEqual(paths.slice(0, 3));
+    expect(selection.stats.sensitive).toBe(2);
+  });
+
+  it('should exclude production configuration before reading', async () => {
+    const result = await collectCandidateFiles([new File(['synthetic'], 'application-prod.yml')], 1_000);
+    expect(result.files).toHaveLength(0);
+    expect(result.stats.sensitive).toBe(1);
+  });
+
   it('should encode docx files as base64 so the backend can extract text', async () => {
     const bytes = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0x06, 0x00]);
     const file = new File([bytes], '需求说明.docx', {

@@ -1,12 +1,27 @@
 package com.promptoptimizer.context.application;
 
 import com.promptoptimizer.context.api.DocumentUploadCreateRequest;
+import com.promptoptimizer.context.api.ContextAnalysisRequest;
+import com.promptoptimizer.context.api.ContextFileInput;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import com.promptoptimizer.context.domain.DocumentProcessingPhase;
 import com.promptoptimizer.context.domain.DocumentSelection;
 import com.promptoptimizer.context.domain.DocumentUploadStatus;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.nio.charset.StandardCharsets;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import java.time.Duration;
 import java.util.Optional;
 
@@ -20,6 +35,163 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @Description: 验证大型文档分片上传、全文索引、尾部检索和安全路径拦截。
  */
 class TemporaryDocumentIndexServiceTest {
+
+    @Test
+    void shouldPreserveWordsAcrossStreamingReadBoundaries() throws Exception {
+        TemporaryDocumentIndexService service = createService();
+        try (AutoCloseable cleanup = service::close) {
+            String rule = "心脑血管疾病死亡率采用Arriaga分解";
+            byte[] bytes = ("常规记录".repeat(3_999) + rule + "其余材料".repeat(5_000)).getBytes(StandardCharsets.UTF_8);
+            var created = service.create(new DocumentUploadCreateRequest("边界.txt", "text", bytes.length));
+            uploadAllChunks(service, created.documentId(), bytes, created.chunkSizeBytes());
+            service.completeUpload(created.documentId());
+            awaitTerminalStatus(service, created.documentId());
+            assertThat(service.retrieve(created.documentId(), rule, 60_000, 10).orElseThrow().content().contains(rule)).isTrue();
+        }
+    }
+
+    @Test
+    void shouldAnalyzeMixedFolderThroughRealUploadExtractionIndexAndContextAnalyzer() throws Exception {
+        TemporaryDocumentIndexService service = createService();
+        try (AutoCloseable cleanup = service::close) {
+            List<ContextFileInput> references = new ArrayList<>();
+            List<byte[]> payloads = List.of(
+                    "数据说明：2015—2025年浙江心脑血管疾病死亡登记数据，使用CSV。".getBytes(StandardCharsets.UTF_8),
+                    wordDocument(), pdfDocument(true));
+            List<String> paths = List.of("资料/数据.txt", "资料/子目录/方案.docx", "资料/附录.pdf");
+            List<String> languages = List.of("text", "docx", "pdf");
+            for (int i = 0; i < payloads.size(); i++) {
+                byte[] bytes = payloads.get(i);
+                var created = service.create(new DocumentUploadCreateRequest(paths.get(i), languages.get(i), bytes.length));
+                uploadAllChunks(service, created.documentId(), bytes, created.chunkSizeBytes());
+                service.completeUpload(created.documentId());
+                var completed = awaitTerminalStatus(service, created.documentId());
+                assertThat(completed.phase()).isEqualTo(DocumentProcessingPhase.READY);
+                assertThat(completed.warnings()).isEmpty();
+                references.add(new ContextFileInput(paths.get(i), "", languages.get(i), created.documentId(), (long) bytes.length));
+            }
+            var analyzer = new DefaultContextAnalyzer(new ObjectMapper(), new BinaryContentExtractor(),
+                    new FileContentSummarizer(), service);
+            var snapshot = analyzer.analyze(new ContextAnalysisRequest("", references), "心脑血管疾病死亡率分析，采用Arriaga，附录验收标准");
+            assertThat(snapshot.fileSnippets()).extracting("path").containsExactlyInAnyOrderElementsOf(paths);
+            String selected = snapshot.fileSnippets().stream().map(snippet -> snippet.content()).reduce("", String::concat);
+            assertThat(selected).contains("浙江", "CSV", "心脑血管疾病死亡率", "Arriaga", "ACCEPTANCE: compare annual mortality");
+            assertThat(snapshot.fileCoverage()).hasSize(3).allSatisfy(coverage ->
+                    assertThat(coverage.extractionStatus()).isEqualTo("COMPLETE"));
+            assertThat(snapshot.warnings()).isEmpty();
+        }
+    }
+
+    @Test
+    void shouldReportScannedPdfWithoutTextAndIncompleteUploadsExplicitly() throws Exception {
+        TemporaryDocumentIndexService service = createService();
+        try (AutoCloseable cleanup = service::close) {
+            byte[] bytes = pdfDocument(false);
+            var created = service.create(new DocumentUploadCreateRequest("扫描.pdf", "pdf", bytes.length));
+            assertThatThrownBy(() -> service.completeUpload(created.documentId())).isInstanceOf(DocumentUploadException.class);
+            uploadAllChunks(service, created.documentId(), bytes, created.chunkSizeBytes());
+            service.completeUpload(created.documentId());
+            var result = awaitTerminalStatus(service, created.documentId());
+            assertThat(result.phase()).isEqualTo(DocumentProcessingPhase.FAILED);
+            assertThat(result.errorMessage()).contains("OCR");
+            assertThat(service.retrieve(created.documentId(), "任意内容", 6_000, 1)).isEmpty();
+        }
+    }
+
+    /** 用最小 OOXML 包验证真实 ZIP/XML 解析链路和中文跨 run 内容。 */
+    private byte[] wordDocument() throws Exception {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (ZipOutputStream zip = new ZipOutputStream(output)) {
+            zip.putNextEntry(new ZipEntry("word/document.xml"));
+            zip.write(("<w:document xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">"
+                    + "<w:body><w:p><w:r><w:t>心脑</w:t></w:r><w:r><w:t>血管疾病死亡率采用Arriaga分解。</w:t></w:r>"
+                    + "</w:p></w:body></w:document>").getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+        }
+        return output.toByteArray();
+    }
+
+    /** 生成文字层 PDF 或无文字层 PDF；不依赖机器上安装的中文字体。 */
+    private byte[] pdfDocument(boolean withText) throws Exception {
+        try (PDDocument pdf = new PDDocument(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            PDPage page = new PDPage();
+            pdf.addPage(page);
+            if (withText) {
+                try (PDPageContentStream text = new PDPageContentStream(pdf, page)) {
+                    text.beginText();
+                    text.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+                    text.newLineAtOffset(40, 700);
+                    text.showText("ACCEPTANCE: compare annual mortality");
+                    text.endText();
+                }
+            }
+            pdf.save(output);
+            return output.toByteArray();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"../report.txt", "docs/../../report.txt", "C:report.txt", "/report.txt",
+            "docs\\..\\report.txt", "docs/.env", "docs/id_rsa", "config/application-prod.yml"})
+    void shouldRejectUnsafeOrProtectedPaths(String path) throws Exception {
+        TemporaryDocumentIndexService service = createService();
+        try (AutoCloseable cleanup = service::close) {
+            assertThatThrownBy(() -> service.create(new DocumentUploadCreateRequest(path, "text", 10)))
+                    .isInstanceOf(DocumentUploadException.class);
+        }
+    }
+
+    @Test
+    void shouldMatchChineseBusinessRuleBeyondFirstFortyTermsOfAChunk() throws Exception {
+        TemporaryDocumentIndexService service = createService();
+        try (AutoCloseable cleanup = service::close) {
+            StringBuilder text = new StringBuilder();
+            for (int i = 0; i < 3_000; i++) text.append("unique").append(i).append(" 说明材料\n");
+            text.append("退款时限必须为三个工作日。\n");
+            for (int i = 3_000; i < 12_000; i++) text.append("unique").append(i).append(" 说明材料\n");
+            byte[] bytes = text.toString().getBytes(StandardCharsets.UTF_8);
+            var created = service.create(new DocumentUploadCreateRequest("方案.txt", "text", bytes.length));
+            uploadAllChunks(service, created.documentId(), bytes, created.chunkSizeBytes());
+            service.completeUpload(created.documentId());
+            assertThat(awaitTerminalStatus(service, created.documentId()).phase()).isEqualTo(DocumentProcessingPhase.READY);
+            var selection = service.retrieve(created.documentId(), "退款时限", 12_000, 2).orElseThrow();
+            assertThat(selection.content().contains("退款时限必须为三个工作日")).isTrue();
+        }
+    }
+
+    @Test
+    void shouldRejectOneHundredMiBAtCurrentFiftyMiBLimit() throws Exception {
+        TemporaryDocumentIndexService service = createService();
+        try (AutoCloseable cleanup = service::close) {
+            assertThatThrownBy(() -> service.create(new DocumentUploadCreateRequest("large.txt", "text", 100L * 1024 * 1024)))
+                    .isInstanceOf(DocumentUploadException.class).hasMessageContaining("50 MB");
+        }
+    }
+
+    @Test
+    void shouldRetrieveChineseTailAtActualFiftyMiBUploadLimit() throws Exception {
+        TemporaryDocumentIndexService service = createService();
+        try (AutoCloseable cleanup = service::close) {
+            var created = service.create(new DocumentUploadCreateRequest("large.txt", "text",
+                    TemporaryDocumentIndexService.MAX_DOCUMENT_BYTES));
+            byte[] chunk = new byte[created.chunkSizeBytes()];
+            java.util.Arrays.fill(chunk, (byte) 'a');
+            for (int i = 79; i < chunk.length; i += 80) chunk[i] = '\n';
+            for (int i = 0; i < 50; i++) {
+                if (i == 49) {
+                    byte[] tail = "\n尾部专项验收：必须保留全文最后的业务规则。".getBytes(StandardCharsets.UTF_8);
+                    System.arraycopy(tail, 0, chunk, chunk.length - tail.length, tail.length);
+                }
+                service.appendChunk(created.documentId(), i, chunk);
+            }
+            service.completeUpload(created.documentId());
+            assertThat(awaitTerminalStatus(service, created.documentId()).phase()).isEqualTo(DocumentProcessingPhase.READY);
+            var result = service.retrieve(created.documentId(), "尾部专项验收", 60_000, 10).orElseThrow();
+            assertThat(result.content()).contains("必须保留全文最后的业务规则");
+            assertThat(result.completelyParsed()).isTrue();
+            assertThat(result.sourceBytes()).isEqualTo(50L * 1024 * 1024);
+        }
+    }
 
     @Test
     void shouldRetrieveTailContentFromChunkedFullTextIndex() throws Exception {
@@ -251,7 +423,7 @@ class TemporaryDocumentIndexServiceTest {
             TemporaryDocumentIndexService service,
             String documentId
     ) throws InterruptedException {
-        long deadline = System.nanoTime() + Duration.ofSeconds(5).toNanos();
+        long deadline = System.nanoTime() + Duration.ofSeconds(60).toNanos();
         while (System.nanoTime() < deadline) {
             DocumentUploadStatus status = service.getStatus(documentId);
             if (status.readyForAnalysis() || status.phase() == DocumentProcessingPhase.FAILED) {

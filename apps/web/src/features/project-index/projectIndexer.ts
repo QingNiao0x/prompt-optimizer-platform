@@ -1,4 +1,5 @@
 import type { ContextFileInput } from '@/types/api';
+import { isSafeRelativeFilePath, isSensitiveFile as isProtectedContextFile } from '@/workers/fileReaderCore';
 
 export const INDEX_CHUNK_CHARACTERS = 6_000;
 export const MAX_INDEXABLE_FILE_BYTES = 50 * 1024 * 1024;
@@ -436,6 +437,12 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     for (const entry of batch) {
       summary.discoveredFiles += 1;
       summary.lastCheckpointPath = entry.path;
+      // 必须在内容读取和增量复用之前过滤，旧索引记录也不能绕过当前安全边界。
+      if (!isSafeRelativeFilePath(entry.path) || isProtectedContextFile(entry.path.replace(/\\/g, '/'))) {
+        summary.ignoredFiles += 1;
+        report('INDEXING', entry.path);
+        continue;
+      }
       const fingerprint = fingerprintOf(entry.file);
       const existing = existingByPath.get(entry.path);
       if (existing?.fingerprint === fingerprint) {

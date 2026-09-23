@@ -678,6 +678,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             path = path.substring(2);
         }
         if (path.isBlank() || WINDOWS_ABSOLUTE_PATH.matcher(path).matches()
+                || path.indexOf(':') >= 0 || path.chars().anyMatch(character -> character < 32)
                 || UNIX_ABSOLUTE_PATH.matcher(path).matches() || TRAVERSAL_PATH.matcher(path).find()) {
             return null;
         }

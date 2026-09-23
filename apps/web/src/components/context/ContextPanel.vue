@@ -70,6 +70,7 @@ const emit = defineEmits<Emits>();
 
 const folderInput = ref<HTMLInputElement>();
 const documentInput = ref<HTMLInputElement>();
+const documentFolderInput = ref<HTMLInputElement>();
 const selecting = ref(false);
 const manualPath = ref('src/example.ts');
 const manualLanguage = ref('typescript');
@@ -263,6 +264,9 @@ watch(
     if (!reading && documentInput.value) {
       documentInput.value.value = '';
     }
+    if (!reading && documentFolderInput.value) {
+      documentFolderInput.value.value = '';
+    }
   },
 );
 
@@ -345,6 +349,15 @@ const addManualFile = (): void => {
         accept=".txt,.md,.rst,.tex,.csv,.tsv,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.wps,.et,.dps,.odt,.ods,.odp,.png,.jpg,.jpeg,.gif,.webp,.bmp,.svg"
         @change="handleDocumentChange"
       />
+      <input
+        ref="documentFolderInput"
+        data-testid="document-folder-input"
+        class="visually-hidden"
+        type="file"
+        multiple
+        webkitdirectory
+        @change="handleDocumentChange"
+      />
       <button
         class="folder-dropzone"
         :class="{ 'is-drag-active': isDragActive }"
@@ -405,7 +418,11 @@ const addManualFile = (): void => {
       >
         添加文档、表格、演示稿或图片
       </ElButton>
+      <ElButton :disabled="isProjectBusy" @click="documentFolderInput?.click()">
+        添加文档文件夹
+      </ElButton>
       <p class="document-upload-help">
+        项目本地索引不解析 Word、PDF 等办公文件；包含这些资料时请使用“添加文档文件夹”，支持子目录。
         大型文档将按 1 MiB 分片发送至本项目后端，解析后只保留最长 2 小时的临时全文索引；
         一键增强时仅选取与当前任务相关的片段。
       </p>

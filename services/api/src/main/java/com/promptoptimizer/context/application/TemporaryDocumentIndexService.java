@@ -53,6 +53,10 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
     private static final Duration DOCUMENT_TTL = Duration.ofHours(2);
     private static final Pattern WINDOWS_ABSOLUTE_PATH = Pattern.compile("^[A-Za-z]:[\\\\/].*");
     private static final Pattern TRAVERSAL_PATH = Pattern.compile("(^|/)\\.\\.($|/)");
+    private static final Pattern PRODUCTION_CONFIG_PATH = Pattern.compile(
+            "(?i)(?:^|/)(?:application[-.](?:prod|production)|config/(?:prod|production))"
+                    + "\\.(?:yml|yaml|properties|json|toml)$"
+    );
     private static final Set<String> SENSITIVE_FILE_NAMES = Set.of(
             ".env", ".env.local", ".env.development", ".env.production",
             "id_rsa", "id_ed25519", "credentials", "credentials.json"
@@ -454,10 +458,18 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         if (!queryTerms.isEmpty() || !semanticScores.isEmpty()) {
             Map<Integer, Integer> lexicalScores = new LinkedHashMap<>();
             int maxLexicalScore = 0;
-            for (ChunkRecord record : session.chunks) {
-                int lexicalScore = score(record, queryTerms);
-                lexicalScores.put(record.index(), lexicalScore);
-                maxLexicalScore = Math.max(maxLexicalScore, lexicalScore);
+            // 每块只保存偏移；检索时顺序读取完整块，避免前 40 个索引词遮蔽片段后部规则。
+            // 单次读取约 6,000 字符，不把整份文档或全部词表加载到内存。
+            try (FileChannel channel = FileChannel.open(session.chunkFile, StandardOpenOption.READ)) {
+                for (ChunkRecord record : session.chunks) {
+                    int lexicalScore = queryTerms.isEmpty() ? 0
+                            : score(record, readChunk(channel, record), queryTerms);
+                    lexicalScores.put(record.index(), lexicalScore);
+                    maxLexicalScore = Math.max(maxLexicalScore, lexicalScore);
+                }
+            } catch (IOException exception) {
+                throw new DocumentUploadException(DocumentUploadException.Reason.CONFLICT,
+                        "临时文档索引读取失败，请重新上传文件", exception);
             }
             int highestLexicalScore = maxLexicalScore;
             session.chunks.stream()
@@ -512,12 +524,10 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         return normalizedLexical * 0.55D + semanticScore * 0.45D;
     }
 
-    private int score(ChunkRecord record, Set<String> queryTerms) {
-        int score = 0;
+    /** 匹配完整块正文和段落标签，不使用截断的文档词表。 */
+    private int score(ChunkRecord record, String content, Set<String> queryTerms) {
+        int score = contentChunkSelector.score(content, queryTerms);
         for (String term : queryTerms) {
-            if (record.searchTerms().contains(term)) {
-                score += Math.min(20, 2 + term.length());
-            }
             if (record.label().toLowerCase(Locale.ROOT).contains(term)) {
                 score += 8;
             }
@@ -687,13 +697,15 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         }
         String fileName = path.substring(path.lastIndexOf('/') + 1).toLowerCase(Locale.ROOT);
         if (path.isBlank() || path.startsWith("/") || WINDOWS_ABSOLUTE_PATH.matcher(path).matches()
+                || path.indexOf(':') >= 0 || path.chars().anyMatch(character -> character < 32)
                 || TRAVERSAL_PATH.matcher(path).find()) {
             throw invalid("只能上传相对路径，不能包含目录穿越");
         }
         if (SENSITIVE_FILE_NAMES.contains(fileName)
                 || (fileName.startsWith(".env.") && !".env.example".equals(fileName))
                 || fileName.endsWith(".pem") || fileName.endsWith(".key")
-                || fileName.endsWith(".p12") || fileName.endsWith(".jks")) {
+                || fileName.endsWith(".p12") || fileName.endsWith(".jks")
+                || PRODUCTION_CONFIG_PATH.matcher(path).find()) {
             throw invalid("受保护文件不能进入文档索引");
         }
         return path;
@@ -784,10 +796,12 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                         "文档处理已取消"
                 );
             }
+            // 同一段落可由多个有界读取块组成；只在真正换段时插入标签，保持跨块词组连续。
+            if (!label.equals(currentLabel)) {
+                appendBounded("\n## " + label + '\n', label);
+            }
             currentLabel = label;
-            appendBounded("## " + label + '\n', label);
             appendBounded(content, label);
-            appendBounded("\n", label);
         }
 
         /**
@@ -834,8 +848,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                         index,
                         label,
                         offset,
-                        bytes.length,
-                        contentChunkSelector.extractSearchTerms(content)
+                        bytes.length
                 ));
             }
         }
@@ -904,12 +917,8 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
             int index,
             String label,
             long byteOffset,
-            int byteLength,
-            Set<String> searchTerms
+            int byteLength
     ) {
-        private ChunkRecord {
-            searchTerms = Set.copyOf(searchTerms);
-        }
     }
 
     private record ScoredRecord(
