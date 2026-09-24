@@ -98,9 +98,9 @@ MODEL_PROVIDER_MODE=openai-compatible
 MODEL_PROVIDER_NAME=deepseek
 MODEL_ENDPOINT=https://api.deepseek.com/chat/completions
 MODEL_API_KEY=替换为运行环境中的密钥
-MODEL_NAME=deepseek-chat
+MODEL_NAME=deepseek-flash
 # 可选模型白名单（逗号分隔）；留空时只显示 MODEL_NAME
-MODEL_MODELS=deepseek-chat
+MODEL_MODELS=deepseek-flash
 MODEL_TEMPERATURE=0.2
 MODEL_MAX_TOKENS=3000
 MODEL_CONNECT_TIMEOUT=3s
@@ -123,7 +123,7 @@ MODEL_PROVIDER_NAME=tokenhub
 MODEL_ENDPOINT=https://tokenhub.tencentmaas.com/v1/chat/completions
 MODEL_API_KEY=替换为你的 TokenHub API Key
 MODEL_NAME=deepseek-v4-pro-0813
-MODEL_MODELS=deepseek/deepseek-flash,deepseek-v4-pro-0813,kimi-k3,kimi-k2.8-preview,kimi-k2.7-code,glm-5.3,glm-5.3-flashx,hy4-preview,hy3,minimax-m3
+MODEL_MODELS=deepseek-v4-pro-0813,kimi-k3,kimi-k2.8-preview,kimi-k2.7-code,glm-5.3,glm-5.3-flashx,hy4-preview,hy3,minimax-m3
 ```
 
 如果 TokenHub 账号的兼容端点不接受 `response_format`，再将 `MODEL_JSON_RESPONSE_FORMAT_ENABLED` 设为
@@ -140,17 +140,22 @@ MODEL_DEFAULT_PROVIDER=tokenhub
 
 MODEL_DEEPSEEK_API_KEY=你的 DeepSeek API Key
 MODEL_DEEPSEEK_ENDPOINT=https://api.deepseek.com/chat/completions
-MODEL_DEEPSEEK_NAME=deepseek-chat
-MODEL_DEEPSEEK_MODELS=deepseek-chat
+MODEL_DEEPSEEK_NAME=deepseek-flash
+MODEL_DEEPSEEK_MODELS=deepseek-flash
 
 MODEL_TOKENHUB_API_KEY=你的 TokenHub API Key
 MODEL_TOKENHUB_ENDPOINT=https://tokenhub.tencentmaas.com/v1/chat/completions
 MODEL_TOKENHUB_NAME=deepseek-v4-pro-0813
-MODEL_TOKENHUB_MODELS=deepseek/deepseek-flash,deepseek-v4-pro-0813,kimi-k3,kimi-k2.8-preview,kimi-k2.7-code,glm-5.3,glm-5.3-flashx,hy4-preview,hy3,minimax-m3
+MODEL_TOKENHUB_MODELS=deepseek-v4-pro-0813,kimi-k3,kimi-k2.8-preview,kimi-k2.7-code,glm-5.3,glm-5.3-flashx,hy4-preview,hy3,minimax-m3
 ```
 
-接口返回的模型 ID 会带供应商前缀，例如 `deepseek:deepseek-chat`、`tokenhub:kimi-k3`。前端只提交这个
-公开 ID，后端根据服务端白名单选择 endpoint 和 API Key；密钥不会进入浏览器请求、历史记录或模型目录。
+多供应商模式的 DeepSeek 路由默认直连 `https://api.deepseek.com/chat/completions`，不会继承通用
+`MODEL_ENDPOINT`、`MODEL_NAME` 或 `MODEL_MODELS`。如果此前把 `MODEL_API_KEY` 改成了 TokenHub Key，
+请在 IDEA 的运行环境中单独设置 `MODEL_DEEPSEEK_API_KEY` 为 DeepSeek Key；不要把密钥写入配置文件。
+
+接口返回的模型 ID 会带供应商前缀，例如 `deepseek:deepseek-flash`、`tokenhub:kimi-k3`。DeepSeek-V4.1-Flash
+使用 DeepSeek 直连端点和 `MODEL_DEEPSEEK_API_KEY`（未设置时回退使用旧 `MODEL_API_KEY`），不再走 TokenHub。
+前端只提交公开 ID，后端根据服务端白名单选择 endpoint 和 API Key；密钥不会进入浏览器请求、历史记录或模型目录。
 `MODEL_API_KEY` 仍作为旧版单供应商配置的兼容回退值，多供应商模式建议使用上面的两套专用变量。
 
 大型文档默认使用零费用的本地规则摘要。需要让当前聊天模型对全部已索引文本执行分批 Map 和分层 Reduce 时，可以显式启用：

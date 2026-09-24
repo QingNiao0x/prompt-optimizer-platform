@@ -29,7 +29,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,12 +79,21 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
      * 分页查询历史摘要。
      */
     @Override
-    public OptimizationHistoryPage list(int page, int size) {
+    public OptimizationHistoryPage list(
+            int page,
+            int size,
+            String keyword,
+            OffsetDateTime createdFrom,
+            OffsetDateTime createdToExclusive
+    ) {
         ActorIdentity context = currentActor.require();
         Page<OptimizationRecordEntity> records = recordRepository
-                .findByTenantIdAndWorkspaceIdOrderByCreatedAtDesc(
+                .findFilteredByTenantIdAndWorkspaceId(
                         context.tenantId(),
                         context.workspaceId(),
+                        keyword,
+                        createdFrom,
+                        createdToExclusive,
                         PageRequest.of(page, size)
                 );
         List<OptimizationHistorySummary> items = records.getContent().stream()
@@ -104,13 +116,20 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
         return toDetail(findRecord(id));
     }
 
-    /**
-     * 删除单条记录。
-     */
+    /** 在当前租户和工作区内逻辑删除历史记录；已删除或越权记录统一按不存在处理。 */
     @Override
+    @Transactional
     public void delete(UUID id) {
-        OptimizationRecordEntity entity = findRecord(id);
-        recordRepository.delete(entity);
+        ActorIdentity context = currentActor.require();
+        int updated = recordRepository.markDeletedByIdAndTenantIdAndWorkspaceId(
+                id,
+                context.tenantId(),
+                context.workspaceId(),
+                OffsetDateTime.now(ZoneOffset.UTC)
+        );
+        if (updated == 0) {
+            throw new ResourceNotFoundException("优化记录不存在或无权访问");
+        }
     }
 
     /**
@@ -154,7 +173,7 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
      */
     private OptimizationRecordEntity findRecord(UUID id) {
         ActorIdentity context = currentActor.require();
-        return recordRepository.findByIdAndTenantIdAndWorkspaceId(
+        return recordRepository.findByIdAndTenantIdAndWorkspaceIdAndDeletedAtIsNull(
                         id,
                         context.tenantId(),
                         context.workspaceId()

@@ -21,7 +21,6 @@ import { deleteDocumentUpload } from '@/services/documentUploadApi';
 import {
   analyzeContext,
   createOptimizationPlan as requestOptimizationPlan,
-  listAvailableModels,
   optimizePrompt,
   preparePlanningContext as requestPlanningContext,
 } from '@/services/promptOptimizerApi';
@@ -30,7 +29,6 @@ import type {
   ContextFileInput,
   ContextSnapshot,
   OptimizationHistoryDetail,
-  AvailableModel,
   OptimizationPlan,
   OptimizationResult,
   PlanConfirmation,
@@ -39,13 +37,6 @@ import type {
   ReoptimizationResult,
   TemplateCode,
 } from '@/types/api';
-
-const FALLBACK_MODELS: AvailableModel[] = [{
-  id: 'tokenhub:deepseek-v4-pro-0813',
-  displayName: 'DeepSeek-V4-Pro',
-  provider: 'tokenhub',
-  defaultModel: true,
-}];
 
 export const useOptimizationStore = defineStore('optimization', () => {
   const rawPrompt = ref('');
@@ -56,8 +47,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const templateCode = ref<TemplateCode>('AUTO');
   const includePermissionBoundaries = ref(true);
   const includeExamples = ref(false);
-  const availableModels = ref<AvailableModel[]>([]);
-  const selectedModel = ref('');
   // 项目正文保存在 IndexedDB；Pinia 只持有轻量摘要和索引编号。
   const projectIndex = shallowRef<ProjectIndexSummary>();
   const contextRetrieval = shallowRef<ProjectContextRetrievalResult>();
@@ -79,23 +68,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
     && !isPlanning.value
     && !isOptimizing.value);
   const canUndoResult = computed(() => resultUndoStack.value.length > 0);
-
-  const loadAvailableModels = async (): Promise<void> => {
-    try {
-      const response = await listAvailableModels();
-      const models = response.data.filter((model) => model.id.trim());
-      availableModels.value = models.length > 0 ? models : FALLBACK_MODELS;
-    } catch {
-      // 模型目录是增强请求的辅助信息；目录暂时不可用时仍允许使用默认模型。
-      availableModels.value = FALLBACK_MODELS;
-    }
-    const configuredSelection = selectedModel.value;
-    if (!availableModels.value.some((model) => model.id === configuredSelection)) {
-      selectedModel.value = availableModels.value.find((model) => model.defaultModel)?.id
-        ?? availableModels.value[0]?.id
-        ?? '';
-    }
-  };
 
   const setFiles = (selectedFiles: ContextFileInput[]): number => {
     if (projectIndex.value) {
@@ -304,7 +276,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
                 version: planningContext.value.version,
               }
             : undefined,
-          selectedModel.value || undefined,
         ),
       );
       plan.value = response.data;
@@ -358,7 +329,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
         includePermissionBoundaries: true,
         includeExamples: includeExamples.value,
         planConfirmation: options.planConfirmation,
-        model: selectedModel.value || undefined,
       }));
       // 直接展示增强结果；用户输入的原始提示词保持不变，不做覆盖。
       rememberCurrentResult();
@@ -444,9 +414,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
     templateCode.value = detail.templateCode;
     includePermissionBoundaries.value = detail.includePermissionBoundaries;
     includeExamples.value = detail.includeExamples;
-    if (detail.modelName.trim()) {
-      selectedModel.value = detail.modelName.trim();
-    }
     if (projectIndex.value) {
       void projectIndexRepository.deleteProject(projectIndex.value.id).catch(() => undefined);
     }
@@ -468,9 +435,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const applyReoptimized = (payload: ReoptimizationResult): void => {
     rememberCurrentResult();
     result.value = payload.result;
-    if (payload.result.provider.model.trim()) {
-      selectedModel.value = payload.result.provider.model.trim();
-    }
     contextSnapshot.value = payload.result.contextReport;
     requestId.value = '';
     errorMessage.value = '';
@@ -483,8 +447,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
     templateCode,
     includePermissionBoundaries,
     includeExamples,
-    availableModels,
-    selectedModel,
     projectIndex,
     contextRetrieval,
     activeFilePath,
@@ -508,7 +470,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
     prepareContextFiles,
     runContextAnalysis,
     preparePlanningContext,
-    loadAvailableModels,
     createOptimizationPlan,
     runOptimization,
     saveEditedSections,

@@ -100,7 +100,7 @@
 | --- | --- | --- |
 | `GET` | `/api/v1/optimization-history?page=&size=` | 分页查询历史，`size` 限制为 1—50 |
 | `GET` | `/api/v1/optimization-history/{id}` | 查询详情 |
-| `DELETE` | `/api/v1/optimization-history/{id}` | 删除当前工作区历史 |
+| `DELETE` | `/api/v1/optimization-history/{id}` | 逻辑删除当前工作区历史；后续列表、详情和再次优化不再返回该记录 |
 | `POST` | `/api/v1/optimization-history/{id}/re-optimize` | 恢复原始输入和确认答案，生成一条新记录 |
 
 ## 4. Provider 配置接口

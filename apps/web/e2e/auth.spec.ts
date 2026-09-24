@@ -44,6 +44,64 @@ test('身份服务不可用时不进入受保护页面', async ({ page }) => {
   await expect(page.locator('.topbar')).toHaveCount(0);
 });
 
+test('历史记录筛选条件变化后重新加载对应查询结果', async ({ page }) => {
+  await mockAuthentication(page);
+  const historyRequests: URL[] = [];
+  await page.route('**/api/v1/optimization-history**', async route => {
+    if (route.request().method() !== 'GET') {
+      await route.continue();
+      return;
+    }
+    const requestUrl = new URL(route.request().url());
+    historyRequests.push(requestUrl);
+    await route.fulfill({
+      status: 200,
+      json: {
+        requestId: 'history-request',
+        data: {
+          items: [{
+            id: 'history-1',
+            templateCode: 'GENERAL',
+            rawPromptPreview: '查询全球使用 AI 最多的职业',
+            providerName: 'mock',
+            modelName: 'deterministic-enhancer-v1',
+            mock: true,
+            latencyMs: 12,
+            createdAt: '2026-09-24T10:00:00Z',
+          }],
+          page: 0,
+          size: 10,
+          totalItems: 1,
+          totalPages: 1,
+        },
+      },
+    });
+  });
+
+  await page.goto('/history');
+  await expect(page.getByRole('heading', { name: '优化历史' })).toBeVisible();
+  await expect(
+    page.locator('.preview-cell:visible, .history-mobile-card__preview:visible')
+      .filter({ hasText: '查询全球使用 AI 最多的职业' }),
+  ).toBeVisible();
+
+  await page.getByLabel('原始提示词搜索').fill('AI 职业');
+  await expect.poll(
+    () => historyRequests.at(-1)?.searchParams.get('keyword'),
+    { timeout: 5_000 },
+  ).toBe('AI 职业');
+  await expect(page.getByLabel('创建时间范围').first()).toBeVisible();
+
+  const dateInputs = page.locator('.history-filter-bar__date input.el-range-input');
+  await dateInputs.nth(0).fill('2026-09-01');
+  await dateInputs.nth(1).fill('2026-09-24');
+  await dateInputs.nth(1).press('Enter');
+  await expect.poll(
+    () => historyRequests.at(-1)?.searchParams.get('dateRange'),
+    { timeout: 5_000 },
+  ).toBe('2026-09-01,2026-09-24');
+});
+
 test('业务接口返回登录失效时清空工作台并跳转，不重放提交', async ({ page }) => {
   await mockAuthentication(page);
   await page.addInitScript(() => {

@@ -51,7 +51,7 @@ class OptimizationHistoryControllerTest {
     @Test
     void shouldReturnPagedHistory() throws Exception {
         UUID id = UUID.randomUUID();
-        when(historyService.list(0, 20)).thenReturn(new OptimizationHistoryPage(
+        when(historyService.list(0, 20, null, null, null)).thenReturn(new OptimizationHistoryPage(
                 List.of(new OptimizationHistorySummary(
                         id,
                         "FEATURE_DEVELOPMENT",
@@ -77,11 +77,33 @@ class OptimizationHistoryControllerTest {
 
     @Test
     void shouldClampPageSizeToMaximum() throws Exception {
-        when(historyService.list(0, 50)).thenReturn(new OptimizationHistoryPage(List.of(), 0, 50, 0, 0));
+        when(historyService.list(0, 50, null, null, null)).thenReturn(new OptimizationHistoryPage(List.of(), 0, 50, 0, 0));
 
         mockMvc.perform(get("/api/v1/optimization-history").param("size", "999"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.size").value(50));
+    }
+
+    @Test
+    void shouldPassHistoryFiltersToService() throws Exception {
+        OffsetDateTime expectedFrom = OffsetDateTime.parse("2026-09-01T00:00:00Z");
+        OffsetDateTime expectedTo = OffsetDateTime.parse("2026-09-25T00:00:00Z");
+        when(historyService.list(0, 20, "AI 职业", expectedFrom, expectedTo))
+                .thenReturn(new OptimizationHistoryPage(List.of(), 0, 20, 0, 0));
+
+        mockMvc.perform(get("/api/v1/optimization-history")
+                        .param("keyword", "  AI 职业 ")
+                        .param("dateRange", "2026-09-01,2026-09-24"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.totalItems").value(0));
+    }
+
+    @Test
+    void shouldRejectInvalidHistoryDateRange() throws Exception {
+        mockMvc.perform(get("/api/v1/optimization-history")
+                        .param("dateRange", "2026-09-24,2026-09-01"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.code").value("INVALID_ARGUMENT"));
     }
 
     @Test

@@ -32,9 +32,12 @@ import java.util.Set;
 @ConfigurationProperties(prefix = "app.provider.openai-compatible")
 public class OpenAiCompatibleProperties {
 
+    private static final String DEEPSEEK_FLASH_MODEL = "deepseek-flash";
+    private static final String LEGACY_TOKENHUB_FLASH_MODEL = "deepseek/deepseek-flash";
+    private static final String LEGACY_TOKENHUB_FLASH_ID = "tokenhub:" + LEGACY_TOKENHUB_FLASH_MODEL;
+
     /** 用户指定的 TokenHub 模型展示顺序；环境变量中的旧白名单不会打乱顺序或移除这些选择项。 */
     private static final List<String> TOKENHUB_BASELINE_MODELS = List.of(
-            "deepseek/deepseek-flash",
             "deepseek-v4-pro-0813",
             "kimi-k3",
             "kimi-k2.8-preview",
@@ -55,7 +58,7 @@ public class OpenAiCompatibleProperties {
     private String apiKey;
 
     @NotBlank
-    private String model = "deepseek-chat";
+    private String model = "deepseek-flash";
 
     /**
      * 允许用户选择的模型白名单。留空时只暴露默认模型；模型 ID 仍由服务端控制，
@@ -231,18 +234,26 @@ public class OpenAiCompatibleProperties {
         return List.copyOf(routes);
     }
 
-    /** 固定 TokenHub 产品模型顺序，同时保留部署环境配置的其他模型。 */
+    /** 固定产品模型顺序，并兼容旧环境变量；V4.1-Flash 只允许通过 DeepSeek 直连路由调用。 */
     private List<String> orderedModelsForProvider(
             String routeKey,
             String resolvedProviderName,
             List<String> configuredModels
     ) {
+        if (routeKey.equalsIgnoreCase("deepseek")) {
+            Set<String> orderedModels = new LinkedHashSet<>();
+            orderedModels.add(DEEPSEEK_FLASH_MODEL);
+            orderedModels.addAll(configuredModels);
+            return List.copyOf(orderedModels);
+        }
         if (!routeKey.equalsIgnoreCase("tokenhub")
                 && !resolvedProviderName.equalsIgnoreCase("tokenhub")) {
             return configuredModels;
         }
         Set<String> orderedModels = new LinkedHashSet<>(TOKENHUB_BASELINE_MODELS);
-        orderedModels.addAll(configuredModels);
+        configuredModels.stream()
+                .filter(modelName -> !LEGACY_TOKENHUB_FLASH_MODEL.equals(modelName))
+                .forEach(orderedModels::add);
         return List.copyOf(orderedModels);
     }
 
@@ -282,7 +293,11 @@ public class OpenAiCompatibleProperties {
     public ModelSelection resolveModel(String requestedModel) {
         List<OpenAiCompatibleRoute> routes = getConfiguredRoutes();
         OpenAiCompatibleRoute defaultRoute = getDefaultRoute();
-        String requested = requestedModel == null ? "" : requestedModel.trim();
+        String provided = requestedModel == null ? "" : requestedModel.trim();
+        // 旧历史记录仍可重新优化，但服务端将其规范化为已迁回 DeepSeek 的公开模型 ID。
+        String requested = multiProviderEnabled && LEGACY_TOKENHUB_FLASH_ID.equals(provided)
+                ? "deepseek:" + DEEPSEEK_FLASH_MODEL
+                : provided;
         if (requested.isBlank()) {
             String defaultModel = selectableDefaultModel(defaultRoute);
             return new ModelSelection(
@@ -354,7 +369,7 @@ public class OpenAiCompatibleProperties {
 
     /** 在默认路由的默认模型已隐藏时，选择该路由的第一个可见模型。 */
     private String selectableDefaultModel(OpenAiCompatibleRoute route) {
-        if (!isModelCatalogHidden(route, route.model())) {
+        if (route.supportsModel(route.model()) && !isModelCatalogHidden(route, route.model())) {
             return route.model();
         }
         return route.models().stream()

@@ -79,7 +79,7 @@ describe('buildOptimizationRequest', () => {
     });
   });
 
-  it('should include the selected model without exposing provider credentials', () => {
+  it('should leave provider and model routing to the platform', () => {
     const request = buildOptimizationRequest({
       rawPrompt: '分析需求',
       customDescription: '',
@@ -87,11 +87,10 @@ describe('buildOptimizationRequest', () => {
       templateCode: 'AUTO',
       includePermissionBoundaries: true,
       includeExamples: false,
-      model: 'kimi-k3',
     });
 
-    expect(request.model).toBe('kimi-k3');
-    expect(JSON.stringify(request)).not.toContain('apiKey');
+    expect(request).not.toHaveProperty('model');
+    expect(JSON.stringify(request)).not.toMatch(/apiKey|endpointUrl|providerConfig/i);
   });
 
   it('should send confirmed plan answers with the final request', () => {
@@ -135,13 +134,11 @@ describe('buildOptimizationRequest', () => {
       '分析死亡率',
       '公共卫生研究',
       planningContext,
-      'glm-5.3-flashx',
     )).toEqual({
       rawPrompt: '分析死亡率',
       contextDescription: '公共卫生研究',
       conversationHistory: [],
       planningContext,
-      model: 'glm-5.3-flashx',
     });
   });
 

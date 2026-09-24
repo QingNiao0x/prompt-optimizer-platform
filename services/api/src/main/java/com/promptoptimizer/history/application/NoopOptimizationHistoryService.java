@@ -8,6 +8,7 @@ import com.promptoptimizer.history.domain.ReoptimizationResult;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,13 @@ public class NoopOptimizationHistoryService implements OptimizationHistoryServic
      * 历史功能关闭时列表直接返回空页。
      */
     @Override
-    public OptimizationHistoryPage list(int page, int size) {
+    public OptimizationHistoryPage list(
+            int page,
+            int size,
+            String keyword,
+            OffsetDateTime createdFrom,
+            OffsetDateTime createdToExclusive
+    ) {
         return new OptimizationHistoryPage(List.of(), page, size, 0, 0);
     }
 

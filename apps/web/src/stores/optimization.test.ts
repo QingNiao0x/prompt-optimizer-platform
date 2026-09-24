@@ -4,7 +4,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('@/services/promptOptimizerApi', () => ({
   analyzeContext: vi.fn(),
   createOptimizationPlan: vi.fn(),
-  listAvailableModels: vi.fn(),
   optimizePrompt: vi.fn(),
   preparePlanningContext: vi.fn(),
 }));
@@ -13,7 +12,6 @@ import type { ProjectIndexSummary } from '@/features/project-index/projectIndexe
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
 import {
   createOptimizationPlan,
-  listAvailableModels,
   optimizePrompt,
   preparePlanningContext,
 } from '@/services/promptOptimizerApi';
@@ -187,43 +185,6 @@ describe('optimization store project context', () => {
       documentId: 'document-123',
       sizeBytes: 40_000_000,
     }]);
-  });
-
-  it('should migrate a retired model selection to the server default model', async () => {
-    vi.mocked(listAvailableModels).mockResolvedValue({
-      requestId: 'models-request',
-      data: [
-        {
-          id: 'tokenhub:deepseek/deepseek-flash',
-          displayName: 'DeepSeek-V4.1-Flash',
-          provider: 'tokenhub',
-          defaultModel: false,
-        },
-        {
-          id: 'tokenhub:deepseek-v4-pro-0813',
-          displayName: 'DeepSeek-V4-Pro',
-          provider: 'tokenhub',
-          defaultModel: true,
-        },
-        {
-          id: 'tokenhub:glm-5.3-flashx',
-          displayName: 'GLM-5.3-FlashX',
-          provider: 'tokenhub',
-          defaultModel: false,
-        },
-      ],
-    });
-    const store = useOptimizationStore();
-    store.selectedModel = 'deepseek:deepseek-chat';
-
-    await store.loadAvailableModels();
-
-    expect(store.availableModels.map((model) => model.id)).toEqual([
-      'tokenhub:deepseek/deepseek-flash',
-      'tokenhub:deepseek-v4-pro-0813',
-      'tokenhub:glm-5.3-flashx',
-    ]);
-    expect(store.selectedModel).toBe('tokenhub:deepseek-v4-pro-0813');
   });
 
   it('should prepare context first and pass its reference into the plan request', async () => {

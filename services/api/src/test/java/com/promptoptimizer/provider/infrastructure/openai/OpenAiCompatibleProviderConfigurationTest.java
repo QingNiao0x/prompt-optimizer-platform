@@ -75,7 +75,7 @@ class OpenAiCompatibleProviderConfigurationTest {
                     assertThat(properties.getAvailableModelDescriptors())
                             .extracting(OpenAiCompatibleProperties.ModelDescriptor::id)
                             .containsExactly(
-                                    "tokenhub:deepseek/deepseek-flash",
+                                    "deepseek:deepseek-flash",
                                     "tokenhub:deepseek-v4-pro-0813",
                                     "tokenhub:kimi-k3",
                                     "tokenhub:kimi-k2.8-preview",
@@ -92,8 +92,13 @@ class OpenAiCompatibleProviderConfigurationTest {
                     assertThat(properties.getAvailableModelDescriptors())
                             .extracting(OpenAiCompatibleProperties.ModelDescriptor::defaultModel)
                             .containsExactly(false, true, false, false, false, false, false, false, false, false);
-                    assertThat(properties.resolveModel("tokenhub:deepseek/deepseek-flash").model())
-                            .isEqualTo("deepseek/deepseek-flash");
+                    OpenAiCompatibleProperties.ModelSelection flash =
+                            properties.resolveModel("tokenhub:deepseek/deepseek-flash");
+                    assertThat(flash.publicModelId()).isEqualTo("deepseek:deepseek-flash");
+                    assertThat(flash.model()).isEqualTo("deepseek-flash");
+                    assertThat(flash.route().endpoint())
+                            .hasToString("https://deepseek.example.com/chat/completions");
+                    assertThat(flash.route().apiKey()).isEqualTo("deepseek-secret");
                 });
     }
 }

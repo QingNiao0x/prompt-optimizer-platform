@@ -35,7 +35,7 @@ class AvailableModelControllerTest {
         assertThat(response.data())
                 .extracting(AvailableModel::id)
                 .containsExactly(
-                        "tokenhub:deepseek/deepseek-flash",
+                        "deepseek:deepseek-flash",
                         "tokenhub:deepseek-v4-pro-0813",
                         "tokenhub:kimi-k3",
                         "tokenhub:kimi-k2.8-preview",
@@ -69,7 +69,7 @@ class AvailableModelControllerTest {
         assertThat(response.data().toString()).doesNotContain("deepseek-secret", "tokenhub-secret");
     }
 
-    /** 构造保留旧 DeepSeek 路由、但仅公开 TokenHub 目标模型的配置。 */
+    /** 构造保留旧环境变量、但将 V4.1-Flash 公开为 DeepSeek 直连模型的配置。 */
     private OpenAiCompatibleProperties properties() {
         OpenAiCompatibleRouteProperties deepseek = route(
                 "deepseek",

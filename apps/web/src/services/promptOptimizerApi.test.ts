@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('./http', () => ({
   httpClient: {
+    get: vi.fn(),
     post: vi.fn(),
   },
 }));
@@ -9,9 +10,35 @@ vi.mock('./http', () => ({
 import { httpClient } from './http';
 import {
   createOptimizationPlan,
+  listHistory,
   optimizePrompt,
   preparePlanningContext,
 } from './promptOptimizerApi';
+
+describe('listHistory', () => {
+  it('should send keyword and date range filters with the paged request', async () => {
+    vi.mocked(httpClient.get).mockResolvedValue({
+      data: { requestId: 'history-request', data: { items: [], totalItems: 0 } },
+    } as never);
+
+    await listHistory(1, 10, {
+      keyword: '  AI 职业  ',
+      dateRange: ['2026-09-01', '2026-09-24'],
+    });
+
+    expect(httpClient.get).toHaveBeenCalledWith(
+      '/api/v1/optimization-history',
+      expect.objectContaining({
+        params: {
+          page: 1,
+          size: 10,
+          keyword: 'AI 职业',
+          dateRange: '2026-09-01,2026-09-24',
+        },
+      }),
+    );
+  });
+});
 
 describe('optimizePrompt', () => {
   it('should call the backend optimization endpoint without an accidental suffix', async () => {

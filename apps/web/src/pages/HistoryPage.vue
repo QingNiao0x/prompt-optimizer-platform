@@ -2,8 +2,10 @@
 import { Delete, RefreshRight, Upload, View } from '@element-plus/icons-vue';
 import {
   ElButton,
+  ElDatePicker,
   ElDialog,
   ElEmpty,
+  ElInput,
   ElMessage,
   ElMessageBox,
   ElPagination,
@@ -11,7 +13,7 @@ import {
   ElTableColumn,
   ElTag,
 } from 'element-plus';
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getApiErrorMessage } from '@/services/http';
@@ -23,6 +25,7 @@ import {
 import { useOptimizationStore } from '@/stores/optimization';
 import type {
   OptimizationHistoryDetail,
+  OptimizationHistoryFilters,
   OptimizationHistorySummary,
   TemplateCode,
 } from '@/types/api';
@@ -35,6 +38,11 @@ const items = ref<OptimizationHistorySummary[]>([]);
 const page = ref(0);
 const pageSize = ref(10);
 const total = ref(0);
+const keyword = ref('');
+const dateRange = ref<[string, string] | null>(null);
+
+let filterTimer: ReturnType<typeof setTimeout> | undefined;
+let loadSequence = 0;
 
 const detailVisible = ref(false);
 const detailLoading = ref(false);
@@ -52,16 +60,42 @@ const TEMPLATE_LABELS: Record<TemplateCode, string> = {
 
 // 拉取当前页的历史摘要。历史记录按创建时间倒序，最新的排在最前。
 const loadPage = async (): Promise<void> => {
+  const sequence = ++loadSequence;
   loading.value = true;
   try {
-    const response = await listHistory(page.value, pageSize.value);
+    const filters: OptimizationHistoryFilters = {
+      keyword: keyword.value.trim() || undefined,
+      dateRange: dateRange.value,
+    };
+    const response = await listHistory(page.value, pageSize.value, filters);
+    // 筛选条件连续变化时，较早的请求可能晚于新请求返回，不能覆盖最新列表。
+    if (sequence !== loadSequence) {
+      return;
+    }
     items.value = response.data.items;
     total.value = response.data.totalItems;
   } catch (error: unknown) {
     ElMessage.error(getApiErrorMessage(error));
   } finally {
-    loading.value = false;
+    if (sequence === loadSequence) {
+      loading.value = false;
+    }
   }
+};
+
+const scheduleFilterLoad = (): void => {
+  if (filterTimer) {
+    clearTimeout(filterTimer);
+  }
+  filterTimer = setTimeout(() => {
+    page.value = 0;
+    void loadPage();
+  }, 300);
+};
+
+const clearFilters = (): void => {
+  keyword.value = '';
+  dateRange.value = null;
 };
 
 const openDetail = async (id: string): Promise<void> => {
@@ -138,6 +172,12 @@ const formatDate = (value: string): string => {
 const templateLabel = (code: TemplateCode): string => TEMPLATE_LABELS[code] ?? code;
 
 onMounted(loadPage);
+watch([keyword, dateRange], scheduleFilterLoad);
+onBeforeUnmount(() => {
+  if (filterTimer) {
+    clearTimeout(filterTimer);
+  }
+});
 </script>
 
 <template>
@@ -151,6 +191,34 @@ onMounted(loadPage);
     </header>
 
     <div v-loading="loading" class="history-card">
+      <div class="history-filter-bar" aria-label="历史记录筛选">
+        <ElInput
+          v-model="keyword"
+          class="history-filter-bar__keyword"
+          clearable
+          placeholder="搜索原始提示词"
+          aria-label="原始提示词搜索"
+        />
+        <ElDatePicker
+          v-model="dateRange"
+          class="history-filter-bar__date"
+          type="daterange"
+          value-format="YYYY-MM-DD"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          aria-label="创建时间范围"
+        />
+        <ElButton
+          v-if="keyword || dateRange"
+          class="history-filter-bar__clear"
+          text
+          @click="clearFilters"
+        >
+          清除筛选
+        </ElButton>
+      </div>
+
       <p v-if="!loading && items.length === 0" class="history-card-list history-card-list--empty">
         还没有优化历史
       </p>
@@ -297,6 +365,26 @@ h1 {
   box-shadow: var(--shadow-panel);
 }
 
+.history-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line-subtle);
+}
+
+.history-filter-bar__keyword {
+  width: min(360px, 100%);
+}
+
+.history-filter-bar__date {
+  width: min(320px, 100%);
+}
+
+.history-filter-bar__clear {
+  flex: 0 0 auto;
+}
+
 .history-table {
   width: 100%;
 }
@@ -387,6 +475,20 @@ h1 {
 }
 
 @media (max-width: 720px) {
+  .history-filter-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .history-filter-bar__keyword,
+  .history-filter-bar__date {
+    width: 100%;
+  }
+
+  .history-filter-bar__clear {
+    align-self: flex-start;
+  }
+
   .history-table {
     display: none;
   }

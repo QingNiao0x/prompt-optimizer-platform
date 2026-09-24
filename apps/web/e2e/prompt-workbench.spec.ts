@@ -12,8 +12,6 @@ import { mockAuthentication } from './authFixture';
 
 test.beforeEach(async ({ page }) => {
   await mockAuthentication(page);
-  // 工作台挂载会加载模型列表；用固定响应避免未启动的后端返回 401 并触发登录跳转。
-  await page.route('**/api/v1/models', (route) => route.fulfill({ json: { data: [] } }));
   await page.route('**/api/v1/optimizations/plan-events', (route) => route.fulfill({ status: 204 }));
 });
 
@@ -436,9 +434,6 @@ test('科研需求会逐项询问业务细节并在全部回答后生成结果',
 
 test('Plan 过期后重新提问并保留仍相同的问题答案', async ({ page }) => {
   await configurePlanMode(page, { enabled: true, introSeen: true });
-  await page.route('**/api/v1/models', async (route) => {
-    await route.fulfill({ status: 200, json: { requestId: 'models', data: [] } });
-  });
   await page.route('**/api/v1/optimizations/plan-events', async (route) => {
     await route.fulfill({ status: 204 });
   });
@@ -693,9 +688,6 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
 
 test('项目代码与单独上传的方案文件一起进入 Plan 上下文准备', async ({ page }) => {
   await configurePlanMode(page, { enabled: true, introSeen: true });
-  await page.route('**/api/v1/models', async (route) => {
-    await route.fulfill({ status: 200, json: { requestId: 'models', data: [] } });
-  });
   await page.route('**/api/v1/optimizations/plan-events', async (route) => {
     await route.fulfill({ status: 204 });
   });
@@ -1151,20 +1143,6 @@ test('未开启 Plan 时待确认事项折叠，增强结果保持在视口内',
   const ambiguities = Array.from({ length: 8 }, (_, index) =>
     `待确认事项 ${index + 1}：需要核对登录、权限、错误处理和验收口径，这段说明故意写长以便占满结果列。`,
   );
-  await page.route('**/api/v1/models', async (route) => {
-    await route.fulfill({
-      status: 200,
-      json: {
-        requestId: 'models',
-        data: [{
-          id: 'deepseek-chat',
-          displayName: 'DeepSeek',
-          provider: 'deepseek',
-          defaultModel: true,
-        }],
-      },
-    });
-  });
   await page.route('**/api/v1/optimizations', async (route) => {
     await route.fulfill({
       status: 200,

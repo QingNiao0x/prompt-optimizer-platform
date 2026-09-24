@@ -506,9 +506,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         );
     }
 
-    /**
-     * 为 TokenHub 已知模型应用其结构化输出所需的协议差异；其他 OpenAI 兼容端点保持原请求参数。
-     */
+    /** 为已知模型应用结构化输出所需的协议差异，其余兼容端点保持原请求参数。 */
     private RequestOptions requestOptions(
             OpenAiCompatibleRoute route,
             String model,
@@ -516,6 +514,12 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             ResponseFormat responseFormat
     ) {
         int maxTokens = properties.getMaxTokens();
+        if (responseFormat != null && "deepseek-flash".equalsIgnoreCase(model)
+                && ("deepseek".equalsIgnoreCase(route.key())
+                || "deepseek".equalsIgnoreCase(route.providerName()))) {
+            // DeepSeek 直连默认开启思考；结构化生成维持旧 deepseek-chat 的非思考行为。
+            return new RequestOptions(temperature, maxTokens, null, new ThinkingOptions("disabled"));
+        }
         if (!isTokenHubRoute(route)) {
             return new RequestOptions(temperature, maxTokens, null, null);
         }
@@ -527,9 +531,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
 
         if (responseFormat != null
                 && (model.toLowerCase(java.util.Locale.ROOT).startsWith("deepseek-v4-")
-                || "deepseek/deepseek-flash".equalsIgnoreCase(model)
                 || "minimax-m3".equalsIgnoreCase(model))) {
-            // TokenHub 不建议思考模式与 JSON 模式同时启用；V4.1 原厂直供 ID 使用 deepseek/ 命名空间。
+            // TokenHub 不建议这些模型同时启用思考模式与 JSON 模式。
             return new RequestOptions(temperature, maxTokens, null, new ThinkingOptions("disabled"));
         }
         return new RequestOptions(temperature, maxTokens, null, null);

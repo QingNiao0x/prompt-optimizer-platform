@@ -58,9 +58,6 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
     });
   }, projectFiles);
 
-  await page.route('**/api/v1/models', async (route) => {
-    await route.fulfill({ status: 200, json: { requestId: 'mixed-models', data: [] } });
-  });
   await page.route('**/api/v1/optimizations/plan-events', async (route) => {
     await route.fulfill({ status: 204 });
   });

@@ -50,6 +50,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
     private static final String ENDPOINT = "https://model.example.com/v1/chat/completions";
     private static final String API_KEY = "test-api-key";
     private static final String MODEL = "test-model";
+    private static final String DEEPSEEK_ENDPOINT = "https://deepseek.example.com/v1/chat/completions";
     private static final String TOKENHUB_ENDPOINT = "https://tokenhub.example.com/v1/chat/completions";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -288,28 +289,40 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
     }
 
     @Test
-    void shouldDisableThinkingForStructuredDeepSeekV41FlashRequests() throws Exception {
+    void shouldSendStructuredDeepSeekV41FlashRequestsToTheDirectEndpoint() throws Exception {
+        OpenAiCompatibleRouteProperties deepseek = route(
+                "deepseek",
+                DEEPSEEK_ENDPOINT,
+                "deepseek-secret",
+                "deepseek-chat",
+                List.of("deepseek-chat")
+        );
         OpenAiCompatibleRouteProperties tokenhub = route(
                 "tokenhub",
                 TOKENHUB_ENDPOINT,
                 "tokenhub-secret",
-                "deepseek/deepseek-flash",
-                List.of("deepseek/deepseek-flash")
+                "deepseek-v4-pro-0813",
+                List.of("deepseek/deepseek-flash", "deepseek-v4-pro-0813")
         );
         properties.setMultiProviderEnabled(true);
         properties.setDefaultProvider("tokenhub");
-        properties.setProviders(Map.of("tokenhub", tokenhub));
+        properties.setProviders(Map.of("deepseek", deepseek, "tokenhub", tokenhub));
         provider = new OpenAiCompatiblePromptEnhancementProvider(builder.build(), objectMapper, properties);
 
-        server.expect(once(), requestTo(TOKENHUB_ENDPOINT))
-                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer tokenhub-secret"))
-                .andExpect(jsonPath("$.model").value("deepseek/deepseek-flash"))
+        server.expect(times(2), requestTo(DEEPSEEK_ENDPOINT))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer deepseek-secret"))
+                .andExpect(jsonPath("$.model").value("deepseek-flash"))
                 .andExpect(jsonPath("$.response_format.type").value("json_object"))
                 .andExpect(jsonPath("$.thinking.type").value("disabled"))
                 .andRespond(withSuccess(completionWithFindings("[]"), MediaType.APPLICATION_JSON));
 
-        provider.enhance(createRequest("tokenhub:deepseek/deepseek-flash"));
+        EnhancementProviderResponse current = provider.enhance(createRequest("deepseek:deepseek-flash"));
+        EnhancementProviderResponse migrated = provider.enhance(createRequest("tokenhub:deepseek/deepseek-flash"));
 
+        assertThat(current.provider()).isEqualTo("deepseek");
+        assertThat(current.model()).isEqualTo("deepseek:deepseek-flash");
+        assertThat(migrated.provider()).isEqualTo("deepseek");
+        assertThat(migrated.model()).isEqualTo("deepseek:deepseek-flash");
         server.verify();
     }
 

@@ -130,7 +130,7 @@ app:
       # 当前适配器会直接 POST 到该地址，不会自动拼接 /chat/completions。
       endpoint: ${MODEL_ENDPOINT:https://api.deepseek.com/chat/completions}
       api-key: ${MODEL_API_KEY:}
-      model: ${MODEL_NAME:deepseek-chat}
+      model: ${MODEL_NAME:deepseek-flash}
       # 逗号分隔的服务端模型白名单；例如 TokenHub 可填写四个模型 ID。
       models: ${MODEL_MODELS:}
       # 是否启用按模型路由到不同 endpoint/API Key 的模式
@@ -139,22 +139,23 @@ app:
       # 保留已配置的 DeepSeek 路由，但默认将旧 deepseek-chat 从用户模型目录中下架。
       # 同时支持写入原始模型 ID，以兼容单供应商模式。
       model-catalog-hidden-ids: ${MODEL_CATALOG_HIDDEN_IDS:deepseek:deepseek-chat,deepseek-chat}
-      # 将 TokenHub 放在前面，使未显式配置 MODEL_DEFAULT_PROVIDER 时优先使用其默认模型。
+      # DeepSeek 直连模型排在目录首位；默认选中项仍由 MODEL_DEFAULT_PROVIDER 控制。
       providers:
+        deepseek:
+          provider-name: ${MODEL_DEEPSEEK_PROVIDER_NAME:deepseek}
+          # 多供应商模式不继承通用 MODEL_ENDPOINT，避免旧环境变量把直连请求送往 TokenHub。
+          endpoint: ${MODEL_DEEPSEEK_ENDPOINT:https://api.deepseek.com/chat/completions}
+          # 仅保留原 DeepSeek 密钥的兼容回退；若 MODEL_API_KEY 已改为其他供应商，请单独设置此变量。
+          api-key: ${MODEL_DEEPSEEK_API_KEY:${MODEL_API_KEY:}}
+          model: ${MODEL_DEEPSEEK_NAME:deepseek-flash}
+          models: ${MODEL_DEEPSEEK_MODELS:deepseek-flash}
         tokenhub:
           provider-name: ${MODEL_TOKENHUB_PROVIDER_NAME:tokenhub}
           endpoint: ${MODEL_TOKENHUB_ENDPOINT:https://tokenhub.tencentmaas.com/v1/chat/completions}
           api-key: ${MODEL_TOKENHUB_API_KEY:${MODEL_API_KEY2:}}
           model: ${MODEL_TOKENHUB_NAME:deepseek-v4-pro-0813}
-          # TokenHub 的调用 ID 与下方客户展示名分离；应用要求展示的基础模型会与此列表合并。
-          models: ${MODEL_TOKENHUB_MODELS:deepseek/deepseek-flash,deepseek-v4-pro-0813,kimi-k3,kimi-k2.8-preview,kimi-k2.7-code,glm-5.3,glm-5.3-flashx,hy4-preview,hy3,minimax-m3}
-        deepseek:
-          provider-name: ${MODEL_DEEPSEEK_PROVIDER_NAME:deepseek}
-          endpoint: ${MODEL_DEEPSEEK_ENDPOINT:${MODEL_ENDPOINT:https://api.deepseek.com/chat/completions}}
-          # 兼容原有单供应商配置；多供应商模式下建议显式设置 MODEL_DEEPSEEK_API_KEY。
-          api-key: ${MODEL_DEEPSEEK_API_KEY:${MODEL_API_KEY:}}
-          model: ${MODEL_DEEPSEEK_NAME:${MODEL_NAME:deepseek-chat}}
-          models: ${MODEL_DEEPSEEK_MODELS:${MODEL_MODELS:}}
+          # TokenHub 的调用 ID 与下方客户展示名分离；旧 V4.1-Flash ID 不再由此路由调用。
+          models: ${MODEL_TOKENHUB_MODELS:deepseek-v4-pro-0813,kimi-k3,kimi-k2.8-preview,kimi-k2.7-code,glm-5.3,glm-5.3-flashx,hy4-preview,hy3,minimax-m3}
       temperature: ${MODEL_TEMPERATURE:0.2}
       # 输出最大TOKEN
       max-tokens: ${MODEL_MAX_TOKENS:10000}

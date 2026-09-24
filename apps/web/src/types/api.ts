@@ -200,7 +200,6 @@ export interface OptimizationRequest {
     requireConfirmationFor: string[];
   };
   planConfirmation?: PlanConfirmation | null;
-  model?: string | null;
 }
 
 export type PlanQuestionType = 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'FREE_TEXT';
@@ -228,7 +227,6 @@ export interface OptimizationPlanRequest {
   contextDescription: string;
   conversationHistory: ConversationMessage[];
   planningContext?: PlanningContextReference | null;
-  model?: string | null;
 }
 
 export interface OptimizationPlan {
@@ -275,13 +273,6 @@ export interface ProviderMetadata {
   mock: boolean;
 }
 
-export interface AvailableModel {
-  id: string;
-  displayName: string;
-  provider: string;
-  defaultModel: boolean;
-}
-
 export interface OptimizationResult {
   optimizedPrompt: string;
   sections: PromptSection[];
@@ -313,6 +304,11 @@ export interface OptimizationHistoryPage {
   totalPages: number;
 }
 
+export interface OptimizationHistoryFilters {
+  keyword?: string;
+  dateRange?: readonly [string, string] | null;
+}
+
 export interface OptimizationHistoryDetail {
   id: string;
   rawPrompt: string;
@@ -338,36 +334,3 @@ export interface ReoptimizationResult {
   result: OptimizationResult;
 }
 
-export type ProviderType = 'OPENAI' | 'ANTHROPIC' | 'DEEPSEEK' | 'CUSTOM';
-
-export interface ProviderConfigSummary {
-  id: string;
-  providerType: ProviderType;
-  displayName: string;
-  endpointUrl: string;
-  modelName: string;
-  apiKeyLast4: string;
-  parameters: Record<string, unknown>;
-  enabled: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ProviderConfigSavePayload {
-  providerType: ProviderType;
-  displayName: string;
-  endpointUrl: string;
-  modelName: string;
-  apiKey: string;
-  parameters: Record<string, unknown>;
-  enabled: boolean;
-}
-
-export interface ProviderConfigUpdatePayload {
-  displayName?: string;
-  endpointUrl?: string;
-  modelName?: string;
-  apiKey?: string;
-  parameters?: Record<string, unknown>;
-  enabled?: boolean;
-}

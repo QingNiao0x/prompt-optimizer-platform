@@ -2,6 +2,7 @@ package com.promptoptimizer.history.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.promptoptimizer.common.exception.ResourceNotFoundException;
 import com.promptoptimizer.context.api.ContextAnalysisRequest;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.context.domain.FileSnippet;
@@ -39,9 +40,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -126,7 +129,9 @@ class JpaOptimizationHistoryServiceTest {
     @Test
     void shouldRebuildDetailFromMetadata() {
         OptimizationRecordEntity entity = recordEntity();
-        when(recordRepository.findByIdAndTenantIdAndWorkspaceId(entity.getId(), TENANT_ID, WORKSPACE_ID))
+        when(recordRepository.findByIdAndTenantIdAndWorkspaceIdAndDeletedAtIsNull(
+                entity.getId(), TENANT_ID, WORKSPACE_ID
+        ))
                 .thenReturn(Optional.of(entity));
 
         OptimizationHistoryDetail detail = service.get(entity.getId());
@@ -140,6 +145,19 @@ class JpaOptimizationHistoryServiceTest {
     }
 
     @Test
+    void shouldHideDeletedOrOutOfScopeRecordFromDetail() {
+        UUID unavailableId = UUID.randomUUID();
+
+        assertThatThrownBy(() -> service.get(unavailableId))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("优化记录不存在或无权访问");
+
+        verify(recordRepository).findByIdAndTenantIdAndWorkspaceIdAndDeletedAtIsNull(
+                unavailableId, TENANT_ID, WORKSPACE_ID
+        );
+    }
+
+    @Test
     void shouldReturnPagedSummaries() {
         OptimizationRecordEntity entity = recordEntity();
         Page<OptimizationRecordEntity> page = new PageImpl<>(
@@ -147,8 +165,8 @@ class JpaOptimizationHistoryServiceTest {
                 PageRequest.of(0, 20),
                 1
         );
-        when(recordRepository.findByTenantIdAndWorkspaceIdOrderByCreatedAtDesc(
-                eq(TENANT_ID), eq(WORKSPACE_ID), any()
+        when(recordRepository.findFilteredByTenantIdAndWorkspaceId(
+                eq(TENANT_ID), eq(WORKSPACE_ID), eq(null), eq(null), eq(null), any()
         )).thenReturn(page);
 
         OptimizationHistoryPage result = service.list(0, 20);
@@ -162,7 +180,9 @@ class JpaOptimizationHistoryServiceTest {
     void shouldReoptimizeAndSaveNewRecord() {
         OptimizationRecordEntity source = recordEntity();
         OptimizationResult newResult = resultWithoutFiles();
-        when(recordRepository.findByIdAndTenantIdAndWorkspaceId(source.getId(), TENANT_ID, WORKSPACE_ID))
+        when(recordRepository.findByIdAndTenantIdAndWorkspaceIdAndDeletedAtIsNull(
+                source.getId(), TENANT_ID, WORKSPACE_ID
+        ))
                 .thenReturn(Optional.of(source));
         when(orchestrator.optimize(any())).thenReturn(newResult);
         when(sessionRepository.findFirstByTenantIdAndWorkspaceIdAndStatusOrderByCreatedAtAsc(
@@ -179,7 +199,9 @@ class JpaOptimizationHistoryServiceTest {
     @Test
     void shouldReplayConfirmedPlanAnswersWhenReoptimizingARecord() {
         OptimizationRecordEntity source = recordEntityWithPlan();
-        when(recordRepository.findByIdAndTenantIdAndWorkspaceId(source.getId(), TENANT_ID, WORKSPACE_ID))
+        when(recordRepository.findByIdAndTenantIdAndWorkspaceIdAndDeletedAtIsNull(
+                source.getId(), TENANT_ID, WORKSPACE_ID
+        ))
                 .thenReturn(Optional.of(source));
         when(orchestrator.optimize(any())).thenReturn(resultWithoutFiles());
         when(sessionRepository.findFirstByTenantIdAndWorkspaceIdAndStatusOrderByCreatedAtAsc(
@@ -198,12 +220,29 @@ class JpaOptimizationHistoryServiceTest {
     @Test
     void shouldDeleteRecordInCurrentWorkspace() {
         OptimizationRecordEntity entity = recordEntity();
-        when(recordRepository.findByIdAndTenantIdAndWorkspaceId(entity.getId(), TENANT_ID, WORKSPACE_ID))
-                .thenReturn(Optional.of(entity));
+        when(recordRepository.markDeletedByIdAndTenantIdAndWorkspaceId(
+                eq(entity.getId()), eq(TENANT_ID), eq(WORKSPACE_ID), any(OffsetDateTime.class)
+        )).thenReturn(1);
 
         service.delete(entity.getId());
 
-        verify(recordRepository).delete(entity);
+        verify(recordRepository).markDeletedByIdAndTenantIdAndWorkspaceId(
+                eq(entity.getId()), eq(TENANT_ID), eq(WORKSPACE_ID), any(OffsetDateTime.class)
+        );
+        verify(recordRepository, never()).delete(any(OptimizationRecordEntity.class));
+    }
+
+    @Test
+    void shouldTreatMissingOrOutOfScopeRecordAsNotFoundWhenDeleting() {
+        UUID unavailableId = UUID.randomUUID();
+
+        assertThatThrownBy(() -> service.delete(unavailableId))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("优化记录不存在或无权访问");
+
+        verify(recordRepository).markDeletedByIdAndTenantIdAndWorkspaceId(
+                eq(unavailableId), eq(TENANT_ID), eq(WORKSPACE_ID), any(OffsetDateTime.class)
+        );
     }
 
     private OptimizationRequest request() {

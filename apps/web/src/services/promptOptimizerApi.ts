@@ -2,10 +2,10 @@ import { httpClient } from './http';
 
 import type {
   ApiResponse,
-  AvailableModel,
   ContextAnalysisRequest,
   ContextSnapshot,
   OptimizationHistoryDetail,
+  OptimizationHistoryFilters,
   OptimizationHistoryPage,
   OptimizationPlan,
   OptimizationPlanRequest,
@@ -15,11 +15,6 @@ import type {
   PlanningContextRequest,
   ReoptimizationResult,
 } from '@/types/api';
-
-export const listAvailableModels = async (): Promise<ApiResponse<AvailableModel[]>> => {
-  const response = await httpClient.get<ApiResponse<AvailableModel[]>>('/api/v1/models');
-  return response.data;
-};
 
 export const preparePlanningContext = async (
   request: PlanningContextRequest,
@@ -64,10 +59,20 @@ export const optimizePrompt = async (
 export const listHistory = async (
   page = 0,
   size = 20,
+  filters?: OptimizationHistoryFilters,
 ): Promise<ApiResponse<OptimizationHistoryPage>> => {
+  const keyword = filters?.keyword?.trim();
+  const dateRange = filters?.dateRange?.filter(Boolean).join(',');
   const response = await httpClient.get<ApiResponse<OptimizationHistoryPage>>(
     '/api/v1/optimization-history',
-    { params: { page, size } },
+    {
+      params: {
+        page,
+        size,
+        ...(keyword ? { keyword } : {}),
+        ...(dateRange ? { dateRange } : {}),
+      },
+    },
   );
   return response.data;
 };

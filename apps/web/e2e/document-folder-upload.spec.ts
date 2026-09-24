@@ -21,7 +21,6 @@ test('文档文件夹保留嵌套路径并完整上传中等大小 TXT 与办公
   const uploaded = new Map<string, Buffer[]>();
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.route('**/api/v1/models', (route) => route.fulfill({ json: { data: [] } }));
   await page.route('**/api/v1/context/documents**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
@@ -125,7 +124,6 @@ test('一次选择混合文件夹会索引源码，并在确认后才上传办�
     chunkCount: 0, summary: '', warnings: [], errorMessage: '',
     expiresAt: '2099-01-01T00:00:00Z', chunkSizeBytes: 65_536,
   };
-  await page.route('**/api/v1/models', (route) => route.fulfill({ json: { data: [] } }));
   await page.route('**/api/v1/context/documents**', async (route) => {
     const path = new URL(route.request().url()).pathname;
     if (path.endsWith('/documents')) {

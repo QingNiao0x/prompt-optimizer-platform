@@ -2,8 +2,6 @@
 import {
   ElButton,
   ElInput,
-  ElOption,
-  ElSelect,
   ElSwitch,
   ElTooltip,
 } from 'element-plus';
@@ -11,13 +9,10 @@ import { computed } from 'vue';
 
 import SparklesIcon from '@/components/brand/SparklesIcon.vue';
 import { usePlanModePreference } from '@/composables/usePlanModePreference';
-import type { AvailableModel } from '@/types/api';
 
 interface Props {
   rawPrompt: string;
   includeExamples: boolean;
-  model: string;
-  modelOptions: AvailableModel[];
   isAnalyzing: boolean;
   isPlanning: boolean;
   isOptimizing: boolean;
@@ -27,7 +22,6 @@ interface Props {
 interface Emits {
   (event: 'update:raw-prompt', value: string): void;
   (event: 'update:include-examples', value: boolean): void;
-  (event: 'update:model', value: string): void;
   (event: 'optimize'): void;
 }
 
@@ -44,20 +38,6 @@ const examplesModel = computed({
   get: (): boolean => props.includeExamples,
   set: (value: boolean): void => emit('update:include-examples', value),
 });
-
-const modelModel = computed({
-  get: (): string => props.model,
-  set: (value: string): void => emit('update:model', value),
-});
-
-const modelCode = (model: AvailableModel): string => {
-  const separator = model.id.indexOf(':');
-  const code = (separator >= 0 ? model.id.slice(separator + 1) : model.id).trim();
-  return code || model.displayName;
-};
-
-// 模型目录的官方展示名优先于带路由前缀的内部 ID，避免把供应商路由显示给用户。
-const modelLabel = (model: AvailableModel): string => model.displayName.trim() || modelCode(model);
 
 const planModeModel = computed({
   get: (): boolean => planModeEnabled.value,
@@ -122,27 +102,6 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
         </div>
 
         <div class="composer-actions">
-          <label class="model-control">
-            <span>模型</span>
-            <ElSelect
-              v-model="modelModel"
-              class="model-select"
-              size="small"
-              :disabled="isBusy || modelOptions.length === 0"
-              :aria-label="modelOptions.length > 0 ? '选择模型' : '当前无可用模型'"
-            >
-              <ElOption
-                v-for="modelOption in modelOptions"
-                :key="modelOption.id"
-                :label="modelLabel(modelOption)"
-                :value="modelOption.id"
-              >
-                <span class="model-option">
-                  <strong>{{ modelLabel(modelOption) }}</strong>
-                </span>
-              </ElOption>
-            </ElSelect>
-          </label>
           <ElButton
             class="optimize-button"
             native-type="submit"
@@ -316,39 +275,11 @@ form {
   cursor: pointer;
 }
 
-.model-control {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
 .composer-actions {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-left: auto;
-}
-
-.model-select {
-  width: 220px;
-}
-
-.model-option {
-  display: flex;
-  align-items: baseline;
-}
-
-.model-option strong {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.model-select :deep(.el-input__wrapper) {
-  border-radius: 999px;
-  background: var(--glass-bg-subtle);
-  box-shadow: 0 0 0 1px var(--glass-border-subtle) inset;
 }
 
 .plan-badge {
@@ -419,19 +350,13 @@ form {
   }
 
   .composer-options,
-  .switch-control,
-  .model-control {
+  .switch-control {
     width: 100%;
   }
 
-  .switch-control,
-  .model-control {
+  .switch-control {
     justify-content: space-between;
     min-height: 44px;
-  }
-
-  .model-select {
-    width: min(70%, 240px);
   }
 
   .optimize-button {

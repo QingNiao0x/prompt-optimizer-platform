@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
@@ -21,6 +22,7 @@ import java.util.UUID;
  * @Description: 优化历史实体，对应 optimization_record 表，只保存脱敏上下文摘要，不保存原始文件内容。
  */
 @Entity
+@SQLRestriction("deleted_at IS NULL")
 @Table(name = "optimization_record")
 public class OptimizationRecordEntity {
 
@@ -69,6 +71,9 @@ public class OptimizationRecordEntity {
 
     @Column(name = "retention_until")
     private OffsetDateTime retentionUntil;
+
+    @Column(name = "deleted_at")
+    private OffsetDateTime deletedAt;
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
@@ -193,6 +198,14 @@ public class OptimizationRecordEntity {
 
     public void setRetentionUntil(OffsetDateTime retentionUntil) {
         this.retentionUntil = retentionUntil;
+    }
+
+    public OffsetDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(OffsetDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 
     public OffsetDateTime getCreatedAt() {
