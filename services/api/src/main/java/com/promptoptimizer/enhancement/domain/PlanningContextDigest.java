@@ -16,7 +16,8 @@ public record PlanningContextDigest(
         List<String> fileSummaries,
         String analysisStatus,
         int analyzedFileCount,
-        List<String> warnings
+        List<String> warnings,
+        List<PlanningFactCard> factCards
 ) {
 
     public PlanningContextDigest {
@@ -27,5 +28,21 @@ public record PlanningContextDigest(
         fileSummaries = fileSummaries == null ? List.of() : List.copyOf(fileSummaries);
         analysisStatus = analysisStatus == null ? "EMPTY" : analysisStatus;
         warnings = warnings == null ? List.of() : List.copyOf(warnings);
+        factCards = factCards == null ? List.of() : List.copyOf(factCards);
+    }
+
+    /** 兼容未包含事实卡片的历史调用方。 */
+    public PlanningContextDigest(
+            String description,
+            List<String> technologies,
+            List<String> dependencies,
+            List<String> directoryOverview,
+            List<String> fileSummaries,
+            String analysisStatus,
+            int analyzedFileCount,
+            List<String> warnings
+    ) {
+        this(description, technologies, dependencies, directoryOverview, fileSummaries,
+                analysisStatus, analyzedFileCount, warnings, List.of());
     }
 }

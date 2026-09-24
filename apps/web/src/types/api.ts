@@ -291,6 +291,7 @@ export interface OptimizationResult {
   templateCode: TemplateCode;
   provider: ProviderMetadata;
   latencyMs: number;
+  warnings?: string[];
 }
 
 export interface OptimizationHistorySummary {

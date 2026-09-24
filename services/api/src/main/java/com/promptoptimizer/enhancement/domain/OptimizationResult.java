@@ -18,7 +18,8 @@ public record OptimizationResult(
         List<String> appliedConstraints,
         TemplateCode templateCode,
         ProviderMetadata provider,
-        long latencyMs
+        long latencyMs,
+        List<String> warnings
 ) {
 
     /**
@@ -28,5 +29,21 @@ public record OptimizationResult(
         sections = List.copyOf(sections);
         ambiguities = List.copyOf(ambiguities);
         appliedConstraints = List.copyOf(appliedConstraints);
+        warnings = warnings == null ? List.of() : List.copyOf(warnings);
+    }
+
+    /** 兼容历史结果构造调用；旧结果没有单独的上下文警告。 */
+    public OptimizationResult(
+            String optimizedPrompt,
+            List<PromptSection> sections,
+            ContextSnapshot contextReport,
+            List<String> ambiguities,
+            List<String> appliedConstraints,
+            TemplateCode templateCode,
+            ProviderMetadata provider,
+            long latencyMs
+    ) {
+        this(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints,
+                templateCode, provider, latencyMs, List.of());
     }
 }

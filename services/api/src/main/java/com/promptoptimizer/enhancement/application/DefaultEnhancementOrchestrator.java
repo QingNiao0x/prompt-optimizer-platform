@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,6 +43,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
     private final ProtectedContextFilter protectedContextFilter;
     private final PlanningSessionService planningSessionService;
     private final SensitiveValueDetector sensitiveValueDetector;
+    private final ContextConflictDetector contextConflictDetector = new ContextConflictDetector();
     private final Clock clock;
 
     @Autowired
@@ -156,13 +158,13 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
     public OptimizationResult optimize(OptimizationRequest request) {
         long startedAt = clock.millis();
         validateTextInputs(request);
-        boolean planConfirmed = request.planConfirmation() != null;
         PlanningSessionService.ConfirmedPlan confirmedPlan = planningSessionService.confirm(
                 request.rawPrompt(),
                 request.context().customDescription(),
                 request.conversationHistory(),
                 request.planConfirmation()
         );
+        boolean planConfirmed = confirmedPlan.bound();
         ProtectedContextFilter.FilteredContext filteredContext = protectedContextFilter.filter(
                 request.context(),
                 request.permissionPolicy()
@@ -181,8 +183,18 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         List<ConversationMessage> conversation = Boolean.TRUE.equals(request.enhancement().includeConversationHistory())
                 ? request.conversationHistory()
                 : List.of();
-        List<String> ambiguities = planConfirmed ? List.of()
-                : ambiguityDetector.detect(request.rawPrompt(), context, conversation);
+        List<ConversationMessage> ambiguityEvidence = new ArrayList<>(conversation);
+        planAnswers.forEach(answer -> ambiguityEvidence.add(new ConversationMessage(
+                "user", confirmedAnswerEvidence(answer)
+        )));
+        List<String> ambiguities = ambiguityDetector.detect(request.rawPrompt(), context, ambiguityEvidence);
+        List<String> contextConflicts = contextConflictDetector.detect(context, planAnswers);
+        if (!contextConflicts.isEmpty()) {
+            List<String> combined = new ArrayList<>(ambiguities);
+            contextConflicts.stream().filter(value -> !combined.contains(value))
+                    .limit(Math.max(0, 8 - combined.size())).forEach(combined::add);
+            ambiguities = List.copyOf(combined);
+        }
         PromptTemplate template = templateRegistry.resolve(
                 request.enhancement().templateCode(),
                 request.rawPrompt()
@@ -204,7 +216,10 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 constraints,
                 conversation,
                 request.enhancement(),
-                request.model()
+                request.model(),
+                confirmedPlan.planningContextDigest() == null
+                        ? List.of()
+                        : confirmedPlan.planningContextDigest().factCards()
         ));
 
         return resultAssembler.assemble(
@@ -216,7 +231,14 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 planConfirmed,
                 constraints,
                 Boolean.TRUE.equals(request.enhancement().includeExamples()),
-                Math.max(0, clock.millis() - startedAt)
+                Math.max(0, clock.millis() - startedAt),
+                request.rawPrompt(),
+                confirmedPlan.planningContextDigest() == null
+                        ? List.of()
+                        : confirmedPlan.planningContextDigest().factCards(),
+                confirmedPlan.planningContextDigest() == null
+                        ? List.of()
+                        : confirmedPlan.planningContextDigest().warnings()
         );
     }
 
@@ -242,6 +264,14 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 .append('\n')
                 .append(answer.answer()));
         return query.toString();
+    }
+
+    /** 将已确认回答转换为明确事实，避免问题中的问号令歧义检测忽略整句。 */
+    private String confirmedAnswerEvidence(PlanAnswer answer) {
+        String id = answer.questionId().toLowerCase(java.util.Locale.ROOT);
+        if (id.contains("region")) return "研究地区：" + answer.answer();
+        if (id.contains("login") || id.contains("auth")) return "采用 " + answer.answer();
+        return answer.question().replace("？", "").replace("?", "") + "：" + answer.answer();
     }
 
     private void rejectCredential(String value) {

@@ -146,6 +146,13 @@ const saveEditing = (): void => {
     </div>
 
     <div v-else class="result-stage">
+      <div v-if="result.warnings?.length && !editing" class="context-warning" role="status">
+        <strong><WarningFilled aria-hidden="true" /> 上下文分析提醒</strong>
+        <ul>
+          <li v-for="(warning, index) in result.warnings" :key="`${index}-${warning}`">{{ warning }}</li>
+        </ul>
+      </div>
+
       <div
         v-if="result.ambiguities.length && !editing"
         class="ambiguity-note"
@@ -411,6 +418,37 @@ h2 {
   color: var(--text-secondary);
   font-size: 12px;
   background: color-mix(in srgb, var(--warning) 8%, var(--glass-bg-subtle));
+}
+
+.context-warning {
+  margin: 0 0 14px;
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, var(--warning) 42%, transparent);
+  border-left: 3px solid var(--warning);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  background: color-mix(in srgb, var(--warning) 7%, var(--glass-bg-subtle));
+  font-size: 13px;
+}
+
+.context-warning strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-primary);
+}
+
+.context-warning strong :deep(svg) {
+  color: var(--warning);
+}
+
+.context-warning ul {
+  margin: 8px 0 0;
+  padding-left: 19px;
+}
+
+.context-warning li + li {
+  margin-top: 5px;
 }
 
 .ambiguity-note.is-open {

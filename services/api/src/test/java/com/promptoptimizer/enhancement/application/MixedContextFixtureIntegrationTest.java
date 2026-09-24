@@ -130,7 +130,8 @@ class MixedContextFixtureIntegrationTest {
         assertThat(result.contextReport().fileSnippets()).extracting(FileSnippet::path)
                 .contains("backend/pom.xml", "frontend/package.json", "审批方案.txt");
         assertThat(result.optimizedPrompt())
-                .contains("Spring Boot", "Vue", "复核失败时返回 409 状态与失败原因");
+                .contains("Spring Boot", "Vue", "复核失败时返回 409 状态与失败原因",
+                        "审批方案.txt", "超过五万元时须先由财务复核");
         assertThat(result.sections()).extracting("type")
                 .contains(PromptSectionType.BACKGROUND, PromptSectionType.TASK,
                         PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS);

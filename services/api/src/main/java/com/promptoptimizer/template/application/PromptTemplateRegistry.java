@@ -82,6 +82,12 @@ public class PromptTemplateRegistry {
      */
     public TemplateCode infer(String rawPrompt) {
         String prompt = rawPrompt.toLowerCase(Locale.ROOT);
+        // 明确的软件交付动词优先于材料中的研究关键词。
+        if (containsAny(prompt, "开发接口", "实现接口", "开发功能", "修复", "bug", "报错")
+                || prompt.matches(".*开发.{0,12}(系统|平台|服务|应用|模块|工具).*")) {
+            return containsAny(prompt, "修复", "bug", "报错")
+                    ? TemplateCode.BUG_FIX : TemplateCode.FEATURE_DEVELOPMENT;
+        }
         if (containsAny(prompt, "研究", "论文", "文献", "死亡率", "发病率", "时间序列", "回归分析", "统计分析", "arriaga", "yll")) {
             return TemplateCode.RESEARCH_ANALYSIS;
         }

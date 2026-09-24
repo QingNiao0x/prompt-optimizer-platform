@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.ArgumentMatchers.any;
@@ -192,7 +193,7 @@ class DefaultEnhancementOrchestratorTest {
     }
 
     @Test
-    void shouldUseConfirmedResearchAnswersAndReturnFinalPromptWithoutPendingItems() {
+    void shouldRejectUnboundLegacyPlanAnswers() {
         OptimizationRequest request = new OptimizationRequest(
                 "分析2015-2025年某地区心脑血管疾病死亡率并进行Arriaga分解",
                 new ContextAnalysisRequest("公共卫生研究", List.of()),
@@ -205,15 +206,8 @@ class DefaultEnhancementOrchestratorTest {
                 ))
         );
 
-        OptimizationResult result = orchestrator.optimize(request);
-
-        assertThat(result.templateCode()).isEqualTo(TemplateCode.RESEARCH_ANALYSIS);
-        assertThat(result.ambiguities()).isEmpty();
-        assertThat(result.sections()).extracting("type")
-                .doesNotContain(PromptSectionType.CLARIFICATIONS);
-        assertThat(result.optimizedPrompt())
-                .contains("广东省", "使用 R 完成分析", "数据来源", "偏倚", "不确定性")
-                .doesNotContain("需求描述较短", "尚未明确输入", "开发任务", "未提供项目上下文");
+        assertThatThrownBy(() -> orchestrator.optimize(request))
+                .hasMessageContaining("计划编号不能为空");
     }
 
     @Test
@@ -223,7 +217,7 @@ class DefaultEnhancementOrchestratorTest {
         ContextAnalyzer contextAnalyzer = new ContextAnalyzer() {
             @Override
             public com.promptoptimizer.context.domain.ContextSnapshot analyze(ContextAnalysisRequest request) {
-                return snapshot(request);
+                return snapshot(request, "");
             }
 
             @Override
@@ -232,16 +226,24 @@ class DefaultEnhancementOrchestratorTest {
                     String query
             ) {
                 analysisQueries.add(query);
-                return snapshot(request);
+                return snapshot(request, query);
             }
 
-            private com.promptoptimizer.context.domain.ContextSnapshot snapshot(ContextAnalysisRequest request) {
+            private com.promptoptimizer.context.domain.ContextSnapshot snapshot(
+                    ContextAnalysisRequest request, String query) {
+                List<com.promptoptimizer.context.domain.FileSnippet> snippets = query.contains("广东省")
+                        ? List.of(
+                        new com.promptoptimizer.context.domain.FileSnippet(
+                                "研究资料.pdf", "pdf", "研究范围：广东省", "", false),
+                        new com.promptoptimizer.context.domain.FileSnippet(
+                                "新方案.txt", "text", "研究范围：浙江省", "", false))
+                        : List.of();
                 return new com.promptoptimizer.context.domain.ContextSnapshot(
                         request.customDescription(),
                         List.of(),
                         List.of(),
                         List.of("研究资料.pdf"),
-                        List.of(),
+                        snippets,
                         List.of(),
                         List.of(),
                         "test-v1"
@@ -322,5 +324,7 @@ class DefaultEnhancementOrchestratorTest {
                 rawPrompt + "\n" + question.question() + "\n广东省"
         );
         assertThat(result.optimizedPrompt()).contains("广东省");
+        assertThat(result.ambiguities()).anySatisfy(value -> assertThat(value)
+                .contains("研究范围", "研究资料.pdf", "新方案.txt"));
     }
 }

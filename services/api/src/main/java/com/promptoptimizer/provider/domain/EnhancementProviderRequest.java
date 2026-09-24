@@ -4,6 +4,7 @@ import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.api.ConversationMessage;
 import com.promptoptimizer.enhancement.api.EnhancementOptions;
 import com.promptoptimizer.enhancement.api.PlanAnswer;
+import com.promptoptimizer.enhancement.domain.PlanningFactCard;
 import com.promptoptimizer.template.domain.PromptTemplate;
 
 import java.util.List;
@@ -24,7 +25,8 @@ public record EnhancementProviderRequest(
         List<String> constraints,
         List<ConversationMessage> conversationHistory,
         EnhancementOptions options,
-        String model
+        String model,
+        List<PlanningFactCard> planningFacts
 ) {
 
     /**
@@ -35,6 +37,24 @@ public record EnhancementProviderRequest(
         planAnswers = List.copyOf(planAnswers);
         constraints = List.copyOf(constraints);
         conversationHistory = List.copyOf(conversationHistory);
+        planningFacts = planningFacts == null ? List.of() : List.copyOf(planningFacts);
+    }
+
+    /** 兼容尚未传递计划事实卡片的现有调用方。 */
+    public EnhancementProviderRequest(
+            String rawPrompt,
+            ContextSnapshot context,
+            PromptTemplate template,
+            List<String> ambiguities,
+            List<PlanAnswer> planAnswers,
+            boolean planConfirmed,
+            List<String> constraints,
+            List<ConversationMessage> conversationHistory,
+            EnhancementOptions options,
+            String model
+    ) {
+        this(rawPrompt, context, template, ambiguities, planAnswers, planConfirmed,
+                constraints, conversationHistory, options, model, List.of());
     }
 
     /**
@@ -60,7 +80,8 @@ public record EnhancementProviderRequest(
                 constraints,
                 conversationHistory,
                 options,
-                model
+                model,
+                List.of()
         );
     }
 
@@ -88,7 +109,8 @@ public record EnhancementProviderRequest(
                 constraints,
                 conversationHistory,
                 options,
-                null
+                null,
+                List.of()
         );
     }
 
@@ -114,7 +136,8 @@ public record EnhancementProviderRequest(
                 constraints,
                 conversationHistory,
                 options,
-                null
+                null,
+                List.of()
         );
     }
 }

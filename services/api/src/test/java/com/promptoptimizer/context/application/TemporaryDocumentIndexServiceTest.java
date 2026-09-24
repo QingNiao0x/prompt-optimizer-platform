@@ -1,6 +1,8 @@
 package com.promptoptimizer.context.application;
 
 import com.promptoptimizer.context.api.DocumentUploadCreateRequest;
+import com.promptoptimizer.context.api.DocumentUploadController;
+import com.promptoptimizer.common.exception.GlobalExceptionHandler;
 import com.promptoptimizer.context.api.ContextAnalysisRequest;
 import com.promptoptimizer.context.api.ContextFileInput;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +14,10 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import com.promptoptimizer.context.domain.DocumentProcessingPhase;
 import com.promptoptimizer.context.domain.DocumentSelection;
 import com.promptoptimizer.context.domain.DocumentUploadStatus;
+import com.promptoptimizer.identity.support.TestActors;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.http.MediaType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -24,9 +29,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @DateTime: 2026-09-12
@@ -35,6 +46,44 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @Description: 验证大型文档分片上传、全文索引、尾部检索和安全路径拦截。
  */
 class TemporaryDocumentIndexServiceTest {
+
+    @Test
+    void shouldRejectAnotherUserAtEveryDocumentEntryPoint() throws Exception {
+        AtomicReference<UUID> actorId = new AtomicReference<>(TestActors.USER_ID);
+        TemporaryDocumentIndexService service = createService(actorId);
+        try (AutoCloseable cleanup = service::close) {
+            byte[] bytes = "仅属用户甲的业务规则".getBytes(StandardCharsets.UTF_8);
+            String documentId = service.create(new DocumentUploadCreateRequest("plan.txt", "text", bytes.length)).documentId();
+            actorId.set(UUID.fromString("00000000-0000-0000-0000-000000000104"));
+            assertThatThrownBy(() -> service.getStatus(documentId)).isInstanceOf(DocumentUploadException.class);
+            assertThatThrownBy(() -> service.appendChunk(documentId, 0, bytes)).isInstanceOf(DocumentUploadException.class);
+            assertThatThrownBy(() -> service.completeUpload(documentId)).isInstanceOf(DocumentUploadException.class);
+            assertThatThrownBy(() -> service.delete(documentId)).isInstanceOf(DocumentUploadException.class);
+            assertThat(service.retrieve(documentId, "业务规则", 1000, 1)).isEmpty();
+            actorId.set(TestActors.USER_ID);
+            assertThat(service.getStatus(documentId).documentId()).isEqualTo(documentId);
+            service.delete(documentId);
+        }
+    }
+
+    @Test
+    void shouldReturnNotFoundAcrossUsersThroughDocumentApi() throws Exception {
+        AtomicReference<UUID> actorId = new AtomicReference<>(TestActors.USER_ID);
+        TemporaryDocumentIndexService service = createService(actorId);
+        try (AutoCloseable cleanup = service::close) {
+            String documentId = service.create(new DocumentUploadCreateRequest("plan.txt", "text", 4)).documentId();
+            var mvc = MockMvcBuilders.standaloneSetup(new DocumentUploadController(service))
+                    .setControllerAdvice(new GlobalExceptionHandler()).build();
+            actorId.set(UUID.fromString("00000000-0000-0000-0000-000000000104"));
+            mvc.perform(get("/api/v1/context/documents/{id}", documentId)).andExpect(status().isNotFound());
+            mvc.perform(put("/api/v1/context/documents/{id}/chunks/0", documentId)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM).content(new byte[] {1, 2, 3, 4}))
+                    .andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/context/documents/{id}", documentId)).andExpect(status().isNotFound());
+            actorId.set(TestActors.USER_ID);
+            assertThat(service.getStatus(documentId).documentId()).isEqualTo(documentId);
+        }
+    }
 
     @Test
     void shouldPreserveWordsAcrossStreamingReadBoundaries() throws Exception {
@@ -374,13 +423,23 @@ class TemporaryDocumentIndexServiceTest {
     }
 
     private TemporaryDocumentIndexService createService() {
+        return createService(new AtomicReference<>(TestActors.USER_ID));
+    }
+
+    private TemporaryDocumentIndexService createService(AtomicReference<UUID> actorId) {
         TextEmbeddingModel unusedModel = inputs -> {
             throw new AssertionError("语义检索关闭时不应调用向量模型");
         };
-        return createService(new SemanticVectorIndex(
+        SemanticVectorIndex semanticIndex = new SemanticVectorIndex(
                 unusedModel,
                 new SemanticVectorIndexOptions(false, 16, 48_000)
-        ));
+        );
+        MapReduceDocumentSummarizer disabledSummarizer = new MapReduceDocumentSummarizer(
+                new FileContentSummarizer(),
+                Optional.empty(),
+                new MapReduceSummaryOptions(false, 8, 24, 48_000, 1_200, 1_800, 256, 32)
+        );
+        return createService(semanticIndex, disabledSummarizer, actorId);
     }
 
     private TemporaryDocumentIndexService createService(SemanticVectorIndex semanticVectorIndex) {
@@ -396,11 +455,20 @@ class TemporaryDocumentIndexServiceTest {
             SemanticVectorIndex semanticVectorIndex,
             MapReduceDocumentSummarizer documentSummarizer
     ) {
+        return createService(semanticVectorIndex, documentSummarizer, new AtomicReference<>(TestActors.USER_ID));
+    }
+
+    private TemporaryDocumentIndexService createService(
+            SemanticVectorIndex semanticVectorIndex,
+            MapReduceDocumentSummarizer documentSummarizer,
+            AtomicReference<UUID> actorId
+    ) {
         BinaryContentExtractor binaryExtractor = new BinaryContentExtractor();
         return new TemporaryDocumentIndexService(
                 new StreamingDocumentExtractor(binaryExtractor),
                 semanticVectorIndex,
-                documentSummarizer
+                documentSummarizer,
+                () -> TestActors.identity(actorId.get())
         );
     }
 

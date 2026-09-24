@@ -4,6 +4,7 @@ import com.promptoptimizer.context.api.DocumentUploadCreateRequest;
 import com.promptoptimizer.context.domain.DocumentProcessingPhase;
 import com.promptoptimizer.context.domain.DocumentSelection;
 import com.promptoptimizer.context.domain.DocumentUploadStatus;
+import com.promptoptimizer.identity.application.CurrentActor;
 import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +71,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
     private final StreamingDocumentExtractor documentExtractor;
     private final SemanticVectorIndex semanticVectorIndex;
     private final MapReduceDocumentSummarizer documentSummarizer;
+    private final CurrentActor currentActor;
     private final ContentChunkSelector contentChunkSelector = new ContentChunkSelector();
     private final Map<String, UploadSession> sessions = new ConcurrentHashMap<>();
     private final ExecutorService executor;
@@ -78,11 +80,13 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
     public TemporaryDocumentIndexService(
             StreamingDocumentExtractor documentExtractor,
             SemanticVectorIndex semanticVectorIndex,
-            MapReduceDocumentSummarizer documentSummarizer
+            MapReduceDocumentSummarizer documentSummarizer,
+            CurrentActor currentActor
     ) {
         this.documentExtractor = documentExtractor;
         this.semanticVectorIndex = semanticVectorIndex;
         this.documentSummarizer = documentSummarizer;
+        this.currentActor = currentActor;
         this.executor = Executors.newFixedThreadPool(
                 Math.max(2, Math.min(4, Runtime.getRuntime().availableProcessors() / 2)),
                 Thread.ofPlatform().name("document-index-", 0).factory()
@@ -100,6 +104,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
      * 创建上传会话。这里只保存文件元数据，不接收浏览器真实绝对路径。
      */
     public DocumentUploadStatus create(DocumentUploadCreateRequest request) {
+        UUID ownerUserId = currentActor.require().userId();
         cleanupExpired();
         String path = normalizeAndValidatePath(request.path());
         String language = normalizeLanguage(request.language());
@@ -125,6 +130,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
             Files.createFile(sourceFile);
             UploadSession session = new UploadSession(
                     documentId,
+                    ownerUserId,
                     path,
                     language,
                     request.sizeBytes(),
@@ -219,6 +225,12 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
      * 删除用户不再使用的临时文档。处理中任务先取消，再清理临时文件。
      */
     public void delete(String documentId) {
+        requireSession(documentId);
+        deleteSession(documentId);
+    }
+
+    /** 仅供已授权删除和过期清理使用，不从请求参数推断所有者。 */
+    private void deleteSession(String documentId) {
         UploadSession session = sessions.remove(documentId);
         if (session == null) {
             return;
@@ -243,11 +255,12 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
             int maxCharacters,
             int maxChunks
     ) {
+        UUID ownerUserId = currentActor.require().userId();
         if (documentId == null || documentId.isBlank()) {
             return Optional.empty();
         }
         UploadSession session = sessions.get(documentId);
-        if (session == null) {
+        if (session == null || !session.ownerUserId.equals(ownerUserId)) {
             return Optional.empty();
         }
 
@@ -651,9 +664,10 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
 
     /** 查找上传会话前先清理过期任务，避免继续操作已失效的临时数据。 */
     private UploadSession requireSession(String documentId) {
+        UUID ownerUserId = currentActor.require().userId();
         cleanupExpired();
         UploadSession session = sessions.get(documentId);
-        if (session == null) {
+        if (session == null || !session.ownerUserId.equals(ownerUserId)) {
             throw new DocumentUploadException(
                     DocumentUploadException.Reason.NOT_FOUND,
                     "文档上传任务不存在或已过期"
@@ -742,7 +756,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 .filter(session -> session.expiresAt.isBefore(now))
                 .map(session -> session.documentId)
                 .toList()
-                .forEach(this::delete);
+                .forEach(this::deleteSession);
     }
 
     private void deleteFileQuietly(Path path) {
@@ -863,6 +877,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
 
         private final Object monitor = new Object();
         private final String documentId;
+        private final UUID ownerUserId;
         private final String path;
         private final String language;
         private final long fileSizeBytes;
@@ -888,6 +903,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
 
         private UploadSession(
                 String documentId,
+                UUID ownerUserId,
                 String path,
                 String language,
                 long fileSizeBytes,
@@ -898,6 +914,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 Instant expiresAt
         ) {
             this.documentId = documentId;
+            this.ownerUserId = ownerUserId;
             this.path = path;
             this.language = language;
             this.fileSizeBytes = fileSizeBytes;

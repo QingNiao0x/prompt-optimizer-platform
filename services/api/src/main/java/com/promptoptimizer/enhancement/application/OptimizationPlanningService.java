@@ -101,17 +101,22 @@ public class OptimizationPlanningService {
                 request.model()
         );
         PlanningProviderResponse validated = requestValidatedPlan(providerRequest);
-        List<PlanQuestion> questions = questionFilter.filter(validated.questions(), providerRequest);
-        metrics.generated(validated.questions().size(), questions.size());
-        StringBuilder inferenceInput = new StringBuilder(request.rawPrompt())
-                .append('\n')
-                .append(request.contextDescription());
-        request.conversationHistory().forEach(message -> inferenceInput
-                .append('\n')
-                .append(message.content()));
-        if (planningContext.digest() != null) {
-            planningContext.digest().technologies().forEach(value -> inferenceInput.append('\n').append(value));
-            planningContext.digest().fileSummaries().forEach(value -> inferenceInput.append('\n').append(value));
+        List<PlanQuestion> requiredConflicts = conflictQuestions(planningContext.digest());
+        List<PlanQuestion> modelQuestions = questionFilter.filter(validated.questions(), providerRequest).stream()
+                .filter(question -> requiredConflicts.stream()
+                        .noneMatch(conflict -> sameConflictDimension(question.question(), conflict.question())))
+                .toList();
+        List<PlanQuestion> candidates = new ArrayList<>(requiredConflicts);
+        candidates.addAll(modelQuestions);
+        List<PlanQuestion> questions = candidates.stream().limit(MAX_QUESTIONS).toList();
+        metrics.generated(validated.questions().size() + requiredConflicts.size(), questions.size());
+        String summary = questions.isEmpty()
+                ? "当前需求及已提供材料足以进入最终增强，无需额外确认。"
+                : validated.summary();
+        // 当前需求决定任务类型；附件只提供事实，不能把代码任务误判为附件的研究主题。
+        var inferredTemplate = templateRegistry.infer(request.rawPrompt());
+        if (inferredTemplate == com.promptoptimizer.enhancement.domain.TemplateCode.GENERAL) {
+            inferredTemplate = templateRegistry.infer(request.contextDescription());
         }
         PlanningSessionService.PlanRegistration registration = planningSessionService.registerPlan(
                 request.rawPrompt(),
@@ -121,15 +126,55 @@ public class OptimizationPlanningService {
                 questions
         );
         return new OptimizationPlan(
-                validated.summary(),
+                summary,
                 questions,
-                templateRegistry.infer(inferenceInput.toString()),
+                inferredTemplate,
                 new ProviderMetadata(validated.provider(), validated.model(), validated.mock()),
                 Math.max(0, clock.millis() - startedAt),
                 registration.planId(),
                 registration.planningContext(),
                 registration.expiresAt()
         );
+    }
+
+    /** 将服务端已核实的材料冲突变成必问项，避免计划 Provider 漏掉跨文件口径冲突。 */
+    private List<PlanQuestion> conflictQuestions(com.promptoptimizer.enhancement.domain.PlanningContextDigest digest) {
+        if (digest == null) return List.of();
+        List<PlanQuestion> conflicts = new ArrayList<>();
+        int sequence = 0;
+        for (String warning : digest.warnings()) {
+            if (!warning.startsWith("资料对“") || !warning.contains("请确认本次采用哪一项")) continue;
+            String question = warning.length() <= 300
+                    ? warning
+                    : warning.substring(0, 280).stripTrailing() + "……请确认本次采用哪一项。";
+            conflicts.add(new PlanQuestion(
+                    "context-conflict-" + (++sequence),
+                    question,
+                    "上传材料对同一项目事实给出了不同内容。请说明本次以哪份资料或规则为准。",
+                    PlanQuestionType.FREE_TEXT,
+                    List.of(),
+                    List.of(),
+                    true
+            ));
+            if (conflicts.size() == 3) break;
+        }
+        return List.copyOf(conflicts);
+    }
+
+    /** 冲突已有服务端必问项时，不再保留同一字段的模型改写问题。 */
+    private boolean sameConflictDimension(String question, String conflict) {
+        var field = Pattern.compile("资料对“([^”]{2,40})”").matcher(conflict);
+        if (!field.find()) return false;
+        String key = field.group(1);
+        if (question.contains(key)) return true;
+        if (key.contains("阈值")) return question.contains("阈值") || question.contains("金额") && question.contains("审批");
+        if (key.contains("范围")) return question.contains("范围") || question.contains("地区") || question.contains("区域");
+        if (key.contains("时限")) return question.contains("时限") || question.contains("期限") || question.contains("时间");
+        if (key.contains("口径")) return question.contains("口径") || question.contains("定义") || question.contains("统计标准");
+        if (key.contains("标准")) return question.contains("标准") || question.contains("验收");
+        if (key.contains("规则")) return question.contains("规则") || question.contains("如何处理");
+        if (key.contains("格式")) return question.contains("格式") || question.contains("类型");
+        return key.contains("版本") && (question.contains("版本") || question.contains("采用哪份"));
     }
 
     /** 仅对额外结构校验发现的无效模型响应再试一次，不叠加 Provider 自身重试。 */

@@ -3,6 +3,7 @@ package com.promptoptimizer.history.application;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.common.exception.ResourceNotFoundException;
+import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.context.api.ContextAnalysisRequest;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.api.ConversationMessage;
@@ -314,18 +315,25 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
         PlanConfirmation savedPlanConfirmation = metadata.containsKey("planConfirmation")
                 ? objectMapper.convertValue(metadata.get("planConfirmation"), PlanConfirmation.class)
                 : null;
-        // 历史重新优化保留已确认事实，但不复用已经过期的短期 planId/contextId。
-        PlanConfirmation planConfirmation = savedPlanConfirmation == null
-                ? null
-                : new PlanConfirmation(savedPlanConfirmation.answers());
+        // 历史回答是已保存的用户事实，不能伪装成仍有效的短期 Plan 会话。
+        String rawPrompt = entity.getRawPrompt();
+        if (savedPlanConfirmation != null && !savedPlanConfirmation.answers().isEmpty()) {
+            String confirmedFacts = savedPlanConfirmation.answers().stream()
+                    .map(answer -> answer.question() + "：" + answer.answer())
+                    .collect(java.util.stream.Collectors.joining("\n"));
+            rawPrompt += "\n\n用户此前已确认的信息：\n" + confirmedFacts;
+            if (rawPrompt.length() > 8_000) {
+                throw new InvalidOptimizationRequestException("历史需求与已确认信息超过 8,000 字符，请编辑后重新增强。");
+            }
+        }
 
         return new OptimizationRequest(
-                entity.getRawPrompt(),
+                rawPrompt,
                 new ContextAnalysisRequest(stringValue(context.get("customDescription")), List.of()),
                 enhancement,
                 conversation,
                 policy == null ? PermissionPolicyInput.empty() : policy,
-                planConfirmation,
+                null,
                 stringValue(metadata.get("model"))
         );
     }

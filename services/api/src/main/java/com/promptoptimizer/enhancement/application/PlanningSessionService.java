@@ -12,6 +12,7 @@ import com.promptoptimizer.enhancement.api.PlanAnswer;
 import com.promptoptimizer.enhancement.api.PlanConfirmation;
 import com.promptoptimizer.enhancement.api.PlanningContextReference;
 import com.promptoptimizer.enhancement.domain.PlanQuestion;
+import com.promptoptimizer.enhancement.domain.PlanningFactCard;
 import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
 import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
 import com.promptoptimizer.identity.application.ActorIdentity;
@@ -59,6 +60,7 @@ public class PlanningSessionService {
     private final ProtectedContextFilter protectedContextFilter;
     private final CurrentActor currentActor;
     private final SensitiveValueDetector sensitiveValueDetector;
+    private final PlanningFactCardExtractor factCardExtractor = new PlanningFactCardExtractor();
     private final Clock clock;
 
     @Autowired
@@ -208,10 +210,7 @@ public class PlanningSessionService {
             return new ConfirmedPlan(List.of(), null, false);
         }
         if (confirmation.planId() == null || confirmation.planId().isBlank()) {
-            if (confirmation.planningContext() != null) {
-                throw new InvalidOptimizationRequestException("计划上下文必须与有效计划编号一起提交。");
-            }
-            return new ConfirmedPlan(validateLegacyAnswers(confirmation.answers()), null, false);
+            throw new InvalidOptimizationRequestException("计划编号不能为空，请重新生成确认问题。");
         }
 
         PlanningSessionStore.PlanSession plan = requirePlan(confirmation.planId());
@@ -224,9 +223,9 @@ public class PlanningSessionService {
         if (!Objects.equals(plan.planningContext(), confirmation.planningContext())) {
             throw new InvalidOptimizationRequestException("文件上下文版本与确认问题不一致，请重新分析。");
         }
-        if (plan.planningContext() != null) {
-            requireContext(plan.planningContext());
-        }
+        PlanningContextDigest boundDigest = plan.planningContext() == null
+                ? null
+                : requireContext(plan.planningContext()).digest();
 
         Map<String, PlanAnswer> submitted = validateLegacyAnswers(confirmation.answers()).stream()
                 .collect(Collectors.toMap(
@@ -246,7 +245,7 @@ public class PlanningSessionService {
                         submitted.get(question.id()).answer().trim()
                 ))
                 .toList();
-        return new ConfirmedPlan(canonical, plan.planningContext(), true);
+        return new ConfirmedPlan(canonical, plan.planningContext(), true, boundDigest);
     }
 
     /**
@@ -333,12 +332,16 @@ public class PlanningSessionService {
                 .toList();
         List<String> fileSummaries = new ArrayList<>();
         int detailedDocuments = 0;
-        for (FileSnippet file : PlanningDigestSelector.select(snapshot.fileSnippets(), query, 30)) {
+        List<FileSnippet> selectedFiles = PlanningDigestSelector.select(snapshot.fileSnippets(), query, 30);
+        for (FileSnippet file : selectedFiles) {
             boolean includeExcerpt = PlanningDigestSelector.isDocument(file) && detailedDocuments < 4;
             fileSummaries.add(planningFileSummary(file, query, includeExcerpt));
             if (includeExcerpt) detailedDocuments++;
         }
-        List<String> warnings = new ArrayList<>(snapshot.warnings().stream()
+        PlanningFactCardExtractor.Extraction facts = factCardExtractor.extract(snapshot, query);
+        List<String> detectedConflicts = new ContextConflictDetector().detect(snapshot, List.of());
+        List<String> warnings = new ArrayList<>(java.util.stream.Stream.concat(
+                        detectedConflicts.stream(), snapshot.warnings().stream())
                 .filter(value -> !containsSensitiveWarning(value))
                 .limit(19)
                 .map(this::truncate)
@@ -346,6 +349,10 @@ public class PlanningSessionService {
         if (snapshot.fileSnippets().size() > fileSummaries.size()) {
             warnings.add("计划摘要仅覆盖 " + fileSummaries.size() + "/" + snapshot.fileSnippets().size()
                     + " 个已提取文件，按需求相关性和目录多样性选择；未覆盖内容不能视为不存在。");
+        }
+        if (facts.omittedCount() > 0) {
+            warnings.add("计划事实卡片达到数量上限，另有 " + facts.omittedCount()
+                    + " 条明确事实未进入本次计划；未展示的规则不能视为不存在。");
         }
         int analyzedFileCount = snapshot.fileCoverage().isEmpty()
                 ? snapshot.fileSnippets().size()
@@ -360,7 +367,8 @@ public class PlanningSessionService {
                 fileSummaries,
                 snapshot.analysisStatus(),
                 analyzedFileCount,
-                warnings
+                warnings,
+                facts.cards()
         );
     }
 
@@ -499,11 +507,17 @@ public class PlanningSessionService {
     public record ConfirmedPlan(
             List<PlanAnswer> answers,
             PlanningContextReference planningContext,
-            boolean bound
+            boolean bound,
+            PlanningContextDigest planningContextDigest
     ) {
 
         public ConfirmedPlan {
             answers = List.copyOf(answers);
+        }
+
+        /** 兼容未绑定事实摘要的现有调用方。 */
+        public ConfirmedPlan(List<PlanAnswer> answers, PlanningContextReference planningContext, boolean bound) {
+            this(answers, planningContext, bound, null);
         }
     }
 }

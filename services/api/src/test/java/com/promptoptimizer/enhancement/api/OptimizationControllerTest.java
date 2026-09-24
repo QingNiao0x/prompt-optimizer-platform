@@ -129,6 +129,21 @@ class OptimizationControllerTest {
     }
 
     @Test
+    void shouldRejectLegacyConfirmationWithoutBoundPlanId() throws Exception {
+        mockMvc.perform(post("/api/v1/optimizations")
+                        .contentType(APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "rawPrompt": "开发订单接口",
+                                  "context": {"files": []},
+                                  "planConfirmation": {"answers": []}
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.code").value("INVALID_ARGUMENT"));
+    }
+
+    @Test
     void shouldRejectMoreThanEightPlanAnswers() throws Exception {
         StringBuilder answers = new StringBuilder();
         for (int index = 0; index < 9; index++) {

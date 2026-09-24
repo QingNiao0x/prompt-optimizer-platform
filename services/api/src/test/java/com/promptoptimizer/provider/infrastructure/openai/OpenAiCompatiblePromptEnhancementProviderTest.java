@@ -5,6 +5,8 @@ import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.api.EnhancementOptions;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
+import com.promptoptimizer.enhancement.domain.PlanningFactCard;
+import com.promptoptimizer.enhancement.domain.PlanningFactCategory;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
@@ -365,6 +367,24 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
 
         var response = provider.enhance(createRequest());
         assertThat(objectMapper.writeValueAsString(response.ambiguities())).isEqualTo(findings);
+        server.verify();
+    }
+
+    @Test
+    void shouldSendPlanBoundFactEvidenceAndSourceToTheFinalProvider() throws Exception {
+        EnhancementProviderRequest base = createRequest();
+        PlanningFactCard fact = new PlanningFactCard("F01", PlanningFactCategory.BUSINESS_RULE,
+                "docs/订单审批方案.txt", "订单金额超过五万元时必须先由财务复核。");
+        EnhancementProviderRequest request = new EnhancementProviderRequest(
+                base.rawPrompt(), base.context(), base.template(), base.ambiguities(), base.planAnswers(),
+                true, base.constraints(), base.conversationHistory(), base.options(), base.model(), List.of(fact));
+        server.expect(once(), requestTo(ENDPOINT))
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.containsString("订单审批方案.txt")))
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.containsString("订单金额超过五万元时必须先由财务复核")))
+                .andRespond(withSuccess(completionWithFindings("[]"), MediaType.APPLICATION_JSON));
+
+        provider.enhance(request);
+
         server.verify();
     }
 

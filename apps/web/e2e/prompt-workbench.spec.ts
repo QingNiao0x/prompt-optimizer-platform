@@ -1026,6 +1026,7 @@ test('关闭 Plan 确认后直接生成，不进入方案确认', async ({ page 
         data: {
           ...optimizationResult,
           ambiguities: ['登录方式尚未确认。'],
+          warnings: ['计划摘要只覆盖部分文件，请检查未覆盖资料。'],
         },
       } satisfies ApiResponse<OptimizationResult>,
     });
@@ -1047,6 +1048,8 @@ test('关闭 Plan 确认后直接生成，不进入方案确认', async ({ page 
   await expect(page.getByRole('dialog', { name: '确认关键细节' })).toHaveCount(0);
   await expect(page.getByRole('dialog', { name: '先确认关键细节' })).toHaveCount(0);
   await expect(page.getByText('待确认事项', { exact: true })).toBeVisible();
+  await expect(page.getByText('上下文分析提醒')).toBeVisible();
+  await expect(page.getByText('计划摘要只覆盖部分文件，请检查未覆盖资料。')).toBeVisible();
   await expect(page.getByRole('button', { name: '直接再次增强' })).toBeVisible();
   expect(planCalls).toBe(0);
   expect(planningContextCalls).toBe(0);

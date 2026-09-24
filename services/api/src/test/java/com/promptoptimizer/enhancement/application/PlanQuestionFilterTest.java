@@ -51,6 +51,78 @@ class PlanQuestionFilterTest {
         assertThat(filter.filter(List.of(question("region", "研究地区是哪里？")), assistantHistory)).hasSize(1);
     }
 
+    @Test
+    void shouldNotAskKnownFrameworkAndShouldKeepConflictOrUnknownFramework() {
+        var digest = new PlanningContextDigest("", List.of("Spring Boot 3"), List.of(),
+                List.of(), List.of("pom.xml：订单服务"), "COMPLETE", 1, List.of());
+        var known = new PlanningProviderRequest("开发订单接口", "", List.of(), digest);
+        var unknown = input("开发订单接口");
+        assertThat(filter.filter(List.of(question("framework", "项目使用什么后端框架？")), known)).isEmpty();
+        assertThat(filter.filter(List.of(question("framework", "项目使用什么后端框架？")), unknown)).hasSize(1);
+        assertThat(filter.filter(List.of(question("migration", "是否更换项目现有后端框架？")), known)).hasSize(1);
+    }
+
+    @Test
+    void shouldMergeParaphrasesOfSingleKnownDimensionWithoutDroppingCompoundQuestions() {
+        assertThat(filter.filter(List.of(
+                question("region-a", "研究地区是哪里？"),
+                question("region-b", "研究覆盖的地区范围是哪里？"),
+                question("region-and-group", "研究地区和人群分别是什么？")
+        ), input("分析死亡率"))).extracting("id").containsExactly("region-a", "region-and-group");
+    }
+
+    @Test
+    void shouldDiscardResearchQuestionIntroducedOnlyByAttachment() {
+        var digest = new PlanningContextDigest("", List.of("Spring Boot 3"), List.of(),
+                List.of(), List.of("研究方案.txt：2015 至 2025 年死亡率研究"), "COMPLETE", 1, List.of());
+        var input = new PlanningProviderRequest("开发订单接口", "", List.of(), digest);
+        assertThat(filter.filter(List.of(
+                question("research-region", "这项研究具体覆盖哪个地区？"),
+                question("order-rule", "订单取消后已支付款项如何处理？")
+        ), input)).extracting("id").containsExactly("order-rule");
+    }
+
+    @Test
+    void shouldUseSourcedFactCardsToRemoveParaphrasedKnownQuestionsButKeepDifferentBusinessDecisions() {
+        var digest = new PlanningContextDigest("", List.of(), List.of(), List.of(), List.of(),
+                "COMPLETE", 2, List.of(), List.of(
+                new PlanningFactCard("F01", PlanningFactCategory.REGION,
+                        "docs/研究方案.txt", "研究范围：广东省"),
+                new PlanningFactCard("F02", PlanningFactCategory.DATA_FORMAT,
+                        "docs/数据字典.txt", "数据格式：CSV"),
+                new PlanningFactCard("F03", PlanningFactCategory.BUSINESS_RULE,
+                        "docs/订单审批方案.txt", "订单金额超过五万元时必须由财务复核。")
+        ));
+        var input = new PlanningProviderRequest("分析广东省数据并实现订单审批", "", List.of(), digest);
+
+        assertThat(filter.filter(List.of(
+                question("region-a", "研究地区是哪里？"),
+                question("region-b", "本次研究覆盖哪个区域？"),
+                question("format", "用户提供的数据是什么格式？"),
+                question("approval", "订单金额的审批规则是什么？"),
+                question("refund", "订单取消后已支付款项如何退款？")
+        ), input)).extracting("id").containsExactly("refund");
+    }
+
+    @Test
+    void shouldKeepQuestionsWhenFactCardsConflictOrOnlyPartiallyAddressACompoundQuestion() {
+        var digest = new PlanningContextDigest("", List.of(), List.of(), List.of(), List.of(),
+                "COMPLETE", 2, List.of(), List.of(
+                new PlanningFactCard("F01", PlanningFactCategory.REGION,
+                        "docs/a.txt", "研究范围：广东省"),
+                new PlanningFactCard("F02", PlanningFactCategory.REGION,
+                        "docs/b.txt", "研究范围：浙江省"),
+                new PlanningFactCard("F03", PlanningFactCategory.DATA_FORMAT,
+                        "docs/data.txt", "数据格式：CSV")
+        ));
+        var input = new PlanningProviderRequest("分析心脑血管疾病", "", List.of(), digest);
+
+        assertThat(filter.filter(List.of(
+                question("region", "研究区域具体是哪一省？"),
+                question("compound", "研究数据的来源和格式分别是什么？")
+        ), input)).extracting("id").containsExactly("region", "compound");
+    }
+
     private PlanningProviderRequest input(String text) { return new PlanningProviderRequest(text, "", List.of()); }
     private PlanQuestion question(String id, String text) {
         return new PlanQuestion(id, text, "", PlanQuestionType.FREE_TEXT, List.of(), List.of(), true);

@@ -1,7 +1,13 @@
 package com.promptoptimizer.enhancement.application;
 
+import com.promptoptimizer.context.api.ContextAnalysisRequest;
+import com.promptoptimizer.context.api.ContextFileInput;
+import com.promptoptimizer.context.api.PlanningContextRequest;
 import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.context.domain.FileSnippet;
 import com.promptoptimizer.enhancement.api.OptimizationPlanRequest;
+import com.promptoptimizer.enhancement.api.PermissionPolicyInput;
+import com.promptoptimizer.enhancement.api.PlanningContextReference;
 import com.promptoptimizer.enhancement.domain.OptimizationPlan;
 import com.promptoptimizer.enhancement.domain.PlanOption;
 import com.promptoptimizer.enhancement.domain.PlanQuestion;
@@ -26,6 +32,64 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OptimizationPlanningServiceTest {
+
+    @Test
+    void shouldClassifyCurrentSoftwareGoalBeforeResearchMaterial() {
+        OptimizationPlan plan = service.plan(new OptimizationPlanRequest(
+                "开发订单接口", "附件是研究方案，仅用于说明订单业务规则", List.of()
+        ));
+        assertThat(plan.templateCode()).isEqualTo(TemplateCode.FEATURE_DEVELOPMENT);
+        assertThat(plan.questions()).extracting("id")
+                .doesNotContain("research-region", "research-data", "research-tool");
+    }
+
+    @Test
+    void shouldKeepResearchTaskWhenUserAsksForAnalysisCode() {
+        OptimizationPlan plan = service.plan(new OptimizationPlanRequest(
+                "研究广东省死亡率长期趋势，并提供可运行的分析代码", "", List.of()
+        ));
+        assertThat(plan.templateCode()).isEqualTo(TemplateCode.RESEARCH_ANALYSIS);
+        assertThat(plan.questions()).extracting("id").doesNotContain("software-done", "software-environment");
+    }
+
+    @Test
+    void shouldTurnVerifiedCrossFileConflictsIntoRequiredPlanQuestions() {
+        String rawPrompt = "按方案实现订单审批流程";
+        PlanningSessionService sessions = new PlanningSessionService(
+                new InMemoryPlanningSessionStore(CLOCK),
+                request -> new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(
+                        new FileSnippet("src/main/resources/审批规则.txt", "text", "审批阈值：三万元", "现行审批阈值", false),
+                        new FileSnippet("docs/新方案.txt", "text", "审批阈值：五万元", "新方案审批阈值", false)
+                ), List.of(), List.of(), "test-v1"),
+                new ProtectedContextFilter(), TestActors.currentActor(), CLOCK);
+        var preparation = sessions.prepareContext(new PlanningContextRequest(rawPrompt,
+                new ContextAnalysisRequest("", List.of(
+                        new ContextFileInput("src/main/resources/审批规则.txt", "审批阈值：三万元", "text"),
+                        new ContextFileInput("docs/新方案.txt", "审批阈值：五万元", "text")
+                )), PermissionPolicyInput.empty()));
+        OptimizationPlanningService planning = new OptimizationPlanningService(
+                request -> new PlanningProviderResponse("已阅读规则。", List.of(), "mock", "planner", true),
+                new PromptTemplateRegistry(), sessions, CLOCK);
+
+        OptimizationPlan plan = planning.plan(new OptimizationPlanRequest(rawPrompt, "", List.of(),
+                new PlanningContextReference(preparation.contextId(), preparation.version())));
+
+        assertThat(plan.questions()).singleElement().satisfies(question -> {
+            assertThat(question.id()).startsWith("context-conflict-");
+            assertThat(question.question()).contains("审批阈值", "三万元", "五万元", "请确认");
+        });
+    }
+
+    @Test
+    void shouldDescribeZeroQuestionsAsReadyForFinalGeneration() {
+        OptimizationPlanningService noQuestionService = new OptimizationPlanningService(
+                request -> new PlanningProviderResponse("请回答下面的问题。", List.of(),
+                        "mock", "planner", true),
+                new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+        OptimizationPlan plan = noQuestionService.plan(request("请把这段文字翻译为英语，保持原有段落格式。"));
+        assertThat(plan.questions()).isEmpty();
+        assertThat(plan.summary()).contains("无需额外确认");
+    }
 
     @Test
     void shouldRetryInvalidPlanExactlyOnceAndPreserveValidQuestions() {

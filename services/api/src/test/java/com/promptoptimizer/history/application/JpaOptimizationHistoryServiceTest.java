@@ -190,9 +190,9 @@ class JpaOptimizationHistoryServiceTest {
 
         ArgumentCaptor<OptimizationRequest> requestCaptor = ArgumentCaptor.forClass(OptimizationRequest.class);
         verify(orchestrator).optimize(requestCaptor.capture());
-        assertThat(requestCaptor.getValue().planConfirmation()).isNotNull();
-        assertThat(requestCaptor.getValue().planConfirmation().answers())
-                .containsExactly(new PlanAnswer("research-region", "研究覆盖哪个地区？", "广东省"));
+        assertThat(requestCaptor.getValue().planConfirmation()).isNull();
+        assertThat(requestCaptor.getValue().rawPrompt())
+                .contains("用户此前已确认的信息", "研究覆盖哪个地区？：广东省");
     }
 
     @Test

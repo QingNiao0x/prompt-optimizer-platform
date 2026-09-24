@@ -44,19 +44,28 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
             request.planningContext().fileSummaries().forEach(value -> input.append(' ').append(value));
         }
         String prompt = input.toString().toLowerCase(Locale.ROOT);
+        String task = request.rawPrompt().toLowerCase(Locale.ROOT);
+        boolean researchGoal = containsAny(task, "研究", "论文", "死亡率", "发病率", "时间序列", "arriaga", "yll");
+        boolean explicitSoftwareGoal = containsAny(task, "开发", "接口", "bug", "报错", "重构", "修复", "登录");
         List<PlanQuestion> questions;
         String summary;
-        if (containsAny(prompt, "研究", "论文", "死亡率", "发病率", "时间序列", "arriaga", "yll")) {
-            questions = researchQuestions(prompt);
-            summary = "我已理解你的研究目标。还需要确认研究范围、数据口径和交付方式，之后会直接生成完整提示词。";
-        } else if (containsAny(prompt, "开发", "代码", "接口", "功能", "bug", "报错", "重构")) {
+        if (explicitSoftwareGoal || (!researchGoal && containsAny(task, "代码", "功能"))) {
             questions = softwareQuestions(prompt, request.contextDescription());
             summary = request.planningContext() == null
                     ? "我已理解你要完成的软件任务。补充下面几个会影响实现方案的细节后，就可以生成最终提示词。"
                     : "我已结合现有项目资料理解这项软件任务。再确认少量无法从文件中确定的细节后，就可以生成最终提示词。";
-        } else if (containsAny(prompt, "写作", "文章", "报告", "演讲", "课程", "作业")) {
+        } else if (researchGoal) {
+            questions = researchQuestions(prompt);
+            summary = "我已理解你的研究目标。还需要确认研究范围、数据口径和交付方式，之后会直接生成完整提示词。";
+        } else if (containsAny(task, "写作", "文章", "报告", "演讲", "课程", "作业")) {
             questions = writingQuestions(prompt);
             summary = "我已理解你的内容目标。确认受众和交付形式后，就可以生成最终提示词。";
+        } else if (containsAny(prompt, "研究", "论文", "死亡率", "发病率", "时间序列", "arriaga", "yll")) {
+            questions = researchQuestions(prompt);
+            summary = "我已结合上下文理解你的研究目标。请确认仍缺失的关键口径。";
+        } else if (containsAny(prompt, "开发", "代码", "接口", "功能", "bug", "报错", "重构")) {
+            questions = softwareQuestions(prompt, request.contextDescription());
+            summary = "我已结合上下文理解你的软件任务。请确认仍缺失的关键选择。";
         } else {
             questions = generalQuestions(prompt);
             summary = "我已理解你的主要目标。回答下面几个关键问题后，就可以生成最终提示词。";

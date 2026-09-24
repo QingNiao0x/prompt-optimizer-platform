@@ -381,6 +381,12 @@ class PlanningSessionServiceTest {
         assertThat(preparation.digest().fileSummaries())
                 .anySatisfy(summary -> assertThat(summary)
                         .contains("订单审批方案.txt", "超过五万元", "财务复核"));
+        assertThat(preparation.digest().factCards())
+                .anySatisfy(card -> {
+                    assertThat(card.origin()).isEqualTo(com.promptoptimizer.enhancement.domain.PlanningFactOrigin.USER_MATERIAL);
+                    assertThat(card.sourcePath()).isEqualTo("docs/订单审批方案.txt");
+                    assertThat(card.evidence()).contains("必须先由财务复核");
+                });
         assertThat(sessions.resolveForPlan(reference(preparation), rawPrompt, "").digest())
                 .isEqualTo(preparation.digest());
     }
@@ -407,13 +413,22 @@ class PlanningSessionServiceTest {
             return new PlanningProviderResponse("已阅读项目和审批方案。", List.of(), "test", "planner", true);
         }, new PromptTemplateRegistry(), sessions, CLOCK);
 
-        planner.plan(new OptimizationPlanRequest(rawPrompt, "", List.of(), reference(preparation)));
+        OptimizationPlan plan = planner.plan(new OptimizationPlanRequest(rawPrompt, "", List.of(), reference(preparation)));
 
         assertThat(preparation.contextReport().fileSnippets()).extracting(FileSnippet::path)
                 .contains("backend/pom.xml", "docs/订单审批方案.txt");
         assertThat(sent.get().planningContext().technologies()).contains("Spring Boot");
         assertThat(sent.get().planningContext().fileSummaries())
                 .anySatisfy(summary -> assertThat(summary).contains("订单审批方案.txt", "五万元", "财务复核"));
+        assertThat(sent.get().planningContext().factCards())
+                .anySatisfy(card -> {
+                    assertThat(card.sourcePath()).isEqualTo("docs/订单审批方案.txt");
+                    assertThat(card.evidence()).contains("必须先由财务复核");
+                });
+        var confirmed = sessions.confirm(rawPrompt, "", List.of(),
+                new PlanConfirmation(plan.planId(), plan.planningContext(), List.of()));
+        assertThat(confirmed.planningContextDigest().factCards())
+                .containsExactlyElementsOf(sent.get().planningContext().factCards());
     }
 
     @Test
@@ -435,6 +450,8 @@ class PlanningSessionServiceTest {
                 .contains("docs/审批方案.txt");
         assertThat(preparation.digest().fileSummaries())
                 .anySatisfy(summary -> assertThat(summary).contains("审批方案.txt", "财务复核"));
+        assertThat(preparation.digest().warnings())
+                .anySatisfy(warning -> assertThat(warning).contains("计划摘要仅覆盖", "未覆盖内容不能视为不存在"));
     }
 
     @Test
