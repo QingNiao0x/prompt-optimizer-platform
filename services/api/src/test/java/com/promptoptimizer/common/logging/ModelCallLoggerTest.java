@@ -47,7 +47,7 @@ class ModelCallLoggerTest {
                 .contains("event=model.call.completed")
                 .contains("requestId=request-123")
                 .contains("workflowId=workflow-hash")
-                .contains("resolvedModelId=public-model-v2")
+                .contains("model=public-model-v2")
                 .contains("inputTokens=18")
                 .contains("outputTokens=31")
                 .contains("totalTokens=49")
@@ -79,6 +79,7 @@ class ModelCallLoggerTest {
 
         assertThat(appender.list.getFirst().getFormattedMessage())
                 .contains("event=model.call.failed")
+                .contains("model=public-model-v2")
                 .contains("failureType=UPSTREAM_UNAVAILABLE")
                 .contains("upstreamStatus=502")
                 .contains("retryable=true")

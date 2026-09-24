@@ -139,7 +139,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 .anySatisfy(message -> assertThat(message)
                         .contains("event=model.call.completed")
                         .contains("operation=prompt.optimize")
-                        .contains("resolvedModelId=test-model")
+                        .contains("model=test-model")
                         .contains("inputTokens=18")
                         .contains("outputTokens=31")
                         .contains("totalTokens=49")

@@ -21,7 +21,7 @@ public final class ModelCallLogger {
     public static void completed(
             String operation,
             String providerRoute,
-            String resolvedModelId,
+            String model,
             String selectionSource,
             boolean mock,
             int attempt,
@@ -31,13 +31,13 @@ public final class ModelCallLogger {
     ) {
         LOGGER.info(
                 "event=model.call.completed requestId={} workflowId={} operation={} providerRoute={} "
-                        + "resolvedModelId={} selectionSource={} mock={} attempt={} inputItems={} "
+                        + "model={} selectionSource={} mock={} attempt={} inputItems={} "
                         + "inputTokens={} outputTokens={} totalTokens={} durationMs={}",
                 LogFields.value(MDC.get("requestId")),
                 LogFields.value(MDC.get("workflowId")),
                 LogFields.value(operation),
                 LogFields.value(providerRoute),
-                LogFields.value(resolvedModelId),
+                LogFields.value(model),
                 LogFields.value(selectionSource),
                 mock,
                 Math.max(1, attempt),
@@ -53,7 +53,7 @@ public final class ModelCallLogger {
     public static void failed(
             String operation,
             String providerRoute,
-            String resolvedModelId,
+            String model,
             String selectionSource,
             String failureType,
             boolean retryable,
@@ -67,7 +67,7 @@ public final class ModelCallLogger {
                 + " workflowId=" + LogFields.value(MDC.get("workflowId"))
                 + " operation=" + LogFields.value(operation)
                 + " providerRoute=" + LogFields.value(providerRoute)
-                + " resolvedModelId=" + LogFields.value(resolvedModelId)
+                + " model=" + LogFields.value(model)
                 + " selectionSource=" + LogFields.value(selectionSource)
                 + " failureType=" + LogFields.value(failureType)
                 + " retryable=" + retryable

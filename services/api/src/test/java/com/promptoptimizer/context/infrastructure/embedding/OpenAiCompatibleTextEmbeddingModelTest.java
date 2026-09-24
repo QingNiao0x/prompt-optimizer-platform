@@ -91,7 +91,7 @@ class OpenAiCompatibleTextEmbeddingModelTest {
                 .anySatisfy(message -> assertThat(message)
                         .contains("event=model.call.completed")
                         .contains("operation=context.embedding")
-                        .contains("resolvedModelId=test-embedding-model")
+                        .contains("model=test-embedding-model")
                         .contains("inputTokens=12")
                         .contains("totalTokens=12")
                         .doesNotContain(API_KEY, ENDPOINT));

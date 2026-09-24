@@ -304,7 +304,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                     throw exception;
                 }
                 LOGGER.warn(
-                        "event=model.call.repair_retry operation={} providerRoute={} modelId={} attempt={} nextAttempt={} failureType={}",
+                        "event=model.call.repair_retry operation={} providerRoute={} model={} attempt={} nextAttempt={} failureType={}",
                         LogFields.value(operation),
                         LogFields.value(route.key()),
                         LogFields.value(resolvedModelId),
