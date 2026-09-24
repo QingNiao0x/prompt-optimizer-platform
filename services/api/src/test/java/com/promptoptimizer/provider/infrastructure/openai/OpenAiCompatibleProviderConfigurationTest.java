@@ -57,6 +57,7 @@ class OpenAiCompatibleProviderConfigurationTest {
                         "app.provider.mode=openai-compatible",
                         "app.provider.openai-compatible.multi-provider-enabled=true",
                         "app.provider.openai-compatible.default-provider=tokenhub",
+                        "app.provider.openai-compatible.model-catalog-hidden-ids=deepseek:deepseek-chat,deepseek-chat",
                         "app.provider.openai-compatible.providers.deepseek.provider-name=deepseek",
                         "app.provider.openai-compatible.providers.deepseek.endpoint=https://deepseek.example.com/chat/completions",
                         "app.provider.openai-compatible.providers.deepseek.api-key=deepseek-secret",
@@ -65,16 +66,34 @@ class OpenAiCompatibleProviderConfigurationTest {
                         "app.provider.openai-compatible.providers.tokenhub.provider-name=tokenhub",
                         "app.provider.openai-compatible.providers.tokenhub.endpoint=https://tokenhub.example.com/v1/chat/completions",
                         "app.provider.openai-compatible.providers.tokenhub.api-key=tokenhub-secret",
-                        "app.provider.openai-compatible.providers.tokenhub.model=glm-5.3-flashx",
-                        "app.provider.openai-compatible.providers.tokenhub.models=glm-5.3-flashx,kimi-k3"
+                        "app.provider.openai-compatible.providers.tokenhub.model=deepseek-v4-pro-0813",
+                        "app.provider.openai-compatible.providers.tokenhub.models=deepseek/deepseek-flash,hy4-preview,hy3,glm-5.3,kimi-k2.8-preview,kimi-k2.7-code,glm-5.3-flashx,kimi-k3"
                 )
                 .run(context -> {
                     assertThat(context).hasSingleBean(PromptEnhancementProvider.class);
                     OpenAiCompatibleProperties properties = context.getBean(OpenAiCompatibleProperties.class);
                     assertThat(properties.getAvailableModelDescriptors())
                             .extracting(OpenAiCompatibleProperties.ModelDescriptor::id)
-                            .containsExactly("deepseek:deepseek-chat", "tokenhub:glm-5.3-flashx", "tokenhub:kimi-k3");
+                            .containsExactly(
+                                    "tokenhub:deepseek/deepseek-flash",
+                                    "tokenhub:deepseek-v4-pro-0813",
+                                    "tokenhub:kimi-k3",
+                                    "tokenhub:kimi-k2.8-preview",
+                                    "tokenhub:kimi-k2.7-code",
+                                    "tokenhub:glm-5.3",
+                                    "tokenhub:glm-5.3-flashx",
+                                    "tokenhub:hy4-preview",
+                                    "tokenhub:hy3",
+                                    "tokenhub:minimax-m3"
+                            );
                     assertThat(properties.getDefaultRoute().providerName()).isEqualTo("tokenhub");
+                    assertThat(properties.resolveModel(null).publicModelId())
+                            .isEqualTo("tokenhub:deepseek-v4-pro-0813");
+                    assertThat(properties.getAvailableModelDescriptors())
+                            .extracting(OpenAiCompatibleProperties.ModelDescriptor::defaultModel)
+                            .containsExactly(false, true, false, false, false, false, false, false, false, false);
+                    assertThat(properties.resolveModel("tokenhub:deepseek/deepseek-flash").model())
+                            .isEqualTo("deepseek/deepseek-flash");
                 });
     }
 }

@@ -189,33 +189,41 @@ describe('optimization store project context', () => {
     }]);
   });
 
-  it('should preserve provider-qualified model ids returned by the server catalog', async () => {
+  it('should migrate a retired model selection to the server default model', async () => {
     vi.mocked(listAvailableModels).mockResolvedValue({
       requestId: 'models-request',
       data: [
         {
-          id: 'deepseek:deepseek-chat',
-          displayName: 'DeepSeek Chat · deepseek',
-          provider: 'deepseek',
+          id: 'tokenhub:deepseek/deepseek-flash',
+          displayName: 'DeepSeek-V4.1-Flash',
+          provider: 'tokenhub',
+          defaultModel: false,
+        },
+        {
+          id: 'tokenhub:deepseek-v4-pro-0813',
+          displayName: 'DeepSeek-V4-Pro',
+          provider: 'tokenhub',
           defaultModel: true,
         },
         {
           id: 'tokenhub:glm-5.3-flashx',
-          displayName: 'GLM-5.3-FlashX · tokenhub',
+          displayName: 'GLM-5.3-FlashX',
           provider: 'tokenhub',
           defaultModel: false,
         },
       ],
     });
     const store = useOptimizationStore();
+    store.selectedModel = 'deepseek:deepseek-chat';
 
     await store.loadAvailableModels();
 
     expect(store.availableModels.map((model) => model.id)).toEqual([
-      'deepseek:deepseek-chat',
+      'tokenhub:deepseek/deepseek-flash',
+      'tokenhub:deepseek-v4-pro-0813',
       'tokenhub:glm-5.3-flashx',
     ]);
-    expect(store.selectedModel).toBe('deepseek:deepseek-chat');
+    expect(store.selectedModel).toBe('tokenhub:deepseek-v4-pro-0813');
   });
 
   it('should prepare context first and pass its reference into the plan request', async () => {

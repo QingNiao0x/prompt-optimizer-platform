@@ -135,9 +135,19 @@ app:
       models: ${MODEL_MODELS:}
       # 是否启用按模型路由到不同 endpoint/API Key 的模式
       multi-provider-enabled: ${MODEL_MULTI_PROVIDER_ENABLED:true}
-      default-provider: ${MODEL_DEFAULT_PROVIDER:}
-      # 多供应商路由配置
+      default-provider: ${MODEL_DEFAULT_PROVIDER:tokenhub}
+      # 保留已配置的 DeepSeek 路由，但默认将旧 deepseek-chat 从用户模型目录中下架。
+      # 同时支持写入原始模型 ID，以兼容单供应商模式。
+      model-catalog-hidden-ids: ${MODEL_CATALOG_HIDDEN_IDS:deepseek:deepseek-chat,deepseek-chat}
+      # 将 TokenHub 放在前面，使未显式配置 MODEL_DEFAULT_PROVIDER 时优先使用其默认模型。
       providers:
+        tokenhub:
+          provider-name: ${MODEL_TOKENHUB_PROVIDER_NAME:tokenhub}
+          endpoint: ${MODEL_TOKENHUB_ENDPOINT:https://tokenhub.tencentmaas.com/v1/chat/completions}
+          api-key: ${MODEL_TOKENHUB_API_KEY:${MODEL_API_KEY2:}}
+          model: ${MODEL_TOKENHUB_NAME:deepseek-v4-pro-0813}
+          # TokenHub 的调用 ID 与下方客户展示名分离；应用要求展示的基础模型会与此列表合并。
+          models: ${MODEL_TOKENHUB_MODELS:deepseek/deepseek-flash,deepseek-v4-pro-0813,kimi-k3,kimi-k2.8-preview,kimi-k2.7-code,glm-5.3,glm-5.3-flashx,hy4-preview,hy3,minimax-m3}
         deepseek:
           provider-name: ${MODEL_DEEPSEEK_PROVIDER_NAME:deepseek}
           endpoint: ${MODEL_DEEPSEEK_ENDPOINT:${MODEL_ENDPOINT:https://api.deepseek.com/chat/completions}}
@@ -145,15 +155,9 @@ app:
           api-key: ${MODEL_DEEPSEEK_API_KEY:${MODEL_API_KEY:}}
           model: ${MODEL_DEEPSEEK_NAME:${MODEL_NAME:deepseek-chat}}
           models: ${MODEL_DEEPSEEK_MODELS:${MODEL_MODELS:}}
-
-        tokenhub:
-          provider-name: ${MODEL_TOKENHUB_PROVIDER_NAME:tokenhub}
-          endpoint: ${MODEL_TOKENHUB_ENDPOINT:https://tokenhub.tencentmaas.com/v1/chat/completions}
-          api-key: ${MODEL_TOKENHUB_API_KEY:${MODEL_API_KEY2:}}
-          model: ${MODEL_TOKENHUB_NAME:glm-5.3-flashx}
-          models: ${MODEL_TOKENHUB_MODELS:glm-5.3-flashx,deepseek-v4-pro-0813,kimi-k3,minimax-m3}
       temperature: ${MODEL_TEMPERATURE:0.2}
-      max-tokens: ${MODEL_MAX_TOKENS:3000}
+      # 输出最大TOKEN
+      max-tokens: ${MODEL_MAX_TOKENS:10000}
       connect-timeout: ${MODEL_CONNECT_TIMEOUT:3s}
       # 结构化提示词生成偶尔会超过 30 秒；浏览器端等待 70 秒，必须留出错误响应返回的时间。
       read-timeout: ${MODEL_READ_TIMEOUT:60s}

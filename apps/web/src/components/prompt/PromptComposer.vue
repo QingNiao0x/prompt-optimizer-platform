@@ -56,6 +56,9 @@ const modelCode = (model: AvailableModel): string => {
   return code || model.displayName;
 };
 
+// 模型目录的官方展示名优先于带路由前缀的内部 ID，避免把供应商路由显示给用户。
+const modelLabel = (model: AvailableModel): string => model.displayName.trim() || modelCode(model);
+
 const planModeModel = computed({
   get: (): boolean => planModeEnabled.value,
   set: (value: boolean): void => setPlanModeEnabled(value),
@@ -131,12 +134,11 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
               <ElOption
                 v-for="modelOption in modelOptions"
                 :key="modelOption.id"
-                :label="modelCode(modelOption)"
+                :label="modelLabel(modelOption)"
                 :value="modelOption.id"
               >
                 <span class="model-option">
-                  <strong>{{ modelCode(modelOption) }}</strong>
-                  <small v-if="modelOption.provider">{{ modelOption.provider }}</small>
+                  <strong>{{ modelLabel(modelOption) }}</strong>
                 </span>
               </ElOption>
             </ElSelect>
@@ -336,18 +338,11 @@ form {
 .model-option {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
 }
 
 .model-option strong {
   color: var(--text-primary);
   font-weight: 600;
-}
-
-.model-option small {
-  color: var(--text-muted);
-  font-size: 13px;
 }
 
 .model-select :deep(.el-input__wrapper) {

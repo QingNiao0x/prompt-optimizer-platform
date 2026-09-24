@@ -38,7 +38,7 @@ public class AvailableModelController {
         List<AvailableModel> models = properties.getAvailableModelDescriptors().stream()
                 .map(model -> new AvailableModel(
                         model.id(),
-                        displayName(model.model(), model.provider(), properties.isMultiProviderEnabled()),
+                        displayName(model.model()),
                         model.provider(),
                         model.defaultModel()
                 ))
@@ -49,14 +49,21 @@ public class AvailableModelController {
         );
     }
 
-    private String displayName(String model, String provider, boolean multiProvider) {
+    /** 将稳定的上游模型 ID 映射为官方名称；路由供应商由服务端使用，不拼入客户展示文案。 */
+    private String displayName(String model) {
         String friendlyName = switch (model) {
+            case "deepseek/deepseek-flash" -> "DeepSeek-V4.1-Flash";
+            case "hy4-preview" -> "Hy4 preview";
+            case "hy3" -> "Hy3";
+            case "glm-5.3" -> "GLM-5.3";
+            case "kimi-k2.8-preview" -> "Kimi K2.8 Preview";
+            case "kimi-k2.7-code" -> "Kimi K2.7 Code";
             case "glm-5.3-flashx" -> "GLM-5.3-FlashX";
-            case "deepseek-v4-pro-0813" -> "DeepSeek-V4-Pro 0813";
+            case "deepseek-v4-pro-0813" -> "DeepSeek-V4-Pro";
             case "kimi-k3" -> "Kimi K3";
             case "minimax-m3" -> "MiniMax-M3";
             default -> model;
         };
-        return multiProvider ? friendlyName + " · " + provider : friendlyName;
+        return friendlyName;
     }
 }

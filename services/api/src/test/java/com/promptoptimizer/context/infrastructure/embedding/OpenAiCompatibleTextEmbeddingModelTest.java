@@ -1,8 +1,12 @@
 package com.promptoptimizer.context.infrastructure.embedding;
 
 import com.promptoptimizer.context.application.TextEmbeddingModel;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -53,9 +57,10 @@ class OpenAiCompatibleTextEmbeddingModelTest {
                 .andExpect(jsonPath("$.model").value("test-embedding-model"))
                 .andExpect(jsonPath("$.input.length()").value(2))
                 .andRespond(withSuccess(
-                        """
+                """
                                 {
                                   "model": "resolved-embedding-model",
+                                  "usage": {"prompt_tokens": 12, "total_tokens": 12},
                                   "data": [
                                     {"index": 1, "embedding": [0.0, 1.0]},
                                     {"index": 0, "embedding": [1.0, 0.0]}
@@ -65,12 +70,31 @@ class OpenAiCompatibleTextEmbeddingModelTest {
                         MediaType.APPLICATION_JSON
                 ));
 
-        TextEmbeddingModel.EmbeddingBatch result = model.embed(List.of("第一段", "第二段"));
+        Logger callLogger = (Logger) LoggerFactory.getLogger(com.promptoptimizer.common.logging.ModelCallLogger.class);
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        callLogger.addAppender(appender);
+        TextEmbeddingModel.EmbeddingBatch result;
+        try {
+            result = model.embed(List.of("第一段", "第二段"));
+        } finally {
+            callLogger.detachAppender(appender);
+            appender.stop();
+        }
 
         assertThat(result.model()).isEqualTo("resolved-embedding-model");
         assertThat(result.vectors()).hasSize(2);
         assertThat(result.vectors().get(0)).containsExactly(1F, 0F);
         assertThat(result.vectors().get(1)).containsExactly(0F, 1F);
+        assertThat(appender.list)
+                .extracting(ILoggingEvent::getFormattedMessage)
+                .anySatisfy(message -> assertThat(message)
+                        .contains("event=model.call.completed")
+                        .contains("operation=context.embedding")
+                        .contains("resolvedModelId=test-embedding-model")
+                        .contains("inputTokens=12")
+                        .contains("totalTokens=12")
+                        .doesNotContain(API_KEY, ENDPOINT));
         server.verify();
     }
 }

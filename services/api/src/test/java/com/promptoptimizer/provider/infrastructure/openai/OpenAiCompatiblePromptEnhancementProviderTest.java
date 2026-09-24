@@ -14,8 +14,12 @@ import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.template.domain.PromptTemplate;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import com.promptoptimizer.context.domain.FileSnippet;
@@ -87,6 +91,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 """;
         String responseBody = objectMapper.writeValueAsString(Map.of(
                 "model", "resolved-model",
+                "usage", Map.of("prompt_tokens", 18, "completion_tokens", 31, "total_tokens", 49),
                 "choices", List.of(Map.of(
                         "message", Map.of(
                                 "role", "assistant",
@@ -106,7 +111,17 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 .andExpect(jsonPath("$.response_format.type").value("json_object"))
                 .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
-        EnhancementProviderResponse response = provider.enhance(createRequest());
+        Logger callLogger = (Logger) LoggerFactory.getLogger(com.promptoptimizer.common.logging.ModelCallLogger.class);
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        callLogger.addAppender(appender);
+        EnhancementProviderResponse response;
+        try {
+            response = provider.enhance(createRequest());
+        } finally {
+            callLogger.detachAppender(appender);
+            appender.stop();
+        }
 
         assertThat(response.provider()).isEqualTo("test-provider");
         assertThat(response.model()).isEqualTo("resolved-model");
@@ -119,6 +134,16 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                         PromptSectionType.CONSTRAINTS,
                         PromptSectionType.ACCEPTANCE
                 );
+        assertThat(appender.list)
+                .extracting(ILoggingEvent::getFormattedMessage)
+                .anySatisfy(message -> assertThat(message)
+                        .contains("event=model.call.completed")
+                        .contains("operation=prompt.optimize")
+                        .contains("resolvedModelId=test-model")
+                        .contains("inputTokens=18")
+                        .contains("outputTokens=31")
+                        .contains("totalTokens=49")
+                        .doesNotContain(API_KEY, ENDPOINT));
         server.verify();
     }
 
@@ -259,6 +284,32 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
 
         assertThat(response.provider()).isEqualTo("tokenhub");
         assertThat(response.model()).isEqualTo("tokenhub:glm-5.3-flashx");
+        server.verify();
+    }
+
+    @Test
+    void shouldDisableThinkingForStructuredDeepSeekV41FlashRequests() throws Exception {
+        OpenAiCompatibleRouteProperties tokenhub = route(
+                "tokenhub",
+                TOKENHUB_ENDPOINT,
+                "tokenhub-secret",
+                "deepseek/deepseek-flash",
+                List.of("deepseek/deepseek-flash")
+        );
+        properties.setMultiProviderEnabled(true);
+        properties.setDefaultProvider("tokenhub");
+        properties.setProviders(Map.of("tokenhub", tokenhub));
+        provider = new OpenAiCompatiblePromptEnhancementProvider(builder.build(), objectMapper, properties);
+
+        server.expect(once(), requestTo(TOKENHUB_ENDPOINT))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer tokenhub-secret"))
+                .andExpect(jsonPath("$.model").value("deepseek/deepseek-flash"))
+                .andExpect(jsonPath("$.response_format.type").value("json_object"))
+                .andExpect(jsonPath("$.thinking.type").value("disabled"))
+                .andRespond(withSuccess(completionWithFindings("[]"), MediaType.APPLICATION_JSON));
+
+        provider.enhance(createRequest("tokenhub:deepseek/deepseek-flash"));
+
         server.verify();
     }
 

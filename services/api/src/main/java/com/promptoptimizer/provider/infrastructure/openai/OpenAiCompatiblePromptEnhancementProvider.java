@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.promptoptimizer.common.logging.LogFields;
+import com.promptoptimizer.common.logging.ModelCallLogger;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.api.ConversationMessage;
 import com.promptoptimizer.enhancement.api.EnhancementOptions;
@@ -168,12 +170,14 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         return retryWhenResponseIsInvalid(
                 requestBody,
                 this::requestEnhancement,
-                ENHANCEMENT_REPAIR_INSTRUCTION
+                ENHANCEMENT_REPAIR_INSTRUCTION,
+                "prompt.optimize",
+                selectionSource(request.model())
         );
     }
 
     /** 执行一次增强请求；网络、HTTP 和结构化响应错误分别映射为稳定的 Provider 错误。 */
-    private EnhancementProviderResponse requestEnhancement(ChatCompletionRequest requestBody) {
+    private ProviderCallResult<EnhancementProviderResponse> requestEnhancement(ChatCompletionRequest requestBody) {
         OpenAiCompatibleRoute route = requestBody.route();
         try {
             ChatCompletionResponse response = restClient.post()
@@ -184,7 +188,10 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                     .body(requestBody)
                     .retrieve()
                     .body(ChatCompletionResponse.class);
-            return mapResponse(response, requestBody);
+            return new ProviderCallResult<>(
+                    mapResponse(response, requestBody),
+                    toTokenUsage(response == null ? null : response.usage())
+            );
         } catch (RestClientResponseException exception) {
             throw mapHttpException(exception);
         } catch (ResourceAccessException exception) {
@@ -210,12 +217,14 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         return retryWhenResponseIsInvalid(
                 requestBody,
                 this::requestPlanning,
-                PLANNING_REPAIR_INSTRUCTION
+                PLANNING_REPAIR_INSTRUCTION,
+                "plan.generate",
+                selectionSource(request.model())
         );
     }
 
     /** 执行一次计划请求；仅向选定路由的上游端点发送本次计划输入。 */
-    private PlanningProviderResponse requestPlanning(ChatCompletionRequest requestBody) {
+    private ProviderCallResult<PlanningProviderResponse> requestPlanning(ChatCompletionRequest requestBody) {
         OpenAiCompatibleRoute route = requestBody.route();
         try {
             ChatCompletionResponse response = restClient.post()
@@ -226,7 +235,10 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                     .body(requestBody)
                     .retrieve()
                     .body(ChatCompletionResponse.class);
-            return mapPlanningResponse(response, requestBody);
+            return new ProviderCallResult<>(
+                    mapPlanningResponse(response, requestBody),
+                    toTokenUsage(response == null ? null : response.usage())
+            );
         } catch (RestClientResponseException exception) {
             throw mapHttpException(exception);
         } catch (ResourceAccessException exception) {
@@ -248,28 +260,101 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
      */
     private <T> T retryWhenResponseIsInvalid(
             ChatCompletionRequest initialRequest,
-            Function<ChatCompletionRequest, T> request,
-            String repairInstruction
+            Function<ChatCompletionRequest, ProviderCallResult<T>> request,
+            String repairInstruction,
+            String operation,
+            String selectionSource
     ) {
         ChatCompletionRequest currentRequest = initialRequest;
         for (int attempt = 1; attempt <= MAX_INVALID_RESPONSE_ATTEMPTS; attempt++) {
+            long startedAt = System.nanoTime();
+            OpenAiCompatibleRoute route = currentRequest.route();
+            String resolvedModelId = properties.publicModelId(route, currentRequest.model());
             try {
-                return request.apply(currentRequest);
+                ProviderCallResult<T> callResult = request.apply(currentRequest);
+                ModelCallLogger.completed(
+                        operation,
+                        route.key(),
+                        resolvedModelId,
+                        selectionSource,
+                        false,
+                        attempt,
+                        1,
+                        elapsedMillis(startedAt),
+                        callResult.tokenUsage()
+                );
+                return callResult.value();
             } catch (ProviderException exception) {
-                if (exception.getFailureType() != ProviderFailureType.INVALID_RESPONSE
-                        || attempt == MAX_INVALID_RESPONSE_ATTEMPTS) {
+                boolean willRetry = exception.getFailureType() == ProviderFailureType.INVALID_RESPONSE
+                        && attempt < MAX_INVALID_RESPONSE_ATTEMPTS;
+                ModelCallLogger.failed(
+                        operation,
+                        route.key(),
+                        resolvedModelId,
+                        selectionSource,
+                        exception.getFailureType().name(),
+                        exception.isRetryable(),
+                        upstreamStatus(exception),
+                        willRetry,
+                        attempt,
+                        1,
+                        elapsedMillis(startedAt)
+                );
+                if (!willRetry) {
                     throw exception;
                 }
                 LOGGER.warn(
-                        "模型第 {} 次返回的结构化结果无效，将进行第 {} 次受控修复；原因：{}",
+                        "event=model.call.repair_retry operation={} providerRoute={} modelId={} attempt={} nextAttempt={} failureType={}",
+                        LogFields.value(operation),
+                        LogFields.value(route.key()),
+                        LogFields.value(resolvedModelId),
                         attempt,
                         attempt + 1,
-                        exception.getMessage()
+                        exception.getFailureType().name()
                 );
                 currentRequest = withRepairInstruction(currentRequest, repairInstruction);
+            } catch (RuntimeException exception) {
+                ModelCallLogger.failed(
+                        operation,
+                        route.key(),
+                        resolvedModelId,
+                        selectionSource,
+                        "UNEXPECTED",
+                        false,
+                        null,
+                        false,
+                        attempt,
+                        1,
+                        elapsedMillis(startedAt)
+                );
+                throw exception;
             }
         }
         throw new IllegalStateException("结构化响应重试流程未返回结果");
+    }
+
+    private String selectionSource(String requestedModel) {
+        return requestedModel == null || requestedModel.isBlank() ? "SERVER_DEFAULT" : "USER_SELECTED";
+    }
+
+    private Integer upstreamStatus(ProviderException exception) {
+        Throwable current = exception;
+        for (int depth = 0; current != null && depth < 6; depth++, current = current.getCause()) {
+            if (current instanceof RestClientResponseException responseException) {
+                return responseException.getStatusCode().value();
+            }
+        }
+        return null;
+    }
+
+    private long elapsedMillis(long startedAt) {
+        return Math.max(0, (System.nanoTime() - startedAt) / 1_000_000L);
+    }
+
+    /** 将 OpenAI 兼容响应中的显式 token 用量映射为统一日志字段。 */
+    private ModelCallLogger.TokenUsage toTokenUsage(ChatTokenUsage usage) {
+        return usage == null ? null : new ModelCallLogger.TokenUsage(
+                usage.promptTokens(), usage.completionTokens(), usage.totalTokens());
     }
 
     /**
@@ -289,12 +374,15 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             }
         }
         messages.add(new ChatMessage("user", repairInstruction));
+        int nextOutputLimit = nextRetryMaxTokens(request.outputTokenLimit());
         return new ChatCompletionRequest(
                 request.model(),
                 List.copyOf(messages),
                 request.temperature(),
-                nextRetryMaxTokens(request.maxTokens()),
+                request.maxTokens() == null ? null : nextOutputLimit,
+                request.maxCompletionTokens() == null ? null : nextOutputLimit,
                 request.responseFormat(),
+                request.thinking(),
                 false,
                 request.route()
         );
@@ -356,15 +444,19 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 ? new ResponseFormat("json_object")
                 : null;
         OpenAiCompatibleProperties.ModelSelection selection = resolveModel(request.model());
+        RequestOptions requestOptions = requestOptions(
+                selection.route(), selection.model(), properties.getTemperature(), responseFormat);
         return new ChatCompletionRequest(
                 selection.model(),
                 List.of(
                         new ChatMessage("system", SYSTEM_PROMPT),
                         new ChatMessage("user", userMessage)
                 ),
-                properties.getTemperature(),
-                properties.getMaxTokens(),
+                requestOptions.temperature(),
+                requestOptions.maxTokens(),
+                requestOptions.maxCompletionTokens(),
                 responseFormat,
+                requestOptions.thinking(),
                 false,
                 selection.route()
         );
@@ -396,18 +488,56 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 ? new ResponseFormat("json_object")
                 : null;
         OpenAiCompatibleProperties.ModelSelection selection = resolveModel(request.model());
+        RequestOptions requestOptions = requestOptions(
+                selection.route(), selection.model(), Math.min(0.3D, properties.getTemperature()), responseFormat);
         return new ChatCompletionRequest(
                 selection.model(),
                 List.of(
                         new ChatMessage("system", PLAN_SYSTEM_PROMPT),
                         new ChatMessage("user", userMessage)
                 ),
-                Math.min(0.3D, properties.getTemperature()),
-                properties.getMaxTokens(),
+                requestOptions.temperature(),
+                requestOptions.maxTokens(),
+                requestOptions.maxCompletionTokens(),
                 responseFormat,
+                requestOptions.thinking(),
                 false,
                 selection.route()
         );
+    }
+
+    /**
+     * 为 TokenHub 已知模型应用其结构化输出所需的协议差异；其他 OpenAI 兼容端点保持原请求参数。
+     */
+    private RequestOptions requestOptions(
+            OpenAiCompatibleRoute route,
+            String model,
+            double temperature,
+            ResponseFormat responseFormat
+    ) {
+        int maxTokens = properties.getMaxTokens();
+        if (!isTokenHubRoute(route)) {
+            return new RequestOptions(temperature, maxTokens, null, null);
+        }
+
+        if ("kimi-k3".equalsIgnoreCase(model)) {
+            // Kimi K3 固定采样参数，并要求使用 max_completion_tokens；显式 temperature 会被上游拒绝。
+            return new RequestOptions(null, null, maxTokens, null);
+        }
+
+        if (responseFormat != null
+                && (model.toLowerCase(java.util.Locale.ROOT).startsWith("deepseek-v4-")
+                || "deepseek/deepseek-flash".equalsIgnoreCase(model)
+                || "minimax-m3".equalsIgnoreCase(model))) {
+            // TokenHub 不建议思考模式与 JSON 模式同时启用；V4.1 原厂直供 ID 使用 deepseek/ 命名空间。
+            return new RequestOptions(temperature, maxTokens, null, new ThinkingOptions("disabled"));
+        }
+        return new RequestOptions(temperature, maxTokens, null, null);
+    }
+
+    private boolean isTokenHubRoute(OpenAiCompatibleRoute route) {
+        return "tokenhub".equalsIgnoreCase(route.key())
+                || "tokenhub".equalsIgnoreCase(route.providerName());
     }
 
     /**
@@ -754,6 +884,19 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     ) {
     }
 
+    /** 保存模型路由在 JSON 结构化调用上的采样、输出上限及思考模式覆盖项。 */
+    private record RequestOptions(
+            Double temperature,
+            Integer maxTokens,
+            Integer maxCompletionTokens,
+            ThinkingOptions thinking
+    ) {
+    }
+
+    /** TokenHub 部分推理模型用于显式关闭思考模式的请求字段。 */
+    private record ThinkingOptions(String type) {
+    }
+
     /**
      * Chat Completions 请求体。
      */
@@ -761,17 +904,23 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     private record ChatCompletionRequest(
             String model,
             List<ChatMessage> messages,
-            double temperature,
-            @JsonProperty("max_tokens") int maxTokens,
+            Double temperature,
+            @JsonProperty("max_tokens") Integer maxTokens,
+            @JsonProperty("max_completion_tokens") Integer maxCompletionTokens,
             @JsonProperty("response_format") ResponseFormat responseFormat,
+            ThinkingOptions thinking,
             boolean stream,
             @JsonIgnore OpenAiCompatibleRoute route
     ) {
+        private int outputTokenLimit() {
+            return maxCompletionTokens != null ? maxCompletionTokens : maxTokens;
+        }
     }
 
     /**
      * Chat Completions 单条消息。
      */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private record ChatMessage(String role, String content) {
     }
 
@@ -785,7 +934,19 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
      * Chat Completions 响应体。
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record ChatCompletionResponse(String model, List<Choice> choices) {
+    private record ChatCompletionResponse(String model, List<Choice> choices, ChatTokenUsage usage) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private record ChatTokenUsage(
+            @JsonProperty("prompt_tokens") Long promptTokens,
+            @JsonProperty("completion_tokens") Long completionTokens,
+            @JsonProperty("total_tokens") Long totalTokens
+    ) {
+    }
+
+    /** 在不污染领域响应模型的前提下携带上游计量字段供日志适配器使用。 */
+    private record ProviderCallResult<T>(T value, ModelCallLogger.TokenUsage tokenUsage) {
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.promptoptimizer.enhancement.application;
 
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
+import com.promptoptimizer.common.logging.LogCorrelation;
+import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.context.api.ContextAnalysisRequest;
 import com.promptoptimizer.context.api.ContextFileInput;
 import com.promptoptimizer.context.api.PlanningContextRequest;
@@ -18,6 +20,9 @@ import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
 import com.promptoptimizer.identity.application.ActorIdentity;
 import com.promptoptimizer.identity.application.CurrentActor;
 import com.promptoptimizer.policy.application.ProtectedContextFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +55,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PlanningSessionService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlanningSessionService.class);
 
     private static final Duration SESSION_TTL = Duration.ofMinutes(30);
     private static final int MAX_DIGEST_ITEM_CHARACTERS = 400;
@@ -93,43 +100,90 @@ public class PlanningSessionService {
      */
     public PlanningContextPreparation prepareContext(PlanningContextRequest request) {
         long startedAt = clock.millis();
-        ActorIdentity actor = currentActor.require();
-        rejectCredential(request.rawPrompt());
-        rejectCredential(request.context().customDescription());
+        long startedNanos = System.nanoTime();
+        String contextId = UUID.randomUUID().toString();
+        int inputFileCount = contextFileCount(request);
+        long inputCharacters = contextCharacterCount(request);
+        try (LogCorrelation.Scope ignored = LogCorrelation.bindWorkflow("planning-context", contextId)) {
+            try {
+                ActorIdentity actor = currentActor.require();
+                rejectCredential(request.rawPrompt());
+                rejectCredential(request.context().customDescription());
 
-        ProtectedContextFilter.FilteredContext filtered = protectedContextFilter.filter(
-                request.context(),
-                request.permissionPolicy()
-        );
-        ContextSnapshot snapshot = protectedContextFilter.attachReport(
-                contextAnalyzer.analyze(prioritizeDocuments(filtered.request()), request.rawPrompt()),
-                filtered
-        );
-        PlanningContextReference reference = new PlanningContextReference(
-                UUID.randomUUID().toString(),
-                fingerprintContext(filtered.request(), request.rawPrompt())
-        );
-        Instant expiresAt = clock.instant().plus(SESSION_TTL);
-        PlanningContextDigest digest = buildDigest(snapshot, request.rawPrompt());
-        store.saveContext(new PlanningSessionStore.ContextSession(
-                reference,
-                actor.userId(),
-                fingerprintContextOwner(
-                        request.rawPrompt(),
-                        request.context().customDescription()
-                ),
-                digest,
-                snapshot,
-                expiresAt
-        ));
-        return new PlanningContextPreparation(
-                reference.contextId(),
-                reference.version(),
-                digest,
-                snapshot,
-                expiresAt,
-                Math.max(0, clock.millis() - startedAt)
-        );
+                ProtectedContextFilter.FilteredContext filtered = protectedContextFilter.filter(
+                        request.context(),
+                        request.permissionPolicy()
+                );
+                ContextSnapshot snapshot = protectedContextFilter.attachReport(
+                        contextAnalyzer.analyze(prioritizeDocuments(filtered.request()), request.rawPrompt()),
+                        filtered
+                );
+                PlanningContextReference reference = new PlanningContextReference(
+                        contextId,
+                        fingerprintContext(filtered.request(), request.rawPrompt())
+                );
+                Instant expiresAt = clock.instant().plus(SESSION_TTL);
+                PlanningContextDigest digest = buildDigest(snapshot, request.rawPrompt());
+                store.saveContext(new PlanningSessionStore.ContextSession(
+                        reference,
+                        actor.userId(),
+                        fingerprintContextOwner(
+                                request.rawPrompt(),
+                                request.context().customDescription()
+                        ),
+                        digest,
+                        snapshot,
+                        expiresAt
+                ));
+                long latencyMs = Math.max(0, clock.millis() - startedAt);
+                LOGGER.info("event=context.prepare.completed requestId={} workflowId={} modelCall=false "
+                                + "inputFiles={} analyzedFiles={} protectedFiles={} inputCharacters={} warnings={} durationMs={}",
+                        LogFields.value(MDC.get("requestId")),
+                        LogFields.value(MDC.get("workflowId")),
+                        inputFileCount,
+                        filtered.request().files().size(),
+                        filtered.protectedPaths().size(),
+                        inputCharacters,
+                        snapshot.warnings().size(),
+                        latencyMs);
+                return new PlanningContextPreparation(
+                        reference.contextId(),
+                        reference.version(),
+                        digest,
+                        snapshot,
+                        expiresAt,
+                        latencyMs
+                );
+            } catch (RuntimeException exception) {
+                LOGGER.error("event=context.prepare.failed requestId={} workflowId={} modelCall=false "
+                                + "inputFiles={} inputCharacters={} failureType={} durationMs={}",
+                        LogFields.value(MDC.get("requestId")),
+                        LogFields.value(MDC.get("workflowId")),
+                        inputFileCount,
+                        inputCharacters,
+                        LogFields.value(exception.getClass().getSimpleName()),
+                        Math.max(0, (System.nanoTime() - startedNanos) / 1_000_000L));
+                throw exception;
+            }
+        }
+    }
+
+    private int contextFileCount(PlanningContextRequest request) {
+        return request == null || request.context() == null || request.context().files() == null
+                ? 0
+                : request.context().files().size();
+    }
+
+    private long contextCharacterCount(PlanningContextRequest request) {
+        if (request == null || request.context() == null || request.context().files() == null) {
+            return 0;
+        }
+        return request.context().files().stream()
+                .filter(Objects::nonNull)
+                .map(ContextFileInput::content)
+                .filter(Objects::nonNull)
+                .mapToLong(String::length)
+                .sum();
     }
 
     /** 把少量文档放到分析队列前部，避免代码文件先占满本次摘要预算。 */

@@ -2,11 +2,14 @@ package com.promptoptimizer.common.exception;
 
 import com.promptoptimizer.common.api.ApiError;
 import com.promptoptimizer.common.api.ApiErrorResponse;
+import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.context.application.DocumentUploadException;
 import com.promptoptimizer.identity.application.RegistrationException;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +19,15 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.HandlerMapping;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 全局异常处理：把业务异常、校验异常和未知异常转换为统一错误响应。
@@ -28,6 +37,8 @@ import java.util.Map;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /** 计划过期时返回冲突状态，提示客户端重新准备上下文和确认问题。 */
     @ExceptionHandler(com.promptoptimizer.enhancement.application.PlanningSessionExpiredException.class)
@@ -242,6 +253,16 @@ public class GlobalExceptionHandler {
             Exception exception,
             HttpServletRequest request
     ) {
+        // 异常消息/完整 Throwable 可能携带上传源码、凭据或上游响应，只记录类型与代码位置。
+        // 使用已匹配的路由模板，不能记录可能包含用户数据的 URI、查询串或请求体。
+        Object route = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+        String routeTemplate = route instanceof String value ? value : "<unmapped>";
+        LOGGER.error("event=request.unexpected_failure requestId={} workflowId={} method={} route={} causes={}",
+                request.getAttribute(com.promptoptimizer.common.web.RequestIdFilter.REQUEST_ID_ATTRIBUTE),
+                LogFields.value(org.slf4j.MDC.get("workflowId")),
+                LogFields.value(request.getMethod()),
+                LogFields.value(routeTemplate),
+                safeFailureLocations(exception));
         return buildResponse(
                 request,
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -250,6 +271,22 @@ public class GlobalExceptionHandler {
                 true,
                 Map.of()
         );
+    }
+
+    /** 有界地提取异常链及本项目代码位置；不读取异常消息、源码文件路径或 suppressed 信息。 */
+    private String safeFailureLocations(Throwable failure) {
+        Set<Throwable> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+        var causes = new ArrayList<String>();
+        for (Throwable current = failure; current != null && causes.size() < 6 && seen.add(current);
+             current = current.getCause()) {
+            var frames = Arrays.stream(current.getStackTrace())
+                    .filter(frame -> frame.getClassName().startsWith("com.promptoptimizer."))
+                    .limit(8)
+                    .map(frame -> frame.getClassName() + "." + frame.getMethodName() + ":" + frame.getLineNumber())
+                    .toList();
+            causes.add(current.getClass().getName() + frames);
+        }
+        return String.join(" <- ", causes);
     }
 
     /**

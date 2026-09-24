@@ -1,5 +1,8 @@
 package com.promptoptimizer.enhancement.application;
 
+import com.promptoptimizer.common.logging.LogCorrelation;
+import com.promptoptimizer.common.logging.LogFields;
+import com.promptoptimizer.common.logging.ModelCallLogger;
 import com.promptoptimizer.enhancement.api.OptimizationPlanRequest;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.enhancement.domain.OptimizationPlan;
@@ -13,6 +16,9 @@ import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
 import com.promptoptimizer.template.application.PromptTemplateRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +38,8 @@ import java.util.regex.Pattern;
  */
 @Service
 public class OptimizationPlanningService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OptimizationPlanningService.class);
 
     private static final int MAX_QUESTIONS = 8;
     private static final int MAX_OPTIONS = 5;
@@ -85,56 +93,89 @@ public class OptimizationPlanningService {
      */
     public OptimizationPlan plan(OptimizationPlanRequest request) {
         long startedAt = clock.millis();
-        rejectCredentials(request.rawPrompt());
-        rejectCredentials(request.contextDescription());
-        request.conversationHistory().forEach(message -> rejectCredentials(message.content()));
-        PlanningSessionService.ResolvedPlanningContext planningContext = planningSessionService.resolveForPlan(
-                request.planningContext(),
-                request.rawPrompt(),
-                request.contextDescription()
-        );
-        PlanningProviderRequest providerRequest = new PlanningProviderRequest(
-                request.rawPrompt().trim(),
-                request.contextDescription().trim(),
-                request.conversationHistory(),
-                planningContext.digest(),
-                request.model()
-        );
-        PlanningProviderResponse validated = requestValidatedPlan(providerRequest);
-        List<PlanQuestion> requiredConflicts = conflictQuestions(planningContext.digest());
-        List<PlanQuestion> modelQuestions = questionFilter.filter(validated.questions(), providerRequest).stream()
-                .filter(question -> requiredConflicts.stream()
-                        .noneMatch(conflict -> sameConflictDimension(question.question(), conflict.question())))
-                .toList();
-        List<PlanQuestion> candidates = new ArrayList<>(requiredConflicts);
-        candidates.addAll(modelQuestions);
-        List<PlanQuestion> questions = candidates.stream().limit(MAX_QUESTIONS).toList();
-        metrics.generated(validated.questions().size() + requiredConflicts.size(), questions.size());
-        String summary = questions.isEmpty()
-                ? "当前需求及已提供材料足以进入最终增强，无需额外确认。"
-                : validated.summary();
-        // 当前需求决定任务类型；附件只提供事实，不能把代码任务误判为附件的研究主题。
-        var inferredTemplate = templateRegistry.infer(request.rawPrompt());
-        if (inferredTemplate == com.promptoptimizer.enhancement.domain.TemplateCode.GENERAL) {
-            inferredTemplate = templateRegistry.infer(request.contextDescription());
+        String contextId = request.planningContext() == null ? null : request.planningContext().contextId();
+        String workflowNamespace = contextId == null ? "planning-plan" : "planning-context";
+        try (LogCorrelation.Scope ignored = LogCorrelation.bindWorkflow(workflowNamespace, contextId)) {
+            try {
+                rejectCredentials(request.rawPrompt());
+                rejectCredentials(request.contextDescription());
+                request.conversationHistory().forEach(message -> rejectCredentials(message.content()));
+                PlanningSessionService.ResolvedPlanningContext planningContext = planningSessionService.resolveForPlan(
+                        request.planningContext(),
+                        request.rawPrompt(),
+                        request.contextDescription()
+                );
+                PlanningProviderRequest providerRequest = new PlanningProviderRequest(
+                        request.rawPrompt().trim(),
+                        request.contextDescription().trim(),
+                        request.conversationHistory(),
+                        planningContext.digest(),
+                        request.model()
+                );
+                PlanningProviderResponse validated = requestValidatedPlan(providerRequest);
+                List<PlanQuestion> requiredConflicts = conflictQuestions(planningContext.digest());
+                List<PlanQuestion> modelQuestions = questionFilter.filter(validated.questions(), providerRequest).stream()
+                        .filter(question -> requiredConflicts.stream()
+                                .noneMatch(conflict -> sameConflictDimension(question.question(), conflict.question())))
+                        .toList();
+                List<PlanQuestion> candidates = new ArrayList<>(requiredConflicts);
+                candidates.addAll(modelQuestions);
+                List<PlanQuestion> questions = candidates.stream().limit(MAX_QUESTIONS).toList();
+                metrics.generated(validated.questions().size() + requiredConflicts.size(), questions.size());
+                String summary = questions.isEmpty()
+                        ? "当前需求及已提供材料足以进入最终增强，无需额外确认。"
+                        : validated.summary();
+                // 当前需求决定任务类型；附件只提供事实，不能把代码任务误判为附件的研究主题。
+                var inferredTemplate = templateRegistry.infer(request.rawPrompt());
+                if (inferredTemplate == com.promptoptimizer.enhancement.domain.TemplateCode.GENERAL) {
+                    inferredTemplate = templateRegistry.infer(request.contextDescription());
+                }
+                PlanningSessionService.PlanRegistration registration = planningSessionService.registerPlan(
+                        request.rawPrompt(),
+                        request.contextDescription(),
+                        request.conversationHistory(),
+                        planningContext,
+                        questions
+                );
+                long latencyMs = Math.max(0, clock.millis() - startedAt);
+                if (validated.mock()) {
+                    ModelCallLogger.completed("plan.generate", validated.provider(), validated.model(),
+                            "MOCK_PROVIDER", true, 1, 1, latencyMs, null);
+                }
+                LOGGER.info("event=plan.completed requestId={} workflowId={} questions={} template={} mock={} durationMs={}",
+                        LogFields.value(MDC.get("requestId")),
+                        LogFields.value(MDC.get("workflowId")),
+                        questions.size(),
+                        inferredTemplate.name(),
+                        validated.mock(),
+                        latencyMs);
+                return new OptimizationPlan(
+                        summary,
+                        questions,
+                        inferredTemplate,
+                        new ProviderMetadata(validated.provider(), validated.model(), validated.mock()),
+                        latencyMs,
+                        registration.planId(),
+                        registration.planningContext(),
+                        registration.expiresAt()
+                );
+            } catch (RuntimeException exception) {
+                LOGGER.error("event=plan.failed requestId={} workflowId={} failureType={} durationMs={}",
+                        LogFields.value(MDC.get("requestId")),
+                        LogFields.value(MDC.get("workflowId")),
+                        failureType(exception),
+                        Math.max(0, clock.millis() - startedAt));
+                throw exception;
+            }
         }
-        PlanningSessionService.PlanRegistration registration = planningSessionService.registerPlan(
-                request.rawPrompt(),
-                request.contextDescription(),
-                request.conversationHistory(),
-                planningContext,
-                questions
-        );
-        return new OptimizationPlan(
-                summary,
-                questions,
-                inferredTemplate,
-                new ProviderMetadata(validated.provider(), validated.model(), validated.mock()),
-                Math.max(0, clock.millis() - startedAt),
-                registration.planId(),
-                registration.planningContext(),
-                registration.expiresAt()
-        );
+    }
+
+    /** 记录稳定的 Provider 故障分类或异常类型，不读取异常消息及上游响应正文。 */
+    private String failureType(RuntimeException exception) {
+        if (exception instanceof com.promptoptimizer.provider.domain.ProviderException providerException) {
+            return providerException.getFailureType().name();
+        }
+        return LogFields.value(exception.getClass().getSimpleName());
     }
 
     /** 将服务端已核实的材料冲突变成必问项，避免计划 Provider 漏掉跨文件口径冲突。 */

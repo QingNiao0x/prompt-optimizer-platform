@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.common.logging.ModelCallLogger;
 import com.promptoptimizer.context.application.DocumentSummaryModel;
 import com.promptoptimizer.context.application.DocumentSummaryModelException;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +16,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -83,6 +85,10 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
                 Math.min(properties.getMaxTokens(), Math.max(512, request.maxOutputCharacters() * 2)),
                 responseFormat
         );
+        String operation = "document.summary." + request.stage().name().toLowerCase(Locale.ROOT);
+        String modelId = properties.publicModelId(route, route.model());
+        int inputItems = request.parts() == null ? 0 : request.parts().size();
+        long startedAt = System.nanoTime();
 
         try {
             ChatCompletionResponse response = restClient.post()
@@ -93,17 +99,61 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
                     .body(requestBody)
                     .retrieve()
                     .body(ChatCompletionResponse.class);
-            return mapResponse(response, route.model());
+            SummaryResult result = mapResponse(response, route.model());
+            ModelCallLogger.completed(operation, route.key(), modelId, "SERVER_CONFIGURED", false,
+                    1, inputItems, elapsedMillis(startedAt), toTokenUsage(response.usage()));
+            return result;
+        } catch (DocumentSummaryModelException exception) {
+            ModelCallLogger.failed(operation, route.key(), modelId, "SERVER_CONFIGURED", "INVALID_RESPONSE",
+                    false, null, false, 1, inputItems, elapsedMillis(startedAt));
+            throw exception;
         } catch (RestClientResponseException exception) {
+            int status = exception.getStatusCode().value();
+            String failureType = failureType(status);
+            ModelCallLogger.failed(operation, route.key(), modelId, "SERVER_CONFIGURED", failureType,
+                    retryable(status), status, false, 1, inputItems, elapsedMillis(startedAt));
             throw new DocumentSummaryModelException(
-                    "摘要模型拒绝请求，HTTP " + exception.getStatusCode().value(),
+                    "摘要模型拒绝请求，HTTP " + status,
                     exception
             );
         } catch (ResourceAccessException exception) {
+            ModelCallLogger.failed(operation, route.key(), modelId, "SERVER_CONFIGURED", "RESOURCE_ACCESS",
+                    true, null, false, 1, inputItems, elapsedMillis(startedAt));
             throw new DocumentSummaryModelException("摘要模型连接失败或请求超时", exception);
         } catch (RestClientException exception) {
+            ModelCallLogger.failed(operation, route.key(), modelId, "SERVER_CONFIGURED", "UPSTREAM_UNAVAILABLE",
+                    true, null, false, 1, inputItems, elapsedMillis(startedAt));
             throw new DocumentSummaryModelException("摘要模型暂时不可用", exception);
+        } catch (RuntimeException exception) {
+            ModelCallLogger.failed(operation, route.key(), modelId, "SERVER_CONFIGURED", "UNEXPECTED",
+                    false, null, false, 1, inputItems, elapsedMillis(startedAt));
+            throw exception;
         }
+    }
+
+    /** 把上游状态折叠为稳定类别，不记录上游错误正文。 */
+    private String failureType(int status) {
+        if (status == 401 || status == 403) return "AUTHENTICATION";
+        if (status == 429) return "RATE_LIMIT";
+        if (status == 408 || status == 504) return "TIMEOUT";
+        if (status >= 500) return "UPSTREAM_UNAVAILABLE";
+        return "REQUEST_REJECTED";
+    }
+
+    /** 标识系统或稍后重试可能恢复的上游状态，不代表此适配器会自动重试。 */
+    private boolean retryable(int status) {
+        return status == 408 || status == 429 || status == 504 || status >= 500;
+    }
+
+    /** 将单次上游调用的单调时钟耗时转换为毫秒。 */
+    private long elapsedMillis(long startedAt) {
+        return Math.max(0, (System.nanoTime() - startedAt) / 1_000_000L);
+    }
+
+    /** 只记录摘要模型明确提供的用量统计。 */
+    private ModelCallLogger.TokenUsage toTokenUsage(ChatTokenUsage usage) {
+        return usage == null ? null : new ModelCallLogger.TokenUsage(
+                usage.promptTokens(), usage.completionTokens(), usage.totalTokens());
     }
 
     /** 校验结构化摘要响应；缺失 summary 或无效 JSON 均显式报错，不伪装成成功摘要。 */
@@ -172,7 +222,15 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record ChatCompletionResponse(String model, List<Choice> choices) {
+    private record ChatCompletionResponse(String model, List<Choice> choices, ChatTokenUsage usage) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private record ChatTokenUsage(
+            @JsonProperty("prompt_tokens") Long promptTokens,
+            @JsonProperty("completion_tokens") Long completionTokens,
+            @JsonProperty("total_tokens") Long totalTokens
+    ) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

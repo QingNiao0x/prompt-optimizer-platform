@@ -41,9 +41,9 @@ import type {
 } from '@/types/api';
 
 const FALLBACK_MODELS: AvailableModel[] = [{
-  id: 'deepseek-chat',
-  displayName: 'DeepSeek Chat',
-  provider: 'deepseek',
+  id: 'tokenhub:deepseek-v4-pro-0813',
+  displayName: 'DeepSeek-V4-Pro',
+  provider: 'tokenhub',
   defaultModel: true,
 }];
 

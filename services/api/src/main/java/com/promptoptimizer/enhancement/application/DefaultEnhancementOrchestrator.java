@@ -2,6 +2,9 @@ package com.promptoptimizer.enhancement.application;
 
 import com.promptoptimizer.context.application.ContextAnalyzer;
 import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.common.logging.LogCorrelation;
+import com.promptoptimizer.common.logging.LogFields;
+import com.promptoptimizer.common.logging.ModelCallLogger;
 import com.promptoptimizer.enhancement.api.ConversationMessage;
 import com.promptoptimizer.enhancement.api.OptimizationRequest;
 import com.promptoptimizer.enhancement.api.PlanAnswer;
@@ -15,6 +18,9 @@ import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.template.application.PromptTemplateRegistry;
 import com.promptoptimizer.template.domain.PromptTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +39,8 @@ import java.util.List;
  */
 @Service
 public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultEnhancementOrchestrator.class);
 
     private final ContextAnalyzer contextAnalyzer;
     private final AmbiguityDetector ambiguityDetector;
@@ -206,40 +214,84 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 template.code()
         );
 
-        EnhancementProviderResponse providerResponse = enhancementProvider.enhance(new EnhancementProviderRequest(
-                request.rawPrompt(),
-                context,
-                template,
-                ambiguities,
-                planAnswers,
-                planConfirmed,
-                constraints,
-                conversation,
-                request.enhancement(),
-                request.model(),
-                confirmedPlan.planningContextDigest() == null
-                        ? List.of()
-                        : confirmedPlan.planningContextDigest().factCards()
-        ));
+        String workflowResourceId = request.planConfirmation() == null
+                ? null
+                : request.planConfirmation().planningContext() != null
+                ? request.planConfirmation().planningContext().contextId()
+                : request.planConfirmation().planId();
+        String workflowNamespace = request.planConfirmation() == null
+                ? "planning-context"
+                : request.planConfirmation().planningContext() != null
+                ? "planning-context"
+                : "planning-plan";
+        try (LogCorrelation.Scope ignored = LogCorrelation.bindWorkflow(workflowNamespace, workflowResourceId)) {
+            try {
+                EnhancementProviderResponse providerResponse = enhancementProvider.enhance(
+                        new EnhancementProviderRequest(
+                                request.rawPrompt(),
+                                context,
+                                template,
+                                ambiguities,
+                                planAnswers,
+                                planConfirmed,
+                                constraints,
+                                conversation,
+                                request.enhancement(),
+                                request.model(),
+                                confirmedPlan.planningContextDigest() == null
+                                        ? List.of()
+                                        : confirmedPlan.planningContextDigest().factCards()
+                        )
+                );
+                long latencyMs = Math.max(0, clock.millis() - startedAt);
+                if (providerResponse.mock()) {
+                    ModelCallLogger.completed("prompt.optimize", providerResponse.provider(),
+                            providerResponse.model(), "MOCK_PROVIDER", true, 1, 1, latencyMs, null);
+                }
+                OptimizationResult result = resultAssembler.assemble(
+                        providerResponse,
+                        context,
+                        template,
+                        ambiguities,
+                        planAnswers,
+                        planConfirmed,
+                        constraints,
+                        Boolean.TRUE.equals(request.enhancement().includeExamples()),
+                        latencyMs,
+                        request.rawPrompt(),
+                        confirmedPlan.planningContextDigest() == null
+                                ? List.of()
+                                : confirmedPlan.planningContextDigest().factCards(),
+                        confirmedPlan.planningContextDigest() == null
+                                ? List.of()
+                                : confirmedPlan.planningContextDigest().warnings()
+                );
+                LOGGER.info("event=optimization.completed requestId={} workflowId={} mock={} "
+                                + "sections={} ambiguities={} durationMs={}",
+                        LogFields.value(MDC.get("requestId")),
+                        LogFields.value(MDC.get("workflowId")),
+                        providerResponse.mock(),
+                        result.sections().size(),
+                        result.ambiguities().size(),
+                        latencyMs);
+                return result;
+            } catch (RuntimeException exception) {
+                LOGGER.error("event=optimization.failed requestId={} workflowId={} failureType={} durationMs={}",
+                        LogFields.value(MDC.get("requestId")),
+                        LogFields.value(MDC.get("workflowId")),
+                        failureType(exception),
+                        Math.max(0, clock.millis() - startedAt));
+                throw exception;
+            }
+        }
+    }
 
-        return resultAssembler.assemble(
-                providerResponse,
-                context,
-                template,
-                ambiguities,
-                planAnswers,
-                planConfirmed,
-                constraints,
-                Boolean.TRUE.equals(request.enhancement().includeExamples()),
-                Math.max(0, clock.millis() - startedAt),
-                request.rawPrompt(),
-                confirmedPlan.planningContextDigest() == null
-                        ? List.of()
-                        : confirmedPlan.planningContextDigest().factCards(),
-                confirmedPlan.planningContextDigest() == null
-                        ? List.of()
-                        : confirmedPlan.planningContextDigest().warnings()
-        );
+    /** 记录稳定的 Provider 故障分类或异常类型，不读取异常消息及上游响应正文。 */
+    private String failureType(RuntimeException exception) {
+        if (exception instanceof com.promptoptimizer.provider.domain.ProviderException providerException) {
+            return providerException.getFailureType().name();
+        }
+        return LogFields.value(exception.getClass().getSimpleName());
     }
 
     private void validateTextInputs(OptimizationRequest request) {

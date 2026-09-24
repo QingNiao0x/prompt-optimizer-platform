@@ -122,8 +122,8 @@ MODEL_PROVIDER_MODE=openai-compatible
 MODEL_PROVIDER_NAME=tokenhub
 MODEL_ENDPOINT=https://tokenhub.tencentmaas.com/v1/chat/completions
 MODEL_API_KEY=替换为你的 TokenHub API Key
-MODEL_NAME=glm-5.3-flashx
-MODEL_MODELS=glm-5.3-flashx,deepseek-v4-pro-0813,kimi-k3,minimax-m3
+MODEL_NAME=deepseek-v4-pro-0813
+MODEL_MODELS=deepseek/deepseek-flash,deepseek-v4-pro-0813,kimi-k3,kimi-k2.8-preview,kimi-k2.7-code,glm-5.3,glm-5.3-flashx,hy4-preview,hy3,minimax-m3
 ```
 
 如果 TokenHub 账号的兼容端点不接受 `response_format`，再将 `MODEL_JSON_RESPONSE_FORMAT_ENABLED` 设为
@@ -136,7 +136,7 @@ MODEL_MODELS=glm-5.3-flashx,deepseek-v4-pro-0813,kimi-k3,minimax-m3
 
 ```dotenv
 MODEL_MULTI_PROVIDER_ENABLED=true
-MODEL_DEFAULT_PROVIDER=deepseek
+MODEL_DEFAULT_PROVIDER=tokenhub
 
 MODEL_DEEPSEEK_API_KEY=你的 DeepSeek API Key
 MODEL_DEEPSEEK_ENDPOINT=https://api.deepseek.com/chat/completions
@@ -145,8 +145,8 @@ MODEL_DEEPSEEK_MODELS=deepseek-chat
 
 MODEL_TOKENHUB_API_KEY=你的 TokenHub API Key
 MODEL_TOKENHUB_ENDPOINT=https://tokenhub.tencentmaas.com/v1/chat/completions
-MODEL_TOKENHUB_NAME=glm-5.3-flashx
-MODEL_TOKENHUB_MODELS=glm-5.3-flashx,deepseek-v4-pro-0813,kimi-k3,minimax-m3
+MODEL_TOKENHUB_NAME=deepseek-v4-pro-0813
+MODEL_TOKENHUB_MODELS=deepseek/deepseek-flash,deepseek-v4-pro-0813,kimi-k3,kimi-k2.8-preview,kimi-k2.7-code,glm-5.3,glm-5.3-flashx,hy4-preview,hy3,minimax-m3
 ```
 
 接口返回的模型 ID 会带供应商前缀，例如 `deepseek:deepseek-chat`、`tokenhub:kimi-k3`。前端只提交这个

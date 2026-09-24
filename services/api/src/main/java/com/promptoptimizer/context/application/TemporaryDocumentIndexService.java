@@ -1,11 +1,16 @@
 package com.promptoptimizer.context.application;
 
+import com.promptoptimizer.common.logging.LogCorrelation;
+import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.context.api.DocumentUploadCreateRequest;
 import com.promptoptimizer.context.domain.DocumentProcessingPhase;
 import com.promptoptimizer.context.domain.DocumentSelection;
 import com.promptoptimizer.context.domain.DocumentUploadStatus;
 import com.promptoptimizer.identity.application.CurrentActor;
 import jakarta.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -43,6 +48,8 @@ import java.util.stream.Stream;
  */
 @Service
 public class TemporaryDocumentIndexService implements DocumentIndexLookup {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TemporaryDocumentIndexService.class);
 
     public static final int UPLOAD_CHUNK_BYTES = 1024 * 1024;
     public static final long MAX_DOCUMENT_BYTES = 50L * 1024 * 1024;
@@ -210,6 +217,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
             session.phase = DocumentProcessingPhase.QUEUED;
             session.progressPercent = 41;
             session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
+            session.requestId = MDC.get("requestId");
             session.task = executor.submit(() -> process(session));
             return statusOf(session);
         }
@@ -330,9 +338,24 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
      * 使进度查询和取消请求仍能及时响应。
      */
     private void process(UploadSession session) {
+        long startedAt = System.nanoTime();
+        try (LogCorrelation.Scope requestScope = LogCorrelation.bindRequestId(session.requestId);
+             LogCorrelation.Scope workflowScope = LogCorrelation.bindWorkflow("document-upload", session.documentId)) {
+            LOGGER.info("event=document.index.started requestId={} workflowId={} fileBytes={} expectedChunks={}",
+                    LogFields.value(MDC.get("requestId")),
+                    LogFields.value(MDC.get("workflowId")),
+                    session.fileSizeBytes,
+                    session.expectedChunks);
+            processDocument(session, startedAt);
+        }
+    }
+
+    /** 在异步工作线程执行解析、向量化和摘要，并仅输出聚合统计，不记录文件路径或正文。 */
+    private void processDocument(UploadSession session, long startedAt) {
         try {
             synchronized (session.monitor) {
                 if (session.cancelled) {
+                    logCancelled(session, startedAt);
                     return;
                 }
                 session.phase = DocumentProcessingPhase.EXTRACTING;
@@ -365,6 +388,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
             );
             synchronized (session.monitor) {
                 if (session.cancelled || Thread.currentThread().isInterrupted()) {
+                    logCancelled(session, startedAt);
                     return;
                 }
                 addWarning(session.warnings, semanticReport.warning());
@@ -384,6 +408,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
             );
             synchronized (session.monitor) {
                 if (session.cancelled || Thread.currentThread().isInterrupted()) {
+                    logCancelled(session, startedAt);
                     return;
                 }
                 summaryReport.warnings().forEach(warning -> addWarning(session.warnings, warning));
@@ -394,6 +419,18 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 session.progressPercent = 100;
                 session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
             }
+            LOGGER.info("event=document.index.completed requestId={} workflowId={} fileBytes={} "
+                            + "extractedCharacters={} chunks={} summaryModelCalls={} summaryModelAssisted={} "
+                            + "summaryWarnings={} durationMs={}",
+                    LogFields.value(MDC.get("requestId")),
+                    LogFields.value(MDC.get("workflowId")),
+                    session.fileSizeBytes,
+                    report.extractedCharacters(),
+                    session.chunks.size(),
+                    summaryReport.modelCalls(),
+                    summaryReport.modelAssisted(),
+                    summaryReport.warnings().size(),
+                    elapsedMillis(startedAt));
         } catch (Exception exception) {
             synchronized (session.monitor) {
                 if (!session.cancelled) {
@@ -402,11 +439,38 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                     session.progressPercent = 100;
                 }
             }
+            if (session.cancelled || Thread.currentThread().isInterrupted()) {
+                logCancelled(session, startedAt);
+            } else {
+                LOGGER.error("event=document.index.failed requestId={} workflowId={} fileBytes={} "
+                                + "chunks={} failureType={} durationMs={}",
+                        LogFields.value(MDC.get("requestId")),
+                        LogFields.value(MDC.get("workflowId")),
+                        session.fileSizeBytes,
+                        session.chunks.size(),
+                        LogFields.value(exception.getClass().getSimpleName()),
+                        elapsedMillis(startedAt));
+            }
             deleteFileQuietly(session.chunkFile);
             deleteFileQuietly(session.vectorFile);
         } finally {
             deleteFileQuietly(session.sourceFile);
         }
+    }
+
+    /** 将异步任务经过的单调时钟时长转换为毫秒。 */
+    private long elapsedMillis(long startedAt) {
+        return Math.max(0, (System.nanoTime() - startedAt) / 1_000_000L);
+    }
+
+    /** 统一记录文档索引取消结果，且不输出用户文件名、路径或内容。 */
+    private void logCancelled(UploadSession session, long startedAt) {
+        LOGGER.info("event=document.index.cancelled requestId={} workflowId={} fileBytes={} chunks={} durationMs={}",
+                LogFields.value(MDC.get("requestId")),
+                LogFields.value(MDC.get("workflowId")),
+                session.fileSizeBytes,
+                session.chunks.size(),
+                elapsedMillis(startedAt));
     }
 
     private void updateExtractionProgress(UploadSession session, long processed, long total) {
@@ -893,6 +957,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         private volatile long uploadedBytes;
         private volatile int progressPercent;
         private volatile long extractedCharacters;
+        private volatile String requestId;
         private volatile boolean extractionComplete;
         private volatile String summary = "";
         private volatile List<String> warnings = List.of();
