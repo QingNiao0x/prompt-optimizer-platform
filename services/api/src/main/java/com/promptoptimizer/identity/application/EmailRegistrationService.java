@@ -137,11 +137,7 @@ public class EmailRegistrationService {
     }
 
     private void ensureEmailNotRegistered(UserIdentityKey emailKey) {
-        if (identityRepository.existsByIdentityTypeAndIssuerAndNormalizedIdentifier(
-                emailKey.type(),
-                emailKey.issuer(),
-                emailKey.normalizedIdentifier()
-        )) {
+        if (identityRepository.existsByKey(emailKey)) {
             throw alreadyRegistered();
         }
     }

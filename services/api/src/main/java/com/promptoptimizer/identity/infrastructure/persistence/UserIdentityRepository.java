@@ -1,5 +1,6 @@
 package com.promptoptimizer.identity.infrastructure.persistence;
 
+import com.promptoptimizer.identity.domain.UserIdentityKey;
 import com.promptoptimizer.identity.domain.UserIdentityStatus;
 import com.promptoptimizer.identity.domain.UserIdentityType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,6 +31,15 @@ public interface UserIdentityRepository extends JpaRepository<UserIdentityEntity
             String issuer,
             String normalizedIdentifier
     );
+
+    /** 按统一规范化键检查邮箱或手机号是否已归属某个账号。 */
+    default boolean existsByKey(UserIdentityKey identityKey) {
+        return existsByIdentityTypeAndIssuerAndNormalizedIdentifier(
+                identityKey.type(),
+                identityKey.issuer(),
+                identityKey.normalizedIdentifier()
+        );
+    }
 
     /** 按创建时间读取用户的指定状态身份，供账户资料或校验流程使用。 */
     List<UserIdentityEntity> findAllByUserIdAndStatusOrderByCreatedAtAsc(

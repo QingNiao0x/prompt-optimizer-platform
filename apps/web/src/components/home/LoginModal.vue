@@ -23,6 +23,7 @@ const emit = defineEmits<Emits>();
 const view = ref<AuthView>(props.mode === 'register' ? 'register' : 'password');
 const auth = useAuthStore();
 const submitting = ref(false);
+const registrationSucceeded = ref(false);
 const errorMessage = ref('');
 const statusMessage = ref('');
 const account = ref('');
@@ -78,6 +79,9 @@ const codeButtonLabel = computed((): string => {
 });
 
 const title = computed((): string => {
+  if (registrationSucceeded.value) {
+    return '注册完成';
+  }
   if (view.value === 'register') {
     return '创建账号';
   }
@@ -103,6 +107,7 @@ const resetFields = (): void => {
   verificationCode.value = '';
   verificationRecipient.value = '';
   agreementAccepted.value = false;
+  registrationSucceeded.value = false;
   errorMessage.value = '';
   statusMessage.value = '';
 };
@@ -196,9 +201,11 @@ const handleSubmit = async (event: Event): Promise<void> => {
         verificationCode: verificationCode.value,
         password: password.value,
       });
-    } else {
-      await auth.login({ identifier: account.value.trim(), password: password.value });
+      registrationSucceeded.value = true;
+      return;
     }
+
+    await auth.login({ identifier: account.value.trim(), password: password.value });
     // 新身份始终从干净的应用内存开始，不复用另一账号的计划和文件。
     window.location.replace('/workbench');
   } catch (error: unknown) {
@@ -209,6 +216,10 @@ const handleSubmit = async (event: Event): Promise<void> => {
     }
     submitting.value = false;
   }
+};
+
+const enterWorkbench = (): void => {
+  window.location.replace('/workbench');
 };
 </script>
 
@@ -230,7 +241,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
 
       <section
         class="login-modal__panel"
-        :class="{ 'login-modal__panel--register': view === 'register' }"
+        :class="{ 'login-modal__panel--register': view === 'register' && !registrationSucceeded }"
         role="document"
       >
         <header class="login-modal__header">
@@ -243,7 +254,18 @@ const handleSubmit = async (event: Event): Promise<void> => {
           </button>
         </header>
 
-        <div v-if="view === 'qr'" class="login-modal__qr">
+        <div v-if="registrationSucceeded" class="login-modal__registration-success" role="status">
+          <span class="login-modal__success-mark" aria-hidden="true">✓</span>
+          <h3>账号创建成功，已自动登录</h3>
+          <p>建议绑定手机号，补充账户联系方式。</p>
+          <small>
+            当前手机号短信验证和绑定入口尚未开放，暂时无法完成绑定。
+          </small>
+          <button class="login-modal__submit" type="button" @click="enterWorkbench">
+            进入工作台
+          </button>
+        </div>
+        <div v-else-if="view === 'qr'" class="login-modal__qr">
           <div class="login-modal__qr-frame" aria-hidden="true">
             <svg viewBox="0 0 120 120" fill="none">
               <rect width="120" height="120" rx="8" fill="white" />
@@ -460,7 +482,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
           </aside>
         </div>
 
-        <footer class="login-modal__footer">
+        <footer v-if="!registrationSucceeded" class="login-modal__footer">
           <button
             v-if="view === 'qr'"
             type="button"
@@ -575,6 +597,51 @@ h2 {
   justify-items: center;
   gap: 12px;
   text-align: center;
+}
+
+.login-modal__registration-success {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.login-modal__success-mark {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 28px;
+  background: #27ae72;
+}
+
+.login-modal__registration-success h3,
+.login-modal__registration-success p,
+.login-modal__registration-success small {
+  margin: 0;
+}
+
+.login-modal__registration-success h3 {
+  color: var(--text-primary);
+  font-size: 18px;
+}
+
+.login-modal__registration-success p {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.login-modal__registration-success small {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.login-modal__registration-success .login-modal__submit {
+  width: 100%;
+  margin-top: 8px;
 }
 
 .login-modal__qr-frame {
