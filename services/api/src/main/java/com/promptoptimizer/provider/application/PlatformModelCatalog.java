@@ -32,6 +32,18 @@ public interface PlatformModelCatalog {
     /** 逻辑删除非默认模型。 */
     void delete(UUID id);
 
+    /**
+     * platform_model 表的只读投影；上游凭据和端点由服务端路由配置管理，不属于此记录。
+     *
+     * @param id 目录项主键
+     * @param publicId 终端用户提交的稳定模型标识
+     * @param routeKey 服务端 Provider 路由键
+     * @param upstreamModel 路由实际调用的上游模型名称
+     * @param displayName 用户界面显示名称
+     * @param enabled 是否允许用户选择和调用
+     * @param defaultModel 是否为平台默认模型
+     * @param sortOrder 用户模型列表的非负排序值
+     */
     record ModelEntry(UUID id, String publicId, String routeKey, String upstreamModel,
                       String displayName, boolean enabled, boolean defaultModel, int sortOrder) {
     }

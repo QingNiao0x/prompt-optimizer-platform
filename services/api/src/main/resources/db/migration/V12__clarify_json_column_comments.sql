@@ -1,0 +1,3 @@
+COMMENT ON COLUMN optimization_record.context_snapshot IS '脱敏上下文 JSON 对象：customDescription 为字符串；technologyStack、dependencies 为结构化条目数组；directoryTree、warnings、redactions 为字符串数组；analysisVersion 为字符串；不含 fileSnippets 或文件正文。';
+COMMENT ON COLUMN optimization_record.result_metadata IS '优化结果 JSON 对象：sections 为结构化段落数组；ambiguities、appliedConstraints 为字符串数组；provider、model 为字符串且 mock 为布尔值；enhancementOptions 为模板及开关对象；conversationHistory 为消息对象数组；planConfirmation 为可选对象。';
+COMMENT ON COLUMN optimization_record.permission_policy IS '权限策略 JSON 对象，含 protectedPaths 受保护路径字符串数组和 requireConfirmationFor 人工确认动作字符串数组；结构由请求 DTO 校验，不由数据库约束。';
