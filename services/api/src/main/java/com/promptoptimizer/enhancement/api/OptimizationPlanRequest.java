@@ -24,8 +24,7 @@ public record OptimizationPlanRequest(
         @Size(max = 20, message = "单次最多携带 20 条会话消息")
         List<@NotNull(message = "会话消息不能为空") @Valid ConversationMessage> conversationHistory,
         @Valid PlanningContextReference planningContext,
-        @Size(max = 120, message = "模型 ID 不能超过 120 个字符")
-        String model
+        @Size(max = 160, message = "模型标识不能超过 160 个字符") String modelId
 ) {
 
     public OptimizationPlanRequest {
@@ -33,9 +32,6 @@ public record OptimizationPlanRequest(
         conversationHistory = conversationHistory == null ? List.of() : List.copyOf(conversationHistory);
     }
 
-    /**
-     * 兼容未提供上下文引用的文本计划调用。
-     */
     public OptimizationPlanRequest(
             String rawPrompt,
             String contextDescription,

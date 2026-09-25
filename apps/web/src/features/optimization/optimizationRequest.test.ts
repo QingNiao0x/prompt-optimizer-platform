@@ -79,9 +79,10 @@ describe('buildOptimizationRequest', () => {
     });
   });
 
-  it('should leave provider and model routing to the platform', () => {
+  it('should send only the published model ID and keep provider secrets on the platform', () => {
     const request = buildOptimizationRequest({
       rawPrompt: '分析需求',
+      modelId: 'tokenhub:kimi-k3',
       customDescription: '',
       files: [],
       templateCode: 'AUTO',
@@ -90,7 +91,8 @@ describe('buildOptimizationRequest', () => {
     });
 
     expect(request).not.toHaveProperty('model');
-    expect(JSON.stringify(request)).not.toMatch(/apiKey|endpointUrl|providerConfig/i);
+    expect(request.modelId).toBe('tokenhub:kimi-k3');
+    expect(JSON.stringify(request)).not.toMatch(/apiKey|endpointUrl/i);
   });
 
   it('should send confirmed plan answers with the final request', () => {
@@ -128,6 +130,7 @@ describe('buildOptimizationRequest', () => {
       rawPrompt: '分析死亡率',
       contextDescription: '公共卫生研究',
       conversationHistory: [],
+      modelId: null,
       planningContext: null,
     });
     expect(buildOptimizationPlanRequest(
@@ -138,6 +141,7 @@ describe('buildOptimizationRequest', () => {
       rawPrompt: '分析死亡率',
       contextDescription: '公共卫生研究',
       conversationHistory: [],
+      modelId: null,
       planningContext,
     });
   });

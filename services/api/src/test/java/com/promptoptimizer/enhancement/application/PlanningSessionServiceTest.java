@@ -97,7 +97,8 @@ class PlanningSessionServiceTest {
                 "Spring Boot 用户服务",
                 history,
                 service.resolveForPlan(reference, "给用户模块添加登录功能", "Spring Boot 用户服务"),
-                List.of(question)
+                List.of(question),
+                "tokenhub:kimi-k3"
         );
 
         PlanningSessionService.ConfirmedPlan confirmed = service.confirm(
@@ -112,6 +113,7 @@ class PlanningSessionServiceTest {
         );
 
         assertThat(confirmed.bound()).isTrue();
+        assertThat(confirmed.modelId()).isEqualTo("tokenhub:kimi-k3");
         assertThat(confirmed.answers()).containsExactly(new PlanAnswer(
                 question.id(),
                 question.question(),

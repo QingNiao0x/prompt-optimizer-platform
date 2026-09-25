@@ -20,6 +20,7 @@ import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.provider.application.PromptEnhancementProvider;
 import com.promptoptimizer.provider.application.PromptPlanningProvider;
+import com.promptoptimizer.provider.application.PlatformModelCatalog;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
@@ -148,15 +149,27 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
     private final OpenAiCompatibleProperties properties;
+    private final PlatformModelCatalog modelCatalog;
 
     public OpenAiCompatiblePromptEnhancementProvider(
             RestClient restClient,
             ObjectMapper objectMapper,
             OpenAiCompatibleProperties properties
     ) {
+        this(restClient, objectMapper, properties, null);
+    }
+
+    /** 平台目录只决定已发布的模型名，真实端点和密钥仍从受控路由获取。 */
+    public OpenAiCompatiblePromptEnhancementProvider(
+            RestClient restClient,
+            ObjectMapper objectMapper,
+            OpenAiCompatibleProperties properties,
+            PlatformModelCatalog modelCatalog
+    ) {
         this.restClient = Objects.requireNonNull(restClient, "restClient must not be null");
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
         this.properties = Objects.requireNonNull(properties, "properties must not be null");
+        this.modelCatalog = modelCatalog;
     }
 
     /**
@@ -334,7 +347,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     }
 
     private String selectionSource(String requestedModel) {
-        return requestedModel == null || requestedModel.isBlank() ? "SERVER_DEFAULT" : "USER_SELECTED";
+        return requestedModel == null || requestedModel.isBlank()
+                ? "PLATFORM_DEFAULT"
+                : "PLATFORM_CATALOG";
     }
 
     private Integer upstreamStatus(ProviderException exception) {
@@ -396,15 +411,24 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     }
 
     /**
-     * 将前端选择限制在服务端白名单内，避免用户借模型选择参数绕过平台的供应商策略。
+     * 将公开模型标识映射为平台目录中的上游模型与服务端路由。
      */
     private OpenAiCompatibleProperties.ModelSelection resolveModel(String requestedModel) {
         try {
+            if (modelCatalog != null) {
+                PlatformModelCatalog.ModelEntry model = modelCatalog.resolve(requestedModel);
+                OpenAiCompatibleRoute route = properties.getConfiguredRoutes().stream()
+                        .filter(candidate -> candidate.key().equals(model.routeKey()))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalStateException("平台模型路由不可用"));
+                return new OpenAiCompatibleProperties.ModelSelection(
+                        route, model.upstreamModel(), model.publicId());
+            }
             return properties.resolveModel(requestedModel);
         } catch (IllegalArgumentException | IllegalStateException exception) {
             throw new ProviderException(
                     ProviderFailureType.REQUEST_REJECTED,
-                    "所选模型不可用，请从当前模型列表中重新选择",
+                    "平台模型路由配置不可用，请联系管理员",
                     false,
                     exception
             );

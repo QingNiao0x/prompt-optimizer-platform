@@ -3,6 +3,7 @@ package com.promptoptimizer.enhancement.application;
 import com.promptoptimizer.common.logging.LogCorrelation;
 import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.common.logging.ModelCallLogger;
+import com.promptoptimizer.provider.application.PlatformModelCatalog;
 import com.promptoptimizer.enhancement.api.OptimizationPlanRequest;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.enhancement.domain.OptimizationPlan;
@@ -62,6 +63,13 @@ public class OptimizationPlanningService {
     private final Clock clock;
     private final PlanQuestionFilter questionFilter = new PlanQuestionFilter();
     private PlanQualityMetrics metrics = new PlanQualityMetrics(new io.micrometer.core.instrument.simple.SimpleMeterRegistry());
+    private PlatformModelCatalog modelCatalog;
+
+    /** Spring 运行时注入平台模型目录；直接构造的既有单元测试继续使用 Mock 默认模型。 */
+    @Autowired(required = false)
+    public void setModelCatalog(PlatformModelCatalog modelCatalog) {
+        this.modelCatalog = modelCatalog;
+    }
 
     @Autowired
     public void setMetrics(PlanQualityMetrics metrics) { this.metrics = metrics; }
@@ -105,12 +113,15 @@ public class OptimizationPlanningService {
                         request.rawPrompt(),
                         request.contextDescription()
                 );
+                String selectedModelId = modelCatalog == null
+                        ? legacyModelId(request.modelId())
+                        : modelCatalog.resolve(request.modelId()).publicId();
                 PlanningProviderRequest providerRequest = new PlanningProviderRequest(
                         request.rawPrompt().trim(),
                         request.contextDescription().trim(),
                         request.conversationHistory(),
                         planningContext.digest(),
-                        request.model()
+                        selectedModelId
                 );
                 PlanningProviderResponse validated = requestValidatedPlan(providerRequest);
                 List<PlanQuestion> requiredConflicts = conflictQuestions(planningContext.digest());
@@ -135,7 +146,8 @@ public class OptimizationPlanningService {
                         request.contextDescription(),
                         request.conversationHistory(),
                         planningContext,
-                        questions
+                        questions,
+                        selectedModelId
                 );
                 long latencyMs = Math.max(0, clock.millis() - startedAt);
                 if (validated.mock()) {
@@ -168,6 +180,13 @@ public class OptimizationPlanningService {
                 throw exception;
             }
         }
+    }
+
+    private String legacyModelId(String requestedModelId) {
+        if (requestedModelId != null && !requestedModelId.isBlank()) {
+            throw new InvalidOptimizationRequestException("平台模型目录不可用，请稍后重试。");
+        }
+        return null;
     }
 
     /** 记录稳定的 Provider 故障分类或异常类型，不读取异常消息及上游响应正文。 */

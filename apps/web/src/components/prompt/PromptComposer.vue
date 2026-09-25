@@ -2,6 +2,8 @@
 import {
   ElButton,
   ElInput,
+  ElOption,
+  ElSelect,
   ElSwitch,
   ElTooltip,
 } from 'element-plus';
@@ -9,6 +11,7 @@ import { computed } from 'vue';
 
 import SparklesIcon from '@/components/brand/SparklesIcon.vue';
 import { usePlanModePreference } from '@/composables/usePlanModePreference';
+import type { AvailableModel } from '@/types/api';
 
 interface Props {
   rawPrompt: string;
@@ -17,11 +20,16 @@ interface Props {
   isPlanning: boolean;
   isOptimizing: boolean;
   canOptimize: boolean;
+  availableModels: AvailableModel[];
+  selectedModelId: string;
+  isLoadingModels: boolean;
+  modelLoadError: string;
 }
 
 interface Emits {
   (event: 'update:raw-prompt', value: string): void;
   (event: 'update:include-examples', value: boolean): void;
+  (event: 'update:selected-model-id', value: string): void;
   (event: 'optimize'): void;
 }
 
@@ -42,6 +50,10 @@ const examplesModel = computed({
 const planModeModel = computed({
   get: (): boolean => planModeEnabled.value,
   set: (value: boolean): void => setPlanModeEnabled(value),
+});
+const selectedModel = computed({
+  get: (): string => props.selectedModelId,
+  set: (value: string): void => emit('update:selected-model-id', value),
 });
 const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isOptimizing);
 </script>
@@ -83,6 +95,27 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
 
       <div class="composer-controls">
         <div class="composer-options">
+          <label class="model-control" for="workbench-model">
+            <span>增强模型</span>
+            <ElSelect
+              id="workbench-model"
+              v-model="selectedModel"
+              class="model-select"
+              aria-label="选择增强模型"
+              :disabled="isBusy || isLoadingModels || availableModels.length === 0"
+              :placeholder="isLoadingModels ? '正在加载模型…' : '平台默认模型'"
+            >
+              <ElOption
+                v-for="model in availableModels"
+                :key="model.id"
+                :label="model.displayName"
+                :value="model.id"
+              />
+            </ElSelect>
+          </label>
+          <span v-if="modelLoadError" class="model-warning" role="status">
+            模型列表加载失败，增强时将由平台选择默认模型。
+          </span>
           <ElTooltip
             content="生成前先确认会影响结果的关键细节。关闭后将直接生成，结果中可能出现待确认事项。"
             placement="top"
@@ -264,6 +297,23 @@ form {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 16px;
+}
+
+.model-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.model-select {
+  width: min(210px, 45vw);
+}
+
+.model-warning {
+  color: var(--warning);
+  font-size: 12px;
 }
 
 .switch-control {

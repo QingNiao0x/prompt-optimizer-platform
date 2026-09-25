@@ -27,6 +27,7 @@ public final class AuthenticatedUser implements UserDetails, CredentialsContaine
     private final UUID tenantId;
     private final UUID workspaceId;
     private final String email;
+    private final String loginIdentifier;
     private final String displayName;
     private final String status;
     private final List<GrantedAuthority> authorities;
@@ -42,10 +43,30 @@ public final class AuthenticatedUser implements UserDetails, CredentialsContaine
             String status,
             Collection<? extends GrantedAuthority> authorities
     ) {
+        this(userId, tenantId, workspaceId, email, email, displayName, passwordHash, status, authorities);
+    }
+
+    /** 允许仅绑定用户名的账户登录；联系邮箱为空时仍保留真实的登录标识。 */
+    public AuthenticatedUser(
+            UUID userId,
+            UUID tenantId,
+            UUID workspaceId,
+            String email,
+            String loginIdentifier,
+            String displayName,
+            String passwordHash,
+            String status,
+            Collection<? extends GrantedAuthority> authorities
+    ) {
         this.userId = Objects.requireNonNull(userId, "userId must not be null");
         this.tenantId = Objects.requireNonNull(tenantId, "tenantId must not be null");
         this.workspaceId = Objects.requireNonNull(workspaceId, "workspaceId must not be null");
-        this.email = Objects.requireNonNull(email, "email must not be null").trim().toLowerCase(Locale.ROOT);
+        this.email = email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
+        this.loginIdentifier = Objects.requireNonNull(loginIdentifier, "loginIdentifier must not be null")
+                .trim().toLowerCase(Locale.ROOT);
+        if (this.loginIdentifier.isBlank()) {
+            throw new IllegalArgumentException("loginIdentifier must not be blank");
+        }
         this.displayName = Objects.requireNonNull(displayName, "displayName must not be null").trim();
         this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash must not be null");
         this.status = Objects.requireNonNull(status, "status must not be null");
@@ -69,7 +90,7 @@ public final class AuthenticatedUser implements UserDetails, CredentialsContaine
 
     @Override
     public String getUsername() {
-        return email;
+        return loginIdentifier;
     }
 
     @Override

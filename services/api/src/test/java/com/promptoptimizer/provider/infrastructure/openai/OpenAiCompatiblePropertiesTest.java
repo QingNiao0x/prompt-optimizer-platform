@@ -12,75 +12,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class OpenAiCompatiblePropertiesTest {
 
     @Test
-    void shouldExposeQualifiedModelsForConfiguredProvidersWithoutExposingKeys() {
+    void shouldUseThePlatformDefaultRouteAndModelWithoutExposingKeys() {
         OpenAiCompatibleProperties properties = multiProviderProperties();
 
-        assertThat(properties.getAvailableModelDescriptors())
-                .extracting(OpenAiCompatibleProperties.ModelDescriptor::id)
-                .containsExactly(
-                        "deepseek:deepseek-flash",
-                        "deepseek:deepseek-chat",
-                        "tokenhub:deepseek-v4-pro-0813",
-                        "tokenhub:kimi-k3",
-                        "tokenhub:kimi-k2.8-preview",
-                        "tokenhub:kimi-k2.7-code",
-                        "tokenhub:glm-5.3",
-                        "tokenhub:glm-5.3-flashx",
-                        "tokenhub:hy4-preview",
-                        "tokenhub:hy3",
-                        "tokenhub:minimax-m3"
-                );
-        assertThat(properties.getAvailableModelDescriptors())
-                .extracting(OpenAiCompatibleProperties.ModelDescriptor::provider)
-                .containsExactly(
-                        "deepseek",
-                        "deepseek",
-                        "tokenhub",
-                        "tokenhub",
-                        "tokenhub",
-                        "tokenhub",
-                        "tokenhub",
-                        "tokenhub",
-                        "tokenhub",
-                        "tokenhub",
-                        "tokenhub"
-                );
-        assertThat(properties.getAvailableModelDescriptors())
-                .extracting(OpenAiCompatibleProperties.ModelDescriptor::defaultModel)
-                .containsExactly(false, true, false, false, false, false, false, false, false, false, false);
-        assertThat(properties.getAvailableModelDescriptors().toString())
-                .doesNotContain("deepseek-secret", "tokenhub-secret");
+        OpenAiCompatibleProperties.ModelSelection selection = properties.resolveModel(null);
+
+        assertThat(selection.model()).isEqualTo("deepseek-chat");
+        assertThat(selection.route().providerName()).isEqualTo("deepseek");
+        assertThat(selection.publicModelId()).isEqualTo("deepseek:deepseek-chat");
         assertThat(properties.getConfiguredRoutes().toString())
                 .doesNotContain("deepseek-secret", "tokenhub-secret");
     }
 
     @Test
-    void shouldKeepRequestedTokenHubModelsWhenEnvironmentListContainsOnlyOlderModels() {
-        OpenAiCompatibleProperties properties = multiProviderProperties();
-
-        assertThat(properties.getAvailableModelDescriptors())
-                .extracting(OpenAiCompatibleProperties.ModelDescriptor::id)
-                .containsExactly(
-                        "deepseek:deepseek-flash",
-                        "deepseek:deepseek-chat",
-                        "tokenhub:deepseek-v4-pro-0813",
-                        "tokenhub:kimi-k3",
-                        "tokenhub:kimi-k2.8-preview",
-                        "tokenhub:kimi-k2.7-code",
-                        "tokenhub:glm-5.3",
-                        "tokenhub:glm-5.3-flashx",
-                        "tokenhub:hy4-preview",
-                        "tokenhub:hy3",
-                        "tokenhub:minimax-m3"
-                );
-
-        OpenAiCompatibleProperties.ModelSelection selection = properties.resolveModel("tokenhub:hy4-preview");
-        assertThat(selection.model()).isEqualTo("hy4-preview");
-        assertThat(selection.route().providerName()).isEqualTo("tokenhub");
-    }
-
-    @Test
-    void shouldResolveRequestedModelToItsOwnEndpointAndApiKey() {
+    void shouldResolvePlatformRouteOverrideToItsConfiguredEndpointAndKey() {
         OpenAiCompatibleProperties properties = multiProviderProperties();
 
         OpenAiCompatibleProperties.ModelSelection selection = properties.resolveModel("tokenhub:kimi-k3");
@@ -90,56 +35,6 @@ class OpenAiCompatiblePropertiesTest {
         assertThat(selection.route().providerName()).isEqualTo("tokenhub");
         assertThat(selection.route().endpoint()).isEqualTo(URI.create("https://tokenhub.example.com/v1/chat/completions"));
         assertThat(selection.route().apiKey()).isEqualTo("tokenhub-secret");
-    }
-
-    @Test
-    void shouldSelectDeepSeekFlashWhenRetiredDeepSeekDefaultIsHidden() {
-        OpenAiCompatibleProperties properties = multiProviderProperties();
-        properties.setModelCatalogHiddenIds(List.of("deepseek:deepseek-chat"));
-
-        assertThat(properties.getAvailableModelDescriptors())
-                .extracting(OpenAiCompatibleProperties.ModelDescriptor::id)
-                .containsExactly(
-                        "deepseek:deepseek-flash",
-                        "tokenhub:deepseek-v4-pro-0813",
-                        "tokenhub:kimi-k3",
-                        "tokenhub:kimi-k2.8-preview",
-                        "tokenhub:kimi-k2.7-code",
-                        "tokenhub:glm-5.3",
-                        "tokenhub:glm-5.3-flashx",
-                        "tokenhub:hy4-preview",
-                        "tokenhub:hy3",
-                        "tokenhub:minimax-m3"
-                );
-        assertThat(properties.getDefaultRoute().key()).isEqualTo("deepseek");
-        assertThat(properties.resolveModel(null).publicModelId()).isEqualTo("deepseek:deepseek-flash");
-        assertThatThrownBy(() -> properties.resolveModel("deepseek:deepseek-chat"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("所选模型不可用");
-    }
-
-    @Test
-    void shouldMigrateOldTokenHubFlashIdToTheDeepSeekEndpoint() {
-        OpenAiCompatibleProperties properties = multiProviderProperties();
-        OpenAiCompatibleRouteProperties tokenhub = properties.getProviders().get("tokenhub");
-        tokenhub.setModel("deepseek/deepseek-flash");
-        tokenhub.setModels(List.of("deepseek/deepseek-flash"));
-        properties.setDefaultProvider("tokenhub");
-
-        assertThat(properties.resolveModel(null).publicModelId())
-                .isEqualTo("tokenhub:deepseek-v4-pro-0813");
-
-        OpenAiCompatibleProperties.ModelSelection selection =
-                properties.resolveModel("tokenhub:deepseek/deepseek-flash");
-
-        assertThat(selection.model()).isEqualTo("deepseek-flash");
-        assertThat(selection.publicModelId()).isEqualTo("deepseek:deepseek-flash");
-        assertThat(selection.route().key()).isEqualTo("deepseek");
-        assertThat(selection.route().endpoint()).isEqualTo(URI.create("https://deepseek.example.com/chat/completions"));
-        assertThat(selection.route().apiKey()).isEqualTo("deepseek-secret");
-        assertThat(properties.getAvailableModelDescriptors())
-                .extracting(OpenAiCompatibleProperties.ModelDescriptor::id)
-                .doesNotContain("tokenhub:deepseek/deepseek-flash");
     }
 
     @Test
@@ -162,37 +57,8 @@ class OpenAiCompatiblePropertiesTest {
         properties.setModel("deepseek-chat");
         properties.setModels(List.of("deepseek-chat"));
 
-        assertThat(properties.getAvailableModelDescriptors())
-                .extracting(OpenAiCompatibleProperties.ModelDescriptor::id)
-                .containsExactly("deepseek-chat");
         assertThat(properties.resolveModel("deepseek-chat").publicModelId())
                 .isEqualTo("deepseek-chat");
-    }
-
-    @Test
-    void shouldApplyPreferredOrderToSingleTokenHubProviderAndKeepCustomModelsLast() {
-        OpenAiCompatibleProperties properties = new OpenAiCompatibleProperties();
-        properties.setMultiProviderEnabled(false);
-        properties.setProviderName("tokenhub");
-        properties.setEndpoint(URI.create("https://tokenhub.example.com/v1/chat/completions"));
-        properties.setApiKey("tokenhub-secret");
-        properties.setModel("glm-5.3-flashx");
-        properties.setModels(List.of("custom-tokenhub-model", "minimax-m3", "hy4-preview"));
-
-        assertThat(properties.getAvailableModelDescriptors())
-                .extracting(OpenAiCompatibleProperties.ModelDescriptor::id)
-                .containsExactly(
-                        "deepseek-v4-pro-0813",
-                        "kimi-k3",
-                        "kimi-k2.8-preview",
-                        "kimi-k2.7-code",
-                        "glm-5.3",
-                        "glm-5.3-flashx",
-                        "hy4-preview",
-                        "hy3",
-                        "minimax-m3",
-                        "custom-tokenhub-model"
-                );
     }
 
     private OpenAiCompatibleProperties multiProviderProperties() {

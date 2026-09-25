@@ -87,15 +87,30 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
             OffsetDateTime createdToExclusive
     ) {
         ActorIdentity context = currentActor.require();
-        Page<OptimizationRecordEntity> records = recordRepository
-                .findFilteredByTenantIdAndWorkspaceId(
-                        context.tenantId(),
-                        context.workspaceId(),
-                        keyword,
-                        createdFrom,
-                        createdToExclusive,
-                        PageRequest.of(page, size)
-                );
+        PageRequest pageRequest = PageRequest.of(page, size);
+        boolean hasKeyword = keyword != null && !keyword.isBlank();
+        boolean hasDateRange = createdFrom != null && createdToExclusive != null;
+        Page<OptimizationRecordEntity> records;
+        if (hasKeyword && hasDateRange) {
+            records = recordRepository
+                    .findByTenantIdAndWorkspaceIdAndRawPromptContainingIgnoreCaseAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtDesc(
+                            context.tenantId(), context.workspaceId(), keyword, createdFrom, createdToExclusive, pageRequest
+                    );
+        } else if (hasKeyword) {
+            records = recordRepository
+                    .findByTenantIdAndWorkspaceIdAndRawPromptContainingIgnoreCaseOrderByCreatedAtDesc(
+                            context.tenantId(), context.workspaceId(), keyword, pageRequest
+                    );
+        } else if (hasDateRange) {
+            records = recordRepository
+                    .findByTenantIdAndWorkspaceIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtDesc(
+                            context.tenantId(), context.workspaceId(), createdFrom, createdToExclusive, pageRequest
+                    );
+        } else {
+            records = recordRepository.findByTenantIdAndWorkspaceIdOrderByCreatedAtDesc(
+                    context.tenantId(), context.workspaceId(), pageRequest
+            );
+        }
         List<OptimizationHistorySummary> items = records.getContent().stream()
                 .map(this::toSummary)
                 .toList();
@@ -352,8 +367,7 @@ public class JpaOptimizationHistoryService implements OptimizationHistoryService
                 enhancement,
                 conversation,
                 policy == null ? PermissionPolicyInput.empty() : policy,
-                null,
-                stringValue(metadata.get("model"))
+                null
         );
     }
 

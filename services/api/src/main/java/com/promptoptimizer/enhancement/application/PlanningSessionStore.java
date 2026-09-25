@@ -51,12 +51,20 @@ public interface PlanningSessionStore {
             String requestFingerprint,
             PlanningContextReference planningContext,
             List<PlanQuestion> questions,
+            String modelId,
             Instant expiresAt
     ) {
 
         public PlanSession {
             Objects.requireNonNull(ownerUserId, "ownerUserId must not be null");
             questions = List.copyOf(questions);
+        }
+
+        /** 兼容不携带模型选择的现有测试与旧短期计划。 */
+        public PlanSession(String planId, UUID ownerUserId, String requestFingerprint,
+                           PlanningContextReference planningContext, List<PlanQuestion> questions,
+                           Instant expiresAt) {
+            this(planId, ownerUserId, requestFingerprint, planningContext, questions, null, expiresAt);
         }
     }
 }

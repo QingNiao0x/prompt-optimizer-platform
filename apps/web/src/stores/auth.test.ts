@@ -11,7 +11,7 @@ vi.mock('@/services/authApi', () => ({
 
 const response: ApiResponse<AuthenticatedUser> = {
   requestId: 'test', data: {
-    userId: 'user-a', tenantId: 'tenant-a', workspaceId: 'workspace-a', email: 'a@example.com', displayName: 'A',
+    userId: 'user-a', tenantId: 'tenant-a', workspaceId: 'workspace-a', email: 'a@example.com', displayName: 'A', platformAdmin: false,
   },
 };
 const unauthorized = (): AxiosError => new AxiosError('unauthorized', undefined, undefined, undefined, {
@@ -50,7 +50,7 @@ describe('auth store', () => {
 
   it('does not pretend logout succeeded when the server could not invalidate the session', async () => {
     const auth = useAuthStore();
-    await auth.login({ email: 'a@example.com', password: 'test-only-password' });
+    await auth.login({ identifier: 'a@example.com', password: 'test-only-password' });
     vi.mocked(logout).mockRejectedValueOnce(new Error('offline'));
     await expect(auth.logout()).rejects.toThrow('offline');
     expect(auth.isAuthenticated).toBe(true);

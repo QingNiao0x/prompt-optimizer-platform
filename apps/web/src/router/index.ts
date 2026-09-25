@@ -34,6 +34,12 @@ const router = createRouter({
       component: () => import('@/pages/SettingsPage.vue'),
       meta: { title: '设置' },
     },
+    {
+      path: '/admin/models',
+      name: 'admin-models',
+      component: () => import('@/pages/AdminModelsPage.vue'),
+      meta: { title: '平台模型管理', platformAdmin: true },
+    },
   ],
 });
 
@@ -47,7 +53,9 @@ router.beforeEach(async (to) => {
   } catch {
     return { name: 'login', query: { unavailable: '1' } };
   }
-  return auth.isAuthenticated ? true : { name: 'login' };
+  if (!auth.isAuthenticated) return { name: 'login' };
+  if (to.meta.platformAdmin && !auth.user?.platformAdmin) return { name: 'workbench' };
+  return true;
 });
 
 router.afterEach((to) => {

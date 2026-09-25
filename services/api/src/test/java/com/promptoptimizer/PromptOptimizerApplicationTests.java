@@ -1,6 +1,5 @@
 package com.promptoptimizer;
 
-import com.promptoptimizer.settings.infrastructure.ProviderConfigRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,9 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
         }
 )
 class PromptOptimizerApplicationTests {
-
-    @MockBean
-    private ProviderConfigRepository providerConfigRepository;
 
     @MockBean
     private com.promptoptimizer.identity.infrastructure.persistence.UserAccountRepository userAccountRepository;

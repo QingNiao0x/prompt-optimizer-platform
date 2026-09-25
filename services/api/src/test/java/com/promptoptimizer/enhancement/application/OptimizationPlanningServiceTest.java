@@ -16,6 +16,7 @@ import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.identity.support.TestActors;
 import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
+import com.promptoptimizer.provider.application.PlatformModelCatalog;
 import com.promptoptimizer.provider.infrastructure.MockPromptPlanningProvider;
 import com.promptoptimizer.policy.application.ProtectedContextFilter;
 import com.promptoptimizer.template.application.PromptTemplateRegistry;
@@ -25,13 +26,35 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class OptimizationPlanningServiceTest {
+
+    @Test
+    void shouldPassPublishedModelToPlanningProvider() {
+        PlatformModelCatalog catalog = mock(PlatformModelCatalog.class);
+        String modelId = "tokenhub:kimi-k3";
+        when(catalog.resolve(modelId)).thenReturn(new PlatformModelCatalog.ModelEntry(
+                UUID.randomUUID(), modelId, "tokenhub", "kimi-k3", "Kimi K3", true, false, 1));
+        AtomicReference<String> receivedModel = new AtomicReference<>();
+        OptimizationPlanningService planning = new OptimizationPlanningService(request -> {
+            receivedModel.set(request.model());
+            return new PlanningProviderResponse("无需额外确认", List.of(), "mock", "planner", true);
+        }, new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+        planning.setModelCatalog(catalog);
+
+        planning.plan(new OptimizationPlanRequest("分析死亡率", "", List.of(), null, modelId));
+
+        assertThat(receivedModel).hasValue(modelId);
+    }
 
     @Test
     void shouldClassifyCurrentSoftwareGoalBeforeResearchMaterial() {

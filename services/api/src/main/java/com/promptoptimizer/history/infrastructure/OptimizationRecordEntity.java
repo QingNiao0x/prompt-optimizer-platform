@@ -42,9 +42,7 @@ public class OptimizationRecordEntity {
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
-    @Column(name = "provider_config_id")
-    private UUID providerConfigId;
-
+    /** 实际使用的模板编码，业务含义见 {@link com.promptoptimizer.enhancement.domain.TemplateCode}。 */
     @Column(name = "template_code", nullable = false, length = 40)
     private String templateCode;
 
@@ -126,14 +124,6 @@ public class OptimizationRecordEntity {
 
     public void setCreatedBy(UUID createdBy) {
         this.createdBy = createdBy;
-    }
-
-    public UUID getProviderConfigId() {
-        return providerConfigId;
-    }
-
-    public void setProviderConfigId(UUID providerConfigId) {
-        this.providerConfigId = providerConfigId;
     }
 
     public String getTemplateCode() {

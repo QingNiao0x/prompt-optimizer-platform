@@ -2,6 +2,7 @@ import { httpClient } from './http';
 
 import type {
   ApiResponse,
+  AvailableModel,
   ContextAnalysisRequest,
   ContextSnapshot,
   OptimizationHistoryDetail,
@@ -15,6 +16,12 @@ import type {
   PlanningContextRequest,
   ReoptimizationResult,
 } from '@/types/api';
+
+/** 读取管理员发布的可选模型目录；浏览器不会收到上游端点或 API Key。 */
+export const listAvailableModels = async (): Promise<ApiResponse<AvailableModel[]>> => {
+  const response = await httpClient.get<ApiResponse<AvailableModel[]>>('/api/v1/models');
+  return response.data;
+};
 
 export const preparePlanningContext = async (
   request: PlanningContextRequest,

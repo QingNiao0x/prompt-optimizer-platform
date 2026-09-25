@@ -120,6 +120,16 @@ public class GlobalExceptionHandler {
         );
     }
 
+    /** 数据库角色被撤销后，管理请求仍应返回明确的 403。 */
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccessDenied(
+            org.springframework.security.access.AccessDeniedException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(request, HttpStatus.FORBIDDEN, "ACCESS_DENIED",
+                "当前用户无权执行该管理操作。", false, Map.of());
+    }
+
     /**
      * 处理模型供应商异常，并映射为稳定的平台错误码。
      */

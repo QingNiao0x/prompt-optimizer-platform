@@ -10,6 +10,7 @@ import type {
 
 export interface OptimizationDraft {
   rawPrompt: string;
+  modelId?: string;
   customDescription: string;
   files: ContextFileInput[];
   templateCode: TemplateCode;
@@ -25,6 +26,7 @@ export const buildOptimizationRequest = (
   draft: OptimizationDraft,
 ): OptimizationRequest => ({
   rawPrompt: draft.rawPrompt.trim(),
+  modelId: draft.modelId || null,
   context: {
     customDescription: draft.customDescription.trim(),
     files: draft.files.map((file) => ({
@@ -56,8 +58,10 @@ export const buildOptimizationPlanRequest = (
   rawPrompt: string,
   contextDescription: string,
   planningContext?: PlanningContextReference,
+  modelId?: string,
 ): OptimizationPlanRequest => ({
   rawPrompt: rawPrompt.trim(),
+  modelId: modelId || null,
   contextDescription: contextDescription.trim(),
   conversationHistory: [],
   planningContext: planningContext ?? null,

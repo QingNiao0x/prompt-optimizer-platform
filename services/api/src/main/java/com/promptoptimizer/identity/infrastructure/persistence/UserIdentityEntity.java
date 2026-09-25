@@ -31,6 +31,7 @@ public class UserIdentityEntity {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
+    /** 登录渠道；取值及其业务含义见 {@link UserIdentityType}。 */
     @Enumerated(EnumType.STRING)
     @Column(name = "identity_type", nullable = false, length = 20)
     private UserIdentityType identityType;
@@ -44,6 +45,7 @@ public class UserIdentityEntity {
     @Column(name = "normalized_identifier", nullable = false, length = 320)
     private String normalizedIdentifier;
 
+    /** 身份绑定状态；取值及其业务含义见 {@link UserIdentityStatus}。 */
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private UserIdentityStatus status;

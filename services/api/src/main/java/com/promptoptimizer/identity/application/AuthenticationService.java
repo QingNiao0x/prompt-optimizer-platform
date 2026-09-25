@@ -47,7 +47,7 @@ public class AuthenticationService {
     }
 
     /**
-     * 校验邮箱密码、轮换会话标识并显式保存认证上下文。
+     * 校验邮箱或用户名密码、轮换会话标识并显式保存认证上下文。
      */
     public AuthenticatedUserView login(
             LoginRequest loginRequest,
@@ -60,7 +60,7 @@ public class AuthenticationService {
         }
         Authentication authentication = authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken.unauthenticated(
-                        loginRequest.email().trim(),
+                        loginRequest.identifier().trim(),
                         loginRequest.password()
                 )
         );
@@ -71,12 +71,15 @@ public class AuthenticationService {
         securityContextRepository.saveContext(context, request, response);
         // 登录时旧 Token 已被旋转策略清除；立即下发新 Token，保证下一次写请求可用。
         csrfTokenRepository.saveToken(csrfTokenRepository.generateToken(request), request, response);
-        return AuthenticatedUserView.from(currentActor.require());
+        return currentUser();
     }
 
     /** 由服务端认证上下文读取当前用户，不接受客户端自报身份。 */
     public AuthenticatedUserView currentUser() {
-        return AuthenticatedUserView.from(currentActor.require());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean platformAdmin = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(authority -> "ROLE_PLATFORM_ADMIN".equals(authority.getAuthority()));
+        return AuthenticatedUserView.from(currentActor.require(), platformAdmin);
     }
 
     /**

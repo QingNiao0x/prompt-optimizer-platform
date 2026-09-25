@@ -13,6 +13,14 @@ import { mockAuthentication } from './authFixture';
 test.beforeEach(async ({ page }) => {
   await mockAuthentication(page);
   await page.route('**/api/v1/optimizations/plan-events', (route) => route.fulfill({ status: 204 }));
+  await page.route('**/api/v1/models', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ requestId: 'e2e-models', data: [
+      { id: 'deepseek:deepseek-chat', displayName: 'DeepSeek', provider: 'DeepSeek', defaultModel: true },
+      { id: 'tokenhub:kimi-k3', displayName: 'Kimi K3', provider: 'TokenHub', defaultModel: false },
+    ] }),
+  }));
 });
 
 const PLAN_MODE_STORAGE_KEY = 'prompt-optimizer.plan-mode.v1';
@@ -129,6 +137,23 @@ const optimizationResponse: ApiResponse<OptimizationResult> = {
   data: optimizationResult,
 };
 
+test('工作台显示平台发布的模型并允许用户切换', async ({ page }) => {
+  await page.goto('/workbench');
+  const selector = page.getByRole('combobox', { name: '选择增强模型' });
+  await expect(selector).toBeVisible();
+  await expect(page.locator('.model-select')).toContainText('DeepSeek');
+  await page.locator('.model-select').click();
+  await page.getByRole('option', { name: 'Kimi K3' }).click();
+  await expect(page.locator('.model-select')).toContainText('Kimi K3');
+});
+
+test('设置页仅保留项目上下文与隐私选项', async ({ page }) => {
+  await page.goto('/settings');
+
+  await expect(page.getByRole('heading', { name: '项目上下文与隐私' })).toBeVisible();
+  await expect(page.getByText(/模型设置|供应商配置|API Key/i)).toHaveCount(0);
+});
+
 const planningContextReference = {
   contextId: 'ea9d3453-5bd7-487b-bafb-5ef608dfd895',
   version: `sha256:${'a'.repeat(64)}`,
@@ -242,6 +267,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
     const requestBody: unknown = route.request().postDataJSON();
     expect(requestBody).toMatchObject({
       rawPrompt: '给用户模块增加登录功能',
+      modelId: 'tokenhub:kimi-k3',
       contextDescription: 'Spring Boot 3 模块化单体，使用 PostgreSQL。',
       planningContext: planningContextReference,
     });
@@ -278,6 +304,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
     const requestBody: unknown = route.request().postDataJSON();
     expect(requestBody).toMatchObject({
       rawPrompt: '给用户模块增加登录功能',
+      modelId: 'tokenhub:kimi-k3',
       enhancement: {
         includePermissionBoundaries: true,
       },
@@ -331,6 +358,8 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
 
   await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
+  await page.locator('.model-select').click();
+  await page.getByRole('option', { name: 'Kimi K3' }).click();
   await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
   await confirmContextTransmission(page, '生成确认问题前分析上下文');
   const planDialog = page.getByRole('dialog', { name: '确认关键细节' });

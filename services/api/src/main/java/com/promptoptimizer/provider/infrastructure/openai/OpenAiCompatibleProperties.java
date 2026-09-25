@@ -23,7 +23,7 @@ import java.util.Set;
  *
  * <p>该配置仅在 {@code app.provider.mode=openai-compatible} 时加载。API Key 必须由环境变量或
  * 外部密钥管理服务注入，禁止写入源码和版本库。默认仍支持旧的单供应商配置；启用多供应商后，
- * {@code providers} 中每条已配置密钥的路由都会进入同一个服务端模型目录。</p>
+ * {@code providers} 中每条已配置密钥的路由都由平台服务端管理，终端用户不接触模型目录。</p>
  *
  * @author QingNiao
  * @since 0.1.0
@@ -36,7 +36,7 @@ public class OpenAiCompatibleProperties {
     private static final String LEGACY_TOKENHUB_FLASH_MODEL = "deepseek/deepseek-flash";
     private static final String LEGACY_TOKENHUB_FLASH_ID = "tokenhub:" + LEGACY_TOKENHUB_FLASH_MODEL;
 
-    /** 用户指定的 TokenHub 模型展示顺序；环境变量中的旧白名单不会打乱顺序或移除这些选择项。 */
+    /** 平台路由允许的 TokenHub 模型顺序；环境变量旧白名单不会改变默认路由优先级。 */
     private static final List<String> TOKENHUB_BASELINE_MODELS = List.of(
             "deepseek-v4-pro-0813",
             "kimi-k3",
@@ -60,10 +60,7 @@ public class OpenAiCompatibleProperties {
     @NotBlank
     private String model = "deepseek-flash";
 
-    /**
-     * 允许用户选择的模型白名单。留空时只暴露默认模型；模型 ID 仍由服务端控制，
-     * 不接受前端直接把任意字符串透传给上游端点。
-     */
+    /** 平台服务端路由允许使用的模型白名单；终端用户不能提交模型选择。 */
     private List<String> models = List.of();
 
     /** 是否启用按模型路由到不同 endpoint/API Key 的模式。 */
@@ -74,9 +71,6 @@ public class OpenAiCompatibleProperties {
 
     /** 多供应商路由配置。Map key 只作为服务端公开模型 ID 的前缀，不包含任何密钥。 */
     private Map<String, OpenAiCompatibleRouteProperties> providers = new LinkedHashMap<>();
-
-    /** 仍保留后端路由、但不再允许用户选择的公开模型 ID 或原始模型 ID。 */
-    private List<String> modelCatalogHiddenIds = List.of();
 
     @DecimalMin("0.0")
     @DecimalMax("2.0")
@@ -156,20 +150,6 @@ public class OpenAiCompatibleProperties {
 
     public void setProviders(Map<String, OpenAiCompatibleRouteProperties> providers) {
         this.providers = providers == null ? new LinkedHashMap<>() : new LinkedHashMap<>(providers);
-    }
-
-    public List<String> getModelCatalogHiddenIds() {
-        return modelCatalogHiddenIds;
-    }
-
-    public void setModelCatalogHiddenIds(List<String> modelCatalogHiddenIds) {
-        this.modelCatalogHiddenIds = modelCatalogHiddenIds == null
-                ? List.of()
-                : modelCatalogHiddenIds.stream()
-                .map(value -> value == null ? "" : value.trim())
-                .filter(value -> !value.isBlank())
-                .distinct()
-                .toList();
     }
 
     /**
@@ -257,10 +237,7 @@ public class OpenAiCompatibleProperties {
         return List.copyOf(orderedModels);
     }
 
-    /**
-     * 返回默认路由。多供应商模式优先使用 default-provider，否则使用第一条已配置路由；
-     * 如果首选路由的模型均已从客户目录隐藏，则回退到第一条仍有可选模型的路由。
-     */
+    /** 返回平台默认路由。多供应商模式优先使用 default-provider，否则使用第一条已配置路由。 */
     public OpenAiCompatibleRoute getDefaultRoute() {
         List<OpenAiCompatibleRoute> routes = getConfiguredRoutes();
         if (routes.isEmpty()) {
@@ -277,29 +254,29 @@ public class OpenAiCompatibleProperties {
         } else {
             preferredRoute = routes.get(0);
         }
-        if (hasSelectableModel(preferredRoute)) {
+        if (hasConfiguredModel(preferredRoute)) {
             return preferredRoute;
         }
         return routes.stream()
-                .filter(this::hasSelectableModel)
+                .filter(this::hasConfiguredModel)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("至少需要配置一个可供用户选择的模型"));
+                .orElseThrow(() -> new IllegalStateException("至少需要配置一条包含有效默认模型的路由"));
     }
 
     /**
-     * 将前端传入的模型目录 ID 解析为服务端路由和上游模型名。
+     * 解析平台内部路由策略指定的模型；未指定时使用平台默认模型。
      * 多供应商模式的公开 ID 为 {@code routeKey:modelName}，同时兼容唯一的裸模型名。
      */
     public ModelSelection resolveModel(String requestedModel) {
         List<OpenAiCompatibleRoute> routes = getConfiguredRoutes();
         OpenAiCompatibleRoute defaultRoute = getDefaultRoute();
         String provided = requestedModel == null ? "" : requestedModel.trim();
-        // 旧历史记录仍可重新优化，但服务端将其规范化为已迁回 DeepSeek 的公开模型 ID。
+        // 旧历史模型 ID 仅在服务端兼容层中迁移到平台当前托管的 DeepSeek 路由。
         String requested = multiProviderEnabled && LEGACY_TOKENHUB_FLASH_ID.equals(provided)
                 ? "deepseek:" + DEEPSEEK_FLASH_MODEL
                 : provided;
         if (requested.isBlank()) {
-            String defaultModel = selectableDefaultModel(defaultRoute);
+            String defaultModel = defaultRoute.model();
             return new ModelSelection(
                     defaultRoute,
                     defaultModel,
@@ -308,8 +285,8 @@ public class OpenAiCompatibleProperties {
         }
 
         if (!multiProviderEnabled) {
-            if (!defaultRoute.supportsModel(requested) || isModelCatalogHidden(defaultRoute, requested)) {
-                throw new IllegalArgumentException("所选模型不可用");
+            if (!defaultRoute.supportsModel(requested)) {
+                throw new IllegalArgumentException("平台模型路由不支持该模型");
             }
             return new ModelSelection(defaultRoute, requested, requested);
         }
@@ -322,66 +299,24 @@ public class OpenAiCompatibleProperties {
                     .filter(candidate -> candidate.key().equals(routeKey))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("所选模型供应商不可用"));
-            if (!route.supportsModel(modelName) || isModelCatalogHidden(route, modelName)) {
-                throw new IllegalArgumentException("所选模型不可用");
+            if (!route.supportsModel(modelName)) {
+                throw new IllegalArgumentException("平台模型路由不支持该模型");
             }
             return new ModelSelection(route, modelName, requested);
         }
 
         List<OpenAiCompatibleRoute> matches = routes.stream()
-                .filter(route -> route.supportsModel(requested) && !isModelCatalogHidden(route, requested))
+                .filter(route -> route.supportsModel(requested))
                 .toList();
         if (matches.size() != 1) {
-            throw new IllegalArgumentException("所选模型不可用或存在多个同名模型");
+            throw new IllegalArgumentException("平台模型路由不支持该模型或存在多个同名模型");
         }
         OpenAiCompatibleRoute route = matches.get(0);
         return new ModelSelection(route, requested, publicModelId(route, requested));
     }
 
-    /**
-     * 返回只包含公开模型信息的目录，不包含 endpoint、API Key 或其他运行时配置。
-     */
-    public List<ModelDescriptor> getAvailableModelDescriptors() {
-        List<OpenAiCompatibleRoute> routes = getConfiguredRoutes();
-        OpenAiCompatibleRoute defaultRoute = getDefaultRoute();
-        String defaultModel = selectableDefaultModel(defaultRoute);
-        String defaultModelId = publicModelId(defaultRoute, defaultModel);
-        List<ModelDescriptor> descriptors = new ArrayList<>();
-        for (OpenAiCompatibleRoute route : routes) {
-            for (String modelName : route.models()) {
-                if (isModelCatalogHidden(route, modelName)) {
-                    continue;
-                }
-                descriptors.add(new ModelDescriptor(
-                        publicModelId(route, modelName),
-                        route.providerName(),
-                        modelName,
-                        publicModelId(route, modelName).equals(defaultModelId)
-                ));
-            }
-        }
-        return List.copyOf(descriptors);
-    }
-
-    private boolean hasSelectableModel(OpenAiCompatibleRoute route) {
-        return route.models().stream().anyMatch(modelName -> !isModelCatalogHidden(route, modelName));
-    }
-
-    /** 在默认路由的默认模型已隐藏时，选择该路由的第一个可见模型。 */
-    private String selectableDefaultModel(OpenAiCompatibleRoute route) {
-        if (route.supportsModel(route.model()) && !isModelCatalogHidden(route, route.model())) {
-            return route.model();
-        }
-        return route.models().stream()
-                .filter(modelName -> !isModelCatalogHidden(route, modelName))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("默认模型路由没有可供用户选择的模型"));
-    }
-
-    /** 同时支持隐藏带路由前缀的目录 ID 或原始上游模型 ID。 */
-    private boolean isModelCatalogHidden(OpenAiCompatibleRoute route, String modelName) {
-        return modelCatalogHiddenIds.contains(modelName)
-                || modelCatalogHiddenIds.contains(publicModelId(route, modelName));
+    private boolean hasConfiguredModel(OpenAiCompatibleRoute route) {
+        return route.model() != null && !route.model().isBlank() && route.supportsModel(route.model());
     }
 
     /** 多供应商模式下为公开模型名加路由前缀，避免不同供应商的同名模型发生冲突。 */
@@ -404,15 +339,6 @@ public class OpenAiCompatibleProperties {
      * @since 0.1.0
      */
     public record ModelSelection(OpenAiCompatibleRoute route, String model, String publicModelId) {
-    }
-
-    /**
-     * 可返回给客户端的模型目录条目，不包含 endpoint 或 API Key。
-     *
-     * @author QingNiao
-     * @since 0.1.0
-     */
-    public record ModelDescriptor(String id, String provider, String model, boolean defaultModel) {
     }
 
     public double getTemperature() {

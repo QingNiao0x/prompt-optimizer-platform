@@ -1,8 +1,17 @@
 <script setup lang="ts">
-import { Clock, HomeFilled, MagicStick, Setting } from '@element-plus/icons-vue';
+import { Clock, HomeFilled, MagicStick, Setting, Tools } from '@element-plus/icons-vue';
+import { computed } from 'vue';
 
 import BrandMark from '@/components/brand/BrandMark.vue';
 import AccountMenu from '@/components/layout/AccountMenu.vue';
+import { useAuthStore } from '@/stores/auth';
+import { useOptimizationStore } from '@/stores/optimization';
+
+const auth = useAuthStore();
+const optimization = useOptimizationStore();
+const selectedModelName = computed(() => optimization.availableModels.find(
+  (model) => model.id === optimization.selectedModelId,
+)?.displayName ?? '平台模型');
 
 const navigation = [
   { to: '/', label: '首页', icon: HomeFilled },
@@ -32,13 +41,17 @@ const navigation = [
         <component :is="item.icon" aria-hidden="true" />
         <span>{{ item.label }}</span>
       </RouterLink>
+      <RouterLink v-if="auth.user?.platformAdmin" class="nav-link" to="/admin/models">
+        <Tools aria-hidden="true" />
+        <span>模型管理</span>
+      </RouterLink>
     </nav>
 
     <div class="topbar-tools">
       <AccountMenu />
-      <div class="provider-status" title="模型由后端安全配置">
+      <div class="provider-status" title="模型由平台管理员配置">
         <span class="status-dot" aria-hidden="true"></span>
-        <span><b>LOCAL</b> · DeepSeek 默认</span>
+        <span>{{ selectedModelName }}</span>
       </div>
     </div>
   </header>
@@ -140,6 +153,7 @@ const navigation = [
   color: var(--success);
   font-weight: 500;
 }
+
 
 .status-dot {
   flex: 0 0 auto;

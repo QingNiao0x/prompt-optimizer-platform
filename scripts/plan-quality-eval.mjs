@@ -190,8 +190,7 @@ for (const sample of cases) {
     const plan = await call('/api/v1/optimizations/plan', {
       rawPrompt: sample.rawPrompt,
       contextDescription: sample.contextDescription,
-      planningContext,
-      model: process.env.PLAN_EVAL_MODEL || null
+      planningContext
     });
     const questions = plan.questions ?? [];
     const questionMetrics = evaluateQuestions(sample, questions);
@@ -199,8 +198,7 @@ for (const sample of cases) {
     const final = await call('/api/v1/optimizations', {
       rawPrompt: sample.rawPrompt,
       context: { customDescription: sample.contextDescription, files: sample.files },
-      planConfirmation: { planId: plan.planId, planningContext: plan.planningContext, answers },
-      model: process.env.PLAN_EVAL_MODEL || null
+      planConfirmation: { planId: plan.planId, planningContext: plan.planningContext, answers }
     });
     const finalText = final.optimizedPrompt ?? '';
     const missingTerms = sample.finalTerms.filter(term => !finalText.includes(term));

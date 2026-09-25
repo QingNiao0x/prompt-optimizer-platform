@@ -1,6 +1,6 @@
 # 最小认证与 Plan 会话所有权
 
-当前已实现邮箱验证码注册、邮箱密码登录、退出、当前用户读取，以及 `contextId` / `planId` 的服务端所有权绑定。登录标识已从账户资料中拆分为通用 `user_identity` 模型。手机号验证码、微信 OAuth、找回密码、团队邀请和角色管理后台仍未实现。
+当前已实现邮箱验证码注册、邮箱或用户名密码登录、退出、当前用户读取，以及 `contextId` / `planId` 的服务端所有权绑定。登录标识已从账户资料中拆分为通用 `user_identity` 模型。手机号验证码、微信 OAuth、找回密码、团队邀请和角色管理后台仍未实现。
 
 临时上传文档也按 `CurrentActor.userId` 绑定所有者：创建时记录用户，分片写入、完成、状态、删除和上下文检索均校验同一用户。跨用户访问统一表现为资源不存在，避免根据文档 ID 探测其他用户资料；后台过期清理不使用请求身份。
 
@@ -15,7 +15,7 @@
 ## 2. 认证链路
 
 ```text
-邮箱 → user_identity(EMAIL / local) → user_account → BCrypt → 服务端 HttpSession
+邮箱或用户名 → user_identity(EMAIL / USERNAME / local) → user_account → BCrypt → 服务端 HttpSession
                                                               ↓
                                                      SecurityContextCurrentActor
                                                               ↓
@@ -26,7 +26,7 @@
 
 - `identity/application/CurrentActor.java`：唯一业务身份入口，`require()` 没有匿名降级身份。
 - `identity/infrastructure/security/SecurityContextCurrentActor.java`：只接受已认证的 `AuthenticatedUser`，不信任请求中的 `userId`、`tenantId` 或自定义身份请求头。
-- `DatabaseUserDetailsService`：先按规范化邮箱查找有效身份，再用稳定 `userId` 加载账户和默认工作区；无密码、锁定、禁用账户不能登录。
+- `DatabaseUserDetailsService`：带 `@` 的标识按规范化邮箱查找，其他标识按规范化用户名查找，再用稳定 `userId` 加载账户和默认工作区；无密码、锁定、禁用账户不能登录。
 - `AuthenticationService`：校验密码后轮换已有 Session ID，显式保存 SecurityContext；退出时使当前 Session 失效。
 - `EmailRegistrationService`：申请验证码、验证验证码、创建账户并在成功后消费验证码；不保存验证码明文。
 - `HybridEmailVerificationStore`：使用 Redis Lua 脚本原子执行冷却、邮箱/IP 小时限流和尝试次数限制；生产配置下 Redis 故障会拒绝发码。
@@ -46,9 +46,17 @@
 1. 启动现有 PostgreSQL / Redis 基础设施。
 2. 在启动后端的进程环境中设置 `BOOTSTRAP_USER_PASSWORD`；不要把真实密码提交到 Git。
 3. 默认初始化邮箱为 `demo@local`，对应 V3 已有的种子账户。`BOOTSTRAP_USER_EMAIL` 只能选择已存在账户，不会自动创建任意邮箱。
-4. 启动后端。Flyway V5 创建 `user_identity`、迁移已有邮箱身份，并把身份唯一性从 `user_account.email` 转移到身份表。
+4. 启动后端。Flyway V5 创建 `user_identity`、迁移已有邮箱身份，并把身份唯一性从 `user_account.email` 转移到身份表；V9 扩展身份类型以支持用户名登录。
 5. 初始化器仅在账户没有密码哈希时写入密码。再次设置环境变量不会覆盖既有密码，也不是重置密码接口。
-6. 前端点击“登录”，输入邮箱和设置的密码；访问工作台、历史或设置时也会先要求登录。
+6. 前端点击“登录”，输入邮箱或用户名及对应密码；访问工作台、历史或设置时也会先要求登录。
+
+### 首位平台管理员
+
+需要自动创建平台管理员时，在受控的启动环境中显式设置 `APP_SECURITY_BOOTSTRAP_ADMIN_ENABLED=true`，并通过 `APP_SECURITY_BOOTSTRAP_ADMIN_PASSWORD` 注入密码。初始化会创建两个独立账户：邮箱管理员默认使用 `1767443348@qq.com`、显示名 `Admin`；备用管理员默认使用用户名 `admin`，不绑定邮箱。可通过 `APP_SECURITY_BOOTSTRAP_ADMIN_USERNAME`、`APP_SECURITY_BOOTSTRAP_ADMIN_EMAIL`、`APP_SECURITY_BOOTSTRAP_ADMIN_DISPLAY_NAME` 覆盖对应标识。默认不启用初始化，也不在仓库内保存初始密码。
+
+启动时，初始化器在事务中锁定 `platform_admin_bootstrap` 单例行，分别为两个管理员创建个人租户、`user_account`、默认工作区和 OWNER 成员关系；邮箱身份仅绑定邮箱管理员，用户名身份仅绑定备用管理员。两个账户各自保存以 BCrypt 工作因子 12 编码的密码哈希。若初始化标记已消费或平台已存在管理员，不会创建账户或重设密码；用户名或邮箱已绑定给其他账户时启动失败且不覆盖现有身份。初始化成功后可从运行环境移除初始密码。已有 `APP_SECURITY_BOOTSTRAP_ADMIN_USER_ID` 是晋升既有账户的兼容路径，与新账户初始化共用一次性标记；该兼容路径不会自动创建备用账户。
+
+登录界面接受邮箱或用户名。新请求使用 `identifier` 字段；服务端仍接受旧客户端提交的 `email` 字段作为兼容别名。
 
 ### 启用邮箱验证码注册
 
@@ -85,12 +93,13 @@ mvn.cmd spring-boot:run
 
 ### 通用登录身份模型
 
-`user_account.id` 仍是业务授权和资源所有权使用的稳定用户标识；邮箱、手机号和微信都只是找到该用户的登录身份。一个用户可以绑定多条身份，但同一个身份不能同时属于两个用户：
+`user_account.id` 仍是业务授权和资源所有权使用的稳定用户标识；邮箱、用户名、手机号和微信都只是找到该用户的登录身份。一个用户可以绑定多条身份，但同一个身份不能同时属于两个用户：
 
 ```text
 user_account
   └── user_identity
         ├── EMAIL  / issuer=local / normalized_identifier=小写邮箱
+        ├── USERNAME / issuer=local / normalized_identifier=小写用户名
         ├── PHONE  / issuer=local / normalized_identifier=E.164 手机号
         └── WECHAT / issuer=AppID / normalized_identifier=UnionID 或应用内 OpenID
 ```
@@ -99,16 +108,16 @@ user_account
 
 | 字段 | 规则 |
 | --- | --- |
-| `identity_type` | 当前只允许 `EMAIL`、`PHONE`、`WECHAT` |
+| `identity_type` | 当前只允许 `EMAIL`、`PHONE`、`WECHAT`、`USERNAME` |
 | `issuer` | 本地身份使用 `local`；微信身份使用实际开放平台应用标识，避免不同应用的 OpenID 冲突 |
 | `identifier` | 身份标识的标准展示值，不保存 access token、验证码或 AppSecret |
-| `normalized_identifier` | 登录查找和唯一约束使用的值；邮箱转小写，手机号必须先转 E.164，微信标识保持大小写 |
+| `normalized_identifier` | 登录查找和唯一约束使用的值；邮箱和用户名转小写，用户名为 3–32 位 ASCII 字母、数字、点、下划线或连字符；手机号必须先转 E.164，微信标识保持大小写 |
 | `status` | `ACTIVE` 身份可用于认证，`REVOKED` 身份不可登录 |
 | `verified_at` | 记录完成邮箱、短信或第三方授权验证的时间；历史种子账户迁移时为空 |
 
 唯一索引覆盖 `(identity_type, issuer, normalized_identifier)`。这意味着同一邮箱或手机号不能注册两个平台用户，同一微信应用下的同一微信身份也不能重复绑定。`user_account.email` 暂时作为当前 API 的联系邮箱兼容字段保留，但已经允许为空，也不再承担认证唯一性；新增注册流程必须同时写入账户和身份，不能只写该兼容字段。
 
-`UserIdentityKey` 集中定义身份规范化：邮箱去除首尾空白并转小写，手机号拒绝非 E.164 值，微信的签发方和用户标识去除首尾空白但保留大小写。后续绑定接口仍必须先完成验证码或 OAuth 回调验证，再持久化身份；仓库层没有对外暴露“未经验证直接绑定”的 HTTP 接口。
+`UserIdentityKey` 集中定义身份规范化：邮箱和用户名去除首尾空白并转小写，用户名仅允许 3–32 位 ASCII 字母、数字、点、下划线或连字符；手机号拒绝非 E.164 值，微信的签发方和用户标识去除首尾空白但保留大小写。后续绑定接口仍必须先完成验证码或 OAuth 回调验证，再持久化身份；仓库层没有对外暴露“未经验证直接绑定”的 HTTP 接口。
 
 ### 无数据库 local-mock 模式
 
@@ -118,7 +127,7 @@ $env:LOCAL_AUTH_PASSWORD = Read-Host '设置本机联调密码' -MaskInput
 mvn.cmd spring-boot:run '-Dspring-boot.run.profiles=local-mock'
 ```
 
-默认邮箱仍为 `demo@local`，可用 `LOCAL_AUTH_EMAIL` 修改。该模式使用显式配置的密码和固定的本地用户 UUID，**不允许无密码启动**。它只适合本地单用户联调，不能用于多用户身份认证。Provider 为 Mock，不调用收费模型；历史持久化关闭，数据库 Provider 配置管理接口不加载。
+默认邮箱仍为 `demo@local`，可用 `LOCAL_AUTH_EMAIL` 修改。该模式使用显式配置的密码和固定的本地用户 UUID，**不允许无密码启动**。它只适合本地单用户联调，不能用于多用户身份认证。Provider 为 Mock，不调用收费模型；历史持久化关闭。
 
 前端在 `apps/web` 目录执行 `npm.cmd run dev`。开发服务器把 `/api` 代理到后端；生产也建议使用同源反向代理。当前没有开放跨域认证，直接把 API base URL 改为另一个站点并不足以完成跨域部署。
 
@@ -133,14 +142,14 @@ HTTPS 部署必须设置 `AUTH_COOKIE_SECURE=true`，同时保证代理配置正
 | `GET /api/v1/auth/csrf` | 否 | 生成 CSRF Cookie，返回 `headerName`、`parameterName`、`token` |
 | `POST /api/v1/auth/registration-code` | 否，但需要 CSRF | JSON：`email`；发送 6 位验证码并返回重发/过期秒数 |
 | `POST /api/v1/auth/register` | 否，但需要 CSRF | JSON：`email`、`verificationCode`、`password`；成功后自动登录 |
-| `POST /api/v1/auth/login` | 否，但需要 CSRF | JSON：`email`、`password`；成功返回当前用户并保存 Session |
+| `POST /api/v1/auth/login` | 否，但需要 CSRF | JSON：`identifier`（邮箱或用户名）、`password`；兼容旧字段 `email`；成功返回当前用户并保存 Session |
 | `GET /api/v1/auth/me` | 是 | 返回 `userId`、`tenantId`、`workspaceId`、`email`、`displayName` |
 | `POST /api/v1/auth/logout` | 是，且需要 CSRF | 使当前 Session 失效并清除 CSRF Cookie |
 
 浏览器调用顺序：先访问 `/auth/csrf`，再发送登录请求；Axios 从 `XSRF-TOKEN` Cookie 读取值，通过 `X-XSRF-TOKEN` 请求头发送。登录成功会重新下发 CSRF Token，随后写请求必须使用新值。退出后再次登录前重新获取 Token。非浏览器客户端同样需要维护 Cookie 容器并提交 CSRF 请求头。
 
 - 未登录访问受保护接口：`401 AUTHENTICATION_REQUIRED`。
-- 邮箱密码错误或账户不可登录：`401 AUTHENTICATION_FAILED`，不披露账户状态细节。
+- 邮箱/用户名或密码错误、账户不可登录：`401 AUTHENTICATION_FAILED`，不披露账户状态细节。
 - 重复发码、邮箱小时限流或 IP 小时限流：`429`，响应含 `Retry-After` 和 `details.retryAfterSeconds`。
 - 验证码错误、过期或尝试次数用尽：`400`；邮箱已经注册：`409 EMAIL_ALREADY_REGISTERED`。
 - 邮件投递或生产 Redis 不可用：`503`，不会绕过限流继续注册。
@@ -214,6 +223,6 @@ npm.cmd run test:e2e -- auth-real.spec.ts
 - 团队角色、邀请、工作区切换和跨成员资源共享策略。
 - 改密、找回密码、邮箱换绑与登录防暴力破解；注册验证码限流不能替代登录接口限流。
 
-历史记录和 Provider 配置已从固定演示身份切换到 `CurrentActor` 的默认租户/工作区作用域，但仍是工作区资源，不应当作逐记录私有权限系统。
+历史记录已从固定演示身份切换到 `CurrentActor` 的默认租户/工作区作用域，但仍是工作区资源，不应当作逐记录私有权限系统。
 
 实现依据：Spring Security 关于 [CSRF 与 SPA 登录后 Token 刷新](https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html) 的说明。实际代码依赖版本由项目 Spring Boot BOM 管理。

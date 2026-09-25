@@ -22,7 +22,7 @@ Spring Boot 后端默认连接 PostgreSQL 和 Redis。没有它们时：
 
 - 后端无法建立数据库连接；
 - Flyway 无法执行建表迁移；
-- 后续历史记录、Provider 配置和 Redis 限流功能无法联调。
+- 后续历史记录和 Redis 限流功能无法联调。
 
 Docker 让团队使用相同的 PostgreSQL 16 和 Redis 7，避免每个人手动安装不同版本。生产环境不一定使用 Docker 内的数据库，通常会换成云厂商托管的 PostgreSQL 和 Redis。
 

@@ -76,6 +76,33 @@ class IdentitySecurityTest {
     }
 
     @Test
+    void usernameOnlyAdminCanLoadWithoutContactEmail() {
+        UserAccountEntity account = account();
+        account.setEmail(null);
+        account.setPlatformRole("PLATFORM_ADMIN");
+        UserIdentityEntity identity = new UserIdentityEntity();
+        identity.setUserId(TestActors.USER_ID);
+        identity.setIdentityType(UserIdentityType.USERNAME);
+        identity.setIssuer("local");
+        identity.setNormalizedIdentifier("admin");
+        identity.setStatus(UserIdentityStatus.ACTIVE);
+        when(identityRepository.findByIdentityTypeAndIssuerAndNormalizedIdentifierAndStatus(
+                UserIdentityType.USERNAME, "local", "admin", UserIdentityStatus.ACTIVE
+        )).thenReturn(Optional.of(identity));
+        when(repository.findById(TestActors.USER_ID)).thenReturn(Optional.of(account));
+        when(repository.findDefaultWorkspaceId(TestActors.USER_ID, TestActors.TENANT_ID))
+                .thenReturn(Optional.of(TestActors.WORKSPACE_ID));
+
+        AuthenticatedUser user = (AuthenticatedUser) new DatabaseUserDetailsService(repository, identityRepository)
+                .loadUserByUsername(" ADMIN ");
+
+        assertThat(user.getUsername()).isEqualTo("admin");
+        assertThat(user.actorIdentity().email()).isEmpty();
+        assertThat(user.getAuthorities()).extracting("authority")
+                .contains("ROLE_PLATFORM_ADMIN");
+    }
+
+    @Test
     void bootstrapNeverOverwritesExistingPasswordAndHashesOnlyOnce() {
         UserAccountEntity account = account();
         stubEmailIdentity(account);

@@ -24,8 +24,7 @@ public record OptimizationRequest(
         List<@NotNull(message = "会话消息不能为空") @Valid ConversationMessage> conversationHistory,
         @Valid PermissionPolicyInput permissionPolicy,
         @Valid PlanConfirmation planConfirmation,
-        @Size(max = 120, message = "模型 ID 不能超过 120 个字符")
-        String model
+        @Size(max = 160, message = "模型标识不能超过 160 个字符") String modelId
 ) {
 
     /**
@@ -46,22 +45,19 @@ public record OptimizationRequest(
             ContextAnalysisRequest context,
             EnhancementOptions enhancement,
             List<ConversationMessage> conversationHistory,
-            PermissionPolicyInput permissionPolicy
+            PermissionPolicyInput permissionPolicy,
+            PlanConfirmation planConfirmation
     ) {
-        this(rawPrompt, context, enhancement, conversationHistory, permissionPolicy, null, null);
+        this(rawPrompt, context, enhancement, conversationHistory, permissionPolicy, planConfirmation, null);
     }
 
-    /**
-     * 兼容未提供模型选择的服务内构造调用。
-     */
     public OptimizationRequest(
             String rawPrompt,
             ContextAnalysisRequest context,
             EnhancementOptions enhancement,
             List<ConversationMessage> conversationHistory,
-            PermissionPolicyInput permissionPolicy,
-            PlanConfirmation planConfirmation
+            PermissionPolicyInput permissionPolicy
     ) {
-        this(rawPrompt, context, enhancement, conversationHistory, permissionPolicy, planConfirmation, null);
+        this(rawPrompt, context, enhancement, conversationHistory, permissionPolicy, null, null);
     }
 }

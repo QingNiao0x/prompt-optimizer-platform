@@ -19,29 +19,36 @@ import java.util.UUID;
  */
 public interface OptimizationRecordRepository extends JpaRepository<OptimizationRecordEntity, UUID> {
 
-    /**
-     * 分页查询工作区内的历史记录，按创建时间倒序。
-     */
-    @Query("""
-            select history from OptimizationRecordEntity history
-            where history.tenantId = :tenantId
-              and history.workspaceId = :workspaceId
-              and history.deletedAt is null
-              and (:keyword is null or lower(history.rawPrompt) like lower(concat('%', :keyword, '%')))
-              and (:createdFrom is null or history.createdAt >= :createdFrom)
-              and (:createdToExclusive is null or history.createdAt < :createdToExclusive)
-            order by history.createdAt desc
-            """)
-    Page<OptimizationRecordEntity> findFilteredByTenantIdAndWorkspaceId(
-            @Param("tenantId")
+    /** 分页查询工作区内的历史记录，按创建时间倒序。 */
+    Page<OptimizationRecordEntity> findByTenantIdAndWorkspaceIdOrderByCreatedAtDesc(
             UUID tenantId,
-            @Param("workspaceId")
             UUID workspaceId,
-            @Param("keyword")
-            String keyword,
-            @Param("createdFrom")
+            Pageable pageable
+    );
+
+    /** 按原始提示词模糊搜索，避免把空关键字作为可空 SQL 参数传给 PostgreSQL。 */
+    Page<OptimizationRecordEntity> findByTenantIdAndWorkspaceIdAndRawPromptContainingIgnoreCaseOrderByCreatedAtDesc(
+            UUID tenantId,
+            UUID workspaceId,
+            String rawPrompt,
+            Pageable pageable
+    );
+
+    /** 按创建时间范围查询，结束时间使用排他上界。 */
+    Page<OptimizationRecordEntity> findByTenantIdAndWorkspaceIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtDesc(
+            UUID tenantId,
+            UUID workspaceId,
             OffsetDateTime createdFrom,
-            @Param("createdToExclusive")
+            OffsetDateTime createdToExclusive,
+            Pageable pageable
+    );
+
+    /** 同时按原始提示词和创建时间范围查询。 */
+    Page<OptimizationRecordEntity> findByTenantIdAndWorkspaceIdAndRawPromptContainingIgnoreCaseAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtDesc(
+            UUID tenantId,
+            UUID workspaceId,
+            String rawPrompt,
+            OffsetDateTime createdFrom,
             OffsetDateTime createdToExclusive,
             Pageable pageable
     );

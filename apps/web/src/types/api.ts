@@ -69,10 +69,37 @@ export interface AuthenticatedUser {
   workspaceId: string;
   email: string;
   displayName: string;
+  platformAdmin: boolean;
 }
 
+/** 平台已发布给终端用户的模型，不包含端点或密钥。 */
+export interface AvailableModel {
+  id: string;
+  displayName: string;
+  provider: string;
+  defaultModel: boolean;
+}
+
+export interface AdminModel {
+  id: string;
+  publicId: string;
+  routeKey: string;
+  upstreamModel: string;
+  displayName: string;
+  enabled: boolean;
+  defaultModel: boolean;
+  sortOrder: number;
+}
+
+export interface ModelRoute {
+  key: string;
+  providerName: string;
+}
+
+export type AdminModelChange = Omit<AdminModel, 'id' | 'publicId'>;
+
 export interface LoginPayload {
-  email: string;
+  identifier: string;
   password: string;
 }
 
@@ -192,6 +219,7 @@ export interface ConversationMessage {
 
 export interface OptimizationRequest {
   rawPrompt: string;
+  modelId?: string | null;
   context: ContextAnalysisRequest;
   enhancement: EnhancementOptions;
   conversationHistory: ConversationMessage[];
@@ -224,6 +252,7 @@ export interface PlanQuestion {
 
 export interface OptimizationPlanRequest {
   rawPrompt: string;
+  modelId?: string | null;
   contextDescription: string;
   conversationHistory: ConversationMessage[];
   planningContext?: PlanningContextReference | null;

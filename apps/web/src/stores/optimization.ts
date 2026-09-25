@@ -23,10 +23,12 @@ import {
   createOptimizationPlan as requestOptimizationPlan,
   optimizePrompt,
   preparePlanningContext as requestPlanningContext,
+  listAvailableModels,
 } from '@/services/promptOptimizerApi';
 import { MAX_FILES } from '@/workers/fileReaderCore';
 import type {
   ContextFileInput,
+  AvailableModel,
   ContextSnapshot,
   OptimizationHistoryDetail,
   OptimizationPlan,
@@ -47,6 +49,11 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const templateCode = ref<TemplateCode>('AUTO');
   const includePermissionBoundaries = ref(true);
   const includeExamples = ref(false);
+  const availableModels = ref<AvailableModel[]>([]);
+  const selectedModelId = ref('');
+  const planModelId = ref('');
+  const isLoadingModels = ref(false);
+  const modelLoadError = ref('');
   // 项目正文保存在 IndexedDB；Pinia 只持有轻量摘要和索引编号。
   const projectIndex = shallowRef<ProjectIndexSummary>();
   const contextRetrieval = shallowRef<ProjectContextRetrievalResult>();
@@ -68,6 +75,26 @@ export const useOptimizationStore = defineStore('optimization', () => {
     && !isPlanning.value
     && !isOptimizing.value);
   const canUndoResult = computed(() => resultUndoStack.value.length > 0);
+
+  /** 更新模型目录时保留仍可用的用户选择，否则回到平台默认模型。 */
+  const refreshAvailableModels = async (): Promise<void> => {
+    isLoadingModels.value = true;
+    modelLoadError.value = '';
+    try {
+      const response = await listAvailableModels();
+      availableModels.value = response.data;
+      if (!availableModels.value.some((model) => model.id === selectedModelId.value)) {
+        selectedModelId.value = availableModels.value.find((model) => model.defaultModel)?.id
+          ?? availableModels.value[0]?.id ?? '';
+      }
+    } catch (error: unknown) {
+      availableModels.value = [];
+      selectedModelId.value = '';
+      modelLoadError.value = getApiErrorMessage(error);
+    } finally {
+      isLoadingModels.value = false;
+    }
+  };
 
   const setFiles = (selectedFiles: ContextFileInput[]): number => {
     if (projectIndex.value) {
@@ -276,9 +303,11 @@ export const useOptimizationStore = defineStore('optimization', () => {
                 version: planningContext.value.version,
               }
             : undefined,
+          selectedModelId.value,
         ),
       );
       plan.value = response.data;
+      planModelId.value = selectedModelId.value;
       templateCode.value = response.data.templateCode;
       requestId.value = response.requestId;
       return true;
@@ -323,6 +352,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
       const contextFiles = preparedFiles ?? await resolveContextFiles(sourcePrompt);
       const response = await optimizePrompt(buildOptimizationRequest({
         rawPrompt: sourcePrompt,
+        modelId: planConfirmed ? planModelId.value : selectedModelId.value,
         customDescription: customDescription.value,
         files: contextFiles,
         templateCode: templateCode.value,
@@ -447,6 +477,10 @@ export const useOptimizationStore = defineStore('optimization', () => {
     templateCode,
     includePermissionBoundaries,
     includeExamples,
+    availableModels,
+    selectedModelId,
+    isLoadingModels,
+    modelLoadError,
     projectIndex,
     contextRetrieval,
     activeFilePath,
@@ -462,6 +496,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     isOptimizing,
     canOptimize,
     canUndoResult,
+    refreshAvailableModels,
     setFiles,
     setProjectIndex,
     addFile,

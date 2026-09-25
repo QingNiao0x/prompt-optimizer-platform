@@ -43,7 +43,10 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserIdentityKey key;
         try {
-            key = UserIdentityKey.email(username);
+            String identifier = username == null ? "" : username.trim();
+            key = identifier.indexOf('@') >= 0
+                    ? UserIdentityKey.email(identifier)
+                    : UserIdentityKey.username(identifier);
         } catch (IllegalArgumentException exception) {
             throw notFound();
         }
@@ -62,15 +65,20 @@ public class DatabaseUserDetailsService implements UserDetailsService {
         }
         UUID workspaceId = repository.findDefaultWorkspaceId(account.getId(), account.getTenantId())
                 .orElseThrow(this::notFound);
+        List<SimpleGrantedAuthority> authorities = "PLATFORM_ADMIN".equals(account.getPlatformRole())
+                ? List.of(new SimpleGrantedAuthority("ROLE_USER"),
+                        new SimpleGrantedAuthority("ROLE_PLATFORM_ADMIN"))
+                : List.of(new SimpleGrantedAuthority("ROLE_USER"));
         return new AuthenticatedUser(
                 account.getId(),
                 account.getTenantId(),
                 workspaceId,
                 account.getEmail(),
+                identity.getNormalizedIdentifier(),
                 account.getDisplayName(),
                 account.getPasswordHash(),
                 account.getStatus(),
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                authorities
         );
     }
 

@@ -18,6 +18,10 @@
 
 ## 2. 优化接口
 
+供应商路由、端点和密钥由平台服务端管理。已登录用户可通过 `GET /api/v1/models` 读取管理员发布的模型目录，并在 Plan 与最终增强请求中提交可选的 `modelId`（最多 160 字符）；省略时使用平台默认模型。服务端校验目录启用状态与路由，不接受客户端提交 Provider、endpoint 或 API Key。`provider` 响应元数据用于展示实际调用结果和追溯。
+
+平台管理员通过 `GET/POST /api/v1/admin/models`、`GET /api/v1/admin/models/routes`、`PUT/DELETE /api/v1/admin/models/{id}` 维护模型。管理接口仅接受已配置路由的 `routeKey`、`upstreamModel`、`displayName`、`enabled`、`defaultModel`、`sortOrder`；更换上游模型时须新增并停用旧项，删除为逻辑删除。需要平台管理员身份，写请求仍须携带 CSRF；路由响应不含端点与密钥。
+
 最终生成接口支持两种前端路径：默认的“直接增强”和用户主动开启的“可选上下文准备 + Plan 确认 + 最终生成”。完整字段、上下限和科研示例见[内置 Plan Mode](./12-内置Plan-Mode交互与接口.md)。
 
 ### `POST /api/v1/context/planning`
@@ -44,6 +48,7 @@
 ```json
 {
   "rawPrompt": "分析2015-2025年某地区心脑血管疾病死亡率",
+  "modelId": "tokenhub:kimi-k3",
   "contextDescription": "公共卫生研究",
   "conversationHistory": [],
   "planningContext": {
@@ -62,6 +67,7 @@
 ```json
 {
   "rawPrompt": "分析2015-2025年某地区心脑血管疾病死亡率",
+  "modelId": "tokenhub:kimi-k3",
   "context": {"customDescription": "公共卫生研究", "files": []},
   "enhancement": {
     "templateCode": "RESEARCH_ANALYSIS",
@@ -86,7 +92,7 @@
 }
 ```
 
-服务端校验计划编号、需求指纹、上下文版本和完整答案集合，并以服务端保存的问题文本为准。确认答案会加入第二次上下文检索查询；文件或查询变化时重新分析，完全一致时复用首次快照。
+服务端校验计划编号、需求指纹、上下文版本、所选模型和完整答案集合，并以服务端保存的问题文本为准。确认答案会加入第二次上下文检索查询；文件或查询变化时重新分析，完全一致时复用首次快照。
 
 响应包含 `optimizedPrompt`、`sections`、`contextReport`、`ambiguities`、`appliedConstraints`、`templateCode`、`provider` 和 `latencyMs`。`sections` 至少包含 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`；完成计划确认后 `ambiguities` 为空，不再要求用户修改待确认项。
 
@@ -103,34 +109,7 @@
 | `DELETE` | `/api/v1/optimization-history/{id}` | 逻辑删除当前工作区历史；后续列表、详情和再次优化不再返回该记录 |
 | `POST` | `/api/v1/optimization-history/{id}/re-optimize` | 恢复原始输入和确认答案，生成一条新记录 |
 
-## 4. Provider 配置接口
-
-> 实现状态：增删改查已实现；`/test` 最小探测接口待实现。
-
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `GET` | `/api/v1/provider-configs` | 查询配置摘要，不返回明文 Key |
-| `POST` | `/api/v1/provider-configs` | 新增配置 |
-| `PATCH` | `/api/v1/provider-configs/{id}` | 更新模型、端点或参数 |
-| `DELETE` | `/api/v1/provider-configs/{id}` | 删除配置和密文 |
-| `POST` | `/api/v1/provider-configs/{id}/test` | 发送最小探测请求验证配置 |
-
-配置请求的 API Key 只允许写入，不允许读取：
-
-```json
-{
-  "providerType": "OPENAI_COMPATIBLE",
-  "modelName": "gpt-4o-mini",
-  "endpointUrl": "https://api.example.com/v1",
-  "apiKey": "sk-...",
-  "parameters": {
-    "temperature": 0.2,
-    "maxTokens": 3000
-  }
-}
-```
-
-## 5. 上下文上传接口（可选分步模式）
+## 4. 上下文上传接口（可选分步模式）
 
 ### `POST /api/v1/context/analyze`
 

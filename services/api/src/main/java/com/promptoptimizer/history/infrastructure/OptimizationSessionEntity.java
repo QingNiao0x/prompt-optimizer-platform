@@ -37,6 +37,7 @@ public class OptimizationSessionEntity {
     @Column(name = "title", length = 160)
     private String title;
 
+    /** ACTIVE：可继续使用的会话；ARCHIVED：已归档的会话。 */
     @Column(name = "status", nullable = false, length = 20)
     private String status = "ACTIVE";
 

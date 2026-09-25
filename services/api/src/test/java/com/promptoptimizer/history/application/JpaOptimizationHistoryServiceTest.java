@@ -165,8 +165,8 @@ class JpaOptimizationHistoryServiceTest {
                 PageRequest.of(0, 20),
                 1
         );
-        when(recordRepository.findFilteredByTenantIdAndWorkspaceId(
-                eq(TENANT_ID), eq(WORKSPACE_ID), eq(null), eq(null), eq(null), any()
+        when(recordRepository.findByTenantIdAndWorkspaceIdOrderByCreatedAtDesc(
+                eq(TENANT_ID), eq(WORKSPACE_ID), any()
         )).thenReturn(page);
 
         OptimizationHistoryPage result = service.list(0, 20);
@@ -174,6 +174,25 @@ class JpaOptimizationHistoryServiceTest {
         assertThat(result.items()).hasSize(1);
         assertThat(result.totalItems()).isEqualTo(1);
         assertThat(result.items().get(0).rawPromptPreview()).contains("添加登录功能");
+    }
+
+    @Test
+    void shouldUseNonNullKeywordQueryWhenFilteringHistory() {
+        Page<OptimizationRecordEntity> page = new PageImpl<>(
+                List.of(recordEntity()),
+                PageRequest.of(0, 20),
+                1
+        );
+        when(recordRepository.findByTenantIdAndWorkspaceIdAndRawPromptContainingIgnoreCaseOrderByCreatedAtDesc(
+                eq(TENANT_ID), eq(WORKSPACE_ID), eq("登录"), any()
+        )).thenReturn(page);
+
+        OptimizationHistoryPage result = service.list(0, 20, "登录", null, null);
+
+        assertThat(result.totalItems()).isEqualTo(1);
+        verify(recordRepository).findByTenantIdAndWorkspaceIdAndRawPromptContainingIgnoreCaseOrderByCreatedAtDesc(
+                eq(TENANT_ID), eq(WORKSPACE_ID), eq("登录"), any()
+        );
     }
 
     @Test

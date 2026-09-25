@@ -229,7 +229,8 @@ public class PlanningSessionService {
             String contextDescription,
             List<ConversationMessage> conversationHistory,
             ResolvedPlanningContext planningContext,
-            List<PlanQuestion> questions
+            List<PlanQuestion> questions,
+            String modelId
     ) {
         ActorIdentity actor = currentActor.require();
         resolveForPlan(planningContext.reference(), rawPrompt, contextDescription);
@@ -245,9 +246,18 @@ public class PlanningSessionService {
                 fingerprintPlanInput(rawPrompt, contextDescription, conversationHistory),
                 planningContext.reference(),
                 questions,
+                modelId,
                 expiresAt
         ));
         return new PlanRegistration(planId, planningContext.reference(), expiresAt);
+    }
+
+    /** 兼容未显式选择模型的既有调用方。 */
+    public PlanRegistration registerPlan(String rawPrompt, String contextDescription,
+            List<ConversationMessage> conversationHistory, ResolvedPlanningContext planningContext,
+            List<PlanQuestion> questions) {
+        return registerPlan(rawPrompt, contextDescription, conversationHistory,
+                planningContext, questions, null);
     }
 
     /**
@@ -299,7 +309,7 @@ public class PlanningSessionService {
                         submitted.get(question.id()).answer().trim()
                 ))
                 .toList();
-        return new ConfirmedPlan(canonical, plan.planningContext(), true, boundDigest);
+        return new ConfirmedPlan(canonical, plan.planningContext(), true, boundDigest, plan.modelId());
     }
 
     /**
@@ -562,7 +572,8 @@ public class PlanningSessionService {
             List<PlanAnswer> answers,
             PlanningContextReference planningContext,
             boolean bound,
-            PlanningContextDigest planningContextDigest
+            PlanningContextDigest planningContextDigest,
+            String modelId
     ) {
 
         public ConfirmedPlan {
@@ -571,7 +582,13 @@ public class PlanningSessionService {
 
         /** 兼容未绑定事实摘要的现有调用方。 */
         public ConfirmedPlan(List<PlanAnswer> answers, PlanningContextReference planningContext, boolean bound) {
-            this(answers, planningContext, bound, null);
+            this(answers, planningContext, bound, null, null);
+        }
+
+        /** 兼容调用方在新增模型绑定之前构造的确认对象。 */
+        public ConfirmedPlan(List<PlanAnswer> answers, PlanningContextReference planningContext,
+                boolean bound, PlanningContextDigest planningContextDigest) {
+            this(answers, planningContext, bound, planningContextDigest, null);
         }
     }
 }

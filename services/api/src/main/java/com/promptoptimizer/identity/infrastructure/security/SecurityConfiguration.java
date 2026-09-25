@@ -67,6 +67,7 @@ public class SecurityConfiguration {
                                 "/actuator/health",
                                 "/actuator/health/**"
                         ).permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasRole("PLATFORM_ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))

@@ -43,6 +43,10 @@ const {
   customDescription,
   files,
   includeExamples,
+  availableModels,
+  selectedModelId,
+  isLoadingModels,
+  modelLoadError,
   projectIndex,
   contextRetrieval,
   contextSnapshot,
@@ -595,6 +599,7 @@ watch(result, (value) => {
 
 onMounted(() => {
   clearPersistedProjectSelection();
+  void store.refreshAvailableModels();
   void projectContextSettingsStore.refreshStorageStatus();
   window.addEventListener('pagehide', handlePageHide);
   mobilePaneQuery = window.matchMedia(MOBILE_PANE_QUERY);
@@ -689,12 +694,17 @@ onBeforeUnmount(() => {
         class="glass-panel intent-column"
         :raw-prompt="rawPrompt"
         :include-examples="includeExamples"
+        :available-models="availableModels"
+        :selected-model-id="selectedModelId"
+        :is-loading-models="isLoadingModels"
+        :model-load-error="modelLoadError"
         :is-analyzing="isAnalyzing"
         :is-planning="isPlanning"
         :is-optimizing="isOptimizing"
         :can-optimize="canOptimize"
         @update:raw-prompt="rawPrompt = $event"
         @update:include-examples="includeExamples = $event"
+        @update:selected-model-id="selectedModelId = $event"
         @optimize="handleOptimize"
       />
       <ResultPanel

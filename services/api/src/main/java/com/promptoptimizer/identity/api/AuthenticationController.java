@@ -37,7 +37,7 @@ public class AuthenticationController {
         return ApiResponse.success(requestId(request), CsrfTokenView.from(csrfToken));
     }
 
-    /** 验证邮箱与密码，建立浏览器登录会话。 */
+    /** 验证邮箱或用户名与密码，建立浏览器登录会话。 */
     @PostMapping("/login")
     public ApiResponse<AuthenticatedUserView> login(
             @Valid @RequestBody LoginRequest loginRequest,

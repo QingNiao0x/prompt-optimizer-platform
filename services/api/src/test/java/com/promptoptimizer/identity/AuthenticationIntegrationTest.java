@@ -80,6 +80,14 @@ class AuthenticationIntegrationTest {
     }
 
     @Test
+    void ordinaryUserCannotManagePlatformModels() throws Exception {
+        mvc.perform(get("/api/v1/admin/models")).andExpect(status().isUnauthorized());
+        Login alice = login("alice@example.com", new MockHttpSession());
+        mvc.perform(get("/api/v1/admin/models").session(alice.session()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void rejectsMissingAndInvalidCsrfOnLoginAndAuthenticatedWrites() throws Exception {
         mvc.perform(post("/api/v1/auth/login").contentType(APPLICATION_JSON).content(credentials("alice@example.com", PASSWORD)))
                 .andExpect(status().isForbidden());

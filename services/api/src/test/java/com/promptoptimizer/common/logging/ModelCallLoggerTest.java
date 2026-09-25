@@ -34,7 +34,7 @@ class ModelCallLoggerTest {
                 "plan.generate\napiKey=must-not-be-a-field",
                 "primary-provider",
                 "public-model-v2",
-                "USER_SELECTED",
+                "PLATFORM_ROUTING_POLICY",
                 false,
                 2,
                 1,
@@ -74,7 +74,7 @@ class ModelCallLoggerTest {
         appender.start();
         logger.addAppender(appender);
 
-        ModelCallLogger.failed("plan.generate", "primary", "public-model-v2", "USER_SELECTED",
+        ModelCallLogger.failed("plan.generate", "primary", "public-model-v2", "PLATFORM_ROUTING_POLICY",
                 "UPSTREAM_UNAVAILABLE", true, 502, true, 2, 1, 73);
 
         assertThat(appender.list.getFirst().getFormattedMessage())

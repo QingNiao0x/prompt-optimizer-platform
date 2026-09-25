@@ -37,8 +37,13 @@ public class UserAccountEntity {
     @Column(name = "password_hash", length = 255)
     private String passwordHash;
 
+    /** ACTIVE：可登录；LOCKED：暂时锁定；DISABLED：禁用账户。 */
     @Column(name = "status", nullable = false, length = 20)
     private String status;
+
+    /** USER：普通平台用户；PLATFORM_ADMIN：可管理平台模型目录，独立于工作区角色。 */
+    @Column(name = "platform_role", nullable = false, length = 24)
+    private String platformRole = "USER";
 
     @Column(name = "last_login_at")
     private OffsetDateTime lastLoginAt;
@@ -97,6 +102,14 @@ public class UserAccountEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getPlatformRole() {
+        return platformRole;
+    }
+
+    public void setPlatformRole(String platformRole) {
+        this.platformRole = platformRole;
     }
 
     public OffsetDateTime getLastLoginAt() {

@@ -197,7 +197,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
         password: password.value,
       });
     } else {
-      await auth.login({ email: account.value.trim(), password: password.value });
+      await auth.login({ identifier: account.value.trim(), password: password.value });
     }
     // 新身份始终从干净的应用内存开始，不复用另一账号的计划和文件。
     window.location.replace('/workbench');
@@ -276,16 +276,16 @@ const handleSubmit = async (event: Event): Promise<void> => {
         >
           <form class="login-modal__form" @submit="handleSubmit">
             <label>
-              {{ view === 'register' ? '邮箱/手机号' : '邮箱' }}
+              {{ view === 'register' ? '邮箱/手机号' : '邮箱或用户名' }}
               <input
                 ref="accountInput"
                 v-model="account"
-                :type="view === 'register' ? 'text' : 'email'"
+                type="text"
                 required
                 maxlength="320"
                 name="account"
                 autocomplete="username"
-                :placeholder="view === 'register' ? '请输入邮箱地址或手机号' : '请输入邮箱'"
+                :placeholder="view === 'register' ? '请输入邮箱地址或手机号' : '请输入邮箱或管理员用户名'"
               >
               <small
                 v-if="view === 'register'"
@@ -424,7 +424,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
             <small v-if="view === 'register'" id="register-preview-note">
               验证码 5 分钟内有效，60 秒后可重发；密码至少 8 个字符。
             </small>
-            <small v-else>请使用管理员配置的邮箱和密码登录。</small>
+            <small v-else>使用注册邮箱或管理员用户名及密码登录。</small>
           </form>
 
           <aside v-if="view === 'register'" class="login-modal__wechat" aria-label="微信扫码登录">
@@ -480,7 +480,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
             type="button"
             @click="view = 'password'"
           >
-            已有账号？使用邮箱密码登录
+            已有账号？使用邮箱或用户名密码登录
           </button>
         </footer>
       </section>

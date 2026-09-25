@@ -14,6 +14,7 @@ import com.promptoptimizer.identity.application.CurrentActor;
 import com.promptoptimizer.policy.application.ConstraintCompleter;
 import com.promptoptimizer.policy.application.ProtectedContextFilter;
 import com.promptoptimizer.provider.application.PromptEnhancementProvider;
+import com.promptoptimizer.provider.application.PlatformModelCatalog;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.template.application.PromptTemplateRegistry;
@@ -53,6 +54,13 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
     private final SensitiveValueDetector sensitiveValueDetector;
     private final ContextConflictDetector contextConflictDetector = new ContextConflictDetector();
     private final Clock clock;
+    private PlatformModelCatalog modelCatalog;
+
+    /** Spring 运行时注入模型目录，既有直接构造的单元测试仍可使用 Mock 默认模型。 */
+    @Autowired(required = false)
+    public void setModelCatalog(PlatformModelCatalog modelCatalog) {
+        this.modelCatalog = modelCatalog;
+    }
 
     @Autowired
     public DefaultEnhancementOrchestrator(
@@ -173,6 +181,16 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 request.planConfirmation()
         );
         boolean planConfirmed = confirmedPlan.bound();
+        String requestedModelId = request.modelId() == null ? "" : request.modelId().trim();
+        if (planConfirmed && !requestedModelId.isBlank()
+                && !requestedModelId.equals(confirmedPlan.modelId())) {
+            throw new InvalidOptimizationRequestException("所选模型与已确认的计划不一致，请重新生成确认问题。");
+        }
+        String boundModelId = planConfirmed ? confirmedPlan.modelId() : requestedModelId;
+        if (modelCatalog == null && boundModelId != null && !boundModelId.isBlank()) {
+            throw new InvalidOptimizationRequestException("平台模型目录不可用，请稍后重试。");
+        }
+        String selectedModelId = modelCatalog == null ? null : modelCatalog.resolve(boundModelId).publicId();
         ProtectedContextFilter.FilteredContext filteredContext = protectedContextFilter.filter(
                 request.context(),
                 request.permissionPolicy()
@@ -237,7 +255,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                                 constraints,
                                 conversation,
                                 request.enhancement(),
-                                request.model(),
+                                selectedModelId,
                                 confirmedPlan.planningContextDigest() == null
                                         ? List.of()
                                         : confirmedPlan.planningContextDigest().factCards()

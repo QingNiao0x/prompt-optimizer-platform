@@ -2,22 +2,7 @@
 
 技术栈：Java 21、Spring Boot 3、Spring MVC、Spring Data JPA、Flyway、PostgreSQL Driver、Spring Data Redis。
 
-当前已完成后端核心 MVP：基础工程、统一响应与错误模型、上下文感知 Plan Mode、提示词增强编排、Mock Provider、可切换的 OpenAI 兼容 Provider、语义向量检索、可选的 Map-Reduce 全文摘要，以及 Provider 配置管理基础 CRUD。
-
-Provider 配置管理接口：
-
-```text
-GET    /api/v1/provider-configs
-POST   /api/v1/provider-configs
-PATCH  /api/v1/provider-configs/{id}
-DELETE /api/v1/provider-configs/{id}
-```
-
-API Key 使用 AES-256-GCM 加密后写入 `provider_config.api_key_ciphertext`，接口只返回 `apiKeyLast4`，不提供明文读取。使用前必须配置加密主密钥：
-
-```text
-API_KEY_ENCRYPTION_SECRET=<由运行环境注入的加密主密钥>
-```
+当前已完成后端核心 MVP：基础工程、统一响应与错误模型、上下文感知 Plan Mode、提示词增强编排、Mock Provider、平台服务端管理的 OpenAI 兼容 Provider、语义向量检索和可选的 Map-Reduce 全文摘要。用户可从平台发布的模型目录中选择模型；供应商端点和 API Key 仍仅由服务端管理。
 
 优化历史接口：
 
@@ -77,12 +62,6 @@ POST http://localhost:8080/api/v1/optimizations/plan
 POST http://localhost:8080/api/v1/optimizations
 ```
 
-模型目录接口（需要登录）：
-
-```text
-GET http://localhost:8080/api/v1/models
-```
-
 有文件时调用顺序为 `/context/planning → /optimizations/plan → /optimizations`。短期上下文和计划的 TTL 最多 30 分钟。`app.planning.store-mode=LOCAL_FALLBACK`（默认）用于本地单实例；多实例部署需设置 `PLANNING_STORE_MODE=REDIS_REQUIRED`，并保证共享 Redis 可用，否则返回 503 而不创建不可跨实例读取的会话。计划过期返回 `409 PLANNING_SESSION_EXPIRED`，可重新准备上下文并生成问题。
 
 项目默认通过 OpenAI 兼容协议调用 DeepSeek。启动前必须设置自己的 DeepSeek API Key：
@@ -99,7 +78,7 @@ MODEL_PROVIDER_NAME=deepseek
 MODEL_ENDPOINT=https://api.deepseek.com/chat/completions
 MODEL_API_KEY=替换为运行环境中的密钥
 MODEL_NAME=deepseek-flash
-# 可选模型白名单（逗号分隔）；留空时只显示 MODEL_NAME
+# 平台服务端允许使用的模型白名单（逗号分隔），不向用户提供选择器
 MODEL_MODELS=deepseek-flash
 MODEL_TEMPERATURE=0.2
 MODEL_MAX_TOKENS=3000
@@ -115,7 +94,7 @@ MODEL_JSON_RESPONSE_FORMAT_ENABLED=true
 
 腾讯云 TokenHub 使用 OpenAI 兼容 Chat Completions 协议。只使用 TokenHub 时，可以覆盖下面配置；API Key
 只放在 API 服务的环境变量（或 IDEA 的 Run Configuration）中，浏览器不会收到明文密钥；`MODEL_MODELS` 是
-服务端白名单，工作台会从 `/api/v1/models` 读取并允许用户选择其中一个模型。
+平台服务端路由白名单，实际使用的供应商和模型由服务端默认路由决定。
 
 ```dotenv
 MODEL_PROVIDER_MODE=openai-compatible
@@ -131,8 +110,8 @@ MODEL_MODELS=deepseek-v4-pro-0813,kimi-k3,kimi-k2.8-preview,kimi-k2.7-code,glm-5
 
 ### DeepSeek 与 TokenHub 同时启用
 
-如果需要让用户在不同供应商之间切换，不要把两个供应商的模型 ID 填入同一个 `MODEL_MODELS`。启用服务端
-多供应商路由，并分别配置两套密钥：
+平台需要配置多个可用供应商时，不要把两个供应商的模型 ID 填入同一个 `MODEL_MODELS`。启用服务端
+多供应商路由并设置平台默认路由；用户请求只携带平台公开的模型 ID，不携带供应商端点或密钥：
 
 ```dotenv
 MODEL_MULTI_PROVIDER_ENABLED=true
@@ -153,9 +132,9 @@ MODEL_TOKENHUB_MODELS=deepseek-v4-pro-0813,kimi-k3,kimi-k2.8-preview,kimi-k2.7-c
 `MODEL_ENDPOINT`、`MODEL_NAME` 或 `MODEL_MODELS`。如果此前把 `MODEL_API_KEY` 改成了 TokenHub Key，
 请在 IDEA 的运行环境中单独设置 `MODEL_DEEPSEEK_API_KEY` 为 DeepSeek Key；不要把密钥写入配置文件。
 
-接口返回的模型 ID 会带供应商前缀，例如 `deepseek:deepseek-flash`、`tokenhub:kimi-k3`。DeepSeek-V4.1-Flash
-使用 DeepSeek 直连端点和 `MODEL_DEEPSEEK_API_KEY`（未设置时回退使用旧 `MODEL_API_KEY`），不再走 TokenHub。
-前端只提交公开 ID，后端根据服务端白名单选择 endpoint 和 API Key；密钥不会进入浏览器请求、历史记录或模型目录。
+增强结果和历史记录保留实际调用的 Provider 与模型元数据，便于追溯；客户端可携带平台目录中的 `modelId`，但不包含 endpoint 或 API Key。
+DeepSeek-V4.1-Flash 使用 DeepSeek 直连端点和 `MODEL_DEEPSEEK_API_KEY`（未设置时回退使用旧 `MODEL_API_KEY`），不再走 TokenHub。
+服务端根据部署配置选择 endpoint 和 API Key；密钥不会进入浏览器请求或历史记录。
 `MODEL_API_KEY` 仍作为旧版单供应商配置的兼容回退值，多供应商模式建议使用上面的两套专用变量。
 
 大型文档默认使用零费用的本地规则摘要。需要让当前聊天模型对全部已索引文本执行分批 Map 和分层 Reduce 时，可以显式启用：

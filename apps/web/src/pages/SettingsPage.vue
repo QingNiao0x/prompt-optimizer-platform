@@ -67,19 +67,6 @@ const formatBytes = (value?: number): string => {
   return `${amount >= 10 || unitIndex === 0 ? amount.toFixed(0) : amount.toFixed(1)} ${units[unitIndex]}`;
 };
 
-const formatDate = (value: string): string => {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return new Intl.DateTimeFormat('zh-CN', {
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date);
-};
-
 onMounted(() => {
   void projectContextSettingsStore.refreshStorageStatus();
 });

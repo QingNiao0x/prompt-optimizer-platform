@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { Delete, RefreshRight, Upload, View } from '@element-plus/icons-vue';
+import { Delete, RefreshRight, Search, Upload, View } from '@element-plus/icons-vue';
 import {
   ElButton,
+  ElConfigProvider,
   ElDatePicker,
   ElDialog,
   ElEmpty,
@@ -13,7 +14,8 @@ import {
   ElTableColumn,
   ElTag,
 } from 'element-plus';
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getApiErrorMessage } from '@/services/http';
@@ -41,7 +43,6 @@ const total = ref(0);
 const keyword = ref('');
 const dateRange = ref<[string, string] | null>(null);
 
-let filterTimer: ReturnType<typeof setTimeout> | undefined;
 let loadSequence = 0;
 
 const detailVisible = ref(false);
@@ -83,14 +84,9 @@ const loadPage = async (): Promise<void> => {
   }
 };
 
-const scheduleFilterLoad = (): void => {
-  if (filterTimer) {
-    clearTimeout(filterTimer);
-  }
-  filterTimer = setTimeout(() => {
-    page.value = 0;
-    void loadPage();
-  }, 300);
+const searchHistory = (): void => {
+  page.value = 0;
+  void loadPage();
 };
 
 const clearFilters = (): void => {
@@ -172,12 +168,6 @@ const formatDate = (value: string): string => {
 const templateLabel = (code: TemplateCode): string => TEMPLATE_LABELS[code] ?? code;
 
 onMounted(loadPage);
-watch([keyword, dateRange], scheduleFilterLoad);
-onBeforeUnmount(() => {
-  if (filterTimer) {
-    clearTimeout(filterTimer);
-  }
-});
 </script>
 
 <template>
@@ -198,17 +188,32 @@ onBeforeUnmount(() => {
           clearable
           placeholder="搜索原始提示词"
           aria-label="原始提示词搜索"
+          @keyup.enter="searchHistory"
         />
-        <ElDatePicker
-          v-model="dateRange"
-          class="history-filter-bar__date"
-          type="daterange"
-          value-format="YYYY-MM-DD"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          aria-label="创建时间范围"
-        />
+        <div class="history-filter-bar__date-control" @keyup.enter.capture="searchHistory">
+          <ElConfigProvider :locale="zhCn">
+            <ElDatePicker
+              v-model="dateRange"
+              class="history-filter-bar__date"
+              type="daterange"
+              format="YYYY年MM月DD日"
+              value-format="YYYY-MM-DD"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              aria-label="创建时间范围"
+            />
+          </ElConfigProvider>
+        </div>
+        <ElButton
+          class="history-filter-bar__search"
+          type="primary"
+          :icon="Search"
+          :loading="loading"
+          @click="searchHistory"
+        >
+          搜索
+        </ElButton>
         <ElButton
           v-if="keyword || dateRange"
           class="history-filter-bar__clear"
@@ -381,6 +386,14 @@ h1 {
   width: min(320px, 100%);
 }
 
+.history-filter-bar__date-control {
+  flex: 0 1 auto;
+}
+
+.history-filter-bar__search {
+  flex: 0 0 auto;
+}
+
 .history-filter-bar__clear {
   flex: 0 0 auto;
 }
@@ -481,11 +494,16 @@ h1 {
   }
 
   .history-filter-bar__keyword,
-  .history-filter-bar__date {
+  .history-filter-bar__date,
+  .history-filter-bar__date-control {
     width: 100%;
   }
 
   .history-filter-bar__clear {
+    align-self: flex-start;
+  }
+
+  .history-filter-bar__search {
     align-self: flex-start;
   }
 

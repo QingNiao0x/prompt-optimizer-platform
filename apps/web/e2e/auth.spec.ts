@@ -22,7 +22,7 @@ test('未登录不能挂载工作台，错误密码可重试，登录后可刷�
   await page.goto('/workbench');
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.getByLabel('原始提示词')).toHaveCount(0);
-  await page.getByPlaceholder('请输入邮箱').fill('test@example.com');
+  await page.getByPlaceholder('请输入邮箱或管理员用户名').fill('test@example.com');
   await page.getByPlaceholder('请输入密码').fill('wrong-password');
   await page.getByRole('button', { name: '登录', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('邮箱或密码不正确');
@@ -44,8 +44,14 @@ test('身份服务不可用时不进入受保护页面', async ({ page }) => {
   await expect(page.locator('.topbar')).toHaveCount(0);
 });
 
-test('历史记录筛选条件变化后重新加载对应查询结果', async ({ page }) => {
+test('历史记录仅在点击搜索或按回车后加载对应查询结果', async ({ page }) => {
   await mockAuthentication(page);
+  const consoleWarnings: string[] = [];
+  page.on('console', message => {
+    if (message.type() === 'warning') {
+      consoleWarnings.push(message.text());
+    }
+  });
   const historyRequests: URL[] = [];
   await page.route('**/api/v1/optimization-history**', async route => {
     if (route.request().method() !== 'GET') {
@@ -80,26 +86,31 @@ test('历史记录筛选条件变化后重新加载对应查询结果', async ({
 
   await page.goto('/history');
   await expect(page.getByRole('heading', { name: '优化历史' })).toBeVisible();
+  expect(consoleWarnings.some(warning => warning.includes('Failed to resolve directive: loading'))).toBe(false);
   await expect(
     page.locator('.preview-cell:visible, .history-mobile-card__preview:visible')
       .filter({ hasText: '查询全球使用 AI 最多的职业' }),
   ).toBeVisible();
 
   await page.getByLabel('原始提示词搜索').fill('AI 职业');
-  await expect.poll(
-    () => historyRequests.at(-1)?.searchParams.get('keyword'),
-    { timeout: 5_000 },
-  ).toBe('AI 职业');
+  const requestCountAfterKeywordInput = historyRequests.length;
+  await page.waitForTimeout(400);
+  expect(historyRequests.length).toBe(requestCountAfterKeywordInput);
+  await page.getByLabel('原始提示词搜索').press('Enter');
+  await expect.poll(() => historyRequests.length, { timeout: 5_000 }).toBeGreaterThan(requestCountAfterKeywordInput);
+  expect(historyRequests.at(-1)?.searchParams.get('keyword')).toBe('AI 职业');
   await expect(page.getByLabel('创建时间范围').first()).toBeVisible();
 
   const dateInputs = page.locator('.history-filter-bar__date input.el-range-input');
   await dateInputs.nth(0).fill('2026-09-01');
   await dateInputs.nth(1).fill('2026-09-24');
   await dateInputs.nth(1).press('Enter');
-  await expect.poll(
-    () => historyRequests.at(-1)?.searchParams.get('dateRange'),
-    { timeout: 5_000 },
-  ).toBe('2026-09-01,2026-09-24');
+  const requestCountAfterDateInput = historyRequests.length;
+  await page.waitForTimeout(400);
+  expect(historyRequests.length).toBe(requestCountAfterDateInput);
+  await dateInputs.nth(1).press('Enter');
+  await expect.poll(() => historyRequests.length, { timeout: 5_000 }).toBeGreaterThan(requestCountAfterDateInput);
+  expect(historyRequests.at(-1)?.searchParams.get('dateRange')).toBe('2026-09-01,2026-09-24');
 });
 
 test('业务接口返回登录失效时清空工作台并跳转，不重放提交', async ({ page }) => {
