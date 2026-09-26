@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.identity.mapper.IdentityProvisioningMapper">
+
+    <select id="selectAdminBootstrapConsumedForUpdate" resultType="boolean">
+        SELECT consumed
+          FROM platform_admin_bootstrap
+         WHERE singleton_id = 1
+         FOR UPDATE
+    </select>
+
+    <select id="countPlatformAdmins" resultType="int">
+        SELECT COUNT(*) FROM user_account WHERE platform_role = 'PLATFORM_ADMIN'
+    </select>
+
+    <select id="selectActivePlatformAdminIdByEmailIdentity" resultType="java.util.UUID">
+        SELECT account.id
+          FROM user_account account
+          JOIN user_identity email_identity ON email_identity.user_id = account.id
+         WHERE account.status = 'ACTIVE'
+           AND account.platform_role = 'PLATFORM_ADMIN'
+           AND email_identity.identity_type = 'EMAIL'
+           AND email_identity.issuer = 'local'
+           AND email_identity.normalized_identifier = #{normalizedEmail}
+           AND email_identity.status = 'ACTIVE'
+    </select>
+
+    <update id="markAdminBootstrapConsumed">
+        UPDATE platform_admin_bootstrap
+           SET consumed = TRUE, consumed_at = CURRENT_TIMESTAMP
+         WHERE singleton_id = 1
+    </update>
+
+    <update id="promoteActiveUserToAdmin">
+        UPDATE user_account
+           SET platform_role = 'PLATFORM_ADMIN', updated_at = CURRENT_TIMESTAMP
+         WHERE id = #{userId} AND status = 'ACTIVE'
+    </update>
+
+    <select id="existsIdentity" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1 FROM user_identity
+             WHERE identity_type = #{identityType}
+               AND issuer = #{issuer}
+               AND normalized_identifier = #{normalizedIdentifier}
+        )
+    </select>
+
+    <insert id="insertUsernameIdentityIfAbsent">
+        INSERT INTO user_identity (
+            id, user_id, identity_type, issuer, identifier, normalized_identifier, status
+        ) VALUES (
+            #{id}, #{userId}, 'USERNAME', 'local', #{normalizedUsername}, #{normalizedUsername}, 'ACTIVE'
+        )
+        ON CONFLICT (identity_type, issuer, normalized_identifier) DO NOTHING
+    </insert>
+
+    <insert id="insertTenant">
+        INSERT INTO tenant (id, name, tenant_type, plan_code, status)
+        VALUES (#{id}, #{name}, 'PERSONAL', 'FREE', 'ACTIVE')
+    </insert>
+
+    <insert id="insertUserAccount">
+        INSERT INTO user_account (id, tenant_id, email, display_name, password_hash, status, platform_role)
+        VALUES (#{id}, #{tenantId}, #{email}, #{displayName}, #{passwordHash}, 'ACTIVE', #{platformRole})
+    </insert>
+
+    <insert id="insertWorkspace">
+        INSERT INTO workspace (id, tenant_id, name, description, created_by, status)
+        VALUES (#{id}, #{tenantId}, #{name}, #{description}, #{createdBy}, 'ACTIVE')
+    </insert>
+
+    <insert id="insertWorkspaceMember">
+        INSERT INTO workspace_member (workspace_id, user_id, role)
+        VALUES (#{workspaceId}, #{userId}, #{role})
+    </insert>
+
+    <insert id="insertUserIdentity">
+        INSERT INTO user_identity (
+            id, user_id, identity_type, issuer, identifier, normalized_identifier, status, verified_at
+        ) VALUES (
+            #{id}, #{userId}, #{identityType}, #{issuer}, #{identifier}, #{normalizedIdentifier},
+            #{status}, #{verifiedAt}
+        )
+    </insert>
+</mapper>

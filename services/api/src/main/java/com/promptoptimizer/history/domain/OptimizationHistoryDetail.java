@@ -1,6 +1,6 @@
 package com.promptoptimizer.history.domain;
 
-import com.promptoptimizer.enhancement.api.ConversationMessage;
+import com.promptoptimizer.enhancement.dto.ConversationMessage;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 
 import java.time.OffsetDateTime;

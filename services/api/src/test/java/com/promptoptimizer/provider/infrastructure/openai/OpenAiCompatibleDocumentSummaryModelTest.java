@@ -1,7 +1,7 @@
 package com.promptoptimizer.provider.infrastructure.openai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.promptoptimizer.context.application.DocumentSummaryModel;
+import com.promptoptimizer.context.service.DocumentSummaryModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;

@@ -1,8 +1,8 @@
 package com.promptoptimizer.provider.infrastructure.openai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.promptoptimizer.context.application.DocumentSummaryModel;
-import com.promptoptimizer.provider.application.PlatformModelCatalog;
+import com.promptoptimizer.context.service.DocumentSummaryModel;
+import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.beans.factory.ObjectProvider;

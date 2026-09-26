@@ -2,14 +2,14 @@ package com.promptoptimizer.enhancement.infrastructure;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.promptoptimizer.enhancement.application.InMemoryPlanningSessionStore;
-import com.promptoptimizer.enhancement.application.PlanningSessionStore;
+import com.promptoptimizer.enhancement.service.InMemoryPlanningSessionStore;
+import com.promptoptimizer.enhancement.service.PlanningSessionStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import com.promptoptimizer.enhancement.application.PlanningStoreUnavailableException;
+import com.promptoptimizer.enhancement.service.PlanningStoreUnavailableException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 

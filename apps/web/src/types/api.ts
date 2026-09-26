@@ -96,11 +96,137 @@ export interface ModelRoute {
   providerName: string;
 }
 
+export type AnalyticsRange = 'TODAY' | 'YESTERDAY' | 'THIS_WEEK' | 'THIS_MONTH' | 'LAST_MONTH' | 'CUSTOM';
+export type AnalyticsRankingPeriod = 'DAY' | 'WEEK' | 'MONTH';
+export type AnalyticsEventType =
+  | 'LOGIN'
+  | 'LOGOUT'
+  | 'APP_VISIT'
+  | 'OPTIMIZATION_SUBMITTED'
+  | 'PLAN_CREATED'
+  | 'CONTEXT_PREPARED'
+  | 'CONTEXT_ANALYZED'
+  | 'RESULT_EXPORTED'
+  | 'RECHARGE_PAID';
+
+export interface AnalyticsPeriodView {
+  fromDate: string;
+  toDateInclusive: string;
+  fromInclusive: string;
+  toExclusive: string;
+  zoneId: string;
+}
+
+export interface AnalyticsDailyMetric {
+  date: string;
+  accessCount: number;
+  uniqueVisitors: number;
+  activeUsers: number;
+  actualUsers: number;
+  newAccounts: number;
+}
+
+export interface AnalyticsHourlyMetric {
+  hour: number;
+  operationCount: number;
+}
+
+export interface AnalyticsMonthlyMetric {
+  month: string;
+  operationCount: number;
+}
+
+export interface AnalyticsDeviceMetric {
+  deviceType: 'MOBILE' | 'TABLET' | 'DESKTOP' | 'UNKNOWN' | string;
+  loginCount: number;
+  uniqueUsers: number;
+}
+
+export interface AnalyticsUserRank {
+  userId: string;
+  displayName: string;
+  operationCount: number;
+  loginCount: number;
+  activeDays: number;
+}
+
+export interface AnalyticsRechargeMetric {
+  date: string;
+  planCode: string;
+  planName: string;
+  paidCount: number;
+  amountMinor: number;
+  currency: string;
+}
+
+export interface AnalyticsDashboard {
+  period: AnalyticsPeriodView;
+  registeredAccountCount: number;
+  newAccountCount: number;
+  actualUserCount: number;
+  accessCount: number;
+  uniqueVisitorCount: number;
+  activeUserCount: number;
+  averageDailyActiveUsers: number;
+  dailyMetrics: AnalyticsDailyMetric[];
+  hourlyUsage: AnalyticsHourlyMetric[];
+  monthlyUsage: AnalyticsMonthlyMetric[];
+  deviceDistribution: AnalyticsDeviceMetric[];
+  rechargeByDay: AnalyticsRechargeMetric[];
+  rechargeStatisticsAvailable: boolean;
+}
+
+export interface AnalyticsRanking {
+  period: AnalyticsPeriodView;
+  items: AnalyticsUserRank[];
+}
+
+export interface AnalyticsOperationLog {
+  eventId: string;
+  userId: string;
+  displayName: string;
+  eventType: AnalyticsEventType;
+  occurredAt: string;
+  clientIp: string | null;
+  country: string | null;
+  province: string | null;
+  city: string | null;
+  loginCountry: string | null;
+  loginProvince: string | null;
+  loginCity: string | null;
+  deviceType: string;
+}
+
+export interface AnalyticsOperationLogPage {
+  items: AnalyticsOperationLog[];
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+}
+
+export interface AnalyticsDashboardQuery {
+  range: AnalyticsRange;
+  fromDate?: string;
+  toDate?: string;
+  userId?: string;
+}
+
+export interface AnalyticsOperationQuery {
+  fromDate: string;
+  toDate: string;
+  userId?: string;
+  eventType?: AnalyticsEventType;
+  page: number;
+  pageSize: number;
+}
+
 export type AdminModelChange = Omit<AdminModel, 'id' | 'publicId'>;
 
 export interface LoginPayload {
   identifier: string;
   password: string;
+  captcha: string;
 }
 
 export interface EmailRegistrationCodePayload {

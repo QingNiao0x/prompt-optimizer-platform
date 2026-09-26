@@ -1,12 +1,11 @@
 package com.promptoptimizer.provider.infrastructure;
 
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
-import com.promptoptimizer.provider.application.PlatformModelCatalog.ModelEntry;
+import com.promptoptimizer.provider.service.PlatformModelCatalog.ModelEntry;
+import com.promptoptimizer.provider.mapper.PlatformModelMapper;
 import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
 import java.net.URI;
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,7 +21,7 @@ class PlatformModelCatalogServiceTest {
 
     @Test
     void resolvesOnlyEnabledPublishedModelsAndNeverFallsBackToUnpublishedRouteModels() {
-        JdbcTemplate jdbc = mock(JdbcTemplate.class);
+        PlatformModelMapper mapper = mock(PlatformModelMapper.class);
         OpenAiCompatibleProperties properties = new OpenAiCompatibleProperties();
         properties.setProviderName("deepseek");
         properties.setEndpoint(URI.create("https://example.invalid/chat/completions"));
@@ -36,15 +34,15 @@ class PlatformModelCatalogServiceTest {
                 "hidden-model", "已停用", false, false, 1);
         ModelEntry missingRoute = new ModelEntry(UUID.randomUUID(), "orphan-model", "gone",
                 "orphan-model", "无路由", true, false, 2);
-        when(jdbc.query(anyString(), org.mockito.ArgumentMatchers.<RowMapper<ModelEntry>>any()))
+        when(mapper.selectAllActive())
                 .thenReturn(List.of(visible, disabled, missingRoute));
         @SuppressWarnings("unchecked")
-        ObjectProvider<JdbcTemplate> jdbcProvider = mock(ObjectProvider.class);
+        ObjectProvider<PlatformModelMapper> mapperProvider = mock(ObjectProvider.class);
         @SuppressWarnings("unchecked")
         ObjectProvider<OpenAiCompatibleProperties> propertiesProvider = mock(ObjectProvider.class);
-        when(jdbcProvider.getIfAvailable()).thenReturn(jdbc);
+        when(mapperProvider.getIfAvailable()).thenReturn(mapper);
         when(propertiesProvider.getIfAvailable()).thenReturn(properties);
-        PlatformModelCatalogService catalog = new PlatformModelCatalogService(jdbcProvider, propertiesProvider);
+        PlatformModelCatalogService catalog = new PlatformModelCatalogService(mapperProvider, propertiesProvider);
 
         assertThat(catalog.available()).containsExactly(visible);
         assertThat(catalog.resolve(null)).isEqualTo(visible);

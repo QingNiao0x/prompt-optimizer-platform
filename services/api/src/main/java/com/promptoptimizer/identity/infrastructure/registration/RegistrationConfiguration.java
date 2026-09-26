@@ -1,7 +1,7 @@
 package com.promptoptimizer.identity.infrastructure.registration;
 
-import com.promptoptimizer.identity.application.RegistrationException;
-import com.promptoptimizer.identity.application.VerificationEmailSender;
+import com.promptoptimizer.identity.service.RegistrationException;
+import com.promptoptimizer.identity.service.VerificationEmailSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;

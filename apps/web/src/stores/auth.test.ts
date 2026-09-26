@@ -50,7 +50,7 @@ describe('auth store', () => {
 
   it('does not pretend logout succeeded when the server could not invalidate the session', async () => {
     const auth = useAuthStore();
-    await auth.login({ identifier: 'a@example.com', password: 'test-only-password' });
+    await auth.login({ identifier: 'a@example.com', password: 'test-only-password1', captcha: 'ABCD' });
     vi.mocked(logout).mockRejectedValueOnce(new Error('offline'));
     await expect(auth.logout()).rejects.toThrow('offline');
     expect(auth.isAuthenticated).toBe(true);

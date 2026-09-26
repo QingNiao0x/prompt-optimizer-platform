@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.provider.mapper.PlatformModelMapper">
+    <resultMap id="modelEntry" type="com.promptoptimizer.provider.service.PlatformModelCatalog$ModelEntry">
+        <constructor>
+            <idArg column="id" javaType="java.util.UUID"/>
+            <arg column="public_id" javaType="java.lang.String"/>
+            <arg column="route_key" javaType="java.lang.String"/>
+            <arg column="upstream_model" javaType="java.lang.String"/>
+            <arg column="display_name" javaType="java.lang.String"/>
+            <arg column="enabled" javaType="_boolean"/>
+            <arg column="default_model" javaType="_boolean"/>
+            <arg column="sort_order" javaType="_int"/>
+        </constructor>
+    </resultMap>
+
+    <sql id="modelColumns">id, public_id, route_key, upstream_model, display_name, enabled, default_model, sort_order</sql>
+
+    <select id="selectAllActive" resultMap="modelEntry">
+        SELECT <include refid="modelColumns"/>
+          FROM platform_model
+         WHERE deleted_at IS NULL
+         ORDER BY sort_order, public_id
+    </select>
+    <select id="selectActiveByPublicId" resultMap="modelEntry">
+        SELECT <include refid="modelColumns"/>
+          FROM platform_model
+         WHERE public_id = #{publicId} AND deleted_at IS NULL
+    </select>
+    <select id="selectByIdActive" resultMap="modelEntry">
+        SELECT <include refid="modelColumns"/>
+          FROM platform_model
+         WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+    <select id="selectDeletedId" resultType="java.util.UUID">
+        SELECT id FROM platform_model WHERE public_id = #{publicId} AND deleted_at IS NOT NULL
+    </select>
+    <select id="hasEnabledDefault" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1 FROM platform_model
+             WHERE default_model = TRUE AND enabled = TRUE AND deleted_at IS NULL
+        )
+    </select>
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM platform_model
+    </select>
+    <update id="clearDefault">
+        UPDATE platform_model
+           SET default_model = FALSE, version = version + 1, updated_at = CURRENT_TIMESTAMP
+         WHERE default_model = TRUE AND deleted_at IS NULL
+    </update>
+    <update id="restore">
+        UPDATE platform_model
+           SET display_name = #{displayName}, enabled = #{enabled}, default_model = #{defaultModel},
+               sort_order = #{sortOrder}, deleted_at = NULL, version = version + 1,
+               updated_at = CURRENT_TIMESTAMP
+         WHERE id = #{id} AND deleted_at IS NOT NULL
+    </update>
+    <insert id="insertIfAbsent">
+        INSERT INTO platform_model
+            (id, public_id, route_key, upstream_model, display_name, enabled, default_model, sort_order)
+        VALUES (#{id}, #{publicId}, #{routeKey}, #{upstreamModel}, #{displayName},
+                #{enabled}, #{defaultModel}, #{sortOrder})
+        ON CONFLICT (public_id) DO NOTHING
+    </insert>
+    <insert id="insert">
+        INSERT INTO platform_model
+            (id, public_id, route_key, upstream_model, display_name, enabled, default_model, sort_order)
+        VALUES (#{id}, #{publicId}, #{routeKey}, #{upstreamModel}, #{displayName},
+                #{enabled}, #{defaultModel}, #{sortOrder})
+    </insert>
+    <update id="update">
+        UPDATE platform_model
+           SET display_name = #{displayName}, enabled = #{enabled}, default_model = #{defaultModel},
+               sort_order = #{sortOrder}, version = version + 1, updated_at = CURRENT_TIMESTAMP
+         WHERE id = #{id} AND deleted_at IS NULL
+    </update>
+    <update id="softDelete">
+        UPDATE platform_model
+           SET enabled = FALSE, deleted_at = CURRENT_TIMESTAMP, version = version + 1,
+               updated_at = CURRENT_TIMESTAMP
+         WHERE id = #{id} AND deleted_at IS NULL
+    </update>
+</mapper>

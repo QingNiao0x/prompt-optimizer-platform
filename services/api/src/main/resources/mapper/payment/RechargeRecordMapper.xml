@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.payment.mapper.RechargeRecordMapper">
+    <resultMap id="rechargeRecord" type="com.promptoptimizer.payment.infrastructure.RechargeRecordRow">
+        <constructor>
+            <idArg column="id" javaType="java.util.UUID"/>
+            <arg column="tenant_id" javaType="java.util.UUID"/>
+            <arg column="user_id" javaType="java.util.UUID"/>
+            <arg column="plan_code" javaType="java.lang.String"/>
+            <arg column="plan_name" javaType="java.lang.String"/>
+            <arg column="amount_minor" javaType="_long"/>
+            <arg column="currency" javaType="java.lang.String"/>
+            <arg column="payment_provider" javaType="java.lang.String"/>
+            <arg column="provider_transaction_id" javaType="java.lang.String"/>
+            <arg column="paid_at" javaType="java.time.OffsetDateTime"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="rechargeMetric" type="com.promptoptimizer.analytics.dto.AnalyticsViews$RechargeMetric">
+        <constructor>
+            <arg column="paid_day" javaType="java.time.LocalDate"/>
+            <arg column="plan_code" javaType="java.lang.String"/>
+            <arg column="plan_name" javaType="java.lang.String"/>
+            <arg column="paid_count" javaType="_long"/>
+            <arg column="amount_minor" javaType="_long"/>
+            <arg column="currency" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+
+    <insert id="insertIfAbsent">
+        INSERT INTO recharge_record (
+            id, tenant_id, user_id, plan_code, plan_name, amount_minor, currency,
+            payment_provider, provider_transaction_id, created_at, paid_at
+        ) VALUES (
+            #{id}, #{payment.tenantId}, #{payment.userId}, #{payment.planCode}, #{payment.planName},
+            #{payment.amountMinor}, #{payment.currency}, #{payment.paymentProvider},
+            #{payment.providerTransactionId}, CURRENT_TIMESTAMP, #{payment.paidAt}
+        ) ON CONFLICT (payment_provider, provider_transaction_id) DO NOTHING
+    </insert>
+
+    <select id="selectByProviderTransaction" resultMap="rechargeRecord">
+        SELECT id, tenant_id, user_id, plan_code, plan_name, amount_minor, currency,
+               payment_provider, provider_transaction_id, paid_at
+          FROM recharge_record
+         WHERE payment_provider = #{paymentProvider}
+           AND provider_transaction_id = #{providerTransactionId}
+    </select>
+
+    <select id="paidByDay" resultMap="rechargeMetric">
+        SELECT (r.paid_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date AS paid_day,
+               r.plan_code, r.plan_name, COUNT(*) AS paid_count,
+               SUM(r.amount_minor) AS amount_minor, r.currency
+          FROM recharge_record r
+         WHERE r.paid_at &gt;= #{period.fromInclusive}
+           AND r.paid_at &lt; #{period.toExclusive}
+           AND (CAST(#{userId} AS uuid) IS NULL OR r.user_id = #{userId})
+         GROUP BY (r.paid_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date,
+                  r.plan_code, r.plan_name, r.currency
+         ORDER BY paid_day, r.plan_code, r.currency
+    </select>
+</mapper>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.history.mapper.OptimizationSessionMapper">
+
+    <resultMap id="optimizationSession" type="com.promptoptimizer.history.entity.OptimizationSessionEntity">
+        <id column="id" property="id"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="workspace_id" property="workspaceId"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="title" property="title"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <select id="selectFirstActiveByScope" resultMap="optimizationSession">
+        SELECT id, tenant_id, workspace_id, created_by, title, status, created_at, updated_at
+          FROM optimization_session
+         WHERE tenant_id = #{tenantId}
+           AND workspace_id = #{workspaceId}
+           AND status = #{status}
+         ORDER BY created_at ASC
+         LIMIT 1
+    </select>
+
+    <insert id="insertSession">
+        INSERT INTO optimization_session
+            (id, tenant_id, workspace_id, created_by, title, status, created_at, updated_at)
+        VALUES
+            (#{session.id}, #{session.tenantId}, #{session.workspaceId}, #{session.createdBy},
+             #{session.title}, #{session.status}, #{session.createdAt}, #{session.updatedAt})
+    </insert>
+</mapper>

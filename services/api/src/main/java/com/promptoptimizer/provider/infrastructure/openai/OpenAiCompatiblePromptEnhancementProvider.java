@@ -10,17 +10,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.common.logging.ModelCallLogger;
 import com.promptoptimizer.context.domain.ContextSnapshot;
-import com.promptoptimizer.enhancement.api.ConversationMessage;
-import com.promptoptimizer.enhancement.api.EnhancementOptions;
+import com.promptoptimizer.enhancement.dto.ConversationMessage;
+import com.promptoptimizer.enhancement.dto.EnhancementOptions;
 import com.promptoptimizer.enhancement.domain.PlanOption;
 import com.promptoptimizer.enhancement.domain.PlanQuestion;
 import com.promptoptimizer.enhancement.domain.PlanQuestionType;
 import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
-import com.promptoptimizer.provider.application.PromptEnhancementProvider;
-import com.promptoptimizer.provider.application.PromptPlanningProvider;
-import com.promptoptimizer.provider.application.PlatformModelCatalog;
+import com.promptoptimizer.provider.service.PromptEnhancementProvider;
+import com.promptoptimizer.provider.service.PromptPlanningProvider;
+import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
@@ -891,7 +891,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             ContextSnapshot context,
             PromptTemplate template,
             List<String> ambiguities,
-            List<com.promptoptimizer.enhancement.api.PlanAnswer> planAnswers,
+            List<com.promptoptimizer.enhancement.dto.PlanAnswer> planAnswers,
             boolean planConfirmed,
             List<String> constraints,
             List<ConversationMessage> conversationHistory,

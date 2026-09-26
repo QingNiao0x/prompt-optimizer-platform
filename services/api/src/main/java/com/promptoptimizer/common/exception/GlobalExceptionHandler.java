@@ -3,8 +3,8 @@ package com.promptoptimizer.common.exception;
 import com.promptoptimizer.common.api.ApiError;
 import com.promptoptimizer.common.api.ApiErrorResponse;
 import com.promptoptimizer.common.logging.LogFields;
-import com.promptoptimizer.context.application.DocumentUploadException;
-import com.promptoptimizer.identity.application.RegistrationException;
+import com.promptoptimizer.context.service.DocumentUploadException;
+import com.promptoptimizer.identity.service.RegistrationException;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,6 +29,8 @@ import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 /**
  * 全局异常处理：把业务异常、校验异常和未知异常转换为统一错误响应。
@@ -39,20 +42,23 @@ import java.util.Set;
 public class GlobalExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Pattern JVM_HELPFUL_NULL_POINTER_MESSAGE = Pattern.compile(
+            "^Cannot invoke \"[^\"\\r\\n]{1,256}\" because \"[^\"\\r\\n]{1,96}\" is null$"
+    );
 
     /** 计划过期时返回冲突状态，提示客户端重新准备上下文和确认问题。 */
-    @ExceptionHandler(com.promptoptimizer.enhancement.application.PlanningSessionExpiredException.class)
+    @ExceptionHandler(com.promptoptimizer.enhancement.service.PlanningSessionExpiredException.class)
     public ResponseEntity<ApiErrorResponse> handlePlanningExpiry(
-            com.promptoptimizer.enhancement.application.PlanningSessionExpiredException exception,
+            com.promptoptimizer.enhancement.service.PlanningSessionExpiredException exception,
             HttpServletRequest request) {
         return buildResponse(request, HttpStatus.CONFLICT, "PLANNING_SESSION_EXPIRED",
                 exception.getMessage(), false, Map.of());
     }
 
     /** 共享计划存储不可用时返回可重试错误，避免创建无法跨实例读取的会话。 */
-    @ExceptionHandler(com.promptoptimizer.enhancement.application.PlanningStoreUnavailableException.class)
+    @ExceptionHandler(com.promptoptimizer.enhancement.service.PlanningStoreUnavailableException.class)
     public ResponseEntity<ApiErrorResponse> handlePlanningStoreUnavailable(
-            com.promptoptimizer.enhancement.application.PlanningStoreUnavailableException exception,
+            com.promptoptimizer.enhancement.service.PlanningStoreUnavailableException exception,
             HttpServletRequest request) {
         return buildResponse(request, HttpStatus.SERVICE_UNAVAILABLE, "PLANNING_STORE_UNAVAILABLE",
                 exception.getMessage(), true, Map.of());
@@ -84,14 +90,69 @@ public class GlobalExceptionHandler {
         return response.body(new ApiErrorResponse(requestId, error));
     }
 
-    /**
-     * 登录接口中的认证失败统一返回模糊提示，避免泄露账户是否存在或被锁定。
-     */
+    /** 支付渠道流水重复且业务字段不一致时返回冲突，不回显支付流水或订单凭据。 */
+    @ExceptionHandler(com.promptoptimizer.payment.service.PaymentRecordConflictException.class)
+    public ResponseEntity<ApiErrorResponse> handlePaymentRecordConflict(
+            com.promptoptimizer.payment.service.PaymentRecordConflictException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(request, HttpStatus.CONFLICT, "PAYMENT_RECORD_CONFLICT",
+                exception.getMessage(), false, Map.of());
+    }
+
+    /** 图形验证码失败返回 400，连续失败锁定返回 429。 */
+    @ExceptionHandler(com.promptoptimizer.identity.service.LoginGuardException.class)
+    public ResponseEntity<ApiErrorResponse> handleLoginGuard(
+            com.promptoptimizer.identity.service.LoginGuardException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = "LOGIN_LOCKED".equals(exception.code())
+                ? HttpStatus.TOO_MANY_REQUESTS
+                : HttpStatus.BAD_REQUEST;
+        Map<String, Object> details = exception.retryAfterSeconds() > 0
+                ? Map.of("retryAfterSeconds", exception.retryAfterSeconds())
+                : Map.of();
+        ResponseEntity<ApiErrorResponse> response = buildResponse(
+                request, status, exception.code(), exception.getMessage(),
+                exception.retryAfterSeconds() > 0, details);
+        if (exception.retryAfterSeconds() <= 0) {
+            return response;
+        }
+        return ResponseEntity.status(status)
+                .header(HttpHeaders.RETRY_AFTER, Long.toString(exception.retryAfterSeconds()))
+                .body(response.getBody());
+    }
+
+    /** 区分凭据拒绝和认证服务故障，避免将后端异常伪装成错误密码。 */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiErrorResponse> handleAuthenticationFailure(
             AuthenticationException exception,
             HttpServletRequest request
     ) {
+        Object route = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+        String routeTemplate = route instanceof String value ? value : "<unmapped>";
+        Object requestId = request.getAttribute(com.promptoptimizer.common.web.RequestIdFilter.REQUEST_ID_ATTRIBUTE);
+        String safeRequestId = LogFields.value(requestId instanceof String value ? value : null);
+        String safeMethod = LogFields.value(request.getMethod());
+        String safeRoute = LogFields.value(routeTemplate);
+
+        if (exception instanceof AuthenticationServiceException) {
+            // Spring wraps failures from UserDetailsService (including persistence failures) in this type.
+            // Keep cause classes, SQLState and application frames, but never exception messages or parameters.
+            LOGGER.error("event=auth.authentication_service_failure requestId={} method={} route={} causes:\n{}",
+                    safeRequestId,
+                    safeMethod,
+                    safeRoute,
+                    safeFailureLocations(exception));
+            return buildResponse(request, HttpStatus.INTERNAL_SERVER_ERROR,
+                    "AUTHENTICATION_SERVICE_UNAVAILABLE", "登录服务暂时不可用，请稍后重试。", true, Map.of());
+        }
+
+        LOGGER.warn("event=auth.authentication_rejected requestId={} method={} route={} failureType={}",
+                safeRequestId,
+                safeMethod,
+                safeRoute,
+                LogFields.value(exception.getClass().getSimpleName()));
         return buildResponse(
                 request,
                 HttpStatus.UNAUTHORIZED,
@@ -267,7 +328,7 @@ public class GlobalExceptionHandler {
         // 使用已匹配的路由模板，不能记录可能包含用户数据的 URI、查询串或请求体。
         Object route = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         String routeTemplate = route instanceof String value ? value : "<unmapped>";
-        LOGGER.error("event=request.unexpected_failure requestId={} workflowId={} method={} route={} causes={}",
+        LOGGER.error("请求处理失败, requestId={}, workflowId={}, method={}, route={}, 原因:\n{}",
                 request.getAttribute(com.promptoptimizer.common.web.RequestIdFilter.REQUEST_ID_ATTRIBUTE),
                 LogFields.value(org.slf4j.MDC.get("workflowId")),
                 LogFields.value(request.getMethod()),
@@ -283,20 +344,71 @@ public class GlobalExceptionHandler {
         );
     }
 
+    /** 把查询参数 Bean Validation 失败映射为统一的 400，不回显原始参数值。 */
+    @ExceptionHandler({
+            jakarta.validation.ConstraintViolationException.class,
+            org.springframework.web.method.annotation.HandlerMethodValidationException.class
+    })
+    public ResponseEntity<ApiErrorResponse> handleInvalidQueryParameters(Exception exception,
+                                                                          HttpServletRequest request) {
+        return buildResponse(request, HttpStatus.BAD_REQUEST, "INVALID_ARGUMENT",
+                "请求参数不符合要求。", false, Map.of());
+    }
+
+    /** UUID 等路径或查询参数类型不合法时返回固定提示，不回显可能包含个人信息的输入值。 */
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidParameterType(
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(request, HttpStatus.BAD_REQUEST, "INVALID_ARGUMENT",
+                "请求参数格式不正确。", false, Map.of());
+    }
+
     /** 有界地提取异常链及本项目代码位置；不读取异常消息、源码文件路径或 suppressed 信息。 */
     private String safeFailureLocations(Throwable failure) {
         Set<Throwable> seen = Collections.newSetFromMap(new IdentityHashMap<>());
-        var causes = new ArrayList<String>();
-        for (Throwable current = failure; current != null && causes.size() < 6 && seen.add(current);
+        var lines = new ArrayList<String>();
+        int causeIndex = 0;
+        for (Throwable current = failure; current != null && causeIndex < 6 && seen.add(current);
              current = current.getCause()) {
+            String sqlDiagnostics = current instanceof SQLException sqlException
+                    ? sqlDiagnostics(sqlException)
+                    : "";
+            lines.add("cause[" + causeIndex++ + "] " + current.getClass().getName() + sqlDiagnostics);
+            String helpfulNullPointerMessage = helpfulNullPointerMessage(current);
+            if (helpfulNullPointerMessage != null) {
+                lines.add("  detail: " + helpfulNullPointerMessage);
+            }
             var frames = Arrays.stream(current.getStackTrace())
                     .filter(frame -> frame.getClassName().startsWith("com.promptoptimizer."))
                     .limit(8)
-                    .map(frame -> frame.getClassName() + "." + frame.getMethodName() + ":" + frame.getLineNumber())
+                    .map(frame -> "  at " + frame.getClassName() + "." + frame.getMethodName()
+                            + "(" + frame.getLineNumber() + ")")
                     .toList();
-            causes.add(current.getClass().getName() + frames);
+            lines.addAll(frames);
         }
-        return String.join(" <- ", causes);
+        return String.join(System.lineSeparator(), lines);
+    }
+
+    /** 仅保留 JVM 生成的安全型空指针诊断，不输出任意异常消息或请求数据。 */
+    private String helpfulNullPointerMessage(Throwable failure) {
+        if (!(failure instanceof NullPointerException)) {
+            return null;
+        }
+        String message = failure.getMessage();
+        return message != null && JVM_HELPFUL_NULL_POINTER_MESSAGE.matcher(message).matches()
+                ? message
+                : null;
+    }
+
+    /** 仅输出 JDBC 诊断编号；不记录 SQLException 消息、SQL 参数或连接信息。 */
+    private String sqlDiagnostics(SQLException exception) {
+        String sqlState = exception.getSQLState();
+        String stateField = sqlState != null && sqlState.matches("[0-9A-Z]{5}")
+                ? " sqlState=" + sqlState
+                : "";
+        return stateField + " vendorCode=" + exception.getErrorCode();
     }
 
     /**

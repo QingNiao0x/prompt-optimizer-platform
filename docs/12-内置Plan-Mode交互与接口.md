@@ -512,7 +512,7 @@ flowchart TD
 - `DefaultEnhancementOrchestratorTest`：确认答案进入最终结果且不再出现待确认项；大型文档会按确认答案重新检索。
 - `OptimizationResultAssemblerTest`：四要素、答案合并、权限红线和 `CLARIFICATIONS` 清理。
 - `ProtectedContextFilterTest`、`SensitiveValueDetectorTest`：受保护路径前置过滤和凭据检测。
-- `JpaOptimizationHistoryServiceTest`：确认答案随历史重新优化恢复。
+- `MybatisOptimizationHistoryServiceTest`：确认答案随历史重新优化恢复。
 - `optimizationRequest.test.ts`、`optimization.test.ts`：上下文准备引用、二次检索词，以及直接增强强制使用 `AUTO` 且清理旧 Plan 状态的前端单元测试。
 - `usePlanModePreference.test.ts`：默认关闭、偏好持久化和异常存储值回退。
 - `prompt-workbench.spec.ts`：Plan 路径的“上下文准备 → 计划弹窗 → 二次检索 → 最终结果”，以及默认直接增强、首次开启说明、拒绝说明、刷新后保持偏好、再次增强分流和计划过期后重新创建。

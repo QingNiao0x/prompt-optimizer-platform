@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.identity.mapper.UserAccountMapper">
+
+    <select id="selectDefaultWorkspaceId" resultType="java.util.UUID">
+        SELECT wm.workspace_id
+          FROM workspace_member wm
+          JOIN workspace w ON w.id = wm.workspace_id
+          JOIN tenant t ON t.id = w.tenant_id
+         WHERE wm.user_id = #{userId}
+           AND w.tenant_id = #{tenantId}
+           AND w.status = 'ACTIVE'
+           AND t.status = 'ACTIVE'
+           AND wm.role = 'OWNER'
+         ORDER BY wm.joined_at ASC, wm.workspace_id ASC
+         LIMIT 1
+    </select>
+
+    <update id="updatePasswordHash">
+        UPDATE user_account
+           SET password_hash = #{passwordHash}, updated_at = CURRENT_TIMESTAMP
+         WHERE id = #{id}
+    </update>
+</mapper>

@@ -1,5 +1,6 @@
 package com.promptoptimizer.infrastructure.web;
 
+import com.promptoptimizer.common.controller.HealthController;
 import com.promptoptimizer.common.web.RequestIdFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

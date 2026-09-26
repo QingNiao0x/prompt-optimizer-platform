@@ -3,7 +3,7 @@ package com.promptoptimizer.provider.infrastructure;
 import com.promptoptimizer.enhancement.domain.PlanOption;
 import com.promptoptimizer.enhancement.domain.PlanQuestion;
 import com.promptoptimizer.enhancement.domain.PlanQuestionType;
-import com.promptoptimizer.provider.application.PromptPlanningProvider;
+import com.promptoptimizer.provider.service.PromptPlanningProvider;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Clock, HomeFilled, MagicStick, Setting, Tools } from '@element-plus/icons-vue';
+import { Clock, DataAnalysis, HomeFilled, MagicStick, Setting, Tools } from '@element-plus/icons-vue';
 import { computed } from 'vue';
 
 import BrandMark from '@/components/brand/BrandMark.vue';
@@ -44,6 +44,10 @@ const navigation = [
       <RouterLink v-if="auth.user?.platformAdmin" class="nav-link" to="/admin/models">
         <Tools aria-hidden="true" />
         <span>模型管理</span>
+      </RouterLink>
+      <RouterLink v-if="auth.user?.platformAdmin" class="nav-link" to="/admin/analytics">
+        <DataAnalysis aria-hidden="true" />
+        <span>统计日志</span>
       </RouterLink>
     </nav>
 

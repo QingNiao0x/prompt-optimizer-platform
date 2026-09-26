@@ -3,10 +3,12 @@ package com.promptoptimizer.identity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.promptoptimizer.identity.infrastructure.security.AuthenticatedUser;
+import com.promptoptimizer.identity.security.AuthenticatedUser;
+import com.promptoptimizer.identity.service.LoginCaptchaService;
 import com.promptoptimizer.identity.support.TestActors;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +24,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -38,10 +43,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /** 真正经过密码校验、Session、CSRF、业务服务和内存会话存储的 HTTP 测试。 */
-@SpringBootTest(properties = "app.security.local-user.password=local-test-password-only")
+@SpringBootTest(properties = "app.security.local-user.password=local-test-password1")
 @ActiveProfiles("local-mock")
 @AutoConfigureMockMvc
 @Import(AuthenticationIntegrationTest.Users.class)
+@ExtendWith(OutputCaptureExtension.class)
 class AuthenticationIntegrationTest {
     private static final String PASSWORD = "test-only-password-2026";
     private static final UUID OTHER_USER = UUID.fromString("00000000-0000-0000-0000-000000000202");
@@ -56,6 +62,11 @@ class AuthenticationIntegrationTest {
         UserDetailsService users(PasswordEncoder encoder) {
             String hash = encoder.encode(PASSWORD);
             return email -> {
+                if ("backend-failure@example.com".equals(email)) {
+                    throw new DataAccessResourceFailureException(
+                            "password=private-database-message",
+                            new java.sql.SQLException("password=private-sql-message", "42P01", 0));
+                }
                 if (!List.of("alice@example.com", "bob@example.com", "locked@example.com").contains(email)) {
                     throw new UsernameNotFoundException("not found");
                 }
@@ -105,11 +116,55 @@ class AuthenticationIntegrationTest {
     void credentialsAreRequiredAndFailuresDoNotDiscloseAccountState() throws Exception {
         for (String email : List.of("alice@example.com", "unknown@example.com", "locked@example.com")) {
             Cookie token = csrf();
-            mvc.perform(post("/api/v1/auth/login").cookie(token).header("X-XSRF-TOKEN", token.getValue())
-                            .contentType(APPLICATION_JSON).content(credentials(email, "incorrect-password")))
+            MockHttpSession session = captchaSession();
+            mvc.perform(post("/api/v1/auth/login").session(session).cookie(token)
+                            .header("X-XSRF-TOKEN", token.getValue())
+                            .contentType(APPLICATION_JSON)
+                            .content(credentials(email, "incorrect-password1",
+                                    (String) session.getAttribute(LoginCaptchaService.ATTRIBUTE))))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.error.code").value("AUTHENTICATION_FAILED"));
         }
+    }
+
+    @Test
+    void failedLoginLogsRequestIdAndFailureTypeWithoutCredentials(CapturedOutput output) throws Exception {
+        Cookie token = csrf();
+        MockHttpSession session = captchaSession();
+        mvc.perform(post("/api/v1/auth/login").session(session).header("X-Request-Id", "auth-failure-test-1")
+                        .cookie(token).header("X-XSRF-TOKEN", token.getValue()).contentType(APPLICATION_JSON)
+                        .content(credentials("alice@example.com", "incorrect-password1",
+                                (String) session.getAttribute(LoginCaptchaService.ATTRIBUTE))))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.code").value("AUTHENTICATION_FAILED"));
+
+        assertThat(output)
+                .contains("event=auth.authentication_rejected")
+                .contains("requestId=auth-failure-test-1")
+                .contains("failureType=BadCredentialsException")
+                .doesNotContain("incorrect-password1");
+    }
+
+    @Test
+    void authenticationInfrastructureFailureIsNotReportedAsWrongCredentials(CapturedOutput output) throws Exception {
+        Cookie token = csrf();
+        MockHttpSession session = captchaSession();
+        mvc.perform(post("/api/v1/auth/login").session(session).header("X-Request-Id", "auth-database-failure-1")
+                        .cookie(token).header("X-XSRF-TOKEN", token.getValue()).contentType(APPLICATION_JSON)
+                        .content(credentials("backend-failure@example.com", PASSWORD,
+                                (String) session.getAttribute(LoginCaptchaService.ATTRIBUTE))))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error.code").value("AUTHENTICATION_SERVICE_UNAVAILABLE"))
+                .andExpect(jsonPath("$.error.message").value("登录服务暂时不可用，请稍后重试。"));
+
+        assertThat(output)
+                .contains("event=auth.authentication_service_failure")
+                .contains("requestId=auth-database-failure-1")
+                .contains("InternalAuthenticationServiceException")
+                .contains("DataAccessResourceFailureException")
+                .contains("sqlState=42P01")
+                .doesNotContain("backend-failure@example.com", "private-database-message",
+                        "private-sql-message", PASSWORD);
     }
 
     @Test
@@ -185,9 +240,12 @@ class AuthenticationIntegrationTest {
 
     private Login login(String email, MockHttpSession session) throws Exception {
         Cookie token = csrf();
+        mvc.perform(get("/api/v1/auth/captcha").session(session)).andExpect(status().isOk());
+        Object captcha = session.getAttribute(LoginCaptchaService.ATTRIBUTE);
+        assertThat(captcha).isInstanceOf(String.class);
         MvcResult result = mvc.perform(post("/api/v1/auth/login").session(session).cookie(token)
                         .header("X-XSRF-TOKEN", token.getValue()).contentType(APPLICATION_JSON)
-                        .content(credentials(email, PASSWORD)))
+                        .content(credentials(email, PASSWORD, (String) captcha)))
                 .andExpect(status().isOk()).andReturn();
         Cookie rotated = null;
         for (Cookie cookie : result.getResponse().getCookies()) {
@@ -201,7 +259,17 @@ class AuthenticationIntegrationTest {
     }
 
     private String credentials(String email, String password) throws Exception {
-        return mapper.writeValueAsString(Map.of("email", email, "password", password));
+        return credentials(email, password, "0000");
+    }
+
+    private String credentials(String email, String password, String captcha) throws Exception {
+        return mapper.writeValueAsString(Map.of("email", email, "password", password, "captcha", captcha));
+    }
+
+    private MockHttpSession captchaSession() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        mvc.perform(get("/api/v1/auth/captcha").session(session)).andExpect(status().isOk());
+        return session;
     }
 
     private MockHttpServletRequestBuilder write(String path, Login login) {

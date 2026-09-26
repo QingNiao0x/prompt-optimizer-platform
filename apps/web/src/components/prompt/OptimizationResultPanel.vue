@@ -13,6 +13,7 @@ import { computed, ref, toRefs, watch } from 'vue';
 
 import ResultCard from '@/components/prompt/ResultCard.vue';
 import ResultMetaBar from '@/components/prompt/ResultMetaBar.vue';
+import { reportClientAnalyticsEventBestEffort } from '@/services/adminAnalyticsApi';
 import type { OptimizationResult, PromptSection, PromptSectionType } from '@/types/api';
 
 interface Props {
@@ -53,6 +54,7 @@ const copyPrompt = async (content: string): Promise<void> => {
   try {
     await navigator.clipboard.writeText(content);
     ElMessage.success('最终提示词已复制。');
+    reportClientAnalyticsEventBestEffort('RESULT_EXPORTED');
   } catch {
     ElMessage.error('复制失败，请手动选择文本复制。');
   }

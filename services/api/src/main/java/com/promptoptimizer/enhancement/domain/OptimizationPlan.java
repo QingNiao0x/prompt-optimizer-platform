@@ -1,6 +1,6 @@
 package com.promptoptimizer.enhancement.domain;
 
-import com.promptoptimizer.enhancement.api.PlanningContextReference;
+import com.promptoptimizer.enhancement.dto.PlanningContextReference;
 
 import java.time.Instant;
 import java.util.List;

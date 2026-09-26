@@ -1,7 +1,8 @@
 package com.promptoptimizer.provider.infrastructure;
 
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
-import com.promptoptimizer.provider.application.PlatformModelCatalog;
+import com.promptoptimizer.provider.service.PlatformModelCatalog;
+import com.promptoptimizer.provider.mapper.PlatformModelMapper;
 import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProperties;
 import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleRoute;
 import org.slf4j.Logger;
@@ -9,14 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -40,16 +37,14 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
             "mock:deterministic-enhancer-v1", "mock", "deterministic-enhancer-v1",
             "演示模型", true, true, 0
     );
-    private static final RowMapper<ModelEntry> MODEL_MAPPER = (rs, rowNum) -> map(rs);
-
-    private final JdbcTemplate jdbc;
+    private final PlatformModelMapper mapper;
     private final OpenAiCompatibleProperties properties;
 
     public PlatformModelCatalogService(
-            ObjectProvider<JdbcTemplate> jdbcProvider,
+            ObjectProvider<PlatformModelMapper> mapperProvider,
             ObjectProvider<OpenAiCompatibleProperties> propertiesProvider
     ) {
-        this.jdbc = jdbcProvider.getIfAvailable();
+        this.mapper = mapperProvider.getIfAvailable();
         this.properties = propertiesProvider.getIfAvailable();
     }
 
@@ -57,7 +52,7 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initialize() {
-        if (jdbc == null || properties == null || countAll() > 0) {
+        if (mapper == null || properties == null || countAll() > 0) {
             return;
         }
         OpenAiCompatibleRoute defaultRoute = properties.getDefaultRoute();
@@ -77,13 +72,7 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
         }
         initial.sort(Comparator.comparing(ModelEntry::defaultModel).reversed());
         for (ModelEntry model : initial) {
-            jdbc.update("""
-                    INSERT INTO platform_model
-                        (id, public_id, route_key, upstream_model, display_name,
-                         enabled, default_model, sort_order)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                    ON CONFLICT (public_id) DO NOTHING
-                    """, model.id(), model.publicId(), model.routeKey(), model.upstreamModel(),
+            mapper.insertIfAbsent(model.id(), model.publicId(), model.routeKey(), model.upstreamModel(),
                     model.displayName(), model.enabled(), model.defaultModel(), model.sortOrder());
         }
         LOGGER.info("event=platform.model.catalog.initialized modelCount={}", countAll());
@@ -113,15 +102,10 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
 
     @Override
     public List<ModelEntry> all() {
-        if (jdbc == null || properties == null) {
+        if (mapper == null || properties == null) {
             return properties == null ? List.of(MOCK_MODEL) : configuredModels();
         }
-        return jdbc.query("""
-                SELECT id, public_id, route_key, upstream_model, display_name,
-                       enabled, default_model, sort_order
-                FROM platform_model WHERE deleted_at IS NULL
-                ORDER BY sort_order, public_id
-                """, MODEL_MAPPER);
+        return mapper.selectAllActive();
     }
 
     @Override
@@ -145,12 +129,7 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
         int sortOrder = validateSortOrder(change.sortOrder());
         String publicId = properties.publicModelId(route, upstreamModel);
         validatePublicId(publicId);
-        List<ModelEntry> existing = jdbc.query("""
-                SELECT id, public_id, route_key, upstream_model, display_name,
-                       enabled, default_model, sort_order
-                FROM platform_model WHERE public_id = ? AND deleted_at IS NULL
-                """, MODEL_MAPPER, publicId);
-        if (!existing.isEmpty()) {
+        if (mapper.selectActiveByPublicId(publicId) != null) {
             throw new InvalidOptimizationRequestException("该模型已在平台目录中，请直接修改现有记录。");
         }
         boolean defaultModel = change.defaultModel() || !hasDefault();
@@ -158,27 +137,14 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
             throw new InvalidOptimizationRequestException("默认模型必须处于启用状态。");
         }
         if (defaultModel) clearDefault();
-        List<UUID> deletedIds = jdbc.query(
-                "SELECT id FROM platform_model WHERE public_id = ? AND deleted_at IS NOT NULL",
-                (rs, rowNum) -> rs.getObject("id", UUID.class), publicId);
-        if (!deletedIds.isEmpty()) {
-            UUID restoredId = deletedIds.getFirst();
-            jdbc.update("""
-                    UPDATE platform_model
-                    SET display_name = ?, enabled = ?, default_model = ?, sort_order = ?,
-                        deleted_at = NULL, version = version + 1, updated_at = CURRENT_TIMESTAMP
-                    WHERE id = ?
-                    """, displayName, change.enabled(), defaultModel, sortOrder, restoredId);
+        UUID deletedId = mapper.selectDeletedId(publicId);
+        if (deletedId != null) {
+            mapper.restore(deletedId, displayName, change.enabled(), defaultModel, sortOrder);
             LOGGER.info("event=platform.model.restored modelId={}", publicId);
-            return requireById(restoredId);
+            return requireById(deletedId);
         }
         UUID id = UUID.randomUUID();
-        jdbc.update("""
-                INSERT INTO platform_model
-                    (id, public_id, route_key, upstream_model, display_name,
-                     enabled, default_model, sort_order)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, id, publicId, route.key(), upstreamModel, displayName,
+        mapper.insert(id, publicId, route.key(), upstreamModel, displayName,
                 change.enabled(), defaultModel, sortOrder);
         LOGGER.info("event=platform.model.created modelId={}", publicId);
         return requireById(id);
@@ -200,13 +166,8 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
             throw new InvalidOptimizationRequestException("默认模型必须处于启用状态。");
         }
         if (change.defaultModel() && !current.defaultModel()) clearDefault();
-        jdbc.update("""
-                UPDATE platform_model
-                SET display_name = ?, enabled = ?, default_model = ?, sort_order = ?,
-                    version = version + 1, updated_at = CURRENT_TIMESTAMP
-                WHERE id = ? AND deleted_at IS NULL
-                """, validateDisplayName(change.displayName()), change.enabled(),
-                change.defaultModel(), validateSortOrder(change.sortOrder()), id);
+        mapper.update(id, validateDisplayName(change.displayName()), change.enabled(),
+                change.defaultModel(), validateSortOrder(change.sortOrder()));
         LOGGER.info("event=platform.model.updated modelId={}", current.publicId());
         return requireById(id);
     }
@@ -219,11 +180,7 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
         if (current.defaultModel()) {
             throw new InvalidOptimizationRequestException("请先设置其他默认模型，再删除当前默认模型。");
         }
-        jdbc.update("""
-                UPDATE platform_model SET enabled = FALSE, deleted_at = CURRENT_TIMESTAMP,
-                    version = version + 1, updated_at = CURRENT_TIMESTAMP
-                WHERE id = ? AND deleted_at IS NULL
-                """, id);
+        mapper.softDelete(id);
         LOGGER.info("event=platform.model.deleted modelId={}", current.publicId());
     }
 
@@ -254,37 +211,27 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
     }
 
     private ModelEntry requireById(UUID id) {
-        return jdbc.query("""
-                SELECT id, public_id, route_key, upstream_model, display_name,
-                       enabled, default_model, sort_order
-                FROM platform_model WHERE id = ? AND deleted_at IS NULL
-                """, MODEL_MAPPER, id).stream().findFirst()
-                .orElseThrow(() -> new InvalidOptimizationRequestException("模型不存在或已删除。"));
+        ModelEntry entry = mapper.selectByIdActive(id);
+        if (entry == null) {
+            throw new InvalidOptimizationRequestException("模型不存在或已删除。");
+        }
+        return entry;
     }
 
     private boolean hasDefault() {
-        Integer count = jdbc.queryForObject("""
-                SELECT COUNT(*) FROM platform_model
-                WHERE default_model = TRUE AND enabled = TRUE AND deleted_at IS NULL
-                """, Integer.class);
-        return count != null && count > 0;
+        return mapper.hasEnabledDefault();
     }
 
     private void clearDefault() {
-        jdbc.update("""
-                UPDATE platform_model SET default_model = FALSE, version = version + 1,
-                    updated_at = CURRENT_TIMESTAMP
-                WHERE default_model = TRUE AND deleted_at IS NULL
-                """);
+        mapper.clearDefault();
     }
 
     private int countAll() {
-        Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM platform_model", Integer.class);
-        return count == null ? 0 : count;
+        return mapper.countAll();
     }
 
     private void requirePersistentCatalog() {
-        if (jdbc == null || properties == null) {
+        if (mapper == null || properties == null) {
             throw new InvalidOptimizationRequestException("当前演示环境不支持修改平台模型目录。");
         }
     }
@@ -316,13 +263,6 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
             throw new InvalidOptimizationRequestException("模型排序值必须在 0 到 10000 之间。");
         }
         return value;
-    }
-
-    private static ModelEntry map(ResultSet rs) throws SQLException {
-        return new ModelEntry(rs.getObject("id", UUID.class), rs.getString("public_id"),
-                rs.getString("route_key"), rs.getString("upstream_model"),
-                rs.getString("display_name"), rs.getBoolean("enabled"),
-                rs.getBoolean("default_model"), rs.getInt("sort_order"));
     }
 
     private static String displayName(String model) {

@@ -54,7 +54,7 @@
 
 需要自动创建平台管理员时，在受控的启动环境中显式设置 `APP_SECURITY_BOOTSTRAP_ADMIN_ENABLED=true`，并通过 `APP_SECURITY_BOOTSTRAP_ADMIN_PASSWORD` 注入密码。初始化会创建两个独立账户：邮箱管理员默认使用 `1767443348@qq.com`、显示名 `Admin`；备用管理员默认使用用户名 `admin`，不绑定邮箱。可通过 `APP_SECURITY_BOOTSTRAP_ADMIN_USERNAME`、`APP_SECURITY_BOOTSTRAP_ADMIN_EMAIL`、`APP_SECURITY_BOOTSTRAP_ADMIN_DISPLAY_NAME` 覆盖对应标识。默认不启用初始化，也不在仓库内保存初始密码。
 
-启动时，初始化器在事务中锁定 `platform_admin_bootstrap` 单例行，分别为两个管理员创建个人租户、`user_account`、默认工作区和 OWNER 成员关系；邮箱身份仅绑定邮箱管理员，用户名身份仅绑定备用管理员。两个账户各自保存以 BCrypt 工作因子 12 编码的密码哈希。若初始化标记已消费或平台已存在管理员，不会创建账户或重设密码；用户名或邮箱已绑定给其他账户时启动失败且不覆盖现有身份。初始化成功后可从运行环境移除初始密码。已有 `APP_SECURITY_BOOTSTRAP_ADMIN_USER_ID` 是晋升既有账户的兼容路径，与新账户初始化共用一次性标记；该兼容路径不会自动创建备用账户。
+启动时，初始化器在事务中锁定 `platform_admin_bootstrap` 单例行，分别为两个管理员创建个人租户、`user_account`、默认工作区和 OWNER 成员关系；邮箱身份仅绑定邮箱管理员，用户名身份仅绑定备用管理员。两个账户各自保存以 BCrypt 工作因子 12 编码的密码哈希。若初始化标记已消费或平台已存在管理员，不会创建账户或重设密码；在 `APP_SECURITY_BOOTSTRAP_ADMIN_ENABLED=true` 时，会尝试把配置用户名绑定到与配置邮箱完全匹配的活动平台管理员，只有邮箱身份和账户均为活动状态、且该用户名尚未绑定时才创建关联。不会恢复已撤销身份或覆盖其他账户的绑定，未匹配或冲突会输出不含邮箱、用户名和密码的原因码。初始化成功后可从运行环境移除初始密码。已有 `APP_SECURITY_BOOTSTRAP_ADMIN_USER_ID` 是晋升既有账户的兼容路径，与新账户初始化共用一次性标记；该兼容路径不会自动创建备用账户。
 
 登录界面接受邮箱或用户名。新请求使用 `identifier` 字段；服务端仍接受旧客户端提交的 `email` 字段作为兼容别名。
 

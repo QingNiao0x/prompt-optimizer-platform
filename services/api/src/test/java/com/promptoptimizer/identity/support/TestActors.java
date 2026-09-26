@@ -1,7 +1,7 @@
 package com.promptoptimizer.identity.support;
 
-import com.promptoptimizer.identity.application.ActorIdentity;
-import com.promptoptimizer.identity.application.CurrentActor;
+import com.promptoptimizer.identity.service.ActorIdentity;
+import com.promptoptimizer.identity.service.CurrentActor;
 
 import java.util.UUID;
 

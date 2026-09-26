@@ -1,7 +1,7 @@
 package com.promptoptimizer.identity.infrastructure.registration;
 
-import com.promptoptimizer.identity.application.EmailVerificationPolicy;
-import com.promptoptimizer.identity.application.EmailVerificationStore;
+import com.promptoptimizer.identity.service.EmailVerificationPolicy;
+import com.promptoptimizer.identity.service.EmailVerificationStore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.data.redis.core.StringRedisTemplate;

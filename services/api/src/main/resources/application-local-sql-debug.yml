@@ -1,0 +1,15 @@
+# 仅用于本地 SQL 排查；会记录所有 SQL、执行耗时及绑定值（可能包含邮箱等个人信息），禁止在生产环境启用。
+decorator:
+  datasource:
+    enabled: true
+    p6spy:
+      enable-logging: true
+      logging: slf4j
+      multiline: true
+      log-format: "[P6SPY] time:%(executionTime)ms | category:%(category) | sql:%(sqlSingleLine)"
+
+logging:
+  level:
+    p6spy: INFO
+    # 同时记录身份 Mapper 的参数与结果行数，便于区分 MyBatis 原始绑定值和 P6Spy 展示文本。
+    com.promptoptimizer.identity.infrastructure.mapper.UserIdentityMapper: DEBUG

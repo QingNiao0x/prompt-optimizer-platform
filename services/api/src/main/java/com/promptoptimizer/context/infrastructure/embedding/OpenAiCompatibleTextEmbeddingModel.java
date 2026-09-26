@@ -2,7 +2,7 @@ package com.promptoptimizer.context.infrastructure.embedding;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.promptoptimizer.common.logging.ModelCallLogger;
-import com.promptoptimizer.context.application.TextEmbeddingModel;
+import com.promptoptimizer.context.service.TextEmbeddingModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.ResourceAccessException;

@@ -1,6 +1,30 @@
 # 项目协作入口
 
-本文件适用于本仓库。以下规则用于明确任务边界，不替代系统、运行环境或用户明确设置的批准要求。
+本文件适用于本仓库。以下规则用于明确任务边界，不替代系统、运行环境或用户明确设置的批准要求。Cursor、Codex 及其他读取本文件的 AI 都以此处为项目约束。
+
+## 项目上下文
+
+本仓库是 Prompt Optimizer Platform：把模糊自然语言整理成可执行的结构化提示词。技术栈为 Vue 3 + Vite + TypeScript + Element Plus，以及 Java 21 + Spring Boot 3 模块化单体；数据用 PostgreSQL 16，短时状态用 Redis 7。产品只生成提示词，不执行用户任务。
+
+新会话开始处理本仓库任务前，先读本文件与 `CONTEXT.md`。涉及模块、接口或测试时，从 `docs/README.md` 找到对应文档，再以代码、配置和测试核对。文档与实现不一致时，以代码为准，并说明差异。使用 `CONTEXT.md` 中的术语：原始提示词、优化提示词、项目上下文、上下文摘要、优化会话、优化记录、模型供应商、工作区、租户、提示词增强、四要素结构、权限红线。
+
+前端 `apps/web`：页面在 `src/pages`，状态在 `src/stores`，请求在 `src/services`，项目索引与 Plan 草稿在 `src/features` 和 `src/workers`。浏览器只处理用户主动选择的文件，本地索引不默认持久化源码。
+
+后端 `services/api` 包 `com.promptoptimizer`：`enhancement` 编排直接增强与 Plan，`context` 分析上下文，`policy` 处理权限红线，`provider` 调用 Mock 或 OpenAI 兼容模型，`history` 保存优化记录，`identity` 负责登录与 `CurrentActor`。Controller 做协议转换，业务在应用服务；Plan 所有权只来自服务端身份。前端通过 Vite 将 `/api` 代理到后端。模型密钥在服务端，不在浏览器配置。
+
+- `apps/web/vite.config.ts`：开发端口、`@` 别名、`/api` 代理、Vitest 范围。
+- `services/api/pom.xml`：Java 21 与 Spring Boot 依赖。
+- `services/api/src/main/resources/db/migration`：Flyway 前向迁移，决定当前表结构。已应用的迁移不回改。
+- 进度看 `README.md` 第 5 节和 `docs/待办事项.md`。已有工作台、Plan、上下文分析、历史和邮箱登录；用户管理完善、额度计费、浏览器插件仍待完成。实现前用代码确认，不把待办写成已完成。
+
+## 前端风格一致性
+
+修改或新增 `apps/web` 页面时，保持与当前产品一致是首要原则。先对照相邻页面和 `apps/web/src/styles/base.css`，再写界面；不为单个功能另起一套视觉或交互。
+
+- 布局：工作台继续使用现有三栏（`workbench-grid`：上下文、原始提示词、优化结果）。视觉参照 `docs/design-preview/prompt-optimizer-ui-style-preview.html` 的推荐方案「QingNiao Midnight Workbench」（深色画布、蓝紫强调、10–14px 圆角）。落地时使用 `base.css` 已有的 `glass-light` / `glass-dark` 变量，不新增第三套配色。
+- 组件：按钮、输入框、弹窗使用 Element Plus，颜色和圆角走已映射的 `--el-*` 变量。
+- 交互：状态放进已有 Pinia store，路由沿用 `src/router`；成功、失败和确认分别用 `ElMessage`、`ElMessageBox`。
+- 代码：Vue 与 TypeScript 遵循 `docs/development/前后端代码注释约定.md`。
 
 ## 项目入口与开发规范
 
@@ -32,7 +56,19 @@
 - 字段注释应说明业务用途。外键字段需指出引用表和数据范围；可空字段应说明何时为空；时间、金额、计数等字段应注明单位、时区或估算口径；特殊约束应解释其业务影响。
 - CHECK 或枚举字典字段必须列出数据库允许的每个代码值及其业务含义，并注明默认值和是否存在预留但当前未开放的值。Java 枚举、实体字段说明和数据库注释中的值域必须一致；没有数据库 CHECK 的字符串字段不得写成受数据库约束的枚举。
 - JSON/JSONB 字段必须说明顶层结构、当前已知键或元素类型、默认值、是否允许为空，以及是否由数据库强制校验结构。结构尚未固定时要明确写为“当前无固定键约束”，不得猜测业务字段。
-- 新增 JPA 持久化实体时，类级 Javadoc 必须说明对应表、业务职责、租户/工作区范围和持久化边界；每个映射字段需有简短业务注释，重点说明主外键、枚举代码、JSON 结构、敏感数据和逻辑删除语义。样板 getter/setter 不重复写注释。
-- 非 JPA 表仍需在迁移中完整注释；若使用 JDBC、记录类或其他映射方式，应在相应映射类型上说明表职责和关键字段语义。
+- 新增 MyBatis 持久化映射类型时，Mapper 接口与 XML namespace、语句 ID 必须一一对应；结果映射类需说明对应表、业务职责、租户/工作区范围和持久化边界，重点说明主外键、枚举代码、JSON 结构、敏感数据和逻辑删除语义。
+- MyBatis SQL 统一放在 `services/api/src/main/resources/mapper/<module>/` 下的 XML；Java Mapper 只声明类型安全的方法签名，不使用注解 SQL、字符串拼接或 `${}` 注入外部值。数据库字段注释继续按前向 Flyway 迁移维护。
+- 对于记录类、DTO 或其他非实体映射方式，应在相应映射类型上说明表职责和关键字段语义；样板访问器不重复写注释。
 - 已退役或已删除的表只保留历史迁移中的历史说明；不得把历史表写成当前有效模型，也不得为其创建新的运行期注释语句。
 - 数据库注释不得包含密码、API Key、Token、私钥、真实用户数据或具体部署密钥；注释描述结构和业务语义，不记录环境值。
+
+## Java 与 MyBatis-Plus 约定
+
+- 包名全小写；类、接口使用 UpperCamelCase；方法和字段使用 lowerCamelCase；常量使用全大写下划线。Mapper 接口以 `Mapper` 结尾，XML 文件名与接口名一致，namespace 使用接口全限定名，语句 ID 使用接口方法名。
+- 固定业务状态优先使用有明确值域的枚举或集中常量，避免散落魔法字符串；外部值在进入应用服务前完成空值、格式、范围和长度校验。
+- SQL 只写在按模块划分的 Mapper XML 中。所有值使用 `#{}` 绑定；禁止 `${}`、拼接用户输入、在 Java 中嵌入 SQL 或用 `@Select` 等注解保存 SQL。动态列名或排序键必须来自代码白名单。
+- 查询历史或业务数据时显式带上租户、工作区及必要的用户范围；逻辑删除模型的列表、详情和恢复路径必须遵守 `deleted_at` 语义。写操作在应用服务或专用持久化应用服务中声明清晰事务边界。
+- 优先使用不可变 DTO、record 和局部变量；方法聚焦单一业务步骤。新增公共类、公共方法和非平凡私有方法补充简洁 Javadoc，解释用途、边界及必要的异常。
+- 预期业务异常使用项目异常类型并返回稳定、可读的信息；不可预期异常保留原始 cause 交由统一异常处理，不吞异常、不伪造成功结果。
+- 使用 SLF4J 参数化日志，不用 `System.out`、`printStackTrace` 或字符串拼接。日志避免原始请求正文、密码、Token、API Key、私钥、密码哈希和不必要的个人信息；可用时携带 requestId 与稳定事件代码。
+- Mapper 方法和 XML 参数必须一一对应。新增复杂映射、JSONB TypeHandler、分页语句时为正常、异常和边界行为补充测试；分页使用配置好的 MyBatis-Plus 分页拦截器，并校验页码与单页上限。

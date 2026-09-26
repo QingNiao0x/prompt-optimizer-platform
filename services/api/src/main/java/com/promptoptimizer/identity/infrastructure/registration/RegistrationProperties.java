@@ -1,6 +1,6 @@
 package com.promptoptimizer.identity.infrastructure.registration;
 
-import com.promptoptimizer.identity.application.EmailVerificationPolicy;
+import com.promptoptimizer.identity.service.EmailVerificationPolicy;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.boot.context.properties.ConfigurationProperties;

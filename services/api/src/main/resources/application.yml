@@ -1,3 +1,8 @@
+# 默认不装饰数据库连接；SQL 诊断只由 local-sql-debug profile 显式开启。
+decorator:
+  datasource:
+    enabled: false
+
 spring:
   application:
     name: prompt-optimizer-api
@@ -7,15 +12,16 @@ spring:
     password: ${DB_PASSWORD:Admin@123}
     hikari:
       maximum-pool-size: ${DB_POOL_MAX_SIZE:10}
-  jpa:
-    open-in-view: false
-    hibernate:
-      ddl-auto: validate
   flyway:
     enabled: ${FLYWAY_ENABLED:true}
   data:
     redis:
       url: ${REDIS_URL:redis://localhost:6379}
+  session:
+    store-type: redis
+    timeout: ${AUTH_SESSION_TIMEOUT:8h}
+    redis:
+      namespace: prompt-optimizer:session
   mail:
     host: ${SMTP_HOST:}
     port: ${SMTP_PORT:587}
@@ -30,6 +36,17 @@ spring:
           connectiontimeout: ${SMTP_CONNECTION_TIMEOUT_MS:5000}
           timeout: ${SMTP_READ_TIMEOUT_MS:10000}
           writetimeout: ${SMTP_WRITE_TIMEOUT_MS:10000}
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-handlers-package: com.promptoptimizer.common.persistence
+  configuration:
+    map-underscore-to-camel-case: true
+    # 枚举按名称写入，避免 MyBatis-Plus 默认按序号保存 EMAIL/USERNAME。
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+  global-config:
+    db-config:
+      id-type: input
 
 server:
   port: ${SERVER_PORT:9000}
@@ -57,8 +74,7 @@ management:
         enabled: true
 
 logging:
-  pattern:
-    level: "%5p [requestId:%X{requestId}]"
+  config: classpath:logback-spring.xml
 
 app:
   planning:
@@ -83,6 +99,12 @@ app:
       email: ${LOCAL_AUTH_EMAIL:demo@local}
       password: ${LOCAL_AUTH_PASSWORD:}
       display-name: ${LOCAL_AUTH_DISPLAY_NAME:Local Demo User}
+    login-guard:
+      # 同一登录标识连续失败 5 次后锁定 10 分钟；同一来源地址 30 次后同样锁定。
+      identifier-limit: ${LOGIN_FAILURE_LIMIT:5}
+      address-limit: ${LOGIN_ADDRESS_FAILURE_LIMIT:30}
+      lock-duration: ${LOGIN_LOCK_DURATION:10m}
+      require-redis: ${LOGIN_GUARD_REQUIRE_REDIS:true}
     registration:
       enabled: ${EMAIL_REGISTRATION_ENABLED:true}
       # disabled / log / smtp。log 会输出验证码，只允许本地开发显式启用。

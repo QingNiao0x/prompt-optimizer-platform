@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onScopeDispose, ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-import { getApiErrorMessage } from '@/services/http';
+import { getApiErrorMessage, httpClient } from '@/services/http';
 import { requestRegistrationCode } from '@/services/authApi';
 import { validateRegistrationAccount } from '@/features/auth/registrationAccount';
 
@@ -36,6 +36,8 @@ const agreementAccepted = ref(false);
 const requestingCode = ref(false);
 const resendAfterSeconds = ref(0);
 const verificationRecipient = ref('');
+const captcha = ref('');
+const captchaUrl = ref('');
 const accountInput = ref<HTMLInputElement>();
 let resendTimer: number | undefined;
 
@@ -58,6 +60,9 @@ const registrationBlockReason = computed((): string => {
   }
   if (password.value.length < 8) {
     return '密码至少需要 8 个字符。';
+  }
+  if (!/\p{L}/u.test(password.value) || !/\d/.test(password.value)) {
+    return '密码须同时包含字母和数字。';
   }
   if (password.value !== confirmPassword.value) {
     return '两次输入的密码不一致。';
@@ -181,6 +186,31 @@ const handleRequestCode = async (): Promise<void> => {
   }
 };
 
+const refreshCaptcha = async (): Promise<void> => {
+  try {
+    const response = await httpClient.get<Blob>('/api/v1/auth/captcha', {
+      responseType: 'blob',
+      headers: { Accept: 'image/png' },
+    });
+    if (captchaUrl.value.startsWith('blob:')) {
+      URL.revokeObjectURL(captchaUrl.value);
+    }
+    captchaUrl.value = URL.createObjectURL(response.data);
+  } catch (error: unknown) {
+    errorMessage.value = getApiErrorMessage(error);
+  }
+};
+
+watch(
+  () => props.modelValue && view.value === 'password',
+  (visible) => {
+    if (visible) {
+      void refreshCaptcha();
+    }
+  },
+  { immediate: true },
+);
+
 const handleSubmit = async (event: Event): Promise<void> => {
   event.preventDefault();
   if (submitting.value || view.value === 'qr') {
@@ -205,11 +235,19 @@ const handleSubmit = async (event: Event): Promise<void> => {
       return;
     }
 
-    await auth.login({ identifier: account.value.trim(), password: password.value });
+    await auth.login({
+      identifier: account.value.trim(),
+      password: password.value,
+      captcha: captcha.value.trim(),
+    });
     // 新身份始终从干净的应用内存开始，不复用另一账号的计划和文件。
     window.location.replace('/workbench');
   } catch (error: unknown) {
     errorMessage.value = getApiErrorMessage(error);
+    if (view.value === 'password') {
+      captcha.value = '';
+      void refreshCaptcha();
+    }
   } finally {
     if (view.value === 'password') {
       password.value = '';
@@ -380,8 +418,30 @@ const enterWorkbench = (): void => {
                 :class="{ 'login-modal__password-hint--error': password.length > 0 && password.length < 8 }"
                 aria-live="polite"
               >
-                已输入 {{ password.length }} 个字符，至少需要 8 个字符。
+                已输入 {{ password.length }} 个字符，至少 8 位，且须同时包含字母和数字。
               </small>
+            </label>
+            <label v-if="view === 'password'">
+              图形验证码
+              <span class="login-modal__code-row">
+                <input
+                  v-model="captcha"
+                  type="text"
+                  required
+                  maxlength="4"
+                  name="captcha"
+                  autocomplete="off"
+                  placeholder="请输入图中字符"
+                >
+                <button
+                  class="login-modal__captcha"
+                  type="button"
+                  aria-label="刷新图形验证码"
+                  @click="refreshCaptcha"
+                >
+                  <img v-if="captchaUrl" :src="captchaUrl" alt="">
+                </button>
+              </span>
             </label>
             <label v-if="view === 'register'">
               确认密码
@@ -444,7 +504,7 @@ const enterWorkbench = (): void => {
               创建账号前：{{ registrationBlockReason }}
             </small>
             <small v-if="view === 'register'" id="register-preview-note">
-              验证码 5 分钟内有效，60 秒后可重发；密码至少 8 个字符。
+              验证码 5 分钟内有效，60 秒后可重发；密码至少 8 位，且须同时包含字母和数字。
             </small>
             <small v-else>使用注册邮箱或管理员用户名及密码登录。</small>
           </form>
@@ -782,6 +842,21 @@ h2 {
 .login-modal__code-row button:disabled {
   color: var(--text-muted);
   cursor: not-allowed;
+}
+
+.login-modal__captcha {
+  display: grid;
+  padding: 0;
+  overflow: hidden;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: #e8f0fb;
+}
+
+.login-modal__captcha img {
+  display: block;
+  width: 160px;
+  height: 48px;
 }
 
 .login-modal__form > p {

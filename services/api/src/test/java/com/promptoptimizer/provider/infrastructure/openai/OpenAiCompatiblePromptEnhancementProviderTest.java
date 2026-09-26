@@ -2,7 +2,7 @@ package com.promptoptimizer.provider.infrastructure.openai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.domain.ContextSnapshot;
-import com.promptoptimizer.enhancement.api.EnhancementOptions;
+import com.promptoptimizer.enhancement.dto.EnhancementOptions;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
 import com.promptoptimizer.enhancement.domain.PlanningFactCard;

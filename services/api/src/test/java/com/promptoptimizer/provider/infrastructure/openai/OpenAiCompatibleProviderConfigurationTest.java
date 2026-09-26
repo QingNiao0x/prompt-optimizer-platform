@@ -1,7 +1,7 @@
 package com.promptoptimizer.provider.infrastructure.openai;
 
-import com.promptoptimizer.context.application.DocumentSummaryModel;
-import com.promptoptimizer.provider.application.PromptEnhancementProvider;
+import com.promptoptimizer.context.service.DocumentSummaryModel;
+import com.promptoptimizer.provider.service.PromptEnhancementProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;

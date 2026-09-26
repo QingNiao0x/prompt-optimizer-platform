@@ -1,10 +1,10 @@
 package com.promptoptimizer.provider.infrastructure;
 
 import com.promptoptimizer.context.domain.ContextSnapshot;
-import com.promptoptimizer.enhancement.api.ConversationMessage;
+import com.promptoptimizer.enhancement.dto.ConversationMessage;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
-import com.promptoptimizer.provider.application.PromptEnhancementProvider;
+import com.promptoptimizer.provider.service.PromptEnhancementProvider;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

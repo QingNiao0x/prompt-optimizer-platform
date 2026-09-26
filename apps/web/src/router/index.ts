@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { reportClientAnalyticsEventBestEffort } from '@/services/adminAnalyticsApi';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -40,6 +41,12 @@ const router = createRouter({
       component: () => import('@/pages/AdminModelsPage.vue'),
       meta: { title: '平台模型管理', platformAdmin: true },
     },
+    {
+      path: '/admin/analytics',
+      name: 'admin-analytics',
+      component: () => import('@/pages/AdminAnalyticsPage.vue'),
+      meta: { title: '平台统计与日志', platformAdmin: true },
+    },
   ],
 });
 
@@ -61,6 +68,9 @@ router.beforeEach(async (to) => {
 router.afterEach((to) => {
   const pageTitle = typeof to.meta.title === 'string' ? to.meta.title : '工作台';
   document.title = `${pageTitle} · Prompt Optimizer`;
+  if (to.name !== 'login' && useAuthStore().isAuthenticated) {
+    reportClientAnalyticsEventBestEffort('APP_VISIT');
+  }
 });
 
 export default router;

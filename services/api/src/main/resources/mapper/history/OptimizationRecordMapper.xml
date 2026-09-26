@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.history.mapper.OptimizationRecordMapper">
+
+    <resultMap id="optimizationRecord" type="com.promptoptimizer.history.entity.OptimizationRecordEntity">
+        <id column="id" property="id"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="workspace_id" property="workspaceId"/>
+        <result column="session_id" property="sessionId"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="template_code" property="templateCode"/>
+        <result column="raw_prompt" property="rawPrompt"/>
+        <result column="optimized_prompt" property="optimizedPrompt"/>
+        <result column="context_snapshot" property="contextSnapshot" javaType="java.util.Map"
+                typeHandler="com.promptoptimizer.common.persistence.JsonbObjectTypeHandler"/>
+        <result column="result_metadata" property="resultMetadata" javaType="java.util.Map"
+                typeHandler="com.promptoptimizer.common.persistence.JsonbObjectTypeHandler"/>
+        <result column="permission_policy" property="permissionPolicy" javaType="java.util.Map"
+                typeHandler="com.promptoptimizer.common.persistence.JsonbObjectTypeHandler"/>
+        <result column="latency_ms" property="latencyMs"/>
+        <result column="retention_until" property="retentionUntil"/>
+        <result column="deleted_at" property="deletedAt"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <sql id="recordColumns">
+        id, tenant_id, workspace_id, session_id, created_by, template_code, raw_prompt,
+        optimized_prompt, context_snapshot, result_metadata, permission_policy, latency_ms,
+        retention_until, deleted_at, created_at
+    </sql>
+
+    <select id="selectPageByScope" resultMap="optimizationRecord">
+        SELECT <include refid="recordColumns"/>
+          FROM optimization_record
+         WHERE tenant_id = #{tenantId}
+           AND workspace_id = #{workspaceId}
+           AND deleted_at IS NULL
+        <if test="keyword != null and keyword != ''">
+           AND raw_prompt ILIKE '%' || #{keyword} || '%' ESCAPE E'\\'
+        </if>
+        <if test="createdFrom != null and createdToExclusive != null">
+           AND created_at &gt;= #{createdFrom}
+           AND created_at &lt; #{createdToExclusive}
+        </if>
+         ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByIdAndScope" resultMap="optimizationRecord">
+        SELECT <include refid="recordColumns"/>
+          FROM optimization_record
+         WHERE id = #{id}
+           AND tenant_id = #{tenantId}
+           AND workspace_id = #{workspaceId}
+           AND deleted_at IS NULL
+    </select>
+
+    <update id="markDeletedByIdAndScope">
+        UPDATE optimization_record
+           SET deleted_at = #{deletedAt}
+         WHERE id = #{id}
+           AND tenant_id = #{tenantId}
+           AND workspace_id = #{workspaceId}
+           AND deleted_at IS NULL
+    </update>
+
+    <insert id="insertRecord">
+        INSERT INTO optimization_record (
+            id, tenant_id, workspace_id, session_id, created_by, template_code, raw_prompt,
+            optimized_prompt, context_snapshot, result_metadata, permission_policy, latency_ms,
+            retention_until, deleted_at, created_at
+        ) VALUES (
+            #{record.id}, #{record.tenantId}, #{record.workspaceId}, #{record.sessionId},
+            #{record.createdBy}, #{record.templateCode}, #{record.rawPrompt}, #{record.optimizedPrompt},
+            CAST(#{record.contextSnapshot,typeHandler=com.promptoptimizer.common.persistence.JsonbObjectTypeHandler,jdbcType=VARCHAR} AS jsonb),
+            CAST(#{record.resultMetadata,typeHandler=com.promptoptimizer.common.persistence.JsonbObjectTypeHandler,jdbcType=VARCHAR} AS jsonb),
+            CAST(#{record.permissionPolicy,typeHandler=com.promptoptimizer.common.persistence.JsonbObjectTypeHandler,jdbcType=VARCHAR} AS jsonb),
+            #{record.latencyMs}, #{record.retentionUntil}, #{record.deletedAt}, #{record.createdAt}
+        )
+    </insert>
+</mapper>

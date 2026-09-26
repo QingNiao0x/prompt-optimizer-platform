@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper">
+
+    <resultMap id="accountCounts" type="com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper$AccountCounts">
+        <constructor>
+            <arg column="registered_accounts" javaType="_long"/>
+            <arg column="new_accounts" javaType="_long"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="usageCounts" type="com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper$UsageCounts">
+        <constructor>
+            <arg column="access_count" javaType="_long"/>
+            <arg column="unique_visitors" javaType="_long"/>
+            <arg column="active_users" javaType="_long"/>
+            <arg column="actual_users" javaType="_long"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="dailyMetric" type="com.promptoptimizer.analytics.dto.AnalyticsViews$DailyMetric">
+        <constructor>
+            <arg column="activity_day" javaType="java.time.LocalDate"/>
+            <arg column="access_count" javaType="_long"/>
+            <arg column="unique_visitors" javaType="_long"/>
+            <arg column="active_users" javaType="_long"/>
+            <arg column="actual_users" javaType="_long"/>
+            <arg column="new_accounts" javaType="_long"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="hourlyMetric" type="com.promptoptimizer.analytics.dto.AnalyticsViews$HourlyMetric">
+        <constructor>
+            <arg column="hour" javaType="_int"/>
+            <arg column="operation_count" javaType="_long"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="monthlyMetric" type="com.promptoptimizer.analytics.dto.AnalyticsViews$MonthlyMetric">
+        <constructor>
+            <arg column="month" javaType="java.lang.String"/>
+            <arg column="operation_count" javaType="_long"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="deviceMetric" type="com.promptoptimizer.analytics.dto.AnalyticsViews$DeviceMetric">
+        <constructor>
+            <arg column="device_type" javaType="java.lang.String"/>
+            <arg column="login_count" javaType="_long"/>
+            <arg column="unique_users" javaType="_long"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="userRank" type="com.promptoptimizer.analytics.dto.AnalyticsViews$UserRank">
+        <constructor>
+            <arg column="user_id" javaType="java.util.UUID"/>
+            <arg column="display_name" javaType="java.lang.String"/>
+            <arg column="operation_count" javaType="_long"/>
+            <arg column="login_count" javaType="_long"/>
+            <arg column="active_days" javaType="_long"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="operationLog" type="com.promptoptimizer.analytics.dto.AnalyticsViews$OperationLog">
+        <constructor>
+            <arg column="event_id" javaType="java.util.UUID"/>
+            <arg column="user_id" javaType="java.util.UUID"/>
+            <arg column="display_name" javaType="java.lang.String"/>
+            <arg column="event_type" javaType="java.lang.String"/>
+            <arg column="occurred_at" javaType="java.time.OffsetDateTime"/>
+            <arg column="client_ip" javaType="java.lang.String"/>
+            <arg column="country" javaType="java.lang.String"/>
+            <arg column="province" javaType="java.lang.String"/>
+            <arg column="city" javaType="java.lang.String"/>
+            <arg column="login_country" javaType="java.lang.String"/>
+            <arg column="login_province" javaType="java.lang.String"/>
+            <arg column="login_city" javaType="java.lang.String"/>
+            <arg column="device_type" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+
+    <sql id="usageEventPredicate">
+        event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
+                       'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
+    </sql>
+
+    <select id="accountCounts" resultMap="accountCounts">
+        SELECT (SELECT COUNT(*) FROM user_account
+                 WHERE (CAST(#{userId} AS uuid) IS NULL OR id = #{userId})) AS registered_accounts,
+               (SELECT COUNT(*) FROM user_account
+                 WHERE created_at &gt;= #{period.fromInclusive}
+                   AND created_at &lt; #{period.toExclusive}
+                   AND (CAST(#{userId} AS uuid) IS NULL OR id = #{userId})) AS new_accounts
+    </select>
+
+    <select id="usageCounts" resultMap="usageCounts">
+        SELECT COUNT(*) FILTER (WHERE event_type = 'APP_VISIT') AS access_count,
+               COUNT(DISTINCT actor_user_id) FILTER (WHERE event_type = 'APP_VISIT') AS unique_visitors,
+               COUNT(DISTINCT actor_user_id) AS active_users,
+               COUNT(DISTINCT actor_user_id) FILTER (WHERE <include refid="usageEventPredicate"/>) AS actual_users
+          FROM audit_event
+         WHERE actor_user_id IS NOT NULL
+           AND occurred_at &gt;= #{period.fromInclusive}
+           AND occurred_at &lt; #{period.toExclusive}
+           AND (CAST(#{userId} AS uuid) IS NULL OR actor_user_id = #{userId})
+    </select>
+
+    <select id="dailyMetrics" resultMap="dailyMetric">
+        WITH days AS (
+            SELECT generated.day::date AS activity_day
+              FROM generate_series(
+                       CAST(#{period.fromDate} AS timestamp without time zone),
+                       CAST(#{period.toDateExclusive} AS timestamp without time zone) - interval '1 day',
+                       interval '1 day'
+                   ) AS generated(day)
+        ), activity AS (
+            SELECT (e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date AS activity_day,
+                   COUNT(*) FILTER (WHERE e.event_type = 'APP_VISIT') AS access_count,
+                   COUNT(DISTINCT e.actor_user_id) FILTER (WHERE e.event_type = 'APP_VISIT') AS unique_visitors,
+                   COUNT(DISTINCT e.actor_user_id) AS active_users,
+                   COUNT(DISTINCT e.actor_user_id) FILTER (WHERE <include refid="usageEventPredicate"/>) AS actual_users
+              FROM audit_event e
+             WHERE e.actor_user_id IS NOT NULL
+               AND e.occurred_at &gt;= #{period.fromInclusive}
+               AND e.occurred_at &lt; #{period.toExclusive}
+               AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+             GROUP BY (e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date
+        ), accounts AS (
+            SELECT (u.created_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date AS activity_day,
+                   COUNT(*) AS new_accounts
+              FROM user_account u
+             WHERE u.created_at &gt;= #{period.fromInclusive}
+               AND u.created_at &lt; #{period.toExclusive}
+               AND (CAST(#{userId} AS uuid) IS NULL OR u.id = #{userId})
+             GROUP BY (u.created_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date
+        )
+        SELECT days.activity_day,
+               COALESCE(activity.access_count, 0) AS access_count,
+               COALESCE(activity.unique_visitors, 0) AS unique_visitors,
+               COALESCE(activity.active_users, 0) AS active_users,
+               COALESCE(activity.actual_users, 0) AS actual_users,
+               COALESCE(accounts.new_accounts, 0) AS new_accounts
+          FROM days
+          LEFT JOIN activity USING (activity_day)
+          LEFT JOIN accounts USING (activity_day)
+         ORDER BY days.activity_day
+    </select>
+
+    <select id="hourlyUsage" resultMap="hourlyMetric">
+        WITH hours AS (SELECT generate_series(0, 23) AS hour)
+        SELECT hours.hour, COUNT(e.id) AS operation_count
+          FROM hours
+          LEFT JOIN audit_event e
+            ON EXTRACT(HOUR FROM (e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text)))::integer = hours.hour
+           AND e.occurred_at &gt;= #{period.fromInclusive}
+           AND e.occurred_at &lt; #{period.toExclusive}
+           AND e.actor_user_id IS NOT NULL
+           AND e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
+                                'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
+           AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+         GROUP BY hours.hour
+         ORDER BY hours.hour
+    </select>
+
+    <select id="monthlyUsage" resultMap="monthlyMetric">
+        WITH months AS (
+            SELECT generated.month_start
+              FROM generate_series(date_trunc('month', CAST(#{period.fromDate} AS date)),
+                                   date_trunc('month', CAST(#{toDateLast} AS date)),
+                                   interval '1 month') AS generated(month_start)
+        ), activity AS (
+            SELECT date_trunc('month', e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text)) AS month_start,
+                   COUNT(*) AS operation_count
+              FROM audit_event e
+             WHERE e.occurred_at &gt;= #{period.fromInclusive}
+               AND e.occurred_at &lt; #{period.toExclusive}
+               AND e.actor_user_id IS NOT NULL
+               AND e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
+                                    'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
+               AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+             GROUP BY date_trunc('month', e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))
+        )
+        SELECT to_char(months.month_start, 'YYYY-MM') AS month,
+               COALESCE(activity.operation_count, 0) AS operation_count
+          FROM months LEFT JOIN activity USING (month_start)
+         ORDER BY months.month_start
+    </select>
+
+    <select id="deviceDistribution" resultMap="deviceMetric">
+        SELECT COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN') AS device_type,
+               COUNT(*) AS login_count,
+               COUNT(DISTINCT e.actor_user_id) AS unique_users
+          FROM audit_event e
+         WHERE e.event_type = 'LOGIN'
+           AND e.actor_user_id IS NOT NULL
+           AND e.occurred_at &gt;= #{period.fromInclusive}
+           AND e.occurred_at &lt; #{period.toExclusive}
+           AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+         GROUP BY COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN')
+         ORDER BY login_count DESC, device_type
+    </select>
+
+    <select id="usageRanking" resultMap="userRank">
+        SELECT e.actor_user_id AS user_id,
+               COALESCE(u.display_name, '') AS display_name,
+               COUNT(*) FILTER (WHERE e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED',
+                     'CONTEXT_PREPARED', 'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')) AS operation_count,
+               COUNT(*) FILTER (WHERE e.event_type = 'LOGIN') AS login_count,
+               COUNT(DISTINCT (e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date) AS active_days
+          FROM audit_event e
+          LEFT JOIN user_account u ON u.id = e.actor_user_id
+         WHERE e.actor_user_id IS NOT NULL
+           AND e.occurred_at &gt;= #{period.fromInclusive}
+           AND e.occurred_at &lt; #{period.toExclusive}
+           AND (e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
+                                 'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
+                OR e.event_type = 'LOGIN')
+           AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+         GROUP BY e.actor_user_id, u.display_name
+        HAVING COUNT(*) FILTER (WHERE e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED',
+                     'CONTEXT_PREPARED', 'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')) &gt; 0
+         ORDER BY operation_count DESC, login_count DESC, e.actor_user_id
+         LIMIT #{limit}
+    </select>
+
+    <select id="selectOperationLogs" resultMap="operationLog">
+        SELECT e.id AS event_id, e.actor_user_id AS user_id,
+               COALESCE(u.display_name, '') AS display_name, e.event_type, e.occurred_at,
+               e.details-&gt;&gt;'clientIp' AS client_ip,
+               e.details-&gt;&gt;'country' AS country,
+               e.details-&gt;&gt;'province' AS province,
+               e.details-&gt;&gt;'city' AS city,
+               e.details-&gt;&gt;'loginCountry' AS login_country,
+               e.details-&gt;&gt;'loginProvince' AS login_province,
+               e.details-&gt;&gt;'loginCity' AS login_city,
+               COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN') AS device_type
+          FROM audit_event e
+          LEFT JOIN user_account u ON u.id = e.actor_user_id
+         WHERE e.actor_user_id IS NOT NULL
+           AND e.occurred_at &gt;= #{fromInclusive}
+           AND e.occurred_at &lt; #{toExclusive}
+           AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+           AND (CAST(#{eventType,jdbcType=VARCHAR} AS text) IS NULL OR e.event_type = #{eventType})
+         ORDER BY e.occurred_at DESC, e.id
+    </select>
+</mapper>

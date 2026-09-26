@@ -14,10 +14,31 @@ import org.springframework.boot.test.context.SpringBootTest;
 class PromptOptimizerApplicationTests {
 
     @MockBean
-    private com.promptoptimizer.identity.infrastructure.persistence.UserAccountRepository userAccountRepository;
+    private com.promptoptimizer.identity.mapper.UserAccountMapper userAccountMapper;
 
     @MockBean
-    private com.promptoptimizer.identity.infrastructure.persistence.UserIdentityRepository userIdentityRepository;
+    private com.promptoptimizer.identity.mapper.UserIdentityMapper userIdentityMapper;
+
+    @MockBean
+    private com.promptoptimizer.identity.mapper.IdentityProvisioningMapper identityProvisioningMapper;
+
+    @MockBean
+    private com.promptoptimizer.history.mapper.OptimizationRecordMapper optimizationRecordMapper;
+
+    @MockBean
+    private com.promptoptimizer.history.mapper.OptimizationSessionMapper optimizationSessionMapper;
+
+    @MockBean
+    private com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper adminAnalyticsMapper;
+
+    @MockBean
+    private com.promptoptimizer.analytics.mapper.AuditEventMapper auditEventMapper;
+
+    @MockBean
+    private com.promptoptimizer.payment.mapper.RechargeRecordMapper rechargeRecordMapper;
+
+    @MockBean
+    private com.promptoptimizer.provider.mapper.PlatformModelMapper platformModelMapper;
 
     @Test
     void contextLoads() {

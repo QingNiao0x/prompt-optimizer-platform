@@ -1,6 +1,6 @@
 package com.promptoptimizer.provider.domain;
 
-import com.promptoptimizer.enhancement.api.ConversationMessage;
+import com.promptoptimizer.enhancement.dto.ConversationMessage;
 import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
 
 import java.util.List;

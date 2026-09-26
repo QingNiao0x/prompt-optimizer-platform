@@ -1,6 +1,6 @@
 package com.promptoptimizer.context.infrastructure.embedding;
 
-import com.promptoptimizer.context.application.TextEmbeddingModel;
+import com.promptoptimizer.context.service.TextEmbeddingModel;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;

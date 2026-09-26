@@ -1,7 +1,7 @@
 package com.promptoptimizer.identity.support;
 
-import com.promptoptimizer.identity.infrastructure.security.SecurityConfiguration;
-import com.promptoptimizer.identity.infrastructure.security.SecurityErrorWriter;
+import com.promptoptimizer.identity.security.SecurityConfiguration;
+import com.promptoptimizer.identity.security.SecurityErrorWriter;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcBuilderCustomizer;
 import org.springframework.context.annotation.Bean;

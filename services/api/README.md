@@ -1,6 +1,8 @@
 # API 后端
 
-技术栈：Java 21、Spring Boot 3、Spring MVC、Spring Data JPA、Flyway、PostgreSQL Driver、Spring Data Redis。
+技术栈：Java 21、Spring Boot 3、Spring MVC、MyBatis-Plus、Flyway、PostgreSQL Driver、Spring Data Redis。
+
+持久化使用 MyBatis-Plus Mapper；SQL 按模块放在 `src/main/resources/mapper/<module>/` 下的 XML 文件中，Mapper 接口只声明类型安全的方法。分页查询通过 PostgreSQL 方言的 MyBatis-Plus 分页拦截器执行。数据库结构仍由 Flyway 前向迁移管理；不要回改已应用的迁移。
 
 当前已完成后端核心 MVP：基础工程、统一响应与错误模型、上下文感知 Plan Mode、提示词增强编排、Mock Provider、平台服务端管理的 OpenAI 兼容 Provider、语义向量检索和可选的 Map-Reduce 全文摘要。用户可从平台发布的模型目录中选择模型；供应商端点和 API Key 仍仅由服务端管理。
 

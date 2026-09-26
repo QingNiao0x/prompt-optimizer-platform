@@ -1,9 +1,9 @@
 package com.promptoptimizer.identity.infrastructure.registration;
 
-import com.promptoptimizer.identity.application.EmailVerificationPolicy;
-import com.promptoptimizer.identity.application.EmailVerificationStore;
-import com.promptoptimizer.identity.application.InMemoryEmailVerificationStore;
-import com.promptoptimizer.identity.application.RegistrationException;
+import com.promptoptimizer.identity.service.EmailVerificationPolicy;
+import com.promptoptimizer.identity.service.EmailVerificationStore;
+import com.promptoptimizer.identity.service.InMemoryEmailVerificationStore;
+import com.promptoptimizer.identity.service.RegistrationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;

@@ -1,7 +1,7 @@
 package com.promptoptimizer.context.infrastructure.embedding;
 
-import com.promptoptimizer.context.application.SemanticVectorIndex;
-import com.promptoptimizer.context.application.TextEmbeddingModel;
+import com.promptoptimizer.context.service.SemanticVectorIndex;
+import com.promptoptimizer.context.service.TextEmbeddingModel;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.web.client.RestClientAutoConfiguration;

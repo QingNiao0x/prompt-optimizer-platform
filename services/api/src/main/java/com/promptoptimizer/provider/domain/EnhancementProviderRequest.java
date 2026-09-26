@@ -1,9 +1,9 @@
 package com.promptoptimizer.provider.domain;
 
 import com.promptoptimizer.context.domain.ContextSnapshot;
-import com.promptoptimizer.enhancement.api.ConversationMessage;
-import com.promptoptimizer.enhancement.api.EnhancementOptions;
-import com.promptoptimizer.enhancement.api.PlanAnswer;
+import com.promptoptimizer.enhancement.dto.ConversationMessage;
+import com.promptoptimizer.enhancement.dto.EnhancementOptions;
+import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.enhancement.domain.PlanningFactCard;
 import com.promptoptimizer.template.domain.PromptTemplate;
 
