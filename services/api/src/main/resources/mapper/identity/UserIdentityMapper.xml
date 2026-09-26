@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.identity.mapper.UserIdentityMapper">
+
+    <sql id="identityColumns">
+        id, user_id, identity_type, issuer, identifier, normalized_identifier,
+        status, verified_at, last_used_at, created_at, updated_at
+    </sql>
+
+    <select id="selectByLoginKey" resultType="com.promptoptimizer.identity.entity.UserIdentityEntity">
+        SELECT <include refid="identityColumns"/>
+          FROM user_identity
+         WHERE identity_type = #{identityType}
+           AND issuer = #{issuer}
+           AND normalized_identifier = #{normalizedIdentifier}
+         LIMIT 1
+    </select>
+
+    <select id="existsByLoginKey" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+              FROM user_identity
+             WHERE identity_type = #{identityType}
+               AND issuer = #{issuer}
+               AND normalized_identifier = #{normalizedIdentifier}
+        )
+    </select>
+</mapper>

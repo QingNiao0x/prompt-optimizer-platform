@@ -23,7 +23,7 @@ public class UserIdentityEntity {
     @TableId(type = IdType.INPUT)
     private UUID id;
 
-    /** 所属账户主键，外键引用 user_account.id；删除账户时身份关系随之删除。 */
+    /** 所属账户主键，外键引用 user_account.id。应用层不物理删除账户；保留期清理若删除账户行，数据库会级联清理身份。 */
     private UUID userId;
 
     /** 登录渠道；合法值及当前支持状态见 {@link UserIdentityType}，与数据库 CHECK 一致。 */

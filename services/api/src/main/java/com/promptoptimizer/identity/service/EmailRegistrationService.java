@@ -1,11 +1,9 @@
 package com.promptoptimizer.identity.service;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.promptoptimizer.identity.dto.EmailRegistrationCodeRequest;
 import com.promptoptimizer.identity.dto.EmailRegistrationCodeView;
 import com.promptoptimizer.identity.dto.EmailRegistrationRequest;
 import com.promptoptimizer.identity.domain.UserIdentityKey;
-import com.promptoptimizer.identity.entity.UserIdentityEntity;
 import com.promptoptimizer.identity.mapper.UserIdentityMapper;
 import com.promptoptimizer.identity.infrastructure.registration.RegistrationProperties;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -139,10 +137,8 @@ public class EmailRegistrationService {
     }
 
     private void ensureEmailNotRegistered(UserIdentityKey emailKey) {
-        boolean registered = identityMapper.exists(Wrappers.<UserIdentityEntity>lambdaQuery()
-                .eq(UserIdentityEntity::getIdentityType, emailKey.type())
-                .eq(UserIdentityEntity::getIssuer, emailKey.issuer())
-                .eq(UserIdentityEntity::getNormalizedIdentifier, emailKey.normalizedIdentifier()));
+        boolean registered = identityMapper.existsByLoginKey(
+                emailKey.type(), emailKey.issuer(), emailKey.normalizedIdentifier());
         if (registered) {
             throw alreadyRegistered();
         }

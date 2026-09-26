@@ -1,5 +1,6 @@
 package com.promptoptimizer.analytics.infrastructure;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
 import com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper;
 import com.promptoptimizer.analytics.mapper.AuditEventMapper;
@@ -18,10 +19,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,12 +41,39 @@ class MapperXmlConfigurationTest {
                 OptimizationSessionMapper.class, IdentityProvisioningMapper.class, UserAccountMapper.class,
                 UserIdentityMapper.class, RechargeRecordMapper.class, PlatformModelMapper.class);
         for (Class<?> mapperType : mapperTypes) {
+            assertThat(BaseMapper.class.isAssignableFrom(mapperType))
+                    .as("%s 不得继承无范围的 BaseMapper 删除和更新", mapperType.getSimpleName())
+                    .isFalse();
             for (var method : mapperType.getDeclaredMethods()) {
                 assertThat(configuration.hasStatement(mapperType.getName() + "." + method.getName()))
                         .as("Mapped XML statement %s.%s", mapperType.getSimpleName(), method.getName())
                         .isTrue();
             }
         }
+    }
+
+    @Test
+    void mapperXmlDoesNotPhysicallyDeleteBusinessRows() throws Exception {
+        Resource[] resources = new PathMatchingResourcePatternResolver()
+                .getResources("classpath*:mapper/**/*.xml");
+        assertThat(resources).isNotEmpty();
+        for (Resource resource : resources) {
+            String xml = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8)
+                    .toUpperCase(Locale.ROOT);
+            assertThat(xml)
+                    .as(resource.getFilename())
+                    .doesNotContain("<DELETE")
+                    .doesNotContain("DELETE FROM");
+        }
+
+        Configuration configuration = parseMappers();
+        String passwordUpdate = configuration.getMappedStatement(
+                        UserAccountMapper.class.getName() + ".updatePasswordHash")
+                .getBoundSql(new HashMap<>())
+                .getSql()
+                .toLowerCase(Locale.ROOT);
+        assertThat(passwordUpdate).contains("password_hash");
+        assertThat(passwordUpdate).doesNotContain("platform_role", "tenant_id =", "status =");
     }
 
     @Test

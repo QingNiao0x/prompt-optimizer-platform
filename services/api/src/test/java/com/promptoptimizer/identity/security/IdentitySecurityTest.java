@@ -52,7 +52,7 @@ class IdentitySecurityTest {
     @Test
     void databaseIdentityComesFromAccountAndMembershipNotRequestIds() {
         UserAccountEntity account = account();
-        when(identityRepository.selectOne(any())).thenReturn(emailIdentity());
+        when(identityRepository.selectByLoginKey(any(), any(), any())).thenReturn(emailIdentity());
         when(repository.selectById(TestActors.USER_ID)).thenReturn(account);
         when(repository.selectDefaultWorkspaceId(TestActors.USER_ID, TestActors.TENANT_ID))
                 .thenReturn(TestActors.WORKSPACE_ID);
@@ -91,7 +91,7 @@ class IdentitySecurityTest {
     void databaseIdentityLogsRevokedIdentityAndRejectsItBeforeLoadingAccount(CapturedOutput output) {
         UserIdentityEntity revoked = emailIdentity();
         revoked.setStatus(UserIdentityStatus.REVOKED);
-        when(identityRepository.selectOne(any())).thenReturn(revoked);
+        when(identityRepository.selectByLoginKey(any(), any(), any())).thenReturn(revoked);
         DatabaseUserDetailsService service = new DatabaseUserDetailsService(repository, identityRepository);
 
         MDC.put("requestId", "unit-auth-revoked-1");
@@ -121,7 +121,7 @@ class IdentitySecurityTest {
         identity.setIssuer("local");
         identity.setNormalizedIdentifier("admin");
         identity.setStatus(UserIdentityStatus.ACTIVE);
-        when(identityRepository.selectOne(any())).thenReturn(identity);
+        when(identityRepository.selectByLoginKey(any(), any(), any())).thenReturn(identity);
         when(repository.selectById(TestActors.USER_ID)).thenReturn(account);
         when(repository.selectDefaultWorkspaceId(TestActors.USER_ID, TestActors.TENANT_ID))
                 .thenReturn(TestActors.WORKSPACE_ID);
@@ -200,7 +200,7 @@ class IdentitySecurityTest {
     }
 
     private void stubEmailIdentity(UserAccountEntity account) {
-        when(identityRepository.selectOne(any())).thenReturn(emailIdentity());
+        when(identityRepository.selectByLoginKey(any(), any(), any())).thenReturn(emailIdentity());
         when(repository.selectById(TestActors.USER_ID)).thenReturn(account);
     }
 }

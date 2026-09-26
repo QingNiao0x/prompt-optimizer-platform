@@ -1,6 +1,5 @@
 package com.promptoptimizer.identity.security;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.promptoptimizer.identity.domain.UserIdentityKey;
 import com.promptoptimizer.identity.domain.UserIdentityStatus;
 import com.promptoptimizer.identity.mapper.UserAccountMapper;
@@ -56,11 +55,8 @@ public class DatabaseUserDetailsService implements UserDetailsService {
         } catch (IllegalArgumentException exception) {
             throw notFound("INVALID_LOGIN_IDENTIFIER", "UNKNOWN");
         }
-        UserIdentityEntity identity = identityMapper.selectOne(Wrappers.<UserIdentityEntity>lambdaQuery()
-                .eq(UserIdentityEntity::getIdentityType, key.type())
-                .eq(UserIdentityEntity::getIssuer, key.issuer())
-                .eq(UserIdentityEntity::getNormalizedIdentifier, key.normalizedIdentifier())
-                .last("LIMIT 1"));
+        UserIdentityEntity identity = identityMapper.selectByLoginKey(
+                key.type(), key.issuer(), key.normalizedIdentifier());
         if (identity == null) {
             throw notFound("IDENTITY_NOT_FOUND", key.type().name());
         }
