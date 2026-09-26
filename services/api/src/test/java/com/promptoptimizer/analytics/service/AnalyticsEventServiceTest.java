@@ -12,7 +12,13 @@ import com.promptoptimizer.identity.service.ActorIdentity;
 import com.promptoptimizer.identity.service.CurrentActor;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.postgresql.util.PSQLException;
+import org.postgresql.util.ServerErrorMessage;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -37,6 +43,7 @@ import static org.mockito.Mockito.when;
  * @author QingNiao
  * @since 0.1.0
  */
+@ExtendWith(OutputCaptureExtension.class)
 class AnalyticsEventServiceTest {
 
     private static final ActorIdentity ACTOR = new ActorIdentity(
@@ -61,10 +68,7 @@ class AnalyticsEventServiceTest {
         GeoLocationResolver unavailableGeo = ip -> {
             throw new IllegalStateException("local lookup failed");
         };
-        AnalyticsEventService service = new AnalyticsEventService(
-                actor, provider(audit), new ClientIpResolver(""), unavailableGeo,
-                new DeviceTypeResolver(), new AnalyticsSessionContext()
-        );
+        AnalyticsEventService service = service(actor, audit, unavailableGeo);
         MockHttpServletRequest request = authenticatedRequest();
 
         service.recordLogin(request);
@@ -82,23 +86,72 @@ class AnalyticsEventServiceTest {
     }
 
     @Test
-    void auditDatabaseFailureDoesNotFailTheUserOperation() {
+    void auditDatabaseFailureDoesNotFailTheUserOperation(CapturedOutput output) {
         CurrentActor actor = mock(CurrentActor.class);
         when(actor.require()).thenReturn(ACTOR);
         AuditEventMapper audit = mock(AuditEventMapper.class);
-        doThrow(new DataAccessResourceFailureException("database unavailable"))
+        doThrow(new DataAccessResourceFailureException("database unavailable INSERT INTO audit_event"))
                 .when(audit).insert(any(UUID.class), any(UUID.class), any(UUID.class), any(), any(), any());
-        AnalyticsEventService service = new AnalyticsEventService(
-                actor,
-                provider(audit),
-                new ClientIpResolver(""),
-                ip -> GeoLocation.unavailable(),
-                new DeviceTypeResolver(),
-                new AnalyticsSessionContext()
-        );
+        AnalyticsEventService service = service(actor, audit);
 
         assertThatCode(() -> service.record(AnalyticsEventType.OPTIMIZATION_SUBMITTED, authenticatedRequest()))
                 .doesNotThrowAnyException();
+        assertThat(output).contains("event=analytics.audit_write_failure")
+                .contains("requestId=request-safe-id")
+                .contains("eventType=OPTIMIZATION_SUBMITTED")
+                .contains("reason=DataAccessResourceFailureException")
+                .contains("sqlState=unavailable")
+                .contains("constraint=unavailable")
+                .doesNotContain("database unavailable")
+                .doesNotContain("INSERT INTO")
+                .doesNotContain("198.51.100.23");
+    }
+
+    @Test
+    void auditIntegrityFailureLogsSqlStateAndConstraintWithoutSqlOrRowValues(CapturedOutput output) {
+        CurrentActor actor = mock(CurrentActor.class);
+        when(actor.require()).thenReturn(ACTOR);
+        AuditEventMapper audit = mock(AuditEventMapper.class);
+        ServerErrorMessage serverError = new ServerErrorMessage(
+                "SERROR\0C23503\0Minsert or update on table \"audit_event\" violates foreign key constraint \"audit_event_actor_user_id_fkey\"\0naudit_event_actor_user_id_fkey\0DKey (actor_user_id)=(secret-user) is not present in table \"user_account\".\0"
+        );
+        DataIntegrityViolationException failure = new DataIntegrityViolationException(
+                "PreparedStatementCallback; SQL [INSERT INTO audit_event (raw_prompt) VALUES ('secret prompt')]; ERROR",
+                new PSQLException(serverError)
+        );
+        doThrow(failure).when(audit).insert(any(UUID.class), any(UUID.class), any(UUID.class), any(), any(), any());
+        AnalyticsEventService service = service(actor, audit);
+
+        assertThatCode(() -> service.record(AnalyticsEventType.LOGIN, authenticatedRequest()))
+                .doesNotThrowAnyException();
+        assertThat(output).contains("event=analytics.audit_write_failure")
+                .contains("eventType=LOGIN")
+                .contains("reason=DataIntegrityViolationException")
+                .contains("sqlState=23503")
+                .contains("constraint=audit_event_actor_user_id_fkey")
+                .doesNotContain("INSERT INTO")
+                .doesNotContain("secret prompt")
+                .doesNotContain("secret-user")
+                .doesNotContain("198.51.100.23");
+    }
+
+    private AnalyticsEventService service(CurrentActor actor, AuditEventMapper audit) {
+        return service(actor, audit, ip -> GeoLocation.unavailable());
+    }
+
+    private AnalyticsEventService service(
+            CurrentActor actor,
+            AuditEventMapper audit,
+            GeoLocationResolver geoLocationResolver
+    ) {
+        return new AnalyticsEventService(
+                actor,
+                provider(audit),
+                new ClientIpResolver(""),
+                geoLocationResolver,
+                new DeviceTypeResolver(),
+                new AnalyticsSessionContext()
+        );
     }
 
     private MockHttpServletRequest authenticatedRequest() {

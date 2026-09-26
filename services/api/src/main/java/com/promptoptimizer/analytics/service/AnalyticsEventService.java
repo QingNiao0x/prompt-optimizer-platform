@@ -19,6 +19,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
@@ -123,9 +124,85 @@ public class AnalyticsEventService {
                     OffsetDateTime.now(ZoneOffset.UTC)
             );
         } catch (DataAccessException exception) {
-            // 统计存储暂不可用时保留主业务结果，同时留下不含 SQL 参数、IP 或用户正文的运维告警。
-            LOGGER.error("event=analytics.audit_write_failure requestId={} eventType={} reason={}",
-                    requestId, eventType, exception.getClass().getSimpleName());
+            // Spring 会把 SQL 和绑定值放进异常消息。这里只记类名、SQLState 和约束名，避免把正文、IP 或提示词打进日志。
+            AuditWriteFailure failure = AuditWriteFailure.from(exception);
+            LOGGER.error(
+                    "event=analytics.audit_write_failure requestId={} eventType={} reason={} sqlState={} constraint={}",
+                    requestId,
+                    eventType,
+                    exception.getClass().getSimpleName(),
+                    failure.sqlState(),
+                    failure.constraint()
+            );
+        }
+    }
+
+    /**
+     * 从数据库异常链取出可公开的诊断码。没有 SQLState 或约束名时记为 unavailable，不回退到异常消息。
+     */
+    private record AuditWriteFailure(String sqlState, String constraint) {
+
+        private static final String UNAVAILABLE = "unavailable";
+
+        private static AuditWriteFailure from(Throwable failure) {
+            SQLException sqlException = findSqlException(failure);
+            return new AuditWriteFailure(sqlState(sqlException), constraint(sqlException));
+        }
+
+        private static SQLException findSqlException(Throwable failure) {
+            Throwable current = failure;
+            for (int depth = 0; current != null && depth < 8; depth++) {
+                if (current instanceof SQLException sqlException) {
+                    return sqlException;
+                }
+                Throwable cause = current.getCause();
+                if (cause == current) {
+                    return null;
+                }
+                current = cause;
+            }
+            return null;
+        }
+
+        private static String sqlState(SQLException sqlException) {
+            for (SQLException current = sqlException; current != null; current = current.getNextException()) {
+                if (current.getSQLState() != null && !current.getSQLState().isBlank()) {
+                    return current.getSQLState();
+                }
+            }
+            return UNAVAILABLE;
+        }
+
+        private static String constraint(SQLException sqlException) {
+            for (SQLException current = sqlException; current != null; current = current.getNextException()) {
+                String name = postgresConstraint(current);
+                if (name != null) {
+                    return name;
+                }
+            }
+            return UNAVAILABLE;
+        }
+
+        /**
+         * 驱动是运行时依赖。只读取约束名，不读取异常消息，避免把 SQL 或键值打进日志。
+         */
+        private static String postgresConstraint(SQLException sqlException) {
+            if (!"org.postgresql.util.PSQLException".equals(sqlException.getClass().getName())) {
+                return null;
+            }
+            try {
+                Object serverError = sqlException.getClass().getMethod("getServerErrorMessage").invoke(sqlException);
+                if (serverError == null) {
+                    return null;
+                }
+                Object constraint = serverError.getClass().getMethod("getConstraint").invoke(serverError);
+                if (constraint instanceof String name && name.matches("[A-Za-z_][A-Za-z0-9_]{0,127}")) {
+                    return name;
+                }
+            } catch (ReflectiveOperationException exception) {
+                return null;
+            }
+            return null;
         }
     }
 }
