@@ -83,11 +83,17 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
     private List<PlanQuestion> researchQuestions(String prompt) {
         List<PlanQuestion> questions = new ArrayList<>();
         if (!hasConcreteRegion(prompt)) {
-            questions.add(freeText(
+            questions.add(singleChoice(
                     "research-region",
                     "这项研究具体覆盖哪个地区？",
-                    "请填写明确的省、市、国家或区域名称。",
-                    List.of("广东省", "北京市", "长三角地区")
+                    "请选择明确范围；没有写明时不要猜一个地名。",
+                    List.of(
+                            option("pending", "未写明的地区标为待确认", "不另猜省或市", "地区以原始需求里已经写明的范围为限；没写明的地区在结果中标为待确认。", true),
+                            option("guangdong", "广东省", "以广东省为研究范围", "研究范围定为广东省。", false),
+                            option("beijing", "北京市", "以北京市为研究范围", "研究范围定为北京市。", false),
+                            option("yangtze", "长三角地区", "覆盖上海、江苏、浙江、安徽", "研究范围定为长三角地区。", false)
+                    ),
+                    true
             ));
         }
         if (!containsAny(prompt, "疾控", "死因登记", "医院", "数据库", "csv", "excel", "xlsx")) {
@@ -98,7 +104,8 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
                     List.of(
                             option("registry", "疾控或死因登记数据", "CSV 或 Excel 数据表", "使用疾控中心或死因登记系统导出的 CSV/Excel 数据。", false),
                             option("hospital", "医院记录", "医院病案或死亡记录", "使用医院病案或死亡记录，文件格式为 CSV/Excel。", false),
-                            option("public", "公开数据库", "从公开平台下载的数据表", "使用公开数据库下载的结构化数据，并在结果中注明来源。", false)
+                            option("public", "公开数据库", "从公开平台下载的数据表", "使用公开数据库下载的结构化数据，并在结果中注明来源。", false),
+                            option("yearbook", "统计年鉴或公报", "政府公开的汇总数据", "使用统计年鉴或政府公报中的汇总数据，并注明年份和口径。", false)
                     ),
                     true
             ));
@@ -110,7 +117,9 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
                     "请选择已有口径；如果数据有自己的分类，请直接填写。",
                     List.of(
                             option("icd", "按 ICD 编码分组", "依据数据版本使用对应 ICD 编码", "按数据所采用的 ICD 版本划分疾病亚类，并列出每个亚类的编码范围。", true),
-                            option("source", "沿用数据源分类", "保持原始数据库中的亚类口径", "沿用数据源已有的疾病亚类分类，同时说明各类别定义。", false)
+                            option("source", "沿用数据源分类", "保持原始数据库中的亚类口径", "沿用数据源已有的疾病亚类分类，同时说明各类别定义。", false),
+                            option("broad", "只分两大类", "心脑血管各作为一类", "只把心脑血管疾病分成心血管和脑血管两大类，不展开亚类。", false),
+                            option("diagnosis", "按诊断名称", "使用病案里的诊断文本", "按医院诊断名称分组，并说明归并规则。", false)
                     ),
                     true
             ));
@@ -121,9 +130,10 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
                     "除性别和地区外，还需要按哪些人群特征分组？",
                     "可多选；具体分组边界也可以在自定义回答中补充。",
                     List.of(
-                            option("age", "年龄组", "例如 0–14、15–44、45–64、65 岁及以上", "按年龄组进行分层比较，并在分析前明确年龄分组边界。", false),
+                            option("age", "年龄组", "例如 0–14、15–44、45–64、65 岁及以上", "按年龄组进行分层比较，并在分析前明确年龄分组边界。", true),
                             option("urban-rural", "城乡", "比较城市与农村人群", "按城乡属性进行分层比较。", false),
-                            option("occupation", "职业", "数据包含职业字段时使用", "在数据字段允许时按职业类别进行分层比较。", false)
+                            option("occupation", "职业", "数据包含职业字段时使用", "在数据字段允许时按职业类别进行分层比较。", false),
+                            option("education", "教育程度", "数据包含教育字段时使用", "在数据字段允许时按教育程度进行分层比较。", false)
                     ),
                     true
             ));
@@ -136,7 +146,8 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
                     List.of(
                             option("r", "R", "适合流行病学统计和可复现报告", "使用 R 完成数据处理、统计分析、Arriaga 分解和图表绘制。", true),
                             option("python", "Python", "适合数据处理和自动化分析", "使用 Python 完成数据处理、统计分析、Arriaga 分解和图表绘制。", false),
-                            option("spss", "SPSS", "适合菜单操作和常规统计", "使用 SPSS 完成可支持的统计分析，并说明 Arriaga 分解所需的补充实现。", false)
+                            option("spss", "SPSS", "适合菜单操作和常规统计", "使用 SPSS 完成可支持的统计分析，并说明 Arriaga 分解所需的补充实现。", false),
+                            option("stata", "Stata", "适合队列和生存分析", "使用 Stata 完成数据处理、统计分析和图表。", false)
                     ),
                     true
             ));
@@ -149,7 +160,8 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
                     List.of(
                             option("full", "需要完整代码", "从数据导入到结果输出", "提供可运行的完整代码，包括数据校验、清洗、分析、图表和结果导出。", true),
                             option("core", "只要关键代码", "聚焦核心计算与分解方法", "提供关键计算和 Arriaga 分解代码，并说明其余处理步骤。", false),
-                            option("none", "不需要代码", "只提供研究设计和方法说明", "不提供代码，重点给出研究设计、统计方法、表格与图表方案。", false)
+                            option("none", "不需要代码", "只提供研究设计和方法说明", "不提供代码，重点给出研究设计、统计方法、表格与图表方案。", false),
+                            option("pseudo", "只要步骤和伪代码", "不绑定某一种语言", "给出可核对的计算步骤和伪代码，不绑定具体统计软件。", false)
                     ),
                     false
             ));
@@ -161,11 +173,17 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
     private List<PlanQuestion> softwareQuestions(String prompt, String contextDescription) {
         List<PlanQuestion> questions = new ArrayList<>();
         if (contextDescription.isBlank() && !containsAny(prompt, "java", "spring", "vue", "react", "python", "go", "rust", "node")) {
-            questions.add(freeText(
+            questions.add(singleChoice(
                     "software-environment",
                     "这项任务要在哪个项目或技术环境中实现？",
-                    "例如现有系统、语言、框架和数据库。",
-                    List.of("Spring Boot 3 + PostgreSQL", "Vue 3 + TypeScript", "Python + FastAPI")
+                    "没有项目材料时，不预设一个框架。",
+                    List.of(
+                            option("unspecified", "先不预设框架", "实现前说明现有技术栈", "先说明现有语言、框架和数据库，再实现；没有材料时不预设框架。", true),
+                            option("spring", "Spring Boot 3 + PostgreSQL", "Java 服务端", "在 Spring Boot 3 和 PostgreSQL 中实现。", false),
+                            option("vue", "Vue 3 + TypeScript", "浏览器前端", "在 Vue 3 和 TypeScript 中实现。", false),
+                            option("python", "Python + FastAPI", "Python 服务端", "在 Python 和 FastAPI 中实现。", false)
+                    ),
+                    true
             ));
         }
         if (prompt.contains("登录") && !containsAny(prompt, "jwt", "session", "cookie", "oauth", "单点登录")) {
@@ -176,17 +194,24 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
                     List.of(
                             option("existing", "沿用项目现有方式", "先检查现有认证代码", "先检查并沿用项目现有的认证与会话机制；不存在时再提出最小方案。", true),
                             option("jwt", "JWT", "使用访问令牌和刷新令牌", "采用 JWT，包含访问令牌、刷新令牌、退出和失效处理。", false),
-                            option("session", "服务端 Session", "由服务端保存登录状态", "采用服务端 Session，并说明 Cookie、安全属性和过期策略。", false)
+                            option("session", "服务端 Session", "由服务端保存登录状态", "采用服务端 Session，并说明 Cookie、安全属性和过期策略。", false),
+                            option("oauth", "外部登录", "接入已有的身份提供方", "接入项目已有的外部登录，不另行发明一套账号体系。", false)
                     ),
                     true
             ));
         }
         if (!containsAny(prompt, "验收", "完成标准", "测试通过", "预期结果")) {
-            questions.add(freeText(
+            questions.add(singleChoice(
                     "software-done",
                     "达到什么结果时，你会认为这项任务已经完成？",
-                    "填写最关键的可验证结果即可。",
-                    List.of("接口正常返回并覆盖异常场景", "现有测试全部通过且新增回归测试", "页面交互与设计稿一致")
+                    "选择一个可以核对的完成标准。",
+                    List.of(
+                            option("behavior", "现有行为仍可用", "并补上本次需求的验证", "现有功能保持可用，同时为本次需求补上可核对的验证。", true),
+                            option("api", "接口覆盖异常", "正常返回和失败都能核对", "接口正常返回，并覆盖主要异常场景。", false),
+                            option("tests", "测试通过", "原有测试加本次回归", "现有测试全部通过，并为本次改动增加回归测试。", false),
+                            option("ui", "界面与设计一致", "按现有页面核对交互", "页面交互与现有设计一致。", false)
+                    ),
+                    true
             ));
         }
         return questions;
@@ -195,10 +220,32 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
     private List<PlanQuestion> writingQuestions(String prompt) {
         List<PlanQuestion> questions = new ArrayList<>();
         if (!containsAny(prompt, "读者", "受众", "面向")) {
-            questions.add(freeText("writing-audience", "这份内容主要写给谁看？", "受众会影响术语密度、语气和解释深度。", List.of("本科生", "行业从业者", "管理层")));
+            questions.add(singleChoice(
+                    "writing-audience",
+                    "这份内容主要写给谁看？",
+                    "受众会影响术语密度、语气和解释深度。",
+                    List.of(
+                            option("unspecified-reader", "读者尚未写明", "先服务能完成该任务的人", "读者以原始需求里写明的对象为准；没写明时先写给能完成该任务的人，并少用未解释的术语。", true),
+                            option("student", "本科生", "术语配简短解释", "主要写给本科生，术语配简短解释。", false),
+                            option("practitioner", "行业从业者", "可以保留专业表述", "主要写给行业从业者，保留完成工作所需的专业表述。", false),
+                            option("manager", "管理层", "结论先于过程", "主要写给管理层，先给结论和取舍，再补充依据。", false)
+                    ),
+                    true
+            ));
         }
         if (!containsAny(prompt, "字数", "页", "大纲", "markdown", "演示稿", "格式")) {
-            questions.add(freeText("writing-format", "你需要什么形式和篇幅的成品？", "例如文章、报告、大纲或演示稿。", List.of("3000 字分析报告", "10 页演示稿大纲", "Markdown 文章")));
+            questions.add(singleChoice(
+                    "writing-format",
+                    "你需要什么形式和篇幅的成品？",
+                    "形式会改变结构和详略。",
+                    List.of(
+                            option("steps", "可执行步骤", "篇幅按内容需要", "先给可执行步骤，篇幅按内容需要，不预先凑字数。", true),
+                            option("report", "3000 字分析报告", "完整文章", "交付约 3000 字的分析报告。", false),
+                            option("deck", "10 页演示稿大纲", "适合讲述", "交付约 10 页的演示稿大纲。", false),
+                            option("markdown", "Markdown 文章", "便于继续修改", "交付一篇 Markdown 文章。", false)
+                    ),
+                    true
+            ));
         }
         return questions;
     }
@@ -206,16 +253,34 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
     private List<PlanQuestion> generalQuestions(String prompt) {
         List<PlanQuestion> questions = new ArrayList<>();
         if (prompt.length() < 80) {
-            questions.add(freeText("general-goal", "你最希望最终结果帮助你完成什么？", "描述使用场景和希望解决的问题。", List.of("做出选择", "完成一份可提交的作业", "制定可执行方案")));
+            questions.add(singleChoice(
+                    "general-goal",
+                    "你最希望最终结果帮助你完成什么？",
+                    "这会决定结果的详略和形态。",
+                    List.of(
+                            option("decide", "做出选择", "比较后给出取舍", "最终结果帮助你在可行做法中做出选择，并写明取舍。", true),
+                            option("homework", "完成可提交的作业", "符合作业要求", "最终结果是一份可提交的作业。", false),
+                            option("plan", "制定可执行方案", "能按步骤做", "最终结果是一份可执行方案。", false),
+                            option("explain", "把问题讲清楚", "先解释再给做法", "最终结果先把问题讲清楚，再给出做法。", false)
+                    ),
+                    true
+            ));
         }
         if (!containsAny(prompt, "输出", "格式", "报告", "表格", "清单", "方案")) {
-            questions.add(freeText("general-deliverable", "你希望最终得到什么形式的结果？", "例如方案、报告、表格、讲解或可执行步骤。", List.of("分步骤方案", "带依据的分析报告", "可直接复制的表格")));
+            questions.add(singleChoice(
+                    "general-deliverable",
+                    "你希望最终得到什么形式的结果？",
+                    "形式会改变提示词的输出要求。",
+                    List.of(
+                            option("steps-out", "分步骤方案", "可以按顺序执行", "交付按顺序执行的分步骤方案。", true),
+                            option("report-out", "带依据的分析报告", "结论和依据分开", "交付带依据的分析报告。", false),
+                            option("table-out", "可直接复制的表格", "适合对照", "交付可直接复制的表格。", false),
+                            option("brief-out", "口头讲解提纲", "适合转述", "交付一份口头讲解提纲。", false)
+                    ),
+                    true
+            ));
         }
         return questions;
-    }
-
-    private PlanQuestion freeText(String id, String question, String hint, List<String> examples) {
-        return new PlanQuestion(id, question, hint, PlanQuestionType.FREE_TEXT, List.of(), examples, true);
     }
 
     private PlanQuestion singleChoice(

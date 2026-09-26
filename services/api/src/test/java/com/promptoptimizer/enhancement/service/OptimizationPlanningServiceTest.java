@@ -122,8 +122,13 @@ class OptimizationPlanningServiceTest {
                 return new PlanningProviderResponse("", List.of(), "mock", "planner", true);
             }
             return new PlanningProviderResponse("请确认关键问题", List.of(new PlanQuestion(
-                    "region", "研究地区是哪里？", "", PlanQuestionType.FREE_TEXT,
-                    List.of(), List.of(), true)), "mock", "planner", true);
+                    "region", "研究地区是哪里？", "", PlanQuestionType.SINGLE_CHOICE,
+                    List.of(
+                            new com.promptoptimizer.enhancement.domain.PlanOption("pending", "未写明则待确认", "", "没写明的地区标为待确认。", true),
+                            new com.promptoptimizer.enhancement.domain.PlanOption("gd", "广东省", "", "研究范围定为广东省。", false),
+                            new com.promptoptimizer.enhancement.domain.PlanOption("bj", "北京市", "", "研究范围定为北京市。", false),
+                            new com.promptoptimizer.enhancement.domain.PlanOption("delta", "长三角", "", "研究范围定为长三角。", false)
+                    ), List.of(), true)), "mock", "planner", true);
         }, new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
         assertThat(service.plan(request("研究死亡率" )).questions()).hasSize(1);
         assertThat(calls).hasValue(2);
@@ -177,9 +182,13 @@ class OptimizationPlanningServiceTest {
                 )
                 .allSatisfy(question -> assertThat((String) question)
                         .doesNotContain("缺失维度", "TemplateCode", "INPUT", "OUTPUT", "ACCEPTANCE"));
-        assertThat(plan.questions().get(0).type()).isEqualTo(PlanQuestionType.FREE_TEXT);
+        assertThat(plan.questions()).allSatisfy(question -> {
+            assertThat(question.options()).hasSizeGreaterThanOrEqualTo(4);
+            assertThat(question.options()).filteredOn(com.promptoptimizer.enhancement.domain.PlanOption::recommended)
+                    .hasSize(1);
+        });
         assertThat(plan.questions().get(4).options()).extracting("label")
-                .containsExactly("R", "Python", "SPSS");
+                .contains("R", "Python", "SPSS");
     }
 
     @Test

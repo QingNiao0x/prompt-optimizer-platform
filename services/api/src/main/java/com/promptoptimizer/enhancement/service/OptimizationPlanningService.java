@@ -131,7 +131,12 @@ public class OptimizationPlanningService {
                         .toList();
                 List<PlanQuestion> candidates = new ArrayList<>(requiredConflicts);
                 candidates.addAll(modelQuestions);
-                List<PlanQuestion> questions = candidates.stream().limit(MAX_QUESTIONS).toList();
+                List<PlanQuestion> questions = candidates.stream()
+                        .limit(MAX_QUESTIONS)
+                        .map(PlanChoiceCompleter::complete)
+                        .map(question -> PlanRecommendationAligner.align(question, providerRequest))
+                        .filter(PlanChoiceCompleter::presentable)
+                        .toList();
                 metrics.generated(validated.questions().size() + requiredConflicts.size(), questions.size());
                 String summary = questions.isEmpty()
                         ? "当前需求及已提供材料足以进入最终增强，无需额外确认。"
@@ -207,18 +212,46 @@ public class OptimizationPlanningService {
             String question = warning.length() <= 300
                     ? warning
                     : warning.substring(0, 280).stripTrailing() + "……请确认本次采用哪一项。";
-            conflicts.add(new PlanQuestion(
-                    "context-conflict-" + (++sequence),
-                    question,
-                    "上传材料对同一项目事实给出了不同内容。请说明本次以哪份资料或规则为准。",
-                    PlanQuestionType.FREE_TEXT,
-                    List.of(),
-                    List.of(),
-                    true
-            ));
+            conflicts.add(conflictChoice("context-conflict-" + (++sequence), question, warning));
             if (conflicts.size() == 3) break;
         }
         return List.copyOf(conflicts);
+    }
+
+    /**
+     * 冲突题给出两份取值、保留冲突和按原始需求重写四条具体路径。
+     * 建议是保留冲突并标明，不替用户选定其中一份。
+     */
+    private PlanQuestion conflictChoice(String id, String question, String warning) {
+        String first = "第一份资料中的取值";
+        String second = "第二份资料中的取值";
+        var values = Pattern.compile("（([^）]{1,80})）").matcher(warning);
+        if (values.find()) {
+            first = values.group(1).trim();
+        }
+        if (values.find()) {
+            second = values.group(1).trim();
+        }
+        return new PlanQuestion(
+                id,
+                question,
+                "上传材料对同一事实给出了不同内容。请选定本次采用的口径。",
+                PlanQuestionType.SINGLE_CHOICE,
+                List.of(
+                        new com.promptoptimizer.enhancement.domain.PlanOption(
+                                id + "-first", "采用第一份", first, "本次采用：" + first, false),
+                        new com.promptoptimizer.enhancement.domain.PlanOption(
+                                id + "-second", "采用第二份", second, "本次采用：" + second, false),
+                        new com.promptoptimizer.enhancement.domain.PlanOption(
+                                id + "-both", "两份都保留并标明冲突", "结果中同时写出两个取值和来源",
+                                "两份资料都保留，并在结果中标明冲突和各自来源，不悄悄选定其中一个。", true),
+                        new com.promptoptimizer.enhancement.domain.PlanOption(
+                                id + "-rewrite", "按原始需求重新写明", "不以这两份数字为准",
+                                "本次不采用这两份资料中的取值，按原始需求重新写明该事实。", false)
+                ),
+                List.of(),
+                true
+        );
     }
 
     /** 冲突已有服务端必问项时，不再保留同一字段的模型改写问题。 */
