@@ -68,6 +68,25 @@ class MapperXmlConfigurationTest {
                 assertThat(mapping.getProperty()).isEqualTo("period.zoneId.id"));
     }
 
+    @Test
+    void historyListSelectsSummaryColumnsOnly() throws Exception {
+        Configuration configuration = parseMappers();
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("tenantId", UUID.fromString("11111111-1111-4111-8111-111111111111"));
+        parameters.put("workspaceId", UUID.fromString("22222222-2222-4222-8222-222222222222"));
+        parameters.put("keyword", null);
+        parameters.put("createdFrom", null);
+        parameters.put("createdToExclusive", null);
+
+        String sql = configuration.getMappedStatement(
+                        OptimizationRecordMapper.class.getName() + ".selectPageByScope")
+                .getBoundSql(parameters)
+                .getSql();
+
+        assertThat(sql).contains("jsonb_build_object", "left(btrim(replace");
+        assertThat(sql).doesNotContain("optimized_prompt", "context_snapshot", "permission_policy");
+    }
+
     private Configuration parseMappers() throws Exception {
         Configuration configuration = new Configuration();
         configuration.getTypeHandlerRegistry().register(PostgresUuidTypeHandler.class);

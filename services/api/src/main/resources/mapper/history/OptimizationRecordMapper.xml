@@ -31,7 +31,15 @@
     </sql>
 
     <select id="selectPageByScope" resultMap="optimizationRecord">
-        SELECT <include refid="recordColumns"/>
+        <!-- 列表只取预览所需字段：原始提示词截到 161 个字符，元数据只保留供应商、模型和 mock。 -->
+        SELECT id, template_code,
+               left(btrim(replace(replace(raw_prompt, chr(13), ' '), chr(10), ' ')), 161) AS raw_prompt,
+               jsonb_build_object(
+                   'provider', result_metadata -&gt; 'provider',
+                   'model', result_metadata -&gt; 'model',
+                   'mock', result_metadata -&gt; 'mock'
+               ) AS result_metadata,
+               latency_ms, created_at
           FROM optimization_record
          WHERE tenant_id = #{tenantId}
            AND workspace_id = #{workspaceId}

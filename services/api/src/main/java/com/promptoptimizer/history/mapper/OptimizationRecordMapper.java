@@ -18,7 +18,8 @@ import java.util.UUID;
 public interface OptimizationRecordMapper {
 
     /**
-     * 在当前租户和工作区内分页读取未删除的优化记录。
+     * 在当前租户和工作区内分页读取未删除记录的列表摘要。
+     * 不返回完整优化提示词、上下文快照和权限策略。
      */
     IPage<OptimizationRecordEntity> selectPageByScope(
             @Param("page") IPage<OptimizationRecordEntity> page,

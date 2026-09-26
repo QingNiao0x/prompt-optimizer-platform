@@ -180,7 +180,7 @@ onMounted(loadPage);
       </div>
     </header>
 
-    <div v-loading="loading" class="history-card">
+    <div class="history-card">
       <div class="history-filter-bar" aria-label="历史记录筛选">
         <ElInput
           v-model="keyword"
@@ -224,6 +224,7 @@ onMounted(loadPage);
         </ElButton>
       </div>
 
+      <div v-loading="loading" class="history-results">
       <p v-if="!loading && items.length === 0" class="history-card-list history-card-list--empty">
         还没有优化历史
       </p>
@@ -250,7 +251,7 @@ onMounted(loadPage);
         </li>
       </ul>
 
-      <ElTable v-loading="loading" :data="items" row-key="id" class="history-table">
+      <ElTable :data="items" row-key="id" class="history-table">
         <ElTableColumn label="创建时间" width="150">
           <template #default="{ row }">{{ formatDate(row.createdAt) }}</template>
         </ElTableColumn>
@@ -292,6 +293,7 @@ onMounted(loadPage);
           <ElEmpty description="还没有优化历史" />
         </template>
       </ElTable>
+      </div>
 
       <div v-if="total > 0" class="pagination-row">
         <ElPagination
@@ -364,10 +366,26 @@ h1 {
 
 .history-card {
   padding: 0;
+  overflow: hidden;
   border: 1px solid var(--line-subtle);
   border-radius: var(--radius-large);
   background: var(--surface-panel);
   box-shadow: var(--shadow-panel);
+}
+
+.history-results {
+  position: relative;
+  min-height: 280px;
+  background: transparent;
+}
+
+.history-results :deep(.el-loading-mask) {
+  background-color: color-mix(in srgb, var(--bg-base) 46%, transparent) !important;
+  backdrop-filter: blur(8px);
+}
+
+.history-results :deep(.el-loading-spinner .path) {
+  stroke: var(--accent);
 }
 
 .history-filter-bar {
@@ -400,6 +418,13 @@ h1 {
 
 .history-table {
   width: 100%;
+  background: transparent;
+}
+
+.history-table :deep(.el-table__inner-wrapper),
+.history-table :deep(.el-table__body-wrapper),
+.history-table :deep(.el-table__empty-block) {
+  background: transparent;
 }
 
 .history-table :deep(.el-table__header-wrapper th) {
@@ -507,6 +532,10 @@ h1 {
     align-self: flex-start;
   }
 
+  .history-results {
+    min-height: 220px;
+  }
+
   .history-table {
     display: none;
   }
@@ -526,7 +555,13 @@ h1 {
 }
 
 .detail-body {
+  position: relative;
   min-height: 180px;
+}
+
+.detail-body :deep(.el-loading-mask) {
+  background-color: color-mix(in srgb, var(--bg-base) 46%, transparent) !important;
+  backdrop-filter: blur(8px);
 }
 
 .detail-block + .detail-block {
