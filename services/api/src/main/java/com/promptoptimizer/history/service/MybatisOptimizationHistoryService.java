@@ -87,6 +87,8 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
     ) {
         ActorIdentity context = currentActor.require();
         Page<OptimizationRecordEntity> pageRequest = new Page<>((long) page + 1L, size);
+        // 列表 SQL 含预览截断和 jsonb_build_object，默认计数改写会得到 0。
+        pageRequest.setOptimizeCountSql(false);
         boolean hasKeyword = keyword != null && !keyword.isBlank();
         boolean hasDateRange = createdFrom != null && createdToExclusive != null;
         IPage<OptimizationRecordEntity> records = recordMapper.selectPageByScope(

@@ -115,6 +115,7 @@ class MybatisOptimizationHistoryServiceTest {
         verify(recordMapper).selectPageByScope(pageCaptor.capture(), eq(TENANT_ID), eq(WORKSPACE_ID),
                 eq("登录\\%\\_"), eq(null), eq(null));
         assertThat(pageCaptor.getValue().getCurrent()).isEqualTo(1);
+        assertThat(pageCaptor.getValue().optimizeCountSql()).isFalse();
         verify(recordMapper, never()).selectByIdAndScope(any(), any(), any());
     }
 
