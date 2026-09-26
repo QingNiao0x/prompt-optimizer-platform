@@ -30,6 +30,19 @@
         retention_until, deleted_at, created_at
     </sql>
 
+    <sql id="scopeWhere">
+         WHERE tenant_id = #{tenantId}
+           AND workspace_id = #{workspaceId}
+           AND deleted_at IS NULL
+        <if test="keyword != null and keyword != ''">
+           AND raw_prompt ILIKE '%' || #{keyword} || '%' ESCAPE E'\\'
+        </if>
+        <if test="createdFrom != null and createdToExclusive != null">
+           AND created_at &gt;= #{createdFrom}
+           AND created_at &lt; #{createdToExclusive}
+        </if>
+    </sql>
+
     <select id="selectPageByScope" resultMap="optimizationRecord">
         <!-- 列表只取预览所需字段：原始提示词截到 161 个字符，元数据只保留供应商、模型和 mock。 -->
         SELECT id, template_code,
@@ -41,17 +54,15 @@
                ) AS result_metadata,
                latency_ms, created_at
           FROM optimization_record
-         WHERE tenant_id = #{tenantId}
-           AND workspace_id = #{workspaceId}
-           AND deleted_at IS NULL
-        <if test="keyword != null and keyword != ''">
-           AND raw_prompt ILIKE '%' || #{keyword} || '%' ESCAPE E'\\'
-        </if>
-        <if test="createdFrom != null and createdToExclusive != null">
-           AND created_at &gt;= #{createdFrom}
-           AND created_at &lt; #{createdToExclusive}
-        </if>
+        <include refid="scopeWhere"/>
          ORDER BY created_at DESC
+         LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countByScope" resultType="long">
+        SELECT COUNT(*)
+          FROM optimization_record
+        <include refid="scopeWhere"/>
     </select>
 
     <select id="selectByIdAndScope" resultMap="optimizationRecord">

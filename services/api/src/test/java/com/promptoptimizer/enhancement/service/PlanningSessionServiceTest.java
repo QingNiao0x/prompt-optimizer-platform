@@ -502,6 +502,39 @@ class PlanningSessionServiceTest {
                 .hasMessageContaining("确认问题已过期");
     }
 
+    @Test
+    void shouldExcerptUploadedAnalyticsSourceInsteadOfAskingTheUserToLocateIt() {
+        ContextAnalyzer analyzer = new DefaultContextAnalyzer(
+                new ObjectMapper(), new BinaryContentExtractor(), new FileContentSummarizer());
+        PlanningSessionService sessions = service(analyzer);
+        String rawPrompt = "修复统计日志模块 /api/v1/admin/analytics/dashboard 的报错";
+        PlanningContextPreparation preparation = sessions.prepareContext(new PlanningContextRequest(
+                rawPrompt,
+                new ContextAnalysisRequest("", List.of(
+                        new ContextFileInput(
+                                "services/api/pom.xml",
+                                "<project><java.version>21</java.version><artifactId>mybatis-plus</artifactId><version>3.5.17</version></project>",
+                                "xml"),
+                        new ContextFileInput(
+                                "services/api/src/main/java/com/promptoptimizer/analytics/service/AdminAnalyticsService.java",
+                                "public class AdminAnalyticsService { public Object dashboard() { return \"audit_event\"; } }",
+                                "java"),
+                        new ContextFileInput(
+                                "services/api/src/main/resources/mapper/analytics/AdminAnalyticsMapper.xml",
+                                "<mapper>SELECT id FROM audit_event</mapper>",
+                                "xml")
+                )),
+                PermissionPolicyInput.empty()
+        ));
+
+        assertThat(preparation.digest().technologies()).contains("Java 21");
+        assertThat(preparation.digest().fileSummaries())
+                .anySatisfy(summary -> assertThat(summary)
+                        .contains("AdminAnalyticsService.java", "业务摘录", "dashboard"));
+        assertThat(preparation.digest().fileSummaries())
+                .anySatisfy(summary -> assertThat(summary).contains("AdminAnalyticsMapper.xml", "audit_event"));
+    }
+
     private static PlanningSessionService service(ContextAnalyzer analyzer) {
         return new PlanningSessionService(
                 new InMemoryPlanningSessionStore(CLOCK),

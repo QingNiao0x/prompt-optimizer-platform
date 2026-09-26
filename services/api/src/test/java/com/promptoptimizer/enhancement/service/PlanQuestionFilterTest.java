@@ -123,6 +123,34 @@ class PlanQuestionFilterTest {
         ), input)).extracting("id").containsExactly("region", "compound");
     }
 
+    @Test
+    void shouldNotAskForPathsSchemaOrToolchainVersionsAlreadyPresentInUploadedProject() {
+        var digest = new PlanningContextDigest("",
+                List.of("Java 21", "Spring Boot 3"),
+                List.of("maven:com.baomidou:mybatis-plus-spring-boot3-starter@3.5.17"),
+                List.of("services/api/src/main/java/com/promptoptimizer/analytics"),
+                List.of(
+                        "services/api/src/main/java/com/promptoptimizer/analytics/service/AdminAnalyticsService.java：Java代码文件，主要定义：AdminAnalyticsService",
+                        "services/api/src/main/resources/mapper/analytics/AdminAnalyticsMapper.xml：映射 audit_event",
+                        "services/api/src/main/resources/db/migration/V1__init_schema.sql：CREATE TABLE audit_event"
+                ),
+                "COMPLETE", 3, List.of());
+        var uploaded = new PlanningProviderRequest(
+                "修复统计日志模块 /api/v1/admin/analytics/dashboard 的报错",
+                "", List.of(), digest);
+        assertThat(filter.filter(List.of(
+                question("path", "统计日志模块的后端代码在哪个目录或仓库中？请提供 AdminAnalyticsService 和对应 Mapper 的源码路径或关键代码片段。"),
+                question("schema", "统计日志相关的数据库表结构是怎样的？请提供涉及的表名、字段及索引信息。"),
+                question("java", "项目使用的 Java 版本是多少？"),
+                question("mybatis", "项目使用的 MyBatis 及 MyBatis-Spring 版本是多少？")
+        ), uploaded)).isEmpty();
+        assertThat(filter.filter(List.of(
+                question("path", "统计日志模块的后端代码在哪个目录或仓库中？请提供 AdminAnalyticsService 和对应 Mapper 的源码路径或关键代码片段。"),
+                question("java", "项目使用的 Java 版本是多少？")
+        ), input("修复统计日志模块的报错"))).hasSize(2);
+        assertThat(filter.filter(List.of(question("upgrade", "是否把 MyBatis 升级到更新版本？")), uploaded)).hasSize(1);
+    }
+
     private PlanningProviderRequest input(String text) { return new PlanningProviderRequest(text, "", List.of()); }
     private PlanQuestion question(String id, String text) {
         return new PlanQuestion(id, text, "", PlanQuestionType.FREE_TEXT, List.of(), List.of(), true);

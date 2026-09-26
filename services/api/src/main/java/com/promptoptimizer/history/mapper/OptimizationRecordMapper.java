@@ -1,11 +1,11 @@
 package com.promptoptimizer.history.mapper;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.promptoptimizer.history.entity.OptimizationRecordEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,9 +20,20 @@ public interface OptimizationRecordMapper {
     /**
      * 在当前租户和工作区内分页读取未删除记录的列表摘要。
      * 不返回完整优化提示词、上下文快照和权限策略。
+     * 条数和偏移写在 SQL 中：这条语句交给分页插件时不会附带 LIMIT，会把命中行一次返回。
      */
-    IPage<OptimizationRecordEntity> selectPageByScope(
-            @Param("page") IPage<OptimizationRecordEntity> page,
+    List<OptimizationRecordEntity> selectPageByScope(
+            @Param("tenantId") UUID tenantId,
+            @Param("workspaceId") UUID workspaceId,
+            @Param("keyword") String keyword,
+            @Param("createdFrom") OffsetDateTime createdFrom,
+            @Param("createdToExclusive") OffsetDateTime createdToExclusive,
+            @Param("limit") int limit,
+            @Param("offset") long offset
+    );
+
+    /** 统计同一筛选条件下未删除的记录数，供分页总页数使用。 */
+    long countByScope(
             @Param("tenantId") UUID tenantId,
             @Param("workspaceId") UUID workspaceId,
             @Param("keyword") String keyword,

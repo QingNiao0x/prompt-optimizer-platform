@@ -17,13 +17,23 @@
 - `services/api/src/main/resources/db/migration`：Flyway 前向迁移，决定当前表结构。已应用的迁移不回改。
 - 进度看 `README.md` 第 5 节和 `docs/待办事项.md`。已有工作台、Plan、上下文分析、历史和邮箱登录；用户管理完善、额度计费、浏览器插件仍待完成。实现前用代码确认，不把待办写成已完成。
 
-## 前端风格一致性
+## 变更约束
 
-修改或新增 `apps/web` 页面时，保持与当前产品一致是首要原则。先对照相邻页面和 `apps/web/src/styles/base.css`，再写界面；不为单个功能另起一套视觉或交互。
+新增、修改、修复或删除任何功能时，同时遵守下面两条。Cursor、Codex 及其他读取本文件的 AI 都要执行，不能只改当前页面而放过共享行为。
 
-- 布局：工作台继续使用现有三栏（`workbench-grid`：上下文、原始提示词、优化结果）。视觉参照 `docs/design-preview/prompt-optimizer-ui-style-preview.html` 的推荐方案「QingNiao Midnight Workbench」（深色画布、蓝紫强调、10–14px 圆角）。落地时使用 `base.css` 已有的 `glass-light` / `glass-dark` 变量，不新增第三套配色。
-- 组件：按钮、输入框、弹窗使用 Element Plus，颜色和圆角走已映射的 `--el-*` 变量。
-- 交互：状态放进已有 Pinia store，路由沿用 `src/router`；成功、失败和确认分别用 `ElMessage`、`ElMessageBox`。
+### 功能独立性
+
+- 变更不得影响其他功能的正常运行，不得削弱或破坏现有功能的使用体验。
+- 只改本次要求触及的路径。接口契约、权限、租户与工作区隔离、逻辑删除和已有交互保持可用。
+- 修复共享组件、全局样式或公共接口前，先核对调用方；不为修一处而改变其他页面的行为或能力。
+
+### 前端风格一致性
+
+修改、新增或修复 `apps/web` 界面时，与当前产品一致是首要原则。先对照相邻页面和 `apps/web/src/styles/base.css`，再写界面；不为单个功能另起一套视觉或交互。
+
+- 布局：工作台继续使用现有三栏（`workbench-grid`：上下文、原始提示词、优化结果）。视觉参照 `docs/design-preview/prompt-optimizer-ui-style-preview.html` 的推荐方案「QingNiao Midnight Workbench」（深色画布、蓝紫强调、10–14px 圆角）。落地时使用 `base.css` 已有的 `glass-light` / `glass-dark` 变量。
+- 组件：按钮、输入框、弹窗和日期、分页等控件使用 Element Plus。颜色和圆角走 `base.css` 已映射的 `--el-*` 变量，不自行定义第三套配色或样式体系。
+- 交互：与相邻页面保持一致，不引入冲突的操作方式。状态放进已有 Pinia store，路由沿用 `src/router`；成功、失败和确认分别用 `ElMessage`、`ElMessageBox`。
 - 代码：Vue 与 TypeScript 遵循 `docs/development/前后端代码注释约定.md`。
 
 ## 项目入口与开发规范

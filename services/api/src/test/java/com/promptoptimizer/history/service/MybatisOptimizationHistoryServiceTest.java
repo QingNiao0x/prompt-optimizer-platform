@@ -22,7 +22,6 @@ import com.promptoptimizer.identity.service.CurrentActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -101,21 +100,18 @@ class MybatisOptimizationHistoryServiceTest {
     @Test
     void pagesHistoryWithEscapedKeywordAndWorkspaceFilters() {
         OptimizationRecordEntity record = recordEntity();
-        Page<OptimizationRecordEntity> page = new Page<>(1, 20);
-        page.setRecords(List.of(record));
-        page.setTotal(1);
-        when(recordMapper.selectPageByScope(any(), eq(TENANT_ID), eq(WORKSPACE_ID),
-                eq("登录\\%\\_"), any(), any())).thenReturn(page);
+        when(recordMapper.countByScope(TENANT_ID, WORKSPACE_ID, "登录\\%\\_", null, null)).thenReturn(1L);
+        when(recordMapper.selectPageByScope(TENANT_ID, WORKSPACE_ID, "登录\\%\\_", null, null, 20, 0L))
+                .thenReturn(List.of(record));
 
         OptimizationHistoryPage result = service.list(0, 20, "登录%_", null, null);
 
         assertThat(result.items()).hasSize(1);
         assertThat(result.totalItems()).isEqualTo(1);
-        ArgumentCaptor<Page<OptimizationRecordEntity>> pageCaptor = ArgumentCaptor.forClass(Page.class);
-        verify(recordMapper).selectPageByScope(pageCaptor.capture(), eq(TENANT_ID), eq(WORKSPACE_ID),
-                eq("登录\\%\\_"), eq(null), eq(null));
-        assertThat(pageCaptor.getValue().getCurrent()).isEqualTo(1);
-        assertThat(pageCaptor.getValue().optimizeCountSql()).isFalse();
+        assertThat(result.page()).isZero();
+        assertThat(result.size()).isEqualTo(20);
+        verify(recordMapper).countByScope(TENANT_ID, WORKSPACE_ID, "登录\\%\\_", null, null);
+        verify(recordMapper).selectPageByScope(TENANT_ID, WORKSPACE_ID, "登录\\%\\_", null, null, 20, 0L);
         verify(recordMapper, never()).selectByIdAndScope(any(), any(), any());
     }
 

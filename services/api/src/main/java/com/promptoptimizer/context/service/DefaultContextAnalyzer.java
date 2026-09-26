@@ -404,6 +404,12 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
         String language = file.language().toLowerCase(Locale.ROOT);
         if (path.endsWith("pom.xml") || path.endsWith("build.gradle") || path.endsWith("build.gradle.kts")) {
             addStack(stack, "Java", source, 0.95);
+            Matcher javaRelease = Pattern.compile(
+                    "(?i)<(?:java\\.version|maven\\.compiler\\.(?:release|source))>\\s*(\\d+)"
+            ).matcher(file.content());
+            if (javaRelease.find()) {
+                addStack(stack, "Java " + javaRelease.group(1), source, 0.99);
+            }
         }
         if ("java".equals(language) || path.endsWith(".java")) {
             addStack(stack, "Java", source, 0.9);

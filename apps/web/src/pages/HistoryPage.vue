@@ -15,7 +15,7 @@ import {
   ElTag,
 } from 'element-plus';
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
-import { onMounted, ref } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getApiErrorMessage } from '@/services/http';
@@ -35,15 +35,21 @@ import type {
 const router = useRouter();
 const store = useOptimizationStore();
 
+const HISTORY_PAGE_SIZES = [10, 20, 50] as const;
+
 const loading = ref(false);
 const items = ref<OptimizationHistorySummary[]>([]);
-const page = ref(0);
-const pageSize = ref(10);
+// ElPagination 从 1 计页；列表接口的 page 从 0 计页。
+const currentPage = ref(1);
+const pageSize = ref<(typeof HISTORY_PAGE_SIZES)[number]>(10);
 const total = ref(0);
 const keyword = ref('');
 const dateRange = ref<[string, string] | null>(null);
 
 let loadSequence = 0;
+// 搜索把页码拨回第一页时，分页组件可能再抛一次 current-change。忽略这一次回声，避免同一轮筛选打两次列表请求。
+let ignorePaginationEcho = false;
+let detachDatePointer: (() => void) | undefined;
 
 const detailVisible = ref(false);
 const detailLoading = ref(false);
@@ -68,13 +74,26 @@ const loadPage = async (): Promise<void> => {
       keyword: keyword.value.trim() || undefined,
       dateRange: dateRange.value,
     };
-    const response = await listHistory(page.value, pageSize.value, filters);
+    const response = await listHistory(currentPage.value - 1, pageSize.value, filters);
     // 筛选条件连续变化时，较早的请求可能晚于新请求返回，不能覆盖最新列表。
     if (sequence !== loadSequence) {
       return;
     }
-    items.value = response.data.items;
-    total.value = response.data.totalItems;
+    const returned = response.data.items ?? [];
+    const limit = pageSize.value;
+    const reportedTotal = Number(response.data.totalItems);
+    const safeTotal = Number.isFinite(reportedTotal) && reportedTotal > 0
+      ? reportedTotal
+      : returned.length;
+    // 旧查询会忽略页大小，一次返回全部命中行。页面只渲染当前页，避免整表铺开。
+    if (returned.length > limit) {
+      const start = (currentPage.value - 1) * limit;
+      items.value = returned.slice(start, start + limit);
+      total.value = Math.max(safeTotal, returned.length);
+    } else {
+      items.value = returned;
+      total.value = safeTotal;
+    }
   } catch (error: unknown) {
     ElMessage.error(getApiErrorMessage(error));
   } finally {
@@ -85,14 +104,148 @@ const loadPage = async (): Promise<void> => {
 };
 
 const searchHistory = (): void => {
-  page.value = 0;
+  ignorePaginationEcho = currentPage.value !== 1;
+  currentPage.value = 1;
   void loadPage();
+  void nextTick(() => {
+    ignorePaginationEcho = false;
+  });
+};
+
+const onCurrentChange = (nextPage: number): void => {
+  if (ignorePaginationEcho) {
+    ignorePaginationEcho = false;
+    return;
+  }
+  if (nextPage === currentPage.value) {
+    return;
+  }
+  currentPage.value = nextPage;
+  void loadPage();
+};
+
+const onSizeChange = (nextSize: number): void => {
+  const size = HISTORY_PAGE_SIZES.find((option) => option === nextSize);
+  if (size === undefined || size === pageSize.value) {
+    return;
+  }
+  ignorePaginationEcho = true;
+  pageSize.value = size;
+  currentPage.value = 1;
+  void loadPage();
+  void nextTick(() => {
+    ignorePaginationEcho = false;
+  });
 };
 
 const clearFilters = (): void => {
   keyword.value = '';
   dateRange.value = null;
 };
+
+const clearDatePointerPaint = (popper: ParentNode): void => {
+  if (popper instanceof HTMLElement) {
+    popper.classList.remove('is-overflow-hover');
+  }
+  popper.querySelectorAll('.el-date-table-cell__text').forEach((node) => {
+    if (!(node instanceof HTMLElement)) {
+      return;
+    }
+    node.style.removeProperty('background-color');
+    node.style.removeProperty('color');
+    node.style.removeProperty('transition');
+  });
+  popper.querySelectorAll('.history-date-pointer, .history-date-span, .has-pointer').forEach((node) => {
+    node.classList.remove('history-date-pointer', 'history-date-span', 'has-pointer');
+  });
+};
+
+const paintDatePointer = (popper: HTMLElement, cell: HTMLTableCellElement): void => {
+  clearDatePointerPaint(popper);
+  const panel = cell.closest('.el-date-range-picker__content');
+  const overflow = cell.classList.contains('prev-month') || cell.classList.contains('next-month');
+  cell.classList.add('history-date-pointer');
+  panel?.classList.add('has-pointer');
+  popper.classList.toggle('is-overflow-hover', overflow);
+  const text = cell.querySelector('.el-date-table-cell__text');
+  if (overflow && text instanceof HTMLElement) {
+    text.style.setProperty('transition', 'none', 'important');
+    text.style.setProperty('background-color', 'var(--accent)', 'important');
+    text.style.setProperty('color', '#fff', 'important');
+  }
+  if (!overflow || !(panel instanceof HTMLElement)) {
+    return;
+  }
+  const cells = [...panel.querySelectorAll('td')].filter(
+    (node): node is HTMLTableCellElement => node instanceof HTMLTableCellElement,
+  );
+  const hoverIndex = cells.indexOf(cell);
+  const startIndex = cells.findIndex((node) => node.classList.contains('start-date'));
+  if (hoverIndex < 0 || startIndex < 0) {
+    return;
+  }
+  const from = Math.min(startIndex, hoverIndex);
+  const to = Math.max(startIndex, hoverIndex);
+  for (let index = from; index <= to; index += 1) {
+    if (index !== hoverIndex) {
+      cells[index]?.classList.add('history-date-span');
+    }
+  }
+};
+
+// Element Plus 只给当月格子加 end-date。九月表里的上月、下月日期和另一侧月历是同一天，圆点会被画到另一边。
+// 等组件先改完类名，再把圆点钉回指针下的格子，并收起另一侧重复的范围色。
+const onHistoryCalendarChange = (dates: Array<Date | string | null> | null): void => {
+  const popper = document.querySelector('.history-date-popper');
+  if (!(popper instanceof HTMLElement)) {
+    return;
+  }
+  const selectingEnd = Boolean(dates?.[0]) && dates?.[1] == null;
+  popper.classList.toggle('is-selecting-end', selectingEnd);
+  if (!selectingEnd) {
+    clearDatePointerPaint(popper);
+  }
+};
+
+const onDatePanelVisible = (visible: boolean): void => {
+  detachDatePointer?.();
+  detachDatePointer = undefined;
+  if (!visible) {
+    const popper = document.querySelector('.history-date-popper');
+    if (popper instanceof HTMLElement) {
+      popper.classList.remove('is-selecting-end');
+      clearDatePointerPaint(popper);
+    }
+    return;
+  }
+  let paintFrame = 0;
+  const onMove = (event: MouseEvent): void => {
+    const popper = document.querySelector('.history-date-popper');
+    if (!(popper instanceof HTMLElement) || !popper.classList.contains('is-selecting-end')) {
+      return;
+    }
+    const fromTarget = event.target instanceof Element ? event.target.closest('td') : null;
+    const cell = fromTarget instanceof HTMLTableCellElement && popper.contains(fromTarget)
+      ? fromTarget
+      : document.elementFromPoint(event.clientX, event.clientY)?.closest('td');
+    if (!(cell instanceof HTMLTableCellElement) || !popper.contains(cell)) {
+      return;
+    }
+    window.cancelAnimationFrame(paintFrame);
+    paintFrame = window.requestAnimationFrame(() => {
+      paintDatePointer(popper, cell);
+    });
+  };
+  document.addEventListener('mousemove', onMove, true);
+  detachDatePointer = () => {
+    window.cancelAnimationFrame(paintFrame);
+    document.removeEventListener('mousemove', onMove, true);
+  };
+};
+
+onBeforeUnmount(() => {
+  detachDatePointer?.();
+});
 
 const openDetail = async (id: string): Promise<void> => {
   detailLoading.value = true;
@@ -195,13 +348,16 @@ onMounted(loadPage);
             <ElDatePicker
               v-model="dateRange"
               class="history-filter-bar__date"
+              popper-class="history-date-popper"
               type="daterange"
-              format="YYYY年MM月DD日"
+              format="YYYY-MM-DD"
               value-format="YYYY-MM-DD"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               aria-label="创建时间范围"
+              @calendar-change="onHistoryCalendarChange"
+              @visible-change="onDatePanelVisible"
             />
           </ElConfigProvider>
         </div>
@@ -297,13 +453,14 @@ onMounted(loadPage);
 
       <div v-if="total > 0" class="pagination-row">
         <ElPagination
-          v-model:current-page="page"
-          v-model:page-size="pageSize"
-          layout="total, sizes, prev, pager, next"
+          background
+          layout="prev, pager, next, sizes"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :page-sizes="[...HISTORY_PAGE_SIZES]"
           :total="total"
-          :page-sizes="[10, 20, 50]"
-          @current-change="loadPage"
-          @size-change="loadPage"
+          @current-change="onCurrentChange"
+          @size-change="onSizeChange"
         />
       </div>
     </div>

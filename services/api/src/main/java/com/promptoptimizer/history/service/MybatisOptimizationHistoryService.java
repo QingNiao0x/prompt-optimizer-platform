@@ -24,8 +24,6 @@ import com.promptoptimizer.history.mapper.OptimizationRecordMapper;
 import com.promptoptimizer.identity.service.ActorIdentity;
 import com.promptoptimizer.identity.service.CurrentActor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,29 +84,32 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
             OffsetDateTime createdToExclusive
     ) {
         ActorIdentity context = currentActor.require();
-        Page<OptimizationRecordEntity> pageRequest = new Page<>((long) page + 1L, size);
-        // 列表 SQL 含预览截断和 jsonb_build_object，默认计数改写会得到 0。
-        pageRequest.setOptimizeCountSql(false);
         boolean hasKeyword = keyword != null && !keyword.isBlank();
         boolean hasDateRange = createdFrom != null && createdToExclusive != null;
-        IPage<OptimizationRecordEntity> records = recordMapper.selectPageByScope(
-                pageRequest,
+        String escapedKeyword = hasKeyword ? escapeLikePattern(keyword) : null;
+        OffsetDateTime rangeStart = hasDateRange ? createdFrom : null;
+        OffsetDateTime rangeEnd = hasDateRange ? createdToExclusive : null;
+        long total = recordMapper.countByScope(
                 context.tenantId(),
                 context.workspaceId(),
-                hasKeyword ? escapeLikePattern(keyword) : null,
-                hasDateRange ? createdFrom : null,
-                hasDateRange ? createdToExclusive : null
+                escapedKeyword,
+                rangeStart,
+                rangeEnd
         );
-        List<OptimizationHistorySummary> items = records.getRecords().stream()
-                .map(this::toSummary)
-                .toList();
-        return new OptimizationHistoryPage(
-                items,
-                Math.toIntExact(records.getCurrent() - 1L),
-                Math.toIntExact(records.getSize()),
-                records.getTotal(),
-                Math.toIntExact(records.getPages())
-        );
+        int totalPages = size <= 0 ? 0 : (int) ((total + size - 1L) / size);
+        if (total == 0L) {
+            return new OptimizationHistoryPage(List.of(), page, size, 0L, 0);
+        }
+        List<OptimizationHistorySummary> items = recordMapper.selectPageByScope(
+                context.tenantId(),
+                context.workspaceId(),
+                escapedKeyword,
+                rangeStart,
+                rangeEnd,
+                size,
+                (long) page * size
+        ).stream().map(this::toSummary).toList();
+        return new OptimizationHistoryPage(items, page, size, total, totalPages);
     }
 
     /**

@@ -396,11 +396,18 @@ public class PlanningSessionService {
                 .toList();
         List<String> fileSummaries = new ArrayList<>();
         int detailedDocuments = 0;
+        int sourceExcerpts = 0;
         List<FileSnippet> selectedFiles = PlanningDigestSelector.select(snapshot.fileSnippets(), query, 30);
         for (FileSnippet file : selectedFiles) {
-            boolean includeExcerpt = PlanningDigestSelector.isDocument(file) && detailedDocuments < 4;
-            fileSummaries.add(planningFileSummary(file, query, includeExcerpt));
-            if (includeExcerpt) detailedDocuments++;
+            boolean documentExcerpt = PlanningDigestSelector.isDocument(file) && detailedDocuments < 4;
+            // Java、XML、SQL 以前只有文件名。与当前任务相关的源码和建表语句需要摘录，否则计划会再向用户索取已上传的代码。
+            boolean sourceExcerpt = !documentExcerpt
+                    && sourceExcerptEligible(file)
+                    && PlanningDigestSelector.relevant(file, query)
+                    && sourceExcerpts < 6;
+            fileSummaries.add(planningFileSummary(file, query, documentExcerpt || sourceExcerpt));
+            if (documentExcerpt) detailedDocuments++;
+            if (sourceExcerpt) sourceExcerpts++;
         }
         PlanningFactCardExtractor.Extraction facts = factCardExtractor.extract(snapshot, query);
         List<String> detectedConflicts = new ContextConflictDetector().detect(snapshot, List.of());
@@ -434,6 +441,13 @@ public class PlanningSessionService {
                 warnings,
                 facts.cards()
         );
+    }
+
+    private static boolean sourceExcerptEligible(FileSnippet file) {
+        String path = file.path() == null ? "" : file.path().toLowerCase(java.util.Locale.ROOT);
+        String language = file.language() == null ? "" : file.language().toLowerCase(java.util.Locale.ROOT);
+        return "java".equals(language) || "xml".equals(language) || "sql".equals(language)
+                || path.endsWith(".java") || path.endsWith(".xml") || path.endsWith(".sql");
     }
 
     private String planningFileSummary(FileSnippet file, String query, boolean includeExcerpt) {

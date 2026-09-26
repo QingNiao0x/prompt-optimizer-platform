@@ -1,7 +1,5 @@
 package com.promptoptimizer.history.mapper;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.promptoptimizer.history.entity.OptimizationRecordEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,13 +64,11 @@ class OptimizationRecordScopeDatabaseTest {
         insertRecord(jdbc, otherWorkspaceId, tenantA, otherWorkspace, otherSession, userA, "同租户其他工作区", null);
         insertRecord(jdbc, otherTenantId, tenantB, workspaceB, sessionB, userB, "其他租户记录", null);
 
-        Page<OptimizationRecordEntity> pageRequest = new Page<>(1, 20);
-        pageRequest.setOptimizeCountSql(false);
-        IPage<OptimizationRecordEntity> page = recordMapper.selectPageByScope(
-                pageRequest, tenantA, workspaceA, null, null, null);
-        assertThat(page.getRecords()).extracting(OptimizationRecordEntity::getId).containsExactly(visibleId);
-        assertThat(page.getRecords().getFirst().getRawPrompt()).contains("当前工作区可见记录");
-        assertThat(page.getRecords().getFirst().getRawPrompt()).doesNotContain("其他租户", "已删除", "其他工作区");
+        List<OptimizationRecordEntity> records = recordMapper.selectPageByScope(
+                tenantA, workspaceA, null, null, null, 20, 0L);
+        assertThat(records).extracting(OptimizationRecordEntity::getId).containsExactly(visibleId);
+        assertThat(records.getFirst().getRawPrompt()).contains("当前工作区可见记录");
+        assertThat(records.getFirst().getRawPrompt()).doesNotContain("其他租户", "已删除", "其他工作区");
         assertThat(jdbc.queryForObject(
                 """
                 SELECT COUNT(*) FROM optimization_record
@@ -102,6 +99,35 @@ class OptimizationRecordScopeDatabaseTest {
                 Boolean.class,
                 otherWorkspaceId
         )).isTrue();
+    }
+
+    @Test
+    void pageRequestReturnsOnlyTheRequestedVisibleRows() {
+        JdbcTemplate jdbc = new JdbcTemplate(dataSource);
+        UUID tenantId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        UUID workspaceId = UUID.randomUUID();
+        UUID sessionId = UUID.randomUUID();
+        insertTenantUser(jdbc, tenantId, userId, "page-" + userId + "@scope.test");
+        insertWorkspaceSession(jdbc, tenantId, userId, workspaceId, sessionId);
+        for (int index = 0; index < 12; index += 1) {
+            insertRecord(
+                    jdbc,
+                    UUID.randomUUID(),
+                    tenantId,
+                    workspaceId,
+                    sessionId,
+                    userId,
+                    "分页记录 " + index,
+                    null
+            );
+        }
+
+        assertThat(recordMapper.selectPageByScope(
+                tenantId, workspaceId, null, null, null, 10, 0L)).hasSize(10);
+        assertThat(recordMapper.countByScope(tenantId, workspaceId, null, null, null)).isEqualTo(12);
+        assertThat(recordMapper.selectPageByScope(
+                tenantId, workspaceId, null, null, null, 10, 10L)).hasSize(2);
     }
 
     private void insertTenantUser(JdbcTemplate jdbc, UUID tenantId, UUID userId, String email) {

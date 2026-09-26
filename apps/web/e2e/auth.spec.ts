@@ -86,6 +86,9 @@ test('历史记录仅在点击搜索或按回车后加载对应查询结果', as
 
   await page.goto('/history');
   await expect(page.getByRole('heading', { name: '优化历史' })).toBeVisible();
+  await expect.poll(() => historyRequests.length).toBe(1);
+  expect(historyRequests[0]?.searchParams.get('page')).toBe('0');
+  expect(historyRequests[0]?.searchParams.get('size')).toBe('10');
   expect(consoleWarnings.some(warning => warning.includes('Failed to resolve directive: loading'))).toBe(false);
   await expect(
     page.locator('.preview-cell:visible, .history-mobile-card__preview:visible')

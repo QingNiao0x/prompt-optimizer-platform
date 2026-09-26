@@ -65,7 +65,7 @@ export const optimizePrompt = async (
 
 export const listHistory = async (
   page = 0,
-  size = 20,
+  size = 10,
   filters?: OptimizationHistoryFilters,
 ): Promise<ApiResponse<OptimizationHistoryPage>> => {
   const keyword = filters?.keyword?.trim();

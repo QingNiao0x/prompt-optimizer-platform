@@ -113,7 +113,7 @@ class MapperXmlConfigurationTest {
                 .getBoundSql(parameters)
                 .getSql();
 
-        assertThat(sql).contains("jsonb_build_object", "left(btrim(replace");
+        assertThat(sql).contains("jsonb_build_object", "left(btrim(replace", "LIMIT", "OFFSET");
         assertThat(sql).doesNotContain("optimized_prompt", "context_snapshot", "permission_policy");
     }
 

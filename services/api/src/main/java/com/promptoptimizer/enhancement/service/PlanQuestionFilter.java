@@ -112,6 +112,7 @@ public final class PlanQuestionFilter {
 
     /** 只有同一类别只有一个明确值且问题未要求变更时，才不再确认。 */
     private boolean resolved(String question, List<KnownFact> facts, PlanningProviderRequest input) {
+        if (answeredByUploadedProject(question, input)) return true;
         if (isCompoundOrChange(question)) return false;
         if (knownTechnologyAnswers(question, input)) return true;
         List<PlanningFactCategory> categories = questionCategories(question);
@@ -156,6 +157,76 @@ public final class PlanQuestionFilter {
             for (int index = 0; index + 2 <= token.length(); index++) terms.add(token.substring(index, index + 2));
         }
         return terms;
+    }
+
+    /**
+     * 已上传项目里能直接读到的路径、表结构和工具版本不再向用户索取。
+     * 要求更换或升级时仍保留问题。
+     */
+    private boolean answeredByUploadedProject(String question, PlanningProviderRequest input) {
+        if (question.matches(".*(更换|调整|迁移|升级|降级|改为|转为).*")) return false;
+        String corpus = projectCorpus(input).toLowerCase(Locale.ROOT);
+        if (corpus.isBlank()) return false;
+        if (asksWhereSourceLives(question)) {
+            List<String> symbols = distinctiveSymbols(question);
+            return !symbols.isEmpty() && symbols.stream()
+                    .allMatch(symbol -> corpus.contains(symbol.toLowerCase(Locale.ROOT)));
+        }
+        if (asksForSchema(question)) {
+            boolean hasSchema = corpus.contains("create table") || corpus.contains(".sql")
+                    || corpus.contains("mapper.xml");
+            return hasSchema && schemaMatchesQuestion(question, corpus);
+        }
+        if (asksForJavaVersion(question)) {
+            return corpus.matches("(?s).*\\bjava\\s*\\d{2}\\b.*")
+                    || corpus.contains("<java.version>")
+                    || corpus.contains("java.version>");
+        }
+        if (question.toLowerCase(Locale.ROOT).contains("mybatis") && question.contains("版本")) {
+            return Pattern.compile("mybatis[^\\n]{0,80}\\d+\\.\\d+").matcher(corpus).find();
+        }
+        return false;
+    }
+
+    private boolean asksWhereSourceLives(String question) {
+        return question.matches(".*(目录|仓库|源码路径|代码片段|代码在哪).*");
+    }
+
+    private boolean asksForSchema(String question) {
+        return question.matches(".*(表结构|表名|字段及索引|索引信息).*");
+    }
+
+    private boolean asksForJavaVersion(String question) {
+        return question.matches("(?i).*java\\s*版本.*") || question.matches("(?i).*使用的\\s*java.*版本.*");
+    }
+
+    /** 统计日志类问题对应 analytics / audit 材料；其它表结构问题要求问题里的标识出现在材料中。 */
+    private boolean schemaMatchesQuestion(String question, String corpus) {
+        if (question.contains("统计") || question.contains("日志")) {
+            return corpus.contains("analytics") || corpus.contains("audit");
+        }
+        List<String> symbols = distinctiveSymbols(question);
+        return !symbols.isEmpty() && symbols.stream()
+                .allMatch(symbol -> corpus.contains(symbol.toLowerCase(Locale.ROOT)));
+    }
+
+    private List<String> distinctiveSymbols(String question) {
+        List<String> symbols = new ArrayList<>();
+        var matcher = Pattern.compile("\\b[A-Z][A-Za-z0-9]{8,}\\b").matcher(question);
+        while (matcher.find()) symbols.add(matcher.group());
+        return symbols;
+    }
+
+    private String projectCorpus(PlanningProviderRequest input) {
+        StringBuilder corpus = new StringBuilder();
+        if (input.planningContext() == null) return "";
+        input.planningContext().technologies().forEach(value -> corpus.append('\n').append(value));
+        input.planningContext().dependencies().forEach(value -> corpus.append('\n').append(value));
+        input.planningContext().directoryOverview().forEach(value -> corpus.append('\n').append(value));
+        input.planningContext().fileSummaries().forEach(value -> corpus.append('\n').append(value));
+        input.planningContext().factCards().forEach(card -> corpus.append('\n')
+                .append(card.sourcePath()).append(' ').append(card.evidence()));
+        return corpus.toString();
     }
 
     /** 项目已有实现或依赖可回答“当前采用什么”，但不能回答“是否迁移/更换”。 */

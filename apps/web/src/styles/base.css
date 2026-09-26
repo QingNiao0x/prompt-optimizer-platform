@@ -237,6 +237,7 @@ body::after {
 
   .el-input__inner,
   .el-textarea__inner,
+  .el-range-input,
   .el-select__placeholder,
   .el-select__selected-item {
     font-size: 16px !important;
@@ -462,6 +463,130 @@ body.dark .glass-panel,
 .el-select__popper {
   --el-bg-color-overlay: var(--glass-fallback);
   --el-border-color-light: var(--glass-border-subtle);
+}
+
+/*
+ * 页面行高是 1.6，会把日期格子撑高，后一行的范围底色盖住前一行，结束日高亮就停在鼠标外面。
+ * 格子恢复成固定命中区，范围色只画在格子内部。
+ * 这里不用 --duration-ui（0.25s）：划过多格时高亮会拖在指针后面。跟手用更短的过渡，缓动仍用 --ease-standard。
+ */
+.el-date-range-picker,
+.el-date-picker {
+  --el-datepicker-active-color: var(--accent);
+  --el-datepicker-hover-text-color: var(--accent);
+  --el-datepicker-inrange-bg-color: color-mix(in srgb, var(--accent) 16%, var(--glass-fallback));
+  --el-datepicker-inrange-hover-bg-color: color-mix(in srgb, var(--accent) 28%, var(--glass-fallback));
+  --el-datepicker-off-text-color: var(--text-muted);
+}
+
+.el-date-range-picker .el-date-table,
+.el-date-picker .el-date-table {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.el-date-range-picker .el-date-table td,
+.el-date-picker .el-date-table td {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  line-height: 32px;
+}
+
+.el-date-range-picker .el-date-table td .el-date-table-cell,
+.el-date-picker .el-date-table td .el-date-table-cell {
+  height: 32px;
+  padding: 4px 0;
+  overflow: hidden;
+  transition: background-color 0.08s var(--ease-standard);
+}
+
+.el-date-range-picker .el-date-table td .el-date-table-cell__text,
+.el-date-picker .el-date-table td .el-date-table-cell__text {
+  transition:
+    background-color 0.08s var(--ease-standard),
+    color 0.08s var(--ease-standard),
+    box-shadow 0.08s var(--ease-standard);
+}
+
+.el-date-range-picker .el-date-table td.available,
+.el-date-picker .el-date-table td.available {
+  cursor: pointer;
+}
+
+.el-date-range-picker .el-date-table td.available:hover .el-date-table-cell__text,
+.el-date-picker .el-date-table td.available:hover .el-date-table-cell__text {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 32%, transparent);
+}
+
+.el-date-picker .el-date-table td.current:not(.disabled) .el-date-table-cell__text {
+  color: #fff;
+  background: var(--accent);
+  box-shadow: none;
+}
+
+/*
+ * 范围选择时，同一天会同时出现在本月溢出格和另一侧月历。
+ * Element Plus 只给当月格子加 end-date，所以指针停在溢出格时圆点会跳到另一边。
+ * 圆点只留在指针所在的格子；溢出格悬停时，另一侧不再重复画范围色。
+ */
+.history-date-popper:not(.is-selecting-end) .el-date-table td.start-date .el-date-table-cell__text,
+.history-date-popper:not(.is-selecting-end) .el-date-table td.end-date .el-date-table-cell__text,
+.history-date-popper.is-selecting-end .el-date-table td.start-date .el-date-table-cell__text,
+.history-date-popper.is-selecting-end .el-date-table td.history-date-pointer .el-date-table-cell__text {
+  color: #fff;
+  background-color: var(--accent);
+  box-shadow: none;
+}
+
+.history-date-popper.is-selecting-end .el-date-table td.end-date:not(.history-date-pointer):not(.start-date) .el-date-table-cell__text {
+  color: inherit !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.history-date-popper.is-selecting-end.is-overflow-hover .el-date-range-picker__content:not(.has-pointer) .el-date-table td.in-range .el-date-table-cell {
+  background-color: transparent !important;
+}
+
+.history-date-popper.is-selecting-end.is-overflow-hover .has-pointer td.history-date-span .el-date-table-cell {
+  background-color: var(--el-datepicker-inrange-bg-color);
+}
+
+.history-date-popper.is-selecting-end .el-date-table td.history-date-pointer .el-date-table-cell__text {
+  color: #fff !important;
+  background-color: var(--accent) !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+@media (max-width: 720px) {
+  .el-date-range-picker {
+    width: min(100vw - 24px, 360px);
+  }
+
+  .el-date-range-picker .el-picker-panel__body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .el-date-range-picker__content {
+    float: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .el-date-range-picker__content.is-left {
+    border-right: none;
+  }
+
+  .el-date-range-picker__content.is-right {
+    border-left: none;
+    border-top: 1px solid var(--el-border-color-lighter);
+  }
 }
 
 ::-webkit-scrollbar {

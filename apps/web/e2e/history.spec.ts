@@ -98,7 +98,8 @@ test('日期范围选择时结束日高亮跟随指针，且选择过程不发�
   await page.goto('/history');
   await expect.poll(() => historyRequests.length).toBe(1);
   await page.getByPlaceholder('开始日期').click();
-  const panel = page.locator('.el-picker__popper:visible .el-date-range-picker');
+  const popper = page.locator('.history-date-popper:visible');
+  const panel = popper.locator('.el-date-range-picker');
   await expect(panel).toBeVisible();
   const panelBox = await panel.boundingBox();
   const viewport = page.viewportSize();
@@ -112,9 +113,64 @@ test('日期范围选择时结束日高亮跟随指针，且选择过程不发�
     { hasText: new RegExp(`^\\s*${label}\\s*$`) },
   );
   await dayCell('10').click();
+  await expect(popper).toHaveClass(/is-selecting-end/);
   await dayCell('18').hover();
   await expect(dayCell('18')).toHaveClass(/in-range/);
   await expect(dayCell('2')).not.toHaveClass(/in-range/);
+
+  const overflowDay = leftMonth.locator('td.next-month', { hasText: /^\s*1\s*$/ }).first();
+  const otherPanelDay = panel.locator(
+    '.el-date-range-picker__content.is-right td:not(.prev-month):not(.next-month)',
+    { hasText: /^\s*1\s*$/ },
+  );
+  await overflowDay.hover();
+  await expect(overflowDay).toHaveClass(/history-date-pointer/);
+  await expect(popper).toHaveClass(/is-overflow-hover/);
+  const focusColor = await overflowDay.locator('.el-date-table-cell__text').evaluate((element) => {
+    return getComputedStyle(element).backgroundColor;
+  });
+  expect(focusColor.replace(/\s/g, '')).toContain('77,107,254');
+  const otherPanelColor = await otherPanelDay.locator('.el-date-table-cell__text').evaluate((element) => {
+    return getComputedStyle(element).backgroundColor;
+  });
+  expect(otherPanelColor.replace(/\s/g, '')).not.toContain('77,107,254');
   await page.waitForTimeout(300);
   expect(historyRequests.length).toBe(1);
+});
+
+test('接口一次返回全部历史时页面仍只显示当前页 10 条', async ({ page }) => {
+  await mockAuthentication(page);
+  const items = Array.from({ length: 15 }, (_, index) => ({
+    ...historyItem,
+    id: `history-${index}`,
+    rawPromptPreview: `历史记录 ${index}`,
+  }));
+  await page.route('**/api/v1/optimization-history**', async route => {
+    if (route.request().method() !== 'GET' || route.request().url().includes('/optimization-history/')) {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      json: {
+        requestId: 'history-request',
+        data: {
+          items,
+          page: 0,
+          size: 10,
+          totalItems: items.length,
+          totalPages: 1,
+        },
+      },
+    });
+  });
+
+  await page.goto('/history');
+  await expect(page.getByRole('heading', { name: '优化历史' })).toBeVisible();
+  const desktopRows = page.locator('.history-table:visible .el-table__row');
+  const mobileRows = page.locator('.history-mobile-card:visible');
+  await expect.poll(async () => (await desktopRows.count()) + (await mobileRows.count())).toBe(10);
+  const visibleList = page.locator('.history-table:visible, .history-card-list:visible');
+  await expect(visibleList.getByText('历史记录 0')).toBeVisible();
+  await expect(visibleList.getByText('历史记录 10')).toHaveCount(0);
 });

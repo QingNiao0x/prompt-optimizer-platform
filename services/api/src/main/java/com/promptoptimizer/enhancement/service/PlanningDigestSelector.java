@@ -14,15 +14,7 @@ final class PlanningDigestSelector {
     private PlanningDigestSelector() { }
 
     static List<FileSnippet> select(List<FileSnippet> files, String query, int limit) {
-        Set<String> terms = new HashSet<>();
-        var words = Pattern.compile("[a-zA-Z0-9_]{3,}|[\\p{IsHan}]{2,}").matcher(query.toLowerCase(Locale.ROOT));
-        while (words.find()) {
-            String word = words.group();
-            terms.add(word);
-            if (word.matches("[\\p{IsHan}]+")) {
-                for (int i = 0; i + 2 <= word.length(); i++) terms.add(word.substring(i, i + 2));
-            }
-        }
+        Set<String> terms = terms(query);
         List<FileSnippet> ranked = files.stream().sorted(Comparator
                 .comparingInt((FileSnippet file) -> score(file, terms)).reversed()
                 .thenComparing(FileSnippet::path)).toList();
@@ -44,6 +36,10 @@ final class PlanningDigestSelector {
         return List.copyOf(chosen);
     }
 
+    static boolean relevant(FileSnippet file, String query) {
+        return score(file, terms(query)) >= 10;
+    }
+
     static boolean isDocument(FileSnippet file) {
         return isDocument(file.path(), file.language());
     }
@@ -57,6 +53,20 @@ final class PlanningDigestSelector {
         String path = rawPath == null ? "" : rawPath.toLowerCase(Locale.ROOT);
         return DOCUMENT_LANGUAGES.contains(language)
                 || path.matches(".*\\.(?:txt|md|rst|adoc|pdf|docx?|xlsx?|pptx?|csv|tsv|odt|ods|odp)$");
+    }
+
+    private static Set<String> terms(String query) {
+        Set<String> terms = new HashSet<>();
+        String source = query == null ? "" : query;
+        var words = Pattern.compile("[a-zA-Z0-9_]{3,}|[\\p{IsHan}]{2,}").matcher(source.toLowerCase(Locale.ROOT));
+        while (words.find()) {
+            String word = words.group();
+            terms.add(word);
+            if (word.matches("[\\p{IsHan}]+")) {
+                for (int index = 0; index + 2 <= word.length(); index++) terms.add(word.substring(index, index + 2));
+            }
+        }
+        return terms;
     }
 
     private static int score(FileSnippet file, Set<String> terms) {
