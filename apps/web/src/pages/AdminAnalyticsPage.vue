@@ -62,7 +62,9 @@ const rankingLoading = ref(false);
 const operationsPageNumber = ref(1);
 const rankingPeriod = ref<AnalyticsRankingPeriod>('DAY');
 const rankingDate = ref('');
-const pageSize = 20;
+const OPERATION_PAGE_SIZES = [10, 20, 50] as const;
+const operationsPageSize = ref<(typeof OPERATION_PAGE_SIZES)[number]>(10);
+let ignoreOperationsEcho = false;
 
 const dailyChart = ref<HTMLDivElement | null>(null);
 const hourlyChart = ref<HTMLDivElement | null>(null);
@@ -142,8 +144,8 @@ const loadOperations = async (page: number): Promise<void> => {
     operationPage.value = await getAnalyticsOperations({
       fromDate: current.period.fromDate,
       toDate: current.period.toDateInclusive,
-      page,
-      pageSize,
+      current: page,
+      size: operationsPageSize.value,
       ...(normalizedAccountId ? { userId: normalizedAccountId } : {}),
       ...(eventFilter.value ? { eventType: eventFilter.value } : {}),
     });
@@ -296,7 +298,28 @@ const resizeCharts = (): void => {
 };
 
 const selectLogPage = (page: number): void => {
+  if (ignoreOperationsEcho) {
+    ignoreOperationsEcho = false;
+    return;
+  }
+  if (page === operationsPageNumber.value) {
+    return;
+  }
   void loadOperations(page);
+};
+
+const selectLogPageSize = (nextSize: number): void => {
+  const size = OPERATION_PAGE_SIZES.find((option) => option === nextSize);
+  if (size === undefined || size === operationsPageSize.value) {
+    return;
+  }
+  ignoreOperationsEcho = true;
+  operationsPageSize.value = size;
+  operationsPageNumber.value = 1;
+  void loadOperations(1);
+  void nextTick(() => {
+    ignoreOperationsEcho = false;
+  });
 };
 
 const locationFor = (item: AnalyticsOperationLog): string => (
@@ -493,7 +516,7 @@ onBeforeUnmount(() => {
             </ElSelect>
           </div>
           <!-- @vue-generic {AnalyticsOperationLog} -->
-          <ElTable v-loading="operationsLoading" :data="operationPage?.items ?? []" stripe>
+          <ElTable v-loading="operationsLoading" :data="operationPage?.records ?? []" stripe>
             <ElTableColumn label="发生时间" min-width="175">
               <template #default="scope">{{ new Date(scope.row.occurredAt).toLocaleString() }}</template>
             </ElTableColumn>
@@ -514,15 +537,17 @@ onBeforeUnmount(() => {
               <template #default="scope">{{ deviceLabel(scope.row.deviceType) }}</template>
             </ElTableColumn>
           </ElTable>
-          <div v-if="operationPage && operationPage.totalItems > 0" class="pagination-row">
-            <span>共 {{ operationPage.totalItems.toLocaleString() }} 条</span>
+          <div v-if="operationPage && operationPage.total > 0" class="pagination-row">
+            <span>共 {{ operationPage.total.toLocaleString() }} 条</span>
             <ElPagination
               background
-              layout="prev, pager, next"
+              layout="prev, pager, next, sizes"
               :current-page="operationsPageNumber"
-              :page-size="pageSize"
-              :total="operationPage.totalItems"
+              :page-size="operationsPageSize"
+              :page-sizes="[...OPERATION_PAGE_SIZES]"
+              :total="operationPage.total"
               @current-change="selectLogPage"
+              @size-change="selectLogPageSize"
             />
           </div>
           <p v-else class="table-empty">所选范围内没有关键操作日志。</p>

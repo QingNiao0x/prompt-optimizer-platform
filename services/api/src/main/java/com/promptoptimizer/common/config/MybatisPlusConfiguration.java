@@ -1,15 +1,13 @@
 package com.promptoptimizer.common.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.autoconfigure.SqlSessionFactoryBeanCustomizer;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.sql.DataSource;
 
 /**
  * 配置 MyBatis-Plus Mapper 扫描和 PostgreSQL 分页拦截器。
@@ -18,13 +16,19 @@ import javax.sql.DataSource;
  * @since 0.1.0
  */
 @Configuration
-@ConditionalOnBean(DataSource.class)
 @MapperScan(basePackages = "com.promptoptimizer", annotationClass = Mapper.class)
 public class MybatisPlusConfiguration {
 
-    /** 为 MyBatis-Plus 的分页查询安装 PostgreSQL 方言拦截器并限制单页最大行数。 */
+    /**
+     * 在 SqlSessionFactory 创建时挂上分页插件。
+     * 配置类上的 ConditionalOnBean 看不到自动配置的 DataSource，单独声明的拦截器 Bean 不会进入工厂，分页查询不会追加 LIMIT。
+     */
     @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+    public SqlSessionFactoryBeanCustomizer mybatisPlusPaginationCustomizer() {
+        return factory -> factory.setPlugins(paginationInterceptor());
+    }
+
+    private MybatisPlusInterceptor paginationInterceptor() {
         PaginationInnerInterceptor pagination = new PaginationInnerInterceptor(DbType.POSTGRE_SQL);
         pagination.setOverflow(false);
         pagination.setMaxLimit(100L);

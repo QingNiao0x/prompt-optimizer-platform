@@ -56,13 +56,6 @@
           FROM optimization_record
         <include refid="scopeWhere"/>
          ORDER BY created_at DESC
-         LIMIT #{limit} OFFSET #{offset}
-    </select>
-
-    <select id="countByScope" resultType="long">
-        SELECT COUNT(*)
-          FROM optimization_record
-        <include refid="scopeWhere"/>
     </select>
 
     <select id="selectByIdAndScope" resultMap="optimizationRecord">

@@ -2,6 +2,8 @@ package com.promptoptimizer.history.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.promptoptimizer.common.exception.ResourceNotFoundException;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.context.dto.ContextAnalysisRequest;
@@ -77,7 +79,7 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
     @Override
     @Transactional(readOnly = true)
     public OptimizationHistoryPage list(
-            int page,
+            int current,
             int size,
             String keyword,
             OffsetDateTime createdFrom,
@@ -89,27 +91,20 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         String escapedKeyword = hasKeyword ? escapeLikePattern(keyword) : null;
         OffsetDateTime rangeStart = hasDateRange ? createdFrom : null;
         OffsetDateTime rangeEnd = hasDateRange ? createdToExclusive : null;
-        long total = recordMapper.countByScope(
+        Page<OptimizationRecordEntity> page = new Page<>(current, size);
+        // 摘要 SQL 含 left 与 jsonb_build_object，计数优化会把 total 改成 0。
+        page.setOptimizeCountSql(false);
+        IPage<OptimizationRecordEntity> result = recordMapper.selectPageByScope(
+                page,
                 context.tenantId(),
                 context.workspaceId(),
                 escapedKeyword,
                 rangeStart,
                 rangeEnd
         );
-        int totalPages = size <= 0 ? 0 : (int) ((total + size - 1L) / size);
-        if (total == 0L) {
-            return new OptimizationHistoryPage(List.of(), page, size, 0L, 0);
-        }
-        List<OptimizationHistorySummary> items = recordMapper.selectPageByScope(
-                context.tenantId(),
-                context.workspaceId(),
-                escapedKeyword,
-                rangeStart,
-                rangeEnd,
-                size,
-                (long) page * size
-        ).stream().map(this::toSummary).toList();
-        return new OptimizationHistoryPage(items, page, size, total, totalPages);
+        List<OptimizationHistorySummary> records = result.getRecords().stream().map(this::toSummary).toList();
+        return new OptimizationHistoryPage(
+                records, result.getTotal(), result.getSize(), result.getCurrent(), result.getPages());
     }
 
     /**

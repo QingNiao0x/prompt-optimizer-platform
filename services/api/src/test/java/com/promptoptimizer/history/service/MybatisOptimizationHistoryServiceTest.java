@@ -1,5 +1,6 @@
 package com.promptoptimizer.history.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.promptoptimizer.common.exception.ResourceNotFoundException;
@@ -33,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -100,18 +102,24 @@ class MybatisOptimizationHistoryServiceTest {
     @Test
     void pagesHistoryWithEscapedKeywordAndWorkspaceFilters() {
         OptimizationRecordEntity record = recordEntity();
-        when(recordMapper.countByScope(TENANT_ID, WORKSPACE_ID, "登录\\%\\_", null, null)).thenReturn(1L);
-        when(recordMapper.selectPageByScope(TENANT_ID, WORKSPACE_ID, "登录\\%\\_", null, null, 20, 0L))
-                .thenReturn(List.of(record));
+        Page<OptimizationRecordEntity> returned = new Page<>(1, 10);
+        returned.setRecords(List.of(record));
+        returned.setTotal(1);
+        when(recordMapper.selectPageByScope(any(), eq(TENANT_ID), eq(WORKSPACE_ID), eq("登录\\%\\_"),
+                isNull(), isNull())).thenReturn(returned);
 
-        OptimizationHistoryPage result = service.list(0, 20, "登录%_", null, null);
+        OptimizationHistoryPage result = service.list(1, 10, "登录%_", null, null);
 
-        assertThat(result.items()).hasSize(1);
-        assertThat(result.totalItems()).isEqualTo(1);
-        assertThat(result.page()).isZero();
-        assertThat(result.size()).isEqualTo(20);
-        verify(recordMapper).countByScope(TENANT_ID, WORKSPACE_ID, "登录\\%\\_", null, null);
-        verify(recordMapper).selectPageByScope(TENANT_ID, WORKSPACE_ID, "登录\\%\\_", null, null, 20, 0L);
+        assertThat(result.records()).hasSize(1);
+        assertThat(result.total()).isEqualTo(1);
+        assertThat(result.current()).isEqualTo(1);
+        assertThat(result.size()).isEqualTo(10);
+        ArgumentCaptor<Page<OptimizationRecordEntity>> pageCaptor = ArgumentCaptor.forClass(Page.class);
+        verify(recordMapper).selectPageByScope(pageCaptor.capture(), eq(TENANT_ID), eq(WORKSPACE_ID),
+                eq("登录\\%\\_"), isNull(), isNull());
+        assertThat(pageCaptor.getValue().optimizeCountSql()).isFalse();
+        assertThat(pageCaptor.getValue().getCurrent()).isEqualTo(1);
+        assertThat(pageCaptor.getValue().getSize()).isEqualTo(10);
         verify(recordMapper, never()).selectByIdAndScope(any(), any(), any());
     }
 

@@ -65,7 +65,7 @@ test('历史记录仅在点击搜索或按回车后加载对应查询结果', as
       json: {
         requestId: 'history-request',
         data: {
-          items: [{
+          records: [{
             id: 'history-1',
             templateCode: 'GENERAL',
             rawPromptPreview: '查询全球使用 AI 最多的职业',
@@ -75,10 +75,10 @@ test('历史记录仅在点击搜索或按回车后加载对应查询结果', as
             latencyMs: 12,
             createdAt: '2026-09-24T10:00:00Z',
           }],
-          page: 0,
+          current: 1,
           size: 10,
-          totalItems: 1,
-          totalPages: 1,
+          total: 1,
+          pages: 1,
         },
       },
     });
@@ -87,7 +87,7 @@ test('历史记录仅在点击搜索或按回车后加载对应查询结果', as
   await page.goto('/history');
   await expect(page.getByRole('heading', { name: '优化历史' })).toBeVisible();
   await expect.poll(() => historyRequests.length).toBe(1);
-  expect(historyRequests[0]?.searchParams.get('page')).toBe('0');
+  expect(historyRequests[0]?.searchParams.get('current')).toBe('1');
   expect(historyRequests[0]?.searchParams.get('size')).toBe('10');
   expect(consoleWarnings.some(warning => warning.includes('Failed to resolve directive: loading'))).toBe(false);
   await expect(

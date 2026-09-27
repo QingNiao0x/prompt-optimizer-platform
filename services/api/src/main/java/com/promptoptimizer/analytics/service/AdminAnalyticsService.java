@@ -103,24 +103,27 @@ public class AdminAnalyticsService {
             String toDate,
             UUID userId,
             String eventType,
-            Integer page,
-            Integer pageSize
+            Integer current,
+            Integer size
     ) {
         AnalyticsPeriod period = periodResolver.resolve("CUSTOM", fromDate, toDate);
-        int normalizedPage = page == null ? 1 : page;
-        int normalizedPageSize = pageSize == null ? 20 : pageSize;
-        if (normalizedPage < 1 || normalizedPage > 100_000) {
+        int normalizedCurrent = current == null ? 1 : current;
+        int normalizedSize = size == null ? 10 : size;
+        if (normalizedCurrent < 1 || normalizedCurrent > 100_000) {
             throw new InvalidOptimizationRequestException("日志页码必须在 1 到 100000 之间");
         }
-        if (normalizedPageSize < 1 || normalizedPageSize > 100) {
+        if (normalizedSize < 1 || normalizedSize > 100) {
             throw new InvalidOptimizationRequestException("每页日志数量必须在 1 到 100 之间");
         }
         String normalizedEventType = normalizeEventType(eventType);
+        Page<com.promptoptimizer.analytics.dto.AnalyticsViews.OperationLog> page =
+                new Page<>(normalizedCurrent, normalizedSize);
+        page.setOptimizeCountSql(false);
         IPage<com.promptoptimizer.analytics.dto.AnalyticsViews.OperationLog> result =
-                requireAnalyticsMapper().selectOperationLogs(new Page<>(normalizedPage, normalizedPageSize),
+                requireAnalyticsMapper().selectOperationLogs(page,
                         period.fromInclusive(), period.toExclusive(), userId, normalizedEventType);
-        return new OperationLogPage(result.getRecords(), normalizedPage, normalizedPageSize,
-                result.getTotal(), Math.toIntExact(result.getPages()));
+        return new OperationLogPage(result.getRecords(), result.getTotal(), result.getSize(),
+                result.getCurrent(), result.getPages());
     }
 
     private String normalizeEventType(String eventType) {

@@ -53,19 +53,19 @@ public class OptimizationHistoryController {
      */
     @GetMapping
     public ApiResponse<OptimizationHistoryPage> list(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "1") int current,
+            @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String dateRange,
             HttpServletRequest request
     ) {
-        int safePage = Math.max(0, page);
+        int safeCurrent = Math.max(1, current);
         int safeSize = Math.max(1, Math.min(MAX_PAGE_SIZE, size));
         HistoryDateRange safeDateRange = parseDateRange(dateRange);
         return ApiResponse.success(
                 requestId(request),
                 historyService.list(
-                        safePage,
+                        safeCurrent,
                         safeSize,
                         normalizeKeyword(keyword),
                         safeDateRange.createdFrom(),

@@ -198,11 +198,11 @@ export interface AnalyticsOperationLog {
 }
 
 export interface AnalyticsOperationLogPage {
-  items: AnalyticsOperationLog[];
-  page: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
+  records: AnalyticsOperationLog[];
+  total: number;
+  size: number;
+  current: number;
+  pages: number;
 }
 
 export interface AnalyticsDashboardQuery {
@@ -217,8 +217,8 @@ export interface AnalyticsOperationQuery {
   toDate: string;
   userId?: string;
   eventType?: AnalyticsEventType;
-  page: number;
-  pageSize: number;
+  current: number;
+  size: number;
 }
 
 export type AdminModelChange = Omit<AdminModel, 'id' | 'publicId'>;
@@ -454,11 +454,11 @@ export interface OptimizationHistorySummary {
 }
 
 export interface OptimizationHistoryPage {
-  items: OptimizationHistorySummary[];
-  page: number;
+  records: OptimizationHistorySummary[];
+  total: number;
   size: number;
-  totalItems: number;
-  totalPages: number;
+  current: number;
+  pages: number;
 }
 
 export interface OptimizationHistoryFilters {

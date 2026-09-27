@@ -1,6 +1,7 @@
 package com.promptoptimizer.analytics.controller;
 
 import com.promptoptimizer.analytics.dto.AnalyticsViews;
+import com.promptoptimizer.analytics.dto.OperationLogQuery;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.DashboardView;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.OperationLogPage;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.RankingView;
@@ -9,6 +10,7 @@ import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.web.RequestIdFilter;
 import com.promptoptimizer.identity.security.PlatformAdminAccess;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -72,17 +74,13 @@ public class AdminAnalyticsController {
     /** 按账号、事件类型和日期范围分页查看关键操作地点日志。 */
     @GetMapping("/operations")
     public ApiResponse<OperationLogPage> operations(
-            @RequestParam @NotBlank String fromDate,
-            @RequestParam @NotBlank String toDate,
-            @RequestParam(required = false) UUID userId,
-            @RequestParam(required = false) String eventType,
-            @RequestParam(required = false) @Min(1) @Max(100_000) Integer page,
-            @RequestParam(required = false) @Min(1) @Max(100) Integer pageSize,
+            @Valid OperationLogQuery query,
             HttpServletRequest request
     ) {
         platformAdminAccess.require();
         return ApiResponse.success(requestId(request), analyticsService.operationLogs(
-                fromDate, toDate, userId, eventType, page, pageSize));
+                query.fromDate(), query.toDate(), query.userId(), query.eventType(),
+                query.current(), query.size()));
     }
 
     private String requestId(HttpServletRequest request) {

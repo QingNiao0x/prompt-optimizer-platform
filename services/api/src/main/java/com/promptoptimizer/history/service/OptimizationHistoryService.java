@@ -18,10 +18,10 @@ import java.util.UUID;
 public interface OptimizationHistoryService {
 
     /**
-     * 分页查询当前演示工作区的历史记录。
+     * 分页查询当前工作区的历史记录。current 从 1 开始，与 MyBatis-Plus Page 一致。
      */
     OptimizationHistoryPage list(
-            int page,
+            int current,
             int size,
             String keyword,
             OffsetDateTime createdFrom,
@@ -29,8 +29,8 @@ public interface OptimizationHistoryService {
     );
 
     /** 保留无筛选调用方的兼容入口。 */
-    default OptimizationHistoryPage list(int page, int size) {
-        return list(page, size, null, null, null);
+    default OptimizationHistoryPage list(int current, int size) {
+        return list(current, size, null, null, null);
     }
 
     /**

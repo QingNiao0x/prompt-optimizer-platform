@@ -1,5 +1,7 @@
 package com.promptoptimizer.history.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.promptoptimizer.history.entity.OptimizationRecordEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +66,8 @@ class OptimizationRecordScopeDatabaseTest {
         insertRecord(jdbc, otherWorkspaceId, tenantA, otherWorkspace, otherSession, userA, "同租户其他工作区", null);
         insertRecord(jdbc, otherTenantId, tenantB, workspaceB, sessionB, userB, "其他租户记录", null);
 
-        List<OptimizationRecordEntity> records = recordMapper.selectPageByScope(
-                tenantA, workspaceA, null, null, null, 20, 0L);
+        List<OptimizationRecordEntity> records = selectPage(
+                tenantA, workspaceA, null, null, null, 1, 20).getRecords();
         assertThat(records).extracting(OptimizationRecordEntity::getId).containsExactly(visibleId);
         assertThat(records.getFirst().getRawPrompt()).contains("当前工作区可见记录");
         assertThat(records.getFirst().getRawPrompt()).doesNotContain("其他租户", "已删除", "其他工作区");
@@ -123,11 +125,27 @@ class OptimizationRecordScopeDatabaseTest {
             );
         }
 
-        assertThat(recordMapper.selectPageByScope(
-                tenantId, workspaceId, null, null, null, 10, 0L)).hasSize(10);
-        assertThat(recordMapper.countByScope(tenantId, workspaceId, null, null, null)).isEqualTo(12);
-        assertThat(recordMapper.selectPageByScope(
-                tenantId, workspaceId, null, null, null, 10, 10L)).hasSize(2);
+        IPage<OptimizationRecordEntity> firstPage = selectPage(
+                tenantId, workspaceId, null, null, null, 1, 10);
+        assertThat(firstPage.getRecords()).hasSize(10);
+        assertThat(firstPage.getTotal()).isEqualTo(12);
+        assertThat(firstPage.getTotal()).isEqualTo(12);
+        assertThat(selectPage(tenantId, workspaceId, null, null, null, 2, 10).getRecords()).hasSize(2);
+    }
+
+    private IPage<OptimizationRecordEntity> selectPage(
+            UUID tenantId,
+            UUID workspaceId,
+            String keyword,
+            OffsetDateTime createdFrom,
+            OffsetDateTime createdToExclusive,
+            long current,
+            long size
+    ) {
+        Page<OptimizationRecordEntity> page = new Page<>(current, size);
+        page.setOptimizeCountSql(false);
+        return recordMapper.selectPageByScope(
+                page, tenantId, workspaceId, keyword, createdFrom, createdToExclusive);
     }
 
     private void insertTenantUser(JdbcTemplate jdbc, UUID tenantId, UUID userId, String email) {

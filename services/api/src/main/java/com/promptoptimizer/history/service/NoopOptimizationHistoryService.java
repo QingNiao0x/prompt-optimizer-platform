@@ -35,13 +35,13 @@ public class NoopOptimizationHistoryService implements OptimizationHistoryServic
      */
     @Override
     public OptimizationHistoryPage list(
-            int page,
+            int current,
             int size,
             String keyword,
             OffsetDateTime createdFrom,
             OffsetDateTime createdToExclusive
     ) {
-        return new OptimizationHistoryPage(List.of(), page, size, 0, 0);
+        return new OptimizationHistoryPage(List.of(), 0, size, current, 0);
     }
 
     /**

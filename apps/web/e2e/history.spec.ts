@@ -27,11 +27,11 @@ test('历史列表默认第一页 10 条，翻页和每页条数各只请求一�
       json: {
         requestId: 'history-request',
         data: {
-          items: [historyItem],
-          page: Number(requestUrl.searchParams.get('page') ?? '0'),
+          records: [historyItem],
+          current: Number(requestUrl.searchParams.get('current') ?? '1'),
           size: Number(requestUrl.searchParams.get('size') ?? '10'),
-          totalItems: 35,
-          totalPages: 4,
+          total: 35,
+          pages: 4,
         },
       },
     });
@@ -40,7 +40,7 @@ test('历史列表默认第一页 10 条，翻页和每页条数各只请求一�
   await page.goto('/history');
   await expect(page.getByRole('heading', { name: '优化历史' })).toBeVisible();
   await expect.poll(() => historyRequests.length).toBe(1);
-  expect(historyRequests[0]?.searchParams.get('page')).toBe('0');
+  expect(historyRequests[0]?.searchParams.get('current')).toBe('1');
   expect(historyRequests[0]?.searchParams.get('size')).toBe('10');
   expect(historyRequests[0]?.searchParams.has('keyword')).toBe(false);
   expect(historyRequests[0]?.searchParams.has('dateRange')).toBe(false);
@@ -49,13 +49,13 @@ test('历史列表默认第一页 10 条，翻页和每页条数各只请求一�
   await page.getByLabel('原始提示词搜索').press('Enter');
   await expect.poll(() => historyRequests.length).toBe(2);
   expect(historyRequests[1]?.searchParams.get('keyword')).toBe('AI 职业');
-  expect(historyRequests[1]?.searchParams.get('page')).toBe('0');
+  expect(historyRequests[1]?.searchParams.get('current')).toBe('1');
   expect(historyRequests[1]?.searchParams.get('size')).toBe('10');
 
   const pagination = page.locator('.pagination-row .el-pagination');
   await pagination.locator('.el-pager li', { hasText: /^2$/ }).click();
   await expect.poll(() => historyRequests.length).toBe(3);
-  expect(historyRequests[2]?.searchParams.get('page')).toBe('1');
+  expect(historyRequests[2]?.searchParams.get('current')).toBe('2');
   expect(historyRequests[2]?.searchParams.get('size')).toBe('10');
   expect(historyRequests[2]?.searchParams.get('keyword')).toBe('AI 职业');
   await page.waitForTimeout(300);
@@ -64,7 +64,7 @@ test('历史列表默认第一页 10 条，翻页和每页条数各只请求一�
   await pagination.locator('.el-select').click();
   await page.locator('.el-select-dropdown:visible .el-select-dropdown__item', { hasText: '20/page' }).click();
   await expect.poll(() => historyRequests.length).toBe(4);
-  expect(historyRequests[3]?.searchParams.get('page')).toBe('0');
+  expect(historyRequests[3]?.searchParams.get('current')).toBe('1');
   expect(historyRequests[3]?.searchParams.get('size')).toBe('20');
   expect(historyRequests[3]?.searchParams.get('keyword')).toBe('AI 职业');
   await page.waitForTimeout(300);
@@ -85,11 +85,11 @@ test('日期范围选择时结束日高亮跟随指针，且选择过程不发�
       json: {
         requestId: 'history-request',
         data: {
-          items: [historyItem],
-          page: 0,
+          records: [historyItem],
+          current: 1,
           size: 10,
-          totalItems: 1,
-          totalPages: 1,
+          total: 1,
+          pages: 1,
         },
       },
     });
@@ -155,11 +155,11 @@ test('接口一次返回全部历史时页面仍只显示当前页 10 条', asyn
       json: {
         requestId: 'history-request',
         data: {
-          items,
-          page: 0,
+          records: items,
+          current: 1,
           size: 10,
-          totalItems: items.length,
-          totalPages: 1,
+          total: items.length,
+          pages: 1,
         },
       },
     });

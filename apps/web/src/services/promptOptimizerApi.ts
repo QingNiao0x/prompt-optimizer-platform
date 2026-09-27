@@ -64,7 +64,7 @@ export const optimizePrompt = async (
 };
 
 export const listHistory = async (
-  page = 0,
+  current = 1,
   size = 10,
   filters?: OptimizationHistoryFilters,
 ): Promise<ApiResponse<OptimizationHistoryPage>> => {
@@ -74,7 +74,7 @@ export const listHistory = async (
     '/api/v1/optimization-history',
     {
       params: {
-        page,
+        current,
         size,
         ...(keyword ? { keyword } : {}),
         ...(dateRange ? { dateRange } : {}),

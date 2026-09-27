@@ -103,14 +103,15 @@ class AdminAnalyticsServiceTest {
         var result = service.operationLogs("2026-09-24", "2026-09-26", USER_ID,
                 "login", 2, 10);
 
-        assertThat(result.page()).isEqualTo(2);
-        assertThat(result.totalItems()).isEqualTo(15);
-        assertThat(result.totalPages()).isEqualTo(2);
-        assertThat(result.items()).hasSize(1);
+        assertThat(result.current()).isEqualTo(2);
+        assertThat(result.total()).isEqualTo(15);
+        assertThat(result.pages()).isEqualTo(2);
+        assertThat(result.records()).hasSize(1);
         ArgumentCaptor<Page<OperationLog>> pageCaptor = ArgumentCaptor.forClass(Page.class);
         verify(repository).selectOperationLogs(pageCaptor.capture(), any(), any(), eq(USER_ID), eq("LOGIN"));
         assertThat(pageCaptor.getValue().getCurrent()).isEqualTo(2);
         assertThat(pageCaptor.getValue().getSize()).isEqualTo(10);
+        assertThat(pageCaptor.getValue().optimizeCountSql()).isFalse();
     }
 
     private AnalyticsPeriodResolver resolver() {

@@ -39,7 +39,7 @@ const HISTORY_PAGE_SIZES = [10, 20, 50] as const;
 
 const loading = ref(false);
 const items = ref<OptimizationHistorySummary[]>([]);
-// ElPagination 从 1 计页；列表接口的 page 从 0 计页。
+// 分页组件和列表接口都从 1 计页，对应 MyBatis-Plus 的 current。
 const currentPage = ref(1);
 const pageSize = ref<(typeof HISTORY_PAGE_SIZES)[number]>(10);
 const total = ref(0);
@@ -74,14 +74,14 @@ const loadPage = async (): Promise<void> => {
       keyword: keyword.value.trim() || undefined,
       dateRange: dateRange.value,
     };
-    const response = await listHistory(currentPage.value - 1, pageSize.value, filters);
+    const response = await listHistory(currentPage.value, pageSize.value, filters);
     // 筛选条件连续变化时，较早的请求可能晚于新请求返回，不能覆盖最新列表。
     if (sequence !== loadSequence) {
       return;
     }
-    const returned = response.data.items ?? [];
+    const returned = response.data.records ?? [];
     const limit = pageSize.value;
-    const reportedTotal = Number(response.data.totalItems);
+    const reportedTotal = Number(response.data.total);
     const safeTotal = Number.isFinite(reportedTotal) && reportedTotal > 0
       ? reportedTotal
       : returned.length;

@@ -30,7 +30,7 @@ describe('listHistory', () => {
       '/api/v1/optimization-history',
       expect.objectContaining({
         params: {
-          page: 1,
+          current: 1,
           size: 10,
           keyword: 'AI 职业',
           dateRange: '2026-09-01,2026-09-24',

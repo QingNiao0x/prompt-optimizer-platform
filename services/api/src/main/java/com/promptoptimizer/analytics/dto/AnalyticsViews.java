@@ -17,7 +17,9 @@ public final class AnalyticsViews {
     private AnalyticsViews() {
     }
 
-    /** 统计区间的日历与数据库查询边界。 */
+    /**
+     * 统计区间的日历与数据库查询边界。
+     */
     public record PeriodView(
             LocalDate fromDate,
             LocalDate toDateInclusive,
@@ -27,7 +29,9 @@ public final class AnalyticsViews {
     ) {
     }
 
-    /** 仪表盘主数据及各图表序列。 */
+    /**
+     * 仪表盘主数据及各图表序列。
+     */
     public record DashboardView(
             PeriodView period,
             long registeredAccountCount,
@@ -46,11 +50,15 @@ public final class AnalyticsViews {
     ) {
     }
 
-    /** 单日、单周或单月使用排行。 */
+    /**
+     * 单日、单周或单月使用排行。
+     */
     public record RankingView(PeriodView period, List<UserRank> items) {
     }
 
-    /** 某日访问量、去重访问用户、活跃用户和新增账号数。 */
+    /**
+     * 某日访问量、去重访问用户、活跃用户和新增账号数。
+     */
     public record DailyMetric(
             LocalDate date,
             long accessCount,
@@ -61,19 +69,27 @@ public final class AnalyticsViews {
     ) {
     }
 
-    /** 某个本地小时发生的关键使用操作数。 */
+    /**
+     * 某个本地小时发生的关键使用操作数。
+     */
     public record HourlyMetric(int hour, long operationCount) {
     }
 
-    /** 某月发生的关键使用操作数。 */
+    /**
+     * 某月发生的关键使用操作数。
+     */
     public record MonthlyMetric(String month, long operationCount) {
     }
 
-    /** 登录设备类别、登录次数和去重账号数。 */
+    /**
+     * 登录设备类别、登录次数和去重账号数。
+     */
     public record DeviceMetric(String deviceType, long loginCount, long uniqueUsers) {
     }
 
-    /** 按账号 ID 汇总的使用频率排行。 */
+    /**
+     * 按账号 ID 汇总的使用频率排行。
+     */
     public record UserRank(
             UUID userId,
             String displayName,
@@ -83,7 +99,9 @@ public final class AnalyticsViews {
     ) {
     }
 
-    /** 已支付充值记录的套餐日汇总；金额使用最小货币单位。 */
+    /**
+     * 已支付充值记录的套餐日汇总；金额使用最小货币单位。
+     */
     public record RechargeMetric(
             LocalDate date,
             String planCode,
@@ -94,7 +112,9 @@ public final class AnalyticsViews {
     ) {
     }
 
-    /** 单条关键操作日志的安全展示字段。 */
+    /**
+     * 单条关键操作日志的安全展示字段。
+     */
     public record OperationLog(
             UUID eventId,
             UUID userId,
@@ -112,13 +132,15 @@ public final class AnalyticsViews {
     ) {
     }
 
-    /** 操作日志分页响应。 */
+    /**
+     * 操作日志分页响应，字段与 MyBatis-Plus 分页结果对齐。
+     */
     public record OperationLogPage(
-            List<OperationLog> items,
-            int page,
-            int pageSize,
-            long totalItems,
-            int totalPages
+            List<OperationLog> records,
+            long total,
+            long size,
+            long current,
+            long pages
     ) {
     }
 }

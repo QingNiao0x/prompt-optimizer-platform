@@ -3,23 +3,24 @@ package com.promptoptimizer.history.domain;
 import java.util.List;
 
 /**
- * @DateTime: 2026-08-14
- * @Author: QingNiao
- * @ProjectName: prompt-optimizer-platform
- * @Description: 历史记录分页结果，避免直接把 Spring Data 的 Page 结构暴露给前端。
+ * 历史列表分页结果，字段与 MyBatis-Plus 的 current、size、records、total、pages 对齐。
+ * 不直接返回 Page，避免把分页插件的内部开关序列化到接口。
+ *
+ * @author QingNiao
+ * @since 0.1.0
  */
 public record OptimizationHistoryPage(
-        List<OptimizationHistorySummary> items,
-        int page,
-        int size,
-        long totalItems,
-        int totalPages
+        List<OptimizationHistorySummary> records,
+        long total,
+        long size,
+        long current,
+        long pages
 ) {
 
     /**
      * 对列表字段做防御性拷贝。
      */
     public OptimizationHistoryPage {
-        items = List.copyOf(items);
+        records = List.copyOf(records);
     }
 }
