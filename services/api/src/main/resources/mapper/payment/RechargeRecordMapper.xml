@@ -47,15 +47,17 @@
     </select>
 
     <select id="paidByDay" resultMap="rechargeMetric">
-        SELECT (r.paid_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date AS paid_day,
-               r.plan_code, r.plan_name, COUNT(*) AS paid_count,
-               SUM(r.amount_minor) AS amount_minor, r.currency
-          FROM recharge_record r
-         WHERE r.paid_at &gt;= #{period.fromInclusive}
-           AND r.paid_at &lt; #{period.toExclusive}
-           AND (CAST(#{userId} AS uuid) IS NULL OR r.user_id = #{userId})
-         GROUP BY (r.paid_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date,
-                  r.plan_code, r.plan_name, r.currency
-         ORDER BY paid_day, r.plan_code, r.currency
+        SELECT paid_day, plan_code, plan_name, COUNT(*) AS paid_count,
+               SUM(amount_minor) AS amount_minor, currency
+          FROM (
+                SELECT (r.paid_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date AS paid_day,
+                       r.plan_code, r.plan_name, r.amount_minor, r.currency
+                  FROM recharge_record r
+                 WHERE r.paid_at &gt;= #{period.fromInclusive}
+                   AND r.paid_at &lt; #{period.toExclusive}
+                   AND (CAST(#{userId} AS uuid) IS NULL OR r.user_id = #{userId})
+               ) local_payment
+         GROUP BY paid_day, plan_code, plan_name, currency
+         ORDER BY paid_day, plan_code, currency
     </select>
 </mapper>

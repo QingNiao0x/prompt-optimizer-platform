@@ -11,9 +11,11 @@ import com.promptoptimizer.identity.mapper.IdentityProvisioningMapper;
 import com.promptoptimizer.identity.mapper.UserAccountMapper;
 import com.promptoptimizer.identity.mapper.UserIdentityMapper;
 import com.promptoptimizer.payment.mapper.RechargeRecordMapper;
+import org.apache.ibatis.mapping.ParameterMapping;
 import com.promptoptimizer.provider.mapper.PlatformModelMapper;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.Resource;
@@ -95,7 +97,18 @@ class MapperXmlConfigurationTest {
                 "AT TIME ZONE CAST(? AS text)").doesNotContain("Asia/Shanghai");
         assertThat(sql.getParameterMappings()).isNotEmpty();
         assertThat(sql.getParameterMappings()).anySatisfy(mapping ->
-                assertThat(mapping.getProperty()).isEqualTo("period.zoneId.id"));
+                assertThat(mapping.getProperty()).isEqualTo("period.zoneIdText"));
+        assertResolvedParameters(configuration, AdminAnalyticsMapper.class.getName() + ".dailyMetrics", parameters,
+                "Asia/Shanghai");
+        parameters.put("toDateLast", from);
+        parameters.put("limit", 20);
+        for (String statement : List.of(
+                AdminAnalyticsMapper.class.getName() + ".hourlyUsage",
+                AdminAnalyticsMapper.class.getName() + ".monthlyUsage",
+                AdminAnalyticsMapper.class.getName() + ".usageRanking",
+                RechargeRecordMapper.class.getName() + ".paidByDay")) {
+            assertResolvedParameters(configuration, statement, parameters, "Asia/Shanghai");
+        }
     }
 
     @Test
@@ -115,6 +128,27 @@ class MapperXmlConfigurationTest {
 
         assertThat(sql).contains("jsonb_build_object", "left(btrim(replace", "LIMIT", "OFFSET");
         assertThat(sql).doesNotContain("optimized_prompt", "context_snapshot", "permission_policy");
+    }
+
+    private void assertResolvedParameters(
+            Configuration configuration,
+            String statementId,
+            HashMap<String, Object> parameters,
+            String expectedZone
+    ) {
+        BoundSql boundSql = configuration.getMappedStatement(statementId).getBoundSql(parameters);
+        assertThat(boundSql.getSql()).doesNotContain("zoneId.id", "Asia/Shanghai");
+        MetaObject parametersMeta = configuration.newMetaObject(parameters);
+        assertThat(boundSql.getParameterMappings()).isNotEmpty();
+        for (ParameterMapping mapping : boundSql.getParameterMappings()) {
+            Object value = parametersMeta.getValue(mapping.getProperty());
+            if ("period.zoneIdText".equals(mapping.getProperty())) {
+                assertThat(value).isEqualTo(expectedZone);
+            }
+        }
+        assertThat(boundSql.getParameterMappings())
+                .as(statementId)
+                .anySatisfy(mapping -> assertThat(mapping.getProperty()).isEqualTo("period.zoneIdText"));
     }
 
     private Configuration parseMappers() throws Exception {

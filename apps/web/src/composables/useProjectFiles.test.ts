@@ -8,6 +8,24 @@ import {
 import { readProjectFiles } from './useProjectFiles';
 
 describe('readProjectFiles', () => {
+  it('should exclude dependency cache paths in fallback folder uploads while retaining project facts', async () => {
+    const ignored = ['demo/.m2/repository/dependency/pom.xml',
+      'demo/apps/web/.npm-cache/index.json', 'demo/.NPM/_cacache/cache.txt',
+      'demo/.pnpm-store/metadata.json'];
+    const retained = ['demo/pom.xml', 'demo/apps/web/package.json',
+      'demo/docs/cache-design.md', 'demo/business-cache/rules.txt'];
+    const files = [...ignored, ...retained].map((path) => {
+      const file = new File(['合成测试内容'], path.split('/').at(-1)!);
+      Object.defineProperty(file, 'webkitRelativePath', { value: path });
+      return file;
+    });
+
+    const selection = await collectCandidateFiles(files, 1_000);
+
+    expect(selection.files.map((file) => file.webkitRelativePath)).toEqual(retained);
+    expect(selection.stats.pathIgnored).toBe(ignored.length);
+  });
+
   it('should extract worksheet text from an xlsx file instead of ignoring it as binary content', async () => {
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.aoa_to_sheet([

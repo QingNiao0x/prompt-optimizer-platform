@@ -35,4 +35,15 @@ public record AnalyticsPeriod(
     public long dayCount() {
         return ChronoUnit.DAYS.between(fromDate, toDateExclusive);
     }
+
+    /**
+     * 返回时区 ID 文本，供统计 SQL 绑定。
+     * <p>
+     * {@code ZoneId.of} 的运行时类型是未导出的 {@code java.time.ZoneRegion}。
+     * MyBatis 反射其 {@code getId} 会触发 {@code InaccessibleObjectException}，
+     * 因此先在本类取出字符串，参数路径不再进入 {@code java.time}。
+     */
+    public String zoneIdText() {
+        return zoneId.getId();
+    }
 }

@@ -108,25 +108,33 @@
                        interval '1 day'
                    ) AS generated(day)
         ), activity AS (
-            SELECT (e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date AS activity_day,
-                   COUNT(*) FILTER (WHERE e.event_type = 'APP_VISIT') AS access_count,
-                   COUNT(DISTINCT e.actor_user_id) FILTER (WHERE e.event_type = 'APP_VISIT') AS unique_visitors,
-                   COUNT(DISTINCT e.actor_user_id) AS active_users,
-                   COUNT(DISTINCT e.actor_user_id) FILTER (WHERE <include refid="usageEventPredicate"/>) AS actual_users
-              FROM audit_event e
-             WHERE e.actor_user_id IS NOT NULL
-               AND e.occurred_at &gt;= #{period.fromInclusive}
-               AND e.occurred_at &lt; #{period.toExclusive}
-               AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
-             GROUP BY (e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date
+            <!-- 时区转换只出现一次。同一表达式在 SELECT 和 GROUP BY 各写一遍会变成两个绑定参数，PostgreSQL 视为不同列并报 42803。 -->
+            SELECT activity_day,
+                   COUNT(*) FILTER (WHERE event_type = 'APP_VISIT') AS access_count,
+                   COUNT(DISTINCT actor_user_id) FILTER (WHERE event_type = 'APP_VISIT') AS unique_visitors,
+                   COUNT(DISTINCT actor_user_id) AS active_users,
+                   COUNT(DISTINCT actor_user_id) FILTER (WHERE <include refid="usageEventPredicate"/>) AS actual_users
+              FROM (
+                    SELECT (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date AS activity_day,
+                           e.event_type,
+                           e.actor_user_id
+                      FROM audit_event e
+                     WHERE e.actor_user_id IS NOT NULL
+                       AND e.occurred_at &gt;= #{period.fromInclusive}
+                       AND e.occurred_at &lt; #{period.toExclusive}
+                       AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+                   ) local_event
+             GROUP BY activity_day
         ), accounts AS (
-            SELECT (u.created_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date AS activity_day,
-                   COUNT(*) AS new_accounts
-              FROM user_account u
-             WHERE u.created_at &gt;= #{period.fromInclusive}
-               AND u.created_at &lt; #{period.toExclusive}
-               AND (CAST(#{userId} AS uuid) IS NULL OR u.id = #{userId})
-             GROUP BY (u.created_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date
+            SELECT activity_day, COUNT(*) AS new_accounts
+              FROM (
+                    SELECT (u.created_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date AS activity_day
+                      FROM user_account u
+                     WHERE u.created_at &gt;= #{period.fromInclusive}
+                       AND u.created_at &lt; #{period.toExclusive}
+                       AND (CAST(#{userId} AS uuid) IS NULL OR u.id = #{userId})
+                   ) local_account
+             GROUP BY activity_day
         )
         SELECT days.activity_day,
                COALESCE(activity.access_count, 0) AS access_count,
@@ -145,7 +153,7 @@
         SELECT hours.hour, COUNT(e.id) AS operation_count
           FROM hours
           LEFT JOIN audit_event e
-            ON EXTRACT(HOUR FROM (e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text)))::integer = hours.hour
+            ON EXTRACT(HOUR FROM (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text)))::integer = hours.hour
            AND e.occurred_at &gt;= #{period.fromInclusive}
            AND e.occurred_at &lt; #{period.toExclusive}
            AND e.actor_user_id IS NOT NULL
@@ -163,16 +171,18 @@
                                    date_trunc('month', CAST(#{toDateLast} AS date)),
                                    interval '1 month') AS generated(month_start)
         ), activity AS (
-            SELECT date_trunc('month', e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text)) AS month_start,
-                   COUNT(*) AS operation_count
-              FROM audit_event e
-             WHERE e.occurred_at &gt;= #{period.fromInclusive}
-               AND e.occurred_at &lt; #{period.toExclusive}
-               AND e.actor_user_id IS NOT NULL
-               AND e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
-                                    'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
-               AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
-             GROUP BY date_trunc('month', e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))
+            SELECT month_start, COUNT(*) AS operation_count
+              FROM (
+                    SELECT date_trunc('month', e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text)) AS month_start
+                      FROM audit_event e
+                     WHERE e.occurred_at &gt;= #{period.fromInclusive}
+                       AND e.occurred_at &lt; #{period.toExclusive}
+                       AND e.actor_user_id IS NOT NULL
+                       AND e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
+                                            'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
+                       AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+                   ) local_event
+             GROUP BY month_start
         )
         SELECT to_char(months.month_start, 'YYYY-MM') AS month,
                COALESCE(activity.operation_count, 0) AS operation_count
@@ -200,7 +210,7 @@
                COUNT(*) FILTER (WHERE e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED',
                      'CONTEXT_PREPARED', 'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')) AS operation_count,
                COUNT(*) FILTER (WHERE e.event_type = 'LOGIN') AS login_count,
-               COUNT(DISTINCT (e.occurred_at AT TIME ZONE CAST(#{period.zoneId.id} AS text))::date) AS active_days
+               COUNT(DISTINCT (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date) AS active_days
           FROM audit_event e
           LEFT JOIN user_account u ON u.id = e.actor_user_id
          WHERE e.actor_user_id IS NOT NULL
