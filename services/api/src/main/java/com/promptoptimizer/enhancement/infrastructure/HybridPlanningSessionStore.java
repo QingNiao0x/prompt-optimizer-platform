@@ -2,7 +2,7 @@ package com.promptoptimizer.enhancement.infrastructure;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.promptoptimizer.enhancement.service.InMemoryPlanningSessionStore;
+import com.promptoptimizer.enhancement.service.impl.InMemoryPlanningSessionStore;
 import com.promptoptimizer.enhancement.service.PlanningSessionStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

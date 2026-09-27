@@ -1,7 +1,7 @@
 package com.promptoptimizer.analytics.dto;
 
 import com.promptoptimizer.analytics.controller.AdminAnalyticsController;
-import com.promptoptimizer.analytics.service.AdminAnalyticsService;
+import com.promptoptimizer.analytics.service.impl.AdminAnalyticsService;
 import com.promptoptimizer.common.web.RequestIdFilter;
 import com.promptoptimizer.identity.security.PlatformAdminAccess;
 import com.promptoptimizer.identity.support.AuthenticatedMvcTestConfiguration;

@@ -2,7 +2,7 @@ package com.promptoptimizer.identity.infrastructure.registration;
 
 import com.promptoptimizer.identity.service.EmailVerificationPolicy;
 import com.promptoptimizer.identity.service.EmailVerificationStore;
-import com.promptoptimizer.identity.service.InMemoryEmailVerificationStore;
+import com.promptoptimizer.identity.service.impl.InMemoryEmailVerificationStore;
 import com.promptoptimizer.identity.service.RegistrationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

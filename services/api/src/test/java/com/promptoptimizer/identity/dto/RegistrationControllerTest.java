@@ -2,8 +2,8 @@ package com.promptoptimizer.identity.dto;
 
 import com.promptoptimizer.identity.controller.RegistrationController;
 import com.promptoptimizer.common.web.RequestIdFilter;
-import com.promptoptimizer.identity.service.AuthenticationService;
-import com.promptoptimizer.identity.service.EmailRegistrationService;
+import com.promptoptimizer.identity.service.impl.AuthenticationService;
+import com.promptoptimizer.identity.service.impl.EmailRegistrationService;
 import com.promptoptimizer.identity.service.RegistrationException;
 import com.promptoptimizer.identity.security.SecurityConfiguration;
 import com.promptoptimizer.identity.security.SecurityErrorWriter;

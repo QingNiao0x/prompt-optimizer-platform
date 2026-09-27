@@ -172,7 +172,7 @@ public class BootstrapAdminAccountInitializer implements ApplicationRunner {
             if (normalizedDisplayName.isBlank() || normalizedDisplayName.length() > 80) {
                 throw new IllegalArgumentException("invalid display name");
             }
-            if (!com.promptoptimizer.identity.service.PasswordPolicy.meets(password)) {
+            if (!com.promptoptimizer.identity.service.impl.PasswordPolicy.meets(password)) {
                 throw new IllegalArgumentException("invalid password");
             }
             return new BootstrapIdentity(usernameKey, emailKey, normalizedDisplayName, password);

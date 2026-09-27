@@ -1,6 +1,6 @@
 package com.promptoptimizer.context.infrastructure.embedding;
 
-import com.promptoptimizer.context.service.SemanticVectorIndex;
+import com.promptoptimizer.context.service.impl.SemanticVectorIndex;
 import com.promptoptimizer.context.service.SemanticVectorIndexOptions;
 import com.promptoptimizer.context.service.TextEmbeddingModel;
 import org.springframework.beans.factory.annotation.Qualifier;

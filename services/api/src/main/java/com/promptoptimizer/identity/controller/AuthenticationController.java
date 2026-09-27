@@ -5,7 +5,7 @@ import com.promptoptimizer.identity.dto.CsrfTokenView;
 import com.promptoptimizer.identity.dto.LoginRequest;
 import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.web.RequestIdFilter;
-import com.promptoptimizer.identity.service.AuthenticationService;
+import com.promptoptimizer.identity.service.impl.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -28,11 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final com.promptoptimizer.identity.service.LoginCaptchaService loginCaptchaService;
+    private final com.promptoptimizer.identity.service.impl.LoginCaptchaService loginCaptchaService;
 
     public AuthenticationController(
             AuthenticationService authenticationService,
-            com.promptoptimizer.identity.service.LoginCaptchaService loginCaptchaService
+            com.promptoptimizer.identity.service.impl.LoginCaptchaService loginCaptchaService
     ) {
         this.authenticationService = authenticationService;
         this.loginCaptchaService = loginCaptchaService;

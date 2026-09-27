@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.promptoptimizer.identity.security.AuthenticatedUser;
-import com.promptoptimizer.identity.service.LoginCaptchaService;
+import com.promptoptimizer.identity.service.impl.LoginCaptchaService;
 import com.promptoptimizer.identity.support.TestActors;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;

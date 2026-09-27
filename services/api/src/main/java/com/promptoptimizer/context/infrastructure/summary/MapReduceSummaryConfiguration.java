@@ -1,8 +1,8 @@
 package com.promptoptimizer.context.infrastructure.summary;
 
 import com.promptoptimizer.context.service.DocumentSummaryModel;
-import com.promptoptimizer.context.service.FileContentSummarizer;
-import com.promptoptimizer.context.service.MapReduceDocumentSummarizer;
+import com.promptoptimizer.context.service.impl.FileContentSummarizer;
+import com.promptoptimizer.context.service.impl.MapReduceDocumentSummarizer;
 import com.promptoptimizer.context.service.MapReduceSummaryOptions;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

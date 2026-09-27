@@ -1,7 +1,7 @@
 package com.promptoptimizer.enhancement.controller;
 
-import com.promptoptimizer.enhancement.service.PlanningSessionService;
-import com.promptoptimizer.enhancement.service.PlanQualityMetrics;
+import com.promptoptimizer.enhancement.service.impl.PlanningSessionService;
+import com.promptoptimizer.enhancement.service.impl.PlanQualityMetrics;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

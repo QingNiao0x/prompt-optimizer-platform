@@ -3,6 +3,7 @@ package com.promptoptimizer.history.controller;
 import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.common.web.RequestIdFilter;
+import com.promptoptimizer.history.dto.HistoryListQuery;
 import com.promptoptimizer.history.service.OptimizationHistoryService;
 import com.promptoptimizer.history.domain.OptimizationHistoryDetail;
 import com.promptoptimizer.history.domain.OptimizationHistoryPage;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -52,22 +52,16 @@ public class OptimizationHistoryController {
      * 分页查询历史记录。
      */
     @GetMapping
-    public ApiResponse<OptimizationHistoryPage> list(
-            @RequestParam(defaultValue = "1") int current,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String dateRange,
-            HttpServletRequest request
-    ) {
-        int safeCurrent = Math.max(1, current);
-        int safeSize = Math.max(1, Math.min(MAX_PAGE_SIZE, size));
-        HistoryDateRange safeDateRange = parseDateRange(dateRange);
+    public ApiResponse<OptimizationHistoryPage> list(HistoryListQuery query, HttpServletRequest request) {
+        int safeCurrent = Math.max(1, query.current());
+        int safeSize = Math.max(1, Math.min(MAX_PAGE_SIZE, query.size()));
+        HistoryDateRange safeDateRange = parseDateRange(query.dateRange());
         return ApiResponse.success(
                 requestId(request),
                 historyService.list(
                         safeCurrent,
                         safeSize,
-                        normalizeKeyword(keyword),
+                        normalizeKeyword(query.keyword()),
                         safeDateRange.createdFrom(),
                         safeDateRange.createdToExclusive()
                 )

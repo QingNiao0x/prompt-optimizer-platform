@@ -3,7 +3,7 @@ package com.promptoptimizer.context.controller;
 import com.promptoptimizer.context.dto.DocumentUploadCreateRequest;
 import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.web.RequestIdFilter;
-import com.promptoptimizer.context.service.TemporaryDocumentIndexService;
+import com.promptoptimizer.context.service.impl.TemporaryDocumentIndexService;
 import com.promptoptimizer.context.domain.DocumentUploadStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

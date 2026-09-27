@@ -2,7 +2,7 @@ package com.promptoptimizer.context.dto;
 
 import com.promptoptimizer.context.controller.DocumentUploadController;
 import com.promptoptimizer.common.web.RequestIdFilter;
-import com.promptoptimizer.context.service.TemporaryDocumentIndexService;
+import com.promptoptimizer.context.service.impl.TemporaryDocumentIndexService;
 import com.promptoptimizer.context.domain.DocumentProcessingPhase;
 import com.promptoptimizer.context.domain.DocumentUploadStatus;
 import org.junit.jupiter.api.Test;

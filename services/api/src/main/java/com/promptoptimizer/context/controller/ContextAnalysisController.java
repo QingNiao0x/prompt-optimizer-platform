@@ -1,7 +1,7 @@
 package com.promptoptimizer.context.controller;
 
 import com.promptoptimizer.context.dto.ContextAnalysisRequest;
-import com.promptoptimizer.analytics.service.AnalyticsEventService;
+import com.promptoptimizer.analytics.service.impl.AnalyticsEventService;
 import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.web.RequestIdFilter;

@@ -72,7 +72,7 @@ class GlobalExceptionHandlerTest {
             request.setContent("private-source-text".getBytes(java.nio.charset.StandardCharsets.UTF_8));
             IllegalArgumentException cause = new IllegalArgumentException("password=example-exception-secret");
             cause.setStackTrace(new StackTraceElement[]{new StackTraceElement(
-                    "com.promptoptimizer.context.service.DefaultContextAnalyzer", "analyze", "private-path.java", 150)});
+                    "com.promptoptimizer.context.service.impl.DefaultContextAnalyzer", "analyze", "private-path.java", 150)});
 
             var response = new GlobalExceptionHandler().handleUnexpectedException(
                     new IllegalStateException("private-source-text", cause), request);
