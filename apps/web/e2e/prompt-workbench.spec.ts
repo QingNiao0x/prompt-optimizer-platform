@@ -12,6 +12,7 @@ import { mockAuthentication } from './authFixture';
 
 test.beforeEach(async ({ page }) => {
   await mockAuthentication(page);
+  await page.route('**/api/v1/analytics/events', (route) => route.fulfill({ status: 204 }));
   await page.route('**/api/v1/optimizations/plan-events', (route) => route.fulfill({ status: 204 }));
   await page.route('**/api/v1/models', (route) => route.fulfill({
     status: 200,
@@ -215,6 +216,7 @@ const loginPlanResponse: ApiResponse<OptimizationPlan> = {
             description: '先检查现有认证代码',
             answer: '先检查并沿用项目现有的认证与会话机制。',
             recommended: true,
+            recommendationReason: '现有认证代码已经提供会话机制，复用可以保持兼容。',
           },
           {
             id: 'jwt',
@@ -1233,4 +1235,95 @@ test('未开启 Plan 时待确认事项折叠，增强结果保持在视口内',
   await page.getByRole('button', { name: '取消' }).click();
   await expect(page.getByRole('button', { name: '待确认事项，8 项，需要人工核对' }))
     .toHaveAttribute('aria-expanded', 'false');
+});
+
+test('Plan 展示推荐依据、支持回看修改并在生成时锁定答案', async ({ page }, testInfo) => {
+  await configurePlanMode(page, { enabled: true, introSeen: true });
+  await page.route('**/api/v1/optimizations/plan', (route) =>
+    route.fulfill({ status: 200, json: loginPlanResponse }));
+  let releaseGeneration: () => void = () => undefined;
+  const generationGate = new Promise<void>((resolve) => { releaseGeneration = resolve; });
+  let calls = 0;
+  await page.route('**/api/v1/optimizations', async (route) => {
+    calls += 1;
+    expect(route.request().postDataJSON().planConfirmation.answers).toEqual([
+      expect.objectContaining({ answer: '沿用 Session，保持原有 Cookie 安全属性' }),
+      expect.objectContaining({ answer: '登录、退出和过期测试均通过' }),
+    ]);
+    await generationGate;
+    await route.fulfill({ status: 200, json: optimizationResponse });
+  });
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
+  await page.getByLabel('原始提示词').fill('改进登录功能并保留现有认证机制');
+  await page.getByRole('button', { name: PLANNED_ENHANCE_BUTTON }).click();
+  const dialog = page.getByRole('dialog', { name: '确认关键细节' });
+  const recommended = dialog.getByRole('button', { name: /^沿用项目现有方式/ });
+  await expect(recommended).toHaveAttribute('aria-pressed', 'false');
+  await expect(recommended).toContainText('现有认证代码已经提供会话机制');
+  await page.screenshot({ path: testInfo.outputPath('plan-recommendation.png'), fullPage: true, animations: 'disabled' });
+  await recommended.click();
+  await dialog.getByRole('button', { name: '下一题' }).click();
+  await dialog.getByLabel('填写回答').fill('登录、退出和过期测试均通过');
+  await dialog.getByRole('button', { name: '核对已填答案（2）' }).click();
+  await expect(dialog.locator('.answer-review')).toContainText('先检查并沿用项目现有的认证与会话机制。');
+  await dialog.getByRole('button', { name: '1. 登录成功后采用哪种身份保持方式？' }).click();
+  await dialog.getByLabel('没有合适选项？直接填写').fill('沿用 Session，保持原有 Cookie 安全属性');
+  await expect(recommended).toHaveAttribute('aria-pressed', 'false');
+  await dialog.getByRole('button', { name: '下一题' }).click();
+  await expect(dialog.getByLabel('填写回答')).toHaveValue('登录、退出和过期测试均通过');
+  await dialog.getByRole('button', { name: '生成最终提示词' }).click();
+  try {
+    await expect.poll(() => calls).toBe(1);
+    await expect(dialog.getByLabel('填写回答')).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: '上一题' })).toBeDisabled();
+  } finally {
+    releaseGeneration();
+  }
+  await expect(page.getByText('最终提示词已生成。')).toBeVisible();
+});
+
+test('上下文分析提醒默认折叠，增强结果保持在视口内', async ({ page }) => {
+  await configurePlanMode(page, { enabled: false, introSeen: true });
+  const warnings = Array.from({ length: 6 }, (_, index) =>
+    `文件已完整解析，本次上下文仅选取相关片段：apps/web/playwright-report/chunk-${index}.html`,
+  );
+  await page.route('**/api/v1/optimizations', async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: {
+        requestId: 'warning-layout',
+        data: {
+          ...optimizationResult,
+          warnings,
+        },
+      } satisfies ApiResponse<OptimizationResult>,
+    });
+  });
+
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
+  await page.getByLabel('原始提示词').fill('给用户模块增加登录功能');
+  await page.getByRole('button', { name: DIRECT_ENHANCE_BUTTON }).click();
+  await expect(page.getByText('最终提示词已生成。')).toBeVisible();
+  await openWorkbenchPane(page, 'result');
+
+  const toggle = page.getByRole('button', { name: '上下文分析提醒，6 项' });
+  const resultContent = page.getByLabel('增强结果内容，可滚动查看完整提示词');
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(toggle.locator('.context-warning-preview')).toContainText('chunk-0.html');
+  await expect(page.locator('#context-warning-details')).toBeHidden();
+  await expect(resultContent).toBeInViewport();
+  const icon = toggle.locator('svg').first();
+  const iconBox = await icon.boundingBox();
+  expect(iconBox).not.toBeNull();
+  expect(iconBox!.width).toBeLessThanOrEqual(18);
+  expect(iconBox!.height).toBeLessThanOrEqual(18);
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#context-warning-details')).toContainText(warnings[5]);
+  const expandedResult = await resultContent.boundingBox();
+  expect(expandedResult).not.toBeNull();
+  expect(expandedResult!.height).toBeGreaterThan(120);
 });

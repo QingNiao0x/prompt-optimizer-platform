@@ -38,6 +38,7 @@ const currentIndex = ref(0);
 const draftAnswers = ref<Record<string, DraftAnswer>>({});
 const showValidation = ref(false);
 const unmatchedDrafts = ref<string[]>([]);
+const reviewVisible = ref(false);
 let previousQuestions: PlanQuestion[] = [];
 let lastRecoveryRevision = 0;
 
@@ -62,6 +63,7 @@ watch(
     }
     currentIndex.value = 0;
     showValidation.value = false;
+    reviewVisible.value = false;
     if ((props.recoveryRevision ?? 0) > lastRecoveryRevision) {
       const recovered = recoverPlanDrafts(previousQuestions, props.plan.questions, draftAnswers.value);
       draftAnswers.value = recovered.answers;
@@ -83,7 +85,7 @@ const isSelected = (option: PlanOption): boolean =>
 
 const chooseOption = (question: PlanQuestion, option: PlanOption): void => {
   const draft = draftAnswers.value[question.id];
-  if (!draft) return;
+  if (!draft || props.isGenerating) return;
 
   draft.customAnswer = '';
   if (question.type === 'SINGLE_CHOICE') {
@@ -98,7 +100,7 @@ const chooseOption = (question: PlanQuestion, option: PlanOption): void => {
 
 const updateCustomAnswer = (question: PlanQuestion, value: string): void => {
   const draft = draftAnswers.value[question.id];
-  if (!draft) return;
+  if (!draft || props.isGenerating) return;
   draft.customAnswer = value;
   if (value.trim()) {
     draft.selectedOptionIds = [];
@@ -109,7 +111,8 @@ const updateCustomAnswer = (question: PlanQuestion, value: string): void => {
 const isQuestionAnswered = (question: PlanQuestion): boolean => {
   const draft = draftAnswers.value[question.id];
   if (!draft) return false;
-  return draft.selectedOptionIds.length > 0 || draft.customAnswer.trim().length > 0;
+  const length = toAnswer(question).answer.length;
+  return length > 0 && length <= 1500;
 };
 
 const toAnswer = (question: PlanQuestion): PlanAnswer => {
@@ -163,10 +166,18 @@ const continueFlow = (): void => {
 };
 
 const previousQuestion = (): void => {
-  if (currentIndex.value > 0) {
+  if (currentIndex.value > 0 && !props.isGenerating) {
     currentIndex.value -= 1;
     showValidation.value = false;
   }
+};
+
+/** 查看已填答案时允许直接返回对应问题，草稿保留，提交期间禁止修改。 */
+const goToQuestion = (index: number): void => {
+  if (props.isGenerating) return;
+  currentIndex.value = index;
+  showValidation.value = false;
+  reviewVisible.value = false;
 };
 
 const close = (): void => {
@@ -227,18 +238,23 @@ const close = (): void => {
           <h3>{{ currentQuestion.question }}</h3>
           <p v-if="currentQuestion.hint">{{ currentQuestion.hint }}</p>
         </div>
+        <p class="answer-instruction">
+          {{ currentQuestion.type === 'FREE_TEXT' ? '请填写实际情况，示例不会自动作为答案。'
+            : currentQuestion.type === 'MULTIPLE_CHOICE' ? '可多选；填写自定义回答会替换已选项。'
+            : '请选择一项，或填写自己的答案。推荐项需要你主动确认。' }}
+        </p>
 
         <div
           v-if="currentQuestion.options.length"
           class="answer-options"
           :class="{ 'answer-options--multiple': currentQuestion.type === 'MULTIPLE_CHOICE' }"
         >
-          <button
+          <ElButton
             v-for="option in currentQuestion.options"
             :key="option.id"
             class="answer-option"
             :class="{ 'is-selected': isSelected(option) }"
-            type="button"
+            :disabled="isGenerating"
             :aria-pressed="isSelected(option)"
             @click="chooseOption(currentQuestion, option)"
           >
@@ -248,16 +264,20 @@ const close = (): void => {
             <span class="option-copy">
               <span class="option-title">
                 <strong>{{ option.label }}</strong>
-                <em v-if="option.recommended">建议</em>
+                <em v-if="option.recommended">推荐</em>
               </span>
               <small>{{ option.description }}</small>
+              <small v-if="option.recommended && option.recommendationReason" class="recommendation-reason">
+                {{ option.recommendationReason }}
+              </small>
             </span>
-          </button>
+          </ElButton>
         </div>
 
         <div v-if="currentQuestion.type === 'FREE_TEXT'" class="free-answer">
           <ElInput
             :model-value="currentDraft?.customAnswer"
+            :disabled="isGenerating"
             type="textarea"
             :rows="4"
             maxlength="1500"
@@ -281,6 +301,10 @@ const close = (): void => {
           <ElInput
             :id="`custom-answer-${currentQuestion.id}`"
             :model-value="currentDraft?.customAnswer"
+            :disabled="isGenerating"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 5 }"
+            show-word-limit
             maxlength="1500"
             placeholder="输入更符合你实际情况的回答"
             @update:model-value="updateCustomAnswer(currentQuestion, $event)"
@@ -288,12 +312,25 @@ const close = (): void => {
         </div>
 
         <p v-if="showValidation && !currentAnswered" class="validation-message" role="alert">
-          请先回答这个问题，再继续生成最终提示词。
+          {{ currentQuestion && toAnswer(currentQuestion).answer.length > 1500
+            ? '回答不能超过 1500 字，请减少选项或精简自定义回答。'
+            : '请先回答这个问题，再继续生成最终提示词。' }}
         </p>
         <p v-if="errorMessage" class="generation-error" role="alert">
           {{ errorMessage }}
         </p>
       </section>
+      <div v-if="completedCount > 0" class="answer-review">
+        <ElButton text :disabled="isGenerating" :aria-expanded="reviewVisible" @click="reviewVisible = !reviewVisible">
+          {{ reviewVisible ? '收起已填答案' : `核对已填答案（${completedCount}）` }}
+        </ElButton>
+        <ol v-if="reviewVisible">
+          <li v-for="(question, index) in questions" :key="question.id">
+            <ElButton text :disabled="isGenerating" @click="goToQuestion(index)">{{ index + 1 }}. {{ question.question }}</ElButton>
+            <p>{{ toAnswer(question).answer || '尚未回答' }}</p>
+          </li>
+        </ol>
+      </div>
     </template>
 
     <template #footer>
@@ -444,6 +481,9 @@ const close = (): void => {
   grid-template-columns: 22px minmax(0, 1fr);
   gap: 12px;
   width: 100%;
+  height: auto;
+  margin: 0;
+  white-space: normal;
   padding: 13px 15px;
   border: 1px solid var(--line-subtle);
   border-radius: 10px;
@@ -452,6 +492,38 @@ const close = (): void => {
   background: color-mix(in srgb, var(--surface-panel) 75%, transparent);
   cursor: pointer;
   transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
+}
+
+.answer-option :deep(> span) {
+  display: contents;
+}
+
+.answer-instruction,
+.answer-review p {
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.answer-review {
+  margin-top: 12px;
+}
+
+.answer-review ol {
+  padding-left: 20px;
+}
+
+.answer-review .el-button {
+  max-width: 100%;
+  height: auto;
+  white-space: normal;
+  text-align: left;
+}
+
+.option-copy small.recommendation-reason {
+  color: var(--accent-blue);
 }
 
 .answer-option:hover,

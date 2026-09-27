@@ -57,6 +57,7 @@ const {
   isAnalyzing,
   isPlanning,
   isOptimizing,
+  isPreparingContext,
   canOptimize,
 } = storeToRefs(store);
 
@@ -384,6 +385,7 @@ const handleReEnhance = async (): Promise<void> => {
 };
 
 const beginEnhancement = (intent: 'optimize' | 'reenhance'): boolean => {
+  if (isPreparingContext.value || isRecoveringPlan.value || planDialogVisible.value) return false;
   if (intent === 'optimize') {
     if (!canOptimize.value) {
       return false;
@@ -541,6 +543,8 @@ const prepareContextTransmission = async (
   willCallModel: boolean,
   planningDigestOnly = false,
 ): Promise<ContextFileInput[] | undefined> => {
+  if (isPreparingContext.value) return undefined;
+  store.isPreparingContext = true;
   try {
     const contextFiles = await store.prepareContextFiles(query);
     if (!projectContextSettings.value.confirmBeforeSendingCode || contextFiles.length === 0) {
@@ -575,6 +579,8 @@ const prepareContextTransmission = async (
     }
     ElMessage.error(error instanceof Error ? error.message : '读取本地上下文失败。');
     return undefined;
+  } finally {
+    store.isPreparingContext = false;
   }
 };
 
@@ -700,7 +706,7 @@ onBeforeUnmount(() => {
         :model-load-error="modelLoadError"
         :is-analyzing="isAnalyzing"
         :is-planning="isPlanning"
-        :is-optimizing="isOptimizing"
+        :is-optimizing="isOptimizing || isPreparingContext"
         :can-optimize="canOptimize"
         @update:raw-prompt="rawPrompt = $event"
         @update:include-examples="includeExamples = $event"
@@ -711,7 +717,7 @@ onBeforeUnmount(() => {
         v-show="showResultPane"
         class="glass-panel result-column"
         :result="result"
-        :busy="isAnalyzing || isPlanning || isOptimizing"
+        :busy="isAnalyzing || isPlanning || isOptimizing || isPreparingContext"
         :plan-mode-enabled="planModeEnabled"
         @save="handleSaveResult"
         @re-enhance="handleReEnhance"
@@ -729,7 +735,7 @@ onBeforeUnmount(() => {
       v-model="planDialogVisible"
       :plan="plan"
       :recovery-revision="recoveryRevision"
-      :is-generating="isOptimizing || isPlanning || isAnalyzing || isRecoveringPlan"
+      :is-generating="isOptimizing || isPlanning || isAnalyzing || isRecoveringPlan || isPreparingContext"
       :error-message="errorMessage"
       @confirm="handlePlanConfirmed"
     />

@@ -65,7 +65,7 @@ class RegistrationControllerTest {
     void registerReturnsAuthenticatedUser() throws Exception {
         when(registrationService.register(any()))
                 .thenReturn(new EmailRegistrationService.RegisteredEmail("new@example.com"));
-        when(authenticationService.login(any(), any(), any())).thenReturn(user());
+        when(authenticationService.loginAfterRegistration(anyString(), anyString(), any(), any())).thenReturn(user());
 
         mvc.perform(post("/api/v1/auth/register")
                         .with(csrf())

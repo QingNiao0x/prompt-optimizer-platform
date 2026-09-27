@@ -130,18 +130,26 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     searchTerms: string[],
     limit: number,
   ): Promise<IndexedProjectChunk[]> {
+    if (limit <= 0) return [];
     const unique = new Map<string, IndexedProjectChunk>();
-    const priorityChunks = await this.getChunksByPriority(projectId, Math.min(limit, 100));
+    const priorityChunks = await this.getChunksByPriority(projectId, Math.min(limit, 40));
     for (const chunk of priorityChunks) {
       unique.set(chunk.id, chunk);
     }
 
-    for (const term of searchTerms.slice(0, 12)) {
-      const matches = await this.getChunksBySearchTerm(`${projectId}:${term}`, 100);
-      for (const chunk of matches) {
-        unique.set(chunk.id, chunk);
-        if (unique.size >= limit) {
-          return Array.from(unique.values());
+    // 均衡覆盖原始需求和末尾确认答案，避免前几个常见词耗尽候选名额。
+    const distinctTerms = Array.from(new Set(searchTerms));
+    const terms = distinctTerms.length <= 64 ? distinctTerms
+      : [...distinctTerms.slice(0, 32), ...distinctTerms.slice(-32)];
+    const hits = new Map<string, number>();
+    const perTermLimit = Math.min(100, Math.max(8, Math.ceil(limit * 2 / Math.max(1, terms.length))));
+    for (let start = 0; start < terms.length; start += 8) {
+      const groups = await Promise.all(terms.slice(start, start + 8)
+        .map((term) => this.getChunksBySearchTerm(`${projectId}:${term}`, perTermLimit)));
+      for (const matches of groups) {
+        for (const chunk of matches) {
+          unique.set(chunk.id, chunk);
+          hits.set(chunk.id, (hits.get(chunk.id) ?? 0) + 1);
         }
       }
     }
@@ -152,7 +160,10 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
         unique.set(chunk.id, chunk);
       }
     }
-    return Array.from(unique.values()).slice(0, limit);
+    return Array.from(unique.values())
+      .sort((left, right) => (hits.get(right.id) ?? 0) - (hits.get(left.id) ?? 0)
+        || left.priority - right.priority || left.id.localeCompare(right.id))
+      .slice(0, limit);
   }
 
   async findChunksByPaths(

@@ -97,7 +97,7 @@ public class OptimizationPlanningService {
     }
 
     /**
-     * 生成自然语言确认问题；计划阶段不会读取或传输项目文件正文。
+     * 结合已分析的安全上下文生成自然语言确认问题，保留缺少事实的自由填写问题。
      */
     public OptimizationPlan plan(OptimizationPlanRequest request) {
         long startedAt = clock.millis();
@@ -135,7 +135,6 @@ public class OptimizationPlanningService {
                         .limit(MAX_QUESTIONS)
                         .map(PlanChoiceCompleter::complete)
                         .map(question -> PlanRecommendationAligner.align(question, providerRequest))
-                        .filter(PlanChoiceCompleter::presentable)
                         .toList();
                 metrics.generated(validated.questions().size() + requiredConflicts.size(), questions.size());
                 String summary = questions.isEmpty()
@@ -333,22 +332,26 @@ public class OptimizationPlanningService {
                     || !optionIds.add(option.id())
                     || isBlank(option.label()) || option.label().length() > 120
                     || value(option.description()).length() > 300
+                    || option.recommendationReason().length() > 300
                     || isBlank(option.answer()) || option.answer().length() > 1_500
                     || containsInternalTerm(option.label())
                     || containsInternalTerm(value(option.description()))
-                    || containsInternalTerm(option.answer())) {
+                    || containsInternalTerm(option.answer())
+                    || containsInternalTerm(option.recommendationReason())) {
                 throw invalidResponse();
             }
             rejectProviderCredential(option.label());
             rejectProviderCredential(option.description());
             rejectProviderCredential(option.answer());
+            rejectProviderCredential(option.recommendationReason());
             recommended += option.recommended() ? 1 : 0;
             options.add(new PlanOption(
                     option.id().trim(),
                     option.label().trim(),
                     value(option.description()).trim(),
                     option.answer().trim(),
-                    option.recommended()
+                    option.recommended(),
+                    option.recommendationReason()
             ));
         }
         if (recommended > 1

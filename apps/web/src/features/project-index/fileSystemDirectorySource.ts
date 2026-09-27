@@ -6,6 +6,7 @@ const IGNORED_DIRECTORY_NAMES = new Set([
   '.next', '.nuxt', '.output', '.cache', '.gradle', '.mvn',
   '__pycache__', '.pytest_cache', '.mypy_cache', '.ruff_cache', '.tox',
   '.venv', 'venv', 'env', 'logs', 'log',
+  '.codegraph', 'playwright-report', 'test-results',
 ]);
 const FILE_HANDLE_BATCH_SIZE = 64;
 const FILE_METADATA_CONCURRENCY = 6;

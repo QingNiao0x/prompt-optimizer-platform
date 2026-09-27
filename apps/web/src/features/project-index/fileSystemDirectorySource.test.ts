@@ -27,6 +27,17 @@ const directoryHandle = (
 });
 
 describe('streamDirectoryEntries', () => {
+  it('should skip generated reports while still traversing user documents', async () => {
+    const root = directoryHandle('demo', [
+      directoryHandle('playwright-report', [fileHandle('index.html', 'generated report')]),
+      directoryHandle('.codegraph', [fileHandle('index.db', 'generated index')]),
+      directoryHandle('docs', [fileHandle('plan.md', '业务方案'), fileHandle('rules.txt', '规则')]),
+    ]);
+    const entries = [];
+    for await (const entry of streamDirectoryEntries(root)) entries.push(entry);
+    expect(entries.filter((entry) => entry.kind === 'file').map((entry) => entry.path))
+      .toEqual(['docs/plan.md', 'docs/rules.txt']);
+  });
   it('should traverse nested source files and skip dependency directories before reading them', async () => {
     let dependencyDirectoryVisited = false;
     const dependencyDirectory: DirectoryHandleLike = {

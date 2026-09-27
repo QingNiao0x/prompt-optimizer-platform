@@ -31,7 +31,7 @@ class SyntheticIncrementalRepository implements ProjectIndexRepository {
       priority: 10,
       chunkCount: 0,
       metadataOnly: true,
-      fingerprint: '3:0:1',
+      fingerprint: '4:0:1',
       lastSeenScanId: 'previous-scan',
       indexedCharacters: 0,
       estimatedIndexBytes: 512,

@@ -82,17 +82,15 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
     /** 仅对研究需求中未明确的地区、数据、分组和工具提出确定性示例问题。 */
     private List<PlanQuestion> researchQuestions(String prompt) {
         List<PlanQuestion> questions = new ArrayList<>();
-        if (!hasConcreteRegion(prompt)) {
-            questions.add(singleChoice(
+        String decomposition = prompt.contains("arriaga") ? "、Arriaga 分解" : "";
+        if (containsAny(prompt, "地区", "区域", "死亡率", "发病率", "流行病") && !hasConcreteRegion(prompt)) {
+            questions.add(new PlanQuestion(
                     "research-region",
                     "这项研究具体覆盖哪个地区？",
-                    "请选择明确范围；没有写明时不要猜一个地名。",
-                    List.of(
-                            option("pending", "未写明的地区标为待确认", "不另猜省或市", "地区以原始需求里已经写明的范围为限；没写明的地区在结果中标为待确认。", true),
-                            option("guangdong", "广东省", "以广东省为研究范围", "研究范围定为广东省。", false),
-                            option("beijing", "北京市", "以北京市为研究范围", "研究范围定为北京市。", false),
-                            option("yangtze", "长三角地区", "覆盖上海、江苏、浙江、安徽", "研究范围定为长三角地区。", false)
-                    ),
+                    "填写实际研究地区及纳入范围，系统无法从现有资料确定这一事实。",
+                    PlanQuestionType.FREE_TEXT,
+                    List.of(),
+                    List.of("省/市名称；是否覆盖全部区县；是否仅纳入常住人口"),
                     true
             ));
         }
@@ -110,7 +108,8 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
                     true
             ));
         }
-        if (containsAny(prompt, "亚类", "亚型") && !containsAny(prompt, "icd", "缺血性心脏病", "脑血管病", "高血压性心脏病")) {
+        if (containsAny(prompt, "心脑血管", "疾病") && containsAny(prompt, "亚类", "亚型")
+                && !containsAny(prompt, "icd", "缺血性心脏病", "脑血管病", "高血压性心脏病")) {
             questions.add(singleChoice(
                     "research-disease-groups",
                     "心脑血管疾病亚类按什么标准划分？",
@@ -144,9 +143,9 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
                     "你希望使用哪种分析工具？",
                     "系统会据此调整方法说明、代码和图表实现。",
                     List.of(
-                            option("r", "R", "适合流行病学统计和可复现报告", "使用 R 完成数据处理、统计分析、Arriaga 分解和图表绘制。", true),
-                            option("python", "Python", "适合数据处理和自动化分析", "使用 Python 完成数据处理、统计分析、Arriaga 分解和图表绘制。", false),
-                            option("spss", "SPSS", "适合菜单操作和常规统计", "使用 SPSS 完成可支持的统计分析，并说明 Arriaga 分解所需的补充实现。", false),
+                            option("r", "R", "适合统计分析和可复现报告", "使用 R 完成数据处理、统计分析" + decomposition + "和图表绘制。", true),
+                            option("python", "Python", "适合数据处理和自动化分析", "使用 Python 完成数据处理、统计分析" + decomposition + "和图表绘制。", false),
+                            option("spss", "SPSS", "适合菜单操作和常规统计", "使用 SPSS 完成可支持的统计分析，软件不支持的方法需说明补充实现。", false),
                             option("stata", "Stata", "适合队列和生存分析", "使用 Stata 完成数据处理、统计分析和图表。", false)
                     ),
                     true
@@ -159,7 +158,7 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
                     "代码可以覆盖数据清洗、指标计算、分解分析和可视化。",
                     List.of(
                             option("full", "需要完整代码", "从数据导入到结果输出", "提供可运行的完整代码，包括数据校验、清洗、分析、图表和结果导出。", true),
-                            option("core", "只要关键代码", "聚焦核心计算与分解方法", "提供关键计算和 Arriaga 分解代码，并说明其余处理步骤。", false),
+                            option("core", "只要关键代码", "聚焦用户要求的核心分析", "提供关键计算" + decomposition + "代码，并说明其余处理步骤。", false),
                             option("none", "不需要代码", "只提供研究设计和方法说明", "不提供代码，重点给出研究设计、统计方法、表格与图表方案。", false),
                             option("pseudo", "只要步骤和伪代码", "不绑定某一种语言", "给出可核对的计算步骤和伪代码，不绑定具体统计软件。", false)
                     ),
@@ -173,16 +172,13 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
     private List<PlanQuestion> softwareQuestions(String prompt, String contextDescription) {
         List<PlanQuestion> questions = new ArrayList<>();
         if (contextDescription.isBlank() && !containsAny(prompt, "java", "spring", "vue", "react", "python", "go", "rust", "node")) {
-            questions.add(singleChoice(
+            questions.add(new PlanQuestion(
                     "software-environment",
                     "这项任务要在哪个项目或技术环境中实现？",
-                    "没有项目材料时，不预设一个框架。",
-                    List.of(
-                            option("unspecified", "先不预设框架", "实现前说明现有技术栈", "先说明现有语言、框架和数据库，再实现；没有材料时不预设框架。", true),
-                            option("spring", "Spring Boot 3 + PostgreSQL", "Java 服务端", "在 Spring Boot 3 和 PostgreSQL 中实现。", false),
-                            option("vue", "Vue 3 + TypeScript", "浏览器前端", "在 Vue 3 和 TypeScript 中实现。", false),
-                            option("python", "Python + FastAPI", "Python 服务端", "在 Python 和 FastAPI 中实现。", false)
-                    ),
+                    "请提供现有项目的语言、框架或运行环境；新项目也可以说明技术偏好。",
+                    PlanQuestionType.FREE_TEXT,
+                    List.of(),
+                    List.of("已有项目：语言、框架、数据库；新项目：技术偏好和部署环境"),
                     true
             ));
         }
@@ -310,7 +306,8 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
             String answer,
             boolean recommended
     ) {
-        return new PlanOption(id, label, description, answer, recommended);
+        return new PlanOption(id, label, description, answer, recommended,
+                recommended ? "方案建议：" + description + "；请结合实际需求确认。" : "");
     }
 
     private boolean containsAny(String value, String... candidates) {

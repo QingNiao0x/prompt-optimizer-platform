@@ -364,6 +364,8 @@ export interface PlanOption {
   description: string;
   answer: string;
   recommended: boolean;
+  /** 推荐依据；旧会话可缺省，推荐仍须用户主动确认。 */
+  recommendationReason?: string;
 }
 
 export interface PlanQuestion {

@@ -153,6 +153,49 @@ const versionedSourceFile = (
 });
 
 describe('indexProject', () => {
+  it('should bound single-line chunks without losing Chinese content or supplementary characters', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const content = '方案📖'.repeat(18_000) + '尾部审批要求';
+    await indexProject({ projectId: 'single-line', rootName: 'fixture', repository,
+      entries: sourceOf([sourceFile('plan.txt', content)]) });
+    expect(repository.chunks.length).toBeGreaterThan(1);
+    expect(repository.chunks.every((chunk) => chunk.content.length <= 12_000)).toBe(true);
+    expect(repository.chunks.map((chunk) => chunk.content).join('')).toBe(content);
+    const result = await retrieveProjectContext(repository, { projectId: 'single-line', query: '尾部审批要求' });
+    expect(result.some((file) => file.content.includes('尾部审批要求'))).toBe(true);
+  });
+  it('should preserve unvisited indexed files when an incremental scan hits its limit', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const entries = [sourceFile('a.txt', 'first'), sourceFile('b.md', 'second')];
+    const options = { projectId: 'limited-refresh', rootName: 'fixture', repository };
+    await indexProject({ ...options, entries: sourceOf(entries) });
+    const result = await indexProject({ ...options, entries: sourceOf(entries),
+      mode: 'INCREMENTAL', limits: { maxScanFiles: 1, maxIndexBytes: 10_000_000, maxIndexableFileBytes: 1_000_000 } });
+    expect(result.scanLimitReached).toBe(true);
+    expect(result.removedFiles).toBe(0);
+    expect(repository.files.map((file) => file.path)).toEqual(['a.txt', 'b.md']);
+  });
+
+  it('should write a large file in bounded batches and reuse its completed fingerprint', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    let maximumBatchChunks = 0;
+    const write = repository.writeBatch.bind(repository);
+    repository.writeBatch = async (files, chunks, replaced) => {
+      maximumBatchChunks = Math.max(maximumBatchChunks, chunks.length);
+      await write(files, chunks, replaced);
+    };
+    const entry = sourceFile('rules.txt', '规则正文\n'.repeat(400_000) + '尾部财务审批规则');
+    const options = { projectId: 'streamed-rules', rootName: 'fixture', repository };
+    const initial = await indexProject({ ...options, entries: sourceOf([entry]) });
+    expect(initial.failedFiles).toBe(0);
+    expect(repository.chunks.at(-1)?.content).toContain('尾部财务审批规则');
+    expect(maximumBatchChunks).toBeLessThanOrEqual(300);
+    expect(repository.chunks.length).toBeGreaterThan(maximumBatchChunks);
+    const refreshed = await indexProject({ ...options, entries: sourceOf([entry]), mode: 'INCREMENTAL' });
+    expect(refreshed.unchangedFiles).toBe(1);
+    expect(refreshed.chunkCount).toBe(initial.chunkCount);
+  });
+
   it('should reject unsafe paths and protected files before reading their content', async () => {
     const repository = new MemoryProjectIndexRepository();
     const paths = ['../report.txt', 'C:report.txt', '/report.txt', 'config/application-prod.yml',
@@ -203,18 +246,22 @@ describe('indexProject', () => {
     expect(progress.some((processed) => processed > 0 && processed < entries.length)).toBe(true);
   });
 
-  it('should keep search index terms bounded for each source chunk', async () => {
+  it('should retrieve business rules after the first forty terms of a chunk', async () => {
     const repository = new MemoryProjectIndexRepository();
     const vocabulary = Array.from({ length: 300 }, (_, index) => `identifier${index}`).join(' ');
 
     await indexProject({
       projectId: 'project-search-term-budget',
       rootName: 'search-term-project',
-      entries: sourceOf([sourceFile('src/vocabulary.ts', vocabulary)]),
+      entries: sourceOf([sourceFile('docs/rules.md', vocabulary + '\n超过五万元需要财务复核。')]),
       repository,
     });
 
-    expect(repository.chunks[0]?.searchTerms.length).toBeLessThanOrEqual(40);
+    const matches = await retrieveProjectContext(repository, {
+      projectId: 'project-search-term-budget', query: '财务复核 identifier299',
+    });
+    expect(matches).toHaveLength(1);
+    expect(matches[0]?.content).toContain('超过五万元需要财务复核');
   });
 
   it('should index unknown text and exclude logs while recording ignored directories', async () => {

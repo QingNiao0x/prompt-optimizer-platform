@@ -32,6 +32,7 @@ const emit = defineEmits<Emits>();
 const { result } = toRefs(props);
 const editing = ref(false);
 const ambiguitiesOpen = ref(false);
+const warningsOpen = ref(false);
 const draftSections = ref<PromptSection[]>([]);
 
 const displaySections = computed(() =>
@@ -39,6 +40,7 @@ const displaySections = computed(() =>
 );
 
 const ambiguityPreview = computed(() => result.value?.ambiguities[0] ?? '');
+const warningPreview = computed(() => result.value?.warnings?.[0] ?? '');
 
 const SECTION_LABELS: Record<PromptSectionType, string> = {
   BACKGROUND: '背景',
@@ -63,6 +65,7 @@ const copyPrompt = async (content: string): Promise<void> => {
 watch(result, () => {
   editing.value = false;
   ambiguitiesOpen.value = false;
+  warningsOpen.value = false;
   draftSections.value = [];
 });
 
@@ -78,6 +81,7 @@ const startEditing = (): void => {
     .filter((section) => section.type !== 'CLARIFICATIONS')
     .map((section) => ({ ...section }));
   ambiguitiesOpen.value = false;
+  warningsOpen.value = false;
   editing.value = true;
 };
 
@@ -148,9 +152,28 @@ const saveEditing = (): void => {
     </div>
 
     <div v-else class="result-stage">
-      <div v-if="result.warnings?.length && !editing" class="context-warning" role="status">
-        <strong><WarningFilled aria-hidden="true" /> 上下文分析提醒</strong>
-        <ul>
+      <div
+        v-if="result.warnings?.length && !editing"
+        class="context-warning"
+        :class="{ 'is-open': warningsOpen }"
+      >
+        <button
+          type="button"
+          class="context-warning-toggle"
+          :aria-expanded="warningsOpen"
+          aria-controls="context-warning-details"
+          :aria-label="`上下文分析提醒，${result.warnings.length} 项`"
+          @click="warningsOpen = !warningsOpen"
+        >
+          <span class="context-warning-title">
+            <WarningFilled aria-hidden="true" />
+            <strong>上下文分析提醒</strong>
+            <span>{{ result.warnings.length }} 项</span>
+          </span>
+          <ArrowDown class="context-warning-chevron" :class="{ 'is-open': warningsOpen }" aria-hidden="true" />
+          <span v-if="!warningsOpen" class="context-warning-preview">{{ warningPreview }}</span>
+        </button>
+        <ul v-if="warningsOpen" id="context-warning-details">
           <li v-for="(warning, index) in result.warnings" :key="`${index}-${warning}`">{{ warning }}</li>
         </ul>
       </div>
@@ -423,34 +446,103 @@ h2 {
 }
 
 .context-warning {
-  margin: 0 0 14px;
-  padding: 12px 16px;
-  border: 1px solid color-mix(in srgb, var(--warning) 42%, transparent);
+  flex: 0 1 auto;
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--warning) 34%, var(--glass-border-subtle));
   border-left: 3px solid var(--warning);
   border-radius: 10px;
   color: var(--text-secondary);
   background: color-mix(in srgb, var(--warning) 7%, var(--glass-bg-subtle));
-  font-size: 13px;
+  font-size: 12px;
 }
 
-.context-warning strong {
-  display: flex;
+.context-warning.is-open {
+  max-height: 28%;
+}
+
+.context-warning-toggle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  width: 100%;
+  min-height: 32px;
   align-items: center;
-  gap: 7px;
-  color: var(--text-primary);
+  column-gap: 8px;
+  row-gap: 4px;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
 }
 
-.context-warning strong :deep(svg) {
+.context-warning-toggle:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--warning) 72%, transparent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.context-warning-title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+}
+
+.context-warning-title :deep(svg),
+.context-warning-chevron {
+  width: 15px;
+  height: 15px;
+  flex: none;
   color: var(--warning);
 }
 
+.context-warning-chevron {
+  transition: transform var(--duration-ui) var(--ease-standard);
+}
+
+.context-warning-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+.context-warning-title strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.context-warning-title span {
+  flex: none;
+  color: var(--warning);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.context-warning-preview {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .context-warning ul {
+  max-height: 120px;
   margin: 8px 0 0;
-  padding-left: 19px;
+  padding-left: 18px;
+  overflow-y: auto;
+  line-height: 1.5;
 }
 
 .context-warning li + li {
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 .ambiguity-note.is-open {

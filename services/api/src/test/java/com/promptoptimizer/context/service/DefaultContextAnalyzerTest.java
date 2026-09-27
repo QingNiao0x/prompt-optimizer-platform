@@ -18,6 +18,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultContextAnalyzerTest {
 
+    @Test
+    void shouldRetrieveTheSameDocumentOnlyOnceEvenWhenItHasDifferentDisplayPaths() {
+        var calls = new java.util.concurrent.atomic.AtomicInteger();
+        DocumentIndexLookup lookup = (id, query, characters, chunks) -> {
+            calls.incrementAndGet();
+            return java.util.Optional.of(new DocumentSelection("rules.txt", "text", "审批阈值五万元",
+                    "业务规则", 30, 8, 1, 1, 8, false, List.of()));
+        };
+        var analyzer = new DefaultContextAnalyzer(new ObjectMapper(), new BinaryContentExtractor(),
+                new FileContentSummarizer(), lookup);
+        var snapshot = analyzer.analyze(new ContextAnalysisRequest("", List.of(
+                new ContextFileInput("rules.txt", "", "text", "same-document", 30L),
+                new ContextFileInput("docs/rules.txt", "", "text", "same-document", 30L))), "审批阈值");
+        assertThat(calls).hasValue(1);
+        assertThat(snapshot.fileSnippets()).hasSize(1);
+        assertThat(snapshot.warnings()).contains("已忽略重复文档引用：docs/rules.txt");
+    }
+
     private final DefaultContextAnalyzer analyzer = new DefaultContextAnalyzer(
             new ObjectMapper(),
             new BinaryContentExtractor(),

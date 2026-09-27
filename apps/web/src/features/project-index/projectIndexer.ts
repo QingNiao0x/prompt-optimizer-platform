@@ -4,7 +4,7 @@ import { isSafeRelativeFilePath, isSensitiveFile as isProtectedContextFile } fro
 export const INDEX_CHUNK_CHARACTERS = 6_000;
 export const MAX_INDEXABLE_FILE_BYTES = 50 * 1024 * 1024;
 export const DEFAULT_CONTEXT_CHARACTERS = 120_000;
-const INDEX_FORMAT_VERSION = 3;
+const INDEX_FORMAT_VERSION = 4;
 
 const DEFAULT_INDEX_LIMITS: ProjectIndexLimits = {
   maxScanFiles: 1_000_000,
@@ -16,7 +16,6 @@ const FILE_BATCH_SIZE = 200;
 const CHUNK_BATCH_SIZE = 300;
 const MAX_PENDING_BATCH_BYTES = 4 * 1024 * 1024;
 const TEXT_SAMPLE_BYTES = 8_192;
-const MAX_SEARCH_TERMS_PER_CHUNK = 40;
 const MAX_RECORDED_CHANGED_PATHS = 500;
 const PROGRESS_FILE_INTERVAL = 32;
 const PROGRESS_TIME_INTERVAL_MS = 150;
@@ -374,7 +373,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     lastReportedFileBytes = currentFileBytesRead ?? 0;
     const elapsedMs = Math.max(0, now - indexingStartedAt);
     const filesPerSecond = elapsedMs > 0 ? processedFiles * 1_000 / elapsedMs : 0;
-    const totalFiles = options.totalFiles;
+    const totalFiles = options.totalFiles ?? (phase === 'COMPLETED' ? summary.discoveredFiles : undefined);
     const percent = totalFiles !== undefined && totalFiles > 0
       ? Math.min(100, Math.round((summary.discoveredFiles / totalFiles) * 100))
       : undefined;
@@ -515,6 +514,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         continue;
       }
 
+      let persistenceFailed = false;
       try {
         let chunkCount = 0;
         let fileCharacters = 0;
@@ -559,6 +559,18 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
           chunkCount += 1;
           fileCharacters += content.length;
           fileEstimatedBytes += estimatedChunkBytes;
+          if (pendingChunks.length >= CHUNK_BATCH_SIZE || pendingBatchBytes >= MAX_PENDING_BATCH_BYTES) {
+            // 大文件也按预算写入；未读完的指纹不可复用，避免中断后把残缺正文视为完整索引。
+            pendingFiles.push(createFileRecord(options.projectId, entry, classification, chunkCount, true,
+              `incomplete:${fingerprint}`, scanId, fileCharacters, fileEstimatedBytes,
+              Array.from(fileSymbols), Array.from(fileImports)));
+            try {
+              await flush();
+            } catch (error) {
+              persistenceFailed = true;
+              throw error;
+            }
+          }
         }
         pendingFiles.push(createFileRecord(
           options.projectId,
@@ -582,8 +594,17 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         } else {
           summary.metadataOnlyFiles += 1;
         }
-      } catch {
+      } catch (error) {
+        if (persistenceFailed) throw error;
+        // 流读取失败时清除该文件的部分块，其余成功文件仍可用；下次增量更新会重新读取。
+        for (let index = pendingChunks.length - 1; index >= 0; index -= 1) {
+          if (pendingChunks[index]?.path === entry.path) pendingChunks.splice(index, 1);
+        }
+        pendingFiles.push(createFileRecord(options.projectId, entry, classification, 0, true,
+          `incomplete:${fingerprint}`, scanId, 0, metadataBytes, [], []));
+        replacedPaths.add(entry.path);
         summary.failedFiles += 1;
+        await flush();
       }
       await flushIfNeeded();
       report('INDEXING', entry.path);
@@ -621,7 +642,10 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     if (await processSourceBatch()) {
       return summary;
     }
-    summary.removedFiles = await options.repository.removeUnseenFiles(options.projectId, scanId);
+    // 达到扫描上限并不表示未遍历文件已被删除；只有完整扫描才清理旧记录。
+    if (!summary.scanLimitReached) {
+      summary.removedFiles = await options.repository.removeUnseenFiles(options.projectId, scanId);
+    }
     summary.status = 'READY';
     summary.completedAt = new Date().toISOString();
     await options.repository.completeProject(summary);
@@ -923,10 +947,19 @@ const streamTextChunks = async function* (
         chunk = '';
       }
       chunk += line;
-      if (chunk.length >= INDEX_CHUNK_CHARACTERS * 2) {
-        yield chunk;
-        chunk = '';
+      while (chunk.length >= INDEX_CHUNK_CHARACTERS * 2) {
+        const end = safeChunkEnd(chunk);
+        yield chunk.slice(0, end);
+        chunk = chunk.slice(end);
       }
+    }
+    // 压缩 JSON、单行 TXT 等没有换行符，不能一直把正文积攒到文件尾才分块。
+    while (chunk.length + buffer.length >= INDEX_CHUNK_CHARACTERS * 2) {
+      const combined = chunk + buffer;
+      const end = safeChunkEnd(combined);
+      yield combined.slice(0, end);
+      buffer = combined.slice(end);
+      chunk = '';
     }
   };
 
@@ -951,9 +984,15 @@ const streamTextChunks = async function* (
   }
 };
 
+/** 不在 UTF-16 代理对中间截断，保留中文之外的补充字符。 */
+const safeChunkEnd = (content: string): number => {
+  const end = INDEX_CHUNK_CHARACTERS * 2;
+  const last = content.charCodeAt(end - 1);
+  return last >= 0xd800 && last <= 0xdbff ? end - 1 : end;
+};
+
 const buildSearchTerms = (projectId: string, path: string, content: string): string[] =>
   extractTerms(`${path}\n${content}`)
-    .slice(0, MAX_SEARCH_TERMS_PER_CHUNK)
     .map((term) => `${projectId}:${term}`);
 
 const extractCodeMetadata = (content: string, language: string): CodeMetadata => {

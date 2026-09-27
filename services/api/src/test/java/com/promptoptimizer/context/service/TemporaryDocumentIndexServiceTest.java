@@ -48,6 +48,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TemporaryDocumentIndexServiceTest {
 
     @Test
+    void shouldNotCalculateQueryVectorsBeforeTheDocumentIsReady() {
+        SemanticVectorIndex vectors = org.mockito.Mockito.mock(SemanticVectorIndex.class);
+        TemporaryDocumentIndexService service = createService(vectors);
+        try {
+            String id = service.create(new DocumentUploadCreateRequest("plan.txt", "text", 4)).documentId();
+            assertThat(service.retrieve(id, "计划", 1000, 2)).isEmpty();
+            org.mockito.Mockito.verifyNoInteractions(vectors);
+        } finally {
+            service.close();
+        }
+    }
+
+    @Test
     void shouldRejectAnotherUserAtEveryDocumentEntryPoint() throws Exception {
         AtomicReference<UUID> actorId = new AtomicReference<>(TestActors.USER_ID);
         TemporaryDocumentIndexService service = createService(actorId);

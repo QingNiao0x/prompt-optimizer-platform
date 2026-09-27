@@ -115,6 +115,34 @@ class OptimizationPlanningServiceTest {
     }
 
     @Test
+    void shouldPreserveARealTwoOptionDecisionAndAnUnknownFactWithoutInventingRecommendations() {
+        var questions = List.of(
+                new PlanQuestion("region", "研究地区是哪里？", "填写实际范围", PlanQuestionType.FREE_TEXT,
+                        List.of(), List.of("填写省市和纳入人群"), true),
+                new PlanQuestion("delivery", "是否需要提供可运行代码？", "影响交付范围", PlanQuestionType.SINGLE_CHOICE,
+                        List.of(new PlanOption("yes", "需要", "完整脚本", "提供代码", false),
+                                new PlanOption("no", "不需要", "研究方案", "无需代码", false)), List.of(), true));
+        var planning = new OptimizationPlanningService(
+                request -> new PlanningProviderResponse("还需确认范围和交付方式", questions, "mock", "planner", true),
+                new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+        var actual = planning.plan(request("分析死亡率"));
+        assertThat(actual.questions()).hasSize(2);
+        assertThat(actual.questions().getFirst().type()).isEqualTo(PlanQuestionType.FREE_TEXT);
+        assertThat(actual.questions().get(1).options()).hasSize(2).noneMatch(PlanOption::recommended);
+    }
+
+    @Test
+    void shouldRejectOversizedRecommendationReason() {
+        var question = new PlanQuestion("tool", "用哪种分析工具？", "", PlanQuestionType.SINGLE_CHOICE,
+                List.of(new PlanOption("python", "Python", "", "Python", true, "a".repeat(301)),
+                        new PlanOption("r", "R", "", "R", false)), List.of(), true);
+        var planning = new OptimizationPlanningService(
+                request -> new PlanningProviderResponse("请确认工具", List.of(question), "mock", "planner", true),
+                new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+        assertThatThrownBy(() -> planning.plan(request("分析死亡率"))).isInstanceOf(ProviderException.class);
+    }
+
+    @Test
     void shouldRetryInvalidPlanExactlyOnceAndPreserveValidQuestions() {
         AtomicInteger calls = new AtomicInteger();
         OptimizationPlanningService service = new OptimizationPlanningService(request -> {
@@ -183,10 +211,17 @@ class OptimizationPlanningServiceTest {
                 .allSatisfy(question -> assertThat((String) question)
                         .doesNotContain("缺失维度", "TemplateCode", "INPUT", "OUTPUT", "ACCEPTANCE"));
         assertThat(plan.questions()).allSatisfy(question -> {
-            assertThat(question.options()).hasSizeGreaterThanOrEqualTo(4);
+            if (question.type() == PlanQuestionType.FREE_TEXT) {
+                assertThat(question.options()).isEmpty();
+                assertThat(question.allowCustomAnswer()).isTrue();
+                return;
+            }
+            assertThat(question.options()).hasSizeGreaterThanOrEqualTo(2);
             assertThat(question.options()).filteredOn(com.promptoptimizer.enhancement.domain.PlanOption::recommended)
-                    .hasSize(1);
+                    .hasSizeLessThanOrEqualTo(1);
         });
+        assertThat(plan.questions().getFirst().type()).isEqualTo(PlanQuestionType.FREE_TEXT);
+        assertThat(plan.questions().get(1).options()).noneMatch(PlanOption::recommended);
         assertThat(plan.questions().get(4).options()).extracting("label")
                 .contains("R", "Python", "SPSS");
     }

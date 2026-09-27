@@ -272,6 +272,16 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
             return Optional.empty();
         }
 
+        // 索引未完成、已经过期或预算无效时，不触发无用的查询向量计算。
+        synchronized (session.monitor) {
+            if (maxCharacters <= 0 || maxChunks <= 0 || !session.expiresAt.isAfter(Instant.now())
+                    || sessions.get(documentId) != session
+                    || (session.phase != DocumentProcessingPhase.READY
+                    && session.phase != DocumentProcessingPhase.PARTIAL)) {
+                return Optional.empty();
+            }
+        }
+
         // 向量查询可能访问外部或本地模型，不能占用会话锁，否则状态查询和取消操作会被阻塞。
         SemanticVectorIndex.SearchResult semanticResult = semanticVectorIndex.search(
                 session.vectorFile,
@@ -280,6 +290,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
         );
         synchronized (session.monitor) {
             if (sessions.get(documentId) != session
+                    || !session.expiresAt.isAfter(Instant.now())
                     || (session.phase != DocumentProcessingPhase.READY
                     && session.phase != DocumentProcessingPhase.PARTIAL)) {
                 return Optional.empty();

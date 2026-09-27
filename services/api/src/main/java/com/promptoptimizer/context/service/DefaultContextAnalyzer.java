@@ -160,6 +160,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
     ) {
         Map<String, AnalyzedFile> files = new LinkedHashMap<>();
         Set<String> seenPaths = new HashSet<>();
+        Set<String> seenDocumentIds = new HashSet<>();
         int totalBytes = 0;
 
         for (ContextFileInput input : request.files()) {
@@ -185,6 +186,11 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
 
             String language = languageOf(path, input.language());
             if (input.documentId() != null && !input.documentId().isBlank()) {
+                // 同一已解析文档可能以不同展示路径重复加入，只进行一次全文检索与摘要组装。
+                if (!seenDocumentIds.add(input.documentId())) {
+                    warnings.add("已忽略重复文档引用：" + path);
+                    continue;
+                }
                 collectIndexedDocument(
                         input.documentId(),
                         path,

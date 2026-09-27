@@ -66,6 +66,8 @@ export const useProjectIndex = () => {
   const indexDirectory = async (
     options: ProjectIndexStartOptions,
   ): Promise<ProjectIndexSummary | undefined> => {
+    if (isSelecting.value || isIndexing.value) return undefined;
+    const selectionId = ++operationVersion;
     isSelecting.value = true;
     errorMessage.value = '';
     let rootHandle: DirectoryHandleLike;
@@ -78,9 +80,9 @@ export const useProjectIndex = () => {
       }
       throw error;
     } finally {
-      isSelecting.value = false;
+      if (selectionId === operationVersion) isSelecting.value = false;
     }
-
+    if (selectionId !== operationVersion) return undefined;
     const projectId = createProjectId();
     currentRootHandle = rootHandle;
     return runIndex(projectId, rootHandle, options, 'FULL');
@@ -98,18 +100,27 @@ export const useProjectIndex = () => {
     options: ProjectIndexStartOptions,
     mode: Extract<ProjectIndexMode, 'INCREMENTAL' | 'RESUME'>,
   ): Promise<ProjectIndexSummary | undefined> => {
-    const existing = summary.value;
-    if (!existing) {
-      throw new Error('没有可继续处理的本地项目索引');
+    if (isSelecting.value || isIndexing.value) return undefined;
+    const preparationId = ++operationVersion;
+    isSelecting.value = true;
+    try {
+      const existing = summary.value;
+      if (!existing) {
+        throw new Error('没有可继续处理的本地项目索引');
+      }
+      const rootHandle = currentRootHandle
+        ?? await projectIndexRepository.findProjectSource(existing.id);
+      if (!rootHandle) {
+        throw new Error('未找到项目目录授权，请重新选择项目文件夹');
+      }
+      await ensureReadPermission(rootHandle);
+      if (preparationId !== operationVersion) return undefined;
+      currentRootHandle = rootHandle;
+      isSelecting.value = false;
+      return runIndex(existing.id, rootHandle, options, mode);
+    } finally {
+      if (preparationId === operationVersion) isSelecting.value = false;
     }
-    const rootHandle = currentRootHandle
-      ?? await projectIndexRepository.findProjectSource(existing.id);
-    if (!rootHandle) {
-      throw new Error('未找到项目目录授权，请重新选择项目文件夹');
-    }
-    await ensureReadPermission(rootHandle);
-    currentRootHandle = rootHandle;
-    return runIndex(existing.id, rootHandle, options, mode);
   };
 
   const runIndex = async (
@@ -142,6 +153,7 @@ export const useProjectIndex = () => {
         expiresAt: createExpiryDate(options.autoCleanupDays),
         mode,
       });
+      assertOperationActive(operationId, operationVersion);
       summary.value = result.summary;
       options.onDocumentsDiscovered?.(result.documents, result.omittedDocuments);
       return result.summary;
@@ -152,12 +164,14 @@ export const useProjectIndex = () => {
       errorMessage.value = error instanceof Error ? error.message : '本地项目索引失败';
       throw error;
     } finally {
-      activeWorker?.terminate();
-      activeWorker = undefined;
-      activeWorkerReject = undefined;
-      activeProjectId = '';
-      isIndexing.value = false;
-      isPausing.value = false;
+      if (operationId === operationVersion) {
+        activeWorker?.terminate();
+        activeWorker = undefined;
+        activeWorkerReject = undefined;
+        activeProjectId = '';
+        isIndexing.value = false;
+        isPausing.value = false;
+      }
     }
   };
 
@@ -174,6 +188,7 @@ export const useProjectIndex = () => {
       activeWorker = worker;
       activeWorkerReject = reject;
       worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
+        if (activeWorker !== worker) return;
         const message = event.data;
         if (message.type === 'progress') {
           progress.value = message.progress;
@@ -193,6 +208,7 @@ export const useProjectIndex = () => {
         }
       };
       worker.onerror = (event) => {
+        if (activeWorker !== worker) return;
         worker.terminate();
         activeWorker = undefined;
         activeWorkerReject = undefined;
@@ -219,6 +235,7 @@ export const useProjectIndex = () => {
 
   const cancelIndexing = async (): Promise<void> => {
     operationVersion += 1;
+    isSelecting.value = false;
     const projectId = activeProjectId || summary.value?.id || '';
     activeWorker?.terminate();
     activeWorker = undefined;
@@ -240,6 +257,7 @@ export const useProjectIndex = () => {
   const resetPageState = (): void => {
     // 页面离开时只终止当前任务并清空内存引用，不主动删除 IndexedDB 中的索引数据。
     operationVersion += 1;
+    isSelecting.value = false;
     activeWorker?.terminate();
     activeWorker = undefined;
     activeWorkerReject?.(new ProjectIndexCancelledError());

@@ -5,6 +5,14 @@ import { mockAuthentication } from './authFixture';
 import { openWorkbenchPane } from './workbenchPanes';
 import type { DocumentUploadStatus } from '../src/types/api';
 
+// 工作台会请求平台模型目录；浏览器用例不应把该请求落到真实后端触发登录过期。
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/v1/analytics/events', (route) => route.fulfill({ status: 204 }));
+  await page.route('**/api/v1/models', (route) => route.fulfill({ status: 200, json: {
+    data: [{ id: 'mock:default', displayName: '测试模型', provider: 'Mock', defaultModel: true }],
+  } }));
+});
+
 // 浏览器用例验证目录选择、原始字节上传及 documentId 传递；真实 Office/PDF 解析由 Java 集成测试验证。
 test('文档文件夹保留嵌套路径并完整上传中等大小 TXT 与办公文件', async ({ page }, testInfo) => {
   await mockAuthentication(page);

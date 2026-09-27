@@ -240,6 +240,28 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
     }
 
     @Test
+    void shouldPreserveRecommendationReasonFromPlanningResponse() throws Exception {
+        String body = objectMapper.writeValueAsString(Map.of("choices", List.of(Map.of("message", Map.of(
+                "content", """
+                {"summary":"请确认实现方案","questions":[{"id":"framework","question":"采用哪种方案？",
+                "hint":"需保持兼容","type":"SINGLE_CHOICE","options":[
+                {"id":"vue","label":"Vue 3","description":"复用组件","answer":"使用 Vue 3",
+                "recommended":true,"recommendationReason":"package.json 已使用 Vue 3"},
+                {"id":"react","label":"React","description":"迁移组件","answer":"迁移至 React","recommended":false}],
+                "examples":[],"allowCustomAnswer":true}]}
+                """)))));
+        server.expect(requestTo(ENDPOINT))
+                .andExpect(jsonPath("$.messages[0].content")
+                        .value(org.hamcrest.Matchers.containsString("没有足够依据时允许没有推荐")))
+                .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+        var response = provider.plan(new PlanningProviderRequest("开发订单页面", "Vue 项目", List.of()));
+        assertThat(response.questions().getFirst().options().getFirst().recommendationReason())
+                .isEqualTo("package.json 已使用 Vue 3");
+        assertThat(response.questions().getFirst().options().get(1).recommendationReason()).isEmpty();
+        server.verify();
+    }
+
+    @Test
     void shouldUseTheRequestedModelWhenItIsInTheServerAllowList() throws Exception {
         String responseBody = completionWithFindings("[]");
         server.expect(once(), requestTo(ENDPOINT))

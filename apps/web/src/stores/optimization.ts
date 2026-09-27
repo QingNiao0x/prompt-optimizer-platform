@@ -69,8 +69,11 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const isAnalyzing = ref(false);
   const isPlanning = ref(false);
   const isOptimizing = ref(false);
+  // 包含本地检索与发送确认，覆盖尚未发出 HTTP 请求的准备阶段。
+  const isPreparingContext = ref(false);
 
   const canOptimize = computed(() => rawPrompt.value.trim().length > 0
+    && !isPreparingContext.value
     && !isAnalyzing.value
     && !isPlanning.value
     && !isOptimizing.value);
@@ -494,6 +497,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     isAnalyzing,
     isPlanning,
     isOptimizing,
+    isPreparingContext,
     canOptimize,
     canUndoResult,
     refreshAvailableModels,
