@@ -1,5 +1,11 @@
 package com.promptoptimizer.enhancement.service.impl;
 
+import com.promptoptimizer.policy.service.impl.ProtectedContextFilterImpl;
+import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
+
+import com.promptoptimizer.analytics.service.AdminAnalyticsService;
+import com.promptoptimizer.enhancement.service.PlanningSessionService;
+import com.promptoptimizer.enhancement.service.OptimizationPlanningService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.context.dto.ContextAnalysisRequest;
@@ -24,11 +30,11 @@ import com.promptoptimizer.enhancement.domain.PlanQuestion;
 import com.promptoptimizer.enhancement.domain.PlanQuestionType;
 import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
 import com.promptoptimizer.identity.support.TestActors;
-import com.promptoptimizer.policy.service.impl.ProtectedContextFilter;
+import com.promptoptimizer.policy.service.ProtectedContextFilter;
 import com.promptoptimizer.provider.infrastructure.MockPromptPlanningProvider;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.provider.domain.PlanningProviderResponse;
-import com.promptoptimizer.template.service.impl.PromptTemplateRegistry;
+import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -226,10 +232,10 @@ class PlanningSessionServiceTest {
     @Test
     void shouldRejectContextAndPlanOwnedByAnotherAuthenticatedUser() {
         AtomicReference<UUID> authenticatedUserId = new AtomicReference<>(TestActors.USER_ID);
-        PlanningSessionService service = new PlanningSessionService(
+        PlanningSessionService service = new PlanningSessionServiceImpl(
                 new InMemoryPlanningSessionStore(CLOCK),
                 PlanningSessionServiceTest::snapshot,
-                new ProtectedContextFilter(),
+                new ProtectedContextFilterImpl(),
                 () -> TestActors.identity(authenticatedUserId.get()),
                 CLOCK
         );
@@ -282,9 +288,9 @@ class PlanningSessionServiceTest {
                 ),
                 PermissionPolicyInput.empty()
         ));
-        OptimizationPlanningService planningService = new OptimizationPlanningService(
+        OptimizationPlanningService planningService = new OptimizationPlanningServiceImpl(
                 new MockPromptPlanningProvider(),
-                new PromptTemplateRegistry(),
+                new PromptTemplateRegistryImpl(),
                 sessions,
                 CLOCK
         );
@@ -333,9 +339,9 @@ class PlanningSessionServiceTest {
                 ))),
                 PermissionPolicyInput.empty()
         ));
-        OptimizationPlanningService planningService = new OptimizationPlanningService(
+        OptimizationPlanningService planningService = new OptimizationPlanningServiceImpl(
                 new MockPromptPlanningProvider(),
-                new PromptTemplateRegistry(),
+                new PromptTemplateRegistryImpl(),
                 sessions,
                 CLOCK
         );
@@ -410,10 +416,10 @@ class PlanningSessionServiceTest {
                 PermissionPolicyInput.empty()
         ));
         AtomicReference<PlanningProviderRequest> sent = new AtomicReference<>();
-        OptimizationPlanningService planner = new OptimizationPlanningService(request -> {
+        OptimizationPlanningService planner = new OptimizationPlanningServiceImpl(request -> {
             sent.set(request);
             return new PlanningProviderResponse("已阅读项目和审批方案。", List.of(), "test", "planner", true);
-        }, new PromptTemplateRegistry(), sessions, CLOCK);
+        }, new PromptTemplateRegistryImpl(), sessions, CLOCK);
 
         OptimizationPlan plan = planner.plan(new OptimizationPlanRequest(rawPrompt, "", List.of(), reference(preparation)));
 
@@ -459,10 +465,10 @@ class PlanningSessionServiceTest {
     @Test
     void shouldRejectExpiredContextAndPlanSessions() {
         MutableClock clock = new MutableClock(Instant.parse("2026-09-14T08:00:00Z"));
-        PlanningSessionService service = new PlanningSessionService(
+        PlanningSessionService service = new PlanningSessionServiceImpl(
                 new InMemoryPlanningSessionStore(clock),
                 PlanningSessionServiceTest::snapshot,
-                new ProtectedContextFilter(),
+                new ProtectedContextFilterImpl(),
                 TestActors.currentActor(),
                 clock
         );
@@ -536,10 +542,10 @@ class PlanningSessionServiceTest {
     }
 
     private static PlanningSessionService service(ContextAnalyzer analyzer) {
-        return new PlanningSessionService(
+        return new PlanningSessionServiceImpl(
                 new InMemoryPlanningSessionStore(CLOCK),
                 analyzer,
-                new ProtectedContextFilter(),
+                new ProtectedContextFilterImpl(),
                 TestActors.currentActor(),
                 CLOCK
         );

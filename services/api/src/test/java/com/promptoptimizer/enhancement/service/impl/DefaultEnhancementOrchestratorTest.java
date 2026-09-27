@@ -1,5 +1,11 @@
 package com.promptoptimizer.enhancement.service.impl;
 
+import com.promptoptimizer.policy.service.impl.ConstraintCompleterImpl;
+import com.promptoptimizer.policy.service.impl.ProtectedContextFilterImpl;
+import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
+
+import com.promptoptimizer.enhancement.service.PlanningSessionService;
+import com.promptoptimizer.enhancement.service.OptimizationPlanningService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.dto.ContextAnalysisRequest;
 import com.promptoptimizer.context.dto.ContextFileInput;
@@ -21,16 +27,16 @@ import com.promptoptimizer.enhancement.domain.PlanQuestionType;
 import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
-import com.promptoptimizer.policy.service.impl.ConstraintCompleter;
-import com.promptoptimizer.policy.service.impl.ProtectedContextFilter;
+import com.promptoptimizer.policy.service.ConstraintCompleter;
+import com.promptoptimizer.policy.service.ProtectedContextFilter;
 import com.promptoptimizer.provider.infrastructure.MockPromptEnhancementProvider;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.enhancement.controller.OptimizationController;
 import com.promptoptimizer.common.exception.GlobalExceptionHandler;
-import com.promptoptimizer.analytics.service.impl.AnalyticsEventService;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.history.service.OptimizationHistoryService;
 import com.promptoptimizer.identity.support.TestActors;
-import com.promptoptimizer.template.service.impl.PromptTemplateRegistry;
+import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -59,8 +65,8 @@ class DefaultEnhancementOrchestratorTest {
                     new FileContentSummarizer()
             ),
             new AmbiguityDetector(),
-            new PromptTemplateRegistry(),
-            new ConstraintCompleter(),
+            new PromptTemplateRegistryImpl(),
+            new ConstraintCompleterImpl(),
             new MockPromptEnhancementProvider(),
             TestActors.currentActor(),
             Clock.fixed(Instant.parse("2026-08-10T12:00:00Z"), ZoneOffset.UTC)
@@ -111,7 +117,7 @@ class DefaultEnhancementOrchestratorTest {
     void shouldPassRealFileContentAndUseProviderBusinessAssessmentWithoutAnotherPlanningCall() {
         var analyzer = new DefaultContextAnalyzer(new ObjectMapper(), new BinaryContentExtractor(), new FileContentSummarizer());
         var semantic = new DefaultEnhancementOrchestrator(analyzer, new AmbiguityDetector(),
-                new PromptTemplateRegistry(), new ConstraintCompleter(), request -> {
+                new PromptTemplateRegistryImpl(), new ConstraintCompleterImpl(), request -> {
                     assertThat(request.context().fileSnippets()).anySatisfy(file ->
                             assertThat(file.content()).contains("PAID", "CANCELLED"));
                     var draft = new MockPromptEnhancementProvider().enhance(request);
@@ -251,8 +257,8 @@ class DefaultEnhancementOrchestratorTest {
                 );
             }
         };
-        ProtectedContextFilter contextFilter = new ProtectedContextFilter();
-        PlanningSessionService sessions = new PlanningSessionService(
+        ProtectedContextFilter contextFilter = new ProtectedContextFilterImpl();
+        PlanningSessionService sessions = new PlanningSessionServiceImpl(
                 new InMemoryPlanningSessionStore(clock),
                 contextAnalyzer,
                 contextFilter,
@@ -298,8 +304,8 @@ class DefaultEnhancementOrchestratorTest {
         DefaultEnhancementOrchestrator contextAwareOrchestrator = new DefaultEnhancementOrchestrator(
                 contextAnalyzer,
                 new AmbiguityDetector(),
-                new PromptTemplateRegistry(),
-                new ConstraintCompleter(),
+                new PromptTemplateRegistryImpl(),
+                new ConstraintCompleterImpl(),
                 new MockPromptEnhancementProvider(),
                 new OptimizationResultAssembler(),
                 contextFilter,

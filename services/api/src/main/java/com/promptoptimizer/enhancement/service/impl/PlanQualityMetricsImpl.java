@@ -1,5 +1,7 @@
 package com.promptoptimizer.enhancement.service.impl;
 
+import com.promptoptimizer.enhancement.service.PlanQualityMetrics;
+import com.promptoptimizer.enhancement.service.PlanQualityMetrics.Event;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Component;
 
@@ -10,9 +12,9 @@ import org.springframework.stereotype.Component;
  * @since 0.1.0
  */
 @Component
-public class PlanQualityMetrics {
+public class PlanQualityMetricsImpl implements PlanQualityMetrics {
     private final MeterRegistry registry;
-    public PlanQualityMetrics(MeterRegistry registry) { this.registry = registry; }
+    public PlanQualityMetricsImpl(MeterRegistry registry) { this.registry = registry; }
     /** 记录生成、展示和被过滤的问题数量，指标不包含问题正文。 */
     public void generated(int received, int displayed) {
         registry.summary("planning.questions.received").record(received);
@@ -26,11 +28,4 @@ public class PlanQualityMetrics {
     public void event(Event event) {
         registry.counter("planning.interactions", "event", event.name()).increment();
     }
-    /**
-     * 可作为低基数指标标签的交互事件集合。
-     *
-     * @author QingNiao
-     * @since 0.1.0
-     */
-    public enum Event { CANCELLED, CONFIRMED, CUSTOM_ANSWER, RESULT_EDITED, EXPIRED_RECOVERED }
 }

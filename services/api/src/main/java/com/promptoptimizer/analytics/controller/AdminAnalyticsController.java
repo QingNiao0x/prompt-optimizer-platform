@@ -6,7 +6,7 @@ import com.promptoptimizer.analytics.dto.AnalyticsViews.RankingView;
 import com.promptoptimizer.analytics.dto.DashboardQuery;
 import com.promptoptimizer.analytics.dto.OperationLogQuery;
 import com.promptoptimizer.analytics.dto.UsageRankingQuery;
-import com.promptoptimizer.analytics.service.impl.AdminAnalyticsService;
+import com.promptoptimizer.analytics.service.AdminAnalyticsService;
 import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.web.RequestIdFilter;
 import com.promptoptimizer.identity.security.PlatformAdminAccess;

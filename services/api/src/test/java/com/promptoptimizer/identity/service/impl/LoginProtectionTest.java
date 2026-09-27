@@ -1,5 +1,7 @@
 package com.promptoptimizer.identity.service.impl;
 
+import com.promptoptimizer.identity.service.LoginCaptchaService;
+import com.promptoptimizer.identity.service.PasswordPolicy;
 import com.promptoptimizer.identity.service.LoginGuardException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
@@ -24,7 +26,7 @@ class LoginProtectionTest {
 
     @Test
     void captchaIsAcceptedOnce() {
-        LoginCaptchaService service = new LoginCaptchaService();
+        LoginCaptchaService service = new LoginCaptchaServiceImpl();
         MockHttpServletRequest request = new MockHttpServletRequest();
         byte[] image = service.issue(request);
         String code = (String) request.getSession().getAttribute(LoginCaptchaService.ATTRIBUTE);

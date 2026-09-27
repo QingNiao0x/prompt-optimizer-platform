@@ -1,5 +1,6 @@
 package com.promptoptimizer.analytics.service.impl;
 
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.analytics.domain.GeoLocation;
 import com.promptoptimizer.analytics.infrastructure.AnalyticsSessionContext;
@@ -144,7 +145,7 @@ class AnalyticsEventServiceTest {
             AuditEventMapper audit,
             GeoLocationResolver geoLocationResolver
     ) {
-        return new AnalyticsEventService(
+        return new AnalyticsEventServiceImpl(
                 actor,
                 provider(audit),
                 new ClientIpResolver(""),

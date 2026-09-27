@@ -1,6 +1,7 @@
 package com.promptoptimizer.context.service.impl;
 
 import com.promptoptimizer.context.service.DocumentIndexLookup;
+import com.promptoptimizer.context.service.DocumentUploadService;
 import com.promptoptimizer.context.service.DocumentUploadException;
 import com.promptoptimizer.common.logging.LogCorrelation;
 import com.promptoptimizer.common.logging.LogFields;
@@ -49,7 +50,7 @@ import java.util.stream.Stream;
  * @Description: 接收大型文档分片，在临时目录完成异步解析和全文分块索引，并按任务检索相关片段。
  */
 @Service
-public class TemporaryDocumentIndexService implements DocumentIndexLookup {
+public class TemporaryDocumentIndexService implements DocumentUploadService, DocumentIndexLookup {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemporaryDocumentIndexService.class);
 
@@ -374,6 +375,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 session.phase = DocumentProcessingPhase.EXTRACTING;
                 session.progressPercent = 45;
             }
+            long extractionStartedAt = System.nanoTime();
             StreamingDocumentExtractor.ExtractionReport report;
             try (DocumentChunkWriter writer = new DocumentChunkWriter(session)) {
                 report = documentExtractor.extract(
@@ -385,6 +387,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 );
                 writer.finish();
             }
+            logStageCompleted(session, DocumentProcessingPhase.EXTRACTING, extractionStartedAt);
             synchronized (session.monitor) {
                 session.phase = DocumentProcessingPhase.INDEXING;
                 session.progressPercent = 88;
@@ -393,12 +396,14 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                 session.warnings = new ArrayList<>(report.warnings());
             }
 
+            long indexingStartedAt = System.nanoTime();
             SemanticVectorIndex.BuildReport semanticReport = semanticVectorIndex.build(
                     session.vectorFile,
                     session.chunks.size(),
                     (offset, limit) -> readChunkBatch(session, offset, limit),
                     indexedChunks -> updateSemanticIndexProgress(session, indexedChunks)
             );
+            logStageCompleted(session, DocumentProcessingPhase.INDEXING, indexingStartedAt);
             synchronized (session.monitor) {
                 if (session.cancelled || Thread.currentThread().isInterrupted()) {
                     logCancelled(session, startedAt);
@@ -410,6 +415,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
             }
 
             // 模型摘要可能耗时较长，必须在会话锁外执行，确保状态轮询和取消请求不被阻塞。
+            long summaryStartedAt = System.nanoTime();
             MapReduceDocumentSummarizer.SummaryReport summaryReport = documentSummarizer.summarize(
                     new MapReduceDocumentSummarizer.SummarySource(
                             session.path,
@@ -419,6 +425,7 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
                     ),
                     completionRatio -> updateSummaryProgress(session, completionRatio)
             );
+            logStageCompleted(session, DocumentProcessingPhase.SUMMARIZING, summaryStartedAt);
             synchronized (session.monitor) {
                 if (session.cancelled || Thread.currentThread().isInterrupted()) {
                     logCancelled(session, startedAt);
@@ -474,6 +481,18 @@ public class TemporaryDocumentIndexService implements DocumentIndexLookup {
     /** 将异步任务经过的单调时钟时长转换为毫秒。 */
     private long elapsedMillis(long startedAt) {
         return Math.max(0, (System.nanoTime() - startedAt) / 1_000_000L);
+    }
+
+    /** 区分解析、向量与摘要耗时；仅记录计数，不把用户文件路径和正文写入日志。 */
+    private void logStageCompleted(UploadSession session, DocumentProcessingPhase phase, long startedAt) {
+        LOGGER.info("event=document.index.stage.completed requestId={} workflowId={} phase={} "
+                        + "fileBytes={} chunks={} durationMs={}",
+                LogFields.value(MDC.get("requestId")),
+                LogFields.value(MDC.get("workflowId")),
+                phase,
+                session.fileSizeBytes,
+                session.chunks.size(),
+                elapsedMillis(startedAt));
     }
 
     /** 统一记录文档索引取消结果，且不输出用户文件名、路径或内容。 */

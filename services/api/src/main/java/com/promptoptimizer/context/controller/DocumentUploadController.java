@@ -3,7 +3,7 @@ package com.promptoptimizer.context.controller;
 import com.promptoptimizer.context.dto.DocumentUploadCreateRequest;
 import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.web.RequestIdFilter;
-import com.promptoptimizer.context.service.impl.TemporaryDocumentIndexService;
+import com.promptoptimizer.context.service.DocumentUploadService;
 import com.promptoptimizer.context.domain.DocumentUploadStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -29,9 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/context/documents")
 public class DocumentUploadController {
 
-    private final TemporaryDocumentIndexService documentIndexService;
+    private final DocumentUploadService documentIndexService;
 
-    public DocumentUploadController(TemporaryDocumentIndexService documentIndexService) {
+    public DocumentUploadController(DocumentUploadService documentIndexService) {
         this.documentIndexService = documentIndexService;
     }
 

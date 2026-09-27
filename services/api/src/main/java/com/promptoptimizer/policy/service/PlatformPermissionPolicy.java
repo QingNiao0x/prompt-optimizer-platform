@@ -1,4 +1,4 @@
-package com.promptoptimizer.policy.service.impl;
+package com.promptoptimizer.policy.service;
 
 import java.util.List;
 

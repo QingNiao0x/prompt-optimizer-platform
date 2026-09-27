@@ -1,5 +1,6 @@
 package com.promptoptimizer.template.service.impl;
 
+import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import org.springframework.stereotype.Component;
@@ -15,14 +16,14 @@ import java.util.Map;
  * @since 0.1.0
  */
 @Component
-public class PromptTemplateRegistry {
+public class PromptTemplateRegistryImpl implements PromptTemplateRegistry {
 
     private final Map<TemplateCode, PromptTemplate> templates;
 
     /**
      * 初始化功能开发、Bug 修复、重构和测试四类内置模板。
      */
-    public PromptTemplateRegistry() {
+    public PromptTemplateRegistryImpl() {
         EnumMap<TemplateCode, PromptTemplate> values = new EnumMap<>(TemplateCode.class);
         values.put(TemplateCode.GENERAL, new PromptTemplate(
                 TemplateCode.GENERAL,

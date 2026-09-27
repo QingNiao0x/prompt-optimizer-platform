@@ -1,5 +1,8 @@
 package com.promptoptimizer.identity.service.impl;
 
+import com.promptoptimizer.identity.service.EmailRegistrationService;
+import com.promptoptimizer.identity.service.EmailRegistrationService.RegisteredEmail;
+import com.promptoptimizer.identity.service.PasswordPolicy;
 import com.promptoptimizer.identity.service.AccountRegistrationGateway;
 import com.promptoptimizer.identity.service.EmailVerificationPolicy;
 import com.promptoptimizer.identity.service.EmailVerificationStore;
@@ -34,7 +37,7 @@ import java.util.HexFormat;
  */
 @Service
 @Profile("!local-mock")
-public class EmailRegistrationService {
+public class EmailRegistrationServiceImpl implements EmailRegistrationService {
 
     private static final int MAX_BCRYPT_PASSWORD_BYTES = 72;
 
@@ -46,7 +49,7 @@ public class EmailRegistrationService {
     private final PasswordEncoder passwordEncoder;
     private final SecureRandom secureRandom;
 
-    public EmailRegistrationService(
+    public EmailRegistrationServiceImpl(
             UserIdentityMapper identityMapper,
             EmailVerificationStore verificationStore,
             VerificationEmailSender emailSender,
@@ -252,12 +255,4 @@ public class EmailRegistrationService {
         return localPart.length() <= 80 ? localPart : localPart.substring(0, 80);
     }
 
-    /**
-     * 注册成功后用于建立会话的规范化邮箱，不包含明文密码或验证码。
-     *
-     * @author QingNiao
-     * @since 0.1.0
-     */
-    public record RegisteredEmail(String email) {
-    }
 }

@@ -1,7 +1,7 @@
 package com.promptoptimizer.analytics.controller;
 
 import com.promptoptimizer.analytics.dto.ClientAnalyticsEventRequest;
-import com.promptoptimizer.analytics.service.impl.AnalyticsEventService;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.web.RequestIdFilter;
 import jakarta.servlet.http.HttpServletRequest;

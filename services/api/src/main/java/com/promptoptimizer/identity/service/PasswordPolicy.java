@@ -1,4 +1,4 @@
-package com.promptoptimizer.identity.service.impl;
+package com.promptoptimizer.identity.service;
 
 import java.nio.charset.StandardCharsets;
 

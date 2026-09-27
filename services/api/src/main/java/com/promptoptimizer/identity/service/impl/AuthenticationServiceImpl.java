@@ -1,7 +1,9 @@
 package com.promptoptimizer.identity.service.impl;
 
+import com.promptoptimizer.identity.service.AuthenticationService;
+import com.promptoptimizer.identity.service.LoginCaptchaService;
 import com.promptoptimizer.identity.service.CurrentActor;
-import com.promptoptimizer.analytics.service.impl.AnalyticsEventService;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.identity.dto.AuthenticatedUserView;
 import com.promptoptimizer.identity.dto.LoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +29,7 @@ import java.nio.charset.StandardCharsets;
  * @since 0.1.0
  */
 @Service
-public class AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
@@ -38,7 +40,7 @@ public class AuthenticationService {
     private final LoginCaptchaService loginCaptchaService;
     private final LoginFailureGuard loginFailureGuard;
 
-    public AuthenticationService(
+    public AuthenticationServiceImpl(
             AuthenticationManager authenticationManager,
             SecurityContextRepository securityContextRepository,
             SessionAuthenticationStrategy sessionAuthenticationStrategy,

@@ -1,5 +1,6 @@
 package com.promptoptimizer.identity.service.impl;
 
+import com.promptoptimizer.identity.service.EmailRegistrationService;
 import com.promptoptimizer.identity.service.AccountRegistrationGateway;
 import com.promptoptimizer.identity.service.RegistrationException;
 import com.promptoptimizer.identity.service.VerificationEmailSender;
@@ -123,7 +124,7 @@ class EmailRegistrationServiceTest {
     }
 
     private EmailRegistrationService service(VerificationEmailSender sender) {
-        return new EmailRegistrationService(
+        return new EmailRegistrationServiceImpl(
                 identityRepository,
                 store,
                 sender,

@@ -8,6 +8,8 @@ import { useUiTheme } from '@/composables/useUiTheme';
 
 const route = useRoute();
 const isWorkbench = computed(() => route.name === 'workbench');
+// 统计表格需要完整可用宽度，其余页面继续使用原有居中容器。
+const isAnalytics = computed(() => route.name === 'admin-analytics');
 const isHome = computed(() => route.name === 'home' || route.name === 'login');
 useUiTheme();
 </script>
@@ -19,6 +21,7 @@ useUiTheme();
       class="app-main"
       :class="{
         'app-main--workbench': isWorkbench,
+        'app-main--analytics': isAnalytics,
         'app-main--home': isHome,
       }"
     >
@@ -40,7 +43,8 @@ useUiTheme();
   padding: 34px 0 64px;
 }
 
-.app-main--workbench {
+.app-main--workbench,
+.app-main--analytics {
   width: 100%;
   max-width: none;
   padding: 0;
@@ -58,7 +62,8 @@ useUiTheme();
     padding: 20px 0 calc(28px + env(safe-area-inset-bottom, 0px));
   }
 
-  .app-main--workbench {
+  .app-main--workbench,
+  .app-main--analytics {
     width: 100%;
     padding: 0;
   }

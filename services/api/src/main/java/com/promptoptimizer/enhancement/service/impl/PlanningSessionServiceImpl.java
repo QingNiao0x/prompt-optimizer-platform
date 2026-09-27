@@ -1,6 +1,10 @@
 package com.promptoptimizer.enhancement.service.impl;
 
 import com.promptoptimizer.enhancement.service.PlanningSessionExpiredException;
+import com.promptoptimizer.enhancement.service.PlanningSessionService;
+import com.promptoptimizer.enhancement.service.PlanningSessionService.ConfirmedPlan;
+import com.promptoptimizer.enhancement.service.PlanningSessionService.PlanRegistration;
+import com.promptoptimizer.enhancement.service.PlanningSessionService.ResolvedPlanningContext;
 import com.promptoptimizer.enhancement.service.PlanningSessionStore;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.common.logging.LogCorrelation;
@@ -21,7 +25,7 @@ import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
 import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
 import com.promptoptimizer.identity.service.ActorIdentity;
 import com.promptoptimizer.identity.service.CurrentActor;
-import com.promptoptimizer.policy.service.impl.ProtectedContextFilter;
+import com.promptoptimizer.policy.service.ProtectedContextFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -56,9 +60,9 @@ import java.util.stream.Collectors;
  * @since 0.1.0
  */
 @Service
-public class PlanningSessionService {
+public class PlanningSessionServiceImpl implements PlanningSessionService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlanningSessionService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlanningSessionServiceImpl.class);
 
     private static final Duration SESSION_TTL = Duration.ofMinutes(30);
     private static final int MAX_DIGEST_ITEM_CHARACTERS = 400;
@@ -73,7 +77,7 @@ public class PlanningSessionService {
     private final Clock clock;
 
     @Autowired
-    public PlanningSessionService(
+    public PlanningSessionServiceImpl(
             PlanningSessionStore store,
             ContextAnalyzer contextAnalyzer,
             ProtectedContextFilter protectedContextFilter,
@@ -82,7 +86,7 @@ public class PlanningSessionService {
         this(store, contextAnalyzer, protectedContextFilter, currentActor, Clock.systemUTC());
     }
 
-    PlanningSessionService(
+    PlanningSessionServiceImpl(
             PlanningSessionStore store,
             ContextAnalyzer contextAnalyzer,
             ProtectedContextFilter protectedContextFilter,
@@ -553,58 +557,4 @@ public class PlanningSessionService {
         return value == null ? "" : value;
     }
 
-    /**
-     * 已通过所有权和有效期校验的上下文引用及安全摘要。
-     *
-     * @author QingNiao
-     * @since 0.1.0
-     */
-    public record ResolvedPlanningContext(
-            PlanningContextReference reference,
-            PlanningContextDigest digest
-    ) {
-    }
-
-    /**
-     * 新计划标识、关联上下文和过期时间。
-     *
-     * @author QingNiao
-     * @since 0.1.0
-     */
-    public record PlanRegistration(
-            String planId,
-            PlanningContextReference planningContext,
-            Instant expiresAt
-    ) {
-    }
-
-    /**
-     * 用户确认后供最终增强流程消费的计划数据。
-     *
-     * @author QingNiao
-     * @since 0.1.0
-     */
-    public record ConfirmedPlan(
-            List<PlanAnswer> answers,
-            PlanningContextReference planningContext,
-            boolean bound,
-            PlanningContextDigest planningContextDigest,
-            String modelId
-    ) {
-
-        public ConfirmedPlan {
-            answers = List.copyOf(answers);
-        }
-
-        /** 兼容未绑定事实摘要的现有调用方。 */
-        public ConfirmedPlan(List<PlanAnswer> answers, PlanningContextReference planningContext, boolean bound) {
-            this(answers, planningContext, bound, null, null);
-        }
-
-        /** 兼容调用方在新增模型绑定之前构造的确认对象。 */
-        public ConfirmedPlan(List<PlanAnswer> answers, PlanningContextReference planningContext,
-                boolean bound, PlanningContextDigest planningContextDigest) {
-            this(answers, planningContext, bound, planningContextDigest, null);
-        }
-    }
 }

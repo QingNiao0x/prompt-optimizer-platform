@@ -1,5 +1,6 @@
 package com.promptoptimizer.policy.service.impl;
 
+import com.promptoptimizer.policy.service.ProtectedContextFilter;
 import com.promptoptimizer.context.dto.ContextAnalysisRequest;
 import com.promptoptimizer.context.dto.ContextFileInput;
 import com.promptoptimizer.context.domain.ContextSnapshot;
@@ -12,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ProtectedContextFilterTest {
 
-    private final ProtectedContextFilter filter = new ProtectedContextFilter();
+    private final ProtectedContextFilter filter = new ProtectedContextFilterImpl();
 
     @Test
     void shouldFilterDefaultAndCustomProtectedPathsBeforeAnalysis() {

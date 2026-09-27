@@ -1,5 +1,6 @@
 package com.promptoptimizer.analytics.service.impl;
 
+import com.promptoptimizer.analytics.service.AdminAnalyticsService;
 import com.promptoptimizer.analytics.dto.DashboardQuery;
 import com.promptoptimizer.analytics.dto.OperationLogQuery;
 import com.promptoptimizer.analytics.dto.UsageRankingQuery;
@@ -34,14 +35,14 @@ import java.util.UUID;
  * @since 0.1.0
  */
 @Service
-public class AdminAnalyticsService {
+public class AdminAnalyticsServiceImpl implements AdminAnalyticsService {
 
     private final AnalyticsPeriodResolver periodResolver;
     private final AdminAnalyticsMapper analyticsMapper;
     private final RechargeRecordMapper rechargeMapper;
     private final boolean rechargeStatisticsEnabled;
 
-    public AdminAnalyticsService(
+    public AdminAnalyticsServiceImpl(
             AnalyticsPeriodResolver periodResolver,
             ObjectProvider<AdminAnalyticsMapper> analyticsMapperProvider,
             ObjectProvider<RechargeRecordMapper> rechargeMapperProvider,

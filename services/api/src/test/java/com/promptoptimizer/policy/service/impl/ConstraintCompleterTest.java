@@ -1,5 +1,6 @@
 package com.promptoptimizer.policy.service.impl;
 
+import com.promptoptimizer.policy.service.ConstraintCompleter;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.context.domain.TechnologyStackItem;
 import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
@@ -12,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ConstraintCompleterTest {
 
-    private final ConstraintCompleter completer = new ConstraintCompleter();
+    private final ConstraintCompleter completer = new ConstraintCompleterImpl();
 
     @Test
     void shouldRecognizeVersionedStackNamesAndKeepPlatformRedlinesEnabled() {

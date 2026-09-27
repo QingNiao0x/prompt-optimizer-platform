@@ -1,5 +1,6 @@
 package com.promptoptimizer.analytics.service.impl;
 
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.analytics.domain.AnalyticsDeviceType;
 import com.promptoptimizer.analytics.domain.ClientAnalyticsEventType;
@@ -31,9 +32,9 @@ import java.util.UUID;
  * @since 0.1.0
  */
 @Service
-public class AnalyticsEventService {
+public class AnalyticsEventServiceImpl implements AnalyticsEventService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsEventService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsEventServiceImpl.class);
     private final CurrentActor currentActor;
     private final AuditEventMapper auditMapper;
     private final ClientIpResolver clientIpResolver;
@@ -41,7 +42,7 @@ public class AnalyticsEventService {
     private final DeviceTypeResolver deviceTypeResolver;
     private final AnalyticsSessionContext sessionContext;
 
-    public AnalyticsEventService(
+    public AnalyticsEventServiceImpl(
             CurrentActor currentActor,
             ObjectProvider<AuditEventMapper> auditMapperProvider,
             ClientIpResolver clientIpResolver,

@@ -1,10 +1,10 @@
 package com.promptoptimizer.context.dto;
 
 import com.promptoptimizer.context.controller.PlanningContextController;
-import com.promptoptimizer.analytics.service.impl.AnalyticsEventService;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.common.web.RequestIdFilter;
 import com.promptoptimizer.context.domain.ContextSnapshot;
-import com.promptoptimizer.enhancement.service.impl.PlanningSessionService;
+import com.promptoptimizer.enhancement.service.PlanningSessionService;
 import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
 import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
 import org.junit.jupiter.api.Test;

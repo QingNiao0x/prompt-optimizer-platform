@@ -1,5 +1,8 @@
 package com.promptoptimizer.policy.service.impl;
 
+import com.promptoptimizer.policy.service.PlatformPermissionPolicy;
+import com.promptoptimizer.policy.service.ProtectedContextFilter;
+import com.promptoptimizer.policy.service.ProtectedContextFilter.FilteredContext;
 import com.promptoptimizer.context.dto.ContextAnalysisRequest;
 import com.promptoptimizer.context.dto.ContextFileInput;
 import com.promptoptimizer.context.domain.ContextSnapshot;
@@ -21,7 +24,7 @@ import java.util.regex.Pattern;
  * @since 0.1.0
  */
 @Component
-public class ProtectedContextFilter {
+public class ProtectedContextFilterImpl implements ProtectedContextFilter {
 
     private static final Pattern CHUNK_SUFFIX = Pattern.compile("#chunk-\\d+$", Pattern.CASE_INSENSITIVE);
 
@@ -149,16 +152,4 @@ public class ProtectedContextFilter {
         boolean matches(String path);
     }
 
-    /**
-     * 可继续分析的请求及本次被拦截的受保护路径。
-     *
-     * @author QingNiao
-     * @since 0.1.0
-     */
-    public record FilteredContext(ContextAnalysisRequest request, List<String> protectedPaths) {
-
-        public FilteredContext {
-            protectedPaths = List.copyOf(protectedPaths);
-        }
-    }
 }

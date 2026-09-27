@@ -1,5 +1,7 @@
 package com.promptoptimizer.policy.service.impl;
 
+import com.promptoptimizer.policy.service.ConstraintCompleter;
+import com.promptoptimizer.policy.service.PlatformPermissionPolicy;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
@@ -16,7 +18,7 @@ import java.util.Set;
  * @since 0.1.0
  */
 @Component
-public class ConstraintCompleter {
+public class ConstraintCompleterImpl implements ConstraintCompleter {
 
     /**
      * 生成去重且顺序稳定的约束列表，便于模型和用户审查。

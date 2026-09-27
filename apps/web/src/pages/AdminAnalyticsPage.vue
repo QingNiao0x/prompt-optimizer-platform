@@ -31,8 +31,9 @@ import {
   ElTableColumn,
   ElTag,
 } from 'element-plus';
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
+import { useUiTheme } from '@/composables/useUiTheme';
 import { getApiErrorMessage } from '@/services/http';
 import { getAnalyticsDashboard, getAnalyticsOperations, getAnalyticsRanking } from '@/services/adminAnalyticsApi';
 import type {
@@ -72,6 +73,7 @@ const monthlyChart = ref<HTMLDivElement | null>(null);
 const deviceChart = ref<HTMLDivElement | null>(null);
 const rechargeChart = ref<HTMLDivElement | null>(null);
 const charts = new Map<string, EChartsType>();
+const { activeThemeId } = useUiTheme();
 
 const eventTypes: Array<{ value: AnalyticsEventType; label: string }> = [
   { value: 'LOGIN', label: '登录' },
@@ -196,11 +198,15 @@ const refresh = async (): Promise<void> => {
   }
 };
 
+/** 图表读取现有主题变量，坐标轴与图例在深浅主题中保持可读；不修改数据序列。 */
+const chartColor = (variable: string): string =>
+  getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+
 const options = (): EChartsOption => ({
   animationDuration: 320,
-  textStyle: { fontFamily: 'JetBrains Mono, Space Grotesk, sans-serif' },
+  textStyle: { fontFamily: getComputedStyle(document.documentElement).fontFamily, color: chartColor('--text-secondary') },
   tooltip: { trigger: 'axis', confine: true },
-  grid: { left: 44, right: 20, top: 30, bottom: 30 },
+  grid: { left: 8, right: 12, top: 48, bottom: 12, containLabel: true },
 });
 
 const dailyOption = (data: AnalyticsDashboard): EChartsOption => ({
@@ -286,7 +292,7 @@ const renderCharts = (): void => {
     ['recharge', rechargeChart.value, rechargeOption(data)],
   ];
   for (const [key, target, option] of targets) {
-    if (!target) continue;
+    if (!target || target.clientWidth === 0) continue;
     const chart = charts.get(key) ?? init(target);
     charts.set(key, chart);
     chart.setOption(option, { notMerge: true });
@@ -294,8 +300,10 @@ const renderCharts = (): void => {
 };
 
 const resizeCharts = (): void => {
-  charts.forEach((chart) => chart.resize());
+  charts.forEach((chart) => { if (chart.getDom().clientWidth > 0) chart.resize(); });
 };
+
+watch(activeThemeId, () => { void nextTick(renderCharts); });
 
 const selectLogPage = (page: number): void => {
   if (ignoreOperationsEcho) {
@@ -343,14 +351,17 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <main class="admin-analytics">
+  <div class="admin-analytics">
     <header class="analytics-heading">
       <div class="heading-copy">
         <p class="eyebrow">PLATFORM OPERATIONS / ACCOUNT ACTIVITY</p>
         <h1>使用与访问</h1>
         <p>按登录账号汇总访问、关键操作与所在地审计记录。</p>
       </div>
+    </header>
       <div class="filters" role="search" aria-label="统计筛选条件">
+        <div class="filter-field">
+        <span class="filter-label">时间范围</span>
         <ElSelect v-model="range" aria-label="统计时间范围" class="range-select">
           <ElOption label="今天" value="TODAY" />
           <ElOption label="昨天" value="YESTERDAY" />
@@ -359,8 +370,10 @@ onBeforeUnmount(() => {
           <ElOption label="上月" value="LAST_MONTH" />
           <ElOption label="自定义" value="CUSTOM" />
         </ElSelect>
+        </div>
+        <div v-if="range === 'CUSTOM'" class="filter-field filter-field--dates">
+        <span class="filter-label">起止日期</span>
         <ElDatePicker
-          v-if="range === 'CUSTOM'"
           v-model="dateRange"
           type="daterange"
           value-format="YYYY-MM-DD"
@@ -369,6 +382,9 @@ onBeforeUnmount(() => {
           end-placeholder="结束日期"
           class="custom-dates"
         />
+        </div>
+        <div class="filter-field filter-field--account">
+        <span class="filter-label">登录账号</span>
         <ElInput
           v-model="accountId"
           clearable
@@ -376,9 +392,9 @@ onBeforeUnmount(() => {
           aria-label="按登录账号 ID 筛选"
           placeholder="账号 ID（可选）"
         />
+        </div>
         <ElButton type="primary" :loading="loading" @click="refresh">查询</ElButton>
       </div>
-    </header>
 
     <ElAlert
       v-if="dashboard && !dashboard.rechargeStatisticsAvailable"
@@ -554,7 +570,7 @@ onBeforeUnmount(() => {
         </article>
       </section>
     </template>
-  </main>
+  </div>
 </template>
 
 <style scoped>

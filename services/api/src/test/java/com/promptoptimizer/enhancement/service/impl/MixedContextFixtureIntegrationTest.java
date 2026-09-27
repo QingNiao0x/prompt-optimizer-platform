@@ -1,5 +1,11 @@
 package com.promptoptimizer.enhancement.service.impl;
 
+import com.promptoptimizer.policy.service.impl.ConstraintCompleterImpl;
+import com.promptoptimizer.policy.service.impl.ProtectedContextFilterImpl;
+import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
+
+import com.promptoptimizer.enhancement.service.PlanningSessionService;
+import com.promptoptimizer.enhancement.service.OptimizationPlanningService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.dto.ContextAnalysisRequest;
 import com.promptoptimizer.context.dto.ContextFileInput;
@@ -20,11 +26,11 @@ import com.promptoptimizer.enhancement.domain.OptimizationResult;
 import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.identity.support.TestActors;
-import com.promptoptimizer.policy.service.impl.ConstraintCompleter;
-import com.promptoptimizer.policy.service.impl.ProtectedContextFilter;
+import com.promptoptimizer.policy.service.ConstraintCompleter;
+import com.promptoptimizer.policy.service.ProtectedContextFilter;
 import com.promptoptimizer.provider.infrastructure.MockPromptEnhancementProvider;
 import com.promptoptimizer.provider.infrastructure.MockPromptPlanningProvider;
-import com.promptoptimizer.template.service.impl.PromptTemplateRegistry;
+import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -71,8 +77,8 @@ class MixedContextFixtureIntegrationTest {
         Clock clock = Clock.fixed(Instant.parse("2026-09-23T08:00:00Z"), ZoneOffset.UTC);
         DefaultContextAnalyzer analyzer = new DefaultContextAnalyzer(
                 new ObjectMapper(), new BinaryContentExtractor(), new FileContentSummarizer());
-        ProtectedContextFilter filter = new ProtectedContextFilter();
-        PlanningSessionService sessions = new PlanningSessionService(
+        ProtectedContextFilter filter = new ProtectedContextFilterImpl();
+        PlanningSessionService sessions = new PlanningSessionServiceImpl(
                 new InMemoryPlanningSessionStore(clock), analyzer, filter,
                 TestActors.currentActor(), clock);
 
@@ -96,8 +102,8 @@ class MixedContextFixtureIntegrationTest {
 
         PlanningContextReference reference = new PlanningContextReference(
                 preparation.contextId(), preparation.version());
-        OptimizationPlanningService planner = new OptimizationPlanningService(
-                new MockPromptPlanningProvider(), new PromptTemplateRegistry(), sessions, clock);
+        OptimizationPlanningService planner = new OptimizationPlanningServiceImpl(
+                new MockPromptPlanningProvider(), new PromptTemplateRegistryImpl(), sessions, clock);
         OptimizationPlan plan = planner.plan(new OptimizationPlanRequest(
                 RAW_PROMPT, "", List.of(), reference));
         assertThat(plan.questions()).extracting("id")
@@ -111,8 +117,8 @@ class MixedContextFixtureIntegrationTest {
         DefaultEnhancementOrchestrator orchestrator = new DefaultEnhancementOrchestrator(
                 analyzer,
                 new AmbiguityDetector(),
-                new PromptTemplateRegistry(),
-                new ConstraintCompleter(),
+                new PromptTemplateRegistryImpl(),
+                new ConstraintCompleterImpl(),
                 new MockPromptEnhancementProvider(),
                 new OptimizationResultAssembler(),
                 filter,

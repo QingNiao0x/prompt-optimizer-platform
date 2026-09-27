@@ -1,11 +1,11 @@
 package com.promptoptimizer.context.controller;
 
 import com.promptoptimizer.context.dto.PlanningContextRequest;
-import com.promptoptimizer.analytics.service.impl.AnalyticsEventService;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.web.RequestIdFilter;
-import com.promptoptimizer.enhancement.service.impl.PlanningSessionService;
+import com.promptoptimizer.enhancement.service.PlanningSessionService;
 import com.promptoptimizer.enhancement.domain.PlanningContextPreparation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

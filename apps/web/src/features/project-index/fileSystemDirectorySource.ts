@@ -1,6 +1,8 @@
 import type { ProjectSourceEntry } from './projectIndexer';
+import { DEPENDENCY_CACHE_DIRECTORY_NAMES } from './dependencyCacheDirectories';
 
 const IGNORED_DIRECTORY_NAMES = new Set([
+  ...DEPENDENCY_CACHE_DIRECTORY_NAMES,
   '.git', '.hg', '.svn', '.idea', '.vscode',
   'node_modules', 'vendor', 'target', 'build', 'dist', 'out', 'coverage',
   '.next', '.nuxt', '.output', '.cache', '.gradle', '.mvn',

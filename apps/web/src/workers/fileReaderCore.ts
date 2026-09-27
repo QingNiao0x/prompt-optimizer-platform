@@ -1,4 +1,5 @@
 import type { ContextFileInput } from '@/types/api';
+import { DEPENDENCY_CACHE_DIRECTORY_NAMES } from '@/features/project-index/dependencyCacheDirectories';
 
 export const MAX_FILES = 1_000;
 export const MAX_FILE_BYTES = 1_000_000;
@@ -68,6 +69,7 @@ const SOURCE_EXTENSION_PATTERN = /\.(ts|tsx|mts|cts|js|jsx|mjs|cjs|vue|svelte|as
 
 // 大型前端项目里这些目录往往包含海量第三方或构建产物，默认跳过可显著提升可用文件的命中率。
 export const IGNORED_PATH_SEGMENTS = new Set([
+  ...DEPENDENCY_CACHE_DIRECTORY_NAMES,
   '.git', 'node_modules', 'target', 'build', 'dist', 'out', '.idea', '.vscode',
   '.next', '.nuxt', 'coverage', '__pycache__', '.venv', 'venv', 'vendor',
   'logs', 'log', '.cache', '.parcel-cache', '.turbo', 'tmp', 'temp',
@@ -388,7 +390,7 @@ const hasIgnoredSegment = (relativePath: string): boolean => {
       continue;
     }
     const segment = relativePath.slice(segmentStart, index);
-    if (segment && IGNORED_PATH_SEGMENTS.has(segment)) {
+    if (segment && IGNORED_PATH_SEGMENTS.has(segment.toLowerCase())) {
       return true;
     }
     segmentStart = index + 1;

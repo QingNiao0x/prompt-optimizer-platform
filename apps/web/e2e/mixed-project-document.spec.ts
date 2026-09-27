@@ -17,7 +17,14 @@ const fixturePaths = [
   'frontend/src/views/App.vue',
 ] as const;
 
-test.beforeEach(async ({ page }) => { await mockAuthentication(page); });
+test.beforeEach(async ({ page }) => {
+  await mockAuthentication(page);
+  // 此用例模拟后端业务接口，平台模型与统计请求也必须隔离，避免真实服务的 401 中断索引。
+  await page.route('**/api/v1/analytics/events', (route) => route.fulfill({ status: 204 }));
+  await page.route('**/api/v1/models', (route) => route.fulfill({ status: 200, json: {
+    data: [{ id: 'mock:default', displayName: '测试模型', provider: 'Mock', defaultModel: true }],
+  } }));
+});
 
 test('本地样例项目索引与单独方案文件共同参与 Plan 和最终增强', async ({ page }) => {
   const pageErrors: string[] = [];

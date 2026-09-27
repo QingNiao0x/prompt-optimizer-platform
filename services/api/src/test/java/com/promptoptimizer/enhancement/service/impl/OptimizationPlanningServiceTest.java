@@ -1,5 +1,10 @@
 package com.promptoptimizer.enhancement.service.impl;
 
+import com.promptoptimizer.policy.service.impl.ProtectedContextFilterImpl;
+import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
+
+import com.promptoptimizer.enhancement.service.PlanningSessionService;
+import com.promptoptimizer.enhancement.service.OptimizationPlanningService;
 import com.promptoptimizer.context.dto.ContextAnalysisRequest;
 import com.promptoptimizer.context.dto.ContextFileInput;
 import com.promptoptimizer.context.dto.PlanningContextRequest;
@@ -18,8 +23,8 @@ import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import com.promptoptimizer.provider.infrastructure.MockPromptPlanningProvider;
-import com.promptoptimizer.policy.service.impl.ProtectedContextFilter;
-import com.promptoptimizer.template.service.impl.PromptTemplateRegistry;
+import com.promptoptimizer.policy.service.ProtectedContextFilter;
+import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -45,10 +50,10 @@ class OptimizationPlanningServiceTest {
         when(catalog.resolve(modelId)).thenReturn(new PlatformModelCatalog.ModelEntry(
                 UUID.randomUUID(), modelId, "tokenhub", "kimi-k3", "Kimi K3", true, false, 1));
         AtomicReference<String> receivedModel = new AtomicReference<>();
-        OptimizationPlanningService planning = new OptimizationPlanningService(request -> {
+        OptimizationPlanningServiceImpl planning = new OptimizationPlanningServiceImpl(request -> {
             receivedModel.set(request.model());
             return new PlanningProviderResponse("无需额外确认", List.of(), "mock", "planner", true);
-        }, new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+        }, new PromptTemplateRegistryImpl(), planningSessions(CLOCK), CLOCK);
         planning.setModelCatalog(catalog);
 
         planning.plan(new OptimizationPlanRequest("分析死亡率", "", List.of(), null, modelId));
@@ -78,21 +83,21 @@ class OptimizationPlanningServiceTest {
     @Test
     void shouldTurnVerifiedCrossFileConflictsIntoRequiredPlanQuestions() {
         String rawPrompt = "按方案实现订单审批流程";
-        PlanningSessionService sessions = new PlanningSessionService(
+        PlanningSessionService sessions = new PlanningSessionServiceImpl(
                 new InMemoryPlanningSessionStore(CLOCK),
                 request -> new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(
                         new FileSnippet("src/main/resources/审批规则.txt", "text", "审批阈值：三万元", "现行审批阈值", false),
                         new FileSnippet("docs/新方案.txt", "text", "审批阈值：五万元", "新方案审批阈值", false)
                 ), List.of(), List.of(), "test-v1"),
-                new ProtectedContextFilter(), TestActors.currentActor(), CLOCK);
+                new ProtectedContextFilterImpl(), TestActors.currentActor(), CLOCK);
         var preparation = sessions.prepareContext(new PlanningContextRequest(rawPrompt,
                 new ContextAnalysisRequest("", List.of(
                         new ContextFileInput("src/main/resources/审批规则.txt", "审批阈值：三万元", "text"),
                         new ContextFileInput("docs/新方案.txt", "审批阈值：五万元", "text")
                 )), PermissionPolicyInput.empty()));
-        OptimizationPlanningService planning = new OptimizationPlanningService(
+        OptimizationPlanningService planning = new OptimizationPlanningServiceImpl(
                 request -> new PlanningProviderResponse("已阅读规则。", List.of(), "mock", "planner", true),
-                new PromptTemplateRegistry(), sessions, CLOCK);
+                new PromptTemplateRegistryImpl(), sessions, CLOCK);
 
         OptimizationPlan plan = planning.plan(new OptimizationPlanRequest(rawPrompt, "", List.of(),
                 new PlanningContextReference(preparation.contextId(), preparation.version())));
@@ -105,10 +110,10 @@ class OptimizationPlanningServiceTest {
 
     @Test
     void shouldDescribeZeroQuestionsAsReadyForFinalGeneration() {
-        OptimizationPlanningService noQuestionService = new OptimizationPlanningService(
+        OptimizationPlanningService noQuestionService = new OptimizationPlanningServiceImpl(
                 request -> new PlanningProviderResponse("请回答下面的问题。", List.of(),
                         "mock", "planner", true),
-                new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+                new PromptTemplateRegistryImpl(), planningSessions(CLOCK), CLOCK);
         OptimizationPlan plan = noQuestionService.plan(request("请把这段文字翻译为英语，保持原有段落格式。"));
         assertThat(plan.questions()).isEmpty();
         assertThat(plan.summary()).contains("无需额外确认");
@@ -122,9 +127,9 @@ class OptimizationPlanningServiceTest {
                 new PlanQuestion("delivery", "是否需要提供可运行代码？", "影响交付范围", PlanQuestionType.SINGLE_CHOICE,
                         List.of(new PlanOption("yes", "需要", "完整脚本", "提供代码", false),
                                 new PlanOption("no", "不需要", "研究方案", "无需代码", false)), List.of(), true));
-        var planning = new OptimizationPlanningService(
+        var planning = new OptimizationPlanningServiceImpl(
                 request -> new PlanningProviderResponse("还需确认范围和交付方式", questions, "mock", "planner", true),
-                new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+                new PromptTemplateRegistryImpl(), planningSessions(CLOCK), CLOCK);
         var actual = planning.plan(request("分析死亡率"));
         assertThat(actual.questions()).hasSize(2);
         assertThat(actual.questions().getFirst().type()).isEqualTo(PlanQuestionType.FREE_TEXT);
@@ -136,16 +141,16 @@ class OptimizationPlanningServiceTest {
         var question = new PlanQuestion("tool", "用哪种分析工具？", "", PlanQuestionType.SINGLE_CHOICE,
                 List.of(new PlanOption("python", "Python", "", "Python", true, "a".repeat(301)),
                         new PlanOption("r", "R", "", "R", false)), List.of(), true);
-        var planning = new OptimizationPlanningService(
+        var planning = new OptimizationPlanningServiceImpl(
                 request -> new PlanningProviderResponse("请确认工具", List.of(question), "mock", "planner", true),
-                new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+                new PromptTemplateRegistryImpl(), planningSessions(CLOCK), CLOCK);
         assertThatThrownBy(() -> planning.plan(request("分析死亡率"))).isInstanceOf(ProviderException.class);
     }
 
     @Test
     void shouldRetryInvalidPlanExactlyOnceAndPreserveValidQuestions() {
         AtomicInteger calls = new AtomicInteger();
-        OptimizationPlanningService service = new OptimizationPlanningService(request -> {
+        OptimizationPlanningService service = new OptimizationPlanningServiceImpl(request -> {
             if (calls.incrementAndGet() == 1) {
                 return new PlanningProviderResponse("", List.of(), "mock", "planner", true);
             }
@@ -157,7 +162,7 @@ class OptimizationPlanningServiceTest {
                             new com.promptoptimizer.enhancement.domain.PlanOption("bj", "北京市", "", "研究范围定为北京市。", false),
                             new com.promptoptimizer.enhancement.domain.PlanOption("delta", "长三角", "", "研究范围定为长三角。", false)
                     ), List.of(), true)), "mock", "planner", true);
-        }, new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+        }, new PromptTemplateRegistryImpl(), planningSessions(CLOCK), CLOCK);
         assertThat(service.plan(request("研究死亡率" )).questions()).hasSize(1);
         assertThat(calls).hasValue(2);
     }
@@ -165,11 +170,11 @@ class OptimizationPlanningServiceTest {
     @Test
     void shouldNotRetryNetworkOrCredentialFailures() {
         AtomicInteger calls = new AtomicInteger();
-        OptimizationPlanningService service = new OptimizationPlanningService(request -> {
+        OptimizationPlanningService service = new OptimizationPlanningServiceImpl(request -> {
             calls.incrementAndGet();
             throw new ProviderException(com.promptoptimizer.provider.domain.ProviderFailureType.UPSTREAM_UNAVAILABLE,
                     "连接失败", true);
-        }, new PromptTemplateRegistry(), planningSessions(CLOCK), CLOCK);
+        }, new PromptTemplateRegistryImpl(), planningSessions(CLOCK), CLOCK);
         assertThatThrownBy(() -> service.plan(request("研究死亡率"))).isInstanceOf(ProviderException.class);
         assertThat(calls).hasValue(1);
     }
@@ -179,9 +184,9 @@ class OptimizationPlanningServiceTest {
             ZoneOffset.UTC
     );
 
-    private final OptimizationPlanningService service = new OptimizationPlanningService(
+    private final OptimizationPlanningService service = new OptimizationPlanningServiceImpl(
             new MockPromptPlanningProvider(),
-            new PromptTemplateRegistry(),
+            new PromptTemplateRegistryImpl(),
             planningSessions(CLOCK),
             CLOCK
     );
@@ -228,7 +233,7 @@ class OptimizationPlanningServiceTest {
 
     @Test
     void shouldRejectInternalImplementationTermsInProviderCopy() {
-        OptimizationPlanningService invalidService = new OptimizationPlanningService(
+        OptimizationPlanningService invalidService = new OptimizationPlanningServiceImpl(
                 request -> new PlanningProviderResponse(
                         "请选择 FEATURE_DEVELOPMENT 模板。",
                         List.of(),
@@ -236,7 +241,7 @@ class OptimizationPlanningServiceTest {
                         "invalid-planner",
                         true
                 ),
-                new PromptTemplateRegistry(),
+                new PromptTemplateRegistryImpl(),
                 planningSessions(Clock.systemUTC()),
                 Clock.systemUTC()
         );
@@ -262,9 +267,9 @@ class OptimizationPlanningServiceTest {
                         false
                 ))
                 .toList();
-        OptimizationPlanningService invalidService = new OptimizationPlanningService(
+        OptimizationPlanningService invalidService = new OptimizationPlanningServiceImpl(
                 request -> new PlanningProviderResponse("还需要确认一些信息。", questions, "mock", "planner", true),
-                new PromptTemplateRegistry(),
+                new PromptTemplateRegistryImpl(),
                 planningSessions(Clock.systemUTC()),
                 Clock.systemUTC()
         );
@@ -299,7 +304,7 @@ class OptimizationPlanningServiceTest {
                 List.of(),
                 false
         );
-        OptimizationPlanningService invalidService = new OptimizationPlanningService(
+        OptimizationPlanningService invalidService = new OptimizationPlanningServiceImpl(
                 request -> new PlanningProviderResponse(
                         "还需要确认一项信息。",
                         List.of(oversized),
@@ -307,7 +312,7 @@ class OptimizationPlanningServiceTest {
                         "planner",
                         true
                 ),
-                new PromptTemplateRegistry(),
+                new PromptTemplateRegistryImpl(),
                 planningSessions(Clock.systemUTC()),
                 Clock.systemUTC()
         );
@@ -321,7 +326,7 @@ class OptimizationPlanningServiceTest {
     }
 
     private static PlanningSessionService planningSessions(Clock clock) {
-        return new PlanningSessionService(
+        return new PlanningSessionServiceImpl(
                 new InMemoryPlanningSessionStore(clock),
                 request -> new ContextSnapshot(
                         request.customDescription(),
@@ -333,7 +338,7 @@ class OptimizationPlanningServiceTest {
                         List.of(),
                         "test-v1"
                 ),
-                new ProtectedContextFilter(),
+                new ProtectedContextFilterImpl(),
                 TestActors.currentActor(),
                 clock
         );

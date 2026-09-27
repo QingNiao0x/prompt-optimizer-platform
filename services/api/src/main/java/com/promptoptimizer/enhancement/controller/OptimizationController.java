@@ -2,12 +2,12 @@ package com.promptoptimizer.enhancement.controller;
 
 import com.promptoptimizer.enhancement.dto.OptimizationPlanRequest;
 import com.promptoptimizer.enhancement.dto.OptimizationRequest;
-import com.promptoptimizer.analytics.service.impl.AnalyticsEventService;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.web.RequestIdFilter;
 import com.promptoptimizer.enhancement.service.EnhancementOrchestrator;
-import com.promptoptimizer.enhancement.service.impl.OptimizationPlanningService;
+import com.promptoptimizer.enhancement.service.OptimizationPlanningService;
 import com.promptoptimizer.enhancement.domain.OptimizationPlan;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
 import com.promptoptimizer.history.service.OptimizationHistoryService;

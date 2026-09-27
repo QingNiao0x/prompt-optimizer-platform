@@ -1,5 +1,8 @@
 package com.promptoptimizer.enhancement.service.impl;
 
+import com.promptoptimizer.enhancement.service.OptimizationPlanningService;
+import com.promptoptimizer.enhancement.service.PlanQualityMetrics;
+import com.promptoptimizer.enhancement.service.PlanningSessionService;
 import com.promptoptimizer.common.logging.LogCorrelation;
 import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.common.logging.ModelCallLogger;
@@ -16,7 +19,7 @@ import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
-import com.promptoptimizer.template.service.impl.PromptTemplateRegistry;
+import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -38,9 +41,9 @@ import java.util.regex.Pattern;
  * @since 0.1.0
  */
 @Service
-public class OptimizationPlanningService {
+public class OptimizationPlanningServiceImpl implements OptimizationPlanningService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OptimizationPlanningService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OptimizationPlanningServiceImpl.class);
 
     private static final int MAX_QUESTIONS = 8;
     private static final int MAX_OPTIONS = 5;
@@ -62,7 +65,7 @@ public class OptimizationPlanningService {
     private final SensitiveValueDetector sensitiveValueDetector;
     private final Clock clock;
     private final PlanQuestionFilter questionFilter = new PlanQuestionFilter();
-    private PlanQualityMetrics metrics = new PlanQualityMetrics(new io.micrometer.core.instrument.simple.SimpleMeterRegistry());
+    private PlanQualityMetrics metrics = new PlanQualityMetricsImpl(new io.micrometer.core.instrument.simple.SimpleMeterRegistry());
     private PlatformModelCatalog modelCatalog;
 
     /** Spring 运行时注入平台模型目录；直接构造的既有单元测试继续使用 Mock 默认模型。 */
@@ -75,7 +78,7 @@ public class OptimizationPlanningService {
     public void setMetrics(PlanQualityMetrics metrics) { this.metrics = metrics; }
 
     @Autowired
-    public OptimizationPlanningService(
+    public OptimizationPlanningServiceImpl(
             PromptPlanningProvider planningProvider,
             PromptTemplateRegistry templateRegistry,
             PlanningSessionService planningSessionService
@@ -83,7 +86,7 @@ public class OptimizationPlanningService {
         this(planningProvider, templateRegistry, planningSessionService, Clock.systemUTC());
     }
 
-    OptimizationPlanningService(
+    OptimizationPlanningServiceImpl(
             PromptPlanningProvider planningProvider,
             PromptTemplateRegistry templateRegistry,
             PlanningSessionService planningSessionService,

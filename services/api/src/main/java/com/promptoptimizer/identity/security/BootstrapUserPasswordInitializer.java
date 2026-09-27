@@ -76,8 +76,8 @@ public class BootstrapUserPasswordInitializer implements ApplicationRunner {
             LOGGER.warn("登录账户尚无密码；请设置 BOOTSTRAP_USER_PASSWORD 后重启服务完成一次性初始化");
             return;
         }
-        if (!com.promptoptimizer.identity.service.impl.PasswordPolicy.meets(password)) {
-            throw new IllegalStateException(com.promptoptimizer.identity.service.impl.PasswordPolicy.rejectionMessage());
+        if (!com.promptoptimizer.identity.service.PasswordPolicy.meets(password)) {
+            throw new IllegalStateException(com.promptoptimizer.identity.service.PasswordPolicy.rejectionMessage());
         }
         int updated = accountMapper.updatePasswordHash(account.getId(), passwordEncoder.encode(password));
         if (updated != 1) {

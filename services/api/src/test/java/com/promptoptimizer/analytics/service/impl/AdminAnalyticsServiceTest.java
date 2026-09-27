@@ -1,5 +1,6 @@
 package com.promptoptimizer.analytics.service.impl;
 
+import com.promptoptimizer.analytics.service.AdminAnalyticsService;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.DailyMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.DeviceMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.HourlyMetric;
@@ -62,7 +63,7 @@ class AdminAnalyticsServiceTest {
         when(repository.usageRanking(period, USER_ID, 10)).thenReturn(List.of(
                 new UserRank(USER_ID, "Admin", 4, 1, 2)
         ));
-        AdminAnalyticsService service = new AdminAnalyticsService(resolver, provider(repository), provider(recharge), false);
+        AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver, provider(repository), provider(recharge), false);
 
         var view = service.dashboard(new DashboardQuery("CUSTOM", "2026-09-01", "2026-09-03", USER_ID));
 
@@ -80,7 +81,7 @@ class AdminAnalyticsServiceTest {
     @Test
     void rejectsInvalidRangeBeforeRunningQueries() {
         AdminAnalyticsMapper repository = mock(AdminAnalyticsMapper.class);
-        AdminAnalyticsService service = new AdminAnalyticsService(resolver(), provider(repository),
+        AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository),
                 provider(mock(RechargeRecordMapper.class)), false);
 
         assertThatThrownBy(() -> service.dashboard(new DashboardQuery("CUSTOM", "2026-09-04", "2026-09-03", null)))
@@ -99,7 +100,7 @@ class AdminAnalyticsServiceTest {
                 null, null, null, null, null, null, null, "DESKTOP")));
         when(repository.selectOperationLogs(any(), any(), any(), eq(USER_ID), eq("LOGIN")))
                 .thenReturn(mapperPage);
-        AdminAnalyticsService service = new AdminAnalyticsService(resolver(), provider(repository),
+        AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository),
                 provider(mock(RechargeRecordMapper.class)), false);
 
         var result = service.operationLogs(new OperationLogQuery(

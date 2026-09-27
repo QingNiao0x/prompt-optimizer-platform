@@ -126,13 +126,13 @@ const indexingLabel = computed(() => {
     ? `${Math.round(progress.filesPerSecond).toLocaleString()} 文件/秒`
     : '正在计算速度';
   if (progress.phase === 'SCANNING') {
-    return `正在统计文件 · 已发现 ${progress.discoveredFiles.toLocaleString()} · ${speed}`;
+    return `正在扫描目录 · 已发现 ${progress.discoveredFiles.toLocaleString()} · ${speed}`;
   }
   const total = progress.totalFiles === undefined
     ? progress.processedFiles.toLocaleString()
     : `${progress.processedFiles.toLocaleString()} / ${progress.totalFiles.toLocaleString()}`;
   const eta = progress.etaMs === undefined
-    ? '剩余时间计算中'
+    ? `已用 ${formatDuration(progress.elapsedMs)}`
     : `预计剩余 ${formatDuration(progress.etaMs)}`;
   return `${total} · 已索引 ${progress.indexedFiles.toLocaleString()} · ${speed} · ${eta}`;
 });

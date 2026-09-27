@@ -1,6 +1,8 @@
 package com.promptoptimizer.enhancement.service.impl;
 
 import com.promptoptimizer.enhancement.service.EnhancementOrchestrator;
+import com.promptoptimizer.enhancement.service.PlanningSessionService;
+import com.promptoptimizer.policy.service.impl.ProtectedContextFilterImpl;
 import com.promptoptimizer.context.service.ContextAnalyzer;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.common.logging.LogCorrelation;
@@ -12,13 +14,13 @@ import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.identity.service.CurrentActor;
-import com.promptoptimizer.policy.service.impl.ConstraintCompleter;
-import com.promptoptimizer.policy.service.impl.ProtectedContextFilter;
+import com.promptoptimizer.policy.service.ConstraintCompleter;
+import com.promptoptimizer.policy.service.ProtectedContextFilter;
 import com.promptoptimizer.provider.service.PromptEnhancementProvider;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
-import com.promptoptimizer.template.service.impl.PromptTemplateRegistry;
+import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,11 +105,11 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 constraintCompleter,
                 enhancementProvider,
                 new OptimizationResultAssembler(),
-                new ProtectedContextFilter(),
-                new PlanningSessionService(
+                new ProtectedContextFilterImpl(),
+                new PlanningSessionServiceImpl(
                         new InMemoryPlanningSessionStore(clock),
                         contextAnalyzer,
-                        new ProtectedContextFilter(),
+                        new ProtectedContextFilterImpl(),
                         currentActor,
                         clock
                 ),
@@ -134,7 +136,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 enhancementProvider,
                 resultAssembler,
                 protectedContextFilter,
-                new PlanningSessionService(
+                new PlanningSessionServiceImpl(
                         new InMemoryPlanningSessionStore(clock),
                         contextAnalyzer,
                         protectedContextFilter,

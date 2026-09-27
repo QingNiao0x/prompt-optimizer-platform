@@ -1,5 +1,6 @@
 package com.promptoptimizer.identity.service.impl;
 
+import com.promptoptimizer.identity.service.LoginCaptchaService;
 import com.promptoptimizer.identity.service.LoginGuardException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -21,9 +22,7 @@ import java.security.SecureRandom;
  * 签发一次性图形验证码，答案只放在服务端会话中。
  */
 @Service
-public class LoginCaptchaService {
-
-    public static final String ATTRIBUTE = "LOGIN_CAPTCHA";
+public class LoginCaptchaServiceImpl implements LoginCaptchaService {
     private static final String ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int LENGTH = 4;
 

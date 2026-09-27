@@ -36,7 +36,7 @@ public class LocalMockUserDetailsConfiguration {
             @Value("${app.demo.tenant-id}") String tenantId,
             @Value("${app.demo.workspace-id}") String workspaceId
     ) {
-        if (!com.promptoptimizer.identity.service.impl.PasswordPolicy.meets(password)) {
+        if (!com.promptoptimizer.identity.service.PasswordPolicy.meets(password)) {
             throw new IllegalStateException(
                     "LOCAL_AUTH_PASSWORD 至少 8 个字符，且须同时包含字母和数字"
             );
