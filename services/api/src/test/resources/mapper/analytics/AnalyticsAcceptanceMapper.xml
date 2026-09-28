@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.analytics.support.AnalyticsAcceptanceMapper">
+    <select id="eventTypes" resultType="java.lang.String">
+        SELECT event_type FROM audit_event WHERE actor_user_id = #{userId}
+        ORDER BY occurred_at, id
+    </select>
+    <select id="eventDetails" resultType="java.lang.String">
+        SELECT details::text FROM audit_event WHERE actor_user_id = #{userId}
+        ORDER BY occurred_at, id
+    </select>
+    <update id="setCreatedAt">
+        UPDATE user_account SET created_at = #{createdAt}
+        WHERE id = #{userId} AND display_name = 'analytics-acceptance'
+    </update>
+    <update id="setAccess">
+        UPDATE user_account SET platform_role = #{role}, status = #{status}
+        WHERE id = #{userId} AND display_name = 'analytics-acceptance'
+    </update>
+    <select id="remainingRows" resultType="long">
+        SELECT (SELECT COUNT(*) FROM tenant WHERE id = #{tenantId})
+             + (SELECT COUNT(*) FROM user_account WHERE id = #{userId})
+             + (SELECT COUNT(*) FROM user_identity WHERE user_id = #{userId})
+             + (SELECT COUNT(*) FROM workspace WHERE id = #{workspaceId})
+             + (SELECT COUNT(*) FROM workspace_member WHERE user_id = #{userId})
+             + (SELECT COUNT(*) FROM optimization_session WHERE created_by = #{userId})
+             + (SELECT COUNT(*) FROM optimization_record WHERE created_by = #{userId})
+             + (SELECT COUNT(*) FROM audit_event WHERE actor_user_id = #{userId})
+    </select>
+</mapper>

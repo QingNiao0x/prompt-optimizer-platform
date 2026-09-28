@@ -54,12 +54,18 @@ const range = ref<AnalyticsRange>('TODAY');
 const dateRange = ref<string[]>([]);
 const accountId = ref('');
 const eventFilter = ref<AnalyticsEventType | ''>('');
+// 筛选输入是草稿；翻页和排行只能复用最近一次成功查询的账号与操作类型。
+const appliedFilters = ref<{ userId?: string; eventType?: AnalyticsEventType }>({});
 const dashboard = ref<AnalyticsDashboard>();
 const operationPage = ref<AnalyticsOperationLogPage>();
 const ranking = ref<AnalyticsRanking>();
 const loading = ref(false);
 const operationsLoading = ref(false);
 const rankingLoading = ref(false);
+const operationsError = ref('');
+const rankingError = ref('');
+let operationsRequestId = 0;
+let rankingRequestId = 0;
 const operationsPageNumber = ref(1);
 const rankingPeriod = ref<AnalyticsRankingPeriod>('DAY');
 const rankingDate = ref('');
@@ -140,51 +146,72 @@ const makeQuery = (): AnalyticsDashboardQuery | undefined => {
 const loadOperations = async (page: number): Promise<void> => {
   const current = dashboard.value;
   if (!current) return;
+  const requestId = ++operationsRequestId;
   operationsLoading.value = true;
+  operationsError.value = '';
   try {
-    const normalizedAccountId = accountId.value.trim();
-    operationPage.value = await getAnalyticsOperations({
+    const result = await getAnalyticsOperations({
       fromDate: current.period.fromDate,
       toDate: current.period.toDateInclusive,
       current: page,
       size: operationsPageSize.value,
-      ...(normalizedAccountId ? { userId: normalizedAccountId } : {}),
-      ...(eventFilter.value ? { eventType: eventFilter.value } : {}),
+      ...appliedFilters.value,
     });
+    if (requestId !== operationsRequestId) return;
+    operationPage.value = result;
     operationsPageNumber.value = page;
   } catch (error: unknown) {
-    ElMessage.error(getApiErrorMessage(error));
+    if (requestId !== operationsRequestId) return;
+    operationsError.value = getApiErrorMessage(error);
+    ElMessage.error(operationsError.value);
   } finally {
-    operationsLoading.value = false;
+    if (requestId === operationsRequestId) operationsLoading.value = false;
   }
 };
 
 const loadRanking = async (fallbackDate?: string): Promise<void> => {
   const selectedDate = rankingDate.value || fallbackDate;
   if (!selectedDate) return;
+  const requestId = ++rankingRequestId;
   rankingLoading.value = true;
+  rankingError.value = '';
   try {
-    const normalizedAccountId = accountId.value.trim();
-    ranking.value = await getAnalyticsRanking(
+    const result = await getAnalyticsRanking(
       rankingPeriod.value,
       selectedDate,
       20,
-      normalizedAccountId || undefined,
+      appliedFilters.value.userId,
     );
+    if (requestId !== rankingRequestId) return;
+    ranking.value = result;
     rankingDate.value = selectedDate;
   } catch (error: unknown) {
-    ElMessage.error(getApiErrorMessage(error));
+    if (requestId !== rankingRequestId) return;
+    rankingError.value = getApiErrorMessage(error);
+    ElMessage.error(rankingError.value);
   } finally {
-    rankingLoading.value = false;
+    if (requestId === rankingRequestId) rankingLoading.value = false;
   }
 };
 
 const refresh = async (): Promise<void> => {
+  if (loading.value) return;
   const query = makeQuery();
   if (!query) return;
+  const submittedFilters = {
+    ...(query.userId ? { userId: query.userId } : {}),
+    ...(eventFilter.value ? { eventType: eventFilter.value } : {}),
+  };
   loading.value = true;
   try {
     dashboard.value = await getAnalyticsDashboard(query);
+    appliedFilters.value = submittedFilters;
+    // 新统计到达后丢弃旧条件的明细与在途响应，避免不同账号的数据混在同一屏。
+    operationsRequestId += 1;
+    rankingRequestId += 1;
+    operationPage.value = undefined;
+    ranking.value = undefined;
+    operationsPageNumber.value = 1;
     await nextTick();
     renderCharts();
     await Promise.all([
@@ -211,16 +238,16 @@ const options = (): EChartsOption => ({
 
 const dailyOption = (data: AnalyticsDashboard): EChartsOption => ({
   ...options(),
-  color: ['#4d6bfe', '#13a9a1', '#d99128'],
-  legend: { top: 0, right: 0, textStyle: { color: '#66779c' } },
+  color: [chartColor('--accent'), chartColor('--success'), chartColor('--warning')],
+  legend: { type: 'scroll', top: 0, right: 0, textStyle: { color: chartColor('--text-secondary') } },
   xAxis: {
     type: 'category',
     boundaryGap: false,
     data: data.dailyMetrics.map((item) => item.date.slice(5)),
-    axisLabel: { color: '#66779c' },
-    axisLine: { lineStyle: { color: 'rgba(102,119,156,.24)' } },
+    axisLabel: { color: chartColor('--text-secondary') },
+    axisLine: { lineStyle: { color: chartColor('--glass-border') } },
   },
-  yAxis: { type: 'value', minInterval: 1, axisLabel: { color: '#66779c' }, splitLine: { lineStyle: { color: 'rgba(102,119,156,.12)' } } },
+  yAxis: { type: 'value', minInterval: 1, axisLabel: { color: chartColor('--text-secondary') }, splitLine: { lineStyle: { color: chartColor('--glass-border-subtle') } } },
   series: [
     { name: '页面访问', type: 'line', smooth: true, showSymbol: false, data: data.dailyMetrics.map((item) => item.accessCount) },
     { name: '去重访问账号', type: 'line', smooth: true, showSymbol: false, data: data.dailyMetrics.map((item) => item.uniqueVisitors) },
@@ -230,32 +257,32 @@ const dailyOption = (data: AnalyticsDashboard): EChartsOption => ({
 
 const hourlyOption = (data: AnalyticsDashboard): EChartsOption => ({
   ...options(),
-  color: ['#13a9a1'],
-  xAxis: { type: 'category', data: data.hourlyUsage.map((item) => `${String(item.hour).padStart(2, '0')}:00`), axisLabel: { color: '#66779c', interval: 2 }, axisLine: { lineStyle: { color: 'rgba(102,119,156,.24)' } } },
-  yAxis: { type: 'value', minInterval: 1, axisLabel: { color: '#66779c' }, splitLine: { lineStyle: { color: 'rgba(102,119,156,.12)' } } },
+  color: [chartColor('--success')],
+  xAxis: { type: 'category', data: data.hourlyUsage.map((item) => `${String(item.hour).padStart(2, '0')}:00`), axisLabel: { color: chartColor('--text-secondary'), interval: 2 }, axisLine: { lineStyle: { color: chartColor('--glass-border') } } },
+  yAxis: { type: 'value', minInterval: 1, axisLabel: { color: chartColor('--text-secondary') }, splitLine: { lineStyle: { color: chartColor('--glass-border-subtle') } } },
   series: [{ name: '关键操作', type: 'bar', barMaxWidth: 22, data: data.hourlyUsage.map((item) => item.operationCount), itemStyle: { borderRadius: [4, 4, 0, 0] } }],
 });
 
 const monthlyOption = (data: AnalyticsDashboard): EChartsOption => ({
   ...options(),
-  color: ['#4d6bfe'],
-  xAxis: { type: 'category', data: data.monthlyUsage.map((item) => item.month), axisLabel: { color: '#66779c' }, axisLine: { lineStyle: { color: 'rgba(102,119,156,.24)' } } },
-  yAxis: { type: 'value', minInterval: 1, axisLabel: { color: '#66779c' }, splitLine: { lineStyle: { color: 'rgba(102,119,156,.12)' } } },
+  color: [chartColor('--accent')],
+  xAxis: { type: 'category', data: data.monthlyUsage.map((item) => item.month), axisLabel: { color: chartColor('--text-secondary') }, axisLine: { lineStyle: { color: chartColor('--glass-border') } } },
+  yAxis: { type: 'value', minInterval: 1, axisLabel: { color: chartColor('--text-secondary') }, splitLine: { lineStyle: { color: chartColor('--glass-border-subtle') } } },
   series: [{ name: '关键操作', type: 'bar', barMaxWidth: 30, data: data.monthlyUsage.map((item) => item.operationCount), itemStyle: { borderRadius: [4, 4, 0, 0] } }],
 });
 
 const deviceOption = (data: AnalyticsDashboard): EChartsOption => ({
   ...options(),
-  color: ['#4d6bfe', '#13a9a1', '#e6a23c', '#a0a7b8'],
+  color: [chartColor('--accent'), chartColor('--success'), chartColor('--warning'), chartColor('--text-muted')],
   tooltip: { trigger: 'item', confine: true, formatter: '{b}: {c} 次登录（{d}%）' },
-  legend: { bottom: 0, textStyle: { color: '#66779c' } },
+  legend: { type: 'scroll', bottom: 0, textStyle: { color: chartColor('--text-secondary') } },
   series: [{
     name: '登录设备',
     type: 'pie',
     radius: ['54%', '76%'],
     center: ['50%', '45%'],
     avoidLabelOverlap: true,
-    itemStyle: { borderColor: 'rgba(255,255,255,.75)', borderWidth: 2 },
+    itemStyle: { borderColor: chartColor('--bg-base'), borderWidth: 2 },
     label: { show: false },
     data: data.deviceDistribution.map((item) => ({ name: deviceLabel(item.deviceType), value: item.loginCount })),
   }],
@@ -266,10 +293,10 @@ const rechargeOption = (data: AnalyticsDashboard): EChartsOption => {
   const groups = [...new Set(data.rechargeByDay.map((item) => `${item.planName} · ${item.currency}`))];
   return {
     ...options(),
-    color: ['#13a9a1', '#4d6bfe', '#d99128', '#8b5cf6', '#d45e81'],
-    legend: { top: 0, right: 0, textStyle: { color: '#66779c' } },
-    xAxis: { type: 'category', data: days.map((day) => day.slice(5)), axisLabel: { color: '#66779c' }, axisLine: { lineStyle: { color: 'rgba(102,119,156,.24)' } } },
-    yAxis: { type: 'value', minInterval: 1, axisLabel: { color: '#66779c' }, splitLine: { lineStyle: { color: 'rgba(102,119,156,.12)' } } },
+    color: [chartColor('--success'), chartColor('--accent'), chartColor('--warning'), chartColor('--pink'), chartColor('--text-muted')],
+    legend: { type: 'scroll', top: 0, right: 0, textStyle: { color: chartColor('--text-secondary') } },
+    xAxis: { type: 'category', data: days.map((day) => day.slice(5)), axisLabel: { color: chartColor('--text-secondary') }, axisLine: { lineStyle: { color: chartColor('--glass-border') } } },
+    yAxis: { type: 'value', minInterval: 1, axisLabel: { color: chartColor('--text-secondary') }, splitLine: { lineStyle: { color: chartColor('--glass-border-subtle') } } },
     series: groups.map((group) => ({
       name: group,
       type: 'bar' as const,
@@ -295,6 +322,7 @@ const renderCharts = (): void => {
     if (!target || target.clientWidth === 0) continue;
     const chart = charts.get(key) ?? init(target);
     charts.set(key, chart);
+    chart.resize();
     chart.setOption(option, { notMerge: true });
   }
 };
@@ -359,8 +387,8 @@ onBeforeUnmount(() => {
         <p>按登录账号汇总访问、关键操作与所在地审计记录。</p>
       </div>
     </header>
-      <div class="filters" role="search" aria-label="统计筛选条件">
-        <div class="filter-field">
+    <div class="filters" role="search" aria-label="统计筛选条件">
+      <div class="filter-field">
         <span class="filter-label">时间范围</span>
         <ElSelect v-model="range" aria-label="统计时间范围" class="range-select">
           <ElOption label="今天" value="TODAY" />
@@ -370,8 +398,8 @@ onBeforeUnmount(() => {
           <ElOption label="上月" value="LAST_MONTH" />
           <ElOption label="自定义" value="CUSTOM" />
         </ElSelect>
-        </div>
-        <div v-if="range === 'CUSTOM'" class="filter-field filter-field--dates">
+      </div>
+      <div v-if="range === 'CUSTOM'" class="filter-field filter-field--dates">
         <span class="filter-label">起止日期</span>
         <ElDatePicker
           v-model="dateRange"
@@ -381,9 +409,10 @@ onBeforeUnmount(() => {
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           class="custom-dates"
+          popper-class="analytics-date-range-popper"
         />
-        </div>
-        <div class="filter-field filter-field--account">
+      </div>
+      <div class="filter-field filter-field--account">
         <span class="filter-label">登录账号</span>
         <ElInput
           v-model="accountId"
@@ -392,9 +421,9 @@ onBeforeUnmount(() => {
           aria-label="按登录账号 ID 筛选"
           placeholder="账号 ID（可选）"
         />
-        </div>
-        <ElButton type="primary" :loading="loading" @click="refresh">查询</ElButton>
       </div>
+      <ElButton type="primary" :loading="loading" @click="refresh">查询</ElButton>
+    </div>
 
     <ElAlert
       v-if="dashboard && !dashboard.rechargeStatisticsAvailable"
@@ -450,103 +479,110 @@ onBeforeUnmount(() => {
       <section class="charts-grid" aria-label="使用统计图表">
         <article class="chart-panel chart-wide">
           <div class="panel-heading">
-            <div><span class="panel-kicker">ACCOUNT SIGNAL</span><h2>每日访问与活跃</h2></div>
+            <div class="panel-title"><span class="panel-kicker">ACCOUNT SIGNAL</span><h2>每日访问与活跃</h2></div>
             <span class="period-label">{{ dashboard.period.fromDate }} — {{ dashboard.period.toDateInclusive }}</span>
           </div>
-          <div ref="dailyChart" class="chart chart-tall" role="img" aria-label="每日访问、去重访问账号与活跃账号折线图"></div>
+          <div v-show="dashboard.dailyMetrics.length" ref="dailyChart" class="chart chart-tall" role="img" aria-label="每日访问、去重访问账号与活跃账号折线图"></div>
+          <div v-if="!dashboard.dailyMetrics.length" class="chart-empty chart-tall">所选范围内暂无每日访问数据。</div>
         </article>
 
         <article class="chart-panel">
           <div class="panel-heading">
-            <div><span class="panel-kicker">TIME OF DAY</span><h2>高频使用时段</h2></div>
+            <div class="panel-title"><span class="panel-kicker">TIME OF DAY</span><h2>高频使用时段</h2></div>
             <ElTag v-if="activeHour" size="small" effect="plain">峰值 {{ String(activeHour.hour).padStart(2, '0') }}:00</ElTag>
           </div>
-          <div ref="hourlyChart" class="chart chart-tall" role="img" aria-label="按小时汇总的关键操作柱状图"></div>
+          <div v-show="dashboard.hourlyUsage.length" ref="hourlyChart" class="chart chart-tall" role="img" aria-label="按小时汇总的关键操作柱状图"></div>
+          <div v-if="!dashboard.hourlyUsage.length" class="chart-empty chart-tall">所选范围内暂无时段统计。</div>
         </article>
 
         <article class="chart-panel">
           <div class="panel-heading">
-            <div><span class="panel-kicker">MONTHLY RHYTHM</span><h2>高频月份 · 近 12 个月</h2></div>
+            <div class="panel-title"><span class="panel-kicker">MONTHLY RHYTHM</span><h2>高频月份 · 近 12 个月</h2></div>
             <ElTag v-if="activeMonth" size="small" effect="plain">峰值 {{ activeMonth.month }}</ElTag>
           </div>
-          <div ref="monthlyChart" class="chart chart-medium" role="img" aria-label="按月份汇总的关键操作柱状图"></div>
+          <div v-show="dashboard.monthlyUsage.length" ref="monthlyChart" class="chart chart-medium" role="img" aria-label="按月份汇总的关键操作柱状图"></div>
+          <div v-if="!dashboard.monthlyUsage.length" class="chart-empty">近 12 个月暂无使用数据。</div>
         </article>
 
         <article class="chart-panel">
           <div class="panel-heading">
-            <div><span class="panel-kicker">DEVICE MIX</span><h2>登录设备</h2></div>
+            <div class="panel-title"><span class="panel-kicker">DEVICE MIX</span><h2>登录设备</h2></div>
           </div>
-          <div ref="deviceChart" class="chart chart-medium" role="img" aria-label="手机、平板、电脑和未知设备登录分布图"></div>
+          <div v-show="dashboard.deviceDistribution.length" ref="deviceChart" class="chart chart-medium" role="img" aria-label="手机、平板、电脑和未知设备登录分布图"></div>
+          <div v-if="!dashboard.deviceDistribution.length" class="chart-empty">所选范围内暂无登录设备数据。</div>
         </article>
 
-        <article class="chart-panel chart-wide">
+        <article class="chart-panel">
           <div class="panel-heading">
-            <div><span class="panel-kicker">RECHARGE RECORDS</span><h2>每日充值套餐</h2></div>
+            <div class="panel-title"><span class="panel-kicker">RECHARGE RECORDS</span><h2>每日充值套餐</h2></div>
             <small>金额以货币最小单位分币种汇总</small>
           </div>
-          <div v-if="dashboard.rechargeStatisticsAvailable" ref="rechargeChart" class="chart chart-medium" role="img" aria-label="每日充值套餐金额堆叠柱状图"></div>
-          <div v-else class="chart-empty">支付记录模块完成迁移并接入已验证的支付结果后显示。</div>
+          <div v-show="dashboard.rechargeStatisticsAvailable && dashboard.rechargeByDay.length" ref="rechargeChart" class="chart chart-medium" role="img" aria-label="每日充值套餐金额堆叠柱状图"></div>
+          <div v-if="!dashboard.rechargeStatisticsAvailable" class="chart-empty">支付记录模块完成迁移并接入已验证的支付结果后显示。</div>
+          <div v-else-if="!dashboard.rechargeByDay.length" class="chart-empty">所选范围内暂无充值记录。</div>
         </article>
       </section>
 
-      <section class="data-grid">
-    <article class="table-panel">
-      <div class="panel-heading">
-        <div><span class="panel-kicker">ACCOUNT RANKING</span><h2>使用频率排行</h2></div>
-        <div class="ranking-controls">
-          <ElSelect v-model="rankingPeriod" aria-label="排行周期" class="rank-period-select">
-            <ElOption label="按日" value="DAY" />
-            <ElOption label="按周" value="WEEK" />
-            <ElOption label="按月" value="MONTH" />
-          </ElSelect>
-          <ElDatePicker
-            v-model="rankingDate"
-            type="date"
-            value-format="YYYY-MM-DD"
-            format="YYYY-MM-DD"
-            aria-label="排行锚点日期"
-            class="rank-date"
-          />
-          <ElButton :loading="rankingLoading" @click="loadRanking()">更新排行</ElButton>
-        </div>
-      </div>
-      <p class="panel-caption">按账号 ID 汇总关键操作；管理员账号计入。</p>
-      <ElTable v-if="ranking?.items.length" v-loading="rankingLoading" :data="ranking.items" stripe>
-            <ElTableColumn label="排名" type="index" width="64" />
-            <ElTableColumn label="账号 ID" min-width="230">
+      <section class="data-grid" aria-label="账号排行与操作明细">
+        <article class="table-panel ranking-panel">
+          <div class="panel-heading">
+            <div class="panel-title"><span class="panel-kicker">ACCOUNT RANKING</span><h2>使用频率排行</h2></div>
+            <div class="ranking-controls">
+              <ElSelect v-model="rankingPeriod" aria-label="排行周期" class="rank-period-select">
+                <ElOption label="按日" value="DAY" />
+                <ElOption label="按周" value="WEEK" />
+                <ElOption label="按月" value="MONTH" />
+              </ElSelect>
+              <ElDatePicker
+                v-model="rankingDate"
+                type="date"
+                value-format="YYYY-MM-DD"
+                format="YYYY-MM-DD"
+                aria-label="排行锚点日期"
+                class="rank-date"
+              />
+              <ElButton :loading="rankingLoading" @click="loadRanking()">更新排行</ElButton>
+            </div>
+          </div>
+          <p class="panel-caption">按账号 ID 汇总关键操作；管理员账号计入。<span class="table-scroll-hint">左右滑动表格可查看完整字段。</span></p>
+          <ElAlert v-if="rankingError" type="error" :closable="false" :title="rankingError" />
+          <ElTable v-else v-loading="rankingLoading" :data="ranking?.items ?? []" stripe :max-height="440" empty-text="所选周期内没有关键使用操作。">
+            <ElTableColumn label="排名" type="index" width="64" align="center" />
+            <ElTableColumn label="账号 ID" min-width="280" show-overflow-tooltip>
               <template #default="scope"><code>{{ scope.row.userId }}</code></template>
             </ElTableColumn>
-            <ElTableColumn prop="displayName" label="显示名称" min-width="120" />
-            <ElTableColumn prop="operationCount" label="关键操作" width="100" />
-            <ElTableColumn prop="loginCount" label="登录次数" width="100" />
-            <ElTableColumn prop="activeDays" label="活跃天数" width="100" />
+            <ElTableColumn prop="displayName" label="显示名称" min-width="180" show-overflow-tooltip />
+            <ElTableColumn prop="operationCount" label="关键操作" min-width="120" align="right" />
+            <ElTableColumn prop="loginCount" label="登录次数" min-width="110" align="right" />
+            <ElTableColumn prop="activeDays" label="活跃天数" min-width="110" align="right" />
           </ElTable>
-      <p v-else class="table-empty">所选周期内没有关键使用操作。</p>
         </article>
 
         <article class="table-panel operations-panel">
           <div class="panel-heading operation-heading">
-            <div><span class="panel-kicker">AUDIT TRAIL</span><h2>关键操作日志</h2></div>
+            <div class="panel-title"><span class="panel-kicker">AUDIT TRAIL</span><h2>关键操作日志</h2></div>
             <ElSelect v-model="eventFilter" clearable aria-label="按操作类型筛选" placeholder="全部操作" class="event-select">
               <ElOption v-for="item in eventTypes" :key="item.value" :label="item.label" :value="item.value" />
             </ElSelect>
           </div>
+          <p class="panel-caption">{{ dashboard.period.fromDate }} — {{ dashboard.period.toDateInclusive }}<span class="table-scroll-hint">左右滑动表格可查看完整字段。</span></p>
+          <ElAlert v-if="operationsError" type="error" :closable="false" :title="operationsError" />
           <!-- @vue-generic {AnalyticsOperationLog} -->
-          <ElTable v-loading="operationsLoading" :data="operationPage?.records ?? []" stripe>
-            <ElTableColumn label="发生时间" min-width="175">
+          <ElTable v-else v-loading="operationsLoading" :data="operationPage?.records ?? []" stripe :max-height="560" empty-text="所选范围内没有关键操作日志。">
+            <ElTableColumn label="发生时间" min-width="185" show-overflow-tooltip>
               <template #default="scope">{{ new Date(scope.row.occurredAt).toLocaleString() }}</template>
             </ElTableColumn>
-            <ElTableColumn label="账号 ID" min-width="230">
+            <ElTableColumn label="账号 ID" min-width="280" show-overflow-tooltip>
               <template #default="scope"><code>{{ scope.row.userId }}</code></template>
             </ElTableColumn>
             <ElTableColumn label="操作" width="120">
               <template #default="scope">{{ eventLabel(scope.row.eventType) }}</template>
             </ElTableColumn>
-            <ElTableColumn prop="clientIp" label="IP" min-width="130" />
-            <ElTableColumn label="操作所在地" min-width="200">
+            <ElTableColumn prop="clientIp" label="IP" min-width="160" show-overflow-tooltip />
+            <ElTableColumn label="操作所在地" min-width="200" show-overflow-tooltip>
               <template #default="scope">{{ locationFor(scope.row as AnalyticsOperationLog) }}</template>
             </ElTableColumn>
-            <ElTableColumn label="登录所在地" min-width="200">
+            <ElTableColumn label="登录所在地" min-width="200" show-overflow-tooltip>
               <template #default="scope">{{ loginLocationFor(scope.row as AnalyticsOperationLog) }}</template>
             </ElTableColumn>
             <ElTableColumn label="设备" width="90">
@@ -561,12 +597,12 @@ onBeforeUnmount(() => {
               :current-page="operationsPageNumber"
               :page-size="operationsPageSize"
               :page-sizes="[...OPERATION_PAGE_SIZES]"
+              :pager-count="5"
               :total="operationPage.total"
               @current-change="selectLogPage"
               @size-change="selectLogPageSize"
             />
           </div>
-          <p v-else class="table-empty">所选范围内没有关键操作日志。</p>
         </article>
       </section>
     </template>
@@ -575,107 +611,120 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .admin-analytics {
-  width: min(1480px, 100%);
-  margin: 0 auto;
-  padding: 34px clamp(16px, 3vw, 42px) 56px;
+  --analytics-gap: 16px;
+  width: 100%;
+  min-width: 0;
+  padding: 24px clamp(16px, 1.5vw, 28px) 48px;
   color: var(--text-primary);
 }
 
-.analytics-heading,
 .panel-heading,
 .filters,
 .pagination-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--analytics-gap);
 }
 
 .analytics-heading {
-  align-items: flex-end;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .heading-copy h1 {
   margin: 7px 0 6px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(28px, 4vw, 38px);
+  font-family: var(--font-display);
+  font-size: clamp(26px, 2.2vw, 34px);
   font-weight: 600;
-  letter-spacing: -1.5px;
+  letter-spacing: -0.8px;
 }
 
 .heading-copy > p:last-child {
   margin: 0;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 14px;
+  line-height: 1.7;
 }
 
 .eyebrow,
 .panel-kicker {
   color: var(--accent);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 1.35px;
 }
 
 .filters {
-  justify-content: flex-end;
+  align-items: flex-end;
+  justify-content: flex-start;
   flex-wrap: wrap;
+  margin-bottom: var(--analytics-gap);
+  padding: 16px 20px;
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
 }
 
-.range-select { width: 116px; }
-.custom-dates { width: 270px; }
-.account-filter { width: 230px; }
-.event-select { width: 150px; }
-.ranking-controls { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
-.rank-period-select { width: 90px; }
-.rank-date { width: 150px; }
+.filter-field { display: grid; flex: 0 0 160px; min-width: 0; gap: 7px; }
+.filter-field--dates { flex: 1 1 300px; }
+.filter-field--account { flex: 1 1 240px; }
+.filter-label { color: var(--text-secondary); font-size: 12px; font-weight: 500; }
+.range-select, .account-filter, .custom-dates { width: 100%; min-width: 0; }
+.filters :deep(.el-date-editor) { width: 100%; min-width: 0; }
+.filters > .el-button { min-width: 96px; }
+.event-select { width: 168px; }
+.ranking-controls { display: flex; min-width: 0; align-items: center; flex-wrap: wrap; gap: 8px; }
+.rank-period-select { width: 96px; }
+.rank-date.el-date-editor { width: 160px; }
 
-.recharge-notice { margin: 0 0 18px; }
+.recharge-notice { margin: 0 0 var(--analytics-gap); }
 
 .loading-state,
-.chart-empty,
-.table-empty {
+.chart-empty {
   display: grid;
   min-height: 140px;
   place-items: center;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 13px;
 }
 
 .metric-strip {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: 12px;
+  margin-bottom: var(--analytics-gap);
 }
 
 .metric {
   display: flex;
-  min-height: 118px;
+  min-width: 0;
+  min-height: 130px;
   flex-direction: column;
   justify-content: space-between;
-  padding: 16px 17px 14px;
+  padding: 16px;
   border: 1px solid var(--glass-border-subtle);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--glass-bg);
   box-shadow: var(--glass-shadow);
 }
 
 .metric > span,
 .metric small {
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 12px;
+  line-height: 1.6;
 }
 
 .metric strong {
   margin: 8px 0;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(22px, 2.4vw, 29px);
+  font-family: var(--font-display);
+  font-size: clamp(24px, 1.8vw, 32px);
   font-weight: 600;
-  letter-spacing: -1px;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
   font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
 }
 
 .metric-primary {
@@ -686,17 +735,19 @@ onBeforeUnmount(() => {
 .charts-grid,
 .data-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 14px;
+  gap: var(--analytics-gap);
+  margin-bottom: var(--analytics-gap);
 }
+
+.charts-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.data-grid { grid-template-columns: minmax(0, 1fr); }
 
 .chart-panel,
 .table-panel {
   min-width: 0;
-  padding: 19px 20px 16px;
+  padding: 20px;
   border: 1px solid var(--glass-border-subtle);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--glass-bg);
   box-shadow: var(--glass-shadow);
 }
@@ -704,11 +755,12 @@ onBeforeUnmount(() => {
 .chart-wide { grid-column: span 2; }
 
 .panel-heading {
-  min-height: 36px;
-  margin-bottom: 8px;
+  min-height: 40px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
 }
 
-.panel-heading > div { display: grid; gap: 5px; }
+.panel-title { display: grid; min-width: 0; gap: 5px; }
 
 .panel-heading h2 {
   margin: 0;
@@ -720,49 +772,68 @@ onBeforeUnmount(() => {
 .period-label,
 .panel-caption,
 .panel-heading small {
-  color: var(--text-muted);
-  font-size: 11px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
-.period-label { font-family: 'JetBrains Mono', monospace; }
-.chart { width: 100%; }
-.chart-tall { height: 270px; }
-.chart-medium { height: 240px; }
-.chart-empty { min-height: 240px; padding: 0 20px; text-align: center; }
+.period-label { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.panel-caption { margin: 0 0 14px; }
+.chart { width: 100%; min-width: 0; }
+.chart-tall { height: 280px; }
+.chart-medium { height: 250px; }
+.chart-empty { min-height: 250px; padding: 20px; text-align: center; }
 
-.data-grid { grid-template-columns: minmax(340px, 0.85fr) minmax(0, 1.65fr); }
 .table-panel { overflow: hidden; }
-.operation-heading { margin-bottom: 16px; }
-.operations-panel :deep(.el-table) { width: 100%; }
-.pagination-row { justify-content: flex-end; margin-top: 15px; color: var(--text-muted); font-size: 12px; }
-.table-empty { min-height: 100px; }
-code { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.table-panel :deep(.el-table) {
+  --el-table-header-bg-color: var(--glass-bg-strong);
+  --el-table-header-text-color: var(--text-primary);
+  --el-table-text-color: var(--text-secondary);
+  width: 100%;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.table-panel :deep(.el-table__cell) { padding: 12px 0; }
+.table-panel :deep(.el-table .cell) { padding: 0 14px; }
+.table-panel :deep(.el-table__empty-text) { width: 100%; padding: 16px; line-height: 1.7; }
+.table-scroll-hint { display: none; margin-left: 12px; }
+.pagination-row { flex-wrap: wrap; margin-top: 16px; color: var(--text-secondary); font-size: 13px; }
+.pagination-row > span { flex-shrink: 0; }
+.pagination-row :deep(.el-pagination) { max-width: 100%; flex-wrap: wrap; gap: 8px; }
+code { color: var(--accent); font-family: var(--font-mono); font-size: 12px; }
 
-@media (max-width: 1120px) {
+@media (max-width: 1439px) {
   .metric-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .analytics-heading { align-items: flex-start; flex-direction: column; }
-  .filters { justify-content: flex-start; }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1100px) {
   .charts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .chart-wide { grid-column: span 2; }
-  .data-grid { grid-template-columns: minmax(0, 1fr); }
+  .table-scroll-hint { display: inline; }
 }
 
-@media (max-width: 560px) {
-  .admin-analytics { padding: 24px 12px 40px; }
+@media (max-width: 680px) {
+  .admin-analytics { --analytics-gap: 12px; padding: 20px 12px calc(40px + env(safe-area-inset-bottom, 0px)); }
+  .eyebrow { letter-spacing: 0.8px; }
+  .filters { padding: 14px; }
+  .filter-field { flex-basis: 100%; }
+  .filters > .el-button { width: 100%; }
   .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .metric { min-height: 104px; padding: 13px; }
+  .metric { min-height: 130px; padding: 13px; }
   .charts-grid { grid-template-columns: minmax(0, 1fr); }
   .chart-wide { grid-column: auto; }
-  .chart-panel, .table-panel { padding: 15px 13px; }
-  .filters { width: 100%; }
-  .range-select, .account-filter, .custom-dates { width: 100%; }
-  .filters :deep(.el-button) { width: 100%; }
-  .panel-heading { align-items: flex-start; flex-direction: column; }
-  .ranking-controls { justify-content: flex-start; }
-  .rank-period-select, .rank-date { width: 100%; }
-  .pagination-row { align-items: flex-end; flex-direction: column; }
+  .chart-panel, .table-panel { padding: 16px 14px; }
+  .ranking-panel .panel-heading { align-items: flex-start; flex-direction: column; }
+  .ranking-controls { display: grid; width: 100%; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .rank-period-select, .rank-date.el-date-editor { width: 100%; min-width: 0; }
+  .ranking-controls > .el-button { grid-column: 1 / -1; }
+  .event-select { width: 100%; }
+  .table-scroll-hint { display: block; margin: 4px 0 0; }
+  .pagination-row { align-items: flex-start; flex-direction: column; }
+  .pagination-row :deep(.el-pagination) { justify-content: flex-start; }
+  .pagination-row :deep(.el-pagination__sizes) { margin: 0; }
+  /* 日期弹层通过专属类适配手机，不改变其他页面的日期控件。 */
+  :global(.analytics-date-range-popper .el-date-range-picker) { width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 100px); overflow-y: auto; }
+  :global(.analytics-date-range-popper .el-date-range-picker__content) { width: 100%; float: none; }
 }
 </style>
