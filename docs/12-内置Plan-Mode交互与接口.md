@@ -155,7 +155,7 @@ Plan 路径采用方案 B：**先分析用户主动提供的相关上下文，�
       "technologies": ["Java 21", "Spring Boot 3"],
       "dependencies": ["maven:spring-boot-starter-web@3.3.13"],
       "directoryOverview": ["pom.xml", "src/main/java/"],
-      "fileSummaries": ["pom.xml：Maven 项目配置"],
+      "fileSummaries": ["[PROJECT_SOURCE] pom.xml：Maven 项目配置"],
       "analysisStatus": "COMPLETE",
       "analyzedFileCount": 1,
       "factCards": [],
@@ -190,6 +190,12 @@ Plan 路径采用方案 B：**先分析用户主动提供的相关上下文，�
 | `contextReport` | 响应 | 无 | 返回给工作台展示的完整脱敏分析报告，不直接传给计划 Provider |
 | `expiresAt` | 响应 | 无 | 默认创建后 30 分钟；过期后必须重新准备上下文和计划 |
 | `latencyMs` | 响应 | 无 | 本次过滤与分析耗时，单位毫秒 |
+
+`digest.fileSummaries` 仍为字符串数组，现在以 `[来源用途]` 标记每份材料；调用方不应依赖旧版摘要的文本前缀。`digest.factCards[].origin` 保留 `PROJECT_SOURCE`（项目实现或配置）和 `USER_MATERIAL`（用户文档），新增 `PROJECT_DOCUMENT`（项目说明文档）、`TEST_SOURCE`（测试代码）、`TEST_FIXTURE`（测试数据或夹具）、`EXAMPLE_MATERIAL`（示例材料）、`GENERATED_REPORT`（生成报告）、`UNKNOWN`（未识别用途）。这些值由服务端生成，不是用户新增必填参数；无法识别时使用 `UNKNOWN`。用途主要根据路径和文件类型判定，不证明材料真实、已经部署或适用于当前业务。
+
+常规业务任务的计划摘要不选用测试、夹具、示例或生成报告；任务明确涉及相应材料或点名文件时仍可使用，并保留用途标记。事实卡片还需经过片段相关性校验，Markdown 明确示例小节不会提升为业务事实，`OUTPUT_FORMAT` 与输入的 `DATA_FORMAT` 分开处理。筛选只影响计划证据，不删除上传文件、本地索引或完整 `contextReport` 中的文件。摘要覆盖提醒的分母为用途筛选后的候选文件数，不代表完整项目的文件总数；原有解析失败、截断等警告继续保留。
+
+最终生成使用原始提示词与确认答案重新校验已绑定卡片，并对补充资料执行相同的相关性筛选；未再次召回原文件不等于已绑定证据失效。同名字段冲突检测也遵循用途筛选，避免测试数据通过冲突提醒重新进入结果。接口字段、会话过期时间和所有权规则保持不变；新增来源值需要外部枚举调用方兼容，滚动部署时应避免新旧服务版本交叉读取包含新来源值的计划缓存。完整语义冲突、结构化决策合并与真实模型质量验收仍为后续工作。
 
 `PlanningSessionStore` 会保存脱敏后的 `ContextSnapshot` 和摘要，以便相同输入在最终阶段复用。默认 `LOCAL_FALLBACK` 允许本地单实例回退内存；多实例部署设置 `PLANNING_STORE_MODE=REDIS_REQUIRED`，此时只从 Redis 读取，Redis 故障返回 503，避免请求落到其他实例时找不到计划。
 

@@ -26,8 +26,11 @@ final class PlanningDigestSelector {
 
     /** 每份摘要只评分一次，复用排序键；保留相关性、文档保底与目录覆盖的原有选择顺序。 */
     static List<FileSnippet> select(List<FileSnippet> files, String query, int limit) {
+        if (limit <= 0 || files == null || files.isEmpty()) return List.of();
         Set<String> terms = terms(query);
+        PlanningEvidencePolicy evidencePolicy = new PlanningEvidencePolicy(query);
         List<FileSnippet> ranked = files.stream()
+                .filter(evidencePolicy::allows)
                 .map(file -> new RankedSnippet(file, score(file, terms)))
                 .sorted(Comparator.comparingInt(RankedSnippet::score).reversed()
                         .thenComparing(item -> item.file().path()))
@@ -36,7 +39,9 @@ final class PlanningDigestSelector {
         // 混合上下文中，代码片段即使命中需求更多，也不能挤掉单独上传的业务方案。
         ranked.stream().filter(PlanningDigestSelector::isDocument)
                 .limit(Math.min(4, limit)).forEach(chosen::add);
-        ranked.stream().limit((limit + 1) / 2).forEach(chosen::add);
+        ranked.stream().limit((limit + 1) / 2).forEach(file -> {
+            if (chosen.size() < limit) chosen.add(file);
+        });
         Set<String> directories = new HashSet<>();
         chosen.forEach(file -> directories.add(directory(file.path())));
         for (FileSnippet file : ranked) {

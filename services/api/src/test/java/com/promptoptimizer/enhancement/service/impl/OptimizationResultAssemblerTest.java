@@ -135,6 +135,26 @@ class OptimizationResultAssemblerTest {
     }
 
     @Test
+    void shouldNotReappendIrrelevantBoundCardsOrBuildWarnings() {
+        var testFact = new PlanningFactCard("F01", PlanningFactCategory.ANALYSIS_TOOL,
+                com.promptoptimizer.enhancement.domain.PlanningFactOrigin.PROJECT_SOURCE,
+                "src/test/java/PlanQuestionFilterTest.java", "编程语言：Python");
+        var unrelated = new PlanningFactCard("F02", PlanningFactCategory.BUSINESS_RULE,
+                "docs/采购规则.txt", "采购金额超过五万元必须由财务复核");
+        ContextSnapshot context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(
+                new FileSnippet("docs/统计日志布局说明.md", "md",
+                        "构建仍提示统计页分包超过 500 kB 的非阻断警告。", "统计日志说明", false),
+                new FileSnippet("docs/统计日志规范.txt", "text",
+                        "统计日志每页不得超过100条", "统计日志规则", false)), List.of(), List.of(), "v1");
+        var result = assembler.assemble(response(List.of()), context,
+                new PromptTemplate(TemplateCode.FEATURE_DEVELOPMENT, "输出", "测试通过", "示例"),
+                List.of(), List.of(), true, List.of("不得削弱现有功能"), false, 1,
+                "设计统计日志模块", List.of(testFact, unrelated));
+        assertThat(result.optimizedPrompt()).doesNotContain("Python", "采购金额", "500 kB")
+                .contains("统计日志每页不得超过100条", "不得削弱现有功能");
+    }
+
+    @Test
     void shouldNotAppendUnrelatedDocumentRuleToAnotherTask() {
         ContextSnapshot context = new ContextSnapshot("", List.of(), List.of(), List.of(),
                 List.of(new FileSnippet("docs/财务规则.txt", "text",

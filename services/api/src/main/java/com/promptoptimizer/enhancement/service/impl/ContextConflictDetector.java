@@ -3,6 +3,7 @@ package com.promptoptimizer.enhancement.service.impl;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.context.domain.FileSnippet;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
+import com.promptoptimizer.enhancement.domain.PlanningFactCategory;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,18 +22,26 @@ final class ContextConflictDetector {
 
     /** 只报告跨文件的同名字段不同取值；语义冲突仍交由模型和人工评测识别。 */
     List<String> detect(ContextSnapshot context, List<PlanAnswer> answers) {
+        return detect(context, answers, "");
+    }
+
+    /** 同名字段冲突也遵守证据用途边界，避免已筛掉的测试样例经冲突通道重新进入 Plan。 */
+    List<String> detect(ContextSnapshot context, List<PlanAnswer> answers, String query) {
+        PlanningEvidencePolicy evidencePolicy = new PlanningEvidencePolicy(query);
         Map<String, Map<String, SourceValue>> byField = new LinkedHashMap<>();
         for (FileSnippet file : context.fileSnippets()) {
             if (file.content() == null || file.path() == null || file.path().length() > 256
                     || sensitiveValueDetector.containsCredential(file.path())
-                    || PROTECTED_NAME.matcher(file.path()).find()) continue;
-            var matches = FIELD.matcher(file.content());
+                    || PROTECTED_NAME.matcher(file.path()).find() || !evidencePolicy.allows(file)) continue;
+            var matches = FIELD.matcher(String.join("\n", evidencePolicy.evidenceLines(file)));
             while (matches.find()) {
                 String key = matches.group(1).trim();
                 String value = matches.group(2).trim();
                 if (!MATERIAL_FIELD.matcher(key).matches() || value.length() < 2
                         || sensitiveValueDetector.containsCredential(value)
                         || value.matches(".*(待定|未知|未明确|可能|例如|[？?]).*")) continue;
+                if (query != null && !query.isBlank()
+                        && !evidencePolicy.relevant(file, key + "：" + value, PlanningFactCategory.BUSINESS_RULE)) continue;
                 byField.computeIfAbsent(key, unused -> new LinkedHashMap<>())
                         .putIfAbsent(value.toLowerCase(Locale.ROOT), new SourceValue(file.path(), value));
             }

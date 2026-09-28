@@ -416,16 +416,18 @@ public class PlanningSessionServiceImpl implements PlanningSessionService {
             if (sourceExcerpt) sourceExcerpts++;
         }
         PlanningFactCardExtractor.Extraction facts = factCardExtractor.extract(snapshot, query);
-        List<String> detectedConflicts = new ContextConflictDetector().detect(snapshot, List.of());
+        List<String> detectedConflicts = new ContextConflictDetector().detect(snapshot, List.of(), query);
         List<String> warnings = new ArrayList<>(java.util.stream.Stream.concat(
                         detectedConflicts.stream(), snapshot.warnings().stream())
                 .filter(value -> !containsSensitiveWarning(value))
                 .limit(19)
                 .map(this::truncate)
                 .toList());
-        if (snapshot.fileSnippets().size() > fileSummaries.size()) {
-            warnings.add("计划摘要仅覆盖 " + fileSummaries.size() + "/" + snapshot.fileSnippets().size()
-                    + " 个已提取文件，按需求相关性和目录多样性选择；未覆盖内容不能视为不存在。");
+        PlanningEvidencePolicy evidencePolicy = new PlanningEvidencePolicy(query);
+        long eligibleFiles = snapshot.fileSnippets().stream().filter(evidencePolicy::allows).count();
+        if (eligibleFiles > fileSummaries.size()) {
+            warnings.add("计划摘要仅覆盖 " + fileSummaries.size() + "/" + eligibleFiles
+                    + " 个候选文件，按需求相关性和目录多样性选择；未覆盖内容不能视为不存在。");
         }
         if (facts.omittedCount() > 0) {
             warnings.add("计划事实卡片达到数量上限，另有 " + facts.omittedCount()
@@ -457,14 +459,16 @@ public class PlanningSessionServiceImpl implements PlanningSessionService {
     }
 
     private String planningFileSummary(FileSnippet file, String query, boolean includeExcerpt) {
-        String description = file.path() + "：" + (isBlank(file.summary())
+        String description = "[" + PlanningEvidencePolicy.origin(file.path(), file.language()) + "] "
+                + file.path() + "：" + (isBlank(file.summary())
                 ? "已识别为 " + file.language() + " 文件"
                 : file.summary());
         if (!includeExcerpt
                 || sensitiveValueDetector.containsCredential(file.content())) {
             return truncate(description);
         }
-        String excerpt = PlanningDocumentExcerpt.select(file.content(), query, 600);
+        String excerpt = PlanningDocumentExcerpt.select(
+                new PlanningEvidencePolicy(query).contextText(file), query, 600);
         if (excerpt.isBlank()) return truncate(description);
         return truncate(truncate(description, 300) + "；业务摘录：" + excerpt,
                 MAX_DOCUMENT_DIGEST_CHARACTERS);

@@ -399,3 +399,42 @@ Plan 的问题清理、推荐对齐各自独立：`PlanQuestionFilter` 先过滤
 ## 10. 后续演进边界
 
 短期 ID 已绑定登录用户并在每次读取时校验。多租户团队上线前仍需按实际成员关系补充租户和工作区授权。生产环境还应限制同一用户并发会话数，并统一采集 Redis 命中率、过期错误率、首次与二次检索差异和 Plan 问题质量指标。
+
+## 11. 第一批证据筛选改进（2026-09-28）
+
+本批解决“资料有出处，但测试样例和无关警告被写成业务事实”的确定性问题。例如统计日志任务不再仅因含有“统计”二字，就采纳 `PlanQuestionFilterTest.java` 内的 Python、CSV 和 Excel 测试字符串。路径用途分类不是完整语义验证，也不证明生产环境已采用某项技术。
+
+```mermaid
+flowchart TD
+    A[原始提示词与安全上下文] --> B[PlanningEvidencePolicy 判断材料用途]
+    B --> C[PlanningDigestSelector 选择候选文件]
+    C --> D[相关性校验与事实类别识别]
+    D --> E[带用途和出处的摘要及事实卡片]
+    E --> F[Plan 提问与用户确认]
+    F --> G[原始需求加确认答案驱动二次检索]
+    G --> H[重新校验绑定卡片与新资料]
+    H --> I[最终 Provider 与结果组装]
+    B --> J[同名字段冲突检测遵守相同用途边界]
+    J --> E
+    H --> K[新发现的有效冲突继续提醒]
+    K --> I
+```
+
+实现分工：
+
+- `PlanningEvidencePolicy` 集中判断项目实现、项目文档、测试代码、夹具、示例、生成报告和未知材料。一般业务任务不选测试或报告；明确修复测试、分析构建或点名文件时仍允许相应材料。Markdown 的明确示例小节不作为业务事实。
+- `PlanningFactCardExtractor` 在用途校验后检查片段相关性，不再按“统计/分析/研究”直接放行某类事实；优先识别 `OUTPUT_FORMAT`，避免被通用“格式”匹配成 `DATA_FORMAT`。
+- `PlanningSessionServiceImpl` 给摘要加用途前缀。被用途筛选排除的文件仍在完整分析报告中，不计作计划摘要遗漏；候选文件超过摘要预算时仍显示覆盖提醒。
+- `DefaultEnhancementOrchestrator` 与 `OptimizationResultAssembler` 使用原始需求和已确认答案重新筛选绑定卡片。旧卡片也重新判定用途；原文件未被二次检索再次选中时，仍可使用符合条件的已绑定摘录。`ContextFactPreserver` 对结果末尾补充的文档规则执行同样筛选，避免把“分包超过 500 kB”等无关构建提醒追加为业务约束。
+- `ContextConflictDetector` 避免测试夹具经“资料冲突”通道重新进入普通业务任务。其能力仍是同名字段不同取值检测，不是开放域语义冲突判断。
+- 兼容 Provider 的 Plan 与最终生成指令说明各用途边界，不得把测试或示例视为生产事实。没有增加模型调用次数，也没有修改文件上传、全文索引、权限红线、数据库结构或 Redis TTL。
+
+本批验证：增强与 Provider 模块的 22 个测试类共 142 项通过，失败、错误、跳过均为 0；前端 `optimizationRequest.test.ts` 的 8 项通过。覆盖统计任务混入 Python/CSV/Excel 测试字符串、无关科研文档、Markdown 示例、输入/输出格式区分、显式测试任务、构建报告任务、旧卡片再过滤、混合材料从上下文准备到最终增强，以及候选预算边界。完整报告保留文件与计划证据筛选分别断言，不能把筛选理解为上传失败。
+
+可从 `services/api` 运行相关回归：
+
+```powershell
+mvn -q "-Dtest=PlanningEvidencePolicyTest,PlanningFactCardExtractorTest,PlanningSessionServiceTest,ContextConflictDetectorTest,OptimizationResultAssemblerTest,DefaultEnhancementOrchestratorTest,OpenAiCompatiblePromptEnhancementProviderTest" "-Dspring.flyway.enabled=false" "-Dapp.security.bootstrap-admin.enabled=false" "-Dapp.security.bootstrap-user.password=" test
+```
+
+这些测试使用确定性断言和模拟 Provider，不是外部模型业务准确率验收。第二批仍需补充结构化确认决策、多轮检索事实合并、冲突与真正未决选择的区分、确认答案覆盖校验；真实 Provider 与双人评审门禁继续按待办执行。

@@ -124,10 +124,14 @@ public class OptimizationResultAssembler {
         }
 
         appendConfirmedAnswers(sections, planAnswers);
-        if (planningFacts == null || planningFacts.isEmpty()) {
-            appendDocumentFacts(sections, context, rawPrompt);
+        String evidenceQuery = rawPrompt + planAnswers.stream()
+                .map(answer -> "\n" + answer.question() + "\n" + answer.answer()).collect(Collectors.joining());
+        List<PlanningFactCard> eligibleFacts = new PlanningFactCardExtractor()
+                .filterBoundFacts(planningFacts, context, evidenceQuery);
+        if (eligibleFacts.isEmpty()) {
+            appendDocumentFacts(sections, context, evidenceQuery);
         } else {
-            appendPlanningFacts(sections, planningFacts, context, rawPrompt);
+            appendPlanningFacts(sections, eligibleFacts, context, evidenceQuery);
         }
         appendConstraints(sections, constraints);
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities);

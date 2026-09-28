@@ -85,7 +85,7 @@ class PlanningSessionServiceTest {
         assertThat(preparation.contextId()).isNotBlank();
         assertThat(preparation.version()).startsWith("sha256:");
         assertThat(preparation.digest().technologies()).contains("Spring Boot 3");
-        assertThat(preparation.digest().fileSummaries()).containsExactly("pom.xml：Maven 项目配置");
+        assertThat(preparation.digest().fileSummaries()).containsExactly("[PROJECT_SOURCE] pom.xml：Maven 项目配置");
         assertThat(preparation.digest().toString()).doesNotContain("secret-value", ".env");
         assertThat(preparation.contextReport().warnings())
                 .contains("已在分析前过滤受保护文件：.env");
@@ -356,6 +356,43 @@ class PlanningSessionServiceTest {
         assertThat(plan.questions()).extracting(PlanQuestion::id)
                 .doesNotContain("research-region", "research-data")
                 .contains("research-tool", "research-code");
+    }
+
+    @Test
+    void shouldKeepUploadedTestsInReportWithoutPromotingTheirExamplesIntoPlanOrFinalFacts() {
+        String rawPrompt = "设计统计日志模块的补充统计项";
+        var analyzer = new DefaultContextAnalyzer(new ObjectMapper(), new BinaryContentExtractor(), new FileContentSummarizer());
+        var filter = new ProtectedContextFilterImpl();
+        var sessions = new PlanningSessionServiceImpl(new InMemoryPlanningSessionStore(CLOCK), analyzer,
+                filter, TestActors.currentActor(), CLOCK);
+        var context = new ContextAnalysisRequest("", List.of(
+                new ContextFileInput("src/main/java/AdminAnalyticsService.java", "日志每页不得超过100条", "java"),
+                new ContextFileInput("src/test/java/PlanQuestionFilterTest.java",
+                        "编程语言：Python\n输出格式：Excel报告\n数据格式：CSV", "java"),
+                new ContextFileInput("docs/统计规范.md", "统计日志必须按上海时区聚合", "md")));
+        var prepared = sessions.prepareContext(new PlanningContextRequest(rawPrompt, context, PermissionPolicyInput.empty()));
+        assertThat(prepared.contextReport().fileSnippets()).hasSize(3);
+        assertThat(prepared.contextReport().fileSnippets()).extracting(FileSnippet::path)
+                .contains("src/test/java/PlanQuestionFilterTest.java");
+        var planner = new OptimizationPlanningServiceImpl(input -> {
+            assertThat(input.planningContext().fileSummaries().toString()).doesNotContain("Python", "CSV", "Excel报告");
+            assertThat(input.planningContext().factCards().toString()).doesNotContain("Python", "CSV", "Excel报告");
+            return new PlanningProviderResponse("材料已核对", List.of(), "test", "planner", true);
+        }, new PromptTemplateRegistryImpl(), sessions, CLOCK);
+        var plan = planner.plan(new OptimizationPlanRequest(rawPrompt, "", List.of(), reference(prepared)));
+        var orchestrator = new DefaultEnhancementOrchestrator(analyzer, new AmbiguityDetector(),
+                new PromptTemplateRegistryImpl(), new com.promptoptimizer.policy.service.impl.ConstraintCompleterImpl(),
+                input -> {
+                    assertThat(input.planningFacts().toString()).doesNotContain("Python", "CSV", "Excel报告")
+                            .contains("上海时区", "100条");
+                    return new com.promptoptimizer.provider.infrastructure.MockPromptEnhancementProvider().enhance(input);
+                }, new OptimizationResultAssembler(), filter, sessions, CLOCK);
+        var result = orchestrator.optimize(new com.promptoptimizer.enhancement.dto.OptimizationRequest(
+                rawPrompt, context, com.promptoptimizer.enhancement.dto.EnhancementOptions.defaults(),
+                List.of(), PermissionPolicyInput.empty(), new PlanConfirmation(plan.planId(), reference(prepared), List.of())));
+        assertThat(result.optimizedPrompt()).doesNotContain("编程语言：Python", "数据格式：CSV", "输出格式：Excel报告")
+                .contains("上海时区", "100条");
+        assertThat(result.contextReport().fileSnippets()).hasSize(3);
     }
 
     @Test

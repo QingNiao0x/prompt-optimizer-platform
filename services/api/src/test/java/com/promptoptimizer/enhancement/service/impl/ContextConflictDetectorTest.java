@@ -9,6 +9,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ContextConflictDetectorTest {
     @Test
+    void shouldNotReintroduceTestFixtureThroughConflictWarnings() {
+        var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(
+                new FileSnippet("docs/统计日志规则.txt", "text", "统计口径：按上海时区", "", false),
+                new FileSnippet("tests/fixtures/统计样例.txt", "text", "统计口径：按UTC时区", "", false)
+        ), List.of(), List.of(), "v1");
+        assertThat(new ContextConflictDetector().detect(context, List.of(), "设计统计日志模块")).isEmpty();
+        assertThat(new ContextConflictDetector().detect(context, List.of(), "修复统计口径测试用例"))
+                .singleElement().asString().contains("统计口径");
+    }
+
+    @Test
     void shouldExposeNewCrossFileConflictUnlessUserAlreadyResolvedTheSameField() {
         ContextSnapshot context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(
                 new FileSnippet("docs/现行规则.txt", "text", "审批阈值：50000", "", false),

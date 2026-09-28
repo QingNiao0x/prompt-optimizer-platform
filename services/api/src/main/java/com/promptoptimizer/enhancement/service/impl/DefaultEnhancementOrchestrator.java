@@ -217,7 +217,11 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 "user", confirmedAnswerEvidence(answer)
         )));
         List<String> ambiguities = ambiguityDetector.detect(request.rawPrompt(), context, ambiguityEvidence);
-        List<String> contextConflicts = contextConflictDetector.detect(context, planAnswers);
+        // 老 Plan 会话可能仍含旧策略提取的样例；模型输入与最终强制保留共用筛选策略。
+        var planningFacts = new PlanningFactCardExtractor().filterBoundFacts(
+                confirmedPlan.planningContextDigest() == null ? List.of()
+                        : confirmedPlan.planningContextDigest().factCards(), context, contextQuery);
+        List<String> contextConflicts = contextConflictDetector.detect(context, planAnswers, contextQuery);
         if (!contextConflicts.isEmpty()) {
             List<String> combined = new ArrayList<>(ambiguities);
             contextConflicts.stream().filter(value -> !combined.contains(value))
@@ -259,9 +263,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                                 conversation,
                                 request.enhancement(),
                                 selectedModelId,
-                                confirmedPlan.planningContextDigest() == null
-                                        ? List.of()
-                                        : confirmedPlan.planningContextDigest().factCards()
+                                planningFacts
                         )
                 );
                 long latencyMs = Math.max(0, clock.millis() - startedAt);
@@ -280,9 +282,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                         Boolean.TRUE.equals(request.enhancement().includeExamples()),
                         latencyMs,
                         request.rawPrompt(),
-                        confirmedPlan.planningContextDigest() == null
-                                ? List.of()
-                                : confirmedPlan.planningContextDigest().factCards(),
+                        planningFacts,
                         confirmedPlan.planningContextDigest() == null
                                 ? List.of()
                                 : confirmedPlan.planningContextDigest().warnings()
