@@ -11,6 +11,7 @@ import com.promptoptimizer.analytics.dto.DashboardQuery;
 import com.promptoptimizer.analytics.dto.OperationLogQuery;
 import com.promptoptimizer.analytics.dto.UsageRankingQuery;
 import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
+import com.promptoptimizer.analytics.domain.AnalyticsAccountFilter;
 import com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper;
 import com.promptoptimizer.payment.mapper.RechargeRecordMapper;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
@@ -52,22 +53,22 @@ class AdminAnalyticsServiceTest {
         RechargeRecordMapper recharge = mock(RechargeRecordMapper.class);
         AnalyticsPeriodResolver resolver = resolver();
         AnalyticsPeriod period = resolver.resolve("CUSTOM", "2026-09-01", "2026-09-03");
-        when(repository.accountCounts(period, USER_ID)).thenReturn(new AdminAnalyticsMapper.AccountCounts(7, 2));
-        when(repository.usageCounts(period, USER_ID)).thenReturn(new AdminAnalyticsMapper.UsageCounts(5, 2, 2, 1));
-        when(repository.dailyMetrics(period, USER_ID)).thenReturn(List.of(
+        when(repository.accountCounts(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(new AdminAnalyticsMapper.AccountCounts(7, 2));
+        when(repository.usageCounts(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(new AdminAnalyticsMapper.UsageCounts(5, 2, 2, 1));
+        when(repository.dailyMetrics(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(List.of(
                 new DailyMetric(LocalDate.parse("2026-09-01"), 2, 1, 2, 1, 1),
                 new DailyMetric(LocalDate.parse("2026-09-02"), 0, 0, 0, 0, 0),
                 new DailyMetric(LocalDate.parse("2026-09-03"), 3, 1, 1, 0, 1)
         ));
-        when(repository.hourlyUsage(period, USER_ID)).thenReturn(List.of(new HourlyMetric(9, 3)));
-        when(repository.monthlyUsage(any(), any(), eq(USER_ID))).thenReturn(List.of(new MonthlyMetric("2026-09", 4)));
-        when(repository.deviceDistribution(period, USER_ID)).thenReturn(List.of(new DeviceMetric("MOBILE", 2, 1)));
-        when(repository.usageRanking(period, USER_ID, 10)).thenReturn(List.of(
+        when(repository.hourlyUsage(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(List.of(new HourlyMetric(9, 3)));
+        when(repository.monthlyUsage(any(), any(), eq(AnalyticsAccountFilter.forUser(USER_ID)))).thenReturn(List.of(new MonthlyMetric("2026-09", 4)));
+        when(repository.deviceDistribution(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(List.of(new DeviceMetric("MOBILE", 2, 1)));
+        when(repository.usageRanking(period, AnalyticsAccountFilter.forUser(USER_ID), 10)).thenReturn(List.of(
                 new UserRank(USER_ID, "Admin", 4, 1, 2)
         ));
         AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver, provider(repository), provider(recharge), false);
 
-        var view = service.dashboard(new DashboardQuery("CUSTOM", "2026-09-01", "2026-09-03", USER_ID));
+        var view = service.dashboard(new DashboardQuery("CUSTOM", "2026-09-01", "2026-09-03", USER_ID, null, null));
 
         assertThat(view.registeredAccountCount()).isEqualTo(7);
         assertThat(view.newAccountCount()).isEqualTo(2);
@@ -86,7 +87,7 @@ class AdminAnalyticsServiceTest {
         AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository),
                 provider(mock(RechargeRecordMapper.class)), false);
 
-        assertThatThrownBy(() -> service.dashboard(new DashboardQuery("CUSTOM", "2026-09-04", "2026-09-03", null)))
+        assertThatThrownBy(() -> service.dashboard(new DashboardQuery("CUSTOM", "2026-09-04", "2026-09-03", null, null, null)))
                 .isInstanceOf(InvalidOptimizationRequestException.class);
         verify(repository, never()).accountCounts(any(), any());
     }
@@ -96,17 +97,17 @@ class AdminAnalyticsServiceTest {
         AdminAnalyticsMapper repository = mock(AdminAnalyticsMapper.class);
         AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository),
                 provider(mock(RechargeRecordMapper.class)), false);
-        assertThatThrownBy(() -> service.dashboard(new DashboardQuery("CUSTOM", "2024-01-01", "2025-01-01", null)))
+        assertThatThrownBy(() -> service.dashboard(new DashboardQuery("CUSTOM", "2024-01-01", "2025-01-01", null, null, null)))
                 .isInstanceOf(InvalidOptimizationRequestException.class);
-        assertThatThrownBy(() -> service.usageRanking(new UsageRankingQuery("DAY", "+999999999-12-31", null, 20)))
+        assertThatThrownBy(() -> service.usageRanking(new UsageRankingQuery("DAY", "+999999999-12-31", null, 20, null, null)))
                 .isInstanceOf(InvalidOptimizationRequestException.class);
-        assertThatThrownBy(() -> service.usageRanking(new UsageRankingQuery("DAY", "2026-10-01", null, 101)))
+        assertThatThrownBy(() -> service.usageRanking(new UsageRankingQuery("DAY", "2026-10-01", null, 101, null, null)))
                 .isInstanceOf(InvalidOptimizationRequestException.class);
-        assertThatThrownBy(() -> service.operationLogs(new OperationLogQuery("2026-10-01", "2026-10-01", null, "INVALID", 1, 10)))
+        assertThatThrownBy(() -> service.operationLogs(new OperationLogQuery("2026-10-01", "2026-10-01", null, "INVALID", 1, 10, null, null)))
                 .isInstanceOf(InvalidOptimizationRequestException.class);
-        assertThatThrownBy(() -> service.operationLogs(new OperationLogQuery("2026-10-01", "2026-10-01", null, null, 0, 10)))
+        assertThatThrownBy(() -> service.operationLogs(new OperationLogQuery("2026-10-01", "2026-10-01", null, null, 0, 10, null, null)))
                 .isInstanceOf(InvalidOptimizationRequestException.class);
-        assertThatThrownBy(() -> service.operationLogs(new OperationLogQuery("2026-10-01", "2026-10-01", null, null, 1, 101)))
+        assertThatThrownBy(() -> service.operationLogs(new OperationLogQuery("2026-10-01", "2026-10-01", null, null, 1, 101, null, null)))
                 .isInstanceOf(InvalidOptimizationRequestException.class);
         verifyNoInteractions(repository);
     }
@@ -115,18 +116,18 @@ class AdminAnalyticsServiceTest {
     void roundsAverageToTwoPlacesAndPreservesFixedRecentMonthWindow() {
         AdminAnalyticsMapper repository = mock(AdminAnalyticsMapper.class);
         AnalyticsPeriod period = resolver().resolve("CUSTOM", "2024-01-01", "2024-01-03");
-        when(repository.accountCounts(period, USER_ID)).thenReturn(new AdminAnalyticsMapper.AccountCounts(1, 0));
-        when(repository.usageCounts(period, USER_ID)).thenReturn(new AdminAnalyticsMapper.UsageCounts(1, 1, 1, 0));
-        when(repository.dailyMetrics(period, USER_ID)).thenReturn(List.of(
+        when(repository.accountCounts(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(new AdminAnalyticsMapper.AccountCounts(1, 0));
+        when(repository.usageCounts(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(new AdminAnalyticsMapper.UsageCounts(1, 1, 1, 0));
+        when(repository.dailyMetrics(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(List.of(
                 new DailyMetric(period.fromDate(), 1, 1, 1, 0, 0),
                 new DailyMetric(period.fromDate().plusDays(1), 0, 0, 0, 0, 0),
                 new DailyMetric(period.fromDate().plusDays(2), 0, 0, 0, 0, 0)));
         AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository),
                 provider(mock(RechargeRecordMapper.class)), false);
-        assertThat(service.dashboard(new DashboardQuery("CUSTOM", "2024-01-01", "2024-01-03", USER_ID))
+        assertThat(service.dashboard(new DashboardQuery("CUSTOM", "2024-01-01", "2024-01-03", USER_ID, null, null))
                 .averageDailyActiveUsers()).isEqualByComparingTo("0.33");
         ArgumentCaptor<AnalyticsPeriod> months = ArgumentCaptor.forClass(AnalyticsPeriod.class);
-        verify(repository).monthlyUsage(months.capture(), eq(LocalDate.of(2026, 9, 25)), eq(USER_ID));
+        verify(repository).monthlyUsage(months.capture(), eq(LocalDate.of(2026, 9, 25)), eq(AnalyticsAccountFilter.forUser(USER_ID)));
         assertThat(months.getValue().fromDate()).isEqualTo(LocalDate.of(2025, 10, 1));
         assertThat(months.getValue().toDateExclusive()).isEqualTo(LocalDate.of(2026, 9, 26));
     }
@@ -140,23 +141,54 @@ class AdminAnalyticsServiceTest {
                 UUID.randomUUID(), USER_ID, "Admin", "LOGIN",
                 java.time.OffsetDateTime.parse("2026-09-25T10:00:00+08:00"),
                 null, null, null, null, null, null, null, "DESKTOP")));
-        when(repository.selectOperationLogs(any(), any(), any(), eq(USER_ID), eq("LOGIN")))
+        when(repository.selectOperationLogs(any(), any(), any(), eq(AnalyticsAccountFilter.forUser(USER_ID)), eq("LOGIN")))
                 .thenReturn(mapperPage);
         AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository),
                 provider(mock(RechargeRecordMapper.class)), false);
 
         var result = service.operationLogs(new OperationLogQuery(
-                "2026-09-24", "2026-09-26", USER_ID, "login", 2, 10));
+                "2026-09-24", "2026-09-26", USER_ID, "login", 2, 10, null, null));
 
         assertThat(result.current()).isEqualTo(2);
         assertThat(result.total()).isEqualTo(15);
         assertThat(result.pages()).isEqualTo(2);
         assertThat(result.records()).hasSize(1);
         ArgumentCaptor<Page<OperationLog>> pageCaptor = ArgumentCaptor.forClass(Page.class);
-        verify(repository).selectOperationLogs(pageCaptor.capture(), any(), any(), eq(USER_ID), eq("LOGIN"));
+        verify(repository).selectOperationLogs(pageCaptor.capture(), any(), any(), eq(AnalyticsAccountFilter.forUser(USER_ID)), eq("LOGIN"));
         assertThat(pageCaptor.getValue().getCurrent()).isEqualTo(2);
         assertThat(pageCaptor.getValue().getSize()).isEqualTo(10);
         assertThat(pageCaptor.getValue().optimizeCountSql()).isFalse();
+    }
+
+    @Test
+    void forwardsNormalizedAccountKeywordsToEveryDashboardSourceIncludingRecharge() {
+        AdminAnalyticsMapper repository = mock(AdminAnalyticsMapper.class);
+        RechargeRecordMapper recharge = mock(RechargeRecordMapper.class);
+        AnalyticsPeriod period = resolver().resolve("TODAY", null, null);
+        AnalyticsAccountFilter account = new AnalyticsAccountFilter(USER_ID, "demo@example.test", "演示名称");
+        when(repository.accountCounts(period, account)).thenReturn(new AdminAnalyticsMapper.AccountCounts(1, 0));
+        when(repository.usageCounts(period, account)).thenReturn(new AdminAnalyticsMapper.UsageCounts(1, 1, 1, 1));
+        when(repository.dailyMetrics(period, account)).thenReturn(List.of(new DailyMetric(period.fromDate(), 1, 1, 1, 1, 0)));
+        AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository), provider(recharge), true);
+        service.dashboard(new DashboardQuery("TODAY", null, null, USER_ID, " DEMO@EXAMPLE.TEST ", " 演示名称 "));
+        verify(repository).hourlyUsage(period, account);
+        verify(repository).deviceDistribution(period, account);
+        verify(repository).monthlyUsage(any(), any(), eq(account));
+        verify(recharge).paidByDay(period, account);
+    }
+
+    @Test
+    void oversizedAccountKeywordsAreRejectedBeforeAnyDatabaseQuery() {
+        AdminAnalyticsMapper repository = mock(AdminAnalyticsMapper.class);
+        AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository),
+                provider(mock(RechargeRecordMapper.class)), false);
+        assertThatThrownBy(() -> service.dashboard(new DashboardQuery("TODAY", null, null, null, "x".repeat(321), null)))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        assertThatThrownBy(() -> service.usageRanking(new UsageRankingQuery("DAY", "2026-09-25", null, 20, null, "名".repeat(81))))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        assertThatThrownBy(() -> service.operationLogs(new OperationLogQuery("2026-09-25", "2026-09-25", null, null, 1, 10, "x".repeat(321), null)))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        verifyNoInteractions(repository);
     }
 
     private AnalyticsPeriodResolver resolver() {

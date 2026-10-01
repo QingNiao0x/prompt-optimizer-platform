@@ -99,6 +99,65 @@ const expectContainedLayout = async (page: Page): Promise<void> => {
   }
 };
 
+test('邮箱和名称提交后用于所有查询，草稿编辑不影响翻页与排行，清空后移除条件', async ({ page }) => {
+  const { requests } = await mockAnalytics(page);
+  await page.goto('/admin/analytics');
+  await expect.poll(() => requests.operations.length).toBe(1);
+  await expect.poll(() => requests.ranking.length).toBe(1);
+  const email = page.getByRole('textbox', { name: '按登录邮箱筛选' });
+  const name = page.getByRole('textbox', { name: '按显示名称筛选' });
+  await email.fill('  DEMO+member@EXAMPLE.test  ');
+  await name.fill('  名称_100%  ');
+  expect(requests.dashboard).toHaveLength(1);
+  await page.getByRole('button', { name: '查询', exact: true }).click();
+  await expect.poll(() => requests.operations.length).toBe(2);
+  await expect.poll(() => requests.ranking.length).toBe(2);
+  for (const url of [requests.dashboard.at(-1), requests.operations.at(-1), requests.ranking.at(-1)]) {
+    expect(url?.searchParams.get('email')).toBe('DEMO+member@EXAMPLE.test');
+    expect(url?.searchParams.get('displayName')).toBe('名称_100%');
+  }
+  await expect(page.getByLabel('已生效的统计条件')).toContainText('名称包含：名称_100%');
+  await email.fill('changed@example.test');
+  await name.fill('未提交名称');
+  await page.locator('.pagination-row .el-pager').getByText('2', { exact: true }).click();
+  await expect.poll(() => requests.operations.length).toBe(3);
+  expect(requests.operations.at(-1)?.searchParams.get('email')).toBe('DEMO+member@EXAMPLE.test');
+  expect(requests.operations.at(-1)?.searchParams.get('displayName')).toBe('名称_100%');
+  await page.getByRole('button', { name: '更新排行', exact: true }).click();
+  await expect.poll(() => requests.ranking.length).toBe(3);
+  expect(requests.ranking.at(-1)?.searchParams.get('email')).toBe('DEMO+member@EXAMPLE.test');
+  await email.fill('');
+  await name.fill('');
+  await name.press('Enter');
+  await expect.poll(() => requests.dashboard.length).toBe(3);
+  await expect.poll(() => requests.operations.length).toBe(4);
+  await expect.poll(() => requests.ranking.length).toBe(4);
+  for (const url of [requests.dashboard.at(-1), requests.operations.at(-1), requests.ranking.at(-1)]) {
+    expect(url?.searchParams.get('email')).toBeNull();
+    expect(url?.searchParams.get('displayName')).toBeNull();
+  }
+});
+
+test('日期范围、排行日期弹层和分页选项使用中文', async ({ page }) => {
+  await mockAnalytics(page);
+  await page.goto('/admin/analytics');
+  await expect(page.locator('.pagination-row')).toContainText('10条/页');
+  await expect(page.locator('.rank-date input')).toHaveAttribute('placeholder', '选择排行日期');
+  await page.locator('.range-select .el-select__wrapper').click();
+  await page.getByRole('option', { name: '自定义', exact: true }).click();
+  await page.getByPlaceholder('开始日期', { exact: true }).click();
+  const rangePicker = page.locator('.analytics-date-range-popper:visible');
+  await expect(rangePicker).toContainText('年');
+  await expect(rangePicker).toContainText('月');
+  await expect(rangePicker.locator('.el-date-table th').first()).toHaveText('日');
+  await page.getByRole('heading', { name: '使用与访问', exact: true }).click();
+  await page.locator('.rank-date input').click();
+  const rankPicker = page.locator('.el-picker-panel:visible');
+  await expect(rankPicker).toContainText('年');
+  await expect(rankPicker).toContainText('月');
+  await expect(rankPicker.locator('.el-date-table th').first()).toHaveText('日');
+});
+
 test('宽屏充分利用宽度，平板与手机不溢出；主题切换保留图表与查询结果', async ({ page }, testInfo) => {
   const { requests } = await mockAnalytics(page);
   await page.goto('/admin/analytics');
@@ -155,7 +214,7 @@ test('长文本与多行记录限制在表格内，切页及每页 50 条保持�
   await pagination.locator('.btn-next').click();
   await expect.poll(() => requests.operations.at(-1)?.searchParams.get('current')).toBe('2');
   await pagination.locator('.el-select').click();
-  await page.locator('.el-select-dropdown:visible .el-select-dropdown__item', { hasText: '50/page' }).click();
+  await page.locator('.el-select-dropdown:visible .el-select-dropdown__item', { hasText: '50条/页' }).click();
   await expect(page.locator('.operations-panel .el-table__body .el-table__row')).toHaveCount(50);
   const request = requests.operations.at(-1)!;
   expect(request.searchParams.get('current')).toBe('1');

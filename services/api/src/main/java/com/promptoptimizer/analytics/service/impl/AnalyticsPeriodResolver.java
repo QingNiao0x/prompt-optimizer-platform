@@ -35,6 +35,7 @@ public class AnalyticsPeriodResolver {
     private final ZoneId zoneId;
     private final Clock clock;
 
+    /** 使用部署配置的统计时区；Clock 保持 UTC，由日历解析显式切换到统计时区。 */
     @Autowired
     public AnalyticsPeriodResolver(@Value("${app.analytics.zone-id:Asia/Shanghai}") String zoneId) {
         this(ZoneId.of(zoneId), Clock.systemUTC());
@@ -47,6 +48,13 @@ public class AnalyticsPeriodResolver {
 
     /**
      * 解析仪表盘范围；结束日期包含在内，至多 366 个自然日，数据库使用排他结束时刻。
+     * 本周/本月只统计到今天，上月覆盖完整自然月；自定义的两个端点均为包含的日历日。
+     *
+     * @param rangeValue 范围枚举代码，接口 DTO 在未传值时默认 TODAY
+     * @param fromValue 自定义开始日；预设范围不使用此值
+     * @param toValue 自定义结束日；预设范围不使用此值
+     * @return 可供 SQL 过滤、补零及页面展示共用的时区明确区间
+     * @throws InvalidOptimizationRequestException 范围、日期格式、日期顺序或日数越界时抛出
      */
     public AnalyticsPeriod resolve(String rangeValue, String fromValue, String toValue) {
         AnalyticsRange range = parseRange(rangeValue);
@@ -63,6 +71,7 @@ public class AnalyticsPeriodResolver {
                 toExclusive = today;
             }
             case THIS_WEEK -> {
+                // 周一为周起点；仪表盘展示截至今天的累计值，不含本周尚未发生的日期。
                 from = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
                 toExclusive = today.plusDays(1);
             }
@@ -77,6 +86,7 @@ public class AnalyticsPeriodResolver {
             case CUSTOM -> {
                 from = parseDate(fromValue, "fromDate");
                 try {
+                    // 前端选择的结束日包含在内，数据库用次日午夜作为排他终点，避免漏掉当晚事件。
                     toExclusive = parseDate(toValue, "toDate").plusDays(1);
                 } catch (DateTimeException exception) {
                     throw new InvalidOptimizationRequestException("toDate 超出支持的日期范围");
@@ -90,7 +100,14 @@ public class AnalyticsPeriodResolver {
         return period(from, toExclusive);
     }
 
-    /** 解析排行榜所需的日、周或月范围。 */
+    /**
+     * 解析排行锚点所在的完整日、周或月；排行周期与仪表盘本周/本月至今的语义不同。
+     *
+     * @param periodValue DAY、WEEK 或 MONTH，允许大小写与边缘空白归一化
+     * @param dateValue YYYY-MM-DD 锚点日，用于定位所在的完整周期
+     * @return 已验证边界的完整排行区间
+     * @throws InvalidOptimizationRequestException 周期代码、日期或展开后的边界不合法时抛出
+     */
     public AnalyticsPeriod resolveRanking(String periodValue, String dateValue) {
         String normalized = periodValue == null ? "" : periodValue.trim().toUpperCase(Locale.ROOT);
         LocalDate date = parseDate(dateValue, "date");
@@ -147,6 +164,7 @@ public class AnalyticsPeriodResolver {
             throw new InvalidOptimizationRequestException("单次统计范围不能超过 366 个自然日，请分段查询");
         }
         try {
+            // 自然日不固定为 24 小时；两端分别按当地午夜解析，夏令时切换仍能保留全部事件。
             OffsetDateTime start = from.atStartOfDay(zoneId).toOffsetDateTime();
             OffsetDateTime end = toExclusive.atStartOfDay(zoneId).toOffsetDateTime();
             return new AnalyticsPeriod(from, toExclusive, zoneId, start, end);

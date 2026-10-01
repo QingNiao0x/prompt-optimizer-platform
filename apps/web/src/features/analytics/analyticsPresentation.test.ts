@@ -21,6 +21,13 @@ describe('统计筛选与展示口径', () => {
     expect(findUsagePeak([{ hour: 0, operationCount: 0 }, { hour: 9, operationCount: 2 }])?.hour).toBe(9);
   });
 
+  it('邮箱与名称允许关键词及字面符号，长度边界与后端保持一致', () => {
+    expect(analyticsQueryError('TODAY', null, '', { email: 'member+tag', displayName: '名称_100%' })).toBeUndefined();
+    expect(analyticsQueryError('TODAY', null, '', { email: 'x'.repeat(320), displayName: '名'.repeat(80) })).toBeUndefined();
+    expect(analyticsQueryError('TODAY', null, '', { email: 'x'.repeat(321) })).toContain('320');
+    expect(analyticsQueryError('TODAY', null, '', { displayName: '名'.repeat(81) })).toContain('80');
+  });
+
   it('单日数据可见，新增账号或实际使用账号独立出现时仍展示图表', () => {
     const zero = { date: '2026-10-01', accessCount: 0, uniqueVisitors: 0, activeUsers: 0, actualUsers: 0, newAccounts: 0 };
     expect(hasDailyActivity([zero])).toBe(false);

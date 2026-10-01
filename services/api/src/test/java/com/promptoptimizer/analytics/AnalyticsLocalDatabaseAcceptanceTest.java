@@ -7,6 +7,7 @@ import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.analytics.mapper.AuditEventMapper;
 import com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper;
 import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
+import com.promptoptimizer.analytics.domain.AnalyticsAccountFilter;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.DailyMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.HourlyMetric;
 import com.promptoptimizer.analytics.support.AnalyticsAcceptanceMapper;
@@ -332,10 +333,10 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         seedEvent(ordinary, AnalyticsEventType.OPTIMIZATION_SUBMITTED, OffsetDateTime.parse("2026-11-01T09:30:00Z"));
         seedEvent(ordinary, AnalyticsEventType.APP_VISIT, period.toExclusive());
         seedEvent(admin, AnalyticsEventType.APP_VISIT, period.fromInclusive());
-        assertThat(analytics.dailyMetrics(period, ordinary.userId())).containsExactly(new DailyMetric(day, 2, 1, 1, 1, 1));
-        assertThat(analytics.hourlyUsage(period, ordinary.userId())).filteredOn(hour -> hour.hour() == 1)
+        assertThat(analytics.dailyMetrics(period, AnalyticsAccountFilter.forUser(ordinary.userId()))).containsExactly(new DailyMetric(day, 2, 1, 1, 1, 1));
+        assertThat(analytics.hourlyUsage(period, AnalyticsAccountFilter.forUser(ordinary.userId()))).filteredOn(hour -> hour.hour() == 1)
                 .containsExactly(new HourlyMetric(1, 2));
-        assertThat(analytics.usageRanking(period, ordinary.userId(), 20)).singleElement().satisfies(rank -> {
+        assertThat(analytics.usageRanking(period, AnalyticsAccountFilter.forUser(ordinary.userId()), 20)).singleElement().satisfies(rank -> {
             assertThat(rank.activeDays()).isEqualTo(1);
             assertThat(rank.operationCount()).isEqualTo(2);
         });
@@ -385,6 +386,65 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         assertThat(ranking(administrator, day, ordinary.userId()).path("items").size()).isZero();
         assertThat(ranking(administrator, day, admin.userId()).path("items").get(0).path("userId").asText())
                 .isEqualTo(admin.userId().toString());
+    }
+
+    /** 验证真实 HTTP 绑定、身份邮箱匹配和数据库聚合共用条件，分页总数不随页码变化。 */
+    @Test
+    void emailAndDisplayNameFiltersReachEveryAdminEndpointAndPreservePagination() throws Exception {
+        LocalDate day = LocalDate.of(2024, 1, 15);
+        OffsetDateTime at = day.atStartOfDay(ZONE).toOffsetDateTime();
+        seedEvent(ordinary, AnalyticsEventType.APP_VISIT, at);
+        seedEvent(ordinary, AnalyticsEventType.LOGIN, at.plusSeconds(1));
+        seedEvent(ordinary, AnalyticsEventType.OPTIMIZATION_SUBMITTED, at.plusSeconds(2));
+        seedEvent(admin, AnalyticsEventType.APP_VISIT, at);
+        seedEvent(admin, AnalyticsEventType.OPTIMIZATION_SUBMITTED, at.plusSeconds(1));
+        Login administrator = login(admin);
+        String emailKeyword = " " + ordinary.email().toUpperCase(java.util.Locale.ROOT) + " ";
+        String nameKeyword = " ACCEPTANCE ";
+
+        var dashboardRequest = get("/api/v1/admin/analytics/dashboard").session(administrator.session())
+                .param("range", "CUSTOM").param("fromDate", day.toString()).param("toDate", day.toString())
+                .param("email", emailKeyword).param("displayName", nameKeyword);
+        JsonNode view = data(mvc.perform(dashboardRequest).andExpect(status().isOk()).andReturn());
+        for (String metric : List.of("registeredAccountCount", "accessCount", "uniqueVisitorCount",
+                "activeUserCount", "actualUserCount")) {
+            assertThat(view.path(metric).asLong()).as(metric).isEqualTo(1);
+        }
+        assertThat(view.path("averageDailyActiveUsers").decimalValue()).isEqualByComparingTo("1.00");
+        assertThat(view.path("dailyMetrics").get(0).path("activeUsers").asInt()).isEqualTo(1);
+        assertThat(view.path("deviceDistribution").get(0).path("loginCount").asInt()).isEqualTo(1);
+
+        JsonNode ranking = data(mvc.perform(get("/api/v1/admin/analytics/usage-ranking")
+                        .session(administrator.session()).param("period", "DAY").param("date", day.toString())
+                        .param("email", emailKeyword).param("displayName", nameKeyword))
+                .andExpect(status().isOk()).andReturn());
+        assertThat(ranking.path("items").size()).isEqualTo(1);
+        assertThat(ranking.path("items").get(0).path("userId").asText()).isEqualTo(ordinary.userId().toString());
+        assertThat(ranking.path("items").get(0).path("operationCount").asInt()).isEqualTo(1);
+
+        for (int current : List.of(1, 2)) {
+            JsonNode page = data(mvc.perform(get("/api/v1/admin/analytics/operations")
+                            .session(administrator.session()).param("fromDate", day.toString()).param("toDate", day.toString())
+                            .param("email", emailKeyword).param("displayName", nameKeyword)
+                            .param("current", Integer.toString(current)).param("size", "2"))
+                    .andExpect(status().isOk()).andReturn());
+            assertThat(page.path("total").asInt()).isEqualTo(3);
+            assertThat(page.path("pages").asInt()).isEqualTo(2);
+            assertThat(page.path("records").size()).isEqualTo(current == 1 ? 2 : 1);
+            page.path("records").forEach(row -> assertThat(row.path("userId").asText())
+                    .isEqualTo(ordinary.userId().toString()));
+        }
+        JsonNode conflict = data(mvc.perform(get("/api/v1/admin/analytics/dashboard").session(administrator.session())
+                        .param("range", "CUSTOM").param("fromDate", day.toString()).param("toDate", day.toString())
+                        .param("email", emailKeyword).param("displayName", "no-match-" + UUID.randomUUID()))
+                .andExpect(status().isOk()).andReturn());
+        assertThat(conflict.path("registeredAccountCount").asLong()).isZero();
+        assertThat(conflict.path("averageDailyActiveUsers").decimalValue()).isEqualByComparingTo("0.00");
+        JsonNode blankKeywords = data(mvc.perform(get("/api/v1/admin/analytics/dashboard").session(administrator.session())
+                        .param("range", "CUSTOM").param("fromDate", day.toString()).param("toDate", day.toString())
+                        .param("userId", ordinary.userId().toString()).param("email", "  ").param("displayName", "  "))
+                .andExpect(status().isOk()).andReturn());
+        assertThat(blankKeywords.path("accessCount").asLong()).isEqualTo(1);
     }
 
     /** 创建随机独立租户、账户、工作区和邮箱身份，全部加入当前回滚事务。 */

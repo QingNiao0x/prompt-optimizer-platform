@@ -2,6 +2,7 @@ package com.promptoptimizer.analytics.infrastructure;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
+import com.promptoptimizer.analytics.domain.AnalyticsAccountFilter;
 import com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper;
 import com.promptoptimizer.analytics.mapper.AuditEventMapper;
 import com.promptoptimizer.common.persistence.PostgresUuidTypeHandler;
@@ -88,7 +89,7 @@ class MapperXmlConfigurationTest {
                 from.plusDays(1).atStartOfDay(zoneId).toOffsetDateTime());
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("period", period);
-        parameters.put("userId", UUID.fromString("11111111-1111-4111-8111-111111111111"));
+        parameters.put("account", AnalyticsAccountFilter.forUser(UUID.fromString("11111111-1111-4111-8111-111111111111")));
 
         BoundSql sql = configuration.getMappedStatement(AdminAnalyticsMapper.class.getName() + ".dailyMetrics")
                 .getBoundSql(parameters);
@@ -109,6 +110,33 @@ class MapperXmlConfigurationTest {
                 RechargeRecordMapper.class.getName() + ".paidByDay")) {
             assertResolvedParameters(configuration, statement, parameters, "Asia/Shanghai");
         }
+    }
+
+    @Test
+    void everyAnalyticsSourceBindsAccountKeywordsIncludingDeferredRechargeSource() throws Exception {
+        Configuration configuration = parseMappers();
+        LocalDate from = LocalDate.of(2026, 9, 25);
+        ZoneId zone = ZoneId.of("Asia/Shanghai");
+        var params = new HashMap<String, Object>();
+        params.put("period", new AnalyticsPeriod(from, from.plusDays(1), zone,
+                from.atStartOfDay(zone).toOffsetDateTime(), from.plusDays(1).atStartOfDay(zone).toOffsetDateTime()));
+        params.put("account", new AnalyticsAccountFilter(null, "' OR 1=1 --", "alpha_100%"));
+        params.put("fromInclusive", from.atStartOfDay(zone).toOffsetDateTime());
+        params.put("toExclusive", from.plusDays(1).atStartOfDay(zone).toOffsetDateTime());
+        params.put("eventType", null);
+        params.put("toDateLast", from);
+        params.put("limit", 20);
+        for (String method : List.of("accountCounts", "usageCounts", "dailyMetrics", "hourlyUsage", "monthlyUsage",
+                "deviceDistribution", "usageRanking", "selectOperationLogs")) {
+            assertKeywordBinding(configuration.getMappedStatement(AdminAnalyticsMapper.class.getName() + "." + method).getBoundSql(params));
+        }
+        assertKeywordBinding(configuration.getMappedStatement(RechargeRecordMapper.class.getName() + ".paidByDay").getBoundSql(params));
+    }
+
+    private void assertKeywordBinding(BoundSql sql) {
+        assertThat(sql.getSql()).contains("EXISTS", "strpos", "user_identity").doesNotContain("' OR 1=1 --", "alpha_100%", "${");
+        assertThat(sql.getParameterMappings()).extracting(ParameterMapping::getProperty)
+                .contains("account.email", "account.displayName");
     }
 
     @Test

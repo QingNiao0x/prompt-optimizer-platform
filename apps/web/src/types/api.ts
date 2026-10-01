@@ -208,17 +208,22 @@ export interface AnalyticsOperationLogPage {
   pages: number;
 }
 
-export interface AnalyticsDashboardQuery {
+/** 多个账号条件同时满足；邮箱和名称按不区分大小写的字面关键词匹配。 */
+export interface AnalyticsAccountFilters {
+  userId?: string;
+  email?: string;
+  displayName?: string;
+}
+
+export interface AnalyticsDashboardQuery extends AnalyticsAccountFilters {
   range: AnalyticsRange;
   fromDate?: string;
   toDate?: string;
-  userId?: string;
 }
 
-export interface AnalyticsOperationQuery {
+export interface AnalyticsOperationQuery extends AnalyticsAccountFilters {
   fromDate: string;
   toDate: string;
-  userId?: string;
   eventType?: AnalyticsEventType;
   current: number;
   size: number;

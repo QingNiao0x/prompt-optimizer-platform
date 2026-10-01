@@ -42,6 +42,7 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
     private final DeviceTypeResolver deviceTypeResolver;
     private final AnalyticsSessionContext sessionContext;
 
+    /** 装配服务端身份、请求元数据解析和可选审计存储，采集不依赖浏览器传入的用户 ID。 */
     public AnalyticsEventServiceImpl(
             CurrentActor currentActor,
             ObjectProvider<AuditEventMapper> auditMapperProvider,
@@ -92,6 +93,7 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
         record(mapped, request);
     }
 
+    /** 无城市库、未知地址或解析失败时保留空所在地；地理增强失败不得阻止记录操作事实。 */
     private GeoLocation locate(String clientIp) {
         try {
             return geoLocationResolver.resolve(clientIp);
@@ -101,6 +103,10 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
         }
     }
 
+    /**
+     * 以服务端认证主体追加审计事实，只保存白名单元数据及 UTC 时刻。
+     * 当前数据库写入失败仅输出安全诊断并放行业务，没有自动重试；不可把该降级描述为日志保证落库。
+     */
     private void persist(
             AnalyticsEventType eventType,
             HttpServletRequest request,
@@ -109,6 +115,7 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
             AnalyticsDeviceType deviceType,
             AnalyticsSessionContext.Snapshot snapshot
     ) {
+        // 用户和租户只能来自当前认证主体；请求参数、User-Agent 和 IP 都不能决定操作所有者。
         ActorIdentity actor = currentActor.require();
         String requestId = (String) request.getAttribute(RequestIdFilter.REQUEST_ID_ATTRIBUTE);
         if (auditMapper == null) {

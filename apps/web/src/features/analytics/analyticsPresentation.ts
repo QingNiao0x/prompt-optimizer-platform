@@ -1,6 +1,6 @@
 import type { BarSeriesOption, LineSeriesOption } from 'echarts/charts';
 
-import type { AnalyticsDailyMetric, AnalyticsRange, AnalyticsRechargeMetric } from '@/types/api';
+import type { AnalyticsAccountFilters, AnalyticsDailyMetric, AnalyticsRange, AnalyticsRechargeMetric } from '@/types/api';
 
 /** 与后端日桶上限一致；历史数据仍可按多个区间分别查询。 */
 export const MAX_ANALYTICS_DAYS = 366;
@@ -18,10 +18,13 @@ export const analyticsQueryError = (
   range: AnalyticsRange,
   dates: readonly string[] | null,
   accountId: string,
+  account: Pick<AnalyticsAccountFilters, 'email' | 'displayName'> = {},
 ): string | undefined => {
   if (accountId.trim() && !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(accountId.trim())) {
     return '账号 ID 必须是完整的 UUID。';
   }
+  if ((account.email?.length ?? 0) > 320) return '登录邮箱筛选最多 320 个字符。';
+  if ((account.displayName?.length ?? 0) > 80) return '显示名称筛选最多 80 个字符。';
   if (range !== 'CUSTOM') return undefined;
   if (dates?.length !== 2 || !dates[0] || !dates[1]) return '请选择完整的自定义开始和结束日期。';
   const from = calendarDay(dates[0]);

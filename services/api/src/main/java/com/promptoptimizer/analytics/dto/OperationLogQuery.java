@@ -19,6 +19,8 @@ public record OperationLogQuery(
         UUID userId,
         @Size(max = 64) String eventType,
         @Min(1) @Max(100_000) Integer current,
-        @Min(1) @Max(100) Integer size
+        @Min(1) @Max(100) Integer size,
+        @Size(max = 320, message = "登录邮箱筛选最多 320 个字符") String email,
+        @Size(max = 80, message = "显示名称筛选最多 80 个字符") String displayName
 ) {
 }

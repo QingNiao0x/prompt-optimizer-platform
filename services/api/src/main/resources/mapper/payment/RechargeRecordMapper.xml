@@ -55,7 +55,10 @@
                   FROM recharge_record r
                  WHERE r.paid_at &gt;= #{period.fromInclusive}
                    AND r.paid_at &lt; #{period.toExclusive}
-                   AND (CAST(#{userId} AS uuid) IS NULL OR r.user_id = #{userId})
+                   AND (CAST(#{account.userId} AS uuid) IS NULL OR r.user_id = #{account.userId})
+                <if test="account.email != null or account.displayName != null">
+                   AND r.user_id IN (<include refid="com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper.matchingAccounts"/>)
+                </if>
                ) local_payment
          GROUP BY paid_day, plan_code, plan_name, currency
          ORDER BY paid_day, plan_code, currency

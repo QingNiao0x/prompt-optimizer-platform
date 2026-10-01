@@ -71,7 +71,7 @@ test('操作日志默认每页 10 条，并可改为 20 条', async ({ page }) =
 
   const pagination = page.locator('.pagination-row .el-pagination');
   await pagination.locator('.el-select').click();
-  await page.locator('.el-select-dropdown:visible .el-select-dropdown__item', { hasText: '20/page' }).click();
+  await page.locator('.el-select-dropdown:visible .el-select-dropdown__item', { hasText: '20条/页' }).click();
   await expect.poll(() => operationRequests.length).toBe(2);
   expect(operationRequests[1]?.searchParams.get('current')).toBe('1');
   expect(operationRequests[1]?.searchParams.get('size')).toBe('20');

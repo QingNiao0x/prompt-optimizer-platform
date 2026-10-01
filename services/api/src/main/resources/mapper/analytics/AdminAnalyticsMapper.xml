@@ -74,17 +74,51 @@
     </resultMap>
 
     <sql id="usageEventPredicate">
+        <!-- 关键使用与访问/登录分开：活跃人数看全部事件，实际使用人数和排行操作数只看这六类。 -->
         event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
                        'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
     </sql>
 
+    <!--
+        关键词匹配当前账号资料；登录邮箱以仍有效的 local EMAIL 身份为准，不使用旧 email 展示副本。
+        EXISTS 避免同一账号绑定多个邮箱时把每条审计事件重复展开。strpos 按字面包含匹配，% 和 _ 不是通配符。
+        此片段只用于管理员统计；普通业务查询仍必须遵循各自的用户、租户和工作区范围。
+    -->
+    <sql id="matchingAccounts">
+        SELECT account_row.id
+          FROM user_account account_row
+         WHERE 1 = 1
+        <if test="account.email != null">
+           AND EXISTS (
+                SELECT 1 FROM user_identity identity_row
+                 WHERE identity_row.user_id = account_row.id
+                   AND identity_row.identity_type = 'EMAIL'
+                   AND identity_row.issuer = 'local'
+                   AND identity_row.status = 'ACTIVE'
+                   AND strpos(lower(identity_row.normalized_identifier), #{account.email,jdbcType=VARCHAR}) &gt; 0
+           )
+        </if>
+        <if test="account.displayName != null">
+           AND strpos(lower(account_row.display_name), #{account.displayName,jdbcType=VARCHAR}) &gt; 0
+        </if>
+    </sql>
+
+    <!-- 注册账号是当前存量，不按选定时间裁剪；新增账号仅按 created_at 的左闭右开区间计算。 -->
     <select id="accountCounts" resultMap="accountCounts">
         SELECT (SELECT COUNT(*) FROM user_account
-                 WHERE (CAST(#{userId} AS uuid) IS NULL OR id = #{userId})) AS registered_accounts,
+                 WHERE (CAST(#{account.userId} AS uuid) IS NULL OR id = #{account.userId})
+                <if test="account.email != null or account.displayName != null">
+                   AND id IN (<include refid="matchingAccounts"/>)
+                </if>
+               ) AS registered_accounts,
                (SELECT COUNT(*) FROM user_account
                  WHERE created_at &gt;= #{period.fromInclusive}
                    AND created_at &lt; #{period.toExclusive}
-                   AND (CAST(#{userId} AS uuid) IS NULL OR id = #{userId})) AS new_accounts
+                   AND (CAST(#{account.userId} AS uuid) IS NULL OR id = #{account.userId})
+                <if test="account.email != null or account.displayName != null">
+                   AND id IN (<include refid="matchingAccounts"/>)
+                </if>
+               ) AS new_accounts
     </select>
 
     <select id="usageCounts" resultMap="usageCounts">
@@ -96,10 +130,14 @@
          WHERE actor_user_id IS NOT NULL
            AND occurred_at &gt;= #{period.fromInclusive}
            AND occurred_at &lt; #{period.toExclusive}
-           AND (CAST(#{userId} AS uuid) IS NULL OR actor_user_id = #{userId})
+           AND (CAST(#{account.userId} AS uuid) IS NULL OR actor_user_id = #{account.userId})
+        <if test="account.email != null or account.displayName != null">
+           AND actor_user_id IN (<include refid="matchingAccounts"/>)
+        </if>
     </select>
 
     <select id="dailyMetrics" resultMap="dailyMetric">
+        <!-- 先建完整日历日，再 LEFT JOIN 聚合；零活跃日不得被过滤，否则平均日活会虚高。 -->
         WITH days AS (
             SELECT generated.day::date AS activity_day
               FROM generate_series(
@@ -122,7 +160,10 @@
                      WHERE e.actor_user_id IS NOT NULL
                        AND e.occurred_at &gt;= #{period.fromInclusive}
                        AND e.occurred_at &lt; #{period.toExclusive}
-                       AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+                       AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
+                    <if test="account.email != null or account.displayName != null">
+                       AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
+                    </if>
                    ) local_event
              GROUP BY activity_day
         ), accounts AS (
@@ -132,7 +173,10 @@
                       FROM user_account u
                      WHERE u.created_at &gt;= #{period.fromInclusive}
                        AND u.created_at &lt; #{period.toExclusive}
-                       AND (CAST(#{userId} AS uuid) IS NULL OR u.id = #{userId})
+                       AND (CAST(#{account.userId} AS uuid) IS NULL OR u.id = #{account.userId})
+                    <if test="account.email != null or account.displayName != null">
+                       AND u.id IN (<include refid="matchingAccounts"/>)
+                    </if>
                    ) local_account
              GROUP BY activity_day
         )
@@ -149,6 +193,7 @@
     </select>
 
     <select id="hourlyUsage" resultMap="hourlyMetric">
+        <!-- 时间和账号条件留在 JOIN ON 中，保持没有匹配事件的小时桶；WHERE 过滤会丢掉零值桶。 -->
         WITH hours AS (SELECT generate_series(0, 23) AS hour)
         SELECT hours.hour, COUNT(e.id) AS operation_count
           FROM hours
@@ -159,12 +204,16 @@
            AND e.actor_user_id IS NOT NULL
            AND e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
                                 'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
-           AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+           AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
+        <if test="account.email != null or account.displayName != null">
+           AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
+        </if>
          GROUP BY hours.hour
          ORDER BY hours.hour
     </select>
 
     <select id="monthlyUsage" resultMap="monthlyMetric">
+        <!-- 本地自然月分组与月份骨架共用统计时区；空月份补零，不能按 UTC 月份直接截断事件。 -->
         WITH months AS (
             SELECT generated.month_start
               FROM generate_series(date_trunc('month', CAST(#{period.fromDate} AS date)),
@@ -180,7 +229,10 @@
                        AND e.actor_user_id IS NOT NULL
                        AND e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
                                             'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
-                       AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+                       AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
+                    <if test="account.email != null or account.displayName != null">
+                       AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
+                    </if>
                    ) local_event
              GROUP BY month_start
         )
@@ -191,6 +243,7 @@
     </select>
 
     <select id="deviceDistribution" resultMap="deviceMetric">
+        <!-- 设备内按账号去重，同一账号可在多个设备出现；只读取登录事件中的设备类型。 -->
         SELECT COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN') AS device_type,
                COUNT(*) AS login_count,
                COUNT(DISTINCT e.actor_user_id) AS unique_users
@@ -199,7 +252,10 @@
            AND e.actor_user_id IS NOT NULL
            AND e.occurred_at &gt;= #{period.fromInclusive}
            AND e.occurred_at &lt; #{period.toExclusive}
-           AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+           AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
+        <if test="account.email != null or account.displayName != null">
+           AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
+        </if>
          GROUP BY COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN')
          ORDER BY login_count DESC, device_type
     </select>
@@ -217,7 +273,10 @@
            AND e.occurred_at &gt;= #{period.fromInclusive}
            AND e.occurred_at &lt; #{period.toExclusive}
            <!-- 活跃天数涵盖任一审计行为；排行入选及排序仍由关键操作的 FILTER/HAVING 决定。 -->
-           AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+           AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
+        <if test="account.email != null or account.displayName != null">
+           AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
+        </if>
          GROUP BY e.actor_user_id, u.display_name
         HAVING COUNT(*) FILTER (WHERE e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED',
                      'CONTEXT_PREPARED', 'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')) &gt; 0
@@ -226,6 +285,7 @@
     </select>
 
     <select id="selectOperationLogs" resultMap="operationLog">
+        <!-- 只投影审计需要的安全字段，避免将完整 details 或认证凭据带入管理员响应。 -->
         SELECT e.id AS event_id, e.actor_user_id AS user_id,
                COALESCE(u.display_name, '') AS display_name, e.event_type, e.occurred_at,
                e.details-&gt;&gt;'clientIp' AS client_ip,
@@ -241,7 +301,10 @@
          WHERE e.actor_user_id IS NOT NULL
            AND e.occurred_at &gt;= #{fromInclusive}
            AND e.occurred_at &lt; #{toExclusive}
-           AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
+           AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
+        <if test="account.email != null or account.displayName != null">
+           AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
+        </if>
            AND (CAST(#{eventType,jdbcType=VARCHAR} AS text) IS NULL OR e.event_type = #{eventType})
          ORDER BY e.occurred_at DESC, e.id
     </select>

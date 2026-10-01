@@ -2,6 +2,7 @@ package com.promptoptimizer.payment.mapper;
 
 import com.promptoptimizer.analytics.dto.AnalyticsViews.RechargeMetric;
 import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
+import com.promptoptimizer.analytics.domain.AnalyticsAccountFilter;
 import com.promptoptimizer.payment.domain.VerifiedRechargePayment;
 import com.promptoptimizer.payment.infrastructure.RechargeRecordRow;
 import org.apache.ibatis.annotations.Mapper;
@@ -33,7 +34,8 @@ public interface RechargeRecordMapper {
     );
 
     /**
-     * 按支付完成时间、套餐和币种统计已支付充值。
+     * 按支付完成时间、套餐和币种统计已支付充值，沿用仪表盘的账号组合条件。
+     * 金额仍以最小货币单位保存和相加，不跨币种换算；仅在支付数据源启用后调用。
      */
-    List<RechargeMetric> paidByDay(@Param("period") AnalyticsPeriod period, @Param("userId") UUID userId);
+    List<RechargeMetric> paidByDay(@Param("period") AnalyticsPeriod period, @Param("account") AnalyticsAccountFilter account);
 }

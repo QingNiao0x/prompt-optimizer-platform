@@ -17,6 +17,8 @@ public record UsageRankingQuery(
         @NotBlank @Size(max = 16) String period,
         @NotBlank @Size(max = 10) String date,
         UUID userId,
-        @Min(1) @Max(100) Integer limit
+        @Min(1) @Max(100) Integer limit,
+        @Size(max = 320, message = "登录邮箱筛选最多 320 个字符") String email,
+        @Size(max = 80, message = "显示名称筛选最多 80 个字符") String displayName
 ) {
 }

@@ -1,5 +1,6 @@
 import { httpClient } from '@/services/http';
 import type {
+  AnalyticsAccountFilters,
   AnalyticsDashboard,
   AnalyticsDashboardQuery,
   AnalyticsEventType,
@@ -25,11 +26,11 @@ export const getAnalyticsRanking = async (
   period: 'DAY' | 'WEEK' | 'MONTH',
   date: string,
   limit = 20,
-  userId?: string,
+  account: AnalyticsAccountFilters = {},
 ): Promise<AnalyticsRanking> => {
   const response = await httpClient.get<ApiResponse<AnalyticsRanking>>(
     '/api/v1/admin/analytics/usage-ranking',
-    { params: { period, date, limit, userId } },
+    { params: { period, date, limit, userId: account.userId, email: account.email, displayName: account.displayName } },
   );
   return response.data.data;
 };
