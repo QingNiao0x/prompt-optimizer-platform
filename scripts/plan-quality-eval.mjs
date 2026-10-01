@@ -1,17 +1,23 @@
 // Opt-in regression against a running API with a real Provider; inputs are fixed synthetic samples.
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
-const baseUrl = process.env.PLAN_EVAL_BASE_URL;
-const email = process.env.PLAN_EVAL_EMAIL;
-const password = process.env.PLAN_EVAL_PASSWORD;
-const releaseMode = process.argv.includes('--release');
-const reviewMode = process.argv.includes('--review');
-if (!baseUrl || !email || !password) {
+const environment = globalThis.process?.env ?? {};
+const argumentsList = globalThis.process?.argv ?? [];
+const directRun = Boolean(argumentsList[1]) && import.meta.url === pathToFileURL(resolve(argumentsList[1])).href;
+const baseUrl = environment.PLAN_EVAL_BASE_URL;
+const email = environment.PLAN_EVAL_EMAIL;
+const password = environment.PLAN_EVAL_PASSWORD;
+const releaseMode = argumentsList.includes('--release');
+const reviewMode = argumentsList.includes('--review');
+if (directRun && (!baseUrl || !email || !password)) {
   console.error('Set PLAN_EVAL_BASE_URL, PLAN_EVAL_EMAIL and PLAN_EVAL_PASSWORD in the process environment.');
   process.exit(2);
 }
 
-const cases = [
+// 交互验收复用同一批样例和断言；导入本模块不会登录或触发模型调用。
+export const cases = [
   {
     id: 'software_mixed_order_approval', category: 'software',
     rawPrompt: '按上传的订单审批方案，在现有 Spring Boot 项目实现订单审批接口。',
@@ -139,7 +145,7 @@ async function call(path, body) {
   return payload.data;
 }
 
-function createAnswers(questions, sample) {
+export function createAnswers(questions, sample) {
   return questions.map(question => {
     const specific = sample.answers?.find(item => item.match.test(question.question));
     return {
@@ -154,7 +160,7 @@ function createAnswers(questions, sample) {
   });
 }
 
-function evaluateQuestions(sample, questions) {
+export function evaluateQuestions(sample, questions) {
   const text = questions.map(question => question.question).join('\n');
   const knownRepetitions = (sample.mustNotAsk ?? []).filter(pattern => pattern.test(text)).length;
   const requiredMissing = (sample.mustAsk ?? []).filter(pattern => !pattern.test(text)).length;
@@ -166,13 +172,14 @@ function evaluateQuestions(sample, questions) {
   return { knownRepetitions, requiredMissing, offTopic, semanticDuplicates };
 }
 
-function redact(value) {
+export function redact(value) {
   return String(value ?? '')
     .replace(/(api[ _-]?key|access[ _-]?token|client[ _-]?secret|password)\s*[:=]\s*\S+/gi, '$1=[REDACTED]')
     .replace(/\bsk-[A-Za-z0-9_-]{10,}\b/g, '[REDACTED_TOKEN]')
     .replace(/-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g, '[REDACTED_PRIVATE_KEY]');
 }
 
+if (directRun) {
 const csrf = await fetch(new URL('/api/v1/auth/csrf', baseUrl));
 absorbCookies(csrf);
 await call('/api/v1/auth/login', { email, password });
@@ -263,3 +270,4 @@ if (releaseMode && failures.some(result => result.id === 'human_review')) {
   console.error('Release gate blocked: complete the human review record after inspecting --review output.');
 }
 process.exitCode = failures.length ? 1 : 0;
+}

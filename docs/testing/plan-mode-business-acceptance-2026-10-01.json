@@ -1,0 +1,708 @@
+{
+  "runId": "2026-10-01T06-19-13-653Z",
+  "commit": "4c64b670b16911e07f32ee2943c5c0019bf91b17",
+  "model": {
+    "id": "deepseek:deepseek-v4-pro",
+    "displayName": "DeepSeek-V4-Pro-0813",
+    "provider": "deepseek",
+    "defaultModel": true
+  },
+  "finalResults": 19,
+  "plans": 15,
+  "baselineAutomaticPassed": 10,
+  "baselineTotal": 11,
+  "httpErrors": 0,
+  "providers": [
+    {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false
+    }
+  ],
+  "latency": {
+    "plan": [
+      984,
+      1247,
+      2991,
+      3317,
+      4985,
+      5979,
+      8174,
+      9091,
+      9733,
+      10691,
+      10749,
+      10753,
+      14201,
+      15567,
+      25664
+    ],
+    "final": [
+      2926,
+      3758,
+      4345,
+      4471,
+      4689,
+      5379,
+      5892,
+      5939,
+      6140,
+      6143,
+      6191,
+      6800,
+      6830,
+      6873,
+      7502,
+      8223,
+      8826,
+      12661,
+      18190
+    ]
+  },
+  "cases": [
+    {
+      "id": "software_mixed_order_approval",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "b1fb03af-ddd9-4a50-adc9-2ef8ef80e630",
+      "planLatencyMs": 10623,
+      "finalLatencyMs": 6681,
+      "questionCount": 6,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "research_known_data_dictionary",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "e8cd3026-efe6-474a-ac09-175a3ff322b3",
+      "planLatencyMs": 10727,
+      "finalLatencyMs": 6786,
+      "questionCount": 4,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "research_missing_region",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "bb294f52-40a3-4ac5-82e1-854784e60d8b",
+      "planLatencyMs": 9685,
+      "finalLatencyMs": 6061,
+      "questionCount": 5,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "education_explicit_audience",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "6d3f3efb-c25a-4607-b99e-65e7f94d031e",
+      "planLatencyMs": 8117,
+      "finalLatencyMs": 5641,
+      "questionCount": 3,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "business_explicit_output",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "8f94ae22-c32a-49f9-9fcd-b8c1fa419baa",
+      "planLatencyMs": 14070,
+      "finalLatencyMs": 6766,
+      "questionCount": 8,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "writing_explicit_audience",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "cdb3f0e5-47ce-4354-ab4c-eb590aadb05c",
+      "planLatencyMs": 952,
+      "finalLatencyMs": 5831,
+      "questionCount": 0,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "operations_explicit_segment",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "6e2504f6-b2ba-4b70-a14f-34cba44d88d7",
+      "planLatencyMs": 9062,
+      "finalLatencyMs": 5303,
+      "questionCount": 5,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "legal_explicit_jurisdiction",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "66c8cb13-8b18-4a28-845e-c7ee17fe5656",
+      "planLatencyMs": 10708,
+      "finalLatencyMs": 4261,
+      "questionCount": 5,
+      "ambiguityCount": 2
+    },
+    {
+      "id": "software_goal_research_attachment",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "61f085e2-98ce-4535-9c0d-9c17ec860a4a",
+      "planLatencyMs": 5917,
+      "finalLatencyMs": 12600,
+      "questionCount": 6,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "cross_file_threshold_conflict",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "c9aa8da9-bc2d-412a-ba0d-17f0410a2df1",
+      "planLatencyMs": 3282,
+      "finalLatencyMs": 6097,
+      "questionCount": 1,
+      "ambiguityCount": 1
+    },
+    {
+      "id": "complete_translation_no_plan_questions",
+      "passedOriginalAutomaticChecks": false,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": false,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "3d5dd336-bcc7-4bb0-9f6f-dfe87316a3aa",
+      "planLatencyMs": 1221,
+      "finalLatencyMs": 2869,
+      "questionCount": 0,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "business_repository_analytics",
+      "passedOriginalAutomaticChecks": false,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": false,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "7b8b60af-36c9-40f5-a0f3-883c7dbc0675",
+      "planLatencyMs": 15531,
+      "finalLatencyMs": 17930,
+      "questionCount": 7,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "business_resolved_approval_conflict",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "ee0805f5-21da-4677-9ae5-3321d46d58a5",
+      "planLatencyMs": 4930,
+      "finalLatencyMs": 3688,
+      "questionCount": 2,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "business_new_approval_conflict",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "812733d9-d763-4736-82b4-7fc62249d2d2",
+      "planLatencyMs": 4930,
+      "finalLatencyMs": 4394,
+      "questionCount": 2,
+      "ambiguityCount": 1
+    },
+    {
+      "id": "business_unresolved_approval_conflict",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "0a27304b-7163-4473-aaae-8ab0eeb383b0",
+      "planLatencyMs": 4930,
+      "finalLatencyMs": 8742,
+      "questionCount": 2,
+      "ambiguityCount": 3
+    },
+    {
+      "id": "business_notification_email",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "26ad5e6f-1133-4fb3-930c-58c6459f1f9b",
+      "planLatencyMs": 2960,
+      "finalLatencyMs": 6111,
+      "questionCount": 1,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "business_notification_inbox",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "835d3ba7-74ca-48e5-b1d2-f160c7a0cf09",
+      "planLatencyMs": 2960,
+      "finalLatencyMs": 7436,
+      "questionCount": 1,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "business_bound_facts_not_retrieved",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "9e1e12e3-b7e6-4340-a8e1-0defdaf8b245",
+      "planLatencyMs": 4930,
+      "finalLatencyMs": 4630,
+      "questionCount": 2,
+      "ambiguityCount": 0
+    },
+    {
+      "id": "business_current_react_target_vue",
+      "passedOriginalAutomaticChecks": true,
+      "checks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "requestId": "183a5167-9adf-4eb1-9240-39636bbdd42d",
+      "planLatencyMs": 25625,
+      "finalLatencyMs": 8173,
+      "questionCount": 7,
+      "ambiguityCount": 0
+    }
+  ],
+  "completedAt": "2026-10-01T06:30:55.151Z",
+  "allFourSections": true,
+  "allAnswerCoverage": true,
+  "businessVerdict": "FAIL",
+  "humanReleaseReview": "PENDING",
+  "reviewType": "assistant evidence review; not two human reviewers",
+  "findings": [
+    {
+      "id": "BA-01",
+      "severity": "P1",
+      "caseIds": [
+        "software_mixed_order_approval",
+        "research_known_data_dictionary",
+        "business_current_react_target_vue"
+      ],
+      "title": "词面命中被错误当作推荐依据",
+      "evidence": "材料要求超过五万元，推荐却为大于等于五万元；推荐理由仅为五万元时。Vuex 与 Ant Design Vue 的推荐依据仅为 vue。",
+      "status": "FAIL"
+    },
+    {
+      "id": "BA-02",
+      "severity": "P1",
+      "caseIds": [
+        "business_repository_analytics"
+      ],
+      "title": "内部提示词字符串与无关调研材料被提升为业务事实",
+      "evidence": "16 张首轮卡片均来自 Provider 指令及事实提取代码；最终追加 FREE_TEXT 必须为 true、只返回 JSON、Qoder 调研的单次不超过10万行等，与统计设计无关。",
+      "status": "FAIL"
+    },
+    {
+      "id": "BA-03",
+      "severity": "P1",
+      "caseIds": [
+        "cross_file_threshold_conflict",
+        "business_resolved_approval_conflict",
+        "business_new_approval_conflict",
+        "business_unresolved_approval_conflict"
+      ],
+      "title": "冲突确认依赖固定文案且剩余歧义未按同一决策去重",
+      "evidence": "标准本次采用：五万元可以消除旧冲突；自定义本次以新审批方案中的五万元阈值为准仍保留旧冲突；暂不确定产生同一阈值的3条提醒，新八万元冲突优先与已放弃的三万元比较。",
+      "status": "FAIL"
+    },
+    {
+      "id": "BA-04",
+      "severity": "P1",
+      "caseIds": [
+        "legal_explicit_jurisdiction"
+      ],
+      "title": "跨领域已知信息与排序语义被误判",
+      "evidence": "需求已写普通租房者，仍问目标读者；风险等级排序触发数字、文本或业务记录以及字段顺序两个编程型歧义。",
+      "status": "FAIL"
+    },
+    {
+      "id": "BA-05",
+      "severity": "P1",
+      "caseIds": [
+        "business_repository_analytics"
+      ],
+      "title": "否定句中的测试一词改变主任务分类",
+      "evidence": "统计模块审计与设计需求中含不得把测试样例当业务事实，最终模板却为 TESTING。",
+      "status": "FAIL"
+    },
+    {
+      "id": "BA-06",
+      "severity": "P1",
+      "caseIds": [
+        "business_current_react_target_vue",
+        "cross_file_threshold_conflict"
+      ],
+      "title": "候选项关系与事实推断缺少语义校验",
+      "evidence": "全部页面与仅核心页面被置于同一道多选题；仅有资料文件被写成需要从零开发；React 依赖清单中无 React Router，最终却直接按现有 React Router 迁移描述。",
+      "status": "FAIL"
+    },
+    {
+      "id": "BA-07",
+      "severity": "P2",
+      "caseIds": [
+        "business_repository_analytics"
+      ],
+      "title": "测试代码挤占真实业务上下文预算",
+      "evidence": "首次20片中10片来自测试；二次26片中8片来自测试，均到120000字符上限，AdminAnalyticsMapper.xml未入选。",
+      "status": "FAIL"
+    },
+    {
+      "id": "BA-08",
+      "severity": "P1",
+      "caseIds": [
+        "complete_translation_no_plan_questions",
+        "software_mixed_order_approval",
+        "cross_file_threshold_conflict"
+      ],
+      "title": "原自动门禁存在误报和漏报",
+      "evidence": "翻译提示词被要求含译文；阈值比较符、确认后重复歧义和推荐依据错误未被关键词检查捕获。保留10/11原始结果，不能解释为业务准确率。",
+      "status": "FAIL"
+    }
+  ],
+  "localIndex": {
+    "trackedFiles": 538,
+    "selectedSafeTextFiles": 499,
+    "indexedFiles": 499,
+    "failedFiles": 0,
+    "chunks": 685,
+    "elapsedMs": 4391,
+    "storageLimitReached": false,
+    "scanLimitReached": false
+  },
+  "backendBase": "http://127.0.0.1:9000",
+  "webBase": "http://127.0.0.1:5175",
+  "rawEvidenceDirectory": "tmp/plan-business-acceptance/2026-10-01T06-19-13-653Z",
+  "evidenceHashes": [
+    {
+      "caseId": "software_mixed_order_approval",
+      "file": "software_mixed_order_approval.json",
+      "sha256": "597c7feb9c43864152d9022ae223d07202133d3a0b49684deed4bbd2daefd424"
+    },
+    {
+      "caseId": "research_known_data_dictionary",
+      "file": "research_known_data_dictionary.json",
+      "sha256": "f9457e7a525c5aafa96c497feb83ff84f0837f3440d1e7a62582fd969acd173d"
+    },
+    {
+      "caseId": "research_missing_region",
+      "file": "research_missing_region.json",
+      "sha256": "dd536f34993d723073336ef129f583b5a4ced47a397731ba12dcb0b1c81fcb8d"
+    },
+    {
+      "caseId": "education_explicit_audience",
+      "file": "education_explicit_audience.json",
+      "sha256": "111c67f8e144cb437a660936078f2d3ec896dbf6314cfebf2706105c79f0637f"
+    },
+    {
+      "caseId": "business_explicit_output",
+      "file": "business_explicit_output.json",
+      "sha256": "574a5163d86450e6c3eba9a4cbd4d6c46207e28232362af9dfe6a1a1a65f96bb"
+    },
+    {
+      "caseId": "writing_explicit_audience",
+      "file": "writing_explicit_audience.json",
+      "sha256": "d6aed8a52221abd3603bc9197b68c71a6a3b3d547cde48d88a3c2fb884b2ec5d"
+    },
+    {
+      "caseId": "operations_explicit_segment",
+      "file": "operations_explicit_segment.json",
+      "sha256": "b72335db1b4b570e2e526090ae8660766e4b9d6335dcf01e4bb3b49c5433f0ac"
+    },
+    {
+      "caseId": "legal_explicit_jurisdiction",
+      "file": "legal_explicit_jurisdiction.json",
+      "sha256": "374013b240e591cbea55fde9f7a73345c594571051842db51c6791e6976ea3ac"
+    },
+    {
+      "caseId": "software_goal_research_attachment",
+      "file": "software_goal_research_attachment.json",
+      "sha256": "ac191a3ffdd246edee9c4715ce9021c6c2673c392065372324689a7e5810c5d0"
+    },
+    {
+      "caseId": "cross_file_threshold_conflict",
+      "file": "cross_file_threshold_conflict.json",
+      "sha256": "5949e4d73bf6fdbf39f4bf03d3e2c402a46715a9dfe74619a7159ddb34f18f80"
+    },
+    {
+      "caseId": "complete_translation_no_plan_questions",
+      "file": "complete_translation_no_plan_questions.json",
+      "sha256": "3f40e9505490f577124282d2e97a2343ceb552b5e9046ab70361ae2ce8350c19"
+    },
+    {
+      "caseId": "business_repository_analytics",
+      "file": "business_repository_analytics.json",
+      "sha256": "e270ce5869ac6443fd6ccd8878f8ec7d9241223fb5ecd3cbba597d0a4f51bf72"
+    },
+    {
+      "caseId": "business_resolved_approval_conflict",
+      "file": "business_resolved_approval_conflict.json",
+      "sha256": "8ef680a9d5453ad2ed39f3d9bc48aea4ec9c7ec6beffc54da00c6721f1faef24"
+    },
+    {
+      "caseId": "business_new_approval_conflict",
+      "file": "business_new_approval_conflict.json",
+      "sha256": "2f409b9adc4060f31dbb5a7e43a9ac95c4fb57fbe92dfa1a7829d83a0c425a16"
+    },
+    {
+      "caseId": "business_unresolved_approval_conflict",
+      "file": "business_unresolved_approval_conflict.json",
+      "sha256": "36862734bbfcb0789a4b07075b0d7561a39958454f988b4f12db08162ee45245"
+    },
+    {
+      "caseId": "business_notification_email",
+      "file": "business_notification_email.json",
+      "sha256": "0a14508f090c4fd4b826af053d0d01babf06bea8ebb381762d30f8bf7881c500"
+    },
+    {
+      "caseId": "business_notification_inbox",
+      "file": "business_notification_inbox.json",
+      "sha256": "619dc89d5c2e31753a7d0b58c21e27d2b914c2fea24de1c762b8ec9412f84b10"
+    },
+    {
+      "caseId": "business_bound_facts_not_retrieved",
+      "file": "business_bound_facts_not_retrieved.json",
+      "sha256": "bf8dbf24a49747e4574426f85ea8e6982554fde123c06d87505e0edf9bbe7218"
+    },
+    {
+      "caseId": "business_current_react_target_vue",
+      "file": "business_current_react_target_vue.json",
+      "sha256": "de802ae84fe710a55e464f3c44e0079bd94840f67c59bb7d6813417bda3ac2ef"
+    }
+  ],
+  "scope": "固定合成样例与真实仓库安全文本索引；浏览器内真实同源API调用，不含逐按钮UI验收、未调用全部模型、未做双人领域评审。"
+}

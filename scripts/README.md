@@ -2,6 +2,23 @@
 
 规划放置格式化、契约校验、数据库迁移检查、测试和本地环境辅助脚本。脚本应保持幂等，不在未确认目标目录的情况下删除或覆盖文件。
 
+## 真实 Plan 业务验收
+
+`plan-business-acceptance.mjs` 通过临时 Chrome 的正常登录会话运行原有 11 个跨行业样例，兼容当前图形验证码。先启动本地 API 与 Vite 前端，再在仓库根目录执行：
+
+```powershell
+$env:PLAN_EVAL_BASE_URL = 'http://127.0.0.1:5175'
+node scripts/plan-business-acceptance.mjs
+```
+
+地址必须是本地前端地址；脚本使用 `apps/web` 已安装的 Playwright 和本机 Chrome，不安装依赖。操作者在浏览器输入密码及验证码，凭据不写入脚本或证据文件。登录后调用平台已发布默认模型，会产生正常模型额度消耗及优化历史。脚本不会扫描本机目录、修改配置或自动删除历史。
+
+每次结果保存在独立的 `tmp/plan-business-acceptance/<runId>/`；JSON 含脱敏的合成问答、实际 Provider、Request ID、检查结果和最终提示词，拒绝覆盖旧证据。`plan-business-cases.mjs` 另提供审批冲突、通知渠道和 React→Vue 的固定夹具，供脚本导出的会话接口编排对照；这些额外场景不包含在默认 11 例 CLI 中。
+
+`--interactive` 仅供本机受控调试：保持临时浏览器，并在回环地址 `127.0.0.1:9325` 开放调试连接；结束后关闭该临时浏览器。普通验收不需要此参数，不得对外暴露调试端口。
+
+原 `plan-quality-eval.mjs` 的 `--release` 门槛及人工评审记录保持不变，其直接登录尚未适配当前验证码。真实运行与自动断言不能代替双人业务评审；当前失败与复现证据见 [2026-10-01 验收报告](../docs/testing/Plan-Mode真实业务验收-2026-10-01.md)。
+
 - `browser-window-diagnostic.mjs`：检查前端是否进入网页全屏、锁定页面滚动或拦截快捷键。默认使用 Microsoft Edge；可通过 `PLAYWRIGHT_BROWSER_CHANNEL=chrome` 切换到 Chrome。它只读取页面状态，不会操作或关闭用户的浏览器窗口。
 - `local-smoke-test.ps1`：检查后端健康接口和上下文分析接口；增加 `-RunOptimization` 才会调用提示词增强接口。默认只允许 Mock Provider，必须显式增加 `-AllowRealModel` 才允许真实模型请求。
 
