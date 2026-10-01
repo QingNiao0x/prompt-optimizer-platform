@@ -100,6 +100,8 @@
 
 Plan 最终组装先登记已核验的新冲突和绑定问题的未决状态，再合并模型提醒；兼容旧 Provider 的纯文本输出。先去重再应用最多 8 条的展示限额，仍超限时通过 `warnings` 明确告知未展示数量。对外 `ambiguities` 仍为字符串数组，与 `CLARIFICATIONS` 使用同一列表；没有新增浏览器必填字段。
 
+Provider 内部可选的 `ambiguityReferences` 校验失败时，仅弃用无效关联并记录安全诊断，不因辅助字段错误重试或拒绝有效结果。直接增强与 Plan 增强都保留已校验的正文和实际未决问题；必需段落、提醒正文、敏感内容及客户端输入校验不降级。字段边界和复合提醒规则见 [内置 Plan Mode](./12-内置Plan-Mode交互与接口.md)。
+
 工作台直接增强时明确发送 `planConfirmation: null`，并把 `enhancement.templateCode` 重置为 `AUTO`，由服务端根据本次输入重新推断策略；此时服务端保留模糊点检测，响应可能包含 `ambiguities`。其他兼容客户端也可以省略 `planConfirmation`。平台默认权限红线不能通过 `includePermissionBoundaries=false` 关闭，用户规则只能追加。
 
 ## 3. 历史接口

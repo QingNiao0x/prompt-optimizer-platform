@@ -3,6 +3,8 @@ package com.promptoptimizer.provider.infrastructure.openai;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.dto.EnhancementOptions;
+import com.promptoptimizer.enhancement.dto.PlanAnswer;
+import com.promptoptimizer.enhancement.service.impl.OptimizationResultAssembler;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
 import com.promptoptimizer.enhancement.domain.PlanningFactCard;
@@ -20,6 +22,7 @@ import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import com.promptoptimizer.context.domain.FileSnippet;
@@ -499,14 +502,17 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"{}", "[null]", "[{\"message\":1,\"questionId\":\"data-source\"}]",
+    @ValueSource(strings = {"{}", "true", "\"invalid\"", "[{}]", "[null]", "[[]]", "[{\"message\":1,\"questionId\":\"data-source\"}]",
             "[{\"message\":\"数据来源未确认。\",\"questionId\":1}]",
             "[{\"message\":\"不存在的提醒\",\"questionId\":\"data-source\"}]",
             "[{\"message\":\"数据来源未确认。\",\"questionId\":\"../invalid\"}]"})
-    void shouldRejectInvalidOrUnmatchedQuestionReferences(String references) throws Exception {
-        server.expect(times(3), requestTo(ENDPOINT)).andRespond(withSuccess(
+    void shouldIgnoreInvalidOrUnmatchedQuestionReferencesWithoutRetry(String references) throws Exception {
+        server.expect(once(), requestTo(ENDPOINT)).andRespond(withSuccess(
                 completionWithFindings("[\"数据来源未确认。\"]", references), MediaType.APPLICATION_JSON));
-        assertThatThrownBy(() -> provider.enhance(createRequest())).isInstanceOf(ProviderException.class);
+        var result = provider.enhance(createRequest());
+        assertThat(result.ambiguities()).containsExactly("数据来源未确认。");
+        assertThat(result.ambiguityReferences()).isEmpty();
+        assertThat(result.sections()).hasSize(4);
         server.verify();
     }
 
@@ -515,22 +521,116 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
     }
 
     @Test
-    void shouldRejectOversizedReferenceArray() throws Exception {
+    void shouldIgnoreOversizedReferenceArrayWithoutRetry() throws Exception {
         String references = objectMapper.writeValueAsString(java.util.Collections.nCopies(9,
                 Map.of("message", "数据来源未确认。", "questionId", "data-source")));
-        server.expect(times(3), requestTo(ENDPOINT)).andRespond(withSuccess(
+        server.expect(once(), requestTo(ENDPOINT)).andRespond(withSuccess(
                 completionWithFindings("[\"数据来源未确认。\"]", references), MediaType.APPLICATION_JSON));
-        assertThatThrownBy(() -> provider.enhance(createRequest())).isInstanceOf(ProviderException.class);
+        var result = provider.enhance(createRequest());
+        assertThat(result.ambiguityReferences()).isEmpty();
+        assertThat(result.ambiguities()).containsExactly("数据来源未确认。");
         server.verify();
     }
 
     @Test
-    void shouldRejectReferenceIdBeyondThePlanIdLimit() throws Exception {
+    void shouldIgnoreReferenceIdBeyondThePlanIdLimitWithoutRetry() throws Exception {
         String references = objectMapper.writeValueAsString(List.of(
                 Map.of("message", "数据来源未确认。", "questionId", "x".repeat(65))));
-        server.expect(times(3), requestTo(ENDPOINT)).andRespond(withSuccess(
+        server.expect(once(), requestTo(ENDPOINT)).andRespond(withSuccess(
                 completionWithFindings("[\"数据来源未确认。\"]", references), MediaType.APPLICATION_JSON));
-        assertThatThrownBy(() -> provider.enhance(createRequest())).isInstanceOf(ProviderException.class);
+        assertThat(provider.enhance(createRequest()).ambiguityReferences()).isEmpty();
+        server.verify();
+    }
+
+    @Test
+    void shouldNormalizeReferenceWhitespaceAndKeepValidEntriesBesideInvalidOnes() throws Exception {
+        String references = """
+                [null, {"message":"  数据来源未确认。  ","questionId":"  data-source  "},
+                {"message":"未在正文出现","questionId":"data-source"}]
+                """;
+        server.expect(once(), requestTo(ENDPOINT)).andRespond(withSuccess(
+                completionWithFindings("[\"数据来源未确认。\"]", references), MediaType.APPLICATION_JSON));
+        var result = provider.enhance(createRequest());
+        assertThat(result.ambiguityReferences()).singleElement().satisfies(reference -> {
+            assertThat(reference.message()).isEqualTo("数据来源未确认。");
+            assertThat(reference.questionId()).isEqualTo("data-source");
+        });
+        server.verify();
+    }
+
+    /** 通过真实适配器和结果组装器验证两条增强路径；上游响应仅替换为确定性的 HTTP 桩。 */
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void shouldCompleteDirectAndPlannedEnhancementDespiteMalformedReferences(boolean confirmed) throws Exception {
+        String finding = "是否需要支持同一账号多设备同时在线？";
+        server.expect(once(), requestTo(ENDPOINT)).andRespond(withSuccess(
+                completionWithFindings(objectMapper.writeValueAsString(List.of(finding)), "{}"), MediaType.APPLICATION_JSON));
+        var base = createRequest();
+        var answers = confirmed ? List.of(new PlanAnswer("auth-mode", "当前采用哪种认证方式？", "用户名密码"))
+                : List.<PlanAnswer>of();
+        var request = new EnhancementProviderRequest(base.rawPrompt(), base.context(), base.template(), List.of(),
+                answers, confirmed, base.constraints(), base.conversationHistory(), base.options(), base.model());
+        var response = provider.enhance(request);
+        var result = new OptimizationResultAssembler().assemble(response, request.context(), request.template(),
+                List.of(), answers, confirmed, request.constraints(), false, 1);
+        assertThat(result.ambiguities()).containsExactly(finding);
+        assertThat(result.sections()).extracting("type").contains(PromptSectionType.BACKGROUND,
+                PromptSectionType.TASK, PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS);
+        assertThat(result.optimizedPrompt()).contains("平台强制约束", "不得读取生产环境密钥");
+        if (confirmed) assertThat(result.optimizedPrompt()).contains("用户名密码");
+        server.verify();
+    }
+
+    @Test
+    void shouldDiagnoseIgnoredReferencesWithoutLoggingTheirContents() throws Exception {
+        String privateFixture = "password=" + "private-fixture-value";
+        String references = objectMapper.writeValueAsString(List.of(
+                Map.of("message", privateFixture, "questionId", "private-question")));
+        server.expect(once(), requestTo(ENDPOINT)).andRespond(withSuccess(
+                completionWithFindings("[\"数据来源未确认。\"]", references), MediaType.APPLICATION_JSON));
+        Logger logger = (Logger) LoggerFactory.getLogger(OpenAiCompatiblePromptEnhancementProvider.class);
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        logger.addAppender(appender);
+        String previousRequestId = MDC.get("requestId");
+        try {
+            MDC.put("requestId", "reference-fallback-test");
+            var result = provider.enhance(createRequest());
+            assertThat(result.ambiguities()).containsExactly("数据来源未确认。");
+            assertThat(result.ambiguityReferences()).isEmpty();
+        } finally {
+            if (previousRequestId == null) MDC.remove("requestId");
+            else MDC.put("requestId", previousRequestId);
+            logger.detachAppender(appender);
+            appender.stop();
+        }
+        assertThat(appender.list).extracting(ILoggingEvent::getFormattedMessage)
+                .anySatisfy(message -> assertThat(message).contains("event=model.response.optional_references_ignored",
+                        "requestId=reference-fallback-test", "ignoredCount=1"))
+                .allSatisfy(message -> assertThat(message).doesNotContain(privateFixture,
+                        "private-question", "数据来源未确认", "repair_retry"));
+        server.verify();
+    }
+
+    @Test
+    void shouldIgnoreAuxiliaryMessageOverTheLengthLimitWithoutRetry() throws Exception {
+        String references = objectMapper.writeValueAsString(List.of(
+                Map.of("message", "字".repeat(501), "questionId", "data-source")));
+        server.expect(once(), requestTo(ENDPOINT)).andRespond(withSuccess(
+                completionWithFindings("[\"数据来源未确认。\"]", references), MediaType.APPLICATION_JSON));
+        var result = provider.enhance(createRequest());
+        assertThat(result.ambiguities()).containsExactly("数据来源未确认。");
+        assertThat(result.ambiguityReferences()).isEmpty();
+        server.verify();
+    }
+
+    @Test
+    void shouldStillRejectInvalidRequiredFindingsWhenAuxiliaryReferencesAreAlsoMalformed() throws Exception {
+        server.expect(times(3), requestTo(ENDPOINT)).andRespond(withSuccess(
+                completionWithFindings("[3]", "{}"), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(createRequest()))
+                .isInstanceOfSatisfying(ProviderException.class, error ->
+                        assertThat(error.getFailureType()).isEqualTo(ProviderFailureType.INVALID_RESPONSE));
         server.verify();
     }
 

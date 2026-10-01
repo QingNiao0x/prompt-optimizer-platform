@@ -8,13 +8,13 @@ import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.provider.domain.AmbiguityReference;
-import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * 回放真实模型的重复提醒，验证最终 API 与段落，而非仅验证字符串工具。
@@ -115,10 +115,49 @@ class PlanAmbiguityMergeTest {
     }
 
     @Test
-    void shouldRejectMalformedReferencesInsteadOfHidingUnmatchedText() {
-        assertThatThrownBy(() -> assemble(List.of("数据来源未确认。"), List.of(), researchAnswers(),
-                List.of(new AmbiguityReference("未在提醒数组中出现", "data-source"))))
-                .isInstanceOf(ProviderException.class);
+    void shouldIgnoreMalformedReferencesAndKeepNewQuestions() {
+        String finding = "数据来源是否允许包含未成年人病历？";
+        var result = assemble(List.of(finding), List.of(), researchAnswers(),
+                java.util.Arrays.asList(null, new AmbiguityReference("未在提醒数组中出现", "data-source"),
+                        new AmbiguityReference(finding, "../invalid")));
+        assertThat(result.ambiguities()).contains(finding);
+        assertSynchronized(result);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"输出格式需要确认；是否需要提供数据？", "输出格式需要确认，是否需要提供数据？",
+            "输出格式需要确认,是否需要提供数据？", "输出格式需要确认。是否需要提供数据？"})
+    void shouldNotEraseASecondQuestionAfterARepeatedReminder(String finding) {
+        var answers = List.of(new PlanAnswer("output-format", "输出格式是什么？", "Excel"));
+        assertThat(assemble(List.of(finding), List.of(), answers).ambiguities()).contains(finding);
+        assertThat(assemble(List.of(finding), List.of(), answers,
+                List.of(new AmbiguityReference(finding, "output-format"))).ambiguities()).contains(finding);
+    }
+
+    @Test
+    void shouldKeepLegacyAuthenticationDeduplicationWithoutSuppressingSessionQuestions() {
+        var answers = List.of(new PlanAnswer("auth-mode", "当前采用哪种认证方式？", "用户名密码"));
+        String newQuestion = "当前认证方式的会话有效期需要多长？";
+        assertThat(assemble(List.of("当前认证方式未明确。", newQuestion), List.of(), answers).ambiguities())
+                .containsExactly(newQuestion);
+    }
+
+    @Test
+    void shouldNotUseConflictingReferencesToGuessWhichQuestionWasAnswered() {
+        var answers = List.of(new PlanAnswer("source-a", "A 项目的数据来源是什么？", "暂不确定"),
+                new PlanAnswer("source-b", "B 项目的数据来源是什么？", "暂不确定"));
+        String finding = "数据来源未确认。";
+        var result = assemble(List.of(finding), List.of(), answers, List.of(
+                new AmbiguityReference(finding, "source-a"), new AmbiguityReference(finding, "source-b")));
+        assertThat(result.ambiguities()).hasSize(3).contains(finding);
+    }
+
+    @Test
+    void shouldKeepGenericReferencedCompoundQuestionsAndAdditionalClauses() {
+        var answers = List.of(new PlanAnswer("chart-colors", "图表配色是什么？", "蓝色"));
+        String finding = "图表配色需要确认；是否需要提供数据？";
+        assertThat(assemble(List.of(finding), List.of(), answers,
+                List.of(new AmbiguityReference(finding, "chart-colors"))).ambiguities()).containsExactly(finding);
     }
 
     @Test
