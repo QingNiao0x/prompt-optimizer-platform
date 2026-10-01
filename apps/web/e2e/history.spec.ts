@@ -74,6 +74,22 @@ test('历史列表默认第一页 10 条，翻页和每页条数各只请求一�
   expect(historyRequests.length).toBe(4);
 });
 
+test('历史模型显示短名且保留其他模型名称中的数字', async ({ page }) => {
+  await mockAuthentication(page);
+  await page.route('**/api/v1/optimization-history**', route => route.fulfill({
+    status: 200,
+    json: { requestId: 'history-model-version', data: {
+      records: [
+        { ...historyItem, modelVersion: 'DeepSeek-V4-Pro-0813' },
+        { ...historyItem, id: 'history-2', modelVersion: '其他模型-20261001' },
+      ], current: 1, size: 10, total: 2, pages: 1,
+    } },
+  }));
+  await page.goto('/history');
+  const modelCells = page.locator('.model-cell:visible, .history-mobile-card__model:visible');
+  await expect(modelCells).toHaveText(['DeepSeek-V4-Pro', '其他模型-20261001']);
+});
+
 test('日期范围选择时结束日高亮跟随指针，且选择过程不发起搜索', async ({ page }) => {
   await mockAuthentication(page);
   const historyRequests: URL[] = [];

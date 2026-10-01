@@ -486,15 +486,63 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         server.verify();
     }
 
+    @Test
+    void shouldParseOptionalQuestionReferencesWithoutAnExtraModelCall() throws Exception {
+        server.expect(once(), requestTo(ENDPOINT)).andRespond(withSuccess(completionWithFindings(
+                "[\"数据来源未确认。\"]", "[{\"message\":\"数据来源未确认。\",\"questionId\":\"data-source\"}]"), MediaType.APPLICATION_JSON));
+        var result = provider.enhance(createRequest());
+        assertThat(result.ambiguityReferences()).singleElement().satisfies(reference -> {
+            assertThat(reference.message()).isEqualTo("数据来源未确认。");
+            assertThat(reference.questionId()).isEqualTo("data-source");
+        });
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"{}", "[null]", "[{\"message\":1,\"questionId\":\"data-source\"}]",
+            "[{\"message\":\"数据来源未确认。\",\"questionId\":1}]",
+            "[{\"message\":\"不存在的提醒\",\"questionId\":\"data-source\"}]",
+            "[{\"message\":\"数据来源未确认。\",\"questionId\":\"../invalid\"}]"})
+    void shouldRejectInvalidOrUnmatchedQuestionReferences(String references) throws Exception {
+        server.expect(times(3), requestTo(ENDPOINT)).andRespond(withSuccess(
+                completionWithFindings("[\"数据来源未确认。\"]", references), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(createRequest())).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
     private String completionWithFindings(String findings) throws Exception {
+        return completionWithFindings(findings, "null");
+    }
+
+    @Test
+    void shouldRejectOversizedReferenceArray() throws Exception {
+        String references = objectMapper.writeValueAsString(java.util.Collections.nCopies(9,
+                Map.of("message", "数据来源未确认。", "questionId", "data-source")));
+        server.expect(times(3), requestTo(ENDPOINT)).andRespond(withSuccess(
+                completionWithFindings("[\"数据来源未确认。\"]", references), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(createRequest())).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    @Test
+    void shouldRejectReferenceIdBeyondThePlanIdLimit() throws Exception {
+        String references = objectMapper.writeValueAsString(List.of(
+                Map.of("message", "数据来源未确认。", "questionId", "x".repeat(65))));
+        server.expect(times(3), requestTo(ENDPOINT)).andRespond(withSuccess(
+                completionWithFindings("[\"数据来源未确认。\"]", references), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(createRequest())).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    private String completionWithFindings(String findings, String references) throws Exception {
         String content = """
                 {"sections":[
                   {"type":"BACKGROUND","title":"背景","content":"Spring Boot 用户服务"},
                   {"type":"TASK","title":"任务","content":"补充登录能力"},
                   {"type":"OUTPUT","title":"输出","content":"保持接口兼容并补充测试"},
                   {"type":"CONSTRAINTS","title":"约束","content":"保留安全边界"}
-                ],"ambiguities":%s}
-                """.formatted(findings);
+                ],"ambiguities":%s,"ambiguityReferences":%s}
+                """.formatted(findings, references);
         return objectMapper.writeValueAsString(Map.of("model", MODEL, "choices",
                 List.of(Map.of("message", Map.of("role", "assistant", "content", content)))));
     }

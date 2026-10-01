@@ -119,8 +119,9 @@ class BusinessAcceptanceRegressionTest {
         String canonicalReminder = CONFLICT.replace("请确认本次采用哪一项。",
                 "用户已确认“暂不确定”，请明确本次采用哪一项，否则无法确定财务复核的触发条件。");
         String newPair = CONFLICT.replace("（三万元）", "（八万元）");
-        assertThat(decisions.uniqueFindings(List.of(CONFLICT, repeated, "该问题尚未确定：" + CONFLICT,
-                paraphrase, reminder, canonicalReminder, newPair, paraphrase + "还需确认退款订单是否采用此阈值。")))
+        assertThat(new PlanAmbiguityMerger(decisions).merge(List.of(CONFLICT, repeated, "该问题尚未确定：" + CONFLICT,
+                paraphrase, reminder, canonicalReminder, newPair, paraphrase + "还需确认退款订单是否采用此阈值。"),
+                List.of(CONFLICT), List.of()).messages())
                 .containsExactly(CONFLICT, newPair, paraphrase + "还需确认退款订单是否采用此阈值。");
     }
 
@@ -130,11 +131,8 @@ class BusinessAcceptanceRegressionTest {
                 "本次以新审批方案中的五万元阈值为准。")));
         String newAmount = CONFLICT + "二次检索另有八万元阈值。";
         String newScope = CONFLICT + "另需确认是否适用于退款订单。";
-        assertThat(decisions.uniqueFindings(List.of(CONFLICT, newAmount, newScope)))
-                .containsExactly(CONFLICT, newAmount, newScope);
-        assertThat(decisions.coversConflictMessage(CONFLICT)).isTrue();
-        assertThat(decisions.coversConflictMessage(newAmount)).isFalse();
-        assertThat(decisions.coversConflictMessage(newScope)).isFalse();
+        assertThat(new PlanAmbiguityMerger(decisions).merge(List.of(CONFLICT, newAmount, newScope),
+                List.of(), List.of()).messages()).containsExactly(newAmount, newScope);
     }
 
     private static ContextSnapshot snapshot(List<FileSnippet> files) {

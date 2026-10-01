@@ -16,6 +16,7 @@ import {
   ElTag,
 } from 'element-plus';
 import { onMounted, reactive, ref } from 'vue';
+import { formatModelVersion } from '@/features/models/modelVersion';
 
 import { getApiErrorMessage } from '@/services/http';
 import {
@@ -156,7 +157,7 @@ onMounted(() => { void refresh(); });
       <ElTable v-if="models.length > 0" :data="models" v-loading="isLoading" row-key="id">
         <ElTableColumn label="模型版本" min-width="230">
           <template #default="{ row }">
-            <div class="model-name"><strong>{{ row.displayName }}</strong><small>调用 ID：{{ row.publicId }}</small></div>
+            <div class="model-name"><strong>{{ formatModelVersion(row.displayName) }}</strong><small>调用 ID：{{ row.publicId }}</small></div>
           </template>
         </ElTableColumn>
         <ElTableColumn prop="routeKey" label="平台路由" min-width="120" />
@@ -190,7 +191,7 @@ onMounted(() => { void refresh(); });
           <ElInput v-model="form.upstreamModel" :disabled="Boolean(editingId)" maxlength="120" />
         </label>
         <label>模型版本
-          <ElInput v-model="form.displayName" maxlength="120" placeholder="例如 DeepSeek-V4-Pro-0813" />
+          <ElInput v-model="form.displayName" maxlength="120" placeholder="例如 DeepSeek-V4-Pro" />
         </label>
         <label>排序
           <ElInputNumber v-model="form.sortOrder" :min="0" :max="10000" />

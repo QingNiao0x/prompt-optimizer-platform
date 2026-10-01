@@ -4,15 +4,16 @@ import { computed } from 'vue';
 
 import BrandMark from '@/components/brand/BrandMark.vue';
 import AccountMenu from '@/components/layout/AccountMenu.vue';
+import { formatModelVersion } from '@/features/models/modelVersion';
 import { useAuthStore } from '@/stores/auth';
 import { useOptimizationStore } from '@/stores/optimization';
 
 const auth = useAuthStore();
 const optimization = useOptimizationStore();
-// 顶栏与选择器共用管理员维护的版本名称，不从路由 ID 推断版本。
-const selectedModelVersion = computed(() => optimization.availableModels.find(
+// 顶栏与选择器共用展示短名；管理员名称和调用路由不变。
+const selectedModelVersion = computed(() => formatModelVersion(optimization.availableModels.find(
   (model) => model.id === optimization.selectedModelId,
-)?.displayName ?? '平台模型');
+)?.displayName, '平台模型'));
 
 const navigation = [
   { to: '/', label: '首页', icon: HomeFilled },

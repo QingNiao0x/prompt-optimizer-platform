@@ -75,7 +75,7 @@ export interface AuthenticatedUser {
 /** 平台已发布给终端用户的模型，不包含端点或密钥。 */
 export interface AvailableModel {
   id: string;
-  /** 管理员维护的具体版本名称；id 仅用于请求路由，不用于替代版本展示。 */
+  /** 管理员维护的版本名称；界面通过 formatModelVersion 显示约定短名，id 只用于请求路由。 */
   displayName: string;
   provider: string;
   defaultModel: boolean;
@@ -431,7 +431,7 @@ export interface ProviderMetadata {
   /** 保留原调用标识用于追踪，不将其当作具体版本。 */
   model: string;
   mock: boolean;
-  /** 调用时的版本快照；旧响应可能缺失，不使用当前目录名称倒填历史。 */
+  /** 调用时的原始版本快照；展示短名不改写此值，旧响应缺失时不按当前目录倒填。 */
   modelVersion?: string;
 }
 

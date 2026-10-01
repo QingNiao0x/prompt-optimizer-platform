@@ -6,7 +6,6 @@ import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -22,8 +21,6 @@ final class ConfirmedDecisionSet {
     private static final Pattern TARGET = Pattern.compile("(迁移|改为|替换|新增|目标|期望|希望|想要|计划采用|本次采用|最终采用)");
     private static final Pattern CURRENT = Pattern.compile("(现有|当前|目前|已实现|已经采用|正在使用)");
     private static final Pattern DETAIL = Pattern.compile("(版本|字段|异常|错误|单位|阈值|有效期|过期|格式|来源|刷新|退出|兼容)");
-    private static final Pattern CONFLICT_EVIDENCE = Pattern.compile(
-            "资料对“([^”]+)”存在不同取值：(.+?)（([^）]+)）与 (.+?)（([^）]+)）");
 
     private final List<ConfirmedPlanDecision> decisions;
 
@@ -70,21 +67,6 @@ final class ConfirmedDecisionSet {
                 && DETAIL.matcher(finding).results().allMatch(detail -> decision.question().contains(detail.group())));
     }
 
-    /** 仅去除同文问题；不同措辞或增加边界的问题不能仅凭相似词判定已回答。 */
-    boolean repeatsAnsweredQuestion(String finding) {
-        String normalized = normalize(finding);
-        return normalized.length() >= 8 && decisions.stream().anyMatch(decision ->
-                decision.scope() != Scope.UNRESOLVED
-                        && normalized.equals(normalize(decision.question())));
-    }
-
-    /** 未决答案保留原问题，避免多个未知主题都退化为同一占位警告。 */
-    List<String> unresolvedFindings() {
-        return decisions.stream().filter(decision -> decision.scope() == Scope.UNRESOLVED)
-                .map(decision -> "该问题尚未确定：" + decision.question())
-                .distinct().toList();
-    }
-
     /** 冲突题的已选择值必须属于本次已知的两份材料；第三个新取值不能被旧回答掩盖。 */
     boolean resolvesConflict(String field, List<String> values) {
         return decisions.stream().anyMatch(decision -> decision.questionId() != null
@@ -121,62 +103,6 @@ final class ConfirmedDecisionSet {
         return unique.size() == 1 ? Optional.of(unique.getFirst()) : Optional.empty();
     }
 
-    /** 模型重复旧冲突时核对完整取值，新增冲突或改写到无法匹配时继续显示。 */
-    boolean coversConflictMessage(String finding) {
-        if (finding == null || conflictKey(finding).isEmpty()) return false;
-        var field = Pattern.compile("资料对“([^”]{2,40})”").matcher(finding);
-        if (!field.find()) return false;
-        List<String> pair = conflictValues(finding);
-        return pair.size() == 2 && resolvesConflict(field.group(1), pair);
-    }
-
-    /** 同字段、同来源、同取值的提醒合并；新增取值或不同来源保留独立证据。 */
-    List<String> uniqueFindings(List<String> findings) {
-        var unique = new LinkedHashMap<String, String>();
-        for (String finding : findings) {
-            String key = conflictKey(finding).orElseGet(() -> unique.keySet().stream()
-                    .filter(known -> sameConflictReminder(finding, known)).findFirst().orElse(finding));
-            unique.putIfAbsent(key, finding);
-        }
-        return unique.values().stream().limit(8).toList();
-    }
-
-    /** 仅合并包含完整字段、双方来源及取值的确认性改写；剩余业务条件不在白名单时保留。 */
-    private boolean sameConflictReminder(String finding, String known) {
-        var evidence = CONFLICT_EVIDENCE.matcher(known);
-        if (!evidence.matches()) return false;
-        String remainder = finding;
-        for (int group : List.of(2, 4, 3, 5, 1)) {
-            String component = evidence.group(group);
-            if (!remainder.contains(component)) return false;
-            remainder = remainder.replace(component, "");
-        }
-        return confirmationReminder(remainder);
-    }
-
-    /** 只忽略催促确认的固定用语；尾部新增数字、适用范围或业务条件时保留完整提醒。 */
-    private Optional<String> conflictKey(String finding) {
-        int start = finding.indexOf("资料对“");
-        int end = finding.indexOf("）。", start);
-        if (start < 0 || end <= start) return Optional.empty();
-        String prefix = normalize(finding.substring(0, start));
-        String suffix = normalize(finding.substring(end + 2));
-        if (!prefix.isEmpty() && !prefix.equals("该问题尚未确定")) return Optional.empty();
-        if (!confirmationReminder(suffix)) {
-            return Optional.empty();
-        }
-        return Optional.of(finding.substring(start, end + 1));
-    }
-
-    /** 只折叠确认状态及阈值未决的直接影响；金额、退款范围等新增内容不会被移除。 */
-    private boolean confirmationReminder(String text) {
-        String remainder = normalize(text).replaceAll(
-                "(?:该值直接决定|否则(?:无法|不能)确定)(?:审批|财务复核)的?触发条件(?:和财务复核范围)?", "");
-        return remainder.matches("(?:取值冲突|冲突未解决|存在不同取值|为|与|用户|回答|确认答案为|答案为"
-                + "|暂不确定|尚未确定|仍未确定|已确认但|已|需|需要|请|确认|明确|采用|哪一项|本次"
-                + "|有效值|生效阈值|核对|阈值|实现|作为|生效)*");
-    }
-
     /** 已知主题取短标签；未知主题不用于自动消除歧义，也不猜测分类。 */
     private static String topic(String question, String id) {
         var field = Pattern.compile("资料对“([^”]{2,40})”").matcher(question);
@@ -188,11 +114,6 @@ final class ConfirmedDecisionSet {
         if (identifier.contains("tool")) return "工具";
         if (identifier.contains("auth") || identifier.contains("login")) return "认证方式";
         return "本次选择";
-    }
-
-    private static String normalize(String text) {
-        return text == null ? "" : text.toLowerCase(Locale.ROOT)
-                .replaceAll("[\\p{Punct}\\p{IsPunctuation}\\s]+", "");
     }
 
     /** 子维度仍需独立答案，例如已选择分析工具不代表工具版本已经明确。 */

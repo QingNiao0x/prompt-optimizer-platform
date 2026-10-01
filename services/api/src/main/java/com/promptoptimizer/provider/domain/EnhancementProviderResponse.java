@@ -15,7 +15,8 @@ public record EnhancementProviderResponse(
         String provider,
         String model,
         boolean mock,
-        List<String> ambiguities
+        List<String> ambiguities,
+        List<AmbiguityReference> ambiguityReferences
 ) {
 
     /**
@@ -26,6 +27,14 @@ public record EnhancementProviderResponse(
         // null 表示旧 Provider 未提供判断；空列表表示已分析且没有歧义，二者不能混用。
         ambiguities = ambiguities == null ? null
                 : java.util.Collections.unmodifiableList(new java.util.ArrayList<>(ambiguities));
+        ambiguityReferences = ambiguityReferences == null ? List.of()
+                : java.util.Collections.unmodifiableList(new java.util.ArrayList<>(ambiguityReferences));
+    }
+
+    /** 兼容返回纯文本提醒的 Provider；没有关联时由应用层保守匹配已有问题。 */
+    public EnhancementProviderResponse(List<PromptSection> sections, String provider, String model,
+                                       boolean mock, List<String> ambiguities) {
+        this(sections, provider, model, mock, ambiguities, List.of());
     }
 
     public EnhancementProviderResponse(List<PromptSection> sections, String provider, String model, boolean mock) {

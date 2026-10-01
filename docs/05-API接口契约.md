@@ -22,7 +22,7 @@
 
 平台管理员通过 `GET/POST /api/v1/admin/models`、`GET /api/v1/admin/models/routes`、`PUT/DELETE /api/v1/admin/models/{id}` 维护模型。管理接口仅接受已配置路由的 `routeKey`、`upstreamModel`、`displayName`、`enabled`、`defaultModel`、`sortOrder`；更换上游模型时须新增并停用旧项，删除为逻辑删除。需要平台管理员身份，写请求仍须携带 CSRF；路由响应不含端点与密钥。
 
-`displayName` 现在表示管理员维护的具体**模型版本**（去除首尾空白后 1—120 字符，例如 `DeepSeek-V4-Pro-0813`），不从路由 ID 猜测版本。工作台和顶部状态显示此字段。Plan 与增强响应的 `provider.modelVersion` 为调用开始时的版本快照，默认 `""`；未配置、旧记录或实际返回路由不匹配时不伪造版本。`provider.model` 仍为调用标识，`modelId` 请求契约不变，修改版本名称不会修改上游调用 ID。
+`displayName` 表示管理员维护的**模型版本名称**（去除首尾空白后 1—120 字符，例如 `DeepSeek-V4-Pro`），不从路由 ID 猜测版本。前端共用 `formatModelVersion`，将已约定的旧名称 `DeepSeek-V4-Pro-0813` 显示为 `DeepSeek-V4-Pro`；其他名称原样展示，不通用删除末尾数字。工作台、顶栏、结果、历史及管理员列表共用此规则，管理员编辑框保留原始配置值。Plan 与增强响应的 `provider.modelVersion` 仍为调用开始时的原始名称快照，默认 `""`；未配置、旧记录或实际返回路由不匹配时不伪造版本。`provider.model` 仍为调用标识，`modelId` 请求契约不变。显示短名不修改目录数据、上游调用 ID 或历史快照。
 
 最终生成接口支持两种前端路径：默认的“直接增强”和用户主动开启的“可选上下文准备 + Plan 确认 + 最终生成”。完整字段、上下限和科研示例见[内置 Plan Mode](./12-内置Plan-Mode交互与接口.md)。
 
@@ -97,6 +97,8 @@
 服务端校验计划编号、需求指纹、上下文版本、所选模型和完整答案集合，并以服务端保存的问题文本为准。确认答案会加入第二次上下文检索查询；文件或查询变化时重新分析，完全一致时复用首次快照。
 
 响应包含 `optimizedPrompt`、`sections`、`contextReport`、`ambiguities`、`appliedConstraints`、`templateCode`、`provider` 和 `latencyMs`。`sections` 至少包含 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`；已明确回答且没有新冲突的问题不再重复提示。未决回答、二次检索的新冲突或新增业务条件仍保留在 `ambiguities`，不能因完成过 Plan 就一律清空。
+
+Plan 最终组装先登记已核验的新冲突和绑定问题的未决状态，再合并模型提醒；兼容旧 Provider 的纯文本输出。先去重再应用最多 8 条的展示限额，仍超限时通过 `warnings` 明确告知未展示数量。对外 `ambiguities` 仍为字符串数组，与 `CLARIFICATIONS` 使用同一列表；没有新增浏览器必填字段。
 
 工作台直接增强时明确发送 `planConfirmation: null`，并把 `enhancement.templateCode` 重置为 `AUTO`，由服务端根据本次输入重新推断策略；此时服务端保留模糊点检测，响应可能包含 `ambiguities`。其他兼容客户端也可以省略 `planConfirmation`。平台默认权限红线不能通过 `includePermissionBoundaries=false` 关闭，用户规则只能追加。
 

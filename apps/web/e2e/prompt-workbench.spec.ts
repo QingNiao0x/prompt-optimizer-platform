@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
     status: 200,
     contentType: 'application/json',
     body: JSON.stringify({ requestId: 'e2e-models', data: [
-      { id: 'deepseek:deepseek-chat', displayName: 'DeepSeek', provider: 'DeepSeek', defaultModel: true },
+      { id: 'deepseek:deepseek-chat', displayName: 'DeepSeek-V4-Pro-0813', provider: 'DeepSeek', defaultModel: true },
       { id: 'tokenhub:kimi-k3', displayName: 'Kimi K3', provider: 'TokenHub', defaultModel: false },
     ] }),
   }));
@@ -143,7 +143,10 @@ test('工作台显示平台发布的模型并允许用户切换', async ({ page 
   await page.goto('/workbench');
   const selector = page.getByRole('combobox', { name: '选择模型版本' });
   await expect(selector).toBeVisible();
-  await expect(page.locator('.model-select')).toContainText('DeepSeek');
+  await expect(page.locator('.model-select')).toContainText('DeepSeek-V4-Pro');
+  await expect(page.locator('.model-select')).not.toContainText('0813');
+  await expect(page.locator('.provider-status')).toContainText('DeepSeek-V4-Pro');
+  await expect(page.locator('.provider-status')).not.toContainText('0813');
   await page.locator('.model-select').click();
   await page.getByRole('option', { name: 'Kimi K3' }).click();
   await expect(page.locator('.model-select')).toContainText('Kimi K3');
@@ -382,7 +385,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   const resultContent = page.getByLabel('增强结果内容，可滚动查看完整提示词');
   await expect(resultContent.getByText('deepseek', { exact: true })).toBeVisible();
   await expect(resultContent.getByText('模型版本', { exact: true })).toBeVisible();
-  await expect(resultContent.getByText('DeepSeek-V4-Pro-0813', { exact: true })).toBeVisible();
+  await expect(resultContent.getByText('DeepSeek-V4-Pro', { exact: true })).toBeVisible();
   await expect(resultContent.locator('.result-meta')).not.toContainText('deepseek:deepseek-v4-pro');
   await expect(resultContent.getByRole('heading', { name: '任务目标' })).toBeVisible();
   await expect(resultContent.getByRole('heading', { name: '输入输出' })).toBeVisible();

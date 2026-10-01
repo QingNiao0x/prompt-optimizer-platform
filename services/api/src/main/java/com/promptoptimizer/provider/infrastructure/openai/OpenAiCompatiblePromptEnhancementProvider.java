@@ -119,9 +119,12 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 已绑定冲突题的自定义答案与标准选项同样有效；明确以某份材料的取值为准后，不再询问原取值对。新材料的新取值应与已确认值比较，重复文案合并为一项。
                 区分当前状态、方案目标和用户确认答案。首次计划证据与二次检索新增证据可能同时出现，
                 不得把方案目标说成当前已实现，不得丢弃用户确认答案；新证据与旧证据冲突时列明双方来源和适用范围。
+            12. 可选 ambiguityReferences 用于关联已有 Plan 问题，格式为 [{"message":"与 ambiguities 中某条文本完全一致","questionId":"输入中的问题ID"}]，最多 8 条。
+                只引用输入 confirmedDecisions 或 planAnswers 中真实存在的 questionId；没有关联时返回 []。
+                关联不代表问题已解决：新金额、新范围、工具版本或新增适用条件必须完整写在 message 中，不能省略。
 
             JSON 格式必须为：
-            {"sections":[{"type":"BACKGROUND","title":"背景","content":"..."}],"ambiguities":[]}
+            {"sections":[{"type":"BACKGROUND","title":"背景","content":"..."}],"ambiguities":[],"ambiguityReferences":[]}
 
             必须包含且只能使用以下段落类型：BACKGROUND、TASK、OUTPUT、CONSTRAINTS、CLARIFICATIONS、ACCEPTANCE、EXAMPLES。
             BACKGROUND、TASK、OUTPUT、CONSTRAINTS 必须存在；ACCEPTANCE 可按任务需要输出；待确认事项统一放入 ambiguities，CLARIFICATIONS 由平台组装；
@@ -631,12 +634,18 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 : response.model() == null || response.model().isBlank()
                 ? request.model()
                 : response.model();
+        List<String> ambiguities = mapAmbiguities(structuredResponse.ambiguities());
+        var references = mapAmbiguityReferences(structuredResponse.ambiguityReferences());
+        if (references.stream().anyMatch(reference -> ambiguities == null || !ambiguities.contains(reference.message()))) {
+            throw invalidResponse("模型提醒关联未匹配待确认文本", null);
+        }
         return new EnhancementProviderResponse(
                 sections,
                 request.route().providerName(),
                 responseModel,
                 false,
-                mapAmbiguities(structuredResponse.ambiguities())
+                ambiguities,
+                references
         );
     }
 
@@ -694,6 +703,25 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             findings.add(item.textValue().trim());
         }
         return List.copyOf(findings);
+    }
+
+    /** 兼容没有关联字段的 Provider；严格校验类型和大小，未知问题 ID 留给绑定状态校验。 */
+    private List<com.promptoptimizer.provider.domain.AmbiguityReference> mapAmbiguityReferences(JsonNode value) {
+        if (value == null || value.isNull()) return List.of();
+        if (!value.isArray() || value.size() > 8) throw invalidResponse("模型提醒关联数量无效", null);
+        var references = new ArrayList<com.promptoptimizer.provider.domain.AmbiguityReference>();
+        for (JsonNode item : value) {
+            JsonNode message = item.get("message");
+            JsonNode questionId = item.get("questionId");
+            if (!item.isObject() || message == null || !message.isTextual() || message.textValue().isBlank()
+                    || message.textValue().length() > 500 || questionId == null || !questionId.isTextual()
+                    || !questionId.textValue().matches("[A-Za-z0-9_-]{1,64}")) {
+                throw invalidResponse("模型提醒关联无效", null);
+            }
+            references.add(new com.promptoptimizer.provider.domain.AmbiguityReference(
+                    message.textValue().trim(), questionId.textValue()));
+        }
+        return List.copyOf(references);
     }
 
     /** 将模型问题映射为平台回答类型，拒绝空问题与未知回答方式。 */
@@ -1022,7 +1050,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
      * 模型返回的结构化段落响应。
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record StructuredPromptResponse(List<StructuredSection> sections, JsonNode ambiguities) {
+    private record StructuredPromptResponse(List<StructuredSection> sections, JsonNode ambiguities,
+                                            JsonNode ambiguityReferences) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

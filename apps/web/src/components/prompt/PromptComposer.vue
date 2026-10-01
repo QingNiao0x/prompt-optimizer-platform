@@ -11,6 +11,7 @@ import { computed } from 'vue';
 
 import SparklesIcon from '@/components/brand/SparklesIcon.vue';
 import { usePlanModePreference } from '@/composables/usePlanModePreference';
+import { formatModelVersion } from '@/features/models/modelVersion';
 import type { AvailableModel } from '@/types/api';
 
 interface Props {
@@ -108,7 +109,7 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
               <ElOption
                 v-for="model in availableModels"
                 :key="model.id"
-                :label="model.displayName"
+                :label="formatModelVersion(model.displayName)"
                 :value="model.id"
               />
             </ElSelect>

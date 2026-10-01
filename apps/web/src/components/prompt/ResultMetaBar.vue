@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { formatModelVersion } from '@/features/models/modelVersion';
 
 import type { OptimizationResult } from '@/types/api';
 
@@ -18,7 +19,7 @@ const sectionCount = computed(() =>
   <dl class="result-meta">
     <div>
       <dt>模型版本</dt>
-      <dd :title="result.provider.modelVersion || '版本未记录'">{{ result.provider.modelVersion || '版本未记录' }}</dd>
+      <dd :title="formatModelVersion(result.provider.modelVersion)">{{ formatModelVersion(result.provider.modelVersion) }}</dd>
       <small>{{ result.provider.provider }}</small>
     </div>
     <div>

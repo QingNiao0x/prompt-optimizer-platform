@@ -138,14 +138,17 @@ public class OptimizationResultAssembler {
         }
         appendConstraints(sections, constraints);
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities);
-        // 已确认答案不再追问；二次检索发现的新事实冲突仍必须对用户可见。
-        List<String> remainingAmbiguities = planConfirmed
-                ? decisions.uniqueFindings(java.util.stream.Stream.concat(assessed.stream()
-                        .map(value -> classifyFinding(value, ambiguities, decisions))
-                        .filter(value -> value.kind() != FindingKind.COVERED_FACT)
-                        .map(AssessedFinding::text),
-                        decisions.unresolvedFindings().stream()).toList())
-                : assessed;
+        validateAmbiguityReferences(providerResponse);
+        // 先登记新冲突和绑定的未决问题，再归并模型提醒，避免重复项挤占展示预算。
+        var merged = planConfirmed
+                ? new PlanAmbiguityMerger(decisions).merge(assessed, ambiguities, providerResponse.ambiguityReferences())
+                : new PlanAmbiguityMerger.MergeResult(assessed.stream().limit(8).toList(), Math.max(0, assessed.size() - 8));
+        List<String> remainingAmbiguities = merged.messages();
+        List<String> resultWarnings = new ArrayList<>(collectWarnings(context, planningWarnings));
+        if (merged.omittedCount() > 0) {
+            resultWarnings.add("待确认事项已去重，本次展示前 8 项，另有 " + merged.omittedCount()
+                    + " 项未展示；请缩小本次任务范围后再次确认。");
+        }
         // 一个权威列表同时驱动 API 与段落，避免 UI 与模型返回的旧 CLARIFICATIONS 互相矛盾。
         sections.remove(PromptSectionType.CLARIFICATIONS);
         if (!remainingAmbiguities.isEmpty()) {
@@ -184,7 +187,7 @@ public class OptimizationResultAssembler {
                         providerResponse.mock()
                 ),
                 Math.max(0, latencyMs),
-                collectWarnings(context, planningWarnings)
+                resultWarnings
         );
     }
 
@@ -276,21 +279,16 @@ public class OptimizationResultAssembler {
         ));
     }
 
-    private enum FindingKind { VERIFIED_CONFLICT, COVERED_FACT, OPEN_CHOICE }
-
-    private record AssessedFinding(FindingKind kind, String text) { }
-
-    /** 已证实的新冲突优先显示；旧答案覆盖的已知事实不再作为待确认选择。 */
-    private AssessedFinding classifyFinding(String text, List<String> serverFindings,
-                                           ConfirmedDecisionSet decisions) {
-        if (text.startsWith("资料对“") && serverFindings.contains(text)) {
-            return new AssessedFinding(FindingKind.VERIFIED_CONFLICT, text);
+    /** 关联只是匹配线索；拒绝不对应正文或格式非法的外部字段，不接受模型自报的确认状态。 */
+    private void validateAmbiguityReferences(EnhancementProviderResponse response) {
+        if (response.ambiguityReferences().size() > 8) throw invalidResponse("模型提醒关联数量无效");
+        for (var reference : response.ambiguityReferences()) {
+            if (reference == null || reference.message() == null || response.ambiguities() == null
+                    || !response.ambiguities().contains(reference.message()) || reference.questionId() == null
+                    || !reference.questionId().matches("[A-Za-z0-9_-]{1,64}")) {
+                throw invalidResponse("模型提醒关联无效");
+            }
         }
-        if (decisions.coversUnknown(text) || decisions.repeatsAnsweredQuestion(text)
-                || decisions.coversConflictMessage(text)) {
-            return new AssessedFinding(FindingKind.COVERED_FACT, text);
-        }
-        return new AssessedFinding(FindingKind.OPEN_CHOICE, text);
     }
 
     /** 兼容旧版待确认段落，同时过滤泛化提示和疑似凭据。 */
@@ -333,7 +331,7 @@ public class OptimizationResultAssembler {
                         java.util.stream.Stream.concat(serverFindings.stream(), findings.stream()))
                 .map(String::trim)
                 .filter(value -> !GENERIC_WARNINGS.contains(value.replaceAll("[。.!！]+$", "")))
-                .distinct().limit(8).toList();
+                .distinct().toList();
     }
 
     /** 拒绝重复、空白和疑似含凭据的模型段落，再转换为按类型索引的结果。 */
