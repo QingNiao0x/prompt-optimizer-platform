@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 
 /**
  * 管理员维护平台模型目录的输入；只能引用已配置路由，不能提交密钥或端点。
+ * displayName 保存用户可见的具体版本名称；upstreamModel 是供应商调用 ID，二者不能混用。
  *
  * @author QingNiao
  * @since 0.1.0

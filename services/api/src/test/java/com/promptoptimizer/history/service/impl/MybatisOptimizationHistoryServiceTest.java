@@ -67,7 +67,7 @@ class MybatisOptimizationHistoryServiceTest {
 
     @Test
     void savesSanitizedContextWithinCurrentActorScope() {
-        UUID savedId = service.save(request(), resultWithFileContent());
+        UUID savedId = service.save(request(), resultWithFileContent().withModelVersion("DeepSeek-V4-Pro-0813"));
 
         ArgumentCaptor<OptimizationRecordEntity> captor = ArgumentCaptor.forClass(OptimizationRecordEntity.class);
         verify(persistenceService).persist(captor.capture(), eq(ACTOR));
@@ -77,6 +77,7 @@ class MybatisOptimizationHistoryServiceTest {
         assertThat(saved.getWorkspaceId()).isEqualTo(WORKSPACE_ID);
         assertThat(saved.getCreatedBy()).isEqualTo(USER_ID);
         assertThat(saved.getContextSnapshot()).doesNotContainKey("fileSnippets");
+        assertThat(saved.getResultMetadata()).containsEntry("modelVersion", "DeepSeek-V4-Pro-0813");
     }
 
     @Test
@@ -84,7 +85,9 @@ class MybatisOptimizationHistoryServiceTest {
         OptimizationRecordEntity record = recordEntity();
         when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);
 
-        assertThat(service.get(record.getId()).rawPrompt()).isEqualTo("给用户模块添加登录功能");
+        var detail = service.get(record.getId());
+        assertThat(detail.rawPrompt()).isEqualTo("给用户模块添加登录功能");
+        assertThat(detail.modelVersion()).isEmpty();
         verify(recordMapper).selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID);
     }
 

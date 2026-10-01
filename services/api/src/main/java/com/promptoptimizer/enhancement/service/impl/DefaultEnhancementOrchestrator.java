@@ -198,7 +198,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         if (modelCatalog == null && boundModelId != null && !boundModelId.isBlank()) {
             throw new InvalidOptimizationRequestException("平台模型目录不可用，请稍后重试。");
         }
-        String selectedModelId = modelCatalog == null ? null : modelCatalog.resolve(boundModelId).publicId();
+        var selectedModel = modelCatalog == null ? null : modelCatalog.resolve(boundModelId);
+        String selectedModelId = selectedModel == null ? null : selectedModel.publicId();
         ProtectedContextFilter.FilteredContext filteredContext = protectedContextFilter.filter(
                 request.context(),
                 request.permissionPolicy()
@@ -303,7 +304,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                         request.rawPrompt(),
                         planningFacts,
                         planningWarnings
-                );
+                ).withModelVersion(selectedModel != null && selectedModelId.equals(providerResponse.model())
+                        ? selectedModel.displayName() : "");
                 LOGGER.info("event=optimization.completed requestId={} workflowId={} mock={} "
                                 + "sections={} ambiguities={} durationMs={}",
                         LogFields.value(MDC.get("requestId")),

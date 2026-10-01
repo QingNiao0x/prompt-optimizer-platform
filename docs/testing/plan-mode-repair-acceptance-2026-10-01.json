@@ -1,0 +1,639 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-01T07:53:07.804Z",
+  "date": "2026-10-01",
+  "timezone": "Asia/Shanghai",
+  "conclusion": "FAIL",
+  "releaseAllowed": false,
+  "scope": "模型版本展示与资料相关性、推荐依据、确认冲突的局部修复复验。保留最终两次真实调用的失败结论。",
+  "provider": {
+    "provider": "deepseek",
+    "model": "deepseek:deepseek-v4-pro",
+    "mock": false,
+    "modelVersion": "DeepSeek-V4-Pro-0813"
+  },
+  "git": {
+    "baseCommit": "d7d14125aff58356cddb627f0f8bf2aede2222ee",
+    "workingTreeModified": true,
+    "committed": false,
+    "serverRestart": "用户确认已重启；没有不可变部署镜像校验值"
+  },
+  "runs": [
+    {
+      "runId": "2026-10-01T07-06-06-520Z",
+      "planCalls": 3,
+      "enhancementCalls": 3,
+      "supersededFailuresPreserved": true,
+      "nonSuccessResponses": [
+        {
+          "path": "/api/v1/optimization-history?page=1&size=10",
+          "status": 500,
+          "requestId": null
+        }
+      ]
+    },
+    {
+      "runId": "2026-10-01T07-18-45-753Z",
+      "planCalls": 5,
+      "enhancementCalls": 8,
+      "supersededFailuresPreserved": true,
+      "nonSuccessResponses": []
+    },
+    {
+      "runId": "2026-10-01T07-29-25-264Z",
+      "planCalls": 5,
+      "enhancementCalls": 8,
+      "supersededFailuresPreserved": true,
+      "nonSuccessResponses": []
+    },
+    {
+      "runId": "2026-10-01T07-37-43-924Z",
+      "planCalls": 1,
+      "enhancementCalls": 4,
+      "supersededFailuresPreserved": true,
+      "nonSuccessResponses": []
+    },
+    {
+      "runId": "2026-10-01T07-45-06-188Z",
+      "planCalls": 0,
+      "enhancementCalls": 2,
+      "supersededFailuresPreserved": true,
+      "nonSuccessResponses": []
+    }
+  ],
+  "totals": {
+    "planCalls": 14,
+    "enhancementCalls": 25,
+    "lastRoundEnhancementCalls": 2
+  },
+  "regression": {
+    "backend": {
+      "suites": 21,
+      "tests": 149,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "scope": "相关回归；不是整个后端全量测试"
+    },
+    "browser": {
+      "tests": 10,
+      "viewportCoverage": [
+        "桌面",
+        "移动端"
+      ],
+      "scope": "模型维护、工作台、历史相关场景"
+    },
+    "frontendTypecheck": "PASS",
+    "frontendBuild": "PASS",
+    "buildWarnings": [
+      "既有第三方 PURE 注释警告",
+      "统计页 ECharts 分包超过 500 kB"
+    ]
+  },
+  "modelVersionVerification": {
+    "version": "DeepSeek-V4-Pro-0813",
+    "workbench": "PASS",
+    "result": "PASS",
+    "historyList": "DeepSeek-V4-Pro-0813",
+    "historyDetail": "DeepSeek-V4-Pro-0813",
+    "routingIdentifierUnchanged": true,
+    "oldRecords": "版本未记录；不按当前模型目录追溯填充"
+  },
+  "cases": [
+    {
+      "id": "software_mixed_order_approval",
+      "runId": "2026-10-01T07-29-25-264Z",
+      "businessVerdict": "PASS_SCOPED",
+      "observation": "严格大于五万元得到有依据的推荐，最终任务保留严格大于条件。",
+      "legacyAutomatedPassed": true,
+      "legacyAutomatedChecks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "actualProviders": {
+        "plan": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "final": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        }
+      },
+      "questionCount": 5,
+      "ambiguityCount": 0,
+      "ambiguityEvidence": [],
+      "expectedAmbiguityCount": null,
+      "templateCode": "FEATURE_DEVELOPMENT",
+      "planLatencyMs": 12381,
+      "finalLatencyMs": 15193,
+      "finalRequest": {
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "973954e1-ea86-4f63-934b-986cd6a6898c",
+        "elapsedMs": 15337
+      },
+      "recommendations": [
+        {
+          "questionId": "threshold_rule",
+          "label": "严格大于五万元",
+          "reason": "项目证据明确包含：>五万元。请核对适用范围后选择。"
+        }
+      ],
+      "evidence": {
+        "path": "tmp/plan-business-acceptance/2026-10-01T07-29-25-264Z/software_mixed_order_approval.json",
+        "sha256": "67622f33e2fdc52d9b1e2fb36cbb9676815ff89a4b32786bd92aae1304451e82"
+      }
+    },
+    {
+      "id": "business_current_react_target_vue",
+      "runId": "2026-10-01T07-29-25-264Z",
+      "businessVerdict": "PASS_SCOPED",
+      "observation": "区分当前 React 与目标 Vue；本次返回没有仅凭 Vue 词面推荐 Vuex 或组件库。",
+      "legacyAutomatedPassed": true,
+      "legacyAutomatedChecks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "actualProviders": {
+        "plan": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "final": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        }
+      },
+      "questionCount": 6,
+      "ambiguityCount": 0,
+      "ambiguityEvidence": [],
+      "expectedAmbiguityCount": null,
+      "templateCode": "REFACTORING",
+      "planLatencyMs": 11760,
+      "finalLatencyMs": 8394,
+      "finalRequest": {
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "12c29d6e-9f80-454d-bae7-1632a349b23b",
+        "elapsedMs": 8453
+      },
+      "recommendations": [],
+      "evidence": {
+        "path": "tmp/plan-business-acceptance/2026-10-01T07-29-25-264Z/business_current_react_target_vue.json",
+        "sha256": "07984261c5e9212f8ab76d100d6cb444b2551093c2a598bc300624953b3e271d"
+      }
+    },
+    {
+      "id": "business_analytics_relevance_repair",
+      "runId": "2026-10-01T07-29-25-264Z",
+      "businessVerdict": "PARTIAL_FAIL",
+      "observation": "无关内部指令与 Qoder 资料未进入本次事实卡片；模板仍误分为 TESTING，正文仍存在测试源码用途核验缺口。",
+      "legacyAutomatedPassed": false,
+      "legacyAutomatedChecks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": false,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "actualProviders": {
+        "plan": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "final": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        }
+      },
+      "questionCount": 6,
+      "ambiguityCount": 0,
+      "ambiguityEvidence": [],
+      "expectedAmbiguityCount": null,
+      "templateCode": "TESTING",
+      "planLatencyMs": 13423,
+      "finalLatencyMs": 16577,
+      "finalRequest": {
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "a4512544-95e9-459c-88ce-de30ecd40da5",
+        "elapsedMs": 16717
+      },
+      "recommendations": [
+        {
+          "questionId": "display_scope",
+          "label": "管理员仪表盘",
+          "reason": "项目证据明确包含：管理员仪表盘。请核对适用范围后选择。"
+        }
+      ],
+      "evidence": {
+        "path": "tmp/plan-business-acceptance/2026-10-01T07-29-25-264Z/business_analytics_relevance_repair.json",
+        "sha256": "00c8620c407fe024c8e1eb64fbba2882f7b01afbcb3986ba9225d27f6424a201"
+      }
+    },
+    {
+      "id": "repair_bound_facts",
+      "runId": "2026-10-01T07-29-25-264Z",
+      "businessVerdict": "PASS_SCOPED",
+      "observation": "二次只发送旧规则材料时，首次绑定的新方案事实及已确认五万元仍保留。",
+      "legacyAutomatedPassed": true,
+      "legacyAutomatedChecks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "actualProviders": {
+        "plan": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "final": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        }
+      },
+      "questionCount": 1,
+      "ambiguityCount": 0,
+      "ambiguityEvidence": [],
+      "expectedAmbiguityCount": null,
+      "templateCode": "FEATURE_DEVELOPMENT",
+      "planLatencyMs": 2766,
+      "finalLatencyMs": 5071,
+      "finalRequest": {
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "45086880-5505-4684-a716-9e498ff50dd8",
+        "elapsedMs": 5118
+      },
+      "recommendations": [],
+      "evidence": {
+        "path": "tmp/plan-business-acceptance/2026-10-01T07-29-25-264Z/repair_bound_facts.json",
+        "sha256": "eea9acde7e02930d9ba5b48b31eae0242ded7bd9e0c6b1af696d88078e213d8d"
+      }
+    },
+    {
+      "id": "final_custom_five",
+      "runId": "2026-10-01T07-37-43-924Z",
+      "businessVerdict": "PASS_SCOPED",
+      "observation": "自然语言确认新方案五万元后，旧三万元/五万元冲突不再显示。",
+      "legacyAutomatedPassed": true,
+      "legacyAutomatedChecks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "actualProviders": {
+        "plan": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "final": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        }
+      },
+      "questionCount": 1,
+      "ambiguityCount": 0,
+      "ambiguityEvidence": [],
+      "expectedAmbiguityCount": null,
+      "templateCode": "FEATURE_DEVELOPMENT",
+      "planLatencyMs": 2766,
+      "finalLatencyMs": 6047,
+      "finalRequest": {
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "2081d56f-39b8-466a-b11f-8f8a854ccbda",
+        "elapsedMs": 6278
+      },
+      "recommendations": [],
+      "evidence": {
+        "path": "tmp/plan-business-acceptance/2026-10-01T07-37-43-924Z/final_custom_five.json",
+        "sha256": "2976bffa7187dbacc6fe28ab82f1f133dd4639994206c4a7d3a259270d56a7f9"
+      }
+    },
+    {
+      "id": "final_new_eight",
+      "runId": "2026-10-01T07-37-43-924Z",
+      "businessVerdict": "PASS_SCOPED",
+      "observation": "新八万元与已确认五万元比较，保留一条新冲突。",
+      "legacyAutomatedPassed": true,
+      "legacyAutomatedChecks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "actualProviders": {
+        "plan": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "final": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        }
+      },
+      "questionCount": 1,
+      "ambiguityCount": 1,
+      "ambiguityEvidence": [
+        "资料对“审批阈值”存在不同取值：docs/新审批方案.txt（五万元）与 docs/财务补充规则.txt（八万元）。请确认本次采用哪一项。"
+      ],
+      "expectedAmbiguityCount": null,
+      "templateCode": "FEATURE_DEVELOPMENT",
+      "planLatencyMs": 2766,
+      "finalLatencyMs": 4098,
+      "finalRequest": {
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "ac6a5e21-12ba-4523-b021-3364e453447c",
+        "elapsedMs": 4144
+      },
+      "recommendations": [],
+      "evidence": {
+        "path": "tmp/plan-business-acceptance/2026-10-01T07-37-43-924Z/final_new_eight.json",
+        "sha256": "f33a0405b6986c10b528c2661752bce964a7d0dd9fd0dd10d1e11dbc007c4ac5"
+      }
+    },
+    {
+      "id": "closed_undecided",
+      "runId": "2026-10-01T07-45-06-188Z",
+      "businessVerdict": "FAIL",
+      "observation": "同一未决审批阈值仍被显示两次，模型改写没有被合并。",
+      "legacyAutomatedPassed": true,
+      "legacyAutomatedChecks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "actualProviders": {
+        "plan": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "final": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        }
+      },
+      "questionCount": 1,
+      "ambiguityCount": 2,
+      "ambiguityEvidence": [
+        "资料对“审批阈值”存在不同取值：src/rules/审批规则.txt（三万元）与 docs/新审批方案.txt（五万元）。请确认本次采用哪一项。",
+        "审批阈值冲突：src/rules/审批规则.txt 规定三万元，docs/新审批方案.txt 规定五万元，用户尚未确认采用哪一项。该值直接影响审批触发条件和财务复核范围，必须明确。"
+      ],
+      "expectedAmbiguityCount": 1,
+      "templateCode": "FEATURE_DEVELOPMENT",
+      "planLatencyMs": 2766,
+      "finalLatencyMs": 10460,
+      "finalRequest": {
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "a6a5c28f-c747-4f41-8ea7-a70b423d23b2",
+        "elapsedMs": 10677
+      },
+      "recommendations": [],
+      "evidence": {
+        "path": "tmp/plan-business-acceptance/2026-10-01T07-45-06-188Z/closed_undecided.json",
+        "sha256": "6750ad337830710bbf07c8e37abbfdc6a6689343ac641c4a74d63821f47f20c1"
+      }
+    },
+    {
+      "id": "closed_region_new_conflict",
+      "runId": "2026-10-01T07-45-06-188Z",
+      "businessVerdict": "FAIL",
+      "observation": "新广东省/浙江省冲突可见，但五个未决问题被模型改写后重复追加原问题，达到八条上限。",
+      "legacyAutomatedPassed": true,
+      "legacyAutomatedChecks": {
+        "realProvider": true,
+        "noKnownRepetitions": true,
+        "requiredQuestionsPresent": true,
+        "noOffTopicQuestions": true,
+        "noDuplicateDimensions": true,
+        "requiredTermsPresent": true,
+        "conflictAsked": true,
+        "noQuestionsWhenComplete": true,
+        "expectedTemplate": true,
+        "boundedQuestionCount": true,
+        "fourSections": true,
+        "confirmedAnswerCoverage": true
+      },
+      "actualProviders": {
+        "plan": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "final": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        }
+      },
+      "questionCount": 6,
+      "ambiguityCount": 8,
+      "ambiguityEvidence": [
+        "资料对“研究范围”存在不同取值：研究资料.txt（广东省）与 新方案.txt（浙江省）。请确认本次采用哪一项。",
+        "数据来源未确认：请提供心脑血管疾病死亡率数据的来源（如统计年鉴、卫生部门报告等）。",
+        "死亡率定义未确认：请明确死亡率的具体定义（如粗死亡率、年龄标化死亡率等）。",
+        "时间范围未确认：请指定需要分析的时间段（如年份区间）。",
+        "病种范围未确认：请明确心脑血管疾病具体包括哪些病种（如冠心病、脑卒中等）。",
+        "分析目的未确认：请说明分析的主要目的（如描述趋势、比较地区差异、识别风险因素等）。",
+        "该问题尚未确定：心脑血管疾病死亡率数据从哪里获取？",
+        "该问题尚未确定：死亡率的具体定义是什么？"
+      ],
+      "expectedAmbiguityCount": 6,
+      "templateCode": "RESEARCH_ANALYSIS",
+      "planLatencyMs": 7849,
+      "finalLatencyMs": 12787,
+      "finalRequest": {
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "680d25c6-5216-4c7b-8508-64dda66e1fc2",
+        "elapsedMs": 12916
+      },
+      "recommendations": [],
+      "evidence": {
+        "path": "tmp/plan-business-acceptance/2026-10-01T07-45-06-188Z/closed_region_new_conflict.json",
+        "sha256": "ebd12ae0d2fdcfc0c4cd7cd2cde0a6ecc08f7ab9f352af9d88bab726036b33cc"
+      }
+    }
+  ],
+  "researchCompatibility": {
+    "scope": "真实上下文准备接口；没有新增科研 Plan 调用",
+    "path": "research/研究方案.md#chunk-1",
+    "factCardCount": 7,
+    "evidence": {
+      "path": "tmp/plan-business-acceptance/2026-10-01T07-37-43-924Z/research-compatibility.json",
+      "sha256": "5faff15368e0803f61bb4c6bc58090da12b040dc22d22e9602293a344a4f8953"
+    }
+  },
+  "repositoryReplay": {
+    "firstChunks": 20,
+    "secondChunks": 26,
+    "firstCharacters": 120000,
+    "secondCharacters": 120000,
+    "sourceSafeFiles": 499,
+    "newFullFolderIndex": false,
+    "firstFactCards": 0,
+    "missingMapperRecallResolved": false
+  },
+  "openFindings": [
+    {
+      "id": "BA-03",
+      "status": "PARTIALLY_FIXED",
+      "remaining": "未决提醒缺少稳定的主题/证据标识，依赖文案去重，最终两例仍失败。"
+    },
+    {
+      "id": "BA-02",
+      "status": "PARTIALLY_FIXED",
+      "remaining": "事实卡片用途过滤改善不等于生成正文全量事实保真；测试源码仍可能被引用为现状。"
+    },
+    {
+      "id": "BA-05",
+      "status": "OPEN",
+      "remaining": "统计审计需求中的否定测试语句仍导致 TESTING 模板。"
+    },
+    {
+      "id": "BA-08",
+      "status": "OPEN",
+      "remaining": "现有通用断言将两个重复提醒反例标为 true，不能作为业务门禁。"
+    },
+    {
+      "id": "BA-04/BA-06/BA-07",
+      "status": "OPEN",
+      "remaining": "跨领域、选项关系/无证据推断和真实召回覆盖不在本次已完成范围。"
+    }
+  ],
+  "humanReview": {
+    "reviewer1": "PENDING",
+    "reviewer2": "PENDING",
+    "businessObservation": "开发者根据具体输入与输出核对，不替代双人独立评审"
+  },
+  "nextFix": "在服务端用已绑定问题 ID、冲突字段、双方来源与取值构建提醒身份；先保留平台原始未决项与新冲突，再核对模型新增信息。不得仅靠主题相似删掉新金额、适用条件或不同来源；增强门禁以识别重复和上限截断。",
+  "sourceHashes": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningEvidencePolicy.java",
+      "sha256": "4c1012652889c4d7ed9531029bd971bad360e90c2b1cee172c2f9f0f4bf2f15e"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanRecommendationAligner.java",
+      "sha256": "a5e53aaae377fdbf4deef6a4a00677e242e36daa81e88c23ebaf5a32ced013c1"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/ConfirmedDecisionSet.java",
+      "sha256": "47cba4f083d1b1518f395adc0d7763610ae16570f1be49d355cd83dadffcff45"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/ContextConflictDetector.java",
+      "sha256": "badde4c43b1a61cd6ee41348ea24f6e32ea77e2d1d522bcd31542081456aa517"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java",
+      "sha256": "318e6803900213d8fe23dfdf30613c909c8047027850c58e3f104aafc3913d4e"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java",
+      "sha256": "b211c5d6d3bdcea9db200b4f11dd216c29c57bc83f15235883fc128c9c7b9833"
+    }
+  ],
+  "limitations": [
+    "未验证所有 Provider/模型组合",
+    "没有重新扫描整个仓库",
+    "未验证大型混合办公文档、并发或生产多实例",
+    "正常验收历史与用量保留；无数据库迁移、提交或生产部署",
+    "修复中出现一次历史查询 500；Vite 会话输出记录该历史接口 ECONNREFUSED，表明当时代理连接后端失败。重启完成后真实列表和详情均为 200。"
+  ]
+}

@@ -391,7 +391,7 @@ onMounted(loadPage);
             <ElTag size="small" effect="plain">{{ templateLabel(row.templateCode) }}</ElTag>
           </div>
           <p class="history-mobile-card__preview">{{ row.rawPromptPreview }}</p>
-          <span class="history-mobile-card__model">{{ row.providerName }} / {{ row.modelName }}</span>
+          <span class="history-mobile-card__model">{{ row.modelVersion || '版本未记录' }}</span>
           <div class="history-mobile-card__actions">
             <ElButton text size="small" :icon="View" @click="openDetail(row.id)">查看</ElButton>
             <ElButton text size="small" :icon="Upload" @click="loadToWorkbench(row.id)">
@@ -416,9 +416,9 @@ onMounted(loadPage);
             <ElTag size="small" effect="plain">{{ templateLabel(row.templateCode) }}</ElTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="模型" width="170">
+        <ElTableColumn label="模型版本" min-width="200">
           <template #default="{ row }">
-            <span class="model-cell">{{ row.providerName }} / {{ row.modelName }}</span>
+            <span class="model-cell" :title="row.modelVersion || '版本未记录'">{{ row.modelVersion || '版本未记录' }}</span>
           </template>
         </ElTableColumn>
         <ElTableColumn label="原始提示词" min-width="260">

@@ -116,9 +116,10 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         request.rawPrompt(),
                         request.contextDescription()
                 );
-                String selectedModelId = modelCatalog == null
+                var selectedModel = modelCatalog == null ? null : modelCatalog.resolve(request.modelId());
+                String selectedModelId = selectedModel == null
                         ? legacyModelId(request.modelId())
-                        : modelCatalog.resolve(request.modelId()).publicId();
+                        : selectedModel.publicId();
                 PlanningProviderRequest providerRequest = new PlanningProviderRequest(
                         request.rawPrompt().trim(),
                         request.contextDescription().trim(),
@@ -172,7 +173,9 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         summary,
                         questions,
                         inferredTemplate,
-                        new ProviderMetadata(validated.provider(), validated.model(), validated.mock()),
+                        new ProviderMetadata(validated.provider(), validated.model(), validated.mock(),
+                                selectedModel != null && selectedModelId.equals(validated.model())
+                                        ? selectedModel.displayName() : ""),
                         latencyMs,
                         registration.planId(),
                         registration.planningContext(),

@@ -254,7 +254,7 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
     private String validateDisplayName(String displayName) {
         String normalized = displayName == null ? "" : displayName.trim();
         if (normalized.isBlank() || normalized.length() > 120) {
-            throw new InvalidOptimizationRequestException("模型展示名称不能为空且不能超过 120 个字符。");
+            throw new InvalidOptimizationRequestException("模型版本不能为空且不能超过 120 个字符。");
         }
         return normalized;
     }

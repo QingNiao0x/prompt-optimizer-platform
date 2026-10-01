@@ -75,6 +75,7 @@ export interface AuthenticatedUser {
 /** 平台已发布给终端用户的模型，不包含端点或密钥。 */
 export interface AvailableModel {
   id: string;
+  /** 管理员维护的具体版本名称；id 仅用于请求路由，不用于替代版本展示。 */
   displayName: string;
   provider: string;
   defaultModel: boolean;
@@ -85,6 +86,7 @@ export interface AdminModel {
   publicId: string;
   routeKey: string;
   upstreamModel: string;
+  /** 用户可见的模型版本，不是供应商调用 ID。 */
   displayName: string;
   enabled: boolean;
   defaultModel: boolean;
@@ -426,8 +428,11 @@ export interface PromptSection {
 
 export interface ProviderMetadata {
   provider: string;
+  /** 保留原调用标识用于追踪，不将其当作具体版本。 */
   model: string;
   mock: boolean;
+  /** 调用时的版本快照；旧响应可能缺失，不使用当前目录名称倒填历史。 */
+  modelVersion?: string;
 }
 
 export interface OptimizationResult {
@@ -448,6 +453,8 @@ export interface OptimizationHistorySummary {
   rawPromptPreview: string;
   providerName: string;
   modelName: string;
+  /** 保存本条优化记录时的版本名称，历史记录可能未保存。 */
+  modelVersion?: string;
   mock: boolean;
   latencyMs: number | null;
   createdAt: string;
@@ -477,6 +484,8 @@ export interface OptimizationHistoryDetail {
   templateCode: TemplateCode;
   providerName: string;
   modelName: string;
+  /** 保存本条优化记录时的版本名称，历史记录可能未保存。 */
+  modelVersion?: string;
   mock: boolean;
   latencyMs: number | null;
   createdAt: string;

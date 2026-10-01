@@ -9,10 +9,11 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * @DateTime: 2026-08-14
- * @Author: QingNiao
- * @ProjectName: prompt-optimizer-platform
- * @Description: 单条历史记录详情，包含原始提示词、优化结果、脱敏上下文摘要和增强选项。
+ * 当前租户/工作区的历史详情；modelName 保留调用 ID，modelVersion 使用当次版本快照，旧记录可为空。
+ * 包含原始提示词、优化结果、脱敏上下文摘要和增强选项，不回填当前目录版本。
+ *
+ * @author QingNiao
+ * @since 0.1.0
  */
 public record OptimizationHistoryDetail(
         UUID id,
@@ -31,7 +32,8 @@ public record OptimizationHistoryDetail(
         boolean includePermissionBoundaries,
         boolean includeExamples,
         List<ConversationMessage> conversationHistory,
-        Map<String, Object> permissionPolicy
+        Map<String, Object> permissionPolicy,
+        String modelVersion
 ) {
 
     /**

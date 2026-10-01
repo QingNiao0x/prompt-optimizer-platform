@@ -39,7 +39,7 @@ public interface PlatformModelCatalog {
      * @param publicId 终端用户提交的稳定模型标识
      * @param routeKey 服务端 Provider 路由键
      * @param upstreamModel 路由实际调用的上游模型名称
-     * @param displayName 用户界面显示名称
+     * @param displayName 管理员维护的具体模型版本名称，用于用户展示及调用快照；不改变上游调用 ID
      * @param enabled 是否允许用户选择和调用
      * @param defaultModel 是否为平台默认模型
      * @param sortOrder 用户模型列表的非负排序值

@@ -328,8 +328,10 @@ class DefaultEnhancementOrchestratorTest {
 
         assertThat(analysisQueries).containsExactly(
                 rawPrompt,
-                rawPrompt + "\n" + question.question() + "\n广东省"
+                rawPrompt + "\n地区：广东省"
         );
+        // 二次检索纳入确定答案，不重新拼入问题里的未选候选项。
+        assertThat(analysisQueries.getLast()).doesNotContain(question.question());
         assertThat(result.optimizedPrompt()).contains("广东省");
         assertThat(result.ambiguities()).anySatisfy(value -> assertThat(value)
                 .contains("研究范围", "研究资料.pdf", "新方案.txt"));

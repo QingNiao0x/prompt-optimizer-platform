@@ -32,6 +32,13 @@ public record OptimizationResult(
         warnings = warnings == null ? List.of() : List.copyOf(warnings);
     }
 
+    /** 保存调用开始时的平台版本名称，后续管理员改名不影响本条优化记录。 */
+    public OptimizationResult withModelVersion(String modelVersion) {
+        return new OptimizationResult(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints,
+                templateCode, new ProviderMetadata(provider.provider(), provider.model(), provider.mock(), modelVersion),
+                latencyMs, warnings);
+    }
+
     /** 兼容历史结果构造调用；旧结果没有单独的上下文警告。 */
     public OptimizationResult(
             String optimizedPrompt,

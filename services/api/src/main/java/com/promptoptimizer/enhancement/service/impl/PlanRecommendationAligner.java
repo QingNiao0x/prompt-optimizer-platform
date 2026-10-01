@@ -6,28 +6,21 @@ import com.promptoptimizer.enhancement.domain.PlanQuestionType;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * 在不增删候选项的前提下，把「建议」对准当前需求、已上传材料和用户已说过的话。
- * 证据不能唯一指向某一项时，保留模型原来的建议，避免替用户改方向。
+ * 只有完整选项或具体实践有证据时才展示推荐；模型自报的推荐也须通过相同核对。
  *
  * @author QingNiao
  * @since 0.1.0
  */
 final class PlanRecommendationAligner {
 
-    private static final Pattern TOKEN = Pattern.compile("[a-z0-9][a-z0-9+_.-]{2,}|[\\p{IsHan}]{2,}");
-    private static final int MINIMUM_EVIDENCE = 1;
-    /** 两个字的常见词不能单独把「建议」改到某个举例上。 */
-    private static final Set<String> WEAK_TOKENS = Set.of(
-            "地区", "范围", "研究", "分析", "使用", "项目", "需求", "结果", "问题", "什么", "哪些", "如何", "以及"
-    );
+    private static final Pattern TECHNOLOGY_LABEL = Pattern.compile("[a-zA-Z][a-zA-Z0-9.+-]*(?:[ /-]+[a-zA-Z0-9][a-zA-Z0-9.+-]*)*");
 
     private PlanRecommendationAligner() {
     }
@@ -37,60 +30,24 @@ final class PlanRecommendationAligner {
         if (question.type() == PlanQuestionType.FREE_TEXT || question.options().size() < 2) {
             return question;
         }
-        String currentCorpus = input.rawPrompt().toLowerCase(Locale.ROOT);
-        String userCorpus = userCorpus(input).toLowerCase(Locale.ROOT);
-        String projectCorpus = projectCorpus(input).toLowerCase(Locale.ROOT);
-        if (currentCorpus.isBlank() && userCorpus.isBlank() && projectCorpus.isBlank()) {
-            return question;
-        }
-        List<Set<String>> tokenSets = question.options().stream()
-                .map(PlanRecommendationAligner::tokens)
-                .toList();
-        Set<String> shared = new HashSet<>(tokenSets.getFirst());
-        for (Set<String> tokens : tokenSets) {
-            shared.retainAll(tokens);
-        }
+        String currentCorpus = normalize(input.rawPrompt());
+        String userCorpus = normalize(userCorpus(input));
+        String projectCorpus = normalize(projectCorpus(input));
         int bestScore = 0;
         int bestIndex = -1;
         boolean unique = true;
-        List<Boolean> excluded = new ArrayList<>();
         List<String> reasons = new ArrayList<>();
-        for (int index = 0; index < tokenSets.size(); index++) {
-            int score = 0;
-            int sourceWeight = 0;
-            boolean rejected = false;
-            Set<String> matched = new java.util.TreeSet<>();
-            String label = question.options().get(index).label().toLowerCase(Locale.ROOT);
-            for (String token : tokenSets.get(index)) {
-                if (shared.contains(token) || WEAK_TOKENS.contains(token)) {
-                    continue;
-                }
-                int currentEvidence = evidence(currentCorpus, token);
-                if (currentEvidence < 0) {
-                    rejected = true;
-                    break;
-                }
-                // 描述中的任务主题不代表选择偏好，例如提到 Arriaga 不等于“只要关键代码”。
-                int weight = label.contains(token) && currentEvidence > 0 ? 10_000
-                        : label.contains(token) && evidence(userCorpus, token) > 0 ? 100
-                        : evidence(projectCorpus, token) > 0 ? 1 : 0;
-                if (weight > sourceWeight) {
-                    sourceWeight = weight;
-                    score = 0;
-                    matched.clear();
-                }
-                if (weight > 0 && weight == sourceWeight) {
-                    score += weight;
-                    matched.add(token);
-                }
-            }
-            excluded.add(rejected);
-            reasons.add((sourceWeight == 10_000 ? "原始需求已提及" : sourceWeight == 100
-                    ? "项目描述或历史偏好已提及" : "已分析的项目技术栈、依赖或文件包含")
-                    + "：" + String.join("、", matched.stream().limit(3)
-                    .map(token -> token.length() > 64 ? token.substring(0, 64) : token).toList())
-                    + "。建议优先核对这项兼容方案。");
-            if (rejected) score = 0;
+        for (int index = 0; index < question.options().size(); index++) {
+            PlanOption option = question.options().get(index);
+            String choice = choiceIdentity(option.label());
+            String current = support(currentCorpus, choice, option, false);
+            String user = support(userCorpus, choice, option, false);
+            String project = support(projectCorpus, choice, option, true);
+            boolean rejected = !choice.isBlank() && evidence(currentCorpus, choice) < 0;
+            int score = rejected ? 0 : !current.isBlank() ? 10_000 : !user.isBlank() ? 100 : !project.isBlank() ? 1 : 0;
+            String matched = score == 10_000 ? current : score == 100 ? user : project;
+            reasons.add((score == 10_000 ? "原始需求" : score == 100 ? "用户描述或历史偏好" : "项目证据")
+                    + "明确包含：" + matched + "。请核对适用范围后选择。");
             if (score > bestScore) {
                 bestScore = score;
                 bestIndex = index;
@@ -99,18 +56,18 @@ final class PlanRecommendationAligner {
                 unique = false;
             }
         }
-        boolean supported = unique && bestIndex >= 0 && bestScore >= MINIMUM_EVIDENCE;
+        boolean supported = unique && bestIndex >= 0 && bestScore > 0;
         List<PlanOption> aligned = new ArrayList<>();
         for (int index = 0; index < question.options().size(); index++) {
             PlanOption option = question.options().get(index);
-            boolean recommended = !excluded.get(index) && (supported ? index == bestIndex : option.recommended());
+            boolean recommended = supported && index == bestIndex;
             aligned.add(new PlanOption(
                     option.id(),
                     option.label(),
                     option.description(),
                     option.answer(),
                     recommended,
-                    recommended ? (supported ? reasons.get(index) : option.recommendationReason()) : ""
+                    recommended ? reasons.get(index) : ""
             ));
         }
         return new PlanQuestion(
@@ -148,35 +105,42 @@ final class PlanRecommendationAligner {
         return corpus.toString();
     }
 
-    private static Set<String> tokens(PlanOption option) {
-        Set<String> tokens = new HashSet<>();
-        String optionText = (option.label() + " " + option.description() + " " + option.answer())
-                .toLowerCase(Locale.ROOT);
-        Matcher matcher = TOKEN.matcher(optionText);
-        while (matcher.find()) {
-            String token = matcher.group();
-            if (evidence(optionText, token) < 0) continue;
-            tokens.add(token);
-            if (token.codePoints().allMatch(Character::isIdeographic) && token.length() > 4) {
-                for (int index = 0; index + 4 <= token.length(); index++) {
-                    tokens.add(token.substring(index, index + 4));
-                }
-            }
+    /** 保留选项的完整含义，不能从“基于 Plan 确认”或“API 调用量”中只截出英文词。 */
+    private static String choiceIdentity(String label) {
+        return normalize(label).replaceFirst("^(?:本次|继续|严格|优先)*(?:采用|用|选择)?\\s*", "");
+    }
+
+    /** 不拆成共同词；完整实践短句可支撑“混合使用”等概括选项，但不能替另一技术名称背书。 */
+    private static String support(String corpus, String choice, PlanOption option, boolean project) {
+        if (option.label().matches(".*(仅|统一|全部|所有|只用).*")
+                && evidence(corpus, normalize(option.label())) <= 0) return "";
+        if (choice.length() >= 3 && evidence(corpus, choice) > 0) return choice;
+        if (!project || TECHNOLOGY_LABEL.matcher(option.label()).find()) return "";
+        for (String clause : option.description().split("[，,。；;]")) {
+            String claim = normalize(clause);
+            if (claim.length() >= 8 && evidence(corpus, claim) > 0) return claim;
         }
-        return tokens;
+        return "";
+    }
+
+    /** 同义连接词可归一化，但保留比较边界、否定词和完整技术名。 */
+    private static String normalize(String value) {
+        return value == null ? "" : value.toLowerCase(Locale.ROOT).replaceAll("\\s+", " ").trim()
+                .replace("使用", "用").replace("大于等于", "≥").replace("不少于", "≥")
+                .replace("大于", ">").replace("超过", ">").replace("小于等于", "≤").replace("小于", "<");
     }
 
     /** 只使用完整技术词或中文短语；明确的否定和迁出来源不构成正向推荐依据。 */
     private static int evidence(String corpus, String token) {
         boolean latin = token.chars().allMatch(character -> character < 128);
-        Pattern occurrence = Pattern.compile((latin ? "(?<![a-z0-9])" : "") + Pattern.quote(token)
-                + (latin ? "(?![a-z0-9])" : ""));
+        Pattern occurrence = Pattern.compile((latin ? "(?<![a-z0-9+_.-])" : "") + Pattern.quote(token)
+                + (latin ? "(?![a-z0-9+_.-])" : ""));
         Matcher matcher = occurrence.matcher(corpus);
         boolean found = false;
         while (matcher.find()) {
             String prefix = corpus.substring(Math.max(0, matcher.start() - 24), matcher.start());
             String suffix = corpus.substring(matcher.end(), Math.min(corpus.length(), matcher.end() + 24));
-            if (prefix.matches("(?s).*(?:不要|不再|不能|不使用|不采用|不引入|尚未|无需|排除|避免|禁止|without|avoid|not)[^，。；;.!?\\n]{0,12}")
+            if (prefix.matches("(?s).*(?:不要|不再|不能|不用|不使用|不采用|不引入|尚未|无需|排除|避免|禁止|without|avoid|not)[^，。；;.!?\\n]{0,12}")
                     || prefix.matches("(?s).*从\\s*") && suffix.matches("(?s)^.{0,6}(?:迁移到|切换到|改为|替换为).*") ) {
                 return -1;
             }

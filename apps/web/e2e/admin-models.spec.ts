@@ -53,15 +53,15 @@ test('管理员可发布、修改和移除用户可选模型', async ({ page }) 
   await expect(page.getByRole('heading', { name: '用户可选模型' })).toBeVisible();
   await page.getByRole('button', { name: '添加模型' }).click();
   const dialog = page.getByRole('dialog', { name: '添加模型' });
-  await dialog.getByLabel('上游模型名称').fill('kimi-k3');
-  await dialog.getByLabel('用户看到的名称').fill('Kimi K3');
+  await dialog.getByLabel('上游调用 ID').fill('kimi-k3');
+  await dialog.getByLabel('模型版本').fill('Kimi K3');
   await dialog.getByRole('button', { name: '保存' }).click();
   const kimiRow = page.getByRole('row').filter({ hasText: 'Kimi K3' });
   await expect(kimiRow).toBeVisible();
 
   await kimiRow.getByRole('button', { name: '编辑' }).click();
   const editDialog = page.getByRole('dialog', { name: '编辑模型' });
-  await editDialog.getByLabel('用户看到的名称').fill('Kimi 新版');
+  await editDialog.getByLabel('模型版本').fill('Kimi 新版');
   await editDialog.getByRole('button', { name: '保存' }).click();
   await expect(page.getByRole('row').filter({ hasText: 'Kimi 新版' })).toBeVisible();
 

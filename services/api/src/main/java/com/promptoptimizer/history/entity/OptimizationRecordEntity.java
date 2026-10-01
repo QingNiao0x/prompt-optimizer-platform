@@ -42,7 +42,7 @@ public class OptimizationRecordEntity {
     /** 脱敏上下文 JSON 对象，含项目描述、技术栈/依赖条目、目录/警告/脱敏字符串数组和分析版本；不含文件正文。 */
     private Map<String, Object> contextSnapshot;
 
-    /** 结果 JSON 对象，保存段落对象数组、歧义/约束字符串数组、Provider/模型标量、增强选项对象、会话消息数组及可选 Plan 确认对象。 */
+    /** 结果 JSON 对象，保存段落、歧义/约束数组、Provider/调用 ID、modelVersion 版本快照、增强选项、会话及可选 Plan 确认；旧记录可缺少 modelVersion。 */
     private Map<String, Object> resultMetadata = new LinkedHashMap<>();
 
     /** 权限策略 JSON 对象，包含 protectedPaths 与 requireConfirmationFor 两个字符串数组；结构由请求 DTO 校验。 */

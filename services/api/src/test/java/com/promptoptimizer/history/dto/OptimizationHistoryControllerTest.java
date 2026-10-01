@@ -61,7 +61,8 @@ class OptimizationHistoryControllerTest {
                         "deterministic-enhancer-v1",
                         true,
                         12,
-                        OffsetDateTime.now(ZoneOffset.UTC)
+                        OffsetDateTime.now(ZoneOffset.UTC),
+                        "验收版本-20261001"
                 )),
                 1,
                 10,
@@ -73,6 +74,7 @@ class OptimizationHistoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().exists(RequestIdFilter.REQUEST_ID_HEADER))
                 .andExpect(jsonPath("$.data.records[0].templateCode").value("FEATURE_DEVELOPMENT"))
+                .andExpect(jsonPath("$.data.records[0].modelVersion").value("验收版本-20261001"))
                 .andExpect(jsonPath("$.data.total").value(1))
                 .andExpect(jsonPath("$.data.current").value(1))
                 .andExpect(jsonPath("$.data.size").value(10));
@@ -130,7 +132,8 @@ class OptimizationHistoryControllerTest {
                 true,
                 false,
                 List.of(),
-                Map.of()
+                Map.of(),
+                "验收版本-20261001"
         ));
 
         mockMvc.perform(get("/api/v1/optimization-history/{id}", id))

@@ -4,10 +4,10 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * @DateTime: 2026-08-14
- * @Author: QingNiao
- * @ProjectName: prompt-optimizer-platform
- * @Description: 历史记录列表项，原始提示词只返回预览，完整内容由详情接口提供。
+ * 历史列表预览；modelName 为原调用标识，modelVersion 为调用时的平台版本快照，旧记录可为空。
+ *
+ * @author QingNiao
+ * @since 0.1.0
  */
 public record OptimizationHistorySummary(
         UUID id,
@@ -17,6 +17,7 @@ public record OptimizationHistorySummary(
         String modelName,
         boolean mock,
         Integer latencyMs,
-        OffsetDateTime createdAt
+        OffsetDateTime createdAt,
+        String modelVersion
 ) {
 }

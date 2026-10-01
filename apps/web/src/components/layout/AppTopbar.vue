@@ -9,7 +9,8 @@ import { useOptimizationStore } from '@/stores/optimization';
 
 const auth = useAuthStore();
 const optimization = useOptimizationStore();
-const selectedModelName = computed(() => optimization.availableModels.find(
+// 顶栏与选择器共用管理员维护的版本名称，不从路由 ID 推断版本。
+const selectedModelVersion = computed(() => optimization.availableModels.find(
   (model) => model.id === optimization.selectedModelId,
 )?.displayName ?? '平台模型');
 
@@ -53,9 +54,9 @@ const navigation = [
 
     <div class="topbar-tools">
       <AccountMenu />
-      <div class="provider-status" title="模型由平台管理员配置">
+      <div class="provider-status" :title="`模型版本：${selectedModelVersion}（由平台管理员维护）`">
         <span class="status-dot" aria-hidden="true"></span>
-        <span>{{ selectedModelName }}</span>
+        <span>{{ selectedModelVersion }}</span>
       </div>
     </div>
   </header>

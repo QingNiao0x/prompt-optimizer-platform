@@ -195,7 +195,8 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 stringValue(metadata.get("model")),
                 Boolean.TRUE.equals(metadata.get("mock")),
                 entity.getLatencyMs(),
-                entity.getCreatedAt()
+                entity.getCreatedAt(),
+                stringValue(metadata.get("modelVersion"))
         );
     }
 
@@ -227,7 +228,8 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 Boolean.TRUE.equals(options.get("includeExamples")),
                 convertList(metadata.get("conversationHistory"), new TypeReference<List<ConversationMessage>>() {
                 }),
-                entity.getPermissionPolicy()
+                entity.getPermissionPolicy(),
+                stringValue(metadata.get("modelVersion"))
         );
     }
 
@@ -244,6 +246,8 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         metadata.put("appliedConstraints", result.appliedConstraints());
         metadata.put("provider", result.provider().provider());
         metadata.put("model", result.provider().model());
+        // 版本名称在调用时固化；不能通过关联当前目录让历史随管理员改名而变化。
+        metadata.put("modelVersion", result.provider().modelVersion());
         metadata.put("mock", result.provider().mock());
         metadata.put("enhancementOptions", Map.of(
                 "templateCode", result.templateCode().name(),

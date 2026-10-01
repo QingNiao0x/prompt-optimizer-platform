@@ -96,12 +96,12 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
       <div class="composer-controls">
         <div class="composer-options">
           <label class="model-control" for="workbench-model">
-            <span>增强模型</span>
+            <span>模型版本</span>
             <ElSelect
               id="workbench-model"
               v-model="selectedModel"
               class="model-select"
-              aria-label="选择增强模型"
+              aria-label="选择模型版本"
               :disabled="isBusy || isLoadingModels || availableModels.length === 0"
               :placeholder="isLoadingModels ? '正在加载模型…' : '平台默认模型'"
             >

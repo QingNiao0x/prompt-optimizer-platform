@@ -8,9 +8,11 @@ import com.promptoptimizer.enhancement.domain.PlanningFactCard;
 import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /** 对已经解析的材料做保守的同名字段冲突检测，供 Plan 与最终结果显示。 */
@@ -44,6 +46,7 @@ final class ContextConflictDetector {
                            List<PlanningFactCard> boundFacts) {
         PlanningEvidencePolicy evidencePolicy = new PlanningEvidencePolicy(query);
         Map<String, Map<String, SourceValue>> byField = new LinkedHashMap<>();
+        Set<String> relevantFields = new HashSet<>();
         List<StagedFile> evidence = new ArrayList<>();
         context.fileSnippets().forEach(file -> evidence.add(new StagedFile(file, false)));
         boundFacts.forEach(card -> evidence.add(new StagedFile(new FileSnippet(
@@ -60,8 +63,11 @@ final class ContextConflictDetector {
                 if (!MATERIAL_FIELD.matcher(key).matches() || value.length() < 2
                         || sensitiveValueDetector.containsCredential(value)
                         || value.matches(".*(待定|未知|未明确|可能|例如|[？?]).*")) continue;
-                if (query != null && !query.isBlank()
-                        && !evidencePolicy.relevant(file, key + "：" + value, PlanningFactCategory.BUSINESS_RULE)) continue;
+                // 一方命中用户已确认值后，同字段的另一取值也必须参加比较，不能因其未命中答案而消失。
+                if (query == null || query.isBlank()
+                        || evidencePolicy.relevant(file, key + "：" + value, PlanningFactCategory.BUSINESS_RULE)) {
+                    relevantFields.add(key);
+                }
                 byField.computeIfAbsent(key, unused -> new LinkedHashMap<>())
                         .putIfAbsent(value.toLowerCase(Locale.ROOT), new SourceValue(file.path(), value,
                                 scope(value), staged.fromPlan()));
@@ -69,7 +75,12 @@ final class ContextConflictDetector {
         }
         List<Finding> conflicts = new ArrayList<>();
         for (Map.Entry<String, Map<String, SourceValue>> entry : byField.entrySet()) {
+            if (!relevantFields.contains(entry.getKey())) continue;
             List<SourceValue> values = new ArrayList<>(entry.getValue().values());
+            // 已确认的规则排在首位，第三个新值必须与本次采用值比较，不能复活已放弃的规则。
+            decisions.selectedConflictValue(entry.getKey()).ifPresent(selected ->
+                    values.sort(java.util.Comparator.comparingInt(value ->
+                            value.value().trim().equalsIgnoreCase(selected) ? 0 : 1)));
             SourceValue first = null;
             SourceValue second = null;
             for (int left = 0; left < values.size() && second == null; left++) {

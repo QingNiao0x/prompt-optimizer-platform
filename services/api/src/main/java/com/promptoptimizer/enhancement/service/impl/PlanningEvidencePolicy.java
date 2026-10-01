@@ -33,6 +33,12 @@ final class PlanningEvidencePolicy {
     private static final Pattern EXAMPLE_LABEL = Pattern.compile("(?i)(示例|样例|举例|example|sample)");
     private static final Pattern BUILD_WARNING = Pattern.compile(
             "(?i)(非阻断警告|构建仍.*提示|(?:构建|打包|分包|bundle|chunk).*(?:警告|warning)|chunks? are larger)");
+    // research 目录也可存放真实科研方案；只识别明确的竞品/调研用途，不按目录名排除科研资料。
+    private static final Pattern RESEARCH_DOCUMENT = Pattern.compile(
+            "(?:^|/)调研(?:/|$)|[^/]*(?:调研|竞品|competitor)[^/]*\\.(?:md|txt)$"
+                    + "|(?:^|/)research/[^/]*(?:资料核对|产品评估|工具对比)[^/]*\\.(?:md|txt)$");
+    private static final Pattern INSTRUCTION_SOURCE = Pattern.compile(
+            "(?i)(?:prompt.*provider|planning.*(?:policy|extractor)|fact.*extractor)\\.(?:java|ts|py)$");
     private static final Set<String> GENERIC_TERMS = Set.of(
             "开发", "实现", "分析", "生成", "处理", "添加", "项目", "方案", "文件", "内容", "用户", "接口", "需求",
             "设计", "系统", "功能", "需要", "要求", "输出", "输入", "数据", "使用", "支持", "优化", "完善",
@@ -45,7 +51,9 @@ final class PlanningEvidencePolicy {
     private final boolean reportTask;
 
     PlanningEvidencePolicy(String query) {
-        this.query = normalize(query);
+        // 禁止事项不是任务目标，例如“不得把测试样例当事实”不能开启测试材料通道。
+        this.query = normalize(query).replaceAll(
+                "(?i)(?:不得|不要|禁止|不能|避免|不应|do not|don't)[^。；;！!？?\\n]*", " ");
         terms = meaningfulTerms(this.query);
         // 提交物中泛称“附测试方案”不应令全仓库测试夹具进入业务事实。
         testTask = Pattern.compile("(?i)(修复|排查|补充|编写|完善|重构|验证|分析).{0,24}(测试|用例|断言|夹具)"
@@ -56,10 +64,11 @@ final class PlanningEvidencePolicy {
 
     /** 先识别报告和夹具，再识别测试源码，避免它们因扩展名被标为正式实现。 */
     static PlanningFactOrigin origin(String path, String language) {
-        String normalized = normalize(path).replace('\\', '/');
+        String normalized = sourcePath(path);
         if (REPORT_PATH.matcher(normalized).find()) return PlanningFactOrigin.GENERATED_REPORT;
         if (FIXTURE_PATH.matcher(normalized).find()) return PlanningFactOrigin.TEST_FIXTURE;
-        if (TEST_PATH.matcher(normalized).find() || path != null && JAVA_TEST_FILE.matcher(path).find()) {
+        if (TEST_PATH.matcher(normalized).find()
+                || JAVA_TEST_FILE.matcher(path == null ? "" : path.replaceFirst("(?i)#chunk-\\d+$", "")).find()) {
             return PlanningFactOrigin.TEST_SOURCE;
         }
         if (EXAMPLE_PATH.matcher(normalized).find()) return PlanningFactOrigin.EXAMPLE_MATERIAL;
@@ -76,6 +85,11 @@ final class PlanningEvidencePolicy {
     /** 只影响证据候选，不从上传列表、本地索引或分析报告删除任何文件。 */
     boolean allows(FileSnippet file) {
         if (file == null || file.path() == null || file.path().isBlank()) return false;
+        String path = sourcePath(file.path());
+        if (!explicitlyNamed(path) && RESEARCH_DOCUMENT.matcher(path).find()
+                && !query.matches("(?s).*(调研|竞品|研究|论文|对标|比较工具|research).*")) return false;
+        if (!explicitlyNamed(path) && INSTRUCTION_SOURCE.matcher(path).find()
+                && !query.matches("(?s).*(模型指令|供应商适配|模型请求|提示词组装|provider).*")) return false;
         return switch (origin(file.path(), file.language())) {
             case TEST_SOURCE, TEST_FIXTURE -> testTask || explicitlyNamed(file.path());
             case EXAMPLE_MATERIAL -> explicitlyNamed(file.path()) || query.contains("示例") || query.contains("样例");
@@ -109,17 +123,38 @@ final class PlanningEvidencePolicy {
 
     /** Markdown 的示例小节不升级为事实；保留其他正文和非示例代码块内的资料。 */
     List<String> evidenceLines(FileSnippet file) {
-        return contextText(file).lines()
+        return factText(file).lines()
                 .flatMap(line -> java.util.Arrays.stream(line.split("[。；;]+")))
                 .map(String::trim).filter(value -> !value.isBlank())
                 .filter(value -> !EXAMPLE_LABEL.matcher(value).lookingAt()).toList();
+    }
+
+    /** 源码字符串、正则和模型提示模板是被审查的数据，不自动成为业务规则；源码原文仍可供上下文分析。 */
+    private String factText(FileSnippet file) {
+        String text = contextText(file);
+        if (origin(file.path(), file.language()) != PlanningFactOrigin.PROJECT_SOURCE
+                || explicitlyNamed(file.path())) return text;
+        List<String> lines = new ArrayList<>();
+        boolean textBlock = false;
+        for (String line : text.lines().toList()) {
+            String stripped = line.strip();
+            int delimiters = stripped.split("\"\"\"", -1).length - 1;
+            if (delimiters > 0) {
+                if (delimiters % 2 != 0) textBlock = !textBlock;
+                continue;
+            }
+            if (textBlock || stripped.matches("(?s).*(?:Pattern\\.compile|\\.matches\\(|\\.replaceAll\\().*")
+                    || stripped.matches("(?s)^(?:[+]?\\s*[\"'`]|(?:private |public |static |final )*String\\s+).*")) continue;
+            lines.add(line);
+        }
+        return String.join("\n", lines);
     }
 
     /** 计划摘录保留源码原文，只在 Markdown 内跳过明确示例小节，避免改坏代码标点。 */
     String contextText(FileSnippet file) {
         if (file.content() == null) return "";
         List<String> result = new ArrayList<>();
-        boolean markdown = file.path() != null && file.path().toLowerCase(Locale.ROOT).endsWith(".md");
+        boolean markdown = sourcePath(file.path()).endsWith(".md");
         if (!markdown) return file.content();
         int exampleDepth = 0;
         boolean fenced = false;
@@ -173,8 +208,13 @@ final class PlanningEvidencePolicy {
     }
 
     private static String fileName(String path) {
-        String normalized = normalize(path).replace('\\', '/');
+        String normalized = sourcePath(path);
         return normalized.substring(normalized.lastIndexOf('/') + 1);
+    }
+
+    /** 本地索引的片段后缀不是文件扩展名，不能让分块材料绕过用途识别。 */
+    private static String sourcePath(String path) {
+        return normalize(path).replace('\\', '/').replaceFirst("#chunk-\\d+$", "");
     }
 
     private static String normalize(String value) {

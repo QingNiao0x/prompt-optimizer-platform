@@ -72,7 +72,7 @@ const openEdit = (model: AdminModel): void => {
 
 const save = async (): Promise<void> => {
   if (!form.routeKey || !form.upstreamModel.trim() || !form.displayName.trim()) {
-    ElMessage.warning('请填写供应商路由、模型名称和展示名称。');
+    ElMessage.warning('请填写供应商路由、上游调用 ID 和模型版本。');
     return;
   }
   isSaving.value = true;
@@ -154,9 +154,9 @@ onMounted(() => { void refresh(); });
 
     <div class="model-table-card">
       <ElTable v-if="models.length > 0" :data="models" v-loading="isLoading" row-key="id">
-        <ElTableColumn label="模型" min-width="230">
+        <ElTableColumn label="模型版本" min-width="230">
           <template #default="{ row }">
-            <div class="model-name"><strong>{{ row.displayName }}</strong><small>{{ row.publicId }}</small></div>
+            <div class="model-name"><strong>{{ row.displayName }}</strong><small>调用 ID：{{ row.publicId }}</small></div>
           </template>
         </ElTableColumn>
         <ElTableColumn prop="routeKey" label="平台路由" min-width="120" />
@@ -186,18 +186,18 @@ onMounted(() => { void refresh(); });
             <ElOption v-for="route in routes" :key="route.key" :label="route.providerName" :value="route.key" />
           </ElSelect>
         </label>
-        <label>上游模型名称
+        <label>上游调用 ID
           <ElInput v-model="form.upstreamModel" :disabled="Boolean(editingId)" maxlength="120" />
         </label>
-        <label>用户看到的名称
-          <ElInput v-model="form.displayName" maxlength="120" />
+        <label>模型版本
+          <ElInput v-model="form.displayName" maxlength="120" placeholder="例如 DeepSeek-V4-Pro-0813" />
         </label>
         <label>排序
           <ElInputNumber v-model="form.sortOrder" :min="0" :max="10000" />
         </label>
         <label class="inline-field">允许用户选择 <ElSwitch v-model="form.enabled" /></label>
         <label class="inline-field">设为默认模型 <ElSwitch v-model="form.defaultModel" /></label>
-        <p class="form-note">上游模型名称与路由决定实际调用地址。发布前请确认该路由支持此模型。</p>
+        <p class="form-note">模型版本用于用户页面展示，并保存到新调用的历史记录。上游调用 ID 与路由决定实际请求；修改版本名称不会切换上游模型。</p>
       </div>
       <template #footer>
         <ElButton @click="dialogVisible = false">取消</ElButton>

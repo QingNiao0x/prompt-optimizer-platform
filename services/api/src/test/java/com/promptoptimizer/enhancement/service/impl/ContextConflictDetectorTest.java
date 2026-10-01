@@ -29,6 +29,10 @@ class ContextConflictDetectorTest {
         assertThat(detector.detect(context, List.of())).singleElement()
                 .asString().contains("审批阈值", "现行规则.txt", "新方案.txt", "请确认");
         assertThat(detector.detect(context, List.of(new PlanAnswer("threshold", "审批阈值采用哪一个？", "50000"))))
+                .isNotEmpty();
+        // 只有服务端签发且绑定了本次两个取值的冲突题，才有资格消除旧冲突。
+        String question = detector.detect(context, List.of()).getFirst();
+        assertThat(detector.detect(context, List.of(new PlanAnswer("context-conflict-1", question, "50000"))))
                 .isEmpty();
     }
 }

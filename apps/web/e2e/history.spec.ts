@@ -7,6 +7,7 @@ const historyItem = {
   rawPromptPreview: '查询全球使用 AI 最多的职业',
   providerName: 'mock',
   modelName: 'deterministic-enhancer-v1',
+  modelVersion: '历史版本-20261001',
   mock: true,
   latencyMs: 12,
   createdAt: '2026-09-24T10:00:00Z',
@@ -39,6 +40,8 @@ test('历史列表默认第一页 10 条，翻页和每页条数各只请求一�
 
   await page.goto('/history');
   await expect(page.getByRole('heading', { name: '优化历史' })).toBeVisible();
+  await expect(page.locator('.model-cell:visible, .history-mobile-card__model:visible').first())
+    .toHaveText('历史版本-20261001');
   await expect.poll(() => historyRequests.length).toBe(1);
   expect(historyRequests[0]?.searchParams.get('current')).toBe('1');
   expect(historyRequests[0]?.searchParams.get('size')).toBe('10');

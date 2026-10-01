@@ -122,6 +122,7 @@ const optimizationResult: OptimizationResult = {
   templateCode: 'FEATURE_DEVELOPMENT',
   provider: {
     provider: 'deepseek',
+    modelVersion: 'DeepSeek-V4-Pro-0813',
     model: 'deepseek-chat',
     mock: true,
   },
@@ -140,7 +141,7 @@ const optimizationResponse: ApiResponse<OptimizationResult> = {
 
 test('工作台显示平台发布的模型并允许用户切换', async ({ page }) => {
   await page.goto('/workbench');
-  const selector = page.getByRole('combobox', { name: '选择增强模型' });
+  const selector = page.getByRole('combobox', { name: '选择模型版本' });
   await expect(selector).toBeVisible();
   await expect(page.locator('.model-select')).toContainText('DeepSeek');
   await page.locator('.model-select').click();
@@ -380,6 +381,9 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await openWorkbenchPane(page, 'result');
   const resultContent = page.getByLabel('增强结果内容，可滚动查看完整提示词');
   await expect(resultContent.getByText('deepseek', { exact: true })).toBeVisible();
+  await expect(resultContent.getByText('模型版本', { exact: true })).toBeVisible();
+  await expect(resultContent.getByText('DeepSeek-V4-Pro-0813', { exact: true })).toBeVisible();
+  await expect(resultContent.locator('.result-meta')).not.toContainText('deepseek:deepseek-v4-pro');
   await expect(resultContent.getByRole('heading', { name: '任务目标' })).toBeVisible();
   await expect(resultContent.getByRole('heading', { name: '输入输出' })).toBeVisible();
   await expect(resultContent.getByRole('heading', { name: '约束条件' })).toBeVisible();

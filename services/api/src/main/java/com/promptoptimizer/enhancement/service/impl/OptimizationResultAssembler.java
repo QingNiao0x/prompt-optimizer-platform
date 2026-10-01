@@ -140,11 +140,11 @@ public class OptimizationResultAssembler {
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities);
         // 已确认答案不再追问；二次检索发现的新事实冲突仍必须对用户可见。
         List<String> remainingAmbiguities = planConfirmed
-                ? java.util.stream.Stream.concat(assessed.stream()
+                ? decisions.uniqueFindings(java.util.stream.Stream.concat(assessed.stream()
                         .map(value -> classifyFinding(value, ambiguities, decisions))
                         .filter(value -> value.kind() != FindingKind.COVERED_FACT)
                         .map(AssessedFinding::text),
-                        decisions.unresolvedFindings().stream()).distinct().limit(8).toList()
+                        decisions.unresolvedFindings().stream()).toList())
                 : assessed;
         // 一个权威列表同时驱动 API 与段落，避免 UI 与模型返回的旧 CLARIFICATIONS 互相矛盾。
         sections.remove(PromptSectionType.CLARIFICATIONS);

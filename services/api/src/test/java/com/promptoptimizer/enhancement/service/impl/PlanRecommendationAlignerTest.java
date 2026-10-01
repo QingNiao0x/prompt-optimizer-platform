@@ -25,6 +25,17 @@ class PlanRecommendationAlignerTest {
     }
 
     @Test
+    void shouldRejectAnExcludedFrameworkAfterUsageVerbNormalization() {
+        var digest = new PlanningContextDigest("", List.of("React"), List.of(), List.of(),
+                List.of(), "COMPLETE", 1, List.of());
+        var aligned = PlanRecommendationAligner.align(question(List.of(
+                option("react", "React", "开发页面", true),
+                option("vue", "Vue 3", "开发页面", false))),
+                request("开发页面，不使用 React", digest, List.of()));
+        assertThat(aligned.options()).noneMatch(PlanOption::recommended);
+    }
+
+    @Test
     void shouldRecommendARecognizedFrameworkAndExplainTheEvidence() {
         var digest = new PlanningContextDigest("", List.of("Vue 3"), List.of(), List.of(),
                 List.of(), "COMPLETE", 1, List.of());
@@ -57,8 +68,8 @@ class PlanRecommendationAlignerTest {
                 option("full", "完整代码", "覆盖全过程", true),
                 option("core", "关键代码", "仅 Arriaga 分解", false))),
                 request("分析死亡率并采用 Arriaga 分解", null, List.of()));
-        assertThat(aligned.options()).filteredOn(PlanOption::recommended).extracting(PlanOption::id)
-                .containsExactly("full");
+        // 任务仅提到分析主题，不能证明交付范围；模型原推荐也不能绕过证据核对。
+        assertThat(aligned.options()).noneMatch(PlanOption::recommended);
     }
 
     @Test

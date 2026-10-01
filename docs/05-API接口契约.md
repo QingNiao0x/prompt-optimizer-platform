@@ -22,6 +22,8 @@
 
 平台管理员通过 `GET/POST /api/v1/admin/models`、`GET /api/v1/admin/models/routes`、`PUT/DELETE /api/v1/admin/models/{id}` 维护模型。管理接口仅接受已配置路由的 `routeKey`、`upstreamModel`、`displayName`、`enabled`、`defaultModel`、`sortOrder`；更换上游模型时须新增并停用旧项，删除为逻辑删除。需要平台管理员身份，写请求仍须携带 CSRF；路由响应不含端点与密钥。
 
+`displayName` 现在表示管理员维护的具体**模型版本**（去除首尾空白后 1—120 字符，例如 `DeepSeek-V4-Pro-0813`），不从路由 ID 猜测版本。工作台和顶部状态显示此字段。Plan 与增强响应的 `provider.modelVersion` 为调用开始时的版本快照，默认 `""`；未配置、旧记录或实际返回路由不匹配时不伪造版本。`provider.model` 仍为调用标识，`modelId` 请求契约不变，修改版本名称不会修改上游调用 ID。
+
 最终生成接口支持两种前端路径：默认的“直接增强”和用户主动开启的“可选上下文准备 + Plan 确认 + 最终生成”。完整字段、上下限和科研示例见[内置 Plan Mode](./12-内置Plan-Mode交互与接口.md)。
 
 ### `POST /api/v1/context/planning`
@@ -94,13 +96,15 @@
 
 服务端校验计划编号、需求指纹、上下文版本、所选模型和完整答案集合，并以服务端保存的问题文本为准。确认答案会加入第二次上下文检索查询；文件或查询变化时重新分析，完全一致时复用首次快照。
 
-响应包含 `optimizedPrompt`、`sections`、`contextReport`、`ambiguities`、`appliedConstraints`、`templateCode`、`provider` 和 `latencyMs`。`sections` 至少包含 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`；完成计划确认后 `ambiguities` 为空，不再要求用户修改待确认项。
+响应包含 `optimizedPrompt`、`sections`、`contextReport`、`ambiguities`、`appliedConstraints`、`templateCode`、`provider` 和 `latencyMs`。`sections` 至少包含 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`；已明确回答且没有新冲突的问题不再重复提示。未决回答、二次检索的新冲突或新增业务条件仍保留在 `ambiguities`，不能因完成过 Plan 就一律清空。
 
 工作台直接增强时明确发送 `planConfirmation: null`，并把 `enhancement.templateCode` 重置为 `AUTO`，由服务端根据本次输入重新推断策略；此时服务端保留模糊点检测，响应可能包含 `ambiguities`。其他兼容客户端也可以省略 `planConfirmation`。平台默认权限红线不能通过 `includePermissionBoundaries=false` 关闭，用户规则只能追加。
 
 ## 3. 历史接口
 
 > 实现状态：分页、详情、删除和重新优化已实现；最终优化自动保存，计划接口不保存。
+
+列表和详情新增 `modelVersion` 字符串，来自该条记录 `result_metadata.modelVersion` 的调用时快照；原 `modelName` 调用标识保持兼容。旧历史缺少此键时返回 `""`，页面显示“版本未记录”，不会用当前管理员目录名称倒填。无需新增数据库字段。
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |

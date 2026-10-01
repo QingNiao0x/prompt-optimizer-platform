@@ -17,9 +17,9 @@ const sectionCount = computed(() =>
 <template>
   <dl class="result-meta">
     <div>
-      <dt>Provider</dt>
-      <dd>{{ result.provider.provider }}</dd>
-      <small>{{ result.provider.model }}</small>
+      <dt>模型版本</dt>
+      <dd :title="result.provider.modelVersion || '版本未记录'">{{ result.provider.modelVersion || '版本未记录' }}</dd>
+      <small>{{ result.provider.provider }}</small>
     </div>
     <div>
       <dt>Template</dt>
