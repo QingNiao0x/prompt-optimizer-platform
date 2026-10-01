@@ -84,12 +84,21 @@ export const buildPlanningContextRequest = (
 });
 
 /**
- * 用户确认的业务事实必须参与第二次文件召回，否则 Plan Mode 不会改善最终上下文精度。
+ * 二次召回以原始需求和已选答案为准；问题中的未选候选项不参与检索。
  */
 export const buildRefinedContextQuery = (
   rawPrompt: string,
   confirmation: PlanConfirmation,
 ): string => [
   rawPrompt.trim(),
-  ...confirmation.answers.map((answer) => `${answer.question}\n${answer.answer}`),
+  ...confirmation.answers
+    .filter((answer) => !/^(暂不确定|尚未确定|待定|不知道|不清楚|unknown|tbd)[。.!！]?$|未决定|稍后确认/i.test(answer.answer.trim()))
+    .map((answer) => {
+      const id = answer.questionId.toLowerCase();
+      const topic = answer.question.match(/资料对“([^”]{2,40})”/)?.[1]
+        ?? answer.question.match(/(研究地区|地区范围|数据来源|数据格式|输出格式|交付格式|交付内容|交付物|输出内容|输出方式|分析工具|分析方法|验收标准|统计口径|审批阈值|认证方式|登录方式|技术选型|技术栈|版本|范围|时限|规则|格式|地区|工具|口径|阈值)/)?.[0]
+        ?? (id.includes('region') ? '地区' : id.includes('tool') ? '工具'
+          : id.includes('auth') || id.includes('login') ? '认证方式' : '本次选择');
+      return `${topic}：${answer.answer.trim()}`;
+    }),
 ].filter(Boolean).join('\n');

@@ -48,7 +48,8 @@ final class PlanningFactCardExtractor {
                         || !safeEvidence(evidence)) continue;
                 PlanningFactCategory category = classify(evidence);
                 if (category == null || !evidencePolicy.relevant(file, evidence, category)) continue;
-                String key = file.path() + "\u0000" + normalize(evidence);
+                String key = file.path() + "\u0000" + Normalizer.normalize(evidence, Normalizer.Form.NFKC)
+                        .replaceAll("\\s+", " ").trim();
                 if (!seen.add(key)) continue;
                 if (cards.size() == MAX_CARDS) {
                     omitted++;
@@ -80,6 +81,7 @@ final class PlanningFactCardExtractor {
             if (contains(key, "分析方法", "研究方法", "分解方法", "方法学", "方法")) return PlanningFactCategory.ANALYSIS_METHOD;
             if (contains(key, "验收标准", "成功标准", "评价标准")) return PlanningFactCategory.ACCEPTANCE_CRITERIA;
             if (contains(key, "时间范围", "研究期间", "分析期间", "起止时间", "时间段")) return PlanningFactCategory.TIME_RANGE;
+            if (contains(key, "阈值", "时限", "口径", "规则", "版本")) return PlanningFactCategory.BUSINESS_RULE;
         }
         return EXPLICIT_RULE.matcher(evidence).find() ? PlanningFactCategory.BUSINESS_RULE : null;
     }

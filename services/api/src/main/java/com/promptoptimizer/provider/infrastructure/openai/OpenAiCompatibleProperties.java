@@ -33,6 +33,8 @@ import java.util.Set;
 public class OpenAiCompatibleProperties {
 
     private static final String DEEPSEEK_FLASH_MODEL = "deepseek-flash";
+    /** 官方 DeepSeek-V4-Pro-0813 的 API 模型名，与版本展示名不同。 */
+    private static final String DEEPSEEK_PRO_MODEL = "deepseek-v4-pro";
     private static final String LEGACY_TOKENHUB_FLASH_MODEL = "deepseek/deepseek-flash";
     private static final String LEGACY_TOKENHUB_FLASH_ID = "tokenhub:" + LEGACY_TOKENHUB_FLASH_MODEL;
 
@@ -223,6 +225,7 @@ public class OpenAiCompatibleProperties {
         if (routeKey.equalsIgnoreCase("deepseek")) {
             Set<String> orderedModels = new LinkedHashSet<>();
             orderedModels.add(DEEPSEEK_FLASH_MODEL);
+            orderedModels.add(DEEPSEEK_PRO_MODEL);
             orderedModels.addAll(configuredModels);
             return List.copyOf(orderedModels);
         }

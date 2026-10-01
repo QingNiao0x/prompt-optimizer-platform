@@ -5,6 +5,7 @@ import com.promptoptimizer.enhancement.dto.ConversationMessage;
 import com.promptoptimizer.enhancement.dto.EnhancementOptions;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.enhancement.domain.PlanningFactCard;
+import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision;
 import com.promptoptimizer.template.domain.PromptTemplate;
 
 import java.util.List;
@@ -26,7 +27,8 @@ public record EnhancementProviderRequest(
         List<ConversationMessage> conversationHistory,
         EnhancementOptions options,
         String model,
-        List<PlanningFactCard> planningFacts
+        List<PlanningFactCard> planningFacts,
+        List<ConfirmedPlanDecision> confirmedDecisions
 ) {
 
     /**
@@ -38,6 +40,16 @@ public record EnhancementProviderRequest(
         constraints = List.copyOf(constraints);
         conversationHistory = List.copyOf(conversationHistory);
         planningFacts = planningFacts == null ? List.of() : List.copyOf(planningFacts);
+        confirmedDecisions = confirmedDecisions == null ? List.of() : List.copyOf(confirmedDecisions);
+    }
+
+    /** 兼容尚未传递结构化决定的旧适配器；直接增强默认没有决定。 */
+    public EnhancementProviderRequest(String rawPrompt, ContextSnapshot context, PromptTemplate template,
+            List<String> ambiguities, List<PlanAnswer> planAnswers, boolean planConfirmed,
+            List<String> constraints, List<ConversationMessage> conversationHistory,
+            EnhancementOptions options, String model, List<PlanningFactCard> planningFacts) {
+        this(rawPrompt, context, template, ambiguities, planAnswers, planConfirmed, constraints,
+                conversationHistory, options, model, planningFacts, List.of());
     }
 
     /** 兼容尚未传递计划事实卡片的现有调用方。 */

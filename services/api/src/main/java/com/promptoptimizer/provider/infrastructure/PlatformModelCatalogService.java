@@ -48,30 +48,37 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
         this.properties = propertiesProvider.getIfAvailable();
     }
 
-    /** 首次启动时从部署路由导入可用模型；后续启动不覆盖管理员的增删改。 */
+    /**
+     * 从部署路由导入目录中还没有的模型。
+     * 已有记录保持管理员的启用、排序和默认选择，不用配置覆盖。
+     */
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initialize() {
-        if (mapper == null || properties == null || countAll() > 0) {
+        if (mapper == null || properties == null) {
             return;
         }
+        boolean catalogEmpty = countAll() == 0;
         OpenAiCompatibleRoute defaultRoute = properties.getDefaultRoute();
-        List<OpenAiCompatibleRoute> routes = properties.getConfiguredRoutes();
-        List<ModelEntry> initial = new ArrayList<>();
-        for (OpenAiCompatibleRoute route : routes) {
+        List<ModelEntry> discovered = new ArrayList<>();
+        for (OpenAiCompatibleRoute route : properties.getConfiguredRoutes()) {
             for (String model : route.models()) {
                 String publicId = properties.publicModelId(route, model);
                 validatePublicId(publicId);
-                boolean isDefault = route.key().equals(defaultRoute.key()) && model.equals(defaultRoute.model());
-                initial.add(new ModelEntry(
+                boolean isDefault = catalogEmpty
+                        && route.key().equals(defaultRoute.key())
+                        && model.equals(defaultRoute.model());
+                discovered.add(new ModelEntry(
                         UUID.nameUUIDFromBytes(publicId.getBytes(StandardCharsets.UTF_8)),
                         publicId, route.key(), model, displayName(model), true, isDefault,
-                        initial.size()
+                        discovered.size()
                 ));
             }
         }
-        initial.sort(Comparator.comparing(ModelEntry::defaultModel).reversed());
-        for (ModelEntry model : initial) {
+        if (catalogEmpty) {
+            discovered.sort(Comparator.comparing(ModelEntry::defaultModel).reversed());
+        }
+        for (ModelEntry model : discovered) {
             mapper.insertIfAbsent(model.id(), model.publicId(), model.routeKey(), model.upstreamModel(),
                     model.displayName(), model.enabled(), model.defaultModel(), model.sortOrder());
         }
@@ -268,6 +275,7 @@ public class PlatformModelCatalogService implements PlatformModelCatalog {
     private static String displayName(String model) {
         return switch (model) {
             case "deepseek-flash" -> "DeepSeek-V4.1-Flash";
+            case "deepseek-v4-pro" -> "DeepSeek-V4-Pro-0813";
             case "deepseek-v4-pro-0813" -> "DeepSeek-V4-Pro";
             case "kimi-k3" -> "Kimi K3";
             case "kimi-k2.8-preview" -> "Kimi K2.8 Preview";

@@ -178,6 +178,6 @@ describe('buildOptimizationRequest', () => {
           answer: 'R',
         },
       ],
-    })).toBe('分析死亡率\n研究地区？\n广东省\n分析工具？\nR');
+    })).toBe('分析死亡率\n研究地区：广东省\n分析工具：R');
   });
 });

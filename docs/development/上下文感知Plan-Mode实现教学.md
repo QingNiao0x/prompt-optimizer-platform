@@ -437,4 +437,31 @@ flowchart TD
 mvn -q "-Dtest=PlanningEvidencePolicyTest,PlanningFactCardExtractorTest,PlanningSessionServiceTest,ContextConflictDetectorTest,OptimizationResultAssemblerTest,DefaultEnhancementOrchestratorTest,OpenAiCompatiblePromptEnhancementProviderTest" "-Dspring.flyway.enabled=false" "-Dapp.security.bootstrap-admin.enabled=false" "-Dapp.security.bootstrap-user.password=" test
 ```
 
-这些测试使用确定性断言和模拟 Provider，不是外部模型业务准确率验收。第二批仍需补充结构化确认决策、多轮检索事实合并、冲突与真正未决选择的区分、确认答案覆盖校验；真实 Provider 与双人评审门禁继续按待办执行。
+这些测试使用确定性断言和模拟 Provider，不是外部模型业务准确率验收。下述第二批实现尚未按用户本次要求执行测试；真实 Provider 与双人评审门禁继续按待办执行。
+
+## 12. 第二批确认决策与二次检索（2026-10-01）
+
+Plan 提交的 `planId`、上下文版本及问题 ID 仍由服务端校验。`ConfirmedDecisionSet` 只从服务端规范化后的问题和答案形成 `ConfirmedPlanDecision`：问题 ID、主题、作用范围（`CURRENT_STATE`、`TARGET`、`CHOICE`、`UNRESOLVED`）、答案和 `USER_CONFIRMED` 来源。结构化决定直接传入最终 Provider 的 `confirmedDecisions`；新调用不再重复发送整份 `planAnswers`，旧适配器仍可使用原字段。该分类是确定性辅助判断，不能证明附件中描述的功能已经实现；“暂不确定”不会被提升成已知事实。
+
+```mermaid
+flowchart LR
+    A[已绑定 Plan 问题及用户答案] --> B[服务端结构化决定]
+    B --> C[原始需求 + 已选答案检索]
+    C --> D[二次上下文分析]
+    E[首次绑定事实] --> F[按来源去重合并]
+    D --> F
+    F --> G[Provider 最终生成]
+    B --> G
+    D --> H[现状/目标与同字段冲突判定]
+    H --> I[最终待确认事项]
+    G --> J[服务端把选择落实到任务/输出段落]
+    I --> J
+```
+
+浏览器本地索引查询和后端文档分析查询均保留原始需求，再加主题与已选答案，不把 Plan 问题里未选的候选技术或数据值当作检索偏好。`PlanningFactMerger` 保留经过本次权限规则及相关性再次筛选的首次证据，按路径、类别和摘录去重，补充二次检索的新证据；最终最多保留 24 条，首次 20 条满额时仍有 4 条新增空间。去重保留比较符和标点，避免合并相反的阈值规则。超过提取或合并预算时给出可见覆盖提醒。文件上传、索引内容和 `contextReport` 不因这个事实预算改变。
+
+`ContextConflictDetector` 内部保留冲突字段、双方取值、来源和提示，并让首次绑定证据与二次片段共同参与比较。明确标注“当前”与“目标”的两个取值不按同一现状冲突处理；已回答的旧冲突仅在原取值对且用户明确选择或保留冲突时免于重问，第三个新取值仍显示。结果组装内部区分有证据的新冲突、已被答案覆盖的信息和未决选择；已选择工具不代表工具版本也已回答。已确认的现状保留在背景，目标或方案写入任务，交付要求写入输出，避免所有答案在背景和任务重复追加；待定回答继续显示原始待确认问题。模型草稿仅出现候选技术名称，不能代替服务端写入已确认的执行选择。覆盖检查确认答案已按字面进入对应段落，不承诺模型所有改写均语义正确。
+
+本批未新增接口请求字段，也没有修改数据库迁移或 Redis TTL。作用范围和主题采用保守规则；开放域同义关系、跨句语义矛盾以及 Provider 生成段落的事实正确性仍需真实模型评测。本次按用户要求不运行测试，因此以上为实现说明，尚非上线验收结论。
+
+2026-10-01 收尾仅执行编译及静态检查：后端 `mvn -q -DskipTests compile`、前端 `npm.cmd run typecheck` 和 `git diff --check` 均通过。未运行单元测试、接口测试、浏览器测试或真实 Provider 评测。

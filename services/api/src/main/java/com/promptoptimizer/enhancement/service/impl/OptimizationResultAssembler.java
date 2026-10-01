@@ -3,6 +3,8 @@ package com.promptoptimizer.enhancement.service.impl;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
+import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision;
+import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope;
 import com.promptoptimizer.enhancement.domain.PlanningFactCard;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
@@ -123,9 +125,10 @@ public class OptimizationResultAssembler {
             throw invalidResponse("模型响应缺少必需的提示词段落");
         }
 
-        appendConfirmedAnswers(sections, planAnswers);
-        String evidenceQuery = rawPrompt + planAnswers.stream()
-                .map(answer -> "\n" + answer.question() + "\n" + answer.answer()).collect(Collectors.joining());
+        ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planAnswers);
+        appendConfirmedAnswers(sections, decisions);
+        appendConfirmedDecisions(sections, decisions);
+        String evidenceQuery = decisions.retrievalQuery(rawPrompt);
         List<PlanningFactCard> eligibleFacts = new PlanningFactCardExtractor()
                 .filterBoundFacts(planningFacts, context, evidenceQuery);
         if (eligibleFacts.isEmpty()) {
@@ -137,7 +140,11 @@ public class OptimizationResultAssembler {
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities);
         // 已确认答案不再追问；二次检索发现的新事实冲突仍必须对用户可见。
         List<String> remainingAmbiguities = planConfirmed
-                ? assessed.stream().filter(value -> !answeredFinding(value, planAnswers)).toList()
+                ? java.util.stream.Stream.concat(assessed.stream()
+                        .map(value -> classifyFinding(value, ambiguities, decisions))
+                        .filter(value -> value.kind() != FindingKind.COVERED_FACT)
+                        .map(AssessedFinding::text),
+                        decisions.unresolvedFindings().stream()).distinct().limit(8).toList()
                 : assessed;
         // 一个权威列表同时驱动 API 与段落，避免 UI 与模型返回的旧 CLARIFICATIONS 互相矛盾。
         sections.remove(PromptSectionType.CLARIFICATIONS);
@@ -221,14 +228,15 @@ public class OptimizationResultAssembler {
         String sourcedFacts = safeFacts.stream()
                 .filter(card -> !existingBackgroundContent.contains(card.sourcePath())
                         || !existingBackgroundContent.contains(card.evidence()))
-                .map(card -> "- [" + card.category() + "/" + card.origin() + "] 来源："
+                .map(card -> "- [" + card.category() + "/" + card.origin() + "] "
+                        + (card.id().startsWith("R") ? "二次检索；" : "首次已读；") + "来源："
                         + card.sourcePath() + "；证据：" + card.evidence())
                 .collect(Collectors.joining("\n"));
         if (!sourcedFacts.isBlank()) {
             background = new PromptSection(
                     PromptSectionType.BACKGROUND,
                     background.title(),
-                    background.content() + "\n\nPlan 阶段绑定的资料事实（用于核对业务要求，不代表已经实现；用户确认答案优先）：\n"
+                    background.content() + "\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n"
                             + sourcedFacts
             );
             sections.put(PromptSectionType.BACKGROUND, background);
@@ -268,17 +276,21 @@ public class OptimizationResultAssembler {
         ));
     }
 
-    /** 仅移除与已确认答案直接矛盾的“未知”旧问题，保留新发现的冲突和细节缺口。 */
-    private boolean answeredFinding(String finding, List<PlanAnswer> answers) {
-        if (finding.matches(".*(冲突|不一致|矛盾|两种|不同版本).*")) return false;
-        if (!finding.matches(".*(未知|未明确|未提供|尚未确定).*")) return false;
-        for (PlanAnswer answer : answers) {
-            String id = answer.questionId().toLowerCase(java.util.Locale.ROOT);
-            if (id.contains("region") && finding.matches(".*(地区|区域).*")) return true;
-            if (id.contains("tool") && finding.matches(".*(工具|语言|软件).*")) return true;
-            if ((id.contains("login") || id.contains("auth")) && finding.matches(".*(登录|认证|会话).*")) return true;
+    private enum FindingKind { VERIFIED_CONFLICT, COVERED_FACT, OPEN_CHOICE }
+
+    private record AssessedFinding(FindingKind kind, String text) { }
+
+    /** 已证实的新冲突优先显示；旧答案覆盖的已知事实不再作为待确认选择。 */
+    private AssessedFinding classifyFinding(String text, List<String> serverFindings,
+                                           ConfirmedDecisionSet decisions) {
+        if (text.startsWith("资料对“") && serverFindings.contains(text)) {
+            return new AssessedFinding(FindingKind.VERIFIED_CONFLICT, text);
         }
-        return false;
+        if (decisions.coversUnknown(text) || decisions.repeatsAnsweredQuestion(text)
+                || decisions.coversConflictMessage(text)) {
+            return new AssessedFinding(FindingKind.COVERED_FACT, text);
+        }
+        return new AssessedFinding(FindingKind.OPEN_CHOICE, text);
     }
 
     /** 兼容旧版待确认段落，同时过滤泛化提示和疑似凭据。 */
@@ -342,23 +354,55 @@ public class OptimizationResultAssembler {
         return sections;
     }
 
-    /** 将用户确认答案写入背景段落，明确它们高于模型的未确认猜测。 */
+    /** 现状、目标与本次选择分别标注来源；待定回答不能冒充已确认事实。 */
     private void appendConfirmedAnswers(
             Map<PromptSectionType, PromptSection> sections,
-            List<PlanAnswer> answers
+            ConfirmedDecisionSet decisions
     ) {
-        if (answers.isEmpty()) {
+        List<ConfirmedPlanDecision> resolved = decisions.decisions().stream()
+                .filter(decision -> decision.scope() == Scope.CURRENT_STATE).toList();
+        if (resolved.isEmpty()) {
             return;
         }
         PromptSection background = sections.get(PromptSectionType.BACKGROUND);
-        String confirmed = answers.stream()
-                .map(answer -> "- " + answer.question().trim() + "：" + answer.answer().trim())
+        String confirmed = resolved.stream()
+                .map(decision -> "- " + decision.topic() + "：" + decision.answer())
+                .distinct()
                 .collect(Collectors.joining("\n"));
         sections.put(PromptSectionType.BACKGROUND, new PromptSection(
                 PromptSectionType.BACKGROUND,
                 background.title(),
-                background.content() + "\n\n用户已确认的信息（必须作为事实落实）：\n" + confirmed
+                background.content() + "\n\n用户已确认的信息（当前情况）：\n" + confirmed
         ));
+    }
+
+    /** 执行选择落到任务或输出段落，并核对每条答案确实进入对应段落。 */
+    private void appendConfirmedDecisions(Map<PromptSectionType, PromptSection> sections,
+                                          ConfirmedDecisionSet decisions) {
+        Map<PromptSectionType, List<String>> required = new EnumMap<>(PromptSectionType.class);
+        for (ConfirmedPlanDecision decision : decisions.decisions()) {
+            if (decision.scope() == Scope.UNRESOLVED
+                    || decision.scope() == Scope.CURRENT_STATE) continue;
+            PromptSectionType type = decision.topic().startsWith("输出") || decision.topic().startsWith("交付")
+                    ? PromptSectionType.OUTPUT : PromptSectionType.TASK;
+            required.computeIfAbsent(type, ignored -> new ArrayList<>())
+                    .add("- " + decision.topic() + "：" + decision.answer());
+        }
+        for (var entry : required.entrySet()) {
+            PromptSectionType type = entry.getKey();
+            PromptSection section = sections.get(type);
+            // 模型提到候选词也可能是在否定它，不能以出现答案字符串作为已落实的证据。
+            List<String> missing = entry.getValue().stream().distinct()
+                    .filter(line -> !section.content().lines().anyMatch(existing -> existing.trim().equals(line)))
+                    .toList();
+            if (!missing.isEmpty()) {
+                sections.put(type, new PromptSection(type, section.title(), section.content()
+                        + "\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n" + String.join("\n", missing)));
+            }
+            if (entry.getValue().stream().anyMatch(line -> !sections.get(type).content().contains(line))) {
+                throw invalidResponse("确认答案未进入对应的执行段落");
+            }
+        }
     }
 
     /** 合并平台约束并删除模型内容中完全重复的约束行，避免最终提示词重复。 */

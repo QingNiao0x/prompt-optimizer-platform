@@ -38,6 +38,19 @@ class OpenAiCompatiblePropertiesTest {
     }
 
     @Test
+    void shouldListBothOfficialDeepSeekModelsEvenWhenConfigNamesOnlyOne() {
+        OpenAiCompatibleProperties properties = multiProviderProperties();
+
+        List<String> deepseekModels = properties.getConfiguredRoutes().stream()
+                .filter(route -> "deepseek".equals(route.key()))
+                .findFirst()
+                .orElseThrow()
+                .models();
+
+        assertThat(deepseekModels).contains("deepseek-flash", "deepseek-v4-pro");
+    }
+
+    @Test
     void shouldRejectAmbiguousBareModelInMultiProviderMode() {
         OpenAiCompatibleProperties properties = multiProviderProperties();
         OpenAiCompatibleRouteProperties tokenhub = properties.getProviders().get("tokenhub");

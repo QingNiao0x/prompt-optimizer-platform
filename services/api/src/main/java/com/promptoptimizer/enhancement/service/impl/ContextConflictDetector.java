@@ -4,6 +4,8 @@ import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.context.domain.FileSnippet;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.enhancement.domain.PlanningFactCategory;
+import com.promptoptimizer.enhancement.domain.PlanningFactCard;
+import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,9 +29,27 @@ final class ContextConflictDetector {
 
     /** 同名字段冲突也遵守证据用途边界，避免已筛掉的测试样例经冲突通道重新进入 Plan。 */
     List<String> detect(ContextSnapshot context, List<PlanAnswer> answers, String query) {
+        return detect(context, answers, query, List.of());
+    }
+
+    /** 首次已读规则未被再次召回时仍参与比较，不只比较二次检索内部的文件。 */
+    List<String> detect(ContextSnapshot context, List<PlanAnswer> answers, String query,
+                        List<PlanningFactCard> boundFacts) {
+        return findings(context, ConfirmedDecisionSet.from(answers), query, boundFacts).stream()
+                .map(Finding::message).toList();
+    }
+
+    /** 内部保留字段、双方取值和来源，使冲突与普通未决问题分别判定。 */
+    List<Finding> findings(ContextSnapshot context, ConfirmedDecisionSet decisions, String query,
+                           List<PlanningFactCard> boundFacts) {
         PlanningEvidencePolicy evidencePolicy = new PlanningEvidencePolicy(query);
         Map<String, Map<String, SourceValue>> byField = new LinkedHashMap<>();
-        for (FileSnippet file : context.fileSnippets()) {
+        List<StagedFile> evidence = new ArrayList<>();
+        context.fileSnippets().forEach(file -> evidence.add(new StagedFile(file, false)));
+        boundFacts.forEach(card -> evidence.add(new StagedFile(new FileSnippet(
+                card.sourcePath(), "", card.evidence(), "", false), true)));
+        for (StagedFile staged : evidence) {
+            FileSnippet file = staged.file();
             if (file.content() == null || file.path() == null || file.path().length() > 256
                     || sensitiveValueDetector.containsCredential(file.path())
                     || PROTECTED_NAME.matcher(file.path()).find() || !evidencePolicy.allows(file)) continue;
@@ -43,17 +63,22 @@ final class ContextConflictDetector {
                 if (query != null && !query.isBlank()
                         && !evidencePolicy.relevant(file, key + "：" + value, PlanningFactCategory.BUSINESS_RULE)) continue;
                 byField.computeIfAbsent(key, unused -> new LinkedHashMap<>())
-                        .putIfAbsent(value.toLowerCase(Locale.ROOT), new SourceValue(file.path(), value));
+                        .putIfAbsent(value.toLowerCase(Locale.ROOT), new SourceValue(file.path(), value,
+                                scope(value), staged.fromPlan()));
             }
         }
-        List<String> conflicts = new ArrayList<>();
+        List<Finding> conflicts = new ArrayList<>();
         for (Map.Entry<String, Map<String, SourceValue>> entry : byField.entrySet()) {
             List<SourceValue> values = new ArrayList<>(entry.getValue().values());
             SourceValue first = null;
             SourceValue second = null;
             for (int left = 0; left < values.size() && second == null; left++) {
                 for (int right = left + 1; right < values.size(); right++) {
-                    if (!values.get(left).path().equals(values.get(right).path())) {
+                    if ((!values.get(left).path().equals(values.get(right).path())
+                            || values.get(left).fromPlan() != values.get(right).fromPlan())
+                            && !isCurrentToTarget(values.get(left), values.get(right))
+                            && !decisions.resolvesConflict(entry.getKey(),
+                                    List.of(values.get(left).value(), values.get(right).value()))) {
                         first = values.get(left);
                         second = values.get(right);
                         break;
@@ -61,20 +86,37 @@ final class ContextConflictDetector {
                 }
             }
             if (second == null) continue;
-            boolean confirmed = answers.stream().anyMatch(answer -> answer.question().contains(entry.getKey())
-                    && values.stream().anyMatch(value -> answer.answer().contains(value.value())));
-            if (confirmed) continue;
-            conflicts.add("资料对“" + entry.getKey() + "”存在不同取值："
-                    + sourceLabel(first.path()) + "（" + first.value() + "）与 "
-                    + sourceLabel(second.path()) + "（" + second.value() + "）。请确认本次采用哪一项。");
+            String message = "资料对“" + entry.getKey() + "”存在不同取值："
+                    + sourceLabel(first) + "（" + first.value() + "）与 "
+                    + sourceLabel(second) + "（" + second.value() + "）。请确认本次采用哪一项。";
+            conflicts.add(new Finding(entry.getKey(), first.path(), first.value(),
+                    second.path(), second.value(), message));
             if (conflicts.size() == 3) break;
         }
         return conflicts;
     }
 
-    private String sourceLabel(String path) {
-        return path.length() <= 80 ? path : "…" + path.substring(path.length() - 79);
+    private Scope scope(String value) {
+        if (value.matches("^(?:目标|迁移后|计划改为|拟采用).*")) return Scope.TARGET;
+        if (value.matches("^(?:当前|现有|目前|迁移前).*")) return Scope.CURRENT_STATE;
+        return Scope.CHOICE;
     }
 
-    private record SourceValue(String path, String value) { }
+    private boolean isCurrentToTarget(SourceValue left, SourceValue right) {
+        return left.scope() == Scope.CURRENT_STATE && right.scope() == Scope.TARGET
+                || left.scope() == Scope.TARGET && right.scope() == Scope.CURRENT_STATE;
+    }
+
+    private String sourceLabel(SourceValue source) {
+        String path = source.path();
+        return (path.length() <= 80 ? path : "…" + path.substring(path.length() - 79))
+                + (source.fromPlan() ? "［首次已读］" : "");
+    }
+
+    record Finding(String field, String firstPath, String firstValue,
+                   String secondPath, String secondValue, String message) { }
+
+    private record SourceValue(String path, String value, Scope scope, boolean fromPlan) { }
+
+    private record StagedFile(FileSnippet file, boolean fromPlan) { }
 }

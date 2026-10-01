@@ -5,6 +5,8 @@ import com.promptoptimizer.enhancement.service.PlanningSessionService;
 import com.promptoptimizer.policy.service.impl.ProtectedContextFilterImpl;
 import com.promptoptimizer.context.service.ContextAnalyzer;
 import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.context.dto.ContextAnalysisRequest;
+import com.promptoptimizer.context.dto.ContextFileInput;
 import com.promptoptimizer.common.logging.LogCorrelation;
 import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.common.logging.ModelCallLogger;
@@ -12,6 +14,9 @@ import com.promptoptimizer.enhancement.dto.ConversationMessage;
 import com.promptoptimizer.enhancement.dto.OptimizationRequest;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
+import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope;
+import com.promptoptimizer.enhancement.domain.PlanningFactCard;
+import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.identity.service.CurrentActor;
 import com.promptoptimizer.policy.service.ConstraintCompleter;
@@ -199,7 +204,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 request.permissionPolicy()
         );
         List<PlanAnswer> planAnswers = confirmedPlan.answers();
-        String contextQuery = buildContextQuery(request.rawPrompt(), planAnswers);
+        ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planAnswers);
+        String contextQuery = decisions.retrievalQuery(request.rawPrompt());
         ContextSnapshot context = planningSessionService.reusableContext(
                         confirmedPlan,
                         filteredContext.request(),
@@ -213,15 +219,23 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 ? request.conversationHistory()
                 : List.of();
         List<ConversationMessage> ambiguityEvidence = new ArrayList<>(conversation);
-        planAnswers.forEach(answer -> ambiguityEvidence.add(new ConversationMessage(
-                "user", confirmedAnswerEvidence(answer)
-        )));
-        List<String> ambiguities = ambiguityDetector.detect(request.rawPrompt(), context, ambiguityEvidence);
-        // 老 Plan 会话可能仍含旧策略提取的样例；模型输入与最终强制保留共用筛选策略。
-        var planningFacts = new PlanningFactCardExtractor().filterBoundFacts(
-                confirmedPlan.planningContextDigest() == null ? List.of()
-                        : confirmedPlan.planningContextDigest().factCards(), context, contextQuery);
-        List<String> contextConflicts = contextConflictDetector.detect(context, planAnswers, contextQuery);
+        planAnswers.stream().filter(answer -> decisions.decisions().stream().anyMatch(decision ->
+                decision.questionId().equals(answer.questionId())
+                        && decision.scope() != Scope.UNRESOLVED))
+                .forEach(answer -> ambiguityEvidence.add(new ConversationMessage(
+                        "user", confirmedAnswerEvidence(answer))));
+        List<String> ambiguities = ambiguityDetector.detect(request.rawPrompt(), context, ambiguityEvidence)
+                .stream().filter(value -> !decisions.coversUnknown(value)).toList();
+        // 首次卡片保留，二次检索只补充新证据；旧卡片和新证据都要经过用途及安全校验。
+        PlanningFactMerger.MergeResult mergedFacts = planConfirmed
+                ? new PlanningFactMerger().merge(
+                        filterBoundPlanningFacts(confirmedPlan.planningContextDigest() == null ? List.of()
+                                : confirmedPlan.planningContextDigest().factCards(), request.permissionPolicy()),
+                        context, contextQuery)
+                : new PlanningFactMerger.MergeResult(List.of(), 0);
+        var planningFacts = mergedFacts.facts();
+        List<String> contextConflicts = contextConflictDetector.detect(context, planAnswers,
+                contextQuery, mergedFacts.boundFacts());
         if (!contextConflicts.isEmpty()) {
             List<String> combined = new ArrayList<>(ambiguities);
             contextConflicts.stream().filter(value -> !combined.contains(value))
@@ -263,7 +277,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                                 conversation,
                                 request.enhancement(),
                                 selectedModelId,
-                                planningFacts
+                                planningFacts,
+                                decisions.decisions()
                         )
                 );
                 long latencyMs = Math.max(0, clock.millis() - startedAt);
@@ -271,6 +286,10 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                     ModelCallLogger.completed("prompt.optimize", providerResponse.provider(),
                             providerResponse.model(), "MOCK_PROVIDER", true, 1, 1, latencyMs, null);
                 }
+                List<String> planningWarnings = new ArrayList<>(confirmedPlan.planningContextDigest() == null
+                        ? List.of() : confirmedPlan.planningContextDigest().warnings());
+                if (mergedFacts.omittedCount() > 0) planningWarnings.add(
+                        "二次检索另发现 " + mergedFacts.omittedCount() + " 条相关事实，超出最终事实卡片预算，请核对上下文报告。");
                 OptimizationResult result = resultAssembler.assemble(
                         providerResponse,
                         context,
@@ -283,9 +302,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                         latencyMs,
                         request.rawPrompt(),
                         planningFacts,
-                        confirmedPlan.planningContextDigest() == null
-                                ? List.of()
-                                : confirmedPlan.planningContextDigest().warnings()
+                        planningWarnings
                 );
                 LOGGER.info("event=optimization.completed requestId={} workflowId={} mock={} "
                                 + "sections={} ambiguities={} durationMs={}",
@@ -315,6 +332,17 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         return LogFields.value(exception.getClass().getSimpleName());
     }
 
+    /** 再次增强可能收紧受保护路径；旧 Plan 证据也须服从本次权限边界。 */
+    private List<PlanningFactCard> filterBoundPlanningFacts(List<PlanningFactCard> facts,
+                                                           PermissionPolicyInput policy) {
+        if (facts.isEmpty()) return facts;
+        ContextAnalysisRequest evidence = new ContextAnalysisRequest("", facts.stream()
+                .map(card -> new ContextFileInput(card.sourcePath(), card.evidence(), "text")).toList());
+        var allowed = protectedContextFilter.filter(evidence, policy).request().files().stream()
+                .map(ContextFileInput::path).collect(java.util.stream.Collectors.toSet());
+        return facts.stream().filter(card -> allowed.contains(card.sourcePath())).toList();
+    }
+
     private void validateTextInputs(OptimizationRequest request) {
         rejectCredential(request.rawPrompt());
         rejectCredential(request.context().customDescription());
@@ -327,16 +355,6 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 }
             });
         }
-    }
-
-    private String buildContextQuery(String rawPrompt, List<PlanAnswer> answers) {
-        StringBuilder query = new StringBuilder(rawPrompt.trim());
-        answers.forEach(answer -> query
-                .append('\n')
-                .append(answer.question())
-                .append('\n')
-                .append(answer.answer()));
-        return query.toString();
     }
 
     /** 将已确认回答转换为明确事实，避免问题中的问号令歧义检测忽略整句。 */
