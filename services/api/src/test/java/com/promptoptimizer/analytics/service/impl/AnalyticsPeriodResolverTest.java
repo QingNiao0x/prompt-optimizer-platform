@@ -3,8 +3,12 @@ package com.promptoptimizer.analytics.service.impl;
 import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -65,5 +69,49 @@ class AnalyticsPeriodResolverTest {
         assertThatThrownBy(() -> resolver.resolve("CUSTOM", "2026-02-30", "2026-03-01"))
                 .isInstanceOf(InvalidOptimizationRequestException.class)
                 .hasMessageContaining("YYYY-MM-DD");
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" ", "0000-01-01", "-0001-01-01", "+10000-01-01", "+999999999-12-31", "2026-2-01"})
+    void rejectsUnsupportedDatesBeforeDateArithmetic(String date) {
+        assertThatThrownBy(() -> resolver.resolveRanking("DAY", date))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        assertThatThrownBy(() -> resolver.resolve("CUSTOM", date, "2026-09-25"))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+    }
+
+    @Test
+    void limitsDailyBucketsIncludingLeapDayAndRejectsUnboundedRanges() {
+        assertThat(resolver.resolve("CUSTOM", "2024-01-01", "2024-12-31").dayCount()).isEqualTo(366);
+        assertThatThrownBy(() -> resolver.resolve("CUSTOM", "2024-01-01", "2025-01-01"))
+                .isInstanceOf(InvalidOptimizationRequestException.class).hasMessageContaining("366");
+        assertThatThrownBy(() -> resolver.resolve("CUSTOM", "0001-01-01", "9999-12-31"))
+                .isInstanceOf(InvalidOptimizationRequestException.class).hasMessageContaining("366");
+    }
+
+    @Test
+    void rankingUsesWholeCalendarPeriodsAndValidatesExpandedYearBoundary() {
+        AnalyticsPeriod week = resolver.resolveRanking("WEEK", "2026-01-01");
+        assertThat(week.fromDate()).hasToString("2025-12-29");
+        assertThat(week.toDateExclusive()).hasToString("2026-01-05");
+        assertThat(week.dayCount()).isEqualTo(7);
+        assertThat(resolver.resolveRanking("MONTH", "2024-02-29").dayCount()).isEqualTo(29);
+        assertThat(resolver.resolveRanking("DAY", "9999-12-31").dayCount()).isEqualTo(1);
+        assertThatThrownBy(() -> resolver.resolveRanking("WEEK", "9999-12-31"))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+    }
+
+    @Test
+    void daylightSavingDaysUseLocalMidnightsInsteadOfFixedTwentyFourHours() {
+        AnalyticsPeriodResolver losAngeles = new AnalyticsPeriodResolver(ZoneId.of("America/Los_Angeles"),
+                Clock.fixed(Instant.parse("2026-10-01T01:00:00Z"), ZoneOffset.UTC));
+        assertThat(losAngeles.resolve("TODAY", null, null).fromDate()).hasToString("2026-09-30");
+        AnalyticsPeriod spring = losAngeles.resolve("CUSTOM", "2026-03-08", "2026-03-08");
+        AnalyticsPeriod autumn = losAngeles.resolve("CUSTOM", "2026-11-01", "2026-11-01");
+        assertThat(spring.dayCount()).isEqualTo(1);
+        assertThat(autumn.dayCount()).isEqualTo(1);
+        assertThat(Duration.between(spring.fromInclusive(), spring.toExclusive()).toHours()).isEqualTo(23);
+        assertThat(Duration.between(autumn.fromInclusive(), autumn.toExclusive()).toHours()).isEqualTo(25);
     }
 }

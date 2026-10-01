@@ -18,6 +18,7 @@ import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -54,8 +55,8 @@ public class AdminAnalyticsServiceImpl implements AdminAnalyticsService {
         this.rechargeStatisticsEnabled = rechargeStatisticsEnabled;
     }
 
-    /** 汇总仪表盘指标；日活平均值包含所选范围内无行为的自然日。 */
-    @Transactional(readOnly = true)
+    /** 同一只读快照内汇总仪表盘，避免并发采集导致总数与日序列不一致；均值包含零活跃日。 */
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public DashboardView dashboard(DashboardQuery query) {
         String range = query.range();
         String fromDate = query.fromDate();

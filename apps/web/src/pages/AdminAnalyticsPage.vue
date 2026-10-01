@@ -34,6 +34,14 @@ import {
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import { useUiTheme } from '@/composables/useUiTheme';
+import {
+  analyticsQueryError,
+  dailyMetricSeries,
+  findUsagePeak,
+  formatAnalyticsTime,
+  hasDailyActivity,
+  rechargeMetricSeries,
+} from '@/features/analytics/analyticsPresentation';
 import { getApiErrorMessage } from '@/services/http';
 import { getAnalyticsDashboard, getAnalyticsOperations, getAnalyticsRanking } from '@/services/adminAnalyticsApi';
 import type {
@@ -51,7 +59,7 @@ use([CanvasRenderer, LineChart, BarChart, PieChart, DataZoomComponent,
   GridComponent, LegendComponent, TooltipComponent]);
 
 const range = ref<AnalyticsRange>('TODAY');
-const dateRange = ref<string[]>([]);
+const dateRange = ref<string[] | null>(null);
 const accountId = ref('');
 const eventFilter = ref<AnalyticsEventType | ''>('');
 // 筛选输入是草稿；翻页和排行只能复用最近一次成功查询的账号与操作类型。
@@ -68,7 +76,8 @@ let operationsRequestId = 0;
 let rankingRequestId = 0;
 const operationsPageNumber = ref(1);
 const rankingPeriod = ref<AnalyticsRankingPeriod>('DAY');
-const rankingDate = ref('');
+const rankingDate = ref<string | null>('');
+const rechargeCurrency = ref('');
 const OPERATION_PAGE_SIZES = [10, 20, 50] as const;
 const operationsPageSize = ref<(typeof OPERATION_PAGE_SIZES)[number]>(10);
 let ignoreOperationsEcho = false;
@@ -91,21 +100,15 @@ const eventTypes: Array<{ value: AnalyticsEventType; label: string }> = [
   { value: 'CONTEXT_ANALYZED', label: '分析上下文' },
   { value: 'RESULT_EXPORTED', label: '复制结果' },
   { value: 'RECHARGE_PAID', label: '充值成功' },
+  { value: 'ADMIN_MODEL_CHANGED', label: '模型配置变更' },
 ];
 
-const activeMonth = computed(() => {
-  const months = dashboard.value?.monthlyUsage ?? [];
-  return months.reduce((peak, current) => (
-    current.operationCount > (peak?.operationCount ?? -1) ? current : peak
-  ), months[0]);
-});
-
-const activeHour = computed(() => {
-  const hours = dashboard.value?.hourlyUsage ?? [];
-  return hours.reduce((peak, current) => (
-    current.operationCount > (peak?.operationCount ?? -1) ? current : peak
-  ), hours[0]);
-});
+const activeMonth = computed(() => findUsagePeak(dashboard.value?.monthlyUsage ?? []));
+const activeHour = computed(() => findUsagePeak(dashboard.value?.hourlyUsage ?? []));
+const hasDailyData = computed(() => hasDailyActivity(dashboard.value?.dailyMetrics ?? []));
+const rechargeCurrencies = computed(() => [...new Set(dashboard.value?.rechargeByDay.map((item) => item.currency) ?? [])]);
+const selectedRechargeCount = computed(() => (dashboard.value?.rechargeByDay ?? [])
+  .filter((item) => item.currency === rechargeCurrency.value).reduce((total, item) => total + item.paidCount, 0));
 
 const deviceLabel = (deviceType: string): string => ({
   MOBILE: '手机',
@@ -125,15 +128,16 @@ const placeLabel = (country: string | null, province: string | null, city: strin
 
 const makeQuery = (): AnalyticsDashboardQuery | undefined => {
   const normalizedAccountId = accountId.value.trim();
+  const error = analyticsQueryError(range.value, dateRange.value, normalizedAccountId);
+  if (error) {
+    ElMessage.warning(error);
+    return undefined;
+  }
   if (range.value === 'CUSTOM') {
-    if (dateRange.value.length !== 2 || !dateRange.value[0] || !dateRange.value[1]) {
-      ElMessage.warning('请选择完整的自定义开始和结束日期。');
-      return undefined;
-    }
     return {
       range: range.value,
-      fromDate: dateRange.value[0],
-      toDate: dateRange.value[1],
+      fromDate: dateRange.value?.[0],
+      toDate: dateRange.value?.[1],
       ...(normalizedAccountId ? { userId: normalizedAccountId } : {}),
     };
   }
@@ -143,7 +147,7 @@ const makeQuery = (): AnalyticsDashboardQuery | undefined => {
   };
 };
 
-const loadOperations = async (page: number): Promise<void> => {
+const loadOperations = async (page: number, filters = appliedFilters.value): Promise<void> => {
   const current = dashboard.value;
   if (!current) return;
   const requestId = ++operationsRequestId;
@@ -155,10 +159,11 @@ const loadOperations = async (page: number): Promise<void> => {
       toDate: current.period.toDateInclusive,
       current: page,
       size: operationsPageSize.value,
-      ...appliedFilters.value,
+      ...filters,
     });
     if (requestId !== operationsRequestId) return;
     operationPage.value = result;
+    appliedFilters.value = filters;
     operationsPageNumber.value = page;
   } catch (error: unknown) {
     if (requestId !== operationsRequestId) return;
@@ -171,7 +176,10 @@ const loadOperations = async (page: number): Promise<void> => {
 
 const loadRanking = async (fallbackDate?: string): Promise<void> => {
   const selectedDate = rankingDate.value || fallbackDate;
-  if (!selectedDate) return;
+  if (!selectedDate) {
+    ElMessage.warning('请选择排行锚点日期。');
+    return;
+  }
   const requestId = ++rankingRequestId;
   rankingLoading.value = true;
   rankingError.value = '';
@@ -205,6 +213,9 @@ const refresh = async (): Promise<void> => {
   loading.value = true;
   try {
     dashboard.value = await getAnalyticsDashboard(query);
+    if (!rechargeCurrencies.value.includes(rechargeCurrency.value)) {
+      rechargeCurrency.value = rechargeCurrencies.value[0] ?? '';
+    }
     appliedFilters.value = submittedFilters;
     // 新统计到达后丢弃旧条件的明细与在途响应，避免不同账号的数据混在同一屏。
     operationsRequestId += 1;
@@ -238,21 +249,17 @@ const options = (): EChartsOption => ({
 
 const dailyOption = (data: AnalyticsDashboard): EChartsOption => ({
   ...options(),
-  color: [chartColor('--accent'), chartColor('--success'), chartColor('--warning')],
+  color: [chartColor('--accent'), chartColor('--success'), chartColor('--warning'), chartColor('--pink'), chartColor('--text-muted')],
   legend: { type: 'scroll', top: 0, right: 0, textStyle: { color: chartColor('--text-secondary') } },
   xAxis: {
     type: 'category',
     boundaryGap: false,
-    data: data.dailyMetrics.map((item) => item.date.slice(5)),
+    data: data.dailyMetrics.map((item) => item.date),
     axisLabel: { color: chartColor('--text-secondary') },
     axisLine: { lineStyle: { color: chartColor('--glass-border') } },
   },
   yAxis: { type: 'value', minInterval: 1, axisLabel: { color: chartColor('--text-secondary') }, splitLine: { lineStyle: { color: chartColor('--glass-border-subtle') } } },
-  series: [
-    { name: '页面访问', type: 'line', smooth: true, showSymbol: false, data: data.dailyMetrics.map((item) => item.accessCount) },
-    { name: '去重访问账号', type: 'line', smooth: true, showSymbol: false, data: data.dailyMetrics.map((item) => item.uniqueVisitors) },
-    { name: '活跃账号', type: 'line', smooth: true, showSymbol: false, data: data.dailyMetrics.map((item) => item.activeUsers) },
-  ],
+  series: dailyMetricSeries(data.dailyMetrics),
 });
 
 const hourlyOption = (data: AnalyticsDashboard): EChartsOption => ({
@@ -289,22 +296,14 @@ const deviceOption = (data: AnalyticsDashboard): EChartsOption => ({
 });
 
 const rechargeOption = (data: AnalyticsDashboard): EChartsOption => {
-  const days = [...new Set(data.rechargeByDay.map((item) => item.date))];
-  const groups = [...new Set(data.rechargeByDay.map((item) => `${item.planName} · ${item.currency}`))];
+  const days = data.dailyMetrics.map((item) => item.date);
   return {
     ...options(),
     color: [chartColor('--success'), chartColor('--accent'), chartColor('--warning'), chartColor('--pink'), chartColor('--text-muted')],
     legend: { type: 'scroll', top: 0, right: 0, textStyle: { color: chartColor('--text-secondary') } },
-    xAxis: { type: 'category', data: days.map((day) => day.slice(5)), axisLabel: { color: chartColor('--text-secondary') }, axisLine: { lineStyle: { color: chartColor('--glass-border') } } },
+    xAxis: { type: 'category', data: days, axisLabel: { color: chartColor('--text-secondary') }, axisLine: { lineStyle: { color: chartColor('--glass-border') } } },
     yAxis: { type: 'value', minInterval: 1, axisLabel: { color: chartColor('--text-secondary') }, splitLine: { lineStyle: { color: chartColor('--glass-border-subtle') } } },
-    series: groups.map((group) => ({
-      name: group,
-      type: 'bar' as const,
-      stack: 'paid-amount',
-      data: days.map((day) => data.rechargeByDay
-        .filter((item) => item.date === day && `${item.planName} · ${item.currency}` === group)
-        .reduce((total, item) => total + item.amountMinor, 0)),
-    })),
+    series: rechargeMetricSeries(data.rechargeByDay, rechargeCurrency.value, days),
   };
 };
 
@@ -319,7 +318,11 @@ const renderCharts = (): void => {
     ['recharge', rechargeChart.value, rechargeOption(data)],
   ];
   for (const [key, target, option] of targets) {
-    if (!target || target.clientWidth === 0) continue;
+    if (!target || target.clientWidth === 0) {
+      charts.get(key)?.dispose();
+      charts.delete(key);
+      continue;
+    }
     const chart = charts.get(key) ?? init(target);
     charts.set(key, chart);
     chart.resize();
@@ -332,6 +335,12 @@ const resizeCharts = (): void => {
 };
 
 watch(activeThemeId, () => { void nextTick(renderCharts); });
+watch(rechargeCurrency, () => { void nextTick(renderCharts); });
+
+/** 日志类型可在表格附近单独提交，仍复用最近一次成功查询的账号及日期。 */
+const applyLogFilter = (): void => {
+  void loadOperations(1, { ...appliedFilters.value, eventType: eventFilter.value || undefined });
+};
 
 const selectLogPage = (page: number): void => {
   if (ignoreOperationsEcho) {
@@ -387,7 +396,7 @@ onBeforeUnmount(() => {
         <p>按登录账号汇总访问、关键操作与所在地审计记录。</p>
       </div>
     </header>
-    <div class="filters" role="search" aria-label="统计筛选条件">
+    <div class="filters" role="search" aria-label="统计筛选条件" @keyup.enter.capture="refresh">
       <div class="filter-field">
         <span class="filter-label">时间范围</span>
         <ElSelect v-model="range" aria-label="统计时间范围" class="range-select">
@@ -400,7 +409,7 @@ onBeforeUnmount(() => {
         </ElSelect>
       </div>
       <div v-if="range === 'CUSTOM'" class="filter-field filter-field--dates">
-        <span class="filter-label">起止日期</span>
+        <span class="filter-label">起止日期 · 最多 366 天</span>
         <ElDatePicker
           v-model="dateRange"
           type="daterange"
@@ -425,19 +434,15 @@ onBeforeUnmount(() => {
       <ElButton type="primary" :loading="loading" @click="refresh">查询</ElButton>
     </div>
 
-    <ElAlert
-      v-if="dashboard && !dashboard.rechargeStatisticsAvailable"
-      class="recharge-notice"
-      type="warning"
-      :closable="false"
-      title="充值图表尚无数据源"
-      description="充值记录表及支付来源尚未启用；支付套餐统计已按待办保留，不会用模拟数据填充。"
-    />
-
     <div v-if="loading && !dashboard" class="loading-state" role="status">正在汇总账号事件…</div>
     <ElEmpty v-else-if="!dashboard" description="选择时间范围并查询统计数据。" />
 
     <template v-else>
+      <div class="query-summary" aria-label="已生效的统计条件">
+        <span class="query-period">{{ dashboard.period.fromDate }} — {{ dashboard.period.toDateInclusive }}</span>
+        <span>统计时区：{{ dashboard.period.zoneId }}</span>
+        <span>{{ appliedFilters.userId ? `账号：${appliedFilters.userId}` : '全部登录账号 · 包含管理员' }}</span>
+      </div>
       <section class="metric-strip" aria-label="统计摘要">
         <article class="metric metric-primary">
           <span>活跃账号</span>
@@ -447,7 +452,7 @@ onBeforeUnmount(() => {
         <article class="metric">
           <span>注册账号</span>
           <strong>{{ dashboard.registeredAccountCount.toLocaleString() }}</strong>
-          <small>包含平台管理员</small>
+          <small>当前存量，包含平台管理员</small>
         </article>
         <article class="metric">
           <span>新增账号</span>
@@ -482,8 +487,8 @@ onBeforeUnmount(() => {
             <div class="panel-title"><span class="panel-kicker">ACCOUNT SIGNAL</span><h2>每日访问与活跃</h2></div>
             <span class="period-label">{{ dashboard.period.fromDate }} — {{ dashboard.period.toDateInclusive }}</span>
           </div>
-          <div v-show="dashboard.dailyMetrics.length" ref="dailyChart" class="chart chart-tall" role="img" aria-label="每日访问、去重访问账号与活跃账号折线图"></div>
-          <div v-if="!dashboard.dailyMetrics.length" class="chart-empty chart-tall">所选范围内暂无每日访问数据。</div>
+          <div v-show="hasDailyData" ref="dailyChart" class="chart chart-tall" role="img" aria-label="每日访问、去重访问、活跃、实际使用与新增账号折线图"></div>
+          <div v-if="!hasDailyData" class="chart-empty chart-tall">所选范围内暂无每日访问数据。</div>
         </article>
 
         <article class="chart-panel">
@@ -491,8 +496,8 @@ onBeforeUnmount(() => {
             <div class="panel-title"><span class="panel-kicker">TIME OF DAY</span><h2>高频使用时段</h2></div>
             <ElTag v-if="activeHour" size="small" effect="plain">峰值 {{ String(activeHour.hour).padStart(2, '0') }}:00</ElTag>
           </div>
-          <div v-show="dashboard.hourlyUsage.length" ref="hourlyChart" class="chart chart-tall" role="img" aria-label="按小时汇总的关键操作柱状图"></div>
-          <div v-if="!dashboard.hourlyUsage.length" class="chart-empty chart-tall">所选范围内暂无时段统计。</div>
+          <div v-show="activeHour" ref="hourlyChart" class="chart chart-tall" role="img" aria-label="按小时汇总的关键操作柱状图"></div>
+          <div v-if="!activeHour" class="chart-empty chart-tall">所选范围内暂无时段统计。</div>
         </article>
 
         <article class="chart-panel">
@@ -500,8 +505,9 @@ onBeforeUnmount(() => {
             <div class="panel-title"><span class="panel-kicker">MONTHLY RHYTHM</span><h2>高频月份 · 近 12 个月</h2></div>
             <ElTag v-if="activeMonth" size="small" effect="plain">峰值 {{ activeMonth.month }}</ElTag>
           </div>
-          <div v-show="dashboard.monthlyUsage.length" ref="monthlyChart" class="chart chart-medium" role="img" aria-label="按月份汇总的关键操作柱状图"></div>
-          <div v-if="!dashboard.monthlyUsage.length" class="chart-empty">近 12 个月暂无使用数据。</div>
+          <p class="panel-caption">固定显示截至今天的近 12 个月，沿用账号筛选。</p>
+          <div v-show="activeMonth" ref="monthlyChart" class="chart chart-medium" role="img" aria-label="按月份汇总的关键操作柱状图"></div>
+          <div v-if="!activeMonth" class="chart-empty">近 12 个月暂无使用数据。</div>
         </article>
 
         <article class="chart-panel">
@@ -510,15 +516,25 @@ onBeforeUnmount(() => {
           </div>
           <div v-show="dashboard.deviceDistribution.length" ref="deviceChart" class="chart chart-medium" role="img" aria-label="手机、平板、电脑和未知设备登录分布图"></div>
           <div v-if="!dashboard.deviceDistribution.length" class="chart-empty">所选范围内暂无登录设备数据。</div>
+          <ul v-else class="device-summary" aria-label="各设备登录次数与去重账号">
+            <li v-for="item in dashboard.deviceDistribution" :key="item.deviceType">
+              <span>{{ deviceLabel(item.deviceType) }}</span>
+              <span>{{ item.loginCount.toLocaleString() }} 次 · {{ item.uniqueUsers.toLocaleString() }} 个账号</span>
+            </li>
+          </ul>
+          <p v-if="dashboard.deviceDistribution.length" class="panel-caption device-note">账号在各设备内去重，跨设备不可相加。</p>
         </article>
 
         <article class="chart-panel">
           <div class="panel-heading">
             <div class="panel-title"><span class="panel-kicker">RECHARGE RECORDS</span><h2>每日充值套餐</h2></div>
-            <small>金额以货币最小单位分币种汇总</small>
+            <ElSelect v-if="rechargeCurrencies.length > 1" v-model="rechargeCurrency" aria-label="充值统计币种" class="currency-select">
+              <ElOption v-for="currency in rechargeCurrencies" :key="currency" :label="currency" :value="currency" />
+            </ElSelect>
           </div>
+          <p v-if="dashboard.rechargeStatisticsAvailable && rechargeCurrencies.length" class="panel-caption">{{ rechargeCurrency }} · 最小货币单位 · 成功支付 {{ selectedRechargeCount }} 笔</p>
           <div v-show="dashboard.rechargeStatisticsAvailable && dashboard.rechargeByDay.length" ref="rechargeChart" class="chart chart-medium" role="img" aria-label="每日充值套餐金额堆叠柱状图"></div>
-          <div v-if="!dashboard.rechargeStatisticsAvailable" class="chart-empty">支付记录模块完成迁移并接入已验证的支付结果后显示。</div>
+          <div v-if="!dashboard.rechargeStatisticsAvailable" class="chart-empty recharge-placeholder"><strong>充值图表尚无数据源</strong><span>套餐与支付功能接入后显示每日统计。</span></div>
           <div v-else-if="!dashboard.rechargeByDay.length" class="chart-empty">所选范围内暂无充值记录。</div>
         </article>
       </section>
@@ -545,6 +561,7 @@ onBeforeUnmount(() => {
             </div>
           </div>
           <p class="panel-caption">按账号 ID 汇总关键操作；管理员账号计入。<span class="table-scroll-hint">左右滑动表格可查看完整字段。</span></p>
+          <p v-if="ranking" class="panel-caption">实际排行周期：{{ ranking.period.fromDate }} — {{ ranking.period.toDateInclusive }} · {{ ranking.period.zoneId }} · 活跃天数包含仅访问的日期</p>
           <ElAlert v-if="rankingError" type="error" :closable="false" :title="rankingError" />
           <ElTable v-else v-loading="rankingLoading" :data="ranking?.items ?? []" stripe :max-height="440" empty-text="所选周期内没有关键使用操作。">
             <ElTableColumn label="排名" type="index" width="64" align="center" />
@@ -561,16 +578,19 @@ onBeforeUnmount(() => {
         <article class="table-panel operations-panel">
           <div class="panel-heading operation-heading">
             <div class="panel-title"><span class="panel-kicker">AUDIT TRAIL</span><h2>关键操作日志</h2></div>
-            <ElSelect v-model="eventFilter" clearable aria-label="按操作类型筛选" placeholder="全部操作" class="event-select">
-              <ElOption v-for="item in eventTypes" :key="item.value" :label="item.label" :value="item.value" />
-            </ElSelect>
+            <div class="operation-controls">
+              <ElSelect v-model="eventFilter" clearable aria-label="按操作类型筛选" placeholder="全部操作" class="event-select">
+                <ElOption v-for="item in eventTypes" :key="item.value" :label="item.label" :value="item.value" />
+              </ElSelect>
+              <ElButton :loading="operationsLoading" :disabled="loading" @click="applyLogFilter">筛选日志</ElButton>
+            </div>
           </div>
-          <p class="panel-caption">{{ dashboard.period.fromDate }} — {{ dashboard.period.toDateInclusive }}<span class="table-scroll-hint">左右滑动表格可查看完整字段。</span></p>
+          <p class="panel-caption">{{ dashboard.period.fromDate }} — {{ dashboard.period.toDateInclusive }} · {{ dashboard.period.zoneId }} · {{ appliedFilters.eventType ? eventLabel(appliedFilters.eventType) : '全部操作' }}<span class="table-scroll-hint">左右滑动表格可查看完整字段。</span></p>
           <ElAlert v-if="operationsError" type="error" :closable="false" :title="operationsError" />
           <!-- @vue-generic {AnalyticsOperationLog} -->
-          <ElTable v-else v-loading="operationsLoading" :data="operationPage?.records ?? []" stripe :max-height="560" empty-text="所选范围内没有关键操作日志。">
+          <ElTable v-else v-loading="operationsLoading" :data="operationPage?.records ?? []" row-key="eventId" stripe :max-height="560" empty-text="所选范围内没有关键操作日志。">
             <ElTableColumn label="发生时间" min-width="185" show-overflow-tooltip>
-              <template #default="scope">{{ new Date(scope.row.occurredAt).toLocaleString() }}</template>
+              <template #default="scope">{{ formatAnalyticsTime(scope.row.occurredAt, dashboard.period.zoneId) }}</template>
             </ElTableColumn>
             <ElTableColumn label="账号 ID" min-width="280" show-overflow-tooltip>
               <template #default="scope"><code>{{ scope.row.userId }}</code></template>
@@ -578,6 +598,7 @@ onBeforeUnmount(() => {
             <ElTableColumn label="操作" width="120">
               <template #default="scope">{{ eventLabel(scope.row.eventType) }}</template>
             </ElTableColumn>
+            <ElTableColumn prop="displayName" label="显示名称" min-width="180" show-overflow-tooltip />
             <ElTableColumn prop="clientIp" label="IP" min-width="160" show-overflow-tooltip />
             <ElTableColumn label="操作所在地" min-width="200" show-overflow-tooltip>
               <template #default="scope">{{ locationFor(scope.row as AnalyticsOperationLog) }}</template>
@@ -585,6 +606,7 @@ onBeforeUnmount(() => {
             <ElTableColumn label="登录所在地" min-width="200" show-overflow-tooltip>
               <template #default="scope">{{ loginLocationFor(scope.row as AnalyticsOperationLog) }}</template>
             </ElTableColumn>
+            <ElTableColumn prop="eventId" label="事件 ID" min-width="280" show-overflow-tooltip />
             <ElTableColumn label="设备" width="90">
               <template #default="scope">{{ deviceLabel(scope.row.deviceType) }}</template>
             </ElTableColumn>
@@ -678,7 +700,15 @@ onBeforeUnmount(() => {
 .rank-period-select { width: 96px; }
 .rank-date.el-date-editor { width: 160px; }
 
-.recharge-notice { margin: 0 0 var(--analytics-gap); }
+.query-summary { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 2px 16px; color: var(--text-secondary); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.query-period { color: var(--text-primary); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.operation-controls { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.currency-select { width: 104px; }
+.device-summary { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; color: var(--text-secondary); font-size: 12px; }
+.device-summary li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-variant-numeric: tabular-nums; }
+.device-note { margin-top: 12px; margin-bottom: 0; }
+.recharge-placeholder { align-content: center; gap: 10px; }
+.recharge-placeholder strong { color: var(--text-primary); font-weight: 500; }
 
 .loading-state,
 .chart-empty {
@@ -819,7 +849,9 @@ code { color: var(--accent); font-family: var(--font-mono); font-size: 12px; }
   .filter-field { flex-basis: 100%; }
   .filters > .el-button { width: 100%; }
   .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .metric { min-height: 130px; padding: 13px; }
+  .metric { min-height: 112px; padding: 12px; }
+  .metric strong { margin: 5px 0; }
+  .query-summary { gap: 4px; flex-direction: column; }
   .charts-grid { grid-template-columns: minmax(0, 1fr); }
   .chart-wide { grid-column: auto; }
   .chart-panel, .table-panel { padding: 16px 14px; }
@@ -827,7 +859,8 @@ code { color: var(--accent); font-family: var(--font-mono); font-size: 12px; }
   .ranking-controls { display: grid; width: 100%; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .rank-period-select, .rank-date.el-date-editor { width: 100%; min-width: 0; }
   .ranking-controls > .el-button { grid-column: 1 / -1; }
-  .event-select { width: 100%; }
+  .operation-controls { width: 100%; }
+  .event-select { flex: 1; min-width: 0; width: auto; }
   .table-scroll-hint { display: block; margin: 4px 0 0; }
   .pagination-row { align-items: flex-start; flex-direction: column; }
   .pagination-row :deep(.el-pagination) { justify-content: flex-start; }

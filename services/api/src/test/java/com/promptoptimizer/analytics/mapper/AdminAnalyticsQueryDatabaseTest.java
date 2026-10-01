@@ -4,9 +4,12 @@ import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.DailyMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.HourlyMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.MonthlyMetric;
+import com.promptoptimizer.identity.security.BootstrapAdminAccountInitializer;
+import com.promptoptimizer.identity.security.BootstrapUserPasswordInitializer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +43,10 @@ class AdminAnalyticsQueryDatabaseTest {
 
     @Autowired
     private DataSource dataSource;
+
+    // ApplicationRunner 先于测试事务运行，替换初始化器以免写入本地已有账号。
+    @MockBean private BootstrapAdminAccountInitializer adminInitializer;
+    @MockBean private BootstrapUserPasswordInitializer userInitializer;
 
     @Test
     void dailyAndMonthlyBucketsGroupByLocalCalendar() {
@@ -104,6 +111,20 @@ class AdminAnalyticsQueryDatabaseTest {
         assertThat(usage.uniqueVisitors()).isEqualTo(1);
         assertThat(usage.activeUsers()).isEqualTo(1);
         assertThat(usage.actualUsers()).isEqualTo(1);
+
+        // 仅访问和仅退出的日期也属于活跃日，关键操作数与登录次数保持各自口径。
+        insertEvent(jdbc, tenantId, userId, "APP_VISIT", "{}", at(day.plusDays(1), 10));
+        insertEvent(jdbc, tenantId, userId, "APP_VISIT", "{}", at(day.plusDays(1), 11));
+        insertEvent(jdbc, tenantId, userId, "LOGOUT", "{}", at(day.plusDays(2), 12));
+        AnalyticsPeriod threeDays = new AnalyticsPeriod(day, day.plusDays(3), ZONE,
+                day.atStartOfDay(ZONE).toOffsetDateTime(), day.plusDays(3).atStartOfDay(ZONE).toOffsetDateTime());
+        assertThat(analyticsMapper.usageRanking(threeDays, userId, 20)).singleElement().satisfies(rank -> {
+            assertThat(rank.activeDays()).isEqualTo(3);
+            assertThat(rank.operationCount()).isEqualTo(1);
+            assertThat(rank.loginCount()).isEqualTo(1);
+        });
+        assertThat(analyticsMapper.dailyMetrics(threeDays, userId))
+                .extracting(DailyMetric::activeUsers).containsExactly(1L, 1L, 1L);
     }
 
     private static OffsetDateTime at(LocalDate day, int hour) {

@@ -216,9 +216,7 @@
          WHERE e.actor_user_id IS NOT NULL
            AND e.occurred_at &gt;= #{period.fromInclusive}
            AND e.occurred_at &lt; #{period.toExclusive}
-           AND (e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
-                                 'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
-                OR e.event_type = 'LOGIN')
+           <!-- 活跃天数涵盖任一审计行为；排行入选及排序仍由关键操作的 FILTER/HAVING 决定。 -->
            AND (CAST(#{userId} AS uuid) IS NULL OR e.actor_user_id = #{userId})
          GROUP BY e.actor_user_id, u.display_name
         HAVING COUNT(*) FILTER (WHERE e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED',

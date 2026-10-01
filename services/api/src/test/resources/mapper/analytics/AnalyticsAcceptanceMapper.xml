@@ -26,6 +26,6 @@
              + (SELECT COUNT(*) FROM workspace_member WHERE user_id = #{userId})
              + (SELECT COUNT(*) FROM optimization_session WHERE created_by = #{userId})
              + (SELECT COUNT(*) FROM optimization_record WHERE created_by = #{userId})
-             + (SELECT COUNT(*) FROM audit_event WHERE actor_user_id = #{userId})
+             + (SELECT COUNT(*) FROM audit_event WHERE tenant_id = #{tenantId})
     </select>
 </mapper>

@@ -25,14 +25,14 @@ const mockAnalytics = async (page: Page, empty = false) => {
     actualUserCount: empty ? 0 : 7304, accessCount: empty ? 0 : 128540,
     uniqueVisitorCount: empty ? 0 : 8600, activeUserCount: empty ? 0 : 9172,
     averageDailyActiveUsers: empty ? 0 : 2587.33,
-    dailyMetrics: empty ? [] : Array.from({ length: 27 }, (_, index) => ({
+    dailyMetrics: Array.from({ length: 27 }, (_, index) => ({
       date: `2026-09-${String(index + 1).padStart(2, '0')}`,
-      accessCount: 3000 + index * 52, uniqueVisitors: 1000 + index * 24,
-      activeUsers: 800 + index * 18, actualUsers: 700 + index * 10, newAccounts: 12,
+      accessCount: empty ? 0 : 3000 + index * 52, uniqueVisitors: empty ? 0 : 1000 + index * 24,
+      activeUsers: empty ? 0 : 800 + index * 18, actualUsers: empty ? 0 : 700 + index * 10, newAccounts: empty ? 0 : 12,
     })),
-    hourlyUsage: empty ? [] : Array.from({ length: 24 }, (_, hour) => ({ hour, operationCount: 40 + hour * 9 })),
-    monthlyUsage: empty ? [] : Array.from({ length: 12 }, (_, index) => ({
-      month: `2026-${String(index + 1).padStart(2, '0')}`, operationCount: 600 + index * 130,
+    hourlyUsage: Array.from({ length: 24 }, (_, hour) => ({ hour, operationCount: empty ? 0 : 40 + hour * 9 })),
+    monthlyUsage: Array.from({ length: 12 }, (_, index) => ({
+      month: `2026-${String(index + 1).padStart(2, '0')}`, operationCount: empty ? 0 : 600 + index * 130,
     })),
     deviceDistribution: empty ? [] : [
       { deviceType: 'DESKTOP', loginCount: 3600, uniqueUsers: 2200 },
@@ -80,7 +80,7 @@ const mockAnalytics = async (page: Page, empty = false) => {
       await route.abort();
     }
   });
-  return { dashboard, requests };
+  return { dashboard, requests, records };
 };
 
 /** 横向滚动应留在表格内，页面本身不得被控件、数字或长文本撑宽。 */
@@ -189,6 +189,7 @@ test('空数据保留筛选和明确空状态，后续查询可恢复图表', as
   await expect(page.getByText('充值图表尚无数据源')).toBeVisible();
   await expect(page.locator('.metric strong')).toHaveText(['0', '0', '0', '0', '0', '0', '0']);
   await expect(page.locator('.chart canvas')).toHaveCount(0);
+  await expect(page.getByText(/^峰值 /)).toHaveCount(0);
   await expect(page.locator('.pagination-row')).toHaveCount(0);
   await expectContainedLayout(page);
   const emptyText = await page.getByText('所选范围内没有关键操作日志。').boundingBox();
@@ -197,6 +198,9 @@ test('空数据保留筛选和明确空状态，后续查询可恢复图表', as
   dashboard.dailyMetrics = [{ date: period.fromDate, accessCount: 1, uniqueVisitors: 1, activeUsers: 1, actualUsers: 1, newAccounts: 0 }];
   await page.getByRole('button', { name: '查询', exact: true }).click();
   await expect(page.locator('.chart canvas')).toHaveCount(1);
+  dashboard.dailyMetrics[0] = { date: period.fromDate, accessCount: 0, uniqueVisitors: 0, activeUsers: 0, actualUsers: 0, newAccounts: 0 };
+  await page.getByRole('button', { name: '查询', exact: true }).click();
+  await expect(page.locator('.chart canvas')).toHaveCount(0);
 });
 
 test('手机自定义日期弹层可操作，账号和操作筛选仍由查询按钮提交', async ({ page }) => {
@@ -266,6 +270,58 @@ test('加载和接口失败状态可见，重试恢复且其他页面容器不�
   await expect(page.locator('.topbar--analytics')).toHaveCount(0);
   const main = await page.locator('.app-main').boundingBox();
   expect(main!.width).toBe(1180);
+});
+
+test('清空自定义日期后查询给出提示，不抛出页面异常或发送无效请求', async ({ page }) => {
+  const { requests } = await mockAnalytics(page);
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('/admin/analytics');
+  await expect.poll(() => requests.operations.length).toBe(1);
+  await page.locator('.range-select .el-select__wrapper').click();
+  await page.getByRole('option', { name: '自定义', exact: true }).click();
+  await page.getByPlaceholder('开始日期').fill('2026-09-02');
+  await page.getByPlaceholder('开始日期').press('Tab');
+  await page.getByPlaceholder('结束日期').fill('2026-09-08');
+  await page.getByPlaceholder('结束日期').press('Tab');
+  await page.getByRole('heading', { name: '使用与访问' }).click();
+  await page.locator('.custom-dates').hover();
+  await page.locator('.custom-dates .el-range__close-icon').click();
+  await page.getByRole('button', { name: '查询', exact: true }).click();
+  await expect(page.getByText('请选择完整的自定义开始和结束日期。')).toBeVisible();
+  expect(errors).toEqual([]);
+  expect(requests.dashboard).toHaveLength(1);
+});
+
+test('单日图表显示数据点，日志使用统计时区而非浏览器时区', async ({ browser }) => {
+  const context = await browser.newContext({ timezoneId: 'America/Los_Angeles', locale: 'zh-CN' });
+  try {
+    const page = await context.newPage();
+    const { dashboard, records } = await mockAnalytics(page);
+    dashboard.period = { fromDate: '2026-10-01', toDateInclusive: '2026-10-01',
+      fromInclusive: '2026-10-01T00:00:00+08:00', toExclusive: '2026-10-02T00:00:00+08:00', zoneId: 'Asia/Shanghai' };
+    dashboard.dailyMetrics = [{ date: '2026-10-01', accessCount: 5, uniqueVisitors: 3, activeUsers: 4, actualUsers: 2, newAccounts: 1 }];
+    records[0]!.occurredAt = '2026-09-30T16:30:00Z';
+    await page.goto('/admin/analytics');
+    await expect(page.locator('.operations-panel .el-table__body .el-table__row').first())
+      .toContainText('2026-10-01 00:30:00');
+    await expect(page.getByText('统计时区：Asia/Shanghai', { exact: true })).toBeVisible();
+    // 从页面使用的同一 ECharts 实例检查单点标记，避免只断言存在一个空白画布。
+    const series = await page.evaluate(async () => {
+      const modulePath = '/node_modules/.vite/deps/echarts_core.js';
+      const echarts: typeof import('echarts/core') = await import(/* @vite-ignore */ modulePath);
+      const element = document.querySelector<HTMLElement>('.chart-wide .chart');
+      if (!element) throw new Error('每日图表容器缺失');
+      const option = echarts.getInstanceByDom(element)?.getOption();
+      return option?.series as Array<{ showSymbol: boolean; data: number[]; name: string }> | undefined;
+    });
+    expect(series).toHaveLength(5);
+    expect(series?.every((item) => item.showSymbol && item.data.length === 1)).toBe(true);
+    expect(series?.map((item) => item.name)).toContain('实际使用账号');
+    expect(series?.map((item) => item.name)).toContain('新增账号');
+  } finally {
+    await context.close();
+  }
 });
 
 test('未提交或查询失败的筛选草稿不改变翻页和排行的已生效条件', async ({ page }) => {
@@ -346,4 +402,51 @@ test('旧翻页响应不能覆盖新查询，明细失败显示错误并支持�
   await expect(rows).toHaveCount(10);
   await expect(page.locator('.ranking-panel .el-table__body .el-table__row')).toHaveCount(20);
   await expect(page.locator('.operations-panel .el-alert, .ranking-panel .el-alert')).toHaveCount(0);
+});
+
+test('账号校验及回车提交有效，日志就近筛选沿用已生效账号并从第一页查询', async ({ page }) => {
+  const { requests } = await mockAnalytics(page);
+  await page.goto('/admin/analytics');
+  await expect.poll(() => requests.operations.length).toBe(1);
+  const account = page.getByRole('textbox', { name: '按登录账号 ID 筛选' });
+  await account.fill('bad-id');
+  await account.press('Enter');
+  await expect(page.getByText('账号 ID 必须是完整的 UUID。')).toBeVisible();
+  expect(requests.dashboard).toHaveLength(1);
+  const appliedUser = '00000000-0000-0000-0000-000000000002';
+  await account.fill(appliedUser);
+  await account.press('Enter');
+  await expect.poll(() => requests.operations.length).toBe(2);
+  await expect(page.getByLabel('已生效的统计条件')).toContainText(appliedUser);
+  await account.fill('00000000-0000-0000-0000-000000000003');
+  await page.locator('.event-select .el-select__wrapper').click();
+  await page.getByRole('option', { name: '登录', exact: true }).click();
+  await page.getByRole('button', { name: '筛选日志', exact: true }).click();
+  await expect.poll(() => requests.operations.length).toBe(3);
+  expect(requests.dashboard).toHaveLength(2);
+  expect(requests.operations.at(-1)?.searchParams.get('userId')).toBe(appliedUser);
+  expect(requests.operations.at(-1)?.searchParams.get('eventType')).toBe('LOGIN');
+  expect(requests.operations.at(-1)?.searchParams.get('current')).toBe('1');
+  await expect(page.locator('.operations-panel .panel-caption')).toContainText('登录');
+});
+
+test('充值图表分币种显示，设备和日志补齐返回的账号信息', async ({ page }) => {
+  const { dashboard } = await mockAnalytics(page);
+  dashboard.rechargeByDay.push({ date: '2026-09-27', planCode: 'TEST', planName: '测试套餐', paidCount: 2, amountMinor: 1000, currency: 'USD' });
+  await page.goto('/admin/analytics');
+  await expect(page.getByLabel('各设备登录次数与去重账号')).toContainText('3,600 次 · 2,200 个账号');
+  await expect(page.locator('.operations-panel .el-table__body .el-table__row').first()).toContainText('测试账号 1');
+  await page.locator('.currency-select .el-select__wrapper').click();
+  await page.getByRole('option', { name: 'USD', exact: true }).click();
+  await expect(page.getByText('USD · 最小货币单位 · 成功支付 2 笔')).toBeVisible();
+  const series = await page.evaluate(async () => {
+    const modulePath = '/node_modules/.vite/deps/echarts_core.js';
+    const echarts: typeof import('echarts/core') = await import(/* @vite-ignore */ modulePath);
+    const element = document.querySelector<HTMLElement>('[aria-label="每日充值套餐金额堆叠柱状图"]');
+    if (!element) throw new Error('充值图表容器缺失');
+    return echarts.getInstanceByDom(element)?.getOption().series as Array<{ data: number[]; stack: string }> | undefined;
+  });
+  expect(series).toHaveLength(1);
+  expect(series?.[0]?.data.at(-1)).toBe(1000);
+  expect(series?.[0]?.stack).toBe('paid-USD');
 });

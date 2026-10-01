@@ -1,5 +1,7 @@
 package com.promptoptimizer.analytics.dto;
 
+import jakarta.validation.constraints.Size;
+
 import java.util.UUID;
 
 /**
@@ -9,9 +11,9 @@ import java.util.UUID;
  * @since 0.1.0
  */
 public record DashboardQuery(
-        String range,
-        String fromDate,
-        String toDate,
+        @Size(max = 32) String range,
+        @Size(max = 10, message = "fromDate 必须使用 YYYY-MM-DD 日期格式") String fromDate,
+        @Size(max = 10, message = "toDate 必须使用 YYYY-MM-DD 日期格式") String toDate,
         UUID userId
 ) {
     public DashboardQuery {

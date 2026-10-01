@@ -3,6 +3,7 @@ package com.promptoptimizer.analytics.dto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
 
@@ -13,10 +14,10 @@ import java.util.UUID;
  * @since 0.1.0
  */
 public record OperationLogQuery(
-        @NotBlank String fromDate,
-        @NotBlank String toDate,
+        @NotBlank @Size(max = 10) String fromDate,
+        @NotBlank @Size(max = 10) String toDate,
         UUID userId,
-        String eventType,
+        @Size(max = 64) String eventType,
         @Min(1) @Max(100_000) Integer current,
         @Min(1) @Max(100) Integer size
 ) {

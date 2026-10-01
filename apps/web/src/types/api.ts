@@ -109,7 +109,8 @@ export type AnalyticsEventType =
   | 'CONTEXT_PREPARED'
   | 'CONTEXT_ANALYZED'
   | 'RESULT_EXPORTED'
-  | 'RECHARGE_PAID';
+  | 'RECHARGE_PAID'
+  | 'ADMIN_MODEL_CHANGED';
 
 export interface AnalyticsPeriodView {
   fromDate: string;

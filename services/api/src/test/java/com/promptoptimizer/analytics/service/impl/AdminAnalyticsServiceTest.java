@@ -9,6 +9,7 @@ import com.promptoptimizer.analytics.dto.AnalyticsViews.OperationLog;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.UserRank;
 import com.promptoptimizer.analytics.dto.DashboardQuery;
 import com.promptoptimizer.analytics.dto.OperationLogQuery;
+import com.promptoptimizer.analytics.dto.UsageRankingQuery;
 import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
 import com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper;
 import com.promptoptimizer.payment.mapper.RechargeRecordMapper;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
  * 验证仪表盘平均日活包含零活跃日，并确保未启用支付记录时不查询虚构数据。
@@ -87,6 +89,46 @@ class AdminAnalyticsServiceTest {
         assertThatThrownBy(() -> service.dashboard(new DashboardQuery("CUSTOM", "2026-09-04", "2026-09-03", null)))
                 .isInstanceOf(InvalidOptimizationRequestException.class);
         verify(repository, never()).accountCounts(any(), any());
+    }
+
+    @Test
+    void invalidDateSpanAndRankingOrLogParametersNeverReachTheMapper() {
+        AdminAnalyticsMapper repository = mock(AdminAnalyticsMapper.class);
+        AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository),
+                provider(mock(RechargeRecordMapper.class)), false);
+        assertThatThrownBy(() -> service.dashboard(new DashboardQuery("CUSTOM", "2024-01-01", "2025-01-01", null)))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        assertThatThrownBy(() -> service.usageRanking(new UsageRankingQuery("DAY", "+999999999-12-31", null, 20)))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        assertThatThrownBy(() -> service.usageRanking(new UsageRankingQuery("DAY", "2026-10-01", null, 101)))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        assertThatThrownBy(() -> service.operationLogs(new OperationLogQuery("2026-10-01", "2026-10-01", null, "INVALID", 1, 10)))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        assertThatThrownBy(() -> service.operationLogs(new OperationLogQuery("2026-10-01", "2026-10-01", null, null, 0, 10)))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        assertThatThrownBy(() -> service.operationLogs(new OperationLogQuery("2026-10-01", "2026-10-01", null, null, 1, 101)))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        verifyNoInteractions(repository);
+    }
+
+    @Test
+    void roundsAverageToTwoPlacesAndPreservesFixedRecentMonthWindow() {
+        AdminAnalyticsMapper repository = mock(AdminAnalyticsMapper.class);
+        AnalyticsPeriod period = resolver().resolve("CUSTOM", "2024-01-01", "2024-01-03");
+        when(repository.accountCounts(period, USER_ID)).thenReturn(new AdminAnalyticsMapper.AccountCounts(1, 0));
+        when(repository.usageCounts(period, USER_ID)).thenReturn(new AdminAnalyticsMapper.UsageCounts(1, 1, 1, 0));
+        when(repository.dailyMetrics(period, USER_ID)).thenReturn(List.of(
+                new DailyMetric(period.fromDate(), 1, 1, 1, 0, 0),
+                new DailyMetric(period.fromDate().plusDays(1), 0, 0, 0, 0, 0),
+                new DailyMetric(period.fromDate().plusDays(2), 0, 0, 0, 0, 0)));
+        AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository),
+                provider(mock(RechargeRecordMapper.class)), false);
+        assertThat(service.dashboard(new DashboardQuery("CUSTOM", "2024-01-01", "2024-01-03", USER_ID))
+                .averageDailyActiveUsers()).isEqualByComparingTo("0.33");
+        ArgumentCaptor<AnalyticsPeriod> months = ArgumentCaptor.forClass(AnalyticsPeriod.class);
+        verify(repository).monthlyUsage(months.capture(), eq(LocalDate.of(2026, 9, 25)), eq(USER_ID));
+        assertThat(months.getValue().fromDate()).isEqualTo(LocalDate.of(2025, 10, 1));
+        assertThat(months.getValue().toDateExclusive()).isEqualTo(LocalDate.of(2026, 9, 26));
     }
 
     @Test

@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
+import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.temporal.TemporalAdjusters;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Locale;
 
 /**
@@ -24,6 +26,11 @@ import java.util.Locale;
  */
 @Component
 public class AnalyticsPeriodResolver {
+
+    /** 单次自然日查询至多覆盖一个闰年，避免 generate_series 产生无界结果集。 */
+    private static final long MAX_QUERY_DAYS = 366;
+    private static final LocalDate MIN_DATE = LocalDate.of(1, 1, 1);
+    private static final LocalDate MAX_DATE = LocalDate.of(9999, 12, 31);
 
     private final ZoneId zoneId;
     private final Clock clock;
@@ -39,7 +46,7 @@ public class AnalyticsPeriodResolver {
     }
 
     /**
-     * 解析仪表盘范围；自定义输入的结束日期包含在内，数据库边界统一转换成排他结束时刻。
+     * 解析仪表盘范围；结束日期包含在内，至多 366 个自然日，数据库使用排他结束时刻。
      */
     public AnalyticsPeriod resolve(String rangeValue, String fromValue, String toValue) {
         AnalyticsRange range = parseRange(rangeValue);
@@ -71,7 +78,7 @@ public class AnalyticsPeriodResolver {
                 from = parseDate(fromValue, "fromDate");
                 try {
                     toExclusive = parseDate(toValue, "toDate").plusDays(1);
-                } catch (java.time.DateTimeException exception) {
+                } catch (DateTimeException exception) {
                     throw new InvalidOptimizationRequestException("toDate 超出支持的日期范围");
                 }
                 if (toExclusive.isBefore(from) || toExclusive.equals(from)) {
@@ -101,6 +108,7 @@ public class AnalyticsPeriodResolver {
         };
     }
 
+    /** 将外部范围代码归一化，非法代码返回稳定的参数错误。 */
     private AnalyticsRange parseRange(String value) {
         try {
             return AnalyticsRange.valueOf(value == null ? "" : value.trim().toUpperCase(Locale.ROOT));
@@ -111,23 +119,39 @@ public class AnalyticsPeriodResolver {
         }
     }
 
+    /** 限定四位公历年份，先拒绝扩展年份和年零，再进行日期运算。 */
     private LocalDate parseDate(String value, String name) {
         try {
-            if (value == null || value.isBlank()) {
-                throw new DateTimeParseException("missing", "", 0);
+            if (value == null || !value.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+                throw new DateTimeParseException("invalid format", "", 0);
             }
-            return LocalDate.parse(value);
+            LocalDate date = LocalDate.parse(value);
+            if (date.isBefore(MIN_DATE) || date.isAfter(MAX_DATE)) {
+                throw new InvalidOptimizationRequestException(name + " 必须在 0001-01-01 至 9999-12-31 之间");
+            }
+            return date;
         } catch (DateTimeParseException exception) {
             throw new InvalidOptimizationRequestException(name + " 必须使用 YYYY-MM-DD 日期格式");
         }
     }
 
+    /** 校验展开后的周期及日桶上限，按当地午夜构造边界以保留夏令时语义。 */
     private AnalyticsPeriod period(LocalDate from, LocalDate toExclusive) {
         if (!from.isBefore(toExclusive)) {
             throw new InvalidOptimizationRequestException("统计结束日期必须晚于开始日期");
         }
-        OffsetDateTime start = from.atStartOfDay(zoneId).toOffsetDateTime();
-        OffsetDateTime end = toExclusive.atStartOfDay(zoneId).toOffsetDateTime();
-        return new AnalyticsPeriod(from, toExclusive, zoneId, start, end);
+        if (from.isBefore(MIN_DATE) || toExclusive.minusDays(1).isAfter(MAX_DATE)) {
+            throw new InvalidOptimizationRequestException("完整统计周期必须在 0001-01-01 至 9999-12-31 之间");
+        }
+        if (ChronoUnit.DAYS.between(from, toExclusive) > MAX_QUERY_DAYS) {
+            throw new InvalidOptimizationRequestException("单次统计范围不能超过 366 个自然日，请分段查询");
+        }
+        try {
+            OffsetDateTime start = from.atStartOfDay(zoneId).toOffsetDateTime();
+            OffsetDateTime end = toExclusive.atStartOfDay(zoneId).toOffsetDateTime();
+            return new AnalyticsPeriod(from, toExclusive, zoneId, start, end);
+        } catch (DateTimeException exception) {
+            throw new InvalidOptimizationRequestException("统计日期超出当前时区支持的范围");
+        }
     }
 }

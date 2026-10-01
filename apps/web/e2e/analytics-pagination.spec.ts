@@ -28,6 +28,7 @@ const dashboard = {
 
 test('操作日志默认每页 10 条，并可改为 20 条', async ({ page }) => {
   await mockAuthentication(page, true, true);
+  await page.route('**/api/v1/analytics/events', (route) => route.fulfill({ status: 204 }));
   const operationRequests: URL[] = [];
   await page.route('**/api/v1/admin/analytics/**', async (route) => {
     const url = new URL(route.request().url());

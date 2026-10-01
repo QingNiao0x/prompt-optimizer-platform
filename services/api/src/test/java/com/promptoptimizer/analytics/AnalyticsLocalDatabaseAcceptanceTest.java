@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.analytics.mapper.AuditEventMapper;
+import com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper;
+import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
+import com.promptoptimizer.analytics.dto.AnalyticsViews.DailyMetric;
+import com.promptoptimizer.analytics.dto.AnalyticsViews.HourlyMetric;
 import com.promptoptimizer.analytics.support.AnalyticsAcceptanceMapper;
 import com.promptoptimizer.identity.mapper.IdentityProvisioningMapper;
 import com.promptoptimizer.identity.security.BootstrapAdminAccountInitializer;
@@ -86,6 +90,7 @@ class AnalyticsLocalDatabaseAcceptanceTest {
     @Autowired private PasswordEncoder encoder;
     @Autowired private IdentityProvisioningMapper provisioning;
     @Autowired private AuditEventMapper audit;
+    @Autowired private AdminAnalyticsMapper analytics;
     @Autowired private AnalyticsAcceptanceMapper inspection;
     // ApplicationRunner 在测试事务之前运行，必须明确替换，不能依赖本机初始化配置为空。
     @MockBean private BootstrapAdminAccountInitializer adminInitializer;
@@ -152,7 +157,8 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         event(member, "RESULT_EXPORTED");
         String authenticationSessionId = member.session().getId();
         mvc.perform(write("/api/v1/auth/logout", member)).andExpect(status().isOk());
-        assertThat(inspection.eventTypes(ordinary.userId())).containsExactly(
+        // 快速连续请求可共享同一数据库时间精度；相同时刻按随机 UUID 排序，不代表请求先后。
+        assertThat(inspection.eventTypes(ordinary.userId())).containsExactlyInAnyOrder(
                 "LOGIN", "APP_VISIT", "APP_VISIT", "CONTEXT_PREPARED", "PLAN_CREATED",
                 "OPTIMIZATION_SUBMITTED", "RESULT_EXPORTED", "LOGOUT");
 
@@ -277,6 +283,11 @@ class AnalyticsLocalDatabaseAcceptanceTest {
                 get("/api/v1/admin/analytics/dashboard").param("range", "CUSTOM")
                         .param("fromDate", "2026-03-02").param("toDate", "2026-03-01"),
                 get("/api/v1/admin/analytics/dashboard").param("userId", "not-a-uuid"),
+                get("/api/v1/admin/analytics/dashboard").param("range", "CUSTOM")
+                        .param("fromDate", "2024-01-01").param("toDate", "2025-01-01"),
+                get("/api/v1/admin/analytics/operations").param("fromDate", "0001-01-01").param("toDate", "9999-12-31"),
+                get("/api/v1/admin/analytics/usage-ranking").param("period", "DAY").param("date", "+999999999-12-31"),
+                get("/api/v1/admin/analytics/usage-ranking").param("period", "WEEK").param("date", "9999-12-31"),
                 adminQuery("operations").param("current", "0"),
                 adminQuery("operations").param("size", "101"),
                 adminQuery("operations").param("eventType", "UNKNOWN"),
@@ -300,11 +311,80 @@ class AnalyticsLocalDatabaseAcceptanceTest {
                         .header("X-User-Id", admin.userId()).header("X-Forwarded-For", "203.0.113.9")
                         .content("{\"eventType\":\"APP_VISIT\"}"))
                 .andExpect(status().isOk());
-        assertThat(inspection.eventTypes(ordinary.userId())).containsExactly("LOGIN", "APP_VISIT");
+        assertThat(inspection.eventTypes(ordinary.userId())).containsExactlyInAnyOrder("LOGIN", "APP_VISIT");
         assertThat(inspection.eventTypes(admin.userId())).isEmpty();
         for (String details : inspection.eventDetails(ordinary.userId())) {
             assertThat(json.readTree(details).path("clientIp").asText()).isEqualTo(CLIENT_IP);
         }
+    }
+
+    @Test
+    void daylightSavingRepeatedHourKeepsBothEventsAndOnlyOneActiveCalendarDay() {
+        ZoneId zone = ZoneId.of("America/Los_Angeles");
+        LocalDate day = LocalDate.of(2026, 11, 1);
+        AnalyticsPeriod period = new AnalyticsPeriod(day, day.plusDays(1), zone,
+                day.atStartOfDay(zone).toOffsetDateTime(), day.plusDays(1).atStartOfDay(zone).toOffsetDateTime());
+        inspection.setCreatedAt(ordinary.userId(), period.fromInclusive());
+        seedEvent(ordinary, AnalyticsEventType.APP_VISIT, period.fromInclusive().minusNanos(1000));
+        seedEvent(ordinary, AnalyticsEventType.APP_VISIT, OffsetDateTime.parse("2026-11-01T08:30:00Z"));
+        seedEvent(ordinary, AnalyticsEventType.APP_VISIT, OffsetDateTime.parse("2026-11-01T09:30:00Z"));
+        seedEvent(ordinary, AnalyticsEventType.OPTIMIZATION_SUBMITTED, OffsetDateTime.parse("2026-11-01T08:30:00Z"));
+        seedEvent(ordinary, AnalyticsEventType.OPTIMIZATION_SUBMITTED, OffsetDateTime.parse("2026-11-01T09:30:00Z"));
+        seedEvent(ordinary, AnalyticsEventType.APP_VISIT, period.toExclusive());
+        seedEvent(admin, AnalyticsEventType.APP_VISIT, period.fromInclusive());
+        assertThat(analytics.dailyMetrics(period, ordinary.userId())).containsExactly(new DailyMetric(day, 2, 1, 1, 1, 1));
+        assertThat(analytics.hourlyUsage(period, ordinary.userId())).filteredOn(hour -> hour.hour() == 1)
+                .containsExactly(new HourlyMetric(1, 2));
+        assertThat(analytics.usageRanking(period, ordinary.userId(), 20)).singleElement().satisfies(rank -> {
+            assertThat(rank.activeDays()).isEqualTo(1);
+            assertThat(rank.operationCount()).isEqualTo(2);
+        });
+    }
+
+    @Test
+    void legacyReoptimizationRecordsOneSubmissionAndPreservesHistoryOwnership() throws Exception {
+        Login member = login(ordinary);
+        mvc.perform(write("/api/v1/optimizations", member)
+                .content(json.writeValueAsString(Map.of("rawPrompt", PROMPT))))
+                .andExpect(status().isOk());
+        JsonNode history = data(mvc.perform(get("/api/v1/optimization-history").session(member.session()))
+                .andExpect(status().isOk()).andReturn());
+        String recordId = history.path("records").get(0).path("id").asText();
+        JsonNode next = data(mvc.perform(write("/api/v1/optimization-history/" + recordId + "/re-optimize", member))
+                .andExpect(status().isOk()).andReturn());
+        assertThat(next.path("recordId").asText()).isNotEqualTo(recordId);
+        assertThat(inspection.eventTypes(ordinary.userId())).containsExactlyInAnyOrder("LOGIN", "OPTIMIZATION_SUBMITTED", "OPTIMIZATION_SUBMITTED");
+        Login administrator = login(admin);
+        mvc.perform(write("/api/v1/optimization-history/" + recordId + "/re-optimize", administrator))
+                .andExpect(status().isNotFound());
+    }
+
+    /** 以基线差值检查平台汇总，不依赖本地库已有数据，也不把匿名访问加入账号统计。 */
+    @Test
+    void globalAdminStatisticsIncludeOtherTenantsAndAdminsButExcludeAnonymousEvents() throws Exception {
+        Login administrator = login(admin);
+        LocalDate day = LocalDate.of(2024, 1, 15);
+        var request = get("/api/v1/admin/analytics/dashboard").session(administrator.session())
+                .param("range", "CUSTOM").param("fromDate", day.toString()).param("toDate", day.toString());
+        JsonNode baseline = data(mvc.perform(request).andExpect(status().isOk()).andReturn());
+        OffsetDateTime at = day.atStartOfDay(ZONE).toOffsetDateTime();
+        seedEvent(ordinary, AnalyticsEventType.LOGIN, at);
+        seedEvent(ordinary, AnalyticsEventType.APP_VISIT, at.plusSeconds(1));
+        seedEvent(admin, AnalyticsEventType.APP_VISIT, at.plusSeconds(2));
+        seedEvent(admin, AnalyticsEventType.OPTIMIZATION_SUBMITTED, at.plusSeconds(3));
+        audit.insert(UUID.randomUUID(), ordinary.tenantId(), null, AnalyticsEventType.APP_VISIT, Map.of(), at.plusSeconds(4));
+        JsonNode global = data(mvc.perform(request).andExpect(status().isOk()).andReturn());
+        for (String metric : List.of("accessCount", "uniqueVisitorCount", "activeUserCount")) {
+            assertThat(global.path(metric).asLong() - baseline.path(metric).asLong()).as(metric).isEqualTo(2);
+        }
+        assertThat(global.path("actualUserCount").asLong() - baseline.path("actualUserCount").asLong()).isEqualTo(1);
+        JsonNode adminOnly = dashboard(administrator, "CUSTOM", day, day, admin.userId());
+        assertThat(adminOnly.path("registeredAccountCount").asInt()).isEqualTo(1);
+        assertThat(adminOnly.path("activeUserCount").asInt()).isEqualTo(1);
+        assertThat(adminOnly.path("actualUserCount").asInt()).isEqualTo(1);
+        assertThat(ranking(administrator, day, ordinary.userId()).path("items").size()).isZero();
+        assertThat(ranking(administrator, day, admin.userId()).path("items").get(0).path("userId").asText())
+                .isEqualTo(admin.userId().toString());
     }
 
     /** 创建随机独立租户、账户、工作区和邮箱身份，全部加入当前回滚事务。 */

@@ -74,7 +74,7 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
         sessionContext.clear(request);
     }
 
-    /** 记录由后端确认成功的关键业务操作。 */
+    /** 记录服务端确认的关键行为；优化提交表示请求尝试，不能用来推断模型执行成功。 */
     public void record(AnalyticsEventType eventType, HttpServletRequest request) {
         String clientIp = clientIpResolver.resolve(request);
         GeoLocation location = locate(clientIp);

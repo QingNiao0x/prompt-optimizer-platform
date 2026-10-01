@@ -1,6 +1,9 @@
 package com.promptoptimizer.history.dto;
 
 import com.promptoptimizer.history.controller.OptimizationHistoryController;
+import com.promptoptimizer.analytics.domain.AnalyticsEventType;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
+import jakarta.servlet.http.HttpServletRequest;
 import com.promptoptimizer.common.web.RequestIdFilter;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
@@ -14,6 +17,8 @@ import com.promptoptimizer.history.domain.ReoptimizationResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +31,9 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @Description: 历史接口控制器测试，验证分页、详情、删除和重新优化的响应结构。
  */
 @WebMvcTest(OptimizationHistoryController.class)
+@AutoConfigureMockMvc(print = MockMvcPrint.NONE)
 @Import({RequestIdFilter.class, com.promptoptimizer.identity.support.AuthenticatedMvcTestConfiguration.class})
 class OptimizationHistoryControllerTest {
 
@@ -48,6 +57,9 @@ class OptimizationHistoryControllerTest {
 
     @MockBean
     private OptimizationHistoryService historyService;
+
+    @MockBean
+    private AnalyticsEventService analyticsEventService;
 
     @Test
     void shouldReturnPagedHistory() throws Exception {
@@ -168,5 +180,6 @@ class OptimizationHistoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.recordId").value(id.toString()))
                 .andExpect(jsonPath("$.data.result.provider.mock").value(true));
+        verify(analyticsEventService).record(eq(AnalyticsEventType.OPTIMIZATION_SUBMITTED), any(HttpServletRequest.class));
     }
 }
