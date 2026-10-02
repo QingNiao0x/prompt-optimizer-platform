@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import { reportClientAnalyticsEventBestEffort } from '@/services/adminAnalyticsApi';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -68,9 +67,6 @@ router.beforeEach(async (to) => {
 router.afterEach((to) => {
   const pageTitle = typeof to.meta.title === 'string' ? to.meta.title : '工作台';
   document.title = `${pageTitle} · Prompt Optimizer`;
-  if (to.name !== 'login' && useAuthStore().isAuthenticated) {
-    reportClientAnalyticsEventBestEffort('APP_VISIT');
-  }
 });
 
 export default router;

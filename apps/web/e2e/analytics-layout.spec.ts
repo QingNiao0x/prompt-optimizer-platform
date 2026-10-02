@@ -7,6 +7,7 @@ import type {
   AnalyticsRanking,
 } from '../src/types/api';
 import { mockAuthentication } from './authFixture';
+import { healthyAnalyticsDelivery } from './analyticsDeliveryFixture';
 
 const period: AnalyticsPeriodView = {
   fromDate: '2026-09-01', toDateInclusive: '2026-09-27',
@@ -20,6 +21,9 @@ const longLocation = '用于验证地区字段溢出展示的测试行政区'.re
 const mockAnalytics = async (page: Page, empty = false) => {
   await mockAuthentication(page, true, true);
   await page.route('**/api/v1/analytics/events', (route) => route.fulfill({ status: 204 }));
+  await page.route('**/api/v1/analytics/context', (route) => route.fulfill({ json: { data: {
+    userId: '00000000-0000-0000-0000-000000000102', loginSessionId: null,
+  } } }));
   const dashboard: AnalyticsDashboard = {
     period, registeredAccountCount: empty ? 0 : 15846, newAccountCount: empty ? 0 : 327,
     actualUserCount: empty ? 0 : 7304, accessCount: empty ? 0 : 128540,
@@ -62,7 +66,9 @@ const mockAnalytics = async (page: Page, empty = false) => {
   const requests = { dashboard: [] as URL[], ranking: [] as URL[], operations: [] as URL[] };
   await page.route('**/api/v1/admin/analytics/**', async (route) => {
     const url = new URL(route.request().url());
-    if (url.pathname.endsWith('/dashboard')) {
+    if (url.pathname.endsWith('/delivery')) {
+      await route.fulfill({ json: { data: healthyAnalyticsDelivery } });
+    } else if (url.pathname.endsWith('/dashboard')) {
       requests.dashboard.push(url);
       await route.fulfill({ json: { data: dashboard } });
     } else if (url.pathname.endsWith('/usage-ranking')) {
@@ -152,7 +158,8 @@ test('日期范围、排行日期弹层和分页选项使用中文', async ({ pa
   await expect(rangePicker.locator('.el-date-table th').first()).toHaveText('日');
   await page.getByRole('heading', { name: '使用与访问', exact: true }).click();
   await page.locator('.rank-date input').click();
-  const rankPicker = page.locator('.el-picker-panel:visible');
+  // 日期范围面板离场动画期间仍可见；排行只定位单日选择器，避免短暂的两个面板命中。
+  const rankPicker = page.locator('.el-picker-panel.el-date-picker:visible');
   await expect(rankPicker).toContainText('年');
   await expect(rankPicker).toContainText('月');
   await expect(rankPicker.locator('.el-date-table th').first()).toHaveText('日');

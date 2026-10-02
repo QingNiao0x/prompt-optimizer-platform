@@ -112,6 +112,45 @@ export type AnalyticsEventType =
   | 'RECHARGE_PAID'
   | 'ADMIN_MODEL_CHANGED';
 
+export type AnalyticsClientEventType = Extract<AnalyticsEventType, 'APP_VISIT' | 'RESULT_EXPORTED'>;
+
+/** 浏览器事件固定元数据；账号由服务端身份决定，expectedUserId 只阻止切换账号时错误重放。 */
+export interface AnalyticsClientEvent {
+  eventId: string;
+  eventType: AnalyticsClientEventType;
+  occurredAt: string;
+  expectedUserId: string;
+  expectedLoginSessionId: string | null;
+}
+
+/** 独立审计关联号不是认证 Session ID，不能用于恢复或冒用登录。 */
+export interface AnalyticsClientContext {
+  userId: string;
+  loginSessionId: string | null;
+}
+
+/** 当前 API 实例的审计投递健康度，不包含事件正文或用户标识。 */
+export interface AnalyticsDeliveryStatus {
+  status: 'HEALTHY' | 'DEGRADED' | 'UNAVAILABLE';
+  scope: 'INSTANCE';
+  healthy: boolean;
+  initialized: boolean;
+  journalAvailable: boolean;
+  databaseAvailable: boolean;
+  pendingEvents: number;
+  oldestPendingAt: string | null;
+  oldestPendingAgeSeconds: number;
+  databaseFailures: number;
+  journalFailures: number;
+  corruptFiles: number;
+  deliveredEvents: number;
+  lastFailureAt: string | null;
+  lastDeliveredAt: string | null;
+  backlogAlert: boolean;
+  pendingAlertThreshold: number;
+  oldestPendingAlertSeconds: number;
+}
+
 export interface AnalyticsPeriodView {
   fromDate: string;
   toDateInclusive: string;

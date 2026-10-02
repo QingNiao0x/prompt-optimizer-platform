@@ -46,6 +46,19 @@ public interface AdminAnalyticsMapper {
     UsageCounts usageCounts(@Param("period") AnalyticsPeriod period, @Param("account") AnalyticsAccountFilter account);
 
     /**
+     * 一次读取筛选后的事件，复用账号/自然日归并结果生成仪表盘使用总量、日、小时和设备维度。
+     * 注册账号仍独立查询；固定近十二月趋势不受主区间裁剪，仍由 monthlyUsage 查询。
+     *
+     * @param period 主仪表盘的左闭右开范围及统计时区
+     * @param account 所有聚合分支共用的账号组合条件
+     * @return 带固定维度标记的内部聚合行；完整日/小时骨架及唯一 SUMMARY 行供服务严格校验
+     */
+    List<DashboardMetricRow> dashboardMetrics(
+            @Param("period") AnalyticsPeriod period,
+            @Param("account") AnalyticsAccountFilter account
+    );
+
+    /**
      * 按统计时区生成每日访问、去重访问、活跃、实际使用及新增账号序列，缺少数据的日期补零。
      * generate_series 生成日历日骨架，事件先转为本地日期再聚合，供平均日活使用完整日数作为分母。
      *
@@ -106,7 +119,7 @@ public interface AdminAnalyticsMapper {
      * 使用 MyBatis-Plus 分页拦截器读取审计安全字段，按发生时刻倒序及事件 ID 稳定排序。
      * 只投影必要的 IP、所在地和设备信息，不把可能包含额外内容的 details 整体返回。
      *
-     * @param page 已校验的页码与单页大小，自动计数使用与列表相同的筛选条件
+     * @param page 已校验的页码与单页大小，countId 指定同条件且无排序的独立计数语句
      * @param fromInclusive 查询开始时刻，包含该时刻
      * @param toExclusive 查询结束时刻，不包含该时刻
      * @param account 账号组合条件
@@ -121,11 +134,60 @@ public interface AdminAnalyticsMapper {
             @Param("eventType") String eventType
     );
 
+    /**
+     * 用列表共用的筛选条件计数，不读取 details、不关联显示字段或排序。
+     * MyBatis-Plus 通过 Page.countId 调用此语句，确保大数据分页总数与明细范围一致。
+     *
+     * @param fromInclusive 查询开始时刻，包含该时刻
+     * @param toExclusive 查询结束时刻，不包含该时刻
+     * @param account 与日志列表一致的账号组合条件
+     * @param eventType 事件代码，null 表示全部可查询操作
+     * @return 满足筛选条件的日志条数
+     */
+    long countOperationLogs(
+            @Param("fromInclusive") OffsetDateTime fromInclusive,
+            @Param("toExclusive") OffsetDateTime toExclusive,
+            @Param("account") AnalyticsAccountFilter account,
+            @Param("eventType") String eventType
+    );
+
     /** 管理员仪表盘账户数统计的不可变结果。 */
     record AccountCounts(long registeredAccounts, long newAccounts) {
     }
 
     /** 管理员仪表盘使用量统计的不可变结果。 */
     record UsageCounts(long accessCount, long uniqueVisitors, long activeUsers, long actualUsers) {
+    }
+
+    /** 内部聚合投影的固定维度代码，不是数据库持久化枚举或外部 API 字段。 */
+    enum MetricKind {
+        /** 主区间按账号 ID 去重的使用总量；bucket 为 null。 */
+        SUMMARY,
+        /** 统计时区自然日；bucket 为 YYYY-MM-DD，包括无事件的零数据日。 */
+        DAILY,
+        /** 跨日合并的本地小时；bucket 为 0 到 23 的十进制文本。 */
+        HOURLY,
+        /** 登录设备原始代码；缺失设备信息归入 UNKNOWN。 */
+        DEVICE
+    }
+
+    /**
+     * 平台管理员审计的内部只读聚合投影，无个人信息、完整 details 或持久化写入职责。
+     * SUMMARY 使用四项账号/访问计数，DAILY 另含新增账号，HOURLY 仅使用操作次数，
+     * DEVICE 仅使用登录次数和设备内去重账号数；未使用的计数字段固定为零。
+     * 访问与操作次数以事件为单位，用户数以账号 ID 为单位；应用服务验证标记、桶和计数。
+     */
+    record DashboardMetricRow(
+            MetricKind kind,
+            String bucket,
+            long accessCount,
+            long uniqueVisitors,
+            long activeUsers,
+            long actualUsers,
+            long newAccounts,
+            long operationCount,
+            long loginCount,
+            long uniqueUsers
+    ) {
     }
 }

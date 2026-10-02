@@ -22,6 +22,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -177,14 +178,49 @@ class AdminAnalyticsQueryDatabaseTest {
             assertThat(item.activeDays()).isEqualTo(1);
         });
         Page<OperationLog> page = new Page<>(1, 2);
-        page.setOptimizeCountSql(false);
+        page.setCountId("countOperationLogs");
         var operations = analyticsMapper.selectOperationLogs(page, period.fromInclusive(), period.toExclusive(), filter, null);
         assertThat(operations.getTotal()).isEqualTo(5);
         assertThat(operations.getRecords()).hasSize(2).allSatisfy(item -> assertThat(item.userId()).isEqualTo(first));
         Page<OperationLog> next = new Page<>(2, 2);
-        next.setOptimizeCountSql(false);
-        assertThat(analyticsMapper.selectOperationLogs(next, period.fromInclusive(), period.toExclusive(), filter, null).getRecords())
+        next.setCountId("countOperationLogs");
+        var nextOperations = analyticsMapper.selectOperationLogs(next, period.fromInclusive(), period.toExclusive(), filter, null);
+        assertThat(nextOperations.getTotal()).isEqualTo(5);
+        assertThat(nextOperations.getRecords())
                 .hasSize(2).allSatisfy(item -> assertThat(item.userId()).isEqualTo(first));
+
+        // 显示名称改为分页后的标量投影，不能改变顺序、跨页唯一性或安全字段的空值语义。
+        var returnedLogs = Stream.concat(operations.getRecords().stream(), nextOperations.getRecords().stream()).toList();
+        assertThat(returnedLogs).extracting(OperationLog::eventId).doesNotHaveDuplicates();
+        assertThat(returnedLogs).extracting(item -> item.occurredAt().toInstant())
+                .containsExactly(at(day, 13).toInstant(), at(day, 12).toInstant(),
+                        at(day, 11).toInstant(), at(day, 10).toInstant());
+        assertThat(returnedLogs).extracting(OperationLog::eventType)
+                .containsExactly("LOGIN", "CONTEXT_ANALYZED", "OPTIMIZATION_SUBMITTED", "APP_VISIT");
+        assertThat(returnedLogs).allSatisfy(item -> {
+            assertThat(item.userId()).isEqualTo(first);
+            assertThat(item.displayName()).isEqualTo("分析小组 Alpha_100%");
+            assertThat(item.clientIp()).isNull();
+            assertThat(item.country()).isNull();
+            assertThat(item.province()).isNull();
+            assertThat(item.city()).isNull();
+            assertThat(item.loginCountry()).isNull();
+            assertThat(item.loginProvince()).isNull();
+            assertThat(item.loginCity()).isNull();
+            assertThat(item.deviceType()).isEqualTo("LOGIN".equals(item.eventType()) ? "DESKTOP" : "UNKNOWN");
+        });
+        assertThat(analyticsMapper.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, "LOGIN"))
+                .isEqualTo(1);
+        Page<OperationLog> logins = new Page<>(1, 2);
+        logins.setCountId("countOperationLogs");
+        var loginOperations = analyticsMapper.selectOperationLogs(logins, period.fromInclusive(), period.toExclusive(), filter, "LOGIN");
+        assertThat(loginOperations.getTotal()).isEqualTo(1);
+        assertThat(loginOperations.getRecords()).singleElement().satisfies(item -> {
+            assertThat(item.userId()).isEqualTo(first);
+            assertThat(item.eventType()).isEqualTo("LOGIN");
+            assertThat(item.displayName()).isEqualTo("分析小组 Alpha_100%");
+            assertThat(item.deviceType()).isEqualTo("DESKTOP");
+        });
 
         // ID、邮箱和名称按交集生效，冲突条件不能回退为更宽的查询。
         AnalyticsAccountFilter conflict = new AnalyticsAccountFilter(second, tag + "+", "alpha_100%");

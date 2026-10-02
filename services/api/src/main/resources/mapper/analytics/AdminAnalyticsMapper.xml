@@ -17,6 +17,21 @@
             <arg column="actual_users" javaType="_long"/>
         </constructor>
     </resultMap>
+    <resultMap id="dashboardMetricRow" type="com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper$DashboardMetricRow">
+        <constructor>
+            <arg column="metric_kind" javaType="com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper$MetricKind"
+                 typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+            <arg column="bucket" javaType="java.lang.String"/>
+            <arg column="access_count" javaType="_long"/>
+            <arg column="unique_visitors" javaType="_long"/>
+            <arg column="active_users" javaType="_long"/>
+            <arg column="actual_users" javaType="_long"/>
+            <arg column="new_accounts" javaType="_long"/>
+            <arg column="operation_count" javaType="_long"/>
+            <arg column="login_count" javaType="_long"/>
+            <arg column="unique_users" javaType="_long"/>
+        </constructor>
+    </resultMap>
     <resultMap id="dailyMetric" type="com.promptoptimizer.analytics.dto.AnalyticsViews$DailyMetric">
         <constructor>
             <arg column="activity_day" javaType="java.time.LocalDate"/>
@@ -122,10 +137,12 @@
     </select>
 
     <select id="usageCounts" resultMap="usageCounts">
-        SELECT COUNT(*) FILTER (WHERE event_type = 'APP_VISIT') AS access_count,
-               COUNT(DISTINCT actor_user_id) FILTER (WHERE event_type = 'APP_VISIT') AS unique_visitors,
-               COUNT(DISTINCT actor_user_id) AS active_users,
-               COUNT(DISTINCT actor_user_id) FILTER (WHERE <include refid="usageEventPredicate"/>) AS actual_users
+        <!-- 先按账号聚合一次，再计账号行；多项 DISTINCT 无需各自排序全部原始事件，去重口径保持账号 ID。 -->
+        WITH account_activity AS (
+        SELECT actor_user_id,
+               COUNT(*) FILTER (WHERE event_type = 'APP_VISIT') AS access_count,
+               BOOL_OR(event_type = 'APP_VISIT') AS visited,
+               BOOL_OR(<include refid="usageEventPredicate"/>) AS used
           FROM audit_event
          WHERE actor_user_id IS NOT NULL
            AND occurred_at &gt;= #{period.fromInclusive}
@@ -134,6 +151,108 @@
         <if test="account.email != null or account.displayName != null">
            AND actor_user_id IN (<include refid="matchingAccounts"/>)
         </if>
+         GROUP BY actor_user_id
+        )
+        SELECT COALESCE(SUM(access_count), 0) AS access_count,
+               COUNT(*) FILTER (WHERE visited) AS unique_visitors,
+               COUNT(*) AS active_users,
+               COUNT(*) FILTER (WHERE used) AS actual_users
+          FROM account_activity
+    </select>
+
+    <select id="dashboardMetrics" resultMap="dashboardMetricRow">
+        <!--
+            主仪表盘四个事件维度共用一次原始表扫描；只物化必要的账号/本地桶/布尔标记，
+            不物化完整 details。日期边界在转换前按 timestamptz 过滤，避免时区和 DST 错位。
+            MATERIALIZED 明确复用输入，不能让优化器将多个消费者重新展开成独立原始表扫描。
+        -->
+        WITH local_events AS MATERIALIZED (
+            SELECT e.actor_user_id,
+                   (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date AS activity_day,
+                   EXTRACT(HOUR FROM (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text)))::integer AS activity_hour,
+                   e.event_type = 'APP_VISIT' AS visited,
+                   (<include refid="usageEventPredicate"/>) AS used,
+                   e.event_type = 'LOGIN' AS logged_in,
+                   CASE WHEN e.event_type = 'LOGIN'
+                        THEN COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN') END AS device_type
+              FROM audit_event e
+             WHERE e.actor_user_id IS NOT NULL
+               AND e.occurred_at &gt;= #{period.fromInclusive}
+               AND e.occurred_at &lt; #{period.toExclusive}
+               AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
+            <if test="account.email != null or account.displayName != null">
+               AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
+            </if>
+        ), account_days AS MATERIALIZED (
+            <!-- 任一事件构成活跃账号日；去重粒度为账号 ID + 本地自然日，不仅限关键使用。 -->
+            SELECT activity_day, actor_user_id,
+                   COUNT(*) FILTER (WHERE visited) AS access_count,
+                   BOOL_OR(visited) AS visited,
+                   BOOL_OR(used) AS used
+              FROM local_events GROUP BY activity_day, actor_user_id
+        ), account_activity AS (
+            <!-- 区间人数再次按账号归并，不能把每日去重人数相加；访问次数才可以相加。 -->
+            SELECT actor_user_id, SUM(access_count) AS access_count,
+                   BOOL_OR(visited) AS visited, BOOL_OR(used) AS used
+              FROM account_days GROUP BY actor_user_id
+        ), daily_activity AS (
+            SELECT activity_day, SUM(access_count) AS access_count,
+                   COUNT(*) FILTER (WHERE visited) AS unique_visitors,
+                   COUNT(*) AS active_users, COUNT(*) FILTER (WHERE used) AS actual_users
+              FROM account_days GROUP BY activity_day
+        ), days AS (
+            <!-- 完整自然日骨架包含零日，供平均日活使用正确分母；不以固定 86400 秒步进。 -->
+            SELECT generated.day::date AS activity_day
+              FROM generate_series(CAST(#{period.fromDate} AS timestamp without time zone),
+                                   CAST(#{period.toDateExclusive} AS timestamp without time zone) - interval '1 day',
+                                   interval '1 day') AS generated(day)
+        ), new_accounts AS (
+            <!-- 未发生事件的新增账号仍计数；账号资料过滤沿用全部事件维度的同一条件。 -->
+            SELECT activity_day, COUNT(*) AS new_accounts
+              FROM (
+                    SELECT (u.created_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date AS activity_day
+                      FROM user_account u
+                     WHERE u.created_at &gt;= #{period.fromInclusive}
+                       AND u.created_at &lt; #{period.toExclusive}
+                       AND (CAST(#{account.userId} AS uuid) IS NULL OR u.id = #{account.userId})
+                    <if test="account.email != null or account.displayName != null">
+                       AND u.id IN (<include refid="matchingAccounts"/>)
+                    </if>
+                   ) local_account
+             GROUP BY activity_day
+        ), hours AS (SELECT generate_series(0, 23) AS hour), hourly_activity AS (
+            <!-- 关键操作按本地小时跨日累加；夏令时重复小时归入同一个 0–23 桶。 -->
+            SELECT activity_hour AS hour, COUNT(*) AS operation_count
+              FROM local_events WHERE used GROUP BY activity_hour
+        ), account_devices AS (
+            <!-- 只看登录。同一账号的同类设备归并，跨设备可分别出现，不能跨设备相加人数。 -->
+            SELECT device_type, actor_user_id, COUNT(*) AS login_count
+              FROM local_events WHERE logged_in GROUP BY device_type, actor_user_id
+        ), devices AS (
+            SELECT device_type, SUM(login_count) AS login_count, COUNT(*) AS unique_users
+              FROM account_devices GROUP BY device_type
+        )
+        <!-- 固定维度代码匹配 Java 枚举。无关字段为零，组装器验证缺行/重复/越界而非伪造零数据。 -->
+        SELECT 'SUMMARY' AS metric_kind, NULL::text AS bucket,
+               COALESCE(SUM(access_count), 0) AS access_count,
+               COUNT(*) FILTER (WHERE visited) AS unique_visitors,
+               COUNT(*) AS active_users, COUNT(*) FILTER (WHERE used) AS actual_users,
+               0 AS new_accounts, 0 AS operation_count, 0 AS login_count, 0 AS unique_users
+          FROM account_activity
+        UNION ALL
+        SELECT 'DAILY', to_char(days.activity_day, 'YYYY-MM-DD'),
+               COALESCE(daily_activity.access_count, 0), COALESCE(daily_activity.unique_visitors, 0),
+               COALESCE(daily_activity.active_users, 0), COALESCE(daily_activity.actual_users, 0),
+               COALESCE(new_accounts.new_accounts, 0), 0, 0, 0
+          FROM days LEFT JOIN daily_activity USING (activity_day) LEFT JOIN new_accounts USING (activity_day)
+        UNION ALL
+        SELECT 'HOURLY', hours.hour::text, 0, 0, 0, 0, 0, COALESCE(hourly_activity.operation_count, 0), 0, 0
+          FROM hours LEFT JOIN hourly_activity USING (hour)
+        UNION ALL
+        SELECT 'DEVICE', device_type, 0, 0, 0, 0, 0, 0, login_count, unique_users
+          FROM devices
+         <!-- 设备同分排序沿用数据库 collation；Java 只恢复日/小时数值顺序，不重排设备字符串。 -->
+         ORDER BY metric_kind, login_count DESC, bucket
     </select>
 
     <select id="dailyMetrics" resultMap="dailyMetric">
@@ -145,13 +264,12 @@
                        CAST(#{period.toDateExclusive} AS timestamp without time zone) - interval '1 day',
                        interval '1 day'
                    ) AS generated(day)
-        ), activity AS (
+        ), account_days AS (
             <!-- 时区转换只出现一次。同一表达式在 SELECT 和 GROUP BY 各写一遍会变成两个绑定参数，PostgreSQL 视为不同列并报 42803。 -->
-            SELECT activity_day,
+            SELECT activity_day, actor_user_id,
                    COUNT(*) FILTER (WHERE event_type = 'APP_VISIT') AS access_count,
-                   COUNT(DISTINCT actor_user_id) FILTER (WHERE event_type = 'APP_VISIT') AS unique_visitors,
-                   COUNT(DISTINCT actor_user_id) AS active_users,
-                   COUNT(DISTINCT actor_user_id) FILTER (WHERE <include refid="usageEventPredicate"/>) AS actual_users
+                   BOOL_OR(event_type = 'APP_VISIT') AS visited,
+                   BOOL_OR(<include refid="usageEventPredicate"/>) AS used
               FROM (
                     SELECT (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date AS activity_day,
                            e.event_type,
@@ -165,6 +283,14 @@
                        AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
                     </if>
                    ) local_event
+             GROUP BY activity_day, actor_user_id
+        ), activity AS (
+            <!-- 每个账号每日已归并成一行；COUNT 行即每日去重账号数，访问次数仍按原始事件求和。 -->
+            SELECT activity_day, SUM(access_count) AS access_count,
+                   COUNT(*) FILTER (WHERE visited) AS unique_visitors,
+                   COUNT(*) AS active_users,
+                   COUNT(*) FILTER (WHERE used) AS actual_users
+              FROM account_days
              GROUP BY activity_day
         ), accounts AS (
             SELECT activity_day, COUNT(*) AS new_accounts
@@ -193,13 +319,12 @@
     </select>
 
     <select id="hourlyUsage" resultMap="hourlyMetric">
-        <!-- 时间和账号条件留在 JOIN ON 中，保持没有匹配事件的小时桶；WHERE 过滤会丢掉零值桶。 -->
-        WITH hours AS (SELECT generate_series(0, 23) AS hour)
-        SELECT hours.hour, COUNT(e.id) AS operation_count
-          FROM hours
-          LEFT JOIN audit_event e
-            ON EXTRACT(HOUR FROM (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text)))::integer = hours.hour
-           AND e.occurred_at &gt;= #{period.fromInclusive}
+        <!-- 先聚合成最多 24 行，再补零；避免将小时骨架与全部原始操作连接后重新排序。 -->
+        WITH hours AS (SELECT generate_series(0, 23) AS hour), activity AS (
+        SELECT EXTRACT(HOUR FROM (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text)))::integer AS hour,
+               COUNT(*) AS operation_count
+          FROM audit_event e
+         WHERE e.occurred_at &gt;= #{period.fromInclusive}
            AND e.occurred_at &lt; #{period.toExclusive}
            AND e.actor_user_id IS NOT NULL
            AND e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
@@ -208,7 +333,10 @@
         <if test="account.email != null or account.displayName != null">
            AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
         </if>
-         GROUP BY hours.hour
+         GROUP BY hour
+        )
+        SELECT hours.hour, COALESCE(activity.operation_count, 0) AS operation_count
+          FROM hours LEFT JOIN activity USING (hour)
          ORDER BY hours.hour
     </select>
 
@@ -243,10 +371,10 @@
     </select>
 
     <select id="deviceDistribution" resultMap="deviceMetric">
-        <!-- 设备内按账号去重，同一账号可在多个设备出现；只读取登录事件中的设备类型。 -->
+        <!-- 同设备/账号先归并，随后求登录次数和账号行数；账号跨设备仍可分别出现。 -->
+        WITH account_devices AS (
         SELECT COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN') AS device_type,
-               COUNT(*) AS login_count,
-               COUNT(DISTINCT e.actor_user_id) AS unique_users
+               e.actor_user_id, COUNT(*) AS login_count
           FROM audit_event e
          WHERE e.event_type = 'LOGIN'
            AND e.actor_user_id IS NOT NULL
@@ -256,19 +384,22 @@
         <if test="account.email != null or account.displayName != null">
            AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
         </if>
-         GROUP BY COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN')
+         GROUP BY device_type, e.actor_user_id
+        )
+        SELECT device_type, SUM(login_count) AS login_count, COUNT(*) AS unique_users
+          FROM account_devices GROUP BY device_type
          ORDER BY login_count DESC, device_type
     </select>
 
     <select id="usageRanking" resultMap="userRank">
-        SELECT e.actor_user_id AS user_id,
-               COALESCE(u.display_name, '') AS display_name,
+        <!-- 先按账号/自然日汇总，再计算活跃天数；避免对原始事件 DISTINCT 排序及逐条关联账号资料。 -->
+        WITH account_days AS (
+        SELECT e.actor_user_id,
+               (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date AS activity_day,
                COUNT(*) FILTER (WHERE e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED',
                      'CONTEXT_PREPARED', 'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')) AS operation_count,
-               COUNT(*) FILTER (WHERE e.event_type = 'LOGIN') AS login_count,
-               COUNT(DISTINCT (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date) AS active_days
+               COUNT(*) FILTER (WHERE e.event_type = 'LOGIN') AS login_count
           FROM audit_event e
-          LEFT JOIN user_account u ON u.id = e.actor_user_id
          WHERE e.actor_user_id IS NOT NULL
            AND e.occurred_at &gt;= #{period.fromInclusive}
            AND e.occurred_at &lt; #{period.toExclusive}
@@ -277,17 +408,49 @@
         <if test="account.email != null or account.displayName != null">
            AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
         </if>
-         GROUP BY e.actor_user_id, u.display_name
-        HAVING COUNT(*) FILTER (WHERE e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED',
-                     'CONTEXT_PREPARED', 'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')) &gt; 0
-         ORDER BY operation_count DESC, login_count DESC, e.actor_user_id
+         GROUP BY e.actor_user_id, activity_day
+        ), account_usage AS (
+            SELECT actor_user_id, SUM(operation_count) AS operation_count,
+                   SUM(login_count) AS login_count, COUNT(*) AS active_days
+              FROM account_days GROUP BY actor_user_id
+            <!-- 仅访问/退出的日仍累计到活跃天数，最终至少一次关键使用的账号才入榜。 -->
+            HAVING SUM(operation_count) &gt; 0
+        )
+        SELECT a.actor_user_id AS user_id, COALESCE(u.display_name, '') AS display_name,
+               a.operation_count, a.login_count, a.active_days
+          FROM account_usage a LEFT JOIN user_account u ON u.id = a.actor_user_id
+         ORDER BY a.operation_count DESC, a.login_count DESC, a.actor_user_id
          LIMIT #{limit}
+    </select>
+
+    <!-- 列表和计数复用同一 WHERE，避免新增邮箱/名称/事件筛选时总数与分页明细漂移。 -->
+    <sql id="operationLogPredicate">
+         WHERE e.actor_user_id IS NOT NULL
+           AND e.occurred_at &gt;= #{fromInclusive}
+           AND e.occurred_at &lt; #{toExclusive}
+           AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
+        <if test="account.email != null or account.displayName != null">
+           AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
+        </if>
+           AND (CAST(#{eventType,jdbcType=VARCHAR} AS text) IS NULL OR e.event_type = #{eventType})
+    </sql>
+
+    <select id="countOperationLogs" resultType="long">
+        <!-- 显示名称仅用于明细投影；账号关键词已由 EXISTS/IN 筛选，不需 JOIN 或 ORDER BY。 -->
+        SELECT COUNT(*) FROM audit_event e
+        <include refid="operationLogPredicate"/>
     </select>
 
     <select id="selectOperationLogs" resultMap="operationLog">
         <!-- 只投影审计需要的安全字段，避免将完整 details 或认证凭据带入管理员响应。 -->
+        <!--
+            显示名称只在 SELECT 投影中按主键读取，不参与排序/分组。
+            PostgreSQL 会在 ORDER BY 和分页 LIMIT 后计算这种输出表达式，避免对全部候选日志关联账号。
+            账号筛选仍在共用 WHERE 中完成；缺失账号/名称继续返回空字符串，分页总数和排序不变。
+        -->
         SELECT e.id AS event_id, e.actor_user_id AS user_id,
-               COALESCE(u.display_name, '') AS display_name, e.event_type, e.occurred_at,
+               COALESCE((SELECT u.display_name FROM user_account u WHERE u.id = e.actor_user_id), '') AS display_name,
+               e.event_type, e.occurred_at,
                e.details-&gt;&gt;'clientIp' AS client_ip,
                e.details-&gt;&gt;'country' AS country,
                e.details-&gt;&gt;'province' AS province,
@@ -297,15 +460,7 @@
                e.details-&gt;&gt;'loginCity' AS login_city,
                COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN') AS device_type
           FROM audit_event e
-          LEFT JOIN user_account u ON u.id = e.actor_user_id
-         WHERE e.actor_user_id IS NOT NULL
-           AND e.occurred_at &gt;= #{fromInclusive}
-           AND e.occurred_at &lt; #{toExclusive}
-           AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
-        <if test="account.email != null or account.displayName != null">
-           AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
-        </if>
-           AND (CAST(#{eventType,jdbcType=VARCHAR} AS text) IS NULL OR e.event_type = #{eventType})
+        <include refid="operationLogPredicate"/>
          ORDER BY e.occurred_at DESC, e.id
     </select>
 </mapper>

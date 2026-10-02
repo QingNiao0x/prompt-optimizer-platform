@@ -74,4 +74,33 @@ describe('auth store', () => {
     expect(auth.user?.userId).toBe('user-a');
     expect(auth.isAuthenticated).toBe(true);
   });
+
+  it('shares concurrent identity initialization and waits for CSRF before publishing identity', async () => {
+    let csrfReady: (() => void) | undefined;
+    vi.mocked(initializeCsrf).mockImplementation(() => new Promise((resolve) => {
+      csrfReady = () => resolve({ requestId: 'test', data: { headerName: '', parameterName: '', token: '' } });
+    }));
+    const auth = useAuthStore();
+    const first = auth.initialize();
+    const second = auth.initialize();
+    await Promise.resolve();
+    expect(getCurrentUser).toHaveBeenCalledOnce();
+    expect(auth.user).toBeUndefined();
+    csrfReady?.();
+    await Promise.all([first, second]);
+    expect(auth.isAuthenticated).toBe(true);
+    expect(initializeCsrf).toHaveBeenCalledOnce();
+  });
+
+  it('does not resurrect an old identity when initialization resolves after logout', async () => {
+    let restore: ((value: ApiResponse<AuthenticatedUser>) => void) | undefined;
+    vi.mocked(getCurrentUser).mockImplementation(() => new Promise((resolve) => { restore = resolve; }));
+    const auth = useAuthStore();
+    const initialization = auth.initialize();
+    await auth.logout();
+    restore?.(response);
+    await initialization;
+    expect(auth.user).toBeUndefined();
+    expect(auth.initialized).toBe(true);
+  });
 });

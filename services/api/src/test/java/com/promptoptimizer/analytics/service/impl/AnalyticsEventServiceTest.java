@@ -4,6 +4,12 @@ import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.analytics.domain.GeoLocation;
 import com.promptoptimizer.analytics.infrastructure.AnalyticsSessionContext;
+import com.promptoptimizer.analytics.infrastructure.AuditEventDelivery;
+import com.promptoptimizer.analytics.infrastructure.AuditEventJournal;
+import com.promptoptimizer.analytics.infrastructure.AuditEventDatabaseWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.io.TempDir;
+import java.nio.file.Path;
 import com.promptoptimizer.analytics.mapper.AuditEventMapper;
 import com.promptoptimizer.analytics.infrastructure.ClientIpResolver;
 import com.promptoptimizer.analytics.infrastructure.DeviceTypeResolver;
@@ -46,6 +52,8 @@ import static org.mockito.Mockito.when;
  */
 @ExtendWith(OutputCaptureExtension.class)
 class AnalyticsEventServiceTest {
+    @TempDir Path journalDirectory;
+    private AuditEventDelivery delivery;
 
     private static final ActorIdentity ACTOR = new ActorIdentity(
             UUID.fromString("11111111-1111-4111-8111-111111111111"),
@@ -73,6 +81,7 @@ class AnalyticsEventServiceTest {
         MockHttpServletRequest request = authenticatedRequest();
 
         service.recordLogin(request);
+        delivery.replayPending();
 
         assertThat(captured.get()).containsEntry("clientIp", "198.51.100.23")
                 .containsEntry("country", null)
@@ -97,6 +106,8 @@ class AnalyticsEventServiceTest {
 
         assertThatCode(() -> service.record(AnalyticsEventType.OPTIMIZATION_SUBMITTED, authenticatedRequest()))
                 .doesNotThrowAnyException();
+        delivery.replayPending();
+        assertThat(delivery.status().pendingEvents()).isEqualTo(1);
         assertThat(output).contains("event=analytics.audit_write_failure")
                 .contains("requestId=request-safe-id")
                 .contains("eventType=OPTIMIZATION_SUBMITTED")
@@ -125,6 +136,8 @@ class AnalyticsEventServiceTest {
 
         assertThatCode(() -> service.record(AnalyticsEventType.LOGIN, authenticatedRequest()))
                 .doesNotThrowAnyException();
+        delivery.replayPending();
+        assertThat(delivery.status().pendingEvents()).isEqualTo(1);
         assertThat(output).contains("event=analytics.audit_write_failure")
                 .contains("eventType=LOGIN")
                 .contains("reason=DataIntegrityViolationException")
@@ -145,9 +158,11 @@ class AnalyticsEventServiceTest {
             AuditEventMapper audit,
             GeoLocationResolver geoLocationResolver
     ) {
+        delivery = new AuditEventDelivery(new AuditEventJournal(journalDirectory.toString(), new ObjectMapper().findAndRegisterModules()),
+                new AuditEventDatabaseWriter(provider(audit)), 100, 100, 1000, 1000, 300, provider(null));
         return new AnalyticsEventServiceImpl(
                 actor,
-                provider(audit),
+                delivery,
                 new ClientIpResolver(""),
                 geoLocationResolver,
                 new DeviceTypeResolver(),

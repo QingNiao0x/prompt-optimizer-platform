@@ -25,6 +25,8 @@ target/
 tmp/
 
 # Local environment and secrets
+# 审计原始事件包含用户/IP 元数据，只存于运行期持久卷，不提交到代码仓库。
+**/data/analytics-journal/
 .env
 .env.*
 !.env.example

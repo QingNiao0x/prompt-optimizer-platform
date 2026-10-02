@@ -1,6 +1,8 @@
 package com.promptoptimizer.analytics.dto;
 
 import com.promptoptimizer.analytics.controller.AdminAnalyticsController;
+import com.promptoptimizer.analytics.controller.AdminAnalyticsDeliveryController;
+import com.promptoptimizer.analytics.infrastructure.AuditEventDelivery;
 import com.promptoptimizer.analytics.service.AdminAnalyticsService;
 import com.promptoptimizer.common.web.RequestIdFilter;
 import com.promptoptimizer.identity.security.PlatformAdminAccess;
@@ -11,10 +13,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.access.AccessDeniedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author QingNiao
  * @since 0.1.0
  */
-@WebMvcTest(AdminAnalyticsController.class)
+@WebMvcTest({AdminAnalyticsController.class, AdminAnalyticsDeliveryController.class})
 @Import({RequestIdFilter.class, AuthenticatedMvcTestConfiguration.class})
 class AdminAnalyticsControllerSecurityTest {
 
@@ -39,9 +44,12 @@ class AdminAnalyticsControllerSecurityTest {
     @MockBean
     private PlatformAdminAccess platformAdminAccess;
 
+    @MockBean
+    private AuditEventDelivery auditEventDelivery;
+
     @Test
     void anonymousRequestIsUnauthorized() throws Exception {
-        for (String endpoint : java.util.List.of("dashboard", "usage-ranking", "operations")) {
+        for (String endpoint : java.util.List.of("dashboard", "usage-ranking", "operations", "delivery")) {
             mockMvc.perform(get("/api/v1/admin/analytics/" + endpoint).param("email", "demo@example.test").with(anonymous()))
                     .andExpect(status().isUnauthorized());
         }
@@ -49,7 +57,7 @@ class AdminAnalyticsControllerSecurityTest {
 
     @Test
     void ordinaryUserIsForbidden() throws Exception {
-        for (String endpoint : java.util.List.of("dashboard", "usage-ranking", "operations")) {
+        for (String endpoint : java.util.List.of("dashboard", "usage-ranking", "operations", "delivery")) {
             mockMvc.perform(get("/api/v1/admin/analytics/" + endpoint).param("displayName", "演示")
                             .with(user("ordinary").roles("USER")))
                     .andExpect(status().isForbidden());
@@ -65,6 +73,25 @@ class AdminAnalyticsControllerSecurityTest {
                 .andExpect(status().isOk());
 
         verify(platformAdminAccess).require();
+    }
+
+    @Test
+    void deliveryStatusIsReadableOnlyAfterCurrentAdministratorPermissionRecheck() throws Exception {
+        when(auditEventDelivery.status()).thenReturn(new AuditEventDelivery.DeliveryStatus(
+                "HEALTHY", "INSTANCE", true, true, true, true, 0, null, 0,
+                0, 0, 0, 0, null, null, false, 1000, 300));
+        mockMvc.perform(get("/api/v1/admin/analytics/delivery").with(user("platform-admin").roles("PLATFORM_ADMIN")))
+                .andExpect(status().isOk());
+        verify(platformAdminAccess).require();
+        verify(auditEventDelivery).status();
+    }
+
+    @Test
+    void revokedAdministratorCannotReadDeliveryDespiteOldSessionRole() throws Exception {
+        doThrow(new AccessDeniedException("fixture permission revoked")).when(platformAdminAccess).require();
+        mockMvc.perform(get("/api/v1/admin/analytics/delivery").with(user("platform-admin").roles("PLATFORM_ADMIN")))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(auditEventDelivery);
     }
 
     @Test

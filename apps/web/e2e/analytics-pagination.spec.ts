@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { mockAuthentication } from './authFixture';
+import { healthyAnalyticsDelivery } from './analyticsDeliveryFixture';
 
 const period = {
   fromDate: '2026-09-27',
@@ -29,9 +30,16 @@ const dashboard = {
 test('操作日志默认每页 10 条，并可改为 20 条', async ({ page }) => {
   await mockAuthentication(page, true, true);
   await page.route('**/api/v1/analytics/events', (route) => route.fulfill({ status: 204 }));
+  await page.route('**/api/v1/analytics/context', (route) => route.fulfill({ json: { data: {
+    userId: '00000000-0000-0000-0000-000000000102', loginSessionId: null,
+  } } }));
   const operationRequests: URL[] = [];
   await page.route('**/api/v1/admin/analytics/**', async (route) => {
     const url = new URL(route.request().url());
+    if (url.pathname.endsWith('/delivery')) {
+      await route.fulfill({ json: { data: healthyAnalyticsDelivery } });
+      return;
+    }
     if (url.pathname.endsWith('/dashboard')) {
       await route.fulfill({ status: 200, json: { requestId: 'dashboard', data: dashboard } });
       return;
@@ -70,7 +78,9 @@ test('操作日志默认每页 10 条，并可改为 20 条', async ({ page }) =
   expect(operationRequests[0]?.searchParams.get('size')).toBe('10');
 
   const pagination = page.locator('.pagination-row .el-pagination');
-  await pagination.locator('.el-select').click();
+  // 请求计数只说明请求已发出；等 Vue 完成总览/排行/明细更新后再操作，避免手机重排关掉弹层。
+  await expect(page.getByRole('button', { name: '查询', exact: true })).toBeEnabled();
+  await pagination.locator('.el-select__wrapper').click();
   await page.locator('.el-select-dropdown:visible .el-select-dropdown__item', { hasText: '20条/页' }).click();
   await expect.poll(() => operationRequests.length).toBe(2);
   expect(operationRequests[1]?.searchParams.get('current')).toBe('1');

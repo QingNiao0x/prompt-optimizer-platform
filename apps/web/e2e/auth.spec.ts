@@ -13,6 +13,9 @@ test('邮箱验证码注册成功后自动登录并进入工作台', async ({ pa
   await page.getByPlaceholder('请再次输入密码').fill('test-password-123');
   await page.getByRole('checkbox').check();
   await page.getByRole('button', { name: '创建账号' }).click();
+  // 当前注册流程保留完成提示，由用户确认进入工作台。
+  await expect(page.getByRole('heading', { name: '账号创建成功，已自动登录' })).toBeVisible();
+  await page.getByRole('button', { name: '进入工作台', exact: true }).click();
   await expect(page).toHaveURL(/\/workbench$/);
   await expect(page.getByRole('button', { name: '退出登录' })).toBeVisible();
 });
@@ -24,9 +27,11 @@ test('未登录不能挂载工作台，错误密码可重试，登录后可刷�
   await expect(page.getByLabel('原始提示词')).toHaveCount(0);
   await page.getByPlaceholder('请输入邮箱或管理员用户名').fill('test@example.com');
   await page.getByPlaceholder('请输入密码').fill('wrong-password');
+  await page.getByPlaceholder('请输入图中字符').fill('ABCD');
   await page.getByRole('button', { name: '登录', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('邮箱或密码不正确');
   await page.getByPlaceholder('请输入密码').fill('test-password');
+  await page.getByPlaceholder('请输入图中字符').fill('ABCD');
   await page.getByRole('button', { name: '登录', exact: true }).click();
   await expect(page).toHaveURL(/\/workbench$/);
   await page.reload();
@@ -118,6 +123,11 @@ test('历史记录仅在点击搜索或按回车后加载对应查询结果', as
 
 test('业务接口返回登录失效时清空工作台并跳转，不重放提交', async ({ page }) => {
   await mockAuthentication(page);
+  // 该用例只在提交优化时模拟失效；模型列表不能先请求真实服务并提前触发跳转。
+  await page.route('**/api/v1/models', (route) => route.fulfill({
+    json: { data: [{ id: 'mock:authentication-test', displayName: '测试模型',
+      provider: 'Mock', defaultModel: true }] },
+  }));
   await page.addInitScript(() => {
     localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify({ enabled: false, introSeen: true }));
   });

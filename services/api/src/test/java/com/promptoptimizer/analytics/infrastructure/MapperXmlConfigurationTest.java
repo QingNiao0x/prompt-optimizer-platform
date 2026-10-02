@@ -104,6 +104,7 @@ class MapperXmlConfigurationTest {
         parameters.put("toDateLast", from);
         parameters.put("limit", 20);
         for (String statement : List.of(
+                AdminAnalyticsMapper.class.getName() + ".dashboardMetrics",
                 AdminAnalyticsMapper.class.getName() + ".hourlyUsage",
                 AdminAnalyticsMapper.class.getName() + ".monthlyUsage",
                 AdminAnalyticsMapper.class.getName() + ".usageRanking",
@@ -126,11 +127,58 @@ class MapperXmlConfigurationTest {
         params.put("eventType", null);
         params.put("toDateLast", from);
         params.put("limit", 20);
-        for (String method : List.of("accountCounts", "usageCounts", "dailyMetrics", "hourlyUsage", "monthlyUsage",
-                "deviceDistribution", "usageRanking", "selectOperationLogs")) {
+        for (String method : List.of("accountCounts", "usageCounts", "dashboardMetrics", "dailyMetrics", "hourlyUsage", "monthlyUsage",
+                "deviceDistribution", "usageRanking", "selectOperationLogs", "countOperationLogs")) {
             assertKeywordBinding(configuration.getMappedStatement(AdminAnalyticsMapper.class.getName() + "." + method).getBoundSql(params));
         }
         assertKeywordBinding(configuration.getMappedStatement(RechargeRecordMapper.class.getName() + ".paidByDay").getBoundSql(params));
+    }
+
+    @Test
+    void dashboardAggregationReusesOneBoundEventScanAndMapsExplicitMetricKinds() throws Exception {
+        Configuration configuration = parseMappers();
+        LocalDate day = LocalDate.of(2026, 10, 2);
+        ZoneId zone = ZoneId.of("Asia/Shanghai");
+        var parameters = new HashMap<String, Object>();
+        parameters.put("period", new AnalyticsPeriod(day, day.plusDays(1), zone,
+                day.atStartOfDay(zone).toOffsetDateTime(), day.plusDays(1).atStartOfDay(zone).toOffsetDateTime()));
+        parameters.put("account", AnalyticsAccountFilter.forUser(null));
+        var statement = configuration.getMappedStatement(AdminAnalyticsMapper.class.getName() + ".dashboardMetrics");
+        String sql = statement.getBoundSql(parameters).getSql().replaceAll("\\s+", " ");
+
+        assertThat(sql.split("FROM audit_event e", -1).length - 1).isEqualTo(1);
+        assertThat(sql).contains("local_events AS MATERIALIZED", "account_days AS MATERIALIZED", "UNION ALL",
+                "generate_series", "AT TIME ZONE CAST(? AS text)", "actor_user_id IS NOT NULL")
+                .doesNotContain("Asia/Shanghai", "password_hash", "${", "SELECT e.details");
+        for (AdminAnalyticsMapper.MetricKind kind : AdminAnalyticsMapper.MetricKind.values()) {
+            assertThat(sql).contains("'" + kind.name() + "'");
+        }
+        assertThat(statement.getResultMaps().getFirst().getType()).isEqualTo(AdminAnalyticsMapper.DashboardMetricRow.class);
+        assertThat(statement.getResultMaps().getFirst().getConstructorResultMappings().getFirst().getJavaType())
+                .isEqualTo(AdminAnalyticsMapper.MetricKind.class);
+        assertResolvedParameters(configuration, statement.getId(), parameters, "Asia/Shanghai");
+    }
+
+    @Test
+    void operationLogCountSharesPredicatesWithoutSortingOrDetailProjection() throws Exception {
+        Configuration configuration = parseMappers();
+        var params = new HashMap<String, Object>();
+        params.put("fromInclusive", java.time.OffsetDateTime.parse("2026-10-01T00:00:00Z"));
+        params.put("toExclusive", java.time.OffsetDateTime.parse("2026-10-02T00:00:00Z"));
+        params.put("account", new AnalyticsAccountFilter(null, "alpha@example.test", "alpha"));
+        params.put("eventType", "LOGIN");
+        BoundSql count = configuration.getMappedStatement(AdminAnalyticsMapper.class.getName() + ".countOperationLogs")
+                .getBoundSql(params);
+        BoundSql list = configuration.getMappedStatement(AdminAnalyticsMapper.class.getName() + ".selectOperationLogs")
+                .getBoundSql(params);
+        String countSql = count.getSql().replaceAll("\\s+", " ").trim();
+        String listSql = list.getSql().replaceAll("\\s+", " ").trim();
+        assertThat(countSql).startsWith("SELECT COUNT(*) FROM audit_event e")
+                .doesNotContain("ORDER BY", "LEFT JOIN", "e.details");
+        assertThat(countSql.substring(countSql.indexOf("WHERE e.actor_user_id")))
+                .isEqualTo(listSql.substring(listSql.indexOf("WHERE e.actor_user_id"), listSql.lastIndexOf("ORDER BY")).trim());
+        assertThat(count.getParameterMappings()).extracting(ParameterMapping::getProperty)
+                .containsExactlyElementsOf(list.getParameterMappings().stream().map(ParameterMapping::getProperty).toList());
     }
 
     private void assertKeywordBinding(BoundSql sql) {

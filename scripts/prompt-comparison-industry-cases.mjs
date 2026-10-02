@@ -9,7 +9,8 @@ import { resolve } from 'node:path';
 async function excerpt(root, path, first, last, language) {
   const source = await readFile(resolve(root, path), 'utf8');
   const content = source.split(/\r?\n/).slice(first - 1, last).join('\n');
-  return { path, language, content: `资料范围：原文件第 ${first}—${last} 行节选，未提供其余正文。\n${content}` };
+  // 出处范围放在评测元数据，不作为正文标签注入业务事实抽取器。
+  return { path, language, content, provenance: { firstLine: first, lastLine: last, excerpt: true } };
 }
 
 /** 仅读取这里显式列出的非敏感资料，不遍历工作区、认证信息或环境配置。 */

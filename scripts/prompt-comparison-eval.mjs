@@ -1,6 +1,7 @@
 /**
  * 同一批合成输入的直接增强 / Plan 增强业务对照。
- * --prepare 仅冻结样例并导出 Qoder 工作区；--run-dir 复用人工登录会话执行真实接口。
+ * --prepare 冻结样例并导出 Qoder 工作区；业务比较优先使用 prompt-comparison-reviewed.mjs 逐题复核。
+ * 旧的关键词答题方式仅供显式选择的敏感性对照，不能当作可靠的业务确认。
  * 不修改业务代码、不伪造 Qoder 输出，不自动接受推荐答案或覆盖既有证据。
  */
 import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
@@ -31,7 +32,12 @@ async function save(path, content) {
 
 /** Qoder 目录只包含固定输入，不含答案卡、预期结果或运行后输出。 */
 async function prepare() {
-  const selectedCases = args.includes('--industry') ? await buildIndustryCases(root) : comparisonCases;
+  let selectedCases = args.includes('--industry') ? await buildIndustryCases(root) : comparisonCases;
+  if (args.includes('--only')) {
+    const requested = new Set((args[args.indexOf('--only') + 1] ?? '').split(','));
+    selectedCases = selectedCases.filter(item => requested.has(item.id));
+    if (!selectedCases.length || selectedCases.length !== requested.size) throw new Error('Unknown case selection.');
+  }
   const runId = new Date().toISOString().replace(/[:.]/g, '-');
   const output = resolve(root, 'tmp/prompt-comparison', runId);
   const qoderRoot = await mkdtemp(resolve(tmpdir(), 'prompt-comparison-qoder-'));
@@ -73,7 +79,8 @@ async function prepare() {
 function optimizationRequest(currentCase, modelId, confirmation) {
   return {
     rawPrompt: currentCase.rawPrompt, modelId,
-    context: { customDescription: currentCase.contextDescription, files: currentCase.files },
+    context: { customDescription: currentCase.contextDescription,
+      files: currentCase.files.map(({ path, language, content }) => ({ path, language, content })) },
     enhancement: { templateCode: 'AUTO', includeConversationHistory: false,
       includePermissionBoundaries: true, includeExamples: false },
     conversationHistory: [], permissionPolicy: { protectedPaths: [], requireConfirmationFor: [] },
@@ -121,7 +128,7 @@ async function run(outputArgument) {
       try {
         let confirmation;
         if (arm === 'plan') {
-          const planned = await session.plan(currentCase);
+          const planned = await session.plan({ ...currentCase, files: optimizationRequest(currentCase, session.model.id).context.files });
           evidence.prepared = planned.prepared;
           evidence.plan = planned.plan;
           evidence.answers = fixedAnswers(planned.plan.questions ?? [], currentCase);
@@ -183,12 +190,13 @@ async function openLogin() {
 }
 
 if (args.includes('--help')) {
-  console.log('node scripts/prompt-comparison-eval.mjs --prepare [--industry]\nnode scripts/prompt-comparison-eval.mjs --login\nnode scripts/prompt-comparison-eval.mjs --run-dir <prepared-directory>');
+  console.log('node scripts/prompt-comparison-eval.mjs --prepare [--industry] [--only id1,id2]\nnode scripts/prompt-comparison-eval.mjs --login\n优先业务流程：node scripts/prompt-comparison-reviewed.mjs --collect <prepared-directory>\n逐题填写 reviewed-answers.json 后：node scripts/prompt-comparison-reviewed.mjs --finish <prepared-directory>\n仅关键词答题敏感性对照：node scripts/prompt-comparison-eval.mjs --run-dir <prepared-directory> --allow-heuristic-answers');
 } else if (args.includes('--login')) {
   await openLogin();
 } else if (args.includes('--prepare')) {
   await prepare();
 } else if (args.includes('--run-dir')) {
+  if (!args.includes('--allow-heuristic-answers')) throw new Error('Use prompt-comparison-reviewed.mjs to review answers before generation; heuristic answers require explicit --allow-heuristic-answers.');
   const directory = args[args.indexOf('--run-dir') + 1];
   if (!directory || directory.startsWith('--')) throw new Error('Missing prepared run directory.');
   await run(directory);

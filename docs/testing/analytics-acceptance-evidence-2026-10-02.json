@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-02T04:55:16.3950293Z",
+  "localAcceptancePassed": true,
+  "productionReadinessVerified": false,
+  "scope": "Confirmed local acceptance; recharge deferred; no migration, dependency upgrade, production deployment or commit",
+  "backendRegression": {
+    "suites": 19,
+    "tests": 159,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "frontendRegression": {
+    "unitFiles": 23,
+    "unitTests": 121,
+    "mockedBrowserTests": 68,
+    "typecheckPassed": true,
+    "buildPassed": true
+  },
+  "performance": {
+    "postgresqlVersion": "16.14",
+    "eventsVisiblePerQuery": 100000,
+    "accountsPerFixture": 1000,
+    "rangeDays": 365,
+    "serialSamples": 15,
+    "serialDashboardP95Ms": 524.8998,
+    "concurrentReaders": 4,
+    "warmupBeforeSynchronizedStart": true,
+    "samplesPerReader": [
+      8,
+      8,
+      8,
+      8
+    ],
+    "concurrentDashboardP95Ms": [
+      972.287,
+      1001.1836,
+      1001.6203,
+      1002.0151
+    ],
+    "budgetMs": 2000,
+    "errorRate": 0,
+    "serialLogCountAndPageP95Ms": 156.6563,
+    "passed": true
+  },
+  "realBrowser": {
+    "scope": "real Chrome + Vite /api proxy + real HTTP/Security/Redis/MyBatis/PostgreSQL",
+    "databaseTransaction": "test-only shared outer transaction; commit suppressed; final rollback verified by JUnit",
+    "modelProvider": "Mock; no external model calls",
+    "checks": [
+      {
+        "name": "anonymous_permissions",
+        "endpoints": 4,
+        "expectedStatus": 401
+      },
+      {
+        "name": "real_browser_login",
+        "status": 200,
+        "ordinaryAdminStatus": 403,
+        "permissionEndpoints": 4
+      },
+      {
+        "name": "home_identity_restore_and_refresh",
+        "extraVisits": 2,
+        "duplicateVisitsPerDocument": 0
+      },
+      {
+        "name": "database_failure_durable_replay",
+        "businessPageAvailable": true,
+        "recoveredVisits": 1,
+        "pendingAfterRecovery": 0
+      },
+      {
+        "name": "browser_network_retry",
+        "injectedNetworkFailures": 1,
+        "recoveredVisits": 1
+      },
+      {
+        "name": "client_event_idempotency_and_proxy",
+        "duplicateRequests": 2,
+        "persistedVisits": 1
+      },
+      {
+        "name": "existing_business_compatibility",
+        "contextStatus": 200,
+        "optimizationStatus": 200,
+        "historyStatus": 200,
+        "provider": "Mock"
+      },
+      {
+        "name": "admin_delivery_health",
+        "presetAndCustomRanges": 6,
+        "visitCount": 6,
+        "uniqueVisitors": 1,
+        "activeUsers": 1,
+        "charts": 4,
+        "geoIpMissingReturnsNull": true,
+        "untrustedForwardedIpIgnored": true,
+        "invalidRangeStatus": 400,
+        "browserErrors": 0
+      }
+    ],
+    "metricObservation": {
+      "expectedAccessCount": 6,
+      "accessCount": 6,
+      "uniqueVisitorCount": 1,
+      "activeUserCount": 1,
+      "actualUserCount": 1,
+      "averageDailyActiveUsers": 1,
+      "rechargeStatisticsAvailable": false
+    },
+    "rankingObservation": {
+      "periods": 3,
+      "accountIdMatched": true,
+      "activeDays": 1
+    },
+    "logObservation": {
+      "total": 9,
+      "records": 9,
+      "matchedEventCount": 1,
+      "loopbackIp": true,
+      "countryNull": true,
+      "countryOmitted": false,
+      "provinceNull": true,
+      "cityNull": true
+    },
+    "chartObservation": {
+      "namedChartsVisible": 4,
+      "canvasRenderedPerNamedChart": true
+    },
+    "completedAt": "2026-10-02T04:48:00.681Z",
+    "passed": true
+  },
+  "boundaries": [
+    "HTTP uses test-only shared rollback transaction; does not verify independent physical commits or power-loss recovery",
+    "Performance uses four independent rollback transactions, 100k events each; physical 400k uncommitted events plus existing baseline",
+    "GeoIP unavailable and untrusted local proxy headers tested; real City database and production proxy chain not verified",
+    "Model provider is Mock; external model behavior not part of this acceptance",
+    "Production per-instance durable storage, ACL, backup, capacity monitoring, external alert delivery and target-environment recovery remain required"
+  ],
+  "performanceHistory": [
+  {
+    "report": "services/api/target/analytics-performance-before-aggregation-optimization.json",
+    "passed": false,
+    "serialDashboardP95Ms": 1222.7758,
+    "concurrentDashboardP95Ms": [
+      3511.6394,
+      3932.5297,
+      3929.4667,
+      3886.7536
+    ],
+    "errorRate": 0
+  },
+  {
+    "report": "services/api/target/analytics-performance-after-preaggregation.json",
+    "passed": false,
+    "serialDashboardP95Ms": 695.4652,
+    "concurrentDashboardP95Ms": [
+      1733.6811,
+      3035.4213,
+      3051.8984,
+      3032.0355
+    ],
+    "errorRate": 0
+  },
+  {
+    "report": "services/api/target/analytics-performance-after-log-projection.json",
+    "passed": false,
+    "serialDashboardP95Ms": 796.7212,
+    "concurrentDashboardP95Ms": [
+      1396.195,
+      2820.3361,
+      2786.7915,
+      2769.3755
+    ],
+    "errorRate": 0
+  }
+],
+  "preservedFailureReports": [
+    "services/api/target/analytics-performance-before-aggregation-optimization.json",
+    "services/api/target/analytics-performance-after-preaggregation.json",
+    "services/api/target/analytics-performance-after-log-projection.json"
+  ]
+}

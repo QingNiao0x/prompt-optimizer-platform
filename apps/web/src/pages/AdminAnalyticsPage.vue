@@ -51,11 +51,12 @@ import {
   rechargeMetricSeries,
 } from '@/features/analytics/analyticsPresentation';
 import { getApiErrorMessage } from '@/services/http';
-import { getAnalyticsDashboard, getAnalyticsOperations, getAnalyticsRanking } from '@/services/adminAnalyticsApi';
+import { getAnalyticsDashboard, getAnalyticsDeliveryStatus, getAnalyticsOperations, getAnalyticsRanking } from '@/services/adminAnalyticsApi';
 import type {
   AnalyticsAccountFilters,
   AnalyticsDashboard,
   AnalyticsDashboardQuery,
+  AnalyticsDeliveryStatus,
   AnalyticsEventType,
   AnalyticsOperationLog,
   AnalyticsOperationLogPage,
@@ -79,6 +80,24 @@ const dashboard = ref<AnalyticsDashboard>();
 const operationPage = ref<AnalyticsOperationLogPage>();
 const ranking = ref<AnalyticsRanking>();
 const loading = ref(false);
+const deliveryStatus = ref<AnalyticsDeliveryStatus>();
+const deliveryError = ref<string>();
+let deliveryRequestId = 0;
+let deliveryTimer: number | undefined;
+const deliveryAlert = computed(() => {
+  if (deliveryError.value) return {
+    type: 'warning' as const, title: '无法读取审计投递状态',
+    description: `${deliveryError.value} 统计查询仍可使用，请重新查询或检查后台。`,
+  };
+  const status = deliveryStatus.value;
+  if (!status || (status.healthy && status.pendingEvents === 0)) return undefined;
+  return {
+    type: status.status === 'UNAVAILABLE' || status.corruptFiles > 0 ? 'error' as const : 'warning' as const,
+    title: status.status === 'UNAVAILABLE' ? '审计投递暂不可用'
+      : status.pendingEvents > 0 ? '审计事件正在补写' : '审计投递需要检查',
+    description: `当前实例待补写 ${status.pendingEvents.toLocaleString()} 条，最老事件距今 ${status.oldestPendingAgeSeconds.toLocaleString()} 秒，损坏文件 ${status.corruptFiles.toLocaleString()} 个。数据库投递${status.databaseAvailable ? '可用' : '异常'}，持久接收${status.journalAvailable ? '可用' : '异常'}。统计可能尚未包含待补写事件；补写完成后点击查询刷新。`,
+  };
+});
 const operationsLoading = ref(false);
 const rankingLoading = ref(false);
 const operationsError = ref('');
@@ -253,10 +272,25 @@ const loadRanking = async (fallbackDate?: string): Promise<void> => {
   }
 };
 
+/** 投递状态与统计查询分别处理；故障提示不能把成功的仪表盘误标为查询失败。 */
+const loadDeliveryStatus = async (): Promise<void> => {
+  const requestId = ++deliveryRequestId;
+  try {
+    const status = await getAnalyticsDeliveryStatus();
+    if (requestId !== deliveryRequestId) return;
+    deliveryStatus.value = status;
+    deliveryError.value = undefined;
+  } catch (error: unknown) {
+    if (requestId !== deliveryRequestId) return;
+    deliveryError.value = getApiErrorMessage(error);
+  }
+};
+
 const refresh = async (): Promise<void> => {
   if (loading.value) return;
   const query = makeQuery();
   if (!query) return;
+  void loadDeliveryStatus();
   const submittedFilters = {
     ...(query.userId ? { userId: query.userId } : {}),
     ...(query.email ? { email: query.email } : {}),
@@ -450,10 +484,14 @@ const loginLocationFor = (item: AnalyticsOperationLog): string => (
 
 onMounted(() => {
   window.addEventListener('resize', resizeCharts, { passive: true });
+  // 只轮询轻量实例状态；后台补写不会触发全量统计查询或额外页面访问事件。
+  deliveryTimer = window.setInterval(() => { void loadDeliveryStatus(); }, 10_000);
   void refresh();
 });
 
 onBeforeUnmount(() => {
+  deliveryRequestId += 1;
+  if (deliveryTimer !== undefined) window.clearInterval(deliveryTimer);
   window.removeEventListener('resize', resizeCharts);
   charts.forEach((chart) => chart.dispose());
   charts.clear();
@@ -478,6 +516,9 @@ onBeforeUnmount(() => {
         </nav>
       </div>
     </header>
+    <ElAlert v-if="deliveryAlert" class="delivery-notice" data-testid="analytics-delivery-alert"
+      :type="deliveryAlert.type" :title="deliveryAlert.title" :description="deliveryAlert.description"
+      :closable="false" show-icon />
     <div class="filters" role="search" aria-label="统计筛选条件" @keyup.enter.capture="refresh">
       <div class="filter-intro">
         <span class="filter-icon"><ElIcon aria-hidden="true"><Filter /></ElIcon></span>
@@ -742,6 +783,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.delivery-notice { margin-bottom: var(--analytics-gap, 16px); }
 .admin-analytics {
   --analytics-gap: 20px;
   --analytics-surface: color-mix(in srgb, var(--glass-fallback) 86%, var(--bg-base));

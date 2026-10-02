@@ -2,6 +2,8 @@ package com.promptoptimizer.analytics.service;
 
 import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.analytics.domain.ClientAnalyticsEventType;
+import com.promptoptimizer.analytics.dto.ClientAnalyticsEventRequest;
+import com.promptoptimizer.analytics.dto.ClientAnalyticsContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -22,6 +24,14 @@ public interface AnalyticsEventService {
     /** 记录后端确认的关键操作；OPTIMIZATION_SUBMITTED 不代表模型执行成功。 */
     void record(AnalyticsEventType eventType, HttpServletRequest request);
 
-    /** 把经过浏览器事件白名单验证的遥测类型映射为审计事件。 */
-    void recordClientEvent(ClientAnalyticsEventType eventType, HttpServletRequest request);
+    /** 校验重放所属身份与原时刻后可靠接收白名单事件，未可靠接收时返回可重试错误。 */
+    void recordClientEvent(ClientAnalyticsEventRequest event, HttpServletRequest request);
+
+    /** 兼容服务内原实时调用；浏览器重试必须使用包含稳定 eventId 的新请求契约。 */
+    default void recordClientEvent(ClientAnalyticsEventType eventType, HttpServletRequest request) {
+        recordClientEvent(new ClientAnalyticsEventRequest(eventType, null, null, null, null), request);
+    }
+
+    /** 读取当前服务端认证主体及非认证登录关联号，不暴露认证会话或位置。 */
+    ClientAnalyticsContext clientContext(HttpServletRequest request);
 }

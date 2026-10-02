@@ -73,12 +73,15 @@ public class AdminAnalyticsServiceImpl implements AdminAnalyticsService {
         AnalyticsPeriod period = periodResolver.resolve(range, fromDate, toDate);
         AdminAnalyticsMapper mapper = requireAnalyticsMapper();
         AdminAnalyticsMapper.AccountCounts accountCounts = mapper.accountCounts(period, account);
-        AdminAnalyticsMapper.UsageCounts usageCounts = mapper.usageCounts(period, account);
-        var dailyMetrics = mapper.dailyMetrics(period, account);
+        // 主区间的四类事件指标共享一次数据库扫描；严格组装完整桶，不回退为空或伪造零值。
+        var metrics = DashboardMetricsAssembler.assemble(period, mapper.dashboardMetrics(period, account));
+        AdminAnalyticsMapper.UsageCounts usageCounts = metrics.usageCounts();
+        var dailyMetrics = metrics.dailyMetrics();
         AnalyticsPeriod twelveMonthPeriod = lastTwelveMonths();
         // 区间去重活跃人数不能代替每日人数之和；分母包括无事件日，也不使用小时数推算自然日。
-        long dailyActiveSum = dailyMetrics.stream().mapToLong(metric -> metric.activeUsers()).sum();
-        BigDecimal averageDailyActive = BigDecimal.valueOf(dailyActiveSum)
+        BigDecimal dailyActiveSum = dailyMetrics.stream().map(metric -> BigDecimal.valueOf(metric.activeUsers()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal averageDailyActive = dailyActiveSum
                 .divide(BigDecimal.valueOf(period.dayCount()), 2, RoundingMode.HALF_UP);
         // 尚未接入支付数据源时明确返回不可用，不查询预留表，也不把空数组伪装成充值统计已完成。
         var rechargeByDay = rechargeStatisticsEnabled
@@ -94,10 +97,10 @@ public class AdminAnalyticsServiceImpl implements AdminAnalyticsService {
                 usageCounts.activeUsers(),
                 averageDailyActive,
                 dailyMetrics,
-                mapper.hourlyUsage(period, account),
+                metrics.hourlyUsage(),
                 mapper.monthlyUsage(twelveMonthPeriod,
                         twelveMonthPeriod.toDateExclusive().minusDays(1), account),
-                mapper.deviceDistribution(period, account),
+                metrics.deviceDistribution(),
                 rechargeByDay,
                 rechargeStatisticsEnabled
         );
@@ -152,8 +155,8 @@ public class AdminAnalyticsServiceImpl implements AdminAnalyticsService {
         String normalizedEventType = normalizeEventType(eventType);
         Page<com.promptoptimizer.analytics.dto.AnalyticsViews.OperationLog> page =
                 new Page<>(normalizedCurrent, normalizedSize);
-        // 保留列表 JOIN 与筛选子查询，避免分页插件改写计数 SQL 后总数和当前页范围不一致。
-        page.setOptimizeCountSql(false);
+        // 显式计数复用日志筛选片段；不对完整明细排序/投影再 COUNT，避免大数据分页浪费内存。
+        page.setCountId("countOperationLogs");
         IPage<com.promptoptimizer.analytics.dto.AnalyticsViews.OperationLog> result =
                 requireAnalyticsMapper().selectOperationLogs(page,
                         period.fromInclusive(), period.toExclusive(), account, normalizedEventType);

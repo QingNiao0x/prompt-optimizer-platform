@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.analytics.mapper.AuditEventMapper;
+import com.promptoptimizer.analytics.infrastructure.AuditEventDelivery;
+import com.promptoptimizer.analytics.domain.PendingAuditEvent;
 import com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper;
 import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
 import com.promptoptimizer.analytics.domain.AnalyticsAccountFilter;
@@ -93,6 +95,9 @@ class AnalyticsLocalDatabaseAcceptanceTest {
     @Autowired private AuditEventMapper audit;
     @Autowired private AdminAnalyticsMapper analytics;
     @Autowired private AnalyticsAcceptanceMapper inspection;
+    // 本历史验收的 fixture 未提交，独立连接不可见。仅在测试中同事务写入真实 Mapper，结束后全部回滚。
+    // 文件 journal、异步工作线程和 REQUIRES_NEW 事务不由此适配器验收，另有恢复故障测试与真实 HTTP 验收。
+    @MockBean private AuditEventDelivery delivery;
     // ApplicationRunner 在测试事务之前运行，必须明确替换，不能依赖本机初始化配置为空。
     @MockBean private BootstrapAdminAccountInitializer adminInitializer;
     @MockBean private BootstrapUserPasswordInitializer userInitializer;
@@ -104,6 +109,11 @@ class AnalyticsLocalDatabaseAcceptanceTest {
 
     @BeforeEach
     void createTransactionalAccounts() {
+        org.mockito.Mockito.doAnswer(invocation -> {
+            PendingAuditEvent event = invocation.getArgument(0);
+            audit.insert(event.id(), event.tenantId(), event.actorUserId(), event.eventType(), event.details(), event.occurredAt());
+            return null;
+        }).when(delivery).accept(org.mockito.ArgumentMatchers.any(PendingAuditEvent.class), org.mockito.ArgumentMatchers.anyBoolean());
         password = UUID.randomUUID() + "Aa!";
         String hash = encoder.encode(password);
         admin = createAccount("PLATFORM_ADMIN", hash);

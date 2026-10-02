@@ -9,5 +9,7 @@
             CAST(#{details,typeHandler=com.promptoptimizer.common.persistence.JsonbObjectTypeHandler,jdbcType=VARCHAR} AS jsonb),
             #{occurredAt}
         )
+        <!-- 重放沿用原事件主键。数据库已提交但 ack 未写成时，再投递只能命中同一事实，不能重复计数。 -->
+        ON CONFLICT (id) DO NOTHING
     </insert>
 </mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.analytics.support.AnalyticsPerformanceFixtureMapper">
+    <insert id="insertAccounts">
+        INSERT INTO user_account (id, tenant_id, email, display_name, status, platform_role, created_at)
+        SELECT md5(#{seed} || ':user:' || n)::uuid, #{tenantId},
+               #{seed} || '-' || n || '@analytics-performance.invalid',
+               'analytics-performance-' || n, 'ACTIVE', 'USER', #{start}
+          FROM generate_series(1, #{accounts}) n
+    </insert>
+    <insert id="insertIdentities">
+        INSERT INTO user_identity (id, user_id, identity_type, issuer, identifier, normalized_identifier, status)
+        SELECT md5(#{seed} || ':identity:' || n)::uuid, md5(#{seed} || ':user:' || n)::uuid,
+               'EMAIL', 'local', #{seed} || '-' || n || '@analytics-performance.invalid',
+               #{seed} || '-' || n || '@analytics-performance.invalid', 'ACTIVE'
+          FROM generate_series(1, #{accounts}) n
+    </insert>
+    <insert id="insertEvents">
+        <!-- 账号和事件均匀分散；时间桶覆盖整年，用于同时测量补零日、小时和月度聚合。 -->
+        INSERT INTO audit_event (id, tenant_id, actor_user_id, event_type, details, occurred_at)
+        SELECT md5(#{seed} || ':event:' || n)::uuid, #{tenantId},
+               md5(#{seed} || ':user:' || ((n % #{accounts}) + 1))::uuid,
+               (ARRAY['APP_VISIT', 'LOGIN', 'LOGOUT', 'OPTIMIZATION_SUBMITTED',
+                      'CONTEXT_ANALYZED', 'PLAN_CREATED', 'RESULT_EXPORTED'])[(n % 7) + 1],
+               jsonb_build_object('analyticsVersion', 1,
+                   'deviceType', (ARRAY['DESKTOP', 'MOBILE', 'TABLET'])[(n % 3) + 1],
+                   'clientIp', NULL, 'country', NULL, 'province', NULL, 'city', NULL),
+               CAST(#{start} AS timestamptz) + ((n % 365) * interval '1 day')
+                   + ((n % 24) * interval '1 hour')
+          FROM generate_series(1, #{events}) n
+    </insert>
+    <select id="remainingRows" resultType="long">
+        SELECT (SELECT COUNT(*) FROM tenant WHERE id = #{tenantId})
+             + (SELECT COUNT(*) FROM user_account WHERE tenant_id = #{tenantId})
+             + (SELECT COUNT(*) FROM audit_event WHERE tenant_id = #{tenantId})
+    </select>
+</mapper>

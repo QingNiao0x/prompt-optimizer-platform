@@ -5,8 +5,13 @@ import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.analytics.domain.AnalyticsDeviceType;
 import com.promptoptimizer.analytics.domain.ClientAnalyticsEventType;
 import com.promptoptimizer.analytics.domain.GeoLocation;
+import com.promptoptimizer.analytics.domain.PendingAuditEvent;
+import com.promptoptimizer.analytics.dto.ClientAnalyticsEventRequest;
+import com.promptoptimizer.analytics.dto.ClientAnalyticsContext;
+import com.promptoptimizer.analytics.infrastructure.AuditEventDelivery;
+import com.promptoptimizer.analytics.service.AnalyticsIdentityChangedException;
+import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.analytics.infrastructure.AnalyticsSessionContext;
-import com.promptoptimizer.analytics.mapper.AuditEventMapper;
 import com.promptoptimizer.analytics.infrastructure.ClientIpResolver;
 import com.promptoptimizer.analytics.infrastructure.DeviceTypeResolver;
 import com.promptoptimizer.analytics.infrastructure.GeoLocationResolver;
@@ -16,13 +21,15 @@ import com.promptoptimizer.identity.service.CurrentActor;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -36,7 +43,7 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsEventServiceImpl.class);
     private final CurrentActor currentActor;
-    private final AuditEventMapper auditMapper;
+    private final AuditEventDelivery delivery;
     private final ClientIpResolver clientIpResolver;
     private final GeoLocationResolver geoLocationResolver;
     private final DeviceTypeResolver deviceTypeResolver;
@@ -45,14 +52,14 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
     /** 装配服务端身份、请求元数据解析和可选审计存储，采集不依赖浏览器传入的用户 ID。 */
     public AnalyticsEventServiceImpl(
             CurrentActor currentActor,
-            ObjectProvider<AuditEventMapper> auditMapperProvider,
+            AuditEventDelivery delivery,
             ClientIpResolver clientIpResolver,
             GeoLocationResolver geoLocationResolver,
             DeviceTypeResolver deviceTypeResolver,
             AnalyticsSessionContext sessionContext
     ) {
         this.currentActor = currentActor;
-        this.auditMapper = auditMapperProvider.getIfAvailable();
+        this.delivery = delivery;
         this.clientIpResolver = clientIpResolver;
         this.geoLocationResolver = geoLocationResolver;
         this.deviceTypeResolver = deviceTypeResolver;
@@ -84,19 +91,68 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
         persist(eventType, request, clientIp, location, deviceType, snapshot);
     }
 
-    /** 把经过浏览器事件白名单验证的遥测类型映射为审计事件。 */
-    public void recordClientEvent(ClientAnalyticsEventType eventType, HttpServletRequest request) {
-        AnalyticsEventType mapped = switch (eventType) {
+    /** 校验离线事件所属账号、时间及登录关联号；可靠保存失败返回可重试错误，不能伪造接收成功。 */
+    public void recordClientEvent(ClientAnalyticsEventRequest event, HttpServletRequest request) {
+        Objects.requireNonNull(event, "client event");
+        ActorIdentity actor = currentActor.require();
+        // 先比较服务端账号，再读取新会话的 IP/位置，防止旧账号的队列被归属到后来登录的人。
+        if (event.expectedUserId() != null && !event.expectedUserId().equals(actor.userId())) {
+            throw new AnalyticsIdentityChangedException();
+        }
+        if (event.eventType() == null) throw new InvalidOptimizationRequestException("统计事件类型不能为空");
+        OffsetDateTime occurredAt = clientOccurredAt(event.occurredAt());
+        AnalyticsEventType mapped = switch (event.eventType()) {
             case APP_VISIT -> AnalyticsEventType.APP_VISIT;
             case RESULT_EXPORTED -> AnalyticsEventType.RESULT_EXPORTED;
         };
-        record(mapped, request);
+        AnalyticsSessionContext.Snapshot snapshot = sessionContext.currentOrCreate(request);
+        boolean hasOriginalContext = event.expectedLoginSessionId() != null
+                && event.expectedLoginSessionId().equals(snapshot.loginSessionId());
+        boolean legacyLiveEvent = event.occurredAt() == null && event.expectedLoginSessionId() == null;
+        String requestId = (String) request.getAttribute(RequestIdFilter.REQUEST_ID_ATTRIBUTE);
+        Map<String, Object> details;
+        if (hasOriginalContext || legacyLiveEvent) {
+            String clientIp = clientIpResolver.resolve(request);
+            details = sessionContext.details(snapshot, clientIp, locate(clientIp),
+                    deviceTypeResolver.resolve(request.getHeader("User-Agent")), requestId);
+        } else {
+            // 无法证明仍是原登录上下文时，保留事实与时刻，但不把当前 IP/登录地伪造为旧事件的位置。
+            var unknown = new LinkedHashMap<>(sessionContext.details(snapshot, null,
+                    GeoLocation.unavailable(), AnalyticsDeviceType.UNKNOWN, requestId));
+            for (String key : new String[]{"loginSessionId", "loginIp", "loginCountry", "loginProvince", "loginCity"}) unknown.put(key, null);
+            unknown.put("delayedMetadata", true);
+            details = unknown;
+        }
+        UUID id = event.eventId() == null ? UUID.randomUUID() : scopedClientEventId(actor, mapped, event.eventId());
+        delivery.accept(new PendingAuditEvent(id, actor.tenantId(), actor.userId(), mapped, details, occurredAt), true);
+    }
+
+    /** 返回无认证能力的审计关联号；旧会话缺少快照时创建未知位置快照，不伪造登录事实。 */
+    public ClientAnalyticsContext clientContext(HttpServletRequest request) {
+        ActorIdentity actor = currentActor.require();
+        return new ClientAnalyticsContext(actor.userId(), sessionContext.currentOrCreate(request).loginSessionId());
+    }
+
+    /** 将浏览器时刻归一到 UTC；永久队列允许合法历史时刻，仅限制支持年份与五分钟未来容差。 */
+    private OffsetDateTime clientOccurredAt(OffsetDateTime supplied) {
+        OffsetDateTime value = supplied == null ? OffsetDateTime.now(ZoneOffset.UTC) : supplied.withOffsetSameInstant(ZoneOffset.UTC);
+        if (value.getYear() < 1 || value.getYear() > 9999 || value.toInstant().isAfter(Instant.now().plusSeconds(300))) {
+            throw new InvalidOptimizationRequestException("统计事件时间必须在支持的公历年份内，且不能超过当前时间五分钟");
+        }
+        return value;
+    }
+
+    /** 客户端 UUID 只负责幂等，账号、租户与事件类型仍由服务端限定，不能碰撞其他人的事件主键。 */
+    private UUID scopedClientEventId(ActorIdentity actor, AnalyticsEventType eventType, UUID clientId) {
+        String scope = "analytics:v1:" + actor.tenantId() + ":" + actor.userId() + ":" + eventType + ":" + clientId;
+        return UUID.nameUUIDFromBytes(scope.getBytes(StandardCharsets.UTF_8));
     }
 
     /** 无城市库、未知地址或解析失败时保留空所在地；地理增强失败不得阻止记录操作事实。 */
     private GeoLocation locate(String clientIp) {
         try {
-            return geoLocationResolver.resolve(clientIp);
+            GeoLocation location = geoLocationResolver.resolve(clientIp);
+            return location == null ? GeoLocation.unavailable() : location;
         } catch (RuntimeException exception) {
             LOGGER.warn("event=analytics.geo_lookup_unavailable reason={}", exception.getClass().getSimpleName());
             return GeoLocation.unavailable();
@@ -105,7 +161,8 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
 
     /**
      * 以服务端认证主体追加审计事实，只保存白名单元数据及 UTC 时刻。
-     * 当前数据库写入失败仅输出安全诊断并放行业务，没有自动重试；不可把该降级描述为日志保证落库。
+     * 先保存可靠 journal，再由独立工作线程入库；主业务不等待数据库恢复。
+     * 磁盘与数据库都不可用时明确告警，不能宣称双存储故障仍保证不丢数据。
      */
     private void persist(
             AnalyticsEventType eventType,
@@ -118,99 +175,14 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
         // 用户和租户只能来自当前认证主体；请求参数、User-Agent 和 IP 都不能决定操作所有者。
         ActorIdentity actor = currentActor.require();
         String requestId = (String) request.getAttribute(RequestIdFilter.REQUEST_ID_ATTRIBUTE);
-        if (auditMapper == null) {
-            LOGGER.warn("event=analytics.persistence_disabled requestId={} reason=mapper_unavailable", requestId);
-            return;
-        }
-        try {
-            auditMapper.insert(
+        delivery.accept(new PendingAuditEvent(
                     UUID.randomUUID(),
                     actor.tenantId(),
                     actor.userId(),
                     eventType,
                     sessionContext.details(snapshot, clientIp, location, deviceType, requestId),
                     OffsetDateTime.now(ZoneOffset.UTC)
-            );
-        } catch (DataAccessException exception) {
-            // Spring 会把 SQL 和绑定值放进异常消息。这里只记类名、SQLState 和约束名，避免把正文、IP 或提示词打进日志。
-            AuditWriteFailure failure = AuditWriteFailure.from(exception);
-            LOGGER.error(
-                    "event=analytics.audit_write_failure requestId={} eventType={} reason={} sqlState={} constraint={}",
-                    requestId,
-                    eventType,
-                    exception.getClass().getSimpleName(),
-                    failure.sqlState(),
-                    failure.constraint()
-            );
-        }
+            ), false);
     }
 
-    /**
-     * 从数据库异常链取出可公开的诊断码。没有 SQLState 或约束名时记为 unavailable，不回退到异常消息。
-     */
-    private record AuditWriteFailure(String sqlState, String constraint) {
-
-        private static final String UNAVAILABLE = "unavailable";
-
-        private static AuditWriteFailure from(Throwable failure) {
-            SQLException sqlException = findSqlException(failure);
-            return new AuditWriteFailure(sqlState(sqlException), constraint(sqlException));
-        }
-
-        private static SQLException findSqlException(Throwable failure) {
-            Throwable current = failure;
-            for (int depth = 0; current != null && depth < 8; depth++) {
-                if (current instanceof SQLException sqlException) {
-                    return sqlException;
-                }
-                Throwable cause = current.getCause();
-                if (cause == current) {
-                    return null;
-                }
-                current = cause;
-            }
-            return null;
-        }
-
-        private static String sqlState(SQLException sqlException) {
-            for (SQLException current = sqlException; current != null; current = current.getNextException()) {
-                if (current.getSQLState() != null && !current.getSQLState().isBlank()) {
-                    return current.getSQLState();
-                }
-            }
-            return UNAVAILABLE;
-        }
-
-        private static String constraint(SQLException sqlException) {
-            for (SQLException current = sqlException; current != null; current = current.getNextException()) {
-                String name = postgresConstraint(current);
-                if (name != null) {
-                    return name;
-                }
-            }
-            return UNAVAILABLE;
-        }
-
-        /**
-         * 驱动是运行时依赖。只读取约束名，不读取异常消息，避免把 SQL 或键值打进日志。
-         */
-        private static String postgresConstraint(SQLException sqlException) {
-            if (!"org.postgresql.util.PSQLException".equals(sqlException.getClass().getName())) {
-                return null;
-            }
-            try {
-                Object serverError = sqlException.getClass().getMethod("getServerErrorMessage").invoke(sqlException);
-                if (serverError == null) {
-                    return null;
-                }
-                Object constraint = serverError.getClass().getMethod("getConstraint").invoke(serverError);
-                if (constraint instanceof String name && name.matches("[A-Za-z_][A-Za-z0-9_]{0,127}")) {
-                    return name;
-                }
-            } catch (ReflectiveOperationException exception) {
-                return null;
-            }
-            return null;
-        }
-    }
 }

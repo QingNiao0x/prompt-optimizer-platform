@@ -1,14 +1,22 @@
 import { httpClient } from '@/services/http';
+import { useAnalyticsDeliveryStore } from '@/stores/analyticsDelivery';
 import type {
   AnalyticsAccountFilters,
   AnalyticsDashboard,
   AnalyticsDashboardQuery,
+  AnalyticsDeliveryStatus,
   AnalyticsEventType,
   AnalyticsOperationLogPage,
   AnalyticsOperationQuery,
   AnalyticsRanking,
   ApiResponse,
 } from '@/types/api';
+
+/** 管理员独立读取当前实例的投递积压和故障状态，不能把统计查询成功当作采集完整。 */
+export const getAnalyticsDeliveryStatus = async (): Promise<AnalyticsDeliveryStatus> => {
+  const response = await httpClient.get<ApiResponse<AnalyticsDeliveryStatus>>('/api/v1/admin/analytics/delivery');
+  return response.data.data;
+};
 
 /** 读取平台管理员统计总览；服务端再次核对当前数据库角色。 */
 export const getAnalyticsDashboard = async (
@@ -46,18 +54,16 @@ export const getAnalyticsOperations = async (
   return response.data.data;
 };
 
-/** 报告无自由文本的浏览器事件；服务端从认证上下文推导账号 ID。 */
+/** 将无自由文本的浏览器事件加入可恢复队列；完成入队不代表服务端已经落库。 */
 export const reportClientAnalyticsEvent = async (
   eventType: Extract<AnalyticsEventType, 'APP_VISIT' | 'RESULT_EXPORTED'>,
 ): Promise<void> => {
-  await httpClient.post<ApiResponse<void>>('/api/v1/analytics/events', { eventType });
+  useAnalyticsDeliveryStore().enqueue(eventType);
 };
 
-/** 以非阻断方式提交客户端事件，失败时仅输出固定提示，不影响主业务。 */
+/** 路由与导出主业务只负责入队；失败由账号隔离队列重试，保留稳定事件 ID。 */
 export const reportClientAnalyticsEventBestEffort = (
   eventType: Extract<AnalyticsEventType, 'APP_VISIT' | 'RESULT_EXPORTED'>,
 ): void => {
-  void reportClientAnalyticsEvent(eventType).catch(() => {
-    console.warn('统计事件暂未记录。');
-  });
+  useAnalyticsDeliveryStore().enqueue(eventType);
 };
