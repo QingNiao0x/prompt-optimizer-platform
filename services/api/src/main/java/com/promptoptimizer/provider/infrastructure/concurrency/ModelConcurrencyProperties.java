@@ -20,7 +20,7 @@ import java.time.Duration;
 public class ModelConcurrencyProperties {
 
     @Min(1)
-    private int globalLimit = 50;
+    private int globalLimit = 100;
     @Min(1)
     private int userLimit = 3;
     @NotNull

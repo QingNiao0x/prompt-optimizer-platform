@@ -7,7 +7,6 @@ import {
   EditPen,
   RefreshRight,
   Right,
-  Share,
   TopRight,
   WarningFilled,
 } from '@element-plus/icons-vue';
@@ -31,7 +30,6 @@ interface Emits {
   (event: 're-enhance'): void;
 }
 
-const COPY_PLATFORM_STORAGE_KEY = 'prompt-optimizer.copy-platform.v1';
 // 平台地址只来自固定名单；跳转不携带提示词，也不尝试自动填写或发送。
 const COPY_PLATFORMS = [
   { name: 'DeepSeek', url: 'https://chat.deepseek.com/' },
@@ -42,50 +40,30 @@ const COPY_PLATFORMS = [
 ] as const;
 type CopyPlatform = typeof COPY_PLATFORMS[number];
 
-/** 本机只记住平台名，存储不可用或值不在名单中时仍可正常复制。 */
-const loadPreferredPlatform = (): CopyPlatform => {
-  try {
-    const name = localStorage.getItem(COPY_PLATFORM_STORAGE_KEY);
-    return COPY_PLATFORMS.find((platform) => platform.name === name) ?? COPY_PLATFORMS[0];
-  } catch {
-    return COPY_PLATFORMS[0];
-  }
-};
-
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 const { result } = toRefs(props);
 const editing = ref(false);
 const copying = ref(false);
-const sharing = ref(false);
 const copied = ref(false);
 const lastCopiedPrompt = ref<string>();
-const preferredPlatform = ref<CopyPlatform>(loadPreferredPlatform());
+const blockedPlatform = ref<CopyPlatform>();
 const manualCopyVisible = ref(false);
 const manualCopyContent = ref('');
 const manualCopyInput = ref<InputInstance>();
 let copyFeedbackTimer: ReturnType<typeof setTimeout> | undefined;
+let pendingPlatformTab: Window | null = null;
 let disposed = false;
 const ambiguitiesOpen = ref(false);
 const warningsOpen = ref(false);
 const draftSections = ref<PromptSection[]>([]);
 const copyDisabled = computed(() =>
-  props.busy || editing.value || copying.value || sharing.value || !result.value?.optimizedPrompt.trim(),
+  props.busy || editing.value || copying.value || !result.value?.optimizedPrompt.trim(),
 );
 const canOpenPlatform = computed(() =>
-  !copyDisabled.value && lastCopiedPrompt.value !== undefined
+  !copyDisabled.value && blockedPlatform.value !== undefined && lastCopiedPrompt.value !== undefined
   && lastCopiedPrompt.value === result.value?.optimizedPrompt,
 );
-const shareData = computed(() => ({ title: '优化提示词', text: result.value?.optimizedPrompt ?? '' }));
-const canSharePrompt = computed(() => {
-  if (!window.isSecureContext || !shareData.value.text.trim()
-    || typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function') return false;
-  try {
-    return navigator.canShare(shareData.value);
-  } catch {
-    return false;
-  }
-});
 
 const displaySections = computed(() =>
   result.value?.sections.filter((section) => section.type !== 'CLARIFICATIONS') ?? [],
@@ -104,10 +82,61 @@ const SECTION_LABELS: Record<PromptSectionType, string> = {
   EXAMPLES: '示例',
 };
 
+/** 只关闭本次预留的空白页；用户已经自行导航的页面不再由组件控制。 */
+const closePendingPlatformTab = (): void => {
+  const tab = pendingPlatformTab;
+  pendingPlatformTab = null;
+  try {
+    if (tab && !tab.closed && tab.location.href === 'about:blank') tab.close();
+  } catch {
+    // 已跨域的页面可能无法读取地址，保持用户当前页面不变。
+  }
+};
+
+/** 在点击事件中预留标签页，避免等待剪贴板权限后才打开时丢失用户激活。 */
+const reservePlatformTab = (platform: CopyPlatform): void => {
+  try {
+    pendingPlatformTab = window.open('about:blank', '_blank');
+    if (!pendingPlatformTab) return;
+    // 先拿到句柄判断是否被拦截，再断开 opener；noopener 参数会让成功打开也返回 null。
+    pendingPlatformTab.opener = null;
+    const page = pendingPlatformTab.document;
+    page.title = `正在打开 ${platform.name}`;
+    page.body.textContent = `正在复制提示词，复制成功后将打开 ${platform.name}，请稍候。`;
+  } catch {
+    closePendingPlatformTab();
+  }
+};
+
+/** 仅在复制成功后导航；窗口被关闭或无法导航时，让用户通过页面链接再次打开。 */
+const openCopiedPlatform = (platform: CopyPlatform): boolean => {
+  const tab = pendingPlatformTab;
+  try {
+    if (!tab || tab.closed || tab.location.href !== 'about:blank') return false;
+    // 在预留页内通过链接导航，让无来源信息策略作用于这次实际请求。
+    const link = tab.document.createElement('a');
+    link.href = platform.url;
+    link.target = '_self';
+    link.rel = 'noopener noreferrer';
+    link.referrerPolicy = 'no-referrer';
+    link.textContent = `打开 ${platform.name}`;
+    tab.document.body.append(link);
+    link.click();
+    pendingPlatformTab = null;
+    return true;
+  } catch {
+    return false;
+  } finally {
+    closePendingPlatformTab();
+  }
+};
+
 const resetCopyFeedback = (): void => {
+  closePendingPlatformTab();
   clearTimeout(copyFeedbackTimer);
   copied.value = false;
   lastCopiedPrompt.value = undefined;
+  blockedPlatform.value = undefined;
   manualCopyVisible.value = false;
   manualCopyContent.value = '';
 };
@@ -138,8 +167,12 @@ const copyPrompt = async (content: string, platform?: CopyPlatform): Promise<voi
   resetCopyFeedback();
   copying.value = true;
   try {
-    await navigator.clipboard.writeText(content);
+    // 写入必须先在当前有焦点的页面发起；预留空白页期间不发送提示词或访问目标平台。
+    const clipboardWrite = navigator.clipboard.writeText(content);
+    if (platform) reservePlatformTab(platform);
+    await clipboardWrite;
   } catch {
+    closePendingPlatformTab();
     if (isCurrentExport(source)) {
       ElMessage.error('复制失败，请手动选择文本复制。');
       showManualCopy(content);
@@ -149,21 +182,15 @@ const copyPrompt = async (content: string, platform?: CopyPlatform): Promise<voi
     copying.value = false;
   }
   reportClientAnalyticsEventBestEffort('RESULT_EXPORTED');
-  if (!isCurrentExport(source)) return;
+  if (!isCurrentExport(source)) {
+    closePendingPlatformTab();
+    return;
+  }
   copied.value = true;
   lastCopiedPrompt.value = content;
   copyFeedbackTimer = setTimeout(() => { copied.value = false; }, 2000);
-  if (platform) {
-    preferredPlatform.value = platform;
-    try {
-      localStorage.setItem(COPY_PLATFORM_STORAGE_KEY, platform.name);
-    } catch {
-      // 浏览器禁用存储时只保留本次页面偏好，不影响已经完成的复制。
-    }
-  }
-  ElMessage.success(platform
-    ? `已复制到剪贴板，请前往 ${platform.name} 粘贴。`
-    : '已复制到剪贴板。');
+  if (platform && !openCopiedPlatform(platform)) blockedPlatform.value = platform;
+  ElMessage.success('已复制，请在目标平台粘贴。');
 };
 
 /** 读取当前已保存的完整结果；生成中或编辑中的内容不从平台入口导出。 */
@@ -188,32 +215,9 @@ const platformCopyActions = [
   { name: '豆包', copy: copyToDoubao },
 ];
 
-/** 菜单只接受已列出的平台名，各入口仍复用同一剪贴板与导出事件流程。 */
+/** 菜单只接受已列出的平台名，复用复制、跳转兜底与导出事件流程。 */
 const handlePlatformCopy = (platformName: unknown): void => {
   void platformCopyActions.find((platform) => platform.name === platformName)?.copy();
-};
-
-/** 按当前内容检测系统分享能力；取消不报错，失败提供完整文本，成功只表示交给系统处理。 */
-const sharePrompt = async (): Promise<void> => {
-  if (copyDisabled.value || !canSharePrompt.value) return;
-  const source = result.value;
-  const data = shareData.value;
-  sharing.value = true;
-  try {
-    // 直接在点击处理内调用，避免额外异步操作消耗浏览器要求的用户激活。
-    await navigator.share(data);
-  } catch (error: unknown) {
-    if (error instanceof DOMException && error.name === 'AbortError') return;
-    if (isCurrentExport(source)) {
-      ElMessage.error('分享未完成，请复制提示词后自行粘贴。');
-      showManualCopy(data.text);
-    }
-    return;
-  } finally {
-    sharing.value = false;
-  }
-  reportClientAnalyticsEventBestEffort('RESULT_EXPORTED');
-  if (isCurrentExport(source)) ElMessage.success('已交给系统分享，请在目标应用中确认。');
 };
 
 watch(result, () => {
@@ -230,6 +234,7 @@ watch([() => props.busy, editing], ([busy, isEditing]) => {
 
 onBeforeUnmount(() => {
   disposed = true;
+  closePendingPlatformTab();
   clearTimeout(copyFeedbackTimer);
 });
 
@@ -307,7 +312,7 @@ const saveEditing = (): void => {
                     :command="platform.name"
                     :disabled="copyDisabled"
                   >
-                    复制至 {{ platform.name }}
+                    复制并打开 {{ platform.name }}
                   </ElDropdownItem>
                 </ElDropdownMenu>
               </template>
@@ -335,31 +340,19 @@ const saveEditing = (): void => {
 
     <div v-if="result && !editing" class="export-guidance">
       <p class="platform-copy-hint">点击复制后，请将内容粘贴至您使用的 AI 软件或网页版。</p>
-      <div v-if="canOpenPlatform || canSharePrompt" class="export-followup">
+      <div v-if="canOpenPlatform && blockedPlatform" class="export-followup" role="status">
+        <span class="platform-copy-hint">已复制，但未能打开平台，请点击链接后粘贴。</span>
         <ElLink
-          v-if="canOpenPlatform"
           class="open-platform-link"
-          :href="preferredPlatform.url"
+          :href="blockedPlatform.url"
           target="_blank"
           rel="noopener noreferrer"
           type="primary"
           :underline="false"
           :icon="TopRight"
         >
-          打开 {{ preferredPlatform.name }}
+          打开 {{ blockedPlatform.name }}
         </ElLink>
-        <ElButton
-          v-if="canSharePrompt"
-          class="share-prompt-button"
-          size="small"
-          text
-          :icon="Share"
-          :loading="sharing"
-          :disabled="copyDisabled"
-          @click="sharePrompt"
-        >
-          系统分享
-        </ElButton>
       </div>
     </div>
 
@@ -721,8 +714,7 @@ h2 {
   margin-top: 4px;
 }
 
-.open-platform-link,
-.share-prompt-button {
+.open-platform-link {
   min-height: 32px;
   touch-action: manipulation;
 }
@@ -1015,7 +1007,6 @@ h2 {
 
   .copy-control :deep(.el-button),
   .open-platform-link,
-  .share-prompt-button,
   .manual-copy-actions :deep(.el-button) {
     min-height: 44px;
   }

@@ -28,12 +28,12 @@ import static org.mockito.Mockito.when;
 class ModelConcurrencyLimiterTest {
 
     @Test
-    void admitsExactlyFiftyOfOneHundredSimultaneousCallsAndReusesReleasedCapacity() throws Exception {
+    void admitsExactlyOneHundredOfTwoHundredSimultaneousCallsAndReusesReleasedCapacity() throws Exception {
         try (var limiter = new ModelConcurrencyLimiter(new InMemoryModelConcurrencyStore(), new ModelConcurrencyProperties());
              var workers = Executors.newVirtualThreadPerTaskExecutor()) {
             CountDownLatch start = new CountDownLatch(1);
             List<Future<ModelConcurrencyLimiter.Permit>> results = new ArrayList<>();
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 200; i++) {
                 results.add(workers.submit(() -> {
                     assertThat(start.await(5, TimeUnit.SECONDS)).isTrue();
                     try {
@@ -51,7 +51,7 @@ class ModelConcurrencyLimiterTest {
                     var permit = result.get(10, TimeUnit.SECONDS);
                     if (permit != null) admitted.add(permit);
                 }
-                assertThat(admitted).hasSize(50);
+                assertThat(admitted).hasSize(100);
                 assertLimit(limiter::acquireGlobal, ModelConcurrencyException.Reason.GLOBAL_LIMIT);
                 admitted.getFirst().close();
                 admitted.getFirst().close();

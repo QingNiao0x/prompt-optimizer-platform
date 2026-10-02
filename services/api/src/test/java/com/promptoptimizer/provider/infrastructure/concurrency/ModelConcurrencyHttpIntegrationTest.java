@@ -122,18 +122,18 @@ class ModelConcurrencyHttpIntegrationTest {
     }
 
     @Test
-    void holdsFiftyRealHttpResponsesRejectsFiftyFirstAndThenRecovers() throws Exception {
-        UPSTREAM.block(50);
+    void holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers() throws Exception {
+        UPSTREAM.block(100);
         ExecutorService callers = Executors.newVirtualThreadPerTaskExecutor();
         List<Future<MvcResult>> requests = new ArrayList<>();
         try {
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 100; i++) {
                 UUID account = UUID.randomUUID();
                 requests.add(callers.submit(() -> mvc.perform(request(account, "/api/v1/optimizations", "generate"))
                         .andReturn()));
             }
             assertThat(UPSTREAM.entered.await(8, TimeUnit.SECONDS)).isTrue();
-            assertThat(UPSTREAM.active.get()).isEqualTo(50);
+            assertThat(UPSTREAM.active.get()).isEqualTo(100);
             UUID waitingAccount = UUID.randomUUID();
             // 重复拒绝也必须释放账号名额，不能让平台繁忙变成该账号永久达到三并发。
             for (int i = 0; i < 4; i++) {
@@ -142,12 +142,12 @@ class ModelConcurrencyHttpIntegrationTest {
                         .andExpect(jsonPath("$.error.code").value("MODEL_CONCURRENCY_LIMIT"))
                         .andExpect(header().string("Retry-After", "1"));
             }
-            assertThat(UPSTREAM.received.get()).isEqualTo(50);
+            assertThat(UPSTREAM.received.get()).isEqualTo(100);
             mvc.perform(get("/api/v1/health")).andExpect(status().isOk());
             UPSTREAM.release();
             for (var result : requests) assertThat(result.get(10, TimeUnit.SECONDS).getResponse().getStatus()).isEqualTo(200);
             mvc.perform(request(waitingAccount, "/api/v1/optimizations", "generate")).andExpect(status().isOk());
-            assertThat(UPSTREAM.peak.get()).isEqualTo(50);
+            assertThat(UPSTREAM.peak.get()).isEqualTo(100);
         } finally {
             UPSTREAM.release();
             callers.close();

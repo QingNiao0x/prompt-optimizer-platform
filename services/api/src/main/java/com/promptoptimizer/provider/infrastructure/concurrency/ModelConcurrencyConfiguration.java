@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * 装配全平台 50 个上游调用、单账号 3 个业务请求的并发控制。
+ * 装配默认全平台 100 个上游调用、单账号 3 个业务请求的并发控制。
  *
  * @author QingNiao
  * @since 0.1.0

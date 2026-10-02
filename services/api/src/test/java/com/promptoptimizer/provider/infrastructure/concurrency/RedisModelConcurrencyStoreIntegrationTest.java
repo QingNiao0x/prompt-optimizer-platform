@@ -58,11 +58,11 @@ class RedisModelConcurrencyStoreIntegrationTest {
     }
 
     @Test
-    void sharesExactlyFiftyPermitsAcrossTwoIndependentApiInstancesUnderContention() throws Exception {
+    void sharesExactlyOneHundredPermitsAcrossTwoIndependentApiInstancesUnderContention() throws Exception {
         try (var first = limiter(); var second = limiter(); var workers = Executors.newVirtualThreadPerTaskExecutor()) {
             CountDownLatch start = new CountDownLatch(1);
             List<Future<ModelConcurrencyLimiter.Permit>> tasks = new ArrayList<>();
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 200; i++) {
                 var node = i % 2 == 0 ? first : second;
                 tasks.add(workers.submit(() -> {
                     assertThat(start.await(5, TimeUnit.SECONDS)).isTrue();
@@ -81,8 +81,8 @@ class RedisModelConcurrencyStoreIntegrationTest {
                     var permit = task.get(10, TimeUnit.SECONDS);
                     if (permit != null) accepted.add(permit);
                 }
-                assertThat(accepted).hasSize(50);
-                assertThat(redis.opsForZSet().zCard(ownedKeys.getFirst())).isEqualTo(50);
+                assertThat(accepted).hasSize(100);
+                assertThat(redis.opsForZSet().zCard(ownedKeys.getFirst())).isEqualTo(100);
             } finally {
                 accepted.forEach(ModelConcurrencyLimiter.Permit::close);
             }
