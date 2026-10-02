@@ -27,6 +27,7 @@ import com.promptoptimizer.provider.domain.AmbiguityReference;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import org.slf4j.Logger;
@@ -205,6 +206,13 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
      */
     @Override
     public EnhancementProviderResponse enhance(EnhancementProviderRequest request) {
+        return enhanceValidated(request, Function.identity());
+    }
+
+    /** 将结果组装校验纳入同一修复预算，避免解析成功后立即向用户暴露可修复的格式失败。 */
+    @Override
+    public <T> T enhanceValidated(EnhancementProviderRequest request,
+                                 Function<EnhancementProviderResponse, T> validation) {
         Objects.requireNonNull(request, "request must not be null");
         ChatCompletionRequest requestBody = buildRequest(request);
 
@@ -213,7 +221,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 this::requestEnhancement,
                 ENHANCEMENT_REPAIR_INSTRUCTION,
                 "prompt.optimize",
-                selectionSource(request.model())
+                selectionSource(request.model()),
+                validation
         );
     }
 
@@ -252,6 +261,13 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
      */
     @Override
     public PlanningProviderResponse plan(PlanningProviderRequest request) {
+        return planValidated(request, Function.identity());
+    }
+
+    /** 结构解析与业务校验共用最多三次上游调用，不叠加应用层重试。 */
+    @Override
+    public <T> T planValidated(PlanningProviderRequest request,
+                              Function<PlanningProviderResponse, T> validation) {
         Objects.requireNonNull(request, "request must not be null");
         ChatCompletionRequest requestBody = buildPlanningRequest(request);
 
@@ -260,7 +276,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 this::requestPlanning,
                 PLANNING_REPAIR_INSTRUCTION,
                 "plan.generate",
-                selectionSource(request.model())
+                selectionSource(request.model()),
+                validation
         );
     }
 
@@ -299,20 +316,25 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
      * 重试时追加明确的结构约束，并逐步提高输出预算，以覆盖模型随机格式偏差和输出截断两类常见原因。
      * 鉴权、限流、超时和连接错误保留原始失败语义，避免放大上游压力。
      */
-    private <T> T retryWhenResponseIsInvalid(
+    private <T, R> R retryWhenResponseIsInvalid(
             ChatCompletionRequest initialRequest,
             Function<ChatCompletionRequest, ProviderCallResult<T>> request,
             String repairInstruction,
             String operation,
-            String selectionSource
+            String selectionSource,
+            Function<T, R> validation
     ) {
+        Objects.requireNonNull(validation, "validation must not be null");
         ChatCompletionRequest currentRequest = initialRequest;
         for (int attempt = 1; attempt <= MAX_INVALID_RESPONSE_ATTEMPTS; attempt++) {
             long startedAt = System.nanoTime();
             OpenAiCompatibleRoute route = currentRequest.route();
             String resolvedModelId = properties.publicModelId(route, currentRequest.model());
+            ModelCallLogger.TokenUsage knownUsage = null;
             try {
                 ProviderCallResult<T> callResult = request.apply(currentRequest);
+                knownUsage = callResult.tokenUsage();
+                R validated = validation.apply(callResult.value());
                 ModelCallLogger.completed(
                         operation,
                         route.key(),
@@ -324,9 +346,16 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                         elapsedMillis(startedAt),
                         callResult.tokenUsage()
                 );
-                return callResult.value();
+                return validated;
             } catch (ProviderException exception) {
+                if (exception instanceof ProviderResponseValidationException invalid) {
+                    LOGGER.warn("event=model.response.validation_failed requestId={} operation={} reason={} field={} attempt={}",
+                            LogFields.value(MDC.get("requestId")), LogFields.value(operation),
+                            invalid.getReason().name(), invalid.getField(), attempt);
+                }
                 boolean willRetry = exception.getFailureType() == ProviderFailureType.INVALID_RESPONSE
+                        && (!(exception instanceof ProviderResponseValidationException invalid)
+                            || invalid.isModelRepairable())
                         && attempt < MAX_INVALID_RESPONSE_ATTEMPTS;
                 ModelCallLogger.failed(
                         operation,
@@ -339,7 +368,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                         willRetry,
                         attempt,
                         1,
-                        elapsedMillis(startedAt)
+                        elapsedMillis(startedAt),
+                        knownUsage
                 );
                 if (!willRetry) {
                     throw exception;
@@ -353,7 +383,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                         attempt + 1,
                         exception.getFailureType().name()
                 );
-                currentRequest = withRepairInstruction(currentRequest, repairInstruction);
+                currentRequest = withRepairInstruction(currentRequest,
+                        repairInstruction + validationRepairInstruction(exception));
             } catch (RuntimeException exception) {
                 ModelCallLogger.failed(
                         operation,
@@ -366,12 +397,23 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                         false,
                         attempt,
                         1,
-                        elapsedMillis(startedAt)
+                        elapsedMillis(startedAt),
+                        knownUsage
                 );
                 throw exception;
             }
         }
         throw new IllegalStateException("结构化响应重试流程未返回结果");
+    }
+
+    /** 仅传递固定原因和字段，禁止把拒绝的模型正文重新拼入修复请求。 */
+    private String validationRepairInstruction(ProviderException failure) {
+        if (!(failure instanceof ProviderResponseValidationException invalid)) {
+            return "";
+        }
+        return "\n本次校验原因：" + invalid.getReason().name() + "，字段：" + invalid.getField()
+                + "。" + invalid.getReason().repairInstruction()
+                + "保持原始需求、已确认答案、资料事实及权限边界，不以删减实质内容满足格式要求。";
     }
 
     private String selectionSource(String requestedModel) {

@@ -110,6 +110,16 @@ final class PlanningEvidencePolicy {
                 && overlaps(file.summary());
     }
 
+    /**
+     * 显式规则保留只按业务正文核对主题，不继承文件名或摘要相关性。
+     * 例如预约项目 README 中的运营签到规则不能因文件主题而自动成为预约修复事实。
+     */
+    boolean relevantBusinessContent(String evidence) {
+        return evidence != null && !evidence.isBlank()
+                && (reportTask || !BUILD_WARNING.matcher(evidence).find())
+                && !EXAMPLE_LABEL.matcher(evidence).lookingAt() && overlaps(evidence);
+    }
+
     /** 混合文档的摘要可能同时提到订单与研究，不能让研究元数据仅凭摘要中的订单词通过。 */
     private boolean metadataApplies(PlanningFactCategory category) {
         return switch (category) {

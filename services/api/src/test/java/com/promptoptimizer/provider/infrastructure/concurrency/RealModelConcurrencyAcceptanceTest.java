@@ -108,6 +108,7 @@ class RealModelConcurrencyAcceptanceTest {
     private final Map<String, Object> report = new LinkedHashMap<>();
     private final AtomicReference<String> captchaAnswer = new AtomicReference<>();
     private final ModelEvents modelEvents = new ModelEvents();
+    private final ValidationEvents validationEvents = new ValidationEvents();
     private JsonNode fixtures;
 
     /** 只允许本机 PostgreSQL；随机 schema 不包含 public，也不继承开发服务的会话和审计目录。 */
@@ -145,8 +146,12 @@ class RealModelConcurrencyAcceptanceTest {
         report.put("globalLimit", CAPACITY);
         report.put("userLimit", 3);
         Logger modelLogger = (Logger) LoggerFactory.getLogger("com.promptoptimizer.common.logging.ModelCallLogger");
+        Logger validationLogger = (Logger) LoggerFactory.getLogger(
+                "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatiblePromptEnhancementProvider");
         modelEvents.start();
         modelLogger.addAppender(modelEvents);
+        validationEvents.start();
+        validationLogger.addAppender(validationEvents);
         try {
             assertThat(limits.getGlobalLimit()).isEqualTo(CAPACITY);
             assertThat(limits.getUserLimit()).isEqualTo(3);
@@ -161,6 +166,11 @@ class RealModelConcurrencyAcceptanceTest {
             report.put("maxOutputTokens", provider.getMaxTokens());
             fixtures = json.readTree(Files.readString(Path.of("target/real-model-fixtures/contexts.json")));
             assertThat(fixtures.path("syntheticOnly").asBoolean()).isTrue();
+            Files.createDirectories(OUTPUT.resolve("synthetic-exchanges"));
+            Files.writeString(OUTPUT.resolve("synthetic-fixtures.json"),
+                    json.writerWithDefaultPrettyPrinter().writeValueAsString(fixtures));
+            report.put("syntheticExchangeBodiesArchived", true);
+            report.put("contentCheck", "literal marker recorded separately; Markdown marker plus linked business rule required");
             report.put("projectIndexEvidence", fixtures.path("indexEvidence"));
             report.put("documentCharacters", fixtures.path("document").path("content").asText().length());
             try (var connection = dataSource.getConnection()) {
@@ -186,6 +196,7 @@ class RealModelConcurrencyAcceptanceTest {
                 for (String model : MODELS) wave("baseline-contexts", model, sessions.subList(0, 4), false);
                 wave("baseline-plan", "mixed", sessions.subList(0, 4), false, Operation.PLAN);
                 List<Session> ready = sessions.stream().filter(s -> s.plan != null).toList();
+                planParticipantCoverage(4, ready.size());
                 if (!ready.isEmpty()) wave("baseline-confirmed", "mixed", ready, false, Operation.CONFIRMED);
             }
             if (load) {
@@ -219,6 +230,7 @@ class RealModelConcurrencyAcceptanceTest {
                     wave("plan-explicit-retry-failed-accounts", "mixed", missing, false, Operation.PLAN);
                 }
                 List<Session> confirmed = sessions.subList(0, CAPACITY).stream().filter(s -> s.plan != null).toList();
+                planParticipantCoverage(CAPACITY, confirmed.size());
                 if (!confirmed.isEmpty()) wave("concurrency-100-confirmed", "mixed", confirmed, false, Operation.CONFIRMED);
             }
             report.put("passed", stages.stream().allMatch(stage -> Boolean.TRUE.equals(stage.get("passed"))));
@@ -228,6 +240,7 @@ class RealModelConcurrencyAcceptanceTest {
         } finally {
             report.put("finishedAt", Instant.now().toString());
             report.put("modelEvents", List.copyOf(modelEvents.events));
+            report.put("validationEvents", List.copyOf(validationEvents.events));
             // 等待在途请求结束再清理，避免把客户端超时误当服务端已停止调用。
             boolean drained = awaitCount(PREFIX + ":global", 0, Duration.ofSeconds(180));
             report.put("allUpstreamPermitsReleased", drained);
@@ -249,6 +262,8 @@ class RealModelConcurrencyAcceptanceTest {
             }
             modelLogger.detachAppender(modelEvents);
             modelEvents.stop();
+            validationLogger.detachAppender(validationEvents);
+            validationEvents.stop();
             saveReport();
             client.close();
         }
@@ -523,7 +538,7 @@ class RealModelConcurrencyAcceptanceTest {
         saveReport();
     }
 
-    /** 校验真实 Provider、四要素和非空结果；仅保存安全元数据与合成场景编号。 */
+    /** 校验真实 Provider、四要素和非空结果；正文仅在已验证的合成夹具运行中归档。 */
     private Map<String, Object> enhance(Session session, String model, int sample) {
         return invoke(session, model, sample, Operation.DIRECT);
     }
@@ -549,11 +564,14 @@ class RealModelConcurrencyAcceptanceTest {
                 body.put("planConfirmation", confirmation(session));
             }
             Reply reply = call(session, "POST", endpoint, body);
+            result.put("syntheticExchange", archiveSyntheticExchange(session, operation, endpoint, body, reply));
             result.put("status", reply.status());
+            result.put("httpElapsedMs", reply.elapsedMs());
             result.put("httpSucceeded", reply.status() == 200);
             result.put("requestId", reply.body().path("requestId").asText());
             result.put("errorCode", reply.body().path("error").path("code").asText());
             result.put("errorMessage", reply.body().path("error").path("message").asText());
+            result.put("errorDetails", reply.body().path("error").path("details"));
             JsonNode data = reply.body().path("data");
             JsonNode actual = data.path("provider");
             result.put("provider", actual);
@@ -563,6 +581,7 @@ class RealModelConcurrencyAcceptanceTest {
                         && data.path("questions").isArray() && data.path("questions").size() <= 8
                         && session.contextReference.equals(data.path("planningContext"));
                 result.put("valid", valid);
+                result.put("failureStage", valid ? "" : reply.status() == 200 ? "PLAN_CONTRACT" : "HTTP_ERROR");
                 result.put("questionCount", data.path("questions").size());
                 if (valid) session.plan = data;
             } else {
@@ -575,21 +594,172 @@ class RealModelConcurrencyAcceptanceTest {
                 String output = data.path("optimizedPrompt").asText();
                 JsonNode snippets = data.path("contextReport").path("fileSnippets");
                 boolean contextPresent = snippets.isArray() && !snippets.isEmpty() && snippets.toString().contains(session.marker);
-                boolean markerPresent = output.contains(session.marker);
-                result.put("valid", reply.status() == 200 && real && sections && !output.isBlank()
-                        && contextPresent && markerPresent);
+                RuleEvidence rule = ruleEvidence(output, session.marker);
+                boolean valid = reply.status() == 200 && real && sections && !output.isBlank()
+                        && contextPresent && rule.presentationMarkerPresent() && rule.linkedBusinessRulePresent();
+                result.put("valid", valid);
                 result.put("contextFileCount", snippets.size());
                 result.put("contextMarkerPresent", contextPresent);
-                result.put("outputMarkerPresent", markerPresent);
+                // 保留旧严格字段便于与历史报告比较；排版兼容绝不替代业务含义验证。
+                result.put("outputMarkerPresent", rule.literalMarkerPresent());
+                result.put("outputPresentationMarkerPresent", rule.presentationMarkerPresent());
+                result.put("outputLinkedBusinessRulePresent", rule.linkedBusinessRulePresent());
+                result.put("outputRuleConflict", rule.conflictingRulePresent());
+                result.put("failureStage", valid ? "" : reply.status() != 200 ? "HTTP_ERROR"
+                        : !real || !sections || output.isBlank() ? "RESULT_CONTRACT"
+                        : !contextPresent ? "CONTEXT_RULE_MISSING"
+                        : !rule.presentationMarkerPresent() ? "OUTPUT_RULE_MARKER_MISSING"
+                        : rule.conflictingRulePresent() ? "OUTPUT_BUSINESS_RULE_CONFLICT" : "OUTPUT_BUSINESS_RULE_MISSING");
                 result.put("analysisStatus", data.path("contextReport").path("analysisStatus").asText());
                 result.put("outputCharacters", output.length());
             }
         } catch (Exception failure) {
             result.put("errorType", failure.getClass().getSimpleName());
+            result.put("failureStage", "HARNESS_OR_TRANSPORT_EXCEPTION");
         }
         result.put("elapsedMs", (System.nanoTime() - start) / 1_000_000L);
         return result;
     }
+
+    /** 明确记录进入确认阶段的人数；不能用 98 人波次通过替代预期的 100 人验收。 */
+    private void planParticipantCoverage(int expected, int actual) {
+        stages.add(Map.of("name", "plan-confirmation-participant-coverage", "expectedParticipants", expected,
+                "actualParticipants", actual, "missingParticipants", expected - actual, "passed", expected == actual));
+    }
+
+    /** 仅归档合成业务请求与响应正文，不采集认证接口、Header、Cookie 或服务端环境配置。 */
+    private String archiveSyntheticExchange(Session session, Operation operation, String endpoint,
+                                            Map<String, Object> request, Reply reply) throws java.io.IOException {
+        if (fixtures == null || !fixtures.path("syntheticOnly").asBoolean()
+                || !Set.of("RESERVATION_WINDOW_8D", "WORKSHOP_CHECKIN_20M").contains(session.marker)) {
+            throw new IllegalStateException("仅允许归档已明确声明的合成资料");
+        }
+        String relative = "synthetic-exchanges/" + UUID.randomUUID() + ".json";
+        Map<String, Object> exchange = new LinkedHashMap<>();
+        exchange.put("syntheticOnly", true);
+        exchange.put("sample", session.sample);
+        exchange.put("contextKind", session.kind);
+        exchange.put("operation", operation.name());
+        exchange.put("endpoint", endpoint);
+        exchange.put("requestBody", request);
+        exchange.put("status", reply.status());
+        exchange.put("responseBody", reply.body());
+        Files.writeString(OUTPUT.resolve(relative), json.writerWithDefaultPrettyPrinter().writeValueAsString(exchange));
+        return relative;
+    }
+
+    /**
+     * 合成规则检查保留原样匹配证据，只消除 Markdown 转义和强调；不改写代号或数字。
+     * 业务规则必须出现在同一段、代号附近，避免其他段落恰好出现相同数字造成假通过。
+     */
+    static RuleEvidence ruleEvidence(String output, String marker) {
+        String normalized = output.replace("\r\n", "\n").replaceAll("\\\\([_*`~])", "$1")
+                .replace("**", "").replace("`", "")
+                .replace("__" + marker + "__", marker).replace("_" + marker + "_", marker);
+        var matcher = Pattern.compile("(?<![A-Za-z0-9_])" + Pattern.quote(marker) + "(?![A-Za-z0-9_])")
+                .matcher(normalized);
+        boolean markerPresent = false;
+        boolean businessRulePresent = false;
+        boolean conflictingRule = false;
+        while (matcher.find()) {
+            markerPresent = true;
+            int paragraphStart = normalized.lastIndexOf("\n\n", matcher.start());
+            int paragraphEnd = normalized.indexOf("\n\n", matcher.end());
+            int start = Math.max(paragraphStart < 0 ? 0 : paragraphStart + 2, matcher.start() - 220);
+            int end = Math.min(paragraphEnd < 0 ? normalized.length() : paragraphEnd, matcher.end() + 220);
+            String linked = normalized.substring(start, end);
+            List<String> statements = List.of(linked.split("[。；！？\\n]"));
+            String subject = "RESERVATION_WINDOW_8D".equals(marker) ? "预约" : "签到";
+            // 逐一检查代号所在句；不能用另一句中的缓存时间或正确代号掩盖已出现的错误规则。
+            for (String statement : statements) {
+                if (!statement.contains(marker)) continue;
+                String candidate = statement;
+                if (!statement.contains(subject) && !hasRuleDuration(statement)) {
+                    candidate = statements.stream().filter(value -> value.contains(subject) && hasRuleDuration(value))
+                            .findFirst().orElse(statement);
+                    // 独立代号之后紧邻的完整规则可以跨空行；只看第一句，不能跳过无关段落借用数字。
+                    if (candidate.equals(statement) && paragraphEnd >= 0) {
+                        String adjacent = normalized.substring(paragraphEnd).stripLeading().split("[。；！？\\n]", 2)[0];
+                        if (adjacent.length() <= 220 && adjacent.contains(subject) && hasRuleDuration(adjacent)
+                                && !Pattern.compile("其他|另一个|无关|示例").matcher(adjacent).find()) {
+                            candidate = adjacent;
+                        }
+                    }
+                }
+                boolean negated = Pattern.compile("不(?:应|再|要)?(?:采用|使用|适用)|不得采用|不可采用"
+                                + "|(?:取消|作废|废弃)\\s*(?:该|此|本|原|现有)?(?:规则|限制|约束|代号|" + Pattern.quote(marker) + ")"
+                                + "|" + Pattern.quote(marker) + "(?:规则)?(?:已)?(?:作废|废弃)")
+                        .matcher(candidate).find();
+                boolean valid = !negated && matchesBusinessRule(candidate, marker);
+                businessRulePresent |= valid;
+                // 没有匹配到定义并不表示矛盾：第九天拒绝、错误码引用等边界描述可以合法包含其他数字。
+                conflictingRule |= negated || hasConflictingDefinition(candidate, marker);
+            }
+        }
+        return new RuleEvidence(output.contains(marker), markerPresent, businessRulePresent && !conflictingRule,
+                conflictingRule);
+    }
+
+    /** 数值必须带业务时间单位，代号自身的 8D/20M 不作为规则含义。 */
+    private static boolean hasRuleDuration(String value) {
+        return Pattern.compile("(?:[0-9]+|[一二三四五六七八九十]+)\\s*(?:天|日|分钟)").matcher(value).find();
+    }
+
+    /** 规则动作与数值在同句匹配；“活动开始”不能冒充“开始签到”，缓存天数不能冒充预约窗口。 */
+    private static boolean matchesBusinessRule(String statement, String marker) {
+        if ("RESERVATION_WINDOW_8D".equals(marker)) {
+            return reservationLimits(statement).stream().anyMatch(value -> value.equals("8") || value.equals("八"));
+        }
+        if ("WORKSHOP_CHECKIN_20M".equals(marker)) {
+            boolean closesCheckIn = Pattern.compile("(?:结束|关闭|停止)签到|签到(?:结束|关闭|停止)")
+                    .matcher(statement).find();
+            boolean openingAction = Pattern.compile("(?:开放|开启|开始)\\s*(?:办理)?签到"
+                            + "|签到(?:的)?(?:开放|开启|开始)(?:时间)?"
+                            + "|签到[^，,。；]{0,35}(?:开放|开启)"
+                            + "|签到[^，,]{0,20}(?:不得早于|不早于)")
+                    .matcher(statement).find();
+            return statement.contains("签到") && openingAction && !closesCheckIn
+                    && Pattern.compile("(?:开场|开课|活动开始|活动|开始)前\\s*(?:20|二十)\\s*分钟")
+                    .matcher(statement).find();
+        }
+        return false;
+    }
+
+    /** 只抽取明确的预约上限/允许窗口，不把“第九天拒绝”或缓存天数当作上限声明。 */
+    private static List<String> reservationLimits(String statement) {
+        String days = "([0-9]+|[一二三四五六七八九十百]+)\\s*(?:天|日)";
+        String limit = "(?:最多|至多|不超过|不得超过|上限|仅允许|只允许|只能)";
+        List<String> patterns = List.of(
+                limit + "(?:可|可以|允许|只允许|只能)?\\s*提前\\s*" + days + "(?:以内|之内|内)?\\s*预约",
+                "预约[^，,。；\\n]{0,20}" + limit + "[^，,。；\\n]{0,12}?" + days,
+                "预约(?:窗口|范围|上限)(?:为|是|：|:|设为|调整为)?\\s*" + days,
+                "提前\\s*" + days + "(?:以内|之内|内)\\s*(?:仅|只)?(?:允许|可以|可)?\\s*预约");
+        return patterns.stream().flatMap(expression -> Pattern.compile(expression).matcher(statement).results())
+                .map(match -> match.group(1)).toList();
+    }
+
+    /** 只有明确错误的定义才算冲突，合法拒绝边界及单纯规则代号引用不会推翻已验证的正确定义。 */
+    private static boolean hasConflictingDefinition(String statement, String marker) {
+        if ("RESERVATION_WINDOW_8D".equals(marker)) {
+            return reservationLimits(statement).stream().anyMatch(value -> !value.equals("8") && !value.equals("八"));
+        }
+        if ("WORKSHOP_CHECKIN_20M".equals(marker)) {
+            boolean opening = Pattern.compile("(?:开放|开启|开始)\\s*(?:办理)?签到|签到(?:的)?(?:开放|开启|开始)")
+                    .matcher(statement).find();
+            var time = Pattern.compile("(?:开场|开课|活动开始|活动|开始)(前|后)\\s*([0-9]+|[一二三四五六七八九十百]+)\\s*分钟")
+                    .matcher(statement);
+            boolean wrongOpening = opening && time.find()
+                    && (!time.group(1).equals("前") || !Set.of("20", "二十").contains(time.group(2)));
+            boolean wrongDefinition = statement.contains(marker)
+                    && Pattern.compile(Pattern.quote(marker) + "\\s*[：:][^。；]*?(?:结束|关闭|停止)签到")
+                    .matcher(statement).find();
+            return wrongOpening || wrongDefinition;
+        }
+        return false;
+    }
+
+    record RuleEvidence(boolean literalMarkerPresent, boolean presentationMarkerPresent,
+                        boolean linkedBusinessRulePresent, boolean conflictingRulePresent) { }
 
     private Map<String, Object> payload(Session session, String model) {
         return new LinkedHashMap<>(Map.of("rawPrompt", session.rawPrompt, "modelId", model,
@@ -710,6 +880,23 @@ class RealModelConcurrencyAcceptanceTest {
             var matcher = FIELD.matcher(event.getFormattedMessage());
             while (matcher.find()) entry.put(matcher.group(1), matcher.group(2));
             events.add(entry);
+        }
+    }
+
+    /** 只接受专用事件的固定字段格式；同一 Provider logger 的其他内容一律不进入报告。 */
+    private static final class ValidationEvents extends AppenderBase<ILoggingEvent> {
+        private static final Pattern SAFE_EVENT = Pattern.compile(
+                "^event=model\\.response\\.validation_failed requestId=([A-Za-z0-9_-]{1,128})"
+                        + " operation=(prompt\\.optimize|plan\\.generate) reason=([A-Z0-9_]{1,80})"
+                        + " field=([A-Za-z0-9_.\\[\\]*-]{1,160}) attempt=([1-9][0-9]?)$");
+        private final List<Map<String, String>> events = new CopyOnWriteArrayList<>();
+
+        @Override protected void append(ILoggingEvent event) {
+            var matcher = SAFE_EVENT.matcher(event.getFormattedMessage());
+            if (!matcher.matches()) return;
+            events.add(Map.of("event", "model.response.validation_failed", "requestId", matcher.group(1),
+                    "operation", matcher.group(2), "reason", matcher.group(3), "field", matcher.group(4),
+                    "attempt", matcher.group(5)));
         }
     }
 }

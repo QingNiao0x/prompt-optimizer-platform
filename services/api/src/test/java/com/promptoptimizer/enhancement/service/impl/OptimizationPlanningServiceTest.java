@@ -21,6 +21,7 @@ import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.identity.support.TestActors;
 import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import com.promptoptimizer.provider.infrastructure.MockPromptPlanningProvider;
 import com.promptoptimizer.policy.service.ProtectedContextFilter;
@@ -247,8 +248,9 @@ class OptimizationPlanningServiceTest {
         );
 
         assertThatThrownBy(() -> invalidService.plan(request("分析一组数据")))
-                .isInstanceOf(ProviderException.class)
-                .hasMessageContaining("确认问题格式无效");
+                .isInstanceOfSatisfying(ProviderResponseValidationException.class, exception ->
+                        assertThat(exception.getReason()).isEqualTo(
+                                ProviderResponseValidationException.Reason.PLAN_STRUCTURE_INVALID));
     }
 
     @Test

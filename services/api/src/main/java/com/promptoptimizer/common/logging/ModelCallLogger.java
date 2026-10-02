@@ -63,24 +63,53 @@ public final class ModelCallLogger {
             int inputItems,
             long durationMs
     ) {
-        String message = "event=model.call.failed requestId=" + LogFields.value(MDC.get("requestId"))
-                + " workflowId=" + LogFields.value(MDC.get("workflowId"))
-                + " operation=" + LogFields.value(operation)
-                + " providerRoute=" + LogFields.value(providerRoute)
-                + " model=" + LogFields.value(model)
-                + " selectionSource=" + LogFields.value(selectionSource)
-                + " failureType=" + LogFields.value(failureType)
-                + " retryable=" + retryable
-                + " upstreamStatus=" + (upstreamStatus == null ? "-" : upstreamStatus)
-                + " willRetry=" + willRetry
-                + " attempt=" + Math.max(1, attempt)
-                + " inputItems=" + Math.max(0, inputItems)
-                + " inputTokens=- outputTokens=- totalTokens=-"
-                + " durationMs=" + Math.max(0, durationMs);
+        failed(operation, providerRoute, model, selectionSource, failureType, retryable,
+                upstreamStatus, willRetry, attempt, inputItems, durationMs, null);
+    }
+
+    /**
+     * 记录失败调用中上游已经明确返回的用量，例如结构解析成功但业务校验拒绝的响应。
+     * 未收到响应或用量缺失时仍使用未知标记，不以零值或估算替代真实计费证据。
+     */
+    public static void failed(
+            String operation,
+            String providerRoute,
+            String model,
+            String selectionSource,
+            String failureType,
+            boolean retryable,
+            Integer upstreamStatus,
+            boolean willRetry,
+            int attempt,
+            int inputItems,
+            long durationMs,
+            TokenUsage tokenUsage
+    ) {
+        String message = "event=model.call.failed requestId={} workflowId={} operation={} providerRoute={} "
+                + "model={} selectionSource={} failureType={} retryable={} upstreamStatus={} willRetry={} "
+                + "attempt={} inputItems={} inputTokens={} outputTokens={} totalTokens={} durationMs={}";
+        Object[] fields = {
+                LogFields.value(MDC.get("requestId")),
+                LogFields.value(MDC.get("workflowId")),
+                LogFields.value(operation),
+                LogFields.value(providerRoute),
+                LogFields.value(model),
+                LogFields.value(selectionSource),
+                LogFields.value(failureType),
+                retryable,
+                upstreamStatus == null ? "-" : upstreamStatus,
+                willRetry,
+                Math.max(1, attempt),
+                Math.max(0, inputItems),
+                tokenCount(tokenUsage == null ? null : tokenUsage.inputTokens()),
+                tokenCount(tokenUsage == null ? null : tokenUsage.outputTokens()),
+                tokenCount(tokenUsage == null ? null : tokenUsage.totalTokens()),
+                Math.max(0, durationMs)
+        };
         if (willRetry) {
-            LOGGER.warn(message);
+            LOGGER.warn(message, fields);
         } else {
-            LOGGER.error(message);
+            LOGGER.error(message, fields);
         }
     }
 

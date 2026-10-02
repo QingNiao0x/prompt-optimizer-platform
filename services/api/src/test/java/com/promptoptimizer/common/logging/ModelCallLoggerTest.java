@@ -10,7 +10,12 @@ import org.slf4j.MDC;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** 验证模型调用日志记录受限元数据、明确用量及单行安全字段。 */
+/**
+ * 验证模型调用日志记录受限元数据、明确用量及单行安全字段。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
 class ModelCallLoggerTest {
 
     private final Logger logger = (Logger) LoggerFactory.getLogger(ModelCallLogger.class);
@@ -85,6 +90,39 @@ class ModelCallLoggerTest {
                 .contains("retryable=true")
                 .contains("willRetry=true")
                 .contains("attempt=2")
+                .contains("inputTokens=- outputTokens=- totalTokens=-")
                 .contains("durationMs=73");
+    }
+
+    @Test
+    void shouldPreserveKnownUsageWhenTheBusinessValidatorRejectsAResponse() {
+        appender.start();
+        logger.addAppender(appender);
+
+        ModelCallLogger.failed("prompt.optimize", "primary", "public-model-v2", "PLATFORM_ROUTING_POLICY",
+                "INVALID_RESPONSE", false, null, false, 3, 1, 81,
+                new ModelCallLogger.TokenUsage(37L, 59L, 96L));
+
+        ILoggingEvent event = appender.list.getFirst();
+        assertThat(event.getLevel()).isEqualTo(ch.qos.logback.classic.Level.ERROR);
+        assertThat(event.getFormattedMessage())
+                .contains("failureType=INVALID_RESPONSE", "willRetry=false", "upstreamStatus=-")
+                .contains("inputTokens=37 outputTokens=59 totalTokens=96", "attempt=3", "durationMs=81");
+    }
+
+    @Test
+    void shouldKeepUnknownFailureUsageAndSanitizeMetadataWithoutInventingTotals() {
+        appender.start();
+        logger.addAppender(appender);
+
+        ModelCallLogger.failed("plan.generate\napiKey=must-not-be-a-field", "primary", "public-model-v2",
+                "PLATFORM_ROUTING_POLICY", "INVALID_RESPONSE", false, null, true, 1, 1, 23,
+                new ModelCallLogger.TokenUsage(null, -1L, 96L));
+
+        ILoggingEvent event = appender.list.getFirst();
+        assertThat(event.getLevel()).isEqualTo(ch.qos.logback.classic.Level.WARN);
+        assertThat(event.getFormattedMessage())
+                .contains("inputTokens=- outputTokens=- totalTokens=96", "operation=[REDACTED]")
+                .doesNotContain("must-not-be-a-field", "\n");
     }
 }

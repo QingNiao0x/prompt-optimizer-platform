@@ -1,0 +1,218 @@
+[
+  {
+    "name": "plan-56-1-mapped-1",
+    "summary": "已理解你要为下一次社区公开课生成一份可直接交给执行者的结构化提示词，并严格依据上传手册中的时间、人数、签到规则，同时把预算、日期等未定事项列为待确认。需要先确认几个会直接影响提示词内容与验收方式的关键点。",
+    "question": {
+      "id": "acceptance_scope",
+      "question": "验收清单需要覆盖哪些异常场景？",
+      "hint": "你要求覆盖正常流程、输入缺失、失败提示、重复操作以及恢复后的处理，需要确认是否还要加入其他场景。",
+      "type": "MULTIPLE_CHOICE",
+      "options": [
+        {
+          "id": "normal",
+          "label": "正常流程",
+          "description": "标准签到、分组、茶歇、反馈流程。",
+          "answer": "正常流程。",
+          "recommended": true,
+          "recommendationReason": "你已明确要求覆盖正常流程。"
+        },
+        {
+          "id": "missing_input",
+          "label": "输入缺失",
+          "description": "报名人数、预算或日期等未确认时的处理。",
+          "answer": "输入缺失场景。",
+          "recommended": true,
+          "recommendationReason": "你已明确要求覆盖输入缺失。"
+        },
+        {
+          "id": "failure_prompt",
+          "label": "失败提示",
+          "description": "操作失败时给志愿者的提示。",
+          "answer": "失败提示场景。",
+          "recommended": true,
+          "recommendationReason": "你已明确要求覆盖失败提示。"
+        },
+        {
+          "id": "repeat",
+          "label": "重复操作",
+          "description": "重复签到或重复交接的处理。",
+          "answer": "重复操作场景。",
+          "recommended": true,
+          "recommendationReason": "你已明确要求覆盖重复操作。"
+        },
+        {
+          "id": "recovery",
+          "label": "恢复后处理",
+          "description": "异常恢复后的核对与记录。",
+          "answer": "恢复后的处理场景。",
+          "recommended": true,
+          "recommendationReason": "你已明确要求覆盖恢复后的处理。"
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  },
+  {
+    "name": "plan-56-1-mapped-2",
+    "summary": "已理解你要把社区公开课活动手册整理成一份可直接交给执行者的结构化提示词，并保留手册中的关键规则代号、区分已确认事实与待确认事项。为了让最终提示词不遗漏或误写手册规则，还需确认几处手册中未明确、但会影响执行方案内容的问题。",
+    "question": {
+      "id": "acceptance_scope",
+      "question": "验收清单需要覆盖哪些异常场景？",
+      "hint": "你要求验收清单覆盖正常流程、输入缺失、失败提示、重复操作以及恢复后的处理，需要确认是否只覆盖这些，还是还要加入其他场景。",
+      "type": "MULTIPLE_CHOICE",
+      "options": [
+        {
+          "id": "normal",
+          "label": "正常流程",
+          "description": "按手册步骤完整执行。",
+          "answer": "正常流程",
+          "recommended": true,
+          "recommendationReason": "你原始需求已明确要求覆盖正常流程。"
+        },
+        {
+          "id": "missing_input",
+          "label": "输入缺失",
+          "description": "报名人数、物料数量等关键输入缺失时的处理。",
+          "answer": "输入缺失",
+          "recommended": true,
+          "recommendationReason": "你原始需求已明确要求覆盖输入缺失。"
+        },
+        {
+          "id": "failure_prompt",
+          "label": "失败提示",
+          "description": "操作失败或规则不满足时的提示方式。",
+          "answer": "失败提示",
+          "recommended": true,
+          "recommendationReason": "你原始需求已明确要求覆盖失败提示。"
+        },
+        {
+          "id": "repeat",
+          "label": "重复操作",
+          "description": "重复签到、重复交接等场景。",
+          "answer": "重复操作",
+          "recommended": true,
+          "recommendationReason": "你原始需求已明确要求覆盖重复操作。"
+        },
+        {
+          "id": "recovery",
+          "label": "恢复后的处理",
+          "description": "异常恢复后如何继续执行并记录。",
+          "answer": "恢复后的处理",
+          "recommended": true,
+          "recommendationReason": "你原始需求已明确要求覆盖恢复后的处理。"
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  },
+  {
+    "name": "plan-56-2-mapped-1",
+    "summary": "已理解你要为下一次社区公开课生成一份可直接交给执行者的结构化提示词，需依据活动手册中的时间、人数、签到规则，并覆盖迟到、容量、物料交接、志愿者同步等异常与恢复场景。资料摘要中出现了关键规则代号及其业务约束，但代号完整拼写和部分规则细节尚未在摘要中明确，需要你确认后才能准确写入提示词。",
+    "question": {
+      "id": "acceptance_scope",
+      "question": "验收清单需要覆盖哪些异常场景？",
+      "hint": "你要求覆盖正常流程、输入缺失、失败提示、重复操作和恢复后处理，但需要确认是否还要加入其他场景，例如超员、迟到、物料缺失。",
+      "type": "MULTIPLE_CHOICE",
+      "options": [
+        {
+          "id": "normal",
+          "label": "正常流程",
+          "description": "签到、分组、茶歇、反馈按计划完成。",
+          "answer": "正常流程：签到、分组讨论、茶歇、反馈收集按计划完成。",
+          "recommended": true,
+          "recommendationReason": "原始需求明确要求验收清单覆盖正常流程。"
+        },
+        {
+          "id": "missing_input",
+          "label": "输入缺失",
+          "description": "报名人数、预算、日期等未确定时的处理。",
+          "answer": "输入缺失：报名人数、预算、日期等未确定时，执行者应如何记录并继续。",
+          "recommended": true,
+          "recommendationReason": "原始需求明确要求覆盖输入缺失。"
+        },
+        {
+          "id": "failure_prompt",
+          "label": "失败提示",
+          "description": "签到系统或物料交接失败时的提示与替代方案。",
+          "answer": "失败提示：签到系统或物料交接失败时，应有明确提示和替代操作。",
+          "recommended": true,
+          "recommendationReason": "原始需求明确要求覆盖失败提示。"
+        },
+        {
+          "id": "repeat_op",
+          "label": "重复操作",
+          "description": "重复签到、重复分组或重复交接时的处理。",
+          "answer": "重复操作：重复签到、重复分组或重复交接时，应有去重或确认机制。",
+          "recommended": true,
+          "recommendationReason": "原始需求明确要求覆盖重复操作。"
+        },
+        {
+          "id": "recovery",
+          "label": "恢复后处理",
+          "description": "异常恢复后如何继续并记录。",
+          "answer": "恢复后处理：异常恢复后应说明如何继续流程并记录交接。",
+          "recommended": true,
+          "recommendationReason": "原始需求明确要求覆盖恢复后的处理。"
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  },
+  {
+    "name": "plan-56-2-mapped-2",
+    "summary": "已理解你要把社区公开课活动手册整理成一份可直接交给执行者的结构化提示词，并保留手册中的关键规则代号、区分资料事实与待确认事项。为了让最终提示词不遗漏或误写手册规则，还需确认几个只有你能判断的问题。",
+    "question": {
+      "id": "acceptance_scope",
+      "question": "验收清单需要覆盖到哪一层？",
+      "hint": "你要求验收覆盖正常流程、输入缺失、失败提示、重复操作和恢复处理，需要确认是否还要覆盖志愿者角色分工和物料清点。",
+      "type": "MULTIPLE_CHOICE",
+      "options": [
+        {
+          "id": "normal",
+          "label": "正常流程",
+          "description": "签到、分组讨论、茶歇、反馈收集按顺序完成",
+          "answer": "验收清单覆盖正常流程：签到、分组讨论、茶歇、反馈收集按顺序完成",
+          "recommended": true,
+          "recommendationReason": "你已明确要求覆盖正常流程，属于必须项"
+        },
+        {
+          "id": "missing",
+          "label": "输入缺失",
+          "description": "报名人数、预算、日期等未确认时的处理",
+          "answer": "验收清单覆盖输入缺失：报名人数、预算、日期等未确认时的处理",
+          "recommended": true,
+          "recommendationReason": "你已明确要求覆盖输入缺失"
+        },
+        {
+          "id": "failure",
+          "label": "失败提示",
+          "description": "签到失败、物料不足、场地超员等异常提示",
+          "answer": "验收清单覆盖失败提示：签到失败、物料不足、场地超员等异常提示",
+          "recommended": true,
+          "recommendationReason": "你已明确要求覆盖失败提示"
+        },
+        {
+          "id": "repeat",
+          "label": "重复操作",
+          "description": "重复签到、重复交接、重复反馈的处理",
+          "answer": "验收清单覆盖重复操作：重复签到、重复交接、重复反馈的处理",
+          "recommended": true,
+          "recommendationReason": "你已明确要求覆盖重复操作"
+        },
+        {
+          "id": "recovery",
+          "label": "恢复处理",
+          "description": "异常后如何恢复到正常流程",
+          "answer": "验收清单覆盖恢复处理：异常后如何恢复到正常流程",
+          "recommended": true,
+          "recommendationReason": "你已明确要求覆盖恢复处理"
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  }
+]

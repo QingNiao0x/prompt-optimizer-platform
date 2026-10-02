@@ -30,6 +30,7 @@ final class PlanningFactCardExtractor {
             "(?i)(?:^|[/\\\\])(?:\\.env(?:\\.[^/\\\\]+)?|id_rsa|id_ed25519|[^/\\\\]+\\.(?:pem|key))$"
     );
     private final SensitiveValueDetector sensitiveValueDetector = new SensitiveValueDetector();
+    private final ExplicitRuleEvidenceExtractor explicitRuleExtractor = new ExplicitRuleEvidenceExtractor();
 
     /** 返回卡片与超出数量上限而未纳入计划的事实数。 */
     Extraction extract(ContextSnapshot context, String query) {
@@ -38,6 +39,11 @@ final class PlanningFactCardExtractor {
         List<PlanningFactCard> cards = new ArrayList<>();
         PlanningEvidencePolicy evidencePolicy = new PlanningEvidencePolicy(query);
         int omitted = 0;
+        var explicitRules = explicitRuleExtractor.extract(context, query, MAX_EVIDENCE_CHARACTERS);
+        // 与最终增强共用明确规则的识别条件，并保持原 20 张卡片与遗漏计数契约。
+        for (var evidence : explicitRules) {
+            omitted += appendCard(cards, seen, evidence.file(), evidence.text(), PlanningFactCategory.BUSINESS_RULE);
+        }
         for (FileSnippet file : PlanningDigestSelector.select(context.fileSnippets(), query, 30)) {
             if (file.path() == null || file.path().isBlank() || file.path().length() > 256
                     || file.path().matches(".*[\\r\\n].*") || PROTECTED_PATH.matcher(file.path()).find()
@@ -48,20 +54,25 @@ final class PlanningFactCardExtractor {
                         || !safeEvidence(evidence)) continue;
                 PlanningFactCategory category = classify(evidence);
                 if (category == null || !evidencePolicy.relevant(file, evidence, category)) continue;
-                String key = file.path() + "\u0000" + Normalizer.normalize(evidence, Normalizer.Form.NFKC)
-                        .replaceAll("\\s+", " ").trim();
-                if (!seen.add(key)) continue;
-                if (cards.size() == MAX_CARDS) {
-                    omitted++;
-                    continue;
-                }
-                cards.add(new PlanningFactCard("F" + String.format(Locale.ROOT, "%02d", cards.size() + 1),
-                        category,
-                        PlanningEvidencePolicy.origin(file.path(), file.language()),
-                        file.path(), evidence));
+                // 完整规则已经登记时，不再把它拆出的半句作为另一条事实挤占预算。
+                if (explicitRules.stream().anyMatch(rule -> rule.file().path().equals(file.path())
+                        && rule.text().contains(evidence))) continue;
+                omitted += appendCard(cards, seen, file, evidence, category);
             }
         }
         return new Extraction(List.copyOf(cards), omitted);
+    }
+
+    /** 按来源和完整证据去重；保留比较符和不同取值，预算外事实仍计入覆盖提醒。 */
+    private int appendCard(List<PlanningFactCard> cards, LinkedHashSet<String> seen, FileSnippet file,
+                           String evidence, PlanningFactCategory category) {
+        String key = file.path() + "\u0000" + Normalizer.normalize(evidence, Normalizer.Form.NFKC)
+                .replaceAll("\\s+", " ").trim();
+        if (!seen.add(key)) return 0;
+        if (cards.size() == MAX_CARDS) return 1;
+        cards.add(new PlanningFactCard("F" + String.format(Locale.ROOT, "%02d", cards.size() + 1),
+                category, PlanningEvidencePolicy.origin(file.path(), file.language()), file.path(), evidence));
+        return 0;
     }
 
     private PlanningFactCategory classify(String evidence) {
@@ -109,7 +120,8 @@ final class PlanningFactCardExtractor {
             // 当前片段确实包含该证据时，重新检查它是否落在 Markdown 示例小节内。
             if (file.content() != null && normalize(file.content()).contains(normalize(card.evidence()))
                     && policy.evidenceLines(file).stream()
-                    .noneMatch(line -> normalize(line).contains(normalize(card.evidence())))) continue;
+                    .noneMatch(line -> normalize(line).contains(normalize(card.evidence())))
+                    && !explicitRuleExtractor.containsSourceEvidence(file, query, card.evidence())) continue;
             result.add(new PlanningFactCard(card.id(), card.category(),
                     PlanningEvidencePolicy.origin(file.path(), file.language()), card.sourcePath(), card.evidence()));
         }

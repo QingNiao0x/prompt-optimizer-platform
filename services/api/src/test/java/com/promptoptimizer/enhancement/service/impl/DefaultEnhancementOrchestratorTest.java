@@ -38,6 +38,8 @@ import com.promptoptimizer.history.service.OptimizationHistoryService;
 import com.promptoptimizer.identity.support.TestActors;
 import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -57,6 +59,65 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.http.MediaType;
 
 class DefaultEnhancementOrchestratorTest {
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldRepairAssemblerFailuresWithinProviderBudgetAndSaveOnlyTheSuccessfulResult(boolean repairSucceeds)
+            throws Exception {
+        String endpoint = "https://model.example.com/chat/completions";
+        ObjectMapper mapper = new ObjectMapper();
+        var clientBuilder = org.springframework.web.client.RestClient.builder();
+        var upstream = org.springframework.test.web.client.MockRestServiceServer.bindTo(clientBuilder).build();
+        var properties = new com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProperties();
+        properties.setEndpoint(java.net.URI.create(endpoint));
+        properties.setApiKey("test-placeholder");
+        properties.setModel("test-model");
+        int attempts = repairSucceeds ? 2 : 3;
+        for (int attempt = 0; attempt < attempts; attempt++) {
+            boolean repaired = repairSucceeds && attempt == 1;
+            var sections = List.of("BACKGROUND", "TASK", "OUTPUT", "CONSTRAINTS").stream()
+                    .map(type -> java.util.Map.of("type", type, "title", type,
+                            "content", type.equals("CONSTRAINTS") && !repaired
+                                    ? "password:请勿在任何位置记录真实密码" : "保留原有业务功能"))
+                    .toList();
+            String content = mapper.writeValueAsString(java.util.Map.of(
+                    "sections", sections, "ambiguities", List.of("预算仍待确认")));
+            String completion = mapper.writeValueAsString(java.util.Map.of("model", "test-model", "choices",
+                    List.of(java.util.Map.of("finish_reason", "stop", "message", java.util.Map.of("content", content)))));
+            upstream.expect(org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo(endpoint))
+                    .andRespond(org.springframework.test.web.client.response.MockRestResponseCreators
+                            .withSuccess(completion, MediaType.APPLICATION_JSON));
+        }
+        var provider = new com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatiblePromptEnhancementProvider(
+                clientBuilder.build(), mapper, properties);
+        var repairedOrchestrator = new DefaultEnhancementOrchestrator(
+                new DefaultContextAnalyzer(mapper, new BinaryContentExtractor(), new FileContentSummarizer()),
+                new AmbiguityDetector(), new PromptTemplateRegistryImpl(), new ConstraintCompleterImpl(),
+                provider, TestActors.currentActor(), Clock.systemUTC());
+        var history = mock(OptimizationHistoryService.class);
+        var mvc = MockMvcBuilders.standaloneSetup(new OptimizationController(repairedOrchestrator,
+                        mock(OptimizationPlanningService.class), history, mock(AnalyticsEventService.class)))
+                .setControllerAdvice(new GlobalExceptionHandler()).build();
+
+        var response = mvc.perform(post("/api/v1/optimizations").contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"rawPrompt":"整理活动执行方案，预算尚未确认", "context":{"files":[]},
+                         "permissionPolicy":{"protectedPaths":["config/prod.yml"],"requireConfirmationFor":[]}}
+                        """));
+
+        if (repairSucceeds) {
+            response.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.optimizedPrompt", org.hamcrest.Matchers.containsString("config/prod.yml")))
+                    .andExpect(jsonPath("$.data.ambiguities[0]").value("预算仍待确认"))
+                    .andExpect(jsonPath("$.data.provider.mock").value(false));
+            verify(history).save(any(), any());
+        } else {
+            response.andExpect(status().isBadGateway())
+                    .andExpect(jsonPath("$.error.code").value("RESULT_INVALID"));
+            org.mockito.Mockito.verifyNoInteractions(history);
+        }
+        upstream.verify();
+    }
 
     private final DefaultEnhancementOrchestrator orchestrator = new DefaultEnhancementOrchestrator(
             new DefaultContextAnalyzer(

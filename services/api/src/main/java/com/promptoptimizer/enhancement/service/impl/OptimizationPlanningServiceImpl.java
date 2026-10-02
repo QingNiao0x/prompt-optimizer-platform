@@ -18,7 +18,8 @@ import com.promptoptimizer.provider.service.PromptPlanningProvider;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
-import com.promptoptimizer.provider.domain.ProviderFailureType;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason;
 import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 /**
@@ -139,6 +141,7 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         .limit(MAX_QUESTIONS)
                         .map(PlanChoiceCompleter::complete)
                         .map(question -> PlanRecommendationAligner.align(question, providerRequest))
+                        .map(this::validateRecommendationCount)
                         .toList();
                 metrics.generated(validated.questions().size() + requiredConflicts.size(), questions.size());
                 String summary = questions.isEmpty()
@@ -182,10 +185,14 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         registration.expiresAt()
                 );
             } catch (RuntimeException exception) {
-                LOGGER.error("event=plan.failed requestId={} workflowId={} failureType={} durationMs={}",
+                LOGGER.error("event=plan.failed requestId={} workflowId={} failureType={} validationReason={} validationField={} durationMs={}",
                         LogFields.value(MDC.get("requestId")),
                         LogFields.value(MDC.get("workflowId")),
                         failureType(exception),
+                        exception instanceof ProviderResponseValidationException validation
+                                ? validation.getReason().name() : "-",
+                        exception instanceof ProviderResponseValidationException validation
+                                ? validation.getField() : "-",
                         Math.max(0, clock.millis() - startedAt));
                 throw exception;
             }
@@ -275,17 +282,14 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
         return key.contains("版本") && (question.contains("版本") || question.contains("采用哪份"));
     }
 
-    /** 仅对额外结构校验发现的无效模型响应再试一次，不叠加 Provider 自身重试。 */
+    /** 将应用层校验交给 Provider 的同一个重试预算，避免格式重试与业务校验重试相乘。 */
     private PlanningProviderResponse requestValidatedPlan(PlanningProviderRequest request) {
-        PlanningProviderResponse response = planningProvider.plan(request);
-        try {
+        AtomicBoolean alreadyValidated = new AtomicBoolean();
+        return planningProvider.planValidated(request, response -> {
+            // 只有实际进入下一次业务校验时才计重试，末次失败不能再记一次未发生的请求。
+            if (alreadyValidated.getAndSet(true)) metrics.retry();
             return validate(response);
-        } catch (ProviderException exception) {
-            // 仅重试应用层额外发现的结构问题；Provider 自身已有受控重试，不叠加调用。
-            if (exception.getFailureType() != ProviderFailureType.INVALID_RESPONSE) throw exception;
-            metrics.retry();
-            return validate(planningProvider.plan(request));
-        }
+        });
     }
 
     /**
@@ -296,11 +300,11 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                 || containsInternalTerm(response.summary())
                 || isBlank(response.provider()) || isBlank(response.model())
                 || response.questions() == null || response.questions().size() > MAX_QUESTIONS) {
-            throw invalidResponse();
+            throw invalidResponse(Reason.PLAN_STRUCTURE_INVALID, "plan");
         }
 
         Set<String> questionIds = new HashSet<>();
-        rejectProviderCredential(response.summary());
+        rejectProviderCredential(response.summary(), "summary");
         List<PlanQuestion> questions = new ArrayList<>();
         for (PlanQuestion question : response.questions()) {
             if (question == null || !SAFE_ID.matcher(value(question.id())).matches()
@@ -311,10 +315,10 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                     || containsInternalTerm(value(question.hint()))
                     || question.options().size() > MAX_OPTIONS
                     || question.examples().size() > MAX_EXAMPLES) {
-                throw invalidResponse();
+                throw invalidResponse(Reason.PLAN_QUESTION_INVALID, "questions");
             }
-            rejectProviderCredential(question.question());
-            rejectProviderCredential(question.hint());
+            rejectProviderCredential(question.question(), "questions.question");
+            rejectProviderCredential(question.hint(), "questions.hint");
             questions.add(normalizeQuestion(question));
         }
         return new PlanningProviderResponse(
@@ -327,11 +331,10 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
     }
 
     /**
-     * 校验模型候选项的 ID、长度、推荐数量与敏感内容，拒绝内部术语后返回可展示问题。
+     * 校验模型候选项的 ID、长度与敏感内容；推荐数量在依据用户证据校准后检查。
      */
     private PlanQuestion normalizeQuestion(PlanQuestion question) {
         Set<String> optionIds = new HashSet<>();
-        int recommended = 0;
         List<PlanOption> options = new ArrayList<>();
         for (PlanOption option : question.options()) {
             if (option == null || !SAFE_ID.matcher(value(option.id())).matches()
@@ -344,13 +347,13 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                     || containsInternalTerm(value(option.description()))
                     || containsInternalTerm(option.answer())
                     || containsInternalTerm(option.recommendationReason())) {
-                throw invalidResponse();
+                throw invalidResponse(Reason.PLAN_OPTION_INVALID, "questions.options");
             }
-            rejectProviderCredential(option.label());
-            rejectProviderCredential(option.description());
-            rejectProviderCredential(option.answer());
-            rejectProviderCredential(option.recommendationReason());
-            recommended += option.recommended() ? 1 : 0;
+            rejectProviderCredential(option.label(), "questions.options.label");
+            rejectProviderCredential(option.description(), "questions.options.description");
+            rejectProviderCredential(option.answer(), "questions.options.answer");
+            // 校准会清除无依据的推荐理由，因此必须先检查其敏感内容，不能靠清除绕过校验。
+            rejectProviderCredential(option.recommendationReason(), "questions.options.recommendationReason");
             options.add(new PlanOption(
                     option.id().trim(),
                     option.label().trim(),
@@ -360,12 +363,11 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                     option.recommendationReason()
             ));
         }
-        if (recommended > 1
-                || (question.type() == PlanQuestionType.FREE_TEXT
+        if ((question.type() == PlanQuestionType.FREE_TEXT
                 && (!options.isEmpty() || !question.allowCustomAnswer()))
                 || (question.type() != PlanQuestionType.FREE_TEXT && options.size() < 2)
                 || combinedAnswerLength(question.type(), options) > 1_500) {
-            throw invalidResponse();
+            throw invalidResponse(Reason.PLAN_OPTION_INVALID, "questions.options");
         }
 
         List<String> examples = question.examples().stream()
@@ -373,9 +375,9 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                 .map(String::trim)
                 .filter(example -> !example.isBlank())
                 .peek(example -> {
-                    rejectProviderCredential(example);
+                    rejectProviderCredential(example, "questions.examples");
                     if (example.length() > 120 || containsInternalTerm(example)) {
-                        throw invalidResponse();
+                        throw invalidResponse(Reason.PLAN_QUESTION_INVALID, "questions.examples");
                     }
                 })
                 .toList();
@@ -388,6 +390,14 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                 examples,
                 question.allowCustomAnswer()
         );
+    }
+
+    /** 推荐只是提示；先按证据校准标记，再守住最多一个推荐的展示契约，不删改可选答案。 */
+    private PlanQuestion validateRecommendationCount(PlanQuestion question) {
+        if (question.options().stream().filter(PlanOption::recommended).count() > 1) {
+            throw invalidResponse(Reason.PLAN_RECOMMENDATION_INVALID, "questions.options.recommended");
+        }
+        return question;
     }
 
     private boolean containsInternalTerm(String question) {
@@ -410,12 +420,9 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
         return value == null ? "" : value;
     }
 
-    private ProviderException invalidResponse() {
-        return new ProviderException(
-                ProviderFailureType.INVALID_RESPONSE,
-                "模型返回的确认问题格式无效",
-                false
-        );
+    /** 错误只携带固定原因和字段路径，避免模型正文进入日志或修复提示。 */
+    private ProviderException invalidResponse(Reason reason, String field) {
+        return new ProviderResponseValidationException(reason, field);
     }
 
     private void rejectCredentials(String value) {
@@ -424,9 +431,9 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
         }
     }
 
-    private void rejectProviderCredential(String value) {
+    private void rejectProviderCredential(String value, String field) {
         if (sensitiveValueDetector.containsCredential(value)) {
-            throw invalidResponse();
+            throw invalidResponse(Reason.SENSITIVE_CONTENT, field);
         }
     }
 }

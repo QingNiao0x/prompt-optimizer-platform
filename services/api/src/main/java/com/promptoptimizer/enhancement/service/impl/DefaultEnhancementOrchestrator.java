@@ -24,7 +24,7 @@ import com.promptoptimizer.policy.service.ProtectedContextFilter;
 import com.promptoptimizer.provider.service.PromptEnhancementProvider;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
-import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import org.slf4j.Logger;
@@ -264,14 +264,19 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 : request.planConfirmation().planningContext() != null
                 ? "planning-context"
                 : "planning-plan";
+        List<String> planningWarnings = new ArrayList<>(confirmedPlan.planningContextDigest() == null
+                ? List.of() : confirmedPlan.planningContextDigest().warnings());
+        if (mergedFacts.omittedCount() > 0) planningWarnings.add(
+                "二次检索另发现 " + mergedFacts.omittedCount() + " 条相关事实，超出最终事实卡片预算，请核对上下文报告。");
+        List<String> finalAmbiguities = ambiguities;
         try (LogCorrelation.Scope ignored = LogCorrelation.bindWorkflow(workflowNamespace, workflowResourceId)) {
             try {
-                EnhancementProviderResponse providerResponse = enhancementProvider.enhance(
+                OptimizationResult result = enhancementProvider.enhanceValidated(
                         new EnhancementProviderRequest(
                                 request.rawPrompt(),
                                 context,
                                 template,
-                                ambiguities,
+                                finalAmbiguities,
                                 planAnswers,
                                 planConfirmed,
                                 constraints,
@@ -280,46 +285,46 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                                 selectedModelId,
                                 planningFacts,
                                 decisions.decisions()
-                        )
-                );
-                long latencyMs = Math.max(0, clock.millis() - startedAt);
-                if (providerResponse.mock()) {
-                    ModelCallLogger.completed("prompt.optimize", providerResponse.provider(),
-                            providerResponse.model(), "MOCK_PROVIDER", true, 1, 1, latencyMs, null);
+                        ),
+                        // 回调只组装及校验结果；历史写入继续由调用方在最终成功返回后执行一次。
+                        providerResponse -> resultAssembler.assemble(
+                                providerResponse,
+                                context,
+                                template,
+                                finalAmbiguities,
+                                planAnswers,
+                                planConfirmed,
+                                constraints,
+                                Boolean.TRUE.equals(request.enhancement().includeExamples()),
+                                Math.max(0, clock.millis() - startedAt),
+                                request.rawPrompt(),
+                                planningFacts,
+                                planningWarnings
+                        ).withModelVersion(selectedModel != null && selectedModelId.equals(providerResponse.model())
+                                ? selectedModel.displayName() : ""));
+                long latencyMs = result.latencyMs();
+                if (result.provider().mock()) {
+                    ModelCallLogger.completed("prompt.optimize", result.provider().provider(),
+                            result.provider().model(), "MOCK_PROVIDER", true, 1, 1, latencyMs, null);
                 }
-                List<String> planningWarnings = new ArrayList<>(confirmedPlan.planningContextDigest() == null
-                        ? List.of() : confirmedPlan.planningContextDigest().warnings());
-                if (mergedFacts.omittedCount() > 0) planningWarnings.add(
-                        "二次检索另发现 " + mergedFacts.omittedCount() + " 条相关事实，超出最终事实卡片预算，请核对上下文报告。");
-                OptimizationResult result = resultAssembler.assemble(
-                        providerResponse,
-                        context,
-                        template,
-                        ambiguities,
-                        planAnswers,
-                        planConfirmed,
-                        constraints,
-                        Boolean.TRUE.equals(request.enhancement().includeExamples()),
-                        latencyMs,
-                        request.rawPrompt(),
-                        planningFacts,
-                        planningWarnings
-                ).withModelVersion(selectedModel != null && selectedModelId.equals(providerResponse.model())
-                        ? selectedModel.displayName() : "");
                 LOGGER.info("event=optimization.completed requestId={} workflowId={} mock={} "
                                 + "sections={} ambiguities={} durationMs={}",
                         LogFields.value(MDC.get("requestId")),
                         LogFields.value(MDC.get("workflowId")),
-                        providerResponse.mock(),
+                        result.provider().mock(),
                         result.sections().size(),
                         result.ambiguities().size(),
                         latencyMs);
                 return result;
             } catch (RuntimeException exception) {
-                LOGGER.error("event=optimization.failed requestId={} workflowId={} failureType={} durationMs={}",
+                LOGGER.error("event=optimization.failed requestId={} workflowId={} failureType={} validationReason={} validationField={} durationMs={}",
                         LogFields.value(MDC.get("requestId")),
                         LogFields.value(MDC.get("workflowId")),
                         failureType(exception),
+                        exception instanceof ProviderResponseValidationException validation
+                                ? validation.getReason().name() : "-",
+                        exception instanceof ProviderResponseValidationException validation
+                                ? validation.getField() : "-",
                         Math.max(0, clock.millis() - startedAt));
                 throw exception;
             }

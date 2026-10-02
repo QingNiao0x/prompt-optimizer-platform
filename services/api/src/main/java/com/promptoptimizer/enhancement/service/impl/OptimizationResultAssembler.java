@@ -13,7 +13,8 @@ import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.provider.domain.AmbiguityReference;
 import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.provider.domain.ProviderException;
-import com.promptoptimizer.provider.domain.ProviderFailureType;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
@@ -124,11 +125,11 @@ public class OptimizationResultAssembler {
             List<String> planningWarnings
     ) {
         if (providerResponse == null || isBlank(providerResponse.provider()) || isBlank(providerResponse.model())) {
-            throw invalidResponse("模型响应缺少 Provider 元数据");
+            throw invalidResponse(Reason.METADATA_INVALID, "provider");
         }
         Map<PromptSectionType, PromptSection> sections = collectSections(providerResponse.sections());
         if (!sections.keySet().containsAll(REQUIRED_TYPES)) {
-            throw invalidResponse("模型响应缺少必需的提示词段落");
+            throw invalidResponse(Reason.REQUIRED_SECTIONS_MISSING, "sections");
         }
 
         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planAnswers);
@@ -312,12 +313,14 @@ public class OptimizationResultAssembler {
                     .toList();
         }
         if (findings == null || findings.size() > 8) {
-            throw invalidResponse("模型待确认事项数量无效");
+            throw invalidResponse(Reason.AMBIGUITY_COUNT_INVALID, "ambiguities");
         }
         for (String finding : findings) {
-            if (finding == null || finding.isBlank() || finding.length() > 500
-                    || sensitiveValueDetector.containsCredential(finding)) {
-                throw invalidResponse("模型待确认事项包含无效或敏感内容");
+            if (finding == null || finding.isBlank() || finding.length() > 500) {
+                throw invalidResponse(Reason.AMBIGUITY_VALUE_INVALID, "ambiguities");
+            }
+            if (sensitiveValueDetector.containsCredential(finding)) {
+                throw invalidResponse(Reason.SENSITIVE_CONTENT, "ambiguities");
             }
         }
         // 模型可能忽略二次检索发现的同名字段冲突；服务端证据优先保留。
@@ -325,8 +328,11 @@ public class OptimizationResultAssembler {
                 .filter(value -> value.startsWith("资料对“"))
                 .toList();
         for (String finding : verifiedConflicts) {
-            if (finding.length() > 500 || sensitiveValueDetector.containsCredential(finding)) {
-                throw invalidResponse("上下文冲突提示包含无效或敏感内容");
+            if (finding.length() > 500) {
+                throw invalidResponse(Reason.AMBIGUITY_VALUE_INVALID, "context.conflicts");
+            }
+            if (sensitiveValueDetector.containsCredential(finding)) {
+                throw invalidResponse(Reason.SENSITIVE_CONTENT, "context.conflicts");
             }
         }
         List<String> serverFindings = candidates.stream()
@@ -345,16 +351,20 @@ public class OptimizationResultAssembler {
     /** 拒绝重复、空白和疑似含凭据的模型段落，再转换为按类型索引的结果。 */
     private Map<PromptSectionType, PromptSection> collectSections(List<PromptSection> values) {
         if (values == null || values.isEmpty()) {
-            throw invalidResponse("模型响应未包含提示词段落");
+            throw invalidResponse(Reason.REQUIRED_SECTIONS_MISSING, "sections");
         }
         Map<PromptSectionType, PromptSection> sections = new EnumMap<>(PromptSectionType.class);
         for (PromptSection section : values) {
-            if (section == null || section.type() == null || isBlank(section.title()) || isBlank(section.content())
-                    || sensitiveValueDetector.containsCredential(section.title())
-                    || sensitiveValueDetector.containsCredential(section.content())
-                    || sections.putIfAbsent(section.type(), new PromptSection(
+            if (section == null || section.type() == null || isBlank(section.title()) || isBlank(section.content())) {
+                throw invalidResponse(Reason.SECTION_INVALID, "sections");
+            }
+            if (sensitiveValueDetector.containsCredential(section.title())
+                    || sensitiveValueDetector.containsCredential(section.content())) {
+                throw invalidResponse(Reason.SENSITIVE_CONTENT, "sections");
+            }
+            if (sections.putIfAbsent(section.type(), new PromptSection(
                     section.type(), section.title().trim(), section.content().trim())) != null) {
-                throw invalidResponse("模型响应包含无效或重复的提示词段落");
+                throw invalidResponse(Reason.SECTION_INVALID, "sections");
             }
         }
         return sections;
@@ -406,7 +416,7 @@ public class OptimizationResultAssembler {
                         + "\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n" + String.join("\n", missing)));
             }
             if (entry.getValue().stream().anyMatch(line -> !sections.get(type).content().contains(line))) {
-                throw invalidResponse("确认答案未进入对应的执行段落");
+                throw invalidResponse(Reason.CONFIRMED_DECISION_MISSING, "confirmedDecisions");
             }
         }
     }
@@ -446,7 +456,7 @@ public class OptimizationResultAssembler {
         return value == null || value.isBlank();
     }
 
-    private ProviderException invalidResponse(String message) {
-        return new ProviderException(ProviderFailureType.INVALID_RESPONSE, message, false);
+    private ProviderException invalidResponse(Reason reason, String field) {
+        return new ProviderResponseValidationException(reason, field);
     }
 }

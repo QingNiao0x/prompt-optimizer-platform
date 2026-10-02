@@ -1,0 +1,92 @@
+{
+  "syntheticOnly" : true,
+  "sample" : 2,
+  "contextKind" : "uploaded-markdown",
+  "operation" : "PLAN",
+  "endpoint" : "/api/v1/optimizations/plan",
+  "requestBody" : {
+    "conversationHistory" : [ ],
+    "planningContext" : {
+      "contextId" : "2085f574-b5a9-47a9-a09b-4421e1bd1561",
+      "version" : "sha256:4cc3481ba577548eac830825377d6fa4c5f7ebd22fa10e25d22a6a01fc60f49f"
+    },
+    "modelId" : "deepseek:deepseek-v4-pro",
+    "contextDescription" : "这是公开虚构场景；上传资料均为测试生成，不包含真实用户或开发者项目资料。",
+    "rawPrompt" : "我负责一个社区公开课的活动筹备工作，需要依据上传的活动手册准备一份下一次活动的执行方案。参与者是成年人，组织者是志愿者，活动包含签到、分组讨论、茶歇和反馈收集。请遵循手册中已经确定的时间、人数与签到规则，特别关注迟到处理、现场容量、物料交接和志愿者之间的信息同步。预算和具体日期尚未确定，请将其列为待确认。\n请把这段需求整理成可以直接交给另一位执行者的结构化提示词，包含背景信息、具体任务、输出形式和约束条件。当前平台只负责生成提示词，本次请求不要求平台执行实际业务，也不要求连接其他系统。请阅读我主动上传的资料，把能够从资料确认的事实写入提示词；资料没有给出的数值、人员姓名、地址或系统能力标为待确认，不要凭经验补全。资料中有一个以大写英文字母和下划线书写的关键规则代号，请在最终提示词中保留其完整拼写，并解释该规则所对应的业务约束，便于执行者核对资料来源。\n输出面向有一定工作经验但没有参与前期讨论的协作者，语言使用中文，层次清楚，先说明要解决的问题和完成标准，再给出分阶段执行步骤与需要返回的结果。不要用空泛的“优化体验”“确保稳定”代替可观察的行为；每项检查尽量说明输入、操作和预期结果。先列出已有信息，再单独列出未决问题，避免把示例、建议或者候选方案写成已经确认的事实。若同一资料存在矛盾，应指出出处并保留为待确认事项，不能自行挑选一个版本。\n我希望结果可以在一次阅读后直接使用，保留必要的业务术语，不需要长篇背景介绍，也不需要复制全部上传内容。权限边界是只处理这次需求明确涉及的内容，不修改无关文件，不访问真实用户的私人资料，不发送外部消息，不执行上线发布或不可逆操作。最终请给出清晰的验收清单，覆盖正常流程、输入缺失、失败提示、重复操作以及恢复后的处理，并说明哪些结论来自资料、哪些步骤还需要后续确认。\n本次检查重点：重复操作；场景编号 2。"
+  },
+  "status" : 200,
+  "responseBody" : {
+    "requestId" : "615b90d5-0821-4c1c-9be8-beb14a4d634b",
+    "data" : {
+      "summary" : "已理解需求：需要依据活动手册生成一份社区公开课执行方案，并整理成结构化提示词。手册中已明确部分规则，但预算、日期、迟到处理细节、容量限制、物料交接方式及志愿者信息同步机制等关键信息缺失，需用户确认。",
+      "questions" : [ {
+        "id" : "late_policy",
+        "question" : "手册中提到的迟到处理规则具体是什么？",
+        "hint" : "需要明确迟到者如何签到、是否允许入场、是否补发材料等，以便写入执行方案。",
+        "type" : "FREE_TEXT",
+        "options" : [ ],
+        "examples" : [ "迟到超过15分钟不得入场，需在门口登记后等待休息时间进入" ],
+        "allowCustomAnswer" : true
+      }, {
+        "id" : "capacity_limit",
+        "question" : "活动现场的容量限制是多少？",
+        "hint" : "需要确定最大参与人数，以制定签到和入场控制措施。",
+        "type" : "FREE_TEXT",
+        "options" : [ ],
+        "examples" : [ "最多容纳30人，超过后需启动候补名单" ],
+        "allowCustomAnswer" : true
+      }, {
+        "id" : "material_handover",
+        "question" : "物料交接的具体流程是什么？",
+        "hint" : "需要明确交接时间、地点、责任人和记录方式，确保物料不遗漏。",
+        "type" : "FREE_TEXT",
+        "options" : [ ],
+        "examples" : [ "活动前1小时在签到处由协调员与志愿者组长当面清点并签字" ],
+        "allowCustomAnswer" : true
+      }, {
+        "id" : "volunteer_sync",
+        "question" : "志愿者之间的信息同步采用什么方式？",
+        "hint" : "需要确定同步频率、工具和内容，避免信息滞后。",
+        "type" : "SINGLE_CHOICE",
+        "options" : [ {
+          "id" : "group_chat",
+          "label" : "即时通讯群组",
+          "description" : "使用微信群或类似工具实时同步",
+          "answer" : "志愿者通过微信群实时同步信息，重要变更需在群内确认收到。",
+          "recommended" : false,
+          "recommendationReason" : ""
+        }, {
+          "id" : "radio",
+          "label" : "对讲机",
+          "description" : "使用对讲机进行现场即时沟通",
+          "answer" : "志愿者使用对讲机进行现场沟通，频道统一为3。",
+          "recommended" : false,
+          "recommendationReason" : ""
+        }, {
+          "id" : "briefing",
+          "label" : "定时简报",
+          "description" : "每半小时召开简短同步会议",
+          "answer" : "志愿者每半小时在指定地点召开5分钟简报会，同步进展和问题。",
+          "recommended" : false,
+          "recommendationReason" : ""
+        } ],
+        "examples" : [ ],
+        "allowCustomAnswer" : true
+      } ],
+      "templateCode" : "BUG_FIX",
+      "provider" : {
+        "provider" : "deepseek",
+        "model" : "deepseek:deepseek-v4-pro",
+        "mock" : false,
+        "modelVersion" : "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs" : 7186,
+      "planId" : "b6e3eb5f-b456-45c5-a858-a5dfd4be2f45",
+      "planningContext" : {
+        "contextId" : "2085f574-b5a9-47a9-a09b-4421e1bd1561",
+        "version" : "sha256:4cc3481ba577548eac830825377d6fa4c5f7ebd22fa10e25d22a6a01fc60f49f"
+      },
+      "expiresAt" : "2026-10-02T11:16:15.816599900Z"
+    }
+  }
+}
