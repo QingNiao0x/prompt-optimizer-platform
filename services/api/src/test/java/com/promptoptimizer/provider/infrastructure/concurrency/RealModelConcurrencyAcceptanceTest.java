@@ -13,6 +13,7 @@ import com.promptoptimizer.identity.service.LoginCaptchaService;
 import com.promptoptimizer.identity.service.impl.LoginCaptchaServiceImpl;
 import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProperties;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import jakarta.servlet.http.HttpServletRequest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 import javax.sql.DataSource;
+import java.io.ByteArrayOutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.HttpCookie;
 import java.net.URI;
@@ -38,6 +40,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -82,13 +85,8 @@ class RealModelConcurrencyAcceptanceTest {
     private static final String PREFIX = "prompt-optimizer:test:real-model:" + RUN;
     private static final Path OUTPUT = Path.of("target", "real-model-concurrency", RUN).toAbsolutePath();
     private static final List<String> MODELS = List.of("deepseek:deepseek-flash", "deepseek:deepseek-v4-pro");
-    private static final List<String> PROMPTS = List.of(
-            "为一个三人产品团队整理每周例会纪要模板。会议持续30分钟，需要记录本周进展、阻塞问题、负责人和截止日期。输出Markdown模板，未知信息用待填写标记，不编造人员和业务数据。",
-            "为大学生制定四周英语阅读练习计划，每天30分钟，目标是提高学术文章阅读能力。输出每周目标、每天练习与自测标准，不引用未经核实的研究，不虚构成绩。",
-            "把一个社区读书会的活动筹备需求整理成执行清单：20名成年人，周六下午两小时，主题是非虚构阅读分享，场地已确定。包括流程、物料和责任分工，预算与姓名留空待填。",
-            "为Vue3和Java21项目设计登录表单的测试方案，已有邮箱密码登录和CSRF校验。覆盖成功、输入校验、错误提示和会话失效。只输出测试步骤及预期结果，不修改代码、不请求真实账号凭据。",
-            "为小型线上课程整理一份用户访谈提纲，受访者是首次购买课程的成年人，时长20分钟，关注选课动机和学习阻碍。输出开放式问题和追问，不采集敏感个人资料。"
-    );
+    private static final int CAPACITY = 100;
+    private static final String DESCRIPTION = "这是公开虚构场景；上传资料均为测试生成，不包含真实用户或开发者项目资料。";
 
     @LocalServerPort private int port;
     @Autowired private ObjectMapper json;
@@ -110,6 +108,7 @@ class RealModelConcurrencyAcceptanceTest {
     private final Map<String, Object> report = new LinkedHashMap<>();
     private final AtomicReference<String> captchaAnswer = new AtomicReference<>();
     private final ModelEvents modelEvents = new ModelEvents();
+    private JsonNode fixtures;
 
     /** 只允许本机 PostgreSQL；随机 schema 不包含 public，也不继承开发服务的会话和审计目录。 */
     @DynamicPropertySource
@@ -143,11 +142,13 @@ class RealModelConcurrencyAcceptanceTest {
         report.put("logicalProcessors", Runtime.getRuntime().availableProcessors());
         report.put("maxHeapBytes", Runtime.getRuntime().maxMemory());
         report.put("javaVersion", System.getProperty("java.version"));
+        report.put("globalLimit", CAPACITY);
+        report.put("userLimit", 3);
         Logger modelLogger = (Logger) LoggerFactory.getLogger("com.promptoptimizer.common.logging.ModelCallLogger");
         modelEvents.start();
         modelLogger.addAppender(modelEvents);
         try {
-            assertThat(limits.getGlobalLimit()).isEqualTo(50);
+            assertThat(limits.getGlobalLimit()).isEqualTo(CAPACITY);
             assertThat(limits.getUserLimit()).isEqualTo(3);
             assertThat(limits.getStoreMode()).isEqualTo(ModelConcurrencyProperties.StoreMode.REDIS);
             for (String model : MODELS) {
@@ -158,6 +159,10 @@ class RealModelConcurrencyAcceptanceTest {
             report.put("upstreamHost", "api.deepseek.com");
             report.put("readTimeoutMs", provider.getReadTimeout().toMillis());
             report.put("maxOutputTokens", provider.getMaxTokens());
+            fixtures = json.readTree(Files.readString(Path.of("target/real-model-fixtures/contexts.json")));
+            assertThat(fixtures.path("syntheticOnly").asBoolean()).isTrue();
+            report.put("projectIndexEvidence", fixtures.path("indexEvidence"));
+            report.put("documentCharacters", fixtures.path("document").path("content").asText().length());
             try (var connection = dataSource.getConnection()) {
                 assertThat(connection.getSchema()).isEqualTo(SCHEMA);
                 report.put("databaseVersion", connection.getMetaData().getDatabaseProductVersion());
@@ -173,29 +178,48 @@ class RealModelConcurrencyAcceptanceTest {
             String hash = encoder.encode(password);
             Account first = account(hash);
             sessions.add(login(first, password));
+            for (int i = 1; i < 4; i++) sessions.add(login(account(hash), password));
             assertStatus(call(sessions.getFirst(), "GET", "/api/v1/models", null), 200);
-            for (String model : MODELS) {
-                var baseline = wave("baseline", model, List.of(sessions.getFirst()), false);
-                assertThat(baseline.get("allSucceeded")).as("单请求真实增强必须先通过，失败时停止扩大调用量").isEqualTo(true);
+            boolean load = "load".equals(System.getProperty("realModelConcurrency.stage", "smoke"));
+            if (!load) {
+                prepareContexts(sessions.subList(0, 4), 0);
+                for (String model : MODELS) wave("baseline-contexts", model, sessions.subList(0, 4), false);
+                wave("baseline-plan", "mixed", sessions.subList(0, 4), false, Operation.PLAN);
+                List<Session> ready = sessions.stream().filter(s -> s.plan != null).toList();
+                if (!ready.isEmpty()) wave("baseline-confirmed", "mixed", ready, false, Operation.CONFIRMED);
             }
-            if ("load".equals(System.getProperty("realModelConcurrency.stage", "smoke"))) {
+            if (load) {
+                // 先单独运行 smoke 核实环境，再显式运行 load；失败结果不会被后续成功覆盖。
                 // 每个并发请求来自独立登录会话，账号数量足以避免把用户上限误测成平台容量。
-                for (int i = 1; i < 51; i++) sessions.add(login(account(hash), password));
+                for (int i = 4; i < CAPACITY + 1; i++) sessions.add(login(account(hash), password));
+                prepareContexts(sessions.subList(0, CAPACITY), 0);
+                prepareContexts(sessions.subList(CAPACITY, CAPACITY + 1), CAPACITY);
+                Reply forbidden = call(sessions.get(1), "GET", "/api/v1/context/documents/" + sessions.getFirst().documentId, null);
+                boolean isolated = forbidden.status() == 403 || forbidden.status() == 404;
+                stages.add(Map.of("name", "document-owner-isolation", "status", forbidden.status(), "passed", isolated));
+                assertThat(isolated).isTrue();
                 List<Session> sameAccount = new ArrayList<>();
                 sameAccount.add(sessions.getFirst());
                 for (int i = 0; i < 3; i++) {
                     Session session = login(first, password);
+                    session.copyContext(sessions.getFirst());
                     sessions.add(session);
                     sameAccount.add(session);
                 }
                 accountBoundary(sameAccount);
                 for (String model : MODELS) {
-                    var medium = wave("concurrency-20", model, sessions.subList(0, 20), false);
-                    // 常规负载已有明显故障时停止放大费用，并保留失败阶段供判断。
-                    if ((long) medium.get("successes") < 18) continue;
-                    wave("concurrency-50", model, sessions.subList(0, 50), true);
+                    var full = wave("concurrency-100-contexts", model, sessions.subList(0, CAPACITY), true);
                     wave("recovery", model, List.of(sessions.getFirst()), false);
+                    assertThat((long) full.get("successes")).as("明显故障时停止后续付费扩量").isGreaterThanOrEqualTo(90);
                 }
+                wave("concurrency-100-plan", "mixed", sessions.subList(0, CAPACITY), false, Operation.PLAN);
+                // 只对首次未获得计划的账号补试一次以测完整确认波次；原失败阶段仍使总验收失败。
+                List<Session> missing = sessions.subList(0, CAPACITY).stream().filter(s -> s.plan == null).toList();
+                if (!missing.isEmpty() && missing.size() <= 10) {
+                    wave("plan-explicit-retry-failed-accounts", "mixed", missing, false, Operation.PLAN);
+                }
+                List<Session> confirmed = sessions.subList(0, CAPACITY).stream().filter(s -> s.plan != null).toList();
+                if (!confirmed.isEmpty()) wave("concurrency-100-confirmed", "mixed", confirmed, false, Operation.CONFIRMED);
             }
             report.put("passed", stages.stream().allMatch(stage -> Boolean.TRUE.equals(stage.get("passed"))));
         } catch (Exception | AssertionError failure) {
@@ -208,7 +232,12 @@ class RealModelConcurrencyAcceptanceTest {
             boolean drained = awaitCount(PREFIX + ":global", 0, Duration.ofSeconds(180));
             report.put("allUpstreamPermitsReleased", drained);
             for (Session session : sessions) {
-                try { call(session, "POST", "/api/v1/auth/logout", Map.of()); }
+                try {
+                    if (session.ownsDocument && !session.documentId.isEmpty()) {
+                        assertStatus(call(session, "DELETE", "/api/v1/context/documents/" + session.documentId, null), 200);
+                    }
+                    call(session, "POST", "/api/v1/auth/logout", Map.of());
+                }
                 catch (Exception ignored) { report.put("logoutIncomplete", true); }
             }
             delivery.close();
@@ -258,6 +287,109 @@ class RealModelConcurrencyAcceptanceTest {
         assertThat(session.csrf.isBlank()).isFalse();
     }
 
+    /** 并发执行真实文档上传、异步解析与上下文分析；项目片段来自生产前端索引器。 */
+    private void prepareContexts(List<Session> callers, int offset) throws Exception {
+        Map<String, Object> stage = new LinkedHashMap<>();
+        stage.put("name", "prepare-upload-and-project-contexts");
+        stage.put("requestedConcurrency", callers.size());
+        stages.add(stage);
+        List<Map<String, Object>> results = new ArrayList<>();
+        long started = System.nanoTime();
+        try (var workers = Executors.newVirtualThreadPerTaskExecutor()) {
+            CountDownLatch gate = new CountDownLatch(1);
+            List<Future<Map<String, Object>>> tasks = new ArrayList<>();
+            for (int i = 0; i < callers.size(); i++) {
+                Session session = callers.get(i);
+                session.sample = offset + i;
+                tasks.add(workers.submit(() -> {
+                    gate.await();
+                    return prepareContext(session);
+                }));
+            }
+            gate.countDown();
+            for (var task : tasks) results.add(task.get(180, TimeUnit.SECONDS));
+        }
+        stage.put("requests", results);
+        stage.put("wallMs", (System.nanoTime() - started) / 1_000_000L);
+        stage.put("passed", results.stream().allMatch(r -> Boolean.TRUE.equals(r.get("passed"))));
+        saveReport();
+        assertThat(stage.get("passed")).as("上传解析及上下文准备全部完成后才调用付费模型").isEqualTo(true);
+    }
+
+    /** 文档正文通过二进制上传接口进入索引，增强请求只携带 documentId，不内嵌伪造摘要。 */
+    private Map<String, Object> prepareContext(Session session) throws Exception {
+        long started = System.nanoTime();
+        boolean document = session.sample % 2 == 0;
+        JsonNode fixture = fixtures.path(document ? "document" : "project");
+        session.rawPrompt = fixture.path("rawPrompt").asText() + "\n本次检查重点："
+                + List.of("正常流程", "异常恢复", "重复操作", "权限边界", "交接验收").get(session.sample % 5)
+                + "；场景编号 " + session.sample + "。";
+        session.marker = fixture.path("marker").asText();
+        Map<String, Object> result = new LinkedHashMap<>();
+        if (document) {
+            boolean docx = session.sample % 4 == 0;
+            session.kind = docx ? "uploaded-docx" : "uploaded-markdown";
+            byte[] bytes = fixture.path("content").asText().getBytes(StandardCharsets.UTF_8);
+            if (docx) {
+                try (XWPFDocument word = new XWPFDocument(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+                    for (String paragraph : fixture.path("content").asText().split("\\n")) {
+                        word.createParagraph().createRun().setText(paragraph);
+                    }
+                    word.write(output);
+                    bytes = output.toByteArray();
+                }
+            }
+            String path = "activity-" + session.sample + (docx ? ".docx" : ".md");
+            String language = docx ? "docx" : "markdown";
+            Reply created = call(session, "POST", "/api/v1/context/documents",
+                    Map.of("path", path, "language", language, "sizeBytes", bytes.length));
+            assertStatus(created, 201);
+            session.documentId = created.body().path("data").path("documentId").asText();
+            session.ownsDocument = true;
+            String endpoint = "/api/v1/context/documents/" + session.documentId;
+            int chunkSize = created.body().path("data").path("chunkSizeBytes").asInt();
+            assertThat(chunkSize).isPositive();
+            for (int offset = 0, chunk = 0; offset < bytes.length; offset += chunkSize, chunk++) {
+                byte[] part = java.util.Arrays.copyOfRange(bytes, offset, Math.min(offset + chunkSize, bytes.length));
+                assertStatus(call(session, "PUT", endpoint + "/chunks/" + chunk, part), 200);
+            }
+            assertStatus(call(session, "POST", endpoint + "/complete", Map.of()), 200);
+            JsonNode status;
+            long deadline = System.nanoTime() + Duration.ofSeconds(120).toNanos();
+            do {
+                Reply progress = call(session, "GET", endpoint, null);
+                assertStatus(progress, 200);
+                status = progress.body().path("data");
+                if (Set.of("READY", "PARTIAL", "FAILED").contains(status.path("phase").asText())) break;
+                Thread.sleep(100);
+            } while (System.nanoTime() < deadline);
+            assertThat(status.path("phase").asText()).isEqualTo("READY");
+            result.put("uploadedBytes", bytes.length);
+            result.put("extractedCharacters", status.path("extractedCharacters").asInt());
+            result.put("documentChunks", status.path("chunkCount").asInt());
+            session.context = Map.of("customDescription", DESCRIPTION, "files", List.of(
+                    Map.of("path", path, "language", language, "content", "", "documentId", session.documentId,
+                            "sizeBytes", bytes.length)));
+        } else {
+            session.kind = "indexed-project";
+            session.context = Map.of("customDescription", DESCRIPTION, "files", fixture.path("files"));
+        }
+        Reply prepared = call(session, "POST", "/api/v1/context/planning",
+                Map.of("rawPrompt", session.rawPrompt, "context", session.context));
+        assertStatus(prepared, 200);
+        JsonNode data = prepared.body().path("data");
+        session.contextReference = json.valueToTree(Map.of("contextId", data.path("contextId").asText(),
+                "version", data.path("version").asText()));
+        result.put("sample", session.sample);
+        result.put("contextKind", session.kind);
+        result.put("rawPromptCharacters", session.rawPrompt.length());
+        result.put("analyzedFiles", data.path("contextReport").path("fileSnippets").size());
+        result.put("passed", !data.path("contextId").asText().isBlank()
+                && data.path("contextReport").path("fileSnippets").toString().contains(session.marker));
+        result.put("elapsedMs", (System.nanoTime() - started) / 1_000_000L);
+        return result;
+    }
+
     /** 真实 HTTP 输入输出；只返回业务结果，认证材料不进入统计对象。 */
     private Reply call(Session session, String method, String path, Object body) throws Exception {
         var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + path))
@@ -269,6 +401,8 @@ class RealModelConcurrencyAcceptanceTest {
             if (!session.csrf.isEmpty()) request.header("X-XSRF-TOKEN", session.csrf);
         }
         if (body == null) request.method(method, HttpRequest.BodyPublishers.noBody());
+        else if (body instanceof byte[] bytes) request.header("Content-Type", "application/octet-stream")
+                .method(method, HttpRequest.BodyPublishers.ofByteArray(bytes));
         else request.header("Content-Type", "application/json")
                 .method(method, HttpRequest.BodyPublishers.ofString(json.writeValueAsString(body)));
         long start = System.nanoTime();
@@ -283,10 +417,20 @@ class RealModelConcurrencyAcceptanceTest {
 
     /** 同时起跑，持续采样 Redis 在途数量和真实连接池；完成后核对每个账号的历史新增。 */
     private Map<String, Object> wave(String name, String model, List<Session> callers, boolean overflow) throws Exception {
+        return wave(name, model, callers, overflow, Operation.DIRECT);
+    }
+
+    /** 各阶段独立计时；Plan 返回后用真实 planId 和上下文版本确认，不伪造计划。 */
+    private Map<String, Object> wave(String name, String model, List<Session> callers, boolean overflow,
+                                     Operation operation) throws Exception {
         Map<String, Object> stage = new LinkedHashMap<>();
         stage.put("name", name);
         stage.put("model", model);
         stage.put("requestedConcurrency", callers.size());
+        stage.put("distinctAccounts", callers.stream().map(s -> s.userId).distinct().count());
+        stage.put("operation", operation.name());
+        stage.put("documentUsers", callers.stream().filter(s -> !s.documentId.isEmpty()).count());
+        stage.put("projectUsers", callers.stream().filter(s -> s.documentId.isEmpty()).count());
         stages.add(stage);
         List<Long> before = new ArrayList<>();
         for (Session session : callers) before.add(historyCount(session));
@@ -301,15 +445,16 @@ class RealModelConcurrencyAcceptanceTest {
                 Session session = callers.get(i);
                 tasks.add(workers.submit(() -> {
                     gate.await();
-                    return enhance(session, model, sample);
+                    return invoke(session, selectedModel(model, session), sample, operation);
                 }));
             }
             gate.countDown();
             if (overflow) {
-                boolean full = awaitCount(PREFIX + ":global", 50, Duration.ofSeconds(12));
+                boolean full = awaitCount(PREFIX + ":global", CAPACITY, Duration.ofSeconds(20));
                 stage.put("observedFullCapacity", full);
                 if (full) {
-                    Reply probe = call(sessions.get(50), "POST", "/api/v1/optimizations", payload(model, 0));
+                    Reply probe = call(sessions.get(CAPACITY), "POST", "/api/v1/optimizations",
+                            payload(sessions.get(CAPACITY), model));
                     stage.put("overflowStatus", probe.status());
                     stage.put("overflowCode", probe.body().path("error").path("code").asText());
                     Reply health = call(null, "GET", "/api/v1/health", null);
@@ -330,17 +475,23 @@ class RealModelConcurrencyAcceptanceTest {
         stage.put("p95Ms", percentile(times, .95));
         stage.put("maxMs", times.getLast());
         stage.put("withinBrowserDeadline", times.stream().allMatch(t -> t < 70_000));
+        stage.put("beyondBrowserDeadline", times.stream().filter(t -> t >= 70_000).count());
         int historySaved = 0;
+        int historyCorrect = 0;
         for (int i = 0; i < callers.size(); i++) {
-            if (Boolean.TRUE.equals(results.get(i).get("valid")) && historyCount(callers.get(i)) == before.get(i) + 1) {
-                historySaved++;
-            }
+            long added = historyCount(callers.get(i)) - before.get(i);
+            boolean successful = Boolean.TRUE.equals(results.get(i).get("httpSucceeded"));
+            long expected = operation == Operation.PLAN || !successful ? 0 : 1;
+            if (added == expected) historyCorrect++;
+            if (expected == 1 && added == 1) historySaved++;
         }
         stage.put("historyRecordsVerified", historySaved);
+        stage.put("historyAccountsCorrect", historyCorrect);
         boolean boundary = !overflow || Boolean.TRUE.equals(stage.get("observedFullCapacity"))
                 && Integer.valueOf(503).equals(stage.get("overflowStatus"))
                 && "MODEL_CONCURRENCY_LIMIT".equals(stage.get("overflowCode"));
-        stage.put("passed", successes == callers.size() && historySaved == successes && boundary
+        stage.put("passed", successes == callers.size() && historyCorrect == callers.size() && boundary
+                && monitor.upstreamPeak <= CAPACITY
                 && Boolean.TRUE.equals(stage.get("withinBrowserDeadline")));
         saveReport();
         return stage;
@@ -359,7 +510,7 @@ class RealModelConcurrencyAcceptanceTest {
             }
             boolean full = awaitCount(PREFIX + ":user:" + sameAccount.getFirst().userId, 3, Duration.ofSeconds(10));
             stage.put("observedThree", full);
-            Reply fourth = call(sameAccount.get(3), "POST", "/api/v1/optimizations", payload(MODELS.getFirst(), 0));
+            Reply fourth = call(sameAccount.get(3), "POST", "/api/v1/optimizations", payload(sameAccount.get(3), MODELS.getFirst()));
             stage.put("fourthStatus", fourth.status());
             stage.put("fourthCode", fourth.body().path("error").path("code").asText());
             List<Map<String, Object>> results = new ArrayList<>();
@@ -374,27 +525,65 @@ class RealModelConcurrencyAcceptanceTest {
 
     /** 校验真实 Provider、四要素和非空结果；仅保存安全元数据与合成场景编号。 */
     private Map<String, Object> enhance(Session session, String model, int sample) {
+        return invoke(session, model, sample, Operation.DIRECT);
+    }
+
+    /** 除协议与四要素外，核对上下文片段和仅存在于文件里的规则代号是否进入最终结果。 */
+    private Map<String, Object> invoke(Session session, String model, int sample, Operation operation) {
         long start = System.nanoTime();
         Map<String, Object> result = new LinkedHashMap<>();
-        result.put("sample", sample % PROMPTS.size());
+        result.put("sample", session.sample);
+        result.put("contextKind", session.kind);
+        result.put("rawPromptCharacters", session.rawPrompt.length());
+        result.put("model", model);
         result.put("valid", false);
         try {
-            Reply reply = call(session, "POST", "/api/v1/optimizations", payload(model, sample));
+            Map<String, Object> body = payload(session, model);
+            String endpoint = "/api/v1/optimizations";
+            if (operation == Operation.PLAN) {
+                session.plan = null;
+                endpoint += "/plan";
+                body = Map.of("rawPrompt", session.rawPrompt, "modelId", model, "contextDescription", DESCRIPTION,
+                        "planningContext", session.contextReference, "conversationHistory", List.of());
+            } else if (operation == Operation.CONFIRMED) {
+                body.put("planConfirmation", confirmation(session));
+            }
+            Reply reply = call(session, "POST", endpoint, body);
             result.put("status", reply.status());
+            result.put("httpSucceeded", reply.status() == 200);
             result.put("requestId", reply.body().path("requestId").asText());
             result.put("errorCode", reply.body().path("error").path("code").asText());
+            result.put("errorMessage", reply.body().path("error").path("message").asText());
             JsonNode data = reply.body().path("data");
             JsonNode actual = data.path("provider");
             result.put("provider", actual);
-            boolean sections = Set.of("BACKGROUND", "TASK", "OUTPUT", "CONSTRAINTS").stream().allMatch(type -> {
-                for (JsonNode section : data.path("sections")) {
-                    if (type.equals(section.path("type").asText()) && !section.path("content").asText().isBlank()) return true;
-                }
-                return false;
-            });
-            result.put("valid", reply.status() == 200 && actual.has("mock") && !actual.path("mock").asBoolean()
-                    && sections && !data.path("optimizedPrompt").asText().isBlank());
-            result.put("outputCharacters", data.path("optimizedPrompt").asText().length());
+            boolean real = actual.has("mock") && !actual.path("mock").asBoolean();
+            if (operation == Operation.PLAN) {
+                boolean valid = reply.status() == 200 && real && !data.path("planId").asText().isBlank()
+                        && data.path("questions").isArray() && data.path("questions").size() <= 8
+                        && session.contextReference.equals(data.path("planningContext"));
+                result.put("valid", valid);
+                result.put("questionCount", data.path("questions").size());
+                if (valid) session.plan = data;
+            } else {
+                boolean sections = Set.of("BACKGROUND", "TASK", "OUTPUT", "CONSTRAINTS").stream().allMatch(type -> {
+                    for (JsonNode section : data.path("sections")) {
+                        if (type.equals(section.path("type").asText()) && !section.path("content").asText().isBlank()) return true;
+                    }
+                    return false;
+                });
+                String output = data.path("optimizedPrompt").asText();
+                JsonNode snippets = data.path("contextReport").path("fileSnippets");
+                boolean contextPresent = snippets.isArray() && !snippets.isEmpty() && snippets.toString().contains(session.marker);
+                boolean markerPresent = output.contains(session.marker);
+                result.put("valid", reply.status() == 200 && real && sections && !output.isBlank()
+                        && contextPresent && markerPresent);
+                result.put("contextFileCount", snippets.size());
+                result.put("contextMarkerPresent", contextPresent);
+                result.put("outputMarkerPresent", markerPresent);
+                result.put("analysisStatus", data.path("contextReport").path("analysisStatus").asText());
+                result.put("outputCharacters", output.length());
+            }
         } catch (Exception failure) {
             result.put("errorType", failure.getClass().getSimpleName());
         }
@@ -402,9 +591,25 @@ class RealModelConcurrencyAcceptanceTest {
         return result;
     }
 
-    private Map<String, Object> payload(String model, int sample) {
-        return Map.of("rawPrompt", PROMPTS.get(sample % PROMPTS.size()), "modelId", model,
-                "context", Map.of("customDescription", "这是公开虚构场景，不包含真实用户或项目资料。", "files", List.of()));
+    private Map<String, Object> payload(Session session, String model) {
+        return new LinkedHashMap<>(Map.of("rawPrompt", session.rawPrompt, "modelId", model,
+                "context", session.context, "conversationHistory", List.of()));
+    }
+
+    /** 两种上下文分别均匀分配给 Flash 和 Pro，避免混合模型阶段只覆盖一组资料。 */
+    private String selectedModel(String model, Session session) {
+        return "mixed".equals(model) ? MODELS.get((session.sample / 2) % MODELS.size()) : model;
+    }
+
+    /** 合成场景的未知项明确保持待确认；不自动把模型推荐的假设当作事实。 */
+    private Map<String, Object> confirmation(Session session) {
+        assertThat(session.plan).as("确认必须使用本账号实际生成的计划").isNotNull();
+        List<Map<String, String>> answers = new ArrayList<>();
+        for (JsonNode question : session.plan.path("questions")) {
+            answers.add(Map.of("questionId", question.path("id").asText(), "question", question.path("question").asText(),
+                    "answer", "采用上传资料与原始需求中已经明确的要求；该问题缺少的具体数值、日期或选择尚未确定，请在最终提示词中保留待确认，不代为决策。"));
+        }
+        return Map.of("planId", session.plan.path("planId").asText(), "planningContext", session.contextReference, "answers", answers);
     }
 
     private long historyCount(Session session) throws Exception {
@@ -438,11 +643,31 @@ class RealModelConcurrencyAcceptanceTest {
 
     private record Account(UUID userId, UUID tenantId, UUID workspaceId, String email) { }
     private record Reply(int status, JsonNode body, long elapsedMs) { }
+    private enum Operation { DIRECT, PLAN, CONFIRMED }
     private static final class Session {
         private final UUID userId;
         private final Map<String, String> cookies = Collections.synchronizedMap(new LinkedHashMap<>());
         private String csrf = "";
+        private int sample;
+        private String rawPrompt;
+        private String marker;
+        private String kind;
+        private Map<String, Object> context;
+        private JsonNode contextReference;
+        private JsonNode plan;
+        private String documentId = "";
+        private boolean ownsDocument;
         private Session(UUID userId) { this.userId = userId; }
+        /** 同账号跨设备共用资料，但每个设备持有独立登录会话。 */
+        private void copyContext(Session source) {
+            sample = source.sample;
+            rawPrompt = source.rawPrompt;
+            marker = source.marker;
+            kind = source.kind;
+            context = source.context;
+            contextReference = source.contextReference;
+            documentId = source.documentId;
+        }
     }
 
     /** 采样器不改变请求和连接行为；CPU 包含本 JVM 的平台和 HTTP 驱动开销。 */

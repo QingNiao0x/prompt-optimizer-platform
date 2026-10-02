@@ -240,6 +240,103 @@ try {
   report.checks.push({ name: stage, presetAndCustomRanges: 6, visitCount: count, uniqueVisitors: 1,
     activeUsers: 1, charts: chartNames.length, geoIpMissingReturnsNull: true,
     untrustedForwardedIpIgnored: true, invalidRangeStatus: 400, browserErrors });
+
+  stage = 'copy_export_real_workbench';
+  await member.evaluate(() => localStorage.setItem('prompt-optimizer.plan-mode.v1',
+    JSON.stringify({ enabled: false, introSeen: true })));
+  await member.goto(`${base}/workbench`);
+  await member.getByLabel('原始提示词', { exact: true }).fill('整理一周学习计划，输出中文多行清单，仅用于复制验收。');
+  const generated = member.waitForResponse((response) => response.url().endsWith('/api/v1/optimizations')
+    && response.request().method() === 'POST');
+  await member.getByRole('button', { name: '直接增强提示词', exact: true }).click();
+  const copyResult = await data(await generated);
+  expect(copyResult.provider.mock).toBe(true);
+  const exportLogs = async () => data(await admin.request.get(`${base}/api/v1/admin/analytics/operations`, {
+    params: { fromDate: today, toDate: today, userId: fixture.memberId, eventType: 'RESULT_EXPORTED', size: '100' },
+  }));
+  const originalExports = (await exportLogs()).total;
+  // 保留真实剪贴板，只注入拒绝分支和弹窗拦截；外部平台不会收到验收文本。
+  await member.evaluate(() => {
+    const nativeWrite = navigator.clipboard.writeText.bind(navigator.clipboard);
+    const probe = window.__copyExportAcceptance = { reject: false, writes: 0 };
+    navigator.clipboard.writeText = async (text) => {
+      if (probe.reject) throw new DOMException('Synthetic permission denial', 'NotAllowedError');
+      await nativeWrite(text);
+      probe.writes++;
+    };
+    window.open = () => null;
+  });
+  const copyButton = member.locator('.copy-main-button');
+  await member.bringToFront();
+  await copyButton.click();
+  await poll(exportLogs, (value) => value.total === originalExports + 1, stage);
+  // 用真实粘贴动作检查 OS 剪贴板，不读取复制前可能存在的用户内容。
+  await member.evaluate(() => {
+    const field = document.createElement('textarea');
+    field.setAttribute('aria-label', '验收剪贴板粘贴区');
+    document.body.append(field);
+  });
+  const pasteField = member.getByRole('textbox', { name: '验收剪贴板粘贴区', exact: true });
+  await pasteField.focus();
+  await member.keyboard.press(process.platform === 'darwin' ? 'Meta+V' : 'Control+V');
+  await expect(pasteField).toHaveValue(copyResult.optimizedPrompt);
+  await pasteField.evaluate((element) => element.remove());
+
+  stage = 'copy_export_permission_failure';
+  await member.evaluate(() => { window.__copyExportAcceptance.reject = true; });
+  await copyButton.click();
+  const manualDialog = member.getByRole('dialog', { name: '手动复制提示词', exact: true });
+  await expect(manualDialog.getByRole('textbox')).toHaveValue(copyResult.optimizedPrompt);
+  await manualDialog.getByRole('button', { name: '全选', exact: true }).click();
+  expect((await exportLogs()).total).toBe(originalExports + 1);
+  await manualDialog.getByRole('button', { name: '关闭', exact: true }).click();
+
+  stage = 'copy_export_blocked_popup';
+  await member.evaluate(() => { window.__copyExportAcceptance.reject = false; });
+  await member.getByRole('button', { name: '选择 AI 平台', exact: true }).click();
+  await member.getByRole('menuitem', { name: '复制并打开 Kimi', exact: true }).click();
+  await poll(exportLogs, (value) => value.total === originalExports + 2, stage);
+  const manualLink = member.getByRole('link', { name: '打开 Kimi', exact: true });
+  await expect(manualLink).toBeVisible();
+  await memberContext.route('https://www.kimi.com/**', (route) => route.fulfill({
+    contentType: 'text/html', body: '<title>Isolated platform fixture</title>',
+  }));
+  const opened = memberContext.waitForEvent('page');
+  await manualLink.click();
+  const target = await opened;
+  await expect(target).toHaveURL('https://www.kimi.com/');
+  await target.close();
+  expect((await exportLogs()).total).toBe(originalExports + 2);
+
+  stage = 'copy_export_lost_response_idempotency';
+  const exportAttempts = [];
+  await member.route('**/api/v1/analytics/events', async (route) => {
+    const event = route.request().postDataJSON();
+    if (event.eventType !== 'RESULT_EXPORTED') { await route.continue(); return; }
+    exportAttempts.push(event);
+    if (exportAttempts.length === 1) {
+      // 服务端已真实接收，再丢弃应答，验证不确定网络结果下的重试不会重复落库。
+      expect((await route.fetch()).status()).toBe(200);
+      await route.abort('failed');
+    } else await route.continue();
+  });
+  await member.bringToFront();
+  await copyButton.click();
+  await expect(copyButton).toHaveText('已复制');
+  await poll(exportLogs, (value) => exportAttempts.length >= 2 && value.total === originalExports + 3, stage);
+  expect(new Set(exportAttempts.map((event) => event.eventId)).size).toBe(1);
+  expect(exportAttempts.every((event) => JSON.stringify(event) === JSON.stringify(exportAttempts[0]))).toBe(true);
+  await expect.poll(() => member.evaluate(() => Object.keys(localStorage)
+    .filter((key) => key.startsWith('prompt-optimizer.analytics.pending.v1:')).length)).toBe(0);
+  await member.unroute('**/api/v1/analytics/events');
+  await poll(inspect, (value) => value.pending === 0, stage);
+  expect((await exportLogs()).total).toBe(originalExports + 3);
+  expect(await member.evaluate(() => window.__copyExportAcceptance.writes)).toBe(3);
+  expect(browserErrors).toBe(0);
+  report.checks.push({ name: 'copy_export_real_browser_and_database', clipboard: 'native write and keyboard paste',
+    successfulCopies: 3, rejectedCopies: 1, persistedExports: 3, manualSelectionExports: 0, manualLinkExports: 0,
+    lostResponseRetries: exportAttempts.length - 1, stableEventId: true, duplicateDatabaseRows: 0,
+    externalPlatform: 'intercepted fixture; no prompt sent', browserErrors });
   report.completedAt = new Date().toISOString();
   report.passed = true;
   await writeFile(fixture.report, JSON.stringify(report, null, 2), 'utf8');
