@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SemanticRetrievalConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
+            .withPropertyValues("app.provider.concurrency.store-mode=MEMORY")
             .withConfiguration(AutoConfigurations.of(RestClientAutoConfiguration.class))
             .withUserConfiguration(SemanticRetrievalConfiguration.class);
 

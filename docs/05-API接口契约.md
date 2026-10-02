@@ -207,3 +207,13 @@ Map-Reduce 默认关闭，启用变量为 `MAP_REDUCE_SUMMARY_ENABLED=true`。�
 建议错误码：`INVALID_ARGUMENT`、`UNAUTHORIZED`、`FORBIDDEN`、`RATE_LIMITED`、`QUOTA_EXCEEDED`、`CONTEXT_TOO_LARGE`、`UNSUPPORTED_FILE`、`PROVIDER_TIMEOUT`、`PROVIDER_AUTH_FAILED`、`PROVIDER_RATE_LIMITED`、`PROVIDER_REQUEST_REJECTED`、`PROVIDER_UNAVAILABLE`、`RESULT_INVALID`、`INTERNAL_ERROR`。
 
 Provider 错误不会透传上游响应正文、API Key 或用户源码。`PROVIDER_RATE_LIMITED`、`PROVIDER_TIMEOUT` 和临时不可用错误可标记为可重试；鉴权失败、请求被拒绝和结构化结果无效默认不可重试。
+
+平台并发控制错误与上游 Provider 错误分开返回，均使用现有统一错误结构，`retryable=true`、`details.retryAfterSeconds=1`，响应头包含 `Retry-After: 1`。该提示是建议等待时间，不承诺一秒后一定有空闲名额。
+
+| HTTP 状态 | 错误码 | 含义 |
+| --- | --- | --- |
+| 429 | `USER_MODEL_CONCURRENCY_LIMIT` | 同一服务端认证账号已有三个模型相关请求执行中。 |
+| 503 | `MODEL_CONCURRENCY_LIMIT` | 平台已有五十个模型 HTTP 调用执行中，本次未发送上游请求。 |
+| 503 | `MODEL_CONCURRENCY_UNAVAILABLE` | 共享计数不可用，本次拒绝新增调用。 |
+
+账号限制覆盖 `POST /api/v1/optimizations`、`POST /api/v1/optimizations/plan`、`POST /api/v1/context/analyze`、`POST /api/v1/context/planning` 和 `POST /api/v1/optimization-history/{id}/re-optimize`；登录、历史读取及健康检查不占用账号名额。50/3 为默认值，部署可统一调整。

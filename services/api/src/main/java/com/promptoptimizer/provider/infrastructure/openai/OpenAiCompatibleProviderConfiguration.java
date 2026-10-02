@@ -3,11 +3,14 @@ package com.promptoptimizer.provider.infrastructure.openai;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.service.DocumentSummaryModel;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
+import com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyConfiguration;
+import com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
@@ -24,6 +27,7 @@ import java.util.Set;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(prefix = "app.provider", name = "mode", havingValue = "openai-compatible")
 @EnableConfigurationProperties(OpenAiCompatibleProperties.class)
+@Import(ModelConcurrencyConfiguration.class)
 public class OpenAiCompatibleProviderConfiguration {
 
     private static final Set<String> SUPPORTED_SCHEMES = Set.of("http", "https");
@@ -34,7 +38,8 @@ public class OpenAiCompatibleProviderConfiguration {
     @Bean
     RestClient openAiCompatibleRestClient(
             RestClient.Builder builder,
-            OpenAiCompatibleProperties properties
+            OpenAiCompatibleProperties properties,
+            ModelConcurrencyHttpInterceptor concurrencyInterceptor
     ) {
         validateRoutes(properties);
         validateTimeout("connect-timeout", properties.getConnectTimeout());
@@ -43,7 +48,8 @@ public class OpenAiCompatibleProviderConfiguration {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(properties.getConnectTimeout());
         requestFactory.setReadTimeout(properties.getReadTimeout());
-        return builder.requestFactory(requestFactory).build();
+        return builder.clone().requestFactory(requestFactory)
+                .requestInterceptor(concurrencyInterceptor).build();
     }
 
     /**

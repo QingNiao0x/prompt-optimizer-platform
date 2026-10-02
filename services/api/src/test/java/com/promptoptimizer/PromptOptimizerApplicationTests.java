@@ -40,6 +40,16 @@ class PromptOptimizerApplicationTests {
     @MockBean
     private com.promptoptimizer.provider.mapper.PlatformModelMapper platformModelMapper;
 
+    // 全量测试的类路径也包含数据库验收夹具；此启动测试显式关闭数据库，不能创建真实 Mapper。
+    @MockBean
+    private com.promptoptimizer.analytics.support.AnalyticsAcceptanceMapper analyticsAcceptanceMapper;
+
+    @MockBean
+    private com.promptoptimizer.analytics.support.AnalyticsAggregationFixtureMapper analyticsAggregationFixtureMapper;
+
+    @MockBean
+    private com.promptoptimizer.analytics.support.AnalyticsPerformanceFixtureMapper analyticsPerformanceFixtureMapper;
+
     @Test
     void contextLoads() {
     }

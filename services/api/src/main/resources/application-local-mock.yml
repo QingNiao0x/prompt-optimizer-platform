@@ -6,6 +6,9 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 
 app:
+  provider:
+    concurrency:
+      store-mode: MEMORY
   history:
     enabled: false
   security:

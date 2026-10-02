@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class OpenAiCompatibleProviderConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
+            .withPropertyValues("app.provider.concurrency.store-mode=MEMORY")
             .withConfiguration(AutoConfigurations.of(
                     JacksonAutoConfiguration.class,
                     RestClientAutoConfiguration.class

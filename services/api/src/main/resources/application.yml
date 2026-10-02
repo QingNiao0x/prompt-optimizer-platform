@@ -147,6 +147,12 @@ app:
       max-reduce-calls: ${MAP_REDUCE_MAX_REDUCE_CALLS:32}
   provider:
     mode: ${MODEL_PROVIDER_MODE:openai-compatible}
+    concurrency:
+      # 所有模型路由共享上游容量；账号限制覆盖同一用户的所有标签页、设备和工作区。
+      global-limit: ${MODEL_CONCURRENCY_GLOBAL_LIMIT:50}
+      user-limit: ${MODEL_CONCURRENCY_USER_LIMIT:3}
+      store-mode: ${MODEL_CONCURRENCY_STORE_MODE:REDIS}
+      key-prefix: ${MODEL_CONCURRENCY_KEY_PREFIX:prompt-optimizer:model-concurrency}
     openai-compatible:
       provider-name: ${MODEL_PROVIDER_NAME:deepseek}
       # 当前适配器会直接 POST 到该地址，不会自动拼接 /chat/completions。

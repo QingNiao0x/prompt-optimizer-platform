@@ -7,18 +7,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 /**
- * 后端启动成功后打印 ASCII 启动图案。
+ * 应用就绪后打印提示词优化平台的 ASCII 横幅与运行信息，不参与业务初始化。
  *
- * @DateTime: 2026-08-12
- * @Author: QingNiao
- * @ProjectName: prompt-optimizer-platform
- * @Description: 监听 ApplicationReadyEvent，在应用完全就绪后于控制台打印启动图案与关键信息，便于确认服务启动成功。
+ * @author QingNiao
  * @since 0.1.0
  */
 @Component
@@ -26,66 +18,33 @@ public class StartupBannerPrinter {
 
     private static final Logger log = LoggerFactory.getLogger(StartupBannerPrinter.class);
 
-    private static final int LETTER_ROWS = 5;
+    private static final int MAX_LINE_WIDTH = 100;
     private static final String GITHUB_USERNAME = "QingNiao0x";
 
     /**
-     * 根据第 1 张参考图绘制的原创 ASCII 青鸟：突出展开的翅膀、鸟身和向右的鸟喙。
+     * 对话气泡经过整理，形成包含背景、任务、输出和约束的结构化提示词。
      *
      * <p>这里使用纯 ASCII 字符，避免不同终端对宽字符渲染不一致。</p>
      */
-    private static final String[] BIRD = {
-            "                         _..---~~~~---.._",
-            "                  _..--''      _.._      `--.._",
-            "             _.-'          _.-'   `-._         `-._",
-            "        _.-''       _..--''  .--.    `--.._       `.",
-            "   _.-'      _..--''        .'    `.        `--.._  \\",
-            " .'   _..--''       _..---/  .--.   \\---.._      `-.>----",
-            "/_.-''       _..---'     |  |  |     |     `---.._  \\",
-            "\\__..---'''             `-.`-' .-'              `-./",
-            "                           `---'       __..---''",
-            "                 _..---.        __..--''",
-            "             _.-'      `--..--''",
-            "          .-'       _..---.._",
-            "        .'      _.-'         `-._",
-            "       /_____.-'               `-._",
+    private static final String[] PROMPT_ART = {
+            ".--------------------.            /\\            .--------------------------.",
+            "| > an idea ...      |           /  \\           | CONTEXT     [========]   |",
+            "| ? a question       |    ----> < {} > ---->    | TASK        [========]   |",
+            "| ...                |           \\  /           | OUTPUT      [========]   |",
+            "'----.  .------------'            \\/            | CONSTRAINTS [========]   |",
+            "     \\/                                         '--------------------------'",
+            "",
+            "      RAW PROMPT               OPTIMIZE              STRUCTURED PROMPT",
+            "",
+            "                         PROMPT OPTIMIZER PLATFORM",
+            "                    Turn intent into structured prompts.",
     };
-
-    /*
-     * 第 2 张参考图：侧身飞鸟版本。先保留在这里，后续可以做成可配置的启动图案。
-     *
-     * private static final String[] BIRD_OPTION_TWO = {
-     *         "                 /\\",
-     *         "        ________/  \\________",
-     *         "   ____/                       `--.._",
-     *         "  /        .--.        _..---.      `--..__",
-     *         " <        /    \\____.'       `-.          `>----",
-     *         "  \\______/                         `-..__  /",
-     *         "        `--..____________________________/"
-     * };
-     *
-     * 第 3 张参考图：线稿展翅版本。
-     *
-     * private static final String[] BIRD_OPTION_THREE = {
-     *         "                   /\\",
-     *         "          __..---'  `---..__",
-     *         "     _.-'      _.._       `-._",
-     *         "  .-'        .'    `.         `-.",
-     *         " /     _..--'  /\\   `--.._     \\",
-     *         "|  _.-'      /  \\       `-._  |>----",
-     *         " \\/          `--'           `-./",
-     *         "  `--..__              __..--'",
-     *         "         `---..____..---'"
-     * };
-     */
-
-    /**
-     * 用户名字符画的字母模板，每行宽度对齐到该字母的最大宽度。
-     */
-    private static final Map<Character, String[]> LETTERS = buildLetters();
 
     private final Environment environment;
 
+    /**
+     * 使用 Spring 环境读取当前 Profile 与服务端口。
+     */
     public StartupBannerPrinter(Environment environment) {
         this.environment = environment;
     }
@@ -102,68 +61,32 @@ public class StartupBannerPrinter {
     }
 
     /**
-     * 组装启动图案：展翅青鸟 + GitHub 用户名字符画 + 运行信息。
+     * 按项目图案、顶格 GitHub 署名、运行信息的顺序组装横幅；未指定 Profile 时使用 default。
      */
     String buildBanner(String profile, String apiBase) {
-        if (profile.isBlank()) {
+        if (profile == null || profile.isBlank()) {
             profile = "default";
         }
 
-        String wordArt = renderWord("QINGNIAO0X");
-        int width = maxLineWidth(wordArt);
-        String birdIndent = " ".repeat((width - maxLineWidth(BIRD)) / 2);
-        String birdArt = Arrays.stream(BIRD)
-                .map(line -> birdIndent + line)
-                .collect(Collectors.joining("\n"));
-
-        return birdArt + "\n\n"
-                + wordArt + "\n\n"
+        return String.join("\n", PROMPT_ART) + "\n\n"
                 + GITHUB_USERNAME + "\n"
-                + "Profile : " + profile + "\n"
-                + "API     : " + apiBase;
+                + formatInfo("Profile : ", profile) + "\n"
+                + formatInfo("API     : ", apiBase);
     }
 
     /**
-     * 把字母模板按行拼接成整词字符画。
+     * 超长运行信息主动折行并对齐到值的起始列，保留完整内容且每行不超过 100 个字符。
      */
-    private static String renderWord(String word) {
-        StringBuilder result = new StringBuilder();
-        for (int row = 0; row < LETTER_ROWS; row++) {
-            for (int i = 0; i < word.length(); i++) {
-                String[] letter = LETTERS.get(word.charAt(i));
-                if (letter == null) {
-                    throw new IllegalArgumentException("不支持的字符: " + word.charAt(i));
-                }
-                result.append(letter[row]);
-                if (i < word.length() - 1) {
-                    result.append("  ");
-                }
+    private static String formatInfo(String prefix, String value) {
+        int valueWidth = MAX_LINE_WIDTH - prefix.length();
+        StringBuilder result = new StringBuilder(prefix);
+        for (int start = 0; start < value.length(); start += valueWidth) {
+            if (start > 0) {
+                // 续行不重复标签，避免多 Profile 被误读成多个独立信息项。
+                result.append('\n').append(" ".repeat(prefix.length()));
             }
-            if (row < LETTER_ROWS - 1) {
-                result.append('\n');
-            }
+            result.append(value, start, Math.min(start + valueWidth, value.length()));
         }
         return result.toString();
-    }
-
-    private static int maxLineWidth(String block) {
-        return block.lines().mapToInt(String::length).max().orElse(0);
-    }
-
-    private static int maxLineWidth(String[] block) {
-        return Arrays.stream(block).mapToInt(String::length).max().orElse(0);
-    }
-
-    private static Map<Character, String[]> buildLetters() {
-        Map<Character, String[]> letters = new LinkedHashMap<>();
-        letters.put('Q', new String[]{"  ___  ", " / _ \\ ", "| | | |", "| |_| |", " \\__\\_\\"});
-        letters.put('I', new String[]{"  ___  ", " |_ _| ", "  | |  ", "  | |  ", " |___| "});
-        letters.put('N', new String[]{" _   _ ", "| \\ | |", "|  \\| |", "| |\\  |", "|_| \\_|"});
-        letters.put('G', new String[]{"  ____ ", " / ___|", "| |  _ ", "| |_| |", " \\____|"});
-        letters.put('A', new String[]{"    _    ", "   / \\   ", "  / _ \\  ", " / ___ \\ ", "/_/   \\_\\"});
-        letters.put('O', new String[]{"  ___  ", " / _ \\ ", "| | | |", "| |_| |", " \\___/ "});
-        letters.put('0', new String[]{"  ___  ", " / _ \\ ", "|  _  |", "| | | |", " \\___/ "});
-        letters.put('X', new String[]{" _  _ ", "| || |", "| __ |", "| || |", "|_||_|"});
-        return letters;
     }
 }

@@ -7,6 +7,7 @@ import com.promptoptimizer.context.service.DocumentUploadException;
 import com.promptoptimizer.identity.service.RegistrationException;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
+import com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,22 @@ public class GlobalExceptionHandler {
     private static final Pattern JVM_HELPFUL_NULL_POINTER_MESSAGE = Pattern.compile(
             "^Cannot invoke \"[^\"\\r\\n]{1,256}\" because \"[^\"\\r\\n]{1,96}\" is null$"
     );
+
+    /** 本平台的账号并发和总容量不足分别返回 429/503，不混淆为上游模型限流。 */
+    @ExceptionHandler(ModelConcurrencyException.class)
+    public ResponseEntity<ApiErrorResponse> handleModelConcurrency(ModelConcurrencyException exception,
+                                                                   HttpServletRequest request) {
+        HttpStatus status = exception.getReason() == ModelConcurrencyException.Reason.USER_LIMIT
+                ? HttpStatus.TOO_MANY_REQUESTS : HttpStatus.SERVICE_UNAVAILABLE;
+        String code = switch (exception.getReason()) {
+            case USER_LIMIT -> "USER_MODEL_CONCURRENCY_LIMIT";
+            case GLOBAL_LIMIT -> "MODEL_CONCURRENCY_LIMIT";
+            case STORE_UNAVAILABLE -> "MODEL_CONCURRENCY_UNAVAILABLE";
+        };
+        ResponseEntity<ApiErrorResponse> response = buildResponse(request, status, code,
+                exception.getMessage(), true, Map.of("retryAfterSeconds", 1));
+        return ResponseEntity.status(status).header(HttpHeaders.RETRY_AFTER, "1").body(response.getBody());
+    }
 
     /** 计划过期时返回冲突状态，提示客户端重新准备上下文和确认问题。 */
     @ExceptionHandler(com.promptoptimizer.enhancement.service.PlanningSessionExpiredException.class)

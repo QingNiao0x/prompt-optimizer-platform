@@ -3,10 +3,13 @@ package com.promptoptimizer.context.infrastructure.embedding;
 import com.promptoptimizer.context.service.impl.SemanticVectorIndex;
 import com.promptoptimizer.context.service.SemanticVectorIndexOptions;
 import com.promptoptimizer.context.service.TextEmbeddingModel;
+import com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyConfiguration;
+import com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
@@ -22,6 +25,7 @@ import java.util.Set;
  */
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(SemanticRetrievalProperties.class)
+@Import(ModelConcurrencyConfiguration.class)
 public class SemanticRetrievalConfiguration {
 
     private static final Set<String> SUPPORTED_SCHEMES = Set.of("http", "https");
@@ -29,7 +33,8 @@ public class SemanticRetrievalConfiguration {
     @Bean("semanticEmbeddingRestClient")
     RestClient semanticEmbeddingRestClient(
             RestClient.Builder builder,
-            SemanticRetrievalProperties properties
+            SemanticRetrievalProperties properties,
+            ModelConcurrencyHttpInterceptor concurrencyInterceptor
     ) {
         validateEndpoint(properties.getEndpoint());
         validateTimeout("connect-timeout", properties.getConnectTimeout());
@@ -38,7 +43,8 @@ public class SemanticRetrievalConfiguration {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(properties.getConnectTimeout());
         requestFactory.setReadTimeout(properties.getReadTimeout());
-        return builder.requestFactory(requestFactory).build();
+        return builder.clone().requestFactory(requestFactory)
+                .requestInterceptor(concurrencyInterceptor).build();
     }
 
     @Bean
