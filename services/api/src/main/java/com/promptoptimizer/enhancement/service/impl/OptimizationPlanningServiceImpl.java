@@ -292,12 +292,16 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
             var guard = new RequirementFidelityGuard();
             List<String> rules = guard.explicitRules(request.rawPrompt(), List.of());
             // 包括非推荐选项；不能让用户通过候选答案无意放弃原始需求中的明确规则。
-            validated.questions().forEach(question -> question.options().forEach(option -> {
+            // 格式和安全仍校验所有项；已被明确事实消除的问题不因无关候选触发额外模型重试。
+            questionFilter.filter(validated.questions(), request).forEach(question -> {
+                question.examples().forEach(example -> guard.validate(example, rules, "questions.examples"));
+                question.options().forEach(option -> {
                 guard.validate(option.answer(), rules, "questions.options.answer");
                 guard.validate(option.label(), rules, "questions.options.label");
                 guard.validate(option.description(), rules, "questions.options.description");
                 guard.validate(option.recommendationReason(), rules, "questions.options.recommendationReason");
-            }));
+                });
+            });
             return validated;
         });
     }

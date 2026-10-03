@@ -28,7 +28,8 @@ const frozenCases = await parse('cases.json');
 // 定向补验使用独立的场景清单，不改动原始冻结输入，也不要求重新生成无关场景。
 let selectedCaseIds;
 try {
-  selectedCaseIds = (await parse('selected-cases.json')).caseIds;
+  const selected = await parse('selected-cases.json');
+  selectedCaseIds = Array.isArray(selected) ? selected : selected.caseIds;
   if (!Array.isArray(selectedCaseIds) || selectedCaseIds.length === 0
     || new Set(selectedCaseIds).size !== selectedCaseIds.length
     || selectedCaseIds.some(id => !frozenCases.some(item => item.id === id))) {
@@ -49,7 +50,7 @@ const page = await context.newPage();
 page.setDefaultTimeout(15000);
 await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: 'http://127.0.0.1:5175' });
 const report = { startedAt: new Date().toISOString(), caseIds: cases.map(item => item.id), clipboardCaseIds,
-  history: [], clipboard: [], scope: '真实历史API；真实响应在工作台Store回放后使用原生剪贴板；不生成新结果、不打开外部AI。' };
+  history: [], clipboard: [], unavailable: [], scope: '真实历史API；真实响应在工作台Store回放后使用原生剪贴板；不生成新结果、不打开外部AI。失败或未生成的结果单列，不记为通过。' };
 
 try {
   // 页面未就绪同样保留失败证据；不能把未进入复制步骤计为复制通过或产品缺陷。
@@ -75,7 +76,17 @@ try {
       return details.map(detail => ({ id: detail.id, optimizedPrompt: detail.optimizedPrompt, sections: detail.sections }));
     }, { keyword: item.rawPrompt.slice(0, 25), startedAt: manifest.startedAt, rawPrompt: item.rawPrompt });
     for (const arm of ['direct', 'plan-final']) {
-      const result = await parse(`results/${item.id}--${arm}.json`);
+      let result;
+      try { result = await parse(`results/${item.id}--${arm}.json`); }
+      catch (error) {
+        if (error.code !== 'ENOENT') throw error;
+        report.unavailable.push({ id: item.id, arm, reason: '未生成结果，不能验收其历史或复制。' });
+        continue;
+      }
+      if (!result.final) {
+        report.unavailable.push({ id: item.id, arm, reason: '生成失败，不能验收其历史或复制。' });
+        continue;
+      }
       const matching = records.find(record => record.optimizedPrompt === result.final.optimizedPrompt);
       report.history.push({ id: item.id, arm, matched: !!matching,
         // JSONB 可能改变对象键顺序；按协议字段和原有段落顺序逐值比较，不修改正文。

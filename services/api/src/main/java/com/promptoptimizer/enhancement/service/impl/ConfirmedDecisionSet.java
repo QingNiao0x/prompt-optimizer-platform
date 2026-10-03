@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
  * @since 0.1.0
  */
 final class ConfirmedDecisionSet {
-    private static final Pattern UNRESOLVED = Pattern.compile("(?i)^(?:暂不确定|尚未确定|待定|不知道|不清楚|unknown|tbd)[。.!！]?$|未决定|稍后确认");
     private static final Pattern TOPIC = Pattern.compile("(研究地区|地区范围|数据来源|数据格式|输出格式|交付格式|交付内容|交付物|输出内容|输出方式|分析工具|分析方法|验收标准|统计口径|审批阈值|认证方式|登录方式|技术选型|技术栈|版本|范围|时限|规则|格式|地区|工具|口径|阈值)");
     private static final Pattern TARGET = Pattern.compile("(迁移|改为|替换|新增|目标|期望|希望|想要|计划采用|本次采用|最终采用)");
     private static final Pattern CURRENT = Pattern.compile("(现有|当前|目前|已实现|已经采用|正在使用)");
@@ -38,7 +37,7 @@ final class ConfirmedDecisionSet {
             String question = answer.question() == null ? "" : answer.question();
             String text = answer.answer().trim();
             String topic = topic(question, answer.questionId());
-            Scope scope = UNRESOLVED.matcher(text).find() ? Scope.UNRESOLVED
+            Scope scope = PlanAnswerSemantics.unresolved(text) ? Scope.UNRESOLVED
                     : TARGET.matcher(question + text).find() ? Scope.TARGET
                     : CURRENT.matcher(question).find() && !CHOICE_QUESTION.matcher(question).find()
                     ? Scope.CURRENT_STATE : Scope.CHOICE;
@@ -53,8 +52,9 @@ final class ConfirmedDecisionSet {
     String retrievalQuery(String rawPrompt) {
         StringBuilder query = new StringBuilder(rawPrompt == null ? "" : rawPrompt.trim());
         for (ConfirmedPlanDecision decision : decisions) {
-            if (decision.scope() == Scope.UNRESOLVED) continue;
-            query.append('\n').append(decision.topic()).append('：').append(decision.answer());
+            String confirmed = decision.scope() == Scope.UNRESOLVED
+                    ? PlanAnswerSemantics.confirmedPart(decision.answer()) : decision.answer();
+            if (!confirmed.isBlank()) query.append('\n').append(decision.topic()).append('：').append(confirmed);
         }
         return query.toString();
     }

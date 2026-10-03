@@ -118,6 +118,8 @@ public final class PlanQuestionFilter {
 
     /** 只有同一类别只有一个明确值且问题未要求变更时，才不再确认。 */
     private boolean resolved(String question, List<KnownFact> facts, PlanningProviderRequest input) {
+        if (explicitDeliveryOrFailure(question, input.rawPrompt())) return true;
+        if (knownFieldScope(question, input) || knownInteractivePlanDefinition(question, input.rawPrompt())) return true;
         if (explicitWritingLanguage(question, input.rawPrompt()) || knownImplementationLayer(question, input)) return true;
         if (answeredByUploadedProject(question, input)) return true;
         if (isCompoundOrChange(question)) return false;
@@ -137,6 +139,18 @@ public final class PlanQuestionFilter {
         return !uncertain && values.size() == 1;
     }
 
+    /** 只复用明确限定的交付范围和通用异常约定；重试次数、演示数据授权等独立选择继续询问。 */
+    private boolean explicitDeliveryOrFailure(String question, String rawPrompt) {
+        String raw = safe(rawPrompt).replaceAll("\\s", "");
+        if (question.matches("^(?:本次)?是否(?:还)?需要(?:输出|提供|生成)(?:实际|真实)(?:分析)?结果[？?]$")
+                && raw.matches("(?s).*(?:只|仅)(?:提供|交付|输出).*(?:方案|方法).*(?:框架|代码).*")) {
+            return raw.matches("(?s).*(?:不|不得)(?:计算|生成|输出|提供)(?:真实|实际)(?:分析)?结果.*");
+        }
+        return question.replaceAll("[，,\\s]", "").matches("^(?:先)?(?:查询)?详情(?:接口)?(?:查询|调用)?(?:这一步)?失败(?:时)?(?:应|应该|需要)?(?:如何|怎么|怎样)处理[？?]$")
+                && raw.contains("接口异常提醒但不阻断手工录入")
+                && !raw.matches("(?s).*(?:仅|只)(?:针对|处理)?列表接口异常.*");
+    }
+
     /** 只复用当前需求中明确的交付语言；资料语言、附录和编程语言不能替代该决定。 */
     private boolean explicitWritingLanguage(String question, String rawPrompt) {
         if (!question.matches(".*(?:使用中文|中文还是|输出语言|交付语言|用什么语言|中英双语).*")
@@ -154,7 +168,15 @@ public final class PlanQuestionFilter {
     private boolean knownImplementationLayer(String question, PlanningProviderRequest input) {
         if (input.planningContext() == null || (safe(input.rawPrompt()) + question)
                 .matches("(?s).*(?:迁移|更换|调整|改为|冲突).*") ) return false;
-        var subject = Pattern.compile("^(.{2,40}?)(?:（[^）]*）)?(?:应|应该|需要)?在哪一层实现[？?]$").matcher(question);
+        String target = question;
+        var qualifier = Pattern.compile("^“([^”]{1,80})”的(.+)$").matcher(target);
+        if (qualifier.matches()) {
+            String raw = safe(input.rawPrompt()).replaceAll("\\s", "");
+            if (!java.util.Arrays.stream(qualifier.group(1).split("[、，,]"))
+                    .allMatch(raw::contains)) return false;
+            target = qualifier.group(2);
+        }
+        var subject = Pattern.compile("^(.{2,40}?)(?:（[^）]*）)?[，,]?(?:应该|应|需要)?在哪一层实现[？?]$").matcher(target);
         if (!subject.find()) return false;
         String object = Pattern.quote(subject.group(1));
         Pattern relation = Pattern.compile("(服务端|后端|前端|客户端)(?:负责|实现|完成)" + object
@@ -181,6 +203,27 @@ public final class PlanQuestionFilter {
             }
         }
         return layers.size() == 1;
+    }
+
+    /** 原文选定了代码中的字段常量时不再扩缩整组字段；空值处理等子问题仍是独立决定。 */
+    private boolean knownFieldScope(String question, PlanningProviderRequest input) {
+        if (input.planningContext() == null || !question.matches(".*填充.*(?:哪些字段|字段范围|指哪些字段)[？?]$")
+                || question.matches(".*(?:null|空值|覆盖|新增|变更|是否增加).*")) return false;
+        var constant = Pattern.compile("(?:再填|填充|使用|遵循)\\s*([A-Z][A-Z0-9_]{2,64})").matcher(input.rawPrompt());
+        if (!constant.find() || input.rawPrompt().matches("(?s).*(?:更改|改为|调整|新增填充字段).*")) return false;
+        Pattern declaration = Pattern.compile("\\b" + Pattern.quote(constant.group(1))
+                + "\\s*=\\s*(\\[\\s*['\"][a-zA-Z0-9_]+['\"](?:\\s*,\\s*['\"][a-zA-Z0-9_]+['\"])*\\s*])");
+        Set<String> definitions = new HashSet<>();
+        input.planningContext().fileSummaries().stream().filter(summary -> summary.startsWith("[PROJECT_SOURCE] "))
+                .forEach(summary -> declaration.matcher(summary).results()
+                        .forEach(match -> definitions.add(match.group(1).replaceAll("[\\s'\"]", ""))));
+        return definitions.size() == 1;
+    }
+
+    /** 已明确研究交互问答时不重新选择机制；问答轮次、信息给法等设计细节继续保留。 */
+    private boolean knownInteractivePlanDefinition(String question, String raw) {
+        return safe(raw).matches("(?si).*plan\\s*问答.*")
+                && question.matches("(?i)^“?Plan”?(?:模式|条件)(?:在方法部分)?(?:应如何界定|具体指什么操作|具体指什么|是什么)[？?]$");
     }
 
     private List<PlanningFactCategory> questionCategories(String question) {

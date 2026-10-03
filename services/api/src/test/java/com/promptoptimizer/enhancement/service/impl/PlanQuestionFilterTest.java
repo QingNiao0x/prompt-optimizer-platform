@@ -14,6 +14,30 @@ class PlanQuestionFilterTest {
     private final PlanQuestionFilter filter = new PlanQuestionFilter();
 
     @Test
+    void shouldRecognizeTheRealDetailFailureParaphraseWithoutHidingASeparateRetryChoice() {
+        var failure = question("detail_failure_behavior", "先查询详情这一步失败时，应如何处理？");
+        var retry = question("retry", "先查询详情这一步失败时，是否重试三次再提醒用户？");
+        assertThat(filter.filter(List.of(failure, retry), input("接口异常提醒但不阻断手工录入。")))
+                .containsExactly(retry);
+        assertThat(filter.filter(List.of(failure), input("仅列表接口异常提醒但不阻断手工录入。")))
+                .containsExactly(failure);
+    }
+
+    @Test
+    void shouldReuseExplicitDeliveryAndGenericFailureRulesWithoutGuessingNewDetails() {
+        var delivery = question("delivery", "本次是否需要输出实际分析结果？");
+        assertThat(filter.filter(List.of(delivery), input("只提供分析方案与 R 代码框架，不计算真实结果。"))).isEmpty();
+        assertThat(filter.filter(List.of(delivery), input("设计数据分析任务。"))).hasSize(1);
+        var failure = question("failure", "查询详情失败时如何处理？");
+        assertThat(filter.filter(List.of(failure), input("完善表单，接口异常提醒但不阻断手工录入。"))).isEmpty();
+        assertThat(filter.filter(List.of(failure), input("仅列表接口异常提醒但不阻断手工录入。"))).hasSize(1);
+        assertThat(filter.filter(List.of(question("timeout", "详情接口超时应该重试几次？")),
+                input("接口异常提醒但不阻断手工录入。"))).hasSize(1);
+        assertThat(filter.filter(List.of(question("sample", "是否允许提供合成数据验证框架？")),
+                input("只提供分析方案与代码框架，不计算真实结果。"))).hasSize(1);
+    }
+
+    @Test
     void shouldNotReaskExplicitWritingLanguageOrConfuseSourceLanguage() {
         var language = question("language", "最终方法提纲和提示词使用中文还是中英双语？");
         assertThat(filter.filter(List.of(language), input("中文方法提纲不超过1200字，附表另计。"))).isEmpty();
@@ -42,6 +66,34 @@ class PlanQuestionFilterTest {
                 List.of("[PROJECT_DOCUMENT] docs/基线.md：服务端负责地区范围过滤。列表返回地址摘要。"),
                 "COMPLETE", 1, List.of());
         assertThat(filter.filter(List.of(prompt), new PlanningProviderRequest("完善基线匹配", "", List.of(), excerpt))).isEmpty();
+        var qualified = question("placement-qualified", "“包含下级地区、排除其他同级地区”的地区范围过滤，应该在哪一层实现？");
+        assertThat(filter.filter(List.of(qualified), new PlanningProviderRequest("完善基线匹配，包含下级地区但排除其他同级地区。", "", List.of(), excerpt))).isEmpty();
+        assertThat(filter.filter(List.of(question("compound", "地区范围过滤和字段脱敏应该在哪一层实现？")),
+                new PlanningProviderRequest("完善基线匹配", "", List.of(), excerpt))).hasSize(1);
+    }
+
+    @Test
+    void shouldNotReopenAnExplicitlySelectedFieldConstantOrTrustTestArrays() {
+        var q = question("fields", "“自动填充基本信息”具体指哪些字段？");
+        for (String origin : List.of("PROJECT_SOURCE", "TEST_FIXTURE")) {
+            var digest = new PlanningContextDigest("", List.of(), List.of(), List.of(),
+                    List.of("[" + origin + "] src/baseline.ts：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];"),
+                    "COMPLETE", 1, List.of());
+            assertThat(filter.filter(List.of(q), new PlanningProviderRequest("先查询详情，再填 BASELINE_FILL_FIELDS。", "", List.of(), digest)))
+                    .hasSize(origin.equals("PROJECT_SOURCE") ? 0 : 1);
+            assertThat(filter.filter(List.of(question("empty", "自动填充字段中 null 值应如何处理？")),
+                    new PlanningProviderRequest("先查询详情，再填 BASELINE_FILL_FIELDS。", "", List.of(), digest))).hasSize(1);
+        }
+    }
+
+    @Test
+    void shouldKeepOpenImplementationDetailsOfAnAlreadyDefinedInteractiveMethod() {
+        var definition = question("definition", "“Plan”模式在方法部分应如何界定？");
+        var rounds = question("rounds", "Plan 模式最多进行几轮问答？");
+        assertThat(filter.filter(List.of(definition, rounds), input("研究Plan问答对提示词质量的影响。")))
+                .containsExactly(rounds);
+        assertThat(filter.filter(List.of(definition), input("研究某种计划策略对提示词的影响，具体机制未确定。")))
+                .containsExactly(definition);
     }
 
     @ParameterizedTest

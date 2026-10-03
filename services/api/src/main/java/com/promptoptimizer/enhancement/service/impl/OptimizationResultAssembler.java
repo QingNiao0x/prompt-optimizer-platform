@@ -152,6 +152,7 @@ public class OptimizationResultAssembler {
         appendExplicitRules(sections, explicitRules);
         appendConstraints(sections, constraints);
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities);
+        assessed = classifyFindings(sections, assessed, rawPrompt, decisions, eligibleFacts, documentFacts, context);
         List<AmbiguityReference> references = normalizeAmbiguityReferences(providerResponse);
         // 先登记新冲突和绑定的未决问题，再归并模型提醒，避免重复项挤占展示预算。
         // 直接增强也可合并相同来源和取值的冲突；仅服务端绑定的 Plan 答案可消除旧问题。
@@ -243,6 +244,49 @@ public class OptimizationResultAssembler {
     /** 未决与冲突必须随可复制正文交付；不把暂不确定转换成模型自行选择的许可。 */
     private void appendExecutionPrerequisites(Map<PromptSectionType, PromptSection> sections, List<String> prerequisites) {
         appendConstraintBlock(sections, "执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）", prerequisites);
+    }
+
+    /** 已核实规则和代码核查仍随复制正文交付，但不混入用户待定列表；新冲突保持原分类。 */
+    private List<String> classifyFindings(Map<PromptSectionType, PromptSection> sections, List<String> findings,
+                                        String rawPrompt, ConfirmedDecisionSet decisions,
+                                        List<PlanningFactCard> facts, List<String> documentFacts, ContextSnapshot context) {
+        List<String> evidence = new ArrayList<>();
+        evidence.add(rawPrompt == null ? "" : rawPrompt);
+        decisions.decisions().forEach(decision -> evidence.add(decision.scope() == Scope.UNRESOLVED
+                ? PlanAnswerSemantics.confirmedPart(decision.answer()) : decision.answer()));
+        facts.stream().filter(fact -> fact.origin() == PlanningFactOrigin.PROJECT_SOURCE
+                        || fact.origin() == PlanningFactOrigin.PROJECT_DOCUMENT || fact.origin() == PlanningFactOrigin.USER_MATERIAL)
+                .forEach(fact -> evidence.add(fact.evidence()));
+        documentFacts.forEach(fact -> evidence.add(fact.substring(fact.indexOf('：') + 1)));
+        // 事实卡片有数量上限；分类继续核对本次实际接收且用途合格的正文，不把测试和无关材料升级为执行规则。
+        var policy = new PlanningEvidencePolicy(decisions.retrievalQuery(rawPrompt));
+        var eligibleFiles = context.fileSnippets().stream().filter(policy::allows)
+                .filter(file -> Set.of(PlanningFactOrigin.PROJECT_SOURCE, PlanningFactOrigin.PROJECT_DOCUMENT,
+                        PlanningFactOrigin.USER_MATERIAL).contains(PlanningEvidencePolicy.origin(file.path(), file.language())))
+                .toList();
+        eligibleFiles.stream().flatMap(file -> policy.evidenceLines(file).stream())
+                .filter(policy::relevantBusinessContent).forEach(evidence::add);
+        List<String> exclusionEvidence = new ArrayList<>(evidence);
+        eligibleFiles.stream().map(file -> String.join("。", policy.evidenceLines(file)))
+                .filter(policy::relevantBusinessContent).forEach(exclusionEvidence::add);
+        var classifier = new PlanFindingClassifier();
+        List<String> pending = new ArrayList<>();
+        List<String> checks = new ArrayList<>();
+        List<String> known = new ArrayList<>();
+        for (String finding : findings) {
+            switch (classifier.classify(finding, evidence, exclusionEvidence)) {
+                case UNRESOLVED -> pending.add(finding);
+                case KNOWN_RULE -> known.add(finding);
+                case IMPLEMENTATION_CHECK -> checks.add(finding);
+            }
+        }
+        appendConstraintBlock(sections, "已明确的执行规则", known);
+        if (!checks.isEmpty()) {
+            var task = sections.get(PromptSectionType.TASK);
+            sections.put(PromptSectionType.TASK, new PromptSection(task.type(), task.title(), task.content()
+                    + "\n\n执行时核查现有实现（不据此臆造实现或更改业务规则）：\n- " + String.join("\n- ", checks)));
+        }
+        return List.copyOf(pending);
     }
 
     /** 修改同一份结构化约束，保证正文、编辑、复制、历史与再次增强使用一致的内容。 */
@@ -451,12 +495,14 @@ public class OptimizationResultAssembler {
                                           ConfirmedDecisionSet decisions) {
         Map<PromptSectionType, List<String>> required = new EnumMap<>(PromptSectionType.class);
         for (ConfirmedPlanDecision decision : decisions.decisions()) {
-            if (decision.scope() == Scope.UNRESOLVED
-                    || decision.scope() == Scope.CURRENT_STATE) continue;
+            if (decision.scope() == Scope.CURRENT_STATE) continue;
+            String confirmed = decision.scope() == Scope.UNRESOLVED
+                    ? PlanAnswerSemantics.confirmedPart(decision.answer()) : decision.answer();
+            if (confirmed.isBlank()) continue;
             PromptSectionType type = decision.topic().startsWith("输出") || decision.topic().startsWith("交付")
                     ? PromptSectionType.OUTPUT : PromptSectionType.TASK;
             required.computeIfAbsent(type, ignored -> new ArrayList<>())
-                    .add("- " + decision.topic() + "：" + decision.answer());
+                    .add("- " + decision.topic() + "：" + confirmed);
         }
         for (var entry : required.entrySet()) {
             PromptSectionType type = entry.getKey();

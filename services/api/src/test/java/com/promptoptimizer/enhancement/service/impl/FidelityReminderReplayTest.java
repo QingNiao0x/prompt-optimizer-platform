@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class FidelityReminderReplayTest {
     @ParameterizedTest
-    @ValueSource(strings = {"fidelity-reminder-replay.json", "fidelity-reminder-recheck.json"})
+    @ValueSource(strings = {"fidelity-reminder-replay.json", "fidelity-reminder-recheck.json", "fidelity-followup-replay.json"})
     void shouldGroupRealExplanationsAndRetainAllNewDetails(String resource) throws Exception {
         try (var stream = getClass().getResourceAsStream("/enhancement/" + resource)) {
             var cases = new ObjectMapper().readTree(stream);

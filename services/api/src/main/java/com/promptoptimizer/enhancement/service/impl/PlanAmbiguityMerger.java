@@ -35,8 +35,8 @@ final class PlanAmbiguityMerger {
             "从哪里获取", "具体", "主要", "本次", "这项", "需要", "哪些", "哪个", "什么", "是否",
             "请", "说明", "明确", "提供", "指定", "确认", "包括", "覆盖", "进行", "研究", "分析", "数据", "的", "是");
     private static final Pattern HEADER_GRAMMAR = words("应如何确定", "如何确定", "是否已经确定", "是否已确定",
-            "应如何限定", "应如何处理", "如何处理", "应采用哪个口径", "应采用哪种", "计算时", "计算",
-            "是否需要", "是否使用", "尚未确定", "未确定", "已经确定", "是什么", "什么", "？", "?");
+            "应如何限定", "应如何处理", "如何处理", "应采用哪个口径", "采用哪个口径", "应采用哪种", "计算时", "计算",
+            "是否需要", "是否使用", "尚未确定", "未确定", "已经确定", "是什么", "什么", "具体", "需要", "需", "？", "?");
     private final ConfirmedDecisionSet decisions;
 
     PlanAmbiguityMerger(ConfirmedDecisionSet decisions) {
@@ -61,11 +61,14 @@ final class PlanAmbiguityMerger {
             if (decision.scope() != Scope.UNRESOLVED) continue;
             String key = identity.map(ConflictIdentity::key).orElse("question:"
                     + (decision.questionId() == null ? decision.question() : decision.questionId()));
-            registered.putIfAbsent(key, "该问题尚未确定：" + decision.question());
+            String explanation = decision.answer().matches("(?i)^(?:暂不确定|尚未确定|待定|不知道|不清楚|unknown|tbd)[。.!！]?$")
+                    ? "" : " 用户说明：" + decision.answer();
+            registered.putIfAbsent(key, "该问题尚未确定：" + decision.question() + explanation);
         }
         for (String text : findings) {
             if (registered.containsValue(text)) continue;
             if (serverFindings.contains(text) && text.startsWith("资料对“")) continue;
+            if (mergeExistingExplanation(text, registered)) continue;
             // 只有同一字段、双方来源和取值，且不增加业务条件，才能归入已有冲突。
             if (knownConflicts.stream().anyMatch(identity -> identity.isReminder(text)
                     && (registered.containsKey(identity.key()) || decisions.resolvesConflict(
@@ -77,6 +80,20 @@ final class PlanAmbiguityMerger {
         }
         List<String> values = registered.values().stream().distinct().toList();
         return MergeResult.from(values);
+    }
+
+    /** 支持已经归并过的提醒再次进入组装，完整题目和答案前缀必须逐字一致。 */
+    private boolean mergeExistingExplanation(String text, Map<String, String> registered) {
+        for (var entry : registered.entrySet()) {
+            String prefix = entry.getValue() + " 补充说明：";
+            if (text.startsWith(prefix)) {
+                String extra = text.substring(prefix.length());
+                if (extra.matches("(?s).*(?:另外|此外|还需|还需要|另需|同时还).*(?:确认|决定|是否|选择).*")) return false;
+                registered.put(entry.getKey(), text);
+                return true;
+            }
+        }
+        return false;
     }
 
     /** 同一对已登记证据的复述附在原冲突下，其他新来源、取值或条件保持独立。 */
@@ -103,26 +120,64 @@ final class PlanAmbiguityMerger {
      */
     private boolean mergeUnresolvedExplanation(String text, Map<String, String> registered) {
         String cleaned = stripDecisionMetadata(text);
-        var separator = Pattern.compile("[。；;：:\\r\\n]").matcher(cleaned);
+        // 仅把明确未定题干后的逗号看作解释边界；数量、版本和题干自身的逗号仍属于原题。
+        var separator = Pattern.compile("[。；;：:\\r\\n]|(?<=尚未确定)[，,]").matcher(cleaned);
         if (!separator.find()) return false;
         String header = cleaned.substring(0, separator.start()).strip();
         // 明确列出的候选项是同一未决选择的展开，完整保留它们，不把候选取值当作已确认事实。
-        var alternatives = Pattern.compile("^(.{2,40}?)采用(.+?)还是(.+?)尚未确定$").matcher(header);
+        var alternatives = Pattern.compile("^(.{2,40}?)(?:应)?采用(.+?)还是(.+?)尚未确定$").matcher(header);
         String matchingHeader = alternatives.matches() ? alternatives.group(1) : header;
         List<ConfirmedPlanDecision> matches = decisions.decisions().stream()
                 .filter(decision -> decision.scope() == Scope.UNRESOLVED && conflict(decision.question()).isEmpty())
                 .filter(decision -> sameQuestionReminder(header, decision.question())
-                        || questionHeader(matchingHeader).equals(questionHeader(decision.question())))
+                        || questionHeader(matchingHeader).equals(questionHeader(decision.question()))
+                        || matchesPartialAnswerExplanation(header, decision))
                 .toList();
         if (matches.size() != 1 || questionHeader(header).length() < 4) return false;
         ConfirmedPlanDecision decision = matches.getFirst();
         String key = "question:" + (decision.questionId() == null ? decision.question() : decision.questionId());
-        String detail = alternatives.matches() ? cleaned : cleaned.substring(separator.end()).strip();
+        String explanation = cleaned.substring(separator.end()).strip();
+        if (explanation.matches("(?s).*(?:另外|此外|还需|还需要|另需|同时还).*(?:确认|决定|是否|选择).*")) return false;
+        String detail = alternatives.matches() || matchesPartialAnswerExplanation(header, decision) ? cleaned : explanation;
         // 只去掉已经匹配的重复题干，解释中任何新单位、版本或条件仍进入同一条完整执行前提。
         if (!detail.isBlank() && !registered.get(key).contains(detail)) {
             registered.put(key, registered.get(key) + " 补充说明：" + detail);
         }
         return true;
+    }
+
+    /**
+     * 部分确定的回答可补充原题未写出的待定子项。只有题干中的全部实词可在原题和回答中定位时才归并，
+     * 不使用相似度阈值；整条提醒仍保留，新的数值、对象或独立决定不会被删掉。
+     */
+    private boolean matchesPartialAnswerExplanation(String header, ConfirmedPlanDecision decision) {
+        if (decision.answer().length() <= 8) return false;
+        String heading = withoutExamples(header.replaceAll("[（(]用户回答[^）)]*[）)]", ""));
+        String grammar = "除已确认的|已明确为|保持不变|尚未确定|未确定|其余|具体|是否还需要|是否需要|需要|尚未明确|未明确|未提供|仍待确定|已确认|仅确认|的|中|外|与|和|及";
+        String[] fragments = heading.toLowerCase(Locale.ROOT).replaceAll(grammar, " ")
+                .split("[^\\p{IsHan}a-z0-9_.<>≤≥=]+|(?<=[\\p{IsHan}])(?=[a-z0-9])|(?<=[a-z0-9])(?=[\\p{IsHan}])");
+        String known = normalize(decision.question() + " " + decision.answer());
+        int semanticLength = 0;
+        for (String fragment : fragments) {
+            if (fragment.isBlank()) continue;
+            semanticLength += fragment.length();
+            if (!fragment.matches("[\\p{IsHan}]+")) {
+                if (!Pattern.compile("(?<![a-z0-9_.<>≤≥=])" + Pattern.quote(fragment) + "(?![a-z0-9_.<>≤≥=])")
+                        .matcher(known).find()) return false;
+                continue;
+            }
+            // 完整短语可直接命中；重排的中文短语需每一段至少两个字且全部有出处。
+            boolean[] covered = new boolean[fragment.length() + 1];
+            covered[0] = true;
+            for (int start = 0; start < fragment.length(); start++) {
+                if (!covered[start]) continue;
+                for (int end = start + 2; end <= fragment.length(); end++) {
+                    if (known.contains(fragment.substring(start, end))) covered[end] = true;
+                }
+            }
+            if (!known.contains(fragment) && !covered[fragment.length()]) return false;
+        }
+        return semanticLength >= 6;
     }
 
     /** 仅消除询问语法，不归一化金额、对象或条件；斜线只在“年龄权重/贴现”固定同主题表达中处理。 */
@@ -132,6 +187,7 @@ final class PlanAmbiguityMerger {
         var contextual = Pattern.compile("^在([^，,。；;]{2,80}?)(?:尚未确定|未确定)的情况下[，,].*应如何处理[^？?]+[？?]$")
                 .matcher(text);
         if (contextual.matches()) text = contextual.group(1);
+        text = text.replace("用什么指标衡量", "衡量指标");
         return normalize(HEADER_GRAMMAR.matcher(text).replaceAll(""))
                 .replace("参考寿命表来源", "参考寿命表")
                 .replace("年龄权重/贴现", "年龄权重和贴现")

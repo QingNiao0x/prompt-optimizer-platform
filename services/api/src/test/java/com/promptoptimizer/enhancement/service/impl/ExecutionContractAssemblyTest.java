@@ -41,6 +41,59 @@ class ExecutionContractAssemblyTest {
     private final OptimizationResultAssembler assembler = new OptimizationResultAssembler();
 
     @Test
+    void shouldKeepExplainedUnknownAnswersPendingAndCopyTheirBoundaries() {
+        String answer = "暂不确定。参考寿命表仍未提供，不能将任何具体标准表作为已确认选择；仅预留读取和校验接口，确认前不得计算相应 YLL。";
+        var result = assemble("设计 YLL 分析框架。", "预留寿命表接口。", List.of(),
+                List.of(new PlanAnswer("life", "采用哪份参考寿命表？", answer)), List.of());
+        assertThat(result.ambiguities()).singleElement().asString().contains("参考寿命表", "尚未确定");
+        assertThat(result.optimizedPrompt()).contains(answer);
+        assertThat(result.sections()).filteredOn(section -> section.type() == PromptSectionType.TASK)
+                .singleElement().satisfies(section -> assertThat(section.content()).doesNotContain("用户已确认的信息"));
+    }
+
+    @Test
+    void shouldRetainConfirmedPartOfAMixedAnswerWithoutResolvingItsMissingVersion() {
+        String answer = "使用 R，但版本暂不确定。";
+        var decisions = ConfirmedDecisionSet.from(List.of(new PlanAnswer("tool", "分析工具及版本是什么？", answer)));
+        assertThat(decisions.decisions().getFirst().scope())
+                .isEqualTo(com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope.UNRESOLVED);
+        assertThat(decisions.retrievalQuery("分析资料")).contains("使用 R").doesNotContain("版本暂不确定");
+        var result = assemble("分析资料", "整理框架。", List.of(),
+                List.of(new PlanAnswer("tool", "分析工具及版本是什么？", answer)), List.of());
+        assertThat(result.optimizedPrompt()).contains("使用 R", "版本暂不确定", "执行前须确认");
+    }
+
+    @Test
+    void shouldNotTreatHistoricalOrConditionalUncertaintyAsAnUnresolvedAnswer() {
+        for (String answer : List.of("之前不确定，现在明确选择 R。", "采用 R；如果版本未确定则先检查项目锁文件。",
+                "计算不确定性区间。", "没有尚未确定的业务选择。", "用户未确认前不得填充。", "如果版本未确定，先查看锁文件。")) {
+            var decisions = ConfirmedDecisionSet.from(List.of(new PlanAnswer("tool", "分析工具是什么？", answer)));
+            assertThat(decisions.decisions().getFirst().scope())
+                    .isNotEqualTo(com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope.UNRESOLVED);
+        }
+    }
+
+    @Test
+    void shouldPreserveImplementationChecksInTaskInsteadOfAsUserBlockers() {
+        String check = "登录态地区取值实现以现有代码核查结果为准，不新增或猜测接口参数。";
+        String known = "地区范围过滤由服务端负责，前端不承担该职责。";
+        String actualDecision = "退款订单是否也适用地区限制尚未确定，需要用户确认。";
+        var result = assemble("服务端负责地区范围过滤。完善登录态地区匹配。", "核查现有实现。",
+                List.of(known, check, actualDecision), List.of(), List.of());
+        assertThat(result.ambiguities()).containsExactly(actualDecision);
+        assertThat(result.optimizedPrompt()).contains(known, check, actualDecision);
+    }
+
+    @Test
+    void shouldNotDismissUnprovenFactsOrMixedConflictsAsImplementationChecks() {
+        for (String finding : List.of("地区范围过滤由前端负责。", "登录态地区取值实现以现有代码核查结果为准，但两份资料存在冲突，需要用户确认。",
+                "登录态地区取值实现尚未提供，是否需要新增地区权限接口？")) {
+            var result = assemble("服务端负责地区范围过滤。", "核查实现。", List.of(finding), List.of(), List.of());
+            assertThat(result.ambiguities()).containsExactly(finding);
+        }
+    }
+
+    @Test
     void shouldTreatConfirmationUiAsAChoiceInsteadOfCurrentRegion() {
         var decision = ConfirmedDecisionSet.from(List.of(new PlanAnswer("autofill_confirm_ui",
                 "“当前地区有时提示用户是否自动填充基本信息”采用哪种确认方式？",

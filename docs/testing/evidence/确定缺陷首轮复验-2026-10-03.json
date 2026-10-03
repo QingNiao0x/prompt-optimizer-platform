@@ -1,0 +1,3212 @@
+{
+  "status": "FAIL_REQUIRES_FOLLOWUP",
+  "scope": "五场景真实复验；两个对照留待最终候选。保留原始输出，不重试到成功。",
+  "runDirectory": "tmp/fidelity-acceptance/2026-10-03T09-13-55-925Z",
+  "manifest": {
+    "startedAt": "2026-10-03T09:13:55.936Z",
+    "commit": "580452057f51944cd07600177589233cecbd54f0",
+    "candidateHashes": {
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/RequirementFidelityGuard.java": "c3d1f5fe79afb3ec05422693f5693795f0877dee655be78d7234f872e9bd2271",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java": "153e9614f88ea963a3f56cd0abb3a4ce259ffa5fb255b5d515f7502103e24321",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAmbiguityMerger.java": "c380d1259e6311a8a59bacb15e1686ad332d382541cdec9c31df6ffe49c11a5b",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationPlanningServiceImpl.java": "ce174eca4bf61617d875c1ee43f9760becd94fd56a187c2b0d89cce9cd40aef8",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/ConfirmedDecisionSet.java": "22ebd7d13b7c0990b4eff9d5854510d7f09ae3f8a35b749ece43a490a3a86f54",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAnswerSemantics.java": "3ae771796e66bab0bd52c607a5e58ea6c9603c9b5bf5174bfe0c0b18d313a20c",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanFindingClassifier.java": "f5740cd974e04e4a87b11a3628505f2d1d7f34e2e10134405af550808901108c",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/domain/ConfirmedPlanDecision.java": "984898479e806ed12cfe1d77dc2401a6e6f70b7ceed6fe3b39ccbe9cd314949a",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanQuestionFilter.java": "6b5596ca6b0c375bc7e1e9f8b6cb5e683a08db0a0e7f62ed83b7b71c9397e206",
+      "services/api/src/main/java/com/promptoptimizer/policy/service/impl/ConstraintCompleterImpl.java": "747f543d6a2c9c748426e79ee8166e3789649de42f57a2a08b440351005a5524",
+      "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java": "142e5b596ff65ed2c525fe6426ab150cca03a3af6991f0e49891dac6c314145a"
+    },
+    "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+    "cases": 9,
+    "repetitions": 1,
+    "maximumSuccessfulApiGenerations": 27,
+    "scope": "真实API、固定合成材料；不验证完整目录索引、办公文件解析或双人上线门禁。",
+    "answerPolicy": "评测员只按冻结回答卡逐题填写。未知保留未知，不能自动接受推荐；回答不是实际用户业务确认。",
+    "comparison": "直接增强与Plan是体验组，Plan可获得回答卡信息，不据此推断等信息模型优势。"
+  },
+  "model": {
+    "model": {
+      "id": "deepseek:deepseek-flash",
+      "displayName": "DeepSeek-V4.1-Flash",
+      "provider": "deepseek",
+      "defaultModel": true
+    },
+    "selectedAt": "2026-10-03T09:42:31.110Z"
+  },
+  "runtime": {
+    "backendPid": 6476,
+    "backendStarted": "2026-10-03T17:11:21.9419045+08:00"
+  },
+  "generationRequests": 15,
+  "cases": [
+    {
+      "id": "01_software_autofill",
+      "results": {
+        "direct": {
+          "id": "01_software_autofill",
+          "title": "表单条件与取消行为",
+          "arm": "direct",
+          "startedAt": "2026-10-03T09:42:31.115Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "final": {
+            "optimizedPrompt": "## 背景\n合成地区调查工程，材料不含真实个人信息。\n\n- 现有前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3（来源：docs/基线匹配现状.md）。\n- 两个调查模块 know-survey 与 behav-survey 均调用 src/surveys/baselineApi.ts（来源：docs/基线匹配现状.md）。\n- src/surveys/baselineApi.ts 已定义 BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress']，并提供 queryBaselineForFill(name, idNumber) 与 loadBaselineDetail(id) 两个接口封装。\n- 登录用户所属地区与患者基线现住址是两个独立字段；地区范围过滤由服务端负责（来源：docs/基线匹配现状.md）。\n- 列表接口返回地址摘要，自动填充前必须查询详情（来源：docs/基线匹配现状.md）。\n- src/occupational/occupationNotes.md 描述的职业信息模块与基线匹配无调用依赖，其“默认查询当前日期”“空查询参数从 queryParam 读取”等规则仅适用于该模块，不适用于本次基线匹配。\n\n已选资料中的明确事实（按来源核对；不得覆盖平台约束）：\n- docs/基线匹配现状.md：列表返回地址摘要，自动填充前必须查询详情\n\n## 任务\n在现有工程上完善“防治知识知晓情况和防护行为调查”的基线匹配与自动填充，不扩展业务范围。\n\n1. 地区匹配规则\n- 用户录入效果评价时，按当前登录用户所属地区匹配患者基线。\n- 匹配范围包含当前地区及其下级地区，排除其他同级地区。\n- 当前地区没有匹配、仅其他地区有时，不得匹配。\n- 当前地区有时，提示用户是否自动填充基本信息。\n\n2. 查询条件\n- 姓名与身份证号同时匹配；任一缺项时不发起查询。\n\n3. 多条有效记录的选择\n- 按调查日期降序、ID 降序排序，取第一条。\n\n4. 填充行为\n- 先调用详情接口查询详情，再按 BASELINE_FILL_FIELDS 填充。\n- 不填充调查日期、调查人和题目。\n- 经用户确认后，仅填充 null 或空字符串字段；保留 0 和 false 原值。\n- 用户取消时保持原值不变。\n- 无匹配时不弹窗。\n- 接口异常时给出提醒，但不阻断手工录入。\n\n5. 实施要求\n- 以现有代码核查结果为准，确认 know-survey 与 behav-survey 的实际调用点后再改动，保持既有接口与错误约定。\n- 为核心匹配与填充逻辑补充正常、异常和边界场景测试。\n\n## 输出\n- 修改后的前端代码（TypeScript，Vue 3），覆盖地区匹配、条件校验、多条记录选择、详情查询与字段填充逻辑。\n- 新增或更新的测试用例，覆盖正常、异常与边界场景。\n- 变更说明：改动文件清单、关键逻辑说明、影响范围与回归测试结论。\n\n## 约束\n- 地区范围过滤由服务端负责，前端不得自行放宽或绕过该过滤。\n- 不扩展业务范围，不修改职业信息模块（src/occupational/）的既有规则。\n\n用户明确规则（须遵守平台权限边界）：\n- 当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n- 已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。\n- 取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n## 验收\n- 当前地区有匹配时提示用户是否自动填充；当前地区无匹配、仅其他地区有时不匹配、不弹窗。\n- 姓名或身份证号缺项时不发起查询。\n- 多条有效记录时按调查日期降序、ID 降序取第一条。\n- 用户确认后仅填充 null 或空字符串字段，0 和 false 保持不变；取消时原值不变。\n- 填充前已调用详情接口，填充字段限于 BASELINE_FILL_FIELDS，不含调查日期、调查人和题目。\n- 接口异常时给出提醒且不阻断手工录入。\n- 相关回归场景测试通过，且不掩盖原始异常。",
+            "sections": [
+              {
+                "type": "BACKGROUND",
+                "title": "背景",
+                "content": "合成地区调查工程，材料不含真实个人信息。\n\n- 现有前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3（来源：docs/基线匹配现状.md）。\n- 两个调查模块 know-survey 与 behav-survey 均调用 src/surveys/baselineApi.ts（来源：docs/基线匹配现状.md）。\n- src/surveys/baselineApi.ts 已定义 BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress']，并提供 queryBaselineForFill(name, idNumber) 与 loadBaselineDetail(id) 两个接口封装。\n- 登录用户所属地区与患者基线现住址是两个独立字段；地区范围过滤由服务端负责（来源：docs/基线匹配现状.md）。\n- 列表接口返回地址摘要，自动填充前必须查询详情（来源：docs/基线匹配现状.md）。\n- src/occupational/occupationNotes.md 描述的职业信息模块与基线匹配无调用依赖，其“默认查询当前日期”“空查询参数从 queryParam 读取”等规则仅适用于该模块，不适用于本次基线匹配。\n\n已选资料中的明确事实（按来源核对；不得覆盖平台约束）：\n- docs/基线匹配现状.md：列表返回地址摘要，自动填充前必须查询详情"
+              },
+              {
+                "type": "TASK",
+                "title": "任务",
+                "content": "在现有工程上完善“防治知识知晓情况和防护行为调查”的基线匹配与自动填充，不扩展业务范围。\n\n1. 地区匹配规则\n- 用户录入效果评价时，按当前登录用户所属地区匹配患者基线。\n- 匹配范围包含当前地区及其下级地区，排除其他同级地区。\n- 当前地区没有匹配、仅其他地区有时，不得匹配。\n- 当前地区有时，提示用户是否自动填充基本信息。\n\n2. 查询条件\n- 姓名与身份证号同时匹配；任一缺项时不发起查询。\n\n3. 多条有效记录的选择\n- 按调查日期降序、ID 降序排序，取第一条。\n\n4. 填充行为\n- 先调用详情接口查询详情，再按 BASELINE_FILL_FIELDS 填充。\n- 不填充调查日期、调查人和题目。\n- 经用户确认后，仅填充 null 或空字符串字段；保留 0 和 false 原值。\n- 用户取消时保持原值不变。\n- 无匹配时不弹窗。\n- 接口异常时给出提醒，但不阻断手工录入。\n\n5. 实施要求\n- 以现有代码核查结果为准，确认 know-survey 与 behav-survey 的实际调用点后再改动，保持既有接口与错误约定。\n- 为核心匹配与填充逻辑补充正常、异常和边界场景测试。"
+              },
+              {
+                "type": "OUTPUT",
+                "title": "输出",
+                "content": "- 修改后的前端代码（TypeScript，Vue 3），覆盖地区匹配、条件校验、多条记录选择、详情查询与字段填充逻辑。\n- 新增或更新的测试用例，覆盖正常、异常与边界场景。\n- 变更说明：改动文件清单、关键逻辑说明、影响范围与回归测试结论。"
+              },
+              {
+                "type": "CONSTRAINTS",
+                "title": "约束",
+                "content": "- 地区范围过滤由服务端负责，前端不得自行放宽或绕过该过滤。\n- 不扩展业务范围，不修改职业信息模块（src/occupational/）的既有规则。\n\n用户明确规则（须遵守平台权限边界）：\n- 当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n- 已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。\n- 取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+              },
+              {
+                "type": "ACCEPTANCE",
+                "title": "验收",
+                "content": "- 当前地区有匹配时提示用户是否自动填充；当前地区无匹配、仅其他地区有时不匹配、不弹窗。\n- 姓名或身份证号缺项时不发起查询。\n- 多条有效记录时按调查日期降序、ID 降序取第一条。\n- 用户确认后仅填充 null 或空字符串字段，0 和 false 保持不变；取消时原值不变。\n- 填充前已调用详情接口，填充字段限于 BASELINE_FILL_FIELDS，不含调查日期、调查人和题目。\n- 接口异常时给出提醒且不阻断手工录入。\n- 相关回归场景测试通过，且不掩盖原始异常。"
+              }
+            ],
+            "contextReport": {
+              "customDescription": "合成的地区调查工程，材料无真实个人信息。",
+              "technologyStack": [
+                {
+                  "name": "TypeScript",
+                  "source": "src/surveys/baselineApi.ts",
+                  "confidence": 0.9
+                }
+              ],
+              "dependencies": [],
+              "directoryTree": [
+                "docs/",
+                "docs/基线匹配现状.md",
+                "src/",
+                "src/occupational/",
+                "src/occupational/occupationNotes.md",
+                "src/surveys/",
+                "src/surveys/baselineApi.ts"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "src/surveys/baselineApi.ts",
+                  "language": "typescript",
+                  "content": "[片段 1/1]\nexport const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];\nexport async function queryBaselineForFill(name: string, idNumber: string) {\n  return fetch('/api/baseline/match?' + new URLSearchParams({ name, idNumber }));\n}\nexport async function loadBaselineDetail(id: string) {\n  return fetch('/api/baseline/' + encodeURIComponent(id));\n}",
+                  "summary": "TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {",
+                  "truncated": false
+                },
+                {
+                  "path": "docs/基线匹配现状.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n# 合成工程现状\n两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n登录用户所属地区与患者基线现住址是两个独立字段；服务端负责地区范围过滤。本次要求匹配当前地区与下级地区。\n列表返回地址摘要，自动填充前必须查询详情。填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。\n同一患者可能有多条记录，本次规则由原始提示词明确。",
+                  "summary": "Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。",
+                  "truncated": false
+                },
+                {
+                  "path": "src/occupational/occupationNotes.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n# 无调用依赖的职业信息模块\n该模块列表默认查询当前日期；空查询参数从 queryParam 读取。该规则仅适用于职业信息模块，不是基线匹配规则。",
+                  "summary": "Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "ambiguities": [],
+            "appliedConstraints": [
+              "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+              "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+              "校验所有外部输入，并明确处理空值、非法值和边界条件。",
+              "处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。",
+              "为核心逻辑补充正常、异常和边界场景测试。",
+              "前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。",
+              "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+              "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+            ],
+            "templateCode": "BUG_FIX",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 6053,
+            "warnings": []
+          },
+          "protocolChecks": {
+            "realProvider": true,
+            "promptPresent": true,
+            "fourSections": true,
+            "constraintsInCopiedBody": true
+          },
+          "elapsedMs": 6577,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "f60699a8-0bbf-4ad9-96c6-e0434b527a13",
+              "elapsedMs": 6575
+            }
+          ]
+        },
+        "plan": {
+          "id": "01_software_autofill",
+          "title": "表单条件与取消行为",
+          "arm": "plan",
+          "startedAt": "2026-10-03T09:42:37.693Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "prepared": {
+            "contextId": "8852527d-af94-4ad0-b185-f2576181f9db",
+            "version": "sha256:2d2c10885005dcab59aa7ef2b0a8389235fa5533ba9e6faf5f2b928fb58c9ed9",
+            "digest": {
+              "description": "合成的地区调查工程，材料无真实个人信息。",
+              "technologies": [
+                "TypeScript"
+              ],
+              "dependencies": [],
+              "directoryOverview": [
+                "docs/",
+                "docs/基线匹配现状.md",
+                "src/",
+                "src/occupational/",
+                "src/occupational/occupationNotes.md",
+                "src/surveys/",
+                "src/surveys/baselineApi.ts"
+              ],
+              "fileSummaries": [
+                "[PROJECT_DOCUMENT] docs/基线匹配现状.md：Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。；业务摘录：[片段 1/1] 两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。 前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。 登录用户所属地区与患者基线现住址是两个独立字段； 服务端负责地区范围过滤。 本次要求匹配当前地区与下级地区。 列表返回地址摘要，自动填充前必须查询详情。 填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。 同一患者可能有多条记录，本次规则由原始提示词明确。",
+                "[PROJECT_DOCUMENT] src/occupational/occupationNotes.md：Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。；业务摘录：[片段 1/1] 该模块列表默认查询当前日期； 空查询参数从 queryParam 读取。 该规则仅适用于职业信息模块，不是基线匹配规则。",
+                "[PROJECT_SOURCE] src/surveys/baselineApi.ts：TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {"
+              ],
+              "analysisStatus": "COMPLETE",
+              "analyzedFileCount": 3,
+              "warnings": [],
+              "factCards": [
+                {
+                  "id": "F01",
+                  "category": "BUSINESS_RULE",
+                  "origin": "PROJECT_DOCUMENT",
+                  "sourcePath": "docs/基线匹配现状.md",
+                  "evidence": "列表返回地址摘要，自动填充前必须查询详情"
+                }
+              ]
+            },
+            "contextReport": {
+              "customDescription": "合成的地区调查工程，材料无真实个人信息。",
+              "technologyStack": [
+                {
+                  "name": "TypeScript",
+                  "source": "src/surveys/baselineApi.ts",
+                  "confidence": 0.9
+                }
+              ],
+              "dependencies": [],
+              "directoryTree": [
+                "docs/",
+                "docs/基线匹配现状.md",
+                "src/",
+                "src/occupational/",
+                "src/occupational/occupationNotes.md",
+                "src/surveys/",
+                "src/surveys/baselineApi.ts"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "docs/基线匹配现状.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n# 合成工程现状\n两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n登录用户所属地区与患者基线现住址是两个独立字段；服务端负责地区范围过滤。本次要求匹配当前地区与下级地区。\n列表返回地址摘要，自动填充前必须查询详情。填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。\n同一患者可能有多条记录，本次规则由原始提示词明确。",
+                  "summary": "Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。",
+                  "truncated": false
+                },
+                {
+                  "path": "src/occupational/occupationNotes.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n# 无调用依赖的职业信息模块\n该模块列表默认查询当前日期；空查询参数从 queryParam 读取。该规则仅适用于职业信息模块，不是基线匹配规则。",
+                  "summary": "Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。",
+                  "truncated": false
+                },
+                {
+                  "path": "src/surveys/baselineApi.ts",
+                  "language": "typescript",
+                  "content": "[片段 1/1]\nexport const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];\nexport async function queryBaselineForFill(name: string, idNumber: string) {\n  return fetch('/api/baseline/match?' + new URLSearchParams({ name, idNumber }));\n}\nexport async function loadBaselineDetail(id: string) {\n  return fetch('/api/baseline/' + encodeURIComponent(id));\n}",
+                  "summary": "TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "expiresAt": "2026-10-03T10:12:37.721253300Z",
+            "latencyMs": 32
+          },
+          "plan": {
+            "summary": "目标是修改现有地区调查工程，实现按当前用户所属地区（含下级、排除同级）匹配患者基线，并在当前地区有记录时经用户确认后自动填充基本信息，同时补充测试。原始需求已明确大部分规则，但地区范围的服务端过滤方式与“自动填充基本信息”的字段边界仍需确认，否则会影响实施与测试范围。",
+            "questions": [
+              {
+                "id": "region_filter_location",
+                "question": "“包含下级地区、排除其他同级地区”的地区范围过滤，应该在哪一层实现？",
+                "hint": "这决定改动落在前端还是后端，以及测试要覆盖哪一端。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "server_side",
+                    "label": "服务端过滤",
+                    "description": "由后端按当前用户所属地区及下级地区过滤，前端只传当前用户地区或身份信息。",
+                    "answer": "地区范围过滤在服务端实现：后端按当前用户所属地区包含下级、排除同级其他地区进行过滤，前端不自行拼接地区范围。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "client_side",
+                    "label": "前端过滤",
+                    "description": "后端返回较宽范围数据，由前端按地区层级筛选。",
+                    "answer": "地区范围过滤在前端实现：后端返回数据后由前端按当前用户所属地区包含下级、排除同级其他地区进行筛选。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "both_sides",
+                    "label": "前后端都过滤",
+                    "description": "后端先过滤，前端再做一次兜底校验。",
+                    "answer": "地区范围过滤前后端都做：后端按当前用户所属地区及下级地区过滤，前端再做一次兜底校验。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "fill_fields_scope",
+                "question": "“自动填充基本信息”具体指哪些字段？",
+                "hint": "原始需求只说明不填调查日期、调查人和题目，需要确认实际填充范围，避免多填或漏填。",
+                "type": "MULTIPLE_CHOICE",
+                "options": [
+                  {
+                    "id": "name_id_residence",
+                    "label": "姓名、身份证号、现住址",
+                    "description": "与现有 BASELINE_FILL_FIELDS 一致。",
+                    "answer": "自动填充字段为姓名、身份证号、现住址，即现有 BASELINE_FILL_FIELDS 定义的范围。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "only_name_id",
+                    "label": "仅姓名、身份证号",
+                    "description": "只回填身份标识字段，不回填地址。",
+                    "answer": "自动填充字段仅为姓名、身份证号，不回填现住址。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "include_contact",
+                    "label": "姓名、身份证号、现住址、联系方式",
+                    "description": "在现有字段基础上增加联系方式。",
+                    "answer": "自动填充字段为姓名、身份证号、现住址、联系方式。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              }
+            ],
+            "templateCode": "BUG_FIX",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 4051,
+            "planId": "bb6356e2-61ad-4394-a872-d4b4976ee25d",
+            "planningContext": {
+              "contextId": "8852527d-af94-4ad0-b185-f2576181f9db",
+              "version": "sha256:2d2c10885005dcab59aa7ef2b0a8389235fa5533ba9e6faf5f2b928fb58c9ed9"
+            },
+            "expiresAt": "2026-10-03T10:12:37.721253300Z"
+          },
+          "elapsedMs": 4620,
+          "requests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "56551797-14cb-4cca-9245-f04faa2c37d5",
+              "elapsedMs": 95
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "1eff232b-0ebf-4516-879b-6f645c46a41d",
+              "elapsedMs": 4522
+            }
+          ]
+        },
+        "plan-final": {
+          "id": "01_software_autofill",
+          "title": "表单条件与取消行为",
+          "arm": "plan-final",
+          "startedAt": "2026-10-03T09:48:42.766Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "plan": {
+            "summary": "目标是修改现有地区调查工程，实现按当前用户所属地区（含下级、排除同级）匹配患者基线，并在当前地区有记录时经用户确认后自动填充基本信息，同时补充测试。原始需求已明确大部分规则，但地区范围的服务端过滤方式与“自动填充基本信息”的字段边界仍需确认，否则会影响实施与测试范围。",
+            "questions": [
+              {
+                "id": "region_filter_location",
+                "question": "“包含下级地区、排除其他同级地区”的地区范围过滤，应该在哪一层实现？",
+                "hint": "这决定改动落在前端还是后端，以及测试要覆盖哪一端。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "server_side",
+                    "label": "服务端过滤",
+                    "description": "由后端按当前用户所属地区及下级地区过滤，前端只传当前用户地区或身份信息。",
+                    "answer": "地区范围过滤在服务端实现：后端按当前用户所属地区包含下级、排除同级其他地区进行过滤，前端不自行拼接地区范围。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "client_side",
+                    "label": "前端过滤",
+                    "description": "后端返回较宽范围数据，由前端按地区层级筛选。",
+                    "answer": "地区范围过滤在前端实现：后端返回数据后由前端按当前用户所属地区包含下级、排除同级其他地区进行筛选。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "both_sides",
+                    "label": "前后端都过滤",
+                    "description": "后端先过滤，前端再做一次兜底校验。",
+                    "answer": "地区范围过滤前后端都做：后端按当前用户所属地区及下级地区过滤，前端再做一次兜底校验。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "fill_fields_scope",
+                "question": "“自动填充基本信息”具体指哪些字段？",
+                "hint": "原始需求只说明不填调查日期、调查人和题目，需要确认实际填充范围，避免多填或漏填。",
+                "type": "MULTIPLE_CHOICE",
+                "options": [
+                  {
+                    "id": "name_id_residence",
+                    "label": "姓名、身份证号、现住址",
+                    "description": "与现有 BASELINE_FILL_FIELDS 一致。",
+                    "answer": "自动填充字段为姓名、身份证号、现住址，即现有 BASELINE_FILL_FIELDS 定义的范围。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "only_name_id",
+                    "label": "仅姓名、身份证号",
+                    "description": "只回填身份标识字段，不回填地址。",
+                    "answer": "自动填充字段仅为姓名、身份证号，不回填现住址。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "include_contact",
+                    "label": "姓名、身份证号、现住址、联系方式",
+                    "description": "在现有字段基础上增加联系方式。",
+                    "answer": "自动填充字段为姓名、身份证号、现住址、联系方式。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              }
+            ],
+            "templateCode": "BUG_FIX",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 4051,
+            "planId": "bb6356e2-61ad-4394-a872-d4b4976ee25d",
+            "planningContext": {
+              "contextId": "8852527d-af94-4ad0-b185-f2576181f9db",
+              "version": "sha256:2d2c10885005dcab59aa7ef2b0a8389235fa5533ba9e6faf5f2b928fb58c9ed9"
+            },
+            "expiresAt": "2026-10-03T10:12:37.721253300Z"
+          },
+          "prepared": {
+            "contextId": "8852527d-af94-4ad0-b185-f2576181f9db",
+            "version": "sha256:2d2c10885005dcab59aa7ef2b0a8389235fa5533ba9e6faf5f2b928fb58c9ed9",
+            "digest": {
+              "description": "合成的地区调查工程，材料无真实个人信息。",
+              "technologies": [
+                "TypeScript"
+              ],
+              "dependencies": [],
+              "directoryOverview": [
+                "docs/",
+                "docs/基线匹配现状.md",
+                "src/",
+                "src/occupational/",
+                "src/occupational/occupationNotes.md",
+                "src/surveys/",
+                "src/surveys/baselineApi.ts"
+              ],
+              "fileSummaries": [
+                "[PROJECT_DOCUMENT] docs/基线匹配现状.md：Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。；业务摘录：[片段 1/1] 两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。 前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。 登录用户所属地区与患者基线现住址是两个独立字段； 服务端负责地区范围过滤。 本次要求匹配当前地区与下级地区。 列表返回地址摘要，自动填充前必须查询详情。 填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。 同一患者可能有多条记录，本次规则由原始提示词明确。",
+                "[PROJECT_DOCUMENT] src/occupational/occupationNotes.md：Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。；业务摘录：[片段 1/1] 该模块列表默认查询当前日期； 空查询参数从 queryParam 读取。 该规则仅适用于职业信息模块，不是基线匹配规则。",
+                "[PROJECT_SOURCE] src/surveys/baselineApi.ts：TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {"
+              ],
+              "analysisStatus": "COMPLETE",
+              "analyzedFileCount": 3,
+              "warnings": [],
+              "factCards": [
+                {
+                  "id": "F01",
+                  "category": "BUSINESS_RULE",
+                  "origin": "PROJECT_DOCUMENT",
+                  "sourcePath": "docs/基线匹配现状.md",
+                  "evidence": "列表返回地址摘要，自动填充前必须查询详情"
+                }
+              ]
+            },
+            "contextReport": {
+              "customDescription": "合成的地区调查工程，材料无真实个人信息。",
+              "technologyStack": [
+                {
+                  "name": "TypeScript",
+                  "source": "src/surveys/baselineApi.ts",
+                  "confidence": 0.9
+                }
+              ],
+              "dependencies": [],
+              "directoryTree": [
+                "docs/",
+                "docs/基线匹配现状.md",
+                "src/",
+                "src/occupational/",
+                "src/occupational/occupationNotes.md",
+                "src/surveys/",
+                "src/surveys/baselineApi.ts"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "docs/基线匹配现状.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n# 合成工程现状\n两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n登录用户所属地区与患者基线现住址是两个独立字段；服务端负责地区范围过滤。本次要求匹配当前地区与下级地区。\n列表返回地址摘要，自动填充前必须查询详情。填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。\n同一患者可能有多条记录，本次规则由原始提示词明确。",
+                  "summary": "Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。",
+                  "truncated": false
+                },
+                {
+                  "path": "src/occupational/occupationNotes.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n# 无调用依赖的职业信息模块\n该模块列表默认查询当前日期；空查询参数从 queryParam 读取。该规则仅适用于职业信息模块，不是基线匹配规则。",
+                  "summary": "Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。",
+                  "truncated": false
+                },
+                {
+                  "path": "src/surveys/baselineApi.ts",
+                  "language": "typescript",
+                  "content": "[片段 1/1]\nexport const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];\nexport async function queryBaselineForFill(name: string, idNumber: string) {\n  return fetch('/api/baseline/match?' + new URLSearchParams({ name, idNumber }));\n}\nexport async function loadBaselineDetail(id: string) {\n  return fetch('/api/baseline/' + encodeURIComponent(id));\n}",
+                  "summary": "TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "expiresAt": "2026-10-03T10:12:37.721253300Z",
+            "latencyMs": 32
+          },
+          "answerReview": {
+            "caseId": "01_software_autofill",
+            "questions": [
+              {
+                "questionId": "region_filter_location",
+                "question": "“包含下级地区、排除其他同级地区”的地区范围过滤，应该在哪一层实现？",
+                "answer": "按原始需求和资料，地区范围过滤由服务端负责，前端不自行拼接地区范围；不新增或猜测接口参数。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              },
+              {
+                "questionId": "fill_fields_scope",
+                "question": "“自动填充基本信息”具体指哪些字段？",
+                "answer": "仅填现有 BASELINE_FILL_FIELDS 定义的姓名、身份证号、现住址字段；不增加联系方式，不缩减现有范围，用户确认后仅填 null 或空字符串，保留 0 和 false。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              }
+            ]
+          },
+          "priorRequests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "56551797-14cb-4cca-9245-f04faa2c37d5",
+              "elapsedMs": 95
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "1eff232b-0ebf-4516-879b-6f645c46a41d",
+              "elapsedMs": 4522
+            }
+          ],
+          "refinedQuery": "完善防治知识知晓情况和防护行为调查的基线匹配：用户录入效果评价时，按当前用户所属地区匹配患者基线。当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。请生成用于修改现有工程并补测试的实施提示词，不扩展业务范围。\n地区：按原始需求和资料，地区范围过滤由服务端负责，前端不自行拼接地区范围；不新增或猜测接口参数。\n本次选择：仅填现有 BASELINE_FILL_FIELDS 定义的姓名、身份证号、现住址字段；不增加联系方式，不缩减现有范围，用户确认后仅填 null 或空字符串，保留 0 和 false。",
+          "final": {
+            "optimizedPrompt": "## 背景\n现有合成工程包含 know-survey 与 behav-survey 两个调查模块，均调用 `src/surveys/baselineApi.ts`。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n\n当前基线匹配能力：\n- `BASELINE_FILL_FIELDS` 已定义为 `['name', 'idNumber', 'residenceAddress']`。\n- `queryBaselineForFill(name, idNumber)` 与 `loadBaselineDetail(id)` 已存在。\n- 列表接口返回地址摘要，自动填充前必须查询详情（来源：`docs/基线匹配现状.md`）。\n- 登录用户所属地区与患者基线现住址是两个独立字段，地区范围过滤由服务端负责。\n\n本次任务是在现有工程上完善“防治知识知晓情况和防护行为调查”的基线匹配，并补充测试，不扩展业务范围。\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n- [BUSINESS_RULE/PROJECT_DOCUMENT] 首次已读；来源：docs/基线匹配现状.md；证据：列表返回地址摘要，自动填充前必须查询详情\n\n## 任务\n在现有工程中实现并完善以下基线匹配逻辑，并补充对应测试：\n\n1. 地区匹配\n- 用户录入效果评价时，按当前登录用户所属地区匹配患者基线。\n- 匹配范围包含当前地区及其下级地区，排除其他同级地区。\n- 地区范围过滤由服务端负责，前端不自行拼接地区范围，不新增或猜测接口参数。\n- 当前地区没有、只有其他地区有时，不得匹配。\n- 当前地区有时，提示用户是否自动填充基本信息。\n\n2. 身份匹配\n- 姓名和身份证号必须同时匹配。\n- 姓名或身份证号缺项时，不发起查询。\n\n3. 多条记录选择\n- 存在多条有效记录时，按调查日期降序、ID 降序选一条。\n\n4. 填充行为\n- 先查询详情，再填充 `BASELINE_FILL_FIELDS`。\n- 仅填充 `BASELINE_FILL_FIELDS` 定义的姓名、身份证号、现住址字段；不增加联系方式，不缩减现有范围。\n- 不填充调查日期、调查人和题目。\n- 经用户确认后，仅填充 null 或空字符串；保留 0 和 false。\n- 取消时保持原值。\n\n5. 异常与提示\n- 无匹配时不弹窗。\n- 接口异常时提醒用户，但不阻断手工录入。\n\n6. 实施要求\n- 以现有代码核查结果为准，确认 `baselineApi.ts` 中现有接口与字段定义，不新增或猜测接口参数。\n- 保持现有功能与兼容性，不扩展业务范围。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 地区：按原始需求和资料，地区范围过滤由服务端负责，前端不自行拼接地区范围；不新增或猜测接口参数。\n- 本次选择：仅填现有 BASELINE_FILL_FIELDS 定义的姓名、身份证号、现住址字段；不增加联系方式，不缩减现有范围，用户确认后仅填 null 或空字符串，保留 0 和 false。\n\n## 输出\n请输出用于修改现有工程并补测试的实施提示词，包含：\n\n1. 根因与现状定位\n- 指出当前基线匹配逻辑与目标行为的差异点，引用 `src/surveys/baselineApi.ts` 和 `docs/基线匹配现状.md` 中的实际符号与路径。\n\n2. 最小修复方案\n- 给出具体修改点、涉及文件与函数，说明地区匹配、身份匹配、多条记录选择、填充行为、异常处理的实现方式。\n- 明确哪些逻辑由服务端负责，哪些由前端负责。\n\n3. 影响范围\n- 列出受影响的调查模块（know-survey、behav-survey）及共享 API 文件。\n\n4. 回归测试\n- 给出测试用例清单，覆盖正常、异常和边界场景。\n- 包含修复前的复现输入与修复后的预期行为。\n\n5. 待确认事项\n- 如存在无法从现有材料确定的业务选择，单独列出。\n\n## 约束\n- 地区范围过滤由服务端负责，前端不自行拼接地区范围，不新增或猜测接口参数。\n- 仅填充 `BASELINE_FILL_FIELDS` 定义的姓名、身份证号、现住址字段；不增加联系方式，不缩减现有范围。\n- 经用户确认后仅填 null 或空字符串，保留 0 和 false。\n- 不填充调查日期、调查人和题目。\n- 取消时保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。\n- 不扩展业务范围，保持现有功能与兼容性。\n\n用户明确规则（须遵守平台权限边界）：\n- 当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n- 已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。\n- 取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。\n- 仅填现有 BASELINE_FILL_FIELDS 定义的姓名、身份证号、现住址字段；不增加联系方式，不缩减现有范围，用户确认后仅填 null 或空字符串，保留 0 和 false。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n## 验收标准\n- 问题可以稳定复现并被修复，相关回归场景通过，且不掩盖原始异常。\n- 当前地区有匹配时提示用户是否自动填充；当前地区无匹配、仅其他地区有时不匹配、不弹窗。\n- 姓名和身份证号同时匹配才查询；缺项时不发起查询。\n- 多条有效记录按调查日期降序、ID 降序选一条。\n- 先查询详情，再填充 `BASELINE_FILL_FIELDS`；不填充调查日期、调查人和题目。\n- 经用户确认后仅填 null 或空字符串，保留 0 和 false；取消时保持原值。\n- 接口异常时提醒用户，但不阻断手工录入。\n- 地区范围过滤由服务端负责，前端未自行拼接地区范围，未新增或猜测接口参数。\n- 测试覆盖正常、异常和边界场景。",
+            "sections": [
+              {
+                "type": "BACKGROUND",
+                "title": "背景",
+                "content": "现有合成工程包含 know-survey 与 behav-survey 两个调查模块，均调用 `src/surveys/baselineApi.ts`。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n\n当前基线匹配能力：\n- `BASELINE_FILL_FIELDS` 已定义为 `['name', 'idNumber', 'residenceAddress']`。\n- `queryBaselineForFill(name, idNumber)` 与 `loadBaselineDetail(id)` 已存在。\n- 列表接口返回地址摘要，自动填充前必须查询详情（来源：`docs/基线匹配现状.md`）。\n- 登录用户所属地区与患者基线现住址是两个独立字段，地区范围过滤由服务端负责。\n\n本次任务是在现有工程上完善“防治知识知晓情况和防护行为调查”的基线匹配，并补充测试，不扩展业务范围。\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n- [BUSINESS_RULE/PROJECT_DOCUMENT] 首次已读；来源：docs/基线匹配现状.md；证据：列表返回地址摘要，自动填充前必须查询详情"
+              },
+              {
+                "type": "TASK",
+                "title": "任务",
+                "content": "在现有工程中实现并完善以下基线匹配逻辑，并补充对应测试：\n\n1. 地区匹配\n- 用户录入效果评价时，按当前登录用户所属地区匹配患者基线。\n- 匹配范围包含当前地区及其下级地区，排除其他同级地区。\n- 地区范围过滤由服务端负责，前端不自行拼接地区范围，不新增或猜测接口参数。\n- 当前地区没有、只有其他地区有时，不得匹配。\n- 当前地区有时，提示用户是否自动填充基本信息。\n\n2. 身份匹配\n- 姓名和身份证号必须同时匹配。\n- 姓名或身份证号缺项时，不发起查询。\n\n3. 多条记录选择\n- 存在多条有效记录时，按调查日期降序、ID 降序选一条。\n\n4. 填充行为\n- 先查询详情，再填充 `BASELINE_FILL_FIELDS`。\n- 仅填充 `BASELINE_FILL_FIELDS` 定义的姓名、身份证号、现住址字段；不增加联系方式，不缩减现有范围。\n- 不填充调查日期、调查人和题目。\n- 经用户确认后，仅填充 null 或空字符串；保留 0 和 false。\n- 取消时保持原值。\n\n5. 异常与提示\n- 无匹配时不弹窗。\n- 接口异常时提醒用户，但不阻断手工录入。\n\n6. 实施要求\n- 以现有代码核查结果为准，确认 `baselineApi.ts` 中现有接口与字段定义，不新增或猜测接口参数。\n- 保持现有功能与兼容性，不扩展业务范围。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 地区：按原始需求和资料，地区范围过滤由服务端负责，前端不自行拼接地区范围；不新增或猜测接口参数。\n- 本次选择：仅填现有 BASELINE_FILL_FIELDS 定义的姓名、身份证号、现住址字段；不增加联系方式，不缩减现有范围，用户确认后仅填 null 或空字符串，保留 0 和 false。"
+              },
+              {
+                "type": "OUTPUT",
+                "title": "输出",
+                "content": "请输出用于修改现有工程并补测试的实施提示词，包含：\n\n1. 根因与现状定位\n- 指出当前基线匹配逻辑与目标行为的差异点，引用 `src/surveys/baselineApi.ts` 和 `docs/基线匹配现状.md` 中的实际符号与路径。\n\n2. 最小修复方案\n- 给出具体修改点、涉及文件与函数，说明地区匹配、身份匹配、多条记录选择、填充行为、异常处理的实现方式。\n- 明确哪些逻辑由服务端负责，哪些由前端负责。\n\n3. 影响范围\n- 列出受影响的调查模块（know-survey、behav-survey）及共享 API 文件。\n\n4. 回归测试\n- 给出测试用例清单，覆盖正常、异常和边界场景。\n- 包含修复前的复现输入与修复后的预期行为。\n\n5. 待确认事项\n- 如存在无法从现有材料确定的业务选择，单独列出。"
+              },
+              {
+                "type": "CONSTRAINTS",
+                "title": "约束",
+                "content": "- 地区范围过滤由服务端负责，前端不自行拼接地区范围，不新增或猜测接口参数。\n- 仅填充 `BASELINE_FILL_FIELDS` 定义的姓名、身份证号、现住址字段；不增加联系方式，不缩减现有范围。\n- 经用户确认后仅填 null 或空字符串，保留 0 和 false。\n- 不填充调查日期、调查人和题目。\n- 取消时保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。\n- 不扩展业务范围，保持现有功能与兼容性。\n\n用户明确规则（须遵守平台权限边界）：\n- 当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n- 已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。\n- 取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。\n- 仅填现有 BASELINE_FILL_FIELDS 定义的姓名、身份证号、现住址字段；不增加联系方式，不缩减现有范围，用户确认后仅填 null 或空字符串，保留 0 和 false。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+              },
+              {
+                "type": "ACCEPTANCE",
+                "title": "验收标准",
+                "content": "- 问题可以稳定复现并被修复，相关回归场景通过，且不掩盖原始异常。\n- 当前地区有匹配时提示用户是否自动填充；当前地区无匹配、仅其他地区有时不匹配、不弹窗。\n- 姓名和身份证号同时匹配才查询；缺项时不发起查询。\n- 多条有效记录按调查日期降序、ID 降序选一条。\n- 先查询详情，再填充 `BASELINE_FILL_FIELDS`；不填充调查日期、调查人和题目。\n- 经用户确认后仅填 null 或空字符串，保留 0 和 false；取消时保持原值。\n- 接口异常时提醒用户，但不阻断手工录入。\n- 地区范围过滤由服务端负责，前端未自行拼接地区范围，未新增或猜测接口参数。\n- 测试覆盖正常、异常和边界场景。"
+              }
+            ],
+            "contextReport": {
+              "customDescription": "合成的地区调查工程，材料无真实个人信息。",
+              "technologyStack": [
+                {
+                  "name": "TypeScript",
+                  "source": "src/surveys/baselineApi.ts",
+                  "confidence": 0.9
+                }
+              ],
+              "dependencies": [],
+              "directoryTree": [
+                "docs/",
+                "docs/基线匹配现状.md",
+                "src/",
+                "src/occupational/",
+                "src/occupational/occupationNotes.md",
+                "src/surveys/",
+                "src/surveys/baselineApi.ts"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "src/surveys/baselineApi.ts",
+                  "language": "typescript",
+                  "content": "[片段 1/1]\nexport const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];\nexport async function queryBaselineForFill(name: string, idNumber: string) {\n  return fetch('/api/baseline/match?' + new URLSearchParams({ name, idNumber }));\n}\nexport async function loadBaselineDetail(id: string) {\n  return fetch('/api/baseline/' + encodeURIComponent(id));\n}",
+                  "summary": "TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {",
+                  "truncated": false
+                },
+                {
+                  "path": "docs/基线匹配现状.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n# 合成工程现状\n两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n登录用户所属地区与患者基线现住址是两个独立字段；服务端负责地区范围过滤。本次要求匹配当前地区与下级地区。\n列表返回地址摘要，自动填充前必须查询详情。填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。\n同一患者可能有多条记录，本次规则由原始提示词明确。",
+                  "summary": "Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。",
+                  "truncated": false
+                },
+                {
+                  "path": "src/occupational/occupationNotes.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n# 无调用依赖的职业信息模块\n该模块列表默认查询当前日期；空查询参数从 queryParam 读取。该规则仅适用于职业信息模块，不是基线匹配规则。",
+                  "summary": "Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "ambiguities": [],
+            "appliedConstraints": [
+              "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+              "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+              "校验所有外部输入，并明确处理空值、非法值和边界条件。",
+              "处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。",
+              "为核心逻辑补充正常、异常和边界场景测试。",
+              "前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。",
+              "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+              "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+            ],
+            "templateCode": "BUG_FIX",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 5991,
+            "warnings": []
+          },
+          "protocolChecks": {
+            "realProvider": true,
+            "promptPresent": true,
+            "fourSections": true,
+            "constraintsInCopiedBody": true
+          },
+          "elapsedMs": 6272,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "33b540ca-9580-4c8c-b8ec-9f133aaac976",
+              "elapsedMs": 6264
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "03_research_yll_unresolved",
+      "results": {
+        "direct": {
+          "id": "03_research_yll_unresolved",
+          "title": "科研寿命表与人口分母仍未知",
+          "arm": "direct",
+          "startedAt": "2026-10-03T09:44:14.898Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "final": {
+            "optimizedPrompt": "## 背景\n- 本轮为合成业务验收材料，不包含真实个人信息；本次任务只优化提示词，不执行分析。\n- 研究资料为合成研究设计，无真实病例，来源为 `research/数据字典.md`（PROJECT_DOCUMENT）。\n- 资料明确的范围与格式：广东省，2015—2025 年；数据格式为 CSV。\n- 资料明确的字段：`year`、`sex`、`age`、`cause`、`deaths`；数据只有年度汇总，没有月数据。\n- 资料明确的疾病范围：缺血性心脏病、脑卒中。\n- 资料明确的分析工具：R。\n- 资料明确标注：参考寿命表未提供；年度分性别人口分母未提供。\n- 目录结构仅显示 `research/` 与 `research/数据字典.md`，未提供其他数据文件或代码文件。\n\n## 任务\n请生成一份研究分析提示词，用于指导完成“广东省 2015—2025 年心脑血管疾病年度死亡特征分析”的分析方案与代码框架设计，具体要求如下：\n\n1. 研究对象与范围\n   - 地区：广东省。\n   - 时间：2015—2025 年，按年度汇总口径。\n   - 疾病：缺血性心脏病、脑卒中。\n   - 分层维度：按性别（`sex`）分层；可结合 `age`、`cause`、`year` 进行描述性分层。\n\n2. 分析内容\n   - 描述年度死亡特征：按年份、性别、疾病、年龄分组的死亡数与构成情况。\n   - 按性别计算 YLL 及 YLL 率。\n   - 在参考寿命表和年度分性别人口分母尚未确定前，不得计算相应的 YLL 或 YLL 率；可先给出数据检查步骤与方法框架。\n\n3. 交付边界\n   - 只交付分析方案与代码框架，不执行分析。\n   - 不编造人口、寿命表、死亡数、研究结果或参考文献。\n   - 不增加月度季节性结论。\n\n4. 待确认事项处理\n   - 参考寿命表与年度分性别人口分母属于尚未确定项；在确认前，相关计算只能以占位或待填参数形式出现在代码框架中，不得填入任何猜测值。\n\n5. 实施检查\n   - 以现有代码与数据核查结果为准，核对字段命名、缺失值、重复记录、年龄分组口径与性别编码；核查结果写入方案的数据检查部分。\n\n## 输出\n交付物为一份研究分析提示词文档，至少包含以下部分：\n\n1. 研究设计说明：研究对象、时间与空间范围、数据来源、疾病与分层定义。\n2. 数据检查方案：字段核对、缺失值、重复记录、异常值、年龄与性别编码一致性检查步骤。\n3. 指标定义：YLL 与 YLL 率的定义、计算公式、所需输入（死亡数、年龄、性别、参考寿命表、年度分性别人口分母）及其待确认状态。\n4. 方法框架：按性别分层的年度死亡特征描述方法与 YLL/YLL 率计算流程；明确在参考寿命表和人口分母确认前不执行相应计算。\n5. 代码框架：使用 R 的脚本结构，包含数据读取、数据检查、指标计算占位函数、结果输出占位；参数以占位符表示，不填入猜测值。\n6. 结果呈现方式：分析表结构与图表清单（如年度分性别死亡数表、YLL 与 YLL 率表等），不包含任何实际数值或结论。\n7. 缺失数据、偏倚与不确定性说明：说明参考寿命表和人口分母缺失对结果的影响及方法适用条件。\n8. 可复现性说明：数据来源可追溯、分析口径可复现、方法选择有依据。\n\n输出中不得出现编造的人口、寿命表、死亡数、研究结果或参考文献，不得包含月度季节性结论。\n\n## 约束\n- 参考寿命表和年度分性别人口分母确认前，不得计算相应 YLL 或 YLL 率。\n- 只交付分析方案与代码框架，不执行分析。\n- 不得增加月度季节性结论；数据本身只有年度汇总，无月数据。\n- 不得编造人口、寿命表、死亡数、研究结果或参考文献。\n\n用户明确规则（须遵守平台权限边界）：\n- 参考寿命表和年度分性别人口分母尚未确定；这两项确认前不得计算相应YLL或YLL率，但可先给数据检查和方法框架。\n- 只交付分析方案与代码框架，不执行分析。\n- 不得编造人口、寿命表、死亡数、研究结果或参考文献；不得增加月度季节性结论。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 参考寿命表的来源、版本与适用人群尚未确定，影响 YLL 计算；在确认前不得计算 YLL。\n- 年度分性别人口分母的来源与口径尚未确定，影响 YLL 率计算；在确认前不得计算 YLL 率。\n- 年龄分组口径（是否使用标准年龄组、组距）尚未明确，影响分层描述与 YLL 计算。\n- 性别编码取值（如 1/2、M/F 等）尚未明确，影响按性别分层。\n- 死因编码与 `cause` 字段取值（缺血性心脏病、脑卒中的具体编码或文本）尚未明确，影响疾病筛选。\n\n## 验收标准\n- 研究口径可复现：研究对象、时间范围、疾病范围、分层维度、指标定义与统计口径清晰一致。\n- 数据来源可追溯：所有数据字段与来源均指向 `research/数据字典.md` 或明确标注为待确认。\n- 方法选择有依据：YLL 与 YLL 率的计算流程符合标准方法框架，并明确所需输入。\n- 缺失数据、偏倚和不确定性已说明：参考寿命表与年度分性别人口分母缺失的影响及方法适用条件已写明。\n- 未在参考寿命表和人口分母确认前计算 YLL 或 YLL 率。\n- 未编造人口、寿命表、死亡数、研究结果或参考文献。\n- 未增加月度季节性结论。\n- 代码框架使用 R，参数以占位符表示，不填入猜测值。\n- 交付物仅为分析方案与代码框架，未执行分析。",
+            "sections": [
+              {
+                "type": "BACKGROUND",
+                "title": "背景",
+                "content": "- 本轮为合成业务验收材料，不包含真实个人信息；本次任务只优化提示词，不执行分析。\n- 研究资料为合成研究设计，无真实病例，来源为 `research/数据字典.md`（PROJECT_DOCUMENT）。\n- 资料明确的范围与格式：广东省，2015—2025 年；数据格式为 CSV。\n- 资料明确的字段：`year`、`sex`、`age`、`cause`、`deaths`；数据只有年度汇总，没有月数据。\n- 资料明确的疾病范围：缺血性心脏病、脑卒中。\n- 资料明确的分析工具：R。\n- 资料明确标注：参考寿命表未提供；年度分性别人口分母未提供。\n- 目录结构仅显示 `research/` 与 `research/数据字典.md`，未提供其他数据文件或代码文件。"
+              },
+              {
+                "type": "TASK",
+                "title": "任务",
+                "content": "请生成一份研究分析提示词，用于指导完成“广东省 2015—2025 年心脑血管疾病年度死亡特征分析”的分析方案与代码框架设计，具体要求如下：\n\n1. 研究对象与范围\n   - 地区：广东省。\n   - 时间：2015—2025 年，按年度汇总口径。\n   - 疾病：缺血性心脏病、脑卒中。\n   - 分层维度：按性别（`sex`）分层；可结合 `age`、`cause`、`year` 进行描述性分层。\n\n2. 分析内容\n   - 描述年度死亡特征：按年份、性别、疾病、年龄分组的死亡数与构成情况。\n   - 按性别计算 YLL 及 YLL 率。\n   - 在参考寿命表和年度分性别人口分母尚未确定前，不得计算相应的 YLL 或 YLL 率；可先给出数据检查步骤与方法框架。\n\n3. 交付边界\n   - 只交付分析方案与代码框架，不执行分析。\n   - 不编造人口、寿命表、死亡数、研究结果或参考文献。\n   - 不增加月度季节性结论。\n\n4. 待确认事项处理\n   - 参考寿命表与年度分性别人口分母属于尚未确定项；在确认前，相关计算只能以占位或待填参数形式出现在代码框架中，不得填入任何猜测值。\n\n5. 实施检查\n   - 以现有代码与数据核查结果为准，核对字段命名、缺失值、重复记录、年龄分组口径与性别编码；核查结果写入方案的数据检查部分。"
+              },
+              {
+                "type": "OUTPUT",
+                "title": "输出",
+                "content": "交付物为一份研究分析提示词文档，至少包含以下部分：\n\n1. 研究设计说明：研究对象、时间与空间范围、数据来源、疾病与分层定义。\n2. 数据检查方案：字段核对、缺失值、重复记录、异常值、年龄与性别编码一致性检查步骤。\n3. 指标定义：YLL 与 YLL 率的定义、计算公式、所需输入（死亡数、年龄、性别、参考寿命表、年度分性别人口分母）及其待确认状态。\n4. 方法框架：按性别分层的年度死亡特征描述方法与 YLL/YLL 率计算流程；明确在参考寿命表和人口分母确认前不执行相应计算。\n5. 代码框架：使用 R 的脚本结构，包含数据读取、数据检查、指标计算占位函数、结果输出占位；参数以占位符表示，不填入猜测值。\n6. 结果呈现方式：分析表结构与图表清单（如年度分性别死亡数表、YLL 与 YLL 率表等），不包含任何实际数值或结论。\n7. 缺失数据、偏倚与不确定性说明：说明参考寿命表和人口分母缺失对结果的影响及方法适用条件。\n8. 可复现性说明：数据来源可追溯、分析口径可复现、方法选择有依据。\n\n输出中不得出现编造的人口、寿命表、死亡数、研究结果或参考文献，不得包含月度季节性结论。"
+              },
+              {
+                "type": "CONSTRAINTS",
+                "title": "约束",
+                "content": "- 参考寿命表和年度分性别人口分母确认前，不得计算相应 YLL 或 YLL 率。\n- 只交付分析方案与代码框架，不执行分析。\n- 不得增加月度季节性结论；数据本身只有年度汇总，无月数据。\n- 不得编造人口、寿命表、死亡数、研究结果或参考文献。\n\n用户明确规则（须遵守平台权限边界）：\n- 参考寿命表和年度分性别人口分母尚未确定；这两项确认前不得计算相应YLL或YLL率，但可先给数据检查和方法框架。\n- 只交付分析方案与代码框架，不执行分析。\n- 不得编造人口、寿命表、死亡数、研究结果或参考文献；不得增加月度季节性结论。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 参考寿命表的来源、版本与适用人群尚未确定，影响 YLL 计算；在确认前不得计算 YLL。\n- 年度分性别人口分母的来源与口径尚未确定，影响 YLL 率计算；在确认前不得计算 YLL 率。\n- 年龄分组口径（是否使用标准年龄组、组距）尚未明确，影响分层描述与 YLL 计算。\n- 性别编码取值（如 1/2、M/F 等）尚未明确，影响按性别分层。\n- 死因编码与 `cause` 字段取值（缺血性心脏病、脑卒中的具体编码或文本）尚未明确，影响疾病筛选。"
+              },
+              {
+                "type": "CLARIFICATIONS",
+                "title": "待确认事项",
+                "content": "- 参考寿命表的来源、版本与适用人群尚未确定，影响 YLL 计算；在确认前不得计算 YLL。\n- 年度分性别人口分母的来源与口径尚未确定，影响 YLL 率计算；在确认前不得计算 YLL 率。\n- 年龄分组口径（是否使用标准年龄组、组距）尚未明确，影响分层描述与 YLL 计算。\n- 性别编码取值（如 1/2、M/F 等）尚未明确，影响按性别分层。\n- 死因编码与 `cause` 字段取值（缺血性心脏病、脑卒中的具体编码或文本）尚未明确，影响疾病筛选。"
+              },
+              {
+                "type": "ACCEPTANCE",
+                "title": "验收标准",
+                "content": "- 研究口径可复现：研究对象、时间范围、疾病范围、分层维度、指标定义与统计口径清晰一致。\n- 数据来源可追溯：所有数据字段与来源均指向 `research/数据字典.md` 或明确标注为待确认。\n- 方法选择有依据：YLL 与 YLL 率的计算流程符合标准方法框架，并明确所需输入。\n- 缺失数据、偏倚和不确定性已说明：参考寿命表与年度分性别人口分母缺失的影响及方法适用条件已写明。\n- 未在参考寿命表和人口分母确认前计算 YLL 或 YLL 率。\n- 未编造人口、寿命表、死亡数、研究结果或参考文献。\n- 未增加月度季节性结论。\n- 代码框架使用 R，参数以占位符表示，不填入猜测值。\n- 交付物仅为分析方案与代码框架，未执行分析。"
+              }
+            ],
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "research/",
+                "research/数据字典.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "research/数据字典.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n资料为合成研究设计，无真实病例。范围：广东省2015—2025年。格式：CSV。字段：year、sex、age、cause、deaths；只有年度汇总，没有月数据。疾病：缺血性心脏病、脑卒中。分析工具：R。参考寿命表：未提供。年度分性别人口分母：未提供。",
+                  "summary": "Markdown 文档摘要：资料为合成研究设计，无真实病例。；格式：CSV。；疾病：缺血性心脏病、脑卒中。；分析工具：R。；年度分性别人口分母：未提供。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "ambiguities": [
+              "参考寿命表的来源、版本与适用人群尚未确定，影响 YLL 计算；在确认前不得计算 YLL。",
+              "年度分性别人口分母的来源与口径尚未确定，影响 YLL 率计算；在确认前不得计算 YLL 率。",
+              "年龄分组口径（是否使用标准年龄组、组距）尚未明确，影响分层描述与 YLL 计算。",
+              "性别编码取值（如 1/2、M/F 等）尚未明确，影响按性别分层。",
+              "死因编码与 `cause` 字段取值（缺血性心脏病、脑卒中的具体编码或文本）尚未明确，影响疾病筛选。"
+            ],
+            "appliedConstraints": [
+              "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+              "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+              "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+              "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+              "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+              "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+            ],
+            "templateCode": "RESEARCH_ANALYSIS",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 7754,
+            "warnings": []
+          },
+          "protocolChecks": {
+            "realProvider": true,
+            "promptPresent": true,
+            "fourSections": true,
+            "constraintsInCopiedBody": true
+          },
+          "elapsedMs": 7898,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "7b723376-5cd8-4430-ad77-fe8bec50ac36",
+              "elapsedMs": 7895
+            }
+          ]
+        },
+        "plan": {
+          "id": "03_research_yll_unresolved",
+          "title": "科研寿命表与人口分母仍未知",
+          "arm": "plan",
+          "startedAt": "2026-10-03T09:44:22.798Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "prepared": {
+            "contextId": "0b78e398-f0db-435f-a20a-92c5125429b8",
+            "version": "sha256:81b98b0ea599337e5c8eaab0144d3272d29a9f216bbf8de5d1c3784d386d558f",
+            "digest": {
+              "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologies": [],
+              "dependencies": [],
+              "directoryOverview": [
+                "research/",
+                "research/数据字典.md"
+              ],
+              "fileSummaries": [
+                "[PROJECT_DOCUMENT] research/数据字典.md：Markdown 文档摘要：资料为合成研究设计，无真实病例。；格式：CSV。；疾病：缺血性心脏病、脑卒中。；分析工具：R。；年度分性别人口分母：未提供。；业务摘录：[片段 1/1] 资料为合成研究设计，无真实病例。 范围：广东省2015—2025年。 格式：CSV。 字段：year、sex、age、cause、deaths； 只有年度汇总，没有月数据。 疾病：缺血性心脏病、脑卒中。 分析工具：R。 参考寿命表：未提供。 年度分性别人口分母：未提供。"
+              ],
+              "analysisStatus": "COMPLETE",
+              "analyzedFileCount": 1,
+              "warnings": [],
+              "factCards": [
+                {
+                  "id": "F01",
+                  "category": "DATA_FORMAT",
+                  "origin": "PROJECT_DOCUMENT",
+                  "sourcePath": "research/数据字典.md",
+                  "evidence": "格式：CSV"
+                },
+                {
+                  "id": "F02",
+                  "category": "ANALYSIS_TOOL",
+                  "origin": "PROJECT_DOCUMENT",
+                  "sourcePath": "research/数据字典.md",
+                  "evidence": "分析工具：R"
+                }
+              ]
+            },
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "research/",
+                "research/数据字典.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "research/数据字典.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n资料为合成研究设计，无真实病例。范围：广东省2015—2025年。格式：CSV。字段：year、sex、age、cause、deaths；只有年度汇总，没有月数据。疾病：缺血性心脏病、脑卒中。分析工具：R。参考寿命表：未提供。年度分性别人口分母：未提供。",
+                  "summary": "Markdown 文档摘要：资料为合成研究设计，无真实病例。；格式：CSV。；疾病：缺血性心脏病、脑卒中。；分析工具：R。；年度分性别人口分母：未提供。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "expiresAt": "2026-10-03T10:14:22.814822400Z",
+            "latencyMs": 3
+          },
+          "plan": {
+            "summary": "已理解目标：为广东省2015—2025年合成心脑血管疾病数据生成一份R分析方案与代码框架，按性别计算YLL及YLL率，但参考寿命表和年度分性别人口分母尚未确定，确认前不得计算相应指标，也不得编造数据或增加月度季节性结论。需要确认寿命表与人口分母的处理方式，以及YLL计算口径，否则无法确定代码框架中哪些部分可运行、哪些需留空。",
+            "questions": [
+              {
+                "id": "life_table_source",
+                "question": "参考寿命表尚未确定，你希望最终提示词如何处理这一项？",
+                "hint": "寿命表直接决定YLL计算，缺失时只能保留占位或方法说明，不能编造。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "placeholder",
+                    "label": "保留占位，不指定来源",
+                    "description": "代码框架中只留寿命表读取接口和参数位置，不填入任何具体数值或来源。",
+                    "answer": "参考寿命表保留为未确定项，代码框架只留读取接口和参数占位，不指定来源、不填入任何数值。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "user_provide",
+                    "label": "由我后续提供",
+                    "description": "提示词中说明寿命表由用户后续提供，代码框架预留读取路径。",
+                    "answer": "参考寿命表由用户后续提供，代码框架预留读取路径和参数接口，确认前不计算YLL。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "who_standard",
+                    "label": "使用WHO标准寿命表",
+                    "description": "指定使用WHO标准寿命表作为参考，但需用户确认具体版本。",
+                    "answer": "使用WHO标准寿命表作为参考，具体版本由用户确认后填入，确认前不计算YLL。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "population_denominator",
+                "question": "年度分性别人口分母尚未确定，你希望最终提示词如何处理这一项？",
+                "hint": "人口分母决定YLL率计算，缺失时只能保留占位或方法说明，不能编造。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "placeholder",
+                    "label": "保留占位，不指定来源",
+                    "description": "代码框架中只留人口分母读取接口和参数位置，不填入任何具体数值或来源。",
+                    "answer": "年度分性别人口分母保留为未确定项，代码框架只留读取接口和参数占位，不指定来源、不填入任何数值。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "user_provide",
+                    "label": "由我后续提供",
+                    "description": "提示词中说明人口分母由用户后续提供，代码框架预留读取路径。",
+                    "answer": "年度分性别人口分母由用户后续提供，代码框架预留读取路径和参数接口，确认前不计算YLL率。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "census_data",
+                    "label": "使用普查或统计年鉴数据",
+                    "description": "指定使用普查或统计年鉴数据作为人口分母，但需用户确认具体来源。",
+                    "answer": "使用普查或统计年鉴数据作为年度分性别人口分母，具体来源由用户确认后填入，确认前不计算YLL率。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "yll_method",
+                "question": "YLL计算口径是否采用标准方法（死亡数×剩余期望寿命）？",
+                "hint": "YLL计算口径影响代码框架的核心公式，需明确。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "standard",
+                    "label": "标准方法",
+                    "description": "YLL = 死亡数 × 剩余期望寿命，按性别和年龄组汇总。",
+                    "answer": "YLL采用标准方法：YLL = 死亡数 × 剩余期望寿命，按性别和年龄组汇总。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "other",
+                    "label": "其他方法",
+                    "description": "使用其他YLL计算口径，需用户说明具体公式。",
+                    "answer": "YLL采用其他方法，具体公式由用户说明后填入。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "age_grouping",
+                "question": "年龄分组方式是否按数据字典中的age字段直接使用，还是需要重新分组？",
+                "hint": "年龄分组影响YLL计算和寿命表匹配，需明确。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "as_is",
+                    "label": "直接使用age字段",
+                    "description": "按数据中已有的age字段值直接分组，不重新划分。",
+                    "answer": "年龄分组直接使用数据字典中的age字段值，不重新划分。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "standard_groups",
+                    "label": "按标准年龄组重新分组",
+                    "description": "按5岁或10岁标准年龄组重新分组，需用户指定具体分组。",
+                    "answer": "年龄按标准年龄组重新分组，具体分组由用户指定后填入。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              }
+            ],
+            "templateCode": "RESEARCH_ANALYSIS",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 5791,
+            "planId": "32c4d9b2-075e-4ea6-9a38-ec4fa39acd6e",
+            "planningContext": {
+              "contextId": "0b78e398-f0db-435f-a20a-92c5125429b8",
+              "version": "sha256:81b98b0ea599337e5c8eaab0144d3272d29a9f216bbf8de5d1c3784d386d558f"
+            },
+            "expiresAt": "2026-10-03T10:14:22.814822400Z"
+          },
+          "elapsedMs": 5895,
+          "requests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "ed8d3b46-b497-4f5d-a851-19162076a09a",
+              "elapsedMs": 49
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "4d143653-5d07-40fd-8cb3-8c773c0f02ed",
+              "elapsedMs": 5842
+            }
+          ]
+        },
+        "plan-final": {
+          "id": "03_research_yll_unresolved",
+          "title": "科研寿命表与人口分母仍未知",
+          "arm": "plan-final",
+          "startedAt": "2026-10-03T09:48:00.964Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "plan": {
+            "summary": "已理解目标：为广东省2015—2025年合成心脑血管疾病数据生成一份R分析方案与代码框架，按性别计算YLL及YLL率，但参考寿命表和年度分性别人口分母尚未确定，确认前不得计算相应指标，也不得编造数据或增加月度季节性结论。需要确认寿命表与人口分母的处理方式，以及YLL计算口径，否则无法确定代码框架中哪些部分可运行、哪些需留空。",
+            "questions": [
+              {
+                "id": "life_table_source",
+                "question": "参考寿命表尚未确定，你希望最终提示词如何处理这一项？",
+                "hint": "寿命表直接决定YLL计算，缺失时只能保留占位或方法说明，不能编造。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "placeholder",
+                    "label": "保留占位，不指定来源",
+                    "description": "代码框架中只留寿命表读取接口和参数位置，不填入任何具体数值或来源。",
+                    "answer": "参考寿命表保留为未确定项，代码框架只留读取接口和参数占位，不指定来源、不填入任何数值。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "user_provide",
+                    "label": "由我后续提供",
+                    "description": "提示词中说明寿命表由用户后续提供，代码框架预留读取路径。",
+                    "answer": "参考寿命表由用户后续提供，代码框架预留读取路径和参数接口，确认前不计算YLL。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "who_standard",
+                    "label": "使用WHO标准寿命表",
+                    "description": "指定使用WHO标准寿命表作为参考，但需用户确认具体版本。",
+                    "answer": "使用WHO标准寿命表作为参考，具体版本由用户确认后填入，确认前不计算YLL。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "population_denominator",
+                "question": "年度分性别人口分母尚未确定，你希望最终提示词如何处理这一项？",
+                "hint": "人口分母决定YLL率计算，缺失时只能保留占位或方法说明，不能编造。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "placeholder",
+                    "label": "保留占位，不指定来源",
+                    "description": "代码框架中只留人口分母读取接口和参数位置，不填入任何具体数值或来源。",
+                    "answer": "年度分性别人口分母保留为未确定项，代码框架只留读取接口和参数占位，不指定来源、不填入任何数值。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "user_provide",
+                    "label": "由我后续提供",
+                    "description": "提示词中说明人口分母由用户后续提供，代码框架预留读取路径。",
+                    "answer": "年度分性别人口分母由用户后续提供，代码框架预留读取路径和参数接口，确认前不计算YLL率。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "census_data",
+                    "label": "使用普查或统计年鉴数据",
+                    "description": "指定使用普查或统计年鉴数据作为人口分母，但需用户确认具体来源。",
+                    "answer": "使用普查或统计年鉴数据作为年度分性别人口分母，具体来源由用户确认后填入，确认前不计算YLL率。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "yll_method",
+                "question": "YLL计算口径是否采用标准方法（死亡数×剩余期望寿命）？",
+                "hint": "YLL计算口径影响代码框架的核心公式，需明确。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "standard",
+                    "label": "标准方法",
+                    "description": "YLL = 死亡数 × 剩余期望寿命，按性别和年龄组汇总。",
+                    "answer": "YLL采用标准方法：YLL = 死亡数 × 剩余期望寿命，按性别和年龄组汇总。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "other",
+                    "label": "其他方法",
+                    "description": "使用其他YLL计算口径，需用户说明具体公式。",
+                    "answer": "YLL采用其他方法，具体公式由用户说明后填入。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "age_grouping",
+                "question": "年龄分组方式是否按数据字典中的age字段直接使用，还是需要重新分组？",
+                "hint": "年龄分组影响YLL计算和寿命表匹配，需明确。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "as_is",
+                    "label": "直接使用age字段",
+                    "description": "按数据中已有的age字段值直接分组，不重新划分。",
+                    "answer": "年龄分组直接使用数据字典中的age字段值，不重新划分。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "standard_groups",
+                    "label": "按标准年龄组重新分组",
+                    "description": "按5岁或10岁标准年龄组重新分组，需用户指定具体分组。",
+                    "answer": "年龄按标准年龄组重新分组，具体分组由用户指定后填入。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              }
+            ],
+            "templateCode": "RESEARCH_ANALYSIS",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 5791,
+            "planId": "32c4d9b2-075e-4ea6-9a38-ec4fa39acd6e",
+            "planningContext": {
+              "contextId": "0b78e398-f0db-435f-a20a-92c5125429b8",
+              "version": "sha256:81b98b0ea599337e5c8eaab0144d3272d29a9f216bbf8de5d1c3784d386d558f"
+            },
+            "expiresAt": "2026-10-03T10:14:22.814822400Z"
+          },
+          "prepared": {
+            "contextId": "0b78e398-f0db-435f-a20a-92c5125429b8",
+            "version": "sha256:81b98b0ea599337e5c8eaab0144d3272d29a9f216bbf8de5d1c3784d386d558f",
+            "digest": {
+              "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologies": [],
+              "dependencies": [],
+              "directoryOverview": [
+                "research/",
+                "research/数据字典.md"
+              ],
+              "fileSummaries": [
+                "[PROJECT_DOCUMENT] research/数据字典.md：Markdown 文档摘要：资料为合成研究设计，无真实病例。；格式：CSV。；疾病：缺血性心脏病、脑卒中。；分析工具：R。；年度分性别人口分母：未提供。；业务摘录：[片段 1/1] 资料为合成研究设计，无真实病例。 范围：广东省2015—2025年。 格式：CSV。 字段：year、sex、age、cause、deaths； 只有年度汇总，没有月数据。 疾病：缺血性心脏病、脑卒中。 分析工具：R。 参考寿命表：未提供。 年度分性别人口分母：未提供。"
+              ],
+              "analysisStatus": "COMPLETE",
+              "analyzedFileCount": 1,
+              "warnings": [],
+              "factCards": [
+                {
+                  "id": "F01",
+                  "category": "DATA_FORMAT",
+                  "origin": "PROJECT_DOCUMENT",
+                  "sourcePath": "research/数据字典.md",
+                  "evidence": "格式：CSV"
+                },
+                {
+                  "id": "F02",
+                  "category": "ANALYSIS_TOOL",
+                  "origin": "PROJECT_DOCUMENT",
+                  "sourcePath": "research/数据字典.md",
+                  "evidence": "分析工具：R"
+                }
+              ]
+            },
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "research/",
+                "research/数据字典.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "research/数据字典.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n资料为合成研究设计，无真实病例。范围：广东省2015—2025年。格式：CSV。字段：year、sex、age、cause、deaths；只有年度汇总，没有月数据。疾病：缺血性心脏病、脑卒中。分析工具：R。参考寿命表：未提供。年度分性别人口分母：未提供。",
+                  "summary": "Markdown 文档摘要：资料为合成研究设计，无真实病例。；格式：CSV。；疾病：缺血性心脏病、脑卒中。；分析工具：R。；年度分性别人口分母：未提供。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "expiresAt": "2026-10-03T10:14:22.814822400Z",
+            "latencyMs": 3
+          },
+          "answerReview": {
+            "caseId": "03_research_yll_unresolved",
+            "questions": [
+              {
+                "questionId": "life_table_source",
+                "question": "参考寿命表尚未确定，你希望最终提示词如何处理这一项？",
+                "answer": "暂不确定。参考寿命表仍未提供，不能将任何具体标准表作为已确认选择；仅预留读取和校验接口，确认前不得计算相应 YLL。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              },
+              {
+                "questionId": "population_denominator",
+                "question": "年度分性别人口分母尚未确定，你希望最终提示词如何处理这一项？",
+                "answer": "暂不确定。年度分性别人口分母仍未提供，不默认或插补人口数值；只预留数据检查和方法框架，确认前不得计算 YLL 率。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              },
+              {
+                "questionId": "yll_method",
+                "question": "YLL计算口径是否采用标准方法（死亡数×剩余期望寿命）？",
+                "answer": "暂不确定，具体 YLL 标准、公式与参数尚未确认，只保留可替换的方法和代码框架，不自行将某个标准写成已确认要求。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              },
+              {
+                "questionId": "age_grouping",
+                "question": "年龄分组方式是否按数据字典中的age字段直接使用，还是需要重新分组？",
+                "answer": "使用数据字典已有 age 字段；具体年龄分组与寿命表年龄映射暂不确定，不自行指定五岁或十岁分组，仅保留可替换接口。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              }
+            ]
+          },
+          "priorRequests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "ed8d3b46-b497-4f5d-a851-19162076a09a",
+              "elapsedMs": 49
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "4d143653-5d07-40fd-8cb3-8c773c0f02ed",
+              "elapsedMs": 5842
+            }
+          ],
+          "refinedQuery": "请生成一份研究分析提示词：分析合成的广东省2015—2025年心脑血管疾病年度死亡特征，按性别计算YLL及YLL率，使用R。参考寿命表和年度分性别人口分母尚未确定；这两项确认前不得计算相应YLL或YLL率，但可先给数据检查和方法框架。只交付分析方案与代码框架，不执行分析。不得编造人口、寿命表、死亡数、研究结果或参考文献；不得增加月度季节性结论。\n本次选择：暂不确定。参考寿命表仍未提供，不能将任何具体标准表作为已确认选择；仅预留读取和校验接口，确认前不得计算相应 YLL。\n本次选择：暂不确定。年度分性别人口分母仍未提供，不默认或插补人口数值；只预留数据检查和方法框架，确认前不得计算 YLL 率。\n口径：暂不确定，具体 YLL 标准、公式与参数尚未确认，只保留可替换的方法和代码框架，不自行将某个标准写成已确认要求。\n本次选择：使用数据字典已有 age 字段；具体年龄分组与寿命表年龄映射暂不确定，不自行指定五岁或十岁分组，仅保留可替换接口。",
+          "final": {
+            "optimizedPrompt": "## 背景\n- 本任务是生成一份**研究分析提示词**，用于分析合成的广东省 2015—2025 年心脑血管疾病年度死亡特征，按性别计算 YLL 及 YLL 率，使用 R。\n- 本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。\n- 数据字典（research/数据字典.md）明确：资料为合成研究设计，无真实病例；范围为广东省 2015—2025 年；格式为 CSV；字段为 year、sex、age、cause、deaths；只有年度汇总，没有月数据；疾病为缺血性心脏病、脑卒中；分析工具为 R；参考寿命表未提供；年度分性别人口分母未提供。\n- 已确认的现状与未决信息：\n  - 参考寿命表仍未提供，不能将任何具体标准表作为已确认选择；仅预留读取和校验接口，确认前不得计算相应 YLL。\n  - 年度分性别人口分母仍未提供，不默认或插补人口数值；只预留数据检查和方法框架，确认前不得计算 YLL 率。\n  - 具体 YLL 标准、公式与参数尚未确认，只保留可替换的方法和代码框架，不自行将某个标准写成已确认要求。\n  - 使用数据字典已有 age 字段；具体年龄分组与寿命表年龄映射暂不确定，不自行指定五岁或十岁分组，仅保留可替换接口。\n- 交付边界：只交付分析方案与代码框架，不执行分析；不得编造人口、寿命表、死亡数、研究结果或参考文献；不得增加月度季节性结论。\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n- [DATA_FORMAT/PROJECT_DOCUMENT] 首次已读；来源：research/数据字典.md；证据：格式：CSV\n- [ANALYSIS_TOOL/PROJECT_DOCUMENT] 首次已读；来源：research/数据字典.md；证据：分析工具：R\n\n## 任务\n请生成一份研究分析提示词，用于指导后续在 R 中分析合成的广东省 2015—2025 年心脑血管疾病年度死亡特征，并按性别计算 YLL 及 YLL 率。该提示词应满足以下要求：\n\n1. **研究对象与范围**：明确研究对象为广东省 2015—2025 年心脑血管疾病（缺血性心脏病、脑卒中）年度死亡特征；空间范围为广东省；时间范围为 2015—2025 年；数据为合成数据，不含真实个人信息。\n2. **数据来源与格式**：数据来源为 CSV 文件，字段包括 year、sex、age、cause、deaths；只有年度汇总，没有月数据。\n3. **指标定义与分层**：按性别计算 YLL 及 YLL 率；YLL 计算口径、参考寿命表、年度分性别人口分母、年龄分组与寿命表年龄映射均尚未确认，提示词中只保留可替换的方法和代码框架，不得自行将某个标准写成已确认要求。\n4. **方法框架**：在参考寿命表和年度分性别人口分母确认前，不得计算相应 YLL 或 YLL 率，但可先给出数据检查和方法框架；数据检查包括字段完整性、取值分布、缺失值、异常值、年度与性别覆盖情况等；方法框架包括 YLL 计算流程、YLL 率计算流程、年龄分组与寿命表映射接口、可替换参数设计等。\n5. **交付物**：只交付分析方案与代码框架，不执行分析；不得编造人口、寿命表、死亡数、研究结果或参考文献；不得增加月度季节性结论。\n6. **可复现性**：研究口径可复现，数据来源可追溯，方法选择有依据，并说明缺失数据、偏倚和不确定性。\n7. **权限与安全**：不得在代码、日志或响应中泄露密码、Token、API Key 或私钥；禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置；以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：使用数据字典已有 age 字段；\n\n## 输出\n- 输出一份研究分析提示词，内容应包含：研究对象、时间与空间范围、数据来源、指标定义、分层方法、统计方法、结果呈现方式、数据检查清单、方法框架、代码框架结构、待确认项清单。\n- 提示词中应明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 提示词中应明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 提示词中应说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 提示词中应包含权限与安全约束：不得在代码、日志或响应中泄露密码、Token、API Key 或私钥；禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置；以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n- 提示词中应包含待确认项：参考寿命表、年度分性别人口分母、YLL 计算口径、年龄分组与寿命表年龄映射。\n- 不执行分析，不输出分析结果，不编造人口、寿命表、死亡数、研究结果或参考文献，不增加月度季节性结论。\n\n## 约束\n- 参考寿命表和年度分性别人口分母确认前，不得计算相应 YLL 或 YLL 率。\n- 不得编造人口、寿命表、死亡数、研究结果或参考文献。\n- 不得增加月度季节性结论。\n- 只交付分析方案与代码框架，不执行分析。\n\n用户明确规则（须遵守平台权限边界）：\n- 参考寿命表和年度分性别人口分母尚未确定；这两项确认前不得计算相应YLL或YLL率，但可先给数据检查和方法框架。\n- 只交付分析方案与代码框架，不执行分析。\n- 不得编造人口、寿命表、死亡数、研究结果或参考文献；不得增加月度季节性结论。\n- 参考寿命表仍未提供，不能将任何具体标准表作为已确认选择；仅预留读取和校验接口，确认前不得计算相应 YLL。\n- 年度分性别人口分母仍未提供，不默认或插补人口数值；只预留数据检查和方法框架，确认前不得计算 YLL 率。\n- 暂不确定，具体 YLL 标准、公式与参数尚未确认，只保留可替换的方法和代码框架，不自行将某个标准写成已确认要求。\n- 使用数据字典已有 age 字段；具体年龄分组与寿命表年龄映射暂不确定，不自行指定五岁或十岁分组，仅保留可替换接口。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：参考寿命表尚未确定，你希望最终提示词如何处理这一项？ 用户说明：暂不确定。参考寿命表仍未提供，不能将任何具体标准表作为已确认选择；仅预留读取和校验接口，确认前不得计算相应 YLL。\n- 该问题尚未确定：年度分性别人口分母尚未确定，你希望最终提示词如何处理这一项？ 用户说明：暂不确定。年度分性别人口分母仍未提供，不默认或插补人口数值；只预留数据检查和方法框架，确认前不得计算 YLL 率。\n- 该问题尚未确定：YLL计算口径是否采用标准方法（死亡数×剩余期望寿命）？ 用户说明：暂不确定，具体 YLL 标准、公式与参数尚未确认，只保留可替换的方法和代码框架，不自行将某个标准写成已确认要求。\n- 该问题尚未确定：年龄分组方式是否按数据字典中的age字段直接使用，还是需要重新分组？ 用户说明：使用数据字典已有 age 字段；具体年龄分组与寿命表年龄映射暂不确定，不自行指定五岁或十岁分组，仅保留可替换接口。\n\n## 验收标准\n- 研究口径可复现，数据来源可追溯，方法选择有依据。\n- 明确说明缺失数据、偏倚和不确定性。\n- 提示词中明确区分已知事实、用户确认信息和必要假设。\n- 提示词中明确数据来源、研究对象、指标定义和统计口径。\n- 提示词中不包含编造的人口、寿命表、死亡数、研究结果或参考文献。\n- 提示词中不包含月度季节性结论。\n- 提示词中不包含执行分析的结果。\n- 提示词中包含权限与安全约束。\n- 提示词中包含待确认项清单。",
+            "sections": [
+              {
+                "type": "BACKGROUND",
+                "title": "背景",
+                "content": "- 本任务是生成一份**研究分析提示词**，用于分析合成的广东省 2015—2025 年心脑血管疾病年度死亡特征，按性别计算 YLL 及 YLL 率，使用 R。\n- 本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。\n- 数据字典（research/数据字典.md）明确：资料为合成研究设计，无真实病例；范围为广东省 2015—2025 年；格式为 CSV；字段为 year、sex、age、cause、deaths；只有年度汇总，没有月数据；疾病为缺血性心脏病、脑卒中；分析工具为 R；参考寿命表未提供；年度分性别人口分母未提供。\n- 已确认的现状与未决信息：\n  - 参考寿命表仍未提供，不能将任何具体标准表作为已确认选择；仅预留读取和校验接口，确认前不得计算相应 YLL。\n  - 年度分性别人口分母仍未提供，不默认或插补人口数值；只预留数据检查和方法框架，确认前不得计算 YLL 率。\n  - 具体 YLL 标准、公式与参数尚未确认，只保留可替换的方法和代码框架，不自行将某个标准写成已确认要求。\n  - 使用数据字典已有 age 字段；具体年龄分组与寿命表年龄映射暂不确定，不自行指定五岁或十岁分组，仅保留可替换接口。\n- 交付边界：只交付分析方案与代码框架，不执行分析；不得编造人口、寿命表、死亡数、研究结果或参考文献；不得增加月度季节性结论。\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n- [DATA_FORMAT/PROJECT_DOCUMENT] 首次已读；来源：research/数据字典.md；证据：格式：CSV\n- [ANALYSIS_TOOL/PROJECT_DOCUMENT] 首次已读；来源：research/数据字典.md；证据：分析工具：R"
+              },
+              {
+                "type": "TASK",
+                "title": "任务",
+                "content": "请生成一份研究分析提示词，用于指导后续在 R 中分析合成的广东省 2015—2025 年心脑血管疾病年度死亡特征，并按性别计算 YLL 及 YLL 率。该提示词应满足以下要求：\n\n1. **研究对象与范围**：明确研究对象为广东省 2015—2025 年心脑血管疾病（缺血性心脏病、脑卒中）年度死亡特征；空间范围为广东省；时间范围为 2015—2025 年；数据为合成数据，不含真实个人信息。\n2. **数据来源与格式**：数据来源为 CSV 文件，字段包括 year、sex、age、cause、deaths；只有年度汇总，没有月数据。\n3. **指标定义与分层**：按性别计算 YLL 及 YLL 率；YLL 计算口径、参考寿命表、年度分性别人口分母、年龄分组与寿命表年龄映射均尚未确认，提示词中只保留可替换的方法和代码框架，不得自行将某个标准写成已确认要求。\n4. **方法框架**：在参考寿命表和年度分性别人口分母确认前，不得计算相应 YLL 或 YLL 率，但可先给出数据检查和方法框架；数据检查包括字段完整性、取值分布、缺失值、异常值、年度与性别覆盖情况等；方法框架包括 YLL 计算流程、YLL 率计算流程、年龄分组与寿命表映射接口、可替换参数设计等。\n5. **交付物**：只交付分析方案与代码框架，不执行分析；不得编造人口、寿命表、死亡数、研究结果或参考文献；不得增加月度季节性结论。\n6. **可复现性**：研究口径可复现，数据来源可追溯，方法选择有依据，并说明缺失数据、偏倚和不确定性。\n7. **权限与安全**：不得在代码、日志或响应中泄露密码、Token、API Key 或私钥；禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置；以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：使用数据字典已有 age 字段；"
+              },
+              {
+                "type": "OUTPUT",
+                "title": "输出",
+                "content": "- 输出一份研究分析提示词，内容应包含：研究对象、时间与空间范围、数据来源、指标定义、分层方法、统计方法、结果呈现方式、数据检查清单、方法框架、代码框架结构、待确认项清单。\n- 提示词中应明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 提示词中应明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 提示词中应说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 提示词中应包含权限与安全约束：不得在代码、日志或响应中泄露密码、Token、API Key 或私钥；禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置；以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n- 提示词中应包含待确认项：参考寿命表、年度分性别人口分母、YLL 计算口径、年龄分组与寿命表年龄映射。\n- 不执行分析，不输出分析结果，不编造人口、寿命表、死亡数、研究结果或参考文献，不增加月度季节性结论。"
+              },
+              {
+                "type": "CONSTRAINTS",
+                "title": "约束",
+                "content": "- 参考寿命表和年度分性别人口分母确认前，不得计算相应 YLL 或 YLL 率。\n- 不得编造人口、寿命表、死亡数、研究结果或参考文献。\n- 不得增加月度季节性结论。\n- 只交付分析方案与代码框架，不执行分析。\n\n用户明确规则（须遵守平台权限边界）：\n- 参考寿命表和年度分性别人口分母尚未确定；这两项确认前不得计算相应YLL或YLL率，但可先给数据检查和方法框架。\n- 只交付分析方案与代码框架，不执行分析。\n- 不得编造人口、寿命表、死亡数、研究结果或参考文献；不得增加月度季节性结论。\n- 参考寿命表仍未提供，不能将任何具体标准表作为已确认选择；仅预留读取和校验接口，确认前不得计算相应 YLL。\n- 年度分性别人口分母仍未提供，不默认或插补人口数值；只预留数据检查和方法框架，确认前不得计算 YLL 率。\n- 暂不确定，具体 YLL 标准、公式与参数尚未确认，只保留可替换的方法和代码框架，不自行将某个标准写成已确认要求。\n- 使用数据字典已有 age 字段；具体年龄分组与寿命表年龄映射暂不确定，不自行指定五岁或十岁分组，仅保留可替换接口。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：参考寿命表尚未确定，你希望最终提示词如何处理这一项？ 用户说明：暂不确定。参考寿命表仍未提供，不能将任何具体标准表作为已确认选择；仅预留读取和校验接口，确认前不得计算相应 YLL。\n- 该问题尚未确定：年度分性别人口分母尚未确定，你希望最终提示词如何处理这一项？ 用户说明：暂不确定。年度分性别人口分母仍未提供，不默认或插补人口数值；只预留数据检查和方法框架，确认前不得计算 YLL 率。\n- 该问题尚未确定：YLL计算口径是否采用标准方法（死亡数×剩余期望寿命）？ 用户说明：暂不确定，具体 YLL 标准、公式与参数尚未确认，只保留可替换的方法和代码框架，不自行将某个标准写成已确认要求。\n- 该问题尚未确定：年龄分组方式是否按数据字典中的age字段直接使用，还是需要重新分组？ 用户说明：使用数据字典已有 age 字段；具体年龄分组与寿命表年龄映射暂不确定，不自行指定五岁或十岁分组，仅保留可替换接口。"
+              },
+              {
+                "type": "CLARIFICATIONS",
+                "title": "待确认事项",
+                "content": "- 该问题尚未确定：参考寿命表尚未确定，你希望最终提示词如何处理这一项？ 用户说明：暂不确定。参考寿命表仍未提供，不能将任何具体标准表作为已确认选择；仅预留读取和校验接口，确认前不得计算相应 YLL。\n- 该问题尚未确定：年度分性别人口分母尚未确定，你希望最终提示词如何处理这一项？ 用户说明：暂不确定。年度分性别人口分母仍未提供，不默认或插补人口数值；只预留数据检查和方法框架，确认前不得计算 YLL 率。\n- 该问题尚未确定：YLL计算口径是否采用标准方法（死亡数×剩余期望寿命）？ 用户说明：暂不确定，具体 YLL 标准、公式与参数尚未确认，只保留可替换的方法和代码框架，不自行将某个标准写成已确认要求。\n- 该问题尚未确定：年龄分组方式是否按数据字典中的age字段直接使用，还是需要重新分组？ 用户说明：使用数据字典已有 age 字段；具体年龄分组与寿命表年龄映射暂不确定，不自行指定五岁或十岁分组，仅保留可替换接口。"
+              },
+              {
+                "type": "ACCEPTANCE",
+                "title": "验收标准",
+                "content": "- 研究口径可复现，数据来源可追溯，方法选择有依据。\n- 明确说明缺失数据、偏倚和不确定性。\n- 提示词中明确区分已知事实、用户确认信息和必要假设。\n- 提示词中明确数据来源、研究对象、指标定义和统计口径。\n- 提示词中不包含编造的人口、寿命表、死亡数、研究结果或参考文献。\n- 提示词中不包含月度季节性结论。\n- 提示词中不包含执行分析的结果。\n- 提示词中包含权限与安全约束。\n- 提示词中包含待确认项清单。"
+              }
+            ],
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "research/",
+                "research/数据字典.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "research/数据字典.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n资料为合成研究设计，无真实病例。范围：广东省2015—2025年。格式：CSV。字段：year、sex、age、cause、deaths；只有年度汇总，没有月数据。疾病：缺血性心脏病、脑卒中。分析工具：R。参考寿命表：未提供。年度分性别人口分母：未提供。",
+                  "summary": "Markdown 文档摘要：资料为合成研究设计，无真实病例。；格式：CSV。；疾病：缺血性心脏病、脑卒中。；分析工具：R。；年度分性别人口分母：未提供。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "ambiguities": [
+              "该问题尚未确定：参考寿命表尚未确定，你希望最终提示词如何处理这一项？ 用户说明：暂不确定。参考寿命表仍未提供，不能将任何具体标准表作为已确认选择；仅预留读取和校验接口，确认前不得计算相应 YLL。",
+              "该问题尚未确定：年度分性别人口分母尚未确定，你希望最终提示词如何处理这一项？ 用户说明：暂不确定。年度分性别人口分母仍未提供，不默认或插补人口数值；只预留数据检查和方法框架，确认前不得计算 YLL 率。",
+              "该问题尚未确定：YLL计算口径是否采用标准方法（死亡数×剩余期望寿命）？ 用户说明：暂不确定，具体 YLL 标准、公式与参数尚未确认，只保留可替换的方法和代码框架，不自行将某个标准写成已确认要求。",
+              "该问题尚未确定：年龄分组方式是否按数据字典中的age字段直接使用，还是需要重新分组？ 用户说明：使用数据字典已有 age 字段；具体年龄分组与寿命表年龄映射暂不确定，不自行指定五岁或十岁分组，仅保留可替换接口。"
+            ],
+            "appliedConstraints": [
+              "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+              "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+              "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+              "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+              "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+              "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+            ],
+            "templateCode": "RESEARCH_ANALYSIS",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 6983,
+            "warnings": []
+          },
+          "protocolChecks": {
+            "realProvider": true,
+            "promptPresent": true,
+            "fourSections": true,
+            "constraintsInCopiedBody": true
+          },
+          "elapsedMs": 7273,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "7c16e075-fc7c-4857-9b4d-90f973f377a0",
+              "elapsedMs": 7266
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "04_academic_protocol",
+      "results": {
+        "direct": {
+          "id": "04_academic_protocol",
+          "title": "论文拟定设计与结果的区别",
+          "arm": "direct",
+          "startedAt": "2026-10-03T09:45:05.806Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "final": {
+            "optimizedPrompt": "## 背景\n当前处于研究设计阶段，研究尚未实施，没有实测数据。研究对象为提示词质量对研究 Plan 问答效果的影响。\n\n已拟定的设计要素（来自开题草案）：\n- 四类任务：代码开发、机关报告、科研方案、数据分析。\n- 每类拟设 5 个任务，共 20 个任务。\n- 每模式每任务独立重复 3 次。\n- 采用两名独立评审进行盲评；评审一致性拟报告，不声称已测得。\n\n本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。\n\n资料性质说明：research/开题草案.md 为项目文档，其中内容为拟定方案，不代表已实施或已获得数据。\n\n## 任务\n为研究生撰写论文“方法”部分，产出一份可直接用于写作的提示词，使其能据此完成方法章节。要求：\n\n1. 研究设计描述\n- 明确研究问题：提示词质量（直接增强 vs. Plan）对研究 Plan 问答效果的影响。\n- 说明实验设计类型、自变量（提示词模式）、因变量（问答效果评价指标）、控制变量。\n- 保留既定设计：4 类任务（代码开发、机关报告、科研方案、数据分析），每类 5 个任务，共 20 个任务；每模式每任务独立重复 3 次；两名独立评审盲评。\n- 设置比较组：直接增强组与 Plan 组；另设两组获得同样确认信息的公平对照组，用于控制确认信息带来的差异。\n\n2. 材料与程序\n- 描述任务材料来源、任务分配方式、重复与随机化安排、盲评实施流程。\n- 说明评审一致性拟报告的方式（如适用的一致性指标），但不得声称已测得。\n\n3. 指标与统计\n- 定义评价指标及其操作化口径。\n- 具体检验方法依据未来数据分布选择，不预设必然显著；说明选择依据与备选方案。\n- 说明缺失数据、偏倚与不确定性的处理思路。\n\n4. 写作口径\n- 全文使用“拟”“计划”“将”等表述，明确研究尚未实施。\n- 不得把拟定样本写成已纳入样本。\n- 不得编造效应量、P 值、参考文献或显著性结论。\n\n5. 交付格式\n- 中文方法提纲不超过 1200 字；附表另计，不计入字数。\n- 提纲需覆盖上述设计要素，结构清晰，可直接扩展为论文方法章节。\n\n## 输出\n- 一份中文方法提纲，正文不超过 1200 字（附表另计）。\n- 提纲应包含：研究问题与设计、任务与材料、实验程序与盲评、指标定义、统计方法选择依据、缺失数据与偏倚处理、研究局限与不确定性说明。\n- 附表另计，可包含任务清单、重复安排、评审流程或指标定义表等。\n- 全文使用“拟”“计划”“将”等未实施表述。\n\n## 约束\n- 不得把拟定样本写成已纳入样本。\n- 不得编造效应量、P 值、参考文献或显著性结论。\n- 具体检验依据未来数据分布选择，不预设必然显著。\n- 保留既定设计：4 类任务，每类 5 个，共 20 个任务；每模式每任务独立重复 3 次；两名独立评审盲评；直接增强与 Plan 比较，另设两组获得同样确认信息的公平对照。\n- 中文方法提纲不超过 1200 字，附表另计。\n\n用户明确规则（须遵守平台权限边界）：\n- 为研究生准备一份论文方法部分的写作提示词，研究Plan问答对提示词质量的影响。\n- 当前只拟定研究，尚未实施。\n- 必须保留设计：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。\n- 比较直接增强和Plan，另设两组获得同样确认信息的公平对照。\n- 中文方法提纲不超过1200字，附表另计。\n- 不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n## 验收标准\n- 研究口径可复现：任务类别、数量、重复次数、评审安排、比较组设置与既定设计一致。\n- 数据来源可追溯：任务材料来源、评审流程、指标定义均有明确说明。\n- 方法选择有依据：统计检验的选择依据未来数据分布，不预设必然显著。\n- 明确说明缺失数据、偏倚和不确定性。\n- 全文未把拟定样本写成已纳入样本，未编造效应量、P 值、参考文献或显著性结论。\n- 中文方法提纲正文不超过 1200 字，附表另计。\n- 使用“拟”“计划”“将”等未实施表述。",
+            "sections": [
+              {
+                "type": "BACKGROUND",
+                "title": "背景",
+                "content": "当前处于研究设计阶段，研究尚未实施，没有实测数据。研究对象为提示词质量对研究 Plan 问答效果的影响。\n\n已拟定的设计要素（来自开题草案）：\n- 四类任务：代码开发、机关报告、科研方案、数据分析。\n- 每类拟设 5 个任务，共 20 个任务。\n- 每模式每任务独立重复 3 次。\n- 采用两名独立评审进行盲评；评审一致性拟报告，不声称已测得。\n\n本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。\n\n资料性质说明：research/开题草案.md 为项目文档，其中内容为拟定方案，不代表已实施或已获得数据。"
+              },
+              {
+                "type": "TASK",
+                "title": "任务",
+                "content": "为研究生撰写论文“方法”部分，产出一份可直接用于写作的提示词，使其能据此完成方法章节。要求：\n\n1. 研究设计描述\n- 明确研究问题：提示词质量（直接增强 vs. Plan）对研究 Plan 问答效果的影响。\n- 说明实验设计类型、自变量（提示词模式）、因变量（问答效果评价指标）、控制变量。\n- 保留既定设计：4 类任务（代码开发、机关报告、科研方案、数据分析），每类 5 个任务，共 20 个任务；每模式每任务独立重复 3 次；两名独立评审盲评。\n- 设置比较组：直接增强组与 Plan 组；另设两组获得同样确认信息的公平对照组，用于控制确认信息带来的差异。\n\n2. 材料与程序\n- 描述任务材料来源、任务分配方式、重复与随机化安排、盲评实施流程。\n- 说明评审一致性拟报告的方式（如适用的一致性指标），但不得声称已测得。\n\n3. 指标与统计\n- 定义评价指标及其操作化口径。\n- 具体检验方法依据未来数据分布选择，不预设必然显著；说明选择依据与备选方案。\n- 说明缺失数据、偏倚与不确定性的处理思路。\n\n4. 写作口径\n- 全文使用“拟”“计划”“将”等表述，明确研究尚未实施。\n- 不得把拟定样本写成已纳入样本。\n- 不得编造效应量、P 值、参考文献或显著性结论。\n\n5. 交付格式\n- 中文方法提纲不超过 1200 字；附表另计，不计入字数。\n- 提纲需覆盖上述设计要素，结构清晰，可直接扩展为论文方法章节。"
+              },
+              {
+                "type": "OUTPUT",
+                "title": "输出",
+                "content": "- 一份中文方法提纲，正文不超过 1200 字（附表另计）。\n- 提纲应包含：研究问题与设计、任务与材料、实验程序与盲评、指标定义、统计方法选择依据、缺失数据与偏倚处理、研究局限与不确定性说明。\n- 附表另计，可包含任务清单、重复安排、评审流程或指标定义表等。\n- 全文使用“拟”“计划”“将”等未实施表述。"
+              },
+              {
+                "type": "CONSTRAINTS",
+                "title": "约束",
+                "content": "- 不得把拟定样本写成已纳入样本。\n- 不得编造效应量、P 值、参考文献或显著性结论。\n- 具体检验依据未来数据分布选择，不预设必然显著。\n- 保留既定设计：4 类任务，每类 5 个，共 20 个任务；每模式每任务独立重复 3 次；两名独立评审盲评；直接增强与 Plan 比较，另设两组获得同样确认信息的公平对照。\n- 中文方法提纲不超过 1200 字，附表另计。\n\n用户明确规则（须遵守平台权限边界）：\n- 为研究生准备一份论文方法部分的写作提示词，研究Plan问答对提示词质量的影响。\n- 当前只拟定研究，尚未实施。\n- 必须保留设计：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。\n- 比较直接增强和Plan，另设两组获得同样确认信息的公平对照。\n- 中文方法提纲不超过1200字，附表另计。\n- 不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+              },
+              {
+                "type": "ACCEPTANCE",
+                "title": "验收标准",
+                "content": "- 研究口径可复现：任务类别、数量、重复次数、评审安排、比较组设置与既定设计一致。\n- 数据来源可追溯：任务材料来源、评审流程、指标定义均有明确说明。\n- 方法选择有依据：统计检验的选择依据未来数据分布，不预设必然显著。\n- 明确说明缺失数据、偏倚和不确定性。\n- 全文未把拟定样本写成已纳入样本，未编造效应量、P 值、参考文献或显著性结论。\n- 中文方法提纲正文不超过 1200 字，附表另计。\n- 使用“拟”“计划”“将”等未实施表述。"
+              }
+            ],
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "research/",
+                "research/开题草案.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "research/开题草案.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n研究尚未执行，没有实测数据。四类任务：代码开发、机关报告、科研方案、数据分析。拟每类5个任务，每模式3次。采用两名独立评审；评审一致性拟报告，不声称已测得。",
+                  "summary": "Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "ambiguities": [],
+            "appliedConstraints": [
+              "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+              "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+              "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+              "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+              "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+              "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+            ],
+            "templateCode": "RESEARCH_ANALYSIS",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 5422,
+            "warnings": []
+          },
+          "protocolChecks": {
+            "realProvider": true,
+            "promptPresent": true,
+            "fourSections": true,
+            "constraintsInCopiedBody": true
+          },
+          "elapsedMs": 6927,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "2bc52f44-aa6f-453a-8115-f4f559fb148f",
+              "elapsedMs": 6925
+            }
+          ]
+        },
+        "plan": {
+          "id": "04_academic_protocol",
+          "title": "论文拟定设计与结果的区别",
+          "arm": "plan",
+          "startedAt": "2026-10-03T09:44:58.481Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "prepared": {
+            "contextId": "f23f0152-2467-4d27-9c55-192cd9ce7d61",
+            "version": "sha256:71df7563d091aac13c54f236c406efa652d36f1a7b24efe15f0c2bd23c8d5651",
+            "digest": {
+              "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologies": [],
+              "dependencies": [],
+              "directoryOverview": [
+                "research/",
+                "research/开题草案.md"
+              ],
+              "fileSummaries": [
+                "[PROJECT_DOCUMENT] research/开题草案.md：Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。；业务摘录：[片段 1/1] 研究尚未执行，没有实测数据。 四类任务：代码开发、机关报告、科研方案、数据分析。 拟每类5个任务，每模式3次。 采用两名独立评审； 评审一致性拟报告，不声称已测得。"
+              ],
+              "analysisStatus": "COMPLETE",
+              "analyzedFileCount": 1,
+              "warnings": [],
+              "factCards": []
+            },
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "research/",
+                "research/开题草案.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "research/开题草案.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n研究尚未执行，没有实测数据。四类任务：代码开发、机关报告、科研方案、数据分析。拟每类5个任务，每模式3次。采用两名独立评审；评审一致性拟报告，不声称已测得。",
+                  "summary": "Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "expiresAt": "2026-10-03T10:14:58.504766300Z",
+            "latencyMs": 12
+          },
+          "plan": {
+            "summary": "已理解目标：为研究生论文方法部分撰写一份写作提示词，研究 Plan 问答对提示词质量的影响，并保留4类任务×5个×3次重复、两名独立评审盲评、直接增强与Plan比较及两组公平对照、中文方法提纲不超过1200字、附表另计、不编造数据等设计。需要确认少数会改变方法部分写法或交付边界的问题。",
+            "questions": [
+              {
+                "id": "task_source",
+                "question": "20个任务的具体内容从哪里来？",
+                "hint": "这决定方法部分是否需要描述任务来源、筛选标准或生成方式，也影响“不得把拟定样本写成已纳入样本”的表述。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "self_constructed",
+                    "label": "自行构造",
+                    "description": "由研究者按四类任务自行编写20个任务，方法部分需说明构造原则与示例。",
+                    "answer": "20个任务由研究者按代码开发、机关报告、科研方案、数据分析四类自行构造，每类5个；方法部分说明构造原则，不写成已纳入样本。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "existing_benchmark",
+                    "label": "取自现有基准",
+                    "description": "从已有公开基准或题库中选取20个任务，方法部分需说明来源与筛选标准。",
+                    "answer": "20个任务从现有公开基准或题库中选取，每类5个；方法部分说明来源、筛选标准和引用，不写成已纳入样本。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "mixed",
+                    "label": "混合来源",
+                    "description": "部分自行构造、部分取自现有基准，方法部分需分别说明。",
+                    "answer": "20个任务采用混合来源，部分自行构造、部分取自现有基准，每类5个；方法部分分别说明来源与筛选标准，不写成已纳入样本。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "plan_definition",
+                "question": "“Plan”模式在方法部分应如何界定？",
+                "hint": "这决定方法部分对实验条件的描述，也影响直接增强与Plan比较的可复现性。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "plan_then_answer",
+                    "label": "先出计划再作答",
+                    "description": "模型先输出任务计划或步骤，再据此生成最终回答。",
+                    "answer": "Plan模式界定为：模型先输出任务计划或步骤，再据此生成最终回答；方法部分按此描述实验条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "plan_as_prompt",
+                    "label": "计划作为提示词内容",
+                    "description": "由研究者或用户提供计划文本，作为提示词的一部分输入模型。",
+                    "answer": "Plan模式界定为：由研究者或用户提供计划文本，作为提示词的一部分输入模型；方法部分按此描述实验条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "interactive_plan",
+                    "label": "交互式计划确认",
+                    "description": "模型先向用户提问、用户回答后再生成计划并作答。",
+                    "answer": "Plan模式界定为：模型先向用户提问，用户回答后再生成计划并作答；方法部分按此描述实验条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "control_groups",
+                "question": "两组公平对照具体指什么？",
+                "hint": "这决定方法部分对照条件的描述，也影响“获得同样确认信息”的公平性论证。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "same_info_no_plan",
+                    "label": "同信息但不含Plan",
+                    "description": "两组对照获得与Plan组相同的确认信息，但不使用Plan机制。",
+                    "answer": "两组公平对照均获得与Plan组相同的确认信息，但不使用Plan机制；方法部分按此描述对照条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "same_info_different_order",
+                    "label": "同信息但顺序不同",
+                    "description": "两组对照获得相同确认信息，但信息呈现顺序不同，以控制顺序效应。",
+                    "answer": "两组公平对照获得相同确认信息，但信息呈现顺序不同，以控制顺序效应；方法部分按此描述对照条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "same_info_different_confirm",
+                    "label": "同信息但确认方式不同",
+                    "description": "两组对照获得相同确认信息，但确认方式不同，以控制确认方式效应。",
+                    "answer": "两组公平对照获得相同确认信息，但确认方式不同，以控制确认方式效应；方法部分按此描述对照条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "outline_scope",
+                "question": "中文方法提纲不超过1200字，是否包含研究设计、任务、评审、分析等全部方法内容？",
+                "hint": "这决定方法部分的详略和附表分工，避免把应放附表的内容挤进正文或遗漏关键方法。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "all_methods",
+                    "label": "全部方法内容",
+                    "description": "1200字内覆盖研究设计、任务、评审、分析等全部方法内容，附表另计。",
+                    "answer": "中文方法提纲不超过1200字，覆盖研究设计、任务、评审、分析等全部方法内容；附表另计。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "core_only",
+                    "label": "仅核心设计",
+                    "description": "1200字内只写研究设计、任务和评审等核心内容，分析细节放附表。",
+                    "answer": "中文方法提纲不超过1200字，只写研究设计、任务和评审等核心内容；分析细节放附表，附表另计。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "design_and_analysis",
+                    "label": "设计与分析为主",
+                    "description": "1200字内以研究设计和分析计划为主，任务与评审细节放附表。",
+                    "answer": "中文方法提纲不超过1200字，以研究设计和分析计划为主；任务与评审细节放附表，附表另计。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              }
+            ],
+            "templateCode": "RESEARCH_ANALYSIS",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 7207,
+            "planId": "027258d5-902c-4d95-a2f6-5b2da8404a0f",
+            "planningContext": {
+              "contextId": "f23f0152-2467-4d27-9c55-192cd9ce7d61",
+              "version": "sha256:71df7563d091aac13c54f236c406efa652d36f1a7b24efe15f0c2bd23c8d5651"
+            },
+            "expiresAt": "2026-10-03T10:14:58.504766300Z"
+          },
+          "elapsedMs": 7323,
+          "requests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "1a71dd00-ecd7-45f6-bed2-584662f088a3",
+              "elapsedMs": 68
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "cd762aa8-4f1d-4afc-8d5a-31c696a531a4",
+              "elapsedMs": 7253
+            }
+          ]
+        },
+        "plan-final": {
+          "id": "04_academic_protocol",
+          "title": "论文拟定设计与结果的区别",
+          "arm": "plan-final",
+          "startedAt": "2026-10-03T09:48:50.851Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "plan": {
+            "summary": "已理解目标：为研究生论文方法部分撰写一份写作提示词，研究 Plan 问答对提示词质量的影响，并保留4类任务×5个×3次重复、两名独立评审盲评、直接增强与Plan比较及两组公平对照、中文方法提纲不超过1200字、附表另计、不编造数据等设计。需要确认少数会改变方法部分写法或交付边界的问题。",
+            "questions": [
+              {
+                "id": "task_source",
+                "question": "20个任务的具体内容从哪里来？",
+                "hint": "这决定方法部分是否需要描述任务来源、筛选标准或生成方式，也影响“不得把拟定样本写成已纳入样本”的表述。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "self_constructed",
+                    "label": "自行构造",
+                    "description": "由研究者按四类任务自行编写20个任务，方法部分需说明构造原则与示例。",
+                    "answer": "20个任务由研究者按代码开发、机关报告、科研方案、数据分析四类自行构造，每类5个；方法部分说明构造原则，不写成已纳入样本。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "existing_benchmark",
+                    "label": "取自现有基准",
+                    "description": "从已有公开基准或题库中选取20个任务，方法部分需说明来源与筛选标准。",
+                    "answer": "20个任务从现有公开基准或题库中选取，每类5个；方法部分说明来源、筛选标准和引用，不写成已纳入样本。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "mixed",
+                    "label": "混合来源",
+                    "description": "部分自行构造、部分取自现有基准，方法部分需分别说明。",
+                    "answer": "20个任务采用混合来源，部分自行构造、部分取自现有基准，每类5个；方法部分分别说明来源与筛选标准，不写成已纳入样本。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "plan_definition",
+                "question": "“Plan”模式在方法部分应如何界定？",
+                "hint": "这决定方法部分对实验条件的描述，也影响直接增强与Plan比较的可复现性。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "plan_then_answer",
+                    "label": "先出计划再作答",
+                    "description": "模型先输出任务计划或步骤，再据此生成最终回答。",
+                    "answer": "Plan模式界定为：模型先输出任务计划或步骤，再据此生成最终回答；方法部分按此描述实验条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "plan_as_prompt",
+                    "label": "计划作为提示词内容",
+                    "description": "由研究者或用户提供计划文本，作为提示词的一部分输入模型。",
+                    "answer": "Plan模式界定为：由研究者或用户提供计划文本，作为提示词的一部分输入模型；方法部分按此描述实验条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "interactive_plan",
+                    "label": "交互式计划确认",
+                    "description": "模型先向用户提问、用户回答后再生成计划并作答。",
+                    "answer": "Plan模式界定为：模型先向用户提问，用户回答后再生成计划并作答；方法部分按此描述实验条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "control_groups",
+                "question": "两组公平对照具体指什么？",
+                "hint": "这决定方法部分对照条件的描述，也影响“获得同样确认信息”的公平性论证。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "same_info_no_plan",
+                    "label": "同信息但不含Plan",
+                    "description": "两组对照获得与Plan组相同的确认信息，但不使用Plan机制。",
+                    "answer": "两组公平对照均获得与Plan组相同的确认信息，但不使用Plan机制；方法部分按此描述对照条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "same_info_different_order",
+                    "label": "同信息但顺序不同",
+                    "description": "两组对照获得相同确认信息，但信息呈现顺序不同，以控制顺序效应。",
+                    "answer": "两组公平对照获得相同确认信息，但信息呈现顺序不同，以控制顺序效应；方法部分按此描述对照条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "same_info_different_confirm",
+                    "label": "同信息但确认方式不同",
+                    "description": "两组对照获得相同确认信息，但确认方式不同，以控制确认方式效应。",
+                    "answer": "两组公平对照获得相同确认信息，但确认方式不同，以控制确认方式效应；方法部分按此描述对照条件。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "outline_scope",
+                "question": "中文方法提纲不超过1200字，是否包含研究设计、任务、评审、分析等全部方法内容？",
+                "hint": "这决定方法部分的详略和附表分工，避免把应放附表的内容挤进正文或遗漏关键方法。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "all_methods",
+                    "label": "全部方法内容",
+                    "description": "1200字内覆盖研究设计、任务、评审、分析等全部方法内容，附表另计。",
+                    "answer": "中文方法提纲不超过1200字，覆盖研究设计、任务、评审、分析等全部方法内容；附表另计。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "core_only",
+                    "label": "仅核心设计",
+                    "description": "1200字内只写研究设计、任务和评审等核心内容，分析细节放附表。",
+                    "answer": "中文方法提纲不超过1200字，只写研究设计、任务和评审等核心内容；分析细节放附表，附表另计。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "design_and_analysis",
+                    "label": "设计与分析为主",
+                    "description": "1200字内以研究设计和分析计划为主，任务与评审细节放附表。",
+                    "answer": "中文方法提纲不超过1200字，以研究设计和分析计划为主；任务与评审细节放附表，附表另计。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              }
+            ],
+            "templateCode": "RESEARCH_ANALYSIS",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 7207,
+            "planId": "027258d5-902c-4d95-a2f6-5b2da8404a0f",
+            "planningContext": {
+              "contextId": "f23f0152-2467-4d27-9c55-192cd9ce7d61",
+              "version": "sha256:71df7563d091aac13c54f236c406efa652d36f1a7b24efe15f0c2bd23c8d5651"
+            },
+            "expiresAt": "2026-10-03T10:14:58.504766300Z"
+          },
+          "prepared": {
+            "contextId": "f23f0152-2467-4d27-9c55-192cd9ce7d61",
+            "version": "sha256:71df7563d091aac13c54f236c406efa652d36f1a7b24efe15f0c2bd23c8d5651",
+            "digest": {
+              "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologies": [],
+              "dependencies": [],
+              "directoryOverview": [
+                "research/",
+                "research/开题草案.md"
+              ],
+              "fileSummaries": [
+                "[PROJECT_DOCUMENT] research/开题草案.md：Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。；业务摘录：[片段 1/1] 研究尚未执行，没有实测数据。 四类任务：代码开发、机关报告、科研方案、数据分析。 拟每类5个任务，每模式3次。 采用两名独立评审； 评审一致性拟报告，不声称已测得。"
+              ],
+              "analysisStatus": "COMPLETE",
+              "analyzedFileCount": 1,
+              "warnings": [],
+              "factCards": []
+            },
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "research/",
+                "research/开题草案.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "research/开题草案.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n研究尚未执行，没有实测数据。四类任务：代码开发、机关报告、科研方案、数据分析。拟每类5个任务，每模式3次。采用两名独立评审；评审一致性拟报告，不声称已测得。",
+                  "summary": "Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "expiresAt": "2026-10-03T10:14:58.504766300Z",
+            "latencyMs": 12
+          },
+          "answerReview": {
+            "caseId": "04_academic_protocol",
+            "questions": [
+              {
+                "questionId": "task_source",
+                "question": "20个任务的具体内容从哪里来？",
+                "answer": "暂不确定。20个任务的具体来源尚未确定，保持每类5个、每模式每任务3次的拟定设计，不写成已纳入样本。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              },
+              {
+                "questionId": "plan_definition",
+                "question": "“Plan”模式在方法部分应如何界定？",
+                "answer": "研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；不能换成静态模板或模型自行列步骤。具体实施轮次暂不确定。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              },
+              {
+                "questionId": "control_groups",
+                "question": "两组公平对照具体指什么？",
+                "answer": "保留两组均获得同样确认信息的公平对照，信息量保持一致；具体信息给法及操作设计暂不确定，不自行选定顺序效应或其他新研究目标。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              },
+              {
+                "questionId": "outline_scope",
+                "question": "中文方法提纲不超过1200字，是否包含研究设计、任务、评审、分析等全部方法内容？",
+                "answer": "仅交付中文论文方法提纲，覆盖已有研究设计、任务、盲评和未来分析方法选择条件。正文不超过1200字，附表另计；不写结果，不执行研究。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              }
+            ]
+          },
+          "priorRequests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "1a71dd00-ecd7-45f6-bed2-584662f088a3",
+              "elapsedMs": 68
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "cd762aa8-4f1d-4afc-8d5a-31c696a531a4",
+              "elapsedMs": 7253
+            }
+          ],
+          "refinedQuery": "为研究生准备一份论文方法部分的写作提示词，研究Plan问答对提示词质量的影响。当前只拟定研究，尚未实施。必须保留设计：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，另设两组获得同样确认信息的公平对照。中文方法提纲不超过1200字，附表另计。不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。具体检验依据未来数据分布选择，不预设必然显著。\n本次选择：暂不确定。20个任务的具体来源尚未确定，保持每类5个、每模式每任务3次的拟定设计，不写成已纳入样本。\n本次选择：研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；不能换成静态模板或模型自行列步骤。具体实施轮次暂不确定。\n本次选择：保留两组均获得同样确认信息的公平对照，信息量保持一致；具体信息给法及操作设计暂不确定，不自行选定顺序效应或其他新研究目标。\n本次选择：仅交付中文论文方法提纲，覆盖已有研究设计、任务、盲评和未来分析方法选择条件。正文不超过1200字，附表另计；不写结果，不执行研究。",
+          "final": {
+            "optimizedPrompt": "## 背景\n- 当前处于研究方案拟定阶段，研究尚未实施，没有实测数据；不得把拟定样本写成已纳入样本。\n- 研究主题：Plan 问答对提示词质量的影响。研究对象为原始需求中的 Plan 交互问答：系统向用户提问、用户回答后再增强提示词；不得替换为静态模板或模型自行列步骤。\n- 已拟定的设计：4 类任务（代码开发、机关报告、科研方案、数据分析），每类 5 个，共 20 个任务；每模式每任务独立重复 3 次；两名独立评审盲评；评审一致性拟报告，不声称已测得。\n- 比较对象：直接增强与 Plan；另设两组获得同样确认信息的公平对照，信息量保持一致。\n- 交付物：中文论文方法提纲，正文不超过 1200 字，附表另计；只写方法，不写结果，不执行研究。\n- 资料依据：research/开题草案.md（项目文档，仅含上述拟定设计，无实测数据）。\n\n## 任务\n撰写一份可直接用于研究生论文方法部分的中文写作提示词，指导生成“方法”章节提纲，要求：\n1. 明确研究对象与范围：Plan 交互问答（系统提问—用户回答—再增强提示词）对提示词质量的影响；说明研究尚未实施，全部样本与重复次数均为拟定设计。\n2. 完整保留并写明研究设计：4 类任务（代码开发、机关报告、科研方案、数据分析），每类 5 个，共 20 个任务；每模式每任务独立重复 3 次；两名独立评审盲评；评审一致性作为拟报告指标。\n3. 说明比较条件：直接增强与 Plan 的对比；另设两组获得同样确认信息的公平对照，两组信息量保持一致。\n4. 说明任务来源、样本纳入与排除、重复与随机化安排、评审流程与盲评实施方式，凡尚未确定者标注为待确认，不得写成已实施。\n5. 说明未来统计分析方法的选择条件：具体检验依据未来数据分布选择，不预设必然显著；写明效应量、置信区间、一致性指标等报告口径的确定原则，但不得给出任何具体数值。\n6. 说明缺失数据、偏倚来源（如顺序效应、评审者偏倚）、不确定性与方法适用条件，保证分析过程可复现。\n7. 明确数据来源、指标定义与统计口径；无法核实的数据与引用不得编造。\n8. 区分已知事实、用户确认信息与必要假设，不得把猜测写成事实。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；；不能换成静态模板或模型自行列步骤。\n- 本次选择：保留两组均获得同样确认信息的公平对照，信息量保持一致；\n- 本次选择：仅交付中文论文方法提纲，覆盖已有研究设计、任务、盲评和未来分析方法选择条件。正文不超过1200字，附表另计；不写结果，不执行研究。\n\n## 输出\n- 交付一份中文论文方法提纲，正文不超过 1200 字，附表另计。\n- 提纲覆盖：研究设计与研究对象、任务与样本、实验条件与对照、评审与盲评、未来分析方法选择条件、偏倚与不确定性、可复现性说明。\n- 附表用于承载任务清单、条件对照表、评审记录表结构等，不计入 1200 字。\n- 不写研究结果，不执行研究，不生成数据。\n- 所有尚未确定的事项以“待确认”标注，不写成已纳入样本或已测得结果。\n\n## 约束\n- 不得编造效应量、P 值、参考文献或显著性结论；不得预设必然显著。\n- 不得把拟定样本写成已纳入样本；不得把评审一致性写成已测得。\n- Plan 模式必须保持为交互问答式增强，不得替换为静态模板或模型自行列步骤。\n- 两组公平对照必须保持信息量一致，不得自行选定顺序效应或其他新研究目标。\n\n用户明确规则（须遵守平台权限边界）：\n- 为研究生准备一份论文方法部分的写作提示词，研究Plan问答对提示词质量的影响。\n- 当前只拟定研究，尚未实施。\n- 必须保留设计：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。\n- 比较直接增强和Plan，另设两组获得同样确认信息的公平对照。\n- 中文方法提纲不超过1200字，附表另计。\n- 不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。\n- 研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；；不能换成静态模板或模型自行列步骤。\n- 研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；不能换成静态模板或模型自行列步骤。\n- 保留两组均获得同样确认信息的公平对照，信息量保持一致；\n- 保留两组均获得同样确认信息的公平对照，信息量保持一致；具体信息给法及操作设计暂不确定，不自行选定顺序效应或其他新研究目标。\n- 仅交付中文论文方法提纲，覆盖已有研究设计、任务、盲评和未来分析方法选择条件。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：20个任务的具体内容从哪里来？ 用户说明：暂不确定。20个任务的具体来源尚未确定，保持每类5个、每模式每任务3次的拟定设计，不写成已纳入样本。\n- 该问题尚未确定：“Plan”模式在方法部分应如何界定？ 用户说明：研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；不能换成静态模板或模型自行列步骤。具体实施轮次暂不确定。\n- 该问题尚未确定：两组公平对照具体指什么？ 用户说明：保留两组均获得同样确认信息的公平对照，信息量保持一致；具体信息给法及操作设计暂不确定，不自行选定顺序效应或其他新研究目标。 补充说明：两组公平对照的具体信息给法及操作设计尚未确定（已确认两组获得同样确认信息、信息量保持一致）。给法不同会影响对照公平性与偏倚讨论，需明确信息以何种形式、何时提供给两组。\n- 20 个任务的具体内容与来源尚未确定（每类 5 个、每模式每任务 3 次的拟定设计保持不变）。缺少任务清单将影响任务代表性、样本纳入排除标准及可复现性描述，需明确任务从何而来、如何筛选。\n- Plan 模式的具体实施轮次尚未确定（研究对象已明确为系统提问—用户回答—再增强提示词的交互问答）。轮次安排会影响方法部分对交互流程与重复次数的描述，需明确每任务进行几轮问答。\n- 未来统计分析方法的具体检验依据尚未确定（已确认依据未来数据分布选择、不预设必然显著）。需明确在何种数据分布条件下选用何种检验，以及效应量与一致性指标的报告口径，否则方法部分只能停留在原则性表述。\n\n## 验收标准\n- 研究口径可复现：任务类别、数量、重复次数、评审人数与盲评方式与拟定设计一致。\n- 数据来源可追溯：任务来源、样本纳入排除、评审记录均可核查，未确定项明确标注待确认。\n- 方法选择有依据：统计检验依据未来数据分布选择，写明选择条件而非预设结论。\n- 已说明缺失数据、偏倚和不确定性，并给出方法适用条件。\n- 正文不超过 1200 字，附表另计；无结果、无编造数值、无编造引用。\n- 全文区分已知事实、用户确认信息与必要假设。",
+            "sections": [
+              {
+                "type": "BACKGROUND",
+                "title": "背景",
+                "content": "- 当前处于研究方案拟定阶段，研究尚未实施，没有实测数据；不得把拟定样本写成已纳入样本。\n- 研究主题：Plan 问答对提示词质量的影响。研究对象为原始需求中的 Plan 交互问答：系统向用户提问、用户回答后再增强提示词；不得替换为静态模板或模型自行列步骤。\n- 已拟定的设计：4 类任务（代码开发、机关报告、科研方案、数据分析），每类 5 个，共 20 个任务；每模式每任务独立重复 3 次；两名独立评审盲评；评审一致性拟报告，不声称已测得。\n- 比较对象：直接增强与 Plan；另设两组获得同样确认信息的公平对照，信息量保持一致。\n- 交付物：中文论文方法提纲，正文不超过 1200 字，附表另计；只写方法，不写结果，不执行研究。\n- 资料依据：research/开题草案.md（项目文档，仅含上述拟定设计，无实测数据）。"
+              },
+              {
+                "type": "TASK",
+                "title": "任务",
+                "content": "撰写一份可直接用于研究生论文方法部分的中文写作提示词，指导生成“方法”章节提纲，要求：\n1. 明确研究对象与范围：Plan 交互问答（系统提问—用户回答—再增强提示词）对提示词质量的影响；说明研究尚未实施，全部样本与重复次数均为拟定设计。\n2. 完整保留并写明研究设计：4 类任务（代码开发、机关报告、科研方案、数据分析），每类 5 个，共 20 个任务；每模式每任务独立重复 3 次；两名独立评审盲评；评审一致性作为拟报告指标。\n3. 说明比较条件：直接增强与 Plan 的对比；另设两组获得同样确认信息的公平对照，两组信息量保持一致。\n4. 说明任务来源、样本纳入与排除、重复与随机化安排、评审流程与盲评实施方式，凡尚未确定者标注为待确认，不得写成已实施。\n5. 说明未来统计分析方法的选择条件：具体检验依据未来数据分布选择，不预设必然显著；写明效应量、置信区间、一致性指标等报告口径的确定原则，但不得给出任何具体数值。\n6. 说明缺失数据、偏倚来源（如顺序效应、评审者偏倚）、不确定性与方法适用条件，保证分析过程可复现。\n7. 明确数据来源、指标定义与统计口径；无法核实的数据与引用不得编造。\n8. 区分已知事实、用户确认信息与必要假设，不得把猜测写成事实。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；；不能换成静态模板或模型自行列步骤。\n- 本次选择：保留两组均获得同样确认信息的公平对照，信息量保持一致；\n- 本次选择：仅交付中文论文方法提纲，覆盖已有研究设计、任务、盲评和未来分析方法选择条件。正文不超过1200字，附表另计；不写结果，不执行研究。"
+              },
+              {
+                "type": "OUTPUT",
+                "title": "输出",
+                "content": "- 交付一份中文论文方法提纲，正文不超过 1200 字，附表另计。\n- 提纲覆盖：研究设计与研究对象、任务与样本、实验条件与对照、评审与盲评、未来分析方法选择条件、偏倚与不确定性、可复现性说明。\n- 附表用于承载任务清单、条件对照表、评审记录表结构等，不计入 1200 字。\n- 不写研究结果，不执行研究，不生成数据。\n- 所有尚未确定的事项以“待确认”标注，不写成已纳入样本或已测得结果。"
+              },
+              {
+                "type": "CONSTRAINTS",
+                "title": "约束",
+                "content": "- 不得编造效应量、P 值、参考文献或显著性结论；不得预设必然显著。\n- 不得把拟定样本写成已纳入样本；不得把评审一致性写成已测得。\n- Plan 模式必须保持为交互问答式增强，不得替换为静态模板或模型自行列步骤。\n- 两组公平对照必须保持信息量一致，不得自行选定顺序效应或其他新研究目标。\n\n用户明确规则（须遵守平台权限边界）：\n- 为研究生准备一份论文方法部分的写作提示词，研究Plan问答对提示词质量的影响。\n- 当前只拟定研究，尚未实施。\n- 必须保留设计：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。\n- 比较直接增强和Plan，另设两组获得同样确认信息的公平对照。\n- 中文方法提纲不超过1200字，附表另计。\n- 不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。\n- 研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；；不能换成静态模板或模型自行列步骤。\n- 研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；不能换成静态模板或模型自行列步骤。\n- 保留两组均获得同样确认信息的公平对照，信息量保持一致；\n- 保留两组均获得同样确认信息的公平对照，信息量保持一致；具体信息给法及操作设计暂不确定，不自行选定顺序效应或其他新研究目标。\n- 仅交付中文论文方法提纲，覆盖已有研究设计、任务、盲评和未来分析方法选择条件。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：20个任务的具体内容从哪里来？ 用户说明：暂不确定。20个任务的具体来源尚未确定，保持每类5个、每模式每任务3次的拟定设计，不写成已纳入样本。\n- 该问题尚未确定：“Plan”模式在方法部分应如何界定？ 用户说明：研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；不能换成静态模板或模型自行列步骤。具体实施轮次暂不确定。\n- 该问题尚未确定：两组公平对照具体指什么？ 用户说明：保留两组均获得同样确认信息的公平对照，信息量保持一致；具体信息给法及操作设计暂不确定，不自行选定顺序效应或其他新研究目标。 补充说明：两组公平对照的具体信息给法及操作设计尚未确定（已确认两组获得同样确认信息、信息量保持一致）。给法不同会影响对照公平性与偏倚讨论，需明确信息以何种形式、何时提供给两组。\n- 20 个任务的具体内容与来源尚未确定（每类 5 个、每模式每任务 3 次的拟定设计保持不变）。缺少任务清单将影响任务代表性、样本纳入排除标准及可复现性描述，需明确任务从何而来、如何筛选。\n- Plan 模式的具体实施轮次尚未确定（研究对象已明确为系统提问—用户回答—再增强提示词的交互问答）。轮次安排会影响方法部分对交互流程与重复次数的描述，需明确每任务进行几轮问答。\n- 未来统计分析方法的具体检验依据尚未确定（已确认依据未来数据分布选择、不预设必然显著）。需明确在何种数据分布条件下选用何种检验，以及效应量与一致性指标的报告口径，否则方法部分只能停留在原则性表述。"
+              },
+              {
+                "type": "CLARIFICATIONS",
+                "title": "待确认事项",
+                "content": "- 该问题尚未确定：20个任务的具体内容从哪里来？ 用户说明：暂不确定。20个任务的具体来源尚未确定，保持每类5个、每模式每任务3次的拟定设计，不写成已纳入样本。\n- 该问题尚未确定：“Plan”模式在方法部分应如何界定？ 用户说明：研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；不能换成静态模板或模型自行列步骤。具体实施轮次暂不确定。\n- 该问题尚未确定：两组公平对照具体指什么？ 用户说明：保留两组均获得同样确认信息的公平对照，信息量保持一致；具体信息给法及操作设计暂不确定，不自行选定顺序效应或其他新研究目标。 补充说明：两组公平对照的具体信息给法及操作设计尚未确定（已确认两组获得同样确认信息、信息量保持一致）。给法不同会影响对照公平性与偏倚讨论，需明确信息以何种形式、何时提供给两组。\n- 20 个任务的具体内容与来源尚未确定（每类 5 个、每模式每任务 3 次的拟定设计保持不变）。缺少任务清单将影响任务代表性、样本纳入排除标准及可复现性描述，需明确任务从何而来、如何筛选。\n- Plan 模式的具体实施轮次尚未确定（研究对象已明确为系统提问—用户回答—再增强提示词的交互问答）。轮次安排会影响方法部分对交互流程与重复次数的描述，需明确每任务进行几轮问答。\n- 未来统计分析方法的具体检验依据尚未确定（已确认依据未来数据分布选择、不预设必然显著）。需明确在何种数据分布条件下选用何种检验，以及效应量与一致性指标的报告口径，否则方法部分只能停留在原则性表述。"
+              },
+              {
+                "type": "ACCEPTANCE",
+                "title": "验收标准",
+                "content": "- 研究口径可复现：任务类别、数量、重复次数、评审人数与盲评方式与拟定设计一致。\n- 数据来源可追溯：任务来源、样本纳入排除、评审记录均可核查，未确定项明确标注待确认。\n- 方法选择有依据：统计检验依据未来数据分布选择，写明选择条件而非预设结论。\n- 已说明缺失数据、偏倚和不确定性，并给出方法适用条件。\n- 正文不超过 1200 字，附表另计；无结果、无编造数值、无编造引用。\n- 全文区分已知事实、用户确认信息与必要假设。"
+              }
+            ],
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "research/",
+                "research/开题草案.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "research/开题草案.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n研究尚未执行，没有实测数据。四类任务：代码开发、机关报告、科研方案、数据分析。拟每类5个任务，每模式3次。采用两名独立评审；评审一致性拟报告，不声称已测得。",
+                  "summary": "Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "ambiguities": [
+              "该问题尚未确定：20个任务的具体内容从哪里来？ 用户说明：暂不确定。20个任务的具体来源尚未确定，保持每类5个、每模式每任务3次的拟定设计，不写成已纳入样本。",
+              "该问题尚未确定：“Plan”模式在方法部分应如何界定？ 用户说明：研究对象是原始需求中的 Plan 交互问答，系统向用户提问、用户回答后再增强提示词；不能换成静态模板或模型自行列步骤。具体实施轮次暂不确定。",
+              "该问题尚未确定：两组公平对照具体指什么？ 用户说明：保留两组均获得同样确认信息的公平对照，信息量保持一致；具体信息给法及操作设计暂不确定，不自行选定顺序效应或其他新研究目标。 补充说明：两组公平对照的具体信息给法及操作设计尚未确定（已确认两组获得同样确认信息、信息量保持一致）。给法不同会影响对照公平性与偏倚讨论，需明确信息以何种形式、何时提供给两组。",
+              "20 个任务的具体内容与来源尚未确定（每类 5 个、每模式每任务 3 次的拟定设计保持不变）。缺少任务清单将影响任务代表性、样本纳入排除标准及可复现性描述，需明确任务从何而来、如何筛选。",
+              "Plan 模式的具体实施轮次尚未确定（研究对象已明确为系统提问—用户回答—再增强提示词的交互问答）。轮次安排会影响方法部分对交互流程与重复次数的描述，需明确每任务进行几轮问答。",
+              "未来统计分析方法的具体检验依据尚未确定（已确认依据未来数据分布选择、不预设必然显著）。需明确在何种数据分布条件下选用何种检验，以及效应量与一致性指标的报告口径，否则方法部分只能停留在原则性表述。"
+            ],
+            "appliedConstraints": [
+              "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+              "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+              "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+              "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+              "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+              "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+            ],
+            "templateCode": "RESEARCH_ANALYSIS",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 7667,
+            "warnings": []
+          },
+          "protocolChecks": {
+            "realProvider": true,
+            "promptPresent": true,
+            "fourSections": true,
+            "constraintsInCopiedBody": true
+          },
+          "elapsedMs": 8003,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "0fc3f10b-e851-44ac-9dbb-3de9fbc923c8",
+              "elapsedMs": 7995
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "07_data_boundaries",
+      "results": {
+        "direct": {
+          "id": "07_data_boundaries",
+          "title": "数据分析单位、比较符和有效零值",
+          "arm": "direct",
+          "startedAt": "2026-10-03T09:45:40.012Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "final": {
+            "optimizedPrompt": "## 背景\n本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。\n\n资料范围（均为合成数据，无真实日志）：\n- `materials/字段说明.md`：`createdAt` 为 Asia/Shanghai 本地时间；`status` 取值为 SUCCESS/FAILED；`latency_ms` 为毫秒数或 null；`cached` 为 true/false。\n- `materials/requests.csv`：字段列为 `createdAt,status,latency_ms,cached`，含 4 条示例记录，例如 `2025-01-01T00:00:00,SUCCESS,0,false`、`2025-01-31T23:59:59,SUCCESS,5000,true`、`2025-02-01T00:00:00,SUCCESS,5001,false`、`2025-01-15T12:00:00,FAILED,8000,false`。\n\n任务性质：为附件合成服务请求数据生成分析提示词，只产出分析方案与 SQL 伪代码，不执行查询。\n\n## 任务\n生成一份用于分析合成服务请求数据的提示词，要求该提示词能指导后续分析者产出分析方案与 SQL 伪代码（不执行查询）。具体执行要求：\n\n1. 统计时间范围：上海时区 2025 年 1 月，区间左闭右开 [2025-01-01, 2025-02-01)。不得自动更换统计月份。\n2. 时延均值：仅 `status` 为 SUCCESS 的记录进入时延均值分母；失败记录单列统计，不混入成功均值。\n3. 慢请求判定：`latency_ms` 单位为毫秒，严格大于 5000 毫秒才计为慢请求，等于 5000 毫秒不计。不得把毫秒阈值当成 5000 秒。\n4. 空值与零值处理：必须保留数值 0 和布尔 false；null 表示缺失，0 不是缺失。\n5. 输出物仅为分析方案与 SQL 伪代码，不执行任何查询。\n\n## 输出\n- 分析方案：说明统计口径、时间范围、分组与过滤条件、空值/零值处理规则。\n- SQL 伪代码：覆盖时间区间过滤、SUCCESS 与 FAILED 分流、时延均值计算、慢请求计数（严格大于 5000 毫秒）。\n- 失败记录单列结果：与成功均值分开呈现。\n- 明确标注哪些是已知事实、哪些是必要假设。\n\n## 约束\n- 只做分析方案及 SQL 伪代码，不执行查询。\n- 不得自动更换统计月份；不得把毫秒阈值当成 5000 秒。\n- 必须保留数值 0 和布尔 false；null 是缺失，0 不是缺失。\n\n用户明确规则（须遵守平台权限边界）：\n- 只做分析方案及SQL伪代码，不执行查询。\n- 仅status为SUCCESS的记录进入时延均值分母；失败记录单列，不混入成功均值。\n- 必须保留数值0和布尔false；null是缺失，0不是缺失。\n- 不得把毫秒阈值当成5000秒，不得自动换统计月份。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n## 验收标准\n- 时间区间严格为 [2025-01-01, 2025-02-01)，时区为 Asia/Shanghai。\n- 时延均值分母仅含 SUCCESS 记录，失败记录单列且不混入成功均值。\n- 慢请求判定为严格大于 5000 毫秒，等于 5000 毫秒不计入。\n- 数值 0 与布尔 false 被保留，null 被识别为缺失而非 0。\n- 输出仅包含分析方案与 SQL 伪代码，未执行任何查询。\n- 未自动更换统计月份，未把毫秒阈值误作 5000 秒。",
+            "sections": [
+              {
+                "type": "BACKGROUND",
+                "title": "背景",
+                "content": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。\n\n资料范围（均为合成数据，无真实日志）：\n- `materials/字段说明.md`：`createdAt` 为 Asia/Shanghai 本地时间；`status` 取值为 SUCCESS/FAILED；`latency_ms` 为毫秒数或 null；`cached` 为 true/false。\n- `materials/requests.csv`：字段列为 `createdAt,status,latency_ms,cached`，含 4 条示例记录，例如 `2025-01-01T00:00:00,SUCCESS,0,false`、`2025-01-31T23:59:59,SUCCESS,5000,true`、`2025-02-01T00:00:00,SUCCESS,5001,false`、`2025-01-15T12:00:00,FAILED,8000,false`。\n\n任务性质：为附件合成服务请求数据生成分析提示词，只产出分析方案与 SQL 伪代码，不执行查询。"
+              },
+              {
+                "type": "TASK",
+                "title": "任务",
+                "content": "生成一份用于分析合成服务请求数据的提示词，要求该提示词能指导后续分析者产出分析方案与 SQL 伪代码（不执行查询）。具体执行要求：\n\n1. 统计时间范围：上海时区 2025 年 1 月，区间左闭右开 [2025-01-01, 2025-02-01)。不得自动更换统计月份。\n2. 时延均值：仅 `status` 为 SUCCESS 的记录进入时延均值分母；失败记录单列统计，不混入成功均值。\n3. 慢请求判定：`latency_ms` 单位为毫秒，严格大于 5000 毫秒才计为慢请求，等于 5000 毫秒不计。不得把毫秒阈值当成 5000 秒。\n4. 空值与零值处理：必须保留数值 0 和布尔 false；null 表示缺失，0 不是缺失。\n5. 输出物仅为分析方案与 SQL 伪代码，不执行任何查询。"
+              },
+              {
+                "type": "OUTPUT",
+                "title": "输出",
+                "content": "- 分析方案：说明统计口径、时间范围、分组与过滤条件、空值/零值处理规则。\n- SQL 伪代码：覆盖时间区间过滤、SUCCESS 与 FAILED 分流、时延均值计算、慢请求计数（严格大于 5000 毫秒）。\n- 失败记录单列结果：与成功均值分开呈现。\n- 明确标注哪些是已知事实、哪些是必要假设。"
+              },
+              {
+                "type": "CONSTRAINTS",
+                "title": "约束",
+                "content": "- 只做分析方案及 SQL 伪代码，不执行查询。\n- 不得自动更换统计月份；不得把毫秒阈值当成 5000 秒。\n- 必须保留数值 0 和布尔 false；null 是缺失，0 不是缺失。\n\n用户明确规则（须遵守平台权限边界）：\n- 只做分析方案及SQL伪代码，不执行查询。\n- 仅status为SUCCESS的记录进入时延均值分母；失败记录单列，不混入成功均值。\n- 必须保留数值0和布尔false；null是缺失，0不是缺失。\n- 不得把毫秒阈值当成5000秒，不得自动换统计月份。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+              },
+              {
+                "type": "ACCEPTANCE",
+                "title": "验收标准",
+                "content": "- 时间区间严格为 [2025-01-01, 2025-02-01)，时区为 Asia/Shanghai。\n- 时延均值分母仅含 SUCCESS 记录，失败记录单列且不混入成功均值。\n- 慢请求判定为严格大于 5000 毫秒，等于 5000 毫秒不计入。\n- 数值 0 与布尔 false 被保留，null 被识别为缺失而非 0。\n- 输出仅包含分析方案与 SQL 伪代码，未执行任何查询。\n- 未自动更换统计月份，未把毫秒阈值误作 5000 秒。"
+              }
+            ],
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "materials/",
+                "materials/requests.csv",
+                "materials/字段说明.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "materials/字段说明.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。没有真实日志。",
+                  "summary": "Markdown 文档摘要：合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。；没有真实日志。",
+                  "truncated": false
+                },
+                {
+                  "path": "materials/requests.csv",
+                  "language": "csv",
+                  "content": "[片段 1/1]\ncreatedAt,status,latency_ms,cached\n2025-01-01T00:00:00,SUCCESS,0,false\n2025-01-31T23:59:59,SUCCESS,5000,true\n2025-02-01T00:00:00,SUCCESS,5001,false\n2025-01-15T12:00:00,FAILED,8000,false",
+                  "summary": "文件内容摘要：createdAt,status,latency_ms,cached；2025-01-01T00:00:00,SUCCESS,0,false；2025-01-31T23:59:59,SUCCESS,5000,true；2025-02-01T00:00:00,SUCCESS,5001,false；2025-01-15T12:00:00,FAILED,8000,false",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "ambiguities": [],
+            "appliedConstraints": [
+              "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+              "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+              "校验所有外部输入，并明确处理空值、非法值和边界条件。",
+              "处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。",
+              "为核心逻辑补充正常、异常和边界场景测试。",
+              "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+              "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+            ],
+            "templateCode": "BUG_FIX",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 4111,
+            "warnings": []
+          },
+          "protocolChecks": {
+            "realProvider": true,
+            "promptPresent": true,
+            "fourSections": true,
+            "constraintsInCopiedBody": true
+          },
+          "elapsedMs": 4243,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "57ee6863-1318-49f4-a679-5eea391e3e50",
+              "elapsedMs": 4240
+            }
+          ]
+        },
+        "plan": {
+          "id": "07_data_boundaries",
+          "title": "数据分析单位、比较符和有效零值",
+          "arm": "plan",
+          "startedAt": "2026-10-03T09:45:44.257Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "prepared": {
+            "contextId": "e95dd8eb-027b-4f8d-9853-211d66257761",
+            "version": "sha256:850bd7b473240b8c97e0aef08c7994e62113e493f3fd0e3f420071d83ac97e70",
+            "digest": {
+              "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologies": [],
+              "dependencies": [],
+              "directoryOverview": [
+                "materials/",
+                "materials/requests.csv",
+                "materials/字段说明.md"
+              ],
+              "fileSummaries": [
+                "[PROJECT_DOCUMENT] materials/字段说明.md：Markdown 文档摘要：合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。；没有真实日志。；业务摘录：[片段 1/1] 合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。 没有真实日志。",
+                "[USER_MATERIAL] materials/requests.csv：文件内容摘要：createdAt,status,latency_ms,cached；2025-01-01T00:00:00,SUCCESS,0,false；2025-01-31T23:59:59,SUCCESS,5000,true；2025-02-01T00:00:00,SUCCESS,5001,false；2025-01-15T12:00:00,FAILED,8000,false；业务摘录：[片段 1/1] createdAt,status,latency_ms,cached 2025-01-01T00:00:00,SUCCESS,0,false 2025-01-31T23:59:59,SUCCESS,5000,true 2025-02-01T00:00:00,SUCCESS,5001,false 2025-01-15T12:00:00,FAILED,8000,false"
+              ],
+              "analysisStatus": "COMPLETE",
+              "analyzedFileCount": 2,
+              "warnings": [],
+              "factCards": []
+            },
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "materials/",
+                "materials/requests.csv",
+                "materials/字段说明.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "materials/字段说明.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。没有真实日志。",
+                  "summary": "Markdown 文档摘要：合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。；没有真实日志。",
+                  "truncated": false
+                },
+                {
+                  "path": "materials/requests.csv",
+                  "language": "csv",
+                  "content": "[片段 1/1]\ncreatedAt,status,latency_ms,cached\n2025-01-01T00:00:00,SUCCESS,0,false\n2025-01-31T23:59:59,SUCCESS,5000,true\n2025-02-01T00:00:00,SUCCESS,5001,false\n2025-01-15T12:00:00,FAILED,8000,false",
+                  "summary": "文件内容摘要：createdAt,status,latency_ms,cached；2025-01-01T00:00:00,SUCCESS,0,false；2025-01-31T23:59:59,SUCCESS,5000,true；2025-02-01T00:00:00,SUCCESS,5001,false；2025-01-15T12:00:00,FAILED,8000,false",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "expiresAt": "2026-10-03T10:15:44.276795500Z",
+            "latencyMs": 8
+          },
+          "plan": {
+            "summary": "目标是生成一份只做分析方案与 SQL 伪代码、不执行查询的提示词，统计上海时区 2025 年 1 月 [2025-01-01, 2025-02-01) 的成功请求时延均值与慢请求（严格大于 5000ms），失败记录单列。原始需求已明确时间范围、状态口径、阈值边界和缺失值规则，仅需确认输出形态与失败记录呈现方式等会影响交付结果的事项。",
+            "questions": [
+              {
+                "id": "output_format",
+                "question": "最终提示词要求产出的分析方案与 SQL 伪代码，希望以什么形式组织？",
+                "hint": "决定交付物的结构，影响提示词如何约束输出。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "plan_then_sql",
+                    "label": "先方案后伪代码",
+                    "description": "先用文字说明统计口径与步骤，再给出对应 SQL 伪代码。",
+                    "answer": "先给出分析方案说明（口径、步骤、边界处理），再给出对应的 SQL 伪代码。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "sql_only",
+                    "label": "只要 SQL 伪代码",
+                    "description": "仅输出 SQL 伪代码，不单独写方案说明。",
+                    "answer": "只输出 SQL 伪代码，不单独撰写分析方案说明。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "plan_only",
+                    "label": "只要分析方案",
+                    "description": "仅输出分析方案说明，不写 SQL 伪代码。",
+                    "answer": "只输出分析方案说明，不写 SQL 伪代码。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "failed_output",
+                "question": "失败记录单列时，希望输出哪些内容？",
+                "hint": "原始需求只要求失败记录单列、不混入成功均值，未说明失败侧要统计什么。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "count_only",
+                    "label": "仅失败条数",
+                    "description": "只统计 2025 年 1 月失败记录的数量。",
+                    "answer": "失败记录单列，仅统计失败记录条数。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "count_and_latency",
+                    "label": "条数加时延分布",
+                    "description": "统计失败条数，并给出失败记录的时延统计（如均值、慢请求数）。",
+                    "answer": "失败记录单列，统计失败条数，并给出失败记录的时延统计（均值与慢请求数）。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "list_records",
+                    "label": "逐条列出失败记录",
+                    "description": "把 2025 年 1 月的失败记录逐条列出。",
+                    "answer": "失败记录单列，逐条列出 2025 年 1 月的失败记录。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "slow_metric",
+                "question": "慢请求除了计数，是否还需要输出其他指标？",
+                "hint": "原始需求只定义了慢请求判定阈值，未说明要输出哪些慢请求指标。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "count_only",
+                    "label": "仅慢请求数",
+                    "description": "只输出严格大于 5000ms 的慢请求条数。",
+                    "answer": "慢请求只输出条数（严格大于 5000ms）。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "count_and_ratio",
+                    "label": "条数与占比",
+                    "description": "输出慢请求条数及其占成功请求的比例。",
+                    "answer": "慢请求输出条数及其占成功请求的比例。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "count_ratio_and_latency",
+                    "label": "条数、占比与慢请求时延",
+                    "description": "输出慢请求条数、占比，以及慢请求的时延统计。",
+                    "answer": "慢请求输出条数、占成功请求的比例，以及慢请求的时延统计。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              }
+            ],
+            "templateCode": "BUG_FIX",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 4059,
+            "planId": "821bc311-2c18-4f58-abc2-0cc78f65facf",
+            "planningContext": {
+              "contextId": "e95dd8eb-027b-4f8d-9853-211d66257761",
+              "version": "sha256:850bd7b473240b8c97e0aef08c7994e62113e493f3fd0e3f420071d83ac97e70"
+            },
+            "expiresAt": "2026-10-03T10:15:44.276795500Z"
+          },
+          "elapsedMs": 4157,
+          "requests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "31602908-6edd-439e-8a06-b112277729c2",
+              "elapsedMs": 52
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "41a88bf1-5db3-4965-ae2a-b9e1ab3de901",
+              "elapsedMs": 4103
+            }
+          ]
+        },
+        "plan-final": {
+          "id": "07_data_boundaries",
+          "title": "数据分析单位、比较符和有效零值",
+          "arm": "plan-final",
+          "startedAt": "2026-10-03T09:49:00.510Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "plan": {
+            "summary": "目标是生成一份只做分析方案与 SQL 伪代码、不执行查询的提示词，统计上海时区 2025 年 1 月 [2025-01-01, 2025-02-01) 的成功请求时延均值与慢请求（严格大于 5000ms），失败记录单列。原始需求已明确时间范围、状态口径、阈值边界和缺失值规则，仅需确认输出形态与失败记录呈现方式等会影响交付结果的事项。",
+            "questions": [
+              {
+                "id": "output_format",
+                "question": "最终提示词要求产出的分析方案与 SQL 伪代码，希望以什么形式组织？",
+                "hint": "决定交付物的结构，影响提示词如何约束输出。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "plan_then_sql",
+                    "label": "先方案后伪代码",
+                    "description": "先用文字说明统计口径与步骤，再给出对应 SQL 伪代码。",
+                    "answer": "先给出分析方案说明（口径、步骤、边界处理），再给出对应的 SQL 伪代码。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "sql_only",
+                    "label": "只要 SQL 伪代码",
+                    "description": "仅输出 SQL 伪代码，不单独写方案说明。",
+                    "answer": "只输出 SQL 伪代码，不单独撰写分析方案说明。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "plan_only",
+                    "label": "只要分析方案",
+                    "description": "仅输出分析方案说明，不写 SQL 伪代码。",
+                    "answer": "只输出分析方案说明，不写 SQL 伪代码。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "failed_output",
+                "question": "失败记录单列时，希望输出哪些内容？",
+                "hint": "原始需求只要求失败记录单列、不混入成功均值，未说明失败侧要统计什么。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "count_only",
+                    "label": "仅失败条数",
+                    "description": "只统计 2025 年 1 月失败记录的数量。",
+                    "answer": "失败记录单列，仅统计失败记录条数。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "count_and_latency",
+                    "label": "条数加时延分布",
+                    "description": "统计失败条数，并给出失败记录的时延统计（如均值、慢请求数）。",
+                    "answer": "失败记录单列，统计失败条数，并给出失败记录的时延统计（均值与慢请求数）。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "list_records",
+                    "label": "逐条列出失败记录",
+                    "description": "把 2025 年 1 月的失败记录逐条列出。",
+                    "answer": "失败记录单列，逐条列出 2025 年 1 月的失败记录。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "slow_metric",
+                "question": "慢请求除了计数，是否还需要输出其他指标？",
+                "hint": "原始需求只定义了慢请求判定阈值，未说明要输出哪些慢请求指标。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "count_only",
+                    "label": "仅慢请求数",
+                    "description": "只输出严格大于 5000ms 的慢请求条数。",
+                    "answer": "慢请求只输出条数（严格大于 5000ms）。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "count_and_ratio",
+                    "label": "条数与占比",
+                    "description": "输出慢请求条数及其占成功请求的比例。",
+                    "answer": "慢请求输出条数及其占成功请求的比例。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "count_ratio_and_latency",
+                    "label": "条数、占比与慢请求时延",
+                    "description": "输出慢请求条数、占比，以及慢请求的时延统计。",
+                    "answer": "慢请求输出条数、占成功请求的比例，以及慢请求的时延统计。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              }
+            ],
+            "templateCode": "BUG_FIX",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 4059,
+            "planId": "821bc311-2c18-4f58-abc2-0cc78f65facf",
+            "planningContext": {
+              "contextId": "e95dd8eb-027b-4f8d-9853-211d66257761",
+              "version": "sha256:850bd7b473240b8c97e0aef08c7994e62113e493f3fd0e3f420071d83ac97e70"
+            },
+            "expiresAt": "2026-10-03T10:15:44.276795500Z"
+          },
+          "prepared": {
+            "contextId": "e95dd8eb-027b-4f8d-9853-211d66257761",
+            "version": "sha256:850bd7b473240b8c97e0aef08c7994e62113e493f3fd0e3f420071d83ac97e70",
+            "digest": {
+              "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologies": [],
+              "dependencies": [],
+              "directoryOverview": [
+                "materials/",
+                "materials/requests.csv",
+                "materials/字段说明.md"
+              ],
+              "fileSummaries": [
+                "[PROJECT_DOCUMENT] materials/字段说明.md：Markdown 文档摘要：合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。；没有真实日志。；业务摘录：[片段 1/1] 合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。 没有真实日志。",
+                "[USER_MATERIAL] materials/requests.csv：文件内容摘要：createdAt,status,latency_ms,cached；2025-01-01T00:00:00,SUCCESS,0,false；2025-01-31T23:59:59,SUCCESS,5000,true；2025-02-01T00:00:00,SUCCESS,5001,false；2025-01-15T12:00:00,FAILED,8000,false；业务摘录：[片段 1/1] createdAt,status,latency_ms,cached 2025-01-01T00:00:00,SUCCESS,0,false 2025-01-31T23:59:59,SUCCESS,5000,true 2025-02-01T00:00:00,SUCCESS,5001,false 2025-01-15T12:00:00,FAILED,8000,false"
+              ],
+              "analysisStatus": "COMPLETE",
+              "analyzedFileCount": 2,
+              "warnings": [],
+              "factCards": []
+            },
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "materials/",
+                "materials/requests.csv",
+                "materials/字段说明.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "materials/字段说明.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。没有真实日志。",
+                  "summary": "Markdown 文档摘要：合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。；没有真实日志。",
+                  "truncated": false
+                },
+                {
+                  "path": "materials/requests.csv",
+                  "language": "csv",
+                  "content": "[片段 1/1]\ncreatedAt,status,latency_ms,cached\n2025-01-01T00:00:00,SUCCESS,0,false\n2025-01-31T23:59:59,SUCCESS,5000,true\n2025-02-01T00:00:00,SUCCESS,5001,false\n2025-01-15T12:00:00,FAILED,8000,false",
+                  "summary": "文件内容摘要：createdAt,status,latency_ms,cached；2025-01-01T00:00:00,SUCCESS,0,false；2025-01-31T23:59:59,SUCCESS,5000,true；2025-02-01T00:00:00,SUCCESS,5001,false；2025-01-15T12:00:00,FAILED,8000,false",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "expiresAt": "2026-10-03T10:15:44.276795500Z",
+            "latencyMs": 8
+          },
+          "answerReview": {
+            "caseId": "07_data_boundaries",
+            "questions": [
+              {
+                "questionId": "output_format",
+                "question": "最终提示词要求产出的分析方案与 SQL 伪代码，希望以什么形式组织？",
+                "answer": "保持原始要求，交付分析方案与 SQL 伪代码两部分，不删除任一交付物，不执行查询。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              },
+              {
+                "questionId": "failed_output",
+                "question": "失败记录单列时，希望输出哪些内容？",
+                "answer": "暂不确定。失败记录必须单列、不混入成功均值；具体失败侧统计指标尚未确定，不自行扩展。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              },
+              {
+                "questionId": "slow_metric",
+                "question": "慢请求除了计数，是否还需要输出其他指标？",
+                "answer": "暂不确定。保留严格大于5000毫秒的慢请求边界；成功均值中 null 不参与分母，单独报告缺失，不补0，保留0与false。其他慢请求指标及统计范围仍未确定，不自行扩展。",
+                "basis": "依据冻结原始需求、实际材料及回答卡逐题填写；仍未知的信息保持未知，不自动接受候选。"
+              }
+            ]
+          },
+          "priorRequests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "31602908-6edd-439e-8a06-b112277729c2",
+              "elapsedMs": 52
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "41a88bf1-5db3-4965-ae2a-b9e1ab3de901",
+              "elapsedMs": 4103
+            }
+          ],
+          "refinedQuery": "为附件合成服务请求数据生成分析提示词。只做分析方案及SQL伪代码，不执行查询。统计上海时区2025年1月，区间左闭右开[2025-01-01,2025-02-01)。仅status为SUCCESS的记录进入时延均值分母；失败记录单列，不混入成功均值。latency_ms单位毫秒，严格大于5000毫秒才计慢请求，等于5000不计。必须保留数值0和布尔false；null是缺失，0不是缺失。不得把毫秒阈值当成5000秒，不得自动换统计月份。\n本次选择：保持原始要求，交付分析方案与 SQL 伪代码两部分，不删除任一交付物，不执行查询。\n本次选择：暂不确定。失败记录必须单列、不混入成功均值；具体失败侧统计指标尚未确定，不自行扩展。\n本次选择：暂不确定。保留严格大于5000毫秒的慢请求边界；成功均值中 null 不参与分母，单独报告缺失，不补0，保留0与false。其他慢请求指标及统计范围仍未确定，不自行扩展。",
+          "final": {
+            "optimizedPrompt": "## 背景\n本轮任务面向合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。\n\n可用资料：\n- `materials/字段说明.md`：合成字段说明——`createdAt` 为 Asia/Shanghai 本地时间，`status` 为 SUCCESS/FAILED，`latency_ms` 为毫秒数或 null，`cached` 为 true/false；没有真实日志。\n- `materials/requests.csv`：合成请求数据，含 `createdAt,status,latency_ms,cached` 四列，示例行包括 `2025-01-01T00:00:00,SUCCESS,0,false`、`2025-01-31T23:59:59,SUCCESS,5000,true`、`2025-02-01T00:00:00,SUCCESS,5001,false`、`2025-01-15T12:00:00,FAILED,8000,false`。\n\n已确认的交付形态：保持原始要求，交付分析方案与 SQL 伪代码两部分，不删除任一交付物，不执行查询。\n\n已确认的统计口径：仅 status 为 SUCCESS 的记录进入时延均值分母；失败记录单列，不混入成功均值；latency_ms 单位为毫秒，严格大于 5000 毫秒才计慢请求，等于 5000 不计；成功均值中 null 不参与分母，单独报告缺失，不补 0，保留 0 与 false。\n\n尚未确定：失败记录单列时具体输出哪些失败侧统计指标；慢请求除计数外是否还需输出其他指标及其统计范围。上述未确定项不自行扩展。\n\n## 任务\n为附件合成服务请求数据生成分析提示词，产出分析方案与 SQL 伪代码两部分，只做方案与伪代码，不执行查询。\n\n统计范围与口径：\n- 统计区间为上海时区 2025 年 1 月，区间左闭右开 [2025-01-01, 2025-02-01)。\n- 仅 status 为 SUCCESS 的记录进入时延均值分母；失败记录单列，不混入成功均值。\n- latency_ms 单位为毫秒；严格大于 5000 毫秒才计慢请求，等于 5000 不计。\n- 必须保留数值 0 和布尔 false；null 是缺失，0 不是缺失。\n- 不得把毫秒阈值当成 5000 秒，不得自动换统计月份。\n\n分析方案需覆盖：统计区间与时间边界处理、成功/失败记录的分流规则、时延均值的分母口径、null 缺失值的单独报告方式、慢请求的判定边界（严格大于 5000 毫秒）、0 与 false 的保留处理。\n\nSQL 伪代码需体现上述口径，包含时间区间过滤、status 分流、时延均值计算、null 缺失单独报告、慢请求计数（严格大于 5000 毫秒）等逻辑；伪代码仅作方案表达，不执行查询。\n\n失败侧统计指标与慢请求其他指标尚未确定，不自行扩展；如需在方案中预留位置，仅作占位说明，不填入猜测指标。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：保持原始要求，交付分析方案与 SQL 伪代码两部分，不删除任一交付物，不执行查询。\n\n## 输出\n交付两部分，缺一不可：\n1. 分析方案：说明统计区间、时间边界、成功/失败分流、时延均值分母口径、null 缺失处理、慢请求判定边界、0 与 false 的保留规则。\n2. SQL 伪代码：体现上述口径的伪代码，不执行查询。\n\n输出中需明确区分已知事实、用户确认信息与必要假设，不得把猜测写成事实。\n\n失败记录单列时具体输出哪些失败侧统计指标尚未确定，慢请求除计数外是否还需其他指标及其统计范围尚未确定；这两项在输出中仅作占位或说明，不自行扩展。\n\n## 约束\n- 只做分析方案及 SQL 伪代码，不执行查询。\n- 统计区间固定为上海时区 2025 年 1 月，左闭右开 [2025-01-01, 2025-02-01)，不得自动换统计月份。\n- 仅 status 为 SUCCESS 的记录进入时延均值分母；失败记录单列，不混入成功均值。\n- latency_ms 单位为毫秒，严格大于 5000 毫秒才计慢请求，等于 5000 不计；不得把毫秒阈值当成 5000 秒。\n- 必须保留数值 0 和布尔 false；null 是缺失，0 不是缺失；成功均值中 null 不参与分母，单独报告缺失，不补 0。\n\n用户明确规则（须遵守平台权限边界）：\n- 只做分析方案及SQL伪代码，不执行查询。\n- 仅status为SUCCESS的记录进入时延均值分母；失败记录单列，不混入成功均值。\n- 必须保留数值0和布尔false；null是缺失，0不是缺失。\n- 不得把毫秒阈值当成5000秒，不得自动换统计月份。\n- 保持原始要求，交付分析方案与 SQL 伪代码两部分，不删除任一交付物，不执行查询。\n- 失败记录必须单列、不混入成功均值；具体失败侧统计指标尚未确定，不自行扩展。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：失败记录单列时，希望输出哪些内容？ 用户说明：暂不确定。失败记录必须单列、不混入成功均值；具体失败侧统计指标尚未确定，不自行扩展。\n- 该问题尚未确定：慢请求除了计数，是否还需要输出其他指标？ 用户说明：暂不确定。保留严格大于5000毫秒的慢请求边界；成功均值中 null 不参与分母，单独报告缺失，不补0，保留0与false。其他慢请求指标及统计范围仍未确定，不自行扩展。\n\n## 验收\n- 交付包含分析方案与 SQL 伪代码两部分，且未执行查询。\n- 统计区间为上海时区 2025 年 1 月，左闭右开 [2025-01-01, 2025-02-01)，未自动换统计月份。\n- 仅 status 为 SUCCESS 的记录进入时延均值分母；失败记录单列，未混入成功均值。\n- 慢请求判定为严格大于 5000 毫秒，等于 5000 不计；未把毫秒阈值当成 5000 秒。\n- 数值 0 和布尔 false 被保留；null 作为缺失单独报告，未补 0，未参与成功均值分母。\n- 失败侧统计指标与慢请求其他指标未被自行扩展，仅作占位或说明。\n- 输出中已知事实、用户确认信息与必要假设区分清晰，无猜测被写成事实。",
+            "sections": [
+              {
+                "type": "BACKGROUND",
+                "title": "背景",
+                "content": "本轮任务面向合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。\n\n可用资料：\n- `materials/字段说明.md`：合成字段说明——`createdAt` 为 Asia/Shanghai 本地时间，`status` 为 SUCCESS/FAILED，`latency_ms` 为毫秒数或 null，`cached` 为 true/false；没有真实日志。\n- `materials/requests.csv`：合成请求数据，含 `createdAt,status,latency_ms,cached` 四列，示例行包括 `2025-01-01T00:00:00,SUCCESS,0,false`、`2025-01-31T23:59:59,SUCCESS,5000,true`、`2025-02-01T00:00:00,SUCCESS,5001,false`、`2025-01-15T12:00:00,FAILED,8000,false`。\n\n已确认的交付形态：保持原始要求，交付分析方案与 SQL 伪代码两部分，不删除任一交付物，不执行查询。\n\n已确认的统计口径：仅 status 为 SUCCESS 的记录进入时延均值分母；失败记录单列，不混入成功均值；latency_ms 单位为毫秒，严格大于 5000 毫秒才计慢请求，等于 5000 不计；成功均值中 null 不参与分母，单独报告缺失，不补 0，保留 0 与 false。\n\n尚未确定：失败记录单列时具体输出哪些失败侧统计指标；慢请求除计数外是否还需输出其他指标及其统计范围。上述未确定项不自行扩展。"
+              },
+              {
+                "type": "TASK",
+                "title": "任务",
+                "content": "为附件合成服务请求数据生成分析提示词，产出分析方案与 SQL 伪代码两部分，只做方案与伪代码，不执行查询。\n\n统计范围与口径：\n- 统计区间为上海时区 2025 年 1 月，区间左闭右开 [2025-01-01, 2025-02-01)。\n- 仅 status 为 SUCCESS 的记录进入时延均值分母；失败记录单列，不混入成功均值。\n- latency_ms 单位为毫秒；严格大于 5000 毫秒才计慢请求，等于 5000 不计。\n- 必须保留数值 0 和布尔 false；null 是缺失，0 不是缺失。\n- 不得把毫秒阈值当成 5000 秒，不得自动换统计月份。\n\n分析方案需覆盖：统计区间与时间边界处理、成功/失败记录的分流规则、时延均值的分母口径、null 缺失值的单独报告方式、慢请求的判定边界（严格大于 5000 毫秒）、0 与 false 的保留处理。\n\nSQL 伪代码需体现上述口径，包含时间区间过滤、status 分流、时延均值计算、null 缺失单独报告、慢请求计数（严格大于 5000 毫秒）等逻辑；伪代码仅作方案表达，不执行查询。\n\n失败侧统计指标与慢请求其他指标尚未确定，不自行扩展；如需在方案中预留位置，仅作占位说明，不填入猜测指标。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：保持原始要求，交付分析方案与 SQL 伪代码两部分，不删除任一交付物，不执行查询。"
+              },
+              {
+                "type": "OUTPUT",
+                "title": "输出",
+                "content": "交付两部分，缺一不可：\n1. 分析方案：说明统计区间、时间边界、成功/失败分流、时延均值分母口径、null 缺失处理、慢请求判定边界、0 与 false 的保留规则。\n2. SQL 伪代码：体现上述口径的伪代码，不执行查询。\n\n输出中需明确区分已知事实、用户确认信息与必要假设，不得把猜测写成事实。\n\n失败记录单列时具体输出哪些失败侧统计指标尚未确定，慢请求除计数外是否还需其他指标及其统计范围尚未确定；这两项在输出中仅作占位或说明，不自行扩展。"
+              },
+              {
+                "type": "CONSTRAINTS",
+                "title": "约束",
+                "content": "- 只做分析方案及 SQL 伪代码，不执行查询。\n- 统计区间固定为上海时区 2025 年 1 月，左闭右开 [2025-01-01, 2025-02-01)，不得自动换统计月份。\n- 仅 status 为 SUCCESS 的记录进入时延均值分母；失败记录单列，不混入成功均值。\n- latency_ms 单位为毫秒，严格大于 5000 毫秒才计慢请求，等于 5000 不计；不得把毫秒阈值当成 5000 秒。\n- 必须保留数值 0 和布尔 false；null 是缺失，0 不是缺失；成功均值中 null 不参与分母，单独报告缺失，不补 0。\n\n用户明确规则（须遵守平台权限边界）：\n- 只做分析方案及SQL伪代码，不执行查询。\n- 仅status为SUCCESS的记录进入时延均值分母；失败记录单列，不混入成功均值。\n- 必须保留数值0和布尔false；null是缺失，0不是缺失。\n- 不得把毫秒阈值当成5000秒，不得自动换统计月份。\n- 保持原始要求，交付分析方案与 SQL 伪代码两部分，不删除任一交付物，不执行查询。\n- 失败记录必须单列、不混入成功均值；具体失败侧统计指标尚未确定，不自行扩展。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：失败记录单列时，希望输出哪些内容？ 用户说明：暂不确定。失败记录必须单列、不混入成功均值；具体失败侧统计指标尚未确定，不自行扩展。\n- 该问题尚未确定：慢请求除了计数，是否还需要输出其他指标？ 用户说明：暂不确定。保留严格大于5000毫秒的慢请求边界；成功均值中 null 不参与分母，单独报告缺失，不补0，保留0与false。其他慢请求指标及统计范围仍未确定，不自行扩展。"
+              },
+              {
+                "type": "CLARIFICATIONS",
+                "title": "待确认事项",
+                "content": "- 该问题尚未确定：失败记录单列时，希望输出哪些内容？ 用户说明：暂不确定。失败记录必须单列、不混入成功均值；具体失败侧统计指标尚未确定，不自行扩展。\n- 该问题尚未确定：慢请求除了计数，是否还需要输出其他指标？ 用户说明：暂不确定。保留严格大于5000毫秒的慢请求边界；成功均值中 null 不参与分母，单独报告缺失，不补0，保留0与false。其他慢请求指标及统计范围仍未确定，不自行扩展。"
+              },
+              {
+                "type": "ACCEPTANCE",
+                "title": "验收",
+                "content": "- 交付包含分析方案与 SQL 伪代码两部分，且未执行查询。\n- 统计区间为上海时区 2025 年 1 月，左闭右开 [2025-01-01, 2025-02-01)，未自动换统计月份。\n- 仅 status 为 SUCCESS 的记录进入时延均值分母；失败记录单列，未混入成功均值。\n- 慢请求判定为严格大于 5000 毫秒，等于 5000 不计；未把毫秒阈值当成 5000 秒。\n- 数值 0 和布尔 false 被保留；null 作为缺失单独报告，未补 0，未参与成功均值分母。\n- 失败侧统计指标与慢请求其他指标未被自行扩展，仅作占位或说明。\n- 输出中已知事实、用户确认信息与必要假设区分清晰，无猜测被写成事实。"
+              }
+            ],
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "materials/",
+                "materials/requests.csv",
+                "materials/字段说明.md"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "materials/字段说明.md",
+                  "language": "markdown",
+                  "content": "[片段 1/1]\n合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。没有真实日志。",
+                  "summary": "Markdown 文档摘要：合成字段：createdAt为Asia/Shanghai本地时间，status为SUCCESS/FAILED，latency_ms为毫秒数或null，cached为true/false。；没有真实日志。",
+                  "truncated": false
+                },
+                {
+                  "path": "materials/requests.csv",
+                  "language": "csv",
+                  "content": "[片段 1/1]\ncreatedAt,status,latency_ms,cached\n2025-01-01T00:00:00,SUCCESS,0,false\n2025-01-31T23:59:59,SUCCESS,5000,true\n2025-02-01T00:00:00,SUCCESS,5001,false\n2025-01-15T12:00:00,FAILED,8000,false",
+                  "summary": "文件内容摘要：createdAt,status,latency_ms,cached；2025-01-01T00:00:00,SUCCESS,0,false；2025-01-31T23:59:59,SUCCESS,5000,true；2025-02-01T00:00:00,SUCCESS,5001,false；2025-01-15T12:00:00,FAILED,8000,false",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "ambiguities": [
+              "该问题尚未确定：失败记录单列时，希望输出哪些内容？ 用户说明：暂不确定。失败记录必须单列、不混入成功均值；具体失败侧统计指标尚未确定，不自行扩展。",
+              "该问题尚未确定：慢请求除了计数，是否还需要输出其他指标？ 用户说明：暂不确定。保留严格大于5000毫秒的慢请求边界；成功均值中 null 不参与分母，单独报告缺失，不补0，保留0与false。其他慢请求指标及统计范围仍未确定，不自行扩展。"
+            ],
+            "appliedConstraints": [
+              "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+              "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+              "校验所有外部输入，并明确处理空值、非法值和边界条件。",
+              "处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。",
+              "为核心逻辑补充正常、异常和边界场景测试。",
+              "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+              "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+            ],
+            "templateCode": "BUG_FIX",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 5433,
+            "warnings": []
+          },
+          "protocolChecks": {
+            "realProvider": true,
+            "promptPresent": true,
+            "fourSections": true,
+            "constraintsInCopiedBody": true
+          },
+          "elapsedMs": 5582,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "28feac17-03fd-4ea1-898d-84d62bcbb865",
+              "elapsedMs": 5574
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "08_data_unresolved_denominator",
+      "results": {
+        "direct": {
+          "id": "08_data_unresolved_denominator",
+          "title": "比率分母与缺失处理仍待确认",
+          "arm": "direct",
+          "startedAt": "2026-10-03T09:46:28.143Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "final": {
+            "optimizedPrompt": "## 背景\n本轮为合成业务验收材料，不包含真实个人信息；任务仅优化提示词，不执行实际数据分析。\n\n现有资料：\n- `materials/问卷字典.txt`：仅合成数据字典，字段为 `group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count`；未提供行数据。\n- 该字典明确标注：完成率分母未确定；缺失答卷处理未确定。\n\n用户目标：为合成问卷数据生成数据分析提示词，用于比较甲、乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。\n\n当前未决事项：\n- 完成率分母采用全部报名人数还是有效答卷人数尚未确定。\n- 缺失答卷如何处理尚未确定。\n- 确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。\n- 不得将未完成、缺失、零值相互混同。\n\n## 任务\n请生成一份用于“比较甲、乙两组完成率”的中文数据分析提示词，供后续执行者使用。要求如下：\n\n1. 明确分析对象与分组：按 `group` 字段区分甲组、乙组，比较两组完成率。\n2. 先做字段检查：核对 `group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count` 是否存在、类型是否可计算、是否存在缺失或异常值；只描述检查项与检查方法，不代入实际数值。\n3. 列出两种完成率口径的区别，但不选择口径、不计算完成率：\n   - 口径 A：分母为全部报名人数（对应 `registered_count`）。\n   - 口径 B：分母为有效答卷人数（对应 `valid_response_count`）。\n   说明两种口径在含义、适用场景、对结果解释的影响上的差异。\n4. 说明缺失答卷处理的可能方式及其影响，但不擅自选定处理方式；需与完成率分母口径一并等待确认。\n5. 明确区分“未完成”“缺失”“零值”三个概念，禁止相互混同；在方法说明和表模板中分别设置对应字段或备注。\n6. 交付中文方法说明和结果表模板；不执行分析、不填实际结果、不输出任何计算后的完成率数值。\n7. 在提示词中保留待确认项：完成率分母口径、缺失答卷处理方式；确认前不得擅自选择口径或计算完成率。\n\n## 输出\n交付内容应包含：\n\n1. 中文方法说明：\n   - 分析目标与分组定义；\n   - 字段检查清单；\n   - 两种完成率口径的定义与区别；\n   - 缺失答卷处理的待确认说明；\n   - “未完成”“缺失”“零值”的区分说明；\n   - 待确认事项清单。\n\n2. 结果表模板（中文表头，不含实际结果）：\n   - 至少包含：组别、报名人数、有效答卷人数、完成人数、缺失数、完成率（口径 A）、完成率（口径 B）、缺失处理方式、备注。\n   - 完成率列留空或标注“待确认口径后填写”，不得填入计算值。\n\n3. 输出语言为中文；不执行分析、不填实际结果。\n\n## 约束\n- 完成率分母口径未确认前，不得擅自选择口径或计算完成率。\n- 缺失答卷处理方式未确认前，不得擅自选定处理方式。\n- 不得将未完成、缺失、零值相互混同。\n- 本轮仅优化提示词，不执行实际数据分析，不填实际结果。\n\n用户明确规则（须遵守平台权限边界）：\n- 请为合成问卷数据生成数据分析提示词，比较甲乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。\n- 确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。\n- 不得将未完成、缺失、零值相互混同。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 完成率分母采用全部报名人数（`registered_count`）还是有效答卷人数（`valid_response_count`）尚未确定；该选择会直接改变完成率的定义、数值和两组比较结论，确认前不得擅自选择口径或计算完成率。\n- 缺失答卷如何处理尚未确定；该选择会影响有效答卷人数、完成人数及完成率的计算基础，确认前不得擅自选定处理方式。\n\n## 验收标准\n- 输出为中文方法说明和结果表模板，且不包含实际计算结果。\n- 明确列出字段检查项，覆盖 `group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count`。\n- 完整说明两种完成率口径（全部报名人数、有效答卷人数）的定义与区别，且未擅自选择口径。\n- 明确说明缺失答卷处理尚未确定，且未擅自选定处理方式。\n- 明确区分“未完成”“缺失”“零值”，未相互混同。\n- 结果表模板包含组别、报名人数、有效答卷人数、完成人数、缺失数、完成率（口径 A）、完成率（口径 B）、缺失处理方式、备注等字段，完成率列留空或标注待确认。\n- 待确认事项在输出中清晰保留，确认前不得擅自选择口径或计算完成率。",
+            "sections": [
+              {
+                "type": "BACKGROUND",
+                "title": "背景",
+                "content": "本轮为合成业务验收材料，不包含真实个人信息；任务仅优化提示词，不执行实际数据分析。\n\n现有资料：\n- `materials/问卷字典.txt`：仅合成数据字典，字段为 `group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count`；未提供行数据。\n- 该字典明确标注：完成率分母未确定；缺失答卷处理未确定。\n\n用户目标：为合成问卷数据生成数据分析提示词，用于比较甲、乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。\n\n当前未决事项：\n- 完成率分母采用全部报名人数还是有效答卷人数尚未确定。\n- 缺失答卷如何处理尚未确定。\n- 确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。\n- 不得将未完成、缺失、零值相互混同。"
+              },
+              {
+                "type": "TASK",
+                "title": "任务",
+                "content": "请生成一份用于“比较甲、乙两组完成率”的中文数据分析提示词，供后续执行者使用。要求如下：\n\n1. 明确分析对象与分组：按 `group` 字段区分甲组、乙组，比较两组完成率。\n2. 先做字段检查：核对 `group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count` 是否存在、类型是否可计算、是否存在缺失或异常值；只描述检查项与检查方法，不代入实际数值。\n3. 列出两种完成率口径的区别，但不选择口径、不计算完成率：\n   - 口径 A：分母为全部报名人数（对应 `registered_count`）。\n   - 口径 B：分母为有效答卷人数（对应 `valid_response_count`）。\n   说明两种口径在含义、适用场景、对结果解释的影响上的差异。\n4. 说明缺失答卷处理的可能方式及其影响，但不擅自选定处理方式；需与完成率分母口径一并等待确认。\n5. 明确区分“未完成”“缺失”“零值”三个概念，禁止相互混同；在方法说明和表模板中分别设置对应字段或备注。\n6. 交付中文方法说明和结果表模板；不执行分析、不填实际结果、不输出任何计算后的完成率数值。\n7. 在提示词中保留待确认项：完成率分母口径、缺失答卷处理方式；确认前不得擅自选择口径或计算完成率。"
+              },
+              {
+                "type": "OUTPUT",
+                "title": "输出",
+                "content": "交付内容应包含：\n\n1. 中文方法说明：\n   - 分析目标与分组定义；\n   - 字段检查清单；\n   - 两种完成率口径的定义与区别；\n   - 缺失答卷处理的待确认说明；\n   - “未完成”“缺失”“零值”的区分说明；\n   - 待确认事项清单。\n\n2. 结果表模板（中文表头，不含实际结果）：\n   - 至少包含：组别、报名人数、有效答卷人数、完成人数、缺失数、完成率（口径 A）、完成率（口径 B）、缺失处理方式、备注。\n   - 完成率列留空或标注“待确认口径后填写”，不得填入计算值。\n\n3. 输出语言为中文；不执行分析、不填实际结果。"
+              },
+              {
+                "type": "CONSTRAINTS",
+                "title": "约束",
+                "content": "- 完成率分母口径未确认前，不得擅自选择口径或计算完成率。\n- 缺失答卷处理方式未确认前，不得擅自选定处理方式。\n- 不得将未完成、缺失、零值相互混同。\n- 本轮仅优化提示词，不执行实际数据分析，不填实际结果。\n\n用户明确规则（须遵守平台权限边界）：\n- 请为合成问卷数据生成数据分析提示词，比较甲乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。\n- 确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。\n- 不得将未完成、缺失、零值相互混同。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 完成率分母采用全部报名人数（`registered_count`）还是有效答卷人数（`valid_response_count`）尚未确定；该选择会直接改变完成率的定义、数值和两组比较结论，确认前不得擅自选择口径或计算完成率。\n- 缺失答卷如何处理尚未确定；该选择会影响有效答卷人数、完成人数及完成率的计算基础，确认前不得擅自选定处理方式。"
+              },
+              {
+                "type": "CLARIFICATIONS",
+                "title": "待确认事项",
+                "content": "- 完成率分母采用全部报名人数（`registered_count`）还是有效答卷人数（`valid_response_count`）尚未确定；该选择会直接改变完成率的定义、数值和两组比较结论，确认前不得擅自选择口径或计算完成率。\n- 缺失答卷如何处理尚未确定；该选择会影响有效答卷人数、完成人数及完成率的计算基础，确认前不得擅自选定处理方式。"
+              },
+              {
+                "type": "ACCEPTANCE",
+                "title": "验收标准",
+                "content": "- 输出为中文方法说明和结果表模板，且不包含实际计算结果。\n- 明确列出字段检查项，覆盖 `group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count`。\n- 完整说明两种完成率口径（全部报名人数、有效答卷人数）的定义与区别，且未擅自选择口径。\n- 明确说明缺失答卷处理尚未确定，且未擅自选定处理方式。\n- 明确区分“未完成”“缺失”“零值”，未相互混同。\n- 结果表模板包含组别、报名人数、有效答卷人数、完成人数、缺失数、完成率（口径 A）、完成率（口径 B）、缺失处理方式、备注等字段，完成率列留空或标注待确认。\n- 待确认事项在输出中清晰保留，确认前不得擅自选择口径或计算完成率。"
+              }
+            ],
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "materials/",
+                "materials/问卷字典.txt"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "materials/问卷字典.txt",
+                  "language": "text",
+                  "content": "[片段 1/1]\n仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。未提供行数据。完成率分母：未确定。缺失答卷处理：未确定。",
+                  "summary": "文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "ambiguities": [
+              "完成率分母采用全部报名人数（`registered_count`）还是有效答卷人数（`valid_response_count`）尚未确定；该选择会直接改变完成率的定义、数值和两组比较结论，确认前不得擅自选择口径或计算完成率。",
+              "缺失答卷如何处理尚未确定；该选择会影响有效答卷人数、完成人数及完成率的计算基础，确认前不得擅自选定处理方式。"
+            ],
+            "appliedConstraints": [
+              "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+              "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+              "输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。",
+              "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+              "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+            ],
+            "templateCode": "GENERAL",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 6285,
+            "warnings": []
+          },
+          "protocolChecks": {
+            "realProvider": true,
+            "promptPresent": true,
+            "fourSections": true,
+            "constraintsInCopiedBody": true
+          },
+          "elapsedMs": 6396,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "0b15ae10-32a5-4d10-ad80-bd112ae0316c",
+              "elapsedMs": 6393
+            }
+          ]
+        },
+        "plan": {
+          "id": "08_data_unresolved_denominator",
+          "title": "比率分母与缺失处理仍待确认",
+          "arm": "plan",
+          "startedAt": "2026-10-03T09:46:21.463Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "prepared": {
+            "contextId": "8f58d909-74bf-4e75-abd8-1f897e2bf751",
+            "version": "sha256:2e7c53c912eb3efa537d4d0a05f7a3b132c6bc2e41ff5980a5d6eddff9172177",
+            "digest": {
+              "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologies": [],
+              "dependencies": [],
+              "directoryOverview": [
+                "materials/",
+                "materials/问卷字典.txt"
+              ],
+              "fileSummaries": [
+                "[USER_MATERIAL] materials/问卷字典.txt：文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。；业务摘录：[片段 1/1] 仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。 未提供行数据。 完成率分母：未确定。 缺失答卷处理：未确定。"
+              ],
+              "analysisStatus": "COMPLETE",
+              "analyzedFileCount": 1,
+              "warnings": [],
+              "factCards": []
+            },
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "materials/",
+                "materials/问卷字典.txt"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "materials/问卷字典.txt",
+                  "language": "text",
+                  "content": "[片段 1/1]\n仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。未提供行数据。完成率分母：未确定。缺失答卷处理：未确定。",
+                  "summary": "文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "expiresAt": "2026-10-03T10:16:21.476883800Z",
+            "latencyMs": 5
+          },
+          "plan": {
+            "summary": "目标是生成一份中文数据分析提示词：比较甲乙两组完成率，交付方法说明和结果表模板，不执行分析、不填实际结果。完成率分母口径与缺失答卷处理尚未确定，因此需要先由用户确认这两项业务规则，确认前只列字段检查和两个口径的区别。",
+            "questions": [
+              {
+                "id": "denominator_rule",
+                "question": "完成率的分母采用哪个口径？",
+                "hint": "这决定完成率的计算定义，确认前不会擅自选择口径或计算完成率。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "registered",
+                    "label": "全部报名人数",
+                    "description": "以 registered_count 作为分母计算完成率。",
+                    "answer": "完成率分母采用全部报名人数（registered_count）。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "valid",
+                    "label": "有效答卷人数",
+                    "description": "以 valid_response_count 作为分母计算完成率。",
+                    "answer": "完成率分母采用有效答卷人数（valid_response_count）。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "both_compare",
+                    "label": "两口径并列对比",
+                    "description": "同时给出两种口径的完成率并说明区别，不合并为单一结果。",
+                    "answer": "完成率同时按全部报名人数（registered_count）和有效答卷人数（valid_response_count）两个口径分别计算并对比，说明两者区别，不合并为单一结果。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "missing_handling",
+                "question": "缺失答卷在本次方法说明和结果表模板中如何处理？",
+                "hint": "缺失答卷处理方式会影响分母口径的适用说明和结果表结构，需明确后才能定稿。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "exclude",
+                    "label": "从分析中排除",
+                    "description": "缺失答卷不计入任何分子分母，仅在字段检查中单独统计缺失数量。",
+                    "answer": "缺失答卷从完成率分析中排除，不计入任何分子或分母，仅在字段检查中单独统计缺失数量。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "keep_unknown",
+                    "label": "保留为未知状态",
+                    "description": "缺失答卷保留在数据中并标记为未知，不视为未完成、缺失或零值中的任何一种。",
+                    "answer": "缺失答卷保留在数据中并标记为未知状态，不将其与未完成、缺失、零值相互混同，也不据此推断完成或未完成。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "separate_report",
+                    "label": "单独列出不参与计算",
+                    "description": "缺失答卷单独列出并说明其数量，不参与完成率计算。",
+                    "answer": "缺失答卷单独列出并说明其数量，不参与完成率计算，且不与未完成、缺失、零值相互混同。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              }
+            ],
+            "templateCode": "GENERAL",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 6574,
+            "planId": "ea5aeab0-fb94-48e9-9bae-cba6f9b27b2b",
+            "planningContext": {
+              "contextId": "8f58d909-74bf-4e75-abd8-1f897e2bf751",
+              "version": "sha256:2e7c53c912eb3efa537d4d0a05f7a3b132c6bc2e41ff5980a5d6eddff9172177"
+            },
+            "expiresAt": "2026-10-03T10:16:21.476883800Z"
+          },
+          "elapsedMs": 6676,
+          "requests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "4a765fce-8368-406e-ae81-55adcea13e16",
+              "elapsedMs": 45
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "f872b893-2d8d-4430-981d-835709b15280",
+              "elapsedMs": 6629
+            }
+          ]
+        },
+        "plan-final": {
+          "id": "08_data_unresolved_denominator",
+          "title": "比率分母与缺失处理仍待确认",
+          "arm": "plan-final",
+          "startedAt": "2026-10-03T09:51:07.598Z",
+          "semanticReview": "PENDING",
+          "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+          "plan": {
+            "summary": "目标是生成一份中文数据分析提示词：比较甲乙两组完成率，交付方法说明和结果表模板，不执行分析、不填实际结果。完成率分母口径与缺失答卷处理尚未确定，因此需要先由用户确认这两项业务规则，确认前只列字段检查和两个口径的区别。",
+            "questions": [
+              {
+                "id": "denominator_rule",
+                "question": "完成率的分母采用哪个口径？",
+                "hint": "这决定完成率的计算定义，确认前不会擅自选择口径或计算完成率。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "registered",
+                    "label": "全部报名人数",
+                    "description": "以 registered_count 作为分母计算完成率。",
+                    "answer": "完成率分母采用全部报名人数（registered_count）。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "valid",
+                    "label": "有效答卷人数",
+                    "description": "以 valid_response_count 作为分母计算完成率。",
+                    "answer": "完成率分母采用有效答卷人数（valid_response_count）。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "both_compare",
+                    "label": "两口径并列对比",
+                    "description": "同时给出两种口径的完成率并说明区别，不合并为单一结果。",
+                    "answer": "完成率同时按全部报名人数（registered_count）和有效答卷人数（valid_response_count）两个口径分别计算并对比，说明两者区别，不合并为单一结果。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              },
+              {
+                "id": "missing_handling",
+                "question": "缺失答卷在本次方法说明和结果表模板中如何处理？",
+                "hint": "缺失答卷处理方式会影响分母口径的适用说明和结果表结构，需明确后才能定稿。",
+                "type": "SINGLE_CHOICE",
+                "options": [
+                  {
+                    "id": "exclude",
+                    "label": "从分析中排除",
+                    "description": "缺失答卷不计入任何分子分母，仅在字段检查中单独统计缺失数量。",
+                    "answer": "缺失答卷从完成率分析中排除，不计入任何分子或分母，仅在字段检查中单独统计缺失数量。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "keep_unknown",
+                    "label": "保留为未知状态",
+                    "description": "缺失答卷保留在数据中并标记为未知，不视为未完成、缺失或零值中的任何一种。",
+                    "answer": "缺失答卷保留在数据中并标记为未知状态，不将其与未完成、缺失、零值相互混同，也不据此推断完成或未完成。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  },
+                  {
+                    "id": "separate_report",
+                    "label": "单独列出不参与计算",
+                    "description": "缺失答卷单独列出并说明其数量，不参与完成率计算。",
+                    "answer": "缺失答卷单独列出并说明其数量，不参与完成率计算，且不与未完成、缺失、零值相互混同。",
+                    "recommended": false,
+                    "recommendationReason": ""
+                  }
+                ],
+                "examples": [],
+                "allowCustomAnswer": true
+              }
+            ],
+            "templateCode": "GENERAL",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 6574,
+            "planId": "ea5aeab0-fb94-48e9-9bae-cba6f9b27b2b",
+            "planningContext": {
+              "contextId": "8f58d909-74bf-4e75-abd8-1f897e2bf751",
+              "version": "sha256:2e7c53c912eb3efa537d4d0a05f7a3b132c6bc2e41ff5980a5d6eddff9172177"
+            },
+            "expiresAt": "2026-10-03T10:16:21.476883800Z"
+          },
+          "prepared": {
+            "contextId": "8f58d909-74bf-4e75-abd8-1f897e2bf751",
+            "version": "sha256:2e7c53c912eb3efa537d4d0a05f7a3b132c6bc2e41ff5980a5d6eddff9172177",
+            "digest": {
+              "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologies": [],
+              "dependencies": [],
+              "directoryOverview": [
+                "materials/",
+                "materials/问卷字典.txt"
+              ],
+              "fileSummaries": [
+                "[USER_MATERIAL] materials/问卷字典.txt：文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。；业务摘录：[片段 1/1] 仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。 未提供行数据。 完成率分母：未确定。 缺失答卷处理：未确定。"
+              ],
+              "analysisStatus": "COMPLETE",
+              "analyzedFileCount": 1,
+              "warnings": [],
+              "factCards": []
+            },
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "materials/",
+                "materials/问卷字典.txt"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "materials/问卷字典.txt",
+                  "language": "text",
+                  "content": "[片段 1/1]\n仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。未提供行数据。完成率分母：未确定。缺失答卷处理：未确定。",
+                  "summary": "文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "expiresAt": "2026-10-03T10:16:21.476883800Z",
+            "latencyMs": 5
+          },
+          "answerReview": {
+            "caseId": "08_data_unresolved_denominator",
+            "questions": [
+              {
+                "questionId": "denominator_rule",
+                "question": "完成率的分母采用哪个口径？",
+                "answer": "暂不确定",
+                "basis": "冻结需求与回答卡明确分母和缺失处理均未确定，不能替用户选定。"
+              },
+              {
+                "questionId": "missing_handling",
+                "question": "缺失答卷在本次方法说明和结果表模板中如何处理？",
+                "answer": "暂不确定",
+                "basis": "冻结需求与回答卡明确分母和缺失处理均未确定，不能替用户选定。"
+              }
+            ]
+          },
+          "priorRequests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "4a765fce-8368-406e-ae81-55adcea13e16",
+              "elapsedMs": 45
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "f872b893-2d8d-4430-981d-835709b15280",
+              "elapsedMs": 6629
+            }
+          ],
+          "refinedQuery": "请为合成问卷数据生成数据分析提示词，比较甲乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。完成率分母采用全部报名人数还是有效答卷人数尚未确定；缺失答卷如何处理也未确定。确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。不得将未完成、缺失、零值相互混同。",
+          "final": {
+            "optimizedPrompt": "## 背景\n- 本轮任务属于合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务，也不产出任何实际分析结果。\n- 现有资料仅为合成数据字典 `materials/问卷字典.txt`，其中列出的字段为：`group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count`。\n- 该资料明确说明：未提供行数据；完成率分母未确定；缺失答卷处理未确定。\n- 用户已确认：完成率的分母采用“全部报名人数”还是“有效答卷人数”暂不确定；缺失答卷在本次方法说明和结果表模板中如何处理也暂不确定。\n- 因此，当前只能围绕字段检查和两个分母口径的区别展开，不得擅自选择口径或计算完成率。\n\n## 任务\n- 为“比较甲乙两组完成率”的合成问卷数据分析，生成一份中文提示词，用于后续指导分析工作。\n- 交付内容限定为：中文方法说明和结果表模板。\n- 不执行分析、不填实际结果、不计算完成率。\n- 在方法说明中先列出字段检查项，至少覆盖：`group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count` 的存在性、类型、取值范围、组别取值、计数一致性、缺失值表示方式。\n- 在方法说明中并列说明两个分母口径的区别：\n  - 口径一：完成率 = 完成人数 / 全部报名人数；\n  - 口径二：完成率 = 完成人数 / 有效答卷人数。\n  说明两者在业务含义、适用场景、对缺失答卷敏感度上的差异，但不得选择其中任一口径。\n- 在方法说明中说明缺失答卷处理的可能方式及其影响，但不得确定具体处理方式。\n- 结果表模板只提供表头、字段说明和填写位置，不填入任何实际数值或计算结果。\n- 明确区分未完成、缺失、零值，不得将三者相互混同。\n\n## 输出\n- 输出一份中文方法说明，包含：\n  - 字段检查清单；\n  - 两个分母口径的定义与区别；\n  - 缺失答卷处理的待确认说明；\n  - 未完成、缺失、零值的区分说明。\n- 输出一份结果表模板，至少包含以下列：\n  - 组别；\n  - 完成率口径（待确认，不预填）；\n  - 分子；\n  - 分母；\n  - 完成率；\n  - 缺失答卷处理方式（待确认，不预填）；\n  - 备注。\n- 模板中所有数值单元格留空或标注“待确认”，不得填入任何实际结果。\n- 输出语言为中文。\n\n## 约束\n- 确认前不得擅自选择完成率分母口径，不得计算完成率。\n- 不得将未完成、缺失、零值相互混同。\n- 不执行分析、不填实际结果。\n\n用户明确规则（须遵守平台权限边界）：\n- 请为合成问卷数据生成数据分析提示词，比较甲乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。\n- 确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。\n- 不得将未完成、缺失、零值相互混同。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：完成率的分母采用哪个口径？\n- 该问题尚未确定：缺失答卷在本次方法说明和结果表模板中如何处理？ 补充说明：该选择会影响分子、分母的取值以及结果表模板中缺失答卷处理方式列的填写内容，确认前不得擅自确定。\n- 完成率的分母采用“全部报名人数”还是“有效答卷人数”尚未确定；该选择会直接改变完成率的计算口径和结果表模板中分母列的含义，确认前不得擅自选择。\n\n## 验收标准\n- 方法说明中同时列出两个分母口径，且未选择其中任一口径。\n- 方法说明中列出缺失答卷处理的待确认状态，且未确定具体处理方式。\n- 结果表模板包含组别、完成率口径、分子、分母、完成率、缺失答卷处理方式、备注等列，且数值单元格为空或标注“待确认”。\n- 全文明确区分未完成、缺失、零值。\n- 未出现任何实际计算结果或完成率数值。\n- 输出为中文，且不包含真实个人信息。",
+            "sections": [
+              {
+                "type": "BACKGROUND",
+                "title": "背景",
+                "content": "- 本轮任务属于合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务，也不产出任何实际分析结果。\n- 现有资料仅为合成数据字典 `materials/问卷字典.txt`，其中列出的字段为：`group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count`。\n- 该资料明确说明：未提供行数据；完成率分母未确定；缺失答卷处理未确定。\n- 用户已确认：完成率的分母采用“全部报名人数”还是“有效答卷人数”暂不确定；缺失答卷在本次方法说明和结果表模板中如何处理也暂不确定。\n- 因此，当前只能围绕字段检查和两个分母口径的区别展开，不得擅自选择口径或计算完成率。"
+              },
+              {
+                "type": "TASK",
+                "title": "任务",
+                "content": "- 为“比较甲乙两组完成率”的合成问卷数据分析，生成一份中文提示词，用于后续指导分析工作。\n- 交付内容限定为：中文方法说明和结果表模板。\n- 不执行分析、不填实际结果、不计算完成率。\n- 在方法说明中先列出字段检查项，至少覆盖：`group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count` 的存在性、类型、取值范围、组别取值、计数一致性、缺失值表示方式。\n- 在方法说明中并列说明两个分母口径的区别：\n  - 口径一：完成率 = 完成人数 / 全部报名人数；\n  - 口径二：完成率 = 完成人数 / 有效答卷人数。\n  说明两者在业务含义、适用场景、对缺失答卷敏感度上的差异，但不得选择其中任一口径。\n- 在方法说明中说明缺失答卷处理的可能方式及其影响，但不得确定具体处理方式。\n- 结果表模板只提供表头、字段说明和填写位置，不填入任何实际数值或计算结果。\n- 明确区分未完成、缺失、零值，不得将三者相互混同。"
+              },
+              {
+                "type": "OUTPUT",
+                "title": "输出",
+                "content": "- 输出一份中文方法说明，包含：\n  - 字段检查清单；\n  - 两个分母口径的定义与区别；\n  - 缺失答卷处理的待确认说明；\n  - 未完成、缺失、零值的区分说明。\n- 输出一份结果表模板，至少包含以下列：\n  - 组别；\n  - 完成率口径（待确认，不预填）；\n  - 分子；\n  - 分母；\n  - 完成率；\n  - 缺失答卷处理方式（待确认，不预填）；\n  - 备注。\n- 模板中所有数值单元格留空或标注“待确认”，不得填入任何实际结果。\n- 输出语言为中文。"
+              },
+              {
+                "type": "CONSTRAINTS",
+                "title": "约束",
+                "content": "- 确认前不得擅自选择完成率分母口径，不得计算完成率。\n- 不得将未完成、缺失、零值相互混同。\n- 不执行分析、不填实际结果。\n\n用户明确规则（须遵守平台权限边界）：\n- 请为合成问卷数据生成数据分析提示词，比较甲乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。\n- 确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。\n- 不得将未完成、缺失、零值相互混同。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：完成率的分母采用哪个口径？\n- 该问题尚未确定：缺失答卷在本次方法说明和结果表模板中如何处理？ 补充说明：该选择会影响分子、分母的取值以及结果表模板中缺失答卷处理方式列的填写内容，确认前不得擅自确定。\n- 完成率的分母采用“全部报名人数”还是“有效答卷人数”尚未确定；该选择会直接改变完成率的计算口径和结果表模板中分母列的含义，确认前不得擅自选择。"
+              },
+              {
+                "type": "CLARIFICATIONS",
+                "title": "待确认事项",
+                "content": "- 该问题尚未确定：完成率的分母采用哪个口径？\n- 该问题尚未确定：缺失答卷在本次方法说明和结果表模板中如何处理？ 补充说明：该选择会影响分子、分母的取值以及结果表模板中缺失答卷处理方式列的填写内容，确认前不得擅自确定。\n- 完成率的分母采用“全部报名人数”还是“有效答卷人数”尚未确定；该选择会直接改变完成率的计算口径和结果表模板中分母列的含义，确认前不得擅自选择。"
+              },
+              {
+                "type": "ACCEPTANCE",
+                "title": "验收标准",
+                "content": "- 方法说明中同时列出两个分母口径，且未选择其中任一口径。\n- 方法说明中列出缺失答卷处理的待确认状态，且未确定具体处理方式。\n- 结果表模板包含组别、完成率口径、分子、分母、完成率、缺失答卷处理方式、备注等列，且数值单元格为空或标注“待确认”。\n- 全文明确区分未完成、缺失、零值。\n- 未出现任何实际计算结果或完成率数值。\n- 输出为中文，且不包含真实个人信息。"
+              }
+            ],
+            "contextReport": {
+              "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+              "technologyStack": [],
+              "dependencies": [],
+              "directoryTree": [
+                "materials/",
+                "materials/问卷字典.txt"
+              ],
+              "fileSnippets": [
+                {
+                  "path": "materials/问卷字典.txt",
+                  "language": "text",
+                  "content": "[片段 1/1]\n仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。未提供行数据。完成率分母：未确定。缺失答卷处理：未确定。",
+                  "summary": "文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。",
+                  "truncated": false
+                }
+              ],
+              "analysisStatus": "COMPLETE",
+              "fileCoverage": [],
+              "warnings": [],
+              "redactions": [],
+              "analysisVersion": "v3"
+            },
+            "ambiguities": [
+              "该问题尚未确定：完成率的分母采用哪个口径？",
+              "该问题尚未确定：缺失答卷在本次方法说明和结果表模板中如何处理？ 补充说明：该选择会影响分子、分母的取值以及结果表模板中缺失答卷处理方式列的填写内容，确认前不得擅自确定。",
+              "完成率的分母采用“全部报名人数”还是“有效答卷人数”尚未确定；该选择会直接改变完成率的计算口径和结果表模板中分母列的含义，确认前不得擅自选择。"
+            ],
+            "appliedConstraints": [
+              "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+              "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+              "输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。",
+              "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+              "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+            ],
+            "templateCode": "GENERAL",
+            "provider": {
+              "provider": "deepseek",
+              "model": "deepseek:deepseek-flash",
+              "mock": false,
+              "modelVersion": "DeepSeek-V4.1-Flash"
+            },
+            "latencyMs": 12322,
+            "warnings": []
+          },
+          "protocolChecks": {
+            "realProvider": true,
+            "promptPresent": true,
+            "fourSections": true,
+            "constraintsInCopiedBody": true
+          },
+          "elapsedMs": 12410,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "a532b8b5-27b1-4e31-b688-ce69097ae496",
+              "elapsedMs": 12402
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "findings": [
+    "01 已知地区过滤层的新措辞与字段常量范围仍被重问",
+    "03 长解释未决分类与禁止计算边界本轮保留",
+    "04 计划先行的选项仍替换交互问答；展开解释的新措辞重复",
+    "07 交付方案与SQL被提供删去其一的候选；最终两个未决主题保留",
+    "08 分母候选展开提醒仍重复"
+  ]
+}

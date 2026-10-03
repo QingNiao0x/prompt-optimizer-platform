@@ -31,7 +31,7 @@ public record ConfirmedPlanDecision(
         TARGET,
         /** 本次采用的方案或交付选择。 */
         CHOICE,
-        /** 用户仍无法确定，继续保留具体待确认问题。 */
+        /** 回答仍有未决部分；完整保留说明，不能将“已选工具、版本待定”等混合回答当作全部已确认。 */
         UNRESOLVED
     }
 }

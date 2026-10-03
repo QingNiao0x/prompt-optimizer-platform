@@ -44,7 +44,9 @@ export async function createAcceptanceSession(context, page, options = {}) {
       elapsedMs: Math.round(performance.now() - started) };
     requests.push(request);
     if (!response.ok) {
-      throw new Error(`${path} HTTP ${request.status}, code=${payload.error?.code ?? 'UNKNOWN'}, requestId=${request.requestId ?? 'unknown'}`);
+      // 只保存统一异常响应的脱敏消息，不记录请求正文、认证头或原始上游响应。
+      request.errorMessage = redact(String(payload.error?.message ?? '').slice(0, 500));
+      throw new Error(`${path} HTTP ${request.status}, code=${payload.error?.code ?? 'UNKNOWN'}, requestId=${request.requestId ?? 'unknown'}, message=${request.errorMessage}`);
     }
     return payload.data;
   };

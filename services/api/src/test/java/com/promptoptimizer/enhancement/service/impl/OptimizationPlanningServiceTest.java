@@ -52,6 +52,10 @@ class OptimizationPlanningServiceTest {
             多条有效记录按调查日期降序、ID降序选一条。|展示多条有效记录供用户选择，用户选定后再查询详情并填充。
             中文方法提纲不超过1200字，附表另计。|1200字包含正文、附表标题、表注和表格内容。
             参考寿命表尚未确定，确认前不得计算YLL。|参考寿命表未确定，方案中先指定采用WHO标准寿命表，待用户确认后替换。
+            研究Plan问答对提示词质量的影响。|Plan模式界定为：模型先输出任务计划或步骤，再据此生成最终回答；方法部分按此描述实验条件。
+            研究Plan问答对提示词质量的影响。|Plan模式界定为：由研究者或用户提供计划文本，作为提示词的一部分输入模型；方法部分按此描述实验条件。
+            只输出分析方案与SQL伪代码。|只输出SQL伪代码，不单独撰写分析方案说明。
+            只输出分析方案与SQL伪代码。|只输出分析方案说明，不写SQL伪代码。
             """)
     void shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String raw, String invalid) {
         AtomicInteger calls = new AtomicInteger();
@@ -240,6 +244,21 @@ class OptimizationPlanningServiceTest {
             Instant.parse("2026-09-13T12:00:00Z"),
             ZoneOffset.UTC
     );
+
+    @ParameterizedTest
+    @ValueSource(strings = {"例如：由研究者预先编写任务计划模板，模型按模板执行", "例如：先让模型输出分步计划再作答，计划不额外人工修订"})
+    void shouldValidateFreeTextExamplesAgainstTheExplicitInteractiveProtocol(String badExample) {
+        AtomicInteger calls = new AtomicInteger();
+        var planning = new OptimizationPlanningServiceImpl(request -> {
+            String example = calls.incrementAndGet() == 1 ? badExample : "例如：先提问，用户回答后再生成最终提示词";
+            return new PlanningProviderResponse("确认试验流程", List.of(new PlanQuestion("protocol", "问答最多进行几轮？", "",
+                    PlanQuestionType.FREE_TEXT, List.of(), List.of(example), true)), "mock", "planner", true);
+        }, new PromptTemplateRegistryImpl(), planningSessions(CLOCK), CLOCK);
+        var plan = planning.plan(request("设计研究方案，比较直接增强与 Plan 问答增强。"));
+        assertThat(calls).hasValue(2);
+        assertThat(plan.questions()).singleElement().satisfies(question -> assertThat(question.examples())
+                .containsExactly("例如：先提问，用户回答后再生成最终提示词"));
+    }
 
     private final OptimizationPlanningService service = new OptimizationPlanningServiceImpl(
             new MockPromptPlanningProvider(),

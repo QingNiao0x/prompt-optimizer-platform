@@ -6,6 +6,7 @@ import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason;
 import java.math.BigDecimal;
 import java.text.Normalizer;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
 final class RequirementFidelityGuard {
     private static final Pattern REQUIREMENT = Pattern.compile(
             "(?i)(必须|须|不得|禁止|不能|不允许|不超过|不少于|不低于|不高于|至少|最多|仅|只|"
-                    + "保持|保留|排除|确认|取消|不填|不覆盖|不修改|不改变|不阻断|不回滚|附表另计|按.+(?:降序|升序).*(?:选|取)|"
+                    + "保持|保留|排除|确认|取消|不填|不覆盖|不修改|不改变|不阻断|不回滚|附表另计|plan\\s*问答|按.+(?:降序|升序).*(?:选|取)|"
                     + "研究范围[：:]|时间范围[：:]|统计口径[：:]|格式要求[：:]|"
                     + "\\bmust\\b|\\bshall\\b|\\bonly\\b|\\bnever\\b|\\bdo not\\b)");
     private static final Pattern INSTRUCTION_OVERRIDE = Pattern.compile(
@@ -39,8 +40,15 @@ final class RequirementFidelityGuard {
     List<String> explicitRules(String rawPrompt, List<ConfirmedPlanDecision> decisions) {
         Set<String> answers = new LinkedHashSet<>();
         for (ConfirmedPlanDecision decision : decisions) {
-            if (decision.scope() != Scope.UNRESOLVED && decision.scope() != Scope.CURRENT_STATE) {
-                collect(decision.answer(), answers);
+            if (decision.scope() != Scope.CURRENT_STATE) {
+                collect(decision.scope() == Scope.UNRESOLVED
+                        ? PlanAnswerSemantics.confirmedPart(decision.answer()) : decision.answer(), answers);
+                // 用户暂未决定参数，不等于放弃其明确的禁止猜测、等待确认等执行边界。
+                if (decision.scope() == Scope.UNRESOLVED) {
+                    Arrays.stream(decision.answer().split("(?<=[。！？!?])|\\R"))
+                            .filter(sentence -> sentence.matches(".*(?:不得|不能|禁止|不默认|不自行|不编造|仅预留|只预留).*"))
+                            .forEach(sentence -> collect(sentence, answers));
+                }
             }
         }
         Set<String> rules = new LinkedHashSet<>();
@@ -161,8 +169,20 @@ final class RequirementFidelityGuard {
 
         // 已确定的自动选取规则不是供模型重新发起的业务选择；展示已选结果仍然合法。
         if (expected.matches(".*多条(?:有效)?记录按.*(?:降序|升序).*(?:选一条|取第一条).*")
-                && actual.matches(".*(?:展示|列出)多条(?:有效)?记录.*(?:供|由|让)用户(?:自行)?选择.*")
+                && actual.matches(".*(?:展示|列出)(?:多条|并列的?)?(?:有效)?记录.*(?:供|由|让)用户(?:自行)?选择.*")
                 && !actual.matches(".*(?:不|不得|禁止|无需)(?:展示|列出).*")) return true;
+        // 研究对象是交互问答时，填写示例也不能偷换成静态模板或模型自行列步骤。
+        if (expected.contains("plan问答") && !actual.matches(".*(?:用户回答|用户确认|向用户提问|先提问|问答).*")) {
+            if (actual.matches(".*(?:预先编写|预先制定).*(?:计划|规划)模板.*模型按模板执行.*")
+                    || actual.matches(".*先(?:让模型|由模型|输出|生成|制定).*(?:计划|步骤).*(?:再|然后).*(?:作答|回答).*" )
+                    || actual.matches(".*(?:研究者|用户)提供计划文本.*作为提示词.*")) return true;
+        }
+        // 方案与代码是并列要求，输出组织方式不能成为删掉其中一项的授权。
+        if (expected.matches(".*(?:交付|输出|提供|给出).*(?:分析|研究)?方案(?:与|和|及|以及|、)(?:sql|r|python)?(?:代码框架|伪代码).*")) {
+            if (actual.matches(".*(?:不|无需|不必)(?:单独)?(?:提供|输出|撰写|写)(?:分析|研究)?方案(?:说明)?$")
+                    || actual.matches(".*(?:不|无需|不必)(?:单独)?(?:提供|输出|撰写|写)(?:sql|r|python)?(?:代码框架|伪代码)$")
+                    || actual.matches("^(?:只要|仅|只)(?:提供|输出)?(?:sql伪代码|分析方案)$")) return true;
+        }
         // 附表另计不能变成正文与表格共用字数预算；表注等未说明的细节不在此推断。
         if (expected.contains("附表另计")
                 && actual.matches(".*(?:字|字数|篇幅).*(?:包含|计入|包括).*(?:正文.*(?:和|及|、).*表格内容|全部附表).*")

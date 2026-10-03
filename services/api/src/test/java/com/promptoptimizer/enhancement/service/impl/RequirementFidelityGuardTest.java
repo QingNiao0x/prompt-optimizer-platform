@@ -81,6 +81,12 @@ class RequirementFidelityGuardTest {
             报告不超过1000字。|附件不超过2000字。
             金额大于50000元时必须审批。|历史规则：金额大于30000元时必须审批。
             邮件失败后最多重试3次。|站内信失败后最多重试1次。
+            研究Plan问答对提示词质量的影响。|模型先向用户提问，用户回答后再生成计划和最终提示词。
+            研究Plan问答对提示词质量的影响。|Plan问答后先输出计划，再生成最终回答。
+            研究计划模板对提示词质量的影响。|由研究者提供计划文本，作为提示词的一部分输入模型。
+            只输出分析方案与SQL伪代码。|先交付分析方案，随后输出SQL伪代码。
+            只输出分析方案与SQL伪代码。|只输出分析方案与SQL伪代码，不写实际执行结果。
+            只输出分析方案与SQL伪代码。|方案作为说明附件，正文提供SQL伪代码。
             """)
     void shouldPreserveEquivalentRulesAndDifferentScopes(String original, String draft) {
         assertThatCode(() -> guard.validate(draft, List.of(original), "sections.TASK")).doesNotThrowAnyException();
