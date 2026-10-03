@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 final class RequirementFidelityGuard {
     private static final Pattern REQUIREMENT = Pattern.compile(
             "(?i)(必须|须|不得|禁止|不能|不允许|不超过|不少于|不低于|不高于|至少|最多|仅|只|"
-                    + "保持|保留|排除|确认|取消|不填|不覆盖|不修改|不改变|不阻断|不回滚|"
+                    + "保持|保留|排除|确认|取消|不填|不覆盖|不修改|不改变|不阻断|不回滚|附表另计|按.+(?:降序|升序).*(?:选|取)|"
                     + "研究范围[：:]|时间范围[：:]|统计口径[：:]|格式要求[：:]|"
                     + "\\bmust\\b|\\bshall\\b|\\bonly\\b|\\bnever\\b|\\bdo not\\b)");
     private static final Pattern INSTRUCTION_OVERRIDE = Pattern.compile(
@@ -48,6 +48,11 @@ final class RequirementFidelityGuard {
         // 绑定确认可以改变业务选择；平台权限仍由独立的强制约束维护，不能在此被覆盖。
         Set<String> effective = new LinkedHashSet<>();
         for (String rule : rules) {
+            // 确认请求不是永久业务规则；只移除可由同字段、同候选对的明确答案证明已解决的子句。
+            String pending = clauses(rule).stream().filter(clause -> !resolvedChoice(clause, decisions))
+                    .collect(java.util.stream.Collectors.joining("；"));
+            if (pending.isBlank()) continue;
+            if (!pending.equals(String.join("；", clauses(rule)))) rule = pending;
             if (!hasContradiction(rule, List.copyOf(answers))) {
                 effective.add(rule);
                 continue;
@@ -59,6 +64,40 @@ final class RequirementFidelityGuard {
         }
         effective.addAll(answers);
         return List.copyOf(effective);
+    }
+
+    /** 仅处理已绑定冲突题的取值选择；新取值、未知回答及同句独立执行条件不能随之丢失。 */
+    private boolean resolvedChoice(String clause, List<ConfirmedPlanDecision> decisions) {
+        String text = normalize(clause);
+        if (!text.matches(".*(?:冲突|未确定|未明确).*(?:确认|选择).*(?:哪一个|哪一项|哪个|何者).*")
+                || text.matches(".*(?:不得|禁止|保留|保持|严格|等于|大于|小于|退款|例外).*")) return false;
+        for (ConfirmedPlanDecision decision : decisions) {
+            if (decision.questionId() == null || !decision.questionId().startsWith("context-conflict-")
+                    || decision.scope() == Scope.UNRESOLVED) continue;
+            String field = normalize(decision.topic()).replace("金额", "");
+            if (!text.replace("金额", "").contains(field)) continue;
+            List<String> values = Pattern.compile("（([^）]+)）").matcher(decision.question()).results()
+                    .map(match -> normalizeQuantities(match.group(1))).distinct().toList();
+            if (values.size() != 2 || values.stream().anyMatch(value -> !normalizeQuantities(text).contains(value))) continue;
+            // 数值集合完全相同才删除旧选择；出现第三个新金额时必须保留。
+            List<String> numbers = QUANTITY.matcher(text.replaceAll("两个|两项|哪一个|哪一项", "")).results()
+                    .map(match -> normalizeNumber(match.group())).distinct().sorted().toList();
+            List<String> knownNumbers = values.stream().flatMap(value -> QUANTITY.matcher(value).results())
+                    .map(match -> normalizeNumber(match.group())).distinct().sorted().toList();
+            if (!numbers.equals(knownNumbers)) continue;
+            var selected = Pattern.compile("^(?:本次|最终|决定)?(?:采用|选定|选择|以|使用)(.+)")
+                    .matcher(normalize(decision.answer().split("[。；;，,]", 2)[0]));
+            if (selected.find() && !selected.group(1).matches(".*(?:不|未|可能|如果|或者|还是|都).*")) {
+                String answer = normalizeQuantities(selected.group(1));
+                if (values.stream().filter(answer::contains).count() == 1) return true;
+            }
+        }
+        return false;
+    }
+
+    /** 中文金额与阿拉伯金额只作文本等值比较，不补造候选项或单位。 */
+    private String normalizeQuantities(String text) {
+        return QUANTITY.matcher(normalize(text)).replaceAll(match -> normalizeNumber(match.group()));
     }
 
     /** 模型不得以追加正确原文掩盖另一个执行段落中的相反要求。 */
@@ -114,9 +153,20 @@ final class RequirementFidelityGuard {
         String expected = normalize(expectedText);
         String actual = normalize(actualText);
         if (expected.isBlank() || actual.isBlank() || expected.equals(actual)
-                || actual.matches(".*(?:反例|错误示例|原错误|旧规则|历史规则|待确认|尚未|暂不确定|[？?]).*")) return false;
+                || actual.matches(".*(?:反例|错误示例|原错误|旧规则|历史规则|[？?]).*")) return false;
+        if (defaultsUnconfirmedFact(expected, actual)) return true;
+        if (actual.matches(".*(?:待确认|尚未|暂不确定).*")) return false;
         if (actual.matches(".*(?:测试|验证).*(?:拒绝|拦截|失败|不应).*")
                 || actual.matches(".*(?:拒绝|拦截|失败).*(?:测试|验证).*")) return false;
+
+        // 已确定的自动选取规则不是供模型重新发起的业务选择；展示已选结果仍然合法。
+        if (expected.matches(".*多条(?:有效)?记录按.*(?:降序|升序).*(?:选一条|取第一条).*")
+                && actual.matches(".*(?:展示|列出)多条(?:有效)?记录.*(?:供|由|让)用户(?:自行)?选择.*")
+                && !actual.matches(".*(?:不|不得|禁止|无需)(?:展示|列出).*")) return true;
+        // 附表另计不能变成正文与表格共用字数预算；表注等未说明的细节不在此推断。
+        if (expected.contains("附表另计")
+                && actual.matches(".*(?:字|字数|篇幅).*(?:包含|计入|包括).*(?:正文.*(?:和|及|、).*表格内容|全部附表).*")
+                && !actual.matches(".*(?:不包含|不计入|不包括|不得|不能).*")) return true;
 
         // 表单回放中的语义反转不是简单漏词；同时识别保留有效值和取消不改变字段的要求。
         if (expected.matches(".*取消.{0,12}(?:保持|保留|不修改|不改变).*原值.*")
@@ -132,9 +182,17 @@ final class RequirementFidelityGuard {
                 && actual.matches(".*(?:将|把)?0.*false.*(?:视为空值|当作空值|覆盖|清空).*")
                 && !actual.matches(".*(?:不得|禁止|不能|不要|不应).*")) return true;
         if (expected.matches(".*(?:确认后|经.{0,8}确认|先.{0,8}确认|提示用户是否|人工确认).*")
-                && actual.matches(".*(?:无需|不需要|不必|跳过|绕过).{0,8}确认.*")
-                && !actual.matches(".*(?:不得|禁止|不能|不要).*(?:跳过|绕过).*")
+                && actual.matches(".*(?:无需|不需要|不必|不再|不额外|不经|跳过|绕过).{0,8}确认.*")
+                && !actual.matches(".*(?:不得|禁止|不能|不要|不应).*(?:跳过|绕过|省略).*" )
+                && !actual.matches(".*(?:经用户确认|用户(?:点击)?确认后|已(?:经)?确认后).*(?:无需|不需要|不必|不额外).*(?:再次|重复|二次|弹窗)?确认.*")
                 && ACTION.matcher(expected).results().anyMatch(action -> actual.contains(action.group()))) return true;
+        if (expected.matches(".*(?:不得|不能|禁止).*(?:未完成|缺失|零值).*(?:混同|等同).*")
+                && actual.matches(".*缺失(?:答卷|记录|值|数据)?.*(?:视为|当作|按|计为)(?:未完成|零值|0).*" )
+                && !actual.matches(".*(?:不|不得|不能|禁止|不要)(?:视为|当作|按|计为).*")) return true;
+        // 完成日期未知不能推出按期，也不能因缺少按期证据反推逾期；保留补齐日期后的事实判断。
+        if (expected.matches(".*缺少完成日期.*(?:不得|不能).*(?:臆断|推定).*按期完成.*")
+                && actual.matches(".*(?:缺少完成日期|完成日期(?:为空|缺失)).*(?:按|视为|标记为)历史逾期.*")
+                && !actual.matches(".*(?:不按|不视为|不标记|不能|不得|不判断).*")) return true;
 
         // 完整作用域相同才比较反向谓词，避免将另一个渠道、阶段或对象的合法规则判成冲突。
         var negative = NEGATION.matcher(expected);
@@ -155,6 +213,17 @@ final class RequirementFidelityGuard {
         QuantityRule right = quantityRule(actual);
         return !left.values().isEmpty() && left.skeleton().equals(right.skeleton())
                 && (!left.values().equals(right.values()) || !left.operators().equals(right.operators()));
+    }
+
+    /** 已知事实仍未定时，不允许“先指定具体值、以后再确认”；合法用户选定与占位接口不在此拦截。 */
+    private boolean defaultsUnconfirmedFact(String expected, String actual) {
+        var selection = Pattern.compile("^(.{2,40}?)(?:尚未确定|未确定|尚未确认|未确认)(.*?)(?:先指定采用|先指定使用|默认采用|暂按)(.+)")
+                .matcher(actual);
+        if (!selection.matches() || !expected.contains(selection.group(1))
+                || !expected.matches(".*(?:未确定|未确认).*")) return false;
+        if (selection.group(2).matches(".*(?:不得|不能|不应|先经用户确认|经用户确认后).*")
+                || selection.group(3).matches("^(?:占位|空值|空字符串|接口|待确认).*$")) return false;
+        return true;
     }
 
     /** 数量比较保持对象、动作和条件原样；只归一化数值及常见比较符，不推算材料未给出的值。 */

@@ -20,6 +20,7 @@ final class ConfirmedDecisionSet {
     private static final Pattern TOPIC = Pattern.compile("(研究地区|地区范围|数据来源|数据格式|输出格式|交付格式|交付内容|交付物|输出内容|输出方式|分析工具|分析方法|验收标准|统计口径|审批阈值|认证方式|登录方式|技术选型|技术栈|版本|范围|时限|规则|格式|地区|工具|口径|阈值)");
     private static final Pattern TARGET = Pattern.compile("(迁移|改为|替换|新增|目标|期望|希望|想要|计划采用|本次采用|最终采用)");
     private static final Pattern CURRENT = Pattern.compile("(现有|当前|目前|已实现|已经采用|正在使用)");
+    private static final Pattern CHOICE_QUESTION = Pattern.compile("采用哪|选择哪|确认方式|应如何|应怎样|希望用|在什么时机|何时触发|是否还需要");
     private static final Pattern DETAIL = Pattern.compile("(版本|字段|异常|错误|单位|阈值|有效期|过期|格式|来源|刷新|退出|兼容)");
 
     private final List<ConfirmedPlanDecision> decisions;
@@ -39,7 +40,8 @@ final class ConfirmedDecisionSet {
             String topic = topic(question, answer.questionId());
             Scope scope = UNRESOLVED.matcher(text).find() ? Scope.UNRESOLVED
                     : TARGET.matcher(question + text).find() ? Scope.TARGET
-                    : CURRENT.matcher(question).find() ? Scope.CURRENT_STATE : Scope.CHOICE;
+                    : CURRENT.matcher(question).find() && !CHOICE_QUESTION.matcher(question).find()
+                    ? Scope.CURRENT_STATE : Scope.CHOICE;
             values.add(new ConfirmedPlanDecision(answer.questionId(), question, topic, scope, text));
         }
         return new ConfirmedDecisionSet(values);
@@ -107,6 +109,10 @@ final class ConfirmedDecisionSet {
     private static String topic(String question, String id) {
         var field = Pattern.compile("资料对“([^”]{2,40})”").matcher(question);
         if (field.find()) return field.group(1);
+        // “当前地区”可能只是确认交互的触发条件，不能把确认方式归类为地区现状。
+        if (question.contains("确认方式")) return "确认方式";
+        if (question.matches(".*(?:在什么时机触发|何时触发).*")) return "触发时机";
+        if (question.matches(".*(?:没有记录|无记录|无匹配).*(?:提示|提醒).*")) return "无匹配提示";
         var subject = TOPIC.matcher(question);
         if (subject.find()) return subject.group(1);
         String identifier = id == null ? "" : id.toLowerCase(Locale.ROOT);

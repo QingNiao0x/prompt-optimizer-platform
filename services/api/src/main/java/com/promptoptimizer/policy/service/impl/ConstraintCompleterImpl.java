@@ -37,7 +37,8 @@ public class ConstraintCompleterImpl implements ConstraintCompleter {
             constraints.add("明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。");
             constraints.add("说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。");
         } else if (templateCode == TemplateCode.GENERAL) {
-            constraints.add("输出应直接回应用户目标，并说明关键依据、适用范围和限制条件。");
+            // 通用交付建议不能覆盖“只输出译文”等明确格式；保密和权限红线仍独立强制添加。
+            constraints.add("输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。");
         } else {
             constraints.add("校验所有外部输入，并明确处理空值、非法值和边界条件。");
             constraints.add("处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。");

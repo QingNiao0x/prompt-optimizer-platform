@@ -13,6 +13,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PlanQuestionFilterTest {
     private final PlanQuestionFilter filter = new PlanQuestionFilter();
 
+    @Test
+    void shouldNotReaskExplicitWritingLanguageOrConfuseSourceLanguage() {
+        var language = question("language", "最终方法提纲和提示词使用中文还是中英双语？");
+        assertThat(filter.filter(List.of(language), input("中文方法提纲不超过1200字，附表另计。"))).isEmpty();
+        assertThat(filter.filter(List.of(language), input("参考材料为中文，输出语言尚未确定。"))).hasSize(1);
+        assertThat(filter.filter(List.of(language), input("参考材料是一份中文报告，请分析其中的问题。"))).hasSize(1);
+        assertThat(filter.filter(List.of(question("abstract", "摘要是否还需要英文版本？")),
+                input("中文方法提纲不超过1200字。"))).hasSize(1);
+    }
+
+    @Test
+    void shouldOnlyReuseUncontestedRealPlacementEvidence() {
+        var known = new PlanningFactCard("placement", PlanningFactCategory.BUSINESS_RULE,
+                PlanningFactOrigin.PROJECT_DOCUMENT, "docs/基线.md", "服务端负责地区范围过滤。");
+        var prompt = question("placement", "地区范围过滤（含下级、排除同级）应在哪一层实现？");
+        for (var origin : List.of(PlanningFactOrigin.PROJECT_DOCUMENT, PlanningFactOrigin.TEST_FIXTURE)) {
+            var digest = new PlanningContextDigest("", List.of(), List.of(), List.of(), List.of(), "COMPLETE", 1,
+                    List.of(), List.of(new PlanningFactCard(known.id(), known.category(), origin, known.sourcePath(), known.evidence())));
+            var result = filter.filter(List.of(prompt), new PlanningProviderRequest("完善基线匹配", "", List.of(), digest));
+            assertThat(result).hasSize(origin == PlanningFactOrigin.PROJECT_DOCUMENT ? 0 : 1);
+        }
+        var conflicting = new PlanningContextDigest("", List.of(), List.of(), List.of(), List.of(), "COMPLETE", 2,
+                List.of(), List.of(known, new PlanningFactCard("other", PlanningFactCategory.BUSINESS_RULE,
+                "docs/其他.md", "前端负责地区范围过滤。")));
+        assertThat(filter.filter(List.of(prompt), new PlanningProviderRequest("完善基线匹配", "", List.of(), conflicting))).hasSize(1);
+        var excerpt = new PlanningContextDigest("", List.of(), List.of(), List.of(),
+                List.of("[PROJECT_DOCUMENT] docs/基线.md：服务端负责地区范围过滤。列表返回地址摘要。"),
+                "COMPLETE", 1, List.of());
+        assertThat(filter.filter(List.of(prompt), new PlanningProviderRequest("完善基线匹配", "", List.of(), excerpt))).isEmpty();
+    }
+
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
             "科研死亡率分析；研究范围：广东省|研究地区是哪里？",

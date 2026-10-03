@@ -154,9 +154,9 @@ public class OptimizationResultAssembler {
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities);
         List<AmbiguityReference> references = normalizeAmbiguityReferences(providerResponse);
         // 先登记新冲突和绑定的未决问题，再归并模型提醒，避免重复项挤占展示预算。
-        var merged = planConfirmed
-                ? new PlanAmbiguityMerger(decisions).merge(assessed, ambiguities, references)
-                : PlanAmbiguityMerger.MergeResult.from(assessed);
+        // 直接增强也可合并相同来源和取值的冲突；仅服务端绑定的 Plan 答案可消除旧问题。
+        var merged = new PlanAmbiguityMerger(planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()))
+                .merge(assessed, ambiguities, references);
         List<String> remainingAmbiguities = merged.messages();
         List<String> resultWarnings = new ArrayList<>(collectWarnings(context, planningWarnings));
         if (merged.omittedCount() > 0) {

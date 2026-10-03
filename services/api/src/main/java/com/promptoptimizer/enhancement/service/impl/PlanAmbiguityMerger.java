@@ -34,6 +34,9 @@ final class PlanAmbiguityMerger {
             "尚未确定", "未确认", "未明确", "未提供", "未指定", "未确定", "未知", "暂不确定",
             "从哪里获取", "具体", "主要", "本次", "这项", "需要", "哪些", "哪个", "什么", "是否",
             "请", "说明", "明确", "提供", "指定", "确认", "包括", "覆盖", "进行", "研究", "分析", "数据", "的", "是");
+    private static final Pattern HEADER_GRAMMAR = words("应如何确定", "如何确定", "是否已经确定", "是否已确定",
+            "应如何限定", "应如何处理", "如何处理", "应采用哪个口径", "应采用哪种", "计算时", "计算",
+            "是否需要", "是否使用", "尚未确定", "未确定", "已经确定", "是什么", "什么", "？", "?");
     private final ConfirmedDecisionSet decisions;
 
     PlanAmbiguityMerger(ConfirmedDecisionSet decisions) {
@@ -61,16 +64,94 @@ final class PlanAmbiguityMerger {
             registered.putIfAbsent(key, "该问题尚未确定：" + decision.question());
         }
         for (String text : findings) {
+            if (registered.containsValue(text)) continue;
             if (serverFindings.contains(text) && text.startsWith("资料对“")) continue;
             // 只有同一字段、双方来源和取值，且不增加业务条件，才能归入已有冲突。
             if (knownConflicts.stream().anyMatch(identity -> identity.isReminder(text)
                     && (registered.containsKey(identity.key()) || decisions.resolvesConflict(
                     identity.field(), List.of(identity.leftValue(), identity.rightValue()))))) continue;
             if (matchesBoundQuestion(text, references)) continue;
-            registered.putIfAbsent("text:" + text, text);
+            if (mergeConflictExplanation(text, knownConflicts, registered)) continue;
+            if (mergeUnresolvedExplanation(text, registered)) continue;
+            registered.putIfAbsent("text:" + text, stripDecisionMetadata(text));
         }
         List<String> values = registered.values().stream().distinct().toList();
         return MergeResult.from(values);
+    }
+
+    /** 同一对已登记证据的复述附在原冲突下，其他新来源、取值或条件保持独立。 */
+    private boolean mergeConflictExplanation(String text, List<ConflictIdentity> conflicts, Map<String, String> registered) {
+        int boundary = text.indexOf('。');
+        if (boundary < 0) return false;
+        String header = text.substring(0, boundary);
+        List<String> matching = conflicts.stream().filter(identity -> registered.containsKey(identity.key()))
+                .filter(identity -> identity.repeatsEvidence(header)).map(ConflictIdentity::key).distinct().toList();
+        if (matching.size() != 1) return false;
+        String detail = text.substring(boundary + 1).strip();
+        // 解释若另外发起一项决定（如退款订单适用范围），保留独立提醒，不能折入旧取值冲突。
+        if (detail.matches("(?s).*(?:另外|此外|还需|还需要|另需|同时还).*(?:确认|决定|是否|选择).*")) return false;
+        String key = matching.getFirst();
+        if (!detail.isBlank() && !registered.get(key).contains(detail)) {
+            registered.put(key, registered.get(key) + " 补充说明：" + detail);
+        }
+        return true;
+    }
+
+    /**
+     * 同一未决问题的展开说明放入原项，新增条件全文保留；已解决问题不走此分支。
+     * 必须唯一匹配解释的完整主题句，不使用相似度或模型自报 ID 推断对应关系。
+     */
+    private boolean mergeUnresolvedExplanation(String text, Map<String, String> registered) {
+        String cleaned = stripDecisionMetadata(text);
+        var separator = Pattern.compile("[。；;：:\\r\\n]").matcher(cleaned);
+        if (!separator.find()) return false;
+        String header = cleaned.substring(0, separator.start()).strip();
+        // 明确列出的候选项是同一未决选择的展开，完整保留它们，不把候选取值当作已确认事实。
+        var alternatives = Pattern.compile("^(.{2,40}?)采用(.+?)还是(.+?)尚未确定$").matcher(header);
+        String matchingHeader = alternatives.matches() ? alternatives.group(1) : header;
+        List<ConfirmedPlanDecision> matches = decisions.decisions().stream()
+                .filter(decision -> decision.scope() == Scope.UNRESOLVED && conflict(decision.question()).isEmpty())
+                .filter(decision -> sameQuestionReminder(header, decision.question())
+                        || questionHeader(matchingHeader).equals(questionHeader(decision.question())))
+                .toList();
+        if (matches.size() != 1 || questionHeader(header).length() < 4) return false;
+        ConfirmedPlanDecision decision = matches.getFirst();
+        String key = "question:" + (decision.questionId() == null ? decision.question() : decision.questionId());
+        String detail = alternatives.matches() ? cleaned : cleaned.substring(separator.end()).strip();
+        // 只去掉已经匹配的重复题干，解释中任何新单位、版本或条件仍进入同一条完整执行前提。
+        if (!detail.isBlank() && !registered.get(key).contains(detail)) {
+            registered.put(key, registered.get(key) + " 补充说明：" + detail);
+        }
+        return true;
+    }
+
+    /** 仅消除询问语法，不归一化金额、对象或条件；斜线只在“年龄权重/贴现”固定同主题表达中处理。 */
+    private String questionHeader(String text) {
+        // “在 X 未定的情况下应如何处理”与“X 尚未确定”的解释可归在同一未决项下。
+        // 只取完整 X；数字、版本、范围或复合条件留在 X 中，不凭主题词子串归并。
+        var contextual = Pattern.compile("^在([^，,。；;]{2,80}?)(?:尚未确定|未确定)的情况下[，,].*应如何处理[^？?]+[？?]$")
+                .matcher(text);
+        if (contextual.matches()) text = contextual.group(1);
+        return normalize(HEADER_GRAMMAR.matcher(text).replaceAll(""))
+                .replace("参考寿命表来源", "参考寿命表")
+                .replace("年龄权重/贴现", "年龄权重和贴现")
+                .replace("与", "和").replace("的", "");
+    }
+
+    /** 只剔除可核对的纯绑定元数据括注，含其他业务描述的括注原样保留。 */
+    private String stripDecisionMetadata(String text) {
+        String result = text.replaceAll("[（(]用户回答[：:]?[“\"]?暂不确定[”\"]?[）)]", "");
+        for (ConfirmedPlanDecision decision : decisions.decisions()) {
+            if (decision.questionId() == null) continue;
+            if (decision.scope() == Scope.UNRESOLVED) {
+                result = result.replaceAll("[（(](?:confirmedDecisions|planAnswers)\\s*中\\s*"
+                        + Pattern.quote(decision.questionId()) + "\\s*为[“\"]暂不确定[”\"][）)]", "");
+            }
+            // 有实际业务说明时仅替换内部绑定名，不能丢掉括注中的已确认范围与仍未知条件。
+            result = result.replaceAll("(?:confirmedDecisions|planAnswers)\\s*中\\s*"
+                    + Pattern.quote(decision.questionId()) + "(?![A-Za-z0-9_-])", "用户回答");
+        }
+        return result;
     }
 
     /** 优先检查模型引用，缺失或引用不正确时只接受唯一的保守文本匹配。 */
@@ -172,6 +253,18 @@ final class PlanAmbiguityMerger {
     /** 来源与取值成对排序，反向引用相同证据仍是同一冲突，不同取值/来源另行保留。 */
     private record ConflictIdentity(String field, String leftPath, String leftValue,
                                     String rightPath, String rightValue) {
+        /** 每个来源与取值都须出现，去除证据后只允许剩下简单询问语法。 */
+        boolean repeatsEvidence(String header) {
+            String remaining = normalize(header);
+            for (String part : List.of(field, leftPath, rightPath, leftValue, rightValue)) {
+                String value = normalize(part);
+                if (!remaining.contains(value)) return false;
+                remaining = remaining.replace(value, "");
+            }
+            remaining = remaining.replace("本次订单审批", "").replace("订单审批", "").replace("哪个", "");
+            return CONFIRMATION.matcher(remaining).replaceAll("").isEmpty();
+        }
+
         String key() {
             return "conflict:" + field + ":" + List.of(leftPath + "\u0000" + leftValue,
                     rightPath + "\u0000" + rightValue).stream().sorted().toList();

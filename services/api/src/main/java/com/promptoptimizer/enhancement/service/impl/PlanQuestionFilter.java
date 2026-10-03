@@ -3,6 +3,7 @@ package com.promptoptimizer.enhancement.service.impl;
 import com.promptoptimizer.enhancement.domain.PlanQuestion;
 import com.promptoptimizer.enhancement.domain.PlanningFactCard;
 import com.promptoptimizer.enhancement.domain.PlanningFactCategory;
+import com.promptoptimizer.enhancement.domain.PlanningFactOrigin;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -12,7 +13,12 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-/** 保守过滤已由明确证据回答或重复的问题；不确定和冲突问题交由用户确认。 */
+/**
+ * 保守过滤已由明确证据回答或重复的问题；不确定和冲突问题交由用户确认。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
 public final class PlanQuestionFilter {
     private record FactRule(PlanningFactCategory category, Pattern question, Pattern label) { }
     private record KnownFact(PlanningFactCategory category, String value, String source) { }
@@ -112,6 +118,7 @@ public final class PlanQuestionFilter {
 
     /** 只有同一类别只有一个明确值且问题未要求变更时，才不再确认。 */
     private boolean resolved(String question, List<KnownFact> facts, PlanningProviderRequest input) {
+        if (explicitWritingLanguage(question, input.rawPrompt()) || knownImplementationLayer(question, input)) return true;
         if (answeredByUploadedProject(question, input)) return true;
         if (isCompoundOrChange(question)) return false;
         if (knownTechnologyAnswers(question, input)) return true;
@@ -128,6 +135,52 @@ public final class PlanQuestionFilter {
             else values.add(normalize(value));
         }
         return !uncertain && values.size() == 1;
+    }
+
+    /** 只复用当前需求中明确的交付语言；资料语言、附录和编程语言不能替代该决定。 */
+    private boolean explicitWritingLanguage(String question, String rawPrompt) {
+        if (!question.matches(".*(?:使用中文|中文还是|输出语言|交付语言|用什么语言|中英双语).*")
+                || question.matches(".*(?:附录|附件|摘要|引用|引文|术语|代码|编程|调整|更换|改为).*")
+                || safe(rawPrompt).matches("(?s).*(?:英文|英语|双语|语言尚未|语言未确定).*")) return false;
+        return Pattern.compile("(?:^|[。；;\\n]|(?:输出|提供|撰写|交付|生成)(?:一份|一篇)?)\\s*中文(?:方法|工作|年度)?(?:提纲|报告|正文|总结)"
+                + "|(?:使用|采用|输出|写成|撰写|交付|语言[：:])\\s*(?:简体)?中文")
+                .matcher(safe(rawPrompt)).find();
+    }
+
+    /**
+     * 只回答某项具体逻辑落在哪一层；双方证据冲突、要求迁移或资料是示例时仍保留问题。
+     * “文件位于前端”不是“业务过滤在前端”，必须有该逻辑与负责层的明确关系。
+     */
+    private boolean knownImplementationLayer(String question, PlanningProviderRequest input) {
+        if (input.planningContext() == null || (safe(input.rawPrompt()) + question)
+                .matches("(?s).*(?:迁移|更换|调整|改为|冲突).*") ) return false;
+        var subject = Pattern.compile("^(.{2,40}?)(?:（[^）]*）)?(?:应|应该|需要)?在哪一层实现[？?]$").matcher(question);
+        if (!subject.find()) return false;
+        String object = Pattern.quote(subject.group(1));
+        Pattern relation = Pattern.compile("(服务端|后端|前端|客户端)(?:负责|实现|完成)" + object
+                + "|" + object + "(?:由|在)(服务端|后端|前端|客户端)(?:负责|实现|完成)");
+        Set<String> layers = new HashSet<>();
+        List<String> evidence = new ArrayList<>();
+        for (PlanningFactCard card : input.planningContext().factCards()) {
+            if (card.category() != PlanningFactCategory.BUSINESS_RULE
+                    || !(card.origin() == PlanningFactOrigin.PROJECT_SOURCE || card.origin() == PlanningFactOrigin.PROJECT_DOCUMENT
+                    || card.origin() == PlanningFactOrigin.USER_MATERIAL)) continue;
+            evidence.add(card.evidence());
+        }
+        // 短事实卡片可能未收录“负责”关系，继续检查带已识别资料用途的安全摘要。
+        input.planningContext().fileSummaries().stream()
+                .filter(summary -> summary.matches("(?s)^\\[(?:PROJECT_SOURCE|PROJECT_DOCUMENT|USER_MATERIAL)] .*"))
+                .forEach(evidence::add);
+        for (String value : evidence) {
+            if (!value.contains(subject.group(1))) continue;
+            if (value.matches("(?s).*(?:建议|候选|计划|目标|示例|待定|未知|尚未|不是|并非|不由|不在|不负责).*")) return false;
+            var matches = relation.matcher(value);
+            while (matches.find()) {
+                String layer = matches.group(1) == null ? matches.group(2) : matches.group(1);
+                layers.add(layer.equals("服务端") || layer.equals("后端") ? "server" : "client");
+            }
+        }
+        return layers.size() == 1;
     }
 
     private List<PlanningFactCategory> questionCategories(String question) {

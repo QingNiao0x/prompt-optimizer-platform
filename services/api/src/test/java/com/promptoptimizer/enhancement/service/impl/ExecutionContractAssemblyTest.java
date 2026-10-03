@@ -23,7 +23,75 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @since 0.1.0
  */
 class ExecutionContractAssemblyTest {
+    @Test
+    void shouldKeepBehaviorChoicesSeparateFromCurrentRegionFacts() {
+        var answers = List.of(
+                new PlanAnswer("trigger", "“当前地区有记录时提示用户是否自动填充”在什么时机触发？", "先查详情，再确认填充。"),
+                new PlanAnswer("empty", "当前地区没有记录时，是否还需要给出提示？", "不弹窗，沿用无匹配处理。"),
+                new PlanAnswer("stack", "当前项目使用什么框架？", "Vue 3"));
+        var decisions = ConfirmedDecisionSet.from(answers).decisions();
+        assertThat(decisions.get(0).topic()).isEqualTo("触发时机");
+        assertThat(decisions.get(1).topic()).isEqualTo("无匹配提示");
+        assertThat(decisions.subList(0, 2)).allMatch(decision ->
+                decision.scope() == com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope.CHOICE);
+        assertThat(decisions.get(2).scope()).isEqualTo(
+                com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope.CURRENT_STATE);
+    }
+
     private final OptimizationResultAssembler assembler = new OptimizationResultAssembler();
+
+    @Test
+    void shouldTreatConfirmationUiAsAChoiceInsteadOfCurrentRegion() {
+        var decision = ConfirmedDecisionSet.from(List.of(new PlanAnswer("autofill_confirm_ui",
+                "“当前地区有时提示用户是否自动填充基本信息”采用哪种确认方式？",
+                "采用匹配成功后弹窗确认，用户确认后填充。"))).decisions().getFirst();
+        assertThat(decision.scope()).isEqualTo(com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope.CHOICE);
+        assertThat(decision.topic()).isEqualTo("确认方式");
+    }
+
+    @Test
+    void shouldMergeDirectConflictExplanationsWithoutInventingAPlanAnswer() {
+        String conflict = "资料对“审批金额阈值”存在不同取值：docs/旧.md（30000元）与 docs/方案.md（50000元）。请确认本次采用哪一项。";
+        String repeated = "本次订单审批采用哪个审批金额阈值：docs/旧.md 为 30000 元，docs/方案.md 为 50000 元。未确认前无法定稿。";
+        var result = assemble("审批阈值冲突，请先确认。", "整理方案。", List.of(repeated), List.of(), List.of(conflict));
+        assertThat(result.ambiguities()).hasSize(1);
+        assertThat(result.optimizedPrompt()).contains("30000元", "50000元", "未确认前无法定稿");
+    }
+
+    @Test
+    void shouldReplaceTheResolvedRawChoiceWithoutHidingTheNewThreshold() {
+        String old = "三万元和五万元两个审批阈值在附件中冲突，需要先确认采用哪一个。";
+        String question = "资料对“审批金额阈值”存在不同取值：docs/旧.md（30000元）与 docs/方案.md（50000元）。请确认本次采用哪一项。";
+        String fresh = "资料对“审批金额阈值”存在不同取值：docs/方案.md（50000元）与 docs/新增.md（80000元）。请确认本次采用哪一项。";
+        var result = assemble(old + "必须保持其他审批行为兼容。", "采用已确认的50000元阈值。",
+                List.of(), List.of(new PlanAnswer("context-conflict-1", question,
+                        "本次采用50000元阈值；严格大于50000元才复核，等于50000元不复核。")), List.of(fresh));
+        assertThat(result.optimizedPrompt()).doesNotContain(old)
+                .contains("等于50000元不复核", "必须保持其他审批行为兼容", fresh);
+        assertThat(result.ambiguities()).containsExactly(fresh);
+        var unresolved = assemble(old, "整理方案。", List.of(),
+                List.of(new PlanAnswer("context-conflict-1", question, "暂不确定")), List.of());
+        assertThat(unresolved.optimizedPrompt()).contains(old, "执行前须确认");
+    }
+
+    @Test
+    void shouldKeepTranslationOutputExclusiveInBothModes() {
+        var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1");
+        var constraints = new com.promptoptimizer.policy.service.impl.ConstraintCompleterImpl().complete(context,
+                new com.promptoptimizer.enhancement.dto.PermissionPolicyInput(List.of(), List.of()), true, TemplateCode.GENERAL);
+        for (boolean planned : List.of(false, true)) {
+            var result = assembler.assemble(new EnhancementProviderResponse(List.of(
+                    new PromptSection(PromptSectionType.BACKGROUND, "背景", "翻译问候语。"),
+                    new PromptSection(PromptSectionType.TASK, "任务", "翻译Good morning, everyone.，只输出译文。"),
+                    new PromptSection(PromptSectionType.OUTPUT, "输出", "仅一行简体中文译文，不附解释。"),
+                    new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "保留问候语气。")), "test", "test", false),
+                    context, new PromptTemplate(TemplateCode.GENERAL, "译文", "遵守原文", "示例"),
+                    List.of(), List.of(), planned, constraints, false, 1, "翻译Good morning, everyone.，只输出译文。");
+            assertThat(result.optimizedPrompt()).doesNotContain("并说明关键依据、适用范围和限制条件")
+                    .contains("仅在任务需要且未限制额外说明时", "不得在代码、日志或响应中泄露", "以下操作必须先获得人工确认");
+            assertThat(result.ambiguities()).isEmpty();
+        }
+    }
 
     @Test
     void shouldPreserveExplicitRulesEvenWhenTheDraftOmitsThem() {

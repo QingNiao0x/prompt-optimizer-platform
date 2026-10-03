@@ -27,6 +27,45 @@ class PlanAmbiguityMergeTest {
     private static final String REGION_CONFLICT = "资料对“研究范围”存在不同取值：研究资料.txt（广东省）与 新方案.txt（浙江省）。请确认本次采用哪一项。";
 
     @Test
+    void shouldGroupOneConflictRegisteredByBothServerAndUnresolvedAnswer() {
+        String explanation = "本次订单审批采用哪个审批阈值：src/rules/审批规则.txt 为三万元，docs/新审批方案.txt 为五万元。确认前不能确定修改位置。";
+        var result = assemble(List.of(explanation), List.of(CONFLICT),
+                List.of(new PlanAnswer("context-conflict-1", CONFLICT, "暂不确定")));
+        assertThat(result.ambiguities()).hasSize(1);
+        assertThat(result.optimizedPrompt()).contains(CONFLICT, "确认前不能确定修改位置");
+    }
+
+    @Test
+    void shouldMergeUnresolvedExplanationWithoutLosingNewConditions() {
+        String explanation = "参考寿命表来源未确定（confirmedDecisions 中 lifetable_source 为“暂不确定”）。缺少寿命表无法计算YLL；需要明确使用哪一版寿命表、按年龄取值口径及是否分性别。";
+        var result = assemble(List.of(explanation), List.of(),
+                List.of(new PlanAnswer("lifetable_source", "参考寿命表应如何确定？", "暂不确定")));
+        assertThat(result.ambiguities()).hasSize(1);
+        assertThat(result.optimizedPrompt()).contains("参考寿命表应如何确定", "哪一版寿命表", "是否分性别")
+                .doesNotContain("confirmedDecisions", "lifetable_source");
+        assertSynchronized(result);
+    }
+
+    @Test
+    void shouldMergeUnlistedQuestionExplanationButKeepSeparateBusinessChoices() {
+        String question = "附表部分希望用什么格式呈现？";
+        String explanation = "附表部分希望用什么格式呈现尚未确定（用户回答暂不确定）。附表形式会影响呈现要求，确认前不擅自指定格式。";
+        String independent = "附表数据是否允许对外公开？";
+        var result = assemble(List.of(explanation, independent), List.of(),
+                List.of(new PlanAnswer("table_format", question, "暂不确定")));
+        assertThat(result.ambiguities()).hasSize(2).contains(independent);
+        assertThat(result.optimizedPrompt()).contains("确认前不擅自指定格式");
+    }
+
+    @Test
+    void shouldNeverMergeAdditionalConditionsIntoAnAlreadyResolvedQuestion() {
+        String fresh = "参考寿命表来源未确定；是否需要采用2026版的女性寿命表？";
+        var result = assemble(List.of(fresh), List.of(),
+                List.of(new PlanAnswer("life", "参考寿命表应如何确定？", "采用2020版全人群表")));
+        assertThat(result.ambiguities()).containsExactly(fresh);
+    }
+
+    @Test
     void shouldReplayRealUndecidedConflictAsOneIssue() {
         var result = assemble(List.of("审批阈值冲突：src/rules/审批规则.txt 规定三万元，docs/新审批方案.txt 规定五万元，用户尚未确认采用哪一项。该值直接影响审批触发条件和财务复核范围，必须明确。"),
                 List.of(CONFLICT), List.of(new PlanAnswer("context-conflict-1", CONFLICT, "暂不确定")));

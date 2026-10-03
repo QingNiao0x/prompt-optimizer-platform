@@ -129,6 +129,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 只向空字段补值不等于把字段清空，0 和 false 不得被当成空值。报告字数、研究范围、证据要求同样必须保真。
                 输出前核对 TASK、OUTPUT、CONSTRAINTS、ACCEPTANCE 之间没有相反要求；不能靠在末尾追加正确原文掩盖前面的错误指令。
                 真正未决的问题继续放在 ambiguities；平台会将归并后的执行前提写入可复制正文，未确认不能视为授权猜测。
+                已确认的旧选择要改写成执行要求，不得把 rawPrompt 中旧的“需要先确认选哪一个”重新列为当前待办；独立约束、新取值与新条件仍须保留。
+            14. 面向用户的正文和提醒使用自然语言，不展示 confirmedDecisions、planAnswers、questionId、scope 或 analysisStatus 等内部协议名；需要关联时仅使用 ambiguityReferences。
+                同一未决主题只列一次，把确实新增的版本、单位或适用条件合并说明，不重复原题。只有用户要求或任务必要时才额外说明依据和限制；“只输出译文”等明确交付限制必须遵守。
 
             JSON 格式必须为：
             {"sections":[{"type":"BACKGROUND","title":"背景","content":"..."}],"ambiguities":[],"ambiguityReferences":[]}
@@ -148,6 +151,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                未知地区、真实数据来源、指标定义等事实没有可靠候选时使用 FREE_TEXT，options=[]，给出简短填写示例；不要用随机地名、框架或“先待确认”凑选项。不得因凑不够选项而丢弃关键问题。
                每个选项的 label、description 与 answer 必须一致，不能反转用户已明确的规则来制造选项；推荐答案也必须保留否定、条件、对象、数值和单位。
                例如用户要求确认后只填空字段，不能推荐无需确认或清空字段；用户要求不编造文献，不能提供允许编造的答案。
+               “不额外确认”也不能绕过第一次确认；缺失不等于未完成或零值，缺少完成日期不能推定按期或逾期。候选项不得把缺少事实当成已有事实。
+               已定的记录选择顺序、附表另计和交付范围直接继承，不能再询问是否改为手动挑选、全文共同限字数或删减已要求的交付物。未知参数只能保持未知或由本次用户明确选择，不得先默认某值再等待确认。
             5. 有依据时最多标记一个 recommended=true，并在 recommendationReason 中简短说明依据（原始需求的偏好、已有依赖/实现或资料来源）及主要取舍。
                当前明确偏好优先于历史偏好；用户要求迁移时，现有架构是兼容约束，不是阻止迁移的理由。不能把用户明确排除的技术标成推荐。
                没有足够依据时允许没有推荐。地名、实际数据值不能靠推荐替用户决定。项目材料同时存在两种互补做法时，不应机械推荐只保留其中一种。

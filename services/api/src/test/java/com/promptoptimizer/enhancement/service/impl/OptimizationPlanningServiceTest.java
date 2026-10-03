@@ -27,6 +27,9 @@ import com.promptoptimizer.provider.infrastructure.MockPromptPlanningProvider;
 import com.promptoptimizer.policy.service.ProtectedContextFilter;
 import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -44,6 +47,27 @@ import static org.mockito.Mockito.when;
 
 class OptimizationPlanningServiceTest {
 
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', textBlock = """
+            多条有效记录按调查日期降序、ID降序选一条。|展示多条有效记录供用户选择，用户选定后再查询详情并填充。
+            中文方法提纲不超过1200字，附表另计。|1200字包含正文、附表标题、表注和表格内容。
+            参考寿命表尚未确定，确认前不得计算YLL。|参考寿命表未确定，方案中先指定采用WHO标准寿命表，待用户确认后替换。
+            """)
+    void shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String raw, String invalid) {
+        AtomicInteger calls = new AtomicInteger();
+        var planning = new OptimizationPlanningServiceImpl(request -> {
+            String answer = calls.incrementAndGet() == 1 ? invalid : "沿用原始需求中已明确的规则，不自行修改。";
+            var question = new PlanQuestion("detail", "还有哪些实施细节需要补充？", "", PlanQuestionType.SINGLE_CHOICE,
+                    List.of(new PlanOption("keep", "沿用要求", "", answer, false),
+                            new PlanOption("unknown", "暂不确定", "", "暂不确定", false)), List.of(), true);
+            return new PlanningProviderResponse("确认未决细节", List.of(question), "mock", "planner", true);
+        }, new PromptTemplateRegistryImpl(), planningSessions(CLOCK), CLOCK);
+        var plan = planning.plan(request(raw));
+        assertThat(calls).hasValue(2);
+        assertThat(plan.questions()).allSatisfy(question -> assertThat(question.options())
+                .noneMatch(option -> option.answer().equals(invalid)));
+    }
+
     @Test
     void shouldNotShowAReversedLabelEvenWhenItsStoredAnswerIsCorrect() {
         var planning = new OptimizationPlanningServiceImpl(request -> new PlanningProviderResponse(
@@ -57,11 +81,12 @@ class OptimizationPlanningServiceTest {
                         assertThat(failure.getField()).isEqualTo("questions.options.label"));
     }
 
-    @Test
-    void shouldRepairAnOptionThatContradictsTheExplicitRuleBeforeRegisteringPlan() {
+    @ParameterizedTest
+    @ValueSource(strings = {"无需用户确认，直接填充。", "匹配到当前地区基线时直接自动填充基本信息，不额外弹窗确认。"})
+    void shouldRepairAnOptionThatContradictsTheExplicitRuleBeforeRegisteringPlan(String invalidAnswer) {
         AtomicInteger calls = new AtomicInteger();
         var planning = new OptimizationPlanningServiceImpl(request -> {
-            String answer = calls.incrementAndGet() == 1 ? "无需用户确认，直接填充。" : "经用户确认后填充。";
+            String answer = calls.incrementAndGet() == 1 ? invalidAnswer : "经用户确认后填充。";
             var question = new PlanQuestion("duplicate", "存在多条匹配记录时如何选择？", "影响记录选择", PlanQuestionType.SINGLE_CHOICE,
                     List.of(new PlanOption("first", "选第一条", "保持原始确认规则", answer, false),
                             new PlanOption("select", "手动选择", "由用户决定记录", "手动选择匹配记录后，经用户确认后填充。", false)),
@@ -72,7 +97,7 @@ class OptimizationPlanningServiceTest {
         var plan = planning.plan(request("完善基线匹配，经用户确认后填充。"));
         assertThat(calls).hasValue(2);
         assertThat(plan.questions()).singleElement().satisfies(question ->
-                assertThat(question.options()).allSatisfy(option -> assertThat(option.answer()).doesNotContain("无需用户确认")));
+                assertThat(question.options()).allSatisfy(option -> assertThat(option.answer()).doesNotContain(invalidAnswer)));
     }
 
     @Test

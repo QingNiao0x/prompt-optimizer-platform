@@ -1,0 +1,129 @@
+[
+  {
+    "id": "03_research_yll_unresolved",
+    "answers": [
+      {
+        "questionId": "lifetable_source",
+        "question": "参考寿命表应如何确定？",
+        "answer": "暂不确定"
+      },
+      {
+        "questionId": "population_denominator",
+        "question": "年度分性别人口分母应如何确定？",
+        "answer": "暂不确定"
+      },
+      {
+        "questionId": "yll_discount_age_weight",
+        "question": "YLL 计算是否需要年龄权重和贴现？",
+        "answer": "暂不确定"
+      },
+      {
+        "questionId": "yll_rate_unit",
+        "question": "YLL 率的分母单位和表达方式是什么？",
+        "answer": "暂不确定"
+      },
+      {
+        "questionId": "deliverable_format",
+        "question": "最终交付的分析方案与代码框架需要包含哪些内容？",
+        "answer": "只交付分析方案与R代码框架，包括数据检查和方法框架；不执行分析，不编造任何结果。"
+      }
+    ],
+    "findings": [
+      "该问题尚未确定：参考寿命表应如何确定？",
+      "该问题尚未确定：年度分性别人口分母应如何确定？",
+      "该问题尚未确定：YLL 计算是否需要年龄权重和贴现？",
+      "该问题尚未确定：YLL 率的分母单位和表达方式是什么？",
+      "参考寿命表来源未确定（confirmedDecisions 中 lifetable_source 为“暂不确定”）：缺少寿命表将无法计算YLL，需明确采用哪一版寿命表、期望寿命取值口径及是否分性别，否则YLL与YLL率只能保留占位。",
+      "年度分性别人口分母未确定（confirmedDecisions 中 population_denominator 为“暂不确定”）：缺少分母将无法计算YLL率，需明确分母来源、年份与性别对应关系及是否与死亡数据同源，否则YLL率只能保留占位。",
+      "YLL计算是否使用年龄权重与贴现未确定（confirmedDecisions 中 yll_discount_age_weight 为“暂不确定”）：该选择会改变YLL数值与可比性，需明确是否采用年龄权重、贴现率取值及适用年龄范围。",
+      "YLL率的分母单位与表达方式未确定（confirmedDecisions 中 yll_rate_unit 为“暂不确定”）：需明确分母是每10万人口还是其他单位、是否分性别分别表达，否则YLL率口径无法统一。"
+    ],
+    "expectedCount": 4
+  },
+  {
+    "id": "04_academic_protocol",
+    "answers": [
+      {
+        "questionId": "task_definition",
+        "question": "四类任务（代码开发、机关报告、科研方案、数据分析）的具体任务清单和难度分层是否已经确定？",
+        "answer": "暂不确定"
+      },
+      {
+        "questionId": "plan_definition",
+        "question": "“Plan”条件具体指什么操作？",
+        "answer": "研究对象是原始需求中的Plan确认问答与直接增强；不能把它替换成仅嵌入固定Plan模板。未提供的具体实施步骤仍待确定。"
+      },
+      {
+        "questionId": "control_groups",
+        "question": "两组“获得同样确认信息的公平对照”具体如何设置？",
+        "answer": "另设两组均获得同样确认信息的公平对照，保持两组输入信息量相同；其余未说明的设计细节仍待确定，不引入中性填充任务。"
+      },
+      {
+        "questionId": "evaluation",
+        "question": "两名评审盲评使用什么评分工具或维度？",
+        "answer": "暂不确定"
+      },
+      {
+        "questionId": "outline_scope",
+        "question": "1200字中文方法提纲是否包含研究设计与数据分析计划，还是仅写方法部分？",
+        "answer": "仅论文方法提纲，包含已规定的研究设计和未来数据分析方法选择条件；不写结果、不执行实验、不写引言讨论。正文不超过1200字，附表另计。"
+      },
+      {
+        "questionId": "language",
+        "question": "最终方法提纲和提示词使用中文还是中英双语？",
+        "answer": "使用原始需求已明确的中文，不扩展成双语任务。"
+      }
+    ],
+    "findings": [
+      "该问题尚未确定：四类任务（代码开发、机关报告、科研方案、数据分析）的具体任务清单和难度分层是否已经确定？",
+      "该问题尚未确定：两名评审盲评使用什么评分工具或维度？",
+      "四类任务（代码开发、机关报告、科研方案、数据分析）的具体任务清单和难度分层尚未确定（confirmedDecisions 中 task_definition 为“暂不确定”）。缺少该信息将影响方法提纲中任务设计、难度控制与结果可比性的表述，需明确每类 5 个任务的具体内容与难度分层依据。",
+      "两名评审盲评使用的评分工具或维度尚未确定（confirmedDecisions 中 evaluation 为“暂不确定”）。缺少该信息将影响方法提纲中指标定义、评审一致性报告方式与未来数据分析方法选择条件的表述，需明确评分维度、量表或评分工具。",
+      "“Plan”条件的具体实施步骤尚未确定（confirmedDecisions 中 plan_definition 仅确认研究对象为原始需求中的 Plan 确认问答，未提供具体实施步骤）。缺少该信息将影响方法提纲中条件操作化与可复现性的表述，需明确 Plan 确认问答的具体流程与轮次。",
+      "两组“获得同样确认信息的公平对照”的其余设计细节尚未确定（confirmedDecisions 中 control_groups 仅确认两组输入信息量相同、不引入中性填充任务）。缺少该信息将影响方法提纲中对照设置与公平性论证的表述，需明确两组对照的具体操作差异与信息量匹配方式。"
+    ],
+    "expectedCount": 4
+  },
+  {
+    "id": "05_government_annual_report",
+    "answers": [
+      {
+        "questionId": "table_format",
+        "question": "附表部分希望以什么形式呈现？",
+        "answer": "暂不确定"
+      },
+      {
+        "questionId": "plan_scope",
+        "question": "2026年计划目标在正文中应如何出现？",
+        "answer": "沿用附件事实：2026年服务事项150件、预算40万元仅放在下一步计划，明确是计划目标，不能写成2025年已完成成绩。"
+      }
+    ],
+    "findings": [
+      "该问题尚未确定：附表部分希望以什么形式呈现？",
+      "附表部分希望以什么形式呈现尚未确定（用户回答“暂不确定”）。附表形式会影响写作提示词中附表部分的呈现要求与验收口径，需用户确认后再定稿；在确认前，提示词不得自行指定附表形式。"
+    ],
+    "expectedCount": 1
+  },
+  {
+    "id": "07_data_boundaries",
+    "answers": [
+      {
+        "questionId": "failed_output",
+        "question": "失败记录单列时，希望输出哪些内容？",
+        "answer": "暂不确定"
+      },
+      {
+        "questionId": "slow_scope",
+        "question": "慢请求（严格大于 5000 毫秒）的统计范围是什么？",
+        "answer": "暂不确定"
+      }
+    ],
+    "findings": [
+      "该问题尚未确定：失败记录单列时，希望输出哪些内容？",
+      "该问题尚未确定：慢请求（严格大于 5000 毫秒）的统计范围是什么？",
+      "失败记录单列时，希望输出哪些内容尚未确定（confirmedDecisions 中 failed_output 为“暂不确定”）。这会影响 SQL 伪代码中 FAILED 分组的选择字段与聚合项，例如是否输出失败总数、失败时延分布、失败时延均值或按 cached 分组，需用户明确。",
+      "慢请求（严格大于 5000 毫秒）的统计范围尚未确定（confirmedDecisions 中 slow_scope 为“暂不确定”）。这会影响 SQL 伪代码中慢请求计数的过滤条件与分组维度，例如是否仅统计 SUCCESS 记录、是否包含 FAILED 记录、是否按 cached 分组，需用户明确。"
+    ],
+    "expectedCount": 2
+  }
+]

@@ -41,6 +41,7 @@ interface ClipboardProbe {
   writes: string[];
   openCalls: number;
   shareCalls: number;
+  lastPopup?: Window | null;
   resolve?: () => void;
 }
 declare global {
@@ -68,7 +69,8 @@ const installClipboardProbe = async (page: Page, dark: boolean): Promise<void> =
       probe.openCalls++;
       if (probe.popupMode === 'blocked') return null;
       if (probe.popupMode === 'throw') throw new DOMException('Test popup denied', 'NotAllowedError');
-      return nativeOpen(url, target, features);
+      probe.lastPopup = nativeOpen(url, target, features);
+      return probe.lastPopup;
     };
     // 即使系统提供分享能力，结果面板也不应再调用它。
     Object.defineProperty(navigator, 'share', { configurable: true, value: async () => { probe.shareCalls++; } });
@@ -278,6 +280,8 @@ test('用户关闭预留页后不自动重开，复制成功提供手动链接',
   const state = await openCopyWorkbench(page);
   const tab = await pendingCopy(page);
   await tab.close();
+  // CDP 的关页返回早于 opener 更新 Window.closed；先等页面看到关闭，才完成模拟剪贴板操作。
+  await expect.poll(() => page.evaluate(() => window.__promptCopyProbe.lastPopup?.closed)).toBe(true);
   await resolveCopy(page);
   await expect.poll(() => state.exports.length).toBe(1);
   await expect(page.locator('.open-platform-link')).toHaveAttribute('href', platforms[0].url);
