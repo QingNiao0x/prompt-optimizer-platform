@@ -98,7 +98,9 @@
 
 响应包含 `optimizedPrompt`、`sections`、`contextReport`、`ambiguities`、`appliedConstraints`、`templateCode`、`provider` 和 `latencyMs`。`sections` 至少包含 `BACKGROUND`、`TASK`、`OUTPUT`、`CONSTRAINTS`；已明确回答且没有新冲突的问题不再重复提示。未决回答、二次检索的新冲突或新增业务条件仍保留在 `ambiguities`，不能因完成过 Plan 就一律清空。
 
-Plan 最终组装先登记已核验的新冲突和绑定问题的未决状态，再合并模型提醒；兼容旧 Provider 的纯文本输出。先去重再应用最多 8 条的展示限额，仍超限时通过 `warnings` 明确告知未展示数量。对外 `ambiguities` 仍为字符串数组，与 `CLARIFICATIONS` 使用同一列表；没有新增浏览器必填字段。
+Plan 最终组装先登记已核验的新冲突和绑定问题的未决状态，再合并模型提醒；兼容旧 Provider 的纯文本输出。先去重再应用最多 8 条的展示限额，仍超限时通过 `warnings` 明确告知未展示数量。对外 `ambiguities` 仍为字符串数组，与 `CLARIFICATIONS` 使用同一展示列表；完整归并结果另外写入 `CONSTRAINTS` 的“执行前须确认”部分，并随 `optimizedPrompt` 返回，避免复制时丢失执行前提。已解决、重复和通用占位提醒不机械附加；没有未决条件时不生成此部分。没有新增浏览器必填字段。
+
+生成结果先检查可确定的明确业务规则反转，再补回遗漏的原始规则和已确认答案。规则冲突使用现有 `RESULT_INVALID` 错误码；内部固定原因 `RULE_CONFLICT` 和字段路径用于日志与受限修复，不携带用户正文。OpenAI 兼容适配器与结构解析共享最多 3 次调用，不新增独立模型校验请求。
 
 Provider 内部可选的 `ambiguityReferences` 校验失败时，仅弃用无效关联并记录安全诊断，不因辅助字段错误重试或拒绝有效结果。直接增强与 Plan 增强都保留已校验的正文和实际未决问题；必需段落、提醒正文、敏感内容及客户端输入校验不降级。字段边界和复合提醒规则见 [内置 Plan Mode](./12-内置Plan-Mode交互与接口.md)。
 

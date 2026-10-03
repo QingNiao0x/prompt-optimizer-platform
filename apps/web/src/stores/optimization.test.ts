@@ -305,6 +305,30 @@ describe('optimization store project context', () => {
     expect(store.undoResult()).toBe(true);
     expect(store.result).toEqual(original);
   });
+
+  it('should preserve execution prerequisites across editing, undo and direct re-enhancement', async () => {
+    const store = useOptimizationStore();
+    const original = resultFixture();
+    const prerequisite = '执行前须确认（不得自行假定答案）：\n- 计算 YLL 使用哪份参考寿命表？';
+    const rule = '不得编造参考文献。';
+    original.sections = original.sections.map((section) => section.type === 'CONSTRAINTS'
+      ? { ...section, content: `${section.content}\n\n${rule}\n\n${prerequisite}` } : section);
+    original.sections.push({ type: 'CLARIFICATIONS', title: '待确认事项', content: '计算 YLL 使用哪份参考寿命表？' });
+    original.optimizedPrompt = original.sections.filter((section) => section.type !== 'CLARIFICATIONS')
+      .map((section) => `## ${section.title}\n${section.content}`).join('\n\n');
+    store.result = original;
+    expect(store.saveEditedSections(original.sections.filter((section) => section.type !== 'CLARIFICATIONS')
+      .map((section) => section.type === 'TASK' ? { ...section, content: '补充年龄分组分析。' } : section))).toBe(true);
+    expect(store.result?.optimizedPrompt).toContain(prerequisite);
+    expect(store.result?.optimizedPrompt).toContain(rule);
+    expect(store.result?.optimizedPrompt).not.toContain('## 待确认事项');
+    expect(store.undoResult()).toBe(true);
+    expect(store.result).toEqual(original);
+    vi.mocked(optimizePrompt).mockResolvedValue({ data: original, requestId: 'contract-re-enhance' });
+    expect(await store.runOptimization([], { rawPrompt: store.result!.optimizedPrompt })).toBe(true);
+    expect(optimizePrompt).toHaveBeenCalledWith(expect.objectContaining({ rawPrompt: original.optimizedPrompt }));
+    expect(store.result?.optimizedPrompt).toContain(prerequisite);
+  });
 });
 
 const resultFixture = (): OptimizationResult => ({

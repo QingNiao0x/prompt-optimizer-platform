@@ -14,6 +14,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * 通过生产结果组装器验证明确规则的最终补回，不将提取器通过等同于可复制结果正确。
@@ -31,6 +32,22 @@ class RulePreservationAssemblyTest {
     private static final List<String> CONSTRAINTS = List.of("不得削弱现有功能", "不得访问受保护文件或泄露凭据");
     private final OptimizationResultAssembler assembler = new OptimizationResultAssembler();
     private final PlanningFactCardExtractor extractor = new PlanningFactCardExtractor();
+
+    @Test
+    void shouldRejectReversingRelevantDocumentRulesThroughDirectAndPlanFlows() {
+        var context = snapshot(List.of(document(SOURCE, "预约取消不得清空历史记录。")));
+        var draft = response("现有预约项目。");
+        var reversed = new EnhancementProviderResponse(draft.sections().stream().map(section ->
+                section.type() == PromptSectionType.TASK
+                        ? new PromptSection(section.type(), section.title(), "预约取消可以清空历史记录。") : section).toList(),
+                draft.provider(), draft.model(), draft.mock(), List.of());
+        for (boolean confirmed : List.of(false, true)) {
+            var facts = confirmed ? extractor.extract(context, "修复预约取消行为").cards() : List.<PlanningFactCard>of();
+            assertThatThrownBy(() -> assemble(context, "修复预约取消行为", confirmed, facts,
+                    List.of(), List.of(), reversed))
+                    .isInstanceOf(com.promptoptimizer.provider.domain.ProviderResponseValidationException.class);
+        }
+    }
 
     @Test
     void shouldRestoreTheIdentifierMeaningAndConditionsInDirectEnhancement() {

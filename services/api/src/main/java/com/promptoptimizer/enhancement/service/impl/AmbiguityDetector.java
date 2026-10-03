@@ -42,7 +42,12 @@ public class AmbiguityDetector {
                         .collect(Collectors.joining("、"));
         String project = scope.isBlank() ? "当前任务" : "已识别的 " + scope + " 项目";
 
-        if (containsAny(prompt, "排序", "sort")) {
+        // 文书中的风险分级、优先级排序已有业务对象和次序，不能套用编程排序算法的问题。
+        boolean explicitBusinessRanking = Pattern.compile(
+                "(?:高[、,，/]中[、,，/]低|由高到低|由低到高|从高到低|从低到高).{0,12}(?:风险|重要性|优先级|紧急程度).{0,12}排序|"
+                        + "(?:风险|重要性|优先级|紧急程度).{0,12}(?:由高到低|由低到高|从高到低|从低到高).{0,12}排序")
+                .matcher(prompt).find();
+        if (containsAny(prompt, "排序", "sort") && !explicitBusinessRanking) {
             String evidence = evidence(prompt, context, conversation, "排序", "sort");
             if (!containsAny(evidence, "整数", "数字", "字符串", "对象", "订单", "记录", "integer", "number", "string")) {
                 findings.add(project + "需要对哪类数据排序（数字、文本或业务记录）？现有资料尚未明确排序对象。");

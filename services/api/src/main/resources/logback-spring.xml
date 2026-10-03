@@ -4,6 +4,8 @@
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{requestId:-}] %logger{50} - %msg%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 审计补写的 SQL/rollback 由安全错误与汇总替代，避免重放批次刷屏及输出绑定值。 -->
+        <filter class="com.promptoptimizer.common.logging.AuditSqlLogFilter"/>
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>

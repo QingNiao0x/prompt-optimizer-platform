@@ -70,8 +70,7 @@ final class PlanAmbiguityMerger {
             registered.putIfAbsent("text:" + text, text);
         }
         List<String> values = registered.values().stream().distinct().toList();
-        return new MergeResult(values.stream().limit(DISPLAY_LIMIT).toList(),
-                Math.max(0, values.size() - DISPLAY_LIMIT));
+        return MergeResult.from(values);
     }
 
     /** 优先检查模型引用，缺失或引用不正确时只接受唯一的保守文本匹配。 */
@@ -192,5 +191,12 @@ final class PlanAmbiguityMerger {
         }
     }
 
-    record MergeResult(List<String> messages, int omittedCount) { }
+    /** 展示列表有上限，复制正文使用完整归并结果，不能让展示预算丢掉执行前提。 */
+    record MergeResult(List<String> messages, int omittedCount, List<String> executionPrerequisites) {
+        static MergeResult from(List<String> values) {
+            List<String> complete = values.stream().distinct().toList();
+            return new MergeResult(complete.stream().limit(DISPLAY_LIMIT).toList(),
+                    Math.max(0, complete.size() - DISPLAY_LIMIT), complete);
+        }
+    }
 }

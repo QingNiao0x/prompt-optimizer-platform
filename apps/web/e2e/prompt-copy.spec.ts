@@ -77,7 +77,7 @@ const installClipboardProbe = async (page: Page, dark: boolean): Promise<void> =
 };
 
 /** 业务接口与目标 AI 页面使用夹具；不会调用真实模型或把文本发送到外部平台。 */
-const openCopyWorkbench = async (page: Page, dark = false) => {
+const openCopyWorkbench = async (page: Page, dark = false, response: OptimizationResult = result) => {
   const exports: AnalyticsClientEvent[] = [];
   const navigations: { url: string; referer?: string }[] = [];
   let exportStatus = 200;
@@ -86,7 +86,7 @@ const openCopyWorkbench = async (page: Page, dark = false) => {
   await page.route('**/api/v1/models', (route) => route.fulfill({ json: { data: [
     { id: 'mock', displayName: 'Mock', provider: 'Mock', defaultModel: true },
   ] } }));
-  await page.route('**/api/v1/optimizations', (route) => route.fulfill({ json: { data: result } }));
+  await page.route('**/api/v1/optimizations', (route) => route.fulfill({ json: { data: response } }));
   await page.route('**/api/v1/analytics/events', (route) => {
     const event = route.request().postDataJSON() as AnalyticsClientEvent;
     if (event.eventType === 'RESULT_EXPORTED') exports.push(event);
@@ -113,6 +113,60 @@ const choosePlatform = async (page: Page, name: string): Promise<void> => {
   await page.getByRole('button', { name: '选择 AI 平台', exact: true }).click();
   await page.getByRole('menuitem', { name: `复制并打开 ${name}`, exact: true }).click();
 };
+
+for (const scenario of [
+  { task: '计算 YLL 并撰写研究报告。', rule: '不得编造参考文献。', unknown: '计算 YLL 使用哪份参考寿命表？' },
+  { task: '完善基线匹配与自动填充。', rule: '取消时保持原值；只填 null 或空字符串，保留 0 和 false。',
+    unknown: '出现多条匹配记录时使用哪一条？' },
+]) {
+  test(`执行规则和未决前提经过复制、编辑、取消编辑、再次增强仍完整：${scenario.task}`, async ({ page }) => {
+    const constraints = `${scenario.rule}\n\n执行前须确认（不得自行假定答案）：\n- ${scenario.unknown}`;
+    const sections: OptimizationResult['sections'] = [
+      { type: 'BACKGROUND', title: '背景', content: '用户提供的任务资料。' },
+      { type: 'TASK', title: '任务', content: scenario.task },
+      { type: 'OUTPUT', title: '输出', content: '交付用户要求的结果。' },
+      { type: 'CONSTRAINTS', title: '约束', content: constraints },
+    ];
+    const complete = sections.map((section) => `## ${section.title}\n${section.content}`).join('\n\n');
+    const response: OptimizationResult = { ...result, optimizedPrompt: complete,
+      sections: [...sections, { type: 'CLARIFICATIONS', title: '待确认事项', content: `- ${scenario.unknown}` }],
+      ambiguities: [scenario.unknown] };
+    await openCopyWorkbench(page, false, response);
+    await page.locator('.copy-main-button').click();
+    await expect.poll(() => page.evaluate(() => window.__promptCopyProbe.writes.at(-1))).toBe(complete);
+
+    await page.getByRole('button', { name: '编辑', exact: true }).click();
+    const editedTask = `${scenario.task}补充实施步骤。`;
+    await page.locator('#section-TASK').fill(editedTask);
+    await page.getByRole('button', { name: '保存修改', exact: true }).click();
+    await page.locator('.copy-main-button').click();
+    await expect.poll(() => page.evaluate(() => window.__promptCopyProbe.writes.at(-1)))
+      .toBe(complete.replace(scenario.task, editedTask));
+
+    const editedPrompt = complete.replace(scenario.task, editedTask);
+    await page.getByRole('button', { name: '编辑', exact: true }).click();
+    await page.locator('#section-CONSTRAINTS').fill('这份未保存的草稿不应进入复制正文。');
+    await page.getByRole('button', { name: '取消', exact: true }).click();
+    await page.evaluate(() => { window.__promptCopyProbe.mode = 'reject'; });
+    await choosePlatform(page, 'Kimi');
+    const dialog = page.getByRole('dialog', { name: '手动复制提示词', exact: true });
+    await expect(dialog.getByRole('textbox', { name: '完整提示词，供手动复制', exact: true })).toHaveValue(editedPrompt);
+    await dialog.getByRole('button', { name: '关闭', exact: true }).click();
+
+    let submitted = '';
+    await page.route('**/api/v1/optimizations', async (route) => {
+      const request = route.request().postDataJSON() as { rawPrompt: string };
+      submitted = request.rawPrompt;
+      await route.fulfill({ json: { data: response } });
+    });
+    await page.getByRole('button', { name: '直接再次增强', exact: true }).click();
+    await expect.poll(() => submitted).toBe(editedPrompt);
+    await openWorkbenchPane(page, 'result');
+    await page.evaluate(() => { window.__promptCopyProbe.mode = 'native'; });
+    await page.locator('.copy-main-button').click();
+    await expect.poll(() => page.evaluate(() => window.__promptCopyProbe.writes.at(-1))).toBe(complete);
+  });
+}
 
 const pendingCopy = async (page: Page): Promise<Page> => {
   await page.evaluate(() => { window.__promptCopyProbe.mode = 'pending'; });

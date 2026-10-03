@@ -125,6 +125,10 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             12. 可选 ambiguityReferences 用于关联已有 Plan 问题，格式为 [{"message":"与 ambiguities 中某条文本完全一致","questionId":"输入中的问题ID"}]，最多 8 条。
                 只引用输入 confirmedDecisions 或 planAnswers 中真实存在的 questionId；没有关联时返回 []。
                 关联不代表问题已解决：新金额、新范围、工具版本或新增适用条件必须完整写在 message 中，不能省略。
+            13. 改写不得改变明确规则的否定、适用对象、触发条件、例外、数值、比较符和单位。保留取消时原值不等于取消保留逻辑，
+                只向空字段补值不等于把字段清空，0 和 false 不得被当成空值。报告字数、研究范围、证据要求同样必须保真。
+                输出前核对 TASK、OUTPUT、CONSTRAINTS、ACCEPTANCE 之间没有相反要求；不能靠在末尾追加正确原文掩盖前面的错误指令。
+                真正未决的问题继续放在 ambiguities；平台会将归并后的执行前提写入可复制正文，未确认不能视为授权猜测。
 
             JSON 格式必须为：
             {"sections":[{"type":"BACKGROUND","title":"背景","content":"..."}],"ambiguities":[],"ambiguityReferences":[]}
@@ -142,6 +146,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             3. 以用户本次原始需求为主，附件只补充事实。仅问会改变本次范围、业务规则、实施方案或交付结果的问题，不扩展无关话题。最多 8 个；需求已经完整时返回空 questions。
             4. 决策问题使用 SINGLE_CHOICE，给出 2 到 5 个具体且互斥的可行方案；只有可同时成立的选择才使用 MULTIPLE_CHOICE。
                未知地区、真实数据来源、指标定义等事实没有可靠候选时使用 FREE_TEXT，options=[]，给出简短填写示例；不要用随机地名、框架或“先待确认”凑选项。不得因凑不够选项而丢弃关键问题。
+               每个选项的 label、description 与 answer 必须一致，不能反转用户已明确的规则来制造选项；推荐答案也必须保留否定、条件、对象、数值和单位。
+               例如用户要求确认后只填空字段，不能推荐无需确认或清空字段；用户要求不编造文献，不能提供允许编造的答案。
             5. 有依据时最多标记一个 recommended=true，并在 recommendationReason 中简短说明依据（原始需求的偏好、已有依赖/实现或资料来源）及主要取舍。
                当前明确偏好优先于历史偏好；用户要求迁移时，现有架构是兼容约束，不是阻止迁移的理由。不能把用户明确排除的技术标成推荐。
                没有足够依据时允许没有推荐。地名、实际数据值不能靠推荐替用户决定。项目材料同时存在两种互补做法时，不应机械推荐只保留其中一种。

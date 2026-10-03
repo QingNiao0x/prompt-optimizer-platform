@@ -6,6 +6,8 @@ import com.promptoptimizer.enhancement.domain.OptimizationResult;
 import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision;
 import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope;
 import com.promptoptimizer.enhancement.domain.PlanningFactCard;
+import com.promptoptimizer.enhancement.domain.PlanningFactCategory;
+import com.promptoptimizer.enhancement.domain.PlanningFactOrigin;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.ProviderMetadata;
@@ -47,6 +49,7 @@ public class OptimizationResultAssembler {
     );
     private final SensitiveValueDetector sensitiveValueDetector = new SensitiveValueDetector();
     private final ContextFactPreserver contextFactPreserver = new ContextFactPreserver();
+    private final RequirementFidelityGuard fidelityGuard = new RequirementFidelityGuard();
     private static final Set<String> GENERIC_WARNINGS = Set.of(
             "尚未明确输入来源、参数格式或调用方式",
             "尚未明确输出内容、输出格式或错误返回方式",
@@ -133,29 +136,34 @@ public class OptimizationResultAssembler {
         }
 
         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planAnswers);
-        appendConfirmedAnswers(sections, decisions);
-        appendConfirmedDecisions(sections, decisions);
         String evidenceQuery = decisions.retrievalQuery(rawPrompt);
         List<PlanningFactCard> eligibleFacts = new PlanningFactCardExtractor()
                 .filterBoundFacts(planningFacts, context, evidenceQuery);
+        List<String> documentFacts = contextFactPreserver.facts(context, evidenceQuery);
+        List<String> explicitRules = fidelityGuard.explicitRules(rawPrompt, decisions.decisions());
+        validateExecutionRules(sections, explicitRules, eligibleFacts, documentFacts);
+        appendConfirmedAnswers(sections, decisions);
+        appendConfirmedDecisions(sections, decisions);
         if (eligibleFacts.isEmpty()) {
-            appendDocumentFacts(sections, context, evidenceQuery);
+            appendDocumentFacts(sections, documentFacts);
         } else {
-            appendPlanningFacts(sections, eligibleFacts, context, evidenceQuery);
+            appendPlanningFacts(sections, eligibleFacts, documentFacts);
         }
+        appendExplicitRules(sections, explicitRules);
         appendConstraints(sections, constraints);
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities);
         List<AmbiguityReference> references = normalizeAmbiguityReferences(providerResponse);
         // 先登记新冲突和绑定的未决问题，再归并模型提醒，避免重复项挤占展示预算。
         var merged = planConfirmed
                 ? new PlanAmbiguityMerger(decisions).merge(assessed, ambiguities, references)
-                : new PlanAmbiguityMerger.MergeResult(assessed.stream().limit(8).toList(), Math.max(0, assessed.size() - 8));
+                : PlanAmbiguityMerger.MergeResult.from(assessed);
         List<String> remainingAmbiguities = merged.messages();
         List<String> resultWarnings = new ArrayList<>(collectWarnings(context, planningWarnings));
         if (merged.omittedCount() > 0) {
             resultWarnings.add("待确认事项已去重，本次展示前 8 项，另有 " + merged.omittedCount()
-                    + " 项未展示；请缩小本次任务范围后再次确认。");
+                    + " 项未展示；所有未决条件已完整保留在约束的执行前须确认部分，请核对后再交付执行。");
         }
+        appendExecutionPrerequisites(sections, merged.executionPrerequisites());
         // 一个权威列表同时驱动 API 与段落，避免 UI 与模型返回的旧 CLARIFICATIONS 互相矛盾。
         sections.remove(PromptSectionType.CLARIFICATIONS);
         if (!remainingAmbiguities.isEmpty()) {
@@ -198,6 +206,54 @@ public class OptimizationResultAssembler {
         );
     }
 
+    /**
+     * 先校验模型的执行断言，再追加权威原句；否则一份正文可能同时要求保留和清空同一字段。
+     * 背景允许引用历史规则用于对照；测试样例与互相冲突的资料不升级为本次执行要求。
+     */
+    private void validateExecutionRules(Map<PromptSectionType, PromptSection> sections, List<String> explicitRules,
+                                        List<PlanningFactCard> facts, List<String> documentFacts) {
+        List<String> sourceRules = new ArrayList<>();
+        facts.stream().filter(card -> card.category() == PlanningFactCategory.BUSINESS_RULE)
+                .filter(card -> card.origin() == PlanningFactOrigin.PROJECT_SOURCE
+                        || card.origin() == PlanningFactOrigin.PROJECT_DOCUMENT
+                        || card.origin() == PlanningFactOrigin.USER_MATERIAL)
+                .forEach(card -> sourceRules.addAll(fidelityGuard.explicitRules(card.evidence(), List.of())));
+        documentFacts.stream()
+                .map(fact -> fact.substring(fact.indexOf('：') + 1))
+                .forEach(fact -> sourceRules.addAll(fidelityGuard.explicitRules(fact, List.of())));
+        List<String> rules = new ArrayList<>(explicitRules);
+        rules.addAll(fidelityGuard.compatibleSourceRules(sourceRules, explicitRules));
+        for (PromptSectionType type : List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT,
+                PromptSectionType.CONSTRAINTS, PromptSectionType.ACCEPTANCE)) {
+            PromptSection section = sections.get(type);
+            if (section != null) fidelityGuard.validate(section.content(), rules, "sections." + type);
+        }
+    }
+
+    /** 只补未完整覆盖的明确原句，条件、例外与否定一起保留；权限红线继续独立强制追加。 */
+    private void appendExplicitRules(Map<PromptSectionType, PromptSection> sections, List<String> rules) {
+        String executionText = List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT,
+                        PromptSectionType.CONSTRAINTS, PromptSectionType.ACCEPTANCE).stream()
+                .filter(sections::containsKey).map(type -> sections.get(type).content())
+                .collect(Collectors.joining("\n"));
+        List<String> missing = rules.stream().filter(rule -> !fidelityGuard.containsRule(executionText, rule)).toList();
+        appendConstraintBlock(sections, "用户明确规则（须遵守平台权限边界）", missing);
+    }
+
+    /** 未决与冲突必须随可复制正文交付；不把暂不确定转换成模型自行选择的许可。 */
+    private void appendExecutionPrerequisites(Map<PromptSectionType, PromptSection> sections, List<String> prerequisites) {
+        appendConstraintBlock(sections, "执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）", prerequisites);
+    }
+
+    /** 修改同一份结构化约束，保证正文、编辑、复制、历史与再次增强使用一致的内容。 */
+    private void appendConstraintBlock(Map<PromptSectionType, PromptSection> sections, String title, List<String> values) {
+        if (values.isEmpty()) return;
+        PromptSection section = sections.get(PromptSectionType.CONSTRAINTS);
+        sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(PromptSectionType.CONSTRAINTS,
+                section.title(), section.content() + "\n\n" + title + "：\n"
+                + values.stream().map(value -> "- " + value).collect(Collectors.joining("\n"))));
+    }
+
     /** 仅显示可行动且不会暴露受保护路径或凭据的上下文质量提醒。 */
     private List<String> collectWarnings(ContextSnapshot context, List<String> planningWarnings) {
         List<String> candidates = new ArrayList<>();
@@ -223,8 +279,7 @@ public class OptimizationResultAssembler {
     /** 把已绑定事实卡片作为带来源资料保留；回答优先级和平台约束在段落中明确区分。 */
     private void appendPlanningFacts(Map<PromptSectionType, PromptSection> sections,
                                      List<PlanningFactCard> facts,
-                                     ContextSnapshot context,
-                                     String rawPrompt) {
+                                     List<String> documentFacts) {
         List<PlanningFactCard> safeFacts = facts.stream()
                 .filter(card -> card != null && card.category() != null && card.origin() != null
                         && !isBlank(card.sourcePath()) && card.sourcePath().length() <= 256
@@ -253,7 +308,7 @@ public class OptimizationResultAssembler {
         }
         // 用户答案可能令二次检索找到计划摘要未覆盖的材料，额外保留这些新发现的明确规则。
         String backgroundContent = background.content();
-        List<String> newlyRetrievedFacts = contextFactPreserver.facts(context, rawPrompt).stream()
+        List<String> newlyRetrievedFacts = documentFacts.stream()
                 .filter(fact -> safeFacts.stream().noneMatch(card -> fact.contains(card.sourcePath())
                         && fact.contains(card.evidence())))
                 .filter(fact -> !backgroundContent.contains(fact))
@@ -270,8 +325,7 @@ public class OptimizationResultAssembler {
 
     /** 把规则作为带出处的资料事实放在背景中，避免误认为平台授权或强制指令。 */
     private void appendDocumentFacts(Map<PromptSectionType, PromptSection> sections,
-                                     ContextSnapshot context, String rawPrompt) {
-        List<String> facts = contextFactPreserver.facts(context, rawPrompt);
+                                     List<String> facts) {
         if (facts.isEmpty()) return;
         PromptSection background = sections.get(PromptSectionType.BACKGROUND);
         List<String> missing = facts.stream()

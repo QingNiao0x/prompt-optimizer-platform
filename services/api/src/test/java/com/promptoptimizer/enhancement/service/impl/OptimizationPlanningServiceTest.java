@@ -45,6 +45,37 @@ import static org.mockito.Mockito.when;
 class OptimizationPlanningServiceTest {
 
     @Test
+    void shouldNotShowAReversedLabelEvenWhenItsStoredAnswerIsCorrect() {
+        var planning = new OptimizationPlanningServiceImpl(request -> new PlanningProviderResponse(
+                "确认匹配策略", List.of(new PlanQuestion("duplicate", "存在多条匹配记录时如何选择？", "",
+                PlanQuestionType.SINGLE_CHOICE, List.of(
+                new PlanOption("first", "移除保持原值的逻辑选项", "", "取消时保持原值。", true),
+                new PlanOption("select", "手动选择", "", "手动选择匹配记录。", false)), List.of(), true)),
+                "mock", "planner", true), new PromptTemplateRegistryImpl(), planningSessions(CLOCK), CLOCK);
+        assertThatThrownBy(() -> planning.plan(request("完善基线匹配，取消时保持原值。")))
+                .isInstanceOfSatisfying(ProviderResponseValidationException.class, failure ->
+                        assertThat(failure.getField()).isEqualTo("questions.options.label"));
+    }
+
+    @Test
+    void shouldRepairAnOptionThatContradictsTheExplicitRuleBeforeRegisteringPlan() {
+        AtomicInteger calls = new AtomicInteger();
+        var planning = new OptimizationPlanningServiceImpl(request -> {
+            String answer = calls.incrementAndGet() == 1 ? "无需用户确认，直接填充。" : "经用户确认后填充。";
+            var question = new PlanQuestion("duplicate", "存在多条匹配记录时如何选择？", "影响记录选择", PlanQuestionType.SINGLE_CHOICE,
+                    List.of(new PlanOption("first", "选第一条", "保持原始确认规则", answer, false),
+                            new PlanOption("select", "手动选择", "由用户决定记录", "手动选择匹配记录后，经用户确认后填充。", false)),
+                    List.of(), true);
+            return new PlanningProviderResponse("确认匹配策略", List.of(question), "mock", "planner", true);
+        }, new PromptTemplateRegistryImpl(), planningSessions(CLOCK), CLOCK);
+
+        var plan = planning.plan(request("完善基线匹配，经用户确认后填充。"));
+        assertThat(calls).hasValue(2);
+        assertThat(plan.questions()).singleElement().satisfies(question ->
+                assertThat(question.options()).allSatisfy(option -> assertThat(option.answer()).doesNotContain("无需用户确认")));
+    }
+
+    @Test
     void shouldPassPublishedModelToPlanningProvider() {
         PlatformModelCatalog catalog = mock(PlatformModelCatalog.class);
         String modelId = "tokenhub:kimi-k3";

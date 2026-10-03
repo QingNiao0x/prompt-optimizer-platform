@@ -10,11 +10,13 @@ import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
@@ -36,6 +38,10 @@ import java.util.concurrent.atomic.AtomicLong;
 @Component
 public class AuditEventDelivery {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuditEventDelivery.class);
+    private static final long INVALID_EVENT_RETRY_MILLIS = TimeUnit.MINUTES.toMillis(5);
+    private final Clock clock;
+    private final AuditFailureReporter failureReporter;
+    private volatile boolean recoveryPending;
     private final AuditEventJournal journal;
     private final AuditEventDatabaseWriter writer;
     private final int batchSize;
@@ -62,6 +68,7 @@ public class AuditEventDelivery {
     private final Counter journalFailureMetric;
 
     /** 校验批量和退避边界；Micrometer 只记无用户标签的积压、失败与损坏数量。 */
+    @Autowired
     public AuditEventDelivery(AuditEventJournal journal, AuditEventDatabaseWriter writer,
                               @Value("${app.analytics.delivery.batch-size:100}") int batchSize,
                               @Value("${app.analytics.delivery.retry-initial-ms:1000}") long initialRetryMillis,
@@ -69,6 +76,14 @@ public class AuditEventDelivery {
                               @Value("${app.analytics.delivery.pending-alert-threshold:1000}") long pendingAlertThreshold,
                               @Value("${app.analytics.delivery.oldest-pending-alert-seconds:300}") long oldestPendingAlertSeconds,
                               ObjectProvider<MeterRegistry> registryProvider) {
+        this(journal, writer, batchSize, initialRetryMillis, maximumRetryMillis, pendingAlertThreshold,
+                oldestPendingAlertSeconds, registryProvider, Clock.systemUTC());
+    }
+
+    /** 测试可推进重试时钟；运行期使用真实 UTC 时钟且沿用同一套参数校验。 */
+    AuditEventDelivery(AuditEventJournal journal, AuditEventDatabaseWriter writer, int batchSize,
+                       long initialRetryMillis, long maximumRetryMillis, long pendingAlertThreshold,
+                       long oldestPendingAlertSeconds, ObjectProvider<MeterRegistry> registryProvider, Clock clock) {
         if (batchSize < 1 || batchSize > 1000 || initialRetryMillis < 100
                 || maximumRetryMillis < initialRetryMillis || maximumRetryMillis > 300000
                 || pendingAlertThreshold < 1 || oldestPendingAlertSeconds < 1) {
@@ -81,6 +96,8 @@ public class AuditEventDelivery {
         this.maximumRetryMillis = maximumRetryMillis;
         this.pendingAlertThreshold = pendingAlertThreshold;
         this.oldestPendingAlertSeconds = oldestPendingAlertSeconds;
+        this.clock = java.util.Objects.requireNonNull(clock);
+        this.failureReporter = new AuditFailureReporter(LOGGER, clock);
         MeterRegistry registry = registryProvider.getIfAvailable();
         databaseFailureMetric = registry == null ? null : registry.counter("analytics.delivery.database.failures");
         journalFailureMetric = registry == null ? null : registry.counter("analytics.delivery.journal.failures");
@@ -122,7 +139,7 @@ public class AuditEventDelivery {
                 databaseRetryMillis = 0;
                 databaseNotBeforeMillis = 0;
                 recoveredEvents.incrementAndGet();
-                lastDeliveredAt = Instant.now();
+                lastDeliveredAt = clock.instant();
                 LOGGER.warn("event=analytics.audit_database_fallback eventType={}", event.eventType());
             } catch (RuntimeException databaseFailure) {
                 recordDatabaseFailure(event, databaseFailure);
@@ -138,7 +155,8 @@ public class AuditEventDelivery {
      */
     public synchronized void replayPending() {
         if (!initialized) recoverJournal();
-        long now = System.currentTimeMillis();
+        failureReporter.flushDue(pending.size());
+        long now = clock.millis();
         if (databaseNotBeforeMillis > now) return;
         var batch = new ArrayList<>(pending.values());
         batch.sort(Comparator.comparing(PendingAuditEvent::occurredAt));
@@ -159,24 +177,28 @@ public class AuditEventDelivery {
                 retries.remove(event.id());
                 recoveredEvents.incrementAndGet();
                 journalAvailable = true;
-                lastDeliveredAt = Instant.now();
+                lastDeliveredAt = clock.instant();
             } catch (IOException failure) {
                 recordJournalFailure(failure, "acknowledge");
-                defer(event.id(), retry, now);
+                defer(event.id(), retry, false);
             } catch (RuntimeException failure) {
                 recordDatabaseFailure(event, failure);
-                defer(event.id(), retry, now);
+                defer(event.id(), retry, AuditFailureDiagnostics.from(failure).requiresSlowRetry(failure));
                 // 连接故障影响整库，不能为每条积压都等待连接超时；约束错误则继续处理其他事件。
                 if (failure instanceof org.springframework.dao.DataAccessResourceFailureException
                         || AuditFailureDiagnostics.from(failure).sqlState().startsWith("08")) {
                     databaseRetryMillis = databaseRetryMillis == 0 ? initialRetryMillis : Math.min(maximumRetryMillis, databaseRetryMillis * 2);
-                    databaseNotBeforeMillis = System.currentTimeMillis() + databaseRetryMillis;
+                    databaseNotBeforeMillis = clock.millis() + databaseRetryMillis;
                     break;
                 }
             }
         }
         if (attempted > 0 && pending.isEmpty() && databaseAvailable && journalAvailable) {
-            LOGGER.info("event=analytics.audit_delivery_recovered pendingEvents=0 deliveredEvents={}", recoveredEvents.get());
+            failureReporter.flushAll(0);
+            if (recoveryPending) {
+                LOGGER.info("event=analytics.audit_delivery_recovered pendingEvents=0 deliveredEvents={}", recoveredEvents.get());
+                recoveryPending = false;
+            }
         }
     }
 
@@ -198,6 +220,7 @@ public class AuditEventDelivery {
     @PreDestroy
     public synchronized void close() {
         if (worker != null) worker.shutdownNow();
+        failureReporter.flushAll(pending.size());
     }
 
     /** 恢复只加载未确认事实；损坏文件保留且触发告警，不把失败事实计为成功。 */
@@ -226,37 +249,39 @@ public class AuditEventDelivery {
         }
     }
 
-    /** 指数退避在最大间隔封顶，不丢弃达到重试次数上限的原始事件。 */
-    private void defer(UUID eventId, Retry previous, long now) {
-        long interval = previous == null ? initialRetryMillis : Math.min(maximumRetryMillis, previous.intervalMillis() * 2);
-        retries.put(eventId, new Retry(interval, now + interval));
+    /** 连接故障指数退避；数据/表结构错误每五分钟复查，保留事实且不阻塞其他账号的正常事件。 */
+    private void defer(UUID eventId, Retry previous, boolean invalidEvent) {
+        long interval = invalidEvent ? INVALID_EVENT_RETRY_MILLIS
+                : previous == null ? initialRetryMillis : Math.min(maximumRetryMillis, previous.intervalMillis() * 2);
+        // 从失败结束时计算，避免慢 SQL 用尽本轮间隔后立即再次尝试。
+        retries.put(eventId, new Retry(interval, clock.millis() + interval));
     }
 
     /** 日志只输出阶段和异常类型；文件路径、IP、JSON、SQL 和底层异常消息都不进入日志。 */
     private void recordJournalFailure(Throwable failure, String stage) {
+        recoveryPending = true;
         journalAvailable = false;
         journalFailures.incrementAndGet();
         if (journalFailureMetric != null) journalFailureMetric.increment();
-        lastFailureAt = Instant.now();
+        lastFailureAt = clock.instant();
         LOGGER.error("event=analytics.audit_journal_failure stage={} reason={} pendingEvents={}", stage,
                 failure.getClass().getSimpleName(), pending.size());
     }
 
     /** 保留原审计失败事件代码与 SQLState/约束诊断，使已有排查流程仍可关联 requestId。 */
     private void recordDatabaseFailure(PendingAuditEvent event, RuntimeException failure) {
+        recoveryPending = true;
         databaseAvailable = false;
         databaseFailures.incrementAndGet();
         if (databaseFailureMetric != null) databaseFailureMetric.increment();
-        lastFailureAt = Instant.now();
+        lastFailureAt = clock.instant();
         AuditFailureDiagnostics diagnostics = AuditFailureDiagnostics.from(failure);
-        LOGGER.error("event=analytics.audit_write_failure requestId={} eventType={} reason={} sqlState={} constraint={} pendingEvents={}",
-                event.details().get("requestId"), event.eventType(), failure.getClass().getSimpleName(),
-                diagnostics.sqlState(), diagnostics.constraint(), pending.size());
+        failureReporter.record(event, failure, diagnostics, pending.size());
     }
 
     /** 积压年龄依据最老事件的真实发生时刻，不因进程重启或重试而重置。 */
     private long oldestPendingAgeSeconds() {
-        return pending.values().stream().mapToLong(event -> Math.max(0, Instant.now().getEpochSecond() - event.occurredAt().toEpochSecond())).max().orElse(0);
+        return pending.values().stream().mapToLong(event -> Math.max(0, clock.instant().getEpochSecond() - event.occurredAt().toEpochSecond())).max().orElse(0);
     }
 
     private record Retry(long intervalMillis, long notBeforeMillis) { }

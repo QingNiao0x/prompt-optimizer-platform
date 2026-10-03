@@ -137,6 +137,33 @@ class OpenAiCompatibleValidatedResponseTest {
                 List.of("不得读取生产密钥"), List.of(), EnhancementOptions.defaults(), null);
     }
 
+    @Test
+    void shouldRepairReversedRulesAndKeepCopyPrerequisitesUsingTheSameBudget() throws Exception {
+        expect(Map.of("sections", List.of()));
+        expect(content("取消原值：移除保持原值的逻辑选项。", List.of()));
+        server.expect(requestTo(ENDPOINT)).andExpect(request ->
+                assertThat(((MockClientHttpRequest) request).getBodyAsString()).contains("RULE_CONFLICT"))
+                .andRespond(withSuccess(completion(content("取消时保持原值。", List.of("匹配存在多条记录时使用哪一条？"))),
+                        MediaType.APPLICATION_JSON));
+        var result = provider.enhanceValidated(request(), response -> new OptimizationResultAssembler().assemble(
+                response, context, template, List.of(), List.of(), false,
+                List.of("不得读取生产密钥"), false, 1, "取消时保持原值。"));
+        assertThat(result.optimizedPrompt()).contains("取消时保持原值", "执行前须确认", "匹配存在多条记录")
+                .doesNotContain("移除保持原值");
+        server.verify();
+    }
+
+    @Test
+    void shouldFailClearlyWhenRuleReversalPersistsWithoutReturningASuccessfulDraft() throws Exception {
+        server.expect(times(3), requestTo(ENDPOINT)).andRespond(withSuccess(
+                completion(content("可以编造参考文献。", List.of())), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhanceValidated(request(), response -> new OptimizationResultAssembler().assemble(
+                response, context, template, List.of(), List.of(), false, List.of(), false, 1, "不得编造参考文献。")))
+                .isInstanceOfSatisfying(ProviderResponseValidationException.class,
+                        failure -> assertThat(failure.getReason()).isEqualTo(ProviderResponseValidationException.Reason.RULE_CONFLICT));
+        server.verify();
+    }
+
     private OptimizationResult assemble(EnhancementProviderResponse response, boolean confirmed) {
         return new OptimizationResultAssembler().assemble(response, context, template, List.of(),
                 confirmed ? List.of(new PlanAnswer("q1", "输出格式是什么？", "只交付 Markdown 表格和验收清单")) : List.of(),

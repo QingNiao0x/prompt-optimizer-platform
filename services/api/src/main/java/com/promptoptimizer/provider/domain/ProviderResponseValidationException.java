@@ -15,7 +15,8 @@ public final class ProviderResponseValidationException extends ProviderException
 
     /** 字段只允许程序定义的 JSON 路径，禁止把模型值、问题 ID 或原文当成诊断位置。 */
     public ProviderResponseValidationException(Reason reason, String field) {
-        super(ProviderFailureType.INVALID_RESPONSE, "模型返回结果未通过结构与安全校验", false);
+        super(ProviderFailureType.INVALID_RESPONSE, reason == Reason.RULE_CONFLICT
+                ? "模型返回结果与已明确的业务规则冲突，请重试。" : "模型返回结果未通过结构与安全校验", false);
         this.reason = Objects.requireNonNull(reason, "reason must not be null");
         if (field == null || !field.matches("[A-Za-z][A-Za-z0-9_.\\[\\]]{0,119}")) {
             throw new IllegalArgumentException("validation field must be a bounded code-defined path");
@@ -41,6 +42,7 @@ public final class ProviderResponseValidationException extends ProviderException
         AMBIGUITY_VALUE_INVALID("每条待确认事项必须为非空字符串，最多五百字符，不得删除实质未决条件。"),
         SENSITIVE_CONTENT("使用不含凭据值的业务表述；隐私要求写成完整句子，避免 password: 或 apiKey= 等赋值形式；不得输出真实或伪造的密钥、密码、认证头或私钥。"),
         CONFIRMED_DECISION_MISSING("完整保留输入中用户已确认的答案和适用边界，不得替用户更改决定。"),
+        RULE_CONFLICT("检查并改正执行要求与原始需求、明确确认答案及适用资料规则相反的内容；保留否定、条件、比较符、数值、单位和作用对象。取消保持原值不等于移除保持逻辑，向空字段补值不等于将字段清空。不得在另一段追加正确规则却保留矛盾指令。"),
         PLAN_STRUCTURE_INVALID("summary 为非空字符串且不超过五百字符，questions 数组最多八项，不展示内部实现术语。"),
         PLAN_QUESTION_INVALID("问题 ID 唯一且仅含英文字母、数字、下划线或连字符，最长六十四字符；question 最长三百字符，hint 最长五百字符；最多四个简短示例。"),
         PLAN_OPTION_INVALID("选项 ID 唯一且最长六十四字符；label 最长一百二十字符，description 和 recommendationReason 最长三百字符，answer 最长一千五百字符；选择题保留二至五项，FREE_TEXT 的 options 必须为空；多选答案合计含分隔符不能超过一千五百字符。"),

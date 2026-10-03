@@ -288,7 +288,17 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
         return planningProvider.planValidated(request, response -> {
             // 只有实际进入下一次业务校验时才计重试，末次失败不能再记一次未发生的请求。
             if (alreadyValidated.getAndSet(true)) metrics.retry();
-            return validate(response);
+            PlanningProviderResponse validated = validate(response);
+            var guard = new RequirementFidelityGuard();
+            List<String> rules = guard.explicitRules(request.rawPrompt(), List.of());
+            // 包括非推荐选项；不能让用户通过候选答案无意放弃原始需求中的明确规则。
+            validated.questions().forEach(question -> question.options().forEach(option -> {
+                guard.validate(option.answer(), rules, "questions.options.answer");
+                guard.validate(option.label(), rules, "questions.options.label");
+                guard.validate(option.description(), rules, "questions.options.description");
+                guard.validate(option.recommendationReason(), rules, "questions.options.recommendationReason");
+            }));
+            return validated;
         });
     }
 

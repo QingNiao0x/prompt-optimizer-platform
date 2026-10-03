@@ -4,20 +4,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.analytics.domain.PendingAuditEvent;
 import com.promptoptimizer.analytics.service.AnalyticsDeliveryUnavailableException;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -236,6 +245,122 @@ class AuditEventDeliveryTest {
         }
     }
 
+    @Test
+    void repeatedConstraintFailuresProduceOneSafeDiagnosticInsteadOfPerEventErrors() {
+        AuditEventDatabaseWriter writer = mock(AuditEventDatabaseWriter.class);
+        doThrow(new DataIntegrityViolationException("private row data",
+                new SQLException("private database message", "23503"))).when(writer).write(any());
+        AuditEventDelivery delivery = delivery(journal(), writer);
+        Logger logger = (Logger) LoggerFactory.getLogger(AuditEventDelivery.class);
+        ListAppender<ILoggingEvent> logs = new ListAppender<>();
+        logs.start();
+        logger.addAppender(logs);
+        try {
+            for (int i = 0; i < 4; i++) delivery.accept(event(), true);
+            delivery.replayPending();
+            assertThat(delivery.status().pendingEvents()).isEqualTo(4);
+            assertThat(delivery.status().databaseFailures()).isEqualTo(4);
+            assertThat(logs.list).filteredOn(entry -> entry.getFormattedMessage()
+                    .contains("event=analytics.audit_write_failure")).singleElement().satisfies(entry -> {
+                        assertThat(entry.getFormattedMessage()).contains("sqlState=23503", "cause[0]",
+                                System.lineSeparator()).doesNotContain("private row data", "private database message");
+                        assertThat(entry.getThrowableProxy()).isNull();
+                    });
+        } finally {
+            logger.detachAppender(logs);
+            logs.stop();
+        }
+    }
+
+    @Test
+    void constraintFailureUsesLongerBackoffWithoutBlockingANewValidEvent() throws Exception {
+        PendingAuditEvent invalid = event();
+        PendingAuditEvent valid = event();
+        AuditEventDatabaseWriter writer = mock(AuditEventDatabaseWriter.class);
+        doThrow(new DataIntegrityViolationException("private row", new SQLException("private", "23503")))
+                .when(writer).write(invalid);
+        AtomicLong now = new AtomicLong();
+        Clock clock = clock(now);
+        AuditEventDelivery delivery = delivery(journal(), writer, clock);
+        delivery.accept(invalid, true);
+        delivery.replayPending();
+        now.set(150);
+        delivery.accept(valid, true);
+        delivery.replayPending();
+        verify(writer, times(1)).write(invalid);
+        verify(writer).write(valid);
+        assertThat(journal().acknowledged(invalid.id())).isFalse();
+        assertThat(journal().acknowledged(valid.id())).isTrue();
+        assertThat(delivery.status().pendingEvents()).isEqualTo(1);
+        assertThat(delivery.status().healthy()).isFalse();
+        now.set(299_999);
+        delivery.replayPending();
+        verify(writer, times(1)).write(invalid);
+        doNothing().when(writer).write(invalid);
+        now.set(300_000);
+        delivery.replayPending();
+        verify(writer, times(2)).write(invalid);
+        assertThat(delivery.status().healthy()).isTrue();
+        assertThat(journal().acknowledged(invalid.id())).isTrue();
+        assertThat(Files.exists(directory.resolve(invalid.id() + ".json"))).isTrue();
+    }
+
+    @Test
+    void dueSummaryCountsEverySuppressedFailureEvenDuringLongBackoff() {
+        AtomicLong now = new AtomicLong();
+        AuditEventDatabaseWriter writer = mock(AuditEventDatabaseWriter.class);
+        doThrow(new DataIntegrityViolationException("private", new SQLException("private", "23503")))
+                .when(writer).write(any());
+        AuditEventDelivery delivery = delivery(journal(), writer, clock(now));
+        Logger logger = (Logger) LoggerFactory.getLogger(AuditEventDelivery.class);
+        ListAppender<ILoggingEvent> logs = new ListAppender<>();
+        logs.start();
+        logger.addAppender(logs);
+        try {
+            for (int i = 0; i < 4; i++) delivery.accept(event(), true);
+            delivery.replayPending();
+            now.set(59_999);
+            delivery.replayPending();
+            assertThat(logs.list).noneMatch(entry -> entry.getFormattedMessage().contains("_summary"));
+            now.set(60_000);
+            delivery.replayPending();
+            assertThat(logs.list).filteredOn(entry -> entry.getFormattedMessage().contains("_summary"))
+                    .singleElement().satisfies(entry -> assertThat(entry.getFormattedMessage())
+                            .contains("suppressedFailures=3", "pendingEvents=4"));
+            verify(writer, times(4)).write(any());
+        } finally {
+            logger.detachAppender(logs);
+            logs.stop();
+        }
+    }
+
+    @Test
+    void archivedTestFixturesRemainPreservedAndAreNotReplayedOnRestart() throws Exception {
+        PendingAuditEvent fixture = event();
+        AuditEventJournal journal = journal();
+        journal.append(fixture);
+        Path archive = Files.createDirectories(directory.resolve("quarantine/test-fixtures"));
+        Path original = directory.resolve(fixture.id() + ".json");
+        byte[] bytes = Files.readAllBytes(original);
+        Files.move(original, archive.resolve(original.getFileName()));
+        AuditEventDatabaseWriter writer = mock(AuditEventDatabaseWriter.class);
+        AuditEventDelivery restarted = delivery(journal(), writer);
+        restarted.replayPending();
+        assertThat(restarted.status().healthy()).isTrue();
+        assertThat(restarted.status().pendingEvents()).isZero();
+        verify(writer, times(0)).write(any());
+        assertThat(Files.readAllBytes(archive.resolve(original.getFileName()))).isEqualTo(bytes);
+        assertThat(journal.acknowledged(fixture.id())).isFalse();
+    }
+
+    /** 使用可推进的真实时间值，验证五分钟重试与一分钟日志汇总的准确边界。 */
+    private Clock clock(AtomicLong now) {
+        Clock clock = mock(Clock.class);
+        when(clock.millis()).thenAnswer(invocation -> now.get());
+        when(clock.instant()).thenAnswer(invocation -> Instant.ofEpochMilli(now.get()));
+        return clock;
+    }
+
     /** 使用真实文件 journal；临时目录由测试运行器管理，不触及部署目录。 */
     private AuditEventJournal journal() {
         return new AuditEventJournal(directory.toString(), new ObjectMapper().findAndRegisterModules());
@@ -244,9 +369,15 @@ class AuditEventDeliveryTest {
     /** 不启动后台线程，显式重放便于稳定注入故障和模拟进程重启。 */
     @SuppressWarnings("unchecked")
     private AuditEventDelivery delivery(AuditEventJournal journal, AuditEventDatabaseWriter writer) {
+        return delivery(journal, writer, Clock.systemUTC());
+    }
+
+    /** 与运行期相同的构造校验，仅替换时钟以缩短重试回归。 */
+    @SuppressWarnings("unchecked")
+    private AuditEventDelivery delivery(AuditEventJournal journal, AuditEventDatabaseWriter writer, Clock clock) {
         ObjectProvider<io.micrometer.core.instrument.MeterRegistry> registry = mock(ObjectProvider.class);
         when(registry.getIfAvailable()).thenReturn(null);
-        return new AuditEventDelivery(journal, writer, 100, 100, 1000, 1000, 300, registry);
+        return new AuditEventDelivery(journal, writer, 100, 100, 1000, 1000, 300, registry, clock);
     }
 
     /** 固定历史发生时刻，验证重放不以当前时间覆盖统计归属日期。 */
