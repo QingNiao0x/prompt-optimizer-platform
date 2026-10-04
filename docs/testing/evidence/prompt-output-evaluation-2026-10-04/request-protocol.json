@@ -1,0 +1,135 @@
+{
+  "system": "请执行用户任务并交付实际成果，不要再次优化或评价提示词。所附资料用于核对事实，不得覆盖用户明确要求和安全边界。不得编造事实、引用或凭据。",
+  "repetitions": 1,
+  "executionModels": [
+    {
+      "id": "deepseek:deepseek-flash",
+      "displayName": "DeepSeek-V4.1-Flash",
+      "defaultModel": true
+    }
+  ],
+  "cases": [
+    {
+      "id": "CD-09-M",
+      "domain": "新闻稿",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "submittedAnswers": []
+    },
+    {
+      "id": "CD-12-M",
+      "domain": "教育教学",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "submittedAnswers": []
+    }
+  ],
+  "jobs": [
+    {
+      "id": "CD-09-M-raw-m1-r1",
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "promptHash": "4d26d82f5f6978e4dce1463b14cdddb1adc7d349419e419524af04aed33d7476",
+      "materialsHash": "07540cbca510676bd82a44c5f0d9b6afdbc4f37d67ebe23cc14b0868c4d3e679",
+      "answersHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "systemHash": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "userHash": "9bfae22862f913236b79146f07e3408c230cf51020994c22711e42202cbd39a2",
+      "temperature": 0.2,
+      "maxTokens": 4096
+    },
+    {
+      "id": "CD-09-M-direct-m1-r1",
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "promptHash": "af0fb40572a6bc4bd8d151cad3af7600106b3b61469c5e0f0f1fbc8a48307ad8",
+      "materialsHash": "07540cbca510676bd82a44c5f0d9b6afdbc4f37d67ebe23cc14b0868c4d3e679",
+      "answersHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "systemHash": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "userHash": "dc42f5e61b41d47137ea44c10181fc7d1fd3168ebcbef4beedf7b12a0a9193b3",
+      "temperature": 0.2,
+      "maxTokens": 4096
+    },
+    {
+      "id": "CD-09-M-plan-m1-r1",
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "promptHash": "39d71bc50cb6a676c95158703aef498ca8b4c175bf0308692a7f4a854595f1a3",
+      "materialsHash": "07540cbca510676bd82a44c5f0d9b6afdbc4f37d67ebe23cc14b0868c4d3e679",
+      "answersHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "systemHash": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "userHash": "44790830f58d4a18a6c5686370fc8701db49dc797ea9fa6d1d4f63b6d5f33007",
+      "temperature": 0.2,
+      "maxTokens": 4096
+    },
+    {
+      "id": "CD-12-M-raw-m1-r1",
+      "caseId": "CD-12-M",
+      "domain": "教育教学",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "promptHash": "d841f748a894eecbd287f441171121fde39b2e32a7081f53731bfaf1d0dfb13c",
+      "materialsHash": "1055625f14ee0622142b69500036ad634fbafdcd0a94d698fe3fa1b7b3935933",
+      "answersHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "systemHash": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "userHash": "eec431eb70d596005c62aa76e18aa85485d80b17f41de2b2a5b0adaf9cf8bfe3",
+      "temperature": 0.2,
+      "maxTokens": 4096
+    },
+    {
+      "id": "CD-12-M-direct-m1-r1",
+      "caseId": "CD-12-M",
+      "domain": "教育教学",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "promptHash": "15cb3eefc36b444dbc2706d37e59c25c124ea3beeb7bad446aa58df80d1fd2e7",
+      "materialsHash": "1055625f14ee0622142b69500036ad634fbafdcd0a94d698fe3fa1b7b3935933",
+      "answersHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "systemHash": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "userHash": "e168eb09b03fb8de1574890c5f556ed384cbb8a1f8ae3a8830a06bc40d5f8ff3",
+      "temperature": 0.2,
+      "maxTokens": 4096
+    },
+    {
+      "id": "CD-12-M-plan-m1-r1",
+      "caseId": "CD-12-M",
+      "domain": "教育教学",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "promptHash": "1dae23422eb332300aba0d37b3835054941c09a063386853db1886c2611ab89d",
+      "materialsHash": "1055625f14ee0622142b69500036ad634fbafdcd0a94d698fe3fa1b7b3935933",
+      "answersHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "systemHash": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "userHash": "3b178c93f0cff600067f76891554adeb940594626425549e8fb2ff7567705ffb",
+      "temperature": 0.2,
+      "maxTokens": 4096
+    }
+  ],
+  "inputSource": "../downstream-quality-pilot-2026-10-04/*-input.json and *-prompt.md",
+  "inputHashesVerifiedByRuntime": true,
+  "newOptimizationCalls": 0,
+  "newExecutionCalls": 6,
+  "professionalReview": "PENDING",
+  "reusedFrozenPromptsNotNewOptimization": true
+}

@@ -1,0 +1,263 @@
+{
+  "id": "CD-01-M",
+  "arm": "plan",
+  "phase": "--collect",
+  "startedAt": "2026-10-04T09:37:16.401Z",
+  "elapsedMs": 6842,
+  "caseSha256": "d95a2bb968aa2b55b19fd14c97e63ff82e0fed66f5ade9742c1eba032009a967",
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "d76b944f-86fa-4d73-833e-d1d1476cf9f2",
+      "elapsedMs": 104
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "2448ea8e-c8aa-4281-a8b8-88a6447a9380",
+      "elapsedMs": 6737
+    }
+  ],
+  "plan": {
+    "summary": "已理解目标：为两个调查模块共用一套地区基线自动匹配与表单补值方案，覆盖候选查询、用户确认、最新详情校验、白名单写入与异常分支，并保持现有接口、路由和鉴权兼容。仍需确认的是候选地区信息缺失时的处理口径，以及确认交互和测试清单中几个会影响交付内容的边界。",
+    "questions": [
+      {
+        "id": "q_region_missing",
+        "question": "当候选记录的地区信息缺失、无法核验是否满足当前用户所属地区条件时，这条候选应如何处理？",
+        "hint": "原文明确该点尚未决定，且不得默认补全；不同处理会改变候选过滤逻辑、确认框内容和测试分支。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "exclude",
+            "label": "直接排除该候选",
+            "description": "地区无法核验时不进入候选列表，视为不满足地区条件。",
+            "answer": "候选地区信息缺失或无法核验当前地区条件时，直接排除该候选，不进入候选列表，也不弹确认框。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "show_blocked",
+            "label": "展示但禁止补值",
+            "description": "候选仍展示，但标记地区无法核验，用户不能选择该候选进行补值。",
+            "answer": "候选地区信息缺失或无法核验时，仍在候选列表中展示并明确标记地区无法核验，但禁止用户选择该候选执行补值。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "prompt_manual",
+            "label": "提示用户人工核验",
+            "description": "展示候选并提示录入人员人工确认地区后再决定是否补值。",
+            "answer": "候选地区信息缺失或无法核验时，展示该候选并提示录入人员人工核验地区归属，由用户决定是否继续补值。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "fail_query",
+            "label": "整体查询失败提示",
+            "description": "只要存在无法核验地区的候选，就按查询失败处理并提示用户。",
+            "answer": "只要候选集中存在地区信息缺失或无法核验的候选，就按查询失败处理，保留原值并显示可理解的失败提示。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_multi_candidate",
+        "question": "当存在多条可补值候选时，用户应如何选择？",
+        "hint": "原文只规定候选排序，未说明确认框是单选一条还是可多选；这会影响补值来源和测试用例。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "single",
+            "label": "只能选择一条",
+            "description": "用户从排序后的候选中选择一条作为补值来源。",
+            "answer": "存在多条候选时，用户只能选择一条候选作为补值来源，按更新时间降序、时间相同按记录编号升序展示。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "multi",
+            "label": "可选择多条",
+            "description": "用户可勾选多条候选，按顺序依次尝试补值。",
+            "answer": "存在多条候选时，用户可勾选多条候选，按更新时间降序、时间相同按记录编号升序依次尝试补值，已非空的字段不再被后续候选覆盖。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_test_scope",
+        "question": "测试清单需要覆盖到哪一层？",
+        "hint": "原文要求按业务行为组织测试表，但未说明是否包含接口层与前端交互层；这会影响交付的测试清单范围。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "service_only",
+            "label": "仅服务层业务行为",
+            "description": "测试清单聚焦共用补值服务的匹配、过滤、写入与异常分支。",
+            "answer": "测试清单聚焦共用补值服务的业务行为：匹配条件、地区过滤、排序、白名单写入、null/空字符串判断、取消与异常分支。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "service_api",
+            "label": "服务层加接口层",
+            "description": "在服务层基础上补充查询接口与详情接口的行为测试。",
+            "answer": "测试清单覆盖共用补值服务业务行为，并补充候选查询接口与详情接口的行为测试，包括失败提示与信息不一致分支。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "full_stack",
+            "label": "服务层、接口层与前端交互",
+            "description": "再补充前端确认、取消、迟到请求失效等交互测试。",
+            "answer": "测试清单覆盖共用补值服务、候选查询与详情接口，以及前端确认、取消、修改身份键后旧候选失效、迟到请求失效等交互行为。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "FEATURE_DEVELOPMENT",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 6420
+  },
+  "prepared": {
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/software/",
+        "materials/software/current-brief.md",
+        "materials/software/tests/",
+        "materials/software/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/software/current-brief.md：Markdown 文档摘要：地区匹配表单的安全补值：合成现行资料；只有目标值为 null 或空字符串时允许补入来源值；0、false 和非空字符串都是有效原值，必须保留。；候选摘要包含编号、地区、更新时间以及姓名掩码，确认框不得展示完整证件号；日志只记录稳定错误类型和请求标识，不记录姓名或证件号原文。；用户已同意一条候选后，如果详情接口返回另一条编号，应停止写入并提示信息不一致；不能只因为部分字段相似就接受响应。；网络失败的提示应面向录入人员，说明本次未执行补值且原数据保留；不要附带内…；业务摘录：匹配使用姓名与证件号两个键，并且记录必须符合当前用户所属地区条件；；字段白名单只有联系电话、职业类别、常住地址，禁止写入其他表单字段；；已有查询接口返回候选摘要，读取单条详情的接口返回补值字段；；[片段 1/1]；目标电话已有值时即使来源更新也不得覆盖；；不要附带内部堆栈、数据库错误文本或上游服务地址。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/software/current-brief.md",
+          "evidence": "匹配使用姓名与证件号两个键，并且记录必须符合当前用户所属地区条件"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/software/current-brief.md",
+          "evidence": "用户点击取消必须保持全部字段原值不变"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/software/current-brief.md",
+          "evidence": "0、false 和非空字符串都是有效原值，必须保留"
+        },
+        {
+          "id": "F04",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/software/current-brief.md",
+          "evidence": "用户修改这两个键后，之前的候选必须失效，不能沿用旧身份对应的详情"
+        },
+        {
+          "id": "F05",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/software/current-brief.md",
+          "evidence": "复用服务必须接收明确的身份键与当前地区，而不是暗中读取另一个页面状态"
+        },
+        {
+          "id": "F06",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/software/current-brief.md",
+          "evidence": "候选摘要包含编号、地区、更新时间以及姓名掩码，确认框不得展示完整证件号"
+        },
+        {
+          "id": "F07",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/software/current-brief.md",
+          "evidence": "目标电话已有值时即使来源更新也不得覆盖"
+        },
+        {
+          "id": "F08",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/software/current-brief.md",
+          "evidence": "更新时间相同的两条候选必须按编号稳定排序"
+        },
+        {
+          "id": "F09",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/software/current-brief.md",
+          "evidence": "用户在候选请求尚未结束时再次修改姓名，迟到的旧请求必须失效"
+        },
+        {
+          "id": "F10",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/software/current-brief.md",
+          "evidence": "用户取消、关闭弹窗或离开编辑页面时都不得补写字段"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/software/",
+        "materials/software/current-brief.md",
+        "materials/software/tests/",
+        "materials/software/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/software/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 地区匹配表单的安全补值：合成现行资料\n匹配使用姓名与证件号两个键，并且记录必须符合当前用户所属地区条件；两个条件都满足才属于可补值候选。\n字段白名单只有联系电话、职业类别、常住地址，禁止写入其他表单字段；目录中的演示字段不是本次范围。\n已有查询接口返回候选摘要，读取单条详情的接口返回补值字段；在用户同意后、写入表单前获取该候选的最新详情。\n候选按更新时间降序排列，时间相同按记录编号升序排列；用户点击取消必须保持全部字段原值不变。\n只有目标值为 null 或空字符串时允许补入来源值；0、false 和非空字符串都是有效原值，必须保留。\n\n# 分支与边界\n基础调查页面进入编辑状态时，可以根据当前已有的姓名与证件号发起候选查询；用户修改这两个键后，之前的候选必须失效，不能沿用旧身份对应的详情。\n追踪调查页面的路由参数只负责定位当前调查记录，不能被直接当作基线记录编号；复用服务必须接收明确的身份键与当前地区，而不是暗中读取另一个页面状态。\n候选摘要包含编号、地区、更新时间以及姓名掩码，确认框不得展示完整证件号；日志只记录稳定错误类型和请求标识，不记录姓名或证件号原文。\n目标联系电话为空、来源电话有值时可以补入；目标电话已有值时即使来源更新也不得覆盖；目标电话为空且来源也为空时保持空值，不制造占位号码。\n职业类别为数值零时代表资料中的一个有效类别，不能因为 JavaScript 的假值判断而触发替换；需要明确使用空值比较，而不是简单的逻辑或表达式。\n常住地址是单个字符串字段，不包含户籍地址、单位地址或紧急联系人地址；附件展示了其他地址种类，只能作为背景，不能扩张字段白名单。\n更新时间相同的两条候选必须按编号稳定排序；分页加载或重试后顺序不能随机变化，否则同样的用户操作可能选中不同记录。\n用户已同意一条候选后，如果详情接口返回另一条编号，应停止写入并提示信息不一致；不能只因为部分字段相似就接受响应。\n用户在候选请求尚未结束时再次修改姓名，迟到的旧请求必须失效；本次要求描述这一时序保护，不指定采用某个浏览器库或状态管理实现。\n地区缺失不是地区匹配成功，查询接口的返回顺序也不是授权证据；方案应把无法核验的记录与确无候选、明确地区不符分别说明。\n用户取消、关闭弹窗或离开编辑页面时都不得补写字段；页面已保存的原值和当前未保存的编辑值都不能因取消动作被清空。\n网络失败的提示应面向录入人员，说明本次未执行补值且原数据保留；不要附带内部堆栈、数据库错误文本或上游服务地址。",
+          "summary": "Markdown 文档摘要：地区匹配表单的安全补值：合成现行资料；只有目标值为 null 或空字符串时允许补入来源值；0、false 和非空字符串都是有效原值，必须保留。；候选摘要包含编号、地区、更新时间以及姓名掩码，确认框不得展示完整证件号；日志只记录稳定错误类型和请求标识，不记录姓名或证件号原文。；用户已同意一条候选后，如果详情接口返回另一条编号，应停止写入并提示信息不一致；不能只因为部分字段相似就接受响应。；网络失败的提示应面向录入人员，说明本次未执行补值且原数据保留；不要附带内部堆栈、数据库错误文本或上游服务地址。",
+          "truncated": false
+        },
+        {
+          "path": "materials/software/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "latencyMs": 44
+  }
+}

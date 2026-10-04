@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 保留用户明确规则，并拦截可确定的否定、数值边界和操作反转。
@@ -21,6 +23,7 @@ import java.util.regex.Pattern;
  * @since 0.1.0
  */
 final class RequirementFidelityGuard {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequirementFidelityGuard.class);
     private static final Pattern REQUIREMENT = Pattern.compile(
             "(?i)(必须|须|不得|禁止|不能|不允许|不超过|不少于|不低于|不高于|至少|最多|仅|只|"
                     + "保持|保留|排除|确认|取消|不填|不覆盖|不修改|不改变|不阻断|不回滚|附表另计|plan\\s*问答|按.+(?:降序|升序).*(?:选|取)|"
@@ -126,10 +129,19 @@ final class RequirementFidelityGuard {
 
     /** 模型不得以追加正确原文掩盖另一个执行段落中的相反要求。 */
     void validate(String draft, List<String> rules, String field) {
-        for (String statement : clauses(draft)) {
-            for (String rule : rules) {
-                for (String expected : clauses(rule)) {
+        List<String> statements = clauses(draft);
+        // 同一组规则服务于本段所有断言，分句只计算一次，避免长需求在嵌套循环中重复解析。
+        List<List<String>> expectedByRule = rules.stream().map(this::clauses).toList();
+        for (int statementIndex = 0; statementIndex < statements.size(); statementIndex++) {
+            String statement = statements.get(statementIndex);
+            for (int ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++) {
+                List<String> expectedClauses = expectedByRule.get(ruleIndex);
+                for (int expectedIndex = 0; expectedIndex < expectedClauses.size(); expectedIndex++) {
+                    String expected = expectedClauses.get(expectedIndex);
                     if (contradicts(expected, statement)) {
+                        // 仅保存位置与分类，便于按同一合成输入复现；不记录规则、模型正文或凭据。
+                        LOGGER.warn("event=requirement.rule_conflict field={} ruleIndex={} expectedClauseIndex={} statementIndex={}",
+                                field, ruleIndex, expectedIndex, statementIndex);
                         throw new ProviderResponseValidationException(Reason.RULE_CONFLICT, field);
                     }
                 }
@@ -159,6 +171,11 @@ final class RequirementFidelityGuard {
         // 保留同句中的条件与例外；“数据尚未提供，但不得编造”仍是明确要求，不能因未知词删掉整句。
         for (String sentence : text.split("(?<=[。！？!?])|\\R")) {
             String value = sentence.strip().replaceFirst("^(?:[-*•]\\s+|\\d+[.)、]\\s*)", "");
+            // 问号后的裸待定状态没有业务对象，不能在答案绑定后继续宣称已定选择尚未决定。
+            // 保留禁止猜测的条件边界；具体未决问题仍由权威提醒列表及 Plan 未决答案完整交付。
+            if (value.matches("^当前(?:尚未|还未)(?:决定|确定)[，,](?:不得|不能)默认补全[。.]?$")) {
+                value = "对于仍未明确的条件，不得默认补全。";
+            }
             if (!value.isBlank() && REQUIREMENT.matcher(value).find() && !UNCERTAIN.matcher(value).find()
                     && !INSTRUCTION_OVERRIDE.matcher(value).find() && !sensitiveValueDetector.containsCredential(value)) {
                 rules.add(value);
@@ -206,17 +223,12 @@ final class RequirementFidelityGuard {
 
         // 表单回放中的语义反转不是简单漏词；同时识别保留有效值和取消不改变字段的要求。
         if (expected.matches(".*取消.{0,12}(?:保持|保留|不修改|不改变).*原值.*")
-                && actual.contains("原值") && (actual.matches(".*(?:移除|删除)(?:原有|现有|已有)?(?:保持|保留)原值.*")
-                || actual.matches(".*取消(?:保持|保留)原值(?:的)?(?:逻辑|保护|选项).*")
-                || actual.matches(".*取消.*(?:清空|覆盖原值|无需保持|不再保持|不必保留).*"))
-                && !actual.matches(".*(?:不得|不能|禁止|不要|不应)(?:移除|删除|取消).*保持原值.*")
-                && !actual.matches(".*取消.*(?:不清空|不得清空|不覆盖原值|不得覆盖原值).*")) return true;
+                && changesValuesOnCancellation(actual)) return true;
         if (expected.matches(".*(?:只填|仅填|仅向|只向|只给|仅给).*(?:null|空字符串|空字段|空值).*")
                 && actual.matches(".*(?:清空.{0,12}字段|填入null|赋值为null|填入空字符串).*")
                 && !actual.matches(".*(?:不|不得|禁止|不要|不能)(?:清空|填入|赋值).*")) return true;
-        if (expected.matches(".*(?:保留|保持).*0.*false.*")
-                && actual.matches(".*(?:将|把)?0.*false.*(?:视为空值|当作空值|覆盖|清空).*")
-                && !actual.matches(".*(?:不得|禁止|不能|不要|不应).*")) return true;
+        if (expected.contains("0") && expected.contains("false")
+                && expected.matches(".*(?:保留|保持).*") && replacesValidValues(actual)) return true;
         if (expected.matches(".*(?:确认后|经.{0,8}确认|先.{0,8}确认|提示用户是否|人工确认).*")
                 && actual.matches(".*(?:无需|不需要|不必|不再|不额外|不经|跳过|绕过).{0,8}确认.*")
                 && !actual.matches(".*(?:不得|禁止|不能|不要|不应).*(?:跳过|绕过|省略).*" )
@@ -253,6 +265,34 @@ final class RequirementFidelityGuard {
                 && (!left.values().equals(right.values()) || !left.operators().equals(right.operators()));
     }
 
+    /**
+     * 按取消分支中各动作的邻近否定判断，不把“禁止清空或覆盖”误当作清空许可。
+     * 并列禁令共享否定，“但覆盖原值”等独立正向动作仍必须拦截；清理候选列表不等于清空表单。
+     */
+    private boolean changesValuesOnCancellation(String statement) {
+        var actions = Pattern.compile("(?:移除|删除)(?:原有|现有|已有)?(?:保持|保留)原值(?:的)?(?:逻辑|保护)?"
+                + "|取消(?:保持|保留)原值(?:的)?(?:逻辑|保护|选项)"
+                + "|清空(?:(?:全部|所有|任何|表单|目标|现有|已有|原有|的)*(?:字段|原值|表单)|(?=或|及|和|、))"
+                + "|覆盖原值|无需保持|不再保持|不必保留").matcher(statement);
+        int cancellation = statement.indexOf("取消");
+        int previousEnd = -1;
+        boolean previousProhibited = false;
+        while (actions.find()) {
+            boolean removesProtection = actions.group().matches("^(?:移除|删除|取消(?:保持|保留)).*");
+            if (!removesProtection && (cancellation < 0 || actions.start() < cancellation)) continue;
+            String prefix = statement.substring(0, actions.start());
+            boolean prohibited = prefix.matches(".*(?:不|不得|不能|禁止|不要|不应|避免)(?:再|直接|自动|随意)?$");
+            if (previousEnd >= 0 && previousProhibited
+                    && statement.substring(previousEnd, actions.start()).matches("(?:的|任何|全部|所有|已有|表单|字段|原值)*(?:或|及|和|、|并|并且)")) {
+                prohibited = true;
+            }
+            if (!prohibited) return true;
+            previousEnd = actions.end();
+            previousProhibited = true;
+        }
+        return false;
+    }
+
     /** 匹配后立即填充是明确的执行时序；之后确认或撤销不能替代此前要求的首次确认。 */
     private boolean immediateFillBeforeConfirmation(String statement) {
         var immediate = Pattern.compile("(?:匹配到(?:记录|基线|数据)|匹配成功|当前地区(?:存在|有)匹配(?:记录|基线)?)"
@@ -261,6 +301,20 @@ final class RequirementFidelityGuard {
             String preceding = statement.substring(0, immediate.start());
             if (preceding.matches(".*(?:不|不得|不能|禁止|不要|不应)(?:在)?$")) continue;
             if (!preceding.matches(".*(?:经用户确认|用户(?:点击)?确认后|用户点击填充后|经确认后).*")) return true;
+        }
+        return false;
+    }
+
+    /** 逐个检查作用于有效值的动作，否定只覆盖相应动作，不能由同句另一条禁令替代。 */
+    private boolean replacesValidValues(String statement) {
+        var actions = Pattern.compile("0.{0,40}false.{0,60}?(视为空值|当作空值|覆盖|清空)").matcher(statement);
+        while (actions.find()) {
+            String prefix = statement.substring(0, actions.start(1));
+            if (prefix.matches(".*(?:不|不得|不能|不应|不要|禁止)(?:再|直接|一律|自动)?$")) continue;
+            if (prefix.matches(".*(?:不得|不能|不应|不要|禁止)(?:将|把)?0[、和与及]*false(?:[、和与及]*非空字符串)?$")) continue;
+            String next = statement.substring(actions.end(1));
+            if (next.matches("^(?:空字段|空字符串|null).*")) continue;
+            return true;
         }
         return false;
     }

@@ -207,7 +207,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         List<PlanAnswer> planAnswers = confirmedPlan.answers();
         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planAnswers);
         String contextQuery = decisions.retrievalQuery(request.rawPrompt());
-        ContextSnapshot context = planningSessionService.reusableContext(
+        ContextSnapshot context = com.promptoptimizer.common.logging.PipelineStageTiming.measure(
+                "prompt.optimize", "context.analyze", selectedModelId, () -> planningSessionService.reusableContext(
                         confirmedPlan,
                         filteredContext.request(),
                         contextQuery
@@ -215,7 +216,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 .orElseGet(() -> protectedContextFilter.attachReport(
                         contextAnalyzer.analyze(filteredContext.request(), contextQuery),
                         filteredContext
-                ));
+                )));
         List<ConversationMessage> conversation = Boolean.TRUE.equals(request.enhancement().includeConversationHistory())
                 ? request.conversationHistory()
                 : List.of();
@@ -287,7 +288,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                                 decisions.decisions()
                         ),
                         // 回调只组装及校验结果；历史写入继续由调用方在最终成功返回后执行一次。
-                        providerResponse -> resultAssembler.assemble(
+                        providerResponse -> com.promptoptimizer.common.logging.PipelineStageTiming.measure(
+                                "prompt.optimize", "result.assemble", selectedModelId, () -> resultAssembler.assemble(
                                 providerResponse,
                                 context,
                                 template,
@@ -301,7 +303,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                                 planningFacts,
                                 planningWarnings
                         ).withModelVersion(selectedModel != null && selectedModelId.equals(providerResponse.model())
-                                ? selectedModel.displayName() : ""));
+                                ? selectedModel.displayName() : "")));
                 long latencyMs = result.latencyMs();
                 if (result.provider().mock()) {
                     ModelCallLogger.completed("prompt.optimize", result.provider().provider(),

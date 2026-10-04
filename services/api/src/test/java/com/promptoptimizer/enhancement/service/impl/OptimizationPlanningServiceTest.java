@@ -402,6 +402,61 @@ class OptimizationPlanningServiceTest {
         return new OptimizationPlanRequest(prompt, "", List.of());
     }
 
+    @Test
+    void shouldUseUploadedStatusBoundaryToRepairAPlanCandidateWithinTheSharedBudget() {
+        String raw = "制定表单补值实现方案，地区缺失时的候选处理方式尚未决定。";
+        String source = "方案应把无法核验的记录与确无候选、明确地区不符分别说明。";
+        PlanningSessionService sessions = new PlanningSessionServiceImpl(new InMemoryPlanningSessionStore(CLOCK),
+                request -> new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(
+                        new FileSnippet("materials/software/current-brief.md", "markdown", source, source, false)),
+                        List.of(), List.of(), "test-v1"), new ProtectedContextFilterImpl(), TestActors.currentActor(), CLOCK);
+        var prepared = sessions.prepareContext(new PlanningContextRequest(raw, new ContextAnalysisRequest("", List.of(
+                new ContextFileInput("materials/software/current-brief.md", source, "markdown"))), PermissionPolicyInput.empty()));
+        AtomicInteger calls = new AtomicInteger();
+        var planning = new OptimizationPlanningServiceImpl(request -> {
+            String answer = calls.incrementAndGet() == 1 ? "无法核验地区时按查询失败处理。" : "无法核验地区时展示但不允许补值，并分别说明。";
+            return new PlanningProviderResponse("确认地区缺失处理", List.of(new PlanQuestion("region-missing",
+                    "无法核验地区的候选如何处理？", "影响补值候选", PlanQuestionType.SINGLE_CHOICE,
+                    List.of(new PlanOption("review", "核验候选", "", answer, false),
+                            new PlanOption("unknown", "暂不确定", "", "暂不确定", false)), List.of(), true)), "mock", "planner", true);
+        }, new PromptTemplateRegistryImpl(), sessions, CLOCK);
+        var plan = planning.plan(new OptimizationPlanRequest(raw, "", List.of(),
+                new PlanningContextReference(prepared.contextId(), prepared.version())));
+        assertThat(calls).hasValue(2);
+        assertThat(plan.questions()).singleElement().satisfies(question -> assertThat(question.options())
+                .noneMatch(option -> option.answer().contains("按查询失败处理")));
+    }
+
+    @Test
+    void shouldNotLetAnApprovalConflictSuppressRefundOrNewApprovalConditions() {
+        String raw = "完善审批与退款流程，核对审批标准并补全退款条件";
+        PlanningSessionService sessions = new PlanningSessionServiceImpl(
+                new InMemoryPlanningSessionStore(CLOCK),
+                request -> new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(
+                        new FileSnippet("docs/现行审批.txt", "text", "审批标准：三万元", "现行审批标准", false),
+                        new FileSnippet("docs/新审批.txt", "text", "审批标准：五万元", "新审批标准", false)
+                ), List.of(), List.of(), "test-v1"),
+                new ProtectedContextFilterImpl(), TestActors.currentActor(), CLOCK);
+        var preparation = sessions.prepareContext(new PlanningContextRequest(raw,
+                new ContextAnalysisRequest("", List.of(
+                        new ContextFileInput("docs/现行审批.txt", "审批标准：三万元", "text"),
+                        new ContextFileInput("docs/新审批.txt", "审批标准：五万元", "text")
+                )), PermissionPolicyInput.empty()));
+        var questions = List.of(
+                new PlanQuestion("approval", "审批标准是什么？", "", PlanQuestionType.FREE_TEXT, List.of(), List.of(), true),
+                new PlanQuestion("refund", "退款规则采用什么标准？", "", PlanQuestionType.FREE_TEXT, List.of(), List.of(), true),
+                new PlanQuestion("urgent", "紧急订单的审批标准是什么？", "", PlanQuestionType.FREE_TEXT, List.of(), List.of(), true));
+        var planning = new OptimizationPlanningServiceImpl(
+                request -> new PlanningProviderResponse("确认各项口径", questions, "mock", "planner", true),
+                new PromptTemplateRegistryImpl(), sessions, CLOCK);
+        var actual = planning.plan(new OptimizationPlanRequest(raw, "", List.of(),
+                new PlanningContextReference(preparation.contextId(), preparation.version())));
+        assertThat(actual.questions()).extracting(PlanQuestion::id)
+                .contains("refund", "urgent").doesNotContain("approval");
+        assertThat(actual.questions()).filteredOn(question -> question.id().startsWith("context-conflict-"))
+                .hasSize(1);
+    }
+
     private static PlanningSessionService planningSessions(Clock clock) {
         return new PlanningSessionServiceImpl(
                 new InMemoryPlanningSessionStore(clock),

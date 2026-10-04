@@ -25,6 +25,41 @@ class OptimizationResultAssemblerTest {
     private final OptimizationResultAssembler assembler = new OptimizationResultAssembler();
 
     @Test
+    void shouldNotDuplicateAnExplicitPendingQuestionAlreadyCoveredByTheWholeProviderReminder() {
+        String pending = "候选地区信息缺失、无法核验当前地区条件时，应怎样处理这条候选？";
+        String raw = "制定表单方案，记录必须符合当前用户所属地区条件。\n## 尚待明确\n- " + pending + "当前尚未决定，不得默认补全。";
+        String reminder = "候选地区信息缺失、无法核验当前用户所属地区条件时，该候选应如何处理（例如：直接排除、标记为待人工核验、还是其他处理方式）？"
+                + "当前尚未决定，不得默认补全；新超时 30 秒的策略也尚未确定。";
+        var result = assembler.assemble(response(List.of(reminder)), emptyContext(),
+                new PromptTemplate(TemplateCode.FEATURE_DEVELOPMENT, "输出", "测试通过", "示例"),
+                List.of(), List.of(), false, List.of("不得削弱现有功能"), false, 1, raw);
+        assertThat(result.ambiguities()).containsExactly(reminder);
+        assertThat(result.optimizedPrompt()).contains("新超时 30 秒的策略也尚未确定");
+        String newCondition = "紧急候选地区信息缺失、无法核验当前地区条件时，应怎样处理这条候选？当前尚未决定。";
+        var withNew = assembler.assemble(response(List.of(newCondition)), emptyContext(),
+                new PromptTemplate(TemplateCode.FEATURE_DEVELOPMENT, "输出", "测试通过", "示例"),
+                List.of(), List.of(), false, List.of("不得削弱现有功能"), false, 1, raw);
+        assertThat(withNew.ambiguities()).containsExactly(newCondition, pending);
+    }
+
+    @Test
+    void shouldKeepExplicitRawPendingQuestionsWhenDirectProviderReturnsAnEmptyList() {
+        String pending = "候选地区信息缺失、无法核验当前地区条件时，应怎样处理这条候选？";
+        String raw = "制定表单补值方案。\n## 尚待明确\n- " + pending + "当前尚未决定，不得默认补全。\n## 交付\n提供测试表。";
+        var result = assembler.assemble(response(List.of()), emptyContext(),
+                new PromptTemplate(TemplateCode.FEATURE_DEVELOPMENT, "输出", "测试通过", "示例"),
+                List.of(), List.of(), false, List.of("不得削弱现有功能"), false, 1, raw);
+        assertThat(result.ambiguities()).containsExactly(pending);
+        assertThat(result.optimizedPrompt()).contains(pending, "执行前须确认");
+        // 明确提交的绑定 Plan 答案仍是权威输入，不能把旧需求的待定标签重新解释成新问题。
+        var confirmed = assembler.assemble(response(List.of()), emptyContext(),
+                new PromptTemplate(TemplateCode.FEATURE_DEVELOPMENT, "输出", "测试通过", "示例"),
+                List.of(), List.of(new PlanAnswer("region", pending, "不允许补值并单独说明无法核验地区。")),
+                true, List.of("不得削弱现有功能"), false, 1, raw);
+        assertThat(confirmed.ambiguities()).isEmpty();
+    }
+
+    @Test
     void shouldProduceFinalPromptFromConfirmedAnswersAndRemoveClarifications() {
         var result = assembler.assemble(
                 new EnhancementProviderResponse(List.of(
@@ -130,9 +165,12 @@ class OptimizationResultAssemblerTest {
                 "按方案实现订单审批", List.of(fact));
 
         assertThat(result.optimizedPrompt())
-                .contains("Plan 阶段绑定的资料事实", "BUSINESS_RULE", "docs/订单审批方案.txt",
+                .contains("Plan 阶段绑定的资料事实", "docs/订单审批方案.txt",
                         "订单金额超过五万元时必须先由财务复核",
                         "二次检索发现的明确资料规则", "订单取消时必须退还未发货商品金额");
+        assertThat(result.evidenceCards()).contains(fact);
+        assertThat(result.withModelVersion("评测版本").evidenceCards()).isEqualTo(result.evidenceCards());
+        assertThat(result.optimizedPrompt()).doesNotContain("[BUSINESS_RULE/", "首次已读；");
     }
 
     @Test

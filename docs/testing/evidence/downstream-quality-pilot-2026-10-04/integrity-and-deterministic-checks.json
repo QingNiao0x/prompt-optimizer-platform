@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-10-04T05:12:13.214Z",
+  "artifactValidation": "PASS",
+  "verifiedArtifactCount": 25,
+  "successfulWorkCount": 6,
+  "sharedMaterialsAndSystemHashes": "PASS",
+  "initialFailuresPreserved": 6,
+  "separateCalibrationFailuresPreserved": 1,
+  "news": [
+    {
+      "arm": "raw",
+      "han": 594,
+      "nonWhitespace": 658,
+      "verdict": "NEEDS_DEFINITION"
+    },
+    {
+      "arm": "direct",
+      "han": 518,
+      "nonWhitespace": 578,
+      "verdict": "FAIL_TOO_SHORT"
+    },
+    {
+      "arm": "plan",
+      "han": 414,
+      "nonWhitespace": 464,
+      "verdict": "FAIL_TOO_SHORT"
+    }
+  ],
+  "arithmetic": [
+    {
+      "arm": "raw",
+      "sourceLine": 140,
+      "invalidRelation": "3/4 < 5/7",
+      "correctRelation": "3/4 > 5/7",
+      "leftCrossProduct": 21,
+      "rightCrossProduct": 20
+    },
+    {
+      "arm": "plan",
+      "sourceLine": 254,
+      "invalidRelation": "4/9 < 3/7",
+      "correctRelation": "4/9 > 3/7",
+      "leftCrossProduct": 28,
+      "rightCrossProduct": 27
+    }
+  ],
+  "note": "Evidence integrity passed. Business findings remain mixed/failed; professional review is pending."
+}

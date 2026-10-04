@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "1",
+  "caseId": "CD-12-M",
+  "date": "2026-10-04",
+  "reviewer": "cross_domain_corpus",
+  "status": "AI_ASSISTED_BLINDED_STATIC_REVIEW_NOT_PROFESSIONAL_OR_HUMAN_RELEASE_ACCEPTANCE",
+  "blinding": {
+    "readFiles": [
+      "CD-12-M-requirements.json",
+      "E-A.md",
+      "E-B.md",
+      "E-C.md"
+    ],
+    "mappingRead": false,
+    "groupIdentityKnown": false,
+    "externalModelCalls": 0
+  },
+  "rubricPolicy": "核查实际教案、题目、答案和业务条件；不同合理题目与措辞均允许，不对照固定成稿全文。",
+  "arithmeticMethod": "Python fractions.Fraction 精确有理数；LaTeX分子分母中的整数乘法按字面解析，不eval；学生留空框不是算式，跳过；并结合全文人工语义核对。",
+  "arithmeticSummary": {
+    "checkedFractionComparisonsAndEqualities": 87,
+    "invalidPublishedComparisons": 2,
+    "nonpositiveOrImproperNumericFractions": 0
+  },
+  "commonVerified": [
+    "三份都交付教师教案、基础/应用各3题的学生练习页及独立答案页",
+    "三份固定环节为5/10/15/10/5分钟，共45分钟，课前准备不占课时",
+    "三份保持30人、10个三人组、角色轮换及黑板/等长纸条，不安排电子设备任务",
+    "三份有相同0至1整体的数轴解释及通分等值理由",
+    "未发现增加第三档练习、课外作业、负分数、假分数、超纲代数、不当学生标签或真实成绩造假",
+    "练习页与答案分离，未把测试材料CSV/Python/收入/准确率当教学事实"
+  ],
+  "results": [
+    {
+      "label": "E-A",
+      "verdict": "FAIL_DETERMINISTIC_ANSWER_CONTRADICTION",
+      "hardIssues": [
+        {
+          "issueId": "EA-MATH-01",
+          "file": "E-A.md",
+          "line": 254,
+          "evidence": "6. 4/9 < 3/7。",
+          "actual": "4/9=28/63，3/7=27/63，因此4/9>3/7。",
+          "impact": "答案标题仍含错误不等式，虽后文自我更正，交付稿仍相互矛盾，教师需编辑后才能直接使用。",
+          "resolutionAlreadyInText": "后文说明与更正正确，但错误首行仍保留，不能记为无错误。"
+        }
+      ],
+      "reasonableDifferences": [
+        "题目2/5与3/7、3/4与5/7等与其他稿不同但都符合正真分数范围；除第6答案首行外数值核对正确。",
+        "示范4+4+2分钟合计10分钟，是合法内部安排。"
+      ],
+      "nonBlockingObservations": [
+        "全文较长并有重复的评价说明和信息完整无待确认声明；可读性需另行评估。",
+        "常见误解中用单位分数讨论只比较分母的局限，教学引导是否充分需教师专业评阅，未作确定违规判断。"
+      ],
+      "arithmetic": {
+        "checkedRelations": 36,
+        "invalid": [
+          {
+            "line": 254,
+            "expression": "4/9 < 3/7",
+            "leftExact": "4/9",
+            "rightExact": "3/7"
+          }
+        ],
+        "nonproper": []
+      }
+    },
+    {
+      "label": "E-B",
+      "verdict": "FAIL_DETERMINISTIC_ANSWER_CONTRADICTION",
+      "hardIssues": [
+        {
+          "issueId": "EB-MATH-01",
+          "file": "E-B.md",
+          "line": 140,
+          "evidence": "5. 3/4 < 5/7。",
+          "actual": "3/4=21/28，5/7=20/28，因此3/4>5/7。",
+          "impact": "首行与同题通分及注意更正冲突，答案页需要人工清稿，不能直接作为无误教案。",
+          "resolutionAlreadyInText": "后文正确比较并指出首句需更正，但首句未删除，仍是发布的错误答案。"
+        }
+      ],
+      "reasonableDifferences": [
+        "第6题要求判断包含错误理由的说法；4/9>2/5的数值结论正确，回答区分结论碰巧正确与理由不成立，不作为数值错误。",
+        "活动包含比较题与口头误解追问，不属于额外课后作业或第三档练习。",
+        "示范两部分各5分钟及合作活动6/6/3分钟均保持固定时长。"
+      ],
+      "nonBlockingObservations": [
+        "答案页面来源说明不改变教学条件；不能仅因有来源文字就判违反只有教案与分离练习答案。"
+      ],
+      "arithmetic": {
+        "checkedRelations": 22,
+        "invalid": [
+          {
+            "line": 140,
+            "expression": "3/4<5/7",
+            "leftExact": "3/4",
+            "rightExact": "5/7"
+          }
+        ],
+        "nonproper": []
+      }
+    },
+    {
+      "label": "E-C",
+      "verdict": "PASS_IN_CHECKED_DETERMINISTIC_SCOPE_PROFESSIONAL_PENDING",
+      "hardIssues": [],
+      "reasonableDifferences": [
+        "使用2/7与5/7、3/4与5/8等不同练习题是合法选择，六题答案和等值算式均正确。",
+        "合作活动三轮角色轮换在固定15分钟中开展，不增加第三档练习。",
+        "准备粉笔卡片属于非电子材料，不违反设备范围。"
+      ],
+      "nonBlockingObservations": [
+        "末尾来源说明存在一定篇幅成本，但原始需求要求资料可追溯，未判定为硬规则违约。",
+        "卡片数量与全部练习分数的对应未逐项解释，不能假设每张卡只能写一个分数而判确定错误；教师可用性仍需评阅。"
+      ],
+      "arithmetic": {
+        "checkedRelations": 29,
+        "invalid": [],
+        "nonproper": []
+      }
+    }
+  ],
+  "overall": "本次两个稿件存在仍保留的答案首行错误且随后自我更正，另一稿在所核查条件与算式中未发现确定违规。不能据盲标号推断哪种提示词组最好；不关闭教师专业评审或上线门槛。"
+}

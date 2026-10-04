@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-04T06:49:33.952Z",
+  "manifest": {
+    "schemaVersion": 1,
+    "createdAt": "2026-10-04T06:39:35.782Z",
+    "jobsSha256": "308aa76b272d858ed03bffd99bb3f271e84e30667890a454ce5ee3bf6c7c98a5",
+    "inputSha256": "65a0fa00a64bdba4da6a54c4c281654b72613f06356e9d3c82a13049dd157af6",
+    "modelsSha256": "e9e79f75cb4fc7d2ce862a0df54ccaa4584e5cd4533e90fba9a259d5a00d559f",
+    "plannedCalls": 6,
+    "professionalReview": "PENDING",
+    "releaseApproval": false,
+    "optimizerCallsThisPreparation": 0,
+    "note": "External execution is separate from the platform. Generation failures remain in cases; this is not a full folder upload benchmark."
+  },
+  "records": [
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "INPUT_AMBIGUITY",
+        "score": null
+      },
+      "latencyMs": 3077,
+      "tokens": {
+        "prompt_tokens": 1061,
+        "completion_tokens": 432,
+        "total_tokens": 1493
+      },
+      "jobId": "CD-09-M-raw-m1-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 71.25,
+        "criticalErrors": [
+          "正文不足600字，两个计数口径均低于要求"
+        ]
+      },
+      "latencyMs": 2566,
+      "tokens": {
+        "prompt_tokens": 2166,
+        "completion_tokens": 361,
+        "total_tokens": 2527
+      },
+      "jobId": "CD-09-M-direct-m1-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 71.25,
+        "criticalErrors": [
+          "正文不足600字，两个计数口径均低于要求"
+        ]
+      },
+      "latencyMs": 2479,
+      "tokens": {
+        "prompt_tokens": 2339,
+        "completion_tokens": 333,
+        "total_tokens": 2672
+      },
+      "jobId": "CD-09-M-plan-m1-r1"
+    },
+    {
+      "caseId": "CD-12-M",
+      "domain": "教育教学",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 9785,
+      "tokens": {
+        "prompt_tokens": 1030,
+        "completion_tokens": 2013,
+        "total_tokens": 3043
+      },
+      "jobId": "CD-12-M-raw-m1-r1"
+    },
+    {
+      "caseId": "CD-12-M",
+      "domain": "教育教学",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 12858,
+      "tokens": {
+        "prompt_tokens": 2410,
+        "completion_tokens": 2975,
+        "total_tokens": 5385
+      },
+      "jobId": "CD-12-M-direct-m1-r1"
+    },
+    {
+      "caseId": "CD-12-M",
+      "domain": "教育教学",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 12544,
+      "tokens": {
+        "prompt_tokens": 2485,
+        "completion_tokens": 3118,
+        "total_tokens": 5603
+      },
+      "jobId": "CD-12-M-plan-m1-r1"
+    }
+  ],
+  "pairs": [
+    {
+      "caseId": "CD-09-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "PENDING",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "CD-09-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "PENDING",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "CD-12-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-12-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    }
+  ],
+  "groups": [
+    {
+      "key": "deepseek:deepseek-flash|raw",
+      "planned": 2,
+      "successfulOutputs": 2,
+      "criticalFailures": 0,
+      "reviewed": 1,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-flash|direct",
+      "planned": 2,
+      "successfulOutputs": 2,
+      "criticalFailures": 1,
+      "reviewed": 2,
+      "pairedComparisons": 1,
+      "wins": 0,
+      "losses": 0,
+      "ties": 1,
+      "bothUnacceptable": 0,
+      "winRate": 0
+    },
+    {
+      "key": "deepseek:deepseek-flash|plan",
+      "planned": 2,
+      "successfulOutputs": 2,
+      "criticalFailures": 1,
+      "reviewed": 2,
+      "pairedComparisons": 1,
+      "wins": 0,
+      "losses": 0,
+      "ties": 1,
+      "bothUnacceptable": 0,
+      "winRate": 0
+    }
+  ],
+  "generationFailures": [],
+  "reviewSource": {
+    "id": "codex-static-review-1",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-04T06:49:32.903384+00:00",
+    "professionalDomain": "NONE; synthetic teaching/news static review, not professional certification"
+  },
+  "professionalReview": "PENDING",
+  "releaseApproval": false,
+  "scope": "Fixed prompt downstream work comparison; no guarantee of professional correctness or universal improvement."
+}

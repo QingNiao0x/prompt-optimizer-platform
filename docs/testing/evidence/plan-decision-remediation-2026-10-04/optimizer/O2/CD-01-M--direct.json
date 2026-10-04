@@ -1,0 +1,21 @@
+{
+  "id": "CD-01-M",
+  "arm": "direct",
+  "phase": "--collect",
+  "startedAt": "2026-10-04T08:08:48.064Z",
+  "elapsedMs": 32531,
+  "caseSha256": "798aef769508d7e1cfe724b1caf461dfa4fa7695acd3cf2ebb0e13171de80ccd",
+  "error": "/api/v1/optimizations HTTP 502, code=RESULT_INVALID, requestId=0e82e9e1-65fc-4d11-997b-d7e283ce5a97, message=模型返回结果格式无效，请重试。",
+  "requests": [
+    {
+      "path": "/api/v1/optimizations",
+      "status": 502,
+      "requestId": "0e82e9e1-65fc-4d11-997b-d7e283ce5a97",
+      "elapsedMs": 32530,
+      "errorMessage": "模型返回结果格式无效，请重试。",
+      "validationReason": "RULE_CONFLICT",
+      "validationField": "sections.CONSTRAINTS",
+      "modelAttempts": 3
+    }
+  ]
+}

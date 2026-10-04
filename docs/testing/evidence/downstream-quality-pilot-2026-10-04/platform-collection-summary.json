@@ -1,0 +1,153 @@
+{
+  "outcomes": [
+    {
+      "caseId": "CD-09-M",
+      "rawPromptHash": "4d26d82f5f6978e4dce1463b14cdddb1adc7d349419e419524af04aed33d7476",
+      "materialsHash": "1bfcfcb13498ce6bdf25f750d65f8532798382a288ba547272ca2544cfe4395a",
+      "optimizerModel": "deepseek:deepseek-flash",
+      "arms": {
+        "direct": {
+          "status": "GENERATED",
+          "promptHash": "af0fb40572a6bc4bd8d151cad3af7600106b3b61469c5e0f0f1fbc8a48307ad8",
+          "chars": 2670,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "000e17e8-796b-4819-a8bc-c8a3e5eb5e04",
+              "elapsedMs": 24051
+            }
+          ]
+        },
+        "plan": {
+          "status": "GENERATED",
+          "promptHash": "39d71bc50cb6a676c95158703aef498ca8b4c175bf0308692a7f4a854595f1a3",
+          "chars": 2990,
+          "requests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "01af4746-0288-4db0-8825-f88ec76e34fe",
+              "elapsedMs": 1336
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "ae838817-ffbb-4a5d-9f07-2155d000acde",
+              "elapsedMs": 1545
+            },
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "73c08798-34f7-4364-9566-1f7b6e91ab63",
+              "elapsedMs": 6189
+            }
+          ]
+        }
+      },
+      "questionCount": 0,
+      "professionalReview": "PENDING"
+    },
+    {
+      "caseId": "CD-12-M",
+      "rawPromptHash": "d841f748a894eecbd287f441171121fde39b2e32a7081f53731bfaf1d0dfb13c",
+      "materialsHash": "bec99756b42513299b8a34900812605a82d754e17a05f2a10e38f6927235ccbe",
+      "optimizerModel": "deepseek:deepseek-flash",
+      "arms": {
+        "plan": {
+          "status": "GENERATED",
+          "promptHash": "1dae23422eb332300aba0d37b3835054941c09a063386853db1886c2611ab89d",
+          "chars": 3171,
+          "requests": [
+            {
+              "path": "/api/v1/context/planning",
+              "status": 200,
+              "requestId": "e2e9d920-b673-4346-bbca-ba68ab4bef7e",
+              "elapsedMs": 87
+            },
+            {
+              "path": "/api/v1/optimizations/plan",
+              "status": 200,
+              "requestId": "9662734f-6669-4af9-aa5b-74fddba0c1cc",
+              "elapsedMs": 802
+            },
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "d1b55816-5636-4ed6-b82d-28a00392691d",
+              "elapsedMs": 11522
+            }
+          ]
+        },
+        "direct": {
+          "status": "GENERATED",
+          "promptHash": "15cb3eefc36b444dbc2706d37e59c25c124ea3beeb7bad446aa58df80d1fd2e7",
+          "chars": 2940,
+          "requests": [
+            {
+              "path": "/api/v1/optimizations",
+              "status": 200,
+              "requestId": "ad17b8a4-acea-475c-8e75-d930b70a3b2d",
+              "elapsedMs": 7005
+            }
+          ]
+        }
+      },
+      "questionCount": 0,
+      "professionalReview": "PENDING"
+    }
+  ],
+  "requests": [
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "000e17e8-796b-4819-a8bc-c8a3e5eb5e04",
+      "elapsedMs": 24051
+    },
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "01af4746-0288-4db0-8825-f88ec76e34fe",
+      "elapsedMs": 1336
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "ae838817-ffbb-4a5d-9f07-2155d000acde",
+      "elapsedMs": 1545
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "73c08798-34f7-4364-9566-1f7b6e91ab63",
+      "elapsedMs": 6189
+    },
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "e2e9d920-b673-4346-bbca-ba68ab4bef7e",
+      "elapsedMs": 87
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "9662734f-6669-4af9-aa5b-74fddba0c1cc",
+      "elapsedMs": 802
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "d1b55816-5636-4ed6-b82d-28a00392691d",
+      "elapsedMs": 11522
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "ad17b8a4-acea-475c-8e75-d930b70a3b2d",
+      "elapsedMs": 7005
+    }
+  ],
+  "inputOraclesSentToModels": false,
+  "timerCaveat": "Platform client elapsedMs includes Node-CDP overhead; it is not model inference timing.",
+  "upstreamRetryCount": "NOT_MEASURED"
+}

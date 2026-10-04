@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "reviewer": {
+    "id": "codex-ai-assisted-2026-10-04-final-software",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-04T10:35:00.573Z",
+    "professionalDomain": "合成软件方案、生命周期和条件分支静态审阅；不替代真实代码执行与独立专业评审"
+  },
+  "entries": [
+    {
+      "blindId": "B001",
+      "outputSha256": "33dbbdfc91256eaa564f94c98eb655d7029b01fac56891e5b139d0d3f16f1d52",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 2,
+        "usability": 2
+      },
+      "criticalErrors": [
+        "CONFIRMED_REGION_STATE_COLLAPSED: 伪代码将明确地区不符按无匹配处理，并丢弃无法核验列表，违反材料与已确认的状态区分。"
+      ],
+      "evidence": [
+        "正文保留三字段白名单、0/false、确认后详情、编号一致性与已确认排除策略；23行测试覆盖两个模块，但不能抵消实现步骤矛盾。",
+        "queryCandidates 建立 unverifiable 列表却只返回 valid；代码明确写“明确地区不符：不加入任何列表，按无匹配处理”，异常表及T02也照此表述。",
+        "applyFill 在详情返回后直接修改表单；前端 await 后才校验 requestSeq，已晚于写入。onUserAgree 还引用另一函数内局部 req，关闭/离开不使待处理详情失效。"
+      ],
+      "additionalAxes": {
+        "clarity": 3,
+        "executability": 1
+      }
+    },
+    {
+      "blindId": "B002",
+      "outputSha256": "a5e6d1506ff764d1c087fcdb44ecb568840cdd3e8190fb4f89c679f6ee98c099",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "显式区分资料用途与实际确认答案；双键、地区、排序、白名单、有效值、同意后详情和32项分支清单完整，未将测试样例写成真实业务。",
+        "runSupplement 只在候选查询之后校验身份快照和请求标识；getDetail 返回后直接编号检查并写入，没有再次检查身份/请求或关闭离开状态。",
+        "无法核验说明只在 candidates 为空时显示，有合法候选与不可核验记录混合时仍缺少单独说明；文字承诺与伪代码不完全一致。"
+      ],
+      "additionalAxes": {
+        "clarity": 3,
+        "executability": 2
+      }
+    },
+    {
+      "blindId": "B003",
+      "outputSha256": "c57cbd49176624793822a754aa62c255df90a7304cf3e6e3e3f7664fa2eaba63",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "交付集中、两个模块与25项测试清单清晰，白名单、null/空字符串、0/false、最新详情和编号校验完整；只有资料缺失的地区呈现问题保留为待确认。",
+        "获取详情后再次核对身份键优于只保护候选查询，但没有对应请求版本及页面离开失效的写入前保护，文字中的生命周期要求尚未完整落实。",
+        "正文先排除无法核验候选，再把是否提示留作业务确认，没有伪造项目已实现字段或将测试Python/CSV作为任务偏好。"
+      ],
+      "additionalAxes": {
+        "clarity": 4,
+        "executability": 3
+      }
+    },
+    {
+      "blindId": "B004",
+      "outputSha256": "270c89b227e92e37e5724ecec0a7394e3e25c988f53a9619985b1c1562cb1609",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "保留双模块、两个身份键与地区条件、三个白名单字段、0/false、稳定排序、详情一致性、取消和27项测试，未知地区策略没有直接默认选定。",
+        "相同未决事项在第0节和第6节重复列出；已知事实、11个步骤和测试多处重复规则，阅读成本较高。",
+        "伪代码仅在独立 onIdentityKeyChanged 中声明失效，主流程查询或详情返回后均无状态校验；onCancelOrCloseOrLeave 只有 return，未作废进行中的写入流程。"
+      ],
+      "additionalAxes": {
+        "clarity": 3,
+        "executability": 2
+      }
+    },
+    {
+      "blindId": "B005",
+      "outputSha256": "20d400b1ffac4ecdad9129c532cdce05e052f371fe344f700047e8ce5ba738e3",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 1
+      },
+      "criticalErrors": [
+        "WHITELIST_VALUE_AS_FIELD_NAME: applyField 接收目标值却用字段名称白名单检查该值，使普通空值补入来源值的正常流程失效。"
+      ],
+      "evidence": [
+        "两个异步阶段均有请求标识/身份快照保护，确认后的不可核验策略、字段边界与33项测试清单齐全，文字比只有候选阶段保护更完整。",
+        "applyField(target, source) 首句判 target not in WHITELIST，但调用传 context.formValues[field]，不是 field。合成例 target空字符串、source为synthetic-phone，按该伪代码返回空字符串，正常补值不成立。",
+        "主流程又把明确地区不符与确无候选合并返回NO_CANDIDATE；正文声称四类可区分。末尾另列接口字段、提示位置、请求生命周期等可由执行者核查的四项待确认，增加低价值确认负担。"
+      ],
+      "additionalAxes": {
+        "clarity": 3,
+        "executability": 1
+      }
+    }
+  ],
+  "reviewLimitations": [
+    "保存评分前未打开组别映射；作品表达和实际确认信息仍可能暴露组别，不宣称完全盲评。",
+    "相同已用于修复的软件题五臂一次补验，不属于独立保留任务或统计显著性结果。",
+    "只执行方案生成，未执行或提交用户业务代码；伪代码确定性反例单独注明。",
+    "执行输入为18:10候选快照，后续裸待定句修复只有最终优化接口补验，不能归为后续版本下游结果。"
+  ]
+}

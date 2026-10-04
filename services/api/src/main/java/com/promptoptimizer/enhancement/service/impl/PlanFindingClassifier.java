@@ -25,6 +25,9 @@ final class PlanFindingClassifier {
 
     /** 整段资料仅核对显式排除关系；一般业务断言仍只匹配逐句相关的事实。 */
     Kind classify(String finding, List<String> evidence, List<String> exclusionEvidence) {
+        // “若发现冲突则保留出处”与“现有金额存在冲突”不同。只复用原文已明确且逐句可核对的处理禁令。
+        if (verifiedInstruction(finding, evidence) || verifiedCapabilityBoundary(finding, evidence)
+                || verifiedExcludedMaterial(finding, exclusionEvidence)) return Kind.KNOWN_RULE;
         if (DECISION.matcher(finding).find()) return Kind.UNRESOLVED;
         if (verifiedExclusion(finding, exclusionEvidence)) return Kind.KNOWN_RULE;
         // 这类语句要求执行者先读工程，而不是要求用户补齐业务选择；保留全文到任务段落。
@@ -53,6 +56,44 @@ final class PlanFindingClassifier {
                         || canonical(part).equals("不自行实现或放宽过滤") && subject.endsWith("过滤")))) return Kind.KNOWN_RULE;
         }
         return statements.stream().map(this::canonical).allMatch(facts::contains) ? Kind.KNOWN_RULE : Kind.UNRESOLVED;
+    }
+
+    /** 已给定的禁止猜测或假设冲突处理规则不要求再决定；真正未知的取值及新增子句仍保留。 */
+    private boolean verifiedInstruction(String finding, List<String> evidence) {
+        if (finding.matches("(?s).*(?:[？?]|尚未确定|暂不确定|未决定|请确认|需确认|待确认).*")) return false;
+        boolean instruction = finding.matches("(?s)^(?:若|如果|当).*(?:发现|出现).*(?:冲突|不一致).*" )
+                || finding.matches("(?s)^(?:不能|不得|禁止|不应)(?:将|把)?.*");
+        if (!instruction) return false;
+        List<String> sourced = evidence.stream().flatMap(value -> clauses(value).stream()).map(this::canonical).toList();
+        List<String> statements = clauses(finding);
+        return !statements.isEmpty() && statements.stream().map(this::canonical).allMatch(sourced::contains);
+    }
+
+    /** 同一主题的完整能力边界复述可进入约束；新条件、数字、另一对象及疑问仍不能借主题名消除。 */
+    private boolean verifiedCapabilityBoundary(String finding, List<String> evidence) {
+        var boundary = Pattern.compile("^([^：:。；;？?]{2,16})的边界[：:]([^？?]+)[。]?$").matcher(finding);
+        if (!boundary.matches()) return false;
+        String expected = capabilityCanonical(boundary.group(1) + boundary.group(2));
+        return evidence.stream().flatMap(value -> Arrays.stream(value.split("[。；;\\r\\n]+")))
+                .filter(value -> !value.matches(".*(?:例外|除外|但仅|仅适用|仅限|取决于|需要确认).*"))
+                .map(this::capabilityCanonical).anyMatch(expected::equals);
+    }
+
+    /** 只归一化几个完整的能力说明谓词，保留主语、否定、执行条件及其后的全部内容。 */
+    private String capabilityCanonical(String text) {
+        return canonical(text).replaceAll("[：:，,。]", "")
+                .replace("意味着", "").replace("仅指", "")
+                .replace("可以编辑复制", "可编辑复制")
+                .replace("但不是ai已完成下游工作", "但不等于ai已完成下游工作")
+                .replace("不能写工具自动读取", "不包含自动读取")
+                .replace("无需强制提问", "不强制提问");
+    }
+
+    /** 文件用途排除仅引用本次收到且声明为排版测试的资料；未知路径或附加业务条件继续保留。 */
+    private boolean verifiedExcludedMaterial(String finding, List<String> evidence) {
+        var excluded = Pattern.compile("^测试材料\\s+([^\\s]{1,256})\\s+仅用于排版与来源识别[，,]不作为本题事实来源[。]?$")
+                .matcher(finding);
+        return excluded.matches() && evidence.contains("已排除的排版测试资料：" + excluded.group(1));
     }
 
     /** 仅核对材料明确排除的模块规则；完整对象、限定词和额外业务条件不能因“无关”二字被丢弃。 */

@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-04T10:35:02.012Z",
+  "records": [
+    {
+      "caseId": "CD-01-M",
+      "domain": "软件开发",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 75,
+        "criticalErrors": []
+      },
+      "latencyMs": 10473,
+      "tokens": {
+        "prompt_tokens": 1252,
+        "completion_tokens": 2240,
+        "total_tokens": 3492
+      },
+      "jobId": "CD-01-M-raw-m1-r1"
+    },
+    {
+      "caseId": "CD-01-M",
+      "domain": "软件开发",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 77.5,
+        "criticalErrors": []
+      },
+      "latencyMs": 16541,
+      "tokens": {
+        "prompt_tokens": 3014,
+        "completion_tokens": 4137,
+        "total_tokens": 7151
+      },
+      "jobId": "CD-01-M-direct-m1-r1"
+    },
+    {
+      "caseId": "CD-01-M",
+      "domain": "软件开发",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 58.75,
+        "criticalErrors": [
+          "WHITELIST_VALUE_AS_FIELD_NAME: applyField 接收目标值却用字段名称白名单检查该值，使普通空值补入来源值的正常流程失效。"
+        ]
+      },
+      "latencyMs": 18156,
+      "tokens": {
+        "prompt_tokens": 4006,
+        "completion_tokens": 4483,
+        "total_tokens": 8489
+      },
+      "jobId": "CD-01-M-plan-m1-r1"
+    },
+    {
+      "caseId": "CD-01-M",
+      "domain": "软件开发",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 56.25,
+        "criticalErrors": [
+          "CONFIRMED_REGION_STATE_COLLAPSED: 伪代码将明确地区不符按无匹配处理，并丢弃无法核验列表，违反材料与已确认的状态区分。"
+        ]
+      },
+      "latencyMs": 12732,
+      "tokens": {
+        "prompt_tokens": 1331,
+        "completion_tokens": 3195,
+        "total_tokens": 4526
+      },
+      "jobId": "CD-01-M-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-01-M",
+      "domain": "软件开发",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 81.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 18692,
+      "tokens": {
+        "prompt_tokens": 3093,
+        "completion_tokens": 4863,
+        "total_tokens": 7956
+      },
+      "jobId": "CD-01-M-direct_matched-m1-r1"
+    }
+  ],
+  "pairs": [
+    {
+      "caseId": "CD-01-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 2.5
+    },
+    {
+      "caseId": "CD-01-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 2.5
+    },
+    {
+      "caseId": "CD-01-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 25
+    }
+  ],
+  "groups": [
+    {
+      "key": "deepseek:deepseek-flash|raw",
+      "planned": 1,
+      "successfulOutputs": 1,
+      "criticalFailures": 0,
+      "reviewed": 1,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-flash|direct",
+      "planned": 1,
+      "successfulOutputs": 1,
+      "criticalFailures": 0,
+      "reviewed": 1,
+      "pairedComparisons": 1,
+      "wins": 1,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": 1
+    },
+    {
+      "key": "deepseek:deepseek-flash|plan",
+      "planned": 1,
+      "successfulOutputs": 1,
+      "criticalFailures": 1,
+      "reviewed": 1,
+      "pairedComparisons": 1,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 1,
+      "winRate": 0
+    },
+    {
+      "key": "deepseek:deepseek-flash|raw_matched",
+      "planned": 1,
+      "successfulOutputs": 1,
+      "criticalFailures": 1,
+      "reviewed": 1,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-flash|direct_matched",
+      "planned": 1,
+      "successfulOutputs": 1,
+      "criticalFailures": 0,
+      "reviewed": 1,
+      "pairedComparisons": 1,
+      "wins": 1,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": 1
+    }
+  ],
+  "reviewSource": {
+    "id": "codex-ai-assisted-2026-10-04-final-software",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-04T10:35:00.573Z",
+    "professionalDomain": "合成软件方案、生命周期和条件分支静态审阅；不替代真实代码执行与独立专业评审"
+  },
+  "professionalReview": "PENDING",
+  "releaseApproval": false,
+  "scope": "Fixed prompt downstream work comparison; no guarantee of professional correctness or universal improvement."
+}

@@ -129,7 +129,8 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         planningContext.digest(),
                         selectedModelId
                 ));
-                PlanningProviderResponse validated = requestValidatedPlan(providerRequest);
+                PlanningProviderResponse validated = com.promptoptimizer.common.logging.PipelineStageTiming.measure(
+                        "plan.generate", "provider.total", selectedModelId, () -> requestValidatedPlan(providerRequest));
                 List<PlanQuestion> requiredConflicts = conflictQuestions(planningContext.digest());
                 List<PlanQuestion> modelQuestions = questionFilter.filter(validated.questions(), providerRequest).stream()
                         .filter(question -> requiredConflicts.stream()
@@ -270,16 +271,7 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
     private boolean sameConflictDimension(String question, String conflict) {
         var field = Pattern.compile("资料对“([^”]{2,40})”").matcher(conflict);
         if (!field.find()) return false;
-        String key = field.group(1);
-        if (question.contains(key)) return true;
-        if (key.contains("阈值")) return question.contains("阈值") || question.contains("金额") && question.contains("审批");
-        if (key.contains("范围")) return question.contains("范围") || question.contains("地区") || question.contains("区域");
-        if (key.contains("时限")) return question.contains("时限") || question.contains("期限") || question.contains("时间");
-        if (key.contains("口径")) return question.contains("口径") || question.contains("定义") || question.contains("统计标准");
-        if (key.contains("标准")) return question.contains("标准") || question.contains("验收");
-        if (key.contains("规则")) return question.contains("规则") || question.contains("如何处理");
-        if (key.contains("格式")) return question.contains("格式") || question.contains("类型");
-        return key.contains("版本") && (question.contains("版本") || question.contains("采用哪份"));
+        return PlanDecisionIdentity.repeatsConflict(question, field.group(1));
     }
 
     /** 将应用层校验交给 Provider 的同一个重试预算，避免格式重试与业务校验重试相乘。 */
@@ -300,6 +292,7 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                     decisionPolicy.validateCandidate(option.answer(), "questions.options.answer");
                     decisionPolicy.validateCandidate(option.label(), "questions.options.label");
                     decisionPolicy.validateCandidate(option.description(), "questions.options.description");
+                    decisionPolicy.validateCandidate(option.recommendationReason(), "questions.options.recommendationReason");
                     guard.validate(option.answer(), rules, "questions.options.answer");
                     guard.validate(option.label(), rules, "questions.options.label");
                     guard.validate(option.description(), rules, "questions.options.description");

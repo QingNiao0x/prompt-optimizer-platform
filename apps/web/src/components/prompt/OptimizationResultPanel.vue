@@ -10,7 +10,7 @@ import {
   TopRight,
   WarningFilled,
 } from '@element-plus/icons-vue';
-import { ElButton, ElDialog, ElDropdown, ElDropdownItem, ElDropdownMenu, ElInput, ElLink, ElMessage } from 'element-plus';
+import { ElButton, ElCollapse, ElCollapseItem, ElDialog, ElDropdown, ElDropdownItem, ElDropdownMenu, ElInput, ElLink, ElMessage } from 'element-plus';
 import type { InputInstance } from 'element-plus';
 import { computed, onBeforeUnmount, ref, toRefs, watch } from 'vue';
 
@@ -444,6 +444,18 @@ const saveEditing = (): void => {
       >
         <ResultMetaBar :result="result" />
 
+        <ElCollapse v-if="result.evidenceCards?.length && !editing" class="evidence-details" data-testid="result-evidence">
+          <ElCollapseItem name="sources" :title="`资料依据 · ${result.evidenceCards.length} 项（展开核对）`">
+            <p>以下是本次使用的资料证据，请核对来源与适用范围。正文已保留必要规则和待确认条件。</p>
+            <ol>
+              <li v-for="card in result.evidenceCards" :key="`${card.id}-${card.sourcePath}`">
+                <code>{{ card.sourcePath }}</code>
+                <p>{{ card.evidence }}</p>
+              </li>
+            </ol>
+          </ElCollapseItem>
+        </ElCollapse>
+
         <article v-if="!editing" class="section-list">
           <ResultCard
             v-for="(section, index) in displaySections"
@@ -509,6 +521,26 @@ const saveEditing = (): void => {
 </template>
 
 <style scoped>
+.evidence-details {
+  margin: 12px 0;
+  color: var(--el-text-color-regular);
+  overflow-wrap: anywhere;
+}
+
+.evidence-details ol {
+  display: grid;
+  gap: 12px;
+  padding-left: 22px;
+}
+
+.evidence-details p {
+  margin: 6px 0;
+  line-height: 1.6;
+}
+
+.evidence-details code {
+  color: var(--el-text-color-secondary);
+}
 .result-panel {
   display: flex;
   min-height: 0;

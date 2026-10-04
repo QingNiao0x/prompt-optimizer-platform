@@ -62,11 +62,15 @@ final class PlanningDecisionPolicy {
     private final PlanningProviderRequest input;
     private final List<PlanningKnownDecision> decisions;
     private final ModuleScope moduleScope;
+    private final boolean separateUnverifiableRegionStates;
 
     private PlanningDecisionPolicy(PlanningProviderRequest input) {
         this.input = input;
         this.moduleScope = declaredModuleScope(safe(input.rawPrompt()), sources(input));
         this.decisions = build(input);
+        this.separateUnverifiableRegionStates = sources(input).stream().anyMatch(source -> normalize(source.text())
+                .matches("(?s).*无法核验(?:的)?记录.*确无候选.*地区不符.*分别说明.*"))
+                && !normalize(input.rawPrompt()).matches("(?s).*无法核验.{0,30}(?:按|视为|当作)查询失败.*");
     }
 
     /** 从同一份输入重建证据；调用方不能仅靠自填内部 metadata 使问题被过滤。 */
@@ -197,7 +201,14 @@ final class PlanningDecisionPolicy {
     /** 保留下来的新问题也不能提供违反已定前提的候选；交给现有 Provider 预算修复，不伪造成功。 */
     void validateCandidate(String candidate, String field) {
         String normalized = normalize(candidate);
+        // 上传材料已要求分别说明这些状态时，不能借未决的候选处理策略把资料缺失伪装成网络查询失败。
+        // 无此证据或用户明确重订状态策略的任务继续保留其原有选择空间。
         for (String clause : normalized.split("[。；;]")) {
+            if (separateUnverifiableRegionStates && clause.matches(".*(?:地区.*(?:缺失|无法核验)|无法核验.*地区).*" )
+                    && (positiveAction(clause, "(?:按|视为|当作)(?:整个|整体)?查询失败(?:处理)?")
+                    || positiveAction(clause, "不(?:向用户)?(?:提示|说明)(?:存在)?(?:此类|无法核验|地区缺失)?(?:记录)?"))) {
+                throw new ProviderResponseValidationException(Reason.RULE_CONFLICT, field);
+            }
             if (hasDecision(Kind.FIELD_SCOPE) && !mentionsDifferentSubject(clause)
                     && positiveAction(clause, "(?:其他|额外|新增)(?:的)?字段(?:也|仍|均|都|全部)?(?:参与|用于|进行)?(?:自动)?填充"
                     + "|(?:填充|写入)(?:其他|额外|新增)(?:的)?字段")) {

@@ -64,7 +64,7 @@ final class ConfirmedDecisionSet {
         if (finding == null || !finding.matches(".*(未知|未明确|未提供|尚未确定|未给出|未指定).*")) return false;
         if (finding.matches(".*(历史|例外|冲突|不一致|迁移后|新增范围).*")) return false;
         return decisions.stream().anyMatch(decision -> decision.scope() != Scope.UNRESOLVED
-                && !decision.topic().equals("本次选择") && matchesTopic(finding, decision.topic())
+                && PlanDecisionIdentity.repeatsReminder(finding, decision.question())
                 && (!CURRENT.matcher(finding).find() || decision.scope() == Scope.CURRENT_STATE)
                 && DETAIL.matcher(finding).results().allMatch(detail -> decision.question().contains(detail.group())));
     }
@@ -120,13 +120,6 @@ final class ConfirmedDecisionSet {
         if (identifier.contains("tool")) return "工具";
         if (identifier.contains("auth") || identifier.contains("login")) return "认证方式";
         return "本次选择";
-    }
-
-    /** 子维度仍需独立答案，例如已选择分析工具不代表工具版本已经明确。 */
-    private boolean matchesTopic(String finding, String topic) {
-        if (topic.equals("研究地区") || topic.equals("地区范围")) return finding.contains("地区");
-        if (topic.equals("分析工具")) return finding.contains("工具");
-        return finding.contains(topic);
     }
 
     private List<String> conflictValues(String question) {

@@ -21,7 +21,8 @@ final class PlanningFactCardExtractor {
     private static final int MAX_EVIDENCE_CHARACTERS = 220;
     private static final Pattern LABEL = Pattern.compile("^\\s*([^：:=]{2,24})\\s*[:：=]\\s*(.{1,})$");
     private static final Pattern EXPLICIT_RULE = Pattern.compile(
-            "(必须|须由|应当|不得|不应|至少|不超过|超过.{0,24}(?:必须|须|应)|仅当|只有.{0,18}(?:才|方可))"
+            "(必须|须由|应当|不得|不应|至少|不超过|超过.{0,24}(?:必须|须|应)|仅当|只有.{0,18}(?:才|方可)"
+                    + "|(?:应|须)(?:把|将)[^。；;]{2,100}(?:分别说明|分别标注|明确区分|分开记录))"
     );
     private static final Pattern UNSAFE_INSTRUCTION = Pattern.compile(
             "(?i)(忽略.{0,12}指令|系统提示|开发者消息|提示词|模型指令|api.?key|password|token|\\.env|id_rsa|\\.pem|\\.key)"

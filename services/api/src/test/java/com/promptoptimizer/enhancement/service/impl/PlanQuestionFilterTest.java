@@ -14,6 +14,143 @@ class PlanQuestionFilterTest {
     private final PlanQuestionFilter filter = new PlanQuestionFilter();
 
     @Test
+    void shouldDelegateRoutineTestLayersWithoutHidingNewBusinessBranches() {
+        String raw = "制定表单补值实现方案，交付按业务行为组织的测试表。匹配使用姓名与证件号两个键，并且记录必须符合当前用户所属地区条件。"
+                + "候选按更新时间降序，时间相同按记录编号升序。字段白名单只有电话。"
+                + "只有目标值为 null 或空字符串时允许补入来源值。用户点击取消必须保持全部字段原值不变。"
+                + "查询或详情失败时保留原值并显示可理解的失败提示。有候选时必须询问用户。"
+                + "用户修改这两个键后，之前的候选必须失效。迟到的旧请求必须失效。";
+        var layer = new PlanQuestion("layer", "测试清单需要覆盖到哪一层？",
+                "原文要求按业务行为组织测试表，但未说明是否包含接口层与前端交互层；这会影响交付的测试清单范围。", PlanQuestionType.SINGLE_CHOICE,
+                List.of(new PlanOption("service", "仅服务层业务行为", "测试清单聚焦匹配与异常分支。",
+                                "测试清单聚焦共用补值服务的业务行为：匹配条件、地区过滤、排序、白名单写入、null/空字符串判断、取消与异常分支。", false, ""),
+                        new PlanOption("api", "服务层加接口层", "在服务层基础上补充查询接口与详情接口的行为测试。",
+                                "测试清单覆盖共用补值服务业务行为，并补充候选查询接口与详情接口的行为测试，包括失败提示。", false, ""),
+                        new PlanOption("full", "服务层、接口层与前端交互", "再补充前端确认、取消、迟到请求失效等交互测试。",
+                                "测试清单覆盖共用补值服务、候选查询与详情接口，以及前端确认、取消、修改身份键后旧候选失效、迟到请求失效等交互行为。", false, "")),
+                List.of(), true);
+        assertThat(filter.filter(List.of(layer), input(raw))).isEmpty();
+        var added = new PlanQuestion(layer.id(), layer.question(), "", layer.type(),
+                List.of(new PlanOption("service", "仅服务层业务行为", "新增退款权限测试。",
+                        layer.options().getFirst().answer(), false, "")), List.of(), true);
+        assertThat(filter.filter(List.of(added), input(raw))).containsExactly(added);
+        assertThat(filter.filter(List.of(layer), input(raw + "请让我选择测试层级。"))).containsExactly(layer);
+        var threshold = new PlanQuestion(layer.id(), layer.question(), "响应不得超过 50 毫秒。", layer.type(),
+                layer.options(), List.of(), true);
+        assertThat(filter.filter(List.of(threshold), input(raw))).containsExactly(threshold);
+    }
+
+    @Test
+    void shouldKeepNewMissingRegionBehaviorInsideAnOtherwiseRoutineTestLayer() {
+        var layer = new PlanQuestion("layer", "测试清单需要覆盖到哪一层？", "", PlanQuestionType.SINGLE_CHOICE,
+                List.of(new PlanOption("service", "仅服务层业务行为", "",
+                        "测试清单覆盖地区缺失时自动补全的行为。", false, "")), List.of(), true);
+        assertThat(filter.filter(List.of(layer), input("制定表单补值实现方案，交付测试清单，地区必须匹配。")))
+                .containsExactly(layer);
+    }
+
+    @Test
+    void shouldDelegateOnlyTestOptionsWhoseEveryBranchIsAlreadyRequired() {
+        String raw = "制定表单补值实现方案，交付测试清单。匹配使用姓名与证件号两个键，并且记录必须符合当前用户所属地区条件。"
+                + "候选按更新时间降序，时间相同按记录编号升序。字段白名单只有电话。"
+                + "只有目标值为 null 或空字符串时允许补入来源值。";
+        var scope = new PlanQuestion("scope", "测试清单需要覆盖哪些范围？", "", PlanQuestionType.MULTIPLE_CHOICE,
+                List.of(new PlanOption("backend", "后端匹配与补值逻辑", "", "测试清单覆盖后端匹配与补值逻辑：地区条件、姓名与证件号双键匹配、排序、字段白名单、仅 null 或空字符串可补值。", false, "")),
+                List.of(), true);
+        assertThat(filter.filter(List.of(scope), input(raw))).isEmpty();
+        var added = new PlanQuestion(scope.id(), scope.question(), "", scope.type(),
+                List.of(new PlanOption("backend", "后端匹配与补值逻辑", "", "测试清单覆盖后端匹配与补值逻辑：地区条件、退款权限。", false, "")),
+                List.of(), true);
+        assertThat(filter.filter(List.of(added), input(raw))).containsExactly(added);
+        assertThat(filter.filter(List.of(scope), input(raw + "请先询问我测试范围。"))).containsExactly(scope);
+    }
+
+    @Test
+    void shouldKeepNewTestRequirementsInLabelsDescriptionsAndQuestionReasons() {
+        String raw = "制定表单补值实现方案，交付测试清单。匹配使用姓名与证件号两个键，并且记录必须符合当前用户所属地区条件。";
+        String answer = "测试清单覆盖后端匹配与补值逻辑：地区条件、姓名与证件号双键匹配。";
+        var options = List.of(
+                new PlanOption("label", "后端匹配与补值逻辑及退款权限", "", answer, false, ""),
+                new PlanOption("description", "后端匹配与补值逻辑", "还需决定退款权限的测试范围。", answer, false, ""),
+                new PlanOption("reason", "后端匹配与补值逻辑", "", answer, true, "推荐同时增加退款权限测试。"));
+        for (var option : options) {
+            var question = new PlanQuestion(option.id(), "测试清单需要覆盖哪些范围？", "", PlanQuestionType.MULTIPLE_CHOICE,
+                    List.of(option), List.of(), true);
+            assertThat(filter.filter(List.of(question), input(raw))).containsExactly(question);
+        }
+        var question = new PlanQuestion("question-reason", "测试清单需要覆盖哪些范围？", "还需确认退款权限。",
+                PlanQuestionType.MULTIPLE_CHOICE,
+                List.of(new PlanOption("backend", "后端匹配与补值逻辑", "", answer, false, "")), List.of(), true);
+        assertThat(filter.filter(List.of(question), input(raw))).containsExactly(question);
+    }
+
+    @Test
+    void shouldDelegatePseudocodeGranularityButKeepExplicitPreferencesAndNewRequirements() {
+        var grain = new PlanQuestion("grain", "伪代码需要详细到什么程度？", "", PlanQuestionType.SINGLE_CHOICE,
+                List.of(new PlanOption("flow", "流程级伪代码", "描述步骤", "采用流程级描述。", false, ""),
+                        new PlanOption("method", "方法级伪代码", "服务方法", "细化到服务方法、参数与返回结构。", false, "")),
+                List.of(), true);
+        assertThat(filter.filter(List.of(grain), input("请制定实现方案，交付关键伪代码，不修改项目。"))).isEmpty();
+        assertThat(filter.filter(List.of(grain), input("请制定实现方案，先询问我伪代码粒度，再交付关键伪代码。")))
+                .containsExactly(grain);
+        var extra = new PlanQuestion("extra", grain.question(), "", grain.type(),
+                List.of(new PlanOption("flow", "流程级伪代码", "", "覆盖流程，并新增跨租户访问策略。", false, "")),
+                List.of(), true);
+        assertThat(filter.filter(List.of(extra), input("请制定实现方案，交付关键伪代码，不修改项目。")))
+                .containsExactly(extra);
+    }
+
+    @Test
+    void shouldNotReaskTheConfirmationPresentationAlreadyNamedByTheUser() {
+        var presentation = question("presentation", "有匹配候选时，确认交互采用哪种形式？");
+        var timing = question("timing", "有匹配候选时，确认是否需要逐字段进行？");
+        String raw = "请制定表单补值实现方案，无候选时不弹确认框，有候选时必须询问用户。";
+        assertThat(filter.filter(List.of(presentation, timing), input(raw))).containsExactly(timing);
+        assertThat(filter.filter(List.of(presentation), input("制定表单补值实现方案，确认形式尚未确定。")))
+                .containsExactly(presentation);
+    }
+
+    @Test
+    void shouldDelegateRoutineOutlineLayoutButKeepResearchDecisionsAndExplicitLayoutPreferences() {
+        var layout = question("layout", "方法提纲的章节应如何组织？");
+        var sample = question("sample", "研究样本应来自哪些机构？");
+        assertThat(filter.filter(List.of(layout, sample), input("撰写论文方法提纲，比较两种提示词方式的质量。")))
+                .containsExactly(sample);
+        assertThat(filter.filter(List.of(layout), input("撰写论文方法提纲，先询问我章节结构再组织正文。")))
+                .containsExactly(layout);
+    }
+
+    @Test
+    void shouldKeepIndependentBusinessDecisionsRegardlessOfQuestionOrder() {
+        var approval = question("approval", "审批规则采用什么标准？");
+        var refund = question("refund", "退款规则采用什么标准？");
+        assertThat(filter.filter(List.of(approval, refund), input("完善审批与退款流程")))
+                .containsExactly(approval, refund);
+        assertThat(filter.filter(List.of(refund, approval), input("完善审批与退款流程")))
+                .containsExactly(refund, approval);
+    }
+
+    @Test
+    void shouldOnlyMergeTheSameScopedDecisionWithoutLosingNewConditions() {
+        var approval = question("approval", "审批规则采用什么标准？");
+        var paraphrase = question("approval-again", "审批规则的标准是什么？");
+        var emergency = question("emergency", "紧急订单的审批规则采用什么标准？");
+        var refund = question("refund", "退款规则采用什么标准？");
+        assertThat(filter.filter(List.of(approval, paraphrase, emergency, refund), input("完善订单流程")))
+                .containsExactly(approval, emergency, refund);
+    }
+
+    @Test
+    void shouldKeepDifferentFileFormatsAndPopulationDefinitions() {
+        var data = question("data", "研究数据采用什么文件格式？");
+        var deliverable = question("deliverable", "输出文件采用什么格式？");
+        var age = question("age", "年龄组按什么标准划分？");
+        var urban = question("urban", "城乡人群按什么标准划分？");
+        assertThat(filter.filter(List.of(data, deliverable, age, urban), input("设计研究分析方案")))
+                .containsExactly(data, deliverable, age, urban);
+    }
+
+    @Test
     void shouldRecognizeTheRealDetailFailureParaphraseWithoutHidingASeparateRetryChoice() {
         var failure = question("detail_failure_behavior", "先查询详情这一步失败时，应如何处理？");
         var retry = question("retry", "先查询详情这一步失败时，是否重试三次再提醒用户？");

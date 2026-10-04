@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "reviewer": {
+    "id": "codex-ai-assisted-2026-10-04-software",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-04T09:18:22.644Z",
+    "professionalDomain": "合成软件方案的事实、控制流和规则静态审阅；不替代独立人工验收"
+  },
+  "entries": [
+    {
+      "blindId": "B001",
+      "outputSha256": "f2c9f2dfdf012ead014029dd11d79222bad2a8b7adfeded6198ecd03af5e55c6",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "第2.3节要求无法核验、确无候选、明确地区不符分别呈现；queryCandidates只保留MATCH与UNVERIFIABLE，MISMATCH被丢弃后落入noCandidate。混合候选存在时hasCandidates也未携带无法核验说明。",
+        "applyFill显式判空并保护0，T-18保护false，取消不写入；但详情等待期间再次变更身份的核对未落实到伪代码。"
+      ],
+      "additionalAxes": {
+        "clarity": 4,
+        "executability": 3
+      }
+    },
+    {
+      "blindId": "B002",
+      "outputSha256": "2b8837dcd71ad4fc12b313e7236860517f046ee087c6072c51a95b527969fc30",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "fillForm把detail.getRegion()==null及明确region不相等合并为pending(\"地区信息缺失，无法核验\")，与原始需求要求分别说明三种结果不一致。",
+        "前端handleEditEnter只在候选查询返回后核对currentRequestId，详情getDetail返回后直接applyFill，未再次校验身份已变化或已离开。0和false保护与来源为空不写入均保留。"
+      ],
+      "additionalAxes": {
+        "clarity": 4,
+        "executability": 2
+      }
+    },
+    {
+      "blindId": "B003",
+      "outputSha256": "b741d915aad38681bdf2d94ee12e5e20e32ab4b061e3ff06aee9078089c53837",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "流程、地区三种分支、25类以上行为测试与暂未决定的地区条件均保留；没有把排版示例当真实事实。",
+        "runAutoFill仅在候选查询后执行handleStaleResponse，fetchDetail后未复核；applyPatch在目标为空时直接写来源，与目标、来源都空时保持空值的要求缺少一致的防护。"
+      ],
+      "additionalAxes": {
+        "clarity": 3,
+        "executability": 3
+      }
+    },
+    {
+      "blindId": "B004",
+      "outputSha256": "c3db321250111774fca51444b8b730a8903923b87dc95ec5c3226d892a300c95",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "onCancel(form,snapshot)调用restore(form,snapshot)，未说明snapshot采集时点；如果用户在快照后有未保存编辑，恢复会覆盖该编辑。这是可执行性风险，不作为已执行的故障结论。",
+        "主流程详情返回后直接写入，时序保护被写成独立辅助函数而未在写入前调用；地区缺失仍明确为未决，白名单、排序、取消文字说明和0/false要求保留。"
+      ],
+      "additionalAxes": {
+        "clarity": 3,
+        "executability": 2
+      }
+    },
+    {
+      "blindId": "B005",
+      "outputSha256": "6cafba09b4ac57680508cc3fd70f652b7cc4a3e0cc1e41f1b2823d17bddb73d6",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 1,
+        "usability": 2
+      },
+      "criticalErrors": [
+        "UNCONFIRMED_BUSINESS_DECISION: 未确认的地区处理被固定为排除并向用户显示同无匹配。"
+      ],
+      "evidence": [
+        "原始需求明确地区缺失处理尚未决定，作品第2节却规定不进入候选列表，第3.3节又规定用户界面同\"无匹配候选\"，将未知业务决定提前固定。",
+        "第5节只把是否区分界面提示列为待确认，已经默认选择排除和同无匹配；这违背不得默认补全及分别说明的要求。queryCandidates仅在查询返回后校验序号，fillFromCandidate等待详情后不再检查。"
+      ],
+      "additionalAxes": {
+        "clarity": 4,
+        "executability": 2
+      }
+    },
+    {
+      "blindId": "B006",
+      "outputSha256": "89cdb2001fbbfd63f6de9706daea906160cb4b58490178a2e5821c240b9fa8fe",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "完整列出两个模块、白名单、0/false、确认后获取详情、编号一致性、地区分类和35项行为测试；实际提交的地区排除决定已进入流程。",
+        "runSupplement取回详情后没有重新核对身份快照；第6节把接口路径、掩码格式、请求标识实现和分页大小列作5条待确认，尽管可由执行者核查且本题只交付方案，增加阅读与确认负担。"
+      ],
+      "additionalAxes": {
+        "clarity": 3,
+        "executability": 3
+      }
+    },
+    {
+      "blindId": "B007",
+      "outputSha256": "cb10b76467c591f7c3bfd6240af150301e41b6df0f1210042e945740c2b56971",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "三类地区结果分别说明、确认后取详情、0/false不覆盖、取消和隐私要求均落实到步骤和测试。",
+        "handleUserConfirm在getDetail返回后只有编号检查，没有复核activeRequestFingerprint或已离开状态；混合存在匹配与无法核验候选时，无法核验提示只在displayable为空分支产生。"
+      ],
+      "additionalAxes": {
+        "clarity": 4,
+        "executability": 3
+      }
+    },
+    {
+      "blindId": "B008",
+      "outputSha256": "1ff427b1a6516885daba8f83b28ab00a0e2f837d459f11351024c8c463fa7e9c",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "明确区分已知事实、用户确认的地区排除和必要假设，完整给出白名单、0/false、取消、详情一致性及28类行为测试。",
+        "enrichForm只在用户同意前再次校验身份，getDetail返回之后没有再次核验；末尾仍以待确认项标题重复已经确认的地区处理，明确写成已确认所以未造成新的未决状态，但增加重复阅读。"
+      ],
+      "additionalAxes": {
+        "clarity": 3,
+        "executability": 3
+      }
+    }
+  ],
+  "reviewLimitations": [
+    "未在评分前打开组别映射；原始任务与作品均可见。",
+    "检查的是执行模型交付的方案与伪代码，没有执行其业务代码。",
+    "单次样本，不构成统计显著性或生产放行。"
+  ]
+}

@@ -1,0 +1,196 @@
+{
+  "id": "CD-05-L",
+  "arm": "plan",
+  "phase": "--collect",
+  "startedAt": "2026-10-04T08:09:28.451Z",
+  "elapsedMs": 4622,
+  "caseSha256": "798aef769508d7e1cfe724b1caf461dfa4fa7695acd3cf2ebb0e13171de80ccd",
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "ac53932e-c0d1-47aa-b972-969d657dce63",
+      "elapsedMs": 111
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "0e98b015-4790-4bd9-a2e7-8f310d0c6f3a",
+      "elapsedMs": 4512
+    }
+  ],
+  "plan": {
+    "summary": "已理解需交付一份尚未执行的研究方案，比较原始需求、直接增强与交互式计划确认增强对下游输出的影响，并保留信息量匹配对照、盲评、失败记录等硬约束。原文已明确列出两项尚待决定的关键规则，需要你确认后才能写入预注册清单。",
+    "questions": [
+      {
+        "id": "max_rounds",
+        "question": "交互式计划确认组的提问轮次上限与终止规则应如何预注册？",
+        "hint": "这决定计划确认组每次运行何时停止提问并进入生成，直接影响该条件能否被重复和比较。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "fixed_one",
+            "label": "固定一轮",
+            "description": "每组只允许一轮提问，回答后立即生成最终提示词。",
+            "answer": "预注册为固定一轮提问：系统提出一组问题，操作者按答案卡作答后即生成最终提示词，不再追问。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "fixed_two",
+            "label": "固定两轮",
+            "description": "最多两轮提问，第二轮仅用于澄清第一轮未覆盖的业务选择。",
+            "answer": "预注册为最多两轮提问：第一轮覆盖主要业务选择，第二轮仅澄清第一轮未覆盖或存在歧义之处，两轮后必须生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "until_no_new",
+            "label": "无新问题即止",
+            "description": "不设固定轮数，直到系统不再提出新的业务选择问题为止，并记录实际轮数。",
+            "answer": "预注册为不设固定轮数：持续提问直到系统不再提出新的业务选择问题为止，同时记录每次运行的实际轮数作为过程指标。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "fixed_three",
+            "label": "固定三轮",
+            "description": "最多三轮提问，覆盖主要选择、澄清与边界确认。",
+            "answer": "预注册为最多三轮提问：依次覆盖主要业务选择、澄清歧义与确认执行边界，三轮后必须生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "disagreement",
+        "question": "两名盲评者的分歧处理与一致性评价方式应如何预先确定？",
+        "hint": "这决定评分结果如何汇总、是否需要第三人介入，以及一致性用什么指标报告。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "mean_no_third",
+            "label": "取均值，不设第三人",
+            "description": "两名评审独立评分后取均值，报告一致性指标，不引入第三人裁决。",
+            "answer": "预注册为两名评审独立评分后取均值作为该任务该条件的得分，并报告评审间一致性指标；不引入第三人裁决。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "third_arbitrate",
+            "label": "分歧超阈值由第三人裁决",
+            "description": "先报告一致性，分歧超过预设阈值时由第三名评审裁决。",
+            "answer": "预注册为两名评审独立评分并报告一致性指标；当分歧超过预先设定的阈值时，由第三名评审独立评分并以其结果作为最终分。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "discuss_consensus",
+            "label": "分歧讨论后达成共识",
+            "description": "两名评审先独立评分，分歧项经讨论达成共识分，并记录讨论前后差异。",
+            "answer": "预注册为两名评审先独立评分，对分歧项进行讨论并形成共识分，同时记录讨论前后的评分差异与一致性指标。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "report_only",
+            "label": "只报告一致性，不合并",
+            "description": "不合并为单一分数，仅报告各维度评分分布与一致性指标。",
+            "answer": "预注册为不合并为单一分数，仅报告两名评审在各评分维度上的分布与评审间一致性指标，分歧项单独列出。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 4472
+  },
+  "prepared": {
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/research_design/",
+        "materials/research_design/current-brief.md",
+        "materials/research_design/tests/",
+        "materials/research_design/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/research_design/current-brief.md：Markdown 文档摘要：提示词整理工具对照研究方案：合成现行资料；评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。；信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。；一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断…；业务摘录：一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；交互式计划确认指系统先提问、实验操作者按预先制定答案卡作答，再生成最终提示词，不是静态任务分解列表。；详细答案卡、记录字段和材料目录放在附表，不能为了压缩文字删除公平比较条件。；[片段 1/1]；任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签；；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "盲评不得暴露工具名称"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "方案可说明选择流程，不应在变量尚未确定时锁定某个显著性检验"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/research_design/",
+        "materials/research_design/current-brief.md",
+        "materials/research_design/tests/",
+        "materials/research_design/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/research_design/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 提示词整理工具对照研究方案：合成现行资料\n交互式计划确认指系统先提问、实验操作者按预先制定答案卡作答，再生成最终提示词，不是静态任务分解列表。\n实验尚未运行，没有准确率、显著性、成功案例数量和用户结论。\n二十个任务和三次独立重复以及两名盲评者已经确定，不需要重新选择样本数量。\n评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。\n\n# 分支与边界\n开发任务要求下游模型只输出方案，不实际修改仓库；写作任务要求交付文本，因此跨任务不能用代码测试通过率作为统一质量指标。\n原始组接收原始需求与初始材料，直接增强组接收同一初始信息得到的优化提示词；两组都不能偷看计划确认组后来回答的业务选择。\n计划确认组应记录每个问题、选项、推荐依据和答案，不只保存最终提示词；错误推荐被答案纠正后仍应计入交互阶段风险。\n信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。\n任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签；不能在人工评分前人为删除不利的测试污染反例。\n每个条件的三次重复应开启隔离会话，随机化顺序并记录模型版本、日期和参数；失败后的重试不能替代第一份失败样本。\n评审看到的是匿名化下游输出和等量任务信息，不展示产品名称、标志和生成来源；为了评分可以看任务事实，但不能看另一名评审先前评分。\n一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。\n候选评价统计方法依赖分数是否有序、是否连续和是否重复测量；方案可说明选择流程，不应在变量尚未确定时锁定某个显著性检验。\n主文只描述研究问题、实验设计、主要指标与限制；详细答案卡、记录字段和材料目录放在附表，不能为了压缩文字删除公平比较条件。\n工具生成速度是过程指标，质量分是结果指标；没有计费日志时不能估算真实 Token 成本，不能把字符数直接换算成实际费用。\n即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。",
+          "summary": "Markdown 文档摘要：提示词整理工具对照研究方案：合成现行资料；评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。；信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。；一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。",
+          "truncated": false
+        },
+        {
+          "path": "materials/research_design/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "latencyMs": 51
+  }
+}

@@ -116,6 +116,20 @@ const choosePlatform = async (page: Page, name: string): Promise<void> => {
   await page.getByRole('menuitem', { name: `复制并打开 ${name}`, exact: true }).click();
 };
 
+test('资料依据默认折叠，展开后不改变真实剪贴板正文', async ({ page }) => {
+  const evidence = { id: 'F1', category: 'BUSINESS_RULE', origin: 'USER_MATERIAL',
+    sourcePath: 'docs/业务规则.md', evidence: '取消时保留表单原值，已有 0 和 false 不覆盖。' };
+  await openCopyWorkbench(page, false, { ...result, evidenceCards: [evidence] });
+  const details = page.getByTestId('result-evidence');
+  await expect(details).toBeVisible();
+  await expect(details.getByText(evidence.sourcePath, { exact: true })).not.toBeVisible();
+  await details.getByRole('button').click();
+  await expect(details.getByText(evidence.sourcePath, { exact: true })).toBeVisible();
+  await expect(details.getByText(evidence.evidence, { exact: true })).toBeVisible();
+  await page.locator('.copy-main-button').click();
+  await expect.poll(() => page.evaluate(() => window.__promptCopyProbe.writes.at(-1))).toBe(prompt);
+});
+
 for (const scenario of [
   { task: '计算 YLL 并撰写研究报告。', rule: '不得编造参考文献。', unknown: '计算 YLL 使用哪份参考寿命表？' },
   { task: '完善基线匹配与自动填充。', rule: '取消时保持原值；只填 null 或空字符串，保留 0 和 false。',

@@ -1,0 +1,145 @@
+{
+  "caseId": "CD-09-M",
+  "reviewType": "AI_ASSISTED_BLINDED_STATIC_REVIEW",
+  "reviewer": "Independent Codex agent",
+  "professionalHumanReview": false,
+  "modelOrExperimentMappingRead": false,
+  "externalModelCalls": 0,
+  "readScope": [
+    "CD-09-M-requirements.json",
+    "N-A.md",
+    "N-B.md",
+    "N-C.md"
+  ],
+  "method": {
+    "comparison": "Assess actual delivered news drafts against supplied synthetic requirements; no full-text equality to an expected final draft.",
+    "length": "Exclude the two optional titles and the heading that labels the body. Count Unicode Script=Han code points separately from all non-whitespace body code points; digits, Latin letters and punctuation count only in the latter.",
+    "requiredLength": {
+      "min": 600,
+      "max": 800
+    },
+    "verdictPolicy": "Only call length definitely non-compliant if both counts fall outside the required range in the same direction. Divergent readings are NEEDS_DEFINITION.",
+    "unknowns": "No inference about group, optimizer, executor, or an undisclosed expected draft."
+  },
+  "reviews": [
+    {
+      "label": "N-A",
+      "bodyStartLine": 8,
+      "paragraphCount": 8,
+      "length": {
+        "han": 518,
+        "nonWhitespace": 578,
+        "verdict": "FAIL_TOO_SHORT"
+      },
+      "checks": {
+        "twoTitles": "PASS: two numbered optional titles at lines 3 and 4.",
+        "sourceFacts": "PASS: Qingjian, synthetic date 2026-10-20, controlled beta and local MVP retained at lines 8 and 10.",
+        "threeAudiences": "PASS: developers, graduate students and office staff appear at lines 8, 18 and 22.",
+        "threeValues": "PASS: clarification, related material selection and structured result are presented at lines 12, 14 and 16.",
+        "capabilityBoundary": "PASS: no direct code execution or formal report completion (line 10); no downstream work or paper promise (line 16); human verification at line 20.",
+        "factualFabrication": "No invented operating statistics, revenue, accuracy, partnerships, awards or expert endorsements; test-only CSV/Python/revenue/99% figures not adopted.",
+        "actualDeliverable": "PASS: two titles and finished body, no execution steps, code, API specification or questionnaire.",
+        "feedback": "PASS: closing directs users to feedback on the beta page, no invented contact or external URL."
+      },
+      "confirmedViolations": [
+        {
+          "code": "BODY_TOO_SHORT",
+          "location": "body paragraphs 1-8 / lines 8-22",
+          "evidence": "518 Han and 578 non-whitespace body characters; both below 600."
+        }
+      ],
+      "usabilityNotes": [
+        "The opening explicitly says the date is synthetic. This is source-faithful but reads as an evaluation fixture rather than a natural publication draft.",
+        "Separate short paragraphs make the three values easy to locate, but repeated scope disclaimers across lines 8, 10, 16, 18 and 20 add reading burden.",
+        "The phrase about no judicial judgement (line 20) is an extra professional-boundary wording not stated verbatim in the brief; it is consistent with the prompt-only scope, and is not recorded as a definite contradictory fact."
+      ],
+      "verdict": "FAIL_CONFIRMED_LENGTH"
+    },
+    {
+      "label": "N-B",
+      "bodyStartLine": 8,
+      "paragraphCount": 4,
+      "length": {
+        "han": 414,
+        "nonWhitespace": 464,
+        "verdict": "FAIL_TOO_SHORT"
+      },
+      "checks": {
+        "twoTitles": "PASS: two numbered optional titles at lines 3 and 4.",
+        "sourceFacts": "PASS: Qingjian, 2026-10-20 controlled beta, not formal launch (line 8), local MVP (line 10).",
+        "threeAudiences": "PASS: all three groups and their use intentions are present at line 10.",
+        "threeValues": "PASS: all three values are delivered at line 12 without unsupported performance claims.",
+        "capabilityBoundary": "PASS: no direct code or formal report work (line 10); no thesis, disease diagnosis, investment return or deployment promises (line 12); human verification (line 14).",
+        "factualFabrication": "No invented operating statistics, revenue, accuracy, institutions, prizes or endorsements; no test-figure pollution.",
+        "actualDeliverable": "PASS: two titles and finished body only, no extra questionnaire or technical procedure.",
+        "feedback": "PASS: line 14 asks for feedback on the beta page without invented contact data."
+      },
+      "confirmedViolations": [
+        {
+          "code": "BODY_TOO_SHORT",
+          "location": "body paragraphs 1-4 / lines 8-14",
+          "evidence": "414 Han and 464 non-whitespace body characters; both below 600."
+        }
+      ],
+      "usabilityNotes": [
+        "Expression is compact and grouped logically; brevity does not satisfy the requested length.",
+        "Three values and several boundaries are crowded into paragraph 3 (line 12); could be split without adding new facts.",
+        "The opening says '于2026年10月20日启动' rather than '将于'; because it does not say already launched and the date is given, this is a tense clarification suggestion, not a definite formal-launch violation.",
+        "Line 14 defers ability boundaries to the actual page, which was not supplied; the fixed boundaries are already retained, so this is avoidable editorial wording rather than proof of a factual conflict."
+      ],
+      "verdict": "FAIL_CONFIRMED_LENGTH"
+    },
+    {
+      "label": "N-C",
+      "bodyStartLine": 7,
+      "paragraphCount": 6,
+      "length": {
+        "han": 594,
+        "nonWhitespace": 658,
+        "verdict": "NEEDS_DEFINITION"
+      },
+      "checks": {
+        "twoTitles": "PASS: exactly two bold optional titles at lines 1 and 3.",
+        "sourceFacts": "PASS: product and date (line 7), local MVP (line 7), controlled beta and not formal commercial launch (line 17).",
+        "threeAudiences": "PASS: developers, graduate students and ordinary office staff are explained at line 9.",
+        "threeValues": "PASS: individual clarification/material/structured-result paragraphs at lines 11, 13 and 15.",
+        "capabilityBoundary": "PASS: no direct code or formal-report completion (line 7); all four prohibited promises excluded (line 9); material selection is user-initiated (line 13); results require verification (line 15).",
+        "factualFabrication": "No invented operating statistics, accuracy, revenue or endorsements, but exclusivity of the feedback channel is asserted without explicit source evidence at line 17.",
+        "actualDeliverable": "PASS: two titles and complete publishable draft body only; no execution checklist or questionnaire.",
+        "feedback": "The specified beta-page feedback is retained, but it is strengthened to the 'only' channel."
+      },
+      "confirmedViolations": [],
+      "unsupportedClaims": [
+        {
+          "code": "UNSUPPORTED_EXCLUSIVITY",
+          "location": "paragraph 6 / line 17",
+          "evidence": "内测页面是本次招募的唯一反馈渠道",
+          "reason": "The brief specifies beta-page feedback and says this task does not supply or need other contact details; it does not establish that no other feedback channel exists.",
+          "interpretationBoundary": "This is unsupported exclusive wording, not evidence that another channel actually exists or that a product statistic was fabricated.",
+          "recommendation": "Use '可在内测页面提交意见' and omit the unsupported exclusive assertion."
+        }
+      ],
+      "usabilityNotes": [
+        "Six paragraphs give a clear opening, audience explanation, three values and feedback closing; the overall flow is natural.",
+        "594 Han is below the lower bound while 658 non-whitespace characters is within it. Do not declare a pass by choosing the second reading; define the intended counting rule or revise to satisfy both.",
+        "The opening/heading use '于/启动/开启' rather than '将于'; recommend making the planned future activity explicit, without calling the current wording a definite claim of formal commercial launch.",
+        "Several scope disclaimers repeat across paragraphs 1, 2, 4 and 5; some can be consolidated while preserving required boundaries."
+      ],
+      "verdict": "NEEDS_LENGTH_DEFINITION_AND_UNSUPPORTED_CLAIM_REVIEW"
+    }
+  ],
+  "summary": {
+    "confirmedLengthFailures": [
+      "N-A",
+      "N-B"
+    ],
+    "lengthDefinitionRequired": [
+      "N-C"
+    ],
+    "unsupportedExclusivity": [
+      "N-C"
+    ],
+    "professionalReview": "Not performed. This is an AI-assisted static assessment of synthetic drafts, not a journalist/editor's acceptance decision.",
+    "ranking": "No numeric scores and no model/group ranking. No fully qualified pass is established under the unresolved length convention."
+  }
+}

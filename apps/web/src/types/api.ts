@@ -490,6 +490,16 @@ export interface OptimizationResult {
   provider: ProviderMetadata;
   latencyMs: number;
   warnings?: string[];
+  /** 只读溯源证据；旧记录默认缺省，展开内容不替代正文中的业务规则和未决条件。 */
+  evidenceCards?: PlanningFactEvidence[];
+}
+
+export interface PlanningFactEvidence {
+  id: string;
+  category: string;
+  origin: string;
+  sourcePath: string;
+  evidence: string;
 }
 
 export interface OptimizationHistorySummary {

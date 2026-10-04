@@ -27,6 +27,61 @@ class PlanAmbiguityMergeTest {
     private static final String REGION_CONFLICT = "资料对“研究范围”存在不同取值：研究资料.txt（广东省）与 新方案.txt（浙江省）。请确认本次采用哪一项。";
 
     @Test
+    void shouldMergeOnlyTheReminderForTheSameBusinessObject() {
+        var answers = List.of(new PlanAnswer("approval", "审批规则采用什么标准？", "暂不确定"),
+                new PlanAnswer("refund", "退款规则采用什么标准？", "暂不确定"));
+        var result = assemble(List.of("审批标准尚未明确。", "退款标准尚未明确。", "紧急订单的审批标准尚未明确。"),
+                List.of(), answers);
+        assertThat(result.ambiguities()).hasSize(3)
+                .contains("紧急订单的审批标准尚未明确。");
+        assertSynchronized(result);
+    }
+
+    @Test
+    void shouldNotUseAnApprovalAnswerToResolveRefundRules() {
+        var decisions = ConfirmedDecisionSet.from(List.of(
+                new PlanAnswer("approval", "审批规则采用什么标准？", "超过五万元由财务审批")));
+        assertThat(decisions.coversUnknown("退款规则尚未明确。")).isFalse();
+        assertThat(decisions.coversUnknown("紧急订单审批规则尚未明确。")).isFalse();
+    }
+
+    @Test
+    void shouldRemoveAbsenceDeclarationsButRetainSpecificProblemsFollowingNoIssues() {
+        var result = assemble(List.of("无。本题必要的事实、范围、读者和交付形式均已提供，不存在影响任务目标且目前缺失的业务决定。",
+                "无已知冲突，但退款期限尚未确定。"), List.of(), List.of());
+        assertThat(result.ambiguities()).containsExactly("无已知冲突，但退款期限尚未确定。");
+    }
+
+    @Test
+    void shouldMergeResearchDecisionLabelsWithBoundQuestionsWithoutDroppingNewPopulation() {
+        var answers = List.of(new PlanAnswer("rounds", "交互式计划确认组最多允许几轮提问？", "暂不确定"),
+                new PlanAnswer("agreement", "两名盲评者之间的一致性应如何评价？", "暂不确定，不提前指定统计检验；按评分变量类型提出候选，并说明选择条件。"));
+        var result = assemble(List.of("以下事项尚未决定，须保留为预注册前待确认条件，不得默认补全：",
+                "交互式计划确认组的最大提问轮次。",
+                "两名盲评者之间一致性的评价方式（按评分变量类型提出候选并说明选择条件，不提前指定统计检验）。",
+                "三名盲评者之间一致性的评价方式。"), List.of(), answers);
+        assertThat(result.ambiguities()).hasSize(3).contains("三名盲评者之间一致性的评价方式。");
+    }
+
+    @Test
+    void shouldCopyOneAuthoritativeReminderWithoutRemovingNewProviderConditions() {
+        var result = new OptimizationResultAssembler().assemble(new EnhancementProviderResponse(List.of(
+                new PromptSection(PromptSectionType.BACKGROUND, "背景", "审批流程。"),
+                new PromptSection(PromptSectionType.TASK, "任务", "整理审批方案。"),
+                new PromptSection(PromptSectionType.OUTPUT, "输出", "审批说明。"),
+                new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "- 审批标准尚未明确。\n- 紧急订单审批标准尚未明确。")),
+                "test", "test", false, List.of("审批标准尚未明确。", "紧急订单审批标准尚未明确。")),
+                new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
+                new PromptTemplate(TemplateCode.GENERAL, "输出", "结果可核对", "示例"), List.of(),
+                List.of(new PlanAnswer("approval", "审批标准是什么？", "暂不确定")), true,
+                List.of("不得削弱现有功能"), false, 1);
+        assertThat(result.optimizedPrompt()).doesNotContain("- 审批标准尚未明确。")
+                .contains("该问题尚未确定：审批标准是什么？");
+        assertThat(result.optimizedPrompt().split("紧急订单审批标准尚未明确", -1)).hasSize(2);
+        assertThat(result.ambiguities()).hasSize(2);
+    }
+
+    @Test
     void shouldGroupOneConflictRegisteredByBothServerAndUnresolvedAnswer() {
         String explanation = "本次订单审批采用哪个审批阈值：src/rules/审批规则.txt 为三万元，docs/新审批方案.txt 为五万元。确认前不能确定修改位置。";
         var result = assemble(List.of(explanation), List.of(CONFLICT),

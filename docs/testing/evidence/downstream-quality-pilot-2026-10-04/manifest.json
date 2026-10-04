@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-04T05:06:51.031Z",
+  "corpusSha256": "4d6b6ad18f3ef29d0f8dfca3a0646a8968da95aa42686ffb27826461b2703312",
+  "optimizer": {
+    "publishedId": "deepseek:deepseek-flash",
+    "version": "DeepSeek-V4.1-Flash"
+  },
+  "executorModels": [
+    "deepseek:deepseek-flash",
+    "tokenhub:glm-5.3-flashx"
+  ],
+  "unpublishedExecutorNotCalled": [
+    "Kimi"
+  ],
+  "repetitionsPerCell": 1,
+  "cases": [
+    "CD-09-M",
+    "CD-12-M"
+  ],
+  "arms": [
+    "raw",
+    "direct",
+    "plan"
+  ],
+  "executorCallCount": 13,
+  "successfulWorkCount": 6,
+  "experimentalMode": "SAME_INFORMATION_SYNTHETIC_MEDIUM_CASE_PILOT",
+  "qualityConclusion": "MIXED_SCOPED_RESULTS_NOT_RELEASE_ACCEPTANCE",
+  "professionalHumanReview": "PENDING",
+  "glmComparison": "NOT_EVALUABLE_EMPTY_TASK_OUTPUT_AT_3072_AND_CALIBRATION_8192",
+  "corpusSemanticInputWarnings": [
+    "CD-09-L",
+    "CD-12-L"
+  ],
+  "excludedSensitiveData": [
+    "credentials",
+    "cookies",
+    "CSRF tokens",
+    "account information",
+    "endpoint URLs",
+    "reasoning text"
+  ],
+  "sourceRun": "tmp/downstream-quality-pilot-2026-10-04/2026-10-04T04-40-00-482Z",
+  "helperHashes": [
+    {
+      "file": "collect-prompts.mjs",
+      "sha256": "e7b8d087d00ffc5aa1bb4d5e89da530ea1c6ec33daf7073ad037879906de2283"
+    },
+    {
+      "file": "DownstreamQualityRunner.java",
+      "sha256": "6c9b070c2c177e2b57054e106d9144de5d64061c82a128dcd94d44e6064a120c"
+    },
+    {
+      "file": "DownstreamQualityRunnerV2.java",
+      "sha256": "ebdb0069e16fa209b339c8d01e75c9f43443e99ca676544ec2bc9eba5db85ed6"
+    },
+    {
+      "file": "run-downstream.ps1",
+      "sha256": "95500472e73f65a2b626f625c4d9e48e53919ad1f8521ec3a5bb22265e427590"
+    },
+    {
+      "file": "run-downstream-v2.ps1",
+      "sha256": "449a357aae1aa8d76c799d40d4138df41b444704d03ed1bac209860e0403f93e"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "CD-09-M-input.json",
+      "sha256": "f8631b25ff52a8a99f0a9143401dd69e8911db3d73c29538db16c57d3803e289",
+      "bytes": 5404
+    },
+    {
+      "path": "CD-09-M-plan-questions.json",
+      "sha256": "1c95d6ffdb251104a4b677a2f00be52ec369b65cda3e2449c05ade35a00346cb",
+      "bytes": 415
+    },
+    {
+      "path": "CD-09-M-raw-prompt.md",
+      "sha256": "4d26d82f5f6978e4dce1463b14cdddb1adc7d349419e419524af04aed33d7476",
+      "bytes": 2004
+    },
+    {
+      "path": "CD-09-M-raw-deepseek-work.md",
+      "sha256": "1b2362aebd7f776c283218d7641aa92a4ebe4419583e1510fb7271299ea921d2",
+      "bytes": 2176
+    },
+    {
+      "path": "CD-09-M-direct-prompt.md",
+      "sha256": "af0fb40572a6bc4bd8d151cad3af7600106b3b61469c5e0f0f1fbc8a48307ad8",
+      "bytes": 6938
+    },
+    {
+      "path": "CD-09-M-direct-optimization-metadata.json",
+      "sha256": "35aa034277d44dc093c715733c640bf52852d1b0cea9dc67421e1f93c2eb4dc7",
+      "bytes": 336
+    },
+    {
+      "path": "CD-09-M-direct-deepseek-work.md",
+      "sha256": "91ae9b7be3bddc46e731767016ee52d80361021d1ebece4e2f82ea2222ff22d3",
+      "bytes": 1920
+    },
+    {
+      "path": "CD-09-M-plan-prompt.md",
+      "sha256": "39d71bc50cb6a676c95158703aef498ca8b4c175bf0308692a7f4a854595f1a3",
+      "bytes": 7668
+    },
+    {
+      "path": "CD-09-M-plan-optimization-metadata.json",
+      "sha256": "efef064fd08ac2a73d6db70ea433cc6ef02ad0d623dd239fedfbe9671a50d44e",
+      "bytes": 336
+    },
+    {
+      "path": "CD-09-M-plan-deepseek-work.md",
+      "sha256": "448facd2d9f8aee86d6980ae970263e0f6bc841711957fef7ba86701902fae9d",
+      "bytes": 1534
+    },
+    {
+      "path": "CD-12-M-input.json",
+      "sha256": "1cf0a5b82eede4313ed7b74b2f484f0ab303ed59bac4d17d6b6f3fb4a7ea1c83",
+      "bytes": 5250
+    },
+    {
+      "path": "CD-12-M-plan-questions.json",
+      "sha256": "c5d89973649f12bda417039f4b683fb89ff476e5a1a1c78fda0ad7e5ca6daa04",
+      "bytes": 404
+    },
+    {
+      "path": "CD-12-M-raw-prompt.md",
+      "sha256": "d841f748a894eecbd287f441171121fde39b2e32a7081f53731bfaf1d0dfb13c",
+      "bytes": 1996
+    },
+    {
+      "path": "CD-12-M-raw-deepseek-work.md",
+      "sha256": "876a1b705714261e2a1f3612edce3c11e82c2fc55d3d747e0366efb5d180fcd0",
+      "bytes": 7593
+    },
+    {
+      "path": "CD-12-M-direct-prompt.md",
+      "sha256": "15cb3eefc36b444dbc2706d37e59c25c124ea3beeb7bad446aa58df80d1fd2e7",
+      "bytes": 7602
+    },
+    {
+      "path": "CD-12-M-direct-optimization-metadata.json",
+      "sha256": "b31d1009bc3f9a3bc9a572cce022ee7523e13e4ec9672e2db570c6dbd39fe733",
+      "bytes": 326
+    },
+    {
+      "path": "CD-12-M-direct-deepseek-work.md",
+      "sha256": "1050894b4e3e5b866685e7d513d81a98a08458c1a7e423ae5547d1f5250f54d0",
+      "bytes": 9761
+    },
+    {
+      "path": "CD-12-M-plan-prompt.md",
+      "sha256": "1dae23422eb332300aba0d37b3835054941c09a063386853db1886c2611ab89d",
+      "bytes": 7997
+    },
+    {
+      "path": "CD-12-M-plan-optimization-metadata.json",
+      "sha256": "7c4de2e5e9f093f73e23ae95fb8f8245a2f8a4c67bdde68613ac50ec3425ff42",
+      "bytes": 755
+    },
+    {
+      "path": "CD-12-M-plan-deepseek-work.md",
+      "sha256": "273c3a2afbd7f4baacdccf7fe0fa77bd8c1de8d71079b16a13c28fc12372e60f",
+      "bytes": 9466
+    },
+    {
+      "path": "execution-call-results.json",
+      "sha256": "ae7de29c967f50465a702394c7fdb156f141666ac291b7703c0f3fe5c310ad45",
+      "bytes": 15265
+    },
+    {
+      "path": "platform-collection-summary.json",
+      "sha256": "7377ad128e6f928cdaedf327886882f49afee22858984cd3b72e825ef255af3f",
+      "bytes": 4720
+    },
+    {
+      "path": "news-blinded-review.json",
+      "sha256": "97665630979520ff9a2f5f675d4037304d10e263c873eddfeab25ecaea2014d6",
+      "bytes": 8825
+    },
+    {
+      "path": "education-blinded-review.json",
+      "sha256": "c756e720161e55acda21f84ee08b43a2801eb77990f8882252b04cd6f6a2cc07",
+      "bytes": 5622
+    },
+    {
+      "path": "blinded-mapping.json",
+      "sha256": "508497c15eaf44e5e6eb07f7817c0e1992ddf5cdff8065a20c0a7f15fc7a34cd",
+      "bytes": 1067
+    }
+  ]
+}

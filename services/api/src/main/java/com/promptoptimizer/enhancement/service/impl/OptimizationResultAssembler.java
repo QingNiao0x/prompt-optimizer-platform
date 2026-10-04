@@ -152,6 +152,13 @@ public class OptimizationResultAssembler {
         appendExplicitRules(sections, explicitRules);
         appendConstraints(sections, constraints);
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities);
+        if (!planConfirmed) {
+            // 用户在原文明确列出的未决问题不能被模型返回的空数组抹掉；绑定 Plan 的旧标签不在此重新引入。
+            List<String> providerFindings = assessed;
+            assessed = java.util.stream.Stream.concat(assessed.stream(), declaredPendingQuestions(rawPrompt).stream()
+                            .filter(question -> providerFindings.stream().noneMatch(finding -> coversDeclaredQuestion(finding, question, rawPrompt))))
+                    .distinct().toList();
+        }
         assessed = classifyFindings(sections, assessed, rawPrompt, decisions, eligibleFacts, documentFacts, context);
         List<AmbiguityReference> references = normalizeAmbiguityReferences(providerResponse);
         // 先登记新冲突和绑定的未决问题，再归并模型提醒，避免重复项挤占展示预算。
@@ -164,6 +171,7 @@ public class OptimizationResultAssembler {
             resultWarnings.add("待确认事项已去重，本次展示前 8 项，另有 " + merged.omittedCount()
                     + " 项未展示；所有未决条件已完整保留在约束的执行前须确认部分，请核对后再交付执行。");
         }
+        removeRepeatedProviderPrerequisites(sections, merged.executionPrerequisites(), decisions);
         appendExecutionPrerequisites(sections, merged.executionPrerequisites());
         // 一个权威列表同时驱动 API 与段落，避免 UI 与模型返回的旧 CLARIFICATIONS 互相矛盾。
         sections.remove(PromptSectionType.CLARIFICATIONS);
@@ -203,8 +211,85 @@ public class OptimizationResultAssembler {
                         providerResponse.mock()
                 ),
                 Math.max(0, latencyMs),
-                resultWarnings
+                resultWarnings,
+                evidenceCards(eligibleFacts, documentFacts)
         );
+    }
+
+    /** 只读取用户明确标记的当前待定问题，保留完整问题而不从关键词缺失制造泛化警告。 */
+    private List<String> declaredPendingQuestions(String rawPrompt) {
+        if (rawPrompt == null || rawPrompt.isBlank()) return List.of();
+        List<String> questions = new ArrayList<>();
+        boolean pendingSection = false;
+        for (String line : rawPrompt.lines().toList()) {
+            String value = line.strip();
+            if (value.startsWith("#")) {
+                pendingSection = value.matches("^#{1,6}\\s*(?:尚待明确|待确认事项|未决事项|待明确)(?:[：:]?)$");
+                continue;
+            }
+            if (!pendingSection) continue;
+            value = value.replaceFirst("^(?:[-*•]\\s+|\\d+[.)、]\\s*)", "");
+            int end = Math.max(value.indexOf('？'), value.indexOf('?'));
+            if (end < 2 || end >= 500 || !value.matches(".*(?:尚未决定|未确定|尚未确定|未明确|暂不确定).*")) continue;
+            String question = value.substring(0, end + 1);
+            if (!sensitiveValueDetector.containsCredential(question)) questions.add(question);
+        }
+        return List.copyOf(questions);
+    }
+
+    /**
+     * 仅避免补回已被完整问题覆盖的原文条目，不删除或截短模型提醒。
+     * 同一完整条件允许“该候选应如何处理”等语法差异；新条件留在独立条目中，新补充仍随原模型提醒交付。
+     */
+    private boolean coversDeclaredQuestion(String finding, String question, String rawPrompt) {
+        int end = Math.max(finding.indexOf('？'), finding.indexOf('?'));
+        if (end < 2) return false;
+        String observed = finding.substring(0, end + 1).replaceAll("（例如[：:][^）]*）", "");
+        String expected = question;
+        if (rawPrompt.contains("当前用户所属地区条件")) {
+            observed = observed.replace("当前用户所属地区条件", "当前地区条件");
+        }
+        // 只规范化完整处理问句的尾部，不去掉条件、业务对象、否定或数值。
+        String suffix = "时[，,](?:该候选)?应(?:如何|怎样)处理(?:这条候选)?[？?]$";
+        observed = observed.replaceAll(suffix, "时：候选处理？");
+        expected = expected.replaceAll(suffix, "时：候选处理？");
+        return observed.replaceAll("\\s", "").equals(expected.replaceAll("\\s", ""));
+    }
+
+    /**
+     * 仅去掉模型约束中可证明与权威未决清单相同的整行；带新条件或解释的整行原样保留。
+     * 不删除段落或靠主题词裁剪正文，避免复制时丢失新冲突和执行限制。
+     */
+    private void removeRepeatedProviderPrerequisites(Map<PromptSectionType, PromptSection> sections,
+                                                     List<String> prerequisites, ConfirmedDecisionSet decisions) {
+        if (prerequisites.isEmpty()) return;
+        PromptSection section = sections.get(PromptSectionType.CONSTRAINTS);
+        String cleaned = section.content().lines().filter(line -> {
+            String value = line.strip().replaceFirst("^[-*•]\\s+", "");
+            return !prerequisites.contains(value) && decisions.decisions().stream()
+                    .filter(decision -> decision.scope() == Scope.UNRESOLVED)
+                    .noneMatch(decision -> PlanDecisionIdentity.repeatsReminder(value, decision.question()));
+        }).collect(Collectors.joining("\n")).strip();
+        sections.put(section.type(), new PromptSection(section.type(), section.title(), cleaned));
+    }
+
+    /** 详细分类和原证据单独返回供展开核对；正文仍保留规则、定位路径及所有执行前提。 */
+    private List<PlanningFactCard> evidenceCards(List<PlanningFactCard> facts, List<String> documentFacts) {
+        List<PlanningFactCard> values = new ArrayList<>(facts);
+        int sequence = 0;
+        for (String documentFact : documentFacts) {
+            int split = documentFact.indexOf('：');
+            if (split < 1) continue;
+            String path = documentFact.substring(0, split);
+            String evidence = documentFact.substring(split + 1);
+            if (values.stream().anyMatch(card -> card.sourcePath().equals(path) && card.evidence().equals(evidence))) continue;
+            values.add(new PlanningFactCard("D" + (++sequence), PlanningFactCategory.BUSINESS_RULE,
+                    PlanningEvidencePolicy.origin(path, "text"), path, evidence));
+        }
+        return values.stream().filter(card -> !isBlank(card.sourcePath()) && card.sourcePath().length() <= 256
+                && !isBlank(card.evidence()) && card.evidence().length() <= 220
+                && !sensitiveValueDetector.containsCredential(card.sourcePath())
+                && !sensitiveValueDetector.containsCredential(card.evidence())).toList();
     }
 
     /**
@@ -267,6 +352,12 @@ public class OptimizationResultAssembler {
         eligibleFiles.stream().flatMap(file -> policy.evidenceLines(file).stream())
                 .filter(policy::relevantBusinessContent).forEach(evidence::add);
         List<String> exclusionEvidence = new ArrayList<>(evidence);
+        // 排除用途是接收文件的可核对元数据，不把测试正文升级为业务证据；新条件不能靠文件名被过滤。
+        context.fileSnippets().stream()
+                .filter(file -> PlanningEvidencePolicy.origin(file.path(), file.language()) == PlanningFactOrigin.TEST_FIXTURE)
+                .filter(file -> file.content().lines().anyMatch(line -> line.strip().startsWith("仅用于排版和来源识别"))
+                        && file.content().contains("不是本题事实"))
+                .forEach(file -> exclusionEvidence.add("已排除的排版测试资料：" + file.path()));
         eligibleFiles.stream().map(file -> String.join("。", policy.evidenceLines(file)))
                 .filter(policy::relevantBusinessContent).forEach(exclusionEvidence::add);
         var classifier = new PlanFindingClassifier();
@@ -337,9 +428,7 @@ public class OptimizationResultAssembler {
         String sourcedFacts = safeFacts.stream()
                 .filter(card -> !existingBackgroundContent.contains(card.sourcePath())
                         || !existingBackgroundContent.contains(card.evidence()))
-                .map(card -> "- [" + card.category() + "/" + card.origin() + "] "
-                        + (card.id().startsWith("R") ? "二次检索；" : "首次已读；") + "来源："
-                        + card.sourcePath() + "；证据：" + card.evidence())
+                .map(card -> "- " + card.sourcePath() + "：" + card.evidence())
                 .collect(Collectors.joining("\n"));
         if (!sourcedFacts.isBlank()) {
             background = new PromptSection(

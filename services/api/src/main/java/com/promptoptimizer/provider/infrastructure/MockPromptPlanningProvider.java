@@ -6,6 +6,7 @@ import com.promptoptimizer.enhancement.domain.PlanQuestionType;
 import com.promptoptimizer.provider.service.PromptPlanningProvider;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.provider.domain.PlanningProviderResponse;
+import com.promptoptimizer.template.domain.TaskDeliveryProfile;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -45,11 +46,18 @@ public class MockPromptPlanningProvider implements PromptPlanningProvider {
         }
         String prompt = input.toString().toLowerCase(Locale.ROOT);
         String task = request.rawPrompt().toLowerCase(Locale.ROOT);
+        TaskDeliveryProfile delivery = TaskDeliveryProfile.identify(task);
+        boolean contentGoal = delivery != TaskDeliveryProfile.GENERAL
+                && delivery != TaskDeliveryProfile.ACADEMIC_METHODS;
         boolean researchGoal = containsAny(task, "研究", "论文", "死亡率", "发病率", "时间序列", "arriaga", "yll");
         boolean explicitSoftwareGoal = containsAny(task, "开发", "接口", "bug", "报错", "重构", "修复", "登录");
         List<PlanQuestion> questions;
         String summary;
-        if (explicitSoftwareGoal || (!researchGoal && containsAny(task, "代码", "功能"))) {
+        // 明确要求新闻、教案或指南时，受众身份和被介绍的登录功能不是本次研发目标。
+        if (contentGoal) {
+            questions = writingQuestions(prompt);
+            summary = "我已理解你要交付的内容。只确认仍会影响受众、篇幅或成品形式的信息。";
+        } else if (explicitSoftwareGoal || (!researchGoal && containsAny(task, "代码", "功能"))) {
             questions = softwareQuestions(prompt, request.contextDescription());
             summary = request.planningContext() == null
                     ? "我已理解你要完成的软件任务。补充下面几个会影响实现方案的细节后，就可以生成最终提示词。"

@@ -137,6 +137,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 真正未决的问题继续放在 ambiguities；平台会将归并后的执行前提写入可复制正文，未确认不能视为授权猜测。
                 已确认的旧选择要改写成执行要求，不得把 rawPrompt 中旧的“需要先确认选哪一个”重新列为当前待办；独立约束、新取值与新条件仍须保留。
             14. 面向用户的正文和提醒使用自然语言，不展示 confirmedDecisions、planAnswers、questionId、scope 或 analysisStatus 等内部协议名；需要关联时仅使用 ambiguityReferences。
+            15. 平台会将全部未决条件统一加入可复制正文；不要再在 CONSTRAINTS 或其他段落列一份同义待确认清单。
+                提示词以目标、必要事实、决定和交付要求为中心；相同确认答案和资料规则只表述一次。
+                来源分类、内部问题 ID 和事实卡片 ID 无需抄进段落；代码定位路径及真正影响执行的规则仍须保留。
                 同一未决主题只列一次，把确实新增的版本、单位或适用条件合并说明，不重复原题。只有用户要求或任务必要时才额外说明依据和限制；“只输出译文”等明确交付限制必须遵守。
 
             JSON 格式必须为：
@@ -362,9 +365,13 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             String resolvedModelId = properties.publicModelId(route, currentRequest.model());
             ModelCallLogger.TokenUsage knownUsage = null;
             try {
-                ProviderCallResult<T> callResult = request.apply(currentRequest);
+                // 固定本次请求，分别计量上游等待与本地校验，不把重试总耗时当成一次模型推理。
+                var attemptRequest = currentRequest;
+                ProviderCallResult<T> callResult = com.promptoptimizer.common.logging.PipelineStageTiming.measure(
+                        operation, "model.upstream", resolvedModelId, () -> request.apply(attemptRequest));
                 knownUsage = callResult.tokenUsage();
-                R validated = validation.apply(callResult.value());
+                R validated = com.promptoptimizer.common.logging.PipelineStageTiming.measure(
+                        operation, "model.validation", resolvedModelId, () -> validation.apply(callResult.value()));
                 ModelCallLogger.completed(
                         operation,
                         route.key(),

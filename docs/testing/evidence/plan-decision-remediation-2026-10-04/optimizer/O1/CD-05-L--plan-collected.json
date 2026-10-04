@@ -1,0 +1,272 @@
+{
+  "id": "CD-05-L",
+  "arm": "plan",
+  "phase": "--collect",
+  "startedAt": "2026-10-04T07:50:28.292Z",
+  "elapsedMs": 10034,
+  "caseSha256": "798aef769508d7e1cfe724b1caf461dfa4fa7695acd3cf2ebb0e13171de80ccd",
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "16a015ab-5cf1-4b44-a8cf-50617c0df197",
+      "elapsedMs": 96
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "88705999-a53b-4631-94e7-9cc9c04ffd72",
+      "elapsedMs": 9938
+    }
+  ],
+  "plan": {
+    "summary": "已理解目标是撰写一份尚未执行的研究方案，比较原始需求、直接增强和交互式计划确认增强对下游输出的影响，并已固定二十个任务、三次重复、两名盲评者、信息量匹配对照等设计。仍需确认交互式计划确认的轮次与终止规则、评审分歧处理与一致性评价方式，因为这两项会直接影响预注册内容和评分表结构。",
+    "questions": [
+      {
+        "id": "max_rounds",
+        "question": "交互式计划确认组最多允许几轮提问？",
+        "hint": "轮次上限会决定预注册的终止规则和交互阶段风险记录方式，当前尚未决定。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "one_round",
+            "label": "固定一轮",
+            "description": "系统只提问一次，操作者按答案卡回答后即生成最终提示词。",
+            "answer": "交互式计划确认组固定只进行一轮提问，操作者按预先制定答案卡作答后即生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "two_rounds",
+            "label": "最多两轮",
+            "description": "允许系统在收到首轮答案后追问一次，再生成最终提示词。",
+            "answer": "交互式计划确认组最多进行两轮提问，操作者按预先制定答案卡作答，第二轮结束后生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "three_rounds",
+            "label": "最多三轮",
+            "description": "允许系统在收到答案后最多追问两次，再生成最终提示词。",
+            "answer": "交互式计划确认组最多进行三轮提问，操作者按预先制定答案卡作答，第三轮结束后生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "until_no_question",
+            "label": "直到系统无新问题",
+            "description": "不设固定轮次上限，以系统不再提出新问题为终止条件。",
+            "answer": "交互式计划确认组不设固定轮次上限，以系统不再提出新问题为终止条件，操作者始终按预先制定答案卡作答。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "termination_rule",
+        "question": "除轮次上限外，交互式计划确认组还应以什么条件终止？",
+        "hint": "终止规则需要与轮次上限共同预注册，避免执行时随意停止。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "answer_card_exhausted",
+            "label": "答案卡用尽即终止",
+            "description": "当预先制定的答案卡中已无对应答案时，立即终止提问并生成最终提示词。",
+            "answer": "交互式计划确认组在答案卡用尽时立即终止提问，并基于已有答案生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "no_new_question",
+            "label": "无新问题即终止",
+            "description": "当系统不再提出答案卡未覆盖的新问题时终止。",
+            "answer": "交互式计划确认组在系统不再提出答案卡未覆盖的新问题时终止，并生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "both_conditions",
+            "label": "轮次上限或答案卡用尽，先到者终止",
+            "description": "达到轮次上限或答案卡用尽，任一条件先满足即终止。",
+            "answer": "交互式计划确认组在达到轮次上限或答案卡用尽时终止，以先满足的条件为准，并生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "disagreement_handling",
+        "question": "两名盲评者评分出现分歧时，应如何处理？",
+        "hint": "分歧处理方式会影响评分表结构和最终质量分的计算口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "third_arbiter",
+            "label": "引入第三名评审仲裁",
+            "description": "分歧超过预设阈值时，由第三名盲评者独立评分并取多数意见或仲裁结果。",
+            "answer": "两名盲评者评分分歧超过预设阈值时，引入第三名盲评者独立评分，以多数意见或仲裁结果作为最终分。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "discuss_consensus",
+            "label": "两名评审讨论达成共识",
+            "description": "分歧出现后，两名评审在不知道对方先前评分的情况下讨论并形成一致评分。",
+            "answer": "两名盲评者评分分歧时，在不查看对方先前评分记录的前提下讨论并形成一致评分。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "average_scores",
+            "label": "取两名评审平均分",
+            "description": "不额外仲裁，直接以两名评审评分的平均值作为最终分。",
+            "answer": "两名盲评者评分分歧时不额外仲裁，直接以两名评审评分的平均值作为最终分。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "report_both",
+            "label": "保留双方评分并报告分歧",
+            "description": "不合并分数，分别报告两名评审结果及分歧情况。",
+            "answer": "两名盲评者评分分歧时保留双方评分，分别报告两名评审结果及分歧情况，不合并为单一分数。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "consistency_metric",
+        "question": "两名盲评者之间的一致性应如何评价？",
+        "hint": "一致性评价方式需要与评分表设计匹配，当前尚未决定。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "cohen_kappa",
+            "label": "Cohen's kappa",
+            "description": "适用于两名评审、分类或有序评分的一致性评价。",
+            "answer": "采用 Cohen's kappa 评价两名盲评者之间的一致性。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "weighted_kappa",
+            "label": "加权 kappa",
+            "description": "适用于两名评审、有序评分且不同等级差异权重不同的情况。",
+            "answer": "采用加权 kappa 评价两名盲评者之间的一致性，以体现有序评分中不同等级差异的权重。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "icc",
+            "label": "组内相关系数 ICC",
+            "description": "适用于两名评审、连续或近似连续评分的一致性评价。",
+            "answer": "采用组内相关系数 ICC 评价两名盲评者之间的一致性。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "percent_agreement",
+            "label": "百分比一致率",
+            "description": "仅报告两名评审评分完全一致或落在同一等级的比例。",
+            "answer": "采用百分比一致率评价两名盲评者之间的一致性，报告评分完全一致或落在同一等级的比例。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 8377
+  },
+  "prepared": {
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/research_design/",
+        "materials/research_design/current-brief.md",
+        "materials/research_design/tests/",
+        "materials/research_design/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/research_design/current-brief.md：Markdown 文档摘要：提示词整理工具对照研究方案：合成现行资料；评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。；信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。；一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断…；业务摘录：一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；交互式计划确认指系统先提问、实验操作者按预先制定答案卡作答，再生成最终提示词，不是静态任务分解列表。；详细答案卡、记录字段和材料目录放在附表，不能为了压缩文字删除公平比较条件。；[片段 1/1]；任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签；；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "盲评不得暴露工具名称"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "方案可说明选择流程，不应在变量尚未确定时锁定某个显著性检验"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/research_design/",
+        "materials/research_design/current-brief.md",
+        "materials/research_design/tests/",
+        "materials/research_design/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/research_design/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 提示词整理工具对照研究方案：合成现行资料\n交互式计划确认指系统先提问、实验操作者按预先制定答案卡作答，再生成最终提示词，不是静态任务分解列表。\n实验尚未运行，没有准确率、显著性、成功案例数量和用户结论。\n二十个任务和三次独立重复以及两名盲评者已经确定，不需要重新选择样本数量。\n评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。\n\n# 分支与边界\n开发任务要求下游模型只输出方案，不实际修改仓库；写作任务要求交付文本，因此跨任务不能用代码测试通过率作为统一质量指标。\n原始组接收原始需求与初始材料，直接增强组接收同一初始信息得到的优化提示词；两组都不能偷看计划确认组后来回答的业务选择。\n计划确认组应记录每个问题、选项、推荐依据和答案，不只保存最终提示词；错误推荐被答案纠正后仍应计入交互阶段风险。\n信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。\n任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签；不能在人工评分前人为删除不利的测试污染反例。\n每个条件的三次重复应开启隔离会话，随机化顺序并记录模型版本、日期和参数；失败后的重试不能替代第一份失败样本。\n评审看到的是匿名化下游输出和等量任务信息，不展示产品名称、标志和生成来源；为了评分可以看任务事实，但不能看另一名评审先前评分。\n一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。\n候选评价统计方法依赖分数是否有序、是否连续和是否重复测量；方案可说明选择流程，不应在变量尚未确定时锁定某个显著性检验。\n主文只描述研究问题、实验设计、主要指标与限制；详细答案卡、记录字段和材料目录放在附表，不能为了压缩文字删除公平比较条件。\n工具生成速度是过程指标，质量分是结果指标；没有计费日志时不能估算真实 Token 成本，不能把字符数直接换算成实际费用。\n即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。",
+          "summary": "Markdown 文档摘要：提示词整理工具对照研究方案：合成现行资料；评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。；信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。；一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。",
+          "truncated": false
+        },
+        {
+          "path": "materials/research_design/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "latencyMs": 43
+  }
+}

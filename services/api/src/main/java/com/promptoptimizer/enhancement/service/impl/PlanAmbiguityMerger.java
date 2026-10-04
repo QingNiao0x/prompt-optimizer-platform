@@ -66,6 +66,7 @@ final class PlanAmbiguityMerger {
             registered.putIfAbsent(key, "该问题尚未确定：" + decision.question() + explanation);
         }
         for (String text : findings) {
+            if (nonDecisionStatement(text)) continue;
             if (registered.containsValue(text)) continue;
             if (serverFindings.contains(text) && text.startsWith("资料对“")) continue;
             if (mergeExistingExplanation(text, registered)) continue;
@@ -214,12 +215,19 @@ final class PlanAmbiguityMerger {
     private boolean matchesBoundQuestion(String text, List<AmbiguityReference> references) {
         List<ConfirmedPlanDecision> matching = decisions.decisions().stream()
                 .filter(decision -> conflict(decision.question()).isEmpty())
-                .filter(decision -> sameQuestionReminder(text, decision.question())).toList();
+                .filter(decision -> sameQuestionReminder(text, decision.question())
+                        || PlanDecisionIdentity.repeatsDecisionLabel(text, decision.question(), decision.answer())).toList();
         if (matching.size() == 1) return true;
         return references.stream().filter(reference -> reference.message().equals(text))
                 .anyMatch(reference -> decisions.decisions().stream().anyMatch(decision ->
                         reference.questionId().equals(decision.questionId())
                                 && (matching.contains(decision) || genericReferencedReminder(text, decision.question()))));
+    }
+
+    /** 只剔除完全不含业务对象的列表引导语和明确的空列表声明；后续具体缺口始终保留。 */
+    private boolean nonDecisionStatement(String text) {
+        return text.matches("^(?:无|没有|无待确认事项|没有待确认事项)[。.!！]?$|^无[。]本题必要的事实、范围、读者和交付形式均已提供，不存在影响任务目标且目前缺失的业务决定[。]?$")
+                || text.matches("^(?:以下|下列)(?:事项|问题|条件)尚未(?:决定|确定)[，,](?:须保留为预注册前待确认条件[，,])?不得默认补全[：:]$");
     }
 
     /** 未列入常见维度的题目只在有效 ID 和完整剩余主题同时吻合时合并，不凭 ID 清空内容。 */
@@ -241,6 +249,7 @@ final class PlanAmbiguityMerger {
         String candidate = withoutExamples(text);
         String original = withoutExamples(question);
         if (normalize(candidate).equals(normalize(original))) return true;
+        if (PlanDecisionIdentity.repeatsReminder(candidate, original)) return true;
         // 每个完整子句都必须有已知依据；不能全局删除“是否/需要/提供/数据”后吞掉第二个问题。
         List<String> clauses = reminderClauses(candidate);
         if (clauses.size() > 1) {

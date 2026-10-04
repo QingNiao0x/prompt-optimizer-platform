@@ -3,6 +3,7 @@ package com.promptoptimizer.template.service.impl;
 import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.template.domain.PromptTemplate;
+import com.promptoptimizer.template.domain.TaskDeliveryProfile;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;
@@ -75,14 +76,36 @@ public class PromptTemplateRegistryImpl implements PromptTemplateRegistry {
         TemplateCode code = requestedTemplate == null || requestedTemplate == TemplateCode.AUTO
                 ? infer(rawPrompt)
                 : requestedTemplate;
-        return templates.get(code);
+        PromptTemplate selected = templates.get(code);
+        // 显式选择继续优先；仅自动通用策略按作品调整交付和验收，不改变公开枚举契约。
+        if (code == TemplateCode.GENERAL && (requestedTemplate == null || requestedTemplate == TemplateCode.AUTO)) {
+            var profile = TaskDeliveryProfile.identify(rawPrompt);
+            return new PromptTemplate(code, profile.outputGuidance(), profile.acceptanceGuidance(), selected.exampleGuidance());
+        }
+        if (code == TemplateCode.RESEARCH_ANALYSIS
+                && TaskDeliveryProfile.identify(rawPrompt) == TaskDeliveryProfile.ACADEMIC_METHODS) {
+            var profile = TaskDeliveryProfile.ACADEMIC_METHODS;
+            return new PromptTemplate(code, profile.outputGuidance(), profile.acceptanceGuidance(), selected.exampleGuidance());
+        }
+        return selected;
     }
 
     /**
      * 根据原始需求关键词推断内部生成策略，未命中时使用通用策略。
      */
     public TemplateCode infer(String rawPrompt) {
-        String prompt = rawPrompt.toLowerCase(Locale.ROOT);
+        String prompt = rawPrompt == null ? "" : rawPrompt.toLowerCase(Locale.ROOT);
+        var profile = TaskDeliveryProfile.identify(rawPrompt);
+        if (profile != TaskDeliveryProfile.GENERAL && profile != TaskDeliveryProfile.ACADEMIC_METHODS) {
+            return TemplateCode.GENERAL;
+        }
+        String goal = prompt.lines().filter(line -> !line.isBlank() && !line.startsWith("#"))
+                .findFirst().orElse(prompt).split("[。；;]", 2)[0];
+        // 实现方案中的异常分支不是 Bug 修复目标；只检查第一条目标中的肯定交付动词。
+        if (java.util.regex.Pattern.compile("(?<!不)(?<!不要)(?:设计|制定|提供|给出).{0,100}(?:实现方案|开发方案|功能方案)")
+                .matcher(goal).find() && !containsAny(goal, "修复", "bug", "报错", "重构")) {
+            return TemplateCode.FEATURE_DEVELOPMENT;
+        }
         // 明确的软件交付动词优先于材料中的研究关键词。
         if (containsAny(prompt, "开发接口", "实现接口", "开发功能", "修复", "bug", "报错")
                 || prompt.matches(".*开发.{0,12}(系统|平台|服务|应用|模块|工具).*")) {

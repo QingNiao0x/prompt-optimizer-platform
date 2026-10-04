@@ -5,6 +5,7 @@ import com.promptoptimizer.enhancement.domain.PlanningFactCard;
 import com.promptoptimizer.enhancement.domain.PlanningFactCategory;
 import com.promptoptimizer.enhancement.domain.PlanningFactOrigin;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
+import com.promptoptimizer.template.domain.TaskDeliveryProfile;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -65,7 +66,7 @@ public final class PlanQuestionFilter {
                     "(?:业务规则|审批规则|退款规则|取消规则|规则|阈值|审批条件)\\s*[:：=]\\s*([^\\n。；;]{2,180})")
     );
 
-    /** 去掉完全重复、已明确事实及同一事实维度的简单同义问法。 */
+    /** 去掉完全重复、已明确事实及同一对象的简单同义问法；分类相同不能代替对象相同。 */
     public List<PlanQuestion> filter(List<PlanQuestion> questions, PlanningProviderRequest input) {
         List<KnownFact> facts = collectFacts(input);
         var decisionPolicy = PlanningDecisionPolicy.from(input);
@@ -74,12 +75,46 @@ public final class PlanQuestionFilter {
         return questions.stream()
                 .filter(question -> seen.add(normalize(question.question())))
                 .filter(question -> !clearlyOutsideCurrentTask(question.question(), input.rawPrompt()))
+                .filter(question -> !routinePresentation(question.question(), input.rawPrompt()))
+                .filter(question -> !routineExecutionPresentation(question, input.rawPrompt()))
+                .filter(question -> !KnownTestCoverage.repeatsKnownBranches(question, input))
                 .filter(question -> !decisionPolicy.resolvedOrDelegated(question))
                 .filter(question -> !resolved(question.question(), facts, input))
                 .filter(question -> {
                     String dimension = questionDimension(question.question());
                     return dimension == null || seenDimensions.add(dimension);
                 }).toList();
+    }
+
+    /** 常规章节组织交给执行者；用户主动要求确认结构、期刊规范或专业方法时仍保留问题。 */
+    private boolean routinePresentation(String question, String rawPrompt) {
+        if (TaskDeliveryProfile.identify(rawPrompt) == TaskDeliveryProfile.GENERAL
+                || safe(rawPrompt).matches("(?s).*(?:询问|确认|让我选择|由我选择).{0,16}(?:章节|结构|顺序|提纲).*")) return false;
+        return question.matches("^(?:论文|方法提纲|报告|新闻稿|教案|指南)?(?:的)?(?:章节|小节|提纲)(?:应|应该|需要)?如何(?:组织|排序|安排)[？?]$")
+                || question.matches("^(?:方法提纲|报告|新闻稿|教案|指南)的(?:章节|小节)(?:应|应该|需要)?如何(?:组织|排序|安排)[？?]$");
+    }
+
+    /**
+     * 仅委托已要求的关键伪代码粒度和原文已命名的确认框形态。
+     * 用户主动要求作出这类选择、确认粒度或候选新增业务参数时保留整题，不代替业务决定。
+     */
+    private boolean routineExecutionPresentation(PlanQuestion question, String rawPrompt) {
+        String raw = safe(rawPrompt);
+        if (!raw.matches("(?s).*(?:实现方案|开发|代码|表单).*")
+                || raw.matches("(?s).*(?:询问|确认|让我选择|由我选择|由用户选择).{0,16}(?:伪代码粒度|伪代码深度|伪代码详细|确认形式|交互形式).*")) return false;
+        String text = question.question();
+        Pattern independent = Pattern.compile("新增|跨租户|权限|隐私|重试|超时|阈值|毫秒|数据来源|字段映射|生产|迁移|运行|具体参数值|\\d+");
+        if (independent.matcher(text).find() || question.options().stream().anyMatch(option ->
+                independent.matcher(option.label() + option.description() + option.answer()).find())) return false;
+        if (raw.contains("关键伪代码") && text.matches("^伪代码(?:需要|应|应该)?(?:详细到什么程度|粒度如何确定|采用什么粒度)[？?]$")
+                && !question.options().isEmpty()) {
+            return question.options().stream().allMatch(option ->
+                    option.label().matches("(?:流程级|方法级)(?:伪代码)?")
+                    && (option.answer().contains("流程级") || option.answer().contains("服务方法")));
+        }
+        return raw.matches("(?s).*(?:确认框|确认弹窗|弹窗确认).*" )
+                && !raw.matches("(?s).*(?:确认形式|确认形态|确认方式).{0,12}(?:尚未|未明确|未确定|待定|冲突).*" )
+                && text.matches("^(?:有匹配候选时[，,])?确认交互(?:应|需要)?采用哪种形式[？?]$");
     }
 
     /** 只拦截与用户主要目标明显冲突的研究提问；其它相关性判断保持保守。 */
@@ -345,18 +380,7 @@ public final class PlanQuestionFilter {
     }
 
     private String questionDimension(String question) {
-        if (isCompoundOrChange(question)) return null;
-        List<PlanningFactCategory> categories = questionCategories(question);
-        if (categories.size() == 1) return categories.getFirst().name();
-        if (question.matches(".*(框架|技术栈|数据库|依赖|运行环境|编程语言).*")) {
-            if (question.contains("数据库")) return "DATABASE";
-            if (question.contains("依赖")) return "DEPENDENCIES";
-            if (question.contains("语言")) return "PROGRAMMING_LANGUAGE";
-            if (question.contains("前端")) return "FRONTEND_FRAMEWORK";
-            if (question.contains("后端")) return "BACKEND_FRAMEWORK";
-            return "TECHNOLOGY_STACK";
-        }
-        return null;
+        return PlanDecisionIdentity.questionKey(question);
     }
 
     private static FactRule rule(PlanningFactCategory category, String question, String label) {
