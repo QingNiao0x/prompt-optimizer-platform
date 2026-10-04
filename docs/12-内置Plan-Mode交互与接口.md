@@ -552,9 +552,13 @@ flowchart TD
 | 上下文为空 | 继续生成 | `contextReport` 明确为空，不伪造项目事实 |
 | 文档解析或检索部分失败 | 降级生成 | 在 `contextReport.warnings` 和覆盖报告中说明原因 |
 
+模型响应校验失败时，`error.details` 可包含固定服务端枚举 `validationReason`、代码定义的 `validationField` 和实际预算循环内的 `modelAttempts`（当前 1—3；未经循环时省略）。这些诊断不包含模型正文、用户文件路径或原始异常消息。例如 Plan JSON 无法解析为 `PLAN_JSON_INVALID / plan.json`，输出达到上限为 `RESPONSE_TRUNCATED / response.finishReason`。既有 HTTP、错误码与 `retryable` 行为保留。
+
 ## 9. 测试范围
 
 - `PlanRecommendationRegressionTest`：真实失败响应的推荐标记回放，问题、候选答案及安全校验保持可用。
+- `PlanningDecisionReplayTest`：实际重复追问及复合改写、作用对象隔离、主动重开、来源冲突、低价值工程核查与真正未知条件。
+- `PlanFailureDiagnosticsTest`、`PlanProviderValidationBudgetTest`：非法 JSON/题型、空正文和截断的原因诊断，前端源码证据进入真实适配器，解析与业务校验共享三次预算。
 - `OpenAiCompatibleValidatedResponseTest`：解析和最终组装共享三次修复预算、凭据持续拦截、实质未决条件及确认答案保留、服务端固定错误不重试。
 - `ExplicitRuleEvidenceExtractorTest`、`RulePreservationAssemblyTest`：明确规则的来源、完整适用条件、预算、二次检索、最终四要素和冲突保留。
 - `OptimizationPlanningServiceTest`：科研六类问题、内部术语拦截、问题数量上限。

@@ -68,11 +68,13 @@ public final class PlanQuestionFilter {
     /** 去掉完全重复、已明确事实及同一事实维度的简单同义问法。 */
     public List<PlanQuestion> filter(List<PlanQuestion> questions, PlanningProviderRequest input) {
         List<KnownFact> facts = collectFacts(input);
+        var decisionPolicy = PlanningDecisionPolicy.from(input);
         Set<String> seen = new HashSet<>();
         Set<String> seenDimensions = new HashSet<>();
         return questions.stream()
                 .filter(question -> seen.add(normalize(question.question())))
                 .filter(question -> !clearlyOutsideCurrentTask(question.question(), input.rawPrompt()))
+                .filter(question -> !decisionPolicy.resolvedOrDelegated(question))
                 .filter(question -> !resolved(question.question(), facts, input))
                 .filter(question -> {
                     String dimension = questionDimension(question.question());
@@ -119,7 +121,7 @@ public final class PlanQuestionFilter {
     /** 只有同一类别只有一个明确值且问题未要求变更时，才不再确认。 */
     private boolean resolved(String question, List<KnownFact> facts, PlanningProviderRequest input) {
         if (explicitDeliveryOrFailure(question, input.rawPrompt())) return true;
-        if (knownFieldScope(question, input) || knownInteractivePlanDefinition(question, input.rawPrompt())) return true;
+        if (knownInteractivePlanDefinition(question, input.rawPrompt())) return true;
         if (explicitWritingLanguage(question, input.rawPrompt()) || knownImplementationLayer(question, input)) return true;
         if (answeredByUploadedProject(question, input)) return true;
         if (isCompoundOrChange(question)) return false;
@@ -203,21 +205,6 @@ public final class PlanQuestionFilter {
             }
         }
         return layers.size() == 1;
-    }
-
-    /** 原文选定了代码中的字段常量时不再扩缩整组字段；空值处理等子问题仍是独立决定。 */
-    private boolean knownFieldScope(String question, PlanningProviderRequest input) {
-        if (input.planningContext() == null || !question.matches(".*填充.*(?:哪些字段|字段范围|指哪些字段)[？?]$")
-                || question.matches(".*(?:null|空值|覆盖|新增|变更|是否增加).*")) return false;
-        var constant = Pattern.compile("(?:再填|填充|使用|遵循)\\s*([A-Z][A-Z0-9_]{2,64})").matcher(input.rawPrompt());
-        if (!constant.find() || input.rawPrompt().matches("(?s).*(?:更改|改为|调整|新增填充字段).*")) return false;
-        Pattern declaration = Pattern.compile("\\b" + Pattern.quote(constant.group(1))
-                + "\\s*=\\s*(\\[\\s*['\"][a-zA-Z0-9_]+['\"](?:\\s*,\\s*['\"][a-zA-Z0-9_]+['\"])*\\s*])");
-        Set<String> definitions = new HashSet<>();
-        input.planningContext().fileSummaries().stream().filter(summary -> summary.startsWith("[PROJECT_SOURCE] "))
-                .forEach(summary -> declaration.matcher(summary).results()
-                        .forEach(match -> definitions.add(match.group(1).replaceAll("[\\s'\"]", ""))));
-        return definitions.size() == 1;
     }
 
     /** 已明确研究交互问答时不重新选择机制；问答轮次、信息给法等设计细节继续保留。 */

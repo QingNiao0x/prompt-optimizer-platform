@@ -46,6 +46,9 @@ final class PlanAnswerSemantics {
     /** 只认当前状态断言；明确的历史转折和否认未决事项不反向变成新的问题。 */
     private static boolean pendingClause(String clause) {
         if (!PENDING.matcher(clause).find()) return false;
+        // “未提供的工程细节先核查”是对未展示实现的核查指令，不是撤销前面已选定的业务值。
+        // 只接受这个明确的条件化工程表达；具体版本、生效时间或业务口径未定仍属于未决部分。
+        if (clause.matches("(?i)^(?:未提供|未明确)的(?:现有|具体)?工程(?:实现)?细节(?:先|需|应|由执行\\s*agent先).*(?:核查|核对).*")) return false;
         if (clause.matches("^(?:若|如果|假如|假设).*") || clause.matches("^当(?!前).*(?:则|就|时).*")) return false;
         if (clause.matches(".*(?:未确认|未确定|未提供)(?:前|时|之前|的情况下).*(?:不得|不能|不应|禁止|先|应|需).*")) return false;
         if (clause.matches("^(?:没有|不存在|并无)(?:尚未确定|未确定|待定).*(?:事项|问题|选择)[。；;]?$")) return false;

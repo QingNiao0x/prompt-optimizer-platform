@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-10-04T04:06:48.385Z",
+  "scope": "READ_ONLY_PRODUCT_EVALUATION_AND_TEST_DESIGN",
+  "productionCodeChangedByThisAssessment": false,
+  "newPaidModelCalls": 0,
+  "historicalGenerationRequests": 27,
+  "historicalProviderAttempts": 31,
+  "historicalServerLatency": {
+    "direct": {
+      "count": 9,
+      "serverMedianMs": 5494,
+      "serverMaxMs": 11335
+    },
+    "plan": {
+      "count": 9,
+      "serverMedianMs": 3703,
+      "serverMaxMs": 20132
+    },
+    "plan-final": {
+      "count": 9,
+      "serverMedianMs": 6702,
+      "serverMaxMs": 20438
+    }
+  },
+  "currentHealthRequests": 21,
+  "currentHealthSuccess": 21,
+  "currentPublishedModelsCheckedAt": "2026-10-04T03:57:21.155Z",
+  "historical432ScopedRegressionTestsRerunInThisAssessment": false,
+  "offlineProbes": "Two current compiled-method synthetic counterexamples reproduced; not complete HTTP or professional acceptance.",
+  "crossDomainRealModelEvaluationStatus": "NOT_EXECUTED",
+  "professionalReviewStatus": "PENDING",
+  "crossModelExecutionStatus": "NOT_EXECUTED",
+  "readinessDecision": "NOT_A_RELEASE_APPROVAL",
+  "artifacts": [
+    {
+      "file": "distinct-decision-probe.json",
+      "sha256": "4d3602a1eab4034a3d4a082068871ec96384301692c372b57f3b264cb695683d"
+    },
+    {
+      "file": "distinct-decision-probe-runtime-proof.json",
+      "sha256": "e32ff35042afc327cdde6ab9e5d1e8f7859f4cf567bdac57027e415d1da55904"
+    },
+    {
+      "file": "historical-generation-latency-correlated.json",
+      "sha256": "8380036e6a8f18bcd576a8252f1220da8ed948fe6ff80196cbdf116733a1807e"
+    },
+    {
+      "file": "health-timing-2026-10-04T03-56-27-506Z-server-correlated.json",
+      "sha256": "2eb7ab1b56b6004c1b8efa189243e310c5a1337a650f96bc6ef99a2b861aaa00"
+    },
+    {
+      "file": "model-catalog.json",
+      "sha256": "5e9dd06b3bc33ba2a9123ec92ca6684a39fdd1b451cdf53df04a54100cf845e0"
+    }
+  ]
+}

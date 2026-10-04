@@ -9,6 +9,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ContextConflictDetectorTest {
     @Test
+    void shouldNotLetAnEngineeringLookupDirectiveReopenTheSelectedThreshold() {
+        var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(
+                new FileSnippet("docs/现行审批.md", "markdown", "审批金额阈值：30000元", "", false),
+                new FileSnippet("docs/候选审批方案.md", "markdown", "审批金额阈值：50000元", "", false),
+                new FileSnippet("docs/二次收到的审批意见.md", "markdown", "审批金额阈值：80000元", "", false)
+        ), List.of(), List.of(), "v1");
+        String question = "资料对“审批金额阈值”存在不同取值：docs/现行审批.md（30000元）与 docs/候选审批方案.md（50000元）。请确认本次采用哪一项。";
+        String answer = "本次采用50000元阈值；仅金额严格大于50000元才财务复核，等于50000元不复核；30000元不再作为本次规则。只交付最小修改方案，不直接修改文件，其他审批行为兼容；未提供的工程细节先核查。";
+        var answers = List.of(new PlanAnswer("context-conflict-1", question, answer));
+        assertThat(new ContextConflictDetector().detect(context, answers, "订单审批"))
+                .singleElement().asString().contains("50000元", "80000元").doesNotContain("30000元");
+        // 具体业务未决仍需保留，不能因为同题含明确的阈值就把生效时间也当成已定。
+        assertThat(PlanAnswerSemantics.unresolved("本次采用50000元；生效日期尚未确定。" )).isTrue();
+    }
+
+    @Test
     void shouldNotReintroduceTestFixtureThroughConflictWarnings() {
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(
                 new FileSnippet("docs/统计日志规则.txt", "text", "统计口径：按上海时区", "", false),

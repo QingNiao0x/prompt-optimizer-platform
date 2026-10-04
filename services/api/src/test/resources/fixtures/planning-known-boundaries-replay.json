@@ -1,0 +1,176 @@
+{
+  "rawPrompt": "完善防治知识知晓情况和防护行为调查的基线匹配：用户录入效果评价时，按当前用户所属地区匹配患者基线。当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。请生成用于修改现有工程并补测试的实施提示词，不扩展业务范围。",
+  "context": {
+    "description": "合成的地区调查工程，材料无真实个人信息。",
+    "technologies": [
+      "TypeScript"
+    ],
+    "dependencies": [],
+    "directoryOverview": [
+      "docs/",
+      "docs/基线匹配现状.md",
+      "src/",
+      "src/occupational/",
+      "src/occupational/occupationNotes.md",
+      "src/surveys/",
+      "src/surveys/baselineApi.ts"
+    ],
+    "fileSummaries": [
+      "[PROJECT_DOCUMENT] docs/基线匹配现状.md：Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。；业务摘录：[片段 1/1] 两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。 前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。 登录用户所属地区与患者基线现住址是两个独立字段； 服务端负责地区范围过滤。 本次要求匹配当前地区与下级地区。 列表返回地址摘要，自动填充前必须查询详情。 填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。 同一患者可能有多条记录，本次规则由原始提示词明确。",
+      "[PROJECT_DOCUMENT] src/occupational/occupationNotes.md：Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。；业务摘录：[片段 1/1] 该模块列表默认查询当前日期； 空查询参数从 queryParam 读取。 该规则仅适用于职业信息模块，不是基线匹配规则。",
+      "[PROJECT_SOURCE] src/surveys/baselineApi.ts：TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {；业务摘录：[片段 1/1] export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress']; export async function queryBaselineForFill(name: string, idNumber: string) { return fetch('/api/baseline/match? ' + new URLSearchParams({ name, idNumber })); } export async function loadBaselineDetail(id: string) { return fetch('/api/baseline/' + encodeURIComponent(id)); }"
+    ],
+    "analysisStatus": "COMPLETE",
+    "analyzedFileCount": 3,
+    "warnings": [],
+    "factCards": [
+      {
+        "id": "F01",
+        "category": "BUSINESS_RULE",
+        "origin": "PROJECT_DOCUMENT",
+        "sourcePath": "docs/基线匹配现状.md",
+        "evidence": "列表返回地址摘要，自动填充前必须查询详情"
+      }
+    ]
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "question": "“当前地区有记录”的判定，是否以服务端按当前用户地区范围过滤后的匹配结果为准？",
+      "hint": "这决定前端提示触发条件与后端过滤职责的边界。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "server",
+          "label": "以服务端过滤结果为准",
+          "description": "服务端按当前用户地区范围过滤后返回结果，前端仅根据返回结果决定是否提示。",
+          "answer": "以服务端按当前用户地区范围过滤后的匹配结果为准，前端仅根据返回结果决定是否提示。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "client",
+          "label": "由前端自行判断地区范围",
+          "description": "前端获取记录后自行判断是否属于当前地区及下级地区。",
+          "answer": "由前端获取记录后自行判断是否属于当前地区及下级地区。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "both",
+          "label": "前后端都做地区判断",
+          "description": "服务端过滤的同时前端再做一次校验。",
+          "answer": "服务端过滤的同时前端再做一次地区范围校验。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q3",
+      "question": "“当前地区没有、只有其他地区有”时不得匹配，这里的“其他地区”是否包括当前地区的上级地区？",
+      "hint": "这影响地区范围过滤的边界，避免把上级地区记录误判为可匹配。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "exclude_all",
+          "label": "排除所有非当前及下级地区",
+          "description": "上级地区、其他同级地区及其他无关地区均不得匹配。",
+          "answer": "排除所有非当前地区及其下级地区，包括上级地区、其他同级地区及其他无关地区。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "exclude_sibling_only",
+          "label": "仅排除其他同级地区",
+          "description": "上级地区记录仍可参与匹配。",
+          "answer": "仅排除其他同级地区，上级地区记录仍可参与匹配。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q4",
+      "question": "接口异常提醒后，用户是否仍可继续本次录入并手动填写基本信息？",
+      "hint": "确认异常分支的最终行为，避免实现时阻断录入。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "continue",
+          "label": "提醒后继续手工录入",
+          "description": "异常仅提示，不阻断，用户可继续录入并手动填写。",
+          "answer": "接口异常时仅提醒，不阻断，用户可继续录入并手动填写基本信息。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "block",
+          "label": "异常时阻断录入",
+          "description": "异常后不允许继续本次录入。",
+          "answer": "接口异常时阻断本次录入。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q5",
+      "question": "本次补测试的验收范围，是否覆盖“当前地区有、无、仅其他地区有、接口异常、取消、多条记录排序”这些分支？",
+      "hint": "确认测试覆盖边界，避免遗漏关键分支或过度扩展。",
+      "type": "MULTIPLE_CHOICE",
+      "options": [
+        {
+          "id": "has",
+          "label": "当前地区有记录",
+          "description": "覆盖提示自动填充及确认后填充。",
+          "answer": "覆盖当前地区有记录时的提示与确认填充。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "none",
+          "label": "当前地区无记录",
+          "description": "覆盖无匹配不弹窗。",
+          "answer": "覆盖当前地区无记录时不弹窗。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_only",
+          "label": "仅其他地区有记录",
+          "description": "覆盖不得匹配。",
+          "answer": "覆盖仅其他地区有记录时不得匹配。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "error",
+          "label": "接口异常",
+          "description": "覆盖提醒但不阻断。",
+          "answer": "覆盖接口异常时提醒但不阻断手工录入。",
+          "recommended": true,
+          "recommendationReason": "原始需求明确包含：接口异常。请核对适用范围后选择。"
+        },
+        {
+          "id": "cancel",
+          "label": "取消与排序",
+          "description": "覆盖取消保持原值及多条记录按调查日期、ID 降序选取。",
+          "answer": "覆盖取消保持原值，以及多条有效记录按调查日期降序、ID 降序选一条。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "requestId": "9874a2ac-59c9-4f00-8056-373429d84d21",
+  "source": "third real candidate first output; synthetic materials"
+}

@@ -1,0 +1,170 @@
+{
+  "description": "真实候选27：目标空字符串是否可填充与长修饰语测试对象重问；界面反馈与重试仍未定。",
+  "requestId": "3d0a65e9-c615-41dd-9be5-f5dc75a6c0e3",
+  "rawPrompt": "完善防治知识知晓情况和防护行为调查的基线匹配：用户录入效果评价时，按当前用户所属地区匹配患者基线。当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。请生成用于修改现有工程并补测试的实施提示词，不扩展业务范围。",
+  "context": {
+    "description": "合成的地区调查工程，材料无真实个人信息。",
+    "technologies": [
+      "TypeScript"
+    ],
+    "dependencies": [],
+    "directoryOverview": [
+      "docs/",
+      "docs/基线匹配现状.md",
+      "src/",
+      "src/occupational/",
+      "src/occupational/occupationNotes.md",
+      "src/surveys/",
+      "src/surveys/baselineApi.ts"
+    ],
+    "fileSummaries": [
+      "[PROJECT_DOCUMENT] docs/基线匹配现状.md：Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。；业务摘录：[片段 1/1] 两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。 前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。 登录用户所属地区与患者基线现住址是两个独立字段； 服务端负责地区范围过滤。 本次要求匹配当前地区与下级地区。 列表返回地址摘要，自动填充前必须查询详情。 填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。 同一患者可能有多条记录，本次规则由原始提示词明确。",
+      "[PROJECT_DOCUMENT] src/occupational/occupationNotes.md：Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。；业务摘录：[片段 1/1] 该模块列表默认查询当前日期； 空查询参数从 queryParam 读取。 该规则仅适用于职业信息模块，不是基线匹配规则。",
+      "[PROJECT_SOURCE] src/surveys/baselineApi.ts：TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {；业务摘录：[片段 1/1] export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress']; export async function queryBaselineForFill(name: string, idNumber: string) { return fetch('/api/baseline/match? ' + new URLSearchParams({ name, idNumber })); } export async function loadBaselineDetail(id: string) { return fetch('/api/baseline/' + encodeURIComponent(id)); }"
+    ],
+    "analysisStatus": "COMPLETE",
+    "analyzedFileCount": 3,
+    "warnings": [],
+    "factCards": [
+      {
+        "id": "F01",
+        "category": "BUSINESS_RULE",
+        "origin": "PROJECT_DOCUMENT",
+        "sourcePath": "docs/基线匹配现状.md",
+        "evidence": "列表返回地址摘要，自动填充前必须查询详情"
+      }
+    ]
+  },
+  "questions": [
+    {
+      "id": "Q1",
+      "question": "当前地区有匹配记录时，提示用户是否自动填充的交互方式采用哪一种？",
+      "hint": "原始需求要求先取得用户确认再填充，取消时保持原值；具体确认方式会影响界面实现与测试用例。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "O1",
+          "label": "弹窗确认",
+          "description": "匹配成功后弹出对话框，用户点击确认才填充，点击取消保持原值。",
+          "answer": "匹配成功后弹出确认对话框，用户确认后才执行自动填充；用户取消时保持表单原值不变。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "O2",
+          "label": "页面内提示条确认",
+          "description": "在表单页面内显示提示条，用户点击确认才填充，点击取消保持原值。",
+          "answer": "匹配成功后页面内显示提示条，用户确认后才执行自动填充；用户取消时保持表单原值不变。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "Q2",
+      "question": "自动填充时，如果目标字段当前是空字符串，是否也视为可填充？",
+      "hint": "原始需求已明确只填 null 或空字符串，保留 0 和 false；此问用于确认空字符串是否与 null 同等对待。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "O1",
+          "label": "null 和空字符串都填充",
+          "description": "目标字段为 null 或空字符串时，均写入匹配到的值。",
+          "answer": "目标字段为 null 或空字符串时均执行填充；已有非空值、0 和 false 保持不变。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "O2",
+          "label": "仅 null 填充",
+          "description": "只有目标字段为 null 时才写入匹配到的值，空字符串保持不变。",
+          "answer": "仅当目标字段为 null 时执行填充；空字符串、已有非空值、0 和 false 均保持不变。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "Q3",
+      "question": "当前地区没有匹配、只有其他地区有时，界面应如何表现？",
+      "hint": "原始需求已明确无匹配不弹窗，且不得匹配其他地区；此问用于确认是否给出静默提示或仅保持原值。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "O1",
+          "label": "不弹窗、不提示",
+          "description": "无匹配时不弹窗，也不显示额外提示，表单保持原值。",
+          "answer": "当前地区无匹配时不弹窗、不提示，表单保持原值；其他地区记录不参与匹配。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "O2",
+          "label": "不弹窗但显示轻提示",
+          "description": "无匹配时不弹窗，但在页面内显示一条轻提示说明未找到匹配。",
+          "answer": "当前地区无匹配时不弹窗，但显示轻提示说明未找到匹配；表单保持原值，其他地区记录不参与匹配。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "Q4",
+      "question": "接口异常时，提醒用户后是否允许用户重试本次匹配？",
+      "hint": "原始需求已明确异常时提醒但不阻断手工录入；此问仅确认是否新增重试入口，不改变已有异常效果。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "O1",
+          "label": "允许重试",
+          "description": "异常提醒后提供重试入口，用户可再次发起匹配；不阻断手工录入。",
+          "answer": "接口异常时提醒用户，并提供重试入口；用户可继续手工录入，不阻断表单操作。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "O2",
+          "label": "不提供重试",
+          "description": "异常提醒后不提供重试入口，用户继续手工录入。",
+          "answer": "接口异常时仅提醒用户，不提供重试入口；用户继续手工录入，不阻断表单操作。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "Q5",
+      "question": "本次补测试时，是否需要对 know-survey 和 behav-survey 两个调查模块都覆盖基线匹配的填充与取消场景？",
+      "hint": "原始需求已明确两个模块均调用基线匹配接口，补测试应覆盖受影响范围；此问确认是否两个模块都纳入本次测试范围。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "O1",
+          "label": "两个模块都覆盖",
+          "description": "know-survey 与 behav-survey 均补充匹配成功、取消、无匹配和异常场景的测试。",
+          "answer": "know-survey 与 behav-survey 两个模块均补充基线匹配相关测试，覆盖匹配成功填充、用户取消保持原值、无匹配不弹窗以及接口异常提醒但不阻断手工录入。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "O2",
+          "label": "仅覆盖一个模块",
+          "description": "只选择一个调查模块补充测试，另一个模块不纳入本次测试范围。",
+          "answer": "本次仅对其中一个调查模块补充基线匹配测试，另一个模块不纳入本次测试范围。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ]
+}

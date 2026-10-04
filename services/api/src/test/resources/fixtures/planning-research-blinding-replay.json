@@ -1,0 +1,176 @@
+{
+  "rawPrompt": "为研究生准备一份论文方法部分的写作提示词，研究Plan问答对提示词质量的影响。当前只拟定研究，尚未实施。必须保留设计：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，另设两组获得同样确认信息的公平对照。中文方法提纲不超过1200字，附表另计。不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。具体检验依据未来数据分布选择，不预设必然显著。",
+  "context": {
+    "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+    "technologies": [],
+    "dependencies": [],
+    "directoryOverview": [
+      "research/",
+      "research/开题草案.md"
+    ],
+    "fileSummaries": [
+      "[PROJECT_DOCUMENT] research/开题草案.md：Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。；业务摘录：[片段 1/1] 研究尚未执行，没有实测数据。 四类任务：代码开发、机关报告、科研方案、数据分析。 拟每类5个任务，每模式3次。 采用两名独立评审； 评审一致性拟报告，不声称已测得。"
+    ],
+    "analysisStatus": "COMPLETE",
+    "analyzedFileCount": 1,
+    "warnings": [],
+    "factCards": []
+  },
+  "questions": [
+    {
+      "id": "outcome_definition",
+      "question": "论文方法部分中，提示词质量的主要评价指标应如何界定？",
+      "hint": "这决定方法部分如何描述因变量和评审评分维度，也影响后续统计检验的对象。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "rubric_total",
+          "label": "按统一评分量表总分",
+          "description": "两名评审使用同一套评分量表，以总分作为主要质量指标。",
+          "answer": "提示词质量以两名独立评审按统一评分量表给出的总分为主要评价指标。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "multi_dimension",
+          "label": "按多个维度分别评价",
+          "description": "如完整性、可执行性、约束遵循、输出稳定性等维度分别评分并分别分析。",
+          "answer": "提示词质量按多个明确维度分别评价，各维度得分分别作为分析指标。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "pass_fail",
+          "label": "按是否达到可接受标准",
+          "description": "评审只判断提示词是否达到预设可接受标准，以通过率作为主要指标。",
+          "answer": "提示词质量以评审判断是否达到预设可接受标准后的通过率作为主要评价指标。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "task_source",
+      "question": "四类任务的具体任务内容从哪里来？",
+      "hint": "方法部分需要说明任务样本的来源和选取方式，否则无法判断 20 个任务是否可复现。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "self_constructed",
+          "label": "研究者自行构造",
+          "description": "由研究者按四类任务各构造 5 个任务，并在方法部分说明构造原则。",
+          "answer": "四类任务由研究者自行构造，每类 5 个，并在方法部分说明构造原则。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "existing_benchmark",
+          "label": "取自已有公开任务集",
+          "description": "从已有公开任务集中按四类筛选任务，并说明来源和筛选标准。",
+          "answer": "四类任务取自已有公开任务集，按类别筛选后每类保留 5 个，并说明来源和筛选标准。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "expert_provided",
+          "label": "由领域专家提供",
+          "description": "邀请相关领域专家提供四类任务，再由研究者统一整理。",
+          "answer": "四类任务由相关领域专家提供，再由研究者统一整理为每类 5 个。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "reviewer_blinding",
+      "question": "两名独立评审盲评时，评审是否知道每个任务对应的实验条件？",
+      "hint": "盲评的具体含义会影响方法部分对评审流程和偏倚控制的描述。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "fully_blinded",
+          "label": "完全不知道条件",
+          "description": "评审只看到任务和对应输出，不知道属于直接增强、Plan 还是公平对照。",
+          "answer": "两名独立评审完全不知道每个任务对应的实验条件，只看到任务和对应输出。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "condition_known",
+          "label": "知道条件但独立评分",
+          "description": "评审知道每个输出属于哪个条件，但两人独立评分、互不商量。",
+          "answer": "两名评审知道每个输出对应的实验条件，但两人独立评分、互不商量。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "fair_control_definition",
+      "question": "两组公平对照具体如何获得与直接增强、Plan 相同的确认信息？",
+      "hint": "公平对照是研究设计的关键，方法部分需要写清两组对照与实验组在信息量上如何对齐。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "same_confirm_content",
+          "label": "获得相同确认内容",
+          "description": "两组对照获得与实验组完全相同的确认信息，但确认信息的呈现或交互方式不同。",
+          "answer": "两组公平对照获得与直接增强、Plan 完全相同的确认信息，但确认信息的呈现或交互方式不同。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "same_confirm_rounds",
+          "label": "获得相同轮次确认",
+          "description": "两组对照与实验组经历相同轮次的确认交互，但确认内容由各自流程生成。",
+          "answer": "两组公平对照与直接增强、Plan 经历相同轮次的确认交互，但确认内容由各自流程生成。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "same_confirm_and_rounds",
+          "label": "确认内容和轮次都相同",
+          "description": "两组对照在确认内容和确认轮次上都与实验组保持一致，仅比较提示词生成方式。",
+          "answer": "两组公平对照在确认内容和确认轮次上都与直接增强、Plan 保持一致，仅比较提示词生成方式。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "method_outline_scope",
+      "question": "中文方法提纲不超过 1200 字，是否包含研究局限与伦理说明？",
+      "hint": "这决定 1200 字内需要覆盖的章节范围，避免方法部分遗漏必要内容或超出篇幅。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "include_limitations_ethics",
+          "label": "包含局限与伦理",
+          "description": "方法提纲在 1200 字内包含研究局限和伦理说明。",
+          "answer": "中文方法提纲不超过 1200 字，并包含研究局限与伦理说明。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "exclude_limitations_ethics",
+          "label": "不包含局限与伦理",
+          "description": "方法提纲只写研究设计与方法，局限和伦理放在其他章节。",
+          "answer": "中文方法提纲不超过 1200 字，只写研究设计与方法，不包含研究局限与伦理说明。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "source": "Ninth real candidate first result, preserved as FAIL"
+}

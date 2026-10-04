@@ -48,6 +48,13 @@ async function prepare() {
     'services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanFindingClassifier.java',
     'services/api/src/main/java/com/promptoptimizer/enhancement/domain/ConfirmedPlanDecision.java',
     'services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanQuestionFilter.java',
+    'services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanRecommendationAligner.java',
+    'services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningDecisionPolicy.java',
+    'services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningSessionServiceImpl.java',
+    'services/api/src/main/java/com/promptoptimizer/enhancement/domain/PlanningKnownDecision.java',
+    'services/api/src/main/java/com/promptoptimizer/provider/domain/PlanningProviderRequest.java',
+    'services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java',
+    'services/api/src/main/java/com/promptoptimizer/common/exception/GlobalExceptionHandler.java',
     'services/api/src/main/java/com/promptoptimizer/policy/service/impl/ConstraintCompleterImpl.java',
     'services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java',
   ];

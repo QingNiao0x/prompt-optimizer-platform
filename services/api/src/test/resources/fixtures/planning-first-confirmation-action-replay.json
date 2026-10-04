@@ -1,0 +1,54 @@
+{
+  "source": "候选18真实Plan首次响应",
+  "requestId": "a1da096a-f043-4993-b80c-c828874d48b4",
+  "rule": "当前地区有时提示用户是否自动填充基本信息；经用户确认后填充",
+  "unsafeQuestions": [
+    {
+      "id": "fill_prompt_ui",
+      "question": "当前地区存在匹配记录时，提示用户是否自动填充基本信息，应采用哪种交互方式？",
+      "hint": "原文只说明“提示用户是否自动填充”，未确定提示形态，会影响界面实现与测试用例。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "confirm_dialog",
+          "label": "确认弹窗",
+          "description": "弹出对话框，用户选择“填充”或“取消”。",
+          "answer": "采用确认弹窗提示用户是否自动填充基本信息，用户确认后执行填充，取消则保持原值。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "inline_tip",
+          "label": "页面内提示条",
+          "description": "在表单内显示提示条，用户点击“填充”或忽略。",
+          "answer": "采用页面内提示条提示用户是否自动填充基本信息，用户点击填充后执行，忽略则保持原值。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "auto_fill_toast",
+          "label": "自动填充并提示",
+          "description": "直接填充后以轻提示告知用户，可撤销。",
+          "answer": "匹配到记录后直接自动填充基本信息，并以轻提示告知用户，用户可撤销。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "region_field_source",
+      "question": "“当前用户所属地区”在现有工程中取自哪个字段或来源？",
+      "hint": "地区范围判定依赖该字段，原文未说明其来源，会影响服务端过滤与测试数据构造。",
+      "type": "FREE_TEXT",
+      "options": [],
+      "examples": [
+        "例如：取自登录用户信息中的 regionCode 字段",
+        "例如：取自当前机构所属地区编码"
+      ],
+      "allowCustomAnswer": true
+    }
+  ],
+  "verdict": "事后撤销不能替代首次确认；地区来源仍为真正未知"
+}

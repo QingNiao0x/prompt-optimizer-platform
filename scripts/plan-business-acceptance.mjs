@@ -10,6 +10,14 @@ import { cases, createAnswers, evaluateQuestions, redact } from './plan-quality-
 
 export { cases };
 
+// 只留代码定义的诊断值；不能将 details 整体写入证据，以免未来字段带入模型正文或认证信息。
+const validationReasons = new Set([
+  'RESPONSE_EMPTY', 'RESPONSE_TRUNCATED', 'PLAN_JSON_INVALID', 'METADATA_INVALID',
+  'SECTION_INVALID', 'REQUIRED_SECTIONS_MISSING', 'AMBIGUITY_COUNT_INVALID', 'AMBIGUITY_VALUE_INVALID',
+  'SENSITIVE_CONTENT', 'CONFIRMED_DECISION_MISSING', 'RULE_CONFLICT',
+  'PLAN_STRUCTURE_INVALID', 'PLAN_QUESTION_INVALID', 'PLAN_OPTION_INVALID', 'PLAN_RECOMMENDATION_INVALID',
+]);
+
 /** 每次运行使用独立目录；已存在的证据文件拒绝覆盖。 */
 export async function createAcceptanceSession(context, page, options = {}) {
   const baseUrl = options.baseUrl ?? 'http://127.0.0.1:5175';
@@ -46,6 +54,16 @@ export async function createAcceptanceSession(context, page, options = {}) {
     if (!response.ok) {
       // 只保存统一异常响应的脱敏消息，不记录请求正文、认证头或原始上游响应。
       request.errorMessage = redact(String(payload.error?.message ?? '').slice(0, 500));
+      const diagnostics = payload.error?.details;
+      if (diagnostics && validationReasons.has(diagnostics.validationReason)
+        && typeof diagnostics.validationField === 'string'
+        && /^[A-Za-z][A-Za-z0-9_.\[\]]{0,119}$/.test(diagnostics.validationField)) {
+        request.validationReason = diagnostics.validationReason;
+        request.validationField = diagnostics.validationField;
+        if (Number.isInteger(diagnostics.modelAttempts) && diagnostics.modelAttempts >= 1 && diagnostics.modelAttempts <= 3) {
+          request.modelAttempts = diagnostics.modelAttempts;
+        }
+      }
       throw new Error(`${path} HTTP ${request.status}, code=${payload.error?.code ?? 'UNKNOWN'}, requestId=${request.requestId ?? 'unknown'}, message=${request.errorMessage}`);
     }
     return payload.data;

@@ -1,0 +1,1602 @@
+{
+  "createdAt": "2026-10-03T11:41:49.896Z",
+  "overall": "FAIL_REQUIRES_FOLLOWUP",
+  "scope": "335项回归候选加载后的两场景真实定向补验；输出组装和复制检查通过，完整需求重复追问仍未关闭。",
+  "directory": "tmp/fidelity-acceptance/2026-10-03T11-00-54-377Z",
+  "manifest": {
+    "startedAt": "2026-10-03T11:00:54.392Z",
+    "commit": "580452057f51944cd07600177589233cecbd54f0",
+    "candidateHashes": {
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/RequirementFidelityGuard.java": "fb3efc57ea5f4e558792ab71fcd724e97af3f5c974c15e02e35c1784f3b5ff6f",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java": "8677aed15b59dd42542842ddaf6363e9703ba40d0a669172ec38d34c7156844f",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAmbiguityMerger.java": "4a78ce6a90bcdf72947f66f5c9c0796899abac52c89b6267e86a12315608c677",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationPlanningServiceImpl.java": "155f5b7d9b2020d4671c3294f0321098fc6dea29f88ec2e503534e93facb991c",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/ConfirmedDecisionSet.java": "22ebd7d13b7c0990b4eff9d5854510d7f09ae3f8a35b749ece43a490a3a86f54",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAnswerSemantics.java": "63dcd26184ab8f572819fc2a6803854f0c5ace5536c57a04c5913fe57d45f2b8",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanFindingClassifier.java": "d31cf58561d60d95a47dfe9d91d5e73321a1850fe001a8bc0ae612118ca50f11",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/domain/ConfirmedPlanDecision.java": "984898479e806ed12cfe1d77dc2401a6e6f70b7ceed6fe3b39ccbe9cd314949a",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanQuestionFilter.java": "ebb919efad48860ccefca7fbe797b55cf427128dab1e7b5b8bcf192e321508ee",
+      "services/api/src/main/java/com/promptoptimizer/policy/service/impl/ConstraintCompleterImpl.java": "747f543d6a2c9c748426e79ee8166e3789649de42f57a2a08b440351005a5524",
+      "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java": "142e5b596ff65ed2c525fe6426ab150cca03a3af6991f0e49891dac6c314145a"
+    },
+    "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+    "cases": 9,
+    "repetitions": 1,
+    "maximumSuccessfulApiGenerations": 27,
+    "scope": "真实API、固定合成材料；不验证完整目录索引、办公文件解析或双人上线门禁。",
+    "answerPolicy": "评测员只按冻结回答卡逐题填写。未知保留未知，不能自动接受推荐；回答不是实际用户业务确认。",
+    "comparison": "直接增强与Plan是体验组，Plan可获得回答卡信息，不据此推断等信息模型优势。"
+  },
+  "runtime": {
+    "checkedAt": "2026-10-03",
+    "backendPid": 21156,
+    "backendStartedAt": "2026-10-03T19:10:23.9675461+08:00",
+    "webPort": 5175,
+    "chromeCdpPort": 9325,
+    "authentication": "normal logged-in browser session verified HTTP 200",
+    "modelId": "deepseek:deepseek-flash",
+    "modelVersion": "DeepSeek-V4.1-Flash",
+    "scope": "335项回归补修候选的两个受影响场景；调用前逐个校验源码指纹，不导出登录凭据。"
+  },
+  "model": {
+    "model": {
+      "id": "deepseek:deepseek-flash",
+      "displayName": "DeepSeek-V4.1-Flash",
+      "provider": "deepseek",
+      "defaultModel": true
+    },
+    "selectedAt": "2026-10-03T11:19:04.609Z"
+  },
+  "selected": {
+    "caseIds": [
+      "01_software_autofill",
+      "08_data_unresolved_denominator"
+    ],
+    "purpose": "加载335项回归候选后的定向真实补验；保留七场景首轮及论文诊断结果，不重复已通过的无关模型调用。"
+  },
+  "cases": [
+    {
+      "id": "01_software_autofill",
+      "category": "complete-software",
+      "rawPrompt": "完善防治知识知晓情况和防护行为调查的基线匹配：用户录入效果评价时，按当前用户所属地区匹配患者基线。当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。请生成用于修改现有工程并补测试的实施提示词，不扩展业务范围。",
+      "contextDescription": "合成的地区调查工程，材料无真实个人信息。",
+      "expectedTemplate": "FEATURE_DEVELOPMENT",
+      "files": [
+        {
+          "path": "src/surveys/baselineApi.ts",
+          "language": "typescript",
+          "content": "export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];\nexport async function queryBaselineForFill(name: string, idNumber: string) {\n  return fetch('/api/baseline/match?' + new URLSearchParams({ name, idNumber }));\n}\nexport async function loadBaselineDetail(id: string) {\n  return fetch('/api/baseline/' + encodeURIComponent(id));\n}"
+        },
+        {
+          "path": "docs/基线匹配现状.md",
+          "language": "markdown",
+          "content": "# 合成工程现状\n两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n登录用户所属地区与患者基线现住址是两个独立字段；服务端负责地区范围过滤。本次要求匹配当前地区与下级地区。\n列表返回地址摘要，自动填充前必须查询详情。填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。\n同一患者可能有多条记录，本次规则由原始提示词明确。"
+        },
+        {
+          "path": "src/occupational/occupationNotes.md",
+          "language": "markdown",
+          "content": "# 无调用依赖的职业信息模块\n该模块列表默认查询当前日期；空查询参数从 queryParam 读取。该规则仅适用于职业信息模块，不是基线匹配规则。"
+        }
+      ],
+      "answerRules": [
+        {
+          "match": "地区|下级|范围|属地",
+          "answer": "按服务端当前登录用户所属地区及其下级地区匹配患者基线现住址；不能匹配其他同级地区。"
+        },
+        {
+          "match": "姓名|身份|识别|匹配条件",
+          "answer": "患者姓名与身份证号必须同时匹配；缺少任一项时不进行匹配，不回退到仅姓名匹配。"
+        },
+        {
+          "match": "最新|多条|排序|时间|优先",
+          "answer": "多条有效记录按调查日期降序、记录 ID 降序确定唯一记录；不以更新时间排序。"
+        },
+        {
+          "match": "覆盖|已有|空字段|冲突",
+          "answer": "用户确认后只填充 null 或空字符串字段，保留已有值，数字 0 和布尔 false 不是空值。"
+        },
+        {
+          "match": "填充|字段|提示|交互|自动",
+          "answer": "匹配成功先弹窗确认；用户同意才填充 BASELINE_FILL_FIELDS，取消时保持表单不变。"
+        },
+        {
+          "match": "异常|失败|未匹配|无匹配",
+          "answer": "无匹配不弹窗，接口异常显示可读提醒但允许继续手工录入，不能放宽地区条件重试。"
+        }
+      ],
+      "requiredRules": [
+        "取消保持原值",
+        "只填 null 或空字符串",
+        "保留 0 和 false",
+        "姓名和身份证号同时匹配",
+        "先查询详情再填指定字段",
+        "接口异常不阻断手工录入"
+      ],
+      "prohibitedClaims": [
+        "把职业信息的默认当前日期用作基线查询过滤",
+        "把用户所属地区等同于患者现住址",
+        "无匹配时改为跨地区查询"
+      ],
+      "mustAsk": [],
+      "finalTerms": [
+        "地区",
+        "填充"
+      ],
+      "expectNoQuestions": true,
+      "title": "表单条件与取消行为",
+      "answerCard": [
+        "所有地区、排序、填充和异常规则已在原始需求确定；不增加业务范围。",
+        "材料未给出的实现细节由执行 Agent 核查现有实现，不能捏造。"
+      ],
+      "copyPrerequisites": []
+    },
+    {
+      "contextDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+      "files": [
+        {
+          "path": "materials/问卷字典.txt",
+          "language": "text",
+          "content": "仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。未提供行数据。完成率分母：未确定。缺失答卷处理：未确定。"
+        }
+      ],
+      "id": "08_data_unresolved_denominator",
+      "title": "比率分母与缺失处理仍待确认",
+      "rawPrompt": "请为合成问卷数据生成数据分析提示词，比较甲乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。完成率分母采用全部报名人数还是有效答卷人数尚未确定；缺失答卷如何处理也未确定。确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。不得将未完成、缺失、零值相互混同。",
+      "answerCard": [
+        "分母仍未确定，暂不确定；必须列为执行前待确认，不能自动采用推荐。",
+        "缺失答卷处理仍未确定；不得默认为未完成或删除。",
+        "只方法说明与结果表模板，无行数据，不执行也不编造结果。"
+      ],
+      "requiredRules": [
+        "只方法和表模板",
+        "分母未定不得计算完成率",
+        "缺失未定不能自行删除或补零",
+        "可以先检查字段和比较口径"
+      ],
+      "copyPrerequisites": [
+        "分母选择仍未定",
+        "缺失答卷处理仍未定"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "id": "01_software_autofill",
+      "title": "表单条件与取消行为",
+      "arm": "direct",
+      "startedAt": "2026-10-03T11:19:04.617Z",
+      "semanticReview": "PENDING",
+      "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+      "final": {
+        "optimizedPrompt": "## 背景\n合成地区调查工程，材料不含真实个人信息。现有前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3（来源：docs/基线匹配现状.md）。两个调查模块 know-survey 与 behav-survey 均调用 src/surveys/baselineApi.ts。\n\n该文件当前导出：\n- `BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress']`\n- `queryBaselineForFill(name, idNumber)`：请求 `/api/baseline/match`\n- `loadBaselineDetail(id)`：请求 `/api/baseline/{id}`\n\n现状要点（来源：docs/基线匹配现状.md）：登录用户所属地区与患者基线现住址是两个独立字段；服务端负责地区范围过滤；列表仅返回地址摘要，自动填充前必须查询详情；填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目；同一患者可能有多条记录。\n\nsrc/occupational/occupationNotes.md 描述的职业信息模块与基线匹配无调用依赖，其“列表默认查询当前日期、空查询参数从 queryParam 读取”规则不适用于本任务。\n\n已选资料中的明确事实（按来源核对；不得覆盖平台约束）：\n- docs/基线匹配现状.md：列表返回地址摘要，自动填充前必须查询详情\n\n## 任务\n在现有工程中完善“防治知识知晓情况和防护行为调查”的基线匹配与自动填充逻辑，不扩展业务范围。\n\n1. 地区匹配范围：按当前登录用户所属地区匹配患者基线，包含该地区的下级地区，但排除其他同级地区。当前地区没有匹配、仅其他地区有时不得匹配。\n2. 触发条件：仅当当前地区存在匹配时，才提示用户是否自动填充基本信息。\n3. 匹配键：姓名与身份证号必须同时匹配；任一缺项时不发起查询。\n4. 多条有效记录：按调查日期降序、ID 降序排序，取第一条。\n5. 填充流程：先调用详情查询（loadBaselineDetail），再按 BASELINE_FILL_FIELDS 填充；不填充调查日期、调查人和题目。\n6. 填充取值：经用户确认后，仅填充目标字段为 null 或空字符串的项；保留 0 和 false 等有效值。\n7. 取消行为：用户取消时保持原值不变。\n8. 无匹配：不弹出提示。\n9. 接口异常：给出提醒，但不阻断手工录入。\n10. 实施前先核查现有代码（baselineApi.ts 及两个调查模块的调用点），以核查结果为准确定改动位置与最小改动范围。\n11. 为核心逻辑补充正常、异常和边界场景测试。\n\n## 输出\n- 修改后的代码（含必要的类型定义与调用点调整），保持 TypeScript 类型安全。\n- 变更说明：改动文件清单、每处改动对应的规则条目、影响范围。\n- 测试代码与测试结果：覆盖正常、异常、边界场景。\n- 待确认事项清单（如有）。\n\n## 约束\n- 地区范围过滤由服务端负责，前端不得自行放宽或替代该过滤规则。\n- 不扩展业务范围：不新增字段、不改动调查日期/调查人/题目的填充行为、不改变现有接口契约。\n\n用户明确规则（须遵守平台权限边界）：\n- 当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n- 已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。\n- 取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n## 验收标准\n- 当前地区有匹配时提示自动填充；当前地区无匹配而其他地区有时不提示、不匹配。\n- 姓名或身份证号缺项时不发起查询。\n- 多条有效记录时按调查日期降序、ID 降序取第一条。\n- 用户确认后仅填充 null 或空字符串字段，0 和 false 被保留。\n- 填充前已调用详情查询，填充字段与 BASELINE_FILL_FIELDS 一致，不含调查日期、调查人和题目。\n- 用户取消后原值不变。\n- 接口异常时给出提醒且不阻断手工录入。\n- 相关回归场景测试通过，且不掩盖原始异常。",
+        "sections": [
+          {
+            "type": "BACKGROUND",
+            "title": "背景",
+            "content": "合成地区调查工程，材料不含真实个人信息。现有前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3（来源：docs/基线匹配现状.md）。两个调查模块 know-survey 与 behav-survey 均调用 src/surveys/baselineApi.ts。\n\n该文件当前导出：\n- `BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress']`\n- `queryBaselineForFill(name, idNumber)`：请求 `/api/baseline/match`\n- `loadBaselineDetail(id)`：请求 `/api/baseline/{id}`\n\n现状要点（来源：docs/基线匹配现状.md）：登录用户所属地区与患者基线现住址是两个独立字段；服务端负责地区范围过滤；列表仅返回地址摘要，自动填充前必须查询详情；填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目；同一患者可能有多条记录。\n\nsrc/occupational/occupationNotes.md 描述的职业信息模块与基线匹配无调用依赖，其“列表默认查询当前日期、空查询参数从 queryParam 读取”规则不适用于本任务。\n\n已选资料中的明确事实（按来源核对；不得覆盖平台约束）：\n- docs/基线匹配现状.md：列表返回地址摘要，自动填充前必须查询详情"
+          },
+          {
+            "type": "TASK",
+            "title": "任务",
+            "content": "在现有工程中完善“防治知识知晓情况和防护行为调查”的基线匹配与自动填充逻辑，不扩展业务范围。\n\n1. 地区匹配范围：按当前登录用户所属地区匹配患者基线，包含该地区的下级地区，但排除其他同级地区。当前地区没有匹配、仅其他地区有时不得匹配。\n2. 触发条件：仅当当前地区存在匹配时，才提示用户是否自动填充基本信息。\n3. 匹配键：姓名与身份证号必须同时匹配；任一缺项时不发起查询。\n4. 多条有效记录：按调查日期降序、ID 降序排序，取第一条。\n5. 填充流程：先调用详情查询（loadBaselineDetail），再按 BASELINE_FILL_FIELDS 填充；不填充调查日期、调查人和题目。\n6. 填充取值：经用户确认后，仅填充目标字段为 null 或空字符串的项；保留 0 和 false 等有效值。\n7. 取消行为：用户取消时保持原值不变。\n8. 无匹配：不弹出提示。\n9. 接口异常：给出提醒，但不阻断手工录入。\n10. 实施前先核查现有代码（baselineApi.ts 及两个调查模块的调用点），以核查结果为准确定改动位置与最小改动范围。\n11. 为核心逻辑补充正常、异常和边界场景测试。"
+          },
+          {
+            "type": "OUTPUT",
+            "title": "输出",
+            "content": "- 修改后的代码（含必要的类型定义与调用点调整），保持 TypeScript 类型安全。\n- 变更说明：改动文件清单、每处改动对应的规则条目、影响范围。\n- 测试代码与测试结果：覆盖正常、异常、边界场景。\n- 待确认事项清单（如有）。"
+          },
+          {
+            "type": "CONSTRAINTS",
+            "title": "约束",
+            "content": "- 地区范围过滤由服务端负责，前端不得自行放宽或替代该过滤规则。\n- 不扩展业务范围：不新增字段、不改动调查日期/调查人/题目的填充行为、不改变现有接口契约。\n\n用户明确规则（须遵守平台权限边界）：\n- 当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n- 已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。\n- 取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+          },
+          {
+            "type": "ACCEPTANCE",
+            "title": "验收标准",
+            "content": "- 当前地区有匹配时提示自动填充；当前地区无匹配而其他地区有时不提示、不匹配。\n- 姓名或身份证号缺项时不发起查询。\n- 多条有效记录时按调查日期降序、ID 降序取第一条。\n- 用户确认后仅填充 null 或空字符串字段，0 和 false 被保留。\n- 填充前已调用详情查询，填充字段与 BASELINE_FILL_FIELDS 一致，不含调查日期、调查人和题目。\n- 用户取消后原值不变。\n- 接口异常时给出提醒且不阻断手工录入。\n- 相关回归场景测试通过，且不掩盖原始异常。"
+          }
+        ],
+        "contextReport": {
+          "customDescription": "合成的地区调查工程，材料无真实个人信息。",
+          "technologyStack": [
+            {
+              "name": "TypeScript",
+              "source": "src/surveys/baselineApi.ts",
+              "confidence": 0.9
+            }
+          ],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/基线匹配现状.md",
+            "src/",
+            "src/occupational/",
+            "src/occupational/occupationNotes.md",
+            "src/surveys/",
+            "src/surveys/baselineApi.ts"
+          ],
+          "fileSnippets": [
+            {
+              "path": "src/surveys/baselineApi.ts",
+              "language": "typescript",
+              "content": "[片段 1/1]\nexport const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];\nexport async function queryBaselineForFill(name: string, idNumber: string) {\n  return fetch('/api/baseline/match?' + new URLSearchParams({ name, idNumber }));\n}\nexport async function loadBaselineDetail(id: string) {\n  return fetch('/api/baseline/' + encodeURIComponent(id));\n}",
+              "summary": "TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {",
+              "truncated": false
+            },
+            {
+              "path": "docs/基线匹配现状.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n# 合成工程现状\n两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n登录用户所属地区与患者基线现住址是两个独立字段；服务端负责地区范围过滤。本次要求匹配当前地区与下级地区。\n列表返回地址摘要，自动填充前必须查询详情。填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。\n同一患者可能有多条记录，本次规则由原始提示词明确。",
+              "summary": "Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。",
+              "truncated": false
+            },
+            {
+              "path": "src/occupational/occupationNotes.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n# 无调用依赖的职业信息模块\n该模块列表默认查询当前日期；空查询参数从 queryParam 读取。该规则仅适用于职业信息模块，不是基线匹配规则。",
+              "summary": "Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [
+          "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+          "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+          "校验所有外部输入，并明确处理空值、非法值和边界条件。",
+          "处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。",
+          "为核心逻辑补充正常、异常和边界场景测试。",
+          "前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。",
+          "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+          "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+        ],
+        "templateCode": "BUG_FIX",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5035,
+        "warnings": []
+      },
+      "protocolChecks": {
+        "realProvider": true,
+        "promptPresent": true,
+        "fourSections": true,
+        "constraintsInCopiedBody": true
+      },
+      "elapsedMs": 5323,
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "3cc5544d-7d6f-4a2f-baa5-193b4130bed1",
+          "elapsedMs": 5318
+        }
+      ]
+    },
+    {
+      "id": "01_software_autofill",
+      "title": "表单条件与取消行为",
+      "arm": "plan-final",
+      "startedAt": "2026-10-03T11:22:41.155Z",
+      "semanticReview": "PENDING",
+      "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+      "plan": {
+        "summary": "目标是修改现有工程，实现按当前用户所属地区（含下级、排除同级）匹配患者基线，并在当前地区有记录时提示用户是否自动填充基本信息，同时补充测试。原始需求已明确大部分规则，但地区范围的具体判定方式、提示交互细节和测试范围仍需确认，以免实现偏差。",
+        "questions": [
+          {
+            "id": "region_scope",
+            "question": "“当前地区包含下级地区但排除其他同级地区”具体如何判定？",
+            "hint": "这决定服务端地区过滤的匹配逻辑，影响查询结果范围。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "prefix_code",
+                "label": "按地区编码前缀匹配",
+                "description": "当前地区编码作为前缀，匹配所有以其开头的下级地区编码，排除其他同级。",
+                "answer": "按地区编码前缀匹配：当前地区编码作为前缀，匹配所有以其开头的下级地区编码，排除其他同级地区。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "parent_id_chain",
+                "label": "按父级ID链递归查询",
+                "description": "通过地区表的父级ID递归查询所有下级地区，排除其他同级。",
+                "answer": "按父级ID链递归查询：通过地区表的父级ID递归查询所有下级地区，排除其他同级地区。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "other_rule",
+                "label": "其他判定方式",
+                "description": "由用户补充具体的地区范围判定规则。",
+                "answer": "其他判定方式：由用户补充具体的地区范围判定规则。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "prompt_trigger",
+            "question": "当前地区有匹配记录时，提示用户是否自动填充基本信息的触发时机是什么？",
+            "hint": "这决定前端交互流程，影响用户操作顺序。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "after_query",
+                "label": "查询到匹配记录后立即提示",
+                "description": "在查询到当前地区有匹配记录后，立即弹出提示询问是否自动填充。",
+                "answer": "查询到匹配记录后立即提示：在查询到当前地区有匹配记录后，立即弹出提示询问是否自动填充。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "on_user_action",
+                "label": "用户点击填充按钮时提示",
+                "description": "用户主动点击自动填充按钮时，再提示是否使用匹配记录填充。",
+                "answer": "用户点击填充按钮时提示：用户主动点击自动填充按钮时，再提示是否使用匹配记录填充。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "other_timing",
+                "label": "其他时机",
+                "description": "由用户补充具体的提示触发时机。",
+                "answer": "其他时机：由用户补充具体的提示触发时机。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "fill_scope",
+            "question": "自动填充时，BASELINE_FILL_FIELDS 中的字段是否全部填充？",
+            "hint": "原始需求已明确不填调查日期、调查人和题目，但未说明 BASELINE_FILL_FIELDS 内字段是否全填。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "fill_all",
+                "label": "填充所有 BASELINE_FILL_FIELDS 字段",
+                "description": "对 BASELINE_FILL_FIELDS 中定义的每个字段，若当前值为 null 或空字符串则填充。",
+                "answer": "填充所有 BASELINE_FILL_FIELDS 字段：对 BASELINE_FILL_FIELDS 中定义的每个字段，若当前值为 null 或空字符串则填充。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "fill_subset",
+                "label": "只填充部分字段",
+                "description": "由用户指定 BASELINE_FILL_FIELDS 中需要填充的具体字段。",
+                "answer": "只填充部分字段：由用户指定 BASELINE_FILL_FIELDS 中需要填充的具体字段。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "test_scope",
+            "question": "补测试的范围是什么？",
+            "hint": "这决定测试工作量和覆盖点，影响实施提示词中的测试部分。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "unit_only",
+                "label": "仅单元测试",
+                "description": "只针对地区匹配和填充逻辑编写单元测试。",
+                "answer": "仅单元测试：只针对地区匹配和填充逻辑编写单元测试。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "unit_integration",
+                "label": "单元测试和集成测试",
+                "description": "覆盖地区匹配、填充逻辑以及前后端交互的集成测试。",
+                "answer": "单元测试和集成测试：覆盖地区匹配、填充逻辑以及前后端交互的集成测试。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "e2e",
+                "label": "端到端测试",
+                "description": "模拟用户操作，验证从查询到填充的完整流程。",
+                "answer": "端到端测试：模拟用户操作，验证从查询到填充的完整流程。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "BUG_FIX",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5811,
+        "planId": "f4d4c0a6-bafe-4353-bab1-21839fdff218",
+        "planningContext": {
+          "contextId": "7082deca-ce28-4a2c-b05f-a31ea9c8dab6",
+          "version": "sha256:2d2c10885005dcab59aa7ef2b0a8389235fa5533ba9e6faf5f2b928fb58c9ed9"
+        },
+        "expiresAt": "2026-10-03T11:49:09.974524100Z"
+      },
+      "prepared": {
+        "contextId": "7082deca-ce28-4a2c-b05f-a31ea9c8dab6",
+        "version": "sha256:2d2c10885005dcab59aa7ef2b0a8389235fa5533ba9e6faf5f2b928fb58c9ed9",
+        "digest": {
+          "description": "合成的地区调查工程，材料无真实个人信息。",
+          "technologies": [
+            "TypeScript"
+          ],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/基线匹配现状.md",
+            "src/",
+            "src/occupational/",
+            "src/occupational/occupationNotes.md",
+            "src/surveys/",
+            "src/surveys/baselineApi.ts"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/基线匹配现状.md：Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。；业务摘录：[片段 1/1] 两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。 前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。 登录用户所属地区与患者基线现住址是两个独立字段； 服务端负责地区范围过滤。 本次要求匹配当前地区与下级地区。 列表返回地址摘要，自动填充前必须查询详情。 填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。 同一患者可能有多条记录，本次规则由原始提示词明确。",
+            "[PROJECT_DOCUMENT] src/occupational/occupationNotes.md：Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。；业务摘录：[片段 1/1] 该模块列表默认查询当前日期； 空查询参数从 queryParam 读取。 该规则仅适用于职业信息模块，不是基线匹配规则。",
+            "[PROJECT_SOURCE] src/surveys/baselineApi.ts：TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 3,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/基线匹配现状.md",
+              "evidence": "列表返回地址摘要，自动填充前必须查询详情"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "合成的地区调查工程，材料无真实个人信息。",
+          "technologyStack": [
+            {
+              "name": "TypeScript",
+              "source": "src/surveys/baselineApi.ts",
+              "confidence": 0.9
+            }
+          ],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/基线匹配现状.md",
+            "src/",
+            "src/occupational/",
+            "src/occupational/occupationNotes.md",
+            "src/surveys/",
+            "src/surveys/baselineApi.ts"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/基线匹配现状.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n# 合成工程现状\n两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n登录用户所属地区与患者基线现住址是两个独立字段；服务端负责地区范围过滤。本次要求匹配当前地区与下级地区。\n列表返回地址摘要，自动填充前必须查询详情。填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。\n同一患者可能有多条记录，本次规则由原始提示词明确。",
+              "summary": "Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。",
+              "truncated": false
+            },
+            {
+              "path": "src/occupational/occupationNotes.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n# 无调用依赖的职业信息模块\n该模块列表默认查询当前日期；空查询参数从 queryParam 读取。该规则仅适用于职业信息模块，不是基线匹配规则。",
+              "summary": "Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。",
+              "truncated": false
+            },
+            {
+              "path": "src/surveys/baselineApi.ts",
+              "language": "typescript",
+              "content": "[片段 1/1]\nexport const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];\nexport async function queryBaselineForFill(name: string, idNumber: string) {\n  return fetch('/api/baseline/match?' + new URLSearchParams({ name, idNumber }));\n}\nexport async function loadBaselineDetail(id: string) {\n  return fetch('/api/baseline/' + encodeURIComponent(id));\n}",
+              "summary": "TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-03T11:49:09.974524100Z",
+        "latencyMs": 28
+      },
+      "answerReview": {
+        "caseId": "01_software_autofill",
+        "questions": [
+          {
+            "questionId": "region_scope",
+            "question": "“当前地区包含下级地区但排除其他同级地区”具体如何判定？",
+            "answer": "沿用服务端按当前登录用户所属地区及其下级地区匹配、排除其他同级地区的既定规则；地区编码或父级关系的具体实现由执行 Agent 核查现有工程，不自行假定前缀或新建递归机制。",
+            "basis": "冻结答案卡：既定业务范围不得改变，未提供的实现细节应核查。"
+          },
+          {
+            "questionId": "prompt_trigger",
+            "question": "当前地区有匹配记录时，提示用户是否自动填充基本信息的触发时机是什么？",
+            "answer": "沿用原始需求：用户录入效果评价时进行匹配，当前地区有匹配记录时提示用户是否自动填充；用户同意后先查详情再填指定空字段，取消保持原值，不增加新的按钮或业务步骤。",
+            "basis": "原始需求及冻结交互规则，不采纳新增交互的候选。"
+          },
+          {
+            "questionId": "fill_scope",
+            "question": "自动填充时，BASELINE_FILL_FIELDS 中的字段是否全部填充？",
+            "answer": "使用现有 BASELINE_FILL_FIELDS 定义的 name、idNumber、residenceAddress；用户确认后只填当前表单中值为 null 或空字符串的这些字段，保留 0 和 false，不任意增减字段，不填调查日期、调查人或题目。",
+            "basis": "源码常量与原始需求明确，不重新选择字段子集。"
+          },
+          {
+            "questionId": "test_scope",
+            "question": "补测试的范围是什么？",
+            "answer": "按照实际修改范围为核心逻辑补充正常、异常和边界测试，保持现有功能兼容；具体测试层和文件由执行 Agent 核查现有工程，不扩展业务范围。",
+            "basis": "冻结答案卡要求补测试，未提供的实现细节由执行 Agent 核查。"
+          }
+        ]
+      },
+      "priorRequests": [
+        {
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "866a5715-ed07-4f70-a733-fb2f0cecf6f3",
+          "elapsedMs": 108
+        },
+        {
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "ce8e3f7b-21bb-400a-b005-628e20553bab",
+          "elapsedMs": 5877
+        }
+      ],
+      "refinedQuery": "完善防治知识知晓情况和防护行为调查的基线匹配：用户录入效果评价时，按当前用户所属地区匹配患者基线。当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。请生成用于修改现有工程并补测试的实施提示词，不扩展业务范围。\n地区：沿用服务端按当前登录用户所属地区及其下级地区匹配、排除其他同级地区的既定规则；地区编码或父级关系的具体实现由执行 Agent 核查现有工程，不自行假定前缀或新建递归机制。\n地区：沿用原始需求：用户录入效果评价时进行匹配，当前地区有匹配记录时提示用户是否自动填充；用户同意后先查详情再填指定空字段，取消保持原值，不增加新的按钮或业务步骤。\n本次选择：使用现有 BASELINE_FILL_FIELDS 定义的 name、idNumber、residenceAddress；用户确认后只填当前表单中值为 null 或空字符串的这些字段，保留 0 和 false，不任意增减字段，不填调查日期、调查人或题目。\n范围：按照实际修改范围为核心逻辑补充正常、异常和边界测试，保持现有功能兼容；具体测试层和文件由执行 Agent 核查现有工程，不扩展业务范围。",
+      "final": {
+        "optimizedPrompt": "## 背景\n现有合成工程包含 know-survey 与 behav-survey 两个调查模块，均调用 `src/surveys/baselineApi.ts`。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n\n- 登录用户所属地区与患者基线现住址是两个独立字段，服务端负责地区范围过滤。\n- 列表接口返回地址摘要，自动填充前必须查询详情（来源：`docs/基线匹配现状.md`）。\n- `src/surveys/baselineApi.ts` 已定义 `BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress']`，并提供 `queryBaselineForFill(name, idNumber)` 与 `loadBaselineDetail(id)`。\n- `src/occupational/occupationNotes.md` 描述的职业信息模块规则（默认查询当前日期、空查询参数从 queryParam 读取）仅适用于该模块，不是基线匹配规则。\n\n本次任务是在现有工程上完善“防治知识知晓情况和防护行为调查”的基线匹配逻辑，并补充测试，不扩展业务范围。\n\n用户已确认的信息（当前情况）：\n- 地区：沿用服务端按当前登录用户所属地区及其下级地区匹配、排除其他同级地区的既定规则；地区编码或父级关系的具体实现由执行 Agent 核查现有工程，不自行假定前缀或新建递归机制。\n- 地区：沿用原始需求：用户录入效果评价时进行匹配，当前地区有匹配记录时提示用户是否自动填充；用户同意后先查详情再填指定空字段，取消保持原值，不增加新的按钮或业务步骤。\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n- [BUSINESS_RULE/PROJECT_DOCUMENT] 首次已读；来源：docs/基线匹配现状.md；证据：列表返回地址摘要，自动填充前必须查询详情\n\n## 任务\n在现有工程中完善效果评价录入时的患者基线匹配与自动填充逻辑，并补充测试。\n\n1. 匹配触发与地区范围\n   - 用户录入效果评价时，按当前登录用户所属地区匹配患者基线。\n   - 地区范围沿用服务端既定规则：匹配当前登录用户所属地区及其下级地区，排除其他同级地区。地区编码或父级关系的具体实现由执行 Agent 核查现有工程，不自行假定前缀或新建递归机制。\n   - 当前地区没有匹配记录、只有其他地区有时，不得匹配。\n   - 当前地区有匹配记录时，提示用户是否自动填充基本信息；不增加新的按钮或业务步骤。\n\n2. 匹配条件与多条记录选择\n   - 姓名和身份证号同时匹配；任一缺项时不发起查询。\n   - 多条有效记录时，按调查日期降序、ID 降序选一条。\n\n3. 自动填充\n   - 用户确认后，先调用详情接口查询详情，再填充 `BASELINE_FILL_FIELDS` 中定义的 `name`、`idNumber`、`residenceAddress`。\n   - 只填当前表单中值为 `null` 或空字符串的字段，保留 `0` 和 `false`。\n   - 不填调查日期、调查人和题目。\n   - 不任意增减 `BASELINE_FILL_FIELDS` 中的字段。\n\n4. 取消与异常\n   - 用户取消时保持原值。\n   - 无匹配记录时不弹窗。\n   - 接口异常时提醒用户，但不阻断手工录入。\n\n5. 测试\n   - 按照实际修改范围为核心逻辑补充正常、异常和边界测试，保持现有功能兼容。具体测试层和文件由执行 Agent 核查现有工程后确定，不扩展业务范围。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：使用现有 BASELINE_FILL_FIELDS 定义的 name、idNumber、residenceAddress；用户确认后只填当前表单中值为 null 或空字符串的这些字段，保留 0 和 false，不任意增减字段，不填调查日期、调查人或题目。\n- 范围：按照实际修改范围为核心逻辑补充正常、异常和边界测试，保持现有功能兼容；具体测试层和文件由执行 Agent 核查现有工程，不扩展业务范围。\n\n## 输出\n输出用于修改现有工程并补测试的实施说明，包含：\n\n- 修改点清单：涉及的文件、函数或组件，以及每个修改点的作用。\n- 关键逻辑说明：地区范围匹配、姓名与身份证号同时匹配、多条记录排序选择、详情查询后填充、空值判断与取消/异常处理。\n- 测试说明：新增或调整的测试用例，覆盖正常、异常和边界场景，并说明测试层与文件位置。\n- 兼容性说明：如何保持现有功能不变。\n- 待确认项：如执行过程中发现新的业务选择或材料冲突，列出并说明影响。\n\n## 约束\n- 前端保持 TypeScript 类型安全，避免使用 `any`，并处理加载、空状态和失败状态。\n- 禁止读取或输出受保护路径：`.env`、`**/*.pem`、`**/*.key`、生产环境配置。\n- 不扩展业务范围；不新增按钮或业务步骤；不任意增减 `BASELINE_FILL_FIELDS` 字段。\n- 地区范围过滤由服务端负责，前端不得自行实现或绕过。\n- 保持现有功能兼容。\n\n用户明确规则（须遵守平台权限边界）：\n- 当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n- 已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。\n- 取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。\n- 使用现有 BASELINE_FILL_FIELDS 定义的 name、idNumber、residenceAddress；用户确认后只填当前表单中值为 null 或空字符串的这些字段，保留 0 和 false，不任意增减字段，不填调查日期、调查人或题目。\n- 按照实际修改范围为核心逻辑补充正常、异常和边界测试，保持现有功能兼容；具体测试层和文件由执行 Agent 核查现有工程，不扩展业务范围。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n## 验收\n- 用户录入效果评价时，按当前登录用户所属地区及其下级地区匹配患者基线，排除其他同级地区。\n- 当前地区没有匹配记录、只有其他地区有时，不匹配、不弹窗。\n- 当前地区有匹配记录时，提示用户是否自动填充基本信息。\n- 姓名和身份证号同时匹配；任一缺项时不发起查询。\n- 多条有效记录时，按调查日期降序、ID 降序选一条。\n- 用户确认后，先查询详情，再填充 `BASELINE_FILL_FIELDS` 中值为 `null` 或空字符串的字段，保留 `0` 和 `false`。\n- 不填调查日期、调查人和题目。\n- 用户取消时保持原值。\n- 接口异常时提醒用户，但不阻断手工录入。\n- 相关正常、异常和边界测试通过，现有功能兼容。",
+        "sections": [
+          {
+            "type": "BACKGROUND",
+            "title": "背景",
+            "content": "现有合成工程包含 know-survey 与 behav-survey 两个调查模块，均调用 `src/surveys/baselineApi.ts`。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n\n- 登录用户所属地区与患者基线现住址是两个独立字段，服务端负责地区范围过滤。\n- 列表接口返回地址摘要，自动填充前必须查询详情（来源：`docs/基线匹配现状.md`）。\n- `src/surveys/baselineApi.ts` 已定义 `BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress']`，并提供 `queryBaselineForFill(name, idNumber)` 与 `loadBaselineDetail(id)`。\n- `src/occupational/occupationNotes.md` 描述的职业信息模块规则（默认查询当前日期、空查询参数从 queryParam 读取）仅适用于该模块，不是基线匹配规则。\n\n本次任务是在现有工程上完善“防治知识知晓情况和防护行为调查”的基线匹配逻辑，并补充测试，不扩展业务范围。\n\n用户已确认的信息（当前情况）：\n- 地区：沿用服务端按当前登录用户所属地区及其下级地区匹配、排除其他同级地区的既定规则；地区编码或父级关系的具体实现由执行 Agent 核查现有工程，不自行假定前缀或新建递归机制。\n- 地区：沿用原始需求：用户录入效果评价时进行匹配，当前地区有匹配记录时提示用户是否自动填充；用户同意后先查详情再填指定空字段，取消保持原值，不增加新的按钮或业务步骤。\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n- [BUSINESS_RULE/PROJECT_DOCUMENT] 首次已读；来源：docs/基线匹配现状.md；证据：列表返回地址摘要，自动填充前必须查询详情"
+          },
+          {
+            "type": "TASK",
+            "title": "任务",
+            "content": "在现有工程中完善效果评价录入时的患者基线匹配与自动填充逻辑，并补充测试。\n\n1. 匹配触发与地区范围\n   - 用户录入效果评价时，按当前登录用户所属地区匹配患者基线。\n   - 地区范围沿用服务端既定规则：匹配当前登录用户所属地区及其下级地区，排除其他同级地区。地区编码或父级关系的具体实现由执行 Agent 核查现有工程，不自行假定前缀或新建递归机制。\n   - 当前地区没有匹配记录、只有其他地区有时，不得匹配。\n   - 当前地区有匹配记录时，提示用户是否自动填充基本信息；不增加新的按钮或业务步骤。\n\n2. 匹配条件与多条记录选择\n   - 姓名和身份证号同时匹配；任一缺项时不发起查询。\n   - 多条有效记录时，按调查日期降序、ID 降序选一条。\n\n3. 自动填充\n   - 用户确认后，先调用详情接口查询详情，再填充 `BASELINE_FILL_FIELDS` 中定义的 `name`、`idNumber`、`residenceAddress`。\n   - 只填当前表单中值为 `null` 或空字符串的字段，保留 `0` 和 `false`。\n   - 不填调查日期、调查人和题目。\n   - 不任意增减 `BASELINE_FILL_FIELDS` 中的字段。\n\n4. 取消与异常\n   - 用户取消时保持原值。\n   - 无匹配记录时不弹窗。\n   - 接口异常时提醒用户，但不阻断手工录入。\n\n5. 测试\n   - 按照实际修改范围为核心逻辑补充正常、异常和边界测试，保持现有功能兼容。具体测试层和文件由执行 Agent 核查现有工程后确定，不扩展业务范围。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：使用现有 BASELINE_FILL_FIELDS 定义的 name、idNumber、residenceAddress；用户确认后只填当前表单中值为 null 或空字符串的这些字段，保留 0 和 false，不任意增减字段，不填调查日期、调查人或题目。\n- 范围：按照实际修改范围为核心逻辑补充正常、异常和边界测试，保持现有功能兼容；具体测试层和文件由执行 Agent 核查现有工程，不扩展业务范围。"
+          },
+          {
+            "type": "OUTPUT",
+            "title": "输出",
+            "content": "输出用于修改现有工程并补测试的实施说明，包含：\n\n- 修改点清单：涉及的文件、函数或组件，以及每个修改点的作用。\n- 关键逻辑说明：地区范围匹配、姓名与身份证号同时匹配、多条记录排序选择、详情查询后填充、空值判断与取消/异常处理。\n- 测试说明：新增或调整的测试用例，覆盖正常、异常和边界场景，并说明测试层与文件位置。\n- 兼容性说明：如何保持现有功能不变。\n- 待确认项：如执行过程中发现新的业务选择或材料冲突，列出并说明影响。"
+          },
+          {
+            "type": "CONSTRAINTS",
+            "title": "约束",
+            "content": "- 前端保持 TypeScript 类型安全，避免使用 `any`，并处理加载、空状态和失败状态。\n- 禁止读取或输出受保护路径：`.env`、`**/*.pem`、`**/*.key`、生产环境配置。\n- 不扩展业务范围；不新增按钮或业务步骤；不任意增减 `BASELINE_FILL_FIELDS` 字段。\n- 地区范围过滤由服务端负责，前端不得自行实现或绕过。\n- 保持现有功能兼容。\n\n用户明确规则（须遵守平台权限边界）：\n- 当前地区没有、只有其他地区有时不得匹配；当前地区有时提示用户是否自动填充基本信息。\n- 已确定：包含下级地区但排除其他同级地区；姓名和身份证号同时匹配，缺项时不查询；多条有效记录按调查日期降序、ID 降序选一条；经用户确认只填 null 或空字符串，保留 0 和 false；先查询详情，再填 BASELINE_FILL_FIELDS，不填调查日期、调查人和题目。\n- 取消保持原值，无匹配不弹窗，接口异常提醒但不阻断手工录入。\n- 使用现有 BASELINE_FILL_FIELDS 定义的 name、idNumber、residenceAddress；用户确认后只填当前表单中值为 null 或空字符串的这些字段，保留 0 和 false，不任意增减字段，不填调查日期、调查人或题目。\n- 按照实际修改范围为核心逻辑补充正常、异常和边界测试，保持现有功能兼容；具体测试层和文件由执行 Agent 核查现有工程，不扩展业务范围。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+          },
+          {
+            "type": "ACCEPTANCE",
+            "title": "验收",
+            "content": "- 用户录入效果评价时，按当前登录用户所属地区及其下级地区匹配患者基线，排除其他同级地区。\n- 当前地区没有匹配记录、只有其他地区有时，不匹配、不弹窗。\n- 当前地区有匹配记录时，提示用户是否自动填充基本信息。\n- 姓名和身份证号同时匹配；任一缺项时不发起查询。\n- 多条有效记录时，按调查日期降序、ID 降序选一条。\n- 用户确认后，先查询详情，再填充 `BASELINE_FILL_FIELDS` 中值为 `null` 或空字符串的字段，保留 `0` 和 `false`。\n- 不填调查日期、调查人和题目。\n- 用户取消时保持原值。\n- 接口异常时提醒用户，但不阻断手工录入。\n- 相关正常、异常和边界测试通过，现有功能兼容。"
+          }
+        ],
+        "contextReport": {
+          "customDescription": "合成的地区调查工程，材料无真实个人信息。",
+          "technologyStack": [
+            {
+              "name": "TypeScript",
+              "source": "src/surveys/baselineApi.ts",
+              "confidence": 0.9
+            }
+          ],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/基线匹配现状.md",
+            "src/",
+            "src/occupational/",
+            "src/occupational/occupationNotes.md",
+            "src/surveys/",
+            "src/surveys/baselineApi.ts"
+          ],
+          "fileSnippets": [
+            {
+              "path": "src/surveys/baselineApi.ts",
+              "language": "typescript",
+              "content": "[片段 1/1]\nexport const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];\nexport async function queryBaselineForFill(name: string, idNumber: string) {\n  return fetch('/api/baseline/match?' + new URLSearchParams({ name, idNumber }));\n}\nexport async function loadBaselineDetail(id: string) {\n  return fetch('/api/baseline/' + encodeURIComponent(id));\n}",
+              "summary": "TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {",
+              "truncated": false
+            },
+            {
+              "path": "docs/基线匹配现状.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n# 合成工程现状\n两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n登录用户所属地区与患者基线现住址是两个独立字段；服务端负责地区范围过滤。本次要求匹配当前地区与下级地区。\n列表返回地址摘要，自动填充前必须查询详情。填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。\n同一患者可能有多条记录，本次规则由原始提示词明确。",
+              "summary": "Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。",
+              "truncated": false
+            },
+            {
+              "path": "src/occupational/occupationNotes.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n# 无调用依赖的职业信息模块\n该模块列表默认查询当前日期；空查询参数从 queryParam 读取。该规则仅适用于职业信息模块，不是基线匹配规则。",
+              "summary": "Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [
+          "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+          "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+          "校验所有外部输入，并明确处理空值、非法值和边界条件。",
+          "处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。",
+          "为核心逻辑补充正常、异常和边界场景测试。",
+          "前端保持 TypeScript 类型安全，避免使用 any，并处理加载、空状态和失败状态。",
+          "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+          "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+        ],
+        "templateCode": "BUG_FIX",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5977,
+        "warnings": []
+      },
+      "protocolChecks": {
+        "realProvider": true,
+        "promptPresent": true,
+        "fourSections": true,
+        "constraintsInCopiedBody": true
+      },
+      "elapsedMs": 6364,
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "b9dcb621-bb5b-48ad-a6f4-6ab1bad44cf1",
+          "elapsedMs": 6353
+        }
+      ]
+    },
+    {
+      "id": "01_software_autofill",
+      "title": "表单条件与取消行为",
+      "arm": "plan",
+      "startedAt": "2026-10-03T11:19:09.943Z",
+      "semanticReview": "PENDING",
+      "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+      "prepared": {
+        "contextId": "7082deca-ce28-4a2c-b05f-a31ea9c8dab6",
+        "version": "sha256:2d2c10885005dcab59aa7ef2b0a8389235fa5533ba9e6faf5f2b928fb58c9ed9",
+        "digest": {
+          "description": "合成的地区调查工程，材料无真实个人信息。",
+          "technologies": [
+            "TypeScript"
+          ],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/基线匹配现状.md",
+            "src/",
+            "src/occupational/",
+            "src/occupational/occupationNotes.md",
+            "src/surveys/",
+            "src/surveys/baselineApi.ts"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/基线匹配现状.md：Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。；业务摘录：[片段 1/1] 两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。 前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。 登录用户所属地区与患者基线现住址是两个独立字段； 服务端负责地区范围过滤。 本次要求匹配当前地区与下级地区。 列表返回地址摘要，自动填充前必须查询详情。 填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。 同一患者可能有多条记录，本次规则由原始提示词明确。",
+            "[PROJECT_DOCUMENT] src/occupational/occupationNotes.md：Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。；业务摘录：[片段 1/1] 该模块列表默认查询当前日期； 空查询参数从 queryParam 读取。 该规则仅适用于职业信息模块，不是基线匹配规则。",
+            "[PROJECT_SOURCE] src/surveys/baselineApi.ts：TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 3,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/基线匹配现状.md",
+              "evidence": "列表返回地址摘要，自动填充前必须查询详情"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "合成的地区调查工程，材料无真实个人信息。",
+          "technologyStack": [
+            {
+              "name": "TypeScript",
+              "source": "src/surveys/baselineApi.ts",
+              "confidence": 0.9
+            }
+          ],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/基线匹配现状.md",
+            "src/",
+            "src/occupational/",
+            "src/occupational/occupationNotes.md",
+            "src/surveys/",
+            "src/surveys/baselineApi.ts"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/基线匹配现状.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n# 合成工程现状\n两个调查模块为 know-survey 与 behav-survey，均调用 baselineApi.ts。前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。\n登录用户所属地区与患者基线现住址是两个独立字段；服务端负责地区范围过滤。本次要求匹配当前地区与下级地区。\n列表返回地址摘要，自动填充前必须查询详情。填充字段使用 BASELINE_FILL_FIELDS，不包括调查日期、调查人和题目。\n同一患者可能有多条记录，本次规则由原始提示词明确。",
+              "summary": "Markdown 文档摘要：合成工程现状；前端为 Vue 3 + TypeScript，后端为 Java 21 + Spring Boot 3。；本次要求匹配当前地区与下级地区。；列表返回地址摘要，自动填充前必须查询详情。；同一患者可能有多条记录，本次规则由原始提示词明确。",
+              "truncated": false
+            },
+            {
+              "path": "src/occupational/occupationNotes.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n# 无调用依赖的职业信息模块\n该模块列表默认查询当前日期；空查询参数从 queryParam 读取。该规则仅适用于职业信息模块，不是基线匹配规则。",
+              "summary": "Markdown 文档摘要：无调用依赖的职业信息模块；该模块列表默认查询当前日期；空查询参数从 queryParam 读取。；该规则仅适用于职业信息模块，不是基线匹配规则。",
+              "truncated": false
+            },
+            {
+              "path": "src/surveys/baselineApi.ts",
+              "language": "typescript",
+              "content": "[片段 1/1]\nexport const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];\nexport async function queryBaselineForFill(name: string, idNumber: string) {\n  return fetch('/api/baseline/match?' + new URLSearchParams({ name, idNumber }));\n}\nexport async function loadBaselineDetail(id: string) {\n  return fetch('/api/baseline/' + encodeURIComponent(id));\n}",
+              "summary": "TypeScript代码文件，主要定义：BASELINE_FILL_FIELDS、queryBaselineForFill、loadBaselineDetail。关键内容：export const BASELINE_FILL_FIELDS = ['name', 'idNumber', 'residenceAddress'];；export async function queryBaselineForFill(name: string, idNumber: string) {",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-03T11:49:09.974524100Z",
+        "latencyMs": 28
+      },
+      "plan": {
+        "summary": "目标是修改现有工程，实现按当前用户所属地区（含下级、排除同级）匹配患者基线，并在当前地区有记录时提示用户是否自动填充基本信息，同时补充测试。原始需求已明确大部分规则，但地区范围的具体判定方式、提示交互细节和测试范围仍需确认，以免实现偏差。",
+        "questions": [
+          {
+            "id": "region_scope",
+            "question": "“当前地区包含下级地区但排除其他同级地区”具体如何判定？",
+            "hint": "这决定服务端地区过滤的匹配逻辑，影响查询结果范围。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "prefix_code",
+                "label": "按地区编码前缀匹配",
+                "description": "当前地区编码作为前缀，匹配所有以其开头的下级地区编码，排除其他同级。",
+                "answer": "按地区编码前缀匹配：当前地区编码作为前缀，匹配所有以其开头的下级地区编码，排除其他同级地区。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "parent_id_chain",
+                "label": "按父级ID链递归查询",
+                "description": "通过地区表的父级ID递归查询所有下级地区，排除其他同级。",
+                "answer": "按父级ID链递归查询：通过地区表的父级ID递归查询所有下级地区，排除其他同级地区。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "other_rule",
+                "label": "其他判定方式",
+                "description": "由用户补充具体的地区范围判定规则。",
+                "answer": "其他判定方式：由用户补充具体的地区范围判定规则。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "prompt_trigger",
+            "question": "当前地区有匹配记录时，提示用户是否自动填充基本信息的触发时机是什么？",
+            "hint": "这决定前端交互流程，影响用户操作顺序。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "after_query",
+                "label": "查询到匹配记录后立即提示",
+                "description": "在查询到当前地区有匹配记录后，立即弹出提示询问是否自动填充。",
+                "answer": "查询到匹配记录后立即提示：在查询到当前地区有匹配记录后，立即弹出提示询问是否自动填充。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "on_user_action",
+                "label": "用户点击填充按钮时提示",
+                "description": "用户主动点击自动填充按钮时，再提示是否使用匹配记录填充。",
+                "answer": "用户点击填充按钮时提示：用户主动点击自动填充按钮时，再提示是否使用匹配记录填充。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "other_timing",
+                "label": "其他时机",
+                "description": "由用户补充具体的提示触发时机。",
+                "answer": "其他时机：由用户补充具体的提示触发时机。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "fill_scope",
+            "question": "自动填充时，BASELINE_FILL_FIELDS 中的字段是否全部填充？",
+            "hint": "原始需求已明确不填调查日期、调查人和题目，但未说明 BASELINE_FILL_FIELDS 内字段是否全填。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "fill_all",
+                "label": "填充所有 BASELINE_FILL_FIELDS 字段",
+                "description": "对 BASELINE_FILL_FIELDS 中定义的每个字段，若当前值为 null 或空字符串则填充。",
+                "answer": "填充所有 BASELINE_FILL_FIELDS 字段：对 BASELINE_FILL_FIELDS 中定义的每个字段，若当前值为 null 或空字符串则填充。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "fill_subset",
+                "label": "只填充部分字段",
+                "description": "由用户指定 BASELINE_FILL_FIELDS 中需要填充的具体字段。",
+                "answer": "只填充部分字段：由用户指定 BASELINE_FILL_FIELDS 中需要填充的具体字段。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "test_scope",
+            "question": "补测试的范围是什么？",
+            "hint": "这决定测试工作量和覆盖点，影响实施提示词中的测试部分。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "unit_only",
+                "label": "仅单元测试",
+                "description": "只针对地区匹配和填充逻辑编写单元测试。",
+                "answer": "仅单元测试：只针对地区匹配和填充逻辑编写单元测试。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "unit_integration",
+                "label": "单元测试和集成测试",
+                "description": "覆盖地区匹配、填充逻辑以及前后端交互的集成测试。",
+                "answer": "单元测试和集成测试：覆盖地区匹配、填充逻辑以及前后端交互的集成测试。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "e2e",
+                "label": "端到端测试",
+                "description": "模拟用户操作，验证从查询到填充的完整流程。",
+                "answer": "端到端测试：模拟用户操作，验证从查询到填充的完整流程。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "BUG_FIX",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5811,
+        "planId": "f4d4c0a6-bafe-4353-bab1-21839fdff218",
+        "planningContext": {
+          "contextId": "7082deca-ce28-4a2c-b05f-a31ea9c8dab6",
+          "version": "sha256:2d2c10885005dcab59aa7ef2b0a8389235fa5533ba9e6faf5f2b928fb58c9ed9"
+        },
+        "expiresAt": "2026-10-03T11:49:09.974524100Z"
+      },
+      "elapsedMs": 5991,
+      "requests": [
+        {
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "866a5715-ed07-4f70-a733-fb2f0cecf6f3",
+          "elapsedMs": 108
+        },
+        {
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "ce8e3f7b-21bb-400a-b005-628e20553bab",
+          "elapsedMs": 5877
+        }
+      ]
+    },
+    {
+      "id": "08_data_unresolved_denominator",
+      "title": "比率分母与缺失处理仍待确认",
+      "arm": "direct",
+      "startedAt": "2026-10-03T11:24:19.212Z",
+      "semanticReview": "PENDING",
+      "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+      "final": {
+        "optimizedPrompt": "## 背景\n- 本轮任务为**合成业务验收材料**，不包含真实个人信息；仅需优化提示词，不执行实际数据分析。\n- 现有资料：`materials/问卷字典.txt`，为合成数据字典，字段包括：`group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count`。\n- 资料中明确标注：**未提供行数据**；**完成率分母未确定**；**缺失答卷处理未确定**。\n- 用户目标：为合成问卷数据生成数据分析提示词，比较甲、乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。\n\n## 任务\n请生成一份用于后续数据分析的**提示词**，该提示词需满足以下要求：\n\n1. **任务范围**\n   - 仅生成提示词，不执行任何实际数据分析、不计算完成率、不填入任何实际结果。\n   - 交付物为中文方法说明和结果表模板。\n\n2. **方法说明需包含**\n   - 字段检查清单：至少覆盖 `group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count` 的存在性、类型、取值范围、组别取值一致性等检查项。\n   - 明确列出两种完成率分母口径的区别：\n     - 口径 A：分母 = 全部报名人数（`registered_count`）\n     - 口径 B：分母 = 有效答卷人数（`valid_response_count`）\n   - 说明两种口径各自的适用场景、计算逻辑差异及对结果解释的影响，但**不得擅自选定其中一种口径**。\n   - 说明缺失答卷处理的可能方式及其对完成率计算的影响，但**不得擅自选定处理方式**。\n   - 强调不得将“未完成”“缺失”“零值”相互混同，需在方法说明中明确三者的定义边界。\n\n3. **结果表模板需包含**\n   - 表头字段建议：组别、报名人数、有效答卷人数、完成人数、缺失数、完成率（口径 A）、完成率（口径 B）、备注。\n   - 模板中所有数值单元格留空或使用占位符，不得填入任何实际计算结果。\n   - 备注列用于标注口径选择、缺失处理方式等待确认事项。\n\n4. **执行前提**\n   - 在完成率分母口径和缺失答卷处理方式确认之前，不得进行任何完成率计算或结果填充。\n   - 提示词中应明确列出待确认事项，并说明确认后方可进入计算阶段。\n\n## 输出\n- 交付一份中文方法说明文档，包含字段检查清单、两种分母口径的区别说明、缺失答卷处理方式说明、以及“未完成/缺失/零值”的区分定义。\n- 交付一份结果表模板，表头包含组别、报名人数、有效答卷人数、完成人数、缺失数、完成率（口径 A）、完成率（口径 B）、备注；所有数值单元格留空或使用占位符。\n- 输出中不得包含任何实际计算结果或对未确认口径的默认选择。\n\n## 约束\n- 不得将未完成、缺失、零值相互混同。\n- 确认前不得擅自选择完成率分母口径或缺失答卷处理方式，不得计算完成率。\n\n用户明确规则（须遵守平台权限边界）：\n- 请为合成问卷数据生成数据分析提示词，比较甲乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。\n- 确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。\n- 不得将未完成、缺失、零值相互混同。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 完成率分母采用全部报名人数（registered_count）还是有效答卷人数（valid_response_count）尚未确定，需用户确认后方可进入计算阶段。\n- 缺失答卷的处理方式尚未确定（例如：从分母中剔除、计入未完成、单独列示等），需用户确认后方可进入计算阶段。\n\n## 验收标准\n- 方法说明完整覆盖字段检查清单、两种分母口径的区别、缺失答卷处理方式说明，以及“未完成/缺失/零值”的区分定义。\n- 结果表模板表头完整，所有数值单元格留空或使用占位符，无任何实际计算结果。\n- 输出中明确列出待确认事项（完成率分母口径、缺失答卷处理方式），且未擅自选定任何口径或处理方式。\n- 未将未完成、缺失、零值相互混同。\n- 交付物为中文，可直接用于后续数据分析提示词。",
+        "sections": [
+          {
+            "type": "BACKGROUND",
+            "title": "背景",
+            "content": "- 本轮任务为**合成业务验收材料**，不包含真实个人信息；仅需优化提示词，不执行实际数据分析。\n- 现有资料：`materials/问卷字典.txt`，为合成数据字典，字段包括：`group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count`。\n- 资料中明确标注：**未提供行数据**；**完成率分母未确定**；**缺失答卷处理未确定**。\n- 用户目标：为合成问卷数据生成数据分析提示词，比较甲、乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。"
+          },
+          {
+            "type": "TASK",
+            "title": "任务",
+            "content": "请生成一份用于后续数据分析的**提示词**，该提示词需满足以下要求：\n\n1. **任务范围**\n   - 仅生成提示词，不执行任何实际数据分析、不计算完成率、不填入任何实际结果。\n   - 交付物为中文方法说明和结果表模板。\n\n2. **方法说明需包含**\n   - 字段检查清单：至少覆盖 `group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count` 的存在性、类型、取值范围、组别取值一致性等检查项。\n   - 明确列出两种完成率分母口径的区别：\n     - 口径 A：分母 = 全部报名人数（`registered_count`）\n     - 口径 B：分母 = 有效答卷人数（`valid_response_count`）\n   - 说明两种口径各自的适用场景、计算逻辑差异及对结果解释的影响，但**不得擅自选定其中一种口径**。\n   - 说明缺失答卷处理的可能方式及其对完成率计算的影响，但**不得擅自选定处理方式**。\n   - 强调不得将“未完成”“缺失”“零值”相互混同，需在方法说明中明确三者的定义边界。\n\n3. **结果表模板需包含**\n   - 表头字段建议：组别、报名人数、有效答卷人数、完成人数、缺失数、完成率（口径 A）、完成率（口径 B）、备注。\n   - 模板中所有数值单元格留空或使用占位符，不得填入任何实际计算结果。\n   - 备注列用于标注口径选择、缺失处理方式等待确认事项。\n\n4. **执行前提**\n   - 在完成率分母口径和缺失答卷处理方式确认之前，不得进行任何完成率计算或结果填充。\n   - 提示词中应明确列出待确认事项，并说明确认后方可进入计算阶段。"
+          },
+          {
+            "type": "OUTPUT",
+            "title": "输出",
+            "content": "- 交付一份中文方法说明文档，包含字段检查清单、两种分母口径的区别说明、缺失答卷处理方式说明、以及“未完成/缺失/零值”的区分定义。\n- 交付一份结果表模板，表头包含组别、报名人数、有效答卷人数、完成人数、缺失数、完成率（口径 A）、完成率（口径 B）、备注；所有数值单元格留空或使用占位符。\n- 输出中不得包含任何实际计算结果或对未确认口径的默认选择。"
+          },
+          {
+            "type": "CONSTRAINTS",
+            "title": "约束",
+            "content": "- 不得将未完成、缺失、零值相互混同。\n- 确认前不得擅自选择完成率分母口径或缺失答卷处理方式，不得计算完成率。\n\n用户明确规则（须遵守平台权限边界）：\n- 请为合成问卷数据生成数据分析提示词，比较甲乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。\n- 确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。\n- 不得将未完成、缺失、零值相互混同。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 完成率分母采用全部报名人数（registered_count）还是有效答卷人数（valid_response_count）尚未确定，需用户确认后方可进入计算阶段。\n- 缺失答卷的处理方式尚未确定（例如：从分母中剔除、计入未完成、单独列示等），需用户确认后方可进入计算阶段。"
+          },
+          {
+            "type": "CLARIFICATIONS",
+            "title": "待确认事项",
+            "content": "- 完成率分母采用全部报名人数（registered_count）还是有效答卷人数（valid_response_count）尚未确定，需用户确认后方可进入计算阶段。\n- 缺失答卷的处理方式尚未确定（例如：从分母中剔除、计入未完成、单独列示等），需用户确认后方可进入计算阶段。"
+          },
+          {
+            "type": "ACCEPTANCE",
+            "title": "验收标准",
+            "content": "- 方法说明完整覆盖字段检查清单、两种分母口径的区别、缺失答卷处理方式说明，以及“未完成/缺失/零值”的区分定义。\n- 结果表模板表头完整，所有数值单元格留空或使用占位符，无任何实际计算结果。\n- 输出中明确列出待确认事项（完成率分母口径、缺失答卷处理方式），且未擅自选定任何口径或处理方式。\n- 未将未完成、缺失、零值相互混同。\n- 交付物为中文，可直接用于后续数据分析提示词。"
+          }
+        ],
+        "contextReport": {
+          "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/问卷字典.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/问卷字典.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。未提供行数据。完成率分母：未确定。缺失答卷处理：未确定。",
+              "summary": "文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [
+          "完成率分母采用全部报名人数（registered_count）还是有效答卷人数（valid_response_count）尚未确定，需用户确认后方可进入计算阶段。",
+          "缺失答卷的处理方式尚未确定（例如：从分母中剔除、计入未完成、单独列示等），需用户确认后方可进入计算阶段。"
+        ],
+        "appliedConstraints": [
+          "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+          "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+          "输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。",
+          "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+          "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+        ],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5042,
+        "warnings": []
+      },
+      "protocolChecks": {
+        "realProvider": true,
+        "promptPresent": true,
+        "fourSections": true,
+        "constraintsInCopiedBody": true
+      },
+      "elapsedMs": 5183,
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "6cd8ddbd-23ec-41de-ac88-c7e0916adb4e",
+          "elapsedMs": 5179
+        }
+      ]
+    },
+    {
+      "id": "08_data_unresolved_denominator",
+      "title": "比率分母与缺失处理仍待确认",
+      "arm": "plan-final",
+      "startedAt": "2026-10-03T11:33:54.714Z",
+      "semanticReview": "PENDING",
+      "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+      "plan": {
+        "summary": "目标是生成一份中文数据分析提示词，用于比较甲乙两组完成率，交付方法说明和结果表模板，不执行分析、不填实际结果。当前完成率分母口径和缺失答卷处理方式尚未确定，需要用户确认后才能写入提示词。",
+        "questions": [
+          {
+            "id": "denominator",
+            "question": "完成率的分母采用哪个口径？",
+            "hint": "这决定完成率的计算定义，必须在提示词中明确，不能由模型自行选择。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "registered",
+                "label": "全部报名人数",
+                "description": "以 registered_count 为分母计算完成率。",
+                "answer": "完成率分母采用全部报名人数（registered_count）。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "valid",
+                "label": "有效答卷人数",
+                "description": "以 valid_response_count 为分母计算完成率。",
+                "answer": "完成率分母采用有效答卷人数（valid_response_count）。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "both",
+                "label": "两个口径都算并对比",
+                "description": "同时按全部报名人数和有效答卷人数计算完成率，并说明两者区别。",
+                "answer": "完成率同时按全部报名人数和有效答卷人数两个口径计算并对比，说明两者区别。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "missing_handling",
+            "question": "缺失答卷在完成率计算中如何处理？",
+            "hint": "缺失答卷的处理方式会影响分子和分母，需要明确规则，且不能与未完成、零值混同。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "exclude",
+                "label": "从分子分母中剔除",
+                "description": "缺失答卷不计入完成率计算的分子和分母。",
+                "answer": "缺失答卷从完成率计算的分子和分母中剔除。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "denominator_only",
+                "label": "计入分母但不计入分子",
+                "description": "缺失答卷计入分母，但不计入完成数。",
+                "answer": "缺失答卷计入完成率分母，但不计入完成数（分子）。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "separate",
+                "label": "单独列出不参与计算",
+                "description": "缺失答卷单独统计展示，不参与完成率计算。",
+                "answer": "缺失答卷单独统计展示，不参与完成率计算。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2646,
+        "planId": "f8b9dd2c-55dc-44ea-bd5e-110c3ad2b36c",
+        "planningContext": {
+          "contextId": "43f6fc87-f6d5-4bdf-978b-52715d86a42e",
+          "version": "sha256:2e7c53c912eb3efa537d4d0a05f7a3b132c6bc2e41ff5980a5d6eddff9172177"
+        },
+        "expiresAt": "2026-10-03T11:54:16.456296Z"
+      },
+      "prepared": {
+        "contextId": "43f6fc87-f6d5-4bdf-978b-52715d86a42e",
+        "version": "sha256:2e7c53c912eb3efa537d4d0a05f7a3b132c6bc2e41ff5980a5d6eddff9172177",
+        "digest": {
+          "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "materials/",
+            "materials/问卷字典.txt"
+          ],
+          "fileSummaries": [
+            "[USER_MATERIAL] materials/问卷字典.txt：文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。；业务摘录：[片段 1/1] 仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。 未提供行数据。 完成率分母：未确定。 缺失答卷处理：未确定。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": []
+        },
+        "contextReport": {
+          "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/问卷字典.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/问卷字典.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。未提供行数据。完成率分母：未确定。缺失答卷处理：未确定。",
+              "summary": "文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-03T11:54:16.456296Z",
+        "latencyMs": 7
+      },
+      "answerReview": {
+        "caseId": "08_data_unresolved_denominator",
+        "questions": [
+          {
+            "questionId": "denominator",
+            "question": "完成率的分母采用哪个口径？",
+            "answer": "暂不确定",
+            "basis": "冻结答案卡明确要求保留分母口径未决；不以补充长答案规避短回答去重反例。"
+          },
+          {
+            "questionId": "missing_handling",
+            "question": "缺失答卷在完成率计算中如何处理？",
+            "answer": "暂不确定",
+            "basis": "冻结答案卡明确要求保留缺失处理未决；不得自行选定剔除或计入分母。"
+          }
+        ]
+      },
+      "priorRequests": [
+        {
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "892330ff-b162-428c-9b34-b5678f10519c",
+          "elapsedMs": 84
+        },
+        {
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "c9a325cb-4477-4c9f-98d6-23f8ad033cde",
+          "elapsedMs": 2701
+        }
+      ],
+      "refinedQuery": "请为合成问卷数据生成数据分析提示词，比较甲乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。完成率分母采用全部报名人数还是有效答卷人数尚未确定；缺失答卷如何处理也未确定。确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。不得将未完成、缺失、零值相互混同。",
+      "final": {
+        "optimizedPrompt": "## 背景\n- 本轮任务属于合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。\n- 现有资料仅为合成数据字典 `materials/问卷字典.txt`，其中列出字段：`group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count`；未提供行数据。\n- 该字典明确标注：完成率分母未确定；缺失答卷处理未确定。\n- 用户已确认：完成率分母采用全部报名人数还是有效答卷人数尚未确定；缺失答卷如何处理尚未确定。确认前不得擅自选择口径或计算完成率。\n- 用户已确认：可以先列字段检查和两个口径的区别。\n- 用户已确认：不得将未完成、缺失、零值相互混同。\n\n## 任务\n- 为合成问卷数据生成一份数据分析提示词，用于比较甲、乙两组的完成率。\n- 交付中文方法说明和结果表模板。\n- 不执行分析、不填实际结果。\n- 在完成率分母口径和缺失答卷处理方式确认前，不得擅自选择口径或计算完成率。\n- 可以先列出字段检查项，并说明两种分母口径的区别。\n- 必须明确区分未完成、缺失、零值，不得相互混同。\n- 方法说明中应包含：字段检查清单、两种分母口径的定义与差异、缺失答卷处理对结果的影响、结果表模板结构。\n- 结果表模板只提供表头与填写说明，不填入任何实际数值或示例结果。\n\n## 输出\n- 中文方法说明文档，包含：\n  - 字段检查清单：对 `group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count` 的检查项与用途说明。\n  - 两种完成率分母口径的定义与区别：全部报名人数口径、有效答卷人数口径。\n  - 缺失答卷处理方式对完成率计算的影响说明。\n  - 未完成、缺失、零值的区分说明。\n- 结果表模板，仅含表头与填写说明，不填实际结果。\n- 模板中应预留甲、乙两组及两种口径的列，并标注待确认项。\n\n## 约束\n- 完成率分母口径和缺失答卷处理方式未确认前，不得擅自选择口径或计算完成率。\n- 不得将未完成、缺失、零值相互混同。\n- 不执行分析、不填实际结果。\n\n用户明确规则（须遵守平台权限边界）：\n- 请为合成问卷数据生成数据分析提示词，比较甲乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。\n- 确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。\n- 不得将未完成、缺失、零值相互混同。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：完成率的分母采用哪个口径？ 补充说明：完成率分母采用全部报名人数还是有效答卷人数尚未确定；在确认前不得擅自选择口径或计算完成率。\n- 该问题尚未确定：缺失答卷在完成率计算中如何处理？ 补充说明：在确认前不得擅自选择处理方式或计算完成率。\n\n## 验收标准\n- 方法说明完整覆盖字段检查清单、两种分母口径的定义与区别、缺失答卷处理影响、未完成/缺失/零值区分。\n- 结果表模板仅含表头与填写说明，不含任何实际数值或示例结果。\n- 明确标注完成率分母口径和缺失答卷处理方式为待确认项，未擅自选择或计算。\n- 未将未完成、缺失、零值相互混同。\n- 输出为中文，且不包含真实个人信息。",
+        "sections": [
+          {
+            "type": "BACKGROUND",
+            "title": "背景",
+            "content": "- 本轮任务属于合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。\n- 现有资料仅为合成数据字典 `materials/问卷字典.txt`，其中列出字段：`group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count`；未提供行数据。\n- 该字典明确标注：完成率分母未确定；缺失答卷处理未确定。\n- 用户已确认：完成率分母采用全部报名人数还是有效答卷人数尚未确定；缺失答卷如何处理尚未确定。确认前不得擅自选择口径或计算完成率。\n- 用户已确认：可以先列字段检查和两个口径的区别。\n- 用户已确认：不得将未完成、缺失、零值相互混同。"
+          },
+          {
+            "type": "TASK",
+            "title": "任务",
+            "content": "- 为合成问卷数据生成一份数据分析提示词，用于比较甲、乙两组的完成率。\n- 交付中文方法说明和结果表模板。\n- 不执行分析、不填实际结果。\n- 在完成率分母口径和缺失答卷处理方式确认前，不得擅自选择口径或计算完成率。\n- 可以先列出字段检查项，并说明两种分母口径的区别。\n- 必须明确区分未完成、缺失、零值，不得相互混同。\n- 方法说明中应包含：字段检查清单、两种分母口径的定义与差异、缺失答卷处理对结果的影响、结果表模板结构。\n- 结果表模板只提供表头与填写说明，不填入任何实际数值或示例结果。"
+          },
+          {
+            "type": "OUTPUT",
+            "title": "输出",
+            "content": "- 中文方法说明文档，包含：\n  - 字段检查清单：对 `group`、`registered_count`、`valid_response_count`、`completed_count`、`missing_count` 的检查项与用途说明。\n  - 两种完成率分母口径的定义与区别：全部报名人数口径、有效答卷人数口径。\n  - 缺失答卷处理方式对完成率计算的影响说明。\n  - 未完成、缺失、零值的区分说明。\n- 结果表模板，仅含表头与填写说明，不填实际结果。\n- 模板中应预留甲、乙两组及两种口径的列，并标注待确认项。"
+          },
+          {
+            "type": "CONSTRAINTS",
+            "title": "约束",
+            "content": "- 完成率分母口径和缺失答卷处理方式未确认前，不得擅自选择口径或计算完成率。\n- 不得将未完成、缺失、零值相互混同。\n- 不执行分析、不填实际结果。\n\n用户明确规则（须遵守平台权限边界）：\n- 请为合成问卷数据生成数据分析提示词，比较甲乙两组的完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。\n- 确认前不得擅自选择口径或计算完成率；可以先列字段检查和两个口径的区别。\n- 不得将未完成、缺失、零值相互混同。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：完成率的分母采用哪个口径？ 补充说明：完成率分母采用全部报名人数还是有效答卷人数尚未确定；在确认前不得擅自选择口径或计算完成率。\n- 该问题尚未确定：缺失答卷在完成率计算中如何处理？ 补充说明：在确认前不得擅自选择处理方式或计算完成率。"
+          },
+          {
+            "type": "CLARIFICATIONS",
+            "title": "待确认事项",
+            "content": "- 该问题尚未确定：完成率的分母采用哪个口径？ 补充说明：完成率分母采用全部报名人数还是有效答卷人数尚未确定；在确认前不得擅自选择口径或计算完成率。\n- 该问题尚未确定：缺失答卷在完成率计算中如何处理？ 补充说明：在确认前不得擅自选择处理方式或计算完成率。"
+          },
+          {
+            "type": "ACCEPTANCE",
+            "title": "验收标准",
+            "content": "- 方法说明完整覆盖字段检查清单、两种分母口径的定义与区别、缺失答卷处理影响、未完成/缺失/零值区分。\n- 结果表模板仅含表头与填写说明，不含任何实际数值或示例结果。\n- 明确标注完成率分母口径和缺失答卷处理方式为待确认项，未擅自选择或计算。\n- 未将未完成、缺失、零值相互混同。\n- 输出为中文，且不包含真实个人信息。"
+          }
+        ],
+        "contextReport": {
+          "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/问卷字典.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/问卷字典.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。未提供行数据。完成率分母：未确定。缺失答卷处理：未确定。",
+              "summary": "文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [
+          "该问题尚未确定：完成率的分母采用哪个口径？ 补充说明：完成率分母采用全部报名人数还是有效答卷人数尚未确定；在确认前不得擅自选择口径或计算完成率。",
+          "该问题尚未确定：缺失答卷在完成率计算中如何处理？ 补充说明：在确认前不得擅自选择处理方式或计算完成率。"
+        ],
+        "appliedConstraints": [
+          "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+          "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+          "输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。",
+          "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+          "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+        ],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 9797,
+        "warnings": []
+      },
+      "protocolChecks": {
+        "realProvider": true,
+        "promptPresent": true,
+        "fourSections": true,
+        "constraintsInCopiedBody": true
+      },
+      "elapsedMs": 9934,
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "8a7a04ed-0dff-420c-a7f2-f8ac4ba1563f",
+          "elapsedMs": 9925
+        }
+      ]
+    },
+    {
+      "id": "08_data_unresolved_denominator",
+      "title": "比率分母与缺失处理仍待确认",
+      "arm": "plan",
+      "startedAt": "2026-10-03T11:24:16.422Z",
+      "semanticReview": "PENDING",
+      "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f",
+      "prepared": {
+        "contextId": "43f6fc87-f6d5-4bdf-978b-52715d86a42e",
+        "version": "sha256:2e7c53c912eb3efa537d4d0a05f7a3b132c6bc2e41ff5980a5d6eddff9172177",
+        "digest": {
+          "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "materials/",
+            "materials/问卷字典.txt"
+          ],
+          "fileSummaries": [
+            "[USER_MATERIAL] materials/问卷字典.txt：文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。；业务摘录：[片段 1/1] 仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。 未提供行数据。 完成率分母：未确定。 缺失答卷处理：未确定。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": []
+        },
+        "contextReport": {
+          "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/问卷字典.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/问卷字典.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。未提供行数据。完成率分母：未确定。缺失答卷处理：未确定。",
+              "summary": "文件内容摘要：仅合成数据字典：group、registered_count、valid_response_count、completed_count、missing_count。；未提供行数据。；完成率分母：未确定。；缺失答卷处理：未确定。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-03T11:54:16.456296Z",
+        "latencyMs": 7
+      },
+      "plan": {
+        "summary": "目标是生成一份中文数据分析提示词，用于比较甲乙两组完成率，交付方法说明和结果表模板，不执行分析、不填实际结果。当前完成率分母口径和缺失答卷处理方式尚未确定，需要用户确认后才能写入提示词。",
+        "questions": [
+          {
+            "id": "denominator",
+            "question": "完成率的分母采用哪个口径？",
+            "hint": "这决定完成率的计算定义，必须在提示词中明确，不能由模型自行选择。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "registered",
+                "label": "全部报名人数",
+                "description": "以 registered_count 为分母计算完成率。",
+                "answer": "完成率分母采用全部报名人数（registered_count）。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "valid",
+                "label": "有效答卷人数",
+                "description": "以 valid_response_count 为分母计算完成率。",
+                "answer": "完成率分母采用有效答卷人数（valid_response_count）。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "both",
+                "label": "两个口径都算并对比",
+                "description": "同时按全部报名人数和有效答卷人数计算完成率，并说明两者区别。",
+                "answer": "完成率同时按全部报名人数和有效答卷人数两个口径计算并对比，说明两者区别。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "missing_handling",
+            "question": "缺失答卷在完成率计算中如何处理？",
+            "hint": "缺失答卷的处理方式会影响分子和分母，需要明确规则，且不能与未完成、零值混同。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "exclude",
+                "label": "从分子分母中剔除",
+                "description": "缺失答卷不计入完成率计算的分子和分母。",
+                "answer": "缺失答卷从完成率计算的分子和分母中剔除。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "denominator_only",
+                "label": "计入分母但不计入分子",
+                "description": "缺失答卷计入分母，但不计入完成数。",
+                "answer": "缺失答卷计入完成率分母，但不计入完成数（分子）。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "separate",
+                "label": "单独列出不参与计算",
+                "description": "缺失答卷单独统计展示，不参与完成率计算。",
+                "answer": "缺失答卷单独统计展示，不参与完成率计算。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2646,
+        "planId": "f8b9dd2c-55dc-44ea-bd5e-110c3ad2b36c",
+        "planningContext": {
+          "contextId": "43f6fc87-f6d5-4bdf-978b-52715d86a42e",
+          "version": "sha256:2e7c53c912eb3efa537d4d0a05f7a3b132c6bc2e41ff5980a5d6eddff9172177"
+        },
+        "expiresAt": "2026-10-03T11:54:16.456296Z"
+      },
+      "elapsedMs": 2788,
+      "requests": [
+        {
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "892330ff-b162-428c-9b34-b5678f10519c",
+          "elapsedMs": 84
+        },
+        {
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "c9a325cb-4477-4c9f-98d6-23f8ad033cde",
+          "elapsedMs": 2701
+        }
+      ]
+    }
+  ],
+  "browserReview": {
+    "startedAt": "2026-10-03T11:37:19.349Z",
+    "caseIds": [
+      "01_software_autofill",
+      "08_data_unresolved_denominator"
+    ],
+    "clipboardCaseIds": [
+      "08_data_unresolved_denominator",
+      "01_software_autofill"
+    ],
+    "history": [
+      {
+        "id": "01_software_autofill",
+        "arm": "direct",
+        "matched": true,
+        "sectionsEqual": true,
+        "promptSha256": "276a0da3e81a9b0e366085fe25de28b7b22abb5d8fbc51a3c883893d5bcf7561"
+      },
+      {
+        "id": "01_software_autofill",
+        "arm": "plan-final",
+        "matched": true,
+        "sectionsEqual": true,
+        "promptSha256": "ef23e577cf1a4c20a22cffdea4046da7283a01d0c5f5672138227d9929721f25"
+      },
+      {
+        "id": "08_data_unresolved_denominator",
+        "arm": "direct",
+        "matched": true,
+        "sectionsEqual": true,
+        "promptSha256": "49bf44a98647cf5e51b40e66bd7c59682f15ae816f2aeefa59f533a5c55052d1"
+      },
+      {
+        "id": "08_data_unresolved_denominator",
+        "arm": "plan-final",
+        "matched": true,
+        "sectionsEqual": true,
+        "promptSha256": "6bb1d24103c847c0f7fcce9c21af0dfe3fde8c983135fea5649ff971fecfc6dd"
+      }
+    ],
+    "clipboard": [
+      {
+        "id": "08_data_unresolved_denominator",
+        "width": 1440,
+        "exactCopy": true,
+        "byteExact": false,
+        "newlinePolicy": "CRLF->LF only",
+        "chars": 1656,
+        "sha256": "6bb1d24103c847c0f7fcce9c21af0dfe3fde8c983135fea5649ff971fecfc6dd",
+        "rawClipboardSha256": "eee1ec6571c958d0fefc564334f6c72d87a0bb6d73d01c2d6a644c1b3efa9bc4",
+        "editedConstraintsPreserved": true,
+        "editApplied": true,
+        "cancelledEditUnchanged": true
+      },
+      {
+        "id": "01_software_autofill",
+        "width": 1440,
+        "exactCopy": true,
+        "byteExact": false,
+        "newlinePolicy": "CRLF->LF only",
+        "chars": 3300,
+        "sha256": "ef23e577cf1a4c20a22cffdea4046da7283a01d0c5f5672138227d9929721f25",
+        "rawClipboardSha256": "6fc0185cc089dd567fe00857f018ee22beb886b3818481b6f189ff05a350b00b",
+        "editedConstraintsPreserved": true,
+        "editApplied": true,
+        "cancelledEditUnchanged": true
+      },
+      {
+        "id": "08_data_unresolved_denominator",
+        "width": 390,
+        "exactCopy": true,
+        "byteExact": false,
+        "newlinePolicy": "CRLF->LF only",
+        "chars": 1656,
+        "sha256": "6bb1d24103c847c0f7fcce9c21af0dfe3fde8c983135fea5649ff971fecfc6dd",
+        "rawClipboardSha256": "eee1ec6571c958d0fefc564334f6c72d87a0bb6d73d01c2d6a644c1b3efa9bc4",
+        "editedConstraintsPreserved": true,
+        "editApplied": true,
+        "cancelledEditUnchanged": true
+      },
+      {
+        "id": "01_software_autofill",
+        "width": 390,
+        "exactCopy": true,
+        "byteExact": false,
+        "newlinePolicy": "CRLF->LF only",
+        "chars": 3300,
+        "sha256": "ef23e577cf1a4c20a22cffdea4046da7283a01d0c5f5672138227d9929721f25",
+        "rawClipboardSha256": "6fc0185cc089dd567fe00857f018ee22beb886b3818481b6f189ff05a350b00b",
+        "editedConstraintsPreserved": true,
+        "editApplied": true,
+        "cancelledEditUnchanged": true
+      }
+    ],
+    "unavailable": [],
+    "scope": "真实历史API；真实响应在工作台Store回放后使用原生剪贴板；不生成新结果、不打开外部AI。失败或未生成的结果单列，不记为通过。"
+  },
+  "assessments": [
+    {
+      "id": "01_software_autofill",
+      "status": "FAIL_PLAN_PRECISION",
+      "outputFidelity": "PASS_BOUNDED",
+      "observations": [
+        "直接增强与Plan最终结果均为0条歧义；服务端职责和明确排除的模块规则没有再误列为待确认。",
+        "姓名与身份证同时匹配、缺项不查询、调查日期与ID降序、详情先查、仅空值填充、保留0/false、取消不修改及异常不阻断均保留。",
+        "Plan仍有4题；fill_scope再次询问BASELINE_FILL_FIELDS是否全部填充，并提供fill_subset选项，重复打开已有字段范围。",
+        "另外包含地区实现方式、提示触发和测试层问题；不能将未展示的工程实现写成已知，应区分执行Agent核查与用户业务决定。",
+        "最终触发行为回答被归入背景的地区标签，任务正文仍正确；分类与冗余表达作为后续上下文合并改进观察，未计为本轮关闭。"
+      ]
+    },
+    {
+      "id": "08_data_unresolved_denominator",
+      "status": "PASS_TARGETED_MERGE_AND_COPY",
+      "observations": [
+        "两个绑定问题分别回答原样的“暂不确定”，未通过补写长答案规避短回答反例。",
+        "最终正好保留2条待确认事项，分母候选解释合并回原题，未另列第三条重复提醒。",
+        "最终正文保留分母与缺失处理未决、确认前不选口径不计算、无行数据、不填实际结果以及未完成/缺失/零值的区别。",
+        "直接增强也保留2项未决，未为去重清空未知条件。",
+        "本结论限于重复提醒、规则保留与复制完整性；不代表所有专业候选及开放域统计方法已完成专家验收。"
+      ]
+    }
+  ],
+  "counts": {
+    "generationApiCalls": 6,
+    "successfulGenerationApiCalls": 6,
+    "finalPrompts": 4,
+    "historyMatched": 4,
+    "clipboardPassed": 4
+  },
+  "remaining": [
+    "Plan已知字段范围仍被重新询问，应先补稳定的已知决定识别与相反候选边界，保留实际未决问题。",
+    "七场景首次论文Plan 502 RESULT_INVALID的具体校验reason/field未取得；之后独立补验成功不能证明首次失败已修复。",
+    "第二批推荐依据与确认后上下文一致性、双人专业评审及正式上线门禁仍未关闭。"
+  ],
+  "limits": [
+    "真实当前默认模型的有限合成场景，不代表全部行业语义准确率，也不是下游Agent实际执行验收。",
+    "原生复制仅归一化Windows CRLF/LF差异；真实响应回放到工作台，不重新执行完整文件夹上传。",
+    "API调用次数不替代上游内部重试次数或Token消耗。",
+    "results中的semanticReview保留采集时PENDING原值；本轮人工逐项审阅结论位于assessments，原始结果不改写。"
+  ]
+}

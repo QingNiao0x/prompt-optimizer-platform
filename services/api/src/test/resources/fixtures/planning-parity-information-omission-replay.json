@@ -1,0 +1,129 @@
+{
+  "provenance": {
+    "candidateTests": 403,
+    "requestId": "382d5b52-bd70-46d8-b9df-a2b9f6ddb1df",
+    "model": "deepseek:deepseek-flash",
+    "run": "2026-10-03T21-35-15-053Z"
+  },
+  "rawPrompt": "为研究生准备一份论文方法部分的写作提示词，研究Plan问答对提示词质量的影响。当前只拟定研究，尚未实施。必须保留设计：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，另设两组获得同样确认信息的公平对照。中文方法提纲不超过1200字，附表另计。不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。具体检验依据未来数据分布选择，不预设必然显著。",
+  "context": {
+    "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+    "technologies": [],
+    "dependencies": [],
+    "directoryOverview": [
+      "research/",
+      "research/开题草案.md"
+    ],
+    "fileSummaries": [
+      "[PROJECT_DOCUMENT] research/开题草案.md：Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。；业务摘录：[片段 1/1] 研究尚未执行，没有实测数据。 四类任务：代码开发、机关报告、科研方案、数据分析。 拟每类5个任务，每模式3次。 采用两名独立评审； 评审一致性拟报告，不声称已测得。"
+    ],
+    "analysisStatus": "COMPLETE",
+    "analyzedFileCount": 1,
+    "warnings": [],
+    "factCards": []
+  },
+  "questions": [
+    {
+      "id": "plan_interaction",
+      "question": "Plan 模式中“向用户澄清并获得回答后生成”的交互，具体按哪种方式写入方法部分？",
+      "hint": "这决定方法部分如何描述 Plan 条件的操作流程，不同轮次与终止方式会影响可复现性。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "single_round",
+          "label": "单轮澄清",
+          "description": "模型先提出澄清问题，用户回答一次后即生成结果。",
+          "answer": "Plan 条件采用单轮澄清：模型先提出澄清问题，用户回答一次后即生成结果。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "multi_round",
+          "label": "多轮澄清",
+          "description": "模型可连续提问，用户逐轮回答，直到模型认为信息足够再生成结果。",
+          "answer": "Plan 条件采用多轮澄清：模型可连续提问，用户逐轮回答，直到模型认为信息足够再生成结果。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "fixed_rounds",
+          "label": "固定轮次",
+          "description": "统一规定澄清轮数（如最多两轮），达到轮数后必须生成结果。",
+          "answer": "Plan 条件采用固定轮次澄清：统一规定澄清轮数，达到轮数后必须生成结果。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "parity_content",
+      "question": "两组公平对照获得的“同样确认信息”，具体指什么？",
+      "hint": "公平对照的信息内容决定方法部分如何说明对照条件与 Plan 条件的信息对等性。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "same_clarification",
+          "label": "与 Plan 相同的澄清问答",
+          "description": "对照组获得与 Plan 条件完全相同的澄清问题及用户回答内容，但不经过 Plan 交互流程。",
+          "answer": "两组公平对照获得与 Plan 条件完全相同的澄清问题及用户回答内容，但不经过 Plan 交互流程。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "same_background",
+          "label": "相同背景信息",
+          "description": "对照组获得与 Plan 条件最终等价的背景信息，但以直接陈述形式提供，不采用问答形式。",
+          "answer": "两组公平对照获得与 Plan 条件最终等价的背景信息，但以直接陈述形式提供，不采用问答形式。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "same_prompt",
+          "label": "相同初始提示词",
+          "description": "对照组仅获得与直接增强条件相同的初始提示词，不额外补充确认信息。",
+          "answer": "两组公平对照仅获得与直接增强条件相同的初始提示词，不额外补充确认信息。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "agreement_report",
+      "question": "两名评审的一致性在方法部分如何报告？",
+      "hint": "你已说明评审一致性拟报告、不声称已测得，需要确认报告口径以免写成已有结果。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "planned_metric",
+          "label": "写明拟用指标",
+          "description": "方法部分写明计划采用的一致性指标（如 Kappa 或 ICC），但不给出数值。",
+          "answer": "方法部分写明计划采用的一致性指标（如 Kappa 或 ICC），但不给出任何数值。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "describe_only",
+          "label": "仅描述流程",
+          "description": "只描述双人独立盲评流程，不指定具体一致性指标。",
+          "answer": "方法部分只描述双人独立盲评流程，不指定具体一致性指标。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "qualitative",
+          "label": "定性描述",
+          "description": "计划以定性方式讨论评审分歧，不计算一致性统计量。",
+          "answer": "方法部分计划以定性方式讨论评审分歧，不计算一致性统计量。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ]
+}

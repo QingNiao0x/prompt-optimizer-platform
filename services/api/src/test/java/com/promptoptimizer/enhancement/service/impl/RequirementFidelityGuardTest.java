@@ -1,5 +1,6 @@
 package com.promptoptimizer.enhancement.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import java.util.List;
@@ -19,6 +20,39 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class RequirementFidelityGuardTest {
     private final RequirementFidelityGuard guard = new RequirementFidelityGuard();
+
+    /** 回放独立真实模型的合法并列禁令；不把这些响应冒充原 HTTP 失败正文。 */
+    @Test
+    void shouldReplayCoordinatedNegationFromRealEnhancementProbe() throws Exception {
+        try (var source = getClass().getResourceAsStream("/fixtures/fidelity-missing-coordinated-negation-replay.json")) {
+            var replay = new ObjectMapper().readTree(source);
+            var rules = guard.explicitRules(replay.path("rawPrompt").asText(), List.of());
+            for (var response : replay.path("responses")) {
+                for (var section : response.path("sections")) {
+                    assertThatCode(() -> guard.validate(section.path("content").asText(), rules,
+                            "sections." + section.path("type").asText())).doesNotThrowAnyException();
+                }
+            }
+        }
+    }
+
+    /** 共同禁令可以覆盖并列动作，转折、重提主体或独立正向动作不能借用前面的否定。 */
+    @Test
+    void shouldKeepProhibitionScopeWithinCoordinatedActions() {
+        var rules = List.of("不得将未完成、缺失、零值相互混同。");
+        for (String legal : List.of("不得自动剔除、补零或把缺失答卷当作未完成。",
+                "缺失答卷不得自动剔除、补零或当作未完成。", "未自动剔除、补零或把缺失当作未完成。",
+                "不得将缺失答卷直接视为未完成或按0处理。")) {
+            assertThatCode(() -> guard.validate(legal, rules, "sections.CONSTRAINTS"))
+                    .as(legal).doesNotThrowAnyException();
+        }
+        for (String illegal : List.of("不得剔除缺失答卷，但将其视为未完成。",
+                "缺失答卷不得视为未完成，但仍计为零值。", "不得自动剔除缺失答卷，直接将其当作未完成。",
+                "未删除缺失答卷，将其计为未完成。", "不得删除缺失答卷；缺失答卷按0处理。")) {
+            assertThatThrownBy(() -> guard.validate(illegal, rules, "sections.CONSTRAINTS"))
+                    .as(illegal).isInstanceOf(ProviderResponseValidationException.class);
+        }
+    }
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', textBlock = """
@@ -140,6 +174,43 @@ class RequirementFidelityGuardTest {
         for (String raw : List.of("三万元和五万元两个退款阈值冲突，需要先确认采用哪一个。",
                 "三万元、五万元和八万元审批阈值冲突，需要先确认采用哪一个。")) {
             assertThat(guard.explicitRules(raw, decisions.decisions())).contains(raw);
+        }
+    }
+
+    /** 映射动作附近的否定才保护该动作，另一条禁止语句不能替违约的状态映射解围。 */
+    @Test
+    void shouldKeepMissingStateProhibitionsAndIndependentSubjectsWithoutAllowingConflation() {
+        var rules = List.of("不得将未完成、缺失、零值相互混同。");
+        for (String legal : List.of("不得将缺失答卷视为未完成或零值。",
+                "不能把缺失答卷当作未完成。", "保持缺失状态，不将其视为未完成或零值。",
+                "缺失答卷不得直接按零值统计。", "缺失答卷单列，未完成记录计为未完成。")) {
+            assertThatCode(() -> guard.validate(legal, rules, "questions.options.answer"))
+                    .as(legal).doesNotThrowAnyException();
+        }
+        for (String illegal : List.of("缺失答卷不得视为未完成，但仍计为零值。",
+                "缺失答卷仍视为未完成，不删除原始记录。", "不能删除缺失答卷，将其视为未完成。")) {
+            assertThatThrownBy(() -> guard.validate(illegal, rules, "questions.options.answer"))
+                    .as(illegal).isInstanceOf(ProviderResponseValidationException.class);
+        }
+    }
+
+    /** 可撤销不代替执行前确认；禁止直接填充及确认后的直接填充仍为合法表达。 */
+    @Test
+    void shouldRejectImmediateFillOnMatchWithoutTreatingUndoAsPriorConfirmation() {
+        var rules = List.of("当前地区有时提示用户是否自动填充基本信息。", "经用户确认后填充。");
+        for (String illegal : List.of("匹配到记录后直接自动填充基本信息，并以轻提示告知用户，用户可撤销。",
+                "匹配成功后立即填充基本信息，随后由用户确认是否保留。",
+                "当前地区存在匹配记录时直接填充基本信息，取消则恢复。")) {
+            assertThatThrownBy(() -> guard.validate(illegal, rules, "questions.options.answer"))
+                    .as(illegal).isInstanceOf(ProviderResponseValidationException.class);
+        }
+        for (String legal : List.of("匹配到记录后不得直接自动填充基本信息。",
+                "匹配到记录后提示，用户确认后直接自动填充基本信息。",
+                "用户点击填充后直接填充基本信息，可撤销。",
+                "匹配到记录后直接展示基本信息预览，用户确认后填充。",
+                "采用页面内提示条，用户点击填充后执行，忽略则保持原值。")) {
+            assertThatCode(() -> guard.validate(legal, rules, "questions.options.answer"))
+                    .as(legal).doesNotThrowAnyException();
         }
     }
 }

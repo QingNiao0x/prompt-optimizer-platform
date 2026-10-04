@@ -1,0 +1,158 @@
+{
+  "rawPrompt": "为研究生准备一份论文方法部分的写作提示词，研究Plan问答对提示词质量的影响。当前只拟定研究，尚未实施。必须保留设计：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，另设两组获得同样确认信息的公平对照。中文方法提纲不超过1200字，附表另计。不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。具体检验依据未来数据分布选择，不预设必然显著。",
+  "context": {
+    "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+    "technologies": [],
+    "dependencies": [],
+    "directoryOverview": [
+      "research/",
+      "research/开题草案.md"
+    ],
+    "fileSummaries": [
+      "[PROJECT_DOCUMENT] research/开题草案.md：Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。；业务摘录：[片段 1/1] 研究尚未执行，没有实测数据。 四类任务：代码开发、机关报告、科研方案、数据分析。 拟每类5个任务，每模式3次。 采用两名独立评审； 评审一致性拟报告，不声称已测得。"
+    ],
+    "analysisStatus": "COMPLETE",
+    "analyzedFileCount": 1,
+    "warnings": [],
+    "factCards": []
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "question": "方法部分对“直接增强”和“Plan”两种模式的描述应写到什么程度？",
+      "hint": "这决定方法提纲中干预描述的具体性，也影响公平对照如何被说明。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "a",
+          "label": "只写操作定义与差异",
+          "description": "说明两种模式在提示词生成流程上的操作差异，不展开具体提示词模板。",
+          "answer": "方法部分只写“直接增强”和“Plan”的操作定义与关键差异，不展开具体提示词模板。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "b",
+          "label": "写出完整提示词模板",
+          "description": "在方法部分附上两种模式使用的完整提示词模板或示例。",
+          "answer": "方法部分写出“直接增强”和“Plan”两种模式使用的完整提示词模板或示例。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "c",
+          "label": "只写名称不写差异",
+          "description": "仅提及两种模式名称，不说明操作差异。",
+          "answer": "方法部分只提及“直接增强”和“Plan”两种模式名称，不说明操作差异。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q2",
+      "question": "“同样确认信息”的公平对照，在方法部分应如何界定？",
+      "hint": "这决定公平对照是否可复现，也影响方法部分对信息一致性的表述。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "a",
+          "label": "确认信息内容与轮次一致",
+          "description": "两组对照获得相同内容的确认信息，且确认交互轮次相同。",
+          "answer": "公平对照获得相同内容的确认信息，且确认交互轮次相同。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "b",
+          "label": "只保证信息内容一致",
+          "description": "两组对照获得相同内容的确认信息，但轮次可以不同。",
+          "answer": "公平对照只保证获得相同内容的确认信息，确认交互轮次可以不同。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "c",
+          "label": "只保证轮次一致",
+          "description": "两组对照确认轮次相同，但确认信息内容可以不同。",
+          "answer": "公平对照只保证确认交互轮次相同，确认信息内容可以不同。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q3",
+      "question": "方法部分是否需要写明四类任务的具体任务清单？",
+      "hint": "这决定方法提纲是否包含任务材料，也影响 20 个任务的可复现程度。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "a",
+          "label": "只写类别与数量",
+          "description": "写明代码开发、机关报告、科研方案、数据分析四类及每类 5 个，不列具体任务。",
+          "answer": "方法部分只写代码开发、机关报告、科研方案、数据分析四类任务及每类 5 个，不列具体任务清单。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "b",
+          "label": "列出全部 20 个任务",
+          "description": "在方法部分列出四类任务下全部 20 个具体任务。",
+          "answer": "方法部分列出四类任务下全部 20 个具体任务。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "c",
+          "label": "每类举一个示例",
+          "description": "每类任务各举一个示例，其余不展开。",
+          "answer": "方法部分每类任务各举一个示例，其余任务不展开。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q4",
+      "question": "方法部分对评审一致性应写到什么程度？",
+      "hint": "研究尚未实施，评审一致性尚无实测值，需要明确方法部分如何表述。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "a",
+          "label": "只写拟报告一致性",
+          "description": "说明将报告评审一致性，但不写具体指标或数值。",
+          "answer": "方法部分只写将报告两名评审的一致性，不写具体一致性指标或数值。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "b",
+          "label": "写明一致性指标",
+          "description": "写明将使用的一致性指标名称，但不写数值。",
+          "answer": "方法部分写明将使用的一致性指标名称，但不写具体数值。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "c",
+          "label": "不写一致性",
+          "description": "方法部分不提及评审一致性。",
+          "answer": "方法部分不提及评审一致性。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "source": "Eleventh candidate first paper Plan result"
+}

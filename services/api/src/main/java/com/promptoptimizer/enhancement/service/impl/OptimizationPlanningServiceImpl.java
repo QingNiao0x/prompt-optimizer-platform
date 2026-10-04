@@ -122,13 +122,13 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                 String selectedModelId = selectedModel == null
                         ? legacyModelId(request.modelId())
                         : selectedModel.publicId();
-                PlanningProviderRequest providerRequest = new PlanningProviderRequest(
+                PlanningProviderRequest providerRequest = PlanningDecisionPolicy.enrich(new PlanningProviderRequest(
                         request.rawPrompt().trim(),
                         request.contextDescription().trim(),
                         request.conversationHistory(),
                         planningContext.digest(),
                         selectedModelId
-                );
+                ));
                 PlanningProviderResponse validated = requestValidatedPlan(providerRequest);
                 List<PlanQuestion> requiredConflicts = conflictQuestions(planningContext.digest());
                 List<PlanQuestion> modelQuestions = questionFilter.filter(validated.questions(), providerRequest).stream()
@@ -290,16 +290,20 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
             if (alreadyValidated.getAndSet(true)) metrics.retry();
             PlanningProviderResponse validated = validate(response);
             var guard = new RequirementFidelityGuard();
+            var decisionPolicy = PlanningDecisionPolicy.from(request);
             List<String> rules = guard.explicitRules(request.rawPrompt(), List.of());
             // 包括非推荐选项；不能让用户通过候选答案无意放弃原始需求中的明确规则。
             // 格式和安全仍校验所有项；已被明确事实消除的问题不因无关候选触发额外模型重试。
             questionFilter.filter(validated.questions(), request).forEach(question -> {
                 question.examples().forEach(example -> guard.validate(example, rules, "questions.examples"));
                 question.options().forEach(option -> {
-                guard.validate(option.answer(), rules, "questions.options.answer");
-                guard.validate(option.label(), rules, "questions.options.label");
-                guard.validate(option.description(), rules, "questions.options.description");
-                guard.validate(option.recommendationReason(), rules, "questions.options.recommendationReason");
+                    decisionPolicy.validateCandidate(option.answer(), "questions.options.answer");
+                    decisionPolicy.validateCandidate(option.label(), "questions.options.label");
+                    decisionPolicy.validateCandidate(option.description(), "questions.options.description");
+                    guard.validate(option.answer(), rules, "questions.options.answer");
+                    guard.validate(option.label(), rules, "questions.options.label");
+                    guard.validate(option.description(), rules, "questions.options.description");
+                    guard.validate(option.recommendationReason(), rules, "questions.options.recommendationReason");
                 });
             });
             return validated;
@@ -321,16 +325,7 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
         rejectProviderCredential(response.summary(), "summary");
         List<PlanQuestion> questions = new ArrayList<>();
         for (PlanQuestion question : response.questions()) {
-            if (question == null || !SAFE_ID.matcher(value(question.id())).matches()
-                    || !questionIds.add(question.id())
-                    || isBlank(question.question()) || question.question().length() > 300
-                    || containsInternalTerm(question.question())
-                    || question.type() == null || value(question.hint()).length() > 500
-                    || containsInternalTerm(value(question.hint()))
-                    || question.options().size() > MAX_OPTIONS
-                    || question.examples().size() > MAX_EXAMPLES) {
-                throw invalidResponse(Reason.PLAN_QUESTION_INVALID, "questions");
-            }
+            validateQuestionEnvelope(question, questionIds);
             rejectProviderCredential(question.question(), "questions.question");
             rejectProviderCredential(question.hint(), "questions.hint");
             questions.add(normalizeQuestion(question));
@@ -342,6 +337,23 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                 response.model().trim(),
                 response.mock()
         );
+    }
+
+    /** 只记录固定字段位置，帮助有限修复定位；不回显问题 ID、拒绝文本或上传内容。 */
+    private void validateQuestionEnvelope(PlanQuestion question, Set<String> questionIds) {
+        if (question == null) throw invalidResponse(Reason.PLAN_QUESTION_INVALID, "questions");
+        if (!SAFE_ID.matcher(value(question.id())).matches() || !questionIds.add(question.id())) {
+            throw invalidResponse(Reason.PLAN_QUESTION_INVALID, "questions.id");
+        }
+        if (isBlank(question.question()) || question.question().length() > 300 || containsInternalTerm(question.question())) {
+            throw invalidResponse(Reason.PLAN_QUESTION_INVALID, "questions.question");
+        }
+        if (question.type() == null) throw invalidResponse(Reason.PLAN_QUESTION_INVALID, "questions.type");
+        if (value(question.hint()).length() > 500 || containsInternalTerm(value(question.hint()))) {
+            throw invalidResponse(Reason.PLAN_QUESTION_INVALID, "questions.hint");
+        }
+        if (question.options().size() > MAX_OPTIONS) throw invalidResponse(Reason.PLAN_OPTION_INVALID, "questions.options");
+        if (question.examples().size() > MAX_EXAMPLES) throw invalidResponse(Reason.PLAN_QUESTION_INVALID, "questions.examples");
     }
 
     /**

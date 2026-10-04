@@ -2,6 +2,7 @@ package com.promptoptimizer.provider.domain;
 
 import com.promptoptimizer.enhancement.dto.ConversationMessage;
 import com.promptoptimizer.enhancement.domain.PlanningContextDigest;
+import com.promptoptimizer.enhancement.domain.PlanningKnownDecision;
 
 import java.util.List;
 
@@ -16,12 +17,20 @@ public record PlanningProviderRequest(
         String contextDescription,
         List<ConversationMessage> conversationHistory,
         PlanningContextDigest planningContext,
-        String model
+        String model,
+        List<PlanningKnownDecision> knownDecisions
 ) {
 
     public PlanningProviderRequest {
         contextDescription = contextDescription == null ? "" : contextDescription;
         conversationHistory = conversationHistory == null ? List.of() : List.copyOf(conversationHistory);
+        knownDecisions = knownDecisions == null ? List.of() : List.copyOf(knownDecisions);
+    }
+
+    /** 旧适配器保持原输入契约；服务端在 Plan 入口另行补充已定信息索引。 */
+    public PlanningProviderRequest(String rawPrompt, String contextDescription, List<ConversationMessage> conversationHistory,
+                                   PlanningContextDigest planningContext, String model) {
+        this(rawPrompt, contextDescription, conversationHistory, planningContext, model, List.of());
     }
 
     public PlanningProviderRequest(

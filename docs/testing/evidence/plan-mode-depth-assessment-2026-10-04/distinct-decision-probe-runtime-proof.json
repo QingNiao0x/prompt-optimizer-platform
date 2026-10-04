@@ -1,0 +1,53 @@
+{
+  "recordedUtc": "2026-10-04T04:02:23.7882388+00:00",
+  "evidenceType": "OFFLINE_COMPILED_METHOD_SYNTHETIC_PROBE",
+  "productionFilesModified": false,
+  "springContextLoaded": false,
+  "networkCalls": 0,
+  "modelCalls": 0,
+  "report": "tmp/plan-evaluation-design-2026-10-04/distinct-decision-probe.json",
+  "javaExecutable": "E:\\Delelop\\Java\\jdk-21\\bin\\java.exe",
+  "compilerExecutable": "E:\\Delelop\\Java\\jdk-21\\bin\\javac.exe",
+  "runtimeDependencyFile": "tmp/backend-local-managed/2026-10-04T01-44-56-266Z-92d20770/runtime-classpath.txt",
+  "compileCommand": "& 'E:\\Delelop\\Java\\jdk-21\\bin\\javac.exe' -encoding UTF-8 -classpath $taskClasspath -d $probeClasses (Join-Path $probeDirectory 'PlanningDistinctDecisionProbe.java')",
+  "executeCommand": "& 'E:\\Delelop\\Java\\jdk-21\\bin\\java.exe' '-Dfile.encoding=UTF-8' -classpath ($probeClasses + ';' + $taskClasspath) com.promptoptimizer.enhancement.service.impl.PlanningDistinctDecisionProbe (Join-Path $probeDirectory 'distinct-decision-probe.json')",
+  "commandVariableDefinitions": {
+    "probeDirectory": "absolute repo root + tmp/plan-evaluation-design-2026-10-04",
+    "probeClasses": "probeDirectory + probe-classes",
+    "taskClasspath": "absolute repo root + services/api/target/classes + semicolon + File.ReadAllText(runtimeDependencyFile).Trim()"
+  },
+  "preconditions": [
+    "Approval and refund rules both explicitly remain unknown; no known context facts supplied.",
+    "Each question has SINGLE_CHOICE with two non-recommended valid choices and custom answers allowed.",
+    "The sameConflictDimension method is invoked directly by reflection; null constructor dependencies are not called.",
+    "No endpoint, controller, tenant/session, upstream provider or complete planning workflow is exercised.",
+    "The report is written with CREATE_NEW; retain it and use a new output filename for another run."
+  ],
+  "hashes": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanQuestionFilter.java",
+      "sha256": "43d32b0b42f40640cb721fc8b28dc1b2e63093c1a64b9966a29d5068b4dbef6c",
+      "lastWriteUtc": "2026-10-03T12:22:34.3594953Z"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationPlanningServiceImpl.java",
+      "sha256": "22c69fe6d71f318f1bfa660a0dd9337dff31c5ab5ec2a994fde2b37aa956a2b5",
+      "lastWriteUtc": "2026-10-04T00:19:04.6907788Z"
+    },
+    {
+      "path": "services/api/target/classes/com/promptoptimizer/enhancement/service/impl/PlanQuestionFilter.class",
+      "sha256": "e73ef91197fa0a39346bda34d29b3e13edf467a3f14f60d07a312421882eb3bf",
+      "lastWriteUtc": "2026-10-04T01:43:41.1170258Z"
+    },
+    {
+      "path": "services/api/target/classes/com/promptoptimizer/enhancement/service/impl/OptimizationPlanningServiceImpl.class",
+      "sha256": "1914b5227ade5ce0cc8b85945204575fe8ae914fdc5a5e3f8e7e17f3d04d809b",
+      "lastWriteUtc": "2026-10-04T01:43:41.0839735Z"
+    },
+    {
+      "path": "tmp/plan-evaluation-design-2026-10-04/PlanningDistinctDecisionProbe.java",
+      "sha256": "0077c853bba591dd47f134e4adbff201b9123dd40152fccd8fea63cb27af93c1",
+      "lastWriteUtc": "2026-10-04T04:00:33.4207617Z"
+    }
+  ]
+}

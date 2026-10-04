@@ -34,6 +34,22 @@ final class RequirementFidelityGuard {
     private static final Pattern NEGATION = Pattern.compile("不得|禁止|不允许|不需要|不能|不应|严禁|不必|无需|不要|不(?=填|覆盖|修改|改变|回滚|阻断|保持|保留|输出)");
     private static final Pattern QUANTITY = Pattern.compile(
             "\\d+(?:\\.\\d+)?|[零〇一二三四五六七八九十百千万两]+(?=个|条|次|字|页|元|天|年|月|小时|分钟|秒|%)");
+    private static final Pattern MISSING_STATE_MAPPING = Pattern.compile("(?:视为|当作|按|计为)(?:未完成|零值|0)");
+    private static final Pattern STATE_SUBJECT = Pattern.compile(
+            "缺失(?:答卷|记录|值|数据)?|未完成(?:答卷|记录|值|数据)|零值(?:答卷|记录|值|数据)?");
+    private static final String MAPPING_NEGATION = "(?:不得|不能|不允许|禁止|严禁|不要|不应|不|未)";
+    private static final String MAPPING_MODIFIERS = "(?:再|直接|一律|统一|简单|自动|擅自|地)*";
+    private static final String MISSING_OBJECT = "(?:其|这些|该|上述|所有|缺失(?:答卷|记录|值|数据)?)";
+    private static final String MAPPING_OBJECT = "(?:(?:将|把)" + MISSING_OBJECT + ")?";
+    private static final Pattern NEGATED_MAPPING_PREFIX = Pattern.compile(
+            MAPPING_NEGATION + MAPPING_MODIFIERS + MAPPING_OBJECT + MAPPING_MODIFIERS + "(?:被)?$");
+    private static final String MISSING_CONTROL_ACTION = MAPPING_MODIFIERS + MAPPING_OBJECT + MAPPING_MODIFIERS
+            + "(?:剔除|删除|移除|排除|补零|补0)(?:缺失(?:答卷|记录|值|数据)?)?";
+    private static final Pattern COORDINATED_NEGATED_MAPPING_PREFIX = Pattern.compile(
+            MAPPING_NEGATION + MISSING_CONTROL_ACTION
+                    + "(?:(?:、|或|或者|和|及)" + MISSING_CONTROL_ACTION + ")*"
+                    + "(?:或|或者|和|及)" + MAPPING_OBJECT + MAPPING_MODIFIERS + "(?:被)?$");
+    private static final Pattern MAPPING_COORDINATION = Pattern.compile("(?:、|或|或者|和|及)" + MAPPING_MODIFIERS);
     private final SensitiveValueDetector sensitiveValueDetector = new SensitiveValueDetector();
 
     /** 原始要求和明确执行决定可保留原句；未决回答与现状说明不能冒充本次执行规则。 */
@@ -206,9 +222,11 @@ final class RequirementFidelityGuard {
                 && !actual.matches(".*(?:不得|禁止|不能|不要|不应).*(?:跳过|绕过|省略).*" )
                 && !actual.matches(".*(?:经用户确认|用户(?:点击)?确认后|已(?:经)?确认后).*(?:无需|不需要|不必|不额外).*(?:再次|重复|二次|弹窗)?确认.*")
                 && ACTION.matcher(expected).results().anyMatch(action -> actual.contains(action.group()))) return true;
+        if (expected.contains("填充")
+                && expected.matches(".*(?:确认后|经.{0,8}确认|先.{0,8}确认|提示用户是否|人工确认).*")
+                && immediateFillBeforeConfirmation(actual)) return true;
         if (expected.matches(".*(?:不得|不能|禁止).*(?:未完成|缺失|零值).*(?:混同|等同).*")
-                && actual.matches(".*缺失(?:答卷|记录|值|数据)?.*(?:视为|当作|按|计为)(?:未完成|零值|0).*" )
-                && !actual.matches(".*(?:不|不得|不能|禁止|不要)(?:视为|当作|按|计为).*")) return true;
+                && conflatesMissingState(actual)) return true;
         // 完成日期未知不能推出按期，也不能因缺少按期证据反推逾期；保留补齐日期后的事实判断。
         if (expected.matches(".*缺少完成日期.*(?:不得|不能).*(?:臆断|推定).*按期完成.*")
                 && actual.matches(".*(?:缺少完成日期|完成日期(?:为空|缺失)).*(?:按|视为|标记为)历史逾期.*")
@@ -233,6 +251,45 @@ final class RequirementFidelityGuard {
         QuantityRule right = quantityRule(actual);
         return !left.values().isEmpty() && left.skeleton().equals(right.skeleton())
                 && (!left.values().equals(right.values()) || !left.operators().equals(right.operators()));
+    }
+
+    /** 匹配后立即填充是明确的执行时序；之后确认或撤销不能替代此前要求的首次确认。 */
+    private boolean immediateFillBeforeConfirmation(String statement) {
+        var immediate = Pattern.compile("(?:匹配到(?:记录|基线|数据)|匹配成功|当前地区(?:存在|有)匹配(?:记录|基线)?)"
+                + "(?:后|时)?(?:直接|立即|马上)(?:自动)?填充(?:基本信息|字段|表单)").matcher(statement);
+        while (immediate.find()) {
+            String preceding = statement.substring(0, immediate.start());
+            if (preceding.matches(".*(?:不|不得|不能|禁止|不要|不应)(?:在)?$")) continue;
+            if (!preceding.matches(".*(?:经用户确认|用户(?:点击)?确认后|用户点击填充后|经确认后).*")) return true;
+        }
+        return false;
+    }
+
+    /** 核对每个状态映射的对象与否定范围，只允许否定沿同一对象的明确并列动作继承。 */
+    private boolean conflatesMissingState(String statement) {
+        var mapping = MISSING_STATE_MAPPING.matcher(statement);
+        int previousEnd = -1;
+        boolean previousMissing = false;
+        boolean previousProhibited = false;
+        while (mapping.find()) {
+            String preceding = statement.substring(0, mapping.start());
+            var subject = STATE_SUBJECT.matcher(preceding);
+            String lastSubject = "";
+            while (subject.find()) lastSubject = subject.group();
+            boolean coordinated = previousEnd >= 0
+                    && MAPPING_COORDINATION.matcher(statement.substring(previousEnd, mapping.start())).matches();
+            // “缺失单列，未完成记录计为未完成”在第二个动作已明确换了对象，不推断为缺失映射。
+            boolean missing = lastSubject.startsWith("缺失") || (coordinated && previousMissing);
+            // “不得剔除、补零或把缺失当作未完成”共享一个禁令；但“不得剔除，但将其视为未完成”不共享。
+            boolean prohibited = NEGATED_MAPPING_PREFIX.matcher(preceding).find()
+                    || COORDINATED_NEGATED_MAPPING_PREFIX.matcher(preceding).find()
+                    || (coordinated && previousMissing && previousProhibited);
+            if (missing && !prohibited) return true;
+            previousEnd = mapping.end();
+            previousMissing = missing;
+            previousProhibited = prohibited;
+        }
+        return false;
     }
 
     /** 已知事实仍未定时，不允许“先指定具体值、以后再确认”；合法用户选定与占位接口不在此拦截。 */

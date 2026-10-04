@@ -1,0 +1,2098 @@
+{
+  "createdAt": "2026-10-04T02:15:02.856Z",
+  "verdict": "FOLLOW_UP_NOT_RELEASE_ACCEPTANCE",
+  "scopedVerdict": "TARGETED_KNOWN_RULE_AND_ENGINEERING_DELEGATION_CHECKS_PASS",
+  "reviewer": {
+    "count": 1,
+    "type": "Codex reviewer; not two independent human reviewers",
+    "answerPolicy": "Only frozen synthetic answer cards; unresolved business choices remain unresolved."
+  },
+  "candidate": {
+    "commit": "c35cbaac527b9b27c90bdbec58d0cd141fc278f2",
+    "hashes": {
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/RequirementFidelityGuard.java": "f33821433cce5106ac042b0d4d263ba8d6cbca506367f2849f0ea2c143889b06",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java": "8677aed15b59dd42542842ddaf6363e9703ba40d0a669172ec38d34c7156844f",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAmbiguityMerger.java": "4a78ce6a90bcdf72947f66f5c9c0796899abac52c89b6267e86a12315608c677",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationPlanningServiceImpl.java": "22c69fe6d71f318f1bfa660a0dd9337dff31c5ab5ec2a994fde2b37aa956a2b5",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/ConfirmedDecisionSet.java": "22ebd7d13b7c0990b4eff9d5854510d7f09ae3f8a35b749ece43a490a3a86f54",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAnswerSemantics.java": "c469a825b3b80f366420246fe024db2fb768e75783e897a4e9c5ceba736d006c",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanFindingClassifier.java": "d31cf58561d60d95a47dfe9d91d5e73321a1850fe001a8bc0ae612118ca50f11",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/domain/ConfirmedPlanDecision.java": "984898479e806ed12cfe1d77dc2401a6e6f70b7ceed6fe3b39ccbe9cd314949a",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanQuestionFilter.java": "43d32b0b42f40640cb721fc8b28dc1b2e63093c1a64b9966a29d5068b4dbef6c",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanRecommendationAligner.java": "add7a96a1b5e57f473fdff8860dde86bb45ddd55ab26eb11f1751c85af86c803",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningDecisionPolicy.java": "a0874d44ac226d89234969fd1513bdf596a27efd450ebdef4d0c70be29e985b8",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningSessionServiceImpl.java": "301df22c8a456cdb6de2a5de4f77ba2c2eaf8c60e51664714cf808315433342e",
+      "services/api/src/main/java/com/promptoptimizer/enhancement/domain/PlanningKnownDecision.java": "64fb3f78f637a045112e6008093ab5339a625ac325c6054490847d9ffd986775",
+      "services/api/src/main/java/com/promptoptimizer/provider/domain/PlanningProviderRequest.java": "373fa1b1f5da4d61e41bac7007bc56f41e11514c693970c5ccf70cd9c86bf2aa",
+      "services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java": "8775f9b672feafe113d712d9eb06b1658a68d60d8f244d008b85df887c6a2c0d",
+      "services/api/src/main/java/com/promptoptimizer/common/exception/GlobalExceptionHandler.java": "7bc3d543d06f1ad36a816a824c14b4941d3df52fd27b894e71f9410dca0cfba1",
+      "services/api/src/main/java/com/promptoptimizer/policy/service/impl/ConstraintCompleterImpl.java": "747f543d6a2c9c748426e79ee8166e3789649de42f57a2a08b440351005a5524",
+      "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java": "a93141bc4bad7ba56c903612e41fecb378744bbccf3b42d34d79d02ab045d968"
+    },
+    "sourceHashesStillMatch": true,
+    "caseSha256": "4813107fe3e780ba8d7b5f3e95c654e27dd88e6f3ca594a0b91e9a81842ae04f"
+  },
+  "runtime": {
+    "pid": 28700,
+    "createdAt": "2026-10-04T01:45:04.3442040Z",
+    "projectClasspath": true,
+    "mainClass": true,
+    "migrationsDisabled": true,
+    "isolatedNioDirectory": true,
+    "verifiedAt": "2026-10-04T01:46:12.9120919Z",
+    "regression": {
+      "classes": 34,
+      "tests": 432,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "compiledAt": "2026-10-04T01:44:10.5674491Z"
+    }
+  },
+  "regression": {
+    "classes": 34,
+    "tests": 432,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\plan-three-defects-regression-final-38.log",
+    "compiledAt": "2026-10-04T01:44:10.5674491Z",
+    "reports": [
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.AmbiguityDetectorTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:07.7582567Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.BusinessAcceptanceRegressionTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:07.8550834Z"
+      },
+      {
+        "name": "com.promptoptimizer.policy.service.impl.ConstraintCompleterTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:10.1536906Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ContextConflictDetectorTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:07.8632393Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.DefaultEnhancementOrchestratorTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:08.2513228Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest",
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:08.2958880Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ExplicitRuleEvidenceExtractorTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:08.3505034Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.FidelityReminderReplayTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:08.3822431Z"
+      },
+      {
+        "name": "com.promptoptimizer.common.exception.GlobalExceptionHandlerTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:43:55.3406362Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.LatestFidelityReplayTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:08.3954549Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.MixedContextFixtureIntegrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:08.4909778Z"
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatiblePromptEnhancementProviderTest",
+        "tests": 40,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:10.4666816Z"
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleValidatedResponseTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:10.5197234Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.dto.OptimizationControllerTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:07.3420479Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest",
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:08.6591809Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:08.7158453Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest",
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:08.7518349Z"
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.PlanFailureDiagnosticsTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:10.5793935Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningDecisionReplayTest",
+        "tests": 66,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:09.2896400Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningDigestSelectorTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:09.2987383Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningDocumentExcerptTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:09.3171064Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningEvidencePolicyTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:09.3254636Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningFactCardExtractorTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:09.3366275Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.infrastructure.PlanningSessionOwnershipSerializationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:07.7294874Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:09.4540497Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanProviderValidationBudgetTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:09.8527634Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanQuestionFilterTest",
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:09.8951874Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanRecommendationAlignerTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:09.9072781Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanRecommendationRegressionTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:09.9477044Z"
+      },
+      {
+        "name": "com.promptoptimizer.policy.service.impl.ProtectedContextFilterTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:10.1604703Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuardTest",
+        "tests": 62,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:10.0756096Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.RulePreservationAssemblyTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:10.1265084Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.SensitiveValueDetectorTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:10.1349397Z"
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.VerifiedFindingClassificationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "finishedAt": "2026-10-04T01:44:10.1439074Z"
+      }
+    ]
+  },
+  "model": {
+    "model": {
+      "id": "deepseek:deepseek-flash",
+      "displayName": "DeepSeek-V4.1-Flash",
+      "provider": "deepseek",
+      "defaultModel": true
+    },
+    "selectedAt": "2026-10-04T01:46:02.250Z"
+  },
+  "totals": {
+    "apiGenerationRequests": 27,
+    "successfulApiRequests": 27,
+    "finalBodies": 18,
+    "planQuestions": 29,
+    "historyChecks": 18,
+    "nativeClipboardChecks": 14,
+    "visiblePlanFinalAmbiguities": 36,
+    "planFinalBodyPendingConditions": 43,
+    "modelUpstreamAttempts": 31,
+    "modelCompletedAttempts": 27,
+    "modelFailedAttempts": 4,
+    "requestsWithRepair": 4,
+    "maximumObservedAttemptsPerRequest": 2,
+    "inputTokens": {
+      "reported": 76796,
+      "callsWithReportedUsage": 27,
+      "callsWithoutReportedUsage": 4
+    },
+    "outputTokens": {
+      "reported": 31689,
+      "callsWithReportedUsage": 27,
+      "callsWithoutReportedUsage": 4
+    },
+    "totalTokens": {
+      "reported": 108485,
+      "callsWithReportedUsage": 27,
+      "callsWithoutReportedUsage": 4
+    },
+    "tokenPolicy": "Only upstream-reported usage; missing failed-attempt usage is unknown, not zero. API counts differ from upstream attempts."
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "run": "tmp/fidelity-acceptance/2026-10-04T01-44-50-430Z",
+      "selectedCases": [
+        "01_software_autofill",
+        "02_software_threshold_conflict",
+        "04_academic_protocol",
+        "08_data_unresolved_denominator",
+        "09_translation_control"
+      ],
+      "cases": [
+        {
+          "id": "01_software_autofill",
+          "title": "表单条件与取消行为",
+          "results": [
+            {
+              "arm": "direct",
+              "requestId": "5b676df8-7644-4d6d-aafd-683ef5b295d5",
+              "apiElapsedMs": 5515,
+              "enhancementLatencyMs": 5269,
+              "chars": 2181,
+              "promptSha256": "519a75651b9c5014f1b5ba2cada380452a4c6a4d3be10714407122adefd93cad",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 0,
+              "copiedBodyPendingConditions": 0,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": false
+            },
+            {
+              "arm": "plan-final",
+              "requestId": "97b10e50-ce98-435c-b8e6-9ca2aedad194",
+              "apiElapsedMs": 32438,
+              "enhancementLatencyMs": 6672,
+              "chars": 3274,
+              "promptSha256": "17c6b654f257bee278a734a945e58680ca2bea580ebd8e52975ebbe7f02335be",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "CLARIFICATIONS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 4,
+              "copiedBodyPendingConditions": 4,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": true
+            }
+          ],
+          "questions": [
+            {
+              "id": "region_data_missing",
+              "question": "当患者基线的现住址地区数据缺失或无法解析时，应如何处理？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "fill_confirm_ui",
+              "question": "当前地区有匹配记录时，提示用户是否自动填充基本信息的交互方式采用哪种？",
+              "type": "SINGLE_CHOICE",
+              "options": 2,
+              "recommendedOptions": 0
+            }
+          ],
+          "planRequestId": "b74d1cd4-e2e7-4cc5-80b7-eff2a7bb56c4",
+          "planApiElapsedMs": 4715,
+          "planProvider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          }
+        },
+        {
+          "id": "02_software_threshold_conflict",
+          "title": "确认比较符与二次材料新冲突",
+          "results": [
+            {
+              "arm": "direct",
+              "requestId": "a95159e1-2e15-4566-96fe-d36d713674c0",
+              "apiElapsedMs": 4303,
+              "enhancementLatencyMs": 3992,
+              "chars": 1447,
+              "promptSha256": "baa7a5879d740440925edb45029bc90fb0cfc7fbd745f50a07325f2b25ba6c26",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "CLARIFICATIONS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 1,
+              "copiedBodyPendingConditions": 1,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": false
+            },
+            {
+              "arm": "plan-final",
+              "requestId": "35ad1df1-54ce-499d-aa4d-c52dd6f5608a",
+              "apiElapsedMs": 5924,
+              "enhancementLatencyMs": 5873,
+              "chars": 2359,
+              "promptSha256": "fff31bb044f95ce27c8b48c0a602f4c94ad00096ac68d319950ab576b5c9ccd8",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "CLARIFICATIONS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 2,
+              "copiedBodyPendingConditions": 2,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": true
+            }
+          ],
+          "questions": [
+            {
+              "id": "context-conflict-1",
+              "question": "资料对“审批金额阈值”存在不同取值：docs/现行审批.md（30000元）与 docs/候选审批方案.md（50000元）。请确认本次采用哪一项。",
+              "type": "SINGLE_CHOICE",
+              "options": 4,
+              "recommendedOptions": 0
+            }
+          ],
+          "planRequestId": "a9bdf1e2-8874-475b-b256-3202cb383064",
+          "planApiElapsedMs": 3245,
+          "planProvider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          }
+        },
+        {
+          "id": "04_academic_protocol",
+          "title": "论文拟定设计与结果的区别",
+          "results": [
+            {
+              "arm": "direct",
+              "requestId": "c31ebcb7-4356-47dd-bec1-ee5bb4fa5d71",
+              "apiElapsedMs": 6252,
+              "enhancementLatencyMs": 5210,
+              "chars": 1714,
+              "promptSha256": "8006ce1dc07338904214c1033796eb07806c4075dfe752c58eafc9a58f9c8c8d",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 0,
+              "copiedBodyPendingConditions": 0,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": false
+            },
+            {
+              "arm": "plan-final",
+              "requestId": "95bd50ef-78d3-4660-9c22-e4ef1a66f1b3",
+              "apiElapsedMs": 15859,
+              "enhancementLatencyMs": 15785,
+              "chars": 3848,
+              "promptSha256": "684964bdd6668931564512c155a7b433b63cab3e00fd5ca43a7f172c003e892a",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "CLARIFICATIONS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 8,
+              "copiedBodyPendingConditions": 14,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": true
+            }
+          ],
+          "questions": [
+            {
+              "id": "plan_rounds",
+              "question": "Plan 模式中，向用户澄清并获得回答的交互，计划采用几轮、以什么条件终止？",
+              "type": "SINGLE_CHOICE",
+              "options": 4,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "parity_info",
+              "question": "两组公平对照需要获得与 Plan 相同的确认信息，这些信息以什么方式提供？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "task_source",
+              "question": "20个任务（代码开发、机关报告、科研方案、数据分析各5个）的题目来源是什么？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "quality_scale",
+              "question": "两名评审对提示词质量采用什么评分方式？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "consistency_metric",
+              "question": "评审一致性计划报告什么指标？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "candidate_tests",
+              "question": "方法提纲中是否列出候选检验方法（实际采用仍依据未来数据分布决定）？",
+              "type": "SINGLE_CHOICE",
+              "options": 2,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "outline_scope",
+              "question": "1200字以内的中文方法提纲需要覆盖哪些内容？",
+              "type": "MULTIPLE_CHOICE",
+              "options": 4,
+              "recommendedOptions": 0
+            }
+          ],
+          "planRequestId": "c4e8c7ac-2fdf-415c-97ec-cc95856fb95a",
+          "planApiElapsedMs": 8625,
+          "planProvider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          }
+        },
+        {
+          "id": "08_data_unresolved_denominator",
+          "title": "比率分母与缺失处理仍待确认",
+          "results": [
+            {
+              "arm": "direct",
+              "requestId": "f3900452-9867-452c-a037-57f16f9909e4",
+              "apiElapsedMs": 11348,
+              "enhancementLatencyMs": 11302,
+              "chars": 2288,
+              "promptSha256": "2c1f722108866f02f1f424bb8cb45cc8fdbfc43db949640e33e2e8a236823800",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "CLARIFICATIONS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 2,
+              "copiedBodyPendingConditions": 2,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": false
+            },
+            {
+              "arm": "plan-final",
+              "requestId": "700ab613-4b7c-4346-b7c1-477d1142447e",
+              "apiElapsedMs": 5492,
+              "enhancementLatencyMs": 5444,
+              "chars": 2131,
+              "promptSha256": "9fc927515334207b93eacd7c2f4a332c5545316894e4b79d6f45cd75912206de",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "CLARIFICATIONS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 4,
+              "copiedBodyPendingConditions": 4,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": true
+            }
+          ],
+          "questions": [
+            {
+              "id": "completion_rate_denominator",
+              "question": "完成率的分母采用哪个口径？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "missing_response_handling",
+              "question": "缺失答卷在完成率计算中如何处理？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            }
+          ],
+          "planRequestId": "0f1725a0-c7d5-45df-9297-bd0b2a3bbf46",
+          "planApiElapsedMs": 4020,
+          "planProvider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          }
+        },
+        {
+          "id": "09_translation_control",
+          "title": "完整翻译需求与仅输出限制",
+          "results": [
+            {
+              "arm": "direct",
+              "requestId": "138615cd-aa2d-4e58-81a3-74d9e5d7cde0",
+              "apiElapsedMs": 2392,
+              "enhancementLatencyMs": 2361,
+              "chars": 778,
+              "promptSha256": "4c771013338ebd9396e88f8102cf2df304c36db8ef947657abc6686a5ae40f8a",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 0,
+              "copiedBodyPendingConditions": 0,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": false
+            },
+            {
+              "arm": "plan-final",
+              "requestId": "2d7665ec-db7f-4932-bf5b-1bbf3d761d38",
+              "apiElapsedMs": 2235,
+              "enhancementLatencyMs": 2199,
+              "chars": 683,
+              "promptSha256": "3d222802597e5586c405baded18c5634a7d42a23abe24af358b381ba5f910af7",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 0,
+              "copiedBodyPendingConditions": 0,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": true
+            }
+          ],
+          "questions": [],
+          "planRequestId": "85b67893-1c1e-402d-9ed6-4e0bcbbdc11e",
+          "planApiElapsedMs": 708,
+          "planProvider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          }
+        }
+      ],
+      "browser": {
+        "artifact": "tmp/fidelity-acceptance/2026-10-04T01-44-50-430Z/reviews/2026-10-04T01-58-13-748Z/browser-history-review.json",
+        "historyChecks": 10,
+        "historyPassed": true,
+        "clipboardChecks": 6,
+        "clipboardPassed": true,
+        "widths": [
+          1440,
+          390
+        ],
+        "newlinePolicy": "CRLF->LF only; no trimming",
+        "scope": "真实历史API；真实响应在工作台Store回放后使用原生剪贴板；不生成新结果、不打开外部AI。失败或未生成的结果单列，不记为通过。"
+      }
+    },
+    {
+      "round": 2,
+      "run": "tmp/fidelity-acceptance/2026-10-04T01-44-50-642Z",
+      "selectedCases": [
+        "01_software_autofill",
+        "04_academic_protocol"
+      ],
+      "cases": [
+        {
+          "id": "01_software_autofill",
+          "title": "表单条件与取消行为",
+          "results": [
+            {
+              "arm": "direct",
+              "requestId": "4e6976be-808b-4e7b-9df0-216a10cc68e0",
+              "apiElapsedMs": 5171,
+              "enhancementLatencyMs": 5112,
+              "chars": 2029,
+              "promptSha256": "2bd63423a7ae097f1b21f63ccabb3655441134605af958603f64fcae6915e361",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 0,
+              "copiedBodyPendingConditions": 0,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": false
+            },
+            {
+              "arm": "plan-final",
+              "requestId": "92205432-43b9-46e4-b2eb-3d420349f4bf",
+              "apiElapsedMs": 6717,
+              "enhancementLatencyMs": 6635,
+              "chars": 3033,
+              "promptSha256": "3aded1de92a57b93adb3bb7b81f8a527e0f0f246d875258870f55f9282477eb9",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "CLARIFICATIONS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 3,
+              "copiedBodyPendingConditions": 3,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": true
+            }
+          ],
+          "questions": [
+            {
+              "id": "region_missing_behavior",
+              "question": "当患者基线记录的现住址地区字段缺失或为空时，本次应如何处理？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "fill_confirm_ui",
+              "question": "当前地区有匹配时，提示用户是否自动填充基本信息的交互方式采用哪种？",
+              "type": "SINGLE_CHOICE",
+              "options": 2,
+              "recommendedOptions": 0
+            }
+          ],
+          "planRequestId": "4b015505-70cc-44b9-a9a5-0f3380d8aabe",
+          "planApiElapsedMs": 3424,
+          "planProvider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          }
+        },
+        {
+          "id": "04_academic_protocol",
+          "title": "论文拟定设计与结果的区别",
+          "results": [
+            {
+              "arm": "direct",
+              "requestId": "b1815e12-9059-495d-942f-884bbb24b748",
+              "apiElapsedMs": 5227,
+              "enhancementLatencyMs": 5173,
+              "chars": 1824,
+              "promptSha256": "6df6f3e990c306a578eb29e5fd1faf58ab002732115b1061be8176210891771b",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 0,
+              "copiedBodyPendingConditions": 0,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": false
+            },
+            {
+              "arm": "plan-final",
+              "requestId": "122605d1-b1b7-409f-95e0-af0788a2985c",
+              "apiElapsedMs": 6439,
+              "enhancementLatencyMs": 6369,
+              "chars": 3136,
+              "promptSha256": "0dadaa7a72be55eb8a9de64987cde2512b6263c01376c87164ae6c1de4faebc9",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "CLARIFICATIONS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 5,
+              "copiedBodyPendingConditions": 5,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": true
+            }
+          ],
+          "questions": [
+            {
+              "id": "task_sampling",
+              "question": "四类任务（代码开发、机关报告、科研方案、数据分析）的具体任务从哪里来？",
+              "type": "SINGLE_CHOICE",
+              "options": 4,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "prompt_quality_measure",
+              "question": "“提示词质量”准备用什么指标或评分维度来衡量？",
+              "type": "SINGLE_CHOICE",
+              "options": 4,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "plan_rounds",
+              "question": "Plan 模式的澄清问答准备采用几轮、如何终止？",
+              "type": "SINGLE_CHOICE",
+              "options": 4,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "fair_control_info",
+              "question": "两组公平对照如何获得与 Plan 相同的确认信息？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "consistency_report",
+              "question": "两名评审的一致性准备报告到什么程度？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            }
+          ],
+          "planRequestId": "e36736af-07c9-4a87-8c98-6235ea0499ac",
+          "planApiElapsedMs": 61021,
+          "planProvider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          }
+        }
+      ],
+      "browser": {
+        "artifact": "tmp/fidelity-acceptance/2026-10-04T01-44-50-642Z/reviews/2026-10-04T02-01-34-157Z/browser-history-review.json",
+        "historyChecks": 4,
+        "historyPassed": true,
+        "clipboardChecks": 4,
+        "clipboardPassed": true,
+        "widths": [
+          1440,
+          390
+        ],
+        "newlinePolicy": "CRLF->LF only; no trimming",
+        "scope": "真实历史API；真实响应在工作台Store回放后使用原生剪贴板；不生成新结果、不打开外部AI。失败或未生成的结果单列，不记为通过。"
+      }
+    },
+    {
+      "round": 3,
+      "run": "tmp/fidelity-acceptance/2026-10-04T01-44-50-831Z",
+      "selectedCases": [
+        "01_software_autofill",
+        "04_academic_protocol"
+      ],
+      "cases": [
+        {
+          "id": "01_software_autofill",
+          "title": "表单条件与取消行为",
+          "results": [
+            {
+              "arm": "direct",
+              "requestId": "45b7f91f-d4ba-47cb-853c-1ffb4840f230",
+              "apiElapsedMs": 6402,
+              "enhancementLatencyMs": 6329,
+              "chars": 2608,
+              "promptSha256": "b56a52e5950db181a6f0719b76f8da78f640b8f93d953c843fdffcb6dcba948b",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 0,
+              "copiedBodyPendingConditions": 0,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": false
+            },
+            {
+              "arm": "plan-final",
+              "requestId": "fbe2058e-6c2b-4476-b979-72924cbc4b86",
+              "apiElapsedMs": 50264,
+              "enhancementLatencyMs": 20330,
+              "chars": 2966,
+              "promptSha256": "447018182519a2eb0305dc9c5aff8da87a00a47ce51a9598851450074600bcfc",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "CLARIFICATIONS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 2,
+              "copiedBodyPendingConditions": 2,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": true
+            }
+          ],
+          "questions": [
+            {
+              "id": "region_data_missing",
+              "question": "当患者基线记录的地区字段缺失或无法判断是否属于当前地区及下级地区时，应如何处理？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "error_retry",
+              "question": "接口异常提醒后，是否需要新增自动重试或缓存填充等策略？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            }
+          ],
+          "planRequestId": "a81548bf-4df1-4668-a4df-3b693ec3b5ea",
+          "planApiElapsedMs": 3713,
+          "planProvider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          }
+        },
+        {
+          "id": "04_academic_protocol",
+          "title": "论文拟定设计与结果的区别",
+          "results": [
+            {
+              "arm": "direct",
+              "requestId": "e91cda89-237f-4ac7-b41f-b38c569919c9",
+              "apiElapsedMs": 5611,
+              "enhancementLatencyMs": 5547,
+              "chars": 2111,
+              "promptSha256": "4b42eeafd693fccd27f356089423e70e5ab8cc911f79e53bebf4f48d208ace16",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 0,
+              "copiedBodyPendingConditions": 0,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": false
+            },
+            {
+              "arm": "plan-final",
+              "requestId": "f552170c-2be0-4ef4-be93-224ea438acce",
+              "apiElapsedMs": 16014,
+              "enhancementLatencyMs": 15942,
+              "chars": 3540,
+              "promptSha256": "73f1d0e7777656964c42eddcbe7536b52a33421fae1899b0d6dd36ec8fe3dd1d",
+              "sectionTypes": [
+                "BACKGROUND",
+                "TASK",
+                "OUTPUT",
+                "CONSTRAINTS",
+                "CLARIFICATIONS",
+                "ACCEPTANCE"
+              ],
+              "visibleAmbiguities": 8,
+              "copiedBodyPendingConditions": 9,
+              "provider": {
+                "provider": "deepseek",
+                "model": "deepseek:deepseek-flash",
+                "mock": false,
+                "modelVersion": "DeepSeek-V4.1-Flash"
+              },
+              "protocolChecks": {
+                "realProvider": true,
+                "promptPresent": true,
+                "fourSections": true,
+                "constraintsInCopiedBody": true
+              },
+              "answerReviewSaved": true
+            }
+          ],
+          "questions": [
+            {
+              "id": "plan_interaction",
+              "question": "Plan 模式在生成最终提示词前，采用哪种澄清交互方式？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "plan_termination",
+              "question": "Plan 模式的澄清在什么条件下终止？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "fair_control_info",
+              "question": "两组公平对照如何获得与 Plan 相同的确认信息？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "scoring_dimensions",
+              "question": "评审对提示词质量采用哪些评分维度？",
+              "type": "MULTIPLE_CHOICE",
+              "options": 5,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "agreement_metric",
+              "question": "两名评审的一致性拟采用哪种指标报告？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "score_scale",
+              "question": "评审评分采用什么量表？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "task_material_source",
+              "question": "四类任务的 20 个任务素材来自哪里？",
+              "type": "FREE_TEXT",
+              "options": 0,
+              "recommendedOptions": 0
+            },
+            {
+              "id": "prompt_length_limit",
+              "question": "直接增强与 Plan 生成的提示词是否设字数或长度上限？",
+              "type": "SINGLE_CHOICE",
+              "options": 3,
+              "recommendedOptions": 0
+            }
+          ],
+          "planRequestId": "a79cfc7e-956c-4052-8df8-cd113debd2dc",
+          "planApiElapsedMs": 8822,
+          "planProvider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          }
+        }
+      ],
+      "browser": {
+        "artifact": "tmp/fidelity-acceptance/2026-10-04T01-44-50-831Z/reviews/2026-10-04T02-02-25-789Z/browser-history-review.json",
+        "historyChecks": 4,
+        "historyPassed": true,
+        "clipboardChecks": 4,
+        "clipboardPassed": true,
+        "widths": [
+          1440,
+          390
+        ],
+        "newlinePolicy": "CRLF->LF only; no trimming",
+        "scope": "真实历史API；真实响应在工作台Store回放后使用原生剪贴板；不生成新结果、不打开外部AI。失败或未生成的结果单列，不记为通过。"
+      }
+    }
+  ],
+  "requests": [
+    {
+      "round": 1,
+      "caseId": "01_software_autofill",
+      "arm": "direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "5b676df8-7644-4d6d-aafd-683ef5b295d5",
+      "elapsedMs": 5515
+    },
+    {
+      "round": 1,
+      "caseId": "01_software_autofill",
+      "arm": "plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "97b10e50-ce98-435c-b8e6-9ca2aedad194",
+      "elapsedMs": 32438
+    },
+    {
+      "round": 1,
+      "caseId": "01_software_autofill",
+      "arm": "plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "b74d1cd4-e2e7-4cc5-80b7-eff2a7bb56c4",
+      "elapsedMs": 4715
+    },
+    {
+      "round": 1,
+      "caseId": "02_software_threshold_conflict",
+      "arm": "direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "a95159e1-2e15-4566-96fe-d36d713674c0",
+      "elapsedMs": 4303
+    },
+    {
+      "round": 1,
+      "caseId": "02_software_threshold_conflict",
+      "arm": "plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "35ad1df1-54ce-499d-aa4d-c52dd6f5608a",
+      "elapsedMs": 5924
+    },
+    {
+      "round": 1,
+      "caseId": "02_software_threshold_conflict",
+      "arm": "plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "a9bdf1e2-8874-475b-b256-3202cb383064",
+      "elapsedMs": 3245
+    },
+    {
+      "round": 1,
+      "caseId": "04_academic_protocol",
+      "arm": "direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "c31ebcb7-4356-47dd-bec1-ee5bb4fa5d71",
+      "elapsedMs": 6252
+    },
+    {
+      "round": 1,
+      "caseId": "04_academic_protocol",
+      "arm": "plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "95bd50ef-78d3-4660-9c22-e4ef1a66f1b3",
+      "elapsedMs": 15859
+    },
+    {
+      "round": 1,
+      "caseId": "04_academic_protocol",
+      "arm": "plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "c4e8c7ac-2fdf-415c-97ec-cc95856fb95a",
+      "elapsedMs": 8625
+    },
+    {
+      "round": 1,
+      "caseId": "08_data_unresolved_denominator",
+      "arm": "direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "f3900452-9867-452c-a037-57f16f9909e4",
+      "elapsedMs": 11348
+    },
+    {
+      "round": 1,
+      "caseId": "08_data_unresolved_denominator",
+      "arm": "plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "700ab613-4b7c-4346-b7c1-477d1142447e",
+      "elapsedMs": 5492
+    },
+    {
+      "round": 1,
+      "caseId": "08_data_unresolved_denominator",
+      "arm": "plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "0f1725a0-c7d5-45df-9297-bd0b2a3bbf46",
+      "elapsedMs": 4020
+    },
+    {
+      "round": 1,
+      "caseId": "09_translation_control",
+      "arm": "direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "138615cd-aa2d-4e58-81a3-74d9e5d7cde0",
+      "elapsedMs": 2392
+    },
+    {
+      "round": 1,
+      "caseId": "09_translation_control",
+      "arm": "plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "2d7665ec-db7f-4932-bf5b-1bbf3d761d38",
+      "elapsedMs": 2235
+    },
+    {
+      "round": 1,
+      "caseId": "09_translation_control",
+      "arm": "plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "85b67893-1c1e-402d-9ed6-4e0bcbbdc11e",
+      "elapsedMs": 708
+    },
+    {
+      "round": 2,
+      "caseId": "01_software_autofill",
+      "arm": "direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "4e6976be-808b-4e7b-9df0-216a10cc68e0",
+      "elapsedMs": 5171
+    },
+    {
+      "round": 2,
+      "caseId": "01_software_autofill",
+      "arm": "plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "92205432-43b9-46e4-b2eb-3d420349f4bf",
+      "elapsedMs": 6717
+    },
+    {
+      "round": 2,
+      "caseId": "01_software_autofill",
+      "arm": "plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "4b015505-70cc-44b9-a9a5-0f3380d8aabe",
+      "elapsedMs": 3424
+    },
+    {
+      "round": 2,
+      "caseId": "04_academic_protocol",
+      "arm": "direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "b1815e12-9059-495d-942f-884bbb24b748",
+      "elapsedMs": 5227
+    },
+    {
+      "round": 2,
+      "caseId": "04_academic_protocol",
+      "arm": "plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "122605d1-b1b7-409f-95e0-af0788a2985c",
+      "elapsedMs": 6439
+    },
+    {
+      "round": 2,
+      "caseId": "04_academic_protocol",
+      "arm": "plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "e36736af-07c9-4a87-8c98-6235ea0499ac",
+      "elapsedMs": 61021
+    },
+    {
+      "round": 3,
+      "caseId": "01_software_autofill",
+      "arm": "direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "45b7f91f-d4ba-47cb-853c-1ffb4840f230",
+      "elapsedMs": 6402
+    },
+    {
+      "round": 3,
+      "caseId": "01_software_autofill",
+      "arm": "plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "fbe2058e-6c2b-4476-b979-72924cbc4b86",
+      "elapsedMs": 50264
+    },
+    {
+      "round": 3,
+      "caseId": "01_software_autofill",
+      "arm": "plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "a81548bf-4df1-4668-a4df-3b693ec3b5ea",
+      "elapsedMs": 3713
+    },
+    {
+      "round": 3,
+      "caseId": "04_academic_protocol",
+      "arm": "direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "e91cda89-237f-4ac7-b41f-b38c569919c9",
+      "elapsedMs": 5611
+    },
+    {
+      "round": 3,
+      "caseId": "04_academic_protocol",
+      "arm": "plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "f552170c-2be0-4ef4-be93-224ea438acce",
+      "elapsedMs": 16014
+    },
+    {
+      "round": 3,
+      "caseId": "04_academic_protocol",
+      "arm": "plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "a79cfc7e-956c-4052-8df8-cd113debd2dc",
+      "elapsedMs": 8822
+    }
+  ],
+  "modelEvents": [
+    {
+      "event": "model.call.completed",
+      "requestId": "5b676df8-7644-4d6d-aafd-683ef5b295d5",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2916",
+      "outputTokens": "1235",
+      "totalTokens": "4151",
+      "durationMs": "5304"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "b74d1cd4-e2e7-4cc5-80b7-eff2a7bb56c4",
+      "operation": "plan.generate",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "3967",
+      "outputTokens": "1083",
+      "totalTokens": "5050",
+      "durationMs": "4641"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "a9bdf1e2-8874-475b-b256-3202cb383064",
+      "operation": "plan.generate",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2378",
+      "outputTokens": "313",
+      "totalTokens": "2691",
+      "durationMs": "1977"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "a95159e1-2e15-4566-96fe-d36d713674c0",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2357",
+      "outputTokens": "854",
+      "totalTokens": "3211",
+      "durationMs": "4012"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "97b10e50-ce98-435c-b8e6-9ca2aedad194",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "3208",
+      "outputTokens": "1667",
+      "totalTokens": "4875",
+      "durationMs": "6764"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "35ad1df1-54ce-499d-aa4d-c52dd6f5608a",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2705",
+      "outputTokens": "1287",
+      "totalTokens": "3992",
+      "durationMs": "5885"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "c4e8c7ac-2fdf-415c-97ec-cc95856fb95a",
+      "operation": "plan.generate",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2706",
+      "outputTokens": "1850",
+      "totalTokens": "4556",
+      "durationMs": "8584"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "c31ebcb7-4356-47dd-bec1-ee5bb4fa5d71",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2388",
+      "outputTokens": "1125",
+      "totalTokens": "3513",
+      "durationMs": "5237"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "0f1725a0-c7d5-45df-9297-bd0b2a3bbf46",
+      "operation": "plan.generate",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2253",
+      "outputTokens": "865",
+      "totalTokens": "3118",
+      "durationMs": "3557"
+    },
+    {
+      "event": "model.call.failed",
+      "requestId": "f3900452-9867-452c-a037-57f16f9909e4",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "attempt": "1",
+      "inputTokens": "-",
+      "outputTokens": "-",
+      "totalTokens": "-",
+      "durationMs": "6137",
+      "failureType": "INVALID_RESPONSE",
+      "willRetry": "true"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "f3900452-9867-452c-a037-57f16f9909e4",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "2",
+      "inputTokens": "2407",
+      "outputTokens": "1340",
+      "totalTokens": "3747",
+      "durationMs": "5173"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "138615cd-aa2d-4e58-81a3-74d9e5d7cde0",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2093",
+      "outputTokens": "438",
+      "totalTokens": "2531",
+      "durationMs": "2357"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "85b67893-1c1e-402d-9ed6-4e0bcbbdc11e",
+      "operation": "plan.generate",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "1978",
+      "outputTokens": "38",
+      "totalTokens": "2016",
+      "durationMs": "665"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "2d7665ec-db7f-4932-bf5b-1bbf3d761d38",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2093",
+      "outputTokens": "404",
+      "totalTokens": "2497",
+      "durationMs": "2199"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "700ab613-4b7c-4346-b7c1-477d1142447e",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2530",
+      "outputTokens": "1177",
+      "totalTokens": "3707",
+      "durationMs": "5453"
+    },
+    {
+      "event": "model.call.failed",
+      "requestId": "95bd50ef-78d3-4660-9c22-e4ef1a66f1b3",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "attempt": "1",
+      "inputTokens": "-",
+      "outputTokens": "-",
+      "totalTokens": "-",
+      "durationMs": "8985",
+      "failureType": "INVALID_RESPONSE",
+      "willRetry": "true"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "95bd50ef-78d3-4660-9c22-e4ef1a66f1b3",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "2",
+      "inputTokens": "3544",
+      "outputTokens": "1414",
+      "totalTokens": "4958",
+      "durationMs": "6830"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "4e6976be-808b-4e7b-9df0-216a10cc68e0",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2916",
+      "outputTokens": "1132",
+      "totalTokens": "4048",
+      "durationMs": "5134"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "45b7f91f-d4ba-47cb-853c-1ffb4840f230",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2916",
+      "outputTokens": "1463",
+      "totalTokens": "4379",
+      "durationMs": "6363"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "4b015505-70cc-44b9-a9a5-0f3380d8aabe",
+      "operation": "plan.generate",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "3967",
+      "outputTokens": "775",
+      "totalTokens": "4742",
+      "durationMs": "3377"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "a81548bf-4df1-4668-a4df-3b693ec3b5ea",
+      "operation": "plan.generate",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "3967",
+      "outputTokens": "693",
+      "totalTokens": "4660",
+      "durationMs": "3681"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "92205432-43b9-46e4-b2eb-3d420349f4bf",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "3216",
+      "outputTokens": "1562",
+      "totalTokens": "4778",
+      "durationMs": "6671"
+    },
+    {
+      "event": "model.call.failed",
+      "requestId": "fbe2058e-6c2b-4476-b979-72924cbc4b86",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "attempt": "1",
+      "inputTokens": "-",
+      "outputTokens": "-",
+      "totalTokens": "-",
+      "durationMs": "7146",
+      "failureType": "INVALID_RESPONSE",
+      "willRetry": "true"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "e36736af-07c9-4a87-8c98-6235ea0499ac",
+      "operation": "plan.generate",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2706",
+      "outputTokens": "2175",
+      "totalTokens": "4881",
+      "durationMs": "19917"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "fbe2058e-6c2b-4476-b979-72924cbc4b86",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "2",
+      "inputTokens": "3318",
+      "outputTokens": "1352",
+      "totalTokens": "4670",
+      "durationMs": "13261"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "b1815e12-9059-495d-942f-884bbb24b748",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2388",
+      "outputTokens": "1179",
+      "totalTokens": "3567",
+      "durationMs": "5189"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "a79cfc7e-956c-4052-8df8-cd113debd2dc",
+      "operation": "plan.generate",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2706",
+      "outputTokens": "2116",
+      "totalTokens": "4822",
+      "durationMs": "8781"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "e91cda89-237f-4ac7-b41f-b38c569919c9",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "2388",
+      "outputTokens": "1308",
+      "totalTokens": "3696",
+      "durationMs": "5571"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "122605d1-b1b7-409f-95e0-af0788a2985c",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "1",
+      "inputTokens": "3129",
+      "outputTokens": "1401",
+      "totalTokens": "4530",
+      "durationMs": "6393"
+    },
+    {
+      "event": "model.call.failed",
+      "requestId": "f552170c-2be0-4ef4-be93-224ea438acce",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "attempt": "1",
+      "inputTokens": "-",
+      "outputTokens": "-",
+      "totalTokens": "-",
+      "durationMs": "9055",
+      "failureType": "INVALID_RESPONSE",
+      "willRetry": "true"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "f552170c-2be0-4ef4-be93-224ea438acce",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": "false",
+      "attempt": "2",
+      "inputTokens": "3656",
+      "outputTokens": "1443",
+      "totalTokens": "5099",
+      "durationMs": "6912"
+    }
+  ],
+  "semanticChecks": [
+    {
+      "result": "PASS_SCOPED",
+      "subject": "Known form rules and engineering delegation",
+      "evidence": "All three software Plan repetitions avoid reopening known field set, cancellation, nonempty-value protection, ordering, module scope and testing layers; actual results retain region, matching keys and detail-before-write prerequisites."
+    },
+    {
+      "result": "PASS_SCOPED",
+      "subject": "Unknowns remain visible",
+      "evidence": "Missing-region handling, confirmation UI or new retry policy remain unresolved; they are not automatically adopted from options. Known rules do not erase new feedback, source, metric or refund-module counterexamples in local regression."
+    },
+    {
+      "result": "PASS_SCOPED",
+      "subject": "Confirmed threshold and new conflict",
+      "evidence": "50000 replaces old 30000, strict greater-than preserved; secondary 80000 material produces a visible new conflict in copied body instead of reopening old choice."
+    },
+    {
+      "result": "PASS_SCOPED",
+      "subject": "Academic known requirements",
+      "evidence": "Three paper repetitions keep interactive Plan definition, blind review, same confirmed information, 20 tasks, three repetitions, two reviewers and 1200-character main text with appendix excluded; future statistical method and unperformed results remain unresolved."
+    },
+    {
+      "result": "PASS_SCOPED",
+      "subject": "Data missingness and final guard",
+      "evidence": "Denominator and missing-answer handling remain unresolved; no exclusion, zero-imputation or missing-to-uncompleted mapping is silently adopted; no fabricated calculations. Valid coordinated prohibition survives final fidelity check."
+    },
+    {
+      "result": "PASS_SCOPED",
+      "subject": "Complete translation control",
+      "evidence": "Plan returns no questions; final instruction retains translated-text-only delivery without unsolicited analysis."
+    }
+  ],
+  "unresolved": [
+    {
+      "priority": "P1",
+      "subject": "Historical paper 502 root cause",
+      "requestId": "464500fe-728a-4bae-a78c-0caaa90be907",
+      "state": "UNKNOWN_OLD_LOGS_NOT_RETAINED",
+      "note": "Future safe diagnostics and successful replay cannot recover the original missing log."
+    },
+    {
+      "priority": "P1",
+      "subject": "Rewritten final reminders and verbose unknown-answer explanations",
+      "evidence": "Round-one paper contains 14 copied-body reminders for seven unresolved questions; model rewrites can duplicate platform-owned conditions. Preserve new conflicts while improving merging."
+    },
+    {
+      "priority": "P2",
+      "subject": "Low-value paper delivery questions and unsolicited new strategies",
+      "evidence": "Paper outline/test-list organization and form retry/cache proposals remain optional quality concerns; do not turn them into mandatory user decisions or silently add selected-looking requirements."
+    },
+    {
+      "priority": "P2",
+      "subject": "Recommendation applicability wording",
+      "evidence": "Missing-region preserve/let-user-decide-fill and cache options need explicit region verification, pre-confirmation and detail-query prerequisites; current three software repetitions contain no explicit keys-alone or ignore-region alternatives, not proof of all semantic variants."
+    },
+    {
+      "priority": "P2",
+      "subject": "Generic research output template",
+      "evidence": "Software experiment paper inherits generic time/space scope and stratification wording that is not directly justified by the requested task."
+    },
+    {
+      "priority": "P1",
+      "subject": "Provider repairs and tail latency",
+      "evidence": "Four response failures repaired within budget; observed end-to-end paper Plan 61000 ms and form final 50000 ms class outliers. End-to-end and model-call durations differ; no exact bottleneck or missing usage is inferred."
+    }
+  ],
+  "previousEvidence": {
+    "protocolCandidatesPrepared": 31,
+    "apiRequestsAcrossCandidates": 165,
+    "successfulApiRequestsAcrossCandidates": 162,
+    "failedApiRequestsAcrossCandidates": 3,
+    "separateDiagnosticUpstreamCalls": 5,
+    "failedCandidate28": "tmp/fidelity-acceptance/2026-10-04T00-51-20-263Z/semantic-review.json",
+    "failedCandidate29": "tmp/fidelity-acceptance/2026-10-04T01-20-31-427Z/semantic-review.json",
+    "failedCandidate30": "tmp/fidelity-acceptance/2026-10-04T01-34-24-455Z/semantic-review.json",
+    "policy": "First failed results and intermediate negative regressions are retained; success never overwrites them."
+  },
+  "scope": {
+    "covered": [
+      "actual authenticated local APIs",
+      "current default non-Mock model",
+      "frozen synthetic code and document context",
+      "three repeated software and academic cases",
+      "actual history persistence",
+      "native desktop/mobile clipboard replay"
+    ],
+    "notCovered": [
+      "complete folder upload/index workflow in this round",
+      "all industries or all models",
+      "two independent human/professional reviews",
+      "downstream Agent execution",
+      "equal-information Qoder comparison",
+      "whole repository test suite",
+      "formal 11-case release gate"
+    ],
+    "releaseApproved": false,
+    "databaseMigrationsExecuted": false,
+    "productionDeploymentExecuted": false
+  }
+}

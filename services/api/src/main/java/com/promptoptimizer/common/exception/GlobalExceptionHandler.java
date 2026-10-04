@@ -6,6 +6,7 @@ import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.context.service.DocumentUploadException;
 import com.promptoptimizer.identity.service.RegistrationException;
 import com.promptoptimizer.provider.domain.ProviderException;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
 import com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -217,13 +218,24 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         ProviderErrorMapping mapping = mapProviderError(exception.getFailureType());
+        Map<String, Object> details = Map.of();
+        if (exception instanceof ProviderResponseValidationException invalid) {
+            // 仅公开代码定义的枚举、固定字段路径与实际调用次数，便于定位 502；绝不回显失败模型正文或 cause。
+            var diagnostics = new LinkedHashMap<String, Object>();
+            diagnostics.put("validationReason", invalid.getReason().name());
+            diagnostics.put("validationField", invalid.getField());
+            if (invalid.getModelAttempts() > 0) {
+                diagnostics.put("modelAttempts", invalid.getModelAttempts());
+            }
+            details = Map.copyOf(diagnostics);
+        }
         return buildResponse(
                 request,
                 mapping.status(),
                 mapping.code(),
                 mapping.message(),
                 exception.isRetryable(),
-                Map.of()
+                details
         );
     }
 

@@ -1,0 +1,29 @@
+{
+  "evidenceType" : "OFFLINE_COMPILED_METHOD_SYNTHETIC_PROBE",
+  "springContextLoaded" : false,
+  "networkCalls" : 0,
+  "modelCalls" : 0,
+  "knownContextFacts" : 0,
+  "schema" : "Safe synthetic question IDs and counts only; no request credentials or runtime configuration.",
+  "coarseQuestionDimension" : {
+    "approvalIndividuallyKept" : [ "approval-standard" ],
+    "refundIndividuallyKept" : [ "refund-standard" ],
+    "combinedKept" : [ "approval-standard" ],
+    "reversedKept" : [ "refund-standard" ],
+    "expectedCombinedCount" : 2,
+    "actualCombinedCount" : 1,
+    "approvalDimension" : "BUSINESS_RULE",
+    "refundDimension" : "BUSINESS_RULE",
+    "reproduced" : true
+  },
+  "coarseConflictDimension" : {
+    "existingConflictObject" : "approval-standard",
+    "differentQuestionObject" : "refund-standard",
+    "expectedDifferentObjectMatch" : false,
+    "actualDifferentObjectMatch" : true,
+    "sameObjectControlMatch" : true,
+    "otherAttributeControlMatch" : false,
+    "wouldFilterDifferentQuestionInPlan" : true,
+    "reproduced" : true
+  }
+}

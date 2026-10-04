@@ -1,0 +1,163 @@
+{
+  "source": "同一冻结合成字典的真实Provider组件诊断，不是首次失败响应，也不计作业务验收",
+  "originalFailureRequestId": "ef23b3b1-0ef6-4621-90cb-e51db62ba043",
+  "originalFailureDiagnostics": {
+    "validationField": "questions.options.answer",
+    "validationReason": "RULE_CONFLICT",
+    "modelAttempts": 3
+  },
+  "upstreamDiagnosticAttempts": 2,
+  "unsafeResponse": {
+    "summary": "目标是生成一份中文数据分析提示词，用于比较甲乙两组的完成率，交付方法说明和结果表模板，不执行分析、不填实际结果。由于完成率分母口径和缺失答卷处理方式尚未确定，需要先由用户确认，否则无法确定计算规则和结果表结构。",
+    "questions": [
+      {
+        "id": "denominator_definition",
+        "question": "完成率的分母采用哪个口径？",
+        "hint": "分母口径直接决定完成率的计算方式和结果表字段，必须由用户确认，不能擅自选择。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "all_registered",
+            "label": "全部报名人数",
+            "description": "分母为 registered_count，即所有报名人数。",
+            "answer": "完成率分母采用全部报名人数（registered_count）。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "valid_responses",
+            "label": "有效答卷人数",
+            "description": "分母为 valid_response_count，即有效答卷人数。",
+            "answer": "完成率分母采用有效答卷人数（valid_response_count）。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "both_denominators",
+            "label": "两个口径都列出",
+            "description": "同时按全部报名人数和有效答卷人数分别计算完成率，并说明区别。",
+            "answer": "完成率同时按两个口径计算：分母为全部报名人数（registered_count）和分母为有效答卷人数（valid_response_count），并分别列出结果。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "missing_handling",
+        "question": "缺失答卷应如何处理？",
+        "hint": "缺失答卷的处理方式会影响完成率分子、分母以及结果表的统计口径，必须由用户确认。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "exclude_missing",
+            "label": "从分母中剔除",
+            "description": "缺失答卷不计入分母，仅基于非缺失答卷计算完成率。",
+            "answer": "缺失答卷从分母中剔除，不参与完成率计算。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "include_missing_as_incomplete",
+            "label": "计入分母且视为未完成",
+            "description": "缺失答卷保留在分母中，且不计入完成数。",
+            "answer": "缺失答卷计入分母，并视为未完成，不计入完成数。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "report_separately",
+            "label": "单独报告缺失数",
+            "description": "缺失答卷不参与完成率计算，但在结果表中单独列出缺失数量。",
+            "answer": "缺失答卷不参与完成率计算，但在结果表中单独列出缺失数量（missing_count）。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "provider": "deepseek",
+    "model": "deepseek:deepseek-flash",
+    "mock": false
+  },
+  "safeResponse": {
+    "summary": "需要为合成问卷数据生成数据分析提示词，比较甲乙两组完成率，交付中文方法说明和结果表模板，不执行分析、不填实际结果。完成率分母口径和缺失答卷处理方式尚未确定，因此需要先向用户确认这两项业务规则，确认前不得擅自选择口径或计算完成率。",
+    "questions": [
+      {
+        "id": "completion_rate_denominator",
+        "question": "完成率的分母应采用哪个口径？",
+        "hint": "数据字典中同时有 registered_count（报名人数）和 valid_response_count（有效答卷人数），两者含义不同，会直接影响完成率数值和结果表模板的字段设计。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "denominator_registered",
+            "label": "全部报名人数",
+            "description": "以 registered_count 作为分母，完成率 = completed_count / registered_count。",
+            "answer": "完成率分母采用全部报名人数（registered_count），完成率 = completed_count / registered_count。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "denominator_valid",
+            "label": "有效答卷人数",
+            "description": "以 valid_response_count 作为分母，完成率 = completed_count / valid_response_count。",
+            "answer": "完成率分母采用有效答卷人数（valid_response_count），完成率 = completed_count / valid_response_count。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "denominator_both",
+            "label": "两个口径都列出",
+            "description": "在方法说明和结果表模板中同时呈现两种口径，分别计算并标注差异。",
+            "answer": "在方法说明和结果表模板中同时列出全部报名人数口径和有效答卷人数口径，分别计算完成率并标注两者差异。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "missing_response_handling",
+        "question": "缺失答卷应如何处理？",
+        "hint": "数据字典中有 missing_count 字段，但未说明缺失答卷在完成率计算中应计入分子、分母还是单独列出。缺失不等于未完成，也不等于零值，需要明确处理规则。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "missing_excluded",
+            "label": "从分母中剔除",
+            "description": "缺失答卷不计入分母，完成率仅基于非缺失答卷计算。",
+            "answer": "缺失答卷从完成率分母中剔除，不参与完成率计算，并在方法说明中注明剔除规则。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "missing_in_denominator",
+            "label": "计入分母但不计入分子",
+            "description": "缺失答卷保留在分母中，但不视为已完成，分子仅计 completed_count。",
+            "answer": "缺失答卷计入完成率分母，但不计入分子，分子仅计 completed_count，并在方法说明中注明该处理规则。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "missing_separate",
+            "label": "单独列出不参与计算",
+            "description": "缺失答卷在结果表中单独列示，不纳入完成率分子或分母，仅作为数据质量指标呈现。",
+            "answer": "缺失答卷在结果表中单独列示，不纳入完成率分子或分母，仅作为数据质量指标呈现，并在方法说明中注明。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "provider": "deepseek",
+    "model": "deepseek:deepseek-flash",
+    "mock": false
+  },
+  "rule": "不得将未完成、缺失、零值相互混同；只交付方法和空结果表模板"
+}

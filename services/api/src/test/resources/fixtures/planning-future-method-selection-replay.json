@@ -1,0 +1,201 @@
+{
+  "description": "真实候选22：预先指定主要检验的选项未保留根据未来分布选择的前提；其余真实参数仍可问。",
+  "requestId": "cc161b57-6e7e-4e9f-b7d1-2400b69ef166",
+  "rawPrompt": "为研究生准备一份论文方法部分的写作提示词，研究Plan问答对提示词质量的影响。当前只拟定研究，尚未实施。必须保留设计：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，另设两组获得同样确认信息的公平对照。中文方法提纲不超过1200字，附表另计。不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。具体检验依据未来数据分布选择，不预设必然显著。",
+  "context": {
+    "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+    "technologies": [],
+    "dependencies": [],
+    "directoryOverview": [
+      "research/",
+      "research/开题草案.md"
+    ],
+    "fileSummaries": [
+      "[PROJECT_DOCUMENT] research/开题草案.md：Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。；业务摘录：[片段 1/1] 研究尚未执行，没有实测数据。 四类任务：代码开发、机关报告、科研方案、数据分析。 拟每类5个任务，每模式3次。 采用两名独立评审； 评审一致性拟报告，不声称已测得。"
+    ],
+    "analysisStatus": "COMPLETE",
+    "analyzedFileCount": 1,
+    "warnings": [],
+    "factCards": []
+  },
+  "questions": [
+    {
+      "id": "plan_rounds",
+      "question": "Plan 模式下，向用户澄清并获得回答的交互轮次如何设定？",
+      "hint": "这决定方法部分如何描述 Plan 条件的操作流程，也影响公平对照如何提供同等确认信息。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "fixed_one",
+          "label": "固定一轮澄清",
+          "description": "Plan 模式统一只进行一次提问并取得回答后生成。",
+          "answer": "Plan 模式固定进行一轮澄清：向用户提问并取得回答后生成。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "fixed_two",
+          "label": "固定两轮澄清",
+          "description": "Plan 模式统一进行两轮提问与回答后生成。",
+          "answer": "Plan 模式固定进行两轮澄清：每轮向用户提问并取得回答后继续，两轮结束后生成。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "until_sufficient",
+          "label": "直到信息充分",
+          "description": "由模型判断信息是否充分，达到充分即停止提问并生成。",
+          "answer": "Plan 模式持续向用户提问并取得回答，直到模型判断信息充分后生成；具体轮次不固定。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "max_rounds",
+          "label": "设最大轮次上限",
+          "description": "设定一个最大澄清轮次，达到上限即生成。",
+          "answer": "Plan 模式设置最大澄清轮次上限，达到上限后生成；具体上限值在方法中说明。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "fair_control_info",
+      "question": "两组公平对照如何获得与 Plan 相同的确认信息？",
+      "hint": "公平对照必须获得同样完整的确认信息，但呈现方式可以不同且可以不再交互；这决定方法部分如何描述对照条件。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "prewritten_qa",
+          "label": "预写问答对",
+          "description": "将 Plan 澄清中使用的问答对预先写入提示词，一次性提供给对照模型。",
+          "answer": "公平对照以预写问答对形式获得与 Plan 相同的确认信息：把 Plan 澄清中使用的问答对一次性写入提示词，不进行交互。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "structured_brief",
+          "label": "结构化信息简报",
+          "description": "将同等确认信息整理为结构化简报，一次性提供给对照模型。",
+          "answer": "公平对照以结构化信息简报形式获得与 Plan 相同的确认信息：将同等确认信息整理为简报一次性提供，不进行交互。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "same_qa_script",
+          "label": "同一问答脚本",
+          "description": "使用与 Plan 相同的问答脚本，但由实验者扮演用户一次性提供全部回答。",
+          "answer": "公平对照使用与 Plan 相同的问答脚本，由实验者扮演用户一次性提供全部回答，不进行交互。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "task_source",
+      "question": "4类任务（代码开发、机关报告、科研方案、数据分析）的20个具体任务从哪里来？",
+      "hint": "研究尚未实施，需要说明任务来源，否则方法部分无法交代任务如何确定。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "researcher_designed",
+          "label": "研究者自行设计",
+          "description": "由研究者根据四类任务自行编写20个任务。",
+          "answer": "20个具体任务由研究者根据代码开发、机关报告、科研方案、数据分析四类自行设计。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "existing_benchmark",
+          "label": "取自现有基准",
+          "description": "从已有公开基准或任务集中选取并适配。",
+          "answer": "20个具体任务从已有公开基准或任务集中选取并适配到四类任务。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "expert_panel",
+          "label": "专家小组拟定",
+          "description": "由领域专家小组拟定并审核20个任务。",
+          "answer": "20个具体任务由领域专家小组拟定并审核。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "quality_metric",
+      "question": "提示词质量用什么指标或评分维度衡量？",
+      "hint": "方法部分需要说明评审依据什么打分，否则无法交代质量评价方式。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "rubric_dimensions",
+          "label": "多维度评分量表",
+          "description": "使用包含清晰度、完整性、可执行性等维度的评分量表。",
+          "answer": "提示词质量使用多维度评分量表衡量，维度包括清晰度、完整性、可执行性等，由两名独立评审盲评打分。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "holistic_score",
+          "label": "整体质量单维评分",
+          "description": "评审对提示词整体质量给出单一评分。",
+          "answer": "提示词质量由两名独立评审对整体质量给出单一评分。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "task_success",
+          "label": "下游任务成功率",
+          "description": "以使用该提示词完成下游任务的成功率作为质量指标。",
+          "answer": "提示词质量以下游任务成功率衡量，由两名独立评审盲评判断任务是否成功完成。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "analysis_plan",
+      "question": "方法提纲中如何描述统计检验与一致性分析？",
+      "hint": "原文要求依据未来数据分布选择检验、不预设必然显著，并拟报告评审一致性；需要确认提纲写到什么程度。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "describe_principle",
+          "label": "只写选择原则",
+          "description": "说明将依据未来数据分布选择检验，并拟报告评审一致性，不指定具体检验。",
+          "answer": "方法提纲只写检验选择原则：依据未来数据分布选择具体检验，不预设必然显著；评审一致性拟报告，不声称已测得。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "list_candidates",
+          "label": "列出候选检验",
+          "description": "列出若干候选检验方法，并说明将根据数据分布从中选择。",
+          "answer": "方法提纲列出若干候选检验方法，并说明将根据未来数据分布从中选择，不预设必然显著；评审一致性拟报告。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "specify_primary",
+          "label": "指定主要检验",
+          "description": "预先指定一个主要检验，并说明备选方案。",
+          "answer": "方法提纲预先指定一个主要检验，并说明备选方案；评审一致性拟报告。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ]
+}

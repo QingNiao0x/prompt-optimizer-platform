@@ -1,0 +1,184 @@
+{
+  "rawPrompt": "为研究生准备一份论文方法部分的写作提示词，研究Plan问答对提示词质量的影响。当前只拟定研究，尚未实施。必须保留设计：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，另设两组获得同样确认信息的公平对照。中文方法提纲不超过1200字，附表另计。不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。具体检验依据未来数据分布选择，不预设必然显著。",
+  "context": {
+    "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+    "technologies": [],
+    "dependencies": [],
+    "directoryOverview": [
+      "research/",
+      "research/开题草案.md"
+    ],
+    "fileSummaries": [
+      "[PROJECT_DOCUMENT] research/开题草案.md：Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。；业务摘录：[片段 1/1] 研究尚未执行，没有实测数据。 四类任务：代码开发、机关报告、科研方案、数据分析。 拟每类5个任务，每模式3次。 采用两名独立评审； 评审一致性拟报告，不声称已测得。"
+    ],
+    "analysisStatus": "COMPLETE",
+    "analyzedFileCount": 1,
+    "warnings": [],
+    "factCards": []
+  },
+  "questions": [
+    {
+      "id": "q_task_source",
+      "question": "20 个任务的具体内容从哪里来？",
+      "hint": "这决定方法部分是否需要描述任务选取与材料来源，也影响能否避免把拟定任务写成已实施。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "a",
+          "label": "由研究者自行设计并固定",
+          "description": "四类任务各 5 个由研究者按研究目的自行编写，方法部分只说明设计原则与类别。",
+          "answer": "20 个任务由研究者自行设计并固定，方法部分说明设计原则与四类任务划分，不写成已实施。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "b",
+          "label": "从已有公开任务集选取",
+          "description": "从公开基准或题库中选取任务，方法部分需说明来源、筛选标准与授权。",
+          "answer": "20 个任务从已有公开任务集中选取，方法部分说明来源、筛选标准与授权情况。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "c",
+          "label": "由领域专家提供",
+          "description": "邀请相关领域专家提供任务，方法部分需说明专家背景与任务征集过程。",
+          "answer": "20 个任务由领域专家提供，方法部分说明专家背景与任务征集过程。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q_plan_definition",
+      "question": "方法部分应如何界定“Plan”这一实验条件？",
+      "hint": "Plan 是核心自变量，界定方式会直接改变方法部分的写法与对照设置。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "a",
+          "label": "先向用户提问再生成",
+          "description": "Plan 条件指模型先向用户提出澄清问题，获得回答后再生成最终提示词。",
+          "answer": "Plan 条件界定为：模型先向用户提出澄清问题，用户回答后再生成最终提示词。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "b",
+          "label": "模型自行列出步骤",
+          "description": "Plan 条件指模型自行列出计划步骤后直接生成，不向用户提问。",
+          "answer": "Plan 条件界定为：模型自行列出计划步骤后直接生成，不向用户提问。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "c",
+          "label": "使用固定计划模板",
+          "description": "Plan 条件指套用固定计划模板生成，不涉及用户交互。",
+          "answer": "Plan 条件界定为：套用固定计划模板生成，不涉及用户交互。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q_control_parity",
+      "question": "两组公平对照如何获得与 Plan 相同的确认信息？",
+      "hint": "公平对照的实现方式会影响方法部分对控制变量的描述，但必须保留信息一致这一要求。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "a",
+          "label": "由研究者预先提供确认信息",
+          "description": "对照条件由研究者预先提供与 Plan 交互中相同的确认信息，再生成提示词。",
+          "answer": "两组公平对照由研究者预先提供与 Plan 交互中相同的确认信息，再生成提示词，确保信息一致。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "b",
+          "label": "由另一模型模拟用户回答",
+          "description": "对照条件由另一模型模拟用户回答，提供与 Plan 交互中相同的确认信息。",
+          "answer": "两组公平对照由另一模型模拟用户回答，提供与 Plan 交互中相同的确认信息，确保信息一致。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "c",
+          "label": "复用 Plan 交互记录",
+          "description": "对照条件复用 Plan 交互中已产生的确认信息记录，再生成提示词。",
+          "answer": "两组公平对照复用 Plan 交互中已产生的确认信息记录，再生成提示词，确保信息一致。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q_outline_scope",
+      "question": "中文方法提纲不超过 1200 字，是否包含研究背景与意义？",
+      "hint": "这决定 1200 字限额覆盖的范围，避免方法部分写成完整论文提纲。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "a",
+          "label": "只写方法部分",
+          "description": "1200 字仅覆盖方法部分，不写研究背景、意义或文献综述。",
+          "answer": "中文方法提纲不超过 1200 字，仅覆盖方法部分，不包含研究背景、意义或文献综述。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "b",
+          "label": "包含简要背景与意义",
+          "description": "1200 字内包含简要研究背景与意义，再写方法部分。",
+          "answer": "中文方法提纲不超过 1200 字，包含简要研究背景与意义，再写方法部分。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q_consistency_report",
+      "question": "两名独立评审的评审一致性拟如何报告？",
+      "hint": "开题草案提到拟报告评审一致性但不声称已测得，方法部分需要说明报告方式。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "a",
+          "label": "报告一致性指标但不预设数值",
+          "description": "方法部分说明将计算并报告评审一致性指标，但不预设具体数值或结论。",
+          "answer": "方法部分说明将计算并报告两名独立评审的评审一致性指标，但不预设具体数值或结论。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "b",
+          "label": "只报告分歧案例",
+          "description": "方法部分只说明将报告评审分歧案例，不计算一致性指标。",
+          "answer": "方法部分只说明将报告两名独立评审的分歧案例，不计算一致性指标。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "c",
+          "label": "不报告一致性",
+          "description": "方法部分不涉及评审一致性报告。",
+          "answer": "方法部分不涉及两名独立评审的评审一致性报告。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "source": "Twelfth candidate first paper Plan result; retained unchanged"
+}

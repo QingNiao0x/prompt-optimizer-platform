@@ -1,0 +1,225 @@
+{
+  "description": "真实候选20：已定方法提纲内容被重新列为多选范围，独立评分维度必须保留。",
+  "requestId": "925489bb-3afb-4350-9827-91aa8770b160",
+  "rawPrompt": "为研究生准备一份论文方法部分的写作提示词，研究Plan问答对提示词质量的影响。当前只拟定研究，尚未实施。必须保留设计：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，另设两组获得同样确认信息的公平对照。中文方法提纲不超过1200字，附表另计。不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。具体检验依据未来数据分布选择，不预设必然显著。",
+  "context": {
+    "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+    "technologies": [],
+    "dependencies": [],
+    "directoryOverview": [
+      "research/",
+      "research/开题草案.md"
+    ],
+    "fileSummaries": [
+      "[PROJECT_DOCUMENT] research/开题草案.md：Markdown 文档摘要：研究尚未执行，没有实测数据。；四类任务：代码开发、机关报告、科研方案、数据分析。；拟每类5个任务，每模式3次。；采用两名独立评审；评审一致性拟报告，不声称已测得。；业务摘录：[片段 1/1] 研究尚未执行，没有实测数据。 四类任务：代码开发、机关报告、科研方案、数据分析。 拟每类5个任务，每模式3次。 采用两名独立评审； 评审一致性拟报告，不声称已测得。"
+    ],
+    "analysisStatus": "COMPLETE",
+    "analyzedFileCount": 1,
+    "warnings": [],
+    "factCards": []
+  },
+  "questions": [
+    {
+      "id": "plan_interaction_rounds",
+      "question": "Plan 模式下，向用户澄清并获得回答的交互轮次应如何设定？",
+      "hint": "这会影响方法部分对 Plan 条件的操作定义，也影响公平对照如何提供同样的确认信息。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "single_round",
+          "label": "固定一轮澄清",
+          "description": "Plan 模式只进行一次提问并取得用户回答，然后生成结果。",
+          "answer": "Plan 模式固定进行一轮澄清：先向用户提问，取得回答后生成结果。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "multi_round_until_clear",
+          "label": "多轮直至信息足够",
+          "description": "Plan 模式可进行多轮提问与回答，直到模型认为信息足够再生成结果。",
+          "answer": "Plan 模式可进行多轮澄清：先向用户提问，取得回答后继续判断，直至信息足够再生成结果。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "max_two_rounds",
+          "label": "最多两轮",
+          "description": "Plan 模式最多进行两轮提问与回答，然后生成结果。",
+          "answer": "Plan 模式最多进行两轮澄清：先向用户提问，取得回答后最多再问一轮，然后生成结果。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "fair_control_info_delivery",
+      "question": "两组公平对照应如何获得与 Plan 相同的确认信息？",
+      "hint": "公平对照必须获得同样完整的确认信息，但呈现方式可以不同；这会影响方法部分对对照条件的描述。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "prefilled_confirmation",
+          "label": "预先填入确认信息",
+          "description": "在初始提示词中直接提供与 Plan 澄清后相同的完整确认信息，不再交互。",
+          "answer": "公平对照在初始提示词中直接获得与 Plan 澄清后相同的完整确认信息，不再进行交互。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "scripted_qa",
+          "label": "脚本化问答",
+          "description": "用预先写好的问答脚本向对照提供同样的确认信息，呈现方式与 Plan 不同但信息一致。",
+          "answer": "公平对照通过脚本化问答获得与 Plan 相同的完整确认信息，呈现方式与 Plan 不同但信息一致。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "same_info_different_order",
+          "label": "同信息不同顺序",
+          "description": "提供与 Plan 相同的确认信息，但改变信息呈现顺序，以检验顺序效应。",
+          "answer": "公平对照获得与 Plan 相同的完整确认信息，但信息呈现顺序不同。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "task_material_source",
+      "question": "4 类任务（代码开发、机关报告、科研方案、数据分析）的 20 个任务材料从哪里来？",
+      "hint": "这会影响方法部分对任务构建与可重复性的描述，也影响是否涉及真实数据或合成数据。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "synthetic_tasks",
+          "label": "全部合成任务",
+          "description": "20 个任务全部由研究者自行编写，不涉及真实业务数据。",
+          "answer": "20 个任务全部由研究者自行编写为合成任务，不涉及真实业务数据。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "public_benchmark",
+          "label": "来自公开基准",
+          "description": "任务从公开基准或公开数据集中选取并适配到四类场景。",
+          "answer": "20 个任务从公开基准或公开数据集中选取，并适配到代码开发、机关报告、科研方案、数据分析四类场景。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "expert_designed",
+          "label": "专家设计任务",
+          "description": "邀请领域专家设计或审核 20 个任务，形成任务库。",
+          "answer": "20 个任务由领域专家设计或审核后形成任务库。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "evaluation_dimensions",
+      "question": "两名独立评审盲评时，主要依据哪些维度评分？",
+      "hint": "评分维度会直接决定方法部分如何描述评审工具与结果分析，也影响评审一致性报告。",
+      "type": "MULTIPLE_CHOICE",
+      "options": [
+        {
+          "id": "task_completion",
+          "label": "任务完成度",
+          "description": "评审判断生成结果是否完整满足任务要求。",
+          "answer": "评审维度包括任务完成度。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "accuracy",
+          "label": "准确性",
+          "description": "评审判断生成结果在事实、逻辑或代码上的正确程度。",
+          "answer": "评审维度包括准确性。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "clarity",
+          "label": "清晰度",
+          "description": "评审判断生成结果的结构、表达与可读性。",
+          "answer": "评审维度包括清晰度。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "instruction_following",
+          "label": "指令遵循",
+          "description": "评审判断生成结果是否遵循原始提示词中的约束。",
+          "answer": "评审维度包括指令遵循。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "overall_quality",
+          "label": "整体质量",
+          "description": "评审对生成结果给出一个整体质量评分。",
+          "answer": "评审维度包括整体质量。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "outline_scope",
+      "question": "中文方法提纲不超过 1200 字，具体应覆盖哪些内容？",
+      "hint": "这决定方法提纲的边界，避免遗漏关键设计或写入不必要内容。",
+      "type": "MULTIPLE_CHOICE",
+      "options": [
+        {
+          "id": "research_design",
+          "label": "研究设计",
+          "description": "包括 4 类任务、每类 5 个、每模式每任务重复 3 次等设计。",
+          "answer": "方法提纲覆盖研究设计，包括 4 类任务、每类 5 个、每模式每任务重复 3 次等设计。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "conditions",
+          "label": "实验条件",
+          "description": "包括直接增强、Plan 及两组公平对照的条件定义。",
+          "answer": "方法提纲覆盖实验条件，包括直接增强、Plan 及两组公平对照的条件定义。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "evaluation_procedure",
+          "label": "评审流程",
+          "description": "包括两名独立评审盲评、评分维度与一致性报告方式。",
+          "answer": "方法提纲覆盖评审流程，包括两名独立评审盲评、评分维度与一致性报告方式。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "analysis_plan",
+          "label": "分析计划",
+          "description": "包括依据未来数据分布选择检验、不预设显著等分析原则。",
+          "answer": "方法提纲覆盖分析计划，包括依据未来数据分布选择检验、不预设显著等分析原则。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "limitations",
+          "label": "局限与边界",
+          "description": "包括研究尚未实施、不编造效应量或显著性结论等边界说明。",
+          "answer": "方法提纲覆盖局限与边界，包括研究尚未实施、不编造效应量或显著性结论等边界说明。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ]
+}

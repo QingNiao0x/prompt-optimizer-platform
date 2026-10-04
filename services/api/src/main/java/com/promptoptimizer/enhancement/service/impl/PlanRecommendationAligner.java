@@ -21,6 +21,8 @@ import java.util.regex.Pattern;
 final class PlanRecommendationAligner {
 
     private static final Pattern TECHNOLOGY_LABEL = Pattern.compile("[a-zA-Z][a-zA-Z0-9.+-]*(?:[ /-]+[a-zA-Z0-9][a-zA-Z0-9.+-]*)*");
+    private static final Pattern ACTION_LABEL = Pattern.compile(
+            "^(?:不|仅|只|先|允许|禁止|继续|保持|保留|直接|自动)?(?:查询|填充|弹窗|提示|录入|覆盖|匹配)(?:也不提示|并提示)?$");
 
     private PlanRecommendationAligner() {
     }
@@ -112,6 +114,11 @@ final class PlanRecommendationAligner {
 
     /** 不拆成共同词；完整实践短句可支撑“混合使用”等概括选项，但不能替另一技术名称背书。 */
     private static String support(String corpus, String choice, PlanOption option, boolean project) {
+        // “缺姓名时不查询”不能替“地区为空时不查询”背书；短动作必须连同对象和条件完整匹配。
+        if (ACTION_LABEL.matcher(choice).matches()) {
+            String claim = normalize(option.answer());
+            return claim.length() >= 8 && evidence(corpus, claim) > 0 ? claim : "";
+        }
         if (option.label().matches(".*(仅|统一|全部|所有|只用).*")
                 && evidence(corpus, normalize(option.label())) <= 0) return "";
         if (choice.length() >= 3 && evidence(corpus, choice) > 0) return choice;
