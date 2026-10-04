@@ -46,6 +46,28 @@ class PlanAmbiguityMergeTest {
     }
 
     @Test
+    void shouldCopyOtherHospitalsAndNewYearsUnknownsAfterConfirmingOnlyOneFormat() {
+        String otherHospital = "乙医院数据格式尚未明确。";
+        String nextYear = "甲医院2026年度数据格式尚未明确。";
+        var result = assemble(List.of("甲医院数据格式尚未明确。", otherHospital, nextYear), List.of(),
+                List.of(new PlanAnswer("format-a", "甲医院数据格式是什么？", "CSV")));
+        assertThat(result.ambiguities()).containsExactly(otherHospital, nextYear);
+        assertThat(result.optimizedPrompt()).contains(otherHospital, nextYear)
+                .doesNotContain("甲医院数据格式尚未明确。");
+        assertSynchronized(result);
+    }
+
+    @Test
+    void shouldNotHideAnEqualThresholdAfterConfirmingOnlyAnUnequalThreshold() {
+        String independent = "金额=50000元时的审批规则尚未确定。";
+        var result = assemble(List.of("金额!=50000元时的审批规则尚未确定。", independent), List.of(),
+                List.of(new PlanAnswer("not-equal", "金额!=50000元时的审批规则是什么？", "由财务复核")));
+        assertThat(result.ambiguities()).containsExactly(independent);
+        assertThat(result.optimizedPrompt()).contains(independent);
+        assertSynchronized(result);
+    }
+
+    @Test
     void shouldRemoveAbsenceDeclarationsButRetainSpecificProblemsFollowingNoIssues() {
         var result = assemble(List.of("无。本题必要的事实、范围、读者和交付形式均已提供，不存在影响任务目标且目前缺失的业务决定。",
                 "无已知冲突，但退款期限尚未确定。"), List.of(), List.of());

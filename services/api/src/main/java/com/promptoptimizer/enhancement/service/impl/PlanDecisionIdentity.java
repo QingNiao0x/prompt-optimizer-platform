@@ -21,6 +21,12 @@ final class PlanDecisionIdentity {
 
     private PlanDecisionIdentity() { }
 
+    /** 沿用文字大小写不敏感的口径，仅去掉空白和句末提问符；不删除比较符、小数点、版本和路径符号。 */
+    static String exactTextKey(String text) {
+        return Normalizer.normalize(text, Normalizer.Form.NFKC).toLowerCase(Locale.ROOT)
+                .replaceAll("\\s+", "").replaceAll("[。？?!！]+$", "");
+    }
+
     /** 简单问题仅按完整对象签名去重；属性相同、对象不同或新增条件都产生不同键。 */
     static String questionKey(String question) {
         if (COMPOUND_OR_CHANGE.matcher(question).find()) return null;
@@ -36,7 +42,7 @@ final class PlanDecisionIdentity {
 
     /** 仅匹配没有新增取值或子句的未决状态句，新的对象、时间和条件必须留在签名中。 */
     static boolean repeatsReminder(String reminder, String question) {
-        var pending = Pattern.compile("^(.+?)(?:尚未确认|尚未明确|尚未确定|尚未提供|未确认|未明确|未确定|未提供|仍待确定|待确认)[。.!！?？]?$")
+        var pending = Pattern.compile("^(.+?)(?:尚未确认|尚未明确|尚未确定|尚未选定|尚未决定|尚未提供|未确认|未明确|未确定|未选定|未决定|未提供|仍待确定|待确认)[。.!！?？]?$")
                 .matcher(reminder);
         if (!pending.matches() || pending.group(1).matches("(?s).*[。；;：:\\r\\n].*")) return false;
         String key = questionKey(question);
@@ -72,7 +78,9 @@ final class PlanDecisionIdentity {
                 .replace("之间的一致性应如何评价", "之间一致性评价方式")
                 .replace("之间一致性的评价方式", "之间一致性评价方式");
         value = QUESTION_GRAMMAR.matcher(value).replaceAll("")
-                .replaceAll("[\\s，。；：！？、‘’“”!?;,:\"']+", "");
+                .replaceAll("[\\s，。；：？、‘’“”?;,:\"']+", "");
+        // != 中的 ! 是条件运算符，不能因去掉普通感叹号而被改成 =。
+        value = value.replaceAll("!(?!=)", "");
         // 两种常见地区问法对应同一研究范围；“患者地区”“数据地区”仍保留其完整对象。
         value = value.replaceAll("研究(?:覆盖)?(?:地区|区域)(?:范围)?", "研究地区范围");
         return value.replace("规则标准", "标准");

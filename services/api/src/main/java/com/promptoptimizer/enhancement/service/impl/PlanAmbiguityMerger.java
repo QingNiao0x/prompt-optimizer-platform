@@ -79,8 +79,12 @@ final class PlanAmbiguityMerger {
             if (mergeUnresolvedExplanation(text, registered)) continue;
             registered.putIfAbsent("text:" + text, stripDecisionMetadata(text));
         }
-        List<String> values = registered.values().stream().distinct().toList();
-        return MergeResult.from(values);
+        // 全半角、空白和句末问号不是新决定；比较符、完整条件及代码大小写仍须区分。
+        Map<String, String> formatted = new LinkedHashMap<>();
+        registered.values().forEach(value -> formatted.putIfAbsent(
+                java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFKC)
+                        .replaceAll("\\s+", "").replaceAll("[。？?!！]+$", ""), value));
+        return MergeResult.from(List.copyOf(formatted.values()));
     }
 
     /** 支持已经归并过的提醒再次进入组装，完整题目和答案前缀必须逐字一致。 */
@@ -291,7 +295,9 @@ final class PlanAmbiguityMerger {
 
     private static String normalize(String text) {
         // 比较符、版本小数点和代码标识符不是排版符号，不能归一化掉。
-        return text.toLowerCase(Locale.ROOT).replaceAll("[\\s，。；：！？、“”‘’（）()!?;,:\"']+", "");
+        return java.text.Normalizer.normalize(text, java.text.Normalizer.Form.NFKC)
+                .toLowerCase(Locale.ROOT).replaceAll("[\\s，。；：？、“”‘’（）()?;,:\"']+", "")
+                .replaceAll("!(?!=)", "");
     }
 
     /** 先匹配长词，避免短词破坏完整确认短语。 */

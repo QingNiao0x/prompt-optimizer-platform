@@ -1,0 +1,464 @@
+{
+  "capturedAt": "2026-10-04T21:26:39.2490066+08:00",
+  "scope": "Deterministic backend regression; no external model or browser upload acceptance",
+  "reproductions": [
+    {
+      "stage": "initial",
+      "tests": 16,
+      "failures": 15,
+      "errors": 0,
+      "failingMethods": [
+        "shouldUseScopedFactCardsWithoutTransferringTheirAnswers",
+        "shouldKeepDifferentOperatorsAndDecimalValuesRegardlessOfOrder(String, String)[1]",
+        "shouldKeepDifferentOperatorsAndDecimalValuesRegardlessOfOrder(String, String)[2]",
+        "shouldKeepDifferentOperatorsAndDecimalValuesRegardlessOfOrder(String, String)[3]",
+        "shouldKeepDifferentOperatorsAndDecimalValuesRegardlessOfOrder(String, String)[4]",
+        "shouldKeepDifferentOperatorsAndDecimalValuesRegardlessOfOrder(String, String)[5]",
+        "shouldKeepDifferentOperatorsAndDecimalValuesRegardlessOfOrder(String, String)[6]",
+        "shouldResolveEachKnownObjectEvenWhenTheirFormatsDiffer",
+        "shouldNotMergeAnOppositeOperatorReminderIntoAnUnresolvedDecision",
+        "shouldKeepConflictsAndNewConditionsWithinTheSameObject",
+        "shouldNotUseAgeGroupsToResolveUrbanRuralGrouping",
+        "shouldNotUseTheBodyFormatToResolveAnAppendixFormat",
+        "shouldNotUseTheBaselinePeriodToResolveFollowUpPeriod",
+        "shouldNotUseOneHospitalsFileFormatToAnswerAnotherHospital",
+        "shouldNotPromoteAnUnscopedFormatIntoANamedObjectsAnswer"
+      ]
+    },
+    {
+      "stage": "metadata-followup",
+      "tests": 21,
+      "failures": 5,
+      "errors": 0,
+      "failingMethods": [
+        "shouldMergeASelectionParaphraseButRetainTheNextYearsDecision",
+        "shouldMergeOnlyFormattingVariantsOfDirectEnhancementReminders",
+        "shouldNotDelegateAResearchDecisionHiddenInsideAnOutlineQuestion",
+        "shouldKeepAnIndependentConditionInsideTheSameQuestionEnvelope",
+        "shouldNotDelegateANewTimeoutHiddenInPseudocodeMetadata"
+      ]
+    }
+  ],
+  "broadRun": {
+    "command": "mvn.cmd -o -s ../../.mvn/settings.xml -Dtest=AmbiguityDetectorTest,BusinessAcceptanceRegressionTest,ContextConflictDetectorTest,DefaultEnhancementOrchestratorTest,ExecutionContractAssemblyTest,ExplicitRuleEvidenceExtractorTest,FidelityReminderReplayTest,FidelityScopeRegressionTest,LatestFidelityReplayTest,MixedContextFixtureIntegrationTest,ModelConcurrencyHttpIntegrationTest,ModelConcurrencyHttpInterceptorTest,ModelConcurrencyLimiterTest,MybatisOptimizationHistoryServiceTest,OpenAiCompatibleDocumentSummaryModelTest,OpenAiCompatiblePromptEnhancementProviderTest,OpenAiCompatiblePropertiesTest,OpenAiCompatibleProviderConfigurationTest,OpenAiCompatibleValidatedResponseTest,OptimizationControllerTest,OptimizationHistoryControllerTest,OptimizationPlanningServiceTest,OptimizationResultAssemblerTest,PlanAmbiguityMergeTest,PlanFailureDiagnosticsTest,PlanFindingClassifierTest,PlanningDecisionReplayTest,PlanningDigestSelectorTest,PlanningDocumentExcerptTest,PlanningEvidencePolicyTest,PlanningFactCardExtractorTest,PlanningSessionOwnershipSerializationTest,PlanningSessionServiceTest,PlanProviderValidationBudgetTest,PlanQuestionFilterTest,PlanRecommendationAlignerTest,PlanRecommendationRegressionTest,PlanScopeSafetyRegressionTest,PlatformModelCatalogServiceTest,PlatformModelConstructorMappingTest,RealModelConcurrencyResultAssertionsTest,RequirementFidelityGuardTest,RulePreservationAssemblyTest,SensitiveValueDetectorTest,TaskDeliveryProfileTest,UnverifiableRegionCandidateTest,VerifiedFindingClassificationTest test -q",
+    "exitCode": 1,
+    "classes": 47,
+    "tests": 533,
+    "assertionFailures": 0,
+    "initializationErrors": 5,
+    "passingClasses": 46,
+    "passingTests": 528,
+    "suites": [
+      {
+        "name": "com.promptoptimizer.enhancement.dto.OptimizationControllerTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.infrastructure.PlanningSessionOwnershipSerializationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.AmbiguityDetectorTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.BusinessAcceptanceRegressionTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ContextConflictDetectorTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.DefaultEnhancementOrchestratorTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest",
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ExplicitRuleEvidenceExtractorTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.FidelityReminderReplayTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.FidelityScopeRegressionTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.LatestFidelityReplayTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.MixedContextFixtureIntegrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest",
+        "tests": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest",
+        "tests": 28,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanFindingClassifierTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningDecisionReplayTest",
+        "tests": 66,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningDigestSelectorTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningDocumentExcerptTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningEvidencePolicyTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningFactCardExtractorTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanProviderValidationBudgetTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanQuestionFilterTest",
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanRecommendationAlignerTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanRecommendationRegressionTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanScopeSafetyRegressionTest",
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuardTest",
+        "tests": 62,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.RulePreservationAssemblyTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.SensitiveValueDetectorTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.TaskDeliveryProfileTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.UnverifiableRegionCandidateTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.VerifiedFindingClassificationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.history.dto.OptimizationHistoryControllerTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.history.service.impl.MybatisOptimizationHistoryServiceTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 5,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptorTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyLimiterTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.concurrency.RealModelConcurrencyResultAssertionsTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.mapper.PlatformModelConstructorMappingTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleDocumentSummaryModelTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatiblePromptEnhancementProviderTest",
+        "tests": 40,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatiblePropertiesTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProviderConfigurationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleValidatedResponseTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.PlanFailureDiagnosticsTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.PlatformModelCatalogServiceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "finalTargetRun": {
+    "command": "mvn.cmd -o -s ../../.mvn/settings.xml '-Dtest=PlanScopeSafetyRegressionTest,PlanAmbiguityMergeTest,OptimizationPlanningServiceTest' test -q",
+    "exitCode": 0,
+    "classes": 3,
+    "tests": 88,
+    "failures": 0,
+    "errors": 0,
+    "suites": [
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanScopeSafetyRegressionTest",
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest",
+        "tests": 28,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest",
+        "tests": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "environmentBlock": {
+    "test": "ModelConcurrencyHttpIntegrationTest",
+    "phase": "static local mock HttpServer initialization",
+    "error": "Unable to establish loopback connection",
+    "cause": "UnixDomainSockets.connect0: Invalid argument: connect",
+    "attempts": [
+      "workspace sandbox",
+      "unsandboxed",
+      "unsandboxed with short JVM temporary directory"
+    ],
+    "resolved": false,
+    "businessAssertionsExecuted": false
+  },
+  "sourceHashes": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanQuestionFilter.java",
+      "sha256": "13d9189db7c18b4097eb21d43891d5ab3354fcd54c9b25c429b52edeec6c7aca"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningFactScope.java",
+      "sha256": "3a8e696570a1c249f78f8c6fdf2cb73cfdee3ec688c859ce422bae013432e9a3"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanDecisionIdentity.java",
+      "sha256": "bc7500a8ae6b37a48eb3b90e4b2cd87251eb422a681cb4c9bff91116d78674c1"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAmbiguityMerger.java",
+      "sha256": "8d1a2a8daa29a4ad8fac5b0f173839f8ca02644e68e2848c8537f7003fefe103"
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/PlanScopeSafetyRegressionTest.java",
+      "sha256": "81200037d6ed542658c075ce5f99368e52a96b5d6dead95af916f1b58955810f"
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/PlanAmbiguityMergeTest.java",
+      "sha256": "3e45ed112c51f21c0b7470b220bb0c47749aff7be179da840d95db9f1ddbfa81"
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/OptimizationPlanningServiceTest.java",
+      "sha256": "90e69fd68b66841df3a83f7f3f3075ad606cc9b44354ed6c9fb48ac7c825bb85"
+    }
+  ],
+  "pending": [
+    "Local HTTP integration after NIO environment repair",
+    "Final candidate external Provider cross-industry evaluation",
+    "Downstream original versus enhanced execution comparison",
+    "Complete real code and office-folder acceptance",
+    "Independent professional review"
+  ]
+}

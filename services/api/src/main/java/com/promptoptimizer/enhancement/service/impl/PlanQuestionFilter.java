@@ -6,7 +6,6 @@ import com.promptoptimizer.enhancement.domain.PlanningFactCategory;
 import com.promptoptimizer.enhancement.domain.PlanningFactOrigin;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.template.domain.TaskDeliveryProfile;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,7 +21,11 @@ import java.util.regex.Pattern;
  */
 public final class PlanQuestionFilter {
     private record FactRule(PlanningFactCategory category, Pattern question, Pattern label) { }
-    private record KnownFact(PlanningFactCategory category, String value, String source) { }
+    private record KnownFact(PlanningFactCategory category, String value, String source, String scope) { }
+    private record QuestionKey(String subject, List<String> details) { }
+    private static final Pattern INDEPENDENT_PRESENTATION_DECISION = Pattern.compile(
+            "新增|另需|另外|还需|是否|待定|尚未|未确定|待确认|冲突|阈值|权限|隐私|保密|重试|超时|[<>!=]|\\d");
+    private static final Pattern ADDITIONAL_DECISION = Pattern.compile("另需|另外|此外|还需(?:确认|决定|选择)|同时还");
 
     private static final List<FactRule> RULES = List.of(
             rule(PlanningFactCategory.REGION,
@@ -70,26 +73,50 @@ public final class PlanQuestionFilter {
     public List<PlanQuestion> filter(List<PlanQuestion> questions, PlanningProviderRequest input) {
         List<KnownFact> facts = collectFacts(input);
         var decisionPolicy = PlanningDecisionPolicy.from(input);
-        Set<String> seen = new HashSet<>();
-        Set<String> seenDimensions = new HashSet<>();
+        Set<QuestionKey> seen = new HashSet<>();
+        Set<QuestionKey> seenDimensions = new HashSet<>();
         return questions.stream()
-                .filter(question -> seen.add(normalize(question.question())))
+                .filter(question -> seen.add(new QuestionKey(normalize(question.question()), questionDetails(question))))
                 .filter(question -> !clearlyOutsideCurrentTask(question.question(), input.rawPrompt()))
-                .filter(question -> !routinePresentation(question.question(), input.rawPrompt()))
+                .filter(question -> !routinePresentation(question, input.rawPrompt()))
                 .filter(question -> !routineExecutionPresentation(question, input.rawPrompt()))
                 .filter(question -> !KnownTestCoverage.repeatsKnownBranches(question, input))
-                .filter(question -> !decisionPolicy.resolvedOrDelegated(question))
-                .filter(question -> !resolved(question.question(), facts, input))
+                .filter(question -> hasAdditionalDecision(question) || !decisionPolicy.resolvedOrDelegated(question))
+                .filter(question -> hasAdditionalDecision(question) || !resolved(question.question(), facts, input))
                 .filter(question -> {
                     String dimension = questionDimension(question.question());
-                    return dimension == null || seenDimensions.add(dimension);
+                    return dimension == null || seenDimensions.add(new QuestionKey(dimension, questionDetails(question)));
                 }).toList();
     }
 
+    /** 模型 ID 不参与身份；说明、选项和示例里的新选择参与比较，不能只凭相同题干删整题。 */
+    private List<String> questionDetails(PlanQuestion question) {
+        List<String> details = new ArrayList<>();
+        details.add(question.type().name());
+        details.add(Boolean.toString(question.allowCustomAnswer()));
+        details.add(normalize(safe(question.hint())));
+        question.options().forEach(option -> {
+            details.add(normalize(safe(option.label())));
+            details.add(normalize(safe(option.description())));
+            details.add(normalize(safe(option.answer())));
+            details.add(normalize(safe(option.recommendationReason())));
+        });
+        question.examples().forEach(example -> details.add(normalize(example)));
+        return List.copyOf(details);
+    }
+
+    /** 额外说明显式引入另一选择时保留；“新增/修改代码”“不新增业务”等交付描述不能绕过已有决定校验。 */
+    private boolean hasAdditionalDecision(PlanQuestion question) {
+        return questionDetails(question).stream().anyMatch(detail -> ADDITIONAL_DECISION.matcher(detail).find());
+    }
+
     /** 常规章节组织交给执行者；用户主动要求确认结构、期刊规范或专业方法时仍保留问题。 */
-    private boolean routinePresentation(String question, String rawPrompt) {
+    private boolean routinePresentation(PlanQuestion candidate, String rawPrompt) {
         if (TaskDeliveryProfile.identify(rawPrompt) == TaskDeliveryProfile.GENERAL
                 || safe(rawPrompt).matches("(?s).*(?:询问|确认|让我选择|由我选择).{0,16}(?:章节|结构|顺序|提纲).*")) return false;
+        // 章节题也可能携带样本、法域等真实选择；只委派没有新决策元信息的纯排版问题。
+        if (questionDetails(candidate).stream().anyMatch(detail -> INDEPENDENT_PRESENTATION_DECISION.matcher(detail).find())) return false;
+        String question = candidate.question();
         return question.matches("^(?:论文|方法提纲|报告|新闻稿|教案|指南)?(?:的)?(?:章节|小节|提纲)(?:应|应该|需要)?如何(?:组织|排序|安排)[？?]$")
                 || question.matches("^(?:方法提纲|报告|新闻稿|教案|指南)的(?:章节|小节)(?:应|应该|需要)?如何(?:组织|排序|安排)[？?]$");
     }
@@ -104,8 +131,8 @@ public final class PlanQuestionFilter {
                 || raw.matches("(?s).*(?:询问|确认|让我选择|由我选择|由用户选择).{0,16}(?:伪代码粒度|伪代码深度|伪代码详细|确认形式|交互形式).*")) return false;
         String text = question.question();
         Pattern independent = Pattern.compile("新增|跨租户|权限|隐私|重试|超时|阈值|毫秒|数据来源|字段映射|生产|迁移|运行|具体参数值|\\d+");
-        if (independent.matcher(text).find() || question.options().stream().anyMatch(option ->
-                independent.matcher(option.label() + option.description() + option.answer()).find())) return false;
+        if (independent.matcher(text).find() || questionDetails(question).stream()
+                .anyMatch(detail -> independent.matcher(detail).find())) return false;
         if (raw.contains("关键伪代码") && text.matches("^伪代码(?:需要|应|应该)?(?:详细到什么程度|粒度如何确定|采用什么粒度)[？?]$")
                 && !question.options().isEmpty()) {
             return question.options().stream().allMatch(option ->
@@ -139,7 +166,17 @@ public final class PlanQuestionFilter {
             input.planningContext().fileSummaries().forEach(value ->
                     collectFromText(facts, value, "analyzed_file_summary"));
             for (PlanningFactCard card : input.planningContext().factCards()) {
-                facts.add(new KnownFact(card.category(), card.evidence(), card.sourcePath()));
+                // 有标签的卡片与普通文本使用同一取值/对象口径，避免完整证据与裸取值被误判成冲突。
+                FactRule rule = RULES.stream().filter(value -> value.category() == card.category()).findFirst().orElseThrow();
+                var matches = rule.label().matcher(card.evidence());
+                boolean labeled = false;
+                while (matches.find()) {
+                    labeled = true;
+                    facts.add(new KnownFact(card.category(), matches.group(1).trim(), card.sourcePath(),
+                            PlanningFactScope.labeled(card.category(), card.evidence(), matches.start(1))));
+                }
+                if (!labeled) facts.add(new KnownFact(card.category(), card.evidence(), card.sourcePath(),
+                        PlanningFactScope.evidence(card.category(), card.evidence())));
             }
         }
         return List.copyOf(facts);
@@ -149,11 +186,12 @@ public final class PlanQuestionFilter {
         if (text == null || text.isBlank()) return;
         for (FactRule rule : RULES) {
             var matches = rule.label().matcher(text);
-            while (matches.find()) facts.add(new KnownFact(rule.category(), matches.group(1).trim(), source));
+            while (matches.find()) facts.add(new KnownFact(rule.category(), matches.group(1).trim(), source,
+                    PlanningFactScope.labeled(rule.category(), text, matches.start(1))));
         }
     }
 
-    /** 只有同一类别只有一个明确值且问题未要求变更时，才不再确认。 */
+    /** 只有同一对象/属性存在唯一明确值且问题未要求变更时，才继承答案；类别相同不足以证明已解决。 */
     private boolean resolved(String question, List<KnownFact> facts, PlanningProviderRequest input) {
         if (explicitDeliveryOrFailure(question, input.rawPrompt())) return true;
         if (knownInteractivePlanDefinition(question, input.rawPrompt())) return true;
@@ -164,11 +202,19 @@ public final class PlanQuestionFilter {
         List<PlanningFactCategory> categories = questionCategories(question);
         if (categories.size() != 1) return false;
         PlanningFactCategory category = categories.getFirst();
+        String questionScope = PlanningFactScope.question(category, question);
         Set<String> values = new HashSet<>();
         boolean uncertain = false;
         for (KnownFact fact : facts) {
             if (fact.category() != category) continue;
-            if (category == PlanningFactCategory.BUSINESS_RULE && !sameTopic(question, fact.value())) continue;
+            if (category == PlanningFactCategory.BUSINESS_RULE) {
+                // 有明确对象标题时必须完整匹配；无标题的既有自然语言规则继续采用有限主题校验。
+                if (fact.scope() != null && !fact.scope().isEmpty()) {
+                    if (!PlanningFactScope.same(questionScope, fact.scope())) continue;
+                } else if (!sameTopic(question, fact.value())) continue;
+            }
+            if (category != PlanningFactCategory.BUSINESS_RULE
+                    && !PlanningFactScope.same(questionScope, fact.scope())) continue;
             String value = fact.value();
             if (value.matches(".*(未知|待定|未明确|可能|建议|例如|某地区|某省|某市|[？?]).*")) uncertain = true;
             else values.add(normalize(value));
@@ -388,8 +434,7 @@ public final class PlanQuestionFilter {
     }
 
     private String normalize(String value) {
-        return Normalizer.normalize(value, Normalizer.Form.NFKC).toLowerCase(Locale.ROOT)
-                .replaceAll("[\\p{Punct}\\p{IsPunctuation}\\s]+", "");
+        return PlanDecisionIdentity.exactTextKey(value);
     }
 
     private String safe(String value) { return value == null ? "" : value; }

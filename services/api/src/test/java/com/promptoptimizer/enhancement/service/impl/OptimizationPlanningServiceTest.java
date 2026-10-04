@@ -457,6 +457,38 @@ class OptimizationPlanningServiceTest {
                 .hasSize(1);
     }
 
+    @Test
+    void shouldUsePreparedHospitalFactsWithoutHidingTheOtherHospitalsMissingFormat() {
+        String raw = "比较甲医院和乙医院的住院数据，确认数据格式后制定分析方案";
+        PlanningSessionService sessions = new PlanningSessionServiceImpl(
+                new InMemoryPlanningSessionStore(CLOCK),
+                request -> new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(
+                        new FileSnippet("docs/甲医院数据字典.txt", "text", "甲医院数据格式：CSV", "甲医院资料", false),
+                        new FileSnippet("docs/乙医院资料.txt", "text", "乙医院提供住院资料，输入格式未提供。", "乙医院资料", false)
+                ), List.of(), List.of(), "test-v1"),
+                new ProtectedContextFilterImpl(), TestActors.currentActor(), CLOCK);
+        var preparation = sessions.prepareContext(new PlanningContextRequest(raw,
+                new ContextAnalysisRequest("", List.of(
+                        new ContextFileInput("docs/甲医院数据字典.txt", "甲医院数据格式：CSV", "text"),
+                        new ContextFileInput("docs/乙医院资料.txt", "乙医院提供住院资料，输入格式未提供。", "text")
+                )), PermissionPolicyInput.empty()));
+        AtomicInteger calls = new AtomicInteger();
+        var first = new PlanQuestion("first", "甲医院数据采用什么文件格式？", "", PlanQuestionType.FREE_TEXT,
+                List.of(), List.of(), true);
+        var second = new PlanQuestion("second", "乙医院数据采用什么文件格式？", "", PlanQuestionType.FREE_TEXT,
+                List.of(), List.of(), true);
+        var planning = new OptimizationPlanningServiceImpl(request -> {
+            calls.incrementAndGet();
+            assertThat(request.planningContext().factCards()).anyMatch(card -> card.evidence().contains("甲医院数据格式：CSV"));
+            return new PlanningProviderResponse("只确认缺失格式", List.of(first, second), "mock", "planner", true);
+        }, new PromptTemplateRegistryImpl(), sessions, CLOCK);
+        var actual = planning.plan(new OptimizationPlanRequest(raw, "", List.of(),
+                new PlanningContextReference(preparation.contextId(), preparation.version())));
+        assertThat(actual.questions()).extracting(PlanQuestion::id).containsExactly("second");
+        assertThat(calls).hasValue(1);
+        assertThat(actual.planId()).isNotBlank();
+    }
+
     private static PlanningSessionService planningSessions(Clock clock) {
         return new PlanningSessionServiceImpl(
                 new InMemoryPlanningSessionStore(clock),
