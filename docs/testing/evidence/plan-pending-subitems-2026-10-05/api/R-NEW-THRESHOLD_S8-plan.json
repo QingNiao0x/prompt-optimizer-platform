@@ -1,0 +1,181 @@
+{
+  "sample": {
+    "contextDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+    "files": [
+      {
+        "path": "docs/现行审批.md",
+        "language": "markdown",
+        "content": "审批金额阈值：30000元。仅严格大于阈值时财务复核。"
+      },
+      {
+        "path": "docs/候选审批方案.md",
+        "language": "markdown",
+        "content": "审批金额阈值：50000元。仅严格大于阈值时财务复核。"
+      }
+    ],
+    "id": "R-NEW-THRESHOLD_S8",
+    "title": "确认比较符与二次材料新冲突",
+    "rawPrompt": "为订单审批设计最小修改方案，不直接修改文件。三万元和五万元两个审批阈值在附件中冲突，需要先确认采用哪一个。无论选哪个阈值，仅金额严格大于阈值时才财务复核，等于阈值时不得触发复核。必须保持其他审批行为兼容，不自行折中阈值。",
+    "finalOnlyFiles": [
+      {
+        "path": "docs/二次收到的审批意见.md",
+        "language": "markdown",
+        "content": "审批金额阈值：80000元。此意见与候选方案存在冲突，尚未经业务负责人批准。"
+      }
+    ],
+    "domain": "软件审批方案",
+    "cohort": "PRIOR_CONFLICT_REPLAY",
+    "lengthClass": "short_boundary_control",
+    "oracle": {
+      "requiredUnknown": [
+        "30000和50000审批阈值选择"
+      ],
+      "confirmedAnswer": "采用50000元阈值，严格大于才复核，等于不复核。",
+      "finalNewConflict": "80000元未批意见不可替代50000元，但必须保留资料冲突提醒"
+    },
+    "acceptanceRound": "2026-10-05 reminders known facts resolved state",
+    "baseCaseId": "R-NEW-THRESHOLD",
+    "candidate": "pending-subitems-next"
+  },
+  "prepared": {
+    "version": "sha256:5521dd3e49f4afa1758d479aa9f2f30552e572c3170691fdb45a7daa4175d168",
+    "digest": {
+      "description": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/候选审批方案.md",
+        "docs/现行审批.md"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] docs/候选审批方案.md：Markdown 文档摘要：审批金额阈值：50000元。；仅严格大于阈值时财务复核。；业务摘录：[片段 1/1] 审批金额阈值：50000元。 仅严格大于阈值时财务复核。",
+        "[PROJECT_DOCUMENT] docs/现行审批.md：Markdown 文档摘要：审批金额阈值：30000元。；仅严格大于阈值时财务复核。；业务摘录：[片段 1/1] 审批金额阈值：30000元。 仅严格大于阈值时财务复核。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [
+        "资料对“审批金额阈值”存在不同取值：docs/现行审批.md（30000元）与 docs/候选审批方案.md（50000元）。请确认本次采用哪一项。"
+      ],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "docs/候选审批方案.md",
+          "evidence": "审批金额阈值：50000元"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "docs/现行审批.md",
+          "evidence": "审批金额阈值：30000元"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "本轮为合成业务验收材料，不包含真实个人信息；只优化提示词，不执行任务。",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/候选审批方案.md",
+        "docs/现行审批.md"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/现行审批.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n审批金额阈值：30000元。仅严格大于阈值时财务复核。",
+          "summary": "Markdown 文档摘要：审批金额阈值：30000元。；仅严格大于阈值时财务复核。",
+          "truncated": false
+        },
+        {
+          "path": "docs/候选审批方案.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n审批金额阈值：50000元。仅严格大于阈值时财务复核。",
+          "summary": "Markdown 文档摘要：审批金额阈值：50000元。；仅严格大于阈值时财务复核。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T21:24:24.129608400Z",
+    "latencyMs": 5
+  },
+  "plan": {
+    "summary": "目标是先确认订单审批采用三万元还是五万元阈值，再据此设计最小修改方案；阈值冲突是唯一会改变方案结果的关键未决点。",
+    "questions": [
+      {
+        "id": "context-conflict-1",
+        "question": "资料对“审批金额阈值”存在不同取值：docs/现行审批.md（30000元）与 docs/候选审批方案.md（50000元）。请确认本次采用哪一项。",
+        "hint": "上传材料对同一事实给出了不同内容。请选定本次采用的口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "context-conflict-1-first",
+            "label": "采用第一份",
+            "description": "30000元",
+            "answer": "本次采用：30000元",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-second",
+            "label": "采用第二份",
+            "description": "50000元",
+            "answer": "本次采用：50000元",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-both",
+            "label": "两份都保留并标明冲突",
+            "description": "结果中同时写出两个取值和来源",
+            "answer": "两份资料都保留，并在结果中标明冲突和各自来源，不悄悄选定其中一个。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-rewrite",
+            "label": "按原始需求重新写明",
+            "description": "不以这两份数字为准",
+            "answer": "本次不采用这两份资料中的取值，按原始需求重新写明该事实。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 1590,
+    "expiresAt": "2026-10-04T21:24:24.129608400Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "7a79c7bb-0cf0-4984-bfc1-155def44a43e",
+      "elapsedMs": 35
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "c76b6f06-d491-468d-b53a-de9c8ac2ffef",
+      "elapsedMs": 1624
+    }
+  ]
+}

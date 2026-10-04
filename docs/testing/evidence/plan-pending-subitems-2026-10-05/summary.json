@@ -1,0 +1,99 @@
+{
+  "releaseGate": "NOT_CLOSED",
+  "reviewType": "AI_ASSISTED_SYNTHETIC_PERSONA",
+  "rows": [
+    {
+      "id": "H-HOSPITAL-M_S8",
+      "rawChars": 789,
+      "questions": 3,
+      "directAmbiguities": 4,
+      "finalAmbiguities": 5,
+      "template": "TESTING",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "finalLatencyMs": 13344,
+      "allRemindersInBody": true,
+      "result": "REQUIRES_SEMANTIC_REVIEW",
+      "stage": "first-replay"
+    },
+    {
+      "id": "H-LEGAL-SCOPE-M_S8",
+      "rawChars": 698,
+      "questions": 2,
+      "directAmbiguities": 3,
+      "finalAmbiguities": 1,
+      "template": "FEATURE_DEVELOPMENT",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "finalLatencyMs": 5653,
+      "allRemindersInBody": true,
+      "result": "REQUIRES_SEMANTIC_REVIEW",
+      "stage": "first-replay"
+    },
+    {
+      "id": "R-NEW-THRESHOLD_S8",
+      "rawChars": 110,
+      "questions": 1,
+      "directAmbiguities": 1,
+      "finalAmbiguities": 1,
+      "template": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "finalLatencyMs": 6949,
+      "allRemindersInBody": true,
+      "result": "REQUIRES_SEMANTIC_REVIEW",
+      "stage": "first-replay"
+    },
+    {
+      "id": "C-TRANSLATION_S8",
+      "rawChars": 51,
+      "questions": 0,
+      "directAmbiguities": 0,
+      "finalAmbiguities": 0,
+      "template": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "finalLatencyMs": 2484,
+      "allRemindersInBody": true,
+      "result": "REQUIRES_SEMANTIC_REVIEW",
+      "stage": "first-replay"
+    },
+    {
+      "id": "H-HOSPITAL-M_S9",
+      "rawChars": 789,
+      "questions": 8,
+      "directAmbiguities": 3,
+      "finalAmbiguities": 6,
+      "template": "TESTING",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "finalLatencyMs": 13594,
+      "allRemindersInBody": true,
+      "result": "REQUIRES_SEMANTIC_REVIEW",
+      "stage": "supplement"
+    }
+  ],
+  "generationRequests": 15,
+  "generationFailures": 0,
+  "upstreamAttempts": 21
+}

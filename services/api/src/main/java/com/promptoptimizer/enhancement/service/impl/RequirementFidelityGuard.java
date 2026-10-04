@@ -198,6 +198,7 @@ final class RequirementFidelityGuard {
         if (defaultsUnconfirmedFact(expected, actual)) return true;
         // 明确的字段映射禁令不是待选偏好；注明“假设/待确认”也不能把按同名映射变成合法候选。
         if (reversesExplicitFieldMapping(expected, actual)) return true;
+        if (reversesMissingCellRule(expected, actual)) return true;
         if (actual.matches(".*(?:待确认|尚未|暂不确定).*")) return false;
         if (actual.matches(".*(?:测试|验证).*(?:拒绝|拦截|失败|不应).*")
                 || actual.matches(".*(?:拒绝|拦截|失败).*(?:测试|验证).*")) return false;
@@ -277,6 +278,17 @@ final class RequirementFidelityGuard {
         }
         return expected.matches(".*(?:不能|不得|禁止).*创建日期.*(?:当作|作为|代替|视为)就诊日期.*")
                 && actual.matches(".*(?:用|将|把)?创建日期(?:代替|当作|作为|视为)就诊日期.*");
+    }
+
+    /** 明确禁止将缺失填零时，按完整单元格对象校验；另一个机构、合法否定和提问不借此被拒。 */
+    private boolean reversesMissingCellRule(String expected, String actual) {
+        var rule = Pattern.compile("^(.*?)(?:空单元格)?(?:不能|不得|禁止)(?:统一|全部|直接)?(?:填|补|填充|填补)(?:为|成)?0$")
+                .matcher(expected);
+        var candidate = Pattern.compile("^(.*?)(?:将|把)?空单元格(?:统一|全部|直接)?(?:填|补|填充|填补)(?:为|成)?0(?:.*)$")
+                .matcher(actual);
+        if (!rule.matches() || !candidate.matches() || actual.matches(".*(?:不得|不能|禁止|不要|不应).*")) return false;
+        String scope = rule.group(1);
+        return scope.isEmpty() || scope.equals(candidate.group(1));
     }
 
     /**

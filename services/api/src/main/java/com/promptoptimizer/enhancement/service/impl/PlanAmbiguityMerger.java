@@ -79,6 +79,7 @@ final class PlanAmbiguityMerger {
                     identity.field(), List.of(identity.leftValue(), identity.rightValue()))))) continue;
             if (matchesBoundQuestion(text, references)) continue;
             if (mergeConflictExplanation(text, knownConflicts, registered)) continue;
+            if (mergeNewConflictExplanation(text, knownConflicts, registered)) continue;
             if (mergeExplicitPendingSubject(text, registered)) continue;
             if (mergeConditionalCandidateExplanation(text, registered)) continue;
             if (mergeUnresolvedExplanation(text, registered)) continue;
@@ -185,6 +186,22 @@ final class PlanAmbiguityMerger {
     }
 
     /**
+     * 新资料复述已确认值与新增值时，绑定来源、属性和完整数值对后附到同一冲突。
+     * 仅处理纯保留说明；另一来源、金额、年份或独立选择不能借旧确认吞并。
+     */
+    private boolean mergeNewConflictExplanation(String text, List<ConflictIdentity> conflicts, Map<String, String> registered) {
+        if (text.matches("(?s).*(?:另外|此外|另需|还需|同时还).*")) return false;
+        String normalized = normalize(text);
+        List<ConflictIdentity> matching = conflicts.stream().filter(identity -> registered.containsKey(identity.key()))
+                .filter(identity -> decisions.selectedConflictValue(identity.field(), List.of(identity.leftValue(), identity.rightValue()))
+                        .filter(selected -> identity.matchesSelectedNewSourceExplanation(normalized, selected)).isPresent()).toList();
+        if (matching.size() != 1) return false;
+        String key = matching.getFirst().key();
+        if (!registered.get(key).contains(text)) registered.put(key, registered.get(key) + " 补充说明：" + text);
+        return true;
+    }
+
+    /**
      * 同一未决问题的展开说明放入原项，新增条件全文保留；已解决问题不走此分支。
      * 必须唯一匹配解释的完整主题句，不使用相似度或模型自报 ID 推断对应关系。
      */
@@ -224,7 +241,12 @@ final class PlanAmbiguityMerger {
         if (decision.answer().length() <= 8) return false;
         String heading = withoutExamples(header.replaceAll("[（(]用户回答[^）)]*[）)]", ""))
                 .replace("及其业务含义", "及业务含义");
-        String grammar = "除已确认的|已明确为|保持不变|尚未确定|尚未提供|未确定|其余|具体|是否还需要|是否需要|需要|尚未明确|未明确|未提供|仍待确定|已确认|仅确认|的|中|外|与|和|及";
+        // 同题整份回答可以同时有状态和列名；只能以当前未决子项作为属性依据，不能让两项互相背书。
+        String pending = decision.question() + " " + decision.answer();
+        if ((heading.contains("列名") || heading.contains("字段名")) && !pending.contains("列名") && !pending.contains("字段名")
+                || heading.contains("状态") && !pending.contains("状态")) return false;
+        if (!samePartialObject(heading, decision)) return false;
+        String grammar = "除已确认的|已明确为|保持不变|尚未确定|尚未提供|未确定|其余|其他|具体|应如何|如何|是否还需要|是否需要|需要|尚未明确|未明确|未提供|仍待确定|已确认|仅确认|的|中|外|与|和|及";
         String evidence = decision.question() + " " + decision.answer() + " " + decisions.decisions().stream()
                 .filter(original -> java.util.Objects.equals(original.questionId(), decision.questionId()))
                 .map(original -> original.question() + " " + original.answer()).collect(java.util.stream.Collectors.joining(" "));
@@ -257,6 +279,24 @@ final class PlanAmbiguityMerger {
             if (!known.contains(fragment) && !covered[fragment.length()]) return false;
         }
         return semanticLength >= 6;
+    }
+
+    /** 缺少主语的子项只继承原题与原回答共同命名的对象，不借参考机构或另一子项匹配。 */
+    private boolean samePartialObject(String heading, ConfirmedPlanDecision pending) {
+        Pattern named = Pattern.compile("^([\\p{IsHan}A-Za-z0-9_]{1,20}?(?:医院|机构|公司|部门|工作区|租户))");
+        var candidate = named.matcher(heading);
+        if (!candidate.find()) return true;
+        var explicit = named.matcher(pending.question());
+        if (explicit.find()) return candidate.group(1).equals(explicit.group(1));
+        List<String> owners = decisions.decisions().stream()
+                .filter(original -> java.util.Objects.equals(original.questionId(), pending.questionId()))
+                .flatMap(original -> {
+                    var question = named.matcher(original.question());
+                    var answer = named.matcher(original.answer());
+                    return question.find() && answer.find() && question.group(1).equals(answer.group(1))
+                            ? java.util.stream.Stream.of(question.group(1)) : java.util.stream.Stream.empty();
+                }).distinct().toList();
+        return owners.size() == 1 && owners.getFirst().equals(candidate.group(1));
     }
 
     /** 保留完整对象和适用条件，仅将逐个有肯定映射依据的技术代码补集换成同题的“其余”。 */
@@ -433,6 +473,21 @@ final class PlanAmbiguityMerger {
     /** 来源与取值成对排序，反向引用相同证据仍是同一冲突，不同取值/来源另行保留。 */
     private record ConflictIdentity(String field, String leftPath, String leftValue,
                                     String rightPath, String rightValue) {
+        /** 只认固定来源说明语法；任何额外数值、文件或业务条件都会使整条提醒继续独立。 */
+        boolean matchesSelectedNewSourceExplanation(String text, String selected) {
+            String selectedValue = normalize(selected);
+            String left = normalize(leftValue);
+            String right = normalize(rightValue);
+            String path = selectedValue.equals(left) ? rightPath : selectedValue.equals(right) ? leftPath : "";
+            String added = selectedValue.equals(left) ? right : left;
+            if (path.isEmpty()) return false;
+            String expression = "^" + Pattern.quote(normalize(path)) + "提出" + Pattern.quote(normalize(field)) + "为"
+                    + Pattern.quote(added) + "并注明该意见与候选方案冲突尚未经业务负责人批准本次已确认采用"
+                    + Pattern.quote(selectedValue) + "请确认该" + Pattern.quote(added)
+                    + "意见是否仍需在方案中作为待批准事项保留或说明其适用范围$";
+            return text.matches(expression);
+        }
+
         /** 每个来源与取值都须出现，去除证据后只允许剩下简单询问语法。 */
         boolean repeatsEvidence(String header) {
             String remaining = normalize(header);

@@ -589,6 +589,8 @@ flowchart TD
 
 ## 9. 测试范围
 
+2026-10-05 未决子项归并按当前属性核对，来源冲突说明须完整匹配来源和取值；错误关联不能影响其他机构、新条件或新证据。确定性回归通过，但真实医院题仍有改写重复及已知交付重问，详见[补验记录](./testing/Plan未决子项与新资料冲突归并补验-2026-10-05.md)，不能把 HTTP 200 等同于正式业务验收。
+
 - `PlanRecommendationRegressionTest`：真实失败响应的推荐标记回放，问题、候选答案及安全校验保持可用。
 - `PlanningDecisionReplayTest`：实际重复追问及复合改写、作用对象隔离、主动重开、来源冲突、低价值工程核查与真正未知条件。
 - `PlanFailureDiagnosticsTest`、`PlanProviderValidationBudgetTest`：非法 JSON/题型、空正文和截断的原因诊断，前端源码证据进入真实适配器，解析与业务校验共享三次预算。

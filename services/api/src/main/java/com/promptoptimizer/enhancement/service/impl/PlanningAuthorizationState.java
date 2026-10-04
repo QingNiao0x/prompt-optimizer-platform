@@ -23,10 +23,12 @@ final class PlanningAuthorizationState {
     private record Status(String action, boolean granted) { }
     private final List<Status> statuses;
     private final boolean separateHospitalStatistics;
+    private final boolean explicitDeliveryChoice;
 
-    private PlanningAuthorizationState(List<Status> statuses, boolean separateHospitalStatistics) {
+    private PlanningAuthorizationState(List<Status> statuses, boolean separateHospitalStatistics, boolean explicitDeliveryChoice) {
         this.statuses = List.copyOf(statuses);
         this.separateHospitalStatistics = separateHospitalStatistics;
+        this.explicitDeliveryChoice = explicitDeliveryChoice;
     }
 
     /** 逐个完整语句收集现状；条件句、将来申请或示例不是当前授权事实。 */
@@ -48,7 +50,9 @@ final class PlanningAuthorizationState {
         boolean separate = evidence.stream().filter(java.util.Objects::nonNull)
                 .map(source -> source.replaceAll("[\\s`*、，,]", ""))
                 .anyMatch(source -> source.contains("各院分别处理") && source.contains("仅交付不可识别的统计结构"));
-        return new PlanningAuthorizationState(result, separate);
+        boolean choice = evidence.stream().filter(java.util.Objects::nonNull)
+                .anyMatch(source -> source.matches("(?s).*(?:让我选择|由我选择|询问我|由用户选择).{0,20}(?:交付|汇总).*"));
+        return new PlanningAuthorizationState(result, separate, choice);
     }
 
     /**
@@ -79,6 +83,7 @@ final class PlanningAuthorizationState {
 
     /** 仅过滤同一当前状态题，不用已知禁止共享替代新对象、范围或申请流程的决定。 */
     boolean resolves(PlanQuestion question) {
+        if (resolvesSeparateStatisticsDelivery(question)) return true;
         var match = QUESTION.matcher(question.question().replaceAll("\\s+", ""));
         if (!match.matches()) return false;
         String details = question.hint() + " " + String.join(" ", question.examples()) + " "
@@ -90,6 +95,28 @@ final class PlanningAuthorizationState {
         if (Pattern.compile("[\\p{IsHan}]{1,16}(?:医院|机构|公司|部门)(?:的)?(?:原始记录|原始数据)(?:共享|授权)")
                 .matcher(completeText).find()) return false;
         return value(action(match.group(1))).isPresent();
+    }
+
+    /** 继承已经明确的分院不可识别汇总交付，不把未获批准再变成选项；新增范围仍由用户确认。 */
+    private boolean resolvesSeparateStatisticsDelivery(PlanQuestion question) {
+        if (explicitDeliveryChoice || !separateHospitalStatistics
+                || !value("跨院共享原始记录").equals(Optional.of(false))
+                || !question.question().matches("^在跨院原始记录共享尚未获批准的情况下[，,]本次交付的汇总结果应如何处理[？?]$")) return false;
+        String hint = question.hint().strip();
+        if (!hint.isEmpty() && !hint.equals("跨院共享原始记录尚未获批准，不能把技术上可合并理解为已获授权；这决定最终交付物是各院分别处理还是仅交付不可识别的统计结构。")) return false;
+        if (!question.examples().isEmpty() || question.options().isEmpty()) return false;
+        return question.options().stream().allMatch(option -> {
+            // 描述和推荐依据也能隐藏新增决定，不能只拿答案文本认定整题已解决。
+            if (!List.of("不合并原始记录。", "不共享原始记录。",
+                    "甲、乙医院分别整理，不合并原始记录，仅各自输出检查结果。",
+                    "不共享原始记录，仅交付各院分别处理后的不可识别统计结构。").contains(option.description())) return false;
+            if (!option.recommendationReason().isBlank() && !option.recommendationReason()
+                    .equals("原始需求明确包含：各院分别处理。请核对适用范围后选择。")) return false;
+            if (!List.of("各院分别处理", "不可识别统计结构", "仅交付不可识别统计结构").contains(option.label())) return false;
+            String answer = option.answer().replaceAll("[\\s，,。]", "");
+            return answer.equals("各院分别处理不合并原始记录仅各自输出检查结果")
+                    || answer.equals("不共享原始记录仅交付各院分别处理后的不可识别统计结构");
+        });
     }
 
     /** 已知限制供模型继承；冲突状态不自选一个值，也不把用户资料当作平台授权。 */
