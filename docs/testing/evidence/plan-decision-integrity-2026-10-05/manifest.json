@@ -1,0 +1,61 @@
+{
+  "protocol": "Six frozen inputs, one first run per mode. Synthetic answers reviewed individually. API 200 is not a semantic PASS. Unrelated template/recommendation/latency limitations remain outside this batch.",
+  "casesSha256": "cf6b1b206e1c53294248475024e174b4a6fbf5c2b6f6b8a473417d941dc8ba87",
+  "sources": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/ConfirmedDecisionSet.java",
+      "sha256": "5489d3eeddfb1c812fc6baaa51d36a9666a61531f277075849681d5e8bc5ef44"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/ContextConflictDetector.java",
+      "sha256": "720cfef95dff4a05ea956cd79893dc7bad30a11bee58d25131be23e4057e5e33"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/DefaultEnhancementOrchestrator.java",
+      "sha256": "f1cb18dab1ea044f962b2641a35a7e00cd47d712796620c8346e944a1589779a"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationPlanningServiceImpl.java",
+      "sha256": "f36e846a61c84bf750767893b568536fc936d296a121e4ddbf53dc0a7cf48e43"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java",
+      "sha256": "99a16a4142f72ade7513b8d3eb8327bd34ae2cb231c32673d8f28be6aef3a853"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAmbiguityMerger.java",
+      "sha256": "f78a021198d40d65baaf15efdbb138bd4544db0d70ea880757e82a498d01c54f"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAnswerSemantics.java",
+      "sha256": "a80bc8c64be2a6b6d008ecb5f845adb638db429b28130210635e508f18ea2110"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanEligibilityGuard.java",
+      "sha256": "8feb9add84129cfa7b2e19ac0dddef993a5de4d0466dc272658302b262f2a532"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningConflictIdentity.java",
+      "sha256": "871da295ea4f2499abb260f38bbe6ff48a488d6f347f304feae84c19179a6d9d"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningDecisionPolicy.java",
+      "sha256": "44591b55d18b35af476f2ad8e272fe47cb457e262a1538fb31c5aa631d0117e4"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/domain/PlanningKnownDecision.java",
+      "sha256": "8b1e588811f0e5b01cf35a68d75fe544e9bfd36557c3931f32afdd752bae1476"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java",
+      "sha256": "0f9f104f44d6ad3bebf236744cce6bb7d4317d84d87f08cb0426e9b7e0813abc"
+    }
+  ],
+  "regression": {
+    "classes": 30,
+    "tests": 456,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

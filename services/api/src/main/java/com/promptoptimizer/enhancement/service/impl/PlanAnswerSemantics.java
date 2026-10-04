@@ -32,6 +32,33 @@ final class PlanAnswerSemantics {
                 .collect(java.util.stream.Collectors.joining(" "));
     }
 
+    /**
+     * 分别保留完整未决子句，不把同一回答里的已定月份、工具或空值规则重新变成未知。
+     * 不拆逗号连接的适用条件和禁止猜测说明，也不将条件分支中的“未确定”认作当前待定。
+     */
+    static List<String> pendingParts(String answer) {
+        List<String> pending = clauses(answer).stream().filter(PlanAnswerSemantics::pendingClause).distinct().toList();
+        boolean named = pending.stream().anyMatch(PlanAnswerSemantics::namesPendingSubject);
+        // “暂不确定。寿命表尚未提供”是一个缺口的总括与展开；不再把总括登记为第二个业务问题。
+        return named ? pending.stream().filter(PlanAnswerSemantics::namesPendingSubject).toList() : pending;
+    }
+
+    /** 有明确业务主语的未决子句可独立展示；裸“暂不确定”仍需继承服务端原题才能保持含义。 */
+    static boolean namesPendingSubject(String clause) {
+        var pending = PENDING.matcher(clause);
+        if (!pending.find()) return false;
+        String subject = clause.substring(0, pending.start()).replaceFirst("^(?:但|不过|然而)", "")
+                .replaceAll("暂|尚|仍|具体|其余|的|\\s|[，,：:]", "");
+        return subject.length() >= 2;
+    }
+
+    /** 未决断言前的完整对象与属性；只移除紧邻状态词的程度副词，不删业务名、数值或条件。 */
+    static String pendingSubject(String clause) {
+        var pending = PENDING.matcher(clause);
+        if (!pending.find()) return "";
+        return clause.substring(0, pending.start()).strip().replaceFirst("(?:完全|仍然|仍|目前|现在|暂时|暂)$", "");
+    }
+
     /** 只有出现明确的当前选择才移开历史未知前缀；按完整语句和转折分开，保留条件与数值。 */
     private static List<String> clauses(String answer) {
         if (answer == null || answer.isBlank()) return List.of();

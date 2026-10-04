@@ -1,0 +1,49 @@
+{
+  "sample": {
+    "id": "C-TRANSLATION_R4",
+    "category": "complete-request",
+    "rawPrompt": "请把“Good morning, everyone.”翻译成简体中文，保留原句的问候语气，只输出译文。",
+    "contextDescription": "",
+    "expectedTemplate": "GENERAL",
+    "files": [],
+    "expectNoQuestions": true,
+    "finalTerms": [
+      "Good morning, everyone.",
+      "简体中文"
+    ],
+    "answerRules": [],
+    "prohibitedClaims": [],
+    "title": "完整翻译需求与仅输出限制",
+    "domain": "翻译",
+    "cohort": "COMPLETE_INPUT_CONTROL",
+    "lengthClass": "short_complete_control",
+    "oracle": {
+      "expectedQuestions": 0,
+      "outputOnly": "下游只输出简体中文译文，不附解释"
+    },
+    "acceptanceRound": "2026-10-05 qualification/conflict/partial state regression",
+    "baseCaseId": "C-TRANSLATION"
+  },
+  "prepared": null,
+  "plan": {
+    "summary": "当前需求及已提供材料足以进入最终增强，无需额外确认。",
+    "questions": [],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 864,
+    "expiresAt": "2026-10-04T18:44:13.669934300Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "cf22db81-5aaa-45f4-89c5-77b11503cf0c",
+      "elapsedMs": 936
+    }
+  ]
+}

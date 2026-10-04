@@ -112,6 +112,7 @@ public final class PlanQuestionFilter {
 
     /** 常规章节组织交给执行者；用户主动要求确认结构、期刊规范或专业方法时仍保留问题。 */
     private boolean routinePresentation(PlanQuestion candidate, String rawPrompt) {
+        if (explicitlyDelegatedFactOrganization(candidate, safe(rawPrompt))) return true;
         if (TaskDeliveryProfile.identify(rawPrompt) == TaskDeliveryProfile.GENERAL
                 || safe(rawPrompt).matches("(?s).*(?:询问|确认|让我选择|由我选择).{0,16}(?:章节|结构|顺序|提纲).*")) return false;
         // 章节题也可能携带样本、法域等真实选择；只委派没有新决策元信息的纯排版问题。
@@ -119,6 +120,28 @@ public final class PlanQuestionFilter {
         String question = candidate.question();
         return question.matches("^(?:论文|方法提纲|报告|新闻稿|教案|指南)?(?:的)?(?:章节|小节|提纲)(?:应|应该|需要)?如何(?:组织|排序|安排)[？?]$")
                 || question.matches("^(?:方法提纲|报告|新闻稿|教案|指南)的(?:章节|小节)(?:应|应该|需要)?如何(?:组织|排序|安排)[？?]$");
+    }
+
+    /**
+     * 用户已委托的事实清单排版无需再选；“冲突材料/未决选择”是已给定的栏目名称。
+     * 只接受这三栏的纯组织选项，新指标、专业标准、另一对象或额外决定继续保留。
+     */
+    private boolean explicitlyDelegatedFactOrganization(PlanQuestion candidate, String raw) {
+        if (!raw.matches("(?s).*常规章节组织[^。]*由执行者处理[^。]*无需让我决定.*")
+                || !candidate.question().matches("^你希望最终提示词在交付物中如何组织“已知事实、冲突材料与未决选择”这三部分[？?]$")) return false;
+        if (!raw.contains("已知事实") || !raw.contains("冲突材料") || !raw.contains("未决选择")
+                || candidate.options().isEmpty()) return false;
+        if (questionDetails(candidate).stream().map(detail -> detail.replace("冲突材料", "").replace("未决选择", ""))
+                .anyMatch(detail -> INDEPENDENT_PRESENTATION_DECISION.matcher(detail).find())) return false;
+        return candidate.options().stream().allMatch(option -> {
+            String answer = option.answer().replaceAll("[\\s，。、]", "")
+                    .replace("已知事实", "").replace("冲突材料", "").replace("未决选择", "").replace("与", "");
+            if (answer.equals("分别独立成节列出") || answer.equals("将合并为一张表用类型列区分")) return true;
+            var byObject = Pattern.compile("^按([^。]{2,40})分别列出各自的已知事实、冲突材料与未决选择[。]?$")
+                    .matcher(option.answer());
+            return byObject.matches() && java.util.Arrays.stream(byObject.group(1).split("[、，,与和]"))
+                    .map(String::strip).allMatch(scope -> scope.length() >= 2 && raw.contains(scope));
+        });
     }
 
     /**
@@ -216,7 +239,9 @@ public final class PlanQuestionFilter {
             if (category != PlanningFactCategory.BUSINESS_RULE
                     && !PlanningFactScope.same(questionScope, fact.scope())) continue;
             String value = fact.value();
-            if (value.matches(".*(未知|待定|未明确|可能|建议|例如|某地区|某省|某市|[？?]).*")) uncertain = true;
+            // 唯一的“未提供/未指定”不是唯一已知取值；保持未知，不能因标签匹配删除必要问题。
+            if (PlanAnswerSemantics.unresolved(value)
+                    || value.matches(".*(未知|待定|未明确|可能|建议|例如|某地区|某省|某市|[？?]).*")) uncertain = true;
             else values.add(normalize(value));
         }
         return !uncertain && values.size() == 1;

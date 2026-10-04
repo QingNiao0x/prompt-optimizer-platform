@@ -196,6 +196,8 @@ final class RequirementFidelityGuard {
         if (expected.isBlank() || actual.isBlank() || expected.equals(actual)
                 || actual.matches(".*(?:反例|错误示例|原错误|旧规则|历史规则|[？?]).*")) return false;
         if (defaultsUnconfirmedFact(expected, actual)) return true;
+        // 明确的字段映射禁令不是待选偏好；注明“假设/待确认”也不能把按同名映射变成合法候选。
+        if (reversesExplicitFieldMapping(expected, actual)) return true;
         if (actual.matches(".*(?:待确认|尚未|暂不确定).*")) return false;
         if (actual.matches(".*(?:测试|验证).*(?:拒绝|拦截|失败|不应).*")
                 || actual.matches(".*(?:拒绝|拦截|失败).*(?:测试|验证).*")) return false;
@@ -263,6 +265,18 @@ final class RequirementFidelityGuard {
         QuantityRule right = quantityRule(actual);
         return !left.values().isEmpty() && left.skeleton().equals(right.skeleton())
                 && (!left.values().equals(right.values()) || !left.operators().equals(right.operators()));
+    }
+
+    /** 只比较完整命名关系，不把合法并列展示、核验后的映射或分别使用两个日期判为违规。 */
+    private boolean reversesExplicitFieldMapping(String expected, String actual) {
+        boolean negated = actual.matches(".*(?:不得|不能|禁止|不要|不应|不)(?:直接|按|将|把|用|视为|当成).*" );
+        if (negated) return false;
+        if (expected.matches(".*(?:不能|不得|禁止).*同名.*同义.*" )) {
+            if (actual.matches(".*同名字段直接(?:视为|当成|当作)同义.*")
+                    || actual.matches(".*直接按同名映射.*")) return true;
+        }
+        return expected.matches(".*(?:不能|不得|禁止).*创建日期.*(?:当作|作为|代替|视为)就诊日期.*")
+                && actual.matches(".*(?:用|将|把)?创建日期(?:代替|当作|作为|视为)就诊日期.*");
     }
 
     /**

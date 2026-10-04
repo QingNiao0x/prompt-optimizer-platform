@@ -1,0 +1,209 @@
+{
+  "sample": {
+    "id": "H-LEGAL-SCOPE-M_S6",
+    "title": "审批与退款的两个标准不能相互覆盖",
+    "domain": "合同复核材料整理",
+    "cohort": "UNSEEN_HOLDOUT",
+    "lengthClass": "medium",
+    "contextDescription": "合成业务验收资料，不含真实患者、当事人或凭据。本平台只生成任务提示词，不执行任务。",
+    "rawPrompt": "请为法务人员整理一组虚构机构的合同审批与退款流程材料，交付中文复核备忘录和条款差异表，不执行审批、退款、发函或法律行动。机构名称为科研标准中心，名称中的“标准”属于完整业务对象，不能因为它是常用词就删除。当前目标是区分两个业务决定：合同审批金额门槛与合同退款审核标准，两者不得相互替代。\n合同审批存在两个尚未选定的版本：现行说明要求金额严格大于50000元才进入二级复核；未批准草稿要求金额大于或等于50000元进入二级复核。两个版本差异只在等于50000元的边界，但该差异会改变结果，必须保留>与>=的含义，不能归一为相同规则。当前尚未确认采用哪版，不自行折中。独立的退款审核标准完全未提供，应单独询问；不能把审批门槛当成退款标准。\n材料均未签署，尚不代表已生效合同或真实法律制度。输出只整理文件中的流程约定，不推断哪一方一定合法、违法或胜诉，不引用没有给出依据的法律条文。版本是否有效不能只按日期较新判断，需要负责人确认。本次已明确从内部材料核对角度出发，不重新询问律师职业、文风、背景国家或开发框架。金额单位均为元，小数1.5与整数15不得合并；退款金额的计量单位已经明确，不再追问单位。\n收到回答后，应明确用户已选的审批条件，同时将仍未知的退款标准保留为执行前条件；没有答案不能假装两项都已解决。正文须保留关键前提，不能仅在页面的黄色提醒中展示。对于格式、标题顺序、差异表排列方式，按易核查原则自行组织即可。最后列出资料缺口与核查清单，用条件句说明哪些步骤可以先做、哪些需等待负责人确认。不要增加真实账户、联系人、银行信息或客户案例。只交付资料整理和风险核查，不展开诉讼方案或运行SQL。",
+    "files": [
+      {
+        "path": "materials/legal/审批现行说明.md",
+        "language": "markdown",
+        "content": "科研标准中心：审批金额 > 50000元时二级复核；=50000元不复核。此规则是否在本次继续采用尚待负责人确认。"
+      },
+      {
+        "path": "materials/legal/审批未批草稿.md",
+        "language": "markdown",
+        "content": "科研标准中心：审批金额 >= 50000元时二级复核。未批准，不能当成生效规则。"
+      },
+      {
+        "path": "materials/legal/退款资料.md",
+        "language": "markdown",
+        "content": "科研标准中心：退款审核标准尚未提供。金额单位：元。没有退款流程执行授权。"
+      }
+    ],
+    "oracle": {
+      "requiredUnknown": [
+        "审批边界版本",
+        "退款审核标准"
+      ],
+      "chosenAnswer": "本次采用严格大于50000元的现行审批条件，等于50000元不得进入二级复核；退款审核标准仍未确定。",
+      "protected": [
+        ">",
+        ">=",
+        "50000等值边界",
+        "科研标准中心",
+        "退款未知独立保留"
+      ]
+    },
+    "acceptanceRound": "2026-10-05 reminders known facts resolved state",
+    "baseCaseId": "H-LEGAL-SCOPE-M",
+    "candidate": "candidate6-final"
+  },
+  "prepared": {
+    "version": "sha256:13856057e6070ecea6725de66a4633e8c01f04ed78c7d544d0716498f218219f",
+    "digest": {
+      "description": "合成业务验收资料，不含真实患者、当事人或凭据。本平台只生成任务提示词，不执行任务。",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/legal/",
+        "materials/legal/审批未批草稿.md",
+        "materials/legal/审批现行说明.md",
+        "materials/legal/退款资料.md"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/legal/审批现行说明.md：Markdown 文档摘要：科研标准中心：审批金额 > 50000元时二级复核；=50000元不复核。；此规则是否在本次继续采用尚待负责人确认。；业务摘录：[片段 1/1] 科研标准中心：审批金额 > 50000元时二级复核； =50000元不复核。 此规则是否在本次继续采用尚待负责人确认。",
+        "[PROJECT_DOCUMENT] materials/legal/退款资料.md：Markdown 文档摘要：科研标准中心：退款审核标准尚未提供。；金额单位：元。；没有退款流程执行授权。；业务摘录：[片段 1/1] 科研标准中心：退款审核标准尚未提供。 金额单位：元。 没有退款流程执行授权。",
+        "[PROJECT_DOCUMENT] materials/legal/审批未批草稿.md：Markdown 文档摘要：科研标准中心：审批金额 >= 50000元时二级复核。；未批准，不能当成生效规则。；业务摘录：[片段 1/1] 科研标准中心：审批金额 >= 50000元时二级复核。 未批准，不能当成生效规则。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 3,
+      "warnings": [
+        "资料对“科研标准中心”存在不同取值：materials/legal/审批现行说明.md（审批金额 > 50000元时二级复核）与 materials/legal/审批未批草稿.md（审批金额 >= 50000元时二级复核）。请确认本次采用哪一项。"
+      ],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "合成业务验收资料，不含真实患者、当事人或凭据。本平台只生成任务提示词，不执行任务。",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/legal/",
+        "materials/legal/审批未批草稿.md",
+        "materials/legal/审批现行说明.md",
+        "materials/legal/退款资料.md"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/legal/审批现行说明.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n科研标准中心：审批金额 > 50000元时二级复核；=50000元不复核。此规则是否在本次继续采用尚待负责人确认。",
+          "summary": "Markdown 文档摘要：科研标准中心：审批金额 > 50000元时二级复核；=50000元不复核。；此规则是否在本次继续采用尚待负责人确认。",
+          "truncated": false
+        },
+        {
+          "path": "materials/legal/审批未批草稿.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n科研标准中心：审批金额 >= 50000元时二级复核。未批准，不能当成生效规则。",
+          "summary": "Markdown 文档摘要：科研标准中心：审批金额 >= 50000元时二级复核。；未批准，不能当成生效规则。",
+          "truncated": false
+        },
+        {
+          "path": "materials/legal/退款资料.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n科研标准中心：退款审核标准尚未提供。金额单位：元。没有退款流程执行授权。",
+          "summary": "Markdown 文档摘要：科研标准中心：退款审核标准尚未提供。；金额单位：元。；没有退款流程执行授权。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T20:44:34.670963800Z",
+    "latencyMs": 10
+  },
+  "plan": {
+    "summary": "已理解目标：为法务人员整理科研标准中心的合同审批与退款流程复核备忘录和条款差异表，不执行任何审批、退款或法律行动，并保留>与>=的边界差异、不把审批门槛当退款标准。需要确认两个尚未决定的关键业务口径：本次采用哪一版审批金额门槛，以及完全未提供的退款审核标准应如何处理。",
+    "questions": [
+      {
+        "id": "context-conflict-1",
+        "question": "资料对“科研标准中心”存在不同取值：materials/legal/审批现行说明.md（审批金额 > 50000元时二级复核）与 materials/legal/审批未批草稿.md（审批金额 >= 50000元时二级复核）。请确认本次采用哪一项。",
+        "hint": "上传材料对同一事实给出了不同内容。请选定本次采用的口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "context-conflict-1-first",
+            "label": "采用第一份",
+            "description": "审批金额 > 50000元时二级复核",
+            "answer": "本次采用：审批金额 > 50000元时二级复核",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-second",
+            "label": "采用第二份",
+            "description": "审批金额 >= 50000元时二级复核",
+            "answer": "本次采用：审批金额 >= 50000元时二级复核",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-both",
+            "label": "两份都保留并标明冲突",
+            "description": "结果中同时写出两个取值和来源",
+            "answer": "两份资料都保留，并在结果中标明冲突和各自来源，不悄悄选定其中一个。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-rewrite",
+            "label": "按原始需求重新写明",
+            "description": "不以这两份数字为准",
+            "answer": "本次不采用这两份资料中的取值，按原始需求重新写明该事实。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "refund_standard_handling",
+        "question": "退款审核标准完全未提供，本次应如何处理？",
+        "hint": "退款标准与审批门槛是两个独立业务决定，不能相互替代；需要明确是等待补充资料，还是仅列出缺口。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "wait_for_material",
+            "label": "等待负责人补充退款标准后再整理",
+            "description": "在收到退款审核标准前，不生成涉及退款标准判断的内容。",
+            "answer": "退款审核标准尚未提供，等待负责人补充后再整理；在此之前不生成涉及退款标准判断的内容。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "list_gap_only",
+            "label": "先列出缺口，退款标准保留为执行前条件",
+            "description": "本次只整理已有审批流程，退款标准作为资料缺口和待确认条件列出，不推断具体标准。",
+            "answer": "本次先整理已有审批流程，退款审核标准作为资料缺口和待负责人确认的执行前条件列出，不推断、不替代为审批门槛。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "FEATURE_DEVELOPMENT",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 3309,
+    "expiresAt": "2026-10-04T20:44:34.670963800Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "68d9df94-4d12-4caf-b0f4-375c5891e3d6",
+      "elapsedMs": 41
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "dbaff716-7434-423a-84ca-4b7ce6a7fc6e",
+      "elapsedMs": 3340
+    }
+  ]
+}

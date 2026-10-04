@@ -136,11 +136,15 @@ public class OptimizationResultAssembler {
         }
 
         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planAnswers);
+        var resolvedState = ResolvedPlanState.from(planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), rawPrompt);
+        // 先建立有效执行视图，再提取规则；原始提示词与卡片仍完整保存，旧未知不能被保真流程补回。
+        String effectiveRawPrompt = resolvedState.reconcile(rawPrompt);
+        sections.replaceAll((type, section) -> new PromptSection(type, section.title(), resolvedState.reconcile(section.content())));
         String evidenceQuery = decisions.retrievalQuery(rawPrompt);
         List<PlanningFactCard> eligibleFacts = new PlanningFactCardExtractor()
                 .filterBoundFacts(planningFacts, context, evidenceQuery);
         List<String> documentFacts = contextFactPreserver.facts(context, evidenceQuery);
-        List<String> explicitRules = fidelityGuard.explicitRules(rawPrompt, decisions.decisions());
+        List<String> explicitRules = fidelityGuard.explicitRules(effectiveRawPrompt, decisions.decisions());
         validateExecutionRules(sections, explicitRules, eligibleFacts, documentFacts);
         appendConfirmedAnswers(sections, decisions);
         appendConfirmedDecisions(sections, decisions);
@@ -309,10 +313,14 @@ public class OptimizationResultAssembler {
                 .forEach(fact -> sourceRules.addAll(fidelityGuard.explicitRules(fact, List.of())));
         List<String> rules = new ArrayList<>(explicitRules);
         rules.addAll(fidelityGuard.compatibleSourceRules(sourceRules, explicitRules));
+        var eligibilityGuard = PlanEligibilityGuard.from(rules);
         for (PromptSectionType type : List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT,
                 PromptSectionType.CONSTRAINTS, PromptSectionType.ACCEPTANCE)) {
             PromptSection section = sections.get(type);
-            if (section != null) fidelityGuard.validate(section.content(), rules, "sections." + type);
+            if (section != null) {
+                fidelityGuard.validate(section.content(), rules, "sections." + type);
+                eligibilityGuard.validate(section.content(), "", "sections." + type);
+            }
         }
     }
 
@@ -562,7 +570,7 @@ public class OptimizationResultAssembler {
             Map<PromptSectionType, PromptSection> sections,
             ConfirmedDecisionSet decisions
     ) {
-        List<ConfirmedPlanDecision> resolved = decisions.decisions().stream()
+        List<ConfirmedPlanDecision> resolved = decisions.knownDecisions().stream()
                 .filter(decision -> decision.scope() == Scope.CURRENT_STATE).toList();
         if (resolved.isEmpty()) {
             return;
@@ -583,10 +591,9 @@ public class OptimizationResultAssembler {
     private void appendConfirmedDecisions(Map<PromptSectionType, PromptSection> sections,
                                           ConfirmedDecisionSet decisions) {
         Map<PromptSectionType, List<String>> required = new EnumMap<>(PromptSectionType.class);
-        for (ConfirmedPlanDecision decision : decisions.decisions()) {
+        for (ConfirmedPlanDecision decision : decisions.knownDecisions()) {
             if (decision.scope() == Scope.CURRENT_STATE) continue;
-            String confirmed = decision.scope() == Scope.UNRESOLVED
-                    ? PlanAnswerSemantics.confirmedPart(decision.answer()) : decision.answer();
+            String confirmed = decision.answer();
             if (confirmed.isBlank()) continue;
             PromptSectionType type = decision.topic().startsWith("输出") || decision.topic().startsWith("交付")
                     ? PromptSectionType.OUTPUT : PromptSectionType.TASK;

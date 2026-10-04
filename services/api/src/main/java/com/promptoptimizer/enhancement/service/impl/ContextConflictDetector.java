@@ -45,8 +45,8 @@ final class ContextConflictDetector {
     List<Finding> findings(ContextSnapshot context, ConfirmedDecisionSet decisions, String query,
                            List<PlanningFactCard> boundFacts) {
         PlanningEvidencePolicy evidencePolicy = new PlanningEvidencePolicy(query);
-        Map<String, Map<String, SourceValue>> byField = new LinkedHashMap<>();
-        Set<String> relevantFields = new HashSet<>();
+        Map<ScopedField, Map<String, SourceValue>> byField = new LinkedHashMap<>();
+        Set<ScopedField> relevantFields = new HashSet<>();
         List<StagedFile> evidence = new ArrayList<>();
         context.fileSnippets().forEach(file -> evidence.add(new StagedFile(file, false)));
         boundFacts.forEach(card -> evidence.add(new StagedFile(new FileSnippet(
@@ -62,34 +62,38 @@ final class ContextConflictDetector {
                 String value = matches.group(2).trim();
                 if (!MATERIAL_FIELD.matcher(key).matches() || value.length() < 2
                         || sensitiveValueDetector.containsCredential(value)
-                        || value.matches(".*(待定|未知|未明确|可能|例如|[？?]).*")) continue;
+                        || value.matches(".*(待定|未知|未明确|可能|例如|[？?]).*")
+                        || PlanAnswerSemantics.unresolved(value)) continue;
+                ScopedField scoped = new ScopedField(key, PlanningConflictIdentity.businessDimension(key, value));
                 // 一方命中用户已确认值后，同字段的另一取值也必须参加比较，不能因其未命中答案而消失。
                 if (query == null || query.isBlank()
                         || evidencePolicy.relevant(file, key + "：" + value, PlanningFactCategory.BUSINESS_RULE)) {
-                    relevantFields.add(key);
+                    relevantFields.add(scoped);
                 }
-                byField.computeIfAbsent(key, unused -> new LinkedHashMap<>())
-                        .putIfAbsent(value.toLowerCase(Locale.ROOT), new SourceValue(file.path(), value,
+                byField.computeIfAbsent(scoped, unused -> new LinkedHashMap<>())
+                        .putIfAbsent(file.path() + "\u0000" + PlanningConflictIdentity.canonical(value), new SourceValue(file.path(), value,
                                 scope(value), staged.fromPlan()));
             }
         }
         List<Finding> conflicts = new ArrayList<>();
-        for (Map.Entry<String, Map<String, SourceValue>> entry : byField.entrySet()) {
+        for (Map.Entry<ScopedField, Map<String, SourceValue>> entry : byField.entrySet()) {
             if (!relevantFields.contains(entry.getKey())) continue;
             List<SourceValue> values = new ArrayList<>(entry.getValue().values());
             // 已确认的规则排在首位，第三个新值必须与本次采用值比较，不能复活已放弃的规则。
-            decisions.selectedConflictValue(entry.getKey()).ifPresent(selected ->
+            decisions.selectedConflictValue(entry.getKey().label(), values.stream().map(SourceValue::value).toList()).ifPresent(selected ->
                     values.sort(java.util.Comparator.comparingInt(value ->
-                            value.value().trim().equalsIgnoreCase(selected) ? 0 : 1)));
+                            PlanningConflictIdentity.canonical(value.value()).equals(selected) ? 0 : 1)));
             SourceValue first = null;
             SourceValue second = null;
             for (int left = 0; left < values.size() && second == null; left++) {
                 for (int right = left + 1; right < values.size(); right++) {
                     if ((!values.get(left).path().equals(values.get(right).path())
                             || values.get(left).fromPlan() != values.get(right).fromPlan())
+                            && !PlanningConflictIdentity.canonical(values.get(left).value()).equals(
+                                    PlanningConflictIdentity.canonical(values.get(right).value()))
                             && !isCurrentToTarget(values.get(left), values.get(right))
-                            && !decisions.resolvesConflict(entry.getKey(),
-                                    List.of(values.get(left).value(), values.get(right).value()))) {
+                            && !decisions.resolvesConflict(entry.getKey().label(), values.get(left).path(), values.get(left).value(),
+                                    values.get(right).path(), values.get(right).value())) {
                         first = values.get(left);
                         second = values.get(right);
                         break;
@@ -97,15 +101,18 @@ final class ContextConflictDetector {
                 }
             }
             if (second == null) continue;
-            String message = "资料对“" + entry.getKey() + "”存在不同取值："
+            String message = "资料对“" + entry.getKey().label() + "”存在不同取值："
                     + sourceLabel(first) + "（" + first.value() + "）与 "
                     + sourceLabel(second) + "（" + second.value() + "）。请确认本次采用哪一项。";
-            conflicts.add(new Finding(entry.getKey(), first.path(), first.value(),
+            conflicts.add(new Finding(entry.getKey().label(), first.path(), first.value(),
                     second.path(), second.value(), message));
             if (conflicts.size() == 3) break;
         }
         return conflicts;
     }
+
+    /** 标签相同但业务对象/属性不同的材料不能构造互斥冲突；公开文案仍保留完整机构名。 */
+    private record ScopedField(String label, String dimension) { }
 
     private Scope scope(String value) {
         if (value.matches("^(?:目标|迁移后|计划改为|拟采用).*")) return Scope.TARGET;

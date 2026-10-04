@@ -21,6 +21,10 @@ public record PlanningKnownDecision(Kind kind, String subject, String evidence, 
         MATCH_TRIGGER,
         EXISTING_UI_TRIGGER_LOOKUP,
         REGION_MATCH_SCOPE,
+        /** 地区必须核验且匹配后才有补值资格；不决定缺失记录的展示或地区层级。 */
+        REGION_ELIGIBILITY,
+        /** 当前明确的资料授权状态；未批准不是允许普通用户选择批准，更不代表平台授予权限。 */
+        AUTHORIZATION_STATE,
         FILL_WRITE_SCOPE,
         DETAIL_BEFORE_FILL,
         CANCEL_EFFECT,

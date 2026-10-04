@@ -27,7 +27,8 @@ final class PlanFindingClassifier {
     Kind classify(String finding, List<String> evidence, List<String> exclusionEvidence) {
         // “若发现冲突则保留出处”与“现有金额存在冲突”不同。只复用原文已明确且逐句可核对的处理禁令。
         if (verifiedInstruction(finding, evidence) || verifiedCapabilityBoundary(finding, evidence)
-                || verifiedExcludedMaterial(finding, exclusionEvidence)) return Kind.KNOWN_RULE;
+                || verifiedExcludedMaterial(finding, exclusionEvidence)
+                || PlanningAuthorizationState.verifiedRuleReminder(finding, evidence)) return Kind.KNOWN_RULE;
         if (DECISION.matcher(finding).find()) return Kind.UNRESOLVED;
         if (verifiedExclusion(finding, exclusionEvidence)) return Kind.KNOWN_RULE;
         // 这类语句要求执行者先读工程，而不是要求用户补齐业务选择；保留全文到任务段落。

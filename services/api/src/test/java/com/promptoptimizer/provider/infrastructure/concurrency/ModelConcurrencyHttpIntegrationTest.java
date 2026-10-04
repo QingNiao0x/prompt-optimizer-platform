@@ -1,10 +1,12 @@
 package com.promptoptimizer.provider.infrastructure.concurrency;
 
+import com.promptoptimizer.analytics.infrastructure.AuditEventDelivery;
 import com.promptoptimizer.enhancement.service.EnhancementOrchestrator;
 import com.promptoptimizer.enhancement.service.OptimizationPlanningService;
 import com.promptoptimizer.history.service.OptimizationHistoryService;
 import com.promptoptimizer.identity.security.AuthenticatedUser;
 import com.promptoptimizer.identity.support.TestActors;
+import com.promptoptimizer.provider.infrastructure.PlatformModelCatalogService;
 import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -63,6 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 0.1.0
  */
 @SpringBootTest(properties = {
+        "spring.flyway.enabled=false",
         "app.security.local-user.password=concurrency-test-password1",
         "app.provider.mode=openai-compatible",
         "app.provider.openai-compatible.multi-provider-enabled=false",
@@ -83,6 +86,9 @@ class ModelConcurrencyHttpIntegrationTest {
     @MockBean private EnhancementOrchestrator enhancement;
     @MockBean private OptimizationPlanningService planning;
     @MockBean private OptimizationHistoryService history;
+    // 并发验证使用合成身份；不能把不存在的租户写入本地审计，也不能导入测试模型到平台目录。
+    @MockBean private AuditEventDelivery auditDelivery;
+    @MockBean private PlatformModelCatalogService modelCatalog;
 
     @DynamicPropertySource
     static void localModelEndpoint(DynamicPropertyRegistry registry) {

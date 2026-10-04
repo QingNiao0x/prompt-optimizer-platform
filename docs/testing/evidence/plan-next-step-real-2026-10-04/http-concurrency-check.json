@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "testClass": "com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest",
+  "tests": 4,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "durationSeconds": 8.889,
+  "cases": [
+    "doesNotReplaceAuthenticationOrCsrfWithClientSuppliedIdentity",
+    "holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers",
+    "releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures",
+    "sharesThreeAcrossDifferentSessionsAndModelEndpointsIgnoringSpoofedUserHeader"
+  ],
+  "runKind": "LOCAL_CONTROLLED_HTTP_UPSTREAM",
+  "paidCalls": 0,
+  "isolatedDependencies": [
+    "AuditEventDelivery",
+    "PlatformModelCatalogService"
+  ],
+  "flywayEnabled": false,
+  "jvmProperty": "jdk.net.unixdomain.tmpdir",
+  "command": "mvn.cmd -o -s ../../.mvn/settings.xml -Dtest=ModelConcurrencyHttpIntegrationTest -DargLine=-Djdk.net.unixdomain.tmpdir=E:/MyProject/prompt-optimizer-platform/tmp/backend-local-managed/nio test -q",
+  "testSourceSha256": "d7dfef2e4910ae25bf5669878777049665341e580bac4a8ab1f5215fc5f15e10",
+  "releaseApproval": false
+}

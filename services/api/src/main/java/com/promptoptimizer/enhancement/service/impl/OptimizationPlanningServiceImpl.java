@@ -134,7 +134,7 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                 List<PlanQuestion> requiredConflicts = conflictQuestions(planningContext.digest());
                 List<PlanQuestion> modelQuestions = questionFilter.filter(validated.questions(), providerRequest).stream()
                         .filter(question -> requiredConflicts.stream()
-                                .noneMatch(conflict -> sameConflictDimension(question.question(), conflict.question())))
+                                .filter(conflict -> sameConflictDimension(question, conflict.question())).count() != 1)
                         .toList();
                 List<PlanQuestion> candidates = new ArrayList<>(requiredConflicts);
                 candidates.addAll(modelQuestions);
@@ -268,10 +268,12 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
     }
 
     /** 冲突已有服务端必问项时，不再保留同一字段的模型改写问题。 */
-    private boolean sameConflictDimension(String question, String conflict) {
+    private boolean sameConflictDimension(PlanQuestion question, String conflict) {
+        var identity = PlanningConflictIdentity.parse(conflict);
+        if (identity.isPresent() && identity.get().matchesQuestion(question)) return true;
         var field = Pattern.compile("资料对“([^”]{2,40})”").matcher(conflict);
         if (!field.find()) return false;
-        return PlanDecisionIdentity.repeatsConflict(question, field.group(1));
+        return PlanDecisionIdentity.repeatsConflict(question.question(), field.group(1));
     }
 
     /** 将应用层校验交给 Provider 的同一个重试预算，避免格式重试与业务校验重试相乘。 */
@@ -287,12 +289,16 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
             // 包括非推荐选项；不能让用户通过候选答案无意放弃原始需求中的明确规则。
             // 格式和安全仍校验所有项；已被明确事实消除的问题不因无关候选触发额外模型重试。
             questionFilter.filter(validated.questions(), request).forEach(question -> {
-                question.examples().forEach(example -> guard.validate(example, rules, "questions.examples"));
+                decisionPolicy.validateCandidate(question.hint(), question.question(), "questions.hint");
+                question.examples().forEach(example -> {
+                    decisionPolicy.validateCandidate(example, question.question(), "questions.examples");
+                    guard.validate(example, rules, "questions.examples");
+                });
                 question.options().forEach(option -> {
-                    decisionPolicy.validateCandidate(option.answer(), "questions.options.answer");
-                    decisionPolicy.validateCandidate(option.label(), "questions.options.label");
-                    decisionPolicy.validateCandidate(option.description(), "questions.options.description");
-                    decisionPolicy.validateCandidate(option.recommendationReason(), "questions.options.recommendationReason");
+                    decisionPolicy.validateCandidate(option.answer(), question.question(), "questions.options.answer");
+                    decisionPolicy.validateCandidate(option.label(), question.question(), "questions.options.label");
+                    decisionPolicy.validateCandidate(option.description(), question.question(), "questions.options.description");
+                    decisionPolicy.validateCandidate(option.recommendationReason(), question.question(), "questions.options.recommendationReason");
                     guard.validate(option.answer(), rules, "questions.options.answer");
                     guard.validate(option.label(), rules, "questions.options.label");
                     guard.validate(option.description(), rules, "questions.options.description");

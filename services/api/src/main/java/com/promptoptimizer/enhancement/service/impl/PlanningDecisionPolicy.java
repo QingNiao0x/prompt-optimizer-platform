@@ -63,8 +63,14 @@ final class PlanningDecisionPolicy {
     private final List<PlanningKnownDecision> decisions;
     private final ModuleScope moduleScope;
     private final boolean separateUnverifiableRegionStates;
+    private final PlanEligibilityGuard eligibilityGuard;
+    private final PlanningAuthorizationState authorizationState;
 
     private PlanningDecisionPolicy(PlanningProviderRequest input) {
+        this.eligibilityGuard = PlanEligibilityGuard.from(java.util.stream.Stream.concat(
+                java.util.stream.Stream.of(safe(input.rawPrompt())), sources(input).stream().map(Source::text)).toList());
+        this.authorizationState = PlanningAuthorizationState.from(java.util.stream.Stream.concat(
+                java.util.stream.Stream.of(safe(input.rawPrompt())), sources(input).stream().map(Source::text)).toList());
         this.input = input;
         this.moduleScope = declaredModuleScope(safe(input.rawPrompt()), sources(input));
         this.decisions = build(input);
@@ -87,6 +93,7 @@ final class PlanningDecisionPolicy {
 
     /** 只消除相同决定维度；时延、缺失值、权限、迁移与验收阈值等新选择继续保留。 */
     boolean resolvedOrDelegated(PlanQuestion question) {
+        if (authorizationState.resolves(question)) return true;
         String text = normalize(question.question());
         if (text.matches(".*(?:冲突|新增业务|数据库迁移|迁移数据库|新建索引).*")) return false;
         // 工程路径与测试指标是不同决定；所有候选均检查，不能用其他已定分支吞掉新性能条件。
@@ -107,6 +114,8 @@ final class PlanningDecisionPolicy {
                 case MATCH_TRIGGER -> triggerSelection(text);
                 case EXISTING_UI_TRIGGER_LOOKUP -> existingUiTrigger(text);
                 case REGION_MATCH_SCOPE -> regionScopeSelection(text) || matchingPromptScopeSelection(question, text);
+                case REGION_ELIGIBILITY -> false;
+                case AUTHORIZATION_STATE -> false;
                 case FILL_WRITE_SCOPE -> fillWriteScope(text);
                 case DETAIL_BEFORE_FILL -> detailPrerequisite(text);
                 case CANCEL_EFFECT -> cancelEffect(text);
@@ -200,6 +209,7 @@ final class PlanningDecisionPolicy {
 
     /** 保留下来的新问题也不能提供违反已定前提的候选；交给现有 Provider 预算修复，不伪造成功。 */
     void validateCandidate(String candidate, String field) {
+        eligibilityGuard.validate(candidate, "", field);
         String normalized = normalize(candidate);
         // 上传材料已要求分别说明这些状态时，不能借未决的候选处理策略把资料缺失伪装成网络查询失败。
         // 无此证据或用户明确重订状态策略的任务继续保留其原有选择空间。
@@ -265,6 +275,12 @@ final class PlanningDecisionPolicy {
                 }
             }
         }
+    }
+
+    /** 选项可能省略题干中的未核验条件，仍须按同一前提校验，不能靠省略关键词绕过。 */
+    void validateCandidate(String candidate, String question, String field) {
+        validateCandidate(candidate, field);
+        eligibilityGuard.validate(candidate, question, field);
     }
 
     /** 未来按分布选检验的任务只允许拟候选，不把提前定案当作等价方案；否定按动作邻近核对。 */
@@ -795,6 +811,18 @@ final class PlanningDecisionPolicy {
         collectTrigger(raw, decisions);
         collectExecutionRules(raw, decisions);
         collectResearchRules(raw, decisions);
+        PlanningAuthorizationState.from(java.util.stream.Stream.concat(java.util.stream.Stream.of(raw),
+                sources.stream().map(Source::text)).toList()).knownRestrictions().forEach(restriction ->
+                decisions.add(new PlanningKnownDecision(Kind.AUTHORIZATION_STATE, "当前资料授权状态", restriction,
+                        java.util.stream.Stream.concat(java.util.stream.Stream.of("rawPrompt"), sources.stream().map(Source::path)).distinct().toList())));
+        if (PlanEligibilityGuard.from(java.util.stream.Stream.concat(java.util.stream.Stream.of(raw),
+                sources.stream().map(Source::text)).toList()).requiresRegion()) {
+            decisions.add(new PlanningKnownDecision(Kind.REGION_ELIGIBILITY, "地区补值候选的准入条件",
+                    "记录必须满足当前用户所属地区条件才可补值。无法核验不等于条件满足；展示、提示或用户确认不能绕过这个前提。"
+                            + "不得用风险提示后由用户自行决定是否继续确认来替代核验；若仅核对资料，应明确不参与补值。"
+                            + "可询问不展示、展示但禁用或先补齐并核验等处理方式，不假定地区层级。",
+                    java.util.stream.Stream.concat(java.util.stream.Stream.of("rawPrompt"), sources.stream().map(Source::path)).distinct().toList()));
+        }
         if (softwareChange(raw) && sources.stream().anyMatch(source -> source.origin() == PlanningFactOrigin.PROJECT_SOURCE)) {
             ModuleScope modules = declaredModuleScope(raw, sources);
             if (modules != null) {

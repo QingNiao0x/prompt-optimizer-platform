@@ -1,0 +1,67 @@
+{
+  "candidate": "final-candidate-round2",
+  "sources": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/domain/PlanningKnownDecision.java",
+      "sha256": "8b1e588811f0e5b01cf35a68d75fe544e9bfd36557c3931f32afdd752bae1476"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/ConfirmedDecisionSet.java",
+      "sha256": "86014113cd0f42dea8aa8f8397fb62be159f9db5f7dcfdffa017b60e11694483"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/ContextConflictDetector.java",
+      "sha256": "ec85994b1e3d96d5ebd9d9635c94a97625b234670a1647d81e46592d5e8c9ded"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/DefaultEnhancementOrchestrator.java",
+      "sha256": "f1cb18dab1ea044f962b2641a35a7e00cd47d712796620c8346e944a1589779a"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationPlanningServiceImpl.java",
+      "sha256": "f36e846a61c84bf750767893b568536fc936d296a121e4ddbf53dc0a7cf48e43"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java",
+      "sha256": "99a16a4142f72ade7513b8d3eb8327bd34ae2cb231c32673d8f28be6aef3a853"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAmbiguityMerger.java",
+      "sha256": "1c96135286a19de9e6cab05ad3442c93586257e230988f9546b406b51e1388d2"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAnswerSemantics.java",
+      "sha256": "e63a6afd07d3947a30e99a54787a328df8e1e64e966fbcc6758008edd8deb9cd"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanEligibilityGuard.java",
+      "sha256": "8feb9add84129cfa7b2e19ac0dddef993a5de4d0466dc272658302b262f2a532"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningConflictIdentity.java",
+      "sha256": "e03c71f66e506284756396bad460be4c90651ab5e5431fe26b8ac844ba511197"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningDecisionPolicy.java",
+      "sha256": "44591b55d18b35af476f2ad8e272fe47cb457e262a1538fb31c5aa631d0117e4"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java",
+      "sha256": "0f9f104f44d6ad3bebf236744cce6bb7d4317d84d87f08cb0426e9b7e0813abc"
+    }
+  ],
+  "inputs": "cases-round2.json",
+  "inputsSha256": "ed99ba97cfb93037721ac23470791fffaed46f9c166599fd1a60e5f1e8498714",
+  "initialInputsSha256": "cf6b1b206e1c53294248475024e174b4a6fbf5c2b6f6b8a473417d941dc8ba87",
+  "regression": {
+    "classes": 30,
+    "tests": 461,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "collectedAt": "2026-10-04T17:37:26.592640+00:00",
+    "log": "tmp\\plan-integrity-serial-final-regression.log"
+  },
+  "modelSelection": "current authenticated platform default",
+  "answerReview": "AI_ASSISTED_SYNTHETIC_PERSONA"
+}

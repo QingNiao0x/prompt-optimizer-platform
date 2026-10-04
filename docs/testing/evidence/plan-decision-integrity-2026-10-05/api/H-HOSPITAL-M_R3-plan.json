@@ -1,0 +1,253 @@
+{
+  "sample": {
+    "id": "H-HOSPITAL-M_R3",
+    "title": "两家医院数据格式与权限边界",
+    "domain": "医院流程数据整理",
+    "cohort": "UNSEEN_HOLDOUT",
+    "lengthClass": "medium",
+    "contextDescription": "合成业务验收资料，不含真实患者、当事人或凭据。本平台只生成任务提示词，不执行任务。",
+    "rawPrompt": "请为医院行政人员制定合成门诊预约资料的整理方案，比较甲医院与乙医院的预约登记完整性，只交付中文整理步骤、字段对照表与检查清单，不读取真实患者数据、不运行程序。甲医院数据格式已经是CSV，乙医院数据格式尚未提供。不能因为甲医院使用CSV就认定乙医院也是CSV。两家机构分别作为业务对象，同名字段只在明确映射后对照，不能把同名当成同义。\n甲医院有appointment_id、created_date、visit_date、department_code、status；状态取值是BOOKED、CANCELLED、ATTENDED。取消记录保留为独立状态，不计为到诊；created_date与visit_date承担不同用途，不能把创建日期当作就诊日期。检查区间为2025年1月，按就诊日期采用左闭右开[2025-01-01,2025-02-01)。乙医院的列名和状态映射也未提供，当前不能计算跨院一致的到诊率。\n分析工具已明确采用Excel，不能推荐替换成Python或R。只描述人工可操作的检查步骤，保留编号重复、日期缺失、取消后重新预约等例外。数值0是有效值，空单元格代表缺失，不能统一填0。缺少乙医院字段时可以先输出待收集信息表，但不得编造实际字段及业务映射。不输出患者姓名、证件号码、电话、真实地址或任何可识别个人的示例。\n必须分别列出已知事实、冲突材料与未决选择。甲医院格式不再询问；乙医院文件格式和状态映射确实尚未知，应在Plan阶段提出具体问题。是否允许跨院共享原始记录尚未获批准；不能把技术上可合并理解为已获授权。即便用户选择只做汇总，也应说明各院分别处理、仅交付不可识别的统计结构。常规章节组织、表格列宽和配色由执行者处理，无需让我决定。不要为追求完整随意添加预测模型、医疗诊断、满意度调查或临床结论。验收应检查来源、分母、状态和日期边界，不要求编写代码测试。",
+    "files": [
+      {
+        "path": "materials/hospital/甲医院资料.md",
+        "language": "markdown",
+        "content": "甲医院数据格式：CSV。分析工具：Excel。甲医院字段为appointment_id、created_date、visit_date、department_code、status；状态为BOOKED、CANCELLED、ATTENDED。乙医院数据格式：未提供。乙医院状态映射：未提供。跨院原始记录共享：未批准。仅合成行政流程材料。"
+      },
+      {
+        "path": "materials/hospital/tests/demo.md",
+        "language": "markdown",
+        "content": "仅演示：使用Python输出CSV。该示例不代表乙医院已确定格式或项目偏好。"
+      }
+    ],
+    "oracle": {
+      "requiredUnknown": [
+        "乙医院文件格式",
+        "乙医院状态映射",
+        "跨院共享批准"
+      ],
+      "forbidden": [
+        "甲医院数据格式",
+        "重新选择分析工具"
+      ],
+      "known": [
+        "甲医院CSV",
+        "Excel",
+        "2025年1月左闭右开"
+      ]
+    },
+    "acceptanceRound": "2026-10-05 qualification/conflict/partial state regression",
+    "baseCaseId": "H-HOSPITAL-M"
+  },
+  "prepared": {
+    "version": "sha256:f56e8ca6d73154dfd14da65e1b7ebde0c7e5eca6e08ac77f621628a93eacfd2b",
+    "digest": {
+      "description": "合成业务验收资料，不含真实患者、当事人或凭据。本平台只生成任务提示词，不执行任务。",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/hospital/",
+        "materials/hospital/tests/",
+        "materials/hospital/tests/demo.md",
+        "materials/hospital/甲医院资料.md"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/hospital/甲医院资料.md：Markdown 文档摘要：甲医院数据格式：CSV。；甲医院字段为appointment_id、created_date、visit_date、department_code、status；状态为BOOKED、CANCELLED、ATTENDED。；乙医院数据格式：未提供。；跨院原始记录共享：未批准。；仅合成行政流程材料。；业务摘录：[片段 1/1] 甲医院数据格式：CSV。 分析工具：Excel。 甲医院字段为appointment_id、created_date、visit_date、department_code、status； 状态为BOOKED、CANCELLED、ATTENDED。 乙医院数据格式：未提供。 乙医院状态映射：未提供。 跨院原始记录共享：未批准。 仅合成行政流程材料。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "DATA_FORMAT",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital/甲医院资料.md",
+          "evidence": "甲医院数据格式：CSV"
+        },
+        {
+          "id": "F02",
+          "category": "ANALYSIS_TOOL",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital/甲医院资料.md",
+          "evidence": "分析工具：Excel"
+        },
+        {
+          "id": "F03",
+          "category": "DATA_FORMAT",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital/甲医院资料.md",
+          "evidence": "乙医院数据格式：未提供"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "合成业务验收资料，不含真实患者、当事人或凭据。本平台只生成任务提示词，不执行任务。",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/hospital/",
+        "materials/hospital/tests/",
+        "materials/hospital/tests/demo.md",
+        "materials/hospital/甲医院资料.md"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/hospital/甲医院资料.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n甲医院数据格式：CSV。分析工具：Excel。甲医院字段为appointment_id、created_date、visit_date、department_code、status；状态为BOOKED、CANCELLED、ATTENDED。乙医院数据格式：未提供。乙医院状态映射：未提供。跨院原始记录共享：未批准。仅合成行政流程材料。",
+          "summary": "Markdown 文档摘要：甲医院数据格式：CSV。；甲医院字段为appointment_id、created_date、visit_date、department_code、status；状态为BOOKED、CANCELLED、ATTENDED。；乙医院数据格式：未提供。；跨院原始记录共享：未批准。；仅合成行政流程材料。",
+          "truncated": false
+        },
+        {
+          "path": "materials/hospital/tests/demo.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n仅演示：使用Python输出CSV。该示例不代表乙医院已确定格式或项目偏好。",
+          "summary": "Markdown 文档摘要：仅演示：使用Python输出CSV。；该示例不代表乙医院已确定格式或项目偏好。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T18:29:22.967261800Z",
+    "latencyMs": 5
+  },
+  "plan": {
+    "summary": "已理解目标：为医院行政人员制定合成门诊预约资料的整理方案，比较甲、乙两院预约登记完整性，只交付中文整理步骤、字段对照表与检查清单，不读取真实数据、不运行程序，且必须分别列出已知事实、冲突材料与未决选择。甲医院格式与字段已明确，但乙医院文件格式、状态映射及跨院共享授权等关键事实仍缺失，需在生成最终提示词前确认。",
+    "questions": [
+      {
+        "id": "q_yi_format",
+        "question": "乙医院预约资料的文件格式是什么？",
+        "hint": "乙医院格式尚未提供，不能因甲医院是CSV就推定乙医院也是CSV；这决定整理步骤和字段对照表如何编写。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：Excel工作簿（.xlsx），含一个预约登记表",
+          "例如：CSV文件，UTF-8编码",
+          "例如：数据库导出文本，制表符分隔"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_yi_status_mapping",
+        "question": "乙医院预约状态有哪些取值，分别对应什么业务含义（如预约、取消、到诊）？",
+        "hint": "乙医院状态映射未提供，当前无法计算跨院一致的到诊率；需要明确后才能设计状态对照规则。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：状态取值有已预约、已取消、已就诊，分别对应BOOKED、CANCELLED、ATTENDED",
+          "例如：状态取值有P、C、A，P为预约、C为取消、A为到诊"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_yi_columns",
+        "question": "乙医院预约登记表有哪些列名？",
+        "hint": "乙医院列名未提供，字段对照表需要乙医院实际列名才能建立映射，不能把同名当成同义。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：预约编号、创建时间、就诊日期、科室编码、状态",
+          "例如：appointment_no、create_time、visit_dt、dept、state"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_share_scope",
+        "question": "在跨院原始记录共享尚未获批准的前提下，本次整理方案应如何处理两院数据？",
+        "hint": "跨院共享未获授权，不能把技术上可合并理解为已获授权；这决定方案是分别处理还是允许合并。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "separate_only",
+            "label": "各院分别处理，仅交付不可识别的统计结构",
+            "description": "两院数据不合并，各自整理后只输出汇总结构，不共享原始记录。",
+            "answer": "各院分别处理，仅交付不可识别的统计结构，不合并或共享原始记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "separate_then_compare",
+            "label": "各院分别处理，再对照不可识别的汇总指标",
+            "description": "两院数据不合并，各自整理后仅对照汇总指标，不共享原始记录。",
+            "answer": "各院分别处理，再对照不可识别的汇总指标，不合并或共享原始记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "pending_approval",
+            "label": "先输出待收集信息表，待共享授权明确后再定",
+            "description": "当前不合并，先输出待收集信息表，共享授权明确后再决定是否合并。",
+            "answer": "先输出待收集信息表，待跨院共享授权明确后再决定是否合并原始记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_missing_handling",
+        "question": "对于乙医院字段缺失的情况，整理方案应如何呈现？",
+        "hint": "乙医院字段尚未知，不能编造实际字段及业务映射；需要明确缺失时是留空、标注待收集还是其他方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "blank_pending",
+            "label": "留空并标注待收集",
+            "description": "缺失字段在对照表中留空，并标注为待收集信息，不编造内容。",
+            "answer": "缺失字段在对照表中留空，并标注为待收集信息，不编造实际字段及业务映射。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "separate_pending_table",
+            "label": "单独输出待收集信息表",
+            "description": "缺失字段不填入对照表，另附待收集信息表列出需补充的内容。",
+            "answer": "缺失字段不填入对照表，另附待收集信息表列出需补充的内容，不编造实际字段及业务映射。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "placeholder",
+            "label": "用占位符标明待确认",
+            "description": "缺失字段用占位符标明待确认，不编造实际字段及业务映射。",
+            "answer": "缺失字段用占位符标明待确认，不编造实际字段及业务映射。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "TESTING",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 6448,
+    "expiresAt": "2026-10-04T18:29:22.967261800Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "a917e37d-b482-413e-9b9f-c43bbd1199ba",
+      "elapsedMs": 33
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "29d891fd-8876-4c64-81d0-53393f142b1d",
+      "elapsedMs": 6488
+    }
+  ]
+}

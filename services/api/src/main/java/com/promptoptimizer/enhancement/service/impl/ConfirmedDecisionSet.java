@@ -37,16 +37,46 @@ final class ConfirmedDecisionSet {
             String question = answer.question() == null ? "" : answer.question();
             String text = answer.answer().trim();
             String topic = topic(question, answer.questionId());
-            Scope scope = PlanAnswerSemantics.unresolved(text) ? Scope.UNRESOLVED
-                    : TARGET.matcher(question + text).find() ? Scope.TARGET
-                    : CURRENT.matcher(question).find() && !CHOICE_QUESTION.matcher(question).find()
-                    ? Scope.CURRENT_STATE : Scope.CHOICE;
+            Scope scope = PlanAnswerSemantics.unresolved(text) ? Scope.UNRESOLVED : confirmedScope(question, text);
             values.add(new ConfirmedPlanDecision(answer.questionId(), question, topic, scope, text));
         }
         return new ConfirmedDecisionSet(values);
     }
 
     List<ConfirmedPlanDecision> decisions() { return decisions; }
+
+    /** 原始回答及其总体状态不变；下游核对已知事实时只使用可明确分开的已确认内容。 */
+    List<ConfirmedPlanDecision> knownDecisions() {
+        return decisions.stream().map(decision -> {
+            if (decision.scope() != Scope.UNRESOLVED) return decision;
+            String confirmed = PlanAnswerSemantics.confirmedPart(decision.answer());
+            return new ConfirmedPlanDecision(decision.questionId(), decision.question(), decision.topic(),
+                    confirmedScope(decision.question(), confirmed), confirmed);
+        }).filter(decision -> !decision.answer().isBlank()).toList();
+    }
+
+    /** 一题可同时有已定选择和多个未决子项；提醒逐项带回原绑定 ID，不覆盖原始回答。 */
+    List<ConfirmedPlanDecision> pendingDecisions() {
+        return decisions.stream().filter(decision -> decision.scope() == Scope.UNRESOLVED)
+                .flatMap(decision -> PlanAnswerSemantics.pendingParts(decision.answer()).stream().map(part -> {
+                    boolean named = PlanAnswerSemantics.namesPendingSubject(part);
+                    boolean explanationOnly = PlanAnswerSemantics.confirmedPart(decision.answer()).isBlank()
+                            && PlanAnswerSemantics.pendingParts(decision.answer()).size() == 1;
+                    return new ConfirmedPlanDecision(decision.questionId(), named ? part : decision.question(),
+                            named ? topic(part, decision.questionId()) : decision.topic(), Scope.UNRESOLVED,
+                            named && !explanationOnly ? part : decision.answer());
+                })).toList();
+    }
+
+    /** 仅供提醒核对的已定与未决视图，不新增外部字段，也不允许客户端指定内部状态。 */
+    List<ConfirmedPlanDecision> assessedDecisions() {
+        return java.util.stream.Stream.concat(knownDecisions().stream(), pendingDecisions().stream()).toList();
+    }
+
+    private static Scope confirmedScope(String question, String answer) {
+        return TARGET.matcher(question + answer).find() ? Scope.TARGET
+                : CURRENT.matcher(question).find() && !CHOICE_QUESTION.matcher(question).find() ? Scope.CURRENT_STATE : Scope.CHOICE;
+    }
 
     /** 需求保持主查询，已确认的选项单独加入；不混入问题中的未选候选项。 */
     String retrievalQuery(String rawPrompt) {
@@ -63,8 +93,8 @@ final class ConfirmedDecisionSet {
     boolean coversUnknown(String finding) {
         if (finding == null || !finding.matches(".*(未知|未明确|未提供|尚未确定|未给出|未指定).*")) return false;
         if (finding.matches(".*(历史|例外|冲突|不一致|迁移后|新增范围).*")) return false;
-        return decisions.stream().anyMatch(decision -> decision.scope() != Scope.UNRESOLVED
-                && PlanDecisionIdentity.repeatsReminder(finding, decision.question())
+        return knownDecisions().stream().anyMatch(decision ->
+                PlanDecisionIdentity.repeatsReminder(finding, decision.question())
                 && (!CURRENT.matcher(finding).find() || decision.scope() == Scope.CURRENT_STATE)
                 && DETAIL.matcher(finding).results().allMatch(detail -> decision.question().contains(detail.group())));
     }
@@ -73,11 +103,20 @@ final class ConfirmedDecisionSet {
     boolean resolvesConflict(String field, List<String> values) {
         return decisions.stream().anyMatch(decision -> decision.questionId() != null
                 && decision.questionId().startsWith("context-conflict-")
-                && decision.topic().equals(field) && decision.scope() != Scope.UNRESOLVED
-                && values.stream().allMatch(value -> decision.question().contains("（" + value + "）"))
+                && decision.topic().equals(field)
+                && PlanningConflictIdentity.parse(decision.question()).filter(identity -> identity.hasValues(field, values)).isPresent()
                 && (selectedConflictValue(decision).filter(selected -> values.stream()
                         .anyMatch(value -> normalizeValue(value).equals(selected))).isPresent()
                     || decision.answer().matches("^(?:两份|同时).*(?:保留|写出|标明).*")));
+    }
+
+    /** 用成对来源约束旧确认的覆盖范围；另一份新文件或新取值不得由旧问题自动解决。 */
+    boolean resolvesConflict(String field, String firstPath, String firstValue, String secondPath, String secondValue) {
+        return decisions.stream().anyMatch(decision -> PlanningConflictIdentity.parse(decision.question())
+                .filter(identity -> identity.containsPair(field, firstPath, firstValue, secondPath, secondValue))
+                .filter(identity -> decision.questionId() != null && decision.questionId().startsWith("context-conflict-")
+                        && (identity.selectedValue(PlanAnswerSemantics.confirmedPart(decision.answer())).isPresent()
+                        || decision.answer().matches("^(?:两份|同时).*(?:保留|写出|标明).*"))).isPresent());
     }
 
     /** 已绑定冲突题中的明确选择优先与新增证据比较，不能先拿被放弃的旧值构造新冲突。 */
@@ -86,10 +125,21 @@ final class ConfirmedDecisionSet {
                 .map(this::selectedConflictValue).flatMap(Optional::stream).findFirst();
     }
 
+    /** 同一机构多项规则分别排序，仅选择实际属于当前对象取值集合的已确认值。 */
+    Optional<String> selectedConflictValue(String field, List<String> values) {
+        List<String> candidates = values.stream().map(PlanningConflictIdentity::canonical).toList();
+        return decisions.stream().filter(decision -> decision.topic().equals(field))
+                .map(this::selectedConflictValue).flatMap(Optional::stream).filter(candidates::contains).findFirst();
+    }
+
     /** 仅在服务端问题给定的候选取值中解析明确选择；否定、条件及多个取值均不猜测。 */
     private Optional<String> selectedConflictValue(ConfirmedPlanDecision decision) {
-        if (decision.scope() == Scope.UNRESOLVED || decision.questionId() == null
+        if (decision.questionId() == null
                 || !decision.questionId().startsWith("context-conflict-")) return Optional.empty();
+        var bound = PlanningConflictIdentity.parse(decision.question());
+        if (bound.isPresent()) {
+            return bound.get().selectedValue(PlanAnswerSemantics.confirmedPart(decision.answer()));
+        }
         List<String> candidates = conflictValues(decision.question());
         String answer = normalizeValue(decision.answer());
         if (candidates.contains(answer)) return Optional.of(answer);
@@ -134,6 +184,6 @@ final class ConfirmedDecisionSet {
     }
 
     private String normalizeValue(String value) {
-        return value.trim().replaceFirst("[。.!！]$", "").toLowerCase(Locale.ROOT);
+        return PlanningConflictIdentity.canonical(value);
     }
 }

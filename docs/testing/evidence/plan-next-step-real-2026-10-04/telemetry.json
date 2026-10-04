@@ -1,0 +1,3145 @@
+{
+  "collection": "WHITELIST_ONLY",
+  "note": "model.validation contains result.assemble; do not add nested spans",
+  "generatorRequests": 24,
+  "httpSuccesses": 24,
+  "modelCompleted": 24,
+  "modelFailed": 4,
+  "repairRetries": 4,
+  "validationFailures": 2,
+  "clientElapsedMs": {
+    "minimum": 1001,
+    "p50NearestRank": 6199,
+    "p95NearestRank": 26748,
+    "maximum": 27360
+  },
+  "phases": [
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "elapsedMs": 18288,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+          "operation": "plan.generate",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 7043
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+          "operation": "plan.generate",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "FAILED",
+          "durationMs": 1617
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+          "operation": "plan.generate",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 5639
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+          "operation": "plan.generate",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "FAILED",
+          "durationMs": 262
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+          "operation": "plan.generate",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 2847
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+          "operation": "plan.generate",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 80
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+          "operation": "plan.generate",
+          "stage": "provider.total",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 17954
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+        "status": 200,
+        "durationMs": 18271,
+        "route": "/api/v1/optimizations/plan"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.failed",
+          "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+          "operation": "plan.generate",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 9071,
+          "attempt": 1,
+          "failureType": "INVALID_RESPONSE",
+          "inputTokens": 3482,
+          "outputTokens": 624,
+          "totalTokens": 4106
+        },
+        {
+          "event": "model.call.failed",
+          "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+          "operation": "plan.generate",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 5905,
+          "attempt": 2,
+          "failureType": "INVALID_RESPONSE",
+          "inputTokens": 3862,
+          "outputTokens": 994,
+          "totalTokens": 4856
+        },
+        {
+          "event": "model.call.completed",
+          "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+          "operation": "plan.generate",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 2930,
+          "attempt": 3,
+          "inputTokens": 3862,
+          "outputTokens": 516,
+          "totalTokens": 4378,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "b3bc6f2e-53d2-4cbc-a18e-552e89a63baf",
+      "elapsedMs": 8908,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b3bc6f2e-53d2-4cbc-a18e-552e89a63baf",
+          "operation": "plan.generate",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 5841
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b3bc6f2e-53d2-4cbc-a18e-552e89a63baf",
+          "operation": "plan.generate",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 2922
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b3bc6f2e-53d2-4cbc-a18e-552e89a63baf",
+          "operation": "plan.generate",
+          "stage": "provider.total",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 8774
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "b3bc6f2e-53d2-4cbc-a18e-552e89a63baf",
+        "status": 200,
+        "durationMs": 8888,
+        "route": "/api/v1/optimizations/plan"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "b3bc6f2e-53d2-4cbc-a18e-552e89a63baf",
+          "operation": "plan.generate",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 8770,
+          "attempt": 1,
+          "inputTokens": 4921,
+          "outputTokens": 1274,
+          "totalTokens": 6195,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "efe9f336-fe34-47f2-8d25-89daa70053f1",
+      "elapsedMs": 8509,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "efe9f336-fe34-47f2-8d25-89daa70053f1",
+          "operation": "plan.generate",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 8390
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "efe9f336-fe34-47f2-8d25-89daa70053f1",
+          "operation": "plan.generate",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 45
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "efe9f336-fe34-47f2-8d25-89daa70053f1",
+          "operation": "plan.generate",
+          "stage": "provider.total",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 8444
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "efe9f336-fe34-47f2-8d25-89daa70053f1",
+        "status": 200,
+        "durationMs": 8493,
+        "route": "/api/v1/optimizations/plan"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "efe9f336-fe34-47f2-8d25-89daa70053f1",
+          "operation": "plan.generate",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 8439,
+          "attempt": 1,
+          "inputTokens": 2852,
+          "outputTokens": 1997,
+          "totalTokens": 4849,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "842204d6-9a1f-4aad-b655-20b177f759bd",
+      "elapsedMs": 3335,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "842204d6-9a1f-4aad-b655-20b177f759bd",
+          "operation": "plan.generate",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 3198
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "842204d6-9a1f-4aad-b655-20b177f759bd",
+          "operation": "plan.generate",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 40
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "842204d6-9a1f-4aad-b655-20b177f759bd",
+          "operation": "plan.generate",
+          "stage": "provider.total",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 3246
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "842204d6-9a1f-4aad-b655-20b177f759bd",
+        "status": 200,
+        "durationMs": 3320,
+        "route": "/api/v1/optimizations/plan"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "842204d6-9a1f-4aad-b655-20b177f759bd",
+          "operation": "plan.generate",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 3242,
+          "attempt": 1,
+          "inputTokens": 2844,
+          "outputTokens": 662,
+          "totalTokens": 3506,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "0dbf96d1-5bc9-4de6-9ce9-318b5b05fe13",
+      "elapsedMs": 6199,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "0dbf96d1-5bc9-4de6-9ce9-318b5b05fe13",
+          "operation": "plan.generate",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 5882
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "0dbf96d1-5bc9-4de6-9ce9-318b5b05fe13",
+          "operation": "plan.generate",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 193
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "0dbf96d1-5bc9-4de6-9ce9-318b5b05fe13",
+          "operation": "plan.generate",
+          "stage": "provider.total",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 6081
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "0dbf96d1-5bc9-4de6-9ce9-318b5b05fe13",
+        "status": 200,
+        "durationMs": 6183,
+        "route": "/api/v1/optimizations/plan"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "0dbf96d1-5bc9-4de6-9ce9-318b5b05fe13",
+          "operation": "plan.generate",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 6079,
+          "attempt": 1,
+          "inputTokens": 4108,
+          "outputTokens": 1428,
+          "totalTokens": 5536,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "a495e996-330e-4dac-bdb6-6d9a9fa0d472",
+      "elapsedMs": 2234,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "a495e996-330e-4dac-bdb6-6d9a9fa0d472",
+          "operation": "plan.generate",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 2182
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "a495e996-330e-4dac-bdb6-6d9a9fa0d472",
+          "operation": "plan.generate",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 8
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "a495e996-330e-4dac-bdb6-6d9a9fa0d472",
+          "operation": "plan.generate",
+          "stage": "provider.total",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 2195
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "a495e996-330e-4dac-bdb6-6d9a9fa0d472",
+        "status": 200,
+        "durationMs": 2223,
+        "route": "/api/v1/optimizations/plan"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "a495e996-330e-4dac-bdb6-6d9a9fa0d472",
+          "operation": "plan.generate",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 2193,
+          "attempt": 1,
+          "inputTokens": 2691,
+          "outputTokens": 477,
+          "totalTokens": 3168,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "36e049f7-056e-4ff8-9903-8303d935c45a",
+      "elapsedMs": 1835,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "36e049f7-056e-4ff8-9903-8303d935c45a",
+          "operation": "plan.generate",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 1794
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "36e049f7-056e-4ff8-9903-8303d935c45a",
+          "operation": "plan.generate",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 4
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "36e049f7-056e-4ff8-9903-8303d935c45a",
+          "operation": "plan.generate",
+          "stage": "provider.total",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 1802
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "36e049f7-056e-4ff8-9903-8303d935c45a",
+        "status": 200,
+        "durationMs": 1826,
+        "route": "/api/v1/optimizations/plan"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "36e049f7-056e-4ff8-9903-8303d935c45a",
+          "operation": "plan.generate",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 1801,
+          "attempt": 1,
+          "inputTokens": 2378,
+          "outputTokens": 282,
+          "totalTokens": 2660,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "fd42ac80-c60f-4eb5-aaf8-cdb44161467e",
+      "elapsedMs": 1001,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "fd42ac80-c60f-4eb5-aaf8-cdb44161467e",
+          "operation": "plan.generate",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 947
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "fd42ac80-c60f-4eb5-aaf8-cdb44161467e",
+          "operation": "plan.generate",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "fd42ac80-c60f-4eb5-aaf8-cdb44161467e",
+          "operation": "plan.generate",
+          "stage": "provider.total",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 951
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "fd42ac80-c60f-4eb5-aaf8-cdb44161467e",
+        "status": 200,
+        "durationMs": 987,
+        "route": "/api/v1/optimizations/plan"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "fd42ac80-c60f-4eb5-aaf8-cdb44161467e",
+          "operation": "plan.generate",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 949,
+          "attempt": 1,
+          "inputTokens": 1978,
+          "outputTokens": 46,
+          "totalTokens": 2024,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+      "elapsedMs": 20365,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "FAILED",
+          "durationMs": 9421
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 10622
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 206
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 208
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+        "status": 200,
+        "durationMs": 20349,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.failed",
+          "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 9421,
+          "attempt": 1,
+          "failureType": "INVALID_RESPONSE",
+          "inputTokens": null,
+          "outputTokens": null,
+          "totalTokens": null
+        },
+        {
+          "event": "model.call.completed",
+          "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 10831,
+          "attempt": 2,
+          "inputTokens": 3845,
+          "outputTokens": 2734,
+          "totalTokens": 6579,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+      "elapsedMs": 12628,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 11708
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 589
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 590
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+        "status": 200,
+        "durationMs": 12392,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 12299,
+          "attempt": 1,
+          "inputTokens": 5484,
+          "outputTokens": 2776,
+          "totalTokens": 8260,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+      "elapsedMs": 5707,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 5473
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 85
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 86
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+        "status": 200,
+        "durationMs": 5686,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 5561,
+          "attempt": 1,
+          "inputTokens": 2942,
+          "outputTokens": 1269,
+          "totalTokens": 4211,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+      "elapsedMs": 7621,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 7441
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 94
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 96
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+        "status": 200,
+        "durationMs": 7606,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 7539,
+          "attempt": 1,
+          "inputTokens": 3002,
+          "outputTokens": 1507,
+          "totalTokens": 4509,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+      "elapsedMs": 8882,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 7944
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 425
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 425
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+        "status": 200,
+        "durationMs": 8419,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 8374,
+          "attempt": 1,
+          "inputTokens": 4042,
+          "outputTokens": 1973,
+          "totalTokens": 6015,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+      "elapsedMs": 11162,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "FAILED",
+          "durationMs": 5397
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 5367
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 308
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 310
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+        "status": 200,
+        "durationMs": 11144,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.failed",
+          "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 5398,
+          "attempt": 1,
+          "failureType": "INVALID_RESPONSE",
+          "inputTokens": null,
+          "outputTokens": null,
+          "totalTokens": null
+        },
+        {
+          "event": "model.call.completed",
+          "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 5681,
+          "attempt": 2,
+          "inputTokens": 2847,
+          "outputTokens": 1310,
+          "totalTokens": 4157,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+      "elapsedMs": 4370,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 4209
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 57
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 59
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+        "status": 200,
+        "durationMs": 4345,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 4271,
+          "attempt": 1,
+          "inputTokens": 2445,
+          "outputTokens": 862,
+          "totalTokens": 3307,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+      "elapsedMs": 2185,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 2041
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 43
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 51
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+        "status": 200,
+        "durationMs": 2166,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 2094,
+          "attempt": 1,
+          "inputTokens": 2180,
+          "outputTokens": 379,
+          "totalTokens": 2559,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+      "elapsedMs": 10489,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 8860
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 1100
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 1101
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+        "status": 200,
+        "durationMs": 10429,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 9963,
+          "attempt": 1,
+          "inputTokens": 4415,
+          "outputTokens": 2068,
+          "totalTokens": 6483,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+      "elapsedMs": 26748,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 20823
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 5665
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 5666
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+        "status": 200,
+        "durationMs": 26700,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 26491,
+          "attempt": 1,
+          "inputTokens": 5829,
+          "outputTokens": 3083,
+          "totalTokens": 8912,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+      "elapsedMs": 7065,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 1
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 6744
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 201
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 202
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+        "status": 200,
+        "durationMs": 7039,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 6949,
+          "attempt": 1,
+          "inputTokens": 3520,
+          "outputTokens": 1555,
+          "totalTokens": 5075,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+      "elapsedMs": 4379,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 4175
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 121
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 122
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+        "status": 200,
+        "durationMs": 4359,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 4299,
+          "attempt": 1,
+          "inputTokens": 3274,
+          "outputTokens": 1044,
+          "totalTokens": 4318,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+      "elapsedMs": 27360,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 1
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 10727
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 16519
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 16520
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+        "status": 200,
+        "durationMs": 27338,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 27248,
+          "attempt": 1,
+          "inputTokens": 4623,
+          "outputTokens": 2381,
+          "totalTokens": 7004,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+      "elapsedMs": 4869,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 4738
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 55
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 56
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+        "status": 200,
+        "durationMs": 4851,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 4795,
+          "attempt": 1,
+          "inputTokens": 2893,
+          "outputTokens": 1247,
+          "totalTokens": 4140,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+      "elapsedMs": 4346,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 4287
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 15
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 16
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+        "status": 200,
+        "durationMs": 4333,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 4305,
+          "attempt": 1,
+          "inputTokens": 2829,
+          "outputTokens": 944,
+          "totalTokens": 3773,
+          "mock": "false"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+      "elapsedMs": 1870,
+      "stages": [
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+          "operation": "prompt.optimize",
+          "stage": "context.analyze",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 0
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+          "operation": "prompt.optimize",
+          "stage": "model.upstream",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 1819
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+          "operation": "prompt.optimize",
+          "stage": "result.assemble",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 3
+        },
+        {
+          "event": "pipeline.stage.completed",
+          "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+          "operation": "prompt.optimize",
+          "stage": "model.validation",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "durationMs": 3
+        }
+      ],
+      "serverHttp": {
+        "event": "http.request.completed",
+        "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+        "status": 200,
+        "durationMs": 1857,
+        "route": "/api/v1/optimizations"
+      },
+      "upstreamAttempts": [
+        {
+          "event": "model.call.completed",
+          "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+          "operation": "prompt.optimize",
+          "model": "deepseek:deepseek-flash",
+          "providerRoute": "deepseek",
+          "durationMs": 1824,
+          "attempt": 1,
+          "inputTokens": 2180,
+          "outputTokens": 261,
+          "totalTokens": 2441,
+          "mock": "false"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "event": "http.request.completed",
+      "requestId": "fa59952e-e3f9-463d-817f-acea14c344e3",
+      "status": 200,
+      "durationMs": 18,
+      "route": "/api/v1/auth/me"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "ec42cb51-c8dd-4cc3-bd64-490d75e6d4b9",
+      "status": 200,
+      "durationMs": 19,
+      "route": "/api/v1/auth/csrf"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "d5605a7f-f971-4b32-9bd7-9cc8787673ff",
+      "status": 200,
+      "durationMs": 21,
+      "route": "/api/v1/models"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "4ea7049f-0f63-4756-ba87-c5193acac883",
+      "status": 200,
+      "durationMs": 20,
+      "route": "/api/v1/models"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "5cd241a0-6eaa-4819-a265-882ad349c17c",
+      "status": 200,
+      "durationMs": 713,
+      "route": "/api/v1/context/planning"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 7043
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "FAILED",
+      "durationMs": 1617
+    },
+    {
+      "event": "model.response.validation_failed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "attempt": 1,
+      "reason": "RULE_CONFLICT",
+      "field": "questions.options.answer"
+    },
+    {
+      "event": "model.call.failed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 9071,
+      "attempt": 1,
+      "failureType": "INVALID_RESPONSE",
+      "inputTokens": 3482,
+      "outputTokens": 624,
+      "totalTokens": 4106
+    },
+    {
+      "event": "model.call.repair_retry",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "attempt": 1,
+      "nextAttempt": 2,
+      "failureType": "INVALID_RESPONSE"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 5639
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "FAILED",
+      "durationMs": 262
+    },
+    {
+      "event": "model.response.validation_failed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "attempt": 2,
+      "reason": "RULE_CONFLICT",
+      "field": "questions.options.answer"
+    },
+    {
+      "event": "model.call.failed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 5905,
+      "attempt": 2,
+      "failureType": "INVALID_RESPONSE",
+      "inputTokens": 3862,
+      "outputTokens": 994,
+      "totalTokens": 4856
+    },
+    {
+      "event": "model.call.repair_retry",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "attempt": 2,
+      "nextAttempt": 3,
+      "failureType": "INVALID_RESPONSE"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 2847
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 80
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 2930,
+      "attempt": 3,
+      "inputTokens": 3862,
+      "outputTokens": 516,
+      "totalTokens": 4378,
+      "mock": "false"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "operation": "plan.generate",
+      "stage": "provider.total",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 17954
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "b6f9e7c4-b09b-46ae-a3eb-dd0e2a056aae",
+      "status": 200,
+      "durationMs": 18271,
+      "route": "/api/v1/optimizations/plan"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "e23a6090-bbb4-4099-b3d0-1aaa7e4ee47c",
+      "status": 200,
+      "durationMs": 142,
+      "route": "/api/v1/context/planning"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b3bc6f2e-53d2-4cbc-a18e-552e89a63baf",
+      "operation": "plan.generate",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 5841
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b3bc6f2e-53d2-4cbc-a18e-552e89a63baf",
+      "operation": "plan.generate",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 2922
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "b3bc6f2e-53d2-4cbc-a18e-552e89a63baf",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 8770,
+      "attempt": 1,
+      "inputTokens": 4921,
+      "outputTokens": 1274,
+      "totalTokens": 6195,
+      "mock": "false"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b3bc6f2e-53d2-4cbc-a18e-552e89a63baf",
+      "operation": "plan.generate",
+      "stage": "provider.total",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 8774
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "b3bc6f2e-53d2-4cbc-a18e-552e89a63baf",
+      "status": 200,
+      "durationMs": 8888,
+      "route": "/api/v1/optimizations/plan"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "43e870d0-0f04-4c7d-9a1a-3f8df5d24f50",
+      "status": 200,
+      "durationMs": 64,
+      "route": "/api/v1/context/planning"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "efe9f336-fe34-47f2-8d25-89daa70053f1",
+      "operation": "plan.generate",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 8390
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "efe9f336-fe34-47f2-8d25-89daa70053f1",
+      "operation": "plan.generate",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 45
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "efe9f336-fe34-47f2-8d25-89daa70053f1",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 8439,
+      "attempt": 1,
+      "inputTokens": 2852,
+      "outputTokens": 1997,
+      "totalTokens": 4849,
+      "mock": "false"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "efe9f336-fe34-47f2-8d25-89daa70053f1",
+      "operation": "plan.generate",
+      "stage": "provider.total",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 8444
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "efe9f336-fe34-47f2-8d25-89daa70053f1",
+      "status": 200,
+      "durationMs": 8493,
+      "route": "/api/v1/optimizations/plan"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "ac304cd7-f07c-40e7-a50d-42770152855d",
+      "status": 200,
+      "durationMs": 32,
+      "route": "/api/v1/context/planning"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "842204d6-9a1f-4aad-b655-20b177f759bd",
+      "operation": "plan.generate",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 3198
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "842204d6-9a1f-4aad-b655-20b177f759bd",
+      "operation": "plan.generate",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 40
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "842204d6-9a1f-4aad-b655-20b177f759bd",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 3242,
+      "attempt": 1,
+      "inputTokens": 2844,
+      "outputTokens": 662,
+      "totalTokens": 3506,
+      "mock": "false"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "842204d6-9a1f-4aad-b655-20b177f759bd",
+      "operation": "plan.generate",
+      "stage": "provider.total",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 3246
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "842204d6-9a1f-4aad-b655-20b177f759bd",
+      "status": 200,
+      "durationMs": 3320,
+      "route": "/api/v1/optimizations/plan"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "e40a74e5-5624-4822-9d93-97eacd2aca91",
+      "status": 200,
+      "durationMs": 247,
+      "route": "/api/v1/context/planning"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "0dbf96d1-5bc9-4de6-9ce9-318b5b05fe13",
+      "operation": "plan.generate",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 5882
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "0dbf96d1-5bc9-4de6-9ce9-318b5b05fe13",
+      "operation": "plan.generate",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 193
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "0dbf96d1-5bc9-4de6-9ce9-318b5b05fe13",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 6079,
+      "attempt": 1,
+      "inputTokens": 4108,
+      "outputTokens": 1428,
+      "totalTokens": 5536,
+      "mock": "false"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "0dbf96d1-5bc9-4de6-9ce9-318b5b05fe13",
+      "operation": "plan.generate",
+      "stage": "provider.total",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 6081
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "0dbf96d1-5bc9-4de6-9ce9-318b5b05fe13",
+      "status": 200,
+      "durationMs": 6183,
+      "route": "/api/v1/optimizations/plan"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "ec0cb481-c6e0-4d32-ace5-2e8145d88891",
+      "status": 200,
+      "durationMs": 37,
+      "route": "/api/v1/context/planning"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "a495e996-330e-4dac-bdb6-6d9a9fa0d472",
+      "operation": "plan.generate",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 2182
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "a495e996-330e-4dac-bdb6-6d9a9fa0d472",
+      "operation": "plan.generate",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 8
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "a495e996-330e-4dac-bdb6-6d9a9fa0d472",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 2193,
+      "attempt": 1,
+      "inputTokens": 2691,
+      "outputTokens": 477,
+      "totalTokens": 3168,
+      "mock": "false"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "a495e996-330e-4dac-bdb6-6d9a9fa0d472",
+      "operation": "plan.generate",
+      "stage": "provider.total",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 2195
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "a495e996-330e-4dac-bdb6-6d9a9fa0d472",
+      "status": 200,
+      "durationMs": 2223,
+      "route": "/api/v1/optimizations/plan"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "0b96d77f-30fe-40a5-9af2-8d4e8b627e67",
+      "status": 200,
+      "durationMs": 19,
+      "route": "/api/v1/context/planning"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "36e049f7-056e-4ff8-9903-8303d935c45a",
+      "operation": "plan.generate",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 1794
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "36e049f7-056e-4ff8-9903-8303d935c45a",
+      "operation": "plan.generate",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 4
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "36e049f7-056e-4ff8-9903-8303d935c45a",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 1801,
+      "attempt": 1,
+      "inputTokens": 2378,
+      "outputTokens": 282,
+      "totalTokens": 2660,
+      "mock": "false"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "36e049f7-056e-4ff8-9903-8303d935c45a",
+      "operation": "plan.generate",
+      "stage": "provider.total",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 1802
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "36e049f7-056e-4ff8-9903-8303d935c45a",
+      "status": 200,
+      "durationMs": 1826,
+      "route": "/api/v1/optimizations/plan"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "fd42ac80-c60f-4eb5-aaf8-cdb44161467e",
+      "operation": "plan.generate",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 947
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "fd42ac80-c60f-4eb5-aaf8-cdb44161467e",
+      "operation": "plan.generate",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "fd42ac80-c60f-4eb5-aaf8-cdb44161467e",
+      "operation": "plan.generate",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 949,
+      "attempt": 1,
+      "inputTokens": 1978,
+      "outputTokens": 46,
+      "totalTokens": 2024,
+      "mock": "false"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "fd42ac80-c60f-4eb5-aaf8-cdb44161467e",
+      "operation": "plan.generate",
+      "stage": "provider.total",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 951
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "fd42ac80-c60f-4eb5-aaf8-cdb44161467e",
+      "status": 200,
+      "durationMs": 987,
+      "route": "/api/v1/optimizations/plan"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "FAILED",
+      "durationMs": 9421
+    },
+    {
+      "event": "model.call.failed",
+      "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 9421,
+      "attempt": 1,
+      "failureType": "INVALID_RESPONSE",
+      "inputTokens": null,
+      "outputTokens": null,
+      "totalTokens": null
+    },
+    {
+      "event": "model.call.repair_retry",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "attempt": 1,
+      "nextAttempt": 2,
+      "failureType": "INVALID_RESPONSE"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 10622
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 206
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 208
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 10831,
+      "attempt": 2,
+      "inputTokens": 3845,
+      "outputTokens": 2734,
+      "totalTokens": 6579,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "35a58bbd-d32c-4121-973e-d3a8548e3202",
+      "status": 200,
+      "durationMs": 20349,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 11708
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 589
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 590
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 12299,
+      "attempt": 1,
+      "inputTokens": 5484,
+      "outputTokens": 2776,
+      "totalTokens": 8260,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "046b2933-3d03-4ce7-8e34-d6c4c6e03f15",
+      "status": 200,
+      "durationMs": 12392,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 5473
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 85
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 86
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 5561,
+      "attempt": 1,
+      "inputTokens": 2942,
+      "outputTokens": 1269,
+      "totalTokens": 4211,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "f29593ea-f6be-4a2d-b6d2-f231914b46fe",
+      "status": 200,
+      "durationMs": 5686,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 7441
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 94
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 96
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 7539,
+      "attempt": 1,
+      "inputTokens": 3002,
+      "outputTokens": 1507,
+      "totalTokens": 4509,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "24851385-fa30-49f2-b63f-e16cdecbee96",
+      "status": 200,
+      "durationMs": 7606,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 7944
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 425
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 425
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 8374,
+      "attempt": 1,
+      "inputTokens": 4042,
+      "outputTokens": 1973,
+      "totalTokens": 6015,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "d968d729-e670-4b86-bb09-8cbe741b2ec4",
+      "status": 200,
+      "durationMs": 8419,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "FAILED",
+      "durationMs": 5397
+    },
+    {
+      "event": "model.call.failed",
+      "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 5398,
+      "attempt": 1,
+      "failureType": "INVALID_RESPONSE",
+      "inputTokens": null,
+      "outputTokens": null,
+      "totalTokens": null
+    },
+    {
+      "event": "model.call.repair_retry",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "attempt": 1,
+      "nextAttempt": 2,
+      "failureType": "INVALID_RESPONSE"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 5367
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 308
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 310
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 5681,
+      "attempt": 2,
+      "inputTokens": 2847,
+      "outputTokens": 1310,
+      "totalTokens": 4157,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "461381b4-f9a9-4d45-a32d-85d0a6fa958d",
+      "status": 200,
+      "durationMs": 11144,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 4209
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 57
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 59
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 4271,
+      "attempt": 1,
+      "inputTokens": 2445,
+      "outputTokens": 862,
+      "totalTokens": 3307,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "4a193f67-bb8c-40aa-9831-f2eabbb3c06a",
+      "status": 200,
+      "durationMs": 4345,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 2041
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 43
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 51
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 2094,
+      "attempt": 1,
+      "inputTokens": 2180,
+      "outputTokens": 379,
+      "totalTokens": 2559,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "f911d3a8-ca69-40ec-8ede-affea45ce61b",
+      "status": 200,
+      "durationMs": 2166,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 8860
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 1100
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 1101
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 9963,
+      "attempt": 1,
+      "inputTokens": 4415,
+      "outputTokens": 2068,
+      "totalTokens": 6483,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "8030e375-00a9-4dee-bb0c-0dcfbc58dc45",
+      "status": 200,
+      "durationMs": 10429,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 20823
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 5665
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 5666
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 26491,
+      "attempt": 1,
+      "inputTokens": 5829,
+      "outputTokens": 3083,
+      "totalTokens": 8912,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "1e65c75d-153e-4f59-9232-76460e737fb9",
+      "status": 200,
+      "durationMs": 26700,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 1
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 6744
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 201
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 202
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 6949,
+      "attempt": 1,
+      "inputTokens": 3520,
+      "outputTokens": 1555,
+      "totalTokens": 5075,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "7807c4ad-b0f0-4372-ab1d-af91c872c0bf",
+      "status": 200,
+      "durationMs": 7039,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 4175
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 121
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 122
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 4299,
+      "attempt": 1,
+      "inputTokens": 3274,
+      "outputTokens": 1044,
+      "totalTokens": 4318,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "4a8943c6-1f45-4f65-96a5-ebb428c9b543",
+      "status": 200,
+      "durationMs": 4359,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 1
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 10727
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 16519
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 16520
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 27248,
+      "attempt": 1,
+      "inputTokens": 4623,
+      "outputTokens": 2381,
+      "totalTokens": 7004,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "84b3df07-8561-4c6c-90a2-9333e3178c3c",
+      "status": 200,
+      "durationMs": 27338,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 4738
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 55
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 56
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 4795,
+      "attempt": 1,
+      "inputTokens": 2893,
+      "outputTokens": 1247,
+      "totalTokens": 4140,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "1b4dec28-9eeb-493d-8f11-f4272b773ead",
+      "status": 200,
+      "durationMs": 4851,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 4287
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 15
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 16
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 4305,
+      "attempt": 1,
+      "inputTokens": 2829,
+      "outputTokens": 944,
+      "totalTokens": 3773,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "b8d7d419-f763-442a-b02c-283ba279fa8c",
+      "status": 200,
+      "durationMs": 4333,
+      "route": "/api/v1/optimizations"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+      "operation": "prompt.optimize",
+      "stage": "context.analyze",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 0
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+      "operation": "prompt.optimize",
+      "stage": "model.upstream",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 1819
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+      "operation": "prompt.optimize",
+      "stage": "result.assemble",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 3
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+      "operation": "prompt.optimize",
+      "stage": "model.validation",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "durationMs": 3
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-flash",
+      "providerRoute": "deepseek",
+      "durationMs": 1824,
+      "attempt": 1,
+      "inputTokens": 2180,
+      "outputTokens": 261,
+      "totalTokens": 2441,
+      "mock": "false"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "45dd5b67-3474-4288-8b95-a1d2804f1f30",
+      "status": 200,
+      "durationMs": 1857,
+      "route": "/api/v1/optimizations"
+    }
+  ]
+}

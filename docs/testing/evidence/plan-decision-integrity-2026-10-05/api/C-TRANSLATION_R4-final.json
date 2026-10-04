@@ -1,0 +1,64 @@
+{
+  "result": {
+    "optimizedPrompt": "## 背景\n用户需要将一句英文问候语翻译为简体中文。原文为：Good morning, everyone.\n\n## 任务\n将英文句子“Good morning, everyone.”翻译成简体中文。\n\n要求：\n- 保留原句的问候语气，译文应自然、符合中文日常问候习惯。\n- 只输出译文，不附加解释、注释或原文。\n\n## 输出\n仅输出简体中文译文，不包含任何额外说明、标点以外的附加内容或原文对照。\n\n## 约束\n- 不得在输出中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式。\n\n用户明确规则（须遵守平台权限边界）：\n- 请把“Good morning, everyone.”翻译成简体中文，保留原句的问候语气，只输出译文。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n## 验收标准\n- 译文为简体中文，忠实于原句含义。\n- 保留问候语气，表达自然。\n- 输出中只有译文，无任何额外内容。",
+    "sections": [
+      {
+        "type": "BACKGROUND",
+        "title": "背景",
+        "content": "用户需要将一句英文问候语翻译为简体中文。原文为：Good morning, everyone."
+      },
+      {
+        "type": "TASK",
+        "title": "任务",
+        "content": "将英文句子“Good morning, everyone.”翻译成简体中文。\n\n要求：\n- 保留原句的问候语气，译文应自然、符合中文日常问候习惯。\n- 只输出译文，不附加解释、注释或原文。"
+      },
+      {
+        "type": "OUTPUT",
+        "title": "输出",
+        "content": "仅输出简体中文译文，不包含任何额外说明、标点以外的附加内容或原文对照。"
+      },
+      {
+        "type": "CONSTRAINTS",
+        "title": "约束",
+        "content": "- 不得在输出中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式。\n\n用户明确规则（须遵守平台权限边界）：\n- 请把“Good morning, everyone.”翻译成简体中文，保留原句的问候语气，只输出译文。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+      },
+      {
+        "type": "ACCEPTANCE",
+        "title": "验收标准",
+        "content": "- 译文为简体中文，忠实于原句含义。\n- 保留问候语气，表达自然。\n- 输出中只有译文，无任何额外内容。"
+      }
+    ],
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [],
+      "fileSnippets": [],
+      "analysisStatus": "EMPTY",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "ambiguities": [],
+    "appliedConstraints": [
+      "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+      "输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。",
+      "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+      "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 1754,
+    "warnings": [],
+    "evidenceCards": []
+  },
+  "answers": [],
+  "refinedQuery": "请把“Good morning, everyone.”翻译成简体中文，保留原句的问候语气，只输出译文。"
+}

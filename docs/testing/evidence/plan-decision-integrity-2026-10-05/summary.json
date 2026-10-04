@@ -1,0 +1,145 @@
+{
+  "candidate": "final-candidate-round4",
+  "backendPid": 22988,
+  "backendStartedAt": "2026-10-05T02:12:20.3720200+08:00",
+  "migrationsEnabled": false,
+  "regression": {
+    "classes": 30,
+    "tests": 469,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": "tmp/plan-integrity-release-candidate-regression.log"
+  },
+  "finalGenerationApiCalls": 18,
+  "finalHttp200": 18,
+  "finalUpstreamAttempts": 26,
+  "finalModelCallEvents": {
+    "model.call.failed": 8,
+    "model.call.completed": 18
+  },
+  "allGenerationApiAttempts": 43,
+  "allHttpFailures": 2,
+  "rows": [
+    {
+      "id": "CD-01-M",
+      "rawPromptCharacters": 915,
+      "planQuestionCount": 1,
+      "finalAmbiguityCount": 2,
+      "directAmbiguityCount": 1,
+      "planLatencyMs": 8096,
+      "finalLatencyMs": 33565,
+      "directLatencyMs": 19892,
+      "copyContainsAllDisplayedReminders": true,
+      "fourRequiredSectionsPresent": true,
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      }
+    },
+    {
+      "id": "CD-05-L",
+      "rawPromptCharacters": 3904,
+      "planQuestionCount": 2,
+      "finalAmbiguityCount": 2,
+      "directAmbiguityCount": 4,
+      "planLatencyMs": 5852,
+      "finalLatencyMs": 18058,
+      "directLatencyMs": 17787,
+      "copyContainsAllDisplayedReminders": true,
+      "fourRequiredSectionsPresent": true,
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      }
+    },
+    {
+      "id": "H-HOSPITAL-M",
+      "rawPromptCharacters": 789,
+      "planQuestionCount": 4,
+      "finalAmbiguityCount": 4,
+      "directAmbiguityCount": 0,
+      "planLatencyMs": 5022,
+      "finalLatencyMs": 12785,
+      "directLatencyMs": 6800,
+      "copyContainsAllDisplayedReminders": true,
+      "fourRequiredSectionsPresent": true,
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      }
+    },
+    {
+      "id": "H-LEGAL-SCOPE-M",
+      "rawPromptCharacters": 698,
+      "planQuestionCount": 2,
+      "finalAmbiguityCount": 1,
+      "directAmbiguityCount": 3,
+      "planLatencyMs": 2392,
+      "finalLatencyMs": 6244,
+      "directLatencyMs": 5728,
+      "copyContainsAllDisplayedReminders": true,
+      "fourRequiredSectionsPresent": true,
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      }
+    },
+    {
+      "id": "R-NEW-THRESHOLD",
+      "rawPromptCharacters": 110,
+      "planQuestionCount": 1,
+      "finalAmbiguityCount": 2,
+      "directAmbiguityCount": 1,
+      "planLatencyMs": 3578,
+      "finalLatencyMs": 7506,
+      "directLatencyMs": 3279,
+      "copyContainsAllDisplayedReminders": true,
+      "fourRequiredSectionsPresent": true,
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      }
+    },
+    {
+      "id": "C-TRANSLATION",
+      "rawPromptCharacters": 51,
+      "planQuestionCount": 0,
+      "finalAmbiguityCount": 0,
+      "directAmbiguityCount": 0,
+      "planLatencyMs": 864,
+      "finalLatencyMs": 1754,
+      "directLatencyMs": 1775,
+      "copyContainsAllDisplayedReminders": true,
+      "fourRequiredSectionsPresent": true,
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      }
+    }
+  ],
+  "sourceHashesUnchanged": true,
+  "answerReview": "AI_ASSISTED_SYNTHETIC_PERSONA",
+  "professionalAcceptance": "PENDING",
+  "overallBusinessAcceptance": "FAIL",
+  "remainingObservedProblems": [
+    "CD-01-M_R4 final repeats the same undecided candidate handling in different wording.",
+    "H-HOSPITAL-M_R4 Plan repeats known sharing status and offers already-approved as a choice.",
+    "H-LEGAL-SCOPE-M_R4 keeps old not-yet-confirmed wording in constraints after a valid approval choice.",
+    "Direct hospital preserves missing information in body but ambiguity list is empty, as in the previous baseline.",
+    "Direct legal and research still have rephrased duplicate reminders.",
+    "Hospital and legal task template classifications still need review; latency and compactness remain open."
+  ]
+}

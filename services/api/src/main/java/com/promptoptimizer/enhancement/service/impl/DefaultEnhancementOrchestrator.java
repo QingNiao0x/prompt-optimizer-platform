@@ -221,11 +221,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 ? request.conversationHistory()
                 : List.of();
         List<ConversationMessage> ambiguityEvidence = new ArrayList<>(conversation);
-        planAnswers.stream().filter(answer -> decisions.decisions().stream().anyMatch(decision ->
-                decision.questionId().equals(answer.questionId())
-                        && decision.scope() != Scope.UNRESOLVED))
-                .forEach(answer -> ambiguityEvidence.add(new ConversationMessage(
-                        "user", confirmedAnswerEvidence(answer))));
+        decisions.knownDecisions().forEach(decision -> ambiguityEvidence.add(new ConversationMessage(
+                "user", confirmedAnswerEvidence(new PlanAnswer(decision.questionId(), decision.question(), decision.answer())))));
         List<String> ambiguities = ambiguityDetector.detect(request.rawPrompt(), context, ambiguityEvidence)
                 .stream().filter(value -> !decisions.coversUnknown(value)).toList();
         // 首次卡片保留，二次检索只补充新证据；旧卡片和新证据都要经过用途及安全校验。
