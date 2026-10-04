@@ -1,0 +1,125 @@
+{
+  "sample": {
+    "id": "TT-ENGLISH-GUIDE_R3",
+    "domain": "英文指南",
+    "rawPrompt": "Write a user guide for first-time students using this prompt platform. Only deliver the guide text, explaining optional Plan Mode, direct enhancement, reviewing and copying results. Keep the product in beta and do not claim it executes code or analyses data. Do not implement features, write code, or add software tests. Use plain English and do not invent buttons or statistics.",
+    "contextDescription": "Java 21 and Spring Boot with Vue 3; these are product background, not development requirements.",
+    "files": [
+      {
+        "path": "docs/product.txt",
+        "content": "The platform is in beta. Users supply requirements and related material, use direct enhancement or optional Plan questions, and review, edit and copy structured prompts. It only generates prompts. Scanned PDF OCR is unavailable.",
+        "language": "text"
+      }
+    ]
+  },
+  "prepared": {
+    "version": "sha256:76d83098dbf5e14203c1f4da92d0139dcccb39427824d7a2acf842dabb57fd47",
+    "digest": {
+      "description": "Java 21 and Spring Boot with Vue 3; these are product background, not development requirements.",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/product.txt"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] docs/product.txt：文件内容摘要：The platform is in beta.；Users supply requirements and related material, use direct enhancement or optional Plan questions, and review, edit and copy structured prompts.；It only generates prompts.；Scanned PDF OCR is unavailable.；业务摘录：[片段 1/1] The platform is in beta. Users supply requirements and related material, use direct enhancement or optional Plan questions, and review, edit and copy structured prompts. It only generates prompts. Scanned PDF OCR is unavailable."
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "Java 21 and Spring Boot with Vue 3; these are product background, not development requirements.",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/product.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/product.txt",
+          "language": "text",
+          "content": "[片段 1/1]\nThe platform is in beta. Users supply requirements and related material, use direct enhancement or optional Plan questions, and review, edit and copy structured prompts. It only generates prompts. Scanned PDF OCR is unavailable.",
+          "summary": "文件内容摘要：The platform is in beta.；Users supply requirements and related material, use direct enhancement or optional Plan questions, and review, edit and copy structured prompts.；It only generates prompts.；Scanned PDF OCR is unavailable.",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T22:49:03.826301500Z",
+    "latencyMs": 15
+  },
+  "plan": {
+    "summary": "目标是写一份面向首次使用学生的纯英文用户指南，只交付指南文本，说明可选的 Plan Mode、直接增强、查看与复制结果，并保持产品处于 beta、不声称执行代码或分析数据、不编造按钮或统计数据。现有资料已覆盖这些范围，但指南中如何称呼产品以及是否包含扫描 PDF OCR 不可用这一已知限制，会直接影响成品内容，需要确认。",
+    "questions": [
+      {
+        "id": "product_name",
+        "question": "指南中应如何称呼这个平台？",
+        "hint": "用户指南通常需要明确的产品名称；资料只说明它是处于 beta 的提示词平台，没有给出正式名称。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：Prompt Platform（测试版）",
+          "例如：直接使用“本平台”作为称呼"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "ocr_limitation",
+        "question": "是否要在指南中说明“扫描版 PDF 无法进行 OCR 识别”这一已知限制？",
+        "hint": "这是资料中明确的产品限制，但原始需求只要求说明 Plan Mode、直接增强、查看与复制结果；是否写入会影响指南内容范围。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "include_ocr",
+            "label": "写入该限制",
+            "description": "在指南中明确说明扫描版 PDF 无法进行 OCR 识别，帮助学生避免上传后困惑。",
+            "answer": "在指南中说明：扫描版 PDF 无法进行 OCR 识别。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "exclude_ocr",
+            "label": "不写入该限制",
+            "description": "指南只覆盖原始需求列出的 Plan Mode、直接增强、查看与复制结果，不额外说明 OCR 限制。",
+            "answer": "指南不说明扫描版 PDF 无法进行 OCR 识别，只覆盖 Plan Mode、直接增强、查看与复制结果。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 2646,
+    "expiresAt": "2026-10-04T22:49:03.826301500Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "5c58b813-2bff-43c1-84db-bbdacf69d04f",
+      "elapsedMs": 56
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "9f9a99ae-a602-4bf1-9356-87727a82b6f7",
+      "elapsedMs": 2685
+    }
+  ]
+}

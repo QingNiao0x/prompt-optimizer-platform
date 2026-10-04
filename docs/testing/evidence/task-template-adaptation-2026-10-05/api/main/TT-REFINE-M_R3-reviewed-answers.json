@@ -1,0 +1,19 @@
+{
+  "reviewType": "AI_ASSISTED_SYNTHETIC_PERSONA",
+  "answers": [
+    {
+      "questionId": "delivery_form",
+      "question": "您希望最终交付的提示词以什么形式呈现？",
+      "answer": "将附件内测公告翻译为英文，只输出译文，不附使用说明、开发实现或发布计划。"
+    },
+    {
+      "questionId": "prompt_purpose",
+      "question": "这份提示词生成后主要用来做什么？",
+      "answer": "让下游AI将附件公告译为英语，保持内测、只生成提示词和扫描PDF OCR未开放等能力边界。"
+    }
+  ],
+  "refinedQuery": "请帮我处理附件材料，内容是一次内测公告。具体交付形式请先向我确认，不执行开发、部署或发送消息。\n本次选择：将附件内测公告翻译为英文，只输出译文，不附使用说明、开发实现或发布计划。\n本次选择：让下游AI将附件公告译为英语，保持内测、只生成提示词和扫描PDF OCR未开放等能力边界。",
+  "finalPaths": [
+    "materials/公告.txt"
+  ]
+}

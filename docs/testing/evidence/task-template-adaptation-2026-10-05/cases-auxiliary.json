@@ -1,0 +1,25 @@
+{
+  "cases": [
+    {
+      "id": "TT-ANALYSIS-CODE-M",
+      "title": "分析主目标与复现代码的约束范围",
+      "domain": "数据分析与代码复现",
+      "cohort": "UNSEEN_HOLDOUT",
+      "lengthClass": "medium",
+      "contextDescription": "合成数据与产品背景，不含真实个人资料。附件项目有Java技术栈，本次分析代码明确用Python。",
+      "rawPrompt": "分析合成月度数据的趋势，并提供分析代码。交付中文分析方案、结果空表与Python复现脚本，不运行代码、不修改项目、不部署；后端Java项目只是材料来源，不是本次脚本语言。\n字段已明确为month、visits、completed；每个月一行，month采用YYYY-MM，visits是非负整数，completed是当月完成数量，completed不得超过visits。零是有效值，空单元格表示缺失，不能把缺失填零。以completed除以visits计算完成率；visits为零时标记不可计算，不用零完成率代替。范围仅2025年1月至12月，不合并其他年份，不编造未提供的月份。\n输出以步骤、空表和必要代码分别组织，脚本校验列名、日期、缺失及分母边界，异常信息便于阅读，不吞掉错误。无需开发接口或补Java服务测试。全部数据为教学合成资料，无须查询外部数据，也不提供投资、医疗或正式统计结论；若材料不足，明确缺口。\n验收关注分母为零与值缺失的区分、非空原值保留、年度范围、Python可复现性以及所有示例不被写为真实结果；代码检查只针对脚本，不把软件交付要求扩大到分析报告。",
+      "files": [
+        {
+          "path": "materials/schema.md",
+          "language": "markdown",
+          "content": "合成月度表字段month、visits、completed；零有效、空值缺失。completed不得超过visits；visits为零时完成率不可计算。范围2025年1月至12月。仅数据字典，没有观测数据。"
+        },
+        {
+          "path": "project/pom.xml",
+          "language": "xml",
+          "content": "<project><properties><java.version>21</java.version></properties><dependencies><dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency></dependencies></project>"
+        }
+      ]
+    }
+  ]
+}

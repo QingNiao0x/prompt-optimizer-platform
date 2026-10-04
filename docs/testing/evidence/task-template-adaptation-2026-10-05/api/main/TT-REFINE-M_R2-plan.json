@@ -1,0 +1,167 @@
+{
+  "sample": {
+    "id": "TT-REFINE-M_R2",
+    "domain": "确认后交付",
+    "rawPrompt": "请帮我处理附件材料，内容是一次内测公告。具体交付形式请先向我确认，不执行开发、部署或发送消息。",
+    "contextDescription": "",
+    "files": [
+      {
+        "path": "materials/公告.txt",
+        "content": "模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。",
+        "language": "text"
+      }
+    ]
+  },
+  "prepared": {
+    "version": "sha256:c4cd672b6fee5367d9caadd2e8000c1ac68b18268cc5ffbb7c43a0eb7780d984",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/公告.txt"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] materials/公告.txt：文件内容摘要：模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。；业务摘录：[片段 1/1] 模拟内测公告：可选Plan问答、直接增强、编辑复制； 只生成提示词，扫描PDF OCR未开放。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/公告.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/公告.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。",
+          "summary": "文件内容摘要：模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T22:33:21.524547100Z",
+    "latencyMs": 2
+  },
+  "plan": {
+    "summary": "你希望基于附件中的内测公告材料生成一份提示词，且明确要求先确认交付形式，不执行开发、部署或发送消息。由于公告本身只是素材，交付形式尚未确定，需要先确认。",
+    "questions": [
+      {
+        "id": "delivery_form",
+        "question": "这次希望我最终交付什么形式的成果？",
+        "hint": "公告只是素材，交付形式会直接决定提示词的目标和结构。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "prompt_only",
+            "label": "仅一段可复用的提示词",
+            "description": "输出一段完整提示词文本，供你后续自行使用。",
+            "answer": "仅交付一段可复用的提示词文本。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "prompt_with_notes",
+            "label": "提示词加使用说明",
+            "description": "在提示词之外附上简短的使用说明和注意事项。",
+            "answer": "交付提示词文本，并附简短的使用说明。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "prompt_and_rewrite",
+            "label": "提示词加公告改写示例",
+            "description": "除提示词外，再按该提示词生成一份公告改写示例。",
+            "answer": "交付提示词文本，并附一份按该提示词生成的公告改写示例。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "prompt_purpose",
+        "question": "这段提示词主要用来做什么？",
+        "hint": "用途不同，提示词的角色设定和输出要求会不同。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "rewrite_announcement",
+            "label": "改写/润色公告",
+            "description": "用于把内测公告改写成更清晰、更规范的版本。",
+            "answer": "用于改写和润色内测公告。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "generate_announcement",
+            "label": "生成同类公告",
+            "description": "用于根据要点生成新的内测公告。",
+            "answer": "用于根据要点生成新的内测公告。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "review_announcement",
+            "label": "检查/优化公告",
+            "description": "用于检查公告的表述、结构和遗漏。",
+            "answer": "用于检查和优化内测公告。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "audience_channel",
+        "question": "公告面向的读者和发布渠道是什么？",
+        "hint": "读者和渠道会影响语气、篇幅和格式要求。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "面向参与内测的用户，通过应用内公告发布",
+          "面向内部测试人员，通过邮件发布"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 3028,
+    "expiresAt": "2026-10-04T22:33:21.524547100Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "8ec33990-5a1b-4b38-8496-e7dfa6dc7ae1",
+      "elapsedMs": 35
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "6c1bd4a1-a02f-4d25-9488-4df17754f706",
+      "elapsedMs": 3060
+    }
+  ]
+}

@@ -285,6 +285,27 @@ describe('optimization store project context', () => {
     expect(deleteProject).not.toHaveBeenCalled();
   });
 
+  it('should keep AUTO after Plan so a resolved classification is not an explicit user choice', async () => {
+    vi.mocked(createOptimizationPlan).mockResolvedValue({
+      requestId: 'plan-auto',
+      data: {
+        summary: '整理医院资料', questions: [], templateCode: 'TESTING',
+        provider: { provider: 'mock', model: 'planner', mock: true }, latencyMs: 1,
+        planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391',
+      },
+    });
+    vi.mocked(optimizePrompt).mockResolvedValue({ requestId: 'resolved-final', data: resultFixture() });
+    const store = useOptimizationStore();
+    const rawPrompt = '整理医院资料，只交付字段对照表，不要求代码测试。';
+    expect(await store.createOptimizationPlan(rawPrompt)).toBe(true);
+    expect(store.templateCode).toBe('TESTING');
+    const planConfirmation = { planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391', answers: [] };
+    expect(await store.runOptimization([], { rawPrompt, planConfirmation })).toBe(true);
+    expect(optimizePrompt).toHaveBeenCalledWith(expect.objectContaining({
+      enhancement: expect.objectContaining({ templateCode: 'AUTO' }), planConfirmation,
+    }));
+  });
+
   it('should restore a removed platform constraint and allow undoing the edit', () => {
     const store = useOptimizationStore();
     const original = resultFixture();

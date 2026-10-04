@@ -1,0 +1,74 @@
+{
+  "sample": {
+    "id": "TT-TRANSLATION-M_R2",
+    "domain": "翻译",
+    "rawPrompt": "请把下面的中文内测公告翻译为自然、简洁的英文，供大学生和研究生阅读。只输出译文，不输出标题之外的注释、语言解释、实现计划或验收报告。保留原文两个段落，Plan Mode这一产品术语保持英文，其他技术词以普通读者容易理解的表达处理。不要把“内测”译成正式发布，不要把“可以帮助”强化成保证，不新增功能、收费或效果数字。\n原文：提示词平台正在开展内测。用户可以输入需求并选择相关资料，直接生成结构化提示词；开启Plan Mode后，系统会先询问仍会影响结果的关键问题，再依据回答生成提示词。平台只生成提示词，不替用户执行代码、分析数据或发布内容。\n优化结果仍需用户核对。请勿上传密码、API Key或其他敏感资料；扫描版PDF的文字识别尚未开放。遇到文件覆盖提醒时，请检查需要的内容是否包含在资料中。欢迎反馈重复问题或不准确的建议，我们会据此继续完善。",
+    "contextDescription": "",
+    "files": []
+  },
+  "prepared": null,
+  "plan": {
+    "summary": "目标已明确：把两段中文内测公告译成自然简洁的英文，面向大学生和研究生，保留两段结构，Plan Mode 保持英文，不夸大、不新增信息。需要确认的只有一处会影响译文的术语处理。",
+    "questions": [
+      {
+        "id": "term_internal_test",
+        "question": "“内测”在英文里希望用哪种说法？",
+        "hint": "你已明确不能译成正式发布，但“内测”本身有几种常见英文表达，选择不同会影响公告语气和读者理解。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "beta",
+            "label": "beta",
+            "description": "用 beta 表示产品处于测试阶段，大学生读者最熟悉。",
+            "answer": "“内测”译为 beta（如 in beta / beta testing），不译为正式发布。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "closed_beta",
+            "label": "closed beta",
+            "description": "强调仅限受邀或特定用户参与的内测。",
+            "answer": "“内测”译为 closed beta，不译为正式发布。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "internal_testing",
+            "label": "internal testing",
+            "description": "强调内部测试，但可能让读者误以为外部用户不能参与。",
+            "answer": "“内测”译为 internal testing，不译为正式发布。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "pilot",
+            "label": "pilot",
+            "description": "用 pilot 表示试运行，语气偏正式。",
+            "answer": "“内测”译为 pilot，不译为正式发布。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 2430,
+    "expiresAt": "2026-10-04T22:33:18.285565Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "7986e2ab-b9df-4f6a-9ea3-7eb0bb0c164a",
+      "elapsedMs": 2467
+    }
+  ]
+}

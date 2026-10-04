@@ -1109,7 +1109,8 @@ test('首次主动开启 Plan 后显示说明并记住选择', async ({ page }) 
       enhancement?: { templateCode?: string };
       planConfirmation?: { planId?: string };
     };
-    expect(requestBody.enhancement?.templateCode).toBe('FEATURE_DEVELOPMENT');
+    // Plan 返回系统推断结果；工作台自动模式最终仍交由服务端结合确认答案解析。
+    expect(requestBody.enhancement?.templateCode).toBe('AUTO');
     expect(requestBody.planConfirmation?.planId).toBe('d53d3b67-62b2-4505-89dd-4ca88f837391');
     await route.fulfill({ status: 200, json: optimizationResponse });
   });

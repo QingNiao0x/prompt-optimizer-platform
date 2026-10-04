@@ -1,0 +1,134 @@
+{
+  "sample": {
+    "id": "TT-TEACHING-M",
+    "domain": "教学",
+    "rawPrompt": "请为六年级学生设计一节45分钟的分数大小比较课，交付教师教案、学生练习页和单独答案页。学生已经学习同分母分数比较和等值分数，本次重点是异分母分数的比较及选择适合的比较方法，不涉及软件开发或代码测试。\n教案安排导入5分钟、示范10分钟、小组练习15分钟、独立练习10分钟和总结5分钟，合计必须是45分钟。每个环节写明教师做什么、学生做什么和可以观察的学习表现。材料使用纸条、白板和常用文具，不依赖手机、付费软件或特殊设备。语言适合六年级，避免要求学生证明超出已学知识的结论。\n学生练习页设置6道题，包含同分母、同分子、通分及接近1这四类思路，至少一题要求解释理由。题目可以有合理的新数字，但答案必须数学正确；不要误用只比较分子或只比较分母的规则。答案页与学生页分开，列出每题结果和简短解释，不把答案直接放在学生练习的旁边。\n教案中的常规教学步骤可由执行者安排，无需把每个措辞和练习形式转成Plan追问。不得编造真实课堂实验、学生成绩或教学成效百分比。验收关注时长合计、六题齐全、方法和答案正确、难度适合已有知识以及三个交付物分开。只输出教案、练习页、答案页，不附程序、研究论文或产品介绍。",
+    "contextDescription": "",
+    "files": []
+  },
+  "prepared": null,
+  "plan": {
+    "summary": "已理解你要为六年级设计一节45分钟的异分母分数比较课，交付教师教案、学生练习页和独立答案页，并已明确各环节时长、题目类型、答案正确性和交付边界。为生成可直接使用的最终提示词，还需确认几个会影响题目与教案内容的教学事实。",
+    "questions": [
+      {
+        "id": "fraction_forms",
+        "question": "学生练习页的6道题中，分数以什么形式呈现？",
+        "hint": "这会影响题目难度和是否涉及带分数或假分数的比较，属于本次教学范围的关键设定。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "proper_only",
+            "label": "只用真分数",
+            "description": "所有分数均为分子小于分母的真分数，符合六年级常见比较练习。",
+            "answer": "6道题全部使用真分数（分子小于分母），不出现带分数或假分数。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "include_mixed",
+            "label": "包含带分数或假分数",
+            "description": "部分题目涉及带分数或假分数与真分数的比较。",
+            "answer": "6道题中包含带分数或假分数与真分数的比较，需在教案中说明相应方法。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "mixed_forms",
+            "label": "真分数与假分数混合",
+            "description": "题目混合真分数和假分数，但不涉及带分数。",
+            "answer": "6道题混合使用真分数和假分数，不出现带分数。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "same_numerator_scope",
+        "question": "“同分子”类题目希望学生比较的是哪种情况？",
+        "hint": "同分子比较可涉及分子相同但分母不同的真分数，也可涉及分子相同且与1接近的分数，明确范围可避免题目超出已学知识。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "same_num_diff_den",
+            "label": "分子相同、分母不同",
+            "description": "比较如3/4与3/5这类分子相同、分母不同的真分数。",
+            "answer": "同分子类题目比较分子相同、分母不同的真分数，例如3/4与3/5。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "same_num_near_one",
+            "label": "分子相同且都接近1",
+            "description": "比较如7/8与8/9这类分子相同且都接近1的分数。",
+            "answer": "同分子类题目比较分子相同且都接近1的分数，例如7/8与8/9。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "both",
+            "label": "两种都包含",
+            "description": "同分子类题目同时包含分子相同分母不同和都接近1两种情况。",
+            "answer": "同分子类题目同时包含分子相同分母不同以及分子相同且都接近1的分数。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "explain_reasoning",
+        "question": "要求解释理由的那道题，希望学生解释到什么程度？",
+        "hint": "这决定答案页中该题的解释深度和练习页的作答空间。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "method_only",
+            "label": "说出所用比较方法",
+            "description": "学生只需说明用了通分、同分子比较或与1比较中的哪一种方法。",
+            "answer": "要求解释理由的题目，学生只需说明使用了哪种比较方法（如通分、同分子比较或与1比较）。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "method_and_steps",
+            "label": "说明方法并写出关键步骤",
+            "description": "学生需说明方法并写出通分或比较的关键步骤。",
+            "answer": "要求解释理由的题目，学生需说明所用方法并写出关键步骤（如通分后的分数）。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "compare_reason",
+            "label": "解释为什么该分数更大或更小",
+            "description": "学生需用语言解释比较结果的原因，而不只是列出步骤。",
+            "answer": "要求解释理由的题目，学生需用语言解释为什么某个分数更大或更小。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 4569,
+    "expiresAt": "2026-10-04T22:18:22.691591200Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "a5f9a582-a4cd-471f-a273-f1b67efe9566",
+      "elapsedMs": 4596
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "sample": {
+    "id": "TT-NEWS-M_R2",
+    "domain": "新闻稿",
+    "rawPrompt": "请依据附件的内测说明，撰写一篇面向大学生和研究生的中文校园新闻稿。当前任务是新闻写作，不是开发平台、开展科研实验或修改代码。只输出一个标题和正文，正文约600字，不能附背景分析、编辑说明、代码、接口契约或测试方案。标题朴实准确，不采用“颠覆行业”“彻底消灭错误”等夸大词。\n新闻应交代平台解决什么使用问题、怎样使用、当前支持什么、还存在什么边界。讲清用户先输入需求，按需提供资料，可以直接增强；开启Plan时，先回答影响结果的关键问题再得到最终提示词。用户复制的结果仍需自己核对，平台只生成提示词，不替用户执行任务。技术栈只是产品背景，提到Java或Vue不意味着本次要编写代码。\n材料中的数字全部是虚构教学素材，不得写为真实运营成果。不要编造用户评价、教师引语、获奖信息、模型准确率、正式上线日期或收费计划。对尚待验收的能力使用“正在完善”之类明确表述。写作风格自然易懂，避免把新闻稿写成产品说明书或研究方法章节。\n文中介绍上传资料时，应说明用户选择相关文件后，系统使用相关片段提供上下文；不能宣称整个目录会原封不动发送模型，也不能说平台理解所有文件或永远不会漏掉业务事实。保留“文档文字层可处理，扫描件OCR尚未支持”的边界。\n验收请在生成时自查：是否只有标题和正文，正文篇幅是否接近要求，产品状态是否保持内测，能力与边界是否与附件一致，有没有引入未经材料支持的数字与引语。自查过程不输出。",
+    "contextDescription": "内测产品新闻素材；背景技术栈为Java/Spring Boot/Vue/TypeScript，但本次仅新闻写作。",
+    "files": [
+      {
+        "path": "docs/内测说明.md",
+        "content": "平台处于内测。支持原始需求、相关代码/文字层文档、直接增强和可选Plan问答、编辑复制及历史。只生成提示词，不执行任务。扫描版PDF OCR未开放。不存在本素材证明的准确率或营收。",
+        "language": "markdown"
+      }
+    ]
+  },
+  "prepared": {
+    "version": "sha256:9aead8fe67cc5dfbbb036791c3ab6b5925ba183d2f967b872eab583198a0e243",
+    "digest": {
+      "description": "内测产品新闻素材；背景技术栈为Java/Spring Boot/Vue/TypeScript，但本次仅新闻写作。",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/内测说明.md"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] docs/内测说明.md：Markdown 文档摘要：平台处于内测。；支持原始需求、相关代码/文字层文档、直接增强和可选Plan问答、编辑复制及历史。；只生成提示词，不执行任务。；扫描版PDF OCR未开放。；不存在本素材证明的准确率或营收。；业务摘录：[片段 1/1] 平台处于内测。 支持原始需求、相关代码/文字层文档、直接增强和可选Plan问答、编辑复制及历史。 只生成提示词，不执行任务。 扫描版PDF OCR未开放。 不存在本素材证明的准确率或营收。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "内测产品新闻素材；背景技术栈为Java/Spring Boot/Vue/TypeScript，但本次仅新闻写作。",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/内测说明.md"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/内测说明.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n平台处于内测。支持原始需求、相关代码/文字层文档、直接增强和可选Plan问答、编辑复制及历史。只生成提示词，不执行任务。扫描版PDF OCR未开放。不存在本素材证明的准确率或营收。",
+          "summary": "Markdown 文档摘要：平台处于内测。；支持原始需求、相关代码/文字层文档、直接增强和可选Plan问答、编辑复制及历史。；只生成提示词，不执行任务。；扫描版PDF OCR未开放。；不存在本素材证明的准确率或营收。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T22:33:28.497392200Z",
+    "latencyMs": 6
+  },
+  "plan": {
+    "summary": "已明确这是一篇面向大学生和研究生的中文校园新闻稿，只输出标题和正文，约600字，介绍内测平台解决的问题、使用方式、当前能力与边界，并避免夸大和虚构数据。材料已覆盖产品状态、功能与边界，但新闻稿中若要点名平台，缺少可用的正式名称，需要确认。",
+    "questions": [
+      {
+        "id": "platform_name",
+        "question": "新闻稿中如何称呼这个平台？",
+        "hint": "标题和正文需要指代产品；材料未给出正式名称，不能自行编造。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "使用材料中的正式名称，如“XX提示词助手”",
+          "暂用“该内测平台”等通用称呼，不出现具体名称"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 1792,
+    "expiresAt": "2026-10-04T22:33:28.497392200Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "2418dbf2-a855-46a1-9b2e-d785ec818123",
+      "elapsedMs": 41
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "bbba995f-4e3a-4fea-8589-08cf80948847",
+      "elapsedMs": 1822
+    }
+  ]
+}

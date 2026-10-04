@@ -1,0 +1,72 @@
+[
+  {
+    "event": "pipeline.stage.completed",
+    "requestId": "a531d69b-122d-4ff5-acec-ebba0c3f07c7",
+    "workflowId": "-",
+    "operation": "prompt.optimize",
+    "stage": "model.upstream",
+    "model": "deepseek:deepseek-flash",
+    "status": "SUCCESS",
+    "durationMs": "6239"
+  },
+  {
+    "event": "pipeline.stage.completed",
+    "requestId": "a531d69b-122d-4ff5-acec-ebba0c3f07c7",
+    "workflowId": "-",
+    "operation": "prompt.optimize",
+    "stage": "model.validation",
+    "model": "deepseek:deepseek-flash",
+    "status": "SUCCESS",
+    "durationMs": "235"
+  },
+  {
+    "event": "model.call.completed",
+    "requestId": "a531d69b-122d-4ff5-acec-ebba0c3f07c7",
+    "workflowId": "-",
+    "operation": "prompt.optimize",
+    "providerRoute": "deepseek",
+    "model": "deepseek:deepseek-flash",
+    "selectionSource": "PLATFORM_CATALOG",
+    "mock": "false",
+    "attempt": "1",
+    "inputTokens": "3177",
+    "outputTokens": "1029",
+    "totalTokens": "4206",
+    "durationMs": "6481"
+  },
+  {
+    "event": "pipeline.stage.completed",
+    "requestId": "a531d69b-122d-4ff5-acec-ebba0c3f07c7",
+    "workflowId": "-",
+    "operation": "plan.generate",
+    "stage": "model.upstream",
+    "model": "deepseek:deepseek-flash",
+    "status": "SUCCESS",
+    "durationMs": "6223"
+  },
+  {
+    "event": "pipeline.stage.completed",
+    "requestId": "a531d69b-122d-4ff5-acec-ebba0c3f07c7",
+    "workflowId": "-",
+    "operation": "plan.generate",
+    "stage": "model.validation",
+    "model": "deepseek:deepseek-flash",
+    "status": "SUCCESS",
+    "durationMs": "0"
+  },
+  {
+    "event": "model.call.completed",
+    "requestId": "a531d69b-122d-4ff5-acec-ebba0c3f07c7",
+    "workflowId": "-",
+    "operation": "plan.generate",
+    "providerRoute": "deepseek",
+    "model": "deepseek:deepseek-flash",
+    "selectionSource": "PLATFORM_CATALOG",
+    "mock": "false",
+    "attempt": "1",
+    "inputTokens": "2770",
+    "outputTokens": "1611",
+    "totalTokens": "4381",
+    "durationMs": "6223"
+  }
+]

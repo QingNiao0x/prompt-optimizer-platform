@@ -1,0 +1,24 @@
+{
+  "reviewType": "AI_ASSISTED_SYNTHETIC_PERSONA",
+  "answers": [
+    {
+      "questionId": "delivery_form",
+      "question": "这次希望我最终交付什么形式的成果？",
+      "answer": "将附件的内测公告翻译为英文，只输出译文，不附解释、实现计划或发布流程。"
+    },
+    {
+      "questionId": "prompt_purpose",
+      "question": "这段提示词主要用来做什么？",
+      "answer": "让下游AI将附件公告翻译为英文，保持公告已经列出的产品能力边界，不执行其他任务。"
+    },
+    {
+      "questionId": "audience_channel",
+      "question": "公告面向的读者和发布渠道是什么？",
+      "answer": "面向大学生与研究生阅读，当前只交译文，不指定或执行实际发布渠道。"
+    }
+  ],
+  "refinedQuery": "请帮我处理附件材料，内容是一次内测公告。具体交付形式请先向我确认，不执行开发、部署或发送消息。\n本次选择：将附件的内测公告翻译为英文，只输出译文，不附解释、实现计划或发布流程。\n本次选择：让下游AI将附件公告翻译为英文，保持公告已经列出的产品能力边界，不执行其他任务。\n本次选择：面向大学生与研究生阅读，当前只交译文，不指定或执行实际发布渠道。",
+  "finalPaths": [
+    "materials/公告.txt"
+  ]
+}

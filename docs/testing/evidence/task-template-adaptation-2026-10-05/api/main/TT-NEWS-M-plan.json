@@ -1,0 +1,137 @@
+{
+  "sample": {
+    "id": "TT-NEWS-M",
+    "domain": "新闻稿",
+    "rawPrompt": "请依据附件的内测说明，撰写一篇面向大学生和研究生的中文校园新闻稿。当前任务是新闻写作，不是开发平台、开展科研实验或修改代码。只输出一个标题和正文，正文约600字，不能附背景分析、编辑说明、代码、接口契约或测试方案。标题朴实准确，不采用“颠覆行业”“彻底消灭错误”等夸大词。\n新闻应交代平台解决什么使用问题、怎样使用、当前支持什么、还存在什么边界。讲清用户先输入需求，按需提供资料，可以直接增强；开启Plan时，先回答影响结果的关键问题再得到最终提示词。用户复制的结果仍需自己核对，平台只生成提示词，不替用户执行任务。技术栈只是产品背景，提到Java或Vue不意味着本次要编写代码。\n材料中的数字全部是虚构教学素材，不得写为真实运营成果。不要编造用户评价、教师引语、获奖信息、模型准确率、正式上线日期或收费计划。对尚待验收的能力使用“正在完善”之类明确表述。写作风格自然易懂，避免把新闻稿写成产品说明书或研究方法章节。\n文中介绍上传资料时，应说明用户选择相关文件后，系统使用相关片段提供上下文；不能宣称整个目录会原封不动发送模型，也不能说平台理解所有文件或永远不会漏掉业务事实。保留“文档文字层可处理，扫描件OCR尚未支持”的边界。\n验收请在生成时自查：是否只有标题和正文，正文篇幅是否接近要求，产品状态是否保持内测，能力与边界是否与附件一致，有没有引入未经材料支持的数字与引语。自查过程不输出。",
+    "contextDescription": "内测产品新闻素材；背景技术栈为Java/Spring Boot/Vue/TypeScript，但本次仅新闻写作。",
+    "files": [
+      {
+        "path": "docs/内测说明.md",
+        "content": "平台处于内测。支持原始需求、相关代码/文字层文档、直接增强和可选Plan问答、编辑复制及历史。只生成提示词，不执行任务。扫描版PDF OCR未开放。不存在本素材证明的准确率或营收。",
+        "language": "markdown"
+      }
+    ]
+  },
+  "prepared": {
+    "version": "sha256:9aead8fe67cc5dfbbb036791c3ab6b5925ba183d2f967b872eab583198a0e243",
+    "digest": {
+      "description": "内测产品新闻素材；背景技术栈为Java/Spring Boot/Vue/TypeScript，但本次仅新闻写作。",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/内测说明.md"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] docs/内测说明.md：Markdown 文档摘要：平台处于内测。；支持原始需求、相关代码/文字层文档、直接增强和可选Plan问答、编辑复制及历史。；只生成提示词，不执行任务。；扫描版PDF OCR未开放。；不存在本素材证明的准确率或营收。；业务摘录：[片段 1/1] 平台处于内测。 支持原始需求、相关代码/文字层文档、直接增强和可选Plan问答、编辑复制及历史。 只生成提示词，不执行任务。 扫描版PDF OCR未开放。 不存在本素材证明的准确率或营收。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "内测产品新闻素材；背景技术栈为Java/Spring Boot/Vue/TypeScript，但本次仅新闻写作。",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/内测说明.md"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/内测说明.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n平台处于内测。支持原始需求、相关代码/文字层文档、直接增强和可选Plan问答、编辑复制及历史。只生成提示词，不执行任务。扫描版PDF OCR未开放。不存在本素材证明的准确率或营收。",
+          "summary": "Markdown 文档摘要：平台处于内测。；支持原始需求、相关代码/文字层文档、直接增强和可选Plan问答、编辑复制及历史。；只生成提示词，不执行任务。；扫描版PDF OCR未开放。；不存在本素材证明的准确率或营收。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T22:15:51.173219500Z",
+    "latencyMs": 0
+  },
+  "plan": {
+    "summary": "已理解目标是依据内测说明撰写一篇约600字的中文校园新闻稿，只含标题和正文，保持内测状态、能力与边界一致，不编造数字和引语。材料已明确大部分写作约束，但仍有少量会影响成品内容或口径的事实需要确认。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "新闻稿中是否需要出现平台的具体名称？如果需要，请提供准确名称。",
+        "hint": "标题和正文若没有平台名称会显得指向不明，但材料中未给出名称，不能自行编造。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "平台名称为“XX提示词助手”",
+          "不出现具体名称，统一用“该平台”指代"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "新闻稿面向大学生和研究生，是否需要点明具体适用场景或学科范围？",
+        "hint": "材料只说明面向大学生和研究生，未限定场景；是否点明会影响正文对“解决什么使用问题”的表述范围。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "general",
+            "label": "不限定学科，泛化描述",
+            "description": "面向所有大学生和研究生，不绑定具体学科或场景。",
+            "answer": "不限定学科，泛化描述学习、写作、资料整理等通用场景。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "specified",
+            "label": "点明具体场景",
+            "description": "在正文中点明一个或多个具体适用场景，如论文写作、课程作业等。",
+            "answer": "点明具体适用场景，例如论文写作、课程作业或资料整理。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q3",
+        "question": "新闻稿中是否需要交代平台由谁开发或所属机构？",
+        "hint": "材料未提供开发方或机构信息，若需要则必须由用户提供，不能编造。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "由某高校某实验室开发",
+          "不交代开发方，只介绍产品本身"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 3498,
+    "expiresAt": "2026-10-04T22:15:51.173219500Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "93fa6e96-c4bc-464e-959f-c8782f479059",
+      "elapsedMs": 42
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "42f01838-21f1-42dd-9edb-555a4302d4c5",
+      "elapsedMs": 3536
+    }
+  ]
+}

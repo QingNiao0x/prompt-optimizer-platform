@@ -1,0 +1,1257 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-04T22:46:36.576Z",
+  "manifest": {
+    "schemaVersion": 1,
+    "createdAt": "2026-10-04T22:09:11.187Z",
+    "jobsSha256": "64a5e4024677d5924d5159ad3be58cfb9b0bcda924a14ce4b744a8ba8689a897",
+    "inputSha256": "ea8ee75cafdbdf27ac3cd236dc87159cc389cb57f37bb8b7bc325b20627b81c0",
+    "modelsSha256": "ab11cce94b165437123f6e23e84609985d53f0cf6692d15c99b36834b58c4c5e",
+    "origin": "REAL_TASK_TEMPLATE_ACCEPTANCE_20261005",
+    "plannedCalls": 40,
+    "professionalReview": "PENDING",
+    "releaseApproval": false,
+    "optimizerCallsThisPreparation": 0,
+    "note": "External execution is separate from the platform. Generation failures remain in cases; this is not a full folder upload benchmark."
+  },
+  "records": [
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 87.5,
+        "criticalErrors": []
+      },
+      "latencyMs": 3986,
+      "tokens": {
+        "prompt_tokens": 493,
+        "completion_tokens": 434,
+        "total_tokens": 927
+      },
+      "jobId": "TT-NEWS-M_R2-raw-m1-r1"
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 3651,
+      "tokens": {
+        "prompt_tokens": 1071,
+        "completion_tokens": 459,
+        "total_tokens": 1530
+      },
+      "jobId": "TT-NEWS-M_R2-direct-m1-r1"
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 2892,
+      "tokens": {
+        "prompt_tokens": 1168,
+        "completion_tokens": 388,
+        "total_tokens": 1556
+      },
+      "jobId": "TT-NEWS-M_R2-plan-m1-r1"
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "domain": "新闻稿",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 3818,
+      "tokens": {
+        "prompt_tokens": 540,
+        "completion_tokens": 435,
+        "total_tokens": 975
+      },
+      "jobId": "TT-NEWS-M_R2-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "domain": "新闻稿",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 3234,
+      "tokens": {
+        "prompt_tokens": 1118,
+        "completion_tokens": 409,
+        "total_tokens": 1527
+      },
+      "jobId": "TT-NEWS-M_R2-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 29213,
+      "tokens": {
+        "prompt_tokens": 503,
+        "completion_tokens": 4631,
+        "total_tokens": 5134
+      },
+      "jobId": "TT-NEWS-M_R2-raw-m2-r1"
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 32516,
+      "tokens": {
+        "prompt_tokens": 1079,
+        "completion_tokens": 5306,
+        "total_tokens": 6385
+      },
+      "jobId": "TT-NEWS-M_R2-direct-m2-r1"
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 20438,
+      "tokens": {
+        "prompt_tokens": 1180,
+        "completion_tokens": 3223,
+        "total_tokens": 4403
+      },
+      "jobId": "TT-NEWS-M_R2-plan-m2-r1"
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "domain": "新闻稿",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 34876,
+      "tokens": {
+        "prompt_tokens": 550,
+        "completion_tokens": 5926,
+        "total_tokens": 6476
+      },
+      "jobId": "TT-NEWS-M_R2-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "domain": "新闻稿",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 12399,
+      "tokens": {
+        "prompt_tokens": 1126,
+        "completion_tokens": 2043,
+        "total_tokens": 3169
+      },
+      "jobId": "TT-NEWS-M_R2-direct_matched-m2-r1"
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "domain": "软件开发",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 53.75,
+        "criticalErrors": [
+          "原始需求明确尚未决定地区缺失分支，作品却在流程、代码和测试中把停止写入行为写定。"
+        ]
+      },
+      "latencyMs": 13260,
+      "tokens": {
+        "prompt_tokens": 1277,
+        "completion_tokens": 3539,
+        "total_tokens": 4816
+      },
+      "jobId": "TT-SOFTWARE-M_R2-raw-m1-r1"
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "domain": "软件开发",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 92.5,
+        "criticalErrors": []
+      },
+      "latencyMs": 18275,
+      "tokens": {
+        "prompt_tokens": 2857,
+        "completion_tokens": 5092,
+        "total_tokens": 7949
+      },
+      "jobId": "TT-SOFTWARE-M_R2-direct-m1-r1"
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "domain": "软件开发",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 92.5,
+        "criticalErrors": []
+      },
+      "latencyMs": 21518,
+      "tokens": {
+        "prompt_tokens": 3278,
+        "completion_tokens": 6062,
+        "total_tokens": 9340
+      },
+      "jobId": "TT-SOFTWARE-M_R2-plan-m1-r1"
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "domain": "软件开发",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 12722,
+      "tokens": {
+        "prompt_tokens": 1348,
+        "completion_tokens": 3365,
+        "total_tokens": 4713
+      },
+      "jobId": "TT-SOFTWARE-M_R2-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "domain": "软件开发",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 83.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 17548,
+      "tokens": {
+        "prompt_tokens": 2928,
+        "completion_tokens": 4749,
+        "total_tokens": 7677
+      },
+      "jobId": "TT-SOFTWARE-M_R2-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "domain": "软件开发",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 60118,
+      "tokens": {
+        "prompt_tokens": 1302,
+        "completion_tokens": 8192,
+        "total_tokens": 9494
+      },
+      "jobId": "TT-SOFTWARE-M_R2-raw-m2-r1"
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "domain": "软件开发",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 59188,
+      "tokens": {
+        "prompt_tokens": 2915,
+        "completion_tokens": 8192,
+        "total_tokens": 11107
+      },
+      "jobId": "TT-SOFTWARE-M_R2-direct-m2-r1"
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "domain": "软件开发",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 57093,
+      "tokens": {
+        "prompt_tokens": 3334,
+        "completion_tokens": 8192,
+        "total_tokens": 11526
+      },
+      "jobId": "TT-SOFTWARE-M_R2-plan-m2-r1"
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "domain": "软件开发",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 58930,
+      "tokens": {
+        "prompt_tokens": 1375,
+        "completion_tokens": 8192,
+        "total_tokens": 9567
+      },
+      "jobId": "TT-SOFTWARE-M_R2-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "domain": "软件开发",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 59711,
+      "tokens": {
+        "prompt_tokens": 2988,
+        "completion_tokens": 8192,
+        "total_tokens": 11180
+      },
+      "jobId": "TT-SOFTWARE-M_R2-direct_matched-m2-r1"
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "domain": "论文与研究设计",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 93.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 5308,
+      "tokens": {
+        "prompt_tokens": 2938,
+        "completion_tokens": 1015,
+        "total_tokens": 3953
+      },
+      "jobId": "TT-ACADEMIC-L_R2-raw-m1-r1"
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "domain": "论文与研究设计",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 8020,
+      "tokens": {
+        "prompt_tokens": 4678,
+        "completion_tokens": 1814,
+        "total_tokens": 6492
+      },
+      "jobId": "TT-ACADEMIC-L_R2-direct-m1-r1"
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "domain": "论文与研究设计",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 5678,
+      "tokens": {
+        "prompt_tokens": 4020,
+        "completion_tokens": 1350,
+        "total_tokens": 5370
+      },
+      "jobId": "TT-ACADEMIC-L_R2-plan-m1-r1"
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "domain": "论文与研究设计",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 5691,
+      "tokens": {
+        "prompt_tokens": 3087,
+        "completion_tokens": 1211,
+        "total_tokens": 4298
+      },
+      "jobId": "TT-ACADEMIC-L_R2-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "domain": "论文与研究设计",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 81.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 8564,
+      "tokens": {
+        "prompt_tokens": 4827,
+        "completion_tokens": 1794,
+        "total_tokens": 6621
+      },
+      "jobId": "TT-ACADEMIC-L_R2-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "domain": "论文与研究设计",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 52089,
+      "tokens": {
+        "prompt_tokens": 2988,
+        "completion_tokens": 8192,
+        "total_tokens": 11180
+      },
+      "jobId": "TT-ACADEMIC-L_R2-raw-m2-r1"
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "domain": "论文与研究设计",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 49673,
+      "tokens": {
+        "prompt_tokens": 4749,
+        "completion_tokens": 8192,
+        "total_tokens": 12941
+      },
+      "jobId": "TT-ACADEMIC-L_R2-direct-m2-r1"
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "domain": "论文与研究设计",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 51318,
+      "tokens": {
+        "prompt_tokens": 4065,
+        "completion_tokens": 8192,
+        "total_tokens": 12257
+      },
+      "jobId": "TT-ACADEMIC-L_R2-plan-m2-r1"
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "domain": "论文与研究设计",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 53202,
+      "tokens": {
+        "prompt_tokens": 3137,
+        "completion_tokens": 8192,
+        "total_tokens": 11329
+      },
+      "jobId": "TT-ACADEMIC-L_R2-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "domain": "论文与研究设计",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 52641,
+      "tokens": {
+        "prompt_tokens": 4898,
+        "completion_tokens": 8192,
+        "total_tokens": 13090
+      },
+      "jobId": "TT-ACADEMIC-L_R2-direct_matched-m2-r1"
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "domain": "用户指南",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 90,
+        "criticalErrors": []
+      },
+      "latencyMs": 6193,
+      "tokens": {
+        "prompt_tokens": 914,
+        "completion_tokens": 1086,
+        "total_tokens": 2000
+      },
+      "jobId": "TT-GUIDE-L_R2-raw-m1-r1"
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "domain": "用户指南",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 85,
+        "criticalErrors": []
+      },
+      "latencyMs": 6800,
+      "tokens": {
+        "prompt_tokens": 1878,
+        "completion_tokens": 1140,
+        "total_tokens": 3018
+      },
+      "jobId": "TT-GUIDE-L_R2-direct-m1-r1"
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "domain": "用户指南",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 81.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 8574,
+      "tokens": {
+        "prompt_tokens": 1924,
+        "completion_tokens": 1457,
+        "total_tokens": 3381
+      },
+      "jobId": "TT-GUIDE-L_R2-plan-m1-r1"
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "domain": "用户指南",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 91.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 5777,
+      "tokens": {
+        "prompt_tokens": 983,
+        "completion_tokens": 1061,
+        "total_tokens": 2044
+      },
+      "jobId": "TT-GUIDE-L_R2-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "domain": "用户指南",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 6210,
+      "tokens": {
+        "prompt_tokens": 1947,
+        "completion_tokens": 1040,
+        "total_tokens": 2987
+      },
+      "jobId": "TT-GUIDE-L_R2-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "domain": "用户指南",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 46790,
+      "tokens": {
+        "prompt_tokens": 940,
+        "completion_tokens": 8192,
+        "total_tokens": 9132
+      },
+      "jobId": "TT-GUIDE-L_R2-raw-m2-r1"
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "domain": "用户指南",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 47369,
+      "tokens": {
+        "prompt_tokens": 1920,
+        "completion_tokens": 8192,
+        "total_tokens": 10112
+      },
+      "jobId": "TT-GUIDE-L_R2-direct-m2-r1"
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "domain": "用户指南",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 49087,
+      "tokens": {
+        "prompt_tokens": 1948,
+        "completion_tokens": 8192,
+        "total_tokens": 10140
+      },
+      "jobId": "TT-GUIDE-L_R2-plan-m2-r1"
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "domain": "用户指南",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "PARTIAL",
+      "quality": {
+        "status": "PARTIAL",
+        "score": null
+      },
+      "latencyMs": 51315,
+      "tokens": {
+        "prompt_tokens": 1009,
+        "completion_tokens": 8192,
+        "total_tokens": 9201
+      },
+      "jobId": "TT-GUIDE-L_R2-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "domain": "用户指南",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 49740,
+      "tokens": {
+        "prompt_tokens": 1989,
+        "completion_tokens": 8192,
+        "total_tokens": 10181
+      },
+      "jobId": "TT-GUIDE-L_R2-direct_matched-m2-r1"
+    }
+  ],
+  "pairs": [
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 8.75
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 3.75
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 3.75
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "TT-NEWS-M_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 38.75
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -3.75
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -12.5
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "PENDING",
+      "pendingReason": "TECHNICAL_FAILURE_NO_COMPARABLE_WORK",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "PENDING",
+      "pendingReason": "TECHNICAL_FAILURE_NO_COMPARABLE_WORK",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "TT-SOFTWARE-M_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "PENDING",
+      "pendingReason": "TECHNICAL_FAILURE_NO_COMPARABLE_WORK",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 2.5
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -3.75
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -18.75
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "PENDING",
+      "pendingReason": "TECHNICAL_FAILURE_NO_COMPARABLE_WORK",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "PENDING",
+      "pendingReason": "TECHNICAL_FAILURE_NO_COMPARABLE_WORK",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "TT-ACADEMIC-L_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "PENDING",
+      "pendingReason": "TECHNICAL_FAILURE_NO_COMPARABLE_WORK",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "LOSS",
+      "scoreDelta": -5
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -10
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 8.75
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "PENDING",
+      "pendingReason": "TECHNICAL_FAILURE_NO_COMPARABLE_WORK",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "PENDING",
+      "pendingReason": "TECHNICAL_FAILURE_NO_COMPARABLE_WORK",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "TT-GUIDE-L_R2",
+      "modelId": "tokenhub:glm-5.3-flashx",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "PENDING",
+      "pendingReason": "TECHNICAL_FAILURE_NO_COMPARABLE_WORK",
+      "scoreDelta": null
+    }
+  ],
+  "groups": [
+    {
+      "key": "deepseek:deepseek-flash|raw",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 1,
+      "reviewed": 4,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-flash|direct",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 0,
+      "reviewed": 4,
+      "pairedComparisons": 4,
+      "wins": 3,
+      "losses": 1,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": 0.75
+    },
+    {
+      "key": "deepseek:deepseek-flash|plan",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 0,
+      "reviewed": 4,
+      "pairedComparisons": 4,
+      "wins": 1,
+      "losses": 3,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": 0.25
+    },
+    {
+      "key": "deepseek:deepseek-flash|raw_matched",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 0,
+      "reviewed": 4,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-flash|direct_matched",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 0,
+      "reviewed": 4,
+      "pairedComparisons": 4,
+      "wins": 2,
+      "losses": 2,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": 0.5
+    },
+    {
+      "key": "tokenhub:glm-5.3-flashx|raw",
+      "planned": 4,
+      "successfulOutputs": 1,
+      "criticalFailures": 0,
+      "reviewed": 1,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "tokenhub:glm-5.3-flashx|direct",
+      "planned": 4,
+      "successfulOutputs": 1,
+      "criticalFailures": 0,
+      "reviewed": 1,
+      "pairedComparisons": 1,
+      "wins": 0,
+      "losses": 0,
+      "ties": 1,
+      "bothUnacceptable": 0,
+      "winRate": 0
+    },
+    {
+      "key": "tokenhub:glm-5.3-flashx|plan",
+      "planned": 4,
+      "successfulOutputs": 1,
+      "criticalFailures": 0,
+      "reviewed": 1,
+      "pairedComparisons": 1,
+      "wins": 0,
+      "losses": 0,
+      "ties": 1,
+      "bothUnacceptable": 0,
+      "winRate": 0
+    },
+    {
+      "key": "tokenhub:glm-5.3-flashx|raw_matched",
+      "planned": 4,
+      "successfulOutputs": 1,
+      "criticalFailures": 0,
+      "reviewed": 1,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "tokenhub:glm-5.3-flashx|direct_matched",
+      "planned": 4,
+      "successfulOutputs": 1,
+      "criticalFailures": 0,
+      "reviewed": 1,
+      "pairedComparisons": 1,
+      "wins": 0,
+      "losses": 0,
+      "ties": 1,
+      "bothUnacceptable": 0,
+      "winRate": 0
+    }
+  ],
+  "generationFailures": [],
+  "reviewSource": {
+    "id": "codex-task-template-20261005",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-04T22:46:36.464253+00:00",
+    "professionalDomain": "synthetic task compliance, not expert certification",
+    "blinded": false,
+    "limitation": "One disclosed AI-assisted reviewer; baseline and arm provenance were seen. Not independent human acceptance."
+  },
+  "professionalReview": "PENDING",
+  "releaseApproval": false,
+  "scope": "Fixed prompt downstream work comparison; no guarantee of professional correctness or universal improvement."
+}

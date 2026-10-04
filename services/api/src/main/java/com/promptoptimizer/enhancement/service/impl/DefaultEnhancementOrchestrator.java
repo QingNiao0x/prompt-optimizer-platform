@@ -27,6 +27,7 @@ import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import com.promptoptimizer.template.domain.PromptTemplate;
+import com.promptoptimizer.template.domain.TaskIntentResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -243,14 +244,17 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         }
         PromptTemplate template = templateRegistry.resolve(
                 request.enhancement().templateCode(),
-                request.rawPrompt()
+                request.rawPrompt(),
+                decisions.knownDecisions()
         );
-        List<String> constraints = constraintCompleter.complete(
-                context,
-                request.permissionPolicy(),
-                Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()),
-                template.code()
-        );
+        var taskIntent = TaskIntentResolver.resolve(request.enhancement().templateCode(),
+                request.rawPrompt(), decisions.knownDecisions());
+        // 只有肯定交付目标包含辅助代码才加代码检查，材料中的技术栈不改变报告的职责。
+        List<String> constraints = taskIntent.engineeringConstraints() && !TaskIntentResolver.software(template.code())
+                ? constraintCompleter.completeWithAuxiliaryCode(context, request.permissionPolicy(),
+                        Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()), template.code())
+                : constraintCompleter.complete(context, request.permissionPolicy(),
+                        Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()), template.code());
 
         String workflowResourceId = request.planConfirmation() == null
                 ? null

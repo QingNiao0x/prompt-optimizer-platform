@@ -1,0 +1,58 @@
+{
+  "sample": {
+    "id": "TT-TEACHING-M_R2",
+    "domain": "教学",
+    "rawPrompt": "请为六年级学生设计一节45分钟的分数大小比较课，交付教师教案、学生练习页和单独答案页。学生已经学习同分母分数比较和等值分数，本次重点是异分母分数的比较及选择适合的比较方法，不涉及软件开发或代码测试。\n教案安排导入5分钟、示范10分钟、小组练习15分钟、独立练习10分钟和总结5分钟，合计必须是45分钟。每个环节写明教师做什么、学生做什么和可以观察的学习表现。材料使用纸条、白板和常用文具，不依赖手机、付费软件或特殊设备。语言适合六年级，避免要求学生证明超出已学知识的结论。\n学生练习页设置6道题，包含同分母、同分子、通分及接近1这四类思路，至少一题要求解释理由。题目可以有合理的新数字，但答案必须数学正确；不要误用只比较分子或只比较分母的规则。答案页与学生页分开，列出每题结果和简短解释，不把答案直接放在学生练习的旁边。\n教案中的常规教学步骤可由执行者安排，无需把每个措辞和练习形式转成Plan追问。不得编造真实课堂实验、学生成绩或教学成效百分比。验收关注时长合计、六题齐全、方法和答案正确、难度适合已有知识以及三个交付物分开。只输出教案、练习页、答案页，不附程序、研究论文或产品介绍。",
+    "contextDescription": "",
+    "files": []
+  },
+  "prepared": null,
+  "plan": {
+    "summary": "已明确为六年级学生设计45分钟异分母分数比较课，交付教案、学生练习页和独立答案页，练习含6题且覆盖四类思路。常规教学细节可由执行者安排，但学生是否需要额外支持或调整会影响题目与解释的适龄性，需确认。",
+    "questions": [
+      {
+        "id": "student_support",
+        "question": "这节课是否需要为有特殊学习需要的学生提供额外支持或调整？",
+        "hint": "若班级有需要额外支持的学生，会影响练习页的题目呈现、解释深度和教案中的差异化安排；若没有，则按普通六年级课堂设计。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "no_special_support",
+            "label": "不需要额外支持",
+            "description": "按普通六年级课堂设计，不加入特殊学习需要的调整。",
+            "answer": "不需要为有特殊学习需要的学生提供额外支持或调整，按普通六年级课堂设计。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "need_support",
+            "label": "需要额外支持",
+            "description": "需要在教案和练习页中加入差异化支持或调整。",
+            "answer": "需要为有特殊学习需要的学生提供额外支持或调整，请在教案和练习页中体现。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 2304,
+    "expiresAt": "2026-10-04T22:33:28.453569500Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "dd739959-3061-4105-a1b6-2bac2b2ec866",
+      "elapsedMs": 2342
+    }
+  ]
+}

@@ -12,6 +12,12 @@ public record PromptTemplate(
         TemplateCode code,
         String outputGuidance,
         String acceptanceGuidance,
-        String exampleGuidance
+        String exampleGuidance,
+        TaskDeliveryProfile deliveryProfile
 ) {
+    /** 兼容原有四参数模板；运行期细分画像由注册中心明确提供。 */
+    public PromptTemplate(TemplateCode code, String outputGuidance, String acceptanceGuidance, String exampleGuidance) {
+        this(code, outputGuidance, acceptanceGuidance, exampleGuidance,
+                TaskIntentResolver.software(code) ? TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION : TaskDeliveryProfile.GENERAL);
+    }
 }

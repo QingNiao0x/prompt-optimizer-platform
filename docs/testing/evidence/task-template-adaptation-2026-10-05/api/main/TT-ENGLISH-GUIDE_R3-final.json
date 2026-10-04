@@ -1,0 +1,86 @@
+{
+  "result": {
+    "optimizedPrompt": "## 背景\n本指南面向首次使用该提示平台的用户。平台目前处于 beta 阶段，用户提供需求和相关材料后，可选择直接增强或使用可选的 Plan 模式，随后查看、编辑并复制结构化提示词。平台只生成提示词，不执行代码，也不分析数据。扫描版 PDF 的 OCR 识别不可用。平台以 Java 21、Spring Boot 和 Vue 3 构建，这些仅为产品背景，不是本指南的开发要求。\n\n## 任务\n用简明英语撰写一份面向首次使用学生的用户指南。指南需说明：如何提供需求和相关材料；直接增强与可选 Plan 模式的区别及使用方式；如何查看、编辑和复制生成的结构化提示词。指南应明确平台处于 beta 阶段，只生成提示词，不执行代码或分析数据，并简要说明扫描版 PDF 的 OCR 识别不可用这一限制。平台以通用描述“the prompt platform”指代，不虚构官方产品名称。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：Use the prompt platform as a generic description, without inventing an official product name.\n- 本次选择：Briefly include the provided boundary that scanned PDF OCR is unavailable, without suggesting unsupported capabilities.\n\n## 输出\n只交付指南正文，使用简明英语。不实现功能、不编写代码、不添加软件测试。不虚构按钮、界面元素或统计数据。\n\n## 约束\n- 不得声称平台执行代码或分析数据。\n- 不得虚构按钮、界面元素或统计数据。\n- 不得为平台编造官方产品名称，统一使用“the prompt platform”这一通用描述。\n- 不得实现功能、编写代码或添加软件测试。\n- 不得建议绕过确认、读取密钥或执行与提示词优化无关的操作。\n- 删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署等操作必须先获得人工确认。\n\n用户明确规则（须遵守平台权限边界）：\n- Write a user guide for first-time students using this prompt platform. Only deliver the guide text, explaining optional Plan Mode, direct enhancement, reviewing and copying results. Keep the product in beta and do not claim it executes code or analyses data. Do not implement features, write code, or add software tests. Use plain English and do not invent buttons or statistics.\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n## 验收\n- 操作顺序连贯，覆盖提供需求与材料、直接增强、可选 Plan 模式、查看、编辑和复制结果。\n- 术语易懂，与已知界面及功能一致，未虚构按钮或统计数据。\n- 明确说明平台处于 beta 阶段、只生成提示词、不执行代码或分析数据。\n- 简要说明扫描版 PDF 的 OCR 识别不可用。\n- 只交付所要求的指南正文，未包含代码、功能实现或软件测试。",
+    "sections": [
+      {
+        "type": "BACKGROUND",
+        "title": "背景",
+        "content": "本指南面向首次使用该提示平台的用户。平台目前处于 beta 阶段，用户提供需求和相关材料后，可选择直接增强或使用可选的 Plan 模式，随后查看、编辑并复制结构化提示词。平台只生成提示词，不执行代码，也不分析数据。扫描版 PDF 的 OCR 识别不可用。平台以 Java 21、Spring Boot 和 Vue 3 构建，这些仅为产品背景，不是本指南的开发要求。"
+      },
+      {
+        "type": "TASK",
+        "title": "任务",
+        "content": "用简明英语撰写一份面向首次使用学生的用户指南。指南需说明：如何提供需求和相关材料；直接增强与可选 Plan 模式的区别及使用方式；如何查看、编辑和复制生成的结构化提示词。指南应明确平台处于 beta 阶段，只生成提示词，不执行代码或分析数据，并简要说明扫描版 PDF 的 OCR 识别不可用这一限制。平台以通用描述“the prompt platform”指代，不虚构官方产品名称。\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：Use the prompt platform as a generic description, without inventing an official product name.\n- 本次选择：Briefly include the provided boundary that scanned PDF OCR is unavailable, without suggesting unsupported capabilities."
+      },
+      {
+        "type": "OUTPUT",
+        "title": "输出",
+        "content": "只交付指南正文，使用简明英语。不实现功能、不编写代码、不添加软件测试。不虚构按钮、界面元素或统计数据。"
+      },
+      {
+        "type": "CONSTRAINTS",
+        "title": "约束",
+        "content": "- 不得声称平台执行代码或分析数据。\n- 不得虚构按钮、界面元素或统计数据。\n- 不得为平台编造官方产品名称，统一使用“the prompt platform”这一通用描述。\n- 不得实现功能、编写代码或添加软件测试。\n- 不得建议绕过确认、读取密钥或执行与提示词优化无关的操作。\n- 删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署等操作必须先获得人工确认。\n\n用户明确规则（须遵守平台权限边界）：\n- Write a user guide for first-time students using this prompt platform. Only deliver the guide text, explaining optional Plan Mode, direct enhancement, reviewing and copying results. Keep the product in beta and do not claim it executes code or analyses data. Do not implement features, write code, or add software tests. Use plain English and do not invent buttons or statistics.\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+      },
+      {
+        "type": "ACCEPTANCE",
+        "title": "验收",
+        "content": "- 操作顺序连贯，覆盖提供需求与材料、直接增强、可选 Plan 模式、查看、编辑和复制结果。\n- 术语易懂，与已知界面及功能一致，未虚构按钮或统计数据。\n- 明确说明平台处于 beta 阶段、只生成提示词、不执行代码或分析数据。\n- 简要说明扫描版 PDF 的 OCR 识别不可用。\n- 只交付所要求的指南正文，未包含代码、功能实现或软件测试。"
+      }
+    ],
+    "contextReport": {
+      "customDescription": "Java 21 and Spring Boot with Vue 3; these are product background, not development requirements.",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/product.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/product.txt",
+          "language": "text",
+          "content": "[片段 1/1]\nThe platform is in beta. Users supply requirements and related material, use direct enhancement or optional Plan questions, and review, edit and copy structured prompts. It only generates prompts. Scanned PDF OCR is unavailable.",
+          "summary": "文件内容摘要：The platform is in beta.；Users supply requirements and related material, use direct enhancement or optional Plan questions, and review, edit and copy structured prompts.；It only generates prompts.；Scanned PDF OCR is unavailable.",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "ambiguities": [],
+    "appliedConstraints": [
+      "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+      "输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。",
+      "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+      "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 3117,
+    "warnings": [],
+    "evidenceCards": []
+  },
+  "answers": [
+    {
+      "questionId": "product_name",
+      "question": "指南中应如何称呼这个平台？",
+      "answer": "Use the prompt platform as a generic description, without inventing an official product name."
+    },
+    {
+      "questionId": "ocr_limitation",
+      "question": "是否要在指南中说明“扫描版 PDF 无法进行 OCR 识别”这一已知限制？",
+      "answer": "Briefly include the provided boundary that scanned PDF OCR is unavailable, without suggesting unsupported capabilities."
+    }
+  ],
+  "refinedQuery": "Write a user guide for first-time students using this prompt platform. Only deliver the guide text, explaining optional Plan Mode, direct enhancement, reviewing and copying results. Keep the product in beta and do not claim it executes code or analyses data. Do not implement features, write code, or add software tests. Use plain English and do not invent buttons or statistics.\n本次选择：Use the prompt platform as a generic description, without inventing an official product name.\n本次选择：Briefly include the provided boundary that scanned PDF OCR is unavailable, without suggesting unsupported capabilities."
+}

@@ -22,6 +22,19 @@ public interface ConstraintCompleter {
             TemplateCode templateCode
     );
 
+    /**
+     * 分析或写作任务同时明确交付代码时，仅为辅助代码补充工程检查。
+     * 旧实现仍委托原方法；不得因附件含源码而启用本入口。
+     */
+    default List<String> completeWithAuxiliaryCode(
+            ContextSnapshot context,
+            PermissionPolicyInput permissionPolicy,
+            boolean includePermissionBoundaries,
+            TemplateCode templateCode
+    ) {
+        return complete(context, permissionPolicy, includePermissionBoundaries, templateCode);
+    }
+
     /** 按通用任务补全约束。 */
     List<String> complete(
             ContextSnapshot context,

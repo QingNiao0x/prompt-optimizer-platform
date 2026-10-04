@@ -3,6 +3,9 @@ package com.promptoptimizer.enhancement.service.impl;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.dto.ConversationMessage;
+import com.promptoptimizer.enhancement.domain.TemplateCode;
+import com.promptoptimizer.template.domain.TaskDeliveryProfile;
+import com.promptoptimizer.template.domain.TaskIntentResolver;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -36,6 +39,14 @@ public class AmbiguityDetector {
             throw new InvalidOptimizationRequestException("原始提示词不能为空且不能超过 8,000 个字符。");
         }
         String prompt = rawPrompt.trim().toLowerCase(Locale.ROOT);
+        var intent = TaskIntentResolver.resolve(TemplateCode.AUTO, rawPrompt);
+        // 写作引用登录、排序或研究案例不等于要求实现这些功能；明确的附带开发目标仍参与判断。
+        boolean softwareDetails = intent.deliveryProfile() == TaskDeliveryProfile.GENERAL
+                || intent.engineeringConstraints()
+                || intent.auxiliaryProfiles().contains(TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
+        boolean analysisDetails = intent.templateCode() == TemplateCode.RESEARCH_ANALYSIS
+                || intent.deliveryProfile() == TaskDeliveryProfile.GENERAL
+                || intent.auxiliaryProfiles().contains(TaskDeliveryProfile.DATA_ANALYSIS);
         List<String> findings = new ArrayList<>();
         String scope = context == null ? ""
                 : context.technologyStack().stream().map(item -> item.name()).limit(3)
@@ -47,7 +58,7 @@ public class AmbiguityDetector {
                 "(?:高[、,，/]中[、,，/]低|由高到低|由低到高|从高到低|从低到高).{0,12}(?:风险|重要性|优先级|紧急程度).{0,12}排序|"
                         + "(?:风险|重要性|优先级|紧急程度).{0,12}(?:由高到低|由低到高|从高到低|从低到高).{0,12}排序")
                 .matcher(prompt).find();
-        if (containsAny(prompt, "排序", "sort") && !explicitBusinessRanking) {
+        if ((softwareDetails || analysisDetails) && containsAny(prompt, "排序", "sort") && !explicitBusinessRanking) {
             String evidence = evidence(prompt, context, conversation, "排序", "sort");
             if (!containsAny(evidence, "整数", "数字", "字符串", "对象", "订单", "记录", "integer", "number", "string")) {
                 findings.add(project + "需要对哪类数据排序（数字、文本或业务记录）？现有资料尚未明确排序对象。");
@@ -56,7 +67,7 @@ public class AmbiguityDetector {
                 findings.add("本次排序按哪个字段、采用什么顺序？请确认比较规则，以便确定预期结果。");
             }
         }
-        if (containsAny(prompt, "登录", "login") && containsAny(prompt, "添加", "增加", "实现", "开发", "add", "implement")) {
+        if (softwareDetails && containsAny(prompt, "登录", "login") && containsAny(prompt, "添加", "增加", "实现", "开发", "add", "implement")) {
             String evidence = evidence(prompt, context, conversation, "登录", "login", "认证", "auth", "security");
             // 只有明确要求或实现证据才说明认证方式；单独出现 JWT 依赖不足以证明登录已经采用 JWT。
             boolean explicit = Pattern.compile("(?:采用|使用|基于|沿用|use).{0,20}(?:jwt|session|oauth|现有|已有)")
@@ -66,7 +77,7 @@ public class AmbiguityDetector {
                 findings.add(project + "的登录功能应采用哪种认证与会话方式？已提供的登录相关资料尚不足以确定现有机制。");
             }
         }
-        if (containsAny(prompt, "死亡率", "yll", "减寿", "arriaga")) {
+        if (analysisDetails && containsAny(prompt, "死亡率", "yll", "减寿", "arriaga")) {
             String evidence = evidence(prompt, context, conversation, "研究", "死亡", "yll", "arriaga", "地区", "数据");
             if (containsAny(prompt, "某地区", "某省", "某市")
                     && !Pattern.compile("(?:研究地区|研究范围|地区范围|覆盖地区|地区)\\s*[:：=]\\s*(?!某|待定|未知|未明确)[\\p{L}]{2,20}")

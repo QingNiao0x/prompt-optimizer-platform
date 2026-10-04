@@ -1,6 +1,10 @@
 package com.promptoptimizer.enhancement.service.impl;
 
 import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision;
+import com.promptoptimizer.enhancement.domain.TemplateCode;
+import com.promptoptimizer.template.domain.TaskIntent;
+import com.promptoptimizer.template.domain.TaskDeliveryProfile;
+import com.promptoptimizer.template.domain.TaskIntentResolver;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -17,14 +21,18 @@ final class ResolvedPlanState {
     private static final Pattern CONTINUE_RULE = Pattern.compile("该规则是否在本次继续采用(?:尚待|仍待|需待)负责人确认");
     private static final Pattern BINDING = Pattern.compile("资料对“([^”]+)”存在不同取值：(.+?)（([^）]+)）与 (.+?)（([^）]+)）");
     private static final Pattern MONEY = Pattern.compile("(?<![<>])(?:>=|<=|>|<|=)\\d+(?:\\.\\d+)?(?:元)?");
+    private static final Pattern DELIVERY_PENDING = Pattern.compile(
+            "(?<![\\p{L}\\d])(?:本次|具体)?交付(?:形式|内容|目标)(?:请|需要|需)(?:先|首先)(?:向我|向用户)?确认");
     private record Choice(ConfirmedPlanDecision decision, String field, String leftPath, String leftValue,
                           String rightPath, String rightValue, String selected) { }
     private final List<Choice> choices;
     private final String original;
+    private final boolean deliveryConfirmed;
 
-    private ResolvedPlanState(List<Choice> choices, String original) {
+    private ResolvedPlanState(List<Choice> choices, String original, boolean deliveryConfirmed) {
         this.choices = List.copyOf(choices);
         this.original = original == null ? "" : original;
+        this.deliveryConfirmed = deliveryConfirmed;
     }
 
     /** 仅由有效冲突题的唯一明确选值建立替代状态；总体未决但已明确版本的部分回答也可更新。 */
@@ -39,13 +47,23 @@ final class ResolvedPlanState {
                     return java.util.stream.Stream.of(new Choice(decision, bound.group(1), bound.group(2), bound.group(3),
                             bound.group(4), bound.group(5), selected.get()));
                 }).toList();
-        return new ResolvedPlanState(choices, original);
+        var rawIntent = TaskIntentResolver.resolve(TemplateCode.AUTO, original);
+        var confirmedIntent = TaskIntentResolver.resolve(TemplateCode.AUTO, original, decisions.knownDecisions());
+        // 仅更新原来未知的本次整体交付；子表格式、下一阶段目标和未决答案不能借此获得确认状态。
+        boolean deliveryConfirmed = rawIntent.deliveryProfile() == TaskDeliveryProfile.GENERAL
+                && confirmedIntent.status() == TaskIntent.ResolutionStatus.USER_CONFIRMED
+                && decisions.knownDecisions().stream().anyMatch(decision ->
+                        TaskIntentResolver.overallDeliveryQuestion(decision.question()));
+        return new ResolvedPlanState(choices, original, deliveryConfirmed);
     }
 
     /** 修正当前执行视图，不抹掉比较符、未签署/未生效或“不自行折中”等独立要求。 */
     String reconcile(String text) {
-        if (choices.isEmpty() || text == null || text.isBlank()) return text;
-        return text.lines().map(line -> {
+        if (text == null || text.isBlank()) return text;
+        String current = deliveryConfirmed ? DELIVERY_PENDING.matcher(text)
+                .replaceAll("本次交付已在Plan阶段确认，以已确认决定为准") : text;
+        if (choices.isEmpty()) return current;
+        return current.lines().map(line -> {
             if (!GENERIC_VERSION.matcher(line).find() && !CONTINUE_RULE.matcher(line).find()) return line;
             StringBuilder result = new StringBuilder();
             var sentences = Pattern.compile("[^。]+[。]?").matcher(line);

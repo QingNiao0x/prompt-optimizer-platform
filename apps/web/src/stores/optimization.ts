@@ -358,7 +358,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
         modelId: planConfirmed ? planModelId.value : selectedModelId.value,
         customDescription: customDescription.value,
         files: contextFiles,
-        templateCode: templateCode.value,
+        // 工作台没有显式模板选择器；Plan 返回的是解析结果，不能当成用户指定而锁定最终分类。
+        templateCode: 'AUTO',
         includePermissionBoundaries: true,
         includeExamples: includeExamples.value,
         planConfirmation: options.planConfirmation,

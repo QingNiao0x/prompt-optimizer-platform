@@ -1,0 +1,152 @@
+{
+  "sample": {
+    "id": "TT-TRANSLATION-M",
+    "domain": "翻译",
+    "rawPrompt": "请把下面的中文内测公告翻译为自然、简洁的英文，供大学生和研究生阅读。只输出译文，不输出标题之外的注释、语言解释、实现计划或验收报告。保留原文两个段落，Plan Mode这一产品术语保持英文，其他技术词以普通读者容易理解的表达处理。不要把“内测”译成正式发布，不要把“可以帮助”强化成保证，不新增功能、收费或效果数字。\n原文：提示词平台正在开展内测。用户可以输入需求并选择相关资料，直接生成结构化提示词；开启Plan Mode后，系统会先询问仍会影响结果的关键问题，再依据回答生成提示词。平台只生成提示词，不替用户执行代码、分析数据或发布内容。\n优化结果仍需用户核对。请勿上传密码、API Key或其他敏感资料；扫描版PDF的文字识别尚未开放。遇到文件覆盖提醒时，请检查需要的内容是否包含在资料中。欢迎反馈重复问题或不准确的建议，我们会据此继续完善。",
+    "contextDescription": "",
+    "files": []
+  },
+  "prepared": null,
+  "plan": {
+    "summary": "目标是把两段中文内测公告翻译成自然简洁的英文，供大学生和研究生阅读，并保留 Plan Mode 等既定处理规则。原文对术语、语气和输出范围已说明得比较清楚，但仍有几处会影响译文措辞的细节需要确认。",
+    "questions": [
+      {
+        "id": "tone_register",
+        "question": "译文整体希望采用哪种语气？",
+        "hint": "公告面向大学生和研究生，语气会影响用词正式程度和句式长短。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "neutral_clear",
+            "label": "中性清晰",
+            "description": "以准确、易读为主，不刻意口语也不过度正式",
+            "answer": "采用中性清晰的语气，准确易读，不刻意口语化也不过度正式",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "friendly",
+            "label": "友好亲切",
+            "description": "略带欢迎和沟通感，适合内测公告",
+            "answer": "采用友好亲切的语气，体现欢迎反馈的内测氛围",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "formal",
+            "label": "正式严谨",
+            "description": "偏官方公告风格，用词更正式",
+            "answer": "采用正式严谨的公告语气",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "platform_name",
+        "question": "“提示词平台”在译文中如何称呼？",
+        "hint": "这是产品自称，会影响首句和后续指代是否统一。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "the_platform",
+            "label": "the platform",
+            "description": "用普通名词指代，不引入具体产品名",
+            "answer": "译为 the platform，不引入具体产品名",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "prompt_platform",
+            "label": "the prompt platform",
+            "description": "保留“提示词”含义，直译为提示词平台",
+            "answer": "译为 the prompt platform",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "keep_original",
+            "label": "保留中文名或另行提供英文名",
+            "description": "若平台有官方英文名，请一并给出",
+            "answer": "保留平台官方名称，具体名称由用户提供",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "plan_mode_scope",
+        "question": "Plan Mode 保持英文时，是否需要附带简短解释？",
+        "hint": "原文要求该术语保持英文，但未说明是否向不熟悉的学生读者补充说明。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "no_explanation",
+            "label": "只保留英文，不加解释",
+            "description": "严格按原文，仅出现 Plan Mode",
+            "answer": "Plan Mode 保持英文，不附加任何解释",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "brief_gloss",
+            "label": "首次出现时加简短同位语",
+            "description": "如 Plan Mode, a planning feature，帮助读者理解",
+            "answer": "Plan Mode 保持英文，首次出现时加一个简短的同位语说明",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "paragraph_break",
+        "question": "原文两段在译文中如何对应？",
+        "hint": "原文第一段讲功能，第二段讲注意事项和反馈，分段方式会影响可读性。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "same_two",
+            "label": "保持两段",
+            "description": "与原文段落一一对应",
+            "answer": "译文保持两个段落，与原文段落划分一致",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "allow_three",
+            "label": "允许按语义拆成三段",
+            "description": "若英文可读性更好，可拆分第二段",
+            "answer": "允许根据英文表达需要拆分为三段",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 4003,
+    "expiresAt": "2026-10-04T22:18:26.727230400Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "52abee89-0adc-4397-9b36-d0856381cb8f",
+      "elapsedMs": 4042
+    }
+  ]
+}

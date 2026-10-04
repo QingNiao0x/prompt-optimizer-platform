@@ -112,6 +112,7 @@ public final class PlanQuestionFilter {
 
     /** 常规章节组织交给执行者；用户主动要求确认结构、期刊规范或专业方法时仍保留问题。 */
     private boolean routinePresentation(PlanQuestion candidate, String rawPrompt) {
+        if (RoutineWritingPresentation.delegated(candidate, safe(rawPrompt))) return true;
         if (explicitlyDelegatedFactOrganization(candidate, safe(rawPrompt))) return true;
         if (TaskDeliveryProfile.identify(rawPrompt) == TaskDeliveryProfile.GENERAL
                 || safe(rawPrompt).matches("(?s).*(?:询问|确认|让我选择|由我选择).{0,16}(?:章节|结构|顺序|提纲).*")) return false;

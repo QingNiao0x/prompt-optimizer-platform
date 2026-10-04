@@ -1,0 +1,155 @@
+{
+  "sample": {
+    "id": "TT-GOV-M",
+    "domain": "机关报告",
+    "rawPrompt": "请根据附件的季度工作记录，起草一份提交给科室负责人审阅的中文季度工作报告。本次只交付报告正文和一个“资料缺口清单”，不编写软件、不运行统计程序，不制作PPT或新闻稿。报告约1200字，分为本期工作、发现的问题、下一季度计划三部分。正文可使用小标题和短段落，表达实事求是、清楚可核对，避免空泛口号。\n这是模拟政务材料整理，不代表真实机关工作情况。附件中的已完成事项只能放在本期工作；正在推进的事项要明确为进行中；下一季度计划不能写成当前已经完成。所有数字必须依据材料，材料只提供受理总数和已办结总数，没有满意度、预算、同比或人员工时，不能自行计算或编造这些指标。不要把受理数量等同办结数量。\n文中明确区分事实和建议。发现材料口径不一致时，记录对应日期、对象和来源，不静默挑一个值。如果材料没有规定负责人、时间或行政程序，报告可以写为建议或待补充，不自行给真实个人分派任务。不要加入未提供的法规条文、领导批示、先进称号或资金承诺。\n使用读者容易理解的公文表达，保留必要业务词，但不套用开发模板中的接口、关键代码和单元测试。资料缺口清单只列影响报告审核的缺项，不把普通措辞和小标题组织强迫交给用户再次确认。审阅时需要核对已完成/进行中/计划是否区分，数字和统计范围是否对应，缺项有没有伪装成事实。",
+    "contextDescription": "",
+    "files": [
+      {
+        "path": "materials/季度记录.txt",
+        "content": "模拟记录：第一季度受理120件，办结90件；其余30件在办理中。2月完成资料归档；3月开始梳理跨部门流程，尚未完成。下季度拟核对流程和推进电子台账。满意度、预算、同比数据未提供。",
+        "language": "text"
+      }
+    ]
+  },
+  "prepared": {
+    "version": "sha256:abcc404a32fddc2ba4984145939076ba272d5ebee6f58798e453a16e7854f856",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/季度记录.txt"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] materials/季度记录.txt：文件内容摘要：模拟记录：第一季度受理120件，办结90件；其余30件在办理中。；2月完成资料归档；3月开始梳理跨部门流程，尚未完成。；下季度拟核对流程和推进电子台账。；满意度、预算、同比数据未提供。；业务摘录：[片段 1/1] 模拟记录：第一季度受理120件，办结90件； 其余30件在办理中。 2月完成资料归档； 3月开始梳理跨部门流程，尚未完成。 下季度拟核对流程和推进电子台账。 满意度、预算、同比数据未提供。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/季度记录.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/季度记录.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n模拟记录：第一季度受理120件，办结90件；其余30件在办理中。2月完成资料归档；3月开始梳理跨部门流程，尚未完成。下季度拟核对流程和推进电子台账。满意度、预算、同比数据未提供。",
+          "summary": "文件内容摘要：模拟记录：第一季度受理120件，办结90件；其余30件在办理中。；2月完成资料归档；3月开始梳理跨部门流程，尚未完成。；下季度拟核对流程和推进电子台账。；满意度、预算、同比数据未提供。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T22:14:29.227097200Z",
+    "latencyMs": 4
+  },
+  "plan": {
+    "summary": "已理解目标是依据季度记录起草约1200字中文季度工作报告，并附资料缺口清单，报告需区分已完成、进行中和下一季度计划，数字只能来自材料，事实与建议分开。材料已明确受理120件、办结90件、30件在办理中，以及归档、流程梳理和下季度拟办事项，因此无需再问这些事实；但报告提交对象和缺口清单的呈现方式会影响正文口径与清单结构，需要确认。",
+    "questions": [
+      {
+        "id": "report_recipient",
+        "question": "这份季度工作报告提交给科室负责人审阅，正文中是否需要出现具体的提交对象称谓或报送单位名称？",
+        "hint": "材料未提供科室名称、单位名称和具体负责人姓名，这会影响报告开头和落款写法；若不需要，可统一用“科室负责人”等通用称谓。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "generic",
+            "label": "使用通用称谓",
+            "description": "正文和落款不写具体单位、科室或负责人姓名，统一用“科室负责人”等通用表述。",
+            "answer": "使用通用称谓，不写具体单位、科室或负责人姓名。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "placeholder",
+            "label": "留待补充占位",
+            "description": "在需要称谓或落款处标注“待补充”，由审阅人后续填写。",
+            "answer": "在需要称谓或落款处标注“待补充”，由审阅人后续填写。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "omit",
+            "label": "不写称谓和落款",
+            "description": "报告只保留标题和正文三部分，不设提交对象称谓和落款。",
+            "answer": "报告只保留标题和正文三部分，不设提交对象称谓和落款。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "gap_list_format",
+        "question": "“资料缺口清单”希望以什么形式附在报告正文之后？",
+        "hint": "材料已明确清单只列影响报告审核的缺项，但未说明清单是表格还是条目式，这会影响交付物的直接可用性。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "table",
+            "label": "表格形式",
+            "description": "用表格列出缺项名称、影响说明和对应报告位置，便于审阅时逐项核对。",
+            "answer": "资料缺口清单以表格形式附在报告正文之后，列出缺项名称、影响说明和对应报告位置。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "bullet",
+            "label": "条目式",
+            "description": "用编号或项目符号逐条列出缺项及其影响，不采用表格。",
+            "answer": "资料缺口清单以条目式附在报告正文之后，逐条列出缺项及其影响。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "paragraph",
+            "label": "段落说明",
+            "description": "用一段或几段文字集中说明资料缺口，不逐项编号。",
+            "answer": "资料缺口清单以段落说明形式附在报告正文之后，集中说明资料缺口。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 3970,
+    "expiresAt": "2026-10-04T22:14:29.227097200Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "fd70f994-1d30-45c0-814f-3249c731a410",
+      "elapsedMs": 37
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "46da0d56-afed-4532-943d-e92b2bcb77a3",
+      "elapsedMs": 4001
+    }
+  ]
+}

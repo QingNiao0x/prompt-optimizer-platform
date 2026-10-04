@@ -1,0 +1,155 @@
+{
+  "sample": {
+    "id": "TT-GOV-M_R2",
+    "domain": "机关报告",
+    "rawPrompt": "请根据附件的季度工作记录，起草一份提交给科室负责人审阅的中文季度工作报告。本次只交付报告正文和一个“资料缺口清单”，不编写软件、不运行统计程序，不制作PPT或新闻稿。报告约1200字，分为本期工作、发现的问题、下一季度计划三部分。正文可使用小标题和短段落，表达实事求是、清楚可核对，避免空泛口号。\n这是模拟政务材料整理，不代表真实机关工作情况。附件中的已完成事项只能放在本期工作；正在推进的事项要明确为进行中；下一季度计划不能写成当前已经完成。所有数字必须依据材料，材料只提供受理总数和已办结总数，没有满意度、预算、同比或人员工时，不能自行计算或编造这些指标。不要把受理数量等同办结数量。\n文中明确区分事实和建议。发现材料口径不一致时，记录对应日期、对象和来源，不静默挑一个值。如果材料没有规定负责人、时间或行政程序，报告可以写为建议或待补充，不自行给真实个人分派任务。不要加入未提供的法规条文、领导批示、先进称号或资金承诺。\n使用读者容易理解的公文表达，保留必要业务词，但不套用开发模板中的接口、关键代码和单元测试。资料缺口清单只列影响报告审核的缺项，不把普通措辞和小标题组织强迫交给用户再次确认。审阅时需要核对已完成/进行中/计划是否区分，数字和统计范围是否对应，缺项有没有伪装成事实。",
+    "contextDescription": "",
+    "files": [
+      {
+        "path": "materials/季度记录.txt",
+        "content": "模拟记录：第一季度受理120件，办结90件；其余30件在办理中。2月完成资料归档；3月开始梳理跨部门流程，尚未完成。下季度拟核对流程和推进电子台账。满意度、预算、同比数据未提供。",
+        "language": "text"
+      }
+    ]
+  },
+  "prepared": {
+    "version": "sha256:abcc404a32fddc2ba4984145939076ba272d5ebee6f58798e453a16e7854f856",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/季度记录.txt"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] materials/季度记录.txt：文件内容摘要：模拟记录：第一季度受理120件，办结90件；其余30件在办理中。；2月完成资料归档；3月开始梳理跨部门流程，尚未完成。；下季度拟核对流程和推进电子台账。；满意度、预算、同比数据未提供。；业务摘录：[片段 1/1] 模拟记录：第一季度受理120件，办结90件； 其余30件在办理中。 2月完成资料归档； 3月开始梳理跨部门流程，尚未完成。 下季度拟核对流程和推进电子台账。 满意度、预算、同比数据未提供。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/季度记录.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/季度记录.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n模拟记录：第一季度受理120件，办结90件；其余30件在办理中。2月完成资料归档；3月开始梳理跨部门流程，尚未完成。下季度拟核对流程和推进电子台账。满意度、预算、同比数据未提供。",
+          "summary": "文件内容摘要：模拟记录：第一季度受理120件，办结90件；其余30件在办理中。；2月完成资料归档；3月开始梳理跨部门流程，尚未完成。；下季度拟核对流程和推进电子台账。；满意度、预算、同比数据未提供。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T22:33:11.124832200Z",
+    "latencyMs": 69
+  },
+  "plan": {
+    "summary": "已理解目标是依据季度记录起草约1200字的中文季度工作报告，并附一份只列影响审核的“资料缺口清单”，不编写软件、不运行统计程序。报告范围、数字口径、事实与建议区分、已完成/进行中/计划区分等要求已明确，但材料中“下季度拟核对流程和推进电子台账”属于计划还是建议、以及报告提交对象的具体称谓仍会影响正文表述，需要确认。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "材料中“下季度拟核对流程和推进电子台账”应如何写入报告？",
+        "hint": "这决定“下一季度计划”部分是把该内容写成已定计划，还是写成建议或待补充事项，避免把拟办事项误写成已决定安排。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "作为下一季度计划",
+            "description": "按材料原意写入“下一季度计划”，表述为拟开展的工作。",
+            "answer": "将“下季度拟核对流程和推进电子台账”作为下一季度计划写入，表述为拟开展的工作。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "作为建议或待补充",
+            "description": "不写成已定计划，而写成建议或待补充事项。",
+            "answer": "将“下季度拟核对流程和推进电子台账”作为建议或待补充事项写入，不写成已定计划。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "计划与建议分开写",
+            "description": "在计划部分保留拟开展表述，同时在建议或待补充中说明尚需确认。",
+            "answer": "在“下一季度计划”中保留拟开展表述，同时在建议或待补充中说明该事项尚需确认。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "报告提交对象“科室负责人”在正文中应如何称呼？",
+        "hint": "这影响报告抬头、称谓和结尾用语；材料未提供具体姓名或职务全称，不能自行编造。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "使用“科室负责人”",
+            "description": "按用户原话使用通用称谓，不编造姓名或具体职务。",
+            "answer": "正文中使用“科室负责人”这一通用称谓，不编造姓名或具体职务。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "不写具体称谓",
+            "description": "报告不设抬头称谓，直接写正文。",
+            "answer": "报告不设抬头称谓，直接写正文。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "留待补充",
+            "description": "在抬头处写“待补充”，并在资料缺口清单中列出。",
+            "answer": "在抬头处写“待补充”，并在资料缺口清单中列出该缺项。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 4589,
+    "expiresAt": "2026-10-04T22:33:11.124832200Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "45dd5903-bf0b-40d4-97f6-d4453a064fc0",
+      "elapsedMs": 570
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "7f6a3916-aaf9-4344-8921-50aaf37e67d6",
+      "elapsedMs": 4632
+    }
+  ]
+}

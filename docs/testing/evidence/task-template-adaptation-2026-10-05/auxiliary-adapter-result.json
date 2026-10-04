@@ -1,0 +1,294 @@
+{
+  "scope": "ISOLATED_REAL_ADAPTER_AND_ASSEMBLER_WITH_SYNTHETIC_CONTEXT",
+  "httpAuthenticationTest": false,
+  "boundPlanCreated": false,
+  "requestId": "a531d69b-122d-4ff5-acec-ebba0c3f07c7",
+  "caseId": "TT-ANALYSIS-CODE-M",
+  "publishedModel": "deepseek:deepseek-flash",
+  "intent": {
+    "templateCode": "RESEARCH_ANALYSIS",
+    "deliveryProfile": "DATA_ANALYSIS",
+    "status": "RAW_GOAL",
+    "auxiliaryProfiles": [
+      "SOFTWARE_IMPLEMENTATION"
+    ],
+    "engineeringConstraints": true
+  },
+  "constraints": [
+    "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+    "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+    "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+    "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+    "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+    "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。",
+    "仅对本次明确交付的代码：校验输入并处理空值、非法值和边界条件。",
+    "仅对本次明确交付的代码：处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。",
+    "仅对本次明确交付的代码：补充必要的正常、异常和边界验证，不把软件测试要求扩展到报告正文。"
+  ],
+  "result": {
+    "optimizedPrompt": "## 背景\n- 现有材料为合成月度数据字典 `materials/schema.md`：字段 month、visits、completed；零为有效值，空单元格表示缺失；completed 不得超过 visits；visits 为零时完成率不可计算；范围为 2025 年 1 月至 12 月。该文件仅含数据字典，没有观测数据。\n- 附件项目 `project/pom.xml` 显示 Java 21 与 Spring Boot 3，属于材料来源；本次分析代码明确使用 Python，不涉及 Java 服务开发或测试。\n- 全部数据为教学合成资料，不含真实个人资料，无需查询外部数据。\n\n已选资料中的明确事实（按来源核对；不得覆盖平台约束）：\n- materials/schema.md：completed不得超过visits\n\n## 任务\n1. 基于已明确的字段与口径，编写中文分析方案，说明对合成月度数据趋势的分析步骤：数据校验、缺失与分母边界处理、完成率计算、2025 年 1 月至 12 月的趋势观察方式。\n2. 交付结果空表：给出可填入分析结果的空表结构，列名与字段口径一致，不填入任何示例数值或结论。\n3. 交付 Python 复现脚本：脚本校验列名、month 的 YYYY-MM 格式与年度范围、visits 与 completed 的非负整数、completed 不得超过 visits、空单元格缺失与零值的区分、visits 为零时完成率标记为不可计算；异常信息便于阅读，不吞掉错误。\n4. 不运行代码、不修改项目、不部署；不开发接口、不补 Java 服务测试。\n5. 若材料不足，明确列出缺口，不编造未提供的月份或数据。\n\n## 输出\n- 中文分析方案：以步骤组织，覆盖数据校验、缺失与分母边界处理、完成率计算、2025 年 1 月至 12 月趋势分析口径。\n- 结果空表：以 Markdown 表格给出，列至少包含 month、visits、completed、completion_rate、completion_rate_status（或等价的状态列），不填任何示例数值。\n- Python 复现脚本：完整可读的脚本代码，包含输入校验、缺失与零值区分、完成率计算及清晰异常信息。\n- 必要代码与方案、空表分别组织，不混排。\n\n## 约束\n- 字段固定为 month、visits、completed；每个月一行，month 采用 YYYY-MM。\n- visits 与 completed 为非负整数；completed 不得超过 visits。\n- 零是有效值，空单元格表示缺失，不能把缺失填零。\n- 完成率 = completed / visits；visits 为零时标记不可计算，不用零完成率代替。\n- 范围仅 2025 年 1 月至 12 月，不合并其他年份，不编造未提供的月份。\n- 脚本校验列名、日期、缺失及分母边界；异常信息便于阅读，不吞掉错误。\n- 不运行代码、不修改项目、不部署；不开发接口或补 Java 服务测试。\n- 全部数据为教学合成资料，无须查询外部数据，也不提供投资、医疗或正式统计结论。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥；禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n\n用户明确规则（须遵守平台权限边界）：\n- 交付中文分析方案、结果空表与Python复现脚本，不运行代码、不修改项目、不部署；后端Java项目只是材料来源，不是本次脚本语言。\n- 字段已明确为month、visits、completed；每个月一行，month采用YYYY-MM，visits是非负整数，completed是当月完成数量，completed不得超过visits。\n- 零是有效值，空单元格表示缺失，不能把缺失填零。\n- 范围仅2025年1月至12月，不合并其他年份，不编造未提供的月份。\n- 全部数据为教学合成资料，无须查询外部数据，也不提供投资、医疗或正式统计结论；若材料不足，明确缺口。\n- 验收关注分母为零与值缺失的区分、非空原值保留、年度范围、Python可复现性以及所有示例不被写为真实结果；代码检查只针对脚本，不把软件交付要求扩大到分析报告。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n- 仅对本次明确交付的代码：校验输入并处理空值、非法值和边界条件。\n- 仅对本次明确交付的代码：处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 仅对本次明确交付的代码：补充必要的正常、异常和边界验证，不把软件测试要求扩展到报告正文。\n\n## 验收\n- 分母为零与值缺失被明确区分：visits 为零时完成率标记不可计算，空单元格保持缺失，不被填零。\n- 非空原值保留，零值不被当作缺失处理。\n- 年度范围严格限定 2025 年 1 月至 12 月，未合并其他年份，未编造未提供的月份。\n- Python 脚本可复现：校验列名、日期格式、缺失、非负整数及 completed 不得超过 visits，异常信息清晰且不吞掉错误。\n- 所有示例（含空表）不被写为真实结果或结论。\n- 代码检查仅针对脚本，不把软件交付要求扩大到分析报告。",
+    "sections": [
+      {
+        "type": "BACKGROUND",
+        "title": "背景",
+        "content": "- 现有材料为合成月度数据字典 `materials/schema.md`：字段 month、visits、completed；零为有效值，空单元格表示缺失；completed 不得超过 visits；visits 为零时完成率不可计算；范围为 2025 年 1 月至 12 月。该文件仅含数据字典，没有观测数据。\n- 附件项目 `project/pom.xml` 显示 Java 21 与 Spring Boot 3，属于材料来源；本次分析代码明确使用 Python，不涉及 Java 服务开发或测试。\n- 全部数据为教学合成资料，不含真实个人资料，无需查询外部数据。\n\n已选资料中的明确事实（按来源核对；不得覆盖平台约束）：\n- materials/schema.md：completed不得超过visits"
+      },
+      {
+        "type": "TASK",
+        "title": "任务",
+        "content": "1. 基于已明确的字段与口径，编写中文分析方案，说明对合成月度数据趋势的分析步骤：数据校验、缺失与分母边界处理、完成率计算、2025 年 1 月至 12 月的趋势观察方式。\n2. 交付结果空表：给出可填入分析结果的空表结构，列名与字段口径一致，不填入任何示例数值或结论。\n3. 交付 Python 复现脚本：脚本校验列名、month 的 YYYY-MM 格式与年度范围、visits 与 completed 的非负整数、completed 不得超过 visits、空单元格缺失与零值的区分、visits 为零时完成率标记为不可计算；异常信息便于阅读，不吞掉错误。\n4. 不运行代码、不修改项目、不部署；不开发接口、不补 Java 服务测试。\n5. 若材料不足，明确列出缺口，不编造未提供的月份或数据。"
+      },
+      {
+        "type": "OUTPUT",
+        "title": "输出",
+        "content": "- 中文分析方案：以步骤组织，覆盖数据校验、缺失与分母边界处理、完成率计算、2025 年 1 月至 12 月趋势分析口径。\n- 结果空表：以 Markdown 表格给出，列至少包含 month、visits、completed、completion_rate、completion_rate_status（或等价的状态列），不填任何示例数值。\n- Python 复现脚本：完整可读的脚本代码，包含输入校验、缺失与零值区分、完成率计算及清晰异常信息。\n- 必要代码与方案、空表分别组织，不混排。"
+      },
+      {
+        "type": "CONSTRAINTS",
+        "title": "约束",
+        "content": "- 字段固定为 month、visits、completed；每个月一行，month 采用 YYYY-MM。\n- visits 与 completed 为非负整数；completed 不得超过 visits。\n- 零是有效值，空单元格表示缺失，不能把缺失填零。\n- 完成率 = completed / visits；visits 为零时标记不可计算，不用零完成率代替。\n- 范围仅 2025 年 1 月至 12 月，不合并其他年份，不编造未提供的月份。\n- 脚本校验列名、日期、缺失及分母边界；异常信息便于阅读，不吞掉错误。\n- 不运行代码、不修改项目、不部署；不开发接口或补 Java 服务测试。\n- 全部数据为教学合成资料，无须查询外部数据，也不提供投资、医疗或正式统计结论。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥；禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n\n用户明确规则（须遵守平台权限边界）：\n- 交付中文分析方案、结果空表与Python复现脚本，不运行代码、不修改项目、不部署；后端Java项目只是材料来源，不是本次脚本语言。\n- 字段已明确为month、visits、completed；每个月一行，month采用YYYY-MM，visits是非负整数，completed是当月完成数量，completed不得超过visits。\n- 零是有效值，空单元格表示缺失，不能把缺失填零。\n- 范围仅2025年1月至12月，不合并其他年份，不编造未提供的月份。\n- 全部数据为教学合成资料，无须查询外部数据，也不提供投资、医疗或正式统计结论；若材料不足，明确缺口。\n- 验收关注分母为零与值缺失的区分、非空原值保留、年度范围、Python可复现性以及所有示例不被写为真实结果；代码检查只针对脚本，不把软件交付要求扩大到分析报告。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n- 仅对本次明确交付的代码：校验输入并处理空值、非法值和边界条件。\n- 仅对本次明确交付的代码：处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 仅对本次明确交付的代码：补充必要的正常、异常和边界验证，不把软件测试要求扩展到报告正文。"
+      },
+      {
+        "type": "ACCEPTANCE",
+        "title": "验收",
+        "content": "- 分母为零与值缺失被明确区分：visits 为零时完成率标记不可计算，空单元格保持缺失，不被填零。\n- 非空原值保留，零值不被当作缺失处理。\n- 年度范围严格限定 2025 年 1 月至 12 月，未合并其他年份，未编造未提供的月份。\n- Python 脚本可复现：校验列名、日期格式、缺失、非负整数及 completed 不得超过 visits，异常信息清晰且不吞掉错误。\n- 所有示例（含空表）不被写为真实结果或结论。\n- 代码检查仅针对脚本，不把软件交付要求扩大到分析报告。"
+      }
+    ],
+    "contextReport": {
+      "customDescription": "合成数据与产品背景，不含真实个人资料。附件项目有Java技术栈，本次分析代码明确用Python。",
+      "technologyStack": [
+        {
+          "name": "Java 21",
+          "source": "project/pom.xml",
+          "confidence": 1.0
+        },
+        {
+          "name": "Spring Boot 3",
+          "source": "project/pom.xml",
+          "confidence": 1.0
+        }
+      ],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/schema.md",
+        "project/pom.xml"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/schema.md",
+          "language": "markdown",
+          "content": "合成月度表字段month、visits、completed；零有效、空值缺失。completed不得超过visits；visits为零时完成率不可计算。范围2025年1月至12月。仅数据字典，没有观测数据。",
+          "summary": "合成月度表字段month、visits、completed；零有效、空值缺失。completed不得超过visits；visits为零时完成率不可计算。范围2025年1月至12月。仅数据字典，没有观测数据。",
+          "truncated": false
+        },
+        {
+          "path": "project/pom.xml",
+          "language": "xml",
+          "content": "<project><properties><java.version>21</java.version></properties><dependencies><dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency></dependencies></project>",
+          "summary": "<project><properties><java.version>21</java.version></properties><dependencies><dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency></dependencies></project>",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "synthetic-smoke-v1"
+    },
+    "ambiguities": [],
+    "appliedConstraints": [
+      "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+      "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+      "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+      "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+      "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。",
+      "仅对本次明确交付的代码：校验输入并处理空值、非法值和边界条件。",
+      "仅对本次明确交付的代码：处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。",
+      "仅对本次明确交付的代码：补充必要的正常、异常和边界验证，不把软件测试要求扩展到报告正文。"
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": ""
+    },
+    "latencyMs": 6330,
+    "warnings": [],
+    "evidenceCards": [
+      {
+        "id": "D1",
+        "category": "BUSINESS_RULE",
+        "origin": "PROJECT_DOCUMENT",
+        "sourcePath": "materials/schema.md",
+        "evidence": "completed不得超过visits"
+      }
+    ]
+  },
+  "planningProviderResponse": {
+    "summary": "本次目标是基于合成月度数据（month、visits、completed，2025年1—12月）交付中文分析方案、结果空表和Python复现脚本，不运行代码、不修改项目；字段定义、缺失与零值区分、分母为零处理、年度范围均已明确。仍需确认少数会改变分析口径或空表结构的事项。",
+    "questions": [
+      {
+        "id": "trend_metric",
+        "question": "趋势分析主要围绕哪个指标展开？",
+        "hint": "这决定方案中趋势判断的对象和空表的核心列，不同选择会改变分析结论的呈现方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "visits_only",
+            "label": "仅访问量visits",
+            "description": "趋势只描述每月visits的变化。",
+            "answer": "趋势分析仅围绕visits展开。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "completed_only",
+            "label": "仅完成量completed",
+            "description": "趋势只描述每月completed的变化。",
+            "answer": "趋势分析仅围绕completed展开。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "both_visits_completed",
+            "label": "visits与completed分别分析",
+            "description": "两个指标各自呈现趋势，不合并为一个综合指标。",
+            "answer": "趋势分析分别围绕visits和completed展开，两者各自呈现趋势。",
+            "recommended": true,
+            "recommendationReason": "原始需求同时给出visits和completed，且完成率由两者计算，分别分析可保留各自变化信息。"
+          },
+          {
+            "id": "completion_rate_only",
+            "label": "仅完成率",
+            "description": "趋势只描述每月完成率的变化，分母为零的月份标记不可计算。",
+            "answer": "趋势分析仅围绕完成率展开，visits为零的月份完成率标记为不可计算。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "trend_method",
+        "question": "趋势判断采用哪种方式？",
+        "hint": "这决定方案中趋势结论的表述口径，也影响空表是否需要趋势方向列。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "month_over_month",
+            "label": "逐月环比变化",
+            "description": "比较相邻月份的变化方向和幅度。",
+            "answer": "趋势判断采用逐月环比变化，比较相邻月份的变化方向和幅度。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "overall_direction",
+            "label": "整体升降方向",
+            "description": "只描述全年整体是上升、下降或波动，不逐月比较。",
+            "answer": "趋势判断采用整体升降方向，描述全年整体是上升、下降或波动。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "both_mom_and_overall",
+            "label": "逐月环比加整体方向",
+            "description": "既给出相邻月份变化，也给出全年整体方向。",
+            "answer": "趋势判断同时采用逐月环比变化和整体升降方向。",
+            "recommended": true,
+            "recommendationReason": "原始需求要求分析月度数据趋势，逐月与整体结合可更完整呈现趋势，且不引入外部数据。"
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "missing_handling",
+        "question": "分析方案中如何处理缺失值？",
+        "hint": "原始需求已明确空单元格表示缺失且不能填零，此处确认缺失值在趋势和完成率分析中的处理方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "exclude_from_calc",
+            "label": "缺失不参与计算",
+            "description": "缺失月份不参与趋势和完成率计算，并在结果中保留缺失标记。",
+            "answer": "缺失值不参与趋势和完成率计算，结果中保留缺失标记，不填零。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确空单元格表示缺失且不能填零，排除计算可避免把缺失误当有效值。"
+          },
+          {
+            "id": "list_as_gap",
+            "label": "缺失单独列为缺口",
+            "description": "缺失月份不参与计算，同时在结果中单独列出为数据缺口。",
+            "answer": "缺失值不参与计算，同时在结果中单独列出为数据缺口，不填零。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "empty_table_structure",
+        "question": "结果空表需要包含哪些列？",
+        "hint": "空表结构决定交付物中结果表的字段，不同选择会影响后续脚本输出格式。",
+        "type": "MULTIPLE_CHOICE",
+        "options": [
+          {
+            "id": "month_col",
+            "label": "month",
+            "description": "月份列，格式YYYY-MM。",
+            "answer": "结果空表包含month列。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确字段month且每月一行，结果表应保留月份列。"
+          },
+          {
+            "id": "visits_col",
+            "label": "visits",
+            "description": "当月访问量列。",
+            "answer": "结果空表包含visits列。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确字段visits，趋势分析需要该列。"
+          },
+          {
+            "id": "completed_col",
+            "label": "completed",
+            "description": "当月完成数量列。",
+            "answer": "结果空表包含completed列。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确字段completed，趋势分析需要该列。"
+          },
+          {
+            "id": "completion_rate_col",
+            "label": "完成率",
+            "description": "completed除以visits，visits为零时标记不可计算。",
+            "answer": "结果空表包含完成率列，visits为零时标记不可计算。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确以completed除以visits计算完成率，结果表应包含该列。"
+          },
+          {
+            "id": "trend_direction_col",
+            "label": "趋势方向",
+            "description": "记录逐月或整体趋势方向。",
+            "answer": "结果空表包含趋势方向列。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "provider": "deepseek",
+    "model": "deepseek:deepseek-flash",
+    "mock": false
+  },
+  "checks": {
+    "allRemindersCopied": true,
+    "constraintsRetained": true,
+    "noForcedWebStack": true
+  }
+}

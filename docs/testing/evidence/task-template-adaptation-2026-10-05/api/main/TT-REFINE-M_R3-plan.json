@@ -1,0 +1,155 @@
+{
+  "sample": {
+    "id": "TT-REFINE-M_R3",
+    "domain": "确认后交付",
+    "rawPrompt": "请帮我处理附件材料，内容是一次内测公告。具体交付形式请先向我确认，不执行开发、部署或发送消息。",
+    "contextDescription": "",
+    "files": [
+      {
+        "path": "materials/公告.txt",
+        "content": "模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。",
+        "language": "text"
+      }
+    ]
+  },
+  "prepared": {
+    "version": "sha256:c4cd672b6fee5367d9caadd2e8000c1ac68b18268cc5ffbb7c43a0eb7780d984",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/公告.txt"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] materials/公告.txt：文件内容摘要：模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。；业务摘录：[片段 1/1] 模拟内测公告：可选Plan问答、直接增强、编辑复制； 只生成提示词，扫描PDF OCR未开放。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/公告.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/公告.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。",
+          "summary": "文件内容摘要：模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T22:43:23.852403700Z",
+    "latencyMs": 75
+  },
+  "plan": {
+    "summary": "您需要我基于附件中的内测公告材料生成一份提示词，且明确要求先确认交付形式，不执行开发、部署或发送消息。目前公告内容已读取，但最终提示词的具体交付形态尚未确定，需要您确认。",
+    "questions": [
+      {
+        "id": "delivery_form",
+        "question": "您希望最终交付的提示词以什么形式呈现？",
+        "hint": "公告材料本身是内测公告，您要求先确认交付形式，这直接决定提示词的组织方式和输出结构。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "single_prompt",
+            "label": "一段可直接使用的完整提示词",
+            "description": "输出一段连贯的提示词文本，可直接复制使用。",
+            "answer": "交付一段可直接复制使用的完整提示词文本。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "structured_prompt",
+            "label": "分模块的结构化提示词",
+            "description": "按角色、任务、约束、输出格式等模块分节呈现，便于后续修改。",
+            "answer": "交付分模块的结构化提示词，按角色、任务、约束、输出格式等分节呈现。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "prompt_with_notes",
+            "label": "提示词加使用说明",
+            "description": "在提示词正文之外附上使用场景、变量替换等说明。",
+            "answer": "交付提示词正文，并附上使用场景和变量替换等说明。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "prompt_purpose",
+        "question": "这份提示词生成后主要用来做什么？",
+        "hint": "公告涉及 Plan 问答、直接增强、编辑复制等内测功能，提示词的用途会影响其内容侧重和约束写法。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "announcement_writing",
+            "label": "撰写或改写内测公告",
+            "description": "用于生成、润色或改写类似的内测公告文案。",
+            "answer": "提示词用于撰写或改写内测公告类文案。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "feature_description",
+            "label": "介绍内测功能与使用方式",
+            "description": "用于向用户说明 Plan 问答、直接增强、编辑复制等功能的用法。",
+            "answer": "提示词用于介绍内测功能及其使用方式。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "qa_plan",
+            "label": "驱动 Plan 问答交互",
+            "description": "用于让模型先向用户提问、取得回答后再生成内容。",
+            "answer": "提示词用于驱动 Plan 问答交互，先向用户提问、取得回答后再生成内容。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 3742,
+    "expiresAt": "2026-10-04T22:43:23.852403700Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "351822d2-9c30-400d-8334-71e0ecb6f009",
+      "elapsedMs": 531
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "394f086a-cac2-4357-9280-a5eda18ffcfd",
+      "elapsedMs": 3788
+    }
+  ]
+}

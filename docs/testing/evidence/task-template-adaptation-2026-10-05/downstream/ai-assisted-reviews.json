@@ -1,0 +1,441 @@
+{
+  "schemaVersion": 1,
+  "reviewer": {
+    "id": "codex-task-template-20261005",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-04T22:46:36.464253+00:00",
+    "professionalDomain": "synthetic task compliance, not expert certification",
+    "blinded": false,
+    "limitation": "One disclosed AI-assisted reviewer; baseline and arm provenance were seen. Not independent human acceptance."
+  },
+  "rubric": {
+    "range": "0..4",
+    "anchors": {
+      "4": "关键要求满足，未观察到影响交付的问题",
+      "3": "主要要求满足，存在轻微遗漏、格式或冗余",
+      "2": "有实质性不一致或交付障碍",
+      "1": "明确规则被违反",
+      "0": "没有符合任务的成果"
+    },
+    "criticalFailureOverridesScore": true,
+    "notExactTextMatching": true,
+    "notStatisticalSignificance": true
+  },
+  "entries": [
+    {
+      "blindId": "B001",
+      "outputSha256": "a58af366c84c406d29cb7830292be9edc8cd9417059d84b643219b7227f02f4f",
+      "criticalErrors": [],
+      "evidence": [
+        "新闻标题和正文保持内测、相关片段、可选Plan、编辑复制、历史、需自核与OCR边界，没有引用测试数字或输出代码。",
+        "新闻共683字符；四项均达到本题要求，有限尺度下与同模型原始作品无可分辨优劣。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B002",
+      "outputSha256": "f4e797fb03145870463937a550fbe0bf2b4eeea00af8d3edef11aa3e63f008b4",
+      "criticalErrors": [],
+      "evidence": [
+        "按八个环节组织，入口以当前界面为准；“不虚构自动撤销”保持未证实边界，没有把未提供资料当作功能不存在。",
+        "1854字符；操作目标和核对步骤清晰，无代码、数据库或测试输出，保留失败时保存需求和专业复核。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B003",
+      "outputSha256": "f482b63973c0fa4f9a037f4b3dd8c0fe671c742d06ab642c449d250fcf1f7f45",
+      "criticalErrors": [],
+      "evidence": [
+        "大部分规则及确认答案完整，“明确地区不符：按无候选处理”与材料要求分别说明的边界表达不足，但伪代码仍标为RegionMismatch。",
+        "10072字符，比同信息原始组长；逐字段伪代码、测试与资料引用重复，不据此认定更可执行。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 2
+      }
+    },
+    {
+      "blindId": "B004",
+      "outputSha256": "7357687d1110c1691299b005b15e988f7dfa964a3eec192d8f592c39afb8f0d8",
+      "criticalErrors": [],
+      "evidence": [
+        "明确已确认轮次与分歧处理、保留原评分；一致性方法暂不确定，实验仍未执行，同信息比较及首轮失败保留。",
+        "2073字符，主文与四个附表连贯，主体目的集中；已定项虽也列入注册清单，但状态明确。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B005",
+      "outputSha256": "0a74c93effe55a7309ed197412133d8ff6adb7c4bc505642d601d581cc09583f",
+      "criticalErrors": [],
+      "evidence": [
+        "新闻标题和正文保持内测、相关片段、可选Plan、编辑复制、历史、需自核与OCR边界，没有引用测试数字或输出代码。",
+        "新闻共625字符；四项均达到本题要求，有限尺度下与同模型原始作品无可分辨优劣。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B006",
+      "outputSha256": "305bb1feae65baa1f439b820ee610503fd20722bff8cf7a2630735cfe13506b9",
+      "criticalErrors": [
+        "原始需求明确尚未决定地区缺失分支，作品却在流程、代码和测试中把停止写入行为写定。"
+      ],
+      "evidence": [
+        "正文“地区缺失或无法核验：不进入写入流程”并给出停止写入代码与测试结果，末尾却承认该业务决定尚未确认；把未知分支提升成确定行为。",
+        "白名单、0/false保护、两个模块、取消、失败提示和迟到查询均有覆盖；完整伪代码另将undefined纳入可补入空值范围，超出明确的null/空字符串。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 1,
+        "usability": 3
+      }
+    },
+    {
+      "blindId": "B007",
+      "outputSha256": "c03fdd3cba0ae6920707ef898d8c5eaf623f6a1461c3f20d15f5ae70a8e5f56c",
+      "criticalErrors": [],
+      "evidence": [
+        "二十任务、三次独立重复、两名盲评和四组同信息对照清楚，实验保持未执行，轮次及评审方法保持未知。",
+        "1740字符；评分/失败模板合并，缺少直接组更具体的失败编号与重试记录字段，但主文和附表区分清楚。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 4,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B008",
+      "outputSha256": "94c78197400171661161c071f4363a219879c65b2ac069e2b2a208fac81c2ea7",
+      "criticalErrors": [],
+      "evidence": [
+        "明确采用实际提交的“排除候选并提示信息缺失、保留原值”答案，区分地区缺失/不符/无候选。两个模块、三个字段、0/false、取消、排序、隐私及故障测试齐全。",
+        "13677字符；七大节后再次列出已知事实、用户确认、资料与平台约束，阅读负担高；与7071字符的同信息原始组相比没有紧凑表达优势。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 2
+      }
+    },
+    {
+      "blindId": "B009",
+      "outputSha256": "0250ae558d076977eb5c4c9e77c0164601010c48a177355819f8bde6ea06981b",
+      "criticalErrors": [],
+      "evidence": [
+        "新闻标题和正文保持内测、相关片段、可选Plan、编辑复制、历史、需自核与OCR边界，没有引用测试数字或输出代码。",
+        "新闻共614字符；四项均达到本题要求，有限尺度下与同模型原始作品无可分辨优劣。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B010",
+      "outputSha256": "8c412b1e35a332321aa55d7a7b7ec7764dbf3c4cb729c90a3849d8d3e565f4aa",
+      "criticalErrors": [],
+      "evidence": [
+        "按八个操作环节组织，三个示例明确不是平台已执行，资料与安全边界完整。",
+        "“平台不提供自动撤销…请不要依赖这些不存在的功能”把材料未证明变成不存在，超过了“不虚构”边界；其余适合新手，无代码交付。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B011",
+      "outputSha256": "8066f37fa2b0ebeb1d1c4348570acdffb02d2ac38fbb75f9fe30b918793f6a22",
+      "criticalErrors": [],
+      "evidence": [
+        "地区分支按同一确认答案处理，不把未知写成默认；三个字段、取消、稳定排序、详情编号核对、隐私和两模块均覆盖。",
+        "7071字符；“待确认项”表中的该项同时注明已明确无需再确认，仍有可精简的状态标签。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      }
+    },
+    {
+      "blindId": "B012",
+      "outputSha256": "161a79c9ab53307087d152f37820f5bb50508ea9919bfb84e986a90236b07f96",
+      "criticalErrors": [],
+      "evidence": [
+        "地区无法核验分支返回PENDING_DECISION，明确“不自行假定为通过或拒绝”，保留原始真正未知。",
+        "10453字符；背景、步骤、异常表、测试、资料引用与交付边界重复较多。其他姓名证件、地区、白名单、空值、取消和排序规则保留。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 2
+      }
+    },
+    {
+      "blindId": "B013",
+      "outputSha256": "f4648cb9524043f981e3d9e748c22381f532228b92821b7519e1a57257686451",
+      "criticalErrors": [],
+      "evidence": [
+        "标题为“校园内测提示词生成平台”，保持内测；只交付标题和正文，保留相关片段、需自核与扫描PDF OCR边界。",
+        "共814字符，末段“材料中的数字均为虚构教学素材”及技术栈较偏素材说明，阅读负担仍有。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      }
+    },
+    {
+      "blindId": "B014",
+      "outputSha256": "8fe051dbe848dfec003e48ac26c86c6025e2eeb8897b583a186d63dc4cff991f",
+      "criticalErrors": [],
+      "evidence": [
+        "标题为“校园内测提示词生成平台上线”，虽正文反复说明内测，但“上线”弱化了要求保持内测的标题边界。正文保留只生成提示词、相关片段与OCR未开放，没有编造数字引语。",
+        "共769字符，含651个汉字；可直接阅读，但技术栈末段占用新闻篇幅。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      }
+    },
+    {
+      "blindId": "B015",
+      "outputSha256": "4c1ac6df1afc516ba6261aedf294f03012eb7d04ee892cf215a8d1d03e9cdcb4",
+      "criticalErrors": [],
+      "evidence": [
+        "覆盖所需九个章节并落实入口以当前界面为准，但“入口位置没有充分资料证明、本指南不新增行为”等作者核对话术直接进入用户指南。",
+        "2563字符；重复核对/编辑/权限边界，较基线阅读负担高。“历史记录不会自动撤销”也是超出材料证明的绝对否定。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      }
+    },
+    {
+      "blindId": "B016",
+      "outputSha256": "94d848f3c83ebb06d54dc97ee8cae003499d694b7a5b2ffbdb3084219f756434",
+      "criticalErrors": [],
+      "evidence": [
+        "资料选择、可选Plan、未知、OCR、逻辑删除及专业边界准确，沿用入口以界面为准。",
+        "“可以按时间或任务查找”未由仅分页的素材明确支持，可能让读者误解存在筛选功能；其他内容连贯且无实现术语。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B017",
+      "outputSha256": "b7ecd5b427e22aed0062471296dbc463cd5f4114b18a153a7b0950af02fa5a90",
+      "criticalErrors": [],
+      "evidence": [
+        "采用同一回答的平台名称，保留不执行任务、复制后核对、相关片段、OCR未开放，不含未经支持的营收或引语。",
+        "763字符，段落交付清楚，标题和新闻叙述比素材清单更易直接使用。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B018",
+      "outputSha256": "062d5b9b6dbea46311bd689fd8aee6164ec09a3b48e9cd6a448d7184e766dd28",
+      "criticalErrors": [],
+      "evidence": [
+        "轮次、分歧及同信息条件完整；评分表直接给出0–4值域，未标为候选，而确认答案要求先明确评分尺度再预注册，不能认定该尺度已获确认。",
+        "3097字符，附表字段丰富但还有材料对应、确认摘要、主体、注册清单和交接的重复；未编造实验结果。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      }
+    },
+    {
+      "blindId": "B019",
+      "outputSha256": "67d423c9e71e74b4332aade510c1df4cb555b2fc0eac280cf380b0cfc813dc31",
+      "criticalErrors": [],
+      "evidence": [
+        "保留同初始信息与信息量匹配、盲评、首轮失败及真实交互定义，未知轮次与一致性方法未默认。",
+        "3196字符；失败编号、重试与评分表更可操作；材料对应表和交接摘要有重复，主文约580字是模型自报而非实际计数（不能据此验收）。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      }
+    },
+    {
+      "blindId": "B020",
+      "outputSha256": "4cbbf93badf195a5e578907e0d51d69e34279a856baa5f9e3248010fad217d43",
+      "criticalErrors": [],
+      "evidence": [
+        "新闻标题和正文保持内测、相关片段、可选Plan、编辑复制、历史、需自核与OCR边界，没有引用测试数字或输出代码。",
+        "新闻共677字符；四项均达到本题要求，有限尺度下与同模型原始作品无可分辨优劣。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B021",
+      "outputSha256": "69940d20eebdf3f0c48b24c61851ad0c5f8e5892dcd46dcecabb5fc2e745514c",
+      "criticalErrors": [],
+      "evidence": [],
+      "status": "PENDING",
+      "scores": {
+        "accuracy": null,
+        "completeness": null,
+        "ruleFidelity": null,
+        "usability": null
+      }
+    },
+    {
+      "blindId": "B022",
+      "outputSha256": "e6805c3d9e8d92f31ff5e0d5a43360997cd41b6c23379c61450944527e56252e",
+      "criticalErrors": [],
+      "evidence": [
+        "新闻标题和正文保持内测、相关片段、可选Plan、编辑复制、历史、需自核与OCR边界，没有引用测试数字或输出代码。",
+        "新闻共642字符；四项均达到本题要求，有限尺度下与同模型原始作品无可分辨优劣。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B023",
+      "outputSha256": "ac0b426038786ff2c4c5a69fedddc8e0d83d61d0cdf857e221866270211fba29",
+      "criticalErrors": [],
+      "evidence": [
+        "最多两轮及第三评审复核落实；一致性统计量仍未决，没有编造结果或锁定显著性检验。",
+        "2362字符；评分/失败附表可使用，但新增待确认清单把评分尺度、统计方法与测量结构再次分列，比2073字符同信息原始组更有阅读负担。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      }
+    },
+    {
+      "blindId": "B024",
+      "outputSha256": "644fc770702c27b062e89d4a5fe45d54dd65e00ec64dfd4228a8e2214767ac46",
+      "criticalErrors": [],
+      "evidence": [
+        "标题与正文沿用实际提交的平台名称；明确“两种方式”和用户核对，保留只生成提示词与OCR未支持，没有追加代码或分析章节。",
+        "711字符，五段正文集中说明使用目标、流程和边界；同信息基线807字符，未以新增平台名称本身记为表达增益。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      }
+    },
+    {
+      "blindId": "B025",
+      "outputSha256": "6c90e2cf0b9445896889c42e085ecee706c5c41aed5335d71c1699ba44929a46",
+      "criticalErrors": [],
+      "evidence": [
+        "保留Plan可选、主动选择相关片段、OCR未支持、逻辑删除及专业复核，不混入Java实现。",
+        "1919字符；合并了“回答/核对”和“编辑/复制/历史”阶段，示例缺少明确“不代表平台已执行”一句，但未声称实际执行。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 4,
+        "usability": 3
+      }
+    },
+    {
+      "blindId": "B026",
+      "outputSha256": "900695aebdee675574496db3b0437334ce04436dc2b81b99bd96a135d3064ace",
+      "criticalErrors": [],
+      "evidence": [
+        "正确采用回答给出的Prompt Optimizer Platform名称；直接增强与可选Plan、相关片段、内测及OCR边界全部保留。",
+        "807字符，技术栈和未公布收费/日期的资料说明使新闻略长；未输出自查过程。"
+      ],
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      }
+    }
+  ]
+}

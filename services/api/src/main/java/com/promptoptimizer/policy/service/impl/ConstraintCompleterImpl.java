@@ -5,6 +5,7 @@ import com.promptoptimizer.policy.service.PlatformPermissionPolicy;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
+import com.promptoptimizer.template.domain.TaskIntentResolver;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashSet;
@@ -45,7 +46,9 @@ public class ConstraintCompleterImpl implements ConstraintCompleter {
             constraints.add("为核心逻辑补充正常、异常和边界场景测试。");
         }
 
+        // 技术栈用于理解材料，但只有软件任务自动追加工程规范；权限和保密继续无条件生效。
         List<String> stackNames = context.technologyStack().stream()
+                .filter(item -> TaskIntentResolver.software(templateCode))
                 .map(item -> item.name().toLowerCase(java.util.Locale.ROOT))
                 .toList();
         if (containsStack(stackNames, "java")) {
@@ -68,6 +71,25 @@ public class ConstraintCompleterImpl implements ConstraintCompleter {
         // 兼容字段不能关闭默认红线；用户规则只能追加，不能削弱平台安全边界。
         constraints.add("禁止读取或输出受保护路径：" + joinPolicies(PlatformPermissionPolicy.PROTECTED_PATHS, permissionPolicy.protectedPaths()) + "。");
         constraints.add("以下操作必须先获得人工确认：" + joinPolicies(PlatformPermissionPolicy.CONFIRMATION_ACTIONS, permissionPolicy.requireConfirmationFor()) + "。");
+        return List.copyOf(constraints);
+    }
+
+    /**
+     * 辅助代码沿用输入、异常与测试保护，但不将背景项目技术栈强加给分析脚本。
+     * 具体语言和框架继续来自用户明确要求及本次代码证据。
+     */
+    @Override
+    public List<String> completeWithAuxiliaryCode(
+            ContextSnapshot context,
+            PermissionPolicyInput permissionPolicy,
+            boolean includePermissionBoundaries,
+            TemplateCode templateCode
+    ) {
+        Set<String> constraints = new LinkedHashSet<>(complete(
+                context, permissionPolicy, includePermissionBoundaries, templateCode));
+        constraints.add("仅对本次明确交付的代码：校验输入并处理空值、非法值和边界条件。");
+        constraints.add("仅对本次明确交付的代码：处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。");
+        constraints.add("仅对本次明确交付的代码：补充必要的正常、异常和边界验证，不把软件测试要求扩展到报告正文。");
         return List.copyOf(constraints);
     }
 

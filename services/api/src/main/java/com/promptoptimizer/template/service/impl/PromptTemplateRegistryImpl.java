@@ -4,10 +4,12 @@ import com.promptoptimizer.template.service.PromptTemplateRegistry;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import com.promptoptimizer.template.domain.TaskDeliveryProfile;
+import com.promptoptimizer.template.domain.TaskIntentResolver;
+import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,7 +24,7 @@ public class PromptTemplateRegistryImpl implements PromptTemplateRegistry {
     private final Map<TemplateCode, PromptTemplate> templates;
 
     /**
-     * 初始化功能开发、Bug 修复、重构和测试四类内置模板。
+     * 初始化六类兼容模板，细分交付物由共享画像适配，不增加公开枚举。
      */
     public PromptTemplateRegistryImpl() {
         EnumMap<TemplateCode, PromptTemplate> values = new EnumMap<>(TemplateCode.class);
@@ -66,79 +68,36 @@ public class PromptTemplateRegistryImpl implements PromptTemplateRegistry {
     }
 
     /**
-     * 根据显式模板或需求关键词选择模板。
+     * 根据显式模板或本次肯定交付目标选择模板；附件词语不替代任务目标。
      *
      * @param requestedTemplate 用户选择的模板
      * @param rawPrompt 原始提示词
      * @return 已解析的内置模板
      */
     public PromptTemplate resolve(TemplateCode requestedTemplate, String rawPrompt) {
-        TemplateCode code = requestedTemplate == null || requestedTemplate == TemplateCode.AUTO
-                ? infer(rawPrompt)
-                : requestedTemplate;
+        return resolve(requestedTemplate, rawPrompt, List.of());
+    }
+
+    /** 显式软件模板继续优先；自动和显式通用任务均可按已确认交付物细化。 */
+    @Override
+    public PromptTemplate resolve(TemplateCode requestedTemplate, String rawPrompt, List<ConfirmedPlanDecision> decisions) {
+        var intent = TaskIntentResolver.resolve(requestedTemplate, rawPrompt, decisions);
+        TemplateCode code = intent.templateCode();
         PromptTemplate selected = templates.get(code);
-        // 显式选择继续优先；仅自动通用策略按作品调整交付和验收，不改变公开枚举契约。
-        if (code == TemplateCode.GENERAL && (requestedTemplate == null || requestedTemplate == TemplateCode.AUTO)) {
-            var profile = TaskDeliveryProfile.identify(rawPrompt);
-            return new PromptTemplate(code, profile.outputGuidance(), profile.acceptanceGuidance(), selected.exampleGuidance());
+        var profile = intent.deliveryProfile();
+        if (!TaskIntentResolver.software(code) && profile != TaskDeliveryProfile.GENERAL) {
+            return new PromptTemplate(code, profile.outputGuidance(), profile.acceptanceGuidance(), profile.exampleGuidance(), profile);
         }
-        if (code == TemplateCode.RESEARCH_ANALYSIS
-                && TaskDeliveryProfile.identify(rawPrompt) == TaskDeliveryProfile.ACADEMIC_METHODS) {
-            var profile = TaskDeliveryProfile.ACADEMIC_METHODS;
-            return new PromptTemplate(code, profile.outputGuidance(), profile.acceptanceGuidance(), selected.exampleGuidance());
+        if (code == TemplateCode.GENERAL) {
+            return new PromptTemplate(code, profile.outputGuidance(), profile.acceptanceGuidance(), profile.exampleGuidance(), profile);
         }
         return selected;
     }
 
     /**
-     * 根据原始需求关键词推断内部生成策略，未命中时使用通用策略。
+     * 根据原始需求中的肯定交付目标推断内部生成策略，未命中时使用通用策略。
      */
     public TemplateCode infer(String rawPrompt) {
-        String prompt = rawPrompt == null ? "" : rawPrompt.toLowerCase(Locale.ROOT);
-        var profile = TaskDeliveryProfile.identify(rawPrompt);
-        if (profile != TaskDeliveryProfile.GENERAL && profile != TaskDeliveryProfile.ACADEMIC_METHODS) {
-            return TemplateCode.GENERAL;
-        }
-        String goal = prompt.lines().filter(line -> !line.isBlank() && !line.startsWith("#"))
-                .findFirst().orElse(prompt).split("[。；;]", 2)[0];
-        // 实现方案中的异常分支不是 Bug 修复目标；只检查第一条目标中的肯定交付动词。
-        if (java.util.regex.Pattern.compile("(?<!不)(?<!不要)(?:设计|制定|提供|给出).{0,100}(?:实现方案|开发方案|功能方案)")
-                .matcher(goal).find() && !containsAny(goal, "修复", "bug", "报错", "重构")) {
-            return TemplateCode.FEATURE_DEVELOPMENT;
-        }
-        // 明确的软件交付动词优先于材料中的研究关键词。
-        if (containsAny(prompt, "开发接口", "实现接口", "开发功能", "修复", "bug", "报错")
-                || prompt.matches(".*开发.{0,12}(系统|平台|服务|应用|模块|工具).*")) {
-            return containsAny(prompt, "修复", "bug", "报错")
-                    ? TemplateCode.BUG_FIX : TemplateCode.FEATURE_DEVELOPMENT;
-        }
-        if (containsAny(prompt, "研究", "论文", "文献", "死亡率", "发病率", "时间序列", "回归分析", "统计分析", "arriaga", "yll")) {
-            return TemplateCode.RESEARCH_ANALYSIS;
-        }
-        if (containsAny(prompt, "修复", "bug", "异常", "报错", "失败")) {
-            return TemplateCode.BUG_FIX;
-        }
-        if (containsAny(prompt, "重构", "refactor", "整理代码", "拆分模块")) {
-            return TemplateCode.REFACTORING;
-        }
-        if (containsAny(prompt, "测试", "test", "覆盖率", "用例")) {
-            return TemplateCode.TESTING;
-        }
-        if (containsAny(prompt, "开发", "实现", "接口", "代码", "模块", "功能", "数据库", "前端", "后端")) {
-            return TemplateCode.FEATURE_DEVELOPMENT;
-        }
-        return TemplateCode.GENERAL;
-    }
-
-    /**
-     * 判断文本是否包含任一候选关键词。
-     */
-    private boolean containsAny(String value, String... candidates) {
-        for (String candidate : candidates) {
-            if (value.contains(candidate)) {
-                return true;
-            }
-        }
-        return false;
+        return TaskIntentResolver.resolve(TemplateCode.AUTO, rawPrompt).templateCode();
     }
 }

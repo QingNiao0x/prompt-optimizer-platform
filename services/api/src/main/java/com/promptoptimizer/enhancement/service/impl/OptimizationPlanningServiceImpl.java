@@ -150,9 +150,7 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         : validated.summary();
                 // 当前需求决定任务类型；附件只提供事实，不能把代码任务误判为附件的研究主题。
                 var inferredTemplate = templateRegistry.infer(request.rawPrompt());
-                if (inferredTemplate == com.promptoptimizer.enhancement.domain.TemplateCode.GENERAL) {
-                    inferredTemplate = templateRegistry.infer(request.contextDescription());
-                }
+                // GENERAL 也可能是明确的写作目标；背景材料不能替本次目标重新分类。
                 PlanningSessionService.PlanRegistration registration = planningSessionService.registerPlan(
                         request.rawPrompt(),
                         request.contextDescription(),

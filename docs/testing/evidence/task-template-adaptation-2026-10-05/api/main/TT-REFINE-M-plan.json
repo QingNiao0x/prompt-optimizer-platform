@@ -1,0 +1,129 @@
+{
+  "sample": {
+    "id": "TT-REFINE-M",
+    "domain": "确认后交付",
+    "rawPrompt": "请帮我处理附件材料，内容是一次内测公告。具体交付形式请先向我确认，不执行开发、部署或发送消息。",
+    "contextDescription": "",
+    "files": [
+      {
+        "path": "materials/公告.txt",
+        "content": "模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。",
+        "language": "text"
+      }
+    ]
+  },
+  "prepared": {
+    "version": "sha256:c4cd672b6fee5367d9caadd2e8000c1ac68b18268cc5ffbb7c43a0eb7780d984",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/公告.txt"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] materials/公告.txt：文件内容摘要：模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。；业务摘录：[片段 1/1] 模拟内测公告：可选Plan问答、直接增强、编辑复制； 只生成提示词，扫描PDF OCR未开放。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/公告.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/公告.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。",
+          "summary": "文件内容摘要：模拟内测公告：可选Plan问答、直接增强、编辑复制；只生成提示词，扫描PDF OCR未开放。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T22:18:26.767748800Z",
+    "latencyMs": 0
+  },
+  "plan": {
+    "summary": "你希望基于附件中的内测公告生成最终提示词，并明确要求先确认具体交付形式，且不执行开发、部署或发送消息。因此需要先确认交付物形态，才能确定提示词的目标与范围。",
+    "questions": [
+      {
+        "id": "delivery_form",
+        "question": "这次最终要交付什么形式的内容？",
+        "hint": "你要求先确认交付形式；不同形式会决定提示词是面向生成公告文案、整理要点，还是其他产物。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "prompt_only",
+            "label": "只生成提示词",
+            "description": "交付一段可直接使用的提示词，不产出公告正文或其他成品。",
+            "answer": "只生成提示词，不产出公告正文或其他成品。",
+            "recommended": true,
+            "recommendationReason": "项目证据明确包含：只生成提示词。请核对适用范围后选择。"
+          },
+          {
+            "id": "announcement_copy",
+            "label": "生成公告文案",
+            "description": "交付一份可直接发布的内测公告文案。",
+            "answer": "生成一份可直接发布的内测公告文案。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "summary_points",
+            "label": "整理公告要点",
+            "description": "交付公告的关键信息要点清单，不写成完整公告。",
+            "answer": "整理公告的关键信息要点清单，不写成完整公告。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "prompt_and_copy",
+            "label": "提示词加公告文案",
+            "description": "同时交付提示词和一份公告文案。",
+            "answer": "同时交付提示词和一份公告文案。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 1966,
+    "expiresAt": "2026-10-04T22:18:26.767748800Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "4722d5ac-cfc1-4764-81a3-9966ca5f8ad2",
+      "elapsedMs": 35
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "2ae41304-8441-405b-af81-95f710f668a8",
+      "elapsedMs": 2005
+    }
+  ]
+}

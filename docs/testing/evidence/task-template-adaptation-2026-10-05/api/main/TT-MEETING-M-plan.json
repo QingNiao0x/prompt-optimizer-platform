@@ -1,0 +1,86 @@
+{
+  "sample": {
+    "id": "TT-MEETING-M",
+    "domain": "会议纪要",
+    "rawPrompt": "请根据附件的模拟会议记录整理中文会议纪要，供参加讨论的项目成员确认。只交付纪要，不发送消息、不分派任务、不修改项目代码。采用“会议主题、讨论情况、已经达成的决定、行动项、待确认事项”五部分，行动项用表格，其他部分可用简短列表。正文约800字，主题为提示词平台内测反馈及改进安排。\n记录中已经明确的决定要保留，提议不能写成批准，尚未确定的事项应标注未确定。尤其不要把“建议扩大内测”和“尚需负责人审批”写成已经对外上线。会议并未讨论收费或收入，不能编造预算、市场份额和商业承诺。没有明确负责人或期限的行动项，填“未指定”，不能自行写入某人的名字或任意日期。\n已经决定继续保留可选Plan、直接增强和资料权限边界，不可简化为删除Plan或全量上传资料。关于减少重复提醒的意见是改进目标，不证明当前系统已经解决所有重复问题。记录出现技术术语时保留必要意思，用容易理解的语言解释，但不要追加接口实现、单元测试或新的产品路线图。\n待确认事项只保留记录明确未定或实施前必要的信息，不把章节顺序、表格样式等常规写作细节转给用户再次选择。结尾不输出编写说明或自评分。生成时核对每项决定和行动项是否能回到记录，有没有把“建议”“拟”“待批”改成已完成，表格中的未知负责人和期限是否明确标注。",
+    "contextDescription": "",
+    "files": [
+      {
+        "path": "materials/会议记录.txt",
+        "content": "模拟会议：决定保留可选Plan和直接增强。讨论重复提醒，拟先定位问题，负责人和期限未定。建议扩大内测，但尚需负责人审批。资料权限边界保持。下一轮需要收集同信息的原始与增强作品对照，未指定执行人。未讨论预算或收费。",
+        "language": "text"
+      }
+    ]
+  },
+  "prepared": {
+    "version": "sha256:1b591097d84bc38d04be209894ab883c9cbfd221249359f8fbdc90c90cff6a91",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/会议记录.txt"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] materials/会议记录.txt：文件内容摘要：模拟会议：决定保留可选Plan和直接增强。；讨论重复提醒，拟先定位问题，负责人和期限未定。；资料权限边界保持。；下一轮需要收集同信息的原始与增强作品对照，未指定执行人。；未讨论预算或收费。；业务摘录：[片段 1/1] 模拟会议：决定保留可选Plan和直接增强。 讨论重复提醒，拟先定位问题，负责人和期限未定。 建议扩大内测，但尚需负责人审批。 资料权限边界保持。 下一轮需要收集同信息的原始与增强作品对照，未指定执行人。 未讨论预算或收费。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/会议记录.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/会议记录.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n模拟会议：决定保留可选Plan和直接增强。讨论重复提醒，拟先定位问题，负责人和期限未定。建议扩大内测，但尚需负责人审批。资料权限边界保持。下一轮需要收集同信息的原始与增强作品对照，未指定执行人。未讨论预算或收费。",
+          "summary": "文件内容摘要：模拟会议：决定保留可选Plan和直接增强。；讨论重复提醒，拟先定位问题，负责人和期限未定。；资料权限边界保持。；下一轮需要收集同信息的原始与增强作品对照，未指定执行人。；未讨论预算或收费。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T22:18:17.169480600Z",
+    "latencyMs": 3
+  },
+  "plan": {
+    "summary": "当前需求及已提供材料足以进入最终增强，无需额外确认。",
+    "questions": [],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 894,
+    "expiresAt": "2026-10-04T22:18:17.169480600Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "a72fd8e5-47a1-4a0e-8175-e3265f6134ba",
+      "elapsedMs": 32
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "14606160-ab7a-4d69-b542-a20c10916e73",
+      "elapsedMs": 921
+    }
+  ]
+}

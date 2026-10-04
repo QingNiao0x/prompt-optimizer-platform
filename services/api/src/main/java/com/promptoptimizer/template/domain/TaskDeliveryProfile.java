@@ -1,8 +1,5 @@
 package com.promptoptimizer.template.domain;
 
-import java.util.Locale;
-import java.util.regex.Pattern;
-
 /**
  * 根据用户要求交付的作品调整通用模板，不增加公开模板代码或假定专业业务事实。
  * 身份、附件主题和明确排除的工作不能替代本次交付目标。
@@ -24,7 +21,21 @@ public enum TaskDeliveryProfile {
     INSTITUTIONAL_REPORT("根据报告用途、受众及已提供材料组织报告，区分已完成工作、问题与下一步计划。",
             "事实和数据可核对，结论有依据，结构适合报告用途，不虚构成效或行政要求。"),
     ACADEMIC_METHODS("只交付指定论文部分或研究方案，明确研究对象、方法、变量与评估步骤，不补写未要求章节或实际结果。",
-            "方法与研究问题一致，定义和比较条件可复核；不编造数据、结果、文献或已完成研究状态。");
+            "方法与研究问题一致，定义和比较条件可复核；不编造数据、结果、文献或已完成研究状态。"),
+    ACADEMIC_WRITING("围绕指定学科、论文阶段和章节组织学术文本；遵守已给写作范围、引用格式与资料边界，不替未完成研究编造结果。",
+            "论点与证据对应，概念、引用及研究状态可核对；遵守章节、篇幅和学术诚信要求。"),
+    DATA_ANALYSIS("按已给数据来源、字段、统计口径与比较范围交付分析方案、表结构或所要求的分析结果；只有要求时才提供代码。",
+            "指标定义、分母、缺失值和时间边界一致；区分实际计算、方法建议与未知参数，结论能回到输入数据。"),
+    MATERIAL_SYNTHESIS("根据提供的材料交付所需摘要、对照表或提取清单，区分已知事实、资料分歧及未决条件，不增加未要求的实现任务。",
+            "重要信息不遗漏，出处与材料内容相符；不把未见信息写成不存在，不把例子写成事实。"),
+    MEETING_MINUTES("依据会议记录整理议题、明确决定和行动项；负责人、期限未指定时标明未指定，不替与会者作出决定。",
+            "讨论、决定与待办分开，行动项可核对；不虚构责任人、期限或会议结论。"),
+    LEGAL_MATERIAL("按指定用途整理法律或法务材料、规则对照与未决问题；保留来源、适用主体、生效时间及不同版本，不编造法条或专业结论。",
+            "对象、条件、取值及来源对应，冲突和未签署状态保留；只交付所要求的材料整理或方案，不冒充已生效的法律意见。"),
+    MEDICAL_MATERIAL("依据提供的医疗材料整理步骤、字段对照和检查清单；保留不同机构的数据含义、缺失状态及权限边界，不将材料整理扩展为诊断或未授权处理。",
+            "机构、字段、状态、分母与日期边界一致，缺失不当作零值；不推断其他机构的数据或映射，未知信息明确保留。"),
+    SOFTWARE_IMPLEMENTATION("围绕明确的软件目标交付实现或验证方案，具体指导沿用所选开发、修复、重构或测试模板。",
+            "已有行为和接口兼容，明确范围与验证证据，不把拟实现能力写成已完成。");
 
     private final String outputGuidance;
     private final String acceptanceGuidance;
@@ -36,14 +47,7 @@ public enum TaskDeliveryProfile {
 
     /** 只识别明确的作品目标，不以“研究生”等受众名词判定科研任务。 */
     public static TaskDeliveryProfile identify(String rawPrompt) {
-        String prompt = rawPrompt == null ? "" : rawPrompt.toLowerCase(Locale.ROOT);
-        if (goal(prompt, "翻译|译文|译成|translate", true)) return TRANSLATION;
-        if (goal(prompt, "新闻稿|新闻通稿|press release", false)) return NEWS_RELEASE;
-        if (goal(prompt, "用户指南|使用指南|操作指南|使用手册|用户手册", false)) return USER_GUIDE;
-        if (goal(prompt, "教案|教学设计|教学方案|课程设计|课堂活动", false)) return TEACHING;
-        if (goal(prompt, "工作报告|工作总结|年度报告|机关报告|调研报告|汇报材料", false)) return INSTITUTIONAL_REPORT;
-        if (goal(prompt, "论文(?:的)?方法(?:部分|提纲|章节)|方法提纲|研究方案|研究设计", false)) return ACADEMIC_METHODS;
-        return GENERAL;
+        return TaskIntentResolver.identifyDelivery(rawPrompt);
     }
 
     /** 模板仅指导作品类型，具体格式、字数和只输出约束仍以原始需求与绑定答案为准。 */
@@ -52,11 +56,35 @@ public enum TaskDeliveryProfile {
     /** 返回对应作品的质量核查要点，不为非软件任务追加软件测试验收。 */
     public String acceptanceGuidance() { return acceptanceGuidance; }
 
-    /** 匹配肯定交付动词；正文引用、禁止输出和材料标题本身不能证明用户要求该作品。 */
-    private static boolean goal(String prompt, String object, boolean translation) {
-        String verb = translation ? "(?:翻译|译成|translate)" : "(?:撰写|编写|起草|写|生成|输出|提供|交付|拟定|制作|设计|制定)";
-        String expression = translation ? verb : verb + "[^。；;\\n]{0,32}(?:" + object + ")";
-        return Pattern.compile("(?<!不)(?<!不得)(?<!不要)(?<!无需)" + expression)
-                .matcher(prompt).find();
+    /** 软件画像不与新闻、指南等作品指导互换；公开软件模板仍优先。 */
+    public boolean softwareTask() {
+        return this == SOFTWARE_IMPLEMENTATION;
+    }
+
+    /** 交付画像限定追问价值，不替用户选择未知的专业口径、数据来源或业务授权。 */
+    public String planningGuidance() {
+        return switch (this) {
+            case TRANSLATION -> "目标语言、受众、语气和段落已明确时沿用。普通词语译法、标点及常规语气由执行者处理，"
+                    + "不再询问已确定段落数或是否增加解释；只有必须使用但缺失的正式名称、专业术语冲突等会改变结果的事项需要确认。";
+            case TEACHING -> "学生、已有知识、课时、学习目标和交付物已明确时，教师可自行设计适龄例题、呈现方式及解释深度。"
+                    + "不让用户逐题选择常规细节；涉及超出学段的内容、特殊学习需要或材料限制且尚未知时才询问。";
+            case NEWS_RELEASE, INSTITUTIONAL_REPORT, MEETING_MINUTES, USER_GUIDE ->
+                    "普通标题、清单排版和段落组织由执行者处理，不制造格式问卷。未提供的名称或日期不要编造；"
+                            + "只有完成用户明确要求的成品必须具备且没有允许替代表达的事实才询问，材料缺口与业务决定分开。";
+            case ACADEMIC_METHODS, ACADEMIC_WRITING, DATA_ANALYSIS ->
+                    "沿用已确定的研究问题、对象、时间、口径及交付范围。仅询问会改变研究结论或公平比较的未决参数；"
+                            + "常规章节和表格排版自行组织，不将只写方案改成实际实验、计算或结果。";
+            default -> "只确认会改变目标、范围、业务行为、数据口径或执行前提的关键缺口；已知事实和常规组织方式不要重问。";
+        };
+    }
+
+    /** 示例仅在既有开关启用时交付，不为研究和写作虚构真实结果。 */
+    public String exampleGuidance() {
+        return switch (this) {
+            case TRANSLATION -> "需要示例时仅提供与原文相关的术语或格式示例，遵守只输出译文的限制。";
+            case ACADEMIC_METHODS, ACADEMIC_WRITING, DATA_ANALYSIS, MEDICAL_MATERIAL, LEGAL_MATERIAL ->
+                    "仅在用户要求且资料允许时提供空表、格式或计算步骤示例，示例不得冒充真实数据或结论。";
+            default -> "只有示例有助于当前交付且不违反输出限制时，提供一个相关最小示例。";
+        };
     }
 }

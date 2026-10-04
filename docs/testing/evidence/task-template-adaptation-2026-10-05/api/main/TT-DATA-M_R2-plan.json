@@ -1,0 +1,107 @@
+{
+  "sample": {
+    "id": "TT-DATA-M_R2",
+    "domain": "数据分析",
+    "rawPrompt": "请依据附件中的模拟月度受理数据，制定一份可复核的统计分析方案，并给出空表模板。只交付中文分析方案与Markdown空表，不运行程序，不输出实际统计数值，不要求选择Python或R，也不生成代码。分析对象为三个科室，时间范围为2025年1月至3月，按自然月分组，各科室分别报告受理量、办结量和办结率。办结率分母是当月受理量，不使用期初积压量或全部记录数替代。\n附件字段为department、received_month、received_count、closed_count。空单元格表示该月数据缺失，不是0，不是没有工作，也不能直接视为未办结。真实0值需要保留。受理量为0时办结率标为不适用，不除零，不填成100%。办结量大于受理量的情况单独列为口径异常，不自动改数；同一科室同一月份出现重复行时列为待核查记录，不能擅自合计或删掉。\n方案应交代字段核对、月份边界、缺失值处理、异常检查、统计公式和空表列。空表只提供科室、月份、受理量、办结量、办结率、数据状态、备注这几列，不填模拟结果。不给出营收、满意度、绩效排名或因果分析，现有材料无法支持这些结论。比较时说明缺失月份不能和完整月份直接解释为真实下降。\n按“已知数据口径、整理步骤、统计公式、空表、核查清单”组织下游作品。核查应可以判断字段来源、分母、0值和缺失是否区分、重复是否记录、没有结果是否被伪造。公式和例外规则已经明确，不要再询问是否严格遵守；确有相反材料时标出来源和冲突。",
+    "contextDescription": "",
+    "files": [
+      {
+        "path": "materials/数据字典.md",
+        "content": "数据格式：CSV。字段department、received_month、received_count、closed_count；统计范围2025年1月至3月三个科室；空值为缺失，0为已记录零值。办结率分母为当月受理量，0分母不适用。仅方法与空表，不实际计算。",
+        "language": "markdown"
+      }
+    ]
+  },
+  "prepared": {
+    "version": "sha256:9fa9c33c7421388338469be9781575f7d7bbd5f2e474e1f538b05ff0271a3886",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/数据字典.md"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/数据字典.md：Markdown 文档摘要：数据格式：CSV。；字段department、received_month、received_count、closed_count；统计范围2025年1月至3月三个科室；空值为缺失，0为已记录零值。；办结率分母为当月受理量，0分母不适用。；仅方法与空表，不实际计算。；业务摘录：[片段 1/1] 数据格式：CSV。 字段department、received_month、received_count、closed_count； 统计范围2025年1月至3月三个科室； 空值为缺失，0为已记录零值。 办结率分母为当月受理量，0分母不适用。 仅方法与空表，不实际计算。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "DATA_FORMAT",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/数据字典.md",
+          "evidence": "数据格式：CSV"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/数据字典.md"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/数据字典.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n数据格式：CSV。字段department、received_month、received_count、closed_count；统计范围2025年1月至3月三个科室；空值为缺失，0为已记录零值。办结率分母为当月受理量，0分母不适用。仅方法与空表，不实际计算。",
+          "summary": "Markdown 文档摘要：数据格式：CSV。；字段department、received_month、received_count、closed_count；统计范围2025年1月至3月三个科室；空值为缺失，0为已记录零值。；办结率分母为当月受理量，0分母不适用。；仅方法与空表，不实际计算。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-04T22:33:24.624342300Z",
+    "latencyMs": 14
+  },
+  "plan": {
+    "summary": "已理解目标是基于附件模拟月度受理数据，制定可复核的中文统计分析方案并给出Markdown空表模板，不运行程序、不输出实际数值。现有材料已明确字段、时间范围、分母口径、缺失与0值区分、异常与重复处理规则，但三个科室的具体名称尚未给出，需要确认后才能准确写入方案和空表。",
+    "questions": [
+      {
+        "id": "dept_names",
+        "question": "分析对象中的三个科室具体是哪三个？",
+        "hint": "方案和空表需要按科室分别报告受理量、办结量和办结率，科室名称会直接影响空表行标签和方案中的分组说明。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：内科、外科、儿科",
+          "例如：门诊部、住院部、急诊科"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 1441,
+    "expiresAt": "2026-10-04T22:33:24.624342300Z"
+  },
+  "requests": [
+    {
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "4ee5d98d-a34a-4691-ac87-42eb48e2f533",
+      "elapsedMs": 52
+    },
+    {
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "f4112bdf-84d1-4b2c-b275-8a3f50c0df24",
+      "elapsedMs": 1477
+    }
+  ]
+}
