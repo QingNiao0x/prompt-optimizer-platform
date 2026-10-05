@@ -1,0 +1,95 @@
+{
+  "scope" : "OFFLINE_HELPER_REPLAY_OF_REAL_PLAN_OUTPUT_NO_AUTH_OR_BINDING",
+  "caseId" : "TT-HOSPITAL-M",
+  "rawCount" : 3,
+  "filteredCount" : 3,
+  "candidateValidationFailures" : [ ],
+  "questions" : [ {
+    "id" : "hospital_b_format",
+    "question" : "乙医院的数据文件格式目前是否已经确定？如果确定，具体是什么格式？",
+    "hint" : "甲医院已明确为CSV，但乙医院格式尚未提供，不能因为甲医院是CSV就推定乙医院也是CSV。这会影响字段对照表和整理步骤的写法。",
+    "type" : "SINGLE_CHOICE",
+    "options" : [ {
+      "id" : "b_csv",
+      "label" : "乙医院也是CSV",
+      "description" : "乙医院数据文件格式已确定为CSV。",
+      "answer" : "乙医院数据文件格式已确定为CSV。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "b_excel",
+      "label" : "乙医院是Excel工作簿",
+      "description" : "乙医院数据文件格式已确定为Excel工作簿（如.xlsx）。",
+      "answer" : "乙医院数据文件格式已确定为Excel工作簿（如.xlsx）。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "b_other",
+      "label" : "其他格式",
+      "description" : "乙医院使用CSV和Excel之外的其他格式，需在补充说明中写明。",
+      "answer" : "乙医院数据文件格式为其他格式，具体为：____。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "b_unknown",
+      "label" : "尚未确定",
+      "description" : "乙医院格式目前未知，方案中先列为待收集信息，不编造格式。",
+      "answer" : "乙医院数据文件格式目前尚未确定，方案中先列为待收集信息，不编造格式。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    } ],
+    "examples" : [ ],
+    "allowCustomAnswer" : true
+  }, {
+    "id" : "hospital_b_status_mapping",
+    "question" : "乙医院的状态取值和到诊状态映射目前是否已经确定？如果确定，具体如何对应到BOOKED、CANCELLED、ATTENDED？",
+    "hint" : "乙医院列名和状态映射未提供，当前不能计算跨院一致的到诊率。需要确认乙医院状态口径，否则字段对照表只能保留待收集。",
+    "type" : "SINGLE_CHOICE",
+    "options" : [ {
+      "id" : "b_status_known",
+      "label" : "已确定，可提供映射",
+      "description" : "乙医院状态取值和到诊映射已确定，可在补充说明中写明具体对应关系。",
+      "answer" : "乙医院状态取值和到诊映射已确定，具体对应关系为：____。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "b_status_unknown",
+      "label" : "尚未确定",
+      "description" : "乙医院状态映射目前未知，方案中先列为待收集信息，不编造映射。",
+      "answer" : "乙医院状态取值和到诊映射目前尚未确定，方案中先列为待收集信息，不编造映射。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    } ],
+    "examples" : [ ],
+    "allowCustomAnswer" : true
+  }, {
+    "id" : "cross_hospital_sharing",
+    "question" : "跨院共享原始记录目前未获批准，本次方案应如何处理两家医院的数据？",
+    "hint" : "是否允许跨院共享原始记录尚未获批准，不能把技术上可合并理解为已获授权。这会影响整理步骤和交付结构。",
+    "type" : "SINGLE_CHOICE",
+    "options" : [ {
+      "id" : "separate_only",
+      "label" : "各院分别处理，仅交付不可识别统计结构",
+      "description" : "两家医院分别整理，不合并原始记录，只交付不可识别的汇总统计结构。",
+      "answer" : "两家医院分别整理，不合并原始记录，只交付不可识别的汇总统计结构。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "separate_then_compare",
+      "label" : "各院分别处理后，在汇总层面对照",
+      "description" : "两家医院分别处理，不共享原始记录，但在汇总层面进行对照比较。",
+      "answer" : "两家医院分别处理，不共享原始记录，但在汇总层面进行对照比较。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "pending_approval",
+      "label" : "先按未批准处理，待授权后再定",
+      "description" : "当前按未获批准处理，方案中保留待授权说明，不预设合并。",
+      "answer" : "当前按未获批准处理，方案中保留待授权说明，不预设合并。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    } ],
+    "examples" : [ ],
+    "allowCustomAnswer" : true
+  } ]
+}

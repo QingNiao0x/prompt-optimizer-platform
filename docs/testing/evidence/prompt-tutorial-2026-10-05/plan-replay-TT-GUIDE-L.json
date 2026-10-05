@@ -1,0 +1,153 @@
+{
+  "scope" : "OFFLINE_HELPER_REPLAY_OF_REAL_PLAN_OUTPUT_NO_AUTH_OR_BINDING",
+  "caseId" : "TT-GUIDE-L",
+  "rawCount" : 5,
+  "filteredCount" : 5,
+  "candidateValidationFailures" : [ ],
+  "questions" : [ {
+    "id" : "q1",
+    "question" : "指南中提到的界面按钮和入口名称，应以哪种方式处理？",
+    "hint" : "材料只提供了“开始增强”“复制”等少量按钮文本，其余界面元素无法核实。这会影响读者能否照着操作，需要确定统一口径。",
+    "type" : "SINGLE_CHOICE",
+    "options" : [ {
+      "id" : "a",
+      "label" : "只写操作目的，不写具体按钮名",
+      "description" : "凡材料未明确证明的按钮文本一律不写，用“找到开始增强的入口”这类表述，并注明以当前界面为准。",
+      "answer" : "指南只描述操作目的和位置线索，不编造按钮文本；材料未证明的界面元素统一注明“以当前界面为准”。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "b",
+      "label" : "沿用材料中出现的按钮名，其余不写",
+      "description" : "仅使用“开始增强”“复制”等材料中已出现的文本，其他界面元素只写目的。",
+      "answer" : "指南沿用材料中已出现的按钮文本（如“开始增强”“复制”），其余未核实的界面元素只写操作目的并注明以当前界面为准。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "c",
+      "label" : "由我提供准确的界面名称清单",
+      "description" : "用户另行给出当前界面的按钮和入口名称，指南按该清单书写。",
+      "answer" : "用户将提供当前界面的准确按钮和入口名称清单，指南按该清单书写。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    } ],
+    "examples" : [ ],
+    "allowCustomAnswer" : true
+  }, {
+    "id" : "q2",
+    "question" : "指南中“添加上下文”部分，是否需要说明用户可以选择哪些类型的资料？",
+    "hint" : "材料提到代码索引、办公文件上传、受保护文件排除、图片仅元数据、扫描PDF不支持OCR，但未说明是否要列出可上传的资料类型清单。这会影响读者准备材料时的预期。",
+    "type" : "SINGLE_CHOICE",
+    "options" : [ {
+      "id" : "a",
+      "label" : "按材料边界说明可处理的资料类型",
+      "description" : "说明代码片段、办公文件等材料中已提及的类型，并保留受保护文件排除、图片仅元数据、扫描PDF不支持OCR的边界。",
+      "answer" : "指南按材料已说明的边界介绍可处理的资料类型，并保留受保护文件排除、图片仅元数据、扫描PDF暂不支持OCR的说明。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "b",
+      "label" : "只讲操作步骤，不列资料类型",
+      "description" : "只说明用户如何主动选择资料，不展开可处理的资料类型清单。",
+      "answer" : "指南只说明用户如何主动选择资料，不列出可处理的资料类型清单。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "c",
+      "label" : "由我补充可上传资料类型清单",
+      "description" : "用户提供当前实际支持的资料类型，指南按该清单书写。",
+      "answer" : "用户将提供当前实际支持的资料类型清单，指南按该清单书写。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    } ],
+    "examples" : [ ],
+    "allowCustomAnswer" : true
+  }, {
+    "id" : "q3",
+    "question" : "指南中“查看历史”部分，是否需要说明历史记录的保留期限或数量上限？",
+    "hint" : "材料只说明历史分页和逻辑删除，未提及保留期限或数量上限。若指南需要给读者明确预期，需要确认口径。",
+    "type" : "SINGLE_CHOICE",
+    "options" : [ {
+      "id" : "a",
+      "label" : "不写期限和数量，只写分页与逻辑删除",
+      "description" : "仅说明历史可分页查看、删除为逻辑删除，不涉及保留期限或数量上限。",
+      "answer" : "指南只说明历史可分页查看、删除为逻辑删除，不写保留期限或数量上限。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "b",
+      "label" : "由我提供保留期限和数量上限",
+      "description" : "用户提供当前实际的保留期限或数量上限，指南按该数值书写。",
+      "answer" : "用户将提供当前实际的保留期限或数量上限，指南按该数值书写。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "c",
+      "label" : "写“以当前界面为准”",
+      "description" : "不写具体数值，但提示读者以当前界面显示为准。",
+      "answer" : "指南不写具体保留期限或数量上限，提示读者以当前界面显示为准。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    } ],
+    "examples" : [ ],
+    "allowCustomAnswer" : true
+  }, {
+    "id" : "q4",
+    "question" : "指南中“常见问题”部分，是否需要包含“模型由管理员发布、用户不填密钥”这一说明？",
+    "hint" : "材料提到模型由管理员发布、用户可选择可用模型但不填密钥。这会影响读者对权限边界的理解，但原始需求未明确要求写入常见问题。",
+    "type" : "SINGLE_CHOICE",
+    "options" : [ {
+      "id" : "a",
+      "label" : "写入权限边界部分",
+      "description" : "在权限边界中说明模型由管理员发布、用户可选择可用模型但不填密钥。",
+      "answer" : "指南在权限边界部分说明模型由管理员发布、用户可选择可用模型但不填密钥。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "b",
+      "label" : "不写入",
+      "description" : "不提及模型发布和密钥相关说明。",
+      "answer" : "指南不提及模型发布和密钥相关说明。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "c",
+      "label" : "写入常见问题",
+      "description" : "在常见问题中说明模型由管理员发布、用户不填密钥。",
+      "answer" : "指南在常见问题中说明模型由管理员发布、用户可选择可用模型但不填密钥。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    } ],
+    "examples" : [ ],
+    "allowCustomAnswer" : true
+  }, {
+    "id" : "q5",
+    "question" : "指南正文中是否需要出现“Plan”这个英文词，还是统一用中文解释？",
+    "hint" : "原始需求要求首次出现Plan时解释为“生成前确认重要信息”，但未说明后续是否继续使用Plan一词。这会影响全文用词一致性。",
+    "type" : "SINGLE_CHOICE",
+    "options" : [ {
+      "id" : "a",
+      "label" : "首次出现解释，后续继续用Plan",
+      "description" : "首次出现时写“Plan（生成前确认重要信息）”，后续沿用Plan。",
+      "answer" : "指南首次出现时写“Plan（生成前确认重要信息）”，后续继续使用Plan一词。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "b",
+      "label" : "首次解释后全部用中文表述",
+      "description" : "首次出现时解释，之后统一用“生成前确认重要信息”等中文表述。",
+      "answer" : "指南首次出现时解释Plan，之后统一使用中文表述“生成前确认重要信息”。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    }, {
+      "id" : "c",
+      "label" : "由我指定统一用词",
+      "description" : "用户指定全文统一使用的词。",
+      "answer" : "用户将指定全文统一使用的词。",
+      "recommended" : false,
+      "recommendationReason" : ""
+    } ],
+    "examples" : [ ],
+    "allowCustomAnswer" : true
+  } ]
+}

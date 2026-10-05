@@ -1,7 +1,8 @@
 package com.promptoptimizer.enhancement.domain;
 
 /**
- * 提示词增强场景。AUTO 表示由系统依据原始需求自动选择模板。
+ * 提示词增强场景。AUTO 依据原始目标及有效确认选择指导；公开代码不等于专业方法或当前实现事实。
+ * 输出细节由交付画像补充，用户明确的范围、格式与禁止事项优先于模板默认指导。
  *
  * @author QingNiao
  * @since 0.1.0

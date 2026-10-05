@@ -1,0 +1,364 @@
+{
+  "scope": "REAL_COMPONENTS_AND_SYNTHETIC_DOCUMENTS_NO_HTTP_LOGIN_OR_BOUND_PLAN",
+  "collectedAt": "2026-10-05T02:36:22.880Z",
+  "inputSha256": "2c6db421e1651bf729ef5615f78193d158631872f039a8820476060e221b2840",
+  "modelId": "deepseek:deepseek-flash",
+  "modelSelectionSource": "previous-public-catalog-snapshot-and-current-environment-route",
+  "cases": [
+    {
+      "id": "TT-GUIDE-L",
+      "rawCharacters": 1321,
+      "fileCount": 2,
+      "candidateCharacters": 2772,
+      "originalDefaultOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "COMPLETE",
+          "characters": 2401,
+          "elapsedMs": 36063
+        },
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "characters": 2577,
+          "elapsedMs": 35877
+        }
+      ],
+      "calibratedOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "COMPLETE",
+          "characters": 1893,
+          "elapsedMs": 6590
+        },
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "characters": 2305,
+          "elapsedMs": 8159
+        }
+      ]
+    },
+    {
+      "id": "TT-ACADEMIC-L",
+      "rawCharacters": 3904,
+      "fileCount": 2,
+      "candidateCharacters": 6312,
+      "originalDefaultOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "EMPTY",
+          "characters": 0,
+          "elapsedMs": 40529
+        },
+        {
+          "arm": "raw",
+          "status": "EMPTY",
+          "characters": 0,
+          "elapsedMs": 40836
+        }
+      ],
+      "calibratedOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "COMPLETE",
+          "characters": 3746,
+          "elapsedMs": 8893
+        },
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "characters": 1855,
+          "elapsedMs": 5346
+        }
+      ]
+    },
+    {
+      "id": "TT-NEWS-M",
+      "rawCharacters": 597,
+      "fileCount": 1,
+      "candidateCharacters": 1615,
+      "originalDefaultOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "COMPLETE",
+          "characters": 669,
+          "elapsedMs": 11532
+        },
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "characters": 677,
+          "elapsedMs": 17259
+        }
+      ],
+      "calibratedOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "COMPLETE",
+          "characters": 659,
+          "elapsedMs": 3071
+        },
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "characters": 723,
+          "elapsedMs": 3150
+        }
+      ]
+    },
+    {
+      "id": "TT-SOFTWARE-M",
+      "rawCharacters": 915,
+      "fileCount": 2,
+      "candidateCharacters": 3709,
+      "originalDefaultOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "EMPTY",
+          "characters": 0,
+          "elapsedMs": 40756
+        },
+        {
+          "arm": "raw",
+          "status": "EMPTY",
+          "characters": 0,
+          "elapsedMs": 38696
+        }
+      ],
+      "calibratedOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "COMPLETE",
+          "characters": 7373,
+          "elapsedMs": 13807
+        },
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "characters": 4291,
+          "elapsedMs": 8607
+        }
+      ]
+    },
+    {
+      "id": "TT-HOSPITAL-M",
+      "rawCharacters": 789,
+      "fileCount": 2,
+      "candidateCharacters": 2677,
+      "originalDefaultOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "EMPTY",
+          "characters": 0,
+          "elapsedMs": 41128
+        },
+        {
+          "arm": "raw",
+          "status": "PARTIAL",
+          "characters": 2763,
+          "elapsedMs": 40163
+        }
+      ],
+      "calibratedOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "COMPLETE",
+          "characters": 4956,
+          "elapsedMs": 10479
+        },
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "characters": 5408,
+          "elapsedMs": 12378
+        }
+      ]
+    },
+    {
+      "id": "TT-LEGAL-M",
+      "rawCharacters": 698,
+      "fileCount": 3,
+      "candidateCharacters": 2518,
+      "originalDefaultOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "PARTIAL",
+          "characters": 1691,
+          "elapsedMs": 36808
+        },
+        {
+          "arm": "raw",
+          "status": "PARTIAL",
+          "characters": 1298,
+          "elapsedMs": 36042
+        }
+      ],
+      "calibratedOutputs": [
+        {
+          "arm": "enhanced",
+          "status": "COMPLETE",
+          "characters": 2968,
+          "elapsedMs": 7463
+        },
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "characters": 2353,
+          "elapsedMs": 6101
+        }
+      ]
+    }
+  ],
+  "tests": {
+    "focused": {
+      "classes": 5,
+      "passed": 95
+    },
+    "shared": {
+      "classes": 37,
+      "passed": 550
+    },
+    "totalPassed": 645,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "stages": {
+    "baseline": {
+      "calls": 2,
+      "statuses": {
+        "SUCCESS": 2
+      },
+      "elapsedMs": [
+        7131,
+        20667
+      ],
+      "completionTokens": null,
+      "reasoningTokens": null,
+      "minimumMs": 7131,
+      "maximumMs": 20667,
+      "medianMs": 13899
+    },
+    "candidate": {
+      "calls": 6,
+      "statuses": {
+        "SUCCESS": 6
+      },
+      "elapsedMs": [
+        2991,
+        5409,
+        6506,
+        10250,
+        13794,
+        18165
+      ],
+      "completionTokens": null,
+      "reasoningTokens": null,
+      "minimumMs": 2991,
+      "maximumMs": 18165,
+      "medianMs": 8378
+    },
+    "execution-calibrated": {
+      "calls": 12,
+      "statuses": {
+        "COMPLETE": 12
+      },
+      "elapsedMs": [
+        3071,
+        3150,
+        5346,
+        6101,
+        6590,
+        7463,
+        8159,
+        8607,
+        8893,
+        10479,
+        12378,
+        13807
+      ],
+      "completionTokens": 20914,
+      "reasoningTokens": 0,
+      "minimumMs": 3071,
+      "maximumMs": 13807,
+      "medianMs": 7811
+    },
+    "execution": {
+      "calls": 12,
+      "statuses": {
+        "EMPTY": 5,
+        "COMPLETE": 4,
+        "PARTIAL": 3
+      },
+      "elapsedMs": [
+        11532,
+        17259,
+        35877,
+        36042,
+        36063,
+        36808,
+        38696,
+        40163,
+        40529,
+        40756,
+        40836,
+        41128
+      ],
+      "completionTokens": 87613,
+      "reasoningTokens": 80725,
+      "minimumMs": 11532,
+      "maximumMs": 41128,
+      "medianMs": 37752
+    },
+    "plan": {
+      "calls": 3,
+      "statuses": {
+        "SUCCESS": 3
+      },
+      "elapsedMs": [
+        1551,
+        5034,
+        8401
+      ],
+      "completionTokens": null,
+      "reasoningTokens": null,
+      "minimumMs": 1551,
+      "maximumMs": 8401,
+      "medianMs": 5034
+    }
+  },
+  "generationUpstreamAttempts": 15,
+  "generationRepairRetries": 4,
+  "planHelperReplay": [
+    {
+      "caseId": "TT-GUIDE-L",
+      "rawCount": 5,
+      "filteredCount": 5,
+      "candidateValidationFailures": 0
+    },
+    {
+      "caseId": "TT-HOSPITAL-M",
+      "rawCount": 3,
+      "filteredCount": 3,
+      "candidateValidationFailures": 0
+    },
+    {
+      "caseId": "TT-NEWS-M",
+      "rawCount": 1,
+      "filteredCount": 1,
+      "candidateValidationFailures": 0
+    }
+  ],
+  "coverage": {
+    "fourRequiredSections": true,
+    "allConstraintsRetained": true,
+    "allAmbiguitiesInCopyBody": true,
+    "mockUsed": false,
+    "httpAuthValidated": false,
+    "planBindingValidated": false,
+    "fullFolderIndexValidated": false,
+    "independentExpertReview": false
+  },
+  "productionGatePassed": false
+}

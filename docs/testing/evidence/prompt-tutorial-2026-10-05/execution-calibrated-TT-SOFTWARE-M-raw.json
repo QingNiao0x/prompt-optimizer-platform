@@ -1,0 +1,29 @@
+{
+  "scope" : "REAL_COMPONENT_CHAIN_SYNTHETIC_NO_HTTP_AUTH_OR_BOUND_PLAN",
+  "stage" : "execution-calibrated",
+  "caseId" : "TT-SOFTWARE-M",
+  "modelId" : "deepseek:deepseek-flash",
+  "requestId" : "361632b8-d635-4430-8d1f-c834112b1e99",
+  "collectedAt" : "2026-10-05T02:29:29.325593700Z",
+  "parameters" : {
+    "maxTokens" : 8192,
+    "temperature" : 0.2,
+    "thinking" : "disabled"
+  },
+  "status" : "COMPLETE",
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 1316,
+    "completion_tokens" : 2067,
+    "total_tokens" : 3383,
+    "prompt_tokens_details" : {
+      "cached_tokens" : 0
+    },
+    "prompt_cache_hit_tokens" : 0,
+    "prompt_cache_miss_tokens" : 1316
+  },
+  "output" : "# 地区基线自动匹配与表单补值实现方案\n\n## 一、背景与现有调用关系\n\n### 1.1 业务背景\n基础调查与追踪调查两个模块在编辑状态下，允许录入人员基于当前记录的**姓名 + 证件号**两个身份键，查询本地区基线库中的候选记录，经用户确认后，将白名单字段补入当前表单。\n\n### 1.2 现有调用关系（保持兼容）\n- **候选查询接口**：入参为身份键（姓名、证件号）与当前用户所属地区；返回候选摘要列表（编号、地区、更新时间、姓名掩码）。按更新时间降序、编号升序稳定排序。\n- **单条详情接口**：入参为候选编号；返回可补值字段（联系电话、职业类别、常住地址）。\n- **前端**：Vue 3 + TypeScript，编辑态触发查询，展示确认框，用户同意后调用详情接口并写入表单。\n- **后端**：Java 21 + Spring Boot 3 + MyBatis-Plus + PostgreSQL。\n- **鉴权与路由**：本次不改动，两个模块复用同一补值服务。\n\n### 1.3 两个模块的差异点\n| 维度 | 基础调查 | 追踪调查 |\n|---|---|---|\n| 触发时机 | 进入编辑态、身份键变更 | 进入编辑态、身份键变更 |\n| 路由参数 | 无特殊 | 路由参数仅定位当前调查记录，**不得**当作基线记录编号 |\n| 身份键来源 | 当前表单字段 | 当前表单字段（显式传入服务） |\n\n> 复用服务必须接收**显式的身份键与当前地区**，不得暗中读取另一页面状态。\n\n---\n\n## 二、两个模块共用的处理步骤\n\n1. **触发查询**：进入编辑态或身份键变更时，携带姓名、证件号、当前地区发起候选查询。\n2. **请求时序保护**：每次查询生成请求标识（requestId）；身份键再次变更时，旧请求标识作废，迟到响应直接丢弃。\n3. **候选排序与展示**：按更新时间降序、编号升序稳定排序；确认框仅展示姓名掩码，不展示完整证件号。\n4. **无候选分支**：不弹确认框，静默结束，保留原值。\n5. **有候选分支**：弹出确认框，用户选择候选。\n6. **用户同意后**：调用详情接口获取该候选**最新详情**。\n7. **详情一致性校验**：详情返回的编号必须与用户同意的候选编号一致，否则停止写入并提示信息不一致。\n8. **字段写入**：仅对白名单字段（联系电话、职业类别、常住地址）执行空值补入。\n9. **取消/关闭/离开**：不写入任何字段，保留已保存原值与未保存编辑值。\n10. **异常处理**：查询或详情失败时，保留原值并显示面向录入人员的失败提示。\n\n---\n\n## 三、字段写入与异常分支伪代码\n\n### 3.1 空值判定（核心规则）\n```\nfunction isEmptyForFill(target):\n    return target == null OR target == \"\"   // 严格空值比较\n    // 注意：0、false、非空字符串均为有效原值，不得覆盖\n```\n\n### 3.2 字段写入\n```\nfunction applyFill(form, source):\n    for field in [联系电话, 职业类别, 常住地址]:\n        if isEmptyForFill(form[field]):\n            form[field] = source[field]\n        // 否则保留原值\n```\n\n### 3.3 主流程伪代码\n```\nfunction onIdentityKeyChanged(name, idNo, region):\n    requestId = newRequestId()\n    currentRequestId = requestId\n    result = queryCandidates(name, idNo, region)\n\n    if result.failed:\n        showUserMessage(\"本次未执行补值，原数据已保留\")\n        return\n\n    if currentRequestId != requestId:\n        return   // 迟到响应，丢弃\n\n    candidates = sortByUpdateTimeDescThenIdAsc(result.candidates)\n\n    if candidates.isEmpty:\n        return   // 无候选，不弹框\n\n    selected = showConfirmDialog(candidates)   // 仅展示掩码\n    if selected == null:\n        return   // 用户取消，保留原值\n\n    detail = getCandidateDetail(selected.id)\n    if detail.failed:\n        showUserMessage(\"本次未执行补值，原数据已保留\")\n        return\n\n    if detail.id != selected.id:\n        showUserMessage(\"候选信息不一致，已停止写入\")\n        return\n\n    applyFill(form, detail)\n```\n\n### 3.4 地区条件处理\n```\nfunction isRegionMatch(candidate, currentRegion):\n    if candidate.region == null OR candidate.region == \"\":\n        return UNVERIFIABLE   // 地区缺失，不得视为匹配成功\n    if candidate.region != currentRegion:\n        return NOT_MATCH\n    return MATCH\n```\n- **UNVERIFIABLE**：无法核验，**不得默认补全**，需按待确认项处理（见第五节）。\n- **NOT_MATCH**：明确地区不符，排除。\n- **MATCH**：地区条件满足。\n\n### 3.5 异常分支汇总\n| 分支 | 处理 |\n|---|---|\n| 查询失败 | 保留原值，提示\"本次未执行补值，原数据已保留\" |\n| 详情失败 | 同上 |\n| 详情编号不一致 | 停止写入，提示信息不一致 |\n| 用户取消/关闭/离开 | 不写入，保留原值与编辑值 |\n| 迟到响应 | 丢弃 |\n| 地区缺失 | 不得视为匹配成功（待确认） |\n\n---\n\n## 四、测试清单（按业务行为组织）\n\n| 编号 | 业务行为 | 前置条件 | 操作 | 预期结果 |\n|---|---|---|---|---|\n| T01 | 双键匹配成功 | 姓名+证件号+地区均匹配 | 触发查询 | 返回候选，弹确认框 |\n| T02 | 仅姓名匹配 | 证件号不匹配 | 触发查询 | 无候选，不弹框 |\n| T03 | 仅证件号匹配 | 姓名不匹配 | 触发查询 | 无候选，不弹框 |\n| T04 | 地区不符 | 双键匹配但地区不同 | 触发查询 | 排除该候选 |\n| T05 | 地区缺失 | 候选地区为空 | 触发查询 | 不得视为匹配成功（待确认） |\n| T06 | 无候选 | 无任何匹配 | 触发查询 | 不弹确认框，静默结束 |\n| T07 | 排序稳定性 | 两条候选更新时间相同 | 查询 | 按编号升序，重试后顺序不变 |\n| T08 | 空值补入 | 目标电话为空，来源有值 | 同意候选 | 补入来源值 |\n| T09 | 非空不覆盖 | 目标电话已有值 | 同意候选 | 保留原值 |\n| T10 | 双空保持 | 目标与来源均为空 | 同意候选 | 保持空值，不造占位 |\n| T11 | 职业类别为0 | 目标职业类别为0 | 同意候选 | 保留0，不触发替换 |\n| T12 | 布尔false | 目标字段为false | 同意候选 | 保留false |\n| T13 | 用户取消 | 有候选 | 点击取消 | 全部字段原值不变 |\n| T14 | 关闭弹窗 | 有候选 | 关闭弹窗 | 不写入 |\n| T15 | 离开编辑页 | 有候选 | 离开页面 | 不写入 |\n| T16 | 详情编号不一致 | 同意候选A，详情返回B | 同意后 | 停止写入，提示不一致 |\n| T17 | 查询失败 | 接口异常 | 触发查询 | 保留原值，提示失败 |\n| T18 | 详情失败 | 接口异常 | 同意后 | 保留原值，提示失败 |\n| T19 | 迟到响应 | 请求未结束再改姓名 | 修改姓名 | 旧响应丢弃 |\n| T20 | 掩码展示 | 有候选 | 查看确认框 | 不展示完整证件号 |\n| T21 | 日志脱敏 | 任意流程 | 查看日志 | 不含姓名/证件号原文 |\n| T22 | 追踪路由参数 | 追踪调查 | 进入编辑 | 路由参数不当作基线编号 |\n| T23 | 白名单限制 | 任意 | 补值 | 仅写入三个白名单字段 |\n\n---\n\n## 五、待确认项\n\n**候选地区信息缺失、无法核验当前地区条件时，应如何处理这条候选？**\n\n- 当前资料明确：地区缺失**不是**地区匹配成功，查询接口返回顺序**不是**授权证据。\n- 但**尚未决定**：是排除该候选、提示用户、还是其他处理方式。\n- **不得默认补全**，需业务方明确后再实现。\n\n---\n\n## 六、资料引用说明\n\n- **正式说明**：`materials/software/current-brief.md`（现行资料，含匹配规则、白名单、排序、空值规则、时序保护、地区缺失说明）。\n- **测试示例**：`materials/software/tests/layout-example.txt`（仅用于排版和来源识别，**不是**本题事实，不代表已实现）。\n- **旧版草稿**：无。\n- 本方案未引用任何真实患者、当事人或凭据信息。",
+  "elapsedMs" : 8607,
+  "arm" : "raw"
+}

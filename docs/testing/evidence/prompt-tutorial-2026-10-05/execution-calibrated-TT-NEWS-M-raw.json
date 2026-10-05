@@ -1,0 +1,29 @@
+{
+  "scope" : "REAL_COMPONENT_CHAIN_SYNTHETIC_NO_HTTP_AUTH_OR_BOUND_PLAN",
+  "stage" : "execution-calibrated",
+  "caseId" : "TT-NEWS-M",
+  "modelId" : "deepseek:deepseek-flash",
+  "requestId" : "36c79809-10f3-4844-a2ea-cba66b0888fd",
+  "collectedAt" : "2026-10-05T02:29:23.095591800Z",
+  "parameters" : {
+    "maxTokens" : 8192,
+    "temperature" : 0.2,
+    "thinking" : "disabled"
+  },
+  "status" : "COMPLETE",
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 491,
+    "completion_tokens" : 404,
+    "total_tokens" : 895,
+    "prompt_tokens_details" : {
+      "cached_tokens" : 0
+    },
+    "prompt_cache_hit_tokens" : 0,
+    "prompt_cache_miss_tokens" : 491
+  },
+  "output" : "# 校园内测提示词生成平台：先理需求，再出提示词\n\n近日，一款面向大学生和研究生学习与科研场景的提示词生成平台正在内测。该平台不直接替用户完成任务，而是帮助用户把模糊的想法整理成结构更清晰的提示词，供用户复制到其他模型或工具中使用。\n\n不少同学习惯把需求直接丢给模型，但常遇到描述不完整、背景缺失、输出方向跑偏等问题。该平台试图解决的正是这一环节：用户先输入原始需求，再按需上传与任务相关的代码或文字层文档。系统会从所选文件中提取相关片段，为提示词提供上下文，而不是把整个目录原封不动发送给模型。平台也不会自动理解所有文件，用户仍需对生成结果自行核对。\n\n使用方式较为直接。用户输入需求后，可以不开启Plan模式，直接获得增强后的提示词；也可以开启Plan模式，先回答若干影响结果的关键问题，再得到最终提示词。生成结果支持编辑、复制，并保留历史记录，方便反复调整。需要明确的是，平台只生成提示词，不执行任务，也不对最终输出负责。\n\n当前内测版本支持原始需求、相关代码和文字层文档的处理，以及直接增强、可选Plan问答、编辑复制和历史记录等功能。技术背景方面，平台采用Java、Spring Boot、Vue和TypeScript等技术栈，但这些只是产品实现背景，不意味着用户需要编写代码。\n\n平台仍存在明确边界。扫描版PDF的OCR识别尚未开放，文档文字层可处理，扫描件暂不支持。部分能力仍在完善中，尚未正式上线，也没有收费计划。内测说明中的数字均为虚构教学素材，不代表真实运营成果。\n\n对需要频繁使用模型辅助学习、编程和写作的同学来说，这类工具的价值在于把“怎么问”这一步做得更细。但它不是答案本身，复制得到的提示词仍需结合自己的判断核对使用。",
+  "elapsedMs" : 3150,
+  "arm" : "raw"
+}

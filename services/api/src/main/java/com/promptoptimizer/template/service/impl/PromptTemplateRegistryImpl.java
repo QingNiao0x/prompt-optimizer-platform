@@ -36,9 +36,9 @@ public class PromptTemplateRegistryImpl implements PromptTemplateRegistry {
         ));
         values.put(TemplateCode.RESEARCH_ANALYSIS, new PromptTemplate(
                 TemplateCode.RESEARCH_ANALYSIS,
-                "明确研究对象、时间与空间范围、数据来源、指标定义、分层方法、统计方法和结果呈现方式。",
-                "研究口径可复现，数据来源可追溯，方法选择有依据，并说明缺失数据、偏倚和不确定性。",
-                "提供分析表结构、图表清单或关键计算示例。"
+                "按本次研究问题和交付范围说明相关对象、资料、方法及结果呈现要求；沿用已定口径，未决参数不默认取值，不增加未要求章节或实际分析。",
+                "相关定义与比较条件可复核，资料可追溯，已定与未知分开；只检查本次交付的质量，不复述全套研究要求。",
+                "仅在需要且用户允许时提供空表、图表格式或计算步骤示例，不冒充真实结果。"
         ));
         values.put(TemplateCode.FEATURE_DEVELOPMENT, new PromptTemplate(
                 TemplateCode.FEATURE_DEVELOPMENT,

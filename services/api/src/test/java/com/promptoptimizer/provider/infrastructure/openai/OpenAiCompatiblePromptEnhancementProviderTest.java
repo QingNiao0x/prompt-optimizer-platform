@@ -647,6 +647,39 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 List.of(Map.of("message", Map.of("role", "assistant", "content", content)))));
     }
 
+    /** 实际请求必须携带证据状态指导，同时继续遵守原有结构、路由与单次调用契约。 */
+    @Test
+    void shouldSendTutorialEvidenceBoundariesWithoutChangingTheResponseContract() throws Exception {
+        server.expect(once(), requestTo(ENDPOINT))
+                .andExpect(jsonPath("$.messages[0].content").value(org.hamcrest.Matchers.containsString("已知不存在")))
+                .andExpect(jsonPath("$.messages[0].content").value(org.hamcrest.Matchers.containsString("资料未说明")))
+                .andExpect(jsonPath("$.messages[0].content").value(org.hamcrest.Matchers.containsString("独立对象")))
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.containsString("增加登录功能")))
+                .andRespond(withSuccess(completionWithFindings("[]"), MediaType.APPLICATION_JSON));
+        var response = provider.enhance(createRequest());
+        assertThat(response.sections()).hasSize(4);
+        assertThat(response.ambiguities()).isEmpty();
+        assertThat(response.mock()).isFalse();
+        server.verify();
+    }
+
+    /** 充分需求仍允许零问题；共同证据指导不能把资料缺项强制变成问卷。 */
+    @Test
+    void shouldSendTutorialPlanningGuidanceAndKeepZeroQuestionPlansValid() throws Exception {
+        String content = objectMapper.writeValueAsString(Map.of("summary", "需求已充分，可直接生成。", "questions", List.of()));
+        String completion = objectMapper.writeValueAsString(Map.of("model", MODEL, "choices",
+                List.of(Map.of("message", Map.of("role", "assistant", "content", content)))));
+        server.expect(once(), requestTo(ENDPOINT))
+                .andExpect(jsonPath("$.messages[0].content").value(org.hamcrest.Matchers.containsString("资料未说明")))
+                .andExpect(jsonPath("$.messages[0].content").value(org.hamcrest.Matchers.containsString("不重要的未知不制造问题")))
+                .andRespond(withSuccess(completion, MediaType.APPLICATION_JSON));
+        var response = provider.plan(new com.promptoptimizer.provider.domain.PlanningProviderRequest(
+                "将给定中文翻译为英语，只输出译文。", "", List.of(), null, MODEL));
+        assertThat(response.questions()).isEmpty();
+        assertThat(response.mock()).isFalse();
+        server.verify();
+    }
+
     private OpenAiCompatibleRouteProperties route(
             String providerName,
             String endpoint,
