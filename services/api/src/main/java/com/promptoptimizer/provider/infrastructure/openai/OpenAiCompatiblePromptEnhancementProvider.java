@@ -574,7 +574,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 request.conversationHistory(),
                 request.options(),
                 request.planningFacts(),
-                request.confirmedDecisions()
+                request.confirmedDecisions(),
+                com.promptoptimizer.provider.domain.PromptRewriteStrategy.forPrompt(request.rawPrompt())
         );
         String userMessage;
         try {
@@ -1077,7 +1078,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             List<ConversationMessage> conversationHistory,
             EnhancementOptions options,
             List<com.promptoptimizer.enhancement.domain.PlanningFactCard> planningFacts,
-            List<com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision> confirmedDecisions
+            List<com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision> confirmedDecisions,
+            com.promptoptimizer.provider.domain.PromptRewriteStrategy rewriteStrategy
     ) {
     }
 

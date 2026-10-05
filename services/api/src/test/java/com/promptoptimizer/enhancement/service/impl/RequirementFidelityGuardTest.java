@@ -21,6 +21,40 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class RequirementFidelityGuardTest {
     private final RequirementFidelityGuard guard = new RequirementFidelityGuard();
 
+    /** 明确的正向分支也是规则；退款金额条件不能被审批中的相同阈值冒充已保留。 */
+    @Test
+    void shouldPreserveAffirmativeRulesWithTheirDiscriminatedBusinessObject() {
+        String approval = "business=APPROVAL时，restricted=true直接返回DENY；否则amount<=1000返回AUTO，amount>1000返回MANUAL。";
+        String refund = "business=REFUND时，paid=false或days>7返回DENY；否则amount<=1000返回AUTO，amount>1000返回MANUAL。";
+        var rules = guard.explicitRules(approval + "\n" + refund, List.of());
+        assertThat(rules).containsExactly(approval, refund);
+        assertThat(guard.containsRule(approval, refund)).isFalse();
+        assertThat(guard.containsRule("business=REFUND时，paid=false或days>7返回DENY。", refund)).isFalse();
+        assertThat(guard.containsRule(refund, refund)).isTrue();
+        assertThat(guard.containsRule(refund.replace("REFUND", "refund"), refund)).isFalse();
+    }
+
+    /** 历史反例、未知问题和不同业务对象的独立门槛不能变成当前相同的执行要求。 */
+    @Test
+    void shouldKeepDistinctAffirmativeBranchesWithoutPromotingExamples() {
+        String approval = "business=APPROVAL时，amount<=1000返回AUTO，amount>1000返回MANUAL。";
+        String refund = "business=REFUND时，amount<=500返回AUTO，amount>500返回MANUAL。";
+        var rules = guard.explicitRules(approval + "\n" + refund + "\n例如business=DEMO时，amount<10返回AUTO。", List.of());
+        assertThat(rules).containsExactly(approval, refund);
+        assertThatCode(() -> guard.validate(refund, rules, "sections.TASK")).doesNotThrowAnyException();
+    }
+
+    /** 否则分支继承自己的判别对象，不让审批金额门槛与退款金额门槛互相冲突。 */
+    @Test
+    void shouldKeepSemicolonContinuationWithinTheSameDiscriminatedObject() {
+        String approval = "business=APPROVAL时，restricted=true返回DENY；否则amount<=1000返回AUTO，amount>1000返回MANUAL。";
+        String refund = "business=REFUND时，paid=false返回DENY；否则amount<=500返回AUTO，amount>500返回MANUAL。";
+        var rules = guard.explicitRules(approval + "\n" + refund, List.of());
+        assertThatCode(() -> guard.validate(approval + "\n" + refund, rules, "sections.TASK")).doesNotThrowAnyException();
+        assertThatThrownBy(() -> guard.validate(refund.replace("500", "600"), rules, "sections.TASK"))
+                .isInstanceOf(ProviderResponseValidationException.class);
+    }
+
     /** 回放独立真实模型的合法并列禁令；不把这些响应冒充原 HTTP 失败正文。 */
     @Test
     void shouldReplayCoordinatedNegationFromRealEnhancementProbe() throws Exception {

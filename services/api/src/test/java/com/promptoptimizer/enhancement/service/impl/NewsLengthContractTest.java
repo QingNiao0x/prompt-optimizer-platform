@@ -12,6 +12,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 0.1.0
  */
 class NewsLengthContractTest {
+    /** 简短组织建议仍提供段落展开尺度，但不改写固定结构或用户原有验收范围。 */
+    @Test
+    void keepsUsefulParagraphScaleInMinimalOrganization() {
+        assertThat(NewsLengthContract.conciseGuidance("撰写新闻稿正文600–800中文字符，标题另计。"))
+                .contains("600–800中文字符", "每段约107中文字符", "不要只列一句要点", "组织建议")
+                .doesNotContain("必须分成7段");
+        assertThat(NewsLengthContract.conciseGuidance("撰写新闻稿正文600–800字，必须分成3段。"))
+                .contains("600–800字").doesNotContain("个短段", "每段约");
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"撰写新闻稿正文六百至八百个中文字符，另给两个标题。", "撰写新闻稿正文600–800中文字符，标题另计。"})
     void plansOnlyTheOriginalBodyRangeWithOptionalParagraphs(String raw) {

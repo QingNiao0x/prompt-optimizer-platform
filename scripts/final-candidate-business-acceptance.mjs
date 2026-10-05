@@ -63,10 +63,21 @@ export async function createFinalCandidateAcceptance(page, options) {
   const caseText = encode(frozen);
   if (!options.resume) await writeFile(resolve(output, 'cases.json'), caseText, { flag: 'wx' });
   const sources = [
+    'enhancement/service/impl/SourceObjectContract.java',
+    'enhancement/service/impl/TaskQuestionScope.java',
+    'enhancement/service/impl/ExecutionRuleCompactor.java',
+    'enhancement/service/impl/MinimalPromptOrganizer.java',
+    'enhancement/service/impl/PendingDecisionSignature.java',
+    'enhancement/service/impl/ReadOnlyMaterialComparison.java',
+    'provider/domain/PromptRewriteStrategy.java',
+    'template/domain/TaskIntentResolver.java',
+    'enhancement/service/impl/AmbiguityDetector.java',
+    'provider/domain/ProviderResponseValidationException.java',
     'enhancement/service/impl/ComparisonMaterialDecision.java',
     'enhancement/service/impl/NewsBodyFactContract.java',
     'enhancement/service/impl/PendingReminderIdentity.java',
     'enhancement/service/impl/PlanQuestionFilter.java', 'enhancement/service/impl/RoutineGuideDecision.java',
+    'enhancement/service/impl/RoutineWritingPresentation.java',
     'enhancement/service/impl/PlanningAuthorizationState.java', 'enhancement/service/impl/PlanningConflictIdentity.java',
     'enhancement/service/impl/RequirementFidelityGuard.java', 'enhancement/service/impl/EvidenceStateGuard.java',
     'enhancement/service/impl/ResolvedPlanState.java', 'enhancement/service/impl/PlanAmbiguityMerger.java',

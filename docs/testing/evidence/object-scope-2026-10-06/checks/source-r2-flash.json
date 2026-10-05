@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "sourceRun": "tmp\\prompt-output-evaluation\\2026-10-05T21-42-21-693Z-f2f4c514",
+  "checkedAt": "2026-10-05T22:00:32.754Z",
+  "mechanism": "SYNTHETIC_UNBOUND_MAINTENANCE_NAMED_VERSION_TABLE_ONLY",
+  "scope": "No definite table binding found is not full legal or semantic acceptance.",
+  "entries": [
+    {
+      "jobId": "CD-10-L-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "6c2887bc1c88a985354d416f496089f24f3c1969fbf564c5ac11f7d9705212af",
+      "status": "SOURCE_OBJECT_FAILED",
+      "violations": [
+        {
+          "line": 42,
+          "kind": "NAMED_VERSION_COLUMN",
+          "version": "草稿A表述",
+          "claim": "承租方承担日常维护",
+          "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | 未确认 | 责任范围差异 | current-brief.md | 不得拼接为更不利条款 |"
+        },
+        {
+          "line": 42,
+          "kind": "NAMED_VERSION_COLUMN",
+          "version": "草稿B表述",
+          "claim": "新增全部设施故障费用",
+          "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | 未确认 | 责任范围差异 | current-brief.md | 不得拼接为更不利条款 |"
+        }
+      ]
+    },
+    {
+      "jobId": "CD-10-L-direct-m1-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "06c145d14f61d3dc60190869b79b518c6417cf04b27dde89985e7882c45a56c5",
+      "status": "NO_DEFINITE_TABLE_BINDING_FOUND",
+      "violations": []
+    },
+    {
+      "jobId": "CD-10-L-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "5ba45f390d3a63a08a6df8743b187e02fbaa3330d79b1c2bb77c17991c58ad91",
+      "status": "SOURCE_OBJECT_FAILED",
+      "violations": [
+        {
+          "line": 38,
+          "kind": "NAMED_VERSION_COLUMN",
+          "version": "草稿A",
+          "claim": "一版:承租方承担日常维护",
+          "quote": "| 维修范围 | 一版：承租方承担日常维护 | 另一版：新增全部设施故障费用 | 未确认 | 维修条款一版/另一版与草稿A/草稿B的完整对应关系未建立；若表格使用具体版本列，该属性尚未建立对应的单元格只能填写“版本对应待核实” | materials/legal_memo/current-brief.md |"
+        },
+        {
+          "line": 38,
+          "kind": "NAMED_VERSION_COLUMN",
+          "version": "草稿B",
+          "claim": "另一版:新增全部设施故障费用",
+          "quote": "| 维修范围 | 一版：承租方承担日常维护 | 另一版：新增全部设施故障费用 | 未确认 | 维修条款一版/另一版与草稿A/草稿B的完整对应关系未建立；若表格使用具体版本列，该属性尚未建立对应的单元格只能填写“版本对应待核实” | materials/legal_memo/current-brief.md |"
+        }
+      ]
+    },
+    {
+      "jobId": "CD-10-L-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "66ab186690e99f525bf0f879c8a562d975250b0b421a6af49e2d8b6bcf102ebb",
+      "status": "SOURCE_OBJECT_FAILED",
+      "violations": [
+        {
+          "line": 35,
+          "kind": "NAMED_VERSION_COLUMN",
+          "version": "草稿A表述",
+          "claim": "承租方承担日常维护",
+          "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | 责任范围差异 | 未见确认 | 不得把两版拼接为对承租方更不利的统一条款；逐条核对来源 |"
+        },
+        {
+          "line": 35,
+          "kind": "NAMED_VERSION_COLUMN",
+          "version": "草稿B表述",
+          "claim": "新增全部设施故障费用",
+          "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | 责任范围差异 | 未见确认 | 不得把两版拼接为对承租方更不利的统一条款；逐条核对来源 |"
+        }
+      ]
+    },
+    {
+      "jobId": "CD-10-L-direct_matched-m1-r1",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "a371c43051121540a5fc1b4f64a816488395fe5911290335ff59788648d825ce",
+      "status": "NO_DEFINITE_TABLE_BINDING_FOUND",
+      "violations": []
+    },
+    {
+      "jobId": "CD-10-L-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "8a49b5be9d6c84a7c75d4431a51faaf233b8cf9c062d79bcd34392667df99ff2",
+      "status": "SOURCE_OBJECT_FAILED",
+      "violations": [
+        {
+          "line": 29,
+          "kind": "NAMED_VERSION_COLUMN",
+          "version": "草稿A",
+          "claim": "承租方承担日常维护",
+          "quote": "| 维修范围 | 承租方承担日常维护 | 承租方承担日常维护及全部设施故障费用 | 责任范围扩大，不得拼接为统一条款 | M1 vs M2 |"
+        },
+        {
+          "line": 29,
+          "kind": "NAMED_VERSION_COLUMN",
+          "version": "草稿B",
+          "claim": "承租方承担日常维护及全部设施故障费用",
+          "quote": "| 维修范围 | 承租方承担日常维护 | 承租方承担日常维护及全部设施故障费用 | 责任范围扩大，不得拼接为统一条款 | M1 vs M2 |"
+        }
+      ]
+    },
+    {
+      "jobId": "CD-10-L-direct-m2-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "50d024b718e8bd544d3b5d6c8e3f61b7004c8402e56100cf317638c44532693c",
+      "status": "NO_DEFINITE_TABLE_BINDING_FOUND",
+      "violations": []
+    },
+    {
+      "jobId": "CD-10-L-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "7347af688994fd01d8b207006b3286c9b1851b7abfe398a1e4b14d1abf85262b",
+      "status": "NO_DEFINITE_TABLE_BINDING_FOUND",
+      "violations": []
+    },
+    {
+      "jobId": "CD-10-L-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "c7c98a3aa5ba83a85abe3c0e13a753206918b2ebc99a40ee57821a36cf8f8ee1",
+      "status": "SOURCE_OBJECT_FAILED",
+      "violations": [
+        {
+          "line": 32,
+          "kind": "NAMED_VERSION_COLUMN",
+          "version": "草稿A",
+          "claim": "承租方承担日常维护",
+          "quote": "| 维修范围 | 承租方承担日常维护 | 新增“全部设施故障费用” | 责任范围显著扩大，对承租方不利 | S-02 | 并列保留，不得拼接为统一条款；需核对两版完整原文 |"
+        },
+        {
+          "line": 32,
+          "kind": "NAMED_VERSION_COLUMN",
+          "version": "草稿B",
+          "claim": "新增“全部设施故障费用”",
+          "quote": "| 维修范围 | 承租方承担日常维护 | 新增“全部设施故障费用” | 责任范围显著扩大，对承租方不利 | S-02 | 并列保留，不得拼接为统一条款；需核对两版完整原文 |"
+        }
+      ]
+    },
+    {
+      "jobId": "CD-10-L-direct_matched-m2-r1",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "542a7e6c21a37faeb996087173ea79287ee547e2748aacec0af17b8ad58850d6",
+      "status": "NO_DEFINITE_TABLE_BINDING_FOUND",
+      "violations": []
+    }
+  ]
+}

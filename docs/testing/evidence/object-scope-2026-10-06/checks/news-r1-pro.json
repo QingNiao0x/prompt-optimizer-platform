@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "sourceRun": "tmp\\prompt-output-evaluation\\2026-10-05T21-37-55-622Z-eaf08e68",
+  "checkedAt": "2026-10-05T21:50:51.404Z",
+  "mechanism": "EXPLICIT_600_TO_800_HAN_BODY_EXCLUDING_TWO_TITLES",
+  "entries": [
+    {
+      "jobId": "CD-09-M-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "9e5dabda6fe265a1d38b885adafb5c18612fe28bdad1c5475d96aba08a1e5c0e",
+      "bodyHanCharacters": 537,
+      "bodyCharactersWithoutWhitespace": 599,
+      "bodyWithinRange": false,
+      "bodyHasMvp": true,
+      "status": "FACT_OR_LENGTH_FAILED"
+    },
+    {
+      "jobId": "CD-09-M-direct-m1-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "99b56dd3288ffdb0ef5acee0f33b5af6c674fbabfb0f29eee86fe69268f1d963",
+      "bodyHanCharacters": 511,
+      "bodyCharactersWithoutWhitespace": 576,
+      "bodyWithinRange": false,
+      "bodyHasMvp": true,
+      "status": "FACT_OR_LENGTH_FAILED"
+    },
+    {
+      "jobId": "CD-09-M-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "ca8101e05cfb46ef04d9ff9768db8a83f65d8ce6c8fc277cdfe98b7b56779850",
+      "bodyHanCharacters": 629,
+      "bodyCharactersWithoutWhitespace": 695,
+      "bodyWithinRange": true,
+      "bodyHasMvp": true,
+      "status": "PASS"
+    },
+    {
+      "jobId": "CD-09-M-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "59e35470238e44ac2d0221b66bb11e303ce86d4004cbff95fc3d2edf1258447f",
+      "bodyHanCharacters": 655,
+      "bodyCharactersWithoutWhitespace": 726,
+      "bodyWithinRange": true,
+      "bodyHasMvp": true,
+      "status": "PASS"
+    },
+    {
+      "jobId": "CD-09-M-direct-m2-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "fd0da1bb1fc13176de8ec6c3d6c0af5eff120afe76e39ecf4a3b1fc4a20c6cd9",
+      "bodyHanCharacters": 642,
+      "bodyCharactersWithoutWhitespace": 707,
+      "bodyWithinRange": true,
+      "bodyHasMvp": true,
+      "status": "PASS"
+    },
+    {
+      "jobId": "CD-09-M-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "6403a4bd118e7e39ca495e00d5bf2515d2743554c80ca3238ecc0bf2b52b48cc",
+      "bodyHanCharacters": 653,
+      "bodyCharactersWithoutWhitespace": 736,
+      "bodyWithinRange": true,
+      "bodyHasMvp": true,
+      "status": "PASS"
+    }
+  ]
+}

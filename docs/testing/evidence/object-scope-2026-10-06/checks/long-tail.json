@@ -1,0 +1,86 @@
+{
+  "candidate": "10",
+  "caseId": "CD-07-M",
+  "model": "deepseek:deepseek-v4-pro",
+  "stageLatencyMs": 59056,
+  "requestId": "e290abbc-f3e8-4840-abe0-b21b2b5f7f3f",
+  "events": [
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "e290abbc-f3e8-4840-abe0-b21b2b5f7f3f",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-v4-pro",
+      "durationMs": "0"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "e290abbc-f3e8-4840-abe0-b21b2b5f7f3f",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-v4-pro",
+      "durationMs": "50586"
+    },
+    {
+      "event": "model.response.validation_failed",
+      "requestId": "e290abbc-f3e8-4840-abe0-b21b2b5f7f3f",
+      "operation": "prompt.optimize",
+      "reason": "RESPONSE_TRUNCATED",
+      "field": "response.finishReason",
+      "attempt": "1"
+    },
+    {
+      "event": "model.call.failed",
+      "requestId": "e290abbc-f3e8-4840-abe0-b21b2b5f7f3f",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "selectionSource": "PLATFORM_CATALOG",
+      "failureType": "INVALID_RESPONSE",
+      "retryable": "false",
+      "upstreamStatus": "-",
+      "willRetry": "true",
+      "attempt": "1",
+      "durationMs": "50587"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "e290abbc-f3e8-4840-abe0-b21b2b5f7f3f",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-v4-pro",
+      "durationMs": "8411"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "e290abbc-f3e8-4840-abe0-b21b2b5f7f3f",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-v4-pro",
+      "durationMs": "41"
+    },
+    {
+      "event": "pipeline.stage.completed",
+      "requestId": "e290abbc-f3e8-4840-abe0-b21b2b5f7f3f",
+      "operation": "prompt.optimize",
+      "model": "deepseek:deepseek-v4-pro",
+      "durationMs": "42"
+    },
+    {
+      "event": "model.call.completed",
+      "requestId": "e290abbc-f3e8-4840-abe0-b21b2b5f7f3f",
+      "operation": "prompt.optimize",
+      "providerRoute": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "selectionSource": "PLATFORM_CATALOG",
+      "attempt": "2",
+      "durationMs": "8458"
+    },
+    {
+      "event": "optimization.completed",
+      "requestId": "e290abbc-f3e8-4840-abe0-b21b2b5f7f3f",
+      "durationMs": "59056"
+    },
+    {
+      "event": "http.request.completed",
+      "requestId": "e290abbc-f3e8-4840-abe0-b21b2b5f7f3f",
+      "durationMs": "59072"
+    }
+  ]
+}

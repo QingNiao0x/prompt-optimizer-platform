@@ -1,0 +1,998 @@
+{
+  "schemaVersion": 1,
+  "reviewer": {
+    "id": "blinded-model-deepseek:deepseek-flash",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-05T22:00:12.423Z",
+    "professionalDomain": "NOT_CERTIFIED",
+    "reviewRun": "tmp\\prompt-output-evaluation\\2026-10-05T21-50-51-954Z-1895df8e"
+  },
+  "professionalReview": "NOT_PERFORMED",
+  "problems": [
+    {
+      "jobId": "CD-07-M-m0-initial-raw-m1-r1",
+      "reason": "Expected ',' or ']' after array element in JSON at position 188 (line 1 column 189)"
+    }
+  ],
+  "entries": [
+    {
+      "blindId": "B001",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [
+        "确定性正文验收失败：537汉字；600–800范围=false；必要MVP事实=true。"
+      ],
+      "evidence": [
+        "**标题一：把模糊需求说清楚：清笺启动受控内测招募**"
+      ],
+      "notes": "两个标题与正文齐全；正文约655字符（含标点）在600-800区间；开头交代内测目的，中间覆盖需求澄清、资料关联、结构化结果三项价值，结尾说明内测页面反馈方式；三类受众均保留；明确本地MVP、非正式上线、不执行代码、不承诺论文/诊断/投资收益/自动部署，并说明资料与输出需自行核查；未编造数据或外部链接，未附执行步骤或问卷。 确定性验收优先，原AI分数和引文保留。",
+      "outputSha256": "9e5dabda6fe265a1d38b885adafb5c18612fe28bdad1c5475d96aba08a1e5c0e",
+      "mechanicalGrounding": [
+        {
+          "jobId": "CD-09-M-raw-m1-r1",
+          "arm": "raw",
+          "modelId": "deepseek:deepseek-flash",
+          "outputSha256": "9e5dabda6fe265a1d38b885adafb5c18612fe28bdad1c5475d96aba08a1e5c0e",
+          "bodyHanCharacters": 537,
+          "bodyCharactersWithoutWhitespace": 599,
+          "bodyWithinRange": false,
+          "bodyHasMvp": true,
+          "status": "FACT_OR_LENGTH_FAILED"
+        }
+      ]
+    },
+    {
+      "blindId": "B002",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**研究问题**  "
+      ],
+      "notes": "覆盖研究问题、四组设计、信息量匹配、五维度盲评、失败保留与统计选择流程，未虚构结果；但主文正文汉字约1559，超出1200字上限，且未按任务要求区分测试示例/旧版草稿/正式说明的来源，也未说明材料引用依据，故未达完整。",
+      "outputSha256": "64a457b9d117a963d740a140f9ad8a2a9c5b7c0bb7e5fc29e2e3819fb7d56520"
+    },
+    {
+      "blindId": "B003",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 待确认 | 预约未到诊的观察窗口如何定义 |"
+      ],
+      "notes": "口径分层清晰，UNKNOWN不计爽约、24/12小时并列、主统计单位待定均正确保留；交付四项齐全，含流程图、采集字段、报告目录、复核隐私清单。不足：内容重复较多（待确认项在1.1、1.2、五、六多处重复），usability因冗长扣分；隐私边界中受保护路径、密码Token等条目超出本题范围但未造成实质越界。",
+      "outputSha256": "712cf12198d2f843fe4667c8abe788868e35b52e623475d4011a711ed3440351"
+    },
+    {
+      "blindId": "B004",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 去重患者 | 不可用 | 一个患者可多次预约"
+      ],
+      "notes": "覆盖口径表、流程图说明、问题清单、拟议采集表、报告目录、复核与隐私清单，交付完整。UNKNOWN不计爽约、24/12小时差异并列、不默认渠道单位等关键约束均遵守。但1.1将去重患者标为“不可用”并称“当前资料未提供患者去重标识”，而任务仅说主统计单位未决定，未说无去重标识，属对未知的过度断言；1.5称“仅按预约事件编号关联的最终记录渠道进行展示”，在渠道归属口径未定时预设了展示口径。整体可用，结构清楚但表格与重复说明较多。",
+      "outputSha256": "11cd78c9db99186a7758217653c5ace1c396022a28180b09bff589293ef830c0"
+    },
+    {
+      "blindId": "B005",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "- **（可选）无交互增强组**：若需进一步分离"
+      ],
+      "notes": "核心设计、信息量匹配对照、盲评匿名、失败保留、待确认项均落地，未虚构结果。但主文自设“可选无交互增强组”并写入变量表，超出给定条件范围；主文汉字约1757，超出1200字上限；待确认项在正文与清单重复出现，阅读负担偏高。",
+      "outputSha256": "8dc6da8fa82f3ab15a4a9fc196b78b4577b2f96869bd1db5fe467340fd291787"
+    },
+    {
+      "blindId": "B006",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "if (business == null || "
+      ],
+      "notes": "公开签名正确，business校验先于数值校验，APPROVAL与REFUND规则独立；restricted仅用于审批，paid与days>7仅用于退款，边界<=1000与days>7保留正确，返回值仅三种代码，非法输入抛IllegalArgumentException，无外部依赖与越界交付。",
+      "outputSha256": "21205215c13d059abce43b25bf989911945eff1cb4bfb3c9fda734c93d7c251d"
+    },
+    {
+      "blindId": "B007",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "if (amount < 0 || days < 0) {"
+      ],
+      "notes": "签名、返回码、null与非法business异常、负值异常、APPROVAL/REFUND独立分支、restricted仅审批、paid与days>7仅退款、<=1000边界均正确；无越界内容，结构简洁可编译。",
+      "outputSha256": "5d5777394f0b5eb65bc175c04997648f6974cb2dfc6d0f2182151f76eaa0f56d"
+    },
+    {
+      "blindId": "B008",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [
+        "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；2处，原作品引文另存。"
+      ],
+      "evidence": [
+        "| 押金 | 两个月租金 | 三个月租金 | 金"
+      ],
+      "notes": "四项交付齐全；押金差异保留、维修两版不拼接、主文本与侧重未决均正确；测试例排除、权属不先判定、解除条款保留附加前提；结构清楚可执行，无越界或伪造。 确定性验收优先，原AI分数和引文保留。",
+      "outputSha256": "dd82cf0006db4821db4e1858cbc71202b9a1db2add2b4a52949751ae91f15c29",
+      "mechanicalGrounding": [
+        {
+          "jobId": "CD-10-L-plan-m1-r1",
+          "arm": "plan",
+          "modelId": "deepseek:deepseek-flash",
+          "outputSha256": "dd82cf0006db4821db4e1858cbc71202b9a1db2add2b4a52949751ae91f15c29",
+          "status": "SOURCE_OBJECT_FAILED",
+          "violations": [
+            {
+              "line": 34,
+              "kind": "NAMED_VERSION_COLUMN",
+              "version": "草稿A",
+              "claim": "承租方承担日常维护",
+              "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | 责任范围差异 | S1 | 两版内容已有依据；与草稿A/B的完整对应关系未建立 |"
+            },
+            {
+              "line": 34,
+              "kind": "NAMED_VERSION_COLUMN",
+              "version": "草稿B",
+              "claim": "新增全部设施故障费用",
+              "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | 责任范围差异 | S1 | 两版内容已有依据；与草稿A/B的完整对应关系未建立 |"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "blindId": "B009",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 爽约率 | **不可计算** | **不可计"
+      ],
+      "notes": "口径表、流程图、采集字段、报告目录、复核与隐私清单齐全；未把UNKNOWN计为爽约，未默认补全观察窗口、取消免责边界与主统计单位，旧24小时与新12小时并列且未擅自采用；测试示例与正式说明分开。usability因内容较长、多处重复同一待定条件而略扣，但结构清楚、可执行。",
+      "outputSha256": "1e9133b9145cbdecd7b4a3f3545971963d6e22f365eb53882c8241da482fb7e6"
+    },
+    {
+      "blindId": "B010",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [
+        "确定性正文验收失败：511汉字；600–800范围=false；必要MVP事实=true。"
+      ],
+      "evidence": [
+        "「清笺」将于2026年10月20日启动受控内测招"
+      ],
+      "notes": "标题与正文齐全，正文约576字符（含标点），略低于600-800要求，属长度不足；内容准确，开头交代目的，三项价值与三类受众均覆盖，结尾说明内测页面反馈；边界表述清楚，无编造数据、无外部链接、无越界承诺。 确定性验收优先，原AI分数和引文保留。",
+      "outputSha256": "99b56dd3288ffdb0ef5acee0f33b5af6c674fbabfb0f29eee86fe69268f1d963",
+      "mechanicalGrounding": [
+        {
+          "jobId": "CD-09-M-direct-m1-r1",
+          "arm": "direct",
+          "modelId": "deepseek:deepseek-flash",
+          "outputSha256": "99b56dd3288ffdb0ef5acee0f33b5af6c674fbabfb0f29eee86fe69268f1d963",
+          "bodyHanCharacters": 511,
+          "bodyCharactersWithoutWhitespace": 576,
+          "bodyWithinRange": false,
+          "bodyHasMvp": true,
+          "status": "FACT_OR_LENGTH_FAILED"
+        }
+      ]
+    },
+    {
+      "blindId": "B011",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| F-06 | 草稿A押金为两个月租金 | 草"
+      ],
+      "notes": "四项交付物齐全，事实表、差异表、分级问题、限制备忘录均有；押金差异、维修两版、解除条件、权属缺失、测试示例隔离等关键点均保留。但差异表将维修条款一版/另一版与草稿A/B的对应关系列为待核实，而材料仅说明两版内容差异，未建立版本对应，此处理尚可；然而差异表列名混用草稿A/B与一版/另一版，结构略乱。事实表F-16/F-17来源写“执行前须确认”，非材料路径，追溯性稍弱。整体未越界，无伪造法律结论。",
+      "outputSha256": "c7de0f2516ac62457c95e7ae2ff6c364f69e79b73adddb11e1403f824cd61a90"
+    },
+    {
+      "blindId": "B012",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**实验设计** 固定二十个任务，每个条件独立重"
+      ],
+      "notes": "四组设计、信息量匹配对照、盲评匿名、失败保留、统计方法不锁定、两项待确认均正确落地；主文含标题约1363汉字，超出1200字上限，属篇幅硬约束未满足，扣usability；无事实虚构或规则反转。",
+      "outputSha256": "3a518ac204768efeacf0a0ec49d020b83e357b75b30c3532f9dc1324016e94eb"
+    },
+    {
+      "blindId": "B013",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| UNKNOWN 处理 | 单独展示为“待核验"
+      ],
+      "notes": "口径表、流程图、问题清单、采集字段、报告目录、复核与隐私清单齐全；UNKNOWN不计爽约、24h/12h争议不擅自采用、事件≠人数、时区无转换证据、不罚款、不扩短信任务等约束均正确落实；资料分层引用清楚。主要不足是内容重复较多（待确认项在口径表、问题清单、报告目录、待确认汇总多处重复），usability扣1分。 仅补齐缺失的evidence数组闭合符，原AI评分及引文不改。",
+      "outputSha256": "02477f366bd8835982d1cede29922279cf55c6a52abaa90891e3ff9ebc9bbebc"
+    },
+    {
+      "blindId": "B014",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**研究问题**"
+      ],
+      "notes": "四组设计、信息量匹配、五维度评分、失败保留、统计选择流程及待确认清单均覆盖，未虚构结果；但主文正文汉字约2476，明显超出1200字上限，且未按任务要求区分测试示例/旧版草稿/正式说明的来源，也未说明材料引用依据。",
+      "outputSha256": "0068c365867709215b1cd6a76c53b0a5e29c0fc0ee60f36cd00c695fd1290206"
+    },
+    {
+      "blindId": "B015",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "差异表将维修条款直接对应为草稿A‘承租方承担日常维护’、草稿B‘新增全部设施故障费用’，但材料仅说明两版内容差异，未建立版本对应，属于把未确认对应关系写成已定事实。",
+        "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；2处，原作品引文另存。"
+      ],
+      "evidence": [
+        "| 维修范围 | 承租方承担日常维护 | 新增全"
+      ],
+      "notes": "交付物齐全，结构清楚，限制与待确认项基本保留。但差异表把维修条款两版内容直接绑定到草稿A/B，材料未提供该对应关系，违反不得默认补全；同时解除条款、租金、提前解约行以‘需逐条核对来源’填充，差异表信息量不足。事实表S7签名占位图在材料中未出现，属引入材料外事实。整体准确性、规则忠实度受损。 确定性验收优先，原AI分数和引文保留。",
+      "outputSha256": "ada33669f75ec71027abc13228a4caf42cce935d176e509030851c363c284623",
+      "mechanicalGrounding": [
+        {
+          "jobId": "CD-10-L-raw-m1-r1",
+          "arm": "raw",
+          "modelId": "deepseek:deepseek-flash",
+          "outputSha256": "ada33669f75ec71027abc13228a4caf42cce935d176e509030851c363c284623",
+          "status": "SOURCE_OBJECT_FAILED",
+          "violations": [
+            {
+              "line": 37,
+              "kind": "NAMED_VERSION_COLUMN",
+              "version": "草稿A",
+              "claim": "承租方承担日常维护",
+              "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | 未确认 | 不能拼接为对承租方更不利的统一条款 | current-brief.md 分支与边界 |"
+            },
+            {
+              "line": 37,
+              "kind": "NAMED_VERSION_COLUMN",
+              "version": "草稿B",
+              "claim": "新增全部设施故障费用",
+              "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | 未确认 | 不能拼接为对承租方更不利的统一条款 | current-brief.md 分支与边界 |"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "blindId": "B016",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "if (amount < 0 || days <"
+      ],
+      "notes": "签名与返回代码正确，两业务规则未混用，restricted仅影响审批，paid与days>7仅影响退款，<=1000与days>7边界正确，非法输入抛异常，纯函数无外部动作，交付范围仅工具类。数值校验先于business校验，但任务未规定两者相对顺序，不影响结果。",
+      "outputSha256": "737d4bb6c87ce4184cc88e0a549b767a4ce84909abb8e8bee245524a67e60364"
+    },
+    {
+      "blindId": "B017",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "- **D 信息量匹配对照**：获得与 C 组相"
+      ],
+      "notes": "四条件设计完整，A/B不接触C组答案，D组信息量匹配；保留失败样本、材料标签、盲评匿名、主错误与关联维度、统计不锁定检验、待确认清单均落地。主文约1694汉字，超出1200字上限，但附表不计入，主文含标题与说明性内容，属篇幅形式问题，未升级为严重错误。未虚构实验结果或引用。",
+      "outputSha256": "7a8b3a9e41768e15cfd2499e7e75925e878e0f4181e451ac526e91797026b88e"
+    },
+    {
+      "blindId": "B018",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 取消免责边界 | 待确认。旧流程说明提前24小时取消不"
+      ],
+      "notes": "口径表覆盖事件单位、渠道、状态、时区、样本量、医生代码等全部关键边界；流程图说明以节点形式给出且标注UNKNOWN不流向爽约；采集字段、报告目录、复核隐私清单齐全；来源引用区分正式说明、旧版草稿、测试示例。结构紧凑，无明显冗余，可执行性好。",
+      "outputSha256": "795e6cfafb4588825e9920a5a8de96e87ed2d5803ae113e0ee45f11146506820"
+    },
+    {
+      "blindId": "B019",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺将于2026年10月20日开启受控内测招募。"
+      ],
+      "notes": "两个标题与正文齐全，正文约711汉字在600-800区间；开头交代内测目的，三项价值与三类受众均保留，结尾反馈方式为内测页面且未附手机号邮箱链接；未编造数据或正式上线表述，能力边界清楚，结构清晰可复制。",
+      "outputSha256": "fd0da1bb1fc13176de8ec6c3d6c0af5eff120afe76e39ecf4a3b1fc4a20c6cd9"
+    },
+    {
+      "blindId": "B020",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| F-01 | 合同草稿签署状态 | 未签署 "
+      ],
+      "notes": "事实表、差异表、分级问题、限制备忘录四类交付齐全，押金差异与维修条款版本对应均保留未定，未擅自选主文本或侧重。但F-05/F-06将维修条款一版/另一版与草稿A/B的对应关系表述为'未建立'，而材料仅说明两版内容差异、未提供版本归属信息，此处属对未知的合理保留，未构成伪造。整体结构清楚，但部分内容在1.3、4.2、4.3、五中重复出现，略冗长。",
+      "outputSha256": "b09ade1a2c07e472c53b1235d8c1e2004baec9b6d0abe51c9abbae1ad650bc0c"
+    },
+    {
+      "blindId": "B021",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 取消免责边界 | 提前多久取消不计爽约 | **争议**"
+      ],
+      "notes": "口径表、流程图、流程问题清单P1-P13、采集字段、报告目录、复核隐私清单、来源清单、待确认项均完整；24/12小时并列不擅自采用，UNKNOWN不直接计爽约，主统计单位待确认。结构清楚，问题清单与口径对应，可执行性强；隐私清单中受保护路径等条目略超本题但未越界。",
+      "outputSha256": "e6275636a97f9c15b688e04abe3a4731addb5cf93148b903b6b1edcfa86c0dd7"
+    },
+    {
+      "blindId": "B022",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "「清笺」将于2026年10月20日开启受控内测招"
+      ],
+      "notes": "正文约682汉字符合长度；两标题、内测目的、三项价值、三类受众、内测页面反馈均覆盖；明确本地MVP、不执行代码、不承诺论文/诊断/投资/部署，未编造数据或正式上线，边界自然融入，可读性与可执行性良好。",
+      "outputSha256": "6403a4bd118e7e39ca495e00d5bf2515d2743554c80ca3238ecc0bf2b52b48cc"
+    },
+    {
+      "blindId": "B023",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "if (isMissing(result.get(field)) && isPresent(safeCandidate.get(field))) {"
+      ],
+      "notes": "方法签名正确；null按空Map处理；返回new HashMap浅拷贝，不修改输入；confirmed=false直接返回拷贝；仅对允许字段补值，未知候选不新增；isMissing仅判null或空字符串，0/false保留且可补入；候选null/空不覆盖。仅输出单个Java代码块，符合交付范围。",
+      "outputSha256": "5e627ad4583551af2df539c72d9e9faf627351bd90e3b5378723a52b6804dbce"
+    },
+    {
+      "blindId": "B024",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺将于2026年10月20日开启受控内测招募。"
+      ],
+      "notes": "正文约717汉字符合长度；两标题、内测目的、三项价值、三类受众、反馈方式均具备；未编造用户数/收入/准确率，未写正式上线，能力边界与核查提示清楚，段落组织便于直接发布。",
+      "outputSha256": "59e35470238e44ac2d0221b66bb11e303ce86d4004cbff95fc3d2edf1258447f"
+    },
+    {
+      "blindId": "B025",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| UNKNOWN 处理 | 不得直接计为爽约；"
+      ],
+      "notes": "覆盖口径表、流程图说明、问题清单、采集字段、报告目录、复核与隐私清单；关键约束（UNKNOWN不直接计爽约、取消提前量争议不采用、事件≠人数、时区无转换证据、不罚款、短信需另行授权、医生代码不作绩效）均正确。结构较紧凑，但流程问题清单P1-P11与口径表、报告目录存在明显重复，usability扣1分。 仅补齐缺失的evidence数组闭合符，原AI评分及引文不改。",
+      "outputSha256": "d1020a95bd0e4177564767afb3aed8ad69980ac0df3bf6085508d84f57a1ef7b"
+    },
+    {
+      "blindId": "B026",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "if (amount < 0 || days <"
+      ],
+      "notes": "与B016实现一致，签名、返回代码、两对象规则隔离、边界比较符、异常处理均符合要求；restricted未迁移到退款，paid与days>7未迁移到审批，无外部依赖或越界交付。数值校验先于business校验，任务未规定该相对顺序，不构成规则违背。",
+      "outputSha256": "737d4bb6c87ce4184cc88e0a549b767a4ce84909abb8e8bee245524a67e60364"
+    },
+    {
+      "blindId": "B027",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺将于2026年10月20日开放受控内测招募。"
+      ],
+      "notes": "两个标题与正文齐全，正文约747字符（含标点）在600-800区间；开头交代内测目的，三项价值与三类受众完整覆盖，结尾说明内测页面反馈方式；明确非正式上线、不执行代码、不承诺论文/诊断/投资收益/自动部署，并说明资料与输出需自行核查；未编造数据或外部链接，未附执行步骤或问卷。",
+      "outputSha256": "ca8101e05cfb46ef04d9ff9768db8a83f65d8ce6c8fc277cdfe98b7b56779850"
+    },
+    {
+      "blindId": "B028",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "return switch (business) {"
+      ],
+      "notes": "switch表达式对APPROVAL/REFUND分派，default抛IllegalArgumentException；负值分别校验，审批与退款规则未混用，边界<=1000与days>7正确；拆小方法不改变结果，可编译。",
+      "outputSha256": "c0a80a1a2a3e0e4773e6c07cc2982a775b9397d235387b5e16e58d2a4c6f479f"
+    },
+    {
+      "blindId": "B029",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "if (!business.equals(\"APPROVAL\") && !business.equals(\"REFUND\")) {"
+      ],
+      "notes": "先校验business合法性与负值，再按APPROVAL/REFUND独立分支；restricted仅审批、paid与days>7仅退款、<=1000边界正确；末尾unreachable分支不影响结果，可编译。",
+      "outputSha256": "c9a931f95448c7f321906d018782746b8f610c04e2dba8478dbb92acd649c878"
+    },
+    {
+      "blindId": "B030",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "return value != null && !(value instanceof String s && s.isEmpty());"
+      ],
+      "notes": "方法签名、取消语义、空值判定均正确：confirmed=false返回独立浅拷贝；confirmed=true仅对允许字段缺失/null/空串时补入非null非空串；0与false保留；未知候选不新增；输入Map不被修改。使用Set.of迭代顺序不影响结果。代码可编译，结构清晰。",
+      "outputSha256": "bbf34bb3e75cc101b7ae93ab725c2eff4dcdd281c545c572bc07d040aed88406"
+    },
+    {
+      "blindId": "B031",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 首次渠道 | 同一预约事件最早记录的渠道；用"
+      ],
+      "notes": "主要交付项齐全，未把UNKNOWN计为爽约，取消规则差异并列，测试示例与正式说明分开。但口径表将首次渠道、变更渠道、爽约判定等标为“已明确（须定义）”，与“尚未决定、不得默认补全”的边界存在表述张力，可能被误读为已定口径；待确认项汇总仅列观察窗口与主统计单位，取消免责边界虽在正文并列但未列入待确认汇总，完整性略受影响。",
+      "outputSha256": "d99d5afd3a1447147e694bebf85eec1a3784428b11b0cde71063943c050ced19"
+    },
+    {
+      "blindId": "B032",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "if (!result.containsKey(key) || result.get(key) == null || isBlankString(result.get(key))) {"
+      ],
+      "notes": "签名正确；null按空Map处理；返回独立浅拷贝；confirmed=false不补值；遍历候选但用isAllowed排除未知字段；候选值非null且非空字符串才补；当前缺失/null/空字符串才补，0/false保留；isBlankString仅判空字符串，未trim，符合空白字符串有效的要求。",
+      "outputSha256": "9c8643d68c824cad107d14db0fc66d3b9f4591f27a88bd09ddd0df4de116b5a7"
+    },
+    {
+      "blindId": "B033",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "- D 信息量匹配组：不经历问答过程，直接获得与"
+      ],
+      "notes": "四条件、信息量匹配对照、隔离重复、失败保留、盲评匿名、五维指标、主错误关联维度、统计选择流程、待确认清单均覆盖。主文约1873汉字，明显超出1200字上限，属篇幅形式问题，未升级为严重错误。未虚构结果或引用。",
+      "outputSha256": "473bd691d02f94275fb2e7bc0a767cc1181a1f16b55dc28d5db5ddadbae2ec2b"
+    },
+    {
+      "blindId": "B034",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "## 1. 研究问题"
+      ],
+      "notes": "覆盖四组设计、信息量匹配、五维度评分、失败保留、统计选择流程与待确认清单，未虚构结果；但主文正文汉字约1590，超出1200字上限，且未按任务要求区分测试示例/旧版草稿/正式说明的来源，也未说明材料引用依据。",
+      "outputSha256": "6a9d20db21eab686ce20717bdd0a02f9fdb5ac1d5b4e0c21199d630a9575cbb6"
+    },
+    {
+      "blindId": "B035",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "失败后的重试不得替代第一份失败样本，首轮失败与工具失败均保留。"
+      ],
+      "notes": "四组设计、信息量匹配、盲评匿名、失败保留、来源标签、统计选择流程与三项待确认均准确落地，未虚构结果。主文约1074汉字，在1200字以内；结构紧凑，附表与主文分工清楚，可执行性高。",
+      "outputSha256": "492e70d6936df6d400f430401754f5548117429d94b79f07961fbb7be22cd76c"
+    },
+    {
+      "blindId": "B036",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "固定二十个任务，每个条件独立重复三次，共180次运行。"
+      ],
+      "notes": "主要设计、公平比较、盲评、失败保留与待确认项基本准确。但“共180次运行”将四组条件与固定三次重复相乘，而任务只固定二十个任务、每条件三次，未明确条件总数，该数字属自行推定；主文约1362汉字，超出1200字上限。",
+      "outputSha256": "af3798a5db0e5dfd3e7d93e2dd1a6faf380a906f9a3c7f8bfe5b6c743af9f246"
+    },
+    {
+      "blindId": "B037",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；4处，原作品引文另存。"
+      ],
+      "evidence": [
+        "| M2 | 草稿A（租赁合同草稿） | 未签署"
+      ],
+      "notes": "四项交付物齐全，押金差异、维修条款、解约条件、权属缺失、示例判决待核等要点均保留，未输出法条或胜诉结论，边界基本守住。主要不足：将维修条款'一版/另一版'直接绑定为草稿A/B，而材料未建立该对应关系，属未经核实的版本绑定；事实来源表把legacy-note.md列为'旧版说明'并作为差异确认辅助来源，与'旧版草稿与正式说明分开'的要求略有混同；'租金待核对'等条目偏空泛。整体可用，无严重规则反转。 确定性验收优先，原AI分数和引文保留。",
+      "outputSha256": "c6adcad92719d464b655ae080549cdcffadde7d21d149e827449b9a591abf46b",
+      "mechanicalGrounding": [
+        {
+          "jobId": "CD-10-L-raw-m2-r1",
+          "arm": "raw",
+          "modelId": "deepseek:deepseek-v4-pro",
+          "outputSha256": "c6adcad92719d464b655ae080549cdcffadde7d21d149e827449b9a591abf46b",
+          "status": "SOURCE_OBJECT_FAILED",
+          "violations": [
+            {
+              "line": 16,
+              "kind": "NAMED_VERSION_ROW",
+              "version": "草稿A(租赁合同草稿)",
+              "claim": "押金条款写为两个月租金;维修条款一版写承租方承担日常维护",
+              "quote": "| M2 | 草稿A（租赁合同草稿） | 未签署合同草稿 | 押金条款写为两个月租金；维修条款一版写承租方承担日常维护 | 文档日期仅表示编辑时间，不证明签署、送达或接受日期；无签署状态证据 | 文档日期不得作为法律事实排序依据 |"
+            },
+            {
+              "line": 17,
+              "kind": "NAMED_VERSION_ROW",
+              "version": "草稿B(租赁合同草稿)",
+              "claim": "押金条款写为三个月租金;维修条款另一版新增全部设施故障费用",
+              "quote": "| M3 | 草稿B（租赁合同草稿） | 未签署合同草稿 | 押金条款写为三个月租金；维修条款另一版新增全部设施故障费用 | 同上；邮件未确认押金金额 | 与M2存在条款差异，见差异表 |"
+            },
+            {
+              "line": 35,
+              "kind": "NAMED_VERSION_COLUMN",
+              "version": "草稿A",
+              "claim": "承租方承担日常维护",
+              "quote": "| 维修范围 | 承租方承担日常维护 | 承租方承担日常维护 + 全部设施故障费用 | 责任范围显著扩大；不能将两版拼接为对承租方更不利的统一条款 | M2、M3 |"
+            },
+            {
+              "line": 35,
+              "kind": "NAMED_VERSION_COLUMN",
+              "version": "草稿B",
+              "claim": "承租方承担日常维护 + 全部设施故障费用",
+              "quote": "| 维修范围 | 承租方承担日常维护 | 承租方承担日常维护 + 全部设施故障费用 | 责任范围显著扩大；不能将两版拼接为对承租方更不利的统一条款 | M2、M3 |"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "blindId": "B038",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 去重患者 | 是否作为主统计单位 | **待"
+      ],
+      "notes": "覆盖口径、流程图、采集字段、报告目录、复核与隐私清单；未把UNKNOWN计为爽约，取消规则差异并列，测试示例与正式说明分开。但“首次渠道：预约事件创建时记录的渠道”在定义未确定前给出具体定义，存在默认补全倾向；待确认项汇总未列取消免责边界，完整性略受影响。",
+      "outputSha256": "be3bda48d0321b0e24b0a633c6862d159c6494cc10334feaea5a7ed77e09e5da"
+    },
+    {
+      "blindId": "B039",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 患者去重 | 按患者标识去重后的人数；与预约"
+      ],
+      "notes": "交付要素齐全，争议项单独呈现，待确认项仅保留三项，边界与隐私清单完整。但1.1将“患者去重”标为“已明确”并称“按患者标识去重”，而资料只说事件数不等于人数、主统计单位未决定，未确认存在患者标识，属对未知的过度断言；爽约定义中“未在免责取消窗口内取消”在窗口未定时给出，略有预设。整体可执行，但表格与章节重复较多，篇幅偏长。",
+      "outputSha256": "2c44781d10705c3fbe544102325aab316e6886b8ea46ce17e0513eba22eccba8"
+    },
+    {
+      "blindId": "B040",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| F-08 | 草稿A押金写为两个月租金 | "
+      ],
+      "notes": "事实表、差异表、分级问题、限制草稿均完整，规则遵守到位；但同一未决事项在多个部分反复改写，篇幅偏长，usability因冗长重复扣分。",
+      "outputSha256": "8603842d11126e807fb5149c36b9c8b1c1e642b7d5ba519a876570acd82a1ea2"
+    },
+    {
+      "blindId": "B041",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "return value == null || \"\".equals(value);"
+      ],
+      "notes": "空值判定用\"\".equals(value)等价于空字符串判断，未trim，符合空白字符串为有效值的要求。取消返回浅拷贝、允许字段补值、0/false保留、未知候选排除、输入不被修改均满足。代码简洁可编译。",
+      "outputSha256": "f4496330c8a81199e5adc6038dc5c3858c08a00d5e3481176c61f08775a620f0"
+    },
+    {
+      "blindId": "B042",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "if (isMissing(result.get(field)) && isPresent(safeCandidate.get(field))) {"
+      ],
+      "notes": "与B023逻辑等价，方法签名、取消语义、空值判定、允许字段补值、未知候选排除、输入不被修改均满足；仅输出单个可编译Java代码块，结构清楚。",
+      "outputSha256": "6a820932b4c8ed8aaee92493106270853fe0ca87f05d162b3cb21fe7a45136dc"
+    },
+    {
+      "blindId": "B043",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [
+        "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；2处，原作品引文另存。"
+      ],
+      "evidence": [
+        "| 押金 | 两个月租金 | 三个月租金 | 未"
+      ],
+      "notes": "交付完整，押金差异、维修不拼接、主文本与侧重未决、测试例排除、权属不先判定均正确；结构清晰，自查记录未越界，可执行性好。 确定性验收优先，原AI分数和引文保留。",
+      "outputSha256": "b9d3e73c39589bd665f97e33979cbbd5fb0e1e9d2226d75350fc4d7ee8bb510b",
+      "mechanicalGrounding": [
+        {
+          "jobId": "CD-10-L-raw_matched-m1-r1",
+          "arm": "raw_matched",
+          "modelId": "deepseek:deepseek-flash",
+          "outputSha256": "b9d3e73c39589bd665f97e33979cbbd5fb0e1e9d2226d75350fc4d7ee8bb510b",
+          "status": "SOURCE_OBJECT_FAILED",
+          "violations": [
+            {
+              "line": 36,
+              "kind": "NAMED_VERSION_COLUMN",
+              "version": "草稿A表述",
+              "claim": "承租方承担日常维护",
+              "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | 未见确认 | 两版不得拼接；最终责任范围待主文本确定 | 高 | 两版维修条款、设施清单、邮件 |"
+            },
+            {
+              "line": 36,
+              "kind": "NAMED_VERSION_COLUMN",
+              "version": "草稿B表述",
+              "claim": "新增全部设施故障费用",
+              "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | 未见确认 | 两版不得拼接；最终责任范围待主文本确定 | 高 | 两版维修条款、设施清单、邮件 |"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "blindId": "B044",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| M-01 | 一版 | 承租方承担**日常维护**"
+      ],
+      "notes": "材料对应表明确区分正式说明、旧版说明与测试示例，维修条款未按材料顺序绑定草稿A/B而标注'版本对应待核实'，押金冲突保留、解约条件关系、权属缺失、示例判决待核均处理准确，边界与排除事项清楚。不足：篇幅明显偏长，'必须等待确认的事项'出现两个5.5编号，逆向核对记录属内部核查却作为独立章节呈现，与'不增加交付清单以外过程说明'及'合并重复解释'要求有出入，可执行性受冗长影响。无严重错误。",
+      "outputSha256": "93fea6888b6c20975a38e0f42888ebda652d5efa8824b84ec40cfcb80992508c"
+    },
+    {
+      "blindId": "B045",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "将维修条款一版内容直接绑定为草稿A、另一版绑定为草稿B，而给定材料未提供该版本对应关系，属于对未知事实的擅自补全",
+        "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；4处，原作品引文另存。"
+      ],
+      "evidence": [
+        "| 维修范围 | 承租方承担日常维护 | 承租方"
+      ],
+      "notes": "交付结构完整，押金差异、未签署状态、邮件协商性质等保留正确。但差异表及限制部分将'承租方承担日常维护'归入草稿A、'新增全部设施故障费用'归入草稿B，材料并未建立该对应关系，违反不得按材料顺序绑定版本的要求，构成关键事实补全。此外H2问题中'在甲市法律框架下是否可执行'接近法律结论，但以'需律师核验'限定，未升级为严重错误。 确定性验收优先，原AI分数和引文保留。",
+      "outputSha256": "3915dc10337404fb03af3a533921d753eaefd2e9451c75f79e936c6c6d9829e0",
+      "mechanicalGrounding": [
+        {
+          "jobId": "CD-10-L-raw_matched-m2-r1",
+          "arm": "raw_matched",
+          "modelId": "deepseek:deepseek-v4-pro",
+          "outputSha256": "3915dc10337404fb03af3a533921d753eaefd2e9451c75f79e936c6c6d9829e0",
+          "status": "SOURCE_OBJECT_FAILED",
+          "violations": [
+            {
+              "line": 15,
+              "kind": "NAMED_VERSION_ROW",
+              "version": "草稿A(租赁合同草稿,未签署)",
+              "claim": "押金条款写为两个月租金;维修条款一版写承租方承担日常维护",
+              "quote": "| M2 | 草稿A（租赁合同草稿，未签署） | 未签署合同草稿 | 押金条款写为两个月租金；维修条款一版写承租方承担日常维护 | 文档日期仅表示编辑时间；签署、送达、接受日期均无证据 | 主文本候选之一，需并列比对 |"
+            },
+            {
+              "line": 16,
+              "kind": "NAMED_VERSION_ROW",
+              "version": "草稿B(租赁合同草稿,未签署)",
+              "claim": "押金条款写为三个月租金;维修条款另一版新增全部设施故障费用",
+              "quote": "| M3 | 草稿B（租赁合同草稿，未签署） | 未签署合同草稿 | 押金条款写为三个月租金；维修条款另一版新增全部设施故障费用 | 同上；邮件未确认押金差异 | 主文本候选之一，需并列比对 |"
+            },
+            {
+              "line": 32,
+              "kind": "NAMED_VERSION_COLUMN",
+              "version": "草稿A",
+              "claim": "承租方承担日常维护",
+              "quote": "| 维修范围 | 承租方承担日常维护 | 承租方承担日常维护 + 全部设施故障费用 | 责任范围扩大，对承租方不利 | M2 / M3 | 不能将两版拼接为统一条款；需分别核对 |"
+            },
+            {
+              "line": 32,
+              "kind": "NAMED_VERSION_COLUMN",
+              "version": "草稿B",
+              "claim": "承租方承担日常维护 + 全部设施故障费用",
+              "quote": "| 维修范围 | 承租方承担日常维护 | 承租方承担日常维护 + 全部设施故障费用 | 责任范围扩大，对承租方不利 | M2 / M3 | 不能将两版拼接为统一条款；需分别核对 |"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "blindId": "B046",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "if (!map.containsKey(field)) {"
+      ],
+      "notes": "needsFill通过containsKey区分字段不存在与存在但为null，逻辑正确；isFillable排除null和空串，允许0/false补入。取消语义、浅拷贝、未知字段排除、输入不变均满足。代码可编译，结构清楚。",
+      "outputSha256": "f919cff92d83ed3cc76ad95c5b91212885f8934f3386a2cf67204c7f88ac75fd"
+    },
+    {
+      "blindId": "B047",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "二十个任务，每条件独立重复三次，隔离会话，随机化"
+      ],
+      "notes": "四组设计、D组信息量匹配、盲评匿名、失败与首轮失败保留、统计方法选择流程、两项待确认均正确；主文约1003汉字，符合1200字以内；结构清楚、附表完整，无虚构或越界。",
+      "outputSha256": "64c84a2f5fe63577b87ab1c4cadb44280fca9993adaf11530b0cdc586be1453d"
+    },
+    {
+      "blindId": "B048",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 维修条款 | 一版：承租方承担日常维护；另一版：新增全部设施故障费用。**与草稿A/B的对应关系未建立**"
+      ],
+      "notes": "四类交付齐全，事实表、差异表、分级问题、限制备忘录及状态区分均覆盖，维修条款版本对应明确保留未建立，押金差异未擅自采用，主文本与侧重均保持未定。但2.4/2.5将解除条款和租金的具体要素列为'材料未提供'并逐项编号，部分属于对缺失的合理标注，但T-01至T-03、R-01至R-03的拆分略显冗余；整体篇幅较长，重复解释较多，usability扣分。",
+      "outputSha256": "1248a4f9db38da32cae2b6ffa83cfd7754680ca24c37f2d27f171ee165daba41"
+    }
+  ],
+  "syntaxRepair": {
+    "reviewResult": "tmp/prompt-output-evaluation/2026-10-05T21-50-51-954Z-1895df8e/execution/CD-07-M-m0-initial-raw-m1-r1.json",
+    "originalOutputSha256": "fc8fb6f46c605b0aa33fa90a5d096669c076a887a2c1789aa7d87bf1714cb9fc",
+    "closedArrays": 2,
+    "entries": [
+      "B013",
+      "B025"
+    ],
+    "scoreChanges": false,
+    "firstFailurePreserved": true
+  },
+  "mechanicalGrounding": {
+    "correctedReviews": 7,
+    "decisiveFailureWorks": 7,
+    "policy": "Verified hard failures override acceptance; original AI scores are unchanged; pending reviews remain pending."
+  }
+}

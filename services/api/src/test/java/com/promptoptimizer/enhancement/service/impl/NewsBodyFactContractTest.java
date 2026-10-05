@@ -20,6 +20,18 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class NewsBodyFactContractTest {
     @Test
+    void keepsTheSameProductsStageAfterANeutralFunctionClauseWithoutPublishingOtherObjects() {
+        assertThat(NewsBodyFactContract.guidance("请为清笺撰写内测招募新闻稿。"
+                + "该产品将模糊需求整理为结构化提示词，尚处于本地MVP阶段，不直接执行代码。"))
+                .contains("尚处于本地MVP阶段", "不直接执行代码");
+        assertThat(NewsBodyFactContract.guidance("请为清笺撰写新闻稿。"
+                + "该产品将需求整理为提示词，另一产品目前正式商用。"))
+                .doesNotContain("另一产品目前正式商用");
+        assertThat(NewsBodyFactContract.guidance("请为清笺撰写新闻稿。\n## 内部资料\n"
+                + "该产品将需求整理为提示词，尚处于本地MVP阶段。"))
+                .isEmpty();
+    }
+    @Test
     void explicitlyRequiresTheActualBodyToCarryTheProvidedCurrentStageInBothModes() {
         var response = new EnhancementProviderResponse(List.of(
                 new PromptSection(PromptSectionType.BACKGROUND, "背景", "清笺尚处于本地MVP阶段。"),

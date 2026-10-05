@@ -46,7 +46,9 @@ class ExecutionContractAssemblyTest {
         var result = assemble("设计 YLL 分析框架。", "预留寿命表接口。", List.of(),
                 List.of(new PlanAnswer("life", "采用哪份参考寿命表？", answer)), List.of());
         assertThat(result.ambiguities()).singleElement().asString().contains("参考寿命表", "尚未确定");
-        assertThat(result.optimizedPrompt()).contains(answer);
+        // 裸未知状态统一由“该问题尚未确定”表达；完整业务边界仍须进入复制正文。
+        assertThat(result.optimizedPrompt()).contains(answer.substring(answer.indexOf('。') + 1),
+                "该问题尚未确定", "执行前须确认");
         assertThat(result.sections()).filteredOn(section -> section.type() == PromptSectionType.TASK)
                 .singleElement().satisfies(section -> assertThat(section.content()).doesNotContain("用户已确认的信息"));
     }

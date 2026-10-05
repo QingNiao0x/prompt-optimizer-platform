@@ -30,24 +30,31 @@ const lines = createInterface({ input: stdin, output: stdout, terminal: false })
 try {
   await page.goto('http://127.0.0.1:5175/workbench', { waitUntil: 'domcontentloaded', timeout: 30_000 });
   await page.evaluate(async () => { await fetch('/api/v1/auth/csrf', { credentials: 'same-origin' }); });
-  const challenge = await context.request.get('http://127.0.0.1:5175/api/v1/auth/captcha');
-  if (!challenge.ok()) throw new Error('CAPTCHA_UNAVAILABLE');
   await mkdir(output, { recursive: true });
-  const path = resolve(output, 'captcha.png');
-  await writeFile(path, await challenge.body(), { flag: 'wx' });
-  console.log(JSON.stringify({ event: 'acceptance.captcha.ready', path }));
-  const captcha = (await lines.question('')).trim();
-  if (!/^[a-zA-Z0-9]{4,8}$/.test(captcha)) throw new Error('INVALID_CAPTCHA_INPUT');
-  const status = await page.evaluate(async payload => {
+  let authenticated = false;
+  // 验证码识读失败时重新签发，仍遵循服务端校验与限流，不重建账户或绕过认证。
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const challenge = await context.request.get('http://127.0.0.1:5175/api/v1/auth/captcha');
+    if (!challenge.ok()) throw new Error('CAPTCHA_UNAVAILABLE');
+    const path = resolve(output, `captcha-${attempt}.png`);
+    await writeFile(path, await challenge.body(), { flag: 'wx' });
+    console.log(JSON.stringify({ event: 'acceptance.captcha.ready', path, attempt }));
+    const captcha = (await lines.question('')).trim();
+    if (!/^[a-zA-Z0-9]{4,8}$/.test(captcha)) throw new Error('INVALID_CAPTCHA_INPUT');
+    const status = await page.evaluate(async payload => {
     const token = document.cookie.split('; ').find(item => item.startsWith('XSRF-TOKEN='))?.split('=').slice(1).join('=');
     const response = await fetch('/api/v1/auth/login', { method: 'POST', credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json', ...(token ? { 'X-XSRF-TOKEN': decodeURIComponent(token) } : {}) },
       body: JSON.stringify(payload) });
     const data = await response.json();
     return { status: response.status, code: data.error?.code };
-  }, { identifier, password, captcha });
+    }, { identifier, password, captcha });
+    if (status.status === 200) { authenticated = true; break; }
+    if (status.code !== 'CAPTCHA_INVALID') throw new Error(`LOGIN_FAILED_${status.code ?? status.status}`);
+    console.log(JSON.stringify({ event: 'acceptance.captcha.retry', attempt }));
+  }
   password = undefined;
-  if (status.status !== 200) throw new Error(`LOGIN_FAILED_${status.code ?? status.status}`);
+  if (!authenticated) throw new Error('LOGIN_FAILED_CAPTCHA_INVALID');
   await page.reload({ waitUntil: 'domcontentloaded' });
   console.log(JSON.stringify({ event: 'acceptance.browser.authenticated', port: 9325, synthetic: true }));
   for await (const line of lines) {

@@ -27,12 +27,28 @@ test('Plan 实际回答仅进入同信息轨道；部分确定不能被改成全
   const input = sample();
   input.cases[0].submittedAnswers = [{ questionId: 'scope', question: '是否区分年度和性别？',
     answer: '按年度和性别，分母暂不确定。', actuallySubmitted: true }];
+  input.cases[0].plan.prompt += '按年度和性别，分母暂不确定。';
   const batch = createJobs(input, catalog, options);
   assert.equal(batch.jobs.length, 5);
   for (const job of batch.jobs) {
     assert.equal(job.user.includes('分母暂不确定'), job.informationTrack === 'matched');
+    if (job.informationTrack === 'matched') assert.equal(job.user.match(/分母暂不确定/g).length, 1);
   }
   assert.equal(new Set(batch.jobs.filter(job => job.informationTrack === 'matched').map(job => job.answersHash)).size, 1);
+});
+
+test('Plan正文漏掉实际回答时执行器不补漏，但保留匹配元数据供评审发现缺陷', () => {
+  const input = sample();
+  input.cases[0].submittedAnswers = [{ questionId: 'scope', question: '分母如何处理？',
+    answer: '保留分母未知，不计算率。', actuallySubmitted: true }];
+  const batch = createJobs(input, catalog, options);
+  const plan = batch.jobs.find(job => job.arm === 'plan');
+  const matched = batch.jobs.find(job => job.arm === 'raw_matched');
+  assert.equal(plan.user.includes('保留分母未知'), false);
+  assert.equal(matched.user.includes('保留分母未知'), true);
+  assert.equal(plan.informationTrack, 'matched');
+  assert.equal(plan.answersHash, matched.answersHash);
+  assert.equal(batch.cases[0].submittedAnswers[0].answer, '保留分母未知，不计算率。');
 });
 
 test('未提交的候选不能当作用户事实；缺少成功 Plan 回执拒绝生成匹配组', () => {

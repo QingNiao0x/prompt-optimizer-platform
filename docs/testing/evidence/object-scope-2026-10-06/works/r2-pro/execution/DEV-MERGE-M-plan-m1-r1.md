@@ -1,0 +1,41 @@
+```java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+public final class FormMerge {
+
+    private static final Set<String> ALLOWED_FIELDS = Set.of("name", "age", "enabled", "region");
+
+    private FormMerge() {
+    }
+
+    public static Map<String, Object> merge(Map<String, Object> current,
+                                            Map<String, Object> candidate,
+                                            boolean confirmed) {
+        Map<String, Object> currentMap = current == null ? Map.of() : current;
+        Map<String, Object> result = new HashMap<>(currentMap);
+
+        if (!confirmed) {
+            return result;
+        }
+
+        Map<String, Object> candidateMap = candidate == null ? Map.of() : candidate;
+
+        for (String field : ALLOWED_FIELDS) {
+            if (isMissing(result.get(field)) && candidateMap.containsKey(field)) {
+                Object candidateValue = candidateMap.get(field);
+                if (candidateValue != null && !(candidateValue instanceof String s && s.isEmpty())) {
+                    result.put(field, candidateValue);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static boolean isMissing(Object value) {
+        return value == null || (value instanceof String s && s.isEmpty());
+    }
+}
+```

@@ -108,7 +108,8 @@ export function createJobs(input, catalog, options) {
     if (item.direct?.prompt) variants.push({ arm: 'direct', prompt: textField(item.direct.prompt, 80_000, 'INVALID_DIRECT_PROMPT'), informationTrack: 'initial', answers: '' });
     if (item.plan?.prompt) {
       assert(item.plan.serverAccepted === true, 'PLAN_NOT_SERVER_ACCEPTED');
-      variants.push({ arm: 'plan', prompt: textField(item.plan.prompt, 80_000, 'INVALID_PLAN_PROMPT'), informationTrack: answers.length ? 'matched' : 'initial', answers: supplemental });
+      // 真实使用时复制正文应已包含答案；不再补一份，否则既增加重复又掩盖正文遗漏。
+      variants.push({ arm: 'plan', prompt: textField(item.plan.prompt, 80_000, 'INVALID_PLAN_PROMPT'), informationTrack: answers.length ? 'matched' : 'initial', answers: '' });
     }
     if (answers.length) {
       variants.push({ arm: 'raw_matched', prompt: raw, informationTrack: 'matched', answers: supplemental });
@@ -128,7 +129,7 @@ export function createJobs(input, catalog, options) {
           const metadata = { caseId: item.id, domain: item.domain, arm: variant.arm, modelId, repetition,
             informationTrack: variant.informationTrack, optimizerModelId: item.optimizerModelId ?? null,
             promptHash: sha256(variant.prompt), materialsHash,
-            answersHash: variant.answers ? answersHash : sha256(''), systemHash: sha256(SYSTEM), userHash: sha256(user) };
+            answersHash: variant.informationTrack === 'matched' ? answersHash : sha256(''), systemHash: sha256(SYSTEM), userHash: sha256(user) };
           jobs.push({ id: `${item.id}-${variant.arm}-m${modelIndex + 1}-r${repetition}`, ...metadata,
             system: SYSTEM, user, temperature: 0.2, maxTokens: options.maxTokens });
         }

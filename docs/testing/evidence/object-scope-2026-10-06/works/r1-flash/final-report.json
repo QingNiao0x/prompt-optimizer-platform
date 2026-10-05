@@ -1,0 +1,1514 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-05T22:00:12.256Z",
+  "manifest": {
+    "schemaVersion": 1,
+    "createdAt": "2026-10-05T21:37:55.434Z",
+    "jobsSha256": "389a984c92000cd71cf70917083a35feb4ddbcac63d91e00b0bf6a5b5fda3e71",
+    "inputSha256": "83b6e68d80b38e972867b89815f287249d13ec59aab9031ec06a8f3464c76646",
+    "modelsSha256": "46e41903fcde6c5c2ea9eff7c5b00a2b66a4940b432b504d3a525c1a0e7da428",
+    "origin": "FINAL_CANDIDATE_REAL_API",
+    "plannedCalls": 48,
+    "professionalReview": "PENDING",
+    "releaseApproval": false,
+    "optimizerCallsThisPreparation": 0,
+    "note": "External execution is separate from the platform. Generation failures remain in cases; this is not a full folder upload benchmark."
+  },
+  "records": [
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 12776,
+      "tokens": {
+        "prompt_tokens": 1177,
+        "completion_tokens": 2921,
+        "total_tokens": 4098
+      },
+      "jobId": "CD-07-M-raw-m1-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 13600,
+      "tokens": {
+        "prompt_tokens": 1842,
+        "completion_tokens": 3490,
+        "total_tokens": 5332
+      },
+      "jobId": "CD-07-M-direct-m1-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 13901,
+      "tokens": {
+        "prompt_tokens": 2007,
+        "completion_tokens": 3331,
+        "total_tokens": 5338
+      },
+      "jobId": "CD-07-M-plan-m1-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 11004,
+      "tokens": {
+        "prompt_tokens": 1305,
+        "completion_tokens": 2676,
+        "total_tokens": 3981
+      },
+      "jobId": "CD-07-M-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 11431,
+      "tokens": {
+        "prompt_tokens": 1970,
+        "completion_tokens": 2905,
+        "total_tokens": 4875
+      },
+      "jobId": "CD-07-M-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 32550,
+      "tokens": {
+        "prompt_tokens": 1176,
+        "completion_tokens": 3473,
+        "total_tokens": 4649
+      },
+      "jobId": "CD-07-M-raw-m2-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 75,
+        "criticalErrors": []
+      },
+      "latencyMs": 26595,
+      "tokens": {
+        "prompt_tokens": 1841,
+        "completion_tokens": 3087,
+        "total_tokens": 4928
+      },
+      "jobId": "CD-07-M-direct-m2-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 37587,
+      "tokens": {
+        "prompt_tokens": 2006,
+        "completion_tokens": 4554,
+        "total_tokens": 6560
+      },
+      "jobId": "CD-07-M-plan-m2-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 24356,
+      "tokens": {
+        "prompt_tokens": 1304,
+        "completion_tokens": 2814,
+        "total_tokens": 4118
+      },
+      "jobId": "CD-07-M-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 32447,
+      "tokens": {
+        "prompt_tokens": 1969,
+        "completion_tokens": 3915,
+        "total_tokens": 5884
+      },
+      "jobId": "CD-07-M-direct_matched-m2-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 100,
+        "criticalErrors": [
+          "确定性正文验收失败：623汉字；600–800范围=true；必要MVP事实=false。"
+        ]
+      },
+      "latencyMs": 3671,
+      "tokens": {
+        "prompt_tokens": 1061,
+        "completion_tokens": 458,
+        "total_tokens": 1519
+      },
+      "jobId": "CD-09-M-raw-m1-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 96.25,
+        "criticalErrors": [
+          "确定性正文验收失败：504汉字；600–800范围=false；必要MVP事实=true。"
+        ]
+      },
+      "latencyMs": 2556,
+      "tokens": {
+        "prompt_tokens": 1630,
+        "completion_tokens": 375,
+        "total_tokens": 2005
+      },
+      "jobId": "CD-09-M-direct-m1-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 100,
+        "criticalErrors": [
+          "确定性正文验收失败：514汉字；600–800范围=false；必要MVP事实=true。"
+        ]
+      },
+      "latencyMs": 2917,
+      "tokens": {
+        "prompt_tokens": 1736,
+        "completion_tokens": 383,
+        "total_tokens": 2119
+      },
+      "jobId": "CD-09-M-plan-m1-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 100,
+        "criticalErrors": [
+          "确定性正文验收失败：595汉字；600–800范围=false；必要MVP事实=true。"
+        ]
+      },
+      "latencyMs": 5639,
+      "tokens": {
+        "prompt_tokens": 1060,
+        "completion_tokens": 434,
+        "total_tokens": 1494
+      },
+      "jobId": "CD-09-M-raw-m2-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 6055,
+      "tokens": {
+        "prompt_tokens": 1629,
+        "completion_tokens": 457,
+        "total_tokens": 2086
+      },
+      "jobId": "CD-09-M-direct-m2-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 100,
+        "criticalErrors": [
+          "确定性正文验收失败：578汉字；600–800范围=false；必要MVP事实=true。"
+        ]
+      },
+      "latencyMs": 6541,
+      "tokens": {
+        "prompt_tokens": 1735,
+        "completion_tokens": 414,
+        "total_tokens": 2149
+      },
+      "jobId": "CD-09-M-plan-m2-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 75,
+        "criticalErrors": []
+      },
+      "latencyMs": 5515,
+      "tokens": {
+        "prompt_tokens": 2934,
+        "completion_tokens": 1176,
+        "total_tokens": 4110
+      },
+      "jobId": "CD-05-L-raw-m1-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 81.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 6583,
+      "tokens": {
+        "prompt_tokens": 3718,
+        "completion_tokens": 1386,
+        "total_tokens": 5104
+      },
+      "jobId": "CD-05-L-direct-m1-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 6303,
+      "tokens": {
+        "prompt_tokens": 3912,
+        "completion_tokens": 1404,
+        "total_tokens": 5316
+      },
+      "jobId": "CD-05-L-plan-m1-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 75,
+        "criticalErrors": []
+      },
+      "latencyMs": 4801,
+      "tokens": {
+        "prompt_tokens": 3047,
+        "completion_tokens": 962,
+        "total_tokens": 4009
+      },
+      "jobId": "CD-05-L-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 8177,
+      "tokens": {
+        "prompt_tokens": 3831,
+        "completion_tokens": 1799,
+        "total_tokens": 5630
+      },
+      "jobId": "CD-05-L-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 75,
+        "criticalErrors": []
+      },
+      "latencyMs": 12099,
+      "tokens": {
+        "prompt_tokens": 2933,
+        "completion_tokens": 1225,
+        "total_tokens": 4158
+      },
+      "jobId": "CD-05-L-raw-m2-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 81.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 17389,
+      "tokens": {
+        "prompt_tokens": 3717,
+        "completion_tokens": 1979,
+        "total_tokens": 5696
+      },
+      "jobId": "CD-05-L-direct-m2-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 11412,
+      "tokens": {
+        "prompt_tokens": 3911,
+        "completion_tokens": 1388,
+        "total_tokens": 5299
+      },
+      "jobId": "CD-05-L-plan-m2-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 11831,
+      "tokens": {
+        "prompt_tokens": 3046,
+        "completion_tokens": 1249,
+        "total_tokens": 4295
+      },
+      "jobId": "CD-05-L-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 17421,
+      "tokens": {
+        "prompt_tokens": 3830,
+        "completion_tokens": 1795,
+        "total_tokens": 5625
+      },
+      "jobId": "CD-05-L-direct_matched-m2-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 75,
+        "criticalErrors": [
+          "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；2处，原作品引文另存。"
+        ]
+      },
+      "latencyMs": 11233,
+      "tokens": {
+        "prompt_tokens": 3006,
+        "completion_tokens": 2685,
+        "total_tokens": 5691
+      },
+      "jobId": "CD-10-L-raw-m1-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 81.25,
+        "criticalErrors": [
+          "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；2处，原作品引文另存。"
+        ]
+      },
+      "latencyMs": 13900,
+      "tokens": {
+        "prompt_tokens": 4084,
+        "completion_tokens": 3482,
+        "total_tokens": 7566
+      },
+      "jobId": "CD-10-L-direct-m1-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 19809,
+      "tokens": {
+        "prompt_tokens": 4168,
+        "completion_tokens": 5014,
+        "total_tokens": 9182
+      },
+      "jobId": "CD-10-L-plan-m1-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 75,
+        "criticalErrors": [
+          "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；2处，原作品引文另存。"
+        ]
+      },
+      "latencyMs": 10238,
+      "tokens": {
+        "prompt_tokens": 3102,
+        "completion_tokens": 2373,
+        "total_tokens": 5475
+      },
+      "jobId": "CD-10-L-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 75,
+        "criticalErrors": [
+          "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；2处，原作品引文另存。"
+        ]
+      },
+      "latencyMs": 12239,
+      "tokens": {
+        "prompt_tokens": 4180,
+        "completion_tokens": 3180,
+        "total_tokens": 7360
+      },
+      "jobId": "CD-10-L-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 75,
+        "criticalErrors": [
+          "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；4处，原作品引文另存。"
+        ]
+      },
+      "latencyMs": 20672,
+      "tokens": {
+        "prompt_tokens": 3005,
+        "completion_tokens": 2128,
+        "total_tokens": 5133
+      },
+      "jobId": "CD-10-L-raw-m2-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 71.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 25588,
+      "tokens": {
+        "prompt_tokens": 4083,
+        "completion_tokens": 3005,
+        "total_tokens": 7088
+      },
+      "jobId": "CD-10-L-direct-m2-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 75,
+        "criticalErrors": []
+      },
+      "latencyMs": 32864,
+      "tokens": {
+        "prompt_tokens": 4167,
+        "completion_tokens": 3732,
+        "total_tokens": 7899
+      },
+      "jobId": "CD-10-L-plan-m2-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 53.75,
+        "criticalErrors": [
+          "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；4处，原作品引文另存。"
+        ]
+      },
+      "latencyMs": 24978,
+      "tokens": {
+        "prompt_tokens": 3101,
+        "completion_tokens": 2590,
+        "total_tokens": 5691
+      },
+      "jobId": "CD-10-L-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 75,
+        "criticalErrors": [
+          "资料归属验收失败：未绑定版本的维修内容被填入明确版本格；6处，原作品引文另存。"
+        ]
+      },
+      "latencyMs": 27145,
+      "tokens": {
+        "prompt_tokens": 4179,
+        "completion_tokens": 3211,
+        "total_tokens": 7390
+      },
+      "jobId": "CD-10-L-direct_matched-m2-r1"
+    },
+    {
+      "caseId": "DEV-MERGE-M",
+      "domain": "software",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 2015,
+      "tokens": {
+        "prompt_tokens": 480,
+        "completion_tokens": 299,
+        "total_tokens": 779
+      },
+      "jobId": "DEV-MERGE-M-raw-m1-r1"
+    },
+    {
+      "caseId": "DEV-MERGE-M",
+      "domain": "software",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 1564,
+      "tokens": {
+        "prompt_tokens": 701,
+        "completion_tokens": 261,
+        "total_tokens": 962
+      },
+      "jobId": "DEV-MERGE-M-direct-m1-r1"
+    },
+    {
+      "caseId": "DEV-MERGE-M",
+      "domain": "software",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 1481,
+      "tokens": {
+        "prompt_tokens": 704,
+        "completion_tokens": 266,
+        "total_tokens": 970
+      },
+      "jobId": "DEV-MERGE-M-plan-m1-r1"
+    },
+    {
+      "caseId": "DEV-MERGE-M",
+      "domain": "software",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 2524,
+      "tokens": {
+        "prompt_tokens": 479,
+        "completion_tokens": 273,
+        "total_tokens": 752
+      },
+      "jobId": "DEV-MERGE-M-raw-m2-r1"
+    },
+    {
+      "caseId": "DEV-MERGE-M",
+      "domain": "software",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 2377,
+      "tokens": {
+        "prompt_tokens": 700,
+        "completion_tokens": 248,
+        "total_tokens": 948
+      },
+      "jobId": "DEV-MERGE-M-direct-m2-r1"
+    },
+    {
+      "caseId": "DEV-MERGE-M",
+      "domain": "software",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 2463,
+      "tokens": {
+        "prompt_tokens": 703,
+        "completion_tokens": 237,
+        "total_tokens": 940
+      },
+      "jobId": "DEV-MERGE-M-plan-m2-r1"
+    },
+    {
+      "caseId": "DEV-DECISION-L",
+      "domain": "software",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 1699,
+      "tokens": {
+        "prompt_tokens": 1004,
+        "completion_tokens": 264,
+        "total_tokens": 1268
+      },
+      "jobId": "DEV-DECISION-L-raw-m1-r1"
+    },
+    {
+      "caseId": "DEV-DECISION-L",
+      "domain": "software",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 1508,
+      "tokens": {
+        "prompt_tokens": 1301,
+        "completion_tokens": 264,
+        "total_tokens": 1565
+      },
+      "jobId": "DEV-DECISION-L-direct-m1-r1"
+    },
+    {
+      "caseId": "DEV-DECISION-L",
+      "domain": "software",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 1415,
+      "tokens": {
+        "prompt_tokens": 1271,
+        "completion_tokens": 264,
+        "total_tokens": 1535
+      },
+      "jobId": "DEV-DECISION-L-plan-m1-r1"
+    },
+    {
+      "caseId": "DEV-DECISION-L",
+      "domain": "software",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 2596,
+      "tokens": {
+        "prompt_tokens": 1003,
+        "completion_tokens": 197,
+        "total_tokens": 1200
+      },
+      "jobId": "DEV-DECISION-L-raw-m2-r1"
+    },
+    {
+      "caseId": "DEV-DECISION-L",
+      "domain": "software",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 1945,
+      "tokens": {
+        "prompt_tokens": 1300,
+        "completion_tokens": 249,
+        "total_tokens": 1549
+      },
+      "jobId": "DEV-DECISION-L-direct-m2-r1"
+    },
+    {
+      "caseId": "DEV-DECISION-L",
+      "domain": "software",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-flash",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 2252,
+      "tokens": {
+        "prompt_tokens": 1270,
+        "completion_tokens": 249,
+        "total_tokens": 1519
+      },
+      "jobId": "DEV-DECISION-L-plan-m2-r1"
+    }
+  ],
+  "pairs": [
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "LOSS",
+      "scoreDelta": -25
+    },
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -3.75
+    },
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -3.75
+    },
+    {
+      "caseId": "CD-09-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "BOTH_FAIL",
+      "scoreDelta": -3.75
+    },
+    {
+      "caseId": "CD-09-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-09-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-09-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 6.25
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 21.25
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 21.25
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 6.25
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 6.25
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 21.25
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": -3.75
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 21.25
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 21.25
+    },
+    {
+      "caseId": "DEV-MERGE-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "DEV-MERGE-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "DEV-MERGE-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "DEV-MERGE-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "DEV-DECISION-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "DEV-DECISION-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "DEV-DECISION-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "DEV-DECISION-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    }
+  ],
+  "groups": [
+    {
+      "key": "deepseek:deepseek-flash|raw",
+      "planned": 6,
+      "successfulOutputs": 6,
+      "criticalFailures": 2,
+      "reviewed": 6,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-flash|direct",
+      "planned": 6,
+      "successfulOutputs": 6,
+      "criticalFailures": 2,
+      "reviewed": 6,
+      "pairedComparisons": 6,
+      "wins": 1,
+      "losses": 0,
+      "ties": 3,
+      "bothUnacceptable": 2,
+      "winRate": 0.16666666666666666
+    },
+    {
+      "key": "deepseek:deepseek-flash|plan",
+      "planned": 6,
+      "successfulOutputs": 6,
+      "criticalFailures": 1,
+      "reviewed": 6,
+      "pairedComparisons": 6,
+      "wins": 2,
+      "losses": 0,
+      "ties": 3,
+      "bothUnacceptable": 1,
+      "winRate": 0.3333333333333333
+    },
+    {
+      "key": "deepseek:deepseek-flash|raw_matched",
+      "planned": 3,
+      "successfulOutputs": 3,
+      "criticalFailures": 1,
+      "reviewed": 3,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-flash|direct_matched",
+      "planned": 3,
+      "successfulOutputs": 3,
+      "criticalFailures": 1,
+      "reviewed": 3,
+      "pairedComparisons": 3,
+      "wins": 1,
+      "losses": 0,
+      "ties": 1,
+      "bothUnacceptable": 1,
+      "winRate": 0.3333333333333333
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|raw",
+      "planned": 6,
+      "successfulOutputs": 6,
+      "criticalFailures": 2,
+      "reviewed": 6,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|direct",
+      "planned": 6,
+      "successfulOutputs": 6,
+      "criticalFailures": 0,
+      "reviewed": 6,
+      "pairedComparisons": 6,
+      "wins": 3,
+      "losses": 1,
+      "ties": 2,
+      "bothUnacceptable": 0,
+      "winRate": 0.5
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|plan",
+      "planned": 6,
+      "successfulOutputs": 6,
+      "criticalFailures": 1,
+      "reviewed": 6,
+      "pairedComparisons": 6,
+      "wins": 1,
+      "losses": 1,
+      "ties": 3,
+      "bothUnacceptable": 1,
+      "winRate": 0.16666666666666666
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|raw_matched",
+      "planned": 3,
+      "successfulOutputs": 3,
+      "criticalFailures": 1,
+      "reviewed": 3,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|direct_matched",
+      "planned": 3,
+      "successfulOutputs": 3,
+      "criticalFailures": 1,
+      "reviewed": 3,
+      "pairedComparisons": 3,
+      "wins": 0,
+      "losses": 1,
+      "ties": 1,
+      "bothUnacceptable": 1,
+      "winRate": 0
+    }
+  ],
+  "generationFailures": [],
+  "reviewSource": {
+    "id": "blinded-model-deepseek:deepseek-flash",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-05T22:00:12.016Z",
+    "professionalDomain": "NOT_CERTIFIED",
+    "reviewRun": "tmp\\prompt-output-evaluation\\2026-10-05T21-50-35-983Z-32ae7855"
+  },
+  "professionalReview": "PENDING",
+  "releaseApproval": false,
+  "scope": "Fixed prompt downstream work comparison; no guarantee of professional correctness or universal improvement."
+}
