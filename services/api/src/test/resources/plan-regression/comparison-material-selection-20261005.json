@@ -1,0 +1,193 @@
+{
+  "rawPrompt": "请依据方案甲和方案乙整理订单审批与退款规则的差异表，只给方案和未决条件，不执行代码或真实业务。两个文件都适用于同一当前工作区，均未批准，不能按文件顺序或较新日期选择胜者。订单审批与退款属于不同业务对象，分别保留完整条件及来源。最终交付规则对照表、执行前需确认清单与只读验证步骤。订单审批金额条件保持>=，退款金额条件保持>，不得把运算符归一化成相同值。确认后若仍不知道答案，就在复制正文中保留未知，不默认某个阈值。",
+  "replays": [
+    {
+      "source": "batch-scope-known-20261005-02/OP-BOUNDARY-M-deepseek_deepseek-flash-plan.json",
+      "questions": [
+        {
+          "id": "order_threshold",
+          "question": "订单审批金额条件本次采用哪一组阈值？",
+          "hint": "方案甲写的是订单金额>=3000元须复核，方案乙写的是订单金额>=5000元须复核。两份材料均未批准，不能按文件顺序或日期选择胜者，需要您明确本次对照表以哪一组数值为基准。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "order_3000",
+              "label": "采用方案甲：>=3000元",
+              "description": "订单审批金额条件保持>=3000元须复核，来源标注为方案甲。",
+              "answer": "订单审批金额条件采用方案甲：订单金额>=3000元须复核，保留>=运算符，来源标注为方案甲。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "order_5000",
+              "label": "采用方案乙：>=5000元",
+              "description": "订单审批金额条件保持>=5000元须复核，来源标注为方案乙。",
+              "answer": "订单审批金额条件采用方案乙：订单金额>=5000元须复核，保留>=运算符，来源标注为方案乙。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "order_both",
+              "label": "两组都保留并列为差异",
+              "description": "订单审批金额条件同时保留>=3000元和>=5000元两个取值，在差异表中并列展示并分别标注来源。",
+              "answer": "订单审批金额条件同时保留方案甲的>=3000元和方案乙的>=5000元，在差异表中并列展示，分别标注来源，不选择胜者。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "refund_threshold",
+          "question": "退款金额条件本次采用哪一组阈值？",
+          "hint": "方案甲写的是退款金额>500元须退款负责人批准，方案乙写的是退款金额>800元须退款负责人批准。两份材料均未批准，不能按文件顺序或日期选择胜者，需要您明确本次对照表以哪一组数值为基准。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "refund_500",
+              "label": "采用方案甲：>500元",
+              "description": "退款金额条件保持>500元须退款负责人批准，来源标注为方案甲。",
+              "answer": "退款金额条件采用方案甲：退款金额>500元须退款负责人批准，保留>运算符，来源标注为方案甲。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "refund_800",
+              "label": "采用方案乙：>800元",
+              "description": "退款金额条件保持>800元须退款负责人批准，来源标注为方案乙。",
+              "answer": "退款金额条件采用方案乙：退款金额>800元须退款负责人批准，保留>运算符，来源标注为方案乙。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "refund_both",
+              "label": "两组都保留并列为差异",
+              "description": "退款金额条件同时保留>500元和>800元两个取值，在差异表中并列展示并分别标注来源。",
+              "answer": "退款金额条件同时保留方案甲的>500元和方案乙的>800元，在差异表中并列展示，分别标注来源，不选择胜者。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "digest": {
+        "description": "合成规则材料，不涉及真实个人或交易。",
+        "technologies": [],
+        "dependencies": [],
+        "directoryOverview": [
+          "docs/",
+          "docs/方案乙.txt",
+          "docs/方案甲.txt"
+        ],
+        "fileSummaries": [
+          "[USER_MATERIAL] docs/方案乙.txt：文件内容摘要：订单审批标准：订单金额>=5000元须复核。；退款标准：退款金额>800元须退款负责人批准。；业务摘录：[片段 1/1] 订单审批标准：订单金额>=5000元须复核。 退款标准：退款金额>800元须退款负责人批准。",
+          "[USER_MATERIAL] docs/方案甲.txt：文件内容摘要：订单审批标准：订单金额>=3000元须复核。；退款标准：退款金额>500元须退款负责人批准。；业务摘录：[片段 1/1] 订单审批标准：订单金额>=3000元须复核。 退款标准：退款金额>500元须退款负责人批准。"
+        ],
+        "analysisStatus": "COMPLETE",
+        "analyzedFileCount": 2,
+        "warnings": [
+          "资料对“订单审批标准”存在不同取值：docs/方案甲.txt（订单金额>=3000元须复核）与 docs/方案乙.txt（订单金额>=5000元须复核）。请确认本次采用哪一项。",
+          "资料对“退款标准”存在不同取值：docs/方案甲.txt（退款金额>500元须退款负责人批准）与 docs/方案乙.txt（退款金额>800元须退款负责人批准）。请确认本次采用哪一项。"
+        ],
+        "factCards": []
+      }
+    },
+    {
+      "source": "batch-scope-known-20261005-02/OP-BOUNDARY-M-deepseek_deepseek-v4-pro-plan.json",
+      "questions": [
+        {
+          "id": "order_approval_threshold",
+          "question": "订单审批的金额阈值应采用哪个方案？",
+          "hint": "两个方案对订单审批阈值有不同规定，需确定最终规则。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "use_plan_a",
+              "label": "采用方案甲",
+              "description": "订单金额>=3000元须复核",
+              "answer": "订单审批阈值采用方案甲：订单金额>=3000元须复核。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "use_plan_b",
+              "label": "采用方案乙",
+              "description": "订单金额>=5000元须复核",
+              "answer": "订单审批阈值采用方案乙：订单金额>=5000元须复核。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "keep_both",
+              "label": "保留两个方案",
+              "description": "在差异表中同时列出两个方案的阈值",
+              "answer": "订单审批阈值保留两个方案：方案甲为>=3000元，方案乙为>=5000元。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "refund_threshold",
+          "question": "退款金额的阈值应采用哪个方案？",
+          "hint": "两个方案对退款阈值有不同规定，需确定最终规则。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "use_plan_a",
+              "label": "采用方案甲",
+              "description": "退款金额>500元须退款负责人批准",
+              "answer": "退款阈值采用方案甲：退款金额>500元须退款负责人批准。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "use_plan_b",
+              "label": "采用方案乙",
+              "description": "退款金额>800元须退款负责人批准",
+              "answer": "退款阈值采用方案乙：退款金额>800元须退款负责人批准。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "keep_both",
+              "label": "保留两个方案",
+              "description": "在差异表中同时列出两个方案的阈值",
+              "answer": "退款阈值保留两个方案：方案甲为>500元，方案乙为>800元。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "digest": {
+        "description": "合成规则材料，不涉及真实个人或交易。",
+        "technologies": [],
+        "dependencies": [],
+        "directoryOverview": [
+          "docs/",
+          "docs/方案乙.txt",
+          "docs/方案甲.txt"
+        ],
+        "fileSummaries": [
+          "[USER_MATERIAL] docs/方案乙.txt：文件内容摘要：订单审批标准：订单金额>=5000元须复核。；退款标准：退款金额>800元须退款负责人批准。；业务摘录：[片段 1/1] 订单审批标准：订单金额>=5000元须复核。 退款标准：退款金额>800元须退款负责人批准。",
+          "[USER_MATERIAL] docs/方案甲.txt：文件内容摘要：订单审批标准：订单金额>=3000元须复核。；退款标准：退款金额>500元须退款负责人批准。；业务摘录：[片段 1/1] 订单审批标准：订单金额>=3000元须复核。 退款标准：退款金额>500元须退款负责人批准。"
+        ],
+        "analysisStatus": "COMPLETE",
+        "analyzedFileCount": 2,
+        "warnings": [
+          "资料对“订单审批标准”存在不同取值：docs/方案甲.txt（订单金额>=3000元须复核）与 docs/方案乙.txt（订单金额>=5000元须复核）。请确认本次采用哪一项。",
+          "资料对“退款标准”存在不同取值：docs/方案甲.txt（退款金额>500元须退款负责人批准）与 docs/方案乙.txt（退款金额>800元须退款负责人批准）。请确认本次采用哪一项。"
+        ],
+        "factCards": []
+      }
+    }
+  ]
+}

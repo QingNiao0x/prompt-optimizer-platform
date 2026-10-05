@@ -1,0 +1,77 @@
+{
+  "source": "batch-scenes-M-20261005-02/CD-13-M-deepseek_deepseek-v4-pro-plan.json",
+  "rawPrompt": "## 任务\n请把附件中合成社区活动的英文通知翻译成自然的简体中文，供首次参加者阅读。只输出译文，不写译者说明、原文、标题之外的新标题、摘要、代码或实施步骤。原文段落和项目符号须一一对应，日期和时间范围不得改变。本题只处理合成通知，不代表活动已经举办或报名已经成功。目标语言、读者和仅译文要求已明确，不需要再询问。\n\n## 已知资料\n1. 活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。\n2. 通知中的cancelled与postponed分别是取消与延期，不能都译为活动结束。\n3. 备用场次只在主场次取消后启用；主场次延期并不自动触发备用场次。\n4. 原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。\n\n## 约束\n- 只输出对应译文；保留原文中的条件、否定、待确认状态及段落层级。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不能加入译文。\n- 术语表与测试例子冲突时采用本题明确指定的术语表，不将测试例子当产品事实。\n\n## 尚待明确\n- 原文access pass的正式中文名称是否已有确认？ 目前未确认，Plan应向用户确认此决定。\n\n## 交付\n与原文段落和项目符号对应的简体中文译文。\n只使用本题合成资料。已知事实不重问；常规措辞与排版自行处理。测试例子、当前依据及未批准材料分开，必要未决条件进入可复制正文，不在多个段落重复改写。\n\n## 原文\nWelcome to Rivergate Open Day. Registration is open from 08:30 to 09:00 on 20 October 2026. A registration request is not a confirmed booking.\n\nIf the main session is cancelled, a backup session may be offered after confirmation. A postponed session does not automatically activate the backup session. Do not travel before the updated notice is published.\n\nPlease bring your access pass. Its official local name is still under review. The proposed date for the next event has not been approved. Participation is voluntary, and the notice does not promise any learning outcome.",
+  "digest": {
+    "description": "",
+    "technologies": [],
+    "dependencies": [],
+    "directoryOverview": [
+      "materials/",
+      "materials/scene-13/",
+      "materials/scene-13/current-brief.md",
+      "materials/scene-13/term-test.txt",
+      "materials/scene-13/tests/",
+      "materials/scene-13/tests/layout-example.txt"
+    ],
+    "fileSummaries": [
+      "[PROJECT_DOCUMENT] materials/scene-13/current-brief.md：Markdown 文档摘要：合成当前说明；原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。；A registration request is not a confirmed booking.；Do not travel before the updated notice is published.；Participation is voluntary, and the notice does not promise any learning outcome.；业务摘录：Please bring your access pass. Its official local name is still under review. The proposed date for the next event has not been approved. Participation is voluntary, and the notice does not promise any learning outcome.；活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。；原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。；[片段 1/1]；主场次延期并不自动触发备用场次。",
+      "[USER_MATERIAL] materials/scene-13/term-test.txt：文件内容摘要：仅用于排版测试：Rivergate Open Day=河湾峰会；access pass=永久会员卡。；以上译名没有批准，不是本次术语。；业务摘录：[片段 1/1] 仅用于排版测试：Rivergate Open Day=河湾峰会； access pass=永久会员卡。 以上译名没有批准，不是本次术语。"
+    ],
+    "analysisStatus": "COMPLETE",
+    "analyzedFileCount": 3,
+    "warnings": [],
+    "factCards": [
+      {
+        "id": "F01",
+        "category": "BUSINESS_RULE",
+        "origin": "PROJECT_DOCUMENT",
+        "sourcePath": "materials/scene-13/current-brief.md",
+        "evidence": "原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期"
+      }
+    ]
+  },
+  "questions": [
+    {
+      "id": "access_pass_translation",
+      "question": "原文中 access pass 的正式中文名称尚未确认，译文应如何处理？",
+      "hint": "原文说明其官方本地名称仍在审核中，需要确定译文用词以保持准确。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "keep_english",
+          "label": "保留英文 access pass",
+          "description": "在译文中直接使用英文原文，不翻译。",
+          "answer": "access pass",
+          "recommended": true,
+          "recommendationReason": "原始需求明确包含：access pass。请核对适用范围后选择。"
+        },
+        {
+          "id": "translate_literal",
+          "label": "直译为“通行证”",
+          "description": "使用通用中文译名“通行证”。",
+          "answer": "通行证",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "translate_access_card",
+          "label": "译为“入场卡”",
+          "description": "使用“入场卡”作为译名。",
+          "answer": "入场卡",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "translate_access_permit",
+          "label": "译为“准入凭证”",
+          "description": "使用“准入凭证”作为译名。",
+          "answer": "准入凭证",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ]
+}

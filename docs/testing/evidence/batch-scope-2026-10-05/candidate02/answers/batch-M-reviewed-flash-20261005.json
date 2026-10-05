@@ -1,0 +1,168 @@
+{
+  "CD-01-M": {
+    "Q1": {
+      "answer": "暂不确定，保留为未决前提，实施前先确认；不得绕过地区匹配条件。地区缺失或无法核验不等于匹配成功，不能仅凭用户点击确认就补值。",
+      "basis": "unknownDecisions software.region_missing_behavior 的答案卡；rawPrompt/已知资料/1及 materials/software/current-brief.md明确地区符合是准入条件。没有选择O3，也未默定隐藏、禁用或补齐方案。"
+    }
+  },
+  "CD-02-M": {
+    "debug_section": {
+      "answer": "需要只读排查步骤，不包含安装依赖、修改配置或启动生产服务的命令；只依据给定接口和稳定错误标识整理，不编造集中日志平台。",
+      "basis": "unknownDecisions project_docs.audience_handover_depth 的答案卡；rawPrompt要求只读现状整理，materials/project_docs/current-brief.md说明错误契约和日志配置覆盖边界。"
+    },
+    "retention_conflict": {
+      "answer": "按原始要求并列列出旧交接说明的永久保留与新需求草稿的180天保留、各自来源和草稿尚未批准状态；不擅自采用任何一项，不将旧说明直接当成当前已证实口径。",
+      "basis": "rawPrompt/尚待明确及 materials/project_docs/legacy-note.md已要求指出差异而不采用；这不是新决定，没有借用调试章节答案卡。"
+    }
+  },
+  "CD-03-M": {
+    "report_example_audience": {
+      "answer": "工作汇报，采用合成的季度工作总结；不要加入真实单位名称。",
+      "basis": "unknownDecisions user_guide.guide_example_type 的匹配答案卡；本题仍只交普通用户指南和结构示意，不把示例当正式报告。"
+    }
+  },
+  "CD-04-M": {
+    "q1": {
+      "answer": "没有同口径基期，仅描述本期内部月度变化，不计算同比；不得把新增台账或基期分母写成已经获得。",
+      "basis": "unknownDecisions public_report.baseline_compare 的匹配答案卡；rawPrompt已限制资料仅本中心六个月汇总。"
+    },
+    "q2": {
+      "answer": "保留台账超过5个工作日与会议纪要建议超过3个工作日的差异及来源，不擅自采用其中一项；会议纪要是未注明生效，不能断言确定未生效。仅列需核查口径，不凭现有汇总反推两种口径的积压数字。",
+      "basis": "rawPrompt/尚待明确明确指出差异且不采用；materials/public_report/current-brief.md与legacy-note.md均说明不能直接比较、不能选有利口径。没有匹配答案卡，因此只继承已知约束，不审批口径。"
+    }
+  },
+  "CD-05-M": {
+    "max_rounds_termination": {
+      "answer": "暂不确定，请保留为预注册前待确认条件，不直接固定为一轮或无限追问；最大轮次与终止规则需事先确定并记录，不能用重试覆盖首次失败。",
+      "basis": "unknownDecisions research_design.interaction_stop 的匹配答案卡；rawPrompt与materials/research_design/current-brief.md要求预注册、公平信息与保留失败。"
+    },
+    "disagreement_resolution": {
+      "answer": "两名评审的分歧处理方式暂不确定，保留为预注册前待确认条件；仍须独立盲评并保留双方原始评分，不默认讨论共识、第三名仲裁或取均值已经获准。",
+      "basis": "rawPrompt/尚待明确包含分歧处理；unknownDecisions research_design.score_agreement 的答案卡仍暂不确定。材料只确定两名独立盲评者，不提供已批准的分歧处理方式。"
+    },
+    "agreement_metric": {
+      "answer": "暂不确定，不提前指定统计检验或一致性指标；按评分变量类型提出候选并说明选择条件，预注册前由研究团队核实，不把kappa或ICC直接写成已确定方法。",
+      "basis": "unknownDecisions research_design.score_agreement 的匹配答案卡；materials/research_design/current-brief.md明确变量类型未定不能锁定检验，需独立评阅。"
+    }
+  },
+  "CD-06-M": {
+    "completion_denominator": {
+      "answer": "暂不确定，先给出全部登记与有效答卷两种分母口径的差异，不计算比例。",
+      "basis": "unknownDecisions data_analysis.rate_denominator 的匹配答案卡；rawPrompt已禁止分母未定时计算。"
+    },
+    "missing_presentation": {
+      "answer": "暂不确定，保留独立缺失状态，不默认剔除、补零或计为未完成；也不因单列缺失就自动将其排除在分母之外，完成率仍待口径确认。",
+      "basis": "unknownDecisions data_analysis.missing_response_policy 的匹配答案卡；rawPrompt/已知资料/2与资料说明缺失状态未知、分母未决定。"
+    },
+    "status_mapping": {
+      "answer": "按原始要求并列指出数据字典COMPLETE与旧报表示例DONE的差异和来源，映射未提供，不擅自等同、不采用一方替代另一方；旧报表示例不能变成本次结果事实。",
+      "basis": "rawPrompt/尚待明确与materials/data_analysis/legacy-note.md明确缺映射和不采用；materials/data_analysis/current-brief.md说明旧报表只是排版示例。没有新增状态映射答案卡。"
+    }
+  },
+  "CD-07-M": {
+    "q1_observation_window": {
+      "answer": "尚未确定，由运营与相关专业人员制定，方案保留该前提，不默认当天结束即爽约，不默认7天或30天。取消免责边界同样未定，24小时与12小时保留来源差异，不能择一当生效规则。",
+      "basis": "unknownDecisions hospital_operations.no_show_window 的匹配答案卡；rawPrompt及materials/hospital_operations/current-brief.md说明观察窗口未知、材料权威性未建立。"
+    },
+    "q3_channel_unit": {
+      "answer": "预约事件作为主口径；当前没有授权的患者去重键，不做人数统计。仍只交运营分析方案，不计算真实医院指标。",
+      "basis": "unknownDecisions hospital_operations.visit_unit 的匹配答案卡；rawPrompt已区分事件数与人数，并限定没有完整逐条数据。"
+    },
+    "q4_channel_definition": {
+      "answer": "暂不确定，首次、最终操作或多渠道归属尚未制定；保留为需要运营方确认的渠道定义，不把操作次数当作预约事件量，也不在本轮擅自选择渠道归属规则。",
+      "basis": "materials/hospital_operations/current-brief.md要求先定义首次与变更渠道，但没有确定归属选择；本题无对应答案卡，属于真实新增未决条件。"
+    }
+  },
+  "CD-08-M": {
+    "q1_yll_life_table": {
+      "answer": "暂不确定，由研究团队和专业评审确定，不自动选某机构寿命表，也不默认适用年份；只列方法和前提，不计算YLL结果。",
+      "basis": "unknownDecisions medical_research.reference_life_table 的匹配答案卡；rawPrompt明确寿命表未确定时不产出数字。"
+    },
+    "q2_arriaga_comparison": {
+      "answer": "暂不确定，先列出需满足的前提，不把死亡率差异与预期寿命差异混为一谈；比较人群与差异对象仍需研究团队和专业评审确认。",
+      "basis": "unknownDecisions medical_research.decomposition_target 的匹配答案卡；materials/medical_research/current-brief.md要求先确认分解对象。"
+    },
+    "q3_population_denominator": {
+      "answer": "暂不确定，没有完整分母，不计算任何率；人口来源、年度和分层匹配层级保留为待确认前提，不自行选普查、插值或年度估计。",
+      "basis": "unknownDecisions medical_research.population_denominator 的匹配答案卡；rawPrompt声明没有完整人口分母。"
+    },
+    "q4_age_group_conflict": {
+      "answer": "按原始要求保留登记字典5岁组与分析草稿10岁组的差异及两方来源，不擅自采用一项；聚合映射和开放年龄组边界未确认，方法方案列为未决前提，不删高龄组以方便计算。",
+      "basis": "rawPrompt/尚待明确与materials/medical_research/legacy-note.md；current-brief.md说明聚合映射和高龄边界缺失。没有年龄组选择答案卡，继承既有保留差异要求。"
+    },
+    "q5_sex_u_handling": {
+      "answer": "U仍为未知，不并入F或M、不根据个人特征推断性别；在方案中作为数据质量项保留。是否进入总量及分层分母、是否排除或采用任何插补方法尚未确定，请研究团队确认，不默认选择。",
+      "basis": "rawPrompt/已知资料/2与materials/medical_research/current-brief.md已明确U不能合并；同一资料又说明是否进入总量与分层分母需确认。没有匹配答案卡，不能借用人口分母卡确定U政策。"
+    },
+    "q6_disease_code_mapping": {
+      "answer": "A、B、C仅作为占位代码描述方法，实际疾病编码映射尚未批准，仍列待确认前提；不将常用编码或候选映射写成已知分类事实，不用未确认映射计算。",
+      "basis": "rawPrompt/已知资料/4及约束、materials/medical_research/current-brief.md明确占位及专业确认边界。这是继承已知限制，不是新增已批准映射。"
+    }
+  },
+  "CD-09-M": {},
+  "CD-10-M": {
+    "primary_draft": {
+      "answer": "暂不确定，两版并列核对，不能按文件日期自动认定后一版已被接受；不设已确认主文本，也不把两版拼成更不利的统一条款。",
+      "basis": "unknownDecisions legal_memo.document_authority 的匹配答案卡；materials/legal_memo/current-brief.md明确文档日期不是接受日期，主文本未知时可并列差异。"
+    },
+    "review_focus": {
+      "answer": "侧重持续履约，但保留提前退出的证据问题；不作策略性法律建议，不给法律效力或胜诉结论。",
+      "basis": "unknownDecisions legal_memo.review_focus 的匹配答案卡；rawPrompt限定律师复核备忘录而非法律结论。"
+    }
+  },
+  "CD-11-M": {
+    "q1": {
+      "answer": "暂不确定，保留为输入元数据缺口，不自行假定复权类型；报告写复权方式未知，不认定未复权、前复权或发生过真实市场事件。",
+      "basis": "unknownDecisions financial_risk.price_adjustment 的匹配答案卡；rawPrompt禁止默认复权方式，资料仅为合成序列。"
+    },
+    "q2": {
+      "answer": "简单收益率作为展示口径，公式与单位明确；不将其延伸为交易建议，不产生确定年化收益和真实证券预测。",
+      "basis": "unknownDecisions financial_risk.return_definition 的匹配答案卡；rawPrompt限定风险模板与合成样本。"
+    },
+    "q3": {
+      "answer": "按原始要求并列保留字典的手与旧图表标题的股及各自来源，注明换算未提供，不擅自采用其中一项或按常识换算。",
+      "basis": "rawPrompt/尚待明确与materials/financial_risk/current-brief.md、legacy-note.md已明确单位冲突和不偷偷换算；无新增单位选择卡。"
+    },
+    "q4": {
+      "answer": "由编写者在既定风险指标表、样本限制清单与空白图表范围内自行组织章节和措辞；必须保留二十个交易日及无外部历史的限制，在相关指标处说明适用边界，无需用户指定章节排版，不扩大为投资策略。",
+      "basis": "rawPrompt/交付已要求样本限制与数据核查清单，末段授权自行整理常规细节；materials/financial_risk/current-brief.md说明各项限制。没有章节形式答案卡，属于已委派写法而非新业务偏好。"
+    }
+  },
+  "CD-12-M": {},
+  "CD-13-M": {
+    "access_pass_name": {
+      "answer": "正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得改成已确定的官方名称。保留仅译文、原文段落对应和待审核状态。",
+      "basis": "unknownDecisions translation.access_pass_term 的匹配答案卡；原文official local name is still under review及materials/scene-13/term-test.txt表明永久会员卡仅是未批准测试译名。"
+    }
+  },
+  "CD-14-M": {
+    "review_frequency": {
+      "answer": "尚未决定，仅记录每周复盘的建议，不将其写成已批准频率；按原文主持人“这次不作决定”保留建议与待确认状态，不推测会后已有决定。",
+      "basis": "unknownDecisions meeting.review_frequency 的匹配答案卡，同时原始发言和materials/scene-14/current-brief.md已明确未决定。这是继承已知状态，不是更新决议。"
+    },
+    "page_owner": {
+      "answer": "未指定，保留展示页面调整行动项的负责人为“未指定”，不替会议安排人员；小林负责数据字典的事实不能迁移成页面调整负责人。",
+      "basis": "unknownDecisions meeting.page_owner 的匹配答案卡；rawPrompt、原文记录员与materials/scene-14/current-brief.md均明确未指定，两个对象不可混同。"
+    }
+  },
+  "CD-15-M": {
+    "cancel_window_status": {
+      "answer": "尚未决定，保留活动甲取消窗口待定，不套用活动乙的时间限制；现行材料未覆盖该规则不等于制度不存在，不编造已批准取消窗口或额外草稿。",
+      "basis": "unknownDecisions synthesis.cancellation_window 的匹配答案卡；rawPrompt及materials/scene-15/current-brief.md明确活动乙24小时不能补作活动甲规则，缺失说明不能写制度不存在。"
+    },
+    "age_draft_presentation": {
+      "answer": "按原始要求并列保留活动甲草稿A满16周岁和草稿B满18周岁及两方出处，均为批准状态未知，不擅自选为当前规则；不能把未知状态改写为已确定未批准，也不借测试年龄20补规则。",
+      "basis": "rawPrompt/尚待明确、原文及materials/scene-15/unapproved-draft.md已要求保留两方且批准未知；没有新增资格选择答案卡。"
+    }
+  },
+  "CD-16-M": {
+    "q1": {
+      "answer": "优先均衡两厅活动，但不能改变讲者日期与场地整理限制；仍交两个可行草案及取舍，不改成只给一套，也不虚构主题清单或已确认报名人数。",
+      "basis": "unknownDecisions general.presentation_preference 的匹配答案卡；rawPrompt固定两方案、讲者日期、容量与40分钟加10分钟整理。"
+    },
+    "q2": {
+      "answer": "暂未确认，请保留未知，不默认限制为上午或全天；草案中明确讲者丙可用时间须确认，不将其写成已批准要求。",
+      "basis": "unknownDecisions general.morning_preference 的匹配答案卡；rawPrompt及materials/scene-16/current-brief.md仅说明上午偏好尚未确认。"
+    }
+  }
+}

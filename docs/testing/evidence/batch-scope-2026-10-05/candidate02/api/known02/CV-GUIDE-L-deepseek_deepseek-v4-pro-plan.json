@@ -1,0 +1,160 @@
+{
+  "id": "CV-GUIDE-L-deepseek_deepseek-v4-pro-plan",
+  "caseId": "CV-GUIDE-L",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T13:30:27.272Z",
+  "prepared": {
+    "contextId": "52b8fc67-ee8a-4689-a1a5-82701eb0cac3",
+    "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2",
+    "digest": {
+      "description": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologies": [
+        "Vue"
+      ],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] docs/产品范围.md：Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。；业务摘录：[片段 1/1] 现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。 模型由管理员发布，用户可选择可用模型但不填密钥。 扫描PDF OCR未开放。 没有自动执行、完整账号管理或专业结论承诺。",
+        "[PROJECT_SOURCE] src/Product.vue：Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>；业务摘录：[片段 1/1] <template><button>开始增强</button><button>复制</button></template>"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologyStack": [
+        {
+          "name": "Vue",
+          "source": "src/Product.vue",
+          "confidence": 0.9
+        }
+      ],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/产品范围.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。模型由管理员发布，用户可选择可用模型但不填密钥。扫描PDF OCR未开放。没有自动执行、完整账号管理或专业结论承诺。",
+          "summary": "Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。",
+          "truncated": false
+        },
+        {
+          "path": "src/Product.vue",
+          "language": "vue",
+          "content": "[片段 1/1]\n<template><button>开始增强</button><button>复制</button></template>",
+          "summary": "Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T14:00:27.298049600Z",
+    "latencyMs": 7
+  },
+  "plan": {
+    "summary": "已理解目标是为非技术用户编写中文操作指南，材料已覆盖主要流程和边界；但部分按钮位置、历史删除后的界面提示及常见问题中的重试方式未在材料中明确，需确认以保持指南忠于材料。",
+    "questions": [
+      {
+        "id": "history_delete_hint",
+        "question": "指南中说明历史记录删除后，用户界面应如何提示？",
+        "hint": "材料仅说明逻辑删除，未说明删除后界面提示，需确认表述方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "state_logical_delete",
+            "label": "说明逻辑删除，不描述界面提示",
+            "description": "只说明历史记录删除是逻辑删除，不描述删除后的界面提示。",
+            "answer": "历史记录删除是逻辑删除，数据不会立即从物理库消失。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "state_unknown_hint",
+            "label": "说明逻辑删除，并注明界面提示以实际为准",
+            "description": "说明逻辑删除，同时注明删除后的界面提示以实际界面为准。",
+            "answer": "历史记录删除是逻辑删除，数据不会立即从物理库消失；删除后的界面提示以实际界面为准。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "retry_method",
+        "question": "常见问题中“模型失败时如何保留需求后重试”，材料未说明具体重试方式，应如何表述？",
+        "hint": "需确定重试方式的表述，避免编造具体操作。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "general_retry",
+            "label": "只说明可保留需求后重试，不描述具体步骤",
+            "description": "说明模型失败时可保留需求后重试，不描述具体操作步骤。",
+            "answer": "当模型失败时，可以保留需求后重试。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "retry_with_interface",
+            "label": "说明可重试，并注明具体操作以界面为准",
+            "description": "说明可重试，并注明具体操作以当前界面为准。",
+            "answer": "当模型失败时，可以保留需求后重试，具体操作以当前界面为准。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 9888,
+    "planId": "97259080-1470-4d17-bb60-9108ddd7247a",
+    "planningContext": {
+      "contextId": "52b8fc67-ee8a-4689-a1a5-82701eb0cac3",
+      "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2"
+    },
+    "expiresAt": "2026-10-05T14:00:27.298049600Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "2cd21517-8437-4dea-a7b9-9733063e3b89",
+      "elapsedMs": 38
+    },
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "3bee74fe-31da-4014-81da-dcc6993d15b3",
+      "elapsedMs": 9925
+    }
+  ]
+}

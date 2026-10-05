@@ -1,0 +1,246 @@
+{
+  "id": "CD-16-L-deepseek_deepseek-v4-pro-plan",
+  "caseId": "CD-16-L",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T15:10:57.208Z",
+  "prepared": {
+    "contextId": "8a9c4469-fc7a-4c22-98a4-d07c2adc24ad",
+    "version": "sha256:e186d42b29652de5849d70a57d145903954c6073e7ecbb6aa35ecee925746c45",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/scene-16/",
+        "materials/scene-16/current-brief.md",
+        "materials/scene-16/tests/",
+        "materials/scene-16/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/scene-16/current-brief.md：Markdown 文档摘要：合成当前说明；不能为了使两份排期完整就宣称丙可以全天参加，或把丙的限制传播给甲乙。；即使确认均衡，也不能把大容量主题移到乙厅。；资料没有批准活动取消顺序，遇不可满足条件应指出冲突而非擅自删掉某个主题。；可行只指在已给条件与显式前提下无冲突，不表示实际参与者已经同意或场地已完成预约。；业务摘录：活动清单核对：七场必须活动的合成清单为：甲一开放材料、甲二资料核查、甲三操作演示、乙一规则表达、乙二结果核对、乙三反馈交流、丙一跨主题讨论。；主题预估参加人数另为开放材料二十五、资料核查十五、操作演示十八、规则表达二十八、结果核对十六、反馈交流十九、跨主题讨论二十；；活动全集：第一天必须安排讲者甲的开放材料、资料核查、操作演示三个主题，第二天必须安排讲者乙的规则表达、结果核对、反馈交流三个主题。；[片段 1/1]；两种草案区别：两个排期要有实际时间或场地的不同组织，不把同一时间表仅改写标题当第二方案。；可行只指在已给条件与显式前提下无冲突，不表示实际参与者已经同意或场地已完成预约。",
+        "[TEST_SOURCE] materials/scene-16/tests/layout-example.txt：文件内容摘要：仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。；这不是本题事实、偏好或执行决定。；业务摘录：[片段 1/1] 仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。 这不是本题事实、偏好或执行决定。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "每场讲座40分钟，随后场地整理10分钟，同一场地相邻讲座必须留出整理时段"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "不得互换日期"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "活动全集：第一天必须安排讲者甲的开放材料、资料核查、操作演示三个主题，第二天必须安排讲者乙的规则表达、结果核对、反馈交流三个主题"
+        },
+        {
+          "id": "F04",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "时间边界：讲座起点不得早于九点，结束加整理必须不晚于十七点"
+        },
+        {
+          "id": "F05",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "同一讲者相邻跨厅活动还须留至少五分钟步行时间，该时间不能与必须由其主持的活动重叠"
+        },
+        {
+          "id": "F06",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "只有资料核查与操作演示需要依序参加的同一组人，因此演示必须在核查结束后至少十分钟开始"
+        },
+        {
+          "id": "F07",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "候场说明：预计超过乙厅容量的主题必须排甲厅"
+        },
+        {
+          "id": "F08",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "跨厅五分钟步行与设备转移不是同一资源，可以同时发生但必须分别满足"
+        },
+        {
+          "id": "F09",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "若方案需要下午出席，必须把确认全天可参加列为执行前提"
+        },
+        {
+          "id": "F10",
+          "category": "DATA_FORMAT",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "结果格式：每种安排一张表，列名固定为日期、时段、场地、活动、必要前提"
+        },
+        {
+          "id": "F11",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "活动清单核对：七场必须活动的合成清单为：甲一开放材料、甲二资料核查、甲三操作演示、乙一规则表达、乙二结果核对、乙三反馈交流、丙一跨主题讨论"
+        },
+        {
+          "id": "F12",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "人数等于上限可以安排，不得误判超限"
+        },
+        {
+          "id": "F13",
+          "category": "DATA_SOURCE",
+          "origin": "TEST_SOURCE",
+          "sourcePath": "materials/scene-16/tests/layout-example.txt",
+          "evidence": "仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/scene-16/",
+        "materials/scene-16/current-brief.md",
+        "materials/scene-16/tests/",
+        "materials/scene-16/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/scene-16/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 合成当前说明\n活动日期已定为合成日期2026年10月20日和21日，每天可用时间为09:00至17:00。\n甲厅与乙厅各有一个活动区域，甲厅人数上限30人，乙厅人数上限20人。\n每场讲座40分钟，随后场地整理10分钟，同一场地相邻讲座必须留出整理时段。\n讲者甲仅能参加第一天，讲者乙仅能参加第二天；不得互换日期。\n\n# 原文或原始记录\n合成展厅资源表：两天均09:00至17:00；甲厅上限30，乙厅上限20。每场40分钟，其后整理10分钟。讲者甲仅第一天，讲者乙仅第二天。讲者丙的上午偏好尚未确认。两厅可同时开放，但同一讲者不能同时出席两场。午间12:00至13:00两厅均不安排讲座。\n\n# 分支与边界\n活动全集：第一天必须安排讲者甲的开放材料、资料核查、操作演示三个主题，第二天必须安排讲者乙的规则表达、结果核对、反馈交流三个主题。讲者丙承担两天任选一天的跨主题讨论。每个具名主题只排一次，跨主题讨论也只有一场，不通过复制同一活动填满两个大厅。\n\n时间边界：讲座起点不得早于九点，结束加整理必须不晚于十七点。十二点至十三点两厅都休息，不安排讲座、答疑或强制整理。可以留出空档，不能因为需要展示整天排期就制造未提供的活动。时间表注明讲座和整理的不同用途，不把十分钟整理偷计入四十分钟讲授。\n\n讲者约束：讲者甲仅能参加第一天，讲者乙仅能参加第二天，这是已定限制，不需再次选择。讲者丙是否仅上午仍未知，可给出带条件的安排并说明确认该偏好后哪些时段需要调整。不能为了使两份排期完整就宣称丙可以全天参加，或把丙的限制传播给甲乙。\n\n场地容量：甲厅三十人、乙厅二十人是容量上限，不是报名实数。主题预估参加人数另为开放材料二十五、资料核查十五、操作演示十八、规则表达二十八、结果核对十六、反馈交流十九、跨主题讨论二十；这些均是合成排期估算。不能安排预计二十八人的活动进入二十人乙厅而不说明条件。\n\n并行安排：不同讲者且不同场地的活动可以并行，条件是各自满足场地人数与设备要求。同一讲者相邻跨厅活动还须留至少五分钟步行时间，该时间不能与必须由其主持的活动重叠。一次讲者移动只算对应行程，不要求其他讲者一起空出时间。并行不是默认每个时段都要满排。\n\n设备需求：操作演示与结果核对需要可移动展示板，全场只有一块展示板。两项活动不能同一时间使用它，跨厅转移另需五分钟。展示板不是投影设备，不能把设备清单扩成两厅均有投影和网络。其他主题不需要展示板，不能因为共享设备稀缺把全部活动都改成串行。\n\n整理依赖：每场结束后的十分钟整理只占用对应场地，可以与另一厅不同讲者活动并行。整理人员只有一组，两个大厅整理不能重叠；若同时结束须重新安排某场，不能默默假定第二组人员。午间休息不能被挪用来补一次早晨未排的整理。人员数量未知的部分不另增保证。\n\n参与者连贯：报名者可选择任一单独主题，不要求连续参加全部讲座。只有资料核查与操作演示需要依序参加的同一组人，因此演示必须在核查结束后至少十分钟开始。其他主题不存在先修关系，不能为方便排期制造教学前置。每种安排说明哪些人流交接需要留出缓冲。\n\n顺序偏好：同主题集中与两厅均衡是尚需确认的取舍，不等于取消已明确活动。即使确认均衡，也不能把大容量主题移到乙厅。集中安排可减少部分移动，但不能声称一定提升满意度。取舍基于提供的场地、移动和人数条件，不加入未经调查的效果数字。\n\n两种草案区别：两个排期要有实际时间或场地的不同组织，不把同一时间表仅改写标题当第二方案。第二种安排仍覆盖全部七场主题，同样遵守讲者日期、午间、整理人员和设备限制。可以说明哪个更符合确认后的偏好，但偏好未提交前不标成用户已经选择。\n\n估算与事实：主题人数是协调练习的估计，不是真实报名或签到人数。没有材料证明的交通时长、设备维修、临时缺席和天气影响不作为既定约束。可提醒收到新条件时重排，但不额外设置未知城市、酒店、医疗支持或收费项目。任务不包含出行预订及现实安全审批。\n\n候场说明：预计超过乙厅容量的主题必须排甲厅；不能以直播、外厅站立或临时加椅解决，因为资料未授权这些做法。等于容量上限的二十人主题允许乙厅，不能误用严格小于条件把它拒绝。预估人数若后续变化需再核查，这是适用前提，不代表已超额或已获得扩容批准。\n\n时间计算：统一采用二十四小时格式，日期与时间分别列出。四十分钟讲座加十分钟整理是五十分钟场地占用，不能按四十五分钟切块。跨厅五分钟步行与设备转移不是同一资源，可以同时发生但必须分别满足。无法证明满足的并行安排明确列条件，不写已验证无冲突。\n\n未知偏好处理：讲者丙上午限制尚未确认时可优先给出上午候选，说明这只是兼容未知的安排，不是得到讲者批准。若方案需要下午出席，必须把确认全天可参加列为执行前提。不能为了消除待确认事项而删除跨主题讨论，亦不能让一个选择替用户解决设备和人数新冲突。\n\n备用范围：只交两种主草案，不生成无限多备选。可在取舍说明用一两句说明若丙只能上午时如何调整，不新增第三张完整排期表。资料没有批准活动取消顺序，遇不可满足条件应指出冲突而非擅自删掉某个主题。只比较给定活动，不补外部讲者或课程。\n\n结果格式：每种安排一张表，列名固定为日期、时段、场地、活动、必要前提；整理行可以标明整理，不被误算为额外讲座。两表后用简短文字解释移动、场地利用及丙偏好影响。不要改写为正式活动邀请、会议纪要、招生教案或数据统计报告，也不输出实现代码。\n\n内部核查：交付前逐对核对同场地占用、讲者重叠、整理人员、展示板使用和先后依赖。计算过程可内部完成，用户只要排期与取舍，不另交算法分析或代码测试报告。若未知条件导致只能条件可行，应清楚写条件，不用“原则上都可以”掩盖没有确认的时段。\n\n活动状态：资源表供排期演练，不能把两个草案写成已提交预约、已确认场地或已经通知参与者。材料没有真实联系人和地址，不能补出联系电话。选择方案以后还需现实执行方按授权核对，本任务仅整理可讨论安排，不替用户进行支付、签约或对外发送。\n\n活动清单核对：七场必须活动的合成清单为：甲一开放材料、甲二资料核查、甲三操作演示、乙一规则表达、乙二结果核对、乙三反馈交流、丙一跨主题讨论。甲一至甲三分别预计二十五、十五、十八人；乙一至乙三分别二十八、十六、十九人；丙一二十人。代号只用于核对本题排期，不是接口名、学生题号或既有预约记录，不在输出中补成真实登记数据。\n\n排期例外：若跨主题讨论排在第一天上午，第一天仍须完整安排甲的三场活动；若排在第二天上午，第二天仍须完整安排乙的三场。丙的时段选择不能导致甲乙换日。两个方案可以分别展示这两个兼容上午偏好的候选，但要说明上午是否为强制要求仍待确认。没有承诺丙能参加两天，因此不能把同一场跨主题讨论重复排到两天。\n\n核查结果含义：时段相接不等于已经满足整理和移动；人数等于上限可以安排，不得误判超限；主题同类不表示讲者可以互换。核查从明确资源逐项推导，不用“均衡”“顺畅”等形容词替代时间表。没有安排的时段标为空档即可，不追加活动。可行只指在已给条件与显式前提下无冲突，不表示实际参与者已经同意或场地已完成预约。",
+          "summary": "Markdown 文档摘要：合成当前说明；不能为了使两份排期完整就宣称丙可以全天参加，或把丙的限制传播给甲乙。；即使确认均衡，也不能把大容量主题移到乙厅。；资料没有批准活动取消顺序，遇不可满足条件应指出冲突而非擅自删掉某个主题。；可行只指在已给条件与显式前提下无冲突，不表示实际参与者已经同意或场地已完成预约。",
+          "truncated": false
+        },
+        {
+          "path": "materials/scene-16/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。这不是本题事实、偏好或执行决定。",
+          "summary": "文件内容摘要：仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。；这不是本题事实、偏好或执行决定。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T15:40:57.245944700Z",
+    "latencyMs": 132
+  },
+  "plan": {
+    "summary": "已理解任务：为合成展厅安排两日讲座排期，交付两个可行草案及取舍说明。需要确认讲者丙的上午限制和两种安排的组织偏好，这些会直接影响排期生成。",
+    "questions": [
+      {
+        "id": "speaker_c_morning_only",
+        "question": "讲者丙是否仅能参加上午？",
+        "hint": "这决定跨主题讨论可安排的时段，若仅上午则只能排在上午，否则可灵活安排。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "morning_only",
+            "label": "仅上午",
+            "description": "讲者丙只能参加上午时段，跨主题讨论必须安排在上午。",
+            "answer": "讲者丙仅能参加上午，跨主题讨论必须安排在上午时段。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "full_day",
+            "label": "全天可参加",
+            "description": "讲者丙全天可参加，跨主题讨论可安排在上午或下午。",
+            "answer": "讲者丙全天可参加，跨主题讨论可安排在上午或下午。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "arrangement_preference",
+        "question": "两种安排应优先集中同主题还是均衡两厅活动？",
+        "hint": "这决定排期的组织策略，影响场地利用和讲者移动。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "concentrate",
+            "label": "集中同主题",
+            "description": "优先将同一讲者的主题集中安排，减少讲者移动。",
+            "answer": "优先集中同主题，减少讲者移动。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "balance",
+            "label": "均衡两厅活动",
+            "description": "优先均衡两厅活动，使两个场地同时有活动。",
+            "answer": "优先均衡两厅活动，使两个场地同时有活动。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 6525,
+    "planId": "1efc8c35-630e-4d85-a4ae-dfb0f382ba31",
+    "planningContext": {
+      "contextId": "8a9c4469-fc7a-4c22-98a4-d07c2adc24ad",
+      "version": "sha256:e186d42b29652de5849d70a57d145903954c6073e7ecbb6aa35ecee925746c45"
+    },
+    "expiresAt": "2026-10-05T15:40:57.245944700Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-16-L-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "dea68a75-39e5-4d4a-8c5b-33e0fe08f73d",
+      "elapsedMs": 195
+    },
+    {
+      "label": "CD-16-L-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "b67db195-65a5-4ce8-9096-20cfa3697a6d",
+      "elapsedMs": 6595
+    }
+  ]
+}

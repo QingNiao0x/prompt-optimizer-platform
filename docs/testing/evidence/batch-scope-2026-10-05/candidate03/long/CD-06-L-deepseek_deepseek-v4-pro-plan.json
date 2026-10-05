@@ -1,0 +1,270 @@
+{
+  "id": "CD-06-L-deepseek_deepseek-v4-pro-plan",
+  "caseId": "CD-06-L",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T15:09:36.751Z",
+  "prepared": {
+    "contextId": "28848c66-65b4-495d-a84b-f346e6110c23",
+    "version": "sha256:e7575a4e2e726ec5d3cd071874f24536b954b70c2aafc44e6236dc85aa3135f3",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/data_analysis/",
+        "materials/data_analysis/current-brief.md",
+        "materials/data_analysis/legacy-note.md",
+        "materials/data_analysis/tests/",
+        "materials/data_analysis/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/data_analysis/current-brief.md：Markdown 文档摘要：注册与有效答卷口径的描述分析：合成现行资料；部门名称为合成分组，个体编号不得出现在结果表中。；完成状态与有效状态不是相同维度，一份完成的答卷仍可能被质检排除；方案需要说明分子是否要求同时完成与有效。；旧报表展示了完成率示例，但它用于演示排版，包含的百分比不是本次数据；结果模板不得继承这些数值。；报告解释只说明可观察差异和数据限制，不推断部门管理效果、员工态度或个人绩效，也不将合成示例当作单位真实表现。；业务摘录：报告解释只说明可观察差异和数据限制，不推断部门管理效果、员工态度或个人绩效，也不将合成示例当作单位真实表现。；字典中的百分号字段是人工登记的文本标签，不保证与分子分母一致，不能直接作为计算结果。；没有用户偏好时可提供工具无关的流程，不能借机改为特定商业软件操作手册。；[片段 1/1]；部门汇总可以给出已登记、有效、已完成和缺失四列，未知数应保持未知；",
+        "[PROJECT_DOCUMENT] materials/data_analysis/legacy-note.md：Markdown 文档摘要：数据字典完成状态写 COMPLETE。；另有草稿写：旧报表示例使用 DONE，未提供映射。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。；业务摘录：[片段 1/1] 数据字典完成状态写 COMPLETE。 另有草稿写：旧报表示例使用 DONE，未提供映射。 两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+        "[TEST_SOURCE] materials/data_analysis/tests/layout-example.txt：文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。；业务摘录：[片段 1/1] 仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。 这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 3,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/data_analysis/current-brief.md",
+          "evidence": "部门名称为合成分组，个体编号不得出现在结果表中"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/data_analysis/current-brief.md",
+          "evidence": "结果模板不得继承这些数值"
+        },
+        {
+          "id": "F03",
+          "category": "DATA_SOURCE",
+          "origin": "TEST_SOURCE",
+          "sourcePath": "materials/data_analysis/tests/layout-example.txt",
+          "evidence": "仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/data_analysis/",
+        "materials/data_analysis/current-brief.md",
+        "materials/data_analysis/legacy-note.md",
+        "materials/data_analysis/tests/",
+        "materials/data_analysis/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/data_analysis/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 注册与有效答卷口径的描述分析：合成现行资料\n输出为分析方案、口径说明和空白结果表，不是已经完成的分析报告。\n缺失答卷不能自动剔除、补零或当作未完成；这些是尚待确认的处理选择。\n字典中的百分号字段是人工登记的文本标签，不保证与分子分母一致，不能直接作为计算结果。\n部门名称为合成分组，个体编号不得出现在结果表中。\n\n# 分支与边界\n登记人数是纳入名单的事件总数，资料没有人员去重规则；如果一个合成编号重复出现，不能只凭姓名相同自动合并。\n有效答卷是经过现有质检的问卷数量，质检说明未给出具体阈值；分析方案可以要求补充规则，不能自行设定答题时长门槛。\n缺失答卷记录可能源于未作答、同步失败或未完成登记，字典没有区分原因；缺失不能等同某一种业务状态。\n完成状态与有效状态不是相同维度，一份完成的答卷仍可能被质检排除；方案需要说明分子是否要求同时完成与有效。\n部门汇总可以给出已登记、有效、已完成和缺失四列，未知数应保持未知；不能为了让各列相加相等而制造一个其他类别。\n部门甲样例中的零值代表真实零件数，部门乙空值代表未登记；统计伪代码应分别显示二者，并检查分母为零时的呈现规则。\n月份只在登记表中存在，不在答卷汇总中存在；没有关联键时不能编造各月有效答卷数量，也不能画假时间序列。\n旧报表展示了完成率示例，但它用于演示排版，包含的百分比不是本次数据；结果模板不得继承这些数值。\n如果分母后来改为有效答卷人数，登记口径不能直接消失，应保留覆盖差异；最终方案应把用户选择与数据来源同时标注。\n跨部门比较需要看到登记覆盖与缺失情况，不是只排高低名次；缺失程度不均可能影响解释，但没有证据时不声称存在选择偏倚。\n分析工具偏好影响代码语言而不影响完成率定义；没有用户偏好时可提供工具无关的流程，不能借机改为特定商业软件操作手册。\n报告解释只说明可观察差异和数据限制，不推断部门管理效果、员工态度或个人绩效，也不将合成示例当作单位真实表现。",
+          "summary": "Markdown 文档摘要：注册与有效答卷口径的描述分析：合成现行资料；部门名称为合成分组，个体编号不得出现在结果表中。；完成状态与有效状态不是相同维度，一份完成的答卷仍可能被质检排除；方案需要说明分子是否要求同时完成与有效。；旧报表展示了完成率示例，但它用于演示排版，包含的百分比不是本次数据；结果模板不得继承这些数值。；报告解释只说明可观察差异和数据限制，不推断部门管理效果、员工态度或个人绩效，也不将合成示例当作单位真实表现。",
+          "truncated": false
+        },
+        {
+          "path": "materials/data_analysis/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        },
+        {
+          "path": "materials/data_analysis/legacy-note.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n数据字典完成状态写 COMPLETE。\n另有草稿写：旧报表示例使用 DONE，未提供映射。\n两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "summary": "Markdown 文档摘要：数据字典完成状态写 COMPLETE。；另有草稿写：旧报表示例使用 DONE，未提供映射。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T15:39:36.785188500Z",
+    "latencyMs": 61
+  },
+  "plan": {
+    "summary": "已理解任务是为合成问卷汇总数据制定描述性分析方案和空白结果表模板，不实际计算。需要确认完成率分母、缺失答卷呈现方式、完成与有效状态的分子条件，以及状态值映射差异，这些直接影响指标定义和结果表结构。",
+    "questions": [
+      {
+        "id": "denominator_choice",
+        "question": "完成率的分母应采用哪种口径？",
+        "hint": "资料中登记人数和有效答卷人数均可作为分母，但当前未决定，且不同分母会改变完成率的解释。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "registered",
+            "label": "全部登记人数",
+            "description": "以 registered_count 为分母，反映登记名单中的完成覆盖情况。",
+            "answer": "完成率分母采用全部登记人数（registered_count）。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "valid",
+            "label": "有效答卷人数",
+            "description": "以 valid_response_count 为分母，反映有效答卷中的完成比例。",
+            "answer": "完成率分母采用有效答卷人数（valid_response_count）。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "both",
+            "label": "同时提供两种口径",
+            "description": "在方案中并列展示两种分母的计算结果，并说明差异。",
+            "answer": "完成率同时提供全部登记人数和有效答卷人数两种分母口径，并说明差异。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "missing_presentation",
+        "question": "缺失答卷在完成率与分部门表中应如何呈现？",
+        "hint": "缺失答卷状态未知，不能自动剔除、补零或当作未完成，需要明确其展示方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "separate_column",
+            "label": "单独列为缺失列",
+            "description": "在结果表中增加缺失答卷列，保持未知状态，不并入其他类别。",
+            "answer": "缺失答卷在完成率与分部门表中单独列为缺失列，保持未知状态，不并入其他类别。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "exclude",
+            "label": "从计算中排除",
+            "description": "计算完成率时排除缺失答卷，但需在表中注明排除规则。",
+            "answer": "缺失答卷从完成率计算中排除，并在表中注明排除规则。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "include_as_incomplete",
+            "label": "视为未完成",
+            "description": "将缺失答卷计入未完成类别，但需明确此假设。",
+            "answer": "缺失答卷视为未完成，计入未完成类别，并明确此假设。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "completion_valid_condition",
+        "question": "完成率分子是否要求答卷同时满足完成和有效两个条件？",
+        "hint": "资料指出完成状态与有效状态不是相同维度，一份完成的答卷仍可能被质检排除，需要明确分子条件。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "both_required",
+            "label": "同时完成且有效",
+            "description": "分子仅包括同时标记为完成且通过质检的答卷。",
+            "answer": "完成率分子要求答卷同时满足完成和有效两个条件。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "completed_only",
+            "label": "仅完成状态",
+            "description": "分子包括所有标记为完成的答卷，不考虑质检结果。",
+            "answer": "完成率分子仅考虑完成状态，不考虑质检结果。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "valid_only",
+            "label": "仅有效状态",
+            "description": "分子包括所有有效答卷，不考虑完成标记。",
+            "answer": "完成率分子仅考虑有效状态，不考虑完成标记。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "status_mapping",
+        "question": "数据字典中的 COMPLETE 与旧报表示例中的 DONE 应如何处理？",
+        "hint": "两份资料存在状态值差异，未提供映射，需要决定采用哪个值或如何映射。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "use_complete",
+            "label": "采用 COMPLETE",
+            "description": "以数据字典的 COMPLETE 为准，忽略旧报表示例的 DONE。",
+            "answer": "采用数据字典中的 COMPLETE 作为完成状态值，忽略旧报表示例的 DONE。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "use_done",
+            "label": "采用 DONE",
+            "description": "以旧报表示例的 DONE 为准，忽略数据字典的 COMPLETE。",
+            "answer": "采用旧报表示例中的 DONE 作为完成状态值，忽略数据字典的 COMPLETE。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "map_both",
+            "label": "建立映射关系",
+            "description": "在方案中说明 COMPLETE 和 DONE 的映射关系，并统一使用。",
+            "answer": "在方案中建立 COMPLETE 和 DONE 的映射关系，并统一使用。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 13157,
+    "planId": "f69abb30-2c0a-4395-a10f-0564a8698f44",
+    "planningContext": {
+      "contextId": "28848c66-65b4-495d-a84b-f346e6110c23",
+      "version": "sha256:e7575a4e2e726ec5d3cd071874f24536b954b70c2aafc44e6236dc85aa3135f3"
+    },
+    "expiresAt": "2026-10-05T15:39:36.785188500Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-06-L-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "cd7e1552-db60-473a-bcc1-d526e3be9418",
+      "elapsedMs": 110
+    },
+    {
+      "label": "CD-06-L-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "9664d0b2-a4c0-40be-a634-9478ecc63560",
+      "elapsedMs": 13215
+    }
+  ]
+}

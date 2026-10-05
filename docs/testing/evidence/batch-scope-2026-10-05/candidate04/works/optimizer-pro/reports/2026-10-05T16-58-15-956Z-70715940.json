@@ -1,0 +1,1148 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-05T16:58:15.958Z",
+  "manifest": {
+    "schemaVersion": 1,
+    "createdAt": "2026-10-05T16:41:49.927Z",
+    "jobsSha256": "d2946df4d5677d0bfb8beb5b2b681d133995729edfee3d7754459bbf62ecdfef",
+    "inputSha256": "06688149013f0d1aebbac49431e762ccd12c2b26fd1cfc0b310991119847e3c4",
+    "modelsSha256": "41f3066bb38a010bc62b66ebc5947520a04e9ded6ecb25e3523145360e74fdd7",
+    "origin": "FINAL_CANDIDATE_REAL_API",
+    "plannedCalls": 36,
+    "professionalReview": "PENDING",
+    "releaseApproval": false,
+    "optimizerCallsThisPreparation": 0,
+    "note": "External execution is separate from the platform. Generation failures remain in cases; this is not a full folder upload benchmark."
+  },
+  "records": [
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 13071,
+      "tokens": {
+        "prompt_tokens": 1177,
+        "completion_tokens": 3330,
+        "total_tokens": 4507
+      },
+      "jobId": "CD-07-M-raw-m1-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 15602,
+      "tokens": {
+        "prompt_tokens": 2521,
+        "completion_tokens": 3838,
+        "total_tokens": 6359
+      },
+      "jobId": "CD-07-M-direct-m1-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 12190,
+      "tokens": {
+        "prompt_tokens": 3130,
+        "completion_tokens": 2968,
+        "total_tokens": 6098
+      },
+      "jobId": "CD-07-M-plan-m1-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 14167,
+      "tokens": {
+        "prompt_tokens": 1334,
+        "completion_tokens": 3530,
+        "total_tokens": 4864
+      },
+      "jobId": "CD-07-M-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 19369,
+      "tokens": {
+        "prompt_tokens": 2678,
+        "completion_tokens": 5124,
+        "total_tokens": 7802
+      },
+      "jobId": "CD-07-M-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 26803,
+      "tokens": {
+        "prompt_tokens": 1176,
+        "completion_tokens": 3011,
+        "total_tokens": 4187
+      },
+      "jobId": "CD-07-M-raw-m2-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 31428,
+      "tokens": {
+        "prompt_tokens": 2520,
+        "completion_tokens": 3582,
+        "total_tokens": 6102
+      },
+      "jobId": "CD-07-M-direct-m2-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 40604,
+      "tokens": {
+        "prompt_tokens": 3129,
+        "completion_tokens": 4430,
+        "total_tokens": 7559
+      },
+      "jobId": "CD-07-M-plan-m2-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 27999,
+      "tokens": {
+        "prompt_tokens": 1333,
+        "completion_tokens": 3083,
+        "total_tokens": 4416
+      },
+      "jobId": "CD-07-M-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "CD-07-M",
+      "domain": "医院运营",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 26394,
+      "tokens": {
+        "prompt_tokens": 2677,
+        "completion_tokens": 2858,
+        "total_tokens": 5535
+      },
+      "jobId": "CD-07-M-direct_matched-m2-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 3280,
+      "tokens": {
+        "prompt_tokens": 1061,
+        "completion_tokens": 443,
+        "total_tokens": 1504
+      },
+      "jobId": "CD-09-M-raw-m1-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 3540,
+      "tokens": {
+        "prompt_tokens": 1723,
+        "completion_tokens": 493,
+        "total_tokens": 2216
+      },
+      "jobId": "CD-09-M-direct-m1-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 2580,
+      "tokens": {
+        "prompt_tokens": 2083,
+        "completion_tokens": 392,
+        "total_tokens": 2475
+      },
+      "jobId": "CD-09-M-plan-m1-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 6245,
+      "tokens": {
+        "prompt_tokens": 1060,
+        "completion_tokens": 438,
+        "total_tokens": 1498
+      },
+      "jobId": "CD-09-M-raw-m2-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 6122,
+      "tokens": {
+        "prompt_tokens": 1722,
+        "completion_tokens": 435,
+        "total_tokens": 2157
+      },
+      "jobId": "CD-09-M-direct-m2-r1"
+    },
+    {
+      "caseId": "CD-09-M",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 5477,
+      "tokens": {
+        "prompt_tokens": 2082,
+        "completion_tokens": 399,
+        "total_tokens": 2481
+      },
+      "jobId": "CD-09-M-plan-m2-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 5806,
+      "tokens": {
+        "prompt_tokens": 2934,
+        "completion_tokens": 1137,
+        "total_tokens": 4071
+      },
+      "jobId": "CD-05-L-raw-m1-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 5029,
+      "tokens": {
+        "prompt_tokens": 3547,
+        "completion_tokens": 878,
+        "total_tokens": 4425
+      },
+      "jobId": "CD-05-L-direct-m1-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "PENDING",
+        "score": null
+      },
+      "latencyMs": 5305,
+      "tokens": {
+        "prompt_tokens": 3218,
+        "completion_tokens": 1128,
+        "total_tokens": 4346
+      },
+      "jobId": "CD-05-L-plan-m1-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "PENDING",
+        "score": null
+      },
+      "latencyMs": 5933,
+      "tokens": {
+        "prompt_tokens": 3065,
+        "completion_tokens": 1156,
+        "total_tokens": 4221
+      },
+      "jobId": "CD-05-L-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "PENDING",
+        "score": null
+      },
+      "latencyMs": 5988,
+      "tokens": {
+        "prompt_tokens": 3678,
+        "completion_tokens": 1301,
+        "total_tokens": 4979
+      },
+      "jobId": "CD-05-L-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 13638,
+      "tokens": {
+        "prompt_tokens": 2933,
+        "completion_tokens": 1318,
+        "total_tokens": 4251
+      },
+      "jobId": "CD-05-L-raw-m2-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 16059,
+      "tokens": {
+        "prompt_tokens": 3546,
+        "completion_tokens": 1555,
+        "total_tokens": 5101
+      },
+      "jobId": "CD-05-L-direct-m2-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 12133,
+      "tokens": {
+        "prompt_tokens": 3217,
+        "completion_tokens": 1355,
+        "total_tokens": 4572
+      },
+      "jobId": "CD-05-L-plan-m2-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 11149,
+      "tokens": {
+        "prompt_tokens": 3064,
+        "completion_tokens": 1022,
+        "total_tokens": 4086
+      },
+      "jobId": "CD-05-L-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "CD-05-L",
+      "domain": "论文与研究设计",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 16402,
+      "tokens": {
+        "prompt_tokens": 3677,
+        "completion_tokens": 1639,
+        "total_tokens": 5316
+      },
+      "jobId": "CD-05-L-direct_matched-m2-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 9716,
+      "tokens": {
+        "prompt_tokens": 3006,
+        "completion_tokens": 2164,
+        "total_tokens": 5170
+      },
+      "jobId": "CD-10-L-raw-m1-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 12932,
+      "tokens": {
+        "prompt_tokens": 4118,
+        "completion_tokens": 3259,
+        "total_tokens": 7377
+      },
+      "jobId": "CD-10-L-direct-m1-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "PENDING",
+        "score": null
+      },
+      "latencyMs": 9268,
+      "tokens": {
+        "prompt_tokens": 4222,
+        "completion_tokens": 2224,
+        "total_tokens": 6446
+      },
+      "jobId": "CD-10-L-plan-m1-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "PENDING",
+        "score": null
+      },
+      "latencyMs": 11156,
+      "tokens": {
+        "prompt_tokens": 3121,
+        "completion_tokens": 2586,
+        "total_tokens": 5707
+      },
+      "jobId": "CD-10-L-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "PENDING",
+        "score": null
+      },
+      "latencyMs": 14745,
+      "tokens": {
+        "prompt_tokens": 4233,
+        "completion_tokens": 3875,
+        "total_tokens": 8108
+      },
+      "jobId": "CD-10-L-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 19717,
+      "tokens": {
+        "prompt_tokens": 3005,
+        "completion_tokens": 1953,
+        "total_tokens": 4958
+      },
+      "jobId": "CD-10-L-raw-m2-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 29692,
+      "tokens": {
+        "prompt_tokens": 4117,
+        "completion_tokens": 3323,
+        "total_tokens": 7440
+      },
+      "jobId": "CD-10-L-direct-m2-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 29223,
+      "tokens": {
+        "prompt_tokens": 4221,
+        "completion_tokens": 3400,
+        "total_tokens": 7621
+      },
+      "jobId": "CD-10-L-plan-m2-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 21307,
+      "tokens": {
+        "prompt_tokens": 3120,
+        "completion_tokens": 2042,
+        "total_tokens": 5162
+      },
+      "jobId": "CD-10-L-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "CD-10-L",
+      "domain": "法律与律师文书",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 96.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 29574,
+      "tokens": {
+        "prompt_tokens": 4232,
+        "completion_tokens": 3197,
+        "total_tokens": 7429
+      },
+      "jobId": "CD-10-L-direct_matched-m2-r1"
+    }
+  ],
+  "pairs": [
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 3.75
+    },
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -3.75
+    },
+    {
+      "caseId": "CD-07-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-09-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-09-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-09-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-09-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "PENDING",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "PENDING",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-05-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "TIE",
+      "scoreDelta": 0
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "PENDING",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "PENDING",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "LOSS",
+      "scoreDelta": -3.75
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -3.75
+    },
+    {
+      "caseId": "CD-10-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -3.75
+    }
+  ],
+  "groups": [
+    {
+      "key": "deepseek:deepseek-flash|raw",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 0,
+      "reviewed": 4,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-flash|direct",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 0,
+      "reviewed": 4,
+      "pairedComparisons": 4,
+      "wins": 0,
+      "losses": 0,
+      "ties": 4,
+      "bothUnacceptable": 0,
+      "winRate": 0
+    },
+    {
+      "key": "deepseek:deepseek-flash|plan",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 0,
+      "reviewed": 2,
+      "pairedComparisons": 2,
+      "wins": 1,
+      "losses": 0,
+      "ties": 1,
+      "bothUnacceptable": 0,
+      "winRate": 0.5
+    },
+    {
+      "key": "deepseek:deepseek-flash|raw_matched",
+      "planned": 3,
+      "successfulOutputs": 3,
+      "criticalFailures": 0,
+      "reviewed": 1,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-flash|direct_matched",
+      "planned": 3,
+      "successfulOutputs": 3,
+      "criticalFailures": 0,
+      "reviewed": 1,
+      "pairedComparisons": 1,
+      "wins": 0,
+      "losses": 0,
+      "ties": 1,
+      "bothUnacceptable": 0,
+      "winRate": 0
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|raw",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 0,
+      "reviewed": 4,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|direct",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 0,
+      "reviewed": 4,
+      "pairedComparisons": 4,
+      "wins": 0,
+      "losses": 1,
+      "ties": 3,
+      "bothUnacceptable": 0,
+      "winRate": 0
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|plan",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 0,
+      "reviewed": 4,
+      "pairedComparisons": 4,
+      "wins": 0,
+      "losses": 2,
+      "ties": 2,
+      "bothUnacceptable": 0,
+      "winRate": 0
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|raw_matched",
+      "planned": 3,
+      "successfulOutputs": 3,
+      "criticalFailures": 0,
+      "reviewed": 3,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|direct_matched",
+      "planned": 3,
+      "successfulOutputs": 3,
+      "criticalFailures": 0,
+      "reviewed": 3,
+      "pairedComparisons": 3,
+      "wins": 0,
+      "losses": 1,
+      "ties": 2,
+      "bothUnacceptable": 0,
+      "winRate": 0
+    }
+  ],
+  "generationFailures": [],
+  "reviewSource": {
+    "id": "blinded-model-deepseek:deepseek-v4-pro",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-05T16:58:13.743Z",
+    "professionalDomain": "NOT_CERTIFIED",
+    "reviewRun": "tmp\\prompt-output-evaluation\\2026-10-05T16-53-27-396Z-bf1d6ef4"
+  },
+  "professionalReview": "PENDING",
+  "releaseApproval": false,
+  "scope": "Fixed prompt downstream work comparison; no guarantee of professional correctness or universal improvement."
+}

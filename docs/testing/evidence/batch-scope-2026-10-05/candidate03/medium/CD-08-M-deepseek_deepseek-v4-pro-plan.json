@@ -1,0 +1,200 @@
+{
+  "id": "CD-08-M-deepseek_deepseek-v4-pro-plan",
+  "caseId": "CD-08-M",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T15:05:41.995Z",
+  "prepared": {
+    "contextId": "71578ac5-0c79-44b1-ad31-02b8fc7b13e3",
+    "version": "sha256:3ce33c356a8752a3ef1b918bb1b8e6fe736bba73e1543beae46143dc17f6ea83",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/medical_research/",
+        "materials/medical_research/current-brief.md",
+        "materials/medical_research/legacy-note.md",
+        "materials/medical_research/tests/",
+        "materials/medical_research/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/medical_research/current-brief.md：Markdown 文档摘要：合成死亡登记资料的趋势与减寿研究方案：合成现行资料；资料列出疾病亚类占位代码A、B、C，尚未批准与实际编码的映射。；地区字段使用登记归属地区，不保证与长期居住地完全一致；分析解释需要保留归属口径，不能未经核对称为居住地区死亡风险。；Arriaga方法涉及比较对象和分解指标，方案必须先确认研究所说的差异，不应在未知对象时写出看似完整但可能不适用的计算流程。；医学研究需要独立专业审查方法适用性和伦理数据权限；本次提示词质量评测只能检验规则保真与未…；业务摘录：研究时间为2015至2025年，目标地区在合成字典中明确定义为甲地区，不重新询问省市名称。；死亡日期格式为YYYY-MM-DD，性别采用字典中的F、M、U，U为未知，不能直接并入某一性别。；资料列出疾病亚类占位代码A、B、C，尚未批准与实际编码的映射。；[片段 1/1]；疾病亚类代码只是合成研究字段，实际映射须由专业人员确认；；本次提示词质量评测只能检验规则保真与未知状态，不能认证方法在实际研究中有效。",
+        "[PROJECT_DOCUMENT] materials/medical_research/legacy-note.md：Markdown 文档摘要：登记字典年龄分组为5岁组。；另有草稿写：分析草稿使用10岁组，但未确认聚合映射。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。；业务摘录：[片段 1/1] 登记字典年龄分组为5岁组。 另有草稿写：分析草稿使用10岁组，但未确认聚合映射。 两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 3,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/medical_research/current-brief.md",
+          "evidence": "疾病亚类代码只是合成研究字段，实际映射须由专业人员确认"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/medical_research/current-brief.md",
+          "evidence": "Arriaga方法涉及比较对象和分解指标，方案必须先确认研究所说的差异，不应在未知对象时写出看似完整但可能不适用的计算流程"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/medical_research/current-brief.md",
+          "evidence": "论文开题材料要把预期分析与已经完成的工作分开，图表标题可作为模板，但图中的数值、置信区间与显著性均不得模拟成真实结果"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/medical_research/",
+        "materials/medical_research/current-brief.md",
+        "materials/medical_research/legacy-note.md",
+        "materials/medical_research/tests/",
+        "materials/medical_research/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/medical_research/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 合成死亡登记资料的趋势与减寿研究方案：合成现行资料\n研究时间为2015至2025年，目标地区在合成字典中明确定义为甲地区，不重新询问省市名称。\n死亡日期格式为YYYY-MM-DD，性别采用字典中的F、M、U，U为未知，不能直接并入某一性别。\n研究工具已指定R，数据格式计划CSV；不是已经获得完整CSV文件。\n资料列出疾病亚类占位代码A、B、C，尚未批准与实际编码的映射。\n\n# 分支与边界\n长期趋势需要区分粗率、年龄特异率和标准化率，字典虽然含年龄字段却没有标准人口权重；方案不能因为存在年龄就声称已可完成标准化。\n季节性分析需核对按月登记完整性及报告延迟，年度汇总不能自动补成月度序列；如果只有年表，应明确季节性分析暂无法执行。\n性别未知记录应作为数据质量项呈现，是否进入总量与分层分母需由团队确认；不能根据姓名或其他个人特征推断性别。\n地区字段使用登记归属地区，不保证与长期居住地完全一致；分析解释需要保留归属口径，不能未经核对称为居住地区死亡风险。\n疾病亚类代码只是合成研究字段，实际映射须由专业人员确认；任何常用疾病编码的推断都不能直接写成已知分类事实。\nYLL取决于参考寿命及死亡年龄，YLL率还需要对应人口分母；把标准化死亡率当作YLL率会改变研究问题，应明确禁止这种替换。\n年龄五岁组改成十岁组可能需要合并，但最高开放年龄组及边界未给出；不能随意删除高龄组以方便计算。\nArriaga方法涉及比较对象和分解指标，方案必须先确认研究所说的差异，不应在未知对象时写出看似完整但可能不适用的计算流程。\n不同年度记录制度变化可能造成可比性问题，材料没有给出改革日期；方案可安排核查清单，不能编造某年制度调整解释趋势。\n样本量不足或存在零死亡单元时，某些模型可能不稳定；方案应说明需评估适用性，不强行保证某统计模型总能收敛。\n论文开题材料要把预期分析与已经完成的工作分开，图表标题可作为模板，但图中的数值、置信区间与显著性均不得模拟成真实结果。\n医学研究需要独立专业审查方法适用性和伦理数据权限；本次提示词质量评测只能检验规则保真与未知状态，不能认证方法在实际研究中有效。",
+          "summary": "Markdown 文档摘要：合成死亡登记资料的趋势与减寿研究方案：合成现行资料；资料列出疾病亚类占位代码A、B、C，尚未批准与实际编码的映射。；地区字段使用登记归属地区，不保证与长期居住地完全一致；分析解释需要保留归属口径，不能未经核对称为居住地区死亡风险。；Arriaga方法涉及比较对象和分解指标，方案必须先确认研究所说的差异，不应在未知对象时写出看似完整但可能不适用的计算流程。；医学研究需要独立专业审查方法适用性和伦理数据权限；本次提示词质量评测只能检验规则保真与未知状态，不能认证方法在实际研究中有效。",
+          "truncated": false
+        },
+        {
+          "path": "materials/medical_research/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        },
+        {
+          "path": "materials/medical_research/legacy-note.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n登记字典年龄分组为5岁组。\n另有草稿写：分析草稿使用10岁组，但未确认聚合映射。\n两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "summary": "Markdown 文档摘要：登记字典年龄分组为5岁组。；另有草稿写：分析草稿使用10岁组，但未确认聚合映射。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T15:35:42.122310100Z",
+    "latencyMs": 45
+  },
+  "plan": {
+    "summary": "已理解任务是为甲地区2015–2025年心脑血管死亡登记研究起草方法方案，仅交付方案与定义表，不计算结果。尚需确认YLL参考寿命表、Arriaga分解对象、人口分母来源与匹配层级、年龄分组聚合映射等关键方法学决定。",
+    "questions": [
+      {
+        "id": "reference_life_table",
+        "question": "YLL计算采用哪份参考寿命表及适用年份？",
+        "hint": "YLL总量与YLL率依赖参考寿命表，未确定前只能写方法与待确认前提。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "如：WHO 2000-2025标准寿命表，按性别和5岁年龄组"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "arriaga_comparison",
+        "question": "Arriaga分解针对哪些可比较人群和哪个差异对象？",
+        "hint": "Arriaga方法需要明确比较对象和分解指标，否则无法写出适用流程。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "如：比较甲地区男性和女性的年龄别死亡率差异，分解为各年龄组贡献"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "population_denominator",
+        "question": "各年度与分层人口分母来源及匹配层级如何确定？",
+        "hint": "人口分母影响年龄标准化死亡率和YLL率，需明确来源和匹配层级。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "如：使用甲地区统计局年度常住人口，按性别、5岁年龄组匹配"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "age_group_mapping",
+        "question": "年龄分组采用哪种方案？登记字典为5岁组，分析草稿使用10岁组，但未确认聚合映射。",
+        "hint": "两份资料存在差异，需确认最终分析使用的年龄分组及聚合规则。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "use_5yr",
+            "label": "采用5岁组",
+            "description": "直接使用登记字典的5岁年龄组，不进行聚合。",
+            "answer": "分析统一采用5岁年龄组，与登记字典一致，不聚合为10岁组。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "use_10yr",
+            "label": "采用10岁组",
+            "description": "将5岁组聚合为10岁组，需明确聚合规则。",
+            "answer": "分析采用10岁年龄组，由相邻两个5岁组合并，具体合并规则在方案中说明。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "keep_both",
+            "label": "同时保留两种分组",
+            "description": "分别按5岁组和10岁组进行分析，并说明适用场景。",
+            "answer": "方案中同时列出5岁组和10岁组的分析，并说明各自适用场景和聚合映射。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 8725,
+    "planId": "09352dc1-0d20-4a02-b259-1e9ef7a5bccb",
+    "planningContext": {
+      "contextId": "71578ac5-0c79-44b1-ad31-02b8fc7b13e3",
+      "version": "sha256:3ce33c356a8752a3ef1b918bb1b8e6fe736bba73e1543beae46143dc17f6ea83"
+    },
+    "expiresAt": "2026-10-05T15:35:42.122310100Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-08-M-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "93c27d31-9355-4e43-a6f5-5aace2179a86",
+      "elapsedMs": 128
+    },
+    {
+      "label": "CD-08-M-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "8442ff00-a9ab-48ae-8cc9-26ac9238928e",
+      "elapsedMs": 8777
+    }
+  ]
+}

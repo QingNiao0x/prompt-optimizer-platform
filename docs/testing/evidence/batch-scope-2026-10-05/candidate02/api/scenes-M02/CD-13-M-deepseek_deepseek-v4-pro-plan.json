@@ -1,0 +1,161 @@
+{
+  "id": "CD-13-M-deepseek_deepseek-v4-pro-plan",
+  "caseId": "CD-13-M",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T13:40:20.505Z",
+  "prepared": {
+    "contextId": "26c175ee-adee-4f05-98f3-727c7931bc52",
+    "version": "sha256:f41e6e403daf18fe3da8742d7d5bb00c2a30ab27f4ae1d48e885fabe6e32afe3",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/scene-13/",
+        "materials/scene-13/current-brief.md",
+        "materials/scene-13/term-test.txt",
+        "materials/scene-13/tests/",
+        "materials/scene-13/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/scene-13/current-brief.md：Markdown 文档摘要：合成当前说明；原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。；A registration request is not a confirmed booking.；Do not travel before the updated notice is published.；Participation is voluntary, and the notice does not promise any learning outcome.；业务摘录：Please bring your access pass. Its official local name is still under review. The proposed date for the next event has not been approved. Participation is voluntary, and the notice does not promise any learning outcome.；活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。；原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。；[片段 1/1]；主场次延期并不自动触发备用场次。",
+        "[USER_MATERIAL] materials/scene-13/term-test.txt：文件内容摘要：仅用于排版测试：Rivergate Open Day=河湾峰会；access pass=永久会员卡。；以上译名没有批准，不是本次术语。；业务摘录：[片段 1/1] 仅用于排版测试：Rivergate Open Day=河湾峰会； access pass=永久会员卡。 以上译名没有批准，不是本次术语。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 3,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-13/current-brief.md",
+          "evidence": "原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/scene-13/",
+        "materials/scene-13/current-brief.md",
+        "materials/scene-13/term-test.txt",
+        "materials/scene-13/tests/",
+        "materials/scene-13/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/scene-13/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 合成当前说明\n活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。\n通知中的cancelled与postponed分别是取消与延期，不能都译为活动结束。\n备用场次只在主场次取消后启用；主场次延期并不自动触发备用场次。\n原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。\n\n# 原文或原始记录\nWelcome to Rivergate Open Day. Registration is open from 08:30 to 09:00 on 20 October 2026. A registration request is not a confirmed booking.\n\nIf the main session is cancelled, a backup session may be offered after confirmation. A postponed session does not automatically activate the backup session. Do not travel before the updated notice is published.\n\nPlease bring your access pass. Its official local name is still under review. The proposed date for the next event has not been approved. Participation is voluntary, and the notice does not promise any learning outcome.",
+          "summary": "Markdown 文档摘要：合成当前说明；原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。；A registration request is not a confirmed booking.；Do not travel before the updated notice is published.；Participation is voluntary, and the notice does not promise any learning outcome.",
+          "truncated": false
+        },
+        {
+          "path": "materials/scene-13/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。这不是本题事实、偏好或执行决定。",
+          "summary": "文件内容摘要：仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。；这不是本题事实、偏好或执行决定。",
+          "truncated": false
+        },
+        {
+          "path": "materials/scene-13/term-test.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版测试：Rivergate Open Day=河湾峰会；access pass=永久会员卡。以上译名没有批准，不是本次术语。",
+          "summary": "文件内容摘要：仅用于排版测试：Rivergate Open Day=河湾峰会；access pass=永久会员卡。；以上译名没有批准，不是本次术语。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T14:10:20.541255200Z",
+    "latencyMs": 15
+  },
+  "plan": {
+    "summary": "已理解任务：将合成英文通知翻译为简体中文，仅输出译文，保留原文段落、条件、否定和待确认状态。唯一未决事项是 access pass 的正式中文名称，原文明确其官方名称仍在审核中，需要用户确认译文用词。",
+    "questions": [
+      {
+        "id": "access_pass_translation",
+        "question": "原文中 access pass 的正式中文名称尚未确认，译文应如何处理？",
+        "hint": "原文说明其官方本地名称仍在审核中，需要确定译文用词以保持准确。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "keep_english",
+            "label": "保留英文 access pass",
+            "description": "在译文中直接使用英文原文，不翻译。",
+            "answer": "access pass",
+            "recommended": true,
+            "recommendationReason": "原始需求明确包含：access pass。请核对适用范围后选择。"
+          },
+          {
+            "id": "translate_literal",
+            "label": "直译为“通行证”",
+            "description": "使用通用中文译名“通行证”。",
+            "answer": "通行证",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "translate_access_card",
+            "label": "译为“入场卡”",
+            "description": "使用“入场卡”作为译名。",
+            "answer": "入场卡",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "translate_access_permit",
+            "label": "译为“准入凭证”",
+            "description": "使用“准入凭证”作为译名。",
+            "answer": "准入凭证",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 4765,
+    "planId": "9c61433b-f1ce-441f-b7a2-8e33cafe9624",
+    "planningContext": {
+      "contextId": "26c175ee-adee-4f05-98f3-727c7931bc52",
+      "version": "sha256:f41e6e403daf18fe3da8742d7d5bb00c2a30ab27f4ae1d48e885fabe6e32afe3"
+    },
+    "expiresAt": "2026-10-05T14:10:20.541255200Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-13-M-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "c5620182-c62d-4036-9437-b33d0a561d85",
+      "elapsedMs": 70
+    },
+    {
+      "label": "CD-13-M-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "0161e0ff-5c56-4057-8fc9-0e3264c2fd12",
+      "elapsedMs": 4810
+    }
+  ]
+}

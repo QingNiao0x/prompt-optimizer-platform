@@ -1,0 +1,321 @@
+{
+  "rawPrompt": "请依据方案甲和方案乙整理订单审批与退款规则的差异表，只给方案和未决条件，不执行代码或真实业务。两个文件都适用于同一当前工作区，均未批准，不能按文件顺序或较新日期选择胜者。订单审批与退款属于不同业务对象，分别保留完整条件及来源。最终交付规则对照表、执行前需确认清单与只读验证步骤。订单审批金额条件保持>=，退款金额条件保持>，不得把运算符归一化成相同值。确认后若仍不知道答案，就在复制正文中保留未知，不默认某个阈值。",
+  "replays": [
+    {
+      "source": "batch-scope-known-20261005-01/OP-BOUNDARY-M-deepseek_deepseek-flash-plan.json",
+      "questions": [
+        {
+          "id": "context-conflict-1",
+          "question": "资料对“订单审批标准”存在不同取值：docs/方案甲.txt（订单金额>=3000元须复核）与 docs/方案乙.txt（订单金额>=5000元须复核）。请确认本次采用哪一项。",
+          "hint": "上传材料对同一事实给出了不同内容。请选定本次采用的口径。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "context-conflict-1-first",
+              "label": "采用第一份",
+              "description": "订单金额>=3000元须复核",
+              "answer": "本次采用：订单金额>=3000元须复核",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-1-second",
+              "label": "采用第二份",
+              "description": "订单金额>=5000元须复核",
+              "answer": "本次采用：订单金额>=5000元须复核",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-1-both",
+              "label": "两份都保留并标明冲突",
+              "description": "结果中同时写出两个取值和来源",
+              "answer": "两份资料都保留，并在结果中标明冲突和各自来源，不悄悄选定其中一个。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-1-rewrite",
+              "label": "按原始需求重新写明",
+              "description": "不以这两份数字为准",
+              "answer": "本次不采用这两份资料中的取值，按原始需求重新写明该事实。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "context-conflict-2",
+          "question": "资料对“退款标准”存在不同取值：docs/方案甲.txt（退款金额>500元须退款负责人批准）与 docs/方案乙.txt（退款金额>800元须退款负责人批准）。请确认本次采用哪一项。",
+          "hint": "上传材料对同一事实给出了不同内容。请选定本次采用的口径。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "context-conflict-2-first",
+              "label": "采用第一份",
+              "description": "退款金额>500元须退款负责人批准",
+              "answer": "本次采用：退款金额>500元须退款负责人批准",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-2-second",
+              "label": "采用第二份",
+              "description": "退款金额>800元须退款负责人批准",
+              "answer": "本次采用：退款金额>800元须退款负责人批准",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-2-both",
+              "label": "两份都保留并标明冲突",
+              "description": "结果中同时写出两个取值和来源",
+              "answer": "两份资料都保留，并在结果中标明冲突和各自来源，不悄悄选定其中一个。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-2-rewrite",
+              "label": "按原始需求重新写明",
+              "description": "不以这两份数字为准",
+              "answer": "本次不采用这两份资料中的取值，按原始需求重新写明该事实。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "threshold_conflict_handling",
+          "question": "方案甲与方案乙对订单审批和退款给出了不同的金额阈值（订单：>=3000 与 >=5000；退款：>500 与 >800），差异表应如何处理这两套冲突取值？",
+          "hint": "这决定对照表是并列保留两套阈值，还是需要用户另行指定本次采用值；两文件均未批准，不能按顺序或日期择一。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "keep_both",
+              "label": "并列保留两套阈值",
+              "description": "订单审批与退款分别列出方案甲、方案乙的完整条件及来源，不判定哪套生效。",
+              "answer": "差异表并列保留方案甲与方案乙的订单审批阈值（>=3000、>=5000）和退款阈值（>500、>800），分别标注来源，不判定哪套生效。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "user_specifies",
+              "label": "由我指定本次采用值",
+              "description": "用户明确给出本次要采用的订单审批与退款阈值，差异表据此标注。",
+              "answer": "由用户指定本次采用的订单审批阈值和退款阈值，差异表按指定值标注，并保留另一方案的取值作为对照。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "mark_undecided",
+              "label": "仅标注为未决条件",
+              "description": "不并列数值，只在未决条件中说明两方案阈值冲突、待批准后确定。",
+              "answer": "差异表不并列具体阈值，仅在未决条件中说明订单审批与退款阈值在两方案间存在冲突，待批准后确定。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "unknown_presentation",
+          "question": "确认后若仍无法确定某项规则（如某阈值是否生效），交付物中应如何呈现该未知？",
+          "hint": "这决定未决条件与对照表中未知项的写法，避免默认某个阈值。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "keep_unknown",
+              "label": "保留未知标记",
+              "description": "在对应位置明确写“未知/待确认”，不填任何默认值。",
+              "answer": "确认后仍无法确定的规则，在对照表和未决条件中明确标注为未知/待确认，不默认任何阈值或结论。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "list_in_pending",
+              "label": "集中列入未决清单",
+              "description": "对照表对应单元格留空，未知项统一列入执行前需确认清单。",
+              "answer": "对照表对应单元格留空，所有仍无法确定的规则统一列入执行前需确认清单，并注明来源方案。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ]
+    },
+    {
+      "source": "batch-scope-known-20261005-01/OP-BOUNDARY-M-deepseek_deepseek-v4-pro-plan.json",
+      "questions": [
+        {
+          "id": "context-conflict-1",
+          "question": "资料对“订单审批标准”存在不同取值：docs/方案甲.txt（订单金额>=3000元须复核）与 docs/方案乙.txt（订单金额>=5000元须复核）。请确认本次采用哪一项。",
+          "hint": "上传材料对同一事实给出了不同内容。请选定本次采用的口径。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "context-conflict-1-first",
+              "label": "采用第一份",
+              "description": "订单金额>=3000元须复核",
+              "answer": "本次采用：订单金额>=3000元须复核",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-1-second",
+              "label": "采用第二份",
+              "description": "订单金额>=5000元须复核",
+              "answer": "本次采用：订单金额>=5000元须复核",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-1-both",
+              "label": "两份都保留并标明冲突",
+              "description": "结果中同时写出两个取值和来源",
+              "answer": "两份资料都保留，并在结果中标明冲突和各自来源，不悄悄选定其中一个。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-1-rewrite",
+              "label": "按原始需求重新写明",
+              "description": "不以这两份数字为准",
+              "answer": "本次不采用这两份资料中的取值，按原始需求重新写明该事实。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "context-conflict-2",
+          "question": "资料对“退款标准”存在不同取值：docs/方案甲.txt（退款金额>500元须退款负责人批准）与 docs/方案乙.txt（退款金额>800元须退款负责人批准）。请确认本次采用哪一项。",
+          "hint": "上传材料对同一事实给出了不同内容。请选定本次采用的口径。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "context-conflict-2-first",
+              "label": "采用第一份",
+              "description": "退款金额>500元须退款负责人批准",
+              "answer": "本次采用：退款金额>500元须退款负责人批准",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-2-second",
+              "label": "采用第二份",
+              "description": "退款金额>800元须退款负责人批准",
+              "answer": "本次采用：退款金额>800元须退款负责人批准",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-2-both",
+              "label": "两份都保留并标明冲突",
+              "description": "结果中同时写出两个取值和来源",
+              "answer": "两份资料都保留，并在结果中标明冲突和各自来源，不悄悄选定其中一个。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "context-conflict-2-rewrite",
+              "label": "按原始需求重新写明",
+              "description": "不以这两份数字为准",
+              "answer": "本次不采用这两份资料中的取值，按原始需求重新写明该事实。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "order_approval_threshold",
+          "question": "订单审批规则中，方案甲要求金额>=3000元复核，方案乙要求>=5000元复核。差异表应如何呈现这两个阈值？",
+          "hint": "两个方案阈值不同，需确定呈现方式以准确反映差异。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "show_both",
+              "label": "分别列出两个阈值",
+              "description": "在差异表中分别列出方案甲和方案乙的阈值，并标注差异。",
+              "answer": "订单审批：方案甲金额>=3000元须复核；方案乙金额>=5000元须复核。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "show_difference_only",
+              "label": "仅列出差异点",
+              "description": "只列出两个方案不同的部分，不重复相同规则。",
+              "answer": "订单审批阈值不同：方案甲为3000元，方案乙为5000元。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "refund_threshold",
+          "question": "退款规则中，方案甲要求金额>500元批准，方案乙要求>800元批准。差异表应如何呈现这两个阈值？",
+          "hint": "两个方案阈值不同，需确定呈现方式以准确反映差异。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "show_both",
+              "label": "分别列出两个阈值",
+              "description": "在差异表中分别列出方案甲和方案乙的阈值，并标注差异。",
+              "answer": "退款：方案甲金额>500元须退款负责人批准；方案乙金额>800元须退款负责人批准。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "show_difference_only",
+              "label": "仅列出差异点",
+              "description": "只列出两个方案不同的部分，不重复相同规则。",
+              "answer": "退款阈值不同：方案甲为500元，方案乙为800元。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "table_structure",
+          "question": "差异表的结构应如何组织？",
+          "hint": "需要确定表格的列和行布局，以便清晰展示规则差异。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "rule_vs_scheme",
+              "label": "规则为行，方案为列",
+              "description": "每行是一个规则（如订单审批、退款），每列是一个方案，单元格显示具体条件。",
+              "answer": "表格行：订单审批、退款；列：方案甲、方案乙；单元格填写对应条件。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "scheme_vs_rule",
+              "label": "方案为行，规则为列",
+              "description": "每行是一个方案，每列是一个规则，单元格显示具体条件。",
+              "answer": "表格行：方案甲、方案乙；列：订单审批、退款；单元格填写对应条件。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ]
+    }
+  ]
+}

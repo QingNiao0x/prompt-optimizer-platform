@@ -1,0 +1,192 @@
+{
+  "id": "CD-16-M-deepseek_deepseek-flash-plan",
+  "caseId": "CD-16-M",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T15:05:31.895Z",
+  "prepared": {
+    "contextId": "6bb2f543-208c-44bb-be9f-c48e62a3a531",
+    "version": "sha256:130c9786ea3ed98caf660210c89484749fdf5abb4afa19322d1e921d9af5c1d6",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/scene-16/",
+        "materials/scene-16/current-brief.md",
+        "materials/scene-16/tests/",
+        "materials/scene-16/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/scene-16/current-brief.md：Markdown 文档摘要：合成当前说明；每场讲座40分钟，随后场地整理10分钟，同一场地相邻讲座必须留出整理时段。；合成展厅资源表：两天均09:00至17:00；甲厅上限30，乙厅上限20。；讲者甲仅第一天，讲者乙仅第二天。；午间12:00至13:00两厅均不安排讲座。；业务摘录：[片段 1/1] 活动日期已定为合成日期2026年10月20日和21日，每天可用时间为09:00至17:00。 甲厅与乙厅各有一个活动区域，甲厅人数上限30人，乙厅人数上限20人。 每场讲座40分钟，随后场地整理10分钟，同一场地相邻讲座必须留出整理时段。 讲者甲仅能参加第一天，讲者乙仅能参加第二天； 不得互换日期。 合成展厅资源表：两天均09:00至17:00； 甲厅上限30，乙厅上限20。 每场40分钟，其后整理10分钟。 讲者甲仅第一天，讲者乙仅第二天。 讲者丙的上午偏好尚未确认。 两厅可同时开放，但同一讲者不能同时出席两场。 午间12:00至13:00两厅均不安排讲座。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "每场讲座40分钟，随后场地整理10分钟，同一场地相邻讲座必须留出整理时段"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-16/current-brief.md",
+          "evidence": "不得互换日期"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/scene-16/",
+        "materials/scene-16/current-brief.md",
+        "materials/scene-16/tests/",
+        "materials/scene-16/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/scene-16/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 合成当前说明\n活动日期已定为合成日期2026年10月20日和21日，每天可用时间为09:00至17:00。\n甲厅与乙厅各有一个活动区域，甲厅人数上限30人，乙厅人数上限20人。\n每场讲座40分钟，随后场地整理10分钟，同一场地相邻讲座必须留出整理时段。\n讲者甲仅能参加第一天，讲者乙仅能参加第二天；不得互换日期。\n\n# 原文或原始记录\n合成展厅资源表：两天均09:00至17:00；甲厅上限30，乙厅上限20。每场40分钟，其后整理10分钟。讲者甲仅第一天，讲者乙仅第二天。讲者丙的上午偏好尚未确认。两厅可同时开放，但同一讲者不能同时出席两场。午间12:00至13:00两厅均不安排讲座。",
+          "summary": "Markdown 文档摘要：合成当前说明；每场讲座40分钟，随后场地整理10分钟，同一场地相邻讲座必须留出整理时段。；合成展厅资源表：两天均09:00至17:00；甲厅上限30，乙厅上限20。；讲者甲仅第一天，讲者乙仅第二天。；午间12:00至13:00两厅均不安排讲座。",
+          "truncated": false
+        },
+        {
+          "path": "materials/scene-16/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。这不是本题事实、偏好或执行决定。",
+          "summary": "文件内容摘要：仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。；这不是本题事实、偏好或执行决定。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T15:35:31.962187600Z",
+    "latencyMs": 28
+  },
+  "plan": {
+    "summary": "已理解目标：为合成展厅2026年10月20—21日安排两日讲座排期，交付两个可行草案及取舍说明，只做排期不执行预约。资料中已明确日期、时段、场地容量、讲座与整理时长、讲者甲/乙的日期限制及午间禁排，但仍有两项会直接改变排期结果的前提未确认，需要先向你核实。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "两种排期草案希望按哪种方式区分？",
+        "hint": "这决定两个草案的排布逻辑和取舍说明的对比维度。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "一个集中同主题、一个均衡两厅",
+            "description": "草案一尽量把同主题讲座集中在同一场地或相邻时段，草案二让两厅活动量更均衡。",
+            "answer": "两个草案分别采用：草案一优先集中同主题，草案二优先均衡两厅活动量。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "两个都集中同主题",
+            "description": "两个草案都优先把同主题讲座集中安排，仅在细节上不同。",
+            "answer": "两个草案都优先集中同主题安排，仅在细节上有所区别。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "两个都均衡两厅",
+            "description": "两个草案都优先让两厅活动量均衡，仅在细节上不同。",
+            "answer": "两个草案都优先均衡两厅活动量，仅在细节上有所区别。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "d",
+            "label": "其他区分方式",
+            "description": "由你指定两个草案的区分维度。",
+            "answer": "两个草案按以下方式区分：",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "讲者丙是否有仅上午参加的限制？",
+        "hint": "这会影响讲者丙的讲座能否排在下午，进而改变两个草案的可行时段。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "仅上午可参加",
+            "description": "讲者丙的讲座只能安排在12:00之前。",
+            "answer": "讲者丙仅上午可参加，其讲座只能安排在12:00之前。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "全天均可参加",
+            "description": "讲者丙没有上午限制，全天时段都可安排。",
+            "answer": "讲者丙全天均可参加，没有上午限制。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "尚未确定",
+            "description": "该限制仍未知，排期草案中作为未决前提保留，不写成已批准要求。",
+            "answer": "讲者丙的上午限制尚未确定，排期草案中作为未决前提保留，不写成已批准要求。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 3400,
+    "planId": "1d5132a6-32d6-41e4-98e3-2c69c01152bf",
+    "planningContext": {
+      "contextId": "6bb2f543-208c-44bb-be9f-c48e62a3a531",
+      "version": "sha256:130c9786ea3ed98caf660210c89484749fdf5abb4afa19322d1e921d9af5c1d6"
+    },
+    "expiresAt": "2026-10-05T15:35:31.962187600Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-16-M-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "e267e7bd-2762-4d9c-9bd4-f78ee492d5b8",
+      "elapsedMs": 108
+    },
+    {
+      "label": "CD-16-M-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "ed7eac6d-8a12-4c2f-9b88-ecc4abfb88fa",
+      "elapsedMs": 3478
+    }
+  ]
+}

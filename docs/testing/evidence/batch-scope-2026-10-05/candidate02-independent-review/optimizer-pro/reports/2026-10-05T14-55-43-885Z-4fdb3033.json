@@ -1,0 +1,1656 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-05T14:55:43.887Z",
+  "manifest": {
+    "schemaVersion": 1,
+    "createdAt": "2026-10-05T13:40:21.515Z",
+    "jobsSha256": "f96cb8368b7eb538298ad0d10ab5ae0db990896fa035aa24ebd093d8431fb8be",
+    "inputSha256": "b27894350221e91ac884af15a05849f8e85157fa146b74b5cd1615c9686c1149",
+    "modelsSha256": "c1a9c8cbec21abb853d521fb01dbea3bdc237c1acf7c2cc83822b74b29712277",
+    "origin": "FINAL_CANDIDATE_REAL_API",
+    "plannedCalls": 52,
+    "professionalReview": "PENDING",
+    "releaseApproval": false,
+    "optimizerCallsThisPreparation": 0,
+    "note": "External execution is separate from the platform. Generation failures remain in cases; this is not a full folder upload benchmark."
+  },
+  "records": [
+    {
+      "caseId": "CV-SCALE-L",
+      "domain": "论文与研究设计",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 83.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 5682,
+      "tokens": {
+        "prompt_tokens": 2938,
+        "completion_tokens": 975,
+        "total_tokens": 3913
+      },
+      "jobId": "CV-SCALE-L-raw-m1-r1"
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "domain": "论文与研究设计",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 91.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 7036,
+      "tokens": {
+        "prompt_tokens": 3223,
+        "completion_tokens": 1258,
+        "total_tokens": 4481
+      },
+      "jobId": "CV-SCALE-L-direct-m1-r1"
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "domain": "论文与研究设计",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 6809,
+      "tokens": {
+        "prompt_tokens": 3329,
+        "completion_tokens": 1289,
+        "total_tokens": 4618
+      },
+      "jobId": "CV-SCALE-L-plan-m1-r1"
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "domain": "论文与研究设计",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 93.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 5254,
+      "tokens": {
+        "prompt_tokens": 3125,
+        "completion_tokens": 1002,
+        "total_tokens": 4127
+      },
+      "jobId": "CV-SCALE-L-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "domain": "论文与研究设计",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 66.25,
+        "criticalErrors": [
+          "WRONG_DESIGN_SAMPLE_COUNT",
+          "BLINDING_SOURCE_LEAK_IN_SCORE_TEMPLATE"
+        ]
+      },
+      "latencyMs": 7544,
+      "tokens": {
+        "prompt_tokens": 3410,
+        "completion_tokens": 1731,
+        "total_tokens": 5141
+      },
+      "jobId": "CV-SCALE-L-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "domain": "论文与研究设计",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 68.75,
+        "criticalErrors": [
+          "UNSUPPORTED_FAILURE_SAMPLE_EXCLUSION"
+        ]
+      },
+      "latencyMs": 13276,
+      "tokens": {
+        "prompt_tokens": 2937,
+        "completion_tokens": 1071,
+        "total_tokens": 4008
+      },
+      "jobId": "CV-SCALE-L-raw-m2-r1"
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "domain": "论文与研究设计",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 81.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 18970,
+      "tokens": {
+        "prompt_tokens": 3222,
+        "completion_tokens": 1597,
+        "total_tokens": 4819
+      },
+      "jobId": "CV-SCALE-L-direct-m2-r1"
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "domain": "论文与研究设计",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 85,
+        "criticalErrors": []
+      },
+      "latencyMs": 20891,
+      "tokens": {
+        "prompt_tokens": 3328,
+        "completion_tokens": 1822,
+        "total_tokens": 5150
+      },
+      "jobId": "CV-SCALE-L-plan-m2-r1"
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "domain": "论文与研究设计",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 83.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 16392,
+      "tokens": {
+        "prompt_tokens": 3124,
+        "completion_tokens": 1426,
+        "total_tokens": 4550
+      },
+      "jobId": "CV-SCALE-L-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "domain": "论文与研究设计",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 75,
+        "criticalErrors": [
+          "BLINDING_SOURCE_LEAK_IN_SCORE_TEMPLATE"
+        ]
+      },
+      "latencyMs": 18243,
+      "tokens": {
+        "prompt_tokens": 3409,
+        "completion_tokens": 1616,
+        "total_tokens": 5025
+      },
+      "jobId": "CV-SCALE-L-direct_matched-m2-r1"
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "domain": "用户指南",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 6693,
+      "tokens": {
+        "prompt_tokens": 914,
+        "completion_tokens": 1127,
+        "total_tokens": 2041
+      },
+      "jobId": "CV-GUIDE-L-raw-m1-r1"
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "domain": "用户指南",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 68.75,
+        "criticalErrors": [
+          "UNSUPPORTED_FUNCTION_CLAIM"
+        ]
+      },
+      "latencyMs": 6672,
+      "tokens": {
+        "prompt_tokens": 1633,
+        "completion_tokens": 1151,
+        "total_tokens": 2784
+      },
+      "jobId": "CV-GUIDE-L-direct-m1-r1"
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "domain": "用户指南",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 90,
+        "criticalErrors": []
+      },
+      "latencyMs": 8217,
+      "tokens": {
+        "prompt_tokens": 1775,
+        "completion_tokens": 1191,
+        "total_tokens": 2966
+      },
+      "jobId": "CV-GUIDE-L-plan-m1-r1"
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "domain": "用户指南",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 83.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 7479,
+      "tokens": {
+        "prompt_tokens": 1073,
+        "completion_tokens": 1134,
+        "total_tokens": 2207
+      },
+      "jobId": "CV-GUIDE-L-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "domain": "用户指南",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 93.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 8908,
+      "tokens": {
+        "prompt_tokens": 1792,
+        "completion_tokens": 1236,
+        "total_tokens": 3028
+      },
+      "jobId": "CV-GUIDE-L-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "domain": "用户指南",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 60,
+        "criticalErrors": [
+          "UNSUPPORTED_EDIT_WORKFLOW",
+          "UNSUPPORTED_HISTORY_VISIBILITY",
+          "UNSUPPORTED_ABSENCE_CLAIM"
+        ]
+      },
+      "latencyMs": 24828,
+      "tokens": {
+        "prompt_tokens": 913,
+        "completion_tokens": 1634,
+        "total_tokens": 2547
+      },
+      "jobId": "CV-GUIDE-L-raw-m2-r1"
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "domain": "用户指南",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 66.25,
+        "criticalErrors": [
+          "UNSUPPORTED_EDIT_WORKFLOW",
+          "UNSUPPORTED_HISTORY_VISIBILITY",
+          "UNSUPPORTED_ABSENCE_CLAIM"
+        ]
+      },
+      "latencyMs": 23757,
+      "tokens": {
+        "prompt_tokens": 1632,
+        "completion_tokens": 1489,
+        "total_tokens": 3121
+      },
+      "jobId": "CV-GUIDE-L-direct-m2-r1"
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "domain": "用户指南",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 66.25,
+        "criticalErrors": [
+          "UNSUPPORTED_FUNCTION_CLAIM",
+          "UNSUPPORTED_ABSENCE_CLAIM"
+        ]
+      },
+      "latencyMs": 23160,
+      "tokens": {
+        "prompt_tokens": 1774,
+        "completion_tokens": 1403,
+        "total_tokens": 3177
+      },
+      "jobId": "CV-GUIDE-L-plan-m2-r1"
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "domain": "用户指南",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 60,
+        "criticalErrors": [
+          "UNSUPPORTED_EDIT_WORKFLOW",
+          "UNSUPPORTED_HISTORY_VISIBILITY",
+          "UNSUPPORTED_ABSENCE_CLAIM"
+        ]
+      },
+      "latencyMs": 26454,
+      "tokens": {
+        "prompt_tokens": 1072,
+        "completion_tokens": 1614,
+        "total_tokens": 2686
+      },
+      "jobId": "CV-GUIDE-L-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "domain": "用户指南",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 66.25,
+        "criticalErrors": [
+          "UNSUPPORTED_HISTORY_VISIBILITY",
+          "UNSUPPORTED_ABSENCE_CLAIM"
+        ]
+      },
+      "latencyMs": 22910,
+      "tokens": {
+        "prompt_tokens": 1791,
+        "completion_tokens": 1473,
+        "total_tokens": 3264
+      },
+      "jobId": "CV-GUIDE-L-direct_matched-m2-r1"
+    },
+    {
+      "caseId": "CV-NEWS-M",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 62.5,
+        "criticalErrors": [
+          "MISSING_REQUIRED_MVP_STAGE"
+        ]
+      },
+      "latencyMs": 3333,
+      "tokens": {
+        "prompt_tokens": 1061,
+        "completion_tokens": 437,
+        "total_tokens": 1498
+      },
+      "jobId": "CV-NEWS-M-raw-m1-r1"
+    },
+    {
+      "caseId": "CV-NEWS-M",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 3454,
+      "tokens": {
+        "prompt_tokens": 1817,
+        "completion_tokens": 516,
+        "total_tokens": 2333
+      },
+      "jobId": "CV-NEWS-M-direct-m1-r1"
+    },
+    {
+      "caseId": "CV-NEWS-M",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 73.75,
+        "criticalErrors": [
+          "NEWS_BODY_LENGTH_OUT_OF_RANGE_BOTH_METHODS"
+        ]
+      },
+      "latencyMs": 3061,
+      "tokens": {
+        "prompt_tokens": 1945,
+        "completion_tokens": 378,
+        "total_tokens": 2323
+      },
+      "jobId": "CV-NEWS-M-plan-m1-r1"
+    },
+    {
+      "caseId": "CV-NEWS-M",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 75,
+        "criticalErrors": [
+          "NEWS_BODY_HAN_LENGTH_OUT_OF_RANGE"
+        ]
+      },
+      "latencyMs": 6554,
+      "tokens": {
+        "prompt_tokens": 1060,
+        "completion_tokens": 404,
+        "total_tokens": 1464
+      },
+      "jobId": "CV-NEWS-M-raw-m2-r1"
+    },
+    {
+      "caseId": "CV-NEWS-M",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 83.75,
+        "criticalErrors": [
+          "NEWS_BODY_LENGTH_OUT_OF_RANGE"
+        ]
+      },
+      "latencyMs": 7343,
+      "tokens": {
+        "prompt_tokens": 1816,
+        "completion_tokens": 432,
+        "total_tokens": 2248
+      },
+      "jobId": "CV-NEWS-M-direct-m2-r1"
+    },
+    {
+      "caseId": "CV-NEWS-M",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 83.75,
+        "criticalErrors": [
+          "NEWS_BODY_HAN_LENGTH_OUT_OF_RANGE"
+        ]
+      },
+      "latencyMs": 6281,
+      "tokens": {
+        "prompt_tokens": 1944,
+        "completion_tokens": 399,
+        "total_tokens": 2343
+      },
+      "jobId": "CV-NEWS-M-plan-m2-r1"
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "domain": "医院运营",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 62.5,
+        "criticalErrors": [
+          "UNDECIDED_CANCELLATION_RULE_DEFAULT",
+          "UNKNOWN_TO_NEGATIVE_FACT"
+        ]
+      },
+      "latencyMs": 17354,
+      "tokens": {
+        "prompt_tokens": 1177,
+        "completion_tokens": 4075,
+        "total_tokens": 5252
+      },
+      "jobId": "CV-HOSPITAL-M-raw-m1-r1"
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "domain": "医院运营",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 60,
+        "criticalErrors": [
+          "UNDECIDED_CANCELLATION_RULE_DEFAULT",
+          "OLD_RULE_AUTHORITY_ASSUMPTION"
+        ]
+      },
+      "latencyMs": 16479,
+      "tokens": {
+        "prompt_tokens": 2540,
+        "completion_tokens": 4102,
+        "total_tokens": 6642
+      },
+      "jobId": "CV-HOSPITAL-M-direct-m1-r1"
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "domain": "医院运营",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 62.5,
+        "criticalErrors": [
+          "UNKNOWN_TO_NEGATIVE_FACT",
+          "UNDECIDED_CHANNEL_ATTRIBUTION_DEFAULT",
+          "KNOWN_TIMEZONE_TREATED_AS_UNDECIDED"
+        ]
+      },
+      "latencyMs": 13479,
+      "tokens": {
+        "prompt_tokens": 2906,
+        "completion_tokens": 3288,
+        "total_tokens": 6194
+      },
+      "jobId": "CV-HOSPITAL-M-plan-m1-r1"
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "domain": "医院运营",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 75,
+        "criticalErrors": [
+          "UNDECIDED_UNKNOWN_DENOMINATOR_DEFAULT"
+        ]
+      },
+      "latencyMs": 14321,
+      "tokens": {
+        "prompt_tokens": 1321,
+        "completion_tokens": 3282,
+        "total_tokens": 4603
+      },
+      "jobId": "CV-HOSPITAL-M-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "domain": "医院运营",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 66.25,
+        "criticalErrors": [
+          "UNDECIDED_CANCELLATION_RULE_DEFAULT",
+          "OLD_RULE_AUTHORITY_ASSUMPTION"
+        ]
+      },
+      "latencyMs": 14120,
+      "tokens": {
+        "prompt_tokens": 2684,
+        "completion_tokens": 3531,
+        "total_tokens": 6215
+      },
+      "jobId": "CV-HOSPITAL-M-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "domain": "医院运营",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 56.25,
+        "criticalErrors": [
+          "UNDECIDED_CANCELLATION_RULE_DEFAULT",
+          "UNSUPPORTED_FIELD_EXISTENCE_OR_ABSENCE",
+          "ROW_LEVEL_TABLE_OUTSIDE_AGGREGATE_SCOPE"
+        ]
+      },
+      "latencyMs": 37415,
+      "tokens": {
+        "prompt_tokens": 1176,
+        "completion_tokens": 3270,
+        "total_tokens": 4446
+      },
+      "jobId": "CV-HOSPITAL-M-raw-m2-r1"
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "domain": "医院运营",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 75,
+        "criticalErrors": []
+      },
+      "latencyMs": 42463,
+      "tokens": {
+        "prompt_tokens": 2539,
+        "completion_tokens": 3771,
+        "total_tokens": 6310
+      },
+      "jobId": "CV-HOSPITAL-M-direct-m2-r1"
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "domain": "医院运营",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 75,
+        "criticalErrors": [
+          "UNKNOWN_TO_NEGATIVE_FACT"
+        ]
+      },
+      "latencyMs": 41352,
+      "tokens": {
+        "prompt_tokens": 2905,
+        "completion_tokens": 3897,
+        "total_tokens": 6802
+      },
+      "jobId": "CV-HOSPITAL-M-plan-m2-r1"
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "domain": "医院运营",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 81.25,
+        "criticalErrors": [
+          "UNSUPPORTED_FIELD_ABSENCE"
+        ]
+      },
+      "latencyMs": 39527,
+      "tokens": {
+        "prompt_tokens": 1320,
+        "completion_tokens": 3107,
+        "total_tokens": 4427
+      },
+      "jobId": "CV-HOSPITAL-M-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "domain": "医院运营",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 75,
+        "criticalErrors": [
+          "OBSERVATION_WINDOW_EXCLUSION_CONTRADICTION"
+        ]
+      },
+      "latencyMs": 38253,
+      "tokens": {
+        "prompt_tokens": 2683,
+        "completion_tokens": 3225,
+        "total_tokens": 5908
+      },
+      "jobId": "CV-HOSPITAL-M-direct_matched-m2-r1"
+    },
+    {
+      "caseId": "OP-NEWS-L",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 83.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 3804,
+      "tokens": {
+        "prompt_tokens": 1664,
+        "completion_tokens": 493,
+        "total_tokens": 2157
+      },
+      "jobId": "OP-NEWS-L-raw-m1-r1"
+    },
+    {
+      "caseId": "OP-NEWS-L",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 93.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 9332,
+      "tokens": {
+        "prompt_tokens": 2503,
+        "completion_tokens": 491,
+        "total_tokens": 2994
+      },
+      "jobId": "OP-NEWS-L-direct-m1-r1"
+    },
+    {
+      "caseId": "OP-NEWS-L",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 93.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 3787,
+      "tokens": {
+        "prompt_tokens": 2828,
+        "completion_tokens": 484,
+        "total_tokens": 3312
+      },
+      "jobId": "OP-NEWS-L-plan-m1-r1"
+    },
+    {
+      "caseId": "OP-NEWS-L",
+      "domain": "新闻稿",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "FAILED",
+      "quality": {
+        "status": "FAILED",
+        "score": null
+      },
+      "latencyMs": 15833,
+      "tokens": null,
+      "jobId": "OP-NEWS-L-raw-m2-r1"
+    },
+    {
+      "caseId": "OP-NEWS-L",
+      "domain": "新闻稿",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 93.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 14144,
+      "tokens": {
+        "prompt_tokens": 2502,
+        "completion_tokens": 518,
+        "total_tokens": 3020
+      },
+      "jobId": "OP-NEWS-L-direct-m2-r1"
+    },
+    {
+      "caseId": "OP-NEWS-L",
+      "domain": "新闻稿",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "CRITICAL_FAIL",
+        "score": 77.5,
+        "criticalErrors": [
+          "NEWS_BODY_LENGTH_OUT_OF_RANGE"
+        ]
+      },
+      "latencyMs": 8598,
+      "tokens": {
+        "prompt_tokens": 2827,
+        "completion_tokens": 409,
+        "total_tokens": 3236
+      },
+      "jobId": "OP-NEWS-L-plan-m2-r1"
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "domain": "业务冲突对照",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 86.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 5611,
+      "tokens": {
+        "prompt_tokens": 263,
+        "completion_tokens": 1157,
+        "total_tokens": 1420
+      },
+      "jobId": "OP-BOUNDARY-M-raw-m1-r1"
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "domain": "业务冲突对照",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 90,
+        "criticalErrors": []
+      },
+      "latencyMs": 5081,
+      "tokens": {
+        "prompt_tokens": 983,
+        "completion_tokens": 1060,
+        "total_tokens": 2043
+      },
+      "jobId": "OP-BOUNDARY-M-direct-m1-r1"
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "domain": "业务冲突对照",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 90,
+        "criticalErrors": []
+      },
+      "latencyMs": 4047,
+      "tokens": {
+        "prompt_tokens": 1410,
+        "completion_tokens": 928,
+        "total_tokens": 2338
+      },
+      "jobId": "OP-BOUNDARY-M-plan-m1-r1"
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "domain": "业务冲突对照",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 86.25,
+        "criticalErrors": []
+      },
+      "latencyMs": 3873,
+      "tokens": {
+        "prompt_tokens": 413,
+        "completion_tokens": 940,
+        "total_tokens": 1353
+      },
+      "jobId": "OP-BOUNDARY-M-raw_matched-m1-r1"
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "domain": "业务冲突对照",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-flash",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 90,
+        "criticalErrors": []
+      },
+      "latencyMs": 5366,
+      "tokens": {
+        "prompt_tokens": 1133,
+        "completion_tokens": 1230,
+        "total_tokens": 2363
+      },
+      "jobId": "OP-BOUNDARY-M-direct_matched-m1-r1"
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "domain": "业务冲突对照",
+      "arm": "raw",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 90,
+        "criticalErrors": []
+      },
+      "latencyMs": 9071,
+      "tokens": {
+        "prompt_tokens": 262,
+        "completion_tokens": 736,
+        "total_tokens": 998
+      },
+      "jobId": "OP-BOUNDARY-M-raw-m2-r1"
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "domain": "业务冲突对照",
+      "arm": "direct",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 100,
+        "criticalErrors": []
+      },
+      "latencyMs": 6764,
+      "tokens": {
+        "prompt_tokens": 982,
+        "completion_tokens": 640,
+        "total_tokens": 1622
+      },
+      "jobId": "OP-BOUNDARY-M-direct-m2-r1"
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "domain": "业务冲突对照",
+      "arm": "plan",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 93.75,
+        "criticalErrors": []
+      },
+      "latencyMs": 6248,
+      "tokens": {
+        "prompt_tokens": 1409,
+        "completion_tokens": 525,
+        "total_tokens": 1934
+      },
+      "jobId": "OP-BOUNDARY-M-plan-m2-r1"
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "domain": "业务冲突对照",
+      "arm": "raw_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 90,
+        "criticalErrors": []
+      },
+      "latencyMs": 11153,
+      "tokens": {
+        "prompt_tokens": 412,
+        "completion_tokens": 850,
+        "total_tokens": 1262
+      },
+      "jobId": "OP-BOUNDARY-M-raw_matched-m2-r1"
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "domain": "业务冲突对照",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "modelId": "deepseek:deepseek-v4-pro",
+      "informationTrack": "matched",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "technicalStatus": "SUCCESS",
+      "quality": {
+        "status": "REVIEWED",
+        "score": 90,
+        "criticalErrors": []
+      },
+      "latencyMs": 10289,
+      "tokens": {
+        "prompt_tokens": 1132,
+        "completion_tokens": 834,
+        "total_tokens": 1966
+      },
+      "jobId": "OP-BOUNDARY-M-direct_matched-m2-r1"
+    }
+  ],
+  "pairs": [
+    {
+      "caseId": "CV-SCALE-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 7.5
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 6.25
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -27.5
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 12.5
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 1.25
+    },
+    {
+      "caseId": "CV-SCALE-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "LOSS",
+      "scoreDelta": -8.75
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "LOSS",
+      "scoreDelta": -31.25
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 6.25
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 10
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 6.25
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 6.25
+    },
+    {
+      "caseId": "CV-GUIDE-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 6.25
+    },
+    {
+      "caseId": "CV-NEWS-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 37.5
+    },
+    {
+      "caseId": "CV-NEWS-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 11.25
+    },
+    {
+      "caseId": "CV-NEWS-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 8.75
+    },
+    {
+      "caseId": "CV-NEWS-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "BOTH_FAIL",
+      "scoreDelta": 8.75
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "BOTH_FAIL",
+      "scoreDelta": -2.5
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "BOTH_FAIL",
+      "scoreDelta": -12.5
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "BOTH_FAIL",
+      "scoreDelta": -8.75
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 18.75
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "BOTH_FAIL",
+      "scoreDelta": -6.25
+    },
+    {
+      "caseId": "CV-HOSPITAL-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "BOTH_FAIL",
+      "scoreDelta": -6.25
+    },
+    {
+      "caseId": "OP-NEWS-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 10
+    },
+    {
+      "caseId": "OP-NEWS-L",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 10
+    },
+    {
+      "caseId": "OP-NEWS-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "PENDING",
+      "pendingReason": "TECHNICAL_FAILURE_NO_COMPARABLE_WORK",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "OP-NEWS-L",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "PENDING",
+      "pendingReason": "TECHNICAL_FAILURE_NO_COMPARABLE_WORK",
+      "scoreDelta": null
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 3.75
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 3.75
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 3.75
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "status": "WIN",
+      "scoreDelta": 10
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "WIN",
+      "scoreDelta": 3.75
+    },
+    {
+      "caseId": "OP-BOUNDARY-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct_matched",
+      "repetition": 1,
+      "informationTrack": "matched",
+      "status": "TIE",
+      "scoreDelta": 0
+    }
+  ],
+  "groups": [
+    {
+      "key": "deepseek:deepseek-flash|raw",
+      "planned": 6,
+      "successfulOutputs": 6,
+      "criticalFailures": 2,
+      "reviewed": 6,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-flash|direct",
+      "planned": 6,
+      "successfulOutputs": 6,
+      "criticalFailures": 2,
+      "reviewed": 6,
+      "pairedComparisons": 6,
+      "wins": 4,
+      "losses": 1,
+      "ties": 0,
+      "bothUnacceptable": 1,
+      "winRate": 0.6666666666666666
+    },
+    {
+      "key": "deepseek:deepseek-flash|plan",
+      "planned": 6,
+      "successfulOutputs": 6,
+      "criticalFailures": 2,
+      "reviewed": 6,
+      "pairedComparisons": 6,
+      "wins": 4,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 2,
+      "winRate": 0.6666666666666666
+    },
+    {
+      "key": "deepseek:deepseek-flash|raw_matched",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 1,
+      "reviewed": 4,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-flash|direct_matched",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 2,
+      "reviewed": 4,
+      "pairedComparisons": 4,
+      "wins": 2,
+      "losses": 1,
+      "ties": 0,
+      "bothUnacceptable": 1,
+      "winRate": 0.5
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|raw",
+      "planned": 6,
+      "successfulOutputs": 5,
+      "criticalFailures": 4,
+      "reviewed": 5,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|direct",
+      "planned": 6,
+      "successfulOutputs": 6,
+      "criticalFailures": 2,
+      "reviewed": 6,
+      "pairedComparisons": 5,
+      "wins": 3,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 2,
+      "winRate": 0.6
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|plan",
+      "planned": 6,
+      "successfulOutputs": 6,
+      "criticalFailures": 4,
+      "reviewed": 6,
+      "pairedComparisons": 5,
+      "wins": 2,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 3,
+      "winRate": 0.4
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|raw_matched",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 2,
+      "reviewed": 4,
+      "pairedComparisons": 0,
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "bothUnacceptable": 0,
+      "winRate": null
+    },
+    {
+      "key": "deepseek:deepseek-v4-pro|direct_matched",
+      "planned": 4,
+      "successfulOutputs": 4,
+      "criticalFailures": 3,
+      "reviewed": 4,
+      "pairedComparisons": 4,
+      "wins": 0,
+      "losses": 1,
+      "ties": 1,
+      "bothUnacceptable": 2,
+      "winRate": 0
+    }
+  ],
+  "generationFailures": [],
+  "reviewSource": {
+    "id": "codex-anonymous-merged-independent-ai-assisted-20261005",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-05T14:55:17.589Z",
+    "professionalDomain": "NONE"
+  },
+  "professionalReview": "PENDING",
+  "releaseApproval": false,
+  "scope": "Fixed prompt downstream work comparison; no guarantee of professional correctness or universal improvement."
+}

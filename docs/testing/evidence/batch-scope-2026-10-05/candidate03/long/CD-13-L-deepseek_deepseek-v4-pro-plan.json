@@ -1,0 +1,160 @@
+{
+  "id": "CD-13-L-deepseek_deepseek-v4-pro-plan",
+  "caseId": "CD-13-L",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T15:10:35.638Z",
+  "prepared": {
+    "contextId": "db961472-0ddf-4db9-911b-8978f2b28973",
+    "version": "sha256:ab5bdd830970fdfbbbad1dd5e04ee4ffdc4624ce76446853ef1c2bf14f2bcf2e",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/scene-13/",
+        "materials/scene-13/current-brief.md",
+        "materials/scene-13/term-test.txt",
+        "materials/scene-13/tests/",
+        "materials/scene-13/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/scene-13/current-brief.md：Markdown 文档摘要：合成当前说明；A staff member can show the route, but this does not mean that a place has been reserved for the visitor.；Participants should not hand over personal identification documents simply because the translated notice uses a genera…；业务摘录：For the morning session, the seating area opens after registration closes. Visitors with a pending request must wait for a separate confirmation notice. A message saying that the request has been received is not an admis…；正式名称：access pass的官方译名尚未确认，暂用表达由本次确认答案控制，不能把任何自动推荐视为获批准名称。；只在相应名词第一次出现标示状态，不在每段重复正式名称未确认的提醒，也不在末尾增列独立问卷。；[片段 1/1]；指代范围：return borrowed display cards的对象是现场借出的展示卡，不是入场凭证，更不是身份证明。；审批、隐私和安全制度如未在通知出现，不添加推测性条款，更不替读者作出实际法律意见。",
+        "[USER_MATERIAL] materials/scene-13/term-test.txt：文件内容摘要：仅用于排版测试：Rivergate Open Day=河湾峰会；access pass=永久会员卡。；以上译名没有批准，不是本次术语。；业务摘录：[片段 1/1] 仅用于排版测试：Rivergate Open Day=河湾峰会； access pass=永久会员卡。 以上译名没有批准，不是本次术语。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 3,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-13/current-brief.md",
+          "evidence": "原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/scene-13/current-brief.md",
+          "evidence": "Please不一律译成命令式“必须”，不得把自愿参加改成强制参加"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/scene-13/",
+        "materials/scene-13/current-brief.md",
+        "materials/scene-13/term-test.txt",
+        "materials/scene-13/tests/",
+        "materials/scene-13/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/scene-13/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 合成当前说明\n活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。\n通知中的cancelled与postponed分别是取消与延期，不能都译为活动结束。\n备用场次只在主场次取消后启用；主场次延期并不自动触发备用场次。\n原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。\n\n# 原文或原始记录\nWelcome to Rivergate Open Day. Registration is open from 08:30 to 09:00 on 20 October 2026. A registration request is not a confirmed booking.\n\nIf the main session is cancelled, a backup session may be offered after confirmation. A postponed session does not automatically activate the backup session. Do not travel before the updated notice is published.\n\nPlease bring your access pass. Its official local name is still under review. The proposed date for the next event has not been approved. Participation is voluntary, and the notice does not promise any learning outcome.\n\nThe venue has two entrances. The east entrance is used for the welcome desk, while the west entrance remains available as an exit. Visitors should not assume that an open exit also provides registration services. A staff member can show the route, but this does not mean that a place has been reserved for the visitor.\n\nFor the morning session, the seating area opens after registration closes. Visitors with a pending request must wait for a separate confirmation notice. A message saying that the request has been received is not an admission decision. Please keep the difference between received, confirmed, and waitlisted messages when sharing this notice with others.\n\nThe demonstration is optional. Visitors may leave the demonstration area without withdrawing from the rest of the open day. If the demonstration is interrupted, the host may pause it while checking the equipment; a pause does not announce cancellation of the entire event. No refund or compensation policy is stated in this notice.\n\nGuests who need assistance may ask the welcome desk for directions. This sentence is an invitation to ask, not a guarantee that every request can be met. The materials do not identify a medical service, a counselling service, or a transport service. Please do not add these services when translating the notice for new visitors.\n\nThe proposed afternoon session remains subject to venue confirmation. It will not replace a postponed morning session unless a separate notice explicitly says so. A proposed arrangement must not be described as an approved schedule. The proposed dates and the confirmed date refer to different events, even when the month is the same.\n\nPlease return borrowed display cards to the marked tray before leaving. This instruction applies to display cards supplied at the welcome desk, not to personal documents or the access pass. Participants should not hand over personal identification documents simply because the translated notice uses a general word such as card.\n\nThe organisers may publish an updated notice. An update changes only the parts explicitly identified in that notice; it does not silently change the venue, the registration window, or the status of an existing request. The current text does not specify a method for delivering updates, so no email address or mobile application should be invented.\n\n# 分支与边界\n段落边界：逐段翻译附件，不把三个状态句合成一句确定性承诺。欢迎语、场次条件与参与提醒分属不同段落。段落对应有助于读者把译文与原文核查，不意味着要逐词生硬照搬英语语序；可以自然调整句内次序，但不能移动条件到失去限定作用的位置。\n\n接收与确认：received仅说明申请已收到，confirmed说明名额已确认，waitlisted说明候补。三种状态属于报名过程不同节点，不能用“报名成功”统称。申请开放时间也不等于座位区开放时间。通知没有给出审核耗时，不推断收到请求几分钟后一定会确认。\n\n指代范围：return borrowed display cards的对象是现场借出的展示卡，不是入场凭证，更不是身份证明。翻译it、these cards和the marked tray时回到具体段落检查先行词。不能为了统一中文名词，把不同卡片类型都改成“证件”并引出上交个人证件的行为。\n\n否定与例外：主场次取消后备用场次仍是可能安排，须另行确认。将may be offered译为“一定举办备用场”会反转条件。延期不自动启用备用场是独立否定，应在译文保留，不能因为已经解释取消条件就省掉。两个分支不能合并为场次变动后自动启用备用安排。\n\n日期归属：2026年10月20日属于本次开放日，后续提议日期属于下一次活动。相同月份不能作为同一事件的证明。原文没有指定下一次活动准确日，保留提议状态，不根据当前年份推算。08:30至09:00是登记窗口，不当作整场活动的时长。\n\n能力边界：询问帮助只表示可以提出需求，不保证所有帮助都可提供。原文明确未列医疗、心理和接送服务，译文不添加服务承诺，也不把“未列出”写成这些服务绝对不存在。是否实际提供须另行核查，当前任务不负责代活动方制定服务范围。\n\n正式名称：access pass的官方译名尚未确认，暂用表达由本次确认答案控制，不能把任何自动推荐视为获批准名称。名称未知不意味着无法翻译其余内容。只在相应名词第一次出现标示状态，不在每段重复正式名称未确认的提醒，也不在末尾增列独立问卷。\n\n译文语气：采用客观、礼貌和容易理解的中文。禁止的行为要保持禁止，提醒不写成法律处罚。Please不一律译成命令式“必须”，不得把自愿参加改成强制参加。中文句子可以稍短，但不能删掉读者决定是否出行所需的条件和状态。\n\n时间更新：更新通知只改变明确列出的事项，不能推断地点、登记窗口及申请状态均已一起变更。没有通知投递方式就不加入邮件、应用程序或短信渠道。译文应保留更新前不建议出行的意思，而不是宣称收到一次通知即可获得永久有效的入场资格。\n\n不补编制度：本通知没有退款或赔偿制度，不能借翻译写进新增制度，也不能断言活动方永不退款。暂停展示不代表整个活动取消，翻译中保留不同范围。审批、隐私和安全制度如未在通知出现，不添加推测性条款，更不替读者作出实际法律意见。",
+          "summary": "Markdown 文档摘要：合成当前说明；A staff member can show the route, but this does not mean that a place has been reserved for the visitor.；Participants should not hand over personal identification documents simply because the translated notice uses a general word such as card.；日期归属：2026年10月20日属于本次开放日，后续提议日期属于下一次活动。；审批、隐私和安全制度如未在通知出现，不添加推测性条款，更不替读者作出实际法律意见。",
+          "truncated": false
+        },
+        {
+          "path": "materials/scene-13/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。这不是本题事实、偏好或执行决定。",
+          "summary": "文件内容摘要：仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。；这不是本题事实、偏好或执行决定。",
+          "truncated": false
+        },
+        {
+          "path": "materials/scene-13/term-test.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版测试：Rivergate Open Day=河湾峰会；access pass=永久会员卡。以上译名没有批准，不是本次术语。",
+          "summary": "文件内容摘要：仅用于排版测试：Rivergate Open Day=河湾峰会；access pass=永久会员卡。；以上译名没有批准，不是本次术语。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T15:40:35.677398500Z",
+    "latencyMs": 96
+  },
+  "plan": {
+    "summary": "已理解任务为将合成英文活动通知翻译成简体中文，仅输出译文，保留原文段落、条件、否定和待确认状态。唯一影响交付的未决事项是 access pass 的正式中文名称尚未确认，需要用户提供或选择处理方式。",
+    "questions": [
+      {
+        "id": "access_pass_name",
+        "question": "access pass 在译文中应如何处理？",
+        "hint": "原文提到其官方本地名称仍在审核中，需要确定译文中的表达方式，以保持准确且不擅自命名。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "use_placeholder",
+            "label": "使用占位符并标注待确认",
+            "description": "在译文中使用“通行证（官方名称待确认）”或类似表达，明确状态。",
+            "answer": "通行证（官方名称待确认）",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "use_generic",
+            "label": "使用通用译名“通行证”",
+            "description": "直接译为“通行证”，不额外标注待确认。",
+            "answer": "通行证",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "use_other",
+            "label": "使用其他指定译名",
+            "description": "用户提供已确认的正式中文名称。",
+            "answer": "用户提供的正式名称",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 6193,
+    "planId": "04d637b9-1180-4424-8928-a7b3e0c6f4a7",
+    "planningContext": {
+      "contextId": "db961472-0ddf-4db9-911b-8978f2b28973",
+      "version": "sha256:ab5bdd830970fdfbbbad1dd5e04ee4ffdc4624ce76446853ef1c2bf14f2bcf2e"
+    },
+    "expiresAt": "2026-10-05T15:40:35.677398500Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-13-L-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "f2497ff4-3e3b-4cd9-a291-afd9b2ad26b6",
+      "elapsedMs": 142
+    },
+    {
+      "label": "CD-13-L-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "ab292b93-eda2-4f05-8269-8143be7197da",
+      "elapsedMs": 6240
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "id": "CD-13-L-deepseek_deepseek-flash-plan-final",
+  "caseId": "CD-13-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T15:35:48.056Z",
+  "plan": {
+    "summary": "本次任务是把合成社区活动通知翻译成简体中文，目标语言、读者、仅输出译文、段落对应、日期与状态保留等均已明确。唯一会改变译文结果且无法从现有资料确定的，是 access pass 在译文中的正式中文名称。",
+    "questions": [
+      {
+        "id": "access_pass_name",
+        "question": "原文中的 access pass 在译文中应使用哪个中文名称？",
+        "hint": "该名称的官方译名尚未确认，但译文必须使用一个具体名称。请给出本次翻译中要使用的正式中文名称；若尚未确定，请说明希望如何处理。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "使用“通行证”，并在首次出现时标注官方名称待确认",
+          "使用“入场凭证”，不添加其他说明",
+          "暂译为“通行证”，但保留英文 access pass 在括号中"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 2049,
+    "planId": "b66d820b-8a3e-4785-8950-8b6fa5900366",
+    "planningContext": {
+      "contextId": "b530675c-0275-45b8-9053-cc8a3fae18d6",
+      "version": "sha256:ab5bdd830970fdfbbbad1dd5e04ee4ffdc4624ce76446853ef1c2bf14f2bcf2e"
+    },
+    "expiresAt": "2026-10-05T15:37:56.261126700Z"
+  },
+  "answers": [
+    {
+      "questionId": "access_pass_name",
+      "question": "原文中的 access pass 在译文中应使用哪个中文名称？",
+      "answer": "正式中文名称仍未确认。本次暂译为“入场凭证”，首次出现写“入场凭证（正式名称待确认）”，后续只沿用暂译名；这是本次译文暂用表达，不是官方批准名称，不加译者说明或独立问卷。"
+    }
+  ],
+  "answerReview": {
+    "access_pass_name": {
+      "answer": "正式中文名称仍未确认。本次暂译为“入场凭证”，首次出现写“入场凭证（正式名称待确认）”，后续只沿用暂译名；这是本次译文暂用表达，不是官方批准名称，不加译者说明或独立问卷。",
+      "basis": "原文及本题资料明确官方译名仍在审核；允许暂用表达由本次回答控制、仅第一次标示状态。中性暂译不采用测试材料的永久会员卡。"
+    }
+  },
+  "refinedQuery": "## 任务\n请把附件中合成社区活动的英文通知翻译成自然的简体中文，供首次参加者阅读。只输出译文，不写译者说明、原文、标题之外的新标题、摘要、代码或实施步骤。原文段落和项目符号须一一对应，日期和时间范围不得改变。本题只处理合成通知，不代表活动已经举办或报名已经成功。目标语言、读者和仅译文要求已明确，不需要再询问。\n\n## 已知资料\n1. 活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。\n2. 通知中的cancelled与postponed分别是取消与延期，不能都译为活动结束。\n3. 备用场次只在主场次取消后启用；主场次延期并不自动触发备用场次。\n4. 原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。\n\n## 约束\n- 只输出对应译文；保留原文中的条件、否定、待确认状态及段落层级。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不能加入译文。\n- 术语表与测试例子冲突时采用本题明确指定的术语表，不将测试例子当产品事实。\n\n## 尚待明确\n- 原文access pass的正式中文名称是否已有确认？ 目前未确认，Plan应向用户确认此决定。\n\n## 交付\n与原文段落和项目符号对应的简体中文译文。\n只使用本题合成资料。已知事实不重问；常规措辞与排版自行处理。测试例子、当前依据及未批准材料分开，必要未决条件进入可复制正文，不在多个段落重复改写。\n\n## 原文\nWelcome to Rivergate Open Day. Registration is open from 08:30 to 09:00 on 20 October 2026. A registration request is not a confirmed booking.\n\nIf the main session is cancelled, a backup session may be offered after confirmation. A postponed session does not automatically activate the backup session. Do not travel before the updated notice is published.\n\nPlease bring your access pass. Its official local name is still under review. The proposed date for the next event has not been approved. Participation is voluntary, and the notice does not promise any learning outcome.\n\nThe venue has two entrances. The east entrance is used for the welcome desk, while the west entrance remains available as an exit. Visitors should not assume that an open exit also provides registration services. A staff member can show the route, but this does not mean that a place has been reserved for the visitor.\n\nFor the morning session, the seating area opens after registration closes. Visitors with a pending request must wait for a separate confirmation notice. A message saying that the request has been received is not an admission decision. Please keep the difference between received, confirmed, and waitlisted messages when sharing this notice with others.\n\nThe demonstration is optional. Visitors may leave the demonstration area without withdrawing from the rest of the open day. If the demonstration is interrupted, the host may pause it while checking the equipment; a pause does not announce cancellation of the entire event. No refund or compensation policy is stated in this notice.\n\nGuests who need assistance may ask the welcome desk for directions. This sentence is an invitation to ask, not a guarantee that every request can be met. The materials do not identify a medical service, a counselling service, or a transport service. Please do not add these services when translating the notice for new visitors.\n\nThe proposed afternoon session remains subject to venue confirmation. It will not replace a postponed morning session unless a separate notice explicitly says so. A proposed arrangement must not be described as an approved schedule. The proposed dates and the confirmed date refer to different events, even when the month is the same.\n\nPlease return borrowed display cards to the marked tray before leaving. This instruction applies to display cards supplied at the welcome desk, not to personal documents or the access pass. Participants should not hand over personal identification documents simply because the translated notice uses a general word such as card.\n\nThe organisers may publish an updated notice. An update changes only the parts explicitly identified in that notice; it does not silently change the venue, the registration window, or the status of an existing request. The current text does not specify a method for delivering updates, so no email address or mobile application should be invented.\n\n## 资料\n下列逐项约束属于本题已提供的材料和交付边界，不新增额外作品；遇未知保持未知。\n### 段落边界\n逐段翻译附件，不把三个状态句合成一句确定性承诺。欢迎语、场次条件与参与提醒分属不同段落。段落对应有助于读者把译文与原文核查，不意味着要逐词生硬照搬英语语序；可以自然调整句内次序，但不能移动条件到失去限定作用的位置。\n\n### 接收与确认\nreceived仅说明申请已收到，confirmed说明名额已确认，waitlisted说明候补。三种状态属于报名过程不同节点，不能用“报名成功”统称。申请开放时间也不等于座位区开放时间。通知没有给出审核耗时，不推断收到请求几分钟后一定会确认。\n\n### 指代范围\nreturn borrowed display cards的对象是现场借出的展示卡，不是入场凭证，更不是身份证明。翻译it、these cards和the marked tray时回到具体段落检查先行词。不能为了统一中文名词，把不同卡片类型都改成“证件”并引出上交个人证件的行为。\n\n### 否定与例外\n主场次取消后备用场次仍是可能安排，须另行确认。将may be offered译为“一定举办备用场”会反转条件。延期不自动启用备用场是独立否定，应在译文保留，不能因为已经解释取消条件就省掉。两个分支不能合并为场次变动后自动启用备用安排。\n\n### 日期归属\n2026年10月20日属于本次开放日，后续提议日期属于下一次活动。相同月份不能作为同一事件的证明。原文没有指定下一次活动准确日，保留提议状态，不根据当前年份推算。08:30至09:00是登记窗口，不当作整场活动的时长。\n\n### 能力边界\n询问帮助只表示可以提出需求，不保证所有帮助都可提供。原文明确未列医疗、心理和接送服务，译文不添加服务承诺，也不把“未列出”写成这些服务绝对不存在。是否实际提供须另行核查，当前任务不负责代活动方制定服务范围。\n\n### 正式名称\naccess pass的官方译名尚未确认，暂用表达由本次确认答案控制，不能把任何自动推荐视为获批准名称。名称未知不意味着无法翻译其余内容。只在相应名词第一次出现标示状态，不在每段重复正式名称未确认的提醒，也不在末尾增列独立问卷。\n\n### 译文语气\n采用客观、礼貌和容易理解的中文。禁止的行为要保持禁止，提醒不写成法律处罚。Please不一律译成命令式“必须”，不得把自愿参加改成强制参加。中文句子可以稍短，但不能删掉读者决定是否出行所需的条件和状态。\n\n### 时间更新\n更新通知只改变明确列出的事项，不能推断地点、登记窗口及申请状态均已一起变更。没有通知投递方式就不加入邮件、应用程序或短信渠道。译文应保留更新前不建议出行的意思，而不是宣称收到一次通知即可获得永久有效的入场资格。\n\n### 不补编制度\n本通知没有退款或赔偿制度，不能借翻译写进新增制度，也不能断言活动方永不退款。暂停展示不代表整个活动取消，翻译中保留不同范围。审批、隐私和安全制度如未在通知出现，不添加推测性条款，更不替读者作出实际法律意见。\n本次选择：正式中文名称仍未确认。本次暂译为“入场凭证”，首次出现写“入场凭证（正式名称待确认）”，后续只沿用暂译名；这是本次译文暂用表达，不是官方批准名称，不加译者说明或独立问卷。",
+  "result": {
+    "optimizedPrompt": "## 背景\n本任务处理一份合成社区活动通知，活动名称为 Rivergate Open Day，统一译为“河湾开放日”，不得根据测试附件改为“河湾峰会”。通知面向首次参加者，需译为自然的简体中文。\n\n通知涉及以下关键事实与边界：\n- 报名开放时间为 2026 年 10 月 20 日 08:30 至 09:00；该时间仅为登记窗口，不是整场活动时长。\n- 提交报名申请不等于已确认预约。\n- 主场次取消后，备用场次仍须另行确认才可能安排；主场次延期不自动启用备用场次。\n- 更新通知发布前不应出行。\n- 通知中的待确认日期仍为待确认，不得改为已公布日期；2026 年 10 月 20 日属于本次开放日，后续提议日期属于下一次活动，即使月份相同也不得混为同一事件。\n- 原文未指定下一次活动的准确日期，不得根据当前年份推算。\n- 原文明确未列出医疗、心理或接送服务，译文不得添加这些服务承诺，也不得写成这些服务绝对不存在。\n- 本通知没有退款或赔偿制度，不得借翻译新增制度，也不得断言活动方永不退款。\n- 原文没有指定更新通知的投递方式，不得加入邮件、应用程序或短信渠道。\n- 测试附件 materials/scene-13/tests/layout-example.txt 与 materials/scene-13/term-test.txt 仅用于排版和来源识别，其中“河湾峰会”“永久会员卡”等译名未获批准，不是本次术语。\n\naccess pass 的正式中文名称尚未确认。本次暂译为“入场凭证”，首次出现写“入场凭证（正式名称待确认）”，后续只沿用暂译名；这是本次译文暂用表达，不是官方批准名称，不加译者说明或独立问卷。\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n- materials/scene-13/current-brief.md：原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期\n- materials/scene-13/current-brief.md：Please不一律译成命令式“必须”，不得把自愿参加改成强制参加\n\n## 任务\n将附件中的英文通知逐段翻译为自然的简体中文，供首次参加者阅读。\n\n翻译时须做到：\n- 原文段落和项目符号一一对应，保留原文中的条件、否定、待确认状态及段落层级。\n- 日期和时间范围不得改变；08:30 至 09:00 仅作为登记窗口，不当作整场活动时长。\n- cancelled 译为取消，postponed 译为延期，不得都译为活动结束。\n- 主场次取消后备用场次仍为可能安排，须另行确认；不得译为“一定举办备用场”。\n- 延期不自动启用备用场是独立否定，须在译文中保留，不得与取消条件合并。\n- received 仅说明申请已收到，confirmed 说明名额已确认，waitlisted 说明候补；三者属于报名过程不同节点，不得用“报名成功”统称。\n- 申请开放时间不等于座位区开放时间；通知未给出审核耗时，不得推断收到请求后几分钟内一定会确认。\n- return borrowed display cards 的对象是现场借出的展示卡，不是入场凭证，更不是身份证明；翻译 it、these cards 和 the marked tray 时须回到具体段落检查先行词，不得把不同卡片类型都改成“证件”并引出上交个人证件的行为。\n- 询问帮助只表示可以提出需求，不保证所有帮助都可提供。\n- 更新通知只改变明确列出的事项，不得推断地点、登记窗口及申请状态均已一起变更。\n- 暂停展示不代表整个活动取消，须保留不同范围。\n- 采用客观、礼貌、容易理解的中文；禁止的行为保持禁止，提醒不写成法律处罚；Please 不一律译成命令式“必须”，不得把自愿参加改成强制参加。\n- 中文句子可以稍短，但不得删掉读者决定是否出行所需的条件和状态。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不得加入译文。\n- 术语表与测试例子冲突时采用本题明确指定的术语表，不将测试例子当产品事实。\n\n## 输出\n只输出与原文段落和项目符号一一对应的简体中文译文。\n\n不写译者说明、原文、标题之外的新标题、摘要、代码或实施步骤。\n\naccess pass 首次出现时写“入场凭证（正式名称待确认）”，后续只沿用“入场凭证”；不在每段重复正式名称未确认的提醒，也不在末尾增列独立问卷。\n\n## 约束\n- 只输出对应译文；保留原文中的条件、否定、待确认状态及段落层级。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不能加入译文。\n- 术语表与测试例子冲突时采用本题明确指定的术语表，不将测试例子当产品事实。\n- 不得把建议日期改成已公布日期；不得把提议安排描述为已批准日程。\n- 不得把“未列出医疗、心理或接送服务”写成这些服务绝对不存在。\n- 不得借翻译新增退款或赔偿制度，也不得断言活动方永不退款。\n- 不得加入邮件、应用程序或短信等通知投递渠道。\n- 不得把自愿参加改成强制参加。\n- 不得把 received、confirmed、waitlisted 三种状态合并为“报名成功”。\n- 不得把不同卡片类型都改成“证件”并引出上交个人证件的行为。\n- 不得把暂停展示写成整个活动取消。\n- 不得把更新通知写成会静默改变地点、登记窗口或申请状态。\n- 不得把询问帮助写成所有帮助都能得到满足。\n- 不得把“更新前不建议出行”写成收到一次通知即可获得永久有效入场资格。\n- 不得添加审批、隐私和安全制度等推测性条款，也不替读者作出实际法律意见。\n\n用户明确规则（须遵守平台权限边界）：\n- 只输出译文，不写译者说明、原文、标题之外的新标题、摘要、代码或实施步骤。\n- 原文段落和项目符号须一一对应，日期和时间范围不得改变。\n- 本题只处理合成通知，不代表活动已经举办或报名已经成功。\n- 目标语言、读者和仅译文要求已明确，不需要再询问。\n- 活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。\n- 通知中的cancelled与postponed分别是取消与延期，不能都译为活动结束。\n- 备用场次只在主场次取消后启用；主场次延期并不自动触发备用场次。\n- 原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。\n- 只输出对应译文；保留原文中的条件、否定、待确认状态及段落层级。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不能加入译文。\n- 目前未确认，Plan应向用户确认此决定。\n- 只使用本题合成资料。\n- If the main session is cancelled, a backup session may be offered after confirmation. A postponed session does not automatically activate the backup session. Do not travel before the updated notice is published.\n- For the morning session, the seating area opens after registration closes. Visitors with a pending request must wait for a separate confirmation notice. A message saying that the request has been received is not an admission decision. Please keep the difference between received, confirmed, and waitlisted messages when sharing this notice with others.\n- Guests who need assistance may ask the welcome desk for directions. This sentence is an invitation to ask, not a guarantee that every request can be met. The materials do not identify a medical service, a counselling service, or a transport service. Please do not add these services when translating the notice for new visitors.\n- The proposed afternoon session remains subject to venue confirmation. It will not replace a postponed morning session unless a separate notice explicitly says so. A proposed arrangement must not be described as an approved schedule. The proposed dates and the confirmed date refer to different events, even when the month is the same.\n- The organisers may publish an updated notice. An update changes only the parts explicitly identified in that notice; it does not silently change the venue, the registration window, or the status of an existing request. The current text does not specify a method for delivering updates, so no email address or mobile application should be invented.\n- 下列逐项约束属于本题已提供的材料和交付边界，不新增额外作品；遇未知保持未知。\n- 段落对应有助于读者把译文与原文核查，不意味着要逐词生硬照搬英语语序；可以自然调整句内次序，但不能移动条件到失去限定作用的位置。\n- ### 接收与确认\n- received仅说明申请已收到，confirmed说明名额已确认，waitlisted说明候补。\n- 三种状态属于报名过程不同节点，不能用“报名成功”统称。\n- 通知没有给出审核耗时，不推断收到请求几分钟后一定会确认。\n- 不能为了统一中文名词，把不同卡片类型都改成“证件”并引出上交个人证件的行为。\n- 主场次取消后备用场次仍是可能安排，须另行确认。\n- 延期不自动启用备用场是独立否定，应在译文保留，不能因为已经解释取消条件就省掉。\n- 两个分支不能合并为场次变动后自动启用备用安排。\n- 相同月份不能作为同一事件的证明。\n- 原文没有指定下一次活动准确日，保留提议状态，不根据当前年份推算。\n- 询问帮助只表示可以提出需求，不保证所有帮助都可提供。\n- access pass的官方译名尚未确认，暂用表达由本次确认答案控制，不能把任何自动推荐视为获批准名称。\n- 只在相应名词第一次出现标示状态，不在每段重复正式名称未确认的提醒，也不在末尾增列独立问卷。\n- 禁止的行为要保持禁止，提醒不写成法律处罚。\n- Please不一律译成命令式“必须”，不得把自愿参加改成强制参加。\n- 中文句子可以稍短，但不能删掉读者决定是否出行所需的条件和状态。\n- 更新通知只改变明确列出的事项，不能推断地点、登记窗口及申请状态均已一起变更。\n- 译文应保留更新前不建议出行的意思，而不是宣称收到一次通知即可获得永久有效的入场资格。\n- 本通知没有退款或赔偿制度，不能借翻译写进新增制度，也不能断言活动方永不退款。\n- 暂停展示不代表整个活动取消，翻译中保留不同范围。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：正式中文名称仍未确认。本次暂译为“入场凭证”，首次出现写“入场凭证（正式名称待确认）”，后续只沿用暂译名；这是本次译文暂用表达，不是官方批准名称，不加译者说明或独立问卷。\n\n## 验收\n检查译文是否满足以下要求：\n- 只输出简体中文译文，无译者说明、原文、新标题、摘要、代码或实施步骤。\n- 原文段落和项目符号一一对应，条件、否定、待确认状态及段落层级保留完整。\n- 日期和时间范围未改变；08:30 至 09:00 仅作为登记窗口。\n- cancelled 与 postponed 分别译为取消与延期。\n- 备用场次仍为可能安排且须另行确认；延期不自动启用备用场。\n- received、confirmed、waitlisted 三种状态未合并为“报名成功”。\n- access pass 首次出现写“入场凭证（正式名称待确认）”，后续只沿用“入场凭证”。\n- 未添加原文没有的姓名、电话、报名链接、活动效果、承诺、服务、制度或投递渠道。\n- 语气客观、礼貌、容易理解；禁止行为保持禁止，自愿参加未被改成强制参加。\n- 未把“未列出医疗、心理或接送服务”写成这些服务绝对不存在。\n- 未把暂停展示写成整个活动取消。\n- 未把更新通知写成会静默改变地点、登记窗口或申请状态。",
+    "sections": [
+      {
+        "type": "BACKGROUND",
+        "title": "背景",
+        "content": "本任务处理一份合成社区活动通知，活动名称为 Rivergate Open Day，统一译为“河湾开放日”，不得根据测试附件改为“河湾峰会”。通知面向首次参加者，需译为自然的简体中文。\n\n通知涉及以下关键事实与边界：\n- 报名开放时间为 2026 年 10 月 20 日 08:30 至 09:00；该时间仅为登记窗口，不是整场活动时长。\n- 提交报名申请不等于已确认预约。\n- 主场次取消后，备用场次仍须另行确认才可能安排；主场次延期不自动启用备用场次。\n- 更新通知发布前不应出行。\n- 通知中的待确认日期仍为待确认，不得改为已公布日期；2026 年 10 月 20 日属于本次开放日，后续提议日期属于下一次活动，即使月份相同也不得混为同一事件。\n- 原文未指定下一次活动的准确日期，不得根据当前年份推算。\n- 原文明确未列出医疗、心理或接送服务，译文不得添加这些服务承诺，也不得写成这些服务绝对不存在。\n- 本通知没有退款或赔偿制度，不得借翻译新增制度，也不得断言活动方永不退款。\n- 原文没有指定更新通知的投递方式，不得加入邮件、应用程序或短信渠道。\n- 测试附件 materials/scene-13/tests/layout-example.txt 与 materials/scene-13/term-test.txt 仅用于排版和来源识别，其中“河湾峰会”“永久会员卡”等译名未获批准，不是本次术语。\n\naccess pass 的正式中文名称尚未确认。本次暂译为“入场凭证”，首次出现写“入场凭证（正式名称待确认）”，后续只沿用暂译名；这是本次译文暂用表达，不是官方批准名称，不加译者说明或独立问卷。\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n- materials/scene-13/current-brief.md：原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期\n- materials/scene-13/current-brief.md：Please不一律译成命令式“必须”，不得把自愿参加改成强制参加"
+      },
+      {
+        "type": "TASK",
+        "title": "任务",
+        "content": "将附件中的英文通知逐段翻译为自然的简体中文，供首次参加者阅读。\n\n翻译时须做到：\n- 原文段落和项目符号一一对应，保留原文中的条件、否定、待确认状态及段落层级。\n- 日期和时间范围不得改变；08:30 至 09:00 仅作为登记窗口，不当作整场活动时长。\n- cancelled 译为取消，postponed 译为延期，不得都译为活动结束。\n- 主场次取消后备用场次仍为可能安排，须另行确认；不得译为“一定举办备用场”。\n- 延期不自动启用备用场是独立否定，须在译文中保留，不得与取消条件合并。\n- received 仅说明申请已收到，confirmed 说明名额已确认，waitlisted 说明候补；三者属于报名过程不同节点，不得用“报名成功”统称。\n- 申请开放时间不等于座位区开放时间；通知未给出审核耗时，不得推断收到请求后几分钟内一定会确认。\n- return borrowed display cards 的对象是现场借出的展示卡，不是入场凭证，更不是身份证明；翻译 it、these cards 和 the marked tray 时须回到具体段落检查先行词，不得把不同卡片类型都改成“证件”并引出上交个人证件的行为。\n- 询问帮助只表示可以提出需求，不保证所有帮助都可提供。\n- 更新通知只改变明确列出的事项，不得推断地点、登记窗口及申请状态均已一起变更。\n- 暂停展示不代表整个活动取消，须保留不同范围。\n- 采用客观、礼貌、容易理解的中文；禁止的行为保持禁止，提醒不写成法律处罚；Please 不一律译成命令式“必须”，不得把自愿参加改成强制参加。\n- 中文句子可以稍短，但不得删掉读者决定是否出行所需的条件和状态。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不得加入译文。\n- 术语表与测试例子冲突时采用本题明确指定的术语表，不将测试例子当产品事实。"
+      },
+      {
+        "type": "OUTPUT",
+        "title": "输出",
+        "content": "只输出与原文段落和项目符号一一对应的简体中文译文。\n\n不写译者说明、原文、标题之外的新标题、摘要、代码或实施步骤。\n\naccess pass 首次出现时写“入场凭证（正式名称待确认）”，后续只沿用“入场凭证”；不在每段重复正式名称未确认的提醒，也不在末尾增列独立问卷。"
+      },
+      {
+        "type": "CONSTRAINTS",
+        "title": "约束",
+        "content": "- 只输出对应译文；保留原文中的条件、否定、待确认状态及段落层级。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不能加入译文。\n- 术语表与测试例子冲突时采用本题明确指定的术语表，不将测试例子当产品事实。\n- 不得把建议日期改成已公布日期；不得把提议安排描述为已批准日程。\n- 不得把“未列出医疗、心理或接送服务”写成这些服务绝对不存在。\n- 不得借翻译新增退款或赔偿制度，也不得断言活动方永不退款。\n- 不得加入邮件、应用程序或短信等通知投递渠道。\n- 不得把自愿参加改成强制参加。\n- 不得把 received、confirmed、waitlisted 三种状态合并为“报名成功”。\n- 不得把不同卡片类型都改成“证件”并引出上交个人证件的行为。\n- 不得把暂停展示写成整个活动取消。\n- 不得把更新通知写成会静默改变地点、登记窗口或申请状态。\n- 不得把询问帮助写成所有帮助都能得到满足。\n- 不得把“更新前不建议出行”写成收到一次通知即可获得永久有效入场资格。\n- 不得添加审批、隐私和安全制度等推测性条款，也不替读者作出实际法律意见。\n\n用户明确规则（须遵守平台权限边界）：\n- 只输出译文，不写译者说明、原文、标题之外的新标题、摘要、代码或实施步骤。\n- 原文段落和项目符号须一一对应，日期和时间范围不得改变。\n- 本题只处理合成通知，不代表活动已经举办或报名已经成功。\n- 目标语言、读者和仅译文要求已明确，不需要再询问。\n- 活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。\n- 通知中的cancelled与postponed分别是取消与延期，不能都译为活动结束。\n- 备用场次只在主场次取消后启用；主场次延期并不自动触发备用场次。\n- 原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。\n- 只输出对应译文；保留原文中的条件、否定、待确认状态及段落层级。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不能加入译文。\n- 目前未确认，Plan应向用户确认此决定。\n- 只使用本题合成资料。\n- If the main session is cancelled, a backup session may be offered after confirmation. A postponed session does not automatically activate the backup session. Do not travel before the updated notice is published.\n- For the morning session, the seating area opens after registration closes. Visitors with a pending request must wait for a separate confirmation notice. A message saying that the request has been received is not an admission decision. Please keep the difference between received, confirmed, and waitlisted messages when sharing this notice with others.\n- Guests who need assistance may ask the welcome desk for directions. This sentence is an invitation to ask, not a guarantee that every request can be met. The materials do not identify a medical service, a counselling service, or a transport service. Please do not add these services when translating the notice for new visitors.\n- The proposed afternoon session remains subject to venue confirmation. It will not replace a postponed morning session unless a separate notice explicitly says so. A proposed arrangement must not be described as an approved schedule. The proposed dates and the confirmed date refer to different events, even when the month is the same.\n- The organisers may publish an updated notice. An update changes only the parts explicitly identified in that notice; it does not silently change the venue, the registration window, or the status of an existing request. The current text does not specify a method for delivering updates, so no email address or mobile application should be invented.\n- 下列逐项约束属于本题已提供的材料和交付边界，不新增额外作品；遇未知保持未知。\n- 段落对应有助于读者把译文与原文核查，不意味着要逐词生硬照搬英语语序；可以自然调整句内次序，但不能移动条件到失去限定作用的位置。\n- ### 接收与确认\n- received仅说明申请已收到，confirmed说明名额已确认，waitlisted说明候补。\n- 三种状态属于报名过程不同节点，不能用“报名成功”统称。\n- 通知没有给出审核耗时，不推断收到请求几分钟后一定会确认。\n- 不能为了统一中文名词，把不同卡片类型都改成“证件”并引出上交个人证件的行为。\n- 主场次取消后备用场次仍是可能安排，须另行确认。\n- 延期不自动启用备用场是独立否定，应在译文保留，不能因为已经解释取消条件就省掉。\n- 两个分支不能合并为场次变动后自动启用备用安排。\n- 相同月份不能作为同一事件的证明。\n- 原文没有指定下一次活动准确日，保留提议状态，不根据当前年份推算。\n- 询问帮助只表示可以提出需求，不保证所有帮助都可提供。\n- access pass的官方译名尚未确认，暂用表达由本次确认答案控制，不能把任何自动推荐视为获批准名称。\n- 只在相应名词第一次出现标示状态，不在每段重复正式名称未确认的提醒，也不在末尾增列独立问卷。\n- 禁止的行为要保持禁止，提醒不写成法律处罚。\n- Please不一律译成命令式“必须”，不得把自愿参加改成强制参加。\n- 中文句子可以稍短，但不能删掉读者决定是否出行所需的条件和状态。\n- 更新通知只改变明确列出的事项，不能推断地点、登记窗口及申请状态均已一起变更。\n- 译文应保留更新前不建议出行的意思，而不是宣称收到一次通知即可获得永久有效的入场资格。\n- 本通知没有退款或赔偿制度，不能借翻译写进新增制度，也不能断言活动方永不退款。\n- 暂停展示不代表整个活动取消，翻译中保留不同范围。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：正式中文名称仍未确认。本次暂译为“入场凭证”，首次出现写“入场凭证（正式名称待确认）”，后续只沿用暂译名；这是本次译文暂用表达，不是官方批准名称，不加译者说明或独立问卷。"
+      },
+      {
+        "type": "CLARIFICATIONS",
+        "title": "待确认事项",
+        "content": "- 该问题尚未确定：正式中文名称仍未确认。本次暂译为“入场凭证”，首次出现写“入场凭证（正式名称待确认）”，后续只沿用暂译名；这是本次译文暂用表达，不是官方批准名称，不加译者说明或独立问卷。"
+      },
+      {
+        "type": "ACCEPTANCE",
+        "title": "验收",
+        "content": "检查译文是否满足以下要求：\n- 只输出简体中文译文，无译者说明、原文、新标题、摘要、代码或实施步骤。\n- 原文段落和项目符号一一对应，条件、否定、待确认状态及段落层级保留完整。\n- 日期和时间范围未改变；08:30 至 09:00 仅作为登记窗口。\n- cancelled 与 postponed 分别译为取消与延期。\n- 备用场次仍为可能安排且须另行确认；延期不自动启用备用场。\n- received、confirmed、waitlisted 三种状态未合并为“报名成功”。\n- access pass 首次出现写“入场凭证（正式名称待确认）”，后续只沿用“入场凭证”。\n- 未添加原文没有的姓名、电话、报名链接、活动效果、承诺、服务、制度或投递渠道。\n- 语气客观、礼貌、容易理解；禁止行为保持禁止，自愿参加未被改成强制参加。\n- 未把“未列出医疗、心理或接送服务”写成这些服务绝对不存在。\n- 未把暂停展示写成整个活动取消。\n- 未把更新通知写成会静默改变地点、登记窗口或申请状态。"
+      }
+    ],
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/scene-13/",
+        "materials/scene-13/current-brief.md",
+        "materials/scene-13/term-test.txt",
+        "materials/scene-13/tests/",
+        "materials/scene-13/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/scene-13/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 合成当前说明\n活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。\n通知中的cancelled与postponed分别是取消与延期，不能都译为活动结束。\n备用场次只在主场次取消后启用；主场次延期并不自动触发备用场次。\n原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。\n\n# 原文或原始记录\nWelcome to Rivergate Open Day. Registration is open from 08:30 to 09:00 on 20 October 2026. A registration request is not a confirmed booking.\n\nIf the main session is cancelled, a backup session may be offered after confirmation. A postponed session does not automatically activate the backup session. Do not travel before the updated notice is published.\n\nPlease bring your access pass. Its official local name is still under review. The proposed date for the next event has not been approved. Participation is voluntary, and the notice does not promise any learning outcome.\n\nThe venue has two entrances. The east entrance is used for the welcome desk, while the west entrance remains available as an exit. Visitors should not assume that an open exit also provides registration services. A staff member can show the route, but this does not mean that a place has been reserved for the visitor.\n\nFor the morning session, the seating area opens after registration closes. Visitors with a pending request must wait for a separate confirmation notice. A message saying that the request has been received is not an admission decision. Please keep the difference between received, confirmed, and waitlisted messages when sharing this notice with others.\n\nThe demonstration is optional. Visitors may leave the demonstration area without withdrawing from the rest of the open day. If the demonstration is interrupted, the host may pause it while checking the equipment; a pause does not announce cancellation of the entire event. No refund or compensation policy is stated in this notice.\n\nGuests who need assistance may ask the welcome desk for directions. This sentence is an invitation to ask, not a guarantee that every request can be met. The materials do not identify a medical service, a counselling service, or a transport service. Please do not add these services when translating the notice for new visitors.\n\nThe proposed afternoon session remains subject to venue confirmation. It will not replace a postponed morning session unless a separate notice explicitly says so. A proposed arrangement must not be described as an approved schedule. The proposed dates and the confirmed date refer to different events, even when the month is the same.\n\nPlease return borrowed display cards to the marked tray before leaving. This instruction applies to display cards supplied at the welcome desk, not to personal documents or the access pass. Participants should not hand over personal identification documents simply because the translated notice uses a general word such as card.\n\nThe organisers may publish an updated notice. An update changes only the parts explicitly identified in that notice; it does not silently change the venue, the registration window, or the status of an existing request. The current text does not specify a method for delivering updates, so no email address or mobile application should be invented.\n\n# 分支与边界\n段落边界：逐段翻译附件，不把三个状态句合成一句确定性承诺。欢迎语、场次条件与参与提醒分属不同段落。段落对应有助于读者把译文与原文核查，不意味着要逐词生硬照搬英语语序；可以自然调整句内次序，但不能移动条件到失去限定作用的位置。\n\n接收与确认：received仅说明申请已收到，confirmed说明名额已确认，waitlisted说明候补。三种状态属于报名过程不同节点，不能用“报名成功”统称。申请开放时间也不等于座位区开放时间。通知没有给出审核耗时，不推断收到请求几分钟后一定会确认。\n\n指代范围：return borrowed display cards的对象是现场借出的展示卡，不是入场凭证，更不是身份证明。翻译it、these cards和the marked tray时回到具体段落检查先行词。不能为了统一中文名词，把不同卡片类型都改成“证件”并引出上交个人证件的行为。\n\n否定与例外：主场次取消后备用场次仍是可能安排，须另行确认。将may be offered译为“一定举办备用场”会反转条件。延期不自动启用备用场是独立否定，应在译文保留，不能因为已经解释取消条件就省掉。两个分支不能合并为场次变动后自动启用备用安排。\n\n日期归属：2026年10月20日属于本次开放日，后续提议日期属于下一次活动。相同月份不能作为同一事件的证明。原文没有指定下一次活动准确日，保留提议状态，不根据当前年份推算。08:30至09:00是登记窗口，不当作整场活动的时长。\n\n能力边界：询问帮助只表示可以提出需求，不保证所有帮助都可提供。原文明确未列医疗、心理和接送服务，译文不添加服务承诺，也不把“未列出”写成这些服务绝对不存在。是否实际提供须另行核查，当前任务不负责代活动方制定服务范围。\n\n正式名称：access pass的官方译名尚未确认，暂用表达由本次确认答案控制，不能把任何自动推荐视为获批准名称。名称未知不意味着无法翻译其余内容。只在相应名词第一次出现标示状态，不在每段重复正式名称未确认的提醒，也不在末尾增列独立问卷。\n\n译文语气：采用客观、礼貌和容易理解的中文。禁止的行为要保持禁止，提醒不写成法律处罚。Please不一律译成命令式“必须”，不得把自愿参加改成强制参加。中文句子可以稍短，但不能删掉读者决定是否出行所需的条件和状态。\n\n时间更新：更新通知只改变明确列出的事项，不能推断地点、登记窗口及申请状态均已一起变更。没有通知投递方式就不加入邮件、应用程序或短信渠道。译文应保留更新前不建议出行的意思，而不是宣称收到一次通知即可获得永久有效的入场资格。\n\n不补编制度：本通知没有退款或赔偿制度，不能借翻译写进新增制度，也不能断言活动方永不退款。暂停展示不代表整个活动取消，翻译中保留不同范围。审批、隐私和安全制度如未在通知出现，不添加推测性条款，更不替读者作出实际法律意见。",
+          "summary": "Markdown 文档摘要：合成当前说明；A staff member can show the route, but this does not mean that a place has been reserved for the visitor.；Participants should not hand over personal identification documents simply because the translated notice uses a general word such as card.；日期归属：2026年10月20日属于本次开放日，后续提议日期属于下一次活动。；审批、隐私和安全制度如未在通知出现，不添加推测性条款，更不替读者作出实际法律意见。",
+          "truncated": false
+        },
+        {
+          "path": "materials/scene-13/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。这不是本题事实、偏好或执行决定。",
+          "summary": "文件内容摘要：仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。；这不是本题事实、偏好或执行决定。",
+          "truncated": false
+        },
+        {
+          "path": "materials/scene-13/term-test.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版测试：Rivergate Open Day=河湾峰会；access pass=永久会员卡。以上译名没有批准，不是本次术语。",
+          "summary": "文件内容摘要：仅用于排版测试：Rivergate Open Day=河湾峰会；access pass=永久会员卡。；以上译名没有批准，不是本次术语。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "ambiguities": [
+      "该问题尚未确定：正式中文名称仍未确认。本次暂译为“入场凭证”，首次出现写“入场凭证（正式名称待确认）”，后续只沿用暂译名；这是本次译文暂用表达，不是官方批准名称，不加译者说明或独立问卷。"
+    ],
+    "appliedConstraints": [
+      "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+      "输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。",
+      "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+      "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 7446,
+    "warnings": [],
+    "evidenceCards": [
+      {
+        "id": "F01",
+        "category": "BUSINESS_RULE",
+        "origin": "PROJECT_DOCUMENT",
+        "sourcePath": "materials/scene-13/current-brief.md",
+        "evidence": "原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期"
+      },
+      {
+        "id": "F02",
+        "category": "BUSINESS_RULE",
+        "origin": "PROJECT_DOCUMENT",
+        "sourcePath": "materials/scene-13/current-brief.md",
+        "evidence": "Please不一律译成命令式“必须”，不得把自愿参加改成强制参加"
+      }
+    ]
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-13-L-deepseek_deepseek-flash-plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "ceffcedc-cd7b-4163-a281-12935371eb7d",
+      "elapsedMs": 7506
+    }
+  ]
+}

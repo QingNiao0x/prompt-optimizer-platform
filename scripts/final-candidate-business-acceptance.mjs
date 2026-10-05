@@ -63,6 +63,9 @@ export async function createFinalCandidateAcceptance(page, options) {
   const caseText = encode(frozen);
   if (!options.resume) await writeFile(resolve(output, 'cases.json'), caseText, { flag: 'wx' });
   const sources = [
+    'enhancement/service/impl/ComparisonMaterialDecision.java',
+    'enhancement/service/impl/NewsBodyFactContract.java',
+    'enhancement/service/impl/PendingReminderIdentity.java',
     'enhancement/service/impl/PlanQuestionFilter.java', 'enhancement/service/impl/RoutineGuideDecision.java',
     'enhancement/service/impl/PlanningAuthorizationState.java', 'enhancement/service/impl/PlanningConflictIdentity.java',
     'enhancement/service/impl/RequirementFidelityGuard.java', 'enhancement/service/impl/EvidenceStateGuard.java',

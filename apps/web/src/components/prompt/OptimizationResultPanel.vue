@@ -429,7 +429,7 @@ const saveEditing = (): void => {
         </button>
         <div v-show="ambiguitiesOpen" id="ambiguity-details" class="ambiguity-body">
           <p class="ambiguity-summary">
-            这些信息尚未经过方案确认。开启 Plan 确认后再次增强，系统会逐项向你提问。
+            以下条件仍未明确，相关步骤需等待确认；已确认内容已进入正文。可开启 Plan 确认后再次增强，继续补充未决信息。
           </p>
           <ul class="ambiguity-list">
             <li v-for="(item, index) in result.ambiguities" :key="`${index}-${item}`">{{ item }}</li>

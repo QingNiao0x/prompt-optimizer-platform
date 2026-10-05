@@ -1,0 +1,830 @@
+{
+  "schemaVersion": 1,
+  "reviewer": {
+    "id": "blinded-model-deepseek:deepseek-flash",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-05T14:21:07.913Z",
+    "professionalDomain": "NOT_CERTIFIED",
+    "reviewRun": "tmp\\prompt-output-evaluation\\2026-10-05T14-09-29-812Z-46a9e758"
+  },
+  "professionalReview": "NOT_PERFORMED",
+  "problems": [],
+  "entries": [
+    {
+      "blindId": "B001",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "# 提示词整理工具对照研究方案（未执行）"
+      ],
+      "notes": "四组设计、五维指标、盲评、失败保留、待确认项均覆盖，无虚构结果。但主文正文汉字约1028字，超过1200字上限（含标题与附表外正文），且未明确主文与附表字数边界；材料对应与交接摘要较简，未逐条说明采用/排除依据。整体达到主要要求。",
+      "outputSha256": "7a5d91f707470f9c08e0ce0f9e957ce6db007bf95cb9230aebc971a6b9cd8db3"
+    },
+    {
+      "blindId": "B002",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 订单审批 | 方案甲 | 3000 元 | >= |"
+      ],
+      "notes": "完整保留两方案订单审批>=3000/>=5000与退款>500/>800，运算符未归一化，来源与未批准状态齐全；交付对照表、确认清单、只读验证三部分，未默认阈值，未越界执行。",
+      "outputSha256": "ccb4d9df8f888c8d9803335308c65a8cd9099d59777bd4b27b4d3e3364ae5cd4"
+    },
+    {
+      "blindId": "B003",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "历史记录仅对当前账号可见，不存在跨账号共享记录。"
+      ],
+      "notes": "覆盖九部分，边界基本忠于材料，未编造按钮或数字。但历史记录仅对当前账号可见、不存在跨账号共享记录属材料未说明的权限断言，与提交答案中不虚构权限边界的要求相冲突；字数约2400汉字，超出1800-2400字上限。整体可用，扣分。",
+      "outputSha256": "90debb835fe98a82a5c3210466d00c4a97d6a61cebc982bff8948c49f08b3c6c"
+    },
+    {
+      "blindId": "B004",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**条件设置。** 设四个条件：原始组、直接增强"
+      ],
+      "notes": "四条件、信息量匹配对照、240次生成、隔离会话、盲评匿名、五维度、失败保留、不锁定检验、待确认清单均准确落地；主文约1833汉字，超出1200字上限，但附表不计入，主文含标题与表格外的正文仍偏长，属形式问题未升级为严重错误；结构清楚可执行。",
+      "outputSha256": "55c662e70ca57ed3d99829b2df990b28ea67fe13050f23d8363a7b4fd4f0c707"
+    },
+    {
+      "blindId": "B005",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "本平台不提供自动撤销、自动恢复历史版本或跨账号共享记录的功能"
+      ],
+      "notes": "结构完整，覆盖全部要求模块，示例与边界大体忠于材料。但将“不虚构跨账号共享记录”表述为平台不提供该功能，属对未说明能力的否定性断言，超出材料；字数约2019汉字，符合要求。整体可用。",
+      "outputSha256": "30b899b3aa38551a9c40d1d5b75079ef1de2b2c8d2ad145b8ef88ba32e00b5ea"
+    },
+    {
+      "blindId": "B006",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "「清笺」于2026年10月20日启动受控内测招募"
+      ],
+      "notes": "正文约674字（不含标题），符合600-800字要求；两个标题、三类受众、三项价值、反馈方式均齐备；明确受控内测非正式上线、本地MVP、不执行代码、不生成论文/诊断/投资/部署等边界；未编造数据或链接；结构清楚，无冗余。",
+      "outputSha256": "e7e72e1f7f13606d0ab6f7eb36af834b766ddc915a7d1caa50b47fa6c5743bde"
+    },
+    {
+      "blindId": "B007",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| D 信息量匹配对照 | 同A | 否 | 是"
+      ],
+      "notes": "四组设计、信息量匹配对照、五维度指标、失败保留、盲评匿名、统计不预锁、评分尺度保留未知等关键要求均准确落地；主文约1170汉字，在1200字以内；附表不计入主文，结构清楚，无虚构结果或越界。",
+      "outputSha256": "8685b7b188e497ce07902fd958ed28157343fb8e576e374237fb84f68c35a4f7"
+    },
+    {
+      "blindId": "B008",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**研究问题。** 本研究比较三种提示词准备条件"
+      ],
+      "notes": "四组设计、信息量匹配对照、盲评匿名、失败保留、来源标签、过程/结果指标区分均准确落地；评分尺度顺序尺度已确认而等级锚点保留未知，轮次终止、分歧处理、一致性指标均未默认补全；主文约1545汉字，超出1200字上限，但附表不计入，主文本身仍偏长，属形式问题未升级为严重错误；结构清楚可执行。",
+      "outputSha256": "a52c7f758014824c13d4fbe754f8d4ce6d782cb100f9709cc6514bd733991c8f"
+    },
+    {
+      "blindId": "B009",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**实验设计。** 固定二十个任务，每条件独立重"
+      ],
+      "notes": "交付物齐全，四组设计、五维指标、评分表与失败模板、待确认清单、材料对应与状态区分均完整，无虚构结果。但主文正文汉字约1489字，明显超过1200字上限，违反篇幅硬约束；待确认清单第4、5项将统计检验与专家参与列为待确认，而任务要求可说明选择流程、专家参与属可自行整理，略过度保留。整体达到主要要求。",
+      "outputSha256": "c4a9cd9a6687dd1fb883012ba42d4fda2bab889e4fbbdd22cfcf04b48c7ef63d"
+    },
+    {
+      "blindId": "B010",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "## 一、开始使用：先说清你要做什么"
+      ],
+      "notes": "覆盖开始使用、上下文、Plan、确认、核对、编辑复制、历史、常见问题与权限边界；示例三类齐全并声明非平台已执行；Plan解释、逻辑删除、OCR边界、不写具体数字、不承诺增强必胜均符合。但编辑/复制与核对结果合并为第五部分，未单列“核对结果”标题，结构略欠清晰；历史部分称“可以找回”略超出材料，但未构成严重错误。字数约1887，低于1800-2400下限，属形式小问题。整体达到主要要求。",
+      "outputSha256": "9ca130728ce412da5d82ef5d136818605b7a13ff116bfc6e447a4873321d06b9"
+    },
+    {
+      "blindId": "B011",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "- 扫描版 PDF 的 OCR 功能尚未开放，这"
+      ],
+      "notes": "覆盖了开始使用、上下文、Plan、确认、核对、编辑复制、历史、FAQ与权限边界，边界表述基本忠于材料，未编造按钮文本或具体限制。但字数约2162汉字，低于1800-2400字要求的下限附近，内容偏简；部分操作步骤（如具体点击位置）不够具体，可执行性一般；未混入代码或架构内容。整体达到主要要求。",
+      "outputSha256": "4b15de4c366089c298950fba84d3014c0dc17be52f225fac0060dd2296d59d3c"
+    },
+    {
+      "blindId": "B012",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| UNKNOWN | 原因未细分，可能来自设备"
+      ],
+      "notes": "口径表、流程图说明、拟议采集字段、报告目录、人工复核与隐私清单齐备；UNKNOWN不计爽约、24/12小时差异单独呈现、T1-T3保留待确认、测试示例与正式资料分开引用，均符合约束；结构清楚，无处罚或临床越界。",
+      "outputSha256": "1ecaa20d123ed68c01ab924d86b96741d20a59d9f32d01f407b7fb5dd3e93168"
+    },
+    {
+      "blindId": "B013",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 订单审批 | 方案甲 | 订单金额 >= 3000 元须复核 |"
+      ],
+      "notes": "四项阈值与运算符均正确保留，来源与未批准状态齐全；交付三部分完整，未选择胜者、未默认阈值；结构简洁，只读步骤可执行。",
+      "outputSha256": "ef3ddf26b15656806dd94b33824f52ec7d1550d977c3b9760f4514e517f48346"
+    },
+    {
+      "blindId": "B014",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 方案甲 | 3000元 | >= | 订单金额>=3000元须复核 |"
+      ],
+      "notes": "阈值、运算符、来源与未批准状态均正确，三部分交付完整；但差异说明、确认清单表格及验证步骤存在较多重复表述，可读性略受影响，usability扣1分。",
+      "outputSha256": "e87f19506f4195d06055c6f4397067986203e5b31817d5f38a10758c91f5c966"
+    },
+    {
+      "blindId": "B015",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "Plan 是可选交互，可以理解为“生成前确认重要"
+      ],
+      "notes": "覆盖全部要求章节；Plan解释、资料主动选择、代码索引本地、办公文件后端提取、图片元数据与扫描PDF无OCR、逻辑删除、不虚构自动恢复/跨账号、专业结论免责、失败重试以界面为准均忠于材料；未写具体文件限制数字；无代码或架构术语；约1993字符合1800-2400；步骤清晰可执行。",
+      "outputSha256": "f09c6359185e1ab68f26dfaba8244db9bb50b1cea3f89ac2c8fbead8b2800ce6"
+    },
+    {
+      "blindId": "B016",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺将于2026年10月20日开启受控内测招募。"
+      ],
+      "notes": "两个标题与正文齐全，正文约673字符（含标点）在600-800区间；准确交代受控内测、本地MVP、不执行代码/不完成正式报告，覆盖三类受众与三项价值，反馈方式为内测页面且未附手机号邮箱链接；未编造数据或越界承诺，能力边界自然融入，结构清楚可复制发布。",
+      "outputSha256": "ca883b31d3c2a13308bfcd38bb119b095c6f524fbbb45813a2edcfa6789062de"
+    },
+    {
+      "blindId": "B017",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺将于2026年10月20日开启受控内测招募。"
+      ],
+      "notes": "两个标题与正文齐全，正文约671字符在600-800区间；准确说明受控内测、本地MVP、只整理提示词，覆盖三类受众及三项价值，结尾说明内测页面反馈且不提供手机号邮箱链接；未编造数据或暗示正式发布，边界清楚，结构紧凑可执行。",
+      "outputSha256": "46953f4ff0e5b646a8d49fdb4b21d3c44a513c9dcf50e9e8058575e7abad59bf"
+    },
+    {
+      "blindId": "B018",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| **观察窗口** | 决定一个预约事件何时可归为最终状态的时间边界 | **尚未确定，不默认任何时长**"
+      ],
+      "notes": "口径表、流程图、采集字段、报告目录、复核与隐私清单齐全；观察窗口、取消免责边界、主统计单位均保留未定，未把UNKNOWN计为爽约，未采用24h或12h任一方，未越界临床或绩效。引用区分正式说明、旧版草稿与测试示例。内容较冗长，多处重复同一未决条件，usability扣1。",
+      "outputSha256": "7a4651187fab80f2ae9f3ce19eee522fad27c0c99afaa033094cf2f19f1e5509"
+    },
+    {
+      "blindId": "B019",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| **爽约** | 本方案不直接定义爽约率。U"
+      ],
+      "notes": "交付项完整，待确认项与新旧规则差异处理正确，隐私边界充分；但1.2节将已知资料逐条重列，与1.1及附录引用索引多处重复，篇幅冗余，可执行性略受影响，故usability扣1分。",
+      "outputSha256": "b518bf619592c98ab614d65c80879a62509df73d12d1f1d12e4241d2e2caeae2"
+    },
+    {
+      "blindId": "B020",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 交互问答记录 | C组专属 | 问题、选项、"
+      ],
+      "notes": "核心设计、四组对照、五维度、失败保留、盲评匿名、待确认项均覆盖且准确；但主文汉字约1722字，明显超出1200字主文上限，且附表A较冗长，可执行性受篇幅影响，故usability扣分。",
+      "outputSha256": "a5eb88513c9bde530fb5b03f85ca3c944d585ec5baa54c1d898968ec49feaccc"
+    },
+    {
+      "blindId": "B021",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "## 标题一：清笺启动受控内测招募：把模糊需求整理成可交接的提示词"
+      ],
+      "notes": "两个标题另列且与正文性质一致；正文交代内测目的、三类受众、三项价值与反馈方式，保留受控内测、本地MVP、不执行代码/不替用户完成报告等边界；未编造数据或外部链接，未把示例写成已实现成效。正文约687汉字，在600-800区间内。结构清楚，可直接复制发布。",
+      "outputSha256": "1f15bd3dedb94e3981f184d709aeda27b86feb76f80f212809d9ceeaea773dc1"
+    },
+    {
+      "blindId": "B022",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "历史记录仅对你当前账号可见，不存在跨账号共享。"
+      ],
+      "notes": "覆盖全部模块，Plan、资料选择、专业边界等表述较准确，示例具体。但历史记录仅对当前账号可见、不存在跨账号共享属材料未说明的权限断言，与提交答案要求不虚构权限边界相冲突；字数约2254汉字，符合要求。整体可用。",
+      "outputSha256": "0753580099c9ca05f6039b946ab6eb3587f92ae43fbbd8d7f7fb824d7cde3bbb"
+    },
+    {
+      "blindId": "B023",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 观察窗口 | **尚未确定**。窗口决定一个预约事件何时可归为最终状态"
+      ],
+      "notes": "四项交付均覆盖，口径与流程说明清楚，取消免责边界以对照表呈现且不擅自采用，UNKNOWN不直接计爽约，隐私与复核边界完整，未越界临床或绩效。篇幅较B018短但仍有多处重复未决条件，usability扣1。",
+      "outputSha256": "459406a23d6dded24b99d90b98d6b4976e4932d0a3016dff8f26f6ef753ec97a"
+    },
+    {
+      "blindId": "B024",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "评分尺度已确定为顺序尺度，但具体等级与评分锚点仍"
+      ],
+      "notes": "四组条件、信息量匹配、盲评匿名、失败保留、来源标签、指标区分均正确；评分尺度顺序尺度已确认而等级锚点保留未知，轮次终止、分歧处理、一致性指标均未默认补全；主文约1105汉字，符合1200字以内；结构紧凑，附表清晰，可执行性好。",
+      "outputSha256": "7edecf80d32197b177b9cb2956e36dc779638cf8153dfa9ca1ff4a4793d70758"
+    },
+    {
+      "blindId": "B025",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 方案甲 | 3000 元 | >= | 订单"
+      ],
+      "notes": "准确提取两方案订单审批(>=3000/>=5000)与退款(>500/>800)条件，运算符未归一化，业务对象分离，来源标注完整；交付规则对照表、执行前需确认清单、只读验证步骤三部分齐全，未决条件与未知保留说明到位；结构清晰、可执行，无越界或伪造。",
+      "outputSha256": "75671f8057c65013665a991d6273d1faf4152210acc3b4218d6c4b9b43f76edf"
+    },
+    {
+      "blindId": "B026",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺将于2026年10月20日启动受控内测招募。"
+      ],
+      "notes": "正文约563字（不含标题），低于600字下限，长度未达标；其余内容准确，三类受众、三项价值、反馈方式、边界说明均具备，无编造；结构清楚但篇幅偏短，完整性略受影响。",
+      "outputSha256": "bcaa6b5d6a6482d3d0d9585f97d709dacf4b811b26899409cf97b1d51c63a267"
+    },
+    {
+      "blindId": "B027",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 未到诊观察窗口 | 尚未决定 | **待确认**"
+      ],
+      "notes": "口径表覆盖事件/人数、渠道、状态、时区、观察窗口、免责边界、主统计单位、24h/12h差异等，均按资料标注待确认，未默认补全；UNKNOWN不并入爽约、取消不附加临床解释、不默认罚款、不减少服务权益、医生代码不作绩效、测试示例与正式/旧稿分开，规则保真到位。交付含口径表、流程图说明、采集字段、报告目录、问题清单、复核与隐私清单，完整。usability因内容高度重复（口径表、问题清单、待确认项、复核清单多处同义复述）扣分，但结构清楚可执行。",
+      "outputSha256": "7de54831b5087dba2f0e093dd44c4f6079edb7bc89ab596623d5c6d675d299c7"
+    },
+    {
+      "blindId": "B028",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺将于2026年10月20日启动受控内测招募。"
+      ],
+      "notes": "正文约815字（不含标题），略超800字上限；内容准确完整，三类受众、三项价值、反馈方式、边界均覆盖，无编造；但篇幅偏长且部分边界重复表述，usability因冗长略扣。",
+      "outputSha256": "9e3d46e78aa22c50cb261ba3c421d53bdb4ed334e391e8fdd8283a260f761d15"
+    },
+    {
+      "blindId": "B029",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "评分尺度已确定为顺序尺度，但具体等级与评分锚点仍未确定"
+      ],
+      "notes": "四组条件、信息量匹配、盲评匿名、失败保留、来源标签、指标区分均正确；评分尺度顺序尺度已确认而等级锚点保留未知，轮次终止、分歧处理、一致性指标均未默认补全；主文约1807汉字，明显超出1200字上限，属形式问题未升级为严重错误；附表详尽，结构清楚可执行。",
+      "outputSha256": "483f248d321da81863ef265a6ca77ea873c732ef2a07c308ca5258f1a4238538"
+    },
+    {
+      "blindId": "B030",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺于合成日期2026年10月20日启动受控内测"
+      ],
+      "notes": "标题与正文均明确受控内测而非正式上线；覆盖三类受众、三项价值、反馈方式及能力边界，未引用测试占位数据。正文约692汉字，符合600-800字要求。表达客观，段落组织便于直接使用。",
+      "outputSha256": "172d4a545667ea4a1cb3643442055c65794f016f91e06bf115fabf38b88ded48"
+    },
+    {
+      "blindId": "B031",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 订单审批 | 方案甲 | 3000元 | >= |"
+      ],
+      "notes": "对照表完整保留两方案订单审批>=与退款>的阈值及来源，未归一化运算符；确认清单列出未决条件且不默认阈值；只读验证步骤可执行，结构清楚无冗余。",
+      "outputSha256": "cfd816a7d73172f71432966740ec438efd9a4d953a78138b4fae2aa9b9f7e1fd"
+    },
+    {
+      "blindId": "B032",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "- 图片文件仅能读取其基本信息（元数据），扫描版"
+      ],
+      "notes": "结构完整，覆盖全部要求章节，Plan解释、资料主动选择、逻辑删除、专业结论边界等均忠于材料，未虚构自动撤销或跨账号共享。但字数约2289汉字，略低于1800-2400字要求的下限附近；部分示例和步骤较泛，可执行性一般；未混入软件开发交付内容。整体达到主要要求。",
+      "outputSha256": "1ce9c65f7c799b9bb9b3e129b78af16b8cdcf272e2967438776ff530a07f8f90"
+    },
+    {
+      "blindId": "B033",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 订单审批 | 金额阈值 | 订单金额 >= "
+      ],
+      "notes": "规则条件、来源、未批准状态与运算符均正确，含未决条件、确认清单和只读验证；但对照表按条件项拆行导致重复，且额外保留用户回答原文，结构略冗长，usability扣1。",
+      "outputSha256": "7019f21b4ac1cfa2d99610a86ab84c4c24647cbdbaf95edfc8266a944adf02d9"
+    },
+    {
+      "blindId": "B034",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺将于2026年10月20日开启受控内测招募。"
+      ],
+      "notes": "两个标题另列且与正文性质一致；正文覆盖受控内测、本地MVP、三类受众、需求澄清/资料关联/结构化结果三项价值及不直接执行任务的边界；反馈方式为内测页面提交意见，未添加手机号、邮箱或外部链接；未编造用户数、收入、准确率、合作机构等；正文约614汉字，在600-800区间内；结构清楚，无冗余清单或越界内容。",
+      "outputSha256": "f97b7e0fb291f222c7e4a81066f56155c0e77564f2a0a75d2d46e789b048d737"
+    },
+    {
+      "blindId": "B035",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "Plan 是可选交互，可以理解为“生成前确认重要"
+      ],
+      "notes": "八部分齐全，示例含会议记录、工作报告、项目资料开发需求并声明非平台已执行；资料选择、代码索引本地、办公文件确认上传、图片元数据、扫描PDF无OCR、逻辑删除、不虚构自动恢复/跨账号、专业结论免责、失败重试以界面为准均符合；无实现术语；约2148字在范围内；结构清楚，可执行。",
+      "outputSha256": "abaf906823801495f2b3d67ad0851806995466b8f221381c722a0c4fb95dc86d"
+    },
+    {
+      "blindId": "B036",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺将于 2026 年 10 月 20 日开启受控内测招募"
+      ],
+      "notes": "两个标题与正文齐全，正文约730字符在600-800区间；准确交代受控内测、本地MVP、不执行代码/不完成正式报告，覆盖三类受众与三项价值，反馈方式为内测页面且未附手机号邮箱链接；未编造数据或越界承诺，能力边界清楚，结构清楚可复制发布。",
+      "outputSha256": "fa044d84649af321c3ae1572e63b4b82be7c5ff9e68f2513d549476f4e6a8dfb"
+    },
+    {
+      "blindId": "B037",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "## 五、核对结果"
+      ],
+      "notes": "八部分结构完整，核对结果单列，常见问题覆盖全部指定问题；Plan解释、逻辑删除、OCR边界、不写具体数字、不承诺增强必胜、不虚构自动撤销/恢复均符合。但权限边界末尾出现“删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署等操作，必须先获得人工确认”，混入软件开发交付术语，与“不要生成实现计划/不要把指南写成内部架构文档”相悖，属范围越界但未达严重错误。字数约1979，符合要求。整体达到主要要求。",
+      "outputSha256": "b71b5d52175eec5a8a671814a4b4723d225cef41ce6e9c2704e13fa2e7b77fb8"
+    },
+    {
+      "blindId": "B038",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "Plan是可选交互，可理解为“生成前确认重要信息"
+      ],
+      "notes": "面向首次使用者的开头明确读者；覆盖开始使用、添加上下文、Plan、确认问题、核对结果、编辑复制、历史、常见问题与权限边界；示例三类且声明非平台已执行；资料主动选择、代码索引本地、办公文件后端提取、图片元数据、扫描PDF无OCR、逻辑删除、不虚构自动恢复/跨账号、专业结论免责、失败重试以界面为准均符合；无实现术语；约1906字在范围内；步骤与示例可操作。",
+      "outputSha256": "860ca9a4fae4914d4b7c75d95879448a95f336020661850cdb5a79c59f88c322"
+    },
+    {
+      "blindId": "B039",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 观察窗口 | 决定一个预约事件何时可归为最终状态；窗口未确定前只展示待核验事件"
+      ],
+      "notes": "口径表、流程图、拟议采集表、报告目录、人工复核与隐私清单齐备；观察窗口、取消免责边界、主统计单位、UNKNOWN分母均保留未定，未默认补全，未采用任一方取消规则，未越界临床或绩效。结构清楚但存在重复表述，usability扣1。",
+      "outputSha256": "2a4f074f60de1b4253d0d2823a9a22b0ebde4ae10ad6546e122e804a812e0a19"
+    },
+    {
+      "blindId": "B040",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 评分尺度 | 因变量属性 | 顺序尺度 | "
+      ],
+      "notes": "完整覆盖四条件、信息量匹配、240次、隔离随机、盲评匿名、五维度、失败保留、统计选择流程与待确认清单；主文约1989汉字，超出1200字上限，但附表不计入，主文正文仍偏长；未虚构结果，未锁定检验，待确认项保留。",
+      "outputSha256": "c5c49183ed7342bbd27f4ce535c91f86a6f071ee8c0282d580cdd958618e2155"
+    },
+    {
+      "blindId": "B041",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 取消免责边界 | 提前多久取消不计爽约 | "
+      ],
+      "notes": "口径表、流程图、采集字段、报告目录、复核与隐私清单齐全；正确保留观察窗口、UNKNOWN分母、取消免责边界、主统计单位四项待确认，区分现行/旧版/草稿/测试来源，未把UNKNOWN计为爽约，未给临床建议。流程图与多张表格存在重复，usability因冗长重复略扣。",
+      "outputSha256": "d8daa0e28ceb55ba2dd62958e75a9ad9586e85b636f883b31b2d519c3b20436c"
+    },
+    {
+      "blindId": "B042",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺将于2026年10月20日开启受控内测招募。"
+      ],
+      "notes": "两个标题另列；正文覆盖受控内测、本地MVP、三类受众、三项价值及不直接执行任务的边界，反馈方式为内测页面提交意见，未添加联系方式或外部链接；未编造经营数据或专业结论；正文约792汉字，在600-800区间内；内容准确但篇幅接近上限，部分解释较展开，可执行性略受影响。",
+      "outputSha256": "62492c40c30da113664b86ffb902e6e39e0c3e6bcf291570e852c00e0498dcce"
+    },
+    {
+      "blindId": "B043",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 已知事实 | 旧流程说明提前24小时取消不计"
+      ],
+      "notes": "交付物完整，待确认项与来源区分清楚，未默认补全观察窗口、免责边界或统计单位，未把UNKNOWN计为爽约。但把用户明确规则列为“用户确认信息”并单列“必要假设”，且多处重复同一条件，结构略冗长，usability扣分。",
+      "outputSha256": "0fa5d63883ebbcc36e4ed86a41ef069f13f123473e04ade41c6c10b56db8adf3"
+    },
+    {
+      "blindId": "B044",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "质量评分采用顺序尺度，具体等级与评分锚点尚未确定"
+      ],
+      "notes": "四条件、信息量匹配对照、240次、隔离随机、盲评匿名、五维度、失败保留、统计选择流程、待确认清单均准确；主文约1479汉字，超出1200字上限，但附表不计入，主文正文仍偏长；未虚构结果，未锁定检验，结构清楚可执行。",
+      "outputSha256": "e208dbca56fbd464e8f2e2ef299fad636e4b2ef63c317d15e7d356babe1b7789"
+    },
+    {
+      "blindId": "B045",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 订单审批 | 金额运算符 | `>=` | "
+      ],
+      "notes": "规则对照表按业务对象与条件项拆分，阈值与运算符准确且未归一化，来源标注完整；未决条件、执行前确认清单、只读验证步骤均覆盖，明确保留未知、不默认阈值、不按文件顺序选胜者；结构清楚可执行，无越界操作。",
+      "outputSha256": "58b6229339fbbb9f045a0ca75b07f9c07c331ebadfadc3d9a0eda33f4f3d3d8b"
+    },
+    {
+      "blindId": "B046",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 取消免责边界 | 旧流程说明提前 24 小时"
+      ],
+      "notes": "覆盖口径表、流程图、采集字段、报告目录、复核与隐私边界；正确保留三项待确认，区分正式/旧版/草稿/测试，未把UNKNOWN计为爽约，未越界给临床建议。内容与B041/B043高度重复，表格和清单多处重复同一条件，usability因冗长扣分。",
+      "outputSha256": "f8e900af5b67792e6a1e16bf4c2bc62a7d4a51bb13f82f5c7348524c27ca9869"
+    },
+    {
+      "blindId": "B047",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 订单审批 | 方案甲 | 订单金额 >= 3"
+      ],
+      "notes": "四组条件与来源、批准状态完整准确，>=与>分别保留未归一化，未决条件不默认；交付对照表、确认清单、只读验证，结构清楚可执行。",
+      "outputSha256": "45d1f79c22e123d6eff0011e6867f4286b3c8fdf1bbf8d2e3a77b46fed23a2ea"
+    },
+    {
+      "blindId": "B048",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 订单审批 | 运算符 | `>=` | `>=` |"
+      ],
+      "notes": "对照表分对象保留两方案完整条件、运算符与来源，未决条件明确且未默认阈值；确认清单与只读验证步骤完整可执行，结构清晰。",
+      "outputSha256": "c62bc4ed4c52ee646f70df8eed44af006721fe4ddcfb9e8d794352600fa76609"
+    },
+    {
+      "blindId": "B049",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 取消免责边界 | 提前多久取消不计爽约 | "
+      ],
+      "notes": "口径梳理区分已知事实、待确认项与必要假设，观察窗口、免责边界、主统计单位、24h/12h差异均保留待确认，未擅自采用；UNKNOWN不计爽约、取消不加临床解释、不默认处罚、不减少权益、医生代码不作绩效、来源三类分开，规则保真。交付含口径表、流程图、采集字段、报告目录、复核与隐私清单，完整。usability因1.2整段重复现行资料、多处清单交叉重复而扣分，但结构清楚、可执行。",
+      "outputSha256": "2398ede4dc728c9a6fb7fc5bb245405d38cb367a854e5027597ac68fd347d1a2"
+    },
+    {
+      "blindId": "B050",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "清笺将于2026年10月20日开放受控内测招募。"
+      ],
+      "notes": "两个标题另列，正文开头说明内测目的，中段完整介绍需求澄清、资料关联、结构化结果三项价值，结尾给出内测页面反馈方式。保留三类受众与不执行代码、不替用户完成报告、不收集密码私钥等边界，未编造数据或外部链接。正文约680汉字，符合长度要求，结构清楚可执行。",
+      "outputSha256": "03c9d8213b9a96e1430dedce8c59cc424b1af9a0d767a84719a19efaf007c64d"
+    },
+    {
+      "blindId": "B051",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 订单审批 | 金额条件 | 订单金额 >= 3000 元须复核 |"
+      ],
+      "notes": "两业务对象分别保留完整条件与来源，运算符未归一化，未决条件与只读步骤齐全；但对照表按条件项、动作、状态拆成多行，确认清单与验证步骤条目偏多且部分重复，结构稍冗长，usability扣1分。",
+      "outputSha256": "5bd1ee1379814d3a77143b1096c0f43872a6e9dfd3a6df635c2245027dcf6508"
+    }
+  ]
+}

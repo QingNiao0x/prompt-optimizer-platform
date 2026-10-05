@@ -1,0 +1,212 @@
+{
+  "id": "CV-HOSPITAL-M-deepseek_deepseek-v4-pro-plan",
+  "caseId": "CV-HOSPITAL-M",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T16:16:48.545Z",
+  "prepared": {
+    "contextId": "5632bdf4-ec14-43b5-a357-008c3c54e345",
+    "version": "sha256:44838d7170ed8c5cf73e0fc84b7fdee5c1a3ab4d14244b50e3b780c1416ce6ec",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/hospital_operations/",
+        "materials/hospital_operations/current-brief.md",
+        "materials/hospital_operations/legacy-note.md",
+        "materials/hospital_operations/tests/",
+        "materials/hospital_operations/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/hospital_operations/current-brief.md：Markdown 文档摘要：合成门诊预约与爽约流程报告：合成现行资料；预约取消时间与就诊时间均用医院本地时区，当前汇总表没有时区转换证据。；观察窗口决定一个预约事件何时可以归为最终状态，窗口未确定前只应展示待核验事件，不应将尚未到期的预约算入爽约率。；科室类型可能影响预约提前量和到诊行为，但本题材料只有一个门诊；不推断跨科室、跨医院或全市的运营表现。；运营会议报告应标注合成材料与方法草案，明确专业评审后才能应用；文字可讨论工作流程，但不宣称任何方案已提高疗效。；业务摘录：预约取消时间与就诊时间均用医院本地时区，当前汇总表没有时区转换证据。；预约事件编号可区分一次预约，但一个患者可以多次预约，事件数不等于人数。；预约渠道有电话、网页和窗口三类，已明确；；[片段 1/1]；报告需将争议单独呈现，不能按文件修改时间直接断定新规则生效。；文字可讨论工作流程，但不宣称任何方案已提高疗效。",
+        "[PROJECT_DOCUMENT] materials/hospital_operations/legacy-note.md：Markdown 文档摘要：旧流程说明提前24小时取消不计爽约。；另有草稿写：新会议草稿建议提前12小时，尚未批准。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。；业务摘录：[片段 1/1] 旧流程说明提前24小时取消不计爽约。 另有草稿写：新会议草稿建议提前12小时，尚未批准。 两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 3,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital_operations/current-brief.md",
+          "evidence": "不得再询问本次需要分析哪些渠道"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital_operations/current-brief.md",
+          "evidence": "电话预约与网页预约可能记录相同一次预约的不同操作事件，渠道比较必须先定义首次渠道和变更渠道，不能把操作次数当成预约量"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital_operations/current-brief.md",
+          "evidence": "观察窗口决定一个预约事件何时可以归为最终状态，窗口未确定前只应展示待核验事件，不应将尚未到期的预约算入爽约率"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/hospital_operations/",
+        "materials/hospital_operations/current-brief.md",
+        "materials/hospital_operations/legacy-note.md",
+        "materials/hospital_operations/tests/",
+        "materials/hospital_operations/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/hospital_operations/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 合成门诊预约与爽约流程报告：合成现行资料\n预约事件编号可区分一次预约，但一个患者可以多次预约，事件数不等于人数。\n预约渠道有电话、网页和窗口三类，已明确；不得再询问本次需要分析哪些渠道。\n到诊状态包括 ARRIVED、CANCELLED、UNKNOWN，UNKNOWN 的原因没有细分。\n预约取消时间与就诊时间均用医院本地时区，当前汇总表没有时区转换证据。\n\n# 分支与边界\n电话预约与网页预约可能记录相同一次预约的不同操作事件，渠道比较必须先定义首次渠道和变更渠道，不能把操作次数当成预约量。\n取消状态表示系统记录到用户主动取消，不意味着治疗结束、病情缓解或不再需要服务；分析报告不能给取消行为附加临床解释。\n到诊状态未知可能来自设备同步延迟、现场漏登记或记录缺项；在缺少来源核查时，不能把这一状态解释为患者责任。\n观察窗口决定一个预约事件何时可以归为最终状态，窗口未确定前只应展示待核验事件，不应将尚未到期的预约算入爽约率。\n旧流程与新会议草稿有不同取消提前量，材料权威性并未建立；报告需将争议单独呈现，不能按文件修改时间直接断定新规则生效。\n预约事件量不同会影响百分比波动，小渠道样本较少时应保留数量和限制说明；没有完整数据不能报告显著的渠道差异。\n资料中的医生代码只是流程角色示例，不是个人绩效评估范围；不能追加医生排行榜或利用服务时间做个体能力评价。\n科室类型可能影响预约提前量和到诊行为，但本题材料只有一个门诊；不推断跨科室、跨医院或全市的运营表现。\n拟议采集表可以增加状态更新时间、取消时间和来源系统字段，实施前仍需合规评估；不能写成已经建表或已获得数据授权。\n改进建议应优先考虑清楚提示取消规则、核对登记质量与便捷改约，不默认采取罚款、降低预约资格或公开患者记录。\n如果机构后来要求短信提醒方案，需要另行确认通知授权和退订流程；本次不把提醒需求悄悄扩成发送短信的实施任务。\n运营会议报告应标注合成材料与方法草案，明确专业评审后才能应用；文字可讨论工作流程，但不宣称任何方案已提高疗效。",
+          "summary": "Markdown 文档摘要：合成门诊预约与爽约流程报告：合成现行资料；预约取消时间与就诊时间均用医院本地时区，当前汇总表没有时区转换证据。；观察窗口决定一个预约事件何时可以归为最终状态，窗口未确定前只应展示待核验事件，不应将尚未到期的预约算入爽约率。；科室类型可能影响预约提前量和到诊行为，但本题材料只有一个门诊；不推断跨科室、跨医院或全市的运营表现。；运营会议报告应标注合成材料与方法草案，明确专业评审后才能应用；文字可讨论工作流程，但不宣称任何方案已提高疗效。",
+          "truncated": false
+        },
+        {
+          "path": "materials/hospital_operations/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        },
+        {
+          "path": "materials/hospital_operations/legacy-note.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n旧流程说明提前24小时取消不计爽约。\n另有草稿写：新会议草稿建议提前12小时，尚未批准。\n两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "summary": "Markdown 文档摘要：旧流程说明提前24小时取消不计爽约。；另有草稿写：新会议草稿建议提前12小时，尚未批准。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T16:46:48.594212100Z",
+    "latencyMs": 28
+  },
+  "plan": {
+    "summary": "已理解任务是为合成门诊2026年第一季度预约事件编写运营分析方案，不涉及真实患者数据或临床建议。需要确认几个影响分析口径和交付内容的关键业务决定。",
+    "questions": [
+      {
+        "id": "observation_window",
+        "question": "预约未到诊的观察窗口应如何定义？",
+        "hint": "这决定一个预约事件何时可归为最终状态，影响爽约率的计算和待核验事件的展示。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：就诊时间后24小时仍未标记到诊则视为未到诊，但需排除已取消事件"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "cancellation_grace_period",
+        "question": "取消免责边界应采用哪个时间标准？",
+        "hint": "旧流程说明提前24小时取消不计爽约，新会议草稿建议提前12小时但尚未批准，需要明确本次分析采用哪个口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "use_24h",
+            "label": "采用旧流程24小时",
+            "description": "按旧流程说明，提前24小时取消不计爽约。",
+            "answer": "采用旧流程说明：提前24小时取消不计爽约。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "use_12h",
+            "label": "采用新草稿12小时",
+            "description": "按新会议草稿建议，提前12小时取消不计爽约，但需注明尚未批准。",
+            "answer": "采用新会议草稿建议：提前12小时取消不计爽约，并注明该草稿尚未批准。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "present_both",
+            "label": "同时呈现两种口径",
+            "description": "在分析中分别按24小时和12小时口径计算，并说明差异。",
+            "answer": "同时呈现两种口径：分别按提前24小时和提前12小时取消不计爽约计算，并说明差异及审批状态。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "statistical_unit",
+        "question": "比较渠道时，主统计单位应使用预约事件还是去重患者？",
+        "hint": "一个患者可以多次预约，事件数不等于人数，这会影响渠道比较的结论。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "use_events",
+            "label": "预约事件",
+            "description": "以每次预约事件为单位进行统计，反映预约行为总量。",
+            "answer": "主统计单位使用预约事件。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "use_unique_patients",
+            "label": "去重患者",
+            "description": "以去重后的患者为单位进行统计，反映患者群体的行为。",
+            "answer": "主统计单位使用去重患者。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "use_both",
+            "label": "两者都呈现",
+            "description": "同时提供基于事件和基于患者的统计结果，并说明差异。",
+            "answer": "同时呈现基于预约事件和基于去重患者的统计结果，并说明差异。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 8461,
+    "planId": "c71fd7b2-a906-4ae2-8150-8227fa32b3c6",
+    "planningContext": {
+      "contextId": "5632bdf4-ec14-43b5-a357-008c3c54e345",
+      "version": "sha256:44838d7170ed8c5cf73e0fc84b7fdee5c1a3ab4d14244b50e3b780c1416ce6ec"
+    },
+    "expiresAt": "2026-10-05T16:46:48.594212100Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CV-HOSPITAL-M-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "1091b04b-58ed-4e16-afaf-99898cb14313",
+      "elapsedMs": 98
+    },
+    {
+      "label": "CV-HOSPITAL-M-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "4d91f874-6c94-42be-b79f-e38af1719e21",
+      "elapsedMs": 8518
+    }
+  ]
+}

@@ -1,0 +1,202 @@
+{
+  "id": "CV-GUIDE-L-deepseek_deepseek-flash-plan",
+  "caseId": "CV-GUIDE-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T16:16:39.130Z",
+  "prepared": {
+    "contextId": "3dc17bb9-a6c3-4358-a352-9a9f7efb169d",
+    "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2",
+    "digest": {
+      "description": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologies": [
+        "Vue"
+      ],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] docs/产品范围.md：Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。；业务摘录：[片段 1/1] 现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。 模型由管理员发布，用户可选择可用模型但不填密钥。 扫描PDF OCR未开放。 没有自动执行、完整账号管理或专业结论承诺。",
+        "[PROJECT_SOURCE] src/Product.vue：Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>；业务摘录：[片段 1/1] <template><button>开始增强</button><button>复制</button></template>"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologyStack": [
+        {
+          "name": "Vue",
+          "source": "src/Product.vue",
+          "confidence": 0.9
+        }
+      ],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/产品范围.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。模型由管理员发布，用户可选择可用模型但不填密钥。扫描PDF OCR未开放。没有自动执行、完整账号管理或专业结论承诺。",
+          "summary": "Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。",
+          "truncated": false
+        },
+        {
+          "path": "src/Product.vue",
+          "language": "vue",
+          "content": "[片段 1/1]\n<template><button>开始增强</button><button>复制</button></template>",
+          "summary": "Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T16:46:39.186921500Z",
+    "latencyMs": 83
+  },
+  "plan": {
+    "summary": "目标是基于产品功能说明和项目代码，为首次使用提示词工具的非技术用户编写约1800-2400字的中文操作指南，覆盖开始使用、添加上下文、Plan选择、确认问题、核对结果、编辑复制、历史、常见问题与权限边界，且不混入开发交付内容。材料已明确大部分能力边界，但仍有少量影响成品准确性的业务事实需要确认。",
+    "questions": [
+      {
+        "id": "q4",
+        "question": "用户编辑结果后，“保存编辑”和“取消编辑”分别是什么效果？",
+        "hint": "材料要求只介绍附件明确提供的行为，不虚构自动撤销或自动恢复。需要确认保存编辑是覆盖原结果还是另存，取消编辑是放弃修改还是恢复原内容。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a1",
+            "label": "保存覆盖，取消放弃",
+            "description": "保存编辑会用修改后的内容覆盖当前结果；取消编辑则放弃本次修改，保留修改前的内容。",
+            "answer": "保存编辑会用修改后的内容覆盖当前结果；取消编辑则放弃本次修改，保留修改前的内容。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "a2",
+            "label": "保存另存，取消放弃",
+            "description": "保存编辑会生成一条新记录，原结果不变；取消编辑则放弃本次修改。",
+            "answer": "保存编辑会生成一条新记录，原结果不变；取消编辑则放弃本次修改。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "a3",
+            "label": "保存覆盖，取消恢复",
+            "description": "保存编辑覆盖当前结果；取消编辑会恢复到上一次保存的版本。",
+            "answer": "保存编辑覆盖当前结果；取消编辑会恢复到上一次保存的版本。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q5",
+        "question": "历史记录中“再次增强”是基于哪份内容重新生成？",
+        "hint": "材料说明历史支持再次增强，但没有说明是基于原始需求、上次结果还是编辑后的内容，这会影响“查看历史”和“编辑复制”部分的写法。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a1",
+            "label": "基于原始需求",
+            "description": "再次增强会回到最初输入的需求和资料，重新生成结果。",
+            "answer": "历史中的再次增强基于最初输入的需求和资料重新生成结果。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "a2",
+            "label": "基于上次结果",
+            "description": "再次增强会以上次生成的结果为基础继续优化。",
+            "answer": "历史中的再次增强以上次生成的结果为基础继续优化。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "a3",
+            "label": "基于编辑后内容",
+            "description": "再次增强会以用户编辑并保存后的内容为基础继续优化。",
+            "answer": "历史中的再次增强以用户编辑并保存后的内容为基础继续优化。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q6",
+        "question": "当模型生成失败时，用户应如何保留需求后重试？",
+        "hint": "材料要求常见问题覆盖“模型失败时如何保留需求后重试”，但没有说明失败后输入内容是否保留、是否有重试按钮，这会影响该条FAQ的写法。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a1",
+            "label": "输入保留，可重试",
+            "description": "失败后用户已输入的需求和资料仍在，可直接再次点击生成或重试。",
+            "answer": "模型生成失败后，用户已输入的需求和资料仍然保留，可直接再次点击生成或重试。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "a2",
+            "label": "需重新输入",
+            "description": "失败后输入内容不保留，用户需要重新填写需求和资料后再生成。",
+            "answer": "模型生成失败后，输入内容不保留，用户需要重新填写需求和资料后再生成。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 7798,
+    "planId": "f12b787c-452a-4e06-8771-63092bdf2a64",
+    "planningContext": {
+      "contextId": "3dc17bb9-a6c3-4358-a352-9a9f7efb169d",
+      "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2"
+    },
+    "expiresAt": "2026-10-05T16:46:39.186921500Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "f34c06e2-2348-4b0e-9a14-cf7c583300c8",
+      "elapsedMs": 174
+    },
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "41b4ce90-83b9-4620-a010-2abbb9ef1577",
+      "elapsedMs": 7864
+    }
+  ]
+}

@@ -1,0 +1,433 @@
+[
+  {
+    "blindId": "B001",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 3,
+      "ruleFidelity": 3,
+      "usability": 3
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "保留20任务3次2名盲评、信息量匹配、失败保留和评分尺度/轮次/分歧未决，没有虚构结果。",
+      "“C组按预先制定答案卡提问作答”未清楚区分系统动态提问与操作者按卡回答；评分/失败模板未提供独立的失败证据位置及阶段，交付可复核性有缺口。"
+    ]
+  },
+  {
+    "blindId": "B002",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 4,
+      "ruleFidelity": 3,
+      "usability": 3
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "四条完整规则、动作、>=/>差异、来源与未批准状态正确，保留不选择生效方案。",
+      "用户已回答只比较不选方案，确认表仍要求“请确认本次采用…”并重复“是否分别适用不同方案”；“阈值边界处理是否需额外说明”也重问已明确约束。"
+    ]
+  },
+  {
+    "blindId": "B003",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 2,
+      "completeness": 4,
+      "ruleFidelity": 2,
+      "usability": 3
+    },
+    "criticalErrors": [
+      "UNSUPPORTED_HISTORY_VISIBILITY",
+      "UNSUPPORTED_ABSENCE_CLAIM"
+    ],
+    "evidence": [
+      "“历史记录仅对当前账号可见，不存在跨账号共享记录”无材料依据，提交回答明确不选择未验证实现/权限边界；应以当前界面为准而不确认可见范围。",
+      "指南完整覆盖操作和5类常见问题，但添加数据库迁移、依赖升级等无关软件操作清单，增加非技术用户负担。"
+    ]
+  },
+  {
+    "blindId": "B004",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 3,
+      "completeness": 4,
+      "ruleFidelity": 2,
+      "usability": 3
+    },
+    "criticalErrors": [
+      "BLINDING_SOURCE_LEAK_IN_SCORE_TEMPLATE"
+    ],
+    "evidence": [
+      "评分表（每任务每重复一份）给评审编号及“条件编号 | 原始/直接增强/计划确认/信息量匹配”，把生成条件明文带进评分表；没有说明该映射仅由非评审管理员保管，违背评审不得看生成来源。",
+      "正确保留顺序尺度已选而等级/锚点未知，20×4×3为拟议240次生成，不冒充实验已完成。"
+    ]
+  },
+  {
+    "blindId": "B005",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 2,
+      "completeness": 4,
+      "ruleFidelity": 2,
+      "usability": 3
+    },
+    "criticalErrors": [
+      "UNSUPPORTED_FUNCTION_CLAIM",
+      "UNSUPPORTED_ABSENCE_CLAIM"
+    ],
+    "evidence": [
+      "“界面中提供保存编辑、取消编辑、再次增强等操作”无附件已提供行为证据；原任务要求这些能力只介绍附件明确行为。",
+      "“本平台不提供自动撤销、自动恢复历史版本或跨账号共享记录的功能”把未说明写成不存在，违反任务/提交回答的证据边界。"
+    ]
+  },
+  {
+    "blindId": "B006",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 3,
+      "completeness": 2,
+      "ruleFidelity": 2,
+      "usability": 3
+    },
+    "criticalErrors": [
+      "MISSING_REQUIRED_MVP_STAGE"
+    ],
+    "evidence": [
+      "任务要求产品“尚处于本地MVP阶段”，作品全文未保留本地MVP，只写“内测仍在进行中”，造成阶段事实遗漏。",
+      "正文从第4行起，两个标题不计；汉字610，非空白全字符674，均在600–800。",
+      "三受众、三价值、日期、内测页面反馈和只生成提示词边界保留，无虚构经营指标。"
+    ]
+  },
+  {
+    "blindId": "B007",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 3,
+      "completeness": 3,
+      "ruleFidelity": 2,
+      "usability": 3
+    },
+    "criticalErrors": [
+      "UNSUPPORTED_FAILURE_SAMPLE_EXCLUSION"
+    ],
+    "evidence": [
+      "失败记录模板预置“是否保留为有效样本 | 否（首轮失败必须保留记录）”，自行排除失败的分析样本资格；任务要求工具/首轮失败保留、重试不得替代，未授权预置排除决定。",
+      "评分尺度仍标为待定并给候选示例，未锁定；但无材料具体出处对应及明确实验尚未运行声明，限制说明不完整。"
+    ]
+  },
+  {
+    "blindId": "B008",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 4,
+      "ruleFidelity": 4,
+      "usability": 4
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "“评分尺度采用顺序尺度；具体等级数量与评分锚点仍未确定”符合提交回答，保留轮次/终止/分歧/一致性未知。",
+      "四组信息公平、20任务3次两盲评、隔离失败保留、匿名条件代码与可复核字段、来源排版示例隔离齐全，无虚构研究结果。"
+    ]
+  },
+  {
+    "blindId": "B009",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 3,
+      "completeness": 4,
+      "ruleFidelity": 4,
+      "usability": 4
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "保留评分尺度未知、20×4×3设计、信息量匹配、隔离和失败，评分模板采用“盲化代号”，未泄露生成来源。",
+      "“评分尺度（有序/连续/重复测量）”把重复测量研究结构并入尺度分类；应分开记录量表属性与数据重复结构，不据此锁定检验。"
+    ]
+  },
+  {
+    "blindId": "B010",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 4,
+      "ruleFidelity": 4,
+      "usability": 4
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "明确“保存编辑、取消编辑、再次增强等能力以当前界面为准”“不要假设存在自动撤销…共享”，保留证据未知而非断言不存在。",
+      "主动资料选择、可选Plan、未知前提、专业边界、逻辑删除和5类常见问题齐全，给出可操作准备和核对步骤。"
+    ]
+  },
+  {
+    "blindId": "B011",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 2,
+      "completeness": 4,
+      "ruleFidelity": 2,
+      "usability": 3
+    },
+    "criticalErrors": [
+      "UNSUPPORTED_EDIT_WORKFLOW",
+      "UNSUPPORTED_HISTORY_VISIBILITY",
+      "UNSUPPORTED_ABSENCE_CLAIM"
+    ],
+    "evidence": [
+      "“保存编辑…保存的是你编辑后的版本”“取消编辑…回到本次编辑前状态”“再次增强…现有结果基础上”均无所给附件行为证据，原任务要求仅介绍附件明确能力。",
+      "“不提供自动撤销到任意历史版本…只能看到自己账号下的内容”把能力/权限未说明写成确定现状。",
+      "“你上传什么、确认什么，系统就用什么”过度概括，会让初学者误以为所有已选材料均进入模型；任务要求提示相关片段及覆盖边界。"
+    ]
+  },
+  {
+    "blindId": "B012",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 2,
+      "completeness": 4,
+      "ruleFidelity": 1,
+      "usability": 2
+    },
+    "criticalErrors": [
+      "UNDECIDED_CANCELLATION_RULE_DEFAULT",
+      "UNSUPPORTED_FIELD_EXISTENCE_OR_ABSENCE",
+      "ROW_LEVEL_TABLE_OUTSIDE_AGGREGATE_SCOPE"
+    ],
+    "evidence": [
+      "状态表“CANCELLED…是否可计为爽约：否”，固定排除取消事件；取消免责边界仍未确定，不能默认排除。",
+      "“预约创建时间…已有”“状态更新时间缺失”“来源系统字段缺失”未被给定字典证实，把未知字段现状写成确定已有/缺失。",
+      "拟议表列APT-2026Q1-0001等三次预约的创建/就诊/取消时间和状态，是逐条预约例子；虽标合成，但任务明确“表格只展示合成汇总信息”，越过交付层级。"
+    ]
+  },
+  {
+    "blindId": "B013",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 4,
+      "ruleFidelity": 3,
+      "usability": 4
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "正确保留四条完整金额条件、动作、>=/>差别、来源和未批准，未选择生效值；三项交付齐备，结构清楚。",
+      "“订单审批与退款规则是否需合并为同一套生效标准”及“是否确定唯一生效版本”扩展已限定的差异比较任务，并与分别阈值未决重复。"
+    ]
+  },
+  {
+    "blindId": "B014",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 4,
+      "ruleFidelity": 3,
+      "usability": 3
+    },
+    "criticalErrors": [],
+    "evidence": [
+      ">=3000/>=5000与>500/>800及动作、来源和未批准正确，正文保持用户已选择只比较、不选择生效方案。",
+      "确认表仍问“本次采用哪一项…还是仅做差异记录”，重复已提交回答；可压缩为未来执行需批准，当前无需重新选。"
+    ]
+  },
+  {
+    "blindId": "B015",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 4,
+      "ruleFidelity": 3,
+      "usability": 3
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "保存/取消/再次增强和重试入口均写“以当前界面实际提供…为准”，未编造历史权限或自动恢复，主动材料/Plan与逻辑删除边界正确。",
+      "末尾加入数据库迁移、依赖升级、生产部署等非技术指南无关操作；全文汉字1727、非空白1956，约1800–2400字按汉字口径略短但“约”属软要求，不作严重错误。"
+    ]
+  },
+  {
+    "blindId": "B016",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 3,
+      "completeness": 4,
+      "ruleFidelity": 2,
+      "usability": 3
+    },
+    "criticalErrors": [
+      "NEWS_BODY_HAN_LENGTH_OUT_OF_RANGE"
+    ],
+    "evidence": [
+      "正文从第5行起，两个标题与“正文”标签不计；汉字546，低于600–800中文字符下限；非空白全字符605，在范围内。",
+      "保留本地MVP、未来2026年10月20日、三受众、三价值、受控内测和页面反馈；“也不涉及疾病诊断、投资收益等场景”比材料“不承诺诊断/收益”更宽，宜避免排除全部相关表达整理场景。"
+    ]
+  },
+  {
+    "blindId": "B017",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 4,
+      "ruleFidelity": 2,
+      "usability": 3
+    },
+    "criticalErrors": [
+      "NEWS_BODY_HAN_LENGTH_OUT_OF_RANGE"
+    ],
+    "evidence": [
+      "正文从第4行起，两个标题不计；汉字553，低于600–800中文字符下限；非空白全字符612，在范围内。",
+      "MVP、内测日期、三类受众、三项价值、只整理提示词和页面反馈均保留，无编造经营结果。"
+    ]
+  },
+  {
+    "blindId": "B018",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 3,
+      "completeness": 4,
+      "ruleFidelity": 2,
+      "usability": 3
+    },
+    "criticalErrors": [
+      "UNKNOWN_TO_NEGATIVE_FACT"
+    ],
+    "evidence": [
+      "标题“拟议，未建表、未授权”及声明“尚未建表，尚未获得数据授权”无现状依据；任务只禁止写成已建/已授权，不能据此反向断定未建/未授权。",
+      "保留UNKNOWN是否进入分母未知、观察窗口/统计单位未知及旧24/新12小时审批争议，交付齐备；首次/变更渠道定义被当作current-brief原有定义，应标候选。"
+    ]
+  },
+  {
+    "blindId": "B019",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 3,
+      "completeness": 3,
+      "ruleFidelity": 3,
+      "usability": 3
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "取消免责边界、观察窗口、主统计单位未决并保留，来源、专业与合成边界清楚，无计算真实指标。",
+      "拟议采集字段没有去重患者键，而方案又保留去重患者这一主统计单位选项，应增加条件性的去重字段建议及合规前提。",
+      "“旧流程…新草稿…当前未批准”表述应只把已知未批准归于新草稿，旧流程审批状态尚未建立；解释和目录重复前提。"
+    ]
+  },
+  {
+    "blindId": "B020",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 3,
+      "completeness": 4,
+      "ruleFidelity": 3,
+      "usability": 3
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "四组信息公平、20任务3次两名盲评、未知评分/交互条件及失败保留齐全，评分表条件匿名化。",
+      "附表预置“任务编号：随机效应”及“C vs B…需扣除D vs B信息增量”，评分尺度尚未知时提前指定统计模型/分解口径，宜改为候选方法并写适用条件。",
+      "未提供材料具体出处对应，主文与附表反复重述信息公平性，阅读负担增加。"
+    ]
+  },
+  {
+    "blindId": "B021",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 3,
+      "ruleFidelity": 4,
+      "usability": 4
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "正文从第5行起，两个标题不计；汉字687，非空白全字符761，均在600–800。",
+      "保留MVP、受控内测、未来2026年10月20日、三受众、三价值和页面反馈；补充材料中的Plan可由用户主动开启未明确落地，完整性轻微不足。"
+    ]
+  },
+  {
+    "blindId": "B022",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 2,
+      "completeness": 3,
+      "ruleFidelity": 2,
+      "usability": 3
+    },
+    "criticalErrors": [
+      "UNSUPPORTED_EDIT_WORKFLOW",
+      "UNSUPPORTED_HISTORY_VISIBILITY",
+      "UNSUPPORTED_ABSENCE_CLAIM"
+    ],
+    "evidence": [
+      "“修改后可以保存…取消当前编辑…现有基础上再次增强”无附件明确行为证据，原任务要求只介绍材料已说明行为。",
+      "“历史记录仅对你当前账号可见，不存在跨账号共享”将未验证权限与能力写成确定状态，提交回答明确缺证据处以当前界面为准。",
+      "遗漏增强不保证胜过原文/永无歧义以及信息充分可少改的限制，只给一类完整会议示例，原要求三种示例覆盖较弱。"
+    ]
+  },
+  {
+    "blindId": "B023",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 3,
+      "completeness": 4,
+      "ruleFidelity": 3,
+      "usability": 3
+    },
+    "criticalErrors": [
+      "UNSUPPORTED_FIELD_ABSENCE"
+    ],
+    "evidence": [
+      "报告目录“缺失字段：状态更新时间、取消时间、来源系统、首次/变更渠道”把拟议增加/需核实变成确认缺失；材料未说明现有字段覆盖情况。",
+      "明确UNKNOWN是否进入分母未知、观察窗口未知、旧24/新12小时差异与主统计单位未知；取消小于阈值分支保留“是否计爽约，待定”，未强行选口径。",
+      "已声明拟议、合规前提和只汇总展示，各交付项齐全，但多个章节重复相同未决。"
+    ]
+  },
+  {
+    "blindId": "B024",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 3,
+      "ruleFidelity": 4,
+      "usability": 4
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "20任务3次两名盲评、四组信息公平、顺序尺度已确定而等级/锚点未知、轮次终止与一致性未决均保留，无虚构结果。",
+      "评分/失败模板简略，缺少独立失败阶段、失败证据位置与样本保留链接字段，仍需完善以支持实际复核。"
+    ]
+  },
+  {
+    "blindId": "B025",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 4,
+      "ruleFidelity": 3,
+      "usability": 3
+    },
+    "criticalErrors": [],
+    "evidence": [
+      "完整保留订单>=3000/>=5000及退款>500/>800、动作、来源、均未批准、不得按顺序/日期择胜，三项交付齐全。",
+      "“是否存在其他业务对象或补充条件”扩展固定订单/退款范围；“请确认两份方案是否已获批准”重问任务已明确的当前未批准状态。"
+    ]
+  },
+  {
+    "blindId": "B026",
+    "status": "REVIEWED",
+    "scores": {
+      "accuracy": 4,
+      "completeness": 4,
+      "ruleFidelity": 1,
+      "usability": 2
+    },
+    "criticalErrors": [
+      "NEWS_BODY_LENGTH_OUT_OF_RANGE_BOTH_METHODS"
+    ],
+    "evidence": [
+      "正文从第5行起，两个标题不计；汉字502、非空白全字符563，两种口径均低于600–800，严格篇幅不符。",
+      "MVP、未来2026年10月20日、受控内测、三受众三价值、只优化提示词和内测页面反馈均保留，但需使用已有材料补足正文，不能加标题凑数。"
+    ]
+  }
+]

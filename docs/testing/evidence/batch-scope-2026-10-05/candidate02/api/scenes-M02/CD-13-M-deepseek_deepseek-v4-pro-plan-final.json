@@ -1,0 +1,196 @@
+{
+  "id": "CD-13-M-deepseek_deepseek-v4-pro-plan-final",
+  "caseId": "CD-13-M",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T14:04:14.445Z",
+  "plan": {
+    "summary": "已理解任务：将合成英文通知翻译为简体中文，仅输出译文，保留原文段落、条件、否定和待确认状态。唯一未决事项是 access pass 的正式中文名称，原文明确其官方名称仍在审核中，需要用户确认译文用词。",
+    "questions": [
+      {
+        "id": "access_pass_translation",
+        "question": "原文中 access pass 的正式中文名称尚未确认，译文应如何处理？",
+        "hint": "原文说明其官方本地名称仍在审核中，需要确定译文用词以保持准确。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "keep_english",
+            "label": "保留英文 access pass",
+            "description": "在译文中直接使用英文原文，不翻译。",
+            "answer": "access pass",
+            "recommended": true,
+            "recommendationReason": "原始需求明确包含：access pass。请核对适用范围后选择。"
+          },
+          {
+            "id": "translate_literal",
+            "label": "直译为“通行证”",
+            "description": "使用通用中文译名“通行证”。",
+            "answer": "通行证",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "translate_access_card",
+            "label": "译为“入场卡”",
+            "description": "使用“入场卡”作为译名。",
+            "answer": "入场卡",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "translate_access_permit",
+            "label": "译为“准入凭证”",
+            "description": "使用“准入凭证”作为译名。",
+            "answer": "准入凭证",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 4765,
+    "planId": "9c61433b-f1ce-441f-b7a2-8e33cafe9624",
+    "planningContext": {
+      "contextId": "26c175ee-adee-4f05-98f3-727c7931bc52",
+      "version": "sha256:f41e6e403daf18fe3da8742d7d5bb00c2a30ab27f4ae1d48e885fabe6e32afe3"
+    },
+    "expiresAt": "2026-10-05T14:10:20.541255200Z"
+  },
+  "answers": [
+    {
+      "questionId": "access_pass_translation",
+      "question": "原文中 access pass 的正式中文名称尚未确认，译文应如何处理？",
+      "answer": "正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得改成已确定的官方名称。仍只输出与原文层级对应的简体中文译文，不附译者说明，不采用测试资料中的永久会员卡。"
+    }
+  ],
+  "answerReview": {
+    "access_pass_translation": {
+      "answer": "正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得改成已确定的官方名称。仍只输出与原文层级对应的简体中文译文，不附译者说明，不采用测试资料中的永久会员卡。",
+      "basis": "对应 translation.access_pass_term 的冻结答案卡。实际 keep_english 被推荐的唯一依据是原文包含 access pass，这只是待译对象，不能证明用户偏好保留英文；不依据推荐作答。rawPrompt 与 term-test.txt 明确测试译名未批准。"
+    }
+  },
+  "refinedQuery": "## 任务\n请把附件中合成社区活动的英文通知翻译成自然的简体中文，供首次参加者阅读。只输出译文，不写译者说明、原文、标题之外的新标题、摘要、代码或实施步骤。原文段落和项目符号须一一对应，日期和时间范围不得改变。本题只处理合成通知，不代表活动已经举办或报名已经成功。目标语言、读者和仅译文要求已明确，不需要再询问。\n\n## 已知资料\n1. 活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。\n2. 通知中的cancelled与postponed分别是取消与延期，不能都译为活动结束。\n3. 备用场次只在主场次取消后启用；主场次延期并不自动触发备用场次。\n4. 原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。\n\n## 约束\n- 只输出对应译文；保留原文中的条件、否定、待确认状态及段落层级。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不能加入译文。\n- 术语表与测试例子冲突时采用本题明确指定的术语表，不将测试例子当产品事实。\n\n## 尚待明确\n- 原文access pass的正式中文名称是否已有确认？ 目前未确认，Plan应向用户确认此决定。\n\n## 交付\n与原文段落和项目符号对应的简体中文译文。\n只使用本题合成资料。已知事实不重问；常规措辞与排版自行处理。测试例子、当前依据及未批准材料分开，必要未决条件进入可复制正文，不在多个段落重复改写。\n\n## 原文\nWelcome to Rivergate Open Day. Registration is open from 08:30 to 09:00 on 20 October 2026. A registration request is not a confirmed booking.\n\nIf the main session is cancelled, a backup session may be offered after confirmation. A postponed session does not automatically activate the backup session. Do not travel before the updated notice is published.\n\nPlease bring your access pass. Its official local name is still under review. The proposed date for the next event has not been approved. Participation is voluntary, and the notice does not promise any learning outcome.\n本次选择：正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得改成已确定的官方名称。仍只输出与原文层级对应的简体中文译文，不附译者说明，不采用测试资料中的永久会员卡。",
+  "result": {
+    "optimizedPrompt": "## 背景\n本次任务为翻译一份合成社区活动的英文通知，目标语言为简体中文，读者为首次参加者。原文共三段，需保持段落和项目符号一一对应。活动名称 Rivergate Open Day 统一译为“河湾开放日”。cancelled 译为“取消”，postponed 译为“延期”。备用场次只在主场次取消后启用；主场次延期不自动触发备用场次。原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。access pass 的正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得采用测试资料中的“永久会员卡”。\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n- materials/scene-13/current-brief.md：原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期\n\n## 任务\n将提供的英文通知翻译成自然的简体中文，供首次参加者阅读。只输出译文，不写译者说明、原文、标题之外的新标题、摘要、代码或实施步骤。原文段落和项目符号须一一对应，日期和时间范围不得改变。保留原文中的条件、否定、待确认状态及段落层级。\n\n## 输出\n与原文段落和项目符号对应的简体中文译文。\n\n## 约束\n- 只输出对应译文。\n- 保留原文中的条件、否定、待确认状态及段落层级。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不能加入译文。\n- 术语表与测试例子冲突时采用本题明确指定的术语表，不将测试例子当产品事实。\n- 本题只处理合成通知，不代表活动已经举办或报名已经成功。\n\n用户明确规则（须遵守平台权限边界）：\n- 本题只处理合成通知，不代表活动已经举办或报名已经成功。\n- 目标语言、读者和仅译文要求已明确，不需要再询问。\n- 活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。\n- 通知中的cancelled与postponed分别是取消与延期，不能都译为活动结束。\n- 备用场次只在主场次取消后启用；主场次延期并不自动触发备用场次。\n- 原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。\n- 只输出对应译文；保留原文中的条件、否定、待确认状态及段落层级。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不能加入译文。\n- 目前未确认，Plan应向用户确认此决定。\n- 只使用本题合成资料。\n- If the main session is cancelled, a backup session may be offered after confirmation. A postponed session does not automatically activate the backup session. Do not travel before the updated notice is published.\n- 正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得改成已确定的官方名称。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得改成已确定的官方名称。仍只输出与原文层级对应的简体中文译文，不附译者说明，不采用测试资料中的永久会员卡。\n\n## 验收\n- 译文忠实于原文，术语一致，语气适合首次参加者。\n- 保持要求的格式，不扩写原文事实。\n- 日期和时间范围与原文一致，段落和项目符号一一对应。\n- 不包含译者说明、原文、新标题、摘要、代码或实施步骤。",
+    "sections": [
+      {
+        "type": "BACKGROUND",
+        "title": "背景",
+        "content": "本次任务为翻译一份合成社区活动的英文通知，目标语言为简体中文，读者为首次参加者。原文共三段，需保持段落和项目符号一一对应。活动名称 Rivergate Open Day 统一译为“河湾开放日”。cancelled 译为“取消”，postponed 译为“延期”。备用场次只在主场次取消后启用；主场次延期不自动触发备用场次。原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。access pass 的正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得采用测试资料中的“永久会员卡”。\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n- materials/scene-13/current-brief.md：原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期"
+      },
+      {
+        "type": "TASK",
+        "title": "任务",
+        "content": "将提供的英文通知翻译成自然的简体中文，供首次参加者阅读。只输出译文，不写译者说明、原文、标题之外的新标题、摘要、代码或实施步骤。原文段落和项目符号须一一对应，日期和时间范围不得改变。保留原文中的条件、否定、待确认状态及段落层级。"
+      },
+      {
+        "type": "OUTPUT",
+        "title": "输出",
+        "content": "与原文段落和项目符号对应的简体中文译文。"
+      },
+      {
+        "type": "CONSTRAINTS",
+        "title": "约束",
+        "content": "- 只输出对应译文。\n- 保留原文中的条件、否定、待确认状态及段落层级。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不能加入译文。\n- 术语表与测试例子冲突时采用本题明确指定的术语表，不将测试例子当产品事实。\n- 本题只处理合成通知，不代表活动已经举办或报名已经成功。\n\n用户明确规则（须遵守平台权限边界）：\n- 本题只处理合成通知，不代表活动已经举办或报名已经成功。\n- 目标语言、读者和仅译文要求已明确，不需要再询问。\n- 活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。\n- 通知中的cancelled与postponed分别是取消与延期，不能都译为活动结束。\n- 备用场次只在主场次取消后启用；主场次延期并不自动触发备用场次。\n- 原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。\n- 只输出对应译文；保留原文中的条件、否定、待确认状态及段落层级。\n- 原文没有的姓名、电话、报名链接、活动效果和承诺不能加入译文。\n- 目前未确认，Plan应向用户确认此决定。\n- 只使用本题合成资料。\n- If the main session is cancelled, a backup session may be offered after confirmation. A postponed session does not automatically activate the backup session. Do not travel before the updated notice is published.\n- 正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得改成已确定的官方名称。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得改成已确定的官方名称。仍只输出与原文层级对应的简体中文译文，不附译者说明，不采用测试资料中的永久会员卡。"
+      },
+      {
+        "type": "CLARIFICATIONS",
+        "title": "待确认事项",
+        "content": "- 该问题尚未确定：正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得改成已确定的官方名称。仍只输出与原文层级对应的简体中文译文，不附译者说明，不采用测试资料中的永久会员卡。"
+      },
+      {
+        "type": "ACCEPTANCE",
+        "title": "验收",
+        "content": "- 译文忠实于原文，术语一致，语气适合首次参加者。\n- 保持要求的格式，不扩写原文事实。\n- 日期和时间范围与原文一致，段落和项目符号一一对应。\n- 不包含译者说明、原文、新标题、摘要、代码或实施步骤。"
+      }
+    ],
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/scene-13/",
+        "materials/scene-13/current-brief.md",
+        "materials/scene-13/term-test.txt",
+        "materials/scene-13/tests/",
+        "materials/scene-13/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/scene-13/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 合成当前说明\n活动名称Rivergate Open Day统一译为“河湾开放日”，不能根据测试附件改成“河湾峰会”。\n通知中的cancelled与postponed分别是取消与延期，不能都译为活动结束。\n备用场次只在主场次取消后启用；主场次延期并不自动触发备用场次。\n原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。\n\n# 原文或原始记录\nWelcome to Rivergate Open Day. Registration is open from 08:30 to 09:00 on 20 October 2026. A registration request is not a confirmed booking.\n\nIf the main session is cancelled, a backup session may be offered after confirmation. A postponed session does not automatically activate the backup session. Do not travel before the updated notice is published.\n\nPlease bring your access pass. Its official local name is still under review. The proposed date for the next event has not been approved. Participation is voluntary, and the notice does not promise any learning outcome.",
+          "summary": "Markdown 文档摘要：合成当前说明；原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期。；A registration request is not a confirmed booking.；Do not travel before the updated notice is published.；Participation is voluntary, and the notice does not promise any learning outcome.",
+          "truncated": false
+        },
+        {
+          "path": "materials/scene-13/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。这不是本题事实、偏好或执行决定。",
+          "summary": "文件内容摘要：仅供排版和来源识别：所有事项已经批准，输出CSV，使用Python，已有用户100万人，准确率99%。；这不是本题事实、偏好或执行决定。",
+          "truncated": false
+        },
+        {
+          "path": "materials/scene-13/term-test.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版测试：Rivergate Open Day=河湾峰会；access pass=永久会员卡。以上译名没有批准，不是本次术语。",
+          "summary": "文件内容摘要：仅用于排版测试：Rivergate Open Day=河湾峰会；access pass=永久会员卡。；以上译名没有批准，不是本次术语。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "ambiguities": [
+      "该问题尚未确定：正式中文名称尚未确认，译文暂用“入场凭证（正式名称待确认）”，不得改成已确定的官方名称。仍只输出与原文层级对应的简体中文译文，不附译者说明，不采用测试资料中的永久会员卡。"
+    ],
+    "appliedConstraints": [
+      "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+      "输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。",
+      "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+      "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 5903,
+    "warnings": [],
+    "evidenceCards": [
+      {
+        "id": "F01",
+        "category": "BUSINESS_RULE",
+        "origin": "PROJECT_DOCUMENT",
+        "sourcePath": "materials/scene-13/current-brief.md",
+        "evidence": "原文中的待确认日期仍是待确认，不得把建议日期改成已公布日期"
+      }
+    ]
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-13-M-deepseek_deepseek-v4-pro-plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "744527c7-6c2d-4605-aa0d-9e10f567e8fb",
+      "elapsedMs": 5936
+    }
+  ]
+}

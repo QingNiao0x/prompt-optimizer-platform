@@ -1,0 +1,940 @@
+{
+  "schemaVersion": 1,
+  "reviewer": {
+    "id": "codex-anonymous-merged-independent-ai-assisted-20261005",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-05T14:55:17.589Z",
+    "professionalDomain": "NONE"
+  },
+  "sourceReviews": [
+    {
+      "filename": "review-first26-ai-assisted.json",
+      "sha256": "20de33df0de6ea20560d67627398875aae2b4140c8bdf58c615cff388db3575e",
+      "reviewer": {
+        "id": "codex-anonymous-first26-20261005",
+        "kind": "AI_ASSISTED",
+        "reviewedAt": "2026-10-05T14:24:27.875821+00:00",
+        "professionalDomain": "NONE"
+      },
+      "reviewedCount": 26
+    },
+    {
+      "filename": "review-last-half-ai-assisted.json",
+      "sha256": "8ceeb1e5673fdd765b5ca0f4b968c8336db0f746921e1f4fc25d2b98cd589894",
+      "reviewer": {
+        "id": "codex-anonymous-last-half-20261005",
+        "kind": "AI_ASSISTED",
+        "reviewedAt": "2026-10-05T14:46:26.445016Z",
+        "professionalDomain": "NONE"
+      },
+      "reviewedCount": 25
+    }
+  ],
+  "professionalReview": "PENDING",
+  "releaseApproval": false,
+  "independenceScope": "两批匿名作品分段独立审阅；不是每件作品的双人独立评分，也不是行业专业验收。",
+  "weights": {
+    "accuracy": 35,
+    "completeness": 25,
+    "ruleFidelity": 25,
+    "usability": 15
+  },
+  "entries": [
+    {
+      "blindId": "B001",
+      "outputSha256": "7a5d91f707470f9c08e0ce0f9e957ce6db007bf95cb9230aebc971a6b9cd8db3",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "保留20任务3次2名盲评、信息量匹配、失败保留和评分尺度/轮次/分歧未决，没有虚构结果。",
+        "“C组按预先制定答案卡提问作答”未清楚区分系统动态提问与操作者按卡回答；评分/失败模板未提供独立的失败证据位置及阶段，交付可复核性有缺口。"
+      ]
+    },
+    {
+      "blindId": "B002",
+      "outputSha256": "ccb4d9df8f888c8d9803335308c65a8cd9099d59777bd4b27b4d3e3364ae5cd4",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "四条完整规则、动作、>=/>差异、来源与未批准状态正确，保留不选择生效方案。",
+        "用户已回答只比较不选方案，确认表仍要求“请确认本次采用…”并重复“是否分别适用不同方案”；“阈值边界处理是否需额外说明”也重问已明确约束。"
+      ]
+    },
+    {
+      "blindId": "B003",
+      "outputSha256": "90debb835fe98a82a5c3210466d00c4a97d6a61cebc982bff8948c49f08b3c6c",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNSUPPORTED_HISTORY_VISIBILITY",
+        "UNSUPPORTED_ABSENCE_CLAIM"
+      ],
+      "evidence": [
+        "“历史记录仅对当前账号可见，不存在跨账号共享记录”无材料依据，提交回答明确不选择未验证实现/权限边界；应以当前界面为准而不确认可见范围。",
+        "指南完整覆盖操作和5类常见问题，但添加数据库迁移、依赖升级等无关软件操作清单，增加非技术用户负担。"
+      ]
+    },
+    {
+      "blindId": "B004",
+      "outputSha256": "55c662e70ca57ed3d99829b2df990b28ea67fe13050f23d8363a7b4fd4f0c707",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "BLINDING_SOURCE_LEAK_IN_SCORE_TEMPLATE"
+      ],
+      "evidence": [
+        "评分表（每任务每重复一份）给评审编号及“条件编号 | 原始/直接增强/计划确认/信息量匹配”，把生成条件明文带进评分表；没有说明该映射仅由非评审管理员保管，违背评审不得看生成来源。",
+        "正确保留顺序尺度已选而等级/锚点未知，20×4×3为拟议240次生成，不冒充实验已完成。"
+      ]
+    },
+    {
+      "blindId": "B005",
+      "outputSha256": "30b899b3aa38551a9c40d1d5b75079ef1de2b2c8d2ad145b8ef88ba32e00b5ea",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNSUPPORTED_FUNCTION_CLAIM",
+        "UNSUPPORTED_ABSENCE_CLAIM"
+      ],
+      "evidence": [
+        "“界面中提供保存编辑、取消编辑、再次增强等操作”无附件已提供行为证据；原任务要求这些能力只介绍附件明确行为。",
+        "“本平台不提供自动撤销、自动恢复历史版本或跨账号共享记录的功能”把未说明写成不存在，违反任务/提交回答的证据边界。"
+      ]
+    },
+    {
+      "blindId": "B006",
+      "outputSha256": "e7e72e1f7f13606d0ab6f7eb36af834b766ddc915a7d1caa50b47fa6c5743bde",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 2,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "MISSING_REQUIRED_MVP_STAGE"
+      ],
+      "evidence": [
+        "任务要求产品“尚处于本地MVP阶段”，作品全文未保留本地MVP，只写“内测仍在进行中”，造成阶段事实遗漏。",
+        "正文从第4行起，两个标题不计；汉字610，非空白全字符674，均在600–800。",
+        "三受众、三价值、日期、内测页面反馈和只生成提示词边界保留，无虚构经营指标。"
+      ]
+    },
+    {
+      "blindId": "B007",
+      "outputSha256": "8685b7b188e497ce07902fd958ed28157343fb8e576e374237fb84f68c35a4f7",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNSUPPORTED_FAILURE_SAMPLE_EXCLUSION"
+      ],
+      "evidence": [
+        "失败记录模板预置“是否保留为有效样本 | 否（首轮失败必须保留记录）”，自行排除失败的分析样本资格；任务要求工具/首轮失败保留、重试不得替代，未授权预置排除决定。",
+        "评分尺度仍标为待定并给候选示例，未锁定；但无材料具体出处对应及明确实验尚未运行声明，限制说明不完整。"
+      ]
+    },
+    {
+      "blindId": "B008",
+      "outputSha256": "a52c7f758014824c13d4fbe754f8d4ce6d782cb100f9709cc6514bd733991c8f",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "“评分尺度采用顺序尺度；具体等级数量与评分锚点仍未确定”符合提交回答，保留轮次/终止/分歧/一致性未知。",
+        "四组信息公平、20任务3次两盲评、隔离失败保留、匿名条件代码与可复核字段、来源排版示例隔离齐全，无虚构研究结果。"
+      ]
+    },
+    {
+      "blindId": "B009",
+      "outputSha256": "c4a9cd9a6687dd1fb883012ba42d4fda2bab889e4fbbdd22cfcf04b48c7ef63d",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "保留评分尺度未知、20×4×3设计、信息量匹配、隔离和失败，评分模板采用“盲化代号”，未泄露生成来源。",
+        "“评分尺度（有序/连续/重复测量）”把重复测量研究结构并入尺度分类；应分开记录量表属性与数据重复结构，不据此锁定检验。"
+      ]
+    },
+    {
+      "blindId": "B010",
+      "outputSha256": "9ca130728ce412da5d82ef5d136818605b7a13ff116bfc6e447a4873321d06b9",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "明确“保存编辑、取消编辑、再次增强等能力以当前界面为准”“不要假设存在自动撤销…共享”，保留证据未知而非断言不存在。",
+        "主动资料选择、可选Plan、未知前提、专业边界、逻辑删除和5类常见问题齐全，给出可操作准备和核对步骤。"
+      ]
+    },
+    {
+      "blindId": "B011",
+      "outputSha256": "4b15de4c366089c298950fba84d3014c0dc17be52f225fac0060dd2296d59d3c",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNSUPPORTED_EDIT_WORKFLOW",
+        "UNSUPPORTED_HISTORY_VISIBILITY",
+        "UNSUPPORTED_ABSENCE_CLAIM"
+      ],
+      "evidence": [
+        "“保存编辑…保存的是你编辑后的版本”“取消编辑…回到本次编辑前状态”“再次增强…现有结果基础上”均无所给附件行为证据，原任务要求仅介绍附件明确能力。",
+        "“不提供自动撤销到任意历史版本…只能看到自己账号下的内容”把能力/权限未说明写成确定现状。",
+        "“你上传什么、确认什么，系统就用什么”过度概括，会让初学者误以为所有已选材料均进入模型；任务要求提示相关片段及覆盖边界。"
+      ]
+    },
+    {
+      "blindId": "B012",
+      "outputSha256": "1ecaa20d123ed68c01ab924d86b96741d20a59d9f32d01f407b7fb5dd3e93168",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 4,
+        "ruleFidelity": 1,
+        "usability": 2
+      },
+      "criticalErrors": [
+        "UNDECIDED_CANCELLATION_RULE_DEFAULT",
+        "UNSUPPORTED_FIELD_EXISTENCE_OR_ABSENCE",
+        "ROW_LEVEL_TABLE_OUTSIDE_AGGREGATE_SCOPE"
+      ],
+      "evidence": [
+        "状态表“CANCELLED…是否可计为爽约：否”，固定排除取消事件；取消免责边界仍未确定，不能默认排除。",
+        "“预约创建时间…已有”“状态更新时间缺失”“来源系统字段缺失”未被给定字典证实，把未知字段现状写成确定已有/缺失。",
+        "拟议表列APT-2026Q1-0001等三次预约的创建/就诊/取消时间和状态，是逐条预约例子；虽标合成，但任务明确“表格只展示合成汇总信息”，越过交付层级。"
+      ]
+    },
+    {
+      "blindId": "B013",
+      "outputSha256": "ef3ddf26b15656806dd94b33824f52ec7d1550d977c3b9760f4514e517f48346",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "正确保留四条完整金额条件、动作、>=/>差别、来源和未批准，未选择生效值；三项交付齐备，结构清楚。",
+        "“订单审批与退款规则是否需合并为同一套生效标准”及“是否确定唯一生效版本”扩展已限定的差异比较任务，并与分别阈值未决重复。"
+      ]
+    },
+    {
+      "blindId": "B014",
+      "outputSha256": "e87f19506f4195d06055c6f4397067986203e5b31817d5f38a10758c91f5c966",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        ">=3000/>=5000与>500/>800及动作、来源和未批准正确，正文保持用户已选择只比较、不选择生效方案。",
+        "确认表仍问“本次采用哪一项…还是仅做差异记录”，重复已提交回答；可压缩为未来执行需批准，当前无需重新选。"
+      ]
+    },
+    {
+      "blindId": "B015",
+      "outputSha256": "f09c6359185e1ab68f26dfaba8244db9bb50b1cea3f89ac2c8fbead8b2800ce6",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "保存/取消/再次增强和重试入口均写“以当前界面实际提供…为准”，未编造历史权限或自动恢复，主动材料/Plan与逻辑删除边界正确。",
+        "末尾加入数据库迁移、依赖升级、生产部署等非技术指南无关操作；全文汉字1727、非空白1956，约1800–2400字按汉字口径略短但“约”属软要求，不作严重错误。"
+      ]
+    },
+    {
+      "blindId": "B016",
+      "outputSha256": "ca883b31d3c2a13308bfcd38bb119b095c6f524fbbb45813a2edcfa6789062de",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "NEWS_BODY_HAN_LENGTH_OUT_OF_RANGE"
+      ],
+      "evidence": [
+        "正文从第5行起，两个标题与“正文”标签不计；汉字546，低于600–800中文字符下限；非空白全字符605，在范围内。",
+        "保留本地MVP、未来2026年10月20日、三受众、三价值、受控内测和页面反馈；“也不涉及疾病诊断、投资收益等场景”比材料“不承诺诊断/收益”更宽，宜避免排除全部相关表达整理场景。"
+      ]
+    },
+    {
+      "blindId": "B017",
+      "outputSha256": "46953f4ff0e5b646a8d49fdb4b21d3c44a513c9dcf50e9e8058575e7abad59bf",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "NEWS_BODY_HAN_LENGTH_OUT_OF_RANGE"
+      ],
+      "evidence": [
+        "正文从第4行起，两个标题不计；汉字553，低于600–800中文字符下限；非空白全字符612，在范围内。",
+        "MVP、内测日期、三类受众、三项价值、只整理提示词和页面反馈均保留，无编造经营结果。"
+      ]
+    },
+    {
+      "blindId": "B018",
+      "outputSha256": "7a4651187fab80f2ae9f3ce19eee522fad27c0c99afaa033094cf2f19f1e5509",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNKNOWN_TO_NEGATIVE_FACT"
+      ],
+      "evidence": [
+        "标题“拟议，未建表、未授权”及声明“尚未建表，尚未获得数据授权”无现状依据；任务只禁止写成已建/已授权，不能据此反向断定未建/未授权。",
+        "保留UNKNOWN是否进入分母未知、观察窗口/统计单位未知及旧24/新12小时审批争议，交付齐备；首次/变更渠道定义被当作current-brief原有定义，应标候选。"
+      ]
+    },
+    {
+      "blindId": "B019",
+      "outputSha256": "b518bf619592c98ab614d65c80879a62509df73d12d1f1d12e4241d2e2caeae2",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "取消免责边界、观察窗口、主统计单位未决并保留，来源、专业与合成边界清楚，无计算真实指标。",
+        "拟议采集字段没有去重患者键，而方案又保留去重患者这一主统计单位选项，应增加条件性的去重字段建议及合规前提。",
+        "“旧流程…新草稿…当前未批准”表述应只把已知未批准归于新草稿，旧流程审批状态尚未建立；解释和目录重复前提。"
+      ]
+    },
+    {
+      "blindId": "B020",
+      "outputSha256": "a5eb88513c9bde530fb5b03f85ca3c944d585ec5baa54c1d898968ec49feaccc",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "四组信息公平、20任务3次两名盲评、未知评分/交互条件及失败保留齐全，评分表条件匿名化。",
+        "附表预置“任务编号：随机效应”及“C vs B…需扣除D vs B信息增量”，评分尺度尚未知时提前指定统计模型/分解口径，宜改为候选方法并写适用条件。",
+        "未提供材料具体出处对应，主文与附表反复重述信息公平性，阅读负担增加。"
+      ]
+    },
+    {
+      "blindId": "B021",
+      "outputSha256": "1f15bd3dedb94e3981f184d709aeda27b86feb76f80f212809d9ceeaea773dc1",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "正文从第5行起，两个标题不计；汉字687，非空白全字符761，均在600–800。",
+        "保留MVP、受控内测、未来2026年10月20日、三受众、三价值和页面反馈；补充材料中的Plan可由用户主动开启未明确落地，完整性轻微不足。"
+      ]
+    },
+    {
+      "blindId": "B022",
+      "outputSha256": "0753580099c9ca05f6039b946ab6eb3587f92ae43fbbd8d7f7fb824d7cde3bbb",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNSUPPORTED_EDIT_WORKFLOW",
+        "UNSUPPORTED_HISTORY_VISIBILITY",
+        "UNSUPPORTED_ABSENCE_CLAIM"
+      ],
+      "evidence": [
+        "“修改后可以保存…取消当前编辑…现有基础上再次增强”无附件明确行为证据，原任务要求只介绍材料已说明行为。",
+        "“历史记录仅对你当前账号可见，不存在跨账号共享”将未验证权限与能力写成确定状态，提交回答明确缺证据处以当前界面为准。",
+        "遗漏增强不保证胜过原文/永无歧义以及信息充分可少改的限制，只给一类完整会议示例，原要求三种示例覆盖较弱。"
+      ]
+    },
+    {
+      "blindId": "B023",
+      "outputSha256": "459406a23d6dded24b99d90b98d6b4976e4932d0a3016dff8f26f6ef753ec97a",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNSUPPORTED_FIELD_ABSENCE"
+      ],
+      "evidence": [
+        "报告目录“缺失字段：状态更新时间、取消时间、来源系统、首次/变更渠道”把拟议增加/需核实变成确认缺失；材料未说明现有字段覆盖情况。",
+        "明确UNKNOWN是否进入分母未知、观察窗口未知、旧24/新12小时差异与主统计单位未知；取消小于阈值分支保留“是否计爽约，待定”，未强行选口径。",
+        "已声明拟议、合规前提和只汇总展示，各交付项齐全，但多个章节重复相同未决。"
+      ]
+    },
+    {
+      "blindId": "B024",
+      "outputSha256": "7edecf80d32197b177b9cb2956e36dc779638cf8153dfa9ca1ff4a4793d70758",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "20任务3次两名盲评、四组信息公平、顺序尺度已确定而等级/锚点未知、轮次终止与一致性未决均保留，无虚构结果。",
+        "评分/失败模板简略，缺少独立失败阶段、失败证据位置与样本保留链接字段，仍需完善以支持实际复核。"
+      ]
+    },
+    {
+      "blindId": "B025",
+      "outputSha256": "75671f8057c65013665a991d6273d1faf4152210acc3b4218d6c4b9b43f76edf",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "完整保留订单>=3000/>=5000及退款>500/>800、动作、来源、均未批准、不得按顺序/日期择胜，三项交付齐全。",
+        "“是否存在其他业务对象或补充条件”扩展固定订单/退款范围；“请确认两份方案是否已获批准”重问任务已明确的当前未批准状态。"
+      ]
+    },
+    {
+      "blindId": "B026",
+      "outputSha256": "bcaa6b5d6a6482d3d0d9585f97d709dacf4b811b26899409cf97b1d51c63a267",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 1,
+        "usability": 2
+      },
+      "criticalErrors": [
+        "NEWS_BODY_LENGTH_OUT_OF_RANGE_BOTH_METHODS"
+      ],
+      "evidence": [
+        "正文从第5行起，两个标题不计；汉字502、非空白全字符563，两种口径均低于600–800，严格篇幅不符。",
+        "MVP、未来2026年10月20日、受控内测、三受众三价值、只优化提示词和内测页面反馈均保留，但需使用已有材料补足正文，不能加标题凑数。"
+      ]
+    },
+    {
+      "blindId": "B027",
+      "outputSha256": "7de54831b5087dba2f0e093dd44c4f6079edb7bc89ab596623d5c6d675d299c7",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 2
+      },
+      "criticalErrors": [
+        "UNDECIDED_CANCELLATION_RULE_DEFAULT",
+        "UNKNOWN_TO_NEGATIVE_FACT"
+      ],
+      "evidence": [
+        "口径说明写“CANCELLED 不等于爽约”，而取消是否免责取决于尚未决定的24/12小时边界，不能把全部CANCELLED提前排除；取消不附临床解释与不算爽约是不同规则。",
+        "问题表写“数据授权未完成”，待确认表又写采集实施/合规评估“尚未完成”。材料仅要求实施前合规评估且不得宣称已建表/获授权，未证明现状一定未完成；未知被改成否定事实。",
+        "其余事件/患者区分、渠道、窗口、隐私和来源标签保留，但九个章节重复同一条件，阅读负担明显。"
+      ]
+    },
+    {
+      "blindId": "B028",
+      "outputSha256": "9e3d46e78aa22c50cb261ba3c421d53bdb4ed334e391e8fdd8283a260f761d15",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "“产品当前仍处于本地MVP阶段，不直接执行代码，也不替用户完成正式报告”以及三类受众、三项价值、主动选资料、输出编辑复制、日期和页面反馈均有覆盖。",
+        "正文从第5行起，两个标题不计：汉字729、非空白全字符815；汉字600–800主检查合格，全字符超800只记度量敏感性，未编造效果认证或运营成果。"
+      ]
+    },
+    {
+      "blindId": "B029",
+      "outputSha256": "483f248d321da81863ef265a6ca77ea873c732ef2a07c308ca5258f1a4238538",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "WRONG_DESIGN_SAMPLE_COUNT",
+        "BLINDING_SOURCE_LEAK_IN_SCORE_TEMPLATE"
+      ],
+      "evidence": [
+        "“固定二十个任务，每个条件独立重复三次，共一百八十次运行”与同文随后列出的四个条件冲突；含信息量匹配对照应20×4×3=240份，不能按三组180份安排完整设计。",
+        "评审评分模板的“条件 | 原始 / 直接增强 / 计划确认 / 信息量匹配”直接暴露生成来源，未隔离为管理员字段；违反盲评只看匿名输出和等量任务信息。",
+        "顺序尺度已定而等级/锚点未定、失败保留、交互风险和专家边界覆盖良好。主文汉字982、非空白全字符1157，附表另列。"
+      ]
+    },
+    {
+      "blindId": "B030",
+      "outputSha256": "172d4a545667ea4a1cb3643442055c65794f016f91e06bf115fabf38b88ded48",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "“优化不会保证每次输出都优于原文”“用户不知道答案时也可以如实说明”忠实覆盖长题面边界，但没有交代Plan可由用户主动开启，完整性3。",
+        "开头“清笺于合成日期2026年10月20日启动”把题目的合成材料标签带入对外新闻，影响正式稿可用性。正文第4行起、标题不计：汉字692、非空白全字符768，汉字主检查合格。"
+      ]
+    },
+    {
+      "blindId": "B031",
+      "outputSha256": "cfd816a7d73172f71432966740ec438efd9a4d953a78138b4fae2aa9b9f7e1fd",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "对照表逐项保留订单“>=3000元须复核”“>=5000元须复核”，退款“>500元须退款负责人批准”“>800元须退款负责人批准”，来源明确且业务对象分开。",
+        "“两份方案均未获批准，不能按文件顺序或较新日期选择胜者”与仅只读核对、不修改/执行的步骤保持一致，未决阈值没有被代选。"
+      ]
+    },
+    {
+      "blindId": "B032",
+      "outputSha256": "1ce9c65f7c799b9bb9b3e129b78af16b8cdcf272e2967438776ff530a07f8f90",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNSUPPORTED_EDIT_WORKFLOW",
+        "UNSUPPORTED_HISTORY_VISIBILITY",
+        "UNSUPPORTED_ABSENCE_CLAIM"
+      ],
+      "evidence": [
+        "“保存后结果会更新为您修改后的版本。再次增强功能可以基于当前结果重新生成优化版本”“取消编辑则放弃本次修改”给出附件未确认的具体编辑和再增强行为，违反只按已确认行为说明的要求。",
+        "“历史记录仅对您本人可见，不支持跨账号共享”分别臆定历史可见范围与能力不存在；材料只确认历史分页和逻辑删除，不足以推出这些事实。",
+        "未明确增强不保证比原文好、也不保证永远无歧义。全文汉字2349、非空白全字符2830，约1800–2400的两口径差异作次要记录。"
+      ]
+    },
+    {
+      "blindId": "B033",
+      "outputSha256": "7019f21b4ac1cfa2d99610a86ab84c4c24647cbdbaf95edfc8266a944adf02d9",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "表格、来源和阈值运算符均正确，开头“本表仅做差异比较，不选择生效方案”沿用已提交回答。",
+        "随后却要求确认“采用方案甲……还是方案乙”并再确认已明确的运算符/对象/不执行边界，还整段重复两份相同回答；未真正选择阈值，故不记严重错误，但重复确认与长篇复述降低规则组织及可用性。"
+      ]
+    },
+    {
+      "blindId": "B034",
+      "outputSha256": "f97b7e0fb291f222c7e4a81066f56155c0e77564f2a0a75d2d46e789b048d737",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "NEWS_BODY_LENGTH_OUT_OF_RANGE"
+      ],
+      "evidence": [
+        "“产品当前处于本地MVP阶段……不直接执行代码，也不替用户完成正式报告”及三项价值、主动材料、反馈与错误风险保留；长题面要求的可选Plan主动开启说明缺失。",
+        "正文从第4行起，两个标题不计：汉字559、非空白全字符626。汉字600–800主检查不足；全字符合格仅敏感性，不用另一口径消除主检查违例。"
+      ]
+    },
+    {
+      "blindId": "B035",
+      "outputSha256": "abaf906823801495f2b3d67ad0851806995466b8f221381c722a0c4fb95dc86d",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "“Plan 是可选交互……你可以主动开启，也可以不开启”“保存编辑、取消编辑、再次增强，这些能力以当前界面实际提供的操作为准”正确保持可选及未经确认操作的界面边界，没有声称未说明能力不存在。",
+        "权限段提示不绕过权限及不贴密码/Token/私钥，但缺少题面要求的模型由管理员发布、用户选可用模型且无需填密钥的说明；故完整性3。全文汉字1858、非空白全字符2148，近似篇幅目标满足。"
+      ]
+    },
+    {
+      "blindId": "B036",
+      "outputSha256": "fa044d84649af321c3ae1572e63b4b82be7c5ff9e68f2513d549476f4e6a8dfb",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "NEWS_BODY_LENGTH_OUT_OF_RANGE"
+      ],
+      "evidence": [
+        "“清笺当前处于本地 MVP 阶段”及三类受众、三项价值、主动资料、下游工作与页面反馈均准确，没有虚构用户/行业成果。",
+        "正文从第6行起，两个标题及正文标签不计：汉字597、非空白全字符661。严格汉字600–800主检查不足3字，仍是篇幅违例；不因接近600或全字符合格而豁免。"
+      ]
+    },
+    {
+      "blindId": "B037",
+      "outputSha256": "b71b5d52175eec5a8a671814a4b4723d225cef41ce6e9c2704e13fa2e7b77fb8",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNSUPPORTED_FUNCTION_CLAIM"
+      ],
+      "evidence": [
+        "“结果生成后，你可以保存编辑、取消编辑，也可以再次增强”先将未建立的能力断言为提供中；后句“以当前界面实际提供的行为为准”仅限定行为，不足以撤回功能事实。附件只确认编辑和复制，题面不允许推测保存/取消/再增强。",
+        "历史段“删除……你可以在历史列表中找回或继续处理”易与已删除记录恢复混淆，不能证明恢复能力；专业FAQ的“提示词或回答”也偏离产品只生成提示词的边界。未交代模型由管理员发布和不用填密钥，完整性3。",
+        "全文汉字1734、非空白全字符1979，近似篇幅主口径略短，不单独记严重篇幅错。"
+      ]
+    },
+    {
+      "blindId": "B038",
+      "outputSha256": "860ca9a4fae4914d4b7c75d95879448a95f336020661850cdb5a79c59f88c322",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "“保存编辑、取消编辑、再次增强等能力以当前界面实际提供为准”没有假定未确认实现；“暂不确定……保留这个执行前提”及资料、来源核查、隐私和逻辑删除说明忠实。",
+        "指南没有说明模型由管理员发布、用户可选可用模型并无需填密钥。全文汉字1627、非空白全字符1906；约1800–2400主口径偏短，完整性/篇幅组织扣分，未据此认定严重错误。"
+      ]
+    },
+    {
+      "blindId": "B039",
+      "outputSha256": "2a4f074f60de1b4253d0d2823a9a22b0ebde4ae10ad6546e122e804a812e0a19",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "OBSERVATION_WINDOW_EXCLUSION_CONTRADICTION"
+      ],
+      "evidence": [
+        "分母口径行写“是否纳入 UNKNOWN、是否纳入窗口内未到期事件，均未确定”；题面及同文其他段已明确“不将尚未到期预约算入爽约率”，只UNKNOWN分母处理未定。把已知的未到期排除条件降为未知，使执行口径互相矛盾。",
+        "“UNKNOWN 是否进入爽约率分母……未确定”以及24/12小时、主统计单位正确保留，拟议字段/合规声明没有转成已建表或未建表事实；其他交付完整。"
+      ]
+    },
+    {
+      "blindId": "B040",
+      "outputSha256": "c5c49183ed7342bbd27f4ce535c91f86a6f071ee8c0282d580cdd958618e2155",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "“共二百四十份下游输出”与四组20任务×3次一致，盲评评分表仅含匿名输出编号、任务和维度，没有实名条件列；未知锚点、交互规则和一致性流程保持开放。",
+        "组别说明称“系统按答案卡提问，操作者作答后生成最终提示词”，与题面系统先提问、操作者依预定答案卡作答的责任分工不够精确，可能引导问题受答案卡控制，属次要流程表述扣分。",
+        "主文汉字908、非空白全字符1028；材料来源与测试排除、失败保留、速度/质量分离和无计费日志不估费用齐全。"
+      ]
+    },
+    {
+      "blindId": "B041",
+      "outputSha256": "d8daa0e28ceb55ba2dd62958e75a9ad9586e85b636f883b31b2d519c3b20436c",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 2
+      },
+      "criticalErrors": [
+        "UNKNOWN_TO_NEGATIVE_FACT",
+        "UNDECIDED_CHANNEL_ATTRIBUTION_DEFAULT",
+        "KNOWN_TIMEZONE_TREATED_AS_UNDECIDED"
+      ],
+      "evidence": [
+        "字段前状态声明“当前未建表、未获得数据授权”，材料只有不能宣称已建表/获授权，没有建立反面事实，违反未知不默认的要求。",
+        "口径表把首次渠道定义成“一次预约中最早记录的操作渠道”，并标【现行】；材料要求渠道归属先定义，尚未指定以最早操作还是首次确认计，因此不能当现行规则。",
+        "报告目录第3章要求“标注时区、统计单位、观察窗口均未确定”，而题面明确取消和就诊时间为医院本地时区；把已知时区也改为未知，且与同文时区行矛盾。",
+        "其他关键未决条件和来源/隐私限制有覆盖，但多张表重复并夹入矛盾现状，严重降低交接可用性。"
+      ]
+    },
+    {
+      "blindId": "B042",
+      "outputSha256": "62492c40c30da113664b86ffb902e6e39e0c3e6bcf291570e852c00e0498dcce",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "“清笺目前处于本地MVP阶段……不直接执行代码，也不替用户完成正式报告”及三类受众、三项价值、未知不代选、材料安全和页面反馈明确；没有长题面要求的用户主动开启可选Plan说明，完整性3。",
+        "正文从第4行起、两个标题不计：汉字733、非空白全字符812；汉字600–800主检查合格，全字符超800仅报告敏感性。"
+      ]
+    },
+    {
+      "blindId": "B043",
+      "outputSha256": "0fa5d63883ebbcc36e4ed86a41ef069f13f123473e04ade41c6c10b56db8adf3",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNDECIDED_CANCELLATION_RULE_DEFAULT",
+        "OLD_RULE_AUTHORITY_ASSUMPTION"
+      ],
+      "evidence": [
+        "爽约定义为“未到诊且非取消、非未知的最终状态”，预先把全部取消排除，虽然状态列标待确认，仍未给出根据未决免责边界处理取消的候选分支，且与同文取消是否计入爽约待确认相冲突。",
+        "争议表把旧规则审批状态写成“旧流程说明为现行资料”，题面明确旧版草稿与正式说明需区分，旧24小时规则适用性/批准情况未建立，不能提升为现行。",
+        "窗口、UNKNOWN分母、主统计单位等回答在其他段正确保留，合规字段和专业/隐私边界完整，未计算真实指标。"
+      ]
+    },
+    {
+      "blindId": "B044",
+      "outputSha256": "e208dbca56fbd464e8f2e2ef299fad636e4b2ef63c317d15e7d356babe1b7789",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "“共二百四十次下游生成”“质量评分采用顺序尺度，具体等级与评分锚点尚未确定”及交互、信息匹配、公平盲评、失败保留正确，没有虚构实验结果。",
+        "未落实材料真实实现/用户/测试/待办来源标签和不可删除不利测试反例，也未明确实验尚未运行且无结果；评分模板的条件—任务—重复编号缺少与评审匿名ID分离的说明。主文汉字841、非空白全字符977。"
+      ]
+    },
+    {
+      "blindId": "B045",
+      "outputSha256": "58b6229339fbbb9f045a0ca75b07f9c07c331ebadfadc3d9a0eda33f4f3d3d8b",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "完整规则按订单和退款分开，保留3000/5000的>=与500/800的>，来源和未批准状态齐全，未选择方案或执行业务。",
+        "八行拆分规则表、六个未决项、十项确认清单和八个验证步骤大量重述既定阈值及边界，甚至把已知业务独立性/运算符再列确认项，违反合并重复说明的组织要求，降低可用性。"
+      ]
+    },
+    {
+      "blindId": "B046",
+      "outputSha256": "f8e900af5b67792e6a1e16bf4c2bc62a7d4a51bb13f82f5c7348524c27ca9869",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNDECIDED_UNKNOWN_DENOMINATOR_DEFAULT"
+      ],
+      "evidence": [
+        "字段表给“待核验标记”定义“标记未到期或 UNKNOWN”，同一行边界为“不进入爽约率”。这把UNKNOWN与未到期事件一并排除分母，与题面和作品口径表“是否进入分母尚未确定”冲突；未知不能默认排除。",
+        "其他窗口、取消24/12小时、主统计单位、隐私、专业评审和来源标签基本齐全；未计算实际医院数值，重复表格和目录增加阅读负担。"
+      ]
+    },
+    {
+      "blindId": "B047",
+      "outputSha256": "45d1f79c22e123d6eff0011e6867f4286b3c8fdf1bbf8d2e3a77b46fed23a2ea",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "“以下内容仅为方案差异比较，不选择生效方案”及同一工作区、完整四条条件、来源和未批准状态正确保留，所有核对步骤均只读。",
+        "已提交回答明确本次只比较，但确认项又问“本次采用哪一项，或是否继续仅做差异比较”，把已答范围重问；也重确认本次不执行边界，规则组织和可用性扣分，未真的默认阈值。"
+      ]
+    },
+    {
+      "blindId": "B048",
+      "outputSha256": "c62bc4ed4c52ee646f70df8eed44af006721fe4ddcfb9e8d794352600fa76609",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "规则表保持订单>=3000/5000与退款>500/800，明确同一工作区、均未批准、不能凭日期胜出，验证不修改不执行。",
+        "确认清单要求再次确认“业务对象独立性”“运算符保持”，这两项已由题面确定，不应当成待决定业务规则；没有代选方案，故只记次要规则组织缺陷。"
+      ]
+    },
+    {
+      "blindId": "B049",
+      "outputSha256": "2398ede4dc728c9a6fb7fc5bb245405d38cb367a854e5027597ac68fd347d1a2",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "UNDECIDED_CANCELLATION_RULE_DEFAULT",
+        "OLD_RULE_AUTHORITY_ASSUMPTION"
+      ],
+      "evidence": [
+        "爽约定义“未到诊且非取消、非未知”仍先排除全部取消，题面要求取消免责边界未决定不能默认，标待确认不能消除公式内部的既定排除。",
+        "争议表将旧流程审批状态标为“旧流程说明（正式说明）”，与来源旧版草稿、权威性未建立要求冲突；后文正式说明另指current-brief，更造成来源混淆。",
+        "未把UNKNOWN是否进入分母单独列为未知决策点，定义仅称不计入爽约，分子与分母易混淆；其余交付、合规和专业/隐私边界保留。"
+      ]
+    },
+    {
+      "blindId": "B050",
+      "outputSha256": "03c9d8213b9a96e1430dedce8c59cc424b1af9a0d767a84719a19efaf007c64d",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "“清笺目前处于本地MVP阶段”及受控内测、三项价值、主动选材料、可编辑复制和专业边界准确，未将使用示例写成业绩；长题面可选Plan主动开启说明缺失，完整性3。",
+        "正文从第4行起、两个标题不计：汉字680、非空白全字符755，汉字600–800主检查合格；日期、三类受众和页面反馈均保留。"
+      ]
+    },
+    {
+      "blindId": "B051",
+      "outputSha256": "5bd1ee1379814d3a77143b1096c0f43872a6e9dfd3a6df635c2245027dcf6508",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "表格正确保留订单/退款不同业务对象、四条完整阈值条件及来源，未批准状态明确且没有采用较新方案，验证全只读。",
+        "确认项“是否允许在未决状态下继续保留两个方案的差异”重问题面与已提交回答已明确允许且要求保留的行为；十项验证与前文多次重复相同条件，降低规则组织及可用性。"
+      ]
+    }
+  ]
+}

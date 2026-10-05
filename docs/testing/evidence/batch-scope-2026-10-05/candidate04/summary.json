@@ -1,0 +1,49 @@
+{
+  "candidate": "04",
+  "synthetic": true,
+  "sourceJavaFiles": 20,
+  "apiActions": 60,
+  "apiSuccessful": 60,
+  "works": 72,
+  "successfulWorks": 72,
+  "reviewed": 72,
+  "qualityGateFailures": 13,
+  "pairs": {
+    "TIE": 21,
+    "BOTH_FAIL": 6,
+    "LOSS": 12,
+    "WIN": 5
+  },
+  "planPairs": {
+    "TIE": 3,
+    "BOTH_FAIL": 3,
+    "LOSS": 7,
+    "WIN": 3
+  },
+  "reviewerKind": "AI_ASSISTED",
+  "professionalReview": "NOT_PERFORMED",
+  "independentHumanReview": "NOT_PERFORMED",
+  "repetitions": 1,
+  "releaseApproval": false,
+  "phase": {
+    "/api/v1/optimizations": {
+      "requests": 40,
+      "p50Ms": 10298,
+      "p90Ms": 25883,
+      "maxMs": 37422
+    },
+    "/api/v1/context/planning": {
+      "requests": 20,
+      "p50Ms": 99,
+      "p90Ms": 178,
+      "maxMs": 1047
+    },
+    "/api/v1/optimizations/plan": {
+      "requests": 20,
+      "p50Ms": 4663,
+      "p90Ms": 9237,
+      "maxMs": 15789
+    }
+  },
+  "note": "63份外部模型评分通过引文校验；3组9份拒绝导入后由根代理逐件复核；12份新闻另做计数和事实核查。不是两路全量独立评审；硬篇幅失败与事实错漏均阻断本批质量门禁，不代表所有失败都是平台引起。"
+}

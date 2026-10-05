@@ -1,0 +1,212 @@
+{
+  "supersedes": "candidate04-news-mechanical-20261006.json",
+  "correction": "一份作品采用标题区块内编号格式，首次诊断未排除这两条标题；v2按正文区块边界准确排除，失败状态不变，旧计数留存。",
+  "primaryMetric": "BODY_HAN_600_800_EXCLUDING_TWO_TITLES",
+  "sensitivityOnly": "BODY_NON_WHITESPACE",
+  "rows": [
+    {
+      "run": "2026-10-05T16-41-49-060Z-bcd93d54",
+      "jobId": "CD-09-M-direct-m1-r1",
+      "arm": "direct",
+      "model": "deepseek:deepseek-flash",
+      "outputSha256": "fd5feaa4803771498cae4e11797ef9977a4403a2b09a32d6cfef10da86f00d0b",
+      "removedHeadingLines": [
+        "## 标题一：把需求说清楚：清笺启动受控内测招募",
+        "## 标题二：清笺内测招募：让模糊需求变成可编辑的结构化提示词"
+      ],
+      "bodyHan": 595,
+      "bodyNonWhitespace": 659,
+      "lengthPass": false,
+      "mvpLiteralPresent": true,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    },
+    {
+      "run": "2026-10-05T16-41-49-060Z-bcd93d54",
+      "jobId": "CD-09-M-direct-m2-r1",
+      "arm": "direct",
+      "model": "deepseek:deepseek-v4-pro",
+      "outputSha256": "6c943955c708ac35a1ad49a118ff3728268cfd88e6c16c53de7091911760385b",
+      "removedHeadingLines": [
+        "标题一：清笺内测招募：把模糊需求说清楚  ",
+        "标题二：清笺受控内测开放，邀你一起打磨提示词整理工具  ",
+        "正文：  "
+      ],
+      "bodyHan": 631,
+      "bodyNonWhitespace": 696,
+      "lengthPass": true,
+      "mvpLiteralPresent": true,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    },
+    {
+      "run": "2026-10-05T16-41-49-060Z-bcd93d54",
+      "jobId": "CD-09-M-plan-m1-r1",
+      "arm": "plan",
+      "model": "deepseek:deepseek-flash",
+      "outputSha256": "f2416178d5011f41bf8b3d44bca153a99c276d7dc11599ec483e748d8d004076",
+      "removedHeadingLines": [
+        "## 标题一：把需求说清楚：清笺受控内测招募开启",
+        "## 标题二：清笺内测招募：让模糊需求变成可核查的提示词"
+      ],
+      "bodyHan": 463,
+      "bodyNonWhitespace": 522,
+      "lengthPass": false,
+      "mvpLiteralPresent": true,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    },
+    {
+      "run": "2026-10-05T16-41-49-060Z-bcd93d54",
+      "jobId": "CD-09-M-plan-m2-r1",
+      "arm": "plan",
+      "model": "deepseek:deepseek-v4-pro",
+      "outputSha256": "d6b565bfcf44fde157be5004f523227bdd103576f73a15cdd518002d4e68785d",
+      "removedHeadingLines": [
+        "标题一：清笺开启受控内测：把需求说清楚，再交给下一步  ",
+        "标题二：清笺内测招募：面向开发者、研究生与办公人员的提示词整理工具"
+      ],
+      "bodyHan": 470,
+      "bodyNonWhitespace": 524,
+      "lengthPass": false,
+      "mvpLiteralPresent": false,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    },
+    {
+      "run": "2026-10-05T16-41-49-060Z-bcd93d54",
+      "jobId": "CD-09-M-raw-m1-r1",
+      "arm": "raw",
+      "model": "deepseek:deepseek-flash",
+      "outputSha256": "6be6bb95a48125eb5a4c4c35f32ba8a410bb020bf6f91ac7bdbd842eb7cfa5eb",
+      "removedHeadingLines": [
+        "## 标题一：把模糊需求说清楚：「清笺」启动受控内测招募",
+        "## 标题二：「清笺」内测招募：面向开发者、研究生与办公人员征集真实场景反馈"
+      ],
+      "bodyHan": 598,
+      "bodyNonWhitespace": 659,
+      "lengthPass": false,
+      "mvpLiteralPresent": false,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    },
+    {
+      "run": "2026-10-05T16-41-49-060Z-bcd93d54",
+      "jobId": "CD-09-M-raw-m2-r1",
+      "arm": "raw",
+      "model": "deepseek:deepseek-v4-pro",
+      "outputSha256": "ea60a28ebb135ae036620f7c64b82763442b56eb2319448d4cac6d145b2593a5",
+      "removedHeadingLines": [
+        "标题一：清笺开启受控内测：把模糊需求整理成可执行的结构化提示词  ",
+        "标题二：清笺内测招募启动：面向开发者、研究生与办公人员的提示词整理工具  ",
+        "新闻稿正文：  "
+      ],
+      "bodyHan": 608,
+      "bodyNonWhitespace": 674,
+      "lengthPass": true,
+      "mvpLiteralPresent": true,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    },
+    {
+      "run": "2026-10-05T16-41-49-915Z-5c650a55",
+      "jobId": "CD-09-M-direct-m1-r1",
+      "arm": "direct",
+      "model": "deepseek:deepseek-flash",
+      "outputSha256": "f21b7dbb599b4174866333c9f58c5d1376d48543a05709af601b15d36e24e40a",
+      "removedHeadingLines": [
+        "## 标题一：把模糊需求说清楚：「清笺」启动受控内测招募",
+        "## 标题二：面向开发者、研究生与办公人员，「清笺」开放内测意见征集"
+      ],
+      "bodyHan": 718,
+      "bodyNonWhitespace": 796,
+      "lengthPass": true,
+      "mvpLiteralPresent": true,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    },
+    {
+      "run": "2026-10-05T16-41-49-915Z-5c650a55",
+      "jobId": "CD-09-M-direct-m2-r1",
+      "arm": "direct",
+      "model": "deepseek:deepseek-v4-pro",
+      "outputSha256": "c46dec2a9dd7039b0944132750c93c871e7582b3059ec9ed84b31e2495ff48e7",
+      "removedHeadingLines": [
+        "标题一：清笺开启受控内测，邀你一起把模糊需求整理成清晰提示词  ",
+        "标题二：面向开发者、研究生与办公人员，清笺内测招募正式开放  "
+      ],
+      "bodyHan": 615,
+      "bodyNonWhitespace": 680,
+      "lengthPass": true,
+      "mvpLiteralPresent": false,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    },
+    {
+      "run": "2026-10-05T16-41-49-915Z-5c650a55",
+      "jobId": "CD-09-M-plan-m1-r1",
+      "arm": "plan",
+      "model": "deepseek:deepseek-flash",
+      "outputSha256": "f24dd3e31db6905fdf34cb352db46f239fa4504aad7ab007601822b208067498",
+      "removedHeadingLines": [
+        "## 标题",
+        "1. 把模糊需求说清楚：清笺启动受控内测招募",
+        "2. 清笺内测招募：面向开发者、研究生与办公人员",
+        "",
+        "## 正文"
+      ],
+      "bodyHan": 541,
+      "bodyNonWhitespace": 605,
+      "lengthPass": false,
+      "mvpLiteralPresent": true,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    },
+    {
+      "run": "2026-10-05T16-41-49-915Z-5c650a55",
+      "jobId": "CD-09-M-plan-m2-r1",
+      "arm": "plan",
+      "model": "deepseek:deepseek-v4-pro",
+      "outputSha256": "98319daba77bb4f7fe578f3aca75b9a4aa50f1892d841c0e8cc7ffc606824af0",
+      "removedHeadingLines": [
+        "标题一：清笺开启内测招募：把模糊需求整理成可执行的结构化提示词  ",
+        "标题二：清笺内测招募启动，面向开发者、研究生与办公人员收集真实使用反馈  ",
+        "新闻稿正文："
+      ],
+      "bodyHan": 546,
+      "bodyNonWhitespace": 603,
+      "lengthPass": false,
+      "mvpLiteralPresent": true,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    },
+    {
+      "run": "2026-10-05T16-41-49-915Z-5c650a55",
+      "jobId": "CD-09-M-raw-m1-r1",
+      "arm": "raw",
+      "model": "deepseek:deepseek-flash",
+      "outputSha256": "974f75e686617e66f61a32d148a44ecf38aab0d0b6d271a5ac66e0edcdf7b696",
+      "removedHeadingLines": [
+        "## 标题一：把模糊需求说清楚：「清笺」启动受控内测招募",
+        "## 标题二：「清笺」内测招募：让提示词整理更贴近真实任务"
+      ],
+      "bodyHan": 607,
+      "bodyNonWhitespace": 682,
+      "lengthPass": true,
+      "mvpLiteralPresent": true,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    },
+    {
+      "run": "2026-10-05T16-41-49-915Z-5c650a55",
+      "jobId": "CD-09-M-raw-m2-r1",
+      "arm": "raw",
+      "model": "deepseek:deepseek-v4-pro",
+      "outputSha256": "5ff39bcc139fc91725f36687366bc0a87a789c3be77d68f840d6be69229e69c1",
+      "removedHeadingLines": [
+        "标题一：清笺开启受控内测：把模糊需求整理为可复用的结构化提示词  ",
+        "标题二：清笺内测招募启动：面向开发者、研究生与办公人员的需求澄清工具  ",
+        "正文：  "
+      ],
+      "bodyHan": 616,
+      "bodyNonWhitespace": 680,
+      "lengthPass": true,
+      "mvpLiteralPresent": true,
+      "note": "篇幅采用事先固定的正文汉字数口径；MVP为字面核对，尚不能代替全文事实保真与全部交付检查。"
+    }
+  ],
+  "summary": {
+    "works": 12,
+    "lengthFailures": 6,
+    "mvpLiteralMissing": 3
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "id": "CD-05-M-deepseek_deepseek-v4-pro-plan",
+  "caseId": "CD-05-M",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T15:04:59.347Z",
+  "prepared": {
+    "contextId": "ee005fc6-3a7d-4601-9a5e-4c2ebee60773",
+    "version": "sha256:2d222270b204fa5539fc893b3f013c6b100d93fc5350031bcbb0f7a7508fc176",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/research_design/",
+        "materials/research_design/current-brief.md",
+        "materials/research_design/tests/",
+        "materials/research_design/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/research_design/current-brief.md：Markdown 文档摘要：提示词整理工具对照研究方案：合成现行资料；评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。；信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。；一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断…；业务摘录：交互式计划确认指系统先提问、实验操作者按预先制定答案卡作答，再生成最终提示词，不是静态任务分解列表。；二十个任务和三次独立重复以及两名盲评者已经确定，不需要重新选择样本数量。；评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；；[片段 1/1]；任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签；；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "盲评不得暴露工具名称"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "方案可说明选择流程，不应在变量尚未确定时锁定某个显著性检验"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/research_design/",
+        "materials/research_design/current-brief.md",
+        "materials/research_design/tests/",
+        "materials/research_design/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/research_design/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 提示词整理工具对照研究方案：合成现行资料\n交互式计划确认指系统先提问、实验操作者按预先制定答案卡作答，再生成最终提示词，不是静态任务分解列表。\n实验尚未运行，没有准确率、显著性、成功案例数量和用户结论。\n二十个任务和三次独立重复以及两名盲评者已经确定，不需要重新选择样本数量。\n评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。\n\n# 分支与边界\n开发任务要求下游模型只输出方案，不实际修改仓库；写作任务要求交付文本，因此跨任务不能用代码测试通过率作为统一质量指标。\n原始组接收原始需求与初始材料，直接增强组接收同一初始信息得到的优化提示词；两组都不能偷看计划确认组后来回答的业务选择。\n计划确认组应记录每个问题、选项、推荐依据和答案，不只保存最终提示词；错误推荐被答案纠正后仍应计入交互阶段风险。\n信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。\n任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签；不能在人工评分前人为删除不利的测试污染反例。\n每个条件的三次重复应开启隔离会话，随机化顺序并记录模型版本、日期和参数；失败后的重试不能替代第一份失败样本。\n评审看到的是匿名化下游输出和等量任务信息，不展示产品名称、标志和生成来源；为了评分可以看任务事实，但不能看另一名评审先前评分。\n一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。\n候选评价统计方法依赖分数是否有序、是否连续和是否重复测量；方案可说明选择流程，不应在变量尚未确定时锁定某个显著性检验。\n主文只描述研究问题、实验设计、主要指标与限制；详细答案卡、记录字段和材料目录放在附表，不能为了压缩文字删除公平比较条件。\n工具生成速度是过程指标，质量分是结果指标；没有计费日志时不能估算真实 Token 成本，不能把字符数直接换算成实际费用。\n即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。",
+          "summary": "Markdown 文档摘要：提示词整理工具对照研究方案：合成现行资料；评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。；信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。；一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。",
+          "truncated": false
+        },
+        {
+          "path": "materials/research_design/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T15:34:59.387087700Z",
+    "latencyMs": 20
+  },
+  "plan": {
+    "summary": "已理解研究方案需比较三种提示词整理方式，并已确定二十个任务、三次重复、两名盲评者及评价维度。尚需确认交互式计划确认的轮次与终止规则、评审分歧处理方式，以及信息量匹配对照的具体实现，以确保公平比较和预注册完整。",
+    "questions": [
+      {
+        "id": "interaction_rounds",
+        "question": "交互式计划确认的最大轮次和终止规则应如何预注册？",
+        "hint": "这会影响实验操作的一致性和可复现性，需在方案中明确。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "fixed_three_rounds",
+            "label": "固定三轮后停止",
+            "description": "无论信息是否充分，最多进行三轮提问，之后生成最终提示词。",
+            "answer": "交互式计划确认固定进行三轮提问，每轮后生成中间计划，三轮结束后生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "until_no_new_info",
+            "label": "直到无新信息",
+            "description": "持续提问直到操作者根据答案卡无法提供新信息，或达到预设上限。",
+            "answer": "交互式计划确认持续提问，直到操作者根据答案卡无法提供新信息或达到预设最大轮次（如五轮），然后生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "adaptive_termination",
+            "label": "自适应终止",
+            "description": "根据信息增益判断是否继续提问，当增益低于阈值时停止。",
+            "answer": "交互式计划确认采用自适应终止：每轮后评估信息增益，若低于预设阈值则停止提问并生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "reviewer_disagreement",
+        "question": "两名盲评者出现分歧时，应如何预先确定处理方式？",
+        "hint": "需明确分歧解决机制和一致性评价方法，以保证评分可靠性。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "third_reviewer",
+            "label": "引入第三名评审",
+            "description": "当两名评审评分差异超过阈值时，由第三名盲评者仲裁。",
+            "answer": "当两名盲评者评分差异超过预设阈值时，引入第三名盲评者进行仲裁，最终分数取中位数或仲裁者评分。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "consensus_discussion",
+            "label": "讨论达成共识",
+            "description": "两名评审讨论分歧点，直到达成一致评分。",
+            "answer": "两名盲评者就分歧点进行讨论，直到达成一致评分；若无法达成一致，则记录分歧并报告。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "average_scores",
+            "label": "取平均分",
+            "description": "直接计算两名评审的平均分作为最终得分，不进行额外处理。",
+            "answer": "直接计算两名盲评者评分的平均值作为最终得分，并报告评分者间信度。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "info_matched_control",
+        "question": "信息量匹配对照组应如何实现？",
+        "hint": "需确保对照组获得相同已确认事实但不经历交互问答，以分离信息量和交互方式的影响。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "prefilled_answers",
+            "label": "直接提供答案卡",
+            "description": "对照组直接获得与交互组相同的答案卡内容，但不进行提问。",
+            "answer": "信息量匹配对照组直接获得与交互组相同的答案卡内容（即所有已确认事实），但不经历系统提问过程，直接生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "static_summary",
+            "label": "提供静态摘要",
+            "description": "对照组获得一份包含所有已确认事实的静态摘要文档，作为输入。",
+            "answer": "信息量匹配对照组获得一份静态摘要文档，其中包含交互组通过提问获得的所有已确认事实，但不包含提问交互。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 22368,
+    "planId": "34080925-b87a-4927-b333-efd5e70cd21f",
+    "planningContext": {
+      "contextId": "ee005fc6-3a7d-4601-9a5e-4c2ebee60773",
+      "version": "sha256:2d222270b204fa5539fc893b3f013c6b100d93fc5350031bcbb0f7a7508fc176"
+    },
+    "expiresAt": "2026-10-05T15:34:59.387087700Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-05-M-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "7c07c397-a6a4-4e06-a74b-03e3f8429349",
+      "elapsedMs": 80
+    },
+    {
+      "label": "CD-05-M-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "09add3d5-3731-4897-b02d-9473ed7cc07e",
+      "elapsedMs": 22440
+    }
+  ]
+}
