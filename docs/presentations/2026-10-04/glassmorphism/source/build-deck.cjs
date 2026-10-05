@@ -5,6 +5,7 @@ const crypto=require('node:crypto');
 const deps=process.env.PRESENTATION_NODE_MODULES||'C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules';
 const PptxGenJS=require(path.join(deps,'pptxgenjs'));
 const {slides,chapters,sources,verifiedAt,projectName}=require('./content.cjs');
+const drawEnhanced=require('./enhanced-layout.cjs');
 const OUT=path.resolve(__dirname,'..'), ROOT=path.resolve(OUT,'../../../..');
 const W=13.333333333,H=7.5,SCALE=96;
 const C={blue:'4d6bfe',purple:'8a5cf6',ink:'1c2541',body:'3a4763',sub:'5b6b8c',muted:'6b7a99',dim:'8a97b5',faint:'98a4c0',green:'0e9f6e',orange:'c2690a',info:'1d5fd6',pink:'c2256f',white:'ffffff',blob1:'c3d6fb',blob2:'dcd0fb',blob3:'c9e8f6',shadow:'465aa0'};
@@ -13,7 +14,7 @@ const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const model=[];
 let items,serial=0;
 function add(e){e.name=e.name||`shape-${++serial}`;items.push(e);return e;}
-function t(text,x,y,w,h,size=14,color=C.body,o={}){return add({kind:'text',text,x,y,w,h,size,color,font:'sans',weight:400,lh:1.8,...o});}
+function t(text,x,y,w,h,size=14,color=C.body,o={}){if(typeof text!=='string')throw Error('Text element requires a string');return add({kind:'text',text,x,y,w,h,size,color,font:'sans',weight:400,lh:1.8,...o});}
 function box(x,y,w,h,o={}){return add({kind:'box',x,y,w,h,fill:C.white,transparency:38,stroke:C.white,strokeTransparency:15,radius:.13,shadow:true,...o});}
 function pill(text,x,y,w,color=C.blue,o={}){box(x,y,w,.35,{fill:color,transparency:90,stroke:color,strokeTransparency:72,radius:.17,shadow:false,...o});t(text,x+.10,y+.035,w-.20,.27,11,color,{weight:500,lh:1.1,align:'center',...o});}
 function line(x1,y1,x2,y2,o={}){return add({kind:'line',x:x1,y:y1,w:x2-x1,h:y2-y1,color:C.blob1,width:1.2,...o});}
@@ -39,6 +40,7 @@ function base(s,i){
  if(!['cover','workbench','closing'].includes(s.id))add({kind:'ellipse',name:'blob-bottom',x:-1.30,y:4.65,w:4.8,h:4.4,fill:i%2?C.blob3:C.blob2,transparency:48,soft:65});
  if(s.id==='closing'){items[0]={...items[0],x:9.1,y:4.3,w:4.8,h:4.8,fill:C.blob3};}
  pill(`SLIDE ${String(i+1).padStart(2,'0')} · ${s.tag}`,.50,.43,Math.max(2.85,(11+s.tag.length)*.14+.10),C.blue,{tracking:2});
+ if(s.illustrative)sample(10.87,.43,1.92);
  t(`${String(i+1).padStart(2,'0')} / 17`,11.78,6.99,1.03,.23,12,C.dim,{font:'mono',lh:1,align:'right'});
  if(!['cover','closing'].includes(s.id)){
    t(s.title,.50,1.07,12.22,.68,32,C.ink,{font:'serif',weight:900,lh:1.05});
@@ -49,7 +51,7 @@ function base(s,i){
 }
 
 function draw(s,i){base(s,i);
- switch(s.id){
+ if(!drawEnhanced(s,{t,box,pill,line,dot,icon,add,C,OUT}))switch(s.id){
  case 'cover':
    t(s.title,.65,1.64,8.80,1.80,44,C.blue,{font:'serif',weight:900,lh:1.28,gradient:true});
    t(s.subtitle,.68,3.75,9.8,.43,18,C.sub,{lh:1.2});
@@ -166,7 +168,8 @@ async function makePpt(){
      if(e.kind==='text')slide.addText(e.text,{...base,fontFace:e.font==='sans'&&e.weight===500?'Noto Sans SC Medium':FONT[e.font],fontSize:e.size,color:e.color,bold:e.weight>=700,margin:0,breakLine:false,valign:'top',align:e.align||'left',lineSpacingMultiple:e.lh,paraSpaceAfterPt:0,charSpacing:e.tracking||0,lang:'zh-CN',isTextBox:true,...(e.go!==undefined?{hyperlink:{slide:e.go+1}}:{})});
      else if(e.kind==='box')slide.addShape(e.radius?'roundRect':'rect',{...base,rectRadius:e.radius,fill:{color:e.fill,transparency:e.transparency},line:{color:e.stroke||C.white,transparency:e.strokeTransparency??100,width:1},...(e.shadow?{shadow:shadow()}:{})});
      else if(e.kind==='ellipse')slide.addShape('ellipse',{...base,fill:{color:e.fill,transparency:e.transparency},line:{transparency:100}});
-     else if(e.kind==='line')slide.addShape('line',{...base,line:{color:e.color,width:e.width,...(e.arrow?{endArrowType:'triangle'}:{})}});
+     // DrawingML 不能使用负尺寸；保留线段方向，避免向上的图标笔画被压成水平线。
+     else if(e.kind==='line')slide.addShape('line',{...base,x:Math.min(e.x,e.x+e.w),y:Math.min(e.y,e.y+e.h),w:Math.abs(e.w),h:Math.abs(e.h),flipH:e.w<0,flipV:e.h<0,line:{color:e.color,width:e.width,...(e.arrow?{endArrowType:'triangle'}:{})}});
      else if(e.kind==='image')slide.addImage({...base,path:path.join(OUT,e.src),altText:e.alt});
    }
  }
@@ -210,9 +213,9 @@ function makeScript(){
  let md=`# Prompt Optimizer Platform｜用户宣传介绍逐页脚本\n\n核对日期：${verifiedAt}。个人开发者项目；当前阶段：**MVP 本地联调与内部试用**。共 17 页、九章，建议讲解约 ${Math.round(slides.reduce((n,s)=>n+s.seconds,0)/60)} 分钟；现场操作另留 3–5 分钟。\n\n## 目录大纲\n\n| 章节 | 页码 | 核心问题 |\n| --- | --- | --- |\n`;
  const pages=['03','04','05','06–07','08–09','10–11','12–13','14–15','16'];const qs=['这是什么产品、交付什么？','为什么先明确需求有价值？','谁能用、适合什么任务？','怎样开始、结果是什么结构？','重要决定怎样由用户确认？','资料怎样参与、多技术栈指什么？','真实界面怎样操作、怎样核对示例？','技术设计怎样帮助用户？','当前能力、数据流和未开放范围是什么？'];
  chapters.forEach((c,i)=>{md+=`| ${String(i+1).padStart(2,'0')} ${c} | ${pages[i]} | ${qs[i]} |\n`;});
- md+='\n封面、目录与结尾不计入九章；已删除“当前进展与未来规划”章节。未开放事项仅在第 16 页独立标注，不作为当前能力或带日期的路线图。技术部分仅第 14 页架构图、第 15 页请求流程图。\n\n## 统一视觉规范\n\n- 16:9，13.333 × 7.5 英寸；HTML 使用 1280 × 720 画布等比呈现。物理尺寸换算为 960 × 540 pt；设计文件中的 1024 × 576 pt 仅视为比例参考，避免尺寸单位冲突。\n- 全册浅蓝 Glassmorphism；背景 135° 三段渐变 #e8f0fb / #f7faff / #eef3fd。\n- 主强调 #4d6bfe；#8a5cf6 只参与蓝紫渐变；标题 #1c2541；正文 #3a4763 / #5b6b8c；说明 #6b7a99 / #8a97b5 / #98a4c0。\n- 标题 Noto Serif SC 900；正文 Noto Sans SC 400/500/700；数字参数 Consolas。封面/结尾 44pt、普通标题 32pt、正文 14pt、卡片 12–15pt、标签 11pt、参数 10–12pt。\n- 外层玻璃白色 38% 透明，白边 1pt / 15% 透明，圆角约 0.13 英寸；内层白色 50% 透明、约 0.09 英寸圆角。外阴影 #465aa0 / 16% 不透明，40pt 模糊、16pt 向下。\n- 色球最多两个，置于内容下方，颜色取规范淡蓝/淡紫/淡青，45–48% 透明。标签左上、页码右下；主要内容约 0.5 英寸边距。\n- PPT 文字、图表式卡片、流程线和架构图均为原生可编辑对象；工作台实际截图作为图片素材，不是整页贴图。HTML 离线内嵌字体与截图。\n\n## 逐页脚本\n\n';
+ md+='\n封面、目录与结尾不计入九章；已删除“当前进展与未来规划”章节。未开放事项仅在第 16 页独立标注，不作为当前能力或带日期的路线图。技术部分仅第 14 页架构图、第 15 页请求流程图。\n\n## 统一视觉规范\n\n- 16:9，13.333 × 7.5 英寸；HTML 使用 1280 × 720 画布等比呈现。物理尺寸换算为 960 × 540 pt；设计文件中的 1024 × 576 pt 仅视为比例参考，避免尺寸单位冲突。\n- 全册浅蓝 Glassmorphism；背景 135° 三段渐变 #e8f0fb / #f7faff / #eef3fd。\n- 主强调 #4d6bfe；#8a5cf6 只参与蓝紫渐变；标题 #1c2541；正文 #3a4763 / #5b6b8c；说明 #6b7a99 / #8a97b5 / #98a4c0。\n- 标题 Noto Serif SC 900；正文 Noto Sans SC 400/500/700；数字参数 Consolas。封面/结尾 44pt、普通标题 32pt、正文 14pt、卡片 12–15pt、标签 11pt、参数 10–12pt。\n- 外层玻璃白色 38% 透明，白边 1pt / 15% 透明，圆角约 0.13 英寸；内层白色 50% 透明、约 0.09 英寸圆角。外阴影 #465aa0 / 16% 不透明，40pt 模糊、16pt 向下。\n- 色球最多两个，置于内容下方，颜色取规范淡蓝/淡紫/淡青，45–48% 透明。标签左上、页码右下；主要内容约 0.5 英寸边距。\n- PPT 文字、图表式卡片、流程线和架构图均为原生可编辑对象；第 8、9、12 页的实际界面截图作为图片素材，不是整页贴图。HTML 离线内嵌字体与截图。新增讲解页右上标注“示意样例”，不作为真实客户成果。\n\n## 逐页脚本\n\n';
  for(const s of model){md+=`### ${String(s.index).padStart(2,'0')}｜${s.title.replace(/\n/g,'，')}\n\n**归属**：${s.chapter?String(s.chapter).padStart(2,'0')+' '+chapters[s.chapter-1]:'封面 / 导览 / 结尾'}；**建议时长**：${s.seconds} 秒。\n\n**页面标题**：${s.title.replace(/\n/g,' / ')}\n\n**副标题**：${s.subtitle}\n\n**核心文案**\n\n${s.copy.map(c=>'- '+c).join('\n')}\n\n**演讲备注**\n\n${s.speech}\n\n**演示动作建议**\n\n${s.demo}\n\n**视觉元素与版式**\n\n${s.visual}\n\n**事实依据**\n\n${s.sources.map(k=>{const r=sources[k];return `- \`${r.path}\` — ${r.anchor}。${r.reason}`}).join('\n')}\n\n`;}
- md+='## 核对与使用约束\n\n1. 演示数据、截图结果、问答题目均为人工示意；不代表客户成果、实测速度、真实模型质量或领域验收。\n2. 没有添加公司背景、商业资质、客户规模、节省比例、Token 降幅、生产 SLA 或公开访问地址。\n3. 已实现和未开放范围分别表达；不将自动代码执行、OCR、图片语义、插件、计费或团队协作写成当前能力。\n4. 真实模型的生成内容需要人工复核；保护规则不等于识别所有敏感信息，逻辑删除不等于即刻物理擦除。\n5. 设计文件附录中的固定五段和按品牌模型模板说明，以当前代码为准修正；界面截图不保留任何真实账户数据。\n6. README 推荐技术栈中的 JWT 为可选项，讲解不把它写成当前认证机制；当前使用服务端会话身份与 CSRF 保护。\n7. 宣讲前确认目标投影与放映软件的字体、换行、透明效果；HTML 可作为离线演示备份。\n8. 原有版权为 Copyright © 2026 QingNiao0x，项目使用 PolyForm Noncommercial License 1.0.0；未经作者书面许可，禁止商业使用。\n';
+ md+='## 核对与使用约束\n\n1. 演示数据、截图结果、问答题目均为人工示意；不代表客户成果、实测速度、真实模型质量或领域验收。\n2. 没有添加公司背景、商业资质、客户规模、节省比例、Token 降幅、生产 SLA 或公开访问地址。\n3. 已实现和未开放范围分别表达；不将自动代码执行、OCR、图片语义、插件、计费或团队协作写成当前能力。\n4. 真实模型的生成内容需要人工复核；保护规则不等于识别所有敏感信息，逻辑删除不等于即刻物理擦除。\n5. 设计文件与产品范围草案中的固定段落、模型选择和历史保存说明，按当前代码修正；桌面素材中直接生成代码或报告的表述已移除。详见 source/素材采用与事实核对.md；界面截图不保留任何真实账户数据。\n6. README 推荐技术栈中的 JWT 为可选项，讲解不把它写成当前认证机制；当前使用服务端会话身份与 CSRF 保护。\n7. 宣讲前确认目标投影与放映软件的字体、换行、透明效果；HTML 可作为离线演示备份。\n8. 原有版权为 Copyright © 2026 QingNiao0x，项目使用 PolyForm Noncommercial License 1.0.0；未经作者书面许可，禁止商业使用。\n';
  fs.writeFileSync(path.join(OUT,'逐页脚本与大纲.md'),md);
  const trace=Object.entries(sources).map(([id,r])=>{const f=path.isAbsolute(r.path)?r.path:path.join(ROOT,r.path);return{id,...r,exists:fs.existsSync(f),sha256:fs.existsSync(f)?crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex'):null};});
  if(trace.some(x=>!x.exists))throw Error('Missing source: '+trace.filter(x=>!x.exists).map(x=>x.path).join(', '));

@@ -19,7 +19,7 @@
   }
   function noteBlock(title,body){return '<section class="note-block"><h3>'+title+'</h3>'+body+'</section>';}
   function updateNotes(){const d=data[index];document.getElementById('notes-title').textContent=d.title.replace(/\n/g,'，');
-    document.getElementById('notes-content').innerHTML='<p class="note-meta">'+String(index+1).padStart(2,'0')+' / 17 · 建议 '+d.seconds+' 秒 · 来源核对 2026-10-04</p>'
+    document.getElementById('notes-content').innerHTML='<p class="note-meta">'+String(index+1).padStart(2,'0')+' / 17 · 建议 '+d.seconds+' 秒 · 来源核对 2026-10-05</p>'
       +noteBlock('核心文案','<ul>'+d.copy.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>')
       +noteBlock('演讲备注','<p>'+esc(d.speech)+'</p>')
       +noteBlock('演示动作建议','<p>'+esc(d.demo)+'</p>')

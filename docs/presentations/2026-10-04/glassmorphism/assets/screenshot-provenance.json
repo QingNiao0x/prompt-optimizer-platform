@@ -1,14 +1,90 @@
 {
-  "capturedAt": "2026-10-03T19:30:00.887Z",
-  "source": "apps/web/src/pages/PromptWorkbenchPage.vue",
-  "url": "http://127.0.0.1:5175/workbench",
-  "data": "人工编写的示意数据；全部 /api 请求在浏览器中拦截，不接触真实账户、Provider 或数据库。",
+  "capturedAt": "2026-10-04T19:22:34.603Z",
+  "source": [
+    "apps/web/src/pages/PromptWorkbenchPage.vue",
+    "apps/web/src/components/prompt/PlanQuestionDialog.vue"
+  ],
+  "url": "http://127.0.0.1:5196/workbench",
+  "data": "示意样例。实际 Vue 界面，人工题目、答案和结果；全部 /api 请求被拦截，无真实账户、数据库或 Provider 调用。",
+  "screenshots": [
+    {
+      "file": "plan-question-sample.png",
+      "selector": ".plan-question-dialog .question-sheet",
+      "size": {
+        "x": 407,
+        "y": 206.171875,
+        "width": 726,
+        "height": 347.84375
+      }
+    },
+    {
+      "file": "plan-review-sample.png",
+      "selector": ".answer-review li content bounds (outside list markers excluded)",
+      "size": {
+        "x": 427,
+        "y": 592.171875,
+        "width": 706,
+        "height": 136.78125
+      }
+    },
+    {
+      "file": "plan-actions-sample.png",
+      "selector": ".dialog-actions",
+      "size": {
+        "x": 407,
+        "y": 758.953125,
+        "width": 726,
+        "height": 32
+      }
+    },
+    {
+      "file": "workbench-sample.png",
+      "selector": ".workbench-grid",
+      "size": {
+        "x": 0,
+        "y": 108,
+        "width": 1540,
+        "height": 632
+      }
+    }
+  ],
   "apiRequests": [
-    "/api/v1/auth/me",
-    "/api/v1/auth/csrf",
-    "/api/v1/analytics/context",
-    "/api/v1/models",
-    "/api/v1/analytics/events",
-    "/api/v1/optimizations"
-  ]
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/csrf"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/analytics/context"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/models"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/analytics/events"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/optimizations/plan"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/optimizations/plan-events"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/optimizations/plan-events"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/optimizations"
+    }
+  ],
+  "pageErrors": []
 }

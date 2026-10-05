@@ -66,7 +66,7 @@ palette='''母版设计备注 / MASTER DESIGN NOTES
 卡片：白色 38% 透明，白边 1pt / 15% 透明，外圆角约 0.13in；内卡白色 50% 透明、0.09in。阴影 #465aa0 / 16% 不透明，模糊 40pt、偏移 16pt、90°。
 色球：#c3d6fb / #dcd0fb / #c9e8f6；45–48% 透明；柔化边缘 65pt；位于内容底层，每页不超过两个。
 字体：Noto Serif SC 900（静态 Black 字重）；Noto Sans SC 400/500/700；Consolas 数字参数。标题 44/32pt；正文 14pt，行距 1.8；卡片 12pt，行距 1.7；卡题 15pt；标签 11pt，字距约 2pt；参数 10–12pt。
-所有文字和图形原生可编辑；仅第 12 页的真实界面截图使用 PNG。正文不作为整页图像。'''
+所有文字和图形原生可编辑；第 8、9、12 页的实际 Plan 提问、答案核对和工作台截图使用 PNG。截图均为隔离接口的人工示意样例，正文不作为整页图像。新增图文页右上标注“示意样例”，沿用原浅蓝视觉，不新增第三套字体或配色。'''
 
 # 将配色与参数同时保存在两类母版的扩展信息和首页可读演讲备注中。
 custom='urn:prompt-optimizer-platform:presentation:design-notes:v1';E.register_namespace('po',custom)
