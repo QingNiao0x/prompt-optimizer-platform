@@ -1,0 +1,85 @@
+{
+  "id": "CD-03-M-tokenhub_glm-5_3-flashx-plan-final",
+  "caseId": "CD-03-M",
+  "modelId": "tokenhub:glm-5.3-flashx",
+  "arm": "plan",
+  "startedAt": "2026-10-05T05:43:55.788Z",
+  "plan": {
+    "summary": "目标是写一份面向普通办公人员的提示词整理工具使用指南，读者对象、字数、必含板块、术语处理与资料边界均已明确；唯一未决的是必含的报告写作示例面向哪类报告，需在成稿前由用户确定。",
+    "questions": [
+      {
+        "id": "report_example_type",
+        "question": "指南中的报告写作示例主要面向哪类报告？",
+        "hint": "原文注明该示例尚未决定且不得默认补全；它同时决定\"合成需求与优化后结构示意\"的题材，直接影响示例的需求描述与优化结果写法。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "work_report",
+            "label": "工作汇报",
+            "description": "示例围绕工作汇报，如周报或月度工作总结的需求整理与结构优化",
+            "answer": "报告写作示例面向工作汇报场景（如周报、月度工作总结），合成需求与优化后结构示意均以此为例。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "study_report",
+            "label": "学习报告",
+            "description": "示例围绕学习报告，如课程学习总结或读书报告的需求整理与结构优化",
+            "answer": "报告写作示例面向学习报告场景（如课程学习总结、读书报告），合成需求与优化后结构示意均以此为例。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "tokenhub",
+      "model": "tokenhub:glm-5.3-flashx",
+      "mock": false,
+      "modelVersion": "GLM-5.3-FlashX"
+    },
+    "latencyMs": 34807,
+    "planId": "8d124271-f51b-4d54-80ca-fb8c26821018",
+    "planningContext": {
+      "contextId": "1f1aa53b-7d00-41bf-a28f-2b6252ee7a6f",
+      "version": "sha256:e595cf2ac735612c8a764446087bfa3a18d402a151449d4241f48fe85a0a5614"
+    },
+    "expiresAt": "2026-10-05T06:03:35.584050200Z"
+  },
+  "answers": [
+    {
+      "questionId": "report_example_type",
+      "question": "指南中的报告写作示例主要面向哪类报告？",
+      "answer": "使用合成的单位季度工作报告作为写作示例，不包含真实单位、个人或未经证实的成效。"
+    }
+  ],
+  "answerReview": {
+    "report_example_type": {
+      "answer": "使用合成的单位季度工作报告作为写作示例，不包含真实单位、个人或未经证实的成效。",
+      "basis": "AI辅助逐题核对实际问题与冻结需求及资料：已有要求继承，真实未知和未批准冲突明确保留；不自动选择推荐。"
+    }
+  },
+  "refinedQuery": "## 任务\n请写一份面向普通办公人员的提示词整理工具使用指南。假设读者不懂接口、缓存或模型供应商术语，指南应帮助其完成一次添加上下文、输入需求、可选计划确认、复制优化提示词的流程。资料是合成产品说明，只能依据其中已经开放的功能写作，不参考测试目录里的演示按钮。成稿正文控制在八百至一千二百个中文字符，包含一个报告写作示例和一个常见问题区；步骤编号清楚，术语首次出现用一句短解释，不写开发代码。\n\n## 已知资料\n1. 工具只整理提示词，不直接生成正式报告、不执行命令或修改用户文件。\n2. 添加上下文支持选单个文档或文件夹；代码可建立本地索引，办公文档需用户确认后发送后端解析。\n3. 计划确认可以手动开启或关闭；需求已清楚时允许没有问题，未确定的关键条件仍需在最终正文中说明。\n4. 用户可以编辑、复制和再次增强优化结果；本题不宣称自动保存到外部聊天工具。\n\n## 约束\n- 不展示内部接口名、错误堆栈、会话标识或密钥；不承诺文件无限大或所有格式都能完整解析。\n- 解释本地索引与文档上传差别，但不要求普通用户了解向量或数据库结构。\n- 成稿应包含添加上下文主题，不能只写输入与复制两个步骤。\n\n## 尚待明确\n- 指南中的报告示例主要面向工作汇报还是学习报告？当前尚未决定，不得默认补全。\n\n## 交付\n面向普通用户的编号步骤；一段合成需求与优化后结构示意；三至五项常见问题；无法解析和未确定条件的处理说明。\n资料引用应能让接收任务的人找到对应依据，测试示例、旧版草稿和正式说明须分开。能由给定资料核查的常规细节，请自行整理；只有真正影响任务目标且目前缺失的业务决定才保留为待确认项。不要用通用的“输入不明、输出不明、验收不明”代替具体分析。文字应紧扣本题，合并同一条件的重复解释，重要前提不能只留在页面提示中。\n本次选择：使用合成的单位季度工作报告作为写作示例，不包含真实单位、个人或未经证实的成效。",
+  "status": "FAILED",
+  "failure": {
+    "label": "CD-03-M-tokenhub_glm-5_3-flashx-plan-final",
+    "path": "/api/v1/optimizations",
+    "status": 502,
+    "requestId": "428d02ba-a6c0-443e-bc6a-8980113ec918",
+    "elapsedMs": 60296,
+    "code": "PROVIDER_UNAVAILABLE"
+  },
+  "requests": [
+    {
+      "label": "CD-03-M-tokenhub_glm-5_3-flashx-plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 502,
+      "requestId": "428d02ba-a6c0-443e-bc6a-8980113ec918",
+      "elapsedMs": 60296,
+      "code": "PROVIDER_UNAVAILABLE"
+    }
+  ]
+}

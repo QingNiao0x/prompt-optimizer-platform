@@ -28,11 +28,14 @@ final class ResolvedPlanState {
     private final List<Choice> choices;
     private final String original;
     private final boolean deliveryConfirmed;
+    private final List<ConfirmedPlanDecision> confirmedParameters;
 
-    private ResolvedPlanState(List<Choice> choices, String original, boolean deliveryConfirmed) {
+    private ResolvedPlanState(List<Choice> choices, String original, boolean deliveryConfirmed,
+                              List<ConfirmedPlanDecision> confirmedParameters) {
         this.choices = List.copyOf(choices);
         this.original = original == null ? "" : original;
         this.deliveryConfirmed = deliveryConfirmed;
+        this.confirmedParameters = List.copyOf(confirmedParameters);
     }
 
     /** 仅由有效冲突题的唯一明确选值建立替代状态；总体未决但已明确版本的部分回答也可更新。 */
@@ -54,7 +57,7 @@ final class ResolvedPlanState {
                 && confirmedIntent.status() == TaskIntent.ResolutionStatus.USER_CONFIRMED
                 && decisions.knownDecisions().stream().anyMatch(decision ->
                         TaskIntentResolver.overallDeliveryQuestion(decision.question()));
-        return new ResolvedPlanState(choices, original, deliveryConfirmed);
+        return new ResolvedPlanState(choices, original, deliveryConfirmed, decisions.decisions());
     }
 
     /** 修正当前执行视图，不抹掉比较符、未签署/未生效或“不自行折中”等独立要求。 */
@@ -62,6 +65,8 @@ final class ResolvedPlanState {
         if (text == null || text.isBlank()) return text;
         String current = deliveryConfirmed ? DELIVERY_PENDING.matcher(text)
                 .replaceAll("本次交付已在Plan阶段确认，以已确认决定为准") : text;
+        current = EvidenceStateGuard.reconcileConfirmedParameters(current,
+                confirmedParameters);
         if (choices.isEmpty()) return current;
         return current.lines().map(line -> {
             if (!GENERIC_VERSION.matcher(line).find() && !CONTINUE_RULE.matcher(line).find()) return line;

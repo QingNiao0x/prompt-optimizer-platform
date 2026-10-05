@@ -314,11 +314,14 @@ public class OptimizationResultAssembler {
         List<String> rules = new ArrayList<>(explicitRules);
         rules.addAll(fidelityGuard.compatibleSourceRules(sourceRules, explicitRules));
         var eligibilityGuard = PlanEligibilityGuard.from(rules);
+        var ruleValidation = fidelityGuard.prepare(rules);
+        // 背景也不能把资料未说明的能力写成不存在；执行反转校验仍限于执行段落。
+        EvidenceStateGuard.validate(sections.get(PromptSectionType.BACKGROUND).content(), rules, "sections.BACKGROUND");
         for (PromptSectionType type : List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT,
                 PromptSectionType.CONSTRAINTS, PromptSectionType.ACCEPTANCE)) {
             PromptSection section = sections.get(type);
             if (section != null) {
-                fidelityGuard.validate(section.content(), rules, "sections." + type);
+                ruleValidation.validate(section.content(), "sections." + type);
                 eligibilityGuard.validate(section.content(), "", "sections." + type);
             }
         }

@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
  * @since 0.1.0
  */
 final class PlanAnswerSemantics {
+    private static final Pattern STATUS_ONLY_SUBJECT = Pattern.compile("^(?:当前|目前|现在|本次|这次|此时|现阶段|本阶段)$");
     private static final Pattern PENDING = Pattern.compile("(?i)不确定(?!性)|暂未确定|(?:仍未|尚未|未)(?:确定|确认|提供|指定|决定)"
             + "|待确定|待定|不知道|不清楚|稍后确认|\\b(?:unknown|tbd)\\b");
     private static final Pattern BOUNDARY = Pattern.compile("(?<=[。；;！？!])|\\R|[,，](?=(?:但|不过|然而|现在明确|目前明确))");
@@ -49,7 +50,8 @@ final class PlanAnswerSemantics {
         if (!pending.find()) return false;
         String subject = clause.substring(0, pending.start()).replaceFirst("^(?:但|不过|然而)", "")
                 .replaceAll("暂|尚|仍|具体|其余|的|\\s|[，,：:]", "");
-        return subject.length() >= 2;
+        // “当前尚未决定”只有状态，仍须保留服务端原题和 ID；完整命名的业务对象继续按子项处理。
+        return subject.length() >= 2 && !STATUS_ONLY_SUBJECT.matcher(subject).matches();
     }
 
     /** 未决断言前的完整对象与属性；只移除紧邻状态词的程度副词，不删业务名、数值或条件。 */

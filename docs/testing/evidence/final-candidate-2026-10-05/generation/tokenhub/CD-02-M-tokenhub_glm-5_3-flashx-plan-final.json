@@ -1,0 +1,93 @@
+{
+  "id": "CD-02-M-tokenhub_glm-5_3-flashx-plan-final",
+  "caseId": "CD-02-M",
+  "modelId": "tokenhub:glm-5.3-flashx",
+  "arm": "plan",
+  "startedAt": "2026-10-05T05:42:55.490Z",
+  "plan": {
+    "summary": "目标是基于合成资料为新维护人员编写技术交接文档，区分已实现、仅计划与资料未覆盖内容；历史保留期限差异已明确按“列明差异、不擅自采用”处理，唯一仍需用户确认的业务决定是是否包含本地调试与故障排查章节。",
+    "questions": [
+      {
+        "id": "debug_troubleshooting_chapter",
+        "question": "交接文档是否需要包含“本地调试与故障排查”操作章节？",
+        "hint": "原始需求注明此项尚未决定且不得默认补全，请选择处理方式；该选择直接决定交付结构中是否新增这一章节及其深度。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "include_standalone",
+            "label": "包含独立章节",
+            "description": "新增独立章节，只写有给定资料依据的调试与排查操作说明。",
+            "answer": "交接文档包含独立的“本地调试与故障排查”章节，内容限于附有给定资料路径与证据的操作说明（如请求标识与稳定事件代码的关联方式），不写资料未提供的日志平台名称或配置。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "appendix_entry_only",
+            "label": "附录入口式",
+            "description": "不设独立操作章节，仅在附录列出核查入口与标识关联方法。",
+            "answer": "不设独立的故障排查操作章节，将排查相关内容放入附录，仅列出核查入口与请求标识关联方法，不展开为分步操作指引。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "exclude",
+            "label": "不包含",
+            "description": "不写调试与排查操作，相关未知仅记入未知及冲突清单。",
+            "answer": "交接文档不包含本地调试与故障排查章节，排查相关的未知事项仅在“未知及冲突清单”中记录，不形成操作指引。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确包含：不包含。请核对适用范围后选择。"
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "tokenhub",
+      "model": "tokenhub:glm-5.3-flashx",
+      "mock": false,
+      "modelVersion": "GLM-5.3-FlashX"
+    },
+    "latencyMs": 39319,
+    "planId": "786dd8e8-bd4f-4200-9ffb-895ceb6c8901",
+    "planningContext": {
+      "contextId": "6c07b513-d222-48eb-9fad-6dd2ae40958d",
+      "version": "sha256:e87177e9813877964b81cba5e09f5f2a18204ba61de5659eebc866a67e62aecc"
+    },
+    "expiresAt": "2026-10-05T06:02:56.155094Z"
+  },
+  "answers": [
+    {
+      "questionId": "debug_troubleshooting_chapter",
+      "question": "交接文档是否需要包含“本地调试与故障排查”操作章节？",
+      "answer": "包含只读的本地调试与故障排查说明，仅引用资料中的安全检查入口，不执行操作、不编造部署与全局日志服务。"
+    }
+  ],
+  "answerReview": {
+    "debug_troubleshooting_chapter": {
+      "answer": "包含只读的本地调试与故障排查说明，仅引用资料中的安全检查入口，不执行操作、不编造部署与全局日志服务。",
+      "basis": "AI辅助逐题核对实际问题与冻结需求及资料：已有要求继承，真实未知和未批准冲突明确保留；不自动选择推荐。"
+    }
+  },
+  "refinedQuery": "## 任务\n请基于一套合成的提示词整理平台资料，编写交付新维护人员的技术交接文档。读者具备基础 Java 和 Vue 开发经验，但没有参与过项目。本次只整理现状与证据，不提出架构重写，不运行命令、不改源码。现状是前后端分离的模块化单体，服务端通过统一模型网关调用已发布模型，用户不能输入模型密钥；工作台提供原始提示词、上下文和优化结果三个区域。交接文档应准确区分已经实现、仅写在计划里、资料未覆盖的内容。\n\n## 已知资料\n1. 合成当前接口清单包含上下文准备、计划提问、最终增强和优化历史四组接口。\n2. 合成目录中 history 模块保留租户与工作区范围，删除历史采用 deleted_at 逻辑删除。\n3. 当前前端使用 Vue 3 和 TypeScript，后端使用 Java 21 和 Spring Boot 3，数据库为 PostgreSQL。\n4. 合成路线图中团队计费、浏览器插件和更多第三方登录均标为待办，不能写成可用功能。\n\n## 约束\n- 所有功能声明必须附给定资料路径与对应证据，没看到的父组件和调用方不得推断存在。\n- 历史迁移描述历史结构，不自动代表当前结构；当前接口清单优先用于现状说明，但冲突处必须先列明。\n- 交付文档不包含密钥、完整认证标识或用户正文，禁止把测试账号写为正式管理员。\n\n## 尚待明确\n- 接手人员是否需要包含本地调试与故障排查操作章节？当前尚未决定，不得默认补全。\n- 两份资料存在差异：旧交接说明写历史永久保留；新需求草稿写历史保留180天，但尚未批准。请指出差异，不擅自采用其中一项。\n\n## 交付\n系统概览和模块职责表；实际接口与资料索引；现状、待办、未知及冲突清单；权限边界与接手检查表。\n资料引用应能让接收任务的人找到对应依据，测试示例、旧版草稿和正式说明须分开。能由给定资料核查的常规细节，请自行整理；只有真正影响任务目标且目前缺失的业务决定才保留为待确认项。不要用通用的“输入不明、输出不明、验收不明”代替具体分析。文字应紧扣本题，合并同一条件的重复解释，重要前提不能只留在页面提示中。\n本次选择：包含只读的本地调试与故障排查说明，仅引用资料中的安全检查入口，不执行操作、不编造部署与全局日志服务。",
+  "status": "FAILED",
+  "failure": {
+    "label": "CD-02-M-tokenhub_glm-5_3-flashx-plan-final",
+    "path": "/api/v1/optimizations",
+    "status": 502,
+    "requestId": "1bf0b9a6-2a46-431a-b4ca-11f69bea95af",
+    "elapsedMs": 60279,
+    "code": "PROVIDER_UNAVAILABLE"
+  },
+  "requests": [
+    {
+      "label": "CD-02-M-tokenhub_glm-5_3-flashx-plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 502,
+      "requestId": "1bf0b9a6-2a46-431a-b4ca-11f69bea95af",
+      "elapsedMs": 60279,
+      "code": "PROVIDER_UNAVAILABLE"
+    }
+  ]
+}

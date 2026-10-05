@@ -1,0 +1,248 @@
+{
+  "id": "CV-HOSPITAL-M-deepseek_deepseek-flash-plan-final",
+  "caseId": "CV-HOSPITAL-M",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T06:34:44.060Z",
+  "plan": {
+    "summary": "本次要基于合成门诊预约汇总字典与流程材料，编写内部运营分析方案，交付口径梳理、流程问题清单、拟议数据采集表、讨论版报告目录及人工复核与隐私边界清单，不计算真实指标、不做临床判断。资料已明确渠道范围、事件与人数区别、时区口径及不把未知状态计为爽约等约束，但观察窗口、取消免责边界、渠道比较的主统计单位以及新旧取消规则差异的处理方式仍会影响口径与结论，需要确认。",
+    "questions": [
+      {
+        "id": "Q1",
+        "question": "预约未到诊的观察窗口应如何定义？",
+        "hint": "观察窗口决定一个预约事件何时可归为最终状态；窗口未确定前，尚未到期的预约只能作为待核验事件，不能计入爽约。请给出具体时长或截止规则。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "就诊时间后满24小时仍未到诊，视为最终未到诊",
+          "以就诊日次日24:00为截止，之后仍未到诊视为最终未到诊",
+          "以季度结束后统一观察30天为窗口"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q2",
+        "question": "取消免责边界应如何定义？",
+        "hint": "旧流程说明提前24小时取消不计爽约，新会议草稿建议提前12小时但尚未批准。需要明确本次方案采用哪一版作为讨论基准，或如何并列呈现差异。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "A",
+            "label": "沿用旧流程24小时",
+            "description": "以已发布的旧流程说明为准，提前24小时取消不计爽约。",
+            "answer": "取消免责边界采用旧流程说明：提前24小时取消不计爽约。",
+            "recommended": true,
+            "recommendationReason": "项目证据明确包含：提前24小时取消不计爽约。请核对适用范围后选择。"
+          },
+          {
+            "id": "B",
+            "label": "并列呈现两版差异",
+            "description": "不擅自采用任一项，在方案中并列呈现24小时与12小时两种口径及其审批状态。",
+            "answer": "取消免责边界不擅自采用任一项，在方案中并列呈现旧流程24小时与新会议草稿12小时两种口径，并标注新草稿尚未批准。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "C",
+            "label": "采用新草稿12小时",
+            "description": "以新会议草稿建议的提前12小时作为讨论基准，并注明尚未批准。",
+            "answer": "取消免责边界采用新会议草稿建议：提前12小时取消不计爽约，并注明该规则尚未批准。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q3",
+        "question": "比较渠道时，主统计单位应使用预约事件还是去重患者？",
+        "hint": "预约事件编号可区分一次预约，但一个患者可以多次预约，事件数不等于人数。主统计单位会直接影响渠道比较的口径和结论。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "A",
+            "label": "预约事件为主",
+            "description": "以预约事件为渠道比较的主统计单位，同时可附去重患者作为参考。",
+            "answer": "渠道比较以预约事件为主统计单位，去重患者作为参考口径。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "B",
+            "label": "去重患者为主",
+            "description": "以去重患者为渠道比较的主统计单位，同时可附预约事件作为参考。",
+            "answer": "渠道比较以去重患者为主统计单位，预约事件作为参考口径。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "C",
+            "label": "两种口径并列",
+            "description": "不设唯一主单位，在方案中并列呈现预约事件与去重患者两种口径，并说明各自适用场景。",
+            "answer": "渠道比较并列呈现预约事件与去重患者两种口径，不设唯一主统计单位，并说明各自适用场景。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q4",
+        "question": "渠道比较时，同一预约涉及多个渠道操作应如何归集？",
+        "hint": "电话预约与网页预约可能记录相同一次预约的不同操作事件，渠道比较必须先定义首次渠道和变更渠道，不能把操作次数当成预约量。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "A",
+            "label": "按首次渠道归集",
+            "description": "以一次预约最早出现的渠道作为该预约的渠道归属。",
+            "answer": "同一预约涉及多个渠道操作时，按首次渠道归集。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "B",
+            "label": "按最终渠道归集",
+            "description": "以一次预约最后一次出现的渠道作为该预约的渠道归属。",
+            "answer": "同一预约涉及多个渠道操作时，按最终渠道归集。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "C",
+            "label": "首次与变更并列",
+            "description": "同时记录首次渠道和变更渠道，分别统计，不合并为单一渠道归属。",
+            "answer": "同一预约涉及多个渠道操作时，同时记录首次渠道和变更渠道，分别统计，不合并为单一渠道归属。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q5",
+        "question": "UNKNOWN 到诊状态在口径表中应如何呈现？",
+        "hint": "到诊状态包括 ARRIVED、CANCELLED、UNKNOWN，UNKNOWN 的原因没有细分。需要明确 UNKNOWN 是单独保留、并入待核验，还是其他处理方式，但不能直接计为爽约。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "A",
+            "label": "单独保留为UNKNOWN",
+            "description": "在口径表和统计中单独保留 UNKNOWN 类别，不并入爽约或到诊。",
+            "answer": "UNKNOWN 到诊状态在口径表中单独保留，不并入爽约或到诊。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "B",
+            "label": "并入待核验事件",
+            "description": "将 UNKNOWN 归入待核验事件类别，与尚未到期的预约一起展示，但不计入爽约率。",
+            "answer": "UNKNOWN 到诊状态归入待核验事件类别，与尚未到期的预约一起展示，但不计入爽约率。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "C",
+            "label": "单独保留并注明原因未细分",
+            "description": "单独保留 UNKNOWN，并在口径表中注明其原因没有细分，无法进一步归类。",
+            "answer": "UNKNOWN 到诊状态单独保留，并在口径表中注明其原因没有细分，无法进一步归类。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q6",
+        "question": "拟议数据采集表是否需要包含时区转换字段？",
+        "hint": "预约取消时间与就诊时间均用医院本地时区，当前汇总表没有时区转换证据。采集表是否预留时区转换字段会影响后续数据可比性。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "A",
+            "label": "包含时区转换字段",
+            "description": "在拟议采集表中增加时区转换字段，记录原始时区及转换后时间。",
+            "answer": "拟议数据采集表包含时区转换字段，记录原始时区及转换后时间。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "B",
+            "label": "不包含，仅注明本地时区",
+            "description": "采集表不增加时区转换字段，仅在口径表中注明当前使用医院本地时区且无转换证据。",
+            "answer": "拟议数据采集表不包含时区转换字段，仅在口径表中注明当前使用医院本地时区且无转换证据。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "C",
+            "label": "作为待确认项列出",
+            "description": "不直接决定是否增加字段，在方案中将时区转换字段列为待确认项，说明其影响。",
+            "answer": "拟议数据采集表将时区转换字段列为待确认项，说明其影响，不直接决定是否增加。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q7",
+        "question": "人工复核及隐私边界清单是否需要包含合成数据以外的真实数据接入条件？",
+        "hint": "本题资料没有真实患者信息，也没有完整逐条数据。需要明确隐私边界清单是否仅针对合成数据，还是需要预留真实数据接入时的复核条件。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "A",
+            "label": "仅针对合成数据",
+            "description": "隐私边界清单仅针对本次合成数据，不涉及真实数据接入条件。",
+            "answer": "人工复核及隐私边界清单仅针对本次合成数据，不涉及真实数据接入条件。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "B",
+            "label": "预留真实数据接入条件",
+            "description": "在清单中预留真实数据接入时的复核与隐私条件，但本次不执行真实数据接入。",
+            "answer": "人工复核及隐私边界清单预留真实数据接入时的复核与隐私条件，但本次不执行真实数据接入。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "C",
+            "label": "仅合成数据并注明未来扩展",
+            "description": "清单以合成数据为主，同时注明未来若接入真实数据需另行评估复核与隐私条件。",
+            "answer": "人工复核及隐私边界清单以合成数据为主，同时注明未来若接入真实数据需另行评估复核与隐私条件。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 17154,
+    "planId": "142c67d6-7dbc-494f-ae72-e38bd250885f",
+    "planningContext": {
+      "contextId": "f24da0b4-5c33-4472-b87d-2c18df57be08",
+      "version": "sha256:44838d7170ed8c5cf73e0fc84b7fdee5c1a3ab4d14244b50e3b780c1416ce6ec"
+    },
+    "expiresAt": "2026-10-05T07:01:48.659577700Z"
+  },
+  "status": "FAILED",
+  "failure": {
+    "code": "EVERY_QUESTION_NEEDS_REVIEWED_ANSWER"
+  },
+  "requests": []
+}

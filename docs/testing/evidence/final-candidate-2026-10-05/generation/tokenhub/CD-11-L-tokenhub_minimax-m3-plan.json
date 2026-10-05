@@ -1,0 +1,420 @@
+{
+  "id": "CD-11-L-tokenhub_minimax-m3-plan",
+  "caseId": "CD-11-L",
+  "modelId": "tokenhub:minimax-m3",
+  "arm": "plan",
+  "startedAt": "2026-10-05T05:37:42.593Z",
+  "prepared": {
+    "contextId": "1835a4d8-4750-4908-af8f-42b7d3c9a305",
+    "version": "sha256:143297eac1d961a2ce11f41476cd47f514a5ba0d9438167687ccc2949fc4f952",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/financial_risk/",
+        "materials/financial_risk/current-brief.md",
+        "materials/financial_risk/legacy-note.md",
+        "materials/financial_risk/tests/",
+        "materials/financial_risk/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/financial_risk/current-brief.md：Markdown 文档摘要：非投资建议的合成价格序列分析：合成现行资料；拟议报告面向一般学习者，用通俗语言说明风险指标而不是专业荐股结论。；连续二十个交易日不是二十个自然日，附件没有完整日历；不能凭日期字符串补出休市日价格，也不能插值当作真实交易。；资料中的技术指标名称只作为候选概念，用户没有要求MACD或均线组合策略；不能因为附件出现技术名词就默认增加交易信号。；本题评价关注提示词是否忠于数据范围和风险边界，金融专业有效性须由相应人员审查；不同模型一致也不能替代数据核验。；业务摘录：可以解释大幅波动和小样本导致估计不稳定，但不得用未经计算的概率、置信区间或极端损失值制造精确感。；图表模板应明确轴名称、单位、数据缺口与样本范围，不附合成数字形成看似已经执行的真实市场报告。；本题评价关注提示词是否忠于数据范围和风险边界，金融专业有效性须由相应人员审查；；[片段 1/1]；成交量零值与未登记是不同状态，若采用量价关系示意，必须保留数据覆盖说明；；不同模型一致也不能替代数据核验。",
+        "[PROJECT_DOCUMENT] materials/financial_risk/legacy-note.md：Markdown 文档摘要：数据字典注明成交量为手。；另有草稿写：旧图表标题写为股，未说明换算。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。；业务摘录：[片段 1/1] 数据字典注明成交量为手。 另有草稿写：旧图表标题写为股，未说明换算。 两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+        "[TEST_SOURCE] materials/financial_risk/tests/layout-example.txt：文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。；业务摘录：[片段 1/1] 仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。 这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 3,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/financial_risk/current-brief.md",
+          "evidence": "成交量单位在数据字典中为合成手数，缺失值和零成交量必须区分"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/financial_risk/current-brief.md",
+          "evidence": "成交量零值与未登记是不同状态，若采用量价关系示意，必须保留数据覆盖说明"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/financial_risk/current-brief.md",
+          "evidence": "缺少复权信息会影响跨日价格可比性，但本题是合成资料，不应声称发生分红拆股"
+        },
+        {
+          "id": "F04",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/financial_risk/current-brief.md",
+          "evidence": "可以解释大幅波动和小样本导致估计不稳定，但不得用未经计算的概率、置信区间或极端损失值制造精确感"
+        },
+        {
+          "id": "F05",
+          "category": "DATA_SOURCE",
+          "origin": "TEST_SOURCE",
+          "sourcePath": "materials/financial_risk/tests/layout-example.txt",
+          "evidence": "仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/financial_risk/",
+        "materials/financial_risk/current-brief.md",
+        "materials/financial_risk/legacy-note.md",
+        "materials/financial_risk/tests/",
+        "materials/financial_risk/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/financial_risk/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 非投资建议的合成价格序列分析：合成现行资料\n合成样本只有二十个交易日，不等于完整一个月或足以支持长期预测的历史。\n成交量单位在数据字典中为合成手数，缺失值和零成交量必须区分。\n不含公司基本面、行业信息、实时新闻和真实证券代码，不能自行补入。\n拟议报告面向一般学习者，用通俗语言说明风险指标而不是专业荐股结论。\n\n# 分支与边界\n收益率的分母是前一交易日价格，缺少前日时不能生成该日收益率；图表应显示缺口，不自动用零替代缺失观察。\n回撤分析需要明确以样本内峰值作为基准还是另有历史峰值；本题没有样本之外数据，因此只能讨论样本内定义及其局限。\n波动率依赖收益率定义和采样频率，日度指标不能不经说明就变成年度风险；没有足够样本和换算依据时不报告确定年化值。\n连续二十个交易日不是二十个自然日，附件没有完整日历；不能凭日期字符串补出休市日价格，也不能插值当作真实交易。\n成交量零值与未登记是不同状态，若采用量价关系示意，必须保留数据覆盖说明；不把缺失的成交量标成市场流动性枯竭。\n图表旧标题的股与字典的手存在单位差异，转换比例没有材料依据；报告应标记单位冲突而不是使用常识偷偷换算。\n合成价格走势看似上涨也不能支撑真实证券看涨结论；报告应提醒示例用途，并避免购买、加仓和目标价等执行性措辞。\n资料中的技术指标名称只作为候选概念，用户没有要求MACD或均线组合策略；不能因为附件出现技术名词就默认增加交易信号。\n缺少复权信息会影响跨日价格可比性，但本题是合成资料，不应声称发生分红拆股；未知元数据与确定市场事件要分开。\n可以解释大幅波动和小样本导致估计不稳定，但不得用未经计算的概率、置信区间或极端损失值制造精确感。\n图表模板应明确轴名称、单位、数据缺口与样本范围，不附合成数字形成看似已经执行的真实市场报告。\n本题评价关注提示词是否忠于数据范围和风险边界，金融专业有效性须由相应人员审查；不同模型一致也不能替代数据核验。",
+          "summary": "Markdown 文档摘要：非投资建议的合成价格序列分析：合成现行资料；拟议报告面向一般学习者，用通俗语言说明风险指标而不是专业荐股结论。；连续二十个交易日不是二十个自然日，附件没有完整日历；不能凭日期字符串补出休市日价格，也不能插值当作真实交易。；资料中的技术指标名称只作为候选概念，用户没有要求MACD或均线组合策略；不能因为附件出现技术名词就默认增加交易信号。；本题评价关注提示词是否忠于数据范围和风险边界，金融专业有效性须由相应人员审查；不同模型一致也不能替代数据核验。",
+          "truncated": false
+        },
+        {
+          "path": "materials/financial_risk/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        },
+        {
+          "path": "materials/financial_risk/legacy-note.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n数据字典注明成交量为手。\n另有草稿写：旧图表标题写为股，未说明换算。\n两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "summary": "Markdown 文档摘要：数据字典注明成交量为手。；另有草稿写：旧图表标题写为股，未说明换算。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T06:07:42.612532100Z",
+    "latencyMs": 11
+  },
+  "plan": {
+    "summary": "已理解任务：针对合成价格序列生成风险分析报告模板，受众为一般学习者，不输出投资建议、不外查行情、不补真实数据。需要用户确认会影响指标定义、口径与图表呈现的若干未决参数。",
+    "questions": [
+      {
+        "id": "return_definition",
+        "question": "报告中\"日收益率\"应当采用哪种定义？请直接选择或填写希望保留的口径。",
+        "hint": "原始材料未规定收益率口径，波动、回撤和示意计算的差异会随定义改变。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "simple",
+            "label": "简单收益率",
+            "description": "本日与前一日价格差除以前一日价格；常用、易解释。",
+            "answer": "日收益率采用简单收益率，即 (今日收盘价 − 前一交易日收盘价) / 前一交易日收盘价；前一交易日缺失时该日不计算，不应用自动填充为零。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "log",
+            "label": "对数收益率",
+            "description": "本日与前一日价格的对数差；更适合连续时间假设和加总。",
+            "answer": "日收益率采用对数收益率，即 ln(今日收盘价 / 前一交易日收盘价)；前一交易日缺失时该日不计算。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "both",
+            "label": "两种并列说明",
+            "description": "在指标定义表中同时给出两种定义及差异。",
+            "answer": "指标定义表中并列给出简单收益率与对数收益率的公式，并提示二者在小幅波动下数值接近、在累计与年化口径上不同；示意计算仍以简单收益率为准。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "adjustment_policy",
+        "question": "合成序列是否登记了复权处理？请明确如何记录。",
+        "hint": "材料没有复权信息，跨日价格可比性受影响；不替用户默认补全。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "unknown_keep",
+            "label": "保持未知",
+            "description": "在报告中标记复权状态为未知，不假设未复权或前复权。",
+            "answer": "复权状态在报告中标记为未知；不假设未复权或前复权，不据此调整历史价格。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确包含：保持未知。请核对适用范围后选择。"
+          },
+          {
+            "id": "none_apply",
+            "label": "视为无复权",
+            "description": "把序列视为无分红拆股调整，直接使用原始价格。",
+            "answer": "复权状态视为无（合成资料未声明发生分红拆股），直接使用原始价格，不调整历史数据。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "user_fill",
+            "label": "由用户填写",
+            "description": "在指标定义表留空，等待用户填入复权说明后再生成计算。",
+            "answer": "在指标定义表预留复权字段为空白，标记为待用户提供；收到说明前不进行跨日比较与年化换算。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "volume_unit_conflict",
+        "question": "成交量单位冲突（字典为\"手\"、旧图标题为\"股\"）应如何处理？",
+        "hint": "资料未给出换算比例，不能擅自换算；需明确报告如何标注与使用。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "keep_dict_unit",
+            "label": "以\"手\"为准",
+            "description": "报告统一采用字典的\"手\"，旧标题标记为待修订。",
+            "answer": "成交量单位以数据字典为准（合成手数）；旧图表标题\"股\"标记为待修订单位，未提供换算前不换算成股。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "flag_conflict",
+            "label": "保留冲突提示",
+            "description": "在图表中并列两个单位并提示冲突，由读者按上下文判断。",
+            "answer": "图表与定义表同时列出手与股两个单位，并明示当前存在单位冲突、未提供换算比例；示意计算不依赖换算。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "ask_each_time",
+            "label": "逐项询问",
+            "description": "在每张量价图前要求确认使用哪个单位。",
+            "answer": "每张涉及成交量的图表在使用前提示读者确认采用\"手\"还是\"股\"；未确认前不绘制量价关系示意。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "drawdown_baseline",
+        "question": "回撤分析的基准如何设定？",
+        "hint": "材料只能使用样本内峰值，样本外历史峰值没有依据。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "in_sample_peak",
+            "label": "样本内峰值",
+            "description": "回撤以二十个交易日内的最高收盘价作为基准。",
+            "answer": "回撤以样本内最高收盘价为基准，回撤率 = (样本内峰值 − 当日收盘价) / 样本内峰值；样本外历史峰值不参与。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确包含：样本内峰值。请核对适用范围后选择。"
+          },
+          {
+            "id": "expanding_peak",
+            "label": "滚动峰值",
+            "description": "回撤以截至当日为止的滚动最高价为基准，逐日更新。",
+            "answer": "回撤以截至当日为止的滚动最高价为基准，逐日更新；并附说明该口径对样本规模依赖较强。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "skip_drawdown",
+            "label": "暂不报告",
+            "description": "样本过短不报告回撤，仅提示样本限制。",
+            "answer": "不计算回撤；在样本限制与数据核查清单中提示二十个交易日样本不足以支持回撤指标，并解释可能的原因。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "annualization_policy",
+        "question": "波动率是否给出年度换算？",
+        "hint": "样本仅二十个交易日且未规定年化方法，不擅自年化。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "no_annual",
+            "label": "不年化",
+            "description": "仅报告日度标准差等指标，年化值留待更多样本。",
+            "answer": "波动率仅报告日度标准差与日度区间；不输出年化波动率、不计算确定年化值，提示样本不足。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "annual_with_note",
+            "label": "年化并注明",
+            "description": "按 252 交易日年化标准差，并在显著位置标注假设与样本限制。",
+            "answer": "年化波动率采用日度标准差 × √252 示意，并在图旁与定义表中标注假设 252 交易日与样本仅二十个交易日的限制。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "user_provides",
+            "label": "由用户指定",
+            "description": "在模板中留空年化公式，等待用户提供后再生成。",
+            "answer": "年化波动率字段在指标定义表中留空，标注待用户提供年化方法与交易日数假设后再生成；当前不填入具体数值。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "missing_volume_handling",
+        "question": "成交量缺失或为零时，量价关系示意如何处理？",
+        "hint": "缺失与零值是两种状态，不能混同。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "separate_states",
+            "label": "区分两种状态",
+            "description": "在图表与清单中分别标出零值与未登记，不作流动性结论。",
+            "answer": "图表与数据核查清单区分\"成交量为零\"与\"成交量未登记\"；二者均不解释为流动性枯竭或其他市场结论。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "skip_volume_view",
+            "label": "不绘制量价图",
+            "description": "为避免歧义，模板中不绘制量价关系图，仅提供价格序列图。",
+            "answer": "模板不绘制量价关系图；仅提供价格序列、收益率序列与回撤示意，成交量字段保留在数据核查清单中等待登记完整性。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "flag_only",
+            "label": "仅作缺口标记",
+            "description": "图上仅以不同颜色区分缺失与零值，不附说明。",
+            "answer": "量价图以不同颜色标注缺失与零值，并在图例处注明状态区别；不作流动性或市场结构推断。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "calendar_basis",
+        "question": "交易日序列与日历的关系应如何呈现？",
+        "hint": "附件只有二十个交易日序号，无完整日历，不能插值或补休市日。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "trade_day_index",
+            "label": "按交易日序号",
+            "description": "横轴用 1 至 20 的交易日序号，不映射到自然日。",
+            "answer": "图表横轴采用 1 至 20 的交易日序号，不映射到自然日；不插值，不补休市日。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "provided_dates",
+            "label": "使用提供日期",
+            "description": "若附件含日期字符串则直接用作横轴，无则留空。",
+            "answer": "横轴优先采用附件提供的日期字符串；若附件无日期则留空并提示缺少日历资料，不自行生成日期。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "user_supplies_calendar",
+            "label": "由用户提供",
+            "description": "日历映射留待用户提供休市日后进行。",
+            "answer": "图表横轴不预设日期，模板中预留待用户提供休市日表后再映射；在收到前仅以交易日序号占位。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "audience_depth",
+        "question": "面向\"一般学习者\"的通俗程度希望定在哪一档？",
+        "hint": "影响风险指标解释的详略与术语注解深度，但不影响是否提供投资建议的红线。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "plain",
+            "label": "完全通俗",
+            "description": "每个指标附日常比喻与例子，回避专业术语。",
+            "answer": "风险指标使用日常语言与比喻解释；首次出现专业术语时附简明定义，不依赖数学公式。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "balanced",
+            "label": "通俗加注释",
+            "description": "通俗叙述为主，关键指标附简短公式与脚注。",
+            "answer": "通俗叙述为主，关键指标在脚注或方框中给出公式与简短解释；保留少量专业词汇并即时注解。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "technical_appendix",
+            "label": "附技术附录",
+            "description": "正文通俗，另设技术附录列完整公式。",
+            "answer": "正文保持通俗；附录列出指标完整公式与计算步骤，供进阶读者参考；正文不展示推导细节。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "tokenhub",
+      "model": "tokenhub:minimax-m3",
+      "mock": false,
+      "modelVersion": "MiniMax-M3"
+    },
+    "latencyMs": 31803,
+    "planId": "bf3e74f4-536d-422f-85c6-7c0ffab36647",
+    "planningContext": {
+      "contextId": "1835a4d8-4750-4908-af8f-42b7d3c9a305",
+      "version": "sha256:143297eac1d961a2ce11f41476cd47f514a5ba0d9438167687ccc2949fc4f952"
+    },
+    "expiresAt": "2026-10-05T06:07:42.612532100Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-11-L-tokenhub_minimax-m3-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "b8625ed7-acc5-4b40-8a41-121fef2f3ea7",
+      "elapsedMs": 55
+    },
+    {
+      "label": "CD-11-L-tokenhub_minimax-m3-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "8e0d7fbf-3ccc-4c81-8226-410c87b12a29",
+      "elapsedMs": 31865
+    }
+  ]
+}

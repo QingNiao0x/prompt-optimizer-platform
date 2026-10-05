@@ -90,19 +90,36 @@ final class PlanningConflictIdentity {
         if (text.equals(canonical(leftValue))) return Optional.of(canonical(leftValue));
         if (text.equals(canonical(rightValue))) return Optional.of(canonical(rightValue));
         List<String> selected = new ArrayList<>();
-        for (String clause : text.split("[，,。；;\\n]")) {
-            if (!clause.matches("^(?:本次|最终|请|决定)?(?:以|采用|用|使用|选择|选定|按照|按).+")) continue;
-            if (clause.matches(".*(?:不采用|不用|不选|不要|不以|不能|未确定|如果|假如|可能|或者|还是|是否|待确认|再确认|都可以).*")) continue;
-            if (hasNewCondition(clause)) continue;
-            for (String value : List.of(leftValue, rightValue)) {
-                if (containsCompleteValue(clause, canonical(value))
-                        || RuleBoundary.parse(value).filter(rule -> rule.matchesSelection(clause)).isPresent()) {
-                    selected.add(canonical(value));
+        for (String sentence : text.split("[。；;\\n]")) {
+            boolean conditionalPrefix = false;
+            for (String originalClause : sentence.split("[，,]")) {
+                String clause = selectionClause(originalClause);
+                // 逗号不能切断“如果批准，采用A”的前提；另一完整句仍可给出独立明确选择。
+                if (clause.matches(".*(?:如果|假如|仅当|前提是|须待|若.{0,20}批准).*")) conditionalPrefix = true;
+                if (conditionalPrefix || !clause.matches("^(?:本次|最终|请|决定)?(?:以|采用|用|使用|选择|选定|按照|按).+")) continue;
+                if (clause.matches(".*(?:不采用|不用|不选|不要|不以|不能|未确定|如果|假如|可能|或者|还是|是否|待确认|再确认|都可以).*")) continue;
+                if (hasNewCondition(clause)) continue;
+                for (String value : List.of(leftValue, rightValue)) {
+                    if (containsCompleteValue(clause, canonical(value))
+                            || RuleBoundary.parse(value).filter(rule -> rule.matchesSelection(clause)).isPresent()) {
+                        selected.add(canonical(value));
+                    }
                 }
             }
         }
         var unique = selected.stream().distinct().toList();
         return unique.size() == 1 ? Optional.of(unique.getFirst()) : Optional.empty();
+    }
+
+    /**
+     * 自定义长回答可包含列表、强调和“我的最终决定是”；只规范化明确选择句的展示前缀。
+     * 不去掉否定、条件、机构名、数值或比较符，未决和多值选择仍由原校验拒绝。
+     */
+    private static String selectionClause(String text) {
+        return text.replaceAll("[`*]", "")
+                .replaceFirst("^(?:[-#]+|\\d+[.)、])", "")
+                .replaceFirst("^(?:我的|用户的)?(?:本次|最终)?(?:明确)?(?:选择|决定|结论|答复)(?:是|为)?[：:]", "")
+                .replaceFirst("^(?:本次|最终)?(?:已确认|确认)[：:]?(?=采用|使用|选择|选定|以|按)", "");
     }
 
     /** 只有绑定时的完整来源和取值对可被旧选择解决；新来源即使复述旧值仍需核对。 */

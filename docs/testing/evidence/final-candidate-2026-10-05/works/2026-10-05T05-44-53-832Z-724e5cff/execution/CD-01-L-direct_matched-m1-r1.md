@@ -1,0 +1,372 @@
+# 地区基线自动匹配与表单补值实现方案
+
+**文档状态**：方案草稿，仅用于只读分析与后续实施参考。  
+**适用对象**：合成公共卫生调查录入系统。  
+**读者**：负责实现、测试与评审该补值功能的后端、前端及测试人员。  
+**边界**：本文不运行命令、不修改项目、不部署；不查询真实个人信息；不产生代码修改和数据库迁移。
+
+
+## 1. 背景与现有调用关系
+
+### 1.1 系统现状
+
+| 项目 | 现状 |
+|---|---|
+| 后端 | Java 21、Spring Boot 3、MyBatis-Plus、PostgreSQL |
+| 前端 | Vue 3、TypeScript |
+| 调查模块 | 基础调查、追踪调查 |
+| 补值服务 | 两个模块复用同一份补值服务 |
+| 现有查询接口 | 返回候选摘要 |
+| 现有详情接口 | 返回单条记录的补值字段 |
+| 鉴权与路由 | 保持现有行为兼容，不在本方案中变更 |
+
+### 1.2 两个模块如何复用同一补值服务
+
+- 基础调查页面进入编辑状态时，根据当前已有的姓名与证件号发起候选查询。
+- 追踪调查页面通过路由参数定位当前调查记录，但路由参数不能直接当作基线记录编号。
+- 两个模块都调用同一个补值服务入口，服务必须接收明确的身份键（姓名、证件号）与当前地区，不暗中读取另一个页面状态。
+- 补值服务不区分调用方是基础调查还是追踪调查；调用方负责传入正确的身份键、地区、目标表单字段当前值以及用户确认的候选编号。
+
+### 1.3 现有接口与行为
+
+| 接口/行为 | 说明 |
+|---|---|
+| 候选查询接口 | 入参：姓名、证件号、当前地区；返回候选摘要列表 |
+| 详情接口 | 入参：候选记录编号；返回该记录的补值字段 |
+| 路由 | 基础调查、追踪调查各自现有路由保持不变 |
+| 鉴权 | 沿用现有鉴权行为，本方案不改变 |
+
+### 1.4 材料对应表
+
+| 材料 | 作用 | 覆盖范围 |
+|---|---|---|
+| materials/software/current-brief.md | 直接说明地区匹配表单安全补值的业务条件 | 匹配键、地区条件、白名单、排序、空值规则、取消规则、详情一致性、时序保护、异常提示 |
+| materials/software/tests/layout-example.txt | 仅排版与来源识别测试例子 | 不进入事实清单；CSV、Python、收入、准确率等内容不是本题事实 |
+
+**确定可采用的信息**：current-brief.md 中与本题直接相关的全部业务规则。  
+**无法核验的部分**：候选记录地区信息缺失时的处理策略，用户已明确回答“暂不确定”。  
+**明确冲突**：未发现材料之间的冲突。layout-example.txt 中的示例内容与本题业务无关，不作为事实。
+
+
+## 2. 两个模块共用的处理步骤
+
+### 2.1 候选查询
+
+1. 页面进入编辑状态，或用户主动触发补值。
+2. 前端收集当前身份键：姓名、证件号。
+3. 前端收集当前用户所属地区。
+4. 调用候选查询接口，传入姓名、证件号、地区。
+5. 查询接口按地区条件过滤；地区缺失的记录不能视为地区匹配成功。
+6. 查询结果按更新时间降序排列；更新时间相同按记录编号升序排列。
+7. 分页加载或重试后顺序必须稳定，不得随机变化。
+
+### 2.2 候选摘要展示
+
+- 候选摘要包含：编号、地区、更新时间、姓名掩码。
+- 确认框不得展示完整证件号。
+- 无候选时不弹确认框。
+- 有匹配候选时必须询问用户，不得自动写入。
+- 地区缺失、确无候选、明确地区不符三种情况分别说明：
+  - 确无候选：查询成功但无满足条件的记录。
+  - 明确地区不符：查询结果中存在身份键匹配但地区不匹配的记录，不作为候选返回。
+  - 地区缺失无法核验：当前未决，暂不默认补全；实施前需确认处理策略。
+
+### 2.3 用户确认
+
+- 用户在候选摘要列表中选择一条候选并确认。
+- 前端记录用户确认的候选编号。
+- 确认后进入写入前获取最新详情步骤。
+
+### 2.4 写入前获取最新详情
+
+- 前端调用详情接口，传入用户确认的候选编号。
+- 详情接口返回该记录的补值字段及记录编号。
+- 前端校验详情接口返回的编号与用户确认的编号一致。
+- 若不一致，停止写入并提示信息不一致。
+- 若详情接口失败，保留原值并显示面向录入人员的失败提示，不伪装为没有匹配记录。
+
+### 2.5 字段补值
+
+- 仅允许写入白名单字段：联系电话、职业类别、常住地址。
+- 对每个白名单字段，仅当目标值为 null 或空字符串时允许补入来源值。
+- 0、false 和非空字符串都是有效原值，必须保留。
+- 职业类别为数值零时是有效类别，不能因 JavaScript 假值判断触发替换。
+- 目标联系电话为空、来源电话有值时可以补入；目标电话已有值时即使来源更新也不得覆盖；目标电话为空且来源也为空时保持空值，不制造占位号码。
+- 常住地址是单个字符串字段，不包含户籍地址、单位地址或紧急联系人地址。
+
+### 2.6 取消与异常分支
+
+- 用户点击取消：保持全部字段原值不变。
+- 用户关闭弹窗：不得补写字段。
+- 用户离开编辑页面：不得补写字段。
+- 页面已保存的原值和当前未保存的编辑值都不能因取消动作被清空。
+- 网络失败：提示面向录入人员，说明本次未执行补值且原数据保留；不附带内部堆栈、数据库错误文本或上游服务地址。
+- 日志只记录稳定错误类型和请求标识，不记录姓名或证件号原文。
+
+
+## 3. 字段写入与异常分支伪代码
+
+### 3.1 前端候选查询与时序保护
+
+```
+// 前端状态
+let latestRequestId = 0
+let confirmedCandidateId = null
+let candidateList = []
+
+function onIdentityKeyChanged() {
+  // 用户修改姓名或证件号
+  latestRequestId = latestRequestId + 1
+  confirmedCandidateId = null
+  candidateList = []
+  // 之前的候选必须失效，不能沿用旧身份对应的详情
+}
+
+async function queryCandidates(name, idNumber, region) {
+  const requestId = ++latestRequestId
+  try {
+    const response = await candidateQueryApi({ name, idNumber, region })
+    // 时序保护：迟到的旧请求必须失效
+    if (requestId !== latestRequestId) {
+      return // 丢弃旧请求结果
+    }
+    candidateList = response.candidates
+    // 排序：更新时间降序，时间相同按记录编号升序
+    candidateList.sort((a, b) => {
+      if (a.updatedAt !== b.updatedAt) {
+        return b.updatedAt.localeCompare(a.updatedAt)
+      }
+      return a.recordId.localeCompare(b.recordId)
+    })
+    if (candidateList.length > 0) {
+      showCandidateDialog(candidateList)
+    }
+  } catch (error) {
+    if (requestId !== latestRequestId) {
+      return // 旧请求失败也丢弃
+    }
+    showFriendlyError("本次未执行补值，原数据保留。请稍后重试。")
+    logStableError("CANDIDATE_QUERY_FAILED", requestId)
+  }
+}
+```
+
+### 3.2 用户确认与详情获取
+
+```
+async function onUserConfirmCandidate(candidate) {
+  confirmedCandidateId = candidate.recordId
+  try {
+    const detail = await detailApi({ recordId: confirmedCandidateId })
+    // 详情编号一致性校验
+    if (detail.recordId !== confirmedCandidateId) {
+      showFriendlyError("候选信息不一致，本次未执行补值，原数据保留。")
+      logStableError("DETAIL_ID_MISMATCH", confirmedCandidateId)
+      return
+    }
+    applyFillValues(detail)
+  } catch (error) {
+    showFriendlyError("本次未执行补值，原数据保留。请稍后重试。")
+    logStableError("DETAIL_FETCH_FAILED", confirmedCandidateId)
+  }
+}
+```
+
+### 3.3 字段补值核心逻辑
+
+```
+// 白名单字段
+const ALLOWED_FIELDS = ["contactPhone", "occupationCategory", "permanentAddress"]
+
+function isEmptyValue(value) {
+  // 明确空值判断：仅 null 或空字符串视为空
+  return value === null || value === ""
+}
+
+function applyFillValues(detail) {
+  for (const field of ALLOWED_FIELDS) {
+    const targetValue = currentForm[field]
+    const sourceValue = detail[field]
+
+    if (isEmptyValue(targetValue) && !isEmptyValue(sourceValue)) {
+      currentForm[field] = sourceValue
+    }
+    // 目标已有值：不覆盖
+    // 目标为空且来源为空：保持空值，不制造占位号码
+    // 目标为 0 或 false：不是空值，保留
+  }
+}
+```
+
+### 3.4 取消与离开页面
+
+```
+function onCancelOrClose() {
+  // 保持全部字段原值不变
+  // 不调用 applyFillValues
+  // 不清空页面已保存的原值和当前未保存的编辑值
+  confirmedCandidateId = null
+  closeDialog()
+}
+
+function onLeaveEditPage() {
+  // 不得补写字段
+  // 不清空页面已保存的原值和当前未保存的编辑值
+  confirmedCandidateId = null
+  closeDialog()
+}
+```
+
+### 3.5 后端候选查询伪代码
+
+```
+function queryCandidates(name, idNumber, region) {
+  // 校验输入
+  if (isEmpty(name) || isEmpty(idNumber) || isEmpty(region)) {
+    return { candidates: [] } // 或返回明确参数错误，不伪装为无候选
+  }
+
+  // 匹配使用姓名与证件号两个键
+  // 记录必须符合当前用户所属地区条件
+  // 两个条件都满足才属于可补值候选
+  let records = db.query(
+    "SELECT record_id, region, updated_at, name FROM baseline_records " +
+    "WHERE name = ? AND id_number = ? AND region = ?",
+    [name, idNumber, region]
+  )
+
+  // 排序：更新时间降序，时间相同按记录编号升序
+  records.sort((a, b) => {
+    if (a.updatedAt !== b.updatedAt) {
+      return b.updatedAt.localeCompare(a.updatedAt)
+    }
+    return a.recordId.localeCompare(b.recordId)
+  })
+
+  // 返回候选摘要：编号、地区、更新时间、姓名掩码
+  return records.map(r => ({
+    recordId: r.recordId,
+    region: r.region,
+    updatedAt: r.updatedAt,
+    maskedName: maskName(r.name)
+  }))
+}
+```
+
+### 3.6 后端详情接口伪代码
+
+```
+function getDetail(recordId) {
+  const detail = db.query(
+    "SELECT record_id, contact_phone, occupation_category, permanent_address " +
+    "FROM baseline_records WHERE record_id = ?",
+    [recordId]
+  )
+  if (detail == null) {
+    throw new NotFoundError("DETAIL_NOT_FOUND")
+  }
+  return {
+    recordId: detail.recordId,
+    contactPhone: detail.contactPhone,
+    occupationCategory: detail.occupationCategory,
+    permanentAddress: detail.permanentAddress
+  }
+}
+```
+
+### 3.7 日志与错误处理
+
+```
+function logStableError(errorType, requestId) {
+  // 只记录稳定错误类型和请求标识
+  // 不记录姓名或证件号原文
+  logger.error({
+    type: errorType,
+    requestId: requestId
+  })
+}
+
+function showFriendlyError(message) {
+  // 面向录入人员，不附带内部堆栈、数据库错误文本或上游服务地址
+  displayMessage(message)
+}
+```
+
+
+## 4. 按业务行为组织的测试表
+
+### 4.1 正常场景
+
+| 测试编号 | 业务行为 | 前置条件 | 操作 | 预期结果 | 状态 |
+|---|---|---|---|---|---|
+| N-01 | 候选查询成功 | 存在姓名、证件号、地区均匹配的记录 | 进入编辑状态触发查询 | 返回候选摘要列表，按更新时间降序、编号升序排列 | 待实施 |
+| N-02 | 候选摘要展示 | 查询返回多条候选 | 查看候选列表 | 显示编号、地区、更新时间、姓名掩码；不显示完整证件号 | 待实施 |
+| N-03 | 用户确认后补值 | 目标联系电话为空，来源电话有值 | 用户确认候选 | 联系电话补入来源值 | 待实施 |
+| N-04 | 目标已有值不覆盖 | 目标联系电话已有值，来源电话更新 | 用户确认候选 | 目标电话保持原值 | 待实施 |
+| N-05 | 职业类别为零保留 | 目标职业类别为 0，来源职业类别为其他值 | 用户确认候选 | 职业类别保持 0，不触发替换 | 待实施 |
+| N-06 | 目标为空来源为空保持空 | 目标电话为空，来源电话为空 | 用户确认候选 | 电话保持空值，不制造占位号码 | 待实施 |
+| N-07 | 详情编号一致 | 详情接口返回编号与确认候选一致 | 用户确认候选 | 正常补值 | 待实施 |
+| N-08 | 取消保持原值 | 用户已确认候选但未写入 | 用户点击取消 | 全部字段原值不变，未保存编辑值不清空 | 待实施 |
+
+### 4.2 异常场景
+
+| 测试编号 | 业务行为 | 前置条件 | 操作 | 预期结果 | 状态 |
+|---|---|---|---|---|---|
+| E-01 | 详情编号不一致 | 详情接口返回另一条编号 | 用户确认候选后获取详情 | 停止写入，提示信息不一致 | 待实施 |
+| E-02 | 查询接口失败 | 网络异常 | 触发候选查询 | 保留原值，显示面向录入人员的失败提示，不伪装为无候选 | 待实施 |
+| E-03 | 详情接口失败 | 网络异常 | 用户确认后获取详情 | 保留原值，显示失败提示 | 待实施 |
+| E-04 | 用户修改姓名后旧请求迟到 | 候选请求未结束，用户修改姓名 | 旧请求返回 | 旧请求结果失效，不展示旧候选 | 待实施 |
+| E-05 | 用户关闭弹窗 | 候选弹窗打开 | 用户关闭弹窗 | 不补写字段，原值不清空 | 待实施 |
+| E-06 | 用户离开编辑页面 | 候选弹窗打开 | 用户离开页面 | 不补写字段，原值不清空 | 待实施 |
+| E-07 | 日志不泄露身份信息 | 查询或详情失败 | 查看日志 | 日志仅含稳定错误类型和请求标识，不含姓名或证件号原文 | 待实施 |
+
+### 4.3 边界场景
+
+| 测试编号 | 业务行为 | 前置条件 | 操作 | 预期结果 | 状态 |
+|---|---|---|---|---|---|
+| B-01 | 更新时间相同按编号排序 | 两条候选更新时间相同 | 查询候选 | 按记录编号升序排列，分页或重试后顺序稳定 | 待实施 |
+| B-02 | 目标值为 false 保留 | 目标字段为 false，来源有值 | 用户确认候选 | 目标字段保持 false | 待实施 |
+| B-03 | 目标值为空字符串可补入 | 目标字段为 ""，来源有值 | 用户确认候选 | 补入来源值 | 待实施 |
+| B-04 | 目标值为 null 可补入 | 目标字段为 null，来源有值 | 用户确认候选 | 补入来源值 | 待实施 |
+| B-05 | 地区缺失不是匹配成功 | 候选记录地区信息缺失 | 查询候选 | 该记录不作为候选返回；与确无候选、明确地区不符分别说明 | 待实施 |
+| B-06 | 无候选不弹确认框 | 查询成功但无满足条件记录 | 触发查询 | 不弹确认框 | 待实施 |
+| B-07 | 有候选必须询问 | 查询返回至少一条候选 | 触发查询 | 弹确认框，不自动写入 | 待实施 |
+| B-08 | 白名单字段不扩张 | 来源记录含户籍地址等字段 | 用户确认候选 | 仅写入联系电话、职业类别、常住地址 | 待实施 |
+| B-09 | 追踪调查路由参数不作基线编号 | 追踪调查页面路由参数存在 | 进入追踪调查编辑 | 补值服务接收明确身份键与地区，不读取路由参数作为基线编号 | 待实施 |
+
+### 4.4 未决条件测试占位
+
+| 测试编号 | 业务行为 | 前置条件 | 操作 | 预期结果 | 状态 |
+|---|---|---|---|---|---|
+| U-01 | 候选地区信息缺失处理策略 | 候选记录地区信息缺失，无法核验当前地区条件 | 查询候选 | 待确认：暂不默认补全；实施前需确认处理策略 | 未决 |
+
+
+## 5. 交接摘要
+
+### 5.1 采用的资料
+
+| 资料 | 用途 |
+|---|---|
+| materials/software/current-brief.md | 直接业务规则来源：匹配键、地区条件、白名单、排序、空值规则、取消规则、详情一致性、时序保护、异常提示 |
+
+### 5.2 被排除的无关示例
+
+| 资料 | 排除原因 |
+|---|---|
+| materials/software/tests/layout-example.txt | 仅排版与来源识别测试例子；CSV、Python、收入、准确率等内容不是本题事实 |
+
+### 5.3 尚缺的关键证据
+
+| 未决事项 | 影响范围 | 所需资料或决策 |
+|---|---|---|
+| 候选记录地区信息缺失、无法核验当前地区条件时的处理策略 | 地区匹配分支、候选展示、写入逻辑 | 需业务方确认：是排除、标记为待核验、还是其他处理方式 |
+
+### 5.4 明确冲突
+
+未发现材料之间的明确冲突。
+
+### 5.5 状态说明
+
+- **已有充分依据可以直接使用**：匹配键、地区条件、白名单、排序、空值规则、取消规则、详情一致性、时序保护、异常提示。
+- **仅作为候选建议需要选择**：无。
+- **因缺少关键资料暂不能执行**：候选地区信息缺失时的处理策略。

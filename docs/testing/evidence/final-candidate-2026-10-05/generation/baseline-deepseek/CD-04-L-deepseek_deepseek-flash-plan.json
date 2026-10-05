@@ -1,0 +1,405 @@
+{
+  "id": "CD-04-L-deepseek_deepseek-flash-plan",
+  "caseId": "CD-04-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T05:03:10.304Z",
+  "prepared": {
+    "contextId": "fdf62e74-4332-40cf-b125-cf1ef21b4051",
+    "version": "sha256:775ae6be3a9ef2b162987b2187872b892c9f9c6f4c517ab8f864969f05b61452",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/public_report/",
+        "materials/public_report/current-brief.md",
+        "materials/public_report/legacy-note.md",
+        "materials/public_report/tests/",
+        "materials/public_report/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/public_report/current-brief.md：Markdown 文档摘要：公共服务试点阶段总结：合成现行资料；本题需要总结材料与整改建议，不包含正式发文版式、落款机关、公章或法律效力声明。；三月记录了窗口培训和说明书更新，两者属于已开展活动；它们对投诉变化的贡献没有单独测量，需要把工作动作与效果证据分别陈述。；部分件数属于重复补交资料后的再次受理，附件没有稳定个人标识；报告应明确目前只能统计事件，不展示所谓用户去重效果。；报告附件应让与会人员能看清哪些结论可直接采用、哪些需要核对；不能用很多泛化免责声明掩盖具体数据缺口。；业务摘录：整改建议可以提出改进登记字段、发布口径表和建立定期复核，不得承诺未经批准的新增编制、采购预算或软件建设期限。；报告既要体现改进效果，也要如实保留积压和登记缺失问题，不使用全面领先、零投诉等无依据表述。；试点范围为两个服务大厅和线上预约入口，台账记录的是受理件数，不等于独立服务人数。；[片段 1/1]；四月积压案件的统计规则在两份材料中不同，不能只选数字更好看的口径；；不能用很多泛化免责声明掩盖具体数据缺口。",
+        "[PROJECT_DOCUMENT] materials/public_report/legacy-note.md：Markdown 文档摘要：台账说明积压指超过5个工作日未办结。；另有草稿写：会议纪要建议超过3个工作日计入积压，未注明生效。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。；业务摘录：[片段 1/1] 台账说明积压指超过5个工作日未办结。 另有草稿写：会议纪要建议超过3个工作日计入积压，未注明生效。 两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 3,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/public_report/current-brief.md",
+          "evidence": "整改建议可以提出改进登记字段、发布口径表和建立定期复核，不得承诺未经批准的新增编制、采购预算或软件建设期限"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/public_report/current-brief.md",
+          "evidence": "会议材料中的将上线自助终端是下一步设想，不应列入本期已实现成效"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/public_report/current-brief.md",
+          "evidence": "每个成效段至少对应可核验台账项，争议数字不放在醒目的标题中"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/public_report/",
+        "materials/public_report/current-brief.md",
+        "materials/public_report/legacy-note.md",
+        "materials/public_report/tests/",
+        "materials/public_report/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/public_report/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 公共服务试点阶段总结：合成现行资料\n试点范围为两个服务大厅和线上预约入口，台账记录的是受理件数，不等于独立服务人数。\n资料中响应时间单位为工作日，零表示当天响应；空白表示未登记，不能当作零。\n报告既要体现改进效果，也要如实保留积压和登记缺失问题，不使用全面领先、零投诉等无依据表述。\n本题需要总结材料与整改建议，不包含正式发文版式、落款机关、公章或法律效力声明。\n\n# 分支与边界\n大厅甲和大厅乙的受理台账都按提交日期记录件数，线上预约只有预约次数；同一群众先线上预约再到大厅办理，会产生不同类型记录，不能简单相加为独立人数。\n一月受理增长与试点启动宣传同期发生，但没有对照组；报告可以列示同步变化，不能把宣传写成增长的确定原因。\n二月部分事项因节假日延长等待，工作日口径不能被改成自然日；附件未给出逐日数据，不能反推每天的平均响应曲线。\n三月记录了窗口培训和说明书更新，两者属于已开展活动；它们对投诉变化的贡献没有单独测量，需要把工作动作与效果证据分别陈述。\n四月积压案件的统计规则在两份材料中不同，不能只选数字更好看的口径；会议总结应说明无法直接比较，整改部分可建议统一定义。\n五月新增了电话回访，但没有抽样框、回答人数和拒访记录；即使会议记录出现效果不错，也不能转写为量化满意率。\n六月台账中的空响应时间不是当天办理，报告应保留登记覆盖度问题；直接删除这些行会使平均值偏向完整记录，需说明样本边界。\n部分件数属于重复补交资料后的再次受理，附件没有稳定个人标识；报告应明确目前只能统计事件，不展示所谓用户去重效果。\n整改建议可以提出改进登记字段、发布口径表和建立定期复核，不得承诺未经批准的新增编制、采购预算或软件建设期限。\n会议材料中的将上线自助终端是下一步设想，不应列入本期已实现成效；可以在计划章节说明依赖场地和预算审核。\n文字风格应务实，避免将一个窗口的经验夸大为全市推广成果；每个成效段至少对应可核验台账项，争议数字不放在醒目的标题中。\n报告附件应让与会人员能看清哪些结论可直接采用、哪些需要核对；不能用很多泛化免责声明掩盖具体数据缺口。",
+          "summary": "Markdown 文档摘要：公共服务试点阶段总结：合成现行资料；本题需要总结材料与整改建议，不包含正式发文版式、落款机关、公章或法律效力声明。；三月记录了窗口培训和说明书更新，两者属于已开展活动；它们对投诉变化的贡献没有单独测量，需要把工作动作与效果证据分别陈述。；部分件数属于重复补交资料后的再次受理，附件没有稳定个人标识；报告应明确目前只能统计事件，不展示所谓用户去重效果。；报告附件应让与会人员能看清哪些结论可直接采用、哪些需要核对；不能用很多泛化免责声明掩盖具体数据缺口。",
+          "truncated": false
+        },
+        {
+          "path": "materials/public_report/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        },
+        {
+          "path": "materials/public_report/legacy-note.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n台账说明积压指超过5个工作日未办结。\n另有草稿写：会议纪要建议超过3个工作日计入积压，未注明生效。\n两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "summary": "Markdown 文档摘要：台账说明积压指超过5个工作日未办结。；另有草稿写：会议纪要建议超过3个工作日计入积压，未注明生效。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T05:33:10.326196200Z",
+    "latencyMs": 27
+  },
+  "plan": {
+    "summary": "已理解需为合成甲市公共服务中心编写二〇二六年一至六月试点阶段总结报告（会议讨论版），并附数据口径与缺失说明表、问题及拟议整改措施对照、需核查的口径清单；正文一千五百至两千字，分工作成效、问题分析、改进安排三部分，所有数字仅限本中心试点范围。资料中已明确不比较去年同期、不采用任一积压口径、不将空值当零、不写满意率等硬约束，但仍有几项会改变报告内容与口径呈现的业务决定需要确认。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "本次报告是否需要与去年同期做比较？如果做，是否有同口径的基期台账可用？",
+        "hint": "这决定报告能否出现同比变化或提升比例，以及是否需要新增基期数据说明；若没有同口径基期台账，只能做本期内部描述。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "不做同比，仅描述本期",
+            "description": "报告只呈现二〇二六年一至六月试点范围内的数据，不涉及去年同期。",
+            "answer": "本次报告不做与去年同期的比较，仅描述二〇二六年一至六月试点范围内的数据。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "做同比，已有同口径基期台账",
+            "description": "报告需加入与去年同期的对比，且基期台账口径与本期一致。",
+            "answer": "本次报告需要与去年同期比较，且已有同口径的基期台账可供使用。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "做同比，但基期口径不同",
+            "description": "报告需加入与去年同期的对比，但基期台账口径与本期不一致，需在报告中说明不可直接比较。",
+            "answer": "本次报告需要与去年同期比较，但基期台账口径与本期不一致，报告中应说明不可直接比较。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "四月积压案件在两份材料中口径不同（台账为超过5个工作日未办结，会议纪要建议超过3个工作日计入积压且未注明生效）。本次报告应如何处理这一差异？",
+        "hint": "这决定积压数字如何呈现、能否直接比较，以及整改部分是否建议统一定义。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "并列呈现两口径并说明不可比",
+            "description": "报告中同时列出两种口径下的积压情况，明确说明两者不可直接比较，整改部分建议统一定义。",
+            "answer": "报告中同时列出两种口径下的积压情况，明确说明两者不可直接比较，整改部分建议统一定义。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "仅采用台账的5个工作日口径",
+            "description": "报告只按台账口径统计积压，不呈现会议纪要的3个工作日建议。",
+            "answer": "报告只按台账口径（超过5个工作日未办结）统计积压，不呈现会议纪要的3个工作日建议。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "仅采用会议纪要的3个工作日口径",
+            "description": "报告只按会议纪要建议的3个工作日口径统计积压，不呈现台账的5个工作日口径。",
+            "answer": "报告只按会议纪要建议的3个工作日口径统计积压，不呈现台账的5个工作日口径。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q3",
+        "question": "六月台账中响应时间为空白的记录，在计算平均响应时间等指标时应如何处理？",
+        "hint": "这决定平均值等指标的样本边界和登记覆盖度问题的呈现方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "排除空白并说明样本边界",
+            "description": "计算平均值时排除空白记录，同时在报告中说明登记覆盖度问题和被排除的样本量。",
+            "answer": "计算平均值时排除空白记录，同时在报告中说明登记覆盖度问题和被排除的样本量。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "将空白按零处理",
+            "description": "把空白响应时间当作当天响应（零）纳入计算。",
+            "answer": "把空白响应时间当作当天响应（零）纳入计算。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "不计算平均值，仅报告登记覆盖度",
+            "description": "不计算平均响应时间，只报告有登记记录的比例和空白数量。",
+            "answer": "不计算平均响应时间，只报告有登记记录的比例和空白数量。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q4",
+        "question": "报告正文中，台账受理件数与线上预约次数应如何呈现？",
+        "hint": "这决定报告是否会出现“独立服务人数”或“去重用户数”等表述。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "分别列示，不合并为人数",
+            "description": "台账受理件数和线上预约次数分别列示，明确说明两者不能简单相加为独立服务人数。",
+            "answer": "台账受理件数和线上预约次数分别列示，明确说明两者不能简单相加为独立服务人数。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "合并为总服务人次",
+            "description": "将台账受理件数与线上预约次数相加，作为总服务人次呈现。",
+            "answer": "将台账受理件数与线上预约次数相加，作为总服务人次呈现。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "仅列示台账受理件数",
+            "description": "报告只列示台账受理件数，不呈现线上预约次数。",
+            "answer": "报告只列示台账受理件数，不呈现线上预约次数。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q5",
+        "question": "五月新增的电话回访，在报告中应如何表述？",
+        "hint": "这决定报告是否会出现满意率或效果量化表述。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "仅作为已开展活动陈述，不量化",
+            "description": "将电话回访作为已开展的工作活动陈述，不给出满意率或效果量化结论，并说明缺少抽样框、回答人数和拒访记录。",
+            "answer": "将电话回访作为已开展的工作活动陈述，不给出满意率或效果量化结论，并说明缺少抽样框、回答人数和拒访记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "引用会议记录中的效果不错作为定性评价",
+            "description": "引用会议记录中“效果不错”的说法作为定性评价，但不给出具体满意率数字。",
+            "answer": "引用会议记录中“效果不错”的说法作为定性评价，但不给出具体满意率数字。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "计算满意率",
+            "description": "根据电话回访结果计算满意率并在报告中呈现。",
+            "answer": "根据电话回访结果计算满意率并在报告中呈现。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q6",
+        "question": "报告正文中，一月受理增长与试点启动宣传同期发生这一情况应如何表述？",
+        "hint": "这决定报告是否会将宣传写成增长的确定原因。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "仅列示同步变化，不归因",
+            "description": "报告仅列示一月受理增长与试点启动宣传同期发生这一同步变化，不将宣传写成增长的确定原因。",
+            "answer": "报告仅列示一月受理增长与试点启动宣传同期发生这一同步变化，不将宣传写成增长的确定原因。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "将宣传列为增长原因",
+            "description": "报告将试点启动宣传列为受理增长的原因。",
+            "answer": "报告将试点启动宣传列为受理增长的原因。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "不提及一月增长与宣传",
+            "description": "报告不提及一月受理增长与试点启动宣传同期发生这一情况。",
+            "answer": "报告不提及一月受理增长与试点启动宣传同期发生这一情况。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q7",
+        "question": "三月窗口培训和说明书更新对投诉变化的贡献，在报告中应如何表述？",
+        "hint": "这决定报告是否会将工作动作与效果证据混同。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "工作动作与效果证据分开陈述",
+            "description": "将窗口培训和说明书更新作为已开展活动陈述，不声称其对投诉变化有已测量的贡献。",
+            "answer": "将窗口培训和说明书更新作为已开展活动陈述，不声称其对投诉变化有已测量的贡献。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "将培训列为投诉下降原因",
+            "description": "报告将窗口培训和说明书更新列为投诉下降的原因。",
+            "answer": "报告将窗口培训和说明书更新列为投诉下降的原因。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "不提及培训与说明书更新",
+            "description": "报告不提及三月窗口培训和说明书更新。",
+            "answer": "报告不提及三月窗口培训和说明书更新。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q8",
+        "question": "会议材料中“将上线自助终端”的设想，在报告中应放在哪里？",
+        "hint": "这决定该内容是否会被误列为已实现成效。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "仅放在改进安排章节，说明依赖场地和预算审核",
+            "description": "将自助终端作为下一步设想放在改进安排章节，说明其依赖场地和预算审核，不列入本期已实现成效。",
+            "answer": "将自助终端作为下一步设想放在改进安排章节，说明其依赖场地和预算审核，不列入本期已实现成效。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "列入本期已实现成效",
+            "description": "将自助终端列入本期已实现成效。",
+            "answer": "将自助终端列入本期已实现成效。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确包含：列入本期已实现成效。请核对适用范围后选择。"
+          },
+          {
+            "id": "c",
+            "label": "不提及自助终端",
+            "description": "报告不提及自助终端这一设想。",
+            "answer": "报告不提及自助终端这一设想。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 10531,
+    "planId": "84051f88-d7fa-4dfd-af85-df5fe9da9e46",
+    "planningContext": {
+      "contextId": "fdf62e74-4332-40cf-b125-cf1ef21b4051",
+      "version": "sha256:775ae6be3a9ef2b162987b2187872b892c9f9c6f4c517ab8f864969f05b61452"
+    },
+    "expiresAt": "2026-10-05T05:33:10.326196200Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-04-L-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "63944199-7c87-477e-b13e-af5ab2bbf605",
+      "elapsedMs": 65
+    },
+    {
+      "label": "CD-04-L-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "9a030fbb-9399-436e-982b-1746412bdf00",
+      "elapsedMs": 10566
+    }
+  ]
+}

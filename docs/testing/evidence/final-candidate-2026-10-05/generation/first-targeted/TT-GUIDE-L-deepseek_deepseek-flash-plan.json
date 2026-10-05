@@ -1,0 +1,194 @@
+{
+  "id": "TT-GUIDE-L-deepseek_deepseek-flash-plan",
+  "caseId": "TT-GUIDE-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T04:34:19.840Z",
+  "prepared": {
+    "contextId": "07eb4b40-e8b0-4b2f-883c-80810865f479",
+    "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2",
+    "digest": {
+      "description": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologies": [
+        "Vue"
+      ],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] docs/产品范围.md：Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。；业务摘录：[片段 1/1] 现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。 模型由管理员发布，用户可选择可用模型但不填密钥。 扫描PDF OCR未开放。 没有自动执行、完整账号管理或专业结论承诺。",
+        "[PROJECT_SOURCE] src/Product.vue：Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>；业务摘录：[片段 1/1] <template><button>开始增强</button><button>复制</button></template>"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologyStack": [
+        {
+          "name": "Vue",
+          "source": "src/Product.vue",
+          "confidence": 0.9
+        }
+      ],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/产品范围.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。模型由管理员发布，用户可选择可用模型但不填密钥。扫描PDF OCR未开放。没有自动执行、完整账号管理或专业结论承诺。",
+          "summary": "Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。",
+          "truncated": false
+        },
+        {
+          "path": "src/Product.vue",
+          "language": "vue",
+          "content": "[片段 1/1]\n<template><button>开始增强</button><button>复制</button></template>",
+          "summary": "Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T05:04:19.970505400Z",
+    "latencyMs": 84
+  },
+  "plan": {
+    "summary": "本次目标是依据产品功能说明和项目代码，为首次使用提示词工具的非技术用户编写一篇约1800至2400字的中文操作指南，只交付可直接发布的指南正文，不涉及代码、数据库、实现计划或测试用例。材料已明确大部分内容边界，但仍有少量会直接影响指南正文准确性的业务事实需要确认。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "指南中是否需要写明“开始增强”按钮的具体位置或界面区域？",
+        "hint": "材料只证明存在“开始增强”按钮，但没有说明它在页面中的位置。若指南需要写具体位置，必须依据真实界面；若无法确认，指南将只写操作目的并提示以当前界面为准。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "不写具体位置",
+            "description": "只说明操作目的和步骤顺序，提示用户以当前界面为准，不编造按钮位置。",
+            "answer": "指南不写“开始增强”按钮的具体位置，只说明操作目的和步骤顺序，并提示以当前界面为准。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "写具体位置",
+            "description": "指南需要写明按钮在页面中的具体位置，用户将提供准确位置信息。",
+            "answer": "指南需要写明“开始增强”按钮的具体位置，用户将提供准确位置信息。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "指南中是否需要写明“复制”按钮复制结果的范围？",
+        "hint": "材料只证明存在“复制”按钮，但没有说明复制的是全部结果还是选中部分。原文要求复制应包含重要规则及未决前提，若范围不明确，指南将按“复制完整结果”表述。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "复制完整结果",
+            "description": "指南说明复制按钮会复制完整结果，包含重要规则及未决前提。",
+            "answer": "指南说明复制按钮会复制完整结果，包含重要规则及未决前提。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "复制选中部分",
+            "description": "指南说明复制按钮只复制用户选中的部分内容。",
+            "answer": "指南说明复制按钮只复制用户选中的部分内容。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "不写复制范围",
+            "description": "指南只说明可以复制，不说明复制范围。",
+            "answer": "指南只说明可以复制，不说明复制范围。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q3",
+        "question": "指南中是否需要写明历史记录中“再次增强”的操作入口或前提条件？",
+        "hint": "材料提到“再次增强”能力，但没有说明入口位置和前提条件。若指南需要写具体操作，必须依据真实界面；若无法确认，指南将只说明该能力存在并提示以当前界面为准。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "不写具体入口",
+            "description": "只说明历史记录中支持再次增强，提示以当前界面为准，不编造入口位置和前提条件。",
+            "answer": "指南只说明历史记录中支持再次增强，提示以当前界面为准，不编造入口位置和前提条件。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "写具体入口",
+            "description": "指南需要写明再次增强的具体入口和前提条件，用户将提供准确信息。",
+            "answer": "指南需要写明再次增强的具体入口和前提条件，用户将提供准确信息。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 5376,
+    "planId": "03c5467f-cd7e-4078-bae6-34127afe1619",
+    "planningContext": {
+      "contextId": "07eb4b40-e8b0-4b2f-883c-80810865f479",
+      "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2"
+    },
+    "expiresAt": "2026-10-05T05:04:19.970505400Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "TT-GUIDE-L-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "8d8a24b5-cd78-42e2-990e-d0bbecb54384",
+      "elapsedMs": 215
+    },
+    {
+      "label": "TT-GUIDE-L-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "8d574fe5-cb13-4cc4-a09a-59a715aa98b7",
+      "elapsedMs": 5422
+    }
+  ]
+}

@@ -1,0 +1,278 @@
+{
+  "id": "CV-GUIDE-L-deepseek_deepseek-flash-plan",
+  "caseId": "CV-GUIDE-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T06:32:05.878Z",
+  "prepared": {
+    "contextId": "85e73044-fd1d-4d40-905b-11b48110a9ac",
+    "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2",
+    "digest": {
+      "description": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologies": [
+        "Vue"
+      ],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] docs/产品范围.md：Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。；业务摘录：[片段 1/1] 现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。 模型由管理员发布，用户可选择可用模型但不填密钥。 扫描PDF OCR未开放。 没有自动执行、完整账号管理或专业结论承诺。",
+        "[PROJECT_SOURCE] src/Product.vue：Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>；业务摘录：[片段 1/1] <template><button>开始增强</button><button>复制</button></template>"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologyStack": [
+        {
+          "name": "Vue",
+          "source": "src/Product.vue",
+          "confidence": 0.9
+        }
+      ],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/产品范围.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。模型由管理员发布，用户可选择可用模型但不填密钥。扫描PDF OCR未开放。没有自动执行、完整账号管理或专业结论承诺。",
+          "summary": "Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。",
+          "truncated": false
+        },
+        {
+          "path": "src/Product.vue",
+          "language": "vue",
+          "content": "[片段 1/1]\n<template><button>开始增强</button><button>复制</button></template>",
+          "summary": "Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T07:02:05.898444200Z",
+    "latencyMs": 8
+  },
+  "plan": {
+    "summary": "目标是交付一篇约1800–2400字、可直接发布的中文操作指南，面向非技术用户，覆盖开始使用、添加上下文、Plan选择、回答确认问题、核对结果、编辑复制、历史与权限边界，且不混入代码或实现细节。材料已给出大部分边界，但仍有几处会改变成品内容或口径的事实需要确认。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "指南中“添加上下文”部分，办公文件上传后的文字提取，材料只说明“需要用户确认上传后由后端提取文字”。对于提取失败或文件无法解析的情况，指南应如何表述？",
+        "hint": "这决定指南是否要写失败处理步骤，以及是否会出现材料未证实的自动重试或自动跳过描述。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "只写确认上传后由后端提取文字，不写失败处理",
+            "description": "严格按材料已有边界，不补充任何失败或重试行为。",
+            "answer": "只说明办公文件需用户确认上传后由后端提取文字，不描述提取失败、重试或跳过等未在材料中说明的行为。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "写提取失败时提示用户并允许重试",
+            "description": "增加失败提示与重试步骤，但材料未说明该能力。",
+            "answer": "说明办公文件提取失败时会提示用户，并允许用户重新上传或重试。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "写提取失败时自动跳过该文件继续",
+            "description": "增加自动跳过行为，但材料未说明该能力。",
+            "answer": "说明办公文件提取失败时会自动跳过该文件，继续处理其他已确认内容。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "指南“查看历史”部分，材料只说明历史分页和逻辑删除。对于用户能否恢复已删除的历史记录，指南应如何表述？",
+        "hint": "这决定指南是否要写恢复入口，以及是否会出现材料未证实的自动恢复或回收站描述。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "只写逻辑删除，不写恢复",
+            "description": "严格按材料已有边界，不补充恢复或回收站行为。",
+            "answer": "只说明历史记录采用逻辑删除，不描述恢复、回收站或自动恢复等未在材料中说明的行为。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "写删除后可在回收站恢复",
+            "description": "增加回收站恢复步骤，但材料未说明该能力。",
+            "answer": "说明删除后的历史记录会进入回收站，用户可在回收站中恢复。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "写删除后无法恢复",
+            "description": "明确否定恢复能力，但材料未说明该否定。",
+            "answer": "说明历史记录删除后无法恢复，请用户谨慎操作。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q3",
+        "question": "指南“常见问题”中，材料提到“当模型失败时如何保留需求后重试”。对于模型失败的具体表现和重试方式，材料没有说明。指南应如何表述？",
+        "hint": "这决定指南是否要写具体错误提示或重试按钮，以及是否会出现材料未证实的自动重试描述。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "只写保留需求后重试，不写具体表现和方式",
+            "description": "严格按材料已有边界，不补充错误提示或重试按钮细节。",
+            "answer": "只说明模型失败时应保留已填写的需求，然后重试；不描述具体错误提示、重试按钮位置或自动重试等未在材料中说明的行为。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "写失败时页面会显示错误提示，用户点击重试按钮",
+            "description": "增加错误提示和重试按钮描述，但材料未说明该界面行为。",
+            "answer": "说明模型失败时页面会显示错误提示，用户点击重试按钮即可重新提交。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "写失败时系统会自动重试",
+            "description": "增加自动重试行为，但材料未说明该能力。",
+            "answer": "说明模型失败时系统会自动重试，用户无需操作。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q4",
+        "question": "指南“权限边界”部分，材料提到“不要给出绕过登录、验证码、权限或文件过滤的方法”。对于用户遇到权限不足时的正确做法，材料没有说明。指南应如何表述？",
+        "hint": "这决定指南是否要写联系管理员或申请权限等步骤，以及是否会出现材料未证实的授权流程。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "只写不要绕过，不写具体求助方式",
+            "description": "严格按材料已有边界，不补充联系管理员或申请权限等未说明流程。",
+            "answer": "只说明用户不应尝试绕过登录、验证码、权限或文件过滤，不描述联系管理员、申请权限等未在材料中说明的流程。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "写权限不足时联系管理员申请",
+            "description": "增加联系管理员步骤，但材料未说明该流程。",
+            "answer": "说明用户遇到权限不足时应联系管理员申请相应权限。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "写权限不足时无法使用相关功能",
+            "description": "明确否定可用性，但材料未说明该结论。",
+            "answer": "说明权限不足时用户将无法使用相关功能，需等待权限开通。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q5",
+        "question": "指南“选择是否使用Plan”部分，材料说明Plan是可选交互，用户主动开启后系统结合需求与已分析资料提问。对于用户不开启Plan时的行为，材料没有说明。指南应如何表述？",
+        "hint": "这决定指南是否要写不开启Plan时的直接增强流程，以及是否会出现材料未证实的自动提问描述。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "只写Plan是可选，不写不开启时的具体行为",
+            "description": "严格按材料已有边界，不补充不开启Plan时的流程细节。",
+            "answer": "只说明Plan是可选交互，用户主动开启后系统会结合需求与已分析资料提问；不描述不开启Plan时的具体行为。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "写不开启Plan时直接增强，不提问",
+            "description": "增加不开启Plan时的直接增强描述，但材料未明确该行为。",
+            "answer": "说明不开启Plan时系统会直接增强，不会向用户提问。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "写不开启Plan时仍会提问但可跳过",
+            "description": "增加仍会提问但可跳过的描述，但材料未说明该行为。",
+            "answer": "说明不开启Plan时系统仍会提问，但用户可以跳过。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 8711,
+    "planId": "0440ea3f-0362-4e17-8e7c-d92446a93f68",
+    "planningContext": {
+      "contextId": "85e73044-fd1d-4d40-905b-11b48110a9ac",
+      "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2"
+    },
+    "expiresAt": "2026-10-05T07:02:05.898444200Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "b6e891a1-ec20-4616-bd10-e72c4ff882fe",
+      "elapsedMs": 42
+    },
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "3654a5ec-1939-40a4-9da0-7f64abbc330b",
+      "elapsedMs": 8744
+    }
+  ]
+}

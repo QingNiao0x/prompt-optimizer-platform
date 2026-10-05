@@ -65,7 +65,10 @@ final class PlanAmbiguityMerger {
                     + pendingKey(decision));
             String explanation = decision.answer().matches("(?i)^(?:暂不确定|尚未确定|待定|不知道|不清楚|unknown|tbd)[。.!！]?$")
                     || decision.answer().equals(decision.question()) ? "" : " 用户说明：" + decision.answer();
-            registered.putIfAbsent(key, "该问题尚未确定：" + decision.question() + explanation);
+            // 部分回答生成的具名未决子项本身就是答案开头，不把同一句再接一遍“用户说明”。
+            String value = decision.answer().startsWith(decision.question()) ? decision.answer()
+                    : decision.question() + explanation;
+            registered.putIfAbsent(key, "该问题尚未确定：" + value);
         }
         for (String text : findings) {
             if (nonDecisionStatement(text)) continue;
@@ -147,7 +150,7 @@ final class PlanAmbiguityMerger {
             String detail = text.startsWith(full + " 补充说明：") ? text.substring((full + " 补充说明：").length()) : "";
             if (detail.matches("(?s).*(?:另外|此外|还需|另需).*(?:确认|决定|是否|选择).*")) return false;
             String key = "question:" + pendingKey(pending.getFirst());
-            if (!detail.isBlank() && !registered.get(key).contains(detail)) registered.put(key, registered.get(key) + " 补充说明：" + detail);
+            appendNovelExplanation(registered, key, detail);
             return true;
         }
         return false;
@@ -160,7 +163,7 @@ final class PlanAmbiguityMerger {
             if (text.startsWith(prefix)) {
                 String extra = text.substring(prefix.length());
                 if (extra.matches("(?s).*(?:另外|此外|还需|还需要|另需|同时还).*(?:确认|决定|是否|选择).*")) return false;
-                registered.put(entry.getKey(), text);
+                appendNovelExplanation(registered, entry.getKey(), extra);
                 return true;
             }
         }
@@ -227,10 +230,35 @@ final class PlanAmbiguityMerger {
         if (explanation.matches("(?s).*(?:另外|此外|还需|还需要|另需|同时还).*(?:确认|决定|是否|选择).*")) return false;
         String detail = alternatives.matches() || matchesPartialAnswerExplanation(header, decision) ? cleaned : explanation;
         // 只去掉已经匹配的重复题干，解释中任何新单位、版本或条件仍进入同一条完整执行前提。
-        if (!detail.isBlank() && !registered.get(key).contains(detail)) {
-            registered.put(key, registered.get(key) + " 补充说明：" + detail);
-        }
+        appendNovelExplanation(registered, key, detail);
         return true;
+    }
+
+    /** 仅在已唯一绑定的同一未决项内去除逐句复写；新对象、单位、数值、运算符和条件原样保留。 */
+    private void appendNovelExplanation(Map<String, String> registered, String key, String detail) {
+        if (detail.isBlank()) return;
+        var separator = Pattern.compile("[。；;：:？?\\r\\n]|(?<=尚未确定|尚未提供|尚未明确|未确定|未提供|未明确|不确定)[，,]").matcher(detail);
+        if (separator.find()) {
+            String header = detail.substring(0, separator.start()).strip();
+            var pending = decisions.pendingDecisions().stream().filter(part -> key.equals("question:" + pendingKey(part))).toList();
+            // 复合、疑问、具名已确认条件及候选取值仍属于完整执行前提，不能只保留逗号后半句。
+            if (pending.size() == 1 && header.matches(".*(?:尚未确定|尚未提供|尚未明确|未确定|未提供|未明确)$")
+                    && !header.matches(".*(?:[（(）)？?<>≤≥]|\\d|是否|如何|哪个|哪种|什么|已确认|已明确|采用.+还是).*" )
+                    && (sameQuestionReminder(header, pending.getFirst().question())
+                    || questionHeader(header).equals(questionHeader(pending.getFirst().question()))
+                    || matchesPartialAnswerExplanation(header, pending.getFirst()))) {
+                detail = detail.substring(separator.end()).strip();
+            }
+        }
+        String known = java.text.Normalizer.normalize(registered.get(key), java.text.Normalizer.Form.NFKC)
+                .replaceAll("\\s+", "");
+        // 保存未删分句的原标点，不把“3.0”、>= 等值域内容拆成另一条规则。
+        String novel = Pattern.compile("[^。；;\\r\\n]+[。；;]?").matcher(detail).results()
+                .map(match -> match.group().strip()).filter(value -> !value.isBlank())
+                .filter(value -> !known.contains(java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFKC)
+                        .replaceAll("\\s+", "").replaceAll("[。；;]+$", "")))
+                .collect(java.util.stream.Collectors.joining());
+        if (!novel.isBlank()) registered.put(key, registered.get(key) + " 补充说明：" + novel);
     }
 
     /**

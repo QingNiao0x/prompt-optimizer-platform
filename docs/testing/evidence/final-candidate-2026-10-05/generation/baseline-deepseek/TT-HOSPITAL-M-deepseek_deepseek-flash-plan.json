@@ -1,0 +1,323 @@
+{
+  "id": "TT-HOSPITAL-M-deepseek_deepseek-flash-plan",
+  "caseId": "TT-HOSPITAL-M",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T05:04:05.835Z",
+  "prepared": {
+    "contextId": "1bb21d11-05dd-4d96-b4a5-8d1fba280bed",
+    "version": "sha256:f56e8ca6d73154dfd14da65e1b7ebde0c7e5eca6e08ac77f621628a93eacfd2b",
+    "digest": {
+      "description": "合成业务验收资料，不含真实患者、当事人或凭据。本平台只生成任务提示词，不执行任务。",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/hospital/",
+        "materials/hospital/tests/",
+        "materials/hospital/tests/demo.md",
+        "materials/hospital/甲医院资料.md"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/hospital/甲医院资料.md：Markdown 文档摘要：甲医院数据格式：CSV。；甲医院字段为appointment_id、created_date、visit_date、department_code、status；状态为BOOKED、CANCELLED、ATTENDED。；乙医院数据格式：未提供。；跨院原始记录共享：未批准。；仅合成行政流程材料。；业务摘录：[片段 1/1] 甲医院数据格式：CSV。 分析工具：Excel。 甲医院字段为appointment_id、created_date、visit_date、department_code、status； 状态为BOOKED、CANCELLED、ATTENDED。 乙医院数据格式：未提供。 乙医院状态映射：未提供。 跨院原始记录共享：未批准。 仅合成行政流程材料。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "DATA_FORMAT",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital/甲医院资料.md",
+          "evidence": "甲医院数据格式：CSV"
+        },
+        {
+          "id": "F02",
+          "category": "ANALYSIS_TOOL",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital/甲医院资料.md",
+          "evidence": "分析工具：Excel"
+        },
+        {
+          "id": "F03",
+          "category": "DATA_FORMAT",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital/甲医院资料.md",
+          "evidence": "乙医院数据格式：未提供"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "合成业务验收资料，不含真实患者、当事人或凭据。本平台只生成任务提示词，不执行任务。",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/hospital/",
+        "materials/hospital/tests/",
+        "materials/hospital/tests/demo.md",
+        "materials/hospital/甲医院资料.md"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/hospital/甲医院资料.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n甲医院数据格式：CSV。分析工具：Excel。甲医院字段为appointment_id、created_date、visit_date、department_code、status；状态为BOOKED、CANCELLED、ATTENDED。乙医院数据格式：未提供。乙医院状态映射：未提供。跨院原始记录共享：未批准。仅合成行政流程材料。",
+          "summary": "Markdown 文档摘要：甲医院数据格式：CSV。；甲医院字段为appointment_id、created_date、visit_date、department_code、status；状态为BOOKED、CANCELLED、ATTENDED。；乙医院数据格式：未提供。；跨院原始记录共享：未批准。；仅合成行政流程材料。",
+          "truncated": false
+        },
+        {
+          "path": "materials/hospital/tests/demo.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n仅演示：使用Python输出CSV。该示例不代表乙医院已确定格式或项目偏好。",
+          "summary": "Markdown 文档摘要：仅演示：使用Python输出CSV。；该示例不代表乙医院已确定格式或项目偏好。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T05:34:05.852981700Z",
+    "latencyMs": 16
+  },
+  "plan": {
+    "summary": "目标是制定一份仅用 Excel 人工操作、不读取真实患者数据的中文整理方案，交付整理步骤、字段对照表和检查清单，用于比较甲、乙两家医院门诊预约登记完整性。甲医院格式与字段已明确，乙医院的文件格式和状态映射确实未知，需要先确认这些事实，否则无法给出跨院一致的对照与到诊口径。",
+    "questions": [
+      {
+        "id": "hospital_b_format",
+        "question": "乙医院预约资料的文件格式是什么？",
+        "hint": "乙医院格式尚未提供，不能因甲医院是 CSV 就推定乙医院也是 CSV；这决定整理步骤中乙医院数据的读取与预处理方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "csv",
+            "label": "CSV",
+            "description": "乙医院资料为逗号分隔的文本文件。",
+            "answer": "乙医院资料格式为 CSV。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "excel",
+            "label": "Excel 工作簿",
+            "description": "乙医院资料为 .xlsx 或 .xls 工作簿。",
+            "answer": "乙医院资料格式为 Excel 工作簿（.xlsx/.xls）。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "other_text",
+            "label": "其他文本/表格格式",
+            "description": "如制表符分隔、固定宽度文本或其他表格导出格式。",
+            "answer": "乙医院资料为其他文本或表格格式，具体为：____。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "not_provided_yet",
+            "label": "目前仍未提供",
+            "description": "乙医院格式确实尚未拿到，方案中先按待收集处理。",
+            "answer": "乙医院资料格式目前仍未提供，方案中先列入待收集信息表，不预设格式。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "hospital_b_fields",
+        "question": "乙医院预约登记包含哪些列名？",
+        "hint": "乙医院列名未提供，字段对照表必须基于真实列名才能建立映射，不能把甲医院字段名套用到乙医院。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：预约编号、登记时间、就诊日期、科室、状态等实际列名，可逐项列出；若尚未拿到，请说明目前未知。"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "hospital_b_status_mapping",
+        "question": "乙医院的状态取值分别对应什么业务含义？",
+        "hint": "乙医院状态映射未提供，无法判断哪些状态计为到诊、哪些为取消，因此当前不能计算跨院一致的到诊率。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：已预约=BOOKED、已取消=CANCELLED、已就诊=ATTENDED；若取值不同或尚未拿到，请说明目前未知。"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "cross_hospital_scope",
+        "question": "在跨院原始记录共享尚未获批准的前提下，本次跨院比较允许做到哪一步？",
+        "hint": "授权状态已明确为未批准，这里只确认在此限制下本次交付的比较深度，不改变授权结论。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "separate_only",
+            "label": "各院分别整理，仅交付不可识别的统计结构",
+            "description": "不合并原始记录，两院各自处理，只输出汇总口径和结构。",
+            "answer": "各院分别整理，仅交付不可识别的统计结构，不合并原始记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "field_mapping_only",
+            "label": "只做字段对照与检查清单，暂不做任何统计",
+            "description": "本次仅交付字段映射和检查清单，不产出统计结构。",
+            "answer": "本次只做字段对照与检查清单，暂不做任何统计。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "pause_until_approved",
+            "label": "暂停跨院比较，等共享获批后再做",
+            "description": "在授权获批前不开展跨院对照工作。",
+            "answer": "暂停跨院比较，等原始记录共享获批后再开展。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "missing_visit_date_handling",
+        "question": "就诊日期缺失的记录，在登记完整性检查中如何处理？",
+        "hint": "空单元格代表缺失、0 是有效值，不能填 0；但缺失记录是否计入分母会直接影响完整性结果，需要明确口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "exclude_and_report",
+            "label": "单独列出，不计入分母",
+            "description": "缺失就诊日期的记录单独成表，不参与区间内完整性比例计算。",
+            "answer": "就诊日期缺失的记录单独列出，不计入完整性比例的分母。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "include_as_missing",
+            "label": "计入分母，按缺失状态统计",
+            "description": "缺失记录计入总数，但保持缺失状态，不填 0、不视为未完成。",
+            "answer": "就诊日期缺失的记录计入分母，按缺失状态单独统计，不填 0、不视为未完成。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "report_only",
+            "label": "本次只报告缺失数量，不纳入比例",
+            "description": "仅统计并报告缺失条数，不参与任何比例计算。",
+            "answer": "本次只报告就诊日期缺失的条数，不纳入任何比例计算。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "duplicate_id_handling",
+        "question": "预约编号重复的记录，在整理时如何处理？",
+        "hint": "原文要求保留编号重复这一例外，需要确认重复记录是保留、标记还是去重，否则会影响登记完整性口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "keep_and_flag",
+            "label": "全部保留并标记重复",
+            "description": "重复编号记录不删除，单独标记供人工核查。",
+            "answer": "预约编号重复的记录全部保留并标记为重复，供人工核查。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "keep_first",
+            "label": "保留首条，其余标记",
+            "description": "保留第一条，其余重复记录标记但不删除。",
+            "answer": "预约编号重复时保留首条，其余记录标记为重复但不删除。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "deduplicate",
+            "label": "直接去重",
+            "description": "删除重复编号记录，只保留一条。",
+            "answer": "预约编号重复的记录直接去重，只保留一条。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "rebook_after_cancel",
+        "question": "取消后重新预约的记录，在到诊与完整性统计中如何认定？",
+        "hint": "原文要求保留取消后重新预约这一例外，需要明确它算一条还是两条、是否影响取消与到诊计数。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "count_separately",
+            "label": "按独立预约记录分别计数",
+            "description": "取消记录与重新预约记录各自独立计数，取消不计为到诊。",
+            "answer": "取消后重新预约按独立预约记录分别计数，取消记录保留为取消状态，不计为到诊。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "merge_as_one",
+            "label": "合并为一条就诊记录",
+            "description": "将取消与重新预约视为同一患者的同一次就诊。",
+            "answer": "取消后重新预约合并为一条就诊记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "flag_only",
+            "label": "仅标记关联，不改变计数",
+            "description": "标记两条记录存在关联，但计数方式不变。",
+            "answer": "取消后重新预约仅标记关联关系，不改变原有计数方式。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 8038,
+    "planId": "567406e7-d28e-4132-8af3-39d5e7ed95f0",
+    "planningContext": {
+      "contextId": "1bb21d11-05dd-4d96-b4a5-8d1fba280bed",
+      "version": "sha256:f56e8ca6d73154dfd14da65e1b7ebde0c7e5eca6e08ac77f621628a93eacfd2b"
+    },
+    "expiresAt": "2026-10-05T05:34:05.852981700Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "TT-HOSPITAL-M-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "fad18bfb-c230-44c4-b7a3-c1aafbe67f28",
+      "elapsedMs": 46
+    },
+    {
+      "label": "TT-HOSPITAL-M-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "d4f838a2-ae1c-4fd3-9437-890a575b7752",
+      "elapsedMs": 8068
+    }
+  ]
+}

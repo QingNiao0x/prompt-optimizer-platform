@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "reviewer": {
+    "id": "blinded-model-deepseek:deepseek-flash",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-05T06:54:19.469Z",
+    "professionalDomain": "NOT_CERTIFIED",
+    "reviewRun": "tmp\\prompt-output-evaluation\\2026-10-05T06-51-21-620Z-ae488772"
+  },
+  "professionalReview": "NOT_PERFORMED",
+  "problems": [],
+  "entries": [
+    {
+      "blindId": "B001",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 8 | 取消免责边界 | 提前多久取消不计爽"
+      ],
+      "notes": "口径表、流程图、问题清单、采集表、报告目录、复核隐私清单齐全；未把UNKNOWN计为爽约，未采用任一取消提前量，未越界临床。但主统计单位写“用户已确认”，而本组submittedAnswers为空，该决定尚未提供，属把未确认当已确认；另B8“不读取或输出受保护路径”为材料外附加边界。整体可用但存在口径越界。",
+      "outputSha256": "1adc878feb0c105f0b6826f501c6998fa814ae579e00950aef319889c727a07f"
+    },
+    {
+      "blindId": "B002",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 主统计单位 | **预约事件** | 用户补"
+      ],
+      "notes": "交付结构完整，状态口径、时区、渠道重复、取消规则差异、隐私边界均覆盖，未越界临床或处罚。但多处将主统计单位标为“用户补充回答明确”，本组submittedAnswers为空，该决定尚未提供，属把未确认当已确认；报告目录含“各月份分布”等超出给定汇总字段的展示项。整体可用。",
+      "outputSha256": "235c9d325552fd9126e5ccaff39c223554e1f68556ab9b34e70b29d64be5b460"
+    },
+    {
+      "blindId": "B003",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| UNKNOWN | 列为待核验事件，单独展示"
+      ],
+      "notes": "口径梳理准确区分事件与人数、三类渠道、ARRIVED/CANCELLED/UNKNOWN，明确UNKNOWN不直接计爽约、取消不附加临床解释；完整覆盖口径表、流程图说明、拟议采集字段、讨论报告目录、人工复核及隐私边界清单；正确并列24小时旧说明与12小时未批准草稿，不擅自采用，保留观察窗口和渠道统计单位为待确认项；结构清楚、可执行，未越界给临床建议或处罚措施，未把测试示例当事实。",
+      "outputSha256": "511813acf8df7f9c50db82ca5dcb2c1972825c678609e0b7c40a9f10e5b9fb94"
+    }
+  ]
+}

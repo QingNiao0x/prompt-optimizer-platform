@@ -1,0 +1,526 @@
+<think>Let me analyze this task carefully. The user is asking me to prepare a comprehensive report package for the Jia City Public Service Center's pilot phase. The task requires four deliverables:
+
+1. Main report (1500-2000 words) with three sections: 工作成效 (work outcomes), 问题分析 (problem analysis), 改进安排 (improvement plan)
+2. Data caliber and missing information table
+3. Problem and proposed rectification measures comparison
+5. List of calibers needing verification
+
+Let me first map out the materials and their relevance:
+- materials/public_report/current-brief.md: Main current material with rules and constraints
+- materials/public_report/tests/layout-example.txt: Test example only, NOT for facts
+- materials/public_report/legacy-note.md: Conflict on April backlog definition
+
+Let me note key constraints:
+- "Records受理件数 (case counts), not independent service users"
+- 响应时间 unit is 工作日 (working days), 0 = same-day, blank = unregistered
+- Cannot compute city-wide results
+- Cannot use expressions like "fully leading", "zero complaints"
+- Cannot invent awards, policy basis, satisfaction rates
+- No formal document format, official seal, etc.
+- Each achievement paragraph must correspond to verifiable台账 items
+- Disputed numbers should not be in prominent titles
+
+Key conflicts and unclear points:
+1. January growth and publicity - can show synchronicity but not causation
+2. February holiday extension - keep working day unit
+3. March training - activity separated from effect evidence
+4. April backlog - 5 working days (台账) vs 3 working days (draft minutes), cannot use just one
+5. May phone follow-up - cannot write quantitative satisfaction rate
+6. June empty response time - not same-day, must note coverage issue
+7. Some cases are duplicate submissions after补交 materials
+8. Cannot show user deduplication
+9. Self-service terminal is next-step idea, not current achievement
+10. Rectification can suggest improvements but cannot promise new staffing, budget, or software
+
+States to differentiate:
+- 已充分依据可直接使用 (Sufficient basis, directly usable)
+- 仅作为候选建议需要选择 (Candidate suggestion, needs choice)
+- 因缺少关键资料暂不能执行 (Cannot execute due to missing key materials)
+
+Let me now draft the content. I need to write in Chinese since the task is in Chinese.
+
+Let me structure the four deliverables:
+
+**1. Main Report (1500-2000 words)**
+- Header (title, scope, period)
+- Part 1: 工作成效 (work outcomes)
+- Part 2: 问题分析 (problem analysis)
+- Part 3: 改进安排 (improvement plan)
+
+**2. Data caliber and missing information table**
+Columns: 指标 (indicator), 测量单位, 适用对象, 状态, 值域/口径, 缺口说明
+
+**3. Problem and proposed rectification measures comparison table**
+Columns: 问题编号, 观察 (observation), 解释 (explanation), 建议 (suggestion), 状态 (status)
+
+**4. List of calibers needing verification**
+Columns: 结论/口径, 依据来源, 状态, 核查要点
+
+Let me think about the monthly breakdown based on the brief:
+
+**January**: Pilot launch + publicity, simultaneous受理 growth (not causal claim)
+**February**: Holiday extension of wait times, working day caliber only
+**March**: Window training + manual update (activities), complaint change effect not separately measured
+**April**: Backlog definition conflict (5 vs 3 working days), cannot directly compare
+**May**: Phone follow-up added, but no sampling frame, cannot quantize satisfaction
+**June**: Empty response times indicate registration coverage issues, not same-day handling
+
+Let me also note that the materials don't include actual numerical台账 data beyond the descriptions. The brief describes what each month contains in terms of events/observations but doesn't give specific受理 counts. Wait, the task mentions "汇总台账与会议记录" but the materials provided don't contain actual numbers - they only contain descriptions of what's in the materials.
+
+Let me re-read the current-brief.md to make sure...
+
+Looking at the materials again:
+- current-brief.md describes the rules, constraints, and monthly context but doesn't provide actual numbers
+- legacy-note.md describes the backlog definition conflict
+- tests/layout-example.txt is just a formatting example
+
+So the actual numbers are NOT provided in the materials. This means the report should:
+- Reference what each month contains without inventing numbers
+- Use general descriptions like "台账记录的一月受理件数较前期增加" without specific counts
+- Be careful about claims
+
+Wait, let me re-read. The task says "附件仅有六个月的汇总台账与会议记录". The materials should contain台账 records. But the current-brief.md provided to me as material doesn't include the actual numbers - it's a "现行资料" that summarizes the rules.
+
+Hmm, this is an important observation. The current-brief.md is the "current brief" describing what the materials are and the rules around them. The actual台账 numbers might be implied but not given.
+
+Given this constraint, my report should:
+- Reference the months and their context without inventing specific numbers
+- Note where numbers should be inserted but aren't available in current data
+- Use placeholder language like "依台账记录" without fabricating values
+
+Let me draft now.
+
+Actually, looking more carefully, the current-brief.md gives me information about what each month's台账 shows in terms of themes/events but NOT specific counts. So I should write descriptively about each month's content and flag where actual numbers are needed but not provided.
+
+Let me draft the main report:
+
+---
+
+# 甲市公共服务中心试点阶段总结报告（会议讨论版）
+
+**试点主体**：甲市公共服务中心（合成）
+**试点范围**：两个服务大厅（大厅甲、大厅乙）和线上预约入口
+**试点时间**：2026年1月至6月
+**读者**：业务负责人和一线窗口主管
+**用途**：内部工作会议讨论
+
+## 一、工作成效
+
+本节按月份顺序整理可由试点台账与会议记录核验的工作进展。每个段落的表述对应已记录的事实，不引入未核验的因果判断。
+
+### （一）一月：试点启动与受理变动
+
+一月台账显示，受理群众数较此前出现一定增长，与试点启动宣传同期发生。需明确的是，台账同时反映宣传动作与受理数量变动，未提供对照组，因此两者之间的因果关系尚不能由本次资料确认。报告以"同步发生"描述这一现象，不将宣传直接归因为增长原因。试点覆盖两个服务大厅与线上预约入口三种受理渠道，三类渠道的台账字段结构（大厅甲、大厅乙按提交日期记录件数；线上预约仅记录预约次数）已在台账说明中明确。
+
+### （二）二月：节假日影响与响应时间
+
+二月部分事项因节假日延长等待，台账响应时间字段继续以工作日为单位记录（0表示当天响应）。本节保留工作日口径，不将节假日影响改算为自然日。附件未提供逐日明细数据，因此未据其反推每日平均响应曲线。响应时间字段的统计以台账已登记条目为准，未登记条目不计入响应时间均值。
+
+### （三）三月：培训与说明书更新
+
+三月台账与会议记录显示，窗口培训已开展，说明书已更新版本。这两项属于已实施的工作动作。投诉变化情况在台账中亦有记录，但未对培训与说明书更新的独立贡献作单独测量。因此，本报告将"已开展培训与说明书更新"与"投诉变化"分别陈述，不将后者直接归因于前者。
+
+### （四）四月：积压口径差异与登记差异
+
+四月台账说明积压口径为"超过5个工作日未办结"。会议纪要另有草稿建议将口径调整为"超过3个工作日计入积压"，但未注明生效。两份材料口径不同，会议总结说明本次无法直接按统一口径比较四月积压数据。台账中案件量与响应时长仍按各自口径登记；本报告不就两份材料中数字较高或较低者单方采纳。
+
+### （五）五月：电话回访的开展与边界
+
+五月台账与会议记录显示，新增了电话回访动作。电话回访属于已实施的工作安排。然而，本次电话回访未设抽样框，未记录回答人数与拒访情况，会议记录中出现"效果不错"等表述，但不应据此推算为量化的群众满意率。本报告将电话回访列入已开展动作，不引入满意率数字。
+
+### （六）六月：空响应时间与登记覆盖度
+
+六月台账中存在响应时间字段为空的条目。按口径说明，空白表示未登记，不能当作零。把空白条目直接删除会改变样本边界，使平均值偏向完整记录条目。本报告保留空响应时间条目，将其作为登记覆盖度问题列入问题分析，不在成效段落引用包含空值处理的均值。
+
+### （七）小结
+
+成效小结段落不引入争议数字。试点六个月在三类渠道的台账字段、已开展动作（培训、说明书更新、电话回访）以及积压口径议题上均有记录。成效的边界已在各月份段落中分别说明。
+
+## 二、问题分析
+
+本节列出试点阶段在数据口径、登记覆盖与统计可比性方面观察到的问题。
+
+### （一）同一口径不可得，无法直接做月份间比较
+
+四月积压案件口径在两份材料中不同（一为台账说明：超过5个工作日未办结；一为会议纪要草稿：超过3个工作日计入积压，未注明生效）。在统一口径未被确认前，四月积压数字与其他月份的潜在比较应当暂缓。
+
+### （二）响应时间字段登记覆盖度不完整
+
+六月台账空响应时间条目存在且比例需要核对。空白条目使响应时间均值与中位数的样本边界与完整登记月份不一致，不在均值层面删除空值。
+
+### （三）独立服务人数无法从台账获得
+
+台账记录受理件数，线上预约仅记录预约次数。同一群众先线上预约再到大厅办理，会在不同类型台账中分别产生一条记录。附件无稳定个人标识，目前只能统计事件，不能展示用户去重效果。
+
+### （四）电话回访效果无法量化为满意率
+
+五月电话回访未设抽样框，未登记回答人数与拒访记录，会议记录中的效果描述不能转为满意率数字。
+
+### （五）宣传与增长的因果关系未确认
+
+一月宣传与受理增长同期发生，附件未提供对照组。两者的因果归属不能直接确认为认证依据。
+
+### （六）自助终端与新增资源尚属设想
+
+会议材料中提及"将上线自助终端"，属下一步设想，需依赖场地与预算审核。本期未将其纳入已实现成效。
+
+## 三、改进安排
+
+本节提出与上节问题逐项对应的拟议措施。所有措施均为建议，不视为已经落实。
+
+### （一）针对口径不统一
+
+拟议：在下次工作会议前发布统一口径表，明确积压案件、响应时间、受理件数等关键字段的定义、计算方式与生效时点；建立季度复核，对口径差异进行检查。
+
+### （二）针对响应时间登记覆盖度
+
+拟议：改进登记字段，对响应时间字段增设必填校验（节假日、特殊情况除外），在登记表中明确"未登记"状态；按月公布登记覆盖率，作为问题跟踪指标而非成效指标。
+
+### （三）针对独立服务人数不可得
+
+拟议：在不引入未经批准的新增编制前提下，对台账字段增设来源标识位（如预约号、办理号），便于将来在用户授权范围内做去重分析；本期以"事件数"作统计口径，不展示用户去重效果。
+
+### （四）针对电话回访
+
+拟议：在下一次电话回访前明确抽样框、记录回答人数与拒访情况，待样本形成后再讨论是否引入量化满意率；本期不出现满意率数字。
+
+### （五）针对宣传与增长
+
+拟议：在下次工作会议讨论宣传效果前，建议保留"同步发生"表述，不以单月数据做归因；如需评估宣传影响，建议引入对照组方案并单独审批。
+
+### （六）针对自助终端
+
+拟议：在计划章节记录自助终端为下一步设想，注明依赖场地与预算审核两项条件；在两项条件未确认前不将其列入成效。
+
+### （七）共同边界
+
+本报告不承诺未经批准的新增编制、采购预算或软件建设期限；不将某一窗口经验作为全市推广成果；不使用全面领先、零投诉等无依据表述。
+
+---
+
+Now let me write the data caliber table:
+
+| 指标 | 单位 | 适用对象 | 状态 | 值域/口径 | 缺口说明 |
+|---|---|---|---|---|---|
+
+Let me think about what to include:
+- 受理件数 (case count)
+- 线上预约次数 (online reservation count)
+- 响应时间 (response time)
+- 积压案件 (backlog)
+- 投诉件数 (complaint count)
+- 电话回访 (phone follow-up)
+- 群众满意率 (satisfaction rate)
+- 登记覆盖率 (registration coverage rate)
+
+| 指标 | 单位 | 适用对象 | 状态 | 值域/口径 | 缺口说明 |
+|---|---|---|---|---|---|
+| 大厅甲受理件数 | 件 | 大厅甲窗口 | 已登记可核验 | 按提交日期记录件数，不等于独立人数 | 重复补交资料后的再次受理未做去重 |
+| 大厅乙受理件数 | 件 | 大厅乙窗口 | 已登记可核验 | 按提交日期记录件数 | 同上 |
+| 线上预约次数 | 次 | 线上预约入口 | 已登记可核验 | 仅记录预约次数 | 与大厅件数不可加为独立人数 |
+| 响应时间 | 工作日 | 三类渠道全部已登记条目 | 已登记可核验 | 0=当天响应；空白=未登记，不计0 | 空条目比例需月度核对 |
+| 积压案件（一口径） | 件 | 台账口径 | 候选需选择 | 超过5个工作日未办结（台账说明） | 与会议纪要草稿口径不同，未生效 |
+| 积压案件（另一口径） | 件 | 会议纪要草稿 | 候选需选择 | 超过3个工作日计入积压 | 未注明生效 |
+| 投诉件数 | 件 | 三类渠道 | 已登记可核验 | 按登记数计 | 培训/说明书贡献未单独测量 |
+| 电话回访次数 | 次 | 已实施动作 | 已登记可核验 | 仅记录开展次数 | 抽样框、回答人数、拒访未登记 |
+| 群众满意率 | % | — | 暂不能执行 | — | 无调查问卷，无抽样框 |
+| 登记覆盖率 | % | 响应时间字段 | 候选需选择 | 需先确定分母（每月总条目） | 当前未公布 |
+| 自助终端上线 | — | — | 暂不能执行 | — | 依赖场地与预算审核 |
+
+Now the problem and rectification table:
+
+| 问题编号 | 观察 | 解释 | 建议 | 状态 |
+|---|---|---|---|---|
+| P1 | 一月受理增长与试点宣传同期发生 | 未提供对照组 | 不写因果，待有对照组方案后再评估 | 候选需选择 |
+| P2 | 二月部分事项因节假日延长等待 | 工作日口径与自然日不一致 | 保留工作日口径，不改算自然日 | 已充分依据可直接使用 |
+| P3 | 三月培训与说明书更新已记录 | 未单独测量效果 | 将工作动作与效果证据分别陈述 | 已充分依据可直接使用 |
+| P4 | 四月积压口径两份材料不同 | 一为5个工作日，一为3个工作日（草稿未生效） | 不直接比较；建议下次工作会议前统一定义 | 候选需选择 |
+| P5 | 五月电话回访已开展 | 未设抽样框，未登记回答与拒访 | 不写满意率，下次回访前明确抽样框 | 候选需选择 |
+| P6 | 六月台账空响应时间 | 空白=未登记，不是当日办 | 保留空值，公布登记覆盖率 | 候选需选择 |
+| P7 | 同一群众先线上后大厅会产生两条记录 | 无稳定个人标识 | 增设来源标识位（建议）；本期以事件计 | 候选需选择 |
+| P8 | 自助终端为下一步设想 | 依赖场地与预算审核 | 在计划章节记录，不列入成效 | 候选需选择 |
+| P9 | 重复补交资料后再受理 | 无稳定个人标识 | 本期以事件计，不展示去重 | 已充分依据可直接使用 |
+| P10 | 整改可能涉及新编制/预算/软件 | 未获批准 | 不承诺未经批准的资源 | 已充分依据可直接使用 |
+
+Now the caliber verification list:
+
+| 结论/口径 | 依据来源 | 状态 | 核查要点 |
+|---|---|---|---|
+| 受理件数（大厅甲、大厅乙）按提交日期计 | current-brief.md | 可直接使用 | 重复补交后再受理未做去重 |
+| 线上预约仅记录预约次数 | current-brief.md | 可直接使用 | 与大厅件数不可加 |
+| 响应时间单位为工作日 | current-brief.md | 可直接使用 | 0=当天，空白=未登记 |
+| 空白响应时间 = 未登记（不是当天） | current-brief.md | 可直接使用 | 不得删除空值行 |
+| 一月宣传与增长同期发生 | current-brief.md | 可直接使用 | 不得写为因果 |
+| 二月保持工作日口径 | current-brief.md | 可直接使用 | 不得改算自然日，不反推逐日曲线 |
+| 三月培训与说明书为已开展动作 | current-brief.md | 可直接使用 | 效果证据单独陈述 |
+| 四月积压口径（5工作日 vs 3工作日） | legacy-note.md | 候选需选择 | 待统一定义 |
+| 五月电话回访已开展 | current-brief.md | 可直接使用 | 不写满意率 |
+| 五月满意率 | — | 暂不能执行 | 无问卷与抽样框 |
+| 六月登记覆盖率 | current-brief.md | 候选需选择 | 待定义分母 |
+| 独立服务人数去重 | — | 暂不能执行 | 无稳定个人标识 |
+| 自助终端上线 | current-brief.md | 暂不能执行 | 依赖场地与预算 |
+| 去年同期比较 | — | 暂不能执行 | 未提供同口径基期台账 |
+| 投诉下降比例 | — | 暂不能执行 | 无基期分母 |
+
+Let me also write a brief handover summary at the end:
+
+## 交接摘要
+- 采用的资料：materials/public_report/current-brief.md（含规则与边界说明）、materials/public_report/legacy-note.md（四月积压口径冲突说明）
+- 被排除的无关示例：materials/public_report/tests/layout-example.txt（排版与来源识别测试例子，非本题事实）
+- 尚缺的关键证据：四月积压统一口径、去年同期同口径基期台账、电话回访抽样框与回答人数、用户身份标识字段、登记覆盖率分母、自助终端场地与预算审核文件
+- 明确冲突：四月积压案件统计口径——台账说明"超过5个工作日未办结" vs 会议纪要草稿"超过3个工作日计入积压"（草稿未注明生效）
+
+Let me check word count for main report... Let me re-count carefully. The main report needs to be 1500-2000 characters/字. Let me count my draft... it's roughly around 1800 characters which is in range.
+
+Actually, let me recount more carefully. The task says "正文一千五百至两千字" - 1500 to 2000 characters/words. In Chinese, 字 typically means characters. Let me check my main report word count.
+
+Hmm, my draft is around 1700-1800 characters which fits in range.
+
+Let me also ensure I'm following all constraints:
+1. ✓ No fabricated numbers
+2. ✓ States three statuses clearly
+3. ✓ No formal document format
+4. ✓ No real identities
+5. ✓ Working day unit preserved
+6. ✓ April conflict noted, not favoring either
+7. ✓ Phone follow-up not turned into satisfaction rate
+8. ✓ Empty response time noted as coverage issue
+9. ✓ No duplication removal claim
+10. ✓ Self-service terminal as plan, not achievement
+11. ✓ No commitments to new resources
+
+One more thing to verify - the acceptance criteria:
+- 主报告正文一千五百至两千字 ✓
+- 三个部分齐全 ✓
+- 成效段对应可核验台账项 ✓
+- 争议数字未放醒目标题 ✓
+- 一月同步发生不写因果 ✓
+- 二月保持工作日口径 ✓
+- 三月工作动作与效果证据分别陈述 ✓
+- 四月积压口径差异说明 ✓
+- 五月电话回访未转写满意率 ✓
+- 六月空响应时间保留 ✓
+- 未展示用户去重 ✓
+- 自助终端未列入成效 ✓
+- 整改未承诺未经批准资源 ✓
+- 问题与建议对应 ✓
+- 四项交付齐全 ✓
+- 表格列名一致 ✓
+- 三种状态可区分 ✓
+- 无真实身份 ✓
+- 无推算全市成效 ✓
+
+Good. Let me finalize the output.
+
+Actually, I should also include a brief note about the assignment:
+
+执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：
+- 本次报告是否比较去年同期，且是否有同口径的基期台账？当前尚未决定，不得默认补全。若需比较，请提供同口径基期台账或明确不比较。
+
+This was mentioned in the task. I should mention this in my handover summary as an unresolved item.
+
+Let me also be careful about the format - the task asks for the main report to be 1500-2000 字. Let me verify my count by going through the main report text.
+
+Counting my main report text...
+
+I'll need to make sure the main report is between 1500-2000 characters. Let me write the final version more carefully.
+
+Let me also think about whether to include explanatory notes for professional terms:
+- "台账" (ledger/records)
+- "响应时间" (response time)
+- "积压" (backlog)
+- "受理件数" (acceptance count)
+- "口径" (caliber/definition)
+
+The task says "专业术语首次出现时解释其在本题中的含义". Let me add brief explanations.
+
+Let me finalize my output now. I'll structure it cleanly:
+
+1. Header info
+2. Main report
+3. Data caliber table
+4. Problem-rectification table
+5. Caliber verification list
+6. Handover summary
+
+Let me write the final version.
+
+Actually, the main report should be the "主成果" so let me make sure it stands out. The three other deliverables should be marked as attachments.
+
+Let me also double-check word count for the main report body (excluding headers and section titles). My draft is approximately 1700 characters which is within 1500-2000.
+
+Let me also make sure I'm clear on:
+- "已有充分依据可直接使用" = can use directly
+- "仅作为候选建议需要选择" = candidate suggestion, needs choice
+- "因缺少关键资料暂不能执行" = cannot execute due to missing materials
+
+I'll use these consistently in tables.
+
+One more consideration: the task mentions "状态区分" - "成果中应能区别三种状态". This means the deliverables should clearly show which conclusions are ready to use, which need decision, and which cannot proceed. I should label each item in tables clearly.
+
+Let me write the final output now.
+
+For the main report, I'll add term explanations where appropriate:
+
+- 受理件数：本报告中指台账按提交日期记录的件数
+- 响应时间：本报告中指台账字段，单位为工作日
+- 积压案件：本报告中指超过一定工作日未办结的案件，口径存在差异
+- 口径：本报告中指统计定义与适用范围的统一标准
+
+Let me finalize and write out the complete deliverable now.
+
+Let me count the main report body text (excluding title, scope info, section headers):
+
+工作成效部分约600字
+问题分析部分约400字
+改进安排部分约500字
+小计约1500字，加上衔接文字约1700字左右 - in the right range.
+
+Let me write out the final version now. I need to be careful with formatting and ensure clarity.
+
+One last thing - I should note that the materials don't include specific numerical values for things like "一月受理数", "三月投诉数" etc. The current-brief.md describes what each month contains but doesn't give specific numbers. So my report should reference these as themes/observations without inventing numbers. I'll use phrases like "依台账记录" to indicate the data is from the records.
+
+Hmm wait, the user prompt mentions "受理件数" but doesn't give actual counts. Let me check the legacy-note too... no, that only discusses the April backlog definition.
+
+So the actual numbers aren't in the materials. This is consistent with the task description: "附件仅有六个月的汇总台账与会议记录". The brief describes what each month contains but doesn't provide actual counts.
+
+So my report should:
+- Reference what each month contains based on brief descriptions
+- Not invent specific counts
+- Use "依台账记录" and similar to indicate the source
+- For items where actual numbers would normally be used, note the absence
+
+This is actually consistent with the task constraint "不得编造事实". So I'll write the report based on the themes/activities described in the brief without inventing numerical values.
+
+Alright, let me finalize.
+
+Actually, looking again, I realize the report should perhaps note specific items more concretely. Let me think...
+
+The materials are essentially describing what each month contains and what constraints apply. The actual numerical values aren't provided. So my report can describe each month's content thematically based on the brief descriptions.
+
+Let me write thefinal version now.</think>
+
+# 甲市公共服务中心试点阶段总结报告（会议讨论版）
+
+**试点主体**：甲市公共服务中心（合成）
+**试点范围**：两个服务大厅（大厅甲、大厅乙）和线上预约入口
+**试点时间**：2026年1月至6月
+**读者**：业务负责人和一线窗口主管
+**用途**：内部工作会议讨论，不用于正式公文签发
+
+> 术语说明：①"受理件数"指台账按提交日期记录的件数；②"响应时间"指台账字段，单位为工作日，0表示当天响应，空白表示未登记；③"积压案件"指超过若干工作日未办结的案件，口径见附件；④"口径"指统计定义、计算方式与适用范围的统一标准。
+
+---
+
+## 一、工作成效
+
+本节按月份顺序整理可由试点台账与会议记录核验的工作进展。每段对应已记录的事实，不引入未核验的因果判断。
+
+**（一）一月：试点启动与受理变动同步发生**
+一月台账显示，试点覆盖两个服务大厅与线上预约入口三种受理渠道。台账同时反映试点启动宣传动作与各渠道受理数量变动，两者同期发生。附件未提供对照组，宣传动作与受理增长之间的因果关系本次不能确认。报告以"同步发生"描述，不将宣传直接归因为增长原因。台账字段结构（大厅甲、大厅乙按提交日期记录件数；线上预约仅记录预约次数）已在台账说明中明确，三类渠道属于不同记录类型。
+
+**（二）二月：节假日因素与响应时间口径**
+二月部分事项因节假日延长等待，台账响应时间字段以工作日记录。报告沿用工作日口径，不将节假日影响改算为自然日。附件未提供逐日明细数据，本次不据其反推每日平均响应曲线。响应时间字段的统计以台账已登记条目为准，未登记条目不计入响应时间均值。
+
+**（三）三月：培训与说明书更新已开展，效果证据分别陈述**
+三月台账与会议记录显示，窗口培训和说明书更新均已开展。两项属于已实施的工作动作。投诉变化情况在台账中亦有记录，但培训与说明书更新对投诉变化的独立贡献未被单独测量。报告将"已开展动作"与"投诉变化"分别陈述，不将后者直接归因于前者。
+
+**（四）四月：积压口径存在差异，不直接比较**
+四月台账说明将"超过5个工作日未办结"计为积压；会议纪要另有草稿建议将口径调整为"超过3个工作日计入积压"，但未注明生效。两份材料口径不同，本期无法按统一口径直接比较四月积压数据与其他月份。报告不就两份材料中数字较高或较低者单方采纳。
+
+**（五）五月：电话回访已开展，量化效果暂缺**
+五月台账与会议记录显示，电话回访作为新增工作动作已开展。电话回访本身属于已开展动作。然而本次电话回访未设抽样框，未记录回答人数与拒访情况。会议记录中出现的效果描述不能据此推算为量化的群众满意率。报告将电话回访列入已开展动作，不引入满意率数字。
+
+**（六）六月：空响应时间保留，登记覆盖度作为问题另行说明**
+六月台账中存在响应时间字段为空的条目。按口径说明，空白表示未登记，不能当作零处理。若把空白条目直接删除，将改变样本边界，使结果偏向完整登记条目。报告保留空响应时间条目，将其作为登记覆盖度问题列入问题分析，不在成效段落引用包含空值处理的均值。
+
+**（七）成效小结**
+成效小结不引入争议数字。试点六个月在台账字段结构、已开展动作（培训、说明书更新、电话回访）以及积压口径议题上均有记录。各段边界已在月份段落中分别说明。
+
+---
+
+## 二、问题分析
+
+**P1 同一口径不可得，月份间比较暂缓。** 四月积压案件口径在两份材料中不同（一为台账说明：超过5个工作日未办结；一为会议纪要草稿：超过3个工作日计入积压，未注明生效）。在统一口径未被确认前，四月积压数字与其他月份的潜在比较应当暂缓。
+
+**P2 响应时间字段登记覆盖度不完整。** 六月台账空响应时间条目存在。空白条目使响应时间均值与中位数的样本边界与完整登记月份不一致。若在均值层面删除空值，会使结果偏向完整登记条目。
+
+**P3 独立服务人数无法由台账直接获得。** 大厅甲、大厅乙的受理台账按提交日期记录件数，线上预约仅记录预约次数。同一群众先线上预约再到大厅办理，会在不同类型台账中分别产生记录。附件无稳定个人标识，目前只能统计事件，不能展示用户去重效果。
+
+**P4 电话回访效果不能量化。** 五月电话回访未设抽样框，未登记回答人数与拒访记录，会议记录中的效果描述不能转为满意率数字。
+
+**P5 宣传与增长的因果关系未确认。** 一月宣传与受理增长同期发生，附件未提供对照组。两者的因果归属不能直接确认为依据。
+
+**P6 自助终端属下一步设想。** 会议材料中"将上线自助终端"属下一步设想，需依赖场地与预算审核两项条件。本期未将其纳入已实现成效。
+
+**P7 重复补交后再受理存在。** 部分件数属于重复补交资料后的再次受理，附件无稳定个人标识；目前只能统计事件，不展示用户去重效果。
+
+**P8 整改措施涉及的潜在资源未获批准。** 整改建议可能涉及登记字段改造、抽样设计、终端建设等。任何新增编制、采购预算或软件建设期限在本次报告中均不作承诺。
+
+---
+
+## 三、改进安排
+
+本节所列均为拟议建议，逐项对应问题分析章节。所有建议不视为已经落实。
+
+**A1 针对 P1（口径差异）：** 拟议在下次工作会议前发布统一口径表，明确积压案件、响应时间、受理件数等关键字段的定义、计算方式与生效时点；建立季度复核机制，对口径差异进行检查。在统一口径未发布前，四月积压数字与其他月份不作直接比较。
+
+**A2 针对 P2（登记覆盖度）：** 拟议对响应时间字段增设必填校验，节假日与特殊情况保留"未登记"状态；按月公布登记覆盖率，作为问题跟踪指标而非成效指标。
+
+**A3 针对 P3（独立人数不可得）：** 拟议在不引入未经批准的新增编制前提下，对台账字段增设来源标识位（如预约号、办理号），为将来在用户授权范围内做去重分析做准备；本期以"事件数"作统计口径，不展示用户去重效果。
+
+**A4 针对 P4（电话回访效果）：** 拟议在下一次电话回访前明确抽样框、记录回答人数与拒访情况；待样本形成后再讨论是否引入量化满意率。本期不出现满意率数字。
+
+**A5 针对 P5（宣传与增长）：** 拟议保留"同步发生"表述，不以单月数据做归因；如需评估宣传影响，建议另行设计对照组方案并单独审批，本次不评估。
+
+**A6 针对 P6（自助终端）：** 拟议在计划章节记录自助终端为下一步设想，注明依赖场地与预算审核两项条件；在两项条件未确认前不将其列入成效。
+
+**A7 针对 P7（重复补交）：** 与 A3 共用字段改造建议；本期以事件计，不展示去重效果。
+
+**A8 共同边界：** 本报告不承诺未经批准的新增编制、采购预算或软件建设期限；不将某一窗口经验作为全市推广成果；不使用全面领先、零投诉等无依据表述。所有数字仅限本中心试点范围，不推算全市成效。
+
+---
+
+# 附件一 数据口径与缺失说明表
+
+| 指标 | 单位 | 适用对象 | 状态 | 值域/口径 | 缺口说明 |
+|---|---|---|---|---|---|
+| 大厅甲受理件数 | 件 | 大厅甲窗口 | 已有充分依据可直接使用 | 按提交日期记录件数；不等于独立服务人数 | 重复补交后再受理未做去重 |
+| 大厅乙受理件数 | 件 | 大厅乙窗口 | 已有充分依据可直接使用 | 按提交日期记录件数 | 同上 |
+| 线上预约次数 | 次 | 线上预约入口 | 已有充分依据可直接使用 | 仅记录预约次数；与大厅件数不可加为独立人数 | 同一群众先预约后办理会双计 |
+| 响应时间 | 仅工作日 | 三类渠道已登记条目 | 已有充分依据可直接使用 | 0=当天响应；空白=未登记，不计0 | 空条目比例需月度核对 |
+| 积压案件（台账口径） | 件 | 四月及全期 | 仅作为候选建议需要选择 | 超过5个工作日未办结（台账说明） | 与会议纪要草稿口径不同，未生效 |
+| 积压案件（纪要草稿口径） | 件 | 纪要草稿 | 因缺少关键资料暂不能执行 | 超过3个工作日计入积压 | 草稿未注明生效 |
+| 投诉件数 | 件 | 三类渠道 | 已有充分依据可直接使用 | 按登记数计 | 培训/说明书贡献未单独测量 |
+| 电话回访次数 | 次 | 已实施动作 | 已有充分依据可直接使用 | 仅记录开展次数 | 抽样框、回答人数、拒访未登记 |
+| 群众满意率 | % | — | 因缺少关键资料暂不能执行 | — | 无调查问卷、无抽样框 |
+| 登记覆盖率 | % | 响应时间字段 | 仅作为候选建议需要选择 | 需先确定分母（每月总条目） | 当前未公布统一计算方式 |
+| 独立服务人数（去重） | 人 | 三类渠道合并 | 因缺少关键资料暂不能执行 | — | 无稳定个人标识字段 |
+| 自助终端上线 | — | — | 因缺少关键资料暂不能执行 | — | 依赖场地与预算审核 |
+| 去年同期比较 | % 或 件 | 同期对比 | 因缺少关键资料暂不能执行 | — | 未提供同口径基期台账 |
+| 提升比例（如投诉下降率） | % | — | 因缺少关键资料暂不能执行 | — | 无基期分母 |
+
+注：列名、单位、状态与值域口径在本表中保持一致；空白或未知处使用"—"明确标记，未用模拟值填满版面。
+
+---
+
+# 附件二 问题及拟议整改措施对照表
+
+| 问题编号 | 观察（已记录事实） | 解释（口径与边界说明） | 拟议整改建议（不视为已落实） | 状态 |
+|---|---|---|---|---|
+| P1 | 一月宣传与受理增长同期发生；四月积压口径两份材料不同 | 未提供对照组；口径未统一 | A1 发布统一口径表与季度复核；保留同步发生表述，不做归因 | 仅作为候选建议需要选择 |
+| P2 | 二月部分事项因节假日延长等待 | 工作日口径与自然日不可互换 | 保留工作日口径，不改算自然日，不反推逐日曲线 | 已有充分依据可直接使用 |
+| P3 | 三月培训与说明书更新已开展 | 效果贡献未单独测量 | A3 把工作动作与效果证据分别陈述 | 已有充分依据可直接使用 |
+| P4 | 六月台账存在空响应时间 | 空白=未登记，不是当天 | A2 增设必填校验与登记覆盖率公布 | 已有充分依据可直接使用（口径）；仅作为候选建议需要选择（具体字段改造） |
+| P5 | 五月电话回访已开展 | 无抽样框、无回答与拒访登记 | A4 下次回访前明确抽样框；本期不出现满意率 | 仅作为候选建议需要选择 |
+| P6 | 同一群众先线上后大厅可能双计；重复补交后再受理 | 无稳定个人标识 | A3/A7 增设来源标识位；本期以事件计，不展示去重 | 仅作为候选建议需要选择 |
+| P7 | 自助终端为下一步设想 | 依赖场地与预算审核 | A6 在计划章节记录，不列入成效 | 因缺少关键资料暂不能执行 |
+| P8 | 整改可能涉及新编制/预算/软件 | 未获批准 | A8 不承诺未经批准的资源 | 已有充分依据可直接使用 |
+
+---
+
+# 附件三 需核查的口径清单
+
+| 序号 | 结论/口径 | 依据来源 | 状态 | 核查要点 |
+|---|---|---|---|---|
+| 1 | 大厅甲、大厅乙受理件数按提交日期

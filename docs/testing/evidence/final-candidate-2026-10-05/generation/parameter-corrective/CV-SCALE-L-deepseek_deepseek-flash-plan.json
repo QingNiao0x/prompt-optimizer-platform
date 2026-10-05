@@ -1,0 +1,249 @@
+{
+  "id": "CV-SCALE-L-deepseek_deepseek-flash-plan",
+  "caseId": "CV-SCALE-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T06:31:38.481Z",
+  "prepared": {
+    "contextId": "ea720e75-16e0-45c7-9b64-acbd2f6ce501",
+    "version": "sha256:9859469e93f8111ec85a89fbcd27e344eeb27ff087606b485314a7bc484b78ef",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/research_design/",
+        "materials/research_design/current-brief.md",
+        "materials/research_design/tests/",
+        "materials/research_design/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/research_design/current-brief.md：Markdown 文档摘要：提示词整理工具对照研究方案：合成现行资料；评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。；信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。；一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断…；业务摘录：一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；交互式计划确认指系统先提问、实验操作者按预先制定答案卡作答，再生成最终提示词，不是静态任务分解列表。；详细答案卡、记录字段和材料目录放在附表，不能为了压缩文字删除公平比较条件。；[片段 1/1]；任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签；；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "盲评不得暴露工具名称"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "方案可说明选择流程，不应在变量尚未确定时锁定某个显著性检验"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/research_design/",
+        "materials/research_design/current-brief.md",
+        "materials/research_design/tests/",
+        "materials/research_design/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/research_design/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 提示词整理工具对照研究方案：合成现行资料\n交互式计划确认指系统先提问、实验操作者按预先制定答案卡作答，再生成最终提示词，不是静态任务分解列表。\n实验尚未运行，没有准确率、显著性、成功案例数量和用户结论。\n二十个任务和三次独立重复以及两名盲评者已经确定，不需要重新选择样本数量。\n评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。\n\n# 分支与边界\n开发任务要求下游模型只输出方案，不实际修改仓库；写作任务要求交付文本，因此跨任务不能用代码测试通过率作为统一质量指标。\n原始组接收原始需求与初始材料，直接增强组接收同一初始信息得到的优化提示词；两组都不能偷看计划确认组后来回答的业务选择。\n计划确认组应记录每个问题、选项、推荐依据和答案，不只保存最终提示词；错误推荐被答案纠正后仍应计入交互阶段风险。\n信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。\n任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签；不能在人工评分前人为删除不利的测试污染反例。\n每个条件的三次重复应开启隔离会话，随机化顺序并记录模型版本、日期和参数；失败后的重试不能替代第一份失败样本。\n评审看到的是匿名化下游输出和等量任务信息，不展示产品名称、标志和生成来源；为了评分可以看任务事实，但不能看另一名评审先前评分。\n一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。\n候选评价统计方法依赖分数是否有序、是否连续和是否重复测量；方案可说明选择流程，不应在变量尚未确定时锁定某个显著性检验。\n主文只描述研究问题、实验设计、主要指标与限制；详细答案卡、记录字段和材料目录放在附表，不能为了压缩文字删除公平比较条件。\n工具生成速度是过程指标，质量分是结果指标；没有计费日志时不能估算真实 Token 成本，不能把字符数直接换算成实际费用。\n即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。",
+          "summary": "Markdown 文档摘要：提示词整理工具对照研究方案：合成现行资料；评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。；信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。；一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。",
+          "truncated": false
+        },
+        {
+          "path": "materials/research_design/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T07:01:38.639134300Z",
+    "latencyMs": 133
+  },
+  "plan": {
+    "summary": "已理解你要交付的是一份尚未执行的研究方案（主文1200字以内，另附变量分组表、评分表与失败记录模板、预注册待确认清单），比较原始需求、直接增强、交互式计划确认增强及信息量匹配对照对下游输出的影响。方案中已明确二十个任务、每条件三次独立重复、两名盲评者、盲评匿名、失败样本保留等设计，但评分尺度、计划确认的轮次与终止规则、评审分歧处理方式仍属未决，需要你确认后才能写入方案。",
+    "questions": [
+      {
+        "id": "scoring_scale",
+        "question": "评分表采用哪种评分尺度？",
+        "hint": "你已要求评分尺度必须保留未知、不得默认指定，因此需要你明确选择；这直接决定评分表结构、一致性评价方法和后续统计选择流程。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "likert5",
+            "label": "5点李克特量表",
+            "description": "每个维度用1–5分有序等级，便于计算一致性，但等级间距不等距。",
+            "answer": "评分采用5点李克特量表（1–5分），每个评价维度单独评分。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "likert7",
+            "label": "7点李克特量表",
+            "description": "每个维度用1–7分有序等级，区分度更高，但评审负担略增。",
+            "answer": "评分采用7点李克特量表（1–7分），每个评价维度单独评分。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "rubric_levels",
+            "label": "分档评分（如差/中/良/优）",
+            "description": "按定性档位评分，档位定义写入评分表，便于跨评审对齐口径。",
+            "answer": "评分采用分档评分（如差/中/良/优），每档附文字定义，每个评价维度单独定档。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "binary_pass",
+            "label": "二值通过/不通过",
+            "description": "每个维度只判通过或不通过，一致性易算，但会损失程度信息。",
+            "answer": "评分采用二值判定（通过/不通过），每个评价维度单独判定。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "plan_rounds",
+        "question": "交互式计划确认组的最大提问轮次和终止规则如何预注册？",
+        "hint": "你已说明当前尚未决定、不得默认补全；轮次与终止规则会影响计划确认组与信息量匹配对照的可比性，必须由你确定。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "fixed_one",
+            "label": "固定一轮",
+            "description": "每组只进行一次提问-作答，随后生成最终提示词，轮次完全一致。",
+            "answer": "计划确认组固定进行一轮提问，实验操作者按答案卡作答后即生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "fixed_two",
+            "label": "固定两轮",
+            "description": "每组进行两轮提问-作答，轮次一致，可观察追问效果。",
+            "answer": "计划确认组固定进行两轮提问，每轮由实验操作者按答案卡作答，两轮结束后生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "until_no_new",
+            "label": "直到无新增关键问题为止",
+            "description": "由系统判断是否还有影响输出的未决问题，达到即终止，轮次可能因任务而异。",
+            "answer": "计划确认组持续提问，直到不再出现影响最终提示词的关键未决问题为止，再生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "max_three",
+            "label": "最多三轮，无新问题提前终止",
+            "description": "设上限三轮，若中途已无关键未决问题则提前结束，兼顾一致性与灵活性。",
+            "answer": "计划确认组最多进行三轮提问；若中途已无影响输出的关键未决问题，则提前终止并生成最终提示词。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "reviewer_disagreement",
+        "question": "两名盲评者的分歧处理与一致性评价方式如何预先确定？",
+        "hint": "你已说明当前尚未决定、不得默认补全；这决定评分表是否设仲裁环节以及一致性指标的选择，必须由你确定。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "mean_no_arbitration",
+            "label": "取均值，不设仲裁",
+            "description": "两名评审独立评分后取平均，不引入第三人，一致性用组内相关系数或加权Kappa报告。",
+            "answer": "两名评审独立评分后取均值作为该任务得分，不设第三人仲裁；一致性以组内相关系数或加权Kappa报告。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "discuss_consensus",
+            "label": "分歧时讨论达成共识",
+            "description": "评分差异超过预设阈值时两名评审讨论并给出统一分，一致性报告讨论前后变化。",
+            "answer": "两名评审先独立评分；当同一维度分差超过预设阈值时进行讨论并达成共识分，一致性报告讨论前后的变化。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "third_arbiter",
+            "label": "第三人仲裁",
+            "description": "分歧超过阈值时由第三名评审裁定，以裁定分为准，一致性报告原始评分。",
+            "answer": "两名评审独立评分；当同一维度分差超过预设阈值时，由第三名评审裁定，以裁定分为准，一致性报告原始评分。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "report_only",
+            "label": "只报告分歧，不合并",
+            "description": "保留两名评审各自评分，不取均值也不仲裁，一致性作为主要结果报告。",
+            "answer": "保留两名评审各自评分，不取均值、不仲裁；一致性指标作为主要结果报告，分歧样本单独列出。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 8260,
+    "planId": "e65d3353-61a3-4255-b963-b61183278f9d",
+    "planningContext": {
+      "contextId": "ea720e75-16e0-45c7-9b64-acbd2f6ce501",
+      "version": "sha256:9859469e93f8111ec85a89fbcd27e344eeb27ff087606b485314a7bc484b78ef"
+    },
+    "expiresAt": "2026-10-05T07:01:38.639134300Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CV-SCALE-L-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "c90fc559-f4f0-4570-8a66-87f901f9599c",
+      "elapsedMs": 291
+    },
+    {
+      "label": "CV-SCALE-L-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "98e34a59-c4f4-41e7-9cab-4e30547a0a31",
+      "elapsedMs": 8318
+    }
+  ]
+}

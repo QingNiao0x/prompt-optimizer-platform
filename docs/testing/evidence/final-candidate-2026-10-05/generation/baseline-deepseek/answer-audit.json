@@ -1,0 +1,634 @@
+[
+  {
+    "caseId": "CD-01-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "region_missing_handling",
+    "question": "当候选记录的地区信息缺失、无法核验是否符合当前用户所属地区条件时，这条候选应如何处理？",
+    "answer": "暂不确定，保留为未决前提，实施前先确认；不得绕过地区匹配条件。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-02-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "debug_section",
+    "question": "交接文档是否需要包含本地调试与故障排查操作章节？",
+    "answer": "需要只读排查步骤，不包含安装依赖、修改配置或启动生产服务的命令。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-02-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "history_retention_conflict",
+    "question": "关于历史保留期限，旧交接说明写永久保留、新需求草稿写180天但尚未批准，交接文档应如何处理这一冲突？",
+    "answer": "历史保留期限未批准且材料冲突，永久保留与180天并列核对，不擅自采用任何一项作为现状。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-03-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "report_example_type",
+    "question": "指南中的报告写作示例，主要面向哪类报告？",
+    "answer": "工作汇报，采用合成的季度工作总结；不要加入真实单位名称。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-04-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q1",
+    "question": "本次报告是否需要与去年同期做比较？如果做，是否有同口径的基期台账可用？",
+    "answer": "没有同口径基期，仅描述本期内部月度变化，不计算同比。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-04-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q2",
+    "question": "四月积压案件在两份材料中口径不同（台账为超过5个工作日未办结，会议纪要建议超过3个工作日计入积压且未注明生效）。本次报告应如何处理这一差异？",
+    "answer": "两种积压口径及来源并列列出，保持未确认，说明不可直接比较，不选更好看的数字。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-04-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q3",
+    "question": "六月台账中响应时间为空白的记录，在计算平均响应时间等指标时应如何处理？",
+    "answer": "空白响应时间保持未登记，不填零；没有确定样本边界前不计算均值，可报告有登记范围与缺失量，说明覆盖不足。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-04-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q4",
+    "question": "报告正文中，台账受理件数与线上预约次数应如何呈现？",
+    "answer": "受理件数与预约次数分别列示，不合并为独立服务人数，不推断去重人数。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-04-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q5",
+    "question": "五月新增的电话回访，在报告中应如何表述？",
+    "answer": "电话回访作为工作活动陈述，不计算满意率，不把“效果不错”写成已核实效果。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-04-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q6",
+    "question": "报告正文中，一月受理增长与试点启动宣传同期发生这一情况应如何表述？",
+    "answer": "只描述同步发生，不将宣传断言为增长原因。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-04-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q7",
+    "question": "三月窗口培训和说明书更新对投诉变化的贡献，在报告中应如何表述？",
+    "answer": "培训和说明书更新为已开展活动，对投诉变化贡献未单独测量，不写成确定原因。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-04-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q8",
+    "question": "会议材料中“将上线自助终端”的设想，在报告中应放在哪里？",
+    "answer": "自助终端是下一步设想，依赖场地和预算审核，不列入已实现成效。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-05-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "max_rounds_termination",
+    "question": "计划确认组（系统先提问、操作者按答案卡作答、再生成最终提示词）的最大提问轮次和终止规则应如何预注册？",
+    "answer": "暂不确定，请保留为预注册前待确认条件，不直接固定为一轮或无限追问。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-05-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "reviewer_disagreement",
+    "question": "两名盲评者独立评分后，分歧处理与一致性评价方式应如何预先确定？",
+    "answer": "暂不确定，不提前指定统计检验；按评分变量类型提出候选，并说明选择条件。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-06-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "completion_denominator",
+    "question": "完成率的分母应采用哪种口径？",
+    "answer": "暂不确定，先给出两种口径的差异，不计算比例。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-06-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "missing_in_completion",
+    "question": "缺失答卷在完成率中应如何呈现？",
+    "answer": "暂不确定，保留独立缺失状态，不默认剔除、补零或计为未完成。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-06-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "missing_in_department_table",
+    "question": "缺失答卷在分部门汇总表中应如何呈现？",
+    "answer": "暂不确定，保留独立缺失状态，不默认剔除、补零或计为未完成。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-06-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "completion_status_mapping",
+    "question": "数据字典的 COMPLETE 与旧报表示例的 DONE 之间应如何处理？",
+    "answer": "COMPLETE与DONE的映射未提供；并列列出来源差异，不直接视为同义，也不自行选择其中之一。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-07-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "observation_window",
+    "question": "预约未到诊的观察窗口应如何定义？即一个预约事件在就诊时间之后经过多长时间，才可以被归为最终状态并纳入爽约统计？",
+    "answer": "尚未确定，由运营与相关专业人员制定，方案保留该前提，不默认当天结束即爽约。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-07-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "cancellation_exemption_boundary",
+    "question": "取消免责边界应如何定义？即提前多久取消可以不计入爽约，以及该边界以哪个时间点为基准计算？",
+    "answer": "尚未确定，由运营与相关专业人员制定，方案保留该前提，不默认当天结束即爽约。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-07-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "channel_comparison_unit",
+    "question": "比较渠道时，主统计单位应使用预约事件还是去重患者？",
+    "answer": "预约事件作为主口径；当前没有授权的患者去重键，不做人数统计。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-07-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "channel_attribution_rule",
+    "question": "同一预约在电话与网页等渠道产生多次操作事件时，渠道归属应如何确定？",
+    "answer": "多渠道多次操作事件的归属规则尚未确定，保留需运营确认的口径，不默认采用首触或末触；仍以预约事件为主口径，不统计患者人数。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q_yll_life_table",
+    "question": "YLL计算拟采用哪份参考寿命表及适用年份口径？",
+    "answer": "暂不确定，由研究团队和专业评审确定，不自动选某机构寿命表。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q_arriaga_comparison",
+    "question": "Arriaga分解拟比较哪些人群、分解哪个差异对象？",
+    "answer": "暂不确定，先列出需满足的前提，不把死亡率差异与预期寿命差异混为一谈。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q_population_denominator",
+    "question": "各年度与分层人口分母的来源及匹配层级如何确定？",
+    "answer": "暂不确定，没有完整分母，不计算任何率。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q_age_group_mapping",
+    "question": "登记字典的5岁年龄组与分析草稿的10岁年龄组之间的聚合映射如何处理？",
+    "answer": "5岁组与10岁组的聚合映射及最高开放年龄组尚未确认，保留差异，不能自行合并或删除高龄组。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q_unknown_sex_denominator",
+    "question": "性别未知（U）记录是否进入总量与分层分母？",
+    "answer": "U保持未知，是否进入总量和分层分母尚未确定，由研究团队确认，不按姓名推断或并入F/M。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-10-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "primary_draft",
+    "question": "两版租赁草稿中，哪一份作为本次律师复核的主文本？",
+    "answer": "暂不确定，两版并列核对，不能按文件日期自动认定后一版已被接受。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-10-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "review_focus",
+    "question": "本次复核优先侧重哪一类安排？",
+    "answer": "侧重持续履约，但保留提前退出的证据问题；不作策略性法律建议。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-11-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q1",
+    "question": "合成价格序列的复权处理状态应如何在报告中记录？",
+    "answer": "暂不确定，保留为输入元数据缺口，不自行假定复权类型。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-11-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q2",
+    "question": "报告中日收益率采用哪种计算口径？",
+    "answer": "简单收益率作为展示口径，公式与单位明确；不将其延伸为交易建议。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-11-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q3",
+    "question": "成交量单位冲突（数据字典为手、旧图表标题为股）在报告中如何处理？",
+    "answer": "成交量单位为手与股存在资料差异，无换算依据，保持冲突并列，不擅自换算或选择。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-11-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q4",
+    "question": "空白图表模板中，缺失或未登记的成交量应如何呈现？",
+    "answer": "零成交量与未登记保持不同；未登记显示缺口与覆盖说明，不用零替代。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-11-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q5",
+    "question": "回撤分析在报告中采用哪种基准定义？",
+    "answer": "仅讨论已给定样本内峰值定义及其局限，不使用未提供的样本外历史峰值。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-11-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "q6",
+    "question": "波动率指标在报告中的呈现范围如何界定？",
+    "answer": "只给日度定义和示意步骤，不计算确定年化值，不增加投资策略或统计结果。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-GUIDE-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "plan_default_state",
+    "question": "指南中描述 Plan 时，应说明用户需要主动开启，还是说明它默认开启？",
+    "answer": "Plan是用户主动开启的可选交互，沿用原文；指南不另行虚构未证明的默认状态。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-GUIDE-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "history_scope",
+    "question": "历史记录部分，指南应说明用户能看到并管理哪些内容？",
+    "answer": "只介绍资料明确的优化结果历史、分页及逻辑删除，不新增未证明的保存问答过程或跨账号共享能力。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-GUIDE-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "edit_effect",
+    "question": "用户编辑已生成的结果后，指南应说明编辑内容如何生效？",
+    "answer": "仅介绍资料明确的结果编辑和再次增强能力；具体输入继承行为未获材料证明时以当前界面为准，不编造自动恢复或重置行为。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-GUIDE-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "file_limits",
+    "question": "关于文件大小、数量或格式限制，指南应如何处理？",
+    "answer": "原文已规定材料未提供的大小和数量不写具体数字，沿用该边界，必要时以当前界面提示为准。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-GUIDE-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "model_selection",
+    "question": "指南是否需要说明用户可以选择模型？",
+    "answer": "沿用资料：用户可选择管理员已发布的模型，不填写密钥，以简单操作说明呈现。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-GUIDE-L",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "failure_retry",
+    "question": "模型失败时，指南应建议用户如何保留需求后重试？",
+    "answer": "失败时保留当前需求，核对仍在后重试，必要时先复制需求；不声称失败结果已自动写入历史或自动恢复。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-HOSPITAL-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "hospital_b_format",
+    "question": "乙医院预约资料的文件格式是什么？",
+    "answer": "乙医院格式尚未提供，保留待收集，不假定CSV。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-HOSPITAL-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "hospital_b_fields",
+    "question": "乙医院预约登记包含哪些列名？",
+    "answer": "乙医院列名尚未提供，保留待收集，不编造字段。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-HOSPITAL-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "hospital_b_status_mapping",
+    "question": "乙医院的状态取值分别对应什么业务含义？",
+    "answer": "乙医院状态取值和映射尚未提供，保留待收集，不照搬甲医院。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-HOSPITAL-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "cross_hospital_scope",
+    "question": "在跨院原始记录共享尚未获批准的前提下，本次跨院比较允许做到哪一步？",
+    "answer": "沿用原始范围：各院分别处理，仅交付不可识别的统计结构、字段对照和检查清单，不能合并原始记录或强行计算跨院到诊率。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-HOSPITAL-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "missing_visit_date_handling",
+    "question": "就诊日期缺失的记录，在登记完整性检查中如何处理？",
+    "answer": "缺失日期记录保持缺失并单列；比例分母口径暂不确定，不填零、不计算未经确认的比例。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-HOSPITAL-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "duplicate_id_handling",
+    "question": "预约编号重复的记录，在整理时如何处理？",
+    "answer": "重复编号的记录完整保留并标记供人工核查，不删除或只保留一条。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "TT-HOSPITAL-M",
+    "modelId": "deepseek:deepseek-flash",
+    "questionId": "rebook_after_cancel",
+    "question": "取消后重新预约的记录，在到诊与完整性统计中如何认定？",
+    "answer": "原取消记录独立保留为取消，不计为到诊；重预约的关联与计数口径暂不确定，不默认合并记录。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-01-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "missing_region_handling",
+    "question": "当候选记录的地区信息缺失或无法核验当前用户所属地区条件时，应如何处理该候选？",
+    "answer": "暂不确定，保留为未决前提，实施前先确认；不得绕过地区匹配条件。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-01-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "region_level",
+    "question": "当前用户所属地区条件中的“地区”具体指哪个层级？",
+    "answer": "当前所属地区沿用现有系统的已实现口径；材料未提供层级时列为执行前核查，不重新指定省市区层级，不绕过地区条件。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-02-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "debug_section",
+    "question": "交接文档是否需要包含本地调试与故障排查操作章节？",
+    "answer": "需要只读排查步骤，不包含安装依赖、修改配置或启动生产服务的命令。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-02-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "history_retention_conflict",
+    "question": "历史保留期限存在冲突：旧交接说明写永久保留，新需求草稿写保留180天但尚未批准。交接文档应如何处理这一差异？",
+    "answer": "历史保留期限未批准且材料冲突，永久保留与180天并列核对，不擅自采用任何一项作为现状。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-03-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "report_example_orientation",
+    "question": "指南中的报告写作示例应主要面向哪种场景？",
+    "answer": "工作汇报，采用合成的季度工作总结；不要加入真实单位名称。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-04-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "compare_yoy",
+    "question": "本次报告是否需要与去年同期进行比较？",
+    "answer": "没有同口径基期，仅描述本期内部月度变化，不计算同比。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-04-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "backlog_threshold",
+    "question": "积压口径冲突如何处理？",
+    "answer": "尚未确认，5与3个工作日及资料来源并列，说明不可比，不自行选择口径。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-05-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "max_rounds",
+    "question": "交互式计划确认的最大轮次应如何设定？",
+    "answer": "暂不确定，请保留为预注册前待确认条件，不直接固定为一轮或无限追问。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-05-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "termination_rule",
+    "question": "交互式计划确认的终止规则是什么？",
+    "answer": "暂不确定，请保留为预注册前待确认条件，不直接固定为一轮或无限追问。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-05-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "disagreement_resolution",
+    "question": "两名评审出现分歧时如何处理？",
+    "answer": "暂不确定，不提前指定统计检验；按评分变量类型提出候选，并说明选择条件。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-05-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "consistency_measure",
+    "question": "如何评价评审间一致性？",
+    "answer": "暂不确定，不提前指定统计检验；按评分变量类型提出候选，并说明选择条件。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-05-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "info_matching_control",
+    "question": "信息量匹配对照应如何实现？",
+    "answer": "两组必须获得相同实际确认信息，信息量匹配；具体交付时点和操作方式暂不确定，列为预注册前待确认条件，不改变已定公平对照。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-06-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "completion_rate_denominator",
+    "question": "完成率的分母应采用哪种口径？",
+    "answer": "暂不确定，先给出两种口径的差异，不计算比例。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-06-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "missing_response_presentation",
+    "question": "缺失答卷在完成率与分部门表中应如何呈现？",
+    "answer": "暂不确定，保留独立缺失状态，不默认剔除、补零或计为未完成。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-06-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "completion_status_mapping",
+    "question": "数据字典中的 COMPLETE 与旧报表示例中的 DONE 应如何处理？",
+    "answer": "COMPLETE与DONE的映射未提供；并列列出来源差异，不直接视为同义，也不自行选择其中之一。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-07-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "observation_window",
+    "question": "预约未到诊的观察窗口应如何定义？",
+    "answer": "尚未确定，由运营与相关专业人员制定，方案保留该前提，不默认当天结束即爽约。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-07-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "cancellation_boundary",
+    "question": "预约取消的免责边界应如何定义？",
+    "answer": "尚未确定，由运营与相关专业人员制定，方案保留该前提，不默认当天结束即爽约。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-07-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "statistical_unit",
+    "question": "比较渠道时，主统计单位应使用预约事件还是去重患者？",
+    "answer": "预约事件作为主口径；当前没有授权的患者去重键，不做人数统计。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "yll_life_table",
+    "question": "YLL计算采用哪份参考寿命表及适用年份？",
+    "answer": "暂不确定，由研究团队和专业评审确定，不自动选某机构寿命表。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "arriaga_comparison",
+    "question": "Arriaga分解针对哪些可比较人群和哪个差异对象？",
+    "answer": "暂不确定，先列出需满足的前提，不把死亡率差异与预期寿命差异混为一谈。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "population_denominator",
+    "question": "各年度与分层人口分母来源及匹配层级怎样确定？",
+    "answer": "暂不确定，没有完整分母，不计算任何率。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "age_group_mapping",
+    "question": "年龄分组采用5岁组还是10岁组？若采用10岁组，如何合并5岁组及处理最高开放年龄组？",
+    "answer": "5岁组与10岁组的聚合映射及最高开放年龄组尚未确认，保留差异，不能自行合并或删除高龄组。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "unknown_sex_handling",
+    "question": "性别未知记录（U）在总量和分层分析中如何处理？",
+    "answer": "U保持未知，是否进入总量和分层分母尚未确定，由研究团队确认，不按姓名推断或并入F/M。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "disease_code_mapping",
+    "question": "疾病亚类占位代码A、B、C如何映射到实际疾病编码？",
+    "answer": "A/B/C只是占位代码，实际疾病编码映射尚未批准，应由专业人员确认，不自行采用常用编码。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-08-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "seasonal_data_availability",
+    "question": "是否具备按月死亡登记数据以支持季节性分析？",
+    "answer": "没有完整按月登记数据，需先核对月度完整性与延迟；若只有年表则季节性分析无法执行，不生成假月度序列。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-10-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "primary_draft",
+    "question": "两版租赁草稿中，哪一份应作为本次律师复核的主文本？",
+    "answer": "暂不确定，两版并列核对，不能按文件日期自动认定后一版已被接受。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-10-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "review_focus",
+    "question": "本次复核应优先侧重持续履约还是可能提前退出的安排？",
+    "answer": "侧重持续履约，但保留提前退出的证据问题；不作策略性法律建议。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-10-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "deposit_discrepancy",
+    "question": "两版草稿押金金额不一致（两个月 vs 三个月），且邮件未确认，应如何处理？",
+    "answer": "押金两个月与三个月及双方来源并列，邮件未确认，保持未决，不自行选择金额，也不认定任一草稿具有已签署效力。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-11-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "adjustment_method",
+    "question": "合成价格序列的复权处理应如何记录？",
+    "answer": "暂不确定，保留为输入元数据缺口，不自行假定复权类型。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-11-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "return_type",
+    "question": "日收益率应使用简单收益率还是对数收益率？",
+    "answer": "简单收益率作为展示口径，公式与单位明确；不将其延伸为交易建议。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  },
+  {
+    "caseId": "CD-11-L",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "questionId": "volume_unit_conflict",
+    "question": "成交量单位冲突（数据字典为手，旧图表标题为股）应如何处理？",
+    "answer": "成交量单位为手与股存在资料差异，无换算依据，保持冲突并列，不擅自换算或选择。",
+    "status": "AI_REVIEWED_NOT_DOMAIN_CERTIFIED"
+  }
+]

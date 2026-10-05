@@ -24,11 +24,17 @@ final class PlanningAuthorizationState {
     private final List<Status> statuses;
     private final boolean separateHospitalStatistics;
     private final boolean explicitDeliveryChoice;
+    private final boolean hospitalComparisonKnown;
+    private final boolean hospitalDeliverablesKnown;
 
-    private PlanningAuthorizationState(List<Status> statuses, boolean separateHospitalStatistics, boolean explicitDeliveryChoice) {
+    private PlanningAuthorizationState(List<Status> statuses, boolean separateHospitalStatistics,
+                                       boolean explicitDeliveryChoice, boolean hospitalComparisonKnown,
+                                       boolean hospitalDeliverablesKnown) {
         this.statuses = List.copyOf(statuses);
         this.separateHospitalStatistics = separateHospitalStatistics;
         this.explicitDeliveryChoice = explicitDeliveryChoice;
+        this.hospitalComparisonKnown = hospitalComparisonKnown;
+        this.hospitalDeliverablesKnown = hospitalDeliverablesKnown;
     }
 
     /** 逐个完整语句收集现状；条件句、将来申请或示例不是当前授权事实。 */
@@ -52,7 +58,13 @@ final class PlanningAuthorizationState {
                 .anyMatch(source -> source.contains("各院分别处理") && source.contains("仅交付不可识别的统计结构"));
         boolean choice = evidence.stream().filter(java.util.Objects::nonNull)
                 .anyMatch(source -> source.matches("(?s).*(?:让我选择|由我选择|询问我|由用户选择).{0,20}(?:交付|汇总).*"));
-        return new PlanningAuthorizationState(result, separate, choice);
+        boolean compare = evidence.stream().filter(java.util.Objects::nonNull)
+                .anyMatch(source -> source.matches("(?s).*(?:比较|对照)甲医院(?:与|和|及)乙医院.*"));
+        boolean deliverables = evidence.stream().filter(java.util.Objects::nonNull)
+                .anyMatch(source -> source.contains("字段对照表") && source.contains("检查清单")
+                        && source.contains("来源") && source.contains("分母")
+                        && source.contains("状态") && source.contains("日期边界"));
+        return new PlanningAuthorizationState(result, separate, choice, compare, deliverables);
     }
 
     /**
@@ -99,6 +111,8 @@ final class PlanningAuthorizationState {
 
     /** 继承已经明确的分院不可识别汇总交付，不把未获批准再变成选项；新增范围仍由用户确认。 */
     private boolean resolvesSeparateStatisticsDelivery(PlanQuestion question) {
+        if (knownHospitalDeliverables(question)) return true;
+        if (knownSeparateHospitalHandling(question)) return true;
         if (explicitDeliveryChoice || !separateHospitalStatistics
                 || !value("跨院共享原始记录").equals(Optional.of(false))
                 || !question.question().matches("^在跨院原始记录共享尚未获批准的情况下[，,]本次交付的汇总结果应如何处理[？?]$")) return false;
@@ -116,6 +130,44 @@ final class PlanningAuthorizationState {
             String answer = option.answer().replaceAll("[\\s，,。]", "");
             return answer.equals("各院分别处理不合并原始记录仅各自输出检查结果")
                     || answer.equals("不共享原始记录仅交付各院分别处理后的不可识别统计结构");
+        });
+    }
+
+    /** 已列明的交付清单不能改成任意多选；新机构、字段授权和专业口径均不借此删除。 */
+    private boolean knownHospitalDeliverables(PlanQuestion question) {
+        if (explicitDeliveryChoice || !hospitalDeliverablesKnown || !separateHospitalStatistics
+                || !value("跨院共享原始记录").equals(Optional.of(false))
+                || !question.question().matches("^如果只做汇总[，,]交付物应包含哪些内容[？?]$")) return false;
+        String details = question.hint() + String.join(" ", question.examples())
+                + question.options().stream().map(option -> option.label() + option.answer()
+                        + option.description() + option.recommendationReason())
+                .collect(java.util.stream.Collectors.joining(" "));
+        if (details.matches("(?s).*(?:新增|另外|第三家|期限|审批|授权范围|医学口径|统计口径|[<>≤≥]|\\d).*")) return false;
+        return !question.options().isEmpty() && question.options().stream().allMatch(option ->
+                option.answer().matches("交付物中(?:包含各院分别处理的说明|只包含不可识别的统计结构|"
+                        + "包含字段对照表[，,]乙医院未知部分标注待收集|包含检查清单[，,]覆盖来源[、，,]分母[、，,]状态和日期边界)[。.]?"));
+    }
+
+    /**
+     * 当前未获批准且用户已限定分院处理时，普通“怎样处理”不再成为新选择。
+     * 汇总对照须已是原目标；申请流程、期限、新机构、字段权限和真实合并仍保留。
+     */
+    private boolean knownSeparateHospitalHandling(PlanQuestion question) {
+        if (explicitDeliveryChoice || !separateHospitalStatistics
+                || !value("跨院共享原始记录").equals(Optional.of(false))) return false;
+        String text = question.question().replaceAll("\\s", "");
+        if (!text.matches("^跨院共享原始记录(?:目前|当前)?(?:尚未获批准|未获批准)[，,]本次方案应如何处理两家医院的数据[？?]$")) return false;
+        String details = question.hint() + " " + String.join(" ", question.examples()) + " "
+                + question.options().stream().map(option -> option.label() + " " + option.description()
+                        + " " + option.answer() + " " + option.recommendationReason())
+                .collect(java.util.stream.Collectors.joining(" "));
+        if (details.matches("(?s).*(?:新增|第三家|期限|有效期|哪些字段|申请流程|审批人|授权范围|重新识别|[<>≤≥]|\\d).*")) return false;
+        return !question.options().isEmpty() && question.options().stream().allMatch(option -> {
+            String answer = option.answer();
+            boolean separate = answer.contains("分别") && answer.matches(".*不(?:合并|共享)原始记录.*")
+                    && (answer.contains("不可识别") || (hospitalComparisonKnown && answer.contains("汇总层面")));
+            boolean wait = answer.contains("当前按未获批准处理") && answer.contains("不预设合并");
+            return separate || wait;
         });
     }
 

@@ -1,0 +1,228 @@
+{
+  "id": "TT-HOSPITAL-M-deepseek_deepseek-flash-plan",
+  "caseId": "TT-HOSPITAL-M",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T04:34:36.876Z",
+  "prepared": {
+    "contextId": "babed502-7bcc-450f-855d-2391c5ef7ae7",
+    "version": "sha256:f56e8ca6d73154dfd14da65e1b7ebde0c7e5eca6e08ac77f621628a93eacfd2b",
+    "digest": {
+      "description": "合成业务验收资料，不含真实患者、当事人或凭据。本平台只生成任务提示词，不执行任务。",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/hospital/",
+        "materials/hospital/tests/",
+        "materials/hospital/tests/demo.md",
+        "materials/hospital/甲医院资料.md"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/hospital/甲医院资料.md：Markdown 文档摘要：甲医院数据格式：CSV。；甲医院字段为appointment_id、created_date、visit_date、department_code、status；状态为BOOKED、CANCELLED、ATTENDED。；乙医院数据格式：未提供。；跨院原始记录共享：未批准。；仅合成行政流程材料。；业务摘录：[片段 1/1] 甲医院数据格式：CSV。 分析工具：Excel。 甲医院字段为appointment_id、created_date、visit_date、department_code、status； 状态为BOOKED、CANCELLED、ATTENDED。 乙医院数据格式：未提供。 乙医院状态映射：未提供。 跨院原始记录共享：未批准。 仅合成行政流程材料。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "DATA_FORMAT",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital/甲医院资料.md",
+          "evidence": "甲医院数据格式：CSV"
+        },
+        {
+          "id": "F02",
+          "category": "ANALYSIS_TOOL",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital/甲医院资料.md",
+          "evidence": "分析工具：Excel"
+        },
+        {
+          "id": "F03",
+          "category": "DATA_FORMAT",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/hospital/甲医院资料.md",
+          "evidence": "乙医院数据格式：未提供"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "合成业务验收资料，不含真实患者、当事人或凭据。本平台只生成任务提示词，不执行任务。",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/hospital/",
+        "materials/hospital/tests/",
+        "materials/hospital/tests/demo.md",
+        "materials/hospital/甲医院资料.md"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/hospital/甲医院资料.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n甲医院数据格式：CSV。分析工具：Excel。甲医院字段为appointment_id、created_date、visit_date、department_code、status；状态为BOOKED、CANCELLED、ATTENDED。乙医院数据格式：未提供。乙医院状态映射：未提供。跨院原始记录共享：未批准。仅合成行政流程材料。",
+          "summary": "Markdown 文档摘要：甲医院数据格式：CSV。；甲医院字段为appointment_id、created_date、visit_date、department_code、status；状态为BOOKED、CANCELLED、ATTENDED。；乙医院数据格式：未提供。；跨院原始记录共享：未批准。；仅合成行政流程材料。",
+          "truncated": false
+        },
+        {
+          "path": "materials/hospital/tests/demo.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n仅演示：使用Python输出CSV。该示例不代表乙医院已确定格式或项目偏好。",
+          "summary": "Markdown 文档摘要：仅演示：使用Python输出CSV。；该示例不代表乙医院已确定格式或项目偏好。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T05:04:36.884260700Z",
+    "latencyMs": 22
+  },
+  "plan": {
+    "summary": "已理解目标：为医院行政人员制定合成门诊预约资料的整理方案，比较甲、乙两院预约登记完整性，只交付中文整理步骤、字段对照表与检查清单，不读取真实数据、不运行程序。甲医院格式与字段已明确，乙医院格式和状态映射尚未提供，因此需要确认乙医院资料在本次交付中的处理方式，以及跨院比较在缺少乙院信息时的口径。",
+    "questions": [
+      {
+        "id": "hospital_b_format",
+        "question": "乙医院的数据文件格式是什么？",
+        "hint": "乙医院格式尚未提供，不能因为甲医院是CSV就假定乙医院也是CSV。这会影响字段对照表和整理步骤的写法。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "乙医院提供的是Excel工作簿（.xlsx）",
+          "乙医院提供的是CSV文件",
+          "乙医院提供的是数据库导出表，格式待确认"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "hospital_b_status_mapping",
+        "question": "乙医院的预约状态取值有哪些，分别对应什么业务含义？",
+        "hint": "乙医院状态映射未提供，当前无法计算跨院一致的到诊率。需要知道乙医院的状态取值以及哪些状态对应到诊、取消、未到诊等。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "乙医院状态有Confirmed、Canceled、Completed，其中Completed对应到诊，Canceled对应取消",
+          "乙医院状态取值和含义尚未收集到，需要先列入待收集信息表"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "hospital_b_fields",
+        "question": "乙医院预约登记包含哪些字段？",
+        "hint": "乙医院列名未提供，无法建立与甲医院的字段对照。需要知道乙医院实际字段名称，才能判断哪些字段可映射、哪些需要补充收集。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "乙医院字段有预约编号、创建时间、就诊时间、科室、状态",
+          "乙医院字段清单尚未提供，需要先列入待收集信息表"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "cross_hospital_comparison_scope",
+        "question": "在乙医院格式和状态映射尚未提供的情况下，本次跨院比较应如何处理？",
+        "hint": "当前无法计算跨院一致的到诊率。需要确认是只输出待收集信息表并暂缓比较，还是先按已知信息做有限比较。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "pending_collection_only",
+            "label": "只输出待收集信息表，暂缓跨院比较",
+            "description": "先列出乙医院需要收集的字段和状态映射，不进行跨院到诊率比较。",
+            "answer": "在乙医院格式和状态映射尚未提供前，只输出待收集信息表，暂缓跨院到诊率比较。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "limited_comparison",
+            "label": "先做有限比较，并标注不可比项",
+            "description": "仅对甲医院已明确的字段和状态做整理，乙医院部分标注为待收集，不强行计算跨院到诊率。",
+            "answer": "先基于甲医院已明确字段和状态做整理，乙医院部分标注为待收集，不强行计算跨院到诊率，并明确列出不可比项。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "summary_delivery_form",
+        "question": "如果只做汇总，交付物应包含哪些内容？",
+        "hint": "原始需求要求即便只做汇总，也应说明各院分别处理、仅交付不可识别的统计结构。需要确认汇总交付的具体范围。",
+        "type": "MULTIPLE_CHOICE",
+        "options": [
+          {
+            "id": "separate_processing_note",
+            "label": "各院分别处理的说明",
+            "description": "说明甲医院和乙医院分别独立处理，不合并原始记录。",
+            "answer": "交付物中包含各院分别处理的说明。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "non_identifiable_stats",
+            "label": "不可识别的统计结构",
+            "description": "只交付汇总统计结构，不包含任何可识别个人的信息。",
+            "answer": "交付物中只包含不可识别的统计结构。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "field_mapping_table",
+            "label": "字段对照表",
+            "description": "包含甲医院与乙医院的字段对照表，乙医院未知部分标注待收集。",
+            "answer": "交付物中包含字段对照表，乙医院未知部分标注待收集。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "checklist",
+            "label": "检查清单",
+            "description": "包含来源、分母、状态和日期边界的检查清单。",
+            "answer": "交付物中包含检查清单，覆盖来源、分母、状态和日期边界。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 5476,
+    "planId": "6316dd42-216d-4e4c-9d6a-a5dc1c994507",
+    "planningContext": {
+      "contextId": "babed502-7bcc-450f-855d-2391c5ef7ae7",
+      "version": "sha256:f56e8ca6d73154dfd14da65e1b7ebde0c7e5eca6e08ac77f621628a93eacfd2b"
+    },
+    "expiresAt": "2026-10-05T05:04:36.884260700Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "TT-HOSPITAL-M-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "fa58b9c9-bbf9-42d1-8fde-7e1f1e6585f8",
+      "elapsedMs": 43
+    },
+    {
+      "label": "TT-HOSPITAL-M-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "7d7b3b50-ae0a-4995-9526-039cee09d40c",
+      "elapsedMs": 5507
+    }
+  ]
+}

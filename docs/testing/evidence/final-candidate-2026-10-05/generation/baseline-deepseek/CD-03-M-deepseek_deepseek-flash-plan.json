@@ -1,0 +1,143 @@
+{
+  "id": "CD-03-M-deepseek_deepseek-flash-plan",
+  "caseId": "CD-03-M",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T05:03:08.386Z",
+  "prepared": {
+    "contextId": "18a91593-319c-4ab0-8ae3-8593aaeef246",
+    "version": "sha256:e595cf2ac735612c8a764446087bfa3a18d402a151449d4241f48fe85a0a5614",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/user_guide/",
+        "materials/user_guide/current-brief.md",
+        "materials/user_guide/tests/",
+        "materials/user_guide/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/user_guide/current-brief.md：Markdown 文档摘要：普通用户的上下文添加与优化指南：合成现行资料；用户可以编辑、复制和再次增强优化结果；本题不宣称自动保存到外部聊天工具。；如果资料尚未覆盖某个关键指标，计划提问可以询问报告统计口径；已经写明季度范围和读者时，不应示范再次询问这两个事实。；用户编辑结果后可再次增强，但旧版本是否保留应以给定产品说明为准；本题资料只保证手动保存的历史，不宣称任何编辑都永久存档。；章节标题应从用户动作出发，如添加资料和检查结果，不从后台模块出发；必要条件可以突出显示，重复的技术警…；业务摘录：需求已清楚时允许没有问题，未确定的关键条件仍需在最终正文中说明。；工具只整理提示词，不直接生成正式报告、不执行命令或修改用户文件。；代码可建立本地索引，办公文档需用户确认后发送后端解析。；[片段 1/1]；页面的上下文提醒表示本次相关片段、解析覆盖或摘要可能有限，不等于大模型生成失败；；必要条件可以突出显示，重复的技术警告应合并为一次说明。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/user_guide/current-brief.md",
+          "evidence": "已经写明季度范围和读者时，不应示范再次询问这两个事实"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/user_guide/",
+        "materials/user_guide/current-brief.md",
+        "materials/user_guide/tests/",
+        "materials/user_guide/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/user_guide/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 普通用户的上下文添加与优化指南：合成现行资料\n工具只整理提示词，不直接生成正式报告、不执行命令或修改用户文件。\n添加上下文支持选单个文档或文件夹；代码可建立本地索引，办公文档需用户确认后发送后端解析。\n计划确认可以手动开启或关闭；需求已清楚时允许没有问题，未确定的关键条件仍需在最终正文中说明。\n用户可以编辑、复制和再次增强优化结果；本题不宣称自动保存到外部聊天工具。\n\n# 分支与边界\n示例用户准备一份季度工作总结，已有会议纪要和任务清单；指南应告诉他选择相关资料而不是把整个电脑目录交给平台，且不要暗示平台主动搜索个人文件。\n第一次添加代码文件夹时页面显示索引进度，完成后才准备上下文；用户指南应解释等待的意义，不展示正在处理的私有文件名或完整本机路径。\n办公文档可能需要上传到后端解析，用户确认对话框用于说明上传范围；不能将这一确认写成技术栈选择或管理员审批。\n如果资料尚未覆盖某个关键指标，计划提问可以询问报告统计口径；已经写明季度范围和读者时，不应示范再次询问这两个事实。\n页面的上下文提醒表示本次相关片段、解析覆盖或摘要可能有限，不等于大模型生成失败；指南需用普通语言区别提醒与真正错误。\n结果里的待确认事项可能是用户选择暂不确定的条件，也可能是后续资料新冲突；不能教用户简单忽略或删掉所有提醒。\n普通复制按钮复制的是优化提示词，接收它的另一个 AI 才执行写报告任务；这一层级需要明确，避免用户把优化正文误当成已经完成的工作汇报。\n用户编辑结果后可再次增强，但旧版本是否保留应以给定产品说明为准；本题资料只保证手动保存的历史，不宣称任何编辑都永久存档。\n网络请求失败时建议查看页面稳定错误提示并重试一次，不建议刷新浏览器以外的破坏性操作，也不要求普通用户清理数据库或修改服务器配置。\n如果上传的资料含员工个人信息，示例应替换为合成编号；指南描述最少必要资料原则，不展示实际姓名、证件号或工资记录。\n文件夹中可能包含代码、文档和不支持的二进制文件，指南应解释支持范围受页面提示约束；不能写所有内容都会完整发送或被长期保留。\n章节标题应从用户动作出发，如添加资料和检查结果，不从后台模块出发；必要条件可以突出显示，重复的技术警告应合并为一次说明。",
+          "summary": "Markdown 文档摘要：普通用户的上下文添加与优化指南：合成现行资料；用户可以编辑、复制和再次增强优化结果；本题不宣称自动保存到外部聊天工具。；如果资料尚未覆盖某个关键指标，计划提问可以询问报告统计口径；已经写明季度范围和读者时，不应示范再次询问这两个事实。；用户编辑结果后可再次增强，但旧版本是否保留应以给定产品说明为准；本题资料只保证手动保存的历史，不宣称任何编辑都永久存档。；章节标题应从用户动作出发，如添加资料和检查结果，不从后台模块出发；必要条件可以突出显示，重复的技术警告应合并为一次说明。",
+          "truncated": false
+        },
+        {
+          "path": "materials/user_guide/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T05:33:08.403345100Z",
+    "latencyMs": 6
+  },
+  "plan": {
+    "summary": "目标是写一份面向普通办公人员的提示词整理工具使用指南，覆盖添加上下文、输入需求、可选计划确认和复制优化结果，并包含报告示例与常见问题。资料已明确大部分功能边界，唯一影响成稿内容的是报告示例的面向对象尚未决定。",
+    "questions": [
+      {
+        "id": "report_example_type",
+        "question": "指南中的报告写作示例，主要面向哪类报告？",
+        "hint": "这决定示例的需求描述、结构示意和常见问题会围绕哪种写作场景展开，资料中尚未决定，不能默认补全。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "work_report",
+            "label": "工作汇报",
+            "description": "示例围绕职场工作汇报类写作，如周报、项目进展或总结汇报。",
+            "answer": "报告写作示例主要面向工作汇报类场景。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "study_report",
+            "label": "学习报告",
+            "description": "示例围绕学习类写作，如课程学习总结、读书报告或培训心得。",
+            "answer": "报告写作示例主要面向学习报告类场景。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "both",
+            "label": "两者兼顾",
+            "description": "示例同时覆盖工作汇报和学习报告，篇幅内各给一个简短示意。",
+            "answer": "报告写作示例同时兼顾工作汇报和学习报告两类场景。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 1841,
+    "planId": "a86b28a4-6b06-4758-9ab8-ce9ebc9a57fb",
+    "planningContext": {
+      "contextId": "18a91593-319c-4ab0-8ae3-8593aaeef246",
+      "version": "sha256:e595cf2ac735612c8a764446087bfa3a18d402a151449d4241f48fe85a0a5614"
+    },
+    "expiresAt": "2026-10-05T05:33:08.403345100Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-03-M-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "c42acb4a-afab-4e14-850c-bfc591f16b9b",
+      "elapsedMs": 37
+    },
+    {
+      "label": "CD-03-M-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "d378691f-6be5-4acd-a164-b1759e620e39",
+      "elapsedMs": 1876
+    }
+  ]
+}

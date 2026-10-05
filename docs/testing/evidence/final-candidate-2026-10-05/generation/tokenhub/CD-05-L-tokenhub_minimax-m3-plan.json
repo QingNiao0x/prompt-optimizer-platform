@@ -1,0 +1,372 @@
+{
+  "id": "CD-05-L-tokenhub_minimax-m3-plan",
+  "caseId": "CD-05-L",
+  "modelId": "tokenhub:minimax-m3",
+  "arm": "plan",
+  "startedAt": "2026-10-05T05:34:28.336Z",
+  "prepared": {
+    "contextId": "74212924-c433-482c-a208-147d04116e26",
+    "version": "sha256:f453d0fc3f19a765d6fcd2737b068e935b9d7a11b382719cde546d418a170eca",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/research_design/",
+        "materials/research_design/current-brief.md",
+        "materials/research_design/tests/",
+        "materials/research_design/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/research_design/current-brief.md：Markdown 文档摘要：提示词整理工具对照研究方案：合成现行资料；评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。；信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。；一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断…；业务摘录：一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；交互式计划确认指系统先提问、实验操作者按预先制定答案卡作答，再生成最终提示词，不是静态任务分解列表。；详细答案卡、记录字段和材料目录放在附表，不能为了压缩文字删除公平比较条件。；[片段 1/1]；任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签；；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "盲评不得暴露工具名称"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/research_design/current-brief.md",
+          "evidence": "方案可说明选择流程，不应在变量尚未确定时锁定某个显著性检验"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/research_design/",
+        "materials/research_design/current-brief.md",
+        "materials/research_design/tests/",
+        "materials/research_design/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/research_design/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 提示词整理工具对照研究方案：合成现行资料\n交互式计划确认指系统先提问、实验操作者按预先制定答案卡作答，再生成最终提示词，不是静态任务分解列表。\n实验尚未运行，没有准确率、显著性、成功案例数量和用户结论。\n二十个任务和三次独立重复以及两名盲评者已经确定，不需要重新选择样本数量。\n评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。\n\n# 分支与边界\n开发任务要求下游模型只输出方案，不实际修改仓库；写作任务要求交付文本，因此跨任务不能用代码测试通过率作为统一质量指标。\n原始组接收原始需求与初始材料，直接增强组接收同一初始信息得到的优化提示词；两组都不能偷看计划确认组后来回答的业务选择。\n计划确认组应记录每个问题、选项、推荐依据和答案，不只保存最终提示词；错误推荐被答案纠正后仍应计入交互阶段风险。\n信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。\n任务材料必须保留真实实现、用户说明、测试示例与待办这几种来源标签；不能在人工评分前人为删除不利的测试污染反例。\n每个条件的三次重复应开启隔离会话，随机化顺序并记录模型版本、日期和参数；失败后的重试不能替代第一份失败样本。\n评审看到的是匿名化下游输出和等量任务信息，不展示产品名称、标志和生成来源；为了评分可以看任务事实，但不能看另一名评审先前评分。\n一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。\n候选评价统计方法依赖分数是否有序、是否连续和是否重复测量；方案可说明选择流程，不应在变量尚未确定时锁定某个显著性检验。\n主文只描述研究问题、实验设计、主要指标与限制；详细答案卡、记录字段和材料目录放在附表，不能为了压缩文字删除公平比较条件。\n工具生成速度是过程指标，质量分是结果指标；没有计费日志时不能估算真实 Token 成本，不能把字符数直接换算成实际费用。\n即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。",
+          "summary": "Markdown 文档摘要：提示词整理工具对照研究方案：合成现行资料；评价需同时覆盖需求保真、业务规则、输出可用性、阅读负担和执行边界；盲评不得暴露工具名称。；信息量匹配对照获得相同已确认事实，但不经历本平台问答过程；这一组用于减少新增信息和交互组织方式之间的混淆。；一个错误可能同时影响完整性与可执行性，评分表需要记录主错误和关联维度，避免将同一问题多次计成不同独立失败。；即使三个模型给出相似结论也不是研究完成证据；方案应安排人工评阅与可复核任务标准，特别说明专业领域判断尚需专家参与。",
+          "truncated": false
+        },
+        {
+          "path": "materials/research_design/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T06:04:28.361215800Z",
+    "latencyMs": 33
+  },
+  "plan": {
+    "summary": "本次只交付不超过一千二百字的研究方案主文、变量与分组附表、评分表及失败记录模板、预注册待确认清单；不实际执行实验或计算结果。二十个任务、每条件三次重复、两名盲评者、四个评价维度、四种材料来源标签、信息量匹配对照、错误归并规则、匿名评审等已定事项需直接继承。只有真正会改变公平比较或研究结论的少数参数仍待用户确认。",
+    "questions": [
+      {
+        "id": "Q01",
+        "question": "交互式计划确认阶段的最大提问轮次与终止规则应如何预注册？",
+        "hint": "条目3要求记录每轮问答，推荐依据与答案；轮次上限和何时停止会直接影响信息量匹配对照的可比性，不应在方案中默认填值。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "Q01A",
+            "label": "固定两轮+信息收敛即停",
+            "description": "最多两轮提问；若首轮已覆盖全部关键事实或用户明确表示已无新约束，则立即终止。",
+            "answer": "交互式计划确认阶段采用最多两轮提问的预注册规则；若首轮已确认全部关键业务事实，或操作者明确表示已无新增约束，则无论轮次是否用完都立即终止。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q01B",
+            "label": "固定三轮+预算上限",
+            "description": "最多三轮提问，并设置总提问条数预算（如不超过八条），用尽即停。",
+            "answer": "交互式计划确认阶段采用最多三轮提问且总提问条数不超过八条的预注册规则；达到任一上限即终止。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q01C",
+            "label": "不设轮次上限",
+            "description": "由操作者自行判断何时信息收敛，不预设硬性终止条件。",
+            "answer": "交互式计划确认阶段不预设轮次或条数上限，由操作者根据信息收敛情况自行判断终止时机。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q02",
+        "question": "两名盲评者出现分歧时应采用哪种预先确定的处理方式？",
+        "hint": "评审匿名独立评分是硬约束，但分歧如何归并、是否引入第三人或仲裁会改变统计口径与样本量假设，需在预注册清单里固化。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "Q02A",
+            "label": "均值+分歧标记",
+            "description": "取两名评审均值作为该样本得分；对差值超过预设阈值的样本另作分歧标记进入敏感性分析，不引入第三人。",
+            "answer": "两名盲评者独立评分后取均值作为样本得分；对评分差值超过预设阈值的样本标记为分歧样本，仅进入敏感性分析，不引入第三位评审。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q02B",
+            "label": "协商一致",
+            "description": "两名评审讨论后给出协商一致分数，过程留痕。",
+            "answer": "两名盲评者在不暴露对方先前评分的前提下进行讨论，并出具协商一致分数，协商过程需留痕。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q02C",
+            "label": "引入第三人仲裁",
+            "description": "预注册第三位专家，仅对分歧样本独立评分，以仲裁分替换原分。",
+            "answer": "预注册第三位专家评审，仅对两名盲评者评分差值超过阈值的分歧样本独立评分，并以仲裁分替换原始均值。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q03",
+        "question": "评分一致性指标应如何预先选定？",
+        "hint": "条目9提示评价统计方法依赖分数是否有序、是否连续和是否重复测量；选用的指标会决定方案中描述的统计流程，并需写入预注册清单。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "Q03A",
+            "label": "加权Kappa+ICC",
+            "description": "对有序等级评分采用加权Cohen's Kappa，对重复测量采用ICC，两者均报告。",
+            "answer": "评分一致性指标预注册为：对有序等级评分采用加权Cohen's Kappa，对重复测量的一致性采用组内相关系数ICC，两者均在方案中报告。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q03B",
+            "label": "仅ICC",
+            "description": "仅报告组内相关系数ICC，不区分等级结构。",
+            "answer": "评分一致性指标预注册为：仅报告组内相关系数ICC，不区分评分等级结构。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q03C",
+            "label": "仅Kappa",
+            "description": "仅报告Cohen's Kappa，不含重复测量指标。",
+            "answer": "评分一致性指标预注册为：仅报告Cohen's Kappa，不含重复测量一致性指标。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q04",
+        "question": "信息量匹配对照应如何保证与计划确认组获得相同已确认事实？",
+        "hint": "条目4要求该组获得相同已确认事实但不经历本平台问答过程；传递方式会直接影响公平比较的有效性，必须预注册。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "Q04A",
+            "label": "答案卡直接嵌入",
+            "description": "将计划确认组最终得到的答案卡直接作为附加材料一次性提供给对照工具，不展示提问过程。",
+            "answer": "信息量匹配对照组的预注册处理方式为：将计划确认组最终得到的答案卡内容直接作为附加材料一次性提供给对照工具，不展示提问过程与轮次。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q04B",
+            "label": "伪交互脚本",
+            "description": "对照工具也获得一份模拟问答脚本，但只读取最终答案，不实际生成提问。",
+            "answer": "信息量匹配对照组的预注册处理方式为：向对照工具提供一份模拟问答脚本，仅供读取最终答案，不展示提问生成过程。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q04C",
+            "label": "先告知关键事实",
+            "description": "仅在初始材料中追加计划确认组得到的关键事实摘要，不附加完整答案卡。",
+            "answer": "信息量匹配对照组的预注册处理方式为：在初始材料中追加计划确认组得到的关键事实摘要，不附加完整答案卡。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q05",
+        "question": "任务材料中真实实现、用户说明、测试示例与待办这四种来源标签的暴露范围应如何设定？",
+        "hint": "条目5要求人工评分前不得人为删除不利的测试污染反例，但全部暴露测试示例可能干扰盲评对需求保真的判断；暴露程度需预先确定。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "Q05A",
+            "label": "全部保留",
+            "description": "四种来源标签全部保留并随任务材料提供给工具与评审，不做任何删减。",
+            "answer": "任务材料预注册保留真实实现、用户说明、测试示例与待办四种来源标签，全部提供给工具与评审，不做任何删减。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q05B",
+            "label": "仅保留三种",
+            "description": "仅保留真实实现、用户说明与待办，向工具与评审隐藏测试示例。",
+            "answer": "任务材料预注册仅保留真实实现、用户说明与待办三种来源标签，向工具与评审隐藏测试示例。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q05C",
+            "label": "按任务类型可选",
+            "description": "默认全部保留，但允许单个任务注明例外时隐藏测试示例。",
+            "answer": "任务材料默认全部保留四种来源标签；允许单个任务在预注册备注中注明例外时隐藏测试示例。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q06",
+        "question": "任务结果如首轮失败，重试与原失败样本的关系应如何预注册？",
+        "hint": "条目6要求失败后重试不能替代第一份失败样本；需明确重试是否计为另一次重复或单独记录。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "Q06A",
+            "label": "重试另计",
+            "description": "首轮失败样本原样保留并记入失败记录，重试结果作为额外样本独立记录，不计入三次重复均值。",
+            "answer": "任务首轮失败时，预注册规则为：原失败样本原样保留并记入失败记录，重试结果作为额外样本独立记录，不替换原样本，也不计入三次重复均值。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q06B",
+            "label": "重试替换",
+            "description": "首轮失败直接用重试样本替换原失败样本并计入三次重复。",
+            "answer": "任务首轮失败时，预注册规则为：用重试样本直接替换原失败样本，并将其计入三次重复均值。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q06C",
+            "label": "整组重跑",
+            "description": "首轮失败即视为整次重复失败，整组三个样本全部重做。",
+            "answer": "任务首轮失败时，预注册规则为：视为整次重复失败，该条件下三个样本全部重做，原失败样本仅作为失败记录保留。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q07",
+        "question": "专业领域判断在评分中应承担何种角色？",
+        "hint": "条目12要求特别说明专业领域判断尚需专家参与；需在方案中明确专家参与的范围与触发条件，避免默认由一般评审替代。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "Q07A",
+            "label": "触发式复核",
+            "description": "仅当两位盲评者对某样本在专业维度（如医学、法律）的一致性低于阈值时，触发专家复核，不改变盲评分数。",
+            "answer": "专业领域判断在评分中的预注册角色为：仅当两位盲评者对某样本的专业维度一致性低于预设阈值时，触发相应领域专家复核，但专家意见不替换盲评分数，仅作为附加记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q07B",
+            "label": "每样本必审",
+            "description": "所有样本均经对应领域专家预审，再进入盲评。",
+            "answer": "专业领域判断在评分中的预注册角色为：所有样本均先经对应领域专家预审，再进入盲评流程。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "Q07C",
+            "label": "仅作后置仲裁",
+            "description": "仅在统计分析后，对差异显著的样本邀请专家回看。",
+            "answer": "专业领域判断在评分中的预注册角色为：仅在统计分析后，对组间差异显著的样本邀请专家回看并出具说明。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "Q08",
+        "question": "方案中变量与分组附表应至少包含哪些列？",
+        "hint": "条目10要求详细答案卡、记录字段和材料目录放入附表；附表结构会决定执行者能否复现研究，需在主文中固化列名以避免临场变动。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "示例列名：任务编号、来源标签组合、原始组输入材料、直接增强组输入材料、计划确认组答案卡、信息量匹配组输入材料、重复次数、会话隔离ID、模型版本与日期、失败标记、主错误维度、关联维度、评审ID、评分差值、分歧标记、专家复核触发。"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "tokenhub",
+      "model": "tokenhub:minimax-m3",
+      "mock": false,
+      "modelVersion": "MiniMax-M3"
+    },
+    "latencyMs": 52073,
+    "planId": "7d5e7b04-9b36-40e8-a1fa-94d09857a9ff",
+    "planningContext": {
+      "contextId": "74212924-c433-482c-a208-147d04116e26",
+      "version": "sha256:f453d0fc3f19a765d6fcd2737b068e935b9d7a11b382719cde546d418a170eca"
+    },
+    "expiresAt": "2026-10-05T06:04:28.361215800Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-05-L-tokenhub_minimax-m3-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "8e077819-0110-45c2-a82e-d0f9c96bc901",
+      "elapsedMs": 70
+    },
+    {
+      "label": "CD-05-L-tokenhub_minimax-m3-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "1cc39060-8a19-4f8d-8183-a3d99ecb589d",
+      "elapsedMs": 52111
+    }
+  ]
+}

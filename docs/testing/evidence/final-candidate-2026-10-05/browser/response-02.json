@@ -1,0 +1,191 @@
+{
+  "path": "/api/v1/optimizations/plan",
+  "status": 200,
+  "requestId": "9cffcea8-2635-4fa6-b1a5-49684783bcd6",
+  "request": {
+    "rawPrompt": "请结合已选代码项目和《通知方案.docx》，为当前消息查询项目新增通知能力设计可执行方案。本次只交付设计说明、接口草案、消息状态规则和测试清单，不修改代码、不执行命令、不做数据库迁移。当前已经是 Java 21、Spring Boot 3、Vue 3 和 TypeScript，不重新选择技术栈；资料并未证明已有发送通知能力，不能把未说明写成不存在。\n需要根据方案提出真正影响业务的关键问题；邮件或站内信尚未决定，先确认单一渠道，再围绕选择形成最终方案。Word 中段规定按业务事件编号幂等去重，通知失败不回滚成功的主业务，需保留失败状态。尾部规定取消发送保持原数据不变，不在日志泄露 Token，站内信的已读状态按用户隔离。不同渠道的规则不能交叉套用：SMTP 发送和邮件重试只在选择邮件时适用。\n输出清楚交代背景、任务、交付和约束，给出 API 参数草案、权限隔离、状态流转和对应正常/异常/边界验收，不引入与本次任务无关的开发步骤。缺乏依据的技术细节由接收任务的 Agent 先核查，确实影响设计的未知选择应说明，不编造现有实现。请利用文件夹中的接口和页面，以及 Word 正文、表格、中段和尾部的明确规则，不仅依赖文件名。",
+    "modelId": "deepseek:deepseek-flash",
+    "contextDescription": "",
+    "conversationHistory": [],
+    "planningContext": {
+      "contextId": "d689d270-4254-42f9-bc72-7bfe0b654530",
+      "version": "sha256:7711d2f0107b3e41e0892024d3f425305d4f82c81a9d1aae97632caeaccbed6d"
+    }
+  },
+  "response": {
+    "requestId": "9cffcea8-2635-4fa6-b1a5-49684783bcd6",
+    "data": {
+      "summary": "本次目标是为当前消息查询项目新增通知能力，交付设计说明、接口草案、消息状态规则和测试清单，不修改代码、不执行命令、不做数据库迁移。已明确技术栈、幂等去重、失败不回滚、取消保持原数据、不泄露 Token、站内信已读按用户隔离等规则。仍需确认通知渠道选择及渠道相关的关键业务口径，否则无法形成可执行方案。",
+      "questions": [
+        {
+          "id": "channel",
+          "question": "本次新增通知能力选择哪一种渠道？",
+          "hint": "渠道决定接口草案、状态规则和测试清单的适用范围；邮件与站内信的规则不能交叉套用。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "email",
+              "label": "邮件",
+              "description": "采用 SMTP 发送，适用邮件重试规则，不涉及站内信已读状态。",
+              "answer": "本次选择邮件渠道，采用 SMTP 发送，适用邮件重试规则，不涉及站内信已读状态。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "in_app",
+              "label": "站内信",
+              "description": "采用平台内消息，适用已读状态按用户隔离，不引入邮件专属重试和 SMTP 配置。",
+              "answer": "本次选择站内信渠道，采用平台内消息，适用已读状态按用户隔离，不引入邮件专属重试和 SMTP 配置。",
+              "recommended": true,
+              "recommendationReason": "原始需求明确包含：站内信。请核对适用范围后选择。"
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "idempotency_scope",
+          "question": "业务事件编号的幂等去重范围是什么？",
+          "hint": "决定同一事件编号在什么范围内只产生一条通知，影响状态规则和测试用例设计。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "global",
+              "label": "全局唯一",
+              "description": "同一业务事件编号在整个通知系统中只允许一条通知记录。",
+              "answer": "业务事件编号全局唯一，同一编号在整个通知系统中只产生一条通知记录。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "per_user",
+              "label": "按用户唯一",
+              "description": "同一业务事件编号对同一用户只产生一条通知，不同用户可各有一条。",
+              "answer": "业务事件编号按用户唯一，同一编号对同一用户只产生一条通知，不同用户可各有一条。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "per_channel",
+              "label": "按渠道唯一",
+              "description": "同一业务事件编号在同一渠道内只产生一条通知，不同渠道可各有一条。",
+              "answer": "业务事件编号按渠道唯一，同一编号在同一渠道内只产生一条通知，不同渠道可各有一条。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "failure_status",
+          "question": "通知失败后保留的失败状态应包含哪些可核对信息？",
+          "hint": "方案要求失败不回滚主业务且保留可核对失败状态，需要明确状态字段的最小集合，以便设计状态流转和验收。",
+          "type": "MULTIPLE_CHOICE",
+          "options": [
+            {
+              "id": "failed_flag",
+              "label": "失败标记",
+              "description": "记录该通知已失败，不伪造已送达。",
+              "answer": "失败状态包含失败标记，明确该通知未送达。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "failure_reason",
+              "label": "失败原因",
+              "description": "记录可读的失败原因，便于排查。",
+              "answer": "失败状态包含失败原因，记录可读的失败说明。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "failed_at",
+              "label": "失败时间",
+              "description": "记录失败发生的时间点。",
+              "answer": "失败状态包含失败时间，记录失败发生的时间点。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "retry_count",
+              "label": "重试次数",
+              "description": "记录已重试次数，仅在选择邮件渠道时适用。",
+              "answer": "失败状态包含重试次数，记录已重试次数；该字段仅在选择邮件渠道时适用。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "cancel_behavior",
+          "question": "取消发送时，通知记录应保持什么状态？",
+          "hint": "方案要求取消发送保持原数据不变，需要明确取消后记录的状态语义，避免与失败状态混淆。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "keep_original",
+              "label": "保持原数据不变",
+              "description": "取消操作不修改已有通知记录的任何字段，仅记录取消动作本身。",
+              "answer": "取消发送时保持原通知数据不变，不修改已有记录字段，仅记录取消动作。",
+              "recommended": true,
+              "recommendationReason": "原始需求明确包含：保持原数据不变。请核对适用范围后选择。"
+            },
+            {
+              "id": "mark_cancelled",
+              "label": "标记为已取消",
+              "description": "在通知记录上增加取消标记，但保留原有业务数据字段不变。",
+              "answer": "取消发送时在通知记录上增加取消标记，原有业务数据字段保持不变。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "read_isolation",
+          "question": "站内信已读状态按用户隔离的具体含义是什么？",
+          "hint": "决定已读状态的存储和查询口径，影响接口权限设计和测试用例。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "per_user_record",
+              "label": "每个用户独立已读记录",
+              "description": "同一通知对不同用户分别记录已读状态，互不影响。",
+              "answer": "站内信已读状态按用户隔离，同一通知对不同用户分别记录已读状态，互不影响。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "per_user_query",
+              "label": "查询时按用户过滤",
+              "description": "已读状态存储在同一记录上，但查询时只返回当前用户可见的已读状态。",
+              "answer": "站内信已读状态存储在同一记录上，但查询时按用户过滤，只返回当前用户可见的已读状态。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 6442,
+      "planId": "6dacbb28-c6b5-47b6-9da0-23fe2560e9f0",
+      "planningContext": {
+        "contextId": "d689d270-4254-42f9-bc72-7bfe0b654530",
+        "version": "sha256:7711d2f0107b3e41e0892024d3f425305d4f82c81a9d1aae97632caeaccbed6d"
+      },
+      "expiresAt": "2026-10-05T05:52:50.567570200Z"
+    }
+  }
+}

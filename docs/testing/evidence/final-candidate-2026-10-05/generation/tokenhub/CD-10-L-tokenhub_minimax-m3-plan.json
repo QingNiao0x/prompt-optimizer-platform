@@ -1,0 +1,389 @@
+{
+  "id": "CD-10-L-tokenhub_minimax-m3-plan",
+  "caseId": "CD-10-L",
+  "modelId": "tokenhub:minimax-m3",
+  "arm": "plan",
+  "startedAt": "2026-10-05T05:36:59.402Z",
+  "prepared": {
+    "contextId": "9daae612-3063-415a-8e72-ba6d47c5ccb7",
+    "version": "sha256:27d505b89bf39660e6abac151f11ab9ee32e1f4738c78c4877222427fbf65fd2",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/legal_memo/",
+        "materials/legal_memo/current-brief.md",
+        "materials/legal_memo/legacy-note.md",
+        "materials/legal_memo/tests/",
+        "materials/legal_memo/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/legal_memo/current-brief.md：Markdown 文档摘要：合成租赁材料的律师复核清单：合成现行资料；租金、押金、维修范围和提前解约条款均需逐条核对来源，不能凭通行惯例补成合同事实。；协商邮件中愿意再讨论不等于接受草稿，也不等于拒绝履约；材料摘要必须保留条件、时间和发送角色，不把意向话语改为明确承诺。；给定材料没有房屋权属和授权链证据，因此不能推断出租方有完整处置权；复核问题可以请求核验，但不先判定其无权出租。；用户没有要求文书送达和诉讼操作，系统不能追加发送律师函、公开争议或执行催告；常规排版顺序由编写者确定，…；业务摘录：往来附件引用了示例判决标题但没有可核验出处，它只能作为待核资料，不能作为法院普遍立场或现行判例依据。；押金两个月与三个月的差异可能影响资金安排，但未签署材料不能直接产生确定付款义务；；用户没有要求文书送达和诉讼操作，系统不能追加发送律师函、公开争议或执行催告；；[片段 1/1]；风险级别代表律师核查优先顺序，不是系统计算的违法概率；；常规排版顺序由编写者确定，无需提问。",
+        "[PROJECT_DOCUMENT] materials/legal_memo/legacy-note.md：Markdown 文档摘要：草稿A押金写为两个月租金。；另有草稿写：草稿B押金写为三个月租金，邮件未确认。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。；业务摘录：[片段 1/1] 草稿A押金写为两个月租金。 另有草稿写：草稿B押金写为三个月租金，邮件未确认。 两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 3,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/legal_memo/current-brief.md",
+          "evidence": "承租方视角、资料整理目标以及高中低三级优先级已经确定，不得再问这些选择"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/legal_memo/current-brief.md",
+          "evidence": "给定附件中的主体、地址、金额均为合成示例，不得加入真实当事人信息"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/legal_memo/current-brief.md",
+          "evidence": "材料摘要必须保留条件、时间和发送角色，不把意向话语改为明确承诺"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/legal_memo/",
+        "materials/legal_memo/current-brief.md",
+        "materials/legal_memo/legacy-note.md",
+        "materials/legal_memo/tests/",
+        "materials/legal_memo/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/legal_memo/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 合成租赁材料的律师复核清单：合成现行资料\n承租方视角、资料整理目标以及高中低三级优先级已经确定，不得再问这些选择。\n合同草稿未签署，往来邮件仅为协商材料，不能把草稿当作双方已生效的协议。\n给定附件中的主体、地址、金额均为合成示例，不得加入真实当事人信息。\n租金、押金、维修范围和提前解约条款均需逐条核对来源，不能凭通行惯例补成合同事实。\n\n# 分支与边界\n合同草稿的文档日期表示编辑时间，不证明签署、送达或接受日期；备忘录应列示这几个状态未有证据，不将文件排序当成法律事实。\n押金两个月与三个月的差异可能影响资金安排，但未签署材料不能直接产生确定付款义务；本次只标明需核对的条款和证据。\n维修条款一版写承租方承担日常维护，另一版新增全部设施故障费用；不能把两个版本拼接成对承租方更不利的统一条款。\n协商邮件中愿意再讨论不等于接受草稿，也不等于拒绝履约；材料摘要必须保留条件、时间和发送角色，不把意向话语改为明确承诺。\n往来附件引用了示例判决标题但没有可核验出处，它只能作为待核资料，不能作为法院普遍立场或现行判例依据。\n风险级别代表律师核查优先顺序，不是系统计算的违法概率；表格应说明高优先项为何影响目标，而不是用颜色代替解释。\n主文本尚未确定时可以先制作并列差异清单，但不能写最终合同摘要；所有当前不一致的金额、期限和责任范围应保留可追溯位置。\n给定材料没有房屋权属和授权链证据，因此不能推断出租方有完整处置权；复核问题可以请求核验，但不先判定其无权出租。\n解除条款涉及通知形式、提前量和费用，各部分可能存在条件关系；摘要不能仅取最短通知天数而删掉附加前提。\n不输入真实当事人敏感信息，也不输出联系地址和身份证件内容；合成编号可用于说明材料之间的关系，复制后仍应保持匿名。\n备忘录结论仅说明材料充分程度和后续核验事项，不评价某方一定胜诉或一定违法；若需法律适用，由律师按真实事实与现行依据另行处理。\n用户没有要求文书送达和诉讼操作，系统不能追加发送律师函、公开争议或执行催告；常规排版顺序由编写者确定，无需提问。",
+          "summary": "Markdown 文档摘要：合成租赁材料的律师复核清单：合成现行资料；租金、押金、维修范围和提前解约条款均需逐条核对来源，不能凭通行惯例补成合同事实。；协商邮件中愿意再讨论不等于接受草稿，也不等于拒绝履约；材料摘要必须保留条件、时间和发送角色，不把意向话语改为明确承诺。；给定材料没有房屋权属和授权链证据，因此不能推断出租方有完整处置权；复核问题可以请求核验，但不先判定其无权出租。；用户没有要求文书送达和诉讼操作，系统不能追加发送律师函、公开争议或执行催告；常规排版顺序由编写者确定，无需提问。",
+          "truncated": false
+        },
+        {
+          "path": "materials/legal_memo/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        },
+        {
+          "path": "materials/legal_memo/legacy-note.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n草稿A押金写为两个月租金。\n另有草稿写：草稿B押金写为三个月租金，邮件未确认。\n两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "summary": "Markdown 文档摘要：草稿A押金写为两个月租金。；另有草稿写：草稿B押金写为三个月租金，邮件未确认。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T06:06:59.448331700Z",
+    "latencyMs": 104
+  },
+  "plan": {
+    "summary": "已经确认目标：基于合成租赁资料，从承租方视角整理律师复核备忘录，不生成法律结论或诉讼文书。承租方视角、优先级等级、整理边界、合成示例属性等已确定；草稿主文本、复核侧重和押金差异的处理尚未明确，需要用户确认。",
+    "questions": [
+      {
+        "id": "main-draft-selection",
+        "question": "两版租赁草稿（押金两个月与三个月）中，本次律师复核应以哪一份为主文本？",
+        "hint": "主文本不同，事实表、差异表和复核问题的对照基准就不同；目前材料只有两版草稿并存，需要先确认以哪一版建立复核基准。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "draft-a",
+            "label": "以押金两个月的草稿A为主文本",
+            "description": "后续差异表、复核问题以草稿A为对照基准，草稿B的内容作为待确认差异列出。",
+            "answer": "本次律师复核以押金两个月租金的草稿A为主文本，草稿B作为待确认差异对照，不预先合并。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "draft-b",
+            "label": "以押金三个月的草稿B为主文本",
+            "description": "后续差异表、复核问题以草稿B为对照基准，草稿A的内容作为待确认差异列出。",
+            "answer": "本次律师复核以押金三个月租金的草稿B为主文本，草稿A作为待确认差异对照，不预先合并。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "parallel",
+            "label": "暂不指定主文本，先做并列差异清单",
+            "description": "不预设哪一版是最终合同，只并列保留两版差异，等律师或用户后续明确后再确定主文本。",
+            "answer": "本次暂不指定主文本，先制作并列差异清单，所有不一致的金额、期限和责任范围均保留可追溯位置。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "review-focus",
+        "question": "本次复核重点应放在持续履约还是可能提前退出？",
+        "hint": "复核重点不同，会改变高优先级问题的排序与提问角度；持续履约侧重付款、维修和单据；提前退出侧重通知、押金和违约金边界。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "ongoing",
+            "label": "以持续履行为复核重点",
+            "description": "优先核对租金支付节点、维修责任划分、押金执行、单据留存等持续履约相关条款。",
+            "answer": "本次复核重点放在持续履约安排，按付款节点、维修责任、押金执行和单据留存顺序排列高优先级问题。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "early-exit",
+            "label": "以可能提前退出安排复核重点",
+            "description": "优先核对提前解约条件、通知形式与期限、押金返还、违约金或扣减项等退出相关条款。",
+            "answer": "本次复核重点放在可能提前退出的安排，按解约条件、通知形式与期限、押金返还、扣减边界排列高优先级问题。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "both",
+            "label": "持续履行与提前退出并重",
+            "description": "两套问题同时列入复核范围，分别标注优先级，不偏废其中之一。",
+            "answer": "本次复核同时覆盖持续履行和提前退出两类条款，两类按对应优先级并列，不偏废。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "deposit-conflict",
+        "question": "押金两个月与三个月的差异，应如何在备忘录中呈现？",
+        "hint": "原始材料已声明不能擅自采用其中一项；用户需要明确差异的处理方式（并列保留、待用户后续裁定、要求补充证据等）。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "parallel-keep",
+            "label": "并列保留两版押金表述",
+            "description": "在差异表中同时列出两个月和三个月，标注各自出处与邮件未确认状态，不替用户作选择。",
+            "answer": "押金两个月与三个月在差异表中并列保留，分别注明出处和邮件未确认状态，不替用户选择采用哪一项。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "await-counsel",
+            "label": "交由律师后续裁定",
+            "description": "备忘录中标注为需律师核定的争议条款，不在资料整理阶段给出倾向。",
+            "answer": "押金两个月与三个月的差异作为需律师核定的争议条款列入复核问题，资料整理阶段不给出倾向。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "collect-evidence",
+            "label": "先收集更多证据后再决定",
+            "description": "在差异表和复核问题中要求补足签约版本、邮件确认或往来凭证，再决定采用哪一项。",
+            "answer": "押金差异先作为待补证据事项处理，要求补足签约版本、邮件确认或往来凭证后再决定采用哪一项。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "repair-scope-conflict",
+        "question": "维修范围两版不一致（日常维护 vs 全部设施故障费用），应如何在备忘录中处理？",
+        "hint": "原始材料禁止把两版拼接成对承租方更不利的统一条款；需要用户确认处理方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "parallel-keep",
+            "label": "并列保留两版维修范围",
+            "description": "在差异表中同时列示日常维护与全部设施故障费用两版，标注来源，不拼接。",
+            "answer": "维修范围在差异表中并列保留两版表述，分别注明出处，不拼接为对承租方更不利的统一条款。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "tenant-light",
+            "label": "暂按对承租方较轻的版本记录",
+            "description": "在汇总中暂以日常维护版本为基准，但明确标注另一版本仍存在。",
+            "answer": "维修范围暂按承租方承担日常维护的版本记录，同时注明全部设施故障费用版本仍存在。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "await-counsel",
+            "label": "交由律师核定",
+            "description": "不预设轻重，作为复核问题交给律师处理。",
+            "answer": "维修范围差异作为需律师核定的争议条款列入复核问题，不预设轻重。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "email-interpretation",
+        "question": "协商邮件中的讨论意愿应如何写入备忘录？",
+        "hint": "原始材料要求保留条件、时间和发送角色，不把意向话语改为承诺；用户需确认具体写法。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "preserve-conditional",
+            "label": "保留条件与发送角色",
+            "description": "邮件内容按原意摘录，标注发送时间、发送方和附带条件，不解读为承诺或违约。",
+            "answer": "协商邮件按原意摘录，标注发送时间、发送方和附带条件，不解读为承诺或违约。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "neutral-statement",
+            "label": "只摘录为中性协商记录",
+            "description": "邮件内容仅作为协商过程记录，不引用具体措辞，避免被解读为意思表示。",
+            "answer": "协商邮件仅作为中性协商过程记录列入材料索引，不引用具体措辞。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "exclude",
+            "label": "暂不纳入备忘录正文",
+            "description": "邮件仅在材料索引中列名，不进入事实表和复核问题正文。",
+            "answer": "协商邮件暂不纳入备忘录正文，仅在材料索引中列名。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "signature-status",
+        "question": "对未签署草稿和仅有签名占位图的版本，签署状态应如何记录？",
+        "hint": "原始材料禁止根据签名占位图认定已签署；用户需确认签署状态字段的统一写法。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "unsigned",
+            "label": "统一记为未签署",
+            "description": "所有草稿在签署状态栏标注为未签署或仅有占位图，不按文件日期或邮件推断为已生效。",
+            "answer": "所有草稿在签署状态栏统一记为未签署或仅有签名占位图，不凭文件日期或邮件推断为已生效。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "state-pending",
+            "label": "标注为待核实签署",
+            "description": "签署状态标注为待核实，要求补充签字页或履约证据再判定。",
+            "answer": "签署状态标注为待核实签署，要求补充签字页或履约证据再判定。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "title-evidence",
+        "question": "往来附件中引用的示例判决标题，应如何写入备忘录？",
+        "hint": "原始材料明确示例判决无可核验出处，不能作为法院普遍立场或现行判例依据；用户需确认处理方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "mark-pending",
+            "label": "标注为待核资料",
+            "description": "判决标题列入待核资料，明示无可核验出处，不引用为立场或判例依据。",
+            "answer": "往来附件中的示例判决标题仅列入待核资料，明示无可核验出处，不引用为法院普遍立场或现行判例依据。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "exclude",
+            "label": "暂不纳入备忘录",
+            "description": "判决标题不进入事实表或复核问题，仅在材料索引中提示其存在。",
+            "answer": "示例判决标题暂不纳入备忘录正文，仅在材料索引中提示其存在。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "termination-clause",
+        "question": "解除条款的通知形式、提前量和费用在备忘录中应如何呈现？",
+        "hint": "原始材料禁止只取最短通知天数而删掉附加前提；用户需确认解除条款的整理口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "preserve-conditions",
+            "label": "完整保留通知与费用条件",
+            "description": "解除条款按原文列出通知形式、提前量、费用和附加条件，不简化或删除前提。",
+            "answer": "解除条款完整保留通知形式、提前量、费用和附加条件，不简化或删除附加前提。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "split-rows",
+            "label": "拆为多行分别核对",
+            "description": "把通知形式、提前量、费用拆成多行，便于律师逐项核对。",
+            "answer": "解除条款拆为通知形式、提前量、费用多行分别核对，便于律师逐项审查。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "await-counsel",
+            "label": "交由律师核定",
+            "description": "解除条款不展开，仅作为复核问题交给律师处理。",
+            "answer": "解除条款不展开，作为需律师核定的复核问题处理。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "RESEARCH_ANALYSIS",
+    "provider": {
+      "provider": "tokenhub",
+      "model": "tokenhub:minimax-m3",
+      "mock": false,
+      "modelVersion": "MiniMax-M3"
+    },
+    "latencyMs": 42948,
+    "planId": "2da8e501-3c85-436b-b7b4-c705a8798dde",
+    "planningContext": {
+      "contextId": "9daae612-3063-415a-8e72-ba6d47c5ccb7",
+      "version": "sha256:27d505b89bf39660e6abac151f11ab9ee32e1f4738c78c4877222427fbf65fd2"
+    },
+    "expiresAt": "2026-10-05T06:06:59.448331700Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CD-10-L-tokenhub_minimax-m3-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "1f624913-6797-4348-846e-1e6d44571a4f",
+      "elapsedMs": 184
+    },
+    {
+      "label": "CD-10-L-tokenhub_minimax-m3-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "1615d158-b8b6-404a-a29e-121f78fa778a",
+      "elapsedMs": 42993
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "id": "CD-11-L-tokenhub_glm-5_3-flashx-plan",
+  "caseId": "CD-11-L",
+  "modelId": "tokenhub:glm-5.3-flashx",
+  "arm": "plan",
+  "startedAt": "2026-10-05T05:39:52.137Z",
+  "prepared": {
+    "contextId": "299a763d-1ace-4b4c-a00c-5751f8443291",
+    "version": "sha256:143297eac1d961a2ce11f41476cd47f514a5ba0d9438167687ccc2949fc4f952",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/financial_risk/",
+        "materials/financial_risk/current-brief.md",
+        "materials/financial_risk/legacy-note.md",
+        "materials/financial_risk/tests/",
+        "materials/financial_risk/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/financial_risk/current-brief.md：Markdown 文档摘要：非投资建议的合成价格序列分析：合成现行资料；拟议报告面向一般学习者，用通俗语言说明风险指标而不是专业荐股结论。；连续二十个交易日不是二十个自然日，附件没有完整日历；不能凭日期字符串补出休市日价格，也不能插值当作真实交易。；资料中的技术指标名称只作为候选概念，用户没有要求MACD或均线组合策略；不能因为附件出现技术名词就默认增加交易信号。；本题评价关注提示词是否忠于数据范围和风险边界，金融专业有效性须由相应人员审查；不同模型一致也不能替代数据核验。；业务摘录：可以解释大幅波动和小样本导致估计不稳定，但不得用未经计算的概率、置信区间或极端损失值制造精确感。；图表模板应明确轴名称、单位、数据缺口与样本范围，不附合成数字形成看似已经执行的真实市场报告。；本题评价关注提示词是否忠于数据范围和风险边界，金融专业有效性须由相应人员审查；；[片段 1/1]；成交量零值与未登记是不同状态，若采用量价关系示意，必须保留数据覆盖说明；；不同模型一致也不能替代数据核验。",
+        "[PROJECT_DOCUMENT] materials/financial_risk/legacy-note.md：Markdown 文档摘要：数据字典注明成交量为手。；另有草稿写：旧图表标题写为股，未说明换算。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。；业务摘录：[片段 1/1] 数据字典注明成交量为手。 另有草稿写：旧图表标题写为股，未说明换算。 两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+        "[TEST_SOURCE] materials/financial_risk/tests/layout-example.txt：文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。；业务摘录：[片段 1/1] 仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。 这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 3,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/financial_risk/current-brief.md",
+          "evidence": "成交量单位在数据字典中为合成手数，缺失值和零成交量必须区分"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/financial_risk/current-brief.md",
+          "evidence": "成交量零值与未登记是不同状态，若采用量价关系示意，必须保留数据覆盖说明"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/financial_risk/current-brief.md",
+          "evidence": "缺少复权信息会影响跨日价格可比性，但本题是合成资料，不应声称发生分红拆股"
+        },
+        {
+          "id": "F04",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/financial_risk/current-brief.md",
+          "evidence": "可以解释大幅波动和小样本导致估计不稳定，但不得用未经计算的概率、置信区间或极端损失值制造精确感"
+        },
+        {
+          "id": "F05",
+          "category": "DATA_SOURCE",
+          "origin": "TEST_SOURCE",
+          "sourcePath": "materials/financial_risk/tests/layout-example.txt",
+          "evidence": "仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/financial_risk/",
+        "materials/financial_risk/current-brief.md",
+        "materials/financial_risk/legacy-note.md",
+        "materials/financial_risk/tests/",
+        "materials/financial_risk/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/financial_risk/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 非投资建议的合成价格序列分析：合成现行资料\n合成样本只有二十个交易日，不等于完整一个月或足以支持长期预测的历史。\n成交量单位在数据字典中为合成手数，缺失值和零成交量必须区分。\n不含公司基本面、行业信息、实时新闻和真实证券代码，不能自行补入。\n拟议报告面向一般学习者，用通俗语言说明风险指标而不是专业荐股结论。\n\n# 分支与边界\n收益率的分母是前一交易日价格，缺少前日时不能生成该日收益率；图表应显示缺口，不自动用零替代缺失观察。\n回撤分析需要明确以样本内峰值作为基准还是另有历史峰值；本题没有样本之外数据，因此只能讨论样本内定义及其局限。\n波动率依赖收益率定义和采样频率，日度指标不能不经说明就变成年度风险；没有足够样本和换算依据时不报告确定年化值。\n连续二十个交易日不是二十个自然日，附件没有完整日历；不能凭日期字符串补出休市日价格，也不能插值当作真实交易。\n成交量零值与未登记是不同状态，若采用量价关系示意，必须保留数据覆盖说明；不把缺失的成交量标成市场流动性枯竭。\n图表旧标题的股与字典的手存在单位差异，转换比例没有材料依据；报告应标记单位冲突而不是使用常识偷偷换算。\n合成价格走势看似上涨也不能支撑真实证券看涨结论；报告应提醒示例用途，并避免购买、加仓和目标价等执行性措辞。\n资料中的技术指标名称只作为候选概念，用户没有要求MACD或均线组合策略；不能因为附件出现技术名词就默认增加交易信号。\n缺少复权信息会影响跨日价格可比性，但本题是合成资料，不应声称发生分红拆股；未知元数据与确定市场事件要分开。\n可以解释大幅波动和小样本导致估计不稳定，但不得用未经计算的概率、置信区间或极端损失值制造精确感。\n图表模板应明确轴名称、单位、数据缺口与样本范围，不附合成数字形成看似已经执行的真实市场报告。\n本题评价关注提示词是否忠于数据范围和风险边界，金融专业有效性须由相应人员审查；不同模型一致也不能替代数据核验。",
+          "summary": "Markdown 文档摘要：非投资建议的合成价格序列分析：合成现行资料；拟议报告面向一般学习者，用通俗语言说明风险指标而不是专业荐股结论。；连续二十个交易日不是二十个自然日，附件没有完整日历；不能凭日期字符串补出休市日价格，也不能插值当作真实交易。；资料中的技术指标名称只作为候选概念，用户没有要求MACD或均线组合策略；不能因为附件出现技术名词就默认增加交易信号。；本题评价关注提示词是否忠于数据范围和风险边界，金融专业有效性须由相应人员审查；不同模型一致也不能替代数据核验。",
+          "truncated": false
+        },
+        {
+          "path": "materials/financial_risk/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        },
+        {
+          "path": "materials/financial_risk/legacy-note.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n数据字典注明成交量为手。\n另有草稿写：旧图表标题写为股，未说明换算。\n两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "summary": "Markdown 文档摘要：数据字典注明成交量为手。；另有草稿写：旧图表标题写为股，未说明换算。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T06:09:52.180731600Z",
+    "latencyMs": 82
+  },
+  "status": "FAILED",
+  "failure": {
+    "label": "CD-11-L-tokenhub_glm-5_3-flashx-plan-plan",
+    "path": "/api/v1/optimizations/plan",
+    "status": 502,
+    "requestId": "7d15ce98-8db2-4ba6-bf75-09d52ed5c15e",
+    "elapsedMs": 60107,
+    "code": "PROVIDER_UNAVAILABLE"
+  },
+  "requests": [
+    {
+      "label": "CD-11-L-tokenhub_glm-5_3-flashx-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "b899bc39-fcd0-4473-8cb8-763174971580",
+      "elapsedMs": 146
+    },
+    {
+      "label": "CD-11-L-tokenhub_glm-5_3-flashx-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 502,
+      "requestId": "7d15ce98-8db2-4ba6-bf75-09d52ed5c15e",
+      "elapsedMs": 60107,
+      "code": "PROVIDER_UNAVAILABLE"
+    }
+  ]
+}

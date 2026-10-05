@@ -41,6 +41,12 @@ public record OptimizationResult(
                 latencyMs, warnings, evidenceCards);
     }
 
+    /** 汇总模型重试、上下文和结果组装的完整耗时；不改变优化正文或历史字段契约。 */
+    public OptimizationResult withLatencyMs(long totalLatencyMs) {
+        return new OptimizationResult(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints,
+                templateCode, provider, Math.max(0, totalLatencyMs), warnings, evidenceCards);
+    }
+
     /** 旧记录没有溯源卡片时返回空列表，保留既有结果构造和历史反序列化契约。 */
     public OptimizationResult(String optimizedPrompt, List<PromptSection> sections, ContextSnapshot contextReport,
                               List<String> ambiguities, List<String> appliedConstraints, TemplateCode templateCode,

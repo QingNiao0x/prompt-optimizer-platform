@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 1,
+  "reviewer": {
+    "id": "blinded-model-deepseek:deepseek-flash",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-05T06:47:55.407Z",
+    "professionalDomain": "NOT_CERTIFIED",
+    "reviewRun": "tmp\\prompt-output-evaluation\\2026-10-05T06-37-46-360Z-7d517302"
+  },
+  "professionalReview": "NOT_PERFORMED",
+  "problems": [],
+  "entries": [
+    {
+      "blindId": "B001",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 架构形态 | 前后端分离的模块化单体 |"
+      ],
+      "notes": "事实基本可回溯到current-brief.md：四组接口、history租户/工作区与deleted_at、技术栈、待办三项、角色边界、错误响应要素、单机部署边界、设计预览性质均正确区分；冲突清单并列旧永久保留与新草稿180天未批准，未擅自采用；测试夹具99%明确标注非事实。但正文开头混入大段英文思考过程（<think>…），属交付污染，且文档冗长重复（同一约束在多节反复解释），usability扣分。未发现规则反转或伪造结论。",
+      "outputSha256": "d4c593e840a52c203e4b35d971186facfe1b4451c5bee0546a6beee3e4c9bc58"
+    },
+    {
+      "blindId": "B002",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 2,
+        "ruleFidelity": 2,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "## 0. 文档使用说明与资料分类标注"
+      ],
+      "notes": "作品在正文前保留了英文思考过程，且第5.7节在'历史保留期限相关排查'处截断，交付不完整。正文覆盖了系统概览、模块职责、接口索引、现状/待办/未知/冲突、权限边界和只读排查，但存在若干与资料不符或超出资料范围的表述：如将'平台管理员（推断）'列入模型配置权限表，属于对未明示角色的推断；'用户自定义供应商表当前归属'被列为未知项，而资料已明确其已退役、不应出现在当前管理员功能列表，应归入演进记录而非未知。历史保留期限冲突已并列列出，符合要求。测试示例内容未被当作事实引用。整体可用但需修正上述问题。",
+      "outputSha256": "0d5cef5b89a8490b6a7936a4cb38a6eaeda17a343ac30a9cc9f27a25c9465cdd"
+    },
+    {
+      "blindId": "B003",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 2,
+        "ruleFidelity": 2,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "<think>The user wants me",
+        "1. **Structure**: 5 min "
+      ],
+      "notes": "作品以思考草稿形式呈现，含大量英文规划与未定稿内容，最终中文教案、练习页、答案页均未完整交付；虽可见45分钟流程、数轴与通分两种解释、正真分数等正确方向，但练习两级各三题、分离答案页等关键交付不完整，且存在未清理的草稿与自问自答，教师无法直接使用。",
+      "outputSha256": "db311da3237bf1ab0cc3f875517ad1fc6f94b060c8e1ee13f9d32bd2e3a04a7b"
+    },
+    {
+      "blindId": "B004",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**范围**：甲市公共服务中心试点（两个服务大厅＋线上预约入口）"
+      ],
+      "notes": "主报告三部分齐全，逐月保留宣传非因果、工作日口径、培训与效果分开、5日/3日积压冲突、回访不转满意率、空值不删、事件不可去重、自助终端属设想等边界，附件含口径表、问题建议对照和核查清单，基本达到主要要求。但作品开头保留了<think>分析草稿，把任务约束、交付物清单和内部推理直接暴露在交付物中，且正文实际字数与自报约1750字存在出入，结构上存在明显冗余，影响可直接使用性。未发现规则反转或伪造事实。",
+      "outputSha256": "bced9c145cc44720b81764e37294b94408e106f81e0d335cb0362e10740411c8"
+    },
+    {
+      "blindId": "B005",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**试点主体**：甲市公共服务中心（合成）"
+      ],
+      "notes": "主报告按月份陈述并保留一月同步非因果、二月工作日口径、三月动作与效果分开、四月积压口径冲突、五月回访不量化、六月空值保留、事件不可去重、自助终端属设想等关键边界，附件一至三覆盖口径缺失、问题建议对照和核查清单，主要要求基本达到。但作品开头保留<think>英文分析草稿，暴露内部推理和任务约束，且附件三在表格中途截断，交付完整性受损，结构冗余影响可执行性。未发现规则反转或伪造事实。",
+      "outputSha256": "0e5dacf5cf8a8774658e951383ea1f18fbf9937e6f84c35da3e0db42412a4b18"
+    },
+    {
+      "blindId": "B006",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 2,
+        "ruleFidelity": 2,
+        "usability": 2
+      },
+      "criticalErrors": [
+        "作品开头保留了模型思考过程（“<think>用户给了一个非常详细的任务说明，需…”），把内部推理、字数规划、交付物构建步骤等非交付内容直接写入正式成果，属于交付范围越界和成品污染。"
+      ],
+      "evidence": [
+        "<think>用户给了一个非常详细的任务说明，需"
+      ],
+      "notes": "主报告与三个附件覆盖了会议讨论版总结、口径缺失表、问题整改对照和核查清单，且多数业务边界（工作日口径、空白不填零、两种积压口径并列、电话回访不量化、自助终端列为设想、不承诺编制预算）得到保留，因此四项均给2分。但作品把模型思考过程、字数规划、交付物构建步骤等非交付内容直接写入成果开头，属于交付范围越界和成品污染，已记入criticalErrors；同时主报告正文实际篇幅明显不足1500-2000字，且未按“工作成效、问题分析、改进安排”三部分组织，而是拆成多个附件，主成果结构不符合任务要求。此外，作品未提供任何可核验的台账数字，仅以“已登记范围可用”等空泛表述代替，导致“每个成效段至少对应可核验台账项”无法落实，完整性不足。整体可用性受思考过程污染和篇幅结构问题影响，扣分明显。",
+      "outputSha256": "83ba6a1ab72d096dc02ed3dd6c0d43f9f85c48b59c2b32975f9ae2db4109707d"
+    },
+    {
+      "blindId": "B007",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 2,
+        "ruleFidelity": 2,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "<think>The user wants me"
+      ],
+      "notes": "work.md 以 <think> 开头，整份作品是模型内部推理草稿而非交付稿：正文仅以“两个可选标题：”加一段约650字正文呈现，但正文前保留了“Let me count characters carefully”等大量英文思考、自检清单和字数核对过程，未清理为可直接复制发布的新闻稿。正文本身覆盖了内测性质、2026年10月20日、三类受众、三项价值、反馈方式与能力边界，事实基本符合资料；但交付形态不符合“只输出两个标题与稿件正文”的要求，且正文中“本轮暂不开放手机号、邮箱或外部联系方式”属对资料中“不提供也不需要”的合理转述，未构成编造。因交付物混入大量非交付内容，可用性明显受损，四项均只能部分达到。",
+      "outputSha256": "f27a391398ed68566d436fc2da4e965e0051d4ab2ba869e9af5e38120c88cbf0"
+    },
+    {
+      "blindId": "B008",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 2,
+        "ruleFidelity": 2,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "<think>Let me carefully ",
+        "**Task Requirements:**"
+      ],
+      "notes": "作品同样以思考草稿形式呈现，包含英文规划、时间核算与未定稿片段，最终教案、学生练习页和答案页未完整成形；虽正确识别45分钟流程、正真分数、数轴与通分等要求，但两级各三题练习、分离答案页等交付缺失，草稿痕迹明显，无法直接作为教师可用成果。",
+      "outputSha256": "d7aaa311271e416d7e02987a771069eb2374f4dbbae5ff0616c21f6304d33992"
+    },
+    {
+      "blindId": "B009",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 2,
+        "ruleFidelity": 2,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "## 4.2 接手检查表"
+      ],
+      "notes": "作品在正文前保留了英文思考过程，且第4.2.2节'模型网关'检查表在'[ ] '处截断，交付不完整。正文覆盖了系统概览、模块职责、接口索引、现状/待办/未知/冲突、权限边界和只读排查，历史保留期限冲突已并列列出。但存在与资料不符的表述：4.2节'模型配置管理边界'表中将'平台管理员（推断）'列为全平台模型发布管理，属于对未明示角色的推断；3.4节'未知清单'中'设计预览对应的实际页面'被列为未知项，而资料已明确设计预览为视觉草图、不能当作已部署界面，应归入边界说明而非未知。测试示例内容未被当作事实引用。整体可用但需修正上述问题。",
+      "outputSha256": "fd213cb1e8e1ab711cfa56534e1fa42ce8f880d35c92a8c7771f92700db84149"
+    },
+    {
+      "blindId": "B010",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "## 附录 B：未确认项登记（仅保留影响任务目标的业务决定）"
+      ],
+      "notes": "作品在正文前保留了英文思考过程，但正文结构完整，覆盖了系统概览、模块职责、接口索引、现状/待办/未知/冲突、权限边界、只读排查和接手检查表。历史保留期限冲突已并列列出且明确不擅自采用任一项。测试示例内容未被当作事实引用。未发现对未明示角色的推断或对已明确事项的错误归类。主要不足在于：思考过程未清理，且部分表述（如'平台管理员（推断）'未出现，但附录B中U-2至U-5的未确认项与资料已明确的内容存在一定重叠，如U-3集中日志平台资料已明确未提供，应归入资料未覆盖而非待确认）。整体达到主要要求。",
+      "outputSha256": "a1f56ba3812db450c35ba37fe23a03727feca8f27a001b651cb3a1ccf946d2ad"
+    },
+    {
+      "blindId": "B011",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 2,
+        "ruleFidelity": 2,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "<think>The user wants me"
+      ],
+      "notes": "work.md 同样以 <think> 开头，整份作品是模型内部推理草稿：正文前有“Let me count characters carefully”“Let me finalize”等英文思考、自检清单和字数核对，未清理为可直接复制发布的新闻稿。正文覆盖了内测性质、2026年10月20日、三类受众、三项价值、反馈方式与能力边界，事实基本符合资料；但交付形态不符合“只输出两个标题与稿件正文”的要求，且正文中“无需另行填写问卷或提供联系方式”属对资料中“不提供也不需要”的合理转述，未构成编造。因交付物混入大量非交付内容，可用性明显受损，四项均只能部分达到。",
+      "outputSha256": "0afb31e64f063b97d81f23a065bf3bdd3617533909e903c76b4301add26e87f5"
+    },
+    {
+      "blindId": "B012",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 2
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| **上下文准备** | 接收会话编号，向后端装配上下文；使用短时会话编号，会话可过期 |"
+      ],
+      "notes": "四组接口、history范围与逻辑删除、技术栈、待办三项、角色边界、错误响应仅事件代码+请求标识、单机部署覆盖、设计预览为草图、测试夹具99%非事实等均正确区分；冲突清单并列永久保留与180天未批准，未擅自采用；未默认补全本地调试章节。但正文开头同样混入英文思考过程（<think>…），且存在少量超出材料的表述（如“提问模板、并发限制未在资料中给出”属合理未知标注，但“接收会话编号，向后端装配上下文”略作推断），整体冗长重复，usability扣分。未发现规则反转或伪造结论。",
+      "outputSha256": "b695f379d556a7d1103013dea760d856457a6dacdae1fe3d7aeb68f8cad998b0"
+    }
+  ]
+}

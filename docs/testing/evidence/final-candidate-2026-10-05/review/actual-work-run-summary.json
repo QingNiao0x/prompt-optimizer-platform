@@ -1,0 +1,572 @@
+{
+  "createdAt": "2026-10-05T07:33:25.161Z",
+  "scope": "Actual task executions only; AI reviews are excluded; complete responses do not imply business quality PASS",
+  "timingField": "singleHttpCallMs from each execution artifact; missing measurements are null, never zero",
+  "taskCalls": 112,
+  "statusCounts": {
+    "SUCCESS": 96,
+    "FAILED": 11,
+    "PARTIAL": 5
+  },
+  "runs": [
+    {
+      "runId": "2026-10-05T05-44-53-347Z-c60b6ae2",
+      "requestedPublishedModels": [
+        "deepseek:deepseek-flash"
+      ],
+      "taskCalls": 53,
+      "statusCounts": {
+        "SUCCESS": 53
+      },
+      "singleHttpCallMsByJob": [
+        {
+          "jobId": "CD-01-L-direct-m1-r1",
+          "milliseconds": 12272
+        },
+        {
+          "jobId": "CD-01-L-direct_matched-m1-r1",
+          "milliseconds": 11991
+        },
+        {
+          "jobId": "CD-01-L-plan-m1-r1",
+          "milliseconds": 13131
+        },
+        {
+          "jobId": "CD-01-L-raw-m1-r1",
+          "milliseconds": 13253
+        },
+        {
+          "jobId": "CD-01-L-raw_matched-m1-r1",
+          "milliseconds": 17002
+        },
+        {
+          "jobId": "CD-02-M-direct-m1-r1",
+          "milliseconds": 12213
+        },
+        {
+          "jobId": "CD-02-M-direct_matched-m1-r1",
+          "milliseconds": 14958
+        },
+        {
+          "jobId": "CD-02-M-plan-m1-r1",
+          "milliseconds": 13911
+        },
+        {
+          "jobId": "CD-02-M-raw-m1-r1",
+          "milliseconds": 10667
+        },
+        {
+          "jobId": "CD-02-M-raw_matched-m1-r1",
+          "milliseconds": 10660
+        },
+        {
+          "jobId": "CD-03-M-direct-m1-r1",
+          "milliseconds": 3912
+        },
+        {
+          "jobId": "CD-03-M-direct_matched-m1-r1",
+          "milliseconds": 4711
+        },
+        {
+          "jobId": "CD-03-M-plan-m1-r1",
+          "milliseconds": 4746
+        },
+        {
+          "jobId": "CD-03-M-raw-m1-r1",
+          "milliseconds": 4177
+        },
+        {
+          "jobId": "CD-03-M-raw_matched-m1-r1",
+          "milliseconds": 4216
+        },
+        {
+          "jobId": "CD-04-L-direct-m1-r1",
+          "milliseconds": 12449
+        },
+        {
+          "jobId": "CD-04-L-direct_matched-m1-r1",
+          "milliseconds": 11613
+        },
+        {
+          "jobId": "CD-04-L-plan-m1-r1",
+          "milliseconds": 13989
+        },
+        {
+          "jobId": "CD-04-L-raw-m1-r1",
+          "milliseconds": 12647
+        },
+        {
+          "jobId": "CD-04-L-raw_matched-m1-r1",
+          "milliseconds": 17202
+        },
+        {
+          "jobId": "CD-05-L-direct-m1-r1",
+          "milliseconds": 7234
+        },
+        {
+          "jobId": "CD-05-L-direct_matched-m1-r1",
+          "milliseconds": 7265
+        },
+        {
+          "jobId": "CD-05-L-plan-m1-r1",
+          "milliseconds": 5431
+        },
+        {
+          "jobId": "CD-05-L-raw-m1-r1",
+          "milliseconds": 6117
+        },
+        {
+          "jobId": "CD-05-L-raw_matched-m1-r1",
+          "milliseconds": 5006
+        },
+        {
+          "jobId": "CD-06-M-direct-m1-r1",
+          "milliseconds": 15637
+        },
+        {
+          "jobId": "CD-06-M-direct_matched-m1-r1",
+          "milliseconds": 18371
+        },
+        {
+          "jobId": "CD-06-M-plan-m1-r1",
+          "milliseconds": 13087
+        },
+        {
+          "jobId": "CD-06-M-raw-m1-r1",
+          "milliseconds": 9773
+        },
+        {
+          "jobId": "CD-06-M-raw_matched-m1-r1",
+          "milliseconds": 14761
+        },
+        {
+          "jobId": "CD-07-M-direct-m1-r1",
+          "milliseconds": 12603
+        },
+        {
+          "jobId": "CD-07-M-raw-m1-r1",
+          "milliseconds": 10317
+        },
+        {
+          "jobId": "CD-08-L-direct-m1-r1",
+          "milliseconds": 10023
+        },
+        {
+          "jobId": "CD-08-L-direct_matched-m1-r1",
+          "milliseconds": 14726
+        },
+        {
+          "jobId": "CD-08-L-plan-m1-r1",
+          "milliseconds": 16276
+        },
+        {
+          "jobId": "CD-08-L-raw-m1-r1",
+          "milliseconds": 11858
+        },
+        {
+          "jobId": "CD-08-L-raw_matched-m1-r1",
+          "milliseconds": 16499
+        },
+        {
+          "jobId": "CD-09-M-direct-m1-r1",
+          "milliseconds": 2369
+        },
+        {
+          "jobId": "CD-09-M-plan-m1-r1",
+          "milliseconds": 2753
+        },
+        {
+          "jobId": "CD-09-M-raw-m1-r1",
+          "milliseconds": 2863
+        },
+        {
+          "jobId": "CD-10-L-direct-m1-r1",
+          "milliseconds": 18573
+        },
+        {
+          "jobId": "CD-10-L-direct_matched-m1-r1",
+          "milliseconds": 18368
+        },
+        {
+          "jobId": "CD-10-L-plan-m1-r1",
+          "milliseconds": 16458
+        },
+        {
+          "jobId": "CD-10-L-raw-m1-r1",
+          "milliseconds": 6918
+        },
+        {
+          "jobId": "CD-10-L-raw_matched-m1-r1",
+          "milliseconds": 11304
+        },
+        {
+          "jobId": "CD-11-L-direct-m1-r1",
+          "milliseconds": 18688
+        },
+        {
+          "jobId": "CD-11-L-direct_matched-m1-r1",
+          "milliseconds": 17142
+        },
+        {
+          "jobId": "CD-11-L-plan-m1-r1",
+          "milliseconds": 13376
+        },
+        {
+          "jobId": "CD-11-L-raw-m1-r1",
+          "milliseconds": 12354
+        },
+        {
+          "jobId": "CD-11-L-raw_matched-m1-r1",
+          "milliseconds": 12175
+        },
+        {
+          "jobId": "CD-12-M-direct-m1-r1",
+          "milliseconds": 13571
+        },
+        {
+          "jobId": "CD-12-M-plan-m1-r1",
+          "milliseconds": 11815
+        },
+        {
+          "jobId": "CD-12-M-raw-m1-r1",
+          "milliseconds": 11880
+        }
+      ],
+      "finishReasons": {
+        "stop": 53
+      }
+    },
+    {
+      "runId": "2026-10-05T05-44-53-832Z-724e5cff",
+      "requestedPublishedModels": [
+        "deepseek:deepseek-v4-pro"
+      ],
+      "taskCalls": 20,
+      "statusCounts": {
+        "SUCCESS": 20
+      },
+      "singleHttpCallMsByJob": [
+        {
+          "jobId": "CD-01-L-direct-m1-r1",
+          "milliseconds": 27550
+        },
+        {
+          "jobId": "CD-01-L-direct_matched-m1-r1",
+          "milliseconds": 33851
+        },
+        {
+          "jobId": "CD-01-L-plan-m1-r1",
+          "milliseconds": 41086
+        },
+        {
+          "jobId": "CD-01-L-raw-m1-r1",
+          "milliseconds": 27331
+        },
+        {
+          "jobId": "CD-01-L-raw_matched-m1-r1",
+          "milliseconds": 33337
+        },
+        {
+          "jobId": "CD-05-L-direct-m1-r1",
+          "milliseconds": 16284
+        },
+        {
+          "jobId": "CD-05-L-direct_matched-m1-r1",
+          "milliseconds": 13790
+        },
+        {
+          "jobId": "CD-05-L-plan-m1-r1",
+          "milliseconds": 17024
+        },
+        {
+          "jobId": "CD-05-L-raw-m1-r1",
+          "milliseconds": 12395
+        },
+        {
+          "jobId": "CD-05-L-raw_matched-m1-r1",
+          "milliseconds": 15097
+        },
+        {
+          "jobId": "CD-08-L-direct-m1-r1",
+          "milliseconds": 39870
+        },
+        {
+          "jobId": "CD-08-L-direct_matched-m1-r1",
+          "milliseconds": 27442
+        },
+        {
+          "jobId": "CD-08-L-plan-m1-r1",
+          "milliseconds": 53551
+        },
+        {
+          "jobId": "CD-08-L-raw-m1-r1",
+          "milliseconds": 40426
+        },
+        {
+          "jobId": "CD-08-L-raw_matched-m1-r1",
+          "milliseconds": 55175
+        },
+        {
+          "jobId": "CD-10-L-direct-m1-r1",
+          "milliseconds": 40557
+        },
+        {
+          "jobId": "CD-10-L-direct_matched-m1-r1",
+          "milliseconds": 37263
+        },
+        {
+          "jobId": "CD-10-L-plan-m1-r1",
+          "milliseconds": 27699
+        },
+        {
+          "jobId": "CD-10-L-raw-m1-r1",
+          "milliseconds": 24898
+        },
+        {
+          "jobId": "CD-10-L-raw_matched-m1-r1",
+          "milliseconds": 25621
+        }
+      ],
+      "finishReasons": {
+        "stop": 20
+      }
+    },
+    {
+      "runId": "2026-10-05T05-44-54-304Z-daed6061",
+      "requestedPublishedModels": [
+        "tokenhub:glm-5.3-flashx"
+      ],
+      "taskCalls": 6,
+      "statusCounts": {
+        "FAILED": 6
+      },
+      "singleHttpCallMsByJob": [
+        {
+          "jobId": "CD-09-M-direct-m1-r1",
+          "milliseconds": 46580
+        },
+        {
+          "jobId": "CD-09-M-plan-m1-r1",
+          "milliseconds": 46706
+        },
+        {
+          "jobId": "CD-09-M-raw-m1-r1",
+          "milliseconds": 43989
+        },
+        {
+          "jobId": "CD-12-M-direct-m1-r1",
+          "milliseconds": 63314
+        },
+        {
+          "jobId": "CD-12-M-plan-m1-r1",
+          "milliseconds": 65949
+        },
+        {
+          "jobId": "CD-12-M-raw-m1-r1",
+          "milliseconds": 64607
+        }
+      ],
+      "finishReasons": {
+        "length": 6
+      }
+    },
+    {
+      "runId": "2026-10-05T05-44-54-724Z-2214b7e4",
+      "requestedPublishedModels": [
+        "tokenhub:minimax-m3"
+      ],
+      "taskCalls": 16,
+      "statusCounts": {
+        "SUCCESS": 7,
+        "PARTIAL": 5,
+        "FAILED": 4
+      },
+      "singleHttpCallMsByJob": [
+        {
+          "jobId": "CD-02-M-direct-m1-r1",
+          "milliseconds": 74638
+        },
+        {
+          "jobId": "CD-02-M-direct_matched-m1-r1",
+          "milliseconds": 113732
+        },
+        {
+          "jobId": "CD-02-M-plan-m1-r1",
+          "milliseconds": 75773
+        },
+        {
+          "jobId": "CD-02-M-raw-m1-r1",
+          "milliseconds": 70606
+        },
+        {
+          "jobId": "CD-02-M-raw_matched-m1-r1",
+          "milliseconds": 99242
+        },
+        {
+          "jobId": "CD-04-L-direct-m1-r1",
+          "milliseconds": 80811
+        },
+        {
+          "jobId": "CD-04-L-direct_matched-m1-r1",
+          "milliseconds": 47804
+        },
+        {
+          "jobId": "CD-04-L-plan-m1-r1",
+          "milliseconds": 120357
+        },
+        {
+          "jobId": "CD-04-L-raw-m1-r1",
+          "milliseconds": 47783
+        },
+        {
+          "jobId": "CD-04-L-raw_matched-m1-r1",
+          "milliseconds": 120290
+        },
+        {
+          "jobId": "CD-09-M-direct-m1-r1",
+          "milliseconds": 86579
+        },
+        {
+          "jobId": "CD-09-M-plan-m1-r1",
+          "milliseconds": 39441
+        },
+        {
+          "jobId": "CD-09-M-raw-m1-r1",
+          "milliseconds": 80253
+        },
+        {
+          "jobId": "CD-12-M-direct-m1-r1",
+          "milliseconds": 106996
+        },
+        {
+          "jobId": "CD-12-M-plan-m1-r1",
+          "milliseconds": 120312
+        },
+        {
+          "jobId": "CD-12-M-raw-m1-r1",
+          "milliseconds": 99732
+        }
+      ],
+      "finishReasons": {
+        "stop": 7,
+        "length": 6,
+        "none": 3
+      }
+    },
+    {
+      "runId": "2026-10-05T05-49-58-381Z-44b02627",
+      "requestedPublishedModels": [
+        "deepseek:deepseek-v4-pro"
+      ],
+      "taskCalls": 3,
+      "statusCounts": {
+        "SUCCESS": 3
+      },
+      "singleHttpCallMsByJob": [
+        {
+          "jobId": "CD-07-M-plan-m1-r1",
+          "milliseconds": 32236
+        },
+        {
+          "jobId": "CD-07-M-raw-m1-r1",
+          "milliseconds": 31055
+        },
+        {
+          "jobId": "CD-07-M-raw_matched-m1-r1",
+          "milliseconds": 35177
+        }
+      ],
+      "finishReasons": {
+        "stop": 3
+      }
+    },
+    {
+      "runId": "2026-10-05T06-17-10-103Z-d7b2a747",
+      "requestedPublishedModels": [
+        "tokenhub:glm-5.3-flashx"
+      ],
+      "taskCalls": 6,
+      "statusCounts": {
+        "SUCCESS": 5,
+        "FAILED": 1
+      },
+      "singleHttpCallMsByJob": [
+        {
+          "jobId": "CD-09-M-direct-m1-r1",
+          "milliseconds": 88806
+        },
+        {
+          "jobId": "CD-09-M-plan-m1-r1",
+          "milliseconds": 69984
+        },
+        {
+          "jobId": "CD-09-M-raw-m1-r1",
+          "milliseconds": 54776
+        },
+        {
+          "jobId": "CD-12-M-direct-m1-r1",
+          "milliseconds": 113883
+        },
+        {
+          "jobId": "CD-12-M-plan-m1-r1",
+          "milliseconds": 120243
+        },
+        {
+          "jobId": "CD-12-M-raw-m1-r1",
+          "milliseconds": 111255
+        }
+      ],
+      "finishReasons": {
+        "stop": 5,
+        "none": 1
+      }
+    },
+    {
+      "runId": "2026-10-05T07-05-07-512Z-78475c41",
+      "requestedPublishedModels": [
+        "deepseek:deepseek-flash"
+      ],
+      "taskCalls": 8,
+      "statusCounts": {
+        "SUCCESS": 8
+      },
+      "singleHttpCallMsByJob": [
+        {
+          "jobId": "CV-HOSPITAL-M-plan-m1-r1",
+          "milliseconds": 11718
+        },
+        {
+          "jobId": "CV-HOSPITAL-M-raw-m1-r1",
+          "milliseconds": 13297
+        },
+        {
+          "jobId": "CV-HOSPITAL-M-raw_matched-m1-r1",
+          "milliseconds": 13878
+        },
+        {
+          "jobId": "CV-NEWS-M-direct-m1-r1",
+          "milliseconds": 2558
+        },
+        {
+          "jobId": "CV-NEWS-M-raw-m1-r1",
+          "milliseconds": 2829
+        },
+        {
+          "jobId": "CV-SCALE-L-plan-m1-r1",
+          "milliseconds": 5999
+        },
+        {
+          "jobId": "CV-SCALE-L-raw-m1-r1",
+          "milliseconds": 5201
+        },
+        {
+          "jobId": "CV-SCALE-L-raw_matched-m1-r1",
+          "milliseconds": 5100
+        }
+      ],
+      "finishReasons": {
+        "stop": 8
+      }
+    }
+  ]
+}

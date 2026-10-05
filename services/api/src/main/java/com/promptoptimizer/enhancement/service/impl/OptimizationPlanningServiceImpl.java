@@ -284,23 +284,24 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
             var guard = new RequirementFidelityGuard();
             var decisionPolicy = PlanningDecisionPolicy.from(request);
             List<String> rules = guard.explicitRules(request.rawPrompt(), List.of());
+            var ruleValidation = guard.prepare(rules);
             // 包括非推荐选项；不能让用户通过候选答案无意放弃原始需求中的明确规则。
             // 格式和安全仍校验所有项；已被明确事实消除的问题不因无关候选触发额外模型重试。
             questionFilter.filter(validated.questions(), request).forEach(question -> {
                 decisionPolicy.validateCandidate(question.hint(), question.question(), "questions.hint");
                 question.examples().forEach(example -> {
                     decisionPolicy.validateCandidate(example, question.question(), "questions.examples");
-                    guard.validate(example, rules, "questions.examples");
+                    ruleValidation.validateProposal(example, "questions.examples");
                 });
                 question.options().forEach(option -> {
                     decisionPolicy.validateCandidate(option.answer(), question.question(), "questions.options.answer");
                     decisionPolicy.validateCandidate(option.label(), question.question(), "questions.options.label");
                     decisionPolicy.validateCandidate(option.description(), question.question(), "questions.options.description");
                     decisionPolicy.validateCandidate(option.recommendationReason(), question.question(), "questions.options.recommendationReason");
-                    guard.validate(option.answer(), rules, "questions.options.answer");
-                    guard.validate(option.label(), rules, "questions.options.label");
-                    guard.validate(option.description(), rules, "questions.options.description");
-                    guard.validate(option.recommendationReason(), rules, "questions.options.recommendationReason");
+                    ruleValidation.validateProposal(option.answer(), "questions.options.answer");
+                    ruleValidation.validateProposal(option.label(), "questions.options.label");
+                    ruleValidation.validateProposal(option.description(), "questions.options.description");
+                    ruleValidation.validate(option.recommendationReason(), "questions.options.recommendationReason");
                 });
             });
             return validated;

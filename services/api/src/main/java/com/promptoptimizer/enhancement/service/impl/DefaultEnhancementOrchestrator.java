@@ -305,6 +305,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                                 planningWarnings
                         ).withModelVersion(selectedModel != null && selectedModelId.equals(providerResponse.model())
                                 ? selectedModel.displayName() : "")));
+                // 组装和可能的受控修复完成后计时，避免长材料的校验耗时被排除在响应指标之外。
+                result = result.withLatencyMs(Math.max(0, clock.millis() - startedAt));
                 long latencyMs = result.latencyMs();
                 if (result.provider().mock()) {
                     ModelCallLogger.completed("prompt.optimize", result.provider().provider(),

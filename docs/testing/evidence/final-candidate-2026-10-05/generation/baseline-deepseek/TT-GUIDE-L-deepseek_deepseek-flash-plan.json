@@ -1,0 +1,280 @@
+{
+  "id": "TT-GUIDE-L-deepseek_deepseek-flash-plan",
+  "caseId": "TT-GUIDE-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T05:03:58.659Z",
+  "prepared": {
+    "contextId": "c20bfb0e-ec5e-44db-97c1-d987aba64373",
+    "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2",
+    "digest": {
+      "description": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologies": [
+        "Vue"
+      ],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] docs/产品范围.md：Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。；业务摘录：[片段 1/1] 现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。 模型由管理员发布，用户可选择可用模型但不填密钥。 扫描PDF OCR未开放。 没有自动执行、完整账号管理或专业结论承诺。",
+        "[PROJECT_SOURCE] src/Product.vue：Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>；业务摘录：[片段 1/1] <template><button>开始增强</button><button>复制</button></template>"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologyStack": [
+        {
+          "name": "Vue",
+          "source": "src/Product.vue",
+          "confidence": 0.9
+        }
+      ],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/产品范围.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。模型由管理员发布，用户可选择可用模型但不填密钥。扫描PDF OCR未开放。没有自动执行、完整账号管理或专业结论承诺。",
+          "summary": "Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。",
+          "truncated": false
+        },
+        {
+          "path": "src/Product.vue",
+          "language": "vue",
+          "content": "[片段 1/1]\n<template><button>开始增强</button><button>复制</button></template>",
+          "summary": "Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T05:33:58.679284600Z",
+    "latencyMs": 12
+  },
+  "plan": {
+    "summary": "目标是产出一篇面向非技术用户的中文操作指南，覆盖开始使用、上下文添加、Plan 交互、确认问题、结果核对与编辑复制、历史与权限边界，并严格忠于材料、不写实现细节。材料已给出大部分内容边界，但仍有几处会直接影响指南正文写法的事实需要确认。",
+    "questions": [
+      {
+        "id": "plan_default_state",
+        "question": "指南中描述 Plan 时，应说明用户需要主动开启，还是说明它默认开启？",
+        "hint": "材料写的是“主动开启Plan”，但需要确认这是否就是最终要写进指南的默认状态，避免读者误以为系统会自动进入提问流程。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "manual_on",
+            "label": "需要用户主动开启",
+            "description": "Plan 默认关闭，用户自行开启后系统才会结合需求与资料提问。",
+            "answer": "Plan 默认关闭，需要用户主动开启；开启后系统才会结合需求与已分析资料提问。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "default_on",
+            "label": "默认开启",
+            "description": "进入工作台后 Plan 已开启，用户可自行关闭。",
+            "answer": "Plan 默认开启，用户可自行关闭；开启状态下系统会结合需求与已分析资料提问。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "history_scope",
+        "question": "历史记录部分，指南应说明用户能看到并管理哪些内容？",
+        "hint": "材料只提到历史分页和逻辑删除，需要确认历史里保存的是增强结果、对话过程还是两者，避免指南写出材料没有的能力。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "result_only",
+            "label": "仅增强结果",
+            "description": "历史只保存每次生成的最终提示词结果，可查看、编辑、复制和逻辑删除。",
+            "answer": "历史记录保存每次生成的最终提示词结果，用户可查看、编辑、复制和逻辑删除。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "result_and_qa",
+            "label": "结果与确认问答",
+            "description": "历史同时保存最终结果和 Plan 确认过程中的问答记录。",
+            "answer": "历史记录同时保存最终提示词结果和 Plan 确认过程中的问答记录，用户可查看、编辑、复制和逻辑删除。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "result_and_context",
+            "label": "结果与所用资料",
+            "description": "历史保存最终结果以及本次使用的资料范围说明。",
+            "answer": "历史记录保存最终提示词结果以及本次使用的资料范围说明，用户可查看、编辑、复制和逻辑删除。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "edit_effect",
+        "question": "用户编辑已生成的结果后，指南应说明编辑内容如何生效？",
+        "hint": "材料提到可编辑措辞但不能削弱平台默认安全边界，需要确认编辑是仅保存在当前结果，还是会影响后续再次增强。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "current_only",
+            "label": "仅当前结果",
+            "description": "编辑只修改当前这条结果，再次增强会基于原始需求重新生成。",
+            "answer": "编辑只修改当前这条结果，保存后仅影响当前结果；再次增强会基于原始需求重新生成。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "carry_forward",
+            "label": "带入再次增强",
+            "description": "编辑后的措辞会作为后续再次增强的输入之一。",
+            "answer": "编辑后的措辞会作为后续再次增强的输入之一，再次增强时在编辑基础上继续优化。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "file_limits",
+        "question": "关于文件大小、数量或格式限制，指南应如何处理？",
+        "hint": "材料没有给出具体数字，需要确认指南是明确写“以当前界面提示为准”，还是完全不提限制。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "refer_to_ui",
+            "label": "以界面提示为准",
+            "description": "不写具体数字，提示用户以当前界面的限制提示为准。",
+            "answer": "文件大小、数量和格式限制以当前界面提示为准，指南不写具体数字。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "omit_limits",
+            "label": "完全不提限制",
+            "description": "指南不涉及文件限制相关说明。",
+            "answer": "指南不涉及文件大小、数量或格式限制的说明。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "model_selection",
+        "question": "指南是否需要说明用户可以选择模型？",
+        "hint": "材料提到模型由管理员发布、用户可选择可用模型但不填密钥，需要确认这是否属于面向非技术用户的指南内容。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "mention_select",
+            "label": "说明可选择模型",
+            "description": "指南说明用户可在可用模型中选择，但不需要填写密钥。",
+            "answer": "指南说明用户可以在管理员发布的可用模型中进行选择，但不需要填写密钥。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "omit_model",
+            "label": "不涉及模型选择",
+            "description": "指南不提及模型选择，只讲提示词增强流程。",
+            "answer": "指南不涉及模型选择相关内容，只讲提示词增强流程。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "failure_retry",
+        "question": "模型失败时，指南应建议用户如何保留需求后重试？",
+        "hint": "常见问题要求覆盖“模型失败时如何保留需求后重试”，需要确认具体建议，避免指南写出材料没有的自动恢复能力。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "copy_retry",
+            "label": "复制需求后重试",
+            "description": "建议用户先复制已填写的需求内容，再重新发起增强。",
+            "answer": "模型失败时，建议用户先复制已填写的需求内容，再重新发起增强，避免内容丢失。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "history_retry",
+            "label": "从历史重新发起",
+            "description": "建议用户到历史记录中找到该次需求，再重新发起增强。",
+            "answer": "模型失败时，建议用户到历史记录中找到该次需求，再重新发起增强。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "stay_retry",
+            "label": "留在当前页重试",
+            "description": "建议用户留在当前页面，确认需求仍在后直接重试。",
+            "answer": "模型失败时，建议用户留在当前页面，确认需求内容仍在后直接重试。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 7091,
+    "planId": "0a84854a-bb56-4b74-aae5-f2c1e87819b3",
+    "planningContext": {
+      "contextId": "c20bfb0e-ec5e-44db-97c1-d987aba64373",
+      "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2"
+    },
+    "expiresAt": "2026-10-05T05:33:58.679284600Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "TT-GUIDE-L-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "42de9e1f-ce6f-41b7-90e0-ef842dac304e",
+      "elapsedMs": 42
+    },
+    {
+      "label": "TT-GUIDE-L-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "9cdfb6fd-abfa-4272-ae26-fc900fbad0db",
+      "elapsedMs": 7127
+    }
+  ]
+}

@@ -1,0 +1,336 @@
+{
+  "schemaVersion": 1,
+  "reviewer": {
+    "id": "blinded-model-deepseek:deepseek-flash",
+    "kind": "AI_ASSISTED",
+    "reviewedAt": "2026-10-05T06:47:53.204Z",
+    "professionalDomain": "NOT_CERTIFIED",
+    "reviewRun": "tmp\\prompt-output-evaluation\\2026-10-05T06-37-42-780Z-98065227"
+  },
+  "professionalReview": "NOT_PERFORMED",
+  "problems": [],
+  "entries": [
+    {
+      "blindId": "B001",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**主文本状态**：暂不确定，草稿A与草稿B并列"
+      ],
+      "notes": "四项交付物齐全，事实表、差异表、分级问题、限制备忘录均紧扣材料；押金两版并列、维修不拼接、邮件不视为承诺、示例判决仅待核、权属不推断、解除条款不删前提等硬约束均落地；未决主文本保持未知。逆向核对与交接摘要完整。usability因多处重复解释（限制条款在事实表、问题表、限制节、逆向核对中反复出现）略扣，但结构清楚可执行。",
+      "outputSha256": "f02163e8d12bda7259ef7482c4923eccf3626d57309e6ff8919e9c6ff9f057d6"
+    },
+    {
+      "blindId": "B002",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**主文本状态**：暂不确定，两版草稿并列核对"
+      ],
+      "notes": "交付物齐全，押金差异、维修不拼接、邮件性质、示例判决待核、权属不推断等主要约束均保留。但材料对应表将草稿A、草稿B、邮件、附件列为独立材料并赋予M2-M5编号，而给定材料中这些并无独立文件路径，属对来源层级的轻度误标；差异表将草稿B维修表述为'日常维护+全部设施故障费用'，与材料'另一版新增全部设施故障费用'的并列关系略有出入。整体仍可追溯，未构成规则反转。",
+      "outputSha256": "7c35bb2937681679a6cf30dd13147ffae33943520ca369c150e8dd9416cc92df"
+    },
+    {
+      "blindId": "B003",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**明确禁止**：年龄标准化死亡率不得替代 YLL 率。"
+      ],
+      "notes": "准确继承甲地区、2015—2025、R/CSV、F/M/U、A/B/C占位等已知事实；区分粗率、年龄别率、标准化率，明确无标准人口权重不能标准化；季节性需月度完整性，否则暂无法执行；U单列不推断；地区保留登记归属口径；亚类映射待专业确认；YLL与YLL率依赖寿命表和分母，禁止与标准化死亡率互换；Arriaga比较对象未定不写具体流程；5岁组与10岁组冲突保留，不删高龄组；制度变化只列核查不编造；模型稳定性评估；预期与已完成分开，图表无数值；伦理未审批不宣称。四项交付物齐全，结构清楚，未越界计算或编造。",
+      "outputSha256": "ca96b9f1a4d226ba60a01071eae53330291fbfacd832185e256da2cc1f3a8cb0"
+    },
+    {
+      "blindId": "B004",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 合成现行资料 | `materials/le"
+      ],
+      "notes": "交付四件齐全，押金/维修/解除/权属/邮件/判决引用等边界基本落地，未输出法条或胜诉结论。但将维修条款两版差异强行对应草稿A/B（F-08/F-09、C-02），而材料未指明版本归属，属超出材料推断；差异表大量“未知”行与逆向核对、交接摘要重复，篇幅冗余，usability扣分。",
+      "outputSha256": "84b2fe75e368ea0bbd9a5bf2b7ab894e79f581241c0493e351979d839d87ad63"
+    },
+    {
+      "blindId": "B005",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 追踪调查 | 页面当前编辑中的姓名与证件号（"
+      ],
+      "notes": "覆盖背景调用关系、两模块共用步骤、字段写入与异常伪代码、按业务行为测试表；空值比较显式区分0/false，详情编号一致性、迟到请求失效、取消保护、地区缺失列为未决前提均正确落地。资料引用区分正式说明与测试示例。主要不足是内容重复较多（约束遵守声明、三种状态表与正文多处重述），usability因冗长扣分。",
+      "outputSha256": "d37b5e540f134ca08f4f89e79492de95134cceb35242009db07aba6161006005"
+    },
+    {
+      "blindId": "B006",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "- **D组（信息量匹配对照）**：获得与C组相"
+      ],
+      "notes": "四组设计、信息量匹配对照、盲评匿名、失败保留、统计不锁定检验等核心规则基本落地；但主文汉字约1241，超出1200字上限，且未按任务要求区分资料引用来源、未说明测试示例与正式说明分开，附表D把评分量尺类型和重复测量结构列为待确认，而任务已明确固定设计（20任务、3次重复、2名盲评），这两项并非真正缺失的业务决定，属于过度保留待确认项，扣分。",
+      "outputSha256": "3c5db79bd328a5ba138dd3efd9d3f4842812535fc0f8a1d996e1e5f46a25878a"
+    },
+    {
+      "blindId": "B007",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [
+        "将维修条款两版差异直接归属草稿A（日常维护）与草稿B（新增全部设施故障费用），而给定材料未指明版本归属，属编造材料未支持的事实对应"
+      ],
+      "evidence": [
+        "| 维修范围 | 承租方承担日常维护 | 承租方"
+      ],
+      "notes": "四类交付物具备，限制说明较清楚。但差异表把维修范围差异绑定到草稿A/B，违反“材料未指明版本归属”的边界；事实来源表把草稿A/B列为独立材料，而附件中并无草稿全文，来源标注不实。押金差异、未签署、邮件非承诺等主要边界保留，故completeness尚可，accuracy与ruleFidelity因上述事实错配降分。",
+      "outputSha256": "8b00572b07326f79ff8afbf56cca18efad687356a18cbd511d779cd938e877de"
+    },
+    {
+      "blindId": "B008",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "- **候选**：按姓名与证件号匹配、且地区条件"
+      ],
+      "notes": "覆盖两模块共用步骤、白名单、排序、空值规则、取消、时序保护、详情编号一致性、日志与错误提示，并保留地区缺失为待确认项，未默认补全。主要不足：地区缺失处理在正文中仅列为待确认，未按条目10要求把无法核验与确无候选、明确地区不符在方案正文中分别说明；伪代码中候选查询的regionMatchesCurrentUserRegion为占位，未体现地区缺失分支；测试表E-06状态为待确认而非可执行预期。整体达到主要要求，无规则反转或伪造结论。",
+      "outputSha256": "cdc3a82d53876a7af9338c4fac0fae969519d6e4c4c4bda630e91b0f335868f2"
+    },
+    {
+      "blindId": "B009",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**文档状态**：开题讨论稿，供研究生论文开题评"
+      ],
+      "notes": "准确继承全部已知事实与否定规则：U不并入F/M、地区为登记归属口径、YLL率≠标准化死亡率、5岁/10岁组冲突保留、A/B/C未映射、无伦理授权不宣称已审批。四项交付物齐全，未决清单与前提表具体可追溯，测试示例被明确排除。主要扣分在usability：同一未决事项（如U记录处理、年龄组映射、YLL寿命表）在分析框架、前提表、未决清单、交接摘要中反复出现，篇幅偏长，执行者需自行合并重复信息。",
+      "outputSha256": "9748726814cf9275599a1127a1dceaccf0d5d3cd3a68f344265e912bfc17c879"
+    },
+    {
+      "blindId": "B010",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**文档状态**：方案草稿，仅用于只读分析与后续"
+      ],
+      "notes": "交付结构完整，含背景、共用步骤、伪代码、测试表与交接摘要，空值规则、排序、编号一致性、取消保护基本正确。但存在若干偏离：B-05将地区缺失直接写成“该记录不作为候选返回”，与未决前提“不得默认排除”相冲突；3.5后端查询伪代码在输入为空时返回空候选，可能把参数错误伪装为无候选；文档状态自称“方案草稿”，与任务要求的方案交付口径不一致。未决前提在正文、测试表、交接摘要多处重复。",
+      "outputSha256": "0c4ef45dae75efd904c22a35f41f0bbede42ee95f7187d39ab92d47a8e0c99b7"
+    },
+    {
+      "blindId": "B011",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "本研究比较三种提示词准备方式对下游任务输出的影响"
+      ],
+      "notes": "研究问题、四条件、信息量匹配对照、盲评匿名、失败样本保留、统计选择流程、待确认清单均覆盖；但主文汉字约2026字，明显超出1200字上限，且附表三新增评分尺度、质量分合成规则等未决项，部分超出原始待确认范围，故各维度未给满分。",
+      "outputSha256": "974e782d15a5c6880c4f16ded08d14ff390e7720a468b65ab23509dfb913f3f7"
+    },
+    {
+      "blindId": "B012",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**禁止把标准化死亡率当作YLL率**；"
+      ],
+      "notes": "同样准确落地全部已知事实与边界：指标分层、标准化缺权重、季节性暂不能执行、U处理待确认、登记归属口径、亚类占位、YLL与YLL率前提、Arriaga待定、年龄组冲突保留、制度核查、模型不保证收敛、预期与已完成区分、伦理未审批。变量指标表、资料依赖表、未决冲突清单完整，交接摘要区分采用资料与排除测试示例，可执行性好。",
+      "outputSha256": "3ac44007b1d2bfe46b45cd4db4c239091233a76a0b3aa74a5762a07c4c1ae20c"
+    },
+    {
+      "blindId": "B013",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**资料状态**：全部为合成材料；合同草稿未签署"
+      ],
+      "notes": "交付物齐全且区分确定/无法核验/冲突三类状态，明确标注草稿A、B、邮件、附件原文未单独提供、仅经转述，来源层级处理最严谨；押金、维修、解除、权属、邮件、示例判决等约束均落地；高优先项说明为何影响目标。usability因篇幅较长、部分限制在多节重复而略扣，但结构清楚、可执行。",
+      "outputSha256": "ce78daec582582f036e36301a40049d12e035d84a15416862cce43fe92c5d017"
+    },
+    {
+      "blindId": "B014",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "核心混淆在于：计划确认组额外获得了答案信息，若直"
+      ],
+      "notes": "四条件设计、信息量匹配对照、盲评、失败记录、统计策略和待确认清单基本完整；但主文汉字约1768字，超出1200字上限，且附表C新增评分等级定义、信息呈现格式等未决项，部分超出原始待确认范围。",
+      "outputSha256": "c4e1f2ca03ff2d991f712fdde4e99bc5a2b6495a8140e6b4b78928b282fe74fb"
+    },
+    {
+      "blindId": "B015",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "本研究比较三种提示词整理方式对下游任务输出的影响"
+      ],
+      "notes": "研究问题、四条件、信息量匹配对照、盲评、失败记录、统计选择流程和待确认清单均覆盖；但主文汉字约1734字，超出1200字上限，且预注册清单新增专家参与方式、材料目录锁定等未决项，部分超出原始待确认范围。",
+      "outputSha256": "b0244db5db0d4109e2f4adcf522255c75b9adf8dec857c6e83b155a0b74b8e29"
+    },
+    {
+      "blindId": "B016",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| 地区信息缺失（null 或空） | **暂不确定，保留为未决前提**"
+      ],
+      "notes": "结构清晰，背景、共用步骤、前后端伪代码、按业务行为组织的测试表齐全；地区缺失明确保留为未决前提且不默认匹配或排除，空值比较、排序稳定性、编号一致性、迟到请求失效、取消/离开保护、日志脱敏均正确。测试表按查询、时序、确认框、详情、字段、模块、日志分组，可执行性好。未发现规则反转或伪造结论。",
+      "outputSha256": "097510df470b7abc4a40df9a1d61a29e75039e8e14ff456de97cca96f0949efd"
+    },
+    {
+      "blindId": "B017",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "ruleFidelity": 4,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**资料性质**：全部为合成演练资料，不代表任何"
+      ],
+      "notes": "事实与规则保真度高：明确区分可执行/暂不能执行、保留5岁与10岁组冲突、U保持未知、地区归属口径、禁止标准化死亡率替代YLL率、不编造制度调整。交付物覆盖方案、变量指标表、依赖前提表、未决冲突清单，并含制度变化核查清单模板。扣分在usability：未决事项在正文、第6节、第7节、第11节逆向核对表中多处重复，结构略显冗余，读者需跨节整合同一条件。",
+      "outputSha256": "25f881a08fc6b53c4260883407e573eff814cfd480e2c4a1b484b3e24d83ed36"
+    },
+    {
+      "blindId": "B018",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 3,
+        "ruleFidelity": 3,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**资料依据**：本方案事实依据来自 `materials/research_design/current-brief.md`"
+      ],
+      "notes": "四组设计、信息量匹配对照、盲评匿名、失败保留、统计选择流程、资料依据与测试示例区分均较好；但主文汉字约1910，明显超出1200字上限，且附表三仅列4项待确认，遗漏评分量尺类型与重复测量结构等统计前置条件，虽然任务已明确固定设计，但统计方法选择流程所需量尺类型仍属未决，作品在正文提及却未纳入待确认清单，完整性不足。",
+      "outputSha256": "8e4181d74c000ed9116003d1bad89b1eaa9af6c8fc4ee6a908073becf9ad5e55"
+    },
+    {
+      "blindId": "B019",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 3,
+        "ruleFidelity": 4,
+        "usability": 4
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "**文档状态**：开题讨论稿，非已完成分析。所有"
+      ],
+      "notes": "规则保真与准确性好：U不并入F/M、地区归属口径、YLL率与标准化死亡率区分、5岁/10岁组冲突保留、A/B/C未映射、无伦理授权不宣称审批。结构紧凑、表格清晰、可执行性强，重复较少。completeness略低于另两份：未决清单仅列U1-U6与C1-C2，未单列月度登记完整性核查方法、模型稳定性评估、伦理数据授权等条目，虽在正文和依赖表中有提及，但作为独立未决事项的覆盖不如B009/B017完整。",
+      "outputSha256": "8e53b9521b33fdb61089636c59928035f3477eea7f07ca6e8d224c4446371df0"
+    },
+    {
+      "blindId": "B020",
+      "status": "REVIEWED",
+      "scores": {
+        "accuracy": 2,
+        "completeness": 3,
+        "ruleFidelity": 2,
+        "usability": 3
+      },
+      "criticalErrors": [],
+      "evidence": [
+        "| Q-05 | 姓名与证件号均匹配，地区缺失 | 记录地区为 null 或空 | 不返回该候选（无法核验地区，不视为匹配） |"
+      ],
+      "notes": "覆盖两模块、白名单、排序、空值规则、取消、时序保护、详情编号一致性、日志与错误提示，测试表较完整。但存在规则反转：任务明确地区缺失尚未决定、不得默认补全，作品在测试表Q-05将地区缺失记录直接判定为不返回候选，并在第5节将当前处理写为暂不纳入候选，把未决事项当作已定规则，违反不得默认补全的约束。该错误影响候选查询分支，属关键规则反转，计入criticalErrors。其余内容基本准确，故accuracy与ruleFidelity降为2。",
+      "outputSha256": "f00104c7ed2d618f3ef3b3c577acfc4f03a130b16b854d77cf522b4f4f12ad47"
+    }
+  ]
+}

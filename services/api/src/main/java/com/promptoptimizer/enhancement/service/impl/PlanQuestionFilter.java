@@ -78,6 +78,7 @@ public final class PlanQuestionFilter {
         return questions.stream()
                 .filter(question -> seen.add(new QuestionKey(normalize(question.question()), questionDetails(question))))
                 .filter(question -> !clearlyOutsideCurrentTask(question.question(), input.rawPrompt()))
+                .filter(question -> !RoutineGuideDecision.delegated(question, input.rawPrompt()))
                 .filter(question -> !routinePresentation(question, input.rawPrompt()))
                 .filter(question -> !routineExecutionPresentation(question, input.rawPrompt()))
                 .filter(question -> !KnownTestCoverage.repeatsKnownBranches(question, input))

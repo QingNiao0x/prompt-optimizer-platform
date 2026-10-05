@@ -1,0 +1,255 @@
+{
+  "path": "/api/v1/context/planning",
+  "status": 200,
+  "requestId": "199e1b4c-bef2-4571-b8c7-5a837fe36bb9",
+  "request": {
+    "rawPrompt": "请结合已选代码项目和《通知方案.docx》，为当前消息查询项目新增通知能力设计可执行方案。本次只交付设计说明、接口草案、消息状态规则和测试清单，不修改代码、不执行命令、不做数据库迁移。当前已经是 Java 21、Spring Boot 3、Vue 3 和 TypeScript，不重新选择技术栈；资料并未证明已有发送通知能力，不能把未说明写成不存在。\n需要根据方案提出真正影响业务的关键问题；邮件或站内信尚未决定，先确认单一渠道，再围绕选择形成最终方案。Word 中段规定按业务事件编号幂等去重，通知失败不回滚成功的主业务，需保留失败状态。尾部规定取消发送保持原数据不变，不在日志泄露 Token，站内信的已读状态按用户隔离。不同渠道的规则不能交叉套用：SMTP 发送和邮件重试只在选择邮件时适用。\n输出清楚交代背景、任务、交付和约束，给出 API 参数草案、权限隔离、状态流转和对应正常/异常/边界验收，不引入与本次任务无关的开发步骤。缺乏依据的技术细节由接收任务的 Agent 先核查，确实影响设计的未知选择应说明，不编造现有实现。请利用文件夹中的接口和页面，以及 Word 正文、表格、中段和尾部的明确规则，不仅依赖文件名。",
+    "context": {
+      "customDescription": "",
+      "files": [
+        {
+          "path": "通知方案.docx",
+          "language": "docx",
+          "content": "",
+          "documentId": "e2eb51cc-7fff-4e93-902b-849b5b550da7",
+          "sizeBytes": 3389
+        },
+        {
+          "path": "src/MessageController.java#chunk-1",
+          "content": "package synthetic; import org.springframework.web.bind.annotation.*; @RestController @RequestMapping(\"/messages\") public class MessageController { @GetMapping public String list(){ return \"synthetic current query\"; } }",
+          "language": "java"
+        },
+        {
+          "path": "README.md#chunk-1",
+          "content": "# 合成通知项目\n使用Java21、Spring Boot3、Vue3、TypeScript和PostgreSQL。当前仅有消息查询接口，不代表通知发送、邮件或已读状态已经实现。",
+          "language": "markdown"
+        },
+        {
+          "path": "pom.xml#chunk-1",
+          "content": "<project><modelVersion>4.0.0</modelVersion><parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>3.3.13</version></parent><artifactId>synthetic-notifications</artifactId><properties><java.version>21</java.version></properties><dependencies><dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency></dependencies></project>",
+          "language": "xml"
+        },
+        {
+          "path": "package.json#chunk-1",
+          "content": "{\"dependencies\":{\"vue\":\"3.5.0\"},\"devDependencies\":{\"typescript\":\"5.7.3\"}}",
+          "language": "json"
+        },
+        {
+          "path": "src/MessageList.vue#chunk-1",
+          "content": "<template><div>我的消息</div></template><script setup lang=\"ts\">const queryPath = \"/messages\";</script>",
+          "language": "vue"
+        }
+      ]
+    },
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    }
+  },
+  "response": {
+    "requestId": "199e1b4c-bef2-4571-b8c7-5a837fe36bb9",
+    "data": {
+      "contextId": "d689d270-4254-42f9-bc72-7bfe0b654530",
+      "version": "sha256:7711d2f0107b3e41e0892024d3f425305d4f82c81a9d1aae97632caeaccbed6d",
+      "digest": {
+        "description": "",
+        "technologies": [
+          "PostgreSQL",
+          "Java",
+          "Java 21",
+          "Spring Boot",
+          "Node.js",
+          "Vue",
+          "TypeScript"
+        ],
+        "dependencies": [
+          "maven:org.springframework.boot:spring-boot-starter-web",
+          "npm:vue@3.5.0",
+          "npm:typescript@5.7.3"
+        ],
+        "directoryOverview": [
+          "README.md",
+          "package.json",
+          "pom.xml",
+          "src/",
+          "src/MessageController.java",
+          "src/MessageList.vue",
+          "通知方案.docx"
+        ],
+        "fileSummaries": [
+          "[USER_MATERIAL] 通知方案.docx：文档内容摘要：Word 1 · 段 73；合成背景段落14：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。；通知失败不回滚已成功的主业务，须给可核对失败状态，不伪造已送达。；背景描述不是新增交付目标，保留明确规则与未知状态。；单次只选择一个通知渠道，不默认发送邮件。；业务摘录：尾部验收规则：站内信的已读状态按用户隔离；；通知失败不回滚已成功的主业务，须给可核对失败状态，不伪造已送达。；合成背景段落0：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。；[片段 1/1]；单次只选择一个通知渠道，不默认发送邮件。",
+          "[PROJECT_DOCUMENT] README.md：Markdown 文档摘要：合成通知项目；使用Java21、Spring Boot3、Vue3、TypeScript和PostgreSQL。；当前仅有消息查询接口，不代表通知发送、邮件或已读状态已经实现。；业务摘录：[片段 1/1] 使用Java21、Spring Boot3、Vue3、TypeScript和PostgreSQL。 当前仅有消息查询接口，不代表通知发送、邮件或已读状态已经实现。",
+          "[PROJECT_SOURCE] src/MessageController.java：Java代码文件，主要定义：MessageController。关键内容：package synthetic; import org.springframework.web.bind.annotation.*; @RestController @RequestMapping(\"/messages\") public class MessageController { @GetMapping public String list(){ return \"synthetic current query\"; } }；业务摘录：[片段 1/1] package synthetic; import org.springframework.web.bind.annotation.*; @RestController @RequestMapping(\"/messages\") public class MessageController { @GetMapping public String list(){ return \"synthetic current query\"; } }",
+          "[PROJECT_SOURCE] src/MessageList.vue：Vue代码文件，主要定义：queryPath；包含 template、script 区块。关键内容：<template><div>我的消息</div></template><script setup lang=\"ts\">const queryPath = \"/messages\";</script>；业务摘录：[片段 1/1] <template><div>我的消息</div></template><script setup lang=\"ts\">const queryPath = \"/messages\"; </script>",
+          "[PROJECT_SOURCE] package.json：Node.js 项目清单。{\"dependencies\":{\"vue\":\"3.5.0\"},\"devDependencies\":{\"typescript\":\"5.7.3\"}}",
+          "[PROJECT_SOURCE] pom.xml：Maven 项目配置。<project><modelVersion>4.0.0</modelVersion><parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>3.3.13</version></parent><artifactId>synthetic-notifications</artifactId><properties><java.version>21</java.ve…；业务摘录：[片段 1/1] <project><modelVersion>4.0.0</modelVersion><parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>3.3.13</version></parent><artifactId>synthetic-notifications</artifactId><properties><java.version>21</java.version></properties><dependencies><dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency></dependencies></project>"
+        ],
+        "analysisStatus": "COMPLETE",
+        "analyzedFileCount": 1,
+        "warnings": [],
+        "factCards": [
+          {
+            "id": "F01",
+            "category": "BUSINESS_RULE",
+            "origin": "USER_MATERIAL",
+            "sourcePath": "通知方案.docx",
+            "evidence": "若选择站内信，采用平台内消息，不应带入邮件专属重试和 SMTP 配置"
+          },
+          {
+            "id": "F02",
+            "category": "BUSINESS_RULE",
+            "origin": "USER_MATERIAL",
+            "sourcePath": "通知方案.docx",
+            "evidence": "用户只能查看自己消息，不得跨账号查看"
+          },
+          {
+            "id": "F03",
+            "category": "BUSINESS_RULE",
+            "origin": "USER_MATERIAL",
+            "sourcePath": "通知方案.docx",
+            "evidence": "中段业务规则：消息去重依据业务事件编号"
+          },
+          {
+            "id": "F04",
+            "category": "BUSINESS_RULE",
+            "origin": "USER_MATERIAL",
+            "sourcePath": "通知方案.docx",
+            "evidence": "尾部验收规则：站内信的已读状态按用户隔离"
+          }
+        ]
+      },
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [
+          {
+            "name": "PostgreSQL",
+            "source": "README.md",
+            "confidence": 0.82
+          },
+          {
+            "name": "Java",
+            "source": "pom.xml",
+            "confidence": 0.95
+          },
+          {
+            "name": "Java 21",
+            "source": "pom.xml",
+            "confidence": 0.99
+          },
+          {
+            "name": "Spring Boot",
+            "source": "pom.xml",
+            "confidence": 0.98
+          },
+          {
+            "name": "Node.js",
+            "source": "package.json",
+            "confidence": 0.9
+          },
+          {
+            "name": "Vue",
+            "source": "package.json",
+            "confidence": 0.98
+          },
+          {
+            "name": "TypeScript",
+            "source": "package.json",
+            "confidence": 0.95
+          }
+        ],
+        "dependencies": [
+          {
+            "ecosystem": "maven",
+            "name": "org.springframework.boot:spring-boot-starter-web",
+            "version": "",
+            "source": "pom.xml"
+          },
+          {
+            "ecosystem": "npm",
+            "name": "vue",
+            "version": "3.5.0",
+            "source": "package.json"
+          },
+          {
+            "ecosystem": "npm",
+            "name": "typescript",
+            "version": "5.7.3",
+            "source": "package.json"
+          }
+        ],
+        "directoryTree": [
+          "README.md",
+          "package.json",
+          "pom.xml",
+          "src/",
+          "src/MessageController.java",
+          "src/MessageList.vue",
+          "通知方案.docx"
+        ],
+        "fileSnippets": [
+          {
+            "path": "通知方案.docx",
+            "language": "docx",
+            "content": "[片段 1/1]\n[文档片段 1/1 · Word 1 · 段 73]\n\n## Word 1 · 段 1\n合成通知业务方案：现有项目为 Java 21、Spring Boot 3、Vue 3 和 TypeScript。通知渠道尚未决定：邮件或站内信。不能将候选渠道写成已实现能力。\n## Word 1 · 段 2\n若选择邮件，才需核对 SMTP 发送与邮件重试；若选择站内信，采用平台内消息，不应带入邮件专属重试和 SMTP 配置。用户只能查看自己消息，不得跨账号查看。\n## Word 1 · 段 3\n合成背景段落0：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 4\n合成背景段落1：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 5\n合成背景段落2：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 6\n合成背景段落3：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 7\n合成背景段落4：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 8\n合成背景段落5：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 9\n合成背景段落6：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 10\n合成背景段落7：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 11\n合成背景段落8：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 12\n合成背景段落9：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 13\n合成背景段落10：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 14\n合成背景段落11：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 15\n合成背景段落12：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 16\n合成背景段落13：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 17\n合成背景段落14：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 18\n合成背景段落15：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 19\n合成背景段落16：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 20\n合成背景段落17：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 21\n合成背景段落18：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 22\n合成背景段落19：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 23\n合成背景段落20：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 24\n合成背景段落21：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 25\n合成背景段落22：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 26\n合成背景段落23：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 27\n合成背景段落24：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 28\n合成背景段落25：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 29\n合成背景段落26：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 30\n合成背景段落27：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 31\n合成背景段落28：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 32\n合成背景段落29：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 33\n合成背景段落30：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 34\n中段业务规则：消息去重依据业务事件编号；重复事件不能生成重复消息。通知失败不回滚已成功的主业务，须给可核对失败状态，不伪造已送达。\n## Word 1 · 段 35\n合成背景段落31：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 36\n合成背景段落32：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 37\n合成背景段落33：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 38\n合成背景段落34：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 39\n合成背景段落35：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 40\n合成背景段落36：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 41\n合成背景段落37：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 42\n合成背景段落38：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 43\n合成背景段落39：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 44\n合成背景段落40：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 45\n合成背景段落41：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 46\n合成背景段落42：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 47\n合成背景段落43：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 48\n合成背景段落44：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 49\n合成背景段落45：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 50\n合成背景段落46：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 51\n合成背景段落47：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 52\n合成背景段落48：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 53\n合成背景段落49：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 54\n合成背景段落50：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 55\n合成背景段落51：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 56\n合成背景段落52：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 57\n合成背景段落53：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 58\n合成背景段落54：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 59\n合成背景段落55：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 60\n合成背景段落56：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 61\n合成背景段落57：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 62\n合成背景段落58：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 63\n合成背景段落59：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。背景描述不是新增交付目标，保留明确规则与未知状态。\n## Word 1 · 段 64\n字段\n## Word 1 · 段 65\n规则\n## Word 1 · 段 67\nread_status\n## Word 1 · 段 68\n站内信才维护已读状态，不把字段当成邮件状态。\n## Word 1 · 段 70\nevent_id\n## Word 1 · 段 71\n幂等业务事件编号，按用户隔离。\n## Word 1 · 段 73\n尾部验收规则：站内信的已读状态按用户隔离；重复消息以业务事件编号幂等去重；用户取消发送时保持原数据不变；日志不得泄露 Token。单次只选择一个通知渠道，不默认发送邮件。",
+            "summary": "文档内容摘要：Word 1 · 段 73；合成背景段落14：项目资料只用于说明当前需求，不执行命令、不访问真实用户数据。；通知失败不回滚已成功的主业务，须给可核对失败状态，不伪造已送达。；背景描述不是新增交付目标，保留明确规则与未知状态。；单次只选择一个通知渠道，不默认发送邮件。",
+            "truncated": false
+          },
+          {
+            "path": "README.md",
+            "language": "markdown",
+            "content": "[片段 1/1]\n# 合成通知项目\n使用Java21、Spring Boot3、Vue3、TypeScript和PostgreSQL。当前仅有消息查询接口，不代表通知发送、邮件或已读状态已经实现。",
+            "summary": "Markdown 文档摘要：合成通知项目；使用Java21、Spring Boot3、Vue3、TypeScript和PostgreSQL。；当前仅有消息查询接口，不代表通知发送、邮件或已读状态已经实现。",
+            "truncated": false
+          },
+          {
+            "path": "src/MessageController.java",
+            "language": "java",
+            "content": "[片段 1/1]\npackage synthetic; import org.springframework.web.bind.annotation.*; @RestController @RequestMapping(\"/messages\") public class MessageController { @GetMapping public String list(){ return \"synthetic current query\"; } }",
+            "summary": "Java代码文件，主要定义：MessageController。关键内容：package synthetic; import org.springframework.web.bind.annotation.*; @RestController @RequestMapping(\"/messages\") public class MessageController { @GetMapping public String list(){ return \"synthetic current query\"; } }",
+            "truncated": false
+          },
+          {
+            "path": "pom.xml",
+            "language": "xml",
+            "content": "[片段 1/1]\n<project><modelVersion>4.0.0</modelVersion><parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>3.3.13</version></parent><artifactId>synthetic-notifications</artifactId><properties><java.version>21</java.version></properties><dependencies><dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency></dependencies></project>",
+            "summary": "Maven 项目配置。<project><modelVersion>4.0.0</modelVersion><parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>3.3.13</version></parent><artifactId>synthetic-notifications</artifactId><properties><java.version>21</java.version></properties><dependencies><dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency></dependencies></project>",
+            "truncated": false
+          },
+          {
+            "path": "package.json",
+            "language": "json",
+            "content": "[片段 1/1]\n{\"dependencies\":{\"vue\":\"3.5.0\"},\"devDependencies\":{\"typescript\":\"5.7.3\"}}",
+            "summary": "Node.js 项目清单。{\"dependencies\":{\"vue\":\"3.5.0\"},\"devDependencies\":{\"typescript\":\"5.7.3\"}}",
+            "truncated": false
+          },
+          {
+            "path": "src/MessageList.vue",
+            "language": "vue",
+            "content": "[片段 1/1]\n<template><div>我的消息</div></template><script setup lang=\"ts\">const queryPath = \"/messages\";</script>",
+            "summary": "Vue代码文件，主要定义：queryPath；包含 template、script 区块。关键内容：<template><div>我的消息</div></template><script setup lang=\"ts\">const queryPath = \"/messages\";</script>",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [
+          {
+            "path": "通知方案.docx",
+            "extractionStatus": "COMPLETE",
+            "sourceBytes": 3389,
+            "extractedCharacters": 4205,
+            "indexedChunks": 1,
+            "selectedChunks": 1,
+            "selectedCharacters": 5456,
+            "contextLimited": false,
+            "message": "本次已使用全部提取内容"
+          }
+        ],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "expiresAt": "2026-10-05T05:52:50.567570200Z",
+      "latencyMs": 36
+    }
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "createdAt": "2026-10-05T07:35:18.894Z",
+  "kind": "SCOPED_VERIFICATION_NOT_RELEASE_APPROVAL",
+  "backend": {
+    "classes": 115,
+    "tests": 1003,
+    "passed": 995,
+    "skipped": 8,
+    "failures": 0,
+    "errors": 0,
+    "command": "mvn -q -DreuseForks=false test",
+    "isolatedForks": true,
+    "sourceLog": "tmp/final-candidate-backend-isolated-regression-20261005-final.log",
+    "skippedTests": [
+      {
+        "className": "com.promptoptimizer.analytics.AnalyticsPerformanceAcceptanceTest",
+        "name": "realisticAggregationAndConcurrentReadersStayWithinLocalBudget"
+      },
+      {
+        "className": "com.promptoptimizer.analytics.AnalyticsRealBrowserAcceptanceTest",
+        "name": "browserHttpAuthenticationHomeVisitsDatabaseRecoveryAndAdminChartsWorkTogether"
+      },
+      {
+        "className": "com.promptoptimizer.provider.infrastructure.concurrency.RealModelConcurrencyAcceptanceTest",
+        "name": "measuresRealProviderAndPlatformCapacity"
+      },
+      {
+        "className": "com.promptoptimizer.provider.infrastructure.concurrency.RealModelConcurrencyArchiveReplayTest",
+        "name": "replaysSyntheticSmokeWithoutChangingTheOriginalEvidence"
+      },
+      {
+        "className": "com.promptoptimizer.provider.infrastructure.concurrency.RedisModelConcurrencyStoreIntegrationTest",
+        "name": "sharesExactlyOneHundredPermitsAcrossTwoIndependentApiInstancesUnderContention"
+      },
+      {
+        "className": "com.promptoptimizer.provider.infrastructure.concurrency.RedisModelConcurrencyStoreIntegrationTest",
+        "name": "keepsLongRunningCallsOccupiedByRenewingTheirLease"
+      },
+      {
+        "className": "com.promptoptimizer.provider.infrastructure.concurrency.RedisModelConcurrencyStoreIntegrationTest",
+        "name": "reclaimsAbandonedLeaseWithoutRevivingItOrDeletingItsReplacement"
+      },
+      {
+        "className": "com.promptoptimizer.provider.infrastructure.concurrency.RedisModelConcurrencyStoreIntegrationTest",
+        "name": "sharesAccountLimitAcrossInstancesAndDoesNotReleaseAnotherRequestsPermit"
+      }
+    ]
+  },
+  "frontend": {
+    "files": 23,
+    "tests": 123,
+    "passed": 123,
+    "typecheck": "PASS",
+    "build": "PASS_WITH_EXISTING_WARNINGS",
+    "sourceLogs": [
+      "tmp/final-candidate-frontend-regression-20261005.log",
+      "tmp/final-candidate-frontend-build-20261005.log"
+    ],
+    "productionFrontendChanged": false
+  },
+  "browserRegression": {
+    "passed": 74,
+    "scope": "Desktop and mobile Playwright; mocked API cases do not establish live model quality",
+    "sourceLog": "tmp/final-candidate-browser-regression-20261005.log"
+  },
+  "evaluationTools": {
+    "passed": 21,
+    "sourceLog": "tmp/final-candidate-evaluation-tools-final-20261005.log"
+  },
+  "realBrowser": {
+    "scope": "Small synthetic five-file code folder and one DOCX containing 73 paragraphs and a table",
+    "normalAuthenticatedLogin": true,
+    "mixedContextBeforeAndAfterPlan": true,
+    "nativeClipboardWrite": "PASS; captured payload equals final prompt",
+    "clipboardReadback": "NOT_VERIFIED_PERMISSION_DENIED",
+    "editAndCancel": "PASS",
+    "historyOriginalPreserved": "PASS",
+    "mobileViewportWidth": 390,
+    "undoUI": "ABSENT",
+    "realReenhancementNewHistory": "NOT_PERFORMED",
+    "candidateStage": "Before final same-parameter and pending-subject corrections; frozen current model evidence is separate"
+  },
+  "actualTaskExecutions": {
+    "taskCalls": 112,
+    "completeResponses": 96,
+    "truncatedResponses": 5,
+    "failures": 11,
+    "qualityPassImplied": false,
+    "aiReviewCallsExcluded": true,
+    "fullCrossDomainCandidate": "INITIAL_FIXED_CANDIDATE",
+    "finalCandidateSupplementalCalls": 8
+  },
+  "outstanding": [
+    "Open-language duplicate reminders",
+    "Low-value questions and unsupported options",
+    "Conditional evidence used as recommendation grounds",
+    "Remaining confirmed-state and relevance examples",
+    "First hospital 502 exact root cause",
+    "News body length not consistently satisfied",
+    "GLM and MiniMax production budget and timeout calibration",
+    "Fixed multi-round 24-case campaign and independent basic-business review",
+    "Full physical large-folder and real reenhancement-history verification"
+  ],
+  "specialistReview": "AFTER_LAUNCH_PER_USER; no professional certification claimed",
+  "lengthStrategyABC": "PROPOSED_NOT_EXECUTED",
+  "finalCandidateSourceHashes": {
+    "enhancement/service/impl/PlanQuestionFilter.java": "994370af35489b701087176c494a167b74adc7a9effd4bfb193a06f7e8dee7d6",
+    "enhancement/service/impl/RoutineGuideDecision.java": "718c59fb3830b136d60d6b8968cd9c051fad9089d2fffef70d65d7d04edbc54e",
+    "enhancement/service/impl/PlanningAuthorizationState.java": "7821104abd742312600bd3ccd7be61a203c5c64577d3a461966a2f80485cb62d",
+    "enhancement/service/impl/PlanningConflictIdentity.java": "77dbdcc59f5be234e422b9d14380239302146d2c9c1d2caf0016479c7095b60c",
+    "enhancement/service/impl/RequirementFidelityGuard.java": "546498baa967d47eba6cd6a63c302a660741e085c4034f44515499aa64c8bb91",
+    "enhancement/service/impl/EvidenceStateGuard.java": "30c635e68e89e8b67a80fd88fbd1f101609c7ecc145dfb5ad987a5f45bd6c837",
+    "enhancement/service/impl/ResolvedPlanState.java": "52f1b60242c83946e3b41588e6d0feea973245d4834ac2127e69996d0db4fcc2",
+    "enhancement/service/impl/PlanAmbiguityMerger.java": "825e7ae24b553576af801e4452870290f9123c94a9cbdf35e9400849f13f7af9",
+    "enhancement/service/impl/PlanAnswerSemantics.java": "bf2b1a00eda6a1d43abaae325b1590b7a780a64da558454eebbab614f1906b7c",
+    "enhancement/service/impl/OptimizationResultAssembler.java": "4e5840942005575f6f1f910d17928e884753e6b1d72312675e815e25a47207fc",
+    "enhancement/service/impl/DefaultEnhancementOrchestrator.java": "f441018ce5cc854e2788f7bd185c66239482951eeb641b1aa2dd3860c6c67e66",
+    "enhancement/service/impl/OptimizationPlanningServiceImpl.java": "cd1e4157045049f313c97a8abec60f73ffef429dd62f90cd8f90736a09551ebb",
+    "provider/domain/PromptOptimizationGuidance.java": "39dbea9de5b5ec00c1a0282001b5c1d8dd88dabd0997afdc8d79591fbe825f0b",
+    "provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java": "98da5dfe6f7d701cd0f5fe77c5c82d5dac05b9fb4ea3b23a08d03dd010cf8b50"
+  }
+}
