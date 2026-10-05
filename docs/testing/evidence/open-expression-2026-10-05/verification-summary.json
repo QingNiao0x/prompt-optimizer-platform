@@ -1,0 +1,868 @@
+{
+  "backend": {
+    "command": "mvn -q -DreuseForks=false test",
+    "classCount": 117,
+    "total": 1035,
+    "passed": 1027,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 8,
+    "sourceReportsAfterClean": true,
+    "classes": [
+      {
+        "name": "com.promptoptimizer.analytics.AnalyticsLocalDatabaseAcceptanceTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.AnalyticsPerformanceAcceptanceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "name": "com.promptoptimizer.analytics.AnalyticsRealBrowserAcceptanceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "name": "com.promptoptimizer.analytics.dto.AdminAnalyticsControllerSecurityTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.dto.AnalyticsEventControllerSecurityTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.infrastructure.AnalyticsTestJournalIsolationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.infrastructure.AuditEventDeliveryTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.infrastructure.AuditFailureDiagnosticsTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.infrastructure.ClientIpResolverTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.infrastructure.DeviceTypeResolverTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.infrastructure.MapperXmlConfigurationTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.mapper.AdminAnalyticsAggregationRegressionTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.mapper.AdminAnalyticsQueryDatabaseTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.service.impl.AdminAnalyticsServiceTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.service.impl.AnalyticsClientEventServiceTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.service.impl.AnalyticsEventServiceTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.service.impl.AnalyticsPeriodResolverTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.analytics.service.impl.DashboardMetricsAssemblerTest",
+        "tests": 46,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.common.exception.GlobalExceptionHandlerTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.common.lifecycle.StartupBannerPrinterTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.common.logging.AuditSqlLogFilterTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.common.logging.LogCorrelationTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.common.logging.LogFieldsTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.common.logging.ModelCallLoggerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.common.persistence.PostgresUuidTypeHandlerTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.common.web.RequestIdFilterTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.dto.ContextAnalysisControllerTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.dto.DocumentUploadControllerTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.dto.PlanningContextControllerTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.infrastructure.embedding.OpenAiCompatibleTextEmbeddingModelTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.infrastructure.embedding.SemanticRetrievalConfigurationTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.service.impl.BinaryContentExtractorTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.service.impl.ContentChunkSelectorTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.service.impl.DefaultContextAnalyzerTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.service.impl.MapReduceDocumentSummarizerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.service.impl.SemanticVectorIndexTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.service.impl.StreamingDocumentExtractorTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.context.service.impl.TemporaryDocumentIndexServiceTest",
+        "tests": 22,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.dto.OptimizationControllerTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.infrastructure.PlanningSessionOwnershipSerializationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.AmbiguityDetectorTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.BusinessAcceptanceRegressionTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ContextConflictDetectorTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.DefaultEnhancementOrchestratorTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest",
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ExplicitRuleEvidenceExtractorTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.FidelityReminderReplayTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.FidelityScopeRegressionTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.FinalCandidateRegressionTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.LatestFidelityReplayTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.MixedContextFixtureIntegrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.NewsLengthContractTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.OpenExpressionRegressionTest",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest",
+        "tests": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest",
+        "tests": 28,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanDecisionIntegrityRegressionTest",
+        "tests": 35,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanFindingClassifierTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningDecisionReplayTest",
+        "tests": 66,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningDigestSelectorTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningDocumentExcerptTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningEvidencePolicyTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningFactCardExtractorTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanPendingSubitemRegressionTest",
+        "tests": 28,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanProviderValidationBudgetTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanQuestionFilterTest",
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanRecommendationAlignerTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanRecommendationRegressionTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest",
+        "tests": 51,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanScopeSafetyRegressionTest",
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuardTest",
+        "tests": 62,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.RequirementFidelityWorkloadTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.RulePreservationAssemblyTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.SensitiveValueDetectorTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.TaskDeliveryProfileTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.TaskTemplateAdaptationTest",
+        "tests": 40,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.TemplateGuidanceBoundaryTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.UnverifiableRegionCandidateTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.VerifiedFindingClassificationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.history.dto.OptimizationHistoryControllerTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.history.mapper.OptimizationRecordScopeDatabaseTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.history.service.impl.MybatisOptimizationHistoryServiceTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.AuthenticationIntegrationTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.domain.UserIdentityKeyTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.dto.RegistrationControllerTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.infrastructure.registration.HybridEmailVerificationStoreTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.mapper.UserAccountParameterBindingTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.mapper.UserAccountScopeDatabaseTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.security.BootstrapAdminAccountInitializerTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.security.IdentitySecurityTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.security.PlatformAdminAccessTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.security.PlatformAdminBootstrapTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.service.impl.EmailRegistrationServiceTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.service.impl.InMemoryEmailVerificationStoreTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.identity.service.impl.LoginProtectionTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.infrastructure.web.HealthControllerTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.payment.domain.VerifiedRechargePaymentTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.payment.service.impl.RechargeRecordServiceTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.policy.service.impl.ConstraintCompleterTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.policy.service.impl.ProtectedContextFilterTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.PromptOptimizerApplicationTests",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptorTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyLimiterTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.concurrency.RealModelConcurrencyAcceptanceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.concurrency.RealModelConcurrencyArchiveReplayTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.concurrency.RealModelConcurrencyResultAssertionsTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.concurrency.RedisModelConcurrencyStoreIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 4
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.mapper.PlatformModelConstructorMappingTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleDocumentSummaryModelTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatiblePromptEnhancementProviderTest",
+        "tests": 42,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatiblePropertiesTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProviderConfigurationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleValidatedResponseTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.PlanFailureDiagnosticsTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.PlatformModelCatalogServiceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "tools": {
+    "command": "node --test scripts/prompt-output-evaluation.test.mjs",
+    "passed": 21,
+    "failures": 0,
+    "syntaxChecked": [
+      "scripts/final-candidate-business-acceptance.mjs",
+      "scripts/prompt-output-evaluation.mjs"
+    ]
+  },
+  "real": {
+    "provider": "deepseek",
+    "platformLogicalCalls": 96,
+    "finalCandidateLogicalCalls": 28,
+    "newsWorks": 72,
+    "finalNewsWorks": 24,
+    "newsFinishReason": "stop",
+    "questionsReviewed": "AI_ASSISTED",
+    "independentHumanReview": "NOT_PERFORMED"
+  },
+  "knownFailures": {
+    "resolved": "保留是否还需要输出其他指标的原回放反例，未降低原断言",
+    "testIsolation": "复用fork的日志捕获检查失败保留；隔离fork全量通过，不把它称为生产日志修复",
+    "remaining": "开放改写重复、部分低价值问题与推荐适用性、新闻不足或超长与阶段遗漏",
+    "tokenHub": "按用户要求暂缓，本轮无调用"
+  },
+  "notRevalidated": [
+    "前端全量",
+    "大型真实目录压力",
+    "原生文件拖拽",
+    "剪贴板与历史重新增强",
+    "生产部署",
+    "专项并发/Redis集成8项",
+    "独立基础业务双评审",
+    "专业人员评审"
+  ]
+}

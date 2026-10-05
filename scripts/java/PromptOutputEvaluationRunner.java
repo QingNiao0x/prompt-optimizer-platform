@@ -67,6 +67,10 @@ public final class PromptOutputEvaluationRunner {
             fail(exception.code);
         } catch (Exception exception) {
             // Exception messages can contain upstream URLs, response bodies or credentials.
+            StackTraceElement location = exception.getStackTrace().length == 0 ? null : exception.getStackTrace()[0];
+            LOGGER.error("event=evaluation.setup_failed causeType={} locationClass={} locationMethod={} line={}",
+                    exception.getClass().getSimpleName(), location == null ? "-" : location.getClassName(),
+                    location == null ? "-" : location.getMethodName(), location == null ? -1 : location.getLineNumber());
             fail("SETUP_OR_FILE_FAILURE");
         }
     }

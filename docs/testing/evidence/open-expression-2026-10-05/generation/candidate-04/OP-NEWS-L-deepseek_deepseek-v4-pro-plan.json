@@ -1,0 +1,137 @@
+{
+  "id": "OP-NEWS-L-deepseek_deepseek-v4-pro-plan",
+  "caseId": "OP-NEWS-L",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T11:35:01.625Z",
+  "prepared": {
+    "contextId": "68417105-7d2b-4055-ad58-f1a842b4fe83",
+    "version": "sha256:70898b3be18e0a6ac1800d7550277ca6c285f4ca93ac9ef2b4a888e4e2bd5d5a",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/press_release/",
+        "materials/press_release/current-brief.md",
+        "materials/press_release/tests/",
+        "materials/press_release/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/press_release/current-brief.md：Markdown 文档摘要：信息完整的合成内测招募稿：合成现行资料；产品只优化提示词，不承诺生成论文、诊断疾病、提供投资收益或自动部署系统。；需求澄清只针对真正影响任务的缺口，信息完整时无需强制提问；新闻稿无需解释内部问题编号、会话版本或请求协议。；测试材料里有百万人使用等营销占位词，这些属于排版测试，不是发布资料；正文不得引用为经营数据或扩写为市场份额。；给定材料不存在未解决的业务选择，编写者可以自行组织段落和措辞；不同表达风格不能被包装成必须用户回答的问题。；业务摘录：开放时间为合成日期2026年10月20日，受众同时包含开发者、研究生与办公人员，不能只保留某一类。；反馈方式为在内测页面提交意见，本题不提供也不需要手机号、邮箱或外部链接。；产品只优化提示词，不承诺生成论文、诊断疾病、提供投资收益或自动部署系统。；[片段 1/1]；不能将生成提示词包装成自动完成开发或正式论文的承诺。；不同表达风格不能被包装成必须用户回答的问题。",
+        "[TEST_SOURCE] materials/press_release/tests/layout-example.txt：文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。；业务摘录：[片段 1/1] 仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。 这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/press_release/current-brief.md",
+          "evidence": "内测日期是未来的合成活动安排，结尾可邀请关注内测页面，不得补一个真实官网、二维码、电话或者现实机构办公地址"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/press_release/current-brief.md",
+          "evidence": "正文不得引用为经营数据或扩写为市场份额"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/press_release/current-brief.md",
+          "evidence": "不得把平台安全限制集中写成生硬长清单，但能力边界必须保持清楚"
+        },
+        {
+          "id": "F04",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/press_release/current-brief.md",
+          "evidence": "不同表达风格不能被包装成必须用户回答的问题"
+        },
+        {
+          "id": "F05",
+          "category": "DATA_SOURCE",
+          "origin": "TEST_SOURCE",
+          "sourcePath": "materials/press_release/tests/layout-example.txt",
+          "evidence": "仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/press_release/",
+        "materials/press_release/current-brief.md",
+        "materials/press_release/tests/",
+        "materials/press_release/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/press_release/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 信息完整的合成内测招募稿：合成现行资料\n产品名称为清笺，发布性质是受控内测招募，不是正式商业上线。\n开放时间为合成日期2026年10月20日，受众同时包含开发者、研究生与办公人员，不能只保留某一类。\n反馈方式为在内测页面提交意见，本题不提供也不需要手机号、邮箱或外部链接。\n产品只优化提示词，不承诺生成论文、诊断疾病、提供投资收益或自动部署系统。\n\n# 分支与边界\n招募目的是收集真实工作与学习场景中的使用反馈，不是宣布平台已通过所有行业专业认证；文本应让读者理解内测仍有能力边界。\n开发者场景可说整理功能需求和兼容条件，研究生场景可说澄清研究材料与方法前提，办公场景可说组织报告要求；不能把示例变成已验证成效。\n资料关联意味着用户主动提供材料后系统选取相关片段，不能写工具自动读取用户电脑、长期存储整份源码或识别所有文件无遗漏。\n需求澄清只针对真正影响任务的缺口，信息完整时无需强制提问；新闻稿无需解释内部问题编号、会话版本或请求协议。\n结构化结果可以编辑复制交给其他AI使用，但不是AI已完成下游工作；不能将生成提示词包装成自动完成开发或正式论文的承诺。\n受众包含三类人，不意味着每一类都保证同样专业准确率；文本应描述使用意图，不能给出未经评测的行业效果排行。\n内测日期是未来的合成活动安排，结尾可邀请关注内测页面，不得补一个真实官网、二维码、电话或者现实机构办公地址。\n测试材料里有百万人使用等营销占位词，这些属于排版测试，不是发布资料；正文不得引用为经营数据或扩写为市场份额。\n标题可以突出把需求说清楚或内测招募，不能用医学、司法或投资收益作为卖点；标题需与正文性质一致，不暗示正式发布。\n长度要求只针对新闻稿正文，两个标题另计；输出应便于直接复制发布草稿，不添加模型自我评价、代码测试计划或技术说明。\n不得把平台安全限制集中写成生硬长清单，但能力边界必须保持清楚；用一句自然描述说明内测资料与输出需要使用者核查。\n给定材料不存在未解决的业务选择，编写者可以自行组织段落和措辞；不同表达风格不能被包装成必须用户回答的问题。",
+          "summary": "Markdown 文档摘要：信息完整的合成内测招募稿：合成现行资料；产品只优化提示词，不承诺生成论文、诊断疾病、提供投资收益或自动部署系统。；需求澄清只针对真正影响任务的缺口，信息完整时无需强制提问；新闻稿无需解释内部问题编号、会话版本或请求协议。；测试材料里有百万人使用等营销占位词，这些属于排版测试，不是发布资料；正文不得引用为经营数据或扩写为市场份额。；给定材料不存在未解决的业务选择，编写者可以自行组织段落和措辞；不同表达风格不能被包装成必须用户回答的问题。",
+          "truncated": false
+        },
+        {
+          "path": "materials/press_release/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T12:05:01.659473600Z",
+    "latencyMs": 38
+  },
+  "plan": {
+    "summary": "当前需求及已提供材料足以进入最终增强，无需额外确认。",
+    "questions": [],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 5520,
+    "planId": "4ae74673-d631-4aef-aab9-54cd95d18f3e",
+    "planningContext": {
+      "contextId": "68417105-7d2b-4055-ad58-f1a842b4fe83",
+      "version": "sha256:70898b3be18e0a6ac1800d7550277ca6c285f4ca93ac9ef2b4a888e4e2bd5d5a"
+    },
+    "expiresAt": "2026-10-05T12:05:01.659473600Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "OP-NEWS-L-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "3e5cfe79-5ced-466e-81f9-81eb89ec5187",
+      "elapsedMs": 93
+    },
+    {
+      "label": "OP-NEWS-L-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "67eb6705-9f53-40d7-abc7-8a90940520d2",
+      "elapsedMs": 5582
+    }
+  ]
+}

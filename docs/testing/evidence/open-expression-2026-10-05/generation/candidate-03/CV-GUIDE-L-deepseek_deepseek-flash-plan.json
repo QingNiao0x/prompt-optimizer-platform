@@ -1,0 +1,186 @@
+{
+  "id": "CV-GUIDE-L-deepseek_deepseek-flash-plan",
+  "caseId": "CV-GUIDE-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T11:05:31.931Z",
+  "prepared": {
+    "contextId": "b79e69c9-099f-496f-8ffe-6a9f3b9cd5f1",
+    "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2",
+    "digest": {
+      "description": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologies": [
+        "Vue"
+      ],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] docs/产品范围.md：Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。；业务摘录：[片段 1/1] 现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。 模型由管理员发布，用户可选择可用模型但不填密钥。 扫描PDF OCR未开放。 没有自动执行、完整账号管理或专业结论承诺。",
+        "[PROJECT_SOURCE] src/Product.vue：Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>；业务摘录：[片段 1/1] <template><button>开始增强</button><button>复制</button></template>"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologyStack": [
+        {
+          "name": "Vue",
+          "source": "src/Product.vue",
+          "confidence": 0.9
+        }
+      ],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/产品范围.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。模型由管理员发布，用户可选择可用模型但不填密钥。扫描PDF OCR未开放。没有自动执行、完整账号管理或专业结论承诺。",
+          "summary": "Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。",
+          "truncated": false
+        },
+        {
+          "path": "src/Product.vue",
+          "language": "vue",
+          "content": "[片段 1/1]\n<template><button>开始增强</button><button>复制</button></template>",
+          "summary": "Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T11:35:31.961743200Z",
+    "latencyMs": 17
+  },
+  "plan": {
+    "summary": "目标是基于产品功能说明和项目代码，为首次使用提示词工具的非技术用户编写约1800-2400字的中文操作指南，覆盖开始使用、添加上下文、Plan交互、确认问题、核对结果、编辑复制、历史、常见问题与权限边界。材料已明确大部分业务规则，但仍有少量影响成品内容的事实缺口需要确认。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "指南中是否需要包含“模型选择”的操作说明？材料提到模型由管理员发布、用户可选择可用模型但不填密钥，但您列出的指南内容大纲中没有明确提到模型选择。",
+        "hint": "这会影响指南是否覆盖一个实际存在的用户操作步骤，以及是否需要在“开始使用”或“常见问题”中说明模型选择与密钥的区别。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "include_model",
+            "label": "包含模型选择说明",
+            "description": "在指南中增加模型选择的步骤，说明用户可选择管理员发布的可用模型，且不需要填写密钥。",
+            "answer": "指南需要包含模型选择的操作说明：用户可选择管理员发布的可用模型，且不需要填写密钥。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "exclude_model",
+            "label": "不包含模型选择说明",
+            "description": "指南不涉及模型选择，仅按您列出的大纲内容编写。",
+            "answer": "指南不需要包含模型选择的操作说明，仅按已列出的大纲内容编写。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "指南中关于“查看历史”的说明，是否需要提及历史记录的分页展示方式？材料提到历史分页，但未说明分页的具体形式（如每页条数、翻页按钮等）。",
+        "hint": "这会影响“查看历史”部分的可操作性描述。如果材料未说明具体分页形式，指南可以只写“历史记录分页展示”而不编造具体数字或按钮。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "mention_pagination_general",
+            "label": "只写分页展示，不写具体形式",
+            "description": "指南说明历史记录分页展示，但不编造每页条数或翻页按钮的具体文本。",
+            "answer": "指南在“查看历史”部分只说明历史记录分页展示，不写具体每页条数或翻页按钮文本。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "omit_pagination",
+            "label": "完全不提分页",
+            "description": "指南只写可以查看历史记录，不提及分页。",
+            "answer": "指南在“查看历史”部分只写可以查看历史记录，不提及分页。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q3",
+        "question": "指南中关于“编辑和复制”的说明，是否需要提及“再次增强”功能？材料提到结果编辑复制，但未明确“再次增强”是否在本次指南范围内。",
+        "hint": "这会影响“编辑和复制”部分是否包含再次增强的操作步骤，以及是否需要在常见问题中说明再次增强与重新开始的区别。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "include_reenhance",
+            "label": "包含再次增强说明",
+            "description": "指南说明用户可以在编辑后再次增强，但只介绍附件明确提供的行为，不虚构自动撤销或自动恢复。",
+            "answer": "指南需要包含再次增强的说明：用户可以在编辑后再次增强，但不虚构自动撤销或自动恢复历史版本。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "exclude_reenhance",
+            "label": "不包含再次增强说明",
+            "description": "指南只写编辑和复制，不涉及再次增强。",
+            "answer": "指南不需要包含再次增强的说明，只写编辑和复制。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 5105,
+    "planId": "64579c6b-e920-4e22-aa5a-62d93f638add",
+    "planningContext": {
+      "contextId": "b79e69c9-099f-496f-8ffe-6a9f3b9cd5f1",
+      "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2"
+    },
+    "expiresAt": "2026-10-05T11:35:31.961743200Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "3e489d44-7a1f-4ba4-8043-def86b5403ac",
+      "elapsedMs": 56
+    },
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "0e77a61c-9012-4410-ac2a-32b448329bb0",
+      "elapsedMs": 5137
+    }
+  ]
+}

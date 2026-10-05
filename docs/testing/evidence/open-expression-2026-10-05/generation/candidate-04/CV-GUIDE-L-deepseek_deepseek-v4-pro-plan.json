@@ -1,0 +1,210 @@
+{
+  "id": "CV-GUIDE-L-deepseek_deepseek-v4-pro-plan",
+  "caseId": "CV-GUIDE-L",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T11:34:43.467Z",
+  "prepared": {
+    "contextId": "6999f875-7ce0-45f5-9ffe-ca3abcc6e62e",
+    "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2",
+    "digest": {
+      "description": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologies": [
+        "Vue"
+      ],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] docs/产品范围.md：Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。；业务摘录：[片段 1/1] 现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。 模型由管理员发布，用户可选择可用模型但不填密钥。 扫描PDF OCR未开放。 没有自动执行、完整账号管理或专业结论承诺。",
+        "[PROJECT_SOURCE] src/Product.vue：Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>；业务摘录：[片段 1/1] <template><button>开始增强</button><button>复制</button></template>"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologyStack": [
+        {
+          "name": "Vue",
+          "source": "src/Product.vue",
+          "confidence": 0.9
+        }
+      ],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/产品范围.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。模型由管理员发布，用户可选择可用模型但不填密钥。扫描PDF OCR未开放。没有自动执行、完整账号管理或专业结论承诺。",
+          "summary": "Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。",
+          "truncated": false
+        },
+        {
+          "path": "src/Product.vue",
+          "language": "vue",
+          "content": "[片段 1/1]\n<template><button>开始增强</button><button>复制</button></template>",
+          "summary": "Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T12:04:43.515544200Z",
+    "latencyMs": 44
+  },
+  "plan": {
+    "summary": "已理解目标是为非技术用户编写中文操作指南，材料已覆盖主要流程和边界；剩余问题仅涉及指南中必须明确但材料未说明的交互细节。",
+    "questions": [
+      {
+        "id": "plan_trigger",
+        "question": "用户开启 Plan 后，系统如何开始提问？",
+        "hint": "指南需要告诉读者开启后会发生什么，但材料未说明具体交互方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "auto_ask",
+            "label": "自动弹出问题",
+            "description": "开启后系统立即显示需要确认的问题。",
+            "answer": "开启 Plan 后，系统会自动显示需要确认的问题。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "click_ask",
+            "label": "点击按钮开始提问",
+            "description": "开启后需要用户点击某个按钮才会显示问题。",
+            "answer": "开启 Plan 后，需要点击“开始提问”按钮才会显示需要确认的问题。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "manual_trigger",
+            "label": "用户主动触发",
+            "description": "开启后由用户通过某个操作触发提问，但具体按钮未说明。",
+            "answer": "开启 Plan 后，用户需要主动触发提问，具体操作以当前界面为准。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "history_delete_effect",
+        "question": "历史记录删除后，用户界面会立即隐藏该记录吗？",
+        "hint": "指南需要说明删除后的可见性，材料仅说明逻辑删除，未说明界面表现。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "immediate_hide",
+            "label": "立即隐藏",
+            "description": "删除后该记录立即从历史列表中消失。",
+            "answer": "删除后，该记录会立即从历史列表中隐藏。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "refresh_hide",
+            "label": "刷新后隐藏",
+            "description": "删除后需要刷新页面才会隐藏。",
+            "answer": "删除后，需要刷新页面该记录才会从历史列表中隐藏。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "unspecified",
+            "label": "未说明",
+            "description": "材料未说明删除后的界面表现，指南中不写具体行为。",
+            "answer": "删除后，该记录将从历史列表中移除，具体界面更新方式以当前界面为准。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "retry_behavior",
+        "question": "模型失败后，用户如何保留需求并重试？",
+        "hint": "常见问题需要说明重试步骤，但材料未提供具体操作。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "keep_input_retry",
+            "label": "保留输入直接重试",
+            "description": "失败后输入内容仍在，用户可直接再次点击增强。",
+            "answer": "模型失败后，您已填写的内容会保留，可以直接再次点击“开始增强”重试。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "copy_retry",
+            "label": "复制需求后重试",
+            "description": "失败后需要用户复制原需求，重新粘贴后重试。",
+            "answer": "模型失败后，请复制您原来的需求，重新粘贴后再次点击“开始增强”重试。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "unspecified_retry",
+            "label": "未说明",
+            "description": "材料未说明失败后的输入保留情况，指南中只说明可重试。",
+            "answer": "模型失败后，您可以保留原有需求并重新尝试增强。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 14022,
+    "planId": "da4f7831-5980-4868-98ef-c07c1040edfe",
+    "planningContext": {
+      "contextId": "6999f875-7ce0-45f5-9ffe-ca3abcc6e62e",
+      "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2"
+    },
+    "expiresAt": "2026-10-05T12:04:43.515544200Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "d5384ef0-2a89-4b89-9dc0-57671d4b2bb8",
+      "elapsedMs": 113
+    },
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "fcb8fc72-d5b2-4086-912a-aeaa96dc3aa4",
+      "elapsedMs": 14086
+    }
+  ]
+}

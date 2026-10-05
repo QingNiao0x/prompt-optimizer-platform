@@ -1,0 +1,253 @@
+{
+  "id": "OP-BOUNDARY-M-deepseek_deepseek-v4-pro-plan",
+  "caseId": "OP-BOUNDARY-M",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T11:35:20.036Z",
+  "prepared": {
+    "contextId": "31196c85-d28f-4c0d-a480-c32942ffad5a",
+    "version": "sha256:b5d4b115318c9d8ee43058821ef48af005c9d4a07a20f77e483b6f31702b3d10",
+    "digest": {
+      "description": "合成规则材料，不涉及真实个人或交易。",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/方案乙.txt",
+        "docs/方案甲.txt"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] docs/方案乙.txt：文件内容摘要：订单审批标准：订单金额>=5000元须复核。；退款标准：退款金额>800元须退款负责人批准。；业务摘录：[片段 1/1] 订单审批标准：订单金额>=5000元须复核。 退款标准：退款金额>800元须退款负责人批准。",
+        "[USER_MATERIAL] docs/方案甲.txt：文件内容摘要：订单审批标准：订单金额>=3000元须复核。；退款标准：退款金额>500元须退款负责人批准。；业务摘录：[片段 1/1] 订单审批标准：订单金额>=3000元须复核。 退款标准：退款金额>500元须退款负责人批准。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [
+        "资料对“订单审批标准”存在不同取值：docs/方案甲.txt（订单金额>=3000元须复核）与 docs/方案乙.txt（订单金额>=5000元须复核）。请确认本次采用哪一项。",
+        "资料对“退款标准”存在不同取值：docs/方案甲.txt（退款金额>500元须退款负责人批准）与 docs/方案乙.txt（退款金额>800元须退款负责人批准）。请确认本次采用哪一项。"
+      ],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "合成规则材料，不涉及真实个人或交易。",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/方案乙.txt",
+        "docs/方案甲.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/方案甲.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n订单审批标准：订单金额>=3000元须复核。退款标准：退款金额>500元须退款负责人批准。",
+          "summary": "文件内容摘要：订单审批标准：订单金额>=3000元须复核。；退款标准：退款金额>500元须退款负责人批准。",
+          "truncated": false
+        },
+        {
+          "path": "docs/方案乙.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n订单审批标准：订单金额>=5000元须复核。退款标准：退款金额>800元须退款负责人批准。",
+          "summary": "文件内容摘要：订单审批标准：订单金额>=5000元须复核。；退款标准：退款金额>800元须退款负责人批准。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T12:05:20.355571600Z",
+    "latencyMs": 30
+  },
+  "plan": {
+    "summary": "已理解目标是整理方案甲与方案乙在订单审批和退款规则上的差异，并输出对照表、待确认清单和验证步骤。由于两个方案对同一业务规则给出了不同阈值，且用户要求保留未知而不默认，因此需要确认最终交付中如何呈现这些冲突的阈值。",
+    "questions": [
+      {
+        "id": "context-conflict-1",
+        "question": "资料对“订单审批标准”存在不同取值：docs/方案甲.txt（订单金额>=3000元须复核）与 docs/方案乙.txt（订单金额>=5000元须复核）。请确认本次采用哪一项。",
+        "hint": "上传材料对同一事实给出了不同内容。请选定本次采用的口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "context-conflict-1-first",
+            "label": "采用第一份",
+            "description": "订单金额>=3000元须复核",
+            "answer": "本次采用：订单金额>=3000元须复核",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-second",
+            "label": "采用第二份",
+            "description": "订单金额>=5000元须复核",
+            "answer": "本次采用：订单金额>=5000元须复核",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-both",
+            "label": "两份都保留并标明冲突",
+            "description": "结果中同时写出两个取值和来源",
+            "answer": "两份资料都保留，并在结果中标明冲突和各自来源，不悄悄选定其中一个。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-rewrite",
+            "label": "按原始需求重新写明",
+            "description": "不以这两份数字为准",
+            "answer": "本次不采用这两份资料中的取值，按原始需求重新写明该事实。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "context-conflict-2",
+        "question": "资料对“退款标准”存在不同取值：docs/方案甲.txt（退款金额>500元须退款负责人批准）与 docs/方案乙.txt（退款金额>800元须退款负责人批准）。请确认本次采用哪一项。",
+        "hint": "上传材料对同一事实给出了不同内容。请选定本次采用的口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "context-conflict-2-first",
+            "label": "采用第一份",
+            "description": "退款金额>500元须退款负责人批准",
+            "answer": "本次采用：退款金额>500元须退款负责人批准",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-2-second",
+            "label": "采用第二份",
+            "description": "退款金额>800元须退款负责人批准",
+            "answer": "本次采用：退款金额>800元须退款负责人批准",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-2-both",
+            "label": "两份都保留并标明冲突",
+            "description": "结果中同时写出两个取值和来源",
+            "answer": "两份资料都保留，并在结果中标明冲突和各自来源，不悄悄选定其中一个。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-2-rewrite",
+            "label": "按原始需求重新写明",
+            "description": "不以这两份数字为准",
+            "answer": "本次不采用这两份资料中的取值，按原始需求重新写明该事实。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "order_approval_threshold",
+        "question": "订单审批规则中，方案甲要求金额>=3000元复核，方案乙要求金额>=5000元复核。在最终差异表中，应如何呈现这两个阈值？",
+        "hint": "两个方案均未获批准，不能按文件顺序或日期选择胜者，且用户要求保留未知。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "keep_both",
+            "label": "保留两个阈值并标注来源",
+            "description": "在差异表中分别列出方案甲和方案乙的阈值，并注明各自来源，不合并或选择。",
+            "answer": "订单审批阈值：方案甲为>=3000元，方案乙为>=5000元，分别保留并标注来源。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "mark_unknown",
+            "label": "标记为未知待确认",
+            "description": "在差异表中将订单审批阈值标记为未知，并在待确认清单中列出两个候选值。",
+            "answer": "订单审批阈值未知，待确认：方案甲为>=3000元，方案乙为>=5000元。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "choose_one",
+            "label": "选择其中一个方案",
+            "description": "在差异表中只采用一个方案的阈值，并说明选择依据。",
+            "answer": "订单审批阈值采用方案甲（>=3000元）或方案乙（>=5000元），需用户指定。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "refund_threshold",
+        "question": "退款规则中，方案甲要求金额>500元批准，方案乙要求金额>800元批准。在最终差异表中，应如何呈现这两个阈值？",
+        "hint": "两个方案均未获批准，不能按文件顺序或日期选择胜者，且用户要求保留未知。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "keep_both",
+            "label": "保留两个阈值并标注来源",
+            "description": "在差异表中分别列出方案甲和方案乙的阈值，并注明各自来源，不合并或选择。",
+            "answer": "退款阈值：方案甲为>500元，方案乙为>800元，分别保留并标注来源。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "mark_unknown",
+            "label": "标记为未知待确认",
+            "description": "在差异表中将退款阈值标记为未知，并在待确认清单中列出两个候选值。",
+            "answer": "退款阈值未知，待确认：方案甲为>500元，方案乙为>800元。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "choose_one",
+            "label": "选择其中一个方案",
+            "description": "在差异表中只采用一个方案的阈值，并说明选择依据。",
+            "answer": "退款阈值采用方案甲（>500元）或方案乙（>800元），需用户指定。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 12883,
+    "planId": "df27d246-ed60-4e73-aaa9-4066cab066af",
+    "planningContext": {
+      "contextId": "31196c85-d28f-4c0d-a480-c32942ffad5a",
+      "version": "sha256:b5d4b115318c9d8ee43058821ef48af005c9d4a07a20f77e483b6f31702b3d10"
+    },
+    "expiresAt": "2026-10-05T12:05:20.355571600Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "OP-BOUNDARY-M-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "3b8667fb-4969-434a-9005-afd0c66f6174",
+      "elapsedMs": 160
+    },
+    {
+      "label": "OP-BOUNDARY-M-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "62913d1f-8799-4bc2-90ce-2ef86cf17ac4",
+      "elapsedMs": 12965
+    }
+  ]
+}

@@ -1,0 +1,237 @@
+{
+  "id": "OP-BOUNDARY-M-deepseek_deepseek-v4-pro-plan",
+  "caseId": "OP-BOUNDARY-M",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-05T09:33:30.711Z",
+  "prepared": {
+    "contextId": "a6e8e11d-6d05-4a6c-9745-b6830f176f46",
+    "version": "sha256:b5d4b115318c9d8ee43058821ef48af005c9d4a07a20f77e483b6f31702b3d10",
+    "digest": {
+      "description": "合成规则材料，不涉及真实个人或交易。",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/方案乙.txt",
+        "docs/方案甲.txt"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] docs/方案乙.txt：文件内容摘要：订单审批标准：订单金额>=5000元须复核。；退款标准：退款金额>800元须退款负责人批准。；业务摘录：[片段 1/1] 订单审批标准：订单金额>=5000元须复核。 退款标准：退款金额>800元须退款负责人批准。",
+        "[USER_MATERIAL] docs/方案甲.txt：文件内容摘要：订单审批标准：订单金额>=3000元须复核。；退款标准：退款金额>500元须退款负责人批准。；业务摘录：[片段 1/1] 订单审批标准：订单金额>=3000元须复核。 退款标准：退款金额>500元须退款负责人批准。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [
+        "资料对“订单审批标准”存在不同取值：docs/方案甲.txt（订单金额>=3000元须复核）与 docs/方案乙.txt（订单金额>=5000元须复核）。请确认本次采用哪一项。",
+        "资料对“退款标准”存在不同取值：docs/方案甲.txt（退款金额>500元须退款负责人批准）与 docs/方案乙.txt（退款金额>800元须退款负责人批准）。请确认本次采用哪一项。"
+      ],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "合成规则材料，不涉及真实个人或交易。",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/方案乙.txt",
+        "docs/方案甲.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/方案甲.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n订单审批标准：订单金额>=3000元须复核。退款标准：退款金额>500元须退款负责人批准。",
+          "summary": "文件内容摘要：订单审批标准：订单金额>=3000元须复核。；退款标准：退款金额>500元须退款负责人批准。",
+          "truncated": false
+        },
+        {
+          "path": "docs/方案乙.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n订单审批标准：订单金额>=5000元须复核。退款标准：退款金额>800元须退款负责人批准。",
+          "summary": "文件内容摘要：订单审批标准：订单金额>=5000元须复核。；退款标准：退款金额>800元须退款负责人批准。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T10:03:30.746020400Z",
+    "latencyMs": 23
+  },
+  "plan": {
+    "summary": "已理解目标：整理方案甲与方案乙在订单审批和退款规则上的差异，保留未决条件，不执行代码或真实业务。需要确认差异表中如何处理两个方案的不同阈值，因为这会直接影响最终交付的规则对照表内容。",
+    "questions": [
+      {
+        "id": "context-conflict-1",
+        "question": "资料对“订单审批标准”存在不同取值：docs/方案甲.txt（订单金额>=3000元须复核）与 docs/方案乙.txt（订单金额>=5000元须复核）。请确认本次采用哪一项。",
+        "hint": "上传材料对同一事实给出了不同内容。请选定本次采用的口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "context-conflict-1-first",
+            "label": "采用第一份",
+            "description": "订单金额>=3000元须复核",
+            "answer": "本次采用：订单金额>=3000元须复核",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-second",
+            "label": "采用第二份",
+            "description": "订单金额>=5000元须复核",
+            "answer": "本次采用：订单金额>=5000元须复核",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-both",
+            "label": "两份都保留并标明冲突",
+            "description": "结果中同时写出两个取值和来源",
+            "answer": "两份资料都保留，并在结果中标明冲突和各自来源，不悄悄选定其中一个。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-1-rewrite",
+            "label": "按原始需求重新写明",
+            "description": "不以这两份数字为准",
+            "answer": "本次不采用这两份资料中的取值，按原始需求重新写明该事实。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "context-conflict-2",
+        "question": "资料对“退款标准”存在不同取值：docs/方案甲.txt（退款金额>500元须退款负责人批准）与 docs/方案乙.txt（退款金额>800元须退款负责人批准）。请确认本次采用哪一项。",
+        "hint": "上传材料对同一事实给出了不同内容。请选定本次采用的口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "context-conflict-2-first",
+            "label": "采用第一份",
+            "description": "退款金额>500元须退款负责人批准",
+            "answer": "本次采用：退款金额>500元须退款负责人批准",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-2-second",
+            "label": "采用第二份",
+            "description": "退款金额>800元须退款负责人批准",
+            "answer": "本次采用：退款金额>800元须退款负责人批准",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-2-both",
+            "label": "两份都保留并标明冲突",
+            "description": "结果中同时写出两个取值和来源",
+            "answer": "两份资料都保留，并在结果中标明冲突和各自来源，不悄悄选定其中一个。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "context-conflict-2-rewrite",
+            "label": "按原始需求重新写明",
+            "description": "不以这两份数字为准",
+            "answer": "本次不采用这两份资料中的取值，按原始需求重新写明该事实。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "order_approval_threshold",
+        "question": "订单审批规则中，方案甲（>=3000元）与方案乙（>=5000元）的阈值不同，差异表应如何呈现？",
+        "hint": "两个方案均未批准，不能按文件顺序或日期选择胜者，需要明确差异表的呈现方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "list_both",
+            "label": "并列列出两个阈值",
+            "description": "在差异表中分别列出方案甲和方案乙的阈值，并注明来源。",
+            "answer": "订单审批规则：方案甲为订单金额>=3000元须复核；方案乙为订单金额>=5000元须复核。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "mark_conflict",
+            "label": "标记为冲突项",
+            "description": "在差异表中将阈值差异标记为冲突，不列出具体数值。",
+            "answer": "订单审批规则：方案甲与方案乙存在阈值冲突，具体数值见原始文件。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "refund_threshold",
+        "question": "退款规则中，方案甲（>500元）与方案乙（>800元）的阈值不同，差异表应如何呈现？",
+        "hint": "两个方案均未批准，不能按文件顺序或日期选择胜者，需要明确差异表的呈现方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "list_both",
+            "label": "并列列出两个阈值",
+            "description": "在差异表中分别列出方案甲和方案乙的阈值，并注明来源。",
+            "answer": "退款规则：方案甲为退款金额>500元须退款负责人批准；方案乙为退款金额>800元须退款负责人批准。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "mark_conflict",
+            "label": "标记为冲突项",
+            "description": "在差异表中将阈值差异标记为冲突，不列出具体数值。",
+            "answer": "退款规则：方案甲与方案乙存在阈值冲突，具体数值见原始文件。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs": 6480,
+    "planId": "d34f9370-f0c8-4e9e-9772-c99eb43d2151",
+    "planningContext": {
+      "contextId": "a6e8e11d-6d05-4a6c-9745-b6830f176f46",
+      "version": "sha256:b5d4b115318c9d8ee43058821ef48af005c9d4a07a20f77e483b6f31702b3d10"
+    },
+    "expiresAt": "2026-10-05T10:03:30.746020400Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "OP-BOUNDARY-M-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "1f3ee78c-f64c-4b4d-89c8-1e0a9278f26f",
+      "elapsedMs": 84
+    },
+    {
+      "label": "OP-BOUNDARY-M-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "f375a5a9-9adc-423b-95a8-5934772035cd",
+      "elapsedMs": 6535
+    }
+  ]
+}

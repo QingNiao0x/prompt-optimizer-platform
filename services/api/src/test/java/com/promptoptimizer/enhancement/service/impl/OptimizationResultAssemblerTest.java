@@ -279,6 +279,25 @@ class OptimizationResultAssemblerTest {
         ), "test", "test", false, findings);
     }
 
+    @Test
+    void copiesTheNewsBodyWritingPlanIntoOutputInBothDirectAndBoundPlanModes() {
+        var provider = new EnhancementProviderResponse(List.of(
+                section(PromptSectionType.BACKGROUND, "背景", "合成产品内测"),
+                section(PromptSectionType.TASK, "任务", "撰写新闻稿"),
+                section(PromptSectionType.OUTPUT, "输出", "两个标题与正文600–800中文字符"),
+                section(PromptSectionType.CONSTRAINTS, "约束", "忠于资料")
+        ), "test", "test", false, List.of());
+        for (boolean confirmed : List.of(false, true)) {
+            var result = assembler.assemble(provider, emptyContext(),
+                    new PromptTemplate(TemplateCode.GENERAL, "输出", "满足新闻篇幅", "示例"),
+                    List.of(), List.of(), confirmed, List.of("不得虚构事实"), false, 1,
+                    "撰写内测招募新闻稿，正文600至800中文字符，另给两个标题。");
+            assertThat(result.sections()).filteredOn(section -> section.type() == PromptSectionType.OUTPUT)
+                    .allSatisfy(section -> assertThat(section.content()).contains("约7个短段", "约750中文字符", "组织建议"));
+            assertThat(result.optimizedPrompt()).contains("约7个短段", "标题/附件边界", "不附规划过程");
+        }
+    }
+
     private com.promptoptimizer.enhancement.domain.OptimizationResult assemble(EnhancementProviderResponse response,
                                                                              boolean confirmed) {
         return assembler.assemble(response, emptyContext(),

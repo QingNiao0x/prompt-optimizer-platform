@@ -215,7 +215,11 @@ async function prepare(args) {
     input.cases = input.cases.filter(item => ids.includes(item.id));
     assert(input.cases.length === new Set(ids).size, 'UNKNOWN_CASE_SELECTION');
   }
-  const catalog = await parse(flag(args, 'catalog'));
+  const suppliedCatalog = await parse(flag(args, 'catalog'));
+  // 接口验收使用 fetchedAt，执行器统一使用 capturedAt；复用实际抓取时间，不伪造新时间绕过有效期。
+  const capturedAt = suppliedCatalog.capturedAt ?? suppliedCatalog.fetchedAt;
+  assert(typeof capturedAt === 'string' && Number.isFinite(Date.parse(capturedAt)), 'INVALID_CATALOG_TIME');
+  const catalog = { ...suppliedCatalog, capturedAt };
   const settings = { models: (flag(args, 'models', '')).split(',').filter(Boolean),
     repetitions: Number(flag(args, 'repetitions', '3')), maxTokens: Number(flag(args, 'max-tokens', '4096')),
     maxJobs: Number(flag(args, 'max-jobs', '30')) };

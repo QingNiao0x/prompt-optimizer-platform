@@ -1,0 +1,380 @@
+{
+  "id": "CV-GUIDE-L-deepseek_deepseek-flash-plan",
+  "caseId": "CV-GUIDE-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-05T10:21:23.768Z",
+  "prepared": {
+    "contextId": "6ed63d2d-6008-4440-98e2-4bcd7577b95c",
+    "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2",
+    "digest": {
+      "description": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologies": [
+        "Vue"
+      ],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] docs/产品范围.md：Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。；业务摘录：[片段 1/1] 现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。 模型由管理员发布，用户可选择可用模型但不填密钥。 扫描PDF OCR未开放。 没有自动执行、完整账号管理或专业结论承诺。",
+        "[PROJECT_SOURCE] src/Product.vue：Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>；业务摘录：[片段 1/1] <template><button>开始增强</button><button>复制</button></template>"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 2,
+      "warnings": [],
+      "factCards": []
+    },
+    "contextReport": {
+      "customDescription": "Java 21 Spring Boot 3 Vue 3 TypeScript产品，包含接口、历史、代码测试，但本次是面向初学者的使用指南。",
+      "technologyStack": [
+        {
+          "name": "Vue",
+          "source": "src/Product.vue",
+          "confidence": 0.9
+        }
+      ],
+      "dependencies": [],
+      "directoryTree": [
+        "docs/",
+        "docs/产品范围.md",
+        "src/",
+        "src/Product.vue"
+      ],
+      "fileSnippets": [
+        {
+          "path": "docs/产品范围.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。模型由管理员发布，用户可选择可用模型但不填密钥。扫描PDF OCR未开放。没有自动执行、完整账号管理或专业结论承诺。",
+          "summary": "Markdown 文档摘要：现有工作台支持直接增强、主动开启Plan、上传相关文件、确认回答后生成、结果编辑复制、历史分页和逻辑删除。；模型由管理员发布，用户可选择可用模型但不填密钥。；扫描PDF OCR未开放。；没有自动执行、完整账号管理或专业结论承诺。",
+          "truncated": false
+        },
+        {
+          "path": "src/Product.vue",
+          "language": "vue",
+          "content": "[片段 1/1]\n<template><button>开始增强</button><button>复制</button></template>",
+          "summary": "Vue代码文件；包含 template 区块。关键内容：<template><button>开始增强</button><button>复制</button></template>",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-05T10:51:23.786690600Z",
+    "latencyMs": 11
+  },
+  "plan": {
+    "summary": "目标是基于附件产品说明和项目代码，为首次使用提示词工具的非技术读者编写一篇约1800至2400字、可直接发布的中文操作指南，覆盖开始使用、添加上下文、Plan、确认问题、核对结果、编辑复制、历史、常见问题与权限边界。材料已给出大部分内容边界，但仍有几处会直接影响指南能否发布或是否越界的事实需要确认。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "指南中需要介绍“选择可用模型”这一步吗？材料只说明模型由管理员发布、用户可选择但不填密钥，未说明选择入口和可选范围。",
+        "hint": "这决定“开始使用”部分是否要写模型选择步骤，以及是否可能写出材料未证实的界面行为。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "需要介绍，但只写“从管理员已发布的可用模型中选择”",
+            "description": "保留材料已确认的事实，不写具体入口位置和模型名称。",
+            "answer": "需要介绍模型选择，但只写“从管理员已发布的可用模型中选择”，不写具体入口位置和模型名称。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "不需要介绍，指南不涉及模型选择",
+            "description": "指南只讲提示词增强流程，不展开模型选择。",
+            "answer": "不需要介绍模型选择，指南不涉及模型选择步骤。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "需要介绍，并写明具体选择位置和可选模型",
+            "description": "需要用户补充具体界面位置和模型清单。",
+            "answer": "需要介绍模型选择，并写明具体选择位置和可选模型清单。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "指南中“查看历史”部分，除了逻辑删除，是否需要说明历史记录能否再次打开、复制或再次增强？材料只说明历史分页和逻辑删除，未说明这些操作。",
+        "hint": "这决定历史部分是否只写查看和删除，还是需要写更多操作；写错会虚构能力。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "只写查看分页和逻辑删除，不写再次打开、复制或再次增强",
+            "description": "严格按材料已确认的历史能力写，不扩展。",
+            "answer": "历史部分只写查看分页和逻辑删除，不写再次打开、复制或再次增强。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "需要写再次打开、复制或再次增强，由用户补充具体行为",
+            "description": "需要用户确认历史记录支持哪些额外操作。",
+            "answer": "历史部分需要写再次打开、复制或再次增强，具体行为由用户补充。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "历史部分只写“可查看历史记录”，不写分页和逻辑删除",
+            "description": "更简略，但会丢失材料已确认的分页和逻辑删除事实。",
+            "answer": "历史部分只写“可查看历史记录”，不写分页和逻辑删除。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q3",
+        "question": "指南中“编辑和复制”部分，材料只确认结果可编辑复制，未说明保存编辑、取消编辑、再次增强这些能力。指南应如何处理？",
+        "hint": "这决定编辑部分是否只写编辑和复制，还是需要写保存、取消、再次增强等未确认操作。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "只写编辑措辞和复制结果，不写保存、取消、再次增强",
+            "description": "严格按材料已确认能力写，不虚构按钮和流程。",
+            "answer": "编辑和复制部分只写编辑措辞和复制结果，不写保存编辑、取消编辑或再次增强。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "需要写保存编辑、取消编辑和再次增强，由用户补充具体行为",
+            "description": "需要用户确认这些能力是否存在及如何操作。",
+            "answer": "编辑和复制部分需要写保存编辑、取消编辑和再次增强，具体行为由用户补充。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "只写复制，不写编辑",
+            "description": "会丢失材料已确认的编辑能力。",
+            "answer": "编辑和复制部分只写复制，不写编辑。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q4",
+        "question": "指南中“常见问题”提到“当模型失败时如何保留需求后重试”，材料未说明失败后的具体界面行为。指南应如何写这一条？",
+        "hint": "这决定该常见问题是写具体重试步骤，还是只写原则性建议。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "只写原则：保留已填写的需求内容，稍后重试，不写具体按钮和恢复机制",
+            "description": "不虚构自动恢复、自动重试或具体按钮。",
+            "answer": "常见问题中只写原则：保留已填写的需求内容，稍后重试，不写具体按钮和恢复机制。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "需要写具体重试步骤和按钮位置，由用户补充",
+            "description": "需要用户确认失败后的界面行为。",
+            "answer": "常见问题中需要写具体重试步骤和按钮位置，具体内容由用户补充。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "不写这一条常见问题",
+            "description": "会丢失用户明确要求覆盖的常见问题。",
+            "answer": "常见问题中不写模型失败后如何保留需求重试这一条。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q5",
+        "question": "指南中“权限边界”部分，材料只说明受保护文件和无关内容应排除、扫描PDF暂不支持OCR、不提供绕过登录验证码权限的方法。是否还需要写明其他权限边界？",
+        "hint": "这决定权限边界部分是否只写已确认内容，还是需要补充其他限制。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "只写已确认内容：受保护文件和无关内容排除、扫描PDF暂不支持OCR、不提供绕过登录验证码权限的方法",
+            "description": "严格按材料已确认边界写，不扩展。",
+            "answer": "权限边界部分只写已确认内容：受保护文件和无关内容排除、扫描PDF暂不支持OCR、不提供绕过登录验证码权限的方法。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "需要补充其他权限边界，由用户提供具体内容",
+            "description": "需要用户确认是否还有其他权限限制。",
+            "answer": "权限边界部分需要补充其他权限边界，具体内容由用户提供。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "不写权限边界部分",
+            "description": "会丢失用户明确要求覆盖的权限边界内容。",
+            "answer": "指南中不写权限边界部分。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q6",
+        "question": "指南中“添加上下文”部分，材料说明代码索引在本地准备、实际发送以用户确认的相关片段为准，办公文件需用户确认上传后由后端提取文字。是否还需要说明文件大小、数量限制？",
+        "hint": "材料未说明文件大小和数量限制，写具体数字会编造事实。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "不写具体文件大小和数量限制，只写“以当前界面提示为准”",
+            "description": "不编造材料未说明的数字。",
+            "answer": "添加上下文部分不写具体文件大小和数量限制，只写“以当前界面提示为准”。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "需要写具体文件大小和数量限制，由用户提供数字",
+            "description": "需要用户确认具体限制数值。",
+            "answer": "添加上下文部分需要写具体文件大小和数量限制，具体数字由用户提供。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "不写任何文件限制相关说明",
+            "description": "会丢失用户明确要求保留的边界说明。",
+            "answer": "添加上下文部分不写任何文件限制相关说明。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q7",
+        "question": "指南中“回答确认问题”部分，材料说明真正无法决定时可以如实回答暂不确定，最终提示词保留执行前提。是否还需要说明用户回答后能否修改已确认答案？",
+        "hint": "这决定确认问题部分是否要写修改答案的流程；材料未说明该能力。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "不写修改已确认答案的流程，只写如实回答暂不确定和保留执行前提",
+            "description": "严格按材料已确认内容写，不虚构修改流程。",
+            "answer": "回答确认问题部分不写修改已确认答案的流程，只写如实回答暂不确定和最终提示词保留执行前提。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "需要写修改已确认答案的流程，由用户补充具体行为",
+            "description": "需要用户确认是否支持修改已确认答案。",
+            "answer": "回答确认问题部分需要写修改已确认答案的流程，具体行为由用户补充。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "不写“暂不确定”这一回答方式",
+            "description": "会丢失材料已确认的如实回答暂不确定的选项。",
+            "answer": "回答确认问题部分不写“暂不确定”这一回答方式。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q8",
+        "question": "指南中“核对结果”部分，材料说明展示的上下文提醒不等于增强失败、目录或摘要覆盖不足要核对相关资料。是否还需要说明用户如何反馈结果问题或联系支持？",
+        "hint": "这决定核对结果部分是否要写反馈渠道；材料未说明该内容。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "a",
+            "label": "不写反馈或联系支持渠道，只写核对来源和结论、处理上下文提醒",
+            "description": "严格按材料已确认内容写，不虚构反馈渠道。",
+            "answer": "核对结果部分不写反馈或联系支持渠道，只写核对来源和结论、处理上下文提醒。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "b",
+            "label": "需要写反馈或联系支持渠道，由用户提供具体方式",
+            "description": "需要用户确认反馈渠道。",
+            "answer": "核对结果部分需要写反馈或联系支持渠道，具体方式由用户提供。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "c",
+            "label": "不写核对来源和结论，只写上下文提醒",
+            "description": "会丢失材料已确认的核对来源和结论要求。",
+            "answer": "核对结果部分不写核对来源和结论，只写上下文提醒。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 10956,
+    "planId": "278be95c-d86c-4be2-a282-44969b5c1f59",
+    "planningContext": {
+      "contextId": "6ed63d2d-6008-4440-98e2-4bcd7577b95c",
+      "version": "sha256:8faaa957c3ac876e9b3884748f85da86530451dbc9b29053f89970c7b27c68d2"
+    },
+    "expiresAt": "2026-10-05T10:51:23.786690600Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "c88422b0-43a4-4ec4-8c70-b4302679efb1",
+      "elapsedMs": 39
+    },
+    {
+      "label": "CV-GUIDE-L-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "3f21d355-77f7-4194-b301-eb36c3144ef4",
+      "elapsedMs": 11002
+    }
+  ]
+}
