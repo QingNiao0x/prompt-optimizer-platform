@@ -1,0 +1,160 @@
+TAP version 13
+# Subtest: 实际正文不满足硬要求时满分不能变成通过，原评分和引文不被覆盖
+ok 1 - 实际正文不满足硬要求时满分不能变成通过，原评分和引文不被覆盖
+  ---
+  duration_ms: 3.5676
+  type: 'test'
+  ...
+# Subtest: 编译通过不能抹掉其他语义错误，也不能将未评审升级为通过
+ok 2 - 编译通过不能抹掉其他语义错误，也不能将未评审升级为通过
+  ---
+  duration_ms: 1.3305
+  type: 'test'
+  ...
+# Subtest: 另一作品或另一内容哈希的断言不能套用到当前作品
+ok 3 - 另一作品或另一内容哈希的断言不能套用到当前作品
+  ---
+  duration_ms: 1.0202
+  type: 'test'
+  ...
+# Subtest: 完整输入三个组均携带相同资料，隐藏答案卡及评分信息不进入请求
+ok 4 - 完整输入三个组均携带相同资料，隐藏答案卡及评分信息不进入请求
+  ---
+  duration_ms: 5.0317
+  type: 'test'
+  ...
+# Subtest: Plan 实际回答仅进入同信息轨道；部分确定不能被改成全部确定
+ok 5 - Plan 实际回答仅进入同信息轨道；部分确定不能被改成全部确定
+  ---
+  duration_ms: 0.807
+  type: 'test'
+  ...
+# Subtest: Plan正文漏掉实际回答时执行器不补漏，但保留匹配元数据供评审发现缺陷
+ok 6 - Plan正文漏掉实际回答时执行器不补漏，但保留匹配元数据供评审发现缺陷
+  ---
+  duration_ms: 0.4848
+  type: 'test'
+  ...
+# Subtest: 未提交的候选不能当作用户事实；缺少成功 Plan 回执拒绝生成匹配组
+ok 7 - 未提交的候选不能当作用户事实；缺少成功 Plan 回执拒绝生成匹配组
+  ---
+  duration_ms: 0.5497
+  type: 'test'
+  ...
+# Subtest: 每次运行受调用预算限制；换执行模型仍保持每题条件一致
+ok 8 - 每次运行受调用预算限制；换执行模型仍保持每题条件一致
+  ---
+  duration_ms: 0.5624
+  type: 'test'
+  ...
+# Subtest: 不同优化器的输入不能混入同一运行后被合并排名
+ok 9 - 不同优化器的输入不能混入同一运行后被合并排名
+  ---
+  duration_ms: 1.0469
+  type: 'test'
+  ...
+# Subtest: 拒绝受保护或逃逸的资料路径：../outside.txt
+ok 10 - 拒绝受保护或逃逸的资料路径：../outside.txt
+  ---
+  duration_ms: 0.3476
+  type: 'test'
+  ...
+# Subtest: 拒绝受保护或逃逸的资料路径：绝对路径
+ok 11 - 拒绝受保护或逃逸的资料路径：绝对路径
+  ---
+  duration_ms: 0.1071
+  type: 'test'
+  ...
+# Subtest: 拒绝受保护或逃逸的资料路径：绝对路径
+ok 12 - 拒绝受保护或逃逸的资料路径：绝对路径
+  ---
+  duration_ms: 0.3113
+  type: 'test'
+  ...
+# Subtest: 拒绝受保护或逃逸的资料路径：.git/config
+ok 13 - 拒绝受保护或逃逸的资料路径：.git/config
+  ---
+  duration_ms: 0.3805
+  type: 'test'
+  ...
+# Subtest: 拒绝受保护或逃逸的资料路径：.env
+ok 14 - 拒绝受保护或逃逸的资料路径：.env
+  ---
+  duration_ms: 0.2148
+  type: 'test'
+  ...
+# Subtest: 拒绝受保护或逃逸的资料路径：nested/.env.local
+ok 15 - 拒绝受保护或逃逸的资料路径：nested/.env.local
+  ---
+  duration_ms: 0.0665
+  type: 'test'
+  ...
+# Subtest: 拒绝受保护或逃逸的资料路径：cert.pem
+ok 16 - 拒绝受保护或逃逸的资料路径：cert.pem
+  ---
+  duration_ms: 0.044
+  type: 'test'
+  ...
+# Subtest: 拒绝受保护或逃逸的资料路径：id_rsa
+ok 17 - 拒绝受保护或逃逸的资料路径：id_rsa
+  ---
+  duration_ms: 0.0419
+  type: 'test'
+  ...
+# Subtest: 拒绝受保护或逃逸的资料路径：keys/private.key
+ok 18 - 拒绝受保护或逃逸的资料路径：keys/private.key
+  ---
+  duration_ms: 0.0398
+  type: 'test'
+  ...
+# Subtest: 拒绝受保护或逃逸的资料路径：src/application-prod.yml
+ok 19 - 拒绝受保护或逃逸的资料路径：src/application-prod.yml
+  ---
+  duration_ms: 0.0407
+  type: 'test'
+  ...
+# Subtest: 空值、超长原始提示词及敏感凭据在准备阶段拒绝
+ok 20 - 空值、超长原始提示词及敏感凭据在准备阶段拒绝
+  ---
+  duration_ms: 0.2802
+  type: 'test'
+  ...
+# Subtest: 请求内容绑定防止混用其他题、模型或资料；HTTP200空正文不算成功
+ok 21 - 请求内容绑定防止混用其他题、模型或资料；HTTP200空正文不算成功
+  ---
+  duration_ms: 0.7591
+  type: 'test'
+  ...
+# Subtest: 严重业务错误不能被满分覆盖，专业未评审保持 PENDING
+ok 22 - 严重业务错误不能被满分覆盖，专业未评审保持 PENDING
+  ---
+  duration_ms: 0.3276
+  type: 'test'
+  ...
+# Subtest: 没有同信息原始基线，不把 Plan 多知道答案的优势归功于表达方式
+ok 23 - 没有同信息原始基线，不把 Plan 多知道答案的优势归功于表达方式
+  ---
+  duration_ms: 0.1385
+  type: 'test'
+  ...
+# Subtest: 未评审不算通过，双方有严重错误不记为增强胜出，回退仍统计为退化
+ok 24 - 未评审不算通过，双方有严重错误不记为增强胜出，回退仍统计为退化
+  ---
+  duration_ms: 0.2364
+  type: 'test'
+  ...
+# Subtest: 网络失败不应被计为提示词退化或让另一组自动胜出
+ok 25 - 网络失败不应被计为提示词退化或让另一组自动胜出
+  ---
+  duration_ms: 0.1457
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 239.2299
