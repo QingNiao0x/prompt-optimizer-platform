@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { ElIcon } from 'element-plus';
 import { onMounted, ref } from 'vue';
 
 import BrandMark from '@/components/brand/BrandMark.vue';
+import GitHubIcon from '@/components/brand/GitHubIcon.vue';
 import AccountMenu from '@/components/layout/AccountMenu.vue';
 import { useAuthStore } from '@/stores/auth';
+
+const GITHUB_REPOSITORY_URL = 'https://github.com/QingNiao0x/prompt-optimizer-platform';
 
 const auth = useAuthStore();
 onMounted(() => { void auth.initialize().catch(() => undefined); });
@@ -34,6 +38,16 @@ const closeMenu = (): void => {
     <div class="landing-nav__links">
       <a href="#features" @click="closeMenu">功能特性</a>
       <a href="#pricing" @click="closeMenu">定价</a>
+      <a
+        :href="GITHUB_REPOSITORY_URL"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub 仓库（在新标签页打开）"
+        @click="closeMenu"
+      >
+        <ElIcon :size="16" aria-hidden="true"><GitHubIcon /></ElIcon>
+        <span>GitHub</span>
+      </a>
     </div>
 
     <div class="landing-nav__actions">
@@ -76,6 +90,16 @@ const closeMenu = (): void => {
   >
     <a href="#features" @click="closeMenu">功能特性</a>
     <a href="#pricing" @click="closeMenu">定价</a>
+    <a
+      :href="GITHUB_REPOSITORY_URL"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="GitHub 仓库（在新标签页打开）"
+      @click="closeMenu"
+    >
+      <ElIcon :size="16" aria-hidden="true"><GitHubIcon /></ElIcon>
+      <span>GitHub</span>
+    </a>
   </div>
 </template>
 
@@ -142,6 +166,9 @@ const closeMenu = (): void => {
 }
 
 .landing-nav__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   min-height: 32px;
   padding: 6px 18px;
   border-radius: var(--radius-pill);
@@ -154,9 +181,16 @@ const closeMenu = (): void => {
     background-color var(--duration-ui) var(--ease-standard);
 }
 
-.landing-nav__links a:hover {
+.landing-nav__links a:hover,
+.landing-nav__drawer a:hover {
   color: var(--text-primary);
   background: var(--glass-bg-strong);
+}
+
+.landing-nav__links a:focus-visible,
+.landing-nav__drawer a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .landing-nav__actions {
@@ -244,6 +278,25 @@ const closeMenu = (): void => {
 }
 
 @media (max-width: 900px) {
+  .landing-nav {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+
+  .landing-nav__brand {
+    max-width: 100%;
+  }
+
+  .landing-nav__brand > span:last-child {
+    min-width: 0;
+  }
+
+  .landing-nav strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .landing-nav__links {
     display: none;
   }
@@ -270,6 +323,9 @@ const closeMenu = (): void => {
   }
 
   .landing-nav__drawer a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     min-height: 44px;
     padding: 10px 12px;
     border-radius: var(--radius-sm);

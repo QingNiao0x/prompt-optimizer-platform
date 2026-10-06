@@ -106,6 +106,13 @@ class DecisionStateScopeRegressionTest {
     }
 
     @Test
+    void rejectsARecordScopeDisguisedByAPendingNoteWithoutTheCountSuffix() {
+        assertThatThrownBy(() -> assemble(table("一致性指标", "全部有效记录（待确认）"),
+                RAW + "一致性指标分母尚未确定。", List.of(), false, List.of()))
+                .isInstanceOf(ProviderResponseValidationException.class);
+    }
+
+    @Test
     void keepsOtherObjectsAndExplicitConditionalBranches() {
         var result = assemble(table("乙院一致性指标", "乙院已核实的适用记录数")
                         + "\n如果以后确认甲院一致性指标分母为全部有效记录，再按该口径计算。",

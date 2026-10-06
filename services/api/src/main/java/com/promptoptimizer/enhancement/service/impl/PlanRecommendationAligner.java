@@ -128,7 +128,7 @@ final class PlanRecommendationAligner {
 
     /** 保留选项的完整含义，不能从“基于 Plan 确认”或“API 调用量”中只截出英文词。 */
     private static String choiceIdentity(String label) {
-        return normalize(label).replaceFirst("^(?:本次|继续|严格|优先)*(?:采用|用|选择)?\\s*", "");
+        return normalize(label).replaceFirst("^(?:本次|继续|严格|优先)*(?:采用|用|选择|沿用)?\\s*", "");
     }
 
     /** 不拆成共同词；完整实践短句可支撑“混合使用”等概括选项，但不能替另一技术名称背书。 */
@@ -137,6 +137,11 @@ final class PlanRecommendationAligner {
         if (ACTION_LABEL.matcher(choice).matches()) {
             String claim = normalize(option.answer());
             return claim.length() >= 8 && evidence(corpus, claim) > 0 ? claim : "";
+        }
+        // 通知渠道的互斥候选允许沿用明确偏好作建议；不能把这种例外扩展到统计分母的“仅/全部”。
+        if (!project && choice.matches("^仅(?:启用)?(?:站内信|邮件)$")) {
+            String channel = choice.replaceFirst("^仅(?:启用)?", "");
+            if (explicitPreference(corpus, channel) && evidence(corpus, channel) > 0) return channel;
         }
         if (option.label().matches(".*(仅|统一|全部|所有|只用).*")
                 && evidence(corpus, normalize(option.label())) <= 0) return "";

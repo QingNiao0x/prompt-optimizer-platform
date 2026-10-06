@@ -157,7 +157,6 @@ public class OptimizationResultAssembler {
         if (providerResponse.ambiguities() != null) {
             for (int index = 0; index < providerResponse.ambiguities().size(); index++) {
                 conditionalGuard.validate(providerResponse.ambiguities().get(index), "ambiguities[" + index + "]");
-                validateUserFacingProtocol(providerResponse.ambiguities().get(index), rawPrompt, "ambiguities[" + index + "]");
             }
         }
         List<String> explicitRules = fidelityGuard.explicitRules(effectiveRawPrompt, decisions.decisions());
@@ -175,7 +174,7 @@ public class OptimizationResultAssembler {
         if (eligibleFacts.isEmpty()) {
             appendDocumentFacts(sections, currentDocumentFacts);
         } else {
-            appendPlanningFacts(sections, currentFacts, currentDocumentFacts);
+            appendPlanningFacts(sections, currentFacts, currentDocumentFacts, planConfirmed);
         }
         appendConstraints(sections, constraints);
         if (!sourceObjects.guidance().isBlank()) appendConstraintBlock(sections, "资料对象与版本", List.of(sourceObjects.guidance()));
@@ -218,8 +217,9 @@ public class OptimizationResultAssembler {
         // 资料里的明确未知也随同一个权威清单交付；旧状态已按完整参数确认更新，不补造缺失事实。
         List<String> currentFindings = assessed;
         assessed = java.util.stream.Stream.concat(assessed.stream(), unresolvedContract.pendingStatements().stream()
-                .filter(statement -> currentFindings.stream().noneMatch(finding ->
-                        unresolvedContract.samePendingStatement(finding, statement))))
+                .filter(statement -> java.util.stream.Stream.concat(currentFindings.stream(),
+                        decisions.pendingDecisions().stream().map(ConfirmedPlanDecision::answer))
+                        .noneMatch(finding -> unresolvedContract.coversPendingStatement(finding, statement))))
                 .distinct().toList();
         assessed = classifyFindings(sections, assessed, rawPrompt, decisions, eligibleFacts, documentFacts, context);
         List<AmbiguityReference> references = normalizeAmbiguityReferences(providerResponse);
@@ -228,6 +228,7 @@ public class OptimizationResultAssembler {
         var merged = new PlanAmbiguityMerger(planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), rawPrompt)
                 .merge(assessed, ambiguities, references);
         List<String> remainingAmbiguities = merged.messages();
+        merged.executionPrerequisites().forEach(value -> validateUserFacingProtocol(value, rawPrompt, "ambiguities"));
         List<String> resultWarnings = new ArrayList<>(collectWarnings(context, planningWarnings));
         if (merged.omittedCount() > 0) {
             resultWarnings.add("待确认事项已去重，本次展示前 8 项，另有 " + merged.omittedCount()
@@ -517,7 +518,7 @@ public class OptimizationResultAssembler {
     /** 把已绑定事实卡片作为带来源资料保留；回答优先级和平台约束在段落中明确区分。 */
     private void appendPlanningFacts(Map<PromptSectionType, PromptSection> sections,
                                      List<PlanningFactCard> facts,
-                                     List<String> documentFacts) {
+                                     List<String> documentFacts, boolean planConfirmed) {
         List<PlanningFactCard> safeFacts = facts.stream()
                 .filter(card -> card != null && card.category() != null && card.origin() != null
                         && !isBlank(card.sourcePath()) && card.sourcePath().length() <= 256
@@ -540,7 +541,8 @@ public class OptimizationResultAssembler {
             background = new PromptSection(
                     PromptSectionType.BACKGROUND,
                     background.title(),
-                    background.content() + "\n\n资料的当前执行视图（原始摘录见资料依据；现状与目标分别核对，不代表已经实现）：\n"
+                    background.content() + (planConfirmed ? "\n\nPlan 阶段绑定的资料事实与二次检索补充" : "\n\n资料的当前执行视图")
+                            + "（原始摘录见资料依据；现状与目标分别核对，不代表已经实现）：\n"
                             + sourcedFacts
             );
             sections.put(PromptSectionType.BACKGROUND, background);

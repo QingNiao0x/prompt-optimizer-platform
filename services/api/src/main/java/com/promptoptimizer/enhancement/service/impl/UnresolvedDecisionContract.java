@@ -75,7 +75,7 @@ final class UnresolvedDecisionContract {
             var choices = CURRENT_PARAMETER.matcher(clause);
             while (choices.find()) {
                 if (CONDITIONAL.matcher(clause.substring(0, choices.end())).find()
-                        || clause.matches(".*(?:尚未|待确认|未知|未决|建议|候选|例如|示例).*") ) continue;
+                        || choices.group().matches(".*(?:尚未|待确认|未知|未决|建议|候选|例如|示例).*")) continue;
                 String subject = choices.group(1).replaceFirst("的$", "");
                 if (subject.matches(".*(?:与|和|及|其他|其余|本次只|仅).*")) continue;
                 result.add(new Parameter(subjectKey(subject), choices.group(2)));
@@ -115,6 +115,12 @@ final class UnresolvedDecisionContract {
                 && first.matches(".*(?:分母|阈值|观察窗口|覆盖度)未决$")
                 && first.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1")
                 .equals(second.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1"));
+    }
+
+    /** 同一未知若已在带新说明的提醒中登记，只避免追加第二条短状态，不裁掉任何新说明。 */
+    boolean coversPendingStatement(String finding, String statement) {
+        return samePendingStatement(finding, statement) || declaredPending(finding).stream()
+                .anyMatch(declaration -> samePendingStatement(declaration, statement));
     }
 
     /**
@@ -208,7 +214,7 @@ final class UnresolvedDecisionContract {
                 header = List.of();
                 for (String clause : text.split("[，,。；;]+")) {
                     if (CONDITIONAL.matcher(clause).find() || PENDING.matcher(clause).find()) continue;
-                    String compact = canonical(clause);
+                    String compact = canonical(clause).replaceFirst("^[-*#]+", "");
                     var assertions = ASSERTED_PARAMETER.matcher(compact);
                     while (assertions.find()) {
                         String subject = assertions.group(1) == null ? assertions.group(3) : assertions.group(1);
@@ -227,7 +233,9 @@ final class UnresolvedDecisionContract {
     /** 具体口径不能通过追加“尚待确认”来伪装成空参数，未知格只允许状态和等待说明。 */
     private boolean unknownCell(String value) {
         String text = canonical(value);
-        return PENDING.matcher(text).find() && !text.matches(".*(?:记录数|样本数|len\\(|count\\(|\\d+(?:分钟|小时|%)).*");
+        return Pattern.compile("^(?:待确认|待定|未决|尚未确定|尚未决定|待核实|TBD|None|null)"
+                        + "(?:$|[（(，,；;：:]?(?:确认|核实|不|不能|不得|需|须|尚|仍|另|等待|不可|按).*)", Pattern.CASE_INSENSITIVE)
+                .matcher(text).matches() && !text.matches(".*(?:记录数|样本数|len\\(|count\\(|\\d+(?:分钟|小时|%)).*");
     }
 
     /** 完整具名对象逐字核对；有限的跨字段一致性子指标别名只覆盖该同类指标。 */

@@ -87,6 +87,7 @@ public final class PlanQuestionFilter {
                 .filter(question -> !routinePresentation(question, input.rawPrompt()))
                 .filter(question -> !routineExecutionPresentation(question, input.rawPrompt()))
                 .filter(question -> !knownNegativeCostPresentation(question, input.rawPrompt()))
+                .filter(question -> !knownCoverageState(question, input.rawPrompt()))
                 .filter(question -> !knownConditionalConflictPresentation(question, input.rawPrompt()))
                 .filter(question -> !KnownTestCoverage.repeatsKnownBranches(question, input))
                 .filter(question -> hasAdditionalDecision(question) || !decisionPolicy.resolvedOrDelegated(question))
@@ -116,6 +117,21 @@ public final class PlanQuestionFilter {
 
     private boolean knownNegativeCostBoundary(String rawPrompt) {
         return safe(rawPrompt).contains("负数先标记并回到来源核实，不擅自改成0");
+    }
+
+    /** 已知某院某年仍未核实时不再询问相同状态；定义、纳入规则、新年份及明确更新请求仍保留。 */
+    private boolean knownCoverageState(PlanQuestion question, String rawPrompt) {
+        var match = Pattern.compile("^([A-Za-z][A-Za-z0-9_]*医院|[甲乙丙丁]院)((?:19|20)\\d{2})年(?:的)?(?:数据)?覆盖度是否已核实[？?]$")
+                .matcher(question.question());
+        if (!match.matches() || hasAdditionalDecision(question)) return false;
+        String raw = safe(rawPrompt);
+        if (raw.matches("(?s).*(?:重新核实|更新覆盖度|核实最新状态).*")) return false;
+        String subject = Pattern.quote(match.group(1) + match.group(2) + "年");
+        boolean known = Pattern.compile("(?:^|[。；;\\n])\\s*" + subject + "(?:的)?(?:数据)?覆盖度(?:尚未|未)核实[。；;\\n]?")
+                .matcher(raw).find();
+        if (!known) return false;
+        String detail = String.join(" ", questionDetails(question));
+        return !detail.matches("(?s).*(?:定义|纳入|分母|阈值|调整|批准|审批|授权|权限|数据来源|新增|另外|重新|更新|[<>]).*");
     }
 
     /** 模型 ID 不参与身份；说明、选项和示例里的新选择参与比较，不能只凭相同题干删整题。 */
