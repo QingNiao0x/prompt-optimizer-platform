@@ -1,0 +1,1789 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-06T06:26:17.097Z",
+  "reviewKind": "ROOT_AGENT_TARGETED_REVIEW",
+  "independentHumanReview": "NOT_PERFORMED",
+  "domainSpecialistReview": "NOT_PERFORMED",
+  "scope": "仅核对维修内容和版本归属相关句子与表格，不代表全篇法律正确性、全部任务质量或所有措辞验收。",
+  "summary": {
+    "scheduled": 36,
+    "completeScopedPass": 26,
+    "incompleteNotPassed": 10
+  },
+  "reviews": [
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-direct-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "f8312b20c881435d5debdcf423239f90c71c012076cfb650288c4ca757465114",
+      "singleHttpCallMs": 15573,
+      "usage": {
+        "prompt_tokens": 5045,
+        "completion_tokens": 4096,
+        "total_tokens": 9141
+      },
+      "outputChars": 7866,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-direct-m1-r1.md",
+      "reviewStatus": "INCOMPLETE_NOT_PASSED",
+      "evidence": []
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-plan-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "ce17f593b006c03c4ccd9b663f0d9f1d5067717880e6a19d770e2c6d5dd73f48",
+      "singleHttpCallMs": 11187,
+      "usage": {
+        "prompt_tokens": 4708,
+        "completion_tokens": 2400,
+        "total_tokens": 7108
+      },
+      "outputChars": 4200,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-plan-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 34,
+          "quote": "| F6 | 维修条款 | 一版：承租方承担日常维护；另一版：新增全部设施故障费用 | 与一版／草稿A／草稿B的完整对应关系未建立 | 两版范围不同，不得拼接为统一规则 | current-brief.md「分支与边界」段；归属依据：尚无对应证据 |"
+        },
+        {
+          "line": 60,
+          "quote": "| 维修条款 | 承租方承担日常维护 | 版本对应待核实 | current-brief.md | 尚无对应证据 |"
+        },
+        {
+          "line": 61,
+          "quote": "| 维修条款 | 全部设施故障费用 | 版本对应待核实 | current-brief.md | 尚无对应证据 |"
+        },
+        {
+          "line": 74,
+          "quote": "| 高 | 维修范围两版内容分别对应哪一版草稿？日常维护与全部设施故障费用是否为互斥或叠加？ | 维修责任范围直接决定承租方成本与风险敞口；拼接会形成对承租方更不利的统一条款 | 两版维修条款原文及其版本标识 | 暂不能执行（版本对应待核实） |"
+        }
+      ]
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-direct_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "80429ffc0f5a3be98ba45a7f5172edd1c4757024744aeeb4ca74460136512c5a",
+      "singleHttpCallMs": 15981,
+      "usage": {
+        "prompt_tokens": 5156,
+        "completion_tokens": 4096,
+        "total_tokens": 9252
+      },
+      "outputChars": 7511,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-direct_matched-m1-r1.md",
+      "reviewStatus": "INCOMPLETE_NOT_PASSED",
+      "evidence": []
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-direct-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "6efd614268dc941ddfa7d8479dbeb0543262823fbeb07de4b9f8344a2e8e3df1",
+      "singleHttpCallMs": 36983,
+      "usage": {
+        "prompt_tokens": 5044,
+        "completion_tokens": 4097,
+        "total_tokens": 9141
+      },
+      "outputChars": 7180,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-direct-m2-r1.md",
+      "reviewStatus": "INCOMPLETE_NOT_PASSED",
+      "evidence": []
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-plan-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "1d5268fdf9b613c43be19f1252dff50462bfb36edd94907142ce0ac865433937",
+      "singleHttpCallMs": 27142,
+      "usage": {
+        "prompt_tokens": 4707,
+        "completion_tokens": 3072,
+        "total_tokens": 7779
+      },
+      "outputChars": 5455,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-plan-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 33,
+          "quote": "| F-11 | 维修条款一版写承租方承担日常维护 | current-brief.md “分支与边界”第3条 | 内容已有依据，版本对应待核实 |"
+        },
+        {
+          "line": 34,
+          "quote": "| F-12 | 维修条款另一版新增全部设施故障费用 | current-brief.md “分支与边界”第3条 | 内容已有依据，版本对应待核实 |"
+        },
+        {
+          "line": 57,
+          "quote": "| C-02 | 维修范围 | 一版：承租方承担日常维护；另一版：新增全部设施故障费用 | current-brief.md “分支与边界”第3条 | 并列保留，不拼接为统一条款；版本对应待核实 |"
+        },
+        {
+          "line": 74,
+          "quote": "| 维修条款 | 承租方承担日常维护 | 版本对应待核实 | current-brief.md “分支与边界”第3条 | 尚无对应证据 |"
+        },
+        {
+          "line": 75,
+          "quote": "| 维修条款 | 全部设施故障费用 | 版本对应待核实 | current-brief.md “分支与边界”第3条 | 尚无对应证据 |"
+        },
+        {
+          "line": 98,
+          "quote": "| H-02 | 维修条款“一版／另一版”分别对应草稿A还是草稿B？两版维修范围差异是否影响租金对价或另行约定？ | 高 | “全部设施故障费用”与“日常维护”的责任范围差异显著，直接决定承租方持续履约成本；版本对应未建立则无法判断哪份草稿对承租方更不利 |"
+        }
+      ]
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-direct_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "95573ca5074274172db6aab45bf562ccc6f842f8210a271ab77b1d9f27f89950",
+      "singleHttpCallMs": 28226,
+      "usage": {
+        "prompt_tokens": 5155,
+        "completion_tokens": 3191,
+        "total_tokens": 8346
+      },
+      "outputChars": 6092,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-direct_matched-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 21,
+          "quote": "| F-08 | 维修条款内容之一 | 一版写承租方承担日常维护 | materials/legal_memo/current-brief.md | 内容已证实；版本对应待核实（见U-01） |"
+        },
+        {
+          "line": 22,
+          "quote": "| F-09 | 维修条款内容之二 | 另一版新增全部设施故障费用 | materials/legal_memo/current-brief.md | 内容已证实；版本对应待核实（见U-01） |"
+        },
+        {
+          "line": 48,
+          "quote": "| C-02 | 维修范围 | 一版：承租方承担日常维护；另一版：新增全部设施故障费用 | materials/legal_memo/current-brief.md | 并列保留，不拼接为统一规则；版本对应待核实 |"
+        },
+        {
+          "line": 69,
+          "quote": "| UB-01 | 承租方承担日常维护 | materials/legal_memo/current-brief.md | 版本对应待核实 |"
+        },
+        {
+          "line": 70,
+          "quote": "| UB-02 | 全部设施故障费用 | materials/legal_memo/current-brief.md | 版本对应待核实 |"
+        },
+        {
+          "line": 86,
+          "quote": "| H-02 | 维修条款中“承租方承担日常维护”与“全部设施故障费用”分别对应哪一版草稿？两项内容是否为替代关系？ | 维修责任范围直接决定承租方日常运营成本和潜在维修支出；若“全部设施故障费用”被采纳，承租方责任显著扩大，须在签署前明确。 |"
+        }
+      ]
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "b0cf880ba67b799d287e8ecbf75cedb9fe6f554e15fb167965d6fd3be0191597",
+      "singleHttpCallMs": 15907,
+      "usage": {
+        "prompt_tokens": 4344,
+        "completion_tokens": 4096,
+        "total_tokens": 8440
+      },
+      "outputChars": 7364,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct-m1-r1.md",
+      "reviewStatus": "INCOMPLETE_NOT_PASSED",
+      "evidence": []
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-plan-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "95615cac2c2a21534894e0bc8fb30e6c38f9e70efc6a3aab53cbc5a0f45c1177",
+      "singleHttpCallMs": 13832,
+      "usage": {
+        "prompt_tokens": 4780,
+        "completion_tokens": 3190,
+        "total_tokens": 7970
+      },
+      "outputChars": 5798,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-plan-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "补充材料已证明的A日常维护保留",
+        "另一项全部设施费用归属仍未知",
+        "未通过排除法归B",
+        "未将两项维修责任拼接为统一规则"
+      ],
+      "evidence": [
+        {
+          "line": 22,
+          "quote": "| F8 | 维修条款（草稿A） | 承租方承担日常维护 | 草稿A | materials/legal_memo/maintenance-confirmation.md | 材料明确标注 | 可直接使用（仅限草稿A） |"
+        },
+        {
+          "line": 23,
+          "quote": "| F9 | 维修条款（另一版） | 新增全部设施故障费用 | 版本对应待核实 | materials/legal_memo/maintenance-confirmation.md | 尚无对应证据 | 暂不能执行（归属未核实） |"
+        },
+        {
+          "line": 41,
+          "quote": "| 维修范围 | 承租方承担日常维护（F8） | 版本对应待核实 | 另一版新增全部设施故障费用（F9） | 责任范围差异 | 草稿A内容明确；另一版内容明确但版本归属未核实，不能与草稿B直接对应 |"
+        },
+        {
+          "line": 46,
+          "quote": "- 另一版维修条款新增“全部设施故障费用”（F9），具体版本归属待核实。"
+        },
+        {
+          "line": 60,
+          "quote": "| H2 | 维修条款中“全部设施故障费用”由哪一版引入？该版是否为主文本？ | 若该条款适用，承租方责任范围可能显著扩大；不能将两版拼接为更不利的统一条款 | 另一版维修条款原文；版本归属证据 | 版本对应待核实 |"
+        },
+        {
+          "line": 103,
+          "quote": "| 已有充分依据可以直接使用 | 材料明确、版本归属已证实 | 草稿A押金两个月；草稿A维修条款承租方承担日常维护 |"
+        },
+        {
+          "line": 142,
+          "quote": "| 草稿A维修条款承租方承担日常维护 | maintenance-confirmation.md | 否 |"
+        },
+        {
+          "line": 143,
+          "quote": "| 另一版新增全部设施故障费用，版本对应待核实 | maintenance-confirmation.md | 否 |"
+        }
+      ]
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct_matched-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "b3312c340d3511c9331d3106fb4e6c882a70a5ed58e762e951c81cca6943e531",
+      "singleHttpCallMs": 16893,
+      "usage": {
+        "prompt_tokens": 4462,
+        "completion_tokens": 4096,
+        "total_tokens": 8558
+      },
+      "outputChars": 7504,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct_matched-m1-r1.md",
+      "reviewStatus": "INCOMPLETE_NOT_PASSED",
+      "evidence": []
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "380d5d19c5f46fa0861cf7d2a25a6e0871696d1d2824c38e04257f88f1503248",
+      "singleHttpCallMs": 34139,
+      "usage": {
+        "prompt_tokens": 4343,
+        "completion_tokens": 4096,
+        "total_tokens": 8439
+      },
+      "outputChars": 7628,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct-m2-r1.md",
+      "reviewStatus": "INCOMPLETE_NOT_PASSED",
+      "evidence": []
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-plan-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "617e59f980074a193a52c43c7d7182d885a9f6c135bd5e2b6c4b7fc8c81d46b5",
+      "singleHttpCallMs": 35164,
+      "usage": {
+        "prompt_tokens": 4779,
+        "completion_tokens": 3876,
+        "total_tokens": 8655
+      },
+      "outputChars": 6989,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-plan-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "补充材料已证明的A日常维护保留",
+        "另一项全部设施费用归属仍未知",
+        "未通过排除法归B",
+        "未将两项维修责任拼接为统一规则"
+      ],
+      "evidence": [
+        {
+          "line": 18,
+          "quote": "| F-05 | 维修条款—草稿A | 承租方承担日常维护 | 草稿A | materials/legal_memo/current-brief.md；materials/legal_memo/maintenance-confirmation.md | maintenance-confirmation.md 明确记载 | 已证实对应草稿A |"
+        },
+        {
+          "line": 19,
+          "quote": "| F-06 | 维修条款—另一版 | 新增全部设施故障费用 | 版本对应待核实 | materials/legal_memo/current-brief.md；materials/legal_memo/maintenance-confirmation.md | 尚无对应证据 | 不得由排除法推定为草稿B |"
+        },
+        {
+          "line": 34,
+          "quote": "| 维修条款 | 承租方承担日常维护 | materials/legal_memo/current-brief.md；materials/legal_memo/maintenance-confirmation.md | 已证实为草稿A |"
+        },
+        {
+          "line": 35,
+          "quote": "| 维修条款 | 全部设施故障费用 | materials/legal_memo/current-brief.md；materials/legal_memo/maintenance-confirmation.md | 版本对应待核实 |"
+        },
+        {
+          "line": 43,
+          "quote": "| 维修范围 | 承租方承担日常维护 | 版本对应待核实 | 另一版新增\"全部设施故障费用\"，具体版本归属未核实 | 若\"全部设施故障费用\"条款被采用，承租方责任范围显著扩大；不得将两版拼接为对承租方更不利的统一条款 | materials/legal_memo/maintenance-confirmation.md |"
+        },
+        {
+          "line": 59,
+          "quote": "| H-2 | 维修条款中\"全部设施故障费用\"的具体版本归属是草稿A、草稿B还是另一独立版本？ | 该条款若被采用，承租方维修责任范围从\"日常维护\"扩大至\"全部设施故障费用\"，直接影响承租方核心成本与风险 | 草稿原文逐条比对；出租方或委托方对版本对应关系的书面确认 | 版本对应待核实，不得由排除法推定 |"
+        },
+        {
+          "line": 93,
+          "quote": "3. **不推定版本归属**：维修条款\"全部设施故障费用\"的版本对应待核实，不得由排除法推定为草稿B。"
+        },
+        {
+          "line": 94,
+          "quote": "4. **不拼接维修条款**：不能把\"承租方承担日常维护\"与\"全部设施故障费用\"拼接为对承租方更不利的统一条款。"
+        },
+        {
+          "line": 111,
+          "quote": "- **维修条款版本归属核实前**：不能将\"全部设施故障费用\"归入草稿A或草稿B，也不能拼接为统一条款。"
+        },
+        {
+          "line": 119,
+          "quote": "| 已有充分依据可以直接使用 | 草稿A押金为两个月租金；草稿A维修条款为承租方承担日常维护；草稿未签署 | F-01、F-03、F-05 |"
+        },
+        {
+          "line": 121,
+          "quote": "| 因缺少关键资料暂不能执行 | 维修条款\"全部设施故障费用\"的版本归属；房屋权属及授权链核验；租金具体数值核对；解约条款完整文本核对 | F-06、F-09、F-14、F-15 |"
+        },
+        {
+          "line": 127,
+          "quote": "3. **维修条款版本归属待核实**：另一版新增\"全部设施故障费用\"的具体版本归属仍未核实，不得由排除法推定为草稿B；若表格使用具体版本列，该属性尚未建立对应的单元格只能填写\"版本对应待核实\"。"
+        },
+        {
+          "line": 141,
+          "quote": "| 是否将\"全部设施故障费用\"推定为草稿B | 否。所有相关位置均标注\"版本对应待核实\" |"
+        }
+      ]
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct_matched-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "2b08bab0e056e5319a7e2f0b9c3aab5998371c4bbe3f32bd1570e69251c18017",
+      "singleHttpCallMs": 35993,
+      "usage": {
+        "prompt_tokens": 4461,
+        "completion_tokens": 4096,
+        "total_tokens": 8557
+      },
+      "outputChars": 7651,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct_matched-m2-r1.md",
+      "reviewStatus": "INCOMPLETE_NOT_PASSED",
+      "evidence": []
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-direct-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "92b5dc2e3761474408ce689298791b7b32ab11c6a55c5f8adb838adaf9410033",
+      "singleHttpCallMs": 12396,
+      "usage": {
+        "prompt_tokens": 3926,
+        "completion_tokens": 2810,
+        "total_tokens": 6736
+      },
+      "outputChars": 4732,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-direct-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 49,
+          "quote": "- 维修条款内容一：承租方承担日常维护。出处：原始需求；materials/legal_memo/current-brief.md。归属依据：尚无对应证据。状态：版本对应待核实。"
+        },
+        {
+          "line": 50,
+          "quote": "- 维修条款内容二：全部设施故障费用。出处：原始需求；materials/legal_memo/current-brief.md。归属依据：尚无对应证据。状态：版本对应待核实。"
+        },
+        {
+          "line": 93,
+          "quote": "- 维修条款一版写承租方承担日常维护，另一版新增全部设施故障费用；两版内容与草稿A/B的完整对应关系未建立，标注“版本对应待核实”。"
+        }
+      ]
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-plan-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "b25f2831eb847ba640ebbda5ebf63286900d6c75c81cd627041870296d3fce83",
+      "singleHttpCallMs": 9864,
+      "usage": {
+        "prompt_tokens": 3974,
+        "completion_tokens": 2274,
+        "total_tokens": 6248
+      },
+      "outputChars": 4261,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-plan-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 18,
+          "quote": "| F6 | 维修条款一版写承租方承担日常维护 | materials/legal_memo/current-brief.md | 内容有依据；**版本对应待核实** |"
+        },
+        {
+          "line": 19,
+          "quote": "| F7 | 维修条款另一版新增全部设施故障费用 | materials/legal_memo/current-brief.md | 内容有依据；**版本对应待核实** |"
+        },
+        {
+          "line": 45,
+          "quote": "| 维修范围 | 版本对应待核实 | 版本对应待核实 | 一版为承租方承担日常维护；另一版新增全部设施故障费用；不得拼接为统一条款 | current-brief.md |"
+        },
+        {
+          "line": 51,
+          "quote": "- 维修条款内容一：承租方承担日常维护（版本对应待核实）。"
+        },
+        {
+          "line": 52,
+          "quote": "- 维修条款内容二：全部设施故障费用（版本对应待核实）。"
+        },
+        {
+          "line": 60,
+          "quote": "| 维修责任范围 | 承租方承担日常维护 | 新增全部设施故障费用 | materials/legal_memo/current-brief.md（版本对应待核实） |"
+        },
+        {
+          "line": 72,
+          "quote": "2. **维修范围**：一版为承租方承担日常维护，另一版新增全部设施故障费用，版本对应待核实。请核实两版各自完整维修责任边界，以及是否存在将日常维护与全部设施故障费用合并解释的风险。影响目标：直接关系承租方持续履约成本。"
+        }
+      ]
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-direct_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "640be1bb46d5f8859c2d1bb012d81216af11c70c5b7359abb2d797986aba89c0",
+      "singleHttpCallMs": 12357,
+      "usage": {
+        "prompt_tokens": 4038,
+        "completion_tokens": 2700,
+        "total_tokens": 6738
+      },
+      "outputChars": 4527,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-direct_matched-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 48,
+          "quote": "| 维修条款：承租方承担日常维护 | 版本对应待核实 | 原始需求；M1 | 尚无对应证据 |"
+        },
+        {
+          "line": 49,
+          "quote": "| 维修条款：全部设施故障费用 | 版本对应待核实 | 原始需求；M1 | 尚无对应证据 |"
+        },
+        {
+          "line": 68,
+          "quote": "| H3 | 维修范围在两版草稿中分别如何约定？“日常维护”与“全部设施故障费用”各自对应哪一版？ | 维修责任范围直接影响承租方成本与风险敞口；两版不得拼接 | 两版草稿维修条款；邮件 | 暂不能执行（版本对应待核实） |"
+        }
+      ]
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-direct-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "10f06252da5f6837339ca799dfd445e46a6a665167e3cdc9952a5329a99c2e1f",
+      "singleHttpCallMs": 31930,
+      "usage": {
+        "prompt_tokens": 3925,
+        "completion_tokens": 3462,
+        "total_tokens": 7387
+      },
+      "outputChars": 5869,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-direct-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 28,
+          "quote": "| F6 | 维修条款一版：承租方承担日常维护 | M1 | 内容已明确，版本对应待核实 | 不得与F7拼接 |"
+        },
+        {
+          "line": 29,
+          "quote": "| F7 | 维修条款另一版：新增全部设施故障费用 | M1 | 内容已明确，版本对应待核实 | 不得与F6拼接 |"
+        },
+        {
+          "line": 67,
+          "quote": "| U1 | 维修条款 | 承租方承担日常维护 | 版本对应待核实 | M1 | 尚无对应证据 |"
+        },
+        {
+          "line": 68,
+          "quote": "| U2 | 维修条款 | 全部设施故障费用 | 版本对应待核实 | M1 | 尚无对应证据 |"
+        },
+        {
+          "line": 89,
+          "quote": "| H4 | 请核验维修条款两版内容分别对应哪份草稿，以及“全部设施故障费用”的具体范围和除外情形。 | 高 | 维修责任范围直接影响承租方长期使用成本和风险敞口；两版内容不能拼接为对承租方更不利的统一条款，必须逐版确认。 |"
+        }
+      ]
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-plan-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "acc2fc051ae2142cf631af67195bef091d4c7ac91a40888f1b77e634f32fc057",
+      "singleHttpCallMs": 23226,
+      "usage": {
+        "prompt_tokens": 3973,
+        "completion_tokens": 2649,
+        "total_tokens": 6622
+      },
+      "outputChars": 4590,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-plan-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 27,
+          "quote": "| F-05 | 维修条款一版写承租方承担日常维护 | `current-brief.md`；原始需求 | 内容已有依据，但与草稿A／草稿B的版本对应**待核实** |"
+        },
+        {
+          "line": 28,
+          "quote": "| F-06 | 维修条款另一版新增全部设施故障费用 | `current-brief.md`；原始需求 | 内容已有依据，但与草稿A／草稿B的版本对应**待核实** |"
+        },
+        {
+          "line": 43,
+          "quote": "| 维修条款 | 承租方承担日常维护 | 版本对应待核实 | 原始需求；`current-brief.md` | 尚无对应证据 |"
+        },
+        {
+          "line": 44,
+          "quote": "| 维修条款 | 全部设施故障费用 | 版本对应待核实 | 原始需求；`current-brief.md` | 尚无对应证据 |"
+        },
+        {
+          "line": 54,
+          "quote": "| 维修范围 | 版本对应待核实 | 版本对应待核实 | 一版为“承租方承担日常维护”，另一版为“全部设施故障费用”；两项内容与草稿A／草稿B的对应关系**尚无证据** |"
+        },
+        {
+          "line": 59,
+          "quote": "- 维修条款内容之一：承租方承担日常维护（出处：原始需求；`current-brief.md`）"
+        },
+        {
+          "line": 60,
+          "quote": "- 维修条款内容之二：全部设施故障费用（出处：原始需求；`current-brief.md`）"
+        },
+        {
+          "line": 73,
+          "quote": "| H-3 | 维修范围条款：两版内容（“日常维护” vs “全部设施故障费用”）分别对应哪份草稿？最终以哪份为准？ | 两版责任范围差异显著，“全部设施故障费用”对承租方负担更重。不能将两版拼接为统一条款，需律师确认适用版本。 |"
+        },
+        {
+          "line": 101,
+          "quote": "   - 维修条款存在两版内容（“日常维护” vs “全部设施故障费用”）这一差异事实；"
+        }
+      ]
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-direct_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "37b78775b897ea0af8d66f085a823a8dd94e1df9bc6f7ad302cb1303f9ec63aa",
+      "singleHttpCallMs": 31373,
+      "usage": {
+        "prompt_tokens": 4037,
+        "completion_tokens": 3605,
+        "total_tokens": 7642
+      },
+      "outputChars": 5992,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-direct_matched-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 27,
+          "quote": "| F5 | 维修条款一版：承租方承担日常维护 | M1 | 内容已确认；版本对应待核实 | 不得与另一版拼接 |"
+        },
+        {
+          "line": 28,
+          "quote": "| F6 | 维修条款另一版：新增全部设施故障费用 | M1 | 内容已确认；版本对应待核实 | 不得与一版拼接 |"
+        },
+        {
+          "line": 43,
+          "quote": "| 维修条款 | 承租方承担日常维护 | 版本对应待核实 | M1 | 尚无对应证据 |"
+        },
+        {
+          "line": 44,
+          "quote": "| 维修条款 | 全部设施故障费用 | 版本对应待核实 | M1 | 尚无对应证据 |"
+        },
+        {
+          "line": 66,
+          "quote": "| 维修范围 | 版本对应待核实 | 版本对应待核实 | 内容已知但版本归属未建立 | M1 | 一版为“承租方承担日常维护”；另一版为“全部设施故障费用”。两版内容不得拼接，不得按材料顺序绑定版本 |"
+        },
+        {
+          "line": 77,
+          "quote": "| R1 | 承租方承担日常维护 | 版本对应待核实 | M1 |"
+        },
+        {
+          "line": 78,
+          "quote": "| R2 | 全部设施故障费用 | 版本对应待核实 | M1 |"
+        },
+        {
+          "line": 90,
+          "quote": "| H2 | 维修条款版本归属：一版为“承租方承担日常维护”，另一版为“全部设施故障费用”。请核验两版草稿的完整文本，确定各版维修条款的准确内容及对应版本。 | 高 | 两版维修责任范围差异显著，“全部设施故障费用”对承租方负担更重。若版本归属不清，承租方无法评估潜在维修成本，也无法确定谈判底线。 |"
+        },
+        {
+          "line": 131,
+          "quote": "2. **维修条款不得拼接**：维修条款一版为“承租方承担日常维护”，另一版为“全部设施故障费用”；不能把两个版本拼接成对承租方更不利的统一条款。版本对应关系未建立，标注“版本对应待核实”。"
+        }
+      ]
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-direct-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "4cb87aeea0005b43e29b9893817ec36adf4f670314cfb2e6a571c67c70981ef5",
+      "singleHttpCallMs": 12489,
+      "usage": {
+        "prompt_tokens": 4164,
+        "completion_tokens": 2842,
+        "total_tokens": 7006
+      },
+      "outputChars": 5635,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-direct-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "补充材料已证明的A日常维护保留",
+        "另一项全部设施费用归属仍未知",
+        "未通过排除法归B",
+        "未将两项维修责任拼接为统一规则"
+      ],
+      "evidence": [
+        {
+          "line": 17,
+          "quote": "| 5 | 草稿A维修条款写承租方承担日常维护 | materials/legal_memo/maintenance-confirmation.md | 第1句 | 已确认（版本归属：草稿A） |"
+        },
+        {
+          "line": 18,
+          "quote": "| 6 | 另一版新增全部设施故障费用；该新增条款的具体版本归属仍未核实 | materials/legal_memo/maintenance-confirmation.md | 第2句 | 内容已确认；**版本对应待核实** |"
+        },
+        {
+          "line": 39,
+          "quote": "| 全部设施故障费用（维修条款新增内容） | materials/legal_memo/maintenance-confirmation.md | **版本对应待核实**；不得由排除法推定为草稿B，不得与草稿A维修条款拼接为统一规则 |"
+        },
+        {
+          "line": 50,
+          "quote": "| 维修范围 | 承租方承担日常维护 | 版本对应待核实 | 另一版新增“全部设施故障费用”，版本归属未核实 | materials/legal_memo/maintenance-confirmation.md |"
+        },
+        {
+          "line": 58,
+          "quote": "| 全部设施故障费用 | materials/legal_memo/maintenance-confirmation.md | **版本对应待核实** |"
+        },
+        {
+          "line": 65,
+          "quote": "| 维修责任范围（日常维护 vs 新增全部设施故障费用） | materials/legal_memo/maintenance-confirmation.md 第1句 | 版本对应待核实 | 未有证据 |"
+        },
+        {
+          "line": 79,
+          "quote": "| H3 | 维修条款中“全部设施故障费用”的具体版本归属是哪一版？该新增内容是否经双方协商确认？ | 维修责任范围直接影响承租方成本与风险；版本归属未核实，不得由排除法推定 | materials/legal_memo/maintenance-confirmation.md；**版本对应待核实** |"
+        },
+        {
+          "line": 106,
+          "quote": "1. 现有材料可以确认：承租方视角、整理目标、三级优先级、草稿A押金两个月、草稿B押金三个月（邮件未确认）、草稿A维修条款为承租方承担日常维护、另一版新增全部设施故障费用但版本归属待核实。"
+        },
+        {
+          "line": 115,
+          "quote": "4. 对“全部设施故障费用”条款，请核验其具体版本归属，不得由排除法推定为草稿B，不得与草稿A维修条款拼接为统一规则。"
+        }
+      ]
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-plan-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "f20906e1cd5760c86499fa4f77a5ea71c9779cff83585c97dab8e65ef8c69542",
+      "singleHttpCallMs": 12818,
+      "usage": {
+        "prompt_tokens": 4363,
+        "completion_tokens": 2958,
+        "total_tokens": 7321
+      },
+      "outputChars": 5776,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-plan-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "补充材料已证明的A日常维护保留",
+        "另一项全部设施费用归属仍未知",
+        "未通过排除法归B",
+        "未将两项维修责任拼接为统一规则"
+      ],
+      "evidence": [
+        {
+          "line": 23,
+          "quote": "| 5 | 合成现行资料 | 维修条款 | 草稿A写承租方承担日常维护 | 未标注 | 维修责任范围 | 日常维护 | materials/legal_memo/maintenance-confirmation.md | 已有充分依据（草稿A归属已证实） |"
+        },
+        {
+          "line": 24,
+          "quote": "| 6 | 合成现行资料 | 维修条款 | 另一版新增全部设施故障费用 | 未标注 | 维修责任范围 | 全部设施故障费用 | materials/legal_memo/maintenance-confirmation.md | 版本对应待核实（不得推定为草稿B） |"
+        },
+        {
+          "line": 29,
+          "quote": "| 11 | 补充确认材料 | 维修条款 | 草稿A写承租方承担日常维护 | 未标注 | 维修责任范围 | 日常维护 | materials/legal_memo/maintenance-confirmation.md | 已有充分依据 |"
+        },
+        {
+          "line": 48,
+          "quote": "| 维修范围 | 承租方承担日常维护 | 版本对应待核实 | 草稿A归属已证实；另一版内容未绑定版本 | materials/legal_memo/maintenance-confirmation.md |"
+        },
+        {
+          "line": 58,
+          "quote": "| 全部设施故障费用 | 版本对应待核实 | materials/legal_memo/maintenance-confirmation.md |"
+        },
+        {
+          "line": 73,
+          "quote": "| H2 | “全部设施故障费用”这一维修条款具体属于哪一份草稿？是否有版本页眉、修订记录或邮件附件可对应？ | 维修责任范围直接影响承租方运营成本和风险敞口；不能把两个版本拼接成对承租方更不利的统一条款 | 该条款所在文件的完整版本信息；修订记录；邮件附件与草稿的对应关系 |"
+        },
+        {
+          "line": 100,
+          "quote": "1. **已有充分依据的内容**：承租方视角、资料整理目标、高中低三级优先级框架已确定；草稿A维修条款写承租方承担日常维护已有补充材料依据；合同草稿未签署、邮件仅为协商材料的状态已有说明。"
+        },
+        {
+          "line": 101,
+          "quote": "2. **存在冲突需核对的内容**：押金两个月与三个月的差异，邮件未确认；维修条款另一版新增全部设施故障费用的版本归属未核实；解除条款的通知形式、提前量和费用可能存在条件关系。"
+        },
+        {
+          "line": 107,
+          "quote": "2. 请律师核实“全部设施故障费用”条款的具体版本归属，不得由排除法推定为草稿B。"
+        }
+      ]
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-direct_matched-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "9fef4835bcd9a665cf17524215e7d56ffbd2a6d22732e3d515e5cb5c3d934c07",
+      "singleHttpCallMs": 10921,
+      "usage": {
+        "prompt_tokens": 4333,
+        "completion_tokens": 2577,
+        "total_tokens": 6910
+      },
+      "outputChars": 4872,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-direct_matched-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "补充材料已证明的A日常维护保留",
+        "另一项全部设施费用归属仍未知",
+        "未通过排除法归B",
+        "未将两项维修责任拼接为统一规则"
+      ],
+      "evidence": [
+        {
+          "line": 21,
+          "quote": "| F5 | 草稿A维修条款写承租方承担日常维护 | materials/legal_memo/maintenance-confirmation.md | 第1句 | 已确认（版本归属：草稿A） |"
+        },
+        {
+          "line": 22,
+          "quote": "| F6 | 另一版新增“全部设施故障费用”条款 | materials/legal_memo/maintenance-confirmation.md | 第2句 | 内容已确认；**版本对应待核实**（不得推定为草稿B） |"
+        },
+        {
+          "line": 49,
+          "quote": "| 维修范围 | 承租方承担日常维护 | 版本对应待核实 | 草稿A已确认；草稿B维修内容未建立对应 | maintenance-confirmation.md |"
+        },
+        {
+          "line": 54,
+          "quote": "- 内容：全部设施故障费用由承租方承担（或类似表述）。"
+        },
+        {
+          "line": 57,
+          "quote": "- 处理：不得与草稿A的“日常维护”拼接为对承租方更不利的统一条款；不得按材料出现顺序绑定版本。"
+        },
+        {
+          "line": 68,
+          "quote": "| H2 | “全部设施故障费用”条款的具体版本归属是哪一份草稿？是否经双方协商确认？ | 该条款显著扩大承租方维修责任范围；归属未核实，不得推定 | maintenance-confirmation.md |"
+        },
+        {
+          "line": 69,
+          "quote": "| H3 | 草稿A“承租方承担日常维护”与另一版“全部设施故障费用”是否为同一版本的不同表述，还是两个独立版本？ | 若拼接将形成对承租方更不利的统一条款，须避免 | current-brief.md；maintenance-confirmation.md |"
+        },
+        {
+          "line": 96,
+          "quote": "- 现有材料可确认：承租方视角、整理目标、三级优先级、草稿A押金为两个月租金、草稿B押金为三个月租金（邮件未确认）、草稿A维修条款为承租方承担日常维护、另一版新增“全部设施故障费用”但版本归属待核实。"
+        },
+        {
+          "line": 102,
+          "quote": "2. 请律师核验“全部设施故障费用”条款的版本归属，不得推定为草稿B。"
+        }
+      ]
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-direct-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "01acfdfd598c77127355e83a82fac8aadad8a88a80bc1230a20d3bb4ee112ff0",
+      "singleHttpCallMs": 25119,
+      "usage": {
+        "prompt_tokens": 4163,
+        "completion_tokens": 2766,
+        "total_tokens": 6929
+      },
+      "outputChars": 4944,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-direct-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "补充材料已证明的A日常维护保留",
+        "另一项全部设施费用归属仍未知",
+        "未通过排除法归B",
+        "未将两项维修责任拼接为统一规则"
+      ],
+      "evidence": [
+        {
+          "line": 28,
+          "quote": "| F-05 | 草稿A维修条款写承租方承担日常维护 | maintenance-confirmation.md | “草稿A维修条款写承租方承担日常维护” | 草稿A内容，未签署 |"
+        },
+        {
+          "line": 29,
+          "quote": "| F-06 | 另一版新增全部设施故障费用 | maintenance-confirmation.md | “另一版新增全部设施故障费用的具体版本归属仍未核实” | **版本对应待核实** |"
+        },
+        {
+          "line": 60,
+          "quote": "| 维修范围 | 承租方承担日常维护 | 待核实 | 草稿A有明确来源；草稿B维修条款内容在给定材料中未提供 |"
+        },
+        {
+          "line": 68,
+          "quote": "| 另一版新增全部设施故障费用 | maintenance-confirmation.md | **版本对应待核实** |"
+        },
+        {
+          "line": 102,
+          "quote": "| H-02 | 请核验“另一版新增全部设施故障费用”的版本归属。 | 该条款若适用于承租方，将显著扩大维修费用责任范围，直接影响承租方履约成本和风险敞口；版本归属未核实前不能确定其是否进入主文本。 |"
+        },
+        {
+          "line": 134,
+          "quote": "- 版本归属：需核验“另一版新增全部设施故障费用”的具体版本。"
+        }
+      ]
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-plan-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "f03215dda397b39fe1bdaf5be9d7a2122be6f82858ca107504d5311879cef358",
+      "singleHttpCallMs": 25866,
+      "usage": {
+        "prompt_tokens": 4362,
+        "completion_tokens": 2702,
+        "total_tokens": 7064
+      },
+      "outputChars": 4786,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-plan-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "补充材料已证明的A日常维护保留",
+        "另一项全部设施费用归属仍未知",
+        "未通过排除法归B",
+        "未将两项维修责任拼接为统一规则"
+      ],
+      "evidence": [
+        {
+          "line": 17,
+          "quote": "| materials/legal_memo/maintenance-confirmation.md | 已核对的补充材料 | 维修条款版本归属 | 确认草稿A维修条款为承租方承担日常维护；另一版“全部设施故障费用”的版本归属待核实 |"
+        },
+        {
+          "line": 28,
+          "quote": "| F-05 | 维修条款—草稿A | 承租方承担日常维护 | 版本归属已证实为草稿A | 已有充分依据 | maintenance-confirmation.md；current-brief.md |"
+        },
+        {
+          "line": 29,
+          "quote": "| F-06 | 维修条款—另一版 | 全部设施故障费用 | 具体版本归属未核实 | 因缺少关键资料暂不能执行：不得由排除法推定为草稿B | maintenance-confirmation.md；current-brief.md |"
+        },
+        {
+          "line": 51,
+          "quote": "| 维修范围 | 承租方承担日常维护 | 版本对应待核实 | 另一版新增“全部设施故障费用”，具体版本归属未核实 | maintenance-confirmation.md；current-brief.md |"
+        },
+        {
+          "line": 60,
+          "quote": "| 维修条款：全部设施故障费用 | maintenance-confirmation.md；current-brief.md | 版本对应待核实；不得由排除法推定为草稿B |"
+        },
+        {
+          "line": 69,
+          "quote": "| H-1 | 请核验“全部设施故障费用”这一维修条款具体属于哪一份草稿，并要求出租方提供该版本的完整条款上下文。 | 该条款若被纳入主文本，将显著扩大承租方维修费用责任范围，从“日常维护”扩展至“全部设施故障费用”，直接影响承租方履约成本和风险敞口。在版本归属未核实前，不能排除或确认该条款对承租方的影响。 |"
+        },
+        {
+          "line": 98,
+          "quote": "- 草稿A维修条款为承租方承担日常维护；另一版“全部设施故障费用”的版本归属待核实。"
+        },
+        {
+          "line": 106,
+          "quote": "- “全部设施故障费用”条款的具体版本归属。"
+        },
+        {
+          "line": 112,
+          "quote": "1. 由执业律师核验“全部设施故障费用”条款的版本归属及完整上下文。"
+        },
+        {
+          "line": 126,
+          "quote": "- 不将“全部设施故障费用”与“日常维护”拼接为统一条款，不按排除法推定其版本归属。"
+        }
+      ]
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-direct_matched-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "34debfcaf5e12beba349676e855c5a22b58ca6a77660477ad63132e9e33bdaed",
+      "singleHttpCallMs": 27957,
+      "usage": {
+        "prompt_tokens": 4332,
+        "completion_tokens": 3002,
+        "total_tokens": 7334
+      },
+      "outputChars": 5576,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-direct_matched-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "补充材料已证明的A日常维护保留",
+        "另一项全部设施费用归属仍未知",
+        "未通过排除法归B",
+        "未将两项维修责任拼接为统一规则"
+      ],
+      "evidence": [
+        {
+          "line": 20,
+          "quote": "| F-06 | 草稿A维修条款写承租方承担日常维护 | materials/legal_memo/maintenance-confirmation.md | 第1句 | 已确认（草稿A） |"
+        },
+        {
+          "line": 21,
+          "quote": "| F-07 | 另一版新增全部设施故障费用，具体版本归属仍未核实 | materials/legal_memo/maintenance-confirmation.md | 第2句 | 版本对应**待核实**；不得由排除法推定为草稿B |"
+        },
+        {
+          "line": 48,
+          "quote": "| 维修条款“全部设施故障费用”的版本归属 | materials/legal_memo/maintenance-confirmation.md | 版本对应待核实 | 不按排除法推定；独立列出 |"
+        },
+        {
+          "line": 58,
+          "quote": "| 维修范围 | 承租方承担日常维护 | — | — | materials/legal_memo/maintenance-confirmation.md | 草稿A归属已确认 |"
+        },
+        {
+          "line": 59,
+          "quote": "| 维修范围 | — | — | 全部设施故障费用 | materials/legal_memo/current-brief.md；materials/legal_memo/maintenance-confirmation.md | **版本对应待核实**；不得由排除法推定为草稿B；不得与草稿A日常维护条款拼接为统一规则 |"
+        },
+        {
+          "line": 70,
+          "quote": "| 另一版新增全部设施故障费用 | materials/legal_memo/current-brief.md（原始需求）；materials/legal_memo/maintenance-confirmation.md（补充核对） | **版本对应待核实**；不得按材料顺序绑定版本，不得拼接为统一规则 |"
+        },
+        {
+          "line": 82,
+          "quote": "| H-02 | 请核验**“全部设施故障费用”维修条款**的具体版本归属（草稿A、草稿B或其他版本），并确认该条款的完整表述、适用条件和除外情形。 | 该条款若生效将显著扩大承租方维修责任范围，从“日常维护”扩展至“全部设施故障费用”，对承租方持续履约成本影响重大；当前版本归属未核实，不能拼接为统一规则。 |"
+        },
+        {
+          "line": 100,
+          "quote": "| L-02 | 请确认**维修条款中“日常维护”的具体范围**在草稿A中是否有进一步定义或列举。 | 草稿A日常维护归属已确认，但具体范围若未定义，可能在履约中产生争议；优先级低于版本归属未核实的“全部设施故障费用”条款。 |"
+        },
+        {
+          "line": 107,
+          "quote": "1. **已有充分依据可直接使用的**：承租方视角、整理目标、高中低三级优先级框架；草稿A押金两个月、草稿B押金三个月的事实记录；草稿A维修条款为“承租方承担日常维护”的归属确认；合同草稿未签署、邮件未确认押金的状态。"
+        },
+        {
+          "line": 109,
+          "quote": "3. **因缺少关键资料暂不能执行的**：提前解约条款的完整内容核验；租金金额、租赁期限等核心商业条款的核对；房屋权属及授权链核验；“全部设施故障费用”条款的版本归属确认。"
+        },
+        {
+          "line": 122,
+          "quote": "| 已有充分依据 | 草稿A押金两个月；草稿B押金三个月；草稿A维修条款为日常维护；合同未签署；邮件未确认押金 |"
+        },
+        {
+          "line": 124,
+          "quote": "| 暂不能执行 | 提前解约条款核验；权属及授权链核验；“全部设施故障费用”版本归属确认；租金金额及期限核对 |"
+        }
+      ]
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-direct-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "baa78b33175343606c6e5b2710498b1fb710b6982bfa34c5bfe52d57617f756f",
+      "singleHttpCallMs": 15274,
+      "usage": {
+        "prompt_tokens": 4646,
+        "completion_tokens": 3588,
+        "total_tokens": 8234
+      },
+      "outputChars": 6740,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-direct-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 37,
+          "quote": "| F-11 | 维修条款一版写承租方承担日常维护 | materials/legal_memo/current-brief.md | 内容已有依据；版本对应待核实 |"
+        },
+        {
+          "line": 38,
+          "quote": "| F-12 | 维修条款另一版新增全部设施故障费用 | materials/legal_memo/current-brief.md | 内容已有依据；版本对应待核实 |"
+        },
+        {
+          "line": 57,
+          "quote": "| C-02 | 维修范围：一版为承租方承担日常维护；另一版新增全部设施故障费用 | materials/legal_memo/current-brief.md | 两版内容已有依据，但与一版／草稿A／草稿B的完整对应关系未建立；不得按材料顺序绑定版本，不得拼接为统一规则 |"
+        },
+        {
+          "line": 69,
+          "quote": "| 维修范围 | 版本对应待核实 | 版本对应待核实 | 一版：承租方承担日常维护；另一版：新增全部设施故障费用 | materials/legal_memo/current-brief.md |"
+        },
+        {
+          "line": 74,
+          "quote": "- 维修条款一版：承租方承担日常维护（来源：materials/legal_memo/current-brief.md；版本对应待核实）。"
+        },
+        {
+          "line": 75,
+          "quote": "- 维修条款另一版：新增全部设施故障费用（来源：materials/legal_memo/current-brief.md；版本对应待核实）。"
+        },
+        {
+          "line": 91,
+          "quote": "| H-02 | 维修范围条款的版本归属如何确定？承租方承担日常维护与新增全部设施故障费用分别对应哪一版草稿？ | 维修责任范围直接影响承租方持续履约期间的运营成本和风险敞口；两版内容已有依据但版本对应未建立，不能拼接为统一规则，须优先核实。 |"
+        }
+      ]
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-plan-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "c6eaf6ad3f8a354691d970f5da91e0b3b40dc95fae25220c2678f07ecc25de6f",
+      "singleHttpCallMs": 9315,
+      "usage": {
+        "prompt_tokens": 4384,
+        "completion_tokens": 2259,
+        "total_tokens": 6643
+      },
+      "outputChars": 4306,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-plan-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 15,
+          "quote": "| F5 | 维修条款一版写承租方承担日常维护 | materials/legal_memo/current-brief.md；原始需求 | 内容有依据；版本对应待核实 |"
+        },
+        {
+          "line": 16,
+          "quote": "| F6 | 维修条款另一版新增全部设施故障费用 | materials/legal_memo/current-brief.md；原始需求 | 内容有依据；版本对应待核实 |"
+        },
+        {
+          "line": 47,
+          "quote": "| 维修范围 | 承租方承担日常维护 | 版本对应待核实 | materials/legal_memo/current-brief.md；原始需求 |"
+        },
+        {
+          "line": 48,
+          "quote": "| 维修范围 | 全部设施故障费用 | 版本对应待核实 | materials/legal_memo/current-brief.md；原始需求 |"
+        },
+        {
+          "line": 62,
+          "quote": "| H2 | 维修条款中“承租方承担日常维护”与“全部设施故障费用”分别对应哪一版草稿？是否存在版本对应证据？ | 维修责任范围直接影响承租方成本承担和风险分配；不能把两个版本拼接成对承租方更不利的统一条款，需先确认版本归属。 |"
+        },
+        {
+          "line": 92,
+          "quote": "   - 维修条款“承租方承担日常维护”与“全部设施故障费用”的版本对应关系待核实，不能按材料顺序绑定版本，也不能拼接为统一规则。"
+        }
+      ]
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-direct_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "a91a30bad19c9113a8b69c45effba97ab3d735d53232516121fab62e04b2df5b",
+      "singleHttpCallMs": 16158,
+      "usage": {
+        "prompt_tokens": 4764,
+        "completion_tokens": 3807,
+        "total_tokens": 8571
+      },
+      "outputChars": 6911,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-direct_matched-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 35,
+          "quote": "| F-07 | 维修条款一版写承租方承担日常维护 | 原始需求；materials/legal_memo/current-brief.md | 正式说明 | 内容已有依据，**版本对应待核实** | 不得按材料顺序绑定版本 |"
+        },
+        {
+          "line": 36,
+          "quote": "| F-08 | 维修条款另一版新增全部设施故障费用 | 原始需求；materials/legal_memo/current-brief.md | 正式说明 | 内容已有依据，**版本对应待核实** | 不得拼接为统一规则 |"
+        },
+        {
+          "line": 57,
+          "quote": "- 维修范围：一版承租方承担日常维护 vs 另一版新增全部设施故障费用，版本对应待核实。"
+        },
+        {
+          "line": 73,
+          "quote": "- 维修条款一版：承租方承担日常维护。"
+        },
+        {
+          "line": 74,
+          "quote": "- 维修条款另一版：新增全部设施故障费用。"
+        },
+        {
+          "line": 89,
+          "quote": "| 高 | 维修条款两版分别对应哪一版草稿？承租方承担日常维护与全部设施故障费用之间是否存在版本归属？ | 维修责任范围直接影响承租方成本与风险分配；版本对应未建立前不能拼接为统一规则 | 两版草稿原文及版本标识；邮件中关于维修的讨论 | 版本对应待核实 |"
+        }
+      ]
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-direct-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "6a179cd552be5f8fe92f13d9fd90db3408683f2f91d805ff0c95bfb630b7a207",
+      "singleHttpCallMs": 34755,
+      "usage": {
+        "prompt_tokens": 4645,
+        "completion_tokens": 4096,
+        "total_tokens": 8741
+      },
+      "outputChars": 7642,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-direct-m2-r1.md",
+      "reviewStatus": "INCOMPLETE_NOT_PASSED",
+      "evidence": []
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-plan-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "f9371b52ba1edf1ace0c29eb3213a68cddf02d65fec303d42ec25d55bace2bb8",
+      "singleHttpCallMs": 34163,
+      "usage": {
+        "prompt_tokens": 4383,
+        "completion_tokens": 3498,
+        "total_tokens": 7881
+      },
+      "outputChars": 6209,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-plan-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 31,
+          "quote": "| F-05 | 维修条款一版写承租方承担日常维护 | current-brief.md | 内容已确认；**版本对应待核实** |"
+        },
+        {
+          "line": 32,
+          "quote": "| F-06 | 维修条款另一版新增全部设施故障费用 | current-brief.md | 内容已确认；**版本对应待核实** |"
+        },
+        {
+          "line": 60,
+          "quote": "| C-02 | 维修范围 | 一版：承租方承担日常维护；另一版：新增全部设施故障费用 | current-brief.md | 并列保留，不拼接为统一规则；版本归属待核实 |"
+        },
+        {
+          "line": 75,
+          "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | current-brief.md | **版本对应待核实**（不得按材料出现顺序绑定为草稿A或草稿B） |"
+        },
+        {
+          "line": 92,
+          "quote": "| H-01 | 两版草稿中维修条款的原文分别是什么？一版“日常维护”与另一版“全部设施故障费用”分别对应草稿A还是草稿B？ | 维修范围直接决定承租方的日常成本和潜在大额支出；若版本对应关系不清，无法判断哪一版对承租方更不利，也无法进行有效的条款比较和谈判准备。当前材料仅确认两版内容存在，但未建立版本对应关系，属于核心事实缺口。 |"
+        },
+        {
+          "line": 136,
+          "quote": "2. **核验维修条款的版本对应关系**，确认“日常维护”和“全部设施故障费用”分别属于哪一版草稿。"
+        }
+      ]
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-direct_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "3fb963ae12427175d92344a8f0ff58f0dbe2c42e8a82d46fe1031ae225d9af37",
+      "singleHttpCallMs": 36237,
+      "usage": {
+        "prompt_tokens": 4763,
+        "completion_tokens": 4096,
+        "total_tokens": 8859
+      },
+      "outputChars": 7124,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-direct_matched-m2-r1.md",
+      "reviewStatus": "INCOMPLETE_NOT_PASSED",
+      "evidence": []
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-direct-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "7bde15db692bdf52f2e10a2138502193aed45121a120c2b2e5b0bbbdde8cc0e3",
+      "singleHttpCallMs": 17539,
+      "usage": {
+        "prompt_tokens": 3829,
+        "completion_tokens": 4096,
+        "total_tokens": 7925
+      },
+      "outputChars": 7031,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-direct-m1-r1.md",
+      "reviewStatus": "INCOMPLETE_NOT_PASSED",
+      "evidence": []
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-plan-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "aa2c6b5fc061900832dd16c20be5d020fe18aaf7c9ef694b776085d0d3f41245",
+      "singleHttpCallMs": 14406,
+      "usage": {
+        "prompt_tokens": 4337,
+        "completion_tokens": 3517,
+        "total_tokens": 7854
+      },
+      "outputChars": 6198,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-plan-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 38,
+          "quote": "| F-10 | 维修条款一版写承租方承担日常维护 | 原始需求；current-brief.md | 分支与边界 | 版本对应待核实 | 内容有依据，但与草稿A／B对应关系未建立 |"
+        },
+        {
+          "line": 39,
+          "quote": "| F-11 | 维修条款另一版新增全部设施故障费用 | 原始需求；current-brief.md | 分支与边界 | 版本对应待核实 | 内容有依据，但与草稿A／B对应关系未建立 |"
+        },
+        {
+          "line": 66,
+          "quote": "| 维修范围 | 版本对应待核实 | 版本对应待核实 | 版本对应待核实 | current-brief.md | 一版写承租方承担日常维护；另一版新增全部设施故障费用；不能拼接为统一规则 |"
+        },
+        {
+          "line": 73,
+          "quote": "| U-01 | 维修条款：承租方承担日常维护 | 原始需求；current-brief.md | 版本对应待核实 | 与草稿A／B／一版／另一版的完整对应关系未建立 |"
+        },
+        {
+          "line": 74,
+          "quote": "| U-02 | 维修条款：全部设施故障费用 | 原始需求；current-brief.md | 版本对应待核实 | 与草稿A／B／一版／另一版的完整对应关系未建立 |"
+        },
+        {
+          "line": 87,
+          "quote": "| H-02 | 维修条款中“承租方承担日常维护”与“全部设施故障费用”分别对应哪一版草稿？两版是否可拼接？ | 维修范围 | 版本对应待核实 | 维修责任范围直接影响承租方运营成本和风险敞口；不能把两个版本拼接成对承租方更不利的统一条款 |"
+        },
+        {
+          "line": 126,
+          "quote": "- 维修条款存在两版内容（一版写承租方承担日常维护，另一版新增全部设施故障费用），但版本对应待核实。"
+        }
+      ]
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-direct_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "2c9f7a323bf820145c7194fd4b94bb9861e6ec9405b1bd9867ce147afbd30f6b",
+      "singleHttpCallMs": 10662,
+      "usage": {
+        "prompt_tokens": 3941,
+        "completion_tokens": 2559,
+        "total_tokens": 6500
+      },
+      "outputChars": 4551,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-direct_matched-m1-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 36,
+          "quote": "| F10 | 维修条款（一版） | 承租方承担日常维护 | 版本对应待核实 | 原始需求；current-brief.md | 尚无对应证据 |"
+        },
+        {
+          "line": 37,
+          "quote": "| F11 | 维修条款（另一版） | 新增全部设施故障费用 | 版本对应待核实 | 原始需求；current-brief.md | 尚无对应证据 |"
+        },
+        {
+          "line": 55,
+          "quote": "| 维修范围 | 承租方承担日常维护 | 新增全部设施故障费用 | 责任范围扩大 | 未确认 | 版本对应待核实 | 原始需求；current-brief.md |"
+        },
+        {
+          "line": 59,
+          "quote": "- 维修条款：承租方承担日常维护（版本对应待核实）。"
+        },
+        {
+          "line": 60,
+          "quote": "- 维修条款：全部设施故障费用（版本对应待核实）。"
+        },
+        {
+          "line": 74,
+          "quote": "| H3 | 维修条款两版分别对应哪份草稿？日常维护与全部设施故障费用的边界？ | 责任范围直接关系承租方成本 | 两版草稿维修条款原文 | 不拼接为统一条款；版本对应待核实 |"
+        }
+      ]
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-direct-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "4620ff38fe68b7ff41b895c7b908d0f7c9997e6cd786be1a137afd22ebea770e",
+      "singleHttpCallMs": 29406,
+      "usage": {
+        "prompt_tokens": 3828,
+        "completion_tokens": 3169,
+        "total_tokens": 6997
+      },
+      "outputChars": 5643,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-direct-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 28,
+          "quote": "| F-05 | 维修条款 | 一版写承租方承担日常维护 | 版本对应待核实 | current-brief.md | 正式说明记载内容，但未绑定具体版本 |"
+        },
+        {
+          "line": 29,
+          "quote": "| F-06 | 维修条款 | 另一版新增全部设施故障费用 | 版本对应待核实 | current-brief.md | 正式说明记载内容，但未绑定具体版本 |"
+        },
+        {
+          "line": 42,
+          "quote": "| 维修条款 | 承租方承担日常维护 | 版本对应待核实 | current-brief.md | 尚无对应证据 |"
+        },
+        {
+          "line": 43,
+          "quote": "| 维修条款 | 全部设施故障费用 | 版本对应待核实 | current-brief.md | 尚无对应证据 |"
+        },
+        {
+          "line": 59,
+          "quote": "| 维修范围 | — | — | 版本对应待核实 | current-brief.md | 一版为承租方承担日常维护；另一版新增全部设施故障费用。两版内容与草稿A/B的对应关系未建立，不得拼接为统一条款 |"
+        },
+        {
+          "line": 63,
+          "quote": "2. **维修范围差异**：两版维修条款的责任范围存在实质差异——\"日常维护\"与\"全部设施故障费用\"对承租方的负担程度显著不同。当前无法确认哪一版本对应草稿A或草稿B，也不能将两版内容合并为对承租方更不利的统一条款。"
+        },
+        {
+          "line": 76,
+          "quote": "| H-3 | 维修条款：两版内容（\"日常维护\" vs. \"全部设施故障费用\"）分别对应哪份草稿？是否存在中间版本或修改记录？ | 责任范围差异显著，直接决定承租方日常运营成本与风险敞口；当前版本对应关系未建立，无法判断哪一版为最新或双方实际协商版本 | 草稿修改记录、版本比对文件、双方往来邮件中涉及维修条款的具体表述 |"
+        }
+      ]
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-plan-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "8fb10f44aac54d0d53c8699624c9bbe1a0a68719895d30b68912654c340fb19a",
+      "singleHttpCallMs": 31247,
+      "usage": {
+        "prompt_tokens": 4336,
+        "completion_tokens": 3535,
+        "total_tokens": 7871
+      },
+      "outputChars": 6023,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-plan-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 26,
+          "quote": "| F-04 | 维修条款一版写“承租方承担日常维护” | 已有充分依据，可直接使用 | 原始需求；current-brief.md | 与草稿A／草稿B的版本对应待核实 |"
+        },
+        {
+          "line": 27,
+          "quote": "| F-05 | 维修条款另一版新增“全部设施故障费用” | 已有充分依据，可直接使用 | 原始需求；current-brief.md | 与草稿A／草稿B的版本对应待核实 |"
+        },
+        {
+          "line": 72,
+          "quote": "| U-01 | 维修条款（一版） | 承租方承担日常维护 | 版本对应待核实 | 原始需求；current-brief.md |"
+        },
+        {
+          "line": 73,
+          "quote": "| U-02 | 维修条款（另一版） | 新增全部设施故障费用 | 版本对应待核实 | 原始需求；current-brief.md |"
+        },
+        {
+          "line": 75,
+          "quote": "**禁止拼接说明**：U-01与U-02不能合并为“承租方承担日常维护及全部设施故障费用”的统一条款。两版内容应分别保留，待版本对应关系核实后再行归入。"
+        },
+        {
+          "line": 93,
+          "quote": "| H-03 | 维修条款两版内容分别归属于草稿A还是草稿B？ | 两版维修条款责任范围差异显著（日常维护 vs. 全部设施故障费用），对承租方成本影响大；版本对应未建立，无法判断哪一版适用于主文本。 |"
+        },
+        {
+          "line": 123,
+          "quote": "- 维修条款存在两版内容：一版为承租方承担日常维护，另一版新增全部设施故障费用；两版与草稿A／草稿B的版本对应关系待核实。"
+        },
+        {
+          "line": 141,
+          "quote": "3. **维修条款版本绑定**：取得两版草稿原文，确认“日常维护”版和“全部设施故障费用”版分别归属于哪一版草稿；不得拼接为统一条款。"
+        }
+      ]
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-direct_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "ad6d3097bad859845c07f84f84c0aaa2701f155426ec1640eadb824d1cf5872e",
+      "singleHttpCallMs": 30425,
+      "usage": {
+        "prompt_tokens": 3940,
+        "completion_tokens": 3594,
+        "total_tokens": 7534
+      },
+      "outputChars": 6354,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-direct_matched-m2-r1.md",
+      "reviewStatus": "TARGETED_ATTRIBUTION_PASS",
+      "reviewer": "ROOT_AGENT",
+      "reviewBasis": "ACTUAL_OUTPUT_RELEVANT_LINES_AND_TABLES",
+      "criteria": [
+        "两项匿名维修内容保留",
+        "未断言A/B维修归属",
+        "未知对应关系明确呈现",
+        "押金等其他明确版本属性继续按证据整理"
+      ],
+      "evidence": [
+        {
+          "line": 30,
+          "quote": "| F-07 | 维修条款一版写承租方承担日常维护 | current-brief.md | 已证实存在该版本内容 |"
+        },
+        {
+          "line": 31,
+          "quote": "| F-08 | 维修条款另一版新增全部设施故障费用 | current-brief.md | 已证实存在该版本内容 |"
+        },
+        {
+          "line": 44,
+          "quote": "| 维修条款 | 承租方承担日常维护 | 版本对应待核实 | current-brief.md | 尚无对应证据 |"
+        },
+        {
+          "line": 45,
+          "quote": "| 维修条款 | 全部设施故障费用 | 版本对应待核实 | current-brief.md | 尚无对应证据 |"
+        },
+        {
+          "line": 68,
+          "quote": "| 维修范围 | 版本对应待核实 | 版本对应待核实 | 责任范围差异 | current-brief.md | 一版为“承租方承担日常维护”，另一版“新增全部设施故障费用”；与草稿A/B的对应关系未建立，不得拼接为统一条款 |"
+        },
+        {
+          "line": 87,
+          "quote": "| H-03 | 维修条款：两版维修范围（“承租方承担日常维护”与“新增全部设施故障费用”）分别对应哪份草稿？是否存在条件关系或排除项？ | 两版责任范围差异显著，不能拼接为统一条款；若按较不利版本理解，承租方责任范围将大幅扩大 | 两版草稿维修条款原文；确认各版本与草稿A/B的对应关系 |"
+        }
+      ]
+    }
+  ]
+}

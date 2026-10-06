@@ -39,7 +39,8 @@ export async function createFinalCandidateAcceptance(page, options) {
     }, { path, body });
     const metadata = { label, path, status: response.status, requestId: response.payload.requestId ?? response.requestId,
       elapsedMs: Math.round(performance.now() - start), code: response.payload.error?.code,
-      validationReason: response.payload.error?.details?.reason, validationField: response.payload.error?.details?.field,
+      validationReason: response.payload.error?.details?.validationReason ?? response.payload.error?.details?.reason,
+      validationField: response.payload.error?.details?.validationField ?? response.payload.error?.details?.field,
       modelAttempts: response.payload.error?.details?.modelAttempts };
     requests.push(metadata);
     if (response.status < 200 || response.status >= 300) {
@@ -63,6 +64,10 @@ export async function createFinalCandidateAcceptance(page, options) {
   const caseText = encode(frozen);
   if (!options.resume) await writeFile(resolve(output, 'cases.json'), caseText, { flag: 'wx' });
   const sources = [
+    'enhancement/service/PlanningSessionService.java',
+    'enhancement/service/impl/PlanningSessionServiceImpl.java',
+    'enhancement/service/impl/PlanningDecisionPolicy.java',
+    'provider/domain/PlanningProviderRequest.java',
     'enhancement/service/impl/SourceObjectContract.java',
     'enhancement/service/impl/TaskQuestionScope.java',
     'enhancement/service/impl/ExecutionRuleCompactor.java',

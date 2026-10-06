@@ -6,6 +6,18 @@ test('表尾待核提示不取消具体A/B格中的维修归属', () => {
   const text = '| 属性 | 草稿A | 草稿B | 状态 |\n|---|---|---|---|\n| 维修范围 | 日常维护 | 全部设施故障费用 | 版本对应待核实 |\n\n版本对应待核实。';
   assert.equal(unboundMaintenanceTableClaims(text).length, 2);
 });
+
+test('短A/B表头、后置版本名和全角别名仍属于具体版本列', () => {
+  for (const headers of ['A | B', 'A版 | B版', 'Ａ | Ｂ', '草稿 A | 草稿 B']) {
+    const text = `| 属性 | ${headers} | 状态 |\n|---|---|---|---|\n| 维修范围 | 日常维护 | 全部设施故障费用 | 版本对应待核实 |`;
+    assert.equal(unboundMaintenanceTableClaims(text).length, 2, headers);
+  }
+});
+
+test('具体格内付款日期或签署状态未知不能隐藏维修归属', () => {
+  const text = '| 版本 | 维修内容 | 签署 |\n|---|---|---|\n| A版 | 日常维护，付款日期未确定 | 未确认 |\n| B版 | 全部设施故障费用 | 未确认 |';
+  assert.equal(unboundMaintenanceTableClaims(text).length, 2);
+});
 test('具体格保持未知并另列匿名内容时不报错，押金属性独立', () => {
   const text = '| 属性 | 草稿A | 草稿B | 已知内容 |\n|---|---|---|---|\n| 押金 | 两个月 | 三个月 | 已知 |\n| 维修 | 版本对应待核实 | 版本对应待核实 | 一版日常维护；另一版全部设施故障费用 |';
   assert.deepEqual(unboundMaintenanceTableClaims(text), []);

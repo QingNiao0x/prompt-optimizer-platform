@@ -9,6 +9,7 @@ import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.template.domain.PromptTemplate;
+import com.promptoptimizer.template.domain.TaskDeliveryProfile;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,47 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @since 0.1.0
  */
 class ExecutionContractAssemblyTest {
+    /** 翻译版次材料时只保留忠实翻译要求，不把材料内容误升级成新增分析表。 */
+    @Test
+    void shouldNotImposeAnAttributionTableOnTranslationOfTheMaterial() {
+        var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1");
+        String raw = "只把下面文字翻译成英文，只输出译文，不作分析：比较草稿A和草稿B。"
+                + "维修条款一版写承租方承担日常维护，另一版新增全部设施故障费用。";
+        var template = new PromptTemplate(TemplateCode.GENERAL, "只输出英文译文。", "忠实于原文。", "",
+                TaskDeliveryProfile.TRANSLATION);
+        var response = new EnhancementProviderResponse(List.of(
+                new PromptSection(PromptSectionType.BACKGROUND, "背景", "材料只作为翻译原文。"),
+                new PromptSection(PromptSectionType.TASK, "任务", "忠实翻译给定文字。"),
+                new PromptSection(PromptSectionType.OUTPUT, "输出", "只输出英文译文。"),
+                new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不增加分析。")),
+                "mock", "test", true, List.of());
+        var result = assembler.assemble(response, context, template, List.of(), List.of(), false, List.of(), false, 1, raw);
+        assertThat(result.sections()).filteredOn(section -> section.type() == PromptSectionType.OUTPUT)
+                .singleElement().satisfies(section -> assertThat(section.content()).doesNotContain("资料归属的交付要求", "| 对象／属性 |"));
+    }
+
+    /** 归属要求进入可复制的交付段落，不只在约束尾部提醒；已知押金不被改成未知。 */
+    @Test
+    void shouldBindUnknownVersionContentToTheActualOutputContract() {
+        String raw = "整理草稿A和草稿B的差异。草稿A押金为两个月，草稿B押金为三个月。"
+                + "维修条款一版写承租方承担日常维护，另一版新增全部设施故障费用。";
+        var result = assemble(raw, "整理资料并分别保留差异。", List.of(), List.of(), List.of());
+        var output = result.sections().stream().filter(section -> section.type() == PromptSectionType.OUTPUT).findFirst().orElseThrow();
+        assertThat(output.content()).contains("资料归属的交付要求", "未绑定版本的资料内容", "承租方承担日常维护", "全部设施故障费用");
+        assertThat(result.optimizedPrompt()).contains(output.content());
+        assertThat(output.content()).doesNotContain("草稿A | 承租方承担日常维护", "草稿B | 全部设施故障费用");
+    }
+
+    /** 已确认一版只解除这一条归属未知，另一版和其他新条件继续保持未决。 */
+    @Test
+    void shouldKeepPartialVersionEvidenceInTheOutputContract() {
+        String raw = "比较草稿A和草稿B。维修条款一版写承租方承担日常维护，另一版新增全部设施故障费用。"
+                + "草稿A维修条款写承租方承担日常维护。";
+        var result = assemble(raw, "核对已有维修资料。", List.of(), List.of(), List.of());
+        var output = result.sections().stream().filter(section -> section.type() == PromptSectionType.OUTPUT).findFirst().orElseThrow();
+        assertThat(output.content()).contains("| 维修条款 | 承租方承担日常维护 | 草稿A |", "| 维修条款 | 全部设施故障费用 | 版本对应待核实 |");
+    }
+
     @Test
     void shouldKeepBehaviorChoicesSeparateFromCurrentRegionFacts() {
         var answers = List.of(

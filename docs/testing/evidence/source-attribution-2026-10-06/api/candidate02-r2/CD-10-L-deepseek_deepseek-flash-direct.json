@@ -1,0 +1,26 @@
+{
+  "id": "CD-10-L-deepseek_deepseek-flash-direct",
+  "caseId": "CD-10-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "direct",
+  "startedAt": "2026-10-06T05:18:28.528Z",
+  "status": "FAILED",
+  "failure": {
+    "label": "CD-10-L-deepseek_deepseek-flash-direct-direct",
+    "path": "/api/v1/optimizations",
+    "status": 429,
+    "requestId": "e00effe9-bc5a-47b2-9cbe-be33fdf7ef0d",
+    "elapsedMs": 163,
+    "code": "USER_MODEL_CONCURRENCY_LIMIT"
+  },
+  "requests": [
+    {
+      "label": "CD-10-L-deepseek_deepseek-flash-direct-direct",
+      "path": "/api/v1/optimizations",
+      "status": 429,
+      "requestId": "e00effe9-bc5a-47b2-9cbe-be33fdf7ef0d",
+      "elapsedMs": 163,
+      "code": "USER_MODEL_CONCURRENCY_LIMIT"
+    }
+  ]
+}

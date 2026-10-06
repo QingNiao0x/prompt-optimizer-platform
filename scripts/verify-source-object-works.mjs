@@ -12,13 +12,15 @@ const plain = text => text.normalize('NFKC').replace(/[*`]/g, '').replace(/\s+/g
 // “与草稿A/B的对应关系”和“对应哪份草稿？”是关系或问题，不能当作明确版本标签。
 const version = text => {
   const label = plain(text);
-  return /^(?:租赁)?(?:草稿|版本)\s*[AB](?:$|[ (：:-]|表述|记载|内容)/i.test(label)
-    && (label.match(/(?:草稿|版本)\s*[AB]\b/gi) ?? []).length === 1
+  const names = label.match(/(?:草稿|版本)\s*[AB]\b|[AB]\s*版(?:本)?/gi) ?? [];
+  // 这是固定A/B合成题的诊断，不把短标签规则推广到其他业务或任意资料。
+  return /^(?:(?:租赁)?(?:草稿|版本)\s*[AB]|[AB]\s*版(?:本)?|[AB])(?:$|[ (：:-]|表述|记载|内容)/i.test(label)
+    && (names.length === 1 || /^[AB](?:$|[ (：:-])/.test(label) && names.length === 0)
     && !/对应关系|是否|如何|还是|未知|待核|未绑定/.test(label);
 };
 const value = text => /日常维护|全部设施故障/.test(plain(text));
 const unknown = text => /版本对应待核实|对应关系.{0,8}(?:未知|未建立|待核)|版本归属.{0,8}(?:未知|未建立|待核)|未(?:绑定|指定|对应)|对应未知/.test(plain(text));
-const cells = line => line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(plain);
+const cells = line => line.trim().replace(/^\|/, '').replace(/\|$/, '').split(/(?<!\\)\|/).map(plain);
 
 /** 只判定具体版本格中的已知内容；通用待核尾注不能抵消已建立的列归属。 */
 export function unboundMaintenanceTableClaims(output) {

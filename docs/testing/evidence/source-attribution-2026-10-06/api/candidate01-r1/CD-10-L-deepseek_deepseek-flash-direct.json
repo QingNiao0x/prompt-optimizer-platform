@@ -1,0 +1,47 @@
+{
+  "id": "CD-10-L-deepseek_deepseek-flash-direct",
+  "caseId": "CD-10-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "direct",
+  "startedAt": "2026-10-06T05:00:55.331Z",
+  "status": "FAILED",
+  "failure": {
+    "label": "CD-10-L-deepseek_deepseek-flash-direct-direct",
+    "path": "/api/v1/optimizations",
+    "status": 502,
+    "requestId": "65980097-1464-488c-a5cf-1146e2266261",
+    "elapsedMs": 35279,
+    "code": "RESULT_INVALID"
+  },
+  "requests": [
+    {
+      "label": "CD-10-L-deepseek_deepseek-v4-pro-direct-direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "d0a07e24-f9eb-40f7-a972-6a73f1ea3018",
+      "elapsedMs": 17958
+    },
+    {
+      "label": "CD-10-L-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "4b072d9e-2001-4f0b-9fd7-fdab51801173",
+      "elapsedMs": 107
+    },
+    {
+      "label": "CD-10-L-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "5f46c254-dcf3-48de-9f3a-b6a1056e4cfb",
+      "elapsedMs": 6319
+    },
+    {
+      "label": "CD-10-L-deepseek_deepseek-flash-direct-direct",
+      "path": "/api/v1/optimizations",
+      "status": 502,
+      "requestId": "65980097-1464-488c-a5cf-1146e2266261",
+      "elapsedMs": 35279,
+      "code": "RESULT_INVALID"
+    }
+  ]
+}

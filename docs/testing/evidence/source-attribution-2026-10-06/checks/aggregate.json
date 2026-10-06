@@ -1,0 +1,1697 @@
+{
+  "candidate": "04",
+  "sourceFileCount": 35,
+  "sourceAggregateSha256": "0b265abd3e6b13c2144dabe61b8fba19a328f8582d4f4b77b12a21fde4a2400f",
+  "sourceHashAlgorithm": "sha256(sorted relativePath:sha256 joined by LF)",
+  "selectedModels": [
+    "deepseek:deepseek-flash",
+    "deepseek:deepseek-v4-pro"
+  ],
+  "apiStageCount": 24,
+  "sourceChecks": {
+    "raw": {
+      "scheduled": 8,
+      "complete": 8,
+      "truncated": 0,
+      "tableBindingFailed": 8
+    },
+    "direct": {
+      "scheduled": 8,
+      "complete": 4,
+      "truncated": 4,
+      "tableBindingFailed": 0
+    },
+    "plan": {
+      "scheduled": 8,
+      "complete": 8,
+      "truncated": 0,
+      "tableBindingFailed": 0
+    },
+    "raw_matched": {
+      "scheduled": 8,
+      "complete": 8,
+      "truncated": 0,
+      "tableBindingFailed": 7
+    },
+    "direct_matched": {
+      "scheduled": 8,
+      "complete": 6,
+      "truncated": 2,
+      "tableBindingFailed": 0
+    }
+  },
+  "actualWorks": 72,
+  "statuses": {
+    "SUCCESS": 62,
+    "PARTIAL": 10
+  },
+  "cases": {
+    "CD-10-L": 40,
+    "ATTR-PARTIAL-L": 20,
+    "DEV-DECISION-L": 12
+  },
+  "incomplete": [
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-direct-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "f8312b20c881435d5debdcf423239f90c71c012076cfb650288c4ca757465114",
+      "singleHttpCallMs": 15573,
+      "usage": {
+        "prompt_tokens": 5045,
+        "completion_tokens": 4096,
+        "total_tokens": 9141
+      },
+      "outputChars": 7866,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-direct-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-direct_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "80429ffc0f5a3be98ba45a7f5172edd1c4757024744aeeb4ca74460136512c5a",
+      "singleHttpCallMs": 15981,
+      "usage": {
+        "prompt_tokens": 5156,
+        "completion_tokens": 4096,
+        "total_tokens": 9252
+      },
+      "outputChars": 7511,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-direct_matched-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-direct-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "6efd614268dc941ddfa7d8479dbeb0543262823fbeb07de4b9f8344a2e8e3df1",
+      "singleHttpCallMs": 36983,
+      "usage": {
+        "prompt_tokens": 5044,
+        "completion_tokens": 4097,
+        "total_tokens": 9141
+      },
+      "outputChars": 7180,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-direct-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "b0cf880ba67b799d287e8ecbf75cedb9fe6f554e15fb167965d6fd3be0191597",
+      "singleHttpCallMs": 15907,
+      "usage": {
+        "prompt_tokens": 4344,
+        "completion_tokens": 4096,
+        "total_tokens": 8440
+      },
+      "outputChars": 7364,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct_matched-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "b3312c340d3511c9331d3106fb4e6c882a70a5ed58e762e951c81cca6943e531",
+      "singleHttpCallMs": 16893,
+      "usage": {
+        "prompt_tokens": 4462,
+        "completion_tokens": 4096,
+        "total_tokens": 8558
+      },
+      "outputChars": 7504,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct_matched-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "380d5d19c5f46fa0861cf7d2a25a6e0871696d1d2824c38e04257f88f1503248",
+      "singleHttpCallMs": 34139,
+      "usage": {
+        "prompt_tokens": 4343,
+        "completion_tokens": 4096,
+        "total_tokens": 8439
+      },
+      "outputChars": 7628,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct_matched-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "2b08bab0e056e5319a7e2f0b9c3aab5998371c4bbe3f32bd1570e69251c18017",
+      "singleHttpCallMs": 35993,
+      "usage": {
+        "prompt_tokens": 4461,
+        "completion_tokens": 4096,
+        "total_tokens": 8557
+      },
+      "outputChars": 7651,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct_matched-m2-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-direct-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "6a179cd552be5f8fe92f13d9fd90db3408683f2f91d805ff0c95bfb630b7a207",
+      "singleHttpCallMs": 34755,
+      "usage": {
+        "prompt_tokens": 4645,
+        "completion_tokens": 4096,
+        "total_tokens": 8741
+      },
+      "outputChars": 7642,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-direct-m2-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-direct_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "3fb963ae12427175d92344a8f0ff58f0dbe2c42e8a82d46fe1031ae225d9af37",
+      "singleHttpCallMs": 36237,
+      "usage": {
+        "prompt_tokens": 4763,
+        "completion_tokens": 4096,
+        "total_tokens": 8859
+      },
+      "outputChars": 7124,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-direct_matched-m2-r1.md"
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-direct-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "7bde15db692bdf52f2e10a2138502193aed45121a120c2b2e5b0bbbdde8cc0e3",
+      "singleHttpCallMs": 17539,
+      "usage": {
+        "prompt_tokens": 3829,
+        "completion_tokens": 4096,
+        "total_tokens": 7925
+      },
+      "outputChars": 7031,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-direct-m1-r1.md"
+    }
+  ],
+  "entries": [
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-raw-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "ff1e3fcecad708812bff6392aae8c9f732e7ae94e0893b29523a0f60fd54a009",
+      "singleHttpCallMs": 15224,
+      "usage": {
+        "prompt_tokens": 3006,
+        "completion_tokens": 3413,
+        "total_tokens": 6419
+      },
+      "outputChars": 5977,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-raw-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-direct-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "f8312b20c881435d5debdcf423239f90c71c012076cfb650288c4ca757465114",
+      "singleHttpCallMs": 15573,
+      "usage": {
+        "prompt_tokens": 5045,
+        "completion_tokens": 4096,
+        "total_tokens": 9141
+      },
+      "outputChars": 7866,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-direct-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-plan-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "ce17f593b006c03c4ccd9b663f0d9f1d5067717880e6a19d770e2c6d5dd73f48",
+      "singleHttpCallMs": 11187,
+      "usage": {
+        "prompt_tokens": 4708,
+        "completion_tokens": 2400,
+        "total_tokens": 7108
+      },
+      "outputChars": 4200,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-plan-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-raw_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "f7d9131e575addba12f27f9a122ae81ba51ea1dcbea55bb6180d0d2e46906c89",
+      "singleHttpCallMs": 8998,
+      "usage": {
+        "prompt_tokens": 3117,
+        "completion_tokens": 1927,
+        "total_tokens": 5044
+      },
+      "outputChars": 3347,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-raw_matched-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-direct_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "80429ffc0f5a3be98ba45a7f5172edd1c4757024744aeeb4ca74460136512c5a",
+      "singleHttpCallMs": 15981,
+      "usage": {
+        "prompt_tokens": 5156,
+        "completion_tokens": 4096,
+        "total_tokens": 9252
+      },
+      "outputChars": 7511,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-direct_matched-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-raw-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "49eee82b10234a44e9c6c4e94b1c0a5c4ae3030399438739e4973914f3244064",
+      "singleHttpCallMs": 20762,
+      "usage": {
+        "prompt_tokens": 3005,
+        "completion_tokens": 1922,
+        "total_tokens": 4927
+      },
+      "outputChars": 3260,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-raw-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-direct-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "6efd614268dc941ddfa7d8479dbeb0543262823fbeb07de4b9f8344a2e8e3df1",
+      "singleHttpCallMs": 36983,
+      "usage": {
+        "prompt_tokens": 5044,
+        "completion_tokens": 4097,
+        "total_tokens": 9141
+      },
+      "outputChars": 7180,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-direct-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-plan-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "1d5268fdf9b613c43be19f1252dff50462bfb36edd94907142ce0ac865433937",
+      "singleHttpCallMs": 27142,
+      "usage": {
+        "prompt_tokens": 4707,
+        "completion_tokens": 3072,
+        "total_tokens": 7779
+      },
+      "outputChars": 5455,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-plan-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-raw_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "e7e70c411d06950f143485338779e7fa2b897a5a7c024b52e0044004df1be797",
+      "singleHttpCallMs": 22629,
+      "usage": {
+        "prompt_tokens": 3116,
+        "completion_tokens": 2355,
+        "total_tokens": 5471
+      },
+      "outputChars": 3897,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-raw_matched-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "CD-10-L-direct_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "95573ca5074274172db6aab45bf562ccc6f842f8210a271ab77b1d9f27f89950",
+      "singleHttpCallMs": 28226,
+      "usage": {
+        "prompt_tokens": 5155,
+        "completion_tokens": 3191,
+        "total_tokens": 8346
+      },
+      "outputChars": 6092,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\CD-10-L-direct_matched-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-raw-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "00cfd84eef081b122d50326f621f05083f6617e1513ce039be3a14870abb61ea",
+      "singleHttpCallMs": 9833,
+      "usage": {
+        "prompt_tokens": 3061,
+        "completion_tokens": 2339,
+        "total_tokens": 5400
+      },
+      "outputChars": 4209,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-raw-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "b0cf880ba67b799d287e8ecbf75cedb9fe6f554e15fb167965d6fd3be0191597",
+      "singleHttpCallMs": 15907,
+      "usage": {
+        "prompt_tokens": 4344,
+        "completion_tokens": 4096,
+        "total_tokens": 8440
+      },
+      "outputChars": 7364,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-plan-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "95615cac2c2a21534894e0bc8fb30e6c38f9e70efc6a3aab53cbc5a0f45c1177",
+      "singleHttpCallMs": 13832,
+      "usage": {
+        "prompt_tokens": 4780,
+        "completion_tokens": 3190,
+        "total_tokens": 7970
+      },
+      "outputChars": 5798,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-plan-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-raw_matched-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "3c1293a437b632cfffe1ec1539d8e5c89aac93f39b5a584319a098f29e54c698",
+      "singleHttpCallMs": 10997,
+      "usage": {
+        "prompt_tokens": 3179,
+        "completion_tokens": 2693,
+        "total_tokens": 5872
+      },
+      "outputChars": 4795,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-raw_matched-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct_matched-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "b3312c340d3511c9331d3106fb4e6c882a70a5ed58e762e951c81cca6943e531",
+      "singleHttpCallMs": 16893,
+      "usage": {
+        "prompt_tokens": 4462,
+        "completion_tokens": 4096,
+        "total_tokens": 8558
+      },
+      "outputChars": 7504,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct_matched-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-raw-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "37367dee9403207b739d2eae21a487818d7c3f3a7dd31372e32258eec7e6deb4",
+      "singleHttpCallMs": 16986,
+      "usage": {
+        "prompt_tokens": 3060,
+        "completion_tokens": 1694,
+        "total_tokens": 4754
+      },
+      "outputChars": 2922,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-raw-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "380d5d19c5f46fa0861cf7d2a25a6e0871696d1d2824c38e04257f88f1503248",
+      "singleHttpCallMs": 34139,
+      "usage": {
+        "prompt_tokens": 4343,
+        "completion_tokens": 4096,
+        "total_tokens": 8439
+      },
+      "outputChars": 7628,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-plan-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "617e59f980074a193a52c43c7d7182d885a9f6c135bd5e2b6c4b7fc8c81d46b5",
+      "singleHttpCallMs": 35164,
+      "usage": {
+        "prompt_tokens": 4779,
+        "completion_tokens": 3876,
+        "total_tokens": 8655
+      },
+      "outputChars": 6989,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-plan-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-raw_matched-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "c3a45fedf25502ec29153990f3d612278721e673806ef8c94ab8e99d1bf813fc",
+      "singleHttpCallMs": 21666,
+      "usage": {
+        "prompt_tokens": 3178,
+        "completion_tokens": 2143,
+        "total_tokens": 5321
+      },
+      "outputChars": 3660,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-raw_matched-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "ATTR-PARTIAL-L-direct_matched-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "2b08bab0e056e5319a7e2f0b9c3aab5998371c4bbe3f32bd1570e69251c18017",
+      "singleHttpCallMs": 35993,
+      "usage": {
+        "prompt_tokens": 4461,
+        "completion_tokens": 4096,
+        "total_tokens": 8557
+      },
+      "outputChars": 7651,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\ATTR-PARTIAL-L-direct_matched-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "DEV-DECISION-L-raw-m1-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "28cbce3f94860f3b1213e6a849af808e96a90adac09703d434191eb9dd85a524",
+      "singleHttpCallMs": 1706,
+      "usage": {
+        "prompt_tokens": 1004,
+        "completion_tokens": 264,
+        "total_tokens": 1268
+      },
+      "outputChars": 1170,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\DEV-DECISION-L-raw-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "DEV-DECISION-L-direct-m1-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "c105b96c6ec461d00b17167912bd1c90c82d12d76a76bd153f6c1faf70ef7d3a",
+      "singleHttpCallMs": 1282,
+      "usage": {
+        "prompt_tokens": 1502,
+        "completion_tokens": 330,
+        "total_tokens": 1832
+      },
+      "outputChars": 1493,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\DEV-DECISION-L-direct-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "DEV-DECISION-L-plan-m1-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "737d4bb6c87ce4184cc88e0a549b767a4ce84909abb8e8bee245524a67e60364",
+      "singleHttpCallMs": 1623,
+      "usage": {
+        "prompt_tokens": 1301,
+        "completion_tokens": 264,
+        "total_tokens": 1565
+      },
+      "outputChars": 1169,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\DEV-DECISION-L-plan-m1-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "DEV-DECISION-L-raw-m2-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "ebf856f58f254d9ebbf04d3fa9c5a34aa637fcf7f8be3b631e6a5ae91f2cf28f",
+      "singleHttpCallMs": 2601,
+      "usage": {
+        "prompt_tokens": 1003,
+        "completion_tokens": 263,
+        "total_tokens": 1266
+      },
+      "outputChars": 1278,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\DEV-DECISION-L-raw-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "DEV-DECISION-L-direct-m2-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "744fc0d264eb11b55a7abdaa70e8a43128429e12b653371b0bc1f47464bc614f",
+      "singleHttpCallMs": 2358,
+      "usage": {
+        "prompt_tokens": 1501,
+        "completion_tokens": 231,
+        "total_tokens": 1732
+      },
+      "outputChars": 1057,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\DEV-DECISION-L-direct-m2-r1.md"
+    },
+    {
+      "run": "r1-flash",
+      "executionRun": "2026-10-06T06-01-15-473Z-62cc1d4e",
+      "jobId": "DEV-DECISION-L-plan-m2-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "79046b2dcc1a67550748ec9dbf4a164e16c3d0e77c873ec25121b0402ecc4b5b",
+      "singleHttpCallMs": 2120,
+      "usage": {
+        "prompt_tokens": 1300,
+        "completion_tokens": 249,
+        "total_tokens": 1549
+      },
+      "outputChars": 1171,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-473Z-62cc1d4e\\execution\\DEV-DECISION-L-plan-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-raw-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "173b3820618bf49209e4fa85141d9ecaaac1eda03628389df4346fa72977a245",
+      "singleHttpCallMs": 12869,
+      "usage": {
+        "prompt_tokens": 3006,
+        "completion_tokens": 2619,
+        "total_tokens": 5625
+      },
+      "outputChars": 4509,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-raw-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-direct-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "92b5dc2e3761474408ce689298791b7b32ab11c6a55c5f8adb838adaf9410033",
+      "singleHttpCallMs": 12396,
+      "usage": {
+        "prompt_tokens": 3926,
+        "completion_tokens": 2810,
+        "total_tokens": 6736
+      },
+      "outputChars": 4732,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-direct-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-plan-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "b25f2831eb847ba640ebbda5ebf63286900d6c75c81cd627041870296d3fce83",
+      "singleHttpCallMs": 9864,
+      "usage": {
+        "prompt_tokens": 3974,
+        "completion_tokens": 2274,
+        "total_tokens": 6248
+      },
+      "outputChars": 4261,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-plan-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-raw_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "4bfa173e46060a0aa96736c051c8614382f923f3686d0a8919b3e03315c722da",
+      "singleHttpCallMs": 2693,
+      "usage": {
+        "prompt_tokens": 3118,
+        "completion_tokens": 504,
+        "total_tokens": 3622
+      },
+      "outputChars": 907,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-raw_matched-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-direct_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "640be1bb46d5f8859c2d1bb012d81216af11c70c5b7359abb2d797986aba89c0",
+      "singleHttpCallMs": 12357,
+      "usage": {
+        "prompt_tokens": 4038,
+        "completion_tokens": 2700,
+        "total_tokens": 6738
+      },
+      "outputChars": 4527,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-direct_matched-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-raw-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "42ef7d77ca48c0ef3aabe01d2e77cd77dab2c8e872107c76127b815bfdda16e1",
+      "singleHttpCallMs": 24947,
+      "usage": {
+        "prompt_tokens": 3005,
+        "completion_tokens": 2484,
+        "total_tokens": 5489
+      },
+      "outputChars": 4185,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-raw-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-direct-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "10f06252da5f6837339ca799dfd445e46a6a665167e3cdc9952a5329a99c2e1f",
+      "singleHttpCallMs": 31930,
+      "usage": {
+        "prompt_tokens": 3925,
+        "completion_tokens": 3462,
+        "total_tokens": 7387
+      },
+      "outputChars": 5869,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-direct-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-plan-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "acc2fc051ae2142cf631af67195bef091d4c7ac91a40888f1b77e634f32fc057",
+      "singleHttpCallMs": 23226,
+      "usage": {
+        "prompt_tokens": 3973,
+        "completion_tokens": 2649,
+        "total_tokens": 6622
+      },
+      "outputChars": 4590,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-plan-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-raw_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "06ed62dedfc39c3d4cb45c8aca3b07a2518274afe6cdb9d2640eda7d9214c6ad",
+      "singleHttpCallMs": 24672,
+      "usage": {
+        "prompt_tokens": 3117,
+        "completion_tokens": 2610,
+        "total_tokens": 5727
+      },
+      "outputChars": 4482,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-raw_matched-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "CD-10-L-direct_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "37b78775b897ea0af8d66f085a823a8dd94e1df9bc6f7ad302cb1303f9ec63aa",
+      "singleHttpCallMs": 31373,
+      "usage": {
+        "prompt_tokens": 4037,
+        "completion_tokens": 3605,
+        "total_tokens": 7642
+      },
+      "outputChars": 5992,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\CD-10-L-direct_matched-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-raw-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "34ac6114ac2e611df9a290850b386afeadc7ffeb69f4f150df3601b1eb9ae976",
+      "singleHttpCallMs": 10852,
+      "usage": {
+        "prompt_tokens": 3061,
+        "completion_tokens": 2439,
+        "total_tokens": 5500
+      },
+      "outputChars": 4262,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-raw-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-direct-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "4cb87aeea0005b43e29b9893817ec36adf4f670314cfb2e6a571c67c70981ef5",
+      "singleHttpCallMs": 12489,
+      "usage": {
+        "prompt_tokens": 4164,
+        "completion_tokens": 2842,
+        "total_tokens": 7006
+      },
+      "outputChars": 5635,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-direct-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-plan-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "f20906e1cd5760c86499fa4f77a5ea71c9779cff83585c97dab8e65ef8c69542",
+      "singleHttpCallMs": 12818,
+      "usage": {
+        "prompt_tokens": 4363,
+        "completion_tokens": 2958,
+        "total_tokens": 7321
+      },
+      "outputChars": 5776,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-plan-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-raw_matched-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "fe87ec1184258f544976c5881c9e4d758a004cefd01bd445fef81bcac2fc9e79",
+      "singleHttpCallMs": 11060,
+      "usage": {
+        "prompt_tokens": 3230,
+        "completion_tokens": 2588,
+        "total_tokens": 5818
+      },
+      "outputChars": 4359,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-raw_matched-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-direct_matched-m1-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "9fef4835bcd9a665cf17524215e7d56ffbd2a6d22732e3d515e5cb5c3d934c07",
+      "singleHttpCallMs": 10921,
+      "usage": {
+        "prompt_tokens": 4333,
+        "completion_tokens": 2577,
+        "total_tokens": 6910
+      },
+      "outputChars": 4872,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-direct_matched-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-raw-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "9560f12fa47ca84a53a8544f1874349f60d30fc841baf3008ec6c568211c38f4",
+      "singleHttpCallMs": 20943,
+      "usage": {
+        "prompt_tokens": 3060,
+        "completion_tokens": 2113,
+        "total_tokens": 5173
+      },
+      "outputChars": 3551,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-raw-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-direct-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "01acfdfd598c77127355e83a82fac8aadad8a88a80bc1230a20d3bb4ee112ff0",
+      "singleHttpCallMs": 25119,
+      "usage": {
+        "prompt_tokens": 4163,
+        "completion_tokens": 2766,
+        "total_tokens": 6929
+      },
+      "outputChars": 4944,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-direct-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-plan-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "f03215dda397b39fe1bdaf5be9d7a2122be6f82858ca107504d5311879cef358",
+      "singleHttpCallMs": 25866,
+      "usage": {
+        "prompt_tokens": 4362,
+        "completion_tokens": 2702,
+        "total_tokens": 7064
+      },
+      "outputChars": 4786,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-plan-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-raw_matched-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "221468b33cc2fe54768a728a14fdd4d8d02d92d303c4c071b7b3268473b0d450",
+      "singleHttpCallMs": 21495,
+      "usage": {
+        "prompt_tokens": 3229,
+        "completion_tokens": 2104,
+        "total_tokens": 5333
+      },
+      "outputChars": 3582,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-raw_matched-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "ATTR-PARTIAL-L-direct_matched-m2-r1",
+      "caseId": "ATTR-PARTIAL-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "34debfcaf5e12beba349676e855c5a22b58ca6a77660477ad63132e9e33bdaed",
+      "singleHttpCallMs": 27957,
+      "usage": {
+        "prompt_tokens": 4332,
+        "completion_tokens": 3002,
+        "total_tokens": 7334
+      },
+      "outputChars": 5576,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\ATTR-PARTIAL-L-direct_matched-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "DEV-DECISION-L-raw-m1-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "737d4bb6c87ce4184cc88e0a549b767a4ce84909abb8e8bee245524a67e60364",
+      "singleHttpCallMs": 1479,
+      "usage": {
+        "prompt_tokens": 1004,
+        "completion_tokens": 264,
+        "total_tokens": 1268
+      },
+      "outputChars": 1169,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\DEV-DECISION-L-raw-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "DEV-DECISION-L-direct-m1-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "737d4bb6c87ce4184cc88e0a549b767a4ce84909abb8e8bee245524a67e60364",
+      "singleHttpCallMs": 1249,
+      "usage": {
+        "prompt_tokens": 1270,
+        "completion_tokens": 264,
+        "total_tokens": 1534
+      },
+      "outputChars": 1169,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\DEV-DECISION-L-direct-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "DEV-DECISION-L-plan-m1-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "737d4bb6c87ce4184cc88e0a549b767a4ce84909abb8e8bee245524a67e60364",
+      "singleHttpCallMs": 1330,
+      "usage": {
+        "prompt_tokens": 1276,
+        "completion_tokens": 264,
+        "total_tokens": 1540
+      },
+      "outputChars": 1169,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\DEV-DECISION-L-plan-m1-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "DEV-DECISION-L-raw-m2-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "11e94b9e5485dd99eb1565bdb54c9b100f46c7eedf474b9fd8c4670dd00fe95f",
+      "singleHttpCallMs": 2189,
+      "usage": {
+        "prompt_tokens": 1003,
+        "completion_tokens": 192,
+        "total_tokens": 1195
+      },
+      "outputChars": 852,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\DEV-DECISION-L-raw-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "DEV-DECISION-L-direct-m2-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "6e19e3e332c80ade7864d7d402f0a27f469bca65f1ca6fecaf7bc7e7f97c46f0",
+      "singleHttpCallMs": 2394,
+      "usage": {
+        "prompt_tokens": 1269,
+        "completion_tokens": 237,
+        "total_tokens": 1506
+      },
+      "outputChars": 1115,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\DEV-DECISION-L-direct-m2-r1.md"
+    },
+    {
+      "run": "r1-pro",
+      "executionRun": "2026-10-06T06-01-15-067Z-a7ed6324",
+      "jobId": "DEV-DECISION-L-plan-m2-r1",
+      "caseId": "DEV-DECISION-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "744fc0d264eb11b55a7abdaa70e8a43128429e12b653371b0bc1f47464bc614f",
+      "singleHttpCallMs": 2268,
+      "usage": {
+        "prompt_tokens": 1275,
+        "completion_tokens": 231,
+        "total_tokens": 1506
+      },
+      "outputChars": 1057,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-01-15-067Z-a7ed6324\\execution\\DEV-DECISION-L-plan-m2-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-raw-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "621682adf96cc857b20461c0c1fb2b090720c1eb606ca8cf6b0ad8fae8522859",
+      "singleHttpCallMs": 13298,
+      "usage": {
+        "prompt_tokens": 3006,
+        "completion_tokens": 2893,
+        "total_tokens": 5899
+      },
+      "outputChars": 4975,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-raw-m1-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-direct-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "baa78b33175343606c6e5b2710498b1fb710b6982bfa34c5bfe52d57617f756f",
+      "singleHttpCallMs": 15274,
+      "usage": {
+        "prompt_tokens": 4646,
+        "completion_tokens": 3588,
+        "total_tokens": 8234
+      },
+      "outputChars": 6740,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-direct-m1-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-plan-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "c6eaf6ad3f8a354691d970f5da91e0b3b40dc95fae25220c2678f07ecc25de6f",
+      "singleHttpCallMs": 9315,
+      "usage": {
+        "prompt_tokens": 4384,
+        "completion_tokens": 2259,
+        "total_tokens": 6643
+      },
+      "outputChars": 4306,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-plan-m1-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-raw_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "39ceef6e557485f2a1c7f76acae49f1fb37ad683b99d28b6e72a2858cbbffdc3",
+      "singleHttpCallMs": 12840,
+      "usage": {
+        "prompt_tokens": 3124,
+        "completion_tokens": 3024,
+        "total_tokens": 6148
+      },
+      "outputChars": 5172,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-raw_matched-m1-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-direct_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "a91a30bad19c9113a8b69c45effba97ab3d735d53232516121fab62e04b2df5b",
+      "singleHttpCallMs": 16158,
+      "usage": {
+        "prompt_tokens": 4764,
+        "completion_tokens": 3807,
+        "total_tokens": 8571
+      },
+      "outputChars": 6911,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-direct_matched-m1-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-raw-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "6b329934d9b8d5530c5c239ef07b48ecedcde53e0de13644686b7a57b3552123",
+      "singleHttpCallMs": 21433,
+      "usage": {
+        "prompt_tokens": 3005,
+        "completion_tokens": 2026,
+        "total_tokens": 5031
+      },
+      "outputChars": 3403,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-raw-m2-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-direct-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "6a179cd552be5f8fe92f13d9fd90db3408683f2f91d805ff0c95bfb630b7a207",
+      "singleHttpCallMs": 34755,
+      "usage": {
+        "prompt_tokens": 4645,
+        "completion_tokens": 4096,
+        "total_tokens": 8741
+      },
+      "outputChars": 7642,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-direct-m2-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-plan-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "f9371b52ba1edf1ace0c29eb3213a68cddf02d65fec303d42ec25d55bace2bb8",
+      "singleHttpCallMs": 34163,
+      "usage": {
+        "prompt_tokens": 4383,
+        "completion_tokens": 3498,
+        "total_tokens": 7881
+      },
+      "outputChars": 6209,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-plan-m2-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-raw_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "dda78ccfa5f823d8ce8193b142eff522f89ad6a67c8fa63f8688f5e4b2e10243",
+      "singleHttpCallMs": 24448,
+      "usage": {
+        "prompt_tokens": 3123,
+        "completion_tokens": 2491,
+        "total_tokens": 5614
+      },
+      "outputChars": 4181,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-raw_matched-m2-r1.md"
+    },
+    {
+      "run": "r2-flash",
+      "executionRun": "2026-10-06T06-07-18-918Z-787ab65a",
+      "jobId": "CD-10-L-direct_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "3fb963ae12427175d92344a8f0ff58f0dbe2c42e8a82d46fe1031ae225d9af37",
+      "singleHttpCallMs": 36237,
+      "usage": {
+        "prompt_tokens": 4763,
+        "completion_tokens": 4096,
+        "total_tokens": 8859
+      },
+      "outputChars": 7124,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-18-918Z-787ab65a\\execution\\CD-10-L-direct_matched-m2-r1.md"
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-raw-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "d6dedfa0d283231eaccce1f83da46237793f744d5926416b740433b4299d0a6a",
+      "singleHttpCallMs": 10458,
+      "usage": {
+        "prompt_tokens": 3006,
+        "completion_tokens": 2354,
+        "total_tokens": 5360
+      },
+      "outputChars": 4118,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-raw-m1-r1.md"
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-direct-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "PARTIAL",
+      "finishReason": "length",
+      "outputSha256": "7bde15db692bdf52f2e10a2138502193aed45121a120c2b2e5b0bbbdde8cc0e3",
+      "singleHttpCallMs": 17539,
+      "usage": {
+        "prompt_tokens": 3829,
+        "completion_tokens": 4096,
+        "total_tokens": 7925
+      },
+      "outputChars": 7031,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-direct-m1-r1.md"
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-plan-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "aa2c6b5fc061900832dd16c20be5d020fe18aaf7c9ef694b776085d0d3f41245",
+      "singleHttpCallMs": 14406,
+      "usage": {
+        "prompt_tokens": 4337,
+        "completion_tokens": 3517,
+        "total_tokens": 7854
+      },
+      "outputChars": 6198,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-plan-m1-r1.md"
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-raw_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "aa3ad86fd7c09e7a77b24e042fd889a32804416484cb1c88c613e61efdd10c00",
+      "singleHttpCallMs": 11663,
+      "usage": {
+        "prompt_tokens": 3118,
+        "completion_tokens": 2603,
+        "total_tokens": 5721
+      },
+      "outputChars": 4616,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-raw_matched-m1-r1.md"
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-direct_matched-m1-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "2c9f7a323bf820145c7194fd4b94bb9861e6ec9405b1bd9867ce147afbd30f6b",
+      "singleHttpCallMs": 10662,
+      "usage": {
+        "prompt_tokens": 3941,
+        "completion_tokens": 2559,
+        "total_tokens": 6500
+      },
+      "outputChars": 4551,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-direct_matched-m1-r1.md"
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-raw-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "05d22e3ac353685b3db3f8764918d1e80b7d62ecdbc5bf068a28684764220128",
+      "singleHttpCallMs": 20724,
+      "usage": {
+        "prompt_tokens": 3005,
+        "completion_tokens": 2182,
+        "total_tokens": 5187
+      },
+      "outputChars": 3642,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-raw-m2-r1.md"
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-direct-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "4620ff38fe68b7ff41b895c7b908d0f7c9997e6cd786be1a137afd22ebea770e",
+      "singleHttpCallMs": 29406,
+      "usage": {
+        "prompt_tokens": 3828,
+        "completion_tokens": 3169,
+        "total_tokens": 6997
+      },
+      "outputChars": 5643,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-direct-m2-r1.md"
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-plan-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "8fb10f44aac54d0d53c8699624c9bbe1a0a68719895d30b68912654c340fb19a",
+      "singleHttpCallMs": 31247,
+      "usage": {
+        "prompt_tokens": 4336,
+        "completion_tokens": 3535,
+        "total_tokens": 7871
+      },
+      "outputChars": 6023,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-plan-m2-r1.md"
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-raw_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "53c39dbaed63db1db21acd7104c3527f8a783accf8d478ef8438b20743012648",
+      "singleHttpCallMs": 24202,
+      "usage": {
+        "prompt_tokens": 3117,
+        "completion_tokens": 2492,
+        "total_tokens": 5609
+      },
+      "outputChars": 4246,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-raw_matched-m2-r1.md"
+    },
+    {
+      "run": "r2-pro",
+      "executionRun": "2026-10-06T06-07-19-579Z-6ceae9a5",
+      "jobId": "CD-10-L-direct_matched-m2-r1",
+      "caseId": "CD-10-L",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "ad6d3097bad859845c07f84f84c0aaa2701f155426ec1640eadb824d1cf5872e",
+      "singleHttpCallMs": 30425,
+      "usage": {
+        "prompt_tokens": 3940,
+        "completion_tokens": 3594,
+        "total_tokens": 7534
+      },
+      "outputChars": 6354,
+      "outputPath": "tmp\\prompt-output-evaluation\\2026-10-06T06-07-19-579Z-6ceae9a5\\execution\\CD-10-L-direct_matched-m2-r1.md"
+    }
+  ]
+}

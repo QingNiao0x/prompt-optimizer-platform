@@ -1,0 +1,40 @@
+{
+  "id": "DEV-DECISION-L-deepseek_deepseek-flash-plan",
+  "caseId": "DEV-DECISION-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "plan",
+  "startedAt": "2026-10-06T05:56:02.027Z",
+  "prepared": null,
+  "plan": {
+    "summary": "当前需求及已提供材料足以进入最终增强，无需额外确认。",
+    "questions": [],
+    "templateCode": "FEATURE_DEVELOPMENT",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 1269,
+    "planId": "cf039dac-1be9-4f45-acf5-6c354329652d",
+    "planningContext": null,
+    "expiresAt": "2026-10-06T06:26:03.381901200Z"
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "ATTR-PARTIAL-L-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "d60c8862-3124-41b1-9529-c6b724885f7f",
+      "elapsedMs": 14306
+    },
+    {
+      "label": "DEV-DECISION-L-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "ca340698-b726-41fa-8a7f-b021513c37b5",
+      "elapsedMs": 1333
+    }
+  ]
+}

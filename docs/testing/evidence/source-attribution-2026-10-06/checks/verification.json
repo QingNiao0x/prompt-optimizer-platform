@@ -1,0 +1,555 @@
+{
+  "schemaVersion": 1,
+  "candidate": "04",
+  "sourceAggregateSha256": "0b265abd3e6b13c2144dabe61b8fba19a328f8582d4f4b77b12a21fde4a2400f",
+  "sourceFileCount": 35,
+  "api": {
+    "stages": 24,
+    "collected": 24,
+    "contextPreparations": 6,
+    "failedRequests": [],
+    "stagesDetail": [
+      {
+        "round": 1,
+        "file": "ATTR-PARTIAL-L-deepseek_deepseek-flash-direct.json",
+        "caseId": "ATTR-PARTIAL-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "direct",
+        "status": "COLLECTED",
+        "latencyMs": 23800,
+        "optimizedPromptChars": 6176
+      },
+      {
+        "round": 1,
+        "file": "ATTR-PARTIAL-L-deepseek_deepseek-flash-plan-final.json",
+        "caseId": "ATTR-PARTIAL-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 25152,
+        "optimizedPromptChars": 6899,
+        "questions": [
+          {
+            "id": "primary_draft",
+            "question": "本次律师复核应以哪一版租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次复核优先侧重持续履约安排，还是可能提前退出的安排？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      },
+      {
+        "round": 1,
+        "file": "ATTR-PARTIAL-L-deepseek_deepseek-flash-plan.json",
+        "caseId": "ATTR-PARTIAL-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 6104,
+        "questions": [
+          {
+            "id": "primary_draft",
+            "question": "本次律师复核应以哪一版租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次复核优先侧重持续履约安排，还是可能提前退出的安排？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      },
+      {
+        "round": 1,
+        "file": "ATTR-PARTIAL-L-deepseek_deepseek-v4-pro-direct.json",
+        "caseId": "ATTR-PARTIAL-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "direct",
+        "status": "COLLECTED",
+        "latencyMs": 14890,
+        "optimizedPromptChars": 5866
+      },
+      {
+        "round": 1,
+        "file": "ATTR-PARTIAL-L-deepseek_deepseek-v4-pro-plan-final.json",
+        "caseId": "ATTR-PARTIAL-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 15365,
+        "optimizedPromptChars": 6189,
+        "questions": [
+          {
+            "id": "primary_draft",
+            "question": "本次律师复核以哪一份租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次复核优先侧重哪一类安排？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "maintenance_clause_version",
+            "question": "“全部设施故障费用”这一维修条款具体属于哪一份草稿？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      },
+      {
+        "round": 1,
+        "file": "ATTR-PARTIAL-L-deepseek_deepseek-v4-pro-plan.json",
+        "caseId": "ATTR-PARTIAL-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 13581,
+        "questions": [
+          {
+            "id": "primary_draft",
+            "question": "本次律师复核以哪一份租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次复核优先侧重哪一类安排？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "maintenance_clause_version",
+            "question": "“全部设施故障费用”这一维修条款具体属于哪一份草稿？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      },
+      {
+        "round": 1,
+        "file": "CD-10-L-deepseek_deepseek-flash-direct.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "direct",
+        "status": "COLLECTED",
+        "latencyMs": 24795,
+        "optimizedPromptChars": 7404
+      },
+      {
+        "round": 1,
+        "file": "CD-10-L-deepseek_deepseek-flash-plan-final.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 26407,
+        "optimizedPromptChars": 6759,
+        "questions": [
+          {
+            "id": "main_draft",
+            "question": "本次律师复核应以哪一版租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次复核优先侧重哪一类安排？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      },
+      {
+        "round": 1,
+        "file": "CD-10-L-deepseek_deepseek-flash-plan.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 5322,
+        "questions": [
+          {
+            "id": "main_draft",
+            "question": "本次律师复核应以哪一版租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次复核优先侧重哪一类安排？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      },
+      {
+        "round": 1,
+        "file": "CD-10-L-deepseek_deepseek-v4-pro-direct.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "direct",
+        "status": "COLLECTED",
+        "latencyMs": 12637,
+        "optimizedPromptChars": 5494
+      },
+      {
+        "round": 1,
+        "file": "CD-10-L-deepseek_deepseek-v4-pro-plan-final.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 15924,
+        "optimizedPromptChars": 5539,
+        "questions": [
+          {
+            "id": "primary_document",
+            "question": "本次律师复核应以哪一份租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次律师复核应优先侧重哪类安排？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      },
+      {
+        "round": 1,
+        "file": "CD-10-L-deepseek_deepseek-v4-pro-plan.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 9023,
+        "questions": [
+          {
+            "id": "primary_document",
+            "question": "本次律师复核应以哪一份租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次律师复核应优先侧重哪类安排？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      },
+      {
+        "round": 1,
+        "file": "DEV-DECISION-L-deepseek_deepseek-flash-direct.json",
+        "caseId": "DEV-DECISION-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "direct",
+        "status": "COLLECTED",
+        "latencyMs": 8302,
+        "optimizedPromptChars": 2886
+      },
+      {
+        "round": 1,
+        "file": "DEV-DECISION-L-deepseek_deepseek-flash-plan-final.json",
+        "caseId": "DEV-DECISION-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 5401,
+        "optimizedPromptChars": 2418,
+        "questions": []
+      },
+      {
+        "round": 1,
+        "file": "DEV-DECISION-L-deepseek_deepseek-flash-plan.json",
+        "caseId": "DEV-DECISION-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 1269,
+        "questions": []
+      },
+      {
+        "round": 1,
+        "file": "DEV-DECISION-L-deepseek_deepseek-v4-pro-direct.json",
+        "caseId": "DEV-DECISION-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "direct",
+        "status": "COLLECTED",
+        "latencyMs": 8843,
+        "optimizedPromptChars": 2368
+      },
+      {
+        "round": 1,
+        "file": "DEV-DECISION-L-deepseek_deepseek-v4-pro-plan-final.json",
+        "caseId": "DEV-DECISION-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 11720,
+        "optimizedPromptChars": 2376,
+        "questions": []
+      },
+      {
+        "round": 1,
+        "file": "DEV-DECISION-L-deepseek_deepseek-v4-pro-plan.json",
+        "caseId": "DEV-DECISION-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 3612,
+        "questions": []
+      },
+      {
+        "round": 2,
+        "file": "CD-10-L-deepseek_deepseek-flash-direct.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "direct",
+        "status": "COLLECTED",
+        "latencyMs": 20448,
+        "optimizedPromptChars": 6646
+      },
+      {
+        "round": 2,
+        "file": "CD-10-L-deepseek_deepseek-flash-plan-final.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 9058,
+        "optimizedPromptChars": 6207,
+        "questions": [
+          {
+            "id": "primary_draft",
+            "question": "本次律师复核应以哪一版租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次复核优先侧重持续履约安排，还是可能提前退出的安排？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "file": "CD-10-L-deepseek_deepseek-flash-plan.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-flash",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 6236,
+        "questions": [
+          {
+            "id": "primary_draft",
+            "question": "本次律师复核应以哪一版租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次复核优先侧重持续履约安排，还是可能提前退出的安排？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "file": "CD-10-L-deepseek_deepseek-v4-pro-direct.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "direct",
+        "status": "COLLECTED",
+        "latencyMs": 13562,
+        "optimizedPromptChars": 5384
+      },
+      {
+        "round": 2,
+        "file": "CD-10-L-deepseek_deepseek-v4-pro-plan-final.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 15643,
+        "optimizedPromptChars": 6147,
+        "questions": [
+          {
+            "id": "main_document",
+            "question": "本次律师复核应以哪一份租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次律师复核应优先侧重哪方面的安排？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "file": "CD-10-L-deepseek_deepseek-v4-pro-plan.json",
+        "caseId": "CD-10-L",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "arm": "plan",
+        "status": "COLLECTED",
+        "latencyMs": 7863,
+        "questions": [
+          {
+            "id": "main_document",
+            "question": "本次律师复核应以哪一份租赁草稿作为主文本？",
+            "recommendedOptionCount": 0
+          },
+          {
+            "id": "review_focus",
+            "question": "本次律师复核应优先侧重哪方面的安排？",
+            "recommendedOptionCount": 0
+          }
+        ]
+      }
+    ]
+  },
+  "backendRegression": {
+    "suites": 134,
+    "tests": 1403,
+    "passed": 1395,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 8,
+    "scope": "完整运行与同一源码的环境故障专项复验合并覆盖；不是单次完整运行零失败。",
+    "initialFullRun": {
+      "tests": 1399,
+      "assertionFailures": 0,
+      "errors": 1,
+      "skipped": 8,
+      "exitCode": 1,
+      "environmentFailures": [
+        "Mockito/ByteBuddy外部自附加失败",
+        "ModelConcurrencyHttpIntegrationTest子JVM退出-1073741571"
+      ]
+    },
+    "environmentRecheck": {
+      "suites": [
+        "PromptOptimizerApplicationTests",
+        "ModelConcurrencyHttpIntegrationTest"
+      ],
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "options": [
+        "reuseForks=false",
+        "Xmx512m",
+        "现有byte-buddy-agent以javaagent预加载",
+        "jdk.net.unixdomain.tmpdir使用仓库临时目录"
+      ]
+    },
+    "conditionalSkippedSuites": [
+      {
+        "suite": "com.promptoptimizer.analytics.AnalyticsPerformanceAcceptanceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "completedAt": "2026-10-06T13:54:39.8570073+08:00"
+      },
+      {
+        "suite": "com.promptoptimizer.analytics.AnalyticsRealBrowserAcceptanceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "completedAt": "2026-10-06T13:54:40.6916190+08:00"
+      },
+      {
+        "suite": "com.promptoptimizer.provider.infrastructure.concurrency.RealModelConcurrencyAcceptanceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "completedAt": "2026-10-06T14:09:17.0543155+08:00"
+      },
+      {
+        "suite": "com.promptoptimizer.provider.infrastructure.concurrency.RealModelConcurrencyArchiveReplayTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "completedAt": "2026-10-06T14:09:17.8327777+08:00"
+      },
+      {
+        "suite": "com.promptoptimizer.provider.infrastructure.concurrency.RedisModelConcurrencyStoreIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 4,
+        "completedAt": "2026-10-06T14:09:27.4206521+08:00"
+      }
+    ]
+  },
+  "targetedRegression": {
+    "suites": 9,
+    "tests": 208,
+    "failures": 0,
+    "errors": 0
+  },
+  "evaluationToolTests": {
+    "tests": 34,
+    "passed": 34
+  },
+  "actualWorks": {
+    "scheduled": 72,
+    "statuses": {
+      "SUCCESS": 62,
+      "PARTIAL": 10
+    },
+    "cases": {
+      "CD-10-L": 40,
+      "ATTR-PARTIAL-L": 20,
+      "DEV-DECISION-L": 12
+    },
+    "cd10NamedVersionTableCheck": {
+      "raw": {
+        "scheduled": 8,
+        "complete": 8,
+        "truncated": 0,
+        "tableBindingFailed": 8
+      },
+      "direct": {
+        "scheduled": 8,
+        "complete": 4,
+        "truncated": 4,
+        "tableBindingFailed": 0
+      },
+      "plan": {
+        "scheduled": 8,
+        "complete": 8,
+        "truncated": 0,
+        "tableBindingFailed": 0
+      },
+      "raw_matched": {
+        "scheduled": 8,
+        "complete": 8,
+        "truncated": 0,
+        "tableBindingFailed": 7
+      },
+      "direct_matched": {
+        "scheduled": 8,
+        "complete": 6,
+        "truncated": 2,
+        "tableBindingFailed": 0
+      }
+    },
+    "targetedReview": {
+      "scheduled": 36,
+      "completeScopedPass": 26,
+      "incompleteNotPassed": 10
+    },
+    "code": {
+      "works": 12,
+      "compileAndBusinessPass": 12,
+      "inputCombinations": 15120
+    },
+    "maxOutputTokens": 4096,
+    "temperature": 0.2,
+    "automaticRetry": false
+  },
+  "limitations": [
+    "仅两个DeepSeek模型；历史catalog的plannedPublishedModels列出可见项，不是本轮调用范围",
+    "10份下游截断保留且不算通过",
+    "归属专项改善不等于全篇质量稳定胜出",
+    "未进行独立人工或领域专业评审",
+    "未补验完整真实目录上传或目标生产并发"
+  ]
+}

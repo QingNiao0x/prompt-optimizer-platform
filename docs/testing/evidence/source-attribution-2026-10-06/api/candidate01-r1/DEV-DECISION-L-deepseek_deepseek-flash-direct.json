@@ -1,0 +1,93 @@
+{
+  "id": "DEV-DECISION-L-deepseek_deepseek-flash-direct",
+  "caseId": "DEV-DECISION-L",
+  "modelId": "deepseek:deepseek-flash",
+  "arm": "direct",
+  "startedAt": "2026-10-06T05:01:43.779Z",
+  "result": {
+    "optimizedPrompt": "## 背景\n参数含business、amount、days、paid、restricted，amount和days为整数。公开方法为public static String decide(String business, int amount, int days, boolean paid, boolean restricted)。系统没有外部依赖，本题只实现工具类。\n\n## 任务\n请实现Java 21纯函数DecisionRules，分别判断审批资格和退款资格，注意两个对象不能混用规则。\n\n## 输出\n只输出一个完整java代码块，含public final class DecisionRules，不设置package。只依赖JDK，可用javac --release 21编译。不要输出解释、分析、测试、SQL、前后端方案或其他类。\n\n## 约束\n### 当前有效规则\n对任何business，amount<0或days<0都抛出IllegalArgumentException；business为null或不严格等于APPROVAL或REFUND时也抛出IllegalArgumentException。\nbusiness=APPROVAL时，restricted=true直接返回DENY；否则amount<=1000返回AUTO，amount>1000返回MANUAL。审批不使用paid和非负days作业务判断。\nbusiness=REFUND时，paid=false或days>7返回DENY；否则amount<=1000返回AUTO，amount>1000返回MANUAL。退款不使用restricted作业务判断。\n### 分支与边界说明\n1. 审批与退款是两个独立业务对象。审批允许小额自动处理，并不为退款的时效、支付状态提供证据。不能用“业务规则同类”合并两个标准，也不能借审批的金额条件回答退款时效。\n2. 边界值必须保留原始比较符：审批amount<=1000与退款days<=7都是包含边界；amount=1000和days=7不得落入严格小于分支。负金额与负天数是非法输入，不应返回通过或拒绝以伪造成功处理。\n3. 用户限制是审批资格条件，不是金额修改，也不是退款状态。审批restricted=true应先拒绝，无论金额大或小；退款只依据paid、days与amount，不把restricted借用为退款拒绝条件。\n4. 输入字段都是调用方显式提供的参数，没有默认客户、医院、租户或操作员。字符串只允许APPROVAL和REFUND，大小写敏感，不接受空值、空串、拼写错误或别名；不要调用trim或大小写转换扩大契约。\n5. 当前只需要交付可编译工具类，不生成REST Controller、Mapper、SQL、数据库迁移、事件发布或管理页面。软件背景不是新增完整系统的授权，交付范围与架构建议必须区别。\n6. 没有任何真实申请或退款明细，不能输出汇总数据、发生率、营收或真实资金结论。此任务不是医疗、法律或金融建议，仅是精确的内存分支规则实现。\n7. 支付是否完成只由paid参数决定，不能根据金额是否为零、申请天数、来源文件日期推测支付状态。退款未支付优先返回DENY，不推荐“自动视为已支付”的候选答案。\n8. 历史规则示例不等于当前要求：旧说明使用金额500和时效3天，本次明确覆盖为1000和7天。实现不得折中、拼接为两个门槛，不把旧示例写进执行条件。\n9. 不允许对输入执行外部动作。方法必须确定性：相同输入得到相同字符串，无系统时间、随机数、文件读取、网络请求、环境变量或反射，不创建线程。\n10. 资格判断、金额分支、时效分支的优先顺序都是本次明确要求，不得再次让用户选择“校验哪一步先做”。代码中可以拆小方法，但拆分不改变结果，不要求为了写法选择新增Plan问题。\n11. 返回值仅有AUTO、MANUAL和DENY三个代码，不能换成中文、布尔值或HTTP状态。非法参数使用IllegalArgumentException，不吞异常，不把异常包装成三种正常返回之一。\n12. 方法层不承担身份认证、数据库事务或生产部署；平台安全边界仍适用。日志也不是本次交付，不应新增输出原始业务参数的调试语句。\n### 约束与验收\n严格按每一业务对象的完整资格和边界顺序执行。包含1000、7、0、负数、null、错大小写及两个布尔参数组合。不得把<=改为<，不得把审批限制迁移到退款规则，不能从旧示例推断新规则。先核对公开签名与返回代码，再确认资格条件优先于金额。所有值和比较条件已明确，不需要新增选型或测试范围追问。\n\n用户明确规则（须遵守平台权限边界）：\n- 系统没有外部依赖，本题只实现工具类。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n\n## 验收\n1. 公开签名与返回代码正确：public static String decide(String business, int amount, int days, boolean paid, boolean restricted)，返回值为 AUTO、MANUAL 或 DENY。\n2. 参数校验正确：amount < 0 或 days < 0 抛出 IllegalArgumentException；business 为 null 或不严格等于 APPROVAL 或 REFUND 时抛出 IllegalArgumentException。\n3. 审批分支正确：restricted = true 返回 DENY；否则 amount <= 1000 返回 AUTO，amount > 1000 返回 MANUAL；审批不使用 paid 和非负 days 作业务判断。\n4. 退款分支正确：paid = false 或 days > 7 返回 DENY；否则 amount <= 1000 返回 AUTO，amount > 1000 返回 MANUAL；退款不使用 restricted 作业务判断。\n5. 边界值正确：amount = 1000 和 days = 7 不得落入严格小于分支；负金额与负天数抛出异常。\n6. 两个业务对象规则未混用。\n7. 方法确定性：相同输入得到相同字符串，无系统时间、随机数、文件读取、网络请求、环境变量或反射，不创建线程。\n8. 只输出一个完整 Java 代码块，含 public final class DecisionRules，不设置 package，只依赖 JDK，可用 javac --release 21 编译。\n9. 未输出解释、分析、测试、SQL、前后端方案或其他类。\n10. 未新增输出原始业务参数的调试语句。",
+    "sections": [
+      {
+        "type": "BACKGROUND",
+        "title": "背景",
+        "content": "参数含business、amount、days、paid、restricted，amount和days为整数。公开方法为public static String decide(String business, int amount, int days, boolean paid, boolean restricted)。系统没有外部依赖，本题只实现工具类。"
+      },
+      {
+        "type": "TASK",
+        "title": "任务",
+        "content": "请实现Java 21纯函数DecisionRules，分别判断审批资格和退款资格，注意两个对象不能混用规则。"
+      },
+      {
+        "type": "OUTPUT",
+        "title": "输出",
+        "content": "只输出一个完整java代码块，含public final class DecisionRules，不设置package。只依赖JDK，可用javac --release 21编译。不要输出解释、分析、测试、SQL、前后端方案或其他类。"
+      },
+      {
+        "type": "CONSTRAINTS",
+        "title": "约束",
+        "content": "### 当前有效规则\n对任何business，amount<0或days<0都抛出IllegalArgumentException；business为null或不严格等于APPROVAL或REFUND时也抛出IllegalArgumentException。\nbusiness=APPROVAL时，restricted=true直接返回DENY；否则amount<=1000返回AUTO，amount>1000返回MANUAL。审批不使用paid和非负days作业务判断。\nbusiness=REFUND时，paid=false或days>7返回DENY；否则amount<=1000返回AUTO，amount>1000返回MANUAL。退款不使用restricted作业务判断。\n### 分支与边界说明\n1. 审批与退款是两个独立业务对象。审批允许小额自动处理，并不为退款的时效、支付状态提供证据。不能用“业务规则同类”合并两个标准，也不能借审批的金额条件回答退款时效。\n2. 边界值必须保留原始比较符：审批amount<=1000与退款days<=7都是包含边界；amount=1000和days=7不得落入严格小于分支。负金额与负天数是非法输入，不应返回通过或拒绝以伪造成功处理。\n3. 用户限制是审批资格条件，不是金额修改，也不是退款状态。审批restricted=true应先拒绝，无论金额大或小；退款只依据paid、days与amount，不把restricted借用为退款拒绝条件。\n4. 输入字段都是调用方显式提供的参数，没有默认客户、医院、租户或操作员。字符串只允许APPROVAL和REFUND，大小写敏感，不接受空值、空串、拼写错误或别名；不要调用trim或大小写转换扩大契约。\n5. 当前只需要交付可编译工具类，不生成REST Controller、Mapper、SQL、数据库迁移、事件发布或管理页面。软件背景不是新增完整系统的授权，交付范围与架构建议必须区别。\n6. 没有任何真实申请或退款明细，不能输出汇总数据、发生率、营收或真实资金结论。此任务不是医疗、法律或金融建议，仅是精确的内存分支规则实现。\n7. 支付是否完成只由paid参数决定，不能根据金额是否为零、申请天数、来源文件日期推测支付状态。退款未支付优先返回DENY，不推荐“自动视为已支付”的候选答案。\n8. 历史规则示例不等于当前要求：旧说明使用金额500和时效3天，本次明确覆盖为1000和7天。实现不得折中、拼接为两个门槛，不把旧示例写进执行条件。\n9. 不允许对输入执行外部动作。方法必须确定性：相同输入得到相同字符串，无系统时间、随机数、文件读取、网络请求、环境变量或反射，不创建线程。\n10. 资格判断、金额分支、时效分支的优先顺序都是本次明确要求，不得再次让用户选择“校验哪一步先做”。代码中可以拆小方法，但拆分不改变结果，不要求为了写法选择新增Plan问题。\n11. 返回值仅有AUTO、MANUAL和DENY三个代码，不能换成中文、布尔值或HTTP状态。非法参数使用IllegalArgumentException，不吞异常，不把异常包装成三种正常返回之一。\n12. 方法层不承担身份认证、数据库事务或生产部署；平台安全边界仍适用。日志也不是本次交付，不应新增输出原始业务参数的调试语句。\n### 约束与验收\n严格按每一业务对象的完整资格和边界顺序执行。包含1000、7、0、负数、null、错大小写及两个布尔参数组合。不得把<=改为<，不得把审批限制迁移到退款规则，不能从旧示例推断新规则。先核对公开签名与返回代码，再确认资格条件优先于金额。所有值和比较条件已明确，不需要新增选型或测试范围追问。\n\n用户明确规则（须遵守平台权限边界）：\n- 系统没有外部依赖，本题只实现工具类。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+      },
+      {
+        "type": "ACCEPTANCE",
+        "title": "验收",
+        "content": "1. 公开签名与返回代码正确：public static String decide(String business, int amount, int days, boolean paid, boolean restricted)，返回值为 AUTO、MANUAL 或 DENY。\n2. 参数校验正确：amount < 0 或 days < 0 抛出 IllegalArgumentException；business 为 null 或不严格等于 APPROVAL 或 REFUND 时抛出 IllegalArgumentException。\n3. 审批分支正确：restricted = true 返回 DENY；否则 amount <= 1000 返回 AUTO，amount > 1000 返回 MANUAL；审批不使用 paid 和非负 days 作业务判断。\n4. 退款分支正确：paid = false 或 days > 7 返回 DENY；否则 amount <= 1000 返回 AUTO，amount > 1000 返回 MANUAL；退款不使用 restricted 作业务判断。\n5. 边界值正确：amount = 1000 和 days = 7 不得落入严格小于分支；负金额与负天数抛出异常。\n6. 两个业务对象规则未混用。\n7. 方法确定性：相同输入得到相同字符串，无系统时间、随机数、文件读取、网络请求、环境变量或反射，不创建线程。\n8. 只输出一个完整 Java 代码块，含 public final class DecisionRules，不设置 package，只依赖 JDK，可用 javac --release 21 编译。\n9. 未输出解释、分析、测试、SQL、前后端方案或其他类。\n10. 未新增输出原始业务参数的调试语句。"
+      }
+    ],
+    "contextReport": {
+      "customDescription": "合成独立资格规则工具，Java 21。",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [],
+      "fileSnippets": [],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "ambiguities": [],
+    "appliedConstraints": [
+      "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+      "校验所有外部输入，并明确处理空值、非法值和边界条件。",
+      "处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。",
+      "为核心逻辑补充正常、异常和边界场景测试。",
+      "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+      "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+    ],
+    "templateCode": "FEATURE_DEVELOPMENT",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 7968,
+    "warnings": [],
+    "evidenceCards": []
+  },
+  "status": "COLLECTED",
+  "requests": [
+    {
+      "label": "ATTR-PARTIAL-L-deepseek_deepseek-v4-pro-direct-direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "3dba1491-d890-4e02-9651-ed45eb01926d",
+      "elapsedMs": 14722
+    },
+    {
+      "label": "ATTR-PARTIAL-L-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "40113f39-783b-4459-b5d0-b2e8ad027ef8",
+      "elapsedMs": 62
+    },
+    {
+      "label": "DEV-DECISION-L-deepseek_deepseek-flash-direct-direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "368e50d0-6792-42af-b130-f8f07e8b18eb",
+      "elapsedMs": 8005
+    }
+  ]
+}

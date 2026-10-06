@@ -151,6 +151,22 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         server.verify();
     }
 
+    /** 归属依据独立发送，不把服务端原文快照或新增客户端参数塞进计划接口。 */
+    @Test
+    void shouldIncludeTheServerDerivedSourceViewInPlanningPayload() throws Exception {
+        String guide = "| 对象／属性 | 已证实版本 |\\n| 维修条款 | 草稿A |";
+        String responseBody = objectMapper.writeValueAsString(Map.of("model", MODEL,
+                "choices", List.of(Map.of("message", Map.of("role", "assistant", "content",
+                        "{\"summary\":\"保留已知归属\",\"questions\":[]}")))));
+        server.expect(once(), requestTo(ENDPOINT))
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.containsString("sourceObjectGuidance")))
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.containsString("维修条款")))
+                .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
+        var response = provider.plan(new PlanningProviderRequest("复核两版合同", "", List.of(), null, MODEL, List.of(), guide));
+        assertThat(response.questions()).isEmpty();
+        server.verify();
+    }
+
     @Test
     void shouldMapRateLimitResponseToRetryableProviderException() {
         server.expect(requestTo(ENDPOINT))

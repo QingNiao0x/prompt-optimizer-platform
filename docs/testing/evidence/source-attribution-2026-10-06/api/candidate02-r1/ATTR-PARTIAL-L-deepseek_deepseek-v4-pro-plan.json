@@ -1,0 +1,181 @@
+{
+  "id": "ATTR-PARTIAL-L-deepseek_deepseek-v4-pro-plan",
+  "caseId": "ATTR-PARTIAL-L",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "arm": "plan",
+  "startedAt": "2026-10-06T05:18:43.197Z",
+  "prepared": {
+    "contextId": "b23bfdd0-2bbc-40bf-b6ca-9c05a6bf25a3",
+    "version": "sha256:67b769a0d569b98a3f67f62a202d40b66ca7a1888ac76f213e7e56d58a3f48aa",
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "materials/",
+        "materials/legal_memo/",
+        "materials/legal_memo/current-brief.md",
+        "materials/legal_memo/legacy-note.md",
+        "materials/legal_memo/maintenance-confirmation.md",
+        "materials/legal_memo/tests/",
+        "materials/legal_memo/tests/layout-example.txt"
+      ],
+      "fileSummaries": [
+        "[PROJECT_DOCUMENT] materials/legal_memo/current-brief.md：Markdown 文档摘要：合成租赁材料的律师复核清单：合成现行资料；租金、押金、维修范围和提前解约条款均需逐条核对来源，不能凭通行惯例补成合同事实。；协商邮件中愿意再讨论不等于接受草稿，也不等于拒绝履约；材料摘要必须保留条件、时间和发送角色，不把意向话语改为明确承诺。；给定材料没有房屋权属和授权链证据，因此不能推断出租方有完整处置权；复核问题可以请求核验，但不先判定其无权出租。；用户没有要求文书送达和诉讼操作，系统不能追加发送律师函、公开争议或执行催告；常规排版顺序由编写者确定，…；业务摘录：往来附件引用了示例判决标题但没有可核验出处，它只能作为待核资料，不能作为法院普遍立场或现行判例依据。；押金两个月与三个月的差异可能影响资金安排，但未签署材料不能直接产生确定付款义务；；用户没有要求文书送达和诉讼操作，系统不能追加发送律师函、公开争议或执行催告；；[片段 1/1]；风险级别代表律师核查优先顺序，不是系统计算的违法概率；；常规排版顺序由编写者确定，无需提问。",
+        "[PROJECT_DOCUMENT] materials/legal_memo/maintenance-confirmation.md：Markdown 文档摘要：已核对的补充材料：草稿A维修条款写承租方承担日常维护。；另一版新增全部设施故障费用的具体版本归属仍未核实，不得由排除法推定为草稿B。；业务摘录：[片段 1/1] 已核对的补充材料：草稿A维修条款写承租方承担日常维护。 另一版新增全部设施故障费用的具体版本归属仍未核实，不得由排除法推定为草稿B。",
+        "[PROJECT_DOCUMENT] materials/legal_memo/legacy-note.md：Markdown 文档摘要：草稿A押金写为两个月租金。；另有草稿写：草稿B押金写为三个月租金，邮件未确认。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。；业务摘录：[片段 1/1] 草稿A押金写为两个月租金。 另有草稿写：草稿B押金写为三个月租金，邮件未确认。 两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 4,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/legal_memo/current-brief.md",
+          "evidence": "承租方视角、资料整理目标以及高中低三级优先级已经确定，不得再问这些选择"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/legal_memo/current-brief.md",
+          "evidence": "给定附件中的主体、地址、金额均为合成示例，不得加入真实当事人信息"
+        },
+        {
+          "id": "F03",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/legal_memo/current-brief.md",
+          "evidence": "材料摘要必须保留条件、时间和发送角色，不把意向话语改为明确承诺"
+        },
+        {
+          "id": "F04",
+          "category": "BUSINESS_RULE",
+          "origin": "PROJECT_DOCUMENT",
+          "sourcePath": "materials/legal_memo/maintenance-confirmation.md",
+          "evidence": "另一版新增全部设施故障费用的具体版本归属仍未核实，不得由排除法推定为草稿B"
+        }
+      ]
+    },
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "materials/",
+        "materials/legal_memo/",
+        "materials/legal_memo/current-brief.md",
+        "materials/legal_memo/legacy-note.md",
+        "materials/legal_memo/maintenance-confirmation.md",
+        "materials/legal_memo/tests/",
+        "materials/legal_memo/tests/layout-example.txt"
+      ],
+      "fileSnippets": [
+        {
+          "path": "materials/legal_memo/current-brief.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n# 合成租赁材料的律师复核清单：合成现行资料\n承租方视角、资料整理目标以及高中低三级优先级已经确定，不得再问这些选择。\n合同草稿未签署，往来邮件仅为协商材料，不能把草稿当作双方已生效的协议。\n给定附件中的主体、地址、金额均为合成示例，不得加入真实当事人信息。\n租金、押金、维修范围和提前解约条款均需逐条核对来源，不能凭通行惯例补成合同事实。\n\n# 分支与边界\n合同草稿的文档日期表示编辑时间，不证明签署、送达或接受日期；备忘录应列示这几个状态未有证据，不将文件排序当成法律事实。\n押金两个月与三个月的差异可能影响资金安排，但未签署材料不能直接产生确定付款义务；本次只标明需核对的条款和证据。\n维修条款一版写承租方承担日常维护，另一版新增全部设施故障费用；不能把两个版本拼接成对承租方更不利的统一条款。\n协商邮件中愿意再讨论不等于接受草稿，也不等于拒绝履约；材料摘要必须保留条件、时间和发送角色，不把意向话语改为明确承诺。\n往来附件引用了示例判决标题但没有可核验出处，它只能作为待核资料，不能作为法院普遍立场或现行判例依据。\n风险级别代表律师核查优先顺序，不是系统计算的违法概率；表格应说明高优先项为何影响目标，而不是用颜色代替解释。\n主文本尚未确定时可以先制作并列差异清单，但不能写最终合同摘要；所有当前不一致的金额、期限和责任范围应保留可追溯位置。\n给定材料没有房屋权属和授权链证据，因此不能推断出租方有完整处置权；复核问题可以请求核验，但不先判定其无权出租。\n解除条款涉及通知形式、提前量和费用，各部分可能存在条件关系；摘要不能仅取最短通知天数而删掉附加前提。\n不输入真实当事人敏感信息，也不输出联系地址和身份证件内容；合成编号可用于说明材料之间的关系，复制后仍应保持匿名。\n备忘录结论仅说明材料充分程度和后续核验事项，不评价某方一定胜诉或一定违法；若需法律适用，由律师按真实事实与现行依据另行处理。\n用户没有要求文书送达和诉讼操作，系统不能追加发送律师函、公开争议或执行催告；常规排版顺序由编写者确定，无需提问。",
+          "summary": "Markdown 文档摘要：合成租赁材料的律师复核清单：合成现行资料；租金、押金、维修范围和提前解约条款均需逐条核对来源，不能凭通行惯例补成合同事实。；协商邮件中愿意再讨论不等于接受草稿，也不等于拒绝履约；材料摘要必须保留条件、时间和发送角色，不把意向话语改为明确承诺。；给定材料没有房屋权属和授权链证据，因此不能推断出租方有完整处置权；复核问题可以请求核验，但不先判定其无权出租。；用户没有要求文书送达和诉讼操作，系统不能追加发送律师函、公开争议或执行催告；常规排版顺序由编写者确定，无需提问。",
+          "truncated": false
+        },
+        {
+          "path": "materials/legal_memo/tests/layout-example.txt",
+          "language": "text",
+          "content": "[片段 1/1]\n仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "summary": "文件内容摘要：仅用于排版和来源识别的测试例子：输出格式CSV，分析工具Python，收入100万元，示例显示准确率99%。；这些不是本题事实，不是工具偏好，不代表已经实现或取得成果。",
+          "truncated": false
+        },
+        {
+          "path": "materials/legal_memo/legacy-note.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n草稿A押金写为两个月租金。\n另有草稿写：草稿B押金写为三个月租金，邮件未确认。\n两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "summary": "Markdown 文档摘要：草稿A押金写为两个月租金。；另有草稿写：草稿B押金写为三个月租金，邮件未确认。；两份材料的适用口径和审批状态应按本题说明核对，不能只凭日期决定。",
+          "truncated": false
+        },
+        {
+          "path": "materials/legal_memo/maintenance-confirmation.md",
+          "language": "markdown",
+          "content": "[片段 1/1]\n已核对的补充材料：草稿A维修条款写承租方承担日常维护。另一版新增全部设施故障费用的具体版本归属仍未核实，不得由排除法推定为草稿B。",
+          "summary": "Markdown 文档摘要：已核对的补充材料：草稿A维修条款写承租方承担日常维护。；另一版新增全部设施故障费用的具体版本归属仍未核实，不得由排除法推定为草稿B。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "expiresAt": "2026-10-06T05:48:43.232419200Z",
+    "latencyMs": 39
+  },
+  "status": "FAILED",
+  "failure": {
+    "label": "ATTR-PARTIAL-L-deepseek_deepseek-v4-pro-plan-plan",
+    "path": "/api/v1/optimizations/plan",
+    "status": 502,
+    "requestId": "167f9221-cd79-47c0-b723-bfbe509abaa8",
+    "elapsedMs": 32333,
+    "code": "RESULT_INVALID",
+    "validationReason": "SOURCE_SCOPE_CONFLICT",
+    "validationField": "questions.options.answer",
+    "modelAttempts": 3
+  },
+  "requests": [
+    {
+      "label": "ATTR-PARTIAL-L-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "8487cc38-04cf-47ca-9198-e8edc873769f",
+      "elapsedMs": 78
+    },
+    {
+      "label": "ATTR-PARTIAL-L-deepseek_deepseek-flash-direct-direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "2ad5ec39-d427-4909-a7b7-fb5c9281d1d3",
+      "elapsedMs": 19081
+    },
+    {
+      "label": "ATTR-PARTIAL-L-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "def68fe9-60d3-40e5-ab5a-2516c3c6c123",
+      "elapsedMs": 103
+    },
+    {
+      "label": "ATTR-PARTIAL-L-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "582c8de7-e253-489c-9f83-fb741f1228df",
+      "elapsedMs": 16301
+    },
+    {
+      "label": "DEV-DECISION-L-deepseek_deepseek-flash-direct-direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "11a545b5-7174-4390-952d-ac4f6596102b",
+      "elapsedMs": 5547
+    },
+    {
+      "label": "DEV-DECISION-L-deepseek_deepseek-flash-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "4bf6d9bc-f00b-4c0c-9877-ef9824b7b678",
+      "elapsedMs": 1917
+    },
+    {
+      "label": "ATTR-PARTIAL-L-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 502,
+      "requestId": "167f9221-cd79-47c0-b723-bfbe509abaa8",
+      "elapsedMs": 32333,
+      "code": "RESULT_INVALID",
+      "validationReason": "SOURCE_SCOPE_CONFLICT",
+      "validationField": "questions.options.answer",
+      "modelAttempts": 3
+    }
+  ]
+}

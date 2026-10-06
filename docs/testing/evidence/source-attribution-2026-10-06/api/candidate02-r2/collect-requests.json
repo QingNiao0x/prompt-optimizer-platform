@@ -1,0 +1,62 @@
+{
+  "requests": [
+    {
+      "label": "identity",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "requestId": "4dd61519-3ce5-4247-aedf-360a76e0986c",
+      "elapsedMs": 45
+    },
+    {
+      "label": "csrf",
+      "path": "/api/v1/auth/csrf",
+      "status": 200,
+      "requestId": "0180a2b7-a7e7-479c-bafe-d1e6fb1c10e3",
+      "elapsedMs": 178
+    },
+    {
+      "label": "catalog",
+      "path": "/api/v1/models",
+      "status": 200,
+      "requestId": "3f75bc4c-23e3-40b0-96d4-59e3ffd2a0f6",
+      "elapsedMs": 56
+    },
+    {
+      "label": "CD-10-L-deepseek_deepseek-flash-direct-direct",
+      "path": "/api/v1/optimizations",
+      "status": 429,
+      "requestId": "e00effe9-bc5a-47b2-9cbe-be33fdf7ef0d",
+      "elapsedMs": 163,
+      "code": "USER_MODEL_CONCURRENCY_LIMIT"
+    },
+    {
+      "label": "CD-10-L-deepseek_deepseek-flash-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 429,
+      "requestId": "4d725d55-337c-4f69-8560-bfd58d5019cb",
+      "elapsedMs": 129,
+      "code": "USER_MODEL_CONCURRENCY_LIMIT"
+    },
+    {
+      "label": "CD-10-L-deepseek_deepseek-v4-pro-direct-direct",
+      "path": "/api/v1/optimizations",
+      "status": 200,
+      "requestId": "9bb49f45-2dba-4352-b619-2ec83840ae7b",
+      "elapsedMs": 17050
+    },
+    {
+      "label": "CD-10-L-deepseek_deepseek-v4-pro-plan-prepare",
+      "path": "/api/v1/context/planning",
+      "status": 200,
+      "requestId": "cd9655b5-b72e-447c-aa83-da5f29f23d3d",
+      "elapsedMs": 102
+    },
+    {
+      "label": "CD-10-L-deepseek_deepseek-v4-pro-plan-plan",
+      "path": "/api/v1/optimizations/plan",
+      "status": 200,
+      "requestId": "b1c75951-ecab-4794-8bfa-cca11e030649",
+      "elapsedMs": 5353
+    }
+  ]
+}

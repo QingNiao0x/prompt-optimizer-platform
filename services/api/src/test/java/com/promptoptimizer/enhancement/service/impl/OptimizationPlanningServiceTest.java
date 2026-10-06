@@ -489,6 +489,56 @@ class OptimizationPlanningServiceTest {
         assertThat(actual.planId()).isNotBlank();
     }
 
+    @Test
+    void shouldValidatePlanOptionsAgainstTheOwnedSourceWhenTheDigestOmitsVersionEvidence() {
+        var plan = planWithMaintenanceSource("草稿A维修条款写承租方承担日常维护。", false);
+        assertThat(plan.questions()).singleElement().satisfies(question -> assertThat(question.options())
+                .anyMatch(option -> option.answer().contains("草稿A维修条款写承租方承担日常维护")));
+    }
+
+    @Test
+    void shouldStillRejectAnUnprovedOtherVersionWhenTheSourceOnlyConfirmsVersionA() {
+        assertThatThrownBy(() -> planWithMaintenanceSource("草稿B维修条款写新增全部设施故障费用。", false))
+                .isInstanceOf(ProviderException.class);
+    }
+
+    @Test
+    void shouldNotUseTestMaterialsAsProofForAnOtherwiseUnboundVersion() {
+        assertThatThrownBy(() -> planWithMaintenanceSource("草稿A维修条款写承租方承担日常维护。", true))
+                .isInstanceOf(ProviderException.class);
+    }
+
+    /** 经真实上下文准备保存原文，证明摘要遗漏不能改变已有归属或让测试样例成为依据。 */
+    private OptimizationPlan planWithMaintenanceSource(String candidate, boolean testSource) {
+        String raw = "复核两版租赁合同并整理差异。维修条款一版写承租方承担日常维护，另一版新增全部设施故障费用。"
+                + "尚未决定主文本，维修版本对应仅按明确材料核对，不能推定。";
+        String path = testSource ? "materials/legal_memo/tests/maintenance-example.md"
+                : "materials/legal_memo/maintenance-confirmation.md";
+        String source = "已核对的补充材料：草稿A维修条款写承租方承担日常维护。"
+                + "另一版新增全部设施故障费用的具体版本归属仍未核实，不得由排除法推定为草稿B。";
+        PlanningSessionService sessions = new PlanningSessionServiceImpl(new InMemoryPlanningSessionStore(CLOCK),
+                request -> new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(
+                        new FileSnippet(path, "markdown", source, "维修资料", false)),
+                        List.of(), List.of(), "test-v1"), new ProtectedContextFilterImpl(), TestActors.currentActor(), CLOCK);
+        var prepared = sessions.prepareContext(new PlanningContextRequest(raw,
+                new ContextAnalysisRequest("", List.of(new ContextFileInput(path, source, "markdown"))),
+                PermissionPolicyInput.empty()));
+        assertThat(prepared.digest().factCards()).noneMatch(card -> card.evidence()
+                .contains("草稿A维修条款写承租方承担日常维护"));
+        var planning = new OptimizationPlanningServiceImpl(request -> {
+            if (!testSource) assertThat(request.sourceObjectGuidance())
+                    .contains("| 维修条款 | 承租方承担日常维护 | 草稿A |", "版本对应待核实");
+            return new PlanningProviderResponse(
+                "确认本次复核主文本", List.of(new PlanQuestion("main-text", "本次以哪份草稿为主文本？", "",
+                PlanQuestionType.SINGLE_CHOICE, List.of(
+                        new PlanOption("first", "以草稿A为主", "", "以草稿A为主文本。" + candidate, false),
+                        new PlanOption("parallel", "暂不指定", "", "暂不指定主文本，先并列差异。", false)),
+                List.of(), true)), "mock", "planner", true);
+        }, new PromptTemplateRegistryImpl(), sessions, CLOCK);
+        return planning.plan(new OptimizationPlanRequest(raw, "", List.of(),
+                new PlanningContextReference(prepared.contextId(), prepared.version())));
+    }
+
     private static PlanningSessionService planningSessions(Clock clock) {
         return new PlanningSessionServiceImpl(
                 new InMemoryPlanningSessionStore(clock),

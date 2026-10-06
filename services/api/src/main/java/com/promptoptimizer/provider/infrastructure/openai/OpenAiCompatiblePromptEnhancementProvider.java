@@ -613,7 +613,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     }
 
     /**
-     * 计划请求只发送需求、背景描述、短期会话和安全上下文摘要，不发送项目文件正文。
+     * 计划请求发送需求、短期会话、安全摘要及有预算的资料归属视图，不发送完整项目文件。
      */
     private ChatCompletionRequest buildPlanningRequest(PlanningProviderRequest request) {
         var taskIntent = com.promptoptimizer.template.domain.TaskIntentResolver.resolve(
@@ -625,7 +625,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 request.planningContext(),
                 request.knownDecisions(),
                 taskIntent,
-                taskIntent.deliveryProfile().planningGuidance()
+                taskIntent.deliveryProfile().planningGuidance(),
+                request.sourceObjectGuidance()
         );
         String userMessage;
         try {
@@ -1093,7 +1094,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             PlanningContextDigest planningContext,
             List<com.promptoptimizer.enhancement.domain.PlanningKnownDecision> knownDecisions,
             com.promptoptimizer.template.domain.TaskIntent taskIntent,
-            String questionScope
+            String questionScope,
+            String sourceObjectGuidance
     ) {
     }
 
