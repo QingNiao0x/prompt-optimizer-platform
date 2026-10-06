@@ -1,0 +1,359 @@
+{
+  "scope": "CONDITIONAL_FACTS_AND_RESEARCH_REMINDERS",
+  "sourceRun": "tmp/prompt-comparison/conditional-reminder-real-20261006-11",
+  "sourceManifest": {
+    "createdAt": "2026-10-06T13:06:10.967Z",
+    "kind": "REAL_AUTHENTICATED_API",
+    "dataAuthorization": "SYNTHETIC",
+    "firstFailuresPreserved": true,
+    "caseSha256": "2102c79a4f021b8c66e87243bcc5190aa329b4682858253d3f8f55e80c6d8025",
+    "sourceHashes": {
+      "enhancement/service/PlanningSessionService.java": "cbfef3afaf9fdd80b19d85f0de9d527c8f5728d3881738beee828ccad95a6821",
+      "enhancement/service/impl/PlanningSessionServiceImpl.java": "18eb969b4b715c77fab0256376d6992daa60f35f2f08dd11d3b2112f3b514b3f",
+      "enhancement/service/impl/PlanningDecisionPolicy.java": "6f2bcff4bac7123ab3eaea63a4b45be0f991ac3c448c9f28aa3c9819b9844d86",
+      "provider/domain/PlanningProviderRequest.java": "74d327312eb02d158a27608ac34604087df07cb6ceecab3fc79b1cbe87ec2c72",
+      "enhancement/service/impl/SourceObjectContract.java": "0952ab42b6f00a054bd5725f9b071e537fdaad4f6e30cb016da9d0267736b527",
+      "enhancement/service/impl/TaskQuestionScope.java": "fc50fedf3c46bc894a4ecb332dcd9649ca878e770e2732aeb234097b7bba0f3a",
+      "enhancement/service/impl/ExecutionRuleCompactor.java": "a0fd858c1aa36f1f47ddd5097065791c77f4ad8e24491406d0869b6d5e8c02d0",
+      "enhancement/service/impl/MinimalPromptOrganizer.java": "815dc21292804de40b00a7879034f26ca584536a1df4aac1294fc3d3180df799",
+      "enhancement/service/impl/PendingDecisionSignature.java": "12c700a04da314aa49a0504836e65f750392bbde84fc387d951c7f47133e0d77",
+      "enhancement/service/impl/ReadOnlyMaterialComparison.java": "036825e57193d53ad9bc9d8576c0f161c451535149f4e14e74b323593ffa2201",
+      "provider/domain/PromptRewriteStrategy.java": "cc4517fa133444ab87cdbed8a452d6a7202a64a39e4d1a48336f38b7bf52f380",
+      "template/domain/TaskIntentResolver.java": "2706a9a570f55369f48ca9482460f141a542a0aa75144c6edd4b7cac990fcba6",
+      "enhancement/service/impl/AmbiguityDetector.java": "2e7e2c95c30eb746171de91611b7b4271cbe1fc224525da8d469ccb25a8263e8",
+      "provider/domain/ProviderResponseValidationException.java": "f6fb3e95c05b0ab581008542ba9811794e11c177672dde1a6dfbe505491748bf",
+      "enhancement/service/impl/ComparisonMaterialDecision.java": "d45b44afe98fb62a857d1b175e1b312343a2a7d3aea75f24355911e889b88e91",
+      "enhancement/service/impl/NewsBodyFactContract.java": "696a8865b2fad64f4544a80ad1ce4ef42fc6029113b55714de71026411bce8b2",
+      "enhancement/service/impl/PendingReminderIdentity.java": "b6fe0dc2323c48107a1ce7592459a8344d71e4133e670b1efc02d0c5e787435f",
+      "enhancement/service/impl/PlanQuestionFilter.java": "180107e5170233ed77cfc49fbf983edcd23541018d00385f1dec01c167c19059",
+      "enhancement/service/impl/RoutineGuideDecision.java": "77e2cce8a833072d384e838a0d06637374222860867d57d8eae2e59520ad89d2",
+      "enhancement/service/impl/RoutineWritingPresentation.java": "894e753ffd06d828010a0f26caca044ad901fb07d16f6a0ff10e725d86ad0ecf",
+      "enhancement/service/impl/PlanningAuthorizationState.java": "7821104abd742312600bd3ccd7be61a203c5c64577d3a461966a2f80485cb62d",
+      "enhancement/service/impl/PlanningConflictIdentity.java": "3178eada3cc1740743e4e7417d108415e91de3ef0eef6b4867c13b46e1a86101",
+      "enhancement/service/impl/RequirementFidelityGuard.java": "f6e71dd45ffb62b3ad66a6fe736255aa344cf7b313fddeb39d2322f97cda4b03",
+      "enhancement/service/impl/EvidenceStateGuard.java": "30c635e68e89e8b67a80fd88fbd1f101609c7ecc145dfb5ad987a5f45bd6c837",
+      "enhancement/service/impl/ConditionalConfirmationGuard.java": "c6e44b221614f70ce733acab5431c3c2a760a021a55a3bfbff7d1be6103faf89",
+      "enhancement/service/impl/ProviderPrerequisiteCompactor.java": "95e0e4aa12b85e0bf12b6d8bb3c72a514e5d0ea0d2cc972616acea4ec76c895e",
+      "enhancement/service/impl/ResolvedPlanState.java": "52f1b60242c83946e3b41588e6d0feea973245d4834ac2127e69996d0db4fcc2",
+      "enhancement/service/impl/PlanAmbiguityMerger.java": "1f39ef49112f80700bc45809bbf79fa280f872e80a2f60d52a486e159788b981",
+      "enhancement/service/impl/PlanAnswerSemantics.java": "c69c7432386b61a3726157eef81da085c84ab93dcbf3a26e7434a927c816d454",
+      "enhancement/service/impl/PlanRecommendationAligner.java": "c3d00f87b17a7d4c7de735ea2af85844f0affff0d4d027985bdccfb534974725",
+      "enhancement/service/impl/NewsLengthContract.java": "a39ecd8f0227c2616d06715623db4c9e97a0e3ace1ba4744e6ed1442bc2e1260",
+      "template/domain/TaskDeliveryProfile.java": "f0f1949caac12b2dc5d741455ca0bdf207f1e15357c5b5fd4902464fac0c7033",
+      "enhancement/service/impl/OptimizationResultAssembler.java": "5887bd24eca971922ca20e286e767a7258f4bca71538cbedf997674b6ca2283f",
+      "enhancement/service/impl/DefaultEnhancementOrchestrator.java": "1716c895aeb93de7b9652507652ff802b69b977b332af495abbe5d89716ab9e9",
+      "enhancement/service/impl/OptimizationPlanningServiceImpl.java": "0ba19504654bcbe938bfdd1eb6445852b902726ee55e1dd62708dd0ae15c114c",
+      "provider/domain/PromptOptimizationGuidance.java": "8120b6eef1e2c15a6bad52b58d1f07ffae47ecc2c0ec380bfa3253ee60710ee0",
+      "provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java": "19b3ab3cb08cc121591e5b65b5c20df47a97b6e5615ff224427ffd7dcf1dee17"
+    },
+    "reviewKind": "AI_ASSISTED",
+    "independentHumanReview": "NOT_PERFORMED",
+    "domainSpecialistReview": "AFTER_LAUNCH_PER_USER",
+    "plannedPublishedModels": [
+      "deepseek:deepseek-flash",
+      "deepseek:deepseek-v4-pro",
+      "tokenhub:glm-5.3-flashx",
+      "tokenhub:minimax-m3"
+    ],
+    "callsPerModelLimit": 40
+  },
+  "backendStartedAt": "2026-10-06T21:05:17.1497970+08:00",
+  "firstFailuresPreserved": true,
+  "reusedPlans": true,
+  "reusedPlanOrigin": {
+    "source": "tmp/prompt-comparison/conditional-reminder-real-20261006-10",
+    "reused": "SERVER_BOUND_PLANS_AND_REVIEWED_ANSWERS",
+    "reason": "Only final reminder normalization changed; original planning source hashes and frozen inputs are equal.",
+    "sourceHashes": {
+      "enhancement/service/PlanningSessionService.java": "cbfef3afaf9fdd80b19d85f0de9d527c8f5728d3881738beee828ccad95a6821",
+      "enhancement/service/impl/PlanningSessionServiceImpl.java": "18eb969b4b715c77fab0256376d6992daa60f35f2f08dd11d3b2112f3b514b3f",
+      "enhancement/service/impl/PlanningDecisionPolicy.java": "6f2bcff4bac7123ab3eaea63a4b45be0f991ac3c448c9f28aa3c9819b9844d86",
+      "provider/domain/PlanningProviderRequest.java": "74d327312eb02d158a27608ac34604087df07cb6ceecab3fc79b1cbe87ec2c72",
+      "enhancement/service/impl/SourceObjectContract.java": "0952ab42b6f00a054bd5725f9b071e537fdaad4f6e30cb016da9d0267736b527",
+      "enhancement/service/impl/TaskQuestionScope.java": "fc50fedf3c46bc894a4ecb332dcd9649ca878e770e2732aeb234097b7bba0f3a",
+      "enhancement/service/impl/ExecutionRuleCompactor.java": "a0fd858c1aa36f1f47ddd5097065791c77f4ad8e24491406d0869b6d5e8c02d0",
+      "enhancement/service/impl/MinimalPromptOrganizer.java": "815dc21292804de40b00a7879034f26ca584536a1df4aac1294fc3d3180df799",
+      "enhancement/service/impl/PendingDecisionSignature.java": "12c700a04da314aa49a0504836e65f750392bbde84fc387d951c7f47133e0d77",
+      "enhancement/service/impl/ReadOnlyMaterialComparison.java": "036825e57193d53ad9bc9d8576c0f161c451535149f4e14e74b323593ffa2201",
+      "provider/domain/PromptRewriteStrategy.java": "cc4517fa133444ab87cdbed8a452d6a7202a64a39e4d1a48336f38b7bf52f380",
+      "template/domain/TaskIntentResolver.java": "2706a9a570f55369f48ca9482460f141a542a0aa75144c6edd4b7cac990fcba6",
+      "enhancement/service/impl/AmbiguityDetector.java": "2e7e2c95c30eb746171de91611b7b4271cbe1fc224525da8d469ccb25a8263e8",
+      "provider/domain/ProviderResponseValidationException.java": "f6fb3e95c05b0ab581008542ba9811794e11c177672dde1a6dfbe505491748bf",
+      "enhancement/service/impl/ComparisonMaterialDecision.java": "d45b44afe98fb62a857d1b175e1b312343a2a7d3aea75f24355911e889b88e91",
+      "enhancement/service/impl/NewsBodyFactContract.java": "696a8865b2fad64f4544a80ad1ce4ef42fc6029113b55714de71026411bce8b2",
+      "enhancement/service/impl/PendingReminderIdentity.java": "b6fe0dc2323c48107a1ce7592459a8344d71e4133e670b1efc02d0c5e787435f",
+      "enhancement/service/impl/PlanQuestionFilter.java": "180107e5170233ed77cfc49fbf983edcd23541018d00385f1dec01c167c19059",
+      "enhancement/service/impl/RoutineGuideDecision.java": "77e2cce8a833072d384e838a0d06637374222860867d57d8eae2e59520ad89d2",
+      "enhancement/service/impl/RoutineWritingPresentation.java": "894e753ffd06d828010a0f26caca044ad901fb07d16f6a0ff10e725d86ad0ecf",
+      "enhancement/service/impl/PlanningAuthorizationState.java": "7821104abd742312600bd3ccd7be61a203c5c64577d3a461966a2f80485cb62d",
+      "enhancement/service/impl/PlanningConflictIdentity.java": "3178eada3cc1740743e4e7417d108415e91de3ef0eef6b4867c13b46e1a86101",
+      "enhancement/service/impl/RequirementFidelityGuard.java": "f6e71dd45ffb62b3ad66a6fe736255aa344cf7b313fddeb39d2322f97cda4b03",
+      "enhancement/service/impl/EvidenceStateGuard.java": "30c635e68e89e8b67a80fd88fbd1f101609c7ecc145dfb5ad987a5f45bd6c837",
+      "enhancement/service/impl/ConditionalConfirmationGuard.java": "c6e44b221614f70ce733acab5431c3c2a760a021a55a3bfbff7d1be6103faf89",
+      "enhancement/service/impl/ProviderPrerequisiteCompactor.java": "1b6e2e7ffa51b25bf7ef3faf9b545cae917bd66174149d801e383b4cf7dbb7ff",
+      "enhancement/service/impl/ResolvedPlanState.java": "52f1b60242c83946e3b41588e6d0feea973245d4834ac2127e69996d0db4fcc2",
+      "enhancement/service/impl/PlanAmbiguityMerger.java": "1f39ef49112f80700bc45809bbf79fa280f872e80a2f60d52a486e159788b981",
+      "enhancement/service/impl/PlanAnswerSemantics.java": "c69c7432386b61a3726157eef81da085c84ab93dcbf3a26e7434a927c816d454",
+      "enhancement/service/impl/PlanRecommendationAligner.java": "c3d00f87b17a7d4c7de735ea2af85844f0affff0d4d027985bdccfb534974725",
+      "enhancement/service/impl/NewsLengthContract.java": "a39ecd8f0227c2616d06715623db4c9e97a0e3ace1ba4744e6ed1442bc2e1260",
+      "template/domain/TaskDeliveryProfile.java": "f0f1949caac12b2dc5d741455ca0bdf207f1e15357c5b5fd4902464fac0c7033",
+      "enhancement/service/impl/OptimizationResultAssembler.java": "5887bd24eca971922ca20e286e767a7258f4bca71538cbedf997674b6ca2283f",
+      "enhancement/service/impl/DefaultEnhancementOrchestrator.java": "1716c895aeb93de7b9652507652ff802b69b977b332af495abbe5d89716ab9e9",
+      "enhancement/service/impl/OptimizationPlanningServiceImpl.java": "0ba19504654bcbe938bfdd1eb6445852b902726ee55e1dd62708dd0ae15c114c",
+      "provider/domain/PromptOptimizationGuidance.java": "8120b6eef1e2c15a6bad52b58d1f07ffae47ecc2c0ec380bfa3253ee60710ee0",
+      "provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java": "19b3ab3cb08cc121591e5b65b5c20df47a97b6e5615ff224427ffd7dcf1dee17"
+    },
+    "originalsPreserved": true
+  },
+  "regression": {
+    "classes": 38,
+    "tests": 663,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "compilation": "Targeted sources explicitly recompiled with javac; current production source compiled with Maven; Surefire executed separately from unrelated analytics test compilation"
+  },
+  "evaluationToolTests": 22,
+  "newModelStages": 10,
+  "plans": [
+    {
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "status": "COLLECTED",
+      "http": [
+        200,
+        200
+      ],
+      "questions": 5
+    },
+    {
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "status": "COLLECTED",
+      "http": [
+        200,
+        200
+      ],
+      "questions": 5
+    },
+    {
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-flash",
+      "status": "COLLECTED",
+      "http": [
+        200,
+        200
+      ],
+      "questions": 4
+    },
+    {
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "status": "COLLECTED",
+      "http": [
+        200,
+        200
+      ],
+      "questions": 2
+    }
+  ],
+  "entries": [
+    {
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 18395,
+      "characters": 4249,
+      "promptSha256": "22cb890bd746e50d35fcffab96c09ba287dca0a90ffd7b5adf687ccdbccbf62f",
+      "ambiguities": [
+        "A医院2022年覆盖度尚未确定，其他年份的覆盖情况须按资料核对；该缺口会影响年度与医院比较中分母和样本量的呈现。",
+        "缺失记录是否进入某些分母尚未确定，且完整性指标分母与一致性指标分母尚需分别确定；该缺口会影响各指标口径和跨医院可比性。",
+        "是否对缺失病例使用插补尚未决定，且不同指标可能采用不同处理；该缺口会影响清洗步骤和结果解释边界。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0,
+      "occurrenceOfConsistencyBoundary": 0
+    },
+    {
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 19148,
+      "characters": 4878,
+      "promptSha256": "2a02d525f2d3120c8f1ecb02ff50a11ff28209f5602a57f8e115b206d40067b3",
+      "ambiguities": [
+        "该问题尚未确定：A医院2022年的数据覆盖度目前处于什么状态？ 用户说明：A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。 补充说明：该缺口影响年度与医院比较中A医院2022年样本量、缺失数和有效分母的呈现。",
+        "该问题尚未确定：仅确认完整性分母，一致性指标分母仍未决定。 补充说明：不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。 补充说明：该缺口影响一致性指标的分子分母口径和比较结果。",
+        "该问题尚未确定：是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。 补充说明：该缺口影响缺失数据的处理方式和指标计算。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 2,
+      "occurrenceOfCoverageExplanation": 1,
+      "occurrenceOfConsistencyBoundary": 2
+    },
+    {
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 11118,
+      "characters": 3237,
+      "promptSha256": "02b52c3d9f588502349a3b9f186ea685e1aaa27d864c4a0fd34ee5a776e0b2bd",
+      "ambiguities": [
+        "A医院2022年的覆盖度尚未确定，需明确该年度数据是否完整或存在缺失，以正确计算该医院该年度的质量指标。",
+        "缺失记录是否进入某些指标的分母尚未决定，且不同指标可能采用不同处理，需分别确定完整性指标和跨字段一致性指标的分母定义。",
+        "是否对缺失病例使用插补尚未决定，且不同指标可能采用不同处理，需明确各指标是否插补及具体方法。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0,
+      "occurrenceOfConsistencyBoundary": 0
+    },
+    {
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 24707,
+      "characters": 3905,
+      "promptSha256": "8bf9407e1402d02f3a295244080b8d83ed2fab1ca28ffb0efda0474977741647",
+      "ambiguities": [
+        "该问题尚未确定：仅确认完整性分母，一致性指标分母仍未决定。 补充说明：不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。 补充说明：需按各逻辑规则的适用记录分别确定。",
+        "该问题尚未确定：是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。 补充说明：若插补，需明确适用指标、插补方法和处理规则；不同指标可能采用不同处理。",
+        "该问题尚未确定：A医院2022年数据覆盖度如何？ 用户说明：A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。 补充说明：该信息尚未核实，影响年度与医院比较的样本量和指标解释。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 1,
+      "occurrenceOfCoverageExplanation": 1,
+      "occurrenceOfConsistencyBoundary": 1
+    },
+    {
+      "caseId": "RC-DEV-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 3573,
+      "characters": 1786,
+      "promptSha256": "af94ae4695b5eca56f816778d1dd35090e523e117936de098422680729ecaf8f",
+      "ambiguities": [],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0,
+      "occurrenceOfConsistencyBoundary": 0
+    },
+    {
+      "caseId": "RC-DEV-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 7368,
+      "characters": 1795,
+      "promptSha256": "ab37d16fdd06d324ea2616115b3420ec32dfd6e9a6e971e413fcde5df57b6183",
+      "ambiguities": [],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0,
+      "occurrenceOfConsistencyBoundary": 0
+    },
+    {
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 11450,
+      "characters": 2543,
+      "promptSha256": "0e437977c4b8273e4c8017759b847a542d870c9c1e1f53501ff7ce0f2d017f93",
+      "ambiguities": [
+        "该问题尚未确定：甲院用于比较的观察窗口是什么？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：需院方后续核实；不能用乙院窗口替代，否则甲院统计口径无法确定。",
+        "该问题尚未确定：乙院用于比较的观察窗口是什么？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：需院方后续核实；不能用甲院窗口替代，否则乙院统计口径无法确定。",
+        "该问题尚未确定：甲院的异常等待阈值尚未决定，不采用资料中60分钟示例值；相关异常比例的计算需等待阈值确认。",
+        "该问题尚未确定：乙院的异常等待阈值尚未决定，不采用资料中60分钟示例值；相关异常比例的计算需等待阈值确认。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0,
+      "occurrenceOfConsistencyBoundary": 0
+    },
+    {
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 15254,
+      "characters": 1542,
+      "promptSha256": "651594c5fa5b3d229cd7d3abe450bb8f87c2e7a67104498fb1d32021e4823ae8",
+      "ambiguities": [
+        "该问题尚未确定：两院比较观察窗口分别如何确定？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代。乙院的比较观察窗口也需要院方后续核实；不能用另一院的窗口替代。本次方案保留为两个独立未决条件。",
+        "该问题尚未确定：甲院的异常等待阈值尚未决定，不采用资料中60分钟示例值。",
+        "该问题尚未确定：乙院的异常等待阈值尚未决定，也不采用该示例值； 补充说明：不采用资料中60分钟示例值。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0,
+      "occurrenceOfConsistencyBoundary": 0
+    },
+    {
+      "caseId": "RC-TRANSLATION-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 4515,
+      "characters": 1912,
+      "promptSha256": "5941e04572b6b004b1e78d10ced23e86e7636363b5f411736db1ee41be7bf318",
+      "ambiguities": [],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0,
+      "occurrenceOfConsistencyBoundary": 0
+    },
+    {
+      "caseId": "RC-TRANSLATION-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 4639,
+      "characters": 1270,
+      "promptSha256": "d97deba6be47946ce4e33d4de369eabd6fe5db2c21e672e62e8d030cfdbadd77",
+      "ambiguities": [],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0,
+      "occurrenceOfConsistencyBoundary": 0
+    }
+  ],
+  "releaseApproved": false,
+  "professionalReview": "NOT_PERFORMED"
+}

@@ -89,10 +89,10 @@ class AdminAnalyticsAggregationRegressionTest {
         assertThat(analytics.accountCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.AccountCounts(4, 2));
         assertThat(analytics.usageCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(6, 2, 3, 2));
         assertThat(analytics.dailyMetrics(period, filter)).containsExactly(
-                new DailyMetric(FIRST_DAY, 5, 2, 2, 2, 1),
-                new DailyMetric(FIRST_DAY.plusDays(1), 1, 1, 2, 1, 0),
-                new DailyMetric(FIRST_DAY.plusDays(2), 0, 0, 2, 1, 1),
-                new DailyMetric(FIRST_DAY.plusDays(3), 0, 0, 0, 0, 0));
+                new DailyMetric(FIRST_DAY, 5, 2, 2, 2, 1, 0, 0),
+                new DailyMetric(FIRST_DAY.plusDays(1), 1, 1, 2, 1, 0, 0, 0),
+                new DailyMetric(FIRST_DAY.plusDays(2), 0, 0, 2, 1, 1, 0, 0),
+                new DailyMetric(FIRST_DAY.plusDays(3), 0, 0, 0, 0, 0, 0, 0));
         assertHours(period, filter, Map.of(11, 4L, 14, 2L));
         assertThat(analytics.monthlyUsage(period, period.toDateExclusive().minusDays(1), filter))
                 .containsExactly(new MonthlyMetric("2020-01", 5), new MonthlyMetric("2020-02", 1));
@@ -114,6 +114,52 @@ class AdminAnalyticsAggregationRegressionTest {
         // 日活总和为 6，含完整零日的分母为 4；期间去重活跃 3 不能直接除以日数。
         assertThat(dashboard.averageDailyActiveUsers()).isEqualByComparingTo(new BigDecimal("1.50"));
         assertThat(dashboard.rechargeStatisticsAvailable()).isFalse();
+    }
+
+    @Test
+    void featureFactsAreDeduplicatedAndFilteredWithoutInflatingExistingOperations() {
+        Scenario scenario = seedScenario();
+        AnalyticsPeriod period = period(FIRST_DAY, FIRST_DAY.plusDays(4), SHANGHAI);
+        AnalyticsAccountFilter filter = matchingAccounts();
+        Snapshot before = snapshot(period, filter);
+        event(scenario.alpha(), AnalyticsEventType.DIRECT_OPTIMIZATION_SUBMITTED, at(FIRST_DAY, 11), Map.of());
+        event(scenario.alpha(), AnalyticsEventType.DIRECT_OPTIMIZATION_SUBMITTED, at(FIRST_DAY, 11), Map.of());
+        event(scenario.beta(), AnalyticsEventType.DIRECT_OPTIMIZATION_SUBMITTED, at(FIRST_DAY, 11), Map.of());
+        UUID completion = UUID.randomUUID();
+        assertThat(events.insert(completion, scenario.alpha().tenantId(), scenario.alpha().id(),
+                AnalyticsEventType.PLAN_COMPLETED, Map.of(), at(FIRST_DAY.plusDays(1), 0))).isEqualTo(1);
+        assertThat(events.insert(completion, scenario.alpha().tenantId(), scenario.alpha().id(),
+                AnalyticsEventType.PLAN_COMPLETED, Map.of(), at(FIRST_DAY.plusDays(2), 12))).isZero();
+        event(scenario.beta(), AnalyticsEventType.PLAN_COMPLETED, at(FIRST_DAY.plusDays(1), 14), Map.of());
+        event(scenario.alpha(), AnalyticsEventType.PLAN_COMPLETED, at(FIRST_DAY.plusDays(2), 11), Map.of());
+        event(scenario.alpha(), AnalyticsEventType.DIRECT_OPTIMIZATION_SUBMITTED, period.fromInclusive().minusNanos(1000), Map.of());
+        event(scenario.alpha(), AnalyticsEventType.PLAN_COMPLETED, period.toExclusive(), Map.of());
+        events.insert(UUID.randomUUID(), scenario.alpha().tenantId(), null, AnalyticsEventType.PLAN_COMPLETED, Map.of(), at(FIRST_DAY, 11));
+        events.insert(UUID.randomUUID(), scenario.alpha().tenantId(), null, AnalyticsEventType.DIRECT_OPTIMIZATION_SUBMITTED, Map.of(), at(FIRST_DAY, 11));
+
+        var dashboard = service.dashboard(new DashboardQuery("CUSTOM", FIRST_DAY.toString(), FIRST_DAY.plusDays(3).toString(), null, seed, null));
+        assertThat(dashboard.directEnhancementCount()).isEqualTo(3);
+        assertThat(dashboard.planCompletedCount()).isEqualTo(3);
+        assertThat(dashboard.dailyMetrics()).extracting(DailyMetric::directEnhancementCount).containsExactly(3L, 0L, 0L, 0L);
+        assertThat(dashboard.dailyMetrics()).extracting(DailyMetric::planCompletedCount).containsExactly(0L, 2L, 1L, 0L);
+        assertThat(analytics.usageCounts(period, filter)).isEqualTo(before.usageCounts());
+        assertThat(analytics.hourlyUsage(period, filter)).isEqualTo(before.hourlyMetrics());
+        assertThat(analytics.monthlyUsage(period, period.toDateExclusive().minusDays(1), filter)).isEqualTo(before.monthlyMetrics());
+        assertThat(analytics.usageRanking(period, filter, 100)).isEqualTo(before.ranking());
+        assertThat(analytics.deviceDistribution(period, filter)).isEqualTo(before.devices());
+        assertThat(analytics.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, "PLAN_COMPLETED")).isEqualTo(3);
+        assertThat(analytics.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, "DIRECT_OPTIMIZATION_SUBMITTED")).isEqualTo(3);
+        assertFusedMatchesIndependent(period, filter);
+        for (var narrowed : List.of(AnalyticsAccountFilter.forUser(scenario.alpha().id()),
+                new AnalyticsAccountFilter(null, seed + "-alpha-alias", scenario.alpha().displayName()))) {
+            var rows = analytics.dashboardMetrics(period, narrowed);
+            assertThat(rows).filteredOn(row -> row.kind() == MetricKind.SUMMARY).singleElement().satisfies(row -> {
+                assertThat(row.directEnhancementCount()).isEqualTo(2);
+                assertThat(row.planCompletedCount()).isEqualTo(2);
+            });
+            assertFusedMatchesIndependent(period, narrowed);
+        }
+        assertFusedMatchesIndependent(period, new AnalyticsAccountFilter(scenario.beta().id(), seed + "-alpha-alias", null));
     }
 
     @Test
@@ -143,10 +189,10 @@ class AdminAnalyticsAggregationRegressionTest {
         assertThat(analytics.accountCounts(period, alias)).isEqualTo(new AdminAnalyticsMapper.AccountCounts(1, 1));
         assertThat(analytics.usageCounts(period, alias)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(3, 1, 1, 1));
         assertThat(analytics.dailyMetrics(period, alias)).containsExactly(
-                new DailyMetric(FIRST_DAY, 3, 1, 1, 1, 1),
-                new DailyMetric(FIRST_DAY.plusDays(1), 0, 0, 1, 0, 0),
-                new DailyMetric(FIRST_DAY.plusDays(2), 0, 0, 1, 1, 0),
-                new DailyMetric(FIRST_DAY.plusDays(3), 0, 0, 0, 0, 0));
+                new DailyMetric(FIRST_DAY, 3, 1, 1, 1, 1, 0, 0),
+                new DailyMetric(FIRST_DAY.plusDays(1), 0, 0, 1, 0, 0, 0, 0),
+                new DailyMetric(FIRST_DAY.plusDays(2), 0, 0, 1, 1, 0, 0, 0),
+                new DailyMetric(FIRST_DAY.plusDays(3), 0, 0, 0, 0, 0, 0, 0));
         assertHours(period, alias, Map.of(11, 3L));
         assertThat(analytics.monthlyUsage(period, period.toDateExclusive().minusDays(1), alias))
                 .containsExactly(new MonthlyMetric("2020-01", 2), new MonthlyMetric("2020-02", 1));
@@ -178,11 +224,14 @@ class AdminAnalyticsAggregationRegressionTest {
         AnalyticsPeriod period = period(day, day.plusDays(1), ZoneId.of("America/New_York"));
         event(user, AnalyticsEventType.OPTIMIZATION_SUBMITTED, OffsetDateTime.parse("2020-11-01T01:30:00-04:00"), Map.of());
         event(user, AnalyticsEventType.RESULT_EXPORTED, OffsetDateTime.parse("2020-11-01T01:30:00-05:00"), Map.of());
+        event(user, AnalyticsEventType.DIRECT_OPTIMIZATION_SUBMITTED, OffsetDateTime.parse("2020-11-01T01:30:00-04:00"), Map.of());
+        event(user, AnalyticsEventType.DIRECT_OPTIMIZATION_SUBMITTED, OffsetDateTime.parse("2020-11-01T01:30:00-05:00"), Map.of());
+        event(user, AnalyticsEventType.PLAN_COMPLETED, OffsetDateTime.parse("2020-11-01T01:30:00-05:00"), Map.of());
         AnalyticsAccountFilter filter = AnalyticsAccountFilter.forUser(user.id());
         assertThat(period.toExclusive().toInstant().getEpochSecond() - period.fromInclusive().toInstant().getEpochSecond())
                 .isEqualTo(25 * 3600);
         assertThat(analytics.usageCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(0, 0, 1, 1));
-        assertThat(analytics.dailyMetrics(period, filter)).containsExactly(new DailyMetric(day, 0, 0, 1, 1, 0));
+        assertThat(analytics.dailyMetrics(period, filter)).containsExactly(new DailyMetric(day, 0, 0, 1, 1, 0, 2, 1));
         assertHours(period, filter, Map.of(1, 2L));
         assertThat(analytics.monthlyUsage(period, day, filter)).containsExactly(new MonthlyMetric("2020-11", 2));
         assertThat(analytics.usageRanking(period, filter, 20))
@@ -210,7 +259,7 @@ class AdminAnalyticsAggregationRegressionTest {
         });
         var days = rows.stream().filter(row -> row.kind() == MetricKind.DAILY)
                 .map(row -> new DailyMetric(LocalDate.parse(row.bucket()), row.accessCount(), row.uniqueVisitors(),
-                        row.activeUsers(), row.actualUsers(), row.newAccounts()))
+                        row.activeUsers(), row.actualUsers(), row.newAccounts(), row.directEnhancementCount(), row.planCompletedCount()))
                 .sorted(java.util.Comparator.comparing(DailyMetric::date)).toList();
         assertThat(days).isEqualTo(analytics.dailyMetrics(period, filter));
         var hours = rows.stream().filter(row -> row.kind() == MetricKind.HOURLY)
@@ -311,7 +360,7 @@ class AdminAnalyticsAggregationRegressionTest {
         assertThat(analytics.accountCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.AccountCounts(0, 0));
         assertThat(analytics.usageCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(0, 0, 0, 0));
         assertThat(analytics.dailyMetrics(period, filter)).containsExactlyElementsOf(
-                FIRST_DAY.datesUntil(FIRST_DAY.plusDays(4)).map(day -> new DailyMetric(day, 0, 0, 0, 0, 0)).toList());
+                FIRST_DAY.datesUntil(FIRST_DAY.plusDays(4)).map(day -> new DailyMetric(day, 0, 0, 0, 0, 0, 0, 0)).toList());
         assertHours(period, filter, Map.of());
         assertThat(analytics.monthlyUsage(period, period.toDateExclusive().minusDays(1), filter))
                 .containsExactly(new MonthlyMetric("2020-01", 0), new MonthlyMetric("2020-02", 0));

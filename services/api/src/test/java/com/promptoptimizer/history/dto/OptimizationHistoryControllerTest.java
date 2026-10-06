@@ -1,7 +1,6 @@
 package com.promptoptimizer.history.dto;
 
 import com.promptoptimizer.history.controller.OptimizationHistoryController;
-import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import jakarta.servlet.http.HttpServletRequest;
 import com.promptoptimizer.common.web.RequestIdFilter;
@@ -180,6 +179,6 @@ class OptimizationHistoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.recordId").value(id.toString()))
                 .andExpect(jsonPath("$.data.result.provider.mock").value(true));
-        verify(analyticsEventService).record(eq(AnalyticsEventType.OPTIMIZATION_SUBMITTED), any(HttpServletRequest.class));
+        verify(analyticsEventService).recordOptimizationSubmission(eq(true), any(HttpServletRequest.class));
     }
 }

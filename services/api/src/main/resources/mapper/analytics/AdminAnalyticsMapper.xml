@@ -30,6 +30,8 @@
             <arg column="operation_count" javaType="_long"/>
             <arg column="login_count" javaType="_long"/>
             <arg column="unique_users" javaType="_long"/>
+            <arg column="direct_enhancement_count" javaType="_long"/>
+            <arg column="plan_completed_count" javaType="_long"/>
         </constructor>
     </resultMap>
     <resultMap id="dailyMetric" type="com.promptoptimizer.analytics.dto.AnalyticsViews$DailyMetric">
@@ -40,6 +42,8 @@
             <arg column="active_users" javaType="_long"/>
             <arg column="actual_users" javaType="_long"/>
             <arg column="new_accounts" javaType="_long"/>
+            <arg column="direct_enhancement_count" javaType="_long"/>
+            <arg column="plan_completed_count" javaType="_long"/>
         </constructor>
     </resultMap>
     <resultMap id="hourlyMetric" type="com.promptoptimizer.analytics.dto.AnalyticsViews$HourlyMetric">
@@ -89,7 +93,7 @@
     </resultMap>
 
     <sql id="usageEventPredicate">
-        <!-- 关键使用与访问/登录分开：活跃人数看全部事件，实际使用人数和排行操作数只看这六类。 -->
+        <!-- 关键使用保持原六类口径：直接提交细分与 Plan 完成另行计数，不能重复放大排行和小时/月操作数。 -->
         event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
                        'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
     </sql>
@@ -173,6 +177,8 @@
                    e.event_type = 'APP_VISIT' AS visited,
                    (<include refid="usageEventPredicate"/>) AS used,
                    e.event_type = 'LOGIN' AS logged_in,
+                   e.event_type = 'DIRECT_OPTIMIZATION_SUBMITTED' AS direct_submitted,
+                   e.event_type = 'PLAN_COMPLETED' AS plan_completed,
                    CASE WHEN e.event_type = 'LOGIN'
                         THEN COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN') END AS device_type
               FROM audit_event e
@@ -188,17 +194,23 @@
             SELECT activity_day, actor_user_id,
                    COUNT(*) FILTER (WHERE visited) AS access_count,
                    BOOL_OR(visited) AS visited,
-                   BOOL_OR(used) AS used
+                   BOOL_OR(used) AS used,
+                   COUNT(*) FILTER (WHERE direct_submitted) AS direct_enhancement_count,
+                   COUNT(*) FILTER (WHERE plan_completed) AS plan_completed_count
               FROM local_events GROUP BY activity_day, actor_user_id
         ), account_activity AS (
             <!-- 区间人数再次按账号归并，不能把每日去重人数相加；访问次数才可以相加。 -->
             SELECT actor_user_id, SUM(access_count) AS access_count,
-                   BOOL_OR(visited) AS visited, BOOL_OR(used) AS used
+                   BOOL_OR(visited) AS visited, BOOL_OR(used) AS used,
+                   SUM(direct_enhancement_count) AS direct_enhancement_count,
+                   SUM(plan_completed_count) AS plan_completed_count
               FROM account_days GROUP BY actor_user_id
         ), daily_activity AS (
             SELECT activity_day, SUM(access_count) AS access_count,
                    COUNT(*) FILTER (WHERE visited) AS unique_visitors,
-                   COUNT(*) AS active_users, COUNT(*) FILTER (WHERE used) AS actual_users
+                   COUNT(*) AS active_users, COUNT(*) FILTER (WHERE used) AS actual_users,
+                   SUM(direct_enhancement_count) AS direct_enhancement_count,
+                   SUM(plan_completed_count) AS plan_completed_count
               FROM account_days GROUP BY activity_day
         ), days AS (
             <!-- 完整自然日骨架包含零日，供平均日活使用正确分母；不以固定 86400 秒步进。 -->
@@ -237,19 +249,22 @@
                COALESCE(SUM(access_count), 0) AS access_count,
                COUNT(*) FILTER (WHERE visited) AS unique_visitors,
                COUNT(*) AS active_users, COUNT(*) FILTER (WHERE used) AS actual_users,
-               0 AS new_accounts, 0 AS operation_count, 0 AS login_count, 0 AS unique_users
+               0 AS new_accounts, 0 AS operation_count, 0 AS login_count, 0 AS unique_users,
+               COALESCE(SUM(direct_enhancement_count), 0) AS direct_enhancement_count,
+               COALESCE(SUM(plan_completed_count), 0) AS plan_completed_count
           FROM account_activity
         UNION ALL
         SELECT 'DAILY', to_char(days.activity_day, 'YYYY-MM-DD'),
                COALESCE(daily_activity.access_count, 0), COALESCE(daily_activity.unique_visitors, 0),
                COALESCE(daily_activity.active_users, 0), COALESCE(daily_activity.actual_users, 0),
-               COALESCE(new_accounts.new_accounts, 0), 0, 0, 0
+               COALESCE(new_accounts.new_accounts, 0), 0, 0, 0,
+               COALESCE(daily_activity.direct_enhancement_count, 0), COALESCE(daily_activity.plan_completed_count, 0)
           FROM days LEFT JOIN daily_activity USING (activity_day) LEFT JOIN new_accounts USING (activity_day)
         UNION ALL
-        SELECT 'HOURLY', hours.hour::text, 0, 0, 0, 0, 0, COALESCE(hourly_activity.operation_count, 0), 0, 0
+        SELECT 'HOURLY', hours.hour::text, 0, 0, 0, 0, 0, COALESCE(hourly_activity.operation_count, 0), 0, 0, 0, 0
           FROM hours LEFT JOIN hourly_activity USING (hour)
         UNION ALL
-        SELECT 'DEVICE', device_type, 0, 0, 0, 0, 0, 0, login_count, unique_users
+        SELECT 'DEVICE', device_type, 0, 0, 0, 0, 0, 0, login_count, unique_users, 0, 0
           FROM devices
          <!-- 设备同分排序沿用数据库 collation；Java 只恢复日/小时数值顺序，不重排设备字符串。 -->
          ORDER BY metric_kind, login_count DESC, bucket
@@ -269,7 +284,9 @@
             SELECT activity_day, actor_user_id,
                    COUNT(*) FILTER (WHERE event_type = 'APP_VISIT') AS access_count,
                    BOOL_OR(event_type = 'APP_VISIT') AS visited,
-                   BOOL_OR(<include refid="usageEventPredicate"/>) AS used
+                   BOOL_OR(<include refid="usageEventPredicate"/>) AS used,
+                   COUNT(*) FILTER (WHERE event_type = 'DIRECT_OPTIMIZATION_SUBMITTED') AS direct_enhancement_count,
+                   COUNT(*) FILTER (WHERE event_type = 'PLAN_COMPLETED') AS plan_completed_count
               FROM (
                     SELECT (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date AS activity_day,
                            e.event_type,
@@ -289,7 +306,9 @@
             SELECT activity_day, SUM(access_count) AS access_count,
                    COUNT(*) FILTER (WHERE visited) AS unique_visitors,
                    COUNT(*) AS active_users,
-                   COUNT(*) FILTER (WHERE used) AS actual_users
+                   COUNT(*) FILTER (WHERE used) AS actual_users,
+                   SUM(direct_enhancement_count) AS direct_enhancement_count,
+                   SUM(plan_completed_count) AS plan_completed_count
               FROM account_days
              GROUP BY activity_day
         ), accounts AS (
@@ -311,7 +330,9 @@
                COALESCE(activity.unique_visitors, 0) AS unique_visitors,
                COALESCE(activity.active_users, 0) AS active_users,
                COALESCE(activity.actual_users, 0) AS actual_users,
-               COALESCE(accounts.new_accounts, 0) AS new_accounts
+               COALESCE(accounts.new_accounts, 0) AS new_accounts,
+               COALESCE(activity.direct_enhancement_count, 0) AS direct_enhancement_count,
+               COALESCE(activity.plan_completed_count, 0) AS plan_completed_count
           FROM days
           LEFT JOIN activity USING (activity_day)
           LEFT JOIN accounts USING (activity_day)

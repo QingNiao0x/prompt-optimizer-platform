@@ -59,9 +59,9 @@ class AdminAnalyticsServiceTest {
         when(repository.accountCounts(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(new AdminAnalyticsMapper.AccountCounts(7, 2));
         when(repository.dashboardMetrics(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(dashboardRows(
                 new AdminAnalyticsMapper.UsageCounts(5, 2, 2, 1), List.of(
-                new DailyMetric(LocalDate.parse("2026-09-01"), 2, 1, 2, 1, 1),
-                new DailyMetric(LocalDate.parse("2026-09-02"), 0, 0, 0, 0, 0),
-                new DailyMetric(LocalDate.parse("2026-09-03"), 3, 1, 1, 0, 1)
+                new DailyMetric(LocalDate.parse("2026-09-01"), 2, 1, 2, 1, 1, 3, 0),
+                new DailyMetric(LocalDate.parse("2026-09-02"), 0, 0, 0, 0, 0, 0, 0),
+                new DailyMetric(LocalDate.parse("2026-09-03"), 3, 1, 1, 0, 1, 0, 2)
         ), List.of(new HourlyMetric(9, 3)), List.of(new DeviceMetric("MOBILE", 2, 1))));
         when(repository.monthlyUsage(any(), any(), eq(AnalyticsAccountFilter.forUser(USER_ID)))).thenReturn(List.of(new MonthlyMetric("2026-09", 4)));
         when(repository.usageRanking(period, AnalyticsAccountFilter.forUser(USER_ID), 10)).thenReturn(List.of(
@@ -76,6 +76,8 @@ class AdminAnalyticsServiceTest {
         assertThat(view.activeUserCount()).isEqualTo(2);
         assertThat(view.actualUserCount()).isEqualTo(1);
         assertThat(view.averageDailyActiveUsers()).isEqualByComparingTo("1.00");
+        assertThat(view.directEnhancementCount()).isEqualTo(3);
+        assertThat(view.planCompletedCount()).isEqualTo(2);
         assertThat(view.dailyMetrics()).hasSize(3);
         assertThat(view.hourlyUsage()).hasSize(24).filteredOn(metric -> metric.hour() == 9)
                 .containsExactly(new HourlyMetric(9, 3));
@@ -127,9 +129,9 @@ class AdminAnalyticsServiceTest {
         when(repository.accountCounts(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(new AdminAnalyticsMapper.AccountCounts(1, 0));
         when(repository.dashboardMetrics(period, AnalyticsAccountFilter.forUser(USER_ID))).thenReturn(dashboardRows(
                 new AdminAnalyticsMapper.UsageCounts(1, 1, 1, 0), List.of(
-                new DailyMetric(period.fromDate(), 1, 1, 1, 0, 0),
-                new DailyMetric(period.fromDate().plusDays(1), 0, 0, 0, 0, 0),
-                new DailyMetric(period.fromDate().plusDays(2), 0, 0, 0, 0, 0)), List.of(), List.of()));
+                new DailyMetric(period.fromDate(), 1, 1, 1, 0, 0, 0, 0),
+                new DailyMetric(period.fromDate().plusDays(1), 0, 0, 0, 0, 0, 0, 0),
+                new DailyMetric(period.fromDate().plusDays(2), 0, 0, 0, 0, 0, 0, 0)), List.of(), List.of()));
         AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository),
                 provider(mock(RechargeRecordMapper.class)), false);
         assertThat(service.dashboard(new DashboardQuery("CUSTOM", "2024-01-01", "2024-01-03", USER_ID, null, null))
@@ -177,7 +179,7 @@ class AdminAnalyticsServiceTest {
         when(repository.accountCounts(period, account)).thenReturn(new AdminAnalyticsMapper.AccountCounts(1, 0));
         when(repository.dashboardMetrics(period, account)).thenReturn(dashboardRows(
                 new AdminAnalyticsMapper.UsageCounts(1, 1, 1, 1),
-                List.of(new DailyMetric(period.fromDate(), 1, 1, 1, 1, 0)), List.of(), List.of()));
+                List.of(new DailyMetric(period.fromDate(), 1, 1, 1, 1, 0, 0, 0)), List.of(), List.of()));
         AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository), provider(recharge), true);
         service.dashboard(new DashboardQuery("TODAY", null, null, USER_ID, " DEMO@EXAMPLE.TEST ", " 演示名称 "));
         verify(repository).dashboardMetrics(period, account);
@@ -208,7 +210,7 @@ class AdminAnalyticsServiceTest {
         when(repository.accountCounts(period, AnalyticsAccountFilter.forUser(USER_ID)))
                 .thenReturn(new AdminAnalyticsMapper.AccountCounts(1, 0));
         when(repository.dashboardMetrics(period, AnalyticsAccountFilter.forUser(USER_ID)))
-                .thenReturn(List.of(new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 0, 0, 0, 0, 0, 0, 0)));
+                .thenReturn(List.of(new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)));
         AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository), provider(recharge), false);
         assertThatThrownBy(() -> service.dashboard(new DashboardQuery("TODAY", null, null, USER_ID, null, null)))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("桶不完整");
@@ -221,19 +223,22 @@ class AdminAnalyticsServiceTest {
                                                   List<HourlyMetric> hours, List<DeviceMetric> devices) {
         List<DashboardMetricRow> rows = new ArrayList<>();
         rows.add(new DashboardMetricRow(MetricKind.SUMMARY, null, summary.accessCount(), summary.uniqueVisitors(),
-                summary.activeUsers(), summary.actualUsers(), 0, 0, 0, 0));
+                summary.activeUsers(), summary.actualUsers(), 0, 0, 0, 0,
+                days.stream().mapToLong(DailyMetric::directEnhancementCount).sum(),
+                days.stream().mapToLong(DailyMetric::planCompletedCount).sum()));
         for (DailyMetric day : days) {
             rows.add(new DashboardMetricRow(MetricKind.DAILY, day.date().toString(), day.accessCount(), day.uniqueVisitors(),
-                    day.activeUsers(), day.actualUsers(), day.newAccounts(), 0, 0, 0));
+                    day.activeUsers(), day.actualUsers(), day.newAccounts(), 0, 0, 0,
+                    day.directEnhancementCount(), day.planCompletedCount()));
         }
         for (int hour = 0; hour < 24; hour++) {
             int bucket = hour;
             long count = hours.stream().filter(metric -> metric.hour() == bucket).mapToLong(HourlyMetric::operationCount).sum();
-            rows.add(new DashboardMetricRow(MetricKind.HOURLY, Integer.toString(hour), 0, 0, 0, 0, 0, count, 0, 0));
+            rows.add(new DashboardMetricRow(MetricKind.HOURLY, Integer.toString(hour), 0, 0, 0, 0, 0, count, 0, 0, 0, 0));
         }
         for (DeviceMetric device : devices) {
             rows.add(new DashboardMetricRow(MetricKind.DEVICE, device.deviceType(), 0, 0, 0, 0, 0, 0,
-                    device.loginCount(), device.uniqueUsers()));
+                    device.loginCount(), device.uniqueUsers(), 0, 0));
         }
         return List.copyOf(rows);
     }

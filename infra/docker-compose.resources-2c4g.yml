@@ -1,0 +1,11 @@
+# 与 infra/docker-compose.yml 同时使用，重建容器后仍保留预算机资源限制。
+# Docker/WSL 总资源另设为 2 CPU、4 GB；CPU 上限不是预留容量。
+services:
+  postgres:
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+  redis:
+    cpus: 0.25
+    mem_limit: 256m
+    memswap_limit: 256m

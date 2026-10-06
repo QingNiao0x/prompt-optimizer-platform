@@ -52,6 +52,40 @@ class AuditEventDeliveryTest {
     @TempDir Path directory;
 
     @Test
+    void concurrentPlanCompletionOutageAndAckFailureRecoverOnlyOneFact() throws Exception {
+        var original = event();
+        PendingAuditEvent completion = new PendingAuditEvent(original.id(), original.tenantId(), original.actorUserId(),
+                AnalyticsEventType.PLAN_COMPLETED, original.details(), original.occurredAt());
+        AuditEventDatabaseWriter unavailable = mock(AuditEventDatabaseWriter.class);
+        doThrow(new DataAccessResourceFailureException("synthetic outage")).when(unavailable).write(any());
+        AuditEventDelivery first = delivery(journal(), unavailable);
+        try (var executor = java.util.concurrent.Executors.newFixedThreadPool(4)) {
+            var tasks = new java.util.ArrayList<java.util.concurrent.Callable<Void>>();
+            for (int attempt = 0; attempt < 32; attempt++) tasks.add(() -> { first.accept(completion, false); return null; });
+            for (var result : executor.invokeAll(tasks)) result.get();
+        }
+        first.replayPending();
+        assertThat(first.status().pendingEvents()).isEqualTo(1);
+        Set<UUID> committed = new HashSet<>();
+        AuditEventDatabaseWriter restored = mock(AuditEventDatabaseWriter.class);
+        doAnswer(call -> committed.add(call.<PendingAuditEvent>getArgument(0).id())).when(restored).write(any());
+        AuditEventJournal faultyAck = spy(journal());
+        doThrow(new IOException("synthetic ack failure")).when(faultyAck).acknowledge(any());
+        AuditEventDelivery second = delivery(faultyAck, restored);
+        second.replayPending();
+        assertThat(second.status().pendingEvents()).isEqualTo(1);
+        var restarted = delivery(journal(), restored);
+        restarted.replayPending();
+        restarted.accept(completion, false);
+        restarted.replayPending();
+        assertThat(committed).containsExactly(completion.id());
+        verify(restored, times(2)).write(completion);
+        assertThat(restarted.status().pendingEvents()).isZero();
+        assertThat(journal().acknowledged(completion.id())).isTrue();
+        assertThat(Files.exists(directory.resolve(completion.id() + ".json"))).isTrue();
+    }
+
+    @Test
     void databaseOutageReturnsAfterDurableReceiptAndRestartReplaysOriginalFact() throws Exception {
         AuditEventJournal journal = journal();
         AuditEventDatabaseWriter unavailable = mock(AuditEventDatabaseWriter.class);

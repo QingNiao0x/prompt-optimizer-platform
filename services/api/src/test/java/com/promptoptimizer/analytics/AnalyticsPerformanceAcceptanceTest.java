@@ -199,6 +199,8 @@ class AnalyticsPerformanceAcceptanceTest {
                 dashboardDurations.add(elapsed(start));
                 assertThat(view.dailyMetrics()).hasSize(365);
                 assertThat(view.activeUserCount()).isGreaterThanOrEqualTo(accounts);
+                assertThat(view.directEnhancementCount()).isGreaterThanOrEqualTo(events / 10);
+                assertThat(view.planCompletedCount()).isGreaterThanOrEqualTo(events / 10);
                 start = System.nanoTime();
                 var timings = queryBundle(period, account, events, accounts);
                 timings.forEach((name, ms) -> perQuery.computeIfAbsent(name, ignored -> new ArrayList<>()).add(ms));
@@ -264,7 +266,7 @@ class AnalyticsPerformanceAcceptanceTest {
         timings.put("accountCounts", elapsed(start));
         start = System.nanoTime();
         var usage = analytics.usageCounts(period, account);
-        assertThat(usage.accessCount()).isGreaterThanOrEqualTo(events / 7);
+        assertThat(usage.accessCount()).isGreaterThanOrEqualTo(events / 10);
         assertThat(usage.activeUsers()).isGreaterThanOrEqualTo(accounts);
         timings.put("usageCounts", elapsed(start));
         start = System.nanoTime();

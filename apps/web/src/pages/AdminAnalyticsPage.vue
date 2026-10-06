@@ -45,6 +45,7 @@ import { useUiTheme } from '@/composables/useUiTheme';
 import {
   analyticsQueryError,
   dailyMetricSeries,
+  featureUsageSeries,
   findUsagePeak,
   formatAnalyticsTime,
   hasDailyActivity,
@@ -113,6 +114,7 @@ const operationsPageSize = ref<(typeof OPERATION_PAGE_SIZES)[number]>(10);
 let ignoreOperationsEcho = false;
 
 const dailyChart = ref<HTMLDivElement | null>(null);
+const featureUsageChart = ref<HTMLDivElement | null>(null);
 const hourlyChart = ref<HTMLDivElement | null>(null);
 const monthlyChart = ref<HTMLDivElement | null>(null);
 const deviceChart = ref<HTMLDivElement | null>(null);
@@ -125,6 +127,8 @@ const eventTypes: Array<{ value: AnalyticsEventType; label: string }> = [
   { value: 'LOGOUT', label: '退出' },
   { value: 'APP_VISIT', label: '页面访问' },
   { value: 'OPTIMIZATION_SUBMITTED', label: '提交优化' },
+  { value: 'DIRECT_OPTIMIZATION_SUBMITTED', label: '直接增强提交' },
+  { value: 'PLAN_COMPLETED', label: 'Plan 完成' },
   { value: 'PLAN_CREATED', label: '生成方案' },
   { value: 'CONTEXT_PREPARED', label: '准备上下文' },
   { value: 'CONTEXT_ANALYZED', label: '分析上下文' },
@@ -136,6 +140,9 @@ const eventTypes: Array<{ value: AnalyticsEventType; label: string }> = [
 const activeMonth = computed(() => findUsagePeak(dashboard.value?.monthlyUsage ?? []));
 const activeHour = computed(() => findUsagePeak(dashboard.value?.hourlyUsage ?? []));
 const hasDailyData = computed(() => hasDailyActivity(dashboard.value?.dailyMetrics ?? []));
+const hasFeatureUsageData = computed(() => dashboard.value?.dailyMetrics.some((item) => (
+  item.directEnhancementCount > 0 || item.planCompletedCount > 0
+)) ?? false);
 const rechargeCurrencies = computed(() => [...new Set(dashboard.value?.rechargeByDay.map((item) => item.currency) ?? [])]);
 const selectedRechargeCount = computed(() => (dashboard.value?.rechargeByDay ?? [])
   .filter((item) => item.currency === rechargeCurrency.value).reduce((total, item) => total + item.paidCount, 0));
@@ -402,6 +409,21 @@ const deviceOption = (data: AnalyticsDashboard): EChartsOption => ({
   }],
 });
 
+/** 功能计数沿用同一统计时区、账号条件和日期序列，颜色从当前产品主题读取。 */
+const featureUsageOption = (data: AnalyticsDashboard): EChartsOption => ({
+  ...options(),
+  color: [chartColor('--accent'), chartColor('--success')],
+  tooltip: { trigger: 'axis', confine: true, backgroundColor: chartColor('--glass-fallback'),
+    borderColor: chartColor('--accent-border'), textStyle: { color: chartColor('--text-primary') } },
+  legend: { top: 0, type: 'scroll', textStyle: { color: chartColor('--text-secondary') } },
+  grid: { left: 12, right: 20, top: 48, bottom: 28, containLabel: true },
+  xAxis: { type: 'category', data: data.dailyMetrics.map((item) => item.date),
+    axisLabel: { color: chartColor('--text-secondary') }, axisLine: { lineStyle: { color: chartColor('--glass-border') } } },
+  yAxis: { type: 'value', minInterval: 1, axisLabel: { color: chartColor('--text-secondary') },
+    splitLine: { lineStyle: { color: chartColor('--glass-border-subtle'), type: 'dashed' } } },
+  series: featureUsageSeries(data.dailyMetrics),
+});
+
 const rechargeOption = (data: AnalyticsDashboard): EChartsOption => {
   const days = data.dailyMetrics.map((item) => item.date);
   return {
@@ -419,6 +441,7 @@ const renderCharts = (): void => {
   if (!data) return;
   const targets: Array<[string, HTMLDivElement | null, EChartsOption]> = [
     ['daily', dailyChart.value, dailyOption(data)],
+    ['featureUsage', featureUsageChart.value, featureUsageOption(data)],
     ['hourly', hourlyChart.value, hourlyOption(data)],
     ['monthly', monthlyChart.value, monthlyOption(data)],
     ['device', deviceChart.value, deviceOption(data)],
@@ -619,8 +642,30 @@ onBeforeUnmount(() => {
         </article>
       </section>
 
+      <section class="feature-usage-strip" aria-label="增强功能使用次数">
+        <article class="metric" data-testid="direct-enhancement-count">
+          <div class="metric-label"><span>直接增强提交次数</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>
+          <strong>{{ dashboard.directEnhancementCount.toLocaleString() }}</strong>
+          <small>包含生成失败及再次增强的提交尝试</small>
+        </article>
+        <article class="metric" data-testid="plan-completed-count">
+          <div class="metric-label"><span>Plan 完成次数</span><ElIcon aria-hidden="true"><List /></ElIcon></div>
+          <strong>{{ dashboard.planCompletedCount.toLocaleString() }}</strong>
+          <small>成功生成并保存历史，每个计划计一次</small>
+        </article>
+      </section>
+      <p class="panel-caption feature-usage-note">细分次数自本功能启用后记录；旧通用优化记录无法区分这两种使用路径。</p>
+
       <div id="analytics-trends" class="section-heading"><h2>使用趋势</h2><span>访问、活跃与使用习惯</span></div>
       <section class="charts-grid" aria-label="使用统计图表">
+        <article class="chart-panel feature-usage-panel">
+          <div class="panel-heading">
+            <div class="panel-title"><span class="panel-icon"><ElIcon aria-hidden="true"><MagicStick /></ElIcon></span><div><h2>直接增强与 Plan 使用</h2><span class="panel-kicker">直接增强按提交日，Plan 按完成日汇总</span></div></div>
+            <span class="panel-badge">按日汇总</span>
+          </div>
+          <div v-show="hasFeatureUsageData" ref="featureUsageChart" class="chart chart-tall" role="img" aria-label="直接增强提交次数与 Plan 完成次数每日折线图"></div>
+          <div v-if="!hasFeatureUsageData" class="chart-empty chart-tall">所选范围内暂无增强功能细分记录。</div>
+        </article>
         <article class="chart-panel chart-wide">
           <div class="panel-heading">
             <div class="panel-title"><span class="panel-icon"><ElIcon aria-hidden="true"><TrendCharts /></ElIcon></span><div><h2>每日访问与活跃</h2><span class="panel-kicker">账号行为的每日变化</span></div></div>
@@ -919,6 +964,11 @@ onBeforeUnmount(() => {
   margin-bottom: 30px;
 }
 
+.feature-usage-strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.feature-usage-strip .metric { min-height: 132px; }
+.feature-usage-note { margin: 12px 0 24px; }
+.feature-usage-panel { grid-column: 1 / -1; }
+
 .metric {
   display: flex;
   min-width: 0;
@@ -1089,6 +1139,7 @@ code { color: var(--text-secondary); font-family: var(--font-mono); font-size: 1
   .filter-field { flex-basis: 100%; }
   .filters > .el-button { width: 100%; }
   .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .feature-usage-strip { grid-template-columns: minmax(0, 1fr); }
   .metric { min-height: 126px; padding: 14px; }
   .metric-primary { min-height: 140px; }
   .metric strong { margin: 5px 0; }

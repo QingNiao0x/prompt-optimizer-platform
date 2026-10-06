@@ -159,6 +159,10 @@ public interface AdminAnalyticsMapper {
     record UsageCounts(long accessCount, long uniqueVisitors, long activeUsers, long actualUsers) {
     }
 
+    /** 以事件为单位的直接增强提交与去重 Plan 完成次数，独立于旧关键操作次数。 */
+    record FeatureUsageCounts(long directEnhancementCount, long planCompletedCount) {
+    }
+
     /** 内部聚合投影的固定维度代码，不是数据库持久化枚举或外部 API 字段。 */
     enum MetricKind {
         /** 主区间按账号 ID 去重的使用总量；bucket 为 null。 */
@@ -173,7 +177,7 @@ public interface AdminAnalyticsMapper {
 
     /**
      * 平台管理员审计的内部只读聚合投影，无个人信息、完整 details 或持久化写入职责。
-     * SUMMARY 使用四项账号/访问计数，DAILY 另含新增账号，HOURLY 仅使用操作次数，
+     * SUMMARY 使用账号/访问及功能计数，DAILY 另含新增账号，HOURLY 仅使用旧操作次数，
      * DEVICE 仅使用登录次数和设备内去重账号数；未使用的计数字段固定为零。
      * 访问与操作次数以事件为单位，用户数以账号 ID 为单位；应用服务验证标记、桶和计数。
      */
@@ -187,7 +191,9 @@ public interface AdminAnalyticsMapper {
             long newAccounts,
             long operationCount,
             long loginCount,
-            long uniqueUsers
+            long uniqueUsers,
+            long directEnhancementCount,
+            long planCompletedCount
     ) {
     }
 }

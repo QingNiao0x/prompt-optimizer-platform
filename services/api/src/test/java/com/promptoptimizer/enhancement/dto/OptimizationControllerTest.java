@@ -30,6 +30,11 @@ import java.util.stream.IntStream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.inOrder;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -90,6 +95,56 @@ class OptimizationControllerTest {
                 .andExpect(header().exists(RequestIdFilter.REQUEST_ID_HEADER))
                 .andExpect(jsonPath("$.data.optimizedPrompt").value("## 任务目标\n实现排序功能"))
                 .andExpect(jsonPath("$.data.provider.mock").value(true));
+        verify(analyticsEventService).recordOptimizationSubmission(eq(true), any());
+        verify(analyticsEventService, never()).recordPlanCompleted(any(), any());
+    }
+
+    @Test
+    void completesPlanOnlyAfterGenerationAndHistorySave() throws Exception {
+        when(orchestrator.optimize(any())).thenReturn(result());
+        mockMvc.perform(post("/api/v1/optimizations").contentType(APPLICATION_JSON).content(planRequest()))
+                .andExpect(status().isOk());
+        var order = inOrder(analyticsEventService, orchestrator, optimizationHistoryService);
+        order.verify(analyticsEventService).recordOptimizationSubmission(eq(false), any());
+        order.verify(orchestrator).optimize(any());
+        order.verify(optimizationHistoryService).save(any(), any());
+        order.verify(analyticsEventService).recordPlanCompleted(eq("11111111-1111-4111-8111-111111111111"), any());
+        verify(analyticsEventService, never()).recordOptimizationSubmission(eq(true), any());
+    }
+
+    @Test
+    void planGenerationFailureNeverCountsCompletion() throws Exception {
+        when(orchestrator.optimize(any())).thenThrow(new ProviderException(ProviderFailureType.TIMEOUT, "unavailable", true));
+        mockMvc.perform(post("/api/v1/optimizations").contentType(APPLICATION_JSON).content(planRequest()))
+                .andExpect(status().isGatewayTimeout());
+        verify(analyticsEventService).recordOptimizationSubmission(eq(false), any());
+        verify(analyticsEventService, never()).recordPlanCompleted(any(), any());
+        verifyNoInteractions(optimizationHistoryService);
+    }
+
+    @Test
+    void planHistoryFailureNeverCountsCompletion() throws Exception {
+        when(orchestrator.optimize(any())).thenReturn(result());
+        when(optimizationHistoryService.save(any(), any())).thenThrow(new org.springframework.dao.DataAccessResourceFailureException("test unavailable"));
+        mockMvc.perform(post("/api/v1/optimizations").contentType(APPLICATION_JSON).content(planRequest()))
+                .andExpect(status().isInternalServerError());
+        verify(analyticsEventService).recordOptimizationSubmission(eq(false), any());
+        verify(analyticsEventService, never()).recordPlanCompleted(any(), any());
+    }
+
+    /** 合法无文件、零问题确认只模拟 Controller 协议；计划有效性由真实应用服务测试核实。 */
+    private String planRequest() {
+        return """
+                {"rawPrompt":"实现排序功能","context":{"files":[]},
+                 "planConfirmation":{"planId":"11111111-1111-4111-8111-111111111111","answers":[]}}
+                """;
+    }
+
+    /** 返回完整的最小结果，不以空对象伪造一次成功。 */
+    private OptimizationResult result() {
+        return new OptimizationResult("## 任务\n实现排序功能", List.of(),
+                new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
+                List.of(), List.of(), TemplateCode.GENERAL, new ProviderMetadata("mock", "test", true), 1);
     }
 
     @Test
@@ -146,6 +201,7 @@ class OptimizationControllerTest {
                                 """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.code").value("INVALID_ARGUMENT"));
+        verifyNoInteractions(analyticsEventService, orchestrator, optimizationHistoryService);
     }
 
     @Test
@@ -212,6 +268,7 @@ class OptimizationControllerTest {
                                 """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.code").value("INVALID_ARGUMENT"));
+        verifyNoInteractions(analyticsEventService, orchestrator, optimizationHistoryService);
     }
 
     @Test
@@ -234,6 +291,8 @@ class OptimizationControllerTest {
                 .andExpect(jsonPath("$.error.code").value("PROVIDER_RATE_LIMITED"))
                 .andExpect(jsonPath("$.error.retryable").value(true))
                 .andExpect(jsonPath("$.error.message").value("模型服务当前请求繁忙，请稍后重试。"));
+        verify(analyticsEventService).recordOptimizationSubmission(eq(true), any());
+        verify(analyticsEventService, never()).recordPlanCompleted(any(), any());
     }
 
     private String quotedValues(String prefix, int count) {

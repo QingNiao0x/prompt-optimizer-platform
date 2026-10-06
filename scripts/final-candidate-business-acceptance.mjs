@@ -85,6 +85,8 @@ export async function createFinalCandidateAcceptance(page, options) {
     'enhancement/service/impl/RoutineWritingPresentation.java',
     'enhancement/service/impl/PlanningAuthorizationState.java', 'enhancement/service/impl/PlanningConflictIdentity.java',
     'enhancement/service/impl/RequirementFidelityGuard.java', 'enhancement/service/impl/EvidenceStateGuard.java',
+    'enhancement/service/impl/ConditionalConfirmationGuard.java',
+    'enhancement/service/impl/ProviderPrerequisiteCompactor.java',
     'enhancement/service/impl/ResolvedPlanState.java', 'enhancement/service/impl/PlanAmbiguityMerger.java',
     'enhancement/service/impl/PlanAnswerSemantics.java', 'enhancement/service/impl/PlanRecommendationAligner.java',
     'enhancement/service/impl/NewsLengthContract.java',

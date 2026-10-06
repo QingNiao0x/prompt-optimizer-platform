@@ -43,9 +43,9 @@ final class PlanRecommendationAligner {
         if (question.type() == PlanQuestionType.FREE_TEXT || question.options().size() < 2) {
             return question;
         }
-        String currentCorpus = normalize(input.rawPrompt());
-        String userCorpus = normalize(userCorpus(input));
-        String projectCorpus = normalize(projectCorpus(input));
+        String currentCorpus = normalize(applicableCorpus(input.rawPrompt(), question.question()));
+        String userCorpus = normalize(applicableCorpus(userCorpus(input), question.question()));
+        String projectCorpus = normalize(applicableCorpus(projectCorpus(input), question.question()));
         int bestScore = 0;
         int bestIndex = -1;
         boolean unique = true;
@@ -206,12 +206,15 @@ final class PlanRecommendationAligner {
      * 条件业务规则只有其完整条件包含在匹配证据里时才可支持，不能只匹配条件中的技术名。
      */
     private static boolean unselectedEvidence(String corpus, int start, int end) {
+        // 完整答案可能连同句号命中。句号属于证据句的边界，不能让下一句审批说明被吞进本句。
+        int evidenceEnd = end;
+        while (evidenceEnd > start && "。；;!?".indexOf(corpus.charAt(evidenceEnd - 1)) >= 0) evidenceEnd--;
         int left = start;
         while (left > 0 && "。；;!?\n".indexOf(corpus.charAt(left - 1)) < 0) left--;
-        int right = end;
+        int right = evidenceEnd;
         while (right < corpus.length() && "。；;!?\n".indexOf(corpus.charAt(right)) < 0) right++;
         String before = corpus.substring(left, start);
-        String after = corpus.substring(end, right);
+        String after = corpus.substring(evidenceEnd, right);
         String sentence = corpus.substring(left, right).strip();
         if (sentence.matches("[^：:。\\n]*[/\\\\][^：:。\\n]*\\.(?:md|txt|java|vue|tsx?|jsx?|pdf)(?:#chunk-\\d+)?")) return true;
         if (before.matches("(?s).*(?:若|如果|假如|假设|倘若|仅在|未来|将来|可考虑|可选|候选|备选|拟采用|建议采用|计划采用)[^。；;\\n]*")) return true;
@@ -222,14 +225,14 @@ final class PlanRecommendationAligner {
 
         // 同一段的下一句若明确指代前面的规则，审批缺口仍约束它；另一业务对象的未批准不能连带否决。
         int paragraphLeft = corpus.lastIndexOf('\n', start) + 1;
-        int paragraphRight = corpus.indexOf('\n', end);
+        int paragraphRight = corpus.indexOf('\n', evidenceEnd);
         if (paragraphRight < 0) paragraphRight = corpus.length();
         String paragraph = corpus.substring(paragraphLeft, paragraphRight);
         int followingStart = Math.min(right + 1, paragraphRight);
         String following = corpus.substring(followingStart, paragraphRight).strip();
         if (following.matches("(?s)^(?:该|此|上述|本|这项).{0,16}(?:规则|方案|口径|材料).*")
                 && (following.matches("(?s)^(?:该|此|上述|本|这项)(?:规则|方案|口径|材料).*")
-                || sharesQuestionObject(following, corpus.substring(start, end)))
+                || sharesQuestionObject(following, corpus.substring(start, evidenceEnd)))
                 && UNVERIFIED_STATE.matcher(following.split("[。；;!?]", 2)[0]).find()) return true;
         // “两份材料的适用/审批须核对”明确约束整段双方；只看到旧规则短句不能恢复其权威性。
         Matcher sharedState = Pattern.compile("(?:两份|双方|这些|各份|全部)(?:资料|材料|规则|口径|方案)"
@@ -289,5 +292,33 @@ final class PlanRecommendationAligner {
         if (value != null && !value.isBlank()) {
             corpus.append('\n').append(value);
         }
+    }
+
+    /**
+     * 具名机构或年份的推荐只能使用相同范围的证据，不能把另一院相同窗口当作默认答案。
+     * 无具名范围的原有技术选型继续走原链路；紧随证据的审批说明保留，不因切句抹掉否定。
+     */
+    private static String applicableCorpus(String corpus, String question) {
+        Pattern owner = Pattern.compile("(?:[A-Za-z][A-Za-z0-9_]*|[\\p{IsHan}]{1,12})(?:医院|公司|机构|部门|工作区|租户)|[甲乙丙丁]院");
+        List<String> scopes = owner.matcher(question).results().map(match -> match.group()
+                .replaceFirst("^(?:对于|关于|请问|请|为)", "")).distinct().toList();
+        List<String> years = Pattern.compile("(?:19|20)\\d{2}年").matcher(question).results().map(java.util.regex.MatchResult::group).toList();
+        if (scopes.isEmpty() && years.isEmpty()) return corpus;
+        StringBuilder eligible = new StringBuilder();
+        // 同段的证据及指代限定保持在同段，不能人为插入换行把未审批说明变成另一份事实。
+        // 原有换行仍是来源边界，另一段的未知审批状态不得连带取消当前推荐。
+        for (String paragraph : corpus.split("\\n", -1)) {
+            StringBuilder scopedParagraph = new StringBuilder();
+            boolean precedingMatches = false;
+            for (String sentence : paragraph.split("(?<=[。；;!?])")) {
+                String text = sentence.strip();
+                boolean same = scopes.stream().allMatch(text::contains) && years.stream().allMatch(text::contains);
+                boolean dependent = precedingMatches && text.matches("^(?:该|此|上述|这项|本规则|本方案).*");
+                if (same || dependent) scopedParagraph.append(sentence);
+                precedingMatches = same || dependent;
+            }
+            append(eligible, scopedParagraph.toString());
+        }
+        return eligible.toString();
     }
 }

@@ -144,6 +144,21 @@ public class OptimizationResultAssembler {
         List<PlanningFactCard> eligibleFacts = new PlanningFactCardExtractor()
                 .filterBoundFacts(planningFacts, context, evidenceQuery);
         List<String> documentFacts = contextFactPreserver.facts(context, evidenceQuery);
+        // 假设来源与实际确认分开核对；提醒也可能带有事实断言，不能只校验四要素正文。
+        List<String> conditionalEvidence = new ArrayList<>(documentFacts);
+        conditionalEvidence.add(rawPrompt == null ? "" : rawPrompt);
+        eligibleFacts.stream().map(PlanningFactCard::evidence).forEach(conditionalEvidence::add);
+        List<ConfirmedPlanDecision> actualConfirmations = planConfirmed ? decisions.knownDecisions() : List.of();
+        var conditionalGuard = ConditionalConfirmationGuard.prepare(rawPrompt, conditionalEvidence, actualConfirmations);
+        sections.forEach((type, section) -> conditionalGuard.validate(section.content(), "sections." + type));
+        var unresolvedContract = UnresolvedDecisionContract.from(effectiveRawPrompt,
+                planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()));
+        sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
+        if (providerResponse.ambiguities() != null) {
+            for (int index = 0; index < providerResponse.ambiguities().size(); index++) {
+                conditionalGuard.validate(providerResponse.ambiguities().get(index), "ambiguities[" + index + "]");
+            }
+        }
         List<String> explicitRules = fidelityGuard.explicitRules(effectiveRawPrompt, decisions.decisions());
         var sourceObjects = SourceObjectContract.from(effectiveRawPrompt, context, eligibleFacts,
                 planConfirmed ? decisions.knownDecisions() : List.of());
@@ -158,7 +173,6 @@ public class OptimizationResultAssembler {
         } else {
             appendPlanningFacts(sections, eligibleFacts, documentFacts);
         }
-        appendExplicitRules(sections, explicitRules);
         appendConstraints(sections, constraints);
         if (!sourceObjects.guidance().isBlank()) appendConstraintBlock(sections, "资料对象与版本", List.of(sourceObjects.guidance()));
         String attributionDelivery = sourceObjects.deliveryGuidance(template.deliveryProfile());
@@ -191,7 +205,9 @@ public class OptimizationResultAssembler {
         if (!planConfirmed) {
             // 用户在原文明确列出的未决问题不能被模型返回的空数组抹掉；绑定 Plan 的旧标签不在此重新引入。
             List<String> providerFindings = assessed;
-            assessed = java.util.stream.Stream.concat(assessed.stream(), declaredPendingQuestions(rawPrompt).stream()
+            assessed = java.util.stream.Stream.concat(assessed.stream(),
+                    java.util.stream.Stream.concat(declaredPendingQuestions(rawPrompt).stream(),
+                            UnresolvedDecisionContract.declaredPending(rawPrompt).stream())
                             .filter(question -> providerFindings.stream().noneMatch(finding -> coversDeclaredQuestion(finding, question, rawPrompt))))
                     .distinct().toList();
         }
@@ -208,7 +224,13 @@ public class OptimizationResultAssembler {
                     + " 项未展示；所有未决条件已完整保留在约束的执行前须确认部分，请核对后再交付执行。");
         }
         removeRepeatedProviderPrerequisites(sections, merged.executionPrerequisites(), decisions);
+        ProviderPrerequisiteCompactor.compact(sections, merged.executionPrerequisites(), decisions, rawPrompt);
         appendExecutionPrerequisites(sections, merged.executionPrerequisites());
+        // 未决清单也是正文中的权威规则来源；先落入正文再查缺补齐，避免同一禁止规则被追加两遍。
+        appendExplicitRules(sections, ProviderPrerequisiteCompactor.uncoveredRules(explicitRules,
+                merged.executionPrerequisites(), decisions, rawPrompt));
+        // 补回规则也可能重述同一未知；权威执行前提所在的标题范围跳过，只检查其余完整断言。
+        ProviderPrerequisiteCompactor.compact(sections, merged.executionPrerequisites(), decisions, rawPrompt);
         // 一个权威列表同时驱动 API 与段落，避免 UI 与模型返回的旧 CLARIFICATIONS 互相矛盾。
         sections.remove(PromptSectionType.CLARIFICATIONS);
         if (!remainingAmbiguities.isEmpty()) {
@@ -373,6 +395,9 @@ public class OptimizationResultAssembler {
     /** 未决与冲突必须随可复制正文交付；不把暂不确定转换成模型自行选择的许可。 */
     private void appendExecutionPrerequisites(Map<PromptSectionType, PromptSection> sections, List<String> prerequisites) {
         appendConstraintBlock(sections, "执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）", prerequisites);
+        if (!prerequisites.isEmpty()) {
+            appendConstraintBlock(sections, "未决决定的交付边界", List.of(UnresolvedDecisionContract.DELIVERY_GUIDANCE));
+        }
     }
 
     /** 已核实规则和代码核查仍随复制正文交付，但不混入用户待定列表；新冲突保持原分类。 */

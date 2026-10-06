@@ -91,6 +91,49 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
         persist(eventType, request, clientIp, location, deviceType, snapshot);
     }
 
+    /** 提交在 Provider 调用前采集；生成失败仍是一次尝试，Provider 内部重试不会再次经过此入口。 */
+    public void recordOptimizationSubmission(boolean direct, HttpServletRequest request) {
+        PendingAuditEvent submitted = requestEvent(currentActor.require(), AnalyticsEventType.OPTIMIZATION_SUBMITTED,
+                request, UUID.randomUUID());
+        delivery.accept(submitted, false);
+        if (direct) {
+            // 同一提交的通用/细分事实共用时刻，避免跨午夜时落入两个不同自然日。
+            delivery.accept(new PendingAuditEvent(UUID.randomUUID(), submitted.tenantId(), submitted.actorUserId(),
+                    AnalyticsEventType.DIRECT_OPTIMIZATION_SUBMITTED, submitted.details(), submitted.occurredAt()), false);
+        }
+    }
+
+    /** 完成事实按服务端身份与计划编号去重；重试、并发及跨实例投递最终命中同一数据库主键。 */
+    public void recordPlanCompleted(String planId, HttpServletRequest request) {
+        if (planId == null || planId.length() != 36) {
+            throw new InvalidOptimizationRequestException("完成计划的编号无效");
+        }
+        UUID planUuid;
+        try {
+            planUuid = UUID.fromString(planId);
+        } catch (IllegalArgumentException invalidId) {
+            throw new InvalidOptimizationRequestException("完成计划的编号无效");
+        }
+        if (!planUuid.toString().equalsIgnoreCase(planId)) throw new InvalidOptimizationRequestException("完成计划的编号无效");
+        ActorIdentity actor = currentActor.require();
+        String scope = "analytics:plan-completed:v1:" + actor.tenantId() + ":" + actor.userId() + ":" + planUuid;
+        UUID eventId = UUID.nameUUIDFromBytes(scope.getBytes(StandardCharsets.UTF_8));
+        // 原始 planId 和身份字符串不进入 details，更不能成为 Micrometer 标签。
+        delivery.accept(requestEvent(actor, AnalyticsEventType.PLAN_COMPLETED, request, eventId), false);
+    }
+
+    /** 只从认证上下文与元数据白名单构造不可变事实，保留服务端采集的 UTC 时刻。 */
+    private PendingAuditEvent requestEvent(ActorIdentity actor, AnalyticsEventType eventType, HttpServletRequest request, UUID eventId) {
+        String clientIp = clientIpResolver.resolve(request);
+        GeoLocation location = locate(clientIp);
+        AnalyticsDeviceType deviceType = deviceTypeResolver.resolve(request.getHeader("User-Agent"));
+        AnalyticsSessionContext.Snapshot snapshot = sessionContext.currentOrCreate(request);
+        String requestId = (String) request.getAttribute(RequestIdFilter.REQUEST_ID_ATTRIBUTE);
+        return new PendingAuditEvent(eventId, actor.tenantId(), actor.userId(), eventType,
+                sessionContext.details(snapshot, clientIp, location, deviceType, requestId),
+                OffsetDateTime.now(ZoneOffset.UTC));
+    }
+
     /** 校验离线事件所属账号、时间及登录关联号；可靠保存失败返回可重试错误，不能伪造接收成功。 */
     public void recordClientEvent(ClientAnalyticsEventRequest event, HttpServletRequest request) {
         Objects.requireNonNull(event, "client event");

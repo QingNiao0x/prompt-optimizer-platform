@@ -1,6 +1,5 @@
 package com.promptoptimizer.history.controller;
 
-import com.promptoptimizer.analytics.domain.AnalyticsEventType;
 import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.common.api.ApiResponse;
 import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
@@ -102,7 +101,7 @@ public class OptimizationHistoryController {
             HttpServletRequest request
     ) {
         // 与直接优化接口保持“提交请求”口径，记录尝试，不把模型失败伪装为成功。
-        analyticsEventService.record(AnalyticsEventType.OPTIMIZATION_SUBMITTED, request);
+        analyticsEventService.recordOptimizationSubmission(true, request);
         return ApiResponse.success(requestId(request), historyService.reoptimize(id));
     }
 

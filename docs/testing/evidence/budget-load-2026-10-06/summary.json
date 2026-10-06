@@ -1,0 +1,208 @@
+{
+  "resources": {
+    "samples": 221,
+    "services": {
+      "api": {
+        "peak_mib": 633.8,
+        "peak_cpu_cores": 1.0299,
+        "peak_pids": 139
+      },
+      "postgres": {
+        "peak_mib": 103.8,
+        "peak_cpu_cores": 0.1198,
+        "peak_pids": 22
+      },
+      "redis": {
+        "peak_mib": 13.79,
+        "peak_cpu_cores": 0.0629,
+        "peak_pids": 12
+      }
+    },
+    "simultaneous_container_peak_mib": 746.04,
+    "simultaneous_cpu_peak_cores": 1.038,
+    "minimum_wsl_available_mib": 2566.64
+  },
+  "boundaries": [
+    {
+      "name": "empty_prompt",
+      "passed": true,
+      "expected": "HTTP 400 / INVALID_ARGUMENT",
+      "actual": {
+        "status": 400,
+        "code": "INVALID_ARGUMENT",
+        "seconds": 0.028403099975548685
+      }
+    },
+    {
+      "name": "oversized_document",
+      "passed": true,
+      "expected": "HTTP 400 / INVALID_ARGUMENT",
+      "actual": {
+        "status": 400,
+        "code": "INVALID_ARGUMENT",
+        "seconds": 0.006816099979914725
+      }
+    },
+    {
+      "name": "invalid_path",
+      "passed": true,
+      "expected": "HTTP 400 / DOCUMENT_PROCESSING_ERROR",
+      "actual": {
+        "status": 400,
+        "code": "DOCUMENT_PROCESSING_ERROR",
+        "seconds": 0.028728900011628866
+      }
+    },
+    {
+      "name": "cross_user_document",
+      "passed": true,
+      "expected": "HTTP 404 / DOCUMENT_PROCESSING_ERROR",
+      "actual": {
+        "status": 404,
+        "code": "DOCUMENT_PROCESSING_ERROR",
+        "seconds": 0.019050900009460747
+      }
+    },
+    {
+      "name": "negative_chunk_index",
+      "passed": true,
+      "expected": "HTTP 400 / DOCUMENT_PROCESSING_ERROR",
+      "actual": {
+        "status": 400,
+        "code": "DOCUMENT_PROCESSING_ERROR",
+        "seconds": 0.006951000017579645
+      }
+    },
+    {
+      "name": "cross_tenant_history",
+      "passed": true,
+      "expected": "HTTP 404",
+      "actual": {
+        "status": 404,
+        "code": "RESOURCE_NOT_FOUND",
+        "seconds": 0.04247430001851171
+      }
+    },
+    {
+      "name": "upstream_429",
+      "passed": true,
+      "expected": "HTTP 503 / PROVIDER_RATE_LIMITED",
+      "actual": {
+        "status": 503,
+        "code": "PROVIDER_RATE_LIMITED",
+        "seconds": 0.09211009996943176
+      }
+    },
+    {
+      "name": "upstream_429_recovery",
+      "passed": true,
+      "expected": "HTTP 200 and valid result",
+      "actual": {
+        "status": 200,
+        "code": "OK",
+        "seconds": 0.0950905000208877
+      }
+    },
+    {
+      "name": "upstream_503",
+      "passed": true,
+      "expected": "HTTP 502 / PROVIDER_UNAVAILABLE",
+      "actual": {
+        "status": 502,
+        "code": "PROVIDER_UNAVAILABLE",
+        "seconds": 0.0970460000098683
+      }
+    },
+    {
+      "name": "upstream_503_recovery",
+      "passed": true,
+      "expected": "HTTP 200 and valid result",
+      "actual": {
+        "status": 200,
+        "code": "OK",
+        "seconds": 0.10962569998810068
+      }
+    },
+    {
+      "name": "upstream_timeout",
+      "passed": false,
+      "expected": "HTTP 504 / PROVIDER_TIMEOUT",
+      "actual": {
+        "status": 502,
+        "code": "PROVIDER_UNAVAILABLE",
+        "seconds": 60.09311350004282
+      }
+    },
+    {
+      "name": "upstream_timeout_recovery",
+      "passed": true,
+      "expected": "HTTP 200 and valid result",
+      "actual": {
+        "status": 200,
+        "code": "OK",
+        "seconds": 0.09552640002220869
+      }
+    },
+    {
+      "name": "per_user_limit_3",
+      "passed": true,
+      "expected": "3 successes + 1 HTTP 429",
+      "actual": {
+        "requests": 4,
+        "successes": 3,
+        "http": {
+          "200": 3,
+          "429": 1
+        },
+        "codes": {
+          "OK": 3,
+          "USER_MODEL_CONCURRENCY_LIMIT": 1
+        },
+        "p50_seconds": 3.047,
+        "p95_seconds": 3.072,
+        "max_seconds": 3.072
+      }
+    },
+    {
+      "name": "per_user_limit_recovery",
+      "passed": true,
+      "expected": "HTTP 200 and valid result",
+      "actual": {
+        "status": 200,
+        "code": "OK",
+        "seconds": 0.07594579999567941
+      }
+    },
+    {
+      "name": "global_limit_100",
+      "passed": true,
+      "expected": "100 successes + 1 HTTP 503",
+      "actual": {
+        "requests": 101,
+        "successes": 100,
+        "http": {
+          "200": 100,
+          "503": 1
+        },
+        "codes": {
+          "OK": 100,
+          "MODEL_CONCURRENCY_LIMIT": 1
+        },
+        "p50_seconds": 5.866,
+        "p95_seconds": 6.404,
+        "max_seconds": 6.421
+      }
+    },
+    {
+      "name": "global_limit_recovery",
+      "passed": true,
+      "expected": "HTTP 200 and valid result",
+      "actual": {
+        "status": 200,
+        "code": "OK",
+        "seconds": 0.08996099996147677
+      }
+    }
+  ],
+  "jar_sha256": "eddd81aa8befc7cb321bc0ab03946376058acbe3a521ec722262e8cc385056ac"
+}

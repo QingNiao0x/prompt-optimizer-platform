@@ -1,5 +1,7 @@
 package com.promptoptimizer.enhancement.service;
 
+import com.promptoptimizer.analytics.domain.AnalyticsEventType;
+
 /**
  * 只记录有界指标，不将问题、答案、用户 ID 或文件内容作为指标标签。
  *
@@ -16,6 +18,9 @@ public interface PlanQualityMetrics {
 
     /** 仅以枚举事件类型计数，不记录用户提交的答案内容。 */
     void event(Event event);
+
+    /** 记录已提交入库的功能使用事件；标签仅允许直接增强提交与 Plan 完成两个固定代码。 */
+    void featureUse(AnalyticsEventType eventType);
 
     /**
      * 可作为低基数指标标签的交互事件集合。

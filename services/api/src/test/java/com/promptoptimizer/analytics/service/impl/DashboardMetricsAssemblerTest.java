@@ -37,19 +37,20 @@ class DashboardMetricsAssemblerTest {
     void assemblesUnorderedRowsAndKeepsAccountDeduplicationSeparateFromDailySums() {
         AnalyticsPeriod period = period(FIRST_DAY, FIRST_DAY.plusDays(2));
         var rows = emptyRows(period);
-        rows.set(0, new DashboardMetricRow(MetricKind.SUMMARY, null, 5, 1, 2, 1, 0, 0, 0, 0));
-        rows.set(1, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.toString(), 3, 1, 2, 1, 1, 0, 0, 0));
-        rows.set(2, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.plusDays(1).toString(), 2, 1, 1, 0, 0, 0, 0, 0));
-        rows.set(3 + 9, new DashboardMetricRow(MetricKind.HOURLY, "9", 0, 0, 0, 0, 0, 3, 0, 0));
-        rows.add(new DashboardMetricRow(MetricKind.DEVICE, "DESKTOP", 0, 0, 0, 0, 0, 0, 2, 1));
-        rows.add(new DashboardMetricRow(MetricKind.DEVICE, "UNKNOWN", 0, 0, 0, 0, 0, 0, 3, 1));
-        rows.add(new DashboardMetricRow(MetricKind.DEVICE, "MOBILE", 0, 0, 0, 0, 0, 0, 3, 2));
+        rows.set(0, new DashboardMetricRow(MetricKind.SUMMARY, null, 5, 1, 2, 1, 0, 0, 0, 0, 3, 1));
+        rows.set(1, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.toString(), 3, 1, 2, 1, 1, 0, 0, 0, 2, 0));
+        rows.set(2, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.plusDays(1).toString(), 2, 1, 1, 0, 0, 0, 0, 0, 1, 1));
+        rows.set(3 + 9, new DashboardMetricRow(MetricKind.HOURLY, "9", 0, 0, 0, 0, 0, 3, 0, 0, 0, 0));
+        rows.add(new DashboardMetricRow(MetricKind.DEVICE, "DESKTOP", 0, 0, 0, 0, 0, 0, 2, 1, 0, 0));
+        rows.add(new DashboardMetricRow(MetricKind.DEVICE, "UNKNOWN", 0, 0, 0, 0, 0, 0, 3, 1, 0, 0));
+        rows.add(new DashboardMetricRow(MetricKind.DEVICE, "MOBILE", 0, 0, 0, 0, 0, 0, 3, 2, 0, 0));
         Collections.reverse(rows);
 
         var metrics = DashboardMetricsAssembler.assemble(period, rows);
         assertThat(metrics.usageCounts()).isEqualTo(new UsageCounts(5, 1, 2, 1));
-        assertThat(metrics.dailyMetrics()).containsExactly(new DailyMetric(FIRST_DAY, 3, 1, 2, 1, 1),
-                new DailyMetric(FIRST_DAY.plusDays(1), 2, 1, 1, 0, 0));
+        assertThat(metrics.dailyMetrics()).containsExactly(new DailyMetric(FIRST_DAY, 3, 1, 2, 1, 1, 2, 0),
+                new DailyMetric(FIRST_DAY.plusDays(1), 2, 1, 1, 0, 0, 1, 1));
+        assertThat(metrics.featureUsage()).isEqualTo(new com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper.FeatureUsageCounts(3, 1));
         assertThat(metrics.hourlyUsage()).hasSize(24).extracting(HourlyMetric::hour)
                 .containsExactlyElementsOf(java.util.stream.IntStream.range(0, 24).boxed().toList());
         assertThat(metrics.hourlyUsage()).filteredOn(metric -> metric.hour() == 9)
@@ -65,7 +66,7 @@ class DashboardMetricsAssemblerTest {
     void emptyEventsStillRequireCompleteZeroDaysAndHoursButAllowNoDevices() {
         var metrics = DashboardMetricsAssembler.assemble(ONE_DAY, emptyRows(ONE_DAY));
         assertThat(metrics.usageCounts()).isEqualTo(new UsageCounts(0, 0, 0, 0));
-        assertThat(metrics.dailyMetrics()).containsExactly(new DailyMetric(FIRST_DAY, 0, 0, 0, 0, 0));
+        assertThat(metrics.dailyMetrics()).containsExactly(new DailyMetric(FIRST_DAY, 0, 0, 0, 0, 0, 0, 0));
         assertThat(metrics.hourlyUsage()).hasSize(24).allSatisfy(hour -> assertThat(hour.operationCount()).isZero());
         assertThat(metrics.deviceDistribution()).isEmpty();
     }
@@ -81,10 +82,10 @@ class DashboardMetricsAssemblerTest {
     @Test
     void preservesDatabaseOrderAndOriginalLegacyDeviceCodesForEqualLoginCounts() {
         var rows = emptyRows(ONE_DAY);
-        rows.set(0, new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 0, 1, 0, 0, 0, 0, 0));
-        rows.set(1, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.toString(), 0, 0, 1, 0, 0, 0, 0, 0));
-        rows.add(new DashboardMetricRow(MetricKind.DEVICE, "旧设备", 0, 0, 0, 0, 0, 0, 1, 1));
-        rows.add(new DashboardMetricRow(MetricKind.DEVICE, "Z", 0, 0, 0, 0, 0, 0, 1, 1));
+        rows.set(0, new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
+        rows.set(1, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.toString(), 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
+        rows.add(new DashboardMetricRow(MetricKind.DEVICE, "旧设备", 0, 0, 0, 0, 0, 0, 1, 1, 0, 0));
+        rows.add(new DashboardMetricRow(MetricKind.DEVICE, "Z", 0, 0, 0, 0, 0, 0, 1, 1, 0, 0));
         assertThat(DashboardMetricsAssembler.assemble(ONE_DAY, rows).deviceDistribution())
                 .containsExactly(new DeviceMetric("旧设备", 1, 1), new DeviceMetric("Z", 1, 1));
     }
@@ -95,9 +96,9 @@ class DashboardMetricsAssemblerTest {
                 .isInstanceOf(IllegalStateException.class);
         AnalyticsPeriod period = period(FIRST_DAY, FIRST_DAY.plusDays(2));
         var rows = emptyRows(period);
-        rows.set(0, new DashboardMetricRow(MetricKind.SUMMARY, null, Long.MAX_VALUE, 0, 0, 0, 0, 0, 0, 0));
-        rows.set(1, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.toString(), Long.MAX_VALUE, 0, 0, 0, 0, 0, 0, 0));
-        rows.set(2, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.plusDays(1).toString(), 1, 0, 0, 0, 0, 0, 0, 0));
+        rows.set(0, new DashboardMetricRow(MetricKind.SUMMARY, null, Long.MAX_VALUE, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+        rows.set(1, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.toString(), Long.MAX_VALUE, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+        rows.set(2, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.plusDays(1).toString(), 1, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         assertThatThrownBy(() -> DashboardMetricsAssembler.assemble(period, rows))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("溢出");
     }
@@ -137,34 +138,57 @@ class DashboardMetricsAssemblerTest {
         var duplicateDevice = appended(row(MetricKind.DEVICE, "UNKNOWN"));
         duplicateDevice.add(row(MetricKind.DEVICE, "UNKNOWN"));
         cases.add(Arguments.of("duplicate device", duplicateDevice));
-        for (int column = 0; column < 8; column++) {
-            long[] counts = new long[8];
+        for (int column = 0; column < 10; column++) {
+            long[] counts = new long[10];
             counts[column] = -1;
             cases.add(Arguments.of("negative count " + column, replaced(0, new DashboardMetricRow(MetricKind.SUMMARY, null,
-                    counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6], counts[7]))));
+                    counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6], counts[7], counts[8], counts[9]))));
         }
         cases.add(Arguments.of("unused summary column", replaced(0,
-                new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 0, 0, 0, 1, 0, 0, 0))));
+                new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0))));
         cases.add(Arguments.of("unused day column", replaced(1,
-                new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.toString(), 0, 0, 0, 0, 0, 1, 0, 0))));
+                new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.toString(), 0, 0, 0, 0, 0, 1, 0, 0, 0, 0))));
         cases.add(Arguments.of("unused hour column", replaced(2,
-                new DashboardMetricRow(MetricKind.HOURLY, "0", 0, 0, 1, 0, 0, 0, 0, 0))));
+                new DashboardMetricRow(MetricKind.HOURLY, "0", 0, 0, 1, 0, 0, 0, 0, 0, 0, 0))));
         cases.add(Arguments.of("unused device column", appended(
-                new DashboardMetricRow(MetricKind.DEVICE, "UNKNOWN", 0, 0, 0, 0, 0, 1, 0, 0))));
+                new DashboardMetricRow(MetricKind.DEVICE, "UNKNOWN", 0, 0, 0, 0, 0, 1, 0, 0, 0, 0))));
         cases.add(Arguments.of("visitors exceed active", replaced(0,
-                new DashboardMetricRow(MetricKind.SUMMARY, null, 1, 1, 0, 0, 0, 0, 0, 0))));
+                new DashboardMetricRow(MetricKind.SUMMARY, null, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0))));
         cases.add(Arguments.of("actual exceed active", replaced(0,
-                new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 0, 0, 1, 0, 0, 0, 0))));
+                new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0))));
         cases.add(Arguments.of("visitors exceed visits", replaced(0,
-                new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 1, 1, 0, 0, 0, 0, 0))));
+                new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0))));
         cases.add(Arguments.of("device users exceed logins", appended(
-                new DashboardMetricRow(MetricKind.DEVICE, "UNKNOWN", 0, 0, 0, 0, 0, 0, 1, 2))));
-        var deviceOrder = appended(new DashboardMetricRow(MetricKind.DEVICE, "DESKTOP", 0, 0, 0, 0, 0, 0, 1, 1));
-        deviceOrder.add(new DashboardMetricRow(MetricKind.DEVICE, "MOBILE", 0, 0, 0, 0, 0, 0, 2, 1));
+                new DashboardMetricRow(MetricKind.DEVICE, "UNKNOWN", 0, 0, 0, 0, 0, 0, 1, 2, 0, 0))));
+        var deviceOrder = appended(new DashboardMetricRow(MetricKind.DEVICE, "DESKTOP", 0, 0, 0, 0, 0, 0, 1, 1, 0, 0));
+        deviceOrder.add(new DashboardMetricRow(MetricKind.DEVICE, "MOBILE", 0, 0, 0, 0, 0, 0, 2, 1, 0, 0));
         cases.add(Arguments.of("device login counts not descending", deviceOrder));
         cases.add(Arguments.of("summary daily access mismatch", replaced(0,
-                new DashboardMetricRow(MetricKind.SUMMARY, null, 1, 0, 0, 0, 0, 0, 0, 0))));
+                new DashboardMetricRow(MetricKind.SUMMARY, null, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0))));
+        cases.add(Arguments.of("direct total mismatch", replaced(0,
+                new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0))));
+        cases.add(Arguments.of("plan total mismatch", replaced(0,
+                new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1))));
+        cases.add(Arguments.of("feature count in hour", replaced(2,
+                new DashboardMetricRow(MetricKind.HOURLY, "0", 0, 0, 0, 0, 0, 0, 0, 0, 1, 0))));
+        cases.add(Arguments.of("feature count in device", appended(
+                new DashboardMetricRow(MetricKind.DEVICE, "UNKNOWN", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1))));
         return cases.stream();
+    }
+
+    @Test
+    void rejectsOverflowOfEachFeatureTotal() {
+        var twoDays = period(FIRST_DAY, FIRST_DAY.plusDays(2));
+        for (boolean direct : List.of(true, false)) {
+            var rows = emptyRows(twoDays);
+            rows.set(0, new DashboardMetricRow(MetricKind.SUMMARY, null, 0, 0, 0, 0, 0, 0, 0, 0,
+                    direct ? Long.MAX_VALUE : 0, direct ? 0 : Long.MAX_VALUE));
+            rows.set(1, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.toString(), 0, 0, 0, 0, 0, 0, 0, 0,
+                    direct ? Long.MAX_VALUE : 0, direct ? 0 : Long.MAX_VALUE));
+            rows.set(2, new DashboardMetricRow(MetricKind.DAILY, FIRST_DAY.plusDays(1).toString(), 0, 0, 0, 0, 0, 0, 0, 0,
+                    direct ? 1 : 0, direct ? 0 : 1));
+            assertThatThrownBy(() -> DashboardMetricsAssembler.assemble(twoDays, rows)).hasMessageContaining("溢出");
+        }
     }
 
     /** 规范零值结果：汇总一行、每日一行和全部 24 小时，没有事件时不创建设备行。 */
@@ -178,7 +202,7 @@ class DashboardMetricsAssemblerTest {
 
     /** 创建一行指定类型的零值结果供边界夹具使用。 */
     private static DashboardMetricRow row(MetricKind kind, String bucket) {
-        return new DashboardMetricRow(kind, bucket, 0, 0, 0, 0, 0, 0, 0, 0);
+        return new DashboardMetricRow(kind, bucket, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     /** 替换规范结果的单行，保持其他桶完整以定位目标错误。 */

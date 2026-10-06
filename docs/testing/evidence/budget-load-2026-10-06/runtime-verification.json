@@ -1,0 +1,83 @@
+{
+  "engine": {
+    "cpus": 2,
+    "memory_bytes": 4107939840,
+    "os": "linux"
+  },
+  "before_stop": [
+    {
+      "name": "/prompt-optimizer-budget-api-1",
+      "image_id": "sha256:ee5e17124ded518d6fad505874471d339f10c8107fcafecd5a813de813413054",
+      "cpu_nano": 1250000000,
+      "memory_bytes": 2147483648,
+      "swap_limit_bytes": 2147483648,
+      "oom_killed": false,
+      "restarts": 0,
+      "state": "running"
+    },
+    {
+      "name": "/prompt-optimizer-budget-postgres-1",
+      "image_id": "sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542",
+      "cpu_nano": 500000000,
+      "memory_bytes": 805306368,
+      "swap_limit_bytes": 805306368,
+      "oom_killed": false,
+      "restarts": 0,
+      "state": "running"
+    },
+    {
+      "name": "/prompt-optimizer-budget-redis-1",
+      "image_id": "sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058",
+      "cpu_nano": 250000000,
+      "memory_bytes": 268435456,
+      "swap_limit_bytes": 268435456,
+      "oom_killed": false,
+      "restarts": 0,
+      "state": "running"
+    }
+  ],
+  "java_version": "openjdk version \"21.0.10\" 2026-01-20\nOpenJDK Runtime Environment (build 21.0.10+7-alpine-r0)\nOpenJDK 64-Bit Server VM (build 21.0.10+7-alpine-r0, mixed mode, sharing)",
+  "redis_appendonly": "no",
+  "jar_sha256": "eddd81aa8befc7cb321bc0ab03946376058acbe3a521ec722262e8cc385056ac",
+  "after_stop": [
+    {
+      "name": "/prompt-optimizer-budget-api-1",
+      "cpu_nano": 1250000000,
+      "memory_bytes": 2147483648,
+      "swap_limit_bytes": 2147483648,
+      "oom_killed": false,
+      "restarts": 0,
+      "state": "exited",
+      "exit_code": 143
+    },
+    {
+      "name": "/prompt-optimizer-budget-postgres-1",
+      "cpu_nano": 500000000,
+      "memory_bytes": 805306368,
+      "swap_limit_bytes": 805306368,
+      "oom_killed": false,
+      "restarts": 0,
+      "state": "exited",
+      "exit_code": 0
+    },
+    {
+      "name": "/prompt-optimizer-budget-redis-1",
+      "cpu_nano": 250000000,
+      "memory_bytes": 268435456,
+      "swap_limit_bytes": 268435456,
+      "oom_killed": false,
+      "restarts": 0,
+      "state": "exited",
+      "exit_code": 0
+    }
+  ],
+  "original_environment": {
+    "original_containers_present_at_end": false,
+    "data_volumes_verified_present": [
+      "prompt-optimizer-local_prompt_optimizer_postgres_data",
+      "prompt-optimizer-local_prompt_optimizer_redis_data"
+    ],
+    "container_disappearance_cause": "not_confirmed",
+    "this_task_deleted_original_containers": false
+  }
+}

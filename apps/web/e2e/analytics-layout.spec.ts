@@ -28,11 +28,12 @@ const mockAnalytics = async (page: Page, empty = false) => {
     period, registeredAccountCount: empty ? 0 : 15846, newAccountCount: empty ? 0 : 327,
     actualUserCount: empty ? 0 : 7304, accessCount: empty ? 0 : 128540,
     uniqueVisitorCount: empty ? 0 : 8600, activeUserCount: empty ? 0 : 9172,
-    averageDailyActiveUsers: empty ? 0 : 2587.33,
+    averageDailyActiveUsers: empty ? 0 : 2587.33, directEnhancementCount: empty ? 0 : 54, planCompletedCount: empty ? 0 : 27,
     dailyMetrics: Array.from({ length: 27 }, (_, index) => ({
       date: `2026-09-${String(index + 1).padStart(2, '0')}`,
       accessCount: empty ? 0 : 3000 + index * 52, uniqueVisitors: empty ? 0 : 1000 + index * 24,
       activeUsers: empty ? 0 : 800 + index * 18, actualUsers: empty ? 0 : 700 + index * 10, newAccounts: empty ? 0 : 12,
+      directEnhancementCount: empty ? 0 : 2, planCompletedCount: empty ? 0 : 1,
     })),
     hourlyUsage: Array.from({ length: 24 }, (_, hour) => ({ hour, operationCount: empty ? 0 : 40 + hour * 9 })),
     monthlyUsage: Array.from({ length: 12 }, (_, index) => ({
@@ -58,7 +59,10 @@ const mockAnalytics = async (page: Page, empty = false) => {
   };
   const records: AnalyticsOperationLog[] = empty ? [] : Array.from({ length: 73 }, (_, index) => ({
     eventId: `event-${index + 1}`, userId: `00000000-0000-0000-0000-${String(index + 1).padStart(12, '0')}`,
-    displayName: `测试账号 ${index + 1}`, eventType: 'OPTIMIZATION_SUBMITTED', occurredAt: '2026-09-27T09:32:10Z',
+    displayName: `测试账号 ${index + 1}`,
+    eventType: index === 0 ? 'DIRECT_OPTIMIZATION_SUBMITTED' : index === 1 ? 'PLAN_COMPLETED'
+      : index % 2 === 0 ? 'LOGIN' : 'OPTIMIZATION_SUBMITTED',
+    occurredAt: '2026-09-27T09:32:10Z',
     clientIp: '2001:db8:1234:5678:abcd:ef01:2345:6789',
     country: '测试国家', province: '测试省份', city: index === 0 ? longLocation : '测试城市',
     loginCountry: null, loginProvince: null, loginCity: null, deviceType: 'DESKTOP',
@@ -78,9 +82,10 @@ const mockAnalytics = async (page: Page, empty = false) => {
       requests.operations.push(url);
       const current = Number(url.searchParams.get('current') ?? 1);
       const size = Number(url.searchParams.get('size') ?? 10);
+      const filteredRecords = records.filter((record) => !url.searchParams.get('eventType') || record.eventType === url.searchParams.get('eventType'));
       await route.fulfill({ json: { data: {
-        records: records.slice((current - 1) * size, current * size),
-        current, size, total: records.length, pages: Math.ceil(records.length / size),
+        records: filteredRecords.slice((current - 1) * size, current * size),
+        current, size, total: filteredRecords.length, pages: Math.ceil(filteredRecords.length / size),
       } } });
     } else {
       await route.abort();
@@ -94,7 +99,7 @@ const expectContainedLayout = async (page: Page): Promise<void> => {
   await expect.poll(() => page.evaluate(() => (
     document.documentElement.scrollWidth - document.documentElement.clientWidth
   ))).toBeLessThanOrEqual(1);
-  for (const selector of ['.filters', '.metric-strip', '.charts-grid', '.ranking-panel', '.operations-panel']) {
+  for (const selector of ['.filters', '.metric-strip', '.feature-usage-strip', '.charts-grid', '.ranking-panel', '.operations-panel']) {
     const bounds = await page.locator(selector).boundingBox();
     expect(bounds).not.toBeNull();
     expect(bounds!.x).toBeGreaterThanOrEqual(10);
@@ -165,11 +170,27 @@ test('日期范围、排行日期弹层和分页选项使用中文', async ({ pa
   await expect(rankPicker.locator('.el-date-table th').first()).toHaveText('日');
 });
 
+test('新增细分操作以中文显示，筛选保持后端事件代码', async ({ page }) => {
+  const { requests } = await mockAnalytics(page);
+  await page.goto('/admin/analytics');
+  await expect(page.locator('.operations-panel .el-table__body .el-table__row').first()).toContainText('直接增强提交');
+  await expect(page.locator('.operations-panel .el-table__body .el-table__row').nth(1)).toContainText('Plan 完成');
+  await page.locator('.event-select .el-select__wrapper').click();
+  await page.getByRole('option', { name: 'Plan 完成', exact: true }).click();
+  await page.getByRole('button', { name: '查询', exact: true }).click();
+  await expect.poll(() => requests.operations.at(-1)?.searchParams.get('eventType')).toBe('PLAN_COMPLETED');
+  await expect(page.locator('.operations-panel .el-table__body .el-table__row')).toHaveCount(1);
+  await expect(page.locator('.operations-panel .el-table__body .el-table__row')).toContainText('Plan 完成');
+});
+
 test('宽屏充分利用宽度，平板与手机不溢出；主题切换保留图表与查询结果', async ({ page }, testInfo) => {
   const { requests } = await mockAnalytics(page);
   await page.goto('/admin/analytics');
   await expect(page.locator('.operations-panel .el-table__body .el-table__row')).toHaveCount(10);
-  await expect(page.locator('.chart canvas')).toHaveCount(5);
+  await expect(page.locator('.chart canvas')).toHaveCount(6);
+  await expect(page.getByTestId('direct-enhancement-count').locator('strong')).toHaveText('54');
+  await expect(page.getByTestId('plan-completed-count').locator('strong')).toHaveText('27');
+  await expect(page.getByText('细分次数自本功能启用后记录；旧通用优化记录无法区分这两种使用路径。')).toBeVisible();
   for (const width of [1920, 1440, 1024, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 1000 });
     await expectContainedLayout(page);
@@ -204,7 +225,7 @@ test('宽屏充分利用宽度，平板与手机不溢出；主题切换保留�
   }
   await page.getByRole('button', { name: '切换为深色主题' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-ui-theme', 'glass-dark');
-  await expect(page.locator('.chart canvas')).toHaveCount(5);
+  await expect(page.locator('.chart canvas')).toHaveCount(6);
   await expectContainedLayout(page);
   expect(requests.dashboard).toHaveLength(1);
   expect(requests.operations).toHaveLength(1);
@@ -253,7 +274,8 @@ test('空数据保留筛选和明确空状态，后续查询可恢复图表', as
   await expect(page.getByText('所选周期内没有关键使用操作。')).toBeVisible();
   await expect(page.getByText('所选范围内没有关键操作日志。')).toBeVisible();
   await expect(page.getByText('充值图表尚无数据源')).toBeVisible();
-  await expect(page.locator('.metric strong')).toHaveText(['0', '0', '0', '0', '0', '0', '0']);
+  await expect(page.locator('.metric strong')).toHaveText(['0', '0', '0', '0', '0', '0', '0', '0', '0']);
+  await expect(page.getByText('所选范围内暂无增强功能细分记录。')).toBeVisible();
   await expect(page.locator('.chart canvas')).toHaveCount(0);
   await expect(page.getByText(/^峰值 /)).toHaveCount(0);
   await expect(page.locator('.pagination-row')).toHaveCount(0);
@@ -261,10 +283,10 @@ test('空数据保留筛选和明确空状态，后续查询可恢复图表', as
   const emptyText = await page.getByText('所选范围内没有关键操作日志。').boundingBox();
   expect(emptyText!.x).toBeGreaterThanOrEqual(12);
   expect(emptyText!.x + emptyText!.width).toBeLessThanOrEqual(378);
-  dashboard.dailyMetrics = [{ date: period.fromDate, accessCount: 1, uniqueVisitors: 1, activeUsers: 1, actualUsers: 1, newAccounts: 0 }];
+  dashboard.dailyMetrics = [{ date: period.fromDate, accessCount: 1, uniqueVisitors: 1, activeUsers: 1, actualUsers: 1, newAccounts: 0, directEnhancementCount: 0, planCompletedCount: 0 }];
   await page.getByRole('button', { name: '查询', exact: true }).click();
   await expect(page.locator('.chart canvas')).toHaveCount(1);
-  dashboard.dailyMetrics[0] = { date: period.fromDate, accessCount: 0, uniqueVisitors: 0, activeUsers: 0, actualUsers: 0, newAccounts: 0 };
+  dashboard.dailyMetrics[0] = { date: period.fromDate, accessCount: 0, uniqueVisitors: 0, activeUsers: 0, actualUsers: 0, newAccounts: 0, directEnhancementCount: 0, planCompletedCount: 0 };
   await page.getByRole('button', { name: '查询', exact: true }).click();
   await expect(page.locator('.chart canvas')).toHaveCount(0);
 });
@@ -366,7 +388,7 @@ test('单日图表显示数据点，日志使用统计时区而非浏览器时�
     const { dashboard, records } = await mockAnalytics(page);
     dashboard.period = { fromDate: '2026-10-01', toDateInclusive: '2026-10-01',
       fromInclusive: '2026-10-01T00:00:00+08:00', toExclusive: '2026-10-02T00:00:00+08:00', zoneId: 'Asia/Shanghai' };
-    dashboard.dailyMetrics = [{ date: '2026-10-01', accessCount: 5, uniqueVisitors: 3, activeUsers: 4, actualUsers: 2, newAccounts: 1 }];
+    dashboard.dailyMetrics = [{ date: '2026-10-01', accessCount: 5, uniqueVisitors: 3, activeUsers: 4, actualUsers: 2, newAccounts: 1 , directEnhancementCount: 0, planCompletedCount: 0}];
     records[0]!.occurredAt = '2026-09-30T16:30:00Z';
     await page.goto('/admin/analytics');
     await expect(page.locator('.operations-panel .el-table__body .el-table__row').first())

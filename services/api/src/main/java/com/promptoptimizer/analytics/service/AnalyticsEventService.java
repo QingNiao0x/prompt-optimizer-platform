@@ -24,6 +24,12 @@ public interface AnalyticsEventService {
     /** 记录后端确认的关键操作；OPTIMIZATION_SUBMITTED 不代表模型执行成功。 */
     void record(AnalyticsEventType eventType, HttpServletRequest request);
 
+    /** 记录通用提交及可选的直接增强细分事实，两条事件共享同一提交时刻和安全元数据。 */
+    void recordOptimizationSubmission(boolean direct, HttpServletRequest request);
+
+    /** 仅在服务端验证计划、生成结果并保存历史后调用；计划标识只用于稳定主键，不保存为明细或标签。 */
+    void recordPlanCompleted(String planId, HttpServletRequest request);
+
     /** 校验重放所属身份与原时刻后可靠接收白名单事件，未可靠接收时返回可重试错误。 */
     void recordClientEvent(ClientAnalyticsEventRequest event, HttpServletRequest request);
 

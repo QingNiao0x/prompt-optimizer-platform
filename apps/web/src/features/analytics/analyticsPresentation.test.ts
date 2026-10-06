@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { analyticsQueryError, dailyMetricSeries, findUsagePeak, formatAnalyticsTime, hasDailyActivity, rechargeMetricSeries } from './analyticsPresentation';
+import { analyticsQueryError, dailyMetricSeries, featureUsageSeries, findUsagePeak, formatAnalyticsTime, hasDailyActivity, rechargeMetricSeries } from './analyticsPresentation';
 
 describe('统计筛选与展示口径', () => {
   it('清空日期可校验，非法日期、账号与超长区间被拒绝', () => {
@@ -29,7 +29,7 @@ describe('统计筛选与展示口径', () => {
   });
 
   it('单日数据可见，新增账号或实际使用账号独立出现时仍展示图表', () => {
-    const zero = { date: '2026-10-01', accessCount: 0, uniqueVisitors: 0, activeUsers: 0, actualUsers: 0, newAccounts: 0 };
+    const zero = { date: '2026-10-01', accessCount: 0, uniqueVisitors: 0, activeUsers: 0, actualUsers: 0, newAccounts: 0, directEnhancementCount: 0, planCompletedCount: 0 };
     expect(hasDailyActivity([zero])).toBe(false);
     expect(hasDailyActivity([{ ...zero, newAccounts: 1 }])).toBe(true);
     expect(hasDailyActivity([{ ...zero, actualUsers: 1 }])).toBe(true);
@@ -38,6 +38,20 @@ describe('统计筛选与展示口径', () => {
     expect(series.every((item) => item.showSymbol)).toBe(true);
     expect(series.find((item) => item.name === '实际使用账号')?.data).toEqual([2]);
     expect(dailyMetricSeries([zero, { ...zero, date: '2026-10-02' }]).every((item) => !item.showSymbol)).toBe(true);
+  });
+
+  it('细分使用次数分别展示，保留零日且不混入原有每日人数序列', () => {
+    const day = { date: '2026-10-01', accessCount: 0, uniqueVisitors: 0, activeUsers: 1, actualUsers: 1,
+      newAccounts: 0, directEnhancementCount: 3, planCompletedCount: 1 };
+    const single = featureUsageSeries([day]);
+    expect(single).toHaveLength(2);
+    expect(single.map((series) => series.name)).toEqual(['直接增强提交', 'Plan 完成']);
+    expect(single.map((series) => series.data)).toEqual([[3], [1]]);
+    expect(single.every((series) => series.showSymbol)).toBe(true);
+    const multi = featureUsageSeries([day, { ...day, date: '2026-10-02', directEnhancementCount: 0, planCompletedCount: 0 }]);
+    expect(multi.map((series) => series.data)).toEqual([[3, 0], [1, 0]]);
+    expect(multi.every((series) => !series.showSymbol)).toBe(true);
+    expect(dailyMetricSeries([day])).toHaveLength(5);
   });
 
   it('使用统计时区显示跨午夜与夏令时回拨事件', () => {

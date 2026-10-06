@@ -94,6 +94,8 @@ final class PlanAmbiguityMerger {
             if (serverFindings.contains(text) && text.startsWith("资料对“")) continue;
             if (mergeOriginalAnswerReminder(text, registered)) continue;
             if (mergeExistingExplanation(text, registered)) continue;
+            // 原题已问及的字段扩展仍需作为条件性说明保留，先于纯题干复写过滤处理。
+            if (mergeBoundImputationFieldExpansion(text, registered)) continue;
             // 只有同一字段、双方来源和取值，且不增加业务条件，才能归入已有冲突。
             if (knownConflicts.stream().anyMatch(identity -> identity.isReminder(text)
                     && (registered.containsKey(identity.key()) || decisions.resolvesConflict(
@@ -101,6 +103,7 @@ final class PlanAmbiguityMerger {
             if (matchesBoundQuestion(text, references)) continue;
             if (mergeConflictExplanation(text, knownConflicts, registered)) continue;
             if (mergeNewConflictExplanation(text, knownConflicts, registered)) continue;
+            if (mergeSplitResearchReminder(text, registered)) continue;
             if (containsNewPendingDetail(text)) {
                 registered.putIfAbsent("text:" + text, stripDecisionMetadata(text));
                 continue;
@@ -157,7 +160,7 @@ final class PlanAmbiguityMerger {
 
     /** 解释逗号仅在完整未决状态之后分开，数值、版本和条件自身的逗号不参与拆分。 */
     private String pendingHeading(String part) {
-        var separator = Pattern.compile("[。；;？?\\r\\n]|(?<=未确定|未提供|未明确|不确定|未决定|待确认|待明确)[，,]")
+        var separator = Pattern.compile("[。；;？?\\r\\n]|(?<=未确定|未提供|未明确|未核实|不确定|未决定|待确认|待明确)[，,]")
                 .matcher(part);
         return separator.find() ? part.substring(0, separator.start()).strip() : part.strip();
     }
@@ -165,17 +168,61 @@ final class PlanAmbiguityMerger {
     /** 已知题干后明确追加另一个未决属性时，不再落入旧的解释归并回退路径。 */
     private boolean containsNewPendingDetail(String text) {
         String cleaned = stripDecisionMetadata(text);
-        var separator = Pattern.compile("[。；;：:？?\\r\\n]|(?<=未确定|未提供|未明确|不确定|未决定|待确认|待明确)[，,]")
+        var separator = Pattern.compile("[。；;：:？?\\r\\n]|(?<=未确定|未提供|未明确|未核实|不确定|未决定|待确认|待明确)[，,]")
                 .matcher(cleaned);
         if (!separator.find()) return false;
         String heading = cleaned.substring(0, separator.start()).strip();
         if (decisions.pendingDecisions().stream().noneMatch(pending -> pendingIdentity.matches(heading, pending))) return false;
         String detail = cleaned.substring(separator.end()).strip();
+        if (hasNewUnverifiedCoverage(detail)) return true;
         if (boundDecisionStateExplanation(detail)) return false;
         return PlanAnswerSemantics.unresolved(detail) && PlanAnswerSemantics.pendingParts(detail).stream()
                 .filter(PlanAnswerSemantics::namesPendingSubject)
                 .anyMatch(part -> decisions.pendingDecisions().stream()
                         .noneMatch(pending -> pendingIdentity.matches(part, pending)));
+    }
+
+    /** 已拆开的三个插补属性只有同一绑定原题能归并；新方法、机构或条件仍保留在提醒正文。 */
+    private boolean mergeSplitResearchReminder(String text, Map<String, String> registered) {
+        var matching = new LinkedHashMap<String, String>();
+        for (ConfirmedPlanDecision pending : decisions.pendingDecisions()) {
+            pendingIdentity.repeatedResearchStatement(stripDecisionMetadata(text), pending)
+                    .ifPresent(detail -> matching.putIfAbsent("question:" + pendingKey(pending), detail));
+        }
+        if (matching.size() != 1) return false;
+        var entry = matching.entrySet().iterator().next();
+        if (hasNewPendingPart(entry.getValue()) || hasNewUnverifiedCoverage(entry.getValue())) return false;
+        appendNovelExplanation(registered, entry.getKey(), entry.getValue());
+        return true;
+    }
+
+    /** 原题明确的插补字段扩展保持条件性，合入唯一绑定项；原有三项说明仍完整保留。 */
+    private boolean mergeBoundImputationFieldExpansion(String text, Map<String, String> registered) {
+        var matching = new LinkedHashMap<String, String>();
+        for (ConfirmedPlanDecision pending : decisions.pendingDecisions()) {
+            pendingIdentity.imputationFieldExpansion(stripDecisionMetadata(text), pending)
+                    .ifPresent(detail -> matching.putIfAbsent("question:" + pendingKey(pending), detail));
+        }
+        if (matching.size() != 1) return false;
+        var entry = matching.entrySet().iterator().next();
+        if (!registered.containsKey(entry.getKey())) return false;
+        // 字段条件不得被删掉；其后与原答案逐字相同的说明只需保留一次。
+        String detail = entry.getValue();
+        int boundary = detail.indexOf('。');
+        String extra = detail.substring(0, boundary + 1);
+        String tail = detail.substring(boundary + 1);
+        String known = registered.get(entry.getKey());
+        if (!tail.isBlank() && !known.contains(tail)) extra += tail;
+        appendNovelExplanation(registered, entry.getKey(), extra);
+        return true;
+    }
+
+    /** 新医院或年份的未核实覆盖度属于独立信息，不能借前半句同题而被当作重复说明。 */
+    private boolean hasNewUnverifiedCoverage(String detail) {
+        return java.util.Arrays.stream(detail.split("[，,。；;]+"))
+                .map(String::strip).filter(pendingIdentity::namesUnverifiedCoverage)
+                .anyMatch(clause -> decisions.pendingDecisions().stream()
+                        .noneMatch(pending -> pendingIdentity.sameUnverifiedCoverage(clause, pending)));
     }
 
     /**
@@ -185,7 +232,7 @@ final class PlanAmbiguityMerger {
     private boolean mergeNamedPendingIdentity(String text, Map<String, String> registered) {
         String cleaned = stripDecisionMetadata(text);
         if (cleaned.matches("(?s).*(?:另外|此外|另需|还需|同时还).*")) return false;
-        var separator = Pattern.compile("[。；;：:？?\\r\\n]|(?<=未确定|未提供|未明确|不确定|未决定|待确认|待明确)[，,]")
+        var separator = Pattern.compile("[。；;：:？?\\r\\n]|(?<=未确定|未提供|未明确|未核实|不确定|未决定|待确认|待明确)[，,]")
                 .matcher(cleaned);
         boolean separated = separator.find();
         String heading = separated ? cleaned.substring(0, separator.start()).strip() : cleaned;
@@ -197,11 +244,14 @@ final class PlanAmbiguityMerger {
         if (matching.size() != 1) return false;
         String key = matching.keySet().iterator().next();
         String detail = separated ? cleaned.substring(separator.end()).strip() : "";
+        if (hasNewUnverifiedCoverage(detail)) return false;
         if (!boundDecisionStateExplanation(detail) && PlanAnswerSemantics.unresolved(detail) && PlanAnswerSemantics.pendingParts(detail).stream()
                 .filter(PlanAnswerSemantics::namesPendingSubject)
                 .anyMatch(part -> decisions.pendingDecisions().stream()
                         .noneMatch(pending -> pendingIdentity.matches(part, pending)))) return false;
-        appendNovelExplanation(registered, key, carriesScopeAnnotation(heading) ? cleaned : detail);
+        ConfirmedPlanDecision bound = matching.values().iterator().next();
+        appendNovelExplanation(registered, key, carriesScopeAnnotation(heading)
+                && !pendingIdentity.sameUnverifiedCoverage(heading, bound) ? cleaned : detail);
         return true;
     }
 
@@ -453,10 +503,25 @@ final class PlanAmbiguityMerger {
     private void appendNovelExplanation(Map<String, String> registered, String key, String detail) {
         if (detail.isBlank()) return;
         var pending = decisions.pendingDecisions().stream().filter(part -> key.equals("question:" + pendingKey(part)))
-                .limit(1).toList();
+                .toList();
+        // 同一具名子项可能来自两道题；只有全部子项的对象键一致时，才允许共同消除原题复写。
+        boolean sameNamedItem = !pending.isEmpty() && pending.stream()
+                .map(pendingIdentity::namedKey).allMatch(java.util.Optional::isPresent)
+                && pending.stream().map(part -> pendingIdentity.namedKey(part).orElseThrow()).distinct().count() == 1;
         // 同一绑定项的“原问题＋原答案”只是复述；移除完整原题前缀后仍逐句保留新解释。
-        if (pending.size() == 1 && detail.startsWith(pending.getFirst().question().strip())) {
-            detail = detail.substring(pending.getFirst().question().strip().length()).strip();
+        if (pending.size() == 1 || sameNamedItem) {
+            var boundQuestions = new ArrayList<String>(pending.stream().map(ConfirmedPlanDecision::question).toList());
+            decisions.decisions().stream().filter(original -> pending.stream()
+                            .anyMatch(part -> java.util.Objects.equals(part.questionId(), original.questionId())))
+                    .map(ConfirmedPlanDecision::question).forEach(boundQuestions::add);
+            for (String question : boundQuestions) {
+                // 跨题子项的“question”也可能是带约束的陈述；不能把其中尚未登记的限制随题干删掉。
+                if (pending.size() != 1 && !question.strip().matches("(?s).*[？?]$")) continue;
+                if (!question.isBlank() && detail.startsWith(question.strip())) {
+                    detail = detail.substring(question.strip().length()).strip();
+                    break;
+                }
+            }
         }
         if (pending.size() == 1) {
             var repeatedQuestion = Pattern.compile("^[^？?]+[？?]").matcher(detail);
@@ -466,7 +531,8 @@ final class PlanAmbiguityMerger {
             }
         }
         if (detail.isBlank()) return;
-        var separator = Pattern.compile("[。；;：:？?\\r\\n]|(?<=未确定|未提供|未明确|不确定|未决定|待确认|待明确)[，,]").matcher(detail);
+        // 跨题子项已经按完整具名键登记；说明去重仍须核对相同对象，不能只凭题 ID 相同。
+        var separator = Pattern.compile("[。；;：:？?\\r\\n]|(?<=未确定|未提供|未明确|不确定|未决定|未核实|待确认|待明确)[，,]").matcher(detail);
         if (separator.find()) {
             String header = detail.substring(0, separator.start()).strip();
             boolean exactPendingHeader = pending.size() == 1 && PENDING_SUFFIX.matcher(header).find()
@@ -475,17 +541,24 @@ final class PlanAmbiguityMerger {
             boolean repeatedPartialState = pending.size() == 1 && PENDING_SUFFIX.matcher(header).find()
                     && !header.matches(".*(?:[（(）)？?<>≤≥]|\\d|是否|如何|哪个|哪种|什么|采用.+还是).*" )
                     && matchesPartialAnswerExplanation(header, pending.getFirst());
-            if (exactPendingHeader || repeatedPartialState || pending.size() == 1
+            // 条件题干即使所有词都有出处，也不能等同于当前状态；删去它会切断后续适用条件。
+            boolean conditionalHeader = header.matches("^(?:若|如果|假如|假设|仅当|仅在|当(?!前)).+");
+            if (!conditionalHeader && (exactPendingHeader || repeatedPartialState || (pending.size() == 1 || sameNamedItem)
+                    && repeatedBoundState(header, pending, registered.get(key)) || (pending.size() == 1 || sameNamedItem)
                     && !header.matches(".*(?:[（(）)？?<>≤≥]|\\d|已确认|已明确).*" )
-                    && pendingIdentity.matches(header, pending.getFirst())
+                    && (pending.stream().anyMatch(part -> pendingIdentity.matches(header, part))
+                    || sameNamedItem && PENDING_SUFFIX.matcher(header).find()
+                    && pending.stream().anyMatch(part -> matchesPartialAnswerExplanation(header, part)))
                     || pending.size() == 1 && PENDING_SUFFIX.matcher(header).find()
                     && !header.matches(".*(?:[（(）)？?<>≤≥]|\\d|是否|如何|哪个|哪种|什么|已确认|已明确|采用.+还是).*" )
                     && (sameQuestionReminder(header, pending.getFirst().question())
                     || questionHeader(header).equals(questionHeader(pending.getFirst().question()))
-                    || matchesPartialAnswerExplanation(header, pending.getFirst()))) {
+                    || matchesPartialAnswerExplanation(header, pending.getFirst())))) {
                 detail = detail.substring(separator.end()).strip();
             }
         }
+        if (pending.size() == 1 || sameNamedItem) detail = withoutRepeatedExplanationClauses(registered.get(key), detail);
+        if (detail.isBlank()) return;
         String known = java.text.Normalizer.normalize(registered.get(key), java.text.Normalizer.Form.NFKC)
                 .replaceAll("\\s+", "");
         // 保存未删分句的原标点，不把“3.0”、>= 等值域内容拆成另一条规则。
@@ -495,6 +568,49 @@ final class PlanAmbiguityMerger {
                         .replaceAll("\\s+", "").replaceAll("[。；;]+$", "")))
                 .collect(java.util.stream.Collectors.joining());
         if (!novel.isBlank()) registered.put(key, registered.get(key) + " 补充说明：" + novel);
+    }
+
+    /** 指代未知状态只在已唯一绑定、原题确有该属性的同一未决项内精简，不消除后续新解释。 */
+    private boolean repeatedBoundState(String header, List<ConfirmedPlanDecision> pending, String known) {
+        var state = Pattern.compile("^该(分母|覆盖度)(?:尚未|仍未|未)(?:决定|确定|明确|核实)$").matcher(header);
+        return state.matches() && known != null && known.contains(state.group(1))
+                && pending.stream().anyMatch(part -> part.question().contains(state.group(1)));
+    }
+
+    /**
+     * 唯一绑定同一未决项后，去掉已完整保留的独立说明；新影响说明继续附在原项。
+     * 条件和方法分支整体保留，不裁掉其后的共同动作；比较完整分句，不用子串冒充另一规则。
+     */
+    private String withoutRepeatedExplanationClauses(String known, String detail) {
+        if (detail.matches("(?s).*(?:若|如果|假如|仅当|仅在|否则|采用|使用|选择).*")) return detail;
+        var existing = java.util.Arrays.stream(known.split("[，,。；;\\r\\n]+"))
+                .map(this::explanationClauseKey).collect(java.util.stream.Collectors.toSet());
+        StringBuilder retained = new StringBuilder();
+        var clauses = Pattern.compile("[^，,。；;\\r\\n]+[，,。；;]?").matcher(detail);
+        while (clauses.find()) {
+            String clause = clauses.group();
+            String identity = explanationClauseKey(clause);
+            boolean dependent = identity.matches("^(?:其中|其|该|此|但).*" );
+            if (identity.length() < 6 || dependent || !existing.contains(identity)) retained.append(clause);
+        }
+        String result = retained.toString().strip().replaceAll("[，,；;]+$", "");
+        return result.isBlank() || result.endsWith("。") ? result : result + "。";
+    }
+
+    /** 仅对完整核查指令归一化语法；新的方法、机构、范围、条件或数值不在此移除。 */
+    private String explanationClauseKey(String value) {
+        String result = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFKC)
+                .replaceAll("\\s+", "").replaceFirst("^(?:该问题尚未确定|用户说明|补充说明):", "")
+                .replaceAll("[，,。；;]+$", "");
+        if (result.matches("^(?:后续)?(?:须|需)按各逻辑规则的适用记录(?:分别)?核实$")) {
+            return "按各逻辑规则的适用记录核实";
+        }
+        // 只在已唯一绑定的同一题内规范核查谓词；2023年、另一院或审批条件仍逐字留在键中。
+        result = result.replace("需要院方后续核实", "需院方后续核实");
+        if (result.matches("^.{2,40}的(?:比较)?观察窗口需院方后续核实$")) {
+            return "需院方后续核实";
+        }
+        return result;
     }
 
     /** 仅用于同一绑定项内的逐题复写；移除引导语，完整对象、条件、数值和疑问内容不变。 */

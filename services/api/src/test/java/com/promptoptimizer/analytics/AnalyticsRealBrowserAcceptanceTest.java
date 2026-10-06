@@ -80,6 +80,7 @@ class AnalyticsRealBrowserAcceptanceTest {
     @Autowired private AnalyticsAcceptanceMapper inspection;
     @Autowired private RollbackDataSource dataSource;
     @Autowired private AuditEventDelivery delivery;
+    @Autowired private io.micrometer.core.instrument.MeterRegistry metrics;
     @SpyBean private LoginCaptchaServiceImpl captchaService;
     @SpyBean private AuditEventDatabaseWriter writer;
     @MockBean private BootstrapAdminAccountInitializer adminInitializer;
@@ -138,6 +139,8 @@ class AnalyticsRealBrowserAcceptanceTest {
                             List<String> events = inspection.eventTypes(member.userId());
                             write(output, Map.of("visits", events.stream().filter("APP_VISIT"::equals).count(),
                                     "events", events.size(), "pending", delivery.status().pendingEvents(),
+                                    "directEnhancementCount", events.stream().filter("DIRECT_OPTIMIZATION_SUBMITTED"::equals).count(),
+                                    "planCompletedCount", events.stream().filter("PLAN_COMPLETED"::equals).count(),
                                     "databaseFailures", delivery.status().databaseFailures()));
                         }
                         case "DONE" -> completed = true;
@@ -149,6 +152,8 @@ class AnalyticsRealBrowserAcceptanceTest {
             assertThat(browser.waitFor(10, TimeUnit.SECONDS)).isTrue();
             assertThat(browser.exitValue()).as("真实浏览器验收进程退出状态").isZero();
             assertThat(delivery.status().pendingEvents()).isZero();
+            assertThat(metrics.get("optimization.feature.uses").tag("event", "DIRECT_OPTIMIZATION_SUBMITTED").counter().count()).isEqualTo(3);
+            assertThat(metrics.get("optimization.feature.uses").tag("event", "PLAN_COMPLETED").counter().count()).isEqualTo(2);
         } finally {
             outage.set(false);
             if (browser != null && browser.isAlive()) browser.destroyForcibly();

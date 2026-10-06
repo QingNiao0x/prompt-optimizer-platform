@@ -105,6 +105,8 @@ export type AnalyticsEventType =
   | 'LOGOUT'
   | 'APP_VISIT'
   | 'OPTIMIZATION_SUBMITTED'
+  | 'DIRECT_OPTIMIZATION_SUBMITTED'
+  | 'PLAN_COMPLETED'
   | 'PLAN_CREATED'
   | 'CONTEXT_PREPARED'
   | 'CONTEXT_ANALYZED'
@@ -166,6 +168,8 @@ export interface AnalyticsDailyMetric {
   activeUsers: number;
   actualUsers: number;
   newAccounts: number;
+  directEnhancementCount: number;
+  planCompletedCount: number;
 }
 
 export interface AnalyticsHourlyMetric {
@@ -210,6 +214,8 @@ export interface AnalyticsDashboard {
   uniqueVisitorCount: number;
   activeUserCount: number;
   averageDailyActiveUsers: number;
+  directEnhancementCount: number;
+  planCompletedCount: number;
   dailyMetrics: AnalyticsDailyMetric[];
   hourlyUsage: AnalyticsHourlyMetric[];
   monthlyUsage: AnalyticsMonthlyMetric[];

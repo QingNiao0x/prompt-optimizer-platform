@@ -19,6 +19,8 @@ const dashboard = {
   uniqueVisitorCount: 1,
   activeUserCount: 1,
   averageDailyActiveUsers: 1,
+  directEnhancementCount: 0,
+  planCompletedCount: 0,
   dailyMetrics: [],
   hourlyUsage: [],
   monthlyUsage: [],

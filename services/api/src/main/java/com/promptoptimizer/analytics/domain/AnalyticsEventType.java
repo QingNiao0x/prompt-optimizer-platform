@@ -11,6 +11,10 @@ public enum AnalyticsEventType {
     LOGOUT,
     APP_VISIT,
     OPTIMIZATION_SUBMITTED,
+    /** 无 Plan 的增强提交尝试；作为细分事实，不再次累计通用关键操作次数。 */
+    DIRECT_OPTIMIZATION_SUBMITTED,
+    /** 有效计划完成最终生成及历史保存；每个计划仅保留一次完成事实。 */
+    PLAN_COMPLETED,
     PLAN_CREATED,
     CONTEXT_PREPARED,
     CONTEXT_ANALYZED,

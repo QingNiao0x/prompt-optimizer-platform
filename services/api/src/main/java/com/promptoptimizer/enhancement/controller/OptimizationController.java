@@ -68,9 +68,13 @@ public class OptimizationController {
             HttpServletRequest httpRequest
     ) {
         String requestId = (String) httpRequest.getAttribute(RequestIdFilter.REQUEST_ID_ATTRIBUTE);
-        analyticsEventService.record(AnalyticsEventType.OPTIMIZATION_SUBMITTED, httpRequest);
+        analyticsEventService.recordOptimizationSubmission(request.planConfirmation() == null, httpRequest);
         OptimizationResult result = enhancementOrchestrator.optimize(request);
         optimizationHistoryService.save(request, result);
+        // 编排器已经验证计划所有权与全部回答；只有生成和历史保存都成功才记录一次完成。
+        if (request.planConfirmation() != null) {
+            analyticsEventService.recordPlanCompleted(request.planConfirmation().planId(), httpRequest);
+        }
         return ApiResponse.success(requestId, result);
     }
 }

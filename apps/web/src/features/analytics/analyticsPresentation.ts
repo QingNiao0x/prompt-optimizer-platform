@@ -57,6 +57,14 @@ export const dailyMetricSeries = (metrics: readonly AnalyticsDailyMetric[]): Lin
   }));
 };
 
+/** 两种功能沿用后端自然日桶；直接增强按提交、Plan 按完成计，单日仍绘制可见标记。 */
+export const featureUsageSeries = (metrics: readonly AnalyticsDailyMetric[]): LineSeriesOption[] => [
+  { name: '直接增强提交', type: 'line', smooth: false, showSymbol: metrics.length === 1, symbolSize: 9,
+    data: metrics.map((item) => item.directEnhancementCount) },
+  { name: 'Plan 完成', type: 'line', smooth: false, showSymbol: metrics.length === 1, symbolSize: 9,
+    data: metrics.map((item) => item.planCompletedCount) },
+];
+
 /** 日志始终使用 API 返回的统计时区；无效时间明确提示，不回退到浏览器当地时间。 */
 export const formatAnalyticsTime = (value: string, zoneId: string): string => {
   const date = new Date(value);

@@ -171,7 +171,7 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         // 快速连续请求可共享同一数据库时间精度；相同时刻按随机 UUID 排序，不代表请求先后。
         assertThat(inspection.eventTypes(ordinary.userId())).containsExactlyInAnyOrder(
                 "LOGIN", "APP_VISIT", "APP_VISIT", "CONTEXT_PREPARED", "PLAN_CREATED",
-                "OPTIMIZATION_SUBMITTED", "RESULT_EXPORTED", "LOGOUT");
+                "OPTIMIZATION_SUBMITTED", "PLAN_COMPLETED", "RESULT_EXPORTED", "LOGOUT");
 
         String loginCorrelation = null;
         for (String rawDetails : inspection.eventDetails(ordinary.userId())) {
@@ -192,15 +192,62 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         LocalDate today = LocalDate.now(ZONE);
         JsonNode dashboard = dashboard(administrator, "CUSTOM", today.minusDays(1), today.plusDays(1), ordinary.userId());
         assertThat(dashboard.path("accessCount").asInt()).isEqualTo(2);
+        assertThat(dashboard.path("directEnhancementCount").asInt()).isZero();
+        assertThat(dashboard.path("planCompletedCount").asInt()).isEqualTo(1);
         for (String name : List.of("uniqueVisitorCount", "activeUserCount", "actualUserCount", "registeredAccountCount")) {
             assertThat(dashboard.path(name).asInt()).as(name).isEqualTo(1);
         }
         JsonNode operations = operations(administrator, today.minusDays(1), today.plusDays(1), ordinary.userId(), 1, 10, null);
-        assertThat(operations.path("total").asInt()).isEqualTo(8);
-        assertThat(operations.path("records").size()).isEqualTo(8);
+        assertThat(operations.path("total").asInt()).isEqualTo(9);
+        assertThat(operations.path("records").size()).isEqualTo(9);
         JsonNode rank = ranking(administrator, today, ordinary.userId());
         assertThat(rank.path("items").get(0).path("operationCount").asInt()).isEqualTo(4);
         assertThat(rank.path("items").get(0).path("loginCount").asInt()).isEqualTo(1);
+    }
+
+    @Test
+    void zeroQuestionNoFilePlansCountOnlyAfterFinalSuccessAndOnlyOncePerPlan() throws Exception {
+        Login member = login(ordinary);
+        Login administrator = login(admin);
+        LocalDate day = LocalDate.now(ZONE);
+        String prompt = "将 hello 翻译为中文，只输出译文。";
+        event(member, "APP_VISIT");
+        JsonNode prepared = data(mvc.perform(write("/api/v1/context/planning", member)
+                        .content(json.writeValueAsString(Map.of("rawPrompt", prompt, "context", Map.of("files", List.of())))))
+                .andExpect(status().isOk()).andReturn());
+        Map<String, String> reference = Map.of("contextId", prepared.path("contextId").asText(), "version", prepared.path("version").asText());
+        String planningRequest = json.writeValueAsString(Map.of("rawPrompt", prompt, "planningContext", reference));
+        JsonNode plan = data(mvc.perform(write("/api/v1/optimizations/plan", member).content(planningRequest))
+                .andExpect(status().isOk()).andReturn());
+        assertThat(plan.path("questions").size()).isZero();
+        JsonNode before = dashboard(administrator, "TODAY", day, day, ordinary.userId());
+        assertThat(before.path("directEnhancementCount").asLong()).isZero();
+        assertThat(before.path("planCompletedCount").asLong()).isZero();
+        ObjectNode optimization = json.createObjectNode().put("rawPrompt", prompt);
+        optimization.putObject("context").putArray("files");
+        ObjectNode confirmation = optimization.putObject("planConfirmation").put("planId", plan.path("planId").asText());
+        confirmation.set("planningContext", json.valueToTree(reference));
+        confirmation.putArray("answers");
+        String valid = json.writeValueAsString(optimization);
+        // 伪造计划与其他账号提交不得产生完成事实；拒绝后仍可由原所有者正常生成。
+        confirmation.put("planId", UUID.randomUUID().toString());
+        mvc.perform(write("/api/v1/optimizations", member).content(json.writeValueAsString(optimization))).andExpect(status().is4xxClientError());
+        mvc.perform(write("/api/v1/optimizations", administrator).content(valid)).andExpect(status().is4xxClientError());
+        mvc.perform(write("/api/v1/optimizations", member).content(valid)).andExpect(status().isOk());
+        mvc.perform(write("/api/v1/optimizations", member).content(valid)).andExpect(status().isOk());
+        assertThat(dashboard(administrator, "TODAY", day, day, ordinary.userId()).path("planCompletedCount").asLong()).isEqualTo(1);
+        assertThat(operations(administrator, day, day, ordinary.userId(), 1, 10, "PLAN_COMPLETED").path("total").asLong()).isEqualTo(1);
+        JsonNode secondPlan = data(mvc.perform(write("/api/v1/optimizations/plan", member).content(planningRequest))
+                .andExpect(status().isOk()).andReturn());
+        assertThat(dashboard(administrator, "TODAY", day, day, ordinary.userId()).path("planCompletedCount").asLong()).isEqualTo(1);
+        confirmation.put("planId", secondPlan.path("planId").asText());
+        mvc.perform(write("/api/v1/optimizations", member).content(json.writeValueAsString(optimization))).andExpect(status().isOk());
+        JsonNode after = dashboard(administrator, "TODAY", day, day, ordinary.userId());
+        assertThat(after.path("planCompletedCount").asLong()).isEqualTo(2);
+        assertThat(after.path("directEnhancementCount").asLong()).isZero();
+        assertThat(after.path("dailyMetrics").get(0).path("planCompletedCount").asLong()).isEqualTo(2);
+        assertThat(inspection.eventDetails(ordinary.userId())).allSatisfy(details -> assertThat(details)
+                .doesNotContain(prompt, plan.path("planId").asText(), secondPlan.path("planId").asText(), "answers", "files"));
     }
 
     @ParameterizedTest
@@ -229,6 +276,10 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         seedEvent(ordinary, AnalyticsEventType.APP_VISIT, start.plusNanos(1000));
         seedEvent(ordinary, AnalyticsEventType.LOGIN, start.plusSeconds(1));
         seedEvent(ordinary, AnalyticsEventType.OPTIMIZATION_SUBMITTED, end.minusNanos(1000));
+        seedEvent(ordinary, AnalyticsEventType.DIRECT_OPTIMIZATION_SUBMITTED, start);
+        seedEvent(ordinary, AnalyticsEventType.PLAN_COMPLETED, end.minusNanos(1000));
+        seedEvent(ordinary, AnalyticsEventType.DIRECT_OPTIMIZATION_SUBMITTED, start.minusNanos(1000));
+        seedEvent(ordinary, AnalyticsEventType.PLAN_COMPLETED, end);
         seedEvent(ordinary, AnalyticsEventType.APP_VISIT, end);
         seedEvent(admin, AnalyticsEventType.APP_VISIT, start);
         Login administrator = login(admin);
@@ -237,6 +288,10 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         assertThat(view.path("period").path("toDateInclusive").asText()).isEqualTo(until.minusDays(1).toString());
         assertThat(view.path("period").path("zoneId").asText()).isEqualTo(ZONE.getId());
         assertThat(view.path("accessCount").asInt()).isEqualTo(2);
+        assertThat(view.path("directEnhancementCount").asLong()).isEqualTo(1);
+        assertThat(view.path("planCompletedCount").asLong()).isEqualTo(1);
+        assertThat(view.path("dailyMetrics").get(0).path("directEnhancementCount").asLong()).isEqualTo(1);
+        assertThat(view.path("dailyMetrics").get(view.path("dailyMetrics").size() - 1).path("planCompletedCount").asLong()).isEqualTo(1);
         for (String key : List.of("newAccountCount", "uniqueVisitorCount", "activeUserCount", "actualUserCount")) {
             assertThat(view.path(key).asInt()).as(key).isEqualTo(1);
         }
@@ -247,14 +302,16 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         assertThat(view.path("averageDailyActiveUsers").decimalValue()).isEqualByComparingTo(expectedAverage);
         JsonNode first = operations(administrator, from, until.minusDays(1), ordinary.userId(), 1, 2, null);
         JsonNode second = operations(administrator, from, until.minusDays(1), ordinary.userId(), 2, 2, null);
-        assertThat(first.path("total").asInt()).isEqualTo(4);
-        assertThat(first.path("pages").asInt()).isEqualTo(2);
+        JsonNode third = operations(administrator, from, until.minusDays(1), ordinary.userId(), 3, 2, null);
+        assertThat(first.path("total").asInt()).isEqualTo(6);
+        assertThat(first.path("pages").asInt()).isEqualTo(3);
         assertThat(first.path("records").size()).isEqualTo(2);
         assertThat(second.path("records").size()).isEqualTo(2);
         HashSet<String> ids = new HashSet<>();
         first.path("records").forEach(row -> ids.add(row.path("eventId").asText()));
         second.path("records").forEach(row -> ids.add(row.path("eventId").asText()));
-        assertThat(ids).hasSize(4);
+        third.path("records").forEach(row -> ids.add(row.path("eventId").asText()));
+        assertThat(ids).hasSize(6);
         JsonNode logins = operations(administrator, from, until.minusDays(1), ordinary.userId(), 1, 10, "LOGIN");
         assertThat(logins.path("total").asInt()).isEqualTo(1);
         assertThat(logins.path("records").get(0).path("eventType").asText()).isEqualTo("LOGIN");
@@ -316,6 +373,10 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         Login member = login(ordinary);
         mvc.perform(write("/api/v1/analytics/events", member).content("{\"eventType\":\"PLAN_CREATED\"}"))
                 .andExpect(status().isBadRequest());
+        for (String type : List.of("DIRECT_OPTIMIZATION_SUBMITTED", "PLAN_COMPLETED")) {
+            mvc.perform(write("/api/v1/analytics/events", member).content(json.writeValueAsString(Map.of("eventType", type))))
+                    .andExpect(status().isBadRequest());
+        }
         mvc.perform(write("/api/v1/optimizations", member).content("{\"rawPrompt\":\"\"}"))
                 .andExpect(status().isBadRequest());
         mvc.perform(write("/api/v1/analytics/events", member)
@@ -343,7 +404,7 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         seedEvent(ordinary, AnalyticsEventType.OPTIMIZATION_SUBMITTED, OffsetDateTime.parse("2026-11-01T09:30:00Z"));
         seedEvent(ordinary, AnalyticsEventType.APP_VISIT, period.toExclusive());
         seedEvent(admin, AnalyticsEventType.APP_VISIT, period.fromInclusive());
-        assertThat(analytics.dailyMetrics(period, AnalyticsAccountFilter.forUser(ordinary.userId()))).containsExactly(new DailyMetric(day, 2, 1, 1, 1, 1));
+        assertThat(analytics.dailyMetrics(period, AnalyticsAccountFilter.forUser(ordinary.userId()))).containsExactly(new DailyMetric(day, 2, 1, 1, 1, 1, 0, 0));
         assertThat(analytics.hourlyUsage(period, AnalyticsAccountFilter.forUser(ordinary.userId()))).filteredOn(hour -> hour.hour() == 1)
                 .containsExactly(new HourlyMetric(1, 2));
         assertThat(analytics.usageRanking(period, AnalyticsAccountFilter.forUser(ordinary.userId()), 20)).singleElement().satisfies(rank -> {
@@ -364,8 +425,14 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         JsonNode next = data(mvc.perform(write("/api/v1/optimization-history/" + recordId + "/re-optimize", member))
                 .andExpect(status().isOk()).andReturn());
         assertThat(next.path("recordId").asText()).isNotEqualTo(recordId);
-        assertThat(inspection.eventTypes(ordinary.userId())).containsExactlyInAnyOrder("LOGIN", "OPTIMIZATION_SUBMITTED", "OPTIMIZATION_SUBMITTED");
+        assertThat(inspection.eventTypes(ordinary.userId())).containsExactlyInAnyOrder("LOGIN", "OPTIMIZATION_SUBMITTED", "OPTIMIZATION_SUBMITTED",
+                "DIRECT_OPTIMIZATION_SUBMITTED", "DIRECT_OPTIMIZATION_SUBMITTED");
         Login administrator = login(admin);
+        LocalDate today = LocalDate.now(ZONE);
+        JsonNode view = dashboard(administrator, "TODAY", today, today, ordinary.userId());
+        assertThat(view.path("directEnhancementCount").asLong()).isEqualTo(2);
+        assertThat(view.path("planCompletedCount").asLong()).isZero();
+        assertThat(ranking(administrator, today, ordinary.userId()).path("items").get(0).path("operationCount").asLong()).isEqualTo(2);
         mvc.perform(write("/api/v1/optimization-history/" + recordId + "/re-optimize", administrator))
                 .andExpect(status().isNotFound());
     }

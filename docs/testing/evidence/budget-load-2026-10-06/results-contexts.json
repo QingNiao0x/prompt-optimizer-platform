@@ -1,0 +1,88 @@
+{
+  "started_at": "2026-10-06 23:38:26",
+  "mode": "contexts",
+  "model": "local synthetic OpenAI-compatible upstream; no paid calls",
+  "phases": [
+    {
+      "name": "indexed-context-5-users-10MiB-docx",
+      "virtual_users": 5,
+      "configured_duration_seconds": 90,
+      "elapsed_seconds": 95.84,
+      "upstream_delay_seconds": 10,
+      "requests": 45,
+      "successes": 45,
+      "http": {
+        "200": 45
+      },
+      "codes": {
+        "OK": 45
+      },
+      "p50_seconds": 10.455,
+      "p95_seconds": 11.582,
+      "max_seconds": 11.598,
+      "light_requests": {
+        "requests": 94,
+        "successes": 94,
+        "http": {
+          "200": 94
+        },
+        "codes": {
+          "OK": 94
+        },
+        "p50_seconds": 0.019,
+        "p95_seconds": 0.048,
+        "max_seconds": 0.061
+      },
+      "successes_per_minute": 28.17
+    }
+  ],
+  "smoke": {
+    "status": 200,
+    "code": "OK",
+    "seconds": 0.09225029998924583
+  },
+  "uploads": [
+    {
+      "status": 200,
+      "code": "READY",
+      "seconds": 1.2189999999827705,
+      "upload_seconds": 0.8119999999762513,
+      "extracted_characters": 2169450,
+      "chunks": 841
+    },
+    {
+      "status": 200,
+      "code": "READY",
+      "seconds": 1.5469999999622814,
+      "upload_seconds": 0.8119999999762513,
+      "extracted_characters": 2169450,
+      "chunks": 841
+    },
+    {
+      "status": 200,
+      "code": "READY",
+      "seconds": 1.5469999999622814,
+      "upload_seconds": 0.8589999999967404,
+      "extracted_characters": 2169450,
+      "chunks": 841
+    },
+    {
+      "status": 200,
+      "code": "READY",
+      "seconds": 1.2189999999827705,
+      "upload_seconds": 0.7969999999622814,
+      "extracted_characters": 2169450,
+      "chunks": 841
+    },
+    {
+      "status": 200,
+      "code": "READY",
+      "seconds": 1.5309999999590218,
+      "upload_seconds": 0.8589999999967404,
+      "extracted_characters": 2169450,
+      "chunks": 841
+    }
+  ],
+  "completed": true,
+  "ended_at": "2026-10-06 23:40:06"
+}

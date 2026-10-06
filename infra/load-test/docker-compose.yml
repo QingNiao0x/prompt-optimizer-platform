@@ -1,0 +1,92 @@
+# 只使用全新压测卷；绝不挂载 prompt-optimizer-local 的业务数据卷。
+name: prompt-optimizer-budget
+services:
+  postgres:
+    image: postgres:16-alpine
+    cpus: 0.5
+    mem_limit: 768m
+    memswap_limit: 768m
+    environment:
+      POSTGRES_DB: budget_load
+      POSTGRES_USER: budget_load
+      POSTGRES_PASSWORD_FILE: /run/secrets/spring.datasource.password
+    secrets:
+      - source: db_password
+        target: spring.datasource.password
+    volumes:
+      - budget_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U budget_load -d budget_load"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    logging:
+      options: {max-size: 5m, max-file: "2"}
+  redis:
+    image: redis:7-alpine
+    cpus: 0.25
+    mem_limit: 256m
+    memswap_limit: 256m
+    # 测试 Session、限流租约 TTL 仍由应用控制；内存耗尽明确报错。
+    command: [redis-server, --maxmemory, 192mb, --maxmemory-policy, noeviction]
+    ports: ["127.0.0.1:19379:6379"]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    logging:
+      options: {max-size: 5m, max-file: "2"}
+  api:
+    image: ${BUDGET_JAVA_IMAGE:-prompt-optimizer-budget-java21}
+    pull_policy: never
+    cpus: 1.25
+    mem_limit: 2g
+    memswap_limit: 2g
+    working_dir: /app
+    command: [java, -Xms256m, -Xmx1024m, -XX:ActiveProcessorCount=2, -Djava.awt.headless=true, -jar, /app/api.jar]
+    environment:
+      SPRING_CONFIG_IMPORT: configtree:/run/secrets/
+      DB_URL: jdbc:postgresql://postgres:5432/budget_load
+      DB_USERNAME: budget_load
+      DB_POOL_MAX_SIZE: "10"
+      REDIS_URL: redis://redis:6379
+      SERVER_PORT: "9000"
+      MODEL_PROVIDER_MODE: openai-compatible
+      MODEL_MULTI_PROVIDER_ENABLED: "false"
+      MODEL_PROVIDER_NAME: budget-simulator
+      MODEL_ENDPOINT: http://host.docker.internal:19081/chat/completions
+      MODEL_NAME: budget-simulator
+      MODEL_MODELS: budget-simulator
+      MODEL_CONCURRENCY_GLOBAL_LIMIT: "100"
+      MODEL_CONCURRENCY_USER_LIMIT: "3"
+      MODEL_READ_TIMEOUT: 60s
+      SEMANTIC_RETRIEVAL_ENABLED: "false"
+      MAP_REDUCE_SUMMARY_ENABLED: "false"
+      EMAIL_DELIVERY_MODE: disabled
+    secrets:
+      - source: db_password
+        target: spring.datasource.password
+      - source: login_password
+        target: app.security.bootstrap-user.password
+      - source: simulator_key
+        target: app.provider.openai-compatible.api-key
+    volumes:
+      - ${BUDGET_LOAD_RUN_DIR:?请先运行准备脚本}/build/target/prompt-optimizer-api-0.1.0-SNAPSHOT.jar:/app/api.jar:ro
+      - budget_api:/app/data
+    ports: ["127.0.0.1:19080:9000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    logging:
+      options: {max-size: 10m, max-file: "3"}
+volumes:
+  budget_postgres:
+  budget_api:
+secrets:
+  db_password:
+    file: ${BUDGET_LOAD_RUN_DIR:?}/secrets/spring.datasource.password
+  login_password:
+    file: ${BUDGET_LOAD_RUN_DIR:?}/secrets/app.security.bootstrap-user.password
+  simulator_key:
+    file: ${BUDGET_LOAD_RUN_DIR:?}/secrets/app.provider.openai-compatible.api-key

@@ -96,6 +96,8 @@ public class AdminAnalyticsServiceImpl implements AdminAnalyticsService {
                 usageCounts.uniqueVisitors(),
                 usageCounts.activeUsers(),
                 averageDailyActive,
+                metrics.featureUsage().directEnhancementCount(),
+                metrics.featureUsage().planCompletedCount(),
                 dailyMetrics,
                 metrics.hourlyUsage(),
                 mapper.monthlyUsage(twelveMonthPeriod,

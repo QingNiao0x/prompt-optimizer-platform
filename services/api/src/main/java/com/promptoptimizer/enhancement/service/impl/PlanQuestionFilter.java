@@ -169,8 +169,16 @@ public final class PlanQuestionFilter {
                     && (option.answer().contains("流程级") || option.answer().contains("服务方法")));
         }
         return raw.matches("(?s).*(?:确认框|确认弹窗|弹窗确认).*" )
+                && !raw.matches("(?s).*(?:请|先|让我|由我).{0,16}(?:选择|确认).{0,16}(?:确认交互|交互形式|确认形式).*" )
                 && !raw.matches("(?s).*(?:确认形式|确认形态|确认方式).{0,12}(?:尚未|未明确|未确定|待定|冲突).*" )
-                && text.matches("^(?:有匹配候选时[，,])?确认交互(?:应|需要)?采用哪种形式[？?]$");
+                && question.options().stream().allMatch(option ->
+                        option.label().matches("确认框|弹窗|确认弹窗")
+                        && option.answer().matches("^(?:使用|采用)(?:确认框|弹窗|确认弹窗)(?:展示|显示)候选(?:并|，)?(?:供|让)用户确认[。]?$"))
+                && (text.matches("^(?:有匹配候选时[，,])?确认交互(?:应|需要)?采用哪种形式[？?]$")
+                || text.matches("^确认交互(?:应|应该|需要)?(?:使用|采用)(?:确认框|弹窗)还是(?:确认框|弹窗)[？?]$")
+                && !question.options().isEmpty() && question.options().stream().allMatch(option ->
+                        option.label().matches("确认框|弹窗|确认弹窗")
+                                && !independent.matcher(option.answer() + option.description()).find()));
     }
 
     /** 只拦截与用户主要目标明显冲突的研究提问；其它相关性判断保持保守。 */

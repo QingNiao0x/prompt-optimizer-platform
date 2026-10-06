@@ -1,0 +1,124 @@
+{
+  "started_at": "2026-10-06 23:17:43",
+  "mode": "smoke",
+  "model": "local synthetic OpenAI-compatible upstream; no paid calls",
+  "phases": [
+    {
+      "name": "upload-1-text-1MiB",
+      "virtual_users": 1,
+      "bytes_per_document": 1048576,
+      "requests": 1,
+      "successes": 1,
+      "http": {
+        "200": 1
+      },
+      "codes": {
+        "READY": 1
+      },
+      "p50_seconds": 0.438,
+      "p95_seconds": 0.438,
+      "max_seconds": 0.438,
+      "details": [
+        {
+          "status": 200,
+          "code": "READY",
+          "seconds": 0.4380000000237487,
+          "upload_seconds": 0.07900000002700835,
+          "extracted_characters": 357256,
+          "chunks": 64
+        }
+      ]
+    }
+  ],
+  "smoke": {
+    "status": 200,
+    "code": "OK",
+    "seconds": 0.5169447000371292
+  },
+  "boundaries": [
+    {
+      "name": "empty_prompt",
+      "status": 400,
+      "code": "INVALID_ARGUMENT",
+      "seconds": 0.042256300046574324
+    },
+    {
+      "name": "oversized_document",
+      "status": 400,
+      "code": "INVALID_ARGUMENT",
+      "seconds": 0.03511430002981797
+    },
+    {
+      "name": "invalid_path",
+      "status": 400,
+      "code": "DOCUMENT_PROCESSING_ERROR",
+      "seconds": 0.02799179998692125
+    },
+    {
+      "name": "cross_user_document",
+      "status": 404,
+      "code": "DOCUMENT_PROCESSING_ERROR",
+      "seconds": 0.04977739998139441
+    },
+    {
+      "name": "upstream_429",
+      "status": 503,
+      "code": "PROVIDER_RATE_LIMITED",
+      "seconds": 0.1372111999662593
+    },
+    {
+      "name": "upstream_429_recovery",
+      "status": 200,
+      "code": "OK",
+      "seconds": 0.11308949999511242
+    },
+    {
+      "name": "upstream_503",
+      "status": 502,
+      "code": "PROVIDER_UNAVAILABLE",
+      "seconds": 0.1099520999705419
+    },
+    {
+      "name": "upstream_503_recovery",
+      "status": 200,
+      "code": "OK",
+      "seconds": 0.10982240003068
+    },
+    {
+      "name": "upstream_timeout",
+      "status": 502,
+      "code": "PROVIDER_UNAVAILABLE",
+      "seconds": 60.08917619998101
+    },
+    {
+      "name": "upstream_timeout_recovery",
+      "status": 200,
+      "code": "OK",
+      "seconds": 0.1375949999783188
+    },
+    {
+      "name": "per_user_limit_3",
+      "requests": 4,
+      "successes": 3,
+      "http": {
+        "429": 1,
+        "200": 3
+      },
+      "codes": {
+        "USER_MODEL_CONCURRENCY_LIMIT": 1,
+        "OK": 3
+      },
+      "p50_seconds": 3.104,
+      "p95_seconds": 3.13,
+      "max_seconds": 3.13
+    },
+    {
+      "name": "per_user_limit_recovery",
+      "status": 200,
+      "code": "OK",
+      "seconds": 0.12806669995188713
+    }
+  ],
+  "completed": true,
+  "ended_at": "2026-10-06 23:18:51"
+}

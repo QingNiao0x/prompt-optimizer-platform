@@ -14,6 +14,37 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 0.1.0
  */
 class ExecutionRuleCompactorTest {
+    @Test
+    void compactsCompleteSentencesAcrossMetadataBlocksButPreservesBusinessAndDependentScopes() {
+        String rule = "数据核查时保留合法零值，避免将其视为缺失。";
+        var sections = new EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
+        sections.put(PromptSectionType.TASK, new PromptSection(PromptSectionType.TASK, "任务", "整理核查流程。" + rule));
+        sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(PromptSectionType.CONSTRAINTS, "约束",
+                "用户明确规则（须遵守平台权限边界）：\n- " + rule + "\n独立权限仍需校验。\n"
+                        + "### 审批\n" + rule + "\n### 退款\n" + rule));
+        ExecutionRuleCompactor.compact(sections);
+        assertThat(sections.get(PromptSectionType.CONSTRAINTS).content())
+                .doesNotContain("- " + rule).contains("### 审批\n" + rule, "### 退款\n" + rule);
+        var dependent = new EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
+        String source = "A医院的规则如下。该记录必须保留当前有效值。B医院的规则如下。该记录必须保留当前有效值。";
+        dependent.put(PromptSectionType.TASK, new PromptSection(PromptSectionType.TASK, "任务", source));
+        ExecutionRuleCompactor.compact(dependent);
+        assertThat(dependent.get(PromptSectionType.TASK).content()).isEqualTo(source);
+    }
+
+    @Test
+    void removesRepeatedCompleteSentencesWithinOneLineWithoutLosingConditionalDependencies() {
+        var sections = new EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
+        String repeated = "缺失病例的插补方法尚未决定，不得默认统一插补。";
+        sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(PromptSectionType.CONSTRAINTS, "约束",
+                repeated + "跨字段一致性分母需按规则适用记录核实。" + repeated
+                        + "若以后确认方法，再更新对应指标；否则保留缺失状态。"));
+        ExecutionRuleCompactor.compact(sections);
+        assertThat(sections.get(PromptSectionType.CONSTRAINTS).content().split(repeated, -1)).hasSize(2);
+        assertThat(sections.get(PromptSectionType.CONSTRAINTS).content())
+                .contains("跨字段一致性分母需按规则适用记录核实", "若以后确认方法，再更新对应指标；否则保留缺失状态");
+    }
+
     /** 代码、表格和隐含主体不同的章节不参与文本去重，避免精简改变可执行逻辑。 */
     @Test
     void keepsCodeBlocksTablesAndRulesUnderDifferentBusinessHeadings() {

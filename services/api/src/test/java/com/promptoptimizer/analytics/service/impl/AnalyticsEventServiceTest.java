@@ -7,6 +7,7 @@ import com.promptoptimizer.analytics.infrastructure.AnalyticsSessionContext;
 import com.promptoptimizer.analytics.infrastructure.AuditEventDelivery;
 import com.promptoptimizer.analytics.infrastructure.AuditEventJournal;
 import com.promptoptimizer.analytics.infrastructure.AuditEventDatabaseWriter;
+import com.promptoptimizer.analytics.domain.PendingAuditEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.io.TempDir;
 import java.nio.file.Path;
@@ -33,9 +34,11 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -43,6 +46,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
  * 验证审计日志由当前账号派生，GeoIP 失败不阻断记录且持久化故障不会中断主业务。
@@ -62,6 +67,83 @@ class AnalyticsEventServiceTest {
             "admin@example.com",
             "Platform Admin"
     );
+
+    @Test
+    void directSubmissionKeepsGenericEventAndSubtypeAtTheSameUtcInstant() {
+        CurrentActor actor = mock(CurrentActor.class);
+        when(actor.require()).thenReturn(ACTOR);
+        AuditEventDelivery sink = mock(AuditEventDelivery.class);
+        AnalyticsEventService service = eventService(actor, sink);
+        MockHttpServletRequest request = authenticatedRequest();
+        request.setContent("sensitive prompt and answers must not enter audit".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
+        service.recordOptimizationSubmission(true, request);
+
+        ArgumentCaptor<PendingAuditEvent> captured = ArgumentCaptor.forClass(PendingAuditEvent.class);
+        verify(sink, times(2)).accept(captured.capture(), eq(false));
+        var generic = captured.getAllValues().get(0);
+        var direct = captured.getAllValues().get(1);
+        assertThat(generic.eventType()).isEqualTo(AnalyticsEventType.OPTIMIZATION_SUBMITTED);
+        assertThat(direct.eventType()).isEqualTo(AnalyticsEventType.DIRECT_OPTIMIZATION_SUBMITTED);
+        assertThat(direct.occurredAt()).isEqualTo(generic.occurredAt());
+        assertThat(direct.occurredAt().getOffset()).isEqualTo(java.time.ZoneOffset.UTC);
+        assertThat(direct.id()).isNotEqualTo(generic.id());
+        assertThat(direct.tenantId()).isEqualTo(ACTOR.tenantId());
+        assertThat(direct.actorUserId()).isEqualTo(ACTOR.userId());
+        assertThat(direct.details()).isEqualTo(generic.details()).doesNotContainKeys("planId", "prompt", "answers", "files");
+        assertThat(direct.details().toString()).doesNotContain("sensitive prompt");
+    }
+
+    @Test
+    void planSubmissionIsOnlyGenericAndCompletionHasStableScopedIdentity() {
+        CurrentActor actor = mock(CurrentActor.class);
+        when(actor.require()).thenReturn(ACTOR);
+        AuditEventDelivery sink = mock(AuditEventDelivery.class);
+        AnalyticsEventService service = eventService(actor, sink);
+        MockHttpServletRequest request = authenticatedRequest();
+        service.recordOptimizationSubmission(false, request);
+        String planId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+        String secondPlanId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+        service.recordPlanCompleted(planId, request);
+        service.recordPlanCompleted(planId.toUpperCase(java.util.Locale.ROOT), authenticatedRequest());
+        service.recordPlanCompleted(secondPlanId, request);
+        ActorIdentity anotherAccount = new ActorIdentity(UUID.randomUUID(), ACTOR.tenantId(), ACTOR.workspaceId(), "other@example.test", "Other");
+        when(actor.require()).thenReturn(anotherAccount);
+        service.recordPlanCompleted(planId, request);
+        ActorIdentity anotherTenant = new ActorIdentity(ACTOR.userId(), UUID.randomUUID(), ACTOR.workspaceId(), "other@example.test", "Other");
+        when(actor.require()).thenReturn(anotherTenant);
+        service.recordPlanCompleted(planId, request);
+
+        ArgumentCaptor<PendingAuditEvent> captured = ArgumentCaptor.forClass(PendingAuditEvent.class);
+        verify(sink, times(6)).accept(captured.capture(), eq(false));
+        var events = captured.getAllValues();
+        assertThat(events.getFirst().eventType()).isEqualTo(AnalyticsEventType.OPTIMIZATION_SUBMITTED);
+        assertThat(events.subList(1, 6)).allSatisfy(event -> {
+            assertThat(event.eventType()).isEqualTo(AnalyticsEventType.PLAN_COMPLETED);
+            assertThat(event.details()).doesNotContainKeys("planId", "prompt", "answers", "files");
+            assertThat(event.details().toString()).doesNotContain(planId, secondPlanId);
+        });
+        assertThat(events.get(1).id()).isEqualTo(events.get(2).id());
+        assertThat(java.util.Set.of(events.get(1).id(), events.get(3).id(), events.get(4).id(), events.get(5).id())).hasSize(4);
+    }
+
+    @Test
+    void invalidPlanIdentifiersNeverCreateAuditEvents() {
+        CurrentActor actor = mock(CurrentActor.class);
+        AuditEventDelivery sink = mock(AuditEventDelivery.class);
+        AnalyticsEventService service = eventService(actor, sink);
+        for (String id : new String[]{null, "", " ", "x".repeat(36), "x".repeat(65), "1-1-1-1-1"}) {
+            assertThatThrownBy(() -> service.recordPlanCompleted(id, authenticatedRequest()))
+                    .isInstanceOf(com.promptoptimizer.common.exception.InvalidOptimizationRequestException.class);
+        }
+        verifyNoInteractions(actor, sink);
+    }
+
+    /** 使用内存投递替身观察采集边界，不能从客户端请求体派生审计字段。 */
+    private AnalyticsEventService eventService(CurrentActor actor, AuditEventDelivery sink) {
+        return new AnalyticsEventServiceImpl(actor, sink, new ClientIpResolver(""), ip -> GeoLocation.unavailable(),
+                new DeviceTypeResolver(), new AnalyticsSessionContext());
+    }
 
     @Test
     void storesIpAndNullGeoWithoutStoringRawAgentOrCredentials() {

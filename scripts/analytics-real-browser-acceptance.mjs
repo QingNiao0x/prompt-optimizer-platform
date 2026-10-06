@@ -37,7 +37,12 @@ const poll = async (read, accepts, description) => {
   }
   throw new Error(description);
 };
-const inspect = () => command('INSPECTION');
+const inspect = async () => {
+  const observation = await command('INSPECTION');
+  // 协议只含有界数量，不包含账号、提示词、计划编号或登录凭据。
+  report.lastInspection = observation;
+  return observation;
+};
 const data = async (response) => {
   expect(response.status()).toBe(200);
   const body = await response.json();
@@ -52,13 +57,16 @@ const login = async (page, email) => {
   await page.goto(`${base}/login`);
   await expect(page.locator('input[name="account"]')).toBeVisible();
   await expect(page.locator('.login-modal__captcha img')).toBeVisible();
+  await expect.poll(() => page.locator('.login-modal__captcha img').evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
   const answer = await command('CAPTCHA');
   await page.locator('input[name="account"]').fill(email);
   await page.locator('input[name="password"]').fill(fixture.password);
   await page.locator('input[name="captcha"]').fill(answer.captcha);
   const response = page.waitForResponse((candidate) => candidate.url().endsWith('/api/v1/auth/login') && candidate.request().method() === 'POST');
   await page.locator('.login-modal__submit').click();
-  expect((await response).status()).toBe(200);
+  const loginStatus = (await response).status();
+  (report.loginStatuses ??= []).push(loginStatus);
+  expect(loginStatus).toBe(200);
   await page.waitForURL('**/workbench');
 };
 const sendEvent = async (page, event, headers = {}) => page.request.post(`${base}/api/v1/analytics/events`, {
@@ -98,6 +106,8 @@ try {
   stage = 'real_browser_login';
   await login(member, fixture.memberEmail);
   await poll(inspect, (value) => value.visits >= 1 && value.pending === 0, stage);
+  expect((await inspect()).directEnhancementCount).toBe(0);
+  expect((await inspect()).planCompletedCount).toBe(0);
   for (const path of adminPaths) expect((await member.request.get(base + path)).status()).toBe(403);
   report.checks.push({ name: stage, status: 200, ordinaryAdminStatus: 403, permissionEndpoints: 4 });
 
@@ -157,8 +167,89 @@ try {
   expect(optimization.optimizedPrompt.length).toBeGreaterThan(0);
   const history = await data(await member.request.get(base + '/api/v1/optimization-history'));
   expect(history.total).toBeGreaterThanOrEqual(1);
-  await poll(inspect, (value) => value.pending === 0, stage);
+  await poll(inspect, (value) => value.pending === 0 && value.directEnhancementCount === 1, stage);
   report.checks.push({ name: stage, contextStatus: 200, optimizationStatus: 200, historyStatus: 200, provider: 'Mock' });
+
+  stage = 'plan_browser_cancel_and_confirm';
+  await member.evaluate(() => localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify({ enabled: true, introSeen: true })));
+  await member.goto(`${base}/workbench`);
+  const planPrompt = '为 Java 用户服务添加邮箱密码登录接口，输出接口和测试方案。';
+  await member.getByLabel('原始提示词', { exact: true }).fill(planPrompt);
+  stage = 'plan_browser_first_questions';
+  await expect(member.getByRole('button', { name: '先确认并增强', exact: true })).toBeVisible();
+  const firstPlanResponse = member.waitForResponse((response) => response.url().endsWith('/api/v1/optimizations/plan') && response.request().method() === 'POST');
+  await member.getByRole('button', { name: '先确认并增强', exact: true }).click();
+  const cancelledPlan = await data(await firstPlanResponse);
+  expect(cancelledPlan.questions.length).toBeGreaterThan(0);
+  const dialog = member.locator('.plan-question-dialog:visible');
+  await expect(dialog).toBeVisible();
+  await poll(inspect, (value) => value.pending === 0 && value.planCompletedCount === 0, stage);
+  await dialog.getByRole('button', { name: '返回修改需求', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  stage = 'plan_browser_second_questions';
+  const secondPlanResponse = member.waitForResponse((response) => response.url().endsWith('/api/v1/optimizations/plan') && response.request().method() === 'POST');
+  await member.getByRole('button', { name: '先确认并增强', exact: true }).click();
+  const plan = await data(await secondPlanResponse);
+  await expect(dialog).toBeVisible();
+  for (let index = 0; index < plan.questions.length; index++) {
+    stage = `plan_browser_answer_${index + 1}`;
+    await expect(dialog.locator('.question-progress')).toContainText(`问题 ${index + 1} / ${plan.questions.length}`);
+    if (plan.questions[index].options.length) await dialog.locator('.answer-option').first().click();
+    else await dialog.getByRole('textbox', { name: '填写回答' }).fill('以当前项目及本次需求中已明确的信息为准。');
+    if (index < plan.questions.length - 1) await dialog.getByRole('button', { name: '下一题', exact: true }).click();
+  }
+  await poll(inspect, (value) => value.pending === 0 && value.planCompletedCount === 0, stage);
+  const finalResponse = member.waitForResponse((response) => response.url().endsWith('/api/v1/optimizations') && response.request().method() === 'POST');
+  stage = 'plan_browser_final_generation';
+  await dialog.getByRole('button', { name: '生成最终提示词', exact: true }).click();
+  const completedResponse = await finalResponse;
+  await data(completedResponse);
+  const completedRequest = completedResponse.request().postDataJSON();
+  expect(completedRequest.planConfirmation.planId).toBe(plan.planId);
+  await poll(inspect, (value) => value.pending === 0 && value.planCompletedCount === 1 && value.directEnhancementCount === 1, stage);
+
+  stage = 'plan_concurrent_final_requests';
+  const repeatedCsrf = await csrf(memberContext);
+  const duplicateStatuses = [];
+  // 保持现有单账号并发限制；两路同时完成后再重复两路，不通过放宽限额获得验收通过。
+  for (let batch = 0; batch < 2; batch++) {
+    const repeated = await Promise.all(Array.from({ length: 2 }, () => member.request.post(base + '/api/v1/optimizations', {
+      headers: { 'X-XSRF-TOKEN': repeatedCsrf }, data: completedRequest,
+    })));
+    duplicateStatuses.push(...repeated.map((response) => response.status()));
+    report.duplicateGenerationStatuses = duplicateStatuses;
+    for (const response of repeated) await data(response);
+  }
+  await poll(inspect, (value) => value.pending === 0 && value.planCompletedCount === 1, stage);
+  report.checks.push({ name: 'plan_browser_lifecycle', cancelledPlanCompletedCount: 0, fullPlanCompletedCount: 1,
+    concurrentDuplicateGenerations: 4, persistedCompletions: 1, noFiles: true });
+
+  stage = 'zero_question_plan_and_history_direct';
+  const zeroPrompt = '将 hello 翻译为中文，只输出译文。';
+  const prepared = await data(await member.request.post(base + '/api/v1/context/planning', {
+    headers: { 'X-XSRF-TOKEN': await csrf(memberContext) }, data: { rawPrompt: zeroPrompt, context: { files: [] } },
+  }));
+  const reference = { contextId: prepared.contextId, version: prepared.version };
+  const zeroPlan = await data(await member.request.post(base + '/api/v1/optimizations/plan', {
+    headers: { 'X-XSRF-TOKEN': await csrf(memberContext) }, data: { rawPrompt: zeroPrompt, planningContext: reference },
+  }));
+  expect(zeroPlan.questions).toHaveLength(0);
+  await poll(inspect, (value) => value.pending === 0 && value.planCompletedCount === 1, stage);
+  const zeroRequest = { rawPrompt: zeroPrompt, context: { files: [] },
+    planConfirmation: { planId: zeroPlan.planId, planningContext: reference, answers: [] } };
+  await data(await member.request.post(base + '/api/v1/optimizations', {
+    headers: { 'X-XSRF-TOKEN': await csrf(memberContext) }, data: zeroRequest,
+  }));
+  const planHistory = await data(await member.request.get(base + '/api/v1/optimization-history'));
+  await data(await member.request.post(base + `/api/v1/optimization-history/${planHistory.records[0].id}/re-optimize`, {
+    headers: { 'X-XSRF-TOKEN': await csrf(memberContext) },
+  }));
+  await poll(inspect, (value) => value.pending === 0 && value.planCompletedCount === 2 && value.directEnhancementCount === 2, stage);
+  for (const eventType of ['DIRECT_OPTIMIZATION_SUBMITTED', 'PLAN_COMPLETED']) {
+    expect((await sendEvent(member, { eventType })).status()).toBe(400);
+  }
+  count = (await inspect()).visits;
+  report.checks.push({ name: stage, noFileZeroQuestionCompleted: 1, historyDirectSubmissions: 1, forgedClientStatus: 400 });
 
   stage = 'admin_filters_metrics_and_charts';
   await login(admin, fixture.adminEmail);
@@ -179,6 +270,11 @@ try {
   expect(metrics.actualUserCount).toBe(1);
   expect(metrics.averageDailyActiveUsers).toBe(1);
   expect(metrics.rechargeStatisticsAvailable).toBe(false);
+  expect(metrics.directEnhancementCount).toBe(2);
+  expect(metrics.planCompletedCount).toBe(2);
+  expect(metrics.dailyMetrics.reduce((sum, day) => sum + day.directEnhancementCount, 0)).toBe(2);
+  expect(metrics.dailyMetrics.reduce((sum, day) => sum + day.planCompletedCount, 0)).toBe(2);
+  report.featureObservation = { directEnhancementCount: 2, planCompletedCount: 2, dailyTotalsMatched: true };
   for (const period of ['DAY', 'WEEK', 'MONTH']) {
     stage = `admin_ranking_${period}`;
     const ranking = await data(await admin.request.get(`${base}/api/v1/admin/analytics/usage-ranking`, {
@@ -214,6 +310,7 @@ try {
   await admin.goto(`${base}/admin/analytics`);
   await expect(admin.getByRole('heading', { name: '使用与访问', exact: true })).toBeVisible();
   const chartNames = [
+    '直接增强提交次数与 Plan 完成次数每日折线图',
     '每日访问、去重访问、活跃、实际使用与新增账号折线图',
     '按小时汇总的关键操作柱状图',
     '按月份汇总的关键操作柱状图',
@@ -231,6 +328,8 @@ try {
   await admin.getByRole('button', { name: '查询', exact: true }).click();
   const filtered = await data(await filteredResponse);
   expect(filtered.uniqueVisitorCount).toBe(1);
+  await expect(admin.getByTestId('direct-enhancement-count').locator('strong')).toHaveText('2');
+  await expect(admin.getByTestId('plan-completed-count').locator('strong')).toHaveText('2');
   expect(filtered.registeredAccountCount).toBe(1);
   stage = 'admin_delivery_health';
   const health = await data(await admin.request.get(base + '/api/v1/admin/analytics/delivery'));
@@ -333,6 +432,11 @@ try {
   expect((await exportLogs()).total).toBe(originalExports + 3);
   expect(await member.evaluate(() => window.__copyExportAcceptance.writes)).toBe(3);
   expect(browserErrors).toBe(0);
+  await poll(inspect, (value) => value.pending === 0 && value.directEnhancementCount === 3 && value.planCompletedCount === 2, stage);
+  const finalMetrics = await dashboard(admin);
+  expect(finalMetrics.directEnhancementCount).toBe(3);
+  expect(finalMetrics.planCompletedCount).toBe(2);
+  report.featureObservation.finalDirectEnhancementCount = 3;
   report.checks.push({ name: 'copy_export_real_browser_and_database', clipboard: 'native write and keyboard paste',
     successfulCopies: 3, rejectedCopies: 1, persistedExports: 3, manualSelectionExports: 0, manualLinkExports: 0,
     lostResponseRetries: exportAttempts.length - 1, stableEventId: true, duplicateDatabaseRows: 0,
@@ -352,7 +456,13 @@ try {
   process.exitCode = 1;
 } finally {
   clearTimeout(watchdog);
-  await browser?.close();
-  await server?.close();
-  input.close();
+  // 关闭失败也须结束私有管道，使 JUnit 能进入 finally 回滚，而不是永久卡在 readLine。
+  const cleanupWatchdog = setTimeout(() => process.exit(process.exitCode ?? 1), 10_000);
+  try {
+    await browser?.close();
+    await server?.close();
+  } finally {
+    clearTimeout(cleanupWatchdog);
+    input.close();
+  }
 }

@@ -1,0 +1,7 @@
+# Docker Hub 下载缓慢时的本机测试备用镜像。
+# 使用已缓存的基础镜像与 Alpine 官方签名包，不改项目 pom.xml。
+FROM redis:7-alpine
+ARG BUDGET_ALPINE_MIRROR=https://dl-cdn.alpinelinux.org/alpine
+RUN printf '%s\n' "$BUDGET_ALPINE_MIRROR/v3.21/main" "$BUDGET_ALPINE_MIRROR/v3.21/community" > /tmp/budget-repositories && apk --repositories-file /tmp/budget-repositories add --no-cache openjdk21-jre font-dejavu
+ENTRYPOINT []
+CMD ["java", "-version"]

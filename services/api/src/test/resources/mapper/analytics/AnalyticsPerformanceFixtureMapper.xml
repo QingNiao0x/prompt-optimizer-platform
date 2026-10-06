@@ -16,12 +16,13 @@
           FROM generate_series(1, #{accounts}) n
     </insert>
     <insert id="insertEvents">
-        <!-- 账号和事件均匀分散；时间桶覆盖整年，用于同时测量补零日、小时和月度聚合。 -->
+        <!-- 合成负载包含新增细分事件；十种位置与三类设备互质，避免登录设备只落入一种代码。 -->
         INSERT INTO audit_event (id, tenant_id, actor_user_id, event_type, details, occurred_at)
         SELECT md5(#{seed} || ':event:' || n)::uuid, #{tenantId},
                md5(#{seed} || ':user:' || ((n % #{accounts}) + 1))::uuid,
                (ARRAY['APP_VISIT', 'LOGIN', 'LOGOUT', 'OPTIMIZATION_SUBMITTED',
-                      'CONTEXT_ANALYZED', 'PLAN_CREATED', 'RESULT_EXPORTED'])[(n % 7) + 1],
+                      'CONTEXT_ANALYZED', 'PLAN_CREATED', 'RESULT_EXPORTED',
+                      'DIRECT_OPTIMIZATION_SUBMITTED', 'PLAN_COMPLETED', 'OPTIMIZATION_SUBMITTED'])[(n % 10) + 1],
                jsonb_build_object('analyticsVersion', 1,
                    'deviceType', (ARRAY['DESKTOP', 'MOBILE', 'TABLET'])[(n % 3) + 1],
                    'clientIp', NULL, 'country', NULL, 'province', NULL, 'city', NULL),

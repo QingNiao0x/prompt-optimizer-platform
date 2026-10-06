@@ -1,0 +1,378 @@
+{
+  "scope": "CONDITIONAL_FACTS_AND_RESEARCH_REMINDERS",
+  "sourceRun": "tmp/prompt-comparison/conditional-reminder-real-20261006-05",
+  "sourceManifest": {
+    "createdAt": "2026-10-06T10:46:23.467Z",
+    "kind": "REAL_AUTHENTICATED_API",
+    "dataAuthorization": "SYNTHETIC",
+    "firstFailuresPreserved": true,
+    "caseSha256": "2102c79a4f021b8c66e87243bcc5190aa329b4682858253d3f8f55e80c6d8025",
+    "sourceHashes": {
+      "enhancement/service/PlanningSessionService.java": "cbfef3afaf9fdd80b19d85f0de9d527c8f5728d3881738beee828ccad95a6821",
+      "enhancement/service/impl/PlanningSessionServiceImpl.java": "18eb969b4b715c77fab0256376d6992daa60f35f2f08dd11d3b2112f3b514b3f",
+      "enhancement/service/impl/PlanningDecisionPolicy.java": "6f2bcff4bac7123ab3eaea63a4b45be0f991ac3c448c9f28aa3c9819b9844d86",
+      "provider/domain/PlanningProviderRequest.java": "74d327312eb02d158a27608ac34604087df07cb6ceecab3fc79b1cbe87ec2c72",
+      "enhancement/service/impl/SourceObjectContract.java": "0952ab42b6f00a054bd5725f9b071e537fdaad4f6e30cb016da9d0267736b527",
+      "enhancement/service/impl/TaskQuestionScope.java": "fc50fedf3c46bc894a4ecb332dcd9649ca878e770e2732aeb234097b7bba0f3a",
+      "enhancement/service/impl/ExecutionRuleCompactor.java": "3c8eed9f5aef20b13d64af56e047858057888470d2ff8567b536e4b9ad5398e8",
+      "enhancement/service/impl/MinimalPromptOrganizer.java": "815dc21292804de40b00a7879034f26ca584536a1df4aac1294fc3d3180df799",
+      "enhancement/service/impl/PendingDecisionSignature.java": "12c700a04da314aa49a0504836e65f750392bbde84fc387d951c7f47133e0d77",
+      "enhancement/service/impl/ReadOnlyMaterialComparison.java": "036825e57193d53ad9bc9d8576c0f161c451535149f4e14e74b323593ffa2201",
+      "provider/domain/PromptRewriteStrategy.java": "cc4517fa133444ab87cdbed8a452d6a7202a64a39e4d1a48336f38b7bf52f380",
+      "template/domain/TaskIntentResolver.java": "2706a9a570f55369f48ca9482460f141a542a0aa75144c6edd4b7cac990fcba6",
+      "enhancement/service/impl/AmbiguityDetector.java": "2e7e2c95c30eb746171de91611b7b4271cbe1fc224525da8d469ccb25a8263e8",
+      "provider/domain/ProviderResponseValidationException.java": "f6fb3e95c05b0ab581008542ba9811794e11c177672dde1a6dfbe505491748bf",
+      "enhancement/service/impl/ComparisonMaterialDecision.java": "d45b44afe98fb62a857d1b175e1b312343a2a7d3aea75f24355911e889b88e91",
+      "enhancement/service/impl/NewsBodyFactContract.java": "696a8865b2fad64f4544a80ad1ce4ef42fc6029113b55714de71026411bce8b2",
+      "enhancement/service/impl/PendingReminderIdentity.java": "355f2feaa961c0036b142c6bfe1e375e00bf15ee03c06450418ba70e1a5999dd",
+      "enhancement/service/impl/PlanQuestionFilter.java": "180107e5170233ed77cfc49fbf983edcd23541018d00385f1dec01c167c19059",
+      "enhancement/service/impl/RoutineGuideDecision.java": "77e2cce8a833072d384e838a0d06637374222860867d57d8eae2e59520ad89d2",
+      "enhancement/service/impl/RoutineWritingPresentation.java": "894e753ffd06d828010a0f26caca044ad901fb07d16f6a0ff10e725d86ad0ecf",
+      "enhancement/service/impl/PlanningAuthorizationState.java": "7821104abd742312600bd3ccd7be61a203c5c64577d3a461966a2f80485cb62d",
+      "enhancement/service/impl/PlanningConflictIdentity.java": "3178eada3cc1740743e4e7417d108415e91de3ef0eef6b4867c13b46e1a86101",
+      "enhancement/service/impl/RequirementFidelityGuard.java": "f6e71dd45ffb62b3ad66a6fe736255aa344cf7b313fddeb39d2322f97cda4b03",
+      "enhancement/service/impl/EvidenceStateGuard.java": "30c635e68e89e8b67a80fd88fbd1f101609c7ecc145dfb5ad987a5f45bd6c837",
+      "enhancement/service/impl/ConditionalConfirmationGuard.java": "c6e44b221614f70ce733acab5431c3c2a760a021a55a3bfbff7d1be6103faf89",
+      "enhancement/service/impl/ResolvedPlanState.java": "52f1b60242c83946e3b41588e6d0feea973245d4834ac2127e69996d0db4fcc2",
+      "enhancement/service/impl/PlanAmbiguityMerger.java": "f9caee746309f41ec2720720a3183dd8e2c46a7dc84bdda3a27e082fb1acb829",
+      "enhancement/service/impl/PlanAnswerSemantics.java": "c69c7432386b61a3726157eef81da085c84ab93dcbf3a26e7434a927c816d454",
+      "enhancement/service/impl/PlanRecommendationAligner.java": "c3d00f87b17a7d4c7de735ea2af85844f0affff0d4d027985bdccfb534974725",
+      "enhancement/service/impl/NewsLengthContract.java": "a39ecd8f0227c2616d06715623db4c9e97a0e3ace1ba4744e6ed1442bc2e1260",
+      "template/domain/TaskDeliveryProfile.java": "f0f1949caac12b2dc5d741455ca0bdf207f1e15357c5b5fd4902464fac0c7033",
+      "enhancement/service/impl/OptimizationResultAssembler.java": "0ebc1c7aaee761d48ef2f378246b63e45065cc8d29454e5a4ce01972cafa6c30",
+      "enhancement/service/impl/DefaultEnhancementOrchestrator.java": "1716c895aeb93de7b9652507652ff802b69b977b332af495abbe5d89716ab9e9",
+      "enhancement/service/impl/OptimizationPlanningServiceImpl.java": "0ba19504654bcbe938bfdd1eb6445852b902726ee55e1dd62708dd0ae15c114c",
+      "provider/domain/PromptOptimizationGuidance.java": "8120b6eef1e2c15a6bad52b58d1f07ffae47ecc2c0ec380bfa3253ee60710ee0",
+      "provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java": "19b3ab3cb08cc121591e5b65b5c20df47a97b6e5615ff224427ffd7dcf1dee17"
+    },
+    "reviewKind": "AI_ASSISTED",
+    "independentHumanReview": "NOT_PERFORMED",
+    "domainSpecialistReview": "AFTER_LAUNCH_PER_USER",
+    "plannedPublishedModels": [
+      "deepseek:deepseek-flash",
+      "deepseek:deepseek-v4-pro",
+      "tokenhub:glm-5.3-flashx",
+      "tokenhub:minimax-m3"
+    ],
+    "callsPerModelLimit": 40
+  },
+  "backendStartedAt": "2026-10-06T18:45:34.3104340+08:00",
+  "firstFailuresPreserved": true,
+  "reusedPlanSource": "tmp/prompt-comparison/conditional-reminder-real-20261006-03",
+  "regression": {
+    "classes": 37,
+    "tests": 653,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "evaluationToolTests": 22,
+  "newModelStages": 16,
+  "entries": [
+    {
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 9169,
+      "characters": 3747,
+      "promptSha256": "0e8d67dc3c9626da5238f69cbc11ffc7d7c01d31316e3859e0b58569775e7718",
+      "ambiguities": [],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    },
+    {
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 11517,
+      "characters": 5243,
+      "promptSha256": "7e4d637aa025ea80d1654e81d7f65f1dcaac1de850ea0ec42fa4b69890b7f236",
+      "ambiguities": [
+        "该问题尚未确定：仅确认完整性分母，一致性指标分母仍未决定。 补充说明：不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。",
+        "该问题尚未确定：是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。",
+        "该问题尚未确定：A医院2022年的覆盖度目前是什么状态？ 用户说明：A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。",
+        "该问题尚未确定：重复导入的“最新有效版本”应依据什么判断？ 用户说明：导入版本的实际排序依据尚未核实；保留原需求的最新有效版本原则，不臆造新的排序字段或规则。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 2,
+      "occurrenceOfCoverageExplanation": 2
+    },
+    {
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 18118,
+      "characters": 4236,
+      "promptSha256": "eb53f4691eed741d549e9485b8b332d5c0257632784b02e70b60b9ae64a56b32",
+      "ambiguities": [
+        "A医院2022年覆盖度尚未确定，影响该年度数据质量评估的完整性和可比性。",
+        "缺失记录是否进入某些指标的分母尚未决定，影响指标计算口径。",
+        "是否对缺失病例使用插补尚未决定，且不同指标可能采用不同处理，影响缺失数据处理方法。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    },
+    {
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 33197,
+      "characters": 4371,
+      "promptSha256": "6b64383bf423b0c2d96e99275d8d0f39c522d3ab19e50d1247963b4bf41e7d17",
+      "ambiguities": [
+        "该问题尚未确定：仅确认完整性分母，一致性指标分母仍未决定。 补充说明：不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。",
+        "该问题尚未确定：A医院2022年覆盖度尚未确定，在方案中应如何处理？ 用户说明：A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。",
+        "该问题尚未确定：缺失值：是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。",
+        "该问题尚未确定：重复导入记录的处理中，如何定义“最新有效版本”？ 用户说明：导入版本的实际排序依据尚未核实；保留原需求的最新有效版本原则，不臆造新的排序字段或规则。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 2,
+      "occurrenceOfCoverageExplanation": 2
+    },
+    {
+      "caseId": "CF-RESEARCH-L-R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 17276,
+      "characters": 4815,
+      "promptSha256": "1fa0ef8ae70cf1d3e43e588c3e121753c376c72004ac175f6d2e1305852aa1b1",
+      "ambiguities": [
+        "A医院2022年覆盖度尚未确定，其他年份的覆盖情况须按资料核对；该信息影响年度与医院比较中分母的确定和覆盖度指标的呈现。",
+        "缺失记录是否进入某些分母尚未确定；完整性指标分母与一致性指标分母尚需分别确定，不同指标可能采用不同分母，影响指标口径和比较结果。",
+        "是否对缺失病例使用插补尚未决定，且不同指标可能采用不同处理；不得默认统一插补，该决定影响数据清洗步骤和指标计算方式。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    },
+    {
+      "caseId": "CF-RESEARCH-L-R2",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 18422,
+      "characters": 5101,
+      "promptSha256": "59b49a877f8a065becc422c81b138b60a8a452e3aee87bd0ebafcf3eee2f5356",
+      "ambiguities": [
+        "该问题尚未确定：A医院2022年的覆盖度目前处于什么状态？ 用户说明：A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。 补充说明：该未决状态影响年度与医院比较中A医院2022年样本量、缺失数与有效分母的呈现方式。",
+        "该问题尚未确定：仅确认完整性分母，一致性指标分母仍未决定。 补充说明：不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。 补充说明：该未决状态影响一致性指标的分子分母口径。",
+        "该问题尚未确定：是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 1,
+      "occurrenceOfCoverageExplanation": 1
+    },
+    {
+      "caseId": "CF-RESEARCH-L-R2",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 15064,
+      "characters": 3528,
+      "promptSha256": "ce3a2a8ccb12a39db2fd547c72dea06808bc54b358779d63ea9b9808202cd2cc",
+      "ambiguities": [
+        "A医院2022年覆盖度尚未确定，影响该年度数据质量评估的样本量和指标分母，需用户确认或提供核实依据。",
+        "缺失记录是否进入某些指标的分母尚未确定，且完整性指标与跨字段一致性指标可能采用不同分母，需分别确认。",
+        "是否对缺失病例使用插补尚未决定，且不同指标可能采用不同处理，需用户明确各指标的插补策略。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    },
+    {
+      "caseId": "CF-RESEARCH-L-R2",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 27534,
+      "characters": 3624,
+      "promptSha256": "9a0f685429b6962d847ad0d55ec93fcc42630863fd377df6bef9e0eb310250b7",
+      "ambiguities": [
+        "该问题尚未确定：仅确认完整性分母，一致性指标分母仍未决定。 补充说明：不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。",
+        "该问题尚未确定：是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。",
+        "该问题尚未确定：A医院2022年出院病案首页的覆盖度如何？ 用户说明：A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 1,
+      "occurrenceOfCoverageExplanation": 1
+    },
+    {
+      "caseId": "RC-DEV-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 4823,
+      "characters": 2437,
+      "promptSha256": "f1d0a9fdb40a94affdeefd503729787542a0c060a0239883a51e96fcea7bec7b",
+      "ambiguities": [],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    },
+    {
+      "caseId": "RC-DEV-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 11610,
+      "characters": 2295,
+      "promptSha256": "f5526181158cde292e85960fc8073e2b6a58585bb494b5f4bd6ebad0c990780a",
+      "ambiguities": [],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    },
+    {
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 9868,
+      "characters": 2145,
+      "promptSha256": "7597eb54632bbc1675890c91b7061ea16f9adf804a6253afcc14c8dcb9c10bd4",
+      "ambiguities": [
+        "甲院和乙院的比较观察窗口均未确定，且两者可能不同，需分别确认。该窗口会改变统计口径和业务结果。",
+        "异常等待阈值未确定，不能把资料中的示例阈值当作医院采用的规则。该阈值会改变异常等待的判定和统计结果。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    },
+    {
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 4913,
+      "characters": 2373,
+      "promptSha256": "cea178a6a7ed3f427028a667a28ecdd92fcd215ba07f719426c2ad1e874fff4b",
+      "ambiguities": [
+        "该问题尚未确定：甲院用于两院比较的观察窗口如何界定？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "该问题尚未确定：乙院用于两院比较的观察窗口如何界定？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "该问题尚未确定：甲院的异常等待阈值尚未决定，不采用资料中60分钟示例值；相关异常比例的计算需等待阈值确认。",
+        "该问题尚未确定：乙院的异常等待阈值尚未决定，不采用资料中60分钟示例值；相关异常比例的计算需等待阈值确认。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    },
+    {
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 9466,
+      "characters": 1742,
+      "promptSha256": "1d7048a071a035a6ec87ac4d6955e5da1ad2bc9fade36d9942aa3d977a9d73d9",
+      "ambiguities": [
+        "甲院的比较观察窗口尚未确定，需明确其时间范围（如从挂号到接诊的观察时长上限），否则无法统一计算甲院的候诊时间指标。",
+        "乙院的比较观察窗口尚未确定，需明确其时间范围（如从挂号到接诊的观察时长上限），否则无法统一计算乙院的候诊时间指标。",
+        "两院异常等待阈值尚未确定，需分别明确甲院和乙院的异常等待判定标准（如超过多少分钟视为异常），否则无法进行异常等待分析。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    },
+    {
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 22583,
+      "characters": 2337,
+      "promptSha256": "e7fa3463b423db3f6c7c4a7f6d3c34018a41b0e6664817105ac761f9db2828f0",
+      "ambiguities": [
+        "该问题尚未确定：甲院的比较观察窗口如何定义？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：需院方后续核实；不能用乙院的窗口替代。",
+        "该问题尚未确定：乙院的比较观察窗口如何定义？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：需院方后续核实；不能用甲院的窗口替代。",
+        "该问题尚未确定：甲院的异常等待阈值尚未决定，不采用资料中60分钟示例值；相关异常比例的计算需等待阈值确认。",
+        "该问题尚未确定：乙院的异常等待阈值尚未决定，不采用资料中60分钟示例值；相关异常比例的计算需等待阈值确认。"
+      ],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    },
+    {
+      "caseId": "RC-TRANSLATION-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 3767,
+      "characters": 1939,
+      "promptSha256": "87378c2f2b299e6138444262a946a34906469f0be8b989d083daa0e66ba76514",
+      "ambiguities": [],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    },
+    {
+      "caseId": "RC-TRANSLATION-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "http": [
+        200
+      ],
+      "latencyMs": 6203,
+      "characters": 1416,
+      "promptSha256": "c5b86739330e1cfbbcd38b41b2532f24b2c876f5b3a0d388d60e519dbf9aca70",
+      "ambiguities": [],
+      "directConfirmedHypothesisCandidates": [],
+      "occurrenceOfImputationAnswer": 0,
+      "occurrenceOfCoverageExplanation": 0
+    }
+  ],
+  "releaseApproved": false,
+  "professionalReview": "NOT_PERFORMED"
+}

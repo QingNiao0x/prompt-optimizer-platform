@@ -41,6 +41,8 @@ public final class AnalyticsViews {
             long uniqueVisitorCount,
             long activeUserCount,
             BigDecimal averageDailyActiveUsers,
+            long directEnhancementCount,
+            long planCompletedCount,
             List<DailyMetric> dailyMetrics,
             List<HourlyMetric> hourlyUsage,
             List<MonthlyMetric> monthlyUsage,
@@ -57,7 +59,7 @@ public final class AnalyticsViews {
     }
 
     /**
-     * 某日访问量、去重访问用户、活跃用户和新增账号数。
+     * 统计时区某日的账号指标及功能事件次数；直接增强按提交计，Plan 按完成计，历史通用事件不反推细分。
      */
     public record DailyMetric(
             LocalDate date,
@@ -65,7 +67,9 @@ public final class AnalyticsViews {
             long uniqueVisitors,
             long activeUsers,
             long actualUsers,
-            long newAccounts
+            long newAccounts,
+            long directEnhancementCount,
+            long planCompletedCount
     ) {
     }
 

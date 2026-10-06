@@ -64,6 +64,8 @@ final class PendingReminderIdentity {
     boolean matches(String heading, ConfirmedPlanDecision pending) {
         if (heading.matches("(?s).*(?:另外|此外|另需|还需|同时还).*")) return false;
         if (!compatibleOwner(heading, pending)) return false;
+        if (sameUnverifiedCoverage(heading, pending)) return true;
+        if (sameBoundImputationPart(heading, pending)) return true;
         if (PendingDecisionSignature.same(heading, pending.question(), rawPrompt)) return true;
         // 未决子项可以省去原题的活动范围，但不能省掉对象或属性后借用另一个子项的身份。
         if (originals(pending).stream().anyMatch(original ->
@@ -76,6 +78,72 @@ final class PendingReminderIdentity {
         return questionSubject(heading).equals(questionSubject(pending.question()))
                 && questionSubject(heading).length() >= 6;
     }
+
+    /** 三项未决中的插补子项可以单独复述；只归并原题已具名的对象，不删除新的方法或人群。 */
+    private boolean sameBoundImputationPart(String heading, ConfirmedPlanDecision pending) {
+        if (!subject(pending.question(), pending).equals("是否插补、适用指标及方法")) return false;
+        var matcher = Pattern.compile("^是否(对([^，,、。；;]{2,30})(?:使用|采用|进行)插补)"
+                + "(?:尚未|仍未|未)(?:决定|确定)[。？?]?$").matcher(compact(heading));
+        if (!matcher.matches()) return false;
+        boolean bound = originals(pending).stream().map(original -> compact(original.question()))
+                .anyMatch(question -> question.contains(matcher.group(1))
+                        || question.contains(matcher.group(2) + "是否采用插补"));
+        if (bound) return true;
+        // 泛指题只能继承原需求唯一明示的插补对象；多个对象或模型新增对象均不借用同一确认。
+        String raw = compact(rawPrompt);
+        List<String> objects = Pattern.compile("对([^，,、。；;]{2,30})(?:使用|采用|进行)插补")
+                .matcher(raw).results().map(match -> match.group(1)).distinct().toList();
+        return objects.size() == 1 && objects.getFirst().equals(matcher.group(2))
+                && raw.contains(matcher.group(1));
+    }
+
+    /** 同一医院、年份和覆盖属性须有绑定回答作证；未核实不是确认事实，也不能借别的年份合并。 */
+    boolean sameUnverifiedCoverage(String heading, ConfirmedPlanDecision pending) {
+        var candidate = coverage(heading);
+        if (candidate.isEmpty()) return false;
+        for (ConfirmedPlanDecision original : originals(pending)) {
+            if (original.scope() != ConfirmedPlanDecision.Scope.UNRESOLVED) continue;
+            String subtype = candidate.get().subtype();
+            if (!subtype.isEmpty() && !original.question().contains(subtype)) continue;
+            for (String clause : compact(original.answer()).split("[，,。；;]+")) {
+                var known = coverage(clause);
+                if (known.isPresent() && candidate.get().object().equals(known.get().object())
+                        && (subtype.equals(known.get().subtype()) || subtype.isEmpty()
+                        || known.get().subtype().isEmpty() && original.question().contains(subtype))) return true;
+            }
+        }
+        return false;
+    }
+
+    /** 只识别完整的具名医院、年度覆盖状态；新增对象或条件不通过宽泛“覆盖度”主题归并。 */
+    boolean namesUnverifiedCoverage(String text) {
+        return coverage(text).isPresent();
+    }
+
+    /** 拆成三项的插补复述须与同题已登记的三个未决属性完全对应，剩余说明交由归并器保留。 */
+    Optional<String> repeatedResearchStatement(String text, ConfirmedPlanDecision pending) {
+        if (!subject(pending.question(), pending).equals("是否插补、适用指标及方法")) return Optional.empty();
+        var matcher = Pattern.compile("^(是否[^，,。；;]{2,80}插补)(?:仍|尚)?未(?:决定|确定)[，,]"
+                + "适用(?:哪些)?指标(?:和|及)方法(?:均|都)?(?:尚)?未(?:确定|决定)[；;。]?(.*)$")
+                .matcher(compact(text));
+        if (!matcher.matches()) return Optional.empty();
+        // 业务对象仍逐字核对，例如缺失病例与新生儿病例不能相互替代。
+        boolean sameQuestion = originals(pending).stream().anyMatch(original ->
+                compact(original.question()).replaceAll("[？?。]+$", "").equals(matcher.group(1)));
+        return sameQuestion ? Optional.of(matcher.group(2)) : Optional.empty();
+    }
+
+    /** 核实状态保留在字段签名之外；签名包含完整机构、年度与明示文档子类。 */
+    private Optional<CoverageIdentity> coverage(String text) {
+        var matcher = Pattern.compile("^([\\p{IsHan}A-Za-z0-9_]{1,25}?医院\\d{4}年)(?:的)?"
+                + "(出院病案首页)?(?:的)?(?:数据)?覆盖度(?:尚未|仍未|未)(?:核实|确认|明确|确定)[。？?]?$")
+                .matcher(compact(text));
+        return matcher.matches() ? Optional.of(new CoverageIdentity(matcher.group(1),
+                matcher.group(2) == null ? "" : matcher.group(2))) : Optional.empty();
+    }
+
+    /** 年份随机构名一起参与身份比较，文档子类只允许从同题显式范围继承。 */
+    private record CoverageIdentity(String object, String subtype) { }
 
     /**
      * 复合题须逐段完全覆盖已登记的具名属性，连接词之外不留任何对象、条件或取值残余。
@@ -185,11 +253,60 @@ final class PendingReminderIdentity {
             if (prefix.group(1).contains("采用") && (known.contains(prefix.group(1))
                     || sameBoundAffirmativePrefix(prefix.group(1), pending))) subject = prefix.group(2);
         }
+        subject = researchSubject(subject, pending);
         // 只是未决等级/锚点的语法差异；“一致性指标”“计分权重”等其他属性仍完整保留。
         subject = subject.replaceFirst("^(?:具体|评分)(?=等级(?:和|与|及)评分锚点)", "");
         return subject.replace("等级与评分锚点", "等级及评分锚点")
                 .replace("等级和评分锚点", "等级及评分锚点")
                 .replace("等级以及评分锚点", "等级及评分锚点");
+    }
+
+    /**
+     * 科研子项只归一化已绑定题目中的完整属性语法；医院、指标种类和新增条件不删除。
+     * 部分确认的完整性分母不能消除一致性分母，只移开同题已有肯定答案的展示前缀。
+     */
+    private String researchSubject(String subject, ConfirmedPlanDecision pending) {
+        var partial = Pattern.compile("^(?:仅|只)确认完整性分母[，,](.+)$").matcher(subject);
+        if (partial.matches() && originals(pending).stream().anyMatch(original ->
+                PlanAnswerSemantics.confirmedPart(original.answer()).matches(
+                        "(?s).*完整性指标分母(?:采用|包含|包括|为).+"))) subject = partial.group(1);
+        // 用户在原需求中明确命名跨字段一致性，同题简写的一致性不能扩大为完整性或另一个具名指标。
+        if (rawPrompt.contains("跨字段一致性指标")) {
+            // 转折只连接前面的已知完整性分母；完整属性以外的对象、条件和取值仍参与比较。
+            String denominator = subject.replaceFirst("^(?:但|不过|然而)(?=(?:跨字段(?:逻辑)?)?一致性指标的?分母)", "");
+            if (denominator.matches("^(?:跨字段(?:逻辑)?)?一致性指标的?分母(?:是否采用相同口径)?$")) {
+                subject = "跨字段一致性指标分母";
+            }
+        }
+        String original = originals(pending).stream().map(value -> compact(value.question()))
+                .collect(java.util.stream.Collectors.joining("\u0000"));
+        var imputation = Pattern.compile("对([^，,、。；;]{2,30})(?:使用|采用|进行)插补").matcher(subject);
+        if (imputation.find() && (original.contains(imputation.group())
+                || original.contains(imputation.group(1) + "是否采用插补")
+                || original.matches("(?s).*(?:对于|对)" + Pattern.quote(imputation.group(1))
+                        + "[，,]是否(?:使用|采用|进行)插补.*")
+                || rawPrompt.contains(imputation.group()))) {
+            subject = subject.substring(0, imputation.start()) + "插补" + subject.substring(imputation.end());
+        }
+        // 只对应三项完整决策；只问方法、新增比例阈值或别的适用对象都不会落入此签名。
+        return subject.replaceFirst("是否插补[、，,]适用(?:哪些)?指标(?:和|及)"
+                + "(?:具体|采用何种)?方法(?:均|都)?$", "是否插补、适用指标及方法");
+    }
+
+    /**
+     * 原题已明确询问指标或字段时，完整三项插补复写可把字段范围附到同一题，不丢新增字段。
+     * 仅投影题干用于核对完整对象；新对象、方法取值、数字条件或题外字段不进入此分支。
+     */
+    Optional<String> imputationFieldExpansion(String text, ConfirmedPlanDecision pending) {
+        var expansion = Pattern.compile("^是否对([^，,、。；;]{2,30})(?:使用|采用|进行)插补、"
+                + "适用哪些指标或字段、采用何种方法均未(?:决定|确定)[；;](.*)$", Pattern.DOTALL).matcher(text.strip());
+        if (!expansion.matches() || originals(pending).stream()
+                .noneMatch(original -> original.question().contains("哪些指标或字段")
+                        && Pattern.compile("(?:对|对于)" + Pattern.quote(expansion.group(1))
+                        + "(?=是否|[，,]|使用|采用|进行)").matcher(original.question()).find())) return Optional.empty();
+        String projected = "是否对" + expansion.group(1) + "采用插补、适用指标及方法均未决定";
+        if (!matches(projected, pending)) return Optional.empty();
+        return Optional.of("若采用插补，适用哪些指标或字段尚未决定。" + expansion.group(2));
     }
 
     /**

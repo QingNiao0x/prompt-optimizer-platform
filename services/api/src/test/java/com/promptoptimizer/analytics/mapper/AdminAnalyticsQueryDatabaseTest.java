@@ -83,7 +83,7 @@ class AdminAnalyticsQueryDatabaseTest {
         );
 
         assertThat(analyticsMapper.dailyMetrics(period, AnalyticsAccountFilter.forUser(userId)))
-                .containsExactly(new DailyMetric(day, 1, 1, 1, 1, 1));
+                .containsExactly(new DailyMetric(day, 1, 1, 1, 1, 1, 0, 0));
         assertThat(analyticsMapper.monthlyUsage(period, day, AnalyticsAccountFilter.forUser(userId)))
                 .containsExactly(new MonthlyMetric("2026-09", 1));
         assertThat(analyticsMapper.hourlyUsage(period, AnalyticsAccountFilter.forUser(userId)))
@@ -164,7 +164,7 @@ class AdminAnalyticsQueryDatabaseTest {
         AnalyticsAccountFilter filter = new AnalyticsAccountFilter(null, " " + tag.toUpperCase() + "+ ", " ALPHA_100% ");
         assertThat(analyticsMapper.accountCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.AccountCounts(1, 1));
         assertThat(analyticsMapper.usageCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(2, 1, 1, 1));
-        assertThat(analyticsMapper.dailyMetrics(period, filter)).containsExactly(new DailyMetric(day, 2, 1, 1, 1, 1));
+        assertThat(analyticsMapper.dailyMetrics(period, filter)).containsExactly(new DailyMetric(day, 2, 1, 1, 1, 1, 0, 0));
         assertThat(analyticsMapper.hourlyUsage(period, filter)).filteredOn(item -> item.hour() == 11)
                 .containsExactly(new HourlyMetric(11, 1));
         assertThat(analyticsMapper.monthlyUsage(period, day, filter)).containsExactly(new MonthlyMetric("2026-09", 2));
@@ -226,7 +226,7 @@ class AdminAnalyticsQueryDatabaseTest {
         AnalyticsAccountFilter conflict = new AnalyticsAccountFilter(second, tag + "+", "alpha_100%");
         assertThat(analyticsMapper.accountCounts(period, conflict).registeredAccounts()).isZero();
         assertThat(analyticsMapper.usageRanking(period, conflict, 20)).isEmpty();
-        assertThat(analyticsMapper.dailyMetrics(period, conflict)).containsExactly(new DailyMetric(day, 0, 0, 0, 0, 0));
+        assertThat(analyticsMapper.dailyMetrics(period, conflict)).containsExactly(new DailyMetric(day, 0, 0, 0, 0, 0, 0, 0));
         assertThat(analyticsMapper.usageCounts(period, new AnalyticsAccountFilter(null, "' OR 1=1 --", null)).accessCount()).isZero();
         assertThat(analyticsMapper.accountCounts(period, new AnalyticsAccountFilter(null, tag + "+revoked", null)).registeredAccounts()).isZero();
 

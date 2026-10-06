@@ -1,6 +1,7 @@
 package com.promptoptimizer.analytics.service.impl;
 
 import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
+import com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper.FeatureUsageCounts;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.DailyMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.DeviceMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.HourlyMetric;
@@ -37,6 +38,7 @@ final class DashboardMetricsAssembler {
     static Metrics assemble(AnalyticsPeriod period, List<DashboardMetricRow> rows) {
         require(period != null && rows != null, "缺少区间或聚合行");
         UsageCounts summary = null;
+        FeatureUsageCounts featureSummary = null;
         Map<LocalDate, DailyMetric> days = new TreeMap<>();
         Map<Integer, HourlyMetric> hours = new TreeMap<>();
         Map<String, DeviceMetric> devices = new LinkedHashMap<>();
@@ -50,6 +52,7 @@ final class DashboardMetricsAssembler {
                     requireZero(row.newAccounts(), row.operationCount(), row.loginCount(), row.uniqueUsers());
                     requireUserCounts(row);
                     summary = new UsageCounts(row.accessCount(), row.uniqueVisitors(), row.activeUsers(), row.actualUsers());
+                    featureSummary = new FeatureUsageCounts(row.directEnhancementCount(), row.planCompletedCount());
                 }
                 case DAILY -> {
                     requireZero(row.operationCount(), row.loginCount(), row.uniqueUsers());
@@ -58,17 +61,19 @@ final class DashboardMetricsAssembler {
                     // 桶键须属于所选自然日；数量完整且无重复后，才能证明零活跃日也被返回。
                     require(!date.isBefore(period.fromDate()) && date.isBefore(period.toDateExclusive()), "日期桶越界");
                     require(days.putIfAbsent(date, new DailyMetric(date, row.accessCount(), row.uniqueVisitors(),
-                            row.activeUsers(), row.actualUsers(), row.newAccounts())) == null, "日期桶重复");
+                            row.activeUsers(), row.actualUsers(), row.newAccounts(),
+                            row.directEnhancementCount(), row.planCompletedCount())) == null, "日期桶重复");
                 }
                 case HOURLY -> {
                     requireZero(row.accessCount(), row.uniqueVisitors(), row.activeUsers(), row.actualUsers(),
-                            row.newAccounts(), row.loginCount(), row.uniqueUsers());
+                            row.newAccounts(), row.loginCount(), row.uniqueUsers(),
+                            row.directEnhancementCount(), row.planCompletedCount());
                     int hour = parseHour(row.bucket());
                     require(hours.putIfAbsent(hour, new HourlyMetric(hour, row.operationCount())) == null, "小时桶重复");
                 }
                 case DEVICE -> {
                     requireZero(row.accessCount(), row.uniqueVisitors(), row.activeUsers(), row.actualUsers(),
-                            row.newAccounts(), row.operationCount());
+                            row.newAccounts(), row.operationCount(), row.directEnhancementCount(), row.planCompletedCount());
                     require(row.bucket() != null && row.uniqueUsers() <= row.loginCount(), "设备桶或登录人数不合法");
                     // 保留数据库原设备代码；历史非枚举字符串不在组装阶段改写或回退为 UNKNOWN。
                     require(row.loginCount() <= previousDeviceLogins, "设备登录次数未按降序返回");
@@ -83,14 +88,24 @@ final class DashboardMetricsAssembler {
         require(days.size() == period.dayCount() && hours.size() == 24, "自然日或小时桶不完整");
         // 访问次数可跨日相加；账号去重汇总必须由 SQL 独立归并，不能用每日人数之和替代。
         long accessSum = 0;
+        long directSum = 0;
+        long planSum = 0;
         try {
-            for (DailyMetric day : days.values()) accessSum = Math.addExact(accessSum, day.accessCount());
+            for (DailyMetric day : days.values()) {
+                accessSum = Math.addExact(accessSum, day.accessCount());
+                directSum = Math.addExact(directSum, day.directEnhancementCount());
+                planSum = Math.addExact(planSum, day.planCompletedCount());
+            }
         } catch (ArithmeticException exception) {
-            throw new IllegalStateException("仪表盘聚合结果不合法：访问次数溢出", exception);
+            throw new IllegalStateException("仪表盘聚合结果不合法：事件次数溢出", exception);
         }
         require(accessSum == summary.accessCount(), "访问汇总与每日序列不一致");
+        // 两种功能次数可跨自然日相加；不能用计划创建数、确认交互数或通用提交数替代。
+        require(directSum == featureSummary.directEnhancementCount()
+                && planSum == featureSummary.planCompletedCount(), "功能使用汇总与每日序列不一致");
         // 同登录次数的设备由 PostgreSQL collation 排序，不能以 Java 字典序重新排列历史代码。
-        return new Metrics(summary, List.copyOf(days.values()), List.copyOf(hours.values()), List.copyOf(devices.values()));
+        return new Metrics(summary, List.copyOf(days.values()), List.copyOf(hours.values()), List.copyOf(devices.values()),
+                featureSummary);
     }
 
     /** 验证各人数仍是活跃账号的子集，访问人数不能超过实际访问次数。 */
@@ -103,7 +118,8 @@ final class DashboardMetricsAssembler {
     private static void requireNonNegative(DashboardMetricRow row) {
         require(row.accessCount() >= 0 && row.uniqueVisitors() >= 0 && row.activeUsers() >= 0
                 && row.actualUsers() >= 0 && row.newAccounts() >= 0 && row.operationCount() >= 0
-                && row.loginCount() >= 0 && row.uniqueUsers() >= 0, "聚合计数为负数");
+                && row.loginCount() >= 0 && row.uniqueUsers() >= 0
+                && row.directEnhancementCount() >= 0 && row.planCompletedCount() >= 0, "聚合计数为负数");
     }
 
     /** 各行种类不使用的列必须为零，及时暴露 UNION 列顺序或映射漂移。 */
@@ -147,6 +163,7 @@ final class DashboardMetricsAssembler {
 
     /** 原 API 的四类使用指标，列表均为不可变并已按既有规则排序。 */
     record Metrics(UsageCounts usageCounts, List<DailyMetric> dailyMetrics,
-                   List<HourlyMetric> hourlyUsage, List<DeviceMetric> deviceDistribution) {
+                   List<HourlyMetric> hourlyUsage, List<DeviceMetric> deviceDistribution,
+                   FeatureUsageCounts featureUsage) {
     }
 }
