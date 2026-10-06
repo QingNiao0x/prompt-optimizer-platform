@@ -88,6 +88,61 @@ class OptimizationResultAssemblerTest {
                 .doesNotContain("待确认", "地区范围未知");
     }
 
+    @Test
+    void shouldNotRepeatAnAlreadyPrintedCurrentStateOrVerifiedRule() {
+        var result = assembler.assemble(new EnhancementProviderResponse(List.of(
+                section(PromptSectionType.BACKGROUND, "背景", "项目现状。\n- 技术栈：Spring Boot 3。"),
+                section(PromptSectionType.TASK, "任务", "- 已支付订单取消时保留原始记录。"),
+                section(PromptSectionType.OUTPUT, "输出", "提供可执行方案。"),
+                section(PromptSectionType.CONSTRAINTS, "约束", "不得编造资料事实。")),
+                "test", "test", false, List.of()), emptyContext(),
+                new PromptTemplate(TemplateCode.FEATURE_DEVELOPMENT, "输出", "测试通过", "示例"),
+                List.of(), List.of(new PlanAnswer("stack", "当前技术栈是什么？", "Spring Boot 3")),
+                true, List.of("不得削弱现有功能"), false, 1);
+        assertThat(result.optimizedPrompt().split("技术栈：Spring Boot 3", -1)).hasSize(2);
+        assertThat(result.optimizedPrompt()).doesNotContain("用户已确认的信息（当前情况）：");
+    }
+
+    @Test
+    void shouldDisplayOneContextWarningWhenSourcesDifferOnlyInSpacingAndPunctuation() {
+        var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(),
+                "PARTIAL", List.of(), List.of("部分文件未完成解析。"), List.of(), "v1");
+        var result = assembler.assemble(response(List.of()), context,
+                new PromptTemplate(TemplateCode.GENERAL, "输出", "结果可核对", "示例"),
+                List.of(), List.of(), false, List.of("不得削弱现有功能"), false, 1,
+                "整理材料", List.of(), List.of(" 部分文件未完成解析！ "));
+        assertThat(result.warnings()).containsExactly("部分文件未完成解析。");
+    }
+
+    @Test
+    void shouldNotPrintTheSameConfirmedDeliveryChoiceTwice() {
+        var result = assembler.assemble(new EnhancementProviderResponse(List.of(
+                section(PromptSectionType.BACKGROUND, "背景", "已提供交付背景。"),
+                section(PromptSectionType.TASK, "任务", "整理统计结果。"),
+                section(PromptSectionType.OUTPUT, "输出", "- 交付格式：Excel。"),
+                section(PromptSectionType.CONSTRAINTS, "约束", "不得编造数据。")),
+                "test", "test", false, List.of()), emptyContext(),
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可核对", "示例"),
+                List.of(), List.of(new PlanAnswer("format", "本次交付格式是什么？", "Excel")),
+                true, List.of("不得削弱现有功能"), false, 1);
+        assertThat(result.optimizedPrompt().split("交付格式：Excel", -1)).hasSize(2);
+        assertThat(result.optimizedPrompt()).doesNotContain("用户已确认的信息（本次执行选择，须遵守平台约束）");
+    }
+
+    @Test
+    void shouldKeepDifferentModelVersionsWhenTheirInternalSpacingChangesTheValue() {
+        var result = assembler.assemble(new EnhancementProviderResponse(List.of(
+                section(PromptSectionType.BACKGROUND, "背景", "- 技术栈：ModelAB"),
+                section(PromptSectionType.TASK, "任务", "梳理项目现状。"),
+                section(PromptSectionType.OUTPUT, "输出", "提供清单。"),
+                section(PromptSectionType.CONSTRAINTS, "约束", "不得猜测版本。")),
+                "test", "test", false, List.of()), emptyContext(),
+                new PromptTemplate(TemplateCode.GENERAL, "输出", "结果可核对", "示例"),
+                List.of(), List.of(new PlanAnswer("stack", "当前技术栈是什么？", "Model AB")),
+                true, List.of("不得削弱现有功能"), false, 1);
+        assertThat(result.optimizedPrompt()).contains("技术栈：ModelAB", "技术栈：Model AB");
+    }
+
     private PromptSection section(PromptSectionType type, String title, String content) {
         return new PromptSection(type, title, content);
     }

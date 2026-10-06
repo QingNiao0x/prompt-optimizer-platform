@@ -41,6 +41,8 @@ final class PlanAmbiguityMerger {
             "(?:仍然|目前|现在|仍|还)?(?:(?:尚未|暂未|未|没有|暂不)(?:确定|决定|明确|确认|选定|提供)|待(?:确认|确定|明确))[。？?]?$"
     );
     private static final Pattern REGISTRATION_QUESTION_SUFFIX = Pattern.compile("(?:应|应该)?如何预注册[？?]?$" );
+    private static final Pattern SIMPLE_UNKNOWN = Pattern.compile(
+            "^([^。；;：:？?]{4,120}?)(?:尚未明确|尚未确定|未明确|未确定|待确认|未知)$");
     private final ConfirmedDecisionSet decisions;
     private final PendingReminderIdentity pendingIdentity;
 
@@ -112,10 +114,16 @@ final class PlanAmbiguityMerger {
         }
         // 全半角、空白和句末问号不是新决定；比较符、完整条件及代码大小写仍须区分。
         Map<String, String> formatted = new LinkedHashMap<>();
-        registered.values().forEach(value -> formatted.putIfAbsent(
-                java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFKC)
-                        .replaceAll("\\s+", "").replaceAll("[。？?!！]+$", ""), value));
+        registered.values().forEach(value -> formatted.putIfAbsent(reminderKey(value), value));
         return MergeResult.from(List.copyOf(formatted.values()));
+    }
+
+    /** 仅合并相同完整主体的简单未知状态；疑问、数值条件和解释仍逐字参与比较。 */
+    private String reminderKey(String value) {
+        String normalized = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFKC)
+                .replaceAll("\\s+", "").replaceAll("[。？?!！]+$", "");
+        var simple = SIMPLE_UNKNOWN.matcher(normalized);
+        return simple.matches() ? "pending:" + simple.group(1) : "text:" + normalized;
     }
 
     /**

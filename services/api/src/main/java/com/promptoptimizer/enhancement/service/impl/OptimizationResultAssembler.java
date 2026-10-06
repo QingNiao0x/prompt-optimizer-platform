@@ -440,21 +440,28 @@ public class OptimizationResultAssembler {
         List<String> candidates = new ArrayList<>();
         if (context != null) candidates.addAll(context.warnings());
         if (planningWarnings != null) candidates.addAll(planningWarnings);
-        if (context != null && "PARTIAL".equals(context.analysisStatus())) {
+        if (context != null && "PARTIAL".equals(context.analysisStatus())
+                && context.warnings().stream().noneMatch(value -> value != null && value.matches(
+                "(?s).*(?:部分文件未完成解析|文件解析失败|仅解析部分文件|文件上下文只完成了部分解析).*"))) {
             candidates.add("文件上下文只完成了部分解析，请核对下方覆盖信息后再使用结果。");
         } else if (context != null && "FAILED".equals(context.analysisStatus())) {
             candidates.add("文件上下文解析失败，本次结果未能基于完整文件内容生成。");
         }
-        return candidates.stream()
-                .filter(value -> value != null && !value.isBlank() && !value.startsWith("资料对“"))
+        var unique = candidates.stream()
+                .filter(value -> value != null && !value.isBlank())
+                .map(String::strip)
+                .filter(value -> !value.startsWith("资料对“"))
                 .filter(value -> !sensitiveValueDetector.containsCredential(value))
                 .filter(value -> !value.matches("(?i).*\\.env(?:\\.[^/\\\\ ]+)?|.*id_rsa.*|.*id_ed25519.*"
                         + "|.*credentials(?:\\.json)?.*|.*\\.(?:pem|key)(?:\\W|$).*"
                         + "|.*application[-.](?:prod|production).*|.*config[/\\\\](?:prod|production).*"))
                 .map(value -> value.length() <= 500 ? value : value.substring(0, 497) + "…")
-                .distinct()
-                .limit(8)
-                .toList();
+                // 不同阶段对同一警告只改了空白或句末标点时，沿用最早的可操作表述。
+                .collect(Collectors.toMap(value -> java.text.Normalizer.normalize(value,
+                                java.text.Normalizer.Form.NFKC).replaceAll("\\s+", "")
+                                .replaceAll("[。！？!]+$", ""),
+                        value -> value, (first, ignored) -> first, java.util.LinkedHashMap::new));
+        return unique.values().stream().limit(8).toList();
     }
 
     /** 把已绑定事实卡片作为带来源资料保留；回答优先级和平台约束在段落中明确区分。 */
@@ -620,7 +627,9 @@ public class OptimizationResultAssembler {
         String confirmed = resolved.stream()
                 .map(decision -> "- " + decision.topic() + "：" + decision.answer())
                 .distinct()
+                .filter(line -> background.content().lines().noneMatch(existing -> sameCompleteLine(existing, line)))
                 .collect(Collectors.joining("\n"));
+        if (confirmed.isBlank()) return;
         sections.put(PromptSectionType.BACKGROUND, new PromptSection(
                 PromptSectionType.BACKGROUND,
                 background.title(),
@@ -646,13 +655,14 @@ public class OptimizationResultAssembler {
             PromptSection section = sections.get(type);
             // 模型提到候选词也可能是在否定它，不能以出现答案字符串作为已落实的证据。
             List<String> missing = entry.getValue().stream().distinct()
-                    .filter(line -> !section.content().lines().anyMatch(existing -> existing.trim().equals(line)))
+                    .filter(line -> section.content().lines().noneMatch(existing -> sameCompleteLine(existing, line)))
                     .toList();
             if (!missing.isEmpty()) {
                 sections.put(type, new PromptSection(type, section.title(), section.content()
                         + "\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n" + String.join("\n", missing)));
             }
-            if (entry.getValue().stream().anyMatch(line -> !sections.get(type).content().contains(line))) {
+            if (entry.getValue().stream().anyMatch(line -> sections.get(type).content().lines()
+                    .noneMatch(existing -> sameCompleteLine(existing, line)))) {
                 throw invalidResponse(Reason.CONFIRMED_DECISION_MISSING, "confirmedDecisions");
             }
         }
@@ -687,6 +697,18 @@ public class OptimizationResultAssembler {
                 .filter(section -> section.type() != PromptSectionType.CLARIFICATIONS)
                 .map(section -> "## " + section.title() + "\n" + section.content())
                 .collect(Collectors.joining("\n\n"));
+    }
+
+    /** 完整行仅允许排版空白与句末标点差异；否定、版本、运算符和条件仍逐字相同。 */
+    private boolean sameCompleteLine(String existing, String expected) {
+        return completeLineKey(existing).equals(completeLineKey(expected));
+    }
+
+    /** 英文型号中的分词可能改变取值，不把 `A B` 与 `AB` 归成同一已确认事实。 */
+    private String completeLineKey(String line) {
+        return java.text.Normalizer.normalize(line.strip(), java.text.Normalizer.Form.NFKC)
+                .replaceFirst("^[-*•]\\s*", "- ").replaceAll("\\s+", " ")
+                .replaceAll("[。！!]+$", "");
     }
 
     private boolean isBlank(String value) {

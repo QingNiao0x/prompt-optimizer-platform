@@ -121,6 +121,27 @@ class PlanQuestionFilterTest {
     }
 
     @Test
+    void shouldDelegateAlreadyRequestedComparisonPresentationButKeepNewLegalDecision() {
+        String raw = "对两份押金协议逐项并列展示条款差异，保留版本和来源；不替用户判断哪个版本有效。";
+        var layout = new PlanQuestion("layout", "押金条款差异采用什么形式呈现？", "",
+                PlanQuestionType.SINGLE_CHOICE, List.of(
+                new PlanOption("table", "并列表格", "", "把已有差异并列成表。", false, ""),
+                new PlanOption("text", "分段说明", "", "分段说明已有差异。", false, "")), List.of(), true);
+        var scope = question("scope", "押金条款差异适用哪个合同版本？");
+        assertThat(filter.filter(List.of(layout, scope), input(raw))).containsExactly(scope);
+        assertThat(filter.filter(List.of(layout), input(raw + "请先让我选择差异呈现形式。")))
+                .containsExactly(layout);
+        var newChoice = new PlanQuestion("new", layout.question(), "", layout.type(),
+                List.of(new PlanOption("table", "并列表格", "", "新增跨地区押金适用范围。", false, "")),
+                List.of(), true);
+        assertThat(filter.filter(List.of(newChoice), input(raw))).containsExactly(newChoice);
+        var versionChoice = new PlanQuestion("version", layout.question(), "", layout.type(),
+                List.of(new PlanOption("table", "并列表格", "", "确认A版本已经生效后再并列展示。", false, "")),
+                List.of(), true);
+        assertThat(filter.filter(List.of(versionChoice), input(raw))).containsExactly(versionChoice);
+    }
+
+    @Test
     void shouldKeepIndependentBusinessDecisionsRegardlessOfQuestionOrder() {
         var approval = question("approval", "审批规则采用什么标准？");
         var refund = question("refund", "退款规则采用什么标准？");

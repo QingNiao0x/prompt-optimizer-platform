@@ -182,6 +182,53 @@ class PlanAmbiguityMergeTest {
     }
 
     @Test
+    void shouldMergeOnlySimpleRewordedUnknownStatesForTheSameSubject() {
+        var result = assemble(List.of("甲医院统计单位未确定。", "甲医院统计单位尚未明确。",
+                "乙医院统计单位尚未明确。", "甲医院2026年度统计单位尚未明确。"), List.of(), List.of());
+        assertThat(result.ambiguities()).containsExactly("甲医院统计单位未确定。",
+                "乙医院统计单位尚未明确。", "甲医院2026年度统计单位尚未明确。");
+        assertThat(result.optimizedPrompt().split("甲医院统计单位未确定", -1)).hasSize(2);
+    }
+
+    @Test
+    void shouldMergeARealHospitalObservationWindowParaphraseWithoutLosingItsImpact() {
+        var answers = List.of(new PlanAnswer("Q1",
+                "对于预约后未到诊（爽约）的判定，观察窗口应如何设定？",
+                "当前尚未决定，不得默认补全。"),
+                new PlanAnswer("Q3", "比较电话、网页和窗口三类渠道时，主统计单位应使用预约事件还是去重患者？",
+                        "当前尚未决定，不得默认补全。"),
+                new PlanAnswer("Q4", "对于到诊状态为UNKNOWN的预约事件，在爽约率等指标中应如何处理？",
+                        "UNKNOWN不直接计为爽约，作为待核验状态单独呈现；"
+                                + "爽约率分母是否包含UNKNOWN尚未确定，不计算真实医院指标。"),
+                new PlanAnswer("Q5", "渠道比较时，同一预约涉及多个渠道操作事件应如何归属？",
+                        "当前尚未决定，不得默认补全。"));
+        String replay = "预约未到诊的观察窗口应如何定义？当前尚未决定，不得默认补全。"
+                + "观察窗口决定一个预约事件何时可以归为最终状态，窗口未确定前只应展示待核验事件。";
+        var merged = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers))
+                .merge(List.of(replay), List.of(), List.of());
+        assertThat(merged.messages()).hasSize(4);
+        assertThat(merged.executionPrerequisites()).anySatisfy(value ->
+                assertThat(value).contains("观察窗口", "待核验事件"));
+        String newCondition = "儿童预约未到诊的观察窗口应如何定义？当前尚未决定。";
+        assertThat(new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers))
+                .merge(List.of(replay, newCondition), List.of(), List.of()).messages()).hasSize(5);
+    }
+
+    @Test
+    void shouldMergeTheSameUnresolvedDenominatorAfterPartialConfirmation() {
+        var answers = List.of(new PlanAnswer("Q4",
+                "对于到诊状态为UNKNOWN的预约事件，在爽约率等指标中应如何处理？",
+                "UNKNOWN不直接计为爽约，作为待核验状态单独呈现；"
+                        + "爽约率分母是否包含UNKNOWN尚未确定，不计算真实医院指标。"));
+        String replay = "对于到诊状态为 UNKNOWN 的预约事件，爽约率分母是否包含 UNKNOWN 尚未确定，"
+                + "不计算真实医院指标。UNKNOWN 不直接计为爽约，作为待核验状态单独呈现。";
+        var merged = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers))
+                .merge(List.of(replay), List.of(), List.of());
+        assertThat(merged.messages()).hasSize(1);
+        assertThat(merged.executionPrerequisites().getFirst()).contains("爽约率分母", "不计算真实医院指标");
+    }
+
+    @Test
     void shouldKeepNewConflictAfterAnExplicitAnswerAndRemoveOnlyTheOldPair() {
         String next = "资料对“审批阈值”存在不同取值：docs/新审批方案.txt（五万元）与 docs/补充方案.txt（八万元）。请确认本次采用哪一项。";
         var result = assemble(List.of(CONFLICT, next), List.of(next),

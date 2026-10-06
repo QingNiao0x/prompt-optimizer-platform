@@ -19,6 +19,7 @@ final class RoutineWritingPresentation {
             "^(?:表格(?:形式)?|条目式|条目(?:形式)?|编号列表|项目符号列表|段落(?:说明|形式)?)$");
     private static final Pattern INDEPENDENT_DECISION = Pattern.compile(
             "新增|另外|还需|必须|阈值|权限|隐私|保密|脱敏|审批|法规|期刊|标准|统计|指标|分母|字段映射|"
+                    + "版本|归属|生效|有效|适用|公开|对外|"
                     + "数据来源|样本|人群|地区|时间范围|期限|责任人|署名|法域|研究方法|重试|超时|冲突|[<>!=]|\\d");
 
     private RoutineWritingPresentation() { }
@@ -28,6 +29,7 @@ final class RoutineWritingPresentation {
         TaskDeliveryProfile profile = TaskDeliveryProfile.identify(rawPrompt);
         if (profile == TaskDeliveryProfile.TRANSLATION && knownTranslationPresentation(question, rawPrompt)) return true;
         if (profile == TaskDeliveryProfile.ACADEMIC_METHODS && knownMatchedFactsLayout(question, rawPrompt)) return true;
+        if (knownComparisonPresentation(question, rawPrompt)) return true;
         if (profile == TaskDeliveryProfile.GENERAL || profile.softwareTask()
                 || question.options().isEmpty()) return false;
         var match = FORMAT_QUESTION.matcher(question.question());
@@ -42,6 +44,23 @@ final class RoutineWritingPresentation {
                         && option.answer().contains(match.group(1))
                         && !INDEPENDENT_DECISION.matcher(option.answer() + " " + option.description()
                                 + " " + option.recommendationReason()).find());
+    }
+
+    /** 已要求并列比较时，纯表格/段落排版交给执行者；版本归属和新增适用范围仍由用户决定。 */
+    private static boolean knownComparisonPresentation(PlanQuestion question, String rawPrompt) {
+        String raw = rawPrompt == null ? "" : rawPrompt.replaceAll("\\s+", "");
+        if (!raw.matches("(?s).*(?:并列|并排).{0,16}(?:展示|对照|比较).{0,30}(?:差异|条款).*"
+                + "|(?s).*(?:差异|条款).{0,16}(?:并列|并排).{0,16}(?:展示|对照|比较).*")
+                || raw.matches("(?s).*(?:请|希望|需要)(?:先)?(?:询问|确认|让我选择|由我选择)"
+                + "[^。；\\n]{0,30}(?:差异|对照)[^。；\\n]{0,30}(?:形式|格式|呈现).*")) return false;
+        String text = question.question();
+        if (!text.matches("^.{2,50}(?:差异|对照)(?:应|应该)?(?:采用什么形式|以什么形式|如何)(?:呈现|展示|排版)[？?]$")) return false;
+        if (INDEPENDENT_DECISION.matcher(question.hint() == null ? "" : question.hint()).find()
+                || question.examples().stream().anyMatch(value -> INDEPENDENT_DECISION.matcher(value).find())) return false;
+        return !question.options().isEmpty() && question.options().stream().allMatch(option ->
+                option.label().matches("并列表格|对照表格|分段说明|段落说明|条目列表")
+                && !INDEPENDENT_DECISION.matcher(option.answer() + option.description()
+                + option.recommendationReason()).find());
     }
 
     /** 信息内容和问答边界均已确定时，仅将单纯呈现形式委派给研究方案编写者。 */
