@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import com.promptoptimizer.enhancement.domain.PromptSection;
+import com.promptoptimizer.enhancement.domain.PromptSectionType;
+import java.util.Map;
 
 /**
  * 将明确未决的具名参数绑定到交付物，防止正文保留未知而表格或公式擅自确定。
@@ -17,32 +20,129 @@ import java.util.regex.Pattern;
  */
 final class UnresolvedDecisionContract {
     private static final Pattern DECLARATION = Pattern.compile(
-            "([^。；;，,：:\\r\\n？?]{2,80}?)(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)");
+            "([^。；;，,：:\\r\\n？?]{2,160}?)(?:(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)"
+                    + "|(?:尚需|仍需|需)(?:分别)?(?:确定|确认|核实)|(?:尚待|待)(?:分别)?(?:确定|确认|核实)|未决)");
     private static final Pattern PARAMETER = Pattern.compile("^(.{2,65}?)(?:的)?(分母|阈值|观察窗口|覆盖度)$");
     private static final Pattern CONDITIONAL = Pattern.compile("若|如果|假如|假设|仅当|只有|例如|示例|引用|不要|不得|不能|不应|禁止");
     private static final Pattern PENDING = Pattern.compile("待确认|待定|未决|尚未|未确定|未决定|未核实|待核实|TBD|None|null", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CURRENT_PARAMETER = Pattern.compile(
+            "([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度)(?:明确)?(?:采用|使用|选定|包含|包括|为|是)([^。；;，,\\r\\n？?]+)");
+    private static final Pattern ASSERTED_PARAMETER = Pattern.compile(
+            "(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定)([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度)"
+                    + "|([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度)(?:已|已经)(?:由用户)?(?:确认|确定|选定)");
     static final String DELIVERY_GUIDANCE = "同一未决决定在正文、表格、公式及伪代码中保持一致："
             + "相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；"
             + "依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。"
-            + "已确认决定仅适用于对应对象、指标和条件，其余已具备条件的步骤继续完成。";
+            + "不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。"
+            + "已确认决定仅适用于对应对象、指标和条件；其他指标不得标成已确认，须有各自的独立依据。"
+            + "原定指标表与必要伪代码仍须交付，逐指标判断参数状态，只暂停依赖未决参数的计算，其余步骤继续完成。";
 
     private record Parameter(String subject, String property) { }
     private final List<Parameter> parameters;
+    private final List<Parameter> confirmedParameters;
 
-    private UnresolvedDecisionContract(List<Parameter> parameters) {
+    private UnresolvedDecisionContract(List<Parameter> parameters, List<Parameter> confirmedParameters) {
         this.parameters = List.copyOf(parameters);
+        this.confirmedParameters = List.copyOf(confirmedParameters);
     }
 
     /** 原需求及有效回答分别建立未决状态；另一指标的已确认分母不能消除当前指标的未知。 */
     static UnresolvedDecisionContract from(String raw, ConfirmedDecisionSet decisions) {
-        var sources = new ArrayList<>(declaredPending(raw));
+        return from(raw, decisions, List.of());
+    }
+
+    /** 已筛选资料的明确状态也参与同一契约；有效答案只更新完全相同的具名参数，原证据不修改。 */
+    static UnresolvedDecisionContract from(String raw, ConfirmedDecisionSet decisions, List<String> evidence) {
+        var resolved = ResolvedPlanState.from(decisions, raw);
+        var sources = new ArrayList<>(declaredPending(resolved.reconcile(raw)));
+        evidence.forEach(value -> sources.addAll(declaredPending(resolved.reconcile(value))));
         decisions.pendingDecisions().forEach(value -> sources.addAll(declaredPending(value.answer())));
         List<Parameter> parameters = sources.stream().flatMap(value -> DECLARATION.matcher(value).results())
-                .map(match -> canonical(match.group(1))).map(PARAMETER::matcher).filter(java.util.regex.Matcher::matches)
-                .map(match -> new Parameter(match.group(1).replaceFirst("的$", ""), match.group(2)))
-                .filter(value -> !value.subject().matches(".*(?:与|和|及|是否|如何|哪些|其他|其余).*"))
-                .distinct().toList();
-        return new UnresolvedDecisionContract(parameters);
+                .map(match -> canonical(match.group(1))).flatMap(value -> namedParameters(value).stream()).distinct().toList();
+        var confirmedSources = new ArrayList<String>();
+        if (raw != null) confirmedSources.add(raw);
+        decisions.knownDecisions().forEach(value -> confirmedSources.add(value.answer()));
+        return new UnresolvedDecisionContract(parameters, confirmedSources.stream()
+                .flatMap(value -> currentParameters(value).stream()).distinct().toList());
+    }
+
+    /** 只有本次明确要求及有效答案能够产生“用户已确认”范围，资料不能自行充当用户授权。 */
+    private static List<Parameter> currentParameters(String text) {
+        var result = new ArrayList<Parameter>();
+        for (String sentence : text.split("[。；;\\r\\n]+")) {
+            String clause = canonical(sentence).replaceFirst("^[-*#]+", "")
+                    .replaceFirst("^(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定)", "");
+            var choices = CURRENT_PARAMETER.matcher(clause);
+            while (choices.find()) {
+                if (CONDITIONAL.matcher(clause.substring(0, choices.end())).find()
+                        || clause.matches(".*(?:尚未|待确认|未知|未决|建议|候选|例如|示例).*") ) continue;
+                String subject = choices.group(1).replaceFirst("的$", "");
+                if (subject.matches(".*(?:与|和|及|其他|其余|本次只|仅).*")) continue;
+                result.add(new Parameter(subjectKey(subject), choices.group(2)));
+            }
+        }
+        return result;
+    }
+
+    /** 并列声明只分开明确具名的对象和共同属性，不把类别相同或省略对象的代词当成同一决定。 */
+    private static List<Parameter> namedParameters(String declaration) {
+        var complete = PARAMETER.matcher(declaration);
+        if (!complete.matches()) return List.of();
+        String property = complete.group(2);
+        return Arrays.stream(complete.group(1).split("与|和|及|、"))
+                .map(value -> value.replaceFirst("(?:的)?" + Pattern.quote(property) + "$", "").replaceFirst("的$", ""))
+                .filter(value -> value.length() >= 2 && !value.matches(".*(?:是否|如何|哪些|其他|其余|这个|该项).*"))
+                .map(value -> new Parameter(subjectKey(value), property)).toList();
+    }
+
+    /** 具名未知用于统一提醒；它不是根据缺少信息推断出的新事实。 */
+    List<String> pendingStatements() {
+        return parameters.stream().map(value -> value.subject() + "的" + value.property() + "尚未确定。").toList();
+    }
+
+    boolean hasNamedParameters() {
+        return !parameters.isEmpty() || !confirmedParameters.isEmpty();
+    }
+
+    /** 同名未知的有限语法变体只用于避免再次补回，不消费带新对象、取值或条件的原提醒。 */
+    boolean samePendingStatement(String finding, String statement) {
+        String first = canonical(finding).replaceAll("的(?=分母|阈值|观察窗口|覆盖度)", "")
+                .replaceAll("(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)", "未决").replaceAll("[。]+$", "");
+        String second = canonical(statement).replaceAll("的(?=分母|阈值|观察窗口|覆盖度)", "")
+                .replace("尚未确定", "未决").replaceAll("[。]+$", "");
+        return subjectKey(first.replaceFirst("(分母|阈值|观察窗口|覆盖度)未决$", ""))
+                .equals(subjectKey(second.replaceFirst("(分母|阈值|观察窗口|覆盖度)未决$", "")))
+                && first.matches(".*(?:分母|阈值|观察窗口|覆盖度)未决$")
+                && first.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1")
+                .equals(second.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1"));
+    }
+
+    /**
+     * 完整具名未知只在统一执行前提中说明。独立整句才参与精简，表格、代码、条件或附带新信息不删。
+     * 原始资料留在证据卡片，当前正文不需要再抄一份同义状态。
+     */
+    void compactPendingStatements(Map<PromptSectionType, PromptSection> sections) {
+        if (parameters.isEmpty()) return;
+        sections.replaceAll((type, section) -> {
+            if (type == PromptSectionType.CLARIFICATIONS) return section;
+            var retained = new ArrayList<String>();
+            boolean code = false;
+            for (String line : section.content().lines().toList()) {
+                if (line.strip().startsWith("```")) code = !code;
+                if (code || line.strip().startsWith("```") || line.strip().startsWith("|") || line.strip().startsWith(">")) {
+                    retained.add(line);
+                    continue;
+                }
+                // 来源前缀只用于核对独立摘录，不能截断含冒号的条件或业务断言。
+                String candidate = line.strip().replaceFirst("^[-*•]\\s+", "");
+                if (candidate.matches("[^：:]+\\.(?:md|txt|docx|pdf)[：:].*")) candidate = candidate.substring(candidate.indexOf('：') >= 0
+                        ? candidate.indexOf('：') + 1 : candidate.indexOf(':') + 1).strip();
+                String comparison = candidate;
+                if (pendingStatements().stream().noneMatch(statement -> samePendingStatement(comparison, statement))) retained.add(line);
+            }
+            String content = String.join("\n", retained).strip();
+            return content.isBlank() ? section : new PromptSection(type, section.title(), content);
+        });
     }
 
     /** 只继承独立的明确未知陈述，不从关键词缺失、假设句、引文或数据代码制造问题。 */
@@ -51,9 +151,12 @@ final class UnresolvedDecisionContract {
         var result = new ArrayList<String>();
         for (String sentence : raw.split("[。；;\\r\\n]+")) {
             String value = sentence.strip().replaceFirst("^(?:[-*•]\\s+|\\d+[.)、]\\s*)", "");
-            if (CONDITIONAL.matcher(value).find() || value.startsWith(">") || value.startsWith("```")) continue;
+            if (value.startsWith(">") || value.startsWith("```")) continue;
             var declarations = DECLARATION.matcher(value);
             while (declarations.find()) {
+                // “尚未决定，不能继承另一指标”先声明真实未知，再限制使用；后半句不应抹掉前半句。
+                // 假设、引用或禁止位于当前断言之前时仍不建立事实，不能把条件内的未知当成现状。
+                if (CONDITIONAL.matcher(value.substring(0, declarations.end())).find()) continue;
                 String subject = declarations.group(1).strip();
                 if (subject.matches(".*(?:分母|阈值|观察窗口|覆盖度|插补|方法|审批标准|退款标准)$")) {
                     result.add(declarations.group().strip() + "。");
@@ -63,15 +166,28 @@ final class UnresolvedDecisionContract {
         return result.stream().distinct().toList();
     }
 
+    /** 具名未决参数随复制正文保留，避免下游只看到通用原则而漏掉具体指标的状态。 */
+    String deliveryGuidance() {
+        String named = parameters.stream().map(parameter -> parameter.subject() + "的" + parameter.property() + "：待确认")
+                .collect(java.util.stream.Collectors.joining("；"));
+        String confirmed = confirmedParameters.stream().map(parameter -> parameter.subject() + "的" + parameter.property())
+                .collect(java.util.stream.Collectors.joining("、"));
+        return DELIVERY_GUIDANCE + (named.isBlank() ? "" : "本次尚未确定的参数：" + named + "。")
+                + (confirmed.isBlank() ? "" : "本次需求或有效回答明确的参数范围仅包含：" + confirmed + "；不得扩大到其他指标。");
+    }
+
     /** 模型自己的确定口径与明确未决状态冲突时进入既有修复预算，不靠附加未知尾注放行。 */
     void validate(String content, String field) {
-        if (parameters.isEmpty() || content == null) return;
+        if (content == null) return;
         List<String> header = List.of();
         for (String line : content.lines().toList()) {
             String text = line.strip();
             if (text.startsWith("|")) {
                 List<String> cells = cells(text);
-                if (cells.stream().anyMatch(value -> value.matches("分母|阈值|观察窗口|覆盖度"))) { header = cells; continue; }
+                if (cells.stream().anyMatch(value -> value.matches("(?:分母|阈值|观察窗口|覆盖度)(?:口径|定义)?"))) {
+                    header = cells.stream().map(value -> value.replaceFirst("(?<=分母|阈值|观察窗口|覆盖度)(?:口径|定义)$", "")).toList();
+                    continue;
+                }
                 if (text.matches("[|:\\-\\s]+") || header.isEmpty() || cells.size() != header.size()) continue;
                 for (Parameter parameter : parameters) {
                     int index = header.indexOf(parameter.property());
@@ -80,13 +196,27 @@ final class UnresolvedDecisionContract {
                             .filter(column -> column != index).anyMatch(column -> sameSubject(cells.get(column), parameter.subject()));
                     if (sameObject && !unknownCell(cells.get(index))) reject(field);
                 }
+                // 状态列的“已确认”必须有同指标、同属性的本次决定，不能借另一行的确认。
+                int subjectColumn = header.indexOf("指标");
+                boolean claimsConfirmed = cells.stream().anyMatch(cell -> cell.matches("(?:用户)?已确认|分母已确认|已由用户确认"));
+                if (subjectColumn >= 0 && claimsConfirmed) {
+                    for (String property : List.of("分母", "阈值", "观察窗口", "覆盖度")) {
+                        if (header.contains(property) && !confirmedParameters.contains(new Parameter(subjectKey(cells.get(subjectColumn)), property))) reject(field);
+                    }
+                }
             } else {
                 header = List.of();
-                for (String clause : text.split("[。；;]+")) {
+                for (String clause : text.split("[，,。；;]+")) {
                     if (CONDITIONAL.matcher(clause).find() || PENDING.matcher(clause).find()) continue;
                     String compact = canonical(clause);
+                    var assertions = ASSERTED_PARAMETER.matcher(compact);
+                    while (assertions.find()) {
+                        String subject = assertions.group(1) == null ? assertions.group(3) : assertions.group(1);
+                        String property = assertions.group(2) == null ? assertions.group(4) : assertions.group(2);
+                        if (!confirmedParameters.contains(new Parameter(subjectKey(subject.replaceFirst("的$", "")), property))) reject(field);
+                    }
                     for (Parameter parameter : parameters) {
-                        String target = Pattern.quote(parameter.subject()) + "(?:的)?" + Pattern.quote(parameter.property());
+                        String target = subjectPattern(parameter.subject()) + "(?:的)?" + Pattern.quote(parameter.property());
                         if (Pattern.compile(target + "(?:采用|取|为|是|=|设为|定义为)(?=.+)").matcher(compact).find()) reject(field);
                     }
                 }
@@ -103,9 +233,24 @@ final class UnresolvedDecisionContract {
     /** 完整具名对象逐字核对；有限的跨字段一致性子指标别名只覆盖该同类指标。 */
     private boolean sameSubject(String candidate, String subject) {
         String name = canonical(candidate).replaceAll("[*`\\s]", "");
-        if (name.equals(subject)) return true;
-        return subject.matches("(?:跨字段(?:逻辑)?)?一致性指标")
-                && name.matches("(?:跨字段(?:逻辑)?)?一致性(?:指标|率)|出院日期早于入院日期不一致率");
+        return subjectKey(name).equals(subject)
+                || subject.equals("跨字段一致性指标") && name.equals("出院日期早于入院日期不一致率");
+    }
+
+    /** 仅规范完整一致性指标别名；机构、年份及其他前缀逐字保留，不能消除跨对象边界。 */
+    private static String subjectKey(String name) {
+        return name.replace("完整性指标(缺失率)", "完整性指标")
+                .replaceFirst("(?:跨字段(?:逻辑)?)?一致性(?:指标|率)$", "跨字段一致性指标");
+    }
+
+    /** 叙述允许同一完整别名，不把另一具名对象包含短名称误当成本参数。 */
+    private static String subjectPattern(String subject) {
+        String suffix = "跨字段一致性指标";
+        if (subject.endsWith(suffix)) {
+            return "(?<![\\p{L}\\d])" + Pattern.quote(subject.substring(0, subject.length() - suffix.length()))
+                    + "(?:跨字段(?:逻辑)?)?一致性(?:指标|率)";
+        }
+        return "(?<![\\p{L}\\d])" + Pattern.quote(subject);
     }
 
     private static List<String> cells(String row) {

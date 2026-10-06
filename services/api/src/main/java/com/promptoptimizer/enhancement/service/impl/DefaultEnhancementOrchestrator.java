@@ -232,7 +232,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                         filterBoundPlanningFacts(confirmedPlan.planningContextDigest() == null ? List.of()
                                 : confirmedPlan.planningContextDigest().factCards(), request.permissionPolicy()),
                         context, contextQuery)
-                : new PlanningFactMerger.MergeResult(List.of(), 0);
+                : new PlanningFactMerger().merge(List.of(), context, contextQuery);
         var planningFacts = mergedFacts.facts();
         List<String> contextConflicts = contextConflictDetector.detect(context, planAnswers,
                 contextQuery, mergedFacts.boundFacts());
@@ -275,6 +275,13 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         String objectGuidance = sourceObjects.guidance();
         // 归属边界同时约束模型的交付组织；只放在安全约束尾部容易被A/B并列表头抵消。
         String deliveryGuidance = sourceObjects.deliveryGuidance(template.deliveryProfile());
+        // 模型与最终组装使用相同逐参数状态。资料的当前未知先传入模型，而不是仅在结果尾部补警告。
+        List<String> stateEvidence = planningFacts.stream().map(com.promptoptimizer.enhancement.domain.PlanningFactCard::evidence).toList();
+        var decisionContract = UnresolvedDecisionContract.from(request.rawPrompt(), decisions, stateEvidence);
+        if (decisionContract.hasNamedParameters()) {
+            String decisionGuidance = decisionContract.deliveryGuidance();
+            deliveryGuidance = deliveryGuidance.isBlank() ? decisionGuidance : deliveryGuidance + "\n\n" + decisionGuidance;
+        }
         PromptTemplate executionTemplate = deliveryGuidance.isBlank() ? template : new PromptTemplate(
                 template.code(), template.outputGuidance() + "\n\n" + deliveryGuidance,
                 template.acceptanceGuidance(), template.exampleGuidance(), template.deliveryProfile());

@@ -45,6 +45,8 @@ final class PlanAmbiguityMerger {
             "^([^。；;：:？?]{4,120}?)(?:尚未明确|尚未确定|未明确|未确定|待确认|未知)$");
     private final ConfirmedDecisionSet decisions;
     private final PendingReminderIdentity pendingIdentity;
+    /** 仅用于核对本次需求命名的对象，不输出或持久化原始提示词。 */
+    private final String rawPrompt;
 
     PlanAmbiguityMerger(ConfirmedDecisionSet decisions) {
         this(decisions, "");
@@ -52,6 +54,7 @@ final class PlanAmbiguityMerger {
 
     PlanAmbiguityMerger(ConfirmedDecisionSet decisions, String rawPrompt) {
         this.decisions = decisions;
+        this.rawPrompt = rawPrompt == null ? "" : rawPrompt;
         this.pendingIdentity = new PendingReminderIdentity(decisions, rawPrompt);
     }
 
@@ -557,7 +560,12 @@ final class PlanAmbiguityMerger {
                 detail = detail.substring(separator.end()).strip();
             }
         }
-        if (pending.size() == 1 || sameNamedItem) detail = withoutRepeatedExplanationClauses(registered.get(key), detail);
+        if (routeBoundCoverageHandling(registered, key, detail)) return;
+        if (pending.size() == 1 || sameNamedItem) {
+            detail = withoutRepeatedBoundRequests(registered.get(key), detail, pending);
+            detail = withoutBoundExampleRestatement(registered.get(key), detail, pending);
+            detail = withoutRepeatedExplanationClauses(registered.get(key), detail);
+        }
         if (detail.isBlank()) return;
         String known = java.text.Normalizer.normalize(registered.get(key), java.text.Normalizer.Form.NFKC)
                 .replaceAll("\\s+", "");
@@ -568,6 +576,73 @@ final class PlanAmbiguityMerger {
                         .replaceAll("\\s+", "").replaceAll("[。；;]+$", "")))
                 .collect(java.util.stream.Collectors.joining());
         if (!novel.isBlank()) registered.put(key, registered.get(key) + " 补充说明：" + novel);
+    }
+
+    /** 覆盖状态和未核实后的比较处理是两个决定；同年指代只能回到已有同院同年处理项，新条件仍随处理项保留。 */
+    private boolean routeBoundCoverageHandling(Map<String, String> registered, String sourceKey, String detail) {
+        var state = Pattern.compile("^该年数据的(?:年度与医院)?比较处理方式(?:未定|尚未决定|未确定)[。；;]?\\s*(.*)$")
+                .matcher(detail);
+        if (!state.matches()) return false;
+        List<String> scopes = Pattern.compile("(?:[A-Za-z]医院|[甲乙丙丁]院)(?:19|20)\\d{2}年")
+                .matcher(registered.get(sourceKey)).results().map(java.util.regex.MatchResult::group).distinct().toList();
+        if (scopes.size() != 1) return false;
+        List<String> targets = decisions.pendingDecisions().stream()
+                .filter(part -> part.answer().contains(scopes.getFirst() + "覆盖度未核实时")
+                        && part.answer().contains("比较处理方式"))
+                .map(part -> "question:" + pendingKey(part)).filter(key -> !key.equals(sourceKey) && registered.containsKey(key))
+                .distinct().toList();
+        if (targets.size() != 1) return false;
+        // 状态已在独立处理项中完整登记；只将后续说明归到该项，不能附在覆盖度下形成第二份决定。
+        appendNovelExplanation(registered, targets.getFirst(), state.group(1));
+        return true;
+    }
+
+    /**
+     * 已登记为未决的同一参数不再附写第二份“请确认”；这里只移除完整自指请求。
+     * 机构、年份和参数通过原绑定事项核对，新增记录范围、数值或条件分支原样交付。
+     */
+    private String withoutRepeatedBoundRequests(String known, String detail, List<ConfirmedPlanDecision> pending) {
+        // 条件下的确认请求依赖前半句；不能拆句后把执行条件留成孤立说明。
+        if (detail.matches("(?s).*(?:若|如果|假如|仅当|仅在|否则).*")) return detail;
+        return Pattern.compile("[^。；;\\r\\n]+[。；;]?").matcher(detail).results()
+                .map(match -> match.group().strip())
+                .filter(clause -> !repeatsBoundRequest(known, clause.replaceAll("[。；;]+$", ""), pending))
+                .collect(java.util.stream.Collectors.joining());
+    }
+
+    /** 所需核实内容已在同一未决项中完整保留时，才消费相同核查请求，不泛化其他专业决定。 */
+    private boolean repeatsBoundRequest(String known, String clause, List<ConfirmedPlanDecision> pending) {
+        boolean consistency = pending.stream().allMatch(part -> part.question().contains("一致性"))
+                && known.contains("分母") && known.contains("按各逻辑规则的适用记录核实");
+        if (consistency && (clause.matches("(?:后续)?(?:须|需)按各逻辑规则的适用记录核实并确认口径")
+                || clause.matches("(?:请|需)?确认各逻辑规则的适用记录及分母定义"))) return true;
+        var request = Pattern.compile("^(?:请|需|须|需要)?确认(.+)$").matcher(clause);
+        if (!request.matches()) return false;
+        String target = request.group(1);
+        if (target.equals("是否插补、适用指标和方法")
+                && known.contains("是否插补、适用指标和方法均未决定")
+                && pending.stream().allMatch(part -> part.question().contains("插补"))) return true;
+        if (target.equals("如何确定该覆盖度") && pending.stream()
+                .allMatch(part -> part.question().contains("覆盖度如何确定"))) return true;
+        String subject = target.replaceFirst("状态$", "");
+        if (!subject.matches("[^，,。；;：:？?]{2,80}(?:分母|阈值|观察窗口|覆盖度)")) return false;
+        // 限定为完整参数名；核实方式、审批来源、额外条件或另一个年份不能借相同类别被删除。
+        return pending.stream().anyMatch(part -> pendingIdentity.matches(subject + "尚未确定", part));
+    }
+
+    /** “该示例值”仅从同一道绑定回答的唯一明确示例解析，不能借另一题的数字消除新阈值。 */
+    private String withoutBoundExampleRestatement(String known, String detail, List<ConfirmedPlanDecision> pending) {
+        if (!known.contains("也不采用该示例值") || !known.contains("异常等待阈值")) return detail;
+        List<String> ids = pending.stream().map(ConfirmedPlanDecision::questionId).distinct().toList();
+        if (ids.size() != 1) return detail;
+        List<String> examples = decisions.decisions().stream().filter(original -> java.util.Objects.equals(ids.getFirst(), original.questionId()))
+                .flatMap(original -> Pattern.compile("不采用资料中(\\d+(?:分钟|小时))示例值").matcher(original.answer()).results())
+                .map(match -> match.group(1)).distinct().toList();
+        if (examples.size() != 1) return detail;
+        return Pattern.compile("[^。；;\\r\\n]+[。；;]?").matcher(detail).results()
+                .map(match -> match.group().strip())
+                .filter(clause -> !clause.replaceAll("[。；;]+$", "").equals("不采用资料中" + examples.getFirst() + "示例值"))
+                .collect(java.util.stream.Collectors.joining());
     }
 
     /** 指代未知状态只在已唯一绑定、原题确有该属性的同一未决项内精简，不消除后续新解释。 */
@@ -584,13 +659,14 @@ final class PlanAmbiguityMerger {
     private String withoutRepeatedExplanationClauses(String known, String detail) {
         if (detail.matches("(?s).*(?:若|如果|假如|仅当|仅在|否则|采用|使用|选择).*")) return detail;
         var existing = java.util.Arrays.stream(known.split("[，,。；;\\r\\n]+"))
-                .map(this::explanationClauseKey).collect(java.util.stream.Collectors.toSet());
+                .map(value -> explanationClauseKey(value, known)).collect(java.util.stream.Collectors.toSet());
         StringBuilder retained = new StringBuilder();
         var clauses = Pattern.compile("[^，,。；;\\r\\n]+[，,。；;]?").matcher(detail);
         while (clauses.find()) {
             String clause = clauses.group();
-            String identity = explanationClauseKey(clause);
+            String identity = explanationClauseKey(clause, known);
             boolean dependent = identity.matches("^(?:其中|其|该|此|但).*" );
+            if (repeatsBoundCalculationImpact(identity, known)) continue;
             if (identity.length() < 6 || dependent || !existing.contains(identity)) retained.append(clause);
         }
         String result = retained.toString().strip().replaceAll("[，,；;]+$", "");
@@ -598,7 +674,7 @@ final class PlanAmbiguityMerger {
     }
 
     /** 仅对完整核查指令归一化语法；新的方法、机构、范围、条件或数值不在此移除。 */
-    private String explanationClauseKey(String value) {
+    private String explanationClauseKey(String value, String known) {
         String result = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFKC)
                 .replaceAll("\\s+", "").replaceFirst("^(?:该问题尚未确定|用户说明|补充说明):", "")
                 .replaceAll("[，,。；;]+$", "");
@@ -610,7 +686,23 @@ final class PlanAmbiguityMerger {
         if (result.matches("^.{2,40}的(?:比较)?观察窗口需院方后续核实$")) {
             return "需院方后续核实";
         }
+        // “另一院”只能展开为原需求命名、且拥有独立窗口问题的另一院；丙院、新年份或额外条件不泛化。
+        var peer = Pattern.compile("^不能用([甲乙丙丁]院)(?:的)?(?:观察)?窗口替代$").matcher(result);
+        var owner = Pattern.compile("[甲乙丙丁]院").matcher(known);
+        if (peer.matches() && owner.find() && !peer.group(1).equals(owner.group()) && known.contains("观察窗口")
+                && rawPrompt.contains(peer.group(1)) && decisions.pendingDecisions().stream()
+                .anyMatch(part -> part.question().contains(peer.group(1)) && part.question().contains("观察窗口"))) {
+            return "不能用另一院的窗口替代";
+        }
         return result;
+    }
+
+    /** 已说明“相关异常比例计算等待阈值”时，同院的无新增条件影响句不再复写；另一院或新条件保留。 */
+    private boolean repeatsBoundCalculationImpact(String clause, String known) {
+        var impact = Pattern.compile("^该未决条件(?:会)?影响([甲乙丙丁]院)(?:的)?异常比例(?:计算|(?:统计)?口径)$").matcher(clause);
+        var owner = Pattern.compile("[甲乙丙丁]院").matcher(known);
+        return impact.matches() && owner.find() && impact.group(1).equals(owner.group())
+                && known.contains("异常等待阈值") && known.contains("相关异常比例的计算需等待阈值确认");
     }
 
     /** 仅用于同一绑定项内的逐题复写；移除引导语，完整对象、条件、数值和疑问内容不变。 */

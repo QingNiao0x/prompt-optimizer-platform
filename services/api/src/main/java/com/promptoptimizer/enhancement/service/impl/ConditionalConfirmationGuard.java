@@ -19,7 +19,7 @@ final class ConditionalConfirmationGuard {
             "(?:^|[。；;\\r\\n：:])\\s*(?:若|如果|假如|假设)(?:以后|今后|将来|后续|未来)?"
                     + "(?:我|用户)?(?:只|仅)?(?:确认|确定)([^，,。；;\\r\\n]{4,160})");
     private static final Pattern CONFIRMED_PREFIX = Pattern.compile(
-            "(?:用户|我)(?:已|已经)(?:明确)?(?:确认|确定)([^，,。；;\\r\\n]{4,160})");
+            "(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|说明)([^，,。；;\\r\\n]{4,160})");
     private static final Pattern CONFIRMED_SUFFIX = Pattern.compile(
             "([^，,。；;\\r\\n]{4,160}?)(?:已|已经)(?:由|经)?用户(?:确认|确定)");
     private static final Pattern CONDITIONAL_OR_QUOTED = Pattern.compile(

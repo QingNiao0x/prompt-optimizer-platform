@@ -78,6 +78,7 @@ public final class PlanQuestionFilter {
         Set<QuestionKey> seen = new HashSet<>();
         Set<QuestionKey> seenDimensions = new HashSet<>();
         return questions.stream()
+                .map(question -> focusNewCostDenominator(question, input.rawPrompt()))
                 .filter(question -> seen.add(new QuestionKey(normalize(question.question()), questionDetails(question))))
                 .filter(question -> !clearlyOutsideCurrentTask(question.question(), input.rawPrompt()))
                 .filter(question -> !comparisonMaterial.delegatedPresentation(question))
@@ -85,6 +86,8 @@ public final class PlanQuestionFilter {
                 .filter(question -> !RoutineGuideDecision.delegated(question, input.rawPrompt()))
                 .filter(question -> !routinePresentation(question, input.rawPrompt()))
                 .filter(question -> !routineExecutionPresentation(question, input.rawPrompt()))
+                .filter(question -> !knownNegativeCostPresentation(question, input.rawPrompt()))
+                .filter(question -> !knownConditionalConflictPresentation(question, input.rawPrompt()))
                 .filter(question -> !KnownTestCoverage.repeatsKnownBranches(question, input))
                 .filter(question -> hasAdditionalDecision(question) || !decisionPolicy.resolvedOrDelegated(question))
                 .filter(question -> hasAdditionalDecision(question) || !resolved(question.question(), facts, input))
@@ -92,6 +95,27 @@ public final class PlanQuestionFilter {
                     String dimension = questionDimension(question.question());
                     return dimension == null || seenDimensions.add(new QuestionKey(dimension, questionDetails(question)));
                 }).toList();
+    }
+
+    /** 处置规则已明确但纳入分母仍未知时，题干对准新增业务决定，不让用户重选已定处置。 */
+    private PlanQuestion focusNewCostDenominator(PlanQuestion question, String rawPrompt) {
+        if (!knownNegativeCostBoundary(rawPrompt) || !question.question().matches("^费用为负数时[，,].*标记和呈现[？?]$")
+                || !safe(question.hint()).contains("负数记录是否进入费用类指标分母")) return question;
+        return new PlanQuestion(question.id(), "费用为负数的记录是否纳入费用类指标的分母？", question.hint(),
+                question.type(), question.options(), question.examples(), question.allowCustomAnswer());
+    }
+
+    /** 仅删除完整重复的标记呈现题，分母、剔除、权限和新增条件不能因题干已知被一并丢弃。 */
+    private boolean knownNegativeCostPresentation(PlanQuestion question, String rawPrompt) {
+        if (!knownNegativeCostBoundary(rawPrompt) || !question.question().matches("^费用为负数时[，,].*(?:标记|呈现|展示)[？?]$")) return false;
+        String details = String.join(" ", questionDetails(question)).replace("不擅自改成0", "");
+        return !details.matches("(?s).*(?:分母|纳入|剔除|排除|权限|阈值|新增|另外|[0-9]).*")
+                && question.options().stream().allMatch(option ->
+                        option.answer().matches("^负数(?:记录)?(?:先)?标记(?:并|后)回到来源核实[，,]不擅自改成0[。]?$"));
+    }
+
+    private boolean knownNegativeCostBoundary(String rawPrompt) {
+        return safe(rawPrompt).contains("负数先标记并回到来源核实，不擅自改成0");
     }
 
     /** 模型 ID 不参与身份；说明、选项和示例里的新选择参与比较，不能只凭相同题干删整题。 */
@@ -113,6 +137,20 @@ public final class PlanQuestionFilter {
     /** 额外说明显式引入另一选择时保留；“新增/修改代码”“不新增业务”等交付描述不能绕过已有决定校验。 */
     private boolean hasAdditionalDecision(PlanQuestion question) {
         return questionDetails(question).stream().anyMatch(detail -> ADDITIONAL_DECISION.matcher(detail).find());
+    }
+
+    /** 已规定假设资料冲突的呈现内容时直接继承；实际具名取值冲突和新增权限仍必须保留。 */
+    private boolean knownConditionalConflictPresentation(PlanQuestion question, String rawPrompt) {
+        if (rawPrompt == null || hasAdditionalDecision(question)
+                || question.id() != null && question.id().startsWith("context-conflict-")) return false;
+        if (!question.question().matches("^(?:若|如果)两份资料(?:对同一指标)?(?:给出|存在)不同阈值[，,].*"
+                + "(?:如何呈现|如何说明|如何展示)[？?]$")) return false;
+        String details = String.join(" ", questionDetails(question));
+        if (details.matches("(?s).*(?:\\d|权限|隐私|保密|跨租户|新增对象|甲院|乙院|[AB]医院).*") ) return false;
+        return java.util.Arrays.stream(rawPrompt.split("[。；;\\n]+"))
+                .filter(clause -> clause.matches("(?s).*(?:若|如果)两份资料.*不同阈值.*应把.+说明清楚.*"))
+                .anyMatch(clause -> clause.contains("指标") && clause.contains("医院")
+                        && clause.contains("适用时间") && clause.contains("两个取值"));
     }
 
     /** 常规章节组织交给执行者；用户主动要求确认结构、期刊规范或专业方法时仍保留问题。 */

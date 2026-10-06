@@ -1,0 +1,777 @@
+{
+  "evaluatedAt": "2026-10-06T19:06:09.866Z",
+  "scope": "TARGETED_SINGLE_ROUND_NOT_RELEASE_ACCEPTANCE",
+  "candidate": "tmp/prompt-comparison/decision-delivery-real-20261007-08",
+  "sourceFiles": 38,
+  "sourceHashesUnchanged": true,
+  "sourceHashes": {
+    "enhancement/service/PlanningSessionService.java": "cbfef3afaf9fdd80b19d85f0de9d527c8f5728d3881738beee828ccad95a6821",
+    "enhancement/service/impl/PlanningSessionServiceImpl.java": "18eb969b4b715c77fab0256376d6992daa60f35f2f08dd11d3b2112f3b514b3f",
+    "enhancement/service/impl/PlanningDecisionPolicy.java": "6f2bcff4bac7123ab3eaea63a4b45be0f991ac3c448c9f28aa3c9819b9844d86",
+    "provider/domain/PlanningProviderRequest.java": "74d327312eb02d158a27608ac34604087df07cb6ceecab3fc79b1cbe87ec2c72",
+    "enhancement/service/impl/SourceObjectContract.java": "0952ab42b6f00a054bd5725f9b071e537fdaad4f6e30cb016da9d0267736b527",
+    "enhancement/service/impl/TaskQuestionScope.java": "fc50fedf3c46bc894a4ecb332dcd9649ca878e770e2732aeb234097b7bba0f3a",
+    "enhancement/service/impl/ExecutionRuleCompactor.java": "a0fd858c1aa36f1f47ddd5097065791c77f4ad8e24491406d0869b6d5e8c02d0",
+    "enhancement/service/impl/MinimalPromptOrganizer.java": "815dc21292804de40b00a7879034f26ca584536a1df4aac1294fc3d3180df799",
+    "enhancement/service/impl/PendingDecisionSignature.java": "12c700a04da314aa49a0504836e65f750392bbde84fc387d951c7f47133e0d77",
+    "enhancement/service/impl/ReadOnlyMaterialComparison.java": "036825e57193d53ad9bc9d8576c0f161c451535149f4e14e74b323593ffa2201",
+    "provider/domain/PromptRewriteStrategy.java": "cc4517fa133444ab87cdbed8a452d6a7202a64a39e4d1a48336f38b7bf52f380",
+    "template/domain/TaskIntentResolver.java": "2706a9a570f55369f48ca9482460f141a542a0aa75144c6edd4b7cac990fcba6",
+    "enhancement/service/impl/AmbiguityDetector.java": "2e7e2c95c30eb746171de91611b7b4271cbe1fc224525da8d469ccb25a8263e8",
+    "provider/domain/ProviderResponseValidationException.java": "f160a2f049eae183238ef33ea0aabaec272dab789cd0b33eb8415c80ffe883ea",
+    "enhancement/service/impl/ComparisonMaterialDecision.java": "d45b44afe98fb62a857d1b175e1b312343a2a7d3aea75f24355911e889b88e91",
+    "enhancement/service/impl/NewsBodyFactContract.java": "696a8865b2fad64f4544a80ad1ce4ef42fc6029113b55714de71026411bce8b2",
+    "enhancement/service/impl/PendingReminderIdentity.java": "2f0748aa8dcc38c2cdf42de3128241438e140a9a7b8e0058fa474ee9dc9cc086",
+    "enhancement/service/impl/PlanQuestionFilter.java": "c2c7f13df0a020630cb5ed48d39cdcadf9c7ebc72bbbe4e110a1e6bf5a3153c8",
+    "enhancement/service/impl/RoutineGuideDecision.java": "77e2cce8a833072d384e838a0d06637374222860867d57d8eae2e59520ad89d2",
+    "enhancement/service/impl/RoutineWritingPresentation.java": "894e753ffd06d828010a0f26caca044ad901fb07d16f6a0ff10e725d86ad0ecf",
+    "enhancement/service/impl/PlanningAuthorizationState.java": "7821104abd742312600bd3ccd7be61a203c5c64577d3a461966a2f80485cb62d",
+    "enhancement/service/impl/PlanningConflictIdentity.java": "3178eada3cc1740743e4e7417d108415e91de3ef0eef6b4867c13b46e1a86101",
+    "enhancement/service/impl/RequirementFidelityGuard.java": "f6e71dd45ffb62b3ad66a6fe736255aa344cf7b313fddeb39d2322f97cda4b03",
+    "enhancement/service/impl/EvidenceStateGuard.java": "30c635e68e89e8b67a80fd88fbd1f101609c7ecc145dfb5ad987a5f45bd6c837",
+    "enhancement/service/impl/ConditionalConfirmationGuard.java": "c6e44b221614f70ce733acab5431c3c2a760a021a55a3bfbff7d1be6103faf89",
+    "enhancement/service/impl/ProviderPrerequisiteCompactor.java": "f042ba75f7cb25531c026c421f878fc48f2b686e14560cc12c91f6e78c914ff2",
+    "enhancement/service/impl/ResolvedPlanState.java": "52f1b60242c83946e3b41588e6d0feea973245d4834ac2127e69996d0db4fcc2",
+    "enhancement/service/impl/PlanAmbiguityMerger.java": "3ab82556052f12030569d755a4f0b209ece0608b4c0a60f2dee09e8552bb6985",
+    "enhancement/service/impl/PlanAnswerSemantics.java": "c69c7432386b61a3726157eef81da085c84ab93dcbf3a26e7434a927c816d454",
+    "enhancement/service/impl/PlanRecommendationAligner.java": "8418692a445891cb5d905675e6efcdae32b4688bf4e7b9bed90d4645d98de16a",
+    "enhancement/service/impl/NewsLengthContract.java": "a39ecd8f0227c2616d06715623db4c9e97a0e3ace1ba4744e6ed1442bc2e1260",
+    "template/domain/TaskDeliveryProfile.java": "f0f1949caac12b2dc5d741455ca0bdf207f1e15357c5b5fd4902464fac0c7033",
+    "enhancement/service/impl/OptimizationResultAssembler.java": "45c580f5c75c9796c17c8c14f4a925eee8abfad4a3426fbe4ccec09eff9684fe",
+    "enhancement/service/impl/DefaultEnhancementOrchestrator.java": "1716c895aeb93de7b9652507652ff802b69b977b332af495abbe5d89716ab9e9",
+    "enhancement/service/impl/OptimizationPlanningServiceImpl.java": "0ba19504654bcbe938bfdd1eb6445852b902726ee55e1dd62708dd0ae15c114c",
+    "provider/domain/PromptOptimizationGuidance.java": "88865c65c843e5b4ae6befd15259509368d1bbdbde5fb71d597de6bfe4e40a91",
+    "provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java": "19b3ab3cb08cc121591e5b65b5c20df47a97b6e5615ff224427ffd7dcf1dee17",
+    "enhancement/service/impl/UnresolvedDecisionContract.java": "18da31008e2d81fae4fe290541e165f3dda434aaba61bbe78b90e2d177245d9a"
+  },
+  "apiStages": [
+    {
+      "file": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-direct.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "b68318f5-c97c-4fec-a696-c3ea49fab690",
+          "elapsedMs": 19930
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 19835,
+      "questions": null,
+      "ambiguities": 6,
+      "promptChars": 4943,
+      "promptSha256": "824b2537f5095e39ee52bf41a42eaaf8d38c04d168df7856914bf8eda8391a1d"
+    },
+    {
+      "file": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan-final.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "e113757f-8b2c-468b-a197-9b487bdde03d",
+          "elapsedMs": 63668
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 63470,
+      "questions": null,
+      "ambiguities": 4,
+      "promptChars": 4162,
+      "promptSha256": "5585c4d05f55c1d3743f245d5bdad74a7a7b085e704b8f87046864aae929ddcf"
+    },
+    {
+      "file": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "e016a225-34ae-4cb6-9f5f-ed0db8b2bd66",
+          "elapsedMs": 639
+        },
+        {
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "1e065667-4c25-46c6-a71f-742783e67b0c",
+          "elapsedMs": 9924
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 9805,
+      "questions": 5,
+      "ambiguities": null,
+      "promptChars": null,
+      "promptSha256": null
+    },
+    {
+      "file": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-direct.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "976a451f-f63e-458b-acc4-ca0c8c828c7a",
+          "elapsedMs": 35421
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 35378,
+      "questions": null,
+      "ambiguities": 5,
+      "promptChars": 8288,
+      "promptSha256": "d0832309740bff89c172f5d7d9572f6a29ab9879ea35f9dd6ba7a4dc63633e4b"
+    },
+    {
+      "file": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan-final.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "90a83853-2f60-4369-874c-bdbc14ebfdd0",
+          "elapsedMs": 15500
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 15385,
+      "questions": null,
+      "ambiguities": 3,
+      "promptChars": 4007,
+      "promptSha256": "54f5add709f37830536523d14ce4fc78bf76b03ec64e37157500fd372a2a89f8"
+    },
+    {
+      "file": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "093bd7aa-b889-45dd-84f0-b1fbd9f76920",
+          "elapsedMs": 158
+        },
+        {
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "d7e90d63-b1ff-4b84-bc81-df400d9a3d1f",
+          "elapsedMs": 8626
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 8598,
+      "questions": 4,
+      "ambiguities": null,
+      "promptChars": null,
+      "promptSha256": null
+    },
+    {
+      "file": "RC-DEV-M-deepseek_deepseek-flash-direct.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "6ce71fe1-3bb7-47e6-b762-f434b0ab0a8b",
+          "elapsedMs": 4247
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 4158,
+      "questions": null,
+      "ambiguities": 0,
+      "promptChars": 2132,
+      "promptSha256": "0a1620c170ff680eb5f5dd5c96f805b5ae4154a223e9c615692ad1a4c9c4947c"
+    },
+    {
+      "file": "RC-DEV-M-deepseek_deepseek-v4-pro-direct.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "310d349b-f7d0-4c55-bc6f-d69c0362e9ce",
+          "elapsedMs": 7490
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 7456,
+      "questions": null,
+      "ambiguities": 0,
+      "promptChars": 2246,
+      "promptSha256": "a31eedebdd5c5f9ad214c428d6a6db4238da5c46bf83a4d652ac33665404e366"
+    },
+    {
+      "file": "RC-HOSP-M-deepseek_deepseek-flash-plan-final.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "83fcf8d4-d074-4b01-8739-900e9766c37f",
+          "elapsedMs": 11973
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 11865,
+      "questions": null,
+      "ambiguities": 4,
+      "promptChars": 2828,
+      "promptSha256": "189093b60228d9992061f15a17768443b31f1d41a789de20b1d0fb82c5dde127"
+    },
+    {
+      "file": "RC-HOSP-M-deepseek_deepseek-flash-plan.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "df7635bb-61a5-460c-bf40-81563a70e2c2",
+          "elapsedMs": 77
+        },
+        {
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "aa92e0d5-96db-4ede-87a2-b919d1efa026",
+          "elapsedMs": 2888
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 2835,
+      "questions": 4,
+      "ambiguities": null,
+      "promptChars": null,
+      "promptSha256": null
+    },
+    {
+      "file": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-final.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "69ce8dd1-665a-41d2-8442-e35cfaf66d0d",
+          "elapsedMs": 7278
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 7166,
+      "questions": null,
+      "ambiguities": 4,
+      "promptChars": 1957,
+      "promptSha256": "f5eea2acfc2731e82f4576a43f5af23073cef278088cb9a42670b7cbbb1bc999"
+    },
+    {
+      "file": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "6abcfb7b-ace1-4e2f-abe6-948edc808356",
+          "elapsedMs": 51
+        },
+        {
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "d5cb221b-0b25-4ef6-ab2c-25ce41856d0a",
+          "elapsedMs": 4165
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 4123,
+      "questions": 4,
+      "ambiguities": null,
+      "promptChars": null,
+      "promptSha256": null
+    },
+    {
+      "file": "RC-TRANSLATION-M-deepseek_deepseek-flash-direct.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "c3b36e05-1a99-4a60-b0c1-f8f0783e541f",
+          "elapsedMs": 3600
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 3533,
+      "questions": null,
+      "ambiguities": 0,
+      "promptChars": 1780,
+      "promptSha256": "14f54f57b8362b30c900dc0e7acadc59dcb26e1fadc7221761a00a580d176048"
+    },
+    {
+      "file": "RC-TRANSLATION-M-deepseek_deepseek-v4-pro-direct.json",
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "path": "/api/v1/optimizations",
+          "status": 200,
+          "requestId": "b6347e9c-1f83-4f7c-b98d-54773de9598e",
+          "elapsedMs": 5092
+        }
+      ],
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 5055,
+      "questions": null,
+      "ambiguities": 0,
+      "promptChars": 1529,
+      "promptSha256": "706ab930f12809831886c27833d23fb79ddc378936324266288b2c6db1fba1d2"
+    }
+  ],
+  "downstreamWorks": [
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-479Z-cac949b2/execution/CF-RESEARCH-L-R1-direct-m1-r1.json",
+      "jobId": "CF-RESEARCH-L-R1-direct-m1-r1",
+      "caseId": "CF-RESEARCH-L-R1",
+      "arm": "direct",
+      "requestedModel": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 8104,
+      "usage": {
+        "prompt_tokens": 3131,
+        "completion_tokens": 1800,
+        "total_tokens": 4931
+      },
+      "outputChars": 3221,
+      "promptHash": "824b2537f5095e39ee52bf41a42eaaf8d38c04d168df7856914bf8eda8391a1d",
+      "outputSha256": "593af02a3907f4b31d06ec3bb31281f4b1323b8e3a4b8069d8f1dad76dabdecd",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "be5b709e49f5e3fdce4fcc936e4643f7f2b1fc4b8c81c5d8c26eff0af5bf47ec",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-479Z-cac949b2/execution/CF-RESEARCH-L-R1-direct_matched-m1-r1.json",
+      "jobId": "CF-RESEARCH-L-R1-direct_matched-m1-r1",
+      "caseId": "CF-RESEARCH-L-R1",
+      "arm": "direct_matched",
+      "requestedModel": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 7876,
+      "usage": {
+        "prompt_tokens": 3430,
+        "completion_tokens": 1792,
+        "total_tokens": 5222
+      },
+      "outputChars": 3033,
+      "promptHash": "824b2537f5095e39ee52bf41a42eaaf8d38c04d168df7856914bf8eda8391a1d",
+      "outputSha256": "e3885ba2f17bae77db708f8a3ced884e703723d6cb86c5cae24c200d085ea668",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "be5b709e49f5e3fdce4fcc936e4643f7f2b1fc4b8c81c5d8c26eff0af5bf47ec",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-479Z-cac949b2/execution/CF-RESEARCH-L-R1-plan-m1-r1.json",
+      "jobId": "CF-RESEARCH-L-R1-plan-m1-r1",
+      "caseId": "CF-RESEARCH-L-R1",
+      "arm": "plan",
+      "requestedModel": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 7673,
+      "usage": {
+        "prompt_tokens": 2628,
+        "completion_tokens": 1724,
+        "total_tokens": 4352
+      },
+      "outputChars": 3054,
+      "promptHash": "5585c4d05f55c1d3743f245d5bdad74a7a7b085e704b8f87046864aae929ddcf",
+      "outputSha256": "a8d297b45326daf089bf6af24fe80cf27bcc91c6eba4e541646ab29446990fb7",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "be5b709e49f5e3fdce4fcc936e4643f7f2b1fc4b8c81c5d8c26eff0af5bf47ec",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-479Z-cac949b2/execution/CF-RESEARCH-L-R1-raw-m1-r1.json",
+      "jobId": "CF-RESEARCH-L-R1-raw-m1-r1",
+      "caseId": "CF-RESEARCH-L-R1",
+      "arm": "raw",
+      "requestedModel": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 7462,
+      "usage": {
+        "prompt_tokens": 1341,
+        "completion_tokens": 1475,
+        "total_tokens": 2816
+      },
+      "outputChars": 2778,
+      "promptHash": "7bcbd2bfbdf25402d1d2febc9de7a74b3dcd4ca00e89619dd4811d429b558915",
+      "outputSha256": "cdc4cd7864ad51015e055199ebc738698949708083b6f31740eda3dd05605625",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "be5b709e49f5e3fdce4fcc936e4643f7f2b1fc4b8c81c5d8c26eff0af5bf47ec",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-479Z-cac949b2/execution/CF-RESEARCH-L-R1-raw_matched-m1-r1.json",
+      "jobId": "CF-RESEARCH-L-R1-raw_matched-m1-r1",
+      "caseId": "CF-RESEARCH-L-R1",
+      "arm": "raw_matched",
+      "requestedModel": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 8097,
+      "usage": {
+        "prompt_tokens": 1640,
+        "completion_tokens": 1854,
+        "total_tokens": 3494
+      },
+      "outputChars": 3254,
+      "promptHash": "7bcbd2bfbdf25402d1d2febc9de7a74b3dcd4ca00e89619dd4811d429b558915",
+      "outputSha256": "07783675d84591c85af3828a0f4b2d8a38c918ac2cb56db119f7144d5c09d481",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "be5b709e49f5e3fdce4fcc936e4643f7f2b1fc4b8c81c5d8c26eff0af5bf47ec",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-479Z-cac949b2/execution/RC-DEV-M-direct-m1-r1.json",
+      "jobId": "RC-DEV-M-direct-m1-r1",
+      "caseId": "RC-DEV-M",
+      "arm": "direct",
+      "requestedModel": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 8480,
+      "usage": {
+        "prompt_tokens": 1261,
+        "completion_tokens": 2658,
+        "total_tokens": 3919
+      },
+      "outputChars": 8883,
+      "promptHash": "0a1620c170ff680eb5f5dd5c96f805b5ae4154a223e9c615692ad1a4c9c4947c",
+      "outputSha256": "61efcc407874ff414402db56db867382ce3749b88f47619498aaa4b5aaf95fc8",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "bba9ca11344a27854bf2269f336063f122b258469cd414383306a335d88c4186",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-479Z-cac949b2/execution/RC-DEV-M-raw-m1-r1.json",
+      "jobId": "RC-DEV-M-raw-m1-r1",
+      "caseId": "RC-DEV-M",
+      "arm": "raw",
+      "requestedModel": "deepseek:deepseek-flash",
+      "actualModel": "deepseek-flash",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 5408,
+      "usage": {
+        "prompt_tokens": 525,
+        "completion_tokens": 1619,
+        "total_tokens": 2144
+      },
+      "outputChars": 5808,
+      "promptHash": "13ce4aaef71ebb4322040cc29a31eb02d389d8c80f4665b5f930af78737e9d3b",
+      "outputSha256": "817465cbcd4f2cebef0780bd8ebc5a018f9cc12e14741249af65e00f8bf4a062",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "bba9ca11344a27854bf2269f336063f122b258469cd414383306a335d88c4186",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-866Z-e6ca49f3/execution/CF-RESEARCH-L-R1-direct-m1-r1.json",
+      "jobId": "CF-RESEARCH-L-R1-direct-m1-r1",
+      "caseId": "CF-RESEARCH-L-R1",
+      "arm": "direct",
+      "requestedModel": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 18977,
+      "usage": {
+        "prompt_tokens": 4893,
+        "completion_tokens": 2331,
+        "total_tokens": 7224
+      },
+      "outputChars": 4750,
+      "promptHash": "d0832309740bff89c172f5d7d9572f6a29ab9879ea35f9dd6ba7a4dc63633e4b",
+      "outputSha256": "3364a203fd9b013f1cfe7205bd8b501f1ed3debf17c230e722785ff40d2351fb",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "be5b709e49f5e3fdce4fcc936e4643f7f2b1fc4b8c81c5d8c26eff0af5bf47ec",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-866Z-e6ca49f3/execution/CF-RESEARCH-L-R1-direct_matched-m1-r1.json",
+      "jobId": "CF-RESEARCH-L-R1-direct_matched-m1-r1",
+      "caseId": "CF-RESEARCH-L-R1",
+      "arm": "direct_matched",
+      "requestedModel": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 15852,
+      "usage": {
+        "prompt_tokens": 5120,
+        "completion_tokens": 2165,
+        "total_tokens": 7285
+      },
+      "outputChars": 4467,
+      "promptHash": "d0832309740bff89c172f5d7d9572f6a29ab9879ea35f9dd6ba7a4dc63633e4b",
+      "outputSha256": "99e53fef63cb0272ccd6e5378e4ee4bf2e632ab24fb8450d1d76cbba14c699d1",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "be5b709e49f5e3fdce4fcc936e4643f7f2b1fc4b8c81c5d8c26eff0af5bf47ec",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-866Z-e6ca49f3/execution/CF-RESEARCH-L-R1-plan-m1-r1.json",
+      "jobId": "CF-RESEARCH-L-R1-plan-m1-r1",
+      "caseId": "CF-RESEARCH-L-R1",
+      "arm": "plan",
+      "requestedModel": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 25088,
+      "usage": {
+        "prompt_tokens": 2513,
+        "completion_tokens": 3390,
+        "total_tokens": 5903
+      },
+      "outputChars": 6942,
+      "promptHash": "54f5add709f37830536523d14ce4fc78bf76b03ec64e37157500fd372a2a89f8",
+      "outputSha256": "5430cdbb2e1507a955b105aac4804ba8eb7b318327051c1022667a210225c4a8",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "be5b709e49f5e3fdce4fcc936e4643f7f2b1fc4b8c81c5d8c26eff0af5bf47ec",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-866Z-e6ca49f3/execution/CF-RESEARCH-L-R1-raw-m1-r1.json",
+      "jobId": "CF-RESEARCH-L-R1-raw-m1-r1",
+      "caseId": "CF-RESEARCH-L-R1",
+      "arm": "raw",
+      "requestedModel": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 21778,
+      "usage": {
+        "prompt_tokens": 1340,
+        "completion_tokens": 2207,
+        "total_tokens": 3547
+      },
+      "outputChars": 4028,
+      "promptHash": "7bcbd2bfbdf25402d1d2febc9de7a74b3dcd4ca00e89619dd4811d429b558915",
+      "outputSha256": "6d9afda4bc442df4e953d4c17fac10f22cb66a598ae91874b6b89a1cf24a9a59",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "be5b709e49f5e3fdce4fcc936e4643f7f2b1fc4b8c81c5d8c26eff0af5bf47ec",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-866Z-e6ca49f3/execution/CF-RESEARCH-L-R1-raw_matched-m1-r1.json",
+      "jobId": "CF-RESEARCH-L-R1-raw_matched-m1-r1",
+      "caseId": "CF-RESEARCH-L-R1",
+      "arm": "raw_matched",
+      "requestedModel": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 19348,
+      "usage": {
+        "prompt_tokens": 1567,
+        "completion_tokens": 2376,
+        "total_tokens": 3943
+      },
+      "outputChars": 5088,
+      "promptHash": "7bcbd2bfbdf25402d1d2febc9de7a74b3dcd4ca00e89619dd4811d429b558915",
+      "outputSha256": "d9668af8e463ec3b96a32decbab9227c61c2dbc4ef4d4ba058e63186c2f799a4",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "be5b709e49f5e3fdce4fcc936e4643f7f2b1fc4b8c81c5d8c26eff0af5bf47ec",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-866Z-e6ca49f3/execution/RC-DEV-M-direct-m1-r1.json",
+      "jobId": "RC-DEV-M-direct-m1-r1",
+      "caseId": "RC-DEV-M",
+      "arm": "direct",
+      "requestedModel": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 7454,
+      "usage": {
+        "prompt_tokens": 1284,
+        "completion_tokens": 1378,
+        "total_tokens": 2662
+      },
+      "outputChars": 5559,
+      "promptHash": "a31eedebdd5c5f9ad214c428d6a6db4238da5c46bf83a4d652ac33665404e366",
+      "outputSha256": "889f7b1ad0b3487cb8d033fbf97d2009ec5d44f19812a4560287a641b983194f",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "bba9ca11344a27854bf2269f336063f122b258469cd414383306a335d88c4186",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    },
+    {
+      "file": "tmp/prompt-output-evaluation/2026-10-06T19-00-11-866Z-e6ca49f3/execution/RC-DEV-M-raw-m1-r1.json",
+      "jobId": "RC-DEV-M-raw-m1-r1",
+      "caseId": "RC-DEV-M",
+      "arm": "raw",
+      "requestedModel": "deepseek:deepseek-v4-pro",
+      "actualModel": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "singleHttpCallMs": 7427,
+      "usage": {
+        "prompt_tokens": 524,
+        "completion_tokens": 1260,
+        "total_tokens": 1784
+      },
+      "outputChars": 5560,
+      "promptHash": "13ce4aaef71ebb4322040cc29a31eb02d389d8c80f4665b5f930af78737e9d3b",
+      "outputSha256": "2abc6d7d48d70ffd4329084bd71d8d9f16bc37cc75d5bb1d5755103257aaa0c3",
+      "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "materialsHash": "bba9ca11344a27854bf2269f336063f122b258469cd414383306a335d88c4186",
+      "maxOutputTokens": 4096,
+      "automaticRetry": false
+    }
+  ],
+  "javaAssertions": [
+    {
+      "id": "RC-DEV-M-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "817465cbcd4f2cebef0780bd8ebc5a018f9cc12e14741249af65e00f8bf4a062",
+      "status": "PASS",
+      "checked": 52,
+      "failures": 0,
+      "firstFailure": ""
+    },
+    {
+      "id": "RC-DEV-M-direct-m1-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "61efcc407874ff414402db56db867382ce3749b88f47619498aaa4b5aaf95fc8",
+      "status": "PASS",
+      "checked": 52,
+      "failures": 0,
+      "firstFailure": ""
+    },
+    {
+      "id": "RC-DEV-M-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "2abc6d7d48d70ffd4329084bd71d8d9f16bc37cc75d5bb1d5755103257aaa0c3",
+      "status": "PASS",
+      "checked": 52,
+      "failures": 0,
+      "firstFailure": ""
+    },
+    {
+      "id": "RC-DEV-M-direct-m1-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "889f7b1ad0b3487cb8d033fbf97d2009ec5d44f19812a4560287a641b983194f",
+      "status": "PASS",
+      "checked": 52,
+      "failures": 0,
+      "firstFailure": ""
+    }
+  ],
+  "qualityScores": null,
+  "limitation": "API SUCCESS does not establish semantic quality; manual findings are recorded separately."
+}

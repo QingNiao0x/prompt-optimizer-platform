@@ -135,7 +135,7 @@ public class OptimizationResultAssembler {
             throw invalidResponse(Reason.REQUIRED_SECTIONS_MISSING, "sections");
         }
 
-        ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planAnswers);
+        ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planConfirmed ? planAnswers : List.of());
         var resolvedState = ResolvedPlanState.from(planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), rawPrompt);
         // 先建立有效执行视图，再提取规则；原始提示词与卡片仍完整保存，旧未知不能被保真流程补回。
         String effectiveRawPrompt = resolvedState.reconcile(rawPrompt);
@@ -151,12 +151,13 @@ public class OptimizationResultAssembler {
         List<ConfirmedPlanDecision> actualConfirmations = planConfirmed ? decisions.knownDecisions() : List.of();
         var conditionalGuard = ConditionalConfirmationGuard.prepare(rawPrompt, conditionalEvidence, actualConfirmations);
         sections.forEach((type, section) -> conditionalGuard.validate(section.content(), "sections." + type));
-        var unresolvedContract = UnresolvedDecisionContract.from(effectiveRawPrompt,
-                planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()));
+        var unresolvedContract = UnresolvedDecisionContract.from(effectiveRawPrompt, decisions, conditionalEvidence);
         sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
+        sections.forEach((type, section) -> validateUserFacingProtocol(section.content(), rawPrompt, "sections." + type));
         if (providerResponse.ambiguities() != null) {
             for (int index = 0; index < providerResponse.ambiguities().size(); index++) {
                 conditionalGuard.validate(providerResponse.ambiguities().get(index), "ambiguities[" + index + "]");
+                validateUserFacingProtocol(providerResponse.ambiguities().get(index), rawPrompt, "ambiguities[" + index + "]");
             }
         }
         List<String> explicitRules = fidelityGuard.explicitRules(effectiveRawPrompt, decisions.decisions());
@@ -168,10 +169,13 @@ public class OptimizationResultAssembler {
                 planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()));
         appendConfirmedAnswers(sections, decisions);
         appendConfirmedDecisions(sections, decisions);
+        List<String> currentDocumentFacts = documentFacts.stream().map(resolvedState::reconcile).toList();
+        List<PlanningFactCard> currentFacts = eligibleFacts.stream().map(card -> new PlanningFactCard(
+                card.id(), card.category(), card.origin(), card.sourcePath(), resolvedState.reconcile(card.evidence()))).toList();
         if (eligibleFacts.isEmpty()) {
-            appendDocumentFacts(sections, documentFacts);
+            appendDocumentFacts(sections, currentDocumentFacts);
         } else {
-            appendPlanningFacts(sections, eligibleFacts, documentFacts);
+            appendPlanningFacts(sections, currentFacts, currentDocumentFacts);
         }
         appendConstraints(sections, constraints);
         if (!sourceObjects.guidance().isBlank()) appendConstraintBlock(sections, "资料对象与版本", List.of(sourceObjects.guidance()));
@@ -211,6 +215,12 @@ public class OptimizationResultAssembler {
                             .filter(question -> providerFindings.stream().noneMatch(finding -> coversDeclaredQuestion(finding, question, rawPrompt))))
                     .distinct().toList();
         }
+        // 资料里的明确未知也随同一个权威清单交付；旧状态已按完整参数确认更新，不补造缺失事实。
+        List<String> currentFindings = assessed;
+        assessed = java.util.stream.Stream.concat(assessed.stream(), unresolvedContract.pendingStatements().stream()
+                .filter(statement -> currentFindings.stream().noneMatch(finding ->
+                        unresolvedContract.samePendingStatement(finding, statement))))
+                .distinct().toList();
         assessed = classifyFindings(sections, assessed, rawPrompt, decisions, eligibleFacts, documentFacts, context);
         List<AmbiguityReference> references = normalizeAmbiguityReferences(providerResponse);
         // 先登记新冲突和绑定的未决问题，再归并模型提醒，避免重复项挤占展示预算。
@@ -225,7 +235,8 @@ public class OptimizationResultAssembler {
         }
         removeRepeatedProviderPrerequisites(sections, merged.executionPrerequisites(), decisions);
         ProviderPrerequisiteCompactor.compact(sections, merged.executionPrerequisites(), decisions, rawPrompt);
-        appendExecutionPrerequisites(sections, merged.executionPrerequisites());
+        unresolvedContract.compactPendingStatements(sections);
+        appendExecutionPrerequisites(sections, merged.executionPrerequisites(), UnresolvedDecisionContract.DELIVERY_GUIDANCE);
         // 未决清单也是正文中的权威规则来源；先落入正文再查缺补齐，避免同一禁止规则被追加两遍。
         appendExplicitRules(sections, ProviderPrerequisiteCompactor.uncoveredRules(explicitRules,
                 merged.executionPrerequisites(), decisions, rawPrompt));
@@ -253,6 +264,9 @@ public class OptimizationResultAssembler {
         }
 
         ExecutionRuleCompactor.compact(sections);
+        // 平台补回后的视图仍须守住确认范围；不能只验证模型原文而漏掉自动追加的规则。
+        sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
+        sections.forEach((type, section) -> conditionalGuard.validate(section.content(), "sections." + type));
         List<PromptSection> ordered = List.of(PromptSectionType.values()).stream()
                 .map(sections::get)
                 .filter(section -> section != null)
@@ -273,6 +287,16 @@ public class OptimizationResultAssembler {
                 resultWarnings,
                 evidenceCards(eligibleFacts, documentFacts)
         );
+    }
+
+    /** 用户要求讲解某协议时保留合法代码名，其他任务不能把模型输入的内部字段当作读者操作指令。 */
+    private void validateUserFacingProtocol(String text, String rawPrompt, String field) {
+        if (text == null) return;
+        var names = java.util.regex.Pattern.compile("(?<![A-Za-z0-9_])(?:confirmedDecisions|planAnswers|questionId)(?![A-Za-z0-9_])")
+                .matcher(text);
+        while (names.find()) {
+            if (rawPrompt == null || !rawPrompt.contains(names.group())) throw invalidResponse(Reason.RULE_CONFLICT, field);
+        }
     }
 
     /** 只读取用户明确标记的当前待定问题，保留完整问题而不从关键词缺失制造泛化警告。 */
@@ -393,10 +417,11 @@ public class OptimizationResultAssembler {
     }
 
     /** 未决与冲突必须随可复制正文交付；不把暂不确定转换成模型自行选择的许可。 */
-    private void appendExecutionPrerequisites(Map<PromptSectionType, PromptSection> sections, List<String> prerequisites) {
+    private void appendExecutionPrerequisites(Map<PromptSectionType, PromptSection> sections, List<String> prerequisites,
+                                              String deliveryGuidance) {
         appendConstraintBlock(sections, "执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）", prerequisites);
         if (!prerequisites.isEmpty()) {
-            appendConstraintBlock(sections, "未决决定的交付边界", List.of(UnresolvedDecisionContract.DELIVERY_GUIDANCE));
+            appendConstraintBlock(sections, "未决决定的交付边界", List.of(deliveryGuidance));
         }
     }
 
@@ -515,7 +540,7 @@ public class OptimizationResultAssembler {
             background = new PromptSection(
                     PromptSectionType.BACKGROUND,
                     background.title(),
-                    background.content() + "\n\nPlan 阶段绑定的资料事实与二次检索补充（现状与目标须分别核对，不代表已经实现）：\n"
+                    background.content() + "\n\n资料的当前执行视图（原始摘录见资料依据；现状与目标分别核对，不代表已经实现）：\n"
                             + sourcedFacts
             );
             sections.put(PromptSectionType.BACKGROUND, background);

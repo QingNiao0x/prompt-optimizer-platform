@@ -297,17 +297,24 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
             var decisionPolicy = PlanningDecisionPolicy.from(request);
             List<String> rules = guard.explicitRules(request.rawPrompt(), List.of());
             var ruleValidation = guard.prepare(rules);
+            var conditionalGuard = ConditionalConfirmationGuard.prepare(request.rawPrompt(),
+                    List.of(request.rawPrompt(), request.contextDescription()), List.of());
             // 包括非推荐选项；不能让用户通过候选答案无意放弃原始需求中的明确规则。
             // 格式和安全仍校验所有项；已被明确事实消除的问题不因无关候选触发额外模型重试。
             questionFilter.filter(validated.questions(), request).forEach(question -> {
+                conditionalGuard.validate(question.question(), "questions.question");
+                conditionalGuard.validate(question.hint(), "questions.hint");
                 sourceObjects.validate(question.hint(), "questions.hint");
                 decisionPolicy.validateCandidate(question.hint(), question.question(), "questions.hint");
                 question.examples().forEach(example -> {
+                    conditionalGuard.validate(example, "questions.examples");
                     sourceObjects.validate(example, "questions.examples");
                     decisionPolicy.validateCandidate(example, question.question(), "questions.examples");
                     ruleValidation.validateProposal(example, "questions.examples");
                 });
                 question.options().forEach(option -> {
+                    conditionalGuard.validate(option.answer(), "questions.options.answer");
+                    conditionalGuard.validate(option.recommendationReason(), "questions.options.recommendationReason");
                     sourceObjects.validate(option.answer(), "questions.options.answer");
                     sourceObjects.validate(option.label(), "questions.options.label");
                     sourceObjects.validate(option.description(), "questions.options.description");

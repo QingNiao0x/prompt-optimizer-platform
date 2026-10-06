@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
   Calendar, CirclePlus, Clock, DataLine, Filter, List, Lock,
-  MagicStick, Monitor, Mouse, Search, TrendCharts, Trophy, User, UserFilled, View, Wallet,
+  MagicStick, Monitor, Mouse, RefreshRight, Search, TrendCharts, Trophy, User, UserFilled, View, Wallet,
 } from '@element-plus/icons-vue';
 import {
   BarChart,
@@ -330,6 +330,26 @@ const refresh = async (): Promise<void> => {
   }
 };
 
+/** 恢复今天、全部账号及按日排行，并复用查询流程同步刷新图表和第一页日志。 */
+const resetFilters = async (): Promise<void> => {
+  if (loading.value) return;
+  // 旧明细或排行请求不能在重置后回填旧筛选和排行日期；查询失败时也不遗留加载状态。
+  operationsRequestId += 1;
+  rankingRequestId += 1;
+  operationsLoading.value = false;
+  rankingLoading.value = false;
+  range.value = 'TODAY';
+  dateRange.value = null;
+  accountId.value = '';
+  email.value = '';
+  displayName.value = '';
+  eventFilter.value = '';
+  rankingPeriod.value = 'DAY';
+  rankingDate.value = '';
+  // 生效条件仅在查询成功后替换，保留原来的错误提示和分页条数选择。
+  await refresh();
+};
+
 /** 图表读取现有主题变量，坐标轴与图例在深浅主题中保持可读；不修改数据序列。 */
 const chartColor = (variable: string): string =>
   getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
@@ -590,7 +610,10 @@ onBeforeUnmount(() => {
         <span class="filter-label">显示名称</span>
         <ElInput v-model="displayName" clearable :maxlength="80" aria-label="按显示名称筛选" placeholder="名称关键词（可选）" />
       </div>
-      <ElButton type="primary" :icon="Search" :loading="loading" @click="refresh">查询</ElButton>
+      <div class="filter-actions">
+        <ElButton type="primary" :icon="Search" :loading="loading" @click="refresh">查询</ElButton>
+        <ElButton :icon="RefreshRight" :disabled="loading" @click="resetFilters">重置</ElButton>
+      </div>
     </div>
 
     <div v-if="loading && !dashboard" class="loading-state" role="status">
@@ -918,7 +941,8 @@ onBeforeUnmount(() => {
 .filter-label { color: var(--text-secondary); font-size: 12px; font-weight: 500; }
 .range-select, .account-filter, .custom-dates { width: 100%; min-width: 0; }
 .filters :deep(.el-date-editor) { width: 100%; min-width: 0; }
-.filters > .el-button { min-width: 104px; min-height: 36px; }
+.filter-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.filter-actions > .el-button { min-width: 104px; min-height: 36px; margin-left: 0; }
 .filters :deep(.el-input__wrapper), .filters :deep(.el-select__wrapper) { min-height: 36px; }
 .event-select { width: 168px; }
 .ranking-controls { display: flex; min-width: 0; align-items: center; flex-wrap: wrap; gap: 8px; }
@@ -1137,7 +1161,8 @@ code { color: var(--text-secondary); font-family: var(--font-mono); font-size: 1
   .eyebrow { font-size: 9px; letter-spacing: 0.6px; }
   .filters { padding: 14px; }
   .filter-field { flex-basis: 100%; }
-  .filters > .el-button { width: 100%; }
+  .filter-actions { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filter-actions > .el-button { width: 100%; min-width: 0; }
   .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .feature-usage-strip { grid-template-columns: minmax(0, 1fr); }
   .metric { min-height: 126px; padding: 14px; }

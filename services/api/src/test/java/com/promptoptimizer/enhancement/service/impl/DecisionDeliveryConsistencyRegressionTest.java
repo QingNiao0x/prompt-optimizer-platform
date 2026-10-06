@@ -51,6 +51,21 @@ class DecisionDeliveryConsistencyRegressionTest {
     }
 
     @Test
+    void extractsAPendingParameterBeforeItsFollowingNegativeInstruction() {
+        var answers = List.of(new PlanAnswer("denominator", "跨字段一致性指标分母采用什么口径？",
+                "暂不确定。跨字段一致性指标分母尚未决定，不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。"));
+        assertThatThrownBy(() -> assemble("| 指标 | 分母 |\n|---|---|\n"
+                + "| 跨字段一致性指标 | 所有有效出院记录数 |", answers, true, "制定病案质量研究方案。"))
+                .isInstanceOf(ProviderResponseValidationException.class);
+    }
+
+    @Test
+    void namesThePendingParameterAndForbidsAUniversalDenominatorInTheCopyableBody() {
+        var result = assemble("交付指标表与必要伪代码。", ANSWERS, true, RAW);
+        assertThat(result.optimizedPrompt()).contains("跨字段一致性指标", "分母", "分别命名", "通用变量", "仍须交付");
+    }
+
+    @Test
     void rejectsTheActualDateConsistencySubindicatorFromTheFailedWork() {
         assertThatThrownBy(() -> assemble("| 指标 | 分子 | 分母 |\n|---|---|---|\n"
                 + "| 出院日期早于入院日期不一致率 | 出院日早于入院日的记录数 | 入院日期与出院日期均格式合法的有效出院记录数 |",
@@ -133,6 +148,120 @@ class DecisionDeliveryConsistencyRegressionTest {
     }
 
     @Test
+    void removesTheRepeatedPeerWindowProhibitionButKeepsTheComparisonExplanation() {
+        var answers = List.of(new PlanAnswer("windowA", "甲院的比较观察窗口如何定义？",
+                        "暂不确定。甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代。"),
+                new PlanAnswer("windowB", "乙院的比较观察窗口如何定义？",
+                        "暂不确定。乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代。"));
+        var result = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers), "甲院与乙院窗口分别确认。")
+                .merge(List.of("甲院的比较观察窗口如何定义？不能用乙院窗口替代，该未决条件影响甲院统计口径与两院比较结果。"),
+                        List.of(), List.of());
+        assertThat(result.messages()).hasSize(2);
+        assertThat(result.messages().getFirst()).doesNotContain("不能用乙院窗口替代").contains("影响甲院统计口径");
+    }
+
+    @Test
+    void preservesANewPeerAndYearEvenWhenTheExistingWindowProhibitionMatches() {
+        var answers = List.of(new PlanAnswer("windowA", "甲院的比较观察窗口如何定义？",
+                "暂不确定。甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代。"));
+        var result = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers), "甲院与乙院窗口分别确认。")
+                .merge(List.of("甲院的比较观察窗口如何定义？不能用丙院窗口替代，需核实2023年窗口。"), List.of(), List.of());
+        assertThat(result.messages().getFirst()).contains("不能用丙院窗口替代", "2023年窗口");
+    }
+
+    @Test
+    void removesOnlyTheAlreadyBoundAbnormalRateCalculationImpact() {
+        var answers = List.of(new PlanAnswer("thresholdA", "甲院异常等待阈值是多少？",
+                "暂不确定。甲院的异常等待阈值尚未决定；相关异常比例的计算需等待阈值确认。"));
+        var result = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers)).merge(
+                List.of("甲院异常等待阈值是多少？该未决条件影响甲院异常比例计算。"), List.of(), List.of());
+        assertThat(result.messages().getFirst()).doesNotContain("补充说明");
+        var novel = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers)).merge(
+                List.of("甲院异常等待阈值是多少？该未决条件影响乙院异常比例计算。"), List.of(), List.of());
+        assertThat(novel.messages().getFirst()).contains("影响乙院异常比例计算");
+    }
+
+    @Test
+    void routesARepeatedComparisonDecisionToItsOwnBoundItemInsteadOfRepeatingItUnderCoverage() {
+        var answers = List.of(new PlanAnswer("coverage", "A医院2022年的覆盖度如何？",
+                        "暂不确定。A医院2022年覆盖度尚未核实。"),
+                new PlanAnswer("handling", "A医院2022年覆盖度未核实时，年度与医院比较如何处理该年数据？",
+                        "暂不确定。A医院2022年覆盖度未核实时，该年数据的比较处理方式尚未决定；不能自动排除或认定已具备直接可比性。"));
+        var result = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers)).merge(
+                List.of("A医院2022年的覆盖度如何？该年数据的年度与医院比较处理方式未定；不能自动排除或认定已具备直接可比性。"),
+                List.of(), List.of());
+        assertThat(result.messages()).hasSize(2);
+        assertThat(result.messages().getFirst()).doesNotContain("比较处理方式", "补充说明");
+        assertThat(result.messages().getLast()).contains("比较处理方式尚未决定", "不能自动排除");
+        var differentYear = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(List.of(answers.getFirst(),
+                new PlanAnswer("handling", "A医院2023年覆盖度未核实时，年度与医院比较如何处理？",
+                        "暂不确定。A医院2023年覆盖度未核实时，该年数据的比较处理方式尚未决定。")))).merge(
+                List.of("A医院2022年的覆盖度如何？该年数据的年度与医院比较处理方式未定；需保留2022年限制。"), List.of(), List.of());
+        assertThat(differentYear.messages().getFirst()).contains("比较处理方式未定", "2022年限制");
+    }
+
+    @Test
+    void resolvesTheSameBoundExampleReferenceButDoesNotDiscardANewExampleValue() {
+        var answers = List.of(new PlanAnswer("thresholds", "异常等待的阈值应如何确定？",
+                "暂不确定。甲院的异常等待阈值尚未决定，不采用资料中60分钟示例值。乙院的异常等待阈值尚未决定，也不采用该示例值；两院相关异常比例的计算分别等待本院阈值确认。"));
+        var result = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers)).merge(
+                List.of("乙院的异常等待阈值尚未决定，不采用资料中60分钟示例值。"), List.of(), List.of());
+        assertThat(result.messages()).hasSize(2);
+        assertThat(result.messages().getLast()).doesNotContain("补充说明：不采用资料中60分钟示例值");
+        var novel = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers)).merge(
+                List.of("乙院的异常等待阈值尚未决定，不采用资料中90分钟示例值。"), List.of(), List.of());
+        assertThat(novel.messages().getLast()).contains("90分钟示例值");
+    }
+
+    @Test
+    void removesASameBoundConfirmationRequestButKeepsAnotherHospitalAndYear() {
+        var answers = List.of(new PlanAnswer("coverage", "A医院2022年出院病案首页的覆盖度如何确定？",
+                "暂不确定。A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。"));
+        var result = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers)).merge(
+                List.of("A医院2022年出院病案首页的覆盖度如何确定？需确认A医院2022年覆盖度状态。",
+                        "A医院2022年出院病案首页的覆盖度如何确定？请确认如何确定该覆盖度。"), List.of(), List.of());
+        assertThat(result.messages()).hasSize(1);
+        assertThat(result.messages().getFirst()).doesNotContain("补充说明");
+        var novel = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers)).merge(
+                List.of("A医院2022年出院病案首页的覆盖度如何确定？需确认A医院2023年覆盖度状态；需确认B医院2022年覆盖度状态。"),
+                List.of(), List.of());
+        assertThat(novel.executionPrerequisites()).anyMatch(value -> value.contains("A医院2023年")
+                && value.contains("B医院2022年"));
+    }
+
+    @Test
+    void compactsTheBoundConsistencyVerificationButKeepsANewRecordScope() {
+        var answers = List.of(new PlanAnswer("consistency", "跨字段逻辑一致性指标的统计分母采用什么口径？",
+                "暂不确定。跨字段一致性指标的分母尚未决定，不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。"));
+        var result = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers)).merge(
+                List.of("跨字段逻辑一致性指标的统计分母采用什么口径？需按各逻辑规则的适用记录核实并确认口径；请确认各逻辑规则的适用记录及分母定义。"),
+                List.of(), List.of());
+        assertThat(result.messages()).hasSize(1);
+        assertThat(result.messages().getFirst()).doesNotContain("补充说明");
+        var novel = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers)).merge(
+                List.of("跨字段逻辑一致性指标的统计分母采用什么口径？请确认各逻辑规则的适用记录及退款分母定义。"),
+                List.of(), List.of());
+        assertThat(novel.executionPrerequisites()).anyMatch(value -> value.contains("退款分母定义"));
+    }
+
+    @Test
+    void removesOnlyTheCoveredImputationRequestAndPreservesTheConditionalMethod() {
+        var answers = List.of(new PlanAnswer("imputation", "是否对缺失病例使用插补？",
+                "暂不确定。是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。"));
+        var result = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers)).merge(
+                List.of("是否对缺失病例使用插补？且不同指标可能采用不同处理；需确认是否插补、适用指标和方法。"),
+                List.of(), List.of());
+        assertThat(result.messages()).hasSize(1);
+        assertThat(result.messages().getFirst()).contains("不同指标可能采用不同处理")
+                .doesNotContain("需确认是否插补");
+        var novel = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers)).merge(
+                List.of("是否对缺失病例使用插补？如果采用多重插补，需确认是否插补、适用指标和方法；需确认20%缺失时的处理。"),
+                List.of(), List.of());
+        assertThat(novel.executionPrerequisites()).anyMatch(value -> value.contains("如果采用多重插补")
+                && value.contains("20%缺失"));
+    }
+
+    @Test
     void doesNotUseAnotherHospitalAsRecommendationEvidence() {
         var question = windowQuestion("乙医院");
         var digest = digest("甲医院的观察窗口采用24小时。");
@@ -196,6 +325,22 @@ class DecisionDeliveryConsistencyRegressionTest {
     void doesNotDeleteAnOptionThatChangesOverwriteBehaviorEvenWithAStyleLabel() {
         assertThat(new PlanQuestionFilter().filter(List.of(dialogQuestion("", "使用确认框，确认后覆盖全部已有值。")),
                 request("开发Vue 3表单，匹配后使用确认框。", null))).hasSize(1);
+    }
+
+    @Test
+    void doesNotReaskTheExplicitConditionalConflictPresentationRule() {
+        var q = new PlanQuestion("presentation", "若两份资料对同一指标给出不同阈值，方案中应如何呈现？",
+                "需确认是否保留两个取值并列。", PlanQuestionType.FREE_TEXT, List.of(), List.of(), true);
+        var input = request("若两份资料给出不同阈值，应把涉及的指标、医院、适用时间和两个取值说明清楚。", null);
+        assertThat(new PlanQuestionFilter().filter(List.of(q), input)).isEmpty();
+        var named = new PlanQuestion("context-conflict-threshold", "甲院2023年阈值30与60冲突，应采用哪个？",
+                "实际来源有两个取值。", PlanQuestionType.FREE_TEXT, List.of(), List.of(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(named), input)).hasSize(1);
+        var additional = new PlanQuestion("presentation", q.question(), "另外需确认对外报告的隐私权限。",
+                PlanQuestionType.FREE_TEXT, List.of(), List.of(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(additional), input)).hasSize(1);
+        assertThat(new PlanQuestionFilter().filter(List.of(q), request("资料有两个阈值，目前不知道如何比较。", null)))
+                .hasSize(1);
     }
 
     private static PlanQuestion dialogQuestion(String hint, String answer) {

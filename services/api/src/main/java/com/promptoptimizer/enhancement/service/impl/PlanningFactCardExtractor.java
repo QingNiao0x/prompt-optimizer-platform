@@ -95,7 +95,9 @@ final class PlanningFactCardExtractor {
             if (contains(key, "时间范围", "研究期间", "分析期间", "起止时间", "时间段")) return PlanningFactCategory.TIME_RANGE;
             if (contains(key, "阈值", "时限", "口径", "规则", "版本")) return PlanningFactCategory.BUSINESS_RULE;
         }
-        return EXPLICIT_RULE.matcher(evidence).find() ? PlanningFactCategory.BUSINESS_RULE : null;
+        // 明确的具名未知同样是资料状态，须传入直接增强；它不来自关键词缺失或专业默认推断。
+        return EXPLICIT_RULE.matcher(evidence).find() || !UnresolvedDecisionContract.declaredPending(evidence).isEmpty()
+                ? PlanningFactCategory.BUSINESS_RULE : null;
     }
 
     /**
