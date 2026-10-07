@@ -37,6 +37,8 @@ final class UnresolvedDecisionContract {
     private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
     private static final Pattern CURRENT_CONFIRMATION = Pattern.compile("^(?:(?:本次|这次)(?:仅|只)?(?:明确)?(?:确认|确定|选定)"
             + "|(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定))");
+    private static final String COMPOSITE_PARAMETER_COLUMN = "分母或所需参数";
+    private static final List<String> PARAMETER_PROPERTIES = List.of("分母", "阈值", "观察窗口", "覆盖度");
     private static final Pattern INDEPENDENT_HOSPITALS = Pattern.compile("^两院(?:需要|须|应)?(?:独立|分别)(?:计算|确认).*$");
     static final String DELIVERY_GUIDANCE = "同一未决决定在正文、表格、公式及伪代码中保持一致："
             + "相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；"
@@ -476,14 +478,15 @@ final class UnresolvedDecisionContract {
             String text = line.strip();
             if (text.startsWith("|")) {
                 List<String> cells = cells(text);
-                if (cells.stream().anyMatch(value -> value.matches("(?:分母|阈值|观察窗口|覆盖度)(?:口径|定义)?"))) {
+                if (cells.stream().anyMatch(value -> value.equals(COMPOSITE_PARAMETER_COLUMN)
+                        || value.matches("(?:分母|阈值|观察窗口|覆盖度)(?:口径|定义)?"))) {
                     header = cells.stream().map(value -> value.equals("指标名称") ? "指标"
                             : value.replaceFirst("(?<=分母|阈值|观察窗口|覆盖度)(?:口径|定义)$", "")).toList();
                     continue;
                 }
                 if (text.matches("[|:\\-\\s]+") || header.isEmpty() || cells.size() != header.size()) continue;
                 for (Parameter parameter : validationParameters) {
-                    int index = header.indexOf(parameter.property());
+                    int index = parameterColumn(header, parameter.property());
                     if (index < 0) continue;
                     boolean sameObject = java.util.stream.IntStream.range(0, cells.size())
                             .filter(column -> column != index).anyMatch(column -> sameSubject(cells.get(column), parameter.subject(), parameter.property()));
@@ -493,11 +496,12 @@ final class UnresolvedDecisionContract {
                 int subjectColumn = header.indexOf("指标");
                 boolean claimsConfirmed = cells.stream().anyMatch(cell -> CONFIRMED_CELL.matcher(cell).matches());
                 if (subjectColumn >= 0 && claimsConfirmed) {
-                    for (String property : List.of("分母", "阈值", "观察窗口", "覆盖度")) {
+                    for (String property : PARAMETER_PROPERTIES) {
                         var claimed = new Parameter(subjectKey(cells.get(subjectColumn)), property);
                         if (independentHospitalParameters) claimed = boundParameterName(claimed);
                         if (header.contains(property) && !confirmedParameters.contains(claimed)) reject(field, "TABLE_CONFIRMATION_SCOPE");
                     }
+                    validateCompositeConfirmation(header, cells, subjectColumn, field);
                 }
             } else {
                 header = List.of();
@@ -518,6 +522,31 @@ final class UnresolvedDecisionContract {
                     }
                 }
             }
+        }
+    }
+
+    /** 独立属性列优先；平台规定的复合参数列不能成为绕过未决格校验的另一种表头。 */
+    private static int parameterColumn(List<String> header, String property) {
+        int dedicated = header.indexOf(property);
+        return dedicated >= 0 ? dedicated : header.indexOf(COMPOSITE_PARAMETER_COLUMN);
+    }
+
+    /**
+     * 复合列先按完整对象登记的属性核对，不将已确认阈值误分类为分母。
+     * 未登记的新率指标不能借同类确认；只有明确计数行与不适用格同时出现才免分母要求。
+     */
+    private void validateCompositeConfirmation(List<String> header, List<String> cells, int subjectColumn, String field) {
+        int column = header.indexOf(COMPOSITE_PARAMETER_COLUMN);
+        if (column < 0) return;
+        String subject = cells.get(subjectColumn);
+        if (subject.matches(".*(?:记录数|人数|例数|次数|总数|计数|数量|个数)$")
+                && cells.get(column).matches("不适用(?:$|[（(](?:计数指标|无需分母|无分母)[）)])")) return;
+        List<Parameter> scoped = java.util.stream.Stream.concat(parameters.stream(),
+                java.util.stream.Stream.concat(confirmedParameters.stream(), materialValues.stream().map(ParameterValue::parameter)))
+                .filter(parameter -> sameSubject(subject, parameter.subject(), parameter.property())).distinct().toList();
+        // 缺少完整对象依据时沿用分母列的确认边界，不按唯一类别值或另一机构推断本行已确认。
+        if (scoped.isEmpty() || scoped.stream().anyMatch(parameter -> !confirmedParameters.contains(parameter))) {
+            reject(field, "TABLE_CONFIRMATION_SCOPE");
         }
     }
 

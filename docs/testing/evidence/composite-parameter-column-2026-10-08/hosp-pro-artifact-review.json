@@ -1,0 +1,164 @@
+{
+  "source": "tmp/prompt-output-evaluation/2026-10-07T18-33-09-348Z-7135fae8",
+  "records": [
+    {
+      "id": "RC-HOSP-M-plan-m1-r1",
+      "arm": "plan",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "387d5118564bfce49859954009a90d98b9af9893934cbf63dd7e46e70da42370",
+      "nonHeadingTableCharacters": 2196,
+      "bodyCharactersExcludingOnlyIndicatorTables": 2789,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "参数",
+            "当前口径",
+            "状态与依据"
+          ],
+          "cells": [
+            "甲院异常等待阈值",
+            "90 分钟",
+            "用户明确（本次方案选值）"
+          ],
+          "quote": "| 甲院异常等待阈值 | 90 分钟 | 用户明确（本次方案选值） |"
+        },
+        {
+          "header": [
+            "参数",
+            "当前口径",
+            "状态与依据"
+          ],
+          "cells": [
+            "甲院观察窗口",
+            "待确认",
+            "未决；无当前选值"
+          ],
+          "quote": "| 甲院观察窗口 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "header": [
+            "参数",
+            "当前口径",
+            "状态与依据"
+          ],
+          "cells": [
+            "乙院观察窗口",
+            "待确认",
+            "未决；无当前选值"
+          ],
+          "quote": "| 乙院观察窗口 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "header": [
+            "参数",
+            "当前口径",
+            "状态与依据"
+          ],
+          "cells": [
+            "乙院异常等待阈值",
+            "待确认",
+            "未决；无当前选值"
+          ],
+          "quote": "| 乙院异常等待阈值 | 待确认 | 未决；无当前选值 |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-plan-m2-r1",
+      "arm": "plan",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "41b83e2a8e9609e2b645883d937ad20e54689c2286ace3df2bcc47c29d41212d",
+      "nonHeadingTableCharacters": 3565,
+      "bodyCharactersExcludingOnlyIndicatorTables": 4999,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "参数",
+            "甲院",
+            "乙院",
+            "状态"
+          ],
+          "cells": [
+            "比较观察窗口",
+            "待确认",
+            "待确认",
+            "未决；两院可能不同，分别确认"
+          ],
+          "quote": "| 比较观察窗口 | 待确认 | 待确认 | 未决；两院可能不同，分别确认 |"
+        },
+        {
+          "header": [
+            "参数",
+            "甲院",
+            "乙院",
+            "状态"
+          ],
+          "cells": [
+            "异常等待阈值",
+            "**90分钟（本次方案选值，用户确认）**",
+            "待确认",
+            "甲院已确认；乙院未决，不得沿用甲院值"
+          ],
+          "quote": "| 异常等待阈值 | **90分钟（本次方案选值，用户确认）** | 待确认 | 甲院已确认；乙院未决，不得沿用甲院值 |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "67bf79a17df42496777fb6478df2cf70d4324b5fed83eb9dbad9699d4ba91763",
+      "nonHeadingTableCharacters": 1561,
+      "bodyCharactersExcludingOnlyIndicatorTables": 1694,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [
+        "`hospital_id` 取值集合为 A/B，但不能证明名称与代码的关系，也不能用另一院排除推定。"
+      ],
+      "indicatorTablePresent": true,
+      "parameterRows": [],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "035d3447dddc33fc9f305dc00e0be76598f5e4e804d1c5e06b9dd1ecd820c86c",
+      "nonHeadingTableCharacters": 2318,
+      "bodyCharactersExcludingOnlyIndicatorTables": 3403,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": false,
+      "parameterRows": [],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    }
+  ],
+  "releaseApproval": false
+}

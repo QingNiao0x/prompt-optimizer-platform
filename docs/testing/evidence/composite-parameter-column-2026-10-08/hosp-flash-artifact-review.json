@@ -1,0 +1,170 @@
+{
+  "source": "tmp/prompt-output-evaluation/2026-10-07T18-33-09-169Z-5fcb4f7c",
+  "records": [
+    {
+      "id": "RC-HOSP-M-plan-m1-r1",
+      "arm": "plan",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "ff9c383ae3e426f15afd8923778b8726efcbee4b3e4d6bfe5e8b6b54cbd01daa",
+      "nonHeadingTableCharacters": 2594,
+      "bodyCharactersExcludingOnlyIndicatorTables": 3449,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "甲院观察窗口内记录数",
+            "甲院窗口内去重记录数",
+            "不适用（计数指标）",
+            "甲院去重后记录",
+            "甲院观察窗口待确认",
+            "待确认"
+          ],
+          "quote": "| 甲院观察窗口内记录数 | 甲院窗口内去重记录数 | 不适用（计数指标） | 甲院去重后记录 | 甲院观察窗口待确认 | 待确认 |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "乙院观察窗口内记录数",
+            "乙院窗口内去重记录数",
+            "不适用（计数指标）",
+            "乙院去重后记录",
+            "乙院观察窗口待确认",
+            "待确认"
+          ],
+          "quote": "| 乙院观察窗口内记录数 | 乙院窗口内去重记录数 | 不适用（计数指标） | 乙院去重后记录 | 乙院观察窗口待确认 | 待确认 |"
+        },
+        {
+          "header": [
+            "参数",
+            "状态",
+            "影响范围"
+          ],
+          "cells": [
+            "甲院观察窗口",
+            "待确认",
+            "甲院统计范围、两院比较口径"
+          ],
+          "quote": "| 甲院观察窗口 | 待确认 | 甲院统计范围、两院比较口径 |"
+        },
+        {
+          "header": [
+            "参数",
+            "状态",
+            "影响范围"
+          ],
+          "cells": [
+            "乙院观察窗口",
+            "待确认",
+            "乙院统计范围、两院比较口径"
+          ],
+          "quote": "| 乙院观察窗口 | 待确认 | 乙院统计范围、两院比较口径 |"
+        },
+        {
+          "header": [
+            "参数",
+            "状态",
+            "影响范围"
+          ],
+          "cells": [
+            "乙院异常等待阈值",
+            "待确认",
+            "乙院异常等待数/比例"
+          ],
+          "quote": "| 乙院异常等待阈值 | 待确认 | 乙院异常等待数/比例 |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-plan-m2-r1",
+      "arm": "plan",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "9cea20e2f27217197f4c795112a4945f3ab9ee832f5fe3032a4f313ca467ae3e",
+      "nonHeadingTableCharacters": 3278,
+      "bodyCharactersExcludingOnlyIndicatorTables": 3836,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "4a84e7afef1743ed2a23f75fb3e12c7da9c8b7d79143e1710a65d300129ae8ac",
+      "nonHeadingTableCharacters": 1531,
+      "bodyCharactersExcludingOnlyIndicatorTables": 2363,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "bd4f6402d5c5262617679e2fd3dbb3a7bb3800f35c4431f861f388d5692160b3",
+      "nonHeadingTableCharacters": 1427,
+      "bodyCharactersExcludingOnlyIndicatorTables": 2313,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "指标",
+            "分母",
+            "说明"
+          ],
+          "cells": [
+            "时间缺失率",
+            "去重后全部记录数",
+            "分子为 registered_at 或 seen_at 缺失的记录数"
+          ],
+          "quote": "| 时间缺失率 | 去重后全部记录数 | 分子为 registered_at 或 seen_at 缺失的记录数 |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    }
+  ],
+  "releaseApproval": false
+}

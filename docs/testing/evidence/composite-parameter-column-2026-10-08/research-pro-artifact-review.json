@@ -1,0 +1,249 @@
+{
+  "source": "tmp/prompt-output-evaluation/2026-10-07T18-33-09-692Z-6fcb8cd7",
+  "records": [
+    {
+      "id": "CF-RESEARCH-L-R1-plan-m1-r1",
+      "arm": "plan",
+      "caseId": "CF-RESEARCH-L-R1",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "cce6a698320f21ee7ca3b40e6dc7a0f73418c1d936af0297b3ba7e4c0eea9c5d",
+      "nonHeadingTableCharacters": 1455,
+      "bodyCharactersExcludingOnlyIndicatorTables": 1999,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "各字段缺失率",
+            "该字段缺失记录数",
+            "所有有效出院记录（包括相应字段缺失的记录）",
+            "所有有效出院记录",
+            "用户明确",
+            "已确认"
+          ],
+          "quote": "| 各字段缺失率 | 该字段缺失记录数 | 所有有效出院记录（包括相应字段缺失的记录） | 所有有效出院记录 | 用户明确 | 已确认 |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "日期格式不合法率",
+            "日期格式不合法记录数",
+            "待确认",
+            "日期字段有值记录",
+            "本次材料未提供独立口径",
+            "待确认"
+          ],
+          "quote": "| 日期格式不合法率 | 日期格式不合法记录数 | 待确认 | 日期字段有值记录 | 本次材料未提供独立口径 | 待确认 |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "性别代码格式不合法率",
+            "性别代码不在允许集合记录数",
+            "待确认",
+            "性别字段有值记录",
+            "本次材料未提供独立口径",
+            "待确认"
+          ],
+          "quote": "| 性别代码格式不合法率 | 性别代码不在允许集合记录数 | 待确认 | 性别字段有值记录 | 本次材料未提供独立口径 | 待确认 |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-plan-m2-r1",
+      "arm": "plan",
+      "caseId": "CF-RESEARCH-L-R1",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "c7e569335da824812ce1b51747a5ad43d376e16668acd1892ecc9234ce68ed4a",
+      "nonHeadingTableCharacters": 2058,
+      "bodyCharactersExcludingOnlyIndicatorTables": 2917,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "各字段完整性",
+            "该字段非缺失的记录数",
+            "所有有效出院记录（包括相应字段缺失的记录）",
+            "所有有效出院记录",
+            "用户确认",
+            "已确认"
+          ],
+          "quote": "| 各字段完整性 | 该字段非缺失的记录数 | 所有有效出院记录（包括相应字段缺失的记录） | 所有有效出院记录 | 用户确认 | 已确认 |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "日期格式不合法计数",
+            "日期字段格式不符记录数",
+            "不适用（计数指标）",
+            "所有有效出院记录",
+            "数据字典",
+            "已确认"
+          ],
+          "quote": "| 日期格式不合法计数 | 日期字段格式不符记录数 | 不适用（计数指标） | 所有有效出院记录 | 数据字典 | 已确认 |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "日期格式不合法率",
+            "日期格式不符记录数",
+            "待确认",
+            "所有有效出院记录",
+            "本次材料未提供独立口径",
+            "待确认"
+          ],
+          "quote": "| 日期格式不合法率 | 日期格式不符记录数 | 待确认 | 所有有效出院记录 | 本次材料未提供独立口径 | 待确认 |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "日期格式不合法计数",
+            "日期字段格式不符记录数",
+            "不适用（计数指标）",
+            "所有有效出院记录",
+            "数据字典",
+            "已确认"
+          ],
+          "quote": "| 日期格式不合法计数 | 日期字段格式不符记录数 | 不适用（计数指标） | 所有有效出院记录 | 数据字典 | 已确认 |"
+        }
+      ],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "caseId": "CF-RESEARCH-L-R1",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "62752e9ee495c768d12c205975b985f21a02ce2a73a7dda3ab4264bd0c6ccee2",
+      "nonHeadingTableCharacters": 1749,
+      "bodyCharactersExcludingOnlyIndicatorTables": 2177,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母",
+            "统计单位",
+            "纳入记录"
+          ],
+          "cells": [
+            "缺失率",
+            "该字段缺失记录数",
+            "有效出院记录数",
+            "医院×年度",
+            "去重后符合范围"
+          ],
+          "quote": "| 缺失率 | 该字段缺失记录数 | 有效出院记录数 | 医院×年度 | 去重后符合范围 |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母",
+            "统计单位",
+            "纳入记录"
+          ],
+          "cells": [
+            "格式不合法率",
+            "格式错误记录数",
+            "该字段非缺失记录数",
+            "医院×年度",
+            "去重后符合范围"
+          ],
+          "quote": "| 格式不合法率 | 格式错误记录数 | 该字段非缺失记录数 | 医院×年度 | 去重后符合范围 |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "caseId": "CF-RESEARCH-L-R1",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "9f02201e3bbebd9bd42f0dd3fd550554dc583d786b7764c18ea39c5f0620aaad",
+      "nonHeadingTableCharacters": 3625,
+      "bodyCharactersExcludingOnlyIndicatorTables": 4295,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    }
+  ],
+  "releaseApproval": false
+}
