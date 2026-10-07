@@ -1,0 +1,2487 @@
+{
+  "scope": "仅明确参数格；不能作为全文质量、胜率或专业评分",
+  "groups": [
+    {
+      "arm": "raw",
+      "samples": 8,
+      "independentConsistencyParameterTable": 0,
+      "completenessMatchesCurrentState": 0,
+      "derivedFormatFalselyClaimsUserConfirmation": 0,
+      "bodyCharacterRange": [
+        1527,
+        3285
+      ]
+    },
+    {
+      "arm": "direct",
+      "samples": 8,
+      "independentConsistencyParameterTable": 8,
+      "completenessMatchesCurrentState": 7,
+      "derivedFormatFalselyClaimsUserConfirmation": 2,
+      "bodyCharacterRange": [
+        1400,
+        3442
+      ]
+    },
+    {
+      "arm": "raw_matched",
+      "samples": 8,
+      "independentConsistencyParameterTable": 1,
+      "completenessMatchesCurrentState": 4,
+      "derivedFormatFalselyClaimsUserConfirmation": 0,
+      "bodyCharacterRange": [
+        1575,
+        3479
+      ]
+    },
+    {
+      "arm": "direct_matched",
+      "samples": 8,
+      "independentConsistencyParameterTable": 8,
+      "completenessMatchesCurrentState": 5,
+      "derivedFormatFalselyClaimsUserConfirmation": 3,
+      "bodyCharacterRange": [
+        1460,
+        3396
+      ]
+    },
+    {
+      "arm": "plan",
+      "samples": 8,
+      "independentConsistencyParameterTable": 7,
+      "completenessMatchesCurrentState": 7,
+      "derivedFormatFalselyClaimsUserConfirmation": 5,
+      "bodyCharacterRange": [
+        1774,
+        3646
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R1-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "542aa8d6c606db8e4afebadd9788793ed7f82bb2fb57b85e5634debe6ceb2cd2",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 81,
+          "text": "| 入院日期缺失率 | admission_date缺失数 | 有效出院记录 | 记录 | 全部 |",
+          "kind": "completeness",
+          "value": "有效出院记录",
+          "pending": false,
+          "concrete": false,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 82,
+          "text": "| 入院日期格式错误率 | 格式不合法数 | 有值记录 | 记录 | 全部 |",
+          "kind": "format",
+          "value": "有值记录",
+          "pending": false,
+          "concrete": false,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 83,
+          "text": "| 出院日早于入院日率 | 逻辑不一致数 | 两日期可解析记录 | 记录 | 全部 |",
+          "kind": "consistency",
+          "value": "两日期可解析记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 85,
+          "text": "| 住院日缺失率 | length_of_stay缺失数 | 有效出院记录 | 记录 | 全部 |",
+          "kind": "completeness",
+          "value": "有效出院记录",
+          "pending": false,
+          "concrete": false,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1819,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R1-direct-m1-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "c0bd1bd55f4128b728683b7bd2d732a9ab3349411477269e5da3884aae968a56",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 76,
+          "text": "| 缺失率_住院日 | 住院日缺失数 | 完整性指标分母 | 出院记录 | 待确认 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 77,
+          "text": "| 缺失率_费用 | 费用缺失数 | 完整性指标分母 | 出院记录 | 待确认 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 78,
+          "text": "| 格式不合法率_入院日 | 格式不合法数 | 完整性指标分母 | 出院记录 | 待确认 | 分母待确认 |",
+          "kind": "format",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 79,
+          "text": "| 格式不合法率_出院日 | 格式不合法数 | 完整性指标分母 | 出院记录 | 待确认 | 分母待确认 |",
+          "kind": "format",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 80,
+          "text": "| 逻辑不一致率_日期 | 出院<入院数 | 跨字段一致性指标分母 | 出院记录 | 待确认 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "跨字段一致性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1997,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R1-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "298931da2884034a9d2f48283c266e9c99d43886bb2d9637a350efdba9fef2c8",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 87,
+          "text": "| 完整性指标 | 字段非缺失记录数 | 所有有效出院记录（已确认） | 一次出院记录 | 去重后满足时间与对象范围 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录（已确认）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 88,
+          "text": "| 格式合法性指标 | 格式不合法记录数 | 待确认 | 一次出院记录 | 按字段适用记录 | 分母待确认 |",
+          "kind": "format",
+          "value": "待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 89,
+          "text": "| 跨字段一致性指标 | 逻辑不一致记录数 | 待确认 | 一次出院记录 | 按各逻辑规则适用记录 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2090,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R1-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "b023de233ec9118299f3ce07602409ffa4e5e67c0952afccc3bccb5f3d2f2895",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 87,
+          "text": "| 年龄缺失率 | age缺失数 | 有效出院记录 | 记录 | 去重后时间范围内 |",
+          "kind": "completeness",
+          "value": "有效出院记录",
+          "pending": false,
+          "concrete": false,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 88,
+          "text": "| 日期格式错误率 | 日期格式错数 | 有效出院记录 | 记录 | 同上 |",
+          "kind": "format",
+          "value": "有效出院记录",
+          "pending": false,
+          "concrete": false,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 89,
+          "text": "| 日期逻辑不一致率 | 出院<入院数 | 两日期均有效 | 记录 | 同上 |",
+          "kind": "consistency",
+          "value": "两日期均有效",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1606,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R1-direct_matched-m1-r1",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "735f677f50dfcde30586064e6574d49a4396b847171d51b17cb2d124ece3f2e9",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 72,
+          "text": "| 缺失率_住院日 | 住院日缺失记录数 | 完整性分母_住院日（待确认） | 出院记录 | 去重后研究范围 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性分母_住院日（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 73,
+          "text": "| 缺失率_费用 | 费用缺失记录数 | 完整性分母_费用（待确认） | 出院记录 | 去重后研究范围 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性分母_费用（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 74,
+          "text": "| 格式不合法率_入院日 | 入院日格式不合法数 | 完整性分母_入院日（待确认） | 出院记录 | 去重后研究范围 | 分母待确认 |",
+          "kind": "format",
+          "value": "完整性分母_入院日（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 75,
+          "text": "| 格式不合法率_出院日 | 出院日格式不合法数 | 完整性分母_出院日（待确认） | 出院记录 | 去重后研究范围 | 分母待确认 |",
+          "kind": "format",
+          "value": "完整性分母_出院日（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 76,
+          "text": "| 逻辑不一致率_日期 | 出院日早于入院日数 | 一致性分母_日期（待确认） | 出院记录 | 两字段均有效 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "一致性分母_日期（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 77,
+          "text": "| 缺失率_性别 | 性别缺失数 | 完整性分母_性别（待确认） | 出院记录 | 去重后研究范围 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性分母_性别（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1675,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R1-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "b2dd84424bfc2288d72d655771707c18302412a16e4ad1e86b150eba4af7f5c8",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 95,
+          "text": "| 字段缺失数（按字段） | 该字段缺失或UNKNOWN的记录数 | 去重后记录总数 | 记录 | 全部去重后记录 |",
+          "kind": "completeness",
+          "value": "去重后记录总数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 97,
+          "text": "| 日期逻辑不一致数 | discharge_date < admission_date的记录数 | 两日期均格式合法的记录数 | 记录 | 两日期均通过格式检查的记录 |",
+          "kind": "consistency",
+          "value": "两日期均格式合法的记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 3285,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R1-direct-m2-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "0d42ebf56abcd3da51f1e93586b4dacb8c36c6e32343d9cec28a035ea29c724d",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": true,
+      "rows": [
+        {
+          "line": 106,
+          "text": "| M1 | record_id缺失率 | record_id缺失记录数 | 完整性指标分母 | 一次出院记录 | 全部去重后记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 107,
+          "text": "| M2 | hospital缺失率 | hospital缺失记录数 | 完整性指标分母 | 一次出院记录 | 全部去重后记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 108,
+          "text": "| M3 | admission_date缺失率 | admission_date缺失记录数 | 完整性指标分母 | 一次出院记录 | 全部去重后记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 109,
+          "text": "| M4 | discharge_date缺失率 | discharge_date缺失记录数 | 完整性指标分母 | 一次出院记录 | 全部去重后记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 110,
+          "text": "| M5 | age缺失率 | age缺失记录数 | 完整性指标分母 | 一次出院记录 | 全部去重后记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 111,
+          "text": "| M6 | gender_code缺失率 | gender_code缺失记录数 | 完整性指标分母 | 一次出院记录 | 全部去重后记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 113,
+          "text": "| M8 | principal_diagnosis缺失率 | principal_diagnosis缺失记录数 | 完整性指标分母 | 一次出院记录 | 全部去重后记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 114,
+          "text": "| M9 | length_of_stay缺失率 | length_of_stay缺失记录数 | 完整性指标分母 | 一次出院记录 | 全部去重后记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 115,
+          "text": "| M10 | total_cost缺失率 | total_cost缺失记录数 | 完整性指标分母 | 一次出院记录 | 全部去重后记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 116,
+          "text": "| M11 | import_version缺失率 | import_version缺失记录数 | 完整性指标分母 | 一次出院记录 | 全部去重后记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 117,
+          "text": "| F1 | admission_date格式不合法率 | admission_date格式不合法记录数 | 格式指标分母（admission_date非缺失记录数） | 一次出院记录 | admission_date非缺失记录 | 已确认 |",
+          "kind": "format",
+          "value": "格式指标分母（admission_date非缺失记录数）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 118,
+          "text": "| F2 | discharge_date格式不合法率 | discharge_date格式不合法记录数 | 格式指标分母（discharge_date非缺失记录数） | 一次出院记录 | discharge_date非缺失记录 | 已确认 |",
+          "kind": "format",
+          "value": "格式指标分母（discharge_date非缺失记录数）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 119,
+          "text": "| F3 | age格式不合法率 | age非数值记录数 | 格式指标分母（age非缺失记录数） | 一次出院记录 | age非缺失记录 | 已确认 |",
+          "kind": "format",
+          "value": "格式指标分母（age非缺失记录数）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 120,
+          "text": "| F4 | gender_code格式不合法率 | gender_code非法值记录数（不含UNKNOWN） | 格式指标分母（gender_code非缺失记录数） | 一次出院记录 | gender_code非缺失记录 | 已确认 |",
+          "kind": "format",
+          "value": "格式指标分母（gender_code非缺失记录数）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 121,
+          "text": "| F5 | length_of_stay格式不合法率 | length_of_stay非数值或负数记录数 | 格式指标分母（length_of_stay非缺失记录数） | 一次出院记录 | length_of_stay非缺失记录 | 已确认 |",
+          "kind": "format",
+          "value": "格式指标分母（length_of_stay非缺失记录数）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 122,
+          "text": "| F6 | total_cost格式不合法率 | total_cost非数值记录数 | 格式指标分母（total_cost非缺失记录数） | 一次出院记录 | total_cost非缺失记录 | 已确认 |",
+          "kind": "format",
+          "value": "格式指标分母（total_cost非缺失记录数）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 124,
+          "text": "| C1 | 出院日早于入院日率 | discharge_date < admission_date记录数 | 跨字段一致性指标分母 | 一次出院记录 | 两日期均非缺失且格式合法 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "跨字段一致性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2420,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R1-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "6682c59066664d139a93597b7c99edf3b139775487a2f48794ac5e05e10fc237",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2568,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R1-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "173d03c6f53009977e22fad830b9dddc407450f9c9282836cee0cbdd5ab16ae0",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 92,
+          "text": "| 各字段缺失率 | 该字段缺失的记录数 | 所有有效出院记录 | 一次出院记录 | 去重后全部记录 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 93,
+          "text": "| 各字段格式不合法率 | 该字段格式不合法的记录数 | 该字段非缺失的记录数 | 一次出院记录 | 去重后该字段非缺失记录 |",
+          "kind": "format",
+          "value": "该字段非缺失的记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 94,
+          "text": "| 日期逻辑不一致率 | 出院早于入院的记录数 | 两日期均通过格式校验的记录数 | 一次出院记录 | 两日期均非缺失且格式合法 |",
+          "kind": "consistency",
+          "value": "两日期均通过格式校验的记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2123,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R1-direct_matched-m2-r1",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "c610cf215b0ff04ec9a4eb072ea7055e06eb94894e27e1f418edd7ae2f30a951",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": true,
+      "rows": [
+        {
+          "line": 111,
+          "text": "| 住院日缺失率 | 住院日缺失记录数 | 完整性分母：所有有效出院记录（含该字段缺失记录） | 一次出院记录 | 去重后满足时间和对象范围的记录 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "完整性分母：所有有效出院记录（含该字段缺失记录）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 112,
+          "text": "| 性别代码缺失率 | 性别代码缺失记录数 | 完整性分母：所有有效出院记录 | 一次出院记录 | 同上 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "完整性分母：所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 113,
+          "text": "| 主要诊断缺失率 | 主要诊断缺失记录数 | 完整性分母：所有有效出院记录 | 一次出院记录 | 同上 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "完整性分母：所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 114,
+          "text": "| 入院日期格式错误率 | 入院日期格式不合法记录数 | 完整性分母：所有有效出院记录 | 一次出院记录 | 同上 | 分母已确认 |",
+          "kind": "format",
+          "value": "完整性分母：所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 115,
+          "text": "| 出院日期格式错误率 | 出院日期格式不合法记录数 | 完整性分母：所有有效出院记录 | 一次出院记录 | 同上 | 分母已确认 |",
+          "kind": "format",
+          "value": "完整性分母：所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 116,
+          "text": "| 出院日早于入院日率 | 出院日早于入院日记录数 | 跨字段一致性分母：**待确认** | 一次出院记录 | 两日期均非缺失且格式合法的记录 | 分母待确认，计算暂停 |",
+          "kind": "consistency",
+          "value": "跨字段一致性分母：待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 117,
+          "text": "| 住院日与日期差一致性 | 待确认 | 跨字段一致性分母：**待确认** | 一次出院记录 | 待确认 | 待确认 |",
+          "kind": "consistency",
+          "value": "跨字段一致性分母：待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 118,
+          "text": "| A医院2022年完整性指标 | 各字段缺失数 | 完整性分母：所有有效出院记录 | 一次出院记录 | A医院2022年去重后记录 | 覆盖度待确认，结果标注待确认 |",
+          "kind": "completeness",
+          "value": "完整性分母：所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 3365,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R2-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "06224051cdcc49b6ea2aab52ea7021f5828dabad9509912c75a215ead95bad0d",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 76,
+          "text": "| 缺失率 | 该字段缺失记录数 | 应填该字段有效出院记录数 | 一次出院记录 | 按指标定 |",
+          "kind": "completeness",
+          "value": "应填该字段有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 77,
+          "text": "| 格式不合法率 | 格式错误记录数 | 有值记录数 | 一次出院记录 | 有值记录 |",
+          "kind": "format",
+          "value": "有值记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 78,
+          "text": "| 逻辑不一致率 | 违反规则记录数 | 相关字段均有效记录数 | 一次出院记录 | 两字段均有效 |",
+          "kind": "consistency",
+          "value": "相关字段均有效记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1527,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R2-direct-m1-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "c24c715acc9653fdf8d59c484ff1dfe7793d8180a2008011fad1992ccc642f17",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 61,
+          "text": "| 缺失率_住院日 | 住院日缺失记录数 | 完整性指标分母_待确认 | 出院记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母_待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 62,
+          "text": "| 缺失率_费用 | 费用缺失记录数 | 完整性指标分母_待确认 | 出院记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母_待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 63,
+          "text": "| 格式不合法率_日期 | 日期格式不合法记录数 | 完整性指标分母_待确认 | 出院记录 | 分母待确认 |",
+          "kind": "format",
+          "value": "完整性指标分母_待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 64,
+          "text": "| 逻辑不一致率_出入院 | 出院日早于入院日记录数 | 一致性指标分母_待确认 | 出院记录 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "一致性指标分母_待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1400,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R2-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "1dbc6c857b16f5fed48222574159105139bbcce11372fdc507782b0c0ec2cd7d",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": true,
+      "rows": [
+        {
+          "line": 66,
+          "text": "| 字段缺失率 | 该字段缺失的有效记录数 | 所有有效出院记录数（已确认，含该字段缺失记录） | 一次出院记录 | 去重后满足研究时间和对象范围的记录 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录数（已确认，含该字段缺失记录）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 67,
+          "text": "| 日期格式不合法率 | 日期格式不合法的有效记录数 | 所有有效出院记录数（已确认） | 一次出院记录 | 同上 | 分母已确认 |",
+          "kind": "format",
+          "value": "所有有效出院记录数（已确认）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 68,
+          "text": "| 性别代码格式不合法率 | 性别代码不在允许集合的有效记录数 | 所有有效出院记录数（已确认） | 一次出院记录 | 同上 | 分母已确认 |",
+          "kind": "format",
+          "value": "所有有效出院记录数（已确认）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 69,
+          "text": "| 出院日早于入院日率 | 出院日早于入院日的有效记录数 | 待确认（须按该逻辑规则适用记录核实） | 一次出院记录 | 待确认 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "待确认（须按该逻辑规则适用记录核实）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2077,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R2-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "7eb08327ef2719a93beef9a39409fbfaa0e61fee45aeee066b2eadc4451631e1",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1807,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R2-direct_matched-m1-r1",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "7781ad4a30d195a24638180893cb748635589488de1c9960ef824ce99d113943",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": true,
+      "rows": [
+        {
+          "line": 70,
+          "text": "| 字段缺失率 | 该字段缺失记录数 | 有效出院记录数 | 一次出院记录 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 71,
+          "text": "| 日期格式不合法率 | 日期格式不合法记录数 | 有效出院记录数 | 一次出院记录 | 分母已确认 |",
+          "kind": "format",
+          "value": "有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 72,
+          "text": "| 出院早于入院不一致率 | 出院日早于入院日记录数 | 待确认 | 一次出院记录 | 分母待确认，暂停计算 |",
+          "kind": "consistency",
+          "value": "待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1887,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R2-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "6a23df1d25fe75b8269bbe49973bc08fe528ae40252785da15a319c6bb585a4d",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 134,
+          "text": "| Q1 | 记录标识缺失率 | record_id为空的记录数 | 去重前全部导入记录数 | 记录 | 全部导入记录 |",
+          "kind": "completeness",
+          "value": "去重前全部导入记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 135,
+          "text": "| Q2 | 主要诊断缺失率 | principal_diagnosis为空的记录数 | 去重后有效出院记录数 | 记录 | 去重后全部记录 |",
+          "kind": "completeness",
+          "value": "去重后有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 136,
+          "text": "| Q3 | 性别代码缺失率 | gender_code为空或UNKNOWN的记录数 | 去重后有效出院记录数 | 记录 | 去重后全部记录 |",
+          "kind": "completeness",
+          "value": "去重后有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 137,
+          "text": "| Q4 | 住院日缺失率 | length_of_stay为空的记录数 | 去重后有效出院记录数 | 记录 | 去重后全部记录 |",
+          "kind": "completeness",
+          "value": "去重后有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 138,
+          "text": "| Q5 | 费用缺失率 | total_cost为空的记录数 | 去重后有效出院记录数 | 记录 | 去重后全部记录 |",
+          "kind": "completeness",
+          "value": "去重后有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 139,
+          "text": "| Q6 | 入院日期格式不合法率 | admission_date不符合YYYY-MM-DD的记录数 | 入院日期非空的去重后记录数 | 记录 | 入院日期非空记录 |",
+          "kind": "format",
+          "value": "入院日期非空的去重后记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 140,
+          "text": "| Q7 | 出院日期格式不合法率 | discharge_date不符合YYYY-MM-DD的记录数 | 出院日期非空的去重后记录数 | 记录 | 出院日期非空记录 |",
+          "kind": "format",
+          "value": "出院日期非空的去重后记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 141,
+          "text": "| Q8 | 年龄格式不合法率 | age非数值或负值的记录数 | 年龄非空的去重后记录数 | 记录 | 年龄非空记录 |",
+          "kind": "format",
+          "value": "年龄非空的去重后记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 142,
+          "text": "| Q9 | 住院日格式不合法率 | length_of_stay非数值或负值的记录数 | 住院日非空的去重后记录数 | 记录 | 住院日非空记录 |",
+          "kind": "format",
+          "value": "住院日非空的去重后记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 143,
+          "text": "| Q10 | 费用格式不合法率 | total_cost非数值或负值的记录数 | 费用非空的去重后记录数 | 记录 | 费用非空记录 |",
+          "kind": "format",
+          "value": "费用非空的去重后记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 144,
+          "text": "| Q11 | 性别代码格式不合法率 | gender_code不在字典值域内的记录数 | 性别代码非空且非UNKNOWN的去重后记录数 | 记录 | 性别代码非空且非UNKNOWN记录 |",
+          "kind": "format",
+          "value": "性别代码非空且非UNKNOWN的去重后记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 145,
+          "text": "| Q12 | 日期逻辑不一致率 | 出院日期早于入院日期的记录数 | 两日期均非空且格式合法的去重后记录数 | 记录 | 两日期均非空且格式合法记录 |",
+          "kind": "consistency",
+          "value": "两日期均非空且格式合法的去重后记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2945,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R2-direct-m2-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "9247572c54dd6cf3a0cade4af6ff08c2941b010057ac1aa910ac25aa43c49fb1",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 112,
+          "text": "| 住院日缺失率 | 住院日缺失记录数 | 完整性指标分母 | 记录 | 待确认 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 113,
+          "text": "| 住院日格式不合法率 | 住院日负数记录数 | 完整性指标分母 | 记录 | 待确认 | 分母待确认 |",
+          "kind": "format",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 114,
+          "text": "| 费用缺失率 | 费用缺失记录数 | 完整性指标分母 | 记录 | 待确认 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 115,
+          "text": "| 费用格式不合法率 | 费用负数记录数 | 完整性指标分母 | 记录 | 待确认 | 分母待确认 |",
+          "kind": "format",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 116,
+          "text": "| 性别缺失率 | 性别为空或UNKNOWN记录数 | 完整性指标分母 | 记录 | 待确认 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 117,
+          "text": "| 性别格式不合法率 | 性别在允许值集合外记录数 | 完整性指标分母 | 记录 | 待确认 | 分母待确认 |",
+          "kind": "format",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 118,
+          "text": "| 日期逻辑不一致率 | 出院早于入院记录数 | 跨字段一致性指标分母 | 记录 | 两日期均非空且格式合法 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "跨字段一致性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 119,
+          "text": "| 年龄格式不合法率 | 年龄负数或非整数记录数 | 完整性指标分母 | 记录 | 待确认 | 分母待确认 |",
+          "kind": "format",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 120,
+          "text": "| 主要诊断缺失率 | 主要诊断缺失记录数 | 完整性指标分母 | 记录 | 待确认 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 3442,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R2-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "7c4ffad5af982d2b0a37052218e6bb51cf7ffc4505c14e17826af565e00a402f",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": true,
+      "rows": [
+        {
+          "line": 112,
+          "text": "| 主要诊断缺失率 | 主要诊断缺失的记录数 | 所有有效出院记录（含该字段缺失记录） | 医院—年度 | 有效记录 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录（含该字段缺失记录）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 113,
+          "text": "| 年龄缺失率 | 年龄缺失的记录数 | 所有有效出院记录（含该字段缺失记录） | 医院—年度 | 有效记录 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录（含该字段缺失记录）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 114,
+          "text": "| 性别代码缺失率 | 性别代码缺失的记录数 | 所有有效出院记录（含该字段缺失记录） | 医院—年度 | 有效记录 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录（含该字段缺失记录）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 115,
+          "text": "| 住院日缺失率 | 住院日缺失的记录数 | 所有有效出院记录（含该字段缺失记录） | 医院—年度 | 有效记录 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录（含该字段缺失记录）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 116,
+          "text": "| 费用缺失率 | 费用缺失的记录数 | 所有有效出院记录（含该字段缺失记录） | 医院—年度 | 有效记录 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录（含该字段缺失记录）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 117,
+          "text": "| 日期格式不合法率 | 入院或出院日期无法解析的记录数 | 所有有效出院记录 | 医院—年度 | 有效记录 | 分母已确认 |",
+          "kind": "format",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 118,
+          "text": "| 出院早于入院率 | 出院日早于入院日的记录数 | 待确认：按该逻辑规则的适用记录核实 | 医院—年度 | 两日期均可解析的有效记录 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "待确认：按该逻辑规则的适用记录核实",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 3646,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R2-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "72c80c02e392731181ee6bb5c7e5df2ec56f2d08c7a7f269edfa499695e3b0a7",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 118,
+          "text": "| 字段缺失率（完整性） | 该字段缺失的记录数 | 所有有效出院记录数 | 记录 | 去重后满足研究时间和对象范围的全部记录，不因该字段缺失排除 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 119,
+          "text": "| 字段格式不合法率 | 该字段格式不合法的记录数 | 该字段非缺失的记录数 | 记录 | 该字段通过缺失校验的记录 |",
+          "kind": "format",
+          "value": "该字段非缺失的记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 120,
+          "text": "| 出院日早于入院日不一致率 | 出院日早于入院日的记录数 | 待定 | 记录 | 两日期均通过格式校验的记录 |",
+          "kind": "consistency",
+          "value": "待定",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 3261,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "flash",
+      "id": "CF-RESEARCH-L-R2-direct_matched-m2-r1",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "8dbe377d08bdaac760e19e13d4be2aa0cad116ac128ea8d4d05f374f3ff43130",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 90,
+          "text": "| 字段缺失率（完整性） | 该字段缺失或UNKNOWN的记录数 | 完整性指标分母：待确认 | 一次出院记录 | 去重后研究范围内记录，不因该字段缺失排除 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母：待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 91,
+          "text": "| 日期格式不合法率 | 日期格式不合法的记录数 | 完整性指标分母：待确认 | 一次出院记录 | 去重后研究范围内记录 | 分母待确认 |",
+          "kind": "format",
+          "value": "完整性指标分母：待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 92,
+          "text": "| 出院日早于入院日率 | 出院日早于入院日的记录数 | 一致性指标分母：待确认 | 一次出院记录 | 两日期均格式合法的记录 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "一致性指标分母：待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2757,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R1-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "43212fa6dbb500c60f39d4c37d23daee0e76c76452c3998543531ad375226ad2",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 82,
+          "text": "| 缺失率 | 字段为空记录数 | 应填记录数 | 出院记录 | 有效出院记录 |",
+          "kind": "completeness",
+          "value": "应填记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 83,
+          "text": "| 格式不合法率 | 格式错误记录数 | 有值记录数 | 出院记录 | 有值记录 |",
+          "kind": "format",
+          "value": "有值记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 84,
+          "text": "| 逻辑不一致率 | 出院<入院记录数 | 两字段均可解析记录数 | 出院记录 | 可解析记录 |",
+          "kind": "consistency",
+          "value": "两字段均可解析记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1651,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R1-direct-m1-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "39a6fb0196f3de51226a8e3beae587d9debb26ec8c19225fc565d36a033bac69",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 41,
+          "text": "| 缺失率_字段X | 字段X缺失记录数 | 完整性指标分母_待确认 | 一次出院记录 | 按医院、年份纳入 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母_待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 42,
+          "text": "| 格式不合法率_日期 | 日期格式不合法记录数 | 日期字段有值记录数 | 一次出院记录 | 按医院、年份纳入 | 已定义 |",
+          "kind": "format",
+          "value": "日期字段有值记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 43,
+          "text": "| 逻辑不一致率_出入院 | 出院日早于入院日记录数 | 跨字段一致性指标分母_待确认 | 一次出院记录 | 两字段均有值 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "跨字段一致性指标分母_待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1589,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R1-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "779a89f35f8dac45f1e3d3d906a3a4e48c17ecc7288a39e573a5fddd9e18c335",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": true,
+      "rows": [
+        {
+          "line": 36,
+          "text": "| 字段缺失率 | 该字段缺失记录数 | 所有有效出院记录 | 出院记录 | 去重后满足时间与对象范围 | 已确认 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 37,
+          "text": "| 格式不合法率 | 该字段格式不合法记录数 | 所有有效出院记录 | 出院记录 | 同上 | 已确认 |",
+          "kind": "format",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 38,
+          "text": "| 跨字段一致性异常率 | 该逻辑规则异常记录数 | 待确认 | 出院记录 | 按各规则适用记录核实 | 待确认 |",
+          "kind": "consistency",
+          "value": "待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1774,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R1-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "358a039c58d40e0389c1dc5e5a6ad13a772d1dced00d1f18f73844e4d5004fa8",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1896,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R1-direct_matched-m1-r1",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "2b2e7cf807e7939e9b1b34bd04be79aa3d5716a67e39fdca743d70382f0501af",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": true,
+      "rows": [
+        {
+          "line": 72,
+          "text": "| 字段缺失率 | 该字段缺失记录数 | 完整性指标分母：所有有效出院记录 | 一次出院记录 | 去重后满足研究时间和对象范围 | 已确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母：所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 73,
+          "text": "| 格式不合法率 | 格式不合法记录数 | 完整性指标分母：所有有效出院记录 | 一次出院记录 | 同上 | 已确认 |",
+          "kind": "format",
+          "value": "完整性指标分母：所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 74,
+          "text": "| 跨字段一致性率 | 逻辑不一致记录数 | 跨字段一致性指标分母：待确认 | 一次出院记录 | 按各逻辑规则适用记录 | 待确认 |",
+          "kind": "consistency",
+          "value": "跨字段一致性指标分母：待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 75,
+          "text": "| 住院日缺失率 | 住院日缺失记录数 | 完整性指标分母：所有有效出院记录 | 一次出院记录 | 同上 | 已确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母：所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 76,
+          "text": "| 费用缺失率 | 费用缺失记录数 | 完整性指标分母：所有有效出院记录 | 一次出院记录 | 同上 | 已确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母：所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1460,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R1-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "e47b2b120202d57456cec51db126d3b6c9a8e900fe91589bfe6757173fe56cd1",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 17,
+          "text": "| 字段缺失率 | 该字段缺失记录数 | 全部有效出院记录数 | 记录 |",
+          "kind": "completeness",
+          "value": "全部有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 18,
+          "text": "| 格式不合法率 | 该字段格式不合法记录数 | 该字段非缺失记录数 | 记录 |",
+          "kind": "format",
+          "value": "该字段非缺失记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 19,
+          "text": "| 逻辑不一致率 | 违反该逻辑规则的记录数 | 该规则涉及字段均非缺失且格式合法的记录数 | 记录 |",
+          "kind": "consistency",
+          "value": "该规则涉及字段均非缺失且格式合法的记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 3143,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R1-direct-m2-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "36a29fb0daf5134a282d37ea9df757644c3ea4e490dbf3dc540c63e8fa6b0810",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 50,
+          "text": "| M1 | record_id缺失率 | record_id为空的记录数 | 全部出院记录数 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "全部出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 51,
+          "text": "| M2 | hospital缺失率 | hospital为空的记录数 | 全部出院记录数 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "全部出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 52,
+          "text": "| M3 | admission_date缺失率 | admission_date为空的记录数 | 全部出院记录数 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "全部出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 53,
+          "text": "| M4 | discharge_date缺失率 | discharge_date为空的记录数 | 全部出院记录数 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "全部出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 54,
+          "text": "| M5 | age缺失率 | age为空的记录数 | 全部出院记录数 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "全部出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 55,
+          "text": "| M6 | gender_code缺失率 | gender_code为空的记录数 | 全部出院记录数 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "全部出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 56,
+          "text": "| M7 | principal_diagnosis缺失率 | principal_diagnosis为空的记录数 | 全部出院记录数 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "全部出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 57,
+          "text": "| M8 | length_of_stay缺失率 | length_of_stay为空的记录数 | 全部出院记录数 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "全部出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 58,
+          "text": "| M9 | total_cost缺失率 | total_cost为空的记录数 | 全部出院记录数 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "全部出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 59,
+          "text": "| M10 | import_version缺失率 | import_version为空的记录数 | 全部出院记录数 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "全部出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 60,
+          "text": "| F1 | admission_date格式不合法率 | admission_date非空且不符合YYYY-MM-DD或非有效日期的记录数 | admission_date非空的记录数 | 记录 | admission_date非空记录 |",
+          "kind": "format",
+          "value": "admission_date非空的记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 61,
+          "text": "| F2 | discharge_date格式不合法率 | discharge_date非空且不符合YYYY-MM-DD或非有效日期的记录数 | discharge_date非空的记录数 | 记录 | discharge_date非空记录 |",
+          "kind": "format",
+          "value": "discharge_date非空的记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 62,
+          "text": "| F3 | age格式不合法率 | age非空且非非负整数的记录数 | age非空的记录数 | 记录 | age非空记录 |",
+          "kind": "format",
+          "value": "age非空的记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 63,
+          "text": "| F4 | gender_code格式不合法率 | gender_code非空且不在规定集合内的记录数 | gender_code非空的记录数 | 记录 | gender_code非空记录 |",
+          "kind": "format",
+          "value": "gender_code非空的记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 64,
+          "text": "| F5 | length_of_stay格式不合法率 | length_of_stay非空且非数值的记录数 | length_of_stay非空的记录数 | 记录 | length_of_stay非空记录 |",
+          "kind": "format",
+          "value": "length_of_stay非空的记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 65,
+          "text": "| F6 | total_cost格式不合法率 | total_cost非空且非数值的记录数 | total_cost非空的记录数 | 记录 | total_cost非空记录 |",
+          "kind": "format",
+          "value": "total_cost非空的记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 66,
+          "text": "| C1 | 出院早于入院率 | discharge_date < admission_date的记录数 | 待确认（跨字段一致性指标分母） | 记录 | 两日期均格式合法的记录 |",
+          "kind": "consistency",
+          "value": "待确认（跨字段一致性指标分母）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2418,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R1-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "8a92769fddde0d4294ccdadc51763fb1fbd0b91691fdc9e9cec685219c37c516",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 46,
+          "text": "| 各字段缺失数 | 该字段缺失的记录数 | 有效出院记录总数 | 记录 | 全部有效出院记录，不因该字段缺失排除 |",
+          "kind": "completeness",
+          "value": "有效出院记录总数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 47,
+          "text": "| 各字段缺失率 | 该字段缺失的记录数 | 有效出院记录总数 | 记录 | 同上 |",
+          "kind": "completeness",
+          "value": "有效出院记录总数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 49,
+          "text": "| 各字段格式不合法率 | 该字段格式不合法的记录数 | 有效出院记录总数 | 记录 | 同上 |",
+          "kind": "format",
+          "value": "有效出院记录总数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 52,
+          "text": "| 日期倒置不一致数 | discharge_date < admission_date的记录数 | 待确认 | 记录 | 两日期均格式合法的记录；分母待确认 |",
+          "kind": "consistency",
+          "value": "待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 53,
+          "text": "| 日期倒置不一致率 | 同上 | 待确认 | 记录 | 同上 |",
+          "kind": "consistency",
+          "value": "待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 3276,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R1-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "5c9ca58dd7c52af573a1d24d47fefca54dfcc6ced0fa568a1ecb627329669591",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 141,
+          "text": "| record_id缺失率 | record_id缺失记录数 | 所有有效出院记录 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 142,
+          "text": "| hospital格式不合法率 | hospital取值非法记录数 | 所有有效出院记录 | 记录 | 全部记录 |",
+          "kind": "format",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 143,
+          "text": "| admission_date缺失率 | 入院日期缺失记录数 | 所有有效出院记录 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 144,
+          "text": "| admission_date格式不合法率 | 入院日期格式不合法记录数 | 入院日期非缺失记录数 | 记录 | 入院日期非缺失 |",
+          "kind": "format",
+          "value": "入院日期非缺失记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 145,
+          "text": "| discharge_date缺失率 | 出院日期缺失记录数 | 所有有效出院记录 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 146,
+          "text": "| discharge_date格式不合法率 | 出院日期格式不合法记录数 | 出院日期非缺失记录数 | 记录 | 出院日期非缺失 |",
+          "kind": "format",
+          "value": "出院日期非缺失记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 147,
+          "text": "| age缺失率 | 年龄缺失记录数 | 所有有效出院记录 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 148,
+          "text": "| age格式不合法率 | 年龄非数值记录数 | 年龄非缺失记录数 | 记录 | 年龄非缺失 |",
+          "kind": "format",
+          "value": "年龄非缺失记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 149,
+          "text": "| gender_code缺失率 | 性别代码缺失记录数 | 所有有效出院记录 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 150,
+          "text": "| gender_code格式不合法率 | 性别代码取值非法记录数 | 性别代码非缺失记录数 | 记录 | 性别代码非缺失 |",
+          "kind": "format",
+          "value": "性别代码非缺失记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 152,
+          "text": "| principal_diagnosis缺失率 | 主要诊断缺失记录数 | 所有有效出院记录 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 153,
+          "text": "| principal_diagnosis格式不合法率 | 主要诊断格式不合法记录数 | 主要诊断非缺失记录数 | 记录 | 主要诊断非缺失 |",
+          "kind": "format",
+          "value": "主要诊断非缺失记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 154,
+          "text": "| length_of_stay缺失率 | 住院日缺失记录数 | 所有有效出院记录 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 155,
+          "text": "| length_of_stay格式不合法率 | 住院日非数值或负值记录数 | 住院日非缺失记录数 | 记录 | 住院日非缺失 |",
+          "kind": "format",
+          "value": "住院日非缺失记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 156,
+          "text": "| total_cost缺失率 | 费用缺失记录数 | 所有有效出院记录 | 记录 | 全部记录 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 157,
+          "text": "| total_cost格式不合法率 | 费用非数值记录数 | 费用非缺失记录数 | 记录 | 费用非缺失 |",
+          "kind": "format",
+          "value": "费用非缺失记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 159,
+          "text": "| 出院早于入院不一致率 | 出院日期早于入院日期记录数 | 待确认（两日期均非缺失且格式合法的记录） | 记录 | 两日期均非缺失且格式合法 |",
+          "kind": "consistency",
+          "value": "待确认（两日期均非缺失且格式合法的记录）",
+          "pending": true,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 3479,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R1-direct_matched-m2-r1",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "4b850c09c22ea9cde064418489aa3c6491ffd6edb4eaf639e04259228f2418bb",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 46,
+          "text": "| M1 | 字段缺失率（分字段） | 该字段缺失的记录数 | **完整性指标分母（待确认）** | 一次出院记录 | 待确认参数确定后适用 |",
+          "kind": "completeness",
+          "value": "完整性指标分母（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 48,
+          "text": "| F1 | 日期格式不合法率（分入院/出院） | 该日期字段格式不合法的记录数 | **格式指标分母（待确认）** | 一次出院记录 | 待确认参数确定后适用 |",
+          "kind": "format",
+          "value": "格式指标分母（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 49,
+          "text": "| F2 | 年龄格式不合法率 | age格式不合法的记录数 | **格式指标分母（待确认）** | 一次出院记录 | 待确认参数确定后适用 |",
+          "kind": "format",
+          "value": "格式指标分母（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 50,
+          "text": "| F3 | 性别代码格式不合法率 | gender_code在字典外且非UNKNOWN的记录数 | **格式指标分母（待确认）** | 一次出院记录 | 待确认参数确定后适用 |",
+          "kind": "format",
+          "value": "格式指标分母（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 51,
+          "text": "| F4 | 主要诊断格式不合法率 | principal_diagnosis形态不符的记录数 | **格式指标分母（待确认）** | 一次出院记录 | 待确认参数确定后适用 |",
+          "kind": "format",
+          "value": "格式指标分母（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 52,
+          "text": "| F5 | 住院日格式不合法率 | length_of_stay为负数、小数或非数值的记录数 | **格式指标分母（待确认）** | 一次出院记录 | 待确认参数确定后适用 |",
+          "kind": "format",
+          "value": "格式指标分母（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 53,
+          "text": "| F6 | 费用格式不合法率 | total_cost为负数或非数值的记录数 | **格式指标分母（待确认）** | 一次出院记录 | 待确认参数确定后适用 |",
+          "kind": "format",
+          "value": "格式指标分母（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 54,
+          "text": "| L1 | 出院早于入院不一致率 | discharge_date < admission_date的记录数 | **跨字段一致性指标分母（待确认）** | 一次出院记录 | 待确认参数确定后适用 |",
+          "kind": "consistency",
+          "value": "跨字段一致性指标分母（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 3396,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R2-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "6245d58cd23918eba274b62e729070e867849c60a99c74fcd474314aa0082a44",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 82,
+          "text": "| 缺失率 | 字段缺失记录数 | 应填该字段的有效出院记录 | 出院记录 | 按年度、医院 |",
+          "kind": "completeness",
+          "value": "应填该字段的有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 83,
+          "text": "| 格式不合法率 | 格式错误记录数 | 应填该字段的有效出院记录 | 出院记录 | 按年度、医院 |",
+          "kind": "format",
+          "value": "应填该字段的有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 84,
+          "text": "| 逻辑不一致率 | 逻辑不一致记录数 | 相关字段均有效的记录 | 出院记录 | 按年度、医院 |",
+          "kind": "consistency",
+          "value": "相关字段均有效的记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1730,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R2-direct-m1-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "1df0554e75c25b5f2017f573a4f1ddc00cd77b107ff6613bc81dca5dd2c9b69a",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 34,
+          "text": "| 缺失率 | 该字段缺失记录数 | 完整性指标分母（待确认） | 出院记录 | 有效出院记录 | 分母待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 35,
+          "text": "| 格式不合法率 | 该字段格式不合法记录数 | 完整性指标分母（待确认） | 出院记录 | 有效出院记录 | 分母待确认 |",
+          "kind": "format",
+          "value": "完整性指标分母（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 36,
+          "text": "| 逻辑不一致率 | 出院早于入院记录数 | 跨字段一致性指标分母（待确认） | 出院记录 | 两日期均有效记录 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "跨字段一致性指标分母（待确认）",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1871,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R2-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "1ce133986473f0b31f4f8f4aed383e2d86e04adf94022f3fa11e7bf9f1f49f4f",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": true,
+      "rows": [
+        {
+          "line": 44,
+          "text": "| 完整性-字段缺失率 | 该字段缺失记录数 | 所有有效出院记录 | 一次出院记录 | 去重后满足时间与对象范围 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 45,
+          "text": "| 格式不合法率 | 该字段格式不合法记录数 | 所有有效出院记录 | 一次出院记录 | 同上 | 分母已确认 |",
+          "kind": "format",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 46,
+          "text": "| 跨字段一致性率 | 逻辑一致记录数 | 待确认 | 一次出院记录 | 按各逻辑规则适用记录 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1787,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R2-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "62890d6e15a3fc448fac45f5b9267d48645dd0ab76b9c30f5d26b05211e44448",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 85,
+          "text": "| 字段缺失率 | 该字段缺失记录数 | 有效出院记录数 | 出院记录 | 去重后有效记录 |",
+          "kind": "completeness",
+          "value": "有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 86,
+          "text": "| 格式不合法率 | 格式错误记录数 | 该字段有值记录数 | 出院记录 | 有值记录 |",
+          "kind": "format",
+          "value": "该字段有值记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 87,
+          "text": "| 日期逻辑不一致率 | 出院<入院记录数 | 两日期均有效记录数 | 出院记录 | 两日期有效 |",
+          "kind": "consistency",
+          "value": "两日期均有效记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1575,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R2-direct_matched-m1-r1",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "6b5ecf4f546a32075b3d0ce07278705c308475fbeff1437afad8020aff568f31",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 38,
+          "text": "| 缺失率（各字段） | 该字段缺失记录数 | 所有有效出院记录 | 一次出院 | 去重后满足时间与对象范围 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 39,
+          "text": "| 格式不合法率（各字段） | 该字段格式不合法记录数 | 待确认 | 一次出院 | 待确认 | 分母待确认 |",
+          "kind": "format",
+          "value": "待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 40,
+          "text": "| 逻辑不一致率（出院早于入院） | 逻辑不一致记录数 | 待确认 | 一次出院 | 两日期均有效 | 分母待确认 |",
+          "kind": "consistency",
+          "value": "待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 1608,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R2-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "7033d1acfbe9035554da54ef869ba81060c0766c860971c278b6ed3f5bdc281a",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2175,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R2-direct-m2-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "0dc7cf27c1e3019709fbeac78076b10550886d51ded757af81aa09fcfb59b34d",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": true,
+      "rows": [
+        {
+          "line": 19,
+          "text": "| 字段缺失率 | 该字段缺失记录数 | 完整性指标分母 | 待确认 |",
+          "kind": "completeness",
+          "value": "完整性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 20,
+          "text": "| 格式不合法率 | 该字段格式不合法记录数 | 该字段非缺失记录数 | 已确认 |",
+          "kind": "format",
+          "value": "该字段非缺失记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 21,
+          "text": "| 逻辑不一致率 | 存在逻辑不一致的记录数 | 跨字段一致性指标分母 | 待确认 |",
+          "kind": "consistency",
+          "value": "跨字段一致性指标分母",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2456,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R2-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "f514e16db4f980cecfad15b78fb3f44926135aab9885aabeb5043eefe24d88c3",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": true,
+      "rows": [
+        {
+          "line": 123,
+          "text": "| 字段完整性（逐字段） | 该字段非缺失记录数 | 所有有效出院记录（去重后满足时间与对象范围，不因该字段缺失排除） | 一次出院记录 | 全部有效出院记录 | 分母已确认 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录（去重后满足时间与对象范围，不因该字段缺失排除）",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 124,
+          "text": "| 字段格式合法性（逐字段） | 该字段格式合法记录数 | 该字段非缺失记录数 | 一次出院记录 | 该字段非缺失的有效出院记录 | 分母已确认 |",
+          "kind": "format",
+          "value": "该字段非缺失记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": true
+        },
+        {
+          "line": 125,
+          "text": "| 日期顺序一致性 | 出院日期早于入院日期的记录数 | 待确认 | 一次出院记录 | 待确认 | 分母待确认，确认前停止计算 |",
+          "kind": "consistency",
+          "value": "待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2884,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R2-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "5c786dc9ec5ead4af8ebdd256445dc7c24463f1902f7fc232d66566416875b1b",
+      "independentConsistencyParameterTable": false,
+      "completenessMatchesCurrentState": false,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 3176,
+      "requiresNarrativeAndPseudocodeReview": true
+    },
+    {
+      "optimizer": "pro",
+      "id": "CF-RESEARCH-L-R2-direct_matched-m2-r1",
+      "arm": "direct_matched",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "62e75d01e5c99aa3dd5213adf813bc0e598027de88ade95e2816ee62179175ed",
+      "independentConsistencyParameterTable": true,
+      "completenessMatchesCurrentState": true,
+      "derivedFormatFalselyClaimsUserConfirmation": false,
+      "rows": [
+        {
+          "line": 21,
+          "text": "| 字段缺失率 | 某字段缺失记录数 | 所有有效出院记录数 | 记录 | 去重后满足研究时间与对象范围的记录，不因该字段缺失而排除 |",
+          "kind": "completeness",
+          "value": "所有有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 22,
+          "text": "| 格式不合法率 | 某字段格式不合法记录数 | 所有有效出院记录数 | 记录 | 同上 |",
+          "kind": "format",
+          "value": "所有有效出院记录数",
+          "pending": false,
+          "concrete": true,
+          "purePending": false,
+          "claimsConfirmed": false
+        },
+        {
+          "line": 23,
+          "text": "| 逻辑不一致率 | 某规则触发记录数 | **待确认** | 记录 | 待确认；须按各逻辑规则的适用记录核实，不自动继承完整性分母 |",
+          "kind": "consistency",
+          "value": "待确认",
+          "pending": true,
+          "concrete": false,
+          "purePending": true,
+          "claimsConfirmed": false
+        }
+      ],
+      "nonWhitespaceBodyCharactersExcludingHeadingsAndTables": 2338,
+      "requiresNarrativeAndPseudocodeReview": true
+    }
+  ]
+}

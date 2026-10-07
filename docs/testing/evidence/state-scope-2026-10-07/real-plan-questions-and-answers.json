@@ -1,0 +1,1008 @@
+[
+  {
+    "modelId": "deepseek:deepseek-flash",
+    "caseId": "CF-RESEARCH-L-R1",
+    "questions": [
+      {
+        "id": "q_completeness_denominator",
+        "question": "完整性指标的统计分母应如何确定？",
+        "hint": "完整性指标的分母直接决定缺失率高低，且资料明确完整性指标分母与一致性指标分母需分别确定，不能互相套用。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "all_valid_discharge",
+            "label": "全部有效出院记录",
+            "description": "以去重清洗后、纳入研究范围的全部有效出院记录为分母，缺失记录仍保留在分母中。",
+            "answer": "完整性指标分母采用去重清洗后纳入研究范围的全部有效出院记录，缺失记录保留在分母中。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "records_with_field_applicable",
+            "label": "该字段适用记录",
+            "description": "仅以该字段理论上应填写的记录为分母，不适用记录排除。",
+            "answer": "完整性指标分母采用该字段适用记录，不适用记录排除在分母之外。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "per_indicator_defined",
+            "label": "逐指标分别定义",
+            "description": "每个完整性指标单独规定分母，并在指标表中写明。",
+            "answer": "完整性指标分母逐指标分别定义，并在指标表中写明每个指标的分母口径。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_consistency_denominator",
+        "question": "跨字段逻辑一致性指标的统计分母应如何确定？",
+        "hint": "一致性指标分母与完整性指标分母需分别确定，不能因完整性分母已定而默认一致。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "all_valid_discharge",
+            "label": "全部有效出院记录",
+            "description": "以去重清洗后、纳入研究范围的全部有效出院记录为分母，不因某字段缺失而排除。",
+            "answer": "跨字段逻辑一致性指标分母采用去重清洗后纳入研究范围的全部有效出院记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "records_with_both_fields",
+            "label": "涉及字段均非缺失的记录",
+            "description": "仅以参与该一致性规则的字段均非缺失的记录为分母。",
+            "answer": "跨字段逻辑一致性指标分母采用参与该一致性规则的字段均非缺失的记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "per_rule_defined",
+            "label": "逐规则分别定义",
+            "description": "每条跨字段逻辑规则单独规定分母，并在规则表中写明。",
+            "answer": "跨字段逻辑一致性指标分母逐规则分别定义，并在规则表中写明每条规则的分母口径。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_missing_imputation",
+        "question": "缺失病例是否采用插补处理？",
+        "hint": "是否插补会影响指标结果和解释边界，且用户明确尚未决定，不同指标可能采用不同处理，不能默认统一插补。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "no_imputation",
+            "label": "不插补",
+            "description": "缺失保持缺失状态，不进行任何插补，指标计算时按各指标分母口径处理。",
+            "answer": "缺失病例不进行插补，缺失保持缺失状态，指标计算时按各指标分母口径处理。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "impute_by_indicator",
+            "label": "按指标分别决定",
+            "description": "不同指标可采用不同插补策略，需在方法方案中逐指标说明。",
+            "answer": "缺失病例按指标分别决定是否插补，并在方法方案中逐指标说明插补策略和依据。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "impute_all",
+            "label": "统一插补",
+            "description": "对所有缺失字段采用统一插补方法。",
+            "answer": "缺失病例采用统一插补方法处理。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_a_hospital_2022_coverage",
+        "question": "A医院2022年的数据覆盖度应如何说明？",
+        "hint": "A医院2022年覆盖度尚未确定，且不能被B医院的已知信息替代；该信息影响年度比较的样本量和解释边界。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "A医院2022年覆盖度未核实，在方法方案中作为未决条件列出，不参与年度比较结论。",
+          "A医院2022年覆盖度已知为XX%，需在方法方案中注明来源和适用范围。"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "actuallySubmittedAnswers": {
+      "q_completeness_denominator": {
+        "answer": "完整性指标分母采用所有有效出院记录，包括相应字段缺失的记录；有效是指去重后满足研究时间和对象范围的记录，不因该字段缺失而排除。仅确认完整性分母，一致性指标分母仍未决定。",
+        "basis": "与前两轮相同的合成部分确认；仅确认完整性分母。"
+      },
+      "q_consistency_denominator": {
+        "answer": "暂不确定。跨字段一致性指标的分母尚未决定，不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。",
+        "basis": "与前两轮相同的独立未决口径。"
+      },
+      "q_missing_imputation": {
+        "answer": "暂不确定。是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。",
+        "basis": "完整保留三项未决状态，不默认选择专业方法。"
+      },
+      "q_a_hospital_2022_coverage": {
+        "answer": "暂不确定。A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。",
+        "basis": "与前两轮相同的医院及年份未知状态。"
+      }
+    },
+    "origin": "FINAL_STAGE_REPLAY_OF_REAL_BOUND_PLAN_FROM_CANDIDATE10"
+  },
+  {
+    "modelId": "deepseek:deepseek-flash",
+    "caseId": "CF-RESEARCH-L-R2",
+    "questions": [
+      {
+        "id": "q_completeness_denominator",
+        "question": "完整性指标（如字段缺失率）的分母应如何界定？",
+        "hint": "分母决定缺失率数值和医院间可比性，且你已说明完整性指标分母与一致性指标分母需分别确定。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "all_valid_discharge",
+            "label": "全部有效出院记录",
+            "description": "以去重清洗后纳入研究的全部有效出院记录为分母，不因某字段缺失而剔除该记录。",
+            "answer": "完整性指标分母采用去重清洗后纳入研究的全部有效出院记录，不因某字段缺失而剔除该记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "field_applicable",
+            "label": "按字段适用记录",
+            "description": "仅以该字段理论上应存在的记录为分母，不适用记录不计入。",
+            "answer": "完整性指标分母按字段适用记录界定，仅以该字段理论上应存在的记录为分母，不适用记录不计入。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "per_indicator_defined",
+            "label": "逐指标单独定义",
+            "description": "每个完整性指标分别说明其分母，不统一采用同一分母。",
+            "answer": "完整性指标不统一分母，每个指标分别说明其分子、分母和纳入记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_consistency_denominator",
+        "question": "跨字段逻辑一致性指标（如出院日早于入院日）的分母应如何界定？",
+        "hint": "一致性指标的分母可能不同于完整性指标，需单独确认，否则无法计算不一致率。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "all_valid_discharge",
+            "label": "全部有效出院记录",
+            "description": "以去重清洗后纳入研究的全部有效出院记录为分母，不因某字段缺失而剔除。",
+            "answer": "跨字段一致性指标分母采用去重清洗后纳入研究的全部有效出院记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "records_with_both_fields",
+            "label": "两字段均非缺失的记录",
+            "description": "仅以参与该一致性规则的字段均非缺失的记录为分母，缺失记录不进入分母。",
+            "answer": "跨字段一致性指标分母仅包含参与该规则的字段均非缺失的记录，缺失记录不进入分母。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "per_rule_defined",
+            "label": "逐规则单独定义",
+            "description": "每条一致性规则分别说明其分母，不统一采用同一分母。",
+            "answer": "跨字段一致性指标不统一分母，每条规则分别说明其分子、分母和纳入记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_missing_imputation",
+        "question": "对缺失病例是否采用插补？若采用，是统一插补还是按指标分别处理？",
+        "hint": "插补会改变缺失率、有效分母和医院间比较结果，你已说明是否插补尚未决定且不同指标可能不同。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "no_imputation",
+            "label": "不插补",
+            "description": "缺失保持缺失状态，不填充任何值，所有指标基于原始缺失状态计算。",
+            "answer": "不进行插补，缺失保持缺失状态，所有指标基于原始缺失状态计算。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "per_indicator_imputation",
+            "label": "按指标分别决定",
+            "description": "不同指标可采用不同处理，在方法方案中逐指标说明是否插补及理由。",
+            "answer": "是否插补按指标分别决定，在方法方案中逐指标说明是否插补及理由。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "uniform_imputation",
+            "label": "统一插补",
+            "description": "对所有缺失字段采用同一插补策略，并在方案中说明。",
+            "answer": "对所有缺失字段采用统一插补策略，并在方案中说明具体方法。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_a_hospital_2022_coverage",
+        "question": "A医院2022年的数据覆盖度目前是否已核实？若已核实，覆盖范围是什么？",
+        "hint": "A医院2022年覆盖度未核实，且不能被B医院信息替代；该事实直接影响年度比较和分母解释。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "尚未核实，方案中保持未决状态",
+          "已核实为全年完整覆盖",
+          "已核实为部分月份覆盖，具体月份待补"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "actuallySubmittedAnswers": {
+      "q_completeness_denominator": {
+        "answer": "完整性指标分母采用所有有效出院记录，包括相应字段缺失的记录；有效是指去重后满足研究时间和对象范围的记录，不因该字段缺失而排除。仅确认完整性分母，一致性指标分母仍未决定。",
+        "basis": "与前两轮相同的合成部分确认；仅确认完整性分母。"
+      },
+      "q_consistency_denominator": {
+        "answer": "暂不确定。跨字段一致性指标的分母尚未决定，不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。",
+        "basis": "与前两轮相同的独立未决口径。"
+      },
+      "q_missing_imputation": {
+        "answer": "暂不确定。是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。",
+        "basis": "完整保留三项未决状态，不默认选择专业方法。"
+      },
+      "q_a_hospital_2022_coverage": {
+        "answer": "暂不确定。A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。",
+        "basis": "与前两轮相同的医院及年份未知状态。"
+      }
+    },
+    "origin": "FINAL_STAGE_REPLAY_OF_REAL_BOUND_PLAN_FROM_CANDIDATE10"
+  },
+  {
+    "modelId": "deepseek:deepseek-flash",
+    "caseId": "RC-HOSP-M",
+    "questions": [
+      {
+        "id": "hospital_a_observation_window",
+        "question": "甲院用于比较的观察窗口如何确定？",
+        "hint": "观察窗口决定纳入哪些就诊记录，两院可能不同，需分别确认。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：2025年1月1日至2025年12月31日，按挂号时间纳入"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "hospital_b_observation_window",
+        "question": "乙院用于比较的观察窗口如何确定？",
+        "hint": "观察窗口决定纳入哪些就诊记录，两院可能不同，需分别确认。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：2025年3月1日至2025年12月31日，按挂号时间纳入"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "hospital_a_abnormal_wait_threshold",
+        "question": "甲院判定异常等待的阈值是多少？",
+        "hint": "异常等待阈值会影响异常记录统计和指标口径，资料中的60分钟仅为示例，不能作为院规。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：候诊时间超过120分钟记为异常等待"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "hospital_b_abnormal_wait_threshold",
+        "question": "乙院判定异常等待的阈值是多少？",
+        "hint": "异常等待阈值会影响异常记录统计和指标口径，两院可能不同，需分别确认。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：候诊时间超过90分钟记为异常等待"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "actuallySubmittedAnswers": {
+      "hospital_a_observation_window": {
+        "answer": "暂不确定。甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "basis": "两院窗口分别未定。"
+      },
+      "hospital_b_observation_window": {
+        "answer": "暂不确定。乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "basis": "两院窗口分别未定。"
+      },
+      "hospital_a_abnormal_wait_threshold": {
+        "answer": "暂不确定。甲院的异常等待阈值尚未决定，不采用资料中60分钟示例值；相关异常比例的计算需等待阈值确认。",
+        "basis": "两院阈值分别未定，不使用示例值。"
+      },
+      "hospital_b_abnormal_wait_threshold": {
+        "answer": "暂不确定。乙院的异常等待阈值尚未决定，不采用资料中60分钟示例值；相关异常比例的计算需等待阈值确认。",
+        "basis": "两院阈值分别未定，不使用示例值。"
+      }
+    },
+    "origin": "FINAL_STAGE_REPLAY_OF_REAL_BOUND_PLAN_FROM_CANDIDATE10"
+  },
+  {
+    "modelId": "deepseek:deepseek-flash",
+    "caseId": "PS-NOTIFY-M",
+    "questions": [
+      {
+        "id": "channel_selection",
+        "question": "本次订单审批结果通知方案启用哪些渠道？",
+        "hint": "站内信与邮件均已实现，但启用范围会直接决定方案内容、接收对象和失败处理设计。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "in_app_only",
+            "label": "仅站内信",
+            "description": "复用已有用户隔离与已读状态能力，运维成本最低，但用户需登录系统才能看到通知。",
+            "answer": "本次仅启用站内信渠道，复用现有用户隔离与已读状态实现。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确包含：站内信。请核对适用范围后选择。"
+          },
+          {
+            "id": "email_only",
+            "label": "仅邮件",
+            "description": "复用已有邮件发送服务，用户无需登录即可获知，但需处理发送失败并记为失败，且无站内已读状态。",
+            "answer": "本次仅启用邮件渠道，复用现有邮件发送服务，发送失败记为失败，不伪造送达。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "both_channels",
+            "label": "站内信与邮件同时启用",
+            "description": "两种渠道均复用现有实现，覆盖更全，但需同时维护两套失败处理与验收口径，运维成本最高。",
+            "answer": "本次同时启用站内信与邮件渠道，分别复用现有实现，并分别说明失败处理与验收。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "recipient_scope",
+        "question": "订单审批结果通知的接收对象是谁？",
+        "hint": "接收对象决定通知记录归属和用户隔离边界，是方案必须明确的事实。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "submitter_only",
+            "label": "仅订单提交人",
+            "description": "通知只发给发起订单审批的用户，范围最小、隔离最清晰。",
+            "answer": "通知接收对象为订单提交人。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "submitter_and_approver",
+            "label": "订单提交人与审批人",
+            "description": "提交人获知结果，审批人获知自己参与审批的订单结果。",
+            "answer": "通知接收对象为订单提交人与审批人。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "submitter_and_related",
+            "label": "订单提交人及相关业务人员",
+            "description": "除提交人外，还包括业务上需要知悉审批结果的相关人员。",
+            "answer": "通知接收对象为订单提交人及相关业务人员。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "failure_handling",
+        "question": "通知发送失败时，方案应采用哪种处理口径？",
+        "hint": "现有邮件能力要求发送失败记为失败、不伪造送达；站内信与邮件的失败处理可能不同，需明确方案口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "record_failure_no_retry",
+            "label": "记录失败，不自动重试",
+            "description": "失败即记为失败状态，不伪造送达，由人工或后续机制处理。",
+            "answer": "通知发送失败时记为失败，不伪造送达，不自动重试。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "record_failure_with_retry",
+            "label": "记录失败并自动重试",
+            "description": "失败先记为失败，再按既定策略自动重试，仍失败则保留失败状态。",
+            "answer": "通知发送失败时记为失败，不伪造送达，并按既定策略自动重试，仍失败则保留失败状态。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "channel_specific",
+            "label": "按渠道分别定义失败处理",
+            "description": "站内信与邮件采用不同的失败处理口径，方案中分别说明。",
+            "answer": "通知发送失败处理按渠道分别定义：站内信与邮件各自说明失败记录与后续处理方式，均不伪造送达。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "actuallySubmittedAnswers": {
+      "channel_selection": {
+        "answer": "本次仅启用站内信渠道，复用现有用户隔离与已读状态实现。",
+        "basis": "合成验收在此实际提交业务选择，推荐与确认分开；使用本轮已审阅的原始选项，未增加专业口径。"
+      },
+      "recipient_scope": {
+        "answer": "暂不确定。订单审批结果通知的接收对象尚未决定，不能因为已选择站内信就自动增加审批人或相关业务人员。现有用户隔离继续有效。",
+        "basis": "已审阅本轮真实问题；原需求未限定收件人，作为独立业务选择保留，不自动挑选范围最小选项。"
+      },
+      "failure_handling": {
+        "answer": "本次仅使用站内信，执行者核查现有失败记录与重试能力，不伪造成功。暂不确定。站内信自动重试是否启用及重试上限尚未决定；不能从邮件现状推断本次站内信的默认重试政策。",
+        "basis": "已审阅本轮失败口径问题，记录真实选择；未知重试政策保持未决，不把邮件规则跨渠道确认为站内信政策。"
+      }
+    },
+    "origin": "FINAL_STAGE_REPLAY_OF_REAL_BOUND_PLAN_FROM_CANDIDATE10"
+  },
+  {
+    "modelId": "deepseek:deepseek-flash",
+    "caseId": "PS-STORAGE-M",
+    "questions": [
+      {
+        "id": "attachment_storage",
+        "question": "本次附件保存位置采用哪种方案？",
+        "hint": "现有凭证已实际使用 MinIO，但新增附件尚未实现；存储位置会直接决定方案中的依赖、部署和维护边界。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "minio",
+            "label": "沿用 MinIO",
+            "description": "附件与现有凭证使用同一类对象存储，减少额外存储维护。",
+            "answer": "本次附件保存沿用 MinIO。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确包含：minio。请核对适用范围后选择。"
+          },
+          {
+            "id": "local_dir",
+            "label": "独立本地目录",
+            "description": "附件保存到订单服务可管理的独立本地目录，不沿用 MinIO。",
+            "answer": "本次附件保存采用独立本地目录。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "attachment_authorization",
+        "question": "附件只对对应订单的授权用户开放，这里的“授权用户”具体指哪些人？",
+        "hint": "权限边界会决定方案中的访问校验规则和验收清单，需要明确可访问附件的用户范围。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "仅订单所属用户本人",
+          "订单所属用户本人及订单服务中已授权的客服角色",
+          "订单所属用户本人及管理员"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "failure_retry_behavior",
+        "question": "附件保存失败后的重试行为，方案需要按哪种口径设计？",
+        "hint": "失败与重试行为是本次交付范围之一，不同口径会影响方案中的状态记录、重试策略和验收清单。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "no_auto_retry",
+            "label": "不自动重试",
+            "description": "保存失败即返回失败，不生成成功记录，由调用方决定是否重新发起。",
+            "answer": "附件保存失败后不自动重试，失败时不生成成功记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "limited_auto_retry",
+            "label": "有限次自动重试",
+            "description": "保存失败后按固定次数自动重试，仍失败则返回失败且不生成成功记录。",
+            "answer": "附件保存失败后按有限次自动重试，仍失败则返回失败且不生成成功记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "async_retry",
+            "label": "异步重试",
+            "description": "保存失败后进入异步重试流程，最终失败时不生成成功记录。",
+            "answer": "附件保存失败后进入异步重试流程，最终失败时不生成成功记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "actuallySubmittedAnswers": {
+      "attachment_storage": {
+        "answer": "本次附件保存沿用 MinIO。",
+        "basis": "合成验收在此实际提交业务选择，推荐与确认分开；使用本轮已审阅的原始选项，未增加专业口径。"
+      },
+      "attachment_authorization": {
+        "answer": "继续复用现有订单授权校验，不改变用户隔离；是否新增被授权共享者尚未决定，不得自行增加共享角色或放开权限。",
+        "basis": "现有材料明确用户隔离，新附件是否额外共享仍未确认，安全边界与新增范围分开处理。"
+      },
+      "failure_retry_behavior": {
+        "answer": "沿用资料：失败时不生成成功记录，重试不改变订单所属用户范围。暂不确定。最大重试次数和失败后的临时文件处理策略尚未决定，方案不得把默认次数或清理策略写成已确认。执行者说明幂等与重复提交处理的必要性，并按现有接口能力核查具体方案，不声称新附件已经实现。",
+        "basis": "已审阅本輪新增的次数与临时文件政策题；现有失败规则继承，新增业务选择独立未决，不选择隐藏默认值。"
+      }
+    },
+    "origin": "FINAL_STAGE_REPLAY_OF_REAL_BOUND_PLAN_FROM_CANDIDATE10"
+  },
+  {
+    "modelId": "deepseek:deepseek-v4-pro",
+    "caseId": "CF-RESEARCH-L-R1",
+    "questions": [
+      {
+        "id": "missing_denominator",
+        "question": "完整性指标（如字段缺失率）的分母应如何定义？",
+        "hint": "不同分母会改变缺失率数值，需明确统计口径。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "all_valid_records",
+            "label": "所有有效出院记录",
+            "description": "分母为清洗后保留的全部出院记录，无论字段是否缺失。",
+            "answer": "完整性指标分母为所有有效出院记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "records_with_field_present",
+            "label": "仅含该字段的记录",
+            "description": "分母为特定字段非空的记录，缺失记录不进入分母。",
+            "answer": "完整性指标分母为特定字段非空的记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "per_field_definition",
+            "label": "按字段分别定义",
+            "description": "不同字段可指定不同分母，需在方案中逐一说明。",
+            "answer": "完整性指标分母按字段分别定义，需在方案中逐一说明。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "consistency_denominator",
+        "question": "跨字段逻辑一致性指标（如出院日期早于入院日期）的分母应如何定义？",
+        "hint": "一致性指标分母可能与完整性指标不同，需分别确定。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "all_valid_records",
+            "label": "所有有效出院记录",
+            "description": "分母为清洗后保留的全部出院记录。",
+            "answer": "一致性指标分母为所有有效出院记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "records_with_both_fields",
+            "label": "仅含相关字段的记录",
+            "description": "分母为参与逻辑检查的字段均非空的记录。",
+            "answer": "一致性指标分母为参与逻辑检查的字段均非空的记录。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "per_rule_definition",
+            "label": "按规则分别定义",
+            "description": "不同逻辑规则可指定不同分母，需在方案中逐一说明。",
+            "answer": "一致性指标分母按规则分别定义，需在方案中逐一说明。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "imputation_method",
+        "question": "是否对缺失值采用插补？若采用，请说明具体方法。",
+        "hint": "插补会影响后续统计结果，需明确是否及如何插补。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "不插补，缺失值保持缺失，仅在分析时按指标定义处理。",
+          "对数值型字段采用均值插补，分类字段采用众数插补。"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "hospital_a_2022_coverage",
+        "question": "A医院2022年的数据覆盖度如何？",
+        "hint": "覆盖度影响该年度数据的代表性和比较解释。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "A医院2022年数据覆盖全部出院病例。",
+          "A医院2022年数据仅覆盖部分科室，具体范围待核实。"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "actuallySubmittedAnswers": {
+      "missing_denominator": {
+        "answer": "完整性指标分母采用所有有效出院记录，包括相应字段缺失的记录；有效是指去重后满足研究时间和对象范围的记录，不因该字段缺失而排除。仅确认完整性分母，一致性指标分母仍未决定。",
+        "basis": "与前两轮相同的合成部分确认；仅确认完整性分母。"
+      },
+      "consistency_denominator": {
+        "answer": "暂不确定。跨字段一致性指标的分母尚未决定，不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。",
+        "basis": "与前两轮相同的独立未决口径。"
+      },
+      "imputation_method": {
+        "answer": "暂不确定。是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。",
+        "basis": "完整保留三项未决状态，不默认选择专业方法。"
+      },
+      "hospital_a_2022_coverage": {
+        "answer": "暂不确定。A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。",
+        "basis": "与前两轮相同的医院及年份未知状态。"
+      }
+    },
+    "origin": "FINAL_STAGE_REPLAY_OF_REAL_BOUND_PLAN_FROM_CANDIDATE10"
+  },
+  {
+    "modelId": "deepseek:deepseek-v4-pro",
+    "caseId": "CF-RESEARCH-L-R2",
+    "questions": [
+      {
+        "id": "coverage_a_2022",
+        "question": "A医院2022年的病案首页覆盖度如何确定？",
+        "hint": "覆盖度影响该年度数据质量的解释和比较，需要明确是已知完整、已知不完整还是待核实。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "coverage_known_complete",
+            "label": "已知完整",
+            "description": "A医院2022年数据已确认覆盖全部出院病案。",
+            "answer": "A医院2022年数据覆盖度已知完整。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "coverage_known_incomplete",
+            "label": "已知不完整",
+            "description": "A医院2022年数据已确认存在缺失，需说明缺失范围。",
+            "answer": "A医院2022年数据覆盖度已知不完整，需在方案中说明缺失范围。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "coverage_to_verify",
+            "label": "待核实",
+            "description": "A医院2022年覆盖度尚未确定，方案中保留为未决条件。",
+            "answer": "A医院2022年数据覆盖度待核实，方案中保留为未决条件。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "missing_in_denominator",
+        "question": "缺失记录是否纳入完整性指标的分母？",
+        "hint": "缺失记录的处理直接影响完整性指标的计算，需要明确是否将缺失记录计入分母。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "include_missing",
+            "label": "纳入分母",
+            "description": "缺失记录计入完整性指标的分母，以反映总体缺失情况。",
+            "answer": "缺失记录纳入完整性指标的分母。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "exclude_missing",
+            "label": "不纳入分母",
+            "description": "缺失记录不计入完整性指标的分母，仅基于有效记录计算。",
+            "answer": "缺失记录不纳入完整性指标的分母。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "missing_denominator_separate",
+            "label": "分别定义",
+            "description": "不同字段或指标的缺失记录是否纳入分母需分别定义。",
+            "answer": "缺失记录是否纳入分母需按字段或指标分别定义。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "imputation_decision",
+        "question": "是否对缺失病例使用插补？",
+        "hint": "插补会影响数据质量评估结果，需要明确是否采用插补以及插补方法。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "no_imputation",
+            "label": "不插补",
+            "description": "不对缺失病例进行插补，保留缺失状态。",
+            "answer": "不对缺失病例进行插补。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "imputation_specific",
+            "label": "特定指标插补",
+            "description": "仅对特定指标采用插补，需指定指标和方法。",
+            "answer": "仅对特定指标采用插补，需指定指标和方法。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "imputation_all",
+            "label": "统一插补",
+            "description": "对所有缺失病例采用统一插补方法。",
+            "answer": "对所有缺失病例采用统一插补方法。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "denominator_consistency",
+        "question": "完整性指标与一致性指标的分母是否相同？",
+        "hint": "原始需求提到完整性指标分母与一致性指标分母尚需分别确定，需要明确两者是否采用相同分母。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "same_denominator",
+            "label": "相同分母",
+            "description": "完整性指标和一致性指标使用相同的分母。",
+            "answer": "完整性指标和一致性指标使用相同的分母。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "different_denominator",
+            "label": "不同分母",
+            "description": "完整性指标和一致性指标使用不同的分母，需分别定义。",
+            "answer": "完整性指标和一致性指标使用不同的分母，需分别定义。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "actuallySubmittedAnswers": {
+      "coverage_a_2022": {
+        "answer": "暂不确定。A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。",
+        "basis": "与前两轮相同的医院及年份未知状态。"
+      },
+      "missing_in_denominator": {
+        "answer": "完整性指标分母采用所有有效出院记录，包括相应字段缺失的记录；有效是指去重后满足研究时间和对象范围的记录，不因该字段缺失而排除。仅确认完整性分母，一致性指标分母仍未决定。",
+        "basis": "与前两轮相同的合成部分确认；仅确认完整性分母。"
+      },
+      "imputation_decision": {
+        "answer": "暂不确定。是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。",
+        "basis": "完整保留三项未决状态，不默认选择专业方法。"
+      },
+      "denominator_consistency": {
+        "answer": "暂不确定。跨字段一致性指标的分母尚未决定，不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。",
+        "basis": "与前两轮相同的独立未决口径。"
+      }
+    },
+    "origin": "FINAL_STAGE_REPLAY_OF_REAL_BOUND_PLAN_FROM_CANDIDATE10"
+  },
+  {
+    "modelId": "deepseek:deepseek-v4-pro",
+    "caseId": "RC-HOSP-M",
+    "questions": [
+      {
+        "id": "obs_window_A",
+        "question": "甲院的比较观察窗口如何确定？",
+        "hint": "用于界定甲院候诊时间统计的有效时间范围，影响纳入分析的记录。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：2025年1月1日至2025年12月31日"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "obs_window_B",
+        "question": "乙院的比较观察窗口如何确定？",
+        "hint": "用于界定乙院候诊时间统计的有效时间范围，影响纳入分析的记录。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：2025年1月1日至2025年12月31日"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "outlier_threshold_A",
+        "question": "甲院异常等待时间的阈值如何确定？",
+        "hint": "用于识别甲院候诊时间中的异常值，影响清洗规则和指标计算。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：超过120分钟视为异常"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "outlier_threshold_B",
+        "question": "乙院异常等待时间的阈值如何确定？",
+        "hint": "用于识别乙院候诊时间中的异常值，影响清洗规则和指标计算。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：超过120分钟视为异常"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "actuallySubmittedAnswers": {
+      "obs_window_A": {
+        "answer": "暂不确定。甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "basis": "两院窗口分别未定。"
+      },
+      "obs_window_B": {
+        "answer": "暂不确定。乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "basis": "两院窗口分别未定。"
+      },
+      "outlier_threshold_A": {
+        "answer": "暂不确定。甲院的异常等待阈值尚未决定，不采用资料中60分钟示例值；相关异常比例的计算需等待阈值确认。",
+        "basis": "两院阈值分别未定，不使用示例值。"
+      },
+      "outlier_threshold_B": {
+        "answer": "暂不确定。乙院的异常等待阈值尚未决定，不采用资料中60分钟示例值；相关异常比例的计算需等待阈值确认。",
+        "basis": "两院阈值分别未定，不使用示例值。"
+      }
+    },
+    "origin": "FINAL_STAGE_REPLAY_OF_REAL_BOUND_PLAN_FROM_CANDIDATE10"
+  },
+  {
+    "modelId": "deepseek:deepseek-v4-pro",
+    "caseId": "PS-NOTIFY-M",
+    "questions": [
+      {
+        "id": "notification_channel",
+        "question": "本次订单审批结果通知采用哪种渠道？",
+        "hint": "现有系统已实现站内信和邮件，但本次启用渠道需业务选择；选项说明复用现有实现与运维成本的主要取舍。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "in_app",
+            "label": "仅站内信",
+            "description": "复用现有站内信，用户隔离和已读状态已实现，运维成本低，但用户需登录系统查看。",
+            "answer": "仅采用站内信通知",
+            "recommended": true,
+            "recommendationReason": "原始需求明确包含：站内信。请核对适用范围后选择。"
+          },
+          {
+            "id": "email",
+            "label": "仅邮件",
+            "description": "复用现有邮件发送服务，可触达离线用户，但需处理发送失败记录，运维成本略高。",
+            "answer": "仅采用邮件通知",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "both",
+            "label": "站内信和邮件",
+            "description": "同时启用两种渠道，覆盖更广，但需维护两套通知记录和失败处理，成本最高。",
+            "answer": "同时采用站内信和邮件通知",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "actuallySubmittedAnswers": {
+      "notification_channel": {
+        "answer": "仅采用站内信通知",
+        "basis": "合成验收在此实际提交业务选择，推荐与确认分开；使用本轮已审阅的原始选项，未增加专业口径。"
+      }
+    },
+    "origin": "FINAL_STAGE_REPLAY_OF_REAL_BOUND_PLAN_FROM_CANDIDATE10"
+  },
+  {
+    "modelId": "deepseek:deepseek-v4-pro",
+    "caseId": "PS-STORAGE-M",
+    "questions": [
+      {
+        "id": "attachment_storage_location",
+        "question": "附件保存位置采用哪种方案？",
+        "hint": "您已表达偏好 MinIO，但需要本次方案确认。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "minio",
+            "label": "沿用 MinIO",
+            "description": "与现有凭证存储一致，减少额外存储维护。",
+            "answer": "附件保存位置：沿用 MinIO。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确包含：minio。请核对适用范围后选择。"
+          },
+          {
+            "id": "local_dir",
+            "label": "独立本地目录",
+            "description": "采用独立本地目录存储附件。",
+            "answer": "附件保存位置：独立本地目录。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "retry_policy",
+        "question": "附件保存失败后的重试行为如何定义？",
+        "hint": "文档仅说明失败不生成成功记录、重试不改变用户范围，但未明确重试次数、间隔等。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "最多重试3次，间隔1秒，指数退避",
+          "不自动重试，仅记录失败由人工处理"
+        ],
+        "allowCustomAnswer": true
+      }
+    ],
+    "actuallySubmittedAnswers": {
+      "attachment_storage_location": {
+        "answer": "附件保存位置：沿用 MinIO。",
+        "basis": "合成验收在此实际提交业务选择，推荐与确认分开；使用本轮已审阅的原始选项，未增加专业口径。"
+      },
+      "retry_policy": {
+        "answer": "沿用资料：失败时不生成成功记录，重试不改变订单所属用户范围。暂不确定。最大重试次数和失败后的临时文件处理策略尚未决定，方案不得把默认次数或清理策略写成已确认。执行者说明幂等与重复提交处理的必要性，并按现有接口能力核查具体方案，不声称新附件已经实现。",
+        "basis": "已审阅本輪新增的次数与临时文件政策题；现有失败规则继承，新增业务选择独立未决，不选择隐藏默认值。"
+      }
+    },
+    "origin": "FINAL_STAGE_REPLAY_OF_REAL_BOUND_PLAN_FROM_CANDIDATE10"
+  }
+]

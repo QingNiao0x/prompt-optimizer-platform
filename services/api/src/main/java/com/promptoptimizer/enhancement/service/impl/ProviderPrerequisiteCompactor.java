@@ -80,6 +80,8 @@ final class ProviderPrerequisiteCompactor {
                 if (header.find()) {
                     annotation = header.group(1) == null ? "" : header.group(1);
                     value = value.substring(header.end());
+                    // 完整交付边界随后由平台统一写入；只移除逐句等价的既有契约，具名状态和新条件继续核对。
+                    value = withoutRepeatedDeliveryGuidance(value);
                 }
                 // 只拆显式列表；条件行已排除，不把分支后的共同动作当作可独立删除的句子。
                 List<String> parts = java.util.Arrays.stream(value.split("[；;]"))
@@ -112,6 +114,26 @@ final class ProviderPrerequisiteCompactor {
                 sections.put(type, new PromptSection(type, section.title(), cleaned));
             }
         }
+    }
+
+    /** 显式未决列表内的通用交付指令须与平台契约整句一致，不能用关键词截掉新增业务范围。 */
+    private static String withoutRepeatedDeliveryGuidance(String value) {
+        var known = java.util.Arrays.stream(UnresolvedDecisionContract.DELIVERY_GUIDANCE.split("[。\\r\\n]+"))
+                .map(ProviderPrerequisiteCompactor::deliverySentenceKey).collect(java.util.stream.Collectors.toSet());
+        return Pattern.compile("[^。\\r\\n]+。?").matcher(value).results()
+                .map(match -> match.group())
+                .filter(sentence -> !known.contains(deliverySentenceKey(sentence)))
+                .collect(java.util.stream.Collectors.joining());
+    }
+
+    /** 仅规范平台交付句的有限措辞，不省略对象、条件、数值或引用内容。 */
+    private static String deliverySentenceKey(String value) {
+        return java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFKC).replaceAll("\\s+", "")
+                .replaceAll("[。]+$", "")
+                .replaceFirst("^上述未决参数在正文", "同一未决决定在正文")
+                .replace("相关参数格标为", "相关参数格明确标为")
+                .replace("不填入惯例、示例值或占位口径", "不得填入惯例、示例值或占位口径")
+                .replace("不设置默认值或生成假结果", "不能设置默认值或生成假结果");
     }
 
     /** 首段的通用组织建议不引入新对象；具名机构、群组、年份或编号仍按独立业务范围保护。 */

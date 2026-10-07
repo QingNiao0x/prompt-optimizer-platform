@@ -19,6 +19,7 @@ import java.util.Map;
  * @since 0.1.0
  */
 final class UnresolvedDecisionContract {
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UnresolvedDecisionContract.class);
     private static final Pattern DECLARATION = Pattern.compile(
             "([^。；;，,：:\\r\\n？?]{2,160}?)(?:(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)"
                     + "|(?:尚需|仍需|需)(?:分别)?(?:确定|确认|核实)|(?:尚待|待)(?:分别)?(?:确定|确认|核实)|未决)");
@@ -40,10 +41,12 @@ final class UnresolvedDecisionContract {
     private record Parameter(String subject, String property) { }
     private final List<Parameter> parameters;
     private final List<Parameter> confirmedParameters;
+    private final boolean twoNamedHospitals;
 
-    private UnresolvedDecisionContract(List<Parameter> parameters, List<Parameter> confirmedParameters) {
+    private UnresolvedDecisionContract(List<Parameter> parameters, List<Parameter> confirmedParameters, boolean twoNamedHospitals) {
         this.parameters = List.copyOf(parameters);
         this.confirmedParameters = List.copyOf(confirmedParameters);
+        this.twoNamedHospitals = twoNamedHospitals;
     }
 
     /** 原需求及有效回答分别建立未决状态；另一指标的已确认分母不能消除当前指标的未知。 */
@@ -57,13 +60,33 @@ final class UnresolvedDecisionContract {
         var sources = new ArrayList<>(declaredPending(resolved.reconcile(raw)));
         evidence.forEach(value -> sources.addAll(declaredPending(resolved.reconcile(value))));
         decisions.pendingDecisions().forEach(value -> sources.addAll(declaredPending(value.answer())));
-        List<Parameter> parameters = sources.stream().flatMap(value -> DECLARATION.matcher(value).results())
-                .map(match -> canonical(match.group(1))).flatMap(value -> namedParameters(value).stream()).distinct().toList();
         var confirmedSources = new ArrayList<String>();
         if (raw != null) confirmedSources.add(raw);
         decisions.knownDecisions().forEach(value -> confirmedSources.add(value.answer()));
-        return new UnresolvedDecisionContract(parameters, confirmedSources.stream()
-                .flatMap(value -> currentParameters(value).stream()).distinct().toList());
+        List<Parameter> confirmed = confirmedSources.stream()
+                .flatMap(value -> currentParameters(value).stream()).distinct().toList();
+        // 资料中的并列未知可能只被回答了一项：按完整对象＋属性更新当前视图，不修改证据或替另一项确认。
+        List<Parameter> parameters = sources.stream().flatMap(value -> DECLARATION.matcher(value).results())
+                .map(match -> canonical(match.group(1))).flatMap(value -> namedParameters(value).stream()).distinct()
+                .filter(parameter -> !confirmed.contains(parameter)).toList();
+        return new UnresolvedDecisionContract(parameters, confirmed,
+                raw != null && raw.contains("甲院和乙院") && java.util.stream.Stream.concat(java.util.stream.Stream.of(raw), evidence.stream())
+                        .noneMatch(value -> value.matches("(?s).*(?:丙院|丁院|其他医院|[A-Z]医院).*")));
+    }
+
+    /** 两院概述仅在两院各自参数已独立登记时被覆盖；新年份、新院及新增条件仍保留原提醒。 */
+    boolean coveredByBoundPending(String statement, ConfirmedDecisionSet decisions) {
+        if (!twoNamedHospitals) return false;
+        String text = canonical(statement).replace("的", "");
+        String property = text.matches("^两院(?:比较)?观察窗口(?:尚未|未)确定[。]?$" ) ? "观察窗口"
+                : text.matches("^异常等待阈值(?:尚未|未)确定[。]?$" ) ? "阈值" : null;
+        if (property == null) return false;
+        return List.of("甲院", "乙院").stream().allMatch(owner -> decisions.pendingDecisions().stream().anyMatch(decision -> {
+            String scope = decision.question() + " " + decision.answer();
+            return scope.contains(owner) && scope.contains(property)
+                    && (property.equals("观察窗口") || scope.contains("异常等待"))
+                    && !scope.matches("(?s).*(?:19|20)\\d{2}年.*");
+        }));
     }
 
     /** 只有本次明确要求及有效答案能够产生“用户已确认”范围，资料不能自行充当用户授权。 */
@@ -119,7 +142,9 @@ final class UnresolvedDecisionContract {
 
     /** 同一未知若已在带新说明的提醒中登记，只避免追加第二条短状态，不裁掉任何新说明。 */
     boolean coversPendingStatement(String finding, String statement) {
-        return samePendingStatement(finding, statement) || declaredPending(finding).stream()
+        // “分母口径尚未确定”只用于证明已有同项说明覆盖短状态；不修改原句或放宽具体口径校验。
+        String observed = finding.replaceAll("分母口径(?=(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确))", "分母");
+        return samePendingStatement(observed, statement) || declaredPending(observed).stream()
                 .anyMatch(declaration -> samePendingStatement(declaration, statement));
     }
 
@@ -200,14 +225,14 @@ final class UnresolvedDecisionContract {
                     if (index < 0) continue;
                     boolean sameObject = java.util.stream.IntStream.range(0, cells.size())
                             .filter(column -> column != index).anyMatch(column -> sameSubject(cells.get(column), parameter.subject()));
-                    if (sameObject && !unknownCell(cells.get(index))) reject(field);
+                    if (sameObject && !unknownCell(cells.get(index))) reject(field, "PENDING_TABLE_CELL");
                 }
                 // 状态列的“已确认”必须有同指标、同属性的本次决定，不能借另一行的确认。
                 int subjectColumn = header.indexOf("指标");
                 boolean claimsConfirmed = cells.stream().anyMatch(cell -> cell.matches("(?:用户)?已确认|分母已确认|已由用户确认"));
                 if (subjectColumn >= 0 && claimsConfirmed) {
                     for (String property : List.of("分母", "阈值", "观察窗口", "覆盖度")) {
-                        if (header.contains(property) && !confirmedParameters.contains(new Parameter(subjectKey(cells.get(subjectColumn)), property))) reject(field);
+                        if (header.contains(property) && !confirmedParameters.contains(new Parameter(subjectKey(cells.get(subjectColumn)), property))) reject(field, "TABLE_CONFIRMATION_SCOPE");
                     }
                 }
             } else {
@@ -219,11 +244,11 @@ final class UnresolvedDecisionContract {
                     while (assertions.find()) {
                         String subject = assertions.group(1) == null ? assertions.group(3) : assertions.group(1);
                         String property = assertions.group(2) == null ? assertions.group(4) : assertions.group(2);
-                        if (!confirmedParameters.contains(new Parameter(subjectKey(subject.replaceFirst("的$", "")), property))) reject(field);
+                        if (!confirmedParameters.contains(new Parameter(subjectKey(subject.replaceFirst("的$", "")), property))) reject(field, "NARRATIVE_CONFIRMATION_SCOPE");
                     }
                     for (Parameter parameter : parameters) {
                         String target = subjectPattern(parameter.subject()) + "(?:的)?" + Pattern.quote(parameter.property());
-                        if (Pattern.compile(target + "(?:采用|取|为|是|=|设为|定义为)(?=.+)").matcher(compact).find()) reject(field);
+                        if (Pattern.compile(target + "(?:采用|取|为|是|=|设为|定义为)(?=.+)").matcher(compact).find()) reject(field, "PENDING_PARAMETER_ASSIGNMENT");
                     }
                 }
             }
@@ -248,6 +273,7 @@ final class UnresolvedDecisionContract {
     /** 仅规范完整一致性指标别名；机构、年份及其他前缀逐字保留，不能消除跨对象边界。 */
     private static String subjectKey(String name) {
         return name.replace("完整性指标(缺失率)", "完整性指标")
+                .replaceFirst("完整性$", "完整性指标")
                 .replaceFirst("(?:跨字段(?:逻辑)?)?一致性(?:指标|率)$", "跨字段一致性指标");
     }
 
@@ -257,6 +283,10 @@ final class UnresolvedDecisionContract {
         if (subject.endsWith(suffix)) {
             return "(?<![\\p{L}\\d])" + Pattern.quote(subject.substring(0, subject.length() - suffix.length()))
                     + "(?:跨字段(?:逻辑)?)?一致性(?:指标|率)";
+        }
+        if (subject.endsWith("完整性指标")) {
+            return "(?<![\\p{L}\\d])" + Pattern.quote(subject.substring(0, subject.length() - "完整性指标".length()))
+                    + "完整性(?:指标)?";
         }
         return "(?<![\\p{L}\\d])" + Pattern.quote(subject);
     }
@@ -270,7 +300,9 @@ final class UnresolvedDecisionContract {
         return Normalizer.normalize(value, Normalizer.Form.NFKC).replaceAll("[\\s*`“”]", "");
     }
 
-    private static void reject(String field) {
+    /** 仅记录固定的校验类型，不记录业务对象、模型正文或用户资料，便于定位误拦和真实违约。 */
+    private static void reject(String field, String check) {
+        LOGGER.warn("event=decision.delivery.validation_failed field={} check={}", field, check);
         throw new ProviderResponseValidationException(Reason.RULE_CONFLICT, field);
     }
 }

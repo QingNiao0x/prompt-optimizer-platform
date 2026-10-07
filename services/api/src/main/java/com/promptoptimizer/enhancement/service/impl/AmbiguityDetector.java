@@ -67,7 +67,7 @@ public class AmbiguityDetector {
                 findings.add("本次排序按哪个字段、采用什么顺序？请确认比较规则，以便确定预期结果。");
             }
         }
-        if (softwareDetails && containsAny(prompt, "登录", "login") && containsAny(prompt, "添加", "增加", "实现", "开发", "add", "implement")) {
+        if (softwareDetails && requestsLoginChange(prompt)) {
             String evidence = evidence(prompt, context, conversation, "登录", "login", "认证", "auth", "security");
             // 只有明确要求或实现证据才说明认证方式；单独出现 JWT 依赖不足以证明登录已经采用 JWT。
             boolean explicit = Pattern.compile("(?:采用|使用|基于|沿用|use).{0,20}(?:jwt|session|oauth|现有|已有)")
@@ -93,6 +93,21 @@ public class AmbiguityDetector {
             findings.add("“" + rawPrompt.trim() + "”具体要改变哪个对象、达到什么效果？现有资料不能替代本次任务目标。");
         }
         return List.copyOf(findings);
+    }
+
+    /** 新增动作必须与登录位于同一分句；既有实现及保护登录权限不等于本次开发登录功能。 */
+    private boolean requestsLoginChange(String prompt) {
+        Pattern request = Pattern.compile("(?:添加|增加|新增|实现|开发|add|implement)[^，,。；;\\n]{0,24}(?:登录|login)");
+        for (String clause : prompt.split("[，,。；;\\n]+")) {
+            var match = request.matcher(clause);
+            while (match.find()) {
+                String before = clause.substring(0, match.start());
+                if (before.matches("(?s).*(?:不|不要|不得|无需|已经|已|引用|例如|示例)[^，,。；;]{0,8}$")) continue;
+                if (match.group().matches("(?s).*(?:保留|保持|沿用|不改变|不修改).*(?:登录|login)")) continue;
+                return true;
+            }
+        }
+        return false;
     }
 
     /** 仅汇集与主题相关的资料和用户对话，并排除带否定或待定语义的句子。 */

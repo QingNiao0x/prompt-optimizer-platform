@@ -1,0 +1,92 @@
+{
+  "flash": {
+    "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-06T22-23-34-301Z-b4682ece",
+    "scope": "PURE_JAVA_SYNTHETIC_FEES_ONLY",
+    "entries": [
+      {
+        "id": "RC-DEV-M-raw-m1-r1",
+        "arm": "raw",
+        "modelId": "deepseek:deepseek-flash",
+        "outputSha256": "797e4aeb3182110c9f5240b57ae8ea36b04f908bb800e3404daae4f984b5077a",
+        "status": "PASS",
+        "checked": 52,
+        "failures": 0,
+        "firstFailure": ""
+      },
+      {
+        "id": "RC-DEV-M-direct-m1-r1",
+        "arm": "direct",
+        "modelId": "deepseek:deepseek-flash",
+        "outputSha256": "d8e1850bcaeb0774a94b6fb4ee32f1df2349089641962e92f486918ab16daa0c",
+        "status": "PASS",
+        "checked": 52,
+        "failures": 0,
+        "firstFailure": ""
+      },
+      {
+        "id": "RC-DEV-M-raw-m2-r1",
+        "arm": "raw",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "outputSha256": "22f88cb43c81a6e1f8748b91381eb61b1d3c69a5379b756542011c7e0770a4ae",
+        "status": "PASS",
+        "checked": 52,
+        "failures": 0,
+        "firstFailure": ""
+      },
+      {
+        "id": "RC-DEV-M-direct-m2-r1",
+        "arm": "direct",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "outputSha256": "5110e63b3cd1648b0d4d947c42bfd640d9d7b9b246b8d111a057716ea07e4db9",
+        "status": "PASS",
+        "checked": 52,
+        "failures": 0,
+        "firstFailure": ""
+      }
+    ]
+  },
+  "pro": {
+    "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-06T22-23-34-402Z-56044b31",
+    "scope": "PURE_JAVA_SYNTHETIC_FEES_ONLY",
+    "entries": [
+      {
+        "id": "RC-DEV-M-raw-m1-r1",
+        "arm": "raw",
+        "modelId": "deepseek:deepseek-flash",
+        "outputSha256": "b235e8469e67730816030c04e04999bcc2bf1af1895f0547882f75bcbe12f202",
+        "status": "PASS",
+        "checked": 52,
+        "failures": 0,
+        "firstFailure": ""
+      },
+      {
+        "id": "RC-DEV-M-direct-m1-r1",
+        "arm": "direct",
+        "modelId": "deepseek:deepseek-flash",
+        "outputSha256": "2e462b85aae180da5f542f2d2b4959d630c8a6b414fe7a96afc8dea9ca9cb219",
+        "status": "COMPILE_FAILED",
+        "error": "FeeCalculator.java:56: ����: �Ҳ�������\r\n            return scale(DELIVERY_FEE.zero());\r\n                                     ^\r\n  ����:   ���� zero()\r\n  λ��: ����ΪBigDecimal�ı��� DELIVERY_FEE\r\nFeeCalculator.java:61: ����: �Ҳ�������\r\n            return scale(DELIVERY_FEE.zero());\r\n                                     ^\r\n  ����:   ���� zero()\r\n  λ��: ����ΪBigDecimal�ı��� DELIVERY_FEE\r\nFeeCalculator.java:87: ����: �Ҳ�������\r\n            return scale(SERVICE_FEE_LOW.zero());\r\n                                        ^\r\n  ����:   ���� zero()\r\n  λ��: ����ΪBigDecimal�ı��� SERVICE_FEE_LOW\r\n3 ������\r\n"
+      },
+      {
+        "id": "RC-DEV-M-raw-m2-r1",
+        "arm": "raw",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "outputSha256": "8c0a6ec32468ccc501299e64f212a6f06f460ff82d37a4fc059320086d7883a3",
+        "status": "PASS",
+        "checked": 52,
+        "failures": 0,
+        "firstFailure": ""
+      },
+      {
+        "id": "RC-DEV-M-direct-m2-r1",
+        "arm": "direct",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "outputSha256": "78f482104f8557f7fea1619111fb667f5724428dffacf0278dd8ea68e3829209",
+        "status": "PASS",
+        "checked": 52,
+        "failures": 0,
+        "firstFailure": ""
+      }
+    ]
+  }
+}

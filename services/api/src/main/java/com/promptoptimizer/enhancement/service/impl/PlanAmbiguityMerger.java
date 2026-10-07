@@ -602,24 +602,35 @@ final class PlanAmbiguityMerger {
      * 机构、年份和参数通过原绑定事项核对，新增记录范围、数值或条件分支原样交付。
      */
     private String withoutRepeatedBoundRequests(String known, String detail, List<ConfirmedPlanDecision> pending) {
-        // 条件下的确认请求依赖前半句；不能拆句后把执行条件留成孤立说明。
-        if (detail.matches("(?s).*(?:若|如果|假如|仅当|仅在|否则).*")) return detail;
         return Pattern.compile("[^。；;\\r\\n]+[。；;]?").matcher(detail).results()
                 .map(match -> match.group().strip())
-                .filter(clause -> !repeatsBoundRequest(known, clause.replaceAll("[。；;]+$", ""), pending))
+                // 条件下的确认请求整句保留；其他独立句仍可核对，不能因一个新分支放过全部复述。
+                .map(clause -> compactBoundRequestClause(known, clause, pending))
                 .collect(java.util.stream.Collectors.joining());
+    }
+
+    /** 确认请求后附的新限制原样保留；只精简已经完整登记的前半项，不切断条件分支。 */
+    private String compactBoundRequestClause(String known, String clause, List<ConfirmedPlanDecision> pending) {
+        if (clause.matches("(?s).*(?:若|如果|假如|仅当|仅在|否则).*")) return clause;
+        if (repeatsBoundRequest(known, clause.replaceAll("[。；;]+$", ""), pending)) return "";
+        String[] parts = clause.split("[，,]", 2);
+        if (parts.length == 2 && repeatsBoundRequest(known, parts[0], pending)) return parts[1];
+        return clause;
     }
 
     /** 所需核实内容已在同一未决项中完整保留时，才消费相同核查请求，不泛化其他专业决定。 */
     private boolean repeatsBoundRequest(String known, String clause, List<ConfirmedPlanDecision> pending) {
         boolean consistency = pending.stream().allMatch(part -> part.question().contains("一致性"))
                 && known.contains("分母") && known.contains("按各逻辑规则的适用记录核实");
-        if (consistency && (clause.matches("(?:后续)?(?:须|需)按各逻辑规则的适用记录核实并确认口径")
+        if (consistency && (clause.matches("(?:后续)?(?:须|需)按各逻辑规则的适用记录(?:分别)?核实并(?:确定|确认)(?:口径)?")
                 || clause.matches("(?:请|需)?确认各逻辑规则的适用记录及分母定义"))) return true;
+        if (clause.matches("(?:请|需|须)明确插补适用指标(?:和|及)方法")
+                && known.contains("是否插补、适用指标和方法均未决定")
+                && pending.stream().allMatch(part -> part.question().contains("插补"))) return true;
         var request = Pattern.compile("^(?:请|需|须|需要)?确认(.+)$").matcher(clause);
         if (!request.matches()) return false;
         String target = request.group(1);
-        if (target.equals("是否插补、适用指标和方法")
+        if (target.matches("是否插补、适用指标(?:和|及)方法")
                 && known.contains("是否插补、适用指标和方法均未决定")
                 && pending.stream().allMatch(part -> part.question().contains("插补"))) return true;
         if (target.equals("如何确定该覆盖度") && pending.stream()
@@ -657,17 +668,25 @@ final class PlanAmbiguityMerger {
      * 条件和方法分支整体保留，不裁掉其后的共同动作；比较完整分句，不用子串冒充另一规则。
      */
     private String withoutRepeatedExplanationClauses(String known, String detail) {
-        if (detail.matches("(?s).*(?:若|如果|假如|仅当|仅在|否则|采用|使用|选择).*")) return detail;
         var existing = java.util.Arrays.stream(known.split("[，,。；;\\r\\n]+"))
                 .map(value -> explanationClauseKey(value, known)).collect(java.util.stream.Collectors.toSet());
         StringBuilder retained = new StringBuilder();
-        var clauses = Pattern.compile("[^，,。；;\\r\\n]+[，,。；;]?").matcher(detail);
-        while (clauses.find()) {
-            String clause = clauses.group();
-            String identity = explanationClauseKey(clause, known);
-            boolean dependent = identity.matches("^(?:其中|其|该|此|但).*" );
-            if (repeatsBoundCalculationImpact(identity, known)) continue;
-            if (identity.length() < 6 || dependent || !existing.contains(identity)) retained.append(clause);
+        var sentences = Pattern.compile("[^。；;\\r\\n]+[。；;]?").matcher(detail);
+        while (sentences.find()) {
+            String sentence = sentences.group();
+            // 方法或条件与同行动作必须一起保留；只豁免本句，后续独立复述继续核对。
+            if (sentence.matches("(?s).*(?:若|如果|假如|仅当|仅在|否则|采用|使用|选择).*")) {
+                retained.append(sentence);
+                continue;
+            }
+            var clauses = Pattern.compile("[^，,。；;\\r\\n]+[，,。；;]?").matcher(sentence);
+            while (clauses.find()) {
+                String clause = clauses.group();
+                String identity = explanationClauseKey(clause, known);
+                boolean dependent = identity.matches("^(?:其中|其|该|此|但).*" );
+                if (repeatsBoundCalculationImpact(identity, known) || coveredDefaultConfirmationBan(identity, existing)) continue;
+                if (identity.length() < 6 || dependent || !existing.contains(identity)) retained.append(clause);
+            }
         }
         String result = retained.toString().strip().replaceAll("[，,；;]+$", "");
         return result.isBlank() || result.endsWith("。") ? result : result + "。";
@@ -680,6 +699,9 @@ final class PlanAmbiguityMerger {
                 .replaceAll("[，,。；;]+$", "");
         if (result.matches("^(?:后续)?(?:须|需)按各逻辑规则的适用记录(?:分别)?核实$")) {
             return "按各逻辑规则的适用记录核实";
+        }
+        if (result.matches("^(?:本次|未确认前)保持缺失状态并说明不同处理的影响$")) {
+            return "保持缺失状态并说明不同处理的影响";
         }
         // 只在已唯一绑定的同一题内规范核查谓词；2023年、另一院或审批条件仍逐字留在键中。
         result = result.replace("需要院方后续核实", "需院方后续核实");
@@ -695,6 +717,12 @@ final class PlanAmbiguityMerger {
             return "不能用另一院的窗口替代";
         }
         return result;
+    }
+
+    /** 同一绑定说明中，完整联合禁止已涵盖单项时才精简；新增对象、年份或条件不作子串匹配。 */
+    private boolean coveredDefaultConfirmationBan(String clause, java.util.Set<String> existing) {
+        var individual = Pattern.compile("^方案不得把默认(次数|清理策略)写成已确认$").matcher(clause);
+        return individual.matches() && existing.contains("方案不得把默认次数或清理策略写成已确认");
     }
 
     /** 已说明“相关异常比例计算等待阈值”时，同院的无新增条件影响句不再复写；另一院或新条件保留。 */

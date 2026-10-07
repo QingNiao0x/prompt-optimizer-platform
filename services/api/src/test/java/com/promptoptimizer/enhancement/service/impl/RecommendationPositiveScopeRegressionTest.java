@@ -99,6 +99,65 @@ class RecommendationPositiveScopeRegressionTest {
         assertThat(new PlanQuestionFilter().filter(List.of(permission), input(raw, ""))).hasSize(1);
     }
 
+    @Test
+    void doesNotReaskAHypotheticalConflictHandlingRuleThatTheUserAlreadySpecified() {
+        String raw = "若两份资料对同一指标给出不同阈值，应把指标、医院、适用时间与两个取值说明清楚。";
+        var q = new PlanQuestion("hypothesis", "若两份资料对同一指标给出不同阈值，应如何处理？", "", PlanQuestionType.SINGLE_CHOICE,
+                List.of(new PlanOption("show", "并列呈现", "", "并列呈现两个取值", false),
+                        new PlanOption("newest", "采用较新资料", "", "以发布时间较新的资料为准", false)), List.of(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(q), input(raw, ""))).isEmpty();
+        var actual = new PlanQuestion("context-conflict-window", q.question(), q.hint(), q.type(), q.options(), q.examples(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(actual), input(raw, ""))).hasSize(1);
+        var advice = new PlanQuestion("advice", "若资料中建议阈值与医院现行规则不一致，方法方案应如何处理？",
+                "建议阈值未经医院批准，不能当作正式规则。", PlanQuestionType.FREE_TEXT, List.of(), List.of(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(advice), input(raw + "建议阈值未经过医院批准。", ""))).isEmpty();
+        var newValue = new PlanQuestion(advice.id(), advice.question(), "甲院2026年出现90分钟的新阈值，需要核对。",
+                advice.type(), advice.options(), advice.examples(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(newValue), input(raw, ""))).containsExactly(newValue);
+    }
+
+    @Test
+    void delegatesRoutineFailureCoverageButKeepsRetryPoliciesAndPermissionDecisions() {
+        String raw = "为订单服务新增附件保存能力，交付实现方案、权限边界、失败与重试行为和验收清单。";
+        var routine = new PlanQuestion("failure", "失败与重试行为需要覆盖哪些失败场景？", "确定覆盖边界才能写全方案。",
+                PlanQuestionType.MULTIPLE_CHOICE, List.of(
+                new PlanOption("write", "存储写入失败", "", "失败与重试行为需覆盖存储写入失败场景。", false),
+                new PlanOption("access", "权限校验失败", "", "失败与重试行为需覆盖权限校验失败场景。", false),
+                new PlanOption("order", "订单不存在或不可用", "", "失败与重试行为需覆盖订单不存在或不可用场景。", false)), List.of(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(routine), input(raw, ""))).isEmpty();
+        var retry = new PlanQuestion("retry", "失败后最多重试多少次？", "", PlanQuestionType.FREE_TEXT,
+                List.of(), List.of(), true);
+        var permission = new PlanQuestion("permission", "对应订单的授权用户具体指哪些人？", "", PlanQuestionType.FREE_TEXT,
+                List.of(), List.of(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(retry, permission), input(raw, "")))
+                .containsExactly(retry, permission);
+        assertThat(new PlanQuestionFilter().filter(List.of(routine), input(raw + "请让我选择失败场景的覆盖范围。", "")))
+                .containsExactly(routine);
+        var newPolicy = new PlanQuestion(routine.id(), routine.question(), "另外需确认失败后的补偿金额上限。",
+                routine.type(), routine.options(), routine.examples(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(newPolicy), input(raw, ""))).containsExactly(newPolicy);
+        var medical = input("拟定医学研究方案，需要说明失败与重试行为，研究阈值尚未确定。", "");
+        assertThat(new PlanQuestionFilter().filter(List.of(routine), medical)).containsExactly(routine);
+    }
+
+    @Test
+    void inheritsTheExplicitHospitalAggregationOrderWithoutHidingAnActualChange() {
+        String raw = "制定两院年度比较方法。分医院先算再汇总，展示样本量、缺失数和有效分母。";
+        var known = new PlanQuestion("aggregation", "年度与医院比较时，样本量、缺失数和有效分母的呈现方式是否按医院先算再汇总？",
+                "资料已要求分医院先算再汇总，此处确认是否作为固定呈现规则。", PlanQuestionType.SINGLE_CHOICE,
+                List.of(new PlanOption("by", "是，分医院先算再汇总", "", "分医院先算再汇总。", false),
+                        new PlanOption("all", "先汇总再分医院", "", "先汇总再分医院。", false)), List.of(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(known), input(raw, ""))).isEmpty();
+        assertThat(new PlanQuestionFilter().filter(List.of(known), input(raw + "本次需要调整汇总顺序，请让我选择。", "")))
+                .containsExactly(known);
+        var conflict = new PlanQuestion("context-conflict-aggregation", known.question(), known.hint(), known.type(),
+                known.options(), known.examples(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(conflict), input(raw, ""))).containsExactly(conflict);
+        var threshold = new PlanQuestion(known.id(), known.question(), "另外需确认小样本医院的剔除阈值。", known.type(),
+                known.options(), known.examples(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(threshold), input(raw, ""))).containsExactly(threshold);
+    }
+
     private static PlanQuestion question(String question, String first, String second) {
         return new PlanQuestion("choice", question, "请确认本次采用的方案。", PlanQuestionType.SINGLE_CHOICE,
                 List.of(new PlanOption("first", first, "", first, false), new PlanOption("second", second, "", second, true)), List.of(), true);

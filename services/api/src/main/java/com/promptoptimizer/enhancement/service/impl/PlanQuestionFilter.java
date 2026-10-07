@@ -86,8 +86,10 @@ public final class PlanQuestionFilter {
                 .filter(question -> !RoutineGuideDecision.delegated(question, input.rawPrompt()))
                 .filter(question -> !routinePresentation(question, input.rawPrompt()))
                 .filter(question -> !routineExecutionPresentation(question, input.rawPrompt()))
+                .filter(question -> !routineFailureCoverage(question, input.rawPrompt()))
                 .filter(question -> !knownNegativeCostPresentation(question, input.rawPrompt()))
                 .filter(question -> !knownCoverageState(question, input.rawPrompt()))
+                .filter(question -> !knownHospitalComparisonOrder(question, input.rawPrompt()))
                 .filter(question -> !knownConditionalConflictPresentation(question, input.rawPrompt()))
                 .filter(question -> !KnownTestCoverage.repeatsKnownBranches(question, input))
                 .filter(question -> hasAdditionalDecision(question) || !decisionPolicy.resolvedOrDelegated(question))
@@ -159,14 +161,27 @@ public final class PlanQuestionFilter {
     private boolean knownConditionalConflictPresentation(PlanQuestion question, String rawPrompt) {
         if (rawPrompt == null || hasAdditionalDecision(question)
                 || question.id() != null && question.id().startsWith("context-conflict-")) return false;
-        if (!question.question().matches("^(?:若|如果)两份资料(?:对同一指标)?(?:给出|存在)不同阈值[，,].*"
-                + "(?:如何呈现|如何说明|如何展示)[？?]$")) return false;
+        if (!question.question().matches("^(?:若|如果)(?:两份资料(?:对同一指标)?(?:给出|存在)不同阈值|资料中建议阈值与医院现行规则不一致)[，,].*"
+                + "(?:如何呈现|如何说明|如何展示|如何处理)[？?]$")) return false;
         String details = String.join(" ", questionDetails(question));
         if (details.matches("(?s).*(?:\\d|权限|隐私|保密|跨租户|新增对象|甲院|乙院|[AB]医院).*") ) return false;
         return java.util.Arrays.stream(rawPrompt.split("[。；;\\n]+"))
                 .filter(clause -> clause.matches("(?s).*(?:若|如果)两份资料.*不同阈值.*应把.+说明清楚.*"))
                 .anyMatch(clause -> clause.contains("指标") && clause.contains("医院")
                         && clause.contains("适用时间") && clause.contains("两个取值"));
+    }
+
+    /** 用户已明确的逐院汇总顺序直接继承；新院、新口径、实际资料冲突或主动调整不借此消除。 */
+    private boolean knownHospitalComparisonOrder(PlanQuestion question, String rawPrompt) {
+        String raw = safe(rawPrompt);
+        if (!raw.contains("分医院先算再汇总") || hasAdditionalDecision(question)
+                || question.id() != null && question.id().startsWith("context-conflict-")
+                || raw.matches("(?s).*(?:调整|变更|重选).{0,12}(?:汇总顺序|汇总方式).*")) return false;
+        if (!question.question().matches("^(?:年度与医院比较时[，,])?(?:样本量[、，,]缺失数(?:和|与)有效分母的呈现方式)?"
+                + "是否(?:按|分)?医院先算再汇总[？?]$")) return false;
+        if (String.join(" ", questionDetails(question)).matches("(?s).*(?:\\d|阈值|剔除|排除|纳入|权限|新增|另外|甲院|乙院|[AB]医院).*")) return false;
+        return !question.options().isEmpty() && question.options().stream().allMatch(option ->
+                option.answer().replaceAll("[，,。\\s]", "").matches("(?:按|分)?医院先算再汇总|先汇总再分医院"));
     }
 
     /** 常规章节组织交给执行者；用户主动要求确认结构、期刊规范或专业方法时仍保留问题。 */
@@ -233,6 +248,24 @@ public final class PlanQuestionFilter {
                 && !question.options().isEmpty() && question.options().stream().allMatch(option ->
                         option.label().matches("确认框|弹窗|确认弹窗")
                                 && !independent.matcher(option.answer() + option.description()).find()));
+    }
+
+    /**
+     * 已要求的工程失败处理由执行者覆盖常规失败分支，不让用户在必须校验的分支中取舍。
+     * 只处理全部选项均为常规失败的覆盖题；次数、补偿、授权主体及用户主动选择仍须确认。
+     */
+    private boolean routineFailureCoverage(PlanQuestion question, String rawPrompt) {
+        String raw = safe(rawPrompt);
+        if (!raw.matches("(?s).*(?:订单服务|附件保存|接口|开发|代码).*")
+                || !raw.contains("失败与重试") || hasAdditionalDecision(question)
+                || raw.matches("(?s).*(?:询问|确认|让我选择|由我选择|由用户选择).{0,16}(?:失败场景|失败范围|重试范围).*")) return false;
+        if (!question.question().matches("^失败与重试(?:行为)?(?:需要|应|应该)?覆盖哪些失败场景[？?]$")
+                || question.options().isEmpty()) return false;
+        String details = String.join(" ", questionDetails(question));
+        if (details.matches("(?s).*(?:次数|上限|阈值|超时|退避|补偿|金额|跨订单|跨租户|新增|另外|[0-9<>]).*")) return false;
+        return question.options().stream().allMatch(option ->
+                option.label().matches("存储写入失败|权限校验失败|订单不存在或不可用")
+                        && option.answer().matches("^失败与重试行为需覆盖(?:存储写入失败|权限校验失败|订单不存在或不可用)场景[。]?$"));
     }
 
     /** 只拦截与用户主要目标明显冲突的研究提问；其它相关性判断保持保守。 */

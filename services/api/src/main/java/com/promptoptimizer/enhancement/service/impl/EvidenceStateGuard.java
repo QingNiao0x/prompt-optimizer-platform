@@ -40,7 +40,7 @@ final class EvidenceStateGuard {
      */
     static String reconcileConfirmedParameters(String text, List<ConfirmedPlanDecision> decisions) {
         if (text == null || text.isBlank()) return text;
-        String updated = text;
+        String updated = reconcileChannelSelection(text, decisions);
         for (ConfirmedPlanDecision decision : decisions) {
             if (decision.scope() != Scope.CHOICE && decision.scope() != Scope.UNRESOLVED) continue;
             String answer = decision.scope() == Scope.UNRESOLVED
@@ -48,18 +48,78 @@ final class EvidenceStateGuard {
             for (String clause : answer.split("[。；;\\r\\n]+")) {
                 String selected = clause.strip().replaceAll("[`*]", "");
                 if (selected.matches(".*(?:如果|若|仅当|仅在|只针对|适用于|前提|尚未|未知|待定|待确认|可能|还是|或者).*")) continue;
-                var explicit = EXPLICIT_PARAMETER_CHOICE.matcher(selected);
+                // 同句的“包括缺失记录”等说明不改变前面的实际选值，条件与未决仍按完整句先核对。
+                var explicit = EXPLICIT_PARAMETER_CHOICE.matcher(selected.split("[，,]", 2)[0]);
                 if (!explicit.matches()) continue;
                 String field = explicit.group(1).strip();
-                // 完整具名属性必须同时存在于服务端原题；不能凭另一个对象的答案消除未知。
-                if (!decision.question().contains(field)) continue;
-                String subject = "(?<![\\p{L}\\d])" + Pattern.quote(field);
-                updated = Pattern.compile(subject + "(?:目前)?(?:尚未确定|未确定|尚未决定|未决定|未知)")
-                        .matcher(updated).replaceAll(java.util.regex.Matcher.quoteReplacement(
-                                field + "已由用户确认选定，以本次确认答案为准"));
+                // 实际绑定回答明确选择完整参数名时，以回答的对象和属性为准，不依赖原题的改写词。
+                // 未具名参数仍须与原题匹配；不得把通用“采用某口径”关联到另一指标或另一院。
+                boolean namedParameter = field.matches("[^与和及、，,。；;]{2,60}(?:分母|阈值|观察窗口|覆盖度)");
+                if (!namedParameter && !parameterName(decision.question()).contains(parameterName(field))) continue;
+                updated = reconcileCoordinatedState(updated, field);
+                updated = reconcileStandaloneState(updated, field);
             }
         }
         return updated;
+    }
+
+    /** 同名独立未知只更新当前断言；未来条件、示例和引用不随本次参数选值改变。 */
+    private static String reconcileStandaloneState(String text, String field) {
+        var parameter = Pattern.compile("^(.+?)(?:的)?(分母|阈值|观察窗口|覆盖度)$").matcher(field);
+        String named = parameter.matches() ? Pattern.quote(parameter.group(1)) + "(?:的)?" + Pattern.quote(parameter.group(2))
+                : Pattern.quote(field);
+        var state = Pattern.compile("(?<![\\p{L}\\d])" + named
+                + "(?:目前)?(?:尚未确定|未确定|尚未决定|未决定|还未选定|尚未选定|未选定|未知)");
+        return Pattern.compile("[^。；;\\r\\n]+[。；;]?").matcher(text).replaceAll(match -> {
+            String sentence = match.group();
+            if (sentence.matches("(?s).*(?:若|如果|假如|假设|仅当|仅在|例如|示例|引用|[“”\\\"`]).*")) {
+                return java.util.regex.Matcher.quoteReplacement(sentence);
+            }
+            return java.util.regex.Matcher.quoteReplacement(state.matcher(sentence).replaceAll(
+                    java.util.regex.Matcher.quoteReplacement(field + "已由用户确认选定，以本次确认答案为准")));
+        });
+    }
+
+    /** 同一资料把参数并列标为未知时，只更新本次真正选择的完整参数，保留其余参数的未决状态。 */
+    private static String reconcileCoordinatedState(String text, String field) {
+        var declarations = Pattern.compile("(?:^|(?<=[。；;\\r\\n]))"
+                + "([^，,。；;\\r\\n]{2,120}?)(?:尚需分别确定|尚未分别确定|均尚未确定)");
+        return declarations.matcher(text).replaceAll(match -> {
+            String named = match.group(1).strip();
+            if (named.matches("^(?:若|如果|假设|假如|例如|示例|引用|>|```).*")) return java.util.regex.Matcher.quoteReplacement(match.group());
+            var parameters = java.util.Arrays.stream(named.split("与|和|及|、")).map(String::strip).toList();
+            if (parameters.size() < 2 || parameters.size() > 6
+                    || parameters.stream().anyMatch(value -> !value.matches(".{2,60}(?:分母|阈值|观察窗口|覆盖度)"))
+                    || parameters.stream().noneMatch(value -> parameterName(value).equals(parameterName(field)))) {
+                return java.util.regex.Matcher.quoteReplacement(match.group());
+            }
+            return java.util.regex.Matcher.quoteReplacement(parameters.stream().map(value -> value
+                    + (parameterName(value).equals(parameterName(field)) ? "已按本次回答确认" : "尚未确定"))
+                    .collect(java.util.stream.Collectors.joining("；")));
+        });
+    }
+
+    /** 只规范可选“的”和完整性指标的已知示例别名，机构、年份及限定范围逐字保留。 */
+    private static String parameterName(String text) {
+        return text.replaceAll("完整性指标[（(](?:如|例如)字段缺失率[）)](?=(?:的)?分母)", "完整性指标")
+                .replaceAll("的(?=分母|阈值|观察窗口|覆盖度)", "");
+    }
+
+    /** 仅更新单一本次通知渠道的旧选择状态；绑定回答必须真选渠道，偏好、未来条件和另一对象不继承。 */
+    private static String reconcileChannelSelection(String text, List<ConfirmedPlanDecision> decisions) {
+        var candidates = decisions.stream().filter(decision -> decision.question().matches(
+                "^本次[^。；;\\n]{0,32}通知[^。；;\\n]{0,24}渠道[？?]$")).toList();
+        if (candidates.size() != 1) return text;
+        String answer = candidates.getFirst().scope() == Scope.UNRESOLVED
+                ? PlanAnswerSemantics.confirmedPart(candidates.getFirst().answer()) : candidates.getFirst().answer();
+        boolean chosen = java.util.Arrays.stream(answer.split("[。；;\\r\\n]+"))
+                .map(String::strip).anyMatch(clause -> clause.matches(
+                        "^(?:本次)?(?:仅|只|同时)?(?:使用|启用|采用)(?:现有)?(?:站内信|邮件)(?:与(?:站内信|邮件))?(?:通知|渠道)?.*"));
+        if (!chosen) return text;
+        return text.lines().map(line -> {
+            if (line.matches("(?s).*(?:如果|假如|假设|仅当|未来|以后|其他医院|另一院).*")) return line;
+            return line.replaceAll("本次(?:尚未|还未|未)(?:作出)?(?:最终)?渠道选择", "本次通知渠道已按计划回答确认");
+        }).collect(java.util.stream.Collectors.joining("\n"));
     }
 
     /** 只处理证据明确标记的未知对象；不以“没有查到”宣称未知对象已经不存在。 */

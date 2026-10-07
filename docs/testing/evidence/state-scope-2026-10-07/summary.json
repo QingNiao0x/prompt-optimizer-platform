@@ -1,0 +1,56 @@
+{
+  "capturedAt": "2026-10-06T22:38:22.541Z",
+  "sourceCandidate": 12,
+  "releaseApproval": false,
+  "userDataScope": "SYNTHETIC_ONLY",
+  "relatedTests": {
+    "classes": 11,
+    "total": 323,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "candidateFreshPlanCalls": 4,
+  "candidateFinalAndDirectCalls": 18,
+  "candidateReplayPlans": 10,
+  "apiChecksPassed": 18,
+  "downstream": {
+    "frozenPrompts": true,
+    "models": [
+      "deepseek:deepseek-flash",
+      "deepseek:deepseek-v4-pro"
+    ],
+    "attempts": 48,
+    "automaticRetry": false,
+    "maxOutputTokens": 6144,
+    "temperature": 0.2,
+    "parallelIndependentBatches": 2,
+    "fixedPromptRepetitions": 1,
+    "researchInput": "同题R1/R2重复采集，不代表两种行业",
+    "stats": [
+      {
+        "optimizer": "flash",
+        "name": "2026-10-06T22-23-34-301Z-b4682ece",
+        "planned": 24,
+        "successful": 24,
+        "minHttpMs": 5176,
+        "maxHttpMs": 22649,
+        "totalTokens": 105670
+      },
+      {
+        "optimizer": "pro",
+        "name": "2026-10-06T22-23-34-402Z-56044b31",
+        "planned": 24,
+        "successful": 24,
+        "minHttpMs": 4585,
+        "maxHttpMs": 22388,
+        "totalTokens": 95138
+      }
+    ],
+    "javaArtifacts": 8,
+    "javaPassed": 7,
+    "javaCompileFailures": 1,
+    "executedBusinessAssertions": 364,
+    "qualityAcceptancePassed": false
+  }
+}

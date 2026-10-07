@@ -217,6 +217,7 @@ public class OptimizationResultAssembler {
         // 资料里的明确未知也随同一个权威清单交付；旧状态已按完整参数确认更新，不补造缺失事实。
         List<String> currentFindings = assessed;
         assessed = java.util.stream.Stream.concat(assessed.stream(), unresolvedContract.pendingStatements().stream()
+                .filter(statement -> !unresolvedContract.coveredByBoundPending(statement, decisions))
                 .filter(statement -> java.util.stream.Stream.concat(currentFindings.stream(),
                         decisions.pendingDecisions().stream().map(ConfirmedPlanDecision::answer))
                         .noneMatch(finding -> unresolvedContract.coversPendingStatement(finding, statement))))
@@ -327,7 +328,7 @@ public class OptimizationResultAssembler {
      */
     private boolean coversDeclaredQuestion(String finding, String question, String rawPrompt) {
         int end = Math.max(finding.indexOf('？'), finding.indexOf('?'));
-        if (end < 2) return false;
+        if (end < 2) return coversExplicitPendingDeclaration(finding, question);
         String observed = finding.substring(0, end + 1).replaceAll("（例如[：:][^）]*）", "");
         String expected = question;
         if (rawPrompt.contains("当前用户所属地区条件")) {
@@ -338,6 +339,23 @@ public class OptimizationResultAssembler {
         observed = observed.replaceAll(suffix, "时：候选处理？");
         expected = expected.replaceAll(suffix, "时：候选处理？");
         return observed.replaceAll("\\s", "").equals(expected.replaceAll("\\s", ""));
+    }
+
+    /** 直接增强只避免补回已被完整说明覆盖的短未知；主体、年份和属性必须逐字一致。 */
+    private boolean coversExplicitPendingDeclaration(String finding, String declaration) {
+        String expected = pendingDeclarationKey(declaration).replaceAll("[。]+$", "");
+        if (!expected.matches("[^，,。；;：:？?\\\"“”`<>≤≥]{2,160}未决$")
+                || expected.matches(".*(?:若|如果|假如|假设|例如|引用).*")) return false;
+        String observed = pendingDeclarationKey(finding);
+        if (!observed.startsWith(expected)) return false;
+        return observed.length() == expected.length() || observed.substring(expected.length())
+                .matches("^[，,。；;].*");
+    }
+
+    /** 只归一化未决谓词及排版，不删除适用范围、比较符或否定。 */
+    private String pendingDeclarationKey(String value) {
+        return java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFKC).replaceAll("\\s+", "")
+                .replaceAll("(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)", "未决");
     }
 
     /**
