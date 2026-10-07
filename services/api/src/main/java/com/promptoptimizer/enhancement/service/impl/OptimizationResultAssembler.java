@@ -217,7 +217,8 @@ public class OptimizationResultAssembler {
         }
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities).stream()
                 .filter(finding -> !TaskQuestionScope.unrelatedEngineeringReminder(finding, rawPrompt))
-                .filter(finding -> !readOnlyComparison.directedReminder(finding)).toList();
+                .filter(finding -> !readOnlyComparison.directedReminder(finding))
+                .filter(finding -> !identifierRelations.coveredPendingStatement(finding)).toList();
         if (!planConfirmed) {
             // 用户在原文明确列出的未决问题不能被模型返回的空数组抹掉；绑定 Plan 的旧标签不在此重新引入。
             List<String> providerFindings = assessed;
@@ -238,8 +239,10 @@ public class OptimizationResultAssembler {
                         .noneMatch(finding -> unresolvedContract.coversPendingStatement(finding, statement))))
                 .distinct().toList();
         // 名称与代码是独立关系，不让参数确认或模型空数组掩盖缺少对应依据。
+        List<String> relationFindings = assessed;
         assessed = java.util.stream.Stream.concat(assessed.stream(), identifierRelations.pendingStatements().stream()
-                .filter(statement -> !identifierRelations.coveredByBoundPending(statement, decisions)))
+                .filter(statement -> !identifierRelations.coveredByBoundPending(statement, decisions))
+                .filter(statement -> relationFindings.stream().noneMatch(finding -> identifierRelations.coversPendingStatement(finding, statement))))
                 .distinct().toList();
         assessed = classifyFindings(sections, assessed, rawPrompt, decisions, eligibleFacts, documentFacts, context);
         List<AmbiguityReference> references = normalizeAmbiguityReferences(providerResponse);

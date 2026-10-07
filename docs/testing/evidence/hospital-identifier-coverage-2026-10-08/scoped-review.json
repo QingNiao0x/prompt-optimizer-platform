@@ -1,0 +1,53 @@
+{
+  "scope": "当前甲乙普通门诊任务的纯医院代码对应题及提醒，不涵盖全部开放表达重复",
+  "preservedFirstFailures": [
+    {
+      "run": 39,
+      "model": "deepseek-flash",
+      "requestId": "15c68132-08e6-4c52-ac21-b1d1228e651f",
+      "status": 502,
+      "field": "sections.TASK",
+      "check": "RULE_CONFLICT"
+    },
+    {
+      "run": 39,
+      "model": "deepseek-v4-pro",
+      "requestId": "151ca317-5bdb-415e-80f5-e2ee512f903d",
+      "status": 502,
+      "field": "sections.BACKGROUND",
+      "check": "RULE_CONFLICT"
+    }
+  ],
+  "environmentFailure": {
+    "run": 40,
+    "status": 500,
+    "stage": "context.prepare",
+    "modelCalls": 0,
+    "diagnostic": "共享编译目录缺少PlatformPermissionPolicy.class；NoClassDefFoundError/ClassNotFoundException。隔离HEAD后端加本轮明确补丁后上下文恢复。",
+    "requestIds": [
+      "b63e9f4d-e9ee-4122-aad6-5e635bf7b08e",
+      "2a21867f-f35c-44da-a6c3-a773621d2517"
+    ]
+  },
+  "run41": {
+    "planPureMappingQuestions": 2,
+    "flashTotalQuestions": 6,
+    "proTotalQuestions": 7,
+    "retainedNewDecision": "缺失挂号时间或接诊时间的记录是否纳入候诊时间指标的分母？",
+    "directFirstResults": {
+      "flashAmbiguities": 7,
+      "proAmbiguities": 6
+    },
+    "flashDuplicateQuote": "甲院与乙院的 hospital_id 对应关系（哪个代码对应甲院、哪个对应乙院）尚无证据，影响两院独立计算与比较结果的归属，需确认。"
+  },
+  "nextConfirmedStateDefect": "实际“本次仅确认甲院异常等待阈值为90分钟”未进入当前参数视图；与本次对应覆盖分开修复。",
+  "finalRun46": {
+    "bothDirectResultsSucceeded": true,
+    "ambiguityMessagesPerModel": 5,
+    "representedIndependentStates": 6,
+    "mappingRelationRows": 2,
+    "review": "联合对应说明保留全文并覆盖甲乙两个未知；四项机构参数分别保留，不再追加两条短对应状态。非独立专业评审。"
+  },
+  "fullQualityGatePassed": false,
+  "releaseApproval": false
+}

@@ -51,6 +51,19 @@ final class NamedIdentifierContract {
     private static final Pattern PARENTHETICAL = Pattern.compile("(甲院|乙院)" + QUALIFIER + "[(（]([AB])[)）]");
     private static final Pattern CODE_MAPPING = Pattern.compile("[\\\"'‘’“”]*(甲院|乙院)[\\\"'‘’“”]*"
             + "(?:对应|代码为|编码为|=|:)[\\\"'‘’“”]*([AB])[\\\"'‘’“”]*" + VALUE_END);
+    private static final Pattern CODE_PAIR = Pattern.compile("[AB](?:和|与|、|/|或)[AB]");
+    private static final List<String> MAPPING_QUESTION_WORDS = List.of("数据中的", "文件中的", "hospital_id", "医院代码",
+            "医院编码", "哪家医院", "哪所医院", "对应", "分别", "说明", "确认", "它们", "甲院", "乙院", "还是",
+            "取值", "请", "的", "为", "是", "和", "与", "、", "/", "或", "A", "B")
+            .stream().sorted((left, right) -> Integer.compare(right.length(), left.length())).toList();
+    private static final List<String> MAPPING_REMINDER_WORDS = List.of("hospital_id", "医院代码", "医院编码", "对应关系",
+            "尚无证据", "当前无对应证据", "尚未确定", "尚未确认", "尚未核实", "未提供", "未确定", "未确认", "未核实", "待确认", "待核实",
+            "正文、表格及伪代码中未知项用“医院代码待确认”占位", "仅依赖该对应的步骤需等待", "其他清洗与指标模板继续交付",
+            "数据说明中", "数据中的", "资料中的", "具体院区名称", "医院维度分组", "医院分组", "独立计算", "比较结果", "哪个代码",
+            "可继续交付", "指标模板", "需等待", "需确认", "需核实", "该对应", "对应", "影响", "涉及", "取值",
+            "出现", "仅以", "哪个", "代码", "甲院", "乙院", "两院", "比较", "归属", "清洗", "分组", "步骤", "其他",
+            "分别", "前", "在", "的", "与", "和", "或", "/", "、", "A", "B")
+            .stream().sorted((left, right) -> Integer.compare(right.length(), left.length())).toList();
     private final List<Relation> relations;
     private final Set<String> years;
 
@@ -175,7 +188,10 @@ final class NamedIdentifierContract {
 
     /** 仅替代本次纯对应关系问题；新增年份、审批条件或其他字段仍由原流程处理。 */
     boolean coveredQuestion(PlanQuestion question) {
-        return !relations.isEmpty() && !questionOwners(question.question()).isEmpty();
+        String hint = normalize(question.hint());
+        return !relations.isEmpty() && currentScope(hint)
+                && !hint.matches(".*(?:新增|审批|授权|冲突|另一字段|其他字段).*" )
+                && !questionOwners(question.question()).isEmpty();
     }
 
     /** 提供一份简短的当前关系视图，资料证据不得写成用户已确认。 */
@@ -212,6 +228,57 @@ final class NamedIdentifierContract {
                 .anyMatch(object -> statement.startsWith(object + "与 hospital_id")));
     }
 
+    /**
+     * 仅用本次独立未知关系覆盖模型的同项说明；权威关系表和短清单保留依赖影响。
+     * 另一年份、审批、来源、候选值或未来条件不因出现相同字段被删除。
+     */
+    boolean coveredPendingStatement(String statement) {
+        if (relations.isEmpty() || statement == null) return false;
+        String value = normalize(statement);
+        if (!currentScope(value) || value.matches("^[>‘’“”\\\"'].*")
+                || value.matches(".*(?:审批|授权|冲突|阈值|窗口|患者|科室|来源|校验|建议|候选|以后|如果|假设|重新|迁移|版本|选择|是否|如何|[0-9]).*")) {
+            return false;
+        }
+        if (!value.matches(".*(?:hospital_id|医院代码|医院编码).*") || !value.contains("对应")
+                || !value.matches(".*(?:尚未(?:确定|确认|核实)|未(?:确定|确认|核实|提供)|待(?:确认|核实)|尚无证据|无对应证据).*")) {
+            return false;
+        }
+        // 只消费当前关系及其依赖说明；还有绩效、另一字段或新规则时保留整句，不能靠黑名单猜测全部业务词。
+        String unconsumed = value;
+        for (String word : MAPPING_REMINDER_WORDS) unconsumed = unconsumed.replace(word, "");
+        if (!unconsumed.matches("[，,:：;；.。?？()（）]*")) return false;
+        var owners = OBJECTS.stream().filter(value::contains).toList();
+        // 一个具名说明不能覆盖另一院；混合已知、未知或冲突时不丢弃模型的整句。
+        return !owners.isEmpty() && owners.stream().allMatch(object -> relations.stream()
+                .anyMatch(relation -> relation.object().equals(object) && relation.state() == State.UNRESOLVED));
+    }
+
+    /**
+     * 已有说明的首个决定明确覆盖同院未知关系时，不再追加一条短状态。
+     * 此方法不删改已有说明；其附带的新审批、条件或依赖解释完整保留，另一院仍独立登记。
+     */
+    boolean coversPendingStatement(String finding, String pending) {
+        if (relations.isEmpty() || finding == null || pending == null) return false;
+        Relation target = relations.stream().filter(relation -> relation.state() == State.UNRESOLVED
+                && pending.equals(relation.object() + "与 hospital_id 的对应关系尚未确定。"))
+                .findFirst().orElse(null);
+        if (target == null) return false;
+        String primary = normalize(finding).split("[，,。；;：:]", 2)[0];
+        if (!currentScope(primary) || primary.matches("^[>‘’“”\\\"'].*")
+                || primary.matches(".*(?:如果|以后|假设|建议|推荐|候选|已确认|并非|不是|不再|阈值|窗口|分母|[0-9]).*")) return false;
+        if (!Pattern.compile("(?<![A-Za-z0-9_])hospital_id(?![A-Za-z0-9_])|医院代码|医院编码").matcher(primary).find()
+                || !primary.matches(".*(?:对应|映射).*" )
+                || !primary.matches(".*(?:(?:尚未|未|仍未|暂未|没有)(?:确定|确认|核实|明确|说明|定义|提供)"
+                        + "|未在[^，,。；;]{0,12}说明|待(?:确认|核实)|(?:尚无|无|缺少)(?:对应)?证据).*")) {
+            return false;
+        }
+        // 不删除任何原说明，因此语序可变；只以当前具名对象、完整字段及显式未知状态阻止重复追加。
+        var mentioned = OBJECTS.stream().filter(object -> Pattern.compile(Pattern.quote(object)
+                + "(?=的|与|和|在|分别|还是|/|、|对应|hospital_id|医院代码|医院编码|[)）]|$)").matcher(primary).find()).toList();
+        return mentioned.contains(target.object()) && mentioned.stream().allMatch(object -> relations.stream()
+                .anyMatch(relation -> relation.object().equals(object) && relation.state() == State.UNRESOLVED));
+    }
+
     /** 不用句尾未知或另一院状态抵消具体赋值；分别校验叙述、纵向表和代码字典。 */
     void validate(String content, String field) {
         if (relations.isEmpty() || content == null) return;
@@ -246,10 +313,24 @@ final class NamedIdentifierContract {
     private List<String> questionOwners(String question) {
         String value = normalize(question);
         if (!currentScope(value) || value.matches(".*(?:审批|状态|窗口|阈值|患者|来源|校验|以后|如果|假设).*")) return List.of();
+        // 集合只限定纯对应题的覆盖；完整词法消费后仍有新内容时不按部分关键词删除。
+        if (pureCodePairQuestion(value)) return OBJECTS;
         if (!value.matches("^(?:甲院|乙院)(?:(?:与|和|、)(?:甲院|乙院))?(?:的|与)?"
                 + "(?:hospital_id|医院代码|医院编码|代码)(?:的)?(?:对应关系|对应|映射|取值)?"
                 + "(?:是什么|是多少|如何对应|怎么对应|如何确定)[？?]?$")) return List.of();
         return OBJECTS.stream().filter(value::contains).toList();
+    }
+
+    /** 允许纯对应问题调整语序，但不能消费另一字段、年份、对象或新增业务条件。 */
+    private static boolean pureCodePairQuestion(String value) {
+        if (!value.matches(".*(?:hospital_id|医院代码|医院编码).*") || !value.contains("对应")
+                || !CODE_PAIR.matcher(value).results().anyMatch(match -> match.group().contains("A") && match.group().contains("B"))
+                || !(value.contains("甲院") && value.contains("乙院") || value.contains("哪家医院") || value.contains("哪所医院"))) {
+            return false;
+        }
+        String unconsumed = value;
+        for (String word : MAPPING_QUESTION_WORDS) unconsumed = unconsumed.replace(word, "");
+        return unconsumed.matches("[，,:：?？.。()（）]*");
     }
 
     /** 不让旧年份或不同就诊人群的证据为本次普通门诊背书。 */

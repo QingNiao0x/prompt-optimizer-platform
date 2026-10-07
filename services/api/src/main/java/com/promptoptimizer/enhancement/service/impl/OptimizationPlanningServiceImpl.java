@@ -310,7 +310,9 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                     List.of(request.rawPrompt(), request.contextDescription()), List.of());
             // 包括非推荐选项；不能让用户通过候选答案无意放弃原始需求中的明确规则。
             // 格式和安全仍校验所有项；已被明确事实消除的问题不因无关候选触发额外模型重试。
-            questionFilter.filter(validated.questions(), request).forEach(question -> {
+            questionFilter.filter(validated.questions(), request).stream()
+                    // 纯对应题由服务端自由回答题替换；格式和安全已检查，丢弃的候选不增加业务修复调用。
+                    .filter(question -> !identifierRelations.coveredQuestion(question)).forEach(question -> {
                 identifierRelations.validate(question.question(), "questions.question");
                 conditionalGuard.validate(question.question(), "questions.question");
                 conditionalGuard.validate(question.hint(), "questions.hint");
