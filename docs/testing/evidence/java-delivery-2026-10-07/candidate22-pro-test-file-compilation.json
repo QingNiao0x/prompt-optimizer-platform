@@ -1,0 +1,111 @@
+{
+  "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-07T07-23-44-454Z-be2f215b",
+  "scope": "SYNTHETIC_FEE_IMPLEMENTATION_AND_TEST_COMPILATION_ONLY",
+  "entries": [
+    {
+      "id": "RC-DEV-M-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "1b27dc72c2d3cf47b26cbff07d082aaeff9eeea7d3239742aa9cb9ef9f59ea32",
+      "status": "COMPILE_FAILED",
+      "error": "FeeCalculatorTest.java:14: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                                         ^\r\nFeeCalculatorTest.java:17: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"200\"), 0));\r\n                                         ^\r\nFeeCalculatorTest.java:20: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 1));\r\n                                         ^\r\nFeeCalculatorTest.java:23: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"199.99\"), 1));\r\n                                         ^\r\nFeeCalculatorTest.java:26: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"200\"), 1));\r\n                                         ^\r\nFeeCalculatorTest.java:29: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigD"
+    },
+    {
+      "id": "RC-DEV-M-direct-m1-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "288ea3727411bf318bdf844286d29f8871fb104d5d35d95d421afad6607be296",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "7b3b19b76eaa721b5b95cc6d93f81eaa6df2e5c37e690c04195f907b44c3e97e",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "9ac59f9dc3d69991e790ae9082cf3104be0ce8776546cfc74440a0ce7456052e",
+      "status": "COMPILE_FAILED",
+      "error": "FeeCalculatorTest.java:85: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual) {\r\n                                     ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:85: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual) {\r\n                                                          ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:11: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                         ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:11: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                                                                           ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:12: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"200\"), 0));\r"
+    },
+    {
+      "id": "RC-DEV-M-direct-m2-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "7560b6c0789347004c5c183157ea2a7a81ec82cc95a86788abfaf4eb905af686",
+      "status": "FULL_TEST_CLASS_NEEDS_REVIEW",
+      "implementationBlocks": 1,
+      "testBlocks": 0
+    },
+    {
+      "id": "RC-DEV-M-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "2ac335306813348bc63460824753c60e30fd6c5e0b704a875b272238f6cd1cce",
+      "status": "FULL_TEST_CLASS_NEEDS_REVIEW",
+      "implementationBlocks": 1,
+      "testBlocks": 0
+    },
+    {
+      "id": "RC-DEV-M-plan-m1-r2",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "1d4de3133a0a2aa0af3b566e1909ceedef274a71f38b6da311de3adfd6231b9c",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-direct-m1-r2",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "8d54066ec301377a742d204a8bf64f340ab919ed4c638127b547ba7e509da4e3",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-raw-m1-r2",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "ccd434a895415e6c23fe28df386950473afa58356c71439a03a7057d94601279",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-plan-m2-r2",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "9de1e72facf676ff1d59d9c2ba3197883ff8a0228eb1f078206da975993f1420",
+      "status": "FULL_TEST_CLASS_NEEDS_REVIEW",
+      "implementationBlocks": 1,
+      "testBlocks": 0
+    },
+    {
+      "id": "RC-DEV-M-direct-m2-r2",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "70f178571fe97c9b4eb3d0d4a79c10e842d11c66c163e7f3adb4496353e92896",
+      "status": "FULL_TEST_CLASS_NEEDS_REVIEW",
+      "implementationBlocks": 1,
+      "testBlocks": 0
+    },
+    {
+      "id": "RC-DEV-M-raw-m2-r2",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "2aee5d4b276cb1256db59bb442d2d566ffc6a87ff92c5121cbcc901dc2000b1b",
+      "status": "COMPILE_FAILED",
+      "error": "FeeCalculatorTest.java:62: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual) {\r\n                                     ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:62: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual) {\r\n                                                          ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:11: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                         ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:11: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                                                                           ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:12: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"300\"), 0));\r"
+    }
+  ]
+}

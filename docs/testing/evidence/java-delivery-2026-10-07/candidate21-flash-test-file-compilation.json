@@ -1,0 +1,113 @@
+{
+  "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-07T07-00-17-291Z-1c6599c8",
+  "scope": "SYNTHETIC_FEE_IMPLEMENTATION_AND_TEST_COMPILATION_ONLY",
+  "entries": [
+    {
+      "id": "RC-DEV-M-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "cc24dcc2b5febd48e391c79cab16c9a389582181bbd11eb0a2c668d1b4b5507b",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-direct-m1-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "f5a94282d78cb767620045d96d8b1b70d24f5b45e9c4c5bd3a1802f94d880411",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "09038d4ff2f55a808903f0f48cf9f8d7186a984d597bfe8e0e8b5c1dafc850e1",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "95566ac11edb120ae1f8b846e6d9ee45dd045e9ad7a65cde59b14f41eaa8bb19",
+      "status": "FULL_TEST_CLASS_NEEDS_REVIEW",
+      "implementationBlocks": 1,
+      "testBlocks": 0
+    },
+    {
+      "id": "RC-DEV-M-direct-m2-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "3a0ee538d78c4000a4d9bbc55ab8853e8702fb7728f8228133242e061e9567e7",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "ef641a56462ba3d90f7f17fdbadea3c869d94ea63fa3f479914d28b018d951e8",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-plan-m1-r2",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "709cf97834164c13cf229ef854829aa6a179b02d74643ce402ef726487264715",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-direct-m1-r2",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "c20868f92ffc57614122c7c7a02490a10fd63c154b5f6d9e354b3e6ab61bde4d",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-raw-m1-r2",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "cacd1d6ae62bad9711edd9bf418d47bcf89797f98f9288890f3455a7de65f07b",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-plan-m2-r2",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "30745ff94c979c3f5f2cc359f5d555c264b924e1bc0138cdaa558cf30f397eaf",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-direct-m2-r2",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "d8cba326cbfd750f6dd0035284a8903a0d0a8d4ecf7c9bde7c46c6e9d0643eec",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-raw-m2-r2",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "e7edb74a1f4ca3e4f706e439645be7b1426b43a1c5e7ac7ad84e44f543b33fc1",
+      "status": "COMPILE_FAILED",
+      "error": "FeeCalculatorTest.java:8: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual, String message) {\r\n                                     ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:8: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual, String message) {\r\n                                                          ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:27: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0), \"deliveryFee(0,0)\");\r\n                         ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:27: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0), \"deliveryFee(0,0)\");\r\n                                                                           ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:28: error: cannot find symbol\r\n        assertEquals(new BigD"
+    }
+  ]
+}

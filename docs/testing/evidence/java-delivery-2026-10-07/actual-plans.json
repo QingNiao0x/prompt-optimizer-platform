@@ -1,0 +1,542 @@
+[
+  {
+    "run": "20",
+    "evidence": {
+      "id": "RC-DEV-M-deepseek_deepseek-flash-plan",
+      "caseId": "RC-DEV-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "startedAt": "2026-10-07T06:43:06.437Z",
+      "prepared": {
+        "contextId": "2c11f47a-198c-4aa8-aff1-505d5ce0b8b0",
+        "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/费用规则.md：Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。；业务摘录：[片段 1/1] 本次费用规则与用户需求一致。 配送费：itemCount=0返回0； amount>200且itemCount>0配送费0，否则12。 服务费：amount=0返回0； 0<amount<=100返回2； amount>100返回5。 负金额、负件数和null非法。 仅实现纯Java工具类，不涉及外部服务。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": []
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/费用规则.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n本次费用规则与用户需求一致。配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。负金额、负件数和null非法。仅实现纯Java工具类，不涉及外部服务。",
+              "summary": "Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T07:13:06.630772700Z",
+        "latencyMs": 98
+      },
+      "plan": {
+        "summary": "当前需求及已提供材料足以进入最终增强，无需额外确认。",
+        "questions": [],
+        "templateCode": "FEATURE_DEVELOPMENT",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 1652,
+        "planId": "ca90b552-7c32-4f91-93bf-3e453d522fc3",
+        "planningContext": {
+          "contextId": "2c11f47a-198c-4aa8-aff1-505d5ce0b8b0",
+          "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f"
+        },
+        "expiresAt": "2026-10-07T07:13:06.630772700Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-flash-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "e0a3949b-2e21-4a9d-81a9-71f11027494a",
+          "elapsedMs": 277
+        },
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-flash-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "e66e69f7-b211-4654-9937-a1dcdf5a3f72",
+          "elapsedMs": 1716
+        }
+      ]
+    }
+  },
+  {
+    "run": "20",
+    "evidence": {
+      "id": "RC-DEV-M-deepseek_deepseek-v4-pro-plan",
+      "caseId": "RC-DEV-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "startedAt": "2026-10-07T06:43:08.447Z",
+      "prepared": {
+        "contextId": "42f66a49-b0c2-4b2c-a63e-2fb7d3560614",
+        "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/费用规则.md：Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。；业务摘录：[片段 1/1] 本次费用规则与用户需求一致。 配送费：itemCount=0返回0； amount>200且itemCount>0配送费0，否则12。 服务费：amount=0返回0； 0<amount<=100返回2； amount>100返回5。 负金额、负件数和null非法。 仅实现纯Java工具类，不涉及外部服务。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": []
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/费用规则.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n本次费用规则与用户需求一致。配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。负金额、负件数和null非法。仅实现纯Java工具类，不涉及外部服务。",
+              "summary": "Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T07:13:08.486570100Z",
+        "latencyMs": 10
+      },
+      "plan": {
+        "summary": "当前需求及已提供材料足以进入最终增强，无需额外确认。",
+        "questions": [],
+        "templateCode": "FEATURE_DEVELOPMENT",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "latencyMs": 1579,
+        "planId": "928c9d68-ef2d-4250-b9ab-b3e5d3f47446",
+        "planningContext": {
+          "contextId": "42f66a49-b0c2-4b2c-a63e-2fb7d3560614",
+          "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f"
+        },
+        "expiresAt": "2026-10-07T07:13:08.486570100Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-v4-pro-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "3b875943-5935-41e0-b577-aaf7d54320a6",
+          "elapsedMs": 54
+        },
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-v4-pro-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "ca0444a9-c911-4b93-b051-05b3c6bc7f47",
+          "elapsedMs": 1616
+        }
+      ]
+    }
+  },
+  {
+    "run": "21",
+    "evidence": {
+      "id": "RC-DEV-M-deepseek_deepseek-flash-plan",
+      "caseId": "RC-DEV-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "startedAt": "2026-10-07T06:43:06.437Z",
+      "prepared": {
+        "contextId": "2c11f47a-198c-4aa8-aff1-505d5ce0b8b0",
+        "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/费用规则.md：Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。；业务摘录：[片段 1/1] 本次费用规则与用户需求一致。 配送费：itemCount=0返回0； amount>200且itemCount>0配送费0，否则12。 服务费：amount=0返回0； 0<amount<=100返回2； amount>100返回5。 负金额、负件数和null非法。 仅实现纯Java工具类，不涉及外部服务。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": []
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/费用规则.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n本次费用规则与用户需求一致。配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。负金额、负件数和null非法。仅实现纯Java工具类，不涉及外部服务。",
+              "summary": "Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T07:13:06.630772700Z",
+        "latencyMs": 98
+      },
+      "plan": {
+        "summary": "当前需求及已提供材料足以进入最终增强，无需额外确认。",
+        "questions": [],
+        "templateCode": "FEATURE_DEVELOPMENT",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 1652,
+        "planId": "ca90b552-7c32-4f91-93bf-3e453d522fc3",
+        "planningContext": {
+          "contextId": "2c11f47a-198c-4aa8-aff1-505d5ce0b8b0",
+          "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f"
+        },
+        "expiresAt": "2026-10-07T07:13:06.630772700Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-flash-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "e0a3949b-2e21-4a9d-81a9-71f11027494a",
+          "elapsedMs": 277
+        },
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-flash-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "e66e69f7-b211-4654-9937-a1dcdf5a3f72",
+          "elapsedMs": 1716
+        }
+      ]
+    }
+  },
+  {
+    "run": "21",
+    "evidence": {
+      "id": "RC-DEV-M-deepseek_deepseek-v4-pro-plan",
+      "caseId": "RC-DEV-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "startedAt": "2026-10-07T06:43:08.447Z",
+      "prepared": {
+        "contextId": "42f66a49-b0c2-4b2c-a63e-2fb7d3560614",
+        "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/费用规则.md：Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。；业务摘录：[片段 1/1] 本次费用规则与用户需求一致。 配送费：itemCount=0返回0； amount>200且itemCount>0配送费0，否则12。 服务费：amount=0返回0； 0<amount<=100返回2； amount>100返回5。 负金额、负件数和null非法。 仅实现纯Java工具类，不涉及外部服务。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": []
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/费用规则.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n本次费用规则与用户需求一致。配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。负金额、负件数和null非法。仅实现纯Java工具类，不涉及外部服务。",
+              "summary": "Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T07:13:08.486570100Z",
+        "latencyMs": 10
+      },
+      "plan": {
+        "summary": "当前需求及已提供材料足以进入最终增强，无需额外确认。",
+        "questions": [],
+        "templateCode": "FEATURE_DEVELOPMENT",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "latencyMs": 1579,
+        "planId": "928c9d68-ef2d-4250-b9ab-b3e5d3f47446",
+        "planningContext": {
+          "contextId": "42f66a49-b0c2-4b2c-a63e-2fb7d3560614",
+          "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f"
+        },
+        "expiresAt": "2026-10-07T07:13:08.486570100Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-v4-pro-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "3b875943-5935-41e0-b577-aaf7d54320a6",
+          "elapsedMs": 54
+        },
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-v4-pro-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "ca0444a9-c911-4b93-b051-05b3c6bc7f47",
+          "elapsedMs": 1616
+        }
+      ]
+    }
+  },
+  {
+    "run": "22",
+    "evidence": {
+      "id": "RC-DEV-M-deepseek_deepseek-flash-plan",
+      "caseId": "RC-DEV-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "startedAt": "2026-10-07T07:19:23.518Z",
+      "prepared": {
+        "contextId": "79abfd3e-408f-45dd-97e8-6b613f34c316",
+        "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/费用规则.md：Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。；业务摘录：[片段 1/1] 本次费用规则与用户需求一致。 配送费：itemCount=0返回0； amount>200且itemCount>0配送费0，否则12。 服务费：amount=0返回0； 0<amount<=100返回2； amount>100返回5。 负金额、负件数和null非法。 仅实现纯Java工具类，不涉及外部服务。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": []
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/费用规则.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n本次费用规则与用户需求一致。配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。负金额、负件数和null非法。仅实现纯Java工具类，不涉及外部服务。",
+              "summary": "Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T07:49:23.618173500Z",
+        "latencyMs": 91
+      },
+      "plan": {
+        "summary": "当前需求及已提供材料足以进入最终增强，无需额外确认。",
+        "questions": [],
+        "templateCode": "FEATURE_DEVELOPMENT",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2536,
+        "planId": "e795ae1b-dd04-4ede-ae9e-5a53c5d09d55",
+        "planningContext": {
+          "contextId": "79abfd3e-408f-45dd-97e8-6b613f34c316",
+          "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f"
+        },
+        "expiresAt": "2026-10-07T07:49:23.618173500Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-flash-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "1e2d4b6a-9357-467d-8d49-d4b6fd7884e5",
+          "elapsedMs": 240
+        },
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-flash-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "da304155-1fbf-489e-878a-f6bcf331ec4f",
+          "elapsedMs": 2731
+        }
+      ]
+    }
+  },
+  {
+    "run": "22",
+    "evidence": {
+      "id": "RC-DEV-M-deepseek_deepseek-v4-pro-plan",
+      "caseId": "RC-DEV-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "startedAt": "2026-10-07T07:19:26.509Z",
+      "prepared": {
+        "contextId": "43ea7fa6-4a8f-4661-913e-0ac00528ca91",
+        "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/费用规则.md：Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。；业务摘录：[片段 1/1] 本次费用规则与用户需求一致。 配送费：itemCount=0返回0； amount>200且itemCount>0配送费0，否则12。 服务费：amount=0返回0； 0<amount<=100返回2； amount>100返回5。 负金额、负件数和null非法。 仅实现纯Java工具类，不涉及外部服务。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": []
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/费用规则.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/费用规则.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n本次费用规则与用户需求一致。配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。负金额、负件数和null非法。仅实现纯Java工具类，不涉及外部服务。",
+              "summary": "Markdown 文档摘要：本次费用规则与用户需求一致。；配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。；服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。；负金额、负件数和null非法。；仅实现纯Java工具类，不涉及外部服务。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T07:49:26.592506900Z",
+        "latencyMs": 20
+      },
+      "plan": {
+        "summary": "当前需求及已提供材料足以进入最终增强，无需额外确认。",
+        "questions": [],
+        "templateCode": "FEATURE_DEVELOPMENT",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "latencyMs": 1495,
+        "planId": "f22b7b5c-cc8c-44ea-8a58-3ad2360137e3",
+        "planningContext": {
+          "contextId": "43ea7fa6-4a8f-4661-913e-0ac00528ca91",
+          "version": "sha256:222eaaa5d4a368249832def69e754522731d0240322f7df307ca3ad0bdbeb04f"
+        },
+        "expiresAt": "2026-10-07T07:49:26.592506900Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-v4-pro-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "6eb27b49-870b-4e61-a4ea-ce339b0f7045",
+          "elapsedMs": 87
+        },
+        {
+          "label": "RC-DEV-M-deepseek_deepseek-v4-pro-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "07c71bfe-49d2-441c-87ea-fbb99bb41ae1",
+          "elapsedMs": 1575
+        }
+      ]
+    }
+  }
+]

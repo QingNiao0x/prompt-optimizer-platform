@@ -12,6 +12,7 @@ import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.ProviderMetadata;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
+import com.promptoptimizer.provider.domain.JavaCodeDeliveryContract;
 import com.promptoptimizer.provider.domain.AmbiguityReference;
 import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.provider.domain.ProviderException;
@@ -203,6 +204,12 @@ public class OptimizationResultAssembler {
             sections.put(PromptSectionType.OUTPUT, new PromptSection(output.type(), output.title(),
                     output.content() + "\n\n" + lengthGuidance));
         }
+        String codeDelivery = JavaCodeDeliveryContract.guidance(effectiveRawPrompt);
+        if (!codeDelivery.isBlank()) {
+            PromptSection output = sections.get(PromptSectionType.OUTPUT);
+            sections.put(PromptSectionType.OUTPUT, new PromptSection(output.type(), output.title(),
+                    output.content() + "\n\n" + codeDelivery));
+        }
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities).stream()
                 .filter(finding -> !TaskQuestionScope.unrelatedEngineeringReminder(finding, rawPrompt))
                 .filter(finding -> !readOnlyComparison.directedReminder(finding)).toList();
@@ -282,6 +289,9 @@ public class OptimizationResultAssembler {
         }
         if (unresolvedContract.hasNamedParameters()) {
             deliveryAuthority.put(PromptSectionType.OUTPUT, unresolvedContract.independentEvidenceGuidance());
+        }
+        if (!codeDelivery.isBlank()) {
+            deliveryAuthority.merge(PromptSectionType.OUTPUT, codeDelivery, (existing, added) -> existing + "\n" + added);
         }
         AuthoritativeDeliveryCompactor.compact(sections, deliveryAuthority);
         ExecutionRuleCompactor.compact(sections);

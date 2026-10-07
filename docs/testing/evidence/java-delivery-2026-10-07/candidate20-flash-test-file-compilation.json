@@ -1,0 +1,104 @@
+{
+  "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-07T06-45-45-326Z-1c30f098",
+  "scope": "SYNTHETIC_FEE_IMPLEMENTATION_AND_TEST_COMPILATION_ONLY",
+  "entries": [
+    {
+      "id": "RC-DEV-M-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "62ebf4e4706ed65905221b3596db95d0f4f83e5bf373556d63ee88fde17d9d24",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-direct-m1-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "3ec2bad3e571c498f8ec81151dbb41e6cac70be0e0876bc5528aad237b72092e",
+      "status": "COMPILE_FAILED",
+      "error": "FeeCalculatorTest.java:53: ����: �Ҳ�������\r\n        assertScale(\"���ͷѾ���\", deliveryFee(new BigDecimal(\"100\"), 1));\r\n                             ^\r\n  ����:   ���� deliveryFee(BigDecimal,int)\r\n  λ��: �� FeeCalculatorTest\r\nFeeCalculatorTest.java:54: ����: �Ҳ�������\r\n        assertScale(\"����Ѿ���\", serviceFee(new BigDecimal(\"50\")));\r\n                             ^\r\n  ����:   ���� serviceFee(BigDecimal)\r\n  λ��: �� FeeCalculatorTest\r\n2 ������\r\n"
+    },
+    {
+      "id": "RC-DEV-M-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "d245b668c8dff8c494e5bee994b5430fbaf886613e95e8ca645eb390b40fcc76",
+      "status": "NOT_COMPILED_UNSUPPORTED_ENTRY"
+    },
+    {
+      "id": "RC-DEV-M-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "961b0339cb84e3ddc1ac2291a809a7a552f29cfb22f6a5ddd97b40f48f832296",
+      "status": "NOT_COMPILED_UNSUPPORTED_ENTRY"
+    },
+    {
+      "id": "RC-DEV-M-direct-m2-r1",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "f691a99dc3bf4c44dc3ffaf7fceb6b722bc49a1f58a211fb4da852eab4394c0c",
+      "status": "NOT_COMPILED_UNSUPPORTED_ENTRY"
+    },
+    {
+      "id": "RC-DEV-M-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "b061214c19f1d400a616ea7cee605757458ee7fc6a56edf95e6ed6215da736a5",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-plan-m1-r2",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "742db2e42599bfdf210d19d8459eacab6306e1f6afe3abe812708138f1610fb0",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-direct-m1-r2",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "bf40c1cd2beb36c2f3394bdfa540ea4cb62d3a694795f557cbe82cf69efe46bc",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-raw-m1-r2",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "bc1482602412185631cb9a1fdda3d627cde012485435edea004706004d515f44",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-plan-m2-r2",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "e94176186d7295f7e281f32a8f9ae9ae80d4d9b2bdd7e86a932c9abdbec2c88c",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-direct-m2-r2",
+      "arm": "direct",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "2af5ecc662e3bdc95aa070c24cd3b17d7fedbb05aa28f9cd476adf3995c1a9bd",
+      "status": "COMPILE_FAILED",
+      "error": "FeeCalculatorTest.java:10: ����: �Ҳ�������\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual, String message) {\r\n                                     ^\r\n  ����:   �� BigDecimal\r\n  λ��: �� FeeCalculatorTest\r\nFeeCalculatorTest.java:10: ����: �Ҳ�������\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual, String message) {\r\n                                                          ^\r\n  ����:   �� BigDecimal\r\n  λ��: �� FeeCalculatorTest\r\nFeeCalculatorTest.java:27: ����: �Ҳ�������\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0), \"���� 0����� 0\");\r\n                         ^\r\n  ����:   �� BigDecimal\r\n  λ��: �� FeeCalculatorTest\r\nFeeCalculatorTest.java:27: ����: �Ҳ�������\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0), \"���� 0����� 0\");\r\n                                                                           ^\r\n  ����:   �� BigDecimal\r\n  λ��: �� FeeCalculatorTest\r\nFeeCalculatorTest.java:28: ����: �Ҳ�������\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"100\"), 0), \"���� 0����� 100\");\r\n                "
+    },
+    {
+      "id": "RC-DEV-M-raw-m2-r2",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "9b00af0625e50b0f7180bcc67363369fe7fa0e5534d6db6d3c439748dd5770cf",
+      "status": "NOT_COMPILED_UNSUPPORTED_ENTRY"
+    }
+  ]
+}
