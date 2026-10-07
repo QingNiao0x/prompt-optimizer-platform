@@ -58,6 +58,8 @@ final class UnresolvedDecisionContract {
     private final List<Parameter> confirmedParameters;
     private final List<ParameterValue> confirmedValues;
     private final List<ParameterValue> materialValues;
+    /** 服务端仍标为未决的原题；允许其明确范围参与提醒覆盖，不赋予任何参数选值。 */
+    private final List<String> boundPendingQuestions;
     private final boolean twoNamedHospitals;
     private final boolean independentHospitalParameters;
     private final boolean hospitalWaitingComparison;
@@ -67,11 +69,12 @@ final class UnresolvedDecisionContract {
     private UnresolvedDecisionContract(List<Parameter> parameters, List<ParameterValue> confirmedValues,
                                        List<ParameterValue> materialValues, boolean twoNamedHospitals,
                                        boolean independentHospitalParameters, boolean hospitalWaitingComparison, boolean indicatorTableRequested,
-                                       boolean formatIndicatorsRequested) {
+                                       boolean formatIndicatorsRequested, List<String> boundPendingQuestions) {
         this.parameters = List.copyOf(parameters);
         this.confirmedValues = List.copyOf(confirmedValues);
         this.confirmedParameters = confirmedValues.stream().map(ParameterValue::parameter).distinct().toList();
         this.materialValues = List.copyOf(materialValues);
+        this.boundPendingQuestions = List.copyOf(boundPendingQuestions);
         this.twoNamedHospitals = twoNamedHospitals;
         this.independentHospitalParameters = independentHospitalParameters;
         this.hospitalWaitingComparison = hospitalWaitingComparison;
@@ -121,7 +124,8 @@ final class UnresolvedDecisionContract {
         return new UnresolvedDecisionContract(parameters, confirmedValues, materialValues,
                 twoNamedHospitals, independentHospitalParameters, independentHospitalParameters && raw.contains("候诊时间"),
                 raw != null && raw.contains("指标表") && !raw.matches("(?s).*(?:不交付|不输出|不需要|不要)(?:任何)?指标表.*"),
-                raw != null && raw.matches("(?s).*(?:格式不合法|格式异常|格式错误|格式正确率|格式合法率).*"));
+                raw != null && raw.matches("(?s).*(?:格式不合法|格式异常|格式错误|格式正确率|格式合法率).*"),
+                decisions.pendingDecisions().stream().map(com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision::question).toList());
     }
 
     /**
@@ -258,11 +262,16 @@ final class UnresolvedDecisionContract {
                     "(?:(?:应|应该)?如何(?:确定|确认|设定|定义)|是多少(?:分钟)?|是什么)[？?]?$", "");
         }
         List<Parameter> known = namedParameters(knownSubject).stream().map(this::boundParameterName).toList();
-        if (known.size() != 1 || !parameters.contains(known.getFirst())
+        if (known.size() != 1 || (!parameters.contains(known.getFirst()) && !boundPendingQuestions.contains(boundQuestion))
                 || !isIndependentHospitalParameter(known.getFirst())) return Optional.empty();
         // 不能先去除引号再把引用中的旧状态当作当前执行决定。
         if (heading.strip().matches("^[>‘’“”\\\"'`].*")) return Optional.of(false);
-        var declaration = DECLARATION.matcher(canonical(heading).replaceFirst("[。？?]$", ""));
+        String currentHeading = canonical(heading).replaceFirst("[。？?]$", "");
+        // 原题仍未决时，“需要院方后续核实”只是该窗口的完整状态复写；独立条件不由此确认为未知。
+        if (boundPendingQuestions.contains(boundQuestion)) {
+            currentHeading = currentHeading.replaceFirst("(?<=观察窗口)需要(?:院方)?后续核实$", "尚未核实");
+        }
+        var declaration = DECLARATION.matcher(currentHeading);
         if (!declaration.matches()) return Optional.of(false);
         List<Parameter> candidate = namedParameters(declaration.group(1)).stream()
                 .map(this::boundParameterName).toList();
@@ -574,7 +583,8 @@ final class UnresolvedDecisionContract {
         materialValues.forEach(value -> rows.add(parameterRow(value.parameter(), value.value(), "资料明确；不是用户确认")));
         parameters.forEach(value -> rows.add(parameterRow(value, "待确认", "未决；无当前选值")));
         if (rows.isEmpty()) return "";
-        return "\n\n当前参数依据（用于生成指标表，不代替指标表）：\n"
+        return "\n\n以下参数依据只作为输入，合入最终指标表；除用户明确要求，不再重复交付同一参数表或多份待确认清单。\n"
+                + "当前参数依据（用于生成指标表，不代替指标表）：\n"
                 + "| 参数 | 当前口径 | 状态与依据 |\n| --- | --- | --- |\n" + String.join("\n", rows);
     }
 

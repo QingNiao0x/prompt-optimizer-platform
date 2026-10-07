@@ -69,7 +69,8 @@ final class AuthoritativeDeliveryCompactor {
                 }
                 if (stripped.matches("^(?:#{1,6}\\s+.+|\\*\\*.+\\*\\*)$") || stripped.endsWith("：") || stripped.endsWith(":")) {
                     // 仅平台元信息标题不承载新业务对象；其他章节中的省略主语不能跨范围删除。
-                    protectedScope = !metadataHeading(stripped);
+                    // 普通交付标题不建立新对象，也不能解除之前的具名业务章节保护。
+                    protectedScope = protectedScope || !metadataHeading(stripped);
                     lines.add(line);
                     continue;
                 }
@@ -166,12 +167,16 @@ final class AuthoritativeDeliveryCompactor {
         String value = heading.replaceFirst("^#{1,6}\\s+", "").replaceAll("[*：:]", "");
         return value.equals("平台强制约束（不得删除或弱化）") || value.equals("未决决定的交付边界")
                 || value.equals("用户明确规则（须遵守平台权限边界）")
-                || value.equals("当前参数依据（用于生成指标表，不代替指标表）");
+                || value.equals("当前参数依据（用于生成指标表，不代替指标表）")
+                || value.equals("交付物") || value.equals("交付要求") || value.equals("输出要求")
+                || value.equals("实体标识的独立依据（A/B集合不证明名称对应，不按次序或排除法绑定）");
     }
 
     /** 只归一化平台契约的排版与有限完整句前缀；新条件、对象、数值与例外必须继续逐字匹配。 */
     private static String key(String text) {
         return Normalizer.normalize(text.strip().replaceFirst("^[-*•]\\s+", ""), Normalizer.Form.NFKC)
+                // 已登记平台句里的代码名只作行内排版；代码块、实际业务表与数值字面量不在此处理。
+                .replaceAll("`([A-Za-z_][A-Za-z0-9_. ]*)`", "$1")
                 .replaceAll("\\s+", "")
                 .replaceFirst("^(?:上述)?未决参数在正文", "同一未决决定在正文")
                 .replaceFirst("^指标表:逐行包含", "指标表逐行包含");

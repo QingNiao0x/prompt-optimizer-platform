@@ -15,6 +15,39 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PlanRecommendationAlignerTest {
 
     @Test
+    void positivePreferenceReasonExplainsTheActualChoiceWithoutInventingConfirmationOrBenefits() {
+        var choices = new PlanQuestion("storage", "本次附件保存在何处？", "", PlanQuestionType.SINGLE_CHOICE,
+                List.of(option("minio", "MinIO", "复用已有存储", false), option("local", "本地目录", "独立管理", false)), List.of(), true);
+        var aligned = PlanRecommendationAligner.align(choices,
+                request("本次增加订单附件。我偏好 MinIO，以减少额外存储维护，但仍需要本次确认。", null, List.of()));
+        assertThat(aligned.options()).filteredOn(PlanOption::recommended).singleElement().satisfies(option -> {
+            assertThat(option.id()).isEqualTo("minio");
+            assertThat(option.recommendationReason()).contains("偏好", "减少额外存储维护", "确认")
+                    .doesNotContain("已经选定", "性能更好", "成本最低");
+        });
+    }
+
+    @Test
+    void unrelatedReasonsNeverBecomeTheCostBasisForARecommendation() {
+        var aligned = PlanRecommendationAligner.align(question(List.of(option("vue", "Vue 3", "开发页面", false),
+                option("react", "React", "开发页面", false))),
+                request("我偏好 Vue 3。本次尚需确认方案。另一份资料说 React 能减少培训成本。", null, List.of()));
+        assertThat(aligned.options()).filteredOn(PlanOption::recommended).singleElement().satisfies(option ->
+                assertThat(option.recommendationReason()).contains("偏好").doesNotContain("减少培训成本"));
+    }
+
+    @Test
+    void competingPreferencesAndConditionalPreferencesCannotInventOneWinner() {
+        var choices = question(List.of(option("vue", "Vue 3", "开发页面", true),
+                option("react", "React", "开发页面", false)));
+        for (String raw : List.of("我偏好 Vue 3，另一处也明确偏好 React。尚未选择。",
+                "如果以后确认，我偏好 Vue 3。本次不决定技术。")) {
+            assertThat(PlanRecommendationAligner.align(choices, request(raw, null, List.of())).options())
+                    .as(raw).noneMatch(PlanOption::recommended);
+        }
+    }
+
+    @Test
     void shouldAlignWithCurrentPreferenceWithoutAnyFilesOrHistory() {
         var aligned = PlanRecommendationAligner.align(question(List.of(
                 option("react", "React", "开发页面", true),

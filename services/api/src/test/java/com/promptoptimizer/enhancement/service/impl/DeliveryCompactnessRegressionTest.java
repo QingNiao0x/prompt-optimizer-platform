@@ -97,6 +97,40 @@ class DeliveryCompactnessRegressionTest {
         assertThat(result.optimizedPrompt()).contains("计数指标", "不适用", "指标表", "口径依据", "待确认");
     }
 
+    @Test
+    void copiedPromptCarriesTheEvidenceBoundaryInsteadOfLeavingItOnlyInTheEnhancerInstructions() {
+        var result = assemble(RAW + "列出清洗规则，同一编号保留已确认的最新记录。",
+                "交付清洗规则、指标表和必要伪代码。", "不得编造数据。", "核对业务边界。");
+        assertThat(result.optimizedPrompt()).contains("未给出时不能默认负值归零", "版本最大值", "已明确的规则原样执行");
+    }
+
+    @Test
+    void inputParameterBasisDoesNotDemandAnotherDuplicateDeliverable() {
+        var result = assemble(RAW, "交付规则表和指标表。", "不得编造数据。", "核对交付完整。");
+        assertThat(result.optimizedPrompt()).contains("当前参数依据", "合入最终指标表", "用户明确要求", "不再重复交付");
+    }
+
+    @Test
+    void genericDeliveryHeadingsAndInlineFormattingDoNotHideAnIdenticalPlatformRule() {
+        String rule = "每个独立文件各自包含import，不能借用实现文件的导入。";
+        var sections = new java.util.EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
+        sections.put(PromptSectionType.OUTPUT, new PromptSection(PromptSectionType.OUTPUT, "输出",
+                "交付物：\n- 每个独立文件各自包含 `import`，不能借用实现文件的导入。\n" + rule));
+        AuthoritativeDeliveryCompactor.compact(sections, java.util.Map.of(PromptSectionType.OUTPUT, rule));
+        assertThat(sections.get(PromptSectionType.OUTPUT).content().split("不能借用实现文件的导入", -1)).hasSize(2);
+    }
+
+    @Test
+    void genericHeadingsCannotReleaseAnExistingNamedBusinessScope() {
+        String rule = "不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。";
+        String business = "### 甲院2026年\n交付物：\n" + rule
+                + "\n当前参数依据（用于生成指标表，不代替指标表）：\n" + rule;
+        var sections = new java.util.EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
+        sections.put(PromptSectionType.OUTPUT, new PromptSection(PromptSectionType.OUTPUT, "输出", rule + "\n" + business));
+        AuthoritativeDeliveryCompactor.compact(sections, java.util.Map.of(PromptSectionType.OUTPUT, rule));
+        assertThat(sections.get(PromptSectionType.OUTPUT).content()).contains(business);
+    }
+
     private static OptimizationResult assemble(String raw, String output, String constraints, String acceptance) {
         var response = new EnhancementProviderResponse(List.of(
                 new PromptSection(PromptSectionType.BACKGROUND, "背景", "基于用户提供的数据资料。"),

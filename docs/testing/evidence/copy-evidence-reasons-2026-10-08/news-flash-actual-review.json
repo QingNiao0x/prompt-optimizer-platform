@@ -1,0 +1,105 @@
+{
+  "records": [
+    {
+      "id": "CV-NEWS-M-raw-m1-r1",
+      "arm": "raw",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "outputSha256": "caddc85de8125447333fe56bd83fca26569ef5fab3f1bc0c54455ebcb9680925",
+      "bodyStartLine": 6,
+      "bodyNonWhitespaceCharacters": 583,
+      "bodyHanCharacters": 512,
+      "nonWhitespaceInRange": false,
+      "hanInRange": false,
+      "checks": {
+        "date": true,
+        "mvp": true,
+        "controlledBeta": true,
+        "audiences": true,
+        "values": true,
+        "feedback": true,
+        "scope": true,
+        "twoLabelledTitles": true,
+        "extraHeadline": true
+      },
+      "requiredFactsPresent": true,
+      "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+    },
+    {
+      "id": "CV-NEWS-M-plan-m1-r1",
+      "arm": "plan",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "outputSha256": "eed4ee9d2992406b43777ad984d9d89f1cbdbf42848c8d7674556d7f54317a98",
+      "bodyStartLine": 2,
+      "bodyNonWhitespaceCharacters": 664,
+      "bodyHanCharacters": 588,
+      "nonWhitespaceInRange": true,
+      "hanInRange": false,
+      "checks": {
+        "date": true,
+        "mvp": true,
+        "controlledBeta": true,
+        "audiences": true,
+        "values": true,
+        "feedback": true,
+        "scope": true,
+        "twoLabelledTitles": false,
+        "extraHeadline": false
+      },
+      "requiredFactsPresent": true,
+      "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+    },
+    {
+      "id": "CV-NEWS-M-raw-m2-r1",
+      "arm": "raw",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "outputSha256": "83aca6b11c96769a9078b78430b5383a56e940f036d64c43aa59579f42e1a33d",
+      "bodyStartLine": 6,
+      "bodyNonWhitespaceCharacters": 749,
+      "bodyHanCharacters": 678,
+      "nonWhitespaceInRange": true,
+      "hanInRange": true,
+      "checks": {
+        "date": true,
+        "mvp": true,
+        "controlledBeta": true,
+        "audiences": true,
+        "values": true,
+        "feedback": true,
+        "scope": true,
+        "twoLabelledTitles": true,
+        "extraHeadline": false
+      },
+      "requiredFactsPresent": true,
+      "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+    },
+    {
+      "id": "CV-NEWS-M-plan-m2-r1",
+      "arm": "plan",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "outputSha256": "b17e80fc783a59a0e2ae0cf43e66425c43914122330ef2ac4a7ea9b9f034aafa",
+      "bodyStartLine": 4,
+      "bodyNonWhitespaceCharacters": 615,
+      "bodyHanCharacters": 552,
+      "nonWhitespaceInRange": true,
+      "hanInRange": false,
+      "checks": {
+        "date": true,
+        "mvp": true,
+        "controlledBeta": true,
+        "audiences": true,
+        "values": true,
+        "feedback": true,
+        "scope": true,
+        "twoLabelledTitles": true,
+        "extraHeadline": false
+      },
+      "requiredFactsPresent": true,
+      "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+    }
+  ],
+  "releaseApproval": false
+}

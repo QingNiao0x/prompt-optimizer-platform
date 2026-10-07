@@ -1,0 +1,1133 @@
+{
+  "node": 16,
+  "scope": "COPYABLE_EVIDENCE_GROUNDED_RECOMMENDATIONS_AND_BOUND_WINDOW_REMINDERS",
+  "unitTests": 776,
+  "unitClasses": 41,
+  "unitLogs": [
+    "copy-evidence-reasons-red.log",
+    "bound-window-actual-red.log",
+    "bound-window-actual-red2.log",
+    "delivery-heading-actual-red.log",
+    "copy-evidence-reasons-final5.log"
+  ],
+  "buildScope": "隔离构建，排除另一会话正在开发的短信认证；未执行迁移，未改变API或共享修复预算。",
+  "methodology": {
+    "optimizerModels": [
+      "deepseek:deepseek-flash",
+      "deepseek:deepseek-v4-pro"
+    ],
+    "executionModels": [
+      "deepseek:deepseek-flash",
+      "deepseek:deepseek-v4-pro"
+    ],
+    "temperature": 0.2,
+    "maxTokens": 6144,
+    "repetitions": 1,
+    "automaticExecutionRetries": 0,
+    "pairs": "医院和科研：原始/直接增强、原始加实际回答/Plan；Java和新闻：零问题，原始/Plan。每对资料与答案哈希一致。",
+    "calls": "01、02两候选分别16Plan+24增强；03复用02的16份实际Plan与答案，只新调用24次增强，另执行48份实际作品。不得将复用Plan计作新调用。",
+    "frozenSourceFiles": 46,
+    "realProvider": true,
+    "syntheticMaterials": true,
+    "fullBrowserFolderWorkflow": false,
+    "independentProfessionalReview": false
+  },
+  "platformFixes": [
+    "无依据清洗与排序边界进入最终复制正文，禁止默认负值归零、版本最大值或行序取最新。",
+    "当前参数依据表只作输入，合入指标表；普通交付标题不再阻断平台权威句归并，具名业务章节保护保留。",
+    "已绑定的完整观察窗口未决状态可覆盖原题用词不同、需要院方后续核实的复述，不确认其他参数。",
+    "当前明确偏好优先于普通提及；推荐理由引用适用证据中的完整短句，竞争偏好不强行推荐。"
+  ],
+  "apiFinal": [
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-direct",
+      "status": "COLLECTED",
+      "latencyMs": 9696,
+      "copyLength": 5839,
+      "ambiguities": [
+        "A医院2022年的覆盖度尚未确定。",
+        "是否对缺失病例使用插补尚未决定。",
+        "完整性指标的分母尚未确定。",
+        "跨字段一致性指标的分母尚未确定。"
+      ],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 22128,
+      "copyLength": 7046,
+      "ambiguities": [
+        "该问题尚未确定：A医院2022年的覆盖度目前未核实，您希望在本方案中如何处理？ 用户说明：A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。",
+        "该问题尚未确定：仅确认完整性分母，一致性指标分母仍未决定。 补充说明：不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。",
+        "该问题尚未确定：是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。",
+        "该问题尚未确定：费用负数核实后的处理方式、相关指标分母和无法完成来源核实的处置尚未决定，需分别核实，不预先删除或改写。"
+      ],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-direct",
+      "status": "COLLECTED",
+      "latencyMs": 19026,
+      "copyLength": 5111,
+      "ambiguities": [
+        "A医院2022年的覆盖度尚未确定，影响该年度样本量、缺失数和有效分母的计算，请确认该年度数据是否完整覆盖所有出院病案首页。",
+        "完整性指标的分母尚未确定，例如是否包含所有有效出院记录、是否排除重复导入或特定记录，请确认该指标的具体分母定义。",
+        "跨字段一致性指标的分母尚未确定，例如是否仅包含主要诊断代码非空的记录或所有记录，请确认该指标的具体分母定义。",
+        "是否对缺失病例使用插补尚未决定，且不同指标可能采用不同处理，请确认各指标是否采用插补及具体插补方法。"
+      ],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 23157,
+      "copyLength": 5426,
+      "ambiguities": [
+        "该问题尚未确定：仅确认完整性分母，一致性指标分母仍未决定。 补充说明：不能直接继承完整性指标分母；后续须按各逻辑规则的适用记录核实。 补充说明：不同逻辑规则可能适用不同记录子集，需要分别明确各规则的分母定义。",
+        "该问题尚未确定：缺失值：是否插补、适用指标和方法均未决定，本次保持缺失状态并说明不同处理的影响，不把默认不插补写成已确认专业决定。 补充说明：且不同指标可能采用不同处理，需要确认各指标缺失值的处理方式。",
+        "该问题尚未确定：A医院2022年的数据覆盖度如何？ 用户说明：A医院2022年覆盖度尚未核实，其他年份与医院不能替该项建立覆盖事实。 补充说明：影响该年度数据质量指标的可比性和解释，需要确认覆盖范围或说明无法核实的原因。"
+      ],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "CV-NEWS-M-deepseek_deepseek-flash-direct",
+      "status": "COLLECTED",
+      "latencyMs": 4323,
+      "copyLength": 1817,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "CV-NEWS-M-deepseek_deepseek-flash-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 4172,
+      "copyLength": 1909,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "CV-NEWS-M-deepseek_deepseek-v4-pro-direct",
+      "status": "COLLECTED",
+      "latencyMs": 3924,
+      "copyLength": 1713,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "CV-NEWS-M-deepseek_deepseek-v4-pro-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 4367,
+      "copyLength": 1768,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "PS-NOTIFY-M-deepseek_deepseek-flash-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 2161,
+      "copyLength": 979,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "PS-NOTIFY-M-deepseek_deepseek-v4-pro-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 3814,
+      "copyLength": 1062,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "PS-STORAGE-M-deepseek_deepseek-flash-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 8004,
+      "copyLength": 2065,
+      "ambiguities": [
+        "该问题尚未确定：最大重试次数和失败后的临时文件处理策略尚未决定，方案不得把默认次数或清理策略写成已确认。 补充说明：影响失败与重试行为方案的具体参数设计，需用户确认。 补充说明：影响失败与重试行为方案的具体处理流程，需用户确认。"
+      ],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "PS-STORAGE-M-deepseek_deepseek-v4-pro-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 5898,
+      "copyLength": 1572,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-DEV-M-deepseek_deepseek-flash-direct",
+      "status": "COLLECTED",
+      "latencyMs": 4985,
+      "copyLength": 2900,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-DEV-M-deepseek_deepseek-flash-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 4864,
+      "copyLength": 2825,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-DEV-M-deepseek_deepseek-v4-pro-direct",
+      "status": "COLLECTED",
+      "latencyMs": 7062,
+      "copyLength": 2605,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-DEV-M-deepseek_deepseek-v4-pro-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 9385,
+      "copyLength": 3308,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-direct",
+      "status": "COLLECTED",
+      "latencyMs": 5711,
+      "copyLength": 3641,
+      "ambiguities": [
+        "甲院与乙院的 hospital_id 对应关系（A/B 分别对应哪家医院）无对应证据，当前对应待确认。该对应关系影响按医院分组、两院独立计算及比较结果，需确认后才能完成依赖该对应的步骤。",
+        "甲院的观察窗口尚未确定，影响甲院候诊时间统计的时间边界与纳入记录范围，需确认。",
+        "乙院的观察窗口尚未确定，影响乙院候诊时间统计的时间边界与纳入记录范围，需确认。",
+        "甲院异常等待的阈值尚未确定，影响甲院异常等待指标的判定与统计结果，需确认。",
+        "乙院异常等待的阈值尚未确定，影响乙院异常等待指标的判定与统计结果，需确认。"
+      ],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 5764,
+      "copyLength": 4285,
+      "ambiguities": [
+        "该问题尚未确定：甲院与 hospital_id 的对应关系是什么？ 用户说明：甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "该问题尚未确定：乙院与 hospital_id 的对应关系是什么？ 用户说明：乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "该问题尚未确定：甲院用于比较的观察窗口是什么？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "该问题尚未确定：乙院用于比较的观察窗口是什么？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "该问题尚未确定：乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。"
+      ],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-direct",
+      "status": "COLLECTED",
+      "latencyMs": 14790,
+      "copyLength": 2799,
+      "ambiguities": [
+        "甲院的观察窗口尚未确定，请提供具体时间范围（如从挂号到接诊的最大等待时间），否则无法计算该院的候诊时间指标。",
+        "乙院的观察窗口尚未确定，请提供具体时间范围（如从挂号到接诊的最大等待时间），否则无法计算该院的候诊时间指标。",
+        "甲院异常等待的阈值尚未确定，请提供具体阈值（如超过多少分钟视为异常），否则无法标记该院的异常等待记录。",
+        "乙院异常等待的阈值尚未确定，请提供具体阈值（如超过多少分钟视为异常），否则无法标记该院的异常等待记录。",
+        "甲院与 hospital_id 的对应关系尚未确定。",
+        "乙院与 hospital_id 的对应关系尚未确定。"
+      ],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 15788,
+      "copyLength": 3216,
+      "ambiguities": [
+        "该问题尚未确定：甲院与 hospital_id 的对应关系是什么？ 用户说明：甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "该问题尚未确定：乙院与 hospital_id 的对应关系是什么？ 用户说明：乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "该问题尚未确定：甲院的比较观察窗口如何定义？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "该问题尚未确定：乙院的比较观察窗口如何定义？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "该问题尚未确定：乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。 补充说明：不能沿用甲院的90分钟。",
+        "甲院与hospital_id的对应关系尚未核实，无法确定A/B代码分别对应哪家医院。",
+        "乙院与hospital_id的对应关系尚未核实，无法确定A/B代码分别对应哪家医院。"
+      ],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-TRANSLATION-M-deepseek_deepseek-flash-direct",
+      "status": "COLLECTED",
+      "latencyMs": 3451,
+      "copyLength": 1939,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-TRANSLATION-M-deepseek_deepseek-flash-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 3143,
+      "copyLength": 1764,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-TRANSLATION-M-deepseek_deepseek-v4-pro-direct",
+      "status": "COLLECTED",
+      "latencyMs": 3961,
+      "copyLength": 1231,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    },
+    {
+      "id": "RC-TRANSLATION-M-deepseek_deepseek-v4-pro-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 4466,
+      "copyLength": 1302,
+      "ambiguities": [],
+      "internalProtocolLeak": false
+    }
+  ],
+  "platformRemaining": [
+    {
+      "id": "PLATFORM-MAPPING-PARAPHRASE",
+      "evidence": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-final",
+      "detail": "5项独立未知之外仍有两条“无法确定A/B代码分别对应哪家医院”复述；窗口旧复写已关闭，不把它们混为同一失败。"
+    },
+    {
+      "id": "PLATFORM-COPY-VERBOSITY",
+      "detail": "医院Flash正文中算法依据边界仍出现两次；具名章节保守保护阻止删除。科研原始1992字符，Plan正文5426/7046字符，未达到全文精简目标。"
+    },
+    {
+      "id": "PLAN-LOW-VALUE",
+      "evidence": "PS-HOSP-APPROVED-M-deepseek_deepseek-flash-plan",
+      "detail": "“两个窗口的主要取舍围绕哪些方面”价值不足；不能把低价值问题与真正未知窗口混同。"
+    },
+    {
+      "id": "PLAN-OPTION-EVIDENCE",
+      "detail": "推荐理由可追溯不等于选项所有取舍均有证据。机构、年份、审批组合及选项成本断言仍需扩大反例；本轮医院保守无推荐不是该场景正向推荐验收通过。"
+    }
+  ],
+  "downstreamFindings": [
+    {
+      "id": "HOSPITAL-SORTING-FABRICATION",
+      "batch": "hosp-pro",
+      "work": "RC-HOSP-M-direct-m2-r1",
+      "quote": "当前按“import_version 最大值 = 最新记录”执行，该规则来自输入数据说明。",
+      "attribution": "最终提示词明确禁止默认最大值，资料只列字段；执行模型新增规则并伪称来源。"
+    },
+    {
+      "id": "HOSPITAL-DEPENDENCY-READINESS",
+      "batch": "hosp-flash",
+      "work": "RC-HOSP-M-direct-m1-r1",
+      "quote": "| 缺失挂号时间记录数 | registered_at 缺失的记录数 | 不适用（计数指标） | 去重后记录 | 用户确认：缺失挂号时间不能当作零分钟，应列出缺失数量 | 可计算（计数） |",
+      "attribution": "同作品去重规则仍待确认；去重后计数却已可计算。平台已传依赖原则，当前本地守卫不判断外部执行作品任意依赖。"
+    },
+    {
+      "id": "RESEARCH-SORTING",
+      "batch": "research-flash",
+      "work": "CF-RESEARCH-L-R1-plan-m2-r1",
+      "quote": "df_sorted = df.sort_values([\"hospital\",\"record_id\",\"import_version\"])",
+      "attribution": "后续keep=last实现最大版本，输入只说最新有效版本，最终提示词有禁止默认排序依据的边界。"
+    },
+    {
+      "id": "RESEARCH-GROUP-READINESS",
+      "batch": "research-pro",
+      "work": "CF-RESEARCH-L-R1-plan-m1-r1",
+      "quote": "| 年度/医院分组指标 | 各分组分子 | 各分组有效分母 | 分组记录 | 用户明确 | 可计算 |",
+      "attribution": "同一作品格式率、一致性率分母仍未知；泛称分组指标可计算不够精确。"
+    },
+    {
+      "id": "CODE-FULL-DELIVERY",
+      "detail": "4份增强：1份完整文件编译通过，1份测试断言类型错误，2份未交测试类；其中1份实现是私有构造器加实例方法，公共调用不可用。原始4份只有1份完整文件编译通过。"
+    },
+    {
+      "id": "LENGTH",
+      "detail": "科研4份Plan按既定非空白近似口径均超2000；新闻4份Plan为599/615/846/693非空白字符，纯汉字为530/552/759/627，不能混用口径宣布通过。"
+    }
+  ],
+  "toolCorrections": [
+    "零题时没有raw_matched轨，原始轨空答案哈希与Plan一致；准备脚本错误发生在调用前，改正后执行48份，未虚构答案。",
+    "旧Java断言假设所有方法static，但需求未规定；保留旧记录，按真实公开方法形式复验。合法实例方法不算业务失败，私有构造器且无工厂的实例API仍判不可用。",
+    "新闻一份标题独立成行且以产品名开头，旧正文边界误包含标题；verified文件改用正文标记及最后标题边界。",
+    "一次临时脚本生成的PowerShell引号错误发生在编译前，改用文件补丁，未更改实际模型作品。"
+  ],
+  "artifacts": {
+    "research-flash": [
+      {
+        "id": "CF-RESEARCH-L-R1-direct-m1-r1",
+        "arm": "direct",
+        "model": "deepseek:deepseek-flash",
+        "characters": 1994,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-direct-m2-r1",
+        "arm": "direct",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 2452,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-plan-m1-r1",
+        "arm": "plan",
+        "model": "deepseek:deepseek-flash",
+        "characters": 2644,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-plan-m2-r1",
+        "arm": "plan",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 3441,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-raw-m1-r1",
+        "arm": "raw",
+        "model": "deepseek:deepseek-flash",
+        "characters": 2565,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-raw-m2-r1",
+        "arm": "raw",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 3488,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-raw_matched-m1-r1",
+        "arm": "raw_matched",
+        "model": "deepseek:deepseek-flash",
+        "characters": 2520,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-raw_matched-m2-r1",
+        "arm": "raw_matched",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 3211,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      }
+    ],
+    "research-pro": [
+      {
+        "id": "CF-RESEARCH-L-R1-direct-m1-r1",
+        "arm": "direct",
+        "model": "deepseek:deepseek-flash",
+        "characters": 2466,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-direct-m2-r1",
+        "arm": "direct",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 4582,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": [
+          "医院间差异可能与导入版本、数据覆盖和记录构成有关，只描述差异，不作因果推断。"
+        ]
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-plan-m1-r1",
+        "arm": "plan",
+        "model": "deepseek:deepseek-flash",
+        "characters": 2201,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": [
+          "跨字段一致性指标分母待确认，不能继承完整性分母。"
+        ]
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-plan-m2-r1",
+        "arm": "plan",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 2559,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-raw-m1-r1",
+        "arm": "raw",
+        "model": "deepseek:deepseek-flash",
+        "characters": 1945,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-raw-m2-r1",
+        "arm": "raw",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 3502,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-raw_matched-m1-r1",
+        "arm": "raw_matched",
+        "model": "deepseek:deepseek-flash",
+        "characters": 1905,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "CF-RESEARCH-L-R1-raw_matched-m2-r1",
+        "arm": "raw_matched",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 3751,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      }
+    ],
+    "hosp-flash": [
+      {
+        "id": "RC-HOSP-M-direct-m1-r1",
+        "arm": "direct",
+        "model": "deepseek:deepseek-flash",
+        "characters": 5001,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-direct-m2-r1",
+        "arm": "direct",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 6381,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-plan-m1-r1",
+        "arm": "plan",
+        "model": "deepseek:deepseek-flash",
+        "characters": 3348,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-plan-m2-r1",
+        "arm": "plan",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 5336,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-raw-m1-r1",
+        "arm": "raw",
+        "model": "deepseek:deepseek-flash",
+        "characters": 2264,
+        "indicatorTableDetected": false,
+        "exactRepeatedSentences": [
+          "按医院、月份、科室分别计算。"
+        ]
+      },
+      {
+        "id": "RC-HOSP-M-raw-m2-r1",
+        "arm": "raw",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 2578,
+        "indicatorTableDetected": false,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-raw_matched-m1-r1",
+        "arm": "raw_matched",
+        "model": "deepseek:deepseek-flash",
+        "characters": 2187,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-raw_matched-m2-r1",
+        "arm": "raw_matched",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 1864,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      }
+    ],
+    "hosp-pro": [
+      {
+        "id": "RC-HOSP-M-direct-m1-r1",
+        "arm": "direct",
+        "model": "deepseek:deepseek-flash",
+        "characters": 2737,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-direct-m2-r1",
+        "arm": "direct",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 4172,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": [
+          "确认后，候诊时间超过该窗口的记录在候诊时间统计指标中排除，单独计数报告。",
+          "确认后，候诊时间超过该阈值的记录标记为“异常等待”。"
+        ]
+      },
+      {
+        "id": "RC-HOSP-M-plan-m1-r1",
+        "arm": "plan",
+        "model": "deepseek:deepseek-flash",
+        "characters": 3233,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-plan-m2-r1",
+        "arm": "plan",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 6438,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-raw-m1-r1",
+        "arm": "raw",
+        "model": "deepseek:deepseek-flash",
+        "characters": 2516,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-raw-m2-r1",
+        "arm": "raw",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 1738,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-raw_matched-m1-r1",
+        "arm": "raw_matched",
+        "model": "deepseek:deepseek-flash",
+        "characters": 2181,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      },
+      {
+        "id": "RC-HOSP-M-raw_matched-m2-r1",
+        "arm": "raw_matched",
+        "model": "deepseek:deepseek-v4-pro",
+        "characters": 2417,
+        "indicatorTableDetected": true,
+        "exactRepeatedSentences": []
+      }
+    ]
+  },
+  "java": [
+    {
+      "label": "java-flash",
+      "correctedPublicApi": {
+        "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-07T21-19-48-317Z-a9b1f730",
+        "scope": "PURE_JAVA_SYNTHETIC_FEES_ONLY",
+        "entries": [
+          {
+            "id": "RC-DEV-M-raw-m1-r1",
+            "arm": "raw",
+            "modelId": "deepseek:deepseek-flash",
+            "outputSha256": "804672b6c94c955dea655d984809e1cdcf04304034b9328d51e7649628630ad5",
+            "status": "PASS",
+            "checked": 52,
+            "failures": 0,
+            "firstFailure": ""
+          },
+          {
+            "id": "RC-DEV-M-plan-m1-r1",
+            "arm": "plan",
+            "modelId": "deepseek:deepseek-flash",
+            "outputSha256": "f33fe0f5c3de80155d205f6dec5491953f5aeded36020234832ba75f9c7809a5",
+            "status": "PASS",
+            "checked": 52,
+            "failures": 0,
+            "firstFailure": ""
+          },
+          {
+            "id": "RC-DEV-M-raw-m2-r1",
+            "arm": "raw",
+            "modelId": "deepseek:deepseek-v4-pro",
+            "outputSha256": "1b8d59d93ef104cf103225865b07c7fa3a07f592b75e62ee00d3b39eaabe6acd",
+            "status": "PASS",
+            "checked": 52,
+            "failures": 0,
+            "firstFailure": ""
+          },
+          {
+            "id": "RC-DEV-M-plan-m2-r1",
+            "arm": "plan",
+            "modelId": "deepseek:deepseek-v4-pro",
+            "outputSha256": "0969757d7356090264e325d53f2c8c81cdc3466d44b9ef534de99bf1134bbaeb",
+            "status": "PASS",
+            "checked": 52,
+            "failures": 0,
+            "firstFailure": ""
+          }
+        ]
+      },
+      "completeFiles": {
+        "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-07T21-19-48-317Z-a9b1f730",
+        "scope": "SYNTHETIC_FEE_IMPLEMENTATION_AND_TEST_COMPILATION_ONLY",
+        "entries": [
+          {
+            "id": "RC-DEV-M-raw-m1-r1",
+            "arm": "raw",
+            "modelId": "deepseek:deepseek-flash",
+            "outputSha256": "804672b6c94c955dea655d984809e1cdcf04304034b9328d51e7649628630ad5",
+            "status": "COMPILE_FAILED",
+            "error": "FeeCalculatorTest.java:14: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                                         ^\r\nFeeCalculatorTest.java:16: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 1));\r\n                                         ^\r\nFeeCalculatorTest.java:19: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"100\"), 0));\r\n                                         ^\r\nFeeCalculatorTest.java:21: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"100\"), 1));\r\n                                         ^\r\nFeeCalculatorTest.java:24: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"199.99\"), 1));\r\n                                         ^\r\nFeeCalculatorTest.java:26: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigD"
+          },
+          {
+            "id": "RC-DEV-M-plan-m1-r1",
+            "arm": "plan",
+            "modelId": "deepseek:deepseek-flash",
+            "outputSha256": "f33fe0f5c3de80155d205f6dec5491953f5aeded36020234832ba75f9c7809a5",
+            "status": "COMPILED",
+            "testClass": "FeeCalculatorTest",
+            "generatedTestsExecuted": false
+          },
+          {
+            "id": "RC-DEV-M-raw-m2-r1",
+            "arm": "raw",
+            "modelId": "deepseek:deepseek-v4-pro",
+            "outputSha256": "1b8d59d93ef104cf103225865b07c7fa3a07f592b75e62ee00d3b39eaabe6acd",
+            "status": "COMPILE_FAILED",
+            "error": "FeeCalculatorTest.java:82: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual) {\r\n                                     ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:82: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual) {\r\n                                                          ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:11: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                         ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:11: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                                                                           ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:12: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"300\"), 0));\r"
+          },
+          {
+            "id": "RC-DEV-M-plan-m2-r1",
+            "arm": "plan",
+            "modelId": "deepseek:deepseek-v4-pro",
+            "outputSha256": "0969757d7356090264e325d53f2c8c81cdc3466d44b9ef534de99bf1134bbaeb",
+            "status": "FULL_TEST_CLASS_NEEDS_REVIEW",
+            "implementationBlocks": 1,
+            "testBlocks": 0
+          }
+        ]
+      }
+    },
+    {
+      "label": "java-pro",
+      "correctedPublicApi": {
+        "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-07T21-19-48-554Z-3c89af4d",
+        "scope": "PURE_JAVA_SYNTHETIC_FEES_ONLY",
+        "entries": [
+          {
+            "id": "RC-DEV-M-raw-m1-r1",
+            "arm": "raw",
+            "modelId": "deepseek:deepseek-flash",
+            "outputSha256": "b4a016fc220077929bb30d3d34d45ae0376928a1104201f669902aed2c7dce84",
+            "status": "PASS",
+            "checked": 52,
+            "failures": 0,
+            "firstFailure": ""
+          },
+          {
+            "id": "RC-DEV-M-plan-m1-r1",
+            "arm": "plan",
+            "modelId": "deepseek:deepseek-flash",
+            "outputSha256": "60495615afbdcd372c68410ef3d3d46f6c3ea839d684ec7075a2df474d835abc",
+            "status": "PASS",
+            "checked": 52,
+            "failures": 0,
+            "firstFailure": ""
+          },
+          {
+            "id": "RC-DEV-M-raw-m2-r1",
+            "arm": "raw",
+            "modelId": "deepseek:deepseek-v4-pro",
+            "outputSha256": "b186f2140850cb7938e7c89251ae3cb6b272603e471d77d0153864a814b96ea5",
+            "status": "PASS",
+            "checked": 52,
+            "failures": 0,
+            "firstFailure": ""
+          },
+          {
+            "id": "RC-DEV-M-plan-m2-r1",
+            "arm": "plan",
+            "modelId": "deepseek:deepseek-v4-pro",
+            "outputSha256": "cf94fb1b9ec1c605c6f87e138aa8c87568f452ed225d8d3c5d1818c81dfe9cb4",
+            "status": "PUBLIC_API_COMPILE_FAILED",
+            "error": "Harness.java:10: error: FeeCalculator() has private access in FeeCalculator\r\n   try{check(expected.equals(new FeeCalculator().deliveryFee(amount,n)),\"delivery:\"+s+\":\"+n);}catch(Throwable e){check(false,\"delivery:\"+s+\":\"+e.getClass().getSimpleName());}}\r\n                             ^\r\nHarness.java:12: error: FeeCalculator() has private access in FeeCalculator\r\n   try{check(expected.equals(new FeeCalculator().serviceFee(amount)),\"service:\"+s);}catch(Throwable e){check(false,\"service:\"+s+\":\"+e.getClass().getSimpleName());}\r\n                             ^\r\nHarness.java:14: error: FeeCalculator() has private access in FeeCalculator\r\n  bad(()->new FeeCalculator().deliveryFee(null,1),\"delivery:null\");bad(()->new FeeCalculator().deliveryFee(null,0),\"delivery:null-zero-count\");bad(()->new FeeCalculator().serviceFee(null),\"service:null\");\r\n          ^\r\nHarness.java:14: error: FeeCalculator() has private access in FeeCalculator\r\n  bad(()->new FeeCalculator().deliveryFee(null,1),\"delivery:null\");"
+          }
+        ]
+      },
+      "completeFiles": {
+        "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-07T21-19-48-554Z-3c89af4d",
+        "scope": "SYNTHETIC_FEE_IMPLEMENTATION_AND_TEST_COMPILATION_ONLY",
+        "entries": [
+          {
+            "id": "RC-DEV-M-raw-m1-r1",
+            "arm": "raw",
+            "modelId": "deepseek:deepseek-flash",
+            "outputSha256": "b4a016fc220077929bb30d3d34d45ae0376928a1104201f669902aed2c7dce84",
+            "status": "COMPILED",
+            "testClass": "FeeCalculatorTest",
+            "generatedTestsExecuted": false
+          },
+          {
+            "id": "RC-DEV-M-plan-m1-r1",
+            "arm": "plan",
+            "modelId": "deepseek:deepseek-flash",
+            "outputSha256": "60495615afbdcd372c68410ef3d3d46f6c3ea839d684ec7075a2df474d835abc",
+            "status": "COMPILE_FAILED",
+            "error": "FeeCalculatorTest.java:72: error: incompatible types: String cannot be converted to BigDecimal\r\n        assertEquals(\"����δ���޸�\", original.toPlainString(), amount.toPlainString());\r\n                                                                             ^\r\nFeeCalculatorTest.java:77: error: incompatible types: String cannot be converted to BigDecimal\r\n        assertEquals(\"������δ���޸�\", \"0\", zero.toPlainString());\r\n                                                       ^\r\nNote: Some messages have been simplified; recompile with -Xdiags:verbose to get full output\r\n2 errors\r\n"
+          },
+          {
+            "id": "RC-DEV-M-raw-m2-r1",
+            "arm": "raw",
+            "modelId": "deepseek:deepseek-v4-pro",
+            "outputSha256": "b186f2140850cb7938e7c89251ae3cb6b272603e471d77d0153864a814b96ea5",
+            "status": "COMPILE_FAILED",
+            "error": "FeeCalculatorTest.java:54: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual) {\r\n                                     ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:54: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual) {\r\n                                                          ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:11: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                         ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:11: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                                                                           ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:12: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"300\"), 0));\r"
+          },
+          {
+            "id": "RC-DEV-M-plan-m2-r1",
+            "arm": "plan",
+            "modelId": "deepseek:deepseek-v4-pro",
+            "outputSha256": "cf94fb1b9ec1c605c6f87e138aa8c87568f452ed225d8d3c5d1818c81dfe9cb4",
+            "status": "FULL_TEST_CLASS_NEEDS_REVIEW",
+            "implementationBlocks": 1,
+            "testBlocks": 0
+          }
+        ]
+      }
+    }
+  ],
+  "news": [
+    {
+      "label": "news-flash",
+      "records": [
+        {
+          "id": "CV-NEWS-M-raw-m1-r1",
+          "arm": "raw",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "outputSha256": "caddc85de8125447333fe56bd83fca26569ef5fab3f1bc0c54455ebcb9680925",
+          "bodyStartLine": 6,
+          "bodyNonWhitespaceCharacters": 583,
+          "bodyHanCharacters": 512,
+          "nonWhitespaceInRange": false,
+          "hanInRange": false,
+          "checks": {
+            "date": true,
+            "mvp": true,
+            "controlledBeta": true,
+            "audiences": true,
+            "values": true,
+            "feedback": true,
+            "scope": true,
+            "twoLabelledTitles": true,
+            "extraHeadline": true
+          },
+          "requiredFactsPresent": true,
+          "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+        },
+        {
+          "id": "CV-NEWS-M-plan-m1-r1",
+          "arm": "plan",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "outputSha256": "eed4ee9d2992406b43777ad984d9d89f1cbdbf42848c8d7674556d7f54317a98",
+          "bodyStartLine": 9,
+          "bodyNonWhitespaceCharacters": 599,
+          "bodyHanCharacters": 530,
+          "nonWhitespaceInRange": false,
+          "hanInRange": false,
+          "checks": {
+            "date": true,
+            "mvp": true,
+            "controlledBeta": true,
+            "audiences": true,
+            "values": true,
+            "feedback": true,
+            "scope": true,
+            "twoLabelledTitles": true,
+            "extraHeadline": false
+          },
+          "requiredFactsPresent": true,
+          "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+        },
+        {
+          "id": "CV-NEWS-M-raw-m2-r1",
+          "arm": "raw",
+          "model": "deepseek:deepseek-v4-pro",
+          "status": "SUCCESS",
+          "outputSha256": "83aca6b11c96769a9078b78430b5383a56e940f036d64c43aa59579f42e1a33d",
+          "bodyStartLine": 6,
+          "bodyNonWhitespaceCharacters": 749,
+          "bodyHanCharacters": 678,
+          "nonWhitespaceInRange": true,
+          "hanInRange": true,
+          "checks": {
+            "date": true,
+            "mvp": true,
+            "controlledBeta": true,
+            "audiences": true,
+            "values": true,
+            "feedback": true,
+            "scope": true,
+            "twoLabelledTitles": true,
+            "extraHeadline": false
+          },
+          "requiredFactsPresent": true,
+          "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+        },
+        {
+          "id": "CV-NEWS-M-plan-m2-r1",
+          "arm": "plan",
+          "model": "deepseek:deepseek-v4-pro",
+          "status": "SUCCESS",
+          "outputSha256": "b17e80fc783a59a0e2ae0cf43e66425c43914122330ef2ac4a7ea9b9f034aafa",
+          "bodyStartLine": 4,
+          "bodyNonWhitespaceCharacters": 615,
+          "bodyHanCharacters": 552,
+          "nonWhitespaceInRange": true,
+          "hanInRange": false,
+          "checks": {
+            "date": true,
+            "mvp": true,
+            "controlledBeta": true,
+            "audiences": true,
+            "values": true,
+            "feedback": true,
+            "scope": true,
+            "twoLabelledTitles": true,
+            "extraHeadline": false
+          },
+          "requiredFactsPresent": true,
+          "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+        }
+      ],
+      "releaseApproval": false,
+      "supersedes": "news-flash-actual-review.json",
+      "correction": "正文标签优先于以产品名开头的标题；旧计数保留为工具问题记录。"
+    },
+    {
+      "label": "news-pro",
+      "records": [
+        {
+          "id": "CV-NEWS-M-raw-m1-r1",
+          "arm": "raw",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "outputSha256": "d748b127875d2b36140863e1c1ab1985d1b17735f3caac7d841415765184bdff",
+          "bodyStartLine": 6,
+          "bodyNonWhitespaceCharacters": 532,
+          "bodyHanCharacters": 471,
+          "nonWhitespaceInRange": false,
+          "hanInRange": false,
+          "checks": {
+            "date": true,
+            "mvp": true,
+            "controlledBeta": true,
+            "audiences": true,
+            "values": true,
+            "feedback": true,
+            "scope": true,
+            "twoLabelledTitles": true,
+            "extraHeadline": true
+          },
+          "requiredFactsPresent": true,
+          "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+        },
+        {
+          "id": "CV-NEWS-M-plan-m1-r1",
+          "arm": "plan",
+          "model": "deepseek:deepseek-flash",
+          "status": "SUCCESS",
+          "outputSha256": "b73fceade0344b8e1e1edaa893de2354b6caa37da7af5e73955490e4a7d5fcbd",
+          "bodyStartLine": 4,
+          "bodyNonWhitespaceCharacters": 846,
+          "bodyHanCharacters": 759,
+          "nonWhitespaceInRange": false,
+          "hanInRange": true,
+          "checks": {
+            "date": true,
+            "mvp": true,
+            "controlledBeta": true,
+            "audiences": true,
+            "values": true,
+            "feedback": true,
+            "scope": true,
+            "twoLabelledTitles": true,
+            "extraHeadline": false
+          },
+          "requiredFactsPresent": true,
+          "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+        },
+        {
+          "id": "CV-NEWS-M-raw-m2-r1",
+          "arm": "raw",
+          "model": "deepseek:deepseek-v4-pro",
+          "status": "SUCCESS",
+          "outputSha256": "537305985051c92d22ae5449ba5ee6ff37045003078cf99d2a961881e962dc7f",
+          "bodyStartLine": 6,
+          "bodyNonWhitespaceCharacters": 725,
+          "bodyHanCharacters": 654,
+          "nonWhitespaceInRange": true,
+          "hanInRange": true,
+          "checks": {
+            "date": true,
+            "mvp": true,
+            "controlledBeta": true,
+            "audiences": true,
+            "values": true,
+            "feedback": true,
+            "scope": true,
+            "twoLabelledTitles": true,
+            "extraHeadline": false
+          },
+          "requiredFactsPresent": true,
+          "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+        },
+        {
+          "id": "CV-NEWS-M-plan-m2-r1",
+          "arm": "plan",
+          "model": "deepseek:deepseek-v4-pro",
+          "status": "SUCCESS",
+          "outputSha256": "ec6cf5c8b45cecbf2cd2b9e936f2c0f593e6b2ccb525fb3650d2a0db0e74f401",
+          "bodyStartLine": 4,
+          "bodyNonWhitespaceCharacters": 693,
+          "bodyHanCharacters": 627,
+          "nonWhitespaceInRange": true,
+          "hanInRange": true,
+          "checks": {
+            "date": true,
+            "mvp": true,
+            "controlledBeta": true,
+            "audiences": true,
+            "values": true,
+            "feedback": true,
+            "scope": true,
+            "twoLabelledTitles": true,
+            "extraHeadline": false
+          },
+          "requiredFactsPresent": true,
+          "countingNote": "正文排除标题及正文标签；同时记录非空白字符与纯汉字数量，二者不能混为同一口径。必要事实检查后已逐篇阅读；不是所有语义或专业准确率认证。"
+        }
+      ],
+      "releaseApproval": false,
+      "supersedes": "news-pro-actual-review.json",
+      "correction": "正文标签优先于以产品名开头的标题；旧计数保留为工具问题记录。"
+    }
+  ],
+  "batches": [
+    {
+      "label": "hosp-flash",
+      "model": "deepseek:deepseek-flash",
+      "id": "RC-HOSP-M",
+      "directory": "tmp/prompt-output-evaluation/2026-10-07T21-19-47-842Z-f9a6d99a",
+      "jobs": 8,
+      "arms": [
+        "raw",
+        "direct",
+        "raw_matched",
+        "plan"
+      ],
+      "paidCalls": 0
+    },
+    {
+      "label": "hosp-pro",
+      "model": "deepseek:deepseek-v4-pro",
+      "id": "RC-HOSP-M",
+      "directory": "tmp/prompt-output-evaluation/2026-10-07T21-19-47-964Z-73da77ac",
+      "jobs": 8,
+      "arms": [
+        "raw",
+        "direct",
+        "raw_matched",
+        "plan"
+      ],
+      "paidCalls": 0
+    },
+    {
+      "label": "research-flash",
+      "model": "deepseek:deepseek-flash",
+      "id": "CF-RESEARCH-L-R1",
+      "directory": "tmp/prompt-output-evaluation/2026-10-07T21-19-48-083Z-df8c0228",
+      "jobs": 8,
+      "arms": [
+        "raw",
+        "direct",
+        "raw_matched",
+        "plan"
+      ],
+      "paidCalls": 0
+    },
+    {
+      "label": "research-pro",
+      "model": "deepseek:deepseek-v4-pro",
+      "id": "CF-RESEARCH-L-R1",
+      "directory": "tmp/prompt-output-evaluation/2026-10-07T21-19-48-194Z-d3e8d12f",
+      "jobs": 8,
+      "arms": [
+        "raw",
+        "direct",
+        "raw_matched",
+        "plan"
+      ],
+      "paidCalls": 0
+    },
+    {
+      "label": "java-flash",
+      "model": "deepseek:deepseek-flash",
+      "id": "RC-DEV-M",
+      "directory": "tmp/prompt-output-evaluation/2026-10-07T21-19-48-317Z-a9b1f730",
+      "jobs": 4,
+      "arms": [
+        "raw",
+        "plan"
+      ],
+      "paidCalls": 0
+    },
+    {
+      "label": "java-pro",
+      "model": "deepseek:deepseek-v4-pro",
+      "id": "RC-DEV-M",
+      "directory": "tmp/prompt-output-evaluation/2026-10-07T21-19-48-554Z-3c89af4d",
+      "jobs": 4,
+      "arms": [
+        "raw",
+        "plan"
+      ],
+      "paidCalls": 0
+    },
+    {
+      "label": "news-flash",
+      "model": "deepseek:deepseek-flash",
+      "id": "CV-NEWS-M",
+      "directory": "tmp/prompt-output-evaluation/2026-10-07T21-19-48-783Z-ade025c8",
+      "jobs": 4,
+      "arms": [
+        "raw",
+        "plan"
+      ],
+      "paidCalls": 0
+    },
+    {
+      "label": "news-pro",
+      "model": "deepseek:deepseek-v4-pro",
+      "id": "CV-NEWS-M",
+      "directory": "tmp/prompt-output-evaluation/2026-10-07T21-19-48-970Z-7a346038",
+      "jobs": 4,
+      "arms": [
+        "raw",
+        "plan"
+      ],
+      "paidCalls": 0
+    }
+  ],
+  "next": [
+    "以完整关系身份处理映射后果复述，保留新年份、对象、字段、条件。",
+    "减少重复交付要求与已知事实复述，不继续堆加同义约束。",
+    "对明确充分需求校验少改候选；继续固定同信息、同预算比较实际作品，代码以完整文件和公共API验收。",
+    "候选稳定后再做正式多轮跨行业与真实目录/编辑复制历史验收。"
+  ],
+  "fullQualityGatePassed": false,
+  "releaseApproval": false,
+  "stableEnhancementSuperiorityProven": false
+}

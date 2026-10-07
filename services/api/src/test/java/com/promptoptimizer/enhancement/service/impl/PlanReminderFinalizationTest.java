@@ -60,12 +60,50 @@ class PlanReminderFinalizationTest {
     }
 
     @Test
+    void aBoundUnknownWindowDoesNotNeedTheOriginalPromptToUseOnePendingVerb() {
+        String raw = "甲院和乙院的候诊时间比较。两院需要独立计算后再比较。两院的比较观察窗口都没有定。";
+        var answers = List.of(new PlanAnswer("a-window", "甲院用于比较的观察窗口是什么？",
+                "暂不确定。甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代。"),
+                new PlanAnswer("b-window", "乙院用于比较的观察窗口是什么？",
+                        "暂不确定。乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代。"));
+        var result = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers), raw)
+                .merge(List.of("甲院的观察窗口尚未确定。", "乙院的观察窗口尚未确定。"), List.of(), List.of());
+        assertThat(result.messages()).hasSize(2);
+        assertThat(String.join("\n", result.executionPrerequisites())).contains("不能用另一院的窗口替代");
+        var newScope = new PlanAmbiguityMerger(ConfirmedDecisionSet.from(answers), raw)
+                .merge(List.of("甲院2026年的观察窗口尚未确定。"), List.of(), List.of());
+        assertThat(newScope.messages()).hasSize(3);
+    }
+
+    @Test
     void anotherMappingFieldYearOrInstitutionIsNotAnOldMappingQuestion() {
         var answer = new PlanAnswer("a-mapping", "甲院与 hospital_id 的对应关系是什么？", "暂不确定。");
         for (String newIssue : List.of("乙院与hospital_id的对应关系尚未核实。", "甲院2026年与hospital_id的对应关系尚未核实。",
                 "甲院与department_id的对应关系尚未核实。", "甲院与hospital_id的对应关系尚未核实，新增跨院共享仍需审批。")) {
             assertThat(String.join("\n", merge(List.of(answer), List.of(newIssue)).executionPrerequisites()))
                     .contains(newIssue);
+        }
+    }
+
+    @Test
+    void actualMixedAnswersKeepOnlyFiveIndependentHospitalDecisions() throws Exception {
+        var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        try (var input = getClass().getResourceAsStream("/enhancement/bound-window-actual.json")) {
+            var fixture = mapper.readTree(input);
+            var answers = mapper.convertValue(fixture.get("answers"), new com.fasterxml.jackson.core.type.TypeReference<List<PlanAnswer>>() { });
+            var findings = mapper.convertValue(fixture.get("findings"), new com.fasterxml.jackson.core.type.TypeReference<List<String>>() { });
+            var decisions = ConfirmedDecisionSet.from(answers);
+            assertThat(UnresolvedDecisionContract.from(fixture.get("rawPrompt").asText(), decisions)
+                    .matchesBoundIndependentParameter("甲院的观察窗口尚未确定。", "甲院用于比较的观察窗口是什么？"))
+                    .contains(true);
+            var result = new PlanAmbiguityMerger(decisions, fixture.get("rawPrompt").asText())
+                    .merge(findings, List.of(), List.of());
+            assertThat(result.messages()).hasSize(5);
+            var copiedAnswers = answers.stream().filter(answer -> answer.questionId().startsWith("observation_window"))
+                    .map(answer -> answer.answer().replaceFirst("^暂不确定。", "")).toList();
+            var copied = new PlanAmbiguityMerger(decisions, fixture.get("rawPrompt").asText())
+                    .merge(copiedAnswers, List.of(), List.of());
+            assertThat(copied.messages()).hasSize(5);
         }
     }
 

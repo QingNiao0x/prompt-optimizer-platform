@@ -59,10 +59,12 @@ final class PlanRecommendationAligner {
             // 事实存在不等于本次已决定沿用。当前需求明确要求只比较双方时，历史及项目不能替它选胜者。
             boolean rejected = !choice.isBlank() && evidence(currentCorpus, choice) < 0
                     || unresolvedCurrentSelection(currentCorpus, question, option);
-            int score = rejected ? 0 : !current.isBlank() ? 10_000 : !user.isBlank() ? 100 : !project.isBlank() ? 1 : 0;
-            String matched = score == 10_000 ? current : score == 100 ? user : project;
-            reasons.add((score == 10_000 ? "原始需求" : score == 100 ? "用户描述或历史偏好" : "项目证据")
-                    + "明确包含：" + matched + "。请核对适用范围后选择。");
+            // 明确偏好优先于同次材料中的普通技术提及；两个同级偏好仍不替用户选胜者。
+            int score = rejected ? 0 : !current.isBlank() ? explicitPreference(currentCorpus, current) ? 20_000 : 10_000
+                    : !user.isBlank() ? 100 : !project.isBlank() ? 1 : 0;
+            String matched = score >= 10_000 ? current : score == 100 ? user : project;
+            reasons.add(recommendationReason(score >= 10_000 ? "原始需求" : score == 100 ? "用户描述或历史偏好" : "项目证据",
+                    score >= 10_000 ? currentCorpus : score == 100 ? userCorpus : projectCorpus, matched));
             if (score > bestScore) {
                 bestScore = score;
                 bestIndex = index;
@@ -94,6 +96,25 @@ final class PlanRecommendationAligner {
                 question.examples(),
                 question.allowCustomAnswer()
         );
+    }
+
+    /**
+     * 推荐理由复用已核对范围的同句依据，偏好不写成决定，不从另一技术或机构借用取舍。
+     * 只展示完整短句；长句不截掉否定或适用条件，无法简明引用时只说明已有匹配依据。
+     */
+    private static String recommendationReason(String source, String corpus, String matched) {
+        if (matched.isBlank()) return "";
+        boolean preference = explicitPreference(corpus, matched);
+        String evidenceSentence = java.util.Arrays.stream(corpus.split("[。；;!?\\n]+"))
+                .map(String::strip).filter(sentence -> !sentence.isEmpty() && sentence.length() <= 120)
+                .filter(sentence -> evidence(sentence, matched) > 0)
+                .filter(sentence -> !preference || explicitPreference(sentence, matched))
+                .findFirst().orElse("");
+        String basis = evidenceSentence.isEmpty()
+                ? (matched.length() <= 80 ? "匹配依据为“" + matched + "”" : "存在与该选项相符的完整依据")
+                : "依据摘要：“" + evidenceSentence + "”";
+        return source + (preference ? "表达了偏好；" : "提供了适用依据；") + basis
+                + "。此为建议，仍需确认本次选择及适用范围。";
     }
 
     private static String userCorpus(PlanningProviderRequest input) {

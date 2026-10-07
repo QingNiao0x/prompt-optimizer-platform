@@ -1,0 +1,42 @@
+{
+  "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-07T21-19-48-554Z-3c89af4d",
+  "scope": "PURE_JAVA_SYNTHETIC_FEES_ONLY",
+  "entries": [
+    {
+      "id": "RC-DEV-M-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "b4a016fc220077929bb30d3d34d45ae0376928a1104201f669902aed2c7dce84",
+      "status": "PASS",
+      "checked": 52,
+      "failures": 0,
+      "firstFailure": ""
+    },
+    {
+      "id": "RC-DEV-M-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "60495615afbdcd372c68410ef3d3d46f6c3ea839d684ec7075a2df474d835abc",
+      "status": "COMPILE_FAILED",
+      "error": "Harness.java:10: ����: �޷��Ӿ�̬�����������÷Ǿ�̬ ���� deliveryFee(BigDecimal,int)\r\n   try{check(expected.equals(FeeCalculator.deliveryFee(amount,n)),\"delivery:\"+s+\":\"+n);}catch(Throwable e){check(false,\"delivery:\"+s+\":\"+e.getClass().getSimpleName());}}\r\n                                          ^\r\nHarness.java:12: ����: �޷��Ӿ�̬�����������÷Ǿ�̬ ���� serviceFee(BigDecimal)\r\n   try{check(expected.equals(FeeCalculator.serviceFee(amount)),\"service:\"+s);}catch(Throwable e){check(false,\"service:\"+s+\":\"+e.getClass().getSimpleName());}\r\n                                          ^\r\nHarness.java:14: ����: �޷��Ӿ�̬�����������÷Ǿ�̬ ���� deliveryFee(BigDecimal,int)\r\n  bad(()->FeeCalculator.deliveryFee(null,1),\"delivery:null\");bad(()->FeeCalculator.deliveryFee(null,0),\"delivery:null-zero-count\");bad(()->FeeCalculator.serviceFee(null),\"service:null\");\r\n                       ^\r\nHarness.java:14: ����: �޷��Ӿ�̬�����������÷Ǿ�̬ ���� deliveryFee(BigDecimal,int)\r\n  bad(()->FeeCalculator.deliveryFee(null,1),\"delive"
+    },
+    {
+      "id": "RC-DEV-M-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "b186f2140850cb7938e7c89251ae3cb6b272603e471d77d0153864a814b96ea5",
+      "status": "PASS",
+      "checked": 52,
+      "failures": 0,
+      "firstFailure": ""
+    },
+    {
+      "id": "RC-DEV-M-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "cf94fb1b9ec1c605c6f87e138aa8c87568f452ed225d8d3c5d1818c81dfe9cb4",
+      "status": "COMPILE_FAILED",
+      "error": "Harness.java:10: ����: �޷��Ӿ�̬�����������÷Ǿ�̬ ���� deliveryFee(BigDecimal,int)\r\n   try{check(expected.equals(FeeCalculator.deliveryFee(amount,n)),\"delivery:\"+s+\":\"+n);}catch(Throwable e){check(false,\"delivery:\"+s+\":\"+e.getClass().getSimpleName());}}\r\n                                          ^\r\nHarness.java:12: ����: �޷��Ӿ�̬�����������÷Ǿ�̬ ���� serviceFee(BigDecimal)\r\n   try{check(expected.equals(FeeCalculator.serviceFee(amount)),\"service:\"+s);}catch(Throwable e){check(false,\"service:\"+s+\":\"+e.getClass().getSimpleName());}\r\n                                          ^\r\nHarness.java:14: ����: �޷��Ӿ�̬�����������÷Ǿ�̬ ���� deliveryFee(BigDecimal,int)\r\n  bad(()->FeeCalculator.deliveryFee(null,1),\"delivery:null\");bad(()->FeeCalculator.deliveryFee(null,0),\"delivery:null-zero-count\");bad(()->FeeCalculator.serviceFee(null),\"service:null\");\r\n                       ^\r\nHarness.java:14: ����: �޷��Ӿ�̬�����������÷Ǿ�̬ ���� deliveryFee(BigDecimal,int)\r\n  bad(()->FeeCalculator.deliveryFee(null,1),\"delive"
+    }
+  ]
+}
