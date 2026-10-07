@@ -487,6 +487,8 @@ final class PlanAmbiguityMerger {
         String matchingHeader = alternatives.matches() ? alternatives.group(1) : header;
         List<ConfirmedPlanDecision> matches = decisions.pendingDecisions().stream()
                 .filter(decision -> conflict(decision.question()).isEmpty())
+                // 当前完整参数已证明不是同一项时，不再落入按题干简化的旧解释匹配。
+                .filter(decision -> pendingIdentity.boundParameterMatch(header, decision).orElse(true))
                 .filter(decision -> sameQuestionReminder(header, decision.question())
                         || questionHeader(matchingHeader).equals(questionHeader(decision.question()))
                         || matchesPartialAnswerExplanation(header, decision))

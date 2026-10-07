@@ -1,0 +1,224 @@
+{
+  "source": "tmp/prompt-output-evaluation/2026-10-07T12-34-38-620Z-6c794481",
+  "records": [
+    {
+      "id": "RC-HOSP-M-plan-m1-r1",
+      "arm": "plan",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "d4391ed08720f1ec0e8df01b8651d75a03896556fa721aedbb441cb06f161fe5",
+      "nonHeadingTableCharacters": 2752,
+      "bodyCharactersExcludingOnlyIndicatorTables": 2843,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [
+        "本方案只做统计方案，不输出诊疗建议，不编造患者数据。",
+        "两院独立计算后再比较，不合并参数或待确认事项。"
+      ],
+      "indicatorTablePresent": true,
+      "parameterRows": [],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-plan-m2-r1",
+      "arm": "plan",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "66df980aced68059f48c52f968e5894e56d9816a4254c5ccf1bff31d9782e5e6",
+      "nonHeadingTableCharacters": 3444,
+      "bodyCharactersExcludingOnlyIndicatorTables": 4824,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "甲院观察窗口内挂号量",
+            "窗口内去重记录数",
+            "所需参数：甲院观察窗口定义",
+            "甲院挂号分析集",
+            "甲院观察窗口独立确认",
+            "**待确认**"
+          ],
+          "quote": "| 甲院观察窗口内挂号量 | 窗口内去重记录数 | 所需参数：甲院观察窗口定义 | 甲院挂号分析集 | 甲院观察窗口独立确认 | **待确认** |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "甲院观察窗口内候诊时间均值/中位数/分位数",
+            "窗口内候诊时间统计量",
+            "所需参数：甲院观察窗口定义",
+            "甲院候诊时间分析集",
+            "甲院观察窗口独立确认",
+            "**待确认**"
+          ],
+          "quote": "| 甲院观察窗口内候诊时间均值/中位数/分位数 | 窗口内候诊时间统计量 | 所需参数：甲院观察窗口定义 | 甲院候诊时间分析集 | 甲院观察窗口独立确认 | **待确认** |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "乙院观察窗口内挂号量",
+            "窗口内去重记录数",
+            "所需参数：乙院观察窗口定义",
+            "乙院挂号分析集",
+            "乙院观察窗口独立确认，不得沿用甲院",
+            "**待确认**"
+          ],
+          "quote": "| 乙院观察窗口内挂号量 | 窗口内去重记录数 | 所需参数：乙院观察窗口定义 | 乙院挂号分析集 | 乙院观察窗口独立确认，不得沿用甲院 | **待确认** |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "乙院观察窗口内候诊时间均值/中位数/分位数",
+            "窗口内候诊时间统计量",
+            "所需参数：乙院观察窗口定义",
+            "乙院候诊时间分析集",
+            "乙院观察窗口独立确认，不得沿用甲院",
+            "**待确认**"
+          ],
+          "quote": "| 乙院观察窗口内候诊时间均值/中位数/分位数 | 窗口内候诊时间统计量 | 所需参数：乙院观察窗口定义 | 乙院候诊时间分析集 | 乙院观察窗口独立确认，不得沿用甲院 | **待确认** |"
+        },
+        {
+          "header": [
+            "参数",
+            "当前口径",
+            "状态与依据"
+          ],
+          "cells": [
+            "甲院异常等待的阈值",
+            "90 分钟（严格大于）",
+            "**用户明确**（本次执行选择，仅用于本方案，不代表医院现行院规）"
+          ],
+          "quote": "| 甲院异常等待的阈值 | 90 分钟（严格大于） | **用户明确**（本次执行选择，仅用于本方案，不代表医院现行院规） |"
+        },
+        {
+          "header": [
+            "参数",
+            "当前口径",
+            "状态与依据"
+          ],
+          "cells": [
+            "甲院的观察窗口",
+            "待确认",
+            "未决；无当前选值"
+          ],
+          "quote": "| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "header": [
+            "参数",
+            "当前口径",
+            "状态与依据"
+          ],
+          "cells": [
+            "乙院的观察窗口",
+            "待确认",
+            "未决；无当前选值，不得沿用甲院"
+          ],
+          "quote": "| 乙院的观察窗口 | 待确认 | 未决；无当前选值，不得沿用甲院 |"
+        },
+        {
+          "header": [
+            "参数",
+            "当前口径",
+            "状态与依据"
+          ],
+          "cells": [
+            "乙院异常等待的阈值",
+            "待确认",
+            "未决；无当前选值，不得沿用甲院 90 分钟或资料 60 分钟示例"
+          ],
+          "quote": "| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值，不得沿用甲院 90 分钟或资料 60 分钟示例 |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "5b79192689b2eea1db56533af35e5f63fcd9d96ac04cb03d11c46bed358e1b6f",
+      "nonHeadingTableCharacters": 1158,
+      "bodyCharactersExcludingOnlyIndicatorTables": 1435,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "指标",
+            "分母",
+            "排除记录"
+          ],
+          "cells": [
+            "缺失率",
+            "去重后应分析记录",
+            "按缺失字段分别计算"
+          ],
+          "quote": "| 缺失率 | 去重后应分析记录 | 按缺失字段分别计算 |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "7f48f6255986b48185dcc6e960e43ee93772eec21290934d8812709d5d5f081f",
+      "nonHeadingTableCharacters": 984,
+      "bodyCharactersExcludingOnlyIndicatorTables": 2457,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": false,
+      "parameterRows": [],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    }
+  ],
+  "releaseApproval": false
+}

@@ -18,6 +18,8 @@ final class PendingReminderIdentity {
             + "(?:医院|机构|公司|部门|工作区|租户|研究组|问卷|评分表))");
     private final ConfirmedDecisionSet decisions;
     private final String rawPrompt;
+    /** 重用当前具名未决参数；在本次归并器内计算一次，不按每条提醒重新抽取。 */
+    private final UnresolvedDecisionContract parameterContract;
 
     PendingReminderIdentity(ConfirmedDecisionSet decisions) {
         this(decisions, "");
@@ -25,7 +27,8 @@ final class PendingReminderIdentity {
 
     PendingReminderIdentity(ConfirmedDecisionSet decisions, String rawPrompt) {
         this.decisions = decisions;
-        this.rawPrompt = rawPrompt;
+        this.rawPrompt = rawPrompt == null ? "" : rawPrompt;
+        this.parameterContract = UnresolvedDecisionContract.from(this.rawPrompt, decisions, List.of());
     }
 
     /** 只为完整具名子项提供跨题键；裸未知与依赖原题的泛指子项继续保留 questionId。 */
@@ -64,6 +67,8 @@ final class PendingReminderIdentity {
     boolean matches(String heading, ConfirmedPlanDecision pending) {
         if (heading.matches("(?s).*(?:另外|此外|另需|还需|同时还).*")) return false;
         if (!compatibleOwner(heading, pending)) return false;
+        var parameterMatch = boundParameterMatch(heading, pending);
+        if (parameterMatch.isPresent()) return parameterMatch.get();
         if (sameUnverifiedCoverage(heading, pending)) return true;
         if (sameBoundImputationPart(heading, pending)) return true;
         if (PendingDecisionSignature.same(heading, pending.question(), rawPrompt)) return true;
@@ -77,6 +82,11 @@ final class PendingReminderIdentity {
         // 只有完整的观察对象与属性吻合才兼容提问语序，不按“观察窗口”一个主题删题。
         return questionSubject(heading).equals(questionSubject(pending.question()))
                 && questionSubject(heading).length() >= 6;
+    }
+
+    /** 完整具名参数的否定匹配同样约束旧解释回退，不能让公共提醒在后续分支借用机构身份。 */
+    java.util.Optional<Boolean> boundParameterMatch(String heading, ConfirmedPlanDecision pending) {
+        return parameterContract.matchesBoundIndependentParameter(heading, pending.question());
     }
 
     /** 三项未决中的插补子项可以单独复述；只归并原题已具名的对象，不删除新的方法或人群。 */

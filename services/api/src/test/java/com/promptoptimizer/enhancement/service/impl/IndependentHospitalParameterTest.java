@@ -225,6 +225,29 @@ class IndependentHospitalParameterTest {
         }
     }
 
+    @Test
+    void aCompleteJointQuestionCoversTheAlreadyNamedUnknownsWithoutAddingFourShortCopies() {
+        var contract = create(RAW, List.of(), List.of(MATERIAL));
+        String windows = "甲院和乙院用于比较的观察窗口分别是什么？两院可能不同，需分别确认。";
+        String thresholds = "甲院和乙院判定异常等待的阈值分别是什么？资料中的60分钟仅为示例，须分别确认。";
+        assertThat(contract.coversPendingStatement(windows, "甲院的观察窗口尚未确定。")).isTrue();
+        assertThat(contract.coversPendingStatement(windows, "乙院的观察窗口尚未确定。")).isTrue();
+        assertThat(contract.coversPendingStatement(thresholds, "甲院异常等待的阈值尚未确定。")).isTrue();
+        assertThat(contract.coversPendingStatement(thresholds, "乙院异常等待的阈值尚未确定。")).isTrue();
+        assertThat(contract.independentlyScopedPending(List.of(windows, thresholds))).containsExactly(windows, thresholds);
+    }
+
+    @Test
+    void jointQuestionCoverageDoesNotApplyToCommonSelectionOrAnAlreadyAnsweredOwner() {
+        var contract = create(RAW, List.of(), List.of(MATERIAL));
+        assertThat(contract.coversPendingStatement("甲院和乙院是否都采用90分钟作为异常等待阈值？",
+                "乙院异常等待的阈值尚未确定。")).isFalse();
+        var partial = create(RAW, List.of(new PlanAnswer("a-threshold", "甲院异常等待阈值是什么？",
+                "甲院异常等待阈值采用90分钟。乙院异常等待阈值仍未决定。")), List.of(MATERIAL));
+        assertThat(partial.coversPendingStatement("甲院和乙院判定异常等待的阈值分别是什么？",
+                "乙院异常等待的阈值尚未确定。")).isFalse();
+    }
+
     private static UnresolvedDecisionContract create(String raw, List<PlanAnswer> answers, List<String> material) {
         return UnresolvedDecisionContract.from(raw, ConfirmedDecisionSet.from(answers), material);
     }

@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 将明确未决的具名参数绑定到交付物，防止正文保留未知而表格或公式擅自确定。
@@ -50,12 +51,13 @@ final class UnresolvedDecisionContract {
     private final List<ParameterValue> materialValues;
     private final boolean twoNamedHospitals;
     private final boolean independentHospitalParameters;
+    private final boolean hospitalWaitingComparison;
     private final boolean indicatorTableRequested;
     private final boolean formatParameterNotEvidenced;
 
     private UnresolvedDecisionContract(List<Parameter> parameters, List<ParameterValue> confirmedValues,
                                        List<ParameterValue> materialValues, boolean twoNamedHospitals,
-                                       boolean independentHospitalParameters, boolean indicatorTableRequested,
+                                       boolean independentHospitalParameters, boolean hospitalWaitingComparison, boolean indicatorTableRequested,
                                        boolean formatIndicatorsRequested) {
         this.parameters = List.copyOf(parameters);
         this.confirmedValues = List.copyOf(confirmedValues);
@@ -63,6 +65,7 @@ final class UnresolvedDecisionContract {
         this.materialValues = List.copyOf(materialValues);
         this.twoNamedHospitals = twoNamedHospitals;
         this.independentHospitalParameters = independentHospitalParameters;
+        this.hospitalWaitingComparison = hospitalWaitingComparison;
         this.indicatorTableRequested = indicatorTableRequested;
         this.formatParameterNotEvidenced = formatIndicatorsRequested && java.util.stream.Stream.concat(confirmedValues.stream(), materialValues.stream())
                 .noneMatch(value -> value.parameter().subject().contains("格式"));
@@ -107,7 +110,7 @@ final class UnresolvedDecisionContract {
                 .map(value -> independentHospitalParameters ? new ParameterValue(independentHospitalName(value.parameter()), value.value()) : value)
                 .filter(value -> !parameters.contains(value.parameter()) && !confirmed.contains(value.parameter())).distinct().toList();
         return new UnresolvedDecisionContract(parameters, confirmedValues, materialValues,
-                twoNamedHospitals, independentHospitalParameters,
+                twoNamedHospitals, independentHospitalParameters, independentHospitalParameters && raw.contains("候诊时间"),
                 raw != null && raw.contains("指标表") && !raw.matches("(?s).*(?:不交付|不输出|不需要|不要)(?:任何)?指标表.*"),
                 raw != null && raw.matches("(?s).*(?:格式不合法|格式异常|格式错误|格式正确率|格式合法率).*"));
     }
@@ -184,6 +187,50 @@ final class UnresolvedDecisionContract {
         }).distinct().toList();
     }
 
+    /**
+     * 同一独立机构参数的语法匹配复用当前登记，避免提醒链路另造一份宽泛主题键。
+     * 只有绑定项对应本次确实未决的完整参数时才作明确判断；无具名范围的提醒不能借该项归并。
+     */
+    Optional<Boolean> matchesBoundIndependentParameter(String heading, String boundQuestion) {
+        if (!independentHospitalParameters) return Optional.empty();
+        String knownSubject = PlanAnswerSemantics.pendingSubject(canonical(boundQuestion));
+        if (knownSubject.isEmpty()) {
+            knownSubject = canonical(boundQuestion).replaceFirst(
+                    "(?:(?:应|应该)?如何(?:确定|确认|设定|定义)|是多少(?:分钟)?|是什么)[？?]?$", "");
+        }
+        List<Parameter> known = namedParameters(knownSubject).stream().map(this::boundParameterName).toList();
+        if (known.size() != 1 || !parameters.contains(known.getFirst())
+                || !isIndependentHospitalParameter(known.getFirst())) return Optional.empty();
+        // 不能先去除引号再把引用中的旧状态当作当前执行决定。
+        if (heading.strip().matches("^[>‘’“”\\\"'`].*")) return Optional.of(false);
+        var declaration = DECLARATION.matcher(canonical(heading).replaceFirst("[。？?]$", ""));
+        if (!declaration.matches()) return Optional.of(false);
+        List<Parameter> candidate = namedParameters(declaration.group(1)).stream()
+                .map(this::boundParameterName).toList();
+        return Optional.of(candidate.size() == 1 && candidate.getFirst().equals(known.getFirst()));
+    }
+
+    /** 仅在本次明确的候诊比较任务中接受其完整窗口别名，不扩展到其他指标、年份或未具名范围。 */
+    private Parameter boundParameterName(Parameter parameter) {
+        Parameter normalized = independentHospitalName(parameter);
+        if (hospitalWaitingComparison && normalized.property().equals("观察窗口")
+                && normalized.subject().matches("(?:甲院|乙院)(?:的)?(?:用于(?:两院)?比较|候诊时间(?:统计)?(?:的)?比较)")) {
+            return new Parameter(normalized.subject().substring(0, 2), "观察窗口");
+        }
+        if (hospitalWaitingComparison && normalized.property().equals("阈值")
+                && normalized.subject().matches("(?:甲院|乙院)(?:的)?(?:判定|用于(?:判定|标记))?"
+                        + "异常等待(?:时间)?(?:的)?(?:判定)?")) {
+            return new Parameter(normalized.subject().substring(0, 2) + "异常等待", "阈值");
+        }
+        return normalized;
+    }
+
+    /** 只对应已经明确展开的完整槽位，额外年份、亚类或另一属性不能继承此别名。 */
+    private static boolean isIndependentHospitalParameter(Parameter parameter) {
+        return parameter.property().equals("观察窗口") && parameter.subject().matches("甲院|乙院")
+                || parameter.property().equals("阈值") && parameter.subject().matches("(?:甲院|乙院)异常等待");
+    }
+
     /** 两院概述仅在两院各自参数已独立登记时被覆盖；新年份、新院及新增条件仍保留原提醒。 */
     boolean coveredByBoundPending(String statement, ConfirmedDecisionSet decisions) {
         if (!twoNamedHospitals) return false;
@@ -254,8 +301,8 @@ final class UnresolvedDecisionContract {
                 first.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1"));
         var secondParameter = new Parameter(subjectKey(second.replaceFirst("(分母|阈值|观察窗口|覆盖度)未决$", "")),
                 second.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1"));
-        return (independentHospitalParameters ? independentHospitalName(firstParameter) : firstParameter)
-                .equals(independentHospitalParameters ? independentHospitalName(secondParameter) : secondParameter)
+        return (independentHospitalParameters ? boundParameterName(firstParameter) : firstParameter)
+                .equals(independentHospitalParameters ? boundParameterName(secondParameter) : secondParameter)
                 && first.matches(".*(?:分母|阈值|观察窗口|覆盖度)未决$")
                 && first.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1")
                 .equals(second.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1"));
@@ -291,8 +338,16 @@ final class UnresolvedDecisionContract {
             pair = List.of(new Parameter("甲院异常等待", "阈值"), new Parameter("乙院异常等待", "阈值"));
         } else return false;
         if (!parameters.containsAll(pair)) return false;
-        return canonical(finding).matches("^(?:甲院(?:和|与|、)乙院|乙院(?:和|与|、)甲院)(?:的)?" + suffix
-                + "(?:均|都|分别)?(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)(?:$|[，,。；;].*)");
+        String owners = "^(?:甲院(?:和|与|、)乙院|乙院(?:和|与|、)甲院)(?:的)?";
+        String observed = canonical(finding);
+        if (observed.matches(owners + suffix
+                + "(?:均|都|分别)?(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)(?:$|[，,。；;].*)")) return true;
+        // 完整并列问题已分别登记两项未知，只免于追加短状态；保留原问题与示例、条件等全部解释。
+        // 必须出现“分别／各自”，共同数值选择不能冒充两个独立决定，已回答任一项时也不适用。
+        String questionProperty = expected.property().equals("观察窗口")
+                ? "(?:用于(?:两院)?比较的|比较)?观察窗口" : "(?:判定)?异常等待(?:的)?阈值";
+        return observed.matches(owners + questionProperty
+                + "(?:分别|各自)(?:是什么|是多少(?:分钟)?|如何(?:确定|确认))[？?](?:$|.*)");
     }
 
     /**
@@ -412,7 +467,7 @@ final class UnresolvedDecisionContract {
                 if (subjectColumn >= 0 && claimsConfirmed) {
                     for (String property : List.of("分母", "阈值", "观察窗口", "覆盖度")) {
                         var claimed = new Parameter(subjectKey(cells.get(subjectColumn)), property);
-                        if (independentHospitalParameters) claimed = independentHospitalName(claimed);
+                        if (independentHospitalParameters) claimed = boundParameterName(claimed);
                         if (header.contains(property) && !confirmedParameters.contains(claimed)) reject(field, "TABLE_CONFIRMATION_SCOPE");
                     }
                 }
@@ -426,7 +481,7 @@ final class UnresolvedDecisionContract {
                         String subject = assertions.group(1) == null ? assertions.group(3) : assertions.group(1);
                         String property = assertions.group(2) == null ? assertions.group(4) : assertions.group(2);
                         var claimed = new Parameter(subjectKey(subject.replaceFirst("的$", "")), property);
-                        if (independentHospitalParameters) claimed = independentHospitalName(claimed);
+                        if (independentHospitalParameters) claimed = boundParameterName(claimed);
                         if (!confirmedParameters.contains(claimed)) reject(field, "NARRATIVE_CONFIRMATION_SCOPE");
                     }
                     for (Parameter parameter : validationParameters) {
@@ -462,10 +517,12 @@ final class UnresolvedDecisionContract {
         if (independentHospitalParameters && parameter.property().equals("阈值")
                 && parameter.subject().matches("(?:甲院|乙院)异常等待")) {
             return subjectPattern(parameter.subject().replaceFirst("异常等待$", ""))
-                    + "(?:的)?异常等待(?:的)?阈值";
+                    + "(?:的)?" + (hospitalWaitingComparison ? "(?:判定|用于(?:判定|标记))?" : "")
+                    + "异常等待" + (hospitalWaitingComparison ? "(?:时间)?(?:的)?(?:判定)?" : "") + "(?:的)?阈值";
         }
         String alias = independentHospitalParameters && parameter.property().equals("观察窗口")
-                && parameter.subject().matches("甲院|乙院") ? "(?:比较)?(?:的)?" : "";
+                && parameter.subject().matches("甲院|乙院") ? hospitalWaitingComparison
+                ? "(?:比较|用于(?:两院)?比较|候诊时间(?:统计)?(?:的)?比较)?(?:的)?" : "(?:比较)?(?:的)?" : "";
         return subjectPattern(parameter.subject()) + "(?:的)?" + alias + Pattern.quote(parameter.property());
     }
 
@@ -480,7 +537,7 @@ final class UnresolvedDecisionContract {
     /** 完整具名对象逐字核对；有限的跨字段一致性子指标别名只覆盖该同类指标。 */
     private boolean sameSubject(String candidate, String subject, String property) {
         String name = canonical(candidate).replaceAll("[*`\\s]", "");
-        if (independentHospitalParameters) name = independentHospitalName(new Parameter(subjectKey(name), property)).subject();
+        if (independentHospitalParameters) name = boundParameterName(new Parameter(subjectKey(name), property)).subject();
         return subjectKey(name).equals(subject)
                 || subject.equals("跨字段一致性指标") && name.equals("出院日期早于入院日期不一致率");
     }
