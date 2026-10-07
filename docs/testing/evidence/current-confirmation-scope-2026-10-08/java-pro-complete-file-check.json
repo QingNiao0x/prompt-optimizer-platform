@@ -1,0 +1,40 @@
+{
+  "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-07T17-33-20-388Z-7ee65204",
+  "scope": "SYNTHETIC_FEE_IMPLEMENTATION_AND_TEST_COMPILATION_ONLY",
+  "entries": [
+    {
+      "id": "RC-DEV-M-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "ce400206306b2fccf0db376ae84ff0e4200d471a3ddc48f2911e335d837e0188",
+      "status": "COMPILE_FAILED",
+      "error": "FeeCalculatorTest.java:68: error: incompatible types: String cannot be converted to BigDecimal\r\n        assertEquals(\"delivery input not modified\", before.toPlainString(), amount.toPlainString());\r\n                                                                                                ^\r\nFeeCalculatorTest.java:73: error: incompatible types: String cannot be converted to BigDecimal\r\n        assertEquals(\"service input not modified\", serviceBefore.toPlainString(), serviceAmount.toPlainString());\r\n                                                                                                             ^\r\nNote: Some messages have been simplified; recompile with -Xdiags:verbose to get full output\r\n2 errors\r\n"
+    },
+    {
+      "id": "RC-DEV-M-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "ac962892f27358a86d9d469f8df79f8a0dbf8be9f1c81485a363c1aea5cc9147",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "68503aed09f6a6ccb53b59a6c31cefff0954d2d210e361a103ae90b603039005",
+      "status": "COMPILE_FAILED",
+      "error": "FeeCalculatorTest.java:8: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual, String message) {\r\n                                     ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:8: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual, String message) {\r\n                                                          ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:27: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0), \"deliveryFee(0,0)\");\r\n                         ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:27: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0), \"deliveryFee(0,0)\");\r\n                                                                           ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:28: error: cannot find symbol\r\n        assertEquals(new BigD"
+    },
+    {
+      "id": "RC-DEV-M-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "95566ac11edb120ae1f8b846e6d9ee45dd045e9ad7a65cde59b14f41eaa8bb19",
+      "status": "FULL_TEST_CLASS_NEEDS_REVIEW",
+      "implementationBlocks": 1,
+      "testBlocks": 0
+    }
+  ]
+}

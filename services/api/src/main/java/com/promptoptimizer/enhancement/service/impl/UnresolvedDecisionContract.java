@@ -35,6 +35,8 @@ final class UnresolvedDecisionContract {
     private static final Pattern CONFIRMED_CELL = Pattern.compile("^(?:用户)?(?:已确认|已由用户确认|分母已确认)"
             + "(?:分母|口径|阈值|观察窗口|覆盖度)?(?:$|[（(：:，,；;].*)");
     private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
+    private static final Pattern CURRENT_CONFIRMATION = Pattern.compile("^(?:(?:本次|这次)(?:仅|只)?(?:明确)?(?:确认|确定|选定)"
+            + "|(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定))");
     private static final Pattern INDEPENDENT_HOSPITALS = Pattern.compile("^两院(?:需要|须|应)?(?:独立|分别)(?:计算|确认).*$");
     static final String DELIVERY_GUIDANCE = "同一未决决定在正文、表格、公式及伪代码中保持一致："
             + "相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；"
@@ -249,9 +251,9 @@ final class UnresolvedDecisionContract {
     /** 只有本次明确要求及有效答案能够产生“用户已确认”范围，资料不能自行充当用户授权。 */
     private static List<ParameterValue> currentParameterValues(String text) {
         var result = new ArrayList<ParameterValue>();
-        for (String sentence : text.split("[。；;\\r\\n]+")) {
-            String clause = canonical(sentence).replaceFirst("^[-*#]+", "")
-                    .replaceFirst("^(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定)", "");
+        for (String sentence : currentDecisionSentences(text)) {
+            // 仅移除肯定的当前确认前缀，完整保留机构、年份、指标和属性，不扩大到其他参数。
+            String clause = CURRENT_CONFIRMATION.matcher(canonical(sentence)).replaceFirst("");
             var choices = CURRENT_PARAMETER.matcher(clause);
             while (choices.find()) {
                 if (CONDITIONAL.matcher(clause.substring(0, choices.end())).find()
@@ -269,6 +271,32 @@ final class UnresolvedDecisionContract {
             }
         }
         return result;
+    }
+
+    /**
+     * 在归一化前排除引文和围栏示例，避免去掉引号后把示例值当成用户选择。
+     * 围栏按类型和长度配对，关闭后的真实陈述继续参与核对；未关闭的示例不建立确认。
+     */
+    private static List<String> currentDecisionSentences(String text) {
+        if (text == null || text.isBlank()) return List.of();
+        var result = new ArrayList<String>();
+        String fence = null;
+        for (String line : text.lines().toList()) {
+            String current = line.strip();
+            var marker = FENCE.matcher(current);
+            if (marker.matches()) {
+                if (fence == null) fence = marker.group(1);
+                else if (marker.group(1).charAt(0) == fence.charAt(0)
+                        && marker.group(1).length() >= fence.length() && marker.group(2).isBlank()) fence = null;
+                continue;
+            }
+            if (fence != null) continue;
+            for (String sentence : current.split("[。；;]+")) {
+                String clause = sentence.strip().replaceFirst("^(?:[-*•]\\s+|#+\\s+|\\d+[.)、]\\s*)", "");
+                if (!clause.isBlank() && !clause.matches("^[>‘’“”\\\"'`].*")) result.add(clause);
+            }
+        }
+        return List.copyOf(result);
     }
 
     /** 并列声明只分开明确具名的对象和共同属性，不把类别相同或省略对象的代词当成同一决定。 */
