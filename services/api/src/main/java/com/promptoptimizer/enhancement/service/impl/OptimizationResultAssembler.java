@@ -222,6 +222,8 @@ public class OptimizationResultAssembler {
                             .filter(question -> providerFindings.stream().noneMatch(finding -> coversDeclaredQuestion(finding, question, rawPrompt))))
                     .distinct().toList();
         }
+        // 显式独立的机构参数采用当前具名状态，不再同时追加整句公共未知；新条件及新冲突不消除。
+        assessed = unresolvedContract.independentlyScopedPending(assessed);
         // 资料里的明确未知也随同一个权威清单交付；旧状态已按完整参数确认更新，不补造缺失事实。
         List<String> currentFindings = assessed;
         assessed = java.util.stream.Stream.concat(assessed.stream(), unresolvedContract.pendingStatements().stream()

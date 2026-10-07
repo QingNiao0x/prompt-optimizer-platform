@@ -1,0 +1,1178 @@
+[
+  {
+    "run": "26",
+    "evidence": {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-plan",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "startedAt": "2026-10-07T08:49:12.672Z",
+      "prepared": {
+        "contextId": "769d93a0-8ec7-4ba6-b7d7-f46ef4f16c00",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSummaries": [
+            "[USER_MATERIAL] docs/两院数据说明.txt：文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。；业务摘录：[片段 1/1] 甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。 hospital_id只能为A或B。 时间为北京时间。 status为registered、seen、cancelled。 两院比较观察窗口尚未确定，异常等待阈值尚未确定。 示例：60分钟仅供说明，不是现行院规。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "BUSINESS_RULE",
+              "origin": "USER_MATERIAL",
+              "sourcePath": "docs/两院数据说明.txt",
+              "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/两院数据说明.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+              "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T09:19:12.952808400Z",
+        "latencyMs": 92
+      },
+      "plan": {
+        "summary": "目标是制定甲院与乙院普通门诊候诊时间的统计方案，已明确对象、时间、去重、缺失与取消处理、交付范围等；仍需确认两院各自的比较观察窗口和异常等待阈值，这两项会直接改变统计口径与比较结果。",
+        "questions": [
+          {
+            "id": "obs_window_a",
+            "question": "甲院用于比较的观察窗口如何界定？",
+            "hint": "观察窗口决定纳入哪些就诊记录，两院可能不同，需分别确认；请给出具体起止或口径。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "2025年1月1日至2025年12月31日全部普通门诊就诊",
+              "2025年每月1日至月末，按自然月分别统计"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "obs_window_b",
+            "question": "乙院用于比较的观察窗口如何界定？",
+            "hint": "观察窗口决定纳入哪些就诊记录，需与甲院分别确认，不能混为一项。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "2025年1月1日至2025年12月31日全部普通门诊就诊",
+              "2025年每月1日至月末，按自然月分别统计"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_a",
+            "question": "甲院判定异常等待的阈值是多少？",
+            "hint": "阈值会改变异常等待的统计结果；资料中的60分钟仅为示例，不能作为院规使用。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "等待超过60分钟",
+              "等待超过120分钟"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_b",
+            "question": "乙院判定异常等待的阈值是多少？",
+            "hint": "阈值会改变异常等待的统计结果；两院可能不同，需分别确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "等待超过60分钟",
+              "等待超过120分钟"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3429,
+        "planId": "dc8e99b9-5946-40c5-9803-f774d5204d3e",
+        "planningContext": {
+          "contextId": "769d93a0-8ec7-4ba6-b7d7-f46ef4f16c00",
+          "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+        },
+        "expiresAt": "2026-10-07T09:19:12.952808400Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "7cc48a73-0214-488a-bbc0-c1b29a681252",
+          "elapsedMs": 361
+        },
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "3264c736-330c-4528-9f07-eb56d77dea3f",
+          "elapsedMs": 3508
+        }
+      ]
+    }
+  },
+  {
+    "run": "26",
+    "evidence": {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "startedAt": "2026-10-07T08:49:16.566Z",
+      "prepared": {
+        "contextId": "a34ebf0d-33fb-49c9-a56d-9100d1c006be",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSummaries": [
+            "[USER_MATERIAL] docs/两院数据说明.txt：文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。；业务摘录：[片段 1/1] 甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。 hospital_id只能为A或B。 时间为北京时间。 status为registered、seen、cancelled。 两院比较观察窗口尚未确定，异常等待阈值尚未确定。 示例：60分钟仅供说明，不是现行院规。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "BUSINESS_RULE",
+              "origin": "USER_MATERIAL",
+              "sourcePath": "docs/两院数据说明.txt",
+              "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/两院数据说明.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+              "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T09:19:16.601952200Z",
+        "latencyMs": 10
+      },
+      "plan": {
+        "summary": "已理解需为两院普通门诊制定候诊时间统计方案，仅交付方案与指标表，不输出结果或诊疗建议。需确认影响统计口径的未决参数：两院各自的观察窗口和异常等待阈值。",
+        "questions": [
+          {
+            "id": "obs_window_A",
+            "question": "甲院候诊时间统计的观察窗口如何定义？",
+            "hint": "用于确定哪些就诊记录纳入统计，两院可能不同，需分别确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：2025年1月1日至2025年12月31日",
+              "例如：2025年3月1日至2025年11月30日"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "obs_window_B",
+            "question": "乙院候诊时间统计的观察窗口如何定义？",
+            "hint": "用于确定哪些就诊记录纳入统计，两院可能不同，需分别确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：2025年1月1日至2025年12月31日",
+              "例如：2025年2月1日至2025年10月31日"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_A",
+            "question": "甲院候诊时间的异常等待阈值是多少？",
+            "hint": "用于识别异常值，影响清洗规则和指标计算。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：超过120分钟视为异常",
+              "例如：超过180分钟视为异常"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_B",
+            "question": "乙院候诊时间的异常等待阈值是多少？",
+            "hint": "用于识别异常值，影响清洗规则和指标计算。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：超过120分钟视为异常",
+              "例如：超过180分钟视为异常"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "latencyMs": 4628,
+        "planId": "4f7a3957-8553-40f1-94f1-8da23d7472c6",
+        "planningContext": {
+          "contextId": "a34ebf0d-33fb-49c9-a56d-9100d1c006be",
+          "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+        },
+        "expiresAt": "2026-10-07T09:19:16.601952200Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "4327caa9-8eec-4f8b-91a2-c1df05cbc860",
+          "elapsedMs": 54
+        },
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "a2686071-232e-4823-a5c9-4dbe7fb9842b",
+          "elapsedMs": 4671
+        }
+      ]
+    }
+  },
+  {
+    "run": "29",
+    "evidence": {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-plan",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "startedAt": "2026-10-07T08:49:12.672Z",
+      "prepared": {
+        "contextId": "769d93a0-8ec7-4ba6-b7d7-f46ef4f16c00",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSummaries": [
+            "[USER_MATERIAL] docs/两院数据说明.txt：文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。；业务摘录：[片段 1/1] 甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。 hospital_id只能为A或B。 时间为北京时间。 status为registered、seen、cancelled。 两院比较观察窗口尚未确定，异常等待阈值尚未确定。 示例：60分钟仅供说明，不是现行院规。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "BUSINESS_RULE",
+              "origin": "USER_MATERIAL",
+              "sourcePath": "docs/两院数据说明.txt",
+              "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/两院数据说明.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+              "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T09:19:12.952808400Z",
+        "latencyMs": 92
+      },
+      "plan": {
+        "summary": "目标是制定甲院与乙院普通门诊候诊时间的统计方案，已明确对象、时间、去重、缺失与取消处理、交付范围等；仍需确认两院各自的比较观察窗口和异常等待阈值，这两项会直接改变统计口径与比较结果。",
+        "questions": [
+          {
+            "id": "obs_window_a",
+            "question": "甲院用于比较的观察窗口如何界定？",
+            "hint": "观察窗口决定纳入哪些就诊记录，两院可能不同，需分别确认；请给出具体起止或口径。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "2025年1月1日至2025年12月31日全部普通门诊就诊",
+              "2025年每月1日至月末，按自然月分别统计"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "obs_window_b",
+            "question": "乙院用于比较的观察窗口如何界定？",
+            "hint": "观察窗口决定纳入哪些就诊记录，需与甲院分别确认，不能混为一项。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "2025年1月1日至2025年12月31日全部普通门诊就诊",
+              "2025年每月1日至月末，按自然月分别统计"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_a",
+            "question": "甲院判定异常等待的阈值是多少？",
+            "hint": "阈值会改变异常等待的统计结果；资料中的60分钟仅为示例，不能作为院规使用。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "等待超过60分钟",
+              "等待超过120分钟"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_b",
+            "question": "乙院判定异常等待的阈值是多少？",
+            "hint": "阈值会改变异常等待的统计结果；两院可能不同，需分别确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "等待超过60分钟",
+              "等待超过120分钟"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3429,
+        "planId": "dc8e99b9-5946-40c5-9803-f774d5204d3e",
+        "planningContext": {
+          "contextId": "769d93a0-8ec7-4ba6-b7d7-f46ef4f16c00",
+          "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+        },
+        "expiresAt": "2026-10-07T09:19:12.952808400Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "7cc48a73-0214-488a-bbc0-c1b29a681252",
+          "elapsedMs": 361
+        },
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "3264c736-330c-4528-9f07-eb56d77dea3f",
+          "elapsedMs": 3508
+        }
+      ]
+    }
+  },
+  {
+    "run": "29",
+    "evidence": {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "startedAt": "2026-10-07T08:49:16.566Z",
+      "prepared": {
+        "contextId": "a34ebf0d-33fb-49c9-a56d-9100d1c006be",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSummaries": [
+            "[USER_MATERIAL] docs/两院数据说明.txt：文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。；业务摘录：[片段 1/1] 甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。 hospital_id只能为A或B。 时间为北京时间。 status为registered、seen、cancelled。 两院比较观察窗口尚未确定，异常等待阈值尚未确定。 示例：60分钟仅供说明，不是现行院规。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "BUSINESS_RULE",
+              "origin": "USER_MATERIAL",
+              "sourcePath": "docs/两院数据说明.txt",
+              "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/两院数据说明.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+              "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T09:19:16.601952200Z",
+        "latencyMs": 10
+      },
+      "plan": {
+        "summary": "已理解需为两院普通门诊制定候诊时间统计方案，仅交付方案与指标表，不输出结果或诊疗建议。需确认影响统计口径的未决参数：两院各自的观察窗口和异常等待阈值。",
+        "questions": [
+          {
+            "id": "obs_window_A",
+            "question": "甲院候诊时间统计的观察窗口如何定义？",
+            "hint": "用于确定哪些就诊记录纳入统计，两院可能不同，需分别确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：2025年1月1日至2025年12月31日",
+              "例如：2025年3月1日至2025年11月30日"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "obs_window_B",
+            "question": "乙院候诊时间统计的观察窗口如何定义？",
+            "hint": "用于确定哪些就诊记录纳入统计，两院可能不同，需分别确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：2025年1月1日至2025年12月31日",
+              "例如：2025年2月1日至2025年10月31日"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_A",
+            "question": "甲院候诊时间的异常等待阈值是多少？",
+            "hint": "用于识别异常值，影响清洗规则和指标计算。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：超过120分钟视为异常",
+              "例如：超过180分钟视为异常"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_B",
+            "question": "乙院候诊时间的异常等待阈值是多少？",
+            "hint": "用于识别异常值，影响清洗规则和指标计算。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：超过120分钟视为异常",
+              "例如：超过180分钟视为异常"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "latencyMs": 4628,
+        "planId": "4f7a3957-8553-40f1-94f1-8da23d7472c6",
+        "planningContext": {
+          "contextId": "a34ebf0d-33fb-49c9-a56d-9100d1c006be",
+          "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+        },
+        "expiresAt": "2026-10-07T09:19:16.601952200Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "4327caa9-8eec-4f8b-91a2-c1df05cbc860",
+          "elapsedMs": 54
+        },
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "a2686071-232e-4823-a5c9-4dbe7fb9842b",
+          "elapsedMs": 4671
+        }
+      ]
+    }
+  },
+  {
+    "run": "30",
+    "evidence": {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-plan",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "startedAt": "2026-10-07T08:49:12.672Z",
+      "prepared": {
+        "contextId": "769d93a0-8ec7-4ba6-b7d7-f46ef4f16c00",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSummaries": [
+            "[USER_MATERIAL] docs/两院数据说明.txt：文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。；业务摘录：[片段 1/1] 甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。 hospital_id只能为A或B。 时间为北京时间。 status为registered、seen、cancelled。 两院比较观察窗口尚未确定，异常等待阈值尚未确定。 示例：60分钟仅供说明，不是现行院规。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "BUSINESS_RULE",
+              "origin": "USER_MATERIAL",
+              "sourcePath": "docs/两院数据说明.txt",
+              "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/两院数据说明.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+              "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T09:19:12.952808400Z",
+        "latencyMs": 92
+      },
+      "plan": {
+        "summary": "目标是制定甲院与乙院普通门诊候诊时间的统计方案，已明确对象、时间、去重、缺失与取消处理、交付范围等；仍需确认两院各自的比较观察窗口和异常等待阈值，这两项会直接改变统计口径与比较结果。",
+        "questions": [
+          {
+            "id": "obs_window_a",
+            "question": "甲院用于比较的观察窗口如何界定？",
+            "hint": "观察窗口决定纳入哪些就诊记录，两院可能不同，需分别确认；请给出具体起止或口径。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "2025年1月1日至2025年12月31日全部普通门诊就诊",
+              "2025年每月1日至月末，按自然月分别统计"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "obs_window_b",
+            "question": "乙院用于比较的观察窗口如何界定？",
+            "hint": "观察窗口决定纳入哪些就诊记录，需与甲院分别确认，不能混为一项。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "2025年1月1日至2025年12月31日全部普通门诊就诊",
+              "2025年每月1日至月末，按自然月分别统计"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_a",
+            "question": "甲院判定异常等待的阈值是多少？",
+            "hint": "阈值会改变异常等待的统计结果；资料中的60分钟仅为示例，不能作为院规使用。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "等待超过60分钟",
+              "等待超过120分钟"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_b",
+            "question": "乙院判定异常等待的阈值是多少？",
+            "hint": "阈值会改变异常等待的统计结果；两院可能不同，需分别确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "等待超过60分钟",
+              "等待超过120分钟"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3429,
+        "planId": "dc8e99b9-5946-40c5-9803-f774d5204d3e",
+        "planningContext": {
+          "contextId": "769d93a0-8ec7-4ba6-b7d7-f46ef4f16c00",
+          "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+        },
+        "expiresAt": "2026-10-07T09:19:12.952808400Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "7cc48a73-0214-488a-bbc0-c1b29a681252",
+          "elapsedMs": 361
+        },
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "3264c736-330c-4528-9f07-eb56d77dea3f",
+          "elapsedMs": 3508
+        }
+      ]
+    }
+  },
+  {
+    "run": "30",
+    "evidence": {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "startedAt": "2026-10-07T08:49:16.566Z",
+      "prepared": {
+        "contextId": "a34ebf0d-33fb-49c9-a56d-9100d1c006be",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSummaries": [
+            "[USER_MATERIAL] docs/两院数据说明.txt：文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。；业务摘录：[片段 1/1] 甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。 hospital_id只能为A或B。 时间为北京时间。 status为registered、seen、cancelled。 两院比较观察窗口尚未确定，异常等待阈值尚未确定。 示例：60分钟仅供说明，不是现行院规。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "BUSINESS_RULE",
+              "origin": "USER_MATERIAL",
+              "sourcePath": "docs/两院数据说明.txt",
+              "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/两院数据说明.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+              "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T09:19:16.601952200Z",
+        "latencyMs": 10
+      },
+      "plan": {
+        "summary": "已理解需为两院普通门诊制定候诊时间统计方案，仅交付方案与指标表，不输出结果或诊疗建议。需确认影响统计口径的未决参数：两院各自的观察窗口和异常等待阈值。",
+        "questions": [
+          {
+            "id": "obs_window_A",
+            "question": "甲院候诊时间统计的观察窗口如何定义？",
+            "hint": "用于确定哪些就诊记录纳入统计，两院可能不同，需分别确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：2025年1月1日至2025年12月31日",
+              "例如：2025年3月1日至2025年11月30日"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "obs_window_B",
+            "question": "乙院候诊时间统计的观察窗口如何定义？",
+            "hint": "用于确定哪些就诊记录纳入统计，两院可能不同，需分别确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：2025年1月1日至2025年12月31日",
+              "例如：2025年2月1日至2025年10月31日"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_A",
+            "question": "甲院候诊时间的异常等待阈值是多少？",
+            "hint": "用于识别异常值，影响清洗规则和指标计算。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：超过120分钟视为异常",
+              "例如：超过180分钟视为异常"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_B",
+            "question": "乙院候诊时间的异常等待阈值是多少？",
+            "hint": "用于识别异常值，影响清洗规则和指标计算。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：超过120分钟视为异常",
+              "例如：超过180分钟视为异常"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "latencyMs": 4628,
+        "planId": "4f7a3957-8553-40f1-94f1-8da23d7472c6",
+        "planningContext": {
+          "contextId": "a34ebf0d-33fb-49c9-a56d-9100d1c006be",
+          "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+        },
+        "expiresAt": "2026-10-07T09:19:16.601952200Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "4327caa9-8eec-4f8b-91a2-c1df05cbc860",
+          "elapsedMs": 54
+        },
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "a2686071-232e-4823-a5c9-4dbe7fb9842b",
+          "elapsedMs": 4671
+        }
+      ]
+    }
+  },
+  {
+    "run": "31",
+    "evidence": {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-plan",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "startedAt": "2026-10-07T09:41:41.458Z",
+      "prepared": {
+        "contextId": "7cc79cea-c5df-4300-9d46-8899758bf541",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSummaries": [
+            "[USER_MATERIAL] docs/两院数据说明.txt：文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。；业务摘录：[片段 1/1] 甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。 hospital_id只能为A或B。 时间为北京时间。 status为registered、seen、cancelled。 两院比较观察窗口尚未确定，异常等待阈值尚未确定。 示例：60分钟仅供说明，不是现行院规。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "BUSINESS_RULE",
+              "origin": "USER_MATERIAL",
+              "sourcePath": "docs/两院数据说明.txt",
+              "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/两院数据说明.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+              "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T10:11:41.658314900Z",
+        "latencyMs": 94
+      },
+      "plan": {
+        "summary": "已理解目标：为甲院和乙院普通门诊制定候诊时间统计方案，两院独立计算后比较，只交付可讨论的分析方案与指标表，不输出诊疗建议或虚构结果。需要确认两院各自的比较观察窗口和异常等待阈值，否则无法确定比较口径和异常标记规则。",
+        "questions": [
+          {
+            "id": "q1",
+            "question": "甲院用于两院比较的观察窗口是什么？",
+            "hint": "观察窗口决定纳入比较的就诊时间范围，两院可能不同，需分别确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：2025年1月1日至2025年12月31日",
+              "例如：2025年4月1日至2025年9月30日"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "q2",
+            "question": "乙院用于两院比较的观察窗口是什么？",
+            "hint": "观察窗口决定纳入比较的就诊时间范围，两院可能不同，需分别确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：2025年1月1日至2025年12月31日",
+              "例如：2025年4月1日至2025年9月30日"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "q3",
+            "question": "甲院用于标记异常等待的阈值是多少分钟？",
+            "hint": "异常等待阈值决定哪些记录被标记为异常，资料中的60分钟仅为示例，不能作为院规使用。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：90分钟",
+              "例如：120分钟"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "q4",
+            "question": "乙院用于标记异常等待的阈值是多少分钟？",
+            "hint": "异常等待阈值决定哪些记录被标记为异常，资料中的60分钟仅为示例，不能作为院规使用。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：90分钟",
+              "例如：120分钟"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2934,
+        "planId": "96a7a3f6-906e-452c-ae74-448006f7a202",
+        "planningContext": {
+          "contextId": "7cc79cea-c5df-4300-9d46-8899758bf541",
+          "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+        },
+        "expiresAt": "2026-10-07T10:11:41.658314900Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "cdf88883-d20f-4510-866e-b02b1a1800e2",
+          "elapsedMs": 288
+        },
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "eff6cd4a-c874-482c-8033-fd592e9ace22",
+          "elapsedMs": 3006
+        }
+      ]
+    }
+  },
+  {
+    "run": "31",
+    "evidence": {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "startedAt": "2026-10-07T09:41:44.766Z",
+      "prepared": {
+        "contextId": "5a160770-0a85-4407-a43c-9189391d3177",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSummaries": [
+            "[USER_MATERIAL] docs/两院数据说明.txt：文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。；业务摘录：[片段 1/1] 甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。 hospital_id只能为A或B。 时间为北京时间。 status为registered、seen、cancelled。 两院比较观察窗口尚未确定，异常等待阈值尚未确定。 示例：60分钟仅供说明，不是现行院规。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "BUSINESS_RULE",
+              "origin": "USER_MATERIAL",
+              "sourcePath": "docs/两院数据说明.txt",
+              "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/两院数据说明.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/两院数据说明.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+              "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T10:11:44.801591500Z",
+        "latencyMs": 10
+      },
+      "plan": {
+        "summary": "已理解需为两院普通门诊制定候诊时间分析方案，仅交付统计方案与指标表，不输出诊疗建议或虚构数据。两院需独立计算后比较，但观察窗口和异常等待阈值尚未确定，且可能不同，需分别确认。",
+        "questions": [
+          {
+            "id": "obs_window_A",
+            "question": "甲院的比较观察窗口如何确定？",
+            "hint": "用于界定候诊时间分析的有效时间范围，影响纳入统计的记录。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "2025-01-01 至 2025-12-31",
+              "2025-03-01 至 2025-11-30"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "obs_window_B",
+            "question": "乙院的比较观察窗口如何确定？",
+            "hint": "用于界定候诊时间分析的有效时间范围，影响纳入统计的记录。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "2025-01-01 至 2025-12-31",
+              "2025-02-01 至 2025-10-31"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_A",
+            "question": "甲院异常等待的阈值是多少？",
+            "hint": "用于识别异常等待记录，影响清洗规则和指标计算。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "120分钟",
+              "90分钟"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "abnormal_threshold_B",
+            "question": "乙院异常等待的阈值是多少？",
+            "hint": "用于识别异常等待记录，影响清洗规则和指标计算。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "120分钟",
+              "90分钟"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "latencyMs": 4257,
+        "planId": "ed191da5-bdab-4ebd-8ae1-45a97dfce65a",
+        "planningContext": {
+          "contextId": "5a160770-0a85-4407-a43c-9189391d3177",
+          "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+        },
+        "expiresAt": "2026-10-07T10:11:44.801591500Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "b5c1becb-1c09-47b8-9d48-de8f0e75e4db",
+          "elapsedMs": 54
+        },
+        {
+          "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "547115b6-b882-472a-b36c-b337718f8b66",
+          "elapsedMs": 4298
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "fourIndependentStateRowsRequired": true,
+  "fourSeparateAlertStringsRequired": false,
+  "explanation": "同一句完整说明可以覆盖两项分别未决的参数，但依据表必须分别登记四项；不允许共享取值或将甲院答案传播到乙院。",
+  "historicalStrictAlertCountsRetained": true,
+  "businessQualityPassed": false,
+  "observedOpenIssues": [
+    "Pro最终提醒中乙院阈值的具名改写仍重复",
+    "部分下游作品擅自认定甲院=A、乙院=B，输入未给出该关系",
+    "开放语义重复及完整Java文件交付未全部通过"
+  ],
+  "toolingFailures": [
+    {
+      "run": "27",
+      "status": "SETUP_ONLY_NO_MODEL_CALL"
+    },
+    {
+      "run": "28",
+      "status": "DEPENDENT_SETUP_BEFORE_BACKEND_HEALTH",
+      "note": "执行流程错误，无有效模型作品；不计作业务失败或成功"
+    }
+  ]
+}
