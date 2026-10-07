@@ -1,0 +1,142 @@
+{
+  "criteria": "独立参数按表中对象／属性／实际选值核对；共同说明可以覆盖两项未知，但不允许共用参数或借取值",
+  "records": [
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-direct",
+      "status": "COLLECTED",
+      "findings": [
+        "甲院与乙院在数据说明中仅以 hospital_id 取值 A 或 B 出现，未提供 A/B 与“甲院”“乙院”的对应关系；该对应未确认前，涉及具体院区名称的清洗、分组与比较步骤需等待，其他清洗与指标模板可继续交付。",
+        "甲院的比较观察窗口尚未确定，请确认具体起止时间或口径；该参数未定前，依赖该窗口的甲院比较计算需暂停。",
+        "乙院的比较观察窗口尚未确定，请确认具体起止时间或口径；该参数未定前，依赖该窗口的乙院比较计算需暂停。",
+        "甲院异常等待的阈值尚未确定，请确认具体数值或判定规则；该参数未定前，依赖该阈值的甲院异常等待指标计算需暂停。",
+        "乙院异常等待的阈值尚未确定，请确认具体数值或判定规则；该参数未定前，依赖该阈值的乙院异常等待指标计算需暂停。",
+        "甲院与 hospital_id 的对应关系尚未确定。",
+        "乙院与 hospital_id 的对应关系尚未确定。"
+      ],
+      "rows": [
+        {
+          "parameter": "甲院的观察窗口",
+          "row": "| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "parameter": "乙院的观察窗口",
+          "row": "| 乙院的观察窗口 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "parameter": "甲院异常等待的阈值",
+          "row": "| 甲院异常等待的阈值 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "parameter": "乙院异常等待的阈值",
+          "row": "| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值 |"
+        }
+      ],
+      "checks": {
+        "fourIndependentParameterRows": true,
+        "correctIndependentState": true,
+        "pendingScopesRemainVisible": true,
+        "oneAuthorityTable": true,
+        "noInternalNames": true
+      },
+      "passed": true,
+      "professionalQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-plan-final",
+      "status": "FAILED",
+      "failure": {
+        "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-final",
+        "path": "/api/v1/optimizations",
+        "status": 502,
+        "requestId": "9de34afd-5e32-4c08-b400-bf46d89aaec2",
+        "elapsedMs": 25740,
+        "code": "RESULT_INVALID",
+        "validationReason": "RULE_CONFLICT",
+        "validationField": "sections.BACKGROUND",
+        "modelAttempts": 3
+      }
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-direct",
+      "status": "COLLECTED",
+      "findings": [
+        "甲院和乙院分别对应的hospital_id取值（A或B）尚未确认，影响两院独立计算和比较的医院分组。",
+        "甲院的比较观察窗口尚未确定，影响该院候诊时间统计的时间范围。",
+        "乙院的比较观察窗口尚未确定，影响该院候诊时间统计的时间范围。",
+        "甲院异常等待的阈值尚未确定，影响该院异常等待指标的判定。",
+        "乙院异常等待的阈值尚未确定，影响该院异常等待指标的判定。",
+        "甲院与 hospital_id 的对应关系尚未确定。",
+        "乙院与 hospital_id 的对应关系尚未确定。"
+      ],
+      "rows": [
+        {
+          "parameter": "甲院的观察窗口",
+          "row": "| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "parameter": "乙院的观察窗口",
+          "row": "| 乙院的观察窗口 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "parameter": "甲院异常等待的阈值",
+          "row": "| 甲院异常等待的阈值 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "parameter": "乙院异常等待的阈值",
+          "row": "| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值 |"
+        }
+      ],
+      "checks": {
+        "fourIndependentParameterRows": true,
+        "correctIndependentState": true,
+        "pendingScopesRemainVisible": true,
+        "oneAuthorityTable": true,
+        "noInternalNames": true
+      },
+      "passed": true,
+      "professionalQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-final",
+      "status": "COLLECTED",
+      "findings": [
+        "该问题尚未确定：甲院与 hospital_id 的对应关系是什么？ 用户说明：甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "该问题尚未确定：乙院与 hospital_id 的对应关系是什么？ 用户说明：乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "该问题尚未确定：数据中的 hospital_id 为 A 和 B，请确认 A、B 分别对应哪家医院？ 用户说明：甲院与hospital_id的对应关系尚未核实；乙院与hospital_id的对应关系也尚未核实。A/B取值集合不能证明名称与代码关系，不能按顺序或排除法绑定。 补充说明：甲院与 hospital_id 的对应关系尚未核实，请分别确认甲院和乙院对应的 hospital_id 取值。",
+        "该问题尚未确定：甲院的比较观察窗口如何定义？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：请确认甲院的观察窗口定义。",
+        "该问题尚未确定：乙院的比较观察窗口如何定义？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：请确认乙院的观察窗口定义。",
+        "该问题尚未确定：乙院阈值与两院观察窗口分别仍未决定。",
+        "该问题尚未确定：乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。"
+      ],
+      "rows": [
+        {
+          "parameter": "甲院的观察窗口",
+          "row": "| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "parameter": "乙院的观察窗口",
+          "row": "| 乙院的观察窗口 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "parameter": "甲院异常等待的阈值",
+          "row": "| 甲院异常等待的阈值 | 待确认 | 未决；无当前选值 |"
+        },
+        {
+          "parameter": "乙院异常等待的阈值",
+          "row": "| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值 |"
+        }
+      ],
+      "checks": {
+        "fourIndependentParameterRows": true,
+        "correctIndependentState": false,
+        "pendingScopesRemainVisible": true,
+        "oneAuthorityTable": true,
+        "noInternalNames": true
+      },
+      "passed": false,
+      "professionalQualityRequiresReview": true
+    }
+  ],
+  "passed": 2,
+  "releaseApproval": false
+}

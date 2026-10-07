@@ -125,6 +125,8 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         : selectedModel.publicId();
                 var sourceObjects = SourceObjectContract.from(request.rawPrompt(), planningContext.snapshot(),
                         planningContext.digest() == null ? List.of() : planningContext.digest().factCards());
+                var identifierRelations = NamedIdentifierContract.from(request.rawPrompt(), planningContext.snapshot(),
+                        planningContext.digest() == null ? List.of() : planningContext.digest().factCards(), List.of());
                 var deliveryProfile = com.promptoptimizer.template.domain.TaskIntentResolver.resolve(
                         TemplateCode.AUTO, request.rawPrompt()).deliveryProfile();
                 PlanningProviderRequest providerRequest = PlanningDecisionPolicy.enrich(new PlanningProviderRequest(
@@ -134,20 +136,23 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         planningContext.digest(),
                         selectedModelId,
                         List.of(),
-                        sourceObjects.planningGuidance(deliveryProfile)
+                        java.util.stream.Stream.of(sourceObjects.planningGuidance(deliveryProfile), identifierRelations.guidance())
+                                .filter(value -> !value.isBlank()).collect(java.util.stream.Collectors.joining("\n\n"))
                 ));
                 PlanningProviderResponse validated = com.promptoptimizer.common.logging.PipelineStageTiming.measure(
                         "plan.generate", "provider.total", selectedModelId,
-                        () -> requestValidatedPlan(providerRequest, sourceObjects));
+                        () -> requestValidatedPlan(providerRequest, sourceObjects, identifierRelations));
                 // 对照交付已要求完整保留双方时，冲突是素材与未来执行前提，无需在本次写作前强迫用户择一。
                 var comparisonMaterial = ComparisonMaterialDecision.from(providerRequest);
                 List<PlanQuestion> requiredConflicts = conflictQuestions(planningContext.digest()).stream()
                         .filter(question -> !comparisonMaterial.coveredConflictQuestion(question)).toList();
                 List<PlanQuestion> modelQuestions = questionFilter.filter(validated.questions(), providerRequest).stream()
+                        .filter(question -> !identifierRelations.coveredQuestion(question))
                         .filter(question -> requiredConflicts.stream()
                                 .filter(conflict -> sameConflictDimension(question, conflict.question())).count() != 1)
                         .toList();
                 List<PlanQuestion> candidates = new ArrayList<>(requiredConflicts);
+                candidates.addAll(identifierRelations.requiredQuestions());
                 candidates.addAll(modelQuestions);
                 List<PlanQuestion> questions = candidates.stream()
                         .limit(MAX_QUESTIONS)
@@ -155,9 +160,12 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         .map(question -> PlanRecommendationAligner.align(question, providerRequest))
                         .map(this::validateRecommendationCount)
                         .toList();
-                metrics.generated(validated.questions().size() + requiredConflicts.size(), questions.size());
+                metrics.generated(validated.questions().size() + requiredConflicts.size()
+                        + identifierRelations.requiredQuestions().size(), questions.size());
                 String summary = questions.isEmpty()
                         ? "当前需求及已提供材料足以进入最终增强，无需额外确认。"
+                        : validated.questions().isEmpty() && !identifierRelations.requiredQuestions().isEmpty()
+                        ? "医院名称与数据代码的对应关系还需独立确认，请补充以下信息。"
                         : validated.summary();
                 // 当前需求决定任务类型；附件只提供事实，不能把代码任务误判为附件的研究主题。
                 var inferredTemplate = templateRegistry.infer(request.rawPrompt());
@@ -287,7 +295,8 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
     }
 
     /** 将应用层校验交给 Provider 的同一个重试预算，避免格式重试与业务校验重试相乘。 */
-    private PlanningProviderResponse requestValidatedPlan(PlanningProviderRequest request, SourceObjectContract sourceObjects) {
+    private PlanningProviderResponse requestValidatedPlan(PlanningProviderRequest request, SourceObjectContract sourceObjects,
+                                                         NamedIdentifierContract identifierRelations) {
         AtomicBoolean alreadyValidated = new AtomicBoolean();
         return planningProvider.planValidated(request, response -> {
             // 只有实际进入下一次业务校验时才计重试，末次失败不能再记一次未发生的请求。
@@ -302,13 +311,16 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
             // 包括非推荐选项；不能让用户通过候选答案无意放弃原始需求中的明确规则。
             // 格式和安全仍校验所有项；已被明确事实消除的问题不因无关候选触发额外模型重试。
             questionFilter.filter(validated.questions(), request).forEach(question -> {
+                identifierRelations.validate(question.question(), "questions.question");
                 conditionalGuard.validate(question.question(), "questions.question");
                 conditionalGuard.validate(question.hint(), "questions.hint");
                 sourceObjects.validate(question.hint(), "questions.hint");
+                identifierRelations.validate(question.hint(), "questions.hint");
                 decisionPolicy.validateCandidate(question.hint(), question.question(), "questions.hint");
                 question.examples().forEach(example -> {
                     conditionalGuard.validate(example, "questions.examples");
                     sourceObjects.validate(example, "questions.examples");
+                    identifierRelations.validate(example, "questions.examples");
                     decisionPolicy.validateCandidate(example, question.question(), "questions.examples");
                     ruleValidation.validateProposal(example, "questions.examples");
                 });
@@ -319,6 +331,10 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                     sourceObjects.validate(option.label(), "questions.options.label");
                     sourceObjects.validate(option.description(), "questions.options.description");
                     sourceObjects.validate(option.recommendationReason(), "questions.options.recommendationReason");
+                    identifierRelations.validate(option.answer(), "questions.options.answer");
+                    identifierRelations.validate(option.label(), "questions.options.label");
+                    identifierRelations.validate(option.description(), "questions.options.description");
+                    identifierRelations.validate(option.recommendationReason(), "questions.options.recommendationReason");
                     decisionPolicy.validateCandidate(option.answer(), question.question(), "questions.options.answer");
                     decisionPolicy.validateCandidate(option.label(), question.question(), "questions.options.label");
                     decisionPolicy.validateCandidate(option.description(), question.question(), "questions.options.description");

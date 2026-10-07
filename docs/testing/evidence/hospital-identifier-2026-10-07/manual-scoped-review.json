@@ -1,0 +1,54 @@
+{
+  "scope": "单轮合成反例的具体引文核对，不代表独立专业评审或增强胜率",
+  "actualApiAttempts": 12,
+  "successfulApiResults": 11,
+  "firstFailureRetained": true,
+  "failedResult": {
+    "id": "RC-HOSP-M-deepseek_deepseek-flash-plan-final",
+    "status": 502,
+    "requestId": "9de34afd-5e32-4c08-b400-bf46d89aaec2",
+    "reason": "RULE_CONFLICT",
+    "field": "sections.BACKGROUND",
+    "modelAttempts": 3,
+    "observedStages": "第一次上游失败；第二次TASK决定校验失败；第三次BACKGROUND决定校验失败。没有原模型正文，不能进一步伪造根因。"
+  },
+  "hospital": {
+    "successfulApiViews": 3,
+    "bothIdentifierRelationsUnknown": true,
+    "planQuestionsOverlap": true,
+    "directReminderOverlap": true,
+    "actualWorks": 4,
+    "indicatorTablesDetected": 4,
+    "exactCounterexample": {
+      "id": "RC-HOSP-M-plan-m2-r1",
+      "quote": "hospital_threshold_map={\"A\": 90, \"B\": NULL}",
+      "explanation": "正文保留映射未知，代码却把仅甲院确认的90分钟赋给A。注释中的未来条件没有包住实际赋值，因此不通过。"
+    }
+  },
+  "research": {
+    "actualWorks": 8,
+    "enhancedWorks": 4,
+    "enhancedIndicatorTablesDetected": 4,
+    "enhancedDenominatorState": "完整性采用实际答案；一致性与格式率分母仍未决。计数的N/A＋已确认不算率指标确认。",
+    "enhancedOver2000ApproximateCharacters": 4,
+    "enhancedExactRepeatWorks": 1,
+    "rawUnrecognizedIndicatorTable": 1,
+    "semanticAndProfessionalReviewComplete": false
+  },
+  "java": {
+    "actualWorks": 8,
+    "generatedImplementationsCompile": 8,
+    "independentAssertionsPassed": 416,
+    "enhancedCompleteImplementationAndTestFilesCompile": 4,
+    "rawCompleteFilesCompile": 2,
+    "generatedTestsExecuted": false,
+    "broaderProjectCompilationCovered": false
+  },
+  "toolingFailures": [
+    "浏览器和隔离前端已停止，重新正常登录后恢复；未发模型调用。",
+    "Windows PowerShell5临时助手缺BOM导致解析失败，修正编码；未发模型调用。",
+    "无问题Plan没有raw_matched轨，旧准备器在HTTP前拒绝；以空答案哈希相同的raw轨配对，未修改候选。"
+  ],
+  "fullQualityGatePassed": false,
+  "releaseApproval": false
+}

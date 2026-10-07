@@ -275,6 +275,12 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         String objectGuidance = sourceObjects.guidance();
         // 归属边界同时约束模型的交付组织；只放在安全约束尾部容易被A/B并列表头抵消。
         String deliveryGuidance = sourceObjects.deliveryGuidance(template.deliveryProfile());
+        var identifierRelations = NamedIdentifierContract.from(request.rawPrompt(), context, planningFacts,
+                planConfirmed ? decisions.decisions() : List.of());
+        if (!identifierRelations.guidance().isBlank()) {
+            deliveryGuidance = deliveryGuidance.isBlank() ? identifierRelations.guidance()
+                    : deliveryGuidance + "\n\n" + identifierRelations.guidance();
+        }
         // 模型与最终组装使用相同逐参数状态。资料的当前未知先传入模型，而不是仅在结果尾部补警告。
         List<String> stateEvidence = planningFacts.stream().map(com.promptoptimizer.enhancement.domain.PlanningFactCard::evidence).toList();
         var decisionContract = UnresolvedDecisionContract.from(request.rawPrompt(), decisions, stateEvidence);

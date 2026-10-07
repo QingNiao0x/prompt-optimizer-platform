@@ -164,6 +164,11 @@ public class OptimizationResultAssembler {
         var sourceObjects = SourceObjectContract.from(effectiveRawPrompt, context, eligibleFacts,
                 planConfirmed ? decisions.knownDecisions() : List.of());
         sections.forEach((type, section) -> sourceObjects.validate(section.content(), "sections." + type));
+        var identifierRelations = NamedIdentifierContract.from(effectiveRawPrompt, context, eligibleFacts,
+                planConfirmed ? decisions.decisions() : List.of());
+        sections.forEach((type, section) -> identifierRelations.validate(section.content(), "sections." + type));
+        if (providerResponse.ambiguities() != null) providerResponse.ambiguities().forEach(
+                finding -> identifierRelations.validate(finding, "ambiguities"));
         validateExecutionRules(sections, explicitRules, eligibleFacts, documentFacts);
         boolean minimal = MinimalPromptOrganizer.organize(sections, effectiveRawPrompt,
                 planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()));
@@ -232,6 +237,10 @@ public class OptimizationResultAssembler {
                         decisions.pendingDecisions().stream().map(ConfirmedPlanDecision::answer))
                         .noneMatch(finding -> unresolvedContract.coversPendingStatement(finding, statement))))
                 .distinct().toList();
+        // 名称与代码是独立关系，不让参数确认或模型空数组掩盖缺少对应依据。
+        assessed = java.util.stream.Stream.concat(assessed.stream(), identifierRelations.pendingStatements().stream()
+                .filter(statement -> !identifierRelations.coveredByBoundPending(statement, decisions)))
+                .distinct().toList();
         assessed = classifyFindings(sections, assessed, rawPrompt, decisions, eligibleFacts, documentFacts, context);
         List<AmbiguityReference> references = normalizeAmbiguityReferences(providerResponse);
         // 先登记新冲突和绑定的未决问题，再归并模型提醒，避免重复项挤占展示预算。
@@ -256,6 +265,13 @@ public class OptimizationResultAssembler {
             if (!parameterEvidence.isBlank() && !output.content().contains(parameterEvidence)) {
                 sections.put(PromptSectionType.OUTPUT, new PromptSection(output.type(), output.title(),
                         output.content() + "\n\n" + parameterEvidence));
+            }
+        }
+        if (!identifierRelations.guidance().isBlank()) {
+            PromptSection output = sections.get(PromptSectionType.OUTPUT);
+            if (!output.content().contains(identifierRelations.guidance())) {
+                sections.put(PromptSectionType.OUTPUT, new PromptSection(output.type(), output.title(),
+                        output.content() + "\n\n" + identifierRelations.guidance()));
             }
         }
         // 未决清单也是正文中的权威规则来源；先落入正文再查缺补齐，避免同一禁止规则被追加两遍。
@@ -291,6 +307,9 @@ public class OptimizationResultAssembler {
         }
         if (unresolvedContract.hasNamedParameters()) {
             deliveryAuthority.put(PromptSectionType.OUTPUT, unresolvedContract.independentEvidenceGuidance());
+        }
+        if (!identifierRelations.guidance().isBlank()) {
+            deliveryAuthority.merge(PromptSectionType.OUTPUT, identifierRelations.guidance(), (existing, added) -> existing + "\n" + added);
         }
         if (!codeDelivery.isBlank()) {
             deliveryAuthority.merge(PromptSectionType.OUTPUT, codeDelivery, (existing, added) -> existing + "\n" + added);
