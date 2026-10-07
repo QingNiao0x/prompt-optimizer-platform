@@ -510,7 +510,8 @@ final class UnresolvedDecisionContract {
                 + "已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。"
                 + "指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；"
                 + "已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。"
-                + "计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。" : "")
+                + "计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。"
+                + MetricCalculationContract.GUIDANCE : "")
                 + (indicatorTableRequested && formatParameterNotEvidenced ? "本次参数依据没有登记格式类指标的独立分母；"
                 + "新增格式率指标的执行分母填写“待确认”，依据列写“本次材料未提供独立口径”，不能借日期格式或完整性分母标为已确认。" : "")
                 + parameterStateTable();
@@ -536,6 +537,7 @@ final class UnresolvedDecisionContract {
     /** 模型自己的确定口径与明确未决状态冲突时进入既有修复预算，不靠附加未知尾注放行。 */
     void validate(String content, String field) {
         if (content == null) return;
+        if (indicatorTableRequested) MetricCalculationContract.validate(content, field);
         List<Parameter> validationParameters = parametersWithSharedBoundary();
         List<String> header = List.of();
         for (String line : content.lines().toList()) {

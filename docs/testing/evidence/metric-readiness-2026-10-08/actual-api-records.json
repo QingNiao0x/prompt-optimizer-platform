@@ -1,0 +1,2011 @@
+[
+  {
+    "id": "PS-HOSP-APPROVED-M-deepseek_deepseek-flash-plan",
+    "caseId": "PS-HOSP-APPROVED-M",
+    "modelId": "deepseek:deepseek-flash",
+    "arm": "plan",
+    "startedAt": "2026-10-07T19:59:18.482Z",
+    "prepared": {
+      "contextId": "23492c1d-f74b-41d6-a7b5-3eadcb4d379c",
+      "version": "sha256:d0455294eed42720988ed69288996af47454043410524d5a802e6ec3c2c543e9",
+      "digest": {
+        "description": "",
+        "technologies": [],
+        "dependencies": [],
+        "directoryOverview": [
+          "docs/",
+          "docs/甲院2025年窗口批准说明.txt"
+        ],
+        "fileSummaries": [
+          "[USER_MATERIAL] docs/甲院2025年窗口批准说明.txt：文件内容摘要：甲院2025年的观察窗口采用24小时。；该规则已批准并生效。；48小时仅为本次比较候选，尚未批准。；甲院2025年的异常等待阈值尚未确定。；其他医院或其他年份不能沿用这份说明作为审批依据。；业务摘录：[片段 1/1] 甲院2025年的观察窗口采用24小时。 该规则已批准并生效。 48小时仅为本次比较候选，尚未批准。 甲院2025年的异常等待阈值尚未确定。 其他医院或其他年份不能沿用这份说明作为审批依据。"
+        ],
+        "analysisStatus": "COMPLETE",
+        "analyzedFileCount": 1,
+        "warnings": [],
+        "factCards": [
+          {
+            "id": "F01",
+            "category": "BUSINESS_RULE",
+            "origin": "USER_MATERIAL",
+            "sourcePath": "docs/甲院2025年窗口批准说明.txt",
+            "evidence": "甲院2025年的异常等待阈值尚未确定"
+          }
+        ]
+      },
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/甲院2025年窗口批准说明.txt"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/甲院2025年窗口批准说明.txt",
+            "language": "text",
+            "content": "[片段 1/1]\n甲院2025年的观察窗口采用24小时。该规则已批准并生效。48小时仅为本次比较候选，尚未批准。甲院2025年的异常等待阈值尚未确定。其他医院或其他年份不能沿用这份说明作为审批依据。",
+            "summary": "文件内容摘要：甲院2025年的观察窗口采用24小时。；该规则已批准并生效。；48小时仅为本次比较候选，尚未批准。；甲院2025年的异常等待阈值尚未确定。；其他医院或其他年份不能沿用这份说明作为审批依据。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "expiresAt": "2026-10-07T20:29:18.508092400Z",
+      "latencyMs": 6
+    },
+    "plan": {
+      "summary": "目标是交付甲院2025年门诊运营组的比较观察方案，只写方案、不计算真实数据。已明确甲院2025年24小时窗口已批准生效，48小时仅为未获批候选；异常等待阈值尚未确定。仍需确认本次窗口采用方式以及异常等待阈值的处理口径，否则方案中的观察范围和未决条件会不同。",
+      "questions": [
+        {
+          "id": "window_choice",
+          "question": "本次比较观察方案中，观察窗口应如何采用？",
+          "hint": "甲院2025年24小时窗口已批准并生效，48小时仅为候选且尚未批准；这决定方案是沿用已批准规则，还是把48小时作为待审批比较项。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "keep_24h",
+              "label": "沿用已批准的24小时窗口",
+              "description": "以甲院2025年已批准并生效的24小时窗口作为本次观察窗口，不把48小时写入已采用规则。",
+              "answer": "本次比较观察方案沿用甲院2025年已批准并生效的24小时观察窗口。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "compare_24h_48h",
+              "label": "以24小时为已批准基准，48小时作为未获批候选比较",
+              "description": "方案中明确24小时为已批准生效规则，48小时仅作为待院方审批的比较候选，不写成已获批。",
+              "answer": "本次比较观察方案以甲院2025年已批准并生效的24小时窗口为基准，同时将48小时作为尚未获批的比较候选列出，供院方审批参考，不写成已获批规则。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other_window",
+              "label": "采用其他窗口安排",
+              "description": "如果本次需要采用不同于24小时或48小时候选的窗口，请具体说明。",
+              "answer": "本次比较观察方案采用以下观察窗口安排：____。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "threshold_handling",
+          "question": "甲院2025年异常等待阈值尚未确定，本次方案应如何处理？",
+          "hint": "阈值未确定会影响异常等待的判定口径和方案中的未决条件写法；需要确认是列为独立未决条件，还是本次先给出待审批候选值。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "list_as_pending",
+              "label": "列为独立未决条件，不设定具体阈值",
+              "description": "方案中明确异常等待阈值尚未确定，作为独立未决条件列出，不给出具体数值。",
+              "answer": "本次方案将甲院2025年异常等待阈值列为独立未决条件，不设定具体阈值，待后续核实确认。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "propose_candidate",
+              "label": "提出待审批候选阈值",
+              "description": "方案中提出一个或多个候选阈值供院方审批，并明确尚未批准。",
+              "answer": "本次方案提出以下待审批候选异常等待阈值：____，并明确该候选尚未批准，需院方审批确认。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other_threshold",
+              "label": "采用其他处理方式",
+              "description": "如果本次对异常等待阈值有其他处理要求，请具体说明。",
+              "answer": "本次方案对甲院2025年异常等待阈值采用以下处理方式：____。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 4055,
+      "planId": "c5cf8f77-7eae-4821-961f-a477809e1240",
+      "planningContext": {
+        "contextId": "23492c1d-f74b-41d6-a7b5-3eadcb4d379c",
+        "version": "sha256:d0455294eed42720988ed69288996af47454043410524d5a802e6ec3c2c543e9"
+      },
+      "expiresAt": "2026-10-07T20:29:18.508092400Z"
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "PS-HOSP-APPROVED-M-deepseek_deepseek-flash-plan-prepare",
+        "path": "/api/v1/context/planning",
+        "status": 200,
+        "requestId": "52663199-9a0c-45e2-a43c-b06eb6941c9b",
+        "elapsedMs": 32
+      },
+      {
+        "label": "PS-HOSP-APPROVED-M-deepseek_deepseek-flash-plan-plan",
+        "path": "/api/v1/optimizations/plan",
+        "status": 200,
+        "requestId": "20deae07-fe74-4a6e-8b15-6629071b0270",
+        "elapsedMs": 4094
+      }
+    ]
+  },
+  {
+    "id": "PS-HOSP-APPROVED-M-deepseek_deepseek-v4-pro-plan",
+    "caseId": "PS-HOSP-APPROVED-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "arm": "plan",
+    "startedAt": "2026-10-07T19:59:33.205Z",
+    "prepared": {
+      "contextId": "53cd64e6-ecb0-46bd-b2dc-489d457e64f5",
+      "version": "sha256:d0455294eed42720988ed69288996af47454043410524d5a802e6ec3c2c543e9",
+      "digest": {
+        "description": "",
+        "technologies": [],
+        "dependencies": [],
+        "directoryOverview": [
+          "docs/",
+          "docs/甲院2025年窗口批准说明.txt"
+        ],
+        "fileSummaries": [
+          "[USER_MATERIAL] docs/甲院2025年窗口批准说明.txt：文件内容摘要：甲院2025年的观察窗口采用24小时。；该规则已批准并生效。；48小时仅为本次比较候选，尚未批准。；甲院2025年的异常等待阈值尚未确定。；其他医院或其他年份不能沿用这份说明作为审批依据。；业务摘录：[片段 1/1] 甲院2025年的观察窗口采用24小时。 该规则已批准并生效。 48小时仅为本次比较候选，尚未批准。 甲院2025年的异常等待阈值尚未确定。 其他医院或其他年份不能沿用这份说明作为审批依据。"
+        ],
+        "analysisStatus": "COMPLETE",
+        "analyzedFileCount": 1,
+        "warnings": [],
+        "factCards": [
+          {
+            "id": "F01",
+            "category": "BUSINESS_RULE",
+            "origin": "USER_MATERIAL",
+            "sourcePath": "docs/甲院2025年窗口批准说明.txt",
+            "evidence": "甲院2025年的异常等待阈值尚未确定"
+          }
+        ]
+      },
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/甲院2025年窗口批准说明.txt"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/甲院2025年窗口批准说明.txt",
+            "language": "text",
+            "content": "[片段 1/1]\n甲院2025年的观察窗口采用24小时。该规则已批准并生效。48小时仅为本次比较候选，尚未批准。甲院2025年的异常等待阈值尚未确定。其他医院或其他年份不能沿用这份说明作为审批依据。",
+            "summary": "文件内容摘要：甲院2025年的观察窗口采用24小时。；该规则已批准并生效。；48小时仅为本次比较候选，尚未批准。；甲院2025年的异常等待阈值尚未确定。；其他医院或其他年份不能沿用这份说明作为审批依据。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "expiresAt": "2026-10-07T20:29:33.225030300Z",
+      "latencyMs": 3
+    },
+    "plan": {
+      "summary": "已理解本次目标是为甲院2025年门诊运营组拟定比较观察方案，只交付方案，不计算真实数据。需要确认观察窗口是否沿用24小时或提出48小时候选，以及异常等待阈值的具体数值，因为这两个因素直接影响方案设计。",
+      "questions": [
+        {
+          "id": "observation_window",
+          "question": "本次比较观察方案中，观察窗口应如何处理？",
+          "hint": "24小时窗口已批准生效，48小时仅为候选尚未批准，需明确本次方案采用哪种方式。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "use_24h",
+              "label": "沿用24小时窗口",
+              "description": "直接采用已批准生效的24小时观察窗口。",
+              "answer": "沿用24小时观察窗口。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "propose_48h",
+              "label": "提出48小时候选",
+              "description": "在方案中提出48小时观察窗口作为候选，供院方审批。",
+              "answer": "提出48小时观察窗口作为候选，供院方审批。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "abnormal_wait_threshold",
+          "question": "异常等待阈值应设为多少？",
+          "hint": "该阈值尚未确定，需要明确具体数值或定义。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：超过30分钟视为异常等待"
+          ],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 3601,
+      "planId": "19d844ce-fed6-4f24-9a99-eb83059c86ba",
+      "planningContext": {
+        "contextId": "53cd64e6-ecb0-46bd-b2dc-489d457e64f5",
+        "version": "sha256:d0455294eed42720988ed69288996af47454043410524d5a802e6ec3c2c543e9"
+      },
+      "expiresAt": "2026-10-07T20:29:33.225030300Z"
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "PS-HOSP-APPROVED-M-deepseek_deepseek-v4-pro-plan-prepare",
+        "path": "/api/v1/context/planning",
+        "status": 200,
+        "requestId": "ea9e42a7-7741-4691-bc90-1a608932149c",
+        "elapsedMs": 30
+      },
+      {
+        "label": "PS-HOSP-APPROVED-M-deepseek_deepseek-v4-pro-plan-plan",
+        "path": "/api/v1/optimizations/plan",
+        "status": 200,
+        "requestId": "622720af-f498-4cee-a329-1417828be4be",
+        "elapsedMs": 3632
+      }
+    ]
+  },
+  {
+    "id": "PS-NOTIFY-M-deepseek_deepseek-flash-plan",
+    "caseId": "PS-NOTIFY-M",
+    "modelId": "deepseek:deepseek-flash",
+    "arm": "plan",
+    "startedAt": "2026-10-07T19:59:12.688Z",
+    "prepared": {
+      "contextId": "b328392c-ba0d-4534-9e7c-78f5d08d9273",
+      "version": "sha256:6e0cd7c721dc82bcb7c26ba413e93a64ead36007951453c6704c5bbf90958e0a",
+      "digest": {
+        "description": "",
+        "technologies": [],
+        "dependencies": [],
+        "directoryOverview": [
+          "docs/",
+          "docs/订单通知现状.md"
+        ],
+        "fileSummaries": [
+          "[PROJECT_DOCUMENT] docs/订单通知现状.md：Markdown 文档摘要：订单审批结果由后端产生，站内信已有用户隔离和已读状态。；邮件通知已有发送服务，发送失败需记为失败，不伪造送达。；现有实现不支持未经授权读取其他用户通知。；两种渠道均已实现，本次启用哪些渠道仍需用户作出业务选择。；业务摘录：[片段 1/1] 订单审批结果由后端产生，站内信已有用户隔离和已读状态。 邮件通知已有发送服务，发送失败需记为失败，不伪造送达。 现有实现不支持未经授权读取其他用户通知。 两种渠道均已实现，本次启用哪些渠道仍需用户作出业务选择。"
+        ],
+        "analysisStatus": "COMPLETE",
+        "analyzedFileCount": 1,
+        "warnings": [],
+        "factCards": []
+      },
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/订单通知现状.md"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/订单通知现状.md",
+            "language": "markdown",
+            "content": "[片段 1/1]\n订单审批结果由后端产生，站内信已有用户隔离和已读状态。邮件通知已有发送服务，发送失败需记为失败，不伪造送达。现有实现不支持未经授权读取其他用户通知。两种渠道均已实现，本次启用哪些渠道仍需用户作出业务选择。",
+            "summary": "Markdown 文档摘要：订单审批结果由后端产生，站内信已有用户隔离和已读状态。；邮件通知已有发送服务，发送失败需记为失败，不伪造送达。；现有实现不支持未经授权读取其他用户通知。；两种渠道均已实现，本次启用哪些渠道仍需用户作出业务选择。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "expiresAt": "2026-10-07T20:29:12.718730700Z",
+      "latencyMs": 11
+    },
+    "plan": {
+      "summary": "目标是只交付订单审批结果通知方案，不修改代码，且不改变审批规则和登录权限。现有站内信与邮件均已实现，但本次启用哪些渠道尚未决定，需要用户确认后才能写入最终方案。",
+      "questions": [
+        {
+          "id": "channel_choice",
+          "question": "本次订单审批结果通知方案启用哪些渠道？",
+          "hint": "现有站内信和邮件均已实现，但本次启用范围尚未确定；该选择会直接影响消息接收对象、已读状态、失败处理和验收内容。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "in_app_only",
+              "label": "仅站内信",
+              "description": "复用已有用户隔离和已读状态能力，运维成本较低，但用户不登录时无法及时获知审批结果。",
+              "answer": "本次方案仅启用站内信渠道。",
+              "recommended": true,
+              "recommendationReason": "原始需求明确包含：站内信。请核对适用范围后选择。"
+            },
+            {
+              "id": "email_only",
+              "label": "仅邮件",
+              "description": "复用已有邮件发送服务，触达更主动，但需处理发送失败记录，且没有站内已读状态。",
+              "answer": "本次方案仅启用邮件渠道。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "both_channels",
+              "label": "站内信和邮件",
+              "description": "同时复用两种已有能力，覆盖更全面，但需分别定义失败处理、已读状态和验收口径，运维成本更高。",
+              "answer": "本次方案同时启用站内信和邮件渠道。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 2228,
+      "planId": "bfd5d0ab-c0ca-4fe8-9c43-811a8d1d2393",
+      "planningContext": {
+        "contextId": "b328392c-ba0d-4534-9e7c-78f5d08d9273",
+        "version": "sha256:6e0cd7c721dc82bcb7c26ba413e93a64ead36007951453c6704c5bbf90958e0a"
+      },
+      "expiresAt": "2026-10-07T20:29:12.718730700Z"
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "PS-NOTIFY-M-deepseek_deepseek-flash-plan-prepare",
+        "path": "/api/v1/context/planning",
+        "status": 200,
+        "requestId": "2659f051-cdd1-4593-8768-9740a93bd0ef",
+        "elapsedMs": 44
+      },
+      {
+        "label": "PS-NOTIFY-M-deepseek_deepseek-flash-plan-plan",
+        "path": "/api/v1/optimizations/plan",
+        "status": 200,
+        "requestId": "56d52ef7-bfbb-49c5-9ddc-6cbdc3d965e2",
+        "elapsedMs": 2257
+      }
+    ]
+  },
+  {
+    "id": "PS-NOTIFY-M-deepseek_deepseek-v4-pro-plan",
+    "caseId": "PS-NOTIFY-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "arm": "plan",
+    "startedAt": "2026-10-07T19:59:27.158Z",
+    "prepared": {
+      "contextId": "b2f49b37-22cd-41e6-93f7-51c709a81daf",
+      "version": "sha256:6e0cd7c721dc82bcb7c26ba413e93a64ead36007951453c6704c5bbf90958e0a",
+      "digest": {
+        "description": "",
+        "technologies": [],
+        "dependencies": [],
+        "directoryOverview": [
+          "docs/",
+          "docs/订单通知现状.md"
+        ],
+        "fileSummaries": [
+          "[PROJECT_DOCUMENT] docs/订单通知现状.md：Markdown 文档摘要：订单审批结果由后端产生，站内信已有用户隔离和已读状态。；邮件通知已有发送服务，发送失败需记为失败，不伪造送达。；现有实现不支持未经授权读取其他用户通知。；两种渠道均已实现，本次启用哪些渠道仍需用户作出业务选择。；业务摘录：[片段 1/1] 订单审批结果由后端产生，站内信已有用户隔离和已读状态。 邮件通知已有发送服务，发送失败需记为失败，不伪造送达。 现有实现不支持未经授权读取其他用户通知。 两种渠道均已实现，本次启用哪些渠道仍需用户作出业务选择。"
+        ],
+        "analysisStatus": "COMPLETE",
+        "analyzedFileCount": 1,
+        "warnings": [],
+        "factCards": []
+      },
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/订单通知现状.md"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/订单通知现状.md",
+            "language": "markdown",
+            "content": "[片段 1/1]\n订单审批结果由后端产生，站内信已有用户隔离和已读状态。邮件通知已有发送服务，发送失败需记为失败，不伪造送达。现有实现不支持未经授权读取其他用户通知。两种渠道均已实现，本次启用哪些渠道仍需用户作出业务选择。",
+            "summary": "Markdown 文档摘要：订单审批结果由后端产生，站内信已有用户隔离和已读状态。；邮件通知已有发送服务，发送失败需记为失败，不伪造送达。；现有实现不支持未经授权读取其他用户通知。；两种渠道均已实现，本次启用哪些渠道仍需用户作出业务选择。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "expiresAt": "2026-10-07T20:29:27.178009800Z",
+      "latencyMs": 3
+    },
+    "plan": {
+      "summary": "已理解本次目标是为订单审批结果设计通知方案，只交付方案不修改代码，且需先确认通知渠道。现有文档已说明站内信和邮件能力均已实现，但本次启用哪些渠道仍需用户选择，因此需要询问渠道选择。",
+      "questions": [
+        {
+          "id": "notification_channel",
+          "question": "本次订单审批结果通知采用哪种渠道？",
+          "hint": "现有系统已实现站内信和邮件，但本次启用哪些渠道尚未确定，需要您明确选择。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "in_app",
+              "label": "仅站内信",
+              "description": "复用现有站内信实现，用户隔离和已读状态已支持，无需额外运维成本。",
+              "answer": "仅使用站内信通知",
+              "recommended": true,
+              "recommendationReason": "原始需求明确包含：站内信。请核对适用范围后选择。"
+            },
+            {
+              "id": "email",
+              "label": "仅邮件",
+              "description": "复用现有邮件发送服务，发送失败需记为失败，不伪造送达。",
+              "answer": "仅使用邮件通知",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "both",
+              "label": "站内信和邮件",
+              "description": "同时使用两种渠道，覆盖更广，但需考虑两种渠道的失败处理和用户偏好。",
+              "answer": "同时使用站内信和邮件通知",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 3021,
+      "planId": "66f51b09-d958-43e2-8fae-d5ffc3ce5af2",
+      "planningContext": {
+        "contextId": "b2f49b37-22cd-41e6-93f7-51c709a81daf",
+        "version": "sha256:6e0cd7c721dc82bcb7c26ba413e93a64ead36007951453c6704c5bbf90958e0a"
+      },
+      "expiresAt": "2026-10-07T20:29:27.178009800Z"
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "PS-NOTIFY-M-deepseek_deepseek-v4-pro-plan-prepare",
+        "path": "/api/v1/context/planning",
+        "status": 200,
+        "requestId": "6f63e7e0-ea33-4a87-a4a5-36cedb39d852",
+        "elapsedMs": 33
+      },
+      {
+        "label": "PS-NOTIFY-M-deepseek_deepseek-v4-pro-plan-plan",
+        "path": "/api/v1/optimizations/plan",
+        "status": 200,
+        "requestId": "3e2a8c56-d91c-4da0-9f90-364d9f43da5c",
+        "elapsedMs": 3054
+      }
+    ]
+  },
+  {
+    "id": "PS-STORAGE-M-deepseek_deepseek-flash-plan",
+    "caseId": "PS-STORAGE-M",
+    "modelId": "deepseek:deepseek-flash",
+    "arm": "plan",
+    "startedAt": "2026-10-07T19:59:15.005Z",
+    "prepared": {
+      "contextId": "c570268f-ac4e-43b2-b30e-1d693ef61b14",
+      "version": "sha256:9a3e417fda44375ff3bc48137be53eb931a6cd8a3d6573a1e5cac9b969254a7b",
+      "digest": {
+        "description": "",
+        "technologies": [
+          "Java"
+        ],
+        "dependencies": [],
+        "directoryOverview": [
+          "docs/",
+          "docs/订单存储现状.md",
+          "services/",
+          "services/order/",
+          "services/order/src/",
+          "services/order/src/main/",
+          "services/order/src/main/java/",
+          "services/order/src/main/java/com/",
+          "services/order/src/main/java/com/example/",
+          "services/order/src/main/java/com/example/ReceiptStorage.java"
+        ],
+        "fileSummaries": [
+          "[PROJECT_DOCUMENT] docs/订单存储现状.md：Markdown 文档摘要：现有凭证存储服务使用 MinIO，文件访问先校验订单所属用户权限。；此次新增附件尚未实现。；失败时不生成成功记录，重试不改变订单所属用户范围。；业务摘录：[片段 1/1] 现有凭证存储服务使用 MinIO，文件访问先校验订单所属用户权限。 此次新增附件尚未实现。 失败时不生成成功记录，重试不改变订单所属用户范围。"
+        ],
+        "analysisStatus": "COMPLETE",
+        "analyzedFileCount": 2,
+        "warnings": [],
+        "factCards": []
+      },
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [
+          {
+            "name": "Java",
+            "source": "services/order/src/main/java/com/example/ReceiptStorage.java",
+            "confidence": 0.9
+          }
+        ],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/订单存储现状.md",
+          "services/",
+          "services/order/",
+          "services/order/src/",
+          "services/order/src/main/",
+          "services/order/src/main/java/",
+          "services/order/src/main/java/com/",
+          "services/order/src/main/java/com/example/",
+          "services/order/src/main/java/com/example/ReceiptStorage.java"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/订单存储现状.md",
+            "language": "markdown",
+            "content": "[片段 1/1]\n现有凭证存储服务使用 MinIO，文件访问先校验订单所属用户权限。此次新增附件尚未实现。失败时不生成成功记录，重试不改变订单所属用户范围。",
+            "summary": "Markdown 文档摘要：现有凭证存储服务使用 MinIO，文件访问先校验订单所属用户权限。；此次新增附件尚未实现。；失败时不生成成功记录，重试不改变订单所属用户范围。",
+            "truncated": false
+          },
+          {
+            "path": "services/order/src/main/java/com/example/ReceiptStorage.java",
+            "language": "java",
+            "content": "[片段 1/1]\npackage com.example;\nimport io.minio.MinioClient;\npublic final class ReceiptStorage { private final MinioClient client; public ReceiptStorage(MinioClient client) { this.client = client; } public MinioClient configuredClient() { return client; } }",
+            "summary": "Java代码文件，主要定义：ReceiptStorage。关键内容：package com.example;；import io.minio.MinioClient;",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "expiresAt": "2026-10-07T20:29:15.030587100Z",
+      "latencyMs": 6
+    },
+    "plan": {
+      "summary": "目标是先交付订单附件保存的实现方案（不执行代码修改），范围含存储方案、权限边界、失败与重试行为、验收清单。现有订单服务已实际使用 MinIO 保存凭证，但附件功能尚未实现；附件存储位置尚未选定，用户偏好 MinIO，仍需确认。",
+      "questions": [
+        {
+          "id": "storage_choice",
+          "question": "本次附件保存位置采用哪种方案？",
+          "hint": "这决定存储方案、权限边界与失败重试设计的整体走向；现有凭证已使用 MinIO，但附件功能尚未实现，不能据此视为已选定。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "minio",
+              "label": "沿用 MinIO",
+              "description": "附件与现有凭证共用 MinIO 存储，减少额外存储维护，权限校验沿用订单所属用户范围。",
+              "answer": "本次附件保存沿用 MinIO，与现有凭证存储一致，减少额外存储维护；权限校验沿用订单所属用户范围。",
+              "recommended": true,
+              "recommendationReason": "原始需求明确包含：minio。请核对适用范围后选择。"
+            },
+            {
+              "id": "local_dir",
+              "label": "独立本地目录",
+              "description": "附件保存到订单服务可访问的独立本地目录，与 MinIO 凭证存储分离。",
+              "answer": "本次附件保存采用独立本地目录，与现有 MinIO 凭证存储分离。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "attachment_scope",
+          "question": "附件与订单的对应关系是哪种？",
+          "hint": "决定权限边界和存储路径组织方式：一个订单可有多份附件，还是每类附件唯一。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "multi",
+              "label": "一个订单可有多份附件",
+              "description": "同一订单下允许保存多份附件，每份附件独立标识。",
+              "answer": "一个订单可保存多份附件，每份附件独立标识。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "single_per_type",
+              "label": "每类附件每订单唯一",
+              "description": "同一订单下每类附件只保留一份，重复上传按覆盖或拒绝处理。",
+              "answer": "同一订单下每类附件只保留一份，重复上传按覆盖或拒绝处理。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "failure_retry",
+          "question": "附件保存失败后的重试行为按哪种口径设计？",
+          "hint": "影响失败与重试行为章节的交付内容；现有资料只说明失败时不生成成功记录、重试不改变订单所属用户范围。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "auto_retry",
+              "label": "自动重试有限次",
+              "description": "保存失败后由服务自动重试固定次数，仍失败则返回失败，不生成成功记录。",
+              "answer": "附件保存失败后由服务自动重试有限次，仍失败则返回失败，不生成成功记录，重试不改变订单所属用户范围。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "manual_retry",
+              "label": "由调用方手动重试",
+              "description": "保存失败直接返回失败，由调用方决定是否重新发起，不生成成功记录。",
+              "answer": "附件保存失败直接返回失败，由调用方决定是否重新发起，不生成成功记录，重试不改变订单所属用户范围。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 3389,
+      "planId": "ad6f4007-6097-468f-828a-2d34a6de927c",
+      "planningContext": {
+        "contextId": "c570268f-ac4e-43b2-b30e-1d693ef61b14",
+        "version": "sha256:9a3e417fda44375ff3bc48137be53eb931a6cd8a3d6573a1e5cac9b969254a7b"
+      },
+      "expiresAt": "2026-10-07T20:29:15.030587100Z"
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "PS-STORAGE-M-deepseek_deepseek-flash-plan-prepare",
+        "path": "/api/v1/context/planning",
+        "status": 200,
+        "requestId": "2eab4c51-a8ee-4d2b-b358-94daa6a4ba39",
+        "elapsedMs": 39
+      },
+      {
+        "label": "PS-STORAGE-M-deepseek_deepseek-flash-plan-plan",
+        "path": "/api/v1/optimizations/plan",
+        "status": 200,
+        "requestId": "b1b4f7dc-71b4-4b34-aca4-779dd8712bfc",
+        "elapsedMs": 3424
+      }
+    ]
+  },
+  {
+    "id": "PS-STORAGE-M-deepseek_deepseek-v4-pro-plan",
+    "caseId": "PS-STORAGE-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "arm": "plan",
+    "startedAt": "2026-10-07T19:59:30.255Z",
+    "prepared": {
+      "contextId": "41df3cb9-4afb-484b-95f3-8c464eefe128",
+      "version": "sha256:9a3e417fda44375ff3bc48137be53eb931a6cd8a3d6573a1e5cac9b969254a7b",
+      "digest": {
+        "description": "",
+        "technologies": [
+          "Java"
+        ],
+        "dependencies": [],
+        "directoryOverview": [
+          "docs/",
+          "docs/订单存储现状.md",
+          "services/",
+          "services/order/",
+          "services/order/src/",
+          "services/order/src/main/",
+          "services/order/src/main/java/",
+          "services/order/src/main/java/com/",
+          "services/order/src/main/java/com/example/",
+          "services/order/src/main/java/com/example/ReceiptStorage.java"
+        ],
+        "fileSummaries": [
+          "[PROJECT_DOCUMENT] docs/订单存储现状.md：Markdown 文档摘要：现有凭证存储服务使用 MinIO，文件访问先校验订单所属用户权限。；此次新增附件尚未实现。；失败时不生成成功记录，重试不改变订单所属用户范围。；业务摘录：[片段 1/1] 现有凭证存储服务使用 MinIO，文件访问先校验订单所属用户权限。 此次新增附件尚未实现。 失败时不生成成功记录，重试不改变订单所属用户范围。"
+        ],
+        "analysisStatus": "COMPLETE",
+        "analyzedFileCount": 2,
+        "warnings": [],
+        "factCards": []
+      },
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [
+          {
+            "name": "Java",
+            "source": "services/order/src/main/java/com/example/ReceiptStorage.java",
+            "confidence": 0.9
+          }
+        ],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/订单存储现状.md",
+          "services/",
+          "services/order/",
+          "services/order/src/",
+          "services/order/src/main/",
+          "services/order/src/main/java/",
+          "services/order/src/main/java/com/",
+          "services/order/src/main/java/com/example/",
+          "services/order/src/main/java/com/example/ReceiptStorage.java"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/订单存储现状.md",
+            "language": "markdown",
+            "content": "[片段 1/1]\n现有凭证存储服务使用 MinIO，文件访问先校验订单所属用户权限。此次新增附件尚未实现。失败时不生成成功记录，重试不改变订单所属用户范围。",
+            "summary": "Markdown 文档摘要：现有凭证存储服务使用 MinIO，文件访问先校验订单所属用户权限。；此次新增附件尚未实现。；失败时不生成成功记录，重试不改变订单所属用户范围。",
+            "truncated": false
+          },
+          {
+            "path": "services/order/src/main/java/com/example/ReceiptStorage.java",
+            "language": "java",
+            "content": "[片段 1/1]\npackage com.example;\nimport io.minio.MinioClient;\npublic final class ReceiptStorage { private final MinioClient client; public ReceiptStorage(MinioClient client) { this.client = client; } public MinioClient configuredClient() { return client; } }",
+            "summary": "Java代码文件，主要定义：ReceiptStorage。关键内容：package com.example;；import io.minio.MinioClient;",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "expiresAt": "2026-10-07T20:29:30.279975600Z",
+      "latencyMs": 4
+    },
+    "plan": {
+      "summary": "已理解目标是为现有订单服务设计附件保存方案，交付实现方案而非代码。现有凭证存储已用 MinIO 且权限校验订单所属用户，但附件保存位置尚未选定，需用户确认。",
+      "questions": [
+        {
+          "id": "storage_location",
+          "question": "附件保存位置选择哪种方案？",
+          "hint": "您已表示偏好 MinIO，但需要本次方案确认。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "minio",
+              "label": "沿用 MinIO",
+              "description": "使用现有 MinIO 服务保存附件，减少额外存储维护。",
+              "answer": "附件保存位置采用 MinIO，复用现有凭证存储服务。",
+              "recommended": true,
+              "recommendationReason": "原始需求明确包含：minio。请核对适用范围后选择。"
+            },
+            {
+              "id": "local_dir",
+              "label": "独立本地目录",
+              "description": "使用独立本地目录保存附件，与 MinIO 分离。",
+              "answer": "附件保存位置采用独立本地目录。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 2879,
+      "planId": "a8d56479-aedc-4f8b-b435-a07475993559",
+      "planningContext": {
+        "contextId": "41df3cb9-4afb-484b-95f3-8c464eefe128",
+        "version": "sha256:9a3e417fda44375ff3bc48137be53eb931a6cd8a3d6573a1e5cac9b969254a7b"
+      },
+      "expiresAt": "2026-10-07T20:29:30.279975600Z"
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "PS-STORAGE-M-deepseek_deepseek-v4-pro-plan-prepare",
+        "path": "/api/v1/context/planning",
+        "status": 200,
+        "requestId": "c72daceb-69a3-4f77-85f2-d2f61eb861f2",
+        "elapsedMs": 32
+      },
+      {
+        "label": "PS-STORAGE-M-deepseek_deepseek-v4-pro-plan-plan",
+        "path": "/api/v1/optimizations/plan",
+        "status": 200,
+        "requestId": "c1cc7f36-233b-416a-a4c1-ec316e148ea1",
+        "elapsedMs": 2903
+      }
+    ]
+  },
+  {
+    "id": "RC-HOSP-M-deepseek_deepseek-flash-direct",
+    "caseId": "RC-HOSP-M",
+    "modelId": "deepseek:deepseek-flash",
+    "arm": "direct",
+    "startedAt": "2026-10-07T20:01:45.201Z",
+    "result": {
+      "optimizedPrompt": "## 背景\n- 分析对象：甲院和乙院的普通门诊，不包括急诊、住院和体检。\n- 研究时间：2025年1月至12月。\n- 统计单位：一次有效门诊就诊；重复导入按就诊编号（visit_id）去重。\n- 数据来源：docs/两院数据说明.txt。两院数据均为CSV，字段包括 visit_id、hospital_id、department、registered_at、seen_at、status、import_version；hospital_id 只能为 A 或 B；时间为北京时间；status 为 registered、seen、cancelled。\n- 两院比较观察窗口尚未确定；异常等待阈值尚未确定。资料中的示例 60 分钟仅供说明，不是现行院规。\n- 甲院与乙院需独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n\n资料的当前执行视图（原始摘录见资料依据；现状与目标分别核对，不代表已经实现）：\n- docs/两院数据说明.txt：两院比较观察窗口尚未确定，异常等待阈值尚未确定\n\n## 任务\n制定一份候诊时间分析方案（仅统计方案，不输出诊疗建议，不编造患者数据），交付可讨论的分析方案与指标表。方案需包含：\n- 候诊时间的定义。\n- 数据清洗规则：缺失挂号时间或接诊时间的记录不能当作零分钟，应列出缺失数量，并明确哪些指标排除了这些记录；取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录；保留有效 0 分钟，不能改成缺失。\n- 分组表：按月、医院、科室分别整理。\n- 分母与结果展示方式。\n- 指标表：逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。\n- 甲院与乙院分别独立计算后再比较。\n- 甲院、乙院的观察窗口分别待确认；甲院、乙院异常等待的阈值分别待确认。相关参数格标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算。\n- 新增指标必须独立列出口径依据及状态；无独立依据时，具体口径只能列为建议，执行参数保持待确认。\n- 普通章节、颜色、测试工具、代码语言和图表布局由执行者处理，不需要让用户选择表格还是文字等普通排版。\n\n## 输出\n- 一份可讨论的候诊时间分析方案。\n- 一份指标表，逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态。\n- 不输出虚构的结果或已经落地的系统功能。\n新增指标必须独立列出口径依据及状态：无独立依据时，具体口径只能列为建议，执行参数保持待确认；已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。口径依据、参数确认与计算就绪分别判断：状态列说明已定参数及尚缺计算前提，不能用一个“已确认”概括。只有本指标实际依赖的分母、机构对应、观察窗口等均有适用依据并满足必要确认，才可标为可计算；不适用的依赖说明原因，不强加。伪代码必须实际检查并使用这些具名参数，未知时只暂停依赖它的计算，不能仅声明未知却继续计算。\n当前参数依据（用于生成指标表，不代替指标表）：\n| 参数 | 当前口径 | 状态与依据 |\n| --- | --- | --- |\n| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 甲院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n实体标识的独立依据（A/B集合不证明名称对应，不按次序或排除法绑定）：\n| 机构 | 标识字段 | 当前对应 | 状态与依据 |\n| --- | --- | --- | --- |\n| 甲院 | hospital_id | 对应关系待确认 | 无对应证据 |\n| 乙院 | hospital_id | 对应关系待确认 | 无对应证据 |\n正文、表格及伪代码采用同一状态。未知项用“医院代码待确认”占位；仅依赖该对应的步骤需等待，其他清洗与指标模板继续交付。平台统一保留未决清单，模型不要再复写同义提醒。\n\n## 约束\n- 只做统计方案，不输出诊疗建议，不编造患者数据。\n- 分析对象仅限甲院和乙院的普通门诊，不包括急诊、住院和体检。\n- 两院独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 缺失挂号时间或接诊时间的记录不能当作零分钟；应列出缺失数量，并明确哪些指标排除了这些记录。\n- 取消挂号不得当作已经接诊。\n- 同一个就诊编号保留已确认的最新记录；保留有效 0 分钟，不能改成缺失。\n- 资料中的示例阈值（如 60 分钟）不得当作医院采用的规则。\n- 只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 甲院的观察窗口尚未确定。\n- 乙院的观察窗口尚未确定。\n- 甲院异常等待的阈值尚未确定。\n- 乙院异常等待的阈值尚未确定。\n- 甲院与 hospital_id 的对应关系尚未确定。\n- 乙院与 hospital_id 的对应关系尚未确定。\n未决决定的交付边界：\n- 同一未决决定在正文、表格、公式及伪代码中保持一致：相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。已确认决定仅适用于对应对象、指标和条件；其他指标不得标成已确认，须有各自的独立依据。原定指标表与必要伪代码仍须交付，逐指标判断参数状态，只暂停依赖未决参数的计算，其余步骤继续完成。\n用户明确规则（须遵守平台权限边界）：\n- 请为医院门诊运营组制定一份候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。\n- 两院需要独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录，保留有效0分钟，不能改成缺失。\n- 两院的比较观察窗口都没有定，但两者可能不同，请分别确认。\n- 异常等待的阈值也没有定，不能把资料中的示例阈值当作医院采用的规则。\n- 请只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n- 最终只交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。\n- 已知信息直接继承；用户回答暂不确定时保留必要未决条件，同一件事情不要重复提醒。\n\n## 验收\n- 指标、分母、缺失值和时间边界一致。\n- 建议或待定参数不冒充已选方法。\n- 实际结论能回到输入数据。\n- 甲院与乙院的观察窗口、异常等待阈值分别标注为待确认，未填入默认值或示例值。\n- 指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；计数指标分母写“不适用（计数指标）”。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "- 分析对象：甲院和乙院的普通门诊，不包括急诊、住院和体检。\n- 研究时间：2025年1月至12月。\n- 统计单位：一次有效门诊就诊；重复导入按就诊编号（visit_id）去重。\n- 数据来源：docs/两院数据说明.txt。两院数据均为CSV，字段包括 visit_id、hospital_id、department、registered_at、seen_at、status、import_version；hospital_id 只能为 A 或 B；时间为北京时间；status 为 registered、seen、cancelled。\n- 两院比较观察窗口尚未确定；异常等待阈值尚未确定。资料中的示例 60 分钟仅供说明，不是现行院规。\n- 甲院与乙院需独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n\n资料的当前执行视图（原始摘录见资料依据；现状与目标分别核对，不代表已经实现）：\n- docs/两院数据说明.txt：两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "制定一份候诊时间分析方案（仅统计方案，不输出诊疗建议，不编造患者数据），交付可讨论的分析方案与指标表。方案需包含：\n- 候诊时间的定义。\n- 数据清洗规则：缺失挂号时间或接诊时间的记录不能当作零分钟，应列出缺失数量，并明确哪些指标排除了这些记录；取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录；保留有效 0 分钟，不能改成缺失。\n- 分组表：按月、医院、科室分别整理。\n- 分母与结果展示方式。\n- 指标表：逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。\n- 甲院与乙院分别独立计算后再比较。\n- 甲院、乙院的观察窗口分别待确认；甲院、乙院异常等待的阈值分别待确认。相关参数格标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算。\n- 新增指标必须独立列出口径依据及状态；无独立依据时，具体口径只能列为建议，执行参数保持待确认。\n- 普通章节、颜色、测试工具、代码语言和图表布局由执行者处理，不需要让用户选择表格还是文字等普通排版。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "- 一份可讨论的候诊时间分析方案。\n- 一份指标表，逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态。\n- 不输出虚构的结果或已经落地的系统功能。\n新增指标必须独立列出口径依据及状态：无独立依据时，具体口径只能列为建议，执行参数保持待确认；已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。口径依据、参数确认与计算就绪分别判断：状态列说明已定参数及尚缺计算前提，不能用一个“已确认”概括。只有本指标实际依赖的分母、机构对应、观察窗口等均有适用依据并满足必要确认，才可标为可计算；不适用的依赖说明原因，不强加。伪代码必须实际检查并使用这些具名参数，未知时只暂停依赖它的计算，不能仅声明未知却继续计算。\n当前参数依据（用于生成指标表，不代替指标表）：\n| 参数 | 当前口径 | 状态与依据 |\n| --- | --- | --- |\n| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 甲院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n实体标识的独立依据（A/B集合不证明名称对应，不按次序或排除法绑定）：\n| 机构 | 标识字段 | 当前对应 | 状态与依据 |\n| --- | --- | --- | --- |\n| 甲院 | hospital_id | 对应关系待确认 | 无对应证据 |\n| 乙院 | hospital_id | 对应关系待确认 | 无对应证据 |\n正文、表格及伪代码采用同一状态。未知项用“医院代码待确认”占位；仅依赖该对应的步骤需等待，其他清洗与指标模板继续交付。平台统一保留未决清单，模型不要再复写同义提醒。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 只做统计方案，不输出诊疗建议，不编造患者数据。\n- 分析对象仅限甲院和乙院的普通门诊，不包括急诊、住院和体检。\n- 两院独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 缺失挂号时间或接诊时间的记录不能当作零分钟；应列出缺失数量，并明确哪些指标排除了这些记录。\n- 取消挂号不得当作已经接诊。\n- 同一个就诊编号保留已确认的最新记录；保留有效 0 分钟，不能改成缺失。\n- 资料中的示例阈值（如 60 分钟）不得当作医院采用的规则。\n- 只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 甲院的观察窗口尚未确定。\n- 乙院的观察窗口尚未确定。\n- 甲院异常等待的阈值尚未确定。\n- 乙院异常等待的阈值尚未确定。\n- 甲院与 hospital_id 的对应关系尚未确定。\n- 乙院与 hospital_id 的对应关系尚未确定。\n未决决定的交付边界：\n- 同一未决决定在正文、表格、公式及伪代码中保持一致：相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。已确认决定仅适用于对应对象、指标和条件；其他指标不得标成已确认，须有各自的独立依据。原定指标表与必要伪代码仍须交付，逐指标判断参数状态，只暂停依赖未决参数的计算，其余步骤继续完成。\n用户明确规则（须遵守平台权限边界）：\n- 请为医院门诊运营组制定一份候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。\n- 两院需要独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录，保留有效0分钟，不能改成缺失。\n- 两院的比较观察窗口都没有定，但两者可能不同，请分别确认。\n- 异常等待的阈值也没有定，不能把资料中的示例阈值当作医院采用的规则。\n- 请只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n- 最终只交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。\n- 已知信息直接继承；用户回答暂不确定时保留必要未决条件，同一件事情不要重复提醒。"
+        },
+        {
+          "type": "CLARIFICATIONS",
+          "title": "待确认事项",
+          "content": "- 甲院的观察窗口尚未确定。\n- 乙院的观察窗口尚未确定。\n- 甲院异常等待的阈值尚未确定。\n- 乙院异常等待的阈值尚未确定。\n- 甲院与 hospital_id 的对应关系尚未确定。\n- 乙院与 hospital_id 的对应关系尚未确定。"
+        },
+        {
+          "type": "ACCEPTANCE",
+          "title": "验收",
+          "content": "- 指标、分母、缺失值和时间边界一致。\n- 建议或待定参数不冒充已选方法。\n- 实际结论能回到输入数据。\n- 甲院与乙院的观察窗口、异常等待阈值分别标注为待确认，未填入默认值或示例值。\n- 指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；计数指标分母写“不适用（计数指标）”。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/两院数据说明.txt"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/两院数据说明.txt",
+            "language": "text",
+            "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+            "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [
+        "甲院的观察窗口尚未确定。",
+        "乙院的观察窗口尚未确定。",
+        "甲院异常等待的阈值尚未确定。",
+        "乙院异常等待的阈值尚未确定。",
+        "甲院与 hospital_id 的对应关系尚未确定。",
+        "乙院与 hospital_id 的对应关系尚未确定。"
+      ],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+        "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+        "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+        "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+        "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+        "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 4488,
+      "warnings": [],
+      "evidenceCards": [
+        {
+          "id": "R01",
+          "category": "BUSINESS_RULE",
+          "origin": "USER_MATERIAL",
+          "sourcePath": "docs/两院数据说明.txt",
+          "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+        }
+      ]
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "RC-HOSP-M-deepseek_deepseek-flash-direct-direct",
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "961c902c-2a93-442c-9e2d-cf51e0ee4d0f",
+        "elapsedMs": 4537
+      }
+    ]
+  },
+  {
+    "id": "RC-HOSP-M-deepseek_deepseek-flash-plan-final",
+    "caseId": "RC-HOSP-M",
+    "modelId": "deepseek:deepseek-flash",
+    "arm": "plan",
+    "startedAt": "2026-10-07T20:01:10.664Z",
+    "plan": {
+      "summary": "已理解目标：为甲院和乙院普通门诊分别制定2025年1—12月候诊时间统计方案，按就诊编号去重、保留已确认最新记录，缺失时间不按零处理，取消挂号不计为已接诊，只交付可讨论的方案与指标表。仍需确认两院各自的比较观察窗口、异常等待阈值，以及医院代码与甲院、乙院的对应关系，这些会直接影响统计口径和两院比较结果。",
+      "questions": [
+        {
+          "id": "entity-id-relation-1",
+          "question": "甲院与 hospital_id 的对应关系是什么？",
+          "hint": "资料仅列出A/B取值集合，没有证明医院名称与代码的对应；不能按顺序推定。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "entity-id-relation-2",
+          "question": "乙院与 hospital_id 的对应关系是什么？",
+          "hint": "资料仅列出A/B取值集合，没有证明医院名称与代码的对应；不能按顺序推定。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "hospital_a_observation_window",
+          "question": "甲院用于比较的观察窗口是什么？",
+          "hint": "观察窗口决定纳入比较的就诊时间范围，两院可能不同，需分别确认。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "2025年1月1日至2025年12月31日",
+            "2025年3月1日至2025年9月30日",
+            "暂不确定，先保留待确认"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "hospital_b_observation_window",
+          "question": "乙院用于比较的观察窗口是什么？",
+          "hint": "观察窗口决定纳入比较的就诊时间范围，两院可能不同，需分别确认。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "2025年1月1日至2025年12月31日",
+            "2025年4月1日至2025年10月31日",
+            "暂不确定，先保留待确认"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "hospital_a_abnormal_wait_threshold",
+          "question": "甲院判定异常等待的阈值是多少分钟？",
+          "hint": "异常等待阈值会改变异常记录数量和统计结果，资料中的60分钟只是示例，不能当作甲院规则。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "30分钟",
+            "60分钟",
+            "暂不确定，先保留待确认"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "hospital_b_abnormal_wait_threshold",
+          "question": "乙院判定异常等待的阈值是多少分钟？",
+          "hint": "异常等待阈值会改变异常记录数量和统计结果，资料中的60分钟只是示例，不能当作乙院规则。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "30分钟",
+            "60分钟",
+            "暂不确定，先保留待确认"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "missing_time_denominator",
+          "question": "缺失挂号时间或接诊时间的记录，是否纳入候诊时间指标的分母？",
+          "hint": "缺失记录不能当作零分钟，但纳入分母还是排除会改变各指标结果，需明确口径。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "exclude_missing",
+              "label": "排除缺失记录",
+              "description": "计算候诊时间指标时，分母只包含挂号时间和接诊时间均不缺失的记录。",
+              "answer": "缺失挂号时间或接诊时间的记录不纳入候诊时间指标的分母，单独列出缺失数量。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "include_missing",
+              "label": "纳入缺失记录",
+              "description": "计算候诊时间指标时，分母包含缺失挂号时间或接诊时间的记录，但缺失值不按零计算。",
+              "answer": "缺失挂号时间或接诊时间的记录纳入候诊时间指标的分母，但缺失值不按零分钟计算，并单独列出缺失数量。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "per_indicator",
+              "label": "按指标分别确定",
+              "description": "不同候诊时间指标可采用不同的分母口径，需在方案中逐项说明。",
+              "answer": "缺失挂号时间或接诊时间的记录是否纳入分母，按不同候诊时间指标分别确定，并在方案中逐项说明。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 12883,
+      "planId": "cb73b8fc-066d-4453-98c3-5b7cc27e07e0",
+      "planningContext": {
+        "contextId": "92520860-6021-4bb4-b412-286bd0f18f09",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+      },
+      "expiresAt": "2026-10-07T20:28:59.652368600Z"
+    },
+    "answers": [
+      {
+        "questionId": "entity-id-relation-1",
+        "question": "甲院与 hospital_id 的对应关系是什么？",
+        "answer": "暂不确定。甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。"
+      },
+      {
+        "questionId": "entity-id-relation-2",
+        "question": "乙院与 hospital_id 的对应关系是什么？",
+        "answer": "暂不确定。乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。"
+      },
+      {
+        "questionId": "hospital_a_observation_window",
+        "question": "甲院用于比较的观察窗口是什么？",
+        "answer": "暂不确定。甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。"
+      },
+      {
+        "questionId": "hospital_b_observation_window",
+        "question": "乙院用于比较的观察窗口是什么？",
+        "answer": "暂不确定。乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。"
+      },
+      {
+        "questionId": "hospital_a_abnormal_wait_threshold",
+        "question": "甲院判定异常等待的阈值是多少分钟？",
+        "answer": "甲院异常等待严格超过90分钟。本次仅确认甲院异常等待阈值为90分钟，作为本次方案选值，不代表医院已批准的现行院规；乙院阈值与两院观察窗口分别仍未决定。"
+      },
+      {
+        "questionId": "hospital_b_abnormal_wait_threshold",
+        "question": "乙院判定异常等待的阈值是多少分钟？",
+        "answer": "暂不确定。乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。"
+      },
+      {
+        "questionId": "missing_time_denominator",
+        "question": "缺失挂号时间或接诊时间的记录，是否纳入候诊时间指标的分母？",
+        "answer": "缺失时间不能填0；候诊时长指标只使用挂号与接诊时间可核实的有效就诊记录，缺失记录单独列数量，不混入时长分母。其他指标仍分别明确适用记录。"
+      }
+    ],
+    "answerReview": {
+      "entity-id-relation-1": {
+        "answer": "暂不确定。甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "basis": "已审阅本轮两个服务端独立对应题与真实模型合并题；原材料只提供代码集合，没有对应证据，分别保留未知。"
+      },
+      "entity-id-relation-2": {
+        "answer": "暂不确定。乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "basis": "已审阅本轮两个服务端独立对应题与真实模型合并题；原材料只提供代码集合，没有对应证据，分别保留未知。"
+      },
+      "hospital_a_observation_window": {
+        "answer": "暂不确定。甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "basis": "两院窗口分别未定。"
+      },
+      "hospital_b_observation_window": {
+        "answer": "暂不确定。乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "basis": "两院窗口分别未定。"
+      },
+      "hospital_a_abnormal_wait_threshold": {
+        "answer": "甲院异常等待严格超过90分钟。本次仅确认甲院异常等待阈值为90分钟，作为本次方案选值，不代表医院已批准的现行院规；乙院阈值与两院观察窗口分别仍未决定。",
+        "basis": "仅甲院选择90分钟作为本次合成方案；乙院保持未知，与前轮实际部分确认政策一致，不将建议当院规。"
+      },
+      "hospital_b_abnormal_wait_threshold": {
+        "answer": "暂不确定。乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。",
+        "basis": "仅甲院选择90分钟作为本次合成方案；乙院保持未知，与前轮实际部分确认政策一致，不将建议当院规。"
+      },
+      "missing_time_denominator": {
+        "answer": "缺失时间不能填0；候诊时长指标只使用挂号与接诊时间可核实的有效就诊记录，缺失记录单独列数量，不混入时长分母。其他指标仍分别明确适用记录。",
+        "basis": "合成回答限定时长指标，不能推广为全部指标分母。"
+      }
+    },
+    "refinedQuery": "请为医院门诊运营组制定一份候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。本次分析对象是甲院和乙院的普通门诊，不包括急诊、住院和体检。两院需要独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。研究时间为2025年1月至12月，统计单位是一次有效门诊就诊，重复导入按就诊编号去重。\n已提供两院的数据说明。列出候诊时间的定义、清洗规则、分组表、分母和结果展示方式。按月、医院、科室分别整理，不需要让我选择表格还是文字等普通排版。缺失挂号时间或接诊时间的记录不能当作零分钟；应列出缺失数量，并明确哪些指标排除了这些记录。取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录，保留有效0分钟，不能改成缺失。\n两院的比较观察窗口都没有定，但两者可能不同，请分别确认。异常等待的阈值也没有定，不能把资料中的示例阈值当作医院采用的规则。请只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。最终只交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。已知信息直接继承；用户回答暂不确定时保留必要未决条件，同一件事情不要重复提醒。\n本次选择：暂不确定。甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n本次选择：暂不确定。乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n本次选择：暂不确定。甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。\n本次选择：暂不确定。乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。\n本次选择：缺失时间不能填0；候诊时长指标只使用挂号与接诊时间可核实的有效就诊记录，缺失记录单独列数量，不混入时长分母。其他指标仍分别明确适用记录。",
+    "result": {
+      "optimizedPrompt": "## 背景\n- 分析对象：甲院和乙院的普通门诊，不包括急诊、住院和体检。两院需独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 研究时间：2025年1月至12月。统计单位：一次有效门诊就诊，重复导入按就诊编号去重。\n- 数据来源：docs/两院数据说明.txt。两院数据均为CSV，字段为 visit_id、hospital_id、department、registered_at、seen_at、status、import_version；hospital_id 只能为 A 或 B；时间为北京时间；status 为 registered、seen、cancelled。\n- 甲院与 hospital_id 的对应关系尚未核实；A/B 取值集合不能证明名称与代码的关系，也不能用另一院排除推定。乙院与 hospital_id 的对应关系同样尚未核实。\n- 甲院异常等待阈值已明确为严格超过90分钟，作为本次方案选值，不代表医院已批准的现行院规。乙院异常等待阈值尚未决定，不能沿用甲院90分钟。\n- 甲院、乙院的比较观察窗口均需院方后续核实，不能用另一院的窗口替代，分别保留为独立未决条件。\n- 缺失挂号时间或接诊时间的记录不能填0；候诊时长指标只使用挂号与接诊时间可核实的有效就诊记录，缺失记录单独列数量，不混入时长分母。其他指标仍分别明确适用记录。\n- 资料中示例“60分钟”仅供说明，不是现行院规，不得当作医院采用的规则。\n\nPlan 阶段绑定的资料事实与二次检索补充（原始摘录见资料依据；现状与目标分别核对，不代表已经实现）：\n- docs/两院数据说明.txt（按本次明确决定更新，非原文摘录）：两院比较观察窗口尚未确定，甲院异常等待的阈值采用90分钟；乙院异常等待的阈值尚未确定\n\n## 任务\n为医院门诊运营组制定一份候诊时间分析方案（只做统计方案，不输出诊疗建议，不编造患者数据）。\n1. 列出候诊时间的定义、清洗规则、分组表、分母和结果展示方式。\n2. 按月、医院、科室分别整理。\n3. 两院独立计算后再比较；甲院与乙院的参数、未决事项分别命名、分别处理，不得混为一项。\n4. 清洗规则须包含：缺失挂号时间或接诊时间的记录不能当作零分钟，应列出缺失数量，并明确哪些指标排除了这些记录；取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录；保留有效0分钟，不能改成缺失。\n5. 交付指标表，逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态。计数指标本身不需要分母时写“不适用（计数指标）”。\n6. 交付必要伪代码，实际检查并使用具名参数；未知参数只暂停依赖它的计算，不能仅声明未知却继续计算，也不能设置默认值或生成假结果。\n7. 逐指标判断参数状态：甲院异常等待阈值（严格超过90分钟）已明确；甲院观察窗口、乙院观察窗口、乙院异常等待阈值待确认。仅暂停依赖未决参数的计算，其余步骤继续完成。\n8. 新增指标必须独立列出口径依据及状态；无独立依据时，具体口径只能列为建议，执行参数保持待确认。已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。\n9. 只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n10. 最终只交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 阈值：甲院异常等待严格超过90分钟。 本次仅确认甲院异常等待阈值为90分钟，作为本次方案选值，不代表医院已批准的现行院规；\n- 本次选择：缺失时间不能填0；候诊时长指标只使用挂号与接诊时间可核实的有效就诊记录，缺失记录单独列数量，不混入时长分母。其他指标仍分别明确适用记录。\n\n## 输出\n- 一份可讨论的候诊时间分析方案，包含：候诊时间定义、清洗规则、分组表、分母说明、结果展示方式。\n- 一份指标表，逐行包含：指标、分子、分母或所需参数、适用记录、口径依据、状态。\n- 必要伪代码，使用具名参数并体现未决参数的处理。\n- 按月、医院、科室分别整理的内容。\n- 不输出虚构结果、不输出诊疗建议、不输出已落地系统功能。\n新增指标必须独立列出口径依据及状态：无独立依据时，具体口径只能列为建议，执行参数保持待确认；已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。口径依据、参数确认与计算就绪分别判断：状态列说明已定参数及尚缺计算前提，不能用一个“已确认”概括。只有本指标实际依赖的分母、机构对应、观察窗口等均有适用依据并满足必要确认，才可标为可计算；不适用的依赖说明原因，不强加。伪代码必须实际检查并使用这些具名参数，未知时只暂停依赖它的计算，不能仅声明未知却继续计算。\n当前参数依据（用于生成指标表，不代替指标表）：\n| 参数 | 当前口径 | 状态与依据 |\n| --- | --- | --- |\n| 甲院异常等待的阈值 | 90分钟 | 用户明确（原始需求或本次回答） |\n| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n实体标识的独立依据（A/B集合不证明名称对应，不按次序或排除法绑定）：\n| 机构 | 标识字段 | 当前对应 | 状态与依据 |\n| --- | --- | --- | --- |\n| 甲院 | hospital_id | 对应关系待确认 | 无对应证据 |\n| 乙院 | hospital_id | 对应关系待确认 | 无对应证据 |\n正文、表格及伪代码采用同一状态。未知项用“医院代码待确认”占位；仅依赖该对应的步骤需等待，其他清洗与指标模板继续交付。平台统一保留未决清单，模型不要再复写同义提醒。\n\n## 约束\n- 只做统计方案，不输出诊疗建议，不编造患者数据。\n- 分析对象仅限甲院和乙院的普通门诊，不包括急诊、住院和体检。\n- 两院独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 研究时间为2025年1月至12月；统计单位为一次有效门诊就诊；重复导入按就诊编号去重。\n- 缺失挂号时间或接诊时间的记录不能当作零分钟；应列出缺失数量，并明确哪些指标排除了这些记录。\n- 取消挂号不得当作已经接诊。\n- 同一个就诊编号保留已确认的最新记录；保留有效0分钟，不能改成缺失。\n- 甲院异常等待阈值严格超过90分钟，仅作为本次方案选值，不代表医院已批准的现行院规；乙院异常等待阈值不得沿用甲院90分钟。\n- 资料中示例“60分钟”仅供说明，不是现行院规，不得当作医院采用的规则。\n- 甲院与 hospital_id、乙院与 hospital_id 的对应关系尚未核实，不得按次序或排除法绑定；正文、表格及伪代码采用同一状态，未知项用“医院代码待确认”占位。\n- 甲院观察窗口、乙院观察窗口、乙院异常等待阈值待确认；相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算。\n- 不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。\n- 已确认决定仅适用于对应对象、指标和条件；其他指标不得标成已确认，须有各自的独立依据。\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：甲院与 hospital_id 的对应关系是什么？ 用户说明：甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。 补充说明：该对应关系影响按医院分组和两院比较的落地，需院方确认。\n- 该问题尚未确定：乙院与 hospital_id 的对应关系是什么？ 用户说明：乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n- 该问题尚未确定：甲院用于比较的观察窗口是什么？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：该参数影响甲院比较口径。\n- 该问题尚未确定：乙院用于比较的观察窗口是什么？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：该参数影响乙院比较口径。\n- 该问题尚未确定：乙院阈值与两院观察窗口分别仍未决定。\n- 该问题尚未确定：乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。 补充说明：该参数影响乙院异常比例的计算，需院方确认。\n未决决定的交付边界：\n- 同一未决决定在正文、表格、公式及伪代码中保持一致：相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。原定指标表与必要伪代码仍须交付，逐指标判断参数状态，只暂停依赖未决参数的计算，其余步骤继续完成。\n用户明确规则（须遵守平台权限边界）：\n- 请为医院门诊运营组制定一份候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。\n- 两院需要独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录，保留有效0分钟，不能改成缺失。\n- 两院的比较观察窗口都没有定，但两者可能不同，请分别确认。\n- 甲院异常等待的阈值采用90分钟；乙院异常等待的阈值尚未确定，不能把资料中的示例阈值当作医院采用的规则。\n- 请只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n- 已知信息直接继承；用户回答暂不确定时保留必要未决条件，同一件事情不要重复提醒。\n- 缺失时间不能填0；候诊时长指标只使用挂号与接诊时间可核实的有效就诊记录，缺失记录单独列数量，不混入时长分母。\n\n## 验收\n- 指标、分母、缺失值和时间边界一致。\n- 建议或待定参数不冒充已选方法。\n- 实际结论能回到输入数据。\n- 两院参数与未决事项分别命名、分别处理，未混为一项。\n- 指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；计数指标分母写“不适用（计数指标）”。\n- 伪代码实际检查并使用具名参数，未知时只暂停依赖它的计算。\n- 未输出虚构结果、诊疗建议或已落地系统功能。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "- 分析对象：甲院和乙院的普通门诊，不包括急诊、住院和体检。两院需独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 研究时间：2025年1月至12月。统计单位：一次有效门诊就诊，重复导入按就诊编号去重。\n- 数据来源：docs/两院数据说明.txt。两院数据均为CSV，字段为 visit_id、hospital_id、department、registered_at、seen_at、status、import_version；hospital_id 只能为 A 或 B；时间为北京时间；status 为 registered、seen、cancelled。\n- 甲院与 hospital_id 的对应关系尚未核实；A/B 取值集合不能证明名称与代码的关系，也不能用另一院排除推定。乙院与 hospital_id 的对应关系同样尚未核实。\n- 甲院异常等待阈值已明确为严格超过90分钟，作为本次方案选值，不代表医院已批准的现行院规。乙院异常等待阈值尚未决定，不能沿用甲院90分钟。\n- 甲院、乙院的比较观察窗口均需院方后续核实，不能用另一院的窗口替代，分别保留为独立未决条件。\n- 缺失挂号时间或接诊时间的记录不能填0；候诊时长指标只使用挂号与接诊时间可核实的有效就诊记录，缺失记录单独列数量，不混入时长分母。其他指标仍分别明确适用记录。\n- 资料中示例“60分钟”仅供说明，不是现行院规，不得当作医院采用的规则。\n\nPlan 阶段绑定的资料事实与二次检索补充（原始摘录见资料依据；现状与目标分别核对，不代表已经实现）：\n- docs/两院数据说明.txt（按本次明确决定更新，非原文摘录）：两院比较观察窗口尚未确定，甲院异常等待的阈值采用90分钟；乙院异常等待的阈值尚未确定"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "为医院门诊运营组制定一份候诊时间分析方案（只做统计方案，不输出诊疗建议，不编造患者数据）。\n1. 列出候诊时间的定义、清洗规则、分组表、分母和结果展示方式。\n2. 按月、医院、科室分别整理。\n3. 两院独立计算后再比较；甲院与乙院的参数、未决事项分别命名、分别处理，不得混为一项。\n4. 清洗规则须包含：缺失挂号时间或接诊时间的记录不能当作零分钟，应列出缺失数量，并明确哪些指标排除了这些记录；取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录；保留有效0分钟，不能改成缺失。\n5. 交付指标表，逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态。计数指标本身不需要分母时写“不适用（计数指标）”。\n6. 交付必要伪代码，实际检查并使用具名参数；未知参数只暂停依赖它的计算，不能仅声明未知却继续计算，也不能设置默认值或生成假结果。\n7. 逐指标判断参数状态：甲院异常等待阈值（严格超过90分钟）已明确；甲院观察窗口、乙院观察窗口、乙院异常等待阈值待确认。仅暂停依赖未决参数的计算，其余步骤继续完成。\n8. 新增指标必须独立列出口径依据及状态；无独立依据时，具体口径只能列为建议，执行参数保持待确认。已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。\n9. 只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n10. 最终只交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 阈值：甲院异常等待严格超过90分钟。 本次仅确认甲院异常等待阈值为90分钟，作为本次方案选值，不代表医院已批准的现行院规；\n- 本次选择：缺失时间不能填0；候诊时长指标只使用挂号与接诊时间可核实的有效就诊记录，缺失记录单独列数量，不混入时长分母。其他指标仍分别明确适用记录。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "- 一份可讨论的候诊时间分析方案，包含：候诊时间定义、清洗规则、分组表、分母说明、结果展示方式。\n- 一份指标表，逐行包含：指标、分子、分母或所需参数、适用记录、口径依据、状态。\n- 必要伪代码，使用具名参数并体现未决参数的处理。\n- 按月、医院、科室分别整理的内容。\n- 不输出虚构结果、不输出诊疗建议、不输出已落地系统功能。\n新增指标必须独立列出口径依据及状态：无独立依据时，具体口径只能列为建议，执行参数保持待确认；已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。口径依据、参数确认与计算就绪分别判断：状态列说明已定参数及尚缺计算前提，不能用一个“已确认”概括。只有本指标实际依赖的分母、机构对应、观察窗口等均有适用依据并满足必要确认，才可标为可计算；不适用的依赖说明原因，不强加。伪代码必须实际检查并使用这些具名参数，未知时只暂停依赖它的计算，不能仅声明未知却继续计算。\n当前参数依据（用于生成指标表，不代替指标表）：\n| 参数 | 当前口径 | 状态与依据 |\n| --- | --- | --- |\n| 甲院异常等待的阈值 | 90分钟 | 用户明确（原始需求或本次回答） |\n| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n实体标识的独立依据（A/B集合不证明名称对应，不按次序或排除法绑定）：\n| 机构 | 标识字段 | 当前对应 | 状态与依据 |\n| --- | --- | --- | --- |\n| 甲院 | hospital_id | 对应关系待确认 | 无对应证据 |\n| 乙院 | hospital_id | 对应关系待确认 | 无对应证据 |\n正文、表格及伪代码采用同一状态。未知项用“医院代码待确认”占位；仅依赖该对应的步骤需等待，其他清洗与指标模板继续交付。平台统一保留未决清单，模型不要再复写同义提醒。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 只做统计方案，不输出诊疗建议，不编造患者数据。\n- 分析对象仅限甲院和乙院的普通门诊，不包括急诊、住院和体检。\n- 两院独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 研究时间为2025年1月至12月；统计单位为一次有效门诊就诊；重复导入按就诊编号去重。\n- 缺失挂号时间或接诊时间的记录不能当作零分钟；应列出缺失数量，并明确哪些指标排除了这些记录。\n- 取消挂号不得当作已经接诊。\n- 同一个就诊编号保留已确认的最新记录；保留有效0分钟，不能改成缺失。\n- 甲院异常等待阈值严格超过90分钟，仅作为本次方案选值，不代表医院已批准的现行院规；乙院异常等待阈值不得沿用甲院90分钟。\n- 资料中示例“60分钟”仅供说明，不是现行院规，不得当作医院采用的规则。\n- 甲院与 hospital_id、乙院与 hospital_id 的对应关系尚未核实，不得按次序或排除法绑定；正文、表格及伪代码采用同一状态，未知项用“医院代码待确认”占位。\n- 甲院观察窗口、乙院观察窗口、乙院异常等待阈值待确认；相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算。\n- 不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。\n- 已确认决定仅适用于对应对象、指标和条件；其他指标不得标成已确认，须有各自的独立依据。\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：甲院与 hospital_id 的对应关系是什么？ 用户说明：甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。 补充说明：该对应关系影响按医院分组和两院比较的落地，需院方确认。\n- 该问题尚未确定：乙院与 hospital_id 的对应关系是什么？ 用户说明：乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n- 该问题尚未确定：甲院用于比较的观察窗口是什么？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：该参数影响甲院比较口径。\n- 该问题尚未确定：乙院用于比较的观察窗口是什么？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：该参数影响乙院比较口径。\n- 该问题尚未确定：乙院阈值与两院观察窗口分别仍未决定。\n- 该问题尚未确定：乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。 补充说明：该参数影响乙院异常比例的计算，需院方确认。\n未决决定的交付边界：\n- 同一未决决定在正文、表格、公式及伪代码中保持一致：相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。原定指标表与必要伪代码仍须交付，逐指标判断参数状态，只暂停依赖未决参数的计算，其余步骤继续完成。\n用户明确规则（须遵守平台权限边界）：\n- 请为医院门诊运营组制定一份候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。\n- 两院需要独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录，保留有效0分钟，不能改成缺失。\n- 两院的比较观察窗口都没有定，但两者可能不同，请分别确认。\n- 甲院异常等待的阈值采用90分钟；乙院异常等待的阈值尚未确定，不能把资料中的示例阈值当作医院采用的规则。\n- 请只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n- 已知信息直接继承；用户回答暂不确定时保留必要未决条件，同一件事情不要重复提醒。\n- 缺失时间不能填0；候诊时长指标只使用挂号与接诊时间可核实的有效就诊记录，缺失记录单独列数量，不混入时长分母。"
+        },
+        {
+          "type": "CLARIFICATIONS",
+          "title": "待确认事项",
+          "content": "- 该问题尚未确定：甲院与 hospital_id 的对应关系是什么？ 用户说明：甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。 补充说明：该对应关系影响按医院分组和两院比较的落地，需院方确认。\n- 该问题尚未确定：乙院与 hospital_id 的对应关系是什么？ 用户说明：乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。 补充说明：该对应关系影响按医院分组和两院比较的落地，需院方确认。\n- 该问题尚未确定：甲院用于比较的观察窗口是什么？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：该参数影响甲院比较口径。\n- 该问题尚未确定：乙院用于比较的观察窗口是什么？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：该参数影响乙院比较口径。\n- 该问题尚未确定：乙院阈值与两院观察窗口分别仍未决定。\n- 该问题尚未确定：乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。 补充说明：该参数影响乙院异常比例的计算，需院方确认。"
+        },
+        {
+          "type": "ACCEPTANCE",
+          "title": "验收",
+          "content": "- 指标、分母、缺失值和时间边界一致。\n- 建议或待定参数不冒充已选方法。\n- 实际结论能回到输入数据。\n- 两院参数与未决事项分别命名、分别处理，未混为一项。\n- 指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；计数指标分母写“不适用（计数指标）”。\n- 伪代码实际检查并使用具名参数，未知时只暂停依赖它的计算。\n- 未输出虚构结果、诊疗建议或已落地系统功能。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/两院数据说明.txt"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/两院数据说明.txt",
+            "language": "text",
+            "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+            "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [
+        "该问题尚未确定：甲院与 hospital_id 的对应关系是什么？ 用户说明：甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。 补充说明：该对应关系影响按医院分组和两院比较的落地，需院方确认。",
+        "该问题尚未确定：乙院与 hospital_id 的对应关系是什么？ 用户说明：乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。 补充说明：该对应关系影响按医院分组和两院比较的落地，需院方确认。",
+        "该问题尚未确定：甲院用于比较的观察窗口是什么？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：该参数影响甲院比较口径。",
+        "该问题尚未确定：乙院用于比较的观察窗口是什么？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：该参数影响乙院比较口径。",
+        "该问题尚未确定：乙院阈值与两院观察窗口分别仍未决定。",
+        "该问题尚未确定：乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。 补充说明：该参数影响乙院异常比例的计算，需院方确认。"
+      ],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+        "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+        "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+        "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+        "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+        "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 15981,
+      "warnings": [],
+      "evidenceCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "USER_MATERIAL",
+          "sourcePath": "docs/两院数据说明.txt",
+          "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+        }
+      ]
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-final",
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "dd4dc681-55fc-44a2-ac97-0f6e5230a5ae",
+        "elapsedMs": 16086
+      }
+    ]
+  },
+  {
+    "id": "RC-HOSP-M-deepseek_deepseek-flash-plan",
+    "caseId": "RC-HOSP-M",
+    "modelId": "deepseek:deepseek-flash",
+    "arm": "plan",
+    "startedAt": "2026-10-07T19:58:59.464Z",
+    "prepared": {
+      "contextId": "92520860-6021-4bb4-b412-286bd0f18f09",
+      "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894",
+      "digest": {
+        "description": "",
+        "technologies": [],
+        "dependencies": [],
+        "directoryOverview": [
+          "docs/",
+          "docs/两院数据说明.txt"
+        ],
+        "fileSummaries": [
+          "[USER_MATERIAL] docs/两院数据说明.txt：文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。；业务摘录：[片段 1/1] 甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。 hospital_id只能为A或B。 时间为北京时间。 status为registered、seen、cancelled。 两院比较观察窗口尚未确定，异常等待阈值尚未确定。 示例：60分钟仅供说明，不是现行院规。"
+        ],
+        "analysisStatus": "COMPLETE",
+        "analyzedFileCount": 1,
+        "warnings": [],
+        "factCards": [
+          {
+            "id": "F01",
+            "category": "BUSINESS_RULE",
+            "origin": "USER_MATERIAL",
+            "sourcePath": "docs/两院数据说明.txt",
+            "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+          }
+        ]
+      },
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/两院数据说明.txt"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/两院数据说明.txt",
+            "language": "text",
+            "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+            "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "expiresAt": "2026-10-07T20:28:59.652368600Z",
+      "latencyMs": 79
+    },
+    "plan": {
+      "summary": "已理解目标：为甲院和乙院普通门诊分别制定2025年1—12月候诊时间统计方案，按就诊编号去重、保留已确认最新记录，缺失时间不按零处理，取消挂号不计为已接诊，只交付可讨论的方案与指标表。仍需确认两院各自的比较观察窗口、异常等待阈值，以及医院代码与甲院、乙院的对应关系，这些会直接影响统计口径和两院比较结果。",
+      "questions": [
+        {
+          "id": "entity-id-relation-1",
+          "question": "甲院与 hospital_id 的对应关系是什么？",
+          "hint": "资料仅列出A/B取值集合，没有证明医院名称与代码的对应；不能按顺序推定。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "entity-id-relation-2",
+          "question": "乙院与 hospital_id 的对应关系是什么？",
+          "hint": "资料仅列出A/B取值集合，没有证明医院名称与代码的对应；不能按顺序推定。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "hospital_a_observation_window",
+          "question": "甲院用于比较的观察窗口是什么？",
+          "hint": "观察窗口决定纳入比较的就诊时间范围，两院可能不同，需分别确认。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "2025年1月1日至2025年12月31日",
+            "2025年3月1日至2025年9月30日",
+            "暂不确定，先保留待确认"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "hospital_b_observation_window",
+          "question": "乙院用于比较的观察窗口是什么？",
+          "hint": "观察窗口决定纳入比较的就诊时间范围，两院可能不同，需分别确认。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "2025年1月1日至2025年12月31日",
+            "2025年4月1日至2025年10月31日",
+            "暂不确定，先保留待确认"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "hospital_a_abnormal_wait_threshold",
+          "question": "甲院判定异常等待的阈值是多少分钟？",
+          "hint": "异常等待阈值会改变异常记录数量和统计结果，资料中的60分钟只是示例，不能当作甲院规则。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "30分钟",
+            "60分钟",
+            "暂不确定，先保留待确认"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "hospital_b_abnormal_wait_threshold",
+          "question": "乙院判定异常等待的阈值是多少分钟？",
+          "hint": "异常等待阈值会改变异常记录数量和统计结果，资料中的60分钟只是示例，不能当作乙院规则。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "30分钟",
+            "60分钟",
+            "暂不确定，先保留待确认"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "missing_time_denominator",
+          "question": "缺失挂号时间或接诊时间的记录，是否纳入候诊时间指标的分母？",
+          "hint": "缺失记录不能当作零分钟，但纳入分母还是排除会改变各指标结果，需明确口径。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "exclude_missing",
+              "label": "排除缺失记录",
+              "description": "计算候诊时间指标时，分母只包含挂号时间和接诊时间均不缺失的记录。",
+              "answer": "缺失挂号时间或接诊时间的记录不纳入候诊时间指标的分母，单独列出缺失数量。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "include_missing",
+              "label": "纳入缺失记录",
+              "description": "计算候诊时间指标时，分母包含缺失挂号时间或接诊时间的记录，但缺失值不按零计算。",
+              "answer": "缺失挂号时间或接诊时间的记录纳入候诊时间指标的分母，但缺失值不按零分钟计算，并单独列出缺失数量。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "per_indicator",
+              "label": "按指标分别确定",
+              "description": "不同候诊时间指标可采用不同的分母口径，需在方案中逐项说明。",
+              "answer": "缺失挂号时间或接诊时间的记录是否纳入分母，按不同候诊时间指标分别确定，并在方案中逐项说明。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 12883,
+      "planId": "cb73b8fc-066d-4453-98c3-5b7cc27e07e0",
+      "planningContext": {
+        "contextId": "92520860-6021-4bb4-b412-286bd0f18f09",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+      },
+      "expiresAt": "2026-10-07T20:28:59.652368600Z"
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-prepare",
+        "path": "/api/v1/context/planning",
+        "status": 200,
+        "requestId": "9848bc98-8af1-4312-a5a9-8442541b10f5",
+        "elapsedMs": 262
+      },
+      {
+        "label": "RC-HOSP-M-deepseek_deepseek-flash-plan-plan",
+        "path": "/api/v1/optimizations/plan",
+        "status": 200,
+        "requestId": "6bb1f02b-1dd7-4076-9b78-b7dfcb4a9120",
+        "elapsedMs": 12943
+      }
+    ]
+  },
+  {
+    "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-direct",
+    "caseId": "RC-HOSP-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "arm": "direct",
+    "startedAt": "2026-10-07T20:01:49.755Z",
+    "result": {
+      "optimizedPrompt": "## 背景\n分析对象为甲院和乙院的普通门诊，不包括急诊、住院和体检。研究时间为2025年1月至12月。统计单位是一次有效门诊就诊，重复导入按就诊编号去重。两院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version；hospital_id只能为A或B；status为registered、seen、cancelled；时间为北京时间。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例60分钟仅供说明，不是现行院规。\n\n## 任务\n制定候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。两院独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。列出候诊时间的定义、清洗规则、分组表、分母和结果展示方式。按月、医院、科室分别整理。缺失挂号时间或接诊时间的记录不能当作零分钟；应列出缺失数量，并明确哪些指标排除了这些记录。取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录，保留有效0分钟，不能改成缺失。\n\n## 输出\n交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。\n新增指标必须独立列出口径依据及状态：无独立依据时，具体口径只能列为建议，执行参数保持待确认；已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。口径依据、参数确认与计算就绪分别判断：状态列说明已定参数及尚缺计算前提，不能用一个“已确认”概括。只有本指标实际依赖的分母、机构对应、观察窗口等均有适用依据并满足必要确认，才可标为可计算；不适用的依赖说明原因，不强加。伪代码必须实际检查并使用这些具名参数，未知时只暂停依赖它的计算，不能仅声明未知却继续计算。\n当前参数依据（用于生成指标表，不代替指标表）：\n| 参数 | 当前口径 | 状态与依据 |\n| --- | --- | --- |\n| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 甲院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n实体标识的独立依据（A/B集合不证明名称对应，不按次序或排除法绑定）：\n| 机构 | 标识字段 | 当前对应 | 状态与依据 |\n| --- | --- | --- | --- |\n| 甲院 | hospital_id | 对应关系待确认 | 无对应证据 |\n| 乙院 | hospital_id | 对应关系待确认 | 无对应证据 |\n正文、表格及伪代码采用同一状态。未知项用“医院代码待确认”占位；仅依赖该对应的步骤需等待，其他清洗与指标模板继续交付。平台统一保留未决清单，模型不要再复写同义提醒。\n\n## 约束\n只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。已知信息直接继承；用户回答暂不确定时保留必要未决条件，同一件事情不要重复提醒。缺失和未核实不改成零值，不默认未知口径。实体标识的独立依据：甲院和乙院与hospital_id的对应关系待确认，未知项用“医院代码待确认”占位；仅依赖该对应的步骤需等待，其他清洗与指标模板继续交付。同一未决决定在正文、表格、公式及伪代码中保持一致：相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。已确认决定仅适用于对应对象、指标和条件；其他指标不得标成已确认，须有各自的独立依据。原定指标表与必要伪代码仍须交付，逐指标判断参数状态，只暂停依赖未决参数的计算，其余步骤继续完成。本次尚未确定的参数：甲院的观察窗口：待确认；乙院的观察窗口：待确认；甲院异常等待的阈值：待确认；乙院异常等待的阈值：待确认。\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 甲院和乙院与hospital_id的对应关系待确认：数据说明中hospital_id只能为A或B，但未提供A、B分别对应哪家医院，影响两院独立计算和比较。\n- 甲院的比较观察窗口尚未确定：需要明确观察窗口的起止时间或规则，否则无法计算该院的候诊时间相关指标。\n- 乙院的比较观察窗口尚未确定：需要明确观察窗口的起止时间或规则，否则无法计算该院的候诊时间相关指标。\n- 甲院异常等待的阈值尚未确定：需要明确判定异常等待的具体阈值，否则无法计算该院的异常等待相关指标。\n- 乙院异常等待的阈值尚未确定：需要明确判定异常等待的具体阈值，否则无法计算该院的异常等待相关指标。\n用户明确规则（须遵守平台权限边界）：\n- 请为医院门诊运营组制定一份候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。\n- 两院需要独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 两院的比较观察窗口都没有定，但两者可能不同，请分别确认。\n- 异常等待的阈值也没有定，不能把资料中的示例阈值当作医院采用的规则。\n- 请只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n- 最终只交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。\n\n## 验收标准\n指标、分母、缺失值和时间边界一致；建议或待定参数不冒充已选方法，实际结论能回到输入数据。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "分析对象为甲院和乙院的普通门诊，不包括急诊、住院和体检。研究时间为2025年1月至12月。统计单位是一次有效门诊就诊，重复导入按就诊编号去重。两院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version；hospital_id只能为A或B；status为registered、seen、cancelled；时间为北京时间。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例60分钟仅供说明，不是现行院规。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "制定候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。两院独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。列出候诊时间的定义、清洗规则、分组表、分母和结果展示方式。按月、医院、科室分别整理。缺失挂号时间或接诊时间的记录不能当作零分钟；应列出缺失数量，并明确哪些指标排除了这些记录。取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录，保留有效0分钟，不能改成缺失。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。\n新增指标必须独立列出口径依据及状态：无独立依据时，具体口径只能列为建议，执行参数保持待确认；已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。口径依据、参数确认与计算就绪分别判断：状态列说明已定参数及尚缺计算前提，不能用一个“已确认”概括。只有本指标实际依赖的分母、机构对应、观察窗口等均有适用依据并满足必要确认，才可标为可计算；不适用的依赖说明原因，不强加。伪代码必须实际检查并使用这些具名参数，未知时只暂停依赖它的计算，不能仅声明未知却继续计算。\n当前参数依据（用于生成指标表，不代替指标表）：\n| 参数 | 当前口径 | 状态与依据 |\n| --- | --- | --- |\n| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 甲院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n实体标识的独立依据（A/B集合不证明名称对应，不按次序或排除法绑定）：\n| 机构 | 标识字段 | 当前对应 | 状态与依据 |\n| --- | --- | --- | --- |\n| 甲院 | hospital_id | 对应关系待确认 | 无对应证据 |\n| 乙院 | hospital_id | 对应关系待确认 | 无对应证据 |\n正文、表格及伪代码采用同一状态。未知项用“医院代码待确认”占位；仅依赖该对应的步骤需等待，其他清洗与指标模板继续交付。平台统一保留未决清单，模型不要再复写同义提醒。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。已知信息直接继承；用户回答暂不确定时保留必要未决条件，同一件事情不要重复提醒。缺失和未核实不改成零值，不默认未知口径。实体标识的独立依据：甲院和乙院与hospital_id的对应关系待确认，未知项用“医院代码待确认”占位；仅依赖该对应的步骤需等待，其他清洗与指标模板继续交付。同一未决决定在正文、表格、公式及伪代码中保持一致：相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。已确认决定仅适用于对应对象、指标和条件；其他指标不得标成已确认，须有各自的独立依据。原定指标表与必要伪代码仍须交付，逐指标判断参数状态，只暂停依赖未决参数的计算，其余步骤继续完成。本次尚未确定的参数：甲院的观察窗口：待确认；乙院的观察窗口：待确认；甲院异常等待的阈值：待确认；乙院异常等待的阈值：待确认。\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 甲院和乙院与hospital_id的对应关系待确认：数据说明中hospital_id只能为A或B，但未提供A、B分别对应哪家医院，影响两院独立计算和比较。\n- 甲院的比较观察窗口尚未确定：需要明确观察窗口的起止时间或规则，否则无法计算该院的候诊时间相关指标。\n- 乙院的比较观察窗口尚未确定：需要明确观察窗口的起止时间或规则，否则无法计算该院的候诊时间相关指标。\n- 甲院异常等待的阈值尚未确定：需要明确判定异常等待的具体阈值，否则无法计算该院的异常等待相关指标。\n- 乙院异常等待的阈值尚未确定：需要明确判定异常等待的具体阈值，否则无法计算该院的异常等待相关指标。\n用户明确规则（须遵守平台权限边界）：\n- 请为医院门诊运营组制定一份候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。\n- 两院需要独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 两院的比较观察窗口都没有定，但两者可能不同，请分别确认。\n- 异常等待的阈值也没有定，不能把资料中的示例阈值当作医院采用的规则。\n- 请只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n- 最终只交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。"
+        },
+        {
+          "type": "CLARIFICATIONS",
+          "title": "待确认事项",
+          "content": "- 甲院和乙院与hospital_id的对应关系待确认：数据说明中hospital_id只能为A或B，但未提供A、B分别对应哪家医院，影响两院独立计算和比较。\n- 甲院的比较观察窗口尚未确定：需要明确观察窗口的起止时间或规则，否则无法计算该院的候诊时间相关指标。\n- 乙院的比较观察窗口尚未确定：需要明确观察窗口的起止时间或规则，否则无法计算该院的候诊时间相关指标。\n- 甲院异常等待的阈值尚未确定：需要明确判定异常等待的具体阈值，否则无法计算该院的异常等待相关指标。\n- 乙院异常等待的阈值尚未确定：需要明确判定异常等待的具体阈值，否则无法计算该院的异常等待相关指标。"
+        },
+        {
+          "type": "ACCEPTANCE",
+          "title": "验收标准",
+          "content": "指标、分母、缺失值和时间边界一致；建议或待定参数不冒充已选方法，实际结论能回到输入数据。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/两院数据说明.txt"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/两院数据说明.txt",
+            "language": "text",
+            "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+            "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [
+        "甲院和乙院与hospital_id的对应关系待确认：数据说明中hospital_id只能为A或B，但未提供A、B分别对应哪家医院，影响两院独立计算和比较。",
+        "甲院的比较观察窗口尚未确定：需要明确观察窗口的起止时间或规则，否则无法计算该院的候诊时间相关指标。",
+        "乙院的比较观察窗口尚未确定：需要明确观察窗口的起止时间或规则，否则无法计算该院的候诊时间相关指标。",
+        "甲院异常等待的阈值尚未确定：需要明确判定异常等待的具体阈值，否则无法计算该院的异常等待相关指标。",
+        "乙院异常等待的阈值尚未确定：需要明确判定异常等待的具体阈值，否则无法计算该院的异常等待相关指标。"
+      ],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+        "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+        "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+        "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+        "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+        "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 17481,
+      "warnings": [],
+      "evidenceCards": [
+        {
+          "id": "R01",
+          "category": "BUSINESS_RULE",
+          "origin": "USER_MATERIAL",
+          "sourcePath": "docs/两院数据说明.txt",
+          "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+        }
+      ]
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-direct-direct",
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "8ccefcc4-0639-4653-8bae-e33b945b05e8",
+        "elapsedMs": 17527
+      }
+    ]
+  },
+  {
+    "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-final",
+    "caseId": "RC-HOSP-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "arm": "plan",
+    "startedAt": "2026-10-07T20:01:26.771Z",
+    "plan": {
+      "summary": "已理解需为甲院和乙院普通门诊制定2025年候诊时间统计方案，只交付方案与指标表，不输出结果。还需确认两院比较观察窗口、异常等待阈值及医院代码对应关系，这些会直接影响统计口径和公平比较。",
+      "questions": [
+        {
+          "id": "entity-id-relation-1",
+          "question": "甲院与 hospital_id 的对应关系是什么？",
+          "hint": "资料仅列出A/B取值集合，没有证明医院名称与代码的对应；不能按顺序推定。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "entity-id-relation-2",
+          "question": "乙院与 hospital_id 的对应关系是什么？",
+          "hint": "资料仅列出A/B取值集合，没有证明医院名称与代码的对应；不能按顺序推定。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "observation_window_A",
+          "question": "甲院的比较观察窗口如何定义？",
+          "hint": "观察窗口用于界定候诊时间统计的有效范围，两院可能不同，需分别确认。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：从挂号时间起至接诊时间止，或指定固定时段如8:00-17:00"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "observation_window_B",
+          "question": "乙院的比较观察窗口如何定义？",
+          "hint": "观察窗口用于界定候诊时间统计的有效范围，两院可能不同，需分别确认。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：从挂号时间起至接诊时间止，或指定固定时段如8:00-17:00"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "abnormal_wait_threshold_A",
+          "question": "甲院判定异常等待的阈值是多少？",
+          "hint": "异常等待阈值用于识别极端候诊时间，影响清洗和指标计算，需明确具体数值。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：超过120分钟视为异常"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "abnormal_wait_threshold_B",
+          "question": "乙院判定异常等待的阈值是多少？",
+          "hint": "异常等待阈值用于识别极端候诊时间，影响清洗和指标计算，需明确具体数值。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：超过120分钟视为异常"
+          ],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 4451,
+      "planId": "f7a84b96-3e86-492c-8070-93bc230112d0",
+      "planningContext": {
+        "contextId": "f3e23d91-201c-4a1f-be9f-5157e5fb34bb",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+      },
+      "expiresAt": "2026-10-07T20:29:22.654475600Z"
+    },
+    "answers": [
+      {
+        "questionId": "entity-id-relation-1",
+        "question": "甲院与 hospital_id 的对应关系是什么？",
+        "answer": "暂不确定。甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。"
+      },
+      {
+        "questionId": "entity-id-relation-2",
+        "question": "乙院与 hospital_id 的对应关系是什么？",
+        "answer": "暂不确定。乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。"
+      },
+      {
+        "questionId": "observation_window_A",
+        "question": "甲院的比较观察窗口如何定义？",
+        "answer": "暂不确定。甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。"
+      },
+      {
+        "questionId": "observation_window_B",
+        "question": "乙院的比较观察窗口如何定义？",
+        "answer": "暂不确定。乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。"
+      },
+      {
+        "questionId": "abnormal_wait_threshold_A",
+        "question": "甲院判定异常等待的阈值是多少？",
+        "answer": "甲院异常等待严格超过90分钟。本次仅确认甲院异常等待阈值为90分钟，作为本次方案选值，不代表医院已批准的现行院规；乙院阈值与两院观察窗口分别仍未决定。"
+      },
+      {
+        "questionId": "abnormal_wait_threshold_B",
+        "question": "乙院判定异常等待的阈值是多少？",
+        "answer": "暂不确定。乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。"
+      }
+    ],
+    "answerReview": {
+      "entity-id-relation-1": {
+        "answer": "暂不确定。甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "basis": "已审阅本轮两个服务端独立对应题与真实模型合并题；原材料只提供代码集合，没有对应证据，分别保留未知。"
+      },
+      "entity-id-relation-2": {
+        "answer": "暂不确定。乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "basis": "已审阅本轮两个服务端独立对应题与真实模型合并题；原材料只提供代码集合，没有对应证据，分别保留未知。"
+      },
+      "observation_window_A": {
+        "answer": "暂不确定。甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "basis": "两院窗口分别未定。"
+      },
+      "observation_window_B": {
+        "answer": "暂不确定。乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+        "basis": "两院窗口分别未定。"
+      },
+      "abnormal_wait_threshold_A": {
+        "answer": "甲院异常等待严格超过90分钟。本次仅确认甲院异常等待阈值为90分钟，作为本次方案选值，不代表医院已批准的现行院规；乙院阈值与两院观察窗口分别仍未决定。",
+        "basis": "仅甲院选择90分钟作为本次合成方案；乙院保持未知，与前轮实际部分确认政策一致，不将建议当院规。"
+      },
+      "abnormal_wait_threshold_B": {
+        "answer": "暂不确定。乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。",
+        "basis": "仅甲院选择90分钟作为本次合成方案；乙院保持未知，与前轮实际部分确认政策一致，不将建议当院规。"
+      }
+    },
+    "refinedQuery": "请为医院门诊运营组制定一份候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。本次分析对象是甲院和乙院的普通门诊，不包括急诊、住院和体检。两院需要独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。研究时间为2025年1月至12月，统计单位是一次有效门诊就诊，重复导入按就诊编号去重。\n已提供两院的数据说明。列出候诊时间的定义、清洗规则、分组表、分母和结果展示方式。按月、医院、科室分别整理，不需要让我选择表格还是文字等普通排版。缺失挂号时间或接诊时间的记录不能当作零分钟；应列出缺失数量，并明确哪些指标排除了这些记录。取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录，保留有效0分钟，不能改成缺失。\n两院的比较观察窗口都没有定，但两者可能不同，请分别确认。异常等待的阈值也没有定，不能把资料中的示例阈值当作医院采用的规则。请只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。最终只交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。已知信息直接继承；用户回答暂不确定时保留必要未决条件，同一件事情不要重复提醒。\n本次选择：暂不确定。甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n本次选择：暂不确定。乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n本次选择：暂不确定。甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。\n本次选择：暂不确定。乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。",
+    "result": {
+      "optimizedPrompt": "## 背景\n分析对象为甲院和乙院的普通门诊，不含急诊、住院和体检。研究时间为2025年1月至12月。统计单位是一次有效门诊就诊，重复导入按就诊编号去重。数据说明见 docs/两院数据说明.txt：两院数据均为CSV，包含 visit_id、hospital_id、department、registered_at、seen_at、status、import_version；hospital_id 只能为 A 或 B；时间为北京时间；status 为 registered、seen、cancelled。甲院与 hospital_id 的对应关系待确认，乙院与 hospital_id 的对应关系待确认。甲院异常等待阈值已确认为90分钟（本次方案选值，不代表医院已批准的现行院规）。乙院异常等待阈值待确认。甲院比较观察窗口待确认，乙院比较观察窗口待确认。\n\nPlan 阶段绑定的资料事实与二次检索补充（原始摘录见资料依据；现状与目标分别核对，不代表已经实现）：\n- docs/两院数据说明.txt（按本次明确决定更新，非原文摘录）：两院比较观察窗口尚未确定，甲院异常等待的阈值采用90分钟；乙院异常等待的阈值尚未确定\n\n## 任务\n制定候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。两院独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。列出候诊时间的定义、清洗规则、分组表、分母和结果展示方式。按月、医院、科室分别整理。缺失挂号时间或接诊时间的记录不能当作零分钟；应列出缺失数量，并明确哪些指标排除了这些记录。取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录，保留有效0分钟，不能改成缺失。两院比较观察窗口分别确认，异常等待阈值分别确认。只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。最终只交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。已知信息直接继承；用户回答暂不确定时保留必要未决条件，同一件事情不要重复提醒。\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 阈值：甲院异常等待严格超过90分钟。 本次仅确认甲院异常等待阈值为90分钟，作为本次方案选值，不代表医院已批准的现行院规；\n\n## 输出\n交付可讨论的分析方案与指标表。方案包含候诊时间定义、清洗规则、分组表、分母和结果展示方式。指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态。计数指标本身不需要分母时写“不适用（计数指标）”。已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。甲院异常等待阈值使用90分钟；乙院异常等待阈值、两院观察窗口在对应参数格标为“待确认”。医院代码对应关系未确认时，正文、表格及伪代码采用同一状态，未知项用“医院代码待确认”占位。\n新增指标必须独立列出口径依据及状态：无独立依据时，具体口径只能列为建议，执行参数保持待确认；已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。口径依据、参数确认与计算就绪分别判断：状态列说明已定参数及尚缺计算前提，不能用一个“已确认”概括。只有本指标实际依赖的分母、机构对应、观察窗口等均有适用依据并满足必要确认，才可标为可计算；不适用的依赖说明原因，不强加。伪代码必须实际检查并使用这些具名参数，未知时只暂停依赖它的计算，不能仅声明未知却继续计算。\n当前参数依据（用于生成指标表，不代替指标表）：\n| 参数 | 当前口径 | 状态与依据 |\n| --- | --- | --- |\n| 甲院异常等待的阈值 | 90分钟 | 用户明确（原始需求或本次回答） |\n| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n实体标识的独立依据（A/B集合不证明名称对应，不按次序或排除法绑定）：\n| 机构 | 标识字段 | 当前对应 | 状态与依据 |\n| --- | --- | --- | --- |\n| 甲院 | hospital_id | 对应关系待确认 | 无对应证据 |\n| 乙院 | hospital_id | 对应关系待确认 | 无对应证据 |\n正文、表格及伪代码采用同一状态。未知项用“医院代码待确认”占位；仅依赖该对应的步骤需等待，其他清洗与指标模板继续交付。平台统一保留未决清单，模型不要再复写同义提醒。\n\n## 约束\n只做统计方案，不输出诊疗建议，不编造患者数据。不输出虚构的结果或已经落地的系统功能。甲院异常等待阈值使用90分钟，不代表医院已批准的现行院规；乙院阈值与两院观察窗口分别仍未决定，不得沿用甲院90分钟或互相替代。普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：甲院与 hospital_id 的对应关系是什么？ 用户说明：甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n- 该问题尚未确定：乙院与 hospital_id 的对应关系是什么？ 用户说明：乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n- 该问题尚未确定：甲院的比较观察窗口如何定义？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：影响候诊时间相关指标的计算范围。\n- 该问题尚未确定：乙院的比较观察窗口如何定义？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。\n- 该问题尚未确定：乙院阈值与两院观察窗口分别仍未决定。\n- 该问题尚未确定：乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。 补充说明：影响乙院异常等待相关指标的计算。\n- 甲院与 hospital_id 的对应关系尚未核实，影响按医院分组统计和两院比较。\n- 乙院与 hospital_id 的对应关系尚未核实，影响按医院分组统计和两院比较。\n未决决定的交付边界：\n- 同一未决决定在正文、表格、公式及伪代码中保持一致：相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。已确认决定仅适用于对应对象、指标和条件；其他指标不得标成已确认，须有各自的独立依据。原定指标表与必要伪代码仍须交付，逐指标判断参数状态，只暂停依赖未决参数的计算，其余步骤继续完成。\n用户明确规则（须遵守平台权限边界）：\n- 请为医院门诊运营组制定一份候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。\n- 两院需要独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 两院的比较观察窗口都没有定，但两者可能不同，请分别确认。\n- 甲院异常等待的阈值采用90分钟；乙院异常等待的阈值尚未确定，不能把资料中的示例阈值当作医院采用的规则。\n- 请只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n\n## 验收标准\n指标、分母、缺失值和时间边界一致；建议或待定参数不冒充已选方法，实际结论能回到输入数据。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "分析对象为甲院和乙院的普通门诊，不含急诊、住院和体检。研究时间为2025年1月至12月。统计单位是一次有效门诊就诊，重复导入按就诊编号去重。数据说明见 docs/两院数据说明.txt：两院数据均为CSV，包含 visit_id、hospital_id、department、registered_at、seen_at、status、import_version；hospital_id 只能为 A 或 B；时间为北京时间；status 为 registered、seen、cancelled。甲院与 hospital_id 的对应关系待确认，乙院与 hospital_id 的对应关系待确认。甲院异常等待阈值已确认为90分钟（本次方案选值，不代表医院已批准的现行院规）。乙院异常等待阈值待确认。甲院比较观察窗口待确认，乙院比较观察窗口待确认。\n\nPlan 阶段绑定的资料事实与二次检索补充（原始摘录见资料依据；现状与目标分别核对，不代表已经实现）：\n- docs/两院数据说明.txt（按本次明确决定更新，非原文摘录）：两院比较观察窗口尚未确定，甲院异常等待的阈值采用90分钟；乙院异常等待的阈值尚未确定"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "制定候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。两院独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。列出候诊时间的定义、清洗规则、分组表、分母和结果展示方式。按月、医院、科室分别整理。缺失挂号时间或接诊时间的记录不能当作零分钟；应列出缺失数量，并明确哪些指标排除了这些记录。取消挂号不得当作已经接诊；同一个就诊编号保留已确认的最新记录，保留有效0分钟，不能改成缺失。两院比较观察窗口分别确认，异常等待阈值分别确认。只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。最终只交付可讨论的分析方案与指标表，不输出虚构的结果或已经落地的系统功能。已知信息直接继承；用户回答暂不确定时保留必要未决条件，同一件事情不要重复提醒。\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 阈值：甲院异常等待严格超过90分钟。 本次仅确认甲院异常等待阈值为90分钟，作为本次方案选值，不代表医院已批准的现行院规；"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "交付可讨论的分析方案与指标表。方案包含候诊时间定义、清洗规则、分组表、分母和结果展示方式。指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态。计数指标本身不需要分母时写“不适用（计数指标）”。已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。甲院异常等待阈值使用90分钟；乙院异常等待阈值、两院观察窗口在对应参数格标为“待确认”。医院代码对应关系未确认时，正文、表格及伪代码采用同一状态，未知项用“医院代码待确认”占位。\n新增指标必须独立列出口径依据及状态：无独立依据时，具体口径只能列为建议，执行参数保持待确认；已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。计数指标本身不需要分母时写“不适用（计数指标）”，不能强行增加分母或改成率指标。口径依据、参数确认与计算就绪分别判断：状态列说明已定参数及尚缺计算前提，不能用一个“已确认”概括。只有本指标实际依赖的分母、机构对应、观察窗口等均有适用依据并满足必要确认，才可标为可计算；不适用的依赖说明原因，不强加。伪代码必须实际检查并使用这些具名参数，未知时只暂停依赖它的计算，不能仅声明未知却继续计算。\n当前参数依据（用于生成指标表，不代替指标表）：\n| 参数 | 当前口径 | 状态与依据 |\n| --- | --- | --- |\n| 甲院异常等待的阈值 | 90分钟 | 用户明确（原始需求或本次回答） |\n| 甲院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院的观察窗口 | 待确认 | 未决；无当前选值 |\n| 乙院异常等待的阈值 | 待确认 | 未决；无当前选值 |\n实体标识的独立依据（A/B集合不证明名称对应，不按次序或排除法绑定）：\n| 机构 | 标识字段 | 当前对应 | 状态与依据 |\n| --- | --- | --- | --- |\n| 甲院 | hospital_id | 对应关系待确认 | 无对应证据 |\n| 乙院 | hospital_id | 对应关系待确认 | 无对应证据 |\n正文、表格及伪代码采用同一状态。未知项用“医院代码待确认”占位；仅依赖该对应的步骤需等待，其他清洗与指标模板继续交付。平台统一保留未决清单，模型不要再复写同义提醒。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "只做统计方案，不输出诊疗建议，不编造患者数据。不输出虚构的结果或已经落地的系统功能。甲院异常等待阈值使用90分钟，不代表医院已批准的现行院规；乙院阈值与两院观察窗口分别仍未决定，不得沿用甲院90分钟或互相替代。普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）：\n- 该问题尚未确定：甲院与 hospital_id 的对应关系是什么？ 用户说明：甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n- 该问题尚未确定：乙院与 hospital_id 的对应关系是什么？ 用户说明：乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n- 该问题尚未确定：甲院的比较观察窗口如何定义？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：影响候诊时间相关指标的计算范围。\n- 该问题尚未确定：乙院的比较观察窗口如何定义？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。\n- 该问题尚未确定：乙院阈值与两院观察窗口分别仍未决定。\n- 该问题尚未确定：乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。 补充说明：影响乙院异常等待相关指标的计算。\n- 甲院与 hospital_id 的对应关系尚未核实，影响按医院分组统计和两院比较。\n- 乙院与 hospital_id 的对应关系尚未核实，影响按医院分组统计和两院比较。\n未决决定的交付边界：\n- 同一未决决定在正文、表格、公式及伪代码中保持一致：相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。已确认决定仅适用于对应对象、指标和条件；其他指标不得标成已确认，须有各自的独立依据。原定指标表与必要伪代码仍须交付，逐指标判断参数状态，只暂停依赖未决参数的计算，其余步骤继续完成。\n用户明确规则（须遵守平台权限边界）：\n- 请为医院门诊运营组制定一份候诊时间分析方案，只做统计方案，不输出诊疗建议，不编造患者数据。\n- 两院需要独立计算后再比较，不能把两个院区的参数或待确认事项混为一项。\n- 两院的比较观察窗口都没有定，但两者可能不同，请分别确认。\n- 甲院异常等待的阈值采用90分钟；乙院异常等待的阈值尚未确定，不能把资料中的示例阈值当作医院采用的规则。\n- 请只询问会改变统计口径或业务结果的关键问题；普通章节、颜色、测试工具、代码语言和图表布局由执行者处理。"
+        },
+        {
+          "type": "CLARIFICATIONS",
+          "title": "待确认事项",
+          "content": "- 该问题尚未确定：甲院与 hospital_id 的对应关系是什么？ 用户说明：甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n- 该问题尚未确定：乙院与 hospital_id 的对应关系是什么？ 用户说明：乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。\n- 该问题尚未确定：甲院的比较观察窗口如何定义？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：影响候诊时间相关指标的计算范围。\n- 该问题尚未确定：乙院的比较观察窗口如何定义？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：影响候诊时间相关指标的计算范围。\n- 该问题尚未确定：乙院阈值与两院观察窗口分别仍未决定。\n- 该问题尚未确定：乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。 补充说明：影响乙院异常等待相关指标的计算。\n- 甲院与 hospital_id 的对应关系尚未核实，影响按医院分组统计和两院比较。\n- 乙院与 hospital_id 的对应关系尚未核实，影响按医院分组统计和两院比较。"
+        },
+        {
+          "type": "ACCEPTANCE",
+          "title": "验收标准",
+          "content": "指标、分母、缺失值和时间边界一致；建议或待定参数不冒充已选方法，实际结论能回到输入数据。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/两院数据说明.txt"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/两院数据说明.txt",
+            "language": "text",
+            "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+            "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [
+        "该问题尚未确定：甲院与 hospital_id 的对应关系是什么？ 用户说明：甲院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "该问题尚未确定：乙院与 hospital_id 的对应关系是什么？ 用户说明：乙院与hospital_id的对应关系尚未核实；A/B取值集合不能证明名称与代码的关系，也不能用另一院排除推定。",
+        "该问题尚未确定：甲院的比较观察窗口如何定义？ 用户说明：甲院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：影响候诊时间相关指标的计算范围。",
+        "该问题尚未确定：乙院的比较观察窗口如何定义？ 用户说明：乙院的比较观察窗口需要院方后续核实；不能用另一院的窗口替代，本次方案保留为独立未决条件。 补充说明：影响候诊时间相关指标的计算范围。",
+        "该问题尚未确定：乙院阈值与两院观察窗口分别仍未决定。",
+        "该问题尚未确定：乙院的异常等待阈值尚未决定，不能沿用甲院90分钟；相关异常比例的计算需等待乙院阈值确认。 补充说明：影响乙院异常等待相关指标的计算。",
+        "甲院与 hospital_id 的对应关系尚未核实，影响按医院分组统计和两院比较。",
+        "乙院与 hospital_id 的对应关系尚未核实，影响按医院分组统计和两院比较。"
+      ],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+        "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+        "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+        "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+        "禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。",
+        "以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。"
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 17678,
+      "warnings": [],
+      "evidenceCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "USER_MATERIAL",
+          "sourcePath": "docs/两院数据说明.txt",
+          "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+        }
+      ]
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-final",
+        "path": "/api/v1/optimizations",
+        "status": 200,
+        "requestId": "5dab584c-bdc1-4986-b45a-9bcec3cc6b44",
+        "elapsedMs": 17730
+      }
+    ]
+  },
+  {
+    "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan",
+    "caseId": "RC-HOSP-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "arm": "plan",
+    "startedAt": "2026-10-07T19:59:22.629Z",
+    "prepared": {
+      "contextId": "f3e23d91-201c-4a1f-be9f-5157e5fb34bb",
+      "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894",
+      "digest": {
+        "description": "",
+        "technologies": [],
+        "dependencies": [],
+        "directoryOverview": [
+          "docs/",
+          "docs/两院数据说明.txt"
+        ],
+        "fileSummaries": [
+          "[USER_MATERIAL] docs/两院数据说明.txt：文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。；业务摘录：[片段 1/1] 甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。 hospital_id只能为A或B。 时间为北京时间。 status为registered、seen、cancelled。 两院比较观察窗口尚未确定，异常等待阈值尚未确定。 示例：60分钟仅供说明，不是现行院规。"
+        ],
+        "analysisStatus": "COMPLETE",
+        "analyzedFileCount": 1,
+        "warnings": [],
+        "factCards": [
+          {
+            "id": "F01",
+            "category": "BUSINESS_RULE",
+            "origin": "USER_MATERIAL",
+            "sourcePath": "docs/两院数据说明.txt",
+            "evidence": "两院比较观察窗口尚未确定，异常等待阈值尚未确定"
+          }
+        ]
+      },
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "docs/",
+          "docs/两院数据说明.txt"
+        ],
+        "fileSnippets": [
+          {
+            "path": "docs/两院数据说明.txt",
+            "language": "text",
+            "content": "[片段 1/1]\n甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。hospital_id只能为A或B。时间为北京时间。status为registered、seen、cancelled。两院比较观察窗口尚未确定，异常等待阈值尚未确定。示例：60分钟仅供说明，不是现行院规。",
+            "summary": "文件内容摘要：甲院和乙院数据均为CSV，包含visit_id、hospital_id、department、registered_at、seen_at、status、import_version。；hospital_id只能为A或B。；status为registered、seen、cancelled。；两院比较观察窗口尚未确定，异常等待阈值尚未确定。；示例：60分钟仅供说明，不是现行院规。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "expiresAt": "2026-10-07T20:29:22.654475600Z",
+      "latencyMs": 4
+    },
+    "plan": {
+      "summary": "已理解需为甲院和乙院普通门诊制定2025年候诊时间统计方案，只交付方案与指标表，不输出结果。还需确认两院比较观察窗口、异常等待阈值及医院代码对应关系，这些会直接影响统计口径和公平比较。",
+      "questions": [
+        {
+          "id": "entity-id-relation-1",
+          "question": "甲院与 hospital_id 的对应关系是什么？",
+          "hint": "资料仅列出A/B取值集合，没有证明医院名称与代码的对应；不能按顺序推定。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "entity-id-relation-2",
+          "question": "乙院与 hospital_id 的对应关系是什么？",
+          "hint": "资料仅列出A/B取值集合，没有证明医院名称与代码的对应；不能按顺序推定。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "observation_window_A",
+          "question": "甲院的比较观察窗口如何定义？",
+          "hint": "观察窗口用于界定候诊时间统计的有效范围，两院可能不同，需分别确认。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：从挂号时间起至接诊时间止，或指定固定时段如8:00-17:00"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "observation_window_B",
+          "question": "乙院的比较观察窗口如何定义？",
+          "hint": "观察窗口用于界定候诊时间统计的有效范围，两院可能不同，需分别确认。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：从挂号时间起至接诊时间止，或指定固定时段如8:00-17:00"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "abnormal_wait_threshold_A",
+          "question": "甲院判定异常等待的阈值是多少？",
+          "hint": "异常等待阈值用于识别极端候诊时间，影响清洗和指标计算，需明确具体数值。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：超过120分钟视为异常"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "abnormal_wait_threshold_B",
+          "question": "乙院判定异常等待的阈值是多少？",
+          "hint": "异常等待阈值用于识别极端候诊时间，影响清洗和指标计算，需明确具体数值。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：超过120分钟视为异常"
+          ],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 4451,
+      "planId": "f7a84b96-3e86-492c-8070-93bc230112d0",
+      "planningContext": {
+        "contextId": "f3e23d91-201c-4a1f-be9f-5157e5fb34bb",
+        "version": "sha256:68b6683a372a5a742a8c99b8401733cbb7295b870e8850e9cb7cb4a242dba894"
+      },
+      "expiresAt": "2026-10-07T20:29:22.654475600Z"
+    },
+    "status": "COLLECTED",
+    "requests": [
+      {
+        "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-prepare",
+        "path": "/api/v1/context/planning",
+        "status": 200,
+        "requestId": "76b54aa3-9c0e-4770-b9b3-1bbf2bf8a4b6",
+        "elapsedMs": 32
+      },
+      {
+        "label": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-plan",
+        "path": "/api/v1/optimizations/plan",
+        "status": 200,
+        "requestId": "b8439540-74a4-44f4-828a-86ed9a64ec65",
+        "elapsedMs": 4482
+      }
+    ]
+  }
+]
