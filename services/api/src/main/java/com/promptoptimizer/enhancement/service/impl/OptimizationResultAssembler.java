@@ -139,7 +139,7 @@ public class OptimizationResultAssembler {
         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planConfirmed ? planAnswers : List.of());
         var resolvedState = ResolvedPlanState.from(planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), rawPrompt);
         // 先建立有效执行视图，再提取规则；原始提示词与卡片仍完整保存，旧未知不能被保真流程补回。
-        String effectiveRawPrompt = resolvedState.reconcile(rawPrompt);
+        String resolvedRawPrompt = resolvedState.reconcile(rawPrompt);
         sections.replaceAll((type, section) -> new PromptSection(type, section.title(), resolvedState.reconcile(section.content())));
         String evidenceQuery = decisions.retrievalQuery(rawPrompt);
         List<PlanningFactCard> eligibleFacts = new PlanningFactCardExtractor()
@@ -152,7 +152,10 @@ public class OptimizationResultAssembler {
         List<ConfirmedPlanDecision> actualConfirmations = planConfirmed ? decisions.knownDecisions() : List.of();
         var conditionalGuard = ConditionalConfirmationGuard.prepare(rawPrompt, conditionalEvidence, actualConfirmations);
         sections.forEach((type, section) -> conditionalGuard.validate(section.content(), "sections." + type));
-        var unresolvedContract = UnresolvedDecisionContract.from(effectiveRawPrompt, decisions, conditionalEvidence);
+        var unresolvedContract = UnresolvedDecisionContract.from(resolvedRawPrompt, decisions, conditionalEvidence);
+        String effectiveRawPrompt = unresolvedContract.reconcileCurrentText(resolvedRawPrompt);
+        sections.replaceAll((type, section) -> new PromptSection(type, section.title(),
+                unresolvedContract.reconcileCurrentText(section.content())));
         sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
         sections.forEach((type, section) -> validateUserFacingProtocol(section.content(), rawPrompt, "sections." + type));
         if (providerResponse.ambiguities() != null) {
@@ -174,13 +177,22 @@ public class OptimizationResultAssembler {
                 planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()));
         appendConfirmedAnswers(sections, decisions);
         appendConfirmedDecisions(sections, decisions);
-        List<String> currentDocumentFacts = documentFacts.stream().map(resolvedState::reconcile).toList();
+        java.util.function.UnaryOperator<String> currentEvidence = value ->
+                unresolvedContract.reconcileCurrentText(resolvedState.reconcile(value));
+        List<String> currentDocumentFacts = documentFacts.stream().map(value -> {
+            String current = currentEvidence.apply(value);
+            return value.equals(current) ? current : "按本次明确决定更新（非原文摘录）：" + current;
+        }).toList();
+        Set<String> updatedFactIds = eligibleFacts.stream()
+                .filter(card -> !card.evidence().equals(currentEvidence.apply(card.evidence())))
+                .map(PlanningFactCard::id).collect(Collectors.toSet());
         List<PlanningFactCard> currentFacts = eligibleFacts.stream().map(card -> new PlanningFactCard(
-                card.id(), card.category(), card.origin(), card.sourcePath(), resolvedState.reconcile(card.evidence()))).toList();
+                card.id(), card.category(), card.origin(), card.sourcePath(),
+                currentEvidence.apply(card.evidence()))).toList();
         if (eligibleFacts.isEmpty()) {
             appendDocumentFacts(sections, currentDocumentFacts);
         } else {
-            appendPlanningFacts(sections, currentFacts, currentDocumentFacts, planConfirmed);
+            appendPlanningFacts(sections, currentFacts, currentDocumentFacts, planConfirmed, updatedFactIds);
         }
         appendConstraints(sections, constraints);
         if (!sourceObjects.guidance().isBlank()) appendConstraintBlock(sections, "资料对象与版本", List.of(sourceObjects.guidance()));
@@ -589,7 +601,7 @@ public class OptimizationResultAssembler {
     /** 把已绑定事实卡片作为带来源资料保留；回答优先级和平台约束在段落中明确区分。 */
     private void appendPlanningFacts(Map<PromptSectionType, PromptSection> sections,
                                      List<PlanningFactCard> facts,
-                                     List<String> documentFacts, boolean planConfirmed) {
+                                     List<String> documentFacts, boolean planConfirmed, Set<String> updatedFactIds) {
         List<PlanningFactCard> safeFacts = facts.stream()
                 .filter(card -> card != null && card.category() != null && card.origin() != null
                         && !isBlank(card.sourcePath()) && card.sourcePath().length() <= 256
@@ -606,7 +618,10 @@ public class OptimizationResultAssembler {
                         || !existingBackgroundContent.contains(card.evidence()))
                 // 详细出处继续由 evidenceCards 返回；复制正文已完整包含原句时无需再抄一份。
                 .filter(card -> !existingExecution.contains(card.evidence()))
-                .map(card -> "- " + card.sourcePath() + "：" + card.evidence())
+                // 当前选值可能来自回答；更新后的正文不得冒充文件原文，原始卡片仍独立返回。
+                .map(card -> "- " + card.sourcePath()
+                        + (updatedFactIds.contains(card.id()) ? "（按本次明确决定更新，非原文摘录）" : "")
+                        + "：" + card.evidence())
                 .collect(Collectors.joining("\n"));
         if (!sourcedFacts.isBlank()) {
             background = new PromptSection(

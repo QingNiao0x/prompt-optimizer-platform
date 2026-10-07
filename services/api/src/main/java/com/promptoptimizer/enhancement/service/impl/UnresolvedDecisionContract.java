@@ -40,6 +40,11 @@ final class UnresolvedDecisionContract {
     private static final String COMPOSITE_PARAMETER_COLUMN = "分母或所需参数";
     private static final List<String> PARAMETER_PROPERTIES = List.of("分母", "阈值", "观察窗口", "覆盖度");
     private static final Pattern INDEPENDENT_HOSPITALS = Pattern.compile("^两院(?:需要|须|应)?(?:独立|分别)(?:计算|确认).*$");
+    private static final Pattern CURRENT_PENDING_CLAUSE = Pattern.compile(
+            "(^|[，,])(\\s*)((?:(?:甲院|乙院)(?:的)?)?(?:异常等待(?:的)?阈值)|"
+                    + "(?:甲院|乙院|两院)(?:的)?(?:比较)?观察窗口)"
+                    + "(?:也|都|均)?(?:(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)|(?:还)?没有(?:定|确定|决定))"
+                    + "(?=$|[，,。；;])");
     static final String DELIVERY_GUIDANCE = "同一未决决定在正文、表格、公式及伪代码中保持一致："
             + "相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；"
             + "依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。"
@@ -233,6 +238,65 @@ final class UnresolvedDecisionContract {
     private static boolean isIndependentHospitalParameter(Parameter parameter) {
         return parameter.property().equals("观察窗口") && parameter.subject().matches("甲院|乙院")
                 || parameter.property().equals("阈值") && parameter.subject().matches("(?:甲院|乙院)异常等待");
+    }
+
+    /**
+     * 同步当前执行正文中的公共旧未知，避免参数表已更新而任务仍说两院都未定。
+     * 仅使用已登记的独立范围与真实选值；原始材料、引文、代码及未来条件不在此改写。
+     */
+    String reconcileCurrentText(String text) {
+        if (text == null || !independentHospitalParameters || confirmedValues.isEmpty()) return text;
+        var lines = new ArrayList<String>();
+        String fence = null;
+        for (String line : text.split("\n", -1)) {
+            String stripped = line.strip();
+            var marker = FENCE.matcher(stripped);
+            if (marker.matches()) {
+                String token = marker.group(1);
+                if (fence == null) fence = token;
+                else if (token.charAt(0) == fence.charAt(0) && token.length() >= fence.length()
+                        && marker.group(2).isBlank()) fence = null;
+                lines.add(line);
+                continue;
+            }
+            if (fence != null || stripped.matches("^[>‘’“”\\\"'`|].*")) {
+                lines.add(line);
+                continue;
+            }
+            var result = new StringBuilder();
+            var sentences = Pattern.compile("[^。；;]+(?:[。；;]|$)|[。；;]").matcher(line);
+            while (sentences.find()) {
+                // 分号并不终止假设、引用或年份的作用域；宁可保留材料原句，也不能跨句升级状态。
+                String prefix = line.substring(0, sentences.start());
+                boolean scoped = CONDITIONAL.matcher(prefix).find()
+                        || prefix.matches("(?s).*(?:19|20)\\d{2}年.*");
+                result.append(scoped ? sentences.group() : reconcileCurrentSentence(sentences.group()));
+            }
+            lines.add(result.toString());
+        }
+        return String.join("\n", lines);
+    }
+
+    /** 完整公共参数只在至少一项实际确认时展开；保留其后业务限制，条件及年份语境不消费。 */
+    private String reconcileCurrentSentence(String sentence) {
+        var result = new StringBuilder();
+        var pending = CURRENT_PENDING_CLAUSE.matcher(sentence);
+        while (pending.find()) {
+            if (CONDITIONAL.matcher(sentence.substring(0, pending.start(3))).find()
+                    || sentence.matches("(?s).*(?:19|20)\\d{2}年.*")) continue;
+            List<Parameter> scopes = namedParameters(canonical(pending.group(3))).stream()
+                    .flatMap(value -> hospitalParameterScopes(value).stream()).toList();
+            if (scopes.isEmpty() || scopes.stream().noneMatch(confirmedParameters::contains)
+                    || scopes.stream().anyMatch(value -> !parameters.contains(value) && !confirmedParameters.contains(value))) continue;
+            String current = scopes.stream().map(parameter -> confirmedValues.stream()
+                    .filter(value -> value.parameter().equals(parameter)).findFirst()
+                    .map(value -> parameter.subject() + "的" + parameter.property() + "采用" + value.value())
+                    .orElse(parameter.subject() + "的" + parameter.property() + "尚未确定"))
+                    .collect(java.util.stream.Collectors.joining("；"));
+            pending.appendReplacement(result, java.util.regex.Matcher.quoteReplacement(pending.group(1) + pending.group(2) + current));
+        }
+        pending.appendTail(result);
+        return result.toString();
     }
 
     /** 两院概述仅在两院各自参数已独立登记时被覆盖；新年份、新院及新增条件仍保留原提醒。 */
