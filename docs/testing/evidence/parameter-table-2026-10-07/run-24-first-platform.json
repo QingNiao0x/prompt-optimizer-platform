@@ -1,0 +1,126 @@
+{
+  "capturedAt": "2026-10-07T08:15:22.630Z",
+  "input": "tmp/prompt-comparison/state-scope-real-20261007-24",
+  "records": [
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-direct",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 5855,
+      "ambiguities": 4,
+      "latencyMs": 12639,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan-final",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "optimizedCharacters": 6509,
+      "ambiguities": 4,
+      "latencyMs": 26881,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "confirmedMetricDoesNotRetainOldJointState": true,
+        "independentConsistencyRemainsPending": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-direct",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 4240,
+      "ambiguities": 4,
+      "latencyMs": 13452,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan-final",
+      "status": "FAILED",
+      "failure": {
+        "label": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan-final",
+        "path": "/api/v1/optimizations",
+        "status": 409,
+        "requestId": "153767cb-e9cb-419d-8022-4d398bd31273",
+        "elapsedMs": 106,
+        "code": "PLANNING_SESSION_EXPIRED"
+      }
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-direct",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 2450,
+      "ambiguities": 4,
+      "latencyMs": 10581,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "independentHospitalParameters": false
+      },
+      "protocolChecksPassed": false,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-direct",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 2194,
+      "ambiguities": 2,
+      "latencyMs": 8922,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "independentHospitalParameters": false
+      },
+      "protocolChecksPassed": false,
+      "semanticQualityRequiresReview": true
+    }
+  ],
+  "successfulCalls": 5,
+  "failedCalls": 1,
+  "passedProtocolChecks": 3,
+  "releaseApproval": false
+}

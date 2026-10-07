@@ -1,0 +1,136 @@
+{
+  "capturedAt": "2026-10-07T08:20:03.485Z",
+  "input": "tmp/prompt-comparison/state-scope-real-20261007-25",
+  "records": [
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-direct",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 4611,
+      "ambiguities": 4,
+      "latencyMs": 10476,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan-final",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "optimizedCharacters": 5771,
+      "ambiguities": 4,
+      "latencyMs": 22632,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "confirmedMetricDoesNotRetainOldJointState": true,
+        "independentConsistencyRemainsPending": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-direct",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 4420,
+      "ambiguities": 4,
+      "latencyMs": 16387,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan-final",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "optimizedCharacters": 5508,
+      "ambiguities": 3,
+      "latencyMs": 22096,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "confirmedMetricDoesNotRetainOldJointState": true,
+        "independentConsistencyRemainsPending": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-direct",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 2594,
+      "ambiguities": 4,
+      "latencyMs": 14827,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "independentHospitalParameters": false
+      },
+      "protocolChecksPassed": false,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-direct",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 2162,
+      "ambiguities": 2,
+      "latencyMs": 9854,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "independentHospitalParameters": false
+      },
+      "protocolChecksPassed": false,
+      "semanticQualityRequiresReview": true
+    }
+  ],
+  "successfulCalls": 6,
+  "failedCalls": 0,
+  "passedProtocolChecks": 4,
+  "releaseApproval": false
+}

@@ -1,0 +1,1076 @@
+[
+  {
+    "run": "24",
+    "evidence": {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "startedAt": "2026-10-07T07:43:12.942Z",
+      "prepared": {
+        "contextId": "f0815363-c536-4f52-ad0c-78b9a8f078b0",
+        "version": "sha256:6d3f96777d1cd96da49371ea759fd8cbb7eb5579163c3b303abab8930e64ee7f",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/病案数据字典.md"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/病案数据字典.md：Markdown 文档摘要：地区：示范市。；分析工具：Python pandas。；日期格式：YYYY-MM-DD。；完整性指标分母与一致性指标分母尚需分别确定。；建议阈值不代表现行规则。；业务摘录：[片段 1/1] 地区：示范市。 对象：A医院及B医院2022-2025年出院病案首页。 数据格式：CSV。 分析工具：Python pandas。 字段：record_id、hospital、admission_date、discharge_date、age、gender_code、principal_diagnosis、length_of_stay、total_cost、import_version。 日期格式：YYYY-MM-DD。 UNKNOWN为性别代码中的数据状态。 A医院2022年覆盖度未核实。 完整性指标分母与一致性指标分母尚需分别确定。 不得把缺失住院日当0。 建议阈值不代表现行规则。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "REGION",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "地区：示范市"
+            },
+            {
+              "id": "F02",
+              "category": "DATA_FORMAT",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "数据格式：CSV"
+            },
+            {
+              "id": "F03",
+              "category": "ANALYSIS_TOOL",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "分析工具：Python pandas"
+            },
+            {
+              "id": "F04",
+              "category": "DATA_FORMAT",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "日期格式：YYYY-MM-DD"
+            },
+            {
+              "id": "F05",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "A医院2022年覆盖度未核实"
+            },
+            {
+              "id": "F06",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "完整性指标分母与一致性指标分母尚需分别确定"
+            },
+            {
+              "id": "F07",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "不得把缺失住院日当0"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/病案数据字典.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/病案数据字典.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n地区：示范市。对象：A医院及B医院2022-2025年出院病案首页。数据格式：CSV。分析工具：Python pandas。字段：record_id、hospital、admission_date、discharge_date、age、gender_code、principal_diagnosis、length_of_stay、total_cost、import_version。日期格式：YYYY-MM-DD。UNKNOWN为性别代码中的数据状态。A医院2022年覆盖度未核实。完整性指标分母与一致性指标分母尚需分别确定。不得把缺失住院日当0。建议阈值不代表现行规则。",
+              "summary": "Markdown 文档摘要：地区：示范市。；分析工具：Python pandas。；日期格式：YYYY-MM-DD。；完整性指标分母与一致性指标分母尚需分别确定。；建议阈值不代表现行规则。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T08:13:12.977059900Z",
+        "latencyMs": 29
+      },
+      "plan": {
+        "summary": "已理解目标：为A、B两医院2022—2025年出院病案首页制定数据质量研究方法方案，围绕缺失、格式不合法、跨字段逻辑不一致三类问题，按年度和医院分别呈现，只交付方法设计，不编造结果。仍需确认少数会直接影响指标口径和比较结果的未决参数。",
+        "questions": [
+          {
+            "id": "completeness_denominator",
+            "question": "完整性指标（如字段缺失率）的分母应如何确定？",
+            "hint": "分母决定缺失率的大小和医院间可比性，且你已说明完整性指标分母与一致性指标分母需分别确定。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "all_valid_discharge",
+                "label": "全部有效出院记录",
+                "description": "以去重、清洗后纳入研究的全部有效出院记录为分母。",
+                "answer": "完整性指标分母采用全部有效出院记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "records_with_field_applicable",
+                "label": "该字段适用记录",
+                "description": "仅以该字段本应填写的记录为分母，排除不适用记录。",
+                "answer": "完整性指标分母采用该字段的适用记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "per_indicator_define",
+                "label": "逐指标分别定义",
+                "description": "每个完整性指标单独说明分母，不统一规定。",
+                "answer": "完整性指标分母逐指标分别定义，并在指标表中写明。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "consistency_denominator",
+            "question": "跨字段逻辑一致性指标（如出院日早于入院日、年龄与诊断矛盾等）的分母应如何确定？",
+            "hint": "一致性指标的分母不一定与完整性指标相同，需单独明确以保证口径可复现。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "all_valid_discharge",
+                "label": "全部有效出院记录",
+                "description": "以去重、清洗后纳入研究的全部有效出院记录为分母。",
+                "answer": "跨字段一致性指标分母采用全部有效出院记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "records_with_both_fields",
+                "label": "涉及字段均非缺失的记录",
+                "description": "仅以参与逻辑判断的字段均非缺失的记录为分母。",
+                "answer": "跨字段一致性指标分母采用涉及字段均非缺失的记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "per_indicator_define",
+                "label": "逐指标分别定义",
+                "description": "每个一致性指标单独说明分母，不统一规定。",
+                "answer": "跨字段一致性指标分母逐指标分别定义，并在指标表中写明。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "missing_imputation",
+            "question": "对缺失病例是否采用插补？若采用，不同指标是否允许不同处理？",
+            "hint": "你已说明是否插补尚未决定，且不同指标可能采用不同处理，不得默认统一插补。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "no_imputation",
+                "label": "不插补",
+                "description": "缺失保持缺失，不进行任何插补。",
+                "answer": "不进行插补，缺失保持缺失状态。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "impute_per_indicator",
+                "label": "按指标分别决定",
+                "description": "不同指标可分别决定是否插补及插补方法，并在方法中说明。",
+                "answer": "按指标分别决定是否插补及插补方法，并在方法中说明。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "impute_all",
+                "label": "统一插补",
+                "description": "对所有缺失字段采用统一插补策略。",
+                "answer": "对所有缺失字段采用统一插补策略。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "a_hospital_2022_coverage",
+            "question": "A医院2022年的覆盖度目前未核实，你希望方法方案中如何处理？",
+            "hint": "A医院2022年覆盖度未核实，且不能被B医院信息替代；这会影响该年度比较结果的可解释性。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "mark_unverified",
+                "label": "标记为未核实",
+                "description": "在方法方案中明确A医院2022年覆盖度未核实，不纳入覆盖度比较或单独说明。",
+                "answer": "A医院2022年覆盖度标记为未核实，不纳入覆盖度比较或单独说明。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "exclude_2022_comparison",
+                "label": "排除该年度覆盖度比较",
+                "description": "A医院2022年不参与覆盖度比较，其他年份正常比较。",
+                "answer": "A医院2022年不参与覆盖度比较，其他年份正常比较。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "include_with_caveat",
+                "label": "纳入但加注局限",
+                "description": "仍纳入比较，但在结果中加注覆盖度未核实的局限。",
+                "answer": "A医院2022年仍纳入覆盖度比较，但在结果中加注覆盖度未核实的局限。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 6477,
+        "planId": "d02b8dc3-774b-483e-8470-dbbd0a0be500",
+        "planningContext": {
+          "contextId": "f0815363-c536-4f52-ad0c-78b9a8f078b0",
+          "version": "sha256:6d3f96777d1cd96da49371ea759fd8cbb7eb5579163c3b303abab8930e64ee7f"
+        },
+        "expiresAt": "2026-10-07T08:13:12.977059900Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "d7601bb3-ff1c-4f17-a612-a25ad9021cc7",
+          "elapsedMs": 73
+        },
+        {
+          "label": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "3e00f3a5-fbd9-46a3-9dfd-f4a14335e94b",
+          "elapsedMs": 6515
+        }
+      ]
+    }
+  },
+  {
+    "run": "24",
+    "evidence": {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "startedAt": "2026-10-07T07:43:19.548Z",
+      "prepared": {
+        "contextId": "f74fc471-82a6-46cf-8096-f14d1da51df0",
+        "version": "sha256:6d3f96777d1cd96da49371ea759fd8cbb7eb5579163c3b303abab8930e64ee7f",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/病案数据字典.md"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/病案数据字典.md：Markdown 文档摘要：地区：示范市。；分析工具：Python pandas。；日期格式：YYYY-MM-DD。；完整性指标分母与一致性指标分母尚需分别确定。；建议阈值不代表现行规则。；业务摘录：[片段 1/1] 地区：示范市。 对象：A医院及B医院2022-2025年出院病案首页。 数据格式：CSV。 分析工具：Python pandas。 字段：record_id、hospital、admission_date、discharge_date、age、gender_code、principal_diagnosis、length_of_stay、total_cost、import_version。 日期格式：YYYY-MM-DD。 UNKNOWN为性别代码中的数据状态。 A医院2022年覆盖度未核实。 完整性指标分母与一致性指标分母尚需分别确定。 不得把缺失住院日当0。 建议阈值不代表现行规则。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "REGION",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "地区：示范市"
+            },
+            {
+              "id": "F02",
+              "category": "DATA_FORMAT",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "数据格式：CSV"
+            },
+            {
+              "id": "F03",
+              "category": "ANALYSIS_TOOL",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "分析工具：Python pandas"
+            },
+            {
+              "id": "F04",
+              "category": "DATA_FORMAT",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "日期格式：YYYY-MM-DD"
+            },
+            {
+              "id": "F05",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "A医院2022年覆盖度未核实"
+            },
+            {
+              "id": "F06",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "完整性指标分母与一致性指标分母尚需分别确定"
+            },
+            {
+              "id": "F07",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "不得把缺失住院日当0"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/病案数据字典.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/病案数据字典.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n地区：示范市。对象：A医院及B医院2022-2025年出院病案首页。数据格式：CSV。分析工具：Python pandas。字段：record_id、hospital、admission_date、discharge_date、age、gender_code、principal_diagnosis、length_of_stay、total_cost、import_version。日期格式：YYYY-MM-DD。UNKNOWN为性别代码中的数据状态。A医院2022年覆盖度未核实。完整性指标分母与一致性指标分母尚需分别确定。不得把缺失住院日当0。建议阈值不代表现行规则。",
+              "summary": "Markdown 文档摘要：地区：示范市。；分析工具：Python pandas。；日期格式：YYYY-MM-DD。；完整性指标分母与一致性指标分母尚需分别确定。；建议阈值不代表现行规则。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T08:13:19.580581800Z",
+        "latencyMs": 22
+      },
+      "plan": {
+        "summary": "已理解需制定病案首页数据质量研究方法方案，先交付方法设计，不撰写完整论文或编造结果。需确认影响指标口径和结果解释的未决参数。",
+        "questions": [
+          {
+            "id": "missing_denominator",
+            "question": "缺失值相关指标（如字段缺失率）的分母应如何定义？",
+            "hint": "不同指标分母可能不同，需分别确定，否则无法计算缺失率。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "all_valid_records",
+                "label": "所有有效出院记录",
+                "description": "分母为所有有效出院记录（排除重复等无效记录）。",
+                "answer": "缺失值指标分母为所有有效出院记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "records_with_field_expected",
+                "label": "应包含该字段的记录",
+                "description": "分母为根据业务规则应包含该字段的记录（如必填字段）。",
+                "answer": "缺失值指标分母为根据业务规则应包含该字段的记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "per_field_definition",
+                "label": "按字段分别定义",
+                "description": "不同字段根据其业务要求分别定义分母。",
+                "answer": "缺失值指标分母按字段分别定义，在指标表中明确。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "consistency_denominator",
+            "question": "跨字段逻辑一致性指标（如日期顺序错误）的分母应如何定义？",
+            "hint": "需与缺失值指标分母区分，否则无法计算一致性错误率。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "all_valid_records",
+                "label": "所有有效出院记录",
+                "description": "分母为所有有效出院记录。",
+                "answer": "一致性指标分母为所有有效出院记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "records_with_fields_present",
+                "label": "相关字段均非缺失的记录",
+                "description": "分母为参与一致性检查的字段均非缺失的记录。",
+                "answer": "一致性指标分母为参与一致性检查的字段均非缺失的记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "per_rule_definition",
+                "label": "按规则分别定义",
+                "description": "不同一致性规则根据其适用条件分别定义分母。",
+                "answer": "一致性指标分母按规则分别定义，在指标表中明确。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "imputation_decision",
+            "question": "对于缺失值，是否采用插补方法？",
+            "hint": "插补会影响指标计算和结果解释，需明确是否采用及采用何种方法。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "no_imputation",
+                "label": "不插补",
+                "description": "缺失值保持缺失，不进行任何插补。",
+                "answer": "不采用插补，缺失值保持缺失。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "simple_imputation",
+                "label": "简单插补",
+                "description": "采用均值、中位数或众数等简单方法插补。",
+                "answer": "采用简单插补方法（如均值、中位数、众数）。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "multiple_imputation",
+                "label": "多重插补",
+                "description": "采用多重插补方法。",
+                "answer": "采用多重插补方法。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "per_indicator_decision",
+                "label": "按指标分别决定",
+                "description": "不同指标根据其分析需求分别决定是否插补及方法。",
+                "answer": "按指标分别决定是否插补及插补方法，在方案中明确。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "a_hospital_2022_coverage",
+            "question": "A医院2022年的数据覆盖度如何？",
+            "hint": "覆盖度影响年度比较和结果解释，需明确是否完整或存在缺失。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "覆盖全部出院记录",
+              "覆盖部分月份（如1-6月）",
+              "覆盖度未知，需进一步核实"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "latencyMs": 9115,
+        "planId": "724caae9-5c71-46f8-b592-f109b2a0e80c",
+        "planningContext": {
+          "contextId": "f74fc471-82a6-46cf-8096-f14d1da51df0",
+          "version": "sha256:6d3f96777d1cd96da49371ea759fd8cbb7eb5579163c3b303abab8930e64ee7f"
+        },
+        "expiresAt": "2026-10-07T08:13:19.580581800Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "9e78a148-bf45-458a-8d3b-b87424f83929",
+          "elapsedMs": 50
+        },
+        {
+          "label": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "7b8ce33c-5b57-440c-ae71-86bc747481ba",
+          "elapsedMs": 9152
+        }
+      ]
+    }
+  },
+  {
+    "run": "25",
+    "evidence": {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "startedAt": "2026-10-07T08:16:05.915Z",
+      "prepared": {
+        "contextId": "b28cd83f-31f0-439a-a3e1-4ef8ec65a71a",
+        "version": "sha256:6d3f96777d1cd96da49371ea759fd8cbb7eb5579163c3b303abab8930e64ee7f",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/病案数据字典.md"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/病案数据字典.md：Markdown 文档摘要：地区：示范市。；分析工具：Python pandas。；日期格式：YYYY-MM-DD。；完整性指标分母与一致性指标分母尚需分别确定。；建议阈值不代表现行规则。；业务摘录：[片段 1/1] 地区：示范市。 对象：A医院及B医院2022-2025年出院病案首页。 数据格式：CSV。 分析工具：Python pandas。 字段：record_id、hospital、admission_date、discharge_date、age、gender_code、principal_diagnosis、length_of_stay、total_cost、import_version。 日期格式：YYYY-MM-DD。 UNKNOWN为性别代码中的数据状态。 A医院2022年覆盖度未核实。 完整性指标分母与一致性指标分母尚需分别确定。 不得把缺失住院日当0。 建议阈值不代表现行规则。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "REGION",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "地区：示范市"
+            },
+            {
+              "id": "F02",
+              "category": "DATA_FORMAT",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "数据格式：CSV"
+            },
+            {
+              "id": "F03",
+              "category": "ANALYSIS_TOOL",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "分析工具：Python pandas"
+            },
+            {
+              "id": "F04",
+              "category": "DATA_FORMAT",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "日期格式：YYYY-MM-DD"
+            },
+            {
+              "id": "F05",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "A医院2022年覆盖度未核实"
+            },
+            {
+              "id": "F06",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "完整性指标分母与一致性指标分母尚需分别确定"
+            },
+            {
+              "id": "F07",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "不得把缺失住院日当0"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/病案数据字典.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/病案数据字典.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n地区：示范市。对象：A医院及B医院2022-2025年出院病案首页。数据格式：CSV。分析工具：Python pandas。字段：record_id、hospital、admission_date、discharge_date、age、gender_code、principal_diagnosis、length_of_stay、total_cost、import_version。日期格式：YYYY-MM-DD。UNKNOWN为性别代码中的数据状态。A医院2022年覆盖度未核实。完整性指标分母与一致性指标分母尚需分别确定。不得把缺失住院日当0。建议阈值不代表现行规则。",
+              "summary": "Markdown 文档摘要：地区：示范市。；分析工具：Python pandas。；日期格式：YYYY-MM-DD。；完整性指标分母与一致性指标分母尚需分别确定。；建议阈值不代表现行规则。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T08:46:05.995418200Z",
+        "latencyMs": 71
+      },
+      "plan": {
+        "summary": "已理解目标：为A、B两医院2022—2025年出院病案首页制定数据质量研究方法方案，围绕缺失、格式不合法、跨字段逻辑不一致三类问题，按年度和医院分别呈现，只交付方法设计，不编造结果。仍需确认少数会直接影响指标口径和比较结论的未决参数。",
+        "questions": [
+          {
+            "id": "q_completeness_denominator",
+            "question": "完整性指标（如字段缺失率）的分母应如何确定？",
+            "hint": "分母选择会直接改变缺失率数值和医院间比较结论，且资料明确完整性指标分母尚需确定。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "all_valid_discharge",
+                "label": "全部有效出院记录",
+                "description": "以去重后纳入研究的全部有效出院记录为分母，缺失记录本身仍计入分母。",
+                "answer": "完整性指标分母采用去重后纳入研究的全部有效出院记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "field_applicable",
+                "label": "按字段适用记录",
+                "description": "仅以该字段理论上应存在的记录为分母，不适用记录排除。",
+                "answer": "完整性指标分母按每个字段的适用记录分别确定，不适用记录排除在分母外。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "per_indicator_defined",
+                "label": "逐指标另行定义",
+                "description": "不统一规定，每个完整性指标在指标表中单独写明分母。",
+                "answer": "完整性指标不统一规定分母，每个指标在指标表中单独写明其分母。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "q_consistency_denominator",
+            "question": "跨字段逻辑一致性指标（如出院日早于入院日）的分母应如何确定？",
+            "hint": "资料明确一致性指标分母尚需单独确定，不能由完整性指标分母推断。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "records_with_both_dates",
+                "label": "两字段均有效的记录",
+                "description": "仅当参与逻辑比较的字段均非缺失且格式合法时，该记录才进入一致性指标分母。",
+                "answer": "跨字段逻辑一致性指标分母采用参与比较的字段均非缺失且格式合法的记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "all_valid_discharge",
+                "label": "全部有效出院记录",
+                "description": "所有纳入研究的有效出院记录均进入分母，缺失或格式不合法按不一致处理。",
+                "answer": "跨字段逻辑一致性指标分母采用全部有效出院记录，缺失或格式不合法按不一致处理。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "per_rule_defined",
+                "label": "逐规则另行定义",
+                "description": "不统一规定，每条一致性规则在规则表中单独写明分母。",
+                "answer": "跨字段逻辑一致性指标不统一规定分母，每条规则在规则表中单独写明其分母。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "q_missing_imputation",
+            "question": "对缺失病例是否采用插补？",
+            "hint": "是否插补会影响缺失率、有效分母和后续比较结果，且资料明确尚未决定，不同指标可能不同。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "no_imputation",
+                "label": "不插补",
+                "description": "缺失保持缺失状态，所有指标基于可用记录计算，不填充任何缺失值。",
+                "answer": "不采用插补，缺失保持缺失状态，所有指标基于可用记录计算。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "impute_by_indicator",
+                "label": "按指标分别决定",
+                "description": "不同指标可采用不同处理，在指标表中逐项说明是否插补及方法。",
+                "answer": "是否插补按指标分别决定，在指标表中逐项说明每个指标是否插补及插补方法。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "impute_all",
+                "label": "统一插补",
+                "description": "对所有缺失字段采用统一插补方法。",
+                "answer": "对所有缺失字段采用统一插补方法。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "q_a_hospital_2022_coverage",
+            "question": "A医院2022年的数据覆盖度应如何说明？",
+            "hint": "A医院2022年覆盖度尚未核实，且不能被B医院已知信息替代，该状态会影响年度比较的解读。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "mark_unverified",
+                "label": "标记为未核实",
+                "description": "在方法方案中明确A医院2022年覆盖度未核实，不纳入覆盖度比较或仅作提示。",
+                "answer": "A医院2022年覆盖度标记为未核实，不纳入覆盖度比较，仅在局限中说明。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "exclude_year",
+                "label": "排除该年",
+                "description": "A医院2022年数据不纳入年度比较，仅说明排除原因。",
+                "answer": "A医院2022年数据不纳入年度比较，仅说明排除原因为覆盖度未核实。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "include_with_note",
+                "label": "纳入但注明",
+                "description": "仍纳入年度比较，但在结果中注明覆盖度未核实。",
+                "answer": "A医院2022年数据仍纳入年度比较，但在结果中注明覆盖度未核实。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 8094,
+        "planId": "ff249a4c-fde7-4512-94b5-ea0ce51d8da4",
+        "planningContext": {
+          "contextId": "b28cd83f-31f0-439a-a3e1-4ef8ec65a71a",
+          "version": "sha256:6d3f96777d1cd96da49371ea759fd8cbb7eb5579163c3b303abab8930e64ee7f"
+        },
+        "expiresAt": "2026-10-07T08:46:05.995418200Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "c01d3c37-0207-41d2-8b66-3b67e114dfec",
+          "elapsedMs": 168
+        },
+        {
+          "label": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "3c791e9b-e4e2-4140-8d26-d2a2781e835d",
+          "elapsedMs": 8218
+        }
+      ]
+    }
+  },
+  {
+    "run": "25",
+    "evidence": {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "startedAt": "2026-10-07T08:16:14.326Z",
+      "prepared": {
+        "contextId": "d1586be3-fbb0-4c62-b818-b58807e28cbd",
+        "version": "sha256:6d3f96777d1cd96da49371ea759fd8cbb7eb5579163c3b303abab8930e64ee7f",
+        "digest": {
+          "description": "",
+          "technologies": [],
+          "dependencies": [],
+          "directoryOverview": [
+            "docs/",
+            "docs/病案数据字典.md"
+          ],
+          "fileSummaries": [
+            "[PROJECT_DOCUMENT] docs/病案数据字典.md：Markdown 文档摘要：地区：示范市。；分析工具：Python pandas。；日期格式：YYYY-MM-DD。；完整性指标分母与一致性指标分母尚需分别确定。；建议阈值不代表现行规则。；业务摘录：[片段 1/1] 地区：示范市。 对象：A医院及B医院2022-2025年出院病案首页。 数据格式：CSV。 分析工具：Python pandas。 字段：record_id、hospital、admission_date、discharge_date、age、gender_code、principal_diagnosis、length_of_stay、total_cost、import_version。 日期格式：YYYY-MM-DD。 UNKNOWN为性别代码中的数据状态。 A医院2022年覆盖度未核实。 完整性指标分母与一致性指标分母尚需分别确定。 不得把缺失住院日当0。 建议阈值不代表现行规则。"
+          ],
+          "analysisStatus": "COMPLETE",
+          "analyzedFileCount": 1,
+          "warnings": [],
+          "factCards": [
+            {
+              "id": "F01",
+              "category": "REGION",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "地区：示范市"
+            },
+            {
+              "id": "F02",
+              "category": "DATA_FORMAT",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "数据格式：CSV"
+            },
+            {
+              "id": "F03",
+              "category": "ANALYSIS_TOOL",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "分析工具：Python pandas"
+            },
+            {
+              "id": "F04",
+              "category": "DATA_FORMAT",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "日期格式：YYYY-MM-DD"
+            },
+            {
+              "id": "F05",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "A医院2022年覆盖度未核实"
+            },
+            {
+              "id": "F06",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "完整性指标分母与一致性指标分母尚需分别确定"
+            },
+            {
+              "id": "F07",
+              "category": "BUSINESS_RULE",
+              "origin": "PROJECT_DOCUMENT",
+              "sourcePath": "docs/病案数据字典.md",
+              "evidence": "不得把缺失住院日当0"
+            }
+          ]
+        },
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "docs/",
+            "docs/病案数据字典.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "docs/病案数据字典.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n地区：示范市。对象：A医院及B医院2022-2025年出院病案首页。数据格式：CSV。分析工具：Python pandas。字段：record_id、hospital、admission_date、discharge_date、age、gender_code、principal_diagnosis、length_of_stay、total_cost、import_version。日期格式：YYYY-MM-DD。UNKNOWN为性别代码中的数据状态。A医院2022年覆盖度未核实。完整性指标分母与一致性指标分母尚需分别确定。不得把缺失住院日当0。建议阈值不代表现行规则。",
+              "summary": "Markdown 文档摘要：地区：示范市。；分析工具：Python pandas。；日期格式：YYYY-MM-DD。；完整性指标分母与一致性指标分母尚需分别确定。；建议阈值不代表现行规则。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "expiresAt": "2026-10-07T08:46:14.409803300Z",
+        "latencyMs": 96
+      },
+      "plan": {
+        "summary": "已理解需要制定病案首页数据质量研究方法方案，先交付方法设计，不撰写完整论文或编造结果。仍需确认影响指标口径和结果解释的少数未决参数。",
+        "questions": [
+          {
+            "id": "missing_denominator",
+            "question": "缺失值相关指标（如缺失率）的分母应如何定义？",
+            "hint": "不同指标可能采用不同分母，需分别明确，否则无法计算和比较。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "all_valid_records",
+                "label": "所有有效出院记录",
+                "description": "分母为所有通过基本有效性检查的出院记录，包括存在缺失值的记录。",
+                "answer": "缺失值相关指标的分母为所有有效出院记录（即通过基本有效性检查的记录），包括存在缺失值的记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "all_records",
+                "label": "所有原始记录",
+                "description": "分母为导入的所有出院记录，不排除任何记录。",
+                "answer": "缺失值相关指标的分母为所有原始出院记录，不排除任何记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "field_specific",
+                "label": "按字段分别定义",
+                "description": "每个字段的缺失率分母为该字段适用的记录范围，例如仅对必填字段计算。",
+                "answer": "缺失值相关指标的分母按字段分别定义：每个字段的缺失率分母为该字段适用的记录范围。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "logic_inconsistency_denominator",
+            "question": "跨字段逻辑不一致指标的分母应如何定义？",
+            "hint": "逻辑不一致检查通常只适用于同时具备相关字段的记录，需明确分母范围。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "records_with_fields",
+                "label": "具备相关字段的记录",
+                "description": "分母为同时具备进行逻辑检查所需字段的记录，缺失任一字段的记录不纳入。",
+                "answer": "跨字段逻辑不一致指标的分母为同时具备进行逻辑检查所需字段的记录，缺失任一字段的记录不纳入。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "all_valid_records",
+                "label": "所有有效出院记录",
+                "description": "分母为所有通过基本有效性检查的出院记录，包括缺失相关字段的记录。",
+                "answer": "跨字段逻辑不一致指标的分母为所有有效出院记录，包括缺失相关字段的记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "all_records",
+                "label": "所有原始记录",
+                "description": "分母为导入的所有出院记录，不排除任何记录。",
+                "answer": "跨字段逻辑不一致指标的分母为所有原始出院记录，不排除任何记录。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "imputation_method",
+            "question": "对于缺失值，是否采用插补？如果采用，具体方法是什么？",
+            "hint": "插补会影响后续统计结果，需明确是否插补及方法，且不同指标可能不同。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "no_imputation",
+                "label": "不插补",
+                "description": "保留缺失值，仅在分析时按指标定义处理（如排除或单独报告）。",
+                "answer": "不进行插补，保留缺失值，仅在分析时按指标定义处理。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "simple_imputation",
+                "label": "简单插补",
+                "description": "使用均值、中位数或众数等简单方法插补，需指定具体方法和适用字段。",
+                "answer": "采用简单插补方法（如均值、中位数或众数），具体方法和适用字段需进一步明确。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "multiple_imputation",
+                "label": "多重插补",
+                "description": "使用多重插补方法，需指定模型和软件实现。",
+                "answer": "采用多重插补方法，具体模型和软件实现需进一步明确。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "a_hospital_2022_coverage",
+            "question": "A医院2022年的数据覆盖度如何？",
+            "hint": "覆盖度影响年度比较和结果解释，需明确是否完整或存在缺失。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "A医院2022年数据覆盖全部出院病例",
+              "A医院2022年数据仅覆盖部分月份或科室",
+              "A医院2022年数据覆盖度未知，需在方案中说明"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "RESEARCH_ANALYSIS",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-v4-pro",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4-Pro-0813"
+        },
+        "latencyMs": 10321,
+        "planId": "009386dd-274e-4382-a433-3fb92a84b106",
+        "planningContext": {
+          "contextId": "d1586be3-fbb0-4c62-b818-b58807e28cbd",
+          "version": "sha256:6d3f96777d1cd96da49371ea759fd8cbb7eb5579163c3b303abab8930e64ee7f"
+        },
+        "expiresAt": "2026-10-07T08:46:14.409803300Z"
+      },
+      "status": "COLLECTED",
+      "requests": [
+        {
+          "label": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan-prepare",
+          "path": "/api/v1/context/planning",
+          "status": 200,
+          "requestId": "492517ca-2d11-4efa-b966-eeabfe090e6d",
+          "elapsedMs": 164
+        },
+        {
+          "label": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan-plan",
+          "path": "/api/v1/optimizations/plan",
+          "status": 200,
+          "requestId": "e2d725f7-8d44-4c7d-83bb-e6fa57a614aa",
+          "elapsedMs": 10396
+        }
+      ]
+    }
+  }
+]
