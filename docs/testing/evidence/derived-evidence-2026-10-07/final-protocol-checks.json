@@ -1,0 +1,136 @@
+{
+  "capturedAt": "2026-10-07T05:28:32.838Z",
+  "input": "tmp/prompt-comparison/state-scope-real-20261007-14",
+  "records": [
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-direct",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 5915,
+      "ambiguities": 4,
+      "latencyMs": 21554,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan-final",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "optimizedCharacters": 6603,
+      "ambiguities": 4,
+      "latencyMs": 23095,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "confirmedMetricDoesNotRetainOldJointState": true,
+        "independentConsistencyRemainsPending": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-direct",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 3541,
+      "ambiguities": 4,
+      "latencyMs": 17061,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan-final",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "optimizedCharacters": 4960,
+      "ambiguities": 4,
+      "latencyMs": 27579,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "confirmedMetricDoesNotRetainOldJointState": true,
+        "independentConsistencyRemainsPending": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-plan-final",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "optimizedCharacters": 3176,
+      "ambiguities": 4,
+      "latencyMs": 5694,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "independentHospitalParameters": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-plan-final",
+      "caseId": "RC-HOSP-M",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "optimizedCharacters": 2763,
+      "ambiguities": 4,
+      "latencyMs": 7114,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "independentHospitalParameters": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    }
+  ],
+  "successfulCalls": 6,
+  "failedCalls": 0,
+  "passedProtocolChecks": 6,
+  "releaseApproval": false
+}

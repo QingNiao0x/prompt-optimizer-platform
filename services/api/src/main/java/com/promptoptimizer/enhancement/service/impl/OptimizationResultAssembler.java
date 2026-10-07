@@ -239,6 +239,15 @@ public class OptimizationResultAssembler {
         ProviderPrerequisiteCompactor.compact(sections, merged.executionPrerequisites(), decisions, rawPrompt);
         unresolvedContract.compactPendingStatements(sections);
         appendExecutionPrerequisites(sections, merged.executionPrerequisites(), UnresolvedDecisionContract.DELIVERY_GUIDANCE);
+        if (unresolvedContract.hasNamedParameters()) {
+            PromptSection output = sections.get(PromptSectionType.OUTPUT);
+            String parameterEvidence = unresolvedContract.independentEvidenceGuidance();
+            // 参数状态与原选值随复制正文交付，不依赖页面问答；资料依据仍不提升为用户确认。
+            if (!parameterEvidence.isBlank() && !output.content().contains(parameterEvidence)) {
+                sections.put(PromptSectionType.OUTPUT, new PromptSection(output.type(), output.title(),
+                        output.content() + "\n\n" + parameterEvidence));
+            }
+        }
         // 未决清单也是正文中的权威规则来源；先落入正文再查缺补齐，避免同一禁止规则被追加两遍。
         appendExplicitRules(sections, ProviderPrerequisiteCompactor.uncoveredRules(explicitRules,
                 merged.executionPrerequisites(), decisions, rawPrompt));

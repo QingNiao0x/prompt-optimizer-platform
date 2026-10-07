@@ -31,6 +31,8 @@ final class UnresolvedDecisionContract {
     private static final Pattern ASSERTED_PARAMETER = Pattern.compile(
             "(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定)([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度)"
                     + "|([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度)(?:已|已经)(?:由用户)?(?:确认|确定|选定)");
+    private static final Pattern CONFIRMED_CELL = Pattern.compile("^(?:用户)?(?:已确认|已由用户确认|分母已确认)"
+            + "(?:分母|口径|阈值|观察窗口|覆盖度)?(?:$|[（(：:，,；;].*)");
     static final String DELIVERY_GUIDANCE = "同一未决决定在正文、表格、公式及伪代码中保持一致："
             + "相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；"
             + "依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。"
@@ -39,14 +41,26 @@ final class UnresolvedDecisionContract {
             + "原定指标表与必要伪代码仍须交付，逐指标判断参数状态，只暂停依赖未决参数的计算，其余步骤继续完成。";
 
     private record Parameter(String subject, String property) { }
+    private record ParameterValue(Parameter parameter, String value) { }
     private final List<Parameter> parameters;
     private final List<Parameter> confirmedParameters;
+    private final List<ParameterValue> confirmedValues;
+    private final List<ParameterValue> materialValues;
     private final boolean twoNamedHospitals;
+    private final boolean indicatorTableRequested;
+    private final boolean formatParameterNotEvidenced;
 
-    private UnresolvedDecisionContract(List<Parameter> parameters, List<Parameter> confirmedParameters, boolean twoNamedHospitals) {
+    private UnresolvedDecisionContract(List<Parameter> parameters, List<ParameterValue> confirmedValues,
+                                       List<ParameterValue> materialValues, boolean twoNamedHospitals,
+                                       boolean indicatorTableRequested, boolean formatIndicatorsRequested) {
         this.parameters = List.copyOf(parameters);
-        this.confirmedParameters = List.copyOf(confirmedParameters);
+        this.confirmedValues = List.copyOf(confirmedValues);
+        this.confirmedParameters = confirmedValues.stream().map(ParameterValue::parameter).distinct().toList();
+        this.materialValues = List.copyOf(materialValues);
         this.twoNamedHospitals = twoNamedHospitals;
+        this.indicatorTableRequested = indicatorTableRequested;
+        this.formatParameterNotEvidenced = formatIndicatorsRequested && java.util.stream.Stream.concat(confirmedValues.stream(), materialValues.stream())
+                .noneMatch(value -> value.parameter().subject().contains("格式"));
     }
 
     /** 原需求及有效回答分别建立未决状态；另一指标的已确认分母不能消除当前指标的未知。 */
@@ -63,15 +77,26 @@ final class UnresolvedDecisionContract {
         var confirmedSources = new ArrayList<String>();
         if (raw != null) confirmedSources.add(raw);
         decisions.knownDecisions().forEach(value -> confirmedSources.add(value.answer()));
-        List<Parameter> confirmed = confirmedSources.stream()
-                .flatMap(value -> currentParameters(value).stream()).distinct().toList();
+        var currentValues = new java.util.LinkedHashMap<Parameter, ParameterValue>();
+        // 原始要求先登记，服务端有效回答后更新；同名旧值不能在当前视图再占一行，其他对象不受影响。
+        confirmedSources.stream().flatMap(value -> currentParameterValues(value).stream())
+                .forEach(value -> currentValues.put(value.parameter(), value));
+        List<ParameterValue> confirmedValues = List.copyOf(currentValues.values());
+        List<Parameter> confirmed = confirmedValues.stream().map(ParameterValue::parameter).distinct().toList();
         // 资料中的并列未知可能只被回答了一项：按完整对象＋属性更新当前视图，不修改证据或替另一项确认。
         List<Parameter> parameters = sources.stream().flatMap(value -> DECLARATION.matcher(value).results())
                 .map(match -> canonical(match.group(1))).flatMap(value -> namedParameters(value).stream()).distinct()
                 .filter(parameter -> !confirmed.contains(parameter)).toList();
-        return new UnresolvedDecisionContract(parameters, confirmed,
+        // 资料提供某一口径，不等于用户确认了它；建议或待批准卡片只保留原证据，不生成当前口径行。
+        List<ParameterValue> materialValues = evidence.stream()
+                .filter(value -> !value.matches("(?s).*(?:建议|候选|未批准|尚未批准).*$"))
+                .flatMap(value -> currentParameterValues(value).stream())
+                .filter(value -> !parameters.contains(value.parameter()) && !confirmed.contains(value.parameter())).distinct().toList();
+        return new UnresolvedDecisionContract(parameters, confirmedValues, materialValues,
                 raw != null && raw.contains("甲院和乙院") && java.util.stream.Stream.concat(java.util.stream.Stream.of(raw), evidence.stream())
-                        .noneMatch(value -> value.matches("(?s).*(?:丙院|丁院|其他医院|[A-Z]医院).*")));
+                        .noneMatch(value -> value.matches("(?s).*(?:丙院|丁院|其他医院|[A-Z]医院).*")),
+                raw != null && raw.contains("指标表") && !raw.matches("(?s).*(?:不交付|不输出|不需要|不要)(?:任何)?指标表.*"),
+                raw != null && raw.matches("(?s).*(?:格式不合法|格式异常|格式错误|格式正确率|格式合法率).*"));
     }
 
     /** 两院概述仅在两院各自参数已独立登记时被覆盖；新年份、新院及新增条件仍保留原提醒。 */
@@ -90,8 +115,8 @@ final class UnresolvedDecisionContract {
     }
 
     /** 只有本次明确要求及有效答案能够产生“用户已确认”范围，资料不能自行充当用户授权。 */
-    private static List<Parameter> currentParameters(String text) {
-        var result = new ArrayList<Parameter>();
+    private static List<ParameterValue> currentParameterValues(String text) {
+        var result = new ArrayList<ParameterValue>();
         for (String sentence : text.split("[。；;\\r\\n]+")) {
             String clause = canonical(sentence).replaceFirst("^[-*#]+", "")
                     .replaceFirst("^(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定)", "");
@@ -101,7 +126,14 @@ final class UnresolvedDecisionContract {
                         || choices.group().matches(".*(?:尚未|待确认|未知|未决|建议|候选|例如|示例).*")) continue;
                 String subject = choices.group(1).replaceFirst("的$", "");
                 if (subject.matches(".*(?:与|和|及|其他|其余|本次只|仅).*")) continue;
-                result.add(new Parameter(subjectKey(subject), choices.group(2)));
+                String value = choices.group(3);
+                // 选值后的纳入／排除限定属于这个口径；不将随后独立的指标选择或未来条件拼入当前取值。
+                var qualifiers = Pattern.compile("^[，,]((?:包括|包含|不包括|不含|排除|仅含)[^，,。；;]+)")
+                        .matcher(clause.substring(choices.end()));
+                if (qualifiers.find() && !qualifiers.group(1).matches(".*(?:如果|以后|若|候选|尚未|待确认).*")) {
+                    value += "，" + qualifiers.group(1);
+                }
+                result.add(new ParameterValue(new Parameter(subjectKey(subject), choices.group(2)), value));
             }
         }
         return result;
@@ -204,7 +236,36 @@ final class UnresolvedDecisionContract {
         String confirmed = confirmedParameters.stream().map(parameter -> parameter.subject() + "的" + parameter.property())
                 .collect(java.util.stream.Collectors.joining("、"));
         return DELIVERY_GUIDANCE + (named.isBlank() ? "" : "本次尚未确定的参数：" + named + "。")
-                + (confirmed.isBlank() ? "" : "本次需求或有效回答明确的参数范围仅包含：" + confirmed + "；不得扩大到其他指标。");
+                + (confirmed.isBlank() ? "" : "本次需求或有效回答明确的参数范围仅包含：" + confirmed + "；不得扩大到其他指标。")
+                + independentEvidenceGuidance();
+    }
+
+    /** 只有原定指标表增加逐行依据要求；参数视图是执行依据，不新增临床、法律或其他指标任务。 */
+    String independentEvidenceGuidance() {
+        return (indicatorTableRequested ? "新增指标必须独立列出口径依据及状态：无独立依据时，具体口径只能列为建议，执行参数保持待确认；"
+                + "已知字段格式只证明校验规则，不能确认格式正确率等新增指标的分母。"
+                + "指标表逐行包含指标、分子、分母或所需参数、适用记录、口径依据、状态；"
+                + "已具备规则但未确定统计参数的行仍交付规则与待确认参数，不省略指标表。" : "")
+                + (indicatorTableRequested && formatParameterNotEvidenced ? "本次参数依据没有登记格式类指标的独立分母；"
+                + "新增格式率指标的执行分母填写“待确认”，依据列写“本次材料未提供独立口径”，不能借日期格式或完整性分母标为已确认。" : "")
+                + parameterStateTable();
+    }
+
+    /** 当前参数视图随复制正文保留；完整名称与原选值一起提供，来源状态不互相升级。 */
+    private String parameterStateTable() {
+        var rows = new ArrayList<String>();
+        confirmedValues.forEach(value -> rows.add(parameterRow(value.parameter(), value.value(), "用户明确（原始需求或本次回答）")));
+        materialValues.forEach(value -> rows.add(parameterRow(value.parameter(), value.value(), "资料明确；不是用户确认")));
+        parameters.forEach(value -> rows.add(parameterRow(value, "待确认", "未决；无当前选值")));
+        if (rows.isEmpty()) return "";
+        return "\n\n当前参数依据（用于生成指标表，不代替指标表）：\n"
+                + "| 参数 | 当前口径 | 状态与依据 |\n| --- | --- | --- |\n" + String.join("\n", rows);
+    }
+
+    /** 仅转义表格分隔符，保留对象、年份、条件与完整取值，不从相同类别推断其他参数。 */
+    private static String parameterRow(Parameter parameter, String value, String state) {
+        return "| " + parameter.subject() + "的" + parameter.property() + " | "
+                + value.replace("|", "&#124;") + " | " + state + " |";
     }
 
     /** 模型自己的确定口径与明确未决状态冲突时进入既有修复预算，不靠附加未知尾注放行。 */
@@ -216,7 +277,8 @@ final class UnresolvedDecisionContract {
             if (text.startsWith("|")) {
                 List<String> cells = cells(text);
                 if (cells.stream().anyMatch(value -> value.matches("(?:分母|阈值|观察窗口|覆盖度)(?:口径|定义)?"))) {
-                    header = cells.stream().map(value -> value.replaceFirst("(?<=分母|阈值|观察窗口|覆盖度)(?:口径|定义)$", "")).toList();
+                    header = cells.stream().map(value -> value.equals("指标名称") ? "指标"
+                            : value.replaceFirst("(?<=分母|阈值|观察窗口|覆盖度)(?:口径|定义)$", "")).toList();
                     continue;
                 }
                 if (text.matches("[|:\\-\\s]+") || header.isEmpty() || cells.size() != header.size()) continue;
@@ -229,7 +291,7 @@ final class UnresolvedDecisionContract {
                 }
                 // 状态列的“已确认”必须有同指标、同属性的本次决定，不能借另一行的确认。
                 int subjectColumn = header.indexOf("指标");
-                boolean claimsConfirmed = cells.stream().anyMatch(cell -> cell.matches("(?:用户)?已确认|分母已确认|已由用户确认"));
+                boolean claimsConfirmed = cells.stream().anyMatch(cell -> CONFIRMED_CELL.matcher(cell).matches());
                 if (subjectColumn >= 0 && claimsConfirmed) {
                     for (String property : List.of("分母", "阈值", "观察窗口", "覆盖度")) {
                         if (header.contains(property) && !confirmedParameters.contains(new Parameter(subjectKey(cells.get(subjectColumn)), property))) reject(field, "TABLE_CONFIRMATION_SCOPE");
