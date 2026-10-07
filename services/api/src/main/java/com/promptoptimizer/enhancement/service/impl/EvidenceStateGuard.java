@@ -31,6 +31,8 @@ final class EvidenceStateGuard {
                     + "|未说明|未提供|未核实|未确定|尚未确定|暂不确定|待确认|待定|[？?]");
     private static final Pattern EXPLICIT_PARAMETER_CHOICE = Pattern.compile(
             "^(?:本次|最终)?([^，,。；;\\r\\n]{2,30}?)(?:明确)?(?:采用|使用|选定)([^，,。；;\\r\\n]+)$");
+    private static final Pattern FACT_LIST_MARKER = Pattern.compile("其中明确[：:]?");
+    private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
 
     private EvidenceStateGuard() { }
 
@@ -56,11 +58,61 @@ final class EvidenceStateGuard {
                 // 未具名参数仍须与原题匹配；不得把通用“采用某口径”关联到另一指标或另一院。
                 boolean namedParameter = field.matches("[^与和及、，,。；;]{2,60}(?:分母|阈值|观察窗口|覆盖度)");
                 if (!namedParameter && !parameterName(decision.question()).contains(parameterName(field))) continue;
-                updated = reconcileCoordinatedState(updated, field);
-                updated = reconcileStandaloneState(updated, field);
+                updated = reconcileCurrentParameterState(updated, field);
             }
         }
         return updated;
+    }
+
+    /**
+     * 只更新当前叙述，引用块与代码围栏逐字保留；保留换行方式，不将代码中的示例升级为执行决定。
+     * 围栏结束标记必须同类且不短于开始标记，不能被围栏内的更短反引号提前结束保护。
+     */
+    private static String reconcileCurrentParameterState(String text, String field) {
+        StringBuilder result = new StringBuilder(text.length());
+        char fenceType = 0;
+        int fenceLength = 0;
+        for (String line : text.split("(?<=\\n)", -1)) {
+            var fence = FENCE.matcher(line.strip());
+            if (fence.matches()) {
+                String marker = fence.group(1);
+                if (fenceType == 0) {
+                    fenceType = marker.charAt(0);
+                    fenceLength = marker.length();
+                } else if (marker.charAt(0) == fenceType && marker.length() >= fenceLength
+                        && fence.group(2).isBlank()) {
+                    fenceType = 0;
+                }
+                result.append(line);
+                continue;
+            }
+            if (fenceType != 0 || line.stripLeading().startsWith(">")) {
+                result.append(line);
+                continue;
+            }
+            String current = reconcileCoordinatedState(line, field);
+            current = reconcileEnumeratedState(current, field);
+            result.append(reconcileStandaloneState(current, field));
+        }
+        return result.toString();
+    }
+
+    /**
+     * 平铺摘要的顿号只是事实之间的分隔，不扩大为任意叙述的参数边界。
+     * 仅接受无共享主体的“其中明确”列表；来源前缀具名机构或年份时保留未知，不能借用全局确认。
+     */
+    private static String reconcileEnumeratedState(String text, String field) {
+        var marker = FACT_LIST_MARKER.matcher(text);
+        if (!marker.find() || text.matches("(?s).*(?:如果|若|假如|假设|例如|示例|引用|[“”\\\"`]).*")) return text;
+        String prefix = text.substring(0, marker.start());
+        // 未知叙述前缀不推断为中性来源；路径中的机构和年份也不能解除其限定范围。
+        if (!prefix.matches("\\s*(?:数据字典来源[：:][^；;\\r\\n]+[；;]\\s*)?")
+                || prefix.matches("(?s).*(?:院|机构|中心|部门|团队|学校|公司|集团|[12][0-9]{3}年).*")) return text;
+        String list = text.substring(marker.end());
+        String current = java.util.Arrays.stream(list.split("、", -1))
+                .map(item -> reconcileCoordinatedState(item, field))
+                .collect(java.util.stream.Collectors.joining("、"));
+        return text.substring(0, marker.end()) + current;
     }
 
     /** 同名独立未知只更新当前断言；未来条件、示例和引用不随本次参数选值改变。 */
