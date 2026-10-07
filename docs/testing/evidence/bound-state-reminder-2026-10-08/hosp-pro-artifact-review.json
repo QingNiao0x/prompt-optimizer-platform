@@ -1,0 +1,320 @@
+{
+  "source": "tmp/prompt-output-evaluation/2026-10-07T18-07-29-448Z-a42cf0a9",
+  "records": [
+    {
+      "id": "RC-HOSP-M-plan-m1-r1",
+      "arm": "plan",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "ef2cb449937b3e66d8f3972661d701aece4bfdd4f15f5e6b5fa66126a8bec79f",
+      "nonHeadingTableCharacters": 1950,
+      "bodyCharactersExcludingOnlyIndicatorTables": 3760,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "甲院观察窗口内就诊数",
+            "甲院观察窗口内记录数",
+            "甲院观察窗口待确认",
+            "甲院记录",
+            "甲院观察窗口待确认",
+            "待确认"
+          ],
+          "quote": "| 甲院观察窗口内就诊数 | 甲院观察窗口内记录数 | 甲院观察窗口待确认 | 甲院记录 | 甲院观察窗口待确认 | 待确认 |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "乙院观察窗口内就诊数",
+            "乙院观察窗口内记录数",
+            "乙院观察窗口待确认",
+            "乙院记录",
+            "乙院观察窗口待确认",
+            "待确认"
+          ],
+          "quote": "| 乙院观察窗口内就诊数 | 乙院观察窗口内记录数 | 乙院观察窗口待确认 | 乙院记录 | 乙院观察窗口待确认 | 待确认 |"
+        },
+        {
+          "header": [
+            "指标",
+            "分母",
+            "是否排除缺失",
+            "是否排除取消",
+            "是否排除负值",
+            "状态"
+          ],
+          "cells": [
+            "甲院观察窗口内就诊数",
+            "不适用（计数指标）",
+            "不适用",
+            "不适用",
+            "不适用",
+            "待确认"
+          ],
+          "quote": "| 甲院观察窗口内就诊数 | 不适用（计数指标） | 不适用 | 不适用 | 不适用 | 待确认 |"
+        },
+        {
+          "header": [
+            "指标",
+            "分母",
+            "是否排除缺失",
+            "是否排除取消",
+            "是否排除负值",
+            "状态"
+          ],
+          "cells": [
+            "乙院观察窗口内就诊数",
+            "不适用（计数指标）",
+            "不适用",
+            "不适用",
+            "不适用",
+            "待确认"
+          ],
+          "quote": "| 乙院观察窗口内就诊数 | 不适用（计数指标） | 不适用 | 不适用 | 不适用 | 待确认 |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-plan-m2-r1",
+      "arm": "plan",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "7a5f5ef2db0e8a6cb395b9db8d0f997e1133fa904a6036e2fdcbe2b213d78d6a",
+      "nonHeadingTableCharacters": 4668,
+      "bodyCharactersExcludingOnlyIndicatorTables": 5476,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "挂号时间缺失率",
+            "缺失挂号时间记录数",
+            "status = seen 的记录数",
+            "status = seen",
+            "用户明确规则",
+            "已确认"
+          ],
+          "quote": "| 挂号时间缺失率 | 缺失挂号时间记录数 | status = seen 的记录数 | status = seen | 用户明确规则 | 已确认 |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "接诊时间缺失率",
+            "缺失接诊时间记录数",
+            "status = seen 的记录数",
+            "status = seen",
+            "用户明确规则",
+            "已确认"
+          ],
+          "quote": "| 接诊时间缺失率 | 缺失接诊时间记录数 | status = seen 的记录数 | status = seen | 用户明确规则 | 已确认 |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "甲院观察窗口内有效候诊记录数",
+            "不适用（计数指标）",
+            "甲院观察窗口（待确认）",
+            "甲院有效候诊记录且 registered_at 在观察窗口内",
+            "甲院观察窗口未定，需院方后续核实",
+            "待确认（甲院观察窗口）"
+          ],
+          "quote": "| 甲院观察窗口内有效候诊记录数 | 不适用（计数指标） | 甲院观察窗口（待确认） | 甲院有效候诊记录且 registered_at 在观察窗口内 | 甲院观察窗口未定，需院方后续核实 | 待确认（甲院观察窗口） |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "乙院观察窗口内有效候诊记录数",
+            "不适用（计数指标）",
+            "乙院观察窗口（待确认）",
+            "乙院有效候诊记录且 registered_at 在观察窗口内",
+            "乙院观察窗口未定，需院方后续核实",
+            "待确认（乙院观察窗口）"
+          ],
+          "quote": "| 乙院观察窗口内有效候诊记录数 | 不适用（计数指标） | 乙院观察窗口（待确认） | 乙院有效候诊记录且 registered_at 在观察窗口内 | 乙院观察窗口未定，需院方后续核实 | 待确认（乙院观察窗口） |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "甲院观察窗口内候诊时间均值",
+            "观察窗口内有效候诊时间之和",
+            "甲院观察窗口内有效候诊记录数",
+            "甲院观察窗口内有效候诊记录",
+            "甲院观察窗口未定",
+            "待确认（甲院观察窗口）"
+          ],
+          "quote": "| 甲院观察窗口内候诊时间均值 | 观察窗口内有效候诊时间之和 | 甲院观察窗口内有效候诊记录数 | 甲院观察窗口内有效候诊记录 | 甲院观察窗口未定 | 待确认（甲院观察窗口） |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "乙院观察窗口内候诊时间均值",
+            "观察窗口内有效候诊时间之和",
+            "乙院观察窗口内有效候诊记录数",
+            "乙院观察窗口内有效候诊记录",
+            "乙院观察窗口未定",
+            "待确认（乙院观察窗口）"
+          ],
+          "quote": "| 乙院观察窗口内候诊时间均值 | 观察窗口内有效候诊时间之和 | 乙院观察窗口内有效候诊记录数 | 乙院观察窗口内有效候诊记录 | 乙院观察窗口未定 | 待确认（乙院观察窗口） |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "甲院观察窗口内异常等待比例",
+            "观察窗口内异常等待记录数",
+            "甲院观察窗口内有效候诊记录数",
+            "甲院观察窗口内有效候诊记录",
+            "甲院观察窗口未定；阈值已确认",
+            "待确认（甲院观察窗口）"
+          ],
+          "quote": "| 甲院观察窗口内异常等待比例 | 观察窗口内异常等待记录数 | 甲院观察窗口内有效候诊记录数 | 甲院观察窗口内有效候诊记录 | 甲院观察窗口未定；阈值已确认 | 待确认（甲院观察窗口） |"
+        },
+        {
+          "header": [
+            "指标",
+            "分子",
+            "分母或所需参数",
+            "适用记录",
+            "口径依据",
+            "状态"
+          ],
+          "cells": [
+            "乙院观察窗口内异常等待比例",
+            "观察窗口内异常等待记录数",
+            "乙院观察窗口内有效候诊记录数",
+            "乙院观察窗口内有效候诊记录",
+            "乙院观察窗口未定；阈值未定",
+            "待确认（乙院观察窗口、乙院阈值）"
+          ],
+          "quote": "| 乙院观察窗口内异常等待比例 | 观察窗口内异常等待记录数 | 乙院观察窗口内有效候诊记录数 | 乙院观察窗口内有效候诊记录 | 乙院观察窗口未定；阈值未定 | 待确认（乙院观察窗口、乙院阈值） |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "4c78a5f26f634458a7c65b6090c1de62c2bae6b72299c5152d091beeaa7e9c6f",
+      "nonHeadingTableCharacters": 2366,
+      "bodyCharactersExcludingOnlyIndicatorTables": 3102,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "RC-HOSP-M-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "caseId": "RC-HOSP-M",
+      "model": "deepseek:deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputSha256": "cc7dacd7979137dcd550be3f18c12dd3f13d2c5ba5679617dedf7902983a739a",
+      "nonHeadingTableCharacters": 759,
+      "bodyCharactersExcludingOnlyIndicatorTables": 1880,
+      "lengthCountingNote": "非空白字符近似口径；排除标题及指标表，规则表与伪代码计入，不等同于专业编辑字数",
+      "exactRepeatedSentences": [],
+      "indicatorTablePresent": true,
+      "parameterRows": [
+        {
+          "header": [
+            "指标",
+            "分母"
+          ],
+          "cells": [
+            "时间字段缺失率",
+            "该分组内去重后 `status = seen` 但 `registered_at` 或 `seen_at` 缺失的记录数 / 该分组内去重后 `status = seen` 的记录数"
+          ],
+          "quote": "| 时间字段缺失率 | 该分组内去重后 `status = seen` 但 `registered_at` 或 `seen_at` 缺失的记录数 / 该分组内去重后 `status = seen` 的记录数 |"
+        }
+      ],
+      "suspectedConfirmedFormatRows": [],
+      "completeOutput": true,
+      "semanticQualityRequiresReview": true
+    }
+  ],
+  "releaseApproval": false
+}

@@ -564,6 +564,7 @@ final class PlanAmbiguityMerger {
         }
         if (routeBoundCoverageHandling(registered, key, detail)) return;
         if (pending.size() == 1 || sameNamedItem) {
+            detail = BoundStateReminderCompactor.compact(registered.get(key), detail);
             detail = withoutRepeatedBoundRequests(registered.get(key), detail, pending);
             detail = withoutBoundExampleRestatement(registered.get(key), detail, pending);
             detail = withoutRepeatedExplanationClauses(registered.get(key), detail);
