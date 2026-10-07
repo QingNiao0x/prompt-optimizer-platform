@@ -62,6 +62,9 @@ final class ConfirmedDecisionSet {
                     boolean named = PlanAnswerSemantics.namesPendingSubject(part);
                     boolean explanationOnly = PlanAnswerSemantics.confirmedPart(decision.answer()).isBlank()
                             && PlanAnswerSemantics.pendingParts(decision.answer()).size() == 1;
+                    // 裸待定后的单项核实解释仍继承原绑定题，避免新增核实识别改变旧问题的身份与范围。
+                    if (explanationOnly && decision.answer().matches("(?s)^(?:暂不确定|尚未确定|不知道|不清楚)[。.!！].*")
+                            && part.matches("(?s).*(?:尚未|仍未|未)核实.*")) named = false;
                     return new ConfirmedPlanDecision(decision.questionId(), named ? part : decision.question(),
                             named ? topic(part, decision.questionId()) : decision.topic(), Scope.UNRESOLVED,
                             named && !explanationOnly ? part : decision.answer());

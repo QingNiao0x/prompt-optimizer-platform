@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
  * @since 0.1.0
  */
 final class PlanAnswerSemantics {
-    private static final Pattern STATUS_ONLY_SUBJECT = Pattern.compile("^(?:当前|目前|现在|本次|这次|此时|现阶段|本阶段)$");
-    private static final Pattern PENDING = Pattern.compile("(?i)不确定(?!性)|暂未确定|(?:仍未|尚未|未)(?:确定|确认|提供|指定|决定)"
+    private static final Pattern STATUS_ONLY_SUBJECT = Pattern.compile("^(?:当前|目前|现在|本次|这次|此时|现阶段|本阶段|(?:该|此|上述)(?:覆盖度|参数|指标|选择|决定))$");
+    private static final Pattern PENDING = Pattern.compile("(?i)不确定(?!性)|暂未确定|(?:仍未|尚未|未)(?:确定|确认|核实|提供|指定|决定)"
             + "|待确定|待定|不知道|不清楚|稍后确认|\\b(?:unknown|tbd)\\b");
     private static final Pattern BOUNDARY = Pattern.compile("(?<=[。；;！？!])|\\R|[,，](?=(?:但|不过|然而|现在明确|目前明确))");
 
@@ -108,6 +108,9 @@ final class PlanAnswerSemantics {
     private static Optional<MatchResult> pendingMarker(String clause) {
         var marker = PENDING.matcher(clause);
         while (marker.find()) {
+            // “覆盖度未核实时，比较方式尚未决定”的主未决项是后者；前半句仅限定适用条件。
+            if (marker.group().endsWith("核实") && clause.substring(marker.end())
+                    .matches("(?s)^(?:时|前|之前|的情况下).*")) continue;
             if (marker.group().equals("UNKNOWN")) {
                 String suffix = clause.substring(marker.end());
                 if (suffix.matches("(?s)^\\s*(?:不(?:直接)?计(?:为|入)|作为|表示|代表|单独(?:统计|列示|呈现)).*")) continue;

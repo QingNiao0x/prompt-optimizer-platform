@@ -197,6 +197,56 @@ final class UnresolvedDecisionContract {
     }
 
     /**
+     * 纯概述的每个独立参数已有单项提醒时才移除概述，不消费解释、年份或新条件。
+     * 只用当前已登记参数作覆盖证明；不借概述创建新决定，也不删除剩余单项。
+     */
+    List<String> withoutCoveredSummaries(List<String> reminders) {
+        if (!independentHospitalParameters) return reminders;
+        return reminders.stream().filter(reminder -> {
+            if (reminder.matches("^[>‘’“”\\\"'`].*")) return true;
+            var summary = Pattern.compile("^该问题尚未确定:(.+?)(?:分别)?(?:尚未|仍未|未)(?:确定|决定)[。]?$"
+                    ).matcher(canonical(reminder));
+            if (!summary.matches()) return true;
+            // 最终仍保留的逐项提醒证明覆盖，不借提醒新增事实、确认值或计算前提。
+            List<Parameter> covered = reminders.stream().filter(other -> !other.equals(reminder))
+                    .flatMap(other -> independentReminderParameter(other).stream()).distinct().toList();
+            var mentioned = new ArrayList<Parameter>();
+            for (String part : summary.group(1).split("与|和|及|、")) {
+                List<Parameter> parsed = namedParameters(part);
+                if (parsed.size() != 1) return true;
+                Parameter parameter = parsed.getFirst();
+                // 裸院名阈值只在当前候诊任务的唯一同院阈值明确登记时映射；不推广到其他指标。
+                if (hospitalWaitingComparison && parameter.property().equals("阈值")
+                        && parameter.subject().matches("甲院|乙院")) {
+                    String object = parameter.subject();
+                    List<Parameter> candidates = covered.stream().filter(value -> value.property().equals("阈值")
+                            && value.subject().startsWith(object)).distinct().toList();
+                    if (candidates.size() != 1 || !candidates.getFirst().subject().equals(object + "异常等待")) return true;
+                    parameter = candidates.getFirst();
+                }
+                List<Parameter> scoped = hospitalParameterScopes(parameter);
+                if (scoped.stream().anyMatch(value -> !isIndependentHospitalParameter(value))) return true;
+                mentioned.addAll(scoped);
+            }
+            if (mentioned.stream().distinct().count() < 2) return true;
+            return mentioned.stream().anyMatch(parameter -> !covered.contains(parameter));
+        }).toList();
+    }
+
+    /** 只识别最终清单中完整具名的独立标题，解释尾句不用于猜测对象或覆盖新条件。 */
+    private Optional<Parameter> independentReminderParameter(String reminder) {
+        String heading = reminder.replaceFirst("^该问题尚未确定[：:]", "")
+                .split("[。；;？?]|(?<=未确定|未决定|未核实)[，,]", 2)[0].strip();
+        if (heading.strip().matches("^[>‘’“”\\\"'`].*")) return Optional.empty();
+        String subject = PlanAnswerSemantics.pendingSubject(canonical(heading));
+        if (subject.isEmpty()) subject = canonical(heading).replaceFirst(
+                "(?:(?:应|应该)?如何(?:确定|确认|设定|定义)|是多少(?:分钟)?|是什么)$", "");
+        List<Parameter> named = namedParameters(subject).stream().map(this::boundParameterName).toList();
+        return named.size() == 1 && isIndependentHospitalParameter(named.getFirst())
+                ? Optional.of(named.getFirst()) : Optional.empty();
+    }
+
+    /**
      * 同一独立机构参数的语法匹配复用当前登记，避免提醒链路另造一份宽泛主题键。
      * 只有绑定项对应本次确实未决的完整参数时才作明确判断；无具名范围的提醒不能借该项归并。
      */

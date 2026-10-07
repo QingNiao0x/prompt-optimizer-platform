@@ -53,7 +53,7 @@ final class NamedIdentifierContract {
             + "(?:对应|代码为|编码为|=|:)[\\\"'‘’“”]*([AB])[\\\"'‘’“”]*" + VALUE_END);
     private static final Pattern CODE_PAIR = Pattern.compile("[AB](?:和|与|、|/|或)[AB]");
     private static final List<String> MAPPING_QUESTION_WORDS = List.of("数据中的", "文件中的", "hospital_id", "医院代码",
-            "医院编码", "哪家医院", "哪所医院", "对应", "分别", "说明", "确认", "它们", "甲院", "乙院", "还是",
+            "医院编码", "哪家医院", "哪所医院", "中的哪一家", "对应", "分别", "说明", "确认", "它们", "甲院", "乙院", "还是",
             "取值", "请", "的", "为", "是", "和", "与", "、", "/", "或", "A", "B")
             .stream().sorted((left, right) -> Integer.compare(right.length(), left.length())).toList();
     private static final List<String> MAPPING_REMINDER_WORDS = List.of("hospital_id", "医院代码", "医院编码", "对应关系",
@@ -315,6 +315,10 @@ final class NamedIdentifierContract {
         if (!currentScope(value) || value.matches(".*(?:审批|状态|窗口|阈值|患者|来源|校验|以后|如果|假设).*")) return List.of();
         // 集合只限定纯对应题的覆盖；完整词法消费后仍有新内容时不按部分关键词删除。
         if (pureCodePairQuestion(value)) return OBJECTS;
+        if (value.matches("^(?:数据中的|文件中的)?(?:hospital_id|医院代码|医院编码)(?:与|和)"
+                + "(?:甲院|乙院)(?:(?:与|和|、|/)(?:甲院|乙院))?(?:的)?对应关系是什么[？?]?$")) {
+            return OBJECTS.stream().filter(value::contains).toList();
+        }
         if (!value.matches("^(?:甲院|乙院)(?:(?:与|和|、)(?:甲院|乙院))?(?:的|与)?"
                 + "(?:hospital_id|医院代码|医院编码|代码)(?:的)?(?:对应关系|对应|映射|取值)?"
                 + "(?:是什么|是多少|如何对应|怎么对应|如何确定)[？?]?$")) return List.of();

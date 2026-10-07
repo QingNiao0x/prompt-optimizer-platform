@@ -31,6 +31,11 @@ final class PendingReminderIdentity {
         this.parameterContract = UnresolvedDecisionContract.from(this.rawPrompt, decisions, List.of());
     }
 
+    /** 复用本次登记的独立参数，只有全部单项仍在清单里才精简纯概述。 */
+    List<String> withoutCoveredSummaries(List<String> reminders) {
+        return parameterContract.withoutCoveredSummaries(reminders);
+    }
+
     /** 只为完整具名子项提供跨题键；裸未知与依赖原题的泛指子项继续保留 questionId。 */
     Optional<String> namedKey(ConfirmedPlanDecision pending) {
         String subject = subject(pending.question(), pending);

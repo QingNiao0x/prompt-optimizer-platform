@@ -121,7 +121,7 @@ final class PlanAmbiguityMerger {
         // 全半角、空白和句末问号不是新决定；比较符、完整条件及代码大小写仍须区分。
         Map<String, String> formatted = new LinkedHashMap<>();
         registered.values().forEach(value -> formatted.putIfAbsent(reminderKey(value), value));
-        return MergeResult.from(List.copyOf(formatted.values()));
+        return MergeResult.from(pendingIdentity.withoutCoveredSummaries(List.copyOf(formatted.values())));
     }
 
     /** 仅合并相同完整主体的简单未知状态；疑问、数值条件和解释仍逐字参与比较。 */

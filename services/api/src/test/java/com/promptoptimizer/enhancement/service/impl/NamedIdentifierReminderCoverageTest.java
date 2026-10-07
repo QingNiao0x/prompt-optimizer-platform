@@ -42,7 +42,9 @@ class NamedIdentifierReminderCoverageTest {
         var relation = contract();
         for (String text : List.of("数据中的医院代码 A、B 分别对应甲院还是乙院？",
                 "数据中的 hospital_id 为 A 和 B，请确认 A、B 分别对应哪家医院？",
-                "数据中的 hospital_id 为 A 和 B，请分别说明它们对应甲院还是乙院？")) {
+                "数据中的 hospital_id 为 A 和 B，请分别说明它们对应甲院还是乙院？",
+                "数据中的hospital_id与甲院、乙院的对应关系是什么？",
+                "数据中的医院代码A和B分别对应甲院和乙院中的哪一家？")) {
             assertThat(relation.coveredQuestion(question(text))).as(text).isTrue();
         }
     }

@@ -38,7 +38,7 @@ final class BoundStateReminderCompactor {
             String clause = clauses.group().strip();
             String heading = header(clause);
             StateKey state = stateKey(heading);
-            int separator = firstComma(clause);
+            int separator = firstExplanationSeparator(clause);
             if (state != null && known.contains(state)) {
                 changed = true;
                 // 只移开已登记状态和紧接的分隔符，新说明仍留在原事项中，不能连同后半句删除。
@@ -52,16 +52,17 @@ final class BoundStateReminderCompactor {
         return changed ? result.toString().strip() : detail;
     }
 
-    /** 中文句号和分号不进入身份；逗号后的依赖解释不参与删除判断。 */
+    /** 中文句号和分号不进入身份；逗号或冒号后的依赖解释不参与删除判断。 */
     private static String header(String text) {
-        int separator = firstComma(text);
+        int separator = firstExplanationSeparator(text);
         return (separator < 0 ? text : text.substring(0, separator)).strip().replaceFirst("[。；;]+$", "");
     }
 
-    private static int firstComma(String text) {
-        int chinese = text.indexOf('，');
-        int ascii = text.indexOf(',');
-        return chinese < 0 ? ascii : ascii < 0 ? chinese : Math.min(chinese, ascii);
+    private static int firstExplanationSeparator(String text) {
+        for (int index = 0; index < text.length(); index++) {
+            if ("，,:：".indexOf(text.charAt(index)) >= 0) return index;
+        }
+        return -1;
     }
 
     /** 只统一空白及同一状态动词的程度词，不把“未核实”和“未选定”当成同一业务状态。 */

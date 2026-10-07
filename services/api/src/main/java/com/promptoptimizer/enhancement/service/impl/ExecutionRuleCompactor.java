@@ -16,6 +16,7 @@ import java.util.ArrayList;
  * @since 0.1.0
  */
 final class ExecutionRuleCompactor {
+    private static final java.util.regex.Pattern FENCE = java.util.regex.Pattern.compile("^(`{3,}|~{3,})(.*)$");
     private ExecutionRuleCompactor() { }
 
     /** 只在另一执行段已完整保留同一规则时删除重复行；四要素不能为空。 */
@@ -30,15 +31,19 @@ final class ExecutionRuleCompactor {
             Set<String> pendingSentences = new LinkedHashSet<>();
             var retained = new ArrayList<String>();
             String scope = "";
-            boolean code = false;
+            String fence = null;
             for (String line : section.content().lines().toList()) {
                 // 重复代码可能属于不同分支；表格行靠列和相邻行定位，不能当作独立规则删去。
-                if (line.strip().startsWith("```")) {
-                    code = !code;
+                var marker = FENCE.matcher(line.strip());
+                if (marker.matches()) {
+                    String token = marker.group(1);
+                    if (fence == null) fence = token;
+                    else if (token.charAt(0) == fence.charAt(0) && token.length() >= fence.length()
+                            && marker.group(2).isBlank()) fence = null;
                     retained.add(line);
                     continue;
                 }
-                if (code || line.strip().startsWith("|") || line.strip().startsWith(">")) {
+                if (fence != null || line.strip().startsWith("|") || line.strip().startsWith(">")) {
                     retained.add(line);
                     continue;
                 }
