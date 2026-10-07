@@ -197,6 +197,7 @@ public class OptimizationResultAssembler {
         }
         String lengthGuidance = minimal ? NewsLengthContract.conciseGuidance(effectiveRawPrompt)
                 : NewsLengthContract.guidance(effectiveRawPrompt);
+        if (lengthGuidance.isBlank()) lengthGuidance = TaskBodyLengthContract.guidance(effectiveRawPrompt);
         if (!lengthGuidance.isBlank()) {
             PromptSection output = sections.get(PromptSectionType.OUTPUT);
             sections.put(PromptSectionType.OUTPUT, new PromptSection(output.type(), output.title(),
@@ -274,6 +275,15 @@ public class OptimizationResultAssembler {
             sections.remove(PromptSectionType.EXAMPLES);
         }
 
+        // 平台交付契约有唯一正文责任段；仅合并完整等价句，表格、代码和独立业务章节继续保护。
+        var deliveryAuthority = new java.util.LinkedHashMap<PromptSectionType, String>();
+        if (!merged.executionPrerequisites().isEmpty()) {
+            deliveryAuthority.put(PromptSectionType.CONSTRAINTS, UnresolvedDecisionContract.DELIVERY_GUIDANCE);
+        }
+        if (unresolvedContract.hasNamedParameters()) {
+            deliveryAuthority.put(PromptSectionType.OUTPUT, unresolvedContract.independentEvidenceGuidance());
+        }
+        AuthoritativeDeliveryCompactor.compact(sections, deliveryAuthority);
         ExecutionRuleCompactor.compact(sections);
         // 平台补回后的视图仍须守住确认范围；不能只验证模型原文而漏掉自动追加的规则。
         sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));

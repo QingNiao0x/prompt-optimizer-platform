@@ -1,0 +1,94 @@
+{
+  "capturedAt": "2026-10-07T06:27:29.196Z",
+  "input": "tmp/prompt-comparison/state-scope-real-20261007-18",
+  "records": [
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-direct",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 5646,
+      "ambiguities": 4,
+      "latencyMs": 20884,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-flash-plan-final",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-flash",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "optimizedCharacters": 5842,
+      "ambiguities": 3,
+      "latencyMs": 22968,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "confirmedMetricDoesNotRetainOldJointState": false,
+        "independentConsistencyRemainsPending": true
+      },
+      "protocolChecksPassed": false,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-direct",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "direct",
+      "status": "COLLECTED",
+      "optimizedCharacters": 5089,
+      "ambiguities": 4,
+      "latencyMs": 33626,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    },
+    {
+      "id": "CF-RESEARCH-L-R1-deepseek_deepseek-v4-pro-plan-final",
+      "caseId": "CF-RESEARCH-L-R1",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "arm": "plan",
+      "status": "COLLECTED",
+      "optimizedCharacters": 5554,
+      "ambiguities": 3,
+      "latencyMs": 35985,
+      "checks": {
+        "realProvider": true,
+        "requiredSections": true,
+        "naturalCopy": true,
+        "unresolvedIncludedInCopy": true,
+        "exactDuplicateFindings": true,
+        "positiveLatency": true,
+        "confirmedMetricDoesNotRetainOldJointState": true,
+        "independentConsistencyRemainsPending": true
+      },
+      "protocolChecksPassed": true,
+      "semanticQualityRequiresReview": true
+    }
+  ],
+  "successfulCalls": 4,
+  "failedCalls": 0,
+  "passedProtocolChecks": 3,
+  "releaseApproval": false
+}
