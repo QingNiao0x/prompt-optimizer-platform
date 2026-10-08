@@ -28,7 +28,9 @@ final class UnresolvedDecisionContract {
     private static final Pattern CONDITIONAL = Pattern.compile("若|如果|假如|假设|仅当|只有|例如|示例|引用|不要|不得|不能|不应|禁止");
     private static final Pattern PENDING = Pattern.compile("待确认|待定|未决|尚未|未确定|未决定|未核实|未提供|未确认|待核实|TBD|None|null", Pattern.CASE_INSENSITIVE);
     private static final Pattern CURRENT_PARAMETER = Pattern.compile(
-            "([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)(?:明确)?(?:采用|使用|选定|包含|包括|为|是)([^。；;，,\\r\\n？?]+)");
+            "([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)"
+                    + "(?:(?:本次|这次)?(?:已|已经)?(?:明确|确认|确定|选定))?"
+                    + "(?:采用|使用|选定|包含|包括|为|是)([^。；;，,\\r\\n？?]+)");
     private static final Pattern ASSERTED_PARAMETER = Pattern.compile(
             "(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定)([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)"
                     + "|([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)(?:已|已经)(?:由用户)?(?:确认|确定|选定)");
@@ -468,6 +470,8 @@ final class UnresolvedDecisionContract {
             }
             var choices = CURRENT_PARAMETER.matcher(clause);
             while (choices.find()) {
+                // “甲指标阈值本次已明确为”与“阈值为”都登记同一个具名参数；
+                // 条件、未决与否定仍逐句排除，不能借甲指标的确认替乙指标赋值。
                 if (CONDITIONAL.matcher(clause.substring(0, choices.end())).find()
                         || choices.group().matches(".*(?:尚未|待确认|未知|未决|建议|候选|例如|示例).*")) continue;
                 String subject = choices.group(1).replaceFirst("的$", "");
@@ -782,7 +786,9 @@ final class UnresolvedDecisionContract {
                         String property = assertions.group(2) == null ? assertions.group(4) : assertions.group(2);
                         // 否认窗口确认能推导出另一参数，不是确认该参数；逐项核对，转折后的真实断言仍须验证。
                         if (deniesWindowConfirmationInference(subject)) continue;
-                        var claimed = new Parameter(subjectKey(subject.replaceFirst("的$", "")), property);
+                        // “说明甲指标已确认”中的表达动作不属于指标名；只移除句首动作，机构、年份和对象仍完整匹配。
+                        String assertedSubject = subject.replaceFirst("^(?:明确)?(?:说明|注明|标注|列明)", "");
+                        var claimed = new Parameter(subjectKey(assertedSubject.replaceFirst("的$", "")), property);
                         if (independentHospitalParameters) claimed = boundParameterName(claimed);
                         if (!isConfirmedNarrativeParameter(claimed)) reject(field, "NARRATIVE_CONFIRMATION_SCOPE");
                     }

@@ -1,7 +1,6 @@
 package com.promptoptimizer.enhancement.service.impl;
 
 import java.text.Normalizer;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -21,9 +20,9 @@ final class PlanDecisionIdentity {
 
     private PlanDecisionIdentity() { }
 
-    /** 沿用文字大小写不敏感的口径，仅去掉空白和句末提问符；不删除比较符、小数点、版本和路径符号。 */
+    /** 仅去掉空白和句末提问符；保留标识符大小写、比较符、小数点、版本和路径符号。 */
     static String exactTextKey(String text) {
-        return Normalizer.normalize(text, Normalizer.Form.NFKC).toLowerCase(Locale.ROOT)
+        return Normalizer.normalize(text, Normalizer.Form.NFKC)
                 .replaceAll("\\s+", "").replaceAll("[。？?!！]+$", "");
     }
 
@@ -70,7 +69,7 @@ final class PlanDecisionIdentity {
 
     /** 仅归一化确定的提问语法及地区问法；不去掉金额、范围限定、比较符和来源。 */
     private static String subject(String text) {
-        String value = Normalizer.normalize(text, Normalizer.Form.NFKC).toLowerCase(Locale.ROOT);
+        String value = Normalizer.normalize(text, Normalizer.Form.NFKC);
         // 仅规范化同一属性的询问/陈述语序，保留人数、研究组、附加范围和所有数值。
         value = value.replace("最多允许几轮提问", "最大提问轮次")
                 .replaceAll("评分出现分歧时[，,]?(?:应如何|如何)处理", "评分分歧处理方式")

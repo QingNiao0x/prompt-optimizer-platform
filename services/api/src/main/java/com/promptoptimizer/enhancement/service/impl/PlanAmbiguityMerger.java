@@ -964,7 +964,7 @@ final class PlanAmbiguityMerger {
     private static String normalize(String text) {
         // 比较符、版本小数点和代码标识符不是排版符号，不能归一化掉。
         return java.text.Normalizer.normalize(text, java.text.Normalizer.Form.NFKC)
-                .toLowerCase(Locale.ROOT).replaceAll("[\\s，。；：？、“”‘’（）()?;,:\"']+", "")
+                .replaceAll("[\\s，。；：？、“”‘’（）()?;,:\"']+", "")
                 .replaceAll("!(?!=)", "");
     }
 

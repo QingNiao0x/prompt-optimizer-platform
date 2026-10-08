@@ -7,7 +7,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 /**
- * 保守识别用户回答中的当前未决部分；历史叙述、条件分支和“不确定性”术语不代表待定。
+ * 保守识别用户回答中的当前未决部分；未来确认保持未决，历史叙述、普通条件规则和“不确定性”术语不代表待定。
  * 保留原回答供最终正文核对，只用明确分开的肯定子句参与二次检索和决定补齐。
  *
  * @author QingNiao
@@ -18,6 +18,9 @@ final class PlanAnswerSemantics {
     private static final Pattern PENDING = Pattern.compile("(?i)不确定(?!性)|暂未确定|(?:仍未|尚未|未)(?:确定|确认|核实|提供|指定|决定)"
             + "|待确定|待定|不知道|不清楚|稍后确认|\\b(?:unknown|tbd)\\b");
     private static final Pattern BOUNDARY = Pattern.compile("(?<=[。；;！？!])|\\R|[,，](?=(?:但|不过|然而|现在明确|目前明确))");
+    private static final Pattern CONDITIONAL_CONFIRMATION = Pattern.compile(
+            "(?:若|如果|假如|假设)(?:以后|今后|将来|后续|未来|届时|日后|之后)?"
+                    + "(?:用户|我们|我|您)?(?:只|仅)?(?:再)?(?:确认|确定|选定|明确)([^，,。；;！？!?]+)");
 
     private PlanAnswerSemantics() { }
 
@@ -59,6 +62,7 @@ final class PlanAnswerSemantics {
 
     /** 有明确业务主语的未决子句可独立展示；裸“暂不确定”仍需继承服务端原题才能保持含义。 */
     static boolean namesPendingSubject(String clause) {
+        if (CONDITIONAL_CONFIRMATION.matcher(clause).find()) return !pendingSubject(clause).isBlank();
         var pending = pendingMarker(clause);
         if (pending.isEmpty()) return false;
         String subject = clause.substring(0, pending.get().start()).replaceFirst("^(?:但|不过|然而)", "")
@@ -69,6 +73,11 @@ final class PlanAnswerSemantics {
 
     /** 未决断言前的完整对象与属性；只移除紧邻状态词的程度副词，不删业务名、数值或条件。 */
     static String pendingSubject(String clause) {
+        var conditional = CONDITIONAL_CONFIRMATION.matcher(clause);
+        if (conditional.find()) {
+            // 单字“为”可能属于“行为指标”等对象名，只在明确参数属性后将它识别为赋值动作。
+            return conditional.group(1).split("(?:采用|使用|选用|(?<=分母|阈值|口径|范围|窗口)为)", 2)[0].strip();
+        }
         var pending = pendingMarker(clause);
         if (pending.isEmpty()) return "";
         return clause.substring(0, pending.get().start()).strip().replaceFirst("(?:完全|仍然|仍|目前|现在|暂时|暂)$", "");
@@ -87,6 +96,9 @@ final class PlanAnswerSemantics {
 
     /** 只认当前状态断言；明确的历史转折和否认未决事项不反向变成新的问题。 */
     private static boolean pendingClause(String clause) {
+        // “如果以后确认乙指标”只登记未来选择，不得借确认甲指标的回答升级为乙指标已选定。
+        // 普通“若取消则保留原值”不含条件化确认动作，仍是可执行的业务规则。
+        if (CONDITIONAL_CONFIRMATION.matcher(clause).find()) return true;
         if (pendingMarker(clause).isEmpty()) return false;
         // “未提供的工程细节先核查”是对未展示实现的核查指令，不是撤销前面已选定的业务值。
         // 只接受这个明确的条件化工程表达；具体版本、生效时间或业务口径未定仍属于未决部分。

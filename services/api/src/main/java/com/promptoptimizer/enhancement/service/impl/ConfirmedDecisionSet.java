@@ -110,7 +110,7 @@ final class ConfirmedDecisionSet {
                 && PlanningConflictIdentity.parse(decision.question()).filter(identity -> identity.hasValues(field, values)).isPresent()
                 && (selectedConflictValue(decision).filter(selected -> values.stream()
                         .anyMatch(value -> normalizeValue(value).equals(selected))).isPresent()
-                    || decision.answer().matches("^(?:两份|同时).*(?:保留|写出|标明).*")));
+                    || confirmsParallelPresentation(decision.answer())));
     }
 
     /** 用成对来源约束旧确认的覆盖范围；另一份新文件或新取值不得由旧问题自动解决。 */
@@ -119,7 +119,18 @@ final class ConfirmedDecisionSet {
                 .filter(identity -> identity.containsPair(field, firstPath, firstValue, secondPath, secondValue))
                 .filter(identity -> decision.questionId() != null && decision.questionId().startsWith("context-conflict-")
                         && (identity.selectedValue(PlanAnswerSemantics.confirmedPart(decision.answer())).isPresent()
-                        || decision.answer().matches("^(?:两份|同时).*(?:保留|写出|标明).*"))).isPresent());
+                        || confirmsParallelPresentation(decision.answer()))).isPresent());
+    }
+
+    /**
+     * 仅明确决定并列展示时解除本题选择提醒；疑问、否定、未来假设和限定范围不能冒充已解决。
+     * 混合回答只用已确认子句核对，其他未知参数仍由 pendingDecisions 保留。
+     */
+    private boolean confirmsParallelPresentation(String answer) {
+        String confirmed = PlanAnswerSemantics.confirmedPart(answer);
+        if (confirmed.isBlank() || Pattern.compile("是否|能否|可否|[？?]|不能|不得|不要|不应|不同时|不保留"
+                + "|(?:只|仅)(?:对|针对|在)|若|如果|假如|假设").matcher(confirmed).find()) return false;
+        return confirmed.matches("^(?:两份|同时).*(?:保留|写出|标明).*");
     }
 
     /** 已绑定冲突题中的明确选择优先与新增证据比较，不能先拿被放弃的旧值构造新冲突。 */

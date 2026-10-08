@@ -5,7 +5,6 @@ import com.promptoptimizer.enhancement.domain.PlanQuestionType;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -188,13 +187,13 @@ final class PlanningConflictIdentity {
     }
 
     private boolean containsCompleteValue(String text, String value) {
-        return Pattern.compile("(?<![a-z0-9零一二三四五六七八九十百千万亿点.<>])" + Pattern.quote(value)
-                + "(?![a-z0-9零一二三四五六七八九十百千万亿点.=>])").matcher(text).find();
+        return Pattern.compile("(?<![A-Za-z0-9零一二三四五六七八九十百千万亿点.<>])" + Pattern.quote(value)
+                + "(?![A-Za-z0-9零一二三四五六七八九十百千万亿点.=>])").matcher(text).find();
     }
 
-    /** 只做保留边界的等义规范化，不能像标点清理一样抹掉 >、>=、小数或业务对象。 */
+    /** 只做保留边界的等义规范化；保留字段大小写、>、>=、小数与业务对象，不吞掉新取值。 */
     static String canonical(String value) {
-        return Normalizer.normalize(value == null ? "" : value, Normalizer.Form.NFKC).toLowerCase(Locale.ROOT)
+        return Normalizer.normalize(value == null ? "" : value, Normalizer.Form.NFKC)
                 .replaceAll("\\s+", "").replace("大于或等于", ">=").replace("大于等于", ">=")
                 .replace("小于或等于", "<=").replace("小于等于", "<=").replace("严格大于", ">")
                 .replace("严格小于", "<").replace("大于", ">").replace("小于", "<")
@@ -210,7 +209,7 @@ final class PlanningConflictIdentity {
     /** 仅适配可逐项核对的金额规则，不将含额外适用条件的专业句子压成同一个数字键。 */
     private record RuleBoundary(String object, String property, String comparator, String amount, String unit, String effect) {
         static Optional<RuleBoundary> parse(String value) {
-            var match = Pattern.compile("^([\\p{IsHan}a-z_]{2,24}?)(金额)(>=|<=|>|<|=)(\\d+(?:\\.\\d+)?)(元)?"
+            var match = Pattern.compile("^([\\p{IsHan}A-Za-z_]{2,24}?)(金额)(>=|<=|>|<|=)(\\d+(?:\\.\\d+)?)(元)?"
                     + "(?:时|才|则|需|触发|进行|进入)?(二级复核|财务复核|复核)$").matcher(canonical(value));
             if (!match.matches()) return Optional.empty();
             return Optional.of(new RuleBoundary(match.group(1), match.group(2), match.group(3), match.group(4),
