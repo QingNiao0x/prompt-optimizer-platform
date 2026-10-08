@@ -52,6 +52,11 @@ final class NamedIdentifierContract {
     private static final Pattern CODE_MAPPING = Pattern.compile("[\\\"'‘’“”]*(甲院|乙院)[\\\"'‘’“”]*"
             + "(?:对应|代码为|编码为|=|:)[\\\"'‘’“”]*([AB])[\\\"'‘’“”]*" + VALUE_END);
     private static final Pattern CODE_PAIR = Pattern.compile("[AB](?:和|与|、|/|或)[AB]");
+    /** 同一A/B对应未知的纯后果句，不包含机构选择、候选赋值或别的业务属性。 */
+    private static final Pattern UNKNOWN_INVERSE_MAPPING = Pattern.compile(
+            "(?<=[，,；;。])(?:因此|因而|从而)?(?:无法|不能|尚不能)(?:确定|确认|核实)"
+                    + "(?:A(?:/|、|和|与|或)B|B(?:/|、|和|与|或)A)(?:代码|取值)?(?:分别)?对应"
+                    + "(?:哪家|哪所)医院(?=$|[，,；;。])");
     private static final List<String> MAPPING_QUESTION_WORDS = List.of("数据中的", "文件中的", "hospital_id", "医院代码",
             "医院编码", "哪家医院", "哪所医院", "中的哪一家", "对应", "分别", "说明", "确认", "它们", "甲院", "乙院", "还是",
             "取值", "请", "的", "为", "是", "和", "与", "、", "/", "或", "A", "B")
@@ -59,7 +64,7 @@ final class NamedIdentifierContract {
     private static final List<String> MAPPING_REMINDER_WORDS = List.of("hospital_id", "医院代码", "医院编码", "对应关系",
             "尚无证据", "当前无对应证据", "尚未确定", "尚未确认", "尚未核实", "未提供", "未确定", "未确认", "未核实", "待确认", "待核实",
             "正文、表格及伪代码中未知项用“医院代码待确认”占位", "仅依赖该对应的步骤需等待", "其他清洗与指标模板继续交付",
-            "数据说明中", "数据中的", "资料中的", "具体院区名称", "医院维度分组", "医院分组", "独立计算", "比较结果", "哪个代码",
+            "数据说明中", "数据中的", "资料中的", "具体院区名称", "医院维度分组", "按医院分组", "医院分组", "独立计算", "比较结果", "哪个代码",
             "可继续交付", "指标模板", "需等待", "需确认", "需核实", "该对应", "对应", "影响", "涉及", "取值",
             "出现", "仅以", "哪个", "代码", "甲院", "乙院", "两院", "比较", "归属", "清洗", "分组", "步骤", "其他",
             "分别", "前", "在", "的", "与", "和", "或", "/", "、", "A", "B")
@@ -244,7 +249,9 @@ final class NamedIdentifierContract {
             return false;
         }
         // 只消费当前关系及其依赖说明；还有绩效、另一字段或新规则时保留整句，不能靠黑名单猜测全部业务词。
-        String unconsumed = value;
+        // 正向关系已核对对象、字段和未知状态；反向的A/B归属问法只能消费完整的同项后果句。
+        // 不把“无法确定”作为通用删除词，未消费的新条件仍阻止归并。
+        String unconsumed = UNKNOWN_INVERSE_MAPPING.matcher(value).replaceAll("");
         for (String word : MAPPING_REMINDER_WORDS) unconsumed = unconsumed.replace(word, "");
         if (!unconsumed.matches("[，,:：;；.。?？()（）]*")) return false;
         var owners = OBJECTS.stream().filter(value::contains).toList();

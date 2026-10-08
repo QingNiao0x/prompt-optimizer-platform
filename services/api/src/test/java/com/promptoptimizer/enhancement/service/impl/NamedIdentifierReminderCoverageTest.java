@@ -12,6 +12,7 @@ import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.enhancement.dto.OptimizationPlanRequest;
 import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
 import com.promptoptimizer.enhancement.dto.PlanningContextReference;
+import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.identity.support.TestActors;
 import com.promptoptimizer.policy.service.impl.ProtectedContextFilterImpl;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
@@ -95,6 +96,39 @@ class NamedIdentifierReminderCoverageTest {
                 "甲院与hospital_id的对应关系尚无证据，另需决定绩效评分规则。")) {
             assertThat(assemble(List.of(statement)).ambiguities()).as(statement).contains(statement);
         }
+    }
+
+    @Test
+    void actualBoundCodeConsequencesDoNotAddTwoMoreHospitalDecisions() throws Exception {
+        var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        try (var input = getClass().getResourceAsStream("/enhancement/bound-window-actual.json")) {
+            var fixture = mapper.readTree(input);
+            var answers = mapper.convertValue(fixture.get("answers"),
+                    new com.fasterxml.jackson.core.type.TypeReference<List<PlanAnswer>>() { });
+            for (String consequence : List.of("无法确定A/B代码分别对应哪家医院。", "影响按医院分组和比较。")) {
+                var findings = List.of("甲院与hospital_id的对应关系尚未核实，" + consequence,
+                        "乙院与hospital_id的对应关系尚未核实，" + consequence);
+                var result = assemble(findings, fixture.get("rawPrompt").asText(), answers);
+                assertThat(result.ambiguities()).as(consequence).hasSize(5);
+                assertThat(result.optimizedPrompt()).doesNotContain(findings.getFirst(), findings.getLast())
+                        .contains("不能用另一院排除推定", "不能用另一院的窗口替代", "90分钟");
+            }
+        }
+    }
+
+    @Test
+    void anInverseCodeConsequenceDoesNotConsumeAnAdditionalDecisionOrConfirmedRelation() {
+        String repeated = "甲院与hospital_id的对应关系尚未核实，无法确定A/B代码分别对应哪家医院";
+        assertThat(assemble(List.of(repeated + "。")).ambiguities()).hasSize(2);
+        for (String added : List.of("；丙院的医院代码尚未确定。", "；另需确认绩效评分分母。",
+                "；科室代码的对应关系尚未核实。", "；2026年的关系需要重新核实。",
+                "；如果以后确认，还需审批共享权限。", "；两院使用相同代码是否属于合法重复尚未确定。")) {
+            assertThat(assemble(List.of(repeated + added)).ambiguities()).as(added).contains(repeated + added);
+        }
+        var confirmed = NamedIdentifierContract.from(RAW, context(), List.of(),
+                ConfirmedDecisionSet.from(List.of(new PlanAnswer("jia", "甲院与hospital_id的对应关系是什么？", "A")))
+                        .decisions());
+        assertThat(confirmed.coveredPendingStatement(repeated + "。")).isFalse();
     }
 
     @Test
@@ -191,6 +225,11 @@ class NamedIdentifierReminderCoverageTest {
     }
 
     private static com.promptoptimizer.enhancement.domain.OptimizationResult assemble(List<String> findings) {
+        return assemble(findings, RAW, List.of());
+    }
+
+    private static com.promptoptimizer.enhancement.domain.OptimizationResult assemble(
+            List<String> findings, String raw, List<PlanAnswer> answers) {
         var response = new EnhancementProviderResponse(List.of(
                 new PromptSection(PromptSectionType.BACKGROUND, "背景", "两院普通门诊合成资料。"),
                 new PromptSection(PromptSectionType.TASK, "任务", "制定候诊时间比较方案。"),
@@ -199,7 +238,7 @@ class NamedIdentifierReminderCoverageTest {
                 "test", "test", false, findings);
         return new OptimizationResultAssembler().assemble(response, context(),
                 new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付指标表。", "范围一致。", "示例"),
-                List.of(), List.of(), false, List.of(), false, 1, RAW, List.of(), List.of());
+                List.of(), answers, !answers.isEmpty(), List.of(), false, 1, raw, List.of(), List.of());
     }
 
     private static ContextSnapshot context() {
