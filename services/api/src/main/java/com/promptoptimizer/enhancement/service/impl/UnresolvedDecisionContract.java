@@ -296,10 +296,13 @@ final class UnresolvedDecisionContract {
      */
     Optional<Boolean> matchesBoundIndependentParameter(String heading, String boundQuestion) {
         var complete = boundReminderParameter(boundQuestion, true);
-        if (complete.isPresent() && (parameters.contains(complete.get()) || boundPendingQuestions.contains(boundQuestion))) {
+        if (complete.isPresent() && parameters.contains(complete.get())) {
             var candidate = boundReminderParameter(heading, false);
             // 已绑定完整对象后，另一年份、属性及新增限定必须明确不匹配，不能落入宽泛主题回退。
-            return Optional.of(candidate.isPresent() && candidate.equals(complete));
+            if (candidate.isPresent()) return Optional.of(candidate.equals(complete));
+            if (heading.strip().matches("^[>‘’“”\\\"'`].*")
+                    || canonical(heading).matches("^(?:若|如果|假如|假设|仅当|只有).*")) return Optional.of(false);
+            // 长说明或完整原题不是一个纯参数声明；不据此否定原有绑定，交给保留新条件的原链路。
         }
         if (!independentHospitalParameters) return Optional.empty();
         String knownSubject = PlanAnswerSemantics.pendingSubject(canonical(boundQuestion));
