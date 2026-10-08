@@ -1,0 +1,97 @@
+{
+  "name": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+  "tests": 11,
+  "failures": 7,
+  "errors": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "shouldRespectExplicitParallelPresentationWithoutConfirmingEitherCalculationValue",
+      "className": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+      "seconds": "0.091",
+      "failure": "",
+      "error": "",
+      "skipped": false
+    },
+    {
+      "name": "shouldKeepAnExecutableConditionalBusinessRule",
+      "className": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+      "seconds": "0.008",
+      "failure": "",
+      "error": "",
+      "skipped": false
+    },
+    {
+      "name": "shouldKeepReportDeliveryWhenOnlyCodeIsDeclined",
+      "className": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+      "seconds": "0.2",
+      "failure": "",
+      "error": "",
+      "skipped": false
+    },
+    {
+      "name": "shouldKeepFutureConfirmationUnresolvedAndSeparateFromTheConfirmedMetric",
+      "className": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+      "seconds": "0.022",
+      "failure": "\n[List check single element] (1 failure)\n-- failure 1 --\nExpecting actual:\n  \"甲指标阈值确定为50000元；如果以后确认乙指标分母采用全部预约记录，再计算乙指标。\"\nnot to contain:\n  \"乙指标\"\nat ConfirmationBoundaryRegressionTest.lambda$shouldKeepFutureConfirmationUnresolvedAndSeparateFromTheConfirmedMetric$1(ConfirmationBoundaryRegressionTest.java:63)",
+      "error": "",
+      "skipped": false
+    },
+    {
+      "name": "shouldRetainANewCaseSensitiveFieldValueDuringReminderMerging",
+      "className": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+      "seconds": "0.016",
+      "failure": "\nExpected size: 2 but was: 1 in:\n[\"该问题尚未确定：输出字段使用 code 还是 Code？\"]",
+      "error": "",
+      "skipped": false
+    },
+    {
+      "name": "shouldNotResolveAnotherInstitutionYearOrNewValueWithTheBoundAnswer",
+      "className": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+      "seconds": "0.004",
+      "failure": "",
+      "error": "",
+      "skipped": false
+    },
+    {
+      "name": "shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[1]",
+      "className": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+      "seconds": "0.028",
+      "failure": "\nExpecting value to be false but was true",
+      "error": "",
+      "skipped": false
+    },
+    {
+      "name": "shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[2]",
+      "className": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+      "seconds": "0.0",
+      "failure": "\nExpecting value to be false but was true",
+      "error": "",
+      "skipped": false
+    },
+    {
+      "name": "shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[3]",
+      "className": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+      "seconds": "0.004",
+      "failure": "\nExpecting value to be false but was true",
+      "error": "",
+      "skipped": false
+    },
+    {
+      "name": "shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[4]",
+      "className": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+      "seconds": "0.004",
+      "failure": "\nExpecting value to be false but was true",
+      "error": "",
+      "skipped": false
+    },
+    {
+      "name": "shouldNotRegisterAConditionalFutureChoiceAsConfirmed",
+      "className": "com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest",
+      "seconds": "0.027",
+      "failure": "\nExpecting empty but was: [ConfirmedPlanDecision[questionId=denominator, question=乙指标的分母如何选择？, topic=本次选择, scope=CHOICE, answer=如果以后确认乙指标分母采用全部预约记录，再计算乙指标。, source=USER_CONFIRMED]]",
+      "error": "",
+      "skipped": false
+    }
+  ]
+}

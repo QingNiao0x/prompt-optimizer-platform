@@ -1,0 +1,163 @@
+{
+  "scope" : "REAL_COMPONENT_CHAIN_SYNTHETIC_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "CB-METRICS-PLAN-L",
+  "arm" : "direct-generation",
+  "requestId" : "a082594e-e13e-4593-9e7e-0303b11dafc7",
+  "startedAt" : "2026-10-08T19:38:32.195071800Z",
+  "status" : "FAILED",
+  "plan" : {
+    "summary" : "已理解任务是为甲院2025年运营团队撰写指标口径核对报告，甲指标阈值已明确为50000元，乙指标的分母、观察起点、终点和医院代码关系尚未确定。需要确认乙指标的关键口径，以便在报告中准确说明已知事实和未知状态。",
+    "questions" : [ {
+      "id" : "metric_b_denominator",
+      "question" : "乙指标的分母采用什么口径？",
+      "hint" : "乙指标的分母尚未确定，直接影响指标定义和计算步骤。",
+      "type" : "FREE_TEXT",
+      "options" : [ ],
+      "examples" : [ "例如：全部预约记录数", "例如：已完成预约的记录数" ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "metric_b_observation_start",
+      "question" : "乙指标的观察起点是什么事件或时间点？",
+      "hint" : "观察起点未确定，影响计算窗口的定义。",
+      "type" : "FREE_TEXT",
+      "options" : [ ],
+      "examples" : [ "例如：预约创建时间", "例如：就诊日期" ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "metric_b_observation_end",
+      "question" : "乙指标的观察终点是什么事件或时间点？",
+      "hint" : "观察终点未确定，影响计算窗口的定义。",
+      "type" : "FREE_TEXT",
+      "options" : [ ],
+      "examples" : [ "例如：预约完成时间", "例如：报告生成日期" ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "metric_b_hospital_code_relation",
+      "question" : "乙指标的医院代码关系是什么？",
+      "hint" : "医院代码关系未确定，影响数据筛选范围。",
+      "type" : "FREE_TEXT",
+      "options" : [ ],
+      "examples" : [ "例如：仅限甲院代码", "例如：包含所有分院代码" ],
+      "allowCustomAnswer" : true
+    } ],
+    "templateCode" : "GENERAL",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-v4-pro",
+      "mock" : false,
+      "modelVersion" : "DeepSeek-V4-Pro-0813"
+    },
+    "latencyMs" : 3108,
+    "planId" : "7178d076-225d-4746-8f49-000e4b9aa6a1",
+    "planningContext" : {
+      "contextId" : "bd16cf30-938a-405c-b6fc-ab0ab11bb634",
+      "version" : "sha256:07dbda34c692c4d328c23a64c9403889224d1c4d01a871a7270c7356f6e31055"
+    },
+    "expiresAt" : 1791490112.195071800
+  },
+  "answers" : [ {
+    "questionId" : "metric_b_denominator",
+    "question" : "乙指标的分母采用什么口径？",
+    "answer" : "甲指标阈值确定为50000元；如果以后确认乙指标分母采用全部预约记录，再计算乙指标。乙指标的观察起点、终点与医院代码关系尚未确定。"
+  }, {
+    "questionId" : "metric_b_observation_start",
+    "question" : "乙指标的观察起点是什么事件或时间点？",
+    "answer" : "甲指标阈值确定为50000元；如果以后确认乙指标分母采用全部预约记录，再计算乙指标。乙指标的观察起点、终点与医院代码关系尚未确定。"
+  }, {
+    "questionId" : "metric_b_observation_end",
+    "question" : "乙指标的观察终点是什么事件或时间点？",
+    "answer" : "甲指标阈值确定为50000元；如果以后确认乙指标分母采用全部预约记录，再计算乙指标。乙指标的观察起点、终点与医院代码关系尚未确定。"
+  }, {
+    "questionId" : "metric_b_hospital_code_relation",
+    "question" : "乙指标的医院代码关系是什么？",
+    "answer" : "甲指标阈值确定为50000元；如果以后确认乙指标分母采用全部预约记录，再计算乙指标。乙指标的观察起点、终点与医院代码关系尚未确定。"
+  } ],
+  "knownDecisions" : [ {
+    "questionId" : "metric_b_denominator",
+    "question" : "乙指标的分母采用什么口径？",
+    "topic" : "口径",
+    "scope" : "CHOICE",
+    "answer" : "甲指标阈值确定为50000元；",
+    "source" : "USER_CONFIRMED"
+  }, {
+    "questionId" : "metric_b_observation_start",
+    "question" : "乙指标的观察起点是什么事件或时间点？",
+    "topic" : "本次选择",
+    "scope" : "CHOICE",
+    "answer" : "甲指标阈值确定为50000元；",
+    "source" : "USER_CONFIRMED"
+  }, {
+    "questionId" : "metric_b_observation_end",
+    "question" : "乙指标的观察终点是什么事件或时间点？",
+    "topic" : "本次选择",
+    "scope" : "CHOICE",
+    "answer" : "甲指标阈值确定为50000元；",
+    "source" : "USER_CONFIRMED"
+  }, {
+    "questionId" : "metric_b_hospital_code_relation",
+    "question" : "乙指标的医院代码关系是什么？",
+    "topic" : "本次选择",
+    "scope" : "CHOICE",
+    "answer" : "甲指标阈值确定为50000元；",
+    "source" : "USER_CONFIRMED"
+  } ],
+  "pendingDecisions" : [ {
+    "questionId" : "metric_b_denominator",
+    "question" : "如果以后确认乙指标分母采用全部预约记录，再计算乙指标。",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "如果以后确认乙指标分母采用全部预约记录，再计算乙指标。",
+    "source" : "USER_CONFIRMED"
+  }, {
+    "questionId" : "metric_b_denominator",
+    "question" : "乙指标的观察起点、终点与医院代码关系尚未确定。",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "乙指标的观察起点、终点与医院代码关系尚未确定。",
+    "source" : "USER_CONFIRMED"
+  }, {
+    "questionId" : "metric_b_observation_start",
+    "question" : "如果以后确认乙指标分母采用全部预约记录，再计算乙指标。",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "如果以后确认乙指标分母采用全部预约记录，再计算乙指标。",
+    "source" : "USER_CONFIRMED"
+  }, {
+    "questionId" : "metric_b_observation_start",
+    "question" : "乙指标的观察起点、终点与医院代码关系尚未确定。",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "乙指标的观察起点、终点与医院代码关系尚未确定。",
+    "source" : "USER_CONFIRMED"
+  }, {
+    "questionId" : "metric_b_observation_end",
+    "question" : "如果以后确认乙指标分母采用全部预约记录，再计算乙指标。",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "如果以后确认乙指标分母采用全部预约记录，再计算乙指标。",
+    "source" : "USER_CONFIRMED"
+  }, {
+    "questionId" : "metric_b_observation_end",
+    "question" : "乙指标的观察起点、终点与医院代码关系尚未确定。",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "乙指标的观察起点、终点与医院代码关系尚未确定。",
+    "source" : "USER_CONFIRMED"
+  }, {
+    "questionId" : "metric_b_hospital_code_relation",
+    "question" : "如果以后确认乙指标分母采用全部预约记录，再计算乙指标。",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "如果以后确认乙指标分母采用全部预约记录，再计算乙指标。",
+    "source" : "USER_CONFIRMED"
+  }, {
+    "questionId" : "metric_b_hospital_code_relation",
+    "question" : "乙指标的观察起点、终点与医院代码关系尚未确定。",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "乙指标的观察起点、终点与医院代码关系尚未确定。",
+    "source" : "USER_CONFIRMED"
+  } ],
+  "failureCategory" : "RULE_CONFLICT",
+  "elapsedMs" : 19706
+}
