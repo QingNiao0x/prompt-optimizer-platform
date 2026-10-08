@@ -75,6 +75,11 @@ public final class PlanQuestionFilter {
         var decisionPolicy = PlanningDecisionPolicy.from(input);
         var comparisonMaterial = ComparisonMaterialDecision.from(input);
         var readOnlyComparison = ReadOnlyMaterialComparison.from(input.rawPrompt());
+        List<String> pendingEvidence = input.planningContext() == null ? List.of()
+                : input.planningContext().factCards().stream().filter(card -> card.origin() == PlanningFactOrigin.USER_MATERIAL
+                        || card.origin() == PlanningFactOrigin.PROJECT_SOURCE || card.origin() == PlanningFactOrigin.PROJECT_DOCUMENT)
+                .map(PlanningFactCard::evidence).toList();
+        var pendingParameters = UnresolvedDecisionContract.from(input.rawPrompt(), ConfirmedDecisionSet.from(List.of()), pendingEvidence);
         Set<QuestionKey> seen = new HashSet<>();
         Set<QuestionKey> seenDimensions = new HashSet<>();
         return questions.stream()
@@ -85,6 +90,7 @@ public final class PlanQuestionFilter {
                 .filter(question -> !readOnlyComparison.directedQuestion(question))
                 .filter(question -> !RoutineGuideDecision.delegated(question, input.rawPrompt()))
                 .filter(question -> !routinePresentation(question, input.rawPrompt()))
+                .filter(question -> !delegatedPendingPresentation(question, input.rawPrompt(), pendingParameters))
                 .filter(question -> !routineWindowTradeoffAnalysis(question, input.rawPrompt()))
                 .filter(question -> !routineExecutionPresentation(question, input.rawPrompt()))
                 .filter(question -> !routineFailureCoverage(question, input.rawPrompt()))
@@ -99,6 +105,28 @@ public final class PlanQuestionFilter {
                     String dimension = questionDimension(question.question());
                     return dimension == null || seenDimensions.add(new QuestionKey(dimension, questionDetails(question)));
                 }).toList();
+    }
+
+    /**
+     * 只交付方案且已要求独立未决条件时，不重新选择如何展示同一具名未知。
+     * 实际参数取值、用户主动选择处理、新对象、权限或新计算条件仍需保留。
+     */
+    private boolean delegatedPendingPresentation(PlanQuestion question, String rawPrompt,
+                                                 UnresolvedDecisionContract parameters) {
+        String raw = safe(rawPrompt);
+        if (!raw.matches("(?s).*(?:只|仅)(?:交付|输出|提供)方案.*")
+                || !raw.matches("(?s).*(?:独立未决条件|未决参数.{0,12}(?:保留|列出|呈现)|保留.{0,12}未决条件).*")) return false;
+        if (hasAdditionalDecision(question) || question.id() != null && question.id().startsWith("context-conflict-")) return false;
+        var pending = Pattern.compile("^([^，,。；;？?]{2,90}?)(?:尚未|仍未|未)确定(?:的情况下)?[，,]?(?:本次方案|方案)?"
+                + "(?:应|应该)?如何(?:处理|展示|呈现)(?:这一未决参数|该未知|该参数|未决状态)?[？?]$")
+                .matcher(question.question());
+        if (!pending.matches() || !parameters.namesPendingParameter(pending.group(1))) return false;
+        String topic = Pattern.quote(pending.group(1));
+        if (Pattern.compile(topic + "[^。；;]{0,32}(?:请(?:先)?让我|由我|由用户)(?:选择|决定|确认)[^。；;]{0,20}"
+                + "(?:处理方式|如何处理|呈现方式)").matcher(raw).find()) return false;
+        String details = String.join(" ", questionDetails(question));
+        // 具体候选值、跨对象授权与纳入规则是业务决定，不因题干同时问展示而删除。
+        return !details.matches("(?s).*(?:新增|另外|跨院|共享|授权|权限|纳入|排除|剔除|分母|[<>!=]|\\d+\\s*(?:分钟|小时|天|%)).*");
     }
 
     /** 处置规则已明确但纳入分母仍未知时，题干对准新增业务决定，不让用户重选已定处置。 */

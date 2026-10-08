@@ -505,6 +505,13 @@ final class UnresolvedDecisionContract {
         return !parameters.isEmpty() || !confirmedParameters.isEmpty();
     }
 
+    /** Plan仅识别本次实际登记的具名未知，不从类别唯一值或另一对象推断该项已交付给执行者。 */
+    boolean namesPendingParameter(String name) {
+        List<Parameter> named = namedParameters(canonical(name)).stream()
+                .map(parameter -> independentHospitalParameters ? boundParameterName(parameter) : parameter).toList();
+        return named.size() == 1 && parameters.contains(named.getFirst());
+    }
+
     /** 同名完整未知通过对象与属性核对；状态谓词差异不创建新决定，附带说明不在此删除。 */
     boolean samePendingStatement(String finding, String statement) {
         var first = purePendingParameter(finding);

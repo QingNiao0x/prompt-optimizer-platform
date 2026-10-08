@@ -43,15 +43,20 @@ final class PlanRecommendationAligner {
         if (question.type() == PlanQuestionType.FREE_TEXT || question.options().size() < 2) {
             return question;
         }
-        String currentCorpus = normalize(applicableCorpus(input.rawPrompt(), question.question()));
-        String userCorpus = normalize(applicableCorpus(userCorpus(input), question.question()));
-        String projectCorpus = normalize(applicableCorpus(projectCorpus(input), question.question()));
+        String currentEvidence = input.rawPrompt();
+        String userEvidence = userCorpus(input);
+        String projectEvidence = projectCorpus(input);
         int bestScore = 0;
         int bestIndex = -1;
         boolean unique = true;
         List<String> reasons = new ArrayList<>();
         for (int index = 0; index < question.options().size(); index++) {
             PlanOption option = question.options().get(index);
+            // 泛指题干不能消除候选自身的机构和年份；每个候选独立核对，另一院同值不构成依据。
+            String candidateScope = question.question() + " " + option.answer() + " " + option.description();
+            String currentCorpus = normalize(applicableCorpus(currentEvidence, candidateScope));
+            String userCorpus = normalize(applicableCorpus(userEvidence, candidateScope));
+            String projectCorpus = normalize(applicableCorpus(projectEvidence, candidateScope));
             String choice = choiceIdentity(option.label());
             String current = support(currentCorpus, choice, option, question.options(), false);
             String user = support(userCorpus, choice, option, question.options(), false);
