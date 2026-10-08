@@ -22,6 +22,8 @@ public class RegistrationProperties {
     private String deliveryMode = "disabled";
     private String verificationSecret = "";
     private String fromAddress = "";
+    /** 邮件中展示的产品名称，不包含部署账号或个人信息。 */
+    private String fromName = "PromptOptimizer";
     private Duration codeTtl = Duration.ofMinutes(5);
     private Duration resendInterval = Duration.ofSeconds(60);
 
@@ -80,6 +82,14 @@ public class RegistrationProperties {
 
     public void setFromAddress(String fromAddress) {
         this.fromAddress = fromAddress;
+    }
+
+    public String getFromName() {
+        return fromName;
+    }
+
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
     }
 
     public Duration getCodeTtl() {

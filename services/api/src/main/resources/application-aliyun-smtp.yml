@@ -1,0 +1,20 @@
+# 显式启用 aliyun-smtp profile 才切换到阿里云华东 1（杭州）；不覆盖通用 SMTP 默认值。
+# 发信地址、SMTP 密码和验证码摘要密钥仍从后端环境变量注入。
+spring:
+  mail:
+    host: ${SMTP_HOST:smtpdm.aliyun.com}
+    port: ${SMTP_PORT:465}
+    properties:
+      mail:
+        smtp:
+          # 465 使用连接建立时的 TLS，不是 587 的 STARTTLS 升级流程。
+          ssl:
+            enable: true
+          starttls:
+            enable: false
+            required: false
+
+app:
+  security:
+    registration:
+      delivery-mode: ${EMAIL_DELIVERY_MODE:smtp}

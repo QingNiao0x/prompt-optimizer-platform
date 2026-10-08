@@ -26,13 +26,22 @@ spring:
     host: ${SMTP_HOST:}
     port: ${SMTP_PORT:587}
     username: ${SMTP_USERNAME:}
-    password: ${SMTP_PASSWORD:}
+    # 优先兼容阿里云 SMTP 密码变量；不复用短信 AccessKey，旧 SMTP_PASSWORD 仍可用。
+    password: ${ALIBABA_SMTP_PASSWORD:${SMTP_PASSWORD:}}
+    default-encoding: UTF-8
     properties:
       mail:
+        # 协议调试可能输出认证信息、收件地址和验证码正文，真实发信始终关闭。
+        debug: false
+        debug.auth: false
         smtp:
           auth: ${SMTP_AUTH:true}
+          ssl:
+            enable: ${SMTP_SSL_ENABLED:false}
+            checkserveridentity: true
           starttls:
             enable: ${SMTP_STARTTLS:true}
+            required: ${SMTP_STARTTLS:true}
           connectiontimeout: ${SMTP_CONNECTION_TIMEOUT_MS:5000}
           timeout: ${SMTP_READ_TIMEOUT_MS:10000}
           writetimeout: ${SMTP_WRITE_TIMEOUT_MS:10000}
@@ -123,6 +132,7 @@ app:
       delivery-mode: ${EMAIL_DELIVERY_MODE:disabled}
       verification-secret: ${EMAIL_VERIFICATION_SECRET:}
       from-address: ${EMAIL_FROM_ADDRESS:${SMTP_USERNAME:}}
+      from-name: ${EMAIL_FROM_NAME:PromptOptimizer}
       code-ttl: ${EMAIL_CODE_TTL:5m}
       resend-interval: ${EMAIL_CODE_RESEND_INTERVAL:60s}
       max-attempts: ${EMAIL_CODE_MAX_ATTEMPTS:5}

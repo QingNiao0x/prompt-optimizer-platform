@@ -75,6 +75,8 @@ SMTP_PASSWORD=<SMTP 密码或授权码>
 
 本机调试可将 `EMAIL_DELIVERY_MODE=log`，验证码会写入后端警告日志；该模式不得用于公网。默认 `disabled` 会明确拒绝发码。SMTP 可以使用已有企业邮箱或邮件服务商提供的 SMTP，不要求绑定某一家验证码平台。
 
+阿里云杭州 SMTP 可显式启用 `aliyun-smtp` profile，使用 465/SSL，并通过 `ALIBABA_SMTP_PASSWORD` 注入 SMTP 密码（未定义时兼容原 `SMTP_PASSWORD`）。通用 587 配置继续使用 STARTTLS；465 模式不能只改端口而不改加密方式。详见[阿里云 SMTP 邮件接入](./阿里云SMTP邮件接入.md)。当前只发送邮箱注册验证码，邮箱验证码登录及邮箱绑定文案为预留模板，不代表已开放相应接口。
+
 默认规则为同一邮箱 60 秒后才能重发、验证码 5 分钟过期、最多错误 5 次、同一邮箱每小时最多发 5 次、同一来源 IP 每小时最多发 20 次。所有规则由服务端执行。Redis 中只保存验证码的 HMAC 摘要和邮箱/IP 的 SHA-256 指纹，不保存验证码明文；账户创建成功后才消费验证码。
 
 公网部署保持 `EMAIL_VERIFICATION_REQUIRE_REDIS=true`。只有明确的单实例开发环境才可设为 `false`；当邮件投递模式同时为 `log` 时，验证码生命周期直接使用进程内存，不连接 Redis，应用重启后验证码失效。IP 限流读取 Servlet 解析后的远端地址；部署在反向代理后必须只信任受控代理并正确配置 forwarded-header 处理，不能直接信任任意客户端传入的 `X-Forwarded-For`。
@@ -209,7 +211,7 @@ $env:PROMPT_OPTIMIZER_E2E_PORT = '5186'
 npm.cmd run test:e2e -- auth-real.spec.ts
 ```
 
-后端测试不连接真实 PostgreSQL 或 Redis。数据库迁移执行、真实 Redis 故障切换和 HTTPS 反向代理环境需单独验证，不能用 MockMvc 通过代替这些部署验证。
+邮件配置、邮箱验证码及 PNVS 供应商定向测试使用模拟对象，不投递真实邮件或短信。现有 `AuthenticationIntegrationTest` 虽声明 `local-mock`，但当前该 profile 仅排除了 Redis 自动配置，没有排除 DataSource/Flyway，因此仍可能连接本地 PostgreSQL 并执行迁移检查；不能把 profile 名称当作数据库已隔离的证明。执行这类测试前应使用独立测试库或明确的基础设施隔离配置。数据库迁移执行、真实 Redis 故障切换和 HTTPS 反向代理环境需单独验证，不能用 MockMvc 通过代替这些部署验证。
 
 本机 Windows / JDK 21 联调如果在 Tomcat 启动时报 `UnixDomainSockets.connect: Invalid argument`，可以创建一个项目内临时目录，并仅给该次启动追加 `-Dspring-boot.run.jvmArguments=-Djdk.net.unixdomain.tmpdir=<该目录绝对路径>`。本轮使用该方式成功启动并进行了真实浏览器验证；不要为此关闭认证、CSRF 或修改系统级网络策略。
 
