@@ -37,6 +37,12 @@ final class UnresolvedDecisionContract {
     private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
     private static final Pattern CURRENT_CONFIRMATION = Pattern.compile("^(?:(?:本次|这次)(?:仅|只)?(?:明确)?(?:确认|确定|选定)"
             + "|(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定))");
+    private static final Pattern PREFIXED_WINDOW_CHOICE = Pattern.compile(
+            "^([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(\\d{1,4}(?:\\.\\d{1,4})?小时)观察窗口$");
+    private static final Pattern PREFIXED_WINDOW_SUBJECT = Pattern.compile("^(.{2,80}?)(\\d{1,4}(?:\\.\\d{1,4})?小时)$");
+    private static final Pattern DENIED_WINDOW_CONFIRMATION = Pattern.compile(
+            "^(?:(已确认的)(?:(\\d{1,4}(?:\\.\\d{1,4})?小时))?(?:观察)?窗口|确认(?:观察)?窗口)"
+                    + "(?:不代表|不等于)(?!.*(?:但|不过|然而|用户(?:已|已经)))[^，,。；;？?]*$");
     private static final String COMPOSITE_PARAMETER_COLUMN = "分母或所需参数";
     private static final List<String> PARAMETER_PROPERTIES = List.of("分母", "阈值", "观察窗口", "覆盖度");
     private static final Pattern INDEPENDENT_HOSPITALS = Pattern.compile("^两院(?:需要|须|应)?(?:独立|分别)(?:计算|确认).*$");
@@ -378,7 +384,16 @@ final class UnresolvedDecisionContract {
         var result = new ArrayList<ParameterValue>();
         for (String sentence : currentDecisionSentences(text)) {
             // 仅移除肯定的当前确认前缀，完整保留机构、年份、指标和属性，不扩大到其他参数。
-            String clause = CURRENT_CONFIRMATION.matcher(canonical(sentence)).replaceFirst("");
+            var confirmation = CURRENT_CONFIRMATION.matcher(canonical(sentence));
+            boolean explicitlyConfirmed = confirmation.find();
+            String clause = confirmation.replaceFirst("");
+            // 数值前置是当前明确选择的语法变体，不将资料中的“24小时窗口已批准”当作本次选择。
+            var prefixedWindow = PREFIXED_WINDOW_CHOICE.matcher(clause);
+            if (explicitlyConfirmed && !CONDITIONAL.matcher(clause).find() && !PENDING.matcher(clause).find()
+                    && !clause.matches(".*(?:建议|候选|示例).*") && prefixedWindow.matches()) {
+                result.add(new ParameterValue(new Parameter(subjectKey(prefixedWindow.group(1).replaceFirst("的$", "")),
+                        "观察窗口"), prefixedWindow.group(2)));
+            }
             var choices = CURRENT_PARAMETER.matcher(clause);
             while (choices.find()) {
                 if (CONDITIONAL.matcher(clause.substring(0, choices.end())).find()
@@ -638,9 +653,11 @@ final class UnresolvedDecisionContract {
                     while (assertions.find()) {
                         String subject = assertions.group(1) == null ? assertions.group(3) : assertions.group(1);
                         String property = assertions.group(2) == null ? assertions.group(4) : assertions.group(2);
+                        // 否认窗口确认能推导出另一参数，不是确认该参数；逐项核对，转折后的真实断言仍须验证。
+                        if (deniesWindowConfirmationInference(subject)) continue;
                         var claimed = new Parameter(subjectKey(subject.replaceFirst("的$", "")), property);
                         if (independentHospitalParameters) claimed = boundParameterName(claimed);
-                        if (!confirmedParameters.contains(claimed)) reject(field, "NARRATIVE_CONFIRMATION_SCOPE");
+                        if (!isConfirmedNarrativeParameter(claimed)) reject(field, "NARRATIVE_CONFIRMATION_SCOPE");
                     }
                     for (Parameter parameter : validationParameters) {
                         String target = assignmentTarget(parameter);
@@ -649,6 +666,26 @@ final class UnresolvedDecisionContract {
                 }
             }
         }
+    }
+
+    /** 数值前置断言须同时匹配完整对象和实际选值；相同机构的另一个窗口值不能借用确认。 */
+    private boolean isConfirmedNarrativeParameter(Parameter claimed) {
+        if (confirmedParameters.contains(claimed)) return true;
+        if (!claimed.property().equals("观察窗口")) return false;
+        var prefixed = PREFIXED_WINDOW_SUBJECT.matcher(claimed.subject());
+        if (!prefixed.matches()) return false;
+        var parameter = new Parameter(subjectKey(prefixed.group(1).replaceFirst("的$", "")), "观察窗口");
+        return confirmedValues.stream().anyMatch(value -> value.parameter().equals(parameter)
+                && value.value().equals(prefixed.group(2)));
+    }
+
+    /** 已确认窗口的比较说明仍须有对应选值；未知48小时不能借24小时的确认建立此类陈述。 */
+    private boolean deniesWindowConfirmationInference(String subject) {
+        var denial = DENIED_WINDOW_CONFIRMATION.matcher(subject);
+        if (!denial.matches()) return false;
+        if (denial.group(1) == null) return true;
+        return confirmedValues.stream().filter(value -> value.parameter().property().equals("观察窗口"))
+                .anyMatch(value -> denial.group(2) == null || value.value().equals(denial.group(2)));
     }
 
     /** 独立属性列优先；平台规定的复合参数列不能成为绕过未决格校验的另一种表头。 */

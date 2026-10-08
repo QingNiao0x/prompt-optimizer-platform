@@ -1,0 +1,180 @@
+{
+  "closed": [
+    "同对象同年份的窗口值前置明确确认可登记",
+    "窗口确认不等于阈值确认的否定说明不再误判为确认断言"
+  ],
+  "unitTests": 789,
+  "classes": 42,
+  "isolatedSmsExcluded": true,
+  "unitLogs": [
+    "prefixed-window-confirmation-red.log",
+    "window-noninference-red.log",
+    "window-actual-answers-shared-final.log"
+  ],
+  "positiveAndNegativeCoverage": [
+    "前置／后置同一选值",
+    "另一窗口／机构／年份",
+    "假设、候选、否定及引用",
+    "否定说明后的新确认断言",
+    "两模型逐字实际绑定回答"
+  ],
+  "prefixOnlyApiSuccess": 0,
+  "prefixOnlyApiFailed": 2,
+  "finalPlanCalls": 2,
+  "finalApiSuccess": 2,
+  "finalPendingCounts": [
+    1,
+    1
+  ],
+  "actualWorks": [
+    {
+      "enhancer": "deepseek:deepseek-flash",
+      "executor": "deepseek-flash",
+      "arm": "plan",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "chars": 1979,
+      "latencyMs": 6067,
+      "outputSha256": "02457dc3a5990a4d7d19f456daa827e73b62803a8ab1c97b56eba4ae5e3953eb",
+      "window24CurrentSelectionLost": true,
+      "thresholdNotGivenNumericValue": true,
+      "window48NotApproved": true,
+      "extraIndicatorTableFromPlatformContract": true,
+      "inventedOtherIndicatorReady": false,
+      "scope": "人工按合成答案核对窗口选择、阈值和审批状态；非领域专业评分"
+    },
+    {
+      "enhancer": "deepseek:deepseek-flash",
+      "executor": "deepseek-flash",
+      "arm": "raw_matched",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "chars": 1319,
+      "latencyMs": 4566,
+      "outputSha256": "721c5f2a825dd54668a536aac4c4e39cc2878ead417ec29a9a78d41f5377a869",
+      "window24CurrentSelectionLost": true,
+      "thresholdNotGivenNumericValue": true,
+      "window48NotApproved": true,
+      "extraIndicatorTableFromPlatformContract": false,
+      "inventedOtherIndicatorReady": false,
+      "scope": "人工按合成答案核对窗口选择、阈值和审批状态；非领域专业评分"
+    },
+    {
+      "enhancer": "deepseek:deepseek-flash",
+      "executor": "deepseek-v4-pro",
+      "arm": "plan",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "chars": 2934,
+      "latencyMs": 20714,
+      "outputSha256": "effd4665e123e9cae55d6bf23d3911db8185b8ff905eb348a50238cee0934daa",
+      "window24CurrentSelectionLost": false,
+      "thresholdNotGivenNumericValue": true,
+      "window48NotApproved": true,
+      "extraIndicatorTableFromPlatformContract": true,
+      "inventedOtherIndicatorReady": true,
+      "scope": "人工按合成答案核对窗口选择、阈值和审批状态；非领域专业评分"
+    },
+    {
+      "enhancer": "deepseek:deepseek-flash",
+      "executor": "deepseek-v4-pro",
+      "arm": "raw_matched",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "chars": 866,
+      "latencyMs": 8545,
+      "outputSha256": "03dfa2adfbd89995446d1e010bf56d563766a8f0ed7f398ab89cf5f071d96b29",
+      "window24CurrentSelectionLost": false,
+      "thresholdNotGivenNumericValue": true,
+      "window48NotApproved": true,
+      "extraIndicatorTableFromPlatformContract": false,
+      "inventedOtherIndicatorReady": false,
+      "scope": "人工按合成答案核对窗口选择、阈值和审批状态；非领域专业评分"
+    },
+    {
+      "enhancer": "deepseek:deepseek-v4-pro",
+      "executor": "deepseek-flash",
+      "arm": "plan",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "chars": 2356,
+      "latencyMs": 7214,
+      "outputSha256": "0e0716e1de783149bc6ce608ae98f0be2aa22d8d96931a573ed4cc4b65e6642a",
+      "window24CurrentSelectionLost": false,
+      "thresholdNotGivenNumericValue": true,
+      "window48NotApproved": true,
+      "extraIndicatorTableFromPlatformContract": true,
+      "inventedOtherIndicatorReady": false,
+      "scope": "人工按合成答案核对窗口选择、阈值和审批状态；非领域专业评分"
+    },
+    {
+      "enhancer": "deepseek:deepseek-v4-pro",
+      "executor": "deepseek-flash",
+      "arm": "raw_matched",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "chars": 960,
+      "latencyMs": 3370,
+      "outputSha256": "af06c28f1099219bb2afbd0c700a876ff2757ed786fa2ac6ed527efdcde19fb2",
+      "window24CurrentSelectionLost": true,
+      "thresholdNotGivenNumericValue": true,
+      "window48NotApproved": true,
+      "extraIndicatorTableFromPlatformContract": false,
+      "inventedOtherIndicatorReady": false,
+      "scope": "人工按合成答案核对窗口选择、阈值和审批状态；非领域专业评分"
+    },
+    {
+      "enhancer": "deepseek:deepseek-v4-pro",
+      "executor": "deepseek-v4-pro",
+      "arm": "plan",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "chars": 1651,
+      "latencyMs": 13314,
+      "outputSha256": "5a68f0ff800d950a5269dd9efc1ff4e5494a2cf80699b8c6b6a8a2dca7183088",
+      "window24CurrentSelectionLost": false,
+      "thresholdNotGivenNumericValue": true,
+      "window48NotApproved": true,
+      "extraIndicatorTableFromPlatformContract": true,
+      "inventedOtherIndicatorReady": false,
+      "scope": "人工按合成答案核对窗口选择、阈值和审批状态；非领域专业评分"
+    },
+    {
+      "enhancer": "deepseek:deepseek-v4-pro",
+      "executor": "deepseek-v4-pro",
+      "arm": "raw_matched",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "chars": 1302,
+      "latencyMs": 10617,
+      "outputSha256": "65ea63000c6e0d84819f556ae1fc40956568f2ef239f2c23ab96bcdcb04bd0d0",
+      "window24CurrentSelectionLost": true,
+      "thresholdNotGivenNumericValue": true,
+      "window48NotApproved": true,
+      "extraIndicatorTableFromPlatformContract": false,
+      "inventedOtherIndicatorReady": false,
+      "scope": "人工按合成答案核对窗口选择、阈值和审批状态；非领域专业评分"
+    }
+  ],
+  "actualWorkSummary": {
+    "total": 8,
+    "complete": 8,
+    "rawCurrentChoiceLost": 3,
+    "planCurrentChoiceLost": 1,
+    "thresholdNumericInvention": 0,
+    "window48WronglyApproved": 0,
+    "planExtraIndicatorTable": 4,
+    "planInventedOtherIndicatorReady": 1
+  },
+  "platformRemaining": [
+    "可复制正文仍追加原始尚未选择状态",
+    "未决通用契约强加未请求的指标表或伪代码",
+    "同一阈值说明仍较长"
+  ],
+  "downstreamRemaining": [
+    "增强作品一份重复待选择状态",
+    "一份额外指标表擅自声明M1/M2可计算；须先撤掉平台扩范围诱因再做归因"
+  ],
+  "fullQualityGatePassed": false,
+  "releaseApproval": false
+}

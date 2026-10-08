@@ -1,0 +1,240 @@
+[
+  {
+    "id": "PS-HOSP-APPROVED-M-deepseek_deepseek-flash-plan-final",
+    "caseId": "PS-HOSP-APPROVED-M",
+    "modelId": "deepseek:deepseek-flash",
+    "arm": "plan",
+    "startedAt": "2026-10-08T06:35:08.792Z",
+    "plan": {
+      "summary": "目标是交付甲院2025年门诊运营组的比较观察方案，只写方案、不计算真实数据。当前已明确24小时窗口已批准生效、48小时仅为未获批候选，但本次方案是沿用24小时还是把48小时作为候选提出尚未选择；异常等待阈值也尚未确定，需要确认其处理口径。",
+      "questions": [
+        {
+          "id": "window_choice",
+          "question": "本次比较观察方案中，观察窗口应如何设定？",
+          "hint": "这决定方案的主口径：是直接沿用甲院2025年已批准生效的24小时窗口，还是把48小时作为未获批候选一并提出供院方审批。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "keep_24h",
+              "label": "沿用24小时",
+              "description": "以甲院2025年已批准并生效的24小时窗口作为本次方案口径，不把48小时作为候选提出。",
+              "answer": "本次比较观察方案沿用甲院2025年已批准并生效的24小时观察窗口。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "propose_48h_candidate",
+              "label": "提出48小时候选",
+              "description": "在方案中把48小时作为尚未批准的候选窗口提出，供院方审批，同时保留24小时已生效规则作为对照。",
+              "answer": "本次比较观察方案在保留甲院2025年已批准并生效的24小时窗口的同时，将48小时作为尚未批准的候选窗口提出，供院方审批；不得写成已获批。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "wait_threshold_handling",
+          "question": "甲院2025年异常等待阈值尚未确定，本次方案应如何处理这一未决条件？",
+          "hint": "阈值未确定会影响观察方案中异常等待的判定口径和验收条件，需要明确是列为独立未决条件，还是本次先给出一个待审批的候选阈值。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "list_as_open_condition",
+              "label": "列为独立未决条件",
+              "description": "方案中不设定具体阈值，将异常等待阈值作为独立未决条件列出，待后续核实确认。",
+              "answer": "本次方案不设定具体异常等待阈值，将其作为独立未决条件列出，待后续核实确认。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "propose_candidate_threshold",
+              "label": "提出候选阈值",
+              "description": "本次方案中提出一个待审批的候选异常等待阈值，并明确标注尚未批准、需院方确认。",
+              "answer": "本次方案提出一个待审批的候选异常等待阈值，并明确标注该阈值尚未批准、需院方确认，不得写成已生效规则。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 4084,
+      "planId": "54e4bf89-d506-4cbc-b808-ead3e9e329ca",
+      "planningContext": {
+        "contextId": "35f84ee8-e012-44f6-ab30-1060fc7b9dec",
+        "version": "sha256:d0455294eed42720988ed69288996af47454043410524d5a802e6ec3c2c543e9"
+      },
+      "expiresAt": "2026-10-08T06:38:38.029533300Z"
+    },
+    "answers": [
+      {
+        "questionId": "window_choice",
+        "question": "本次比较观察方案中，观察窗口应如何设定？",
+        "answer": "本次比较观察方案沿用甲院2025年已批准并生效的24小时观察窗口。本次仅确认甲院2025年的24小时观察窗口；48小时仍可作为比较候选说明取舍，但未获批，也不确认异常等待阈值。"
+      },
+      {
+        "questionId": "wait_threshold_handling",
+        "question": "甲院2025年异常等待阈值尚未确定，本次方案应如何处理这一未决条件？",
+        "answer": "暂不确定。甲院2025年异常等待阈值仍需独立核实，方案不设定具体数值；已确认的24小时窗口不代表阈值已确认。"
+      }
+    ],
+    "answerReview": {
+      "window_choice": {
+        "answer": "本次比较观察方案沿用甲院2025年已批准并生效的24小时观察窗口。本次仅确认甲院2025年的24小时观察窗口；48小时仍可作为比较候选说明取舍，但未获批，也不确认异常等待阈值。",
+        "basis": "已审阅本轮实际窗口题，合成选择沿用当前已批准口径；范围限于甲院2025年，不扩展到阈值或其他机构。"
+      },
+      "wait_threshold_handling": {
+        "answer": "暂不确定。甲院2025年异常等待阈值仍需独立核实，方案不设定具体数值；已确认的24小时窗口不代表阈值已确认。",
+        "basis": "已审阅本轮阈值题，专业阈值保持独立未决，不给候选默认数值。"
+      }
+    },
+    "refinedQuery": "为甲院2025年的门诊运营组拟定比较观察方案，只交付方案，不计算真实患者数据、不输出诊疗建议。研究对象和年份已经明确。所附说明记录甲院2025年已批准并生效的24小时观察窗口。\n本次是否继续沿用24小时窗口，还是提出48小时候选供院方审批，尚未选择，请先让我确认。推荐需要依据甲院、2025年和已批准状态；不能从别院或其他年份借用规则。推荐不等于我已选定，48小时候选也不能写成已经获批。本次异常等待阈值仍需独立核实，不因窗口已有规则而自动确认。最终交付观察范围、两个方案的主要取舍、独立未决条件及验收，不让我选择常规章节或图表颜色。\n本次选择：本次比较观察方案沿用甲院2025年已批准并生效的24小时观察窗口。本次仅确认甲院2025年的24小时观察窗口；48小时仍可作为比较候选说明取舍，但未获批，也不确认异常等待阈值。\n阈值：暂不确定。甲院2025年异常等待阈值仍需独立核实，方案不设定具体数值；已确认的24小时窗口不代表阈值已确认。",
+    "status": "FAILED",
+    "failure": {
+      "label": "PS-HOSP-APPROVED-M-deepseek_deepseek-flash-plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 502,
+      "requestId": "3ecba746-d7c2-408b-be13-ff01339cf972",
+      "elapsedMs": 12784,
+      "code": "RESULT_INVALID",
+      "validationReason": "RULE_CONFLICT",
+      "validationField": "sections.BACKGROUND",
+      "modelAttempts": 3
+    },
+    "requests": [
+      {
+        "label": "PS-HOSP-APPROVED-M-deepseek_deepseek-flash-plan-final",
+        "path": "/api/v1/optimizations",
+        "status": 502,
+        "requestId": "3ecba746-d7c2-408b-be13-ff01339cf972",
+        "elapsedMs": 12784,
+        "code": "RESULT_INVALID",
+        "validationReason": "RULE_CONFLICT",
+        "validationField": "sections.BACKGROUND",
+        "modelAttempts": 3
+      }
+    ]
+  },
+  {
+    "id": "PS-HOSP-APPROVED-M-deepseek_deepseek-v4-pro-plan-final",
+    "caseId": "PS-HOSP-APPROVED-M",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "arm": "plan",
+    "startedAt": "2026-10-08T06:35:21.592Z",
+    "plan": {
+      "summary": "已理解本次目标是为甲院2025年门诊运营组拟定比较观察方案，仅交付方案，不计算真实数据、不输出诊疗建议。需要确认观察窗口的选择和异常等待阈值的取值，因为这两个因素会直接影响方案中的比较口径和业务规则。",
+      "questions": [
+        {
+          "id": "observation_window",
+          "question": "本次比较观察方案中，观察窗口采用哪种方案？",
+          "hint": "已批准并生效的24小时窗口与尚未批准的48小时候选会影响方案中的观察时长和比较口径。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "window_24h",
+              "label": "沿用24小时窗口",
+              "description": "使用甲院2025年已批准并生效的24小时观察窗口。",
+              "answer": "观察窗口采用24小时（已批准并生效）。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "window_48h",
+              "label": "提出48小时候选",
+              "description": "在方案中提出48小时观察窗口作为候选，供院方审批。",
+              "answer": "观察窗口提出48小时作为候选，供院方审批（尚未批准）。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "abnormal_wait_threshold",
+          "question": "本次方案中，异常等待阈值应如何设定？",
+          "hint": "该阈值尚未确定，且不能从其他医院或年份借用规则，需要您提供具体数值或定义。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：异常等待阈值定义为超过30分钟",
+            "例如：异常等待阈值定义为超过2小时"
+          ],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 5619,
+      "planId": "623e07b5-3a8c-4c7b-b16d-c7b4bad13d2c",
+      "planningContext": {
+        "contextId": "840f1a55-7169-42c1-92ee-762c0815174a",
+        "version": "sha256:d0455294eed42720988ed69288996af47454043410524d5a802e6ec3c2c543e9"
+      },
+      "expiresAt": "2026-10-08T06:38:54.581596600Z"
+    },
+    "answers": [
+      {
+        "questionId": "observation_window",
+        "question": "本次比较观察方案中，观察窗口采用哪种方案？",
+        "answer": "观察窗口采用24小时（已批准并生效）。本次仅确认甲院2025年的24小时观察窗口；48小时仍可作为比较候选说明取舍，但未获批，也不确认异常等待阈值。"
+      },
+      {
+        "questionId": "abnormal_wait_threshold",
+        "question": "本次方案中，异常等待阈值应如何设定？",
+        "answer": "暂不确定。甲院2025年异常等待阈值仍需独立核实，方案不设定具体数值；已确认的24小时窗口不代表阈值已确认。"
+      }
+    ],
+    "answerReview": {
+      "observation_window": {
+        "answer": "观察窗口采用24小时（已批准并生效）。本次仅确认甲院2025年的24小时观察窗口；48小时仍可作为比较候选说明取舍，但未获批，也不确认异常等待阈值。",
+        "basis": "已审阅本轮实际窗口题，合成选择沿用当前已批准口径；范围限于甲院2025年，不扩展到阈值或其他机构。"
+      },
+      "abnormal_wait_threshold": {
+        "answer": "暂不确定。甲院2025年异常等待阈值仍需独立核实，方案不设定具体数值；已确认的24小时窗口不代表阈值已确认。",
+        "basis": "已审阅本轮阈值题，专业阈值保持独立未决，不给候选默认数值。"
+      }
+    },
+    "refinedQuery": "为甲院2025年的门诊运营组拟定比较观察方案，只交付方案，不计算真实患者数据、不输出诊疗建议。研究对象和年份已经明确。所附说明记录甲院2025年已批准并生效的24小时观察窗口。\n本次是否继续沿用24小时窗口，还是提出48小时候选供院方审批，尚未选择，请先让我确认。推荐需要依据甲院、2025年和已批准状态；不能从别院或其他年份借用规则。推荐不等于我已选定，48小时候选也不能写成已经获批。本次异常等待阈值仍需独立核实，不因窗口已有规则而自动确认。最终交付观察范围、两个方案的主要取舍、独立未决条件及验收，不让我选择常规章节或图表颜色。\n本次选择：观察窗口采用24小时（已批准并生效）。本次仅确认甲院2025年的24小时观察窗口；48小时仍可作为比较候选说明取舍，但未获批，也不确认异常等待阈值。\n阈值：暂不确定。甲院2025年异常等待阈值仍需独立核实，方案不设定具体数值；已确认的24小时窗口不代表阈值已确认。",
+    "status": "FAILED",
+    "failure": {
+      "label": "PS-HOSP-APPROVED-M-deepseek_deepseek-v4-pro-plan-final",
+      "path": "/api/v1/optimizations",
+      "status": 502,
+      "requestId": "d446a3d8-6de2-48f4-b3dc-15a736b3a0d0",
+      "elapsedMs": 21438,
+      "code": "RESULT_INVALID",
+      "validationReason": "RULE_CONFLICT",
+      "validationField": "sections.CONSTRAINTS",
+      "modelAttempts": 3
+    },
+    "requests": [
+      {
+        "label": "PS-HOSP-APPROVED-M-deepseek_deepseek-v4-pro-plan-final",
+        "path": "/api/v1/optimizations",
+        "status": 502,
+        "requestId": "d446a3d8-6de2-48f4-b3dc-15a736b3a0d0",
+        "elapsedMs": 21438,
+        "code": "RESULT_INVALID",
+        "validationReason": "RULE_CONFLICT",
+        "validationField": "sections.CONSTRAINTS",
+        "modelAttempts": 3
+      }
+    ]
+  }
+]
