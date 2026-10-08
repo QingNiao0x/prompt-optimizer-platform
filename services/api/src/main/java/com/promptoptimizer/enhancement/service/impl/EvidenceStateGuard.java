@@ -62,7 +62,7 @@ final class EvidenceStateGuard {
                 String field = explicit.group(1).strip();
                 // 实际绑定回答明确选择完整参数名时，以回答的对象和属性为准，不依赖原题的改写词。
                 // 未具名参数仍须与原题匹配；不得把通用“采用某口径”关联到另一指标或另一院。
-                boolean namedParameter = field.matches("[^与和及、，,。；;]{2,60}(?:分母|阈值|观察窗口|覆盖度)");
+                boolean namedParameter = field.matches("[^与和及、，,。；;]{2,60}(?:分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)");
                 if (!namedParameter && !parameterName(decision.question()).contains(parameterName(field))) continue;
                 updated = reconcileCurrentParameterState(updated, field);
             }
@@ -161,11 +161,11 @@ final class EvidenceStateGuard {
 
     /** 同名独立未知只更新当前断言；未来条件、示例和引用不随本次参数选值改变。 */
     private static String reconcileStandaloneState(String text, String field) {
-        var parameter = Pattern.compile("^(.+?)(?:的)?(分母|阈值|观察窗口|覆盖度)$").matcher(field);
+        var parameter = Pattern.compile("^(.+?)(?:的)?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)$").matcher(field);
         String named = parameter.matches() ? Pattern.quote(parameter.group(1)) + "(?:的)?" + Pattern.quote(parameter.group(2))
                 : Pattern.quote(field);
         var state = Pattern.compile("(?<![\\p{L}\\d])" + named
-                + "(?:目前)?(?:尚未确定|未确定|尚未决定|未决定|还未选定|尚未选定|未选定|未知)");
+                + "(?:目前)?(?:尚未确定|未确定|尚未决定|未决定|还未选定|尚未选定|未选定|尚未提供|未提供|尚未确认|未确认|未知)");
         return Pattern.compile("[^。；;\\r\\n]+[。；;]?").matcher(text).replaceAll(match -> {
             String sentence = match.group();
             if (sentence.matches("(?s).*(?:若|如果|假如|假设|仅当|仅在|例如|示例|引用|[“”\\\"`]).*")) {
@@ -185,7 +185,7 @@ final class EvidenceStateGuard {
             if (named.matches("^(?:若|如果|假设|假如|例如|示例|引用|>|```).*")) return java.util.regex.Matcher.quoteReplacement(match.group());
             var parameters = java.util.Arrays.stream(named.split("与|和|及|、")).map(String::strip).toList();
             if (parameters.size() < 2 || parameters.size() > 6
-                    || parameters.stream().anyMatch(value -> !value.matches(".{2,60}(?:分母|阈值|观察窗口|覆盖度)"))
+                    || parameters.stream().anyMatch(value -> !value.matches(".{2,60}(?:分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)"))
                     || parameters.stream().noneMatch(value -> parameterName(value).equals(parameterName(field)))) {
                 return java.util.regex.Matcher.quoteReplacement(match.group());
             }
@@ -198,7 +198,7 @@ final class EvidenceStateGuard {
     /** 只规范可选“的”和完整性指标的已知示例别名，机构、年份及限定范围逐字保留。 */
     private static String parameterName(String text) {
         return text.replaceAll("完整性指标[（(](?:如|例如)字段缺失率[）)](?=(?:的)?分母)", "完整性指标")
-                .replaceAll("的(?=分母|阈值|观察窗口|覆盖度)", "");
+                .replaceAll("的(?=分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)", "");
     }
 
     /** 仅更新单一本次通知渠道的旧选择状态；绑定回答必须真选渠道，偏好、未来条件和另一对象不继承。 */

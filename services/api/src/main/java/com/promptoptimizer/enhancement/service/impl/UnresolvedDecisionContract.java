@@ -22,16 +22,16 @@ import java.util.Optional;
 final class UnresolvedDecisionContract {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UnresolvedDecisionContract.class);
     private static final Pattern DECLARATION = Pattern.compile(
-            "([^。；;，,：:\\r\\n？?]{2,160}?)(?:(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)"
+            "([^。；;，,：:\\r\\n？?]{2,160}?)(?:(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确|确认|提供)"
                     + "|(?:尚需|仍需|需)(?:分别)?(?:确定|确认|核实)|(?:尚待|待)(?:分别)?(?:确定|确认|核实)|未决)");
-    private static final Pattern PARAMETER = Pattern.compile("^(.{2,65}?)(?:的)?(分母|阈值|观察窗口|覆盖度)$");
+    private static final Pattern PARAMETER = Pattern.compile("^(.{2,65}?)(?:的)?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)$");
     private static final Pattern CONDITIONAL = Pattern.compile("若|如果|假如|假设|仅当|只有|例如|示例|引用|不要|不得|不能|不应|禁止");
-    private static final Pattern PENDING = Pattern.compile("待确认|待定|未决|尚未|未确定|未决定|未核实|待核实|TBD|None|null", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PENDING = Pattern.compile("待确认|待定|未决|尚未|未确定|未决定|未核实|未提供|未确认|待核实|TBD|None|null", Pattern.CASE_INSENSITIVE);
     private static final Pattern CURRENT_PARAMETER = Pattern.compile(
-            "([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度)(?:明确)?(?:采用|使用|选定|包含|包括|为|是)([^。；;，,\\r\\n？?]+)");
+            "([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)(?:明确)?(?:采用|使用|选定|包含|包括|为|是)([^。；;，,\\r\\n？?]+)");
     private static final Pattern ASSERTED_PARAMETER = Pattern.compile(
-            "(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定)([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度)"
-                    + "|([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度)(?:已|已经)(?:由用户)?(?:确认|确定|选定)");
+            "(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定)([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)"
+                    + "|([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)(?:已|已经)(?:由用户)?(?:确认|确定|选定)");
     private static final Pattern CONFIRMED_CELL = Pattern.compile("^(?:用户)?(?:已确认|已由用户确认|分母已确认)"
             + "(?:分母|口径|阈值|观察窗口|覆盖度)?(?:$|[（(：:，,；;].*)");
     private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
@@ -44,12 +44,12 @@ final class UnresolvedDecisionContract {
             "^(?:(已确认的)(?:(\\d{1,4}(?:\\.\\d{1,4})?小时))?(?:观察)?窗口|确认(?:观察)?窗口)"
                     + "(?:不代表|不等于)(?!.*(?:但|不过|然而|用户(?:已|已经)))[^，,。；;？?]*$");
     private static final String COMPOSITE_PARAMETER_COLUMN = "分母或所需参数";
-    private static final List<String> PARAMETER_PROPERTIES = List.of("分母", "阈值", "观察窗口", "覆盖度");
+    private static final List<String> PARAMETER_PROPERTIES = List.of("分母", "阈值", "观察窗口", "覆盖度", "观察起点", "观察终点", "观察日期范围");
     private static final Pattern INDEPENDENT_HOSPITALS = Pattern.compile("^两院(?:需要|须|应)?(?:独立|分别)(?:计算|确认).*$");
     private static final Pattern CURRENT_PENDING_CLAUSE = Pattern.compile(
             "(^|[，,])(\\s*)((?:(?:甲院|乙院)(?:的)?)?(?:异常等待(?:的)?阈值)|"
                     + "(?:甲院|乙院|两院)(?:的)?(?:比较)?观察窗口)"
-                    + "(?:也|都|均)?(?:(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)|(?:还)?没有(?:定|确定|决定))"
+                    + "(?:也|都|均)?(?:(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确|确认|提供)|(?:还)?没有(?:定|确定|决定))"
                     + "(?=$|[，,。；;])");
     static final String DELIVERY_GUIDANCE = "同一未决决定在用户已要求的交付形式中保持一致："
             + "相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；"
@@ -506,25 +506,25 @@ final class UnresolvedDecisionContract {
 
     /** 同名未知的有限语法变体只用于避免再次补回，不消费带新对象、取值或条件的原提醒。 */
     boolean samePendingStatement(String finding, String statement) {
-        String first = canonical(finding).replaceAll("的(?=分母|阈值|观察窗口|覆盖度)", "")
-                .replaceAll("(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)", "未决").replaceAll("[。]+$", "");
-        String second = canonical(statement).replaceAll("的(?=分母|阈值|观察窗口|覆盖度)", "")
+        String first = canonical(finding).replaceAll("的(?=分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)", "")
+                .replaceAll("(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确|确认|提供)", "未决").replaceAll("[。]+$", "");
+        String second = canonical(statement).replaceAll("的(?=分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)", "")
                 .replace("尚未确定", "未决").replaceAll("[。]+$", "");
-        var firstParameter = new Parameter(subjectKey(first.replaceFirst("(分母|阈值|观察窗口|覆盖度)未决$", "")),
-                first.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1"));
-        var secondParameter = new Parameter(subjectKey(second.replaceFirst("(分母|阈值|观察窗口|覆盖度)未决$", "")),
-                second.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1"));
+        var firstParameter = new Parameter(subjectKey(first.replaceFirst("(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "")),
+                first.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "$1"));
+        var secondParameter = new Parameter(subjectKey(second.replaceFirst("(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "")),
+                second.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "$1"));
         return (independentHospitalParameters ? boundParameterName(firstParameter) : firstParameter)
                 .equals(independentHospitalParameters ? boundParameterName(secondParameter) : secondParameter)
-                && first.matches(".*(?:分母|阈值|观察窗口|覆盖度)未决$")
-                && first.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1")
-                .equals(second.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度)未决$", "$1"));
+                && first.matches(".*(?:分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$")
+                && first.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "$1")
+                .equals(second.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "$1"));
     }
 
     /** 同一未知若已在带新说明的提醒中登记，只避免追加第二条短状态，不裁掉任何新说明。 */
     boolean coversPendingStatement(String finding, String statement) {
         // “分母口径尚未确定”只用于证明已有同项说明覆盖短状态；不修改原句或放宽具体口径校验。
-        String observed = finding.replaceAll("分母口径(?=(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确))", "分母");
+        String observed = finding.replaceAll("分母口径(?=(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确|确认|提供))", "分母");
         return samePendingStatement(observed, statement) || coversIndependentPair(observed, statement) || declaredPending(observed).stream()
                 .anyMatch(declaration -> samePendingStatement(declaration, statement));
     }
@@ -554,7 +554,7 @@ final class UnresolvedDecisionContract {
         String owners = "^(?:甲院(?:和|与|、)乙院|乙院(?:和|与|、)甲院)(?:的)?";
         String observed = canonical(finding);
         if (observed.matches(owners + suffix
-                + "(?:均|都|分别)?(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)(?:$|[，,。；;].*)")) return true;
+                + "(?:均|都|分别)?(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确|确认|提供)(?:$|[，,。；;].*)")) return true;
         // 完整并列问题已分别登记两项未知，只免于追加短状态；保留原问题与示例、条件等全部解释。
         // 必须出现“分别／各自”，共同数值选择不能冒充两个独立决定，已回答任一项时也不适用。
         String questionProperty = expected.property().equals("观察窗口")
@@ -604,7 +604,7 @@ final class UnresolvedDecisionContract {
                 // 假设、引用或禁止位于当前断言之前时仍不建立事实，不能把条件内的未知当成现状。
                 if (CONDITIONAL.matcher(value.substring(0, declarations.end())).find()) continue;
                 String subject = declarations.group(1).strip();
-                if (subject.matches(".*(?:分母|阈值|观察窗口|覆盖度|插补|方法|审批标准|退款标准)$")) {
+                if (subject.matches(".*(?:分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围|插补|方法|审批标准|退款标准)$")) {
                     result.add(declarations.group().strip() + "。");
                 }
             }
@@ -626,8 +626,17 @@ final class UnresolvedDecisionContract {
     /** 模型前指导和最终复制正文使用同一交付范围；有指标表不意味着也要求伪代码，反之亦然。 */
     String baseDeliveryGuidance() {
         return DELIVERY_GUIDANCE
+                + observationBoundaryGuidance()
                 + (indicatorTableRequested ? "原定指标表仍须交付，逐指标说明依据、参数状态和计算前提。" : "")
                 + (pseudocodeRequested ? "原定伪代码仍须交付，只暂停依赖未决参数的计算，其余已要求步骤继续完成。" : "");
+    }
+
+    /** 窗口时长只确定自身参数；缺失起止事件或日期范围不能由年份、惯例或示例补成事实。 */
+    private String observationBoundaryGuidance() {
+        boolean observation = java.util.stream.Stream.concat(parameters.stream(), confirmedParameters.stream())
+                .anyMatch(parameter -> parameter.property().startsWith("观察"));
+        return observation ? "窗口时长不证明观察起止事件、采集日期范围或其他指标分母。"
+                + "未提供的边界保持未知；候选定义明确标为建议，另行确认后才用于依赖它的计算。" : "";
     }
 
     /** 只有原定指标表增加逐行依据要求；参数视图是执行依据，不新增临床、法律或其他指标任务。 */
@@ -675,9 +684,9 @@ final class UnresolvedDecisionContract {
             if (text.startsWith("|")) {
                 List<String> cells = cells(text);
                 if (cells.stream().anyMatch(value -> value.equals(COMPOSITE_PARAMETER_COLUMN)
-                        || value.matches("(?:分母|阈值|观察窗口|覆盖度)(?:口径|定义)?"))) {
+                        || value.matches("(?:分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)(?:口径|定义)?"))) {
                     header = cells.stream().map(value -> value.equals("指标名称") ? "指标"
-                            : value.replaceFirst("(?<=分母|阈值|观察窗口|覆盖度)(?:口径|定义)$", "")).toList();
+                            : value.replaceFirst("(?<=分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)(?:口径|定义)$", "")).toList();
                     continue;
                 }
                 if (text.matches("[|:\\-\\s]+") || header.isEmpty() || cells.size() != header.size()) continue;
@@ -714,6 +723,8 @@ final class UnresolvedDecisionContract {
                         if (independentHospitalParameters) claimed = boundParameterName(claimed);
                         if (!isConfirmedNarrativeParameter(claimed)) reject(field, "NARRATIVE_CONFIRMATION_SCOPE");
                     }
+                    // 建议可以提出备选定义，但不能冒充当前执行参数；上面的确认断言仍独立校验。
+                    if (compact.matches("^(?:建议|候选方案|备选方案)[：:]?.*")) continue;
                     for (Parameter parameter : validationParameters) {
                         String target = assignmentTarget(parameter);
                         if (Pattern.compile(target + "(?:采用|取|为|是|=|设为|定义为)(?=.+)").matcher(compact).find()) reject(field, "PENDING_PARAMETER_ASSIGNMENT");

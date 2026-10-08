@@ -279,3 +279,5 @@ prompt-optimizer-platform/
 Copyright © 2026 QingNiao0x
 
 本项目按 [PolyForm Noncommercial License 1.0.0](./LICENSE) 发布：允许个人学习、研究和非商业使用；未经作者书面许可，禁止商业使用。
+
+本轮提示词增强／Plan修复进度：见[专业边界与提醒交付闭环验收](docs/testing/专业边界与提醒交付闭环验收-2026-10-08.md)。观察起止和日期范围的独立状态已补修，128项相关测试通过；最终多轮作品与全仓库门禁尚未完成。
