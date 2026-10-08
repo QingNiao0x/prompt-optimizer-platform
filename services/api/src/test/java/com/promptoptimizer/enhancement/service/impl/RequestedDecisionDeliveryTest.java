@@ -85,6 +85,34 @@ class RequestedDecisionDeliveryTest {
                 .doesNotContain("原定指标表仍须交付", "原定伪代码仍须交付");
     }
 
+    @Test
+    void directNeedsDifferentScopesAndQuantityLimitsPreserveRequestedDeliverables() {
+        for (String request : List.of("本次需要指标表和清洗伪代码。", "本次要求指标表和清洗伪代码。",
+                "交付不同口径的指标表和清洗伪代码。", "交付不超过两张指标表和必要伪代码。")) {
+            assertThat(contract(RAW + request).deliveryGuidance()).as(request)
+                    .contains("原定指标表仍须交付", "原定伪代码仍须交付");
+        }
+    }
+
+    @Test
+    void actualNegativeDeliveryVerbsRemainNegative() {
+        for (String request : List.of("不需要指标表和清洗伪代码。", "不再交付指标表或伪代码。",
+                "无需提供任何指标表或伪代码。", "禁止额外输出指标表或伪代码。")) {
+            assertThat(contract(RAW + request).deliveryGuidance()).as(request)
+                    .doesNotContain("原定指标表仍须交付", "原定伪代码仍须交付");
+        }
+    }
+
+    @Test
+    void oppositeDeliverablesInOneClauseKeepTheirOwnActionScopes() {
+        assertThat(contract(RAW + "交付指标表但不提供伪代码。").deliveryGuidance())
+                .contains("原定指标表仍须交付").doesNotContain("原定伪代码仍须交付");
+        assertThat(contract(RAW + "需要伪代码但无需提供指标表。").deliveryGuidance())
+                .contains("原定伪代码仍须交付").doesNotContain("原定指标表仍须交付");
+        assertThat(contract(RAW + "不需要交付指标表或伪代码。").deliveryGuidance())
+                .doesNotContain("原定指标表仍须交付", "原定伪代码仍须交付");
+    }
+
     private static UnresolvedDecisionContract contract(String raw) {
         return UnresolvedDecisionContract.from(raw, ConfirmedDecisionSet.from(List.of()));
     }

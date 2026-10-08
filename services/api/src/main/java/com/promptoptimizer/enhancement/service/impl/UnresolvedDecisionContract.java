@@ -139,8 +139,10 @@ final class UnresolvedDecisionContract {
 
     /** 本次肯定交付指令才激活相应保护；条件、引用、示例及单纯提到表名不扩大任务范围。 */
     private static boolean requestedDeliverable(String text, String name) {
-        var directive = Pattern.compile("交付|输出|提供|包含|提交|列出|给出|生成|完成|附上|制作|设计");
+        var directive = Pattern.compile("交付|输出|提供|包含|提交|列出|给出|生成|完成|附上|制作|设计|需要|要求");
         var hypothetical = Pattern.compile("若|如果|假如|假设|仅当|只有|例如|示例|引用");
+        var negativeAction = Pattern.compile("(?:不|不要|无需|不需|禁止|避免|不必|不得|不能)"
+                + "(?:需要|要求)?(?:再|另行|额外|自行|单独|强行)*\\s*$");
         for (String sentence : currentDecisionSentences(text)) {
             boolean condition = false;
             for (String clause : sentence.split("[，,]")) {
@@ -148,9 +150,18 @@ final class UnresolvedDecisionContract {
                 String prefix = action.find() ? clause.substring(0, action.start()) : clause;
                 condition |= hypothetical.matcher(prefix).find();
                 // 后半句的禁止计算不撤销前半句的真实交付；条件前提则持续约束同句后续分句。
-                if (!condition && clause.matches(".*(?:交付|输出|提供|包含|提交|列出|给出|生成|完成|附上|制作|设计).{0,80}"
-                        + Pattern.quote(name) + ".*") && !clause.matches(".*(?:不|不要|无需|不需|禁止|避免).{0,30}"
-                        + Pattern.quote(name) + ".*")) return true;
+                int nameIndex = clause.indexOf(name);
+                if (condition || nameIndex < 0) continue;
+                // 否定作用于该交付物前最近的要求动词；“不同口径”“不超过两张”是范围，不是禁止交付。
+                var precedingAction = directive.matcher(clause.substring(0, nameIndex));
+                int actionStart = -1;
+                int actionEnd = -1;
+                while (precedingAction.find()) {
+                    actionStart = precedingAction.start();
+                    actionEnd = precedingAction.end();
+                }
+                if (actionStart >= 0 && nameIndex - actionEnd <= 80
+                        && !negativeAction.matcher(clause.substring(0, actionStart)).find()) return true;
             }
         }
         return false;
