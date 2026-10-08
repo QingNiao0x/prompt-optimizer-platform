@@ -23,7 +23,7 @@ final class AuthoritativeDeliveryCompactor {
     private static final String PARAMETER_HEADING = "当前参数依据（用于生成指标表，不代替指标表）：";
     private static final String ORIGINAL_DELIVERY_HEADING = "当前参数依据（用于核对原定交付，不新增交付物）：";
     private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
-    private static final Pattern EMPHASIZED_SENTENCE = Pattern.compile("^(\\*\\*|__)([^。\\r\\n]+。)\\1$");
+    private static final Pattern EMPHASIZED_SENTENCE = Pattern.compile("^(\\*\\*|__)([^。\\r\\n]+。?)\\1$");
 
     private AuthoritativeDeliveryCompactor() { }
 
@@ -86,7 +86,8 @@ final class AuthoritativeDeliveryCompactor {
                     String sentence = matches.group();
                     String identity = key(sentence);
                     PromptSectionType owner = authority.get(identity);
-                    if (protectedScope || owner == null || !sentence.endsWith("。")
+                    // 完整登记句仅省略末尾句号时仍是同一平台要求；未知片段或新增条件不会命中权威键。
+                    if (protectedScope || owner == null
                             || owner == type && retainedAuthority.add(identity)) kept.append(sentence);
                 }
                 if (!kept.toString().isBlank()) {
@@ -195,6 +196,7 @@ final class AuthoritativeDeliveryCompactor {
                 // 已登记平台句里的代码名只作行内排版；代码块、实际业务表与数值字面量不在此处理。
                 .replaceAll("`([A-Za-z_][A-Za-z0-9_. ]*)`", "$1")
                 .replaceAll("\\s+", "")
+                .replaceFirst("。$", "")
                 .replaceFirst("^(?:上述)?未决参数在正文", "同一未决决定在正文")
                 .replaceFirst("^指标表:逐行包含", "指标表逐行包含");
     }
