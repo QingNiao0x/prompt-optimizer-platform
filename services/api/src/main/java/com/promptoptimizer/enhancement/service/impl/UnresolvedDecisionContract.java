@@ -295,6 +295,12 @@ final class UnresolvedDecisionContract {
      * 只有绑定项对应本次确实未决的完整参数时才作明确判断；无具名范围的提醒不能借该项归并。
      */
     Optional<Boolean> matchesBoundIndependentParameter(String heading, String boundQuestion) {
+        var complete = boundReminderParameter(boundQuestion, true);
+        if (complete.isPresent() && (parameters.contains(complete.get()) || boundPendingQuestions.contains(boundQuestion))) {
+            var candidate = boundReminderParameter(heading, false);
+            // 已绑定完整对象后，另一年份、属性及新增限定必须明确不匹配，不能落入宽泛主题回退。
+            return Optional.of(candidate.isPresent() && candidate.equals(complete));
+        }
         if (!independentHospitalParameters) return Optional.empty();
         String knownSubject = PlanAnswerSemantics.pendingSubject(canonical(boundQuestion));
         if (knownSubject.isEmpty()) {
@@ -316,6 +322,34 @@ final class UnresolvedDecisionContract {
         List<Parameter> candidate = namedParameters(declaration.group(1)).stream()
                 .map(this::boundParameterName).toList();
         return Optional.of(candidate.size() == 1 && candidate.getFirst().equals(known.getFirst()));
+    }
+
+    /**
+     * 完整具名问句与纯未知共享参数身份，只统一明确的属性说法和提问尾部。
+     * 不省略机构、年份、科室、比较符或适用条件，引用与未来语境不提供当前状态依据。
+     */
+    private Optional<Parameter> boundReminderParameter(String text, boolean question) {
+        if (text == null || text.strip().matches("^[>‘’“”\\\"'`].*")) return Optional.empty();
+        String value = canonical(text).replaceFirst("[。？?]+$", "");
+        if (CONDITIONAL.matcher(value).find()) return Optional.empty();
+        var declaration = DECLARATION.matcher(value);
+        if (declaration.matches()) value = declaration.group(1);
+        else if (question) value = value.replaceFirst(
+                "(?:(?:应|应该)?如何(?:确定|确认|设定|定义)|是多少(?:分钟)?|是什么)$", "");
+        else return Optional.empty();
+        value = value.replace("观察窗口的起点事件", "观察起点")
+                .replace("观察窗口的终点事件", "观察终点")
+                .replace("观察窗口的起点", "观察起点")
+                .replace("观察窗口的终点", "观察终点")
+                .replace("观察的日期范围", "观察日期范围")
+                .replaceFirst("观察窗口时长$", "观察窗口")
+                .replaceFirst("的具体数值和单位$", "")
+                .replaceFirst("的统计分母$", "的分母");
+        // 复合条件、事件描述与有值比较不属于一个纯参数名，继续由原绑定语境处理。
+        if (value.matches(".*[，,。；;：:（）()<>≤≥].*")) return Optional.empty();
+        List<Parameter> named = namedParameters(value).stream()
+                .map(parameter -> independentHospitalParameters ? boundParameterName(parameter) : parameter).toList();
+        return named.size() == 1 ? Optional.of(named.getFirst()) : Optional.empty();
     }
 
     /** 仅在本次明确的候诊比较任务中接受其完整窗口别名，不扩展到其他指标、年份或未具名范围。 */

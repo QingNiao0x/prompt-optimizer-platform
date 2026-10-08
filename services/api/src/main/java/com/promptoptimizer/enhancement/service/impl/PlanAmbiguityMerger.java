@@ -548,7 +548,9 @@ final class PlanAmbiguityMerger {
                     && matchesPartialAnswerExplanation(header, pending.getFirst());
             // 条件题干即使所有词都有出处，也不能等同于当前状态；删去它会切断后续适用条件。
             boolean conditionalHeader = header.matches("^(?:若|如果|假如|假设|仅当|仅在|当(?!前)).+");
-            if (!conditionalHeader && (exactPendingHeader || repeatedPartialState || (pending.size() == 1 || sameNamedItem)
+            boolean completeParameterState = (pending.size() == 1 || sameNamedItem) && pending.stream()
+                    .anyMatch(part -> pendingIdentity.boundParameterMatch(header, part).orElse(false));
+            if (!conditionalHeader && (completeParameterState || exactPendingHeader || repeatedPartialState || (pending.size() == 1 || sameNamedItem)
                     && repeatedBoundState(header, pending, registered.get(key)) || (pending.size() == 1 || sameNamedItem)
                     && !header.matches(".*(?:[（(）)？?<>≤≥]|\\d|已确认|已明确).*" )
                     && (pending.stream().anyMatch(part -> pendingIdentity.matches(header, part))
@@ -671,7 +673,8 @@ final class PlanAmbiguityMerger {
      * 条件和方法分支整体保留，不裁掉其后的共同动作；比较完整分句，不用子串冒充另一规则。
      */
     private String withoutRepeatedExplanationClauses(String known, String detail) {
-        var existing = java.util.Arrays.stream(known.split("[，,。；;\\r\\n]+"))
+        // 固定展示元信息不是业务分句的一部分；同一原回答再被模型完整复述时仍逐句核对。
+        var existing = java.util.Arrays.stream(known.split("用户说明[：:]|补充说明[：:]|[，,。；;\\r\\n]+"))
                 .map(value -> explanationClauseKey(value, known)).collect(java.util.stream.Collectors.toSet());
         StringBuilder retained = new StringBuilder();
         var sentences = Pattern.compile("[^。；;\\r\\n]+[。；;]?").matcher(detail);
