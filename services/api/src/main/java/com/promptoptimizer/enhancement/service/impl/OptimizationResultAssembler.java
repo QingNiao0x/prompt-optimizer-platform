@@ -272,7 +272,7 @@ public class OptimizationResultAssembler {
         removeRepeatedProviderPrerequisites(sections, merged.executionPrerequisites(), decisions);
         ProviderPrerequisiteCompactor.compact(sections, merged.executionPrerequisites(), decisions, rawPrompt);
         unresolvedContract.compactPendingStatements(sections);
-        appendExecutionPrerequisites(sections, merged.executionPrerequisites(), UnresolvedDecisionContract.DELIVERY_GUIDANCE);
+        appendExecutionPrerequisites(sections, merged.executionPrerequisites(), unresolvedContract.baseDeliveryGuidance());
         if (unresolvedContract.hasNamedParameters()) {
             PromptSection output = sections.get(PromptSectionType.OUTPUT);
             String parameterEvidence = unresolvedContract.independentEvidenceGuidance();
@@ -318,7 +318,7 @@ public class OptimizationResultAssembler {
         // 平台交付契约有唯一正文责任段；仅合并完整等价句，表格、代码和独立业务章节继续保护。
         var deliveryAuthority = new java.util.LinkedHashMap<PromptSectionType, String>();
         if (!merged.executionPrerequisites().isEmpty()) {
-            deliveryAuthority.put(PromptSectionType.CONSTRAINTS, UnresolvedDecisionContract.DELIVERY_GUIDANCE);
+            deliveryAuthority.put(PromptSectionType.CONSTRAINTS, unresolvedContract.baseDeliveryGuidance());
         }
         if (unresolvedContract.hasNamedParameters()) {
             deliveryAuthority.put(PromptSectionType.OUTPUT, unresolvedContract.independentEvidenceGuidance());

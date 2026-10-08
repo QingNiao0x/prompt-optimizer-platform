@@ -34,7 +34,7 @@ class DecisionDeliveryConsistencyRegressionTest {
     @Test
     void putsThePendingStatusContractInTheCopyableBody() {
         var result = assemble("交付指标表与必要伪代码。", ANSWERS, true, RAW);
-        assertThat(result.optimizedPrompt()).contains("正文、表格、公式", "待确认", "伪代码");
+        assertThat(result.optimizedPrompt()).contains("用户已要求的交付形式", "待确认", "原定伪代码仍须交付");
     }
 
     @Test

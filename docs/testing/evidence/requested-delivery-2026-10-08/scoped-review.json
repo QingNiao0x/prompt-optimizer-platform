@@ -1,0 +1,321 @@
+{
+  "closed": [
+    "通用未决契约不再强加未请求指标表或伪代码",
+    "实际请求的指标表与伪代码各自独立保留",
+    "同范围真实确认的窗口旧请求在最终候选与作品中未再重复"
+  ],
+  "unitTests": 799,
+  "classes": 44,
+  "unitLogs": [
+    "requested-delivery-red.log",
+    "requested-delivery-green2.log",
+    "requested-delivery-shared-final.log",
+    "requested-delivery-final799.log"
+  ],
+  "isolatedSmsExcluded": true,
+  "newPlanCalls": 2,
+  "realEnhancementCalls": 6,
+  "answersReboundVerbatim": true,
+  "api": [
+    {
+      "id": "PS-HOSP-APPROVED-M-deepseek_deepseek-flash-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 3686,
+      "copiedChars": 1891,
+      "pending": 1,
+      "staleChoiceRequest": false,
+      "indicatorTableRequired": false,
+      "pseudocodeRequired": false,
+      "universalUnrequestedContract": false
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-flash-direct",
+      "status": "COLLECTED",
+      "latencyMs": 15712,
+      "copiedChars": 4131,
+      "pending": 5,
+      "staleChoiceRequest": false,
+      "indicatorTableRequired": true,
+      "pseudocodeRequired": false,
+      "universalUnrequestedContract": false
+    },
+    {
+      "id": "RC-DEV-M-deepseek_deepseek-flash-direct",
+      "status": "COLLECTED",
+      "latencyMs": 4691,
+      "copiedChars": 2387,
+      "pending": 0,
+      "staleChoiceRequest": false,
+      "indicatorTableRequired": false,
+      "pseudocodeRequired": false,
+      "universalUnrequestedContract": false
+    },
+    {
+      "id": "PS-HOSP-APPROVED-M-deepseek_deepseek-v4-pro-plan-final",
+      "status": "COLLECTED",
+      "latencyMs": 6827,
+      "copiedChars": 1656,
+      "pending": 1,
+      "staleChoiceRequest": false,
+      "indicatorTableRequired": false,
+      "pseudocodeRequired": false,
+      "universalUnrequestedContract": false
+    },
+    {
+      "id": "RC-HOSP-M-deepseek_deepseek-v4-pro-direct",
+      "status": "COLLECTED",
+      "latencyMs": 22367,
+      "copiedChars": 2870,
+      "pending": 7,
+      "staleChoiceRequest": false,
+      "indicatorTableRequired": true,
+      "pseudocodeRequired": false,
+      "universalUnrequestedContract": false
+    },
+    {
+      "id": "RC-DEV-M-deepseek_deepseek-v4-pro-direct",
+      "status": "COLLECTED",
+      "latencyMs": 13975,
+      "copiedChars": 2803,
+      "pending": 0,
+      "staleChoiceRequest": false,
+      "indicatorTableRequired": false,
+      "pseudocodeRequired": false,
+      "universalUnrequestedContract": false
+    }
+  ],
+  "actualWorkReview": [
+    {
+      "batch": "approved-flash",
+      "id": "PS-HOSP-APPROVED-M-plan-m1-r1",
+      "arm": "plan",
+      "executor": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputChars": 2002,
+      "singleHttpCallMs": 6319,
+      "usage": {
+        "prompt_tokens": 1241,
+        "completion_tokens": 1174,
+        "total_tokens": 2415
+      },
+      "confirmedWindowLost": false,
+      "fabricatedNumericThresholdObserved": false,
+      "wrong48HourApprovalObserved": false,
+      "unrequestedIndicatorTableObserved": false,
+      "unrequestedPseudocodeObserved": false,
+      "newIndicatorReadyObserved": false,
+      "reviewScope": "逐份核对当前24小时选择、48小时审批、阈值与交付范围；不等于专业方案全面正确",
+      "remainingExamples": [
+        "**观察内容**：在门诊运营流程中，对患者从进入观察节点到离开观察节点的时间跨度进行记录与比较，判断是否落在既定观察窗口内。观察对象为门诊运营环节的时间窗口符合情况，不涉及具体患者的临床判断或诊疗建议。",
+        "8. **平台约束合规**：未泄露密码、Token、API Key 或私钥；未读取或输出受保护路径；未执行需人工确认的操作。"
+      ]
+    },
+    {
+      "batch": "approved-flash",
+      "id": "PS-HOSP-APPROVED-M-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "executor": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputChars": 924,
+      "singleHttpCallMs": 3964,
+      "usage": {
+        "prompt_tokens": 418,
+        "completion_tokens": 545,
+        "total_tokens": 963
+      },
+      "confirmedWindowLost": true,
+      "fabricatedNumericThresholdObserved": false,
+      "wrong48HourApprovalObserved": false,
+      "unrequestedIndicatorTableObserved": false,
+      "unrequestedPseudocodeObserved": false,
+      "newIndicatorReadyObserved": false,
+      "reviewScope": "逐份核对当前24小时选择、48小时审批、阈值与交付范围；不等于专业方案全面正确",
+      "remainingExamples": [
+        "**推荐说明**：基于甲院、2025年及已批准状态，推荐优先沿用已批准并生效的24小时观察窗口。48小时候选可作为比较说明供院方审批参考，但不得写成已获批。推荐不等于已选定，最终口径由院方确认。"
+      ]
+    },
+    {
+      "batch": "approved-flash",
+      "id": "PS-HOSP-APPROVED-M-plan-m2-r1",
+      "arm": "plan",
+      "executor": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputChars": 927,
+      "singleHttpCallMs": 8439,
+      "usage": {
+        "prompt_tokens": 1240,
+        "completion_tokens": 546,
+        "total_tokens": 1786
+      },
+      "confirmedWindowLost": false,
+      "fabricatedNumericThresholdObserved": false,
+      "wrong48HourApprovalObserved": false,
+      "unrequestedIndicatorTableObserved": false,
+      "unrequestedPseudocodeObserved": false,
+      "newIndicatorReadyObserved": false,
+      "reviewScope": "逐份核对当前24小时选择、48小时审批、阈值与交付范围；不等于专业方案全面正确",
+      "remainingExamples": []
+    },
+    {
+      "batch": "approved-flash",
+      "id": "PS-HOSP-APPROVED-M-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "executor": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputChars": 902,
+      "singleHttpCallMs": 9922,
+      "usage": {
+        "prompt_tokens": 417,
+        "completion_tokens": 545,
+        "total_tokens": 962
+      },
+      "confirmedWindowLost": false,
+      "fabricatedNumericThresholdObserved": false,
+      "wrong48HourApprovalObserved": false,
+      "unrequestedIndicatorTableObserved": false,
+      "unrequestedPseudocodeObserved": false,
+      "newIndicatorReadyObserved": false,
+      "reviewScope": "逐份核对当前24小时选择、48小时审批、阈值与交付范围；不等于专业方案全面正确",
+      "remainingExamples": [
+        "- 观察期间：2025年1月1日至2025年12月31日。"
+      ]
+    },
+    {
+      "batch": "approved-pro",
+      "id": "PS-HOSP-APPROVED-M-plan-m1-r1",
+      "arm": "plan",
+      "executor": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputChars": 1366,
+      "singleHttpCallMs": 4317,
+      "usage": {
+        "prompt_tokens": 1099,
+        "completion_tokens": 814,
+        "total_tokens": 1913
+      },
+      "confirmedWindowLost": false,
+      "fabricatedNumericThresholdObserved": false,
+      "wrong48HourApprovalObserved": false,
+      "unrequestedIndicatorTableObserved": false,
+      "unrequestedPseudocodeObserved": false,
+      "newIndicatorReadyObserved": false,
+      "reviewScope": "逐份核对当前24小时选择、48小时审批、阈值与交付范围；不等于专业方案全面正确",
+      "remainingExamples": []
+    },
+    {
+      "batch": "approved-pro",
+      "id": "PS-HOSP-APPROVED-M-raw_matched-m1-r1",
+      "arm": "raw_matched",
+      "executor": "deepseek-flash",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputChars": 1011,
+      "singleHttpCallMs": 3500,
+      "usage": {
+        "prompt_tokens": 399,
+        "completion_tokens": 604,
+        "total_tokens": 1003
+      },
+      "confirmedWindowLost": true,
+      "fabricatedNumericThresholdObserved": false,
+      "wrong48HourApprovalObserved": false,
+      "unrequestedIndicatorTableObserved": false,
+      "unrequestedPseudocodeObserved": false,
+      "newIndicatorReadyObserved": false,
+      "reviewScope": "逐份核对当前24小时选择、48小时审批、阈值与交付范围；不等于专业方案全面正确",
+      "remainingExamples": [
+        "两个方案的选择尚未确定。推荐需要依据甲院、2025年和已批准状态；推荐不等于已选定。48小时候选也不能写成已经获批。"
+      ]
+    },
+    {
+      "batch": "approved-pro",
+      "id": "PS-HOSP-APPROVED-M-plan-m2-r1",
+      "arm": "plan",
+      "executor": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputChars": 1711,
+      "singleHttpCallMs": 18246,
+      "usage": {
+        "prompt_tokens": 1098,
+        "completion_tokens": 975,
+        "total_tokens": 2073
+      },
+      "confirmedWindowLost": false,
+      "fabricatedNumericThresholdObserved": false,
+      "wrong48HourApprovalObserved": false,
+      "unrequestedIndicatorTableObserved": false,
+      "unrequestedPseudocodeObserved": false,
+      "newIndicatorReadyObserved": false,
+      "reviewScope": "逐份核对当前24小时选择、48小时审批、阈值与交付范围；不等于专业方案全面正确",
+      "remainingExamples": [
+        "- **24小时窗口（已批准并生效）**：观察范围限定在患者进入门诊运营流程后24小时内发生的等待事件。超出24小时的部分不在当前已批准规则的观察范围内。"
+      ]
+    },
+    {
+      "batch": "approved-pro",
+      "id": "PS-HOSP-APPROVED-M-raw_matched-m2-r1",
+      "arm": "raw_matched",
+      "executor": "deepseek-v4-pro",
+      "status": "SUCCESS",
+      "finishReason": "stop",
+      "outputChars": 756,
+      "singleHttpCallMs": 9248,
+      "usage": {
+        "prompt_tokens": 398,
+        "completion_tokens": 470,
+        "total_tokens": 868
+      },
+      "confirmedWindowLost": false,
+      "fabricatedNumericThresholdObserved": false,
+      "wrong48HourApprovalObserved": false,
+      "unrequestedIndicatorTableObserved": false,
+      "unrequestedPseudocodeObserved": false,
+      "newIndicatorReadyObserved": false,
+      "reviewScope": "逐份核对当前24小时选择、48小时审批、阈值与交付范围；不等于专业方案全面正确",
+      "remainingExamples": []
+    }
+  ],
+  "comparison": {
+    "sameInformation": true,
+    "temperature": 0.2,
+    "maxOutputTokens": 6144,
+    "automaticRetry": false,
+    "cases": 1,
+    "runsPerPair": 1,
+    "actualWorks": 8,
+    "completed": 8,
+    "rawConfirmedWindowLost": 2,
+    "planConfirmedWindowLost": 0,
+    "planUnrequestedIndicatorTables": 0,
+    "planFabricatedNumericThreshold": 0,
+    "planWrong48HourApproval": 0,
+    "previousNode20PlanUnrequestedTables": 4,
+    "previousNode20PlanConfirmedWindowLost": 1,
+    "priorFailuresPreserved": true,
+    "stableWinRateEstablished": false,
+    "copiedPromptReductionPercentAgainstNode21": {
+      "flash": 9.434865900383137,
+      "pro": 19.061583577712614
+    }
+  },
+  "remainingPlatform": [
+    "Pro直接医院增强仍有联合对应提醒与甲乙单项提醒改写重复",
+    "部分已委托的未决处理仍变成Plan选项",
+    "平台安全句与用户规则跨段语义复写仍有冗余"
+  ],
+  "remainingDownstream": [
+    "部分作品自行补未提供的观察起止点或完整年度日期",
+    "方案仍有重复或无关平台合规文字",
+    "本节点未新增Java作品复验，完整测试文件失败仍开放",
+    "科研新闻篇幅及跨行业多轮作品门禁仍开放"
+  ],
+  "attribution": "两份增强输入未定义观察节点或进入流程起点，执行作品新增细节；原始对照也有自行补日期。平台与执行模型分别留档，不将全部问题归给下游。",
+  "fullQualityGatePassed": false,
+  "releaseApproval": false
+}

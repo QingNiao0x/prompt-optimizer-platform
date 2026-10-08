@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 final class AuthoritativeDeliveryCompactor {
     private static final Pattern SENTENCE = Pattern.compile("[^。\\r\\n]+。?");
     private static final String PARAMETER_HEADING = "当前参数依据（用于生成指标表，不代替指标表）：";
+    private static final String ORIGINAL_DELIVERY_HEADING = "当前参数依据（用于核对原定交付，不新增交付物）：";
     private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
     private static final Pattern EMPHASIZED_SENTENCE = Pattern.compile("^(\\*\\*|__)([^。\\r\\n]+。)\\1$");
 
@@ -104,7 +105,7 @@ final class AuthoritativeDeliveryCompactor {
         var lines = text.lines().toList();
         Set<String> tables = new LinkedHashSet<>();
         for (int index = 0; index < lines.size(); index++) {
-            if (!lines.get(index).strip().equals(PARAMETER_HEADING)) continue;
+            if (!parameterHeading(lines.get(index).strip())) continue;
             int end = parameterTableEnd(lines, index);
             if (end - index < 4) continue;
             tables.add(parameterTableKey(lines.subList(index, end)));
@@ -156,7 +157,7 @@ final class AuthoritativeDeliveryCompactor {
             }
             if ((stripped.matches("^(?:#{1,6}\\s+.+|\\*\\*.+\\*\\*)$") || stripped.endsWith("：") || stripped.endsWith(":"))
                     && !metadataHeading(stripped)) businessScope = true;
-            if (!businessScope && stripped.equals(PARAMETER_HEADING)) {
+            if (!businessScope && parameterHeading(stripped)) {
                 int end = parameterTableEnd(original, index);
                 String identity = parameterTableKey(original.subList(index, end));
                 if (tables.contains(identity)) {
@@ -174,11 +175,18 @@ final class AuthoritativeDeliveryCompactor {
     private static boolean metadataHeading(String heading) {
         String value = heading.replaceFirst("^#{1,6}\\s+", "").replaceAll("[*：:]", "");
         return value.equals("平台强制约束（不得删除或弱化）") || value.equals("未决决定的交付边界")
+                || value.equals("执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）")
                 || value.equals("用户明确规则（须遵守平台权限边界）")
                 || value.equals("当前参数依据（用于生成指标表，不代替指标表）")
+                || value.equals("当前参数依据（用于核对原定交付，不新增交付物）")
                 || value.equals("交付物") || value.equals("交付要求") || value.equals("输出要求")
                 || value.equals("交付以下文件") || value.equals("测试覆盖")
                 || value.equals("实体标识的独立依据（A/B集合不证明名称对应，不按次序或排除法绑定）");
+    }
+
+    /** 两种明确的平台输入表标题都只按完整表格身份归并，不消费用户自己的业务表。 */
+    private static boolean parameterHeading(String value) {
+        return value.equals(PARAMETER_HEADING) || value.equals(ORIGINAL_DELIVERY_HEADING);
     }
 
     /** 只归一化平台契约的排版与有限完整句前缀；新条件、对象、数值与例外必须继续逐字匹配。 */

@@ -51,7 +51,7 @@ class DeliveryCompactnessRegressionTest {
                 "平台强制约束（不得删除或弱化）：\n不得编造数据。" + guidance, "核对交付完整。" + guidance);
         String sentence = "不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。";
         assertThat(result.optimizedPrompt().split(java.util.regex.Pattern.quote(sentence), -1)).hasSize(2);
-        assertThat(result.optimizedPrompt()).contains("完整性指标", "待确认", "指标表", "必要伪代码");
+        assertThat(result.optimizedPrompt()).contains("完整性指标", "待确认", "原定指标表仍须交付", "原定伪代码仍须交付");
     }
 
     @Test

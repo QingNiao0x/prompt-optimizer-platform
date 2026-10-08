@@ -51,12 +51,12 @@ final class UnresolvedDecisionContract {
                     + "(?:甲院|乙院|两院)(?:的)?(?:比较)?观察窗口)"
                     + "(?:也|都|均)?(?:(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确)|(?:还)?没有(?:定|确定|决定))"
                     + "(?=$|[，,。；;])");
-    static final String DELIVERY_GUIDANCE = "同一未决决定在正文、表格、公式及伪代码中保持一致："
+    static final String DELIVERY_GUIDANCE = "同一未决决定在用户已要求的交付形式中保持一致："
             + "相关参数格明确标为“待确认”，不得填入惯例、示例值或占位口径；"
             + "依赖该参数的计算只声明待确认参数并在确认前停止该计算，不能设置默认值或生成假结果。"
             + "不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。"
             + "已确认决定仅适用于对应对象、指标和条件；其他指标不得标成已确认，须有各自的独立依据。"
-            + "原定指标表与必要伪代码仍须交付，逐指标判断参数状态，只暂停依赖未决参数的计算，其余步骤继续完成。";
+            + "只暂停依赖未决参数的步骤，其余已要求的内容继续交付；不得因此新增未要求的指标、表格或伪代码。";
 
     private record Parameter(String subject, String property) { }
     private record ParameterValue(Parameter parameter, String value) { }
@@ -70,12 +70,13 @@ final class UnresolvedDecisionContract {
     private final boolean independentHospitalParameters;
     private final boolean hospitalWaitingComparison;
     private final boolean indicatorTableRequested;
+    private final boolean pseudocodeRequested;
     private final boolean formatParameterNotEvidenced;
 
     private UnresolvedDecisionContract(List<Parameter> parameters, List<ParameterValue> confirmedValues,
                                        List<ParameterValue> materialValues, boolean twoNamedHospitals,
                                        boolean independentHospitalParameters, boolean hospitalWaitingComparison, boolean indicatorTableRequested,
-                                       boolean formatIndicatorsRequested, List<String> boundPendingQuestions) {
+                                       boolean pseudocodeRequested, boolean formatIndicatorsRequested, List<String> boundPendingQuestions) {
         this.parameters = List.copyOf(parameters);
         this.confirmedValues = List.copyOf(confirmedValues);
         this.confirmedParameters = confirmedValues.stream().map(ParameterValue::parameter).distinct().toList();
@@ -85,6 +86,7 @@ final class UnresolvedDecisionContract {
         this.independentHospitalParameters = independentHospitalParameters;
         this.hospitalWaitingComparison = hospitalWaitingComparison;
         this.indicatorTableRequested = indicatorTableRequested;
+        this.pseudocodeRequested = pseudocodeRequested;
         this.formatParameterNotEvidenced = formatIndicatorsRequested && java.util.stream.Stream.concat(confirmedValues.stream(), materialValues.stream())
                 .noneMatch(value -> value.parameter().subject().contains("格式"));
     }
@@ -129,9 +131,29 @@ final class UnresolvedDecisionContract {
                 .filter(value -> !parameters.contains(value.parameter()) && !confirmed.contains(value.parameter())).distinct().toList();
         return new UnresolvedDecisionContract(parameters, confirmedValues, materialValues,
                 twoNamedHospitals, independentHospitalParameters, independentHospitalParameters && raw.contains("候诊时间"),
-                raw != null && raw.contains("指标表") && !raw.matches("(?s).*(?:不交付|不输出|不需要|不要)(?:任何)?指标表.*"),
+                confirmedSources.stream().anyMatch(value -> requestedDeliverable(value, "指标表")),
+                confirmedSources.stream().anyMatch(value -> requestedDeliverable(value, "伪代码")),
                 raw != null && raw.matches("(?s).*(?:格式不合法|格式异常|格式错误|格式正确率|格式合法率).*"),
                 decisions.pendingDecisions().stream().map(com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision::question).toList());
+    }
+
+    /** 本次肯定交付指令才激活相应保护；条件、引用、示例及单纯提到表名不扩大任务范围。 */
+    private static boolean requestedDeliverable(String text, String name) {
+        var directive = Pattern.compile("交付|输出|提供|包含|提交|列出|给出|生成|完成|附上|制作|设计");
+        var hypothetical = Pattern.compile("若|如果|假如|假设|仅当|只有|例如|示例|引用");
+        for (String sentence : currentDecisionSentences(text)) {
+            boolean condition = false;
+            for (String clause : sentence.split("[，,]")) {
+                var action = directive.matcher(clause);
+                String prefix = action.find() ? clause.substring(0, action.start()) : clause;
+                condition |= hypothetical.matcher(prefix).find();
+                // 后半句的禁止计算不撤销前半句的真实交付；条件前提则持续约束同句后续分句。
+                if (!condition && clause.matches(".*(?:交付|输出|提供|包含|提交|列出|给出|生成|完成|附上|制作|设计).{0,80}"
+                        + Pattern.quote(name) + ".*") && !clause.matches(".*(?:不|不要|无需|不需|禁止|避免).{0,30}"
+                        + Pattern.quote(name) + ".*")) return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -585,9 +607,16 @@ final class UnresolvedDecisionContract {
                 .collect(java.util.stream.Collectors.joining("；"));
         String confirmed = confirmedParameters.stream().map(parameter -> parameter.subject() + "的" + parameter.property())
                 .collect(java.util.stream.Collectors.joining("、"));
-        return DELIVERY_GUIDANCE + (named.isBlank() ? "" : "本次尚未确定的参数：" + named + "。")
+        return baseDeliveryGuidance() + (named.isBlank() ? "" : "本次尚未确定的参数：" + named + "。")
                 + (confirmed.isBlank() ? "" : "本次需求或有效回答明确的参数范围仅包含：" + confirmed + "；不得扩大到其他指标。")
                 + independentEvidenceGuidance();
+    }
+
+    /** 模型前指导和最终复制正文使用同一交付范围；有指标表不意味着也要求伪代码，反之亦然。 */
+    String baseDeliveryGuidance() {
+        return DELIVERY_GUIDANCE
+                + (indicatorTableRequested ? "原定指标表仍须交付，逐指标说明依据、参数状态和计算前提。" : "")
+                + (pseudocodeRequested ? "原定伪代码仍须交付，只暂停依赖未决参数的计算，其余已要求步骤继续完成。" : "");
     }
 
     /** 只有原定指标表增加逐行依据要求；参数视图是执行依据，不新增临床、法律或其他指标任务。 */
@@ -610,8 +639,11 @@ final class UnresolvedDecisionContract {
         materialValues.forEach(value -> rows.add(parameterRow(value.parameter(), value.value(), "资料明确；不是用户确认")));
         parameters.forEach(value -> rows.add(parameterRow(value, "待确认", "未决；无当前选值")));
         if (rows.isEmpty()) return "";
-        return "\n\n以下参数依据只作为输入，合入最终指标表；除用户明确要求，不再重复交付同一参数表或多份待确认清单。\n"
-                + "当前参数依据（用于生成指标表，不代替指标表）：\n"
+        return (indicatorTableRequested
+                ? "\n\n以下参数依据只作为输入，合入最终指标表；除用户明确要求，不再重复交付同一参数表或多份待确认清单。\n"
+                    + "当前参数依据（用于生成指标表，不代替指标表）：\n"
+                : "\n\n以下参数依据只作为输入，按本次已要求的形式表达；不新增指标表、计算或其他未要求的交付，不重复交付同一参数表或待确认清单。\n"
+                    + "当前参数依据（用于核对原定交付，不新增交付物）：\n")
                 + "| 参数 | 当前口径 | 状态与依据 |\n| --- | --- | --- |\n" + String.join("\n", rows);
     }
 
