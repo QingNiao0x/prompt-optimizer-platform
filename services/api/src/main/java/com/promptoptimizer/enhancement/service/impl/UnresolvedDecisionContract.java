@@ -244,14 +244,15 @@ final class UnresolvedDecisionContract {
      * 只用当前已登记参数作覆盖证明；不借概述创建新决定，也不删除剩余单项。
      */
     List<String> withoutCoveredSummaries(List<String> reminders) {
-        if (!independentHospitalParameters) return reminders;
-        return reminders.stream().filter(reminder -> {
+        List<String> complete = withoutCoveredPureStatuses(reminders);
+        if (!independentHospitalParameters) return complete;
+        return complete.stream().filter(reminder -> {
             if (reminder.matches("^[>‘’“”\\\"'`].*")) return true;
             var summary = Pattern.compile("^该问题尚未确定:(.+?)(?:分别)?(?:尚未|仍未|未)(?:确定|决定)[。]?$"
                     ).matcher(canonical(reminder));
             if (!summary.matches()) return true;
             // 最终仍保留的逐项提醒证明覆盖，不借提醒新增事实、确认值或计算前提。
-            List<Parameter> covered = reminders.stream().filter(other -> !other.equals(reminder))
+            List<Parameter> covered = complete.stream().filter(other -> !other.equals(reminder))
                     .flatMap(other -> independentReminderParameter(other).stream()).distinct().toList();
             var mentioned = new ArrayList<Parameter>();
             for (String part : summary.group(1).split("与|和|及|、")) {
@@ -504,25 +505,38 @@ final class UnresolvedDecisionContract {
         return !parameters.isEmpty() || !confirmedParameters.isEmpty();
     }
 
-    /** 同名未知的有限语法变体只用于避免再次补回，不消费带新对象、取值或条件的原提醒。 */
+    /** 同名完整未知通过对象与属性核对；状态谓词差异不创建新决定，附带说明不在此删除。 */
     boolean samePendingStatement(String finding, String statement) {
-        String first = canonical(finding).replaceAll("的(?=分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)", "")
-                .replaceAll("(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确|确认|提供)", "未决").replaceAll("[。]+$", "");
-        String second = canonical(statement).replaceAll("的(?=分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)", "")
-                .replace("尚未确定", "未决").replaceAll("[。]+$", "");
-        var firstParameter = new Parameter(subjectKey(first.replaceFirst("(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "")),
-                first.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "$1"));
-        var secondParameter = new Parameter(subjectKey(second.replaceFirst("(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "")),
-                second.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "$1"));
-        return (independentHospitalParameters ? boundParameterName(firstParameter) : firstParameter)
-                .equals(independentHospitalParameters ? boundParameterName(secondParameter) : secondParameter)
-                && first.matches(".*(?:分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$")
-                && first.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "$1")
-                .equals(second.replaceFirst("^.*?(分母|阈值|观察窗口|覆盖度|观察起点|观察终点|观察日期范围)未决$", "$1"));
+        var first = purePendingParameter(finding);
+        var second = purePendingParameter(statement);
+        return first.isPresent() && first.equals(second);
+    }
+
+    /** 仅识别完整的一项纯未知陈述，引文、假设、复合对象和说明尾句不能冒充短状态。 */
+    private Optional<Parameter> purePendingParameter(String statement) {
+        if (statement == null || statement.strip().matches("^[>‘’“”\\\"'`].*")) return Optional.empty();
+        String value = canonical(statement).replaceFirst("[。？?]+$", "");
+        if (CONDITIONAL.matcher(value).find()) return Optional.empty();
+        var declaration = DECLARATION.matcher(value);
+        if (!declaration.matches()) return Optional.empty();
+        List<Parameter> named = namedParameters(declaration.group(1)).stream()
+                .map(parameter -> independentHospitalParameters ? boundParameterName(parameter) : parameter).toList();
+        return named.size() == 1 ? Optional.of(named.getFirst()) : Optional.empty();
+    }
+
+    /** 已保留的完整说明覆盖同一纯状态时，只删除短状态，不截断其中的审批、新条件或专业解释。 */
+    private List<String> withoutCoveredPureStatuses(List<String> reminders) {
+        return reminders.stream().filter(reminder -> {
+            var target = purePendingParameter(reminder);
+            if (target.isEmpty()) return true;
+            return reminders.stream().filter(other -> !other.equals(reminder))
+                    .noneMatch(other -> purePendingParameter(other).isEmpty() && coversPendingStatement(other, reminder));
+        }).toList();
     }
 
     /** 同一未知若已在带新说明的提醒中登记，只避免追加第二条短状态，不裁掉任何新说明。 */
     boolean coversPendingStatement(String finding, String statement) {
+        if (finding == null || finding.strip().matches("^[>‘’“”\\\"'`].*")) return false;
         // “分母口径尚未确定”只用于证明已有同项说明覆盖短状态；不修改原句或放宽具体口径校验。
         String observed = finding.replaceAll("分母口径(?=(?:尚未|仍未|暂未|未)(?:确定|决定|核实|明确|确认|提供))", "分母");
         return samePendingStatement(observed, statement) || coversIndependentPair(observed, statement) || declaredPending(observed).stream()
