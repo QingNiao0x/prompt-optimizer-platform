@@ -36,7 +36,7 @@ final class UnresolvedDecisionContract {
             + "(?:分母|口径|阈值|观察窗口|覆盖度)?(?:$|[（(：:，,；;].*)");
     private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
     private static final Pattern CURRENT_CONFIRMATION = Pattern.compile("^(?:(?:本次|这次)(?:仅|只)?(?:明确)?(?:确认|确定|选定)"
-            + "|(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定))");
+            + "|(?:用户|我|你)(?:已|已经)(?:明确)?(?:确认|确定|选定)|(?:仅|只)(?:明确)?(?:确认|确定|选定))");
     private static final Pattern PREFIXED_WINDOW_CHOICE = Pattern.compile(
             "^([^。；;，,：:\\r\\n？?]{2,80}?)(?:的)?(\\d{1,4}(?:\\.\\d{1,4})?小时)观察窗口$");
     private static final Pattern PREFIXED_WINDOW_SUBJECT = Pattern.compile("^(.{2,80}?)(\\d{1,4}(?:\\.\\d{1,4})?小时)$");
@@ -454,7 +454,8 @@ final class UnresolvedDecisionContract {
     private static List<ParameterValue> currentParameterValues(String text) {
         var result = new ArrayList<ParameterValue>();
         for (String sentence : currentDecisionSentences(text)) {
-            // 仅移除肯定的当前确认前缀，完整保留机构、年份、指标和属性，不扩大到其他参数。
+            // 仅移除肯定的当前确认前缀；“仅确认”不要求用户重复“本次”，未来及引用已由句界排除。
+            // 完整保留机构、年份、指标、属性及本句选值，不扩大到同回答中的其他未决参数。
             var confirmation = CURRENT_CONFIRMATION.matcher(canonical(sentence));
             boolean explicitlyConfirmed = confirmation.find();
             String clause = confirmation.replaceFirst("");
