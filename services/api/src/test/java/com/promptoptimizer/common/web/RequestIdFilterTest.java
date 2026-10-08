@@ -1,10 +1,12 @@
 package com.promptoptimizer.common.web;
 
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -19,11 +21,20 @@ class RequestIdFilterTest {
 
     private final Logger logger = (Logger) LoggerFactory.getLogger(RequestIdFilter.class);
     private final ListAppender<ILoggingEvent> appender = new ListAppender<>();
+    private Level previousLevel;
+
+    @BeforeEach
+    void enableTestLogger() {
+        // 明确测试INFO事件，再恢复原级别，避免全仓库Spring测试顺序改变断言结果。
+        previousLevel = logger.getLevel();
+        logger.setLevel(Level.INFO);
+    }
 
     @AfterEach
     void tearDown() {
         logger.detachAppender(appender);
         appender.stop();
+        logger.setLevel(previousLevel);
         MDC.clear();
     }
 

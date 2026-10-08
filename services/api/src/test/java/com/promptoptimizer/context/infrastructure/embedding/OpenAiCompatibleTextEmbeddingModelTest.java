@@ -2,6 +2,7 @@ package com.promptoptimizer.context.infrastructure.embedding;
 
 import com.promptoptimizer.context.service.TextEmbeddingModel;
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,6 +72,9 @@ class OpenAiCompatibleTextEmbeddingModelTest {
                 ));
 
         Logger callLogger = (Logger) LoggerFactory.getLogger(com.promptoptimizer.common.logging.ModelCallLogger.class);
+        Level previousLevel = callLogger.getLevel();
+        // 用量日志是INFO事件；控制并恢复自身级别，不改变真实Provider的日志策略。
+        callLogger.setLevel(Level.INFO);
         ListAppender<ILoggingEvent> appender = new ListAppender<>();
         appender.start();
         callLogger.addAppender(appender);
@@ -80,6 +84,7 @@ class OpenAiCompatibleTextEmbeddingModelTest {
         } finally {
             callLogger.detachAppender(appender);
             appender.stop();
+            callLogger.setLevel(previousLevel);
         }
 
         assertThat(result.model()).isEqualTo("resolved-embedding-model");

@@ -8,7 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
         properties = {
                 "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration,org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration",
                 "spring.flyway.enabled=false",
-                "app.history.enabled=false"
+                "app.history.enabled=false",
+                "app.security.sms.enabled=false"
         }
 )
 class PromptOptimizerApplicationTests {
@@ -21,6 +22,13 @@ class PromptOptimizerApplicationTests {
 
     @MockBean
     private com.promptoptimizer.identity.mapper.IdentityProvisioningMapper identityProvisioningMapper;
+
+    // 无数据库启动检查只验证装配，不访问新增短信表，也不创建真实短信云客户端。
+    @MockBean
+    private com.promptoptimizer.identity.mapper.SmsChallengeMapper smsChallengeMapper;
+
+    @MockBean
+    private com.promptoptimizer.identity.mapper.SmsAccountMapper smsAccountMapper;
 
     @MockBean
     private com.promptoptimizer.history.mapper.OptimizationRecordMapper optimizationRecordMapper;
@@ -49,6 +57,9 @@ class PromptOptimizerApplicationTests {
 
     @MockBean
     private com.promptoptimizer.analytics.support.AnalyticsPerformanceFixtureMapper analyticsPerformanceFixtureMapper;
+
+    @MockBean
+    private com.promptoptimizer.identity.sms.SmsFixtureMapper smsFixtureMapper;
 
     @Test
     void contextLoads() {

@@ -1,9 +1,11 @@
 package com.promptoptimizer.common.logging;
 
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -20,11 +22,20 @@ class ModelCallLoggerTest {
 
     private final Logger logger = (Logger) LoggerFactory.getLogger(ModelCallLogger.class);
     private final ListAppender<ILoggingEvent> appender = new ListAppender<>();
+    private Level previousLevel;
+
+    @BeforeEach
+    void enableTestLogger() {
+        // Spring启动测试可能改变继承级别；只控制本测试的日志源，不修改应用运行配置。
+        previousLevel = logger.getLevel();
+        logger.setLevel(Level.INFO);
+    }
 
     @AfterEach
     void tearDown() {
         logger.detachAppender(appender);
         appender.stop();
+        logger.setLevel(previousLevel);
         MDC.clear();
     }
 

@@ -101,6 +101,9 @@ class StartupBannerPrinterTest {
         }
         StartupBannerPrinter printer = new StartupBannerPrinter(environment);
         Logger logger = (Logger) LoggerFactory.getLogger(StartupBannerPrinter.class);
+        Level previousLevel = logger.getLevel();
+        // 横幅断言验证INFO事件，不能依赖其他Spring测试留下的全局有效级别。
+        logger.setLevel(Level.INFO);
         ListAppender<ILoggingEvent> appender = new ListAppender<>();
         appender.start();
         logger.addAppender(appender);
@@ -119,6 +122,7 @@ class StartupBannerPrinterTest {
             // 只解除本测试的监听器，避免后续测试受到全局日志对象的影响。
             logger.detachAppender(appender);
             appender.stop();
+            logger.setLevel(previousLevel);
         }
     }
 

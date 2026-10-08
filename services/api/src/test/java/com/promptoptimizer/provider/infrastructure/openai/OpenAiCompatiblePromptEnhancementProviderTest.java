@@ -17,6 +17,7 @@ import com.promptoptimizer.provider.domain.ProviderFailureType;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.BeforeEach;
@@ -116,6 +117,9 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
         Logger callLogger = (Logger) LoggerFactory.getLogger(com.promptoptimizer.common.logging.ModelCallLogger.class);
+        Level previousLevel = callLogger.getLevel();
+        // Spring装配测试可能改变有效日志级别；本用例验证INFO事件并在结束时恢复原配置。
+        callLogger.setLevel(Level.INFO);
         ListAppender<ILoggingEvent> appender = new ListAppender<>();
         appender.start();
         callLogger.addAppender(appender);
@@ -125,6 +129,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         } finally {
             callLogger.detachAppender(appender);
             appender.stop();
+            callLogger.setLevel(previousLevel);
         }
 
         assertThat(response.provider()).isEqualTo("test-provider");
