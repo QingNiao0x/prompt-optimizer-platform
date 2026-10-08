@@ -67,6 +67,7 @@ final class ResolvedPlanState {
                 .replaceAll("本次交付已在Plan阶段确认，以已确认决定为准") : text;
         current = EvidenceStateGuard.reconcileConfirmedParameters(current,
                 confirmedParameters);
+        current = EvidenceStateGuard.reconcileWindowChoiceRequests(current, original, confirmedParameters);
         if (choices.isEmpty()) return current;
         return current.lines().map(line -> {
             if (!GENERIC_VERSION.matcher(line).find() && !CONTINUE_RULE.matcher(line).find()) return line;

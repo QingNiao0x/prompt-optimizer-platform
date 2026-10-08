@@ -413,6 +413,18 @@ final class UnresolvedDecisionContract {
         return result;
     }
 
+    /** 旧窗口请求只借同一完整对象的唯一有效选值更新，不由资料批准、假设或另一院选择推断。 */
+    static Optional<String> selectedWindowValue(String subject, List<com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision> decisions) {
+        var values = decisions.stream().filter(decision -> decision.scope()
+                        != com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope.CURRENT_STATE)
+                .flatMap(decision -> currentParameterValues(decision.scope()
+                        == com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope.UNRESOLVED
+                        ? PlanAnswerSemantics.confirmedPart(decision.answer()) : decision.answer()).stream())
+                .filter(value -> value.parameter().equals(new Parameter(subjectKey(subject), "观察窗口")))
+                .map(ParameterValue::value).distinct().toList();
+        return values.size() == 1 ? Optional.of(values.getFirst()) : Optional.empty();
+    }
+
     /**
      * 在归一化前排除引文和围栏示例，避免去掉引号后把示例值当成用户选择。
      * 围栏按类型和长度配对，关闭后的真实陈述继续参与核对；未关闭的示例不建立确认。

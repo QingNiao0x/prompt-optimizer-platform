@@ -33,6 +33,12 @@ final class EvidenceStateGuard {
             "^(?:本次|最终)?([^，,。；;\\r\\n]{2,30}?)(?:明确)?(?:采用|使用|选定)([^，,。；;\\r\\n]+)$");
     private static final Pattern FACT_LIST_MARKER = Pattern.compile("其中明确[：:]?");
     private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
+    private static final Pattern WINDOW_TASK_SCOPE = Pattern.compile("^(?:为|请为)((?:甲院|乙院)(?:19|20)\\d{2}年)(?:的)?门诊运营组");
+    private static final Pattern NAMED_HOSPITAL_YEAR = Pattern.compile("(?:甲院|乙院|丙院|丁院)(?:19|20)\\d{2}年");
+    private static final Pattern WINDOW_CHOICE_REQUEST = Pattern.compile(
+            "^本次是否继续沿用(\\d{1,4}(?:\\.\\d{1,4})?小时)(?:观察)?窗口[，,]"
+                    + "还是提出(\\d{1,4}(?:\\.\\d{1,4})?小时)(?:观察)?(?:窗口)?候选供院方审批[，,]"
+                    + "尚未选择[，,]请先让我确认[。.]?$");
 
     private EvidenceStateGuard() { }
 
@@ -42,7 +48,7 @@ final class EvidenceStateGuard {
      */
     static String reconcileConfirmedParameters(String text, List<ConfirmedPlanDecision> decisions) {
         if (text == null || text.isBlank()) return text;
-        String updated = reconcileChannelSelection(text, decisions);
+        String updated = reconcileWindowChoiceRequests(reconcileChannelSelection(text, decisions), text, decisions);
         for (ConfirmedPlanDecision decision : decisions) {
             if (decision.scope() != Scope.CHOICE && decision.scope() != Scope.UNRESOLVED) continue;
             String answer = decision.scope() == Scope.UNRESOLVED
@@ -62,6 +68,44 @@ final class EvidenceStateGuard {
             }
         }
         return updated;
+    }
+
+    /**
+     * 仅更新真实反例的完整本次请求，任务首句须唯一标明机构年份，回答须选择同一已列窗口。
+     * 引文、围栏及后续条件保留；旧请求的候选审批边界不升级为已批准，也不带走独立阈值。
+     */
+    static String reconcileWindowChoiceRequests(String text, String original, List<ConfirmedPlanDecision> decisions) {
+        var scope = WINDOW_TASK_SCOPE.matcher(original == null ? "" : original.strip());
+        if (text == null || text.isBlank() || !scope.find()) return text;
+        String subject = scope.group(1);
+        if (java.util.stream.Stream.of(original, text).anyMatch(value -> NAMED_HOSPITAL_YEAR.matcher(value)
+                .results().map(match -> match.group()).anyMatch(named -> !named.equals(subject)))) return text;
+        var selected = UnresolvedDecisionContract.selectedWindowValue(subject, decisions);
+        if (selected.isEmpty()) return text;
+        StringBuilder result = new StringBuilder(text.length());
+        String activeFence = null;
+        for (String line : text.split("(?<=\\n)", -1)) {
+            var fence = FENCE.matcher(line.strip());
+            if (fence.matches()) {
+                if (activeFence == null) activeFence = fence.group(1);
+                else if (fence.group(1).charAt(0) == activeFence.charAt(0)
+                        && fence.group(1).length() >= activeFence.length() && fence.group(2).isBlank()) activeFence = null;
+                result.append(line);
+                continue;
+            }
+            if (activeFence != null || line.stripLeading().startsWith(">")) {
+                result.append(line);
+                continue;
+            }
+            for (String sentence : line.split("(?<=[。])", -1)) {
+                String prose = sentence.strip().replaceFirst("^(?:[-*•]\\s+|\\d+[.)、]\\s*)", "");
+                var request = WINDOW_CHOICE_REQUEST.matcher(prose);
+                if (!request.matches() || !request.group(1).equals(selected.get())) result.append(sentence);
+                else result.append(sentence.replace(prose, "本次已确认采用" + subject + "的"
+                        + selected.get() + "观察窗口；" + request.group(2) + "候选的审批要求保持不变。"));
+            }
+        }
+        return result.toString();
     }
 
     /**
