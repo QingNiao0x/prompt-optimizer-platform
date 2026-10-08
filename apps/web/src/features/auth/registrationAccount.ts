@@ -43,14 +43,14 @@ export const normalizePhoneNumber = (value: string): string | undefined => {
   return E164_PHONE_PATTERN.test(compactPhone) ? compactPhone : undefined;
 };
 
-/** 校验注册账号；手机号统一转换为身份模型使用的 E.164 格式。 */
+/** 注册首期只接收邮箱和大陆手机号；能力是否开放由表单读取后端开关判断。 */
 export const validateRegistrationAccount = (value: string): RegistrationAccountValidation => {
   const trimmed = value.trim();
   if (!trimmed) {
     return {
       kind: 'empty',
       normalized: '',
-      message: '请输入邮箱地址或手机号。',
+      message: '请输入邮箱地址或中国大陆 11 位手机号。',
     };
   }
 
@@ -62,11 +62,11 @@ export const validateRegistrationAccount = (value: string): RegistrationAccountV
     };
   }
 
-  const normalizedPhone = normalizePhoneNumber(trimmed);
+  const normalizedPhone = normalizeMainlandPhone(trimmed);
   if (normalizedPhone) {
     return {
       kind: 'phone',
-      message: '手机号格式正确，但短信验证码注册尚未开通，请暂时使用邮箱。',
+      message: '手机号格式正确',
       normalized: normalizedPhone,
     };
   }
@@ -74,6 +74,6 @@ export const validateRegistrationAccount = (value: string): RegistrationAccountV
   return {
     kind: 'invalid',
     normalized: '',
-    message: '请输入有效的邮箱地址或手机号。',
+    message: '请输入有效的邮箱地址或中国大陆 11 位手机号。',
   };
 };

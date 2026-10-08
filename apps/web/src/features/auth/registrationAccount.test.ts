@@ -24,20 +24,22 @@ describe('registration account validation', () => {
     });
   });
 
-  it('should accept mainland and E.164 phone numbers', () => {
+  it('should accept mainland registration numbers without assuming SMS availability', () => {
     expect(validateRegistrationAccount('13800138000')).toEqual({
       kind: 'phone',
       normalized: '+8613800138000',
-      message: '手机号格式正确，但短信验证码注册尚未开通，请暂时使用邮箱。',
+      message: '手机号格式正确',
     });
-    expect(validateRegistrationAccount('+14155552671').kind).toBe('phone');
+    expect(validateRegistrationAccount('+86 13800138000').normalized).toBe('+8613800138000');
+    expect(validateRegistrationAccount('+14155552671').kind).toBe('invalid');
+    expect(validateRegistrationAccount('12800138000').kind).toBe('invalid');
   });
 
   it('should reject malformed email and phone values', () => {
     expect(validateRegistrationAccount('not-an-account')).toEqual({
       kind: 'invalid',
       normalized: '',
-      message: '请输入有效的邮箱地址或手机号。',
+      message: '请输入有效的邮箱地址或中国大陆 11 位手机号。',
     });
     expect(validateRegistrationAccount('1380013800').kind).toBe('invalid');
   });

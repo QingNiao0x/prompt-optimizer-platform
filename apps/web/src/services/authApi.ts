@@ -24,9 +24,11 @@ const phonePost = async <T>(url: string, payload: object): Promise<ApiResponse<T
   return (await httpClient.post<ApiResponse<T>>(url, payload)).data;
 };
 
+/** 统一注册表单使用 REGISTER；短信登录使用 LOGIN，图形验证码只随发送请求提交。 */
 export const requestSmsChallenge = (payload: { phone: string; purpose: 'REGISTER' | 'LOGIN'; captcha: string }): Promise<ApiResponse<SmsChallengeStatus>> => (
   phonePost('/api/v1/auth/sms/challenges', payload)
 );
+/** 手机注册提交号码及对应挑战，复用邮箱注册后的当前用户投影和会话处理。 */
 export const registerPhone = (payload: PhoneCredentials & { password: string }): Promise<ApiResponse<AuthenticatedUser>> => (
   phonePost('/api/v1/auth/phone/register', payload)
 );

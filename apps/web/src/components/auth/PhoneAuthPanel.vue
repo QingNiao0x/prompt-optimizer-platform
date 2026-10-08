@@ -1,35 +1,31 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { ElAlert, ElButton, ElCheckbox, ElForm, ElFormItem, ElInput, ElMessage } from 'element-plus';
+import { ElAlert, ElButton, ElForm, ElFormItem, ElInput, ElMessage } from 'element-plus';
 import ImageCaptcha from './ImageCaptcha.vue';
 import { useAuthStore } from '@/stores/auth';
-import { normalizeMainlandPhone, validRegistrationPassword } from '@/features/auth/registrationAccount';
+import { normalizeMainlandPhone } from '@/features/auth/registrationAccount';
 import { useSmsChallenge } from '@/features/auth/useSmsChallenge';
 import { requestSmsChallenge } from '@/services/authApi';
 import { getApiErrorMessage } from '@/services/http';
 
-const props = defineProps<{ mode: 'phone-register' | 'sms' | 'phone-password' }>();
+const props = defineProps<{ mode: 'sms' | 'phone-password' }>();
 const emit = defineEmits<{ success: [] }>();
 const auth = useAuthStore();
 const input = ref('');
 const phone = computed(() => normalizeMainlandPhone(input.value));
 const password = ref('');
-const confirmation = ref('');
-const agreed = ref(false);
 const captcha = ref('');
 const code = ref('');
 const busy = ref(false);
 const error = ref('');
 const captchaImage = ref<InstanceType<typeof ImageCaptcha>>();
 const { challengeId, sending, remaining, valid, send, reset } = useSmsChallenge(phone);
-const isRegistration = computed(() => props.mode === 'phone-register');
 const isPassword = computed(() => props.mode === 'phone-password');
 const allowed = computed(() => !!phone.value && (isPassword.value
   ? password.value.length >= 8 && captcha.value.trim().length === 4
-  : valid.value && /^[0-9]{6}$/.test(code.value) && (!isRegistration.value
-    || (validRegistrationPassword(password.value) && password.value === confirmation.value && agreed.value))));
+  : valid.value && /^[0-9]{6}$/.test(code.value)));
 watch(phone, () => { code.value = ''; error.value = ''; });
-watch(() => props.mode, () => { reset(); password.value = ''; code.value = ''; confirmation.value = ''; error.value = ''; });
+watch(() => props.mode, () => { reset(); password.value = ''; code.value = ''; error.value = ''; });
 
 /** 仅由用户点击触发发送，不自动重试；用途由当前界面固定。 */
 const requestCode = async (): Promise<void> => {
@@ -38,7 +34,7 @@ const requestCode = async (): Promise<void> => {
   error.value = '';
   try {
     const issued = await send(() => requestSmsChallenge({ phone: recipient,
-      purpose: isRegistration.value ? 'REGISTER' : 'LOGIN', captcha: captcha.value }));
+      purpose: 'LOGIN', captcha: captcha.value }));
     if (issued) ElMessage.success('短信已发送，5 分钟内有效。');
   } catch (failure: unknown) { error.value = getApiErrorMessage(failure); }
   finally { void captchaImage.value?.refresh(); }
@@ -53,8 +49,7 @@ const submit = async (): Promise<void> => {
       await auth.login({ identifier: phone.value, identityType: 'PHONE', password: password.value, captcha: captcha.value });
     } else {
       const credentials = { phone: phone.value, challengeId: challengeId.value, verificationCode: code.value };
-      if (isRegistration.value) await auth.registerPhone({ ...credentials, password: password.value });
-      else await auth.loginSms(credentials);
+      await auth.loginSms(credentials);
     }
     emit('success');
   } catch (failure: unknown) {
@@ -80,18 +75,12 @@ const submit = async (): Promise<void> => {
         </ElButton>
       </div>
     </ElFormItem>
-    <ElFormItem v-if="isPassword || isRegistration" label="密码">
-      <ElInput v-model="password" aria-label="密码" type="password" show-password maxlength="200" :autocomplete="isRegistration ? 'new-password' : 'current-password'" />
-      <small v-if="isRegistration">至少 8 位，包含字母和数字，UTF-8 编码不超过 72 字节。</small>
+    <ElFormItem v-if="isPassword" label="密码">
+      <ElInput v-model="password" aria-label="密码" type="password" show-password maxlength="200" autocomplete="current-password" />
     </ElFormItem>
-    <ElFormItem v-if="isRegistration" label="确认密码">
-      <ElInput v-model="confirmation" aria-label="确认密码" type="password" show-password maxlength="200" autocomplete="new-password" />
-      <small v-if="confirmation && confirmation !== password" class="form-error">两次输入的密码不一致。</small>
-    </ElFormItem>
-    <ElCheckbox v-if="isRegistration" v-model="agreed">我已阅读并同意用户协议与隐私政策</ElCheckbox>
     <ElAlert v-if="error" :title="error" type="error" :closable="false" role="alert" />
     <ElButton type="primary" native-type="submit" :loading="busy" :disabled="!allowed || sending">
-      {{ isRegistration ? '创建手机号账号' : '登录' }}
+      登录
     </ElButton>
   </ElForm>
 </template>

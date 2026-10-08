@@ -2,13 +2,15 @@
 import { computed, onScopeDispose, ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { getApiErrorMessage, httpClient } from '@/services/http';
-import { requestRegistrationCode } from '@/services/authApi';
-import { validateRegistrationAccount } from '@/features/auth/registrationAccount';
+import { requestRegistrationCode, requestSmsChallenge } from '@/services/authApi';
+import { normalizeMainlandPhone, validateRegistrationAccount } from '@/features/auth/registrationAccount';
+import { useSmsChallenge } from '@/features/auth/useSmsChallenge';
 import { ElButton } from 'element-plus';
 import PhoneAuthPanel from '@/components/auth/PhoneAuthPanel.vue';
+import ImageCaptcha from '@/components/auth/ImageCaptcha.vue';
 
 export type AuthModalMode = 'login' | 'register';
-type AuthView = 'qr' | 'password' | 'register' | 'phone-register' | 'sms' | 'phone-password';
+type AuthView = 'qr' | 'password' | 'register' | 'sms' | 'phone-password';
 
 interface Props {
   modelValue: boolean;
@@ -29,6 +31,7 @@ const registrationSucceeded = ref(false);
 const errorMessage = ref('');
 const statusMessage = ref('');
 const account = ref('');
+const loginAsUsername = ref(false);
 const password = ref('');
 const confirmPassword = ref('');
 const showPassword = ref(false);
@@ -40,27 +43,67 @@ const resendAfterSeconds = ref(0);
 const verificationRecipient = ref('');
 const captcha = ref('');
 const captchaUrl = ref('');
+const registrationCaptcha = ref('');
+const registrationCaptchaImage = ref<InstanceType<typeof ImageCaptcha>>();
 const accountInput = ref<HTMLInputElement>();
 let resendTimer: number | undefined;
+let registrationRevision = 0;
 
 const registrationAccount = computed(() => validateRegistrationAccount(account.value));
-const phoneView = computed(() => view.value === 'phone-register' || view.value === 'sms' || view.value === 'phone-password' ? view.value : undefined);
-const phoneHint = computed(() => auth.capabilities.phoneRegistration ? '手机号格式正确，请选择“手机号注册”入口。' : registrationAccount.value.message);
+const loginPhone = computed(() => normalizeMainlandPhone(account.value));
+const loginAccountLabel = computed(() => loginAsUsername.value ? '用户名' : '手机号或邮箱');
+const loginAccountPlaceholder = computed(() => loginAsUsername.value ? '请输入用户名' : '请输入手机号或邮箱');
+const phoneView = computed(() => view.value === 'sms' || view.value === 'phone-password' ? view.value : undefined);
+const isSmsRegistration = computed(() => registrationAccount.value.kind === 'phone' && auth.capabilities.phoneRegistration);
+const registrationPhone = computed(() => isSmsRegistration.value ? registrationAccount.value.normalized : undefined);
+// 短信与邮箱分别保留冷却状态；号码或表单变化会丢弃旧短信授权，但不会退还发送预算。
+const {
+  challengeId: smsChallengeId,
+  sending: sendingSmsCode,
+  remaining: smsResendAfterSeconds,
+  valid: smsChallengeValid,
+  send: sendSmsChallenge,
+  reset: resetSmsChallenge,
+} = useSmsChallenge(registrationPhone);
+const codeSending = computed(() => requestingCode.value || sendingSmsCode.value);
+const codeResendAfterSeconds = computed(() => isSmsRegistration.value ? smsResendAfterSeconds.value : resendAfterSeconds.value);
+const registrationHint = computed((): string => {
+  if (registrationAccount.value.kind === 'empty') {
+    return auth.capabilities.phoneRegistration
+      ? '可使用邮箱或中国大陆 11 位手机号注册。'
+      : '当前仅支持邮箱验证码注册。';
+  }
+  if (registrationAccount.value.kind === 'phone') {
+    return auth.capabilities.phoneRegistration
+      ? '手机号格式正确，将通过短信验证码注册。'
+      : '短信服务未开启，当前仅支持邮箱注册。';
+  }
+  return registrationAccount.value.message;
+});
+const canRequestRegistrationCode = computed((): boolean => {
+  if (submitting.value || codeSending.value || codeResendAfterSeconds.value > 0) return false;
+  return registrationAccount.value.kind === 'email'
+    || (isSmsRegistration.value && registrationCaptcha.value.trim().length === 4);
+});
 const registrationBlockReason = computed((): string => {
   if (registrationAccount.value.kind === 'empty') {
-    return auth.capabilities.phoneRegistration ? '请填写邮箱地址，或选择手机号注册。' : '请先填写邮箱地址；手机号短信注册将在接入短信服务后开放。';
+    return auth.capabilities.phoneRegistration ? '请先填写邮箱地址或中国大陆 11 位手机号。' : '请先填写邮箱地址。';
   }
   if (registrationAccount.value.kind === 'invalid') {
     return registrationAccount.value.message;
   }
-  if (registrationAccount.value.kind === 'phone') {
-    return phoneHint.value;
+  if (registrationAccount.value.kind === 'phone' && !auth.capabilities.phoneRegistration) {
+    return registrationHint.value;
   }
-  if (verificationRecipient.value !== registrationAccount.value.normalized) {
+  if (codeSending.value) return '请等待验证码发送完成。';
+  if (isSmsRegistration.value && !smsChallengeValid.value) {
+    return smsChallengeId.value ? '短信验证码已过期，请重新获取。' : '请先获取当前手机号的短信验证码。';
+  }
+  if (!isSmsRegistration.value && verificationRecipient.value !== registrationAccount.value.normalized) {
     return '请先向当前邮箱获取验证码。';
   }
   if (!/^\d{6}$/.test(verificationCode.value)) {
-    return '请输入邮件中的 6 位验证码。';
+    return isSmsRegistration.value ? '请输入短信中的 6 位验证码。' : '请输入邮件中的 6 位验证码。';
   }
   if (password.value.length < 8) {
     return '密码至少需要 8 个字符。';
@@ -79,13 +122,13 @@ const registrationBlockReason = computed((): string => {
 });
 const canSubmitRegistration = computed((): boolean => registrationBlockReason.value === '');
 const codeButtonLabel = computed((): string => {
-  if (requestingCode.value) {
+  if (codeSending.value) {
     return '发送中…';
   }
-  if (resendAfterSeconds.value > 0) {
-    return `${resendAfterSeconds.value} 秒后重发`;
+  if (codeResendAfterSeconds.value > 0) {
+    return `${codeResendAfterSeconds.value} 秒后重发`;
   }
-  return registrationAccount.value.kind === 'phone' ? (auth.capabilities.phoneRegistration ? '请切换手机号注册' : '短信注册待开通') : '获取验证码';
+  return isSmsRegistration.value ? '获取短信验证码' : '获取邮箱验证码';
 });
 
 const title = computed((): string => {
@@ -95,14 +138,14 @@ const title = computed((): string => {
   if (view.value === 'register') {
     return '创建账号';
   }
-  if (view.value === 'phone-register') return '手机号注册';
   if (view.value === 'sms') return '短信登录';
   if (view.value === 'phone-password') return '手机号密码登录';
-  return view.value === 'qr' ? '扫码登录' : '账号登录';
+  if (view.value === 'qr') return '扫码登录';
+  return loginAsUsername.value ? '用户名登录' : '手机号或邮箱登录';
 });
 
 const close = (): void => {
-  stopResendTimer();
+  resetRegistrationVerification();
   password.value = '';
   confirmPassword.value = '';
   showPassword.value = false;
@@ -111,19 +154,28 @@ const close = (): void => {
 };
 
 const resetFields = (): void => {
-  stopResendTimer();
+  resetRegistrationVerification();
   account.value = '';
+  loginAsUsername.value = false;
   password.value = '';
   confirmPassword.value = '';
   showPassword.value = false;
   showConfirmPassword.value = false;
-  verificationCode.value = '';
-  verificationRecipient.value = '';
   agreementAccepted.value = false;
   registrationSucceeded.value = false;
   errorMessage.value = '';
   statusMessage.value = '';
 };
+
+/** 账号、视图或弹窗变化后不能继续使用旧验证码，迟到响应也不能重新激活授权。 */
+function resetRegistrationVerification(): void {
+  registrationRevision += 1;
+  stopResendTimer();
+  resetSmsChallenge();
+  registrationCaptcha.value = '';
+  verificationCode.value = '';
+  verificationRecipient.value = '';
+}
 
 function stopResendTimer(): void {
   if (resendTimer !== undefined) {
@@ -150,50 +202,59 @@ const syncView = (): void => {
 };
 
 watch(() => props.mode, syncView);
+watch(view, resetFields);
+watch(account, () => { loginAsUsername.value = false; });
 watch(() => props.modelValue, (open) => {
   if (open) {
     syncView();
     void auth.loadCapabilities();
+  } else {
+    resetRegistrationVerification();
   }
 }, { immediate: true });
-watch(account, () => {
-  if (
-    view.value === 'register'
-    && verificationRecipient.value
-    && registrationAccount.value.normalized !== verificationRecipient.value
-  ) {
-    stopResendTimer();
-    verificationCode.value = '';
-    verificationRecipient.value = '';
+watch(() => registrationAccount.value.kind + ':' + registrationAccount.value.normalized, () => {
+  if (view.value === 'register') {
+    resetRegistrationVerification();
     statusMessage.value = '';
+    errorMessage.value = '';
   }
 });
 
 onScopeDispose(stopResendTimer);
 
 const handleRequestCode = async (): Promise<void> => {
-  if (requestingCode.value || resendAfterSeconds.value > 0) {
-    return;
-  }
-  if (registrationAccount.value.kind !== 'email') {
-    errorMessage.value = registrationAccount.value.message;
-    accountInput.value?.focus();
-    return;
-  }
-  requestingCode.value = true;
+  if (!canRequestRegistrationCode.value || view.value !== 'register') return;
+  const recipient = registrationAccount.value.normalized;
+  const sendingSms = isSmsRegistration.value;
+  const revision = registrationRevision;
+  verificationCode.value = '';
+  verificationRecipient.value = '';
   errorMessage.value = '';
   statusMessage.value = '';
   try {
-    const recipient = registrationAccount.value.normalized;
-    const response = await requestRegistrationCode({ email: recipient });
-    if (recipient !== registrationAccount.value.normalized) return;
-    verificationRecipient.value = recipient;
-    startResendTimer(response.data.resendAfterSeconds);
-    statusMessage.value = `验证码已发送，${Math.ceil(response.data.expiresInSeconds / 60)} 分钟内有效。`;
+    if (sendingSms) {
+      const issued = await sendSmsChallenge(() => requestSmsChallenge({
+        phone: recipient,
+        purpose: 'REGISTER',
+        captcha: registrationCaptcha.value.trim(),
+      }));
+      if (issued && revision === registrationRevision) statusMessage.value = '短信验证码已发送，5 分钟内有效。';
+    } else {
+      requestingCode.value = true;
+      const response = await requestRegistrationCode({ email: recipient });
+      if (revision !== registrationRevision || !props.modelValue || view.value !== 'register') return;
+      verificationRecipient.value = recipient;
+      startResendTimer(response.data.resendAfterSeconds);
+      statusMessage.value = `邮箱验证码已发送，${Math.ceil(response.data.expiresInSeconds / 60)} 分钟内有效。`;
+    }
   } catch (error: unknown) {
-    errorMessage.value = getApiErrorMessage(error);
+    if (revision === registrationRevision) errorMessage.value = getApiErrorMessage(error);
   } finally {
     requestingCode.value = false;
+    // 图形验证码由后端一次性消费；短信发送尝试结束后刷新，不要求再次填写才能完成注册。
+    if (sendingSms && revision === registrationRevision && props.modelValue) {
+      void registrationCaptchaImage.value?.refresh();
+    }
   }
 };
 
@@ -230,7 +291,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
   }
   if (view.value === 'register') {
     if (!canSubmitRegistration.value) {
-      errorMessage.value = '请填写有效验证码、至少 8 位且一致的密码，并同意用户协议与隐私政策。';
+      errorMessage.value = registrationBlockReason.value;
       return;
     }
   }
@@ -238,17 +299,29 @@ const handleSubmit = async (event: Event): Promise<void> => {
   errorMessage.value = '';
   try {
     if (view.value === 'register') {
-      await auth.register({
-        email: registrationAccount.value.normalized,
-        verificationCode: verificationCode.value,
-        password: password.value,
-      });
+      if (isSmsRegistration.value) {
+        await auth.registerPhone({
+          phone: registrationAccount.value.normalized,
+          challengeId: smsChallengeId.value,
+          verificationCode: verificationCode.value,
+          password: password.value,
+        });
+      } else {
+        await auth.register({
+          email: registrationAccount.value.normalized,
+          verificationCode: verificationCode.value,
+          password: password.value,
+        });
+      }
       registrationSucceeded.value = true;
       return;
     }
 
+    // 后端只在显式 PHONE 时识别手机号；数字用户名允许用户明确切换，不能靠失败后重放登录请求猜测。
+    const phone = loginAsUsername.value ? undefined : loginPhone.value;
     await auth.login({
-      identifier: account.value.trim(),
+      identifier: phone ?? account.value.trim(),
+      identityType: phone ? 'PHONE' : undefined,
       password: password.value,
       captcha: captcha.value.trim(),
     });
@@ -347,7 +420,7 @@ const enterWorkbench = (): void => {
         >
           <form class="login-modal__form" @submit="handleSubmit">
             <label>
-              {{ view === 'register' ? '邮箱/手机号' : '邮箱或用户名' }}
+              {{ view === 'register' ? (auth.capabilities.phoneRegistration ? '邮箱/手机号' : '邮箱') : loginAccountLabel }}
               <input
                 ref="accountInput"
                 v-model="account"
@@ -356,23 +429,34 @@ const enterWorkbench = (): void => {
                 maxlength="320"
                 name="account"
                 autocomplete="username"
-                :placeholder="view === 'register' ? '请输入邮箱地址或手机号' : '请输入邮箱或管理员用户名'"
+                :aria-label="view === 'register' ? (auth.capabilities.phoneRegistration ? '邮箱/手机号' : '邮箱') : loginAccountLabel"
+                :disabled="submitting || (view === 'register' && codeSending)"
+                :placeholder="view === 'register' ? (auth.capabilities.phoneRegistration ? '请输入邮箱地址或手机号' : '请输入邮箱地址') : loginAccountPlaceholder"
               >
               <small
                 v-if="view === 'register'"
                 class="login-modal__field-hint"
                 :class="{
                   'login-modal__field-hint--error': registrationAccount.kind === 'invalid',
-                  'login-modal__field-hint--notice': registrationAccount.kind === 'phone',
+                  'login-modal__field-hint--notice': registrationAccount.kind === 'phone' && !auth.capabilities.phoneRegistration,
                 }"
               >
-                {{ registrationAccount.kind === 'empty'
-                  ? (auth.capabilities.phoneRegistration ? '可在当前表单使用邮箱注册，或选择手机号注册。' : '支持邮箱和手机号格式；当前先开放邮箱验证码注册。')
-                  : registrationAccount.kind === 'phone' ? phoneHint : registrationAccount.message }}
+                {{ registrationHint }}
               </small>
             </label>
+            <div v-if="view === 'password' && loginPhone" class="login-modal__field-hint" aria-live="polite">
+              {{ loginAsUsername ? '当前按用户名登录。' : '已识别为手机号。' }}
+              <ElButton link type="primary" :disabled="submitting" @click="loginAsUsername = !loginAsUsername">
+                {{ loginAsUsername ? '使用手机号登录' : '使用用户名登录' }}
+              </ElButton>
+            </div>
+            <!-- 短信发码前需要图形验证码；邮箱注册继续沿用原有验证流程。 -->
+            <div v-if="view === 'register' && isSmsRegistration" class="login-modal__captcha-field">
+              <span>图形验证码</span>
+              <ImageCaptcha ref="registrationCaptchaImage" v-model="registrationCaptcha" />
+            </div>
             <label v-if="view === 'register'">
-              {{ registrationAccount.kind === 'phone' ? '短信验证码' : '邮箱验证码' }}
+              {{ isSmsRegistration ? '短信验证码' : '邮箱验证码' }}
               <span class="login-modal__code-row">
                 <input
                   v-model="verificationCode"
@@ -383,11 +467,12 @@ const enterWorkbench = (): void => {
                   maxlength="6"
                   name="verificationCode"
                   autocomplete="one-time-code"
+                  :aria-label="isSmsRegistration ? '短信验证码' : '邮箱验证码'"
                   placeholder="请输入 6 位验证码"
                 >
                 <button
                   type="button"
-                  :disabled="requestingCode || resendAfterSeconds > 0 || registrationAccount.kind !== 'email'"
+                  :disabled="!canRequestRegistrationCode"
                   @click="handleRequestCode"
                 >
                   {{ codeButtonLabel }}
@@ -517,7 +602,7 @@ const enterWorkbench = (): void => {
             <small v-if="view === 'register'" id="register-preview-note">
               验证码 5 分钟内有效，60 秒后可重发；密码至少 8 位，且须同时包含字母和数字。
             </small>
-            <small v-else>使用注册邮箱或管理员用户名及密码登录。</small>
+            <small v-else>使用已注册或绑定的手机号、邮箱及密码登录；管理员也可使用用户名。</small>
           </form>
 
           <aside v-if="view === 'register'" class="login-modal__wechat" aria-label="微信扫码登录">
@@ -554,8 +639,7 @@ const enterWorkbench = (): void => {
         </div>
 
         <footer v-if="!registrationSucceeded" class="login-modal__footer">
-          <ElButton v-if="auth.capabilities.phoneRegistration && view !== 'phone-register'" link type="primary" @click="view = 'phone-register'">手机号注册</ElButton>
-          <ElButton v-if="view === 'phone-register'" link type="primary" @click="view = 'register'">邮箱注册</ElButton>
+          <ElButton v-if="view !== 'register'" link type="primary" @click="view = 'register'">立即注册</ElButton>
           <ElButton v-if="auth.capabilities.smsLogin && view !== 'sms'" link type="primary" @click="view = 'sms'">短信登录</ElButton>
           <ElButton v-if="auth.capabilities.smsLogin && view !== 'phone-password'" link type="primary" @click="view = 'phone-password'">手机号密码登录</ElButton>
           <button
@@ -563,7 +647,7 @@ const enterWorkbench = (): void => {
             type="button"
             @click="view = 'password'"
           >
-            使用账号密码登录
+            使用手机号或邮箱登录
           </button>
           <button
             v-else-if="view === 'password'"
@@ -577,7 +661,7 @@ const enterWorkbench = (): void => {
             type="button"
             @click="view = 'password'"
           >
-            已有账号？使用邮箱或用户名密码登录
+            已有账号？使用手机号或邮箱登录
           </button>
         </footer>
       </section>
@@ -762,12 +846,17 @@ h2 {
   align-items: stretch;
 }
 
-.login-modal__form label {
+.login-modal__form label,
+.login-modal__captcha-field {
   display: grid;
   gap: 6px;
   color: var(--text-primary);
   font-size: 14px;
   font-weight: 600;
+}
+
+.login-modal__captcha-field :deep(.el-input) {
+  min-width: 0;
 }
 
 .login-modal__form input {

@@ -6,8 +6,8 @@ test('邮箱验证码注册成功后自动登录并进入工作台', async ({ pa
   await mockAuthentication(page, false);
   await page.goto('/');
   await page.getByRole('button', { name: '注册' }).first().click();
-  await page.getByPlaceholder('请输入邮箱地址或手机号').fill('new@example.com');
-  await page.getByRole('button', { name: '获取验证码' }).click();
+  await page.getByPlaceholder('请输入邮箱地址').fill('new@example.com');
+  await page.getByRole('button', { name: '获取邮箱验证码' }).click();
   await page.getByPlaceholder('请输入 6 位验证码').fill('123456');
   await page.getByPlaceholder('请输入密码').fill('test-password-123');
   await page.getByPlaceholder('请再次输入密码').fill('test-password-123');
@@ -25,7 +25,7 @@ test('未登录不能挂载工作台，错误密码可重试，登录后可刷�
   await page.goto('/workbench');
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.getByLabel('原始提示词')).toHaveCount(0);
-  await page.getByPlaceholder('请输入邮箱或管理员用户名').fill('test@example.com');
+  await page.getByPlaceholder('请输入手机号或邮箱').fill('test@example.com');
   await page.getByPlaceholder('请输入密码').fill('wrong-password');
   await page.getByPlaceholder('请输入图中字符').fill('ABCD');
   await page.getByRole('button', { name: '登录', exact: true }).click();
