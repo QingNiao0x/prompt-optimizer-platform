@@ -85,6 +85,7 @@ public final class PlanQuestionFilter {
                 .filter(question -> !readOnlyComparison.directedQuestion(question))
                 .filter(question -> !RoutineGuideDecision.delegated(question, input.rawPrompt()))
                 .filter(question -> !routinePresentation(question, input.rawPrompt()))
+                .filter(question -> !routineWindowTradeoffAnalysis(question, input.rawPrompt()))
                 .filter(question -> !routineExecutionPresentation(question, input.rawPrompt()))
                 .filter(question -> !routineFailureCoverage(question, input.rawPrompt()))
                 .filter(question -> !knownNegativeCostPresentation(question, input.rawPrompt()))
@@ -217,6 +218,43 @@ public final class PlanQuestionFilter {
             return byObject.matches() && java.util.Arrays.stream(byObject.group(1).split("[、，,与和]"))
                     .map(String::strip).allMatch(scope -> scope.length() >= 2 && raw.contains(scope));
         });
+    }
+
+    /**
+     * 已要求两方案主要取舍时，纯分析栏目由执行者覆盖，不再要求用户挑选常规栏目。
+     * 当前只消费已复现的24/48小时观察窗口和四个完整分析选项；实际窗口选择、阈值、
+     * 新机构、审批决定或选项里追加的规则不属于这项委托，保守保留。
+     */
+    private boolean routineWindowTradeoffAnalysis(PlanQuestion question, String rawPrompt) {
+        String raw = safe(rawPrompt);
+        boolean assigned = java.util.Arrays.stream(raw.split("[。；;\\n]"))
+                .map(String::strip).anyMatch(clause -> clause.matches(
+                        "^(?:本次)?(?:最终交付|交付内容(?:为|包括)|方案(?:需|应|必须)(?:包含|包括|说明))"
+                                + "[^。；;]*两个(?:方案|窗口)的主要取舍[^。；;]*"));
+        if (!assigned || !raw.contains("观察窗口") || !raw.contains("24小时") || !raw.contains("48小时")
+                // 选择请求不得跨句关联：上一句确认阈值，不能变成下一句的分析栏目也必须让用户确认。
+                || raw.matches("(?s).*(?:询问|让我选择|由我选择|由用户选择|确认)[^。；;\\r\\n]{0,16}"
+                        + "(?:主要取舍|比较维度|取舍重点).*")) return false;
+        if (!question.question().matches("^(?:比较观察方案中[，,])?两个窗口的主要取舍(?:应|应该|需要)?围绕哪些方面展开[？?]$")
+                || question.type() != com.promptoptimizer.enhancement.domain.PlanQuestionType.MULTIPLE_CHOICE
+                || question.options().isEmpty() || !question.examples().isEmpty()) return false;
+        String hint = safe(question.hint());
+        if (!hint.isBlank() && !hint.equals("这决定方案中比较维度的范围，影响交付内容和验收。可多选。")) return false;
+        var answers = java.util.Map.of(
+                "运营影响", "比较两个窗口在门诊运营观察范围、资源投入和流程方面的运营影响。",
+                "数据覆盖与可比性", "比较两个窗口对观察数据覆盖范围、可比性和完整性的影响。",
+                "审批与合规风险", "比较沿用已批准24小时窗口与引入未获批48小时候选在审批和合规方面的风险。",
+                "实施与调整成本", "比较两个窗口在方案落地、流程调整和后续维护方面的实施与调整成本。");
+        var descriptions = java.util.Map.of(
+                "运营影响", "比较不同窗口对门诊运营观察范围、资源投入和流程的影响。",
+                "数据覆盖与可比性", "比较不同窗口对观察数据覆盖范围、可比性和完整性的影响。",
+                "审批与合规风险", "比较沿用已批准窗口与引入未获批候选在审批和合规方面的风险。",
+                "实施与调整成本", "比较不同窗口在方案落地、流程调整和后续维护方面的成本。");
+        // 逐个完整选项核对，不因题干像排版题而吞掉元信息中的专业参数或新的业务选择。
+        return question.options().stream().allMatch(option -> !option.recommended()
+                && safe(option.recommendationReason()).isBlank()
+                && option.answer().equals(answers.get(option.label()))
+                && safe(option.description()).equals(descriptions.get(option.label())));
     }
 
     /**

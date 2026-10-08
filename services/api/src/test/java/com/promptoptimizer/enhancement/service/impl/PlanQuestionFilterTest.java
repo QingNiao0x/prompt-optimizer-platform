@@ -14,6 +14,52 @@ class PlanQuestionFilterTest {
     private final PlanQuestionFilter filter = new PlanQuestionFilter();
 
     @Test
+    void shouldAnalyzeAlreadyRequestedWindowTradeoffsWithoutAskingTheUserToSelectAnalysisDimensions() throws Exception {
+        var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        try (var source = getClass().getResourceAsStream("/enhancement/approved-window-tradeoff-actual.json")) {
+            var fixture = mapper.readTree(source);
+            var questions = mapper.convertValue(fixture.get("questions"),
+                    new com.fasterxml.jackson.core.type.TypeReference<List<PlanQuestion>>() { });
+            assertThat(filter.filter(questions, input(fixture.get("rawPrompt").asText())))
+                    .extracting(PlanQuestion::id).containsExactly("window_choice", "threshold_handling");
+        }
+    }
+
+    @Test
+    void shouldKeepNewBusinessDecisionsAndExplicitUserControlInsideAWindowTradeoffQuestion() throws Exception {
+        var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        try (var source = getClass().getResourceAsStream("/enhancement/approved-window-tradeoff-actual.json")) {
+            var fixture = mapper.readTree(source);
+            var questions = mapper.convertValue(fixture.get("questions"),
+                    new com.fasterxml.jackson.core.type.TypeReference<List<PlanQuestion>>() { });
+            String raw = fixture.get("rawPrompt").asText();
+            var question = questions.getLast();
+            assertThat(filter.filter(List.of(question), input(raw + "请先让我选择主要取舍的比较维度。")))
+                    .containsExactly(question);
+            for (String detail : List.of("丙院2026年的观察窗口需另行审批。", "实际比较分母尚未确定。",
+                    "是否允许跨院共享患者记录尚未确定。", "资源投入上限为10万元，是否接受？")) {
+                var changed = new PlanQuestion(question.id(), question.question(), detail, question.type(),
+                        question.options(), question.examples(), true);
+                assertThat(filter.filter(List.of(changed), input(raw))).as(detail).containsExactly(changed);
+            }
+            var original = question.options().getFirst();
+            for (String detail : List.of("本次观察窗口统一采用48小时。", "新增退款审批的取舍。")) {
+                var changed = new PlanQuestion(question.id(), question.question(), question.hint(), question.type(),
+                        List.of(new PlanOption(original.id(), original.label(), original.description(),
+                                original.answer() + detail, false, "")), List.of(), true);
+                assertThat(filter.filter(List.of(changed), input(raw))).as(detail).containsExactly(changed);
+            }
+            var unsupportedRecommendation = new PlanQuestion(question.id(), question.question(), question.hint(), question.type(),
+                    List.of(new PlanOption(original.id(), original.label(), original.description(), original.answer(), true,
+                            "48小时已获批。")), List.of(), true);
+            assertThat(filter.filter(List.of(unsupportedRecommendation), input(raw))).containsExactly(unsupportedRecommendation);
+            var newExample = new PlanQuestion(question.id(), question.question(), question.hint(), question.type(),
+                    question.options(), List.of("还需决定临床评分标准。"), true);
+            assertThat(filter.filter(List.of(newExample), input(raw))).containsExactly(newExample);
+        }
+    }
+
+    @Test
     void shouldDelegateRoutineTestLayersWithoutHidingNewBusinessBranches() {
         String raw = "制定表单补值实现方案，交付按业务行为组织的测试表。匹配使用姓名与证件号两个键，并且记录必须符合当前用户所属地区条件。"
                 + "候选按更新时间降序，时间相同按记录编号升序。字段白名单只有电话。"

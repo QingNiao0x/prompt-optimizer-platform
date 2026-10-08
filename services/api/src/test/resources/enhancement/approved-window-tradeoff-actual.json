@@ -1,0 +1,107 @@
+{
+  "rawPrompt": "为甲院2025年的门诊运营组拟定比较观察方案，只交付方案，不计算真实患者数据、不输出诊疗建议。研究对象和年份已经明确。所附说明记录甲院2025年已批准并生效的24小时观察窗口。\n本次是否继续沿用24小时窗口，还是提出48小时候选供院方审批，尚未选择，请先让我确认。推荐需要依据甲院、2025年和已批准状态；不能从别院或其他年份借用规则。推荐不等于我已选定，48小时候选也不能写成已经获批。本次异常等待阈值仍需独立核实，不因窗口已有规则而自动确认。最终交付观察范围、两个方案的主要取舍、独立未决条件及验收，不让我选择常规章节或图表颜色。",
+  "questions": [
+    {
+      "id": "window_choice",
+      "question": "本次比较观察方案中，观察窗口应如何设定？",
+      "hint": "甲院2025年24小时窗口已批准生效，48小时仅为未获批候选。选择会决定方案是沿用已批准规则，还是把未获批候选纳入比较。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "keep_24h",
+          "label": "沿用已批准的24小时窗口",
+          "description": "以甲院2025年已批准并生效的24小时窗口作为本次方案的基础口径。",
+          "answer": "本次比较观察方案沿用甲院2025年已批准并生效的24小时观察窗口。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "compare_24h_48h",
+          "label": "以24小时为基础，同时列出48小时候选供审批比较",
+          "description": "方案主体仍以已批准的24小时窗口为准，另将48小时作为未获批候选并列说明主要取舍，供院方审批参考。",
+          "answer": "本次比较观察方案以甲院2025年已批准并生效的24小时观察窗口为基础，同时将48小时作为尚未获批的候选窗口并列说明主要取舍，供院方审批参考；不得将48小时写成已获批规则。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "only_48h_candidate",
+          "label": "仅以48小时候选作为本次方案窗口",
+          "description": "方案只围绕48小时未获批候选展开，不沿用已批准的24小时窗口。",
+          "answer": "本次比较观察方案仅以48小时未获批候选作为观察窗口展开，不沿用甲院2025年已批准的24小时窗口。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "threshold_handling",
+      "question": "甲院2025年异常等待阈值尚未确定，本次方案应如何处理？",
+      "hint": "阈值未确定会直接影响异常判定和验收口径。需要确认是列为独立未决条件，还是本次由用户给出一个待审批的候选值。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "list_as_open",
+          "label": "列为独立未决条件，不设定具体数值",
+          "description": "方案中明确异常等待阈值尚未确定，作为独立未决条件列出，不给出具体阈值。",
+          "answer": "甲院2025年异常等待阈值尚未确定，本次方案将其列为独立未决条件，不设定具体阈值。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "propose_candidate",
+          "label": "本次提出一个待审批的候选阈值",
+          "description": "由用户给出一个候选阈值，方案中标注为待审批，不作为已生效规则。",
+          "answer": "本次方案提出一个待审批的异常等待候选阈值，并明确标注该阈值尚未获批、不作为已生效规则。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "comparison_scope",
+      "question": "比较观察方案中，两个窗口的主要取舍应围绕哪些方面展开？",
+      "hint": "这决定方案中比较维度的范围，影响交付内容和验收。可多选。",
+      "type": "MULTIPLE_CHOICE",
+      "options": [
+        {
+          "id": "operational_impact",
+          "label": "运营影响",
+          "description": "比较不同窗口对门诊运营观察范围、资源投入和流程的影响。",
+          "answer": "比较两个窗口在门诊运营观察范围、资源投入和流程方面的运营影响。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "data_coverage",
+          "label": "数据覆盖与可比性",
+          "description": "比较不同窗口对观察数据覆盖范围、可比性和完整性的影响。",
+          "answer": "比较两个窗口对观察数据覆盖范围、可比性和完整性的影响。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "approval_risk",
+          "label": "审批与合规风险",
+          "description": "比较沿用已批准窗口与引入未获批候选在审批和合规方面的风险。",
+          "answer": "比较沿用已批准24小时窗口与引入未获批48小时候选在审批和合规方面的风险。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "implementation_cost",
+          "label": "实施与调整成本",
+          "description": "比较不同窗口在方案落地、流程调整和后续维护方面的成本。",
+          "answer": "比较两个窗口在方案落地、流程调整和后续维护方面的实施与调整成本。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ]
+}
