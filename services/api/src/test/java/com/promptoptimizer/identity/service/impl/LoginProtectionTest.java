@@ -54,6 +54,34 @@ class LoginProtectionTest {
                 .isInstanceOf(LoginGuardException.class);
     }
 
+    @Test
+    void captchaExpiresAtFiveMinuteBoundaryAndIsConsumedOnWrongAnswer() {
+        var clock = mock(java.time.Clock.class);
+        org.mockito.Mockito.when(clock.millis()).thenReturn(0L);
+        var service = new LoginCaptchaServiceImpl(null, false, clock);
+        var request = new MockHttpServletRequest();
+        service.issue(request);
+        var answer = (String) request.getSession().getAttribute(LoginCaptchaService.ATTRIBUTE);
+        org.mockito.Mockito.when(clock.millis()).thenReturn(300_000L);
+        assertThatThrownBy(() -> service.verifyAndConsume(request, answer)).isInstanceOf(LoginGuardException.class);
+        service.issue(request);
+        var second = (String) request.getSession().getAttribute(LoginCaptchaService.ATTRIBUTE);
+        assertThatThrownBy(() -> service.verifyAndConsume(request, "invalid")).isInstanceOf(LoginGuardException.class);
+        assertThatThrownBy(() -> service.verifyAndConsume(request, second)).isInstanceOf(LoginGuardException.class);
+    }
+
+    @Test
+    void captchaStoreFailureIsUnavailableRatherThanWrongAnswer() {
+        var service = new LoginCaptchaServiceImpl(emptyRedis(), true);
+        var request = new MockHttpServletRequest();
+        assertThatThrownBy(() -> service.issue(request)).isInstanceOf(LoginGuardException.class);
+        var handler = new com.promptoptimizer.common.exception.GlobalExceptionHandler();
+        var response = handler.handleLoginGuard(new LoginGuardException("LOGIN_GUARD_UNAVAILABLE", "登录防护服务暂不可用。", 0), request);
+        assertThat(response.getStatusCode().value()).isEqualTo(503);
+        assertThat(handler.handleLoginGuard(new LoginGuardException("CAPTCHA_INVALID", "验证码错误。", 0), request)
+                .getStatusCode().value()).isEqualTo(400);
+    }
+
     @SuppressWarnings("unchecked")
     private static ObjectProvider<org.springframework.data.redis.core.StringRedisTemplate> emptyRedis() {
         return mock(ObjectProvider.class);

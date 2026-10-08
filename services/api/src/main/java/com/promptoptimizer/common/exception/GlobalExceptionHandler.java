@@ -118,21 +118,23 @@ public class GlobalExceptionHandler {
                 exception.getMessage(), false, Map.of());
     }
 
-    /** 图形验证码失败返回 400，连续失败锁定返回 429。 */
+    /** 图形验证码错误为 400，连续失败锁定为 429；存储故障不能误报为用户输错。 */
     @ExceptionHandler(com.promptoptimizer.identity.service.LoginGuardException.class)
     public ResponseEntity<ApiErrorResponse> handleLoginGuard(
             com.promptoptimizer.identity.service.LoginGuardException exception,
             HttpServletRequest request
     ) {
-        HttpStatus status = "LOGIN_LOCKED".equals(exception.code())
-                ? HttpStatus.TOO_MANY_REQUESTS
-                : HttpStatus.BAD_REQUEST;
+        HttpStatus status = switch (exception.code()) {
+            case "LOGIN_LOCKED" -> HttpStatus.TOO_MANY_REQUESTS;
+            case "LOGIN_GUARD_UNAVAILABLE" -> HttpStatus.SERVICE_UNAVAILABLE;
+            default -> HttpStatus.BAD_REQUEST;
+        };
         Map<String, Object> details = exception.retryAfterSeconds() > 0
                 ? Map.of("retryAfterSeconds", exception.retryAfterSeconds())
                 : Map.of();
         ResponseEntity<ApiErrorResponse> response = buildResponse(
                 request, status, exception.code(), exception.getMessage(),
-                exception.retryAfterSeconds() > 0, details);
+                status.is5xxServerError() || exception.retryAfterSeconds() > 0, details);
         if (exception.retryAfterSeconds() <= 0) {
             return response;
         }

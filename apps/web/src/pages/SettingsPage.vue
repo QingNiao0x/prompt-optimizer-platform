@@ -16,6 +16,7 @@ import { storeToRefs } from 'pinia';
 import { computed, onMounted } from 'vue';
 
 import { useProjectContextSettingsStore } from '@/stores/projectContextSettings';
+import PhoneBindingCard from '@/components/auth/PhoneBindingCard.vue';
 
 const projectContextSettingsStore = useProjectContextSettingsStore();
 const {
@@ -82,6 +83,7 @@ onMounted(() => {
       </div>
     </header>
 
+    <PhoneBindingCard />
     <section class="settings-card context-settings-card" aria-labelledby="context-settings-title">
       <div class="section-heading">
         <div>

@@ -39,6 +39,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AnalyticsEventService analyticsEventService;
     private final LoginCaptchaService loginCaptchaService;
     private final LoginFailureGuard loginFailureGuard;
+    private com.promptoptimizer.identity.mapper.SmsAccountMapper smsAccounts;
+
+    /** 本地模拟模式没有持久化 Mapper；真实账户资料只暴露脱敏号码。 */
+    @org.springframework.beans.factory.annotation.Autowired
+    public void configurePhoneProjection(org.springframework.beans.factory.ObjectProvider<com.promptoptimizer.identity.mapper.SmsAccountMapper> accounts,
+            org.springframework.core.env.Environment environment) {
+        smsAccounts = java.util.Arrays.asList(environment.getActiveProfiles()).contains("local-mock") ? null : accounts.getIfAvailable();
+    }
 
     public AuthenticationServiceImpl(
             AuthenticationManager authenticationManager,
@@ -73,6 +81,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BadCredentialsException("无效凭据");
         }
         String identifier = loginRequest.identifier().trim();
+        // 显式 PHONE 才解析手机号；旧请求中的数字用户名继续按原行为解析。
+        if (loginRequest.identityType() == com.promptoptimizer.identity.domain.UserIdentityType.PHONE) {
+            identifier = "PHONE:" + com.promptoptimizer.identity.domain.MainlandPhone.normalize(identifier);
+        } else if (loginRequest.identityType() != null
+                && loginRequest.identityType() != com.promptoptimizer.identity.domain.UserIdentityType.EMAIL
+                && loginRequest.identityType() != com.promptoptimizer.identity.domain.UserIdentityType.USERNAME) {
+            throw new BadCredentialsException("不支持的密码登录类型");
+        }
         String clientAddress = request.getRemoteAddr();
         loginFailureGuard.checkAllowed(identifier, clientAddress);
         loginCaptchaService.verifyAndConsume(request, loginRequest.captcha());
@@ -107,7 +123,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             loginFailureGuard.recordFailure(identifier, clientAddress);
             throw exception;
         }
-        loginFailureGuard.recordSuccess(identifier);
+        try {
+            loginFailureGuard.recordSuccess(identifier);
+        } catch (org.springframework.dao.DataAccessException | org.springframework.security.authentication.AuthenticationServiceException exception) {
+            // 认证前的限流已经通过；清理失败只保留更严格的旧计数，不能把已建号误报为注册失败。
+            org.slf4j.LoggerFactory.getLogger(AuthenticationServiceImpl.class)
+                    .warn("event=auth.failure_counter_cleanup_deferred type={}", exception.getClass().getSimpleName());
+        }
+        return establishSession(authentication, request, response);
+    }
+
+    /** 短信只交给独立 Provider；不伪造密码，也不清除密码失败预算。 */
+    @Override public AuthenticatedUserView loginWithSms(com.promptoptimizer.identity.dto.SmsRequests.Login credentials,
+            HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = authenticationManager.authenticate(
+                new com.promptoptimizer.identity.security.SmsAuthenticationToken(credentials, request));
+        return establishSession(authentication, request, response);
+    }
+
+    /** 两条认证链路共享 Session ID 轮换、CSRF 更新及上下文保存。 */
+    private AuthenticatedUserView establishSession(Authentication authentication, HttpServletRequest request,
+            HttpServletResponse response) {
         sessionAuthenticationStrategy.onAuthentication(authentication, request, response);
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
@@ -126,7 +162,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean platformAdmin = authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(authority -> "ROLE_PLATFORM_ADMIN".equals(authority.getAuthority()));
-        return AuthenticatedUserView.from(currentActor.require(), platformAdmin);
+        var actor = currentActor.require();
+        var phone = smsAccounts == null ? null : smsAccounts.activePhone(actor.userId());
+        return AuthenticatedUserView.from(actor, platformAdmin).withPhone(phone == null ? null
+                : com.promptoptimizer.identity.domain.MainlandPhone.masked(phone.getNormalizedIdentifier()));
     }
 
     /**

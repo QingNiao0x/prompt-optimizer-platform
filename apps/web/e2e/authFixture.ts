@@ -19,6 +19,8 @@ export const mockAuthentication = async (
     const path = new URL(route.request().url()).pathname;
     if (path.endsWith('/csrf')) {
       await route.fulfill({ status: 200, json: { data: { token: 'test-csrf' } } });
+    } else if (path.endsWith('/capabilities')) {
+      await route.fulfill({ status: 200, json: { data: { phoneRegistration: false, smsLogin: false, phoneBinding: false } } });
     } else if (path.endsWith('/captcha')) {
       // 登录表单会先加载图形验证码；模拟图片，不把该请求落到真实认证服务。
       await route.fulfill({ status: 200, contentType: 'image/svg+xml',

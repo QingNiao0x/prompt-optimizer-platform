@@ -70,6 +70,9 @@ export interface AuthenticatedUser {
   email: string;
   displayName: string;
   platformAdmin: boolean;
+  /** 兼容旧服务响应；只返回脱敏号码，不暴露身份表或供应商配置。 */
+  phoneBound?: boolean;
+  maskedPhone?: string | null;
 }
 
 /** 平台已发布给终端用户的模型，不包含端点或密钥。 */
@@ -280,6 +283,26 @@ export interface LoginPayload {
   identifier: string;
   password: string;
   captcha: string;
+  /** 不传时保留邮箱/用户名解析；手机号密码登录必须显式传 PHONE。 */
+  identityType?: 'PHONE';
+}
+
+export interface AuthCapabilities {
+  phoneRegistration: boolean;
+  smsLogin: boolean;
+  phoneBinding: boolean;
+}
+
+export interface SmsChallengeStatus {
+  challengeId: string;
+  expiresInSeconds: number;
+  resendAfterSeconds: number;
+}
+
+export interface PhoneCredentials {
+  phone: string;
+  challengeId: string;
+  verificationCode: string;
 }
 
 export interface EmailRegistrationCodePayload {

@@ -1,8 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
-import { validateRegistrationAccount } from './registrationAccount';
+import { validateRegistrationAccount, normalizeMainlandPhone, validRegistrationPassword } from './registrationAccount';
 
 describe('registration account validation', () => {
+  it('limits the PNVS channel to canonical mainland numbers', () => {
+    expect(normalizeMainlandPhone(' 138-0000-0000 ')).toBe('+8613800000000');
+    expect(normalizeMainlandPhone('+86 13800000000')).toBe('+8613800000000');
+    expect(normalizeMainlandPhone('+12025550123')).toBeUndefined();
+    expect(normalizeMainlandPhone('12800000000')).toBeUndefined();
+  });
+  it('checks password complexity and the BCrypt byte boundary', () => {
+    expect(validRegistrationPassword('Abcdefg1')).toBe(true);
+    expect(validRegistrationPassword('abcdefgh')).toBe(false);
+    expect(validRegistrationPassword('Abcde1')).toBe(false);
+    expect(validRegistrationPassword('字'.repeat(24) + '1')).toBe(false);
+    expect(validRegistrationPassword('字'.repeat(23) + '1')).toBe(true);
+  });
   it('should normalize a valid email address', () => {
     expect(validateRegistrationAccount(' New@Example.com ')).toEqual({
       kind: 'email',

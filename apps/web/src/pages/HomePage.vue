@@ -26,7 +26,7 @@ const openAuth = (mode: AuthModalMode): void => {
 
     <section id="pricing" class="home-pricing" aria-labelledby="pricing-title">
       <h2 id="pricing-title">定价</h2>
-      <p>当前提供本地工作台能力，付费方案稍后公布。</p>
+      <p>目前完全免费!</p>
     </section>
 
     <footer class="home-footer">

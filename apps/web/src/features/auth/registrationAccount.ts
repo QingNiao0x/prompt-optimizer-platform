@@ -15,6 +15,19 @@ const EMAIL_PATTERN = new RegExp(
 const MAINLAND_PHONE_PATTERN = /^1[3-9]\d{9}$/;
 const E164_PHONE_PATTERN = /^\+[1-9]\d{7,14}$/;
 
+/** PNVS 首期只开放大陆号码；通用身份模型仍保留其他 E.164 号码的表示能力。 */
+export const normalizeMainlandPhone = (value: string): string | undefined => {
+  if (value.length > 32) return undefined;
+  const compact = value.trim().replace(/[ -]/g, '');
+  const local = compact.startsWith('+86') ? compact.slice(3) : compact;
+  return MAINLAND_PHONE_PATTERN.test(local) ? `+86${local}` : undefined;
+};
+
+/** 与后端 BCrypt 输入边界一致，避免多字节密码被截断。 */
+export const validRegistrationPassword = (value: string): boolean => (
+  value.length >= 8 && /\p{L}/u.test(value) && /[0-9]/.test(value) && new TextEncoder().encode(value).length <= 72
+);
+
 /** 校验邮箱格式并限制为数据库支持的最大长度。 */
 export const isValidEmailAddress = (value: string): boolean => {
   const trimmed = value.trim();

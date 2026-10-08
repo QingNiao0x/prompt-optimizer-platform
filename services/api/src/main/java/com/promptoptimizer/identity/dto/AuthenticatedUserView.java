@@ -6,7 +6,7 @@ import java.util.UUID;
 
 /**
  * 当前用户的安全前端投影，不包含密码哈希或 Session 标识。
- * 仅绑定用户名的账户没有联系邮箱，email 返回空字符串。
+ * 仅绑定用户名或手机号的账户没有联系邮箱，email 返回空字符串；手机号另以脱敏字段返回。
  *
  * @author QingNiao
  * @since 0.1.0
@@ -17,8 +17,22 @@ public record AuthenticatedUserView(
         UUID workspaceId,
         String email,
         String displayName,
-        boolean platformAdmin
+        boolean platformAdmin,
+        boolean phoneBound,
+        String maskedPhone
 ) {
+
+    /** 保留既有六字段调用方；号码投影单独查询，不从联系邮箱推断。 */
+    public AuthenticatedUserView(UUID userId, UUID tenantId, UUID workspaceId,
+            String email, String displayName, boolean platformAdmin) {
+        this(userId, tenantId, workspaceId, email, displayName, platformAdmin, false, null);
+    }
+
+    /** 资料响应只能接收已经脱敏的手机号，不包含供应商配置。 */
+    public AuthenticatedUserView withPhone(String masked) {
+        return new AuthenticatedUserView(userId, tenantId, workspaceId, email, displayName, platformAdmin,
+                masked != null, masked);
+    }
 
     /** 保持原有五字段调用方的源码与二进制兼容。 */
     public AuthenticatedUserView(UUID userId, UUID tenantId, UUID workspaceId,

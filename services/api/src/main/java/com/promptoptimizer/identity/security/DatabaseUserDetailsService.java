@@ -49,7 +49,9 @@ public class DatabaseUserDetailsService implements UserDetailsService {
         UserIdentityKey key;
         try {
             String identifier = username == null ? "" : username.trim();
-            key = identifier.indexOf('@') >= 0
+            key = identifier.startsWith("PHONE:")
+                    ? UserIdentityKey.phone(com.promptoptimizer.identity.domain.MainlandPhone.normalize(identifier.substring(6)))
+                    : identifier.indexOf('@') >= 0
                     ? UserIdentityKey.email(identifier)
                     : UserIdentityKey.username(identifier);
         } catch (IllegalArgumentException exception) {
@@ -94,7 +96,8 @@ public class DatabaseUserDetailsService implements UserDetailsService {
                 account.getDisplayName(),
                 account.getPasswordHash(),
                 account.getStatus(),
-                authorities
+                authorities,
+                identity.getId()
         );
     }
 

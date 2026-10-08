@@ -4,9 +4,11 @@ import { useAuthStore } from '@/stores/auth';
 import { getApiErrorMessage, httpClient } from '@/services/http';
 import { requestRegistrationCode } from '@/services/authApi';
 import { validateRegistrationAccount } from '@/features/auth/registrationAccount';
+import { ElButton } from 'element-plus';
+import PhoneAuthPanel from '@/components/auth/PhoneAuthPanel.vue';
 
 export type AuthModalMode = 'login' | 'register';
-type AuthView = 'qr' | 'password' | 'register';
+type AuthView = 'qr' | 'password' | 'register' | 'phone-register' | 'sms' | 'phone-password';
 
 interface Props {
   modelValue: boolean;
@@ -42,15 +44,17 @@ const accountInput = ref<HTMLInputElement>();
 let resendTimer: number | undefined;
 
 const registrationAccount = computed(() => validateRegistrationAccount(account.value));
+const phoneView = computed(() => view.value === 'phone-register' || view.value === 'sms' || view.value === 'phone-password' ? view.value : undefined);
+const phoneHint = computed(() => auth.capabilities.phoneRegistration ? '手机号格式正确，请选择“手机号注册”入口。' : registrationAccount.value.message);
 const registrationBlockReason = computed((): string => {
   if (registrationAccount.value.kind === 'empty') {
-    return '请先填写邮箱地址；手机号短信注册将在接入短信服务后开放。';
+    return auth.capabilities.phoneRegistration ? '请填写邮箱地址，或选择手机号注册。' : '请先填写邮箱地址；手机号短信注册将在接入短信服务后开放。';
   }
   if (registrationAccount.value.kind === 'invalid') {
     return registrationAccount.value.message;
   }
   if (registrationAccount.value.kind === 'phone') {
-    return registrationAccount.value.message;
+    return phoneHint.value;
   }
   if (verificationRecipient.value !== registrationAccount.value.normalized) {
     return '请先向当前邮箱获取验证码。';
@@ -64,6 +68,7 @@ const registrationBlockReason = computed((): string => {
   if (!/\p{L}/u.test(password.value) || !/\d/.test(password.value)) {
     return '密码须同时包含字母和数字。';
   }
+  if (new TextEncoder().encode(password.value).length > 72) return '密码 UTF-8 编码不能超过 72 字节。';
   if (password.value !== confirmPassword.value) {
     return '两次输入的密码不一致。';
   }
@@ -80,7 +85,7 @@ const codeButtonLabel = computed((): string => {
   if (resendAfterSeconds.value > 0) {
     return `${resendAfterSeconds.value} 秒后重发`;
   }
-  return registrationAccount.value.kind === 'phone' ? '短信注册待开通' : '获取验证码';
+  return registrationAccount.value.kind === 'phone' ? (auth.capabilities.phoneRegistration ? '请切换手机号注册' : '短信注册待开通') : '获取验证码';
 });
 
 const title = computed((): string => {
@@ -90,6 +95,9 @@ const title = computed((): string => {
   if (view.value === 'register') {
     return '创建账号';
   }
+  if (view.value === 'phone-register') return '手机号注册';
+  if (view.value === 'sms') return '短信登录';
+  if (view.value === 'phone-password') return '手机号密码登录';
   return view.value === 'qr' ? '扫码登录' : '账号登录';
 });
 
@@ -145,8 +153,9 @@ watch(() => props.mode, syncView);
 watch(() => props.modelValue, (open) => {
   if (open) {
     syncView();
+    void auth.loadCapabilities();
   }
-});
+}, { immediate: true });
 watch(account, () => {
   if (
     view.value === 'register'
@@ -175,8 +184,10 @@ const handleRequestCode = async (): Promise<void> => {
   errorMessage.value = '';
   statusMessage.value = '';
   try {
-    const response = await requestRegistrationCode({ email: registrationAccount.value.normalized });
-    verificationRecipient.value = registrationAccount.value.normalized;
+    const recipient = registrationAccount.value.normalized;
+    const response = await requestRegistrationCode({ email: recipient });
+    if (recipient !== registrationAccount.value.normalized) return;
+    verificationRecipient.value = recipient;
     startResendTimer(response.data.resendAfterSeconds);
     statusMessage.value = `验证码已发送，${Math.ceil(response.data.expiresInSeconds / 60)} 分钟内有效。`;
   } catch (error: unknown) {
@@ -187,6 +198,7 @@ const handleRequestCode = async (): Promise<void> => {
 };
 
 const refreshCaptcha = async (): Promise<void> => {
+  captcha.value = '';
   try {
     const response = await httpClient.get<Blob>('/api/v1/auth/captcha', {
       responseType: 'blob',
@@ -295,10 +307,8 @@ const enterWorkbench = (): void => {
         <div v-if="registrationSucceeded" class="login-modal__registration-success" role="status">
           <span class="login-modal__success-mark" aria-hidden="true">✓</span>
           <h3>账号创建成功，已自动登录</h3>
-          <p>建议绑定手机号，补充账户联系方式。</p>
-          <small>
-            当前手机号短信验证和绑定入口尚未开放，暂时无法完成绑定。
-          </small>
+          <p v-if="!auth.user?.phoneBound">建议绑定手机号，补充账户联系方式。</p>
+          <small v-if="!auth.user?.phoneBound">{{ auth.capabilities.phoneBinding ? '可在“设置 → 账户安全”验证并绑定手机号。' : '当前手机号短信验证和绑定入口尚未开放，暂时无法完成绑定。' }}</small>
           <button class="login-modal__submit" type="button" @click="enterWorkbench">
             进入工作台
           </button>
@@ -329,6 +339,7 @@ const enterWorkbench = (): void => {
           <small>当前为界面占位，不会发起登录请求。</small>
         </div>
 
+        <PhoneAuthPanel v-else-if="phoneView" :key="phoneView" :mode="phoneView" @success="enterWorkbench" />
         <div
           v-else
           class="login-modal__account-layout"
@@ -356,8 +367,8 @@ const enterWorkbench = (): void => {
                 }"
               >
                 {{ registrationAccount.kind === 'empty'
-                  ? '支持邮箱和手机号格式；当前先开放邮箱验证码注册。'
-                  : registrationAccount.message }}
+                  ? (auth.capabilities.phoneRegistration ? '可在当前表单使用邮箱注册，或选择手机号注册。' : '支持邮箱和手机号格式；当前先开放邮箱验证码注册。')
+                  : registrationAccount.kind === 'phone' ? phoneHint : registrationAccount.message }}
               </small>
             </label>
             <label v-if="view === 'register'">
@@ -543,6 +554,10 @@ const enterWorkbench = (): void => {
         </div>
 
         <footer v-if="!registrationSucceeded" class="login-modal__footer">
+          <ElButton v-if="auth.capabilities.phoneRegistration && view !== 'phone-register'" link type="primary" @click="view = 'phone-register'">手机号注册</ElButton>
+          <ElButton v-if="view === 'phone-register'" link type="primary" @click="view = 'register'">邮箱注册</ElButton>
+          <ElButton v-if="auth.capabilities.smsLogin && view !== 'sms'" link type="primary" @click="view = 'sms'">短信登录</ElButton>
+          <ElButton v-if="auth.capabilities.smsLogin && view !== 'phone-password'" link type="primary" @click="view = 'phone-password'">手机号密码登录</ElButton>
           <button
             v-if="view === 'qr'"
             type="button"
@@ -989,6 +1004,8 @@ h2 {
 
 .login-modal__footer {
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   justify-content: center;
 }
 

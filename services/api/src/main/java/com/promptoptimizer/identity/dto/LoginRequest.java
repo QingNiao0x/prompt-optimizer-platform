@@ -22,6 +22,12 @@ public record LoginRequest(
 
         @NotBlank(message = "图形验证码不能为空")
         @Size(max = 8, message = "图形验证码长度不正确")
-        String captcha
+        String captcha,
+        com.promptoptimizer.identity.domain.UserIdentityType identityType
 ) {
+    /** 旧邮箱/用户名客户端及测试保持兼容，数字用户名不会被自动识别为手机号。 */
+    public LoginRequest(String identifier, String password, String captcha) { this(identifier, password, captcha, null); }
+
+    /** 请求对象不可把密码、图形验证码或登录标识写入诊断。 */
+    @Override public String toString() { return "LoginRequest[redacted]"; }
 }

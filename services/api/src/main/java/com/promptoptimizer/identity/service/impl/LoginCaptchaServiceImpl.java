@@ -17,9 +17,21 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.time.Clock;
+import java.time.Duration;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 
 /**
- * 签发一次性图形验证码，答案只放在服务端会话中。
+ * 图形验证码五分钟过期；共享 Redis 原子消费，显式本地模式使用原子内存存储。
+ * @author QingNiao
+ * @since 0.1.0
  */
 @Service
 public class LoginCaptchaServiceImpl implements LoginCaptchaService {
@@ -27,24 +39,71 @@ public class LoginCaptchaServiceImpl implements LoginCaptchaService {
     private static final int LENGTH = 4;
 
     private final SecureRandom random = new SecureRandom();
+    private static final String CHALLENGE = ATTRIBUTE + "_ID";
+    private static final DefaultRedisScript<String> CONSUME = new DefaultRedisScript<>(
+            "local v=redis.call('GET',KEYS[1]); if v then redis.call('DEL',KEYS[1]); end; return v", String.class);
+    private final StringRedisTemplate redis;
+    private final boolean requireRedis;
+    private final Clock clock;
+    private final ConcurrentHashMap<String, LocalAnswer> local = new ConcurrentHashMap<>();
+
+    /** 应用运行时继承现有登录防护的存储策略；短信配置另外强制要求共享 Redis。 */
+    @Autowired
+    public LoginCaptchaServiceImpl(ObjectProvider<StringRedisTemplate> redis, @Value("${app.security.login-guard.require-redis:true}") boolean requireRedis) {
+        this(redis.getIfAvailable(), requireRedis, Clock.systemUTC());
+    }
+
+    /** 独立单元测试构造；生产由显式注入构造器决定存储策略。 */
+    public LoginCaptchaServiceImpl() { this(null, false, Clock.systemUTC()); }
+
+    LoginCaptchaServiceImpl(StringRedisTemplate redis, boolean requireRedis, Clock clock) {
+        this.redis = redis; this.requireRedis = requireRedis; this.clock = clock;
+    }
 
     /** 生成新验证码并替换会话中的旧答案，返回 PNG 图片。 */
     public byte[] issue(HttpServletRequest request) {
         String code = randomCode();
-        request.getSession(true).setAttribute(ATTRIBUTE, code);
+        String id = UUID.randomUUID().toString();
+        if (requireRedis) {
+            try {
+                if (redis == null) throw new IllegalStateException();
+                redis.opsForValue().set("prompt-optimizer:captcha:" + id, code, Duration.ofMinutes(5));
+            } catch (RuntimeException exception) { throw unavailable(); }
+        } else {
+            local.entrySet().removeIf(entry -> entry.getValue().expiresAt() <= clock.millis());
+            if (local.size() >= 10_000) throw unavailable();
+            local.put(id, new LocalAnswer(code, clock.millis() + 300_000));
+        }
+        var session = request.getSession(true);
+        session.setAttribute(CHALLENGE, id);
+        // 兼容既有内部验收代码读取答案；公开接口始终只有图片，不返回会话内容。
+        session.setAttribute(ATTRIBUTE, code);
         return render(code);
     }
 
     /** 核对后立即作废，错误或过期都要求用户刷新图片。 */
     public void verifyAndConsume(HttpServletRequest request, String submitted) {
         HttpSession session = request.getSession(false);
-        Object stored = session == null ? null : session.getAttribute(ATTRIBUTE);
+        Object stored = session == null ? null : session.getAttribute(CHALLENGE);
         if (session != null) {
             session.removeAttribute(ATTRIBUTE);
+            session.removeAttribute(CHALLENGE);
         }
-        String answer = stored instanceof String value ? value : "";
+        String answer = null;
+        if (stored instanceof String id) {
+            if (requireRedis) {
+                try {
+                    if (redis == null) throw new IllegalStateException();
+                    answer = redis.execute(CONSUME, List.of("prompt-optimizer:captcha:" + id));
+                } catch (RuntimeException exception) { throw unavailable(); }
+            } else {
+                // remove 是一次性竞争点，即使两个请求拿到同一 Session 快照也只有一个能消费。
+                var value = local.remove(id);
+                if (value != null && value.expiresAt() > clock.millis()) answer = value.code();
+            }
+        }
         String provided = submitted == null ? "" : submitted.trim();
-        if (answer.isEmpty() || !answer.equalsIgnoreCase(provided)) {
+        if (answer == null || !answer.equalsIgnoreCase(provided)) {
             throw new LoginGuardException(
                     "CAPTCHA_INVALID",
                     "图形验证码错误或已过期，请刷新后重试。",
@@ -52,6 +111,12 @@ public class LoginCaptchaServiceImpl implements LoginCaptchaService {
             );
         }
     }
+
+    private static LoginGuardException unavailable() {
+        return new LoginGuardException("LOGIN_GUARD_UNAVAILABLE", "登录防护服务暂不可用，请稍后重试。", 0);
+    }
+
+    private record LocalAnswer(String code, long expiresAt) { }
 
     private String randomCode() {
         StringBuilder code = new StringBuilder(LENGTH);

@@ -11,7 +11,7 @@ package com.promptoptimizer.identity.domain;
 public enum UserIdentityType {
     /** 邮箱登录身份，通过电子邮件地址查找账户并完成密码认证。 */
     EMAIL,
-    /** 手机号登录身份，预留短信验证码或密码登录；当前未开放手机号认证流程。 */
+    /** 手机号身份；短信开关控制注册、普通用户短信登录及首次绑定，密码登录需显式指定类型。 */
     PHONE,
     /** 微信登录身份，预留微信开放平台授权后的第三方登录；当前未开放微信认证流程。 */
     WECHAT,

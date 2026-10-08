@@ -23,19 +23,19 @@ public class UserIdentityEntity {
     @TableId(type = IdType.INPUT)
     private UUID id;
 
-    /** 所属账户主键，外键引用 user_account.id。应用层不物理删除账户；保留期清理若删除账户行，数据库会级联清理身份。 */
+    /** 所属账户主键，外键引用 user_account.id；每账户至多一个 ACTIVE 手机身份。应用层不物理删除账户。 */
     private UUID userId;
 
     /** 登录渠道；合法值及当前支持状态见 {@link UserIdentityType}，与数据库 CHECK 一致。 */
     private UserIdentityType identityType;
 
-    /** 身份签发方；本地身份使用 local，第三方身份使用对应平台应用标识。 */
+    /** 身份签发方；本地身份使用 local，其中 PHONE 由数据库强制约束，不能使用短信供应商名称。 */
     private String issuer;
 
-    /** 登录查找所需的原始身份标识；不保存第三方访问令牌。 */
+    /** 登录身份标识；PHONE 与规范化 E.164 号码一致，属敏感信息，不进入日志或公开资料响应。 */
     private String identifier;
 
-    /** 规范化后的查找值，参与唯一索引；邮箱和用户名采用小写形式。 */
+    /** 全局唯一键的规范化标识，包括已撤销身份；邮箱/用户名小写，PHONE 为 E.164，国内入口限定 +86。 */
     private String normalizedIdentifier;
 
     /** 身份生命周期状态；合法值及含义见 {@link UserIdentityStatus}，与数据库 CHECK 一致。 */

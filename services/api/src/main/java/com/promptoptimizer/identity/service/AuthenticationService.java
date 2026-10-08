@@ -30,6 +30,10 @@ public interface AuthenticationService {
             HttpServletResponse response
     );
 
+    /** 独立短信认证入口，与密码登录共享会话轮换和安全上下文保存。 */
+    AuthenticatedUserView loginWithSms(com.promptoptimizer.identity.dto.SmsRequests.Login credentials,
+            HttpServletRequest request, HttpServletResponse response);
+
     /** 由服务端认证上下文读取当前用户，不接受客户端自报身份。 */
     AuthenticatedUserView currentUser();
 

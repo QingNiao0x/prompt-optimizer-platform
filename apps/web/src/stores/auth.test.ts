@@ -2,11 +2,12 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AxiosError, AxiosHeaders } from 'axios';
 import { useAuthStore } from './auth';
-import { getCurrentUser, initializeCsrf, login, logout, register } from '@/services/authApi';
+import { getCurrentUser, initializeCsrf, login, logout, register, getAuthCapabilities, registerPhone, loginWithSms } from '@/services/authApi';
 import type { ApiResponse, AuthenticatedUser } from '@/types/api';
 
 vi.mock('@/services/authApi', () => ({
   getCurrentUser: vi.fn(), initializeCsrf: vi.fn(), login: vi.fn(), logout: vi.fn(), register: vi.fn(),
+  getAuthCapabilities: vi.fn(), registerPhone: vi.fn(), loginWithSms: vi.fn(), bindPhone: vi.fn(),
 }));
 
 const response: ApiResponse<AuthenticatedUser> = {
@@ -19,6 +20,23 @@ const unauthorized = (): AxiosError => new AxiosError('unauthorized', undefined,
 });
 
 describe('auth store', () => {
+  it('keeps capabilities off when the service is unavailable', async () => {
+    vi.mocked(getAuthCapabilities).mockRejectedValue(new Error('offline'));
+    const auth = useAuthStore();
+    await auth.loadCapabilities();
+    expect(auth.capabilities).toEqual({ phoneRegistration: false, smsLogin: false, phoneBinding: false });
+  });
+
+  it('stores only the server identity after phone registration and SMS login', async () => {
+    vi.mocked(registerPhone).mockResolvedValue(response);
+    vi.mocked(loginWithSms).mockResolvedValue(response);
+    const auth = useAuthStore();
+    const credentials = { phone: '+8613800000000', challengeId: 'test', verificationCode: '123456' };
+    await auth.registerPhone({ ...credentials, password: 'test-only-password1' });
+    expect(auth.user?.userId).toBe('user-a');
+    await auth.loginSms(credentials);
+    expect(auth.user).not.toHaveProperty('verificationCode');
+  });
   beforeEach(() => {
     vi.resetAllMocks();
     setActivePinia(createPinia());

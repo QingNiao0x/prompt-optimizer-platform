@@ -64,6 +64,10 @@ public class SecurityConfiguration {
                                 "/api/v1/auth/login",
                                 "/api/v1/auth/registration-code",
                                 "/api/v1/auth/register",
+                                "/api/v1/auth/capabilities",
+                                "/api/v1/auth/sms/challenges",
+                                "/api/v1/auth/phone/register",
+                                "/api/v1/auth/phone/login",
                                 "/api/v1/health",
                                 "/actuator/health",
                                 "/actuator/health/**"
@@ -103,12 +107,16 @@ public class SecurityConfiguration {
     @Bean
     AuthenticationManager authenticationManager(
             UserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            org.springframework.beans.factory.ObjectProvider<SmsAuthenticationProvider> smsProvider
     ) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
-        return new ProviderManager(provider);
+        var providers = new java.util.ArrayList<org.springframework.security.authentication.AuthenticationProvider>();
+        providers.add(provider);
+        smsProvider.ifAvailable(providers::add);
+        return new ProviderManager(providers);
     }
 
     @Bean

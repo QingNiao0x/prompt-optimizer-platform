@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.identity.mapper.SmsChallengeMapper">
+    <!-- 事务锁只覆盖本地读写，禁止持有此锁等待云端网络调用。 -->
+    <select id="lockSubject" resultType="string">
+        SELECT pg_advisory_xact_lock(hashtextextended(#{subject}, 0))::text
+    </select>
+    <insert id="insert">
+        INSERT INTO sms_verification_challenge
+            (id, purpose, phone_fingerprint, browser_fingerprint, actor_user_id, scheme_name, expires_at)
+        VALUES (#{id}, #{purpose}, #{phoneFingerprint}, #{browserFingerprint}, #{actorUserId}, #{schemeName}, #{expiresAt})
+    </insert>
+    <select id="find" resultType="com.promptoptimizer.identity.entity.SmsChallenge">
+        SELECT id, purpose, phone_fingerprint, browser_fingerprint, actor_user_id, scheme_name, state,
+               attempts, verification_token, expires_at, result_user_id, result_code, created_at
+          FROM sms_verification_challenge WHERE id = #{id}
+    </select>
+    <update id="supersede">
+        UPDATE sms_verification_challenge SET state = 'SUPERSEDED', verification_token = NULL
+         WHERE phone_fingerprint = #{phone} AND purpose = #{purpose}
+           AND state IN ('SENDING', 'SENT', 'VERIFYING', 'VERIFIED')
+    </update>
+    <update id="markSent">
+        UPDATE sms_verification_challenge SET state = 'SENT'
+         WHERE id = #{id} AND state = 'SENDING' AND expires_at &gt; clock_timestamp()
+    </update>
+    <update id="reserve">
+        UPDATE sms_verification_challenge SET state = 'VERIFYING', attempts = attempts + 1, verification_token = #{token}
+         WHERE id = #{id} AND state = 'SENT' AND attempts &lt; 5 AND expires_at &gt; clock_timestamp()
+    </update>
+    <update id="verified">
+        UPDATE sms_verification_challenge
+           SET state = CASE WHEN #{passed} THEN 'VERIFIED' WHEN attempts &gt;= 5 THEN 'FAILED' ELSE 'SENT' END,
+               verification_token = NULL
+         WHERE id = #{id} AND state = 'VERIFYING' AND verification_token = #{token}
+           AND expires_at &gt; clock_timestamp()
+    </update>
+    <update id="fail">
+        UPDATE sms_verification_challenge SET state = 'FAILED', verification_token = NULL
+         WHERE id = #{id} AND state IN ('SENDING', 'VERIFYING')
+    </update>
+    <update id="consume">
+        UPDATE sms_verification_challenge SET state = 'CONSUMED', result_user_id = #{userId}, result_code = #{code}
+         WHERE id = #{id} AND state = 'VERIFIED' AND expires_at &gt; clock_timestamp()
+    </update>
+</mapper>

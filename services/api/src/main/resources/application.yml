@@ -105,6 +105,18 @@ app:
       address-limit: ${LOGIN_ADDRESS_FAILURE_LIMIT:30}
       lock-duration: ${LOGIN_LOCK_DURATION:10m}
       require-redis: ${LOGIN_GUARD_REQUIRE_REDIS:true}
+    sms:
+      # 默认关闭；AccessKey 仅由后端读取 ALIBABA_CLOUD_ACCESS_KEY_ID / ALIBABA_CLOUD_ACCESS_KEY_SECRET。
+      enabled: ${SMS_ENABLED:false}
+      sign-name: ${SMS_SIGN_NAME:}
+      # 按环境隔离（1-11位字母数字、下划线、连字符），注册/登录/绑定自动追加不同后缀。
+      scheme-prefix: ${SMS_SCHEME_PREFIX:}
+      verification-secret: ${SMS_VERIFICATION_SECRET:}
+      account-template: ${SMS_ACCOUNT_TEMPLATE:100001}
+      binding-template: ${SMS_BINDING_TEMPLATE:100004}
+      phone-hourly-limit: ${SMS_PHONE_HOURLY_LIMIT:5}
+      ip-hourly-limit: ${SMS_IP_HOURLY_LIMIT:20}
+      actor-hourly-limit: ${SMS_ACTOR_HOURLY_LIMIT:5}
     registration:
       enabled: ${EMAIL_REGISTRATION_ENABLED:true}
       # disabled / log / smtp。log 会输出验证码，只允许本地开发显式启用。

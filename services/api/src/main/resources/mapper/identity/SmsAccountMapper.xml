@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.identity.mapper.SmsAccountMapper">
+    <select id="lockAccount" resultType="com.promptoptimizer.identity.entity.UserAccountEntity">
+        SELECT id, tenant_id, email, display_name, password_hash, status, platform_role, last_login_at, updated_at
+          FROM user_account WHERE id = #{id} FOR UPDATE
+    </select>
+    <select id="lockIdentity" resultType="com.promptoptimizer.identity.entity.UserIdentityEntity">
+        SELECT id, user_id, identity_type, issuer, identifier, normalized_identifier, status,
+               verified_at, last_used_at, created_at, updated_at
+          FROM user_identity WHERE id = #{id} FOR SHARE
+    </select>
+    <select id="activePhone" resultType="com.promptoptimizer.identity.entity.UserIdentityEntity">
+        SELECT id, user_id, identity_type, issuer, identifier, normalized_identifier, status,
+               verified_at, last_used_at, created_at, updated_at
+          FROM user_identity WHERE user_id = #{userId} AND identity_type = 'PHONE' AND issuer = 'local' AND status = 'ACTIVE'
+    </select>
+    <insert id="insertPhone">
+        INSERT INTO user_identity(id, user_id, identity_type, issuer, identifier, normalized_identifier, status, verified_at)
+        VALUES(#{id}, #{userId}, 'PHONE', 'local', #{phone}, #{phone}, 'ACTIVE', CURRENT_TIMESTAMP)
+        ON CONFLICT (identity_type, issuer, normalized_identifier) DO NOTHING
+    </insert>
+</mapper>

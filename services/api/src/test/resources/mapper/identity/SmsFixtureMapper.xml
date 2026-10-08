@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.identity.sms.SmsFixtureMapper">
+    <select id="counts" resultType="com.promptoptimizer.identity.sms.SmsFixtureMapper$Counts">
+        SELECT (SELECT count(*) FROM tenant) AS tenants, (SELECT count(*) FROM user_account) AS users,
+               (SELECT count(*) FROM workspace) AS workspaces, (SELECT count(*) FROM workspace_member) AS members,
+               (SELECT count(*) FROM user_identity) AS identities
+    </select>
+    <update id="expire">UPDATE sms_verification_challenge SET expires_at = #{expiry} WHERE id = #{id}</update>
+    <update id="accountStatus">UPDATE user_account SET status = #{status} WHERE id = #{id}</update>
+    <update id="identityStatus">UPDATE user_identity SET status = #{status} WHERE id = #{id}</update>
+    <insert id="history">
+        WITH session AS (
+            INSERT INTO optimization_session(id, tenant_id, workspace_id, created_by, title)
+            VALUES(#{id}, #{tenant}, #{workspace}, #{user}, 'Synthetic SMS acceptance') RETURNING id
+        )
+        INSERT INTO optimization_record(id, tenant_id, workspace_id, session_id, created_by, template_code, raw_prompt, optimized_prompt)
+        SELECT #{id}, #{tenant}, #{workspace}, id, #{user}, 'GENERAL', 'synthetic input', 'synthetic result' FROM session
+    </insert>
+    <select id="historyDigest" resultType="string">
+        SELECT md5(coalesce(string_agg(row_to_json(r)::text, ',' ORDER BY id), '')) FROM optimization_record r
+    </select>
+</mapper>

@@ -10,10 +10,10 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public interface LoginCaptchaService {
 
-    /** 会话中保存验证码答案的属性名。 */
+    /** 服务端会话内的图形答案属性；原子消费还需独立挑战编号，不作为公开接口返回。 */
     String ATTRIBUTE = "LOGIN_CAPTCHA";
 
-    /** 签发验证码图片，答案只保存在服务端会话。 */
+    /** 签发五分钟有效的验证码图片，答案只在服务端，Redis负责原子消费。 */
     byte[] issue(HttpServletRequest request);
 
     /** 校验并消费本次验证码；失败时拒绝继续登录。 */
