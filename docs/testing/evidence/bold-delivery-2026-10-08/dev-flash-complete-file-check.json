@@ -1,0 +1,40 @@
+{
+  "sourceRun": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-08T06-12-49-677Z-f2419581",
+  "scope": "SYNTHETIC_FEE_IMPLEMENTATION_AND_TEST_COMPILATION_ONLY",
+  "entries": [
+    {
+      "id": "RC-DEV-M-raw-m1-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "6d7f7f9357acec1fc692608ccae7b6e722a66bbd2adcc43f5f4fb546a31f7e8b",
+      "status": "COMPILE_FAILED",
+      "error": "FeeCalculatorTest.java:14: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                                         ^\r\nFeeCalculatorTest.java:17: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"200\"), 0));\r\n                                         ^\r\nFeeCalculatorTest.java:20: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 1));\r\n                                         ^\r\nFeeCalculatorTest.java:23: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"199.99\"), 1));\r\n                                         ^\r\nFeeCalculatorTest.java:26: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigDecimal(\"200\"), 1));\r\n                                         ^\r\nFeeCalculatorTest.java:29: error: incompatible types: BigDecimal cannot be converted to String\r\n                FeeCalculator.deliveryFee(new BigD"
+    },
+    {
+      "id": "RC-DEV-M-plan-m1-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "outputSha256": "6aa32d73d2de16d776dbe6ba08bd65105e3d34af097d6d2806d99c149bff41b9",
+      "status": "COMPILED",
+      "testClass": "FeeCalculatorTest",
+      "generatedTestsExecuted": false
+    },
+    {
+      "id": "RC-DEV-M-raw-m2-r1",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "80535f3b05bb07b8f4ce4dfd4a7153b9f28c577d13779d89320ecbe67fc2c6ef",
+      "status": "COMPILE_FAILED",
+      "error": "FeeCalculatorTest.java:55: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual) {\r\n                                     ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:55: error: cannot find symbol\r\n    private static void assertEquals(BigDecimal expected, BigDecimal actual) {\r\n                                                          ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:11: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                         ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:11: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"0\"), 0));\r\n                                                                           ^\r\n  symbol:   class BigDecimal\r\n  location: class FeeCalculatorTest\r\nFeeCalculatorTest.java:12: error: cannot find symbol\r\n        assertEquals(new BigDecimal(\"0.00\"), FeeCalculator.deliveryFee(new BigDecimal(\"200\"), 0));\r"
+    },
+    {
+      "id": "RC-DEV-M-plan-m2-r1",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "outputSha256": "5355bf7fcff9d757ed2a09a8bf0566710118d8191ed17f6f1abcf87f5c92a1ce",
+      "status": "FULL_TEST_CLASS_NEEDS_REVIEW",
+      "implementationBlocks": 1,
+      "testBlocks": 0
+    }
+  ]
+}

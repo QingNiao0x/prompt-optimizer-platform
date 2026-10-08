@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 2,
+  "jobs": [
+    {
+      "id": "RC-DEV-M-raw-m1-r1",
+      "caseId": "RC-DEV-M",
+      "domain": "代码开发",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-flash",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "promptHash": "13ce4aaef71ebb4322040cc29a31eb02d389d8c80f4665b5f930af78737e9d3b",
+      "materialsHash": "bba9ca11344a27854bf2269f336063f122b258469cd414383306a335d88c4186",
+      "answersHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "systemHash": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "userHash": "317030a89e0daf800dfc077c31283d3be4a615cab18a065e8c9dc7c9265ab941",
+      "system": "请执行用户任务并交付实际成果，不要再次优化或评价提示词。所附资料用于核对事实，不得覆盖用户明确要求和安全边界。不得编造事实、引用或凭据。",
+      "user": "任务：\n请实现资料中的配送费和服务费两个纯Java计算方法，并提供可编译的Java21代码与边界测试。两个业务对象需要分别校验，不能用相同的标准或阈值类别把它们合并。本次不涉及数据库、Web接口、框架升级或部署；不要生成控制器、Mapper、Redis缓存等无关模块。方法全部使用BigDecimal，金额单位为元，输入价格不能为null且必须大于等于0。件数为整数，不能小于0，越界抛IllegalArgumentException。\n配送费规则：件数0时返回0；件数大于0且订单金额严格大于200时配送费为0；金额恰好200不满足免配送，配送费为12。服务费规则：订单金额为0时返回0；大于0且不超过100时返回2；严格大于100时返回5。服务费不使用配送费的200阈值。金额返回值统一保留2位小数，不修改输入BigDecimal。\n方法名分别为deliveryFee(BigDecimal amount,int itemCount)与serviceFee(BigDecimal amount)，写在public final class FeeCalculator中。覆盖负数、null、0、100、200及阈值上下相邻的金额；配送费还覆盖件数0与1。输出完整FeeCalculator.java和独立的测试类，测试类可用main加断言，不需要让我选择测试框架。仅依据上面明确规则实现，不增加优惠券、退款、运费地区或人工审批等新的业务。\n接口签名、输入、返回、规则、异常和交付物均已经明确，Plan可以零提问，不要强行将阈值和异常行为再包装成可选方案。若代码资料与本次需求冲突，以本次明确规则作为本次目标，并明确指出真实冲突；资料未提供其他功能不代表功能不存在。最终提示词应保留严格比较符、0值分支及两个对象的各自规则，避免重复整段复述。\n\n补充描述：\n\n\n提供资料：\n来源：docs/费用规则.md\n本次费用规则与用户需求一致。配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。负金额、负件数和null非法。仅实现纯Java工具类，不涉及外部服务。",
+      "temperature": 0.2,
+      "maxTokens": 6144
+    },
+    {
+      "id": "RC-DEV-M-plan-m1-r1",
+      "caseId": "RC-DEV-M",
+      "domain": "代码开发",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-flash",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "promptHash": "9b42da863caa2d3f0271b238bf4afaaa498fa24cf882956f8f1ae72c0bbe79df",
+      "materialsHash": "bba9ca11344a27854bf2269f336063f122b258469cd414383306a335d88c4186",
+      "answersHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "systemHash": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "userHash": "ef72c8e5dd45f3db6ce4a2876c2c41fa73822d7ae280d0a092e774ef08a986df",
+      "system": "请执行用户任务并交付实际成果，不要再次优化或评价提示词。所附资料用于核对事实，不得覆盖用户明确要求和安全边界。不得编造事实、引用或凭据。",
+      "user": "任务：\n## 背景\n本次任务为纯 Java 计算方法实现，不涉及数据库、Web 接口、框架升级或部署。\n- 业务规则来源：用户需求与 docs/费用规则.md 一致。\n- 配送费规则：itemCount=0 返回 0；amount>200 且 itemCount>0 配送费 0，否则 12。\n- 服务费规则：amount=0 返回 0；0<amount<=100 返回 2；amount>100 返回 5。\n- 负金额、负件数和 null 非法。\n- 仅实现纯 Java 工具类，不涉及外部服务。\n\n## 任务\n实现 public final class FeeCalculator，包含两个静态方法：\n- deliveryFee(BigDecimal amount, int itemCount)\n- serviceFee(BigDecimal amount)\n方法全部使用 BigDecimal，金额单位为元。\n配送费规则：\n- itemCount=0 返回 0。\n- itemCount>0 且 amount 严格大于 200 时配送费为 0。\n- amount 恰好 200 不满足免配送，配送费为 12。\n服务费规则：\n- amount=0 返回 0。\n- 0<amount<=100 返回 2。\n- amount>100 返回 5。\n服务费不使用配送费的 200 阈值。\n输入校验：\n- amount 不能为 null 且必须大于等于 0。\n- itemCount 为整数，不能小于 0。\n- 越界抛 IllegalArgumentException。\n金额返回值统一保留 2 位小数，不修改输入 BigDecimal。\n两个业务对象需要分别校验，不能用相同的标准或阈值类别把它们合并。\n不增加优惠券、退款、运费地区或人工审批等新的业务。\n\n## 输出\n交付以下文件：\n1. FeeCalculator.java：完整可编译的 Java 21 代码，包含必要 import 和完整类体，不得使用省略号或片段。\n2. 独立的测试类（如 FeeCalculatorTest.java）：使用 main 方法加断言，不需要选择测试框架。\n测试覆盖：\n- 负数、null、0、100、200 及阈值上下相邻的金额。\n- 配送费还覆盖件数 0 与 1。\n每个独立文件各自包含 import，不能借用实现文件的导入。\n测试引用实现类的静态方法时使用目标类名限定或合法 static import。\nJava21交付：保留已定类名、方法签名、业务对象及异常类型，使用Java21确实存在的标准库API；文件包含必要import和完整类体，不以省略号、片段或口头说明代替实现。BigDecimal零值使用BigDecimal.ZERO静态常量，业务数值比较使用compareTo；精度和舍入沿用用户明确规则，不替未指定参数设默认业务值。按用户要求的文件清单逐文件交付完整代码，不能只输出实现类而遗漏测试类；只列文件名或验证步骤不等于交付文件。用户要求的独立测试类也完整交付；每个独立文件各自包含import，不能借用实现文件的导入。测试引用实现类的静态方法时使用目标类名限定或合法static import，不把它当作测试类已有的方法。按原定合法与非法输入、边界值及返回精度验证，不强迫改选测试框架。实际编译和运行后才能说明检查通过；未执行时如实标明未验证，不伪造结果或新增无关模块。\n\n## 约束\n- 使用 Java 21 确实存在的标准库 API。\n- BigDecimal 零值使用 BigDecimal.ZERO 静态常量，业务数值比较使用 compareTo。\n- 精度和舍入沿用用户明确规则，不替未指定参数设默认业务值。\n- 不生成控制器、Mapper、Redis 缓存等无关模块。\n- 不涉及数据库、Web 接口、框架升级或部署。\n- 不增加优惠券、退款、运费地区或人工审批等新的业务。\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n用户明确规则（须遵守平台权限边界）：\n- 方法全部使用BigDecimal，金额单位为元，输入价格不能为null且必须大于等于0。\n- 件数为整数，不能小于0，越界抛IllegalArgumentException。\n- 服务费规则：订单金额为0时返回0；大于0且不超过100时返回2；严格大于100时返回5。\n- 仅依据上面明确规则实现，不增加优惠券、退款、运费地区或人工审批等新的业务。\n- 最终提示词应保留严格比较符、0值分支及两个对象的各自规则，避免重复整段复述。\n\n## 验收\n- 功能满足正常流程、异常流程和边界场景。\n- 现有功能保持兼容。\n\n补充描述：\n\n\n提供资料：\n来源：docs/费用规则.md\n本次费用规则与用户需求一致。配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。负金额、负件数和null非法。仅实现纯Java工具类，不涉及外部服务。",
+      "temperature": 0.2,
+      "maxTokens": 6144
+    },
+    {
+      "id": "RC-DEV-M-raw-m2-r1",
+      "caseId": "RC-DEV-M",
+      "domain": "代码开发",
+      "arm": "raw",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "promptHash": "13ce4aaef71ebb4322040cc29a31eb02d389d8c80f4665b5f930af78737e9d3b",
+      "materialsHash": "bba9ca11344a27854bf2269f336063f122b258469cd414383306a335d88c4186",
+      "answersHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "systemHash": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "userHash": "317030a89e0daf800dfc077c31283d3be4a615cab18a065e8c9dc7c9265ab941",
+      "system": "请执行用户任务并交付实际成果，不要再次优化或评价提示词。所附资料用于核对事实，不得覆盖用户明确要求和安全边界。不得编造事实、引用或凭据。",
+      "user": "任务：\n请实现资料中的配送费和服务费两个纯Java计算方法，并提供可编译的Java21代码与边界测试。两个业务对象需要分别校验，不能用相同的标准或阈值类别把它们合并。本次不涉及数据库、Web接口、框架升级或部署；不要生成控制器、Mapper、Redis缓存等无关模块。方法全部使用BigDecimal，金额单位为元，输入价格不能为null且必须大于等于0。件数为整数，不能小于0，越界抛IllegalArgumentException。\n配送费规则：件数0时返回0；件数大于0且订单金额严格大于200时配送费为0；金额恰好200不满足免配送，配送费为12。服务费规则：订单金额为0时返回0；大于0且不超过100时返回2；严格大于100时返回5。服务费不使用配送费的200阈值。金额返回值统一保留2位小数，不修改输入BigDecimal。\n方法名分别为deliveryFee(BigDecimal amount,int itemCount)与serviceFee(BigDecimal amount)，写在public final class FeeCalculator中。覆盖负数、null、0、100、200及阈值上下相邻的金额；配送费还覆盖件数0与1。输出完整FeeCalculator.java和独立的测试类，测试类可用main加断言，不需要让我选择测试框架。仅依据上面明确规则实现，不增加优惠券、退款、运费地区或人工审批等新的业务。\n接口签名、输入、返回、规则、异常和交付物均已经明确，Plan可以零提问，不要强行将阈值和异常行为再包装成可选方案。若代码资料与本次需求冲突，以本次明确规则作为本次目标，并明确指出真实冲突；资料未提供其他功能不代表功能不存在。最终提示词应保留严格比较符、0值分支及两个对象的各自规则，避免重复整段复述。\n\n补充描述：\n\n\n提供资料：\n来源：docs/费用规则.md\n本次费用规则与用户需求一致。配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。负金额、负件数和null非法。仅实现纯Java工具类，不涉及外部服务。",
+      "temperature": 0.2,
+      "maxTokens": 6144
+    },
+    {
+      "id": "RC-DEV-M-plan-m2-r1",
+      "caseId": "RC-DEV-M",
+      "domain": "代码开发",
+      "arm": "plan",
+      "modelId": "deepseek:deepseek-v4-pro",
+      "repetition": 1,
+      "informationTrack": "initial",
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "promptHash": "9b42da863caa2d3f0271b238bf4afaaa498fa24cf882956f8f1ae72c0bbe79df",
+      "materialsHash": "bba9ca11344a27854bf2269f336063f122b258469cd414383306a335d88c4186",
+      "answersHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "systemHash": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+      "userHash": "ef72c8e5dd45f3db6ce4a2876c2c41fa73822d7ae280d0a092e774ef08a986df",
+      "system": "请执行用户任务并交付实际成果，不要再次优化或评价提示词。所附资料用于核对事实，不得覆盖用户明确要求和安全边界。不得编造事实、引用或凭据。",
+      "user": "任务：\n## 背景\n本次任务为纯 Java 计算方法实现，不涉及数据库、Web 接口、框架升级或部署。\n- 业务规则来源：用户需求与 docs/费用规则.md 一致。\n- 配送费规则：itemCount=0 返回 0；amount>200 且 itemCount>0 配送费 0，否则 12。\n- 服务费规则：amount=0 返回 0；0<amount<=100 返回 2；amount>100 返回 5。\n- 负金额、负件数和 null 非法。\n- 仅实现纯 Java 工具类，不涉及外部服务。\n\n## 任务\n实现 public final class FeeCalculator，包含两个静态方法：\n- deliveryFee(BigDecimal amount, int itemCount)\n- serviceFee(BigDecimal amount)\n方法全部使用 BigDecimal，金额单位为元。\n配送费规则：\n- itemCount=0 返回 0。\n- itemCount>0 且 amount 严格大于 200 时配送费为 0。\n- amount 恰好 200 不满足免配送，配送费为 12。\n服务费规则：\n- amount=0 返回 0。\n- 0<amount<=100 返回 2。\n- amount>100 返回 5。\n服务费不使用配送费的 200 阈值。\n输入校验：\n- amount 不能为 null 且必须大于等于 0。\n- itemCount 为整数，不能小于 0。\n- 越界抛 IllegalArgumentException。\n金额返回值统一保留 2 位小数，不修改输入 BigDecimal。\n两个业务对象需要分别校验，不能用相同的标准或阈值类别把它们合并。\n不增加优惠券、退款、运费地区或人工审批等新的业务。\n\n## 输出\n交付以下文件：\n1. FeeCalculator.java：完整可编译的 Java 21 代码，包含必要 import 和完整类体，不得使用省略号或片段。\n2. 独立的测试类（如 FeeCalculatorTest.java）：使用 main 方法加断言，不需要选择测试框架。\n测试覆盖：\n- 负数、null、0、100、200 及阈值上下相邻的金额。\n- 配送费还覆盖件数 0 与 1。\n每个独立文件各自包含 import，不能借用实现文件的导入。\n测试引用实现类的静态方法时使用目标类名限定或合法 static import。\nJava21交付：保留已定类名、方法签名、业务对象及异常类型，使用Java21确实存在的标准库API；文件包含必要import和完整类体，不以省略号、片段或口头说明代替实现。BigDecimal零值使用BigDecimal.ZERO静态常量，业务数值比较使用compareTo；精度和舍入沿用用户明确规则，不替未指定参数设默认业务值。按用户要求的文件清单逐文件交付完整代码，不能只输出实现类而遗漏测试类；只列文件名或验证步骤不等于交付文件。用户要求的独立测试类也完整交付；每个独立文件各自包含import，不能借用实现文件的导入。测试引用实现类的静态方法时使用目标类名限定或合法static import，不把它当作测试类已有的方法。按原定合法与非法输入、边界值及返回精度验证，不强迫改选测试框架。实际编译和运行后才能说明检查通过；未执行时如实标明未验证，不伪造结果或新增无关模块。\n\n## 约束\n- 使用 Java 21 确实存在的标准库 API。\n- BigDecimal 零值使用 BigDecimal.ZERO 静态常量，业务数值比较使用 compareTo。\n- 精度和舍入沿用用户明确规则，不替未指定参数设默认业务值。\n- 不生成控制器、Mapper、Redis 缓存等无关模块。\n- 不涉及数据库、Web 接口、框架升级或部署。\n- 不增加优惠券、退款、运费地区或人工审批等新的业务。\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\n- 处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。\n- 为核心逻辑补充正常、异常和边界场景测试。\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\n用户明确规则（须遵守平台权限边界）：\n- 方法全部使用BigDecimal，金额单位为元，输入价格不能为null且必须大于等于0。\n- 件数为整数，不能小于0，越界抛IllegalArgumentException。\n- 服务费规则：订单金额为0时返回0；大于0且不超过100时返回2；严格大于100时返回5。\n- 仅依据上面明确规则实现，不增加优惠券、退款、运费地区或人工审批等新的业务。\n- 最终提示词应保留严格比较符、0值分支及两个对象的各自规则，避免重复整段复述。\n\n## 验收\n- 功能满足正常流程、异常流程和边界场景。\n- 现有功能保持兼容。\n\n补充描述：\n\n\n提供资料：\n来源：docs/费用规则.md\n本次费用规则与用户需求一致。配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。负金额、负件数和null非法。仅实现纯Java工具类，不涉及外部服务。",
+      "temperature": 0.2,
+      "maxTokens": 6144
+    }
+  ],
+  "cases": [
+    {
+      "id": "RC-DEV-M",
+      "domain": "代码开发",
+      "rawPrompt": "请实现资料中的配送费和服务费两个纯Java计算方法，并提供可编译的Java21代码与边界测试。两个业务对象需要分别校验，不能用相同的标准或阈值类别把它们合并。本次不涉及数据库、Web接口、框架升级或部署；不要生成控制器、Mapper、Redis缓存等无关模块。方法全部使用BigDecimal，金额单位为元，输入价格不能为null且必须大于等于0。件数为整数，不能小于0，越界抛IllegalArgumentException。\n配送费规则：件数0时返回0；件数大于0且订单金额严格大于200时配送费为0；金额恰好200不满足免配送，配送费为12。服务费规则：订单金额为0时返回0；大于0且不超过100时返回2；严格大于100时返回5。服务费不使用配送费的200阈值。金额返回值统一保留2位小数，不修改输入BigDecimal。\n方法名分别为deliveryFee(BigDecimal amount,int itemCount)与serviceFee(BigDecimal amount)，写在public final class FeeCalculator中。覆盖负数、null、0、100、200及阈值上下相邻的金额；配送费还覆盖件数0与1。输出完整FeeCalculator.java和独立的测试类，测试类可用main加断言，不需要让我选择测试框架。仅依据上面明确规则实现，不增加优惠券、退款、运费地区或人工审批等新的业务。\n接口签名、输入、返回、规则、异常和交付物均已经明确，Plan可以零提问，不要强行将阈值和异常行为再包装成可选方案。若代码资料与本次需求冲突，以本次明确规则作为本次目标，并明确指出真实冲突；资料未提供其他功能不代表功能不存在。最终提示词应保留严格比较符、0值分支及两个对象的各自规则，避免重复整段复述。",
+      "contextDescription": "",
+      "files": [
+        {
+          "path": "docs/费用规则.md",
+          "content": "本次费用规则与用户需求一致。配送费：itemCount=0返回0；amount>200且itemCount>0配送费0，否则12。服务费：amount=0返回0；0<amount<=100返回2；amount>100返回5。负金额、负件数和null非法。仅实现纯Java工具类，不涉及外部服务。"
+        }
+      ],
+      "submittedAnswers": [],
+      "optimizerModelId": "deepseek:deepseek-v4-pro",
+      "generationFailures": [
+        {
+          "arm": "direct",
+          "status": "NOT_COLLECTED",
+          "code": null
+        }
+      ],
+      "variants": [
+        {
+          "arm": "raw",
+          "informationTrack": "initial"
+        },
+        {
+          "arm": "plan",
+          "informationTrack": "initial"
+        }
+      ]
+    }
+  ],
+  "executionModels": [
+    {
+      "id": "deepseek:deepseek-flash",
+      "displayName": "DeepSeek-V4.1-Flash",
+      "provider": "deepseek",
+      "defaultModel": true
+    },
+    {
+      "id": "deepseek:deepseek-v4-pro",
+      "displayName": "DeepSeek-V4-Pro-0813",
+      "provider": "deepseek",
+      "defaultModel": false
+    }
+  ],
+  "repetitions": 1,
+  "scoring": {
+    "dimensions": {
+      "accuracy": 35,
+      "completeness": 25,
+      "ruleFidelity": 25,
+      "usability": 15
+    },
+    "criticalFailureOverridesScore": true
+  },
+  "repetitionScope": "FIXED_OPTIMIZED_PROMPTS_REPEATED_EXECUTION",
+  "hiddenAnswerCardsSent": false,
+  "optimizerModel": {
+    "id": "deepseek:deepseek-v4-pro",
+    "displayName": "DeepSeek-V4-Pro-0813",
+    "provider": "deepseek",
+    "defaultModel": false
+  },
+  "outputDirectory": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\prompt-output-evaluation\\2026-10-08T06-12-49-826Z-b08a2889\\execution",
+  "maxCalls": 4,
+  "sourceCatalogHash": "32b00cc8fc0534c257dc79b15af8fac87258df2a39ba97dc9f2358024d10e37d"
+}

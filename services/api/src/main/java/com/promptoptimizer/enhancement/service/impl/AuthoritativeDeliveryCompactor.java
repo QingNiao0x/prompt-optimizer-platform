@@ -22,6 +22,7 @@ final class AuthoritativeDeliveryCompactor {
     private static final Pattern SENTENCE = Pattern.compile("[^。\\r\\n]+。?");
     private static final String PARAMETER_HEADING = "当前参数依据（用于生成指标表，不代替指标表）：";
     private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
+    private static final Pattern EMPHASIZED_SENTENCE = Pattern.compile("^(\\*\\*|__)([^。\\r\\n]+。)\\1$");
 
     private AuthoritativeDeliveryCompactor() { }
 
@@ -67,7 +68,11 @@ final class AuthoritativeDeliveryCompactor {
                     lines.add(line);
                     continue;
                 }
-                if (stripped.matches("^(?:#{1,6}\\s+.+|\\*\\*.+\\*\\*)$") || stripped.endsWith("：") || stripped.endsWith(":")) {
+                var emphasized = EMPHASIZED_SENTENCE.matcher(stripped);
+                // 只把完整、已登记的平台句识别为加粗正文；业务标题和含新增条件的复合句保持原样。
+                boolean emphasizedAuthority = emphasized.matches() && authority.containsKey(key(emphasized.group(2)));
+                if (!emphasizedAuthority && (stripped.matches("^(?:#{1,6}\\s+.+|\\*\\*.+\\*\\*)$")
+                        || stripped.endsWith("：") || stripped.endsWith(":"))) {
                     // 仅平台元信息标题不承载新业务对象；其他章节中的省略主语不能跨范围删除。
                     // 普通交付标题不建立新对象，也不能解除之前的具名业务章节保护。
                     protectedScope = protectedScope || !metadataHeading(stripped);
@@ -75,7 +80,7 @@ final class AuthoritativeDeliveryCompactor {
                     continue;
                 }
                 StringBuilder kept = new StringBuilder();
-                var matches = SENTENCE.matcher(line);
+                var matches = SENTENCE.matcher(emphasizedAuthority ? emphasized.group(2) : line);
                 while (matches.find()) {
                     String sentence = matches.group();
                     String identity = key(sentence);
@@ -83,7 +88,10 @@ final class AuthoritativeDeliveryCompactor {
                     if (protectedScope || owner == null || !sentence.endsWith("。")
                             || owner == type && retainedAuthority.add(identity)) kept.append(sentence);
                 }
-                if (!kept.toString().isBlank()) lines.add(kept.toString());
+                if (!kept.toString().isBlank()) {
+                    // 未被归并的加粗句继续使用原来的成对标记，不留下孤立的 Markdown 标记。
+                    lines.add(emphasizedAuthority ? emphasized.group(1) + kept + emphasized.group(1) : kept.toString());
+                }
             }
             String compacted = String.join("\n", lines).strip();
             // 无法精简为空的必需段落，继续保留原文；不生成占位句假装交付完整。
@@ -169,6 +177,7 @@ final class AuthoritativeDeliveryCompactor {
                 || value.equals("用户明确规则（须遵守平台权限边界）")
                 || value.equals("当前参数依据（用于生成指标表，不代替指标表）")
                 || value.equals("交付物") || value.equals("交付要求") || value.equals("输出要求")
+                || value.equals("交付以下文件") || value.equals("测试覆盖")
                 || value.equals("实体标识的独立依据（A/B集合不证明名称对应，不按次序或排除法绑定）");
     }
 

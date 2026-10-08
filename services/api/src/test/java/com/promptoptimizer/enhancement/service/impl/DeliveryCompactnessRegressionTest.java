@@ -23,6 +23,28 @@ class DeliveryCompactnessRegressionTest {
             + "正文1500至2000字，指标表另计，标题不计。完整性指标分母尚未确定。";
 
     @Test
+    void aCompleteBoldInstructionIsNotABusinessHeadingAndAppearsOnceInCopiedDelivery() {
+        String rule = "不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。";
+        for (String marker : List.of("**", "__")) {
+            var result = assemble(RAW, "交付物：\n" + marker + rule + marker + "\n交付必要伪代码。",
+                    "不得编造数据。", "核对指标状态。");
+            assertThat(result.optimizedPrompt().split(java.util.regex.Pattern.quote(rule), -1)).as(marker).hasSize(2);
+            assertThat(result.optimizedPrompt()).contains("完整性指标", "待确认", "指标表", "必要伪代码");
+        }
+    }
+
+    @Test
+    void boldBusinessScopesQuotesCodeAndNewConditionsRemainIntact() {
+        String rule = "不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。";
+        for (String original : List.of("**甲院2026年新增项目**\n**" + rule + "**",
+                "### 乙院2026年\n__" + rule + "__", "~~~text\n**" + rule + "**\n~~~",
+                "> **" + rule + "**", "**" + rule + "新增退款指标仍需独立审批。**")) {
+            assertThat(assemble(RAW, original, "不得编造数据。", "核对独立参数。").optimizedPrompt())
+                    .as(original).contains(original);
+        }
+    }
+
+    @Test
     void keepsOneAuthoritativeDeliveryExplanationAcrossExecutionSections() {
         String guidance = UnresolvedDecisionContract.DELIVERY_GUIDANCE;
         var result = assemble(RAW, "交付规则表与指标表。" + guidance,
@@ -121,9 +143,22 @@ class DeliveryCompactnessRegressionTest {
     }
 
     @Test
+    void currentJavaFileAndTestHeadingsDoNotStartAnotherBusinessScope() {
+        String rule = "每个独立文件各自包含import，不能借用实现文件的导入。";
+        var sections = new java.util.EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
+        String delivery = "交付以下文件：\n1. FeeCalculator.java：完整实现。\n2. FeeCalculatorTest.java：独立测试类。\n"
+                + "测试覆盖：\n- 负数、null、0和阈值上下边界。\n" + rule + "\n" + rule;
+        sections.put(PromptSectionType.OUTPUT, new PromptSection(PromptSectionType.OUTPUT, "输出", delivery));
+        AuthoritativeDeliveryCompactor.compact(sections, java.util.Map.of(PromptSectionType.OUTPUT, rule));
+        assertThat(sections.get(PromptSectionType.OUTPUT).content().split("不能借用实现文件的导入", -1)).hasSize(2);
+        assertThat(sections.get(PromptSectionType.OUTPUT).content()).contains("FeeCalculator.java", "FeeCalculatorTest.java",
+                "负数、null、0和阈值上下边界");
+    }
+
+    @Test
     void genericHeadingsCannotReleaseAnExistingNamedBusinessScope() {
         String rule = "不同指标的分母或阈值分别命名，禁止用同一个通用变量或共同分母覆盖未决指标。";
-        String business = "### 甲院2026年\n交付物：\n" + rule
+        String business = "### 甲院2026年\n交付物：\n" + rule + "\n交付以下文件：\n" + rule + "\n测试覆盖：\n" + rule
                 + "\n当前参数依据（用于生成指标表，不代替指标表）：\n" + rule;
         var sections = new java.util.EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
         sections.put(PromptSectionType.OUTPUT, new PromptSection(PromptSectionType.OUTPUT, "输出", rule + "\n" + business));
