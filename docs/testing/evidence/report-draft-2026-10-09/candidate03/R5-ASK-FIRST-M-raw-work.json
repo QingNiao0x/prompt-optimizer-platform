@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_SYNTHETIC_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "R5-ASK-FIRST-M",
+  "arm" : "raw",
+  "requestId" : "4ba8d312-adee-4d7f-94b4-389f2fd3c616",
+  "startedAt" : "2026-10-08T16:59:58.404345500Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "2b5bcf33b9676e7d1850ef99628a2c24ecaea8309abdc34a21bc00fb6e918396",
+  "materialsSha256" : "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "systemSha256" : "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+  "executionUserSha256" : "949db4cf38bfb0300641e100c8c4cd1a1561b34901423e48e7f5d83b2cf7084a",
+  "settings" : {
+    "automaticRetry" : false,
+    "temperature" : 0.2,
+    "thinking" : "disabled",
+    "maxOutputTokens" : 8192
+  },
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 215,
+    "completion_tokens" : 238,
+    "total_tokens" : 453
+  },
+  "output" : "在开始撰写前，请先澄清以下三个最关键的问题：\n\n1. **地区范围具体指哪里？**  \n   这决定报告的数据口径、行政区划层级和可比性。例如，是某省、某市、某区域（如长三角）还是多个地区对比；如果范围不同，后续趋势、季节性、分地区差异以及YLL和Arriaga分解的对象都会完全不同。\n\n2. **现有数据覆盖到什么程度？**  \n   这决定哪些分析可以做、哪些只能作为局限说明。需要明确：是否有2015—2025年连续年度死亡数据、分性别/年龄/地区/死因编码数据、人口分母、YLL所需年龄别死亡与期望寿命参数，以及Arriaga分解所需的分年龄别死亡率和人口构成。如果数据不完整，分析深度和结论边界会随之改变。\n\n3. **报告用途和读者是谁？**  \n   这决定报告的详略、表达方式和重点。例如，是用于政府决策、学术论文、内部工作汇报还是科普发布；不同用途会影响是否需要统计检验、置信区间、方法学附录、政策建议，以及对结果不确定性的呈现程度。",
+  "outputSha256" : "b268f94f9c9a5f92dbe14698037d1e6d719e609acc5a81199d928d0783e20fd0",
+  "nonWhitespaceChars" : 400,
+  "hanChars" : 312,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 1886
+}

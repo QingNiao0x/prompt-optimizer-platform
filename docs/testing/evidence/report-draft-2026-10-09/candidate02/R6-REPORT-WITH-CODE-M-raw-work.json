@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_SYNTHETIC_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "R6-REPORT-WITH-CODE-M",
+  "arm" : "raw",
+  "requestId" : "db84d1a2-8c66-4f41-abc1-6fddb65a2eb3",
+  "startedAt" : "2026-10-08T16:52:11.266694100Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "c3bb25c95bc105a89a281290806c466e39b5cf9e260f0efe325e32d59f4d35d6",
+  "materialsSha256" : "cf83480b80868d6e6482b126f5eb96b1c98083bf507b9a7151971c9f3d7de92b",
+  "systemSha256" : "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+  "executionUserSha256" : "9257a5756d8e0c21202a560429c1376a2517058c7abd01a0718c4e7ed76c8548",
+  "settings" : {
+    "temperature" : 0.2,
+    "automaticRetry" : false,
+    "maxOutputTokens" : 8192,
+    "thinking" : "disabled"
+  },
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 360,
+    "completion_tokens" : 1712,
+    "total_tokens" : 2072
+  },
+  "output" : "# 青禾服务中心月度服务量数据质量报告（初稿）\n\n## 一、报告目的与资料范围\n\n本报告针对青禾服务中心月度服务量台账的数据质量进行初步核查说明。当前可用的资料仅为一份 CSV 数据字典（`materials/csv-dictionary.md`），其中规定 CSV 包含 `month` 与 `count` 两列：`month` 采用 `YYYY-MM` 格式且月份须为 01 至 12；`count` 为非负整数；空单元表示缺失，不得替换为 0；负数、小数、非数字或非法月份应报告为非法值，不能静默丢弃。\n\n需要特别说明的是，截至本报告撰写时，尚未提供任何实际 CSV 数据行。因此本报告不包含任何记录数、缺失率、异常月份分布或服务量趋势等基于真实数据的结论。凡涉及数据依赖的结果，均在正文中以“【所需输入】”标记，待实际数据到位后补充。\n\n## 二、检查方法\n\n数据质量检查围绕字段级规则展开，分为格式检查与取值检查两类。\n\n对 `month` 字段，检查其是否满足 `YYYY-MM` 结构，且月份部分是否落在 01 至 12 之间。不符合该结构的取值（如 `2024-13`、`2024/01`、`202401`、空字符串以外的乱码等）应判定为非法值。\n\n对 `count` 字段，检查其是否为非负整数。负数、小数、非数字文本均判定为非法值。空单元单独判定为缺失，不参与非法值统计，也不得补零。\n\n检查结果按“缺失”与“非法”两类分别记录，二者不得混同。缺失表示数据未填写，非法表示填写了但不符合规则，二者在后续处理中的含义不同。\n\n## 三、结果位置\n\n由于当前无实际数据，以下结果位置暂以占位标记表示，待数据到位后填入：\n\n- 总记录数：【所需输入：实际 CSV 记录数】\n- `month` 缺失数：【所需输入：month 为空的行数】\n- `month` 非法数：【所需输入：month 格式或月份非法的行数】\n- `count` 缺失数：【所需输入：count 为空的行数】\n- `count` 非法数：【所需输入：count 为负数、小数或非数字的行数】\n- 非法值明细样例：【所需输入：具体非法行及原因】\n\n上述各项均需在拿到实际 CSV 后，由检查脚本输出摘要，再据实填入本报告。\n\n## 四、局限\n\n本报告及配套脚本存在以下局限：\n\n第一，当前无实际数据，所有数据依赖结论均未生成，报告仅完成方法与位置说明，不能视为数据质量结论。\n\n第二，检查仅覆盖 `month` 与 `count` 两列的格式与取值规则，不涉及跨月连续性、重复月份、业务口径一致性等更复杂问题。若同一月份出现多行，脚本不会自动判定为重复或合并，需人工复核。\n\n第三，脚本只读取操作者主动指定的本地 CSV 文件，不修改原文件，不进行数据库写入、网络请求或文件删除。因此检查过程不改变台账原始状态，但也意味着脚本不负责修复数据。\n\n第四，缺失与非法虽已区分，但脚本不判断缺失是否由业务原因造成，也不对非法值做自动纠正。\n\n## 五、下一步建议\n\n建议在取得实际 CSV 后，按以下步骤推进：\n\n1. 由数据提供方确认 CSV 文件路径与编码，确保脚本读取的是目标台账。\n2. 运行配套脚本，获取缺失与非法值的分类摘要。\n3. 将摘要结果填入本报告第三节的对应位置，形成完整版报告。\n4. 对非法值逐条复核，区分录入错误与口径问题，必要时回溯原始台账。\n5. 对缺失值不补零，保留缺失状态，并在后续分析中单独说明。\n6. 若发现同一月份多行，另行制定去重或合并规则，不在本脚本中自动处理。\n\n## 六、交付说明\n\n本报告与配套 Python 脚本分别交付、分别验收。报告用于审阅数据质量检查的范围、方法、结果位置与局限；脚本用于在实际数据到位后执行检查并输出摘要。两者不互相替代。\n\n---\n\n## 附：可运行 Python 3 脚本\n\n```python\n#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\"\"\"\n青禾服务中心月度服务量 CSV 数据质量检查脚本\n\n用法:\n    python check_monthly.py <csv文件路径>\n\n说明:\n    - 仅使用 Python 标准库。\n    - 只读取操作者主动指定的 CSV 文件，不修改原文件。\n    - 检查 month 与 count 两列。\n    - month 格式 YYYY-MM，月份 01-12。\n    - count 为非负整数。\n    - 空单元视为缺失，不补零。\n    - 非法值与缺失分别报告。\n\"\"\"\n\nimport csv\nimport re\nimport sys\n\nMONTH_RE = re.compile(r\"^\\d{4}-(0[1-9]|1[0-2])$\")\n\n\ndef is_non_negative_int(text):\n    \"\"\"判断字符串是否为非负整数（不含正负号、不含小数点）。\"\"\"\n    return text.isdigit()\n\n\ndef check_file(path):\n    total = 0\n    month_missing = 0\n    month_invalid = 0\n    count_missing = 0\n    count_invalid = 0\n    invalid_details = []\n\n    with open(path, \"r\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        reader = csv.DictReader(f)\n        if reader.fieldnames is None:\n            print(\"错误：CSV 文件为空或缺少表头。\")\n            return\n        if \"month\" not in reader.fieldnames or \"count\" not in reader.fieldnames:\n            print(\"错误：CSV 必须包含 month 和 count 两列。\")\n            print(\"实际表头：\", reader.fieldnames)\n            return\n\n        for lineno, row in enumerate(reader, start=2):\n            total += 1\n            month = (row.get(\"month\") or \"\").strip()\n            count = (row.get(\"count\") or \"\").strip()\n\n            if month == \"\":\n                month_missing += 1\n            elif not MONTH_RE.match(month):\n                month_invalid += 1\n                invalid_details.append((lineno, \"month\", month, \"格式或月份非法\"))\n\n            if count == \"\":\n                count_missing += 1\n            elif not is_non_negative_int(count):\n                count_invalid += 1\n                invalid_details.append((lineno, \"count\", count, \"非负整数校验失败\"))\n\n    print(\"===== 检查摘要 =====\")\n    print(\"文件：\", path)\n    print(\"总记录数：\", total)\n    print(\"month 缺失数：\", month_missing)\n    print(\"month 非法数：\", month_invalid)\n    print(\"count 缺失数：\", count_missing)\n    print(\"count 非法数：\", count_invalid)\n    print(\"非法值明细：\")\n    if not invalid_details:\n        print(\"  （无）\")\n    else:\n        for lineno, col, value, reason in invalid_details:\n            print(f\"  第{lineno}行 列={col} 值={value!r} 原因={reason}\")\n\n\ndef main():\n    if len(sys.argv) != 2:\n        print(\"用法：python check_monthly.py <csv文件路径>\")\n        sys.exit(1)\n    check_file(sys.argv[1])\n\n\nif __name__ == \"__main__\":\n    main()\n```\n\n最小运行示例：\n\n```bash\npython check_monthly.py ./monthly_ledger.csv\n```\n\n脚本将输出总记录数、`month` 与 `count` 的缺失数和非法数，以及非法值明细。原始 CSV 文件不会被修改。",
+  "outputSha256" : "94165afeec546b527b489e3b42d700b85fecdcd7e1640a9d82ec42301ca68825",
+  "nonWhitespaceChars" : 3209,
+  "hanChars" : 1304,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 7466
+}

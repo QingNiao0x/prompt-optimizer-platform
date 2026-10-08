@@ -23,6 +23,7 @@ import com.promptoptimizer.provider.service.PromptPlanningProvider;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.JavaCodeDeliveryContract;
+import com.promptoptimizer.provider.domain.DraftDeliveryContract;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.provider.domain.PromptOptimizationGuidance;
 import com.promptoptimizer.provider.domain.AmbiguityReference;
@@ -602,7 +603,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         return new ChatCompletionRequest(
                 selection.model(),
                 List.of(
-                        new ChatMessage("system", SYSTEM_PROMPT + "\n" + JavaCodeDeliveryContract.guidance(request.rawPrompt())),
+                        new ChatMessage("system", SYSTEM_PROMPT + "\n" + JavaCodeDeliveryContract.guidance(request.rawPrompt())
+                                + DraftDeliveryContract.from(request.rawPrompt(), request.template(),
+                                request.planConfirmed() ? request.confirmedDecisions() : List.of()).modelGuidance()),
                         new ChatMessage("user", userMessage)
                 ),
                 requestOptions.temperature(),

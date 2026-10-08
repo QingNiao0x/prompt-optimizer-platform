@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_SYNTHETIC_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "R5-ASK-FIRST-M",
+  "arm" : "raw",
+  "requestId" : "f7735bb3-d620-4bb5-a536-45a10751d959",
+  "startedAt" : "2026-10-08T16:52:05.511657400Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "2b5bcf33b9676e7d1850ef99628a2c24ecaea8309abdc34a21bc00fb6e918396",
+  "materialsSha256" : "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "systemSha256" : "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+  "executionUserSha256" : "949db4cf38bfb0300641e100c8c4cd1a1561b34901423e48e7f5d83b2cf7084a",
+  "settings" : {
+    "temperature" : 0.2,
+    "automaticRetry" : false,
+    "maxOutputTokens" : 8192,
+    "thinking" : "disabled"
+  },
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 215,
+    "completion_tokens" : 274,
+    "total_tokens" : 489
+  },
+  "output" : "在开始撰写前，请先澄清以下三个最关键的问题：\n\n1. **地区范围具体指哪里？**  \n   这决定报告的数据边界、地区内部分组层级（如省—市—县，或城乡），以及能否使用统一的死亡登记、人口和疾病负担数据。若范围不明确，后续时间趋势、季节性、分地区差异和 Arriaga 分解都无法确定分析对象。\n\n2. **现有数据覆盖情况如何？**  \n   需要明确：2015—2025年死亡数据来自什么系统或调查，覆盖哪些年份、地区、性别、年龄和人群亚类；是否具备死因编码、人口分母、YLL 计算所需年龄别死亡与期望寿命参数，以及 Arriaga 分解所需的分年龄/分死因死亡数据。数据覆盖会直接决定哪些分析能做、哪些只能描述性呈现，以及结果精度和局限性。\n\n3. **报告用途和受众是什么？**  \n   这会影响指标优先级、分组详细程度、统计方法复杂度和表达方式。例如用于卫生政策决策、学术论文、区域疾病负担评估或内部监测，对 YLL、Arriaga 分解、亚组比较和不确定性表达的要求会明显不同。用途不明确时，无法判断报告应侧重趋势预警、归因解释还是方法学展示。",
+  "outputSha256" : "0ee2cde55256d32adc4151796f905fe5a4b6525a05b00944a2706f21ccace22d",
+  "nonWhitespaceChars" : 446,
+  "hanChars" : 348,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 2318
+}

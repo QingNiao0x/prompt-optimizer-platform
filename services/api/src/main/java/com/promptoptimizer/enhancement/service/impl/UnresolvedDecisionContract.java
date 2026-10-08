@@ -684,8 +684,12 @@ final class UnresolvedDecisionContract {
 
     /** 模型前指导和最终复制正文使用同一交付范围；有指标表不意味着也要求伪代码，反之亦然。 */
     String baseDeliveryGuidance() {
-        return DELIVERY_GUIDANCE
-                + observationBoundaryGuidance()
+        return DELIVERY_GUIDANCE + scopedDeliveryGuidance();
+    }
+
+    /** 起草交付可省去通用清单说明，但原定附表、伪代码与观察边界仍按实际任务保留。 */
+    String scopedDeliveryGuidance() {
+        return observationBoundaryGuidance()
                 + (indicatorTableRequested ? "原定指标表仍须交付，逐指标说明依据、参数状态和计算前提。" : "")
                 + (pseudocodeRequested ? "原定伪代码仍须交付，只暂停依赖未决参数的计算，其余已要求步骤继续完成。" : "");
     }

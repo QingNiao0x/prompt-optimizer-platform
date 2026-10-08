@@ -1,0 +1,482 @@
+{
+  "createdAt": "2026-10-08T17:00:32.253Z",
+  "scope": "REAL_ORCHESTRATOR_SYNTHETIC_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "modelId": "deepseek:deepseek-flash",
+  "modelSelectionEvidence": "最近真实默认目录 tmp/prompt-comparison/dynamic-platform-20261008-final/catalog.json；本组件链不声称在线读取当前管理员目录。",
+  "inputSha256": "4676992a49a11a2228439f24a56bdee189c5800e4bef6495738d220c40a9aa36",
+  "classesSha256": "79e6cb968640dba0d2dbf7037bbba1c4a475b8f81147dd2b3f4c0d54db8ff6f5",
+  "plannedDirectStages": 6,
+  "plannedWorks": 12,
+  "collectedDirect": 6,
+  "completeWorks": 12,
+  "partialWorks": 0,
+  "failedOrMissingWorks": 0,
+  "transportCalls": 18,
+  "totalTokensWithActualUsage": 56880,
+  "tracesWithoutUsage": 0,
+  "businessReview": "PENDING",
+  "cases": [
+    {
+      "caseId": "R1-ORIGINAL-M",
+      "generationStatus": "COLLECTED",
+      "generationFailure": null,
+      "optimizedPromptSha256": "f5c406ff0f215ecc71a9e4d0a0bcee1b428a5e8c1b58fa8407b4b411e945275a",
+      "generationMs": 5163,
+      "generationAttempts": [
+        {
+          "attempt": 1,
+          "httpStatus": 200,
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "elapsedMs": 4743,
+          "usage": {
+            "prompt_tokens": 4204,
+            "completion_tokens": 945,
+            "total_tokens": 5149
+          }
+        }
+      ],
+      "paired": true,
+      "sameInformation": true,
+      "works": [
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 12286,
+          "usage": {
+            "prompt_tokens": 141,
+            "completion_tokens": 2495,
+            "total_tokens": 2636
+          },
+          "outputSha256": "c62bb1c45e83daa6112c4b893183e1d9d648de4461964081e64f26adca4719a8",
+          "promptSha256": "9d8e8817bf76ebf7c0d9bb7f6776a623753f2d8ae56b321beaf345650596adcb",
+          "materialsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 2133,
+          "nonWhitespaceChars": 3722
+        },
+        {
+          "arm": "direct",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 11572,
+          "usage": {
+            "prompt_tokens": 1077,
+            "completion_tokens": 2165,
+            "total_tokens": 3242
+          },
+          "outputSha256": "9a34d40aff4026c2146d7533957fbccb4fa5b3bcbbdd32554831f56a20a50a51",
+          "promptSha256": "f5c406ff0f215ecc71a9e4d0a0bcee1b428a5e8c1b58fa8407b4b411e945275a",
+          "materialsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 2854,
+          "nonWhitespaceChars": 3476
+        }
+      ],
+      "businessReview": "PENDING"
+    },
+    {
+      "caseId": "R2-EXPLICIT-DRAFT-L",
+      "generationStatus": "COLLECTED",
+      "generationFailure": null,
+      "optimizedPromptSha256": "a704ab2c08ee657fd3363e8fe7caac4b230968eec59dc40b9a918d52456c7ade",
+      "generationMs": 4151,
+      "generationAttempts": [
+        {
+          "attempt": 1,
+          "httpStatus": 200,
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "elapsedMs": 4017,
+          "usage": {
+            "prompt_tokens": 4641,
+            "completion_tokens": 998,
+            "total_tokens": 5639
+          }
+        }
+      ],
+      "paired": true,
+      "sameInformation": true,
+      "works": [
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 9355,
+          "usage": {
+            "prompt_tokens": 484,
+            "completion_tokens": 1497,
+            "total_tokens": 1981
+          },
+          "outputSha256": "b51b887276cc2ad6dcca839d6fdd95c9e9c1b745438e41f096624b5015bd5834",
+          "promptSha256": "8ba5953aa9983629c00ebf07ddf1031b2f93ba3b1fc07d53e90a2d8e5d984d06",
+          "materialsSha256": "99273cee8c7608b4529b8cba224572f1ef86b897a10b0d7963db4155770f19bb",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 1986,
+          "nonWhitespaceChars": 2449
+        },
+        {
+          "arm": "direct",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 9698,
+          "usage": {
+            "prompt_tokens": 1458,
+            "completion_tokens": 1643,
+            "total_tokens": 3101
+          },
+          "outputSha256": "2a50bf179452f834222ddd17e23e1d0c9334d5f66f58e3f26a19e0f69dbfa42b",
+          "promptSha256": "a704ab2c08ee657fd3363e8fe7caac4b230968eec59dc40b9a918d52456c7ade",
+          "materialsSha256": "99273cee8c7608b4529b8cba224572f1ef86b897a10b0d7963db4155770f19bb",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 2147,
+          "nonWhitespaceChars": 2677
+        }
+      ],
+      "businessReview": "PENDING"
+    },
+    {
+      "caseId": "R3-COMPLETE-OFFICE-M",
+      "generationStatus": "COLLECTED",
+      "generationFailure": null,
+      "optimizedPromptSha256": "38e10a54f0e78354bdb33f17fbab03ca57e16fedeba67c8c514c53fbc652e97a",
+      "generationMs": 2787,
+      "generationAttempts": [
+        {
+          "attempt": 1,
+          "httpStatus": 200,
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "elapsedMs": 2734,
+          "usage": {
+            "prompt_tokens": 4294,
+            "completion_tokens": 612,
+            "total_tokens": 4906
+          }
+        }
+      ],
+      "paired": true,
+      "sameInformation": true,
+      "works": [
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 4966,
+          "usage": {
+            "prompt_tokens": 347,
+            "completion_tokens": 755,
+            "total_tokens": 1102
+          },
+          "outputSha256": "ff89f4859f921e9d7eeaf8b4dfa49a2d9eba10da633ae57fa0e72ca7bf80d570",
+          "promptSha256": "1f10a043065259988495155ffc5537cb24fdaabff8b869ccf115c5a3e5b91357",
+          "materialsSha256": "8c70e4fdf7f5887184e6ede536a2db7acff44bbff43c037ec0911e51e6730001",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 1199,
+          "nonWhitespaceChars": 1323
+        },
+        {
+          "arm": "direct",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 5614,
+          "usage": {
+            "prompt_tokens": 1202,
+            "completion_tokens": 796,
+            "total_tokens": 1998
+          },
+          "outputSha256": "efb0300d43d91b3b5598cf3adf573eba991503225dfe9f1a0a4409fc66968c48",
+          "promptSha256": "38e10a54f0e78354bdb33f17fbab03ca57e16fedeba67c8c514c53fbc652e97a",
+          "materialsSha256": "8c70e4fdf7f5887184e6ede536a2db7acff44bbff43c037ec0911e51e6730001",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 1247,
+          "nonWhitespaceChars": 1370
+        }
+      ],
+      "businessReview": "PENDING"
+    },
+    {
+      "caseId": "R4-PLAN-ONLY-M",
+      "generationStatus": "COLLECTED",
+      "generationFailure": null,
+      "optimizedPromptSha256": "6acf73fd3eccf92b8320521c774e8c3683c21ce7a1866e5902a4655b79f180ce",
+      "generationMs": 4824,
+      "generationAttempts": [
+        {
+          "attempt": 1,
+          "httpStatus": 200,
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "elapsedMs": 4758,
+          "usage": {
+            "prompt_tokens": 4158,
+            "completion_tokens": 1027,
+            "total_tokens": 5185
+          }
+        }
+      ],
+      "paired": true,
+      "sameInformation": true,
+      "works": [
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 5582,
+          "usage": {
+            "prompt_tokens": 231,
+            "completion_tokens": 969,
+            "total_tokens": 1200
+          },
+          "outputSha256": "d436f5394712bcd95b64e1156a9b9e781371a4cc40eb6f2a05a7c62adc3457d4",
+          "promptSha256": "55c18273105896c2acb06674e97058f3734d36718a5d206b861e8c6f64d53238",
+          "materialsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 1172,
+          "nonWhitespaceChars": 1535
+        },
+        {
+          "arm": "direct",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 7281,
+          "usage": {
+            "prompt_tokens": 1282,
+            "completion_tokens": 1199,
+            "total_tokens": 2481
+          },
+          "outputSha256": "b07569e43368f1c1c06b899989b545b11da57a1f562f203ba1848c1110a1c42c",
+          "promptSha256": "6acf73fd3eccf92b8320521c774e8c3683c21ce7a1866e5902a4655b79f180ce",
+          "materialsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 1482,
+          "nonWhitespaceChars": 1930
+        }
+      ],
+      "businessReview": "PENDING"
+    },
+    {
+      "caseId": "R5-ASK-FIRST-M",
+      "generationStatus": "COLLECTED",
+      "generationFailure": null,
+      "optimizedPromptSha256": "e401858420b851f57c182c83283d7594941fdf8f83f3e44bf76e50b92810eb6d",
+      "generationMs": 4282,
+      "generationAttempts": [
+        {
+          "attempt": 1,
+          "httpStatus": 200,
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "elapsedMs": 4229,
+          "usage": {
+            "prompt_tokens": 4142,
+            "completion_tokens": 820,
+            "total_tokens": 4962
+          }
+        }
+      ],
+      "paired": true,
+      "sameInformation": true,
+      "works": [
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 1886,
+          "usage": {
+            "prompt_tokens": 215,
+            "completion_tokens": 238,
+            "total_tokens": 453
+          },
+          "outputSha256": "b268f94f9c9a5f92dbe14698037d1e6d719e609acc5a81199d928d0783e20fd0",
+          "promptSha256": "2b5bcf33b9676e7d1850ef99628a2c24ecaea8309abdc34a21bc00fb6e918396",
+          "materialsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 312,
+          "nonWhitespaceChars": 400
+        },
+        {
+          "arm": "direct",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 1834,
+          "usage": {
+            "prompt_tokens": 1091,
+            "completion_tokens": 217,
+            "total_tokens": 1308
+          },
+          "outputSha256": "cafa43c8cc3e91a8cfccf00ab330342ffec6d9a335adf0c38663b9d94d5f213e",
+          "promptSha256": "e401858420b851f57c182c83283d7594941fdf8f83f3e44bf76e50b92810eb6d",
+          "materialsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 297,
+          "nonWhitespaceChars": 358
+        }
+      ],
+      "businessReview": "PENDING"
+    },
+    {
+      "caseId": "R6-REPORT-WITH-CODE-M",
+      "generationStatus": "COLLECTED",
+      "generationFailure": null,
+      "optimizedPromptSha256": "57ed3414c96f29b107c0909e34aee7d43e286814fb833f1b2a8c135e2786cdb4",
+      "generationMs": 3719,
+      "generationAttempts": [
+        {
+          "attempt": 1,
+          "httpStatus": 200,
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "elapsedMs": 3661,
+          "usage": {
+            "prompt_tokens": 4658,
+            "completion_tokens": 890,
+            "total_tokens": 5548
+          }
+        }
+      ],
+      "paired": true,
+      "sameInformation": true,
+      "works": [
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 7789,
+          "usage": {
+            "prompt_tokens": 360,
+            "completion_tokens": 1955,
+            "total_tokens": 2315
+          },
+          "outputSha256": "348e4455f4c3c16115536c8d2dec17052537536a08594ae9714f11997ce73b0b",
+          "promptSha256": "c3bb25c95bc105a89a281290806c466e39b5cf9e260f0efe325e32d59f4d35d6",
+          "materialsSha256": "cf83480b80868d6e6482b126f5eb96b1c98083bf507b9a7151971c9f3d7de92b",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 1256,
+          "nonWhitespaceChars": 3843
+        },
+        {
+          "arm": "direct",
+          "status": "COMPLETE",
+          "failureCategory": null,
+          "actualModel": "deepseek-flash",
+          "finishReason": "stop",
+          "singleHttpCallMs": 8469,
+          "usage": {
+            "prompt_tokens": 1664,
+            "completion_tokens": 2010,
+            "total_tokens": 3674
+          },
+          "outputSha256": "ce38e53d7f4bdfe2f9e6194d245db329e76c486817367370198cb1d8c8d7338e",
+          "promptSha256": "57ed3414c96f29b107c0909e34aee7d43e286814fb833f1b2a8c135e2786cdb4",
+          "materialsSha256": "cf83480b80868d6e6482b126f5eb96b1c98083bf507b9a7151971c9f3d7de92b",
+          "systemSha256": "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+          "settings": {
+            "automaticRetry": false,
+            "temperature": 0.2,
+            "thinking": "disabled",
+            "maxOutputTokens": 8192
+          },
+          "hanChars": 1355,
+          "nonWhitespaceChars": 3930
+        }
+      ],
+      "businessReview": "PENDING"
+    }
+  ]
+}

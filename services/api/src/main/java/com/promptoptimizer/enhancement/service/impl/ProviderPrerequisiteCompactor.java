@@ -20,6 +20,7 @@ final class ProviderPrerequisiteCompactor {
     private static final Pattern LIST_HEADER = Pattern.compile("^未决事项(?:[（(]([^（）()]*)[）)])?[：:]");
     private static final Pattern PENDING_HEADING = Pattern.compile(
             "^([^，,。；;\\r\\n]+(?:尚未|仍未|未)(?:确定|决定|核实))[，,。；;]?");
+    private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
 
     private ProviderPrerequisiteCompactor() { }
 
@@ -47,6 +48,8 @@ final class ProviderPrerequisiteCompactor {
     static void compact(Map<PromptSectionType, PromptSection> sections, List<String> prerequisites,
                         ConfirmedDecisionSet decisions, String rawPrompt) {
         if (prerequisites.isEmpty()) return;
+        // 直接增强没有绑定问题可供语义归并，只移动完整等价行；权威清单仍由组装器完整追加。
+        if (decisions.decisions().isEmpty()) compactDirectReminders(sections, prerequisites);
         var merger = new PlanAmbiguityMerger(decisions, rawPrompt);
         var identity = new PendingReminderIdentity(decisions, rawPrompt);
         List<String> authoritative = merger.merge(prerequisites, prerequisites, List.of()).executionPrerequisites();
@@ -114,6 +117,65 @@ final class ProviderPrerequisiteCompactor {
                 sections.put(type, new PromptSection(type, section.title(), cleaned));
             }
         }
+    }
+
+    /**
+     * 未绑定 Plan 的正文只按完整提醒去重，不把同一主题或相同开头当作覆盖证明。
+     * 标题后的业务范围及权威清单保持原位，保证组装器第二次压缩不会删除自己的完整列表。
+     */
+    private static void compactDirectReminders(Map<PromptSectionType, PromptSection> sections,
+                                               List<String> prerequisites) {
+        var completeKeys = prerequisites.stream().filter(value -> !value.contains("\n") && !value.contains("\r"))
+                .map(ProviderPrerequisiteCompactor::completeReminderKey)
+                .filter(value -> !value.isBlank()).collect(java.util.stream.Collectors.toSet());
+        for (PromptSectionType type : List.of(PromptSectionType.BACKGROUND, PromptSectionType.TASK,
+                PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS, PromptSectionType.ACCEPTANCE)) {
+            PromptSection section = sections.get(type);
+            if (section == null) continue;
+            var retained = new ArrayList<String>();
+            String fence = null;
+            boolean scoped = false;
+            for (String line : section.content().lines().toList()) {
+                String value = line.strip();
+                var marker = FENCE.matcher(value);
+                if (marker.matches()) {
+                    String token = marker.group(1);
+                    if (fence == null) fence = token;
+                    else if (token.charAt(0) == fence.charAt(0) && token.length() >= fence.length()
+                            && marker.group(2).isBlank()) fence = null;
+                    retained.add(line);
+                    continue;
+                }
+                if (fence != null) {
+                    retained.add(line);
+                    continue;
+                }
+                if (value.equals("用户明确规则（须遵守平台权限边界）：")) scoped = false;
+                else if (value.matches("^(?:#{1,6}\\s+.+|\\*\\*.+\\*\\*|__.+__)$")
+                        || value.endsWith("：") || value.endsWith(":")) scoped = true;
+                // 不拆条件、复合句或引文；完整行多一个业务字符就不与既有提醒等同。
+                if (scoped || value.startsWith("|") || value.startsWith(">")
+                        || value.matches(".*[“”‘’\"'`].*") || CONDITIONAL.matcher(value).find()
+                        || !completeKeys.contains(completeReminderKey(value))) retained.add(line);
+            }
+            String content = String.join("\n", retained).strip();
+            // 四要素正文不能被精简为空；约束的权威清单会在下一组装步骤补入。
+            if (!content.isBlank() || type == PromptSectionType.CONSTRAINTS) {
+                sections.put(type, new PromptSection(type, section.title(), content));
+            }
+        }
+    }
+
+    /** 只规范列表标记、全半角、连续横向空白及句末标点；对象内空格、大小写与比较符仍参与比较。 */
+    private static String completeReminderKey(String value) {
+        var normalized = new StringBuilder();
+        // 仅折叠 ASCII 全角排版；NFKC 还会把圈号和上标数字改为另一对象或数值，不能用于此处。
+        value.codePoints().forEach(codePoint -> normalized.appendCodePoint(codePoint == 0x3000 ? ' '
+                : codePoint >= 0xFF01 && codePoint <= 0xFF5E ? codePoint - 0xFEE0 : codePoint));
+        return normalized.toString().strip()
+                .replaceFirst("^(?:[-*•]\\s+|\\d+[.)、]\\s*)", "")
+                .replaceAll("[\\p{Zs}\\t]+", " ")
+                .replaceAll("[。.!！？?]+$", "").strip();
     }
 
     /** 显式未决列表内的通用交付指令须与平台契约整句一致，不能用关键词截掉新增业务范围。 */

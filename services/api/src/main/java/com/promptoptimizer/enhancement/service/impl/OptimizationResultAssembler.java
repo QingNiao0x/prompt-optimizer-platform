@@ -13,6 +13,7 @@ import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.ProviderMetadata;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.provider.domain.JavaCodeDeliveryContract;
+import com.promptoptimizer.provider.domain.DraftDeliveryContract;
 import com.promptoptimizer.provider.domain.AmbiguityReference;
 import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.provider.domain.ProviderException;
@@ -170,6 +171,7 @@ public class OptimizationResultAssembler {
         sections.forEach((type, section) -> conditionalGuard.validate(section.content(), "sections." + type));
         var unresolvedContract = UnresolvedDecisionContract.from(resolvedRawPrompt, decisions, conditionalEvidence);
         String effectiveRawPrompt = unresolvedContract.reconcileCurrentText(resolvedRawPrompt);
+        var draftDelivery = DraftDeliveryContract.from(effectiveRawPrompt, template, actualConfirmations);
         sections.replaceAll((type, section) -> new PromptSection(type, section.title(),
                 unresolvedContract.reconcileCurrentText(section.content())));
         sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
@@ -243,6 +245,12 @@ public class OptimizationResultAssembler {
             sections.put(PromptSectionType.OUTPUT, new PromptSection(output.type(), output.title(),
                     output.content() + "\n\n" + codeDelivery));
         }
+        if (draftDelivery.active()) {
+            PromptSection output = sections.get(PromptSectionType.OUTPUT);
+            // 起草推进方式随复制正文保留；未知仍由原有参数校验器处理，不转换为默认值。
+            sections.put(PromptSectionType.OUTPUT, new PromptSection(output.type(), output.title(),
+                    output.content() + "\n\n" + draftDelivery.guidance()));
+        }
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities).stream()
                 .filter(finding -> !TaskQuestionScope.unrelatedEngineeringReminder(finding, rawPrompt))
                 .filter(finding -> !readOnlyComparison.directedReminder(finding))
@@ -283,12 +291,16 @@ public class OptimizationResultAssembler {
         List<String> resultWarnings = new ArrayList<>(collectWarnings(context, planningWarnings));
         if (merged.omittedCount() > 0) {
             resultWarnings.add("待确认事项已去重，本次展示前 8 项，另有 " + merged.omittedCount()
-                    + " 项未展示；所有未决条件已完整保留在约束的执行前须确认部分，请核对后再交付执行。");
+                    + " 项未展示；所有未决条件已完整保留在约束部分，仅限制依赖它们的内容。");
         }
         removeRepeatedProviderPrerequisites(sections, merged.executionPrerequisites(), decisions);
         ProviderPrerequisiteCompactor.compact(sections, merged.executionPrerequisites(), decisions, rawPrompt);
         unresolvedContract.compactPendingStatements(sections);
-        appendExecutionPrerequisites(sections, merged.executionPrerequisites(), unresolvedContract.baseDeliveryGuidance());
+        // 普通起草不追加面向所有指标的通用长契约；具名参数、观察边界与原定交付保护仍保留。
+        String pendingDeliveryGuidance = draftDelivery.active() && !unresolvedContract.hasNamedParameters()
+                ? unresolvedContract.scopedDeliveryGuidance() : unresolvedContract.baseDeliveryGuidance();
+        appendExecutionPrerequisites(sections, merged.executionPrerequisites(), pendingDeliveryGuidance,
+                draftDelivery.prerequisiteHeading());
         if (unresolvedContract.hasNamedParameters()) {
             PromptSection output = sections.get(PromptSectionType.OUTPUT);
             String parameterEvidence = unresolvedContract.independentEvidenceGuidance();
@@ -333,8 +345,8 @@ public class OptimizationResultAssembler {
 
         // 平台交付契约有唯一正文责任段；仅合并完整等价句，表格、代码和独立业务章节继续保护。
         var deliveryAuthority = new java.util.LinkedHashMap<PromptSectionType, String>();
-        if (!merged.executionPrerequisites().isEmpty()) {
-            deliveryAuthority.put(PromptSectionType.CONSTRAINTS, unresolvedContract.baseDeliveryGuidance());
+        if (!merged.executionPrerequisites().isEmpty() && !pendingDeliveryGuidance.isBlank()) {
+            deliveryAuthority.put(PromptSectionType.CONSTRAINTS, pendingDeliveryGuidance);
         }
         if (unresolvedContract.hasNamedParameters()) {
             deliveryAuthority.put(PromptSectionType.OUTPUT, unresolvedContract.independentEvidenceGuidance());
@@ -344,6 +356,9 @@ public class OptimizationResultAssembler {
         }
         if (!codeDelivery.isBlank()) {
             deliveryAuthority.merge(PromptSectionType.OUTPUT, codeDelivery, (existing, added) -> existing + "\n" + added);
+        }
+        if (draftDelivery.active()) {
+            deliveryAuthority.merge(PromptSectionType.OUTPUT, draftDelivery.guidance(), (existing, added) -> existing + "\n" + added);
         }
         AuthoritativeDeliveryCompactor.compact(sections, deliveryAuthority);
         ExecutionRuleCompactor.compact(sections);
@@ -521,9 +536,9 @@ public class OptimizationResultAssembler {
 
     /** 未决与冲突必须随可复制正文交付；不把暂不确定转换成模型自行选择的许可。 */
     private void appendExecutionPrerequisites(Map<PromptSectionType, PromptSection> sections, List<String> prerequisites,
-                                              String deliveryGuidance) {
-        appendConstraintBlock(sections, "执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）", prerequisites);
-        if (!prerequisites.isEmpty()) {
+                                              String deliveryGuidance, String heading) {
+        appendConstraintBlock(sections, heading, prerequisites);
+        if (!prerequisites.isEmpty() && !deliveryGuidance.isBlank()) {
             appendConstraintBlock(sections, "未决决定的交付边界", List.of(deliveryGuidance));
         }
     }

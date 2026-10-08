@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_SYNTHETIC_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "R5-ASK-FIRST-M",
+  "arm" : "direct",
+  "requestId" : "83b506bd-3e97-46ba-9aea-6e99aa756088",
+  "startedAt" : "2026-10-08T17:00:00.295669300Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "e401858420b851f57c182c83283d7594941fdf8f83f3e44bf76e50b92810eb6d",
+  "materialsSha256" : "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "systemSha256" : "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+  "executionUserSha256" : "f4ca2248e43af1c84812441b060a113a68ba98d1eeaf89210c5269e1f3abe51b",
+  "settings" : {
+    "automaticRetry" : false,
+    "temperature" : 0.2,
+    "thinking" : "disabled",
+    "maxOutputTokens" : 8192
+  },
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 1091,
+    "completion_tokens" : 217,
+    "total_tokens" : 1308
+  },
+  "output" : "1. “某地区”具体指哪里？请明确研究覆盖的地理范围（如省、市或跨区域）。\n该问题的答案会改变数据筛选范围、地区间可比性、分地区亚组分析的划分方式，以及结论可外推的边界。\n\n2. 现有数据的覆盖情况如何？请说明数据来源、2015—2025年各年份是否完整、可用变量字段（如性别、年龄、地区、死亡原因、人口分母）以及是否存在缺失或口径变化。\n该问题的答案会改变时间趋势与季节性分析的可行性、分性别/地区/人群亚类能否成立、YLL和Arriaga分解所需字段是否齐备，以及缺失数据与偏倚的处理方式。\n\n3. 报告用途与目标读者是什么？请说明该报告用于学术研究、卫生决策、项目评估还是其他用途，以及主要读者对象。\n该问题的答案会改变指标呈现的详略与口径、结果解释和结论表述的边界、不确定性说明的深度，以及是否需要针对特定决策场景调整分析重点。",
+  "outputSha256" : "cafa43c8cc3e91a8cfccf00ab330342ffec6d9a335adf0c38663b9d94d5f213e",
+  "nonWhitespaceChars" : 358,
+  "hanChars" : 297,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 1834
+}
