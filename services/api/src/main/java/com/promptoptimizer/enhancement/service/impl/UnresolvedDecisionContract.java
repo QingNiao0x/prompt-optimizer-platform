@@ -787,7 +787,9 @@ final class UnresolvedDecisionContract {
                         // 否认窗口确认能推导出另一参数，不是确认该参数；逐项核对，转折后的真实断言仍须验证。
                         if (deniesWindowConfirmationInference(subject)) continue;
                         // “说明甲指标已确认”中的表达动作不属于指标名；只移除句首动作，机构、年份和对象仍完整匹配。
-                        String assertedSubject = subject.replaceFirst("^(?:明确)?(?:说明|注明|标注|列明)", "");
+                        String assertedSubject = subject.replaceFirst("^(?:明确)?(?:说明|注明|标注|列明)", "")
+                                // “不因甲已确认而确认乙”限制推导，前半句仍核对甲的独立证据，不把“不因”当对象名。
+                                .replaceFirst("^不因(?:为)?", "");
                         var claimed = new Parameter(subjectKey(assertedSubject.replaceFirst("的$", "")), property);
                         if (independentHospitalParameters) claimed = boundParameterName(claimed);
                         if (!isConfirmedNarrativeParameter(claimed)) reject(field, "NARRATIVE_CONFIRMATION_SCOPE");

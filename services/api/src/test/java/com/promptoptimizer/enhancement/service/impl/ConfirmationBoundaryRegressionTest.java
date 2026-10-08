@@ -129,6 +129,8 @@ class ConfirmationBoundaryRegressionTest {
         var contract = UnresolvedDecisionContract.from(raw, decisions);
         assertThatCode(() -> contract.validate("甲指标阈值已确认为50000元，可完成甲指标边界说明。乙指标分母尚未确定。", "sections.TASK"))
                 .doesNotThrowAnyException();
+        assertThatCode(() -> contract.validate("不因甲指标阈值已确认而自动确认乙指标任何参数。", "sections.CONSTRAINTS"))
+                .doesNotThrowAnyException();
         assertThatThrownBy(() -> contract.validate("乙指标分母已确认采用全部预约记录。", "sections.TASK"))
                 .isInstanceOf(com.promptoptimizer.provider.domain.ProviderResponseValidationException.class);
     }
