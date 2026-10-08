@@ -183,6 +183,10 @@ final class PlanRecommendationAligner {
                 && !TECHNOLOGY_LABEL.matcher(choice).matches()
                 && !explicitPreference(corpus, choice) && !explicitPreference(corpus, answer);
         if (!bareNamedAnswer && answer.length() >= 8 && evidence(corpus, answer) > 0) return answer;
+        if (project) {
+            String approvedWindow = approvedObservationWindow(corpus, option);
+            if (!approvedWindow.isBlank()) return approvedWindow;
+        }
         if (TECHNOLOGY_LABEL.matcher(option.label()).find()) return "";
         for (String clause : option.description().split("[，,。；;]")) {
             String claim = normalize(clause);
@@ -191,6 +195,32 @@ final class PlanRecommendationAligner {
                     .anyMatch(other -> normalize(other.label() + " " + other.description() + " " + other.answer()).contains(claim));
             if (!shared && claim.length() >= 8 && evidence(corpus, claim) > 0
                     && (project || explicitPreference(corpus, claim))) return claim;
+        }
+        return "";
+    }
+
+    /**
+     * 较长候选可沿用同范围已批准的观察窗口，但数值本身不能为阈值或其他机构背书。
+     * 范围由调用方逐选项筛选；这里只匹配标签的唯一时长及同句批准状态，仍核对后句指代的未知审批。
+     */
+    private static String approvedObservationWindow(String corpus, PlanOption option) {
+        String label = normalize(option.label());
+        String details = normalize(option.answer() + " " + option.description());
+        if (!label.matches(".*(?:沿用|采用).*已批准.*") || !details.contains("观察窗口")) return "";
+        var quantities = QUANTITY.matcher(label).results().map(java.util.regex.MatchResult::group)
+                .filter(value -> value.matches(".*(?:小时|分钟|天)$")).distinct().toList();
+        if (quantities.size() != 1) return "";
+        String quantity = quantities.getFirst();
+        Pattern windowValue = Pattern.compile("(?:观察窗口|窗口时长)[^，,。；;!?\\n]{0,14}"
+                + Pattern.quote(quantity) + "|" + Pattern.quote(quantity)
+                + "[^，,。；;!?\\n]{0,8}观察窗口");
+        for (String sentence : corpus.split("[。；;!?\\n]+")) {
+            String claim = sentence.strip();
+            if (!windowValue.matcher(claim).find() || !claim.matches(".*(?:已批准|审批通过|批准生效).*")
+                    || UNVERIFIED_STATE.matcher(claim).find()
+                    || claim.matches(".*(?:若|如果|假如|假设|未来|以后|将来|候选|备选|拟采用|建议采用).*")) continue;
+            // 使用完整证据句，不能仅截取“24小时”而丢掉条件或紧随的否定审批说明。
+            if (evidence(corpus, claim) > 0) return claim;
         }
         return "";
     }

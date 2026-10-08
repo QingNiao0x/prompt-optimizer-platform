@@ -1,0 +1,108 @@
+[
+  {
+    "model": "flash",
+    "question": {
+      "id": "window_choice",
+      "question": "本次方案对甲院2025年观察窗口采用哪种处理？",
+      "hint": "说明已证明甲院2025年24小时窗口已批准生效，48小时仅候选、尚未批准；这决定方案正文采用哪个窗口口径。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "use_24h",
+          "label": "采用已批准的24小时窗口",
+          "description": "方案以甲院2025年已批准生效的24小时窗口作为观察口径，48小时仅作为未批准候选在说明中提及。",
+          "answer": "本次方案采用甲院2025年已批准生效的24小时观察窗口；48小时仅作为未批准候选在说明中提及，不作为本次观察口径。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "propose_48h",
+          "label": "提出48小时供审批",
+          "description": "方案以48小时作为拟申请审批的候选窗口提出，同时说明其尚未批准、不能作为已生效口径。",
+          "answer": "本次方案将48小时作为拟申请审批的候选观察窗口提出，并明确其尚未批准、不能作为已生效口径；已批准的24小时窗口作为现状说明。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/甲院2025年窗口批准说明.txt"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] docs/甲院2025年窗口批准说明.txt：文件内容摘要：甲院2025年24小时观察窗口已批准并生效；48小时仅候选、尚未批准。；甲院2025年异常等待阈值尚未确定。；乙院2025年48小时已批准，但只适用乙院；甲院2024年48小时已批准，但不能用于2025年。；业务摘录：[片段 1/1] 甲院2025年24小时观察窗口已批准并生效； 48小时仅候选、尚未批准。 甲院2025年异常等待阈值尚未确定。 乙院2025年48小时已批准，但只适用乙院； 甲院2024年48小时已批准，但不能用于2025年。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "USER_MATERIAL",
+          "sourcePath": "docs/甲院2025年窗口批准说明.txt",
+          "evidence": "甲院2025年异常等待阈值尚未确定"
+        }
+      ]
+    }
+  },
+  {
+    "model": "v4-pro",
+    "question": {
+      "id": "window_choice",
+      "question": "本次方案中，观察窗口采用哪种方式？",
+      "hint": "24小时已批准，48小时未批准，需明确方案采用已批准窗口还是提出未批准窗口供审批。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "use_24h",
+          "label": "沿用已批准的24小时窗口",
+          "description": "方案直接采用甲院2025年已批准的24小时观察窗口。",
+          "answer": "观察窗口采用甲院2025年已批准的24小时窗口。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "propose_48h",
+          "label": "提出48小时窗口供审批",
+          "description": "方案中提出48小时观察窗口，并注明该窗口尚未批准，需提交审批。",
+          "answer": "观察窗口提出48小时窗口，并注明该窗口尚未批准，需提交审批。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    "digest": {
+      "description": "",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "docs/",
+        "docs/甲院2025年窗口批准说明.txt"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] docs/甲院2025年窗口批准说明.txt：文件内容摘要：甲院2025年24小时观察窗口已批准并生效；48小时仅候选、尚未批准。；甲院2025年异常等待阈值尚未确定。；乙院2025年48小时已批准，但只适用乙院；甲院2024年48小时已批准，但不能用于2025年。；业务摘录：[片段 1/1] 甲院2025年24小时观察窗口已批准并生效； 48小时仅候选、尚未批准。 甲院2025年异常等待阈值尚未确定。 乙院2025年48小时已批准，但只适用乙院； 甲院2024年48小时已批准，但不能用于2025年。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "USER_MATERIAL",
+          "sourcePath": "docs/甲院2025年窗口批准说明.txt",
+          "evidence": "甲院2025年异常等待阈值尚未确定"
+        }
+      ]
+    }
+  }
+]
