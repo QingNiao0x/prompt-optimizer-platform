@@ -19,6 +19,8 @@ import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason;
 import com.promptoptimizer.template.domain.PromptTemplate;
+import com.promptoptimizer.template.domain.TaskIntentResolver;
+import com.promptoptimizer.policy.domain.ConstraintBundle;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,6 +130,20 @@ public class OptimizationResultAssembler {
             List<PlanningFactCard> planningFacts,
             List<String> planningWarnings
     ) {
+        var decisions = ConfirmedDecisionSet.from(planConfirmed ? planAnswers : List.of());
+        var intent = TaskIntentResolver.resolve(template.code(), rawPrompt, decisions.knownDecisions());
+        return assemble(providerResponse, context, template, ambiguities, planAnswers, planConfirmed,
+                ConstraintBundle.fromLegacy(constraints, intent.engineeringConstraints()), includeExamples,
+                latencyMs, rawPrompt, planningFacts, planningWarnings);
+    }
+
+    /** 正常编排传递同一份分组规则，模型不能改写固定平台块或覆盖任务与用户权限边界。 */
+    public OptimizationResult assemble(
+            EnhancementProviderResponse providerResponse, ContextSnapshot context, PromptTemplate template,
+            List<String> ambiguities, List<PlanAnswer> planAnswers, boolean planConfirmed,
+            ConstraintBundle constraintBundle, boolean includeExamples, long latencyMs, String rawPrompt,
+            List<PlanningFactCard> planningFacts, List<String> planningWarnings
+    ) {
         if (providerResponse == null || isBlank(providerResponse.provider()) || isBlank(providerResponse.model())) {
             throw invalidResponse(Reason.METADATA_INVALID, "provider");
         }
@@ -139,7 +155,7 @@ public class OptimizationResultAssembler {
         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planConfirmed ? planAnswers : List.of());
         var resolvedState = ResolvedPlanState.from(planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), rawPrompt);
         // 先建立有效执行视图，再提取规则；原始提示词与卡片仍完整保存，旧未知不能被保真流程补回。
-        String resolvedRawPrompt = resolvedState.reconcile(rawPrompt);
+        String resolvedRawPrompt = resolvedState.reconcile(PlatformConstraintRenderer.taskInput(rawPrompt));
         sections.replaceAll((type, section) -> new PromptSection(type, section.title(), resolvedState.reconcile(section.content())));
         String evidenceQuery = decisions.retrievalQuery(rawPrompt);
         List<PlanningFactCard> eligibleFacts = new PlanningFactCardExtractor()
@@ -194,7 +210,7 @@ public class OptimizationResultAssembler {
         } else {
             appendPlanningFacts(sections, currentFacts, currentDocumentFacts, planConfirmed, updatedFactIds);
         }
-        appendConstraints(sections, constraints);
+        appendConstraints(sections, constraintBundle, rawPrompt);
         if (!sourceObjects.guidance().isBlank()) appendConstraintBlock(sections, "资料对象与版本", List.of(sourceObjects.guidance()));
         String attributionDelivery = sourceObjects.deliveryGuidance(template.deliveryProfile());
         if (!attributionDelivery.isBlank()) {
@@ -331,6 +347,9 @@ public class OptimizationResultAssembler {
         }
         AuthoritativeDeliveryCompactor.compact(sections, deliveryAuthority);
         ExecutionRuleCompactor.compact(sections);
+        PromptSection constraintSection = sections.get(PromptSectionType.CONSTRAINTS);
+        sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(constraintSection.type(), constraintSection.title(),
+                PlatformConstraintRenderer.appendMandatory(constraintSection.content(), constraintBundle)));
         // 平台补回后的视图仍须守住确认范围；不能只验证模型原文而漏掉自动追加的规则。
         sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
         sections.forEach((type, section) -> conditionalGuard.validate(section.content(), "sections." + type));
@@ -343,7 +362,7 @@ public class OptimizationResultAssembler {
                 ordered,
                 context,
                 remainingAmbiguities,
-                constraints,
+                constraintBundle.visibleConstraints(),
                 template.code(),
                 new ProviderMetadata(
                         providerResponse.provider(),
@@ -806,28 +825,17 @@ public class OptimizationResultAssembler {
         }
     }
 
-    /** 合并平台约束并删除模型内容中完全重复的约束行，避免最终提示词重复。 */
+    /** 先落入任务与用户权限分组；固定平台块在所有普通压缩完成后追加。 */
     private void appendConstraints(
             Map<PromptSectionType, PromptSection> sections,
-            List<String> constraints
+            ConstraintBundle constraints,
+            String rawPrompt
     ) {
         PromptSection current = sections.get(PromptSectionType.CONSTRAINTS);
-        Set<String> exactConstraintLines = constraints.stream()
-                .flatMap(value -> java.util.stream.Stream.of(value.trim(), "- " + value.trim()))
-                .collect(Collectors.toSet());
-        String providerContent = current.content().lines()
-                .filter(line -> !exactConstraintLines.contains(line.trim()))
-                .collect(Collectors.joining("\n"))
-                .trim();
-        String authoritative = constraints.stream()
-                .map(value -> "- " + value)
-                .collect(Collectors.joining("\n"));
         sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(
-                PromptSectionType.CONSTRAINTS,
-                current.title(),
-                (providerContent.isBlank() ? "" : providerContent + "\n\n")
-                        + "平台强制约束（不得删除或弱化）：\n" + authoritative
-        ));
+                current.type(), current.title(), PlatformConstraintRenderer.providerText(current.content(), rawPrompt, constraints)));
+        appendConstraintBlock(sections, "任务相关约束", constraints.taskSpecific());
+        appendConstraintBlock(sections, "用户补充权限边界", constraints.additionalPermissions());
     }
 
     private String renderPrompt(List<PromptSection> sections) {

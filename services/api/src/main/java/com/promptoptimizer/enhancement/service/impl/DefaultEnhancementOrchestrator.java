@@ -250,11 +250,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         var taskIntent = TaskIntentResolver.resolve(request.enhancement().templateCode(),
                 request.rawPrompt(), decisions.knownDecisions());
         // 只有肯定交付目标包含辅助代码才加代码检查，材料中的技术栈不改变报告的职责。
-        List<String> constraints = taskIntent.engineeringConstraints() && !TaskIntentResolver.software(template.code())
-                ? constraintCompleter.completeWithAuxiliaryCode(context, request.permissionPolicy(),
-                        Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()), template.code())
-                : constraintCompleter.complete(context, request.permissionPolicy(),
-                        Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()), template.code());
+        var constraints = constraintCompleter.completeForTask(context, request.permissionPolicy(),
+                Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()), taskIntent);
 
         String workflowResourceId = request.planConfirmation() == null
                 ? null
@@ -291,8 +288,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         PromptTemplate executionTemplate = deliveryGuidance.isBlank() ? template : new PromptTemplate(
                 template.code(), template.outputGuidance() + "\n\n" + deliveryGuidance,
                 template.acceptanceGuidance(), template.exampleGuidance(), template.deliveryProfile());
-        List<String> executionConstraints = objectGuidance.isBlank() ? constraints
-                : java.util.stream.Stream.concat(constraints.stream(), java.util.stream.Stream.of(objectGuidance)).toList();
+        var executionConstraints = constraints.withTaskRule(objectGuidance);
         List<String> finalAmbiguities = ambiguities;
         try (LogCorrelation.Scope ignored = LogCorrelation.bindWorkflow(workflowNamespace, workflowResourceId)) {
             try {
@@ -304,7 +300,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                                 finalAmbiguities,
                                 planAnswers,
                                 planConfirmed,
-                                executionConstraints,
+                                executionConstraints.visibleConstraints(),
                                 conversation,
                                 request.enhancement(),
                                 selectedModelId,

@@ -3,6 +3,9 @@ package com.promptoptimizer.policy.service;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
+import com.promptoptimizer.policy.domain.ConstraintBundle;
+import com.promptoptimizer.template.domain.TaskIntent;
+import com.promptoptimizer.template.domain.TaskIntentResolver;
 
 import java.util.List;
 
@@ -13,6 +16,15 @@ import java.util.List;
  * @since 0.1.0
  */
 public interface ConstraintCompleter {
+
+    /** 按已验证的任务意图分组约束；材料技术栈和未确认候选不能开启工程约束。 */
+    default ConstraintBundle completeForTask(ContextSnapshot context, PermissionPolicyInput permissionPolicy,
+                                           boolean includePermissionBoundaries, TaskIntent intent) {
+        List<String> rules = intent.engineeringConstraints() && !TaskIntentResolver.software(intent.templateCode())
+                ? completeWithAuxiliaryCode(context, permissionPolicy, includePermissionBoundaries, intent.templateCode())
+                : complete(context, permissionPolicy, includePermissionBoundaries, intent.templateCode());
+        return ConstraintBundle.fromLegacy(rules, intent.engineeringConstraints());
+    }
 
     /** 生成去重且顺序稳定的约束列表，便于模型和用户审查。 */
     List<String> complete(

@@ -130,7 +130,7 @@ class TaskTemplateAdaptationTest {
     }
 
     @Test
-    void writingFromJavaSourcesKeepsSecurityButDoesNotInjectEngineeringRequirements() {
+    void writingFromJavaSourcesShowsOnlyApplicableRulesWithoutEngineeringBoilerplate() {
         var context = new ContextSnapshot("Java项目", List.of(
                 new TechnologyStackItem("Java 21", "pom.xml", 1),
                 new TechnologyStackItem("Spring Boot 3", "pom.xml", 1),
@@ -140,8 +140,8 @@ class TaskTemplateAdaptationTest {
         var completer = new ConstraintCompleterImpl();
         for (TemplateCode code : List.of(TemplateCode.GENERAL, TemplateCode.RESEARCH_ANALYSIS)) {
             String text = String.join("\n", completer.complete(context, PermissionPolicyInput.empty(), false, code));
-            assertThat(text).contains(".env", "**/*.pem", "人工确认", "API Key")
-                    .doesNotContain("Java 21", "Controller", "Bean Validation", "Redis", "ORM", "核心逻辑补充");
+            assertThat(text).contains("不得把猜测写成事实")
+                    .doesNotContain(".env", "**/*.pem", "人工确认", "API Key", "Java 21", "Controller", "Bean Validation", "Redis", "ORM", "核心逻辑补充");
         }
         String software = String.join("\n", completer.complete(context, PermissionPolicyInput.empty(), false, TemplateCode.FEATURE_DEVELOPMENT));
         assertThat(software).contains("Java 21", "Controller", "Bean Validation", "Redis", "TTL", "参数化查询", "核心逻辑");

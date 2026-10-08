@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, ref, shallowRef } from 'vue';
+import { restoreAppliedConstraints } from '@/features/optimization/constraintEditing';
 
 import {
   buildOptimizationPlanRequest,
@@ -390,19 +391,11 @@ export const useOptimizationStore = defineStore('optimization', () => {
       if (section.type !== 'CONSTRAINTS') {
         return { ...section };
       }
-      const requiredConstraints = result.value?.appliedConstraints ?? [];
-      const missingConstraints = requiredConstraints.filter((constraint) =>
-        !section.content.includes(constraint));
-      if (missingConstraints.length === 0) {
-        return { ...section };
-      }
-      const marker = '平台强制约束（不得删除或弱化）：';
-      const separator = section.content.includes(marker) ? '\n' : `\n\n${marker}\n`;
       return {
         ...section,
-        content: `${section.content.trim()}${separator}${missingConstraints
-          .map((constraint) => `- ${constraint}`)
-          .join('\n')}`,
+        content: restoreAppliedConstraints(section.content,
+          result.value?.sections.find(item => item.type === 'CONSTRAINTS')?.content ?? '',
+          result.value?.appliedConstraints ?? []),
       };
     });
     const optimizedPrompt = normalizedSections

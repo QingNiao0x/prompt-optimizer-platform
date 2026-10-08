@@ -45,8 +45,10 @@ class ConstraintCompleterTest {
         assertThat(constraints).anySatisfy(value -> assertThat(value).contains("参数化查询或 ORM"));
         assertThat(constraints).anySatisfy(value -> assertThat(value).contains("Redis", "TTL"));
         assertThat(constraints).anySatisfy(value -> assertThat(value)
-                .contains(".env", "**/*.pem", "research/private/**"));
+                .contains(".env", "**/*.pem"));
         assertThat(constraints).anySatisfy(value -> assertThat(value)
-                .contains("数据库结构迁移", "发布研究数据"));
+                .contains("数据库结构迁移"));
+        assertThat(constraints).contains("禁止读取或输出受保护路径：research/private/**。",
+                "以下操作必须先获得人工确认：发布研究数据。");
     }
 }

@@ -1,11 +1,13 @@
 package com.promptoptimizer.policy.service.impl;
 
 import com.promptoptimizer.policy.service.ConstraintCompleter;
-import com.promptoptimizer.policy.service.PlatformPermissionPolicy;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.template.domain.TaskIntentResolver;
+import com.promptoptimizer.template.domain.TaskIntent;
+import com.promptoptimizer.policy.domain.ConstraintBundle;
+import com.promptoptimizer.policy.domain.PlatformConstraintRules;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashSet;
@@ -30,23 +32,30 @@ public class ConstraintCompleterImpl implements ConstraintCompleter {
             boolean includePermissionBoundaries,
             TemplateCode templateCode
     ) {
+        return grouped(context, permissionPolicy, templateCode, TaskIntentResolver.software(templateCode)).visibleConstraints();
+    }
+
+    @Override
+    public ConstraintBundle completeForTask(ContextSnapshot context, PermissionPolicyInput permissionPolicy,
+                                           boolean includePermissionBoundaries, TaskIntent intent) {
+        return grouped(context, permissionPolicy, intent.templateCode(), intent.engineeringConstraints());
+    }
+
+    /** 可见条款按来源组装；兼容显示开关不参与服务端路径过滤，也不能关闭代码任务的五条固定规则。 */
+    private ConstraintBundle grouped(ContextSnapshot context, PermissionPolicyInput permissionPolicy,
+                                     TemplateCode templateCode, boolean engineering) {
         Set<String> constraints = new LinkedHashSet<>();
-        constraints.add("明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。");
-        constraints.add("不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。");
 
         if (templateCode == TemplateCode.RESEARCH_ANALYSIS) {
             constraints.add("明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。");
             constraints.add("说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。");
-        } else if (templateCode == TemplateCode.GENERAL) {
-            // 通用交付建议不能覆盖“只输出译文”等明确格式；保密和权限红线仍独立强制添加。
-            constraints.add("输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。");
-        } else {
+        } else if (TaskIntentResolver.software(templateCode)) {
             constraints.add("校验所有外部输入，并明确处理空值、非法值和边界条件。");
             constraints.add("处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。");
             constraints.add("为核心逻辑补充正常、异常和边界场景测试。");
         }
 
-        // 技术栈用于理解材料，但只有软件任务自动追加工程规范；权限和保密继续无条件生效。
+        // 技术栈用于理解材料；辅助分析脚本不能被背景项目的 Java/Vue 工程规范污染。
         List<String> stackNames = context.technologyStack().stream()
                 .filter(item -> TaskIntentResolver.software(templateCode))
                 .map(item -> item.name().toLowerCase(java.util.Locale.ROOT))
@@ -68,10 +77,16 @@ public class ConstraintCompleterImpl implements ConstraintCompleter {
             constraints.add("Redis 数据必须设置合理 TTL，并说明缓存一致性和失效策略。");
         }
 
-        // 兼容字段不能关闭默认红线；用户规则只能追加，不能削弱平台安全边界。
-        constraints.add("禁止读取或输出受保护路径：" + joinPolicies(PlatformPermissionPolicy.PROTECTED_PATHS, permissionPolicy.protectedPaths()) + "。");
-        constraints.add("以下操作必须先获得人工确认：" + joinPolicies(PlatformPermissionPolicy.CONFIRMATION_ACTIONS, permissionPolicy.requireConfirmationFor()) + "。");
-        return List.copyOf(constraints);
+        if (engineering && !TaskIntentResolver.software(templateCode)) {
+            constraints.add("仅对本次明确交付的代码：校验输入并处理空值、非法值和边界条件。");
+            constraints.add("仅对本次明确交付的代码：处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。");
+            constraints.add("仅对本次明确交付的代码：补充必要的正常、异常和边界验证，不把软件测试要求扩展到报告正文。");
+        }
+        PermissionPolicyInput policy = permissionPolicy == null ? PermissionPolicyInput.empty() : permissionPolicy;
+        List<String> permissions = new java.util.ArrayList<>();
+        addCustomPolicy(permissions, PlatformConstraintRules.PATH_PREFIX, policy.protectedPaths());
+        addCustomPolicy(permissions, PlatformConstraintRules.ACTION_PREFIX, policy.requireConfirmationFor());
+        return new ConstraintBundle(PlatformConstraintRules.forTask(engineering), List.copyOf(constraints), permissions);
     }
 
     /**
@@ -85,12 +100,7 @@ public class ConstraintCompleterImpl implements ConstraintCompleter {
             boolean includePermissionBoundaries,
             TemplateCode templateCode
     ) {
-        Set<String> constraints = new LinkedHashSet<>(complete(
-                context, permissionPolicy, includePermissionBoundaries, templateCode));
-        constraints.add("仅对本次明确交付的代码：校验输入并处理空值、非法值和边界条件。");
-        constraints.add("仅对本次明确交付的代码：处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。");
-        constraints.add("仅对本次明确交付的代码：补充必要的正常、异常和边界验证，不把软件测试要求扩展到报告正文。");
-        return List.copyOf(constraints);
+        return grouped(context, permissionPolicy, templateCode, true).visibleConstraints();
     }
 
     /**
@@ -105,15 +115,11 @@ public class ConstraintCompleterImpl implements ConstraintCompleter {
     }
 
     /**
-     * 合并默认策略和用户自定义策略，按顺序去重。
+     * 用户显式权限单独保留，即使与默认条款重合，也不能在非代码任务中丢失。
      */
-    private String joinPolicies(List<String> defaults, List<String> customValues) {
-        Set<String> values = new LinkedHashSet<>(defaults);
-        customValues.stream()
-                .map(String::trim)
-                .filter(value -> !value.isEmpty())
-                .forEach(values::add);
-        return String.join("、", values);
+    private void addCustomPolicy(List<String> target, String prefix, List<String> customValues) {
+        List<String> values = customValues.stream().map(String::trim).filter(value -> !value.isEmpty()).distinct().toList();
+        if (!values.isEmpty()) target.add(prefix + String.join("、", values) + "。");
     }
 
     private boolean containsStack(List<String> stackNames, String expected) {

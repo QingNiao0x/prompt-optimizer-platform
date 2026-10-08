@@ -19,10 +19,16 @@ import java.util.Map;
 public final class TaskIntentResolver {
     private record Goal(TemplateCode code, TaskDeliveryProfile profile) { }
     private static final Pattern NEGATIVE = Pattern.compile(
-            "^(?:(?:也|并|且|亦|同时|本次)\\s*)?(?:不(?:要求|需要|要|得|应|会)?|无需|禁止|不得|避免|不要|未要求|无须|not\\b|do not\\b)");
+            "^(?:(?:请|也|并|且|亦|同时|本次)\\s*)*(?:不(?:要求|需要|要|得|应|会)?|勿|无需|禁止|不得|避免|不要|未要求|无须|not\\b|do not\\b)");
     private static final Pattern DELIVERY_ANSWER = Pattern.compile(
             "交付|输出|成品|任务目标|需要.*结果|希望.*(?:完成|得到)|目标.*(?:是什么|什么)|用途|主要用来|主要用于");
     private static final Pattern PENDING = Pattern.compile("暂不确定|尚未确定|待定|不知道|不清楚|未决定|unknown|tbd", Pattern.CASE_INSENSITIVE);
+    // 交付物作主语时，否定词不一定出现在句首，例如“本次交付不包含 R 脚本”。
+    private static final Pattern DECLINED_CODE_DELIVERY = Pattern.compile(
+            "^(?:(?:本次|本轮|此次|这次|最终)(?:的)?\\s*)?"
+                    + "(?:(?:交付|输出)(?:物|内容|范围)?\\s*)?"
+                    + "(?:不包含|不含|不提供|不交付|不输出|不附带|不附上|不需要|不编写|无需|无须)"
+                    + "[^。；;，,\\r\\n]{0,32}(?:代码|脚本|程序)", Pattern.CASE_INSENSITIVE);
     private static final String WRITE = "(?:撰写|编写|起草|写|生成|输出|提供|交付|拟定|制作|设计|制定|\\bwrite\\b|\\bdraft\\b|\\bcreate\\b|\\bproduce\\b)";
     // 表达式仅来自下面的固定规则，按固定数量缓存，避免每个子句重新编译同一规则。
     private static final Map<String, Pattern> PATTERNS = new ConcurrentHashMap<>();
@@ -43,17 +49,34 @@ public final class TaskIntentResolver {
         TaskIntent.ResolutionStatus status = goals.isEmpty()
                 ? TaskIntent.ResolutionStatus.DEFAULT : TaskIntent.ResolutionStatus.RAW_GOAL;
         List<Goal> confirmedGoals = new ArrayList<>();
+        Boolean auxiliaryCode = null;
         for (ConfirmedPlanDecision decision : decisions == null ? List.<ConfirmedPlanDecision>of() : decisions) {
             if (decision.scope() == ConfirmedPlanDecision.Scope.UNRESOLVED
                     || decision.scope() == ConfirmedPlanDecision.Scope.CURRENT_STATE
-                    || PENDING.matcher(decision.answer()).find()
-                    || !overallDeliveryQuestion(decision.question())) continue;
+                    || PENDING.matcher(decision.answer()).find()) continue;
+            // 附带代码题只决定辅助交付，不能把“统计分析方案”替换为软件主任务。
+            if (codeDeliveryQuestion(decision.question())) {
+                String answer = decision.answer().trim().toLowerCase(Locale.ROOT);
+                // 按子句核对，允许“不提供 Python 代码，但提供 R 脚本”，不把前一项否定扩大到全部交付。
+                boolean affirmed = java.util.Arrays.stream(answer.split("[。；;，,\\r\\n]"))
+                        .anyMatch(TaskIntentResolver::explicitCodeDelivery);
+                if (affirmed || answer.matches("^(?:是|需要|要|提供|包含|yes)[。.!！\\s]*$")) auxiliaryCode = true;
+                else if (NEGATIVE.matcher(answer).find() || DECLINED_CODE_DELIVERY.matcher(answer).find()) auxiliaryCode = false;
+                continue;
+            }
+            if (!overallDeliveryQuestion(decision.question())) continue;
             confirmedGoals.addAll(goals(decision.answer()));
         }
         // 仅针对交付主题的明确答案细化；审批阈值等独立答案不改变任务类型。
         if (!confirmedGoals.isEmpty()) {
             goals = confirmedGoals;
             status = TaskIntent.ResolutionStatus.USER_CONFIRMED;
+        }
+        if (Boolean.TRUE.equals(auxiliaryCode)) {
+            goals = new ArrayList<>(goals);
+            goals.add(new Goal(TemplateCode.FEATURE_DEVELOPMENT, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION));
+        } else if (Boolean.FALSE.equals(auxiliaryCode) && !goals.isEmpty() && !goals.getFirst().profile().softwareTask()) {
+            goals = goals.stream().filter(goal -> !goal.profile().softwareTask()).toList();
         }
         Goal primary = goals.isEmpty() ? new Goal(TemplateCode.GENERAL, TaskDeliveryProfile.GENERAL) : goals.getFirst();
         TemplateCode code = primary.code();
@@ -98,7 +121,7 @@ public final class TaskIntentResolver {
         for (String line : (input == null ? "" : input).toLowerCase(Locale.ROOT).split("\\R")) {
             String text = line.trim();
             if (text.startsWith("```") || text.startsWith("~~~")) { fenced = !fenced; continue; }
-            if (fenced) continue;
+            if (fenced || text.startsWith(">") || text.startsWith("|")) continue;
             String heading = text.replaceAll("^[#*\\s]+|[*\\s]+$", "");
             if (heading.matches("(?:背景|项目背景|约束|约束条件|验收标准|示例|参考资料|原文|材料|资料|已知资料)[:：]?")) {
                 referenceSection = true;
@@ -121,6 +144,10 @@ public final class TaskIntentResolver {
                 if (reference >= 0) clause = clause.substring(0, reference);
                 Goal goal = classify(clause);
                 if (goal != null) values.add(goal);
+                if (goal != null && !goal.profile().softwareTask()
+                        && goal.profile() != TaskDeliveryProfile.TRANSLATION && explicitCodeDelivery(clause)) {
+                    values.add(new Goal(TemplateCode.FEATURE_DEVELOPMENT, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION));
+                }
                 // 翻译指令后的冒号引入待译内容；原文中的“开发/研究”不作为附带任务。
                 if (reference >= 0 || (goal != null && goal.profile() == TaskDeliveryProfile.TRANSLATION
                         && clause.matches(".*(?:翻译|译成|translate)[^：:]{0,100}[:：].*"))) {
@@ -148,7 +175,7 @@ public final class TaskIntentResolver {
             return general(TaskDeliveryProfile.LEGAL_MATERIAL);
         if (match(clause, "(?:整理|核对|比较|提取|汇总).{0,60}(?:医院|门诊|医疗|患者|诊疗).{0,35}(?:资料|数据|记录|材料)"))
             return general(TaskDeliveryProfile.MEDICAL_MATERIAL);
-        if (deliver(clause, "统计分析方案|数据分析方案|统计方案|分析方案"))
+        if (deliver(clause, "统计分析方案|数据分析方案|统计方案|分析方案|分析报告"))
             return research(TaskDeliveryProfile.DATA_ANALYSIS);
         if (match(clause, "(?:总结|摘要|概括|整理|归纳|提取|对照).{0,60}(?:材料|资料|文件|文本|文档|记录|报告|规则)|(?:生成|输出|撰写).{0,30}(?:摘要|对照表)"))
             return general(TaskDeliveryProfile.MATERIAL_SYNTHESIS);
@@ -166,7 +193,7 @@ public final class TaskIntentResolver {
             return new Goal(TemplateCode.TESTING, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
         if (match(clause, "(?:开发|实现|新增|添加|增加|编写|构建).{0,60}(?:接口|功能|模块|系统|服务|程序|代码|算法|函数|页面|缓存|认证|登录)|(?:设计|制定|提供|给出).{0,60}(?:实现方案|开发方案|功能方案)"))
             return new Goal(TemplateCode.FEATURE_DEVELOPMENT, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
-        if (match(clause, "(?:提供|交付|给出)(?:可复现|复现|分析|示例|完整|可运行)?代码(?:[。；;\\s]|$)|\\bprovide\\b.{0,30}\\b(?:reproducible|analysis) code\\b"))
+        if (explicitCodeDelivery(clause))
             return new Goal(TemplateCode.FEATURE_DEVELOPMENT, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
         if (match(clause, "\\b(?:implement|add|create|build|develop)\\b.{0,60}\\b(?:api|endpoint|function|feature|service|module|authentication|login|algorithm|program|cache)\\b"))
             return new Goal(TemplateCode.FEATURE_DEVELOPMENT, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
@@ -177,6 +204,19 @@ public final class TaskIntentResolver {
 
     private static Goal general(TaskDeliveryProfile profile) { return new Goal(TemplateCode.GENERAL, profile); }
     private static Goal research(TaskDeliveryProfile profile) { return new Goal(TemplateCode.RESEARCH_ANALYSIS, profile); }
+
+    /** 代码交付需要肯定的动作与交付物；“用 R 分析”“参考 Python 文档”不是脚本交付。 */
+    private static boolean explicitCodeDelivery(String clause) {
+        return !PENDING.matcher(clause).find() && !DECLINED_CODE_DELIVERY.matcher(clause.strip()).find() && match(clause,
+                "(?:提供|交付|给出|编写|输出|生成|附上|附带|包含|实现|需要|要求).{0,32}(?:(?<!伪)代码|脚本|程序)"
+                        + "|\\b(?:provide|deliver|write|generate|include)\\b.{0,40}\\b(?:code|scripts?|programs?)\\b");
+    }
+
+    /** 只识别是否交付代码的选择题，不把语言偏好或资料中的现状题提升为交付承诺。 */
+    private static boolean codeDeliveryQuestion(String question) {
+        return question != null && question.matches("(?s).*(?:是否|需要|要不要).{0,20}(?:代码|脚本|程序).*")
+                && !question.matches("(?s).*(?:使用什么|用什么|哪种|现有|已有|当前|版本|语言偏好).*");
+    }
 
     /** 否定后出现的交付动词不匹配，例如“不要求编写代码测试”；不跨过完整子句边界。 */
     private static boolean deliver(String clause, String object) {
@@ -189,7 +229,8 @@ public final class TaskIntentResolver {
                 value -> Pattern.compile(value, Pattern.CASE_INSENSITIVE)).matcher(clause);
         while (matcher.find()) {
             String prefix = clause.substring(0, matcher.start());
-            if (!prefix.matches(".*(?:不要求|不需要|无需|不要|不得|禁止|无须|不提供|不附|是否|例如|示例|原文|材料中|资料中)[^，。；;]{0,80}$")) return true;
+            if (!prefix.matches(".*(?:不要求|不需要|不要|不得|不提供|不附|请勿|未要求|无需|禁止|无须|是否|例如|示例|原文|材料中|资料中)[^，。；;]{0,80}$")
+                    && !prefix.matches(".*(?:不|未|勿)$")) return true;
         }
         return false;
     }

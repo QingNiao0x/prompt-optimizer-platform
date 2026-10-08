@@ -184,8 +184,9 @@ class ExecutionContractAssemblyTest {
                     new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "保留问候语气。")), "test", "test", false),
                     context, new PromptTemplate(TemplateCode.GENERAL, "译文", "遵守原文", "示例"),
                     List.of(), List.of(), planned, constraints, false, 1, "翻译Good morning, everyone.，只输出译文。");
-            assertThat(result.optimizedPrompt()).doesNotContain("并说明关键依据、适用范围和限制条件")
-                    .contains("仅在任务需要且未限制额外说明时", "不得在代码、日志或响应中泄露", "以下操作必须先获得人工确认");
+            assertThat(result.optimizedPrompt()).doesNotContain("并说明关键依据、适用范围和限制条件",
+                            "不得在代码、日志或响应中泄露", "以下操作必须先获得人工确认")
+                    .contains("只输出译文", "不得把猜测写成事实");
             assertThat(result.ambiguities()).isEmpty();
         }
     }

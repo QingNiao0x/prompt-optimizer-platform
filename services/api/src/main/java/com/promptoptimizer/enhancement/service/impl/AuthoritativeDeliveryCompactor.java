@@ -176,6 +176,7 @@ final class AuthoritativeDeliveryCompactor {
     private static boolean metadataHeading(String heading) {
         String value = heading.replaceFirst("^#{1,6}\\s+", "").replaceAll("[*：:]", "");
         return value.equals("平台强制约束（不得删除或弱化）") || value.equals("未决决定的交付边界")
+                || value.equals("任务相关约束") || value.equals("用户补充权限边界")
                 || value.equals("执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）")
                 || value.equals("用户明确规则（须遵守平台权限边界）")
                 || value.equals("当前参数依据（用于生成指标表，不代替指标表）")

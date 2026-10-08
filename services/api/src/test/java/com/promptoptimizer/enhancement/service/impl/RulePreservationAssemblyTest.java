@@ -173,7 +173,8 @@ class RulePreservationAssemblyTest {
             assertThat(result.optimizedPrompt()).as("planConfirmed=%s", confirmed)
                     .contains("activity-20.docx", sourceRule, "预算和具体日期尚未确定", "标为待确认")
                     .doesNotContain("三十分钟", "四十分钟");
-            assertThat(result.appliedConstraints()).containsExactlyElementsOf(CONSTRAINTS);
+            assertThat(result.appliedConstraints()).containsExactlyElementsOf(java.util.stream.Stream.concat(
+                    com.promptoptimizer.policy.domain.PlatformConstraintRules.forTask(false).stream(), CONSTRAINTS.stream()).toList());
             assertThat(result.provider().model()).isEqualTo("deepseek:deepseek-v4-pro");
         }
     }
@@ -209,7 +210,8 @@ class RulePreservationAssemblyTest {
                         PromptSectionType.CONSTRAINTS, PromptSectionType.ACCEPTANCE);
         assertThat(result.optimizedPrompt()).contains("修复重复预约的返回行为", "给出实现步骤与验收清单",
                 "不得擅自变更登录身份和工作区隔离", "平台强制约束");
-        assertThat(result.appliedConstraints()).containsExactlyElementsOf(CONSTRAINTS);
+        assertThat(result.appliedConstraints()).containsExactlyElementsOf(java.util.stream.Stream.concat(
+                com.promptoptimizer.policy.domain.PlatformConstraintRules.forTask(true).stream(), CONSTRAINTS.stream()).toList());
         assertThat(result.provider().provider()).isEqualTo("diagnostic-provider");
         assertThat(result.provider().model()).isEqualTo("diagnostic-model");
         assertThat(result.provider().mock()).isFalse();

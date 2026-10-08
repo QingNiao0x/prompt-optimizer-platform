@@ -327,6 +327,42 @@ describe('optimization store project context', () => {
     expect(store.result).toEqual(original);
   });
 
+  it('should keep dynamic platform rules separate when restoring edited task and custom rules', () => {
+    const store = useOptimizationStore();
+    const original = resultFixture();
+    const truth = '明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。';
+    const research = '不得编造数据或引用。';
+    const permission = '以下操作必须先获得人工确认：公开访谈原文。';
+    original.appliedConstraints = [truth, research, permission];
+    original.sections = original.sections.map(section => section.type === 'CONSTRAINTS' ? { ...section,
+      content: `任务相关约束：\n- ${research}\n\n用户补充权限边界：\n- ${permission}\n\n平台强制约束（不得删除或弱化）：\n- ${truth}`,
+    } : section);
+    store.result = original;
+    expect(store.saveEditedSections(original.sections.map(section => section.type === 'CONSTRAINTS'
+      ? { ...section, content: '保留新的写作要求。' } : section))).toBe(true);
+    const content = store.result!.sections.find(section => section.type === 'CONSTRAINTS')!.content;
+    expect(content).toContain(`任务相关约束：\n- ${research}`);
+    expect(content).toContain(`用户补充权限边界：\n- ${permission}`);
+    expect(content.split('平台强制约束（不得删除或弱化）：')[1]?.trim()).toBe(`- ${truth}`);
+    expect(store.result!.optimizedPrompt).toContain(content);
+    expect(store.undoResult()).toBe(true);
+    expect(store.result).toEqual(original);
+  });
+
+  it('should restore code platform rules in server order after deleting a middle rule', () => {
+    const store = useOptimizationStore();
+    const original = resultFixture();
+    const rules = ['明确事实。', '不泄露凭据。', '遵守交付。', '保护路径。', '人工确认。'];
+    original.appliedConstraints = rules;
+    const marker = '平台强制约束（不得删除或弱化）：';
+    original.sections = original.sections.map(section => section.type === 'CONSTRAINTS'
+      ? { ...section, content: `${marker}\n- ${rules.join('\n- ')}` } : section);
+    store.result = original;
+    store.saveEditedSections(original.sections.map(section => section.type === 'CONSTRAINTS'
+      ? { ...section, content: section.content.replace('- 不泄露凭据。\n', '') } : section));
+    expect(store.result!.optimizedPrompt.split(marker)[1]?.trim()).toBe(`- ${rules.join('\n- ')}`);
+  });
+
   it('should preserve execution prerequisites across editing, undo and direct re-enhancement', async () => {
     const store = useOptimizationStore();
     const original = resultFixture();
