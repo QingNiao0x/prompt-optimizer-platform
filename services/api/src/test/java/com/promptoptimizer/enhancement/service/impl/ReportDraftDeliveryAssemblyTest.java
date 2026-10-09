@@ -28,8 +28,9 @@ class ReportDraftDeliveryAssemblyTest {
         var result = assemble(RAW, List.of("研究地区尚未提供，请明确研究地区。", "参考寿命表尚未确定。"));
         String output = section(result, PromptSectionType.OUTPUT);
         String constraints = section(result, PromptSectionType.CONSTRAINTS);
-        assertThat(output).contains("正文", "初稿", "对应位置", "不编造", "建议");
-        assertThat(output).contains("大面积待填模板", "简短完整句", "不逐年逐格铺空表", "已要求的表格和代码仍完整交付");
+        assertThat(output).contains("正文", "初稿", "对应内容", "不编造", "重要未决条件集中说明一次",
+                "原要求的表格、代码及篇幅继续保留");
+        assertThat(output).doesNotContain("背景、解释、讨论与局限", "[待补：具体内容]", "不逐年逐格铺空表");
         assertThat(constraints).contains("资料缺口与待定选择").doesNotContain("执行前须确认", "同一未决决定在用户已要求的交付形式中保持一致");
         assertThat(result.optimizedPrompt()).contains(output, "研究地区尚未提供", "参考寿命表尚未确定");
         assertThat(result.optimizedPrompt().split("研究地区尚未提供", -1)).hasSize(2);
@@ -73,11 +74,43 @@ class ReportDraftDeliveryAssemblyTest {
         assertThat(section(result, PromptSectionType.OUTPUT)).contains("不编造");
     }
 
+    @Test
+    void aShortEmailDoesNotReceiveReportSectionsOrResearchPlaceholders() {
+        var result = assemble("请编写一封两句话的会议改期邮件，只输出邮件正文。", List.of());
+        assertThat(section(result, PromptSectionType.OUTPUT))
+                .doesNotContain("背景、解释、讨论与局限", "[待补：具体内容]", "方法候选", "不逐年逐格铺空表");
+        assertThat(result.optimizedPrompt()).contains("两句话", "只输出邮件正文");
+    }
+
+    @Test
+    void anExistingDraftContractIsNotAppendedAgainUnderANamedOutputHeading() {
+        var template = new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, RAW);
+        String guidance = com.promptoptimizer.provider.domain.DraftDeliveryContract.from(RAW, template, List.of()).guidance();
+        var result = assemble(RAW, List.of(), "## 本次成稿说明\n交付报告正文。\n" + guidance);
+        assertThat(section(result, PromptSectionType.OUTPUT).split(java.util.regex.Pattern.quote(guidance), -1)).hasSize(2);
+        assertThat(section(result, PromptSectionType.OUTPUT)).contains("交付报告正文");
+    }
+
+    @Test
+    void userRequestedSectionsAndIndependentLifeTablesRemainInTheCopyBody() {
+        String raw = "请撰写甲院和乙院比较报告，保留研究背景、资料与方法、结果、讨论、局限与结论。"
+                + "甲院参考寿命表尚未确定。乙院参考寿命表尚未确定。不需要代码。";
+        var result = assemble(raw, List.of("甲院参考寿命表尚未确定。", "乙院参考寿命表尚未确定。"));
+        assertThat(result.optimizedPrompt()).contains("研究背景、资料与方法、结果、讨论、局限与结论", "不需要代码");
+        assertThat(section(result, PromptSectionType.CONSTRAINTS)).contains("甲院参考寿命表尚未确定", "乙院参考寿命表尚未确定");
+        assertThat(result.appliedConstraints()).hasSize(1);
+    }
+
     private OptimizationResult assemble(String raw, List<String> findings) {
+        return assemble(raw, findings, "交付用户要求的内容。");
+    }
+
+    /** 用实际组装入口回放已有输出段，避免仅比较模板字符串掩盖重复追加。 */
+    private OptimizationResult assemble(String raw, List<String> findings, String output) {
         var response = new EnhancementProviderResponse(List.of(
                 new PromptSection(PromptSectionType.BACKGROUND, "背景", "本次用户提供的任务资料。"),
                 new PromptSection(PromptSectionType.TASK, "任务", raw),
-                new PromptSection(PromptSectionType.OUTPUT, "输出", "交付用户要求的内容。"),
+                new PromptSection(PromptSectionType.OUTPUT, "输出", output),
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不编造事实。")
         ), "test", "test-model", false, List.of());
         return new OptimizationResultAssembler().assemble(response,

@@ -91,14 +91,26 @@ class ReportDraftGuidanceTest {
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("先完成现有依据支持的有用初稿")))
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("不能只交提纲或先发问卷等待补齐")))
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("缺口只限制依赖它的内容")))
+                .andExpect(jsonPath("$.messages[0].content").value(containsString("背景不盘点未上传的项目文件")))
+                .andExpect(jsonPath("$.messages[0].content").value(containsString("候选方法及适用条件")))
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("用户明确要求先提问")))
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("只输出译文、只读比较或代码")))
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("执行前确认仍须遵守")))
                 .andExpect(jsonPath("$.messages[1].content").value(containsString("要求撰写分析正文或报告时")))
+                .andExpect(jsonPath("$.messages[1].content").value(containsString("沿用用户给定的分析问题与章节")))
                 .andExpect(jsonPath("$.messages[1].content").value(containsString("Arriaga")))
                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
         assertThat(provider.enhance(request(RESEARCH_REPORT)).sections()).hasSize(4);
         server.verify();
+    }
+
+    @Test
+    void researchGuidanceExplainsMethodsWithoutForcingEmptyResultChapters() {
+        var response = new MockPromptEnhancementProvider().enhance(request(RESEARCH_REPORT));
+        String output = response.sections().stream().filter(section -> section.type() == PromptSectionType.OUTPUT)
+                .findFirst().orElseThrow().content();
+        assertThat(output).contains("候选方法", "适用条件", "结果呈现", "专业建议不冒充已选口径")
+                .doesNotContain("可按研究背景、资料与方法、分析结果、讨论、局限与结论组织正文");
     }
 
     @Test
