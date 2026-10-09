@@ -59,6 +59,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * 在已初始化的本地 PostgreSQL 上串联真实身份认证、业务 Controller、审计写入和统计查询。
+ * 可通过 ANALYTICS_TEST_DB_URL 指定独立测试库；未配置时沿用本地库，不连接生产环境。
  * 禁止自动迁移和初始化已有账号；随机测试数据只在同线程事务内存在，并核查回滚结果。
  * Provider 固定为 Mock，测试证明事件与统计链路，不代替真实模型业务质量或浏览器验收。
  *
@@ -66,11 +67,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 0.1.0
  */
 @SpringBootTest(properties = {
-        "spring.datasource.url=jdbc:postgresql://localhost:5432/prompt_optimizer",
+        "spring.datasource.url=${ANALYTICS_TEST_DB_URL:jdbc:postgresql://localhost:5432/prompt_optimizer}",
         "spring.flyway.enabled=false",
         "spring.session.store-type=none",
         "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration",
         "app.security.login-guard.require-redis=false",
+        // 本测试不验收验证码投递；显式覆盖部署环境，避免读取云凭据或触发真实短信的 Redis 校验。
+        "app.security.sms.enabled=false",
+        "app.security.registration.delivery-mode=disabled",
         "app.provider.mode=mock",
         "app.analytics.zone-id=Asia/Shanghai",
         "app.analytics.trusted-proxies=",
