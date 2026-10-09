@@ -576,11 +576,12 @@ const enterWorkbench = (): void => {
             </label>
             <label v-if="view === 'register'" class="login-modal__agreement">
               <input v-model="agreementAccepted" type="checkbox" required>
+              <!-- 协议在新标签打开，避免已填写的注册表单因跳转而丢失；点击链接不应连带切换勾选框。 -->
               <span>
                 我已阅读并同意
-                <strong>用户协议</strong>
+                <a href="/terms" target="_blank" rel="noopener noreferrer" @click.stop>用户协议</a>
                 与
-                <strong>隐私政策</strong>
+                <a href="/privacy" target="_blank" rel="noopener noreferrer" @click.stop>隐私政策</a>
               </span>
             </label>
             <p v-if="errorMessage" role="alert">{{ errorMessage }}</p>
@@ -1007,9 +1008,14 @@ h2 {
   accent-color: var(--accent);
 }
 
-.login-modal__agreement strong {
+.login-modal__agreement a {
   color: var(--accent);
   font-weight: 600;
+  text-decoration: none;
+}
+
+.login-modal__agreement a:hover {
+  text-decoration: underline;
 }
 
 .login-modal__submit {

@@ -37,7 +37,8 @@ const closeMenu = (): void => {
 
     <div class="landing-nav__links">
       <a href="#features" @click="closeMenu">功能特性</a>
-      <a href="#pricing" @click="closeMenu">定价</a>
+      <!-- 备案期间隐藏「定价」入口：个人性质备案不得展示经营性内容，恢复时与首页版块一并取消注释 -->
+      <!-- <a href="#pricing" @click="closeMenu">定价</a> -->
       <a
         :href="GITHUB_REPOSITORY_URL"
         target="_blank"
@@ -89,7 +90,8 @@ const closeMenu = (): void => {
     class="landing-nav__drawer"
   >
     <a href="#features" @click="closeMenu">功能特性</a>
-    <a href="#pricing" @click="closeMenu">定价</a>
+    <!-- 备案期间隐藏「定价」入口：个人性质备案不得展示经营性内容，恢复时与首页版块一并取消注释 -->
+    <!-- <a href="#pricing" @click="closeMenu">定价</a> -->
     <a
       :href="GITHUB_REPOSITORY_URL"
       target="_blank"

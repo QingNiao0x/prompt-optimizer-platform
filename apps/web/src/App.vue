@@ -10,19 +10,27 @@ const route = useRoute();
 const isWorkbench = computed(() => route.name === 'workbench');
 // 统计表格需要完整可用宽度，其余页面继续使用原有居中容器。
 const isAnalytics = computed(() => route.name === 'admin-analytics');
-const isHome = computed(() => route.name === 'home' || route.name === 'login');
+// 独立布局页面自带顶栏与页脚，不再叠加应用内 WorkbenchTopBar。
+// 用户协议与隐私政策必须能在注册前访问，因此和首页、登录页归为同一类；
+// 若沿用应用内顶栏，会同时出现两套导航，且其中的工作台/历史入口对未登录用户无意义。
+const isStandalone = computed(
+  () => route.name === 'home'
+    || route.name === 'login'
+    || route.name === 'terms'
+    || route.name === 'privacy',
+);
 useUiTheme();
 </script>
 
 <template>
   <div class="app-shell">
-    <WorkbenchTopBar v-if="!isHome" :class="{ 'topbar--analytics': isAnalytics }" />
+    <WorkbenchTopBar v-if="!isStandalone" :class="{ 'topbar--analytics': isAnalytics }" />
     <main
       class="app-main"
       :class="{
         'app-main--workbench': isWorkbench,
         'app-main--analytics': isAnalytics,
-        'app-main--home': isHome,
+        'app-main--home': isStandalone,
       }"
     >
       <RouterView />

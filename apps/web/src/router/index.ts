@@ -16,6 +16,19 @@ const router = createRouter({
       component: () => import('@/pages/HomePage.vue'),
       meta: { title: '首页' },
     },
+    // 用户协议与隐私政策必须在注册前可读，因此保持公开访问，不受登录守卫限制。
+    {
+      path: '/terms',
+      name: 'terms',
+      component: () => import('@/pages/TermsPage.vue'),
+      meta: { title: '用户协议' },
+    },
+    {
+      path: '/privacy',
+      name: 'privacy',
+      component: () => import('@/pages/PrivacyPage.vue'),
+      meta: { title: '隐私政策' },
+    },
     {
       path: '/workbench',
       name: 'workbench',
@@ -50,7 +63,8 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  if (to.name === 'home' || to.name === 'login') {
+  // terms 与 privacy 属于公开页面：注册前的用户需要先读到条款才能勾选同意。
+  if (to.name === 'home' || to.name === 'login' || to.name === 'terms' || to.name === 'privacy') {
     return true;
   }
   const auth = useAuthStore();
