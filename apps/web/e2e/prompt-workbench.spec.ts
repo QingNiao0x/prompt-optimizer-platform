@@ -359,7 +359,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
   await expect(page.getByText('依赖信息', { exact: true })).toBeVisible();
   await expect(page.getByText('目录结构', { exact: true })).toBeVisible();
   await expect(page.getByText('Spring Boot 3', { exact: true })).toBeVisible();
-  await expect(page.getByText('Maven 项目配置，使用 Spring Boot Web。')).toBeVisible();
+  await expect(page.locator('.analysis-result').getByText('Maven 项目配置，使用 Spring Boot Web。', { exact: true })).toBeVisible();
   await expect(page.getByText('1 个依赖 · 3 个目录节点')).toBeVisible();
 
   await openWorkbenchPane(page, 'intent');
@@ -650,14 +650,14 @@ test('普通文档分析只展示内容概要，不套用代码项目信息', as
     mimeType: 'text/plain',
     buffer: Buffer.from('本季度完成核心功能交付，下一季度将重点改善用户体验。'),
   });
-  await expect(page.getByText('个文件已加入上下文', { exact: false })).toBeVisible();
+  await expect(page.getByText('个文件已选择', { exact: false })).toBeVisible();
 
   await page.getByRole('button', { name: '分析上下文资料' }).click();
   await confirmContextTransmission(page, '分析上下文资料');
 
   await expect(page.getByText('普通文档', { exact: true })).toBeVisible();
   await expect(page.getByText('文件内容概要', { exact: true })).toBeVisible();
-  await expect(page.getByText(documentContextSnapshot.fileSnippets[0]?.summary ?? '')).toBeVisible();
+  await expect(page.locator('.analysis-result').getByText(documentContextSnapshot.fileSnippets[0]?.summary ?? '', { exact: true })).toBeVisible();
   await expect(page.getByText('项目概要', { exact: true })).toHaveCount(0);
   await expect(page.getByText('功能模块', { exact: true })).toHaveCount(0);
   await expect(page.getByText('技术栈', { exact: true })).toHaveCount(0);
@@ -859,7 +859,7 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
   await confirmContextTransmission(page, '生成最终提示词');
   await openWorkbenchPane(page, 'context');
   await page.getByText(/查看本次代码选择依据/).click();
-  await expect(page.getByText('src/main.ts', { exact: true })).toBeVisible();
+  await expect(page.locator('.project-index-summary').getByText('src/main.ts', { exact: true })).toBeVisible();
   await expect(page.getByText(/任务中的符号/).first()).toBeVisible();
 
   await page.evaluate(async () => {

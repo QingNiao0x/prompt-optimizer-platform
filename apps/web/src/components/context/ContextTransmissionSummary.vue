@@ -8,7 +8,10 @@ const props = defineProps<{ report: ContextTransmissionReport }>();
 const enhancement = computed(() => props.report.phase === 'ENHANCEMENT' && !props.report.mock);
 const heading = computed(() => props.report.phase === 'ENHANCEMENT' ? '本次增强资料范围'
   : props.report.phase === 'PLAN_CONTEXT' ? 'Plan 准备资料范围' : '上下文分析资料范围');
-const explanation = computed(() => props.report.phase === 'PLAN_CONTEXT'
+const explanation = computed(() => props.report.status === 'PENDING'
+  ? '请求正在处理；实际范围将在返回后核对，当前选中不代表已发送全文。'
+  : props.report.status === 'FAILED' ? '请求未成功，无法确认本次实际选取或模型接收范围。'
+  : props.report.phase === 'PLAN_CONTEXT'
   ? '这里显示后端选取的正文；Plan 使用裁剪后的摘要，最终增强会另行选取资料。'
   : props.report.phase === 'ANALYSIS' ? '这里显示本次后端分析范围，尚未发送给增强模型。'
   : props.report.mock ? '本次为模拟增强，未调用外部模型；这里显示纳入增强输入的正文。'

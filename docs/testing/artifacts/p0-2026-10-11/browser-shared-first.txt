@@ -1,0 +1,265 @@
+
+> @prompt-optimizer/web@0.1.0 test:e2e
+> playwright test e2e/p0-workbench.spec.ts e2e/prompt-workbench.spec.ts e2e/prompt-copy.spec.ts e2e/document-folder-upload.spec.ts e2e/mixed-project-document.spec.ts e2e/project-index-retrieval.spec.ts e2e/history.spec.ts e2e/auth.spec.ts
+
+
+Running 108 tests using 1 worker
+
+(node:25756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok   1 [desktop-chrome] › e2e\auth.spec.ts:5:1 › 邮箱验证码注册成功后自动登录并进入工作台 (3.1s)
+  ok   2 [desktop-chrome] › e2e\auth.spec.ts:23:1 › 未登录不能挂载工作台，错误密码可重试，登录后可刷新和退出 (2.3s)
+  ok   3 [desktop-chrome] › e2e\auth.spec.ts:45:1 › 身份服务不可用时不进入受保护页面 (595ms)
+  ok   4 [desktop-chrome] › e2e\auth.spec.ts:52:1 › 历史记录仅在点击搜索或按回车后加载对应查询结果 (1.9s)
+  ok   5 [desktop-chrome] › e2e\auth.spec.ts:124:1 › 业务接口返回登录失效时清空工作台并跳转，不重放提交 (850ms)
+  ok   6 [desktop-chrome] › e2e\document-folder-upload.spec.ts:17:1 › 文档文件夹保留嵌套路径并完整上传中等大小 TXT 与办公文件 (3.8s)
+  ok   7 [desktop-chrome] › e2e\document-folder-upload.spec.ts:107:1 › 一次选择混合文件夹会索引源码，并在确认后才上传办公文档 (3.9s)
+  ok   8 [desktop-chrome] › e2e\history.spec.ts:16:1 › 历史列表默认第一页 10 条，翻页和每页条数各只请求一次 (2.1s)
+  ok   9 [desktop-chrome] › e2e\history.spec.ts:77:1 › 历史模型显示短名且保留其他模型名称中的数字 (818ms)
+  ok  10 [desktop-chrome] › e2e\history.spec.ts:93:1 › 日期范围选择时结束日高亮跟随指针，且选择过程不发起搜索 (1.9s)
+  ok  11 [desktop-chrome] › e2e\history.spec.ts:160:1 › 接口一次返回全部历史时页面仍只显示当前页 10 条 (906ms)
+  ok  12 [desktop-chrome] › e2e\mixed-project-document.spec.ts:29:1 › 本地样例项目索引与单独方案文件共同参与 Plan 和最终增强 (2.8s)
+  ok  13 [desktop-chrome] › e2e\p0-workbench.spec.ts:70:1 › P0 保存校验失败保留全部草稿，修正后应用并复制 (1.5s)
+  ok  14 [desktop-chrome] › e2e\p0-workbench.spec.ts:93:1 › P0 历史任务 B 添加资料后，最终请求不含 A 的资料 (2.0s)
+  ok  15 [desktop-chrome] › e2e\p0-workbench.spec.ts:108:1 › P0 A 的增强响应迟到，不能覆盖 B 的结果 (1.9s)
+  ok  16 [desktop-chrome] › e2e\p0-workbench.spec.ts:143:1 › P0 未保存修改阻止再次增强和离开，取消离开后仍保留草稿 (5.0s)
+  ok  17 [desktop-chrome] › e2e\p0-workbench.spec.ts:161:1 › P0 显示完整、部分与未发送正文，并只预览本次安全片段 (1.5s)
+  ok  18 [desktop-chrome] › e2e\p0-workbench.spec.ts:188:1 › P0 清空资料会取消进行中的文档上传，迟到响应不恢复引用 (1.4s)
+  ok  19 [desktop-chrome] › e2e\project-index-retrieval.spec.ts:4:1 › 长需求末尾的确认答案能召回中文方案正文，且索引按项目隔离 (375ms)
+  ok  20 [desktop-chrome] › e2e\prompt-copy.spec.ts:119:1 › 资料依据默认折叠，展开后不改变真实剪贴板正文 (1.1s)
+  ok  21 [desktop-chrome] › e2e\prompt-copy.spec.ts:138:3 › 执行规则和未决前提经过复制、编辑、取消编辑、再次增强仍完整：计算 YLL 并撰写研究报告。 (2.9s)
+  ok  22 [desktop-chrome] › e2e\prompt-copy.spec.ts:138:3 › 执行规则和未决前提经过复制、编辑、取消编辑、再次增强仍完整：完善基线匹配与自动填充。 (2.9s)
+  ok  23 [desktop-chrome] › e2e\prompt-copy.spec.ts:200:1 › 主按钮与五个平台使用真实剪贴板，粘贴内容完整且导出事件不含正文 (4.2s)
+  ok  24 [desktop-chrome] › e2e\prompt-copy.spec.ts:236:3 › 剪贴板 reject 时保留完整手动复制文本，不打开平台或记录导出 (1.9s)
+  ok  25 [desktop-chrome] › e2e\prompt-copy.spec.ts:236:3 › 剪贴板 throw 时保留完整手动复制文本，不打开平台或记录导出 (1.9s)
+  ok  26 [desktop-chrome] › e2e\prompt-copy.spec.ts:236:3 › 剪贴板 missing 时保留完整手动复制文本，不打开平台或记录导出 (1.9s)
+  ok  27 [desktop-chrome] › e2e\prompt-copy.spec.ts:258:1 › 弹窗被拦截或抛错时复制仍成功，手动打开链接不重复计数 (2.4s)
+  ok  28 [desktop-chrome] › e2e\prompt-copy.spec.ts:279:1 › 权限等待期间仅预留空白页并禁用重复复制，成功后才导航 (1.5s)
+  ok  29 [desktop-chrome] › e2e\prompt-copy.spec.ts:293:1 › 用户关闭预留页后不自动重开，复制成功提供手动链接 (1.6s)
+  ok  30 [desktop-chrome] › e2e\prompt-copy.spec.ts:306:1 › 编辑保存关闭旧预留页，之后复制的是最新完整内容 (1.8s)
+  ok  31 [desktop-chrome] › e2e\prompt-copy.spec.ts:326:1 › 重新生成期间关闭旧预留页且不把旧复制状态标到新结果 (1.7s)
+  ok  32 [desktop-chrome] › e2e\prompt-copy.spec.ts:349:1 › 离开工作台关闭预留页，迟到的复制回调不打开平台 (1.9s)
+  ok  33 [desktop-chrome] › e2e\prompt-copy.spec.ts:361:1 › 上报503不阻断复制，恢复后沿用同一事件ID重试 (3.0s)
+  ok  34 [desktop-chrome] › e2e\prompt-copy.spec.ts:376:1 › 320px深色界面的菜单、触控目标与手动复制弹窗可用 (1.7s)
+  ok  35 [desktop-chrome] › e2e\prompt-workbench.spec.ts:142:1 › 工作台显示平台发布的模型并允许用户切换 (1.2s)
+  ok  36 [desktop-chrome] › e2e\prompt-workbench.spec.ts:155:1 › 设置页仅保留项目上下文与隐私选项 (851ms)
+  x   37 [desktop-chrome] › e2e\prompt-workbench.spec.ts:252:1 › 用户可以分析项目上下文并生成结构化提示词 (2.4s)
+(node:31628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  38 [desktop-chrome] › e2e\prompt-workbench.spec.ts:396:1 › 科研需求会逐项询问业务细节并在全部回答后生成结果 (1.9s)
+  ok  39 [desktop-chrome] › e2e\prompt-workbench.spec.ts:473:1 › Plan 过期后重新提问并保留仍相同的问题答案 (1.4s)
+  ok  40 [desktop-chrome] › e2e\prompt-workbench.spec.ts:526:1 › 最终生成失败时在计划弹窗内显示可读错误并保留回答 (1.3s)
+  ok  41 [desktop-chrome] › e2e\prompt-workbench.spec.ts:566:1 › 计划会话过期后可以重新生成问题并完成增强 (2.4s)
+  x   42 [desktop-chrome] › e2e\prompt-workbench.spec.ts:634:1 › 普通文档分析只展示内容概要，不套用代码项目信息 (6.2s)
+(node:24340) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  43 [desktop-chrome] › e2e\prompt-workbench.spec.ts:666:1 › 未单独分析上下文时，一键增强仍返回并展示项目分析结果 (2.5s)
+  ok  44 [desktop-chrome] › e2e\prompt-workbench.spec.ts:727:1 › 项目代码与单独上传的方案文件一起进入 Plan 上下文准备 (2.4s)
+  x   45 [desktop-chrome] › e2e\prompt-workbench.spec.ts:787:1 › 用户可以通过 File System Access API 建立本地项目索引 (2.5s)
+(node:10340) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  46 [desktop-chrome] › e2e\prompt-workbench.spec.ts:892:1 › 用户可以暂停并继续本地项目索引 (1.8s)
+  ok  47 [desktop-chrome] › e2e\prompt-workbench.spec.ts:932:1 › 重新打开页面后不恢复之前选择的项目文件夹 (761ms)
+  ok  48 [desktop-chrome] › e2e\prompt-workbench.spec.ts:1009:1 › 重新打开页面后不保留之前上传的单个文件 (1.6s)
+  ok  49 [desktop-chrome] › e2e\prompt-workbench.spec.ts:1030:1 › 关闭 Plan 确认后直接生成，不进入方案确认 (1.6s)
+  ok  50 [desktop-chrome] › e2e\prompt-workbench.spec.ts:1088:1 › 首次主动开启 Plan 后显示说明并记住选择 (1.8s)
+  ok  51 [desktop-chrome] › e2e\prompt-workbench.spec.ts:1148:1 › 首次说明中拒绝 Plan 后立即直接增强并记住选择 (1.0s)
+  ok  52 [desktop-chrome] › e2e\prompt-workbench.spec.ts:1180:1 › 未开启 Plan 时待确认事项折叠，增强结果保持在视口内 (1.3s)
+  ok  53 [desktop-chrome] › e2e\prompt-workbench.spec.ts:1248:1 › Plan 展示推荐依据、支持回看修改并在生成时锁定答案 (1.6s)
+  ok  54 [desktop-chrome] › e2e\prompt-workbench.spec.ts:1294:1 › 上下文分析提醒默认折叠，增强结果保持在视口内 (1.1s)
+(node:24452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  55 [mobile-chrome] › e2e\auth.spec.ts:5:1 › 邮箱验证码注册成功后自动登录并进入工作台 (2.6s)
+  ok  56 [mobile-chrome] › e2e\auth.spec.ts:23:1 › 未登录不能挂载工作台，错误密码可重试，登录后可刷新和退出 (2.4s)
+  ok  57 [mobile-chrome] › e2e\auth.spec.ts:45:1 › 身份服务不可用时不进入受保护页面 (712ms)
+  ok  58 [mobile-chrome] › e2e\auth.spec.ts:52:1 › 历史记录仅在点击搜索或按回车后加载对应查询结果 (2.2s)
+  ok  59 [mobile-chrome] › e2e\auth.spec.ts:124:1 › 业务接口返回登录失效时清空工作台并跳转，不重放提交 (886ms)
+  ok  60 [mobile-chrome] › e2e\document-folder-upload.spec.ts:17:1 › 文档文件夹保留嵌套路径并完整上传中等大小 TXT 与办公文件 (4.2s)
+  ok  61 [mobile-chrome] › e2e\document-folder-upload.spec.ts:107:1 › 一次选择混合文件夹会索引源码，并在确认后才上传办公文档 (4.1s)
+  ok  62 [mobile-chrome] › e2e\history.spec.ts:16:1 › 历史列表默认第一页 10 条，翻页和每页条数各只请求一次 (2.4s)
+  ok  63 [mobile-chrome] › e2e\history.spec.ts:77:1 › 历史模型显示短名且保留其他模型名称中的数字 (1.2s)
+  ok  64 [mobile-chrome] › e2e\history.spec.ts:93:1 › 日期范围选择时结束日高亮跟随指针，且选择过程不发起搜索 (2.2s)
+  ok  65 [mobile-chrome] › e2e\history.spec.ts:160:1 › 接口一次返回全部历史时页面仍只显示当前页 10 条 (1.3s)
+  ok  66 [mobile-chrome] › e2e\mixed-project-document.spec.ts:29:1 › 本地样例项目索引与单独方案文件共同参与 Plan 和最终增强 (3.4s)
+  ok  67 [mobile-chrome] › e2e\p0-workbench.spec.ts:70:1 › P0 保存校验失败保留全部草稿，修正后应用并复制 (1.7s)
+  x   68 [mobile-chrome] › e2e\p0-workbench.spec.ts:93:1 › P0 历史任务 B 添加资料后，最终请求不含 A 的资料 (1.0m)
+(node:24976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   69 [mobile-chrome] › e2e\p0-workbench.spec.ts:108:1 › P0 A 的增强响应迟到，不能覆盖 B 的结果 (1.0m)
+(node:34380) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   70 [mobile-chrome] › e2e\p0-workbench.spec.ts:143:1 › P0 未保存修改阻止再次增强和离开，取消离开后仍保留草稿 (1.0m)
+(node:31404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  71 [mobile-chrome] › e2e\p0-workbench.spec.ts:161:1 › P0 显示完整、部分与未发送正文，并只预览本次安全片段 (2.3s)
+  ok  72 [mobile-chrome] › e2e\p0-workbench.spec.ts:188:1 › P0 清空资料会取消进行中的文档上传，迟到响应不恢复引用 (1.7s)
+  ok  73 [mobile-chrome] › e2e\project-index-retrieval.spec.ts:4:1 › 长需求末尾的确认答案能召回中文方案正文，且索引按项目隔离 (421ms)
+  ok  74 [mobile-chrome] › e2e\prompt-copy.spec.ts:119:1 › 资料依据默认折叠，展开后不改变真实剪贴板正文 (1.4s)
+  ok  75 [mobile-chrome] › e2e\prompt-copy.spec.ts:138:3 › 执行规则和未决前提经过复制、编辑、取消编辑、再次增强仍完整：计算 YLL 并撰写研究报告。 (4.7s)
+  ok  76 [mobile-chrome] › e2e\prompt-copy.spec.ts:138:3 › 执行规则和未决前提经过复制、编辑、取消编辑、再次增强仍完整：完善基线匹配与自动填充。 (4.8s)
+  ok  77 [mobile-chrome] › e2e\prompt-copy.spec.ts:200:1 › 主按钮与五个平台使用真实剪贴板，粘贴内容完整且导出事件不含正文 (5.9s)
+  ok  78 [mobile-chrome] › e2e\prompt-copy.spec.ts:236:3 › 剪贴板 reject 时保留完整手动复制文本，不打开平台或记录导出 (2.3s)
+Warning: truncated output (original token count: 6155)
+Total output lines: 301
+
+  ok  79 [mobile-chrome] › e2e\prompt-copy.spec.ts:236:3 › 剪贴板 throw 时保留完整手动复制文本，不打开平台或记录导出 (2.2s)
+  ok  80 [mobile-chrome] › e2e\prompt-copy.spec.ts:236:3 › 剪贴板 missing 时保留完整手动复制文本，不打开平台或记录导出 (2.3s)
+  ok  81 [mobile-chrome] › e2e\prompt-copy.spec.ts:258:1 › 弹窗被拦截或抛错时复制仍成功，手动打开链接不重复计数 (2.7s)
+  ok  82 [mobile-chrome] › e2e\prompt-copy.spec.ts:279:1 › 权限等待期间仅预留空白页并禁用重复复制，成功后才导航 (1.8s)
+  ok  83 [mobile-chrome] › e2e\prompt-copy.spec.ts:293:1 › 用户关闭预留页后不自动重开，复制成功提供手动链接 (1.9s)
+  ok  84 [mobile-chrome] › e2e\prompt-copy.spec.ts:306:1 › 编辑保存关闭旧预留页，之后复制的是最新完整内容 (2.2s)
+  ok  85 [mobile-chrome] › e2e\prompt-copy.spec.ts:326:1 › 重新生成期间关闭旧预留页且不把旧复制状态标到新结果 (2.0s)
+  ok  86 [mobile-chrome] › e2e\prompt-copy.spec.ts:349:1 › 离开工作台关闭预留页，迟到的复制回调不打开平台 (2.4s)
+  ok  87 [mobile-chrome] › e2e\prompt-copy.spec.ts:361:1 › 上报503不阻断复制，恢复后沿用同一事件ID重试 (3.2s)
+  ok  88 [mobile-chrome] › e2e\prompt-copy.spec.ts:376:1 › 320px深色界面的菜单、触控目标与手动复制弹窗可用 (1.9s)
+  ok  89 [mobile-chrome] › e2e\prompt-workbench.spec.ts:142:1 › 工作台显示平台发布的模型并允许用户切换 (1.4s)
+  ok  90 [mobile-chrome] › e2e\prompt-workbench.spec.ts:155:1 › 设置页仅保留项目上下文与隐私选项 (1.2s)
+  x   91 [mobile-chrome] › e2e\prompt-workbench.spec.ts:252:1 › 用户可以分析项目上下文并生成结构化提示词 (2.7s)
+(node:14956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  92 [mobile-chrome] › e2e\prompt-workbench.spec.ts:396:1 › 科研需求会逐项询问业务细节并在全部回答后生成结果 (2.4s)
+  ok  93 [mobile-chrome] › e2e\prompt-workbench.spec.ts:473:1 › Plan 过期后重新提问并保留仍相同的问题答案 (1.8s)
+  ok  94 [mobile-chrome] › e2e\prompt-workbench.spec.ts:526:1 › 最终生成失败时在计划弹窗内显示可读错误并保留回答 (1.2s)
+  ok  95 [mobile-chrome] › e2e\prompt-workbench.spec.ts:566:1 › 计划会话过期后可以重新生成问题并完成增强 (2.3s)
+  x   96 [mobile-chrome] › e2e\prompt-workbench.spec.ts:634:1 › 普通文档分析只展示内容概要，不套用代码项目信息 (6.5s)
+(node:12132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  97 [mobile-chrome] › e2e\prompt-workbench.spec.ts:666:1 › 未单独分析上下文时，一键增强仍返回并展示项目分析结果 (3.1s)
+  ok  98 [mobile-chrome] › e2e\prompt-workbench.spec.ts:727:1 › 项目代码与单独上传的方案文件一起进入 Plan 上下文准备 (2.5s)
+  x   99 [mobile-chrome] › e2e\prompt-workbench.spec.ts:787:1 › 用户可以通过 File System Access API 建立本地项目索引 (2.8s)
+(node:20104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 100 [mobile-chrome] › e2e\prompt-workbench.spec.ts:892:1 › 用户可以暂停并继续本地项目索引 (2.0s)
+  ok 101 [mobile-chrome] › e2e\prompt-workbench.spec.ts:932:1 › 重新打开页面后不恢复之前选择的项目文件夹 (1.1s)
+  ok 102 [mobile-chrome] › e2e\prompt-workbench.spec.ts:1009:1 › 重新打开页面后不保留之前上传的单个文件 (1.9s)
+  ok 103 [mobile-chrome] › e2e\prompt-workbench.spec.ts:1030:1 › 关闭 Plan 确认后直接生成，不进入方案确认 (1.8s)
+  ok 104 [mobile-chrome] › e2e\prompt-workbench.spec.ts:1088:1 › 首次主动开启 Plan 后显示说明并记住选择 (2.4s)
+  ok 105 [mobile-chrome] › e2e\prompt-workbench.spec.ts:1148:1 › 首次说明中拒绝 Plan 后立即直接增强并记住选择 (1.6s)
+  ok 106 [mobile-chrome] › e2e\prompt-workbench.spec.ts:1180:1 › 未开启 Plan 时待确认事项折叠，增强结果保持在视口内 (1.5s)
+  ok 107 [mobile-chrome] › e2e\prompt-workbench.spec.ts:1248:1 › Plan 展示推荐依据、支持回看修改并在生成时锁定答案 (2.2s)
+  ok 108 [mobile-chrome] › e2e\prompt-workbench.spec.ts:1294:1 › 上下文分析提醒默认折叠，增强结果保持在视口内 (1.3s)
+
+
+  1) [desktop-chrome] › e2e\prompt-workbench.spec.ts:252:1 › 用户可以分析项目上下文并生成结构化提示词 ──────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Maven 项目配置，使用 Spring Boot Web。')
+    Expected: visible
+    Error: strict mode violation: getByText('Maven 项目配置，使用 Spring Boot Web。') resolved to 2 elements:
+        1) <pre data-v-9be6cce9="">Maven 项目配置，使用 Spring Boot Web。↵<artifactId>spring…</pre> aka getByText('Maven 项目配置，使用 Spring Boot Web。 <artifactId>spring-boot-starter-web</artifactId>')
+        2) <p data-v-19645adc="">Maven 项目配置，使用 Spring Boot Web。</p> aka getByText('Maven 项目配置，使用 Spring Boot Web。', { exact: true })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Maven 项目配置，使用 Spring Boot Web。')
+
+
+      360 |   await expect(page.getByText('目录结构', { exact: true })).toBeVisible();
+      361 |   await expect(page.getByText('Spring Boot 3', { exact: true })).toBeVisible();
+    > 362 |   await expect(page.getByText('Maven 项目配置，使用 Spring Boot Web。')).toBeVisible();
+          |                                                                  ^
+      363 |   await expect(page.getByText('1 个依赖 · 3 个目录节点')).toBeVisible();
+      364 |
+      365 |   await openWorkbenchPane(page, 'intent');
+        at E:\MyProject\prompt-optimizer-platform\apps\web\e2e\prompt-workbench.spec.ts:362:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\prompt-workbench-用户可以分析项目上下文并生成结构化提示词-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\prompt-workbench-用户可以分析项目上下文并生成结构化提示词-desktop-chrome\error-context.md
+
+  2) [desktop-chrome] › e2e\prompt-workbench.spec.ts:634:1 › 普通文档分…2555 tokens truncated…ng Boot Web。', { exact: true })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('Maven 项目配置，使用 Spring Boot Web。')
+
+
+      360 |   await expect(page.getByText('目录结构', { exact: true })).toBeVisible();
+      361 |   await expect(page.getByText('Spring Boot 3', { exact: true })).toBeVisible();
+    > 362 |   await expect(page.locator('.analysis-result').getByText('Maven 项目配置，使用 Spring Boot Web。', { exact: true })).toBeVisible();
+          |                                                                  ^
+      363 |   await expect(page.getByText('1 个依赖 · 3 个目录节点')).toBeVisible();
+      364 |
+      365 |   await openWorkbenchPane(page, 'intent');
+        at E:\MyProject\prompt-optimizer-platform\apps\web\e2e\prompt-workbench.spec.ts:362:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\prompt-workbench-用户可以分析项目上下文并生成结构化提示词-mobile-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\prompt-workbench-用户可以分析项目上下文并生成结构化提示词-mobile-chrome\error-context.md
+
+  8) [mobile-chrome] › e2e\prompt-workbench.spec.ts:634:1 › 普通文档分析只展示内容概要，不套用代码项目信息 ────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('个文件已加入上下文')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('个文件已加入上下文')
+
+
+      651 |     buffer: Buffer.from('本季度完成核心功能交付，下一季度将重点改善用户体验。'),
+      652 |   });
+    > 653 |   await expect(page.getByText('个文件已选择', { exact: false })).toBeVisible();
+          |                                                               ^
+      654 |
+      655 |   await page.getByRole('button', { name: '分析上下文资料' }).click();
+      656 |   await confirmContextTransmission(page, '分析上下文资料');
+        at E:\MyProject\prompt-optimizer-platform\apps\web\e2e\prompt-workbench.spec.ts:653:63
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\prompt-workbench-普通文档分析只展示内容概要，不套用代码项目信息-mobile-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\prompt-workbench-普通文档分析只展示内容概要，不套用代码项目信息-mobile-chrome\error-context.md
+
+  9) [mobile-chrome] › e2e\prompt-workbench.spec.ts:787:1 › 用户可以通过 File System Access API 建立本地项目索引 ─
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('src/main.ts', { exact: true })
+    Expected: visible
+    Error: strict mode violation: getByText('src/main.ts', { exact: true }) resolved to 2 elements:
+        1) <span data-v-2e2fc0d3="" title="src/main.ts">src/main.ts</span> aka getByText('src/main.ts').first()
+        2) <span data-v-9be6cce9="" title="src/main.ts">src/main.ts</span> aka getByLabel('本次资料发送范围').getByText('src/main.ts')
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('src/main.ts', { exact: true })
+
+
+      860 |   await openWorkbenchPane(page, 'context');
+      861 |   await page.getByText(/查看本次代码选择依据/).click();
+    > 862 |   await expect(page.locator('.project-index-summary').getByText('src/main.ts', { exact: true })).toBeVisible();
+          |                                                                ^
+      863 |   await expect(page.getByText(/任务中的符号/).first()).toBeVisible();
+      864 |
+      865 |   await page.evaluate(async () => {
+        at E:\MyProject\prompt-optimizer-platform\apps\web\e2e\prompt-workbench.spec.ts:862:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\prompt-workbench-用户可以通过-File-System-Access-API-建立本地项目索引-mobile-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\prompt-workbench-用户可以通过-File-System-Access-API-建立本地项目索引-mobile-chrome\error-context.md
+
+  9 failed
+    [desktop-chrome] › e2e\prompt-workbench.spec.ts:252:1 › 用户可以分析项目上下文并生成结构化提示词 ───────────────────
+    [desktop-chrome] › e2e\prompt-workbench.spec.ts:634:1 › 普通文档分析只展示内容概要，不套用代码项目信息 ────────────────
+    [desktop-chrome] › e2e\prompt-workbench.spec.ts:787:1 › 用户可以通过 File System Access API 建立本地项目索引 ─
+    [mobile-chrome] › e2e\p0-workbench.spec.ts:93:1 › P0 历史任务 B 添加资料后，最终请求不含 A 的资料 ─────────────────
+    [mobile-chrome] › e2e\p0-workbench.spec.ts:108:1 › P0 A 的增强响应迟到，不能覆盖 B 的结果 ─────────────────────
+    [mobile-chrome] › e2e\p0-workbench.spec.ts:143:1 › P0 未保存修改阻止再次增强和离开，取消离开后仍保留草稿 ────────────────
+    [mobile-chrome] › e2e\prompt-workbench.spec.ts:252:1 › 用户可以分析项目上下文并生成结构化提示词 ────────────────────
+    [mobile-chrome] › e2e\prompt-workbench.spec.ts:634:1 › 普通文档分析只展示内容概要，不套用代码项目信息 ─────────────────
+    [mobile-chrome] › e2e\prompt-workbench.spec.ts:787:1 › 用户可以通过 File System Access API 建立本地项目索引 ──
+  99 passed (7.0m)
+

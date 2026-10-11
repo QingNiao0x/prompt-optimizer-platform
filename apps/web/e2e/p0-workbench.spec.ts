@@ -53,7 +53,7 @@ const addMaterial = async (page: Page, path: string, content: string): Promise<v
 
 const loadB = async (page: Page): Promise<void> => {
   // 使用 SPA 路由保留 Pinia，整页 goto 会清空内存并掩盖历史载入缺陷。
-  await page.getByRole('link', { name: '历史', exact: true }).click();
+  await page.locator('nav[aria-label="主导航"] a[href="/history"]').click();
   await page.getByRole('button', { name: '载入', exact: true }).filter({ visible: true }).first().click();
   await expect(page).toHaveURL(/\/workbench$/);
 };
@@ -77,6 +77,7 @@ test('P0 保存校验失败保留全部草稿，修正后应用并复制', async
   await expect(page.locator('#section-OUTPUT')).toHaveValue('');
   await expect(page.locator('#section-OUTPUT')).toBeFocused();
   await expect(page.locator('#section-OUTPUT')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('.el-message')).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath('failed-save-draft.png') });
   await page.locator('#section-OUTPUT').fill('修正后的输出要求');
   await page.getByRole('button', { name: '保存修改', exact: true }).click();
@@ -150,7 +151,7 @@ test('P0 未保存修改阻止再次增强和离开，取消离开后仍保留�
   await page.getByRole('button', { name: '直接增强提示词', exact: true }).click();
   await expect(page.getByText('请先保存或取消结果中的修改，再进行增强。')).toBeVisible();
   expect(extraRequests).toBe(0);
-  await page.getByRole('link', { name: '历史', exact: true }).click();
+  await page.locator('nav[aria-label="主导航"] a[href="/history"]').click();
   const dialog = page.getByRole('dialog', { name: '尚未保存的修改' });
   await dialog.getByRole('button', { name: '继续编辑', exact: true }).click();
   await expect(page).toHaveURL(/\/workbench$/);
@@ -167,7 +168,8 @@ test('P0 显示完整、部分与未发送正文，并只预览本次安全片�
     },
   } } }));
   await page.goto('/workbench');
-  await addMaterial(page, 'full.txt', '完整正文');
+  // 后端会移除 ./ 前缀；发送报告需要按同一文件核对，不能误报成未发送。
+  await addMaterial(page, './full.txt', '完整正文');
   await addMaterial(page, 'partial.txt', '选取部分，后续内容未进入模型');
   await addMaterial(page, 'omitted.txt', 'OMITTED_RAW_MARKER');
   await openWorkbenchPane(page, 'intent');
@@ -182,7 +184,33 @@ test('P0 显示完整、部分与未发送正文，并只预览本次安全片�
   await expect(report.locator('[data-path="partial.txt"] pre')).toHaveText('选取部分');
   await expect(report).not.toContainText('OMITTED_RAW_MARKER');
   await expect(report).not.toContainText('后续内容未进入模型');
+  await expect(page.locator('.el-message')).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath('actual-context-range.png') });
+});
+
+test('P0 前端预算截断仍列出未发送文件，实际请求不含省略正文', async ({ page }) => {
+  let sentFiles: ContextFileInput[] = [];
+  await page.route('**/api/v1/optimizations', async route => {
+    sentFiles = route.request().postDataJSON().context.files;
+    await route.fulfill({ json: { requestId: 'p0-front-budget', data: {
+      ...result, provider: { provider: 'synthetic', model: 'fixture', mock: false }, contextReport: { ...context,
+        fileSnippets: sentFiles.map(file => ({ ...file, summary: '', truncated: false })),
+      },
+    } } });
+  });
+  await page.goto('/workbench');
+  await addMaterial(page, 'large.txt', '已选择的长资料。'.repeat(20_000));
+  await addMaterial(page, 'omitted.txt', 'FRONTEND_OMITTED_MARKER');
+  await openWorkbenchPane(page, 'intent');
+  await page.getByLabel('原始提示词').fill('整理资料。');
+  await page.getByRole('button', { name: '直接增强提示词', exact: true }).click();
+  await openWorkbenchPane(page, 'context');
+  const report = page.getByRole('region', { name: '本次资料发送范围' });
+  await expect(report.locator('[data-path="large.txt"]')).toContainText('部分发送');
+  await expect(report.locator('[data-path="omitted.txt"]')).toContainText('未发送正文');
+  expect(sentFiles.map(file => file.path)).toEqual(['large.txt']);
+  expect(sentFiles[0]?.content.length).toBe(120_000);
+  expect(JSON.stringify(sentFiles)).not.toContain('FRONTEND_OMITTED_MARKER');
 });
 
 test('P0 清空资料会取消进行中的文档上传，迟到响应不恢复引用', async ({ page }) => {

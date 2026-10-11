@@ -1,0 +1,130 @@
+
+> @prompt-optimizer/web@0.1.0 test
+> vitest run
+
+
+ RUN  v3.2.7 E:/MyProject/prompt-optimizer-platform/apps/web
+
+ ✓ src/features/analytics/analyticsPresentation.test.ts (7 tests) 65ms
+ ✓ src/features/analytics/analyticsDeliveryQueue.test.ts (9 tests) 66ms
+ ✓ src/composables/useUiTheme.test.ts (3 tests) 331ms
+stdout | src/composables/useProjectFilesLifecycle.test.ts > P0 selected-file lifecycle > terminates the old reader and cannot clear a new reader when its callback arrives late
+[file-upload] start { total: 1, at: '2026-10-11T09:44:06.182Z' }
+
+stdout | src/composables/useProjectFilesLifecycle.test.ts > P0 selected-file lifecycle > terminates the old reader and cannot clear a new reader when its callback arrives late
+[file-upload] scan finished {
+  fileListLength: 1,
+  scanned: 1,
+  selected: 1,
+  pathIgnored: 0,
+  sensitive: 0,
+  unsupported: 0,
+  oversized: 0,
+  tookMs: 5
+}
+
+stdout | src/composables/useProjectFilesRouting.test.ts > document upload routing > should protect document tails when many small documents exceed the inline total budget
+[file-upload] start { total: 70, at: '2026-10-11T09:44:06.190Z' }
+
+stdout | src/composables/useProjectFilesRouting.test.ts > document upload routing > should protect document tails when many small documents exceed the inline total budget
+[file-upload] scan finished {
+  fileListLength: 70,
+  scanned: 70,
+  selected: 70,
+  pathIgnored: 0,
+  sensitive: 0,
+  unsupported: 0,
+  oversized: 0,
+  tookMs: 10
+}
+
+ ✓ src/features/project-index/fileSystemDirectorySource.test.ts (10 tests) 35ms
+ ✓ src/workers/projectIndex.worker.test.ts (1 test) 299ms
+stdout | src/composables/useProjectFilesRouting.test.ts > document upload routing > should protect document tails when many small documents exceed the inline total budget
+[file-upload] read finished { files: 70, tookMs: 23 }
+
+stdout | src/composables/useProjectFilesRouting.test.ts > document upload routing > should upload nested office documents and reject protected entries before invoking the uploader
+[file-upload] start { total: 5, at: '2026-10-11T09:44:06.255Z' }
+
+stdout | src/composables/useProjectFilesLifecycle.test.ts > P0 selected-file lifecycle > terminates the old reader and cannot clear a new reader when its callback arrives late
+[file-upload] start { total: 1, at: '2026-10-11T09:44:06.256Z' }
+
+stdout | src/composables/useProjectFilesRouting.test.ts > document upload routing > should upload nested office documents and reject protected entries before invoking the uploader
+[file-upload] scan finished {
+  fileListLength: 5,
+  scanned: 5,
+  selected: 3,
+  pathIgnored: 0,
+  sensitive: 2,
+  unsupported: 0,
+  oversized: 0,
+  tookMs: 3
+}
+
+stdout | src/composables/useProjectFilesLifecycle.test.ts > P0 selected-file lifecycle > terminates the old reader and cannot clear a new reader when its callback arrives late
+[file-upload] scan finished {
+  fileListLength: 1,
+  scanned: 1,
+  selected: 1,
+  pathIgnored: 0,
+  sensitive: 0,
+  unsupported: 0,
+  oversized: 0,
+  tookMs: 3
+}
+
+stdout | src/composables/useProjectFilesRouting.test.ts > document upload routing > should upload nested office documents and reject protected entries before invoking the uploader
+[file-upload] read finished { files: 3, tookMs: 16 }
+
+ ✓ src/composables/useProjectFilesRouting.test.ts (2 tests) 113ms
+stdout | src/composables/useProjectFilesLifecycle.test.ts > P0 selected-file lifecycle > terminates the old reader and cannot clear a new reader when its callback arrives late
+[file-upload] read finished { files: 1, tookMs: 53 }
+
+stdout | src/composables/useProjectFilesLifecycle.test.ts > P0 selected-file lifecycle > cleans up a document completed after reset without returning its reference or old warnings
+[file-upload] start { total: 1, at: '2026-10-11T09:44:06.327Z' }
+
+stdout | src/composables/useProjectFilesLifecycle.test.ts > P0 selected-file lifecycle > cleans up a document completed after reset without returning its reference or old warnings
+[file-upload] scan finished {
+  fileListLength: 1,
+  scanned: 1,
+  selected: 1,
+  pathIgnored: 0,
+  sensitive: 0,
+  unsupported: 0,
+  oversized: 0,
+  tookMs: 1
+}
+
+stdout | src/composables/useProjectFilesLifecycle.test.ts > P0 selected-file lifecycle > cleans up a document completed after reset without returning its reference or old warnings
+[file-upload] read finished { files: 1, tookMs: 61 }
+
+ ✓ src/composables/useProjectFilesLifecycle.test.ts (2 tests) 223ms
+ ✓ src/stores/optimizationLifecycle.test.ts (12 tests) 48ms
+ ✓ src/composables/useProjectFiles.test.ts (14 tests) 65ms
+ ✓ src/stores/optimization.test.ts (14 tests) 80ms
+ ✓ src/services/promptOptimizerApi.test.ts (4 tests) 14ms
+ ✓ src/composables/usePlanModePreference.test.ts (4 tests) 15ms
+ ✓ src/features/project-index/projectIndexer.test.ts (20 tests) 1037ms
+   ✓ indexProject > should write a large file in bounded batches and reuse its completed fingerprint  472ms
+   ✓ indexProject > should stream every eligible source file without stopping at one thousand files  352ms
+ ✓ src/features/optimization/optimizationRequest.test.ts (8 tests) 11ms
+ ✓ src/stores/auth.test.ts (8 tests) 27ms
+ ✓ src/features/context-analysis/contextTransmission.test.ts (7 tests) 12ms
+ ✓ src/features/auth/useSmsChallenge.test.ts (2 tests) 23ms
+ ✓ src/features/analytics/analyticsRouteCapture.test.ts (2 tests) 26ms
+ ✓ src/features/document-upload/documentUploader.test.ts (1 test) 9ms
+ ✓ src/features/project-index/indexedDbProjectIndexRepository.test.ts (2 tests) 10ms
+ ✓ src/features/context-analysis/contextPresentation.test.ts (3 tests) 10ms
+ ✓ src/features/auth/registrationAccount.test.ts (5 tests) 10ms
+ ✓ src/composables/fileDrop.test.ts (2 tests) 10ms
+ ✓ src/composables/useProjectIndex.test.ts (2 tests) 10ms
+ ✓ src/features/project-context-config/projectContextConfig.test.ts (4 tests) 8ms
+ ✓ src/features/optimization/planDraftRecovery.test.ts (3 tests) 10ms
+ ✓ src/services/http.test.ts (2 tests) 4ms
+
+ Test Files  27 passed (27)
+      Tests  153 passed (153)
+   Start at  17:44:05
+   Duration  3.09s (transform 2.46s, setup 0ms, collect 8.58s, tests 2.57s, environment 11ms, prepare 5.89s)
+
+

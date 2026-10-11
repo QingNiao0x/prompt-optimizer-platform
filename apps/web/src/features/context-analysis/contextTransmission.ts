@@ -27,14 +27,16 @@ export interface ContextTransmissionReport {
 
 const binaryLanguages = new Set(['bmp', 'doc', 'docx', 'dps', 'et', 'gif', 'jpeg', 'jpg', 'odt',
   'ods', 'odp', 'pdf', 'png', 'ppt', 'pptx', 'webp', 'wps', 'xls', 'xlsx']);
-const sourcePath = (path: string): string => path.replace(/\\/g, '/').replace(/#chunk-\d+$/, '');
+// 与后端相同地移除空白和 ./ 前缀，保留大小写，不能合并 Linux 上的独立文件。
+const normalizedPath = (path: string): string => path.trim().replace(/\\/g, '/').replace(/^(?:\.\/)+/, '');
+const sourcePath = (path: string): string => normalizedPath(path).replace(/#chunk-\d+$/, '');
 
 /** 包含预算前所有候选，保留前端省略项；引用文档和二进制不能按内联字符推断全文覆盖。 */
 export const createContextTransmission = (
   candidates: readonly ContextFileInput[], prepared: readonly ContextFileInput[], phase: TransmissionPhase,
 ): ContextTransmissionReport => {
   // 已选择列表和检索候选可能引用同一个文件；按精确路径去重，不能把重复引用算成两份正文。
-  const uniqueCandidates = [...new Map(candidates.map(file => [file.path, file])).values()];
+  const uniqueCandidates = [...new Map(candidates.map(file => [normalizedPath(file.path), file])).values()];
   const paths = [...new Set([...uniqueCandidates, ...prepared].map(file => sourcePath(file.path)))];
   return { phase, status: 'PENDING', entries: paths.map(path => {
     const originals = uniqueCandidates.filter(file => sourcePath(file.path) === path);

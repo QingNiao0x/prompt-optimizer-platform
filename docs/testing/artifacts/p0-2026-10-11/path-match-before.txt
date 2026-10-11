@@ -1,0 +1,43 @@
+
+> @prompt-optimizer/web@0.1.0 test
+> vitest run src/features/context-analysis/contextTransmission.test.ts
+
+
+ RUN  v3.2.7 E:/MyProject/prompt-optimizer-platform/apps/web
+
+ ❯ src/features/context-analysis/contextTransmission.test.ts (8 tests | 1 failed) 11ms
+   ✓ P0 actual context transmission evidence > deduplicates candidates and matches backend paths: readme.txt 2ms
+   × P0 actual context transmission evidence > deduplicates candidates and matches backend paths:  ././readme.txt  7ms
+     → expected 'NONE' to be 'FULL' // Object.is equality
+   ✓ P0 actual context transmission evidence > keeps files omitted by the browser budget and distinguishes partial submissions 1ms
+   ✓ P0 actual context transmission evidence > reports backend snippet truncation and omission without assuming all submitted files were used 0ms
+   ✓ P0 actual context transmission evidence > never rebuilds a protected preview from the original content 0ms
+   ✓ P0 actual context transmission evidence > uses document extraction coverage, not empty inline content, for full versus partial selection 0ms
+   ✓ P0 actual context transmission evidence > does not call retrieved chunks or binary extraction a complete original file 0ms
+   ✓ P0 actual context transmission evidence > never declares delivery success after a failed request and keeps omission evidence 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/context-analysis/contextTransmission.test.ts > P0 actual context transmission evidence > deduplicates candidates and matches backend paths:  ././readme.txt 
+AssertionError: expected 'NONE' to be 'FULL' // Object.is equality
+
+Expected: "FULL"
+Received: "NONE"
+
+ ❯ src/features/context-analysis/contextTransmission.test.ts:17:48
+     15|     expect(pending.entries[0]?.contentStatus).toBe('PENDING');
+     16|     const complete = completeContextTransmission(pending, snapshot([sn…
+     17|     expect(complete.entries[0]?.contentStatus).toBe('FULL');
+       |                                                ^
+     18|     expect(complete.entries[0]?.sourceCharacters).toBe(original.conten…
+     19|     expect(complete.entries[0]?.preview).toBe(original.content);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  17:51:01
+   Duration  476ms (transform 71ms, setup 0ms, collect 58ms, tests 11ms, environment 0ms, prepare 125ms)
+
+

@@ -59,14 +59,22 @@ describe('P0 task lifecycle regressions', () => {
     vi.mocked(optimizePrompt).mockResolvedValue({ requestId: 'b', data: result('B 结果') });
   });
 
-  it('A attachments cannot reappear after loading B and adding a new file', async () => {
+  it.each(['attachment', 'folder', 'index'] as const)(
+    'A attachments cannot reappear after loading B and adding a new %s', async mode => {
     const store = useOptimizationStore();
     store.selectedModelId = 'chosen-model';
     store.addFile({ path: 'A.txt', language: 'text', content: 'A_PRIVATE_MARKER' });
     store.loadFromHistory(history());
-    store.addFile({ path: 'B.txt', language: 'text', content: 'B_ONLY' });
+    const fileB = { path: 'B.txt', language: 'text', content: 'B_ONLY' };
+    if (mode === 'attachment') store.addFile(fileB);
+    else if (mode === 'folder') store.setFiles([fileB]);
+    else {
+      store.setProjectIndex({ ...readyIndex(), id: 'project-b', rootName: 'project-b' });
+      vi.mocked(retrieveProjectContextWithReport).mockResolvedValueOnce({ files: [fileB], selections: [], totalCharacters: 6 });
+    }
     await store.runOptimization();
-    expect(store.files.map(file => file.path)).toEqual(['B.txt']);
+    expect(store.files.map(file => file.path)).toEqual(mode === 'index' ? [] : ['B.txt']);
+    expect(vi.mocked(optimizePrompt).mock.lastCall?.[0].context.files.map(file => file.path)).toEqual(['B.txt']);
     expect(JSON.stringify(vi.mocked(optimizePrompt).mock.calls)).not.toContain('A_PRIVATE_MARKER');
     expect(store.selectedModelId).toBe('chosen-model');
   });
@@ -175,6 +183,9 @@ describe('P0 task lifecycle regressions', () => {
   it('invalidates Plan creation and drafts on identity or workspace change while keeping model preferences', async () => {
     const pendingPlan = deferred<Awaited<ReturnType<typeof createOptimizationPlan>>>();
     vi.mocked(createOptimizationPlan).mockReturnValueOnce(pendingPlan.promise);
+    const auth = useAuthStore();
+    auth.user = { userId: 'a', tenantId: 'tenant-a', workspaceId: 'workspace-a',
+      email: 'synthetic-a@example.test', displayName: 'A', platformAdmin: false };
     const store = useOptimizationStore();
     store.rawPrompt = 'A';
     store.includeExamples = true;
@@ -182,7 +193,6 @@ describe('P0 task lifecycle regressions', () => {
     store.addFile({ path: 'A.txt', language: 'text', content: 'A' });
     store.resultDraft = result('A draft').sections;
     const pending = store.createOptimizationPlan();
-    const auth = useAuthStore();
     auth.user = { userId: 'b', tenantId: 'tenant-b', workspaceId: 'workspace-b',
       email: 'synthetic@example.test', displayName: 'B', platformAdmin: false };
     pendingPlan.resolve({ requestId: 'a', data: { planId: 'old-a', summary: 'old', templateCode: 'GENERAL',

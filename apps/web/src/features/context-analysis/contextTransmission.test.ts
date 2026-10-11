@@ -9,11 +9,11 @@ const snapshot = (fileSnippets: FileSnippet[] = []): ContextSnapshot => ({ custo
 const snippet = (source: ContextFileInput, truncated = false): FileSnippet => ({ ...source, summary: '', truncated });
 
 describe('P0 actual context transmission evidence', () => {
-  it('deduplicates candidates and marks all submitted plain text as full', () => {
-    const original = file('readme.txt');
+  it.each(['readme.txt', ' ././readme.txt '])('deduplicates candidates and matches backend paths: %s', path => {
+    const original = file(path);
     const pending = createContextTransmission([original, original], [original], 'ENHANCEMENT');
     expect(pending.entries[0]?.contentStatus).toBe('PENDING');
-    const complete = completeContextTransmission(pending, snapshot([snippet(original)]), 'p0-full');
+    const complete = completeContextTransmission(pending, snapshot([snippet({ ...original, path: 'readme.txt' })]), 'p0-full');
     expect(complete.entries[0]?.contentStatus).toBe('FULL');
     expect(complete.entries[0]?.sourceCharacters).toBe(original.content.length);
     expect(complete.entries[0]?.preview).toBe(original.content);

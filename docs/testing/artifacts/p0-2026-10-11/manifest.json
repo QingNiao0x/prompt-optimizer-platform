@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-11T09:55:28.803831+00:00",
+  "baselineCommit": "44a5840",
+  "verificationHead": "ab52d137ff7f4fb14b9bc87cf85de72746ba5ccb",
+  "workingTreeNote": "仓库在工作中出现外部提交；最终以文件 SHA256 标识当前修复，未由本轮执行 commit/push。",
+  "scope": "P0 frontend task isolation, edit draft retention, context transmission evidence and comparable fixtures",
+  "sourceHashes": {
+    "apps/web/src/stores/optimization.ts": {
+      "beforeSha256": "6bea39597c53cee4eac2704c53961bd89598278939af16728670b1a385ea6b5b",
+      "currentSha256": "85c1f91435e480cb146fdbb4883fe4098087a2674b44f3f94c9753e63aaf0b26"
+    },
+    "apps/web/src/pages/PromptWorkbenchPage.vue": {
+      "beforeSha256": "15d1b0ed327ec94881012a7b3df6548732005f06f5bb0de6c4bdcbe07056f988",
+      "currentSha256": "5e74b980a1e2a5b55ad77202b1efd23ac976da383a86e35a57c66cdb971b6b2c"
+    },
+    "apps/web/src/composables/useProjectFiles.ts": {
+      "beforeSha256": "4b40b6b88d0637e4c98ad937b48bab37ac5dd1e7a01a24913ee8344d30423aed",
+      "currentSha256": "83286e3a66fd246b6f2ad24502968318f565ab4541dac48a3218377313e10c21"
+    },
+    "apps/web/src/components/prompt/OptimizationResultPanel.vue": {
+      "beforeSha256": "84b18b625756dc740c2fd567b3af4a851ba911c7cd612729157dba6458d96c26",
+      "currentSha256": "a97f3ddf191bad5d82db5b90308765c7b954de1385f4800f92ccce583c274254"
+    },
+    "apps/web/src/components/context/ContextPanel.vue": {
+      "beforeSha256": "c5b9b78338cf2ffcf7a209c7dbed9629d23635830e941e210ce774f5074f69f2",
+      "currentSha256": "9f378fdb70d4bbf3068631d3cef85c04ada2bd26e05c64c2fdb46c2538da008c"
+    },
+    "apps/web/src/components/context/ContextTransmissionSummary.vue": {
+      "beforeSha256": null,
+      "currentSha256": "848273bdb3f3a178e4f166b0fe5468119bf66e221e30367d318993985f3fd545"
+    },
+    "apps/web/src/features/context-analysis/contextTransmission.ts": {
+      "beforeSha256": null,
+      "currentSha256": "1820cecafde277ae79057a37e8dbb630cd444088c118778956fd6dff9a8d5fa0"
+    },
+    "apps/web/src/stores/optimizationLifecycle.test.ts": {
+      "beforeSha256": null,
+      "currentSha256": "9092b238a8ab39885d14011a66cfe568b23ac0df3b2ee276ddd85584b696b79f"
+    },
+    "apps/web/src/composables/useProjectFilesLifecycle.test.ts": {
+      "beforeSha256": null,
+      "currentSha256": "98ba95f0019b40e1babc1d71d99acf7b90561b8c9ae0b6fa0b5c8efe2ea0e3ca"
+    },
+    "apps/web/src/features/context-analysis/contextTransmission.test.ts": {
+      "beforeSha256": null,
+      "currentSha256": "54e9f333be2617998687a9fc389f8e41507493c6cf6dfcef261a6514aeb3c73b"
+    },
+    "apps/web/e2e/p0-workbench.spec.ts": {
+      "beforeSha256": null,
+      "currentSha256": "9ecc5f012e1e290b80ed86e4a4db1e8713734e0a952b18562d3f47013d38ddc9"
+    },
+    "apps/web/e2e/prompt-workbench.spec.ts": {
+      "beforeSha256": "e5ce9c1258f1d4df554507199ba81145531f24c9fc2bd9d0a7ce5426dcae73dd",
+      "currentSha256": "7d5e683c8e696b936242b7571ad14ad754ec6f081a08b33713d1ebc6857b2778"
+    }
+  },
+  "qualityFixtures": {
+    "path": "docs/testing/fixtures/p0-quality-baseline-2026-10-11.json",
+    "sha256": "f4fa2a5e4ca1e45f098c438985044414fd0a0baed52bb3e3fd7ac8a177f12d7e",
+    "count": 8,
+    "status": "FROZEN_INPUTS_NOT_RERUN"
+  },
+  "historicalEvidence": {
+    "docs/testing/直接增强正文目标保护与真实复验-2026-10-11.md": "790064f21eb0b70173c795a3888ea79f8b5e9a24faec35ccbef148d122095e4b",
+    "docs/testing/确认范围与冲突边界真实复验-2026-10-09.md": "b2bb4de398e09c835054873ceabfe746eca8036cbb7439701d1a87760b2e946a",
+    "docs/testing/evidence/direct-report-delivery-2026-10-11/cases-flash.json": "903c75ab493755a2d5423f9b53f4c9ad399111e229d38849006120e6288700fd",
+    "docs/testing/evidence/direct-report-delivery-2026-10-11/cases-pro.json": "7c64698553ddc14fe8108a6fb6fe62cde275c57ca551bf12836336d03ef255cb",
+    "docs/testing/evidence/direct-report-delivery-2026-10-11/baseline-summary.json": "e331b9f870929012a4c21717b9a788da0541f90fdeb633310eff088e73c1c0c2",
+    "docs/testing/evidence/direct-report-delivery-2026-10-11/archive-files-sha256.json": "6ee15038b4021062f1db0aa2ae6a4f6b84c0e739d9836f7a7f405f2d32ddc439"
+  },
+  "verification": {
+    "redStore": {
+      "total": 7,
+      "passed": 2,
+      "failed": 5
+    },
+    "redBrowser": {
+      "total": 1,
+      "failed": 1
+    },
+    "unitFinal": {
+      "files": 27,
+      "passed": 154,
+      "failed": 0,
+      "exitCode": 0
+    },
+    "browserSharedFirst": {
+      "total": 108,
+      "passed": 99,
+      "failed": 9,
+      "exitCode": 1,
+      "failureKinds": [
+        "duplicate/text locator",
+        "updated selection label",
+        "mobile icon locator"
+      ]
+    },
+    "browserFinalReports": {
+      "browser-final.json": {
+        "startTime": "2026-10-11T09:38:09.810Z",
+        "duration": 55059.683,
+        "expected": 20,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "browser-p0-final.json": {
+        "startTime": "2026-10-11T09:39:48.105Z",
+        "duration": 51060.839,
+        "expected": 14,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "browser-path-final.json": {
+        "startTime": "2026-10-11T09:52:57.846Z",
+        "duration": 15812.482,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    "finalUniqueBrowserCases": 110,
+    "build": {
+      "command": "npm run build",
+      "includes": "vue-tsc -b && vite build",
+      "exitCode": 0
+    },
+    "modelCallsThisRound": 0,
+    "additionalPathRegressionRed": {
+      "total": 8,
+      "passed": 7,
+      "failed": 1
+    }
+  },
+  "unverified": [
+    "normal account and actual backend end to end",
+    "external model actual receipt or use",
+    "new downstream quality comparison",
+    "resource TTL capacity multi instance and cross tab",
+    "all Java and database regressions",
+    "G1-G8 release gates"
+  ],
+  "artifactsSha256": {
+    "docs/testing/artifacts/p0-2026-10-11/browser-before.txt": "820cde1e75f3b06b1fa480777f1524d77fbdea22b748996aec80e31972c3074d",
+    "docs/testing/artifacts/p0-2026-10-11/browser-final.json": "58cdc7e6bd6ec7a136cf88b9ea82b2b7a927dd1a95869de0d2fb94cc53b38245",
+    "docs/testing/artifacts/p0-2026-10-11/browser-p0-final.json": "bb1b254866d85aeedc540170bf2db68ec26cd9e1d250e5ec31b8910523bdfd41",
+    "docs/testing/artifacts/p0-2026-10-11/browser-path-final.json": "bcc3f1a891f2d7361e61102d28e3c97d469fbc4ac27528eb7a505ea6acffffb5",
+    "docs/testing/artifacts/p0-2026-10-11/browser-shared-first.txt": "41838c3a89a2a11942d1d5228b23223381a9c5467317531b7d982c22804baeb6",
+    "docs/testing/artifacts/p0-2026-10-11/build-before-path-adjustment.txt": "e2983724d49f893ec5f6b15049f00f3ae86ee15224e9bd9f5b07362ce493aef5",
+    "docs/testing/artifacts/p0-2026-10-11/build-final.txt": "d2b682198adb6ffa0e6943d823afd6ddfd3427fbde4d9e1f6c9b1fcca8a6f35a",
+    "docs/testing/artifacts/p0-2026-10-11/context-range-desktop.png": "b704722c4bb2665d02fc8b61a722fa2a64a1d0a10d9ff5cd5cdf6fe72cff96e8",
+    "docs/testing/artifacts/p0-2026-10-11/context-range-mobile.png": "7c74e1c3b0a20ac89e2019d3a82e47760f368386d03d09811817ebe5b9323a68",
+    "docs/testing/artifacts/p0-2026-10-11/context-range-path-desktop.png": "0be0c559295b7736949c1d7c96cd475fdbb77b8ddf5df8db18a6338bd130bd2b",
+    "docs/testing/artifacts/p0-2026-10-11/context-range-path-mobile.png": "bef145658669e59b5f638c42ec2f8aee5879bcc9c815c56e621e9a36b10dabfd",
+    "docs/testing/artifacts/p0-2026-10-11/p0-workbench-P0-保存校验失败保留全部草稿，修正后应用并复制-desktop-chrome-failed-save-draft.png": "21f6df9c15c39cd2608da9a20286d204018ca8fa096b53af6611cbf5e2006b70",
+    "docs/testing/artifacts/p0-2026-10-11/p0-workbench-P0-保存校验失败保留全部草稿，修正后应用并复制-mobile-chrome-failed-save-draft.png": "a97fb8e614394afcf660396e6ecb4f4746c0e7ea35e2cefd49c9e23072e7a1e8",
+    "docs/testing/artifacts/p0-2026-10-11/p0-workbench-P0-显示完整、部分与未发送正文，并只预览本次安全片段-desktop-chrome-actual-context-range.png": "e90743050a6f3a198cc625ed0a83ea2cca669b17e34dbc6a79daa8a5f14f796e",
+    "docs/testing/artifacts/p0-2026-10-11/p0-workbench-P0-显示完整、部分与未发送正文，并只预览本次安全片段-mobile-chrome-actual-context-range.png": "f396c6e569d55198ffc1348c783e7386cdb46aa1e83bf77ea6e453744c48f1b1",
+    "docs/testing/artifacts/p0-2026-10-11/path-match-before.txt": "4167aedad991ec141bd83cf8cd61eb7e21b89cdb3c040661138a9aaa8189a369",
+    "docs/testing/artifacts/p0-2026-10-11/save-after-desktop.png": "7d0a81455a700c185ea7e414ff1d74ec9e7213e76724a0bdddfe011a6401c575",
+    "docs/testing/artifacts/p0-2026-10-11/save-after-mobile.png": "b2a1c5844fd3d54059eb1de09d5884f045e18ede9d4a36ee3ac1fa5ad2a81de9",
+    "docs/testing/artifacts/p0-2026-10-11/save-before.png": "cd8a27211a284969ea2c4f1acf64758b3fb25f50a7ac4cf41c8c6767cc2a47b3",
+    "docs/testing/artifacts/p0-2026-10-11/shared-first-failures/p0-workbench-P0-A-的增强响应迟到，不能覆盖-B-的结果-mobile-chrome/error-context.md": "9f969058ab5687786fc0ef1f75b38c8e04203819d8fcc6ea5b5cb65cec62469a",
+    "docs/testing/artifacts/p0-2026-10-11/shared-first-failures/p0-workbench-P0-历史任务-B-添加资料后，最终请求不含-A-的资料-mobile-chrome/error-context.md": "db405bb7f1883393b5c69e09ff3449dc452d823c6fe02010e3d26b02beee0ff5",
+    "docs/testing/artifacts/p0-2026-10-11/shared-first-failures/p0-workbench-P0-未保存修改阻止再次增强和离开，取消离开后仍保留草稿-mobile-chrome/error-context.md": "da1bab83f8fdf485520e41e59e05b9393130e21de8be4cd4e5f92bda81f1d4a9",
+    "docs/testing/artifacts/p0-2026-10-11/shared-first-failures/prompt-workbench-普通文档分析只展示内容概要，不套用代码项目信息-desktop-chrome/error-context.md": "301ae0ccba365dc7fbabb2cd0229a114308d3fc9d63978868ca1d4db725cbdba",
+    "docs/testing/artifacts/p0-2026-10-11/shared-first-failures/prompt-workbench-普通文档分析只展示内容概要，不套用代码项目信息-mobile-chrome/error-context.md": "d4a6997243c72b6ba55f0c581049d73c9a3f19b08a0d590c104adb5bb7295838",
+    "docs/testing/artifacts/p0-2026-10-11/shared-first-failures/prompt-workbench-用户可以分析项目上下文并生成结构化提示词-desktop-chrome/error-context.md": "597d21dc6c200685bf90e2a97383f760293b8dce2084ae62dd0da27295fc3e0c",
+    "docs/testing/artifacts/p0-2026-10-11/shared-first-failures/prompt-workbench-用户可以分析项目上下文并生成结构化提示词-mobile-chrome/error-context.md": "e9ba85c1328c511de063b3c0237df418fbf1833cc0fd60e883e7aacbe1e9ef63",
+    "docs/testing/artifacts/p0-2026-10-11/shared-first-failures/prompt-workbench-用户可以通过-File-System-Access-API-建立本地项目索引-desktop-chrome/error-context.md": "2866af7929032ab1282a7dab06ce79330be8b147b6a615980ba659523d0bcc57",
+    "docs/testing/artifacts/p0-2026-10-11/shared-first-failures/prompt-workbench-用户可以通过-File-System-Access-API-建立本地项目索引-mobile-chrome/error-context.md": "2ff810e745500beabfc8e085784345e8759cab4402001a9b4d9e63272007f3a5",
+    "docs/testing/artifacts/p0-2026-10-11/store-before.txt": "d1b17c015ad2f46e21f5b8ce1f4263f4461ae2330b9c0277cc41f4a4496ec36a",
+    "docs/testing/artifacts/p0-2026-10-11/unit-after.txt": "dba90287346257f92391b90995d359860d9b67f0f82deecfeccbc680a93f59bc",
+    "docs/testing/artifacts/p0-2026-10-11/unit-before-path-adjustment.txt": "e8c5caeaf70de3a93fe3d1d264ba0efcef77aa609fd3ce631bcc7871aa5a249a",
+    "docs/testing/artifacts/p0-2026-10-11/unit-shared-first.txt": "7cef3038b38287bd87889c5bb9e6bf59ca70d67374132c704430ccf3c72a138b"
+  },
+  "archiveNormalization": "Only screenshot attachment paths were rebased to archived files. Result statuses and assertions were preserved."
+}
