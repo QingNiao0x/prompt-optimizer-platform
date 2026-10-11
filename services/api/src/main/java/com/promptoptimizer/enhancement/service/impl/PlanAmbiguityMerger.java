@@ -88,6 +88,10 @@ final class PlanAmbiguityMerger {
 
     /** 未列入常见维度的题目只在有效 ID 和完整剩余主题同时吻合时合并，不凭 ID 清空内容。 */
     private boolean genericReferencedReminder(String text, String question) {
+        List<String> clauses = reminderClauses(withoutExamples(text));
+        if (clauses.size() > 1) {
+            return clauses.stream().allMatch(clause -> genericReferencedReminder(clause, question));
+        }
         String candidate = normalize(QUESTION_GRAMMAR.matcher(withoutExamples(text)).replaceAll(""));
         String known = normalize(QUESTION_GRAMMAR.matcher(withoutExamples(question)).replaceAll(""));
         return candidate.length() >= 4 && known.contains(candidate);
@@ -101,6 +105,11 @@ final class PlanAmbiguityMerger {
         String candidate = withoutExamples(text);
         String original = withoutExamples(question);
         if (normalize(candidate).equals(normalize(original))) return true;
+        // 每个完整子句都必须有已知依据；不能全局删除“是否/需要/提供/数据”后吞掉第二个问题。
+        List<String> clauses = reminderClauses(candidate);
+        if (clauses.size() > 1) {
+            return clauses.stream().allMatch(clause -> sameQuestionReminder(clause, original));
+        }
         List<QuestionAspect> aspects = Arrays.stream(QuestionAspect.values())
                 .filter(aspect -> aspect.pattern.matcher(original).find()).toList();
         if (aspects.size() != 1 || !aspects.getFirst().pattern.matcher(candidate).find()) return false;
@@ -108,6 +117,12 @@ final class PlanAmbiguityMerger {
         String remaining = residue(candidate, aspect);
         String known = residue(original, aspect);
         return remaining.isEmpty() || !known.isEmpty() && known.contains(remaining);
+    }
+
+    /** 逐句和分句检查；保留数字之间的逗号、小数点及比较符，不能改变金额或版本。 */
+    private List<String> reminderClauses(String text) {
+        return Arrays.stream(text.split("[。；;！？?\\r\\n]+|(?<![0-9])[,，]|[,，](?![0-9])"))
+                .map(String::strip).filter(value -> !value.isEmpty()).toList();
     }
 
     private String residue(String text, Pattern aspect) {
@@ -148,7 +163,8 @@ final class PlanAmbiguityMerger {
         PURPOSE("分析目的|(?<!项)目的"),
         REGION("研究范围|地区范围|地区|地域"),
         TOOL("分析工具|工具"),
-        OUTPUT_FORMAT("输出格式|交付格式");
+        OUTPUT_FORMAT("输出格式|交付格式"),
+        AUTHENTICATION("认证方式|登录方式|身份保持方式");
 
         private final Pattern pattern;
         QuestionAspect(String expression) { this.pattern = Pattern.compile(expression); }

@@ -23,6 +23,7 @@ import com.promptoptimizer.provider.service.PromptPlanningProvider;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
+import com.promptoptimizer.provider.domain.AmbiguityReference;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.provider.domain.PlanningProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderException;
@@ -30,6 +31,7 @@ import com.promptoptimizer.provider.domain.ProviderFailureType;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.ResourceAccessException;
@@ -635,10 +637,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 ? request.model()
                 : response.model();
         List<String> ambiguities = mapAmbiguities(structuredResponse.ambiguities());
-        var references = mapAmbiguityReferences(structuredResponse.ambiguityReferences());
-        if (references.stream().anyMatch(reference -> ambiguities == null || !ambiguities.contains(reference.message()))) {
-            throw invalidResponse("模型提醒关联未匹配待确认文本", null);
-        }
+        var references = mapAmbiguityReferences(structuredResponse.ambiguityReferences(), ambiguities);
         return new EnhancementProviderResponse(
                 sections,
                 request.route().providerName(),
@@ -705,23 +704,37 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         return List.copyOf(findings);
     }
 
-    /** 兼容没有关联字段的 Provider；严格校验类型和大小，未知问题 ID 留给绑定状态校验。 */
-    private List<com.promptoptimizer.provider.domain.AmbiguityReference> mapAmbiguityReferences(JsonNode value) {
+    /**
+     * 辅助关联错误不触发模型重试。严格校验后只接收有效条目，其余丢弃并记录无正文诊断；
+     * sections 与 ambiguities 的必需结构、数量和内容校验仍由原流程负责。
+     */
+    private List<AmbiguityReference> mapAmbiguityReferences(
+            JsonNode value, List<String> findings) {
         if (value == null || value.isNull()) return List.of();
-        if (!value.isArray() || value.size() > 8) throw invalidResponse("模型提醒关联数量无效", null);
-        var references = new ArrayList<com.promptoptimizer.provider.domain.AmbiguityReference>();
+        if (!value.isArray() || value.size() > AmbiguityReference.MAX_REFERENCES) {
+            logIgnoredReferences(value.isArray() ? value.size() : 1);
+            return List.of();
+        }
+        var references = new ArrayList<AmbiguityReference>();
         for (JsonNode item : value) {
             JsonNode message = item.get("message");
             JsonNode questionId = item.get("questionId");
-            if (!item.isObject() || message == null || !message.isTextual() || message.textValue().isBlank()
-                    || message.textValue().length() > 500 || questionId == null || !questionId.isTextual()
-                    || !questionId.textValue().matches("[A-Za-z0-9_-]{1,64}")) {
-                throw invalidResponse("模型提醒关联无效", null);
-            }
-            references.add(new com.promptoptimizer.provider.domain.AmbiguityReference(
-                    message.textValue().trim(), questionId.textValue()));
+            if (!item.isObject() || message == null || !message.isTextual()
+                    || questionId == null || !questionId.isTextual()) continue;
+            references.add(new AmbiguityReference(
+                    message.textValue(), questionId.textValue()));
         }
-        return List.copyOf(references);
+        var accepted = AmbiguityReference.normalize(references, findings);
+        logIgnoredReferences(value.size() - accepted.size());
+        return accepted;
+    }
+
+    /** 只记关联降级次数；请求标识可关联同次模型调用日志，不记录任何模型正文或关联字段。 */
+    private void logIgnoredReferences(int ignored) {
+        if (ignored > 0) {
+            LOGGER.warn("event=model.response.optional_references_ignored requestId={} stage=provider ignoredCount={}",
+                    LogFields.value(MDC.get("requestId")), ignored);
+        }
     }
 
     /** 将模型问题映射为平台回答类型，拒绝空问题与未知回答方式。 */

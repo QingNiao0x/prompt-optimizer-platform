@@ -9,6 +9,7 @@ import com.promptoptimizer.enhancement.domain.PlanningFactCard;
 import com.promptoptimizer.enhancement.domain.PlanningFactCategory;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
+import com.promptoptimizer.provider.domain.AmbiguityReference;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import org.junit.jupiter.api.Test;
 import com.promptoptimizer.provider.domain.ProviderException;
@@ -193,6 +194,40 @@ class OptimizationResultAssemblerTest {
                         assertThat(error.getFailureType()).isEqualTo(ProviderFailureType.INVALID_RESPONSE);
                         assertThat(error.getMessage()).doesNotContain("secretvalue123456");
                     });
+        }
+    }
+
+    @Test
+    void shouldKeepDirectEnhancementIdenticalWhenOptionalReferencesAreInvalid() {
+        var base = response(List.of("已支付订单取消后是否立即退款？"));
+        var expected = assemble(base, false);
+        for (List<AmbiguityReference> references : List.of(
+                java.util.Arrays.asList((AmbiguityReference) null),
+                List.of(new AmbiguityReference("正文中不存在", "refund")),
+                List.of(new AmbiguityReference(base.ambiguities().getFirst(), "../invalid")),
+                java.util.Collections.nCopies(9, new AmbiguityReference(base.ambiguities().getFirst(), "refund")))) {
+            var response = new EnhancementProviderResponse(base.sections(), base.provider(), base.model(),
+                    base.mock(), base.ambiguities(), references);
+            assertThat(assemble(response, false)).isEqualTo(expected);
+        }
+    }
+
+    @Test
+    void shouldStillRejectSensitiveFindingsAndMissingSectionsWhenReferencesAreInvalid() {
+        List<AmbiguityReference> malformed = List.of(new AmbiguityReference("关联正文不存在", "../invalid"));
+        var unsafe = response(List.of("password=" + "safety-fixture-value"));
+        var missing = response(List.of("订单是否允许取消？"));
+        for (boolean confirmed : List.of(false, true)) {
+            for (var invalid : List.of(
+                    new EnhancementProviderResponse(unsafe.sections(), "test", "test", false, unsafe.ambiguities(), malformed),
+                    new EnhancementProviderResponse(missing.sections().subList(1, missing.sections().size()),
+                            "test", "test", false, missing.ambiguities(), malformed))) {
+                assertThatThrownBy(() -> assemble(invalid, confirmed))
+                        .isInstanceOfSatisfying(ProviderException.class, error -> {
+                            assertThat(error.getFailureType()).isEqualTo(ProviderFailureType.INVALID_RESPONSE);
+                            assertThat(error.getMessage()).doesNotContain("safety-fixture-value");
+                        });
+            }
         }
     }
 

@@ -10,10 +10,15 @@ import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.ProviderMetadata;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
+import com.promptoptimizer.provider.domain.AmbiguityReference;
+import com.promptoptimizer.common.logging.LogFields;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.domain.ProviderFailureType;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -32,6 +37,7 @@ import java.util.stream.Collectors;
 @Component
 public class OptimizationResultAssembler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OptimizationResultAssembler.class);
     private static final Set<PromptSectionType> REQUIRED_TYPES = EnumSet.of(
             PromptSectionType.BACKGROUND,
             PromptSectionType.TASK,
@@ -138,10 +144,10 @@ public class OptimizationResultAssembler {
         }
         appendConstraints(sections, constraints);
         List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities);
-        validateAmbiguityReferences(providerResponse);
+        List<AmbiguityReference> references = normalizeAmbiguityReferences(providerResponse);
         // 先登记新冲突和绑定的未决问题，再归并模型提醒，避免重复项挤占展示预算。
         var merged = planConfirmed
-                ? new PlanAmbiguityMerger(decisions).merge(assessed, ambiguities, providerResponse.ambiguityReferences())
+                ? new PlanAmbiguityMerger(decisions).merge(assessed, ambiguities, references)
                 : new PlanAmbiguityMerger.MergeResult(assessed.stream().limit(8).toList(), Math.max(0, assessed.size() - 8));
         List<String> remainingAmbiguities = merged.messages();
         List<String> resultWarnings = new ArrayList<>(collectWarnings(context, planningWarnings));
@@ -279,16 +285,18 @@ public class OptimizationResultAssembler {
         ));
     }
 
-    /** 关联只是匹配线索；拒绝不对应正文或格式非法的外部字段，不接受模型自报的确认状态。 */
-    private void validateAmbiguityReferences(EnhancementProviderResponse response) {
-        if (response.ambiguityReferences().size() > 8) throw invalidResponse("模型提醒关联数量无效");
-        for (var reference : response.ambiguityReferences()) {
-            if (reference == null || reference.message() == null || response.ambiguities() == null
-                    || !response.ambiguities().contains(reference.message()) || reference.questionId() == null
-                    || !reference.questionId().matches("[A-Za-z0-9_-]{1,64}")) {
-                throw invalidResponse("模型提醒关联无效");
-            }
+    /**
+     * 其他 Provider 也可能返回错误关联，因此应用层再次收敛；仅丢弃辅助关联，保留已校验的正文。
+     * 不接收模型自报的确认状态，不将关联正文、问题 ID 或凭据写入诊断日志。
+     */
+    private List<AmbiguityReference> normalizeAmbiguityReferences(EnhancementProviderResponse response) {
+        var references = AmbiguityReference.normalize(response.ambiguityReferences(), response.ambiguities());
+        int ignored = response.ambiguityReferences().size() - references.size();
+        if (ignored > 0) {
+            LOGGER.warn("event=model.response.optional_references_ignored requestId={} stage=assembly ignoredCount={}",
+                    LogFields.value(MDC.get("requestId")), ignored);
         }
+        return references;
     }
 
     /** 兼容旧版待确认段落，同时过滤泛化提示和疑似凭据。 */
