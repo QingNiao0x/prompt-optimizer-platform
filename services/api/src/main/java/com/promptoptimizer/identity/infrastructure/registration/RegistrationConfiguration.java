@@ -37,6 +37,8 @@ public class RegistrationConfiguration {
             Environment environment
     ) {
         validateSmtpPrivacy(environment);
+        // 只确认发送器已选中；不表示 SMTP 连接或真实收件已验收，也不记录发信账号和凭据。
+        LOGGER.info("event=email.delivery.configured mode=SMTP sender=SmtpVerificationEmailSender");
         return new SmtpVerificationEmailSender(mailSenderProvider, properties);
     }
 

@@ -23,6 +23,8 @@ import {
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import ContextAnalysisSummary from '@/components/context/ContextAnalysisSummary.vue';
+import ContextTransmissionSummary from '@/components/context/ContextTransmissionSummary.vue';
+import type { ContextTransmissionReport } from '@/features/context-analysis/contextTransmission';
 import { collectDroppedFiles, type DroppedFileCollection } from '@/composables/fileDrop';
 import {
   UNSUPPORTED_EXTENSIONS,
@@ -51,6 +53,7 @@ interface Props {
   indexProgress?: ProjectIndexProgress;
   projectIndex?: ProjectIndexSummary;
   contextRetrieval?: ProjectContextRetrievalResult;
+  transmission?: ContextTransmissionReport;
 }
 
 interface Emits {
@@ -324,7 +327,7 @@ const addManualFile = (): void => {
       <div class="section-title-row">
         <span class="field-label">本地资料与项目文件</span>
         <ElButton
-          v-if="files.length || projectIndex"
+          v-if="files.length || projectIndex || isReading"
           text
           size="small"
           type="danger"
@@ -523,7 +526,7 @@ const addManualFile = (): void => {
       <div v-if="files.length" class="file-summary">
         <div class="file-count">
           <span>{{ files.length }}</span>
-          <small>个文件已加入上下文</small>
+          <small>个文件已选择</small>
         </div>
         <ElScrollbar max-height="184px">
           <ul class="file-list">
@@ -573,6 +576,7 @@ const addManualFile = (): void => {
       </div>
     </details>
 
+    <ContextTransmissionSummary v-if="transmission" :report="transmission" />
     <ContextAnalysisSummary v-if="snapshot" :snapshot="snapshot" />
     </div>
 

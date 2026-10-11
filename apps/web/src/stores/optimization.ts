@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia';
-import { computed, ref, shallowRef } from 'vue';
+import { computed, ref, shallowRef, watch } from 'vue';
 import { restoreAppliedConstraints } from '@/features/optimization/constraintEditing';
+import { completeContextTransmission, createContextTransmission, failContextTransmission,
+  type ContextTransmissionReport, type TransmissionPhase } from '@/features/context-analysis/contextTransmission';
+import { useAuthStore } from '@/stores/auth';
 
 import {
   buildOptimizationPlanRequest,
@@ -41,6 +44,9 @@ import type {
   TemplateCode,
 } from '@/types/api';
 
+/** 任务切换和资料变化均会使异步操作失效，普通偏好不参与资料归属。 */
+export interface OptimizationContextLease { task: number; context: number }
+
 export const useOptimizationStore = defineStore('optimization', () => {
   const rawPrompt = ref('');
   const customDescription = ref('');
@@ -72,6 +78,90 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const isOptimizing = ref(false);
   // 包含本地检索与发送确认，覆盖尚未发出 HTTP 请求的准备阶段。
   const isPreparingContext = ref(false);
+  const taskRevision = ref(0);
+  const contextRevision = ref(0);
+  const contextTransmission = shallowRef<ContextTransmissionReport>();
+  const contextCleanupWarning = ref('');
+  // 草稿仅在当前 Pinia 实例内保留；不写浏览器存储或覆盖后端历史。
+  const resultDraft = ref<PromptSection[]>();
+  let preparedCandidates: ContextFileInput[] = [];
+  const preparedLeases = new WeakMap<ContextFileInput[], OptimizationContextLease>();
+
+  const captureContext = (): OptimizationContextLease => ({ task: taskRevision.value, context: contextRevision.value });
+  const isCurrentContext = (lease: OptimizationContextLease): boolean =>
+    lease.task === taskRevision.value && lease.context === contextRevision.value;
+  const acceptsPrepared = (prepared?: ContextFileInput[]): boolean =>
+    !prepared || !preparedLeases.has(prepared) || isCurrentContext(preparedLeases.get(prepared)!);
+
+  /** 修改资料或输入后，旧请求的成功、失败和 finally 都不得改变新操作状态。 */
+  const invalidateContext = (): void => {
+    contextRevision.value += 1;
+    contextRetrieval.value = undefined;
+    contextSnapshot.value = undefined;
+    planningContext.value = undefined;
+    plan.value = undefined;
+    planModelId.value = '';
+    planningSessionExpired.value = false;
+    contextTransmission.value = undefined;
+    preparedCandidates = [];
+    isAnalyzing.value = false;
+    isPlanning.value = false;
+    isOptimizing.value = false;
+    isPreparingContext.value = false;
+  };
+
+  const cleanupReferences = (previous: readonly ContextFileInput[], next: readonly ContextFileInput[]): void => {
+    const task = taskRevision.value;
+    cleanupUnusedDocumentReferences(previous, next, () => {
+      if (task === taskRevision.value) contextCleanupWarning.value =
+        '旧文档引用已从当前任务移除，但服务端临时资料清理失败；不会用于本次请求，到期清理由服务端执行。';
+    });
+  };
+
+  /** 切换任务统一释放内存归属；删除失败也不恢复旧资料，身份切换同时移除旧输入和草稿。 */
+  const resetTask = (): void => {
+    const previous = [...files.value, ...supplementalFiles.value];
+    const previousIndex = projectIndex.value;
+    taskRevision.value += 1;
+    invalidateContext();
+    contextCleanupWarning.value = '';
+    projectIndex.value = undefined;
+    files.value = [];
+    supplementalFiles.value = [];
+    activeFilePath.value = '';
+    result.value = undefined;
+    resultDraft.value = undefined;
+    resultUndoStack.value = [];
+    rawPrompt.value = '';
+    customDescription.value = '';
+    templateCode.value = 'AUTO';
+    requestId.value = '';
+    errorMessage.value = '';
+    cleanupReferences(previous, []);
+    if (previousIndex) void projectIndexRepository.deleteProject(previousIndex.id).catch(() => undefined);
+  };
+
+  /** 页面离开时停止旧请求写回，但保留同一任务的资料和已保存结果。 */
+  const cancelPendingOperations = (): void => invalidateContext();
+
+  /** 已失效的上传即使返回了文档编号，也只清理引用，不能重新加入当前任务。 */
+  const discardContextFiles = (discarded: readonly ContextFileInput[]): void =>
+    cleanupReferences(discarded, files.value);
+
+  const auth = useAuthStore();
+  watch(() => [auth.user?.userId, auth.user?.tenantId, auth.user?.workspaceId].join('|'), resetTask, { flush: 'sync' });
+  watch([rawPrompt, customDescription], invalidateContext, { flush: 'sync' });
+
+  const beginTransmission = (prepared: ContextFileInput[], phase: TransmissionPhase): void => {
+    contextTransmission.value = createContextTransmission(
+      [...files.value, ...preparedCandidates], prepared, phase);
+  };
+  const finishTransmission = (snapshot: ContextSnapshot, id: string): void => {
+    if (contextTransmission.value) contextTransmission.value = completeContextTransmission(contextTransmission.value, snapshot, id);
+  };
+  const failTransmission = (): void => {
+    if (contextTransmission.value) contextTransmission.value = failContextTransmission(contextTransmission.value);
+  };
 
   const canOptimize = computed(() => rawPrompt.value.trim().length > 0
     && !isPreparingContext.value
@@ -110,12 +200,10 @@ export const useOptimizationStore = defineStore('optimization', () => {
       ...supplementalFiles.value,
       ...selectedFiles.filter((file) => !supplementalPaths.has(normalizePath(file.path))),
     ].slice(0, MAX_FILES);
-    cleanupUnusedDocumentReferences(files.value, nextFiles);
+    cleanupReferences(files.value, nextFiles);
     files.value = nextFiles;
     activeFilePath.value = '';
-    contextRetrieval.value = undefined;
-    contextSnapshot.value = undefined;
-    planningContext.value = undefined;
+    invalidateContext();
     return nextFiles.length - supplementalFiles.value.length;
   };
 
@@ -126,19 +214,17 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
     projectIndex.value = summary;
     if (!keepsCurrentProject) {
-      cleanupUnusedDocumentReferences(files.value, supplementalFiles.value);
+      cleanupReferences(files.value, supplementalFiles.value);
       files.value = [...supplementalFiles.value];
       activeFilePath.value = files.value.at(-1)?.path ?? '';
     }
-    contextRetrieval.value = undefined;
-    contextSnapshot.value = undefined;
-    planningContext.value = undefined;
+    invalidateContext();
   };
 
   const addFile = (file: ContextFileInput): boolean => {
     const supplementalIndex = supplementalFiles.value.findIndex((item) => normalizePath(item.path) === normalizePath(file.path));
     if (supplementalIndex < 0 && supplementalFiles.value.length >= MAX_FILES) {
-      cleanupUnusedDocumentReferences([file], files.value);
+      cleanupReferences([file], files.value);
       return false;
     }
     const nextSupplemental = [...supplementalFiles.value];
@@ -149,41 +235,37 @@ export const useOptimizationStore = defineStore('optimization', () => {
       ...nextSupplemental,
       ...files.value.filter((item) => !supplementalPaths.has(normalizePath(item.path))),
     ].slice(0, MAX_FILES);
-    cleanupUnusedDocumentReferences(files.value, nextFiles);
+    cleanupReferences(files.value, nextFiles);
     supplementalFiles.value = nextSupplemental;
     files.value = nextFiles;
     activeFilePath.value = file.path;
-    contextRetrieval.value = undefined;
-    contextSnapshot.value = undefined;
-    planningContext.value = undefined;
+    invalidateContext();
     return true;
   };
 
   const removeFile = (path: string): void => {
-    cleanupUnusedDocumentReferences(files.value.filter((file) => file.path === path), []);
+    cleanupReferences(files.value.filter((file) => file.path === path), []);
     files.value = files.value.filter((file) => file.path !== path);
     supplementalFiles.value = supplementalFiles.value.filter((file) => file.path !== path);
     if (activeFilePath.value === path) {
       activeFilePath.value = files.value.at(-1)?.path ?? '';
     }
-    contextRetrieval.value = undefined;
-    contextSnapshot.value = undefined;
-    planningContext.value = undefined;
+    invalidateContext();
   };
 
   const clearFiles = (): void => {
     // 本地索引的物理删除由 useProjectIndex 统一负责，避免同一项目被重复删除。
     projectIndex.value = undefined;
-    cleanupUnusedDocumentReferences(files.value, []);
+    cleanupReferences([...files.value, ...supplementalFiles.value], []);
     files.value = [];
     supplementalFiles.value = [];
     activeFilePath.value = '';
-    contextRetrieval.value = undefined;
-    contextSnapshot.value = undefined;
-    planningContext.value = undefined;
+    invalidateContext();
   };
 
   const resolveContextFiles = async (query: string): Promise<ContextFileInput[]> => {
+    const lease = captureContext();
+    const manualFiles = [...files.value];
     const profile = resolveProjectContextProfile(loadProjectContextSettings().profile);
     const retrieval = projectIndex.value?.status === 'READY'
       ? await retrieveProjectContextWithReport(projectIndexRepository, {
@@ -196,12 +278,13 @@ export const useOptimizationStore = defineStore('optimization', () => {
           maxChunks: profile.limits.maxContextChunks,
         })
       : undefined;
-    const manualPaths = new Set(files.value.map((file) => normalizePath(file.path)));
+    if (!isCurrentContext(lease)) throw new Error('任务或资料已变更，本次上下文准备已取消。');
+    const manualPaths = new Set(manualFiles.map((file) => normalizePath(file.path)));
     const indexedFiles = retrieval?.files.filter((file) =>
       !manualPaths.has(normalizePath(file.path.split('#chunk-')[0] ?? file.path))) ?? [];
     // 用户手动粘贴或通过兼容上传选择的文件优先于自动检索结果。
     const preparedFiles = fitFilesWithinBudget(
-      [...files.value, ...indexedFiles],
+      [...manualFiles, ...indexedFiles],
       profile.limits.maxContextCharacters,
       MAX_FILES,
     );
@@ -220,6 +303,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
     } else {
       contextRetrieval.value = undefined;
     }
+    preparedCandidates = [...manualFiles, ...indexedFiles];
+    preparedLeases.set(preparedFiles, lease);
     return preparedFiles;
   };
 
@@ -229,25 +314,33 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const runContextAnalysis = async (
     preparedFiles?: ContextFileInput[],
   ): Promise<boolean> => {
+    if (!acceptsPrepared(preparedFiles) || isAnalyzing.value || isPlanning.value || isOptimizing.value) return false;
+    const lease = captureContext();
     isAnalyzing.value = true;
     errorMessage.value = '';
     try {
       const contextFiles = preparedFiles ?? await resolveContextFiles(
         `${customDescription.value} 技术栈 依赖 项目结构 配置`,
       );
+      if (!isCurrentContext(lease)) return false;
+      beginTransmission(contextFiles, 'ANALYSIS');
       const response = await analyzeContext({
         customDescription: customDescription.value.trim(),
         files: contextFiles,
       });
+      if (!isCurrentContext(lease)) return false;
+      finishTransmission(response.data, response.requestId);
       contextSnapshot.value = response.data;
       requestId.value = response.requestId;
       return true;
     } catch (error: unknown) {
+      if (!isCurrentContext(lease)) return false;
+      failTransmission();
       errorMessage.value = getApiErrorMessage(error);
       requestId.value = getApiErrorRequestId(error);
       return false;
     } finally {
-      isAnalyzing.value = false;
+      if (isCurrentContext(lease)) isAnalyzing.value = false;
     }
   };
 
@@ -255,6 +348,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     sourcePrompt: string,
     preparedFiles: ContextFileInput[],
   ): Promise<boolean> => {
+    if (!acceptsPrepared(preparedFiles)) return false;
     if (!sourcePrompt.trim()) {
       planningContext.value = undefined;
       errorMessage.value = '请先输入需要增强的内容。';
@@ -263,25 +357,31 @@ export const useOptimizationStore = defineStore('optimization', () => {
     if (isAnalyzing.value || isPlanning.value || isOptimizing.value) {
       return false;
     }
+    const lease = captureContext();
     isAnalyzing.value = true;
     errorMessage.value = '';
     try {
+      beginTransmission(preparedFiles, 'PLAN_CONTEXT');
       const response = await requestPlanningContext(buildPlanningContextRequest(
         sourcePrompt,
         customDescription.value,
         preparedFiles,
       ));
+      if (!isCurrentContext(lease)) return false;
+      finishTransmission(response.data.contextReport, response.requestId);
       planningContext.value = response.data;
       contextSnapshot.value = response.data.contextReport;
       requestId.value = response.requestId;
       return true;
     } catch (error: unknown) {
+      if (!isCurrentContext(lease)) return false;
+      failTransmission();
       planningContext.value = undefined;
       errorMessage.value = getApiErrorMessage(error);
       requestId.value = getApiErrorRequestId(error);
       return false;
     } finally {
-      isAnalyzing.value = false;
+      if (isCurrentContext(lease)) isAnalyzing.value = false;
     }
   };
 
@@ -291,9 +391,11 @@ export const useOptimizationStore = defineStore('optimization', () => {
       errorMessage.value = '请先输入需要增强的内容。';
       return false;
     }
-    if (isPlanning.value || isOptimizing.value) {
+    if (isAnalyzing.value || isPlanning.value || isOptimizing.value) {
       return false;
     }
+    const lease = captureContext();
+    const requestedModelId = selectedModelId.value;
     isPlanning.value = true;
     errorMessage.value = '';
     try {
@@ -307,21 +409,23 @@ export const useOptimizationStore = defineStore('optimization', () => {
                 version: planningContext.value.version,
               }
             : undefined,
-          selectedModelId.value,
+          requestedModelId,
         ),
       );
+      if (!isCurrentContext(lease)) return false;
       plan.value = response.data;
-      planModelId.value = selectedModelId.value;
+      planModelId.value = requestedModelId;
       templateCode.value = response.data.templateCode;
       requestId.value = response.requestId;
       return true;
     } catch (error: unknown) {
+      if (!isCurrentContext(lease)) return false;
       planningSessionExpired.value = getApiErrorCode(error) === 'PLANNING_SESSION_EXPIRED';
       errorMessage.value = getApiErrorMessage(error);
       requestId.value = getApiErrorRequestId(error);
       return false;
     } finally {
-      isPlanning.value = false;
+      if (isCurrentContext(lease)) isPlanning.value = false;
     }
   };
 
@@ -332,17 +436,19 @@ export const useOptimizationStore = defineStore('optimization', () => {
       planConfirmation?: PlanConfirmation;
     } = {},
   ): Promise<boolean> => {
+    if (!acceptsPrepared(preparedFiles)) return false;
     planningSessionExpired.value = false;
     const sourcePrompt = options.rawPrompt ?? rawPrompt.value;
     if (!sourcePrompt.trim()) {
       errorMessage.value = '请先输入需要增强的内容。';
       return false;
     }
-    if (isPlanning.value || isOptimizing.value) {
+    if (isAnalyzing.value || isPlanning.value || isOptimizing.value) {
       return false;
     }
 
     const planConfirmed = options.planConfirmation !== undefined;
+    const lease = captureContext();
     if (!planConfirmed) {
       // 直接增强必须让服务端重新推断策略，不能沿用上一次 Plan 或历史记录留下的模板。
       planningContext.value = undefined;
@@ -354,6 +460,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
     errorMessage.value = '';
     try {
       const contextFiles = preparedFiles ?? await resolveContextFiles(sourcePrompt);
+      if (!isCurrentContext(lease)) return false;
+      beginTransmission(contextFiles, 'ENHANCEMENT');
       const response = await optimizePrompt(buildOptimizationRequest({
         rawPrompt: sourcePrompt,
         modelId: planConfirmed ? planModelId.value : selectedModelId.value,
@@ -365,20 +473,28 @@ export const useOptimizationStore = defineStore('optimization', () => {
         includeExamples: includeExamples.value,
         planConfirmation: options.planConfirmation,
       }));
+      if (!isCurrentContext(lease)) return false;
+      finishTransmission(response.data.contextReport, response.requestId);
+      if (contextTransmission.value) contextTransmission.value = {
+        ...contextTransmission.value, mock: response.data.provider.mock,
+      };
       // 直接展示增强结果；用户输入的原始提示词保持不变，不做覆盖。
       rememberCurrentResult();
+      resultDraft.value = undefined;
       result.value = response.data;
       contextSnapshot.value = response.data.contextReport;
       templateCode.value = response.data.templateCode;
       requestId.value = response.requestId;
       return true;
     } catch (error: unknown) {
+      if (!isCurrentContext(lease)) return false;
+      failTransmission();
       planningSessionExpired.value = getApiErrorCode(error) === 'PLANNING_SESSION_EXPIRED';
       errorMessage.value = getApiErrorMessage(error);
       requestId.value = getApiErrorRequestId(error);
       return false;
     } finally {
-      isOptimizing.value = false;
+      if (isCurrentContext(lease)) isOptimizing.value = false;
     }
   };
 
@@ -403,10 +519,13 @@ export const useOptimizationStore = defineStore('optimization', () => {
       .map((section) => `## ${section.title}\n${section.content}`)
       .join('\n\n');
     if (optimizedPrompt === result.value.optimizedPrompt) {
+      resultDraft.value = undefined;
+      errorMessage.value = '';
       return true;
     }
     rememberCurrentResult();
     result.value = { ...result.value, sections: normalizedSections, optimizedPrompt };
+    resultDraft.value = undefined;
     errorMessage.value = '';
     return true;
   };
@@ -417,6 +536,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
       return false;
     }
     result.value = previous;
+    resultDraft.value = undefined;
     contextSnapshot.value = previous.contextReport;
     templateCode.value = previous.templateCode;
     resultUndoStack.value = resultUndoStack.value.slice(0, -1);
@@ -433,6 +553,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   // 从历史详情恢复工作台输入，让用户能在原需求基础上继续修改。
   // 历史记录不保存文件正文，因此文件列表会清空，只恢复描述和选项。
   const loadFromHistory = (detail: OptimizationHistoryDetail): void => {
+    resetTask();
     rawPrompt.value = detail.rawPrompt;
     customDescription.value =
       typeof detail.contextSummary?.customDescription === 'string'
@@ -441,26 +562,12 @@ export const useOptimizationStore = defineStore('optimization', () => {
     templateCode.value = detail.templateCode;
     includePermissionBoundaries.value = detail.includePermissionBoundaries;
     includeExamples.value = detail.includeExamples;
-    if (projectIndex.value) {
-      void projectIndexRepository.deleteProject(projectIndex.value.id).catch(() => undefined);
-    }
-    projectIndex.value = undefined;
-    cleanupUnusedDocumentReferences(files.value, []);
-    files.value = [];
-    activeFilePath.value = '';
-    contextRetrieval.value = undefined;
-    contextSnapshot.value = undefined;
-    planningContext.value = undefined;
-    plan.value = undefined;
-    result.value = undefined;
-    resultUndoStack.value = [];
-    requestId.value = '';
-    errorMessage.value = '';
   };
 
   // 服务端重新优化完成后，直接把新结果放回工作台结果区。
   const applyReoptimized = (payload: ReoptimizationResult): void => {
     rememberCurrentResult();
+    resultDraft.value = undefined;
     result.value = payload.result;
     contextSnapshot.value = payload.result.contextReport;
     requestId.value = '';
@@ -494,6 +601,15 @@ export const useOptimizationStore = defineStore('optimization', () => {
     isPreparingContext,
     canOptimize,
     canUndoResult,
+    taskRevision,
+    contextTransmission,
+    contextCleanupWarning,
+    resultDraft,
+    captureContext,
+    isCurrentContext,
+    resetTask,
+    cancelPendingOperations,
+    discardContextFiles,
     refreshAvailableModels,
     setFiles,
     setProjectIndex,
@@ -556,6 +672,7 @@ const fitFilesWithinBudget = (
 const cleanupUnusedDocumentReferences = (
   previousFiles: readonly ContextFileInput[],
   nextFiles: readonly ContextFileInput[],
+  onFailure: () => void = () => undefined,
 ): void => {
   const retainedIds = new Set(
     nextFiles.map((file) => file.documentId).filter((id): id is string => Boolean(id)),
@@ -566,6 +683,6 @@ const cleanupUnusedDocumentReferences = (
       .filter((id): id is string => id !== undefined && id.length > 0 && !retainedIds.has(id)),
   );
   staleIds.forEach((documentId) => {
-    void deleteDocumentUpload(documentId).catch(() => undefined);
+    void deleteDocumentUpload(documentId).catch(onFailure);
   });
 };

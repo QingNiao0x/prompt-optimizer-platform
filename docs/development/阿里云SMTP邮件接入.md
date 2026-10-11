@@ -33,6 +33,8 @@ EMAIL_VERIFICATION_SECRET=<独立生成的至少32字节随机密钥>
 
 `EMAIL_FROM_ADDRESS` 默认复用 `SMTP_USERNAME`；如设置过此变量，须核对它与发信账号一致。`EMAIL_FROM_NAME` 默认 `PromptOptimizer`，可改为公开产品名称。
 
+`SMTP_USERNAME` 是阿里云邮件推送控制台创建并验证的完整发信地址，不是收件地址、阿里云登录账号或 AccessKey。启用 `aliyun-smtp` 后，认证账号按 `SMTP_USERNAME` → `EMAIL_FROM_ADDRESS` → 空值解析；后一项用于兼容已有部署只配置发信地址的情况。只有前一变量未定义时才回退，显式空值仍需修正。通用 SMTP 配置继续要求显式提供 `SMTP_USERNAME`，不改变其他服务商的认证方式。
+
 `aliyun-smtp` profile 自带下列配置，不需要额外设置主机、端口和加密模式：
 
 | 配置 | 默认值 |
@@ -57,11 +59,25 @@ EMAIL_VERIFICATION_SECRET=<独立生成的至少32字节随机密钥>
 
 ## 3. 本地与部署注意事项
 
+- IDEA 直接运行 `PromptOptimizerApplication` 时，运行配置的环境变量也会覆盖 YAML。切换真实邮件时，须将旧的 `EMAIL_DELIVERY_MODE=log` 改为 `smtp`，并启用 `SPRING_PROFILES_ACTIVE=aliyun-smtp`；不要只修改配置文件的默认值。本机运行配置位于被 Git 忽略的 `services/api/.idea/workspace.xml`，不会作为部署配置提交。
+- 杭州站点使用 `SMTP_HOST=smtpdm.aliyun.com`、`SMTP_PORT=465`、`SMTP_SSL_ENABLED=true`、`SMTP_STARTTLS=false`。这些公开连接参数可以放入本地运行配置；`SMTP_USERNAME`、`ALIBABA_SMTP_PASSWORD` 和已有 `EMAIL_VERIFICATION_SECRET` 由后端启动环境安全注入，不在共享配置中保存真实值。验证码密钥无需因切换邮件服务而轮换。
+- 发送器初始化后输出 `event=email.delivery.configured mode=SMTP sender=SmtpVerificationEmailSender`。这只表示 SMTP 模式已选中，不代表已完成认证、实际投递或收件验收；本地 `log` 模式返回的 200 也不表示邮件已发送。发信账号未注入时，仍会返回投递不可用错误，不能回退成模拟成功。
 - Windows 用户环境变量需被 IDEA/Cursor 启动的 Java 进程继承；设置后重启 IDE，再启动后端。不要输出密码值、粘贴到聊天或放在命令行参数中。
 - Spring Boot 不自动加载仓库根目录 `.env`；`.env.example` 仅说明变量名。容器化时必须将变量或 Secret 显式注入 API 容器，不能只配置 Windows 用户变量。
 - SMTP 是后端主动连接云服务，不要求服务器监听 465，也不要求新增容器端口映射或公网入站 465 规则；如果部署环境限制出站流量，再核对到 SMTP 主机 TCP/465 的出站连通性。
 - 保留 `EMAIL_VERIFICATION_REQUIRE_REDIS=true`。公网使用真实 PostgreSQL 和共享 Redis；Redis 故障时不绕过验证码限流。
 - `EMAIL_REGISTRATION_ENABLED` 保持开启，验证码 HMAC 密钥不可复用 SMTP 密码或短信密钥。
+
+### 3.1 本地与服务器沿用同一套环境变量
+
+| 环境 | 配置位置 | 生效方式 |
+| --- | --- | --- |
+| Windows 本地 | 电脑的用户环境变量，或仅保存在本机的 IDE 运行环境 | 配置 `SMTP_USERNAME` 为已验证发信地址；重启 Cursor/IDEA，再启动后端以继承新变量。 |
+| 服务器容器 | 部署目录中受保护的外部环境文件或 Secret，由 Compose 的 `env_file`/`environment` 注入 API 容器 | 继续沿用既有 `aliyun-smtp`、`EMAIL_DELIVERY_MODE=smtp`、发信账号、SMTP 密码与验证码密钥；改动容器环境后需要重新创建 API 容器。 |
+
+两个环境使用相同变量名，但值由各自运行环境提供。Windows 用户变量不会自动进入服务器容器；已部署环境若只有 `EMAIL_FROM_ADDRESS`，新的阿里云 profile 可复用该值进行认证，无需为此修改源代码或 YAML。若两项都未定义，仍需在运行环境补齐发信地址，不能推断或伪造账号。
+
+发布时只更新应用镜像或 JAR，保留服务器现有的外部环境文件和 Secret，不用本地 IDE 配置覆盖服务器配置，不将真实值打包进仓库或发布物。环境变量名称、优先级和 profile 保持兼容，后续常规部署无需反复修改项目配置文件；已有验证码密钥与 SMTP 密码不因应用更新而轮换。
 
 ## 4. 隐私与失败行为
 

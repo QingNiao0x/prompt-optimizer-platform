@@ -12,7 +12,7 @@ import {
 } from '@element-plus/icons-vue';
 import { ElButton, ElCollapse, ElCollapseItem, ElDialog, ElDropdown, ElDropdownItem, ElDropdownMenu, ElInput, ElLink, ElMessage } from 'element-plus';
 import type { InputInstance } from 'element-plus';
-import { computed, onBeforeUnmount, ref, toRefs, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, toRefs, watch } from 'vue';
 
 import ResultCard from '@/components/prompt/ResultCard.vue';
 import ResultMetaBar from '@/components/prompt/ResultMetaBar.vue';
@@ -23,10 +23,12 @@ interface Props {
   result?: OptimizationResult;
   busy: boolean;
   planModeEnabled: boolean;
+  editDraft?: PromptSection[];
 }
 
 interface Emits {
-  (event: 'save', sections: PromptSection[]): void;
+  (event: 'save', sections: PromptSection[], complete: (saved: boolean, message?: string) => void): void;
+  (event: 'update:edit-draft', sections: PromptSection[] | undefined): void;
   (event: 're-enhance'): void;
 }
 
@@ -43,7 +45,7 @@ type CopyPlatform = typeof COPY_PLATFORMS[number];
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 const { result } = toRefs(props);
-const editing = ref(false);
+const editing = ref(Boolean(props.editDraft));
 const copying = ref(false);
 const copied = ref(false);
 const lastCopiedPrompt = ref<string>();
@@ -56,7 +58,13 @@ let pendingPlatformTab: Window | null = null;
 let disposed = false;
 const ambiguitiesOpen = ref(false);
 const warningsOpen = ref(false);
-const draftSections = ref<PromptSection[]>([]);
+const draftSections = ref<PromptSection[]>(props.editDraft?.map(section => ({ ...section })) ?? []);
+const editError = ref('');
+const editValidationVisible = ref(false);
+const invalidDraft = (section: PromptSection): boolean => !section.title.trim() || !section.content.trim();
+watch(draftSections, sections => {
+  if (editing.value) emit('update:edit-draft', sections.map(section => ({ ...section })));
+}, { deep: true });
 const copyDisabled = computed(() =>
   props.busy || editing.value || copying.value || !result.value?.optimizedPrompt.trim(),
 );
@@ -226,6 +234,9 @@ watch(result, () => {
   ambiguitiesOpen.value = false;
   warningsOpen.value = false;
   draftSections.value = [];
+  editError.value = '';
+  editValidationVisible.value = false;
+  emit('update:edit-draft', undefined);
 });
 
 watch([() => props.busy, editing], ([busy, isEditing]) => {
@@ -252,16 +263,38 @@ const startEditing = (): void => {
   ambiguitiesOpen.value = false;
   warningsOpen.value = false;
   editing.value = true;
+  editError.value = '';
+  editValidationVisible.value = false;
+  emit('update:edit-draft', draftSections.value.map(section => ({ ...section })));
 };
 
 const cancelEditing = (): void => {
   editing.value = false;
   draftSections.value = [];
+  editError.value = '';
+  editValidationVisible.value = false;
+  emit('update:edit-draft', undefined);
 };
 
 const saveEditing = (): void => {
-  emit('save', draftSections.value.map((section) => ({ ...section })));
-  editing.value = false;
+  editValidationVisible.value = true;
+  const invalid = draftSections.value.find(invalidDraft);
+  if (invalid) {
+    editError.value = `“${invalid.title || SECTION_LABELS[invalid.type]}”的标题和内容不能为空，其他修改已保留。`;
+    void nextTick(() => document.getElementById(`section-${invalid.type}`)?.focus());
+    return;
+  }
+  // Vue emit 不返回父层校验结果；通过完成回调确认保存，失败时继续持有整份草稿。
+  emit('save', draftSections.value.map(section => ({ ...section })), (saved, message) => {
+    if (!saved) {
+      editError.value = message || '保存未成功，修改已保留，请修正后重试。';
+      return;
+    }
+    editing.value = false;
+    editError.value = '';
+    draftSections.value = [];
+    emit('update:edit-draft', undefined);
+  });
 };
 </script>
 
@@ -467,6 +500,7 @@ const saveEditing = (): void => {
         </article>
 
         <div v-else class="edit-section-list">
+          <p v-if="editError" class="edit-error" role="alert">{{ editError }}</p>
           <section v-for="section in draftSections" :key="section.type" class="edit-section">
             <label :for="`section-${section.type}`">
               {{ SECTION_LABELS[section.type] }} · {{ section.title }}
@@ -479,7 +513,12 @@ const saveEditing = (): void => {
               resize="vertical"
               maxlength="12000"
               show-word-limit
+              :aria-invalid="editValidationVisible && invalidDraft(section) ? 'true' : undefined"
+              :aria-describedby="editValidationVisible && invalidDraft(section) ? `error-${section.type}` : undefined"
             />
+            <p v-if="editValidationVisible && invalidDraft(section)" :id="`error-${section.type}`" class="edit-error">
+              此段内容不能为空，其他修改已保留。
+            </p>
           </section>
         </div>
       </div>
@@ -785,6 +824,17 @@ h2 {
 
 .edit-section-list {
   gap: 14px;
+}
+
+.edit-error {
+  margin: 0;
+  color: var(--el-color-danger);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.edit-section :deep(textarea[aria-invalid="true"]) {
+  border-color: var(--el-color-danger);
 }
 
 .edit-section label {

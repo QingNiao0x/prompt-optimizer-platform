@@ -1,0 +1,123 @@
+> @prompt-optimizer/web@0.1.0 test
+> vitest run src/stores/optimizationLifecycle.test.ts
+
+
+ RUN  v3.2.7 E:/MyProject/prompt-optimizer-platform/apps/web
+
+ ❯ src/stores/optimizationLifecycle.test.ts (7 tests | 5 failed) 20ms
+   × P0 task lifecycle regressions > A attachments cannot reappear after loading B and adding a new file 11ms
+     → expected [ 'A.txt', 'B.txt' ] to deeply equal [ 'B.txt' ]
+   ✓ P0 task lifecycle regressions > keeps independent attachments when replacing a folder within the same task 1ms
+   × P0 task lifecycle regressions > rejects a late A result without clearing the busy state or result of B 2ms
+     → expected true to be false // Object.is equality
+   × P0 task lifecycle regressions > ignores a stale context failure after task replacement 1ms
+     → expected '旧 A 故障' to be '' // Object.is equality
+   × P0 task lifecycle regressions > clearing or changing materials invalidates the previous Plan and late preparation 1ms
+     → expected true to be false // Object.is equality
+   × P0 task lifecycle regressions > removes stale document references even if server cleanup fails 1ms
+     → expected false to be true // Object.is equality
+   ✓ P0 task lifecycle regressions > keeps the current result unchanged after an invalid edit and accepts the corrected draft 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/stores/optimizationLifecycle.test.ts > P0 task lifecycle regressions > A attachments cannot reappear after loading B and adding a new file
+AssertionError: expected [ 'A.txt', 'B.txt' ] to deeply equal [ 'B.txt' ]
+
+- Expected
++ Received
+
+  [
++   "A.txt",
+    "B.txt",
+  ]
+
+ ❯ src/stores/optimizationLifecycle.test.ts:55:48
+     53|     store.addFile({ path: 'B.txt', language: 'text', content: 'B_ONLY'…
+     54|     await store.runOptimization();
+     55|     expect(store.files.map(file => file.path)).toEqual(['B.txt']);
+       |                                                ^
+     56|     expect(JSON.stringify(vi.mocked(optimizePrompt).mock.calls)).not.t…
+     57|     expect(store.selectedModelId).toBe('chosen-model');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/stores/optimizationLifecycle.test.ts > P0 task lifecycle regressions > rejects a late A result without clearing the busy state or result of B
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/stores/optimizationLifecycle.test.ts:78:25
+     76|     const second = store.runOptimization([]);
+     77|     a.resolve({ requestId: 'a', data: result('旧 A') });
+     78|     expect(await first).toBe(false);
+       |                         ^
+     79|     expect(store.result).toBeUndefined();
+     80|     expect(store.isOptimizing).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/stores/optimizationLifecycle.test.ts > P0 task lifecycle regressions > ignores a stale context failure after task replacement
+AssertionError: expected '旧 A 故障' to be '' // Object.is equality
+
+- Expected
++ Received
+
++ 旧 A 故障
+
+ ❯ src/stores/optimizationLifecycle.test.ts:94:32
+     92|     a.reject(new Error('旧 A 故障'));
+     93|     expect(await pending).toBe(false);
+     94|     expect(store.errorMessage).toBe('');
+       |                                ^
+     95|     expect(store.contextSnapshot).toBeUndefined();
+     96|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/stores/optimizationLifecycle.test.ts > P0 task lifecycle regressions > clearing or changing materials invalidates the previous Plan and late preparation
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/stores/optimizationLifecycle.test.ts:107:27
+    105|       contextReport: snapshot(), digest: { description: '', technologi…
+    106|         fileSummaries: [], analysisStatus: 'EMPTY', analyzedFileCount:…
+    107|     expect(await pending).toBe(false);
+       |                           ^
+    108|     expect(store.planningContext).toBeUndefined();
+    109|     expect(store.plan).toBeUndefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/stores/optimizationLifecycle.test.ts > P0 task lifecycle regressions > removes stale document references even if server cleanup fails
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/stores/optimizationLifecycle.test.ts:120:75
+    118|     await store.runOptimization();
+    119|     expect(deleteDocumentUpload).toHaveBeenCalledWith('old-document');
+    120|     expect(store.files.every(file => file.documentId !== 'old-document…
+       |                                                                           ^
+    121|   });
+    122| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 2 passed (7)
+   Start at  17:05:44
+   Duration  781ms (transform 149ms, setup 0ms, collect 333ms, tests 20ms, environment 0ms, prepare 140ms)

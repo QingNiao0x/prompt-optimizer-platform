@@ -35,19 +35,30 @@ interface WorkerRequest {
 const readFilesInWorker = (
   files: File[],
   onProgress: (progress: FileProcessingProgress) => void,
+  signal: AbortSignal,
 ): Promise<ProjectFileSelection> =>
   new Promise((resolve, reject) => {
     const worker = new Worker(
       new URL('../workers/fileReader.worker.ts', import.meta.url),
       { type: 'module' },
     );
+    const stop = (): void => {
+      worker.terminate();
+      signal.removeEventListener('abort', onAbort);
+    };
+    const onAbort = (): void => {
+      stop();
+      reject(new Error('文件读取已取消。'));
+    };
+    if (signal.aborted) { onAbort(); return; }
+    signal.addEventListener('abort', onAbort, { once: true });
     worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
       const message = event.data;
       if (message.type === 'progress') {
         onProgress(message.progress);
         return;
       }
-      worker.terminate();
+      stop();
       if (message.type === 'done') {
         resolve({ files: message.files, warnings: message.warnings });
       } else {
@@ -55,7 +66,7 @@ const readFilesInWorker = (
       }
     };
     worker.onerror = (event) => {
-      worker.terminate();
+      stop();
       reject(new Error(event.message || '文件读取线程启动失败'));
     };
     worker.postMessage({ files } satisfies WorkerRequest);
@@ -246,7 +257,7 @@ export const useProjectFiles = () => {
             if (isCurrentOperation()) {
               progress.value = next;
             }
-          });
+          }, abortController.signal);
         } catch (workerError) {
           if (!isCurrentOperation()) {
             return [];
@@ -319,6 +330,11 @@ export const useProjectFiles = () => {
           files: selection.files.length + uploadedDocuments.length,
           tookMs: Math.round(performance.now() - readStartedAt),
         });
+      }
+      // 最后一份上传也可能在 reset 后才返回，不能再写警告或交回旧引用。
+      if (!isCurrentOperation()) {
+        await deleteDocumentReferences(uploadedDocuments);
+        return [];
       }
       warnings.value = [...scanWarnings, ...selection.warnings, ...documentWarnings];
       return [...selection.files, ...uploadedDocuments];

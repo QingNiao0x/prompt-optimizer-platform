@@ -3,7 +3,7 @@ import { WarningFilled } from '@element-plus/icons-vue';
 import { ElAlert, ElMessage, ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 
 import ContextPanel from '@/components/context/ContextPanel.vue';
 import ContextUploadConfirmDialog, { type UploadCandidate } from '@/components/context/ContextUploadConfirmDialog.vue';
@@ -50,6 +50,9 @@ const {
   projectIndex,
   contextRetrieval,
   contextSnapshot,
+  contextTransmission,
+  contextCleanupWarning,
+  resultDraft,
   plan,
   result,
   requestId,
@@ -115,6 +118,7 @@ const contextWarnings = computed(() => Array.from(new Set([
   ...selectionWarnings.value,
   ...(contextSnapshot.value?.warnings ?? []),
   ...(indexErrorMessage.value ? [indexErrorMessage.value] : []),
+  ...(contextCleanupWarning.value ? [contextCleanupWarning.value] : []),
 ])));
 const hasContextSource = computed(() => files.value.length > 0
   || projectIndex.value?.status === 'READY');
@@ -175,6 +179,7 @@ const runProjectIndexOperation = async (
       retention: projectContextSettings.value.retention,
       autoCleanupDays: projectContextSettings.value.autoCleanupDays,
       onDocumentsDiscovered: (documents: UploadCandidate[], omitted: number): void => {
+        if (currentLifecycle !== pageLifecycleVersion) return;
         // Worker 仅交回附件引用；先显示索引结果，再请用户决定上传哪些文档。
         uploadCandidates.value = documents
           .filter((document) => !files.value.some((file) => file.path === document.path))
@@ -227,15 +232,19 @@ const handleCancelIndex = async (): Promise<void> => {
     return;
   }
   isClearingIndex.value = true;
+  const currentLifecycle = pageLifecycleVersion;
+  cancelFileSelection();
   const deletion = cancelIndexing();
   store.clearFiles();
   try {
     await deletion;
+    if (currentLifecycle !== pageLifecycleVersion) return;
     ElMessage.success('本地项目索引已删除。');
   } catch {
+    if (currentLifecycle !== pageLifecycleVersion) return;
     ElMessage.error('索引已从当前上下文移除，但本地数据清理失败，请在设置页重试。');
   } finally {
-    isClearingIndex.value = false;
+    if (currentLifecycle === pageLifecycleVersion) isClearingIndex.value = false;
   }
 };
 
@@ -244,6 +253,8 @@ const handleClearContextFiles = async (): Promise<void> => {
     return;
   }
   const shouldDeleteIndex = Boolean(projectIndex.value || isIndexing.value);
+  const currentLifecycle = pageLifecycleVersion;
+  cancelFileSelection();
   const deletion = shouldDeleteIndex ? cancelIndexing() : Promise.resolve();
   store.clearFiles();
   if (!shouldDeleteIndex) {
@@ -253,9 +264,10 @@ const handleClearContextFiles = async (): Promise<void> => {
   try {
     await deletion;
   } catch {
+    if (currentLifecycle !== pageLifecycleVersion) return;
     ElMessage.error('上下文已清空，但本地索引数据清理失败，请在设置页重试。');
   } finally {
-    isClearingIndex.value = false;
+    if (currentLifecycle === pageLifecycleVersion) isClearingIndex.value = false;
   }
 };
 
@@ -302,8 +314,11 @@ const addSelectedFiles = async (
   selectionVersion?: number,
 ): Promise<void> => {
   const selectedFiles = await selectFileArray(selected);
-  if (currentLifecycle !== pageLifecycleVersion) return;
-  if (selectionVersion !== undefined && selectionVersion !== contextSelectionVersion) return;
+  if (currentLifecycle !== pageLifecycleVersion
+      || (selectionVersion !== undefined && selectionVersion !== contextSelectionVersion)) {
+    store.discardContextFiles(selectedFiles);
+    return;
+  }
   let added = 0;
   for (const file of selectedFiles) {
     if (store.addFile(file)) added += 1;
@@ -386,6 +401,10 @@ const handleReEnhance = async (): Promise<void> => {
 
 const beginEnhancement = (intent: 'optimize' | 'reenhance'): boolean => {
   if (isPreparingContext.value || isRecoveringPlan.value || planDialogVisible.value) return false;
+  if (hasUnsavedResultDraft.value) {
+    ElMessage.warning('请先保存或取消结果中的修改，再进行增强。');
+    return false;
+  }
   if (intent === 'optimize') {
     if (!canOptimize.value) {
       return false;
@@ -506,6 +525,7 @@ const generateFinalPrompt = async (confirmation: PlanConfirmation): Promise<void
 
 const recoverExpiredPlan = async (): Promise<void> => {
   if (isRecoveringPlan.value) return;
+  const currentLifecycle = pageLifecycleVersion;
   isRecoveringPlan.value = true;
   try {
     // 重新经过文件发送确认；用户取消时保留旧对话框和草稿，不绕过发送许可。
@@ -516,7 +536,7 @@ const recoverExpiredPlan = async (): Promise<void> => {
     recordPlanningEvent(plan.value?.planId, 'EXPIRED_RECOVERED');
     ElMessage.info('确认已过期，已重新生成问题。请核对答案后再次确认。');
   } finally {
-    isRecoveringPlan.value = false;
+    if (currentLifecycle === pageLifecycleVersion) isRecoveringPlan.value = false;
   }
 };
 
@@ -530,8 +550,12 @@ const createPlanConfirmation = (answers: PlanConfirmation['answers']): PlanConfi
   answers,
 });
 
-const handleSaveResult = (sections: PromptSection[]): void => {
-  if (store.saveEditedSections(sections)) {
+const handleSaveResult = (
+  sections: PromptSection[], complete: (saved: boolean, message?: string) => void,
+): void => {
+  const saved = store.saveEditedSections(sections);
+  complete(saved, saved ? undefined : store.errorMessage);
+  if (saved) {
     recordPlanningEvent(plan.value?.planId, 'RESULT_EDITED');
     ElMessage.success('修改已保存。');
   }
@@ -544,9 +568,11 @@ const prepareContextTransmission = async (
   planningDigestOnly = false,
 ): Promise<ContextFileInput[] | undefined> => {
   if (isPreparingContext.value) return undefined;
+  const lease = store.captureContext();
   store.isPreparingContext = true;
   try {
     const contextFiles = await store.prepareContextFiles(query);
+    if (!store.isCurrentContext(lease)) return undefined;
     if (!projectContextSettings.value.confirmBeforeSendingCode || contextFiles.length === 0) {
       return contextFiles;
     }
@@ -572,15 +598,16 @@ const prepareContextTransmission = async (
         cancelButtonText: '暂不发送',
       },
     );
-    return contextFiles;
+    return store.isCurrentContext(lease) ? contextFiles : undefined;
   } catch (error: unknown) {
+    if (!store.isCurrentContext(lease)) return undefined;
     if (error === 'cancel' || error === 'close') {
       return undefined;
     }
     ElMessage.error(error instanceof Error ? error.message : '读取本地上下文失败。');
     return undefined;
   } finally {
-    store.isPreparingContext = false;
+    if (store.isCurrentContext(lease)) store.isPreparingContext = false;
   }
 };
 
@@ -590,12 +617,53 @@ const formatBytes = (bytes: number): string => {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 };
 
-const handlePageHide = (): void => {
-  pageLifecycleVersion += 1;
+/** 取消选择与上传回调；已添加的独立资料仍由 Store 管理。 */
+const cancelFileSelection = (): void => {
+  contextSelectionVersion += 1;
   resetProjectFiles();
+  uploadCandidates.value = [];
+  omittedUploadCandidates.value = 0;
+  uploadConfirmVisible.value = false;
+};
+
+/** 任务切换或卸载同时失效页面回调，避免旧 Worker、上传与弹窗回到新任务。 */
+const resetPageOperations = (): void => {
+  pageLifecycleVersion += 1;
+  cancelFileSelection();
   resetProjectIndexPageState();
+  selectionWarnings.value = [];
+  planDialogVisible.value = false;
+  planIntroVisible.value = false;
+  pendingPrompt.value = '';
+  recoveryRevision.value = 0;
+  isRecoveringPlan.value = false;
+  isClearingIndex.value = false;
+};
+
+const handlePageHide = (): void => {
+  resetPageOperations();
   store.clearFiles();
 };
+
+const hasUnsavedResultDraft = computed(() => resultDraft.value !== undefined
+  && JSON.stringify(resultDraft.value) !== JSON.stringify(
+    result.value?.sections.filter(section => section.type !== 'CLARIFICATIONS') ?? []));
+
+onBeforeRouteLeave(async () => {
+  if (!hasUnsavedResultDraft.value) return true;
+  try {
+    await ElMessageBox.confirm('结果中的修改尚未保存，离开将放弃这些修改。', '尚未保存的修改', {
+      type: 'warning', confirmButtonText: '放弃修改并离开', cancelButtonText: '继续编辑',
+    });
+    store.resultDraft = undefined;
+    return true;
+  } catch {
+    return false;
+  }
+});
+
+watch(() => store.taskRevision, resetPageOperations, { flush: 'sync' });
+watch(plan, value => { if (!value) planDialogVisible.value = false; });
 
 watch(result, (value) => {
   if (value && isNarrowWorkbench.value) {
@@ -617,6 +685,8 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  resetPageOperations();
+  store.cancelPendingOperations();
   window.removeEventListener('pagehide', handlePageHide);
   mobilePaneQuery?.removeEventListener('change', syncNarrowWorkbench);
 });
@@ -671,6 +741,7 @@ onBeforeUnmount(() => {
         :project-index="projectIndex"
         :context-retrieval="contextRetrieval"
         :snapshot="contextSnapshot"
+        :transmission="contextTransmission"
         :is-reading="isReading"
         :is-analyzing="isAnalyzing"
         :progress="progress"
@@ -717,9 +788,11 @@ onBeforeUnmount(() => {
         v-show="showResultPane"
         class="glass-panel result-column"
         :result="result"
+        :edit-draft="resultDraft"
         :busy="isAnalyzing || isPlanning || isOptimizing || isPreparingContext"
         :plan-mode-enabled="planModeEnabled"
         @save="handleSaveResult"
+        @update:edit-draft="resultDraft = $event"
         @re-enhance="handleReEnhance"
       />
     </div>
