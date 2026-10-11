@@ -20,5 +20,7 @@ public enum AnalyticsEventType {
     CONTEXT_ANALYZED,
     RESULT_EXPORTED,
     RECHARGE_PAID,
-    ADMIN_MODEL_CHANGED
+    ADMIN_MODEL_CHANGED,
+    /** 匿名租户级模型调用尝试对账；不进入账号活跃与业务使用次数统计。 */
+    MODEL_CALL_RECORDED
 }

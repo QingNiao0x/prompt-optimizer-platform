@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import com.promptoptimizer.common.logging.ModelCallLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +30,10 @@ public final class ModelConcurrencyHttpInterceptor implements ClientHttpRequestI
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
             throws IOException {
+        ModelCallLogger.transportPending();
         ModelConcurrencyLimiter.Permit permit = limiter.acquireGlobal();
         try {
+            ModelCallLogger.transportStarted();
             return new LimitedResponse(execution.execute(request, body), permit);
         } catch (IOException | RuntimeException | Error exception) {
             permit.close();
@@ -42,7 +45,11 @@ public final class ModelConcurrencyHttpInterceptor implements ClientHttpRequestI
     private record LimitedResponse(ClientHttpResponse delegate, ModelConcurrencyLimiter.Permit permit)
             implements ClientHttpResponse {
         @Override
-        public HttpStatusCode getStatusCode() throws IOException { return delegate.getStatusCode(); }
+        public HttpStatusCode getStatusCode() throws IOException {
+            HttpStatusCode status = delegate.getStatusCode();
+            ModelCallLogger.responseReceived(status.value());
+            return status;
+        }
         @Override
         public String getStatusText() throws IOException { return delegate.getStatusText(); }
         @Override

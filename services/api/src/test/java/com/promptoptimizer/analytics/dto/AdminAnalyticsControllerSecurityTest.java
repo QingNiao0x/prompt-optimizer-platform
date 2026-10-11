@@ -2,6 +2,8 @@ package com.promptoptimizer.analytics.dto;
 
 import com.promptoptimizer.analytics.controller.AdminAnalyticsController;
 import com.promptoptimizer.analytics.controller.AdminAnalyticsDeliveryController;
+import com.promptoptimizer.analytics.controller.AdminModelCallAnalyticsController;
+import com.promptoptimizer.analytics.service.AdminModelCallAnalyticsService;
 import com.promptoptimizer.analytics.infrastructure.AuditEventDelivery;
 import com.promptoptimizer.analytics.service.AdminAnalyticsService;
 import com.promptoptimizer.common.web.RequestIdFilter;
@@ -31,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author QingNiao
  * @since 0.1.0
  */
-@WebMvcTest({AdminAnalyticsController.class, AdminAnalyticsDeliveryController.class})
+@WebMvcTest({AdminAnalyticsController.class, AdminAnalyticsDeliveryController.class, AdminModelCallAnalyticsController.class})
 @Import({RequestIdFilter.class, AuthenticatedMvcTestConfiguration.class})
 class AdminAnalyticsControllerSecurityTest {
 
@@ -42,6 +44,9 @@ class AdminAnalyticsControllerSecurityTest {
     private AdminAnalyticsService analyticsService;
 
     @MockBean
+    private AdminModelCallAnalyticsService modelCallService;
+
+    @MockBean
     private PlatformAdminAccess platformAdminAccess;
 
     @MockBean
@@ -49,7 +54,7 @@ class AdminAnalyticsControllerSecurityTest {
 
     @Test
     void anonymousRequestIsUnauthorized() throws Exception {
-        for (String endpoint : java.util.List.of("dashboard", "usage-ranking", "operations", "delivery")) {
+        for (String endpoint : java.util.List.of("dashboard", "usage-ranking", "operations", "delivery", "token-ranking", "model-calls")) {
             mockMvc.perform(get("/api/v1/admin/analytics/" + endpoint).param("email", "demo@example.test").with(anonymous()))
                     .andExpect(status().isUnauthorized());
         }
@@ -57,7 +62,7 @@ class AdminAnalyticsControllerSecurityTest {
 
     @Test
     void ordinaryUserIsForbidden() throws Exception {
-        for (String endpoint : java.util.List.of("dashboard", "usage-ranking", "operations", "delivery")) {
+        for (String endpoint : java.util.List.of("dashboard", "usage-ranking", "operations", "delivery", "token-ranking", "model-calls")) {
             mockMvc.perform(get("/api/v1/admin/analytics/" + endpoint).param("displayName", "演示")
                             .with(user("ordinary").roles("USER")))
                     .andExpect(status().isForbidden());
@@ -92,6 +97,29 @@ class AdminAnalyticsControllerSecurityTest {
         mockMvc.perform(get("/api/v1/admin/analytics/delivery").with(user("platform-admin").roles("PLATFORM_ADMIN")))
                 .andExpect(status().isForbidden());
         verifyNoInteractions(auditEventDelivery);
+    }
+
+    @Test
+    void modelQueriesRequireCurrentAdminRoleAndValidateInputs() throws Exception {
+        var admin = user("platform-admin").roles("PLATFORM_ADMIN");
+        mockMvc.perform(get("/api/v1/admin/analytics/token-ranking").param("period", "MONTH").param("date", "2026-10-10")
+                .with(admin)).andExpect(status().isOk());
+        verify(platformAdminAccess).require();
+        verify(modelCallService).tokenRanking(new TokenRankingQuery("MONTH", "2026-10-10", null, null, null, null));
+        mockMvc.perform(get("/api/v1/admin/analytics/token-ranking").param("period", "INVALID").param("date", "2026-10-10")
+                .with(admin)).andExpect(status().isBadRequest());
+        mockMvc.perform(get("/api/v1/admin/analytics/model-calls").param("fromDate", "2026-10-10").param("toDate", "2026-10-10")
+                .param("tenantId", "bad-uuid").with(admin)).andExpect(status().isBadRequest());
+        mockMvc.perform(get("/api/v1/admin/analytics/model-calls").param("fromDate", "2026-10-10").param("toDate", "2026-10-10")
+                .param("size", "101").with(admin)).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void revokedAdministratorCannotReadModelReconciliation() throws Exception {
+        doThrow(new AccessDeniedException("fixture permission revoked")).when(platformAdminAccess).require();
+        mockMvc.perform(get("/api/v1/admin/analytics/model-calls").param("fromDate", "2026-10-10").param("toDate", "2026-10-10")
+                .with(user("platform-admin").roles("PLATFORM_ADMIN"))).andExpect(status().isForbidden());
+        verifyNoInteractions(modelCallService);
     }
 
     @Test

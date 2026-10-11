@@ -3,6 +3,8 @@ package com.promptoptimizer.enhancement.service.impl;
 import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.provider.domain.DraftDeliveryContract;
+import com.promptoptimizer.template.domain.TaskDeliveryProfile;
+import com.promptoptimizer.template.domain.TaskIntentResolver;
 import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,22 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 0.1.0
  */
 class DraftDeliveryBoundaryTest {
+    private static final String SCREENSHOT_ANALYSIS = """
+            我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:
+            1.时间序列的长期趋势和季节性趋势
+            2.分性别\\地区\\分人群\\分亚类去进行比较
+            3.进行减寿分析:年度的\\性别的yll和yll率
+            4.采用Arriaga分解方法去分析""";
+
+    /** 用户要求撰写分析正文，即使标题不含“报告”，也不能降成只交方案。 */
+    @Test
+    void theExactScreenshotRequestAlreadySelectsAnalysisWritingWithoutAReportKeyword() {
+        var intent = TaskIntentResolver.resolve(TemplateCode.AUTO, SCREENSHOT_ANALYSIS);
+        assertThat(intent.deliveryProfile()).isEqualTo(TaskDeliveryProfile.DATA_ANALYSIS);
+        assertThat(intent.engineeringConstraints()).isFalse();
+        assertThat(contract(SCREENSHOT_ANALYSIS, List.of()).active()).isTrue();
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
             "请撰写年度研究报告，不能只给提纲。",

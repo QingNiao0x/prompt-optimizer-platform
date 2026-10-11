@@ -5,6 +5,7 @@ import com.promptoptimizer.context.service.DocumentUploadService;
 import com.promptoptimizer.context.service.DocumentUploadException;
 import com.promptoptimizer.common.logging.LogCorrelation;
 import com.promptoptimizer.common.logging.LogFields;
+import com.promptoptimizer.common.logging.ModelCallAuditContext;
 import com.promptoptimizer.context.dto.DocumentUploadCreateRequest;
 import com.promptoptimizer.context.domain.DocumentProcessingPhase;
 import com.promptoptimizer.context.domain.DocumentSelection;
@@ -221,6 +222,8 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
             session.progressPercent = 41;
             session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
             session.requestId = MDC.get("requestId");
+            // 异步工作线程只继承租户对账范围，不继承账号身份或整个 SecurityContext。
+            session.modelAuditContext = ModelCallAuditContext.capture();
             session.task = executor.submit(() -> process(session));
             return statusOf(session);
         }
@@ -354,7 +357,8 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
     private void process(UploadSession session) {
         long startedAt = System.nanoTime();
         try (LogCorrelation.Scope requestScope = LogCorrelation.bindRequestId(session.requestId);
-             LogCorrelation.Scope workflowScope = LogCorrelation.bindWorkflow("document-upload", session.documentId)) {
+             LogCorrelation.Scope workflowScope = LogCorrelation.bindWorkflow("document-upload", session.documentId);
+             ModelCallAuditContext.Scope auditScope = ModelCallAuditContext.bind(session.modelAuditContext)) {
             LOGGER.info("event=document.index.started requestId={} workflowId={} fileBytes={} expectedChunks={}",
                     LogFields.value(MDC.get("requestId")),
                     LogFields.value(MDC.get("workflowId")),
@@ -990,6 +994,7 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
         private volatile int progressPercent;
         private volatile long extractedCharacters;
         private volatile String requestId;
+        private volatile ModelCallAuditContext.Snapshot modelAuditContext;
         private volatile boolean extractionComplete;
         private volatile String summary = "";
         private volatile List<String> warnings = List.of();

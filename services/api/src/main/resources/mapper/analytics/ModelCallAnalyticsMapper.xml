@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.analytics.mapper.ModelCallAnalyticsMapper">
+    <resultMap id="tokenRank" type="com.promptoptimizer.analytics.dto.AnalyticsViews$TokenRank">
+        <constructor>
+            <arg column="source" javaType="java.lang.String"/>
+            <arg column="call_count" javaType="_long"/>
+            <arg column="success_count" javaType="_long"/>
+            <arg column="failure_count" javaType="_long"/>
+            <arg column="complete_usage_count" javaType="_long"/>
+            <arg column="partial_usage_count" javaType="_long"/>
+            <arg column="unknown_usage_count" javaType="_long"/>
+            <arg column="invalid_usage_count" javaType="_long"/>
+            <arg column="input_tokens" javaType="java.lang.String"/>
+            <arg column="output_tokens" javaType="java.lang.String"/>
+            <arg column="total_tokens" javaType="java.lang.String"/>
+            <arg column="cache_hit_tokens" javaType="java.lang.String"/>
+            <arg column="cache_miss_tokens" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="modelCall" type="com.promptoptimizer.analytics.dto.AnalyticsViews$ModelCallView">
+        <constructor>
+            <arg column="event_id" javaType="java.util.UUID"/>
+            <arg column="tenant_id" javaType="java.util.UUID"/>
+            <arg column="occurred_at" javaType="java.time.OffsetDateTime"/>
+            <arg column="request_id" javaType="java.lang.String"/>
+            <arg column="workflow_id" javaType="java.lang.String"/>
+            <arg column="operation" javaType="java.lang.String"/>
+            <arg column="provider_route" javaType="java.lang.String"/>
+            <arg column="model" javaType="java.lang.String"/>
+            <arg column="attempt" javaType="_int"/>
+            <arg column="mock" javaType="_boolean"/>
+            <arg column="successful" javaType="_boolean"/>
+            <arg column="failure_type" javaType="java.lang.String"/>
+            <arg column="upstream_status" javaType="java.lang.Integer"/>
+            <arg column="will_retry" javaType="_boolean"/>
+            <arg column="transport_state" javaType="java.lang.String"/>
+            <arg column="usage_state" javaType="java.lang.String"/>
+            <arg column="cache_state" javaType="java.lang.String"/>
+            <arg column="input_tokens" javaType="java.lang.Long"/>
+            <arg column="output_tokens" javaType="java.lang.Long"/>
+            <arg column="total_tokens" javaType="java.lang.Long"/>
+            <arg column="cache_hit_tokens" javaType="java.lang.Long"/>
+            <arg column="cache_miss_tokens" javaType="java.lang.Long"/>
+            <arg column="duration_ms" javaType="_long"/>
+        </constructor>
+    </resultMap>
+
+    <sql id="scopePredicate">
+        event_type = 'MODEL_CALL_RECORDED' AND actor_user_id IS NULL
+        AND details->>'schemaVersion' = '1'
+        AND occurred_at >= #{period.fromInclusive} AND occurred_at &lt; #{period.toExclusive}
+        <if test="tenantId != null">AND tenant_id = #{tenantId}</if>
+    </sql>
+
+    <sql id="callRows">
+        WITH scoped AS (
+            SELECT id, tenant_id, occurred_at, details FROM audit_event
+             WHERE <include refid="scopePredicate"/>
+        ), parsed AS (
+            SELECT id AS event_id, tenant_id, occurred_at,
+                   CASE WHEN details->>'requestId' ~ '^([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}|hash-[a-f0-9]{20})$'
+                        THEN details->>'requestId' END AS request_id,
+                   CASE WHEN details->>'workflowId' ~ '^[a-f0-9]{20}$' THEN details->>'workflowId' END AS workflow_id,
+                   CASE WHEN details->>'operation' IN ('prompt.optimize', 'plan.generate', 'document.summary.map',
+                            'document.summary.reduce', 'context.embedding') THEN details->>'operation' ELSE 'unknown' END AS operation,
+                   CASE WHEN details->>'providerRoute' ~ '^[A-Za-z0-9._:/-]{1,128}$'
+                            AND strpos(details->>'providerRoute', '://') = 0
+                        THEN details->>'providerRoute' ELSE 'unknown' END AS provider_route,
+                   CASE WHEN details->>'model' ~ '^[A-Za-z0-9._:/-]{1,128}$'
+                            AND strpos(details->>'model', '://') = 0
+                        THEN details->>'model' ELSE 'unknown' END AS model,
+                   CASE WHEN details->>'attempt' ~ '^[0-9]{1,3}$'
+                        THEN greatest(1, least(100, (details->>'attempt')::int)) ELSE 1 END AS attempt,
+                   COALESCE(details->>'mock' = 'true', false) AS mock,
+                   COALESCE(details->>'successful' = 'true', false) AS successful,
+                   CASE WHEN details->>'failureType' IN ('AUTHENTICATION', 'RATE_LIMIT', 'TIMEOUT', 'REQUEST_REJECTED',
+                            'UPSTREAM_UNAVAILABLE', 'INVALID_RESPONSE', 'CONFIGURATION', 'INTERNAL', 'RESOURCE_ACCESS',
+                            'UNEXPECTED', 'MODEL_CONCURRENCY_LIMIT') THEN details->>'failureType' END AS failure_type,
+                   CASE WHEN details->>'upstreamStatus' ~ '^[1-5][0-9]{2}$'
+                        THEN (details->>'upstreamStatus')::int END AS upstream_status,
+                   COALESCE(details->>'willRetry' = 'true', false) AS will_retry,
+                   CASE WHEN details->>'transportState' IN ('MOCK', 'NOT_SENT', 'STARTED', 'RESPONSE_RECEIVED')
+                        THEN details->>'transportState' ELSE 'UNKNOWN' END AS transport_state,
+                   CASE WHEN details->>'cacheState' IN ('HIT', 'MISS', 'MIXED', 'NONE')
+                        THEN details->>'cacheState' ELSE 'UNKNOWN' END AS cache_state,
+                   details->>'usageState' AS reported_usage_state,
+                   CASE WHEN details->>'durationMs' ~ '^[0-9]{1,18}$'
+                        THEN (details->>'durationMs')::bigint ELSE 0 END AS duration_ms,
+            CASE WHEN jsonb_typeof(details->'inputTokens') = 'number'
+                       AND details->>'inputTokens' ~ '^[0-9]{1,19}$'
+                 THEN CASE WHEN (details->>'inputTokens')::numeric &lt;= 9223372036854775807
+                           THEN (details->>'inputTokens')::numeric END END AS input_tokens,
+            CASE WHEN jsonb_typeof(details->'outputTokens') = 'number'
+                       AND details->>'outputTokens' ~ '^[0-9]{1,19}$'
+                 THEN CASE WHEN (details->>'outputTokens')::numeric &lt;= 9223372036854775807
+                           THEN (details->>'outputTokens')::numeric END END AS output_tokens,
+            CASE WHEN jsonb_typeof(details->'totalTokens') = 'number'
+                       AND details->>'totalTokens' ~ '^[0-9]{1,19}$'
+                 THEN CASE WHEN (details->>'totalTokens')::numeric &lt;= 9223372036854775807
+                           THEN (details->>'totalTokens')::numeric END END AS total_tokens,
+            CASE WHEN jsonb_typeof(details->'cacheHitTokens') = 'number'
+                       AND details->>'cacheHitTokens' ~ '^[0-9]{1,19}$'
+                 THEN CASE WHEN (details->>'cacheHitTokens')::numeric &lt;= 9223372036854775807
+                           THEN (details->>'cacheHitTokens')::numeric END END AS cache_hit_tokens,
+            CASE WHEN jsonb_typeof(details->'cacheMissTokens') = 'number'
+                       AND details->>'cacheMissTokens' ~ '^[0-9]{1,19}$'
+                 THEN CASE WHEN (details->>'cacheMissTokens')::numeric &lt;= 9223372036854775807
+                           THEN (details->>'cacheMissTokens')::numeric END END AS cache_miss_tokens,
+                   details
+              FROM scoped
+        ), calls AS (
+            SELECT *,
+                <!-- 校验真实数字，不仅信任状态代码；损坏或旧格式 JSON 不得导致 CAST 错误或伪造消费。 -->
+                CASE WHEN reported_usage_state = 'INVALID'
+                          OR (input_tokens IS NOT NULL AND output_tokens IS NOT NULL AND total_tokens IS NOT NULL
+                              AND input_tokens + output_tokens != total_tokens)
+                          OR (input_tokens IS NOT NULL AND cache_hit_tokens IS NOT NULL AND cache_hit_tokens > input_tokens)
+                          OR (input_tokens IS NOT NULL AND cache_miss_tokens IS NOT NULL AND cache_miss_tokens > input_tokens)
+                          OR (input_tokens IS NOT NULL AND cache_hit_tokens IS NOT NULL AND cache_miss_tokens IS NOT NULL
+                              AND cache_hit_tokens + cache_miss_tokens != input_tokens)
+                     THEN 'INVALID'
+                     WHEN input_tokens IS NOT NULL AND output_tokens IS NOT NULL AND total_tokens IS NOT NULL THEN 'COMPLETE'
+                     WHEN input_tokens IS NOT NULL OR output_tokens IS NOT NULL OR total_tokens IS NOT NULL THEN 'PARTIAL'
+                     ELSE 'UNKNOWN' END AS usage_state
+            FROM parsed
+        )
+    </sql>
+
+    <select id="tokenRanking" resultMap="tokenRank">
+        <include refid="callRows"/>,
+        eligible AS (
+            SELECT *,
+            <choose>
+                <when test="groupBy == 'SOURCE'">provider_route || ' / ' || model</when>
+                <otherwise>operation</otherwise>
+            </choose> AS source
+            FROM calls WHERE NOT mock AND transport_state NOT IN ('NOT_SENT', 'MOCK')
+        )
+        SELECT source, COUNT(*) AS call_count,
+               COUNT(*) FILTER (WHERE successful) AS success_count,
+               COUNT(*) FILTER (WHERE NOT successful) AS failure_count,
+               COUNT(*) FILTER (WHERE usage_state = 'COMPLETE') AS complete_usage_count,
+               COUNT(*) FILTER (WHERE usage_state = 'PARTIAL') AS partial_usage_count,
+               COUNT(*) FILTER (WHERE usage_state = 'UNKNOWN') AS unknown_usage_count,
+               COUNT(*) FILTER (WHERE usage_state = 'INVALID') AS invalid_usage_count,
+               <!-- PostgreSQL numeric 求和后返回十进制文本，跨大数据量也不会溢出 long 或丢失 JS 精度。 -->
+               COALESCE(SUM(input_tokens) FILTER (WHERE usage_state != 'INVALID'), 0)::text AS input_tokens,
+               COALESCE(SUM(output_tokens) FILTER (WHERE usage_state != 'INVALID'), 0)::text AS output_tokens,
+               COALESCE(SUM(total_tokens) FILTER (WHERE usage_state != 'INVALID'), 0)::text AS total_tokens,
+               COALESCE(SUM(cache_hit_tokens) FILTER (WHERE usage_state != 'INVALID'), 0)::text AS cache_hit_tokens,
+               COALESCE(SUM(cache_miss_tokens) FILTER (WHERE usage_state != 'INVALID'), 0)::text AS cache_miss_tokens
+          FROM eligible GROUP BY source
+         ORDER BY COALESCE(SUM(total_tokens) FILTER (WHERE usage_state != 'INVALID'), 0) DESC, COUNT(*) DESC, source
+         LIMIT #{limit}
+    </select>
+
+    <sql id="detailPredicate">
+        1 = 1
+        <if test="operation != null">AND operation = #{operation}</if>
+        <if test="requestId != null">AND request_id = #{requestId}</if>
+    </sql>
+    <select id="countModelCalls" resultType="long">
+        <include refid="callRows"/>
+        SELECT COUNT(*) FROM calls WHERE <include refid="detailPredicate"/>
+    </select>
+    <select id="selectModelCalls" resultMap="modelCall">
+        <include refid="callRows"/>
+        <!-- 只投影公开列；禁止 SELECT * 把完整 details 或身份字段返回到接口。 -->
+        SELECT event_id, tenant_id, occurred_at, request_id, workflow_id, operation, provider_route, model,
+               attempt, mock, successful, failure_type, upstream_status, will_retry, transport_state, usage_state,
+               CASE WHEN usage_state = 'INVALID' THEN 'UNKNOWN' ELSE cache_state END AS cache_state,
+               input_tokens::bigint, output_tokens::bigint, total_tokens::bigint,
+               cache_hit_tokens::bigint, cache_miss_tokens::bigint, duration_ms
+          FROM calls WHERE <include refid="detailPredicate"/>
+         ORDER BY occurred_at DESC, event_id DESC
+    </select>
+</mapper>
+

@@ -11,6 +11,107 @@ const phoneEnvironment = async (page: Page, authenticated = false): Promise<void
     json: { data: { challengeId: 'synthetic-challenge', expiresInSeconds: 300, resendAfterSeconds: 60 } } }));
 };
 
+/** 完成模拟邮箱注册，用于检查注册后的绑定引导；不会调用真实邮件服务。 */
+const registerEmail = async (page: Page, smsEnabled = true): Promise<void> => {
+  await page.goto('/login');
+  await page.getByRole('button', { name: '立即注册', exact: true }).click();
+  const registration = page.locator('.login-modal__form');
+  await registration.getByLabel(smsEnabled ? '邮箱/手机号' : '邮箱', { exact: true }).fill('new@example.com');
+  await registration.getByRole('button', { name: '获取邮箱验证码' }).click();
+  await registration.getByLabel('邮箱验证码', { exact: true }).fill('123456');
+  await registration.getByPlaceholder('请输入密码').fill('Abcdefg1');
+  await registration.getByPlaceholder('请再次输入密码').fill('Abcdefg1');
+  await registration.getByRole('checkbox').check();
+  await registration.getByRole('button', { name: '创建账号', exact: true }).click();
+  await expect(page.getByRole('heading', { name: '账号创建成功，已自动登录' })).toBeVisible();
+};
+
+/** 邮箱注册只创建一个账号；后续挑战必须走已登录的绑定入口，而非手机号注册。 */
+test('邮箱注册后两步验证手机号，校验失败不绑定，成功关联原邮箱账号', async ({ page }) => {
+  await phoneEnvironment(page);
+  let issued = 0;
+  let bound = 0;
+  await page.route('**/api/v1/me/phone-binding/challenges', route => {
+    issued += 1;
+    expect(route.request().postDataJSON()).toEqual({ phone: '+8613800000000', currentPassword: 'Abcdefg1', captcha: 'ABCD' });
+    return route.fulfill({ status: 200, json: { data: { challengeId: 'email-binding', expiresInSeconds: 300, resendAfterSeconds: 60 } } });
+  });
+  await page.route('**/api/v1/me/phone-binding', route => {
+    bound += 1;
+    const body = route.request().postDataJSON();
+    expect(body).toEqual({ phone: '+8613800000000', currentPassword: 'Abcdefg1', challengeId: 'email-binding', verificationCode: bound === 1 ? '000000' : '123456' });
+    return route.fulfill(bound === 1
+      ? { status: 400, json: { error: { code: 'SMS_CODE_INVALID', message: '短信验证码错误。' } } }
+      : { status: 200, json: { data: { ...testUser, email: 'new@example.com', phoneBound: true, maskedPhone: '+86 138****0000' } } });
+  });
+  await registerEmail(page);
+  await expect(page.getByRole('heading', { name: '验证您的手机号码', exact: true })).toBeVisible();
+  const binding = page.locator('.binding-form');
+  await expect(binding.getByLabel('短信验证码', { exact: true })).toHaveCount(0);
+  await binding.getByLabel('当前密码', { exact: true }).fill('Abcdefg1');
+  await binding.getByLabel('待绑定手机号', { exact: true }).fill('13800000000');
+  await binding.getByLabel('图形验证码', { exact: true }).fill('ABCD');
+  await binding.getByRole('button', { name: '发送短信验证码', exact: true }).click();
+  await expect(binding.getByLabel('短信验证码', { exact: true })).toBeVisible();
+  expect(issued).toBe(1);
+  expect(bound).toBe(0);
+  await binding.getByLabel('短信验证码', { exact: true }).fill('000000');
+  await binding.getByRole('button', { name: '确认绑定', exact: true }).click();
+  await expect(binding.getByRole('alert').last()).toContainText('短信验证码错误');
+  await expect(page.getByRole('heading', { name: '验证您的手机号码', exact: true })).toBeVisible();
+  await binding.getByLabel('短信验证码', { exact: true }).fill('123456');
+  await binding.getByRole('button', { name: '确认绑定', exact: true }).click();
+  await expect(page.getByText('已绑定手机号：+86 138****0000')).toBeVisible();
+  await expect(binding).toHaveCount(0);
+  await expect(page.locator('.login-modal__registration-success')).not.toContainText('13800000000');
+  expect(bound).toBe(2);
+});
+
+test('邮箱注册后的绑定挑战过期或更换号码不能继续提交', async ({ page }) => {
+  await page.clock.install();
+  await phoneEnvironment(page);
+  let bound = 0;
+  await page.route('**/api/v1/me/phone-binding/challenges', route => route.fulfill({ status: 200,
+    json: { data: { challengeId: 'email-expiry', expiresInSeconds: 300, resendAfterSeconds: 60 } } }));
+  await page.route('**/api/v1/me/phone-binding', route => { bound += 1; return route.fulfill({ status: 500 }); });
+  await registerEmail(page);
+  const binding = page.locator('.binding-form');
+  await binding.getByLabel('当前密码', { exact: true }).fill('Abcdefg1');
+  await binding.getByLabel('待绑定手机号', { exact: true }).fill('13800000000');
+  await binding.getByLabel('图形验证码', { exact: true }).fill('ABCD');
+  await binding.getByRole('button', { name: '发送短信验证码', exact: true }).click();
+  await binding.getByLabel('短信验证码', { exact: true }).fill('123456');
+  await expect(binding.getByRole('button', { name: '确认绑定' })).toBeEnabled();
+  await binding.getByLabel('待绑定手机号', { exact: true }).fill('13800000001');
+  await expect(binding.getByLabel('短信验证码', { exact: true })).toHaveCount(0);
+  await expect(binding.getByRole('button', { name: /秒后重发/ })).toBeDisabled();
+  await page.clock.fastForward(61_000);
+  await binding.getByLabel('图形验证码', { exact: true }).fill('ABCD');
+  await binding.getByRole('button', { name: '发送短信验证码', exact: true }).click();
+  await binding.getByLabel('短信验证码', { exact: true }).fill('123456');
+  await page.clock.fastForward(301_000);
+  await expect(binding.getByText('短信验证码已过期，请重新获取。')).toBeVisible();
+  await expect(binding.getByRole('button', { name: '确认绑定' })).toBeDisabled();
+  expect(bound).toBe(0);
+});
+
+for (const smsEnabled of [true, false]) {
+  test(`邮箱注册后可稍后完善手机资料，短信能力${smsEnabled ? '开启' : '关闭'}不阻断原邮箱流程`, async ({ page }) => {
+    if (smsEnabled) await phoneEnvironment(page);
+    else await mockAuthentication(page, false);
+    let issued = 0;
+    await page.route('**/api/v1/me/phone-binding/challenges', route => { issued += 1; return route.fulfill({ status: 500 }); });
+    await registerEmail(page, smsEnabled);
+    if (!smsEnabled) {
+      await expect(page.locator('.binding-form')).toHaveCount(0);
+      await expect(page.getByText('当前手机号短信验证和绑定入口尚未开放，暂时无法完成绑定。')).toBeVisible();
+    }
+    await page.getByRole('button', { name: smsEnabled ? '稍后绑定，进入工作台' : '进入工作台', exact: true }).click();
+    await expect(page).toHaveURL(/\/workbench$/);
+    expect(issued).toBe(0);
+  });
+}
+
 const passwordLoginCases = [
   { name: '手机号', input: '13800000000', identifier: '+8613800000000', identityType: 'PHONE', usernameMode: false },
   { name: '邮箱', input: 'test@example.com', identifier: 'test@example.com', identityType: undefined, usernameMode: false },

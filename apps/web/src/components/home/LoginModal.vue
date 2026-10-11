@@ -7,6 +7,7 @@ import { normalizeMainlandPhone, validateRegistrationAccount } from '@/features/
 import { useSmsChallenge } from '@/features/auth/useSmsChallenge';
 import { ElButton } from 'element-plus';
 import PhoneAuthPanel from '@/components/auth/PhoneAuthPanel.vue';
+import PhoneBindingForm from '@/components/auth/PhoneBindingForm.vue';
 import ImageCaptcha from '@/components/auth/ImageCaptcha.vue';
 
 export type AuthModalMode = 'login' | 'register';
@@ -131,9 +132,12 @@ const codeButtonLabel = computed((): string => {
   return isSmsRegistration.value ? '获取短信验证码' : '获取邮箱验证码';
 });
 
+// 手机验证是注册后的可选完善步骤，不再创建账户，也不阻断原有邮箱使用路径。
+const needsPhoneVerification = computed(() => registrationSucceeded.value && Boolean(auth.user)
+  && !auth.user?.phoneBound && auth.capabilities.phoneBinding);
 const title = computed((): string => {
   if (registrationSucceeded.value) {
-    return '注册完成';
+    return needsPhoneVerification.value ? '验证您的手机号码' : '注册完成';
   }
   if (view.value === 'register') {
     return '创建账号';
@@ -313,6 +317,10 @@ const handleSubmit = async (event: Event): Promise<void> => {
           password: password.value,
         });
       }
+      // 注册凭据到此即清除；后续绑定通过独立挑战及当前密码复核，不能重用注册验证码。
+      password.value = '';
+      confirmPassword.value = '';
+      resetRegistrationVerification();
       registrationSucceeded.value = true;
       return;
     }
@@ -377,13 +385,17 @@ const enterWorkbench = (): void => {
           </button>
         </header>
 
-        <div v-if="registrationSucceeded" class="login-modal__registration-success" role="status">
+        <div v-if="registrationSucceeded" class="login-modal__registration-success">
           <span class="login-modal__success-mark" aria-hidden="true">✓</span>
           <h3>账号创建成功，已自动登录</h3>
-          <p v-if="!auth.user?.phoneBound">建议绑定手机号，补充账户联系方式。</p>
-          <small v-if="!auth.user?.phoneBound">{{ auth.capabilities.phoneBinding ? '可在“设置 → 账户安全”验证并绑定手机号。' : '当前手机号短信验证和绑定入口尚未开放，暂时无法完成绑定。' }}</small>
+          <p v-if="auth.user?.phoneBound" role="status">已绑定手机号：{{ auth.user.maskedPhone }}</p>
+          <template v-else>
+            <p>建议绑定手机号，补充账户联系方式。</p>
+            <small>{{ needsPhoneVerification ? '请验证当前密码并获取短信验证码，验证通过后手机号将关联到此邮箱账号。' : '当前手机号短信验证和绑定入口尚未开放，暂时无法完成绑定。' }}</small>
+            <PhoneBindingForm v-if="needsPhoneVerification" sequential />
+          </template>
           <button class="login-modal__submit" type="button" @click="enterWorkbench">
-            进入工作台
+            {{ needsPhoneVerification ? '稍后绑定，进入工作台' : '进入工作台' }}
           </button>
         </div>
         <div v-else-if="view === 'qr'" class="login-modal__qr">

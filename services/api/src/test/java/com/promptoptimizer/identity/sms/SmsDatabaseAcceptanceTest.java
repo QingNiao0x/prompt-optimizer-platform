@@ -277,6 +277,66 @@ class SmsDatabaseAcceptanceTest {
                 .contentType(APPLICATION_JSON).content(payload)).andExpect(status().isBadRequest());
     }
 
+    /** 邮箱账户经真实安全过滤链发码、核验并新增手机身份；失败时不得提前绑定或改动业务数据。 */
+    @Test void emailAccountVerifiesPhoneBeforeBindingAndKeepsOriginalIdentityAndData() throws Exception {
+        var user = createUser("email-binding", "USER");
+        String phone = number();
+        var counts = fixture.counts();
+        String history = fixture.historyDigest();
+        var originalEmail = identities.selectByLoginKey(UserIdentityType.EMAIL, "local", user.getUsername());
+        var session = new MockHttpSession();
+        mvc.perform(get("/api/v1/auth/captcha").session(session)).andExpect(status().isOk());
+        String answer = (String) session.getAttribute(LoginCaptchaService.ATTRIBUTE);
+        var csrf = mvc.perform(get("/api/v1/auth/csrf").session(session)).andReturn().getResponse().getCookie("XSRF-TOKEN");
+        var login = mvc.perform(post("/api/v1/auth/login").session(session).cookie(csrf).header("X-XSRF-TOKEN", csrf.getValue())
+                .contentType(APPLICATION_JSON).content(json.writeValueAsString(new LoginRequest(user.getUsername(), PASSWORD, answer))))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.data.phoneBound").value(false)).andReturn();
+        // 登录轮换 CSRF Cookie；后续绑定不能重用登录之前的旧令牌。
+        var fresh = Arrays.stream(login.getResponse().getCookies())
+                .filter(cookie -> "XSRF-TOKEN".equals(cookie.getName()) && !cookie.getValue().isBlank())
+                .reduce((first, last) -> last).orElseThrow();
+        mvc.perform(get("/api/v1/auth/captcha").session(session)).andExpect(status().isOk());
+        answer = (String) session.getAttribute(LoginCaptchaService.ATTRIBUTE);
+        var issued = mvc.perform(post("/api/v1/me/phone-binding/challenges").session(session).cookie(fresh)
+                .header("X-XSRF-TOKEN", fresh.getValue()).contentType(APPLICATION_JSON)
+                .content(json.writeValueAsString(new SmsRequests.BindingChallenge(phone, PASSWORD, answer))))
+                .andExpect(status().isOk()).andReturn();
+        UUID challengeId = UUID.fromString(json.readTree(issued.getResponse().getContentAsString()).path("data").path("challengeId").asText());
+        assertThat(challengeMapper.find(challengeId).purpose()).isEqualTo(SmsPurpose.BIND);
+        verify(cloud).send(phone, properties.scheme(SmsPurpose.BIND), properties.getBindingTemplate(), challengeId.toString());
+        assertThat(identities.selectByLoginKey(UserIdentityType.PHONE, "local", phone)).isNull();
+        when(cloud.verify(anyString(), anyString(), anyString(), anyString())).thenReturn(false);
+        var payload = json.writeValueAsString(new SmsRequests.Binding(phone, challengeId, "123456", PASSWORD));
+        mvc.perform(post("/api/v1/me/phone-binding").session(session).cookie(fresh).header("X-XSRF-TOKEN", fresh.getValue())
+                .contentType(APPLICATION_JSON).content(payload)).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.code").value("SMS_CODE_INVALID"));
+        assertThat(identities.selectByLoginKey(UserIdentityType.PHONE, "local", phone)).isNull();
+        assertThat(fixture.counts()).isEqualTo(counts);
+        when(cloud.verify(anyString(), anyString(), anyString(), anyString())).thenReturn(true);
+        // 成功及响应丢失后的同浏览器重试，只新增一个身份，不再调用供应商核验。
+        for (int attempt = 0; attempt < 2; attempt++) {
+            var response = mvc.perform(post("/api/v1/me/phone-binding").session(session).cookie(fresh)
+                    .header("X-XSRF-TOKEN", fresh.getValue()).contentType(APPLICATION_JSON).content(payload))
+                    .andExpect(status().isOk()).andExpect(jsonPath("$.data.phoneBound").value(true))
+                    .andExpect(jsonPath("$.data.email").value(user.getUsername()))
+                    .andExpect(jsonPath("$.data.userId").value(user.actorIdentity().userId().toString()))
+                    .andExpect(jsonPath("$.data.workspaceId").value(user.actorIdentity().workspaceId().toString())).andReturn();
+            assertThat(response.getResponse().getContentAsString()).doesNotContain(phone, phone.substring(3));
+        }
+        var identity = identities.selectByLoginKey(UserIdentityType.PHONE, "local", phone);
+        assertThat(identity.getUserId()).isEqualTo(user.actorIdentity().userId());
+        assertThat(identity.getStatus()).isEqualTo(UserIdentityStatus.ACTIVE);
+        assertThat(identity.getVerifiedAt()).isNotNull();
+        var email = identities.selectByLoginKey(UserIdentityType.EMAIL, "local", user.getUsername());
+        assertThat(email.getId()).isEqualTo(originalEmail.getId());
+        assertThat(email.getStatus()).isEqualTo(originalEmail.getStatus());
+        assertThat(email.getVerifiedAt()).isEqualTo(originalEmail.getVerifiedAt());
+        assertThat(fixture.counts()).isEqualTo(new SmsFixtureMapper.Counts(counts.tenants(), counts.users(),
+                counts.workspaces(), counts.members(), counts.identities() + 1));
+        assertThat(fixture.historyDigest()).isEqualTo(history);
+        verify(cloud, times(2)).verify(phone, properties.scheme(SmsPurpose.BIND), "123456", challengeId.toString());
+    }
+
     @Test void phonePasswordEmailAndNumericUsernameRemainDistinct() throws Exception {
         var user = createUser("password", "PLATFORM_ADMIN"); String phone = number();
         var phoneIdentity = UUID.randomUUID(); var usernameIdentity = UUID.randomUUID();

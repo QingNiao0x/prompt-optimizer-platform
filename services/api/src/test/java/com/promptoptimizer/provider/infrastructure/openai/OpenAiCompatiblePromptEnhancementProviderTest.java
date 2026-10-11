@@ -1,6 +1,8 @@
 package com.promptoptimizer.provider.infrastructure.openai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.common.logging.ModelCallAuditContext;
+import com.promptoptimizer.common.logging.ModelCallObservation;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.dto.EnhancementOptions;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
@@ -413,6 +415,8 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
     void shouldRetryWithLargerOutputBudgetWhenModelReportsLengthLimit() throws Exception {
         String truncatedResponse = objectMapper.writeValueAsString(Map.of(
                 "model", MODEL,
+                "usage", Map.of("prompt_tokens", 18, "completion_tokens", 31, "total_tokens", 49,
+                        "prompt_cache_hit_tokens", 10, "prompt_cache_miss_tokens", 8),
                 "choices", List.of(Map.of(
                         "finish_reason", "length",
                         "message", Map.of("role", "assistant", "content", "{}")
@@ -424,9 +428,60 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 .andExpect(jsonPath("$.max_tokens").value(6000))
                 .andRespond(withSuccess(completionWithFindings("[]"), MediaType.APPLICATION_JSON));
 
-        EnhancementProviderResponse response = provider.enhance(createRequest());
+        var facts = new java.util.ArrayList<ModelCallObservation>();
+        EnhancementProviderResponse response;
+        try (var scope = ModelCallAuditContext.bind(new ModelCallAuditContext.Snapshot(java.util.UUID.randomUUID(),
+                (tenant, fact) -> facts.add(fact)))) {
+            response = provider.enhance(createRequest());
+        }
 
         assertThat(response.sections()).hasSize(4);
+        assertThat(facts).hasSize(2).extracting(ModelCallObservation::attempt).containsExactly(1, 2);
+        assertThat(facts.getFirst().successful()).isFalse();
+        assertThat(facts.getFirst().usage().totalTokens()).isEqualTo(49);
+        assertThat(facts.getFirst().usage().cacheState()).isEqualTo("MIXED");
+        assertThat(facts.getLast().successful()).isTrue();
+        assertThat(facts.getLast().usage()).isNull();
+        server.verify();
+    }
+
+    @Test
+    void repeatedInvalidContentPreservesEveryReportedUsageBeforeJsonParsing() throws Exception {
+        String response = objectMapper.writeValueAsString(Map.of("model", MODEL,
+                "usage", Map.of("prompt_tokens", 12, "completion_tokens", 8, "total_tokens", 20),
+                "choices", List.of(Map.of("message", Map.of("role", "assistant", "content", "not valid json")))));
+        server.expect(times(3), requestTo(ENDPOINT)).andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+        var facts = new java.util.ArrayList<ModelCallObservation>();
+        try (var scope = ModelCallAuditContext.bind(new ModelCallAuditContext.Snapshot(java.util.UUID.randomUUID(),
+                (tenant, fact) -> facts.add(fact)))) {
+            assertThatThrownBy(() -> provider.enhance(createRequest())).isInstanceOf(ProviderException.class);
+        }
+        assertThat(facts).hasSize(3).extracting(ModelCallObservation::attempt).containsExactly(1, 2, 3);
+        assertThat(facts).allSatisfy(fact -> {
+            assertThat(fact.successful()).isFalse();
+            assertThat(fact.usage().totalTokens()).isEqualTo(20);
+            assertThat(fact.failureType()).isEqualTo("INVALID_RESPONSE");
+        });
+        assertThat(facts).extracting(ModelCallObservation::eventId).doesNotHaveDuplicates();
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {429, 502})
+    void upstreamHttpFailureRecordsOneAttemptWithUnknownTokens(int status) {
+        server.expect(once(), requestTo(ENDPOINT)).andRespond(withStatus(HttpStatus.valueOf(status))
+                .body("{\"message\":\"private upstream content\"}").contentType(MediaType.APPLICATION_JSON));
+        var facts = new java.util.ArrayList<ModelCallObservation>();
+        try (var scope = ModelCallAuditContext.bind(new ModelCallAuditContext.Snapshot(java.util.UUID.randomUUID(),
+                (tenant, fact) -> facts.add(fact)))) {
+            assertThatThrownBy(() -> provider.enhance(createRequest())).isInstanceOf(ProviderException.class);
+        }
+        assertThat(facts).singleElement().satisfies(fact -> {
+            assertThat(fact.upstreamStatus()).isEqualTo(status);
+            assertThat(fact.transportState()).isEqualTo("RESPONSE_RECEIVED");
+            assertThat(fact.usage()).isNull();
+            assertThat(fact.toString()).doesNotContain("private upstream content");
+        });
         server.verify();
     }
 

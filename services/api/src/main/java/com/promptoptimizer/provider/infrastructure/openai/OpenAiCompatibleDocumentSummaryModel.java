@@ -90,6 +90,7 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
         int inputItems = request.parts() == null ? 0 : request.parts().size();
         long startedAt = System.nanoTime();
 
+        var auditAttempt = ModelCallLogger.beginAttempt();
         try {
             ChatCompletionResponse response = restClient.post()
                     .uri(route.endpoint())
@@ -99,6 +100,7 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
                     .body(requestBody)
                     .retrieve()
                     .body(ChatCompletionResponse.class);
+            ModelCallLogger.captureTokenUsage(toTokenUsage(response == null ? null : response.usage()));
             SummaryResult result = mapResponse(response, route.model());
             ModelCallLogger.completed(operation, route.key(), modelId, "SERVER_CONFIGURED", false,
                     1, inputItems, elapsedMillis(startedAt), toTokenUsage(response.usage()));
@@ -128,6 +130,8 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
             ModelCallLogger.failed(operation, route.key(), modelId, "SERVER_CONFIGURED", "UNEXPECTED",
                     false, null, false, 1, inputItems, elapsedMillis(startedAt));
             throw exception;
+        } finally {
+            auditAttempt.close();
         }
     }
 
@@ -153,7 +157,8 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
     /** 只记录摘要模型明确提供的用量统计。 */
     private ModelCallLogger.TokenUsage toTokenUsage(ChatTokenUsage usage) {
         return usage == null ? null : new ModelCallLogger.TokenUsage(
-                usage.promptTokens(), usage.completionTokens(), usage.totalTokens());
+                usage.promptTokens(), usage.completionTokens(), usage.totalTokens(),
+                usage.cacheHitTokens(), usage.cacheMissTokens());
     }
 
     /** 校验结构化摘要响应；缺失 summary 或无效 JSON 均显式报错，不伪装成成功摘要。 */
@@ -229,7 +234,9 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
     private record ChatTokenUsage(
             @JsonProperty("prompt_tokens") Long promptTokens,
             @JsonProperty("completion_tokens") Long completionTokens,
-            @JsonProperty("total_tokens") Long totalTokens
+            @JsonProperty("total_tokens") Long totalTokens,
+            @JsonProperty("prompt_cache_hit_tokens") Long cacheHitTokens,
+            @JsonProperty("prompt_cache_miss_tokens") Long cacheMissTokens
     ) {
     }
 

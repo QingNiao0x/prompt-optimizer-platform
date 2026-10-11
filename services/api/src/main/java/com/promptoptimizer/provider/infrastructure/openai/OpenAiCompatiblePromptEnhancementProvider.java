@@ -289,10 +289,10 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                     .body(requestBody)
                     .retrieve()
                     .body(ChatCompletionResponse.class);
-            return new ProviderCallResult<>(
-                    mapResponse(response, requestBody),
-                    toTokenUsage(response == null ? null : response.usage())
-            );
+            var usage = toTokenUsage(response == null ? null : response.usage());
+            // 先取计费证据再解析内容；JSON/截断或业务拒绝仍可能已经消耗 token。
+            ModelCallLogger.captureTokenUsage(usage);
+            return new ProviderCallResult<>(mapResponse(response, requestBody), usage);
         } catch (RestClientResponseException exception) {
             throw mapHttpException(exception);
         } catch (ResourceAccessException exception) {
@@ -344,10 +344,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                     .body(requestBody)
                     .retrieve()
                     .body(ChatCompletionResponse.class);
-            return new ProviderCallResult<>(
-                    mapPlanningResponse(response, requestBody),
-                    toTokenUsage(response == null ? null : response.usage())
-            );
+            var usage = toTokenUsage(response == null ? null : response.usage());
+            ModelCallLogger.captureTokenUsage(usage);
+            return new ProviderCallResult<>(mapPlanningResponse(response, requestBody), usage);
         } catch (RestClientResponseException exception) {
             throw mapHttpException(exception);
         } catch (ResourceAccessException exception) {
@@ -382,6 +381,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             OpenAiCompatibleRoute route = currentRequest.route();
             String resolvedModelId = properties.publicModelId(route, currentRequest.model());
             ModelCallLogger.TokenUsage knownUsage = null;
+            var auditAttempt = ModelCallLogger.beginAttempt();
             try {
                 // 固定本次请求，分别计量上游等待与本地校验，不把重试总耗时当成一次模型推理。
                 var attemptRequest = currentRequest;
@@ -459,6 +459,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                         knownUsage
                 );
                 throw exception;
+            } finally {
+                auditAttempt.close();
             }
         }
         throw new IllegalStateException("结构化响应重试流程未返回结果");
@@ -497,7 +499,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     /** 将 OpenAI 兼容响应中的显式 token 用量映射为统一日志字段。 */
     private ModelCallLogger.TokenUsage toTokenUsage(ChatTokenUsage usage) {
         return usage == null ? null : new ModelCallLogger.TokenUsage(
-                usage.promptTokens(), usage.completionTokens(), usage.totalTokens());
+                usage.promptTokens(), usage.completionTokens(), usage.totalTokens(),
+                usage.cacheHitTokens(), usage.cacheMissTokens());
     }
 
     /**
@@ -1162,7 +1165,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     private record ChatTokenUsage(
             @JsonProperty("prompt_tokens") Long promptTokens,
             @JsonProperty("completion_tokens") Long completionTokens,
-            @JsonProperty("total_tokens") Long totalTokens
+            @JsonProperty("total_tokens") Long totalTokens,
+            @JsonProperty("prompt_cache_hit_tokens") Long cacheHitTokens,
+            @JsonProperty("prompt_cache_miss_tokens") Long cacheMissTokens
     ) {
     }
 

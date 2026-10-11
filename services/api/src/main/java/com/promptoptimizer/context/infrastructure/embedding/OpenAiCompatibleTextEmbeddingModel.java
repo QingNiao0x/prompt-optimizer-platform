@@ -44,6 +44,7 @@ public class OpenAiCompatibleTextEmbeddingModel implements TextEmbeddingModel {
         long startedAt = System.nanoTime();
         String modelId = properties.getModel();
         int inputItems = inputs.size();
+        var auditAttempt = ModelCallLogger.beginAttempt();
         try {
             RestClient.RequestBodySpec request = restClient.post()
                     .uri(properties.getEndpoint())
@@ -56,6 +57,7 @@ public class OpenAiCompatibleTextEmbeddingModel implements TextEmbeddingModel {
                     .body(new EmbeddingRequest(properties.getModel(), List.copyOf(inputs)))
                     .retrieve()
                     .body(EmbeddingResponse.class);
+            ModelCallLogger.captureTokenUsage(toTokenUsage(response == null ? null : response.usage()));
             EmbeddingBatch batch = mapResponse(response, inputItems);
             ModelCallLogger.completed("context.embedding", "semantic-retrieval", modelId,
                     "SERVER_CONFIGURED", false, 1, inputItems, elapsedMillis(startedAt),
@@ -86,6 +88,8 @@ public class OpenAiCompatibleTextEmbeddingModel implements TextEmbeddingModel {
             ModelCallLogger.failed("context.embedding", "semantic-retrieval", modelId, "SERVER_CONFIGURED",
                     "UNEXPECTED", false, null, false, 1, inputItems, elapsedMillis(startedAt));
             throw exception;
+        } finally {
+            auditAttempt.close();
         }
     }
 

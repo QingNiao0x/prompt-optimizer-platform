@@ -5,6 +5,7 @@ import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
 import com.promptoptimizer.analytics.domain.AnalyticsAccountFilter;
 import com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper;
 import com.promptoptimizer.analytics.mapper.AuditEventMapper;
+import com.promptoptimizer.analytics.mapper.ModelCallAnalyticsMapper;
 import com.promptoptimizer.common.persistence.PostgresUuidTypeHandler;
 import com.promptoptimizer.history.mapper.OptimizationRecordMapper;
 import com.promptoptimizer.history.mapper.OptimizationSessionMapper;
@@ -40,7 +41,7 @@ class MapperXmlConfigurationTest {
         Configuration configuration = parseMappers();
 
         List<Class<?>> mapperTypes = List.of(
-                AdminAnalyticsMapper.class, AuditEventMapper.class, OptimizationRecordMapper.class,
+                AdminAnalyticsMapper.class, AuditEventMapper.class, ModelCallAnalyticsMapper.class, OptimizationRecordMapper.class,
                 OptimizationSessionMapper.class, IdentityProvisioningMapper.class, UserAccountMapper.class,
                 UserIdentityMapper.class, RechargeRecordMapper.class, PlatformModelMapper.class);
         for (Class<?> mapperType : mapperTypes) {
