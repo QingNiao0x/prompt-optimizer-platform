@@ -1,0 +1,108 @@
+-------------------------------------------------------------------------------
+Test set: com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 5, Skipped: 0, Time elapsed: 0.136 s <<< FAILURE! -- in com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest
+com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.doesNotReplaceAuthenticationOrCsrfWithClientSuppliedIdentity -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.ExceptionInInitializerError
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized(Unsafe.java:1160)
+	at java.base/java.lang.reflect.Constructor.acquireConstructorAccessor(Constructor.java:549)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: java.io.UncheckedIOException: java.io.IOException: Unable to establish loopback connection
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest$TestUpstream.<init>(ModelConcurrencyHttpIntegrationTest.java:269)
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.<clinit>(ModelConcurrencyHttpIntegrationTest.java:82)
+	... 8 more
+Caused by: java.io.IOException: Unable to establish loopback connection
+	at java.base/sun.nio.ch.PipeImpl$Initializer.run(PipeImpl.java:103)
+	at java.base/sun.nio.ch.PipeImpl$Initializer.run(PipeImpl.java:67)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:571)
+	at java.base/sun.nio.ch.PipeImpl.<init>(PipeImpl.java:197)
+	at java.base/sun.nio.ch.WEPollSelectorImpl.<init>(WEPollSelectorImpl.java:79)
+	at java.base/sun.nio.ch.WEPollSelectorProvider.openSelector(WEPollSelectorProvider.java:33)
+	at java.base/java.nio.channels.Selector.open(Selector.java:295)
+	at jdk.httpserver/sun.net.httpserver.ServerImpl.<init>(ServerImpl.java:149)
+	at jdk.httpserver/sun.net.httpserver.HttpServerImpl.<init>(HttpServerImpl.java:50)
+	at jdk.httpserver/sun.net.httpserver.DefaultHttpServerProvider.createHttpServer(DefaultHttpServerProvider.java:35)
+	at jdk.httpserver/com.sun.net.httpserver.HttpServer.create(HttpServer.java:152)
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest$TestUpstream.<init>(ModelConcurrencyHttpIntegrationTest.java:244)
+	... 9 more
+Caused by: java.net.SocketException: Permission denied: connect
+	at java.base/sun.nio.ch.Net.connect0(Native Method)
+	at java.base/sun.nio.ch.Net.connect(Net.java:597)
+	at java.base/sun.nio.ch.Net.connect(Net.java:604)
+	at java.base/sun.nio.ch.SocketChannelImpl.connect(SocketChannelImpl.java:880)
+	at java.base/java.nio.channels.SocketChannel.open(SocketChannel.java:285)
+	at java.base/sun.nio.ch.PipeImpl$Initializer$LoopbackConnector.run(PipeImpl.java:132)
+	at java.base/sun.nio.ch.PipeImpl$Initializer.run(PipeImpl.java:85)
+	... 20 more
+
+com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers -- Time elapsed: 0 s <<< ERROR!
+java.lang.NoClassDefFoundError: Could not initialize class com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized(Unsafe.java:1160)
+	at java.base/java.lang.reflect.Constructor.acquireConstructorAccessor(Constructor.java:549)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.io.UncheckedIOException: java.io.IOException: Unable to establish loopback connection [in thread "main"]
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest$TestUpstream.<init>(ModelConcurrencyHttpIntegrationTest.java:269)
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.<clinit>(ModelConcurrencyHttpIntegrationTest.java:82)
+	... 8 more
+
+com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.NoClassDefFoundError: Could not initialize class com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized(Unsafe.java:1160)
+	at java.base/java.lang.reflect.Constructor.acquireConstructorAccessor(Constructor.java:549)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.io.UncheckedIOException: java.io.IOException: Unable to establish loopback connection [in thread "main"]
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest$TestUpstream.<init>(ModelConcurrencyHttpIntegrationTest.java:269)
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.<clinit>(ModelConcurrencyHttpIntegrationTest.java:82)
+	... 8 more
+
+com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.sharesThreeAcrossDifferentSessionsAndModelEndpointsIgnoringSpoofedUserHeader -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.NoClassDefFoundError: Could not initialize class com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized(Unsafe.java:1160)
+	at java.base/java.lang.reflect.Constructor.acquireConstructorAccessor(Constructor.java:549)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.io.UncheckedIOException: java.io.IOException: Unable to establish loopback connection [in thread "main"]
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest$TestUpstream.<init>(ModelConcurrencyHttpIntegrationTest.java:269)
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.<clinit>(ModelConcurrencyHttpIntegrationTest.java:82)
+	... 8 more
+
+com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest -- Time elapsed: 0.136 s <<< ERROR!
+java.lang.NoClassDefFoundError: Could not initialize class com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized(Unsafe.java:1160)
+	at java.base/java.lang.reflect.Method.acquireMethodAccessor(Method.java:726)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:577)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.io.UncheckedIOException: java.io.IOException: Unable to establish loopback connection [in thread "main"]
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest$TestUpstream.<init>(ModelConcurrencyHttpIntegrationTest.java:269)
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.<clinit>(ModelConcurrencyHttpIntegrationTest.java:82)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized(Unsafe.java:1160)
+	at java.base/java.lang.reflect.Constructor.acquireConstructorAccessor(Constructor.java:549)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	... 1 more
+

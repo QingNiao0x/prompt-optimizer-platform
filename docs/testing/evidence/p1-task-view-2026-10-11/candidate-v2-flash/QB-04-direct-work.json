@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-04",
+  "arm" : "direct",
+  "requestId" : "ff566fb4-664a-4715-b8ee-828da9c22d26",
+  "startedAt" : "2026-10-11T11:23:05.187901100Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "3aec3485e178beb1a3e2aa68b670579d02f1a9e00c39d7724476aa463edaf65f",
+  "materialsSha256" : "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "systemSha256" : "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+  "executionUserSha256" : "2018fca6c21bbca45c5809815ac5f9430cb7af8fba46b8f67e5014330d5486a5",
+  "settings" : {
+    "maxOutputTokens" : 8192,
+    "automaticRetry" : false,
+    "temperature" : 0.2,
+    "thinking" : "disabled"
+  },
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 488,
+    "completion_tokens" : 786,
+    "total_tokens" : 1274
+  },
+  "output" : "```python\n#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\"\"\"\n网页标题爬取脚本\n\n说明：\n- 目标 URL、超时时间、请求头等参数未确认，需由使用者填写或通过命令行传入。\n- 本脚本仅使用 requests 库发送请求，并使用标准库 html.parser 解析 title 标签。\n\"\"\"\n\nimport argparse\nimport sys\nfrom html.parser import HTMLParser\n\nimport requests\n\n\nclass TitleParser(HTMLParser):\n    \"\"\"提取 HTML 中第一个 <title> 标签的文本内容。\"\"\"\n\n    def __init__(self):\n        super().__init__()\n        self._in_title = False\n        self._title_parts = []\n        self._done = False\n\n    def handle_starttag(self, tag, attrs):\n        if not self._done and tag.lower() == \"title\":\n            self._in_title = True\n\n    def handle_endtag(self, tag):\n        if self._in_title and tag.lower() == \"title\":\n            self._in_title = False\n            self._done = True\n\n    def handle_data(self, data):\n        if self._in_title:\n            self._title_parts.append(data)\n\n    @property\n    def title(self):\n        text = \"\".join(self._title_parts).strip()\n        return text if text else None\n\n\ndef fetch_title(url, timeout=None, headers=None):\n    \"\"\"\n    请求指定 URL 并返回页面标题。\n\n    :param url: 目标网页 URL（必填，由调用方提供）\n    :param timeout: 请求超时时间（秒），未确认，默认 None 表示不设置\n    :param headers: 请求头字典，未确认，默认 None\n    :return: 标题字符串；若未找到 title 则返回 None\n    \"\"\"\n    response = requests.get(url, timeout=timeout, headers=headers)\n    response.raise_for_status()\n\n    # 编码处理：优先使用响应头声明的编码；若未声明，交由 requests 推断。\n    # 具体编码策略未确认，此处不强制指定固定编码。\n    parser = TitleParser()\n    parser.feed(response.text)\n    return parser.title\n\n\ndef main():\n    arg_parser = argparse.ArgumentParser(description=\"爬取指定网页的标题\")\n    arg_parser.add_argument(\"url\", help=\"目标网页 URL（必填）\")\n    arg_parser.add_argument(\n        \"--timeout\",\n        type=float,\n        default=None,\n        help=\"请求超时时间（秒），未确认，默认不设置\",\n    )\n    args = arg_parser.parse_args()\n\n    # 请求头未确认，默认不添加自定义请求头。\n    headers = None\n\n    try:\n        title = fetch_title(args.url, timeout=args.timeout, headers=headers)\n    except requests.RequestException as exc:\n        print(f\"请求失败: {exc}\", file=sys.stderr)\n        sys.exit(1)\n\n    if title is None:\n        print(\"未找到 title 标签\")\n    else:\n        print(title)\n\n\nif __name__ == \"__main__\":\n    main()\n```\n\n使用方式：\n\n```\npython script.py <目标URL> [--timeout 秒数]\n```\n\n未确认项说明：\n- 目标 URL：必须由使用者通过命令行参数提供，脚本中未填入任何示例 URL。\n- 超时时间：默认未设置（`None`），可通过 `--timeout` 指定。\n- 请求头：默认未添加自定义请求头（`headers=None`），如需可自行传入。\n- 编码处理：未强制指定固定编码，使用 `response.text` 由 requests 依据响应头推断；若实际页面编码与推断不符，需由使用者根据实际情况调整。",
+  "outputSha256" : "f99dda3fb6791f459a80eb6d5b9d4210aa8326e95929f9419573bdebdaf76eb2",
+  "nonWhitespaceChars" : 1875,
+  "hanChars" : 360,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 3376
+}

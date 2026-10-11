@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-05",
+  "arm" : "direct",
+  "requestId" : "9b3b6728-fa1e-4c52-b7ae-9ff05f359a60",
+  "startedAt" : "2026-10-11T10:36:16.249196200Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "835c8055a0afc64185e55e356f692db047f55419ad7d7c495edc4367069c0941",
+  "materialsSha256" : "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "systemSha256" : "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+  "executionUserSha256" : "025a13e6180f812fb0a287d56cf21edbdc64d14bf5274be7654146042bf8db47",
+  "settings" : {
+    "temperature" : 0.2,
+    "automaticRetry" : false,
+    "maxOutputTokens" : 8192,
+    "thinking" : "disabled"
+  },
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 470,
+    "completion_tokens" : 822,
+    "total_tokens" : 1292
+  },
+  "output" : "以下按你确认的要求交付：Python 快速排序函数，对整数列表升序排序，处理空列表和重复元素，并附输入与预期输出示例。\n\n```python\ndef quick_sort(nums):\n    \"\"\"\n    对整数列表进行升序快速排序。\n\n    参数:\n        nums: list[int]，待排序的整数列表。\n\n    返回:\n        list[int]，升序排序后的新列表。\n\n    说明:\n        - 空列表返回空列表。\n        - 重复元素会被保留，并正确参与排序。\n        - 不修改原列表，返回新列表。\n    \"\"\"\n    # 基本情况：空列表或单元素列表已经有序\n    if len(nums) <= 1:\n        return nums[:]\n\n    # 选择中间元素作为基准，避免在已排序输入上表现过差\n    pivot = nums[len(nums) // 2]\n\n    # 按基准值分成三部分：小于、等于、大于\n    # 使用“等于”分区可以正确处理重复元素\n    less = [x for x in nums if x < pivot]\n    equal = [x for x in nums if x == pivot]\n    greater = [x for x in nums if x > pivot]\n\n    # 递归排序左右两部分，中间部分已等于基准值，无需再排序\n    return quick_sort(less) + equal + quick_sort(greater)\n\n\nif __name__ == \"__main__\":\n    # 示例 1：普通整数列表\n    input_list = [3, 6, 1, 8, 2, 6, 3]\n    expected_output = [1, 2, 3, 3, 6, 6, 8]\n    actual_output = quick_sort(input_list)\n\n    print(\"输入:\", input_list)\n    print(\"预期输出:\", expected_output)\n    print(\"实际输出:\", actual_output)\n\n    # 示例 2：空列表\n    empty_input = []\n    empty_expected = []\n    empty_actual = quick_sort(empty_input)\n\n    print(\"输入:\", empty_input)\n    print(\"预期输出:\", empty_expected)\n    print(\"实际输出:\", empty_actual)\n\n    # 示例 3：重复元素\n    duplicate_input = [5, 1, 5, 1, 5]\n    duplicate_expected = [1, 1, 5, 5, 5]\n    duplicate_actual = quick_sort(duplicate_input)\n\n    print(\"输入:\", duplicate_input)\n    print(\"预期输出:\", duplicate_expected)\n    print(\"实际输出:\", duplicate_actual)\n```\n\n示例运行结果：\n\n```text\n输入: [3, 6, 1, 8, 2, 6, 3]\n预期输出: [1, 2, 3, 3, 6, 6, 8]\n实际输出: [1, 2, 3, 3, 6, 6, 8]\n输入: []\n预期输出: []\n实际输出: []\n输入: [5, 1, 5, 1, 5]\n预期输出: [1, 1, 5, 5, 5]\n实际输出: [1, 1, 5, 5, 5]\n```\n\n关键逻辑说明：\n\n- 基本情况：`len(nums) <= 1` 时直接返回副本，因此空列表可以正确处理。\n- 基准选择：取中间元素作为 `pivot`，减少在已排序或接近已排序列表上的不平衡划分。\n- 三路划分：`less`、`equal`、`greater` 分别保存小于、等于、大于基准的元素，因此重复元素不会被丢弃，也不会导致无限递归。\n- 递归合并：`quick_sort(less) + equal + quick_sort(greater)` 保证最终结果按升序排列。\n- 不修改原列表：返回新列表，原输入保持不变。",
+  "outputSha256" : "501fbb824f2d9d868187679dfd015c337d8510f9bd5d4d6970b3466fa4b1a391",
+  "nonWhitespaceChars" : 1449,
+  "hanChars" : 429,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 3654
+}

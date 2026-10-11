@@ -1,0 +1,100 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-05",
+  "arm" : "actual-plan",
+  "requestId" : "ba9caacc-207d-4f23-9523-a44a21604ff0",
+  "startedAt" : "2026-10-11T11:22:06.061205500Z",
+  "status" : "COLLECTED",
+  "plan" : {
+    "summary" : "你只说了“弄个排序”，没有说明要排序什么、按什么规则排、结果放在哪里，因此需要先确认这些会直接决定交付内容的关键信息。",
+    "questions" : [ {
+      "id" : "sort_object",
+      "question" : "你要对什么内容进行排序？",
+      "hint" : "排序对象决定了整个任务的范围和交付物。",
+      "type" : "FREE_TEXT",
+      "options" : [ ],
+      "examples" : [ "例如：一份名单、一组数据记录、某个文件里的行、搜索结果列表" ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "sort_key",
+      "question" : "按什么字段或规则排序？",
+      "hint" : "排序依据决定最终顺序，是必须明确的核心口径。",
+      "type" : "FREE_TEXT",
+      "options" : [ ],
+      "examples" : [ "例如：按姓名拼音、按日期先后、按数值大小、按某个字段" ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "sort_order",
+      "question" : "排序方向是升序还是降序？",
+      "hint" : "方向不同会得到完全相反的结果。",
+      "type" : "SINGLE_CHOICE",
+      "options" : [ {
+        "id" : "asc",
+        "label" : "升序",
+        "description" : "从小到大、从早到晚、从A到Z",
+        "answer" : "升序",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "desc",
+        "label" : "降序",
+        "description" : "从大到小、从晚到早、从Z到A",
+        "answer" : "降序",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "custom",
+        "label" : "其他规则",
+        "description" : "例如按自定义优先级顺序排列",
+        "answer" : "按自定义优先级顺序排列",
+        "recommended" : false,
+        "recommendationReason" : ""
+      } ],
+      "examples" : [ ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "output_form",
+      "question" : "排序结果希望以什么形式交付？",
+      "hint" : "交付形式决定最终产出是直接给结果还是给可复用的方法。",
+      "type" : "SINGLE_CHOICE",
+      "options" : [ {
+        "id" : "sorted_result",
+        "label" : "直接给出排序后的结果",
+        "description" : "把排好序的内容直接呈现出来",
+        "answer" : "直接给出排序后的结果",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "method_code",
+        "label" : "给出排序方法或代码",
+        "description" : "提供可自行运行的排序逻辑或脚本",
+        "answer" : "给出排序方法或代码",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "both",
+        "label" : "两者都要",
+        "description" : "既给排序结果，也给实现方法",
+        "answer" : "既给排序结果，也给实现方法",
+        "recommended" : false,
+        "recommendationReason" : ""
+      } ],
+      "examples" : [ ],
+      "allowCustomAnswer" : true
+    } ],
+    "templateCode" : "GENERAL",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : "DeepSeek Flash"
+    },
+    "latencyMs" : 3390,
+    "planId" : "cb08d709-1d82-40be-8a5c-7c0fe0d8d040",
+    "planningContext" : {
+      "contextId" : "2ef76eb9-cae4-48d9-b9da-ce5317c95002",
+      "version" : "sha256:4745b4a9a253f12817f410d49e18de240e4b3a958e44800af172444613762f00"
+    },
+    "expiresAt" : 1791719526.064696000
+  }
+}

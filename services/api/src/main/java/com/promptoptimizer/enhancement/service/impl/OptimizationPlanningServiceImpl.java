@@ -127,8 +127,9 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         planningContext.digest() == null ? List.of() : planningContext.digest().factCards());
                 var identifierRelations = NamedIdentifierContract.from(request.rawPrompt(), planningContext.snapshot(),
                         planningContext.digest() == null ? List.of() : planningContext.digest().factCards(), List.of());
-                var deliveryProfile = com.promptoptimizer.template.domain.TaskIntentResolver.resolve(
-                        TemplateCode.AUTO, request.rawPrompt()).deliveryProfile();
+                var taskView = EffectiveTaskViewFactory.create(request.rawPrompt(), TemplateCode.AUTO, List.of(),
+                        planningContext.digest() == null ? List.of() : planningContext.digest().factCards(), false);
+                var deliveryProfile = taskView.intent().deliveryProfile();
                 PlanningProviderRequest providerRequest = PlanningDecisionPolicy.enrich(new PlanningProviderRequest(
                         request.rawPrompt().trim(),
                         request.contextDescription().trim(),
@@ -137,7 +138,8 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         selectedModelId,
                         List.of(),
                         java.util.stream.Stream.of(sourceObjects.planningGuidance(deliveryProfile), identifierRelations.guidance())
-                                .filter(value -> !value.isBlank()).collect(java.util.stream.Collectors.joining("\n\n"))
+                                .filter(value -> !value.isBlank()).collect(java.util.stream.Collectors.joining("\n\n")),
+                        taskView
                 ));
                 PlanningProviderResponse validated = com.promptoptimizer.common.logging.PipelineStageTiming.measure(
                         "plan.generate", "provider.total", selectedModelId,

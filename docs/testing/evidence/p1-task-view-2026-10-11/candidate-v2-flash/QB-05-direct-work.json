@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-05",
+  "arm" : "direct",
+  "requestId" : "d6d52028-8174-4ead-8e1e-d6d177d741d0",
+  "startedAt" : "2026-10-11T11:23:08.617863600Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "1f73f53ebcf7a57a889ba66fd44d6c040fb33c1dcfb0fab8a9fd62a926c85452",
+  "materialsSha256" : "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "systemSha256" : "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+  "executionUserSha256" : "d608645bd58daa3d9c22455cf9457456cdcda1c78aa81bc9ab46fa3d0f2895bc",
+  "settings" : {
+    "maxOutputTokens" : 8192,
+    "automaticRetry" : false,
+    "temperature" : 0.2,
+    "thinking" : "disabled"
+  },
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 588,
+    "completion_tokens" : 911,
+    "total_tokens" : 1499
+  },
+  "output" : "## 已知事实与用户确认信息\n\n- **用户确认的排序对象**：整数列表。\n- **用户确认的排序规则**：按整数值大小排序。\n- **用户确认的排序方向**：升序。\n- **用户确认的交付形式**：Python 快速排序函数代码。\n- **用户确认的边界要求**：需处理空列表和包含重复元素的列表。\n- **必要假设**：无额外假设；以下代码仅依赖 Python 标准语法，不引入第三方库。\n\n---\n\n## Python 快速排序函数代码\n\n```python\ndef quick_sort(nums):\n    \"\"\"\n    对整数列表进行升序快速排序。\n\n    参数:\n        nums: list[int] —— 待排序的整数列表\n\n    返回:\n        list[int] —— 升序排序后的新列表\n\n    说明:\n        - 空列表返回空列表，不报错。\n        - 重复元素保留，且按升序排列。\n        - 不修改原列表，返回新列表。\n    \"\"\"\n    # 递归终止条件：空列表或单元素列表天然有序\n    if len(nums) <= 1:\n        return nums[:]\n\n    # 选择中间位置元素作为基准值，避免对已排序列表的极端不平衡划分\n    pivot = nums[len(nums) // 2]\n\n    # 按基准值划分为三部分：小于、等于、大于\n    # 使用“等于”分区可正确处理重复元素，并减少递归深度\n    left = [x for x in nums if x < pivot]\n    middle = [x for x in nums if x == pivot]\n    right = [x for x in nums if x > pivot]\n\n    # 递归排序左、右分区，再与中间分区拼接\n    return quick_sort(left) + middle + quick_sort(right)\n\n\nif __name__ == \"__main__\":\n    # 以下示例均为虚构演示，仅用于说明输入与预期输出的对应关系，\n    # 不作为正式事实或已确认口径。\n\n    # 示例 1：普通整数列表\n    demo1_in = [3, 1, 2]\n    demo1_out = quick_sort(demo1_in)\n    print(\"示例1 输入:\", demo1_in, \"输出:\", demo1_out)\n\n    # 示例 2：空列表\n    demo2_in = []\n    demo2_out = quick_sort(demo2_in)\n    print(\"示例2 输入:\", demo2_in, \"输出:\", demo2_out)\n\n    # 示例 3：包含重复元素的列表\n    demo3_in = [2, 2, 1]\n    demo3_out = quick_sort(demo3_in)\n    print(\"示例3 输入:\", demo3_in, \"输出:\", demo3_out)\n```\n\n---\n\n## 输入与预期输出示例\n\n> 以下示例为**虚构演示**，仅用于说明输入与预期输出的对应关系，不作为正式事实或已确认口径。\n\n| 示例 | 输入 | 预期输出 | 对应关系说明 |\n|------|------|----------|--------------|\n| 示例 1 | `[3, 1, 2]` | `[1, 2, 3]` | 输入列表按整数值升序排列后得到输出列表。 |\n| 示例 2 | `[]` | `[]` | 空列表排序后仍为空列表，不报错。 |\n| 示例 3 | `[2, 2, 1]` | `[1, 2, 2]` | 重复元素在排序后保留，且按升序排列。 |\n\n---\n\n## 验收对照\n\n- **快速排序实现**：采用分治 + 基准值划分，符合快速排序思想。\n- **空列表处理**：`len(nums) <= 1` 直接返回副本，返回 `[]`，不报错。\n- **重复元素处理**：通过 `middle = [x for x in nums if x == pivot]` 保留全部重复元素，排序后重复元素数量不变且顺序正确。\n- **注释**：函数内包含参数、返回值、边界说明及关键步骤注释。\n- **可直接运行**：代码仅使用 Python 标准语法，复制后可直接执行。\n- **示例与对应关系**：已提供三组虚构演示及输入输出对应说明。",
+  "outputSha256" : "7fc2f9ccf974ceeaa4b182a42f3cce438791a9df09eac9ff0f3f7b75b4ba4541",
+  "nonWhitespaceChars" : 1500,
+  "hanChars" : 645,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 4223
+}

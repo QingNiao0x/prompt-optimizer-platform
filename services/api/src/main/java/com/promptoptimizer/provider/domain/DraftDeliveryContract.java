@@ -13,10 +13,16 @@ import java.util.regex.Pattern;
  *
  * @param active 本次明确要求写作，且没有只交付准备材料或先确认再起草的限制
  * @param proseRequired 本次仍以正文为目标；先确认或禁止占位不等于允许改成交付方案
+ * @param promptTarget 用户明确要交付的提示词目标；空字符串表示按普通作品交付检查
  * @author QingNiao
  * @since 0.1.0
  */
-public record DraftDeliveryContract(boolean active, boolean proseRequired) {
+public record DraftDeliveryContract(boolean active, boolean proseRequired, String promptTarget) {
+    private static final Pattern PROMPT_DELIVERY = Pattern.compile(
+            "(?:准备|提供|生成|编写|改写|优化|增强|撰写|设计|拟定|交付|输出|整理|转写|写(?:出|一份|一个)?)"
+                    + "[^。；;，,\\r\\n]{0,80}提示词"
+                    + "|\\b(?:write|create|prepare|provide|generate|deliver|output|improve|enhance)\\b"
+                    + "[^.;,\\r\\n]{0,100}\\bprompt\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern WRITING = Pattern.compile(
             "(?:撰写|起草|编写|写出|写一(?:份|篇)|写份|写篇|写.{0,8}报告|生成.{0,12}(?:报告|正文|稿件))|\\b(?:write|draft)\\b",
             Pattern.CASE_INSENSITIVE);
@@ -64,12 +70,29 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired) {
         this(active, active);
     }
 
+    /** 保持原有正文调用兼容；提示词交付只有显式用户要求才能激活。 */
+    public DraftDeliveryContract(boolean active, boolean proseRequired) {
+        this(active, proseRequired, "");
+    }
+
     /** 仅采用当前用户指令及服务端已绑定的交付决定；材料中的引用和代码不建立起草许可。 */
     public static DraftDeliveryContract from(String rawPrompt, PromptTemplate template,
                                              List<ConfirmedPlanDecision> decisions) {
+        String instructions = instructionText(rawPrompt);
+        String promptTarget = promptDeliveryTarget(instructions);
+        for (var decision : decisions == null ? List.<ConfirmedPlanDecision>of() : decisions) {
+            if ((decision.scope() == ConfirmedPlanDecision.Scope.TARGET || decision.scope() == ConfirmedPlanDecision.Scope.CHOICE)
+                    && TaskIntentResolver.overallDeliveryQuestion(decision.question())) {
+                String answer = instructionText(decision.answer());
+                String confirmedPrompt = promptDeliveryTarget(answer);
+                if (!confirmedPrompt.isBlank()) promptTarget = confirmedPrompt;
+                else if (hasAffirmativeWriting(answer)) promptTarget = "";
+            }
+        }
+        // “为论文准备写作提示词”仍交付提示词，领域名词和篇幅限制不能把它改成论文提纲。
+        if (!promptTarget.isBlank()) return new DraftDeliveryContract(false, false, promptTarget);
         if (template == null || template.deliveryProfile().softwareTask()
                 || template.deliveryProfile() == TaskDeliveryProfile.TRANSLATION) return new DraftDeliveryContract(false);
-        String instructions = instructionText(rawPrompt);
         boolean preparationLimit = hasPreparationLimit(instructions);
         boolean preparationTarget = preparationIsMainTarget(instructions);
         for (var decision : decisions == null ? List.<ConfirmedPlanDecision>of() : decisions) {
@@ -96,6 +119,9 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired) {
 
     /** 优化模型生成的是提示词，须将起草要求传给执行者，不能在增强阶段直接撰写作品。 */
     public String modelGuidance() {
+        if (!promptTarget.isBlank()) return "\n【本次提示词交付】\n用户目标：" + promptTarget
+                + "\nTASK 与 OUTPUT 均须明确交付可直接使用的提示词；领域说明用于充实这个提示词，"
+                + "不能改为直接撰写论文、报告、方法提纲或执行代码。用户对提示词所指导作品的限制继续保留。\n";
         return active ? "\n【本次正文交付】\n本次 TASK 只保留用户要完成的正文目标，OUTPUT 只说明本次具体交付内容、范围和格式，不把正文改成方案或问卷。"
                 + "常规组织、衔接和说明由执行者自行完成；缺少数据只限制依赖它的实证数值和结论。"
                 + "不新增用户未要求的空表、附录或指标，用户明确要求的表格继续交付；专业建议标明适用前提，不能冒充已确认事实。"
@@ -114,6 +140,11 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired) {
      * 调用方须在追加平台指导语前执行；普通方案讨论、引用和局部计算前提不构成冲突。
      */
     public void validateDelivery(String content, String field) {
+        if (!promptTarget.isBlank()) {
+            if (promptDeliveryTarget(instructionText(content)).isBlank()) throw new ProviderResponseValidationException(
+                    ProviderResponseValidationException.Reason.RULE_CONFLICT, field);
+            return;
+        }
         if (!proseRequired || content == null || content.isBlank()) return;
         String instructions = instructionText(content);
         if (hasPreparationTarget(instructions)) {
@@ -126,6 +157,21 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired) {
                 throw new ProviderResponseValidationException(ProviderResponseValidationException.Reason.RULE_CONFLICT, field);
             }
         }
+    }
+
+    /** 从肯定的当前交付动作提取目标，忽略否定、候选、引用和未来请求。 */
+    static String promptDeliveryTarget(String instructions) {
+        for (String clause : instructions.split("[。；;，,\\r\\n]")) {
+            var target = PROMPT_DELIVERY.matcher(clause);
+            while (target.find()) {
+                String prefix = clause.substring(0, target.start());
+                if (prefix.matches("(?is).*(?:不需要|不要求|不要|不得|不应|无需|禁止|暂不|不|未)(?:再|只|仅|直接)?\\s*$")
+                        || prefix.matches("(?is).*(?:如果|假如|以后|将来|例如|示例|原文|引用).{0,30}")
+                        || prefix.matches("(?is).*(?:翻译|translate)[^。；;\\r\\n]*[:：‘“\"].*")) continue;
+                return clause.strip();
+            }
+        }
+        return "";
     }
 
     /** 只把肯定交付指令的准备材料宾语视为降级；正文附方案或方法中讨论方案仍属原目标。 */
@@ -207,7 +253,7 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired) {
     }
 
     /** 资料标题后的多行仍属引用；任务与约束标题恢复当前指令，不修改原始输入或归档材料。 */
-    private static String instructionText(String rawPrompt) {
+    static String instructionText(String rawPrompt) {
         var lines = new java.util.ArrayList<String>();
         String fence = null;
         boolean referenceSection = false;
@@ -231,7 +277,7 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired) {
                 referenceSection = false;
                 continue;
             }
-            if (text.matches("^(?:原文|引用|示例|材料原文|参考资料)[:：].*")) {
+            if (text.matches("(?i)^(?:原文|引用|示例|材料原文|参考资料|待译文本|source text)[:：].*")) {
                 referenceSection = true;
                 continue;
             }

@@ -1,0 +1,66 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-04",
+  "arm" : "direct-generation",
+  "requestId" : "0a144a43-e37d-46a1-ada8-b1a97566c9ae",
+  "startedAt" : "2026-10-11T10:34:18.727038200Z",
+  "status" : "COLLECTED",
+  "effectiveOptions" : {
+    "templateCode" : "AUTO",
+    "includeConversationHistory" : false,
+    "includePermissionBoundaries" : true,
+    "includeExamples" : false
+  },
+  "effectiveOptionsSha256" : "186d3e55086ce14e53e885bdaa06af8c7e6325e01470b108c624ef95bf5b5850",
+  "planEnabled" : false,
+  "result" : {
+    "optimizedPrompt" : "## 背景\n用户希望使用 Python 的 requests 库爬取网页标题。当前未提供目标网址、页面结构、编码或反爬限制等具体信息。\n\n## 任务\n编写一段 Python 代码，使用 requests 库获取指定网页的 HTML 内容，并提取该网页的标题。若用户未提供目标网址，代码应保留可替换的网址变量或参数，不臆造具体站点。\n\n## 输出\n提供可直接运行的 Python 代码，包含必要的导入、请求发送和标题提取逻辑；对关键步骤作简要说明。若标题提取依赖 HTML 解析，可选用标准库或常见解析库，并说明依赖。\n\n## 约束\n- 必须使用 Python 的 requests 库发起 HTTP 请求。\n- 不得把未提供的目标网址、页面结构或反爬策略写成已知事实。\n- 代码应处理请求失败、非 200 响应和标题缺失等常见情况。\n- 不添加用户未要求的额外功能、报告或部署步骤。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收\n- 代码使用 requests 库获取网页内容。\n- 代码能够从 HTML 中提取标题。\n- 对请求异常和标题缺失有基本处理。\n- 未把未确认的网址或页面规则当作事实。",
+    "sections" : [ {
+      "type" : "BACKGROUND",
+      "title" : "背景",
+      "content" : "用户希望使用 Python 的 requests 库爬取网页标题。当前未提供目标网址、页面结构、编码或反爬限制等具体信息。"
+    }, {
+      "type" : "TASK",
+      "title" : "任务",
+      "content" : "编写一段 Python 代码，使用 requests 库获取指定网页的 HTML 内容，并提取该网页的标题。若用户未提供目标网址，代码应保留可替换的网址变量或参数，不臆造具体站点。"
+    }, {
+      "type" : "OUTPUT",
+      "title" : "输出",
+      "content" : "提供可直接运行的 Python 代码，包含必要的导入、请求发送和标题提取逻辑；对关键步骤作简要说明。若标题提取依赖 HTML 解析，可选用标准库或常见解析库，并说明依赖。"
+    }, {
+      "type" : "CONSTRAINTS",
+      "title" : "约束",
+      "content" : "- 必须使用 Python 的 requests 库发起 HTTP 请求。\n- 不得把未提供的目标网址、页面结构或反爬策略写成已知事实。\n- 代码应处理请求失败、非 200 响应和标题缺失等常见情况。\n- 不添加用户未要求的额外功能、报告或部署步骤。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+    }, {
+      "type" : "ACCEPTANCE",
+      "title" : "验收",
+      "content" : "- 代码使用 requests 库获取网页内容。\n- 代码能够从 HTML 中提取标题。\n- 对请求异常和标题缺失有基本处理。\n- 未把未确认的网址或页面规则当作事实。"
+    } ],
+    "contextReport" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "EMPTY",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "v3"
+    },
+    "ambiguities" : [ ],
+    "appliedConstraints" : [ "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。" ],
+    "templateCode" : "GENERAL",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : "deepseek:deepseek-flash"
+    },
+    "latencyMs" : 1890,
+    "warnings" : [ ],
+    "evidenceCards" : [ ]
+  },
+  "optimizedPromptSha256" : "d981d117a212d5e1575cbd3f01ddc64f977ef1ef9cc268bbe42cea92e7180b53",
+  "elapsedMs" : 1892
+}

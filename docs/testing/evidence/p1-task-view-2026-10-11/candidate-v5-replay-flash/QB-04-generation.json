@@ -1,0 +1,66 @@
+{
+  "scope" : "OFFLINE_REAL_PROVIDER_TAPE_FINAL_ORCHESTRATOR_NETWORK_DISABLED",
+  "caseId" : "QB-04",
+  "arm" : "direct-generation",
+  "requestId" : "e7d4b0be-a0b5-461a-898e-d12987a9aa81",
+  "startedAt" : "2026-10-11T12:05:17.335687800Z",
+  "status" : "COLLECTED",
+  "effectiveOptions" : {
+    "templateCode" : "AUTO",
+    "includeConversationHistory" : false,
+    "includePermissionBoundaries" : true,
+    "includeExamples" : false
+  },
+  "effectiveOptionsSha256" : "186d3e55086ce14e53e885bdaa06af8c7e6325e01470b108c624ef95bf5b5850",
+  "planEnabled" : false,
+  "result" : {
+    "optimizedPrompt" : "## 背景\n用户提出使用 Python 的 requests 库爬取网页标题。当前未提供目标网址、页面结构、编码要求、异常处理约定或运行环境信息，也未提供任何项目文件、依赖清单或历史对话。该任务属于通用脚本编写，不涉及既有代码库或已确认的技术栈约束。\n\n## 任务\n编写一个 Python 脚本，使用 requests 库请求指定网页并提取该网页的标题（HTML 中 title 标签的文本内容）。脚本应包含基本的请求发送与响应处理逻辑，并在获取到响应后解析出标题。具体目标 URL、超时设置、请求头、编码处理方式等执行细节由执行者根据实际情况确定，但不得将未确认的取值写成已确认事实。\n\n## 输出\n交付一份可运行的 Python 脚本代码，使用 requests 库实现网页标题爬取。代码应包含必要的导入、请求发送、响应处理和标题提取逻辑。若需要用户提供目标 URL 等参数，应在代码中以明确方式标注为待填写或通过命令行参数传入，不得填入虚构的示例 URL 作为真实目标。\n\n## 约束\n- 必须使用 Python 的 requests 库进行网页请求。\n- 不得将猜测的目标网址、页面结构、编码方式或异常处理策略写成已确认事实。\n- 未确认的参数（如目标 URL、超时时间、请求头等）应保持未决状态，由执行者根据实际运行环境决定或在代码中留待用户填写。\n- 不添加用户未要求的额外功能、报告或执行步骤。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收\n- 脚本使用 requests 库发送 HTTP 请求。\n- 脚本能够从响应内容中提取并输出网页标题。\n- 代码中未将未确认的 URL、编码或异常处理策略写成已确认事实。\n- 交付物为可运行的 Python 脚本，不包含无关的额外功能或报告。",
+    "sections" : [ {
+      "type" : "BACKGROUND",
+      "title" : "背景",
+      "content" : "用户提出使用 Python 的 requests 库爬取网页标题。当前未提供目标网址、页面结构、编码要求、异常处理约定或运行环境信息，也未提供任何项目文件、依赖清单或历史对话。该任务属于通用脚本编写，不涉及既有代码库或已确认的技术栈约束。"
+    }, {
+      "type" : "TASK",
+      "title" : "任务",
+      "content" : "编写一个 Python 脚本，使用 requests 库请求指定网页并提取该网页的标题（HTML 中 title 标签的文本内容）。脚本应包含基本的请求发送与响应处理逻辑，并在获取到响应后解析出标题。具体目标 URL、超时设置、请求头、编码处理方式等执行细节由执行者根据实际情况确定，但不得将未确认的取值写成已确认事实。"
+    }, {
+      "type" : "OUTPUT",
+      "title" : "输出",
+      "content" : "交付一份可运行的 Python 脚本代码，使用 requests 库实现网页标题爬取。代码应包含必要的导入、请求发送、响应处理和标题提取逻辑。若需要用户提供目标 URL 等参数，应在代码中以明确方式标注为待填写或通过命令行参数传入，不得填入虚构的示例 URL 作为真实目标。"
+    }, {
+      "type" : "CONSTRAINTS",
+      "title" : "约束",
+      "content" : "- 必须使用 Python 的 requests 库进行网页请求。\n- 不得将猜测的目标网址、页面结构、编码方式或异常处理策略写成已确认事实。\n- 未确认的参数（如目标 URL、超时时间、请求头等）应保持未决状态，由执行者根据实际运行环境决定或在代码中留待用户填写。\n- 不添加用户未要求的额外功能、报告或执行步骤。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+    }, {
+      "type" : "ACCEPTANCE",
+      "title" : "验收",
+      "content" : "- 脚本使用 requests 库发送 HTTP 请求。\n- 脚本能够从响应内容中提取并输出网页标题。\n- 代码中未将未确认的 URL、编码或异常处理策略写成已确认事实。\n- 交付物为可运行的 Python 脚本，不包含无关的额外功能或报告。"
+    } ],
+    "contextReport" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "EMPTY",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "v3"
+    },
+    "ambiguities" : [ ],
+    "appliedConstraints" : [ "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。" ],
+    "templateCode" : "GENERAL",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : "deepseek:deepseek-flash"
+    },
+    "latencyMs" : 26,
+    "warnings" : [ ],
+    "evidenceCards" : [ ]
+  },
+  "optimizedPromptSha256" : "3aec3485e178beb1a3e2aa68b670579d02f1a9e00c39d7724476aa463edaf65f",
+  "elapsedMs" : 29
+}

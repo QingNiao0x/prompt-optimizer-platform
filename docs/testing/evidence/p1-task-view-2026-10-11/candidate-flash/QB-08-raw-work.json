@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-08",
+  "arm" : "raw",
+  "requestId" : "911fe0a9-8093-4515-92cc-c1064bb0f910",
+  "startedAt" : "2026-10-11T10:39:02.812731400Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "9e9f904170da42bbb422d61a8bfe0ca206156a9b9193dab844c6e116ada25724",
+  "materialsSha256" : "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "systemSha256" : "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+  "executionUserSha256" : "feef12878b3b4424153be6628f0374435c191ffdb2dca251971fe07ac0149f2d",
+  "settings" : {
+    "temperature" : 0.2,
+    "thinking" : "disabled",
+    "maxOutputTokens" : 8192,
+    "automaticRetry" : false
+  },
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 123,
+    "completion_tokens" : 247,
+    "total_tokens" : 370
+  },
+  "output" : "**开发提示词：采购审批规则实现**\n\n**目标**\n实现两条采购金额审批规则，用于判断采购单是否需要指定角色复核。\n\n**规则一**\n- 适用机构：甲机构\n- 适用年度：2024 年\n- 触发条件：采购金额超过 5 万元\n- 复核角色：财务\n\n**规则二**\n- 适用机构：乙机构\n- 适用年度：2025 年\n- 触发条件：采购金额达到 5 万元\n- 复核角色：负责人\n\n**实现要求**\n1. 输入：机构、年度、采购金额。\n2. 输出：是否需要复核，以及复核角色。\n3. 仅实现上述两条规则，不新增报表、不生成代码生成器。\n4. 不得使用假设数据；规则中未提供的机构、年度、金额边界不得自行扩展。\n5. 金额比较按规则原文执行：\n   - 甲机构 2024 年：金额 > 5 万元触发。\n   - 乙机构 2025 年：金额 >= 5 万元触发。\n6. 若输入不匹配任一规则，返回无需按本规则复核。",
+  "outputSha256" : "ab3887e98e4320111110b0122ea5235db6a38a97498690b0845855fdfe520c56",
+  "nonWhitespaceChars" : 338,
+  "hanChars" : 241,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 1954
+}

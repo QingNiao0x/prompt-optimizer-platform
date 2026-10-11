@@ -1,0 +1,451 @@
+{
+  "runs": [
+    {
+      "run": "plans-flash",
+      "actualHttpAttempts": 2,
+      "roles": {
+        "planning": 2,
+        "sumHttpMs": 9478
+      },
+      "works": 0,
+      "workStatuses": {}
+    },
+    {
+      "run": "baseline-flash",
+      "actualHttpAttempts": 27,
+      "roles": {
+        "downstream": 16,
+        "sumHttpMs": 169696,
+        "enhancement": 11
+      },
+      "works": 16,
+      "workStatuses": {
+        "COMPLETE": 16
+      }
+    },
+    {
+      "run": "baseline-pro",
+      "actualHttpAttempts": 2,
+      "roles": {
+        "enhancement": 2,
+        "sumHttpMs": 14827
+      },
+      "works": 0,
+      "workStatuses": {}
+    },
+    {
+      "run": "baseline-pro-works",
+      "actualHttpAttempts": 2,
+      "roles": {
+        "downstream": 2,
+        "sumHttpMs": 73562
+      },
+      "works": 2,
+      "workStatuses": {
+        "COMPLETE": 2
+      }
+    },
+    {
+      "run": "baseline-examples-corrected",
+      "actualHttpAttempts": 9,
+      "roles": {
+        "downstream": 4,
+        "sumHttpMs": 42290,
+        "enhancement": 5
+      },
+      "works": 4,
+      "workStatuses": {
+        "COMPLETE": 4
+      }
+    },
+    {
+      "run": "candidate-flash",
+      "actualHttpAttempts": 26,
+      "roles": {
+        "downstream": 16,
+        "sumHttpMs": 171397,
+        "enhancement": 10
+      },
+      "works": 16,
+      "workStatuses": {
+        "COMPLETE": 16
+      }
+    },
+    {
+      "run": "candidate-pro",
+      "actualHttpAttempts": 2,
+      "roles": {
+        "enhancement": 2,
+        "sumHttpMs": 14326
+      },
+      "works": 0,
+      "workStatuses": {}
+    },
+    {
+      "run": "candidate-v2-flash",
+      "actualHttpAttempts": 16,
+      "roles": {
+        "downstream": 8,
+        "sumHttpMs": 117095,
+        "enhancement": 8
+      },
+      "works": 8,
+      "workStatuses": {
+        "COMPLETE": 8
+      }
+    },
+    {
+      "run": "candidate-v2-pro",
+      "actualHttpAttempts": 2,
+      "roles": {
+        "enhancement": 2,
+        "sumHttpMs": 13282
+      },
+      "works": 0,
+      "workStatuses": {}
+    },
+    {
+      "run": "candidate-v3-pro",
+      "actualHttpAttempts": 3,
+      "roles": {
+        "downstream": 1,
+        "sumHttpMs": 70014,
+        "enhancement": 2
+      },
+      "works": 1,
+      "workStatuses": {
+        "COMPLETE": 1
+      }
+    },
+    {
+      "run": "final-plans-flash",
+      "actualHttpAttempts": 2,
+      "roles": {
+        "planning": 2,
+        "sumHttpMs": 10478
+      },
+      "works": 0,
+      "workStatuses": {}
+    },
+    {
+      "run": "raw-examples-matched",
+      "actualHttpAttempts": 2,
+      "roles": {
+        "downstream": 2,
+        "sumHttpMs": 16867
+      },
+      "works": 2,
+      "workStatuses": {
+        "COMPLETE": 2
+      }
+    },
+    {
+      "run": "final-pro-repeat",
+      "actualHttpAttempts": 1,
+      "roles": {
+        "downstream": 1,
+        "sumHttpMs": 39456
+      },
+      "works": 1,
+      "workStatuses": {
+        "COMPLETE": 1
+      }
+    },
+    {
+      "run": "candidate-v4-live",
+      "actualHttpAttempts": 4,
+      "roles": {
+        "downstream": 2,
+        "sumHttpMs": 17484,
+        "enhancement": 2
+      },
+      "works": 2,
+      "workStatuses": {
+        "COMPLETE": 2
+      }
+    },
+    {
+      "run": "candidate-v4-example-work",
+      "actualHttpAttempts": 1,
+      "roles": {
+        "downstream": 1,
+        "sumHttpMs": 21034
+      },
+      "works": 1,
+      "workStatuses": {
+        "COMPLETE": 1
+      }
+    },
+    {
+      "run": "candidate-v5-live",
+      "actualHttpAttempts": 4,
+      "roles": {
+        "downstream": 2,
+        "sumHttpMs": 36741,
+        "enhancement": 2
+      },
+      "works": 2,
+      "workStatuses": {
+        "COMPLETE": 2
+      }
+    }
+  ],
+  "actualTransportAttempts": 105,
+  "roles": {
+    "planning": 4,
+    "downstream": 55,
+    "enhancement": 46
+  },
+  "downstreamExecutions": 55,
+  "actualModels": {
+    "deepseek-flash": {
+      "requests": 93,
+      "prompt_tokens": 207554,
+      "completion_tokens": 117212,
+      "total_tokens": 324766
+    },
+    "deepseek-v4-pro": {
+      "requests": 12,
+      "prompt_tokens": 43807,
+      "completion_tokens": 20934,
+      "total_tokens": 64741
+    }
+  },
+  "totalTokens": 389507,
+  "productionChangedAfterFreeze": [],
+  "finalPairs": [
+    {
+      "caseId": "QB-01",
+      "model": "deepseek-flash",
+      "generation": "candidate-v5-replay-flash/QB-01-generation.json",
+      "work": "candidate-v2-flash/QB-01-direct-work.json",
+      "oldWork": "baseline-flash/QB-01-direct-work.json",
+      "promptSha256": "3af7cc09ebdbfee6e56ffe4a2eb39717e91d315803e8863554c5c5b94715db14",
+      "outputSha256": "30d42817bdef2a890015e848a05c3a3269b67612118f9ff448695b64742f7b9a",
+      "oldHttpMs": 17336,
+      "finalHttpMs": 19118,
+      "oldTokens": {
+        "prompt_tokens": 1006,
+        "completion_tokens": 2617,
+        "total_tokens": 3623
+      },
+      "finalTokens": {
+        "prompt_tokens": 794,
+        "completion_tokens": 2643,
+        "total_tokens": 3437
+      },
+      "oldCharacters": 4523,
+      "finalCharacters": 4481,
+      "sameSettings": true,
+      "copiedPromptIsActualExecutionInput": true
+    },
+    {
+      "caseId": "QB-02",
+      "model": "deepseek-flash",
+      "generation": "candidate-v5-replay-flash/QB-02-generation.json",
+      "work": "candidate-v2-flash/QB-02-direct-work.json",
+      "oldWork": "baseline-flash/QB-02-direct-work.json",
+      "promptSha256": "3b8b1cc6442c2fe22812e0cc9a461e99c232f41dd9f4cb226b7848cc4d59a863",
+      "outputSha256": "e2e2267373a829663d0a28015c19c22edd6c8f10211f841c8a1b3eae9d00e8e5",
+      "oldHttpMs": 18324,
+      "finalHttpMs": 20181,
+      "oldTokens": {
+        "prompt_tokens": 1481,
+        "completion_tokens": 3100,
+        "total_tokens": 4581
+      },
+      "finalTokens": {
+        "prompt_tokens": 1360,
+        "completion_tokens": 3441,
+        "total_tokens": 4801
+      },
+      "oldCharacters": 5306,
+      "finalCharacters": 5936,
+      "sameSettings": true,
+      "copiedPromptIsActualExecutionInput": true
+    },
+    {
+      "caseId": "QB-03",
+      "model": "deepseek-flash",
+      "generation": "candidate-v5-live/QB-03-generation.json",
+      "work": "candidate-v5-live/QB-03-direct-work.json",
+      "oldWork": "baseline-examples-corrected/QB-03-direct-work.json",
+      "promptSha256": "120f5fb5b24cf4ea38e1aee4dafcbea22d585d8d3a48895fb500c80bc4668ede",
+      "outputSha256": "24c5d7cc6432e554c518e08048c5d8a46a7fda7b8a9fdf0f370304b97c5f075b",
+      "oldHttpMs": 15622,
+      "finalHttpMs": 20557,
+      "oldTokens": {
+        "prompt_tokens": 1043,
+        "completion_tokens": 2590,
+        "total_tokens": 3633
+      },
+      "finalTokens": {
+        "prompt_tokens": 929,
+        "completion_tokens": 3716,
+        "total_tokens": 4645
+      },
+      "oldCharacters": 4275,
+      "finalCharacters": 5866,
+      "sameSettings": true,
+      "copiedPromptIsActualExecutionInput": true
+    },
+    {
+      "caseId": "QB-04",
+      "model": "deepseek-flash",
+      "generation": "candidate-v5-replay-flash/QB-04-generation.json",
+      "work": "candidate-v2-flash/QB-04-direct-work.json",
+      "oldWork": "baseline-flash/QB-04-direct-work.json",
+      "promptSha256": "3aec3485e178beb1a3e2aa68b670579d02f1a9e00c39d7724476aa463edaf65f",
+      "outputSha256": "f99dda3fb6791f459a80eb6d5b9d4210aa8326e95929f9419573bdebdaf76eb2",
+      "oldHttpMs": 3246,
+      "finalHttpMs": 3376,
+      "oldTokens": {
+        "prompt_tokens": 471,
+        "completion_tokens": 835,
+        "total_tokens": 1306
+      },
+      "finalTokens": {
+        "prompt_tokens": 488,
+        "completion_tokens": 786,
+        "total_tokens": 1274
+      },
+      "oldCharacters": 2002,
+      "finalCharacters": 1875,
+      "sameSettings": true,
+      "copiedPromptIsActualExecutionInput": true
+    },
+    {
+      "caseId": "QB-05",
+      "model": "deepseek-flash",
+      "generation": "candidate-v5-replay-flash/QB-05-generation.json",
+      "work": "candidate-v2-flash/QB-05-direct-work.json",
+      "oldWork": "baseline-examples-corrected/QB-05-direct-work.json",
+      "promptSha256": "1f73f53ebcf7a57a889ba66fd44d6c040fb33c1dcfb0fab8a9fd62a926c85452",
+      "outputSha256": "7fc2f9ccf974ceeaa4b182a42f3cce438791a9df09eac9ff0f3f7b75b4ba4541",
+      "oldHttpMs": 3654,
+      "finalHttpMs": 4223,
+      "oldTokens": {
+        "prompt_tokens": 470,
+        "completion_tokens": 822,
+        "total_tokens": 1292
+      },
+      "finalTokens": {
+        "prompt_tokens": 588,
+        "completion_tokens": 911,
+        "total_tokens": 1499
+      },
+      "oldCharacters": 1449,
+      "finalCharacters": 1500,
+      "sameSettings": true,
+      "copiedPromptIsActualExecutionInput": true
+    },
+    {
+      "caseId": "QB-06",
+      "model": "deepseek-flash",
+      "generation": "candidate-v5-live/QB-06-generation.json",
+      "work": "candidate-v5-live/QB-06-direct-work.json",
+      "oldWork": "baseline-examples-corrected/QB-06-direct-work.json",
+      "promptSha256": "c5194e49fec227e5c9853a49688f8b0e6d1777168f8690f773745d68dd9b3168",
+      "outputSha256": "686cf20bdaa2da07abea912150a5ccabc33466f8e25f65842a583cfbda196ab1",
+      "oldHttpMs": 4991,
+      "finalHttpMs": 5216,
+      "oldTokens": {
+        "prompt_tokens": 974,
+        "completion_tokens": 845,
+        "total_tokens": 1819
+      },
+      "finalTokens": {
+        "prompt_tokens": 1464,
+        "completion_tokens": 1034,
+        "total_tokens": 2498
+      },
+      "oldCharacters": 1317,
+      "finalCharacters": 1597,
+      "sameSettings": true,
+      "copiedPromptIsActualExecutionInput": true
+    },
+    {
+      "caseId": "QB-07",
+      "model": "deepseek-flash",
+      "generation": "candidate-v5-replay-flash/QB-07-generation.json",
+      "work": "candidate-v2-flash/QB-07-direct-work.json",
+      "oldWork": "baseline-examples-corrected/QB-07-direct-work.json",
+      "promptSha256": "f005bc2ff8974ce7caf53d213799b64f16d667b8cc50754c57c27f8b0ed7bb0f",
+      "outputSha256": "d5db30a7ac93d1dc75c74b9cd2cc90c39a3d20a237ca93a81f5b2e89fec47a14",
+      "oldHttpMs": 556,
+      "finalHttpMs": 850,
+      "oldTokens": {
+        "prompt_tokens": 296,
+        "completion_tokens": 5,
+        "total_tokens": 301
+      },
+      "finalTokens": {
+        "prompt_tokens": 284,
+        "completion_tokens": 5,
+        "total_tokens": 289
+      },
+      "oldCharacters": 7,
+      "finalCharacters": 7,
+      "sameSettings": true,
+      "copiedPromptIsActualExecutionInput": true
+    },
+    {
+      "caseId": "QB-08",
+      "model": "deepseek-flash",
+      "generation": "candidate-v5-replay-rule/QB-08-generation.json",
+      "work": "candidate-v4-live/QB-08-direct-work.json",
+      "oldWork": "baseline-flash/QB-08-direct-work.json",
+      "promptSha256": "f9d34593aff043bb767001574bdd1cda791f9d8f92e49c989da4fc94220634d5",
+      "outputSha256": "e30191dfd883e96ed6b421213f08ca204dfcdf15cd4a593bca1480514f75e642",
+      "oldHttpMs": 3163,
+      "finalHttpMs": 2999,
+      "oldTokens": {
+        "prompt_tokens": 815,
+        "completion_tokens": 662,
+        "total_tokens": 1477
+      },
+      "finalTokens": {
+        "prompt_tokens": 680,
+        "completion_tokens": 582,
+        "total_tokens": 1262
+      },
+      "oldCharacters": 972,
+      "finalCharacters": 875,
+      "sameSettings": true,
+      "copiedPromptIsActualExecutionInput": true
+    },
+    {
+      "caseId": "QB-02",
+      "model": "deepseek-v4-pro",
+      "generation": "candidate-v5-replay-pro/QB-02-generation.json",
+      "work": "candidate-v3-pro/QB-02-direct-work.json",
+      "oldWork": "baseline-pro-works/QB-02-direct-work.json",
+      "promptSha256": "41e6b3f27090e6eb5b932587cf9426f60cf0ed438f93eac70c4fbe3e2a29d843",
+      "outputSha256": "10ed334c8f3eb6d175b47e3f32b1a3f6c7d19bd6f817e2889ad82e059d680d03",
+      "oldHttpMs": 45980,
+      "finalHttpMs": 58438,
+      "oldTokens": {
+        "prompt_tokens": 938,
+        "completion_tokens": 4617,
+        "total_tokens": 5555
+      },
+      "finalTokens": {
+        "prompt_tokens": 747,
+        "completion_tokens": 4992,
+        "total_tokens": 5739
+      },
+      "oldCharacters": 7372,
+      "finalCharacters": 8402,
+      "sameSettings": true,
+      "copiedPromptIsActualExecutionInput": true
+    }
+  ],
+  "offlineReplayNotCountedAsApiCalls": true,
+  "invalidExampleWorkCases": [
+    "baseline-flash/QB-03-direct",
+    "baseline-flash/QB-05-direct",
+    "baseline-flash/QB-06-direct",
+    "baseline-flash/QB-07-direct"
+  ],
+  "reviewMode": "AI_ASSISTED_EVIDENCE_REVIEW_NOT_INDEPENDENT_BLIND_REVIEW"
+}

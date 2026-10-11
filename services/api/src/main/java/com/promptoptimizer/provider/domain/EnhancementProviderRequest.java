@@ -28,7 +28,8 @@ public record EnhancementProviderRequest(
         EnhancementOptions options,
         String model,
         List<PlanningFactCard> planningFacts,
-        List<ConfirmedPlanDecision> confirmedDecisions
+        List<ConfirmedPlanDecision> confirmedDecisions,
+        com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView
 ) {
 
     /**
@@ -41,6 +42,15 @@ public record EnhancementProviderRequest(
         conversationHistory = List.copyOf(conversationHistory);
         planningFacts = planningFacts == null ? List.of() : List.copyOf(planningFacts);
         confirmedDecisions = confirmedDecisions == null ? List.of() : List.copyOf(confirmedDecisions);
+    }
+
+    /** 兼容旧内部适配器；生产编排显式传同一任务视图，旧调用方由 Provider/Assembler 本地建立。 */
+    public EnhancementProviderRequest(String rawPrompt, ContextSnapshot context, PromptTemplate template,
+            List<String> ambiguities, List<PlanAnswer> planAnswers, boolean planConfirmed,
+            List<String> constraints, List<ConversationMessage> conversationHistory, EnhancementOptions options,
+            String model, List<PlanningFactCard> planningFacts, List<ConfirmedPlanDecision> confirmedDecisions) {
+        this(rawPrompt, context, template, ambiguities, planAnswers, planConfirmed, constraints, conversationHistory,
+                options, model, planningFacts, confirmedDecisions, null);
     }
 
     /** 兼容尚未传递结构化决定的旧适配器；直接增强默认没有决定。 */

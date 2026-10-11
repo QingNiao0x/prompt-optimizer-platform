@@ -145,6 +145,20 @@ public class OptimizationResultAssembler {
             ConstraintBundle constraintBundle, boolean includeExamples, long latencyMs, String rawPrompt,
             List<PlanningFactCard> planningFacts, List<String> planningWarnings
     ) {
+        var taskView = EffectiveTaskViewFactory.create(rawPrompt, template.code(),
+                planConfirmed ? planAnswers : List.of(), planningFacts, includeExamples);
+        return assemble(providerResponse, context, template, ambiguities, planAnswers, planConfirmed,
+                constraintBundle, includeExamples, latencyMs, rawPrompt, planningFacts, planningWarnings, taskView);
+    }
+
+    /** 生产路径使用编排器冻结的同一任务视图；兼容入口仅在此之前构建一次。 */
+    public OptimizationResult assemble(
+            EnhancementProviderResponse providerResponse, ContextSnapshot context, PromptTemplate template,
+            List<String> ambiguities, List<PlanAnswer> planAnswers, boolean planConfirmed,
+            ConstraintBundle constraintBundle, boolean includeExamples, long latencyMs, String rawPrompt,
+            List<PlanningFactCard> planningFacts, List<String> planningWarnings,
+            com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView
+    ) {
         if (providerResponse == null || isBlank(providerResponse.provider()) || isBlank(providerResponse.model())) {
             throw invalidResponse(Reason.METADATA_INVALID, "provider");
         }
@@ -156,7 +170,7 @@ public class OptimizationResultAssembler {
         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planConfirmed ? planAnswers : List.of());
         var resolvedState = ResolvedPlanState.from(planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), rawPrompt);
         // 先建立有效执行视图，再提取规则；原始提示词与卡片仍完整保存，旧未知不能被保真流程补回。
-        String resolvedRawPrompt = resolvedState.reconcile(PlatformConstraintRenderer.taskInput(rawPrompt));
+        String resolvedRawPrompt = taskView.effectivePrompt();
         sections.replaceAll((type, section) -> new PromptSection(type, section.title(), resolvedState.reconcile(section.content())));
         String evidenceQuery = decisions.retrievalQuery(rawPrompt);
         List<PlanningFactCard> eligibleFacts = new PlanningFactCardExtractor()
@@ -197,8 +211,7 @@ public class OptimizationResultAssembler {
         validateExecutionRules(sections, explicitRules, eligibleFacts, documentFacts);
         boolean minimal = MinimalPromptOrganizer.organize(sections, effectiveRawPrompt,
                 planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()));
-        appendConfirmedAnswers(sections, decisions);
-        appendConfirmedDecisions(sections, decisions);
+        PlanDecisionIntegrator.integrate(sections, taskView);
         java.util.function.UnaryOperator<String> currentEvidence = value ->
                 unresolvedContract.reconcileCurrentText(resolvedState.reconcile(value));
         List<String> currentDocumentFacts = documentFacts.stream().map(value -> {
@@ -284,7 +297,8 @@ public class OptimizationResultAssembler {
                 .filter(statement -> !identifierRelations.coveredByBoundPending(statement, decisions))
                 .filter(statement -> relationFindings.stream().noneMatch(finding -> identifierRelations.coversPendingStatement(finding, statement))))
                 .distinct().toList();
-        assessed = classifyFindings(sections, assessed, rawPrompt, decisions, eligibleFacts, documentFacts, context);
+        assessed = assessed.stream().filter(finding -> !decisions.resolvesChoiceRequest(finding)).toList();
+        assessed = classifyFindings(sections, assessed, taskView.effectivePrompt(), decisions, eligibleFacts, documentFacts, context);
         List<AmbiguityReference> references = normalizeAmbiguityReferences(providerResponse);
         // 先登记新冲突和绑定的未决问题，再归并模型提醒，避免重复项挤占展示预算。
         // 直接增强也可合并相同来源和取值的冲突；仅服务端绑定的 Plan 答案可消除旧问题。
@@ -323,7 +337,8 @@ public class OptimizationResultAssembler {
         }
         // 未决清单也是正文中的权威规则来源；先落入正文再查缺补齐，避免同一禁止规则被追加两遍。
         appendExplicitRules(sections, ProviderPrerequisiteCompactor.uncoveredRules(explicitRules,
-                merged.executionPrerequisites(), decisions, rawPrompt));
+                merged.executionPrerequisites(), decisions, rawPrompt).stream()
+                .filter(rule -> !PlanDecisionIntegrator.coveredRule(sections, rule)).toList());
         // 补回规则也可能重述同一未知；权威执行前提所在的标题范围跳过，只检查其余完整断言。
         ProviderPrerequisiteCompactor.compact(sections, merged.executionPrerequisites(), decisions, rawPrompt);
         // 一个权威列表同时驱动 API 与段落，避免 UI 与模型返回的旧 CLARIFICATIONS 互相矛盾。
@@ -338,14 +353,7 @@ public class OptimizationResultAssembler {
                 PromptSectionType.ACCEPTANCE,
                 ignored -> new PromptSection(PromptSectionType.ACCEPTANCE, "验收标准", template.acceptanceGuidance())
         );
-        if (includeExamples) {
-            sections.computeIfAbsent(
-                    PromptSectionType.EXAMPLES,
-                    ignored -> new PromptSection(PromptSectionType.EXAMPLES, "示例", template.exampleGuidance())
-            );
-        } else {
-            sections.remove(PromptSectionType.EXAMPLES);
-        }
+        ExampleResultIntegrator.integrate(sections, taskView.examples());
 
         // 平台交付契约有唯一正文责任段；仅合并完整等价句，表格、代码和独立业务章节继续保护。
         var deliveryAuthority = new java.util.LinkedHashMap<PromptSectionType, String>();
@@ -397,7 +405,7 @@ public class OptimizationResultAssembler {
     /** 用户要求讲解某协议时保留合法代码名，其他任务不能把模型输入的内部字段当作读者操作指令。 */
     private void validateUserFacingProtocol(String text, String rawPrompt, String field) {
         if (text == null) return;
-        var names = java.util.regex.Pattern.compile("(?<![A-Za-z0-9_])(?:confirmedDecisions|planAnswers|questionId)(?![A-Za-z0-9_])")
+        var names = java.util.regex.Pattern.compile("(?<![A-Za-z0-9_])(?:taskView|executionRequirements|pendingDecisions|confirmedDecisions|planAnswers|questionId)(?![A-Za-z0-9_])")
                 .matcher(text);
         while (names.find()) {
             if (rawPrompt == null || !rawPrompt.contains(names.group())) throw invalidResponse(Reason.RULE_CONFLICT, field);
@@ -787,61 +795,6 @@ public class OptimizationResultAssembler {
             }
         }
         return sections;
-    }
-
-    /** 现状、目标与本次选择分别标注来源；待定回答不能冒充已确认事实。 */
-    private void appendConfirmedAnswers(
-            Map<PromptSectionType, PromptSection> sections,
-            ConfirmedDecisionSet decisions
-    ) {
-        List<ConfirmedPlanDecision> resolved = decisions.knownDecisions().stream()
-                .filter(decision -> decision.scope() == Scope.CURRENT_STATE).toList();
-        if (resolved.isEmpty()) {
-            return;
-        }
-        PromptSection background = sections.get(PromptSectionType.BACKGROUND);
-        String confirmed = resolved.stream()
-                .map(decision -> "- " + decision.topic() + "：" + decision.answer())
-                .distinct()
-                .filter(line -> background.content().lines().noneMatch(existing -> sameCompleteLine(existing, line)))
-                .collect(Collectors.joining("\n"));
-        if (confirmed.isBlank()) return;
-        sections.put(PromptSectionType.BACKGROUND, new PromptSection(
-                PromptSectionType.BACKGROUND,
-                background.title(),
-                background.content() + "\n\n用户已确认的信息（当前情况）：\n" + confirmed
-        ));
-    }
-
-    /** 执行选择落到任务或输出段落，并核对每条答案确实进入对应段落。 */
-    private void appendConfirmedDecisions(Map<PromptSectionType, PromptSection> sections,
-                                          ConfirmedDecisionSet decisions) {
-        Map<PromptSectionType, List<String>> required = new EnumMap<>(PromptSectionType.class);
-        for (ConfirmedPlanDecision decision : decisions.knownDecisions()) {
-            if (decision.scope() == Scope.CURRENT_STATE) continue;
-            String confirmed = decision.answer();
-            if (confirmed.isBlank()) continue;
-            PromptSectionType type = decision.topic().startsWith("输出") || decision.topic().startsWith("交付")
-                    ? PromptSectionType.OUTPUT : PromptSectionType.TASK;
-            required.computeIfAbsent(type, ignored -> new ArrayList<>())
-                    .add("- " + decision.topic() + "：" + confirmed);
-        }
-        for (var entry : required.entrySet()) {
-            PromptSectionType type = entry.getKey();
-            PromptSection section = sections.get(type);
-            // 模型提到候选词也可能是在否定它，不能以出现答案字符串作为已落实的证据。
-            List<String> missing = entry.getValue().stream().distinct()
-                    .filter(line -> section.content().lines().noneMatch(existing -> sameCompleteLine(existing, line)))
-                    .toList();
-            if (!missing.isEmpty()) {
-                sections.put(type, new PromptSection(type, section.title(), section.content()
-                        + "\n\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n" + String.join("\n", missing)));
-            }
-            if (entry.getValue().stream().anyMatch(line -> sections.get(type).content().lines()
-                    .noneMatch(existing -> sameCompleteLine(existing, line)))) {
-                throw invalidResponse(Reason.CONFIRMED_DECISION_MISSING, "confirmedDecisions");
-            }
-        }
     }
 
     /** 先落入任务与用户权限分组；固定平台块在所有普通压缩完成后追加。 */

@@ -48,4 +48,18 @@ class TemplateGuidanceBoundaryTest {
         assertThat(template.outputGuidance()).contains("不附解释");
         assertThat(template.acceptanceGuidance()).doesNotContain("接口", "软件测试", "Redis");
     }
+
+    @Test
+    void mockAndRealAssemblyKeepTheExplicitWritingPromptDeliverable() {
+        String raw = "为研究生准备论文方法部分的写作提示词。方法提纲不超过1200字，附表另计。";
+        var template = registry.resolve(TemplateCode.AUTO, raw);
+        var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test");
+        var response = new MockPromptEnhancementProvider().enhance(new EnhancementProviderRequest(raw, context, template,
+                List.of(), List.of("不得编造事实。"), List.of(), new EnhancementOptions(TemplateCode.AUTO, false, true, true), null));
+        var result = new OptimizationResultAssembler().assemble(response, context, template, List.of(), List.of(), false,
+                List.of("不得编造事实。"), true, 1, raw);
+        assertThat(result.sections()).filteredOn(s -> s.type() == PromptSectionType.OUTPUT).singleElement()
+                .satisfies(s -> assertThat(s.content()).contains("交付可直接使用的提示词"));
+        assertThat(result.optimizedPrompt()).contains("不超过1200字", "附表另计", "输入与预期输出示例");
+    }
 }

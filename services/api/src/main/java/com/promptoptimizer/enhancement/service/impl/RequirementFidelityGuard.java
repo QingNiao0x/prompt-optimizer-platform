@@ -220,11 +220,18 @@ final class RequirementFidelityGuard {
                 value = "对于仍未明确的条件，不得默认补全。";
             }
             if (!value.isBlank() && (REQUIREMENT.matcher(value).find() || AFFIRMATIVE_BRANCH.matcher(value).matches())
-                    && !UNCERTAIN.matcher(value).find()
+                    && !uncertainRule(value)
                     && !INSTRUCTION_OVERRIDE.matcher(value).find() && !sensitiveValueDetector.containsCredential(value)) {
                 rules.add(value);
             }
         }
+    }
+
+    /** 否定的是“使用假设数据”时仍为硬约束；真正假设、举例和问句继续排除。 */
+    private boolean uncertainRule(String value) {
+        String assessment = pattern("(?:不得|禁止|不能|不要|不允许|不可|不应|勿).{0,12}假设")
+                .matcher(value).replaceAll(match -> match.group().replace("假设", "推测"));
+        return UNCERTAIN.matcher(assessment).find();
     }
 
     /** 来源冲突与确认替代都需双向比较，不能只检测某一种否定方向。 */

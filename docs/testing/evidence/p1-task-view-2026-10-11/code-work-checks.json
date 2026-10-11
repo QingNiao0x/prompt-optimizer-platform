@@ -1,0 +1,125 @@
+{
+  "seed": 20261011,
+  "networkCalls": 0,
+  "sort": [
+    {
+      "artifact": "baseline-flash/QB-05-raw-work.md",
+      "sha256": "af7edc83bb76630fd28bd5f4f590058dd98303e0b6a7f5acb8031cc5441a31ba",
+      "cases": 108,
+      "failures": [],
+      "scope": "actual generated function, sorted oracle plus unchanged input; no performance proof"
+    },
+    {
+      "artifact": "baseline-examples-corrected/QB-05-direct-work.md",
+      "sha256": "501fbb824f2d9d868187679dfd015c337d8510f9bd5d4d6970b3466fa4b1a391",
+      "cases": 108,
+      "failures": [],
+      "scope": "actual generated function, sorted oracle plus unchanged input; no performance proof"
+    },
+    {
+      "artifact": "candidate-v2-flash/QB-05-direct-work.md",
+      "sha256": "7fc2f9ccf974ceeaa4b182a42f3cce438791a9df09eac9ff0f3f7b75b4ba4541",
+      "cases": 108,
+      "failures": [],
+      "scope": "actual generated function, sorted oracle plus unchanged input; no performance proof"
+    }
+  ],
+  "title": [
+    {
+      "artifact": "baseline-flash/QB-04-raw-work.md",
+      "sha256": "58ff59e69d173a6ce47c101f55a7c2e897035585068c89f658a9cd200cb06fcb",
+      "checks": [
+        {
+          "expected": "中文标题",
+          "actual": "中文标题",
+          "passed": true
+        },
+        {
+          "expected": "A & B",
+          "actual": "A & B",
+          "passed": true
+        },
+        {
+          "expected": "first",
+          "actual": "first",
+          "passed": true
+        },
+        {
+          "expected": null,
+          "actual": "",
+          "passed": true
+        },
+        {
+          "expected": null,
+          "actual": "",
+          "passed": true
+        }
+      ],
+      "scope": "inspected primary generated parser/function with a fake requests transport; no live website, CLI, timeout or encoding integration proof"
+    },
+    {
+      "artifact": "baseline-flash/QB-04-direct-work.md",
+      "sha256": "c949a7babb603cb24655f16f45959fa31f76240312407e2857eeeafb9a6e6762",
+      "checks": [
+        {
+          "expected": "中文标题",
+          "actual": "中文标题",
+          "passed": true
+        },
+        {
+          "expected": "A & B",
+          "actual": "A & B",
+          "passed": true
+        },
+        {
+          "expected": "first",
+          "actual": "firstsecond",
+          "passed": false
+        },
+        {
+          "expected": null,
+          "actual": null,
+          "passed": true
+        },
+        {
+          "expected": null,
+          "actual": null,
+          "passed": true
+        }
+      ],
+      "scope": "inspected primary generated parser/function with a fake requests transport; no live website, CLI, timeout or encoding integration proof"
+    },
+    {
+      "artifact": "candidate-v2-flash/QB-04-direct-work.md",
+      "sha256": "f99dda3fb6791f459a80eb6d5b9d4210aa8326e95929f9419573bdebdaf76eb2",
+      "checks": [
+        {
+          "expected": "中文标题",
+          "actual": "中文标题",
+          "passed": true
+        },
+        {
+          "expected": "A & B",
+          "actual": "A & B",
+          "passed": true
+        },
+        {
+          "expected": "first",
+          "actual": "first",
+          "passed": true
+        },
+        {
+          "expected": null,
+          "actual": null,
+          "passed": true
+        },
+        {
+          "expected": null,
+          "actual": null,
+          "passed": true
+        }
+      ],
+      "scope": "inspected primary generated parser/function with a fake requests transport; no live website, CLI, timeout or encoding integration proof"
+    }
+  ]
+}

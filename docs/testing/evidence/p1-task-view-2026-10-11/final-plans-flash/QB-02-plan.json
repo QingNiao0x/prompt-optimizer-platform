@@ -1,0 +1,173 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-02",
+  "arm" : "actual-plan",
+  "requestId" : "22588f8f-ad3a-47d6-8449-fa43634581fa",
+  "startedAt" : "2026-10-11T11:21:58.475416600Z",
+  "status" : "COLLECTED",
+  "plan" : {
+    "summary" : "您要撰写2015—2025年某地区心脑血管疾病死亡率特征分析，涵盖长期趋势与季节性、分性别/地区/人群/亚类比较、年度与性别的YLL及YLL率、以及Arriaga分解。为让分析口径和结论可比，还需确认几个会直接影响结果的关键参数。",
+    "questions" : [ {
+      "id" : "region",
+      "question" : "本次分析针对的具体地区是哪里？",
+      "hint" : "地区决定数据来源、人群范围和可比口径，无法由执行者代为假定。",
+      "type" : "FREE_TEXT",
+      "options" : [ ],
+      "examples" : [ "如：中国某省（请写明省名）", "如：某市全市范围" ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "data_source",
+      "question" : "死亡率、人口和死因数据来自哪个来源？",
+      "hint" : "不同来源的覆盖人群、死因编码和年份完整性不同，会直接影响趋势与分解结果。",
+      "type" : "FREE_TEXT",
+      "options" : [ ],
+      "examples" : [ "如：中国疾病预防控制中心死因监测系统", "如：某省卫生健康统计年鉴", "如：全球疾病负担研究（GBD）数据" ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "population_definition",
+      "question" : "“分人群”具体按什么维度划分？",
+      "hint" : "人群划分方式决定亚组比较的层级和结果解释，需与数据字段匹配。",
+      "type" : "MULTIPLE_CHOICE",
+      "options" : [ {
+        "id" : "age",
+        "label" : "年龄组",
+        "description" : "按年龄段（如0-14、15-44、45-59、60+等）划分",
+        "answer" : "按年龄组划分人群",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "urban_rural",
+        "label" : "城乡",
+        "description" : "按城市/农村划分",
+        "answer" : "按城乡划分人群",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "ethnic",
+        "label" : "民族",
+        "description" : "按民族划分",
+        "answer" : "按民族划分人群",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "insurance",
+        "label" : "医保类型",
+        "description" : "按医保类型划分",
+        "answer" : "按医保类型划分人群",
+        "recommended" : false,
+        "recommendationReason" : ""
+      } ],
+      "examples" : [ ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "subtype_definition",
+      "question" : "“分亚类”具体指心脑血管疾病的哪些亚类？",
+      "hint" : "亚类定义决定死因编码筛选范围和比较结果，需与数据中的ICD编码对应。",
+      "type" : "FREE_TEXT",
+      "options" : [ ],
+      "examples" : [ "如：缺血性心脏病、脑卒中、高血压性心脏病等", "如：按ICD-10章节I00-I99细分" ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "yll_standard",
+      "question" : "YLL计算采用什么标准期望寿命？",
+      "hint" : "期望寿命取值直接决定YLL和YLL率的绝对水平，不同标准结果不可直接比较。",
+      "type" : "SINGLE_CHOICE",
+      "options" : [ {
+        "id" : "who_gbd",
+        "label" : "WHO/GBD标准期望寿命表",
+        "description" : "采用WHO或GBD推荐的年龄别期望寿命",
+        "answer" : "采用WHO/GBD标准期望寿命表计算YLL",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "local_life_table",
+        "label" : "本地区简略寿命表",
+        "description" : "采用本地区实际寿命表",
+        "answer" : "采用本地区简略寿命表计算YLL",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "fixed_75",
+        "label" : "固定年龄上限（如75岁）",
+        "description" : "采用固定年龄截断值",
+        "answer" : "采用固定年龄上限（如75岁）计算YLL",
+        "recommended" : false,
+        "recommendationReason" : ""
+      } ],
+      "examples" : [ ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "arriaga_scope",
+      "question" : "Arriaga分解要分解哪些指标？",
+      "hint" : "分解对象决定方法实现和结果呈现，需明确是期望寿命、死亡率差异还是其他指标。",
+      "type" : "SINGLE_CHOICE",
+      "options" : [ {
+        "id" : "le_diff",
+        "label" : "期望寿命差异",
+        "description" : "分解不同年份或地区间期望寿命差异的年龄/死因贡献",
+        "answer" : "Arriaga分解用于分解期望寿命差异",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "mortality_diff",
+        "label" : "死亡率差异",
+        "description" : "分解不同组间死亡率差异的贡献",
+        "answer" : "Arriaga分解用于分解死亡率差异",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "both",
+        "label" : "两者都做",
+        "description" : "同时分解期望寿命和死亡率差异",
+        "answer" : "Arriaga分解同时用于期望寿命差异和死亡率差异",
+        "recommended" : false,
+        "recommendationReason" : ""
+      } ],
+      "examples" : [ ],
+      "allowCustomAnswer" : true
+    }, {
+      "id" : "comparison_groups",
+      "question" : "Arriaga分解的比较组如何设定？",
+      "hint" : "比较组决定分解结果的解释方向，需明确是年份间、地区间还是性别间比较。",
+      "type" : "MULTIPLE_CHOICE",
+      "options" : [ {
+        "id" : "year",
+        "label" : "年份间比较",
+        "description" : "如2015年与2025年比较",
+        "answer" : "按年份间比较进行Arriaga分解",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "region",
+        "label" : "地区间比较",
+        "description" : "如不同城市/农村比较",
+        "answer" : "按地区间比较进行Arriaga分解",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "sex",
+        "label" : "性别间比较",
+        "description" : "如男性与女性比较",
+        "answer" : "按性别间比较进行Arriaga分解",
+        "recommended" : false,
+        "recommendationReason" : ""
+      } ],
+      "examples" : [ ],
+      "allowCustomAnswer" : true
+    } ],
+    "templateCode" : "RESEARCH_ANALYSIS",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : "DeepSeek Flash"
+    },
+    "latencyMs" : 7429,
+    "planId" : "21820c26-9d63-41ee-9425-f583e0e50040",
+    "planningContext" : {
+      "contextId" : "fcc50a0c-53d0-4266-910b-f67aa8347fec",
+      "version" : "sha256:ccc5f342d07da8bdadffbef757c3033e8bccdf9abb046812c46c322e05175bcf"
+    },
+    "expiresAt" : 1791719518.565141400
+  }
+}

@@ -20,7 +20,8 @@ public record PlanningProviderRequest(
         PlanningContextDigest planningContext,
         String model,
         List<PlanningKnownDecision> knownDecisions,
-        String sourceObjectGuidance
+        String sourceObjectGuidance,
+        com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView
 ) {
 
     public PlanningProviderRequest {
@@ -28,6 +29,14 @@ public record PlanningProviderRequest(
         conversationHistory = conversationHistory == null ? List.of() : List.copyOf(conversationHistory);
         knownDecisions = knownDecisions == null ? List.of() : List.copyOf(knownDecisions);
         sourceObjectGuidance = sourceObjectGuidance == null ? "" : sourceObjectGuidance;
+    }
+
+    /** 保留既有内部请求构造方式；不增加客户端可自报的任务或确认字段。 */
+    public PlanningProviderRequest(String rawPrompt, String contextDescription, List<ConversationMessage> conversationHistory,
+            PlanningContextDigest planningContext, String model, List<PlanningKnownDecision> knownDecisions,
+            String sourceObjectGuidance) {
+        this(rawPrompt, contextDescription, conversationHistory, planningContext, model, knownDecisions,
+                sourceObjectGuidance, null);
     }
 
     /** 内部资料归属视图默认为空，不是客户端请求字段，也不包含完整项目原文。 */

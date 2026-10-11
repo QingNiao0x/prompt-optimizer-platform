@@ -76,6 +76,12 @@ final class ConfirmedDecisionSet {
         return java.util.stream.Stream.concat(knownDecisions().stream(), pendingDecisions().stream()).toList();
     }
 
+    /** 旧择一题只有完整对象相同且已实际回答才失效；总体未决不授权覆盖新子项。 */
+    boolean resolvesChoiceRequest(String finding) {
+        return knownDecisions().stream().anyMatch(decision ->
+                PlanDecisionIdentity.repeatsChoiceRequest(finding, decision.question()));
+    }
+
     private static Scope confirmedScope(String question, String answer) {
         return TARGET.matcher(question + answer).find() ? Scope.TARGET
                 : CURRENT.matcher(question).find() && !CHOICE_QUESTION.matcher(question).find() ? Scope.CURRENT_STATE : Scope.CHOICE;

@@ -1,0 +1,17 @@
+{
+  "frozenAt": "2026-10-11T11:54:45.997635+00:00",
+  "sourceProtocol": "revision-protocol-v3.json",
+  "reason": "真实03/06作品无下游配对示例：只有示范标签未传执行要求；06还将写作提示词降成论文提纲。修复共享交付层级与示例指令后，只补采这三份受影响的作品，08因提示词交付契约系统指导变化重新采集增强。其余七个模型输入以完全相等请求的离线重放复核，保留原失败，不择优替换。",
+  "maximumTotalTransportAttempts": 115,
+  "maximumTotalDownstreamExecutions": 53,
+  "additionalEnhancementCases": [
+    "QB-06",
+    "QB-08"
+  ],
+  "additionalDownstreamCases": [
+    "QB-03",
+    "QB-06",
+    "QB-08"
+  ],
+  "otherEvidence": "八个测试输入未变，仍不含真实患者/生产材料/密钥；其他模型和Plan答案不重新采样。"
+}

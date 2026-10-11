@@ -92,6 +92,7 @@ final class PlanAmbiguityMerger {
         }
         for (String finding : findings) {
             String text = normalizeBoundAnswerPresentation(finding);
+            if (decisions.resolvesChoiceRequest(text)) continue;
             if (nonDecisionStatement(text)) continue;
             if (registered.containsValue(text)) continue;
             if (serverFindings.contains(text) && text.startsWith("资料对“")) continue;

@@ -1,0 +1,66 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-08",
+  "arm" : "direct-generation",
+  "requestId" : "71e4eaf6-a477-43c3-834c-734db08a8144",
+  "startedAt" : "2026-10-11T10:34:29.876411700Z",
+  "status" : "COLLECTED",
+  "effectiveOptions" : {
+    "templateCode" : "AUTO",
+    "includeConversationHistory" : false,
+    "includePermissionBoundaries" : true,
+    "includeExamples" : false
+  },
+  "effectiveOptionsSha256" : "186d3e55086ce14e53e885bdaa06af8c7e6325e01470b108c624ef95bf5b5850",
+  "planEnabled" : false,
+  "result" : {
+    "optimizedPrompt" : "## 背景\n现有两条审批规则需要整理为开发提示词：\n- 2024 年甲机构：采购金额超过 5 万元须由财务复核。\n- 2025 年乙机构：采购金额达到 5 万元须由负责人复核。\n两条规则在年份、机构、金额比较方式（“超过”与“达到”）和复核角色上均不同，须分别保留，不得合并或互相套用。\n\n## 任务\n将上述两条审批规则整理为可直接交付开发的提示词，明确规则实现所需的目标、动作与边界。\n- 逐条保留年份、机构、金额阈值、比较方式（“超过 5 万元”与“达到 5 万元”）和复核角色（财务复核、负责人复核）。\n- 不得使用假设数据，不得为未说明的字段、机构、年份或金额区间补造取值。\n- 只交付规则实现，不新增报表或代码生成器。\n\n## 输出\n交付一份开发提示词，内容覆盖：\n- 两条审批规则的完整条件与对应复核动作。\n- 规则实现所需的输入、判断与输出说明。\n- 规则适用边界（年份、机构、金额口径）及未说明事项的处理方式。\n不包含报表设计、代码生成器或额外交付物。\n\n## 约束\n- 不得使用假设数据；资料未说明的字段、取值或规则不得补造。\n- 两条规则的条件与动作不得合并、改写或互相替代。\n用户明确规则（须遵守平台权限边界）：\n- 把下列审批规则整理为开发提示词：2024 年甲机构采购金额超过 5 万元须由财务复核；2025 年乙机构采购金额达到 5 万元须由负责人复核。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收\n- 两条规则的年份、机构、金额阈值、比较方式和复核角色均完整且与原始表述一致。\n- 未出现假设数据或未说明的取值。\n- 交付物仅为规则实现，不含报表或代码生成器。",
+    "sections" : [ {
+      "type" : "BACKGROUND",
+      "title" : "背景",
+      "content" : "现有两条审批规则需要整理为开发提示词：\n- 2024 年甲机构：采购金额超过 5 万元须由财务复核。\n- 2025 年乙机构：采购金额达到 5 万元须由负责人复核。\n两条规则在年份、机构、金额比较方式（“超过”与“达到”）和复核角色上均不同，须分别保留，不得合并或互相套用。"
+    }, {
+      "type" : "TASK",
+      "title" : "任务",
+      "content" : "将上述两条审批规则整理为可直接交付开发的提示词，明确规则实现所需的目标、动作与边界。\n- 逐条保留年份、机构、金额阈值、比较方式（“超过 5 万元”与“达到 5 万元”）和复核角色（财务复核、负责人复核）。\n- 不得使用假设数据，不得为未说明的字段、机构、年份或金额区间补造取值。\n- 只交付规则实现，不新增报表或代码生成器。"
+    }, {
+      "type" : "OUTPUT",
+      "title" : "输出",
+      "content" : "交付一份开发提示词，内容覆盖：\n- 两条审批规则的完整条件与对应复核动作。\n- 规则实现所需的输入、判断与输出说明。\n- 规则适用边界（年份、机构、金额口径）及未说明事项的处理方式。\n不包含报表设计、代码生成器或额外交付物。"
+    }, {
+      "type" : "CONSTRAINTS",
+      "title" : "约束",
+      "content" : "- 不得使用假设数据；资料未说明的字段、取值或规则不得补造。\n- 两条规则的条件与动作不得合并、改写或互相替代。\n用户明确规则（须遵守平台权限边界）：\n- 把下列审批规则整理为开发提示词：2024 年甲机构采购金额超过 5 万元须由财务复核；2025 年乙机构采购金额达到 5 万元须由负责人复核。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+    }, {
+      "type" : "ACCEPTANCE",
+      "title" : "验收",
+      "content" : "- 两条规则的年份、机构、金额阈值、比较方式和复核角色均完整且与原始表述一致。\n- 未出现假设数据或未说明的取值。\n- 交付物仅为规则实现，不含报表或代码生成器。"
+    } ],
+    "contextReport" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "EMPTY",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "v3"
+    },
+    "ambiguities" : [ ],
+    "appliedConstraints" : [ "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。" ],
+    "templateCode" : "GENERAL",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : "deepseek:deepseek-flash"
+    },
+    "latencyMs" : 2810,
+    "warnings" : [ ],
+    "evidenceCards" : [ ]
+  },
+  "optimizedPromptSha256" : "9c56eb2847fcf503910023129014bc079786fcdd66937de614ad06a2c4370dfd",
+  "elapsedMs" : 2811
+}

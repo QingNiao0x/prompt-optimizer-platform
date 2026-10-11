@@ -88,7 +88,7 @@ final class PlanningDecisionPolicy {
     static PlanningProviderRequest enrich(PlanningProviderRequest input) {
         var policy = from(input);
         return new PlanningProviderRequest(input.rawPrompt(), input.contextDescription(), input.conversationHistory(),
-                input.planningContext(), input.model(), policy.decisions, input.sourceObjectGuidance());
+                input.planningContext(), input.model(), policy.decisions, input.sourceObjectGuidance(), input.taskView());
     }
 
     /** 只消除相同决定维度；时延、缺失值、权限、迁移与验收阈值等新选择继续保留。 */

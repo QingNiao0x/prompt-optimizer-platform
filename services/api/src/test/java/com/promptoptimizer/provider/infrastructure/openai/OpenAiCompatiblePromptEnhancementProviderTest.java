@@ -572,6 +572,25 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         server.verify();
     }
 
+    @Test
+    void shouldSendOneExecutionProjectionInsteadOfTheConfirmedQuestionnaire() throws Exception {
+        EnhancementProviderRequest base = createRequest();
+        var request = new EnhancementProviderRequest("弄个排序", base.context(), base.template(), List.of(),
+                List.of(new com.promptoptimizer.enhancement.dto.PlanAnswer("direction", "排序方向是升序还是降序？", "升序。")),
+                true, base.constraints(), base.conversationHistory(), base.options(), base.model(), List.of());
+        server.expect(once(), requestTo(ENDPOINT))
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.containsString("按升序排序")))
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.not(
+                        org.hamcrest.Matchers.containsString("排序方向是升序还是降序？"))))
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.not(
+                        org.hamcrest.Matchers.containsString("confirmedDecisions"))))
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.not(
+                        org.hamcrest.Matchers.containsString("planAnswers"))))
+                .andRespond(withSuccess(completionWithFindings("[]"), MediaType.APPLICATION_JSON));
+        provider.enhance(request);
+        server.verify();
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"null", "{}", "\"问题\"", "[3]", "[null]", "[\" \" ]",
             "[\"一\",\"二\",\"三\",\"四\",\"五\",\"六\",\"七\",\"八\",\"九\"]"})

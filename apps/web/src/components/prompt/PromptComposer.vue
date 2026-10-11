@@ -127,10 +127,10 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
               <ElSwitch v-model="planModeModel" aria-label="Plan 确认" :disabled="isBusy" />
             </label>
           </ElTooltip>
-          <ElTooltip content="要求模型给出输入与预期输出示例" placement="top">
+          <ElTooltip content="要求下游回答包含相关输入与预期输出示例；用户明确禁例或严格输出格式优先" placement="top">
             <label class="switch-control">
               <span>示例参考</span>
-              <ElSwitch v-model="examplesModel" :disabled="isBusy" />
+              <ElSwitch v-model="examplesModel" aria-label="要求回答包含示例" :disabled="isBusy" />
             </label>
           </ElTooltip>
         </div>

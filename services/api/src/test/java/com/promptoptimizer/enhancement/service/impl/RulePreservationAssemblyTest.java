@@ -72,7 +72,9 @@ class RulePreservationAssemblyTest {
                 List.of(), response("现有预约项目。"));
 
         assertThat(result.optimizedPrompt()).contains(SOURCE, COMPLETE_RULE, confirmedAnswer,
-                "Plan 阶段绑定的资料事实", "用户已确认的信息");
+                "Plan 阶段绑定的资料事实");
+        assertThat(result.optimizedPrompt()).doesNotContain("用户已确认的信息");
+        assertThat(result.optimizedPrompt().split(java.util.regex.Pattern.quote(confirmedAnswer), -1)).hasSize(2);
         assertThat(result.ambiguities()).isEmpty();
         assertRequiredBehavior(result);
     }

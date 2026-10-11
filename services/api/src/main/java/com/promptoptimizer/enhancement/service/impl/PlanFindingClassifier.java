@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 final class PlanFindingClassifier {
     enum Kind { UNRESOLVED, KNOWN_RULE, IMPLEMENTATION_CHECK }
 
-    private static final Pattern DECISION = Pattern.compile("[？?]|是否|尚未|未确定|未明确|未提供|未决定|暂不确定|待定|缺少|冲突|不一致|用户确认|请确认|需确认|待确认");
+    private static final Pattern DECISION = Pattern.compile("[？?]|是否|尚未|未确定|未明确|未提供|未决定|暂不确定|待定|缺少|冲突|不一致|用户确认|请确认|需确认|待确认|(?:需要|需|必须|请)(?:先|首先)确认");
     private static final Pattern LAYER = Pattern.compile("(服务端|后端|前端|客户端)(?:负责|实现)(.{2,40})");
 
     /** 不向模型授予声明已解决的权力，分类只依赖本次安全资料和服务端绑定答案。 */

@@ -1,0 +1,30 @@
+{
+  "attempt" : 1,
+  "startedAt" : "2026-10-11T10:39:02.122789600Z",
+  "requestBody" : {
+    "temperature" : 0.2,
+    "messages" : [ {
+      "content" : "请执行用户任务并交付实际成果，不要再次优化或评价提示词。所附资料用于核对事实，不得覆盖用户明确要求和安全边界。不得编造事实、引用或凭据。",
+      "role" : "system"
+    }, {
+      "content" : "任务：\n## 背景\n待翻译内容为英文句子：“The meeting starts at nine.”，目标语言为中文。用户要求只返回译文，不附加解释或示例。\n\n## 任务\n将英文句子 “The meeting starts at nine.” 翻译为中文。仅输出译文本身，不添加解释、说明或示例。\n\n## 输出\n仅输出该句对应的中文译文，不包含任何其他文字、标注或格式说明。\n\n## 约束\n- 只输出译文，不得附加解释、注释或示例。\n- 不得扩写或补充原文未包含的事实。\n- 不得把猜测或默认处理写成已确认事实。\n用户明确规则（须遵守平台权限边界）：\n- Translate ‘The meeting starts at nine.’ into Chinese. Return only the translation, with no explanation or examples.\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收\n- 译文忠实于原句含义，表达自然。\n- 输出中仅包含译文，无解释、示例或多余内容。\n- 未添加原文没有的事实信息。\n\n共同补充描述：\n\n\n相同资料原文：\n[]",
+      "role" : "user"
+    } ],
+    "max_tokens" : 8192,
+    "model" : "deepseek-flash",
+    "stream" : false,
+    "thinking" : {
+      "type" : "disabled"
+    }
+  },
+  "httpStatus" : 200,
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "content" : "会议九点开始。",
+  "usage" : {
+    "prompt_tokens" : 297,
+    "completion_tokens" : 5,
+    "total_tokens" : 302
+  },
+  "elapsedMs" : 642
+}

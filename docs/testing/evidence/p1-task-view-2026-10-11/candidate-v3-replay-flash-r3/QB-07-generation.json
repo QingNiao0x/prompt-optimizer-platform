@@ -1,0 +1,66 @@
+{
+  "scope" : "OFFLINE_REAL_PROVIDER_TAPE_FINAL_ORCHESTRATOR_NETWORK_DISABLED",
+  "caseId" : "QB-07",
+  "arm" : "direct-generation",
+  "requestId" : "93905fe1-d21e-4489-9f20-ff0af4841fd7",
+  "startedAt" : "2026-10-11T11:21:18.271645300Z",
+  "status" : "COLLECTED",
+  "effectiveOptions" : {
+    "templateCode" : "AUTO",
+    "includeConversationHistory" : false,
+    "includePermissionBoundaries" : true,
+    "includeExamples" : true
+  },
+  "effectiveOptionsSha256" : "eae4115befc59d4ea1d55ede12408157479f0a2e0a8e2d44042df6d03f055415",
+  "planEnabled" : false,
+  "result" : {
+    "optimizedPrompt" : "## 背景\n用户需要将一句英文翻译为中文。原文为：The meeting starts at nine.\n\n## 任务\n将英文句子 “The meeting starts at nine.” 翻译成中文。只完成翻译，不添加解释、说明或示例。\n\n## 输出\n仅输出中文译文本身，不附加任何其他文字、解释或示例。\n\n## 约束\n- 只输出译文，不得包含解释、说明或示例。\n- 不得扩写原文事实或添加原文没有的信息。\n- 译文应忠实于原文含义，使用自然、通顺的中文表达。\n用户明确规则（须遵守平台权限边界）：\n- Translate ‘The meeting starts at nine.’ into Chinese. Return only the translation, with no explanation or examples.\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收\n- 输出内容仅为中文译文，无任何额外文字。\n- 译文准确传达原文含义，不增删原文信息。\n- 中文表达自然通顺。",
+    "sections" : [ {
+      "type" : "BACKGROUND",
+      "title" : "背景",
+      "content" : "用户需要将一句英文翻译为中文。原文为：The meeting starts at nine."
+    }, {
+      "type" : "TASK",
+      "title" : "任务",
+      "content" : "将英文句子 “The meeting starts at nine.” 翻译成中文。只完成翻译，不添加解释、说明或示例。"
+    }, {
+      "type" : "OUTPUT",
+      "title" : "输出",
+      "content" : "仅输出中文译文本身，不附加任何其他文字、解释或示例。"
+    }, {
+      "type" : "CONSTRAINTS",
+      "title" : "约束",
+      "content" : "- 只输出译文，不得包含解释、说明或示例。\n- 不得扩写原文事实或添加原文没有的信息。\n- 译文应忠实于原文含义，使用自然、通顺的中文表达。\n用户明确规则（须遵守平台权限边界）：\n- Translate ‘The meeting starts at nine.’ into Chinese. Return only the translation, with no explanation or examples.\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+    }, {
+      "type" : "ACCEPTANCE",
+      "title" : "验收",
+      "content" : "- 输出内容仅为中文译文，无任何额外文字。\n- 译文准确传达原文含义，不增删原文信息。\n- 中文表达自然通顺。"
+    } ],
+    "contextReport" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "EMPTY",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "v3"
+    },
+    "ambiguities" : [ ],
+    "appliedConstraints" : [ "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。" ],
+    "templateCode" : "GENERAL",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : "deepseek:deepseek-flash"
+    },
+    "latencyMs" : 20,
+    "warnings" : [ ],
+    "evidenceCards" : [ ]
+  },
+  "optimizedPromptSha256" : "f005bc2ff8974ce7caf53d213799b64f16d667b8cc50754c57c27f8b0ed7bb0f",
+  "elapsedMs" : 22
+}

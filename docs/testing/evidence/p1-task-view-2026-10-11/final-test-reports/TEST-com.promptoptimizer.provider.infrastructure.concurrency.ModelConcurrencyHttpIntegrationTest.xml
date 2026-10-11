@@ -1,0 +1,972 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest" time="16.821" tests="4" errors="0" skipped="0" failures="1">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="GBK"/>
+    <property name="java.class.path" value="E:\MyProject\prompt-optimizer-platform\tmp\p1-task-view-20261011\candidate-target\test-classes;E:\MyProject\prompt-optimizer-platform\tmp\p1-task-view-20261011\candidate-target\classes;E:\Delelop\localRepository\com\aliyun\dypnsapi20170525\2.0.0\dypnsapi20170525-2.0.0.jar;E:\Delelop\localRepository\com\aliyun\tea-util\0.2.23\tea-util-0.2.23.jar;E:\Delelop\localRepository\com\aliyun\tea-openapi\0.3.10\tea-openapi-0.3.10.jar;E:\Delelop\localRepository\com\aliyun\credentials-java\1.0.1\credentials-java-1.0.1.jar;E:\Delelop\localRepository\com\aliyun\credentials-api\1.0.0\credentials-api-1.0.0.jar;E:\Delelop\localRepository\com\aliyun\alibabacloud-gateway-spi\0.0.2\alibabacloud-gateway-spi-0.0.2.jar;E:\Delelop\localRepository\com\aliyun\tea-xml\0.1.6\tea-xml-0.1.6.jar;E:\Delelop\localRepository\org\dom4j\dom4j\2.0.3\dom4j-2.0.3.jar;E:\Delelop\localRepository\org\jacoco\org.jacoco.agent\0.8.4\org.jacoco.agent-0.8.4-runtime.jar;E:\Delelop\localRepository\com\aliyun\endpoint-util\0.0.8\endpoint-util-0.0.8.jar;E:\Delelop\localRepository\com\aliyun\tea\1.3.1\tea-1.3.1.jar;E:\Delelop\localRepository\com\squareup\okhttp3\okhttp\4.12.0\okhttp-4.12.0.jar;E:\Delelop\localRepository\com\squareup\okio\okio\3.6.0\okio-3.6.0.jar;E:\Delelop\localRepository\com\squareup\okio\okio-jvm\3.6.0\okio-jvm-3.6.0.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-common\1.9.25\kotlin-stdlib-common-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-jdk8\1.9.25\kotlin-stdlib-jdk8-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib\1.9.25\kotlin-stdlib-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\annotations\13.0\annotations-13.0.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-jdk7\1.9.25\kotlin-stdlib-jdk7-1.9.25.jar;E:\Delelop\localRepository\org\slf4j\slf4j-api\2.0.17\slf4j-api-2.0.17.jar;E:\Delelop\localRepository\com\aliyun\openapiutil\0.2.2\openapiutil-0.2.2.jar;E:\Delelop\localRepository\org\bouncycastle\bcprov-jdk18on\1.78.1\bcprov-jdk18on-1.78.1.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-web\3.3.13\spring-boot-starter-web-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter\3.3.13\spring-boot-starter-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot\3.3.13\spring-boot-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-logging\3.3.13\spring-boot-starter-logging-3.3.13.jar;E:\Delelop\localRepository\ch\qos\logback\logback-classic\1.5.18\logback-classic-1.5.18.jar;E:\Delelop\localRepository\ch\qos\logback\logback-core\1.5.18\logback-core-1.5.18.jar;E:\Delelop\localRepository\org\apache\logging\log4j\log4j-to-slf4j\2.23.1\log4j-to-slf4j-2.23.1.jar;E:\Delelop\localRepository\org\slf4j\jul-to-slf4j\2.0.17\jul-to-slf4j-2.0.17.jar;E:\Delelop\localRepository\jakarta\annotation\jakarta.annotation-api\2.1.1\jakarta.annotation-api-2.1.1.jar;E:\Delelop\localRepository\org\yaml\snakeyaml\2.2\snakeyaml-2.2.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-json\3.3.13\spring-boot-starter-json-3.3.13.jar;E:\Delelop\localRepository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.17.3\jackson-datatype-jdk8-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.17.3\jackson-module-parameter-names-2.17.3.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-tomcat\3.3.13\spring-boot-starter-tomcat-3.3.13.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-core\10.1.42\tomcat-embed-core-10.1.42.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-websocket\10.1.42\tomcat-embed-websocket-10.1.42.jar;E:\Delelop\localRepository\org\springframework\spring-web\6.1.21\spring-web-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-beans\6.1.21\spring-beans-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-webmvc\6.1.21\spring-webmvc-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-context\6.1.21\spring-context-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-expression\6.1.21\spring-expression-6.1.21.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-validation\3.3.13\spring-boot-starter-validation-3.3.13.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-el\10.1.42\tomcat-embed-el-10.1.42.jar;E:\Delelop\localRepository\org\hibernate\validator\hibernate-validator\8.0.2.Final\hibernate-validator-8.0.2.Final.jar;E:\Delelop\localRepository\jakarta\validation\jakarta.validation-api\3.0.2\jakarta.validation-api-3.0.2.jar;E:\Delelop\localRepository\org\jboss\logging\jboss-logging\3.5.3.Final\jboss-logging-3.5.3.Final.jar;E:\Delelop\localRepository\com\fasterxml\classmate\1.7.0\classmate-1.7.0.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-security\3.3.13\spring-boot-starter-security-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-aop\6.1.21\spring-aop-6.1.21.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-config\6.3.10\spring-security-config-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-web\6.3.10\spring-security-web-6.3.10.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-actuator\3.3.13\spring-boot-starter-actuator-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-actuator-autoconfigure\3.3.13\spring-boot-actuator-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-actuator\3.3.13\spring-boot-actuator-3.3.13.jar;E:\Delelop\localRepository\io\micrometer\micrometer-observation\1.13.15\micrometer-observation-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-commons\1.13.15\micrometer-commons-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-jakarta9\1.13.15\micrometer-jakarta9-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-core\1.13.15\micrometer-core-1.13.15.jar;E:\Delelop\localRepository\org\hdrhistogram\HdrHistogram\2.2.2\HdrHistogram-2.2.2.jar;E:\Delelop\localRepository\org\latencyutils\LatencyUtils\2.0.3\LatencyUtils-2.0.3.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot3-starter\3.5.17\mybatis-plus-spring-boot3-starter-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus\3.5.17\mybatis-plus-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-core\3.5.17\mybatis-plus-core-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-annotation\3.5.17\mybatis-plus-annotation-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring\3.5.17\mybatis-plus-spring-3.5.17.jar;E:\Delelop\localRepository\org\mybatis\mybatis\3.5.19\mybatis-3.5.19.jar;E:\Delelop\localRepository\org\mybatis\mybatis-spring\3.0.5\mybatis-spring-3.0.5.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot-autoconfigure\3.5.17\mybatis-plus-spring-boot-autoconfigure-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot-native-image\3.5.17\mybatis-plus-spring-boot-native-image-3.5.17.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-autoconfigure\3.3.13\spring-boot-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-jdbc\3.3.13\spring-boot-starter-jdbc-3.3.13.jar;E:\Delelop\localRepository\com\zaxxer\HikariCP\5.1.0\HikariCP-5.1.0.jar;E:\Delelop\localRepository\org\springframework\spring-jdbc\6.1.21\spring-jdbc-6.1.21.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-jsqlparser\3.5.17\mybatis-plus-jsqlparser-3.5.17.jar;E:\Delelop\localRepository\com\github\jsqlparser\jsqlparser\5.2\jsqlparser-5.2.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-jsqlparser-common\3.5.17\mybatis-plus-jsqlparser-common-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-extension\3.5.17\mybatis-plus-extension-3.5.17.jar;E:\Delelop\localRepository\com\github\gavlyukovskiy\p6spy-spring-boot-starter\1.12.1\p6spy-spring-boot-starter-1.12.1.jar;E:\Delelop\localRepository\com\github\gavlyukovskiy\datasource-decorator-spring-boot-autoconfigure\1.12.1\datasource-decorator-spring-boot-autoconfigure-1.12.1.jar;E:\Delelop\localRepository\p6spy\p6spy\3.9.1\p6spy-3.9.1.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-data-redis\3.3.13\spring-boot-starter-data-redis-3.3.13.jar;E:\Delelop\localRepository\io\lettuce\lettuce-core\6.3.2.RELEASE\lettuce-core-6.3.2.RELEASE.jar;E:\Delelop\localRepository\io\netty\netty-common\4.1.122.Final\netty-common-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-handler\4.1.122.Final\netty-handler-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-resolver\4.1.122.Final\netty-resolver-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-buffer\4.1.122.Final\netty-buffer-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-transport-native-unix-common\4.1.122.Final\netty-transport-native-unix-common-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-codec\4.1.122.Final\netty-codec-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-transport\4.1.122.Final\netty-transport-4.1.122.Final.jar;E:\Delelop\localRepository\io\projectreactor\reactor-core\3.6.18\reactor-core-3.6.18.jar;E:\Delelop\localRepository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-redis\3.3.13\spring-data-redis-3.3.13.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-keyvalue\3.3.13\spring-data-keyvalue-3.3.13.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-commons\3.3.13\spring-data-commons-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-tx\6.1.21\spring-tx-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-oxm\6.1.21\spring-oxm-6.1.21.jar;E:\Delelop\localRepository\org\springframework\session\spring-session-data-redis\3.3.7\spring-session-data-redis-3.3.7.jar;E:\Delelop\localRepository\org\springframework\session\spring-session-core\3.3.7\spring-session-core-3.3.7.jar;E:\Delelop\localRepository\org\springframework\spring-jcl\6.1.21\spring-jcl-6.1.21.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-mail\3.3.13\spring-boot-starter-mail-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-context-support\6.1.21\spring-context-support-6.1.21.jar;E:\Delelop\localRepository\org\eclipse\angus\jakarta.mail\2.0.3\jakarta.mail-2.0.3.jar;E:\Delelop\localRepository\jakarta\activation\jakarta.activation-api\2.1.3\jakarta.activation-api-2.1.3.jar;E:\Delelop\localRepository\org\eclipse\angus\angus-activation\2.0.2\angus-activation-2.0.2.jar;E:\Delelop\localRepository\org\postgresql\postgresql\42.7.7\postgresql-42.7.7.jar;E:\Delelop\localRepository\org\checkerframework\checker-qual\3.49.3\checker-qual-3.49.3.jar;E:\Delelop\localRepository\com\maxmind\geoip2\geoip2\5.2.0\geoip2-5.2.0.jar;E:\Delelop\localRepository\com\maxmind\db\maxmind-db\4.1.0\maxmind-db-4.1.0.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-databind\2.17.3\jackson-databind-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.17.3\jackson-datatype-jsr310-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-core\2.17.3\jackson-core-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-annotations\2.17.3\jackson-annotations-2.17.3.jar;E:\Delelop\localRepository\org\flywaydb\flyway-core\10.10.0\flyway-core-10.10.0.jar;E:\Delelop\localRepository\com\fasterxml\jackson\dataformat\jackson-dataformat-toml\2.17.3\jackson-dataformat-toml-2.17.3.jar;E:\Delelop\localRepository\com\google\code\gson\gson\2.10.1\gson-2.10.1.jar;E:\Delelop\localRepository\org\flywaydb\flyway-database-postgresql\10.10.0\flyway-database-postgresql-10.10.0.jar;E:\Delelop\localRepository\org\apache\poi\poi-ooxml\5.3.0\poi-ooxml-5.3.0.jar;E:\Delelop\localRepository\org\apache\poi\poi\5.3.0\poi-5.3.0.jar;E:\Delelop\localRepository\com\zaxxer\SparseBitSet\1.3\SparseBitSet-1.3.jar;E:\Delelop\localRepository\org\apache\poi\poi-ooxml-lite\5.3.0\poi-ooxml-lite-5.3.0.jar;E:\Delelop\localRepository\org\apache\xmlbeans\xmlbeans\5.2.1\xmlbeans-5.2.1.jar;E:\Delelop\localRepository\org\apache\commons\commons-compress\1.26.2\commons-compress-1.26.2.jar;E:\Delelop\localRepository\org\apache\commons\commons-lang3\3.14.0\commons-lang3-3.14.0.jar;E:\Delelop\localRepository\commons-io\commons-io\2.16.1\commons-io-2.16.1.jar;E:\Delelop\localRepository\com\github\virtuald\curvesapi\1.08\curvesapi-1.08.jar;E:\Delelop\localRepository\org\apache\logging\log4j\log4j-api\2.23.1\log4j-api-2.23.1.jar;E:\Delelop\localRepository\org\apache\commons\commons-collections4\4.4\commons-collections4-4.4.jar;E:\Delelop\localRepository\org\apache\poi\poi-scratchpad\5.3.0\poi-scratchpad-5.3.0.jar;E:\Delelop\localRepository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;E:\Delelop\localRepository\commons-codec\commons-codec\1.16.1\commons-codec-1.16.1.jar;E:\Delelop\localRepository\org\apache\pdfbox\pdfbox\3.0.6\pdfbox-3.0.6.jar;E:\Delelop\localRepository\org\apache\pdfbox\pdfbox-io\3.0.6\pdfbox-io-3.0.6.jar;E:\Delelop\localRepository\org\apache\pdfbox\fontbox\3.0.6\fontbox-3.0.6.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-test\3.3.13\spring-boot-starter-test-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-test\3.3.13\spring-boot-test-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-test-autoconfigure\3.3.13\spring-boot-test-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\com\jayway\jsonpath\json-path\2.9.0\json-path-2.9.0.jar;E:\Delelop\localRepository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.2\jakarta.xml.bind-api-4.0.2.jar;E:\Delelop\localRepository\net\minidev\json-smart\2.5.2\json-smart-2.5.2.jar;E:\Delelop\localRepository\net\minidev\accessors-smart\2.5.2\accessors-smart-2.5.2.jar;E:\Delelop\localRepository\org\ow2\asm\asm\9.7.1\asm-9.7.1.jar;E:\Delelop\localRepository\org\assertj\assertj-core\3.25.3\assertj-core-3.25.3.jar;E:\Delelop\localRepository\net\bytebuddy\byte-buddy\1.14.19\byte-buddy-1.14.19.jar;E:\Delelop\localRepository\org\awaitility\awaitility\4.2.2\awaitility-4.2.2.jar;E:\Delelop\localRepository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter\5.10.5\junit-jupiter-5.10.5.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-api\5.10.5\junit-jupiter-api-5.10.5.jar;E:\Delelop\localRepository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;E:\Delelop\localRepository\org\junit\platform\junit-platform-commons\1.10.5\junit-platform-commons-1.10.5.jar;E:\Delelop\localRepository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-params\5.10.5\junit-jupiter-params-5.10.5.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-engine\5.10.5\junit-jupiter-engine-5.10.5.jar;E:\Delelop\localRepository\org\junit\platform\junit-platform-engine\1.10.5\junit-platform-engine-1.10.5.jar;E:\Delelop\localRepository\org\mockito\mockito-core\5.11.0\mockito-core-5.11.0.jar;E:\Delelop\localRepository\net\bytebuddy\byte-buddy-agent\1.14.19\byte-buddy-agent-1.14.19.jar;E:\Delelop\localRepository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;E:\Delelop\localRepository\org\mockito\mockito-junit-jupiter\5.11.0\mockito-junit-jupiter-5.11.0.jar;E:\Delelop\localRepository\org\skyscreamer\jsonassert\1.5.3\jsonassert-1.5.3.jar;E:\Delelop\localRepository\com\vaadin\external\google\android-json\0.0.20131108.vaadin1\android-json-0.0.20131108.vaadin1.jar;E:\Delelop\localRepository\org\springframework\spring-core\6.1.21\spring-core-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-test\6.1.21\spring-test-6.1.21.jar;E:\Delelop\localRepository\org\xmlunit\xmlunit-core\2.9.1\xmlunit-core-2.9.1.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-test\6.3.10\spring-security-test-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-core\6.3.10\spring-security-core-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-crypto\6.3.10\spring-security-crypto-6.3.10.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="surefire.forkedProcessTimeoutInSeconds" value="180"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Asia/Shanghai"/>
+    <property name="org.jboss.logging.provider" value="slf4j"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="CN"/>
+    <property name="sun.boot.library.path" value="E:\Delelop\Java\jdk-21\bin"/>
+    <property name="sun.java.command" value="C:\Users\Administrator\AppData\Local\Temp\surefire8850862951372535189\surefirebooter-20261011195540829_3.jar C:\Users\Administrator\AppData\Local\Temp\surefire8850862951372535189 2026-10-11T19-55-40_701-jvmRun1 surefire-20261011195540829_1tmp surefire_0-20261011195540829_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="ModelConcurrencyHttpIntegrationTest"/>
+    <property name="surefire.test.class.path" value="E:\MyProject\prompt-optimizer-platform\tmp\p1-task-view-20261011\candidate-target\test-classes;E:\MyProject\prompt-optimizer-platform\tmp\p1-task-view-20261011\candidate-target\classes;E:\Delelop\localRepository\com\aliyun\dypnsapi20170525\2.0.0\dypnsapi20170525-2.0.0.jar;E:\Delelop\localRepository\com\aliyun\tea-util\0.2.23\tea-util-0.2.23.jar;E:\Delelop\localRepository\com\aliyun\tea-openapi\0.3.10\tea-openapi-0.3.10.jar;E:\Delelop\localRepository\com\aliyun\credentials-java\1.0.1\credentials-java-1.0.1.jar;E:\Delelop\localRepository\com\aliyun\credentials-api\1.0.0\credentials-api-1.0.0.jar;E:\Delelop\localRepository\com\aliyun\alibabacloud-gateway-spi\0.0.2\alibabacloud-gateway-spi-0.0.2.jar;E:\Delelop\localRepository\com\aliyun\tea-xml\0.1.6\tea-xml-0.1.6.jar;E:\Delelop\localRepository\org\dom4j\dom4j\2.0.3\dom4j-2.0.3.jar;E:\Delelop\localRepository\org\jacoco\org.jacoco.agent\0.8.4\org.jacoco.agent-0.8.4-runtime.jar;E:\Delelop\localRepository\com\aliyun\endpoint-util\0.0.8\endpoint-util-0.0.8.jar;E:\Delelop\localRepository\com\aliyun\tea\1.3.1\tea-1.3.1.jar;E:\Delelop\localRepository\com\squareup\okhttp3\okhttp\4.12.0\okhttp-4.12.0.jar;E:\Delelop\localRepository\com\squareup\okio\okio\3.6.0\okio-3.6.0.jar;E:\Delelop\localRepository\com\squareup\okio\okio-jvm\3.6.0\okio-jvm-3.6.0.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-common\1.9.25\kotlin-stdlib-common-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-jdk8\1.9.25\kotlin-stdlib-jdk8-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib\1.9.25\kotlin-stdlib-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\annotations\13.0\annotations-13.0.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-jdk7\1.9.25\kotlin-stdlib-jdk7-1.9.25.jar;E:\Delelop\localRepository\org\slf4j\slf4j-api\2.0.17\slf4j-api-2.0.17.jar;E:\Delelop\localRepository\com\aliyun\openapiutil\0.2.2\openapiutil-0.2.2.jar;E:\Delelop\localRepository\org\bouncycastle\bcprov-jdk18on\1.78.1\bcprov-jdk18on-1.78.1.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-web\3.3.13\spring-boot-starter-web-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter\3.3.13\spring-boot-starter-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot\3.3.13\spring-boot-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-logging\3.3.13\spring-boot-starter-logging-3.3.13.jar;E:\Delelop\localRepository\ch\qos\logback\logback-classic\1.5.18\logback-classic-1.5.18.jar;E:\Delelop\localRepository\ch\qos\logback\logback-core\1.5.18\logback-core-1.5.18.jar;E:\Delelop\localRepository\org\apache\logging\log4j\log4j-to-slf4j\2.23.1\log4j-to-slf4j-2.23.1.jar;E:\Delelop\localRepository\org\slf4j\jul-to-slf4j\2.0.17\jul-to-slf4j-2.0.17.jar;E:\Delelop\localRepository\jakarta\annotation\jakarta.annotation-api\2.1.1\jakarta.annotation-api-2.1.1.jar;E:\Delelop\localRepository\org\yaml\snakeyaml\2.2\snakeyaml-2.2.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-json\3.3.13\spring-boot-starter-json-3.3.13.jar;E:\Delelop\localRepository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.17.3\jackson-datatype-jdk8-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.17.3\jackson-module-parameter-names-2.17.3.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-tomcat\3.3.13\spring-boot-starter-tomcat-3.3.13.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-core\10.1.42\tomcat-embed-core-10.1.42.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-websocket\10.1.42\tomcat-embed-websocket-10.1.42.jar;E:\Delelop\localRepository\org\springframework\spring-web\6.1.21\spring-web-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-beans\6.1.21\spring-beans-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-webmvc\6.1.21\spring-webmvc-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-context\6.1.21\spring-context-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-expression\6.1.21\spring-expression-6.1.21.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-validation\3.3.13\spring-boot-starter-validation-3.3.13.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-el\10.1.42\tomcat-embed-el-10.1.42.jar;E:\Delelop\localRepository\org\hibernate\validator\hibernate-validator\8.0.2.Final\hibernate-validator-8.0.2.Final.jar;E:\Delelop\localRepository\jakarta\validation\jakarta.validation-api\3.0.2\jakarta.validation-api-3.0.2.jar;E:\Delelop\localRepository\org\jboss\logging\jboss-logging\3.5.3.Final\jboss-logging-3.5.3.Final.jar;E:\Delelop\localRepository\com\fasterxml\classmate\1.7.0\classmate-1.7.0.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-security\3.3.13\spring-boot-starter-security-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-aop\6.1.21\spring-aop-6.1.21.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-config\6.3.10\spring-security-config-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-web\6.3.10\spring-security-web-6.3.10.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-actuator\3.3.13\spring-boot-starter-actuator-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-actuator-autoconfigure\3.3.13\spring-boot-actuator-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-actuator\3.3.13\spring-boot-actuator-3.3.13.jar;E:\Delelop\localRepository\io\micrometer\micrometer-observation\1.13.15\micrometer-observation-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-commons\1.13.15\micrometer-commons-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-jakarta9\1.13.15\micrometer-jakarta9-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-core\1.13.15\micrometer-core-1.13.15.jar;E:\Delelop\localRepository\org\hdrhistogram\HdrHistogram\2.2.2\HdrHistogram-2.2.2.jar;E:\Delelop\localRepository\org\latencyutils\LatencyUtils\2.0.3\LatencyUtils-2.0.3.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot3-starter\3.5.17\mybatis-plus-spring-boot3-starter-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus\3.5.17\mybatis-plus-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-core\3.5.17\mybatis-plus-core-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-annotation\3.5.17\mybatis-plus-annotation-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring\3.5.17\mybatis-plus-spring-3.5.17.jar;E:\Delelop\localRepository\org\mybatis\mybatis\3.5.19\mybatis-3.5.19.jar;E:\Delelop\localRepository\org\mybatis\mybatis-spring\3.0.5\mybatis-spring-3.0.5.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot-autoconfigure\3.5.17\mybatis-plus-spring-boot-autoconfigure-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot-native-image\3.5.17\mybatis-plus-spring-boot-native-image-3.5.17.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-autoconfigure\3.3.13\spring-boot-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-jdbc\3.3.13\spring-boot-starter-jdbc-3.3.13.jar;E:\Delelop\localRepository\com\zaxxer\HikariCP\5.1.0\HikariCP-5.1.0.jar;E:\Delelop\localRepository\org\springframework\spring-jdbc\6.1.21\spring-jdbc-6.1.21.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-jsqlparser\3.5.17\mybatis-plus-jsqlparser-3.5.17.jar;E:\Delelop\localRepository\com\github\jsqlparser\jsqlparser\5.2\jsqlparser-5.2.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-jsqlparser-common\3.5.17\mybatis-plus-jsqlparser-common-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-extension\3.5.17\mybatis-plus-extension-3.5.17.jar;E:\Delelop\localRepository\com\github\gavlyukovskiy\p6spy-spring-boot-starter\1.12.1\p6spy-spring-boot-starter-1.12.1.jar;E:\Delelop\localRepository\com\github\gavlyukovskiy\datasource-decorator-spring-boot-autoconfigure\1.12.1\datasource-decorator-spring-boot-autoconfigure-1.12.1.jar;E:\Delelop\localRepository\p6spy\p6spy\3.9.1\p6spy-3.9.1.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-data-redis\3.3.13\spring-boot-starter-data-redis-3.3.13.jar;E:\Delelop\localRepository\io\lettuce\lettuce-core\6.3.2.RELEASE\lettuce-core-6.3.2.RELEASE.jar;E:\Delelop\localRepository\io\netty\netty-common\4.1.122.Final\netty-common-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-handler\4.1.122.Final\netty-handler-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-resolver\4.1.122.Final\netty-resolver-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-buffer\4.1.122.Final\netty-buffer-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-transport-native-unix-common\4.1.122.Final\netty-transport-native-unix-common-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-codec\4.1.122.Final\netty-codec-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-transport\4.1.122.Final\netty-transport-4.1.122.Final.jar;E:\Delelop\localRepository\io\projectreactor\reactor-core\3.6.18\reactor-core-3.6.18.jar;E:\Delelop\localRepository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-redis\3.3.13\spring-data-redis-3.3.13.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-keyvalue\3.3.13\spring-data-keyvalue-3.3.13.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-commons\3.3.13\spring-data-commons-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-tx\6.1.21\spring-tx-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-oxm\6.1.21\spring-oxm-6.1.21.jar;E:\Delelop\localRepository\org\springframework\session\spring-session-data-redis\3.3.7\spring-session-data-redis-3.3.7.jar;E:\Delelop\localRepository\org\springframework\session\spring-session-core\3.3.7\spring-session-core-3.3.7.jar;E:\Delelop\localRepository\org\springframework\spring-jcl\6.1.21\spring-jcl-6.1.21.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-mail\3.3.13\spring-boot-starter-mail-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-context-support\6.1.21\spring-context-support-6.1.21.jar;E:\Delelop\localRepository\org\eclipse\angus\jakarta.mail\2.0.3\jakarta.mail-2.0.3.jar;E:\Delelop\localRepository\jakarta\activation\jakarta.activation-api\2.1.3\jakarta.activation-api-2.1.3.jar;E:\Delelop\localRepository\org\eclipse\angus\angus-activation\2.0.2\angus-activation-2.0.2.jar;E:\Delelop\localRepository\org\postgresql\postgresql\42.7.7\postgresql-42.7.7.jar;E:\Delelop\localRepository\org\checkerframework\checker-qual\3.49.3\checker-qual-3.49.3.jar;E:\Delelop\localRepository\com\maxmind\geoip2\geoip2\5.2.0\geoip2-5.2.0.jar;E:\Delelop\localRepository\com\maxmind\db\maxmind-db\4.1.0\maxmind-db-4.1.0.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-databind\2.17.3\jackson-databind-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.17.3\jackson-datatype-jsr310-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-core\2.17.3\jackson-core-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-annotations\2.17.3\jackson-annotations-2.17.3.jar;E:\Delelop\localRepository\org\flywaydb\flyway-core\10.10.0\flyway-core-10.10.0.jar;E:\Delelop\localRepository\com\fasterxml\jackson\dataformat\jackson-dataformat-toml\2.17.3\jackson-dataformat-toml-2.17.3.jar;E:\Delelop\localRepository\com\google\code\gson\gson\2.10.1\gson-2.10.1.jar;E:\Delelop\localRepository\org\flywaydb\flyway-database-postgresql\10.10.0\flyway-database-postgresql-10.10.0.jar;E:\Delelop\localRepository\org\apache\poi\poi-ooxml\5.3.0\poi-ooxml-5.3.0.jar;E:\Delelop\localRepository\org\apache\poi\poi\5.3.0\poi-5.3.0.jar;E:\Delelop\localRepository\com\zaxxer\SparseBitSet\1.3\SparseBitSet-1.3.jar;E:\Delelop\localRepository\org\apache\poi\poi-ooxml-lite\5.3.0\poi-ooxml-lite-5.3.0.jar;E:\Delelop\localRepository\org\apache\xmlbeans\xmlbeans\5.2.1\xmlbeans-5.2.1.jar;E:\Delelop\localRepository\org\apache\commons\commons-compress\1.26.2\commons-compress-1.26.2.jar;E:\Delelop\localRepository\org\apache\commons\commons-lang3\3.14.0\commons-lang3-3.14.0.jar;E:\Delelop\localRepository\commons-io\commons-io\2.16.1\commons-io-2.16.1.jar;E:\Delelop\localRepository\com\github\virtuald\curvesapi\1.08\curvesapi-1.08.jar;E:\Delelop\localRepository\org\apache\logging\log4j\log4j-api\2.23.1\log4j-api-2.23.1.jar;E:\Delelop\localRepository\org\apache\commons\commons-collections4\4.4\commons-collections4-4.4.jar;E:\Delelop\localRepository\org\apache\poi\poi-scratchpad\5.3.0\poi-scratchpad-5.3.0.jar;E:\Delelop\localRepository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;E:\Delelop\localRepository\commons-codec\commons-codec\1.16.1\commons-codec-1.16.1.jar;E:\Delelop\localRepository\org\apache\pdfbox\pdfbox\3.0.6\pdfbox-3.0.6.jar;E:\Delelop\localRepository\org\apache\pdfbox\pdfbox-io\3.0.6\pdfbox-io-3.0.6.jar;E:\Delelop\localRepository\org\apache\pdfbox\fontbox\3.0.6\fontbox-3.0.6.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-test\3.3.13\spring-boot-starter-test-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-test\3.3.13\spring-boot-test-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-test-autoconfigure\3.3.13\spring-boot-test-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\com\jayway\jsonpath\json-path\2.9.0\json-path-2.9.0.jar;E:\Delelop\localRepository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.2\jakarta.xml.bind-api-4.0.2.jar;E:\Delelop\localRepository\net\minidev\json-smart\2.5.2\json-smart-2.5.2.jar;E:\Delelop\localRepository\net\minidev\accessors-smart\2.5.2\accessors-smart-2.5.2.jar;E:\Delelop\localRepository\org\ow2\asm\asm\9.7.1\asm-9.7.1.jar;E:\Delelop\localRepository\org\assertj\assertj-core\3.25.3\assertj-core-3.25.3.jar;E:\Delelop\localRepository\net\bytebuddy\byte-buddy\1.14.19\byte-buddy-1.14.19.jar;E:\Delelop\localRepository\org\awaitility\awaitility\4.2.2\awaitility-4.2.2.jar;E:\Delelop\localRepository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter\5.10.5\junit-jupiter-5.10.5.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-api\5.10.5\junit-jupiter-api-5.10.5.jar;E:\Delelop\localRepository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;E:\Delelop\localRepository\org\junit\platform\junit-platform-commons\1.10.5\junit-platform-commons-1.10.5.jar;E:\Delelop\localRepository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-params\5.10.5\junit-jupiter-params-5.10.5.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-engine\5.10.5\junit-jupiter-engine-5.10.5.jar;E:\Delelop\localRepository\org\junit\platform\junit-platform-engine\1.10.5\junit-platform-engine-1.10.5.jar;E:\Delelop\localRepository\org\mockito\mockito-core\5.11.0\mockito-core-5.11.0.jar;E:\Delelop\localRepository\net\bytebuddy\byte-buddy-agent\1.14.19\byte-buddy-agent-1.14.19.jar;E:\Delelop\localRepository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;E:\Delelop\localRepository\org\mockito\mockito-junit-jupiter\5.11.0\mockito-junit-jupiter-5.11.0.jar;E:\Delelop\localRepository\org\skyscreamer\jsonassert\1.5.3\jsonassert-1.5.3.jar;E:\Delelop\localRepository\com\vaadin\external\google\android-json\0.0.20131108.vaadin1\android-json-0.0.20131108.vaadin1.jar;E:\Delelop\localRepository\org\springframework\spring-core\6.1.21\spring-core-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-test\6.1.21\spring-test-6.1.21.jar;E:\Delelop\localRepository\org\xmlunit\xmlunit-core\2.9.1\xmlunit-core-2.9.1.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-test\6.3.10\spring-security-test-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-core\6.3.10\spring-security-core-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-crypto\6.3.10\spring-security-crypto-6.3.10.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\Administrator"/>
+    <property name="user.language" value="zh"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2026-07-21"/>
+    <property name="java.home" value="E:\Delelop\Java\jdk-21"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="E:\MyProject\prompt-optimizer-platform\tmp\p1-task-view-20261011"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="FILE_LOG_CHARSET" value="UTF-8"/>
+    <property name="java.awt.headless" value="true"/>
+    <property name="surefire.real.class.path" value="C:\Users\Administrator\AppData\Local\Temp\surefire8850862951372535189\surefirebooter-20261011195540829_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="jdk.net.unixdomain.tmpdir" value="E:/MyProject/prompt-optimizer-platform/tmp"/>
+    <property name="java.runtime.version" value="21.0.12+7-LTS-205"/>
+    <property name="user.name" value="Administrator"/>
+    <property name="stdout.encoding" value="GBK"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="jdk.virtualThreadScheduler.maxPoolSize" value="256"/>
+    <property name="jdk.virtualThreadScheduler.parallelism" value="128"/>
+    <property name="localRepository" value="E:\Delelop\localRepository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\ADMINI~1\AppData\Local\Temp\"/>
+    <property name="com.zaxxer.hikari.pool_number" value="1"/>
+    <property name="java.version" value="21.0.12"/>
+    <property name="user.dir" value="E:\MyProject\prompt-optimizer-platform\tmp\p1-task-view-20261011"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="PID" value="6236"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="CONSOLE_LOG_CHARSET" value="UTF-8"/>
+    <property name="native.encoding" value="GBK"/>
+    <property name="java.library.path" value="E:\Delelop\Java\jdk-21\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell;C:\Users\Administrator\.codex\tmp\arg0\codex-arg0xcRQhI;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\libheif\libheif\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\jxrlib\jxrlib\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\poppler\Library\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\override;E:\Delelop\nodejs;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;E:\Delelop\Java\jdk-21\bin;E:\Delelop\apache-maven-3.9.14\bin;E:\Delelop\nodejs\;E:\Delelop\cursor\resources\app\bin;E:\Delelop\SVN\bin;E:\Delelop\Git\cmd;D:\software\7-Zip;E:\Delelop\nodejs\node_global;E:\Delelop\MySQL\MySQL Server 8.4\bin;C:\Program Files\Docker\Docker\resources\bin;E:\Delelop\Qoder IDE\bin;C:\Users\Administrator\.local\bin;E:\Delelop\Python312\Scripts\;E:\Delelop\Python312\;C:\Users\Administrator\AppData\Local\Programs\Python\Launcher\;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\AppData\Roaming\npm;C:\Users\Administrator\.local\bin;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\.qoder\bin\qodercli;C:\Users\Administrator\AppData\Local\Programs\Ollama;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd;C:\Users\Administrator\AppData\Local\OpenAI\Codex\bin\9a7ba4b9ea0c44a3;C:\Users\Administrator\AppData\Local\OpenAI\Codex\bin\2e5e00daee91c61d;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="GBK"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="21.0.12+7-LTS-205"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
+    <property name="LOGGED_APPLICATION_NAME" value="[prompt-optimizer-api] "/>
+    <property name="argLine" value="-javaagent:E:\Delelop\localRepository\net\bytebuddy\byte-buddy-agent\1.17.7\byte-buddy-agent-1.17.7.jar -Djdk.net.unixdomain.tmpdir=E:/MyProject/prompt-optimizer-platform/tmp -Djdk.virtualThreadScheduler.parallelism=128 -Djdk.virtualThreadScheduler.maxPoolSize=256"/>
+  </properties>
+  <testcase name="doesNotReplaceAuthenticationOrCsrfWithClientSuppliedIdentity" classname="com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest" time="0.402">
+    <system-out><![CDATA[19:55:41.649 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest]: ModelConcurrencyHttpIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+19:55:41.815 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.promptoptimizer.PromptOptimizerApplication for test class com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::               (v3.3.13)
+
+2026-10-11 19:55:42.372 [background-preinit] INFO  [] org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2026-10-11 19:55:42.412 [main] INFO  [] c.p.p.i.c.ModelConcurrencyHttpIntegrationTest - Starting ModelConcurrencyHttpIntegrationTest using Java 21.0.12 with PID 6236 (started by Administrator in E:\MyProject\prompt-optimizer-platform\tmp\p1-task-view-20261011)
+2026-10-11 19:55:42.413 [main] INFO  [] c.p.p.i.c.ModelConcurrencyHttpIntegrationTest - The following 1 profile is active: "local-mock"
+ _ _   |_  _ _|_. ___ _ |    _ 
+| | |\/|_)(_| | |_\  |_)||_|_\ 
+     /               |         
+                        null 
+2026-10-11 19:55:46.138 [main] INFO  [] c.p.a.infrastructure.MaxMindGeoLocationResolver - event=analytics.geo_database_disabled
+2026-10-11 19:55:47.408 [main] INFO  [] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name localMockUserDetailsService
+2026-10-11 19:55:47.881 [main] INFO  [] o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 2 endpoints beneath base path '/actuator'
+2026-10-11 19:55:48.254 [main] INFO  [] c.b.m.spring.MybatisPlusApplicationContextAware - Register ApplicationContext instances org.springframework.web.context.support.GenericWebApplicationContext@15e0fe05
+2026-10-11 19:55:48.539 [main] INFO  [] o.s.b.test.mock.web.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-10-11 19:55:48.539 [main] INFO  [] o.s.test.web.servlet.TestDispatcherServlet - Initializing Servlet ''
+2026-10-11 19:55:48.541 [main] INFO  [] o.s.test.web.servlet.TestDispatcherServlet - Completed initialization in 2 ms
+2026-10-11 19:55:48.635 [main] INFO  [] c.p.p.i.c.ModelConcurrencyHttpIntegrationTest - Started ModelConcurrencyHttpIntegrationTest in 6.609 seconds (process running for 7.662)
+2026-10-11 19:55:48.759 [main] INFO  [] c.p.common.lifecycle.StartupBannerPrinter - 
+.--------------------.            /\            .--------------------------.
+| > an idea ...      |           /  \           | CONTEXT     [========]   |
+| ? a question       |    ----> < {} > ---->    | TASK        [========]   |
+| ...                |           \  /           | OUTPUT      [========]   |
+'----.  .------------'            \/            | CONSTRAINTS [========]   |
+     \/                                         '--------------------------'
+
+      RAW PROMPT               OPTIMIZE              STRUCTURED PROMPT
+
+                         PROMPT OPTIMIZER PLATFORM
+                    Turn intent into structured prompts.
+
+QingNiao0x
+Profile : local-mock
+API     : http://localhost:9000/api/v1
+2026-10-11 19:55:48.769 [main] INFO  [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-10-11 19:55:49.000 [main] INFO  [] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2ea8f277
+2026-10-11 19:55:49.009 [main] INFO  [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-10-11 19:55:49.193 [main] INFO  [163d9da9-6b12-43b4-a6d2-af65159318ab] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=163d9da9-6b12-43b4-a6d2-af65159318ab method=POST route=<unmapped> status=401 durationMs=70
+2026-10-11 19:55:49.215 [main] INFO  [2f297ade-2685-4eec-9e50-b5fd34afcc97] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=2f297ade-2685-4eec-9e50-b5fd34afcc97 method=POST route=<unmapped> status=403 durationMs=3
+]]></system-out>
+  </testcase>
+  <testcase name="holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers" classname="com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest" time="8.264">
+    <failure message="&#10;Expecting value to be true but was false" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+Expecting value to be true but was false
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers(ModelConcurrencyHttpIntegrationTest.java:141)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+    <system-out><![CDATA[2026-10-11 19:55:50.182 [virtual-95] ERROR [a862fcc8-764f-4e77-8754-981f17693d04] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=a862fcc8-764f-4e77-8754-981f17693d04, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-133] ERROR [a04c0f09-c766-4b9f-86c7-0480c99c33a3] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=a04c0f09-c766-4b9f-86c7-0480c99c33a3, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-75] ERROR [49ab5c91-6c3c-4e6c-b247-886f94902b2d] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=49ab5c91-6c3c-4e6c-b247-886f94902b2d, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-53] ERROR [67499307-fe56-4315-ac4a-79350450559a] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=67499307-fe56-4315-ac4a-79350450559a, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-108] ERROR [b1e464ce-5b8c-4188-8941-5a34f6a60f88] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=b1e464ce-5b8c-4188-8941-5a34f6a60f88, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.184 [virtual-145] ERROR [543edb9e-424b-498b-a91f-c3fecdae1033] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=543edb9e-424b-498b-a91f-c3fecdae1033, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-98] ERROR [c694acd7-3e5f-4c26-bd4d-90040aac2c13] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=c694acd7-3e5f-4c26-bd4d-90040aac2c13, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-90] ERROR [ce6a251b-9ef0-46ed-a568-e9f4d8d7363a] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=ce6a251b-9ef0-46ed-a568-e9f4d8d7363a, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-152] ERROR [e1971d88-dc28-414d-9bbf-fe8154ec6093] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=e1971d88-dc28-414d-9bbf-fe8154ec6093, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-57] ERROR [9f7dc1a9-cacd-41d9-950f-0fac759d5463] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=9f7dc1a9-cacd-41d9-950f-0fac759d5463, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-104] ERROR [5cbc3d6e-e90d-4768-8743-954640452c8f] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=5cbc3d6e-e90d-4768-8743-954640452c8f, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-62] ERROR [c6274142-62bb-4649-9b7f-e0572fbc3d70] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=c6274142-62bb-4649-9b7f-e0572fbc3d70, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-111] ERROR [0c61a44f-ee19-4d81-9717-6123492adf21] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=0c61a44f-ee19-4d81-9717-6123492adf21, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-56] ERROR [6803b6c1-0c90-40e9-bef9-17c86a9bfbb0] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=6803b6c1-0c90-40e9-bef9-17c86a9bfbb0, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-119] ERROR [132e9b1e-7d4d-40b9-8fc5-f66e789f742b] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=132e9b1e-7d4d-40b9-8fc5-f66e789f742b, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-102] ERROR [fc8d0225-fb81-479f-ab42-bc69f9368415] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=fc8d0225-fb81-479f-ab42-bc69f9368415, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-70] ERROR [dfd391fc-5984-426c-8987-428416d5c370] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=dfd391fc-5984-426c-8987-428416d5c370, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-54] ERROR [42d58443-69e7-4a59-b7ee-63899dcd6f68] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=42d58443-69e7-4a59-b7ee-63899dcd6f68, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-71] ERROR [301cbd13-81ff-4509-a97a-c15ddbe85de9] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=301cbd13-81ff-4509-a97a-c15ddbe85de9, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-137] ERROR [20e0e2c0-f306-4775-a599-75cc5ae79538] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=20e0e2c0-f306-4775-a599-75cc5ae79538, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-110] ERROR [6681f5ef-dd84-4471-b624-b3ffe45561c5] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=6681f5ef-dd84-4471-b624-b3ffe45561c5, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-130] ERROR [45546c6c-8beb-468c-927b-9a665351b410] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=45546c6c-8beb-468c-927b-9a665351b410, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-76] ERROR [708fb50f-6f73-40f7-9324-7d02df5fcad7] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=708fb50f-6f73-40f7-9324-7d02df5fcad7, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-101] ERROR [78b734e0-83ab-492e-8af2-f81932f71a8f] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=78b734e0-83ab-492e-8af2-f81932f71a8f, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-50] ERROR [c29b2d8e-d8fe-4584-921d-74aa3a871130] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=c29b2d8e-d8fe-4584-921d-74aa3a871130, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-123] ERROR [c9f1f02d-922a-4d18-8906-e42ca34d2d9c] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=c9f1f02d-922a-4d18-8906-e42ca34d2d9c, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-67] ERROR [b38d5c02-52ac-422b-8ced-316909aa283e] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=b38d5c02-52ac-422b-8ced-316909aa283e, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.182 [virtual-126] ERROR [952a9e0d-e372-4023-94ec-3e8cc6463dc7] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=952a9e0d-e372-4023-94ec-3e8cc6463dc7, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-51] ERROR [597dfc54-f28a-4d2a-a472-e26a412a1d41] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=597dfc54-f28a-4d2a-a472-e26a412a1d41, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-82] ERROR [7fe9e54b-9951-4c52-8bf0-b0076870451c] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=7fe9e54b-9951-4c52-8bf0-b0076870451c, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-134] ERROR [d7cfeb75-63e4-4667-b23a-434e95dbcc47] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=d7cfeb75-63e4-4667-b23a-434e95dbcc47, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-121] ERROR [205ed1ef-7e7a-4dab-95ce-4dafd37555f7] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=205ed1ef-7e7a-4dab-95ce-4dafd37555f7, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.184 [virtual-89] ERROR [e3f14cc1-3935-4ca7-82f3-6a46e5362a1a] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=e3f14cc1-3935-4ca7-82f3-6a46e5362a1a, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-58] ERROR [3b262cf1-8b97-49c5-a83a-b6c3db3d17f6] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=3b262cf1-8b97-49c5-a83a-b6c3db3d17f6, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-141] ERROR [0624509f-2e49-4911-b745-9f4271ee41c5] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=0624509f-2e49-4911-b745-9f4271ee41c5, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-151] ERROR [5e1bc4c8-f348-4bf6-b0a7-3d67529cf497] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=5e1bc4c8-f348-4bf6-b0a7-3d67529cf497, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.184 [virtual-116] ERROR [a2f8a6be-5833-422f-87a2-ad5f03504199] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=a2f8a6be-5833-422f-87a2-ad5f03504199, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-74] ERROR [8b16852f-1411-418f-9f4d-bffe7cb3de35] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=8b16852f-1411-418f-9f4d-bffe7cb3de35, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-93] ERROR [f73aa439-f58b-443e-a22a-69ad253cacff] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=f73aa439-f58b-443e-a22a-69ad253cacff, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-47] ERROR [f5b14203-7792-4761-b5eb-1e1ba3ec41ef] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=f5b14203-7792-4761-b5eb-1e1ba3ec41ef, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.183 [virtual-78] ERROR [f7d0358d-3c4a-4788-9609-a3e87f1b1bf7] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=f7d0358d-3c4a-4788-9609-a3e87f1b1bf7, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.190 [virtual-86] ERROR [22614a4f-caf6-4ab6-af91-f353a280a0bf] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=22614a4f-caf6-4ab6-af91-f353a280a0bf, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.191 [virtual-77] ERROR [05d27be0-0132-4259-a607-ba126b2dd26b] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=05d27be0-0132-4259-a607-ba126b2dd26b, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.ResourceAccessException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+cause[1] java.net.ConnectException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpInterceptor.intercept(37)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers$4(138)
+2026-10-11 19:55:50.379 [virtual-123] INFO  [c9f1f02d-922a-4d18-8906-e42ca34d2d9c] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=c9f1f02d-922a-4d18-8906-e42ca34d2d9c method=POST route=/api/v1/optimizations status=500 durationMs=860
+2026-10-11 19:55:50.380 [virtual-141] INFO  [0624509f-2e49-4911-b745-9f4271ee41c5] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=0624509f-2e49-4911-b745-9f4271ee41c5 method=POST route=/api/v1/optimizations status=500 durationMs=850
+2026-10-11 19:55:50.380 [virtual-134] INFO  [d7cfeb75-63e4-4667-b23a-434e95dbcc47] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=d7cfeb75-63e4-4667-b23a-434e95dbcc47 method=POST route=/api/v1/optimizations status=500 durationMs=857
+2026-10-11 19:55:50.380 [virtual-70] INFO  [dfd391fc-5984-426c-8987-428416d5c370] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=dfd391fc-5984-426c-8987-428416d5c370 method=POST route=/api/v1/optimizations status=500 durationMs=893
+2026-10-11 19:55:50.379 [virtual-130] INFO  [45546c6c-8beb-468c-927b-9a665351b410] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=45546c6c-8beb-468c-927b-9a665351b410 method=POST route=/api/v1/optimizations status=500 durationMs=857
+2026-10-11 19:55:50.380 [virtual-98] INFO  [c694acd7-3e5f-4c26-bd4d-90040aac2c13] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=c694acd7-3e5f-4c26-bd4d-90040aac2c13 method=POST route=/api/v1/optimizations status=500 durationMs=880
+2026-10-11 19:55:50.379 [virtual-74] INFO  [8b16852f-1411-418f-9f4d-bffe7cb3de35] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=8b16852f-1411-418f-9f4d-bffe7cb3de35 method=POST route=/api/v1/optimizations status=500 durationMs=891
+2026-10-11 19:55:50.380 [virtual-104] INFO  [5cbc3d6e-e90d-4768-8743-954640452c8f] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=5cbc3d6e-e90d-4768-8743-954640452c8f method=POST route=/api/v1/optimizations status=500 durationMs=870
+2026-10-11 19:55:50.380 [virtual-75] INFO  [49ab5c91-6c3c-4e6c-b247-886f94902b2d] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=49ab5c91-6c3c-4e6c-b247-886f94902b2d method=POST route=/api/v1/optimizations status=500 durationMs=892
+2026-10-11 19:55:50.379 [virtual-57] INFO  [9f7dc1a9-cacd-41d9-950f-0fac759d5463] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=9f7dc1a9-cacd-41d9-950f-0fac759d5463 method=POST route=/api/v1/optimizations status=500 durationMs=900
+2026-10-11 19:55:50.379 [virtual-101] INFO  [78b734e0-83ab-492e-8af2-f81932f71a8f] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=78b734e0-83ab-492e-8af2-f81932f71a8f method=POST route=/api/v1/optimizations status=500 durationMs=876
+2026-10-11 19:55:50.379 [virtual-77] INFO  [05d27be0-0132-4259-a607-ba126b2dd26b] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=05d27be0-0132-4259-a607-ba126b2dd26b method=POST route=/api/v1/optimizations status=500 durationMs=891
+2026-10-11 19:55:50.379 [virtual-86] INFO  [22614a4f-caf6-4ab6-af91-f353a280a0bf] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=22614a4f-caf6-4ab6-af91-f353a280a0bf method=POST route=/api/v1/optimizations status=500 durationMs=886
+2026-10-11 19:55:50.379 [virtual-78] INFO  [f7d0358d-3c4a-4788-9609-a3e87f1b1bf7] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=f7d0358d-3c4a-4788-9609-a3e87f1b1bf7 method=POST route=/api/v1/optimizations status=500 durationMs=889
+2026-10-11 19:55:50.379 [virtual-116] INFO  [a2f8a6be-5833-422f-87a2-ad5f03504199] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=a2f8a6be-5833-422f-87a2-ad5f03504199 method=POST route=/api/v1/optimizations status=500 durationMs=863
+2026-10-11 19:55:50.380 [virtual-110] INFO  [6681f5ef-dd84-4471-b624-b3ffe45561c5] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=6681f5ef-dd84-4471-b624-b3ffe45561c5 method=POST route=/api/v1/optimizations status=500 durationMs=867
+2026-10-11 19:55:50.380 [virtual-67] INFO  [b38d5c02-52ac-422b-8ced-316909aa283e] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=b38d5c02-52ac-422b-8ced-316909aa283e method=POST route=/api/v1/optimizations status=500 durationMs=897
+2026-10-11 19:55:50.380 [virtual-50] INFO  [c29b2d8e-d8fe-4584-921d-74aa3a871130] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=c29b2d8e-d8fe-4584-921d-74aa3a871130 method=POST route=/api/v1/optimizations status=500 durationMs=906
+2026-10-11 19:55:50.380 [virtual-126] INFO  [952a9e0d-e372-4023-94ec-3e8cc6463dc7] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=952a9e0d-e372-4023-94ec-3e8cc6463dc7 method=POST route=/api/v1/optimizations status=500 durationMs=859
+2026-10-11 19:55:50.380 [virtual-54] INFO  [42d58443-69e7-4a59-b7ee-63899dcd6f68] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=42d58443-69e7-4a59-b7ee-63899dcd6f68 method=POST route=/api/v1/optimizations status=500 durationMs=904
+2026-10-11 19:55:50.380 [virtual-71] INFO  [301cbd13-81ff-4509-a97a-c15ddbe85de9] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=301cbd13-81ff-4509-a97a-c15ddbe85de9 method=POST route=/api/v1/optimizations status=500 durationMs=891
+2026-10-11 19:55:50.380 [virtual-119] INFO  [132e9b1e-7d4d-40b9-8fc5-f66e789f742b] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=132e9b1e-7d4d-40b9-8fc5-f66e789f742b method=POST route=/api/v1/optimizations status=500 durationMs=863
+2026-10-11 19:55:50.380 [virtual-137] INFO  [20e0e2c0-f306-4775-a599-75cc5ae79538] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=20e0e2c0-f306-4775-a599-75cc5ae79538 method=POST route=/api/v1/optimizations status=500 durationMs=856
+2026-10-11 19:55:50.380 [virtual-108] INFO  [b1e464ce-5b8c-4188-8941-5a34f6a60f88] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=b1e464ce-5b8c-4188-8941-5a34f6a60f88 method=POST route=/api/v1/optimizations status=500 durationMs=868
+2026-10-11 19:55:50.380 [virtual-102] INFO  [fc8d0225-fb81-479f-ab42-bc69f9368415] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=fc8d0225-fb81-479f-ab42-bc69f9368415 method=POST route=/api/v1/optimizations status=500 durationMs=877
+2026-10-11 19:55:50.380 [virtual-145] INFO  [543edb9e-424b-498b-a91f-c3fecdae1033] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=543edb9e-424b-498b-a91f-c3fecdae1033 method=POST route=/api/v1/optimizations status=500 durationMs=846
+2026-10-11 19:55:50.380 [virtual-133] INFO  [a04c0f09-c766-4b9f-86c7-0480c99c33a3] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=a04c0f09-c766-4b9f-86c7-0480c99c33a3 method=POST route=/api/v1/optimizations status=500 durationMs=857
+2026-10-11 19:55:50.380 [virtual-111] INFO  [0c61a44f-ee19-4d81-9717-6123492adf21] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=0c61a44f-ee19-4d81-9717-6123492adf21 method=POST route=/api/v1/optimizations status=500 durationMs=867
+2026-10-11 19:55:50.380 [virtual-90] INFO  [ce6a251b-9ef0-46ed-a568-e9f4d8d7363a] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=ce6a251b-9ef0-46ed-a568-e9f4d8d7363a method=POST route=/api/v1/optimizations status=500 durationMs=886
+2026-10-11 19:55:50.380 [virtual-152] INFO  [e1971d88-dc28-414d-9bbf-fe8154ec6093] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=e1971d88-dc28-414d-9bbf-fe8154ec6093 method=POST route=/api/v1/optimizations status=500 durationMs=850
+2026-10-11 19:55:50.380 [virtual-89] INFO  [e3f14cc1-3935-4ca7-82f3-6a46e5362a1a] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=e3f14cc1-3935-4ca7-82f3-6a46e5362a1a method=POST route=/api/v1/optimizations status=500 durationMs=887
+2026-10-11 19:55:50.380 [virtual-58] INFO  [3b262cf1-8b97-49c5-a83a-b6c3db3d17f6] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=3b262cf1-8b97-49c5-a83a-b6c3db3d17f6 method=POST route=/api/v1/optimizations status=500 durationMs=903
+2026-10-11 19:55:50.380 [virtual-62] INFO  [c6274142-62bb-4649-9b7f-e0572fbc3d70] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=c6274142-62bb-4649-9b7f-e0572fbc3d70 method=POST route=/api/v1/optimizations status=500 durationMs=900
+2026-10-11 19:55:50.380 [virtual-151] INFO  [5e1bc4c8-f348-4bf6-b0a7-3d67529cf497] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=5e1bc4c8-f348-4bf6-b0a7-3d67529cf497 method=POST route=/api/v1/optimizations status=500 durationMs=852
+2026-10-11 19:55:50.380 [virtual-93] INFO  [f73aa439-f58b-443e-a22a-69ad253cacff] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=f73aa439-f58b-443e-a22a-69ad253cacff method=POST route=/api/v1/optimizations status=500 durationMs=884
+2026-10-11 19:55:50.380 [virtual-121] INFO  [205ed1ef-7e7a-4dab-95ce-4dafd37555f7] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=205ed1ef-7e7a-4dab-95ce-4dafd37555f7 method=POST route=/api/v1/optimizations status=500 durationMs=861
+2026-10-11 19:55:50.380 [virtual-56] INFO  [6803b6c1-0c90-40e9-bef9-17c86a9bfbb0] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=6803b6c1-0c90-40e9-bef9-17c86a9bfbb0 method=POST route=/api/v1/optimizations status=500 durationMs=903
+2026-10-11 19:55:50.380 [virtual-95] INFO  [a862fcc8-764f-4e77-8754-981f17693d04] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=a862fcc8-764f-4e77-8754-981f17693d04 method=POST route=/api/v1/optimizations status=500 durationMs=887
+2026-10-11 19:55:50.380 [virtual-53] INFO  [67499307-fe56-4315-ac4a-79350450559a] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=67499307-fe56-4315-ac4a-79350450559a method=POST route=/api/v1/optimizations status=500 durationMs=905
+2026-10-11 19:55:50.379 [virtual-47] INFO  [f5b14203-7792-4761-b5eb-1e1ba3ec41ef] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=f5b14203-7792-4761-b5eb-1e1ba3ec41ef method=POST route=/api/v1/optimizations status=500 durationMs=906
+2026-10-11 19:55:50.380 [virtual-82] INFO  [7fe9e54b-9951-4c52-8bf0-b0076870451c] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=7fe9e54b-9951-4c52-8bf0-b0076870451c method=POST route=/api/v1/optimizations status=500 durationMs=889
+2026-10-11 19:55:50.382 [virtual-76] INFO  [708fb50f-6f73-40f7-9324-7d02df5fcad7] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=708fb50f-6f73-40f7-9324-7d02df5fcad7 method=POST route=/api/v1/optimizations status=500 durationMs=892
+2026-10-11 19:55:50.388 [virtual-51] INFO  [597dfc54-f28a-4d2a-a472-e26a412a1d41] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=597dfc54-f28a-4d2a-a472-e26a412a1d41 method=POST route=/api/v1/optimizations status=500 durationMs=914
+2026-10-11 19:55:57.529 [virtual-149] INFO  [1faf2ea2-7cab-4b32-9919-4218470c7bbd] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=1faf2ea2-7cab-4b32-9919-4218470c7bbd method=POST route=/api/v1/optimizations status=200 durationMs=8000
+2026-10-11 19:55:57.529 [virtual-69] INFO  [d118089d-b58c-4cc3-a3d7-e5ec21c853be] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=d118089d-b58c-4cc3-a3d7-e5ec21c853be method=POST route=/api/v1/optimizations status=200 durationMs=8044
+2026-10-11 19:55:57.530 [virtual-96] INFO  [6cfd12bb-3b44-41ad-85e7-b7048c8965ca] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=6cfd12bb-3b44-41ad-85e7-b7048c8965ca method=POST route=/api/v1/optimizations status=200 durationMs=8035
+2026-10-11 19:55:57.530 [virtual-113] INFO  [1d0ac0d8-12b6-47be-a2ee-60c46ed8df05] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=1d0ac0d8-12b6-47be-a2ee-60c46ed8df05 method=POST route=/api/v1/optimizations status=200 durationMs=8014
+2026-10-11 19:55:57.529 [virtual-60] INFO  [36872e4b-8c41-4833-9735-977478f7d44d] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=36872e4b-8c41-4833-9735-977478f7d44d method=POST route=/api/v1/optimizations status=200 durationMs=8049
+2026-10-11 19:55:57.530 [virtual-61] INFO  [99165eb7-1f3c-4b72-866c-73e41c83386a] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=99165eb7-1f3c-4b72-866c-73e41c83386a method=POST route=/api/v1/optimizations status=200 durationMs=8050
+2026-10-11 19:55:57.530 [virtual-144] INFO  [625f97f8-6f22-42bc-b212-b6e68dc24986] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=625f97f8-6f22-42bc-b212-b6e68dc24986 method=POST route=/api/v1/optimizations status=200 durationMs=7997
+2026-10-11 19:55:57.530 [virtual-94] INFO  [06aaee29-160b-41cb-8f7f-618be3216589] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=06aaee29-160b-41cb-8f7f-618be3216589 method=POST route=/api/v1/optimizations status=200 durationMs=8033
+2026-10-11 19:55:57.530 [virtual-127] INFO  [4637b0e2-6e1c-4a71-bfdf-f1fa1a5f49d0] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=4637b0e2-6e1c-4a71-bfdf-f1fa1a5f49d0 method=POST route=/api/v1/optimizations status=200 durationMs=8010
+2026-10-11 19:55:57.530 [virtual-129] INFO  [e5de2b42-989c-48f8-8c8f-38d465935860] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=e5de2b42-989c-48f8-8c8f-38d465935860 method=POST route=/api/v1/optimizations status=200 durationMs=8008
+2026-10-11 19:55:57.530 [virtual-80] INFO  [158e3317-63b1-4964-9833-c57f61ff3a1a] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=158e3317-63b1-4964-9833-c57f61ff3a1a method=POST route=/api/v1/optimizations status=200 durationMs=8040
+2026-10-11 19:55:57.531 [virtual-65] INFO  [e7897383-bee0-4cc8-a752-40a88f64db0c] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=e7897383-bee0-4cc8-a752-40a88f64db0c method=POST route=/api/v1/optimizations status=200 durationMs=8046
+2026-10-11 19:55:57.530 [virtual-125] INFO  [c129eaf6-5e86-413d-aae7-1825286559e4] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=c129eaf6-5e86-413d-aae7-1825286559e4 method=POST route=/api/v1/optimizations status=200 durationMs=8010
+2026-10-11 19:55:57.536 [virtual-81] INFO  [596f2d4b-e239-41c8-b93a-09474ec9c365] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=596f2d4b-e239-41c8-b93a-09474ec9c365 method=POST route=/api/v1/optimizations status=200 durationMs=8045
+2026-10-11 19:55:57.538 [virtual-64] INFO  [2f2fa37a-1cb1-4654-b811-e0e3d55687ec] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=2f2fa37a-1cb1-4654-b811-e0e3d55687ec method=POST route=/api/v1/optimizations status=200 durationMs=8055
+2026-10-11 19:55:57.540 [virtual-115] INFO  [25249acd-6673-435a-b098-107e9171479d] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=25249acd-6673-435a-b098-107e9171479d method=POST route=/api/v1/optimizations status=200 durationMs=8024
+2026-10-11 19:55:57.542 [virtual-114] INFO  [6c96261f-b2f6-42ad-bc07-4f0b8ddb40fa] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=6c96261f-b2f6-42ad-bc07-4f0b8ddb40fa method=POST route=/api/v1/optimizations status=200 durationMs=8027
+2026-10-11 19:55:57.544 [virtual-122] INFO  [5502735f-fb92-40e7-a4bb-8c5430196a67] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=5502735f-fb92-40e7-a4bb-8c5430196a67 method=POST route=/api/v1/optimizations status=200 durationMs=8024
+2026-10-11 19:55:57.547 [virtual-105] INFO  [4db36e2a-86dc-45fb-9dba-dca3f9999e6a] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=4db36e2a-86dc-45fb-9dba-dca3f9999e6a method=POST route=/api/v1/optimizations status=200 durationMs=8025
+2026-10-11 19:55:57.549 [virtual-150] INFO  [0d45ac57-6902-40a2-a267-20af859e068d] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=0d45ac57-6902-40a2-a267-20af859e068d method=POST route=/api/v1/optimizations status=200 durationMs=8020
+2026-10-11 19:55:57.550 [virtual-103] INFO  [d81c336d-c988-4f09-bfdd-d9c64f88f27a] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=d81c336d-c988-4f09-bfdd-d9c64f88f27a method=POST route=/api/v1/optimizations status=200 durationMs=8047
+2026-10-11 19:55:57.553 [virtual-73] INFO  [b01b3f6d-f5e1-4936-b932-c92b8248fc67] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=b01b3f6d-f5e1-4936-b932-c92b8248fc67 method=POST route=/api/v1/optimizations status=200 durationMs=8064
+2026-10-11 19:55:57.555 [virtual-79] INFO  [4edffada-66e4-4537-a8f3-9cf2f01cb22b] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=4edffada-66e4-4537-a8f3-9cf2f01cb22b method=POST route=/api/v1/optimizations status=200 durationMs=8065
+2026-10-11 19:55:57.557 [virtual-139] INFO  [cfa4a5a8-859f-4323-9475-49cd9fc4704d] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=cfa4a5a8-859f-4323-9475-49cd9fc4704d method=POST route=/api/v1/optimizations status=200 durationMs=8030
+2026-10-11 19:55:57.559 [virtual-120] INFO  [0017085b-4820-4970-b200-626991998a26] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=0017085b-4820-4970-b200-626991998a26 method=POST route=/api/v1/optimizations status=200 durationMs=8041
+2026-10-11 19:55:57.561 [virtual-143] INFO  [d891eae5-1c77-422f-94d9-1d9a9ad97c2c] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=d891eae5-1c77-422f-94d9-1d9a9ad97c2c method=POST route=/api/v1/optimizations status=200 durationMs=8028
+2026-10-11 19:55:57.563 [virtual-49] INFO  [ffea2efe-8000-4111-a8fe-ead781dfbcfd] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=ffea2efe-8000-4111-a8fe-ead781dfbcfd method=POST route=/api/v1/optimizations status=200 durationMs=8089
+2026-10-11 19:55:57.565 [virtual-52] INFO  [2e6c063a-1e77-4625-9698-94affb03a541] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=2e6c063a-1e77-4625-9698-94affb03a541 method=POST route=/api/v1/optimizations status=200 durationMs=8090
+2026-10-11 19:55:57.567 [virtual-132] INFO  [4fe9fcd0-d2a2-4c18-9815-da6eccae4939] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=4fe9fcd0-d2a2-4c18-9815-da6eccae4939 method=POST route=/api/v1/optimizations status=200 durationMs=8055
+2026-10-11 19:55:57.569 [virtual-87] INFO  [c35f0312-368f-4463-889a-f2c66db59312] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=c35f0312-368f-4463-889a-f2c66db59312 method=POST route=/api/v1/optimizations status=200 durationMs=8075
+2026-10-11 19:55:57.570 [virtual-84] INFO  [601cbe57-8679-4293-bcbc-4bb9145d207d] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=601cbe57-8679-4293-bcbc-4bb9145d207d method=POST route=/api/v1/optimizations status=200 durationMs=8078
+2026-10-11 19:55:57.573 [virtual-68] INFO  [42ecbd5a-2030-45b2-9b06-1d2539588a87] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=42ecbd5a-2030-45b2-9b06-1d2539588a87 method=POST route=/api/v1/optimizations status=200 durationMs=8088
+2026-10-11 19:55:57.575 [virtual-147] INFO  [b041c8ee-9bdc-4171-affc-8181de9d2d4c] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=b041c8ee-9bdc-4171-affc-8181de9d2d4c method=POST route=/api/v1/optimizations status=200 durationMs=8040
+2026-10-11 19:55:57.577 [virtual-112] INFO  [9c6e25dd-0159-4534-9357-e9d0e27b5024] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=9c6e25dd-0159-4534-9357-e9d0e27b5024 method=POST route=/api/v1/optimizations status=200 durationMs=8062
+2026-10-11 19:55:57.579 [virtual-88] INFO  [a60aeea2-4de0-47ae-b6d4-2acb0a41fb7a] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=a60aeea2-4de0-47ae-b6d4-2acb0a41fb7a method=POST route=/api/v1/optimizations status=200 durationMs=8082
+2026-10-11 19:55:57.583 [virtual-142] INFO  [098456a3-b667-4fd5-966f-325e62f3c868] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=098456a3-b667-4fd5-966f-325e62f3c868 method=POST route=/api/v1/optimizations status=200 durationMs=8050
+2026-10-11 19:55:57.584 [virtual-148] INFO  [5c80ff91-3bed-4ce3-81fb-ad30a69bfe87] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=5c80ff91-3bed-4ce3-81fb-ad30a69bfe87 method=POST route=/api/v1/optimizations status=200 durationMs=8048
+2026-10-11 19:55:57.585 [virtual-131] INFO  [d40b6c47-4fbd-43be-89be-58c8788c3c60] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=d40b6c47-4fbd-43be-89be-58c8788c3c60 method=POST route=/api/v1/optimizations status=200 durationMs=8062
+2026-10-11 19:55:57.588 [virtual-153] INFO  [8a9823d9-d094-458c-81f6-35d74d5f2289] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=8a9823d9-d094-458c-81f6-35d74d5f2289 method=POST route=/api/v1/optimizations status=200 durationMs=8057
+2026-10-11 19:55:57.589 [virtual-100] INFO  [cc72fe56-828e-4b35-8ccc-96bd3b9406be] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=cc72fe56-828e-4b35-8ccc-96bd3b9406be method=POST route=/api/v1/optimizations status=200 durationMs=8087
+2026-10-11 19:55:57.591 [virtual-117] INFO  [8618daaf-f53c-47fb-b302-4deddc8c705d] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=8618daaf-f53c-47fb-b302-4deddc8c705d method=POST route=/api/v1/optimizations status=200 durationMs=8073
+2026-10-11 19:55:57.593 [virtual-91] INFO  [e2a91e45-7f4a-422b-917c-4cad971504c3] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=e2a91e45-7f4a-422b-917c-4cad971504c3 method=POST route=/api/v1/optimizations status=200 durationMs=8097
+2026-10-11 19:55:57.595 [virtual-124] INFO  [481a9e73-ea1f-4006-b2e9-9212a66d4d45] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=481a9e73-ea1f-4006-b2e9-9212a66d4d45 method=POST route=/api/v1/optimizations status=200 durationMs=8075
+2026-10-11 19:55:57.597 [virtual-72] INFO  [b5d20f22-5548-4c09-b518-0d7909afdd3f] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=b5d20f22-5548-4c09-b518-0d7909afdd3f method=POST route=/api/v1/optimizations status=200 durationMs=8109
+2026-10-11 19:55:57.600 [virtual-146] INFO  [a3508bbb-f1cc-4bf3-b942-9dcf41b1f364] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=a3508bbb-f1cc-4bf3-b942-9dcf41b1f364 method=POST route=/api/v1/optimizations status=200 durationMs=8066
+2026-10-11 19:55:57.602 [virtual-55] INFO  [e2d0fe46-715c-4103-8ad2-506806dbe33d] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=e2d0fe46-715c-4103-8ad2-506806dbe33d method=POST route=/api/v1/optimizations status=200 durationMs=8125
+2026-10-11 19:55:57.604 [virtual-140] INFO  [f04892b2-eaa8-4282-822c-ac7c5ff9df7b] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=f04892b2-eaa8-4282-822c-ac7c5ff9df7b method=POST route=/api/v1/optimizations status=200 durationMs=8075
+2026-10-11 19:55:57.605 [virtual-109] INFO  [16bfba01-7c96-4249-be04-455202ca51f6] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=16bfba01-7c96-4249-be04-455202ca51f6 method=POST route=/api/v1/optimizations status=200 durationMs=8092
+2026-10-11 19:55:57.606 [virtual-106] INFO  [7cf1dde3-577f-482d-9b0f-cfc5ccc1c339] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=7cf1dde3-577f-482d-9b0f-cfc5ccc1c339 method=POST route=/api/v1/optimizations status=200 durationMs=8084
+2026-10-11 19:55:57.608 [virtual-99] INFO  [00867c9e-56b3-4eb9-9c08-47798c929a7e] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=00867c9e-56b3-4eb9-9c08-47798c929a7e method=POST route=/api/v1/optimizations status=200 durationMs=8106
+2026-10-11 19:55:57.609 [virtual-135] INFO  [117e89ac-e455-4341-99cc-905201fa9d3e] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=117e89ac-e455-4341-99cc-905201fa9d3e method=POST route=/api/v1/optimizations status=200 durationMs=8085
+2026-10-11 19:55:57.610 [virtual-92] INFO  [d14d4af5-6182-4b46-b293-28d75593aa78] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=d14d4af5-6182-4b46-b293-28d75593aa78 method=POST route=/api/v1/optimizations status=200 durationMs=8113
+2026-10-11 19:55:57.611 [virtual-97] INFO  [e14ef1a7-61ab-482b-9554-5effd64cb10d] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=e14ef1a7-61ab-482b-9554-5effd64cb10d method=POST route=/api/v1/optimizations status=200 durationMs=8113
+2026-10-11 19:55:57.612 [virtual-128] INFO  [58a28c79-e9b9-4aec-95b8-42da5442c299] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=58a28c79-e9b9-4aec-95b8-42da5442c299 method=POST route=/api/v1/optimizations status=200 durationMs=8101
+2026-10-11 19:55:57.612 [virtual-63] INFO  [5f0d7574-2c6d-42ae-ba7f-a368e0392df8] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=5f0d7574-2c6d-42ae-ba7f-a368e0392df8 method=POST route=/api/v1/optimizations status=200 durationMs=8132
+2026-10-11 19:55:57.613 [virtual-85] INFO  [f44b96af-c7b0-4744-bf97-2faf25232f5a] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=f44b96af-c7b0-4744-bf97-2faf25232f5a method=POST route=/api/v1/optimizations status=200 durationMs=8120
+2026-10-11 19:55:57.613 [virtual-66] INFO  [79f9ca16-38a9-4401-b797-f65d74c4272b] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=79f9ca16-38a9-4401-b797-f65d74c4272b method=POST route=/api/v1/optimizations status=200 durationMs=8130
+]]></system-out>
+  </testcase>
+  <testcase name="releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures" classname="com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest" time="0.242">
+    <system-out><![CDATA[2026-10-11 19:55:57.751 [main] ERROR [e87ded68-a819-475b-9a14-5fa378f061ec] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=e87ded68-a819-475b-9a14-5fa378f061ec, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.HttpServerErrorException$InternalServerError
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(199)
+2026-10-11 19:55:57.752 [main] INFO  [e87ded68-a819-475b-9a14-5fa378f061ec] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=e87ded68-a819-475b-9a14-5fa378f061ec method=POST route=/api/v1/optimizations status=500 durationMs=15
+2026-10-11 19:55:57.764 [main] ERROR [3bd25f40-c070-4d35-b715-14db63c18245] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=3bd25f40-c070-4d35-b715-14db63c18245, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.RestClientException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+cause[1] org.springframework.http.converter.HttpMessageNotReadableException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+cause[2] com.fasterxml.jackson.core.JsonParseException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+2026-10-11 19:55:57.766 [main] INFO  [3bd25f40-c070-4d35-b715-14db63c18245] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=3bd25f40-c070-4d35-b715-14db63c18245 method=POST route=/api/v1/optimizations status=500 durationMs=12
+2026-10-11 19:55:57.784 [main] INFO  [0f611275-a30a-4b7a-a657-86883c0e30f8] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=0f611275-a30a-4b7a-a657-86883c0e30f8 method=POST route=/api/v1/optimizations status=400 durationMs=15
+2026-10-11 19:55:57.792 [main] ERROR [0dd8693e-b0c7-440c-9426-45af44eb1c48] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=0dd8693e-b0c7-440c-9426-45af44eb1c48, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.HttpServerErrorException$InternalServerError
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(199)
+2026-10-11 19:55:57.794 [main] INFO  [0dd8693e-b0c7-440c-9426-45af44eb1c48] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=0dd8693e-b0c7-440c-9426-45af44eb1c48 method=POST route=/api/v1/optimizations status=500 durationMs=8
+2026-10-11 19:55:57.803 [main] ERROR [6535ea61-613b-42a0-b9f0-a4c4eef24fd2] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=6535ea61-613b-42a0-b9f0-a4c4eef24fd2, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.RestClientException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+cause[1] org.springframework.http.converter.HttpMessageNotReadableException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+cause[2] com.fasterxml.jackson.core.JsonParseException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+2026-10-11 19:55:57.805 [main] INFO  [6535ea61-613b-42a0-b9f0-a4c4eef24fd2] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=6535ea61-613b-42a0-b9f0-a4c4eef24fd2 method=POST route=/api/v1/optimizations status=500 durationMs=10
+2026-10-11 19:55:57.809 [main] INFO  [d1e0552b-8740-4bdf-8085-9195c15403dc] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=d1e0552b-8740-4bdf-8085-9195c15403dc method=POST route=/api/v1/optimizations status=400 durationMs=2
+2026-10-11 19:55:57.818 [main] ERROR [0d37ff80-1e6d-4b60-b328-0137c6d4d512] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=0d37ff80-1e6d-4b60-b328-0137c6d4d512, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.HttpServerErrorException$InternalServerError
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(199)
+2026-10-11 19:55:57.819 [main] INFO  [0d37ff80-1e6d-4b60-b328-0137c6d4d512] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=0d37ff80-1e6d-4b60-b328-0137c6d4d512 method=POST route=/api/v1/optimizations status=500 durationMs=9
+2026-10-11 19:55:57.828 [main] ERROR [76ffd9fa-5e9e-4811-9d8e-375c8030db1e] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=76ffd9fa-5e9e-4811-9d8e-375c8030db1e, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.RestClientException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+cause[1] org.springframework.http.converter.HttpMessageNotReadableException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+cause[2] com.fasterxml.jackson.core.JsonParseException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+2026-10-11 19:55:57.830 [main] INFO  [76ffd9fa-5e9e-4811-9d8e-375c8030db1e] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=76ffd9fa-5e9e-4811-9d8e-375c8030db1e method=POST route=/api/v1/optimizations status=500 durationMs=9
+2026-10-11 19:55:57.834 [main] INFO  [273eda42-344d-49a8-829f-b760814f13b9] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=273eda42-344d-49a8-829f-b760814f13b9 method=POST route=/api/v1/optimizations status=400 durationMs=3
+2026-10-11 19:55:57.842 [main] ERROR [1b5656fd-a9b7-4fea-a14b-000f65017548] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=1b5656fd-a9b7-4fea-a14b-000f65017548, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.HttpServerErrorException$InternalServerError
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(199)
+2026-10-11 19:55:57.844 [main] INFO  [1b5656fd-a9b7-4fea-a14b-000f65017548] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=1b5656fd-a9b7-4fea-a14b-000f65017548 method=POST route=/api/v1/optimizations status=500 durationMs=8
+2026-10-11 19:55:57.853 [main] ERROR [18bf9394-5ed0-4691-a90a-193cbe4bf3c4] c.p.common.exception.GlobalExceptionHandler - 请求处理失败, requestId=18bf9394-5ed0-4691-a90a-193cbe4bf3c4, workflowId=-, method=POST, route=/api/v1/optimizations, 原因:
+cause[0] org.springframework.web.client.RestClientException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+cause[1] org.springframework.http.converter.HttpMessageNotReadableException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+cause[2] com.fasterxml.jackson.core.JsonParseException
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.lambda$routeTestOperationsThroughProductionHttpClient$1(109)
+  at com.promptoptimizer.enhancement.service.EnhancementOrchestrator$MockitoMock$sauPzEYv.optimize(-1)
+  at com.promptoptimizer.enhancement.controller.OptimizationController.optimize(72)
+  at com.promptoptimizer.common.web.RequestIdFilter.doFilterInternal(56)
+  at com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest.releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures(201)
+2026-10-11 19:55:57.854 [main] INFO  [18bf9394-5ed0-4691-a90a-193cbe4bf3c4] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=18bf9394-5ed0-4691-a90a-193cbe4bf3c4 method=POST route=/api/v1/optimizations status=500 durationMs=9
+2026-10-11 19:55:57.859 [main] INFO  [1e2e23d6-19e7-4b61-9aa0-5d86c79ed6bb] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=1e2e23d6-19e7-4b61-9aa0-5d86c79ed6bb method=POST route=/api/v1/optimizations status=400 durationMs=3
+2026-10-11 19:55:57.868 [main] INFO  [4800f2ef-39c3-47db-80b8-afc1ccb0fd50] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=4800f2ef-39c3-47db-80b8-afc1ccb0fd50 method=POST route=/api/v1/optimizations status=200 durationMs=8
+]]></system-out>
+  </testcase>
+  <testcase name="sharesThreeAcrossDifferentSessionsAndModelEndpointsIgnoringSpoofedUserHeader" classname="com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest" time="0.338">
+    <system-out><![CDATA[2026-10-11 19:55:58.027 [main] INFO  [74f31e9e-cc0c-4c31-8b31-0fffac0ab46c] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=74f31e9e-cc0c-4c31-8b31-0fffac0ab46c method=POST route=/api/v1/optimizations status=429 durationMs=8
+2026-10-11 19:55:58.092 [main] INFO  [8343aa74-71fc-4dc4-97d3-d9d1b5fa41f1] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=8343aa74-71fc-4dc4-97d3-d9d1b5fa41f1 method=POST route=/api/v1/optimizations/plan status=429 durationMs=2
+2026-10-11 19:55:58.095 [main] INFO  [fdf44701-5daf-49d9-aeb4-5ff3a778e15c] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=fdf44701-5daf-49d9-aeb4-5ff3a778e15c method=POST route=/api/v1/context/analyze status=429 durationMs=2
+2026-10-11 19:55:58.098 [main] INFO  [e570c4ba-bd68-4f22-b0a2-cdf0775fde70] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=e570c4ba-bd68-4f22-b0a2-cdf0775fde70 method=POST route=/api/v1/context/planning status=429 durationMs=1
+2026-10-11 19:55:58.202 [virtual-403] INFO  [470d4426-2a68-49b8-9b76-2e95cbea1392] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=470d4426-2a68-49b8-9b76-2e95cbea1392 method=POST route=/api/v1/optimizations status=200 durationMs=215
+2026-10-11 19:55:58.202 [virtual-407] INFO  [d5a397db-9fa5-4d29-9389-88593816136e] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=d5a397db-9fa5-4d29-9389-88593816136e method=POST route=/api/v1/optimizations status=200 durationMs=101
+2026-10-11 19:55:58.202 [virtual-402] INFO  [62a890e7-629c-4101-b97a-953ab8db44b2] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=62a890e7-629c-4101-b97a-953ab8db44b2 method=POST route=/api/v1/optimizations/plan status=200 durationMs=216
+2026-10-11 19:55:58.203 [virtual-401] INFO  [b5d1dbe4-d74e-4e1a-87f4-0c44089aefbb] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=b5d1dbe4-d74e-4e1a-87f4-0c44089aefbb method=POST route=/api/v1/optimizations status=200 durationMs=217
+2026-10-11 19:55:58.210 [main] INFO  [9bbce1d3-b7ba-4500-8dc7-3c3769606c84] com.promptoptimizer.common.web.RequestIdFilter - event=http.request.completed requestId=9bbce1d3-b7ba-4500-8dc7-3c3769606c84 method=POST route=/api/v1/optimizations status=200 durationMs=6
+]]></system-out>
+  </testcase>
+</testsuite>

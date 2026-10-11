@@ -68,6 +68,23 @@ final class ResolvedPlanState {
         current = EvidenceStateGuard.reconcileConfirmedParameters(current,
                 confirmedParameters);
         current = EvidenceStateGuard.reconcileWindowChoiceRequests(current, original, confirmedParameters);
+        // 仅替代与实际绑定问题完全对应的旧择一请求；代码、引文和历史记录不是当前执行指令。
+        java.util.List<String> reconciled = new java.util.ArrayList<>();
+        boolean fenced = false;
+        for (String line : current.split("\\R", -1)) {
+            String trimmed = line.strip();
+            if (trimmed.startsWith("```") || trimmed.startsWith("~~~")) { fenced = !fenced; reconciled.add(line); continue; }
+            if (fenced || trimmed.startsWith(">") || trimmed.startsWith("|")
+                    || line.matches(".*[“‘\"].*[”’\"].*")) { reconciled.add(line); continue; }
+            reconciled.add(java.util.Arrays.stream(line.split("(?<=[。！？!?])"))
+                    .map(sentence -> {
+                        var matching = confirmedParameters.stream().filter(decision ->
+                                !PlanAnswerSemantics.confirmedPart(decision.answer()).isBlank()
+                                && PlanDecisionIdentity.repeatsChoiceRequest(sentence, decision.question())).toList();
+                        return matching.size() == 1 ? EffectiveTaskViewFactory.statementFor(matching.getFirst()) : sentence;
+                    }).collect(java.util.stream.Collectors.joining()));
+        }
+        current = String.join("\n", reconciled);
         if (choices.isEmpty()) return current;
         return current.lines().map(line -> {
             if (!GENERIC_VERSION.matcher(line).find() && !CONTINUE_RULE.matcher(line).find()) return line;

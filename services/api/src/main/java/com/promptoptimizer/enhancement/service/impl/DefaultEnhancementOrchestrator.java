@@ -207,7 +207,9 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         );
         List<PlanAnswer> planAnswers = confirmedPlan.answers();
         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planAnswers);
-        String contextQuery = decisions.retrievalQuery(request.rawPrompt());
+        var initialTaskView = EffectiveTaskViewFactory.create(request.rawPrompt(), request.enhancement().templateCode(),
+                planConfirmed ? planAnswers : List.of(), List.of(), Boolean.TRUE.equals(request.enhancement().includeExamples()));
+        String contextQuery = decisions.retrievalQuery(initialTaskView.effectivePrompt());
         ContextSnapshot context = com.promptoptimizer.common.logging.PipelineStageTiming.measure(
                 "prompt.optimize", "context.analyze", selectedModelId, () -> planningSessionService.reusableContext(
                         confirmedPlan,
@@ -224,7 +226,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         List<ConversationMessage> ambiguityEvidence = new ArrayList<>(conversation);
         decisions.knownDecisions().forEach(decision -> ambiguityEvidence.add(new ConversationMessage(
                 "user", confirmedAnswerEvidence(new PlanAnswer(decision.questionId(), decision.question(), decision.answer())))));
-        List<String> ambiguities = ambiguityDetector.detect(request.rawPrompt(), context, ambiguityEvidence)
+        List<String> ambiguities = ambiguityDetector.detect(initialTaskView.effectivePrompt(), context, ambiguityEvidence)
                 .stream().filter(value -> !decisions.coversUnknown(value)).toList();
         // 首次卡片保留，二次检索只补充新证据；旧卡片和新证据都要经过用途及安全校验。
         PlanningFactMerger.MergeResult mergedFacts = planConfirmed
@@ -247,8 +249,10 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 request.rawPrompt(),
                 decisions.knownDecisions()
         );
-        var taskIntent = TaskIntentResolver.resolve(request.enhancement().templateCode(),
-                request.rawPrompt(), decisions.knownDecisions());
+        var taskView = new com.promptoptimizer.enhancement.domain.EffectiveTaskView(initialTaskView.originalPrompt(),
+                initialTaskView.effectivePrompt(), initialTaskView.intent(), initialTaskView.confirmedDecisions(),
+                initialTaskView.executionRequirements(), initialTaskView.pendingDecisions(), planningFacts, initialTaskView.examples());
+        var taskIntent = taskView.intent();
         // 只有肯定交付目标包含辅助代码才加代码检查，材料中的技术栈不改变报告的职责。
         var constraints = constraintCompleter.completeForTask(context, request.permissionPolicy(),
                 Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()), taskIntent);
@@ -305,7 +309,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                                 request.enhancement(),
                                 selectedModelId,
                                 planningFacts,
-                                decisions.decisions()
+                                decisions.decisions(),
+                                taskView
                         ),
                         // 回调只组装及校验结果；历史写入继续由调用方在最终成功返回后执行一次。
                         providerResponse -> com.promptoptimizer.common.logging.PipelineStageTiming.measure(
@@ -321,7 +326,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                                 Math.max(0, clock.millis() - startedAt),
                                 request.rawPrompt(),
                                 planningFacts,
-                                planningWarnings
+                                planningWarnings,
+                                taskView
                         ).withModelVersion(selectedModel != null && selectedModelId.equals(providerResponse.model())
                                 ? selectedModel.displayName() : "")));
                 // 组装和可能的受控修复完成后计时，避免长材料的校验耗时被排除在响应指标之外。

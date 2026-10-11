@@ -1,0 +1,38 @@
+-------------------------------------------------------------------------------
+Test set: com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest
+-------------------------------------------------------------------------------
+Tests run: 21, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.130 s <<< FAILURE! -- in com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest
+com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest.shouldProduceFinalPromptFromConfirmedAnswersAndRemoveClarifications -- Time elapsed: 0.012 s <<< FAILURE!
+java.lang.AssertionError: 
+
+Expecting actual:
+  "## 背景
+心脑血管疾病死亡率研究。
+
+## 任务
+完成趋势与分解分析。
+- 研究地区范围：广东省
+
+## 输出
+输出表格和图表。
+
+## 约束
+不得编造数据。
+任务相关约束：
+- 说明数据来源。
+
+平台强制约束（不得删除或弱化）：
+- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。
+
+## 验收标准
+结果可复现。"
+to contain:
+  ["广东省", "用户已确认的信息", "平台强制约束", "说明数据来源"]
+but could not find:
+  ["用户已确认的信息"]
+ 
+	at com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest.shouldProduceFinalPromptFromConfirmedAnswersAndRemoveClarifications(OptimizationResultAssemblerTest.java:87)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+

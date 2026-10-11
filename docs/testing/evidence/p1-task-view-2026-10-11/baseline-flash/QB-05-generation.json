@@ -1,0 +1,84 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-05",
+  "arm" : "direct-generation",
+  "requestId" : "5536cf61-d749-438c-9642-bc5663027c8d",
+  "startedAt" : "2026-10-11T10:28:07.103595100Z",
+  "status" : "COLLECTED",
+  "effectiveOptions" : {
+    "templateCode" : "AUTO",
+    "includeConversationHistory" : true,
+    "includePermissionBoundaries" : true,
+    "includeExamples" : false
+  },
+  "effectiveOptionsSha256" : "eb8b94290d3bedc339dd21a9a2297eb3e5a1d5fa7b72ddf1cf928ff59a7ac914",
+  "planEnabled" : true,
+  "actualSubmittedAnswers" : [ {
+    "questionId" : "sort_target",
+    "question" : "你要对什么内容进行排序？",
+    "answer" : "整数列表，要求处理空列表和重复元素。"
+  }, {
+    "questionId" : "sort_criteria",
+    "question" : "按什么规则排序？",
+    "answer" : "按照整数值排序。"
+  }, {
+    "questionId" : "sort_direction",
+    "question" : "排序方向是升序还是降序？",
+    "answer" : "升序。"
+  }, {
+    "questionId" : "sort_output",
+    "question" : "排序结果以什么形式给你？",
+    "answer" : "使用 Python 编写快速排序函数，提供代码及必要注释，并展示输入与预期输出示例。"
+  } ],
+  "planSourceSha256" : "f1e5c7032216bac7e031dcb49778c6bb6be827e82d84a893a372412c639a1f87",
+  "result" : {
+    "optimizedPrompt" : "## 背景\n用户原始需求为“弄个排序”，经确认后已明确本次任务的具体对象、规则、方向与交付形式。\n\n已确认事实：\n- 排序对象：整数列表。\n- 排序规则：按照整数值排序。\n- 排序方向：升序。\n- 特殊要求：需要处理空列表和重复元素。\n- 交付形式：使用 Python 编写快速排序函数，提供代码及必要注释，并展示输入与预期输出示例。\n\n## 任务\n使用 Python 编写一个快速排序函数，对整数列表进行升序排序。\n要求：\n- 排序依据为整数值大小。\n- 必须能够正确处理空列表。\n- 必须能够正确处理包含重复元素的列表。\n- 代码中提供必要注释，说明关键步骤或逻辑。\n- 展示输入与预期输出示例。\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：整数列表，要求处理空列表和重复元素。\n- 规则：按照整数值排序。\n- 本次选择：升序。\n- 本次选择：使用 Python 编写快速排序函数，提供代码及必要注释，并展示输入与预期输出示例。\n\n## 输出\n交付物应包含：\n1. Python 快速排序函数代码。\n2. 代码中的必要注释。\n3. 输入与预期输出示例，至少覆盖空列表和重复元素场景。\n\n## 约束\n- 排序对象限定为整数列表。\n- 排序规则为按整数值升序排列。\n- 必须处理空列表和重复元素。\n- 使用 Python 实现快速排序函数。\n- 不得把猜测、默认选项或示例写成已确认事实。\n- 明确区分已知事实、用户确认信息和必要假设。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收\n- 交付内容包含 Python 快速排序函数代码。\n- 代码按整数值升序排序。\n- 代码能正确处理空列表。\n- 代码能正确处理重复元素。\n- 代码包含必要注释。\n- 提供输入与预期输出示例，且示例覆盖空列表和重复元素场景。",
+    "sections" : [ {
+      "type" : "BACKGROUND",
+      "title" : "背景",
+      "content" : "用户原始需求为“弄个排序”，经确认后已明确本次任务的具体对象、规则、方向与交付形式。\n\n已确认事实：\n- 排序对象：整数列表。\n- 排序规则：按照整数值排序。\n- 排序方向：升序。\n- 特殊要求：需要处理空列表和重复元素。\n- 交付形式：使用 Python 编写快速排序函数，提供代码及必要注释，并展示输入与预期输出示例。"
+    }, {
+      "type" : "TASK",
+      "title" : "任务",
+      "content" : "使用 Python 编写一个快速排序函数，对整数列表进行升序排序。\n要求：\n- 排序依据为整数值大小。\n- 必须能够正确处理空列表。\n- 必须能够正确处理包含重复元素的列表。\n- 代码中提供必要注释，说明关键步骤或逻辑。\n- 展示输入与预期输出示例。\n用户已确认的信息（本次执行选择，须遵守平台约束）：\n- 本次选择：整数列表，要求处理空列表和重复元素。\n- 规则：按照整数值排序。\n- 本次选择：升序。\n- 本次选择：使用 Python 编写快速排序函数，提供代码及必要注释，并展示输入与预期输出示例。"
+    }, {
+      "type" : "OUTPUT",
+      "title" : "输出",
+      "content" : "交付物应包含：\n1. Python 快速排序函数代码。\n2. 代码中的必要注释。\n3. 输入与预期输出示例，至少覆盖空列表和重复元素场景。"
+    }, {
+      "type" : "CONSTRAINTS",
+      "title" : "约束",
+      "content" : "- 排序对象限定为整数列表。\n- 排序规则为按整数值升序排列。\n- 必须处理空列表和重复元素。\n- 使用 Python 实现快速排序函数。\n- 不得把猜测、默认选项或示例写成已确认事实。\n- 明确区分已知事实、用户确认信息和必要假设。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+    }, {
+      "type" : "ACCEPTANCE",
+      "title" : "验收",
+      "content" : "- 交付内容包含 Python 快速排序函数代码。\n- 代码按整数值升序排序。\n- 代码能正确处理空列表。\n- 代码能正确处理重复元素。\n- 代码包含必要注释。\n- 提供输入与预期输出示例，且示例覆盖空列表和重复元素场景。"
+    } ],
+    "contextReport" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "EMPTY",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "v3"
+    },
+    "ambiguities" : [ ],
+    "appliedConstraints" : [ "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。" ],
+    "templateCode" : "GENERAL",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : "deepseek:deepseek-flash"
+    },
+    "latencyMs" : 2384,
+    "warnings" : [ ],
+    "evidenceCards" : [ ]
+  },
+  "optimizedPromptSha256" : "24e1b9bb8fe5e7d2923e17b18ee3cba30b0348356fdb06e5fa6fdd906d5e02af",
+  "elapsedMs" : 2388
+}

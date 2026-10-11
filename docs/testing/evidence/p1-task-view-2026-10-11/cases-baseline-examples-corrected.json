@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 1,
+  "dataAuthorization": "USER_PROVIDED_SCREENSHOT",
+  "modelId": "deepseek:deepseek-flash",
+  "modelDisplayName": "deepseek:deepseek-flash",
+  "maxOutputTokens": 8192,
+  "temperature": 0.2,
+  "cases": [
+    {
+      "id": "QB-03",
+      "source": "与 QB-01 相同输入；用户示例开关问题",
+      "sameRawPromptAs": "QB-01",
+      "rawPrompt": "我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析",
+      "plan": false,
+      "includeExamples": true,
+      "files": [],
+      "historicalObservation": "开启示例后仍输出‘仅在用户要求且资料允许时’，抵消已开启的要求。",
+      "checks": [
+        "要求下游提供相关输入与预期输出示例",
+        "缺真实数据可用明确标注的虚构演示，不能冒充事实",
+        "不能仅附加条件性空指导语",
+        "示例要求不擅自改变原交付"
+      ],
+      "status": "NOT_RERUN_IN_P0",
+      "dataAuthorization": "USER_PROVIDED_SCREENSHOT",
+      "mode": "direct",
+      "contextDescription": ""
+    },
+    {
+      "id": "QB-05",
+      "source": "用户本会话模糊需求示例",
+      "rawPrompt": "弄个排序",
+      "plan": true,
+      "includeExamples": true,
+      "files": [],
+      "checks": [
+        "主动明确排序对象和交付目标，不能只重排原句",
+        "无依据的 Python 或快速排序可作建议，不能写成用户已选择",
+        "只询问会改变结果的重要未知",
+        "例子与实际目标一致"
+      ],
+      "status": "NOT_RERUN_IN_P0",
+      "dataAuthorization": "USER_PROVIDED_SCREENSHOT",
+      "mode": "plan",
+      "contextDescription": "",
+      "reviewedPlan": {
+        "sourcePath": "tmp/p1-task-view-20261011/plans-flash/QB-05-plan.json",
+        "sourceSha256": "f1e5c7032216bac7e031dcb49778c6bb6be827e82d84a893a372412c639a1f87",
+        "reviewer": "CODEX_AI_ASSISTED_MANUAL_QUESTION_REVIEW",
+        "questions": [
+          {
+            "id": "sort_target",
+            "question": "你要对什么内容进行排序？",
+            "hint": "排序对象决定整个任务的范围和交付物。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：一份名单、一段文字里的条目、某个文件中的表格数据"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "sort_criteria",
+            "question": "按什么规则排序？",
+            "hint": "排序依据决定结果顺序，是核心业务规则。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "例如：按数字大小、按日期先后、按名称拼音或字母顺序"
+            ],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "sort_direction",
+            "question": "排序方向是升序还是降序？",
+            "hint": "方向不同会得到完全相反的结果。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "asc",
+                "label": "升序",
+                "description": "从小到大、从早到晚或按字母顺序排列",
+                "answer": "升序",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "desc",
+                "label": "降序",
+                "description": "从大到小、从晚到早或按字母逆序排列",
+                "answer": "降序",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "custom",
+                "label": "其他方向",
+                "description": "有特殊的方向要求",
+                "answer": "其他方向（请说明）",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "sort_output",
+            "question": "排序结果以什么形式给你？",
+            "hint": "交付形式决定最终产出是直接可用的结果还是可复用的方法。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "sorted_result",
+                "label": "直接给出排好序的结果",
+                "description": "把排序后的完整内容作为交付物",
+                "answer": "直接给出排好序的结果",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "method_only",
+                "label": "只给排序方法或步骤",
+                "description": "说明怎么排，由你自己操作",
+                "answer": "只给排序方法或步骤",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "code",
+                "label": "给出可执行的代码或脚本",
+                "description": "提供能自动完成排序的程序",
+                "answer": "给出可执行的代码或脚本",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "answers": [
+          {
+            "questionId": "sort_target",
+            "question": "你要对什么内容进行排序？",
+            "answer": "整数列表，要求处理空列表和重复元素。"
+          },
+          {
+            "questionId": "sort_criteria",
+            "question": "按什么规则排序？",
+            "answer": "按照整数值排序。"
+          },
+          {
+            "questionId": "sort_direction",
+            "question": "排序方向是升序还是降序？",
+            "answer": "升序。"
+          },
+          {
+            "questionId": "sort_output",
+            "question": "排序结果以什么形式给你？",
+            "answer": "使用 Python 编写快速排序函数，提供代码及必要注释，并展示输入与预期输出示例。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "QB-06",
+      "source": "用户论文方法截图原题的固定录入；编号设计不可丢失",
+      "rawPrompt": "为研究生准备一份论文方法部分的写作提示词，研究 Plan 问答对提示词质量的影响。当前只拟定研究，尚未实施。必须保留设计：4 类任务，每类 5 个，共 20 个任务；每模式每任务独立重复 3 次；两名独立评审盲评。比较直接增强和 Plan，另设两组获得同样确认信息的公平对照。方法提纲不超过 1200 字，附表另计。不得把拟定样本写成已纳入样本，不得编造效应量、P 值、参考文献或显著性结论。具体检验依据未来数据分布选择，不预设必然显著。",
+      "plan": false,
+      "includeExamples": true,
+      "files": [],
+      "checks": [
+        "保留写作提示词这一交付层级",
+        "保留 4×5、三次重复、双人盲评和同信息对照",
+        "补充写作操作指令与必要边界，不能只逐句复制",
+        "保留未实施状态与 1200 字上限",
+        "示例不虚构研究结果"
+      ],
+      "status": "NOT_RERUN_IN_P0",
+      "dataAuthorization": "USER_PROVIDED_SCREENSHOT",
+      "mode": "direct",
+      "contextDescription": ""
+    },
+    {
+      "id": "QB-07",
+      "source": "留作未参与 P0 修复的充分需求合成对照",
+      "rawPrompt": "Translate ‘The meeting starts at nine.’ into Chinese. Return only the translation, with no explanation or examples.",
+      "plan": false,
+      "includeExamples": true,
+      "files": [],
+      "checks": [
+        "保持仅译文要求",
+        "原文禁例优先于示例开关",
+        "不要求下游输出四要素、验收段或额外说明",
+        "充分需求只补必要问题"
+      ],
+      "status": "NOT_RERUN_IN_P0",
+      "dataAuthorization": "SYNTHETIC",
+      "mode": "direct",
+      "contextDescription": ""
+    }
+  ],
+  "budget": {
+    "maximumTransportAttempts": 115,
+    "maximumDownstreamExecutions": 40,
+    "downstreamRetry": false
+  },
+  "reviewPolicy": "先审核真实问题，再冻结同一份实际提交回答。Plan 正文不由脚本补回答案。",
+  "planProtocol": "Reuse actual captured Flash questions and exact reviewed answers via production session registration. Same answers across versions and execution arms. Not HTTP/DB/Redis acceptance."
+}

@@ -108,9 +108,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             4. constraints 是服务端按本次交付选出的适用规则，保留任务限制和用户补充权限，不得建议绕过确认、读取密钥或泄露凭据。
                “平台强制约束”标题及固定条款由服务端统一组装，不要自行生成该标题或重复固定清单；CONSTRAINTS 写本次任务的具体边界。
                非代码任务不自行追加开发、密钥路径、迁移或部署清单；用户明确提出的保密限制与权限要求仍须保留。系统内部安全校验始终有效。
-            5. planConfirmed=true 时，confirmedDecisions（旧适配器使用 planAnswers）来自已绑定的用户确认流程。明确的现状写入 BACKGROUND，已选择的目标和做法写入 TASK，交付格式写入 OUTPUT；
+            5. taskView 是服务端本次有效任务视图：rawPrompt 已更新可确定失效的旧选择，intent 保留本次交付，executionRequirements 给出实际确认的执行表述和责任段，pendingDecisions 只保留未决子项。不能把已经解决的旧选择再变成当前待办。
+               planConfirmed=true 时，executionRequirements 来自服务端绑定的用户确认流程。将 statement 自然融入其 destination 对应段落，各子项的具体对象、取值与条件完整表述一次，不再抄一份答卷、原问题或“已确认口径”等标签；
                “暂不确定”等回答不是已知事实，须保留相应待确认项。不得重复追问已回答事项；若二次检索发现新的材料冲突或关键缺口，应在 ambiguities 中明确列出并说明依据。
-               confirmedDecisions 是服务端整理的决定，包含 questionId、topic、scope、answer 和来源。scope 仅区分现状、目标、选择及未决信息；
                 用户选择迁移不意味着项目已经完成迁移，任何决定都不能削弱 constraints 中的平台约束。输出须包含每个明确答案，不复制问题中的未选候选项。
                 带说明的“暂不确定。……”仍是未决回答；混合回答如“使用 R，但版本暂不确定”只确认 R，不得把版本也写成已确认。完整保留未决回答中的禁止猜测和执行限制。
                 未决状态仅作用于回答中真正未定的子项。已确认月份但日期字段映射未知时，只保留映射缺口；空值处理已定但比率分母未知时，只保留分母缺口，不能再将整题写成尚未确定。
@@ -126,7 +126,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 “以现有代码核查结果为准”等实施检查写入 TASK，不放入 ambiguities；已明确由服务端负责的过滤规则写入约束，不能改称待确认。若存在新的相反证据或真实业务选择，仍须报告。
             9. 输入 ambiguities 只是保守规则候选，必须结合上下文逐条核验、删除已解决或无关的问题，并补充真正遗漏的问题。
                其中以“资料对”开头并列出同一字段、双方来源和取值的冲突已由服务端核验和负责展示，不要在输出 ambiguities 中重写或重复它。
-               confirmedDecisions 中 UNRESOLVED 决定的原问题也由平台保留；你只补充新取值、新适用条件或其他尚未覆盖的业务问题。
+               pendingDecisions 中的未决子项也由平台保留；你只补充新取值、新适用条件或其他尚未覆盖的业务问题。
                没有歧义时必须返回 []，不得为了凑数提问；已确认计划时仅保留二次检索新发现且尚未被回答的歧义。
                不得把本次生成的方案当作用户已提供的事实来消除歧义；不得用猜测填补关键业务决定。
             10. 必须保留现有功能、兼容性要求和平台权限边界，不得为了消除歧义而建议删除或削弱功能。
@@ -141,14 +141,15 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 区分当前状态、方案目标和用户确认答案。首次计划证据与二次检索新增证据可能同时出现，
                 不得把方案目标说成当前已实现，不得丢弃用户确认答案；新证据与旧证据冲突时列明双方来源和适用范围。
             12. 可选 ambiguityReferences 用于关联已有 Plan 问题，格式为 [{"message":"与 ambiguities 中某条文本完全一致","questionId":"输入中的问题ID"}]，最多 8 条。
-                只引用输入 confirmedDecisions 或 planAnswers 中真实存在的 questionId；没有关联时返回 []。
+                只引用 taskView.executionRequirements 或 pendingDecisions 中真实存在的 questionId；没有关联时返回 []。
                 关联不代表问题已解决：新金额、新范围、工具版本或新增适用条件必须完整写在 message 中，不能省略。
             13. 改写不得改变明确规则的否定、适用对象、触发条件、例外、数值、比较符和单位。保留取消时原值不等于取消保留逻辑，
                 只向空字段补值不等于把字段清空，0 和 false 不得被当成空值。报告字数、研究范围、证据要求同样必须保真。
                 输出前核对 TASK、OUTPUT、CONSTRAINTS、ACCEPTANCE 之间没有相反要求；不能靠在末尾追加正确原文掩盖前面的错误指令。
                 真正未决的问题继续放在 ambiguities；平台会将归并后的执行前提写入可复制正文，未确认不能视为授权猜测。
                 已确认的旧选择要改写成执行要求，不得把 rawPrompt 中旧的“需要先确认选哪一个”重新列为当前待办；独立约束、新取值与新条件仍须保留。
-            14. 面向用户的正文和提醒使用自然语言，不展示 confirmedDecisions、planAnswers、questionId、scope 或 analysisStatus 等内部协议名；需要关联时仅使用 ambiguityReferences。
+            14. 面向用户的正文和提醒使用自然语言，不展示 taskView、executionRequirements、confirmedDecisions、planAnswers、questionId、scope 或 analysisStatus 等内部协议名；需要关联时仅使用 ambiguityReferences。
+                taskView.examples.mode=REQUIRED 表示已要求下游提供与任务相关的输入和预期输出示例，不是让平台先执行用户任务；明确该要求，不再写“仅在用户要求时”或“必要时”。演示材料明确标注虚构，不作为正式事实或已确认口径。其余 mode 遵守禁例或严格格式，不主动加示例。原始需求明确要示例时，关闭开关不取消它。
             15. 平台会将全部未决条件统一加入可复制正文；不要再在 CONSTRAINTS 或其他段落列一份同义待确认清单。
                 用户已明确选定版本或解决某个条件时，背景、任务、约束都须同步采用该决定；原材料中的“尚未确认采用哪版”属于确认前状态，不能再作为当前执行前提。部分回答仅更新已确定的子项，其余真正缺口和二次检索的新冲突仍保留。
                 提示词以目标、必要事实、决定和交付要求为中心；相同确认答案和资料规则只表述一次。
@@ -574,19 +575,19 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
      * 把业务请求组装为 Chat Completions 请求体。
      */
     private ChatCompletionRequest buildRequest(EnhancementProviderRequest request) {
+        var taskView = com.promptoptimizer.enhancement.service.impl.EffectiveTaskViewFactory.forProvider(request);
         ProviderPromptPayload payload = new ProviderPromptPayload(
-                request.rawPrompt(),
+                taskView.effectivePrompt(),
                 request.context(),
                 request.template(),
                 request.ambiguities(),
-                request.confirmedDecisions().isEmpty() ? request.planAnswers() : List.of(),
                 request.planConfirmed(),
                 request.constraints(),
                 request.conversationHistory(),
                 request.options(),
                 request.planningFacts(),
-                request.confirmedDecisions(),
-                com.promptoptimizer.provider.domain.PromptRewriteStrategy.forPrompt(request.rawPrompt())
+                com.promptoptimizer.provider.domain.PromptRewriteStrategy.forPrompt(taskView.effectivePrompt()),
+                taskView.modelInput()
         );
         String userMessage;
         try {
@@ -629,8 +630,11 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
      * 计划请求发送需求、短期会话、安全摘要及有预算的资料归属视图，不发送完整项目文件。
      */
     private ChatCompletionRequest buildPlanningRequest(PlanningProviderRequest request) {
-        var taskIntent = com.promptoptimizer.template.domain.TaskIntentResolver.resolve(
-                com.promptoptimizer.enhancement.domain.TemplateCode.AUTO, request.rawPrompt());
+        var taskView = request.taskView() != null ? request.taskView()
+                : com.promptoptimizer.enhancement.service.impl.EffectiveTaskViewFactory.create(request.rawPrompt(),
+                        com.promptoptimizer.enhancement.domain.TemplateCode.AUTO, List.of(),
+                        request.planningContext() == null ? List.of() : request.planningContext().factCards(), false);
+        var taskIntent = taskView.intent();
         PlanningPromptPayload payload = new PlanningPromptPayload(
                 request.rawPrompt(),
                 request.contextDescription(),
@@ -639,7 +643,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 request.knownDecisions(),
                 taskIntent,
                 taskIntent.deliveryProfile().planningGuidance(),
-                request.sourceObjectGuidance()
+                request.sourceObjectGuidance(),
+                taskView.modelInput()
         );
         String userMessage;
         try {
@@ -1086,14 +1091,13 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             ContextSnapshot context,
             PromptTemplate template,
             List<String> ambiguities,
-            List<com.promptoptimizer.enhancement.dto.PlanAnswer> planAnswers,
             boolean planConfirmed,
             List<String> constraints,
             List<ConversationMessage> conversationHistory,
             EnhancementOptions options,
             List<com.promptoptimizer.enhancement.domain.PlanningFactCard> planningFacts,
-            List<com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision> confirmedDecisions,
-            com.promptoptimizer.provider.domain.PromptRewriteStrategy rewriteStrategy
+            com.promptoptimizer.provider.domain.PromptRewriteStrategy rewriteStrategy,
+            com.promptoptimizer.enhancement.domain.EffectiveTaskView.ModelInput taskView
     ) {
     }
 
@@ -1108,7 +1112,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             List<com.promptoptimizer.enhancement.domain.PlanningKnownDecision> knownDecisions,
             com.promptoptimizer.template.domain.TaskIntent taskIntent,
             String questionScope,
-            String sourceObjectGuidance
+            String sourceObjectGuidance,
+            com.promptoptimizer.enhancement.domain.EffectiveTaskView.ModelInput taskView
     ) {
     }
 

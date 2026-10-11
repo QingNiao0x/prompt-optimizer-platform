@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-05",
+  "arm" : "raw",
+  "requestId" : "50dab180-918e-403e-ae6d-e0bef7773139",
+  "startedAt" : "2026-10-11T10:32:19.879766700Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "7c6bb8aef6f486cf0cbe7178895e3643bb4c9951739eb4b478b32aa10431a12a",
+  "materialsSha256" : "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "systemSha256" : "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+  "executionUserSha256" : "0ef93fb638ed9cbe0ca5f634a1e5083a0b7697e82f7c068a1596e787a5d05860",
+  "settings" : {
+    "maxOutputTokens" : 8192,
+    "automaticRetry" : false,
+    "temperature" : 0.2,
+    "thinking" : "disabled"
+  },
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 191,
+    "completion_tokens" : 503,
+    "total_tokens" : 694
+  },
+  "output" : "根据你的要求，下面是一个用 Python 实现的快速排序函数，支持空列表和重复元素，按整数升序排序，并附有注释和示例。\n\n```python\ndef quick_sort(nums):\n    \"\"\"\n    快速排序（升序）\n    :param nums: 整数列表，允许为空或包含重复元素\n    :return: 排序后的新列表（不修改原列表）\n    \"\"\"\n    # 空列表或只有一个元素时，已经有序，直接返回\n    if len(nums) <= 1:\n        return nums[:]\n\n    # 选择中间元素作为基准，避免有序输入时退化为最坏情况\n    pivot = nums[len(nums) // 2]\n\n    # 按基准划分：小于、等于、大于三部分，正确处理重复元素\n    left = [x for x in nums if x < pivot]\n    middle = [x for x in nums if x == pivot]\n    right = [x for x in nums if x > pivot]\n\n    # 递归排序左右两部分，中间部分已等于基准无需再排\n    return quick_sort(left) + middle + quick_sort(right)\n\n\nif __name__ == \"__main__\":\n    # 示例 1：普通整数列表\n    print(quick_sort([3, 1, 4, 1, 5, 9, 2, 6]))  # 预期输出: [1, 1, 2, 3, 4, 5, 6, 9]\n\n    # 示例 2：空列表\n    print(quick_sort([]))  # 预期输出: []\n\n    # 示例 3：包含重复元素\n    print(quick_sort([5, 3, 3, 1, 5, 2]))  # 预期输出: [1, 2, 3, 3, 5, 5]\n\n    # 示例 4：已有序列表\n    print(quick_sort([1, 2, 3, 4, 5]))  # 预期输出: [1, 2, 3, 4, 5]\n```\n\n说明：\n- 使用三路划分（小于、等于、大于基准），重复元素不会造成额外递归，效率更稳定。\n- 返回新列表，不修改传入的原列表。\n- 空列表和单元素列表直接返回，保证边界情况正确。",
+  "outputSha256" : "af7edc83bb76630fd28bd5f4f590058dd98303e0b6a7f5acb8031cc5441a31ba",
+  "nonWhitespaceChars" : 768,
+  "hanChars" : 279,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 2277
+}

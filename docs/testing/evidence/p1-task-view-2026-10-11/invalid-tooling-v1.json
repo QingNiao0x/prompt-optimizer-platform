@@ -1,0 +1,18 @@
+{
+  "status": "PARTIALLY_INVALID_OPTIONS",
+  "cause": "Harness v1 passed includeExamples to includeConversationHistory by constructor position. Actual options stored in every generation record.",
+  "invalidEnhancementCases": [
+    "QB-03",
+    "QB-05",
+    "QB-06",
+    "QB-07"
+  ],
+  "replacement": "baseline-examples-corrected; first responses and downstream works remain preserved and counted in cost, excluded from valid quality pairs.",
+  "validBaselineCases": [
+    "QB-01",
+    "QB-02",
+    "QB-04",
+    "QB-08"
+  ],
+  "rawWorkPolicy": "Raw works remain valid: same original prompt, actual answers, materials and execution settings; no example toggle is sent for raw works."
+}

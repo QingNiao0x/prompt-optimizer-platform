@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "dataAuthorization": "USER_PROVIDED_SCREENSHOT",
+  "modelId": "deepseek:deepseek-flash",
+  "modelDisplayName": "deepseek:deepseek-flash",
+  "maxOutputTokens": 8192,
+  "temperature": 0.2,
+  "cases": [
+    {
+      "id": "QB-03",
+      "source": "与 QB-01 相同输入；用户示例开关问题",
+      "sameRawPromptAs": "QB-01",
+      "rawPrompt": "我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析",
+      "plan": false,
+      "includeExamples": true,
+      "files": [],
+      "historicalObservation": "开启示例后仍输出‘仅在用户要求且资料允许时’，抵消已开启的要求。",
+      "checks": [
+        "要求下游提供相关输入与预期输出示例",
+        "缺真实数据可用明确标注的虚构演示，不能冒充事实",
+        "不能仅附加条件性空指导语",
+        "示例要求不擅自改变原交付"
+      ],
+      "status": "NOT_RERUN_IN_P0",
+      "dataAuthorization": "USER_PROVIDED_SCREENSHOT",
+      "mode": "direct",
+      "contextDescription": ""
+    }
+  ],
+  "budget": {
+    "maximumTransportAttempts": 115,
+    "maximumDownstreamExecutions": 50,
+    "downstreamRetry": false
+  },
+  "reviewPolicy": "先审核真实问题，再冻结同一份实际提交回答。Plan 正文不由脚本补回答案。",
+  "planProtocol": "Reuse actual captured Flash questions and exact reviewed answers via production session registration. Same answers across versions and execution arms. Not HTTP/DB/Redis acceptance.",
+  "protocolRevision": "revision-protocol-v4.json"
+}

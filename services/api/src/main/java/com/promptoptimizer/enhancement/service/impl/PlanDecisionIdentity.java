@@ -33,6 +33,23 @@ final class PlanDecisionIdentity {
         return key.length() >= 2 ? key : null;
     }
 
+    /** 执行短答案使用完整对象名称；不使用第一个主题关键词或内部问题编号作为标签。 */
+    static String executionSubject(String question) {
+        String key = subject(question == null ? "" : question);
+        return key.isBlank() ? "执行要求" : key;
+    }
+
+    /** 仅识别同一完整对象的旧择一请求；新增条件、年份和复合问题不会按主题词删掉。 */
+    static boolean repeatsChoiceRequest(String text, String question) {
+        String value = text.strip().replaceFirst("^(?:[-*•]\\s*|\\d+[.)、]\\s*)", "");
+        if (exactTextKey(value).equals(exactTextKey(question))) return true;
+        var request = Pattern.compile("^(.+?)(?:需要|需|必须|请)?(?:先|首先)?确认(?:采用|选择|选|用)?(?:哪一?个|哪一?项|哪一?种|哪个|哪种)[。？?]?$")
+                .matcher(value);
+        if (!request.matches()) return false;
+        String key = questionKey(question);
+        return key != null && key.equals(subject(request.group(1)));
+    }
+
     /** 服务端冲突题只能替代同一完整字段的简单追问，不能覆盖第三个取值或附加条件。 */
     static boolean repeatsConflict(String question, String field) {
         String key = questionKey(question);

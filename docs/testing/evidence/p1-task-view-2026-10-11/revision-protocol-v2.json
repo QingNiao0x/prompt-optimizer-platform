@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "frozenAt": "2026-10-11T11:02:07.287927+00:00",
+  "revision": "v2",
+  "reason": "候选 v1 的实际科研与排序结果仍追加已融入的多子句确认答案；仅修此真实失败并复验，同八个输入/事实/确认信息/执行模型参数不变。原始 40 次作品预算未能容纳重新冻结的修复候选，本批运行前改为总计最多 50 次，原始文件与失败不覆盖。",
+  "authorization": "用户明确允许八个冻结需求及实际 Plan 确认信息向 DeepSeek 官方 Flash/Pro 发送，不含真实患者/生产资料/密钥。",
+  "maximumTotalTransportAttempts": 115,
+  "maximumTotalDownstreamExecutions": 50,
+  "transportAttemptsBeforeRevision": 70,
+  "downstreamExecutionsBeforeRevision": 38,
+  "plannedGeneration": [
+    "Flash 八例各一次工作流，受控修复最多三次请求",
+    "Pro QB-02 一次工作流，最多三次请求",
+    "Flash 新候选真实 Plan 提问 QB-02/QB-05"
+  ],
+  "plannedWorks": [
+    "新候选八个 Flash 优化正文及一个 Pro 优化正文，沿用已采集的同信息原始作品作对照",
+    "对固定优化正文重复执行 Flash QB-02/QB-03 与 Pro QB-02 各一次，不重新生成增强正文"
+  ],
+  "downstreamRetry": false,
+  "limitations": "同一执行正文的重复不等于增强生成稳定性；未安排专业评审、完整 HTTP 认证/数据库历史/部署验收。"
+}

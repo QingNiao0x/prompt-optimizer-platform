@@ -84,7 +84,8 @@ class OptimizationResultAssemblerTest {
                 .doesNotContain(PromptSectionType.CLARIFICATIONS)
                 .contains(PromptSectionType.ACCEPTANCE);
         assertThat(result.optimizedPrompt())
-                .contains("广东省", "用户已确认的信息", "平台强制约束", "说明数据来源")
+                .contains("研究地区范围：广东省", "平台强制约束", "说明数据来源")
+                .doesNotContain("用户已确认的信息")
                 .doesNotContain("待确认", "地区范围未知");
     }
 

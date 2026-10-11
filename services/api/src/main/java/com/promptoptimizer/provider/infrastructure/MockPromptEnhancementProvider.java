@@ -7,6 +7,7 @@ import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.provider.service.PromptEnhancementProvider;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
+import com.promptoptimizer.provider.domain.DraftDeliveryContract;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -31,10 +32,14 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
      */
     @Override
     public EnhancementProviderResponse enhance(EnhancementProviderRequest request) {
+        var task = com.promptoptimizer.enhancement.service.impl.EffectiveTaskViewFactory.forProvider(request);
+        var delivery = DraftDeliveryContract.from(task.effectivePrompt(), request.template(), task.confirmedDecisions());
         List<PromptSection> sections = new ArrayList<>();
         sections.add(new PromptSection(PromptSectionType.BACKGROUND, "背景", buildBackground(request)));
-        sections.add(new PromptSection(PromptSectionType.TASK, "任务目标", buildTask(request)));
-        sections.add(new PromptSection(PromptSectionType.OUTPUT, "期望输出", request.template().outputGuidance()));
+        sections.add(new PromptSection(PromptSectionType.TASK, "任务目标", buildTask(task.effectivePrompt())));
+        String output = delivery.promptTarget().isBlank() ? request.template().outputGuidance()
+                : "交付可直接使用的提示词，其中保留用户对目标作品的范围、格式和篇幅要求。";
+        sections.add(new PromptSection(PromptSectionType.OUTPUT, "期望输出", output));
         sections.add(new PromptSection(PromptSectionType.CONSTRAINTS, "约束条件", toMarkdownList(request.constraints())));
 
         if (!request.ambiguities().isEmpty()) {
@@ -49,11 +54,12 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
                 "验收标准",
                 request.template().acceptanceGuidance()
         ));
-        if (Boolean.TRUE.equals(request.options().includeExamples())) {
+        var examples = task.examples();
+        if (examples.required()) {
             sections.add(new PromptSection(
                     PromptSectionType.EXAMPLES,
                     "示例参考",
-                    request.template().exampleGuidance()
+                    examples.guidance()
             ));
         }
         return new EnhancementProviderResponse(sections, "mock", "deterministic-enhancer-v1", true,
@@ -97,9 +103,9 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
     /**
      * 组装纯净的任务目标段落；待确认项由独立的 CLARIFICATIONS 段承载。
      */
-    private String buildTask(EnhancementProviderRequest request) {
+    private String buildTask(String effectivePrompt) {
         return "将以下原始需求落实为具体、可执行且可验证的任务说明：\n"
-                + request.rawPrompt().trim();
+                + effectivePrompt.trim();
     }
 
     /**
