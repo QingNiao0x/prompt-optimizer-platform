@@ -68,6 +68,8 @@ public class OpenAiCompatibleTextEmbeddingModel implements TextEmbeddingModel {
                     "INVALID_RESPONSE", false, null, false, 1, inputItems, elapsedMillis(startedAt));
             throw exception;
         } catch (RestClientResponseException exception) {
+            ModelCallLogger.captureTokenUsage(com.promptoptimizer.common.logging.ModelTokenUsageReader
+                    .readErrorUsage(exception.getResponseBodyAsByteArray()));
             int status = exception.getStatusCode().value();
             String failureType = failureType(status);
             ModelCallLogger.failed("context.embedding", "semantic-retrieval", modelId, "SERVER_CONFIGURED",
@@ -164,7 +166,9 @@ public class OpenAiCompatibleTextEmbeddingModel implements TextEmbeddingModel {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record EmbeddingUsage(
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @com.fasterxml.jackson.annotation.JsonProperty("prompt_tokens") Long promptTokens,
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @com.fasterxml.jackson.annotation.JsonProperty("total_tokens") Long totalTokens
     ) {
     }

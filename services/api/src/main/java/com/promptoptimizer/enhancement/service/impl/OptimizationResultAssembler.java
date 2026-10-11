@@ -176,6 +176,10 @@ public class OptimizationResultAssembler {
                 unresolvedContract.reconcileCurrentText(section.content())));
         sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
         sections.forEach((type, section) -> validateUserFacingProtocol(section.content(), rawPrompt, "sections." + type));
+        // 在追加平台交付条款前校验模型的主目标；正确尾注不能掩盖前文把正文改成方案的矛盾。
+        for (PromptSectionType type : List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT)) {
+            draftDelivery.validateDelivery(sections.get(type).content(), "sections." + type);
+        }
         if (providerResponse.ambiguities() != null) {
             for (int index = 0; index < providerResponse.ambiguities().size(); index++) {
                 conditionalGuard.validate(providerResponse.ambiguities().get(index), "ambiguities[" + index + "]");

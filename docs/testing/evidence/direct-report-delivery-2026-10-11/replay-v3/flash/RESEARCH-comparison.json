@@ -1,0 +1,29 @@
+{
+  "caseId" : "RESEARCH",
+  "modelId" : "deepseek:deepseek-flash",
+  "traces" : [ {
+    "sha256" : "55c90f708c1c9f305176e7a1a7a17e1e3fdf7a70c28d847a6e6588d8d7e3a2a5",
+    "path" : "candidate-flash-v1\\RESEARCH-generation-trace-1.json"
+  }, {
+    "sha256" : "cf96d7806cb6c3dfd9f5bdf3628608c78f874d3b61d422894939038121d635f1",
+    "path" : "candidate-flash-v1\\RESEARCH-generation-trace-2.json"
+  } ],
+  "referenceResultSha256" : "0ab8ea87eaaf12c3b32494b170a176207e9de71a6de3fe167f13d10876d5ddee",
+  "effectiveOptions" : {
+    "templateCode" : "AUTO",
+    "includeConversationHistory" : false,
+    "includePermissionBoundaries" : true,
+    "includeExamples" : false
+  },
+  "planEnabled" : false,
+  "fieldEqual" : {
+    "optimizedPrompt" : true,
+    "sections" : true,
+    "appliedConstraints" : true,
+    "ambiguities" : true
+  },
+  "status" : "MATCH",
+  "expectedAttempts" : 2,
+  "replayedAttempts" : 2,
+  "requestBodiesEqual" : true
+}

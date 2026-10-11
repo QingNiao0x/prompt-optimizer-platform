@@ -5,6 +5,8 @@ import type {
   AnalyticsOperationLog,
   AnalyticsPeriodView,
   AnalyticsRanking,
+  TokenRanking,
+  ModelCallRecord,
 } from '../src/types/api';
 import { mockAuthentication } from './authFixture';
 import { healthyAnalyticsDelivery } from './analyticsDeliveryFixture';
@@ -15,6 +17,91 @@ const period: AnalyticsPeriodView = {
   zoneId: 'Asia/Shanghai',
 };
 const longName = '用于验证超长显示名称不会撑开统计表格的测试账号'.repeat(6);
+/** 新对账仅模拟前端契约，真实数字聚合与匿名写入由后端 PostgreSQL 用例验证。 */
+test('模型对账独立筛选、精确 Token 展示与生效范围分页', async ({ page }) => {
+  await mockAnalytics(page);
+  const requested: URL[] = [];
+  const tokenResult: TokenRanking = {
+    period, scope: 'GLOBAL', tenantId: null, groupBy: 'OPERATION',
+    ranking: [{ source: 'prompt.optimize', callCount: 3, successCount: 1, failureCount: 2,
+      completeUsageCount: 2, partialUsageCount: 0, unknownUsageCount: 1, invalidUsageCount: 0,
+      cacheKnownUsageCount: 1, cacheUnknownUsageCount: 2,
+      inputTokens: '9007199254740993', outputTokens: '17', totalTokens: '9007199254741010',
+      cacheHitTokens: '10', cacheMissTokens: '20' }],
+  };
+  const record: ModelCallRecord = { eventId: 'model-call-1', tenantId: '00000000-0000-0000-0000-000000000101',
+    occurredAt: '2026-10-10T10:00:00Z', requestId: 'a9c362a1-97d0-4362-9f9e-940f87a00278',
+    workflowId: '0123456789abcdefabcd', operation: 'prompt.optimize', providerRoute: 'fixture-provider',
+    model: 'fixture-model', attempt: 2, mock: false, successful: false, failureType: 'INVALID_RESPONSE',
+    upstreamStatus: 200, willRetry: true, transportState: 'RESPONSE_RECEIVED', usageState: 'PARTIAL',
+    cacheState: 'UNKNOWN', inputTokens: '25', outputTokens: null, totalTokens: '25',
+    cacheHitTokens: null, cacheMissTokens: null, durationMs: 8 };
+  await page.route('**/api/v1/admin/analytics/token-ranking?*', async route => {
+    const url = new URL(route.request().url()); requested.push(url);
+    await route.fulfill({ json: { data: { ...tokenResult, scope: url.searchParams.get('scope'),
+      tenantId: url.searchParams.get('tenantId'), groupBy: url.searchParams.get('groupBy') } } });
+  });
+  await page.route('**/api/v1/admin/analytics/model-calls?*', async route => {
+    const url = new URL(route.request().url()); requested.push(url);
+    await route.fulfill({ json: { data: { period, scope: url.searchParams.get('scope'),
+      tenantId: url.searchParams.get('tenantId'), records: [record], total: 11, size: 10,
+      current: Number(url.searchParams.get('current')), pages: 2 } } });
+  });
+  await page.goto('/admin/analytics');
+  const panel = page.locator('.model-call-panel');
+  await expect(panel).toBeVisible();
+  expect(requested).toHaveLength(0);
+  await page.getByRole('textbox', { name: '按登录邮箱筛选' }).fill('account-filter@example.test');
+  await panel.getByRole('button', { name: '查询对账', exact: true }).click();
+  await expect.poll(() => requested.length).toBe(2);
+  await expect(panel).toContainText('9,007,199,254,741,010');
+  await expect(panel).toContainText('INVALID_RESPONSE');
+  await expect(panel).toContainText('未知');
+  await expect(panel.locator('.token-chart canvas')).toHaveCount(1);
+  for (const request of requested) {
+    expect(request.searchParams.has('email')).toBe(false);
+    expect(request.searchParams.has('userId')).toBe(false);
+    expect(request.searchParams.has('displayName')).toBe(false);
+  }
+  await panel.locator('label').filter({ hasText: '数据范围' }).locator('.el-select__wrapper').click();
+  await page.getByRole('option', { name: '指定租户', exact: true }).click();
+  await panel.getByRole('textbox', { name: '模型租户 ID' }).fill(record.tenantId);
+  await panel.getByRole('button', { name: '下一页', exact: true }).click();
+  await expect.poll(() => requested.at(-1)?.searchParams.get('current')).toBe('2');
+  expect(requested.at(-1)?.searchParams.get('scope')).toBe('GLOBAL');
+  await panel.getByRole('button', { name: '查询对账', exact: true }).click();
+  await expect.poll(() => requested.at(-1)?.searchParams.get('scope')).toBe('TENANT');
+  expect(requested.at(-1)?.searchParams.get('tenantId')).toBe(record.tenantId);
+  for (const width of [1920, 768, 390, 320]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+    await expect(panel.getByRole('button', { name: '查询对账', exact: true })).toBeVisible();
+  }
+  await panel.getByRole('button', { name: '重置', exact: true }).click();
+  await expect.poll(() => requested.at(-1)?.searchParams.get('scope')).toBe('GLOBAL');
+  expect(requested.at(-1)?.searchParams.has('tenantId')).toBe(false);
+});
+
+test('模型对账空状态与失败恢复不会误显示零消耗或保留旧图表', async ({ page }) => {
+  await mockAnalytics(page);
+  let fail = true;
+  await page.route('**/api/v1/admin/analytics/token-ranking?*', route => fail
+    ? route.fulfill({ status: 503, json: { error: { message: '模型对账暂时不可用。' } } })
+    : route.fulfill({ json: { data: { period, scope: 'GLOBAL', tenantId: null, groupBy: 'OPERATION', ranking: [] } } }));
+  await page.route('**/api/v1/admin/analytics/model-calls?*', route => route.fulfill({ json: { data: {
+    period, scope: 'GLOBAL', tenantId: null, records: [], current: 1, size: 10, total: 0, pages: 0,
+  } } }));
+  await page.goto('/admin/analytics');
+  const panel = page.locator('.model-call-panel');
+  await panel.getByRole('button', { name: '查询对账', exact: true }).click();
+  await expect(panel).toContainText('模型对账暂时不可用。');
+  fail = false;
+  await panel.getByRole('button', { name: '查询对账', exact: true }).click();
+  await expect(panel).toContainText('所选范围内没有可排行的模型调用。');
+  await expect(panel).toContainText('所选范围内没有模型对账记录。');
+  await expect(panel.locator('.token-chart canvas')).toHaveCount(0);
+  await expect(panel).not.toContainText('模型对账暂时不可用。');
+});
 const longLocation = '用于验证地区字段溢出展示的测试行政区'.repeat(6);
 
 /** 只模拟展示契约；统计口径与身份隔离不由这些浏览器布局用例验证。 */

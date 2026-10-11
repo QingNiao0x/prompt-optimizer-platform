@@ -6,6 +6,9 @@ import java.util.UUID;
 /**
  * 传递模型对账所需的服务端租户范围；不复制账号身份、认证会话或用户正文。
  * 异步任务必须显式捕获和恢复快照，线程池复用时恢复原上下文。
+ *
+ * @author QingNiao
+ * @since 0.1.0
  */
 public final class ModelCallAuditContext {
     private static final ThreadLocal<Snapshot> CURRENT = new ThreadLocal<>();

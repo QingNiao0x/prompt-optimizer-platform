@@ -1,0 +1,35 @@
+{
+  "scope": "isolated baseline compilation and real-model verification",
+  "initialCompilation": {
+    "javaHome": "C:/Program Files/Java/latest/jdk-21",
+    "outcome": "compiler resource close failures",
+    "preservedOutputDirectory": "baseline-target",
+    "note": "An incremental Maven invocation returned success, but the evaluation javac still failed; this output was not used for model acceptance."
+  },
+  "successfulCompilation": {
+    "javaHome": "E:/Delelop/Java/jdk-21",
+    "outputDirectory": "baseline-target-jdk21",
+    "freshDirectory": true,
+    "exitCode": 0,
+    "frozenSourceFiles": 379,
+    "sourceHashMismatches": 0,
+    "productionSourceOrSharedTargetChanged": false
+  },
+  "initialNetwork": {
+    "scope": "default sandbox",
+    "failure": "UnknownHostException",
+    "attempts": 6,
+    "httpResponses": 0,
+    "directories": ["baseline-flash", "baseline-pro"]
+  },
+  "successfulNetwork": {
+    "scope": "explicit tool approval outside sandbox",
+    "publicDnsCheckSucceededBeforeRerun": true,
+    "directories": ["baseline-flash-network", "baseline-pro-network"],
+    "enhancementHttpResponses": 8,
+    "downstreamHttpResponses": 4,
+    "allHttpStatus": 200,
+    "allFinishReason": "stop"
+  },
+  "validationBoundary": "No normal HTTP authentication, account creation, database history, browser, or independently verified scientific quality. No historical artifact was overwritten."
+}

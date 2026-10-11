@@ -1,0 +1,235 @@
+{
+  "auditRevision": 2,
+  "auditCorrection": "The initial derived audit compared JSON key order and falsely marked identical Map.of settings as different; revision 2 compares object values without key order. Original outputs and initial audit are preserved.",
+  "scope": "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "candidate": "v1",
+  "sourceFiles": 379,
+  "sourceHashMismatches": 0,
+  "modifiedSourceFiles": [
+    "main\\java\\com\\promptoptimizer\\enhancement\\service\\impl\\OptimizationResultAssembler.java",
+    "main\\java\\com\\promptoptimizer\\provider\\domain\\DraftDeliveryContract.java",
+    "main\\java\\com\\promptoptimizer\\provider\\domain\\ProviderResponseValidationException.java",
+    "main\\java\\com\\promptoptimizer\\template\\domain\\TaskDeliveryProfile.java"
+  ],
+  "candidateBuildExitCode": 0,
+  "planEnabled": false,
+  "includeExamples": false,
+  "singleProcessRepeatedValidateFailure": "Second Validate in one PowerShell process had BindException; separate fresh-process Validate passed before any model calls.",
+  "comparisonLimit": "One randomized sample per arm; both raw and enhanced outputs were regenerated. No causal win-rate or professional accuracy claim.",
+  "runs": [
+    {
+      "model": "flash",
+      "directory": "candidate-flash-v1",
+      "unchangedInput": true,
+      "unchangedRunner": true,
+      "unchangedConfiguration": true,
+      "classesSha256": "d34292a46730a28188ca8d2d12be37fa9cb4b04e7da15a69e1b6f7b2d7bd1592",
+      "cases": [
+        {
+          "caseId": "RESEARCH",
+          "status": "COLLECTED",
+          "elapsedMs": 11321,
+          "upstreamAttempts": 2,
+          "effectiveOptions": {
+            "templateCode": "AUTO",
+            "includeConversationHistory": false,
+            "includePermissionBoundaries": true,
+            "includeExamples": false
+          },
+          "effectiveOptionsHashMatchesBaseline": true,
+          "firstRequestBodyMatchesBaseline": false,
+          "optimizedPromptSha256": "2bedfe8ed6ee6cf2df80db84ae77922ab656fd78114f2feccd1c9ecbf44a6851",
+          "ambiguities": 5
+        },
+        {
+          "caseId": "EMAIL",
+          "status": "COLLECTED",
+          "elapsedMs": 2283,
+          "upstreamAttempts": 1,
+          "effectiveOptions": {
+            "templateCode": "AUTO",
+            "includeConversationHistory": false,
+            "includePermissionBoundaries": true,
+            "includeExamples": false
+          },
+          "effectiveOptionsHashMatchesBaseline": true,
+          "firstRequestBodyMatchesBaseline": true,
+          "optimizedPromptSha256": "0c36a35088e5f0ea1302849cfb3d315f0bfe3617dec2dd7d2eba1dc3259c7e7d",
+          "ambiguities": 0
+        },
+        {
+          "caseId": "PYTHON",
+          "status": "COLLECTED",
+          "elapsedMs": 4243,
+          "upstreamAttempts": 1,
+          "effectiveOptions": {
+            "templateCode": "AUTO",
+            "includeConversationHistory": false,
+            "includePermissionBoundaries": true,
+            "includeExamples": false
+          },
+          "effectiveOptionsHashMatchesBaseline": true,
+          "firstRequestBodyMatchesBaseline": true,
+          "optimizedPromptSha256": "ec4e92b098564a40c06fb967061ac8ee145ca85db1bfa8ec2d7f209b4c8174b3",
+          "ambiguities": 0
+        }
+      ],
+      "works": [
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "finishReason": "stop",
+          "actualModel": "deepseek-flash",
+          "elapsedMs": 11419,
+          "nonWhitespaceChars": 3263,
+          "hanChars": 1645,
+          "usage": {
+            "prompt_tokens": 141,
+            "completion_tokens": 2079,
+            "total_tokens": 2220
+          },
+          "outputSha256": "577fee5597015113795682049b61d2bc3cb8613286ea89df90b45378d062d432",
+          "sameMaterialsAsBaseline": true,
+          "sameSystemAsBaseline": true,
+          "sameSettingsAsBaseline": true,
+          "sameExecutionInputAsBaseline": true,
+          "businessReview": "LIMITED_SINGLE_SAMPLE_NOT_ACCEPTED_FROM_HTTP_SUCCESS"
+        },
+        {
+          "arm": "direct",
+          "status": "COMPLETE",
+          "finishReason": "stop",
+          "actualModel": "deepseek-flash",
+          "elapsedMs": 22264,
+          "nonWhitespaceChars": 5925,
+          "hanChars": 4720,
+          "usage": {
+            "prompt_tokens": 1052,
+            "completion_tokens": 3569,
+            "total_tokens": 4621
+          },
+          "outputSha256": "eac277307a8c012cad03b59319a9573ac0f2955f70fb641b02aef86fe7ab494c",
+          "sameMaterialsAsBaseline": true,
+          "sameSystemAsBaseline": true,
+          "sameSettingsAsBaseline": true,
+          "sameExecutionInputAsBaseline": false,
+          "businessReview": "LIMITED_SINGLE_SAMPLE_NOT_ACCEPTED_FROM_HTTP_SUCCESS"
+        }
+      ],
+      "upstreamHttpResponses": 6,
+      "inputTokens": 17878,
+      "outputTokens": 8658,
+      "allResponsesFinishedStop": true,
+      "actualModels": [
+        "deepseek-flash"
+      ]
+    },
+    {
+      "model": "pro",
+      "directory": "candidate-pro-v1",
+      "unchangedInput": true,
+      "unchangedRunner": true,
+      "unchangedConfiguration": true,
+      "classesSha256": "d34292a46730a28188ca8d2d12be37fa9cb4b04e7da15a69e1b6f7b2d7bd1592",
+      "cases": [
+        {
+          "caseId": "RESEARCH",
+          "status": "COLLECTED",
+          "elapsedMs": 13392,
+          "upstreamAttempts": 2,
+          "effectiveOptions": {
+            "templateCode": "AUTO",
+            "includeConversationHistory": false,
+            "includePermissionBoundaries": true,
+            "includeExamples": false
+          },
+          "effectiveOptionsHashMatchesBaseline": true,
+          "firstRequestBodyMatchesBaseline": false,
+          "optimizedPromptSha256": "8d2205920f4fbfeb4f83a499a0476195f4fa0cd6afb1e29f13dd80487137f6b8",
+          "ambiguities": 2
+        },
+        {
+          "caseId": "EMAIL",
+          "status": "COLLECTED",
+          "elapsedMs": 3908,
+          "upstreamAttempts": 1,
+          "effectiveOptions": {
+            "templateCode": "AUTO",
+            "includeConversationHistory": false,
+            "includePermissionBoundaries": true,
+            "includeExamples": false
+          },
+          "effectiveOptionsHashMatchesBaseline": true,
+          "firstRequestBodyMatchesBaseline": true,
+          "optimizedPromptSha256": "6486704e4d07178680e38e3be05c6e870fd79c76ba06cdf1de257b7712fa9b88",
+          "ambiguities": 0
+        },
+        {
+          "caseId": "PYTHON",
+          "status": "COLLECTED",
+          "elapsedMs": 5601,
+          "upstreamAttempts": 1,
+          "effectiveOptions": {
+            "templateCode": "AUTO",
+            "includeConversationHistory": false,
+            "includePermissionBoundaries": true,
+            "includeExamples": false
+          },
+          "effectiveOptionsHashMatchesBaseline": true,
+          "firstRequestBodyMatchesBaseline": true,
+          "optimizedPromptSha256": "f938c01948f9b5a0c9116d6685c1ffd88f48f83d37a3c04e6a6b963ef8d15701",
+          "ambiguities": 0
+        }
+      ],
+      "works": [
+        {
+          "arm": "raw",
+          "status": "COMPLETE",
+          "finishReason": "stop",
+          "actualModel": "deepseek-v4-pro",
+          "elapsedMs": 2108,
+          "nonWhitespaceChars": 109,
+          "hanChars": 99,
+          "usage": {
+            "prompt_tokens": 140,
+            "completion_tokens": 63,
+            "total_tokens": 203
+          },
+          "outputSha256": "97d2481b5758d83d803e699ebb7f2373766bd8edae17a27d2150682d09ba4bda",
+          "sameMaterialsAsBaseline": true,
+          "sameSystemAsBaseline": true,
+          "sameSettingsAsBaseline": true,
+          "sameExecutionInputAsBaseline": true,
+          "businessReview": "LIMITED_SINGLE_SAMPLE_NOT_ACCEPTED_FROM_HTTP_SUCCESS"
+        },
+        {
+          "arm": "direct",
+          "status": "COMPLETE",
+          "finishReason": "stop",
+          "actualModel": "deepseek-v4-pro",
+          "elapsedMs": 56873,
+          "nonWhitespaceChars": 7366,
+          "hanChars": 5078,
+          "usage": {
+            "prompt_tokens": 688,
+            "completion_tokens": 4574,
+            "total_tokens": 5262
+          },
+          "outputSha256": "25685ab4c8490af2efae3f3278af81df1f7f00de7f8dc6527925e2fdfefd5ba7",
+          "sameMaterialsAsBaseline": true,
+          "sameSystemAsBaseline": true,
+          "sameSettingsAsBaseline": true,
+          "sameExecutionInputAsBaseline": false,
+          "businessReview": "LIMITED_SINGLE_SAMPLE_NOT_ACCEPTED_FROM_HTTP_SUCCESS"
+        }
+      ],
+      "upstreamHttpResponses": 6,
+      "inputTokens": 17501,
+      "outputTokens": 6968,
+      "allResponsesFinishedStop": true,
+      "actualModels": [
+        "deepseek-v4-pro"
+      ]
+    }
+  ]
+}

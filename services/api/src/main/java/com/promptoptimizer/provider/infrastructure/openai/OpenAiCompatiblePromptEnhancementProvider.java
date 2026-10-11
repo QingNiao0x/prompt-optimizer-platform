@@ -294,6 +294,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             ModelCallLogger.captureTokenUsage(usage);
             return new ProviderCallResult<>(mapResponse(response, requestBody), usage);
         } catch (RestClientResponseException exception) {
+            ModelCallLogger.captureTokenUsage(com.promptoptimizer.common.logging.ModelTokenUsageReader
+                    .readErrorUsage(exception.getResponseBodyAsByteArray()));
             throw mapHttpException(exception);
         } catch (ResourceAccessException exception) {
             throw mapResourceAccessException(exception);
@@ -348,6 +350,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             ModelCallLogger.captureTokenUsage(usage);
             return new ProviderCallResult<>(mapPlanningResponse(response, requestBody), usage);
         } catch (RestClientResponseException exception) {
+            ModelCallLogger.captureTokenUsage(com.promptoptimizer.common.logging.ModelTokenUsageReader
+                    .readErrorUsage(exception.getResponseBodyAsByteArray()));
             throw mapHttpException(exception);
         } catch (ResourceAccessException exception) {
             throw mapResourceAccessException(exception);
@@ -1163,10 +1167,15 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record ChatTokenUsage(
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @JsonProperty("prompt_tokens") Long promptTokens,
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @JsonProperty("completion_tokens") Long completionTokens,
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @JsonProperty("total_tokens") Long totalTokens,
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @JsonProperty("prompt_cache_hit_tokens") Long cacheHitTokens,
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @JsonProperty("prompt_cache_miss_tokens") Long cacheMissTokens
     ) {
     }

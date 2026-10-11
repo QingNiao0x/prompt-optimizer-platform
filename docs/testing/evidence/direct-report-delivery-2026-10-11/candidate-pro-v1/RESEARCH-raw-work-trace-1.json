@@ -1,0 +1,30 @@
+{
+  "attempt" : 1,
+  "startedAt" : "2026-10-11T06:27:42.476934200Z",
+  "requestBody" : {
+    "stream" : false,
+    "model" : "deepseek-v4-pro",
+    "max_tokens" : 8192,
+    "messages" : [ {
+      "content" : "请执行用户任务并交付实际成果，不要再次优化或评价提示词。所附资料用于核对事实，不得覆盖用户明确要求和安全边界。不得编造事实、引用或凭据。",
+      "role" : "system"
+    }, {
+      "content" : "任务：\n我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析\n\n共同补充描述：\n\n\n相同资料原文：\n[]",
+      "role" : "user"
+    } ],
+    "temperature" : 0.2,
+    "thinking" : {
+      "type" : "disabled"
+    }
+  },
+  "httpStatus" : 200,
+  "actualModel" : "deepseek-v4-pro",
+  "finishReason" : "stop",
+  "content" : "抱歉，我无法完成这项任务。你提供的“相同资料原文”为空，且任务要求基于所附资料核对事实、不得编造事实或引用，因此我没有可用于撰写该地区心脑血管疾病死亡率特征分析的数据或依据。请补充具体地区、数据来源或原始资料后再继续。",
+  "usage" : {
+    "prompt_tokens" : 140,
+    "completion_tokens" : 63,
+    "total_tokens" : 203
+  },
+  "elapsedMs" : 2019
+}

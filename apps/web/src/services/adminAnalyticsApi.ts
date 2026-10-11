@@ -10,7 +10,23 @@ import type {
   AnalyticsOperationQuery,
   AnalyticsRanking,
   ApiResponse,
+  TokenRankingQuery,
+  TokenRanking,
+  ModelCallQuery,
+  ModelCallPage,
 } from '@/types/api';
+
+/** 按匿名操作或模型来源读取已报告用量及缺失覆盖计数。 */
+export const getModelTokenRanking = async (query: TokenRankingQuery): Promise<TokenRanking> => {
+  const response = await httpClient.get<ApiResponse<TokenRanking>>('/api/v1/admin/analytics/token-ranking', { params: query });
+  return response.data.data;
+};
+
+/** 独立读取模型尝试安全投影，不接受账号筛选或完整审计 JSON。 */
+export const getModelCalls = async (query: ModelCallQuery): Promise<ModelCallPage> => {
+  const response = await httpClient.get<ApiResponse<ModelCallPage>>('/api/v1/admin/analytics/model-calls', { params: query });
+  return response.data.data;
+};
 
 /** 管理员独立读取当前实例的投递积压和故障状态，不能把统计查询成功当作采集完整。 */
 export const getAnalyticsDeliveryStatus = async (): Promise<AnalyticsDeliveryStatus> => {

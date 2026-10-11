@@ -42,6 +42,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import { useUiTheme } from '@/composables/useUiTheme';
+import AdminModelCallPanel from '@/components/analytics/AdminModelCallPanel.vue';
 import {
   analyticsQueryError,
   dailyMetricSeries,
@@ -845,6 +846,7 @@ onBeforeUnmount(() => {
           </div>
         </article>
       </section>
+      <AdminModelCallPanel />
     </template>
   </div>
   </ElConfigProvider>

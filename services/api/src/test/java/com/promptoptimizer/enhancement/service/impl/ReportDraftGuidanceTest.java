@@ -98,6 +98,8 @@ class ReportDraftGuidanceTest {
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("执行前确认仍须遵守")))
                 .andExpect(jsonPath("$.messages[1].content").value(containsString("要求撰写分析正文或报告时")))
                 .andExpect(jsonPath("$.messages[1].content").value(containsString("沿用用户给定的分析问题与章节")))
+                .andExpect(jsonPath("$.messages[1].content").value(containsString("不主动铺空结果表或逐节复读待确认")))
+                .andExpect(jsonPath("$.messages[1].content").value(containsString("一般规律和可能解释不能写成本研究已观察到的结果")))
                 .andExpect(jsonPath("$.messages[1].content").value(containsString("Arriaga")))
                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
         assertThat(provider.enhance(request(RESEARCH_REPORT)).sections()).hasSize(4);
@@ -109,7 +111,7 @@ class ReportDraftGuidanceTest {
         var response = new MockPromptEnhancementProvider().enhance(request(RESEARCH_REPORT));
         String output = response.sections().stream().filter(section -> section.type() == PromptSectionType.OUTPUT)
                 .findFirst().orElseThrow().content();
-        assertThat(output).contains("候选方法", "适用条件", "结果呈现", "专业建议不冒充已选口径")
+        assertThat(output).contains("候选方法", "适用条件", "比较逻辑", "专业建议不冒充已选口径")
                 .doesNotContain("可按研究背景、资料与方法、分析结果、讨论、局限与结论组织正文");
     }
 

@@ -52,6 +52,34 @@ class AuditEventDeliveryTest {
     @TempDir Path directory;
 
     @Test
+    void anonymousModelFactSurvivesOutageRestartAndDuplicateDelivery() throws Exception {
+        PendingAuditEvent original = event();
+        PendingAuditEvent model = new PendingAuditEvent(original.id(), original.tenantId(), null,
+                AnalyticsEventType.MODEL_CALL_RECORDED, Map.of("schemaVersion", 1, "operation", "plan.generate", "totalTokens", 15),
+                original.occurredAt());
+        AuditEventDatabaseWriter unavailable = mock(AuditEventDatabaseWriter.class);
+        doThrow(new DataAccessResourceFailureException("synthetic outage")).when(unavailable).write(any());
+        var first = delivery(journal(), unavailable);
+        first.accept(model, false);
+        first.replayPending();
+        assertThat(first.status().pendingEvents()).isEqualTo(1);
+        AuditEventDatabaseWriter restored = mock(AuditEventDatabaseWriter.class);
+        Set<UUID> committed = new HashSet<>();
+        doAnswer(call -> {
+            PendingAuditEvent fact = call.getArgument(0);
+            assertThat(fact.actorUserId()).isNull();
+            committed.add(fact.id());
+            return null;
+        }).when(restored).write(any());
+        var restarted = delivery(journal(), restored);
+        restarted.replayPending();
+        restarted.accept(model, false);
+        restarted.replayPending();
+        assertThat(committed).containsExactly(model.id());
+        assertThat(restarted.status().pendingEvents()).isZero();
+    }
+
+    @Test
     void concurrentPlanCompletionOutageAndAckFailureRecoverOnlyOneFact() throws Exception {
         var original = event();
         PendingAuditEvent completion = new PendingAuditEvent(original.id(), original.tenantId(), original.actorUserId(),

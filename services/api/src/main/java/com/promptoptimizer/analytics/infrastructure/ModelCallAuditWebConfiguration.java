@@ -6,28 +6,36 @@ import com.promptoptimizer.identity.service.CurrentActor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/** 在受认证保护的模型业务路由绑定服务端租户；不向模型计量传递用户身份。 */
+/**
+ * 在受认证保护的模型业务路由绑定服务端租户；不向模型计量传递用户身份。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
 @Configuration
-@ConditionalOnBean(ModelCallAuditService.class)
 public class ModelCallAuditWebConfiguration implements WebMvcConfigurer {
     private static final String SCOPE_ATTRIBUTE = ModelCallAuditWebConfiguration.class.getName() + ".scope";
-    private final CurrentActor currentActor;
-    private final ModelCallAuditService auditService;
+    private final ObjectProvider<CurrentActor> actorProvider;
+    private final ObjectProvider<ModelCallAuditService> auditProvider;
 
     /** 注入认证适配器和白名单采集服务，不采信请求里的 tenantId。 */
-    public ModelCallAuditWebConfiguration(CurrentActor currentActor, ModelCallAuditService auditService) {
-        this.currentActor = currentActor;
-        this.auditService = auditService;
+    public ModelCallAuditWebConfiguration(ObjectProvider<CurrentActor> actorProvider, ObjectProvider<ModelCallAuditService> auditProvider) {
+        this.actorProvider = actorProvider;
+        this.auditProvider = auditProvider;
     }
 
     /** 先于并发保护建立作用域；权限仍由现有 Spring Security 和业务所有权校验负责。 */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // MVC 切片测试可能没有业务服务；在所有 Bean 注册完成后判断，避免配置解析顺序使完整应用漏装采集。
+        ModelCallAuditService auditService = auditProvider.getIfAvailable();
+        CurrentActor currentActor = actorProvider.getIfAvailable();
+        if (auditService == null || currentActor == null) return;
         registry.addInterceptor(new HandlerInterceptor() {
             @Override
             public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

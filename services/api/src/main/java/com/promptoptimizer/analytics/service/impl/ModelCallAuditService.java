@@ -14,6 +14,9 @@ import java.util.UUID;
 /**
  * 将匿名租户级模型对账事实交给已有持久 journal 和独立数据库事务。
  * 与账号操作采集分开，不引入账号、IP、会话号或原始业务对象 ID。
+ *
+ * @author QingNiao
+ * @since 0.1.0
  */
 @Service
 public class ModelCallAuditService implements ModelCallAuditContext.Sink {

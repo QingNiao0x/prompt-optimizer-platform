@@ -485,6 +485,25 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         server.verify();
     }
 
+    @Test
+    void upstreamHttpFailureKeepsExplicitUsageInsteadOfRollingBackConsumption() {
+        server.expect(once(), requestTo(ENDPOINT)).andRespond(withStatus(HttpStatus.BAD_GATEWAY)
+                .body("{\"usage\":{\"prompt_tokens\":10,\"completion_tokens\":5,\"total_tokens\":15},\"message\":\"private failure\"}")
+                .contentType(MediaType.APPLICATION_JSON));
+        var facts = new java.util.ArrayList<ModelCallObservation>();
+        try (var scope = ModelCallAuditContext.bind(new ModelCallAuditContext.Snapshot(java.util.UUID.randomUUID(),
+                (tenant, fact) -> facts.add(fact)))) {
+            assertThatThrownBy(() -> provider.enhance(createRequest())).isInstanceOf(ProviderException.class);
+        }
+        assertThat(facts).singleElement().satisfies(fact -> {
+            assertThat(fact.upstreamStatus()).isEqualTo(502);
+            assertThat(fact.successful()).isFalse();
+            assertThat(fact.usage().totalTokens()).isEqualTo(15);
+            assertThat(fact.toString()).doesNotContain("private failure");
+        });
+        server.verify();
+    }
+
     private EnhancementProviderRequest createRequest() {
         return createRequest(null);
     }

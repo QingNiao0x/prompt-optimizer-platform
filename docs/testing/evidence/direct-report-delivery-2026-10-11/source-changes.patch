@@ -1,0 +1,562 @@
+diff --git a/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java b/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java
+index 5378636..3ffce09 100644
+--- a/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java
++++ b/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java
+@@ -176,6 +176,10 @@ public class OptimizationResultAssembler {
+                 unresolvedContract.reconcileCurrentText(section.content())));
+         sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
+         sections.forEach((type, section) -> validateUserFacingProtocol(section.content(), rawPrompt, "sections." + type));
++        // 在追加平台交付条款前校验模型的主目标；正确尾注不能掩盖前文把正文改成方案的矛盾。
++        for (PromptSectionType type : List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT)) {
++            draftDelivery.validateDelivery(sections.get(type).content(), "sections." + type);
++        }
+         if (providerResponse.ambiguities() != null) {
+             for (int index = 0; index < providerResponse.ambiguities().size(); index++) {
+                 conditionalGuard.validate(providerResponse.ambiguities().get(index), "ambiguities[" + index + "]");
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/domain/DraftDeliveryContract.java b/services/api/src/main/java/com/promptoptimizer/provider/domain/DraftDeliveryContract.java
+index 1f15000..3e5eada 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/DraftDeliveryContract.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/DraftDeliveryContract.java
+@@ -12,10 +12,11 @@ import java.util.regex.Pattern;
+  * 该约定不选择专业参数、不改变确认状态，也不替代现有事实与计算依赖校验。
+  *
+  * @param active 本次明确要求写作，且没有只交付准备材料或先确认再起草的限制
++ * @param proseRequired 本次仍以正文为目标；先确认或禁止占位不等于允许改成交付方案
+  * @author QingNiao
+  * @since 0.1.0
+  */
+-public record DraftDeliveryContract(boolean active) {
++public record DraftDeliveryContract(boolean active, boolean proseRequired) {
+     private static final Pattern WRITING = Pattern.compile(
+             "(?:撰写|起草|编写|写出|写一(?:份|篇)|写份|写篇|写.{0,8}报告|生成.{0,12}(?:报告|正文|稿件))|\\b(?:write|draft)\\b",
+             Pattern.CASE_INSENSITIVE);
+@@ -43,6 +44,25 @@ public record DraftDeliveryContract(boolean active) {
+             "(?:只|仅)(?:输出|返回|提供|交付)\\s*(?:纯|有效的?|合法的?)?\\s*(?:JSON|CSV)(?![A-Za-z])",
+             Pattern.CASE_INSENSITIVE);
+     private static final Pattern FENCE = Pattern.compile("^(`{3,}|~{3,})(.*)$");
++    private static final Pattern PREPARATION_DELIVERY = Pattern.compile(
++            "(?:撰写|起草|编写|写出|生成|交付|输出|提供|给出)\\s*[:：]?[^。；;，,\\r\\n]{0,100}"
++                    + "(?:方案|提纲|大纲|问卷|问题清单|空表|填空模板)(?:文档|文本)?\\s*$");
++    private static final Pattern PROSE_AS_PREPARATION_NAME = Pattern.compile(
++            "(?:报告|论文|文章|正文)(?:的)?(?:撰写|写作|方法)?(?=方案|提纲|大纲|目录|模板|结构|空表)");
++    private static final Pattern ADDITIONAL_DELIVERY = Pattern.compile("^(?:并|同时|另外|另|还|附带|附|以及|补充)");
++    private static final Pattern DELIVERY_ACTION = Pattern.compile("(?:撰写|起草|编写|写出|生成|交付|输出|提供|给出|写)");
++    private static final Pattern WHOLE_DRAFT_PREREQUISITE = Pattern.compile(
++            "(?:先|须|需|必须|待|等)[^。；;，,\\r\\n]{0,50}(?:补齐|齐全|确认)[^。；;，,\\r\\n]{0,30}"
++                    + "(?:后|再|才|才能|[，,]\\s*再)(?:开始|继续|正式|着手)?"
++                    + "(?:撰写|起草|编写|输出|交付)[^。；;，,\\r\\n]{0,16}(?:正文|全文|报告)"
++                    + "|(?:资料|材料|数据|信息)[^。；;，,\\r\\n]{0,30}(?:未|没有|不)[^。；;，,\\r\\n]{0,16}"
++                    + "(?:前|时)[^。；;，,\\r\\n]{0,8}(?:不得|不能|不要|暂停)[^。；;，,\\r\\n]{0,8}"
++                    + "(?:撰写|起草|编写|输出|交付)[^。；;，,\\r\\n]{0,16}(?:正文|全文|报告)");
++
++    /** 兼容仅有推进状态的内部调用；从用户需求创建时分别判断目标与起草许可。 */
++    public DraftDeliveryContract(boolean active) {
++        this(active, active);
++    }
+ 
+     /** 仅采用当前用户指令及服务端已绑定的交付决定；材料中的引用和代码不建立起草许可。 */
+     public static DraftDeliveryContract from(String rawPrompt, PromptTemplate template,
+@@ -50,23 +70,28 @@ public record DraftDeliveryContract(boolean active) {
+         if (template == null || template.deliveryProfile().softwareTask()
+                 || template.deliveryProfile() == TaskDeliveryProfile.TRANSLATION) return new DraftDeliveryContract(false);
+         String instructions = instructionText(rawPrompt);
+-        if (hasPreparationLimit(instructions)) return new DraftDeliveryContract(false);
++        boolean preparationLimit = hasPreparationLimit(instructions);
++        boolean preparationTarget = preparationIsMainTarget(instructions);
+         for (var decision : decisions == null ? List.<ConfirmedPlanDecision>of() : decisions) {
+             if ((decision.scope() == ConfirmedPlanDecision.Scope.TARGET || decision.scope() == ConfirmedPlanDecision.Scope.CHOICE)
+-                    && TaskIntentResolver.overallDeliveryQuestion(decision.question())
+-                    && hasPreparationLimit(instructionText(decision.answer()))) return new DraftDeliveryContract(false);
++                    && TaskIntentResolver.overallDeliveryQuestion(decision.question())) {
++                String answer = instructionText(decision.answer());
++                preparationLimit |= hasPreparationLimit(answer);
++                preparationTarget |= preparationIsMainTarget(answer);
++            }
+         }
+         boolean proseProfile = switch (template.deliveryProfile()) {
+             case NEWS_RELEASE, INSTITUTIONAL_REPORT, ACADEMIC_WRITING, USER_GUIDE, TEACHING -> true;
+             default -> false;
+         };
+-        return new DraftDeliveryContract(proseProfile || hasAffirmativeWriting(instructions));
++        boolean proseRequired = !preparationTarget && (proseProfile || hasAffirmativeWriting(instructions));
++        return new DraftDeliveryContract(proseRequired && !preparationLimit, proseRequired);
+     }
+ 
+     /** 仅补通用交付边界；具体章节、方法和占位格式不由这一跨场景契约决定。 */
+     public String guidance() {
+-        return active ? "按原定范围和格式交付正文，材料充分时直接成稿；不足时完成有依据的可修订初稿，不以问卷或大片填空模板替代正文。"
+-                + "缺口只限制对应内容，不编造数据、引用或结论；重要未决条件集中说明一次，原要求的表格、代码及篇幅继续保留。" : "";
++        return active ? "按原定范围和格式直接交付正文，不先发补材料问卷；材料充分时直接成稿，不足时完成有依据的可修订初稿，不以大片填空模板替代正文。"
++                + "缺口只限制对应内容，不编造数据、引用或结论；重要未决条件集中说明一次，同一缺口不逐节重复标待确认；原要求的表格、代码及篇幅继续保留。" : "";
+     }
+ 
+     /** 优化模型生成的是提示词，须将起草要求传给执行者，不能在增强阶段直接撰写作品。 */
+@@ -84,6 +109,65 @@ public record DraftDeliveryContract(boolean active) {
+                 : "执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）";
+     }
+ 
++    /**
++     * 校验模型原始 TASK/OUTPUT，拒绝明确替换正文目标或将整篇起草绑定到补齐资料。
++     * 调用方须在追加平台指导语前执行；普通方案讨论、引用和局部计算前提不构成冲突。
++     */
++    public void validateDelivery(String content, String field) {
++        if (!proseRequired || content == null || content.isBlank()) return;
++        String instructions = instructionText(content);
++        if (hasPreparationTarget(instructions)) {
++            throw new ProviderResponseValidationException(ProviderResponseValidationException.Reason.RULE_CONFLICT, field);
++        }
++        if (!active) return;
++        // 保留“补齐资料，再起草”的逗号连接；条件后的动作必须直接指向正文，不能跨过计算动作。
++        for (String clause : instructions.split("[。；;\\r\\n]")) {
++            if (affirmativeMatch(WHOLE_DRAFT_PREREQUISITE, clause)) {
++                throw new ProviderResponseValidationException(ProviderResponseValidationException.Reason.RULE_CONFLICT, field);
++            }
++        }
++    }
++
++    /** 只把肯定交付指令的准备材料宾语视为降级；正文附方案或方法中讨论方案仍属原目标。 */
++    private static boolean hasPreparationTarget(String instructions) {
++        boolean prosePresent = PROSE_DELIVERABLE.matcher(PROSE_AS_PREPARATION_NAME.matcher(instructions).replaceAll("")).find();
++        boolean proseDelivered = false;
++        for (String clause : instructions.split("[。；;，,\\r\\n]")) {
++            String prose = PROSE_AS_PREPARATION_NAME.matcher(clause).replaceAll("");
++            var body = PROSE_DELIVERABLE.matcher(prose);
++            boolean bodyIncludesPreparation = false;
++            while (body.find()) {
++                // “用于撰写报告的方案”不是交付报告；并列附件和正文中的局部说明才保留正文语义。
++                String suffix = prose.substring(body.end());
++                if (suffix.matches("^(?:并|和|与|及|、|中|内|里).*|^的.{0,12}(?:中|内).*")) {
++                    bodyIncludesPreparation = true;
++                    break;
++                }
++            }
++            if (bodyIncludesPreparation) continue;
++            // “另外”不能遮蔽明确的仅交准备材料限制；正文与空表并列的许可已在上面保留。
++            if (affirmativeMatch(PREPARATION_ONLY, clause)) return true;
++            if (prosePresent && ADDITIONAL_DELIVERY.matcher(clause.strip()).find()) continue;
++            boolean preparationDelivery = affirmativeMatch(PREPARATION_DELIVERY, clause);
++            // 正文先成立后，普通方案/附录可为并列交付；“只交方案”仍覆盖目标，后置正文也不能救前句降级。
++            if (preparationDelivery && !proseDelivered) return true;
++            if (!preparationDelivery && PROSE_DELIVERABLE.matcher(prose).find()
++                    && affirmativeMatch(DELIVERY_ACTION, clause)) proseDelivered = true;
++        }
++        return false;
++    }
++
++    /** 原始需求可同时要求正文与准备材料；只有明确“本轮只交准备材料”才覆盖正文目标。 */
++    private static boolean preparationIsMainTarget(String instructions) {
++        boolean proseRequested = false;
++        for (String clause : instructions.split("[。；;，,\\r\\n]")) {
++            if (affirmativeMatch(PREPARATION_ONLY, clause) && !PROSE_DELIVERABLE.matcher(clause).find()) return true;
++            if (hasAffirmativeWriting(clause) && PROSE_DELIVERABLE.matcher(clause).find()
++                    && !hasPreparationTarget(clause)) proseRequested = true;
++        }
++        return !proseRequested && hasPreparationTarget(instructions);
++    }
++
+     /**
+      * 按子句保护本次交付限制；计算前确认只限制计算，不跨过标点将后面的起草也绑定为待确认。
+      * 报告附带空表仍要求正文，只有准备材料的限制才关闭起草契约。
+@@ -106,7 +190,7 @@ public record DraftDeliveryContract(boolean active) {
+         var matcher = pattern.matcher(clause);
+         while (matcher.find()) {
+             String prefix = clause.substring(0, matcher.start());
+-            if (!prefix.matches(".*(?:不能|不要|不得|不应|并非|不是|不|未)\\s*$")
++            if (!prefix.matches(".*(?:不能|不要|不得|不应|并非|不是|不|未)(?:再|只|仅|直接)?\\s*$")
+                     && !prefix.matches(".*(?:如果|假如|以后|将来|例如|示例|原文|引用).{0,20}")) return true;
+         }
+         return false;
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java b/services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java
+index 321ae7b..6f751d6 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java
+@@ -65,7 +65,7 @@ public final class ProviderResponseValidationException extends ProviderException
+         AMBIGUITY_VALUE_INVALID("每条待确认事项必须为非空字符串，最多五百字符，不得删除实质未决条件。"),
+         SENSITIVE_CONTENT("使用不含凭据值的业务表述；隐私要求写成完整句子，避免 password: 或 apiKey= 等赋值形式；不得输出真实或伪造的密钥、密码、认证头或私钥。"),
+         CONFIRMED_DECISION_MISSING("完整保留输入中用户已确认的答案和适用边界，不得替用户更改决定。"),
+-        RULE_CONFLICT("检查并改正执行要求与原始需求、明确确认答案及适用资料规则相反的内容；保留否定、条件、比较符、数值、单位和作用对象。取消保持原值不等于移除保持逻辑，向空字段补值不等于将字段清空。不得在另一段追加正确规则却保留矛盾指令。未决口径在正文、指标表、公式及伪代码中都保持未决，参数格写待确认，不填惯例、示例或临时默认口径；各指标分别命名参数，不套用通用分母，不把一项确认扩大到其他指标，仍须保留原定交付物。"),
++        RULE_CONFLICT("检查并改正执行要求与原始需求、明确确认答案及适用资料规则相反的内容；保留否定、条件、比较符、数值、单位和作用对象。取消保持原值不等于移除保持逻辑，向空字段补值不等于将字段清空。不得在另一段追加正确规则却保留矛盾指令。若原定交付为正文，直接改正 TASK 与 OUTPUT 中将其变为方案、提纲、问卷或等待补齐全部资料的指令；资料缺口仅限制对应内容，保留有依据的实质正文及用户明确的起草前确认要求。未决口径在正文、指标表、公式及伪代码中都保持未决，参数格写待确认，不填惯例、示例或临时默认口径；各指标分别命名参数，不套用通用分母，不把一项确认扩大到其他指标，仍须保留原定交付物。"),
+         SOURCE_SCOPE_CONFLICT("资料取值与对象、属性、版本及适用条件分别核对。只写一版与另一版而未明确对应关系的资料，保持版本对应待核实；不得按出现次序绑定到具体版本或拼成统一规则。其他属性的版本证据不能证明本属性。"),
+         PLAN_STRUCTURE_INVALID("summary 为非空字符串且不超过五百字符，questions 数组最多八项，不展示内部实现术语。"),
+         PLAN_QUESTION_INVALID("问题 ID 唯一且仅含英文字母、数字、下划线或连字符，最长六十四字符；question 非空且最长三百字符，hint 最长五百字符；type 合法；最多四个简短示例。题干和 hint 不展示 TemplateCode、模板枚举代码、选择任务模板、确认缺失维度、缺失维度等内部术语。"),
+diff --git a/services/api/src/main/java/com/promptoptimizer/template/domain/TaskDeliveryProfile.java b/services/api/src/main/java/com/promptoptimizer/template/domain/TaskDeliveryProfile.java
+index dbd80ac..9c05b4c 100644
+--- a/services/api/src/main/java/com/promptoptimizer/template/domain/TaskDeliveryProfile.java
++++ b/services/api/src/main/java/com/promptoptimizer/template/domain/TaskDeliveryProfile.java
+@@ -30,8 +30,9 @@ public enum TaskDeliveryProfile {
+             "论点与证据对应，概念、引用及研究状态可核对；遵守章节、篇幅和学术诚信要求。"),
+     DATA_ANALYSIS("按已给来源、字段、统计口径与比较范围交付，要求方案或表结构时只交付原定内容；"
+             + "要求撰写分析正文或报告时，在原定范围内完成有实质内容的正文，资料不足时交付有依据的可修订初稿，不能用方案、提纲或补充信息清单替代正文。"
+-            + "沿用用户给定的分析问题与章节，解释候选方法、适用条件、结果呈现及解释依据，不强制展开空泛的结果章节。"
+-            + "缺少数据只限制依赖它的真实数值和结论，其他有依据的原定内容继续交付；"
++            + "沿用用户给定的分析问题与章节，将分析目的、指标含义、比较逻辑和解释依据写成连贯的实质段落；候选方法说明适用条件，不写成已选口径。"
++            + "没有实证数据时，不主动铺空结果表或逐节复读待确认，也不先回复补材料问卷；资料缺口集中说明一次，用户明确要求的表格仍须保留。"
++            + "缺少数据只限制依赖它的真实数值和结论，其他有依据的原定内容继续交付；一般规律和可能解释不能写成本研究已观察到的结果。"
+             + "专业建议不冒充已选口径，缺失和未核实不改成零值，不默认未知口径；只有要求时才提供代码。",
+             "交付形式符合原要求；指标、分母、缺失值和时间边界一致；建议或待定参数不冒充已选方法，实际结论能回到输入数据。"),
+     MATERIAL_SYNTHESIS("根据提供的材料交付所需摘要、对照表或提取清单，区分已知事实、资料分歧及未决条件，不增加未要求的实现任务。",
+diff --git a/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/DraftDeliveryBoundaryTest.java b/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/DraftDeliveryBoundaryTest.java
+index 78379d5..d02d32a 100644
+--- a/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/DraftDeliveryBoundaryTest.java
++++ b/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/DraftDeliveryBoundaryTest.java
+@@ -3,6 +3,9 @@ package com.promptoptimizer.enhancement.service.impl;
+ import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision;
+ import com.promptoptimizer.enhancement.domain.TemplateCode;
+ import com.promptoptimizer.provider.domain.DraftDeliveryContract;
++import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
++import com.promptoptimizer.template.domain.TaskDeliveryProfile;
++import com.promptoptimizer.template.domain.TaskIntentResolver;
+ import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
+ import java.util.List;
+ import org.junit.jupiter.api.Test;
+@@ -10,6 +13,8 @@ import org.junit.jupiter.params.ParameterizedTest;
+ import org.junit.jupiter.params.provider.ValueSource;
+ 
+ import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatCode;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
+ /**
+  * 起草策略不能越过明确审批，也不能将计算前提扩大为整份报告的停写条件。
+@@ -18,11 +23,117 @@ import static org.assertj.core.api.Assertions.assertThat;
+  * @since 0.1.0
+  */
+ class DraftDeliveryBoundaryTest {
++    private static final String SCREENSHOT_ANALYSIS = """
++            我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:
++            1.时间序列的长期趋势和季节性趋势
++            2.分性别\\地区\\分人群\\分亚类去进行比较
++            3.进行减寿分析:年度的\\性别的yll和yll率
++            4.采用Arriaga分解方法去分析""";
++
++    /** 用户要求撰写分析正文，即使标题不含“报告”，也不能降成只交方案。 */
++    @Test
++    void theExactScreenshotRequestAlreadySelectsAnalysisWritingWithoutAReportKeyword() {
++        var intent = TaskIntentResolver.resolve(TemplateCode.AUTO, SCREENSHOT_ANALYSIS);
++        assertThat(intent.deliveryProfile()).isEqualTo(TaskDeliveryProfile.DATA_ANALYSIS);
++        assertThat(intent.engineeringConstraints()).isFalse();
++        assertThat(contract(SCREENSHOT_ANALYSIS, List.of()).active()).isTrue();
++    }
++
++    /** 后处理不能用一段正确指导语掩盖模型已将正文目标改为方案或全篇等待。 */
++    @ParameterizedTest
++    @ValueSource(strings = {
++            "撰写一份2015—2025年某地区心脑血管疾病死亡率特征分析方案，覆盖四个分析方向。",
++            "输出：一份死亡率特征分析的撰写方案。",
++            "交付用于撰写报告的分析方案。",
++            "交付一份结构化的分析方案文档。\n资料充分时交付报告正文，不足时完成有依据的初稿。",
++            "撰写研究报告。本轮只交付分析方案。",
++            "撰写研究报告，另外本轮只交付分析方案。",
++            "暂不提供报告正文，另外只交付方案。",
++            "本轮只交付方法提纲和空表。",
++            "先补齐全部资料后再撰写分析正文。",
++            "请先补齐所有资料，再开始撰写报告。",
++            "资料未补齐前不得撰写正文。"
++    })
++    void rejectsReplacingTheScreenshotDeliverable(String modelText) {
++        assertThatThrownBy(() -> contract(SCREENSHOT_ANALYSIS, List.of())
++                .validateDelivery(modelText, "sections.TASK.content"))
++                .isInstanceOfSatisfying(ProviderResponseValidationException.class, error -> {
++                    assertThat(error.getReason()).isEqualTo(ProviderResponseValidationException.Reason.RULE_CONFLICT);
++                    assertThat(error.getField()).isEqualTo("sections.TASK.content");
++                });
++    }
++
++    @ParameterizedTest
++    @ValueSource(strings = {
++            "撰写死亡率特征分析正文，说明候选分析方案的适用条件。",
++            "撰写论文方法章节正文，比较不同分解方案。",
++            "在报告的方法章节中提供分析方案，正文继续完成。",
++            "撰写分析报告并附分析方案。",
++            "撰写研究报告，并提供空表。",
++            "撰写研究报告，另外提供整改方案。",
++            "不得撰写分析方案替代正文。",
++            "不能只交付方法提纲和空表。",
++            "例如撰写分析方案并不等于完成正文。",
++            "如果以后要求撰写分析方案，再调整交付物。",
++            "引用：撰写一份分析方案。\n## 任务\n撰写分析正文。",
++            "> 先补齐全部资料后再撰写正文。\n撰写现有证据支持的正文。",
++            "资料不足仅限制实证结果，不得编造数字，继续完成方法正文。",
++            "计算前先确认参考寿命表，其他正文继续起草。",
++            "先补齐寿命表后再计算YLL，其他正文继续起草。",
++            "先补齐寿命表再计算YLL，继续撰写正文。"
++    })
++    void allowsProseMethodsReferencesNegationAndLocalPrerequisites(String modelText) {
++        assertThatCode(() -> contract(SCREENSHOT_ANALYSIS, List.of())
++                .validateDelivery(modelText, "sections.OUTPUT.content")).doesNotThrowAnyException();
++    }
++
++    @Test
++    void forbiddingPlaceholdersDoesNotPermitChangingTheReportIntoAPlan() {
++        var draft = contract("请撰写分析报告，不要占位符。", List.of());
++        assertThat(draft.active()).isFalse();
++        assertThatThrownBy(() -> draft.validateDelivery("撰写分析方案。", "sections.TASK.content"))
++                .isInstanceOf(ProviderResponseValidationException.class);
++    }
++
++    @ParameterizedTest
++    @ValueSource(strings = {"请撰写分析方案。", "请撰写论文方法提纲。", "本轮只交付提纲。"})
++    void explicitPreparationGoalsRemainAllowed(String raw) {
++        assertThatCode(() -> contract(raw, List.of()).validateDelivery(raw, "sections.TASK.content"))
++                .doesNotThrowAnyException();
++    }
++
++    /** 忠实复述用户要求的两项交付，不应因为缺少“并”字被当成替换正文。 */
++    @ParameterizedTest
++    @ValueSource(strings = {
++            "请撰写研究报告。提供统计分析方案。",
++            "请写研究报告。输出附录中的方法提纲。"
++    })
++    void aRequestedReportCanBeFollowedByAnExplicitAdditionalDeliverable(String raw) {
++        var draft = contract(raw, List.of());
++        assertThat(draft.proseRequired()).isTrue();
++        assertThatCode(() -> draft.validateDelivery(raw, "sections.TASK.content")).doesNotThrowAnyException();
++    }
++
++    @Test
++    void explicitApprovalStillControlsWhenDraftingMayStart() {
++        var draft = contract("请撰写研究报告，先向我确认研究范围。", List.of());
++        assertThat(draft.active()).isFalse();
++        assertThatCode(() -> draft.validateDelivery("先补齐研究范围后再撰写正文。", "sections.TASK.content"))
++                .doesNotThrowAnyException();
++        var chosen = new ConfirmedPlanDecision("delivery", "本次交付什么？", "交付",
++                ConfirmedPlanDecision.Scope.CHOICE, "本次只交付提纲。");
++        assertThatCode(() -> contract(SCREENSHOT_ANALYSIS, List.of(chosen))
++                .validateDelivery("本轮只交付提纲。", "sections.TASK.content")).doesNotThrowAnyException();
++    }
++
+     @ParameterizedTest
+     @ValueSource(strings = {
+             "请撰写年度研究报告，不能只给提纲。",
+             "请撰写分析报告。寿命表确认前不得计算YLL，不得编造数字。",
+             "请撰写研究报告，只交付完整报告和空表。",
++            "请撰写研究报告，并提供空表。",
++            "请撰写研究报告，另外提供整改方案。",
++            "我平时负责撰写研究方案，今天请撰写一篇研究报告。",
+             "请撰写分析报告，只交付分析报告和指标表。",
+             "请撰写分析报告。计算前先向我确认参考寿命表，其他正文继续起草。",
+             "请撰写分析报告。先确认参考寿命表再计算YLL，同时撰写有依据的正文。",
+@@ -81,6 +192,8 @@ class DraftDeliveryBoundaryTest {
+     @Test
+     void theModelKeepsConcreteDeliverablesWithoutCopyingThePlatformDraftParagraph() {
+         var draft = contract("请撰写分析报告。", List.of());
++        assertThat(draft.guidance()).contains("材料充分时直接成稿", "可修订初稿", "直接交付正文，不先发补材料问卷",
++                "重要未决条件集中说明一次", "同一缺口不逐节重复标待确认", "原要求的表格、代码及篇幅继续保留");
+         assertThat(draft.modelGuidance()).contains("TASK 只保留用户要完成的正文目标", "OUTPUT 只说明本次具体交付内容",
+                 "平台统一追加", "不要复制通用起草段落或待补机制", "由执行者自行完成", "实证数值和结论",
+                 "不新增用户未要求的空表、附录或指标", "用户明确要求的表格继续交付", "不能冒充已确认事实")
+diff --git a/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/ReportDraftDeliveryAssemblyTest.java b/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/ReportDraftDeliveryAssemblyTest.java
+index a3fd7d7..1f1da88 100644
+--- a/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/ReportDraftDeliveryAssemblyTest.java
++++ b/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/ReportDraftDeliveryAssemblyTest.java
+@@ -6,12 +6,14 @@ import com.promptoptimizer.enhancement.domain.PromptSection;
+ import com.promptoptimizer.enhancement.domain.PromptSectionType;
+ import com.promptoptimizer.enhancement.domain.TemplateCode;
+ import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
++import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
+ import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
+ import java.util.List;
+ import java.util.stream.IntStream;
+ import org.junit.jupiter.api.Test;
+ 
+ import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
+ /**
+  * 从真实结果组装入口验证报告缺资料时仍交付正文，且不丢失冲突及明确的确认门槛。
+@@ -20,9 +22,44 @@ import static org.assertj.core.api.Assertions.assertThat;
+  * @since 0.1.0
+  */
+ class ReportDraftDeliveryAssemblyTest {
++    private static final String SCREENSHOT_RAW = """
++            我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:
++            1.时间序列的长期趋势和季节性趋势
++            2.分性别\\地区\\分人群\\分亚类去进行比较
++            3.进行减寿分析:年度的\\性别的yll和yll率
++            4.采用Arriaga分解方法去分析""";
+     private static final String RAW = "我想撰写2015-2025年某地区心脑血管疾病死亡率特征分析，"
+             + "分析长期趋势和季节性趋势，按性别、地区、人群和亚类比较，分析年度及性别YLL和YLL率，采用Arriaga分解方法。";
+ 
++    @Test
++    void shouldRejectTheScreenshotTaskDowngradeBeforeAppendingDraftGuidance() {
++        assertThatThrownBy(() -> assemble(SCREENSHOT_RAW, List.of(),
++                "为上述研究撰写一份可执行的分析方案，供下游执行者据此开展分析。", "交付分析方案文档。"))
++                .isInstanceOfSatisfying(ProviderResponseValidationException.class, failure -> {
++                    assertThat(failure.getReason()).isEqualTo(ProviderResponseValidationException.Reason.RULE_CONFLICT);
++                    assertThat(failure.getField()).isEqualTo("sections.TASK");
++                    assertThat(failure.isModelRepairable()).isTrue();
++                });
++    }
++
++    @Test
++    void shouldRejectAnOutputDowngradeEvenWhenTheTaskStillRequestsAReport() {
++        assertThatThrownBy(() -> assemble(SCREENSHOT_RAW, List.of(), "撰写死亡率特征分析报告。",
++                "交付一份统计分析方案，不提供报告正文。"))
++                .isInstanceOfSatisfying(ProviderResponseValidationException.class,
++                        failure -> assertThat(failure.getField()).isEqualTo("sections.OUTPUT"));
++    }
++
++    @Test
++    void shouldRejectWholeReportDeferralWhileAllowingCalculationSpecificGaps() {
++        assertThatThrownBy(() -> assemble(SCREENSHOT_RAW, List.of(), "撰写死亡率特征分析报告。",
++                "请先补齐所有资料，再开始撰写报告。"))
++                .isInstanceOf(ProviderResponseValidationException.class);
++        var result = assemble(SCREENSHOT_RAW, List.of(), "撰写死亡率特征分析报告，方法部分比较候选分析方案。",
++                "交付报告正文。仅在参考寿命表明确后计算 YLL 数值；其他有依据的内容继续撰写。不得改成分析方案。");
++        assertThat(section(result, PromptSectionType.OUTPUT)).contains("交付报告正文", "参考寿命表明确后计算");
++    }
++
+     @Test
+     void shouldKeepDraftProgressAndPlaceMissingInputsInOneCompleteList() {
+         var result = assemble(RAW, List.of("研究地区尚未提供，请明确研究地区。", "参考寿命表尚未确定。"));
+@@ -107,9 +144,14 @@ class ReportDraftDeliveryAssemblyTest {
+ 
+     /** 用实际组装入口回放已有输出段，避免仅比较模板字符串掩盖重复追加。 */
+     private OptimizationResult assemble(String raw, List<String> findings, String output) {
++        return assemble(raw, findings, raw, output);
++    }
++
++    /** 回放模型的真实任务与输出段，验证错误目标不会被平台追加条款掩盖。 */
++    private OptimizationResult assemble(String raw, List<String> findings, String task, String output) {
+         var response = new EnhancementProviderResponse(List.of(
+                 new PromptSection(PromptSectionType.BACKGROUND, "背景", "本次用户提供的任务资料。"),
+-                new PromptSection(PromptSectionType.TASK, "任务", raw),
++                new PromptSection(PromptSectionType.TASK, "任务", task),
+                 new PromptSection(PromptSectionType.OUTPUT, "输出", output),
+                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不编造事实。")
+         ), "test", "test-model", false, List.of());
+diff --git a/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/ReportDraftGuidanceTest.java b/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/ReportDraftGuidanceTest.java
+index 5f64eed..8af73c0 100644
+--- a/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/ReportDraftGuidanceTest.java
++++ b/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/ReportDraftGuidanceTest.java
+@@ -98,6 +98,8 @@ class ReportDraftGuidanceTest {
+                 .andExpect(jsonPath("$.messages[0].content").value(containsString("执行前确认仍须遵守")))
+                 .andExpect(jsonPath("$.messages[1].content").value(containsString("要求撰写分析正文或报告时")))
+                 .andExpect(jsonPath("$.messages[1].content").value(containsString("沿用用户给定的分析问题与章节")))
++                .andExpect(jsonPath("$.messages[1].content").value(containsString("不主动铺空结果表或逐节复读待确认")))
++                .andExpect(jsonPath("$.messages[1].content").value(containsString("一般规律和可能解释不能写成本研究已观察到的结果")))
+                 .andExpect(jsonPath("$.messages[1].content").value(containsString("Arriaga")))
+                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+         assertThat(provider.enhance(request(RESEARCH_REPORT)).sections()).hasSize(4);
+@@ -109,7 +111,7 @@ class ReportDraftGuidanceTest {
+         var response = new MockPromptEnhancementProvider().enhance(request(RESEARCH_REPORT));
+         String output = response.sections().stream().filter(section -> section.type() == PromptSectionType.OUTPUT)
+                 .findFirst().orElseThrow().content();
+-        assertThat(output).contains("候选方法", "适用条件", "结果呈现", "专业建议不冒充已选口径")
++        assertThat(output).contains("候选方法", "适用条件", "比较逻辑", "专业建议不冒充已选口径")
+                 .doesNotContain("可按研究背景、资料与方法、分析结果、讨论、局限与结论组织正文");
+     }
+ 
+diff --git a/services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleValidatedResponseTest.java b/services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleValidatedResponseTest.java
+index 4778eca..80b48c2 100644
+--- a/services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleValidatedResponseTest.java
++++ b/services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleValidatedResponseTest.java
+@@ -3,6 +3,7 @@ package com.promptoptimizer.provider.infrastructure.openai;
+ import com.fasterxml.jackson.databind.ObjectMapper;
+ import com.promptoptimizer.context.domain.ContextSnapshot;
+ import com.promptoptimizer.enhancement.domain.OptimizationResult;
++import com.promptoptimizer.enhancement.domain.PromptSectionType;
+ import com.promptoptimizer.enhancement.domain.TemplateCode;
+ import com.promptoptimizer.enhancement.dto.EnhancementOptions;
+ import com.promptoptimizer.enhancement.dto.PlanAnswer;
+@@ -11,6 +12,7 @@ import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
+ import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
+ import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
+ import com.promptoptimizer.template.domain.PromptTemplate;
++import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.params.ParameterizedTest;
+@@ -40,6 +42,12 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
+  */
+ class OpenAiCompatibleValidatedResponseTest {
+     private static final String ENDPOINT = "https://model.example.com/chat/completions";
++    private static final String REPORT_REQUEST = """
++            我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:
++            1.时间序列的长期趋势和季节性趋势
++            2.分性别\\地区\\分人群\\分亚类去进行比较
++            3.进行减寿分析:年度的\\性别的yll和yll率
++            4.采用Arriaga分解方法去分析""";
+     private final ObjectMapper mapper = new ObjectMapper();
+     private final ContextSnapshot context = new ContextSnapshot("", List.of(), List.of(), List.of(),
+             List.of(), List.of(), List.of(), "v1");
+@@ -164,6 +172,79 @@ class OpenAiCompatibleValidatedResponseTest {
+         server.verify();
+     }
+ 
++    /** 回放模型将分析正文改成方案的响应，必须修正文段，不能靠平台追加初稿条款放行。 */
++    @Test
++    void shouldRepairAReportDowngradedToAPlanBeforeReturningTheAssembledPrompt() throws Exception {
++        expect(reportContent("为上述研究撰写一份可执行的分析方案，供下游执行者据此开展分析。",
++                "交付一份结构化的分析方案文档，包括方法和表结构。"));
++        String repairedTask = "撰写2015-2025年某地区心脑血管疾病死亡率特征分析正文，"
++                + "覆盖长期与季节性趋势、分组比较、年度及性别YLL和YLL率、Arriaga分解四个方向。";
++        String repairedOutput = "交付有实质内容的分析报告初稿，沿用四个分析方向；"
++                + "缺少真实数据的数值和结论保持未核实，其余有依据的正文继续完成。";
++        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
++            var messages = mapper.readTree(((MockClientHttpRequest) request).getBodyAsString()).path("messages");
++            assertThat(messages.get(messages.size() - 1).path("content").asText()).contains("RULE_CONFLICT");
++            String input = messages.get(1).path("content").asText();
++            assertThat(mapper.readTree(input.substring(input.indexOf('{'))).path("rawPrompt").asText())
++                    .isEqualTo(REPORT_REQUEST);
++        }).andRespond(withSuccess(completion(reportContent(repairedTask, repairedOutput)), MediaType.APPLICATION_JSON));
++
++        var result = provider.enhanceValidated(reportRequest(), this::assembleReport);
++
++        assertThat(result.sections().stream().filter(section -> section.type() == PromptSectionType.TASK)
++                .findFirst().orElseThrow().content()).isEqualTo(repairedTask);
++        assertThat(result.sections().stream().filter(section -> section.type() == PromptSectionType.OUTPUT)
++                .findFirst().orElseThrow().content()).contains(repairedOutput);
++        assertThat(result.optimizedPrompt()).doesNotContain("撰写一份可执行的分析方案", "交付一份结构化的分析方案文档")
++                .contains("参考寿命表尚未确定", "Arriaga", "季节性", "YLL");
++        server.verify();
++    }
++
++    /** 正确尾注不能掩盖旧错误任务；连续违约消耗同一三次预算后必须明确失败。 */
++    @Test
++    void shouldExhaustThreeAttemptsWhenReportDowngradesRemainBesideCorrectTailNotes() throws Exception {
++        expect(reportContent("为上述研究撰写一份分析方案。", "交付一份分析方案文档。"));
++        expect(reportContent("为上述研究撰写一份分析方案。",
++                "交付完整分析报告正文，资料不足时完成有依据的初稿。"));
++        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
++            var messages = mapper.readTree(((MockClientHttpRequest) request).getBodyAsString()).path("messages");
++            // 修复提示替换前一条提示；不能因反复追加正确尾注而把矛盾的模型响应视为成功。
++            assertThat(messages).hasSize(3);
++            assertThat(messages.get(2).path("content").asText()).contains("RULE_CONFLICT");
++        }).andRespond(withSuccess(completion(reportContent("撰写2015-2025年某地区心脑血管疾病死亡率特征分析正文。",
++                "交付一份结构化的分析方案文档。\n资料充分时交付报告正文，不足时完成有依据的初稿。")),
++                MediaType.APPLICATION_JSON));
++
++        assertThatThrownBy(() -> provider.enhanceValidated(reportRequest(), this::assembleReport))
++                .isInstanceOfSatisfying(ProviderResponseValidationException.class,
++                        failure -> assertThat(failure.getReason()).isEqualTo(ProviderResponseValidationException.Reason.RULE_CONFLICT));
++        server.verify();
++    }
++
++    /** 使用实际任务画像与直接增强选项，保持截图任务未开启 Plan、示例且没有资料的条件。 */
++    private EnhancementProviderRequest reportRequest() {
++        return new EnhancementProviderRequest(REPORT_REQUEST, context,
++                new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, REPORT_REQUEST), List.of(), List.of(),
++                List.of(), EnhancementOptions.defaults(), null);
++    }
++
++    /** 校验回调使用生产组装器，不能在测试里提前纠正模型的错误交付目标。 */
++    private OptimizationResult assembleReport(EnhancementProviderResponse response) {
++        return new OptimizationResultAssembler().assemble(response, context,
++                new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, REPORT_REQUEST),
++                List.of(), List.of(), false, List.of(), false, 1, REPORT_REQUEST);
++    }
++
++    /** 只替换模型的任务与输出；真实缺口继续保留，证明修复没有靠删除未知换取通过。 */
++    private Map<String, Object> reportContent(String task, String output) {
++        return Map.of("sections", List.of(
++                Map.of("type", "BACKGROUND", "title", "背景", "content", "研究目标是2015-2025年某地区心脑血管疾病死亡率特征。"),
++                Map.of("type", "TASK", "title", "任务", "content", task),
++                Map.of("type", "OUTPUT", "title", "输出", "content", output),
++                Map.of("type", "CONSTRAINTS", "title", "约束", "content", "不编造数据、引用或统计结论。")),
++                "ambiguities", List.of("参考寿命表尚未确定，仅影响依赖它的YLL计算。"));
++    }
++
+     private OptimizationResult assemble(EnhancementProviderResponse response, boolean confirmed) {
+         return new OptimizationResultAssembler().assemble(response, context, template, List.of(),
+                 confirmed ? List.of(new PlanAnswer("q1", "输出格式是什么？", "只交付 Markdown 表格和验收清单")) : List.of(),

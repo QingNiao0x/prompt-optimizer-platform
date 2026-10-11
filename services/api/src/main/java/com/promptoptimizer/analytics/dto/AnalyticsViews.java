@@ -153,21 +153,24 @@ public final class AnalyticsViews {
      */
     public record TokenRank(String source, long callCount, long successCount, long failureCount,
                             long completeUsageCount, long partialUsageCount, long unknownUsageCount,
-                            long invalidUsageCount, String inputTokens, String outputTokens, String totalTokens,
+                            long invalidUsageCount, long cacheKnownUsageCount, long cacheUnknownUsageCount,
+                            String inputTokens, String outputTokens, String totalTokens,
                             String cacheHitTokens, String cacheMissTokens) { }
 
     /** 周期为完整自然日、周或月；GLOBAL 跨租户，TENANT 显式限定一个租户。 */
     public record TokenRankingView(PeriodView period, String scope, UUID tenantId, String groupBy,
                                    List<TokenRank> ranking) { }
 
-    /** audit_event 模型事实的安全投影；无账号、IP、正文、凭据或完整 details JSON。 */
+    /** audit_event 模型事实的安全投影；无账号、IP、正文、凭据或完整 details JSON。
+     * Token 为十进制文本/null；occurredAt 为调用开始 UTC 时刻，durationMs 为毫秒。
+     */
     public record ModelCallView(UUID eventId, UUID tenantId, OffsetDateTime occurredAt,
                                 String requestId, String workflowId, String operation,
                                 String providerRoute, String model, int attempt, boolean mock,
                                 boolean successful, String failureType, Integer upstreamStatus,
                                 boolean willRetry, String transportState, String usageState, String cacheState,
-                                Long inputTokens, Long outputTokens, Long totalTokens,
-                                Long cacheHitTokens, Long cacheMissTokens, long durationMs) { }
+                                String inputTokens, String outputTokens, String totalTokens,
+                                String cacheHitTokens, String cacheMissTokens, long durationMs) { }
 
     /** 模型对账明细页与 MyBatis-Plus 分页契约一致。 */
     public record ModelCallPage(PeriodView period, String scope, UUID tenantId,

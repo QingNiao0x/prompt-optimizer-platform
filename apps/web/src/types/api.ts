@@ -277,6 +277,90 @@ export interface AnalyticsOperationQuery extends AnalyticsAccountFilters {
   size: number;
 }
 
+/** 模型对账只按租户归属；不得加入账号、邮箱或名称过滤条件。 */
+export type ModelCallScope = 'GLOBAL' | 'TENANT';
+export type ModelCallOperation = 'prompt.optimize' | 'plan.generate' | 'document.summary.map' | 'document.summary.reduce' | 'context.embedding' | 'unknown';
+export type ModelCallUsageState = 'COMPLETE' | 'PARTIAL' | 'UNKNOWN' | 'INVALID';
+export interface TokenRankingQuery {
+  period: AnalyticsRankingPeriod;
+  date: string;
+  scope: ModelCallScope;
+  tenantId?: string;
+  groupBy: 'OPERATION' | 'SOURCE';
+  limit: number;
+}
+
+/** Token 数字以十进制文本传输，避免 JS number 丢失大整数精度。 */
+export interface TokenRank {
+  source: string;
+  callCount: number;
+  successCount: number;
+  failureCount: number;
+  completeUsageCount: number;
+  partialUsageCount: number;
+  unknownUsageCount: number;
+  invalidUsageCount: number;
+  cacheKnownUsageCount: number;
+  cacheUnknownUsageCount: number;
+  inputTokens: string;
+  outputTokens: string;
+  totalTokens: string;
+  cacheHitTokens: string;
+  cacheMissTokens: string;
+}
+export interface TokenRanking {
+  period: AnalyticsPeriodView;
+  scope: ModelCallScope;
+  tenantId: string | null;
+  groupBy: 'OPERATION' | 'SOURCE';
+  ranking: TokenRank[];
+}
+export interface ModelCallQuery {
+  fromDate: string;
+  toDate: string;
+  scope: ModelCallScope;
+  tenantId?: string;
+  operation?: ModelCallOperation;
+  requestId?: string;
+  current: number;
+  size: number;
+}
+export interface ModelCallRecord {
+  eventId: string;
+  tenantId: string;
+  occurredAt: string;
+  requestId: string | null;
+  workflowId: string | null;
+  operation: ModelCallOperation;
+  providerRoute: string;
+  model: string;
+  attempt: number;
+  mock: boolean;
+  successful: boolean;
+  failureType: string | null;
+  upstreamStatus: number | null;
+  willRetry: boolean;
+  transportState: 'MOCK' | 'NOT_SENT' | 'STARTED' | 'RESPONSE_RECEIVED' | 'UNKNOWN';
+  usageState: ModelCallUsageState;
+  cacheState: 'HIT' | 'MISS' | 'MIXED' | 'NONE' | 'UNKNOWN';
+  inputTokens: string | null;
+  outputTokens: string | null;
+  totalTokens: string | null;
+  cacheHitTokens: string | null;
+  cacheMissTokens: string | null;
+  durationMs: number;
+}
+export interface ModelCallPage {
+  period: AnalyticsPeriodView;
+  scope: ModelCallScope;
+  tenantId: string | null;
+  records: ModelCallRecord[];
+  total: number;
+  size: number;
+  current: number;
+  pages: number;
+}
+
 export type AdminModelChange = Omit<AdminModel, 'id' | 'publicId'>;
 
 export interface LoginPayload {

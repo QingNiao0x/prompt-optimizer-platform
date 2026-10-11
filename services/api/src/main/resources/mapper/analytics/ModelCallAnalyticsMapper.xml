@@ -11,6 +11,8 @@
             <arg column="partial_usage_count" javaType="_long"/>
             <arg column="unknown_usage_count" javaType="_long"/>
             <arg column="invalid_usage_count" javaType="_long"/>
+            <arg column="cache_known_usage_count" javaType="_long"/>
+            <arg column="cache_unknown_usage_count" javaType="_long"/>
             <arg column="input_tokens" javaType="java.lang.String"/>
             <arg column="output_tokens" javaType="java.lang.String"/>
             <arg column="total_tokens" javaType="java.lang.String"/>
@@ -37,11 +39,11 @@
             <arg column="transport_state" javaType="java.lang.String"/>
             <arg column="usage_state" javaType="java.lang.String"/>
             <arg column="cache_state" javaType="java.lang.String"/>
-            <arg column="input_tokens" javaType="java.lang.Long"/>
-            <arg column="output_tokens" javaType="java.lang.Long"/>
-            <arg column="total_tokens" javaType="java.lang.Long"/>
-            <arg column="cache_hit_tokens" javaType="java.lang.Long"/>
-            <arg column="cache_miss_tokens" javaType="java.lang.Long"/>
+            <arg column="input_tokens" javaType="java.lang.String"/>
+            <arg column="output_tokens" javaType="java.lang.String"/>
+            <arg column="total_tokens" javaType="java.lang.String"/>
+            <arg column="cache_hit_tokens" javaType="java.lang.String"/>
+            <arg column="cache_miss_tokens" javaType="java.lang.String"/>
             <arg column="duration_ms" javaType="_long"/>
         </constructor>
     </resultMap>
@@ -113,6 +115,11 @@
             SELECT *,
                 <!-- 校验真实数字，不仅信任状态代码；损坏或旧格式 JSON 不得导致 CAST 错误或伪造消费。 -->
                 CASE WHEN reported_usage_state = 'INVALID'
+                          OR (details->'inputTokens' IS NOT NULL AND details->'inputTokens' != 'null'::jsonb AND input_tokens IS NULL)
+                          OR (details->'outputTokens' IS NOT NULL AND details->'outputTokens' != 'null'::jsonb AND output_tokens IS NULL)
+                          OR (details->'totalTokens' IS NOT NULL AND details->'totalTokens' != 'null'::jsonb AND total_tokens IS NULL)
+                          OR (details->'cacheHitTokens' IS NOT NULL AND details->'cacheHitTokens' != 'null'::jsonb AND cache_hit_tokens IS NULL)
+                          OR (details->'cacheMissTokens' IS NOT NULL AND details->'cacheMissTokens' != 'null'::jsonb AND cache_miss_tokens IS NULL)
                           OR (input_tokens IS NOT NULL AND output_tokens IS NOT NULL AND total_tokens IS NOT NULL
                               AND input_tokens + output_tokens != total_tokens)
                           OR (input_tokens IS NOT NULL AND cache_hit_tokens IS NOT NULL AND cache_hit_tokens > input_tokens)
@@ -144,6 +151,8 @@
                COUNT(*) FILTER (WHERE usage_state = 'PARTIAL') AS partial_usage_count,
                COUNT(*) FILTER (WHERE usage_state = 'UNKNOWN') AS unknown_usage_count,
                COUNT(*) FILTER (WHERE usage_state = 'INVALID') AS invalid_usage_count,
+               COUNT(*) FILTER (WHERE usage_state != 'INVALID' AND cache_hit_tokens IS NOT NULL AND cache_miss_tokens IS NOT NULL) AS cache_known_usage_count,
+               COUNT(*) FILTER (WHERE usage_state = 'INVALID' OR cache_hit_tokens IS NULL OR cache_miss_tokens IS NULL) AS cache_unknown_usage_count,
                <!-- PostgreSQL numeric 求和后返回十进制文本，跨大数据量也不会溢出 long 或丢失 JS 精度。 -->
                COALESCE(SUM(input_tokens) FILTER (WHERE usage_state != 'INVALID'), 0)::text AS input_tokens,
                COALESCE(SUM(output_tokens) FILTER (WHERE usage_state != 'INVALID'), 0)::text AS output_tokens,
@@ -170,10 +179,9 @@
         SELECT event_id, tenant_id, occurred_at, request_id, workflow_id, operation, provider_route, model,
                attempt, mock, successful, failure_type, upstream_status, will_retry, transport_state, usage_state,
                CASE WHEN usage_state = 'INVALID' THEN 'UNKNOWN' ELSE cache_state END AS cache_state,
-               input_tokens::bigint, output_tokens::bigint, total_tokens::bigint,
-               cache_hit_tokens::bigint, cache_miss_tokens::bigint, duration_ms
+               input_tokens::text, output_tokens::text, total_tokens::text,
+               cache_hit_tokens::text, cache_miss_tokens::text, duration_ms
           FROM calls WHERE <include refid="detailPredicate"/>
          ORDER BY occurred_at DESC, event_id DESC
     </select>
 </mapper>
-

@@ -20,6 +20,9 @@ import com.promptoptimizer.context.domain.DocumentProcessingPhase;
 import com.promptoptimizer.context.domain.DocumentSelection;
 import com.promptoptimizer.context.domain.DocumentUploadStatus;
 import com.promptoptimizer.identity.support.TestActors;
+import com.promptoptimizer.common.logging.ModelCallAuditContext;
+import com.promptoptimizer.common.logging.ModelCallLogger;
+import com.promptoptimizer.common.logging.ModelCallObservation;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.http.MediaType;
@@ -51,6 +54,38 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @Description: 验证大型文档分片上传、全文索引、尾部检索和安全路径拦截。
  */
 class TemporaryDocumentIndexServiceTest {
+
+    @Test
+    void asynchronousEmbeddingKeepsOnlyTrustedTenantAuditScope() throws Exception {
+        UUID tenant = TestActors.identity(TestActors.USER_ID).tenantId();
+        var facts = new java.util.concurrent.ConcurrentLinkedQueue<ModelCallObservation>();
+        TextEmbeddingModel model = inputs -> {
+            assertThat(ModelCallAuditContext.capture().tenantId()).isEqualTo(tenant);
+            try (var attempt = ModelCallLogger.beginAttempt()) {
+                ModelCallLogger.completed("context.embedding", "fixture", "fixture-embedding", "SERVER_CONFIGURED",
+                        false, 1, inputs.size(), 1, new ModelCallLogger.TokenUsage(8L, null, 8L));
+            }
+            return new TextEmbeddingModel.EmbeddingBatch("fixture-embedding", inputs.stream().map(value -> new float[]{1, 0}).toList());
+        };
+        TemporaryDocumentIndexService service = createService(new SemanticVectorIndex(model,
+                new SemanticVectorIndexOptions(true, 16, 48000)));
+        try {
+            byte[] bytes = "模型对账测试文档，不会发送到外部供应商。".repeat(20).getBytes(StandardCharsets.UTF_8);
+            var created = service.create(new DocumentUploadCreateRequest("ledger-fixture.txt", "text", bytes.length));
+            uploadAllChunks(service, created.documentId(), bytes, created.chunkSizeBytes());
+            try (var scope = ModelCallAuditContext.bind(new ModelCallAuditContext.Snapshot(tenant, (id, call) -> {
+                assertThat(id).isEqualTo(tenant);
+                facts.add(call);
+            }))) { service.completeUpload(created.documentId()); }
+            assertThat(awaitTerminalStatus(service, created.documentId()).phase()).isEqualTo(DocumentProcessingPhase.READY);
+            assertThat(facts).isNotEmpty().allSatisfy(call -> {
+                assertThat(call.operation()).isEqualTo("context.embedding");
+                assertThat(call.workflowId()).matches("[a-f0-9]{20}");
+                assertThat(call.usage().totalTokens()).isEqualTo(8);
+            });
+            assertThat(ModelCallAuditContext.capture()).isNull();
+        } finally { service.close(); }
+    }
 
     @Test
     void shouldNotCalculateQueryVectorsBeforeTheDocumentIsReady() {

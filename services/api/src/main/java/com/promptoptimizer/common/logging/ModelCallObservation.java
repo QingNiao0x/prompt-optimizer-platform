@@ -9,6 +9,9 @@ import java.util.UUID;
 /**
  * 一次模型调用尝试的白名单快照。只保留关联号、公开来源、固定状态和数字用量；
  * 不包含用户标识、正文、端点、凭据或原始异常消息。
+ *
+ * @author QingNiao
+ * @since 0.1.0
  */
 public record ModelCallObservation(
         UUID eventId, OffsetDateTime startedAt, String requestId, String workflowId,

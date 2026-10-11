@@ -3,6 +3,7 @@ package com.promptoptimizer.provider.infrastructure.openai;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
+import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.enhancement.dto.EnhancementOptions;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
@@ -11,6 +12,7 @@ import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
 import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import com.promptoptimizer.template.domain.PromptTemplate;
+import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,6 +42,12 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  */
 class OpenAiCompatibleValidatedResponseTest {
     private static final String ENDPOINT = "https://model.example.com/chat/completions";
+    private static final String REPORT_REQUEST = """
+            我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:
+            1.时间序列的长期趋势和季节性趋势
+            2.分性别\\地区\\分人群\\分亚类去进行比较
+            3.进行减寿分析:年度的\\性别的yll和yll率
+            4.采用Arriaga分解方法去分析""";
     private final ObjectMapper mapper = new ObjectMapper();
     private final ContextSnapshot context = new ContextSnapshot("", List.of(), List.of(), List.of(),
             List.of(), List.of(), List.of(), "v1");
@@ -162,6 +170,79 @@ class OpenAiCompatibleValidatedResponseTest {
                 .isInstanceOfSatisfying(ProviderResponseValidationException.class,
                         failure -> assertThat(failure.getReason()).isEqualTo(ProviderResponseValidationException.Reason.RULE_CONFLICT));
         server.verify();
+    }
+
+    /** 回放模型将分析正文改成方案的响应，必须修正文段，不能靠平台追加初稿条款放行。 */
+    @Test
+    void shouldRepairAReportDowngradedToAPlanBeforeReturningTheAssembledPrompt() throws Exception {
+        expect(reportContent("为上述研究撰写一份可执行的分析方案，供下游执行者据此开展分析。",
+                "交付一份结构化的分析方案文档，包括方法和表结构。"));
+        String repairedTask = "撰写2015-2025年某地区心脑血管疾病死亡率特征分析正文，"
+                + "覆盖长期与季节性趋势、分组比较、年度及性别YLL和YLL率、Arriaga分解四个方向。";
+        String repairedOutput = "交付有实质内容的分析报告初稿，沿用四个分析方向；"
+                + "缺少真实数据的数值和结论保持未核实，其余有依据的正文继续完成。";
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var messages = mapper.readTree(((MockClientHttpRequest) request).getBodyAsString()).path("messages");
+            assertThat(messages.get(messages.size() - 1).path("content").asText()).contains("RULE_CONFLICT");
+            String input = messages.get(1).path("content").asText();
+            assertThat(mapper.readTree(input.substring(input.indexOf('{'))).path("rawPrompt").asText())
+                    .isEqualTo(REPORT_REQUEST);
+        }).andRespond(withSuccess(completion(reportContent(repairedTask, repairedOutput)), MediaType.APPLICATION_JSON));
+
+        var result = provider.enhanceValidated(reportRequest(), this::assembleReport);
+
+        assertThat(result.sections().stream().filter(section -> section.type() == PromptSectionType.TASK)
+                .findFirst().orElseThrow().content()).isEqualTo(repairedTask);
+        assertThat(result.sections().stream().filter(section -> section.type() == PromptSectionType.OUTPUT)
+                .findFirst().orElseThrow().content()).contains(repairedOutput);
+        assertThat(result.optimizedPrompt()).doesNotContain("撰写一份可执行的分析方案", "交付一份结构化的分析方案文档")
+                .contains("参考寿命表尚未确定", "Arriaga", "季节性", "YLL");
+        server.verify();
+    }
+
+    /** 正确尾注不能掩盖旧错误任务；连续违约消耗同一三次预算后必须明确失败。 */
+    @Test
+    void shouldExhaustThreeAttemptsWhenReportDowngradesRemainBesideCorrectTailNotes() throws Exception {
+        expect(reportContent("为上述研究撰写一份分析方案。", "交付一份分析方案文档。"));
+        expect(reportContent("为上述研究撰写一份分析方案。",
+                "交付完整分析报告正文，资料不足时完成有依据的初稿。"));
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var messages = mapper.readTree(((MockClientHttpRequest) request).getBodyAsString()).path("messages");
+            // 修复提示替换前一条提示；不能因反复追加正确尾注而把矛盾的模型响应视为成功。
+            assertThat(messages).hasSize(3);
+            assertThat(messages.get(2).path("content").asText()).contains("RULE_CONFLICT");
+        }).andRespond(withSuccess(completion(reportContent("撰写2015-2025年某地区心脑血管疾病死亡率特征分析正文。",
+                "交付一份结构化的分析方案文档。\n资料充分时交付报告正文，不足时完成有依据的初稿。")),
+                MediaType.APPLICATION_JSON));
+
+        assertThatThrownBy(() -> provider.enhanceValidated(reportRequest(), this::assembleReport))
+                .isInstanceOfSatisfying(ProviderResponseValidationException.class,
+                        failure -> assertThat(failure.getReason()).isEqualTo(ProviderResponseValidationException.Reason.RULE_CONFLICT));
+        server.verify();
+    }
+
+    /** 使用实际任务画像与直接增强选项，保持截图任务未开启 Plan、示例且没有资料的条件。 */
+    private EnhancementProviderRequest reportRequest() {
+        return new EnhancementProviderRequest(REPORT_REQUEST, context,
+                new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, REPORT_REQUEST), List.of(), List.of(),
+                List.of(), EnhancementOptions.defaults(), null);
+    }
+
+    /** 校验回调使用生产组装器，不能在测试里提前纠正模型的错误交付目标。 */
+    private OptimizationResult assembleReport(EnhancementProviderResponse response) {
+        return new OptimizationResultAssembler().assemble(response, context,
+                new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, REPORT_REQUEST),
+                List.of(), List.of(), false, List.of(), false, 1, REPORT_REQUEST);
+    }
+
+    /** 只替换模型的任务与输出；真实缺口继续保留，证明修复没有靠删除未知换取通过。 */
+    private Map<String, Object> reportContent(String task, String output) {
+        return Map.of("sections", List.of(
+                Map.of("type", "BACKGROUND", "title", "背景", "content", "研究目标是2015-2025年某地区心脑血管疾病死亡率特征。"),
+                Map.of("type", "TASK", "title", "任务", "content", task),
+                Map.of("type", "OUTPUT", "title", "输出", "content", output),
+                Map.of("type", "CONSTRAINTS", "title", "约束", "content", "不编造数据、引用或统计结论。")),
+                "ambiguities", List.of("参考寿命表尚未确定，仅影响依赖它的YLL计算。"));
     }
 
     private OptimizationResult assemble(EnhancementProviderResponse response, boolean confirmed) {

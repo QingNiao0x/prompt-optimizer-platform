@@ -6,12 +6,14 @@ import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * 从真实结果组装入口验证报告缺资料时仍交付正文，且不丢失冲突及明确的确认门槛。
@@ -20,8 +22,43 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 0.1.0
  */
 class ReportDraftDeliveryAssemblyTest {
+    private static final String SCREENSHOT_RAW = """
+            我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:
+            1.时间序列的长期趋势和季节性趋势
+            2.分性别\\地区\\分人群\\分亚类去进行比较
+            3.进行减寿分析:年度的\\性别的yll和yll率
+            4.采用Arriaga分解方法去分析""";
     private static final String RAW = "我想撰写2015-2025年某地区心脑血管疾病死亡率特征分析，"
             + "分析长期趋势和季节性趋势，按性别、地区、人群和亚类比较，分析年度及性别YLL和YLL率，采用Arriaga分解方法。";
+
+    @Test
+    void shouldRejectTheScreenshotTaskDowngradeBeforeAppendingDraftGuidance() {
+        assertThatThrownBy(() -> assemble(SCREENSHOT_RAW, List.of(),
+                "为上述研究撰写一份可执行的分析方案，供下游执行者据此开展分析。", "交付分析方案文档。"))
+                .isInstanceOfSatisfying(ProviderResponseValidationException.class, failure -> {
+                    assertThat(failure.getReason()).isEqualTo(ProviderResponseValidationException.Reason.RULE_CONFLICT);
+                    assertThat(failure.getField()).isEqualTo("sections.TASK");
+                    assertThat(failure.isModelRepairable()).isTrue();
+                });
+    }
+
+    @Test
+    void shouldRejectAnOutputDowngradeEvenWhenTheTaskStillRequestsAReport() {
+        assertThatThrownBy(() -> assemble(SCREENSHOT_RAW, List.of(), "撰写死亡率特征分析报告。",
+                "交付一份统计分析方案，不提供报告正文。"))
+                .isInstanceOfSatisfying(ProviderResponseValidationException.class,
+                        failure -> assertThat(failure.getField()).isEqualTo("sections.OUTPUT"));
+    }
+
+    @Test
+    void shouldRejectWholeReportDeferralWhileAllowingCalculationSpecificGaps() {
+        assertThatThrownBy(() -> assemble(SCREENSHOT_RAW, List.of(), "撰写死亡率特征分析报告。",
+                "请先补齐所有资料，再开始撰写报告。"))
+                .isInstanceOf(ProviderResponseValidationException.class);
+        var result = assemble(SCREENSHOT_RAW, List.of(), "撰写死亡率特征分析报告，方法部分比较候选分析方案。",
+                "交付报告正文。仅在参考寿命表明确后计算 YLL 数值；其他有依据的内容继续撰写。不得改成分析方案。");
+        assertThat(section(result, PromptSectionType.OUTPUT)).contains("交付报告正文", "参考寿命表明确后计算");
+    }
 
     @Test
     void shouldKeepDraftProgressAndPlaceMissingInputsInOneCompleteList() {
@@ -107,9 +144,14 @@ class ReportDraftDeliveryAssemblyTest {
 
     /** 用实际组装入口回放已有输出段，避免仅比较模板字符串掩盖重复追加。 */
     private OptimizationResult assemble(String raw, List<String> findings, String output) {
+        return assemble(raw, findings, raw, output);
+    }
+
+    /** 回放模型的真实任务与输出段，验证错误目标不会被平台追加条款掩盖。 */
+    private OptimizationResult assemble(String raw, List<String> findings, String task, String output) {
         var response = new EnhancementProviderResponse(List.of(
                 new PromptSection(PromptSectionType.BACKGROUND, "背景", "本次用户提供的任务资料。"),
-                new PromptSection(PromptSectionType.TASK, "任务", raw),
+                new PromptSection(PromptSectionType.TASK, "任务", task),
                 new PromptSection(PromptSectionType.OUTPUT, "输出", output),
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不编造事实。")
         ), "test", "test-model", false, List.of());

@@ -1,0 +1,25 @@
+[
+  {
+    "name": "com.promptoptimizer.enhancement.service.impl.ReportDraftDeliveryAssemblyTest",
+    "tests": 11,
+    "failures": 3,
+    "errors": 0,
+    "skipped": 0,
+    "failureNames": [
+      "shouldRejectWholeReportDeferralWhileAllowingCalculationSpecificGaps",
+      "shouldRejectAnOutputDowngradeEvenWhenTheTaskStillRequestsAReport",
+      "shouldRejectTheScreenshotTaskDowngradeBeforeAppendingDraftGuidance"
+    ]
+  },
+  {
+    "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleValidatedResponseTest",
+    "tests": 11,
+    "failures": 2,
+    "errors": 0,
+    "skipped": 0,
+    "failureNames": [
+      "shouldExhaustThreeAttemptsWhenReportDowngradesRemainBesideCorrectTailNotes",
+      "shouldRepairAReportDowngradedToAPlanBeforeReturningTheAssembledPrompt"
+    ]
+  }
+]

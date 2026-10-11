@@ -110,6 +110,8 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
                     false, null, false, 1, inputItems, elapsedMillis(startedAt));
             throw exception;
         } catch (RestClientResponseException exception) {
+            ModelCallLogger.captureTokenUsage(com.promptoptimizer.common.logging.ModelTokenUsageReader
+                    .readErrorUsage(exception.getResponseBodyAsByteArray()));
             int status = exception.getStatusCode().value();
             String failureType = failureType(status);
             ModelCallLogger.failed(operation, route.key(), modelId, "SERVER_CONFIGURED", failureType,
@@ -232,10 +234,15 @@ public class OpenAiCompatibleDocumentSummaryModel implements DocumentSummaryMode
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record ChatTokenUsage(
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @JsonProperty("prompt_tokens") Long promptTokens,
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @JsonProperty("completion_tokens") Long completionTokens,
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @JsonProperty("total_tokens") Long totalTokens,
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @JsonProperty("prompt_cache_hit_tokens") Long cacheHitTokens,
+            @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.promptoptimizer.common.logging.ReportedTokenCountDeserializer.class)
             @JsonProperty("prompt_cache_miss_tokens") Long cacheMissTokens
     ) {
     }

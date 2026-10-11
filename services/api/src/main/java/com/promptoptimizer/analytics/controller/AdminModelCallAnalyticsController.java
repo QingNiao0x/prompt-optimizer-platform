@@ -15,7 +15,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** 模型对账和 Token 排行仅供平台管理员；复用统一 401/403 与当前数据库角色复核。 */
+/**
+ * 模型对账和 Token 排行仅供平台管理员；复用统一 401/403 与当前数据库角色复核。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
 @Validated
 @RestController
 @RequestMapping("/api/v1/admin/analytics")

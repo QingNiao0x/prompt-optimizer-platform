@@ -1,0 +1,29 @@
+{
+  "caseId" : "RESEARCH",
+  "modelId" : "deepseek:deepseek-v4-pro",
+  "traces" : [ {
+    "sha256" : "0db462d46fd0c3f7fbb1070375bd0fcfa4334d200f0a9132f8e0d1decbee8a04",
+    "path" : "candidate-pro-v1\\RESEARCH-generation-trace-1.json"
+  }, {
+    "sha256" : "5b490797e28527cabda8588675d00eb79675837d83ed553c92e70166cbc08c9d",
+    "path" : "candidate-pro-v1\\RESEARCH-generation-trace-2.json"
+  } ],
+  "referenceResultSha256" : "809a17d8466cb8affc963240238dc03e4bf0ef59132240affa771683e048de21",
+  "effectiveOptions" : {
+    "templateCode" : "AUTO",
+    "includeConversationHistory" : false,
+    "includePermissionBoundaries" : true,
+    "includeExamples" : false
+  },
+  "planEnabled" : false,
+  "fieldEqual" : {
+    "optimizedPrompt" : true,
+    "sections" : true,
+    "appliedConstraints" : true,
+    "ambiguities" : true
+  },
+  "status" : "MATCH",
+  "expectedAttempts" : 2,
+  "replayedAttempts" : 2,
+  "requestBodiesEqual" : true
+}

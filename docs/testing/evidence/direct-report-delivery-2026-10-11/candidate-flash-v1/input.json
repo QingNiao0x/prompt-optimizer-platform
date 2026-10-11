@@ -1,0 +1,41 @@
+{
+  "schemaVersion" : 1,
+  "dataAuthorization" : "USER_PROVIDED_SCREENSHOT",
+  "modelId" : "deepseek:deepseek-flash",
+  "modelDisplayName" : "DeepSeek Flash",
+  "modelSelectionEvidence" : "沿用本地验收的配置路由投影；非管理员在线目录验收。",
+  "maxOutputTokens" : 8192,
+  "temperature" : 0.2,
+  "logicalCalls" : {
+    "enhancement" : 3,
+    "downstream" : 2,
+    "maximumEnhancementHttpCalls" : 9,
+    "automaticDownstreamRetry" : false
+  },
+  "fixtureEvidence" : "科研题逐字转写本轮用户截图，由用户请分析并解决授权；保留标点、换行和反斜线；无上下文、文件、身份或研究原始数据。邮件和Python为历史合成控制用例。",
+  "cases" : [ {
+    "id" : "RESEARCH",
+    "rawPrompt" : "我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析",
+    "contextDescription" : "",
+    "files" : [ ],
+    "dataAuthorization" : "USER_PROVIDED_SCREENSHOT",
+    "mode" : "direct",
+    "includeExamples" : false
+  }, {
+    "id" : "EMAIL",
+    "rawPrompt" : "请编写一封两句话的会议改期通知邮件：原定周三下午3点的项目例会改到周四同一时间，地点不变。只输出邮件正文。",
+    "contextDescription" : "",
+    "files" : [ ],
+    "dataAuthorization" : "SYNTHETIC",
+    "mode" : "direct",
+    "includeExamples" : false
+  }, {
+    "id" : "PYTHON",
+    "rawPrompt" : "用Python的requests库编写获取网页标题的函数，URL作为函数参数传入，处理请求失败和页面没有标题的情况，提供实现和独立测试文件。",
+    "contextDescription" : "",
+    "files" : [ ],
+    "dataAuthorization" : "SYNTHETIC",
+    "mode" : "direct",
+    "includeExamples" : false
+  } ]
+}

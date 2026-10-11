@@ -13,6 +13,9 @@ import java.util.UUID;
 /**
  * audit_event 中 MODEL_CALL_RECORDED 的只读映射；actor_user_id 必须为空。
  * JSON 仅投影对账白名单，查询不连接身份表；管理员全局或显式租户范围由应用服务限定。
+ *
+ * @author QingNiao
+ * @since 0.1.0
  */
 @Mapper
 public interface ModelCallAnalyticsMapper {

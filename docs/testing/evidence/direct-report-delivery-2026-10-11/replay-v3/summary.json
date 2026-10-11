@@ -1,0 +1,183 @@
+{
+  "scope" : "OFFLINE_V1_RESPONSE_REPLAY_NO_NETWORK_NO_DB_NO_HISTORY_NO_DOWNSTREAM_WORK",
+  "startedAt" : "2026-10-11T06:40:49.441040200Z",
+  "productionClassesSha256" : "9ce99f49b205e32876d7f60436f904a569066a0086b4cdcddfd29068ce0a5c9d",
+  "toolClassesSha256" : "0ec1e93a11d0a07ca0e3334dd2a08fe316869f5c273b5508b6b632753ed26bc5",
+  "toolSourceSha256" : "7d9bd8541ed43233b3cbdf25149ccd557697c08ec43042569e3b03f0860ec605",
+  "sourceManifestSha256" : "cd741d7d8da1974f5313176da8322899b3411f7b1f84ad760563ccbb6df71043",
+  "sourceVerification" : {
+    "changedFromV2" : 1,
+    "allFrozenHashesMatch" : true,
+    "files" : 379
+  },
+  "comparisonFields" : [ "optimizedPrompt", "sections", "appliedConstraints", "ambiguities" ],
+  "ignoredResultFields" : [ "id", "createdAt", "provider", "contextSummary", "templateCode", "originalPrompt" ],
+  "requestNormalization" : "None; JsonNode equality compares all body values, ignoring JSON object key order only",
+  "responseEnvelope" : "Reconstructed from preserved content, actualModel, finishReason, usage, httpStatus; unrecorded envelope metadata is not claimed identical",
+  "networkFactory" : "Always throws NETWORK_FORBIDDEN; interceptor never executes transport",
+  "cases" : [ {
+    "caseId" : "RESEARCH",
+    "modelId" : "deepseek:deepseek-flash",
+    "traces" : [ {
+      "sha256" : "55c90f708c1c9f305176e7a1a7a17e1e3fdf7a70c28d847a6e6588d8d7e3a2a5",
+      "path" : "candidate-flash-v1\\RESEARCH-generation-trace-1.json"
+    }, {
+      "sha256" : "cf96d7806cb6c3dfd9f5bdf3628608c78f874d3b61d422894939038121d635f1",
+      "path" : "candidate-flash-v1\\RESEARCH-generation-trace-2.json"
+    } ],
+    "referenceResultSha256" : "0ab8ea87eaaf12c3b32494b170a176207e9de71a6de3fe167f13d10876d5ddee",
+    "effectiveOptions" : {
+      "templateCode" : "AUTO",
+      "includeConversationHistory" : false,
+      "includePermissionBoundaries" : true,
+      "includeExamples" : false
+    },
+    "planEnabled" : false,
+    "fieldEqual" : {
+      "optimizedPrompt" : true,
+      "sections" : true,
+      "appliedConstraints" : true,
+      "ambiguities" : true
+    },
+    "status" : "MATCH",
+    "expectedAttempts" : 2,
+    "replayedAttempts" : 2,
+    "requestBodiesEqual" : true,
+    "inputSha256" : "903c75ab493755a2d5423f9b53f4c9ad399111e229d38849006120e6288700fd"
+  }, {
+    "caseId" : "EMAIL",
+    "modelId" : "deepseek:deepseek-flash",
+    "traces" : [ {
+      "sha256" : "13dcab47555d7683fef8f068d1dcd84ad605dba02db847a29a3eea29ae68ac66",
+      "path" : "candidate-flash-v1\\EMAIL-generation-trace-1.json"
+    } ],
+    "referenceResultSha256" : "0d6696bd208827960667510263abe3d34cc804faae8ae7b7cda13aa98a7703a1",
+    "effectiveOptions" : {
+      "templateCode" : "AUTO",
+      "includeConversationHistory" : false,
+      "includePermissionBoundaries" : true,
+      "includeExamples" : false
+    },
+    "planEnabled" : false,
+    "fieldEqual" : {
+      "optimizedPrompt" : true,
+      "sections" : true,
+      "appliedConstraints" : true,
+      "ambiguities" : true
+    },
+    "status" : "MATCH",
+    "expectedAttempts" : 1,
+    "replayedAttempts" : 1,
+    "requestBodiesEqual" : true,
+    "inputSha256" : "903c75ab493755a2d5423f9b53f4c9ad399111e229d38849006120e6288700fd"
+  }, {
+    "caseId" : "PYTHON",
+    "modelId" : "deepseek:deepseek-flash",
+    "traces" : [ {
+      "sha256" : "283b2ac9da3170f1af6b13b1de917b118c613994fb30085b0fdff872d8b894f6",
+      "path" : "candidate-flash-v1\\PYTHON-generation-trace-1.json"
+    } ],
+    "referenceResultSha256" : "1b4327ed7bf5d43ff8e3f61907d0d4547995db991d9707f52c07803e7228c2d8",
+    "effectiveOptions" : {
+      "templateCode" : "AUTO",
+      "includeConversationHistory" : false,
+      "includePermissionBoundaries" : true,
+      "includeExamples" : false
+    },
+    "planEnabled" : false,
+    "fieldEqual" : {
+      "optimizedPrompt" : true,
+      "sections" : true,
+      "appliedConstraints" : true,
+      "ambiguities" : true
+    },
+    "status" : "MATCH",
+    "expectedAttempts" : 1,
+    "replayedAttempts" : 1,
+    "requestBodiesEqual" : true,
+    "inputSha256" : "903c75ab493755a2d5423f9b53f4c9ad399111e229d38849006120e6288700fd"
+  }, {
+    "caseId" : "RESEARCH",
+    "modelId" : "deepseek:deepseek-v4-pro",
+    "traces" : [ {
+      "sha256" : "0db462d46fd0c3f7fbb1070375bd0fcfa4334d200f0a9132f8e0d1decbee8a04",
+      "path" : "candidate-pro-v1\\RESEARCH-generation-trace-1.json"
+    }, {
+      "sha256" : "5b490797e28527cabda8588675d00eb79675837d83ed553c92e70166cbc08c9d",
+      "path" : "candidate-pro-v1\\RESEARCH-generation-trace-2.json"
+    } ],
+    "referenceResultSha256" : "809a17d8466cb8affc963240238dc03e4bf0ef59132240affa771683e048de21",
+    "effectiveOptions" : {
+      "templateCode" : "AUTO",
+      "includeConversationHistory" : false,
+      "includePermissionBoundaries" : true,
+      "includeExamples" : false
+    },
+    "planEnabled" : false,
+    "fieldEqual" : {
+      "optimizedPrompt" : true,
+      "sections" : true,
+      "appliedConstraints" : true,
+      "ambiguities" : true
+    },
+    "status" : "MATCH",
+    "expectedAttempts" : 2,
+    "replayedAttempts" : 2,
+    "requestBodiesEqual" : true,
+    "inputSha256" : "7c64698553ddc14fe8108a6fb6fe62cde275c57ca551bf12836336d03ef255cb"
+  }, {
+    "caseId" : "EMAIL",
+    "modelId" : "deepseek:deepseek-v4-pro",
+    "traces" : [ {
+      "sha256" : "7b5a0e0bb81851e86ae55905f3238432b432f6fec8fab2b2ac36c1f7655576a0",
+      "path" : "candidate-pro-v1\\EMAIL-generation-trace-1.json"
+    } ],
+    "referenceResultSha256" : "c679b5fea48f7c88a661421373b27c1ae5057efd981a3b4227fd3034fb947c64",
+    "effectiveOptions" : {
+      "templateCode" : "AUTO",
+      "includeConversationHistory" : false,
+      "includePermissionBoundaries" : true,
+      "includeExamples" : false
+    },
+    "planEnabled" : false,
+    "fieldEqual" : {
+      "optimizedPrompt" : true,
+      "sections" : true,
+      "appliedConstraints" : true,
+      "ambiguities" : true
+    },
+    "status" : "MATCH",
+    "expectedAttempts" : 1,
+    "replayedAttempts" : 1,
+    "requestBodiesEqual" : true,
+    "inputSha256" : "7c64698553ddc14fe8108a6fb6fe62cde275c57ca551bf12836336d03ef255cb"
+  }, {
+    "caseId" : "PYTHON",
+    "modelId" : "deepseek:deepseek-v4-pro",
+    "traces" : [ {
+      "sha256" : "48d27e9a602cf50388e23948feec9136e01264891f76a2bf2616169a4f652894",
+      "path" : "candidate-pro-v1\\PYTHON-generation-trace-1.json"
+    } ],
+    "referenceResultSha256" : "2859f5803c4fdb25083fe3be29a5a22de6671be7083a28d085cb4412deb01b05",
+    "effectiveOptions" : {
+      "templateCode" : "AUTO",
+      "includeConversationHistory" : false,
+      "includePermissionBoundaries" : true,
+      "includeExamples" : false
+    },
+    "planEnabled" : false,
+    "fieldEqual" : {
+      "optimizedPrompt" : true,
+      "sections" : true,
+      "appliedConstraints" : true,
+      "ambiguities" : true
+    },
+    "status" : "MATCH",
+    "expectedAttempts" : 1,
+    "replayedAttempts" : 1,
+    "requestBodiesEqual" : true,
+    "inputSha256" : "7c64698553ddc14fe8108a6fb6fe62cde275c57ca551bf12836336d03ef255cb"
+  } ],
+  "status" : "ALL_REQUESTS_AND_DELIVERY_FIELDS_MATCH",
+  "finishedAt" : "2026-10-11T06:40:50.495459500Z"
+}

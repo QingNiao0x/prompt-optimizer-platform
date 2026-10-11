@@ -7,7 +7,12 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.UUID;
 
-/** 匿名模型尝试明细查询；不会接受账号、邮箱或名称筛选。 */
+/**
+ * 匿名模型尝试明细查询；不会接受账号、邮箱或名称筛选。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
 public record ModelCallQuery(
         @NotBlank @Size(max = 10) String fromDate,
         @NotBlank @Size(max = 10) String toDate,
