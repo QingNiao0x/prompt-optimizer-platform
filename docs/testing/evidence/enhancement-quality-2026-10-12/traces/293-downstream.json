@@ -1,0 +1,48 @@
+{
+  "label": "candidate5-r2-Q07-flash",
+  "httpStatus": 200,
+  "elapsedMs": 457,
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "输入文本为“姓名：李明；年龄：28”，需要从中提取姓名与年龄两项信息。\n\n从输入文本“姓名：李明；年龄：28”中提取信息，输出一个严格 JSON 对象。\n\n只输出一个严格 JSON 对象，键只能是 name 和 age：name 为字符串，age 为整数。不要 Markdown、不要解释、不要示例，不增加字段。\n\n- 输出必须是可直接解析的严格 JSON 对象，不得包裹代码围栏或添加任何额外文字。\n- 键名只能是 name 和 age，不得新增、改名或省略字段。\n- name 的值必须是字符串，age 的值必须是整数。\n- 不得输出解释、说明或示例。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "1fe91e2b-1669-4614-84cf-67c909ad7ab2",
+    "object": "chat.completion",
+    "created": 1791745583,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"name\":\"李明\",\"age\":28}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 181,
+      "completion_tokens": 9,
+      "total_tokens": 190,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 181
+    },
+    "system_fingerprint": "aeb56401ca74e127821c4f9126dcb669"
+  }
+}

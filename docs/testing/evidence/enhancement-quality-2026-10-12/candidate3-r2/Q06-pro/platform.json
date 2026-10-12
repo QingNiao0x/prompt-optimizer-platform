@@ -1,0 +1,59 @@
+{
+  "status": 200,
+  "elapsedMs": 2165,
+  "body": {
+    "requestId": "a69aa542-7b41-4b8f-aaf9-4a6107fa3df4",
+    "data": {
+      "optimizedPrompt": "待翻译内容为两行中文，需译为英文。\n\n将下面两行翻译为英文，保持两行及顺序：\n会议改到周五下午三点。\n请在周四之前确认是否参加。\n\n只输出译文，不解释、不加标题或示例。\n\n保持时间、否定与范围边界，例如之前与不晚于不能互换；不因常用说法扩大截止范围。\n用户明确规则（须遵守平台权限边界）：\n- 将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "待翻译内容为两行中文，需译为英文。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "将下面两行翻译为英文，保持两行及顺序：\n会议改到周五下午三点。\n请在周四之前确认是否参加。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出译文，不解释、不加标题或示例。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "保持时间、否定与范围边界，例如之前与不晚于不能互换；不因常用说法扩大截止范围。\n用户明确规则（须遵守平台权限边界）：\n- 将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 2131,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT"
+    }
+  }
+}

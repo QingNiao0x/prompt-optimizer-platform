@@ -306,6 +306,20 @@ describe('optimization store project context', () => {
     }));
   });
 
+  it('keeps compact presentation through editing and undo without losing platform rules', () => {
+    const store = useOptimizationStore();
+    const original = { ...resultFixture(), promptFormat: 'COMPACT' as const };
+    store.result = original;
+    expect(store.saveEditedSections(original.sections.map(section => ({
+      ...section, content: section.type === 'TASK' ? '按新的要求完成邮件。' : section.content,
+    })))).toBe(true);
+    expect(store.result?.optimizedPrompt).not.toContain('## ');
+    expect(store.result?.optimizedPrompt).toContain('按新的要求完成邮件。');
+    expect(store.result?.optimizedPrompt).toContain('禁止读取受保护路径。');
+    expect(store.undoResult()).toBe(true);
+    expect(store.result).toEqual(original);
+  });
+
   it('should restore a removed platform constraint and allow undoing the edit', () => {
     const store = useOptimizationStore();
     const original = resultFixture();

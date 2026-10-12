@@ -18,6 +18,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -39,6 +41,7 @@ import java.util.HexFormat;
 @Profile("!local-mock")
 public class EmailRegistrationServiceImpl implements EmailRegistrationService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailRegistrationServiceImpl.class);
     private static final int MAX_BCRYPT_PASSWORD_BYTES = 72;
 
     private final UserIdentityMapper identityMapper;
@@ -91,7 +94,15 @@ public class EmailRegistrationServiceImpl implements EmailRegistrationService {
         try {
             emailSender.send(emailKey.normalizedIdentifier(), code, policy.codeTtl());
         } catch (RuntimeException exception) {
-            verificationStore.cancelIssue(emailFingerprint, ipFingerprint, codeDigest);
+            // Redis 在邮件失败后也可能故障；清理失败不能掩盖原始投递错误，也不能伪造成功。
+            try {
+                verificationStore.cancelIssue(emailFingerprint, ipFingerprint, codeDigest);
+            } catch (RuntimeException cleanupFailure) {
+                LOGGER.warn("event=email.verification.cancel.failed purpose=REGISTER failureType={}",
+                        cleanupFailure.getClass().getSimpleName());
+            }
+            LOGGER.warn("event=email.registration.failed stage=DELIVERY purpose=REGISTER failureType={}",
+                    exception.getClass().getSimpleName());
             if (exception instanceof RegistrationException registrationException) {
                 throw registrationException;
             }
@@ -137,6 +148,8 @@ public class EmailRegistrationServiceImpl implements EmailRegistrationService {
     private void ensureAvailable() {
         byte[] secretBytes = properties.getVerificationSecret().getBytes(StandardCharsets.UTF_8);
         if (!properties.isEnabled() || secretBytes.length < 32) {
+            LOGGER.warn("event=email.registration.unavailable enabled={} verificationSecretConfigured={}",
+                    properties.isEnabled(), secretBytes.length >= 32);
             throw new RegistrationException(
                     RegistrationException.Reason.SERVICE_UNAVAILABLE,
                     "邮箱注册暂时不可用，请联系管理员。"

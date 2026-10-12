@@ -1,0 +1,114 @@
+{
+  "reviewer": "assistant source-and-work review; not independent blind review",
+  "case": "EI-01 user screenshot role, direct mode, examples disabled",
+  "runtime": {
+    "port": 9000,
+    "pid": 31876,
+    "healthy": true,
+    "compiledClassesCompared": 233,
+    "classMismatches": 0,
+    "databaseMigration": false
+  },
+  "originalAttribution": [
+    "Screenshot enhanced TASK and OUTPUT explicitly ask downstream to write another prompt. This is a platform enhancement/acceptance defect.",
+    "Screenshots do not identify which provider ran and cannot prove Mock was selected.",
+    "A bare role has no specific analysis object. Asking for an actual question is valid; requiring four mandatory fields or returning an empty report is not."
+  ],
+  "preservedFailures": [
+    {
+      "file": "live-flash/EI-01-generation.json",
+      "layer": "enhancement model",
+      "finding": "Inventories absent project files, code and history in BACKGROUND despite no task need."
+    },
+    {
+      "file": "live-v3-flash/EI-01-activation-work.md",
+      "layer": "downstream plus missing output activation branch",
+      "finding": "Empty analysis headings and four mandatory initialization fields."
+    },
+    {
+      "file": "live-v3-flash/EI-01-direct-work.md",
+      "layer": "downstream",
+      "finding": "Unsupported bullish interpretation of revenue growth percentage exceeding absolute profit decline percentage; excessive sections; derived facts mislabeled as necessary assumptions."
+    },
+    {
+      "file": "live-v3-pro/EI-01-direct-work.md",
+      "layer": "downstream",
+      "finding": "Unproven market-share and causal interpretations remain despite an end-of-work caveat."
+    },
+    {
+      "file": "final-pro/EI-01-direct-work.md",
+      "layer": "downstream",
+      "finding": "Revenue growth does not establish that market share or demand has not declined. Calling possible mechanisms necessary assumptions does not establish evidence."
+    }
+  ],
+  "finalChecks": [
+    {
+      "item": "No recursive prompt-writing deliverable",
+      "status": "PASS_FOR_RECORDED_CASE",
+      "evidence": [
+        "final-flash/EI-01-generation.json",
+        "final-pro/EI-01-generation.json"
+      ]
+    },
+    {
+      "item": "No empty auxiliary-material inventory in background",
+      "status": "PASS_FOR_RECORDED_CASE",
+      "evidence": [
+        "final-flash/EI-01-generation.json",
+        "final-pro/EI-01-generation.json"
+      ]
+    },
+    {
+      "item": "Copied final role activates without a four-field questionnaire",
+      "status": "PASS_FLASH_SINGLE_RUN",
+      "evidence": [
+        "final-flash/EI-01-activation-work.md"
+      ]
+    },
+    {
+      "item": "Actual analysis instead of questionnaire when a question and data are supplied",
+      "status": "PASS_BOTH_V3_AND_FINAL_PRO",
+      "evidence": [
+        "live-v3-flash/EI-01-direct-work.md",
+        "live-v3-pro/EI-01-direct-work.md",
+        "final-pro/EI-01-direct-work.md"
+      ]
+    },
+    {
+      "item": "Final Pro arithmetic: revenue +20%, profit -10%, cash flow -50%, margin 10% to 7.5%",
+      "status": "PASS",
+      "evidence": [
+        "final-pro/EI-01-direct-work.md"
+      ]
+    },
+    {
+      "item": "No unsupported inference and concise substantive improvement",
+      "status": "FAIL_NOT_CLOSED",
+      "evidence": [
+        "final-pro/EI-01-direct-work.md",
+        "live-v3-flash/EI-01-direct-work.md"
+      ]
+    }
+  ],
+  "comparison": {
+    "conditions": "same role/followup/materials/model/temperature/system; enhanced arm uses exact platform copy; no scoring rubric sent",
+    "flashV3": "No win established: raw already gives actual analysis; enhanced adds useful ratios but unsupported bullish reasoning and redundant sections.",
+    "proV3": "No win established: raw already gives actual analysis; enhanced adds ratios but unproven causal and market-share interpretations.",
+    "notStatistical": "one paired execution per model, no independent blind ranking or broad quality pass"
+  },
+  "notVerified": [
+    "final-v4 Flash analysis repeated execution",
+    "final-v4 Pro role activation",
+    "Plan/example live flows",
+    "HTTP authentication, history persistence and browser copy/edit flow",
+    "actual financial research or tool retrieval",
+    "all languages, formats, task types and repeated model stability"
+  ],
+  "remaining": [
+    "source-grounded substantive completion",
+    "sufficient requirements minimal rewrite",
+    "adaptive final formatting",
+    "derived fact versus causal hypothesis separation",
+    "ME-02/03/04/06 and G1-G8 remain open"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "status": 200,
+  "elapsedMs": 2895,
+  "body": {
+    "requestId": "1ec1fd99-4b03-4ade-a92a-500c54b6b224",
+    "data": {
+      "optimizedPrompt": "收件人为需要提交周报的同事，双方为日常工作关系。\n\n写一封邮件，委婉提醒同事把周报发过来。语气保持礼貌、不施压，明确表达希望对方发送周报的请求，但不虚构截止时间、汇报对象或具体工作进展。\n\n一封可直接发送的邮件正文，包含称呼、提醒事由、委婉的请求和结尾；称呼未知时使用自然中性的称呼。\n\n- 只输出邮件内容，不附加说明、分析或额外报告。\n- 提醒须委婉，但仍要清楚表达请对方发送周报。\n- 不得编造截止日期、汇总职责、工作进展或其他未提供的事实。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "收件人为需要提交周报的同事，双方为日常工作关系。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "写一封邮件，委婉提醒同事把周报发过来。语气保持礼貌、不施压，明确表达希望对方发送周报的请求，但不虚构截止时间、汇报对象或具体工作进展。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "一封可直接发送的邮件正文，包含称呼、提醒事由、委婉的请求和结尾；称呼未知时使用自然中性的称呼。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 只输出邮件内容，不附加说明、分析或额外报告。\n- 提醒须委婉，但仍要清楚表达请对方发送周报。\n- 不得编造截止日期、汇总职责、工作进展或其他未提供的事实。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 2857,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT"
+    }
+  }
+}

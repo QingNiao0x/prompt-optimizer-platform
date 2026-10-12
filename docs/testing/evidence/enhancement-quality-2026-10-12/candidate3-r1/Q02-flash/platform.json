@@ -1,0 +1,59 @@
+{
+  "status": 200,
+  "elapsedMs": 2981,
+  "body": {
+    "requestId": "d5e349ef-6a6f-4548-b945-62a06d6c74bd",
+    "data": {
+      "optimizedPrompt": "用户需要给一位同事写一封邮件，目的是委婉提醒对方把周报发过来。\n\n写一封委婉提醒同事提交周报的邮件。邮件应表达提醒之意，语气礼貌、委婉，不显得催促或指责。\n\n输出一封可直接发送的邮件正文，包含称呼、正文和落款。\n\n- 语气必须委婉，避免命令式或指责性表达。\n- 不得编造具体截止日期、周报内容、项目进展或其他未提供的事实。\n- 同事姓名未知时，使用自然中性的称呼，不制造姓名填空模板。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "用户需要给一位同事写一封邮件，目的是委婉提醒对方把周报发过来。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "写一封委婉提醒同事提交周报的邮件。邮件应表达提醒之意，语气礼貌、委婉，不显得催促或指责。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "输出一封可直接发送的邮件正文，包含称呼、正文和落款。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 语气必须委婉，避免命令式或指责性表达。\n- 不得编造具体截止日期、周报内容、项目进展或其他未提供的事实。\n- 同事姓名未知时，使用自然中性的称呼，不制造姓名填空模板。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 2929,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT"
+    }
+  }
+}

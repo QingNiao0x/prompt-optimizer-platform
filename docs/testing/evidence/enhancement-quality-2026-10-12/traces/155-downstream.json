@@ -1,0 +1,48 @@
+{
+  "label": "candidate3-r2-Q02-flash",
+  "httpStatus": 200,
+  "elapsedMs": 1830,
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "收件人为需要提交周报的同事，双方为日常工作关系。\n\n写一封邮件，委婉提醒同事把周报发过来。语气保持礼貌、不施压，明确表达希望对方发送周报的请求，但不虚构截止时间、汇报对象或具体工作进展。\n\n一封可直接发送的邮件正文，包含称呼、提醒事由、委婉的请求和结尾；称呼未知时使用自然中性的称呼。\n\n- 只输出邮件内容，不附加说明、分析或额外报告。\n- 提醒须委婉，但仍要清楚表达请对方发送周报。\n- 不得编造截止日期、汇总职责、工作进展或其他未提供的事实。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "e5a4e249-bbbc-4c57-b30d-74d7e77b6972",
+    "object": "chat.completion",
+    "created": 1791742619,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "主题：想麻烦你发一下周报\n\n你好，\n\n想麻烦你方便的时候把周报发我一下，我这边需要一起看一下。没有催你的意思，只是先跟你同步一下这个需求。\n\n如果已经发了，可能是我这边还没看到，麻烦你再确认一下；如果还需要一点时间，也没关系，等你整理好发来就好。\n\n谢谢啦。\n\n祝好"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 171,
+      "completion_tokens": 78,
+      "total_tokens": 249,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 171
+    },
+    "system_fingerprint": "aeb56401ca74e127821c4f9126dcb669"
+  }
+}

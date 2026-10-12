@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "EI-01",
+  "arm" : "activation",
+  "requestId" : "2919af04-72d8-4e08-ab91-c1ee711a1b36",
+  "startedAt" : "2026-10-11T16:25:55.822633500Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "d6637de2ec1c2f8552d26beaa9f8a5fb7d2ffe9fbb5059a83ad334360978cb22",
+  "materialsSha256" : "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "systemSha256" : "bffae34ba035fed68c4370f0054a351c142dc0ccfcd64cab351db9768b7d07c3",
+  "executionUserSha256" : "3a5e773b2f301eae44946354f957f65798cdf190d3ea0424b17bc7c47cd2f18a",
+  "settings" : {
+    "thinking" : "disabled",
+    "maxOutputTokens" : 8192,
+    "automaticRetry" : false,
+    "temperature" : 0.2
+  },
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 629,
+    "completion_tokens" : 544,
+    "total_tokens" : 1173
+  },
+  "output" : "收到。我先按你设定的工作流确认一下当前可处理的范围，再给出首轮可判断内容。\n\n## 结论先行\n\n你这条消息目前是**任务说明**，不是具体投资问题，因此我暂时无法对某只股票、某个行业或某个持仓给出“结论先行”的分析结论。  \n我可以先确认工作框架已就位：后续你只要给出**市场、标的、问题类型、时间范围**，我会按“结论先行 + 数据支撑 + 看多/看空变量 + 风险提示 + 跨市场统一口径”输出。\n\n## 数据支撑\n\n当前没有可分析的标的与问题，因此没有可拉取的行情、财报、资金流向或研报评级数据。  \n已知事实：你要求覆盖 A 股、港股、美股，服务范围包括实时行情、财报解读、行业研究、持仓跟踪。  \n用户确认信息：不喊单、不预测点位、不替用户做决策，只提供看多与看空关键变量。  \n必要假设：你后续会提供具体标的或问题；若未提供，我只能先指出关键缺口，不能用猜测填补。\n\n## 看多变量与看空变量\n\n当前不适用，因为没有具体标的与问题。  \n若强行列，会变成编造，不符合约束。\n\n## 风险提示\n\n- 若问题信息不足，最大风险是结论被误读为完整判断；我会明确标注“可判断部分”和“关键缺口”。\n- 若跨市场比较，最大风险是财年口径和币种不一致；我会统一为同一财年口径和同一币种后再比较。\n- 若数据无法核实，我会直接说明缺口，不编造来源和报告期次。\n\n## 跨市场统一口径\n\n后续涉及 A 股、港股、美股时，我会统一：\n- 财年：按自然年或标的实际财年标注，跨市场比较时统一到同一时间口径。\n- 币种：统一换算为人民币或美元，并标注汇率来源与日期。\n- 报告期次：每项财务数据标注来源与报告期，例如“2024Q3 财报”“2024 年报”。\n\n## 需要你补充的关键信息\n\n请至少给出以下四项：\n1. 市场：A 股 / 港股 / 美股\n2. 标的：股票名称或代码\n3. 问题类型：行情查询 / 深度分析 / 决策辅助 / 事件追踪\n4. 时间范围：例如近一周、近一季、近三年\n\n你给出具体问题后，我会直接按验收要求输出。",
+  "outputSha256" : "de057c03543a73c6e3896f1e696474d5f3de323154428a11ae78d52cd38aeb26",
+  "nonWhitespaceChars" : 773,
+  "hanChars" : 633,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 3668
+}

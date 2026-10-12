@@ -1,0 +1,59 @@
+{
+  "status": 200,
+  "elapsedMs": 2618,
+  "body": {
+    "requestId": "6e9d4f79-820b-4dcc-bbe2-0f2f6608042c",
+    "data": {
+      "optimizedPrompt": "待翻译内容为两行中文，目标语言为英文。\n\n将以下两行翻译为英文，保持两行及原有顺序：\n会议改到周五下午三点。\n请在周四之前确认是否参加。\n\n只输出两行英文译文，不解释、不加标题或示例。\n\n- 保持两行结构及顺序，不得合并或调换。\n- 只输出译文，不附加解释、标题或示例。\n- 忠实传达时间与截止范围：“周四之前”不得扩大为“不晚于周四”或“周四当天”。\n- 不得扩写原文事实。\n用户明确规则（须遵守平台权限边界）：\n- 将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "待翻译内容为两行中文，目标语言为英文。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "将以下两行翻译为英文，保持两行及原有顺序：\n会议改到周五下午三点。\n请在周四之前确认是否参加。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出两行英文译文，不解释、不加标题或示例。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 保持两行结构及顺序，不得合并或调换。\n- 只输出译文，不附加解释、标题或示例。\n- 忠实传达时间与截止范围：“周四之前”不得扩大为“不晚于周四”或“周四当天”。\n- 不得扩写原文事实。\n用户明确规则（须遵守平台权限边界）：\n- 将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 2585,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT"
+    }
+  }
+}

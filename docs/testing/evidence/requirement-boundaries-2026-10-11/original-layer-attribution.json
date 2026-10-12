@@ -1,0 +1,33 @@
+{
+  "QB-08": {
+    "firstError": "UPSTREAM_ENHANCEMENT_RESPONSE",
+    "platform": "ASSEMBLER_ACCEPTED_CONTRADICTORY_EXCEPTION_IN_TASK",
+    "downstream": "REPEATED_EXCEPTION",
+    "oldReviewCorrection": "not downstream-only",
+    "proof": [
+      "candidate-v4-live/QB-08-generation-trace-1.json",
+      "candidate-v5-replay-rule/QB-08-generation.json",
+      "candidate-v4-live/QB-08-direct-work.json"
+    ]
+  },
+  "QB-06": {
+    "firstError": "DOWNSTREAM_WORK",
+    "platform": "original copied prompt did not forbid test names; mixed framing needed clarification",
+    "proof": [
+      "candidate-v5-live/QB-06-generation.json",
+      "candidate-v5-live/QB-06-direct-work.json"
+    ]
+  },
+  "QB-02": {
+    "firstError": "DOWNSTREAM_WORK",
+    "platform": "method confirmation did not establish a standard-population choice; explicit independent parameter boundary missing",
+    "proof": [
+      "candidate-v5-replay-pro/QB-02-generation.json",
+      "candidate-v3-pro/QB-02-direct-work.json"
+    ]
+  },
+  "followup": {
+    "methodBranch": "first new Flash work falsely says direct standardization already chosen; preserved and fixed",
+    "dataScope": "first new Flash prompts prohibit all example data; works contain a narrower local clause, while a global prohibition also survives in their fact section; not evidence of total permission to invent data"
+  }
+}

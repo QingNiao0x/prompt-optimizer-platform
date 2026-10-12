@@ -1,0 +1,62 @@
+{
+  "status": 200,
+  "elapsedMs": 11,
+  "body": {
+    "requestId": "92dc4fb9-879c-4973-bdad-4254e9cfa426",
+    "data": {
+      "id": "b143c25d-67d5-4f08-9898-8e9a0d4750a5",
+      "rawPrompt": "从“姓名：李明；年龄：28”中提取信息。只输出一个严格JSON对象，键只能是name和age，name为字符串，age为整数。不要Markdown、解释或示例，不增加字段。",
+      "optimizedPrompt": "输入字符串为：“姓名：李明；年龄：28”。\n\n从输入字符串中提取姓名和年龄。\n\n只输出一个严格 JSON 对象，键只能是 name 和 age，name 为字符串，age 为整数。不要 Markdown、解释或示例，不增加字段。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "输入字符串为：“姓名：李明；年龄：28”。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "从输入字符串中提取姓名和年龄。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出一个严格 JSON 对象，键只能是 name 和 age，name 为字符串，age 为整数。不要 Markdown、解释或示例，不增加字段。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextSummary": {
+        "warnings": [],
+        "redactions": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "analysisVersion": "v3",
+        "technologyStack": [],
+        "customDescription": ""
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "providerName": "deepseek",
+      "modelName": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "latencyMs": 2176,
+      "createdAt": "2026-10-11T19:06:25.999504Z",
+      "includePermissionBoundaries": true,
+      "includeExamples": false,
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "modelVersion": "DeepSeek-V4-Pro-0813",
+      "promptFormat": "COMPACT"
+    }
+  }
+}

@@ -2,6 +2,7 @@ package com.promptoptimizer.identity.service.impl;
 
 import com.promptoptimizer.identity.service.EmailRegistrationService;
 import com.promptoptimizer.identity.service.AccountRegistrationGateway;
+import com.promptoptimizer.identity.service.EmailVerificationStore;
 import com.promptoptimizer.identity.service.RegistrationException;
 import com.promptoptimizer.identity.service.VerificationEmailSender;
 import com.promptoptimizer.identity.dto.EmailRegistrationCodeRequest;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -121,6 +123,27 @@ class EmailRegistrationServiceTest {
                     .extracting(exception -> ((RegistrationException) exception).getReason())
                     .isEqualTo(RegistrationException.Reason.DELIVERY_UNAVAILABLE);
         }
+    }
+
+    @Test
+    void shouldPreserveDeliveryFailureWhenRedisCancellationAlsoFails() {
+        EmailVerificationStore failingStore = mock(EmailVerificationStore.class);
+        when(failingStore.issue(anyString(), anyString(), anyString(), any()))
+                .thenReturn(new EmailVerificationStore.IssueDecision(EmailVerificationStore.IssueResult.ISSUED, 60));
+        doThrow(new RegistrationException(RegistrationException.Reason.SERVICE_UNAVAILABLE,
+                "验证码服务暂时不可用，请稍后重试。"))
+                .when(failingStore).cancelIssue(anyString(), anyString(), anyString());
+        VerificationEmailSender sender = (recipient, code, validFor) -> {
+            throw new RegistrationException(RegistrationException.Reason.DELIVERY_UNAVAILABLE,
+                    "验证码邮件暂时无法发送，请稍后重试。");
+        };
+        EmailRegistrationService service = new EmailRegistrationServiceImpl(identityRepository, failingStore,
+                sender, properties, registrationGateway, passwordEncoder);
+
+        assertThatThrownBy(() -> service.requestCode(new EmailRegistrationCodeRequest("new@example.test"), "127.0.0.1"))
+                .isInstanceOfSatisfying(RegistrationException.class, exception ->
+                        assertThat(exception.getReason()).isEqualTo(RegistrationException.Reason.DELIVERY_UNAVAILABLE));
+        verify(registrationGateway, never()).createPersonalAccount(anyString(), anyString(), anyString(), any());
     }
 
     private EmailRegistrationService service(VerificationEmailSender sender) {

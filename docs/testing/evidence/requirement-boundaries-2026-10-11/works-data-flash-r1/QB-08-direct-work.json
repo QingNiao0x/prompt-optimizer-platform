@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-08",
+  "arm" : "direct",
+  "requestId" : "1c09a59f-ba4f-4ff1-b829-1b63ea3f14ae",
+  "startedAt" : "2026-10-11T15:17:50.695277100Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "3c03a101e2f95a89718cbf5b8f94efee2fd47786a64d87fba2eaed535d552174",
+  "materialsSha256" : "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "systemSha256" : "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+  "executionUserSha256" : "ad4b8db5b4a3337ce176aee207d5acc1e9197604de22d0372517b7f6cc96dfcd",
+  "settings" : {
+    "temperature" : 0.2,
+    "automaticRetry" : false,
+    "maxOutputTokens" : 8192,
+    "thinking" : "disabled"
+  },
+  "actualModel" : "deepseek-flash",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 765,
+    "completion_tokens" : 447,
+    "total_tokens" : 1212
+  },
+  "output" : "# 开发提示词：采购审批规则实现\n\n## 一、任务目标\n\n请实现以下两条采购审批规则。两条规则相互独立，必须分别实现，不得合并、改写或互相替代。\n\n## 二、规则内容\n\n### 规则一（2024 年 · 甲机构）\n\n- **适用年份**：2024 年\n- **适用机构**：甲机构\n- **触发条件**：采购金额**超过** 5 万元\n- **复核要求**：须由**财务**复核\n\n### 规则二（2025 年 · 乙机构）\n\n- **适用年份**：2025 年\n- **适用机构**：乙机构\n- **触发条件**：采购金额**达到** 5 万元\n- **复核要求**：须由**负责人**复核\n\n### 规则独立性要求\n\n两条规则在年份、机构、金额阈值比较方式（“超过”与“达到”）和复核主体上均不同，属于相互独立的规则。实现时必须保持上述全部要素的原有区别，不得合并为一条规则，不得用其中一条替代另一条，不得改写比较方式或复核主体。\n\n## 三、输入数据要求\n\n- 实现必须以真实、可核实的业务数据为输入。\n- **不得使用假设数据**，该禁令适用于所有用途，包括但不限于开发、测试和验证。\n- 不得使用示例值、临时默认口径或任何编造的数据充当真实业务数据。\n- 如实际业务数据尚未提供或无法核实，应如实向需求方提出，不得自行填充或假定。\n\n## 四、交付范围限制\n\n- 只交付上述两条规则的实现本身。\n- 不新增报表。\n- 不新增代码生成器。\n- 不新增任何其他未要求的交付物。\n\n## 五、实现说明\n\n- 输入字段、判断逻辑的组织方式等常规技术细节，由执行者按实际项目情况处理，本提示词不作虚构规定。\n- 实现过程中如遇本提示词未覆盖的信息缺口，应向需求方确认，不得以猜测、建议或默认选项代替已确认事实。",
+  "outputSha256" : "026b47ebc65420937956d0086385ff80229cd8068eafe9fc70dd7d7b12ed7b35",
+  "nonWhitespaceChars" : 673,
+  "hanChars" : 503,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 4138
+}

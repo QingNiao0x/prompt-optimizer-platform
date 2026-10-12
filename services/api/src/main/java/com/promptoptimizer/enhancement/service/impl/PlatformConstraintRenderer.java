@@ -33,7 +33,39 @@ final class PlatformConstraintRenderer {
     /** 平台块最后落笔，避免普通规则压缩器改变固定数量、顺序或原文。 */
     static String appendMandatory(String text, ConstraintBundle constraints) {
         String block = PlatformConstraintRules.HEADING + "\n- " + String.join("\n- ", constraints.platformMandatory());
+        text = removeUnscopedMandatorySentences(text, Set.copyOf(constraints.platformMandatory()));
         return text.isBlank() ? block : text.stripTrailing() + "\n\n" + block;
+    }
+
+    /** 固定规则可嵌在一行多句中；只移除完整等价句，引用、代码、表格和具名范围不参与。 */
+    private static String removeUnscopedMandatorySentences(String text, Set<String> mandatory) {
+        List<String> lines = new ArrayList<>();
+        boolean protectedScope = false;
+        String fence = null;
+        for (String line : text.lines().toList()) {
+            String value = line.strip();
+            if (value.startsWith("```") || value.startsWith("~~~")) {
+                String marker = value.substring(0, 3);
+                fence = fence == null ? marker : fence.equals(marker) ? null : fence;
+                lines.add(line);
+                continue;
+            }
+            if (fence != null || value.startsWith("|") || value.startsWith(">")) { lines.add(line); continue; }
+            if (value.startsWith("#") || value.endsWith("：") || value.endsWith(":")) {
+                protectedScope = !Set.of("任务相关约束：", "推断依据：").contains(value);
+                lines.add(line);
+                continue;
+            }
+            if (protectedScope) { lines.add(line); continue; }
+            StringBuilder kept = new StringBuilder();
+            var sentences = java.util.regex.Pattern.compile("[^。]+。?").matcher(line);
+            while (sentences.find()) {
+                String sentence = sentences.group();
+                if (!mandatory.contains(ruleText(sentence))) kept.append(sentence);
+            }
+            if (!kept.toString().isBlank()) lines.add(kept.toString());
+        }
+        return String.join("\n", lines).strip();
     }
 
     /**

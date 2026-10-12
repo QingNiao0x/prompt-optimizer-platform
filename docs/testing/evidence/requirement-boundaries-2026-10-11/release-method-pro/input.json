@@ -1,0 +1,29 @@
+{
+  "schemaVersion" : 1,
+  "dataAuthorization" : "USER_PROVIDED_SCREENSHOT",
+  "modelId" : "deepseek:deepseek-v4-pro",
+  "modelDisplayName" : "deepseek:deepseek-v4-pro",
+  "maxOutputTokens" : 8192,
+  "temperature" : 0.2,
+  "cases" : [ {
+    "id" : "QB-06",
+    "source" : "用户论文方法截图原题的固定录入；编号设计不可丢失",
+    "rawPrompt" : "为研究生准备一份论文方法部分的写作提示词，研究 Plan 问答对提示词质量的影响。当前只拟定研究，尚未实施。必须保留设计：4 类任务，每类 5 个，共 20 个任务；每模式每任务独立重复 3 次；两名独立评审盲评。比较直接增强和 Plan，另设两组获得同样确认信息的公平对照。方法提纲不超过 1200 字，附表另计。不得把拟定样本写成已纳入样本，不得编造效应量、P 值、参考文献或显著性结论。具体检验依据未来数据分布选择，不预设必然显著。",
+    "plan" : false,
+    "includeExamples" : true,
+    "files" : [ ],
+    "checks" : [ "保留写作提示词这一交付层级", "保留 4×5、三次重复、双人盲评和同信息对照", "补充写作操作指令与必要边界，不能只逐句复制", "保留未实施状态与 1200 字上限", "示例不虚构研究结果" ],
+    "status" : "NOT_RERUN_IN_P0",
+    "dataAuthorization" : "USER_PROVIDED_SCREENSHOT",
+    "mode" : "direct",
+    "contextDescription" : ""
+  } ],
+  "budget" : {
+    "maximumTransportAttempts" : 115,
+    "maximumDownstreamExecutions" : 50,
+    "downstreamRetry" : false
+  },
+  "reviewPolicy" : "先审核真实问题，再冻结同一份实际提交回答。Plan 正文不由脚本补回答案。",
+  "planProtocol" : "Reuse actual captured Flash questions and exact reviewed answers via production session registration. Same answers across versions and execution arms. Not HTTP/DB/Redis acceptance.",
+  "protocolRevision" : "revision-protocol-v2.json"
+}

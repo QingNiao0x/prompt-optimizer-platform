@@ -1,0 +1,67 @@
+{
+  "status": 200,
+  "elapsedMs": 15,
+  "body": {
+    "requestId": "6ec2a545-f2d2-4d88-8c98-3511b6182028",
+    "data": {
+      "id": "83da70e4-ecf6-4d29-ba81-c1ec85eed230",
+      "rawPrompt": "帮我写封邮件，委婉提醒同事把周报发过来。",
+      "optimizedPrompt": "收件人是需要提交周报的同事，发件人希望对方尽快把周报发过来。\n\n写一封邮件，委婉地提醒同事把周报发过来。邮件须明确表达请对方发送周报这一诉求，语气委婉、礼貌，不显得催促或指责。称呼可用自然中性的称呼，不编造具体姓名、截止日期或工作进展。\n\n直接输出一封可发送的邮件正文，包含称呼、正文和落款位置；语言为中文，篇幅简短。\n\n- 不得把猜测写成事实：不虚构同事姓名、周报截止时间、已沟通情况或具体工作内容。\n- 委婉提醒仍须清楚表达“请把周报发过来”，不得改成无需着急或可以不提交。\n- 不增加未要求的说明、报告或额外执行步骤。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n邮件已明确请求对方发送周报，语气委婉礼貌，且未出现编造的姓名、日期或事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "收件人是需要提交周报的同事，发件人希望对方尽快把周报发过来。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "写一封邮件，委婉地提醒同事把周报发过来。邮件须明确表达请对方发送周报这一诉求，语气委婉、礼貌，不显得催促或指责。称呼可用自然中性的称呼，不编造具体姓名、截止日期或工作进展。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "直接输出一封可发送的邮件正文，包含称呼、正文和落款位置；语言为中文，篇幅简短。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 不得把猜测写成事实：不虚构同事姓名、周报截止时间、已沟通情况或具体工作内容。\n- 委婉提醒仍须清楚表达“请把周报发过来”，不得改成无需着急或可以不提交。\n- 不增加未要求的说明、报告或额外执行步骤。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        },
+        {
+          "type": "ACCEPTANCE",
+          "title": "验收",
+          "content": "邮件已明确请求对方发送周报，语气委婉礼貌，且未出现编造的姓名、日期或事实。"
+        }
+      ],
+      "contextSummary": {
+        "warnings": [],
+        "redactions": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "analysisVersion": "v3",
+        "technologyStack": [],
+        "customDescription": ""
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "providerName": "deepseek",
+      "modelName": "deepseek:deepseek-flash",
+      "mock": false,
+      "latencyMs": 2757,
+      "createdAt": "2026-10-11T18:59:55.720658Z",
+      "includePermissionBoundaries": true,
+      "includeExamples": false,
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "modelVersion": "DeepSeek-V4.1-Flash",
+      "promptFormat": "COMPACT"
+    }
+  }
+}

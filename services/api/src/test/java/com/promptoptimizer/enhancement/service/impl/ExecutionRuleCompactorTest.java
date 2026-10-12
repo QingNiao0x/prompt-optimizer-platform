@@ -89,8 +89,8 @@ class ExecutionRuleCompactorTest {
     void distinguishesSufficientTaskFromShortUnderspecifiedTaskWithoutSkippingValidation() {
         var policy = PromptRewriteStrategy.forPrompt("请为清笺撰写新闻稿。当前处于MVP。只输出两个标题和正文。"
                 + "不得虚构用户数量，不生成商业承诺。");
-        assertThat(policy.mode()).isEqualTo("MINIMAL_ORGANIZATION");
+        assertThat(policy.mode()).isEqualTo("ASSESS_EXECUTION_GAPS");
         assertThat(policy.instruction()).contains("未知", "明确限制", "四要素");
-        assertThat(PromptRewriteStrategy.forPrompt("帮我写点东西").mode()).isEqualTo("CLARIFY_AND_STRUCTURE");
+        assertThat(PromptRewriteStrategy.forPrompt("帮我写点东西").mode()).isEqualTo("ASSESS_EXECUTION_GAPS");
     }
 }

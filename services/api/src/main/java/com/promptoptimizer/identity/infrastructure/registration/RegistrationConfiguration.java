@@ -76,6 +76,7 @@ public class RegistrationConfiguration {
     @Bean
     @ConditionalOnProperty(name = "app.security.registration.delivery-mode", havingValue = "log")
     VerificationEmailSender loggingVerificationEmailSender() {
+        LOGGER.info("event=email.delivery.configured mode=LOG");
         return (recipient, code, validFor) -> LOGGER.warn(
                 "仅限本地开发：邮箱 {} 的注册验证码为 {}，有效期 {} 秒",
                 recipient,
@@ -91,7 +92,9 @@ public class RegistrationConfiguration {
             matchIfMissing = true
     )
     VerificationEmailSender disabledVerificationEmailSender() {
+        LOGGER.info("event=email.delivery.configured mode=DISABLED");
         return (recipient, code, validFor) -> {
+            LOGGER.warn("event=email.delivery.failed purpose=REGISTER reason=DELIVERY_DISABLED");
             throw deliveryUnavailable();
         };
     }

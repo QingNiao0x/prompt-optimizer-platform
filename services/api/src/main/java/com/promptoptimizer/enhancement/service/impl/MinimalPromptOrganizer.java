@@ -2,7 +2,6 @@ package com.promptoptimizer.enhancement.service.impl;
 
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
-import com.promptoptimizer.provider.domain.PromptRewriteStrategy;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,7 @@ import java.util.regex.Pattern;
 
 /**
  * 信息充分且四要素已经明确分段时保留原句，避免为了改写重复扩充交付要求。
- * 不跳过 Provider 校验、资料合并或权限红线；有新增确认选择、未识别标题时沿用模型组织。
+ * 不跳过校验、资料合并或权限红线；确认后的有效原文仍可保留，再由确认融合器写入新决定。
  *
  * @author QingNiao
  * @since 0.1.0
@@ -25,12 +24,21 @@ final class MinimalPromptOrganizer {
     /** 仅替换四个原文完整覆盖的段落；每行必须保留，模型发现的真实歧义继续走统一归并。 */
     static boolean organize(Map<PromptSectionType, PromptSection> sections, String raw,
                             ConfirmedDecisionSet decisions) {
-        if (!PromptRewriteStrategy.forPrompt(raw).mode().equals("MINIMAL_ORGANIZATION")
-                || !decisions.knownDecisions().isEmpty()) return false;
+        return organize(sections, raw, decisions, null);
+    }
+
+    /** 有实质缺口时保留模型补全；旧适配器仅整理可完整识别的四段，不猜测未识别标题。 */
+    static boolean organize(Map<PromptSectionType, PromptSection> sections, String raw,
+                            ConfirmedDecisionSet decisions,
+                            com.promptoptimizer.provider.domain.TaskEnhancementAssessment assessment) {
+        if (raw == null || raw.isBlank() || assessment != null && !assessment.preserveWording()) return false;
+        // 旧适配器未提供有效需求评估，不能用旧原文覆盖已融入模型正文的新选择。
+        if (assessment == null && !decisions.knownDecisions().isEmpty()) return false;
+        String effectiveRaw = ResolvedPlanState.from(decisions, raw).reconcile(raw);
         var content = new EnumMap<PromptSectionType, StringBuilder>(PromptSectionType.class);
         PromptSectionType current = PromptSectionType.TASK;
         boolean inCode = false;
-        for (String line : raw.lines().toList()) {
+        for (String line : effectiveRaw.lines().toList()) {
             if (line.strip().startsWith("```")) inCode = !inCode;
             var heading = HEADING.matcher(line.strip());
             if (!inCode && heading.matches()) {

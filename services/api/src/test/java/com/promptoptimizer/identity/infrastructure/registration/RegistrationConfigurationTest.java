@@ -2,6 +2,15 @@ package com.promptoptimizer.identity.infrastructure.registration;
 
 import com.promptoptimizer.identity.service.RegistrationException;
 import com.promptoptimizer.identity.service.VerificationEmailSender;
+import com.promptoptimizer.identity.controller.RegistrationController;
+import com.promptoptimizer.identity.dto.EmailRegistrationCodeRequest;
+import com.promptoptimizer.identity.mapper.UserIdentityMapper;
+import com.promptoptimizer.identity.service.AccountRegistrationGateway;
+import com.promptoptimizer.identity.service.AuthenticationService;
+import com.promptoptimizer.identity.service.EmailRegistrationService;
+import com.promptoptimizer.identity.service.EmailVerificationStore;
+import com.promptoptimizer.identity.service.impl.EmailRegistrationServiceImpl;
+import com.promptoptimizer.identity.service.impl.LocalMockEmailRegistrationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,12 +26,15 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * 读取实际 YAML 验证 SMTP 兼容与隐私边界；隔离系统环境且不执行连接测试或发送邮件。
@@ -157,6 +169,49 @@ class RegistrationConfigurationTest {
     }
 
     @Test
+    void shouldInjectHybridStoreAndFailClosedWithoutProductionRedis() {
+        registrationRunner(true).withPropertyValues("SMTP_USERNAME=noreply@example.test",
+                "ALIBABA_SMTP_PASSWORD=synthetic-test-password",
+                "EMAIL_VERIFICATION_SECRET=synthetic-test-secret-at-least-32-bytes").run(context -> {
+            assertThat(context).hasNotFailed().hasSingleBean(EmailRegistrationService.class)
+                    .hasSingleBean(EmailVerificationStore.class).hasSingleBean(RegistrationController.class);
+            var service = context.getBean(EmailRegistrationService.class);
+            assertThat(service).isInstanceOf(EmailRegistrationServiceImpl.class);
+            assertThat(ReflectionTestUtils.getField(service, "verificationStore"))
+                    .isSameAs(context.getBean(HybridEmailVerificationStore.class));
+            // SMTP 参数有效不等于可绕过 Redis；未初始化 Redis 客户端时不得触达云发送。
+            assertThatThrownBy(() -> service.requestCode(new EmailRegistrationCodeRequest("recipient@example.test"), "127.0.0.1"))
+                    .isInstanceOfSatisfying(RegistrationException.class, exception ->
+                            assertThat(exception.getReason()).isEqualTo(RegistrationException.Reason.SERVICE_UNAVAILABLE));
+        });
+    }
+
+    @Test
+    void shouldKeepLocalLogVerificationInMemoryWhenExplicitlyConfigured() {
+        registrationRunner(false).withPropertyValues("EMAIL_DELIVERY_MODE=log", "EMAIL_VERIFICATION_REQUIRE_REDIS=false",
+                "EMAIL_VERIFICATION_SECRET=synthetic-test-secret-at-least-32-bytes").run(context -> {
+            assertThat(context).hasNotFailed().hasSingleBean(EmailRegistrationService.class);
+            var service = context.getBean(EmailRegistrationService.class);
+            assertThat(service.requestCode(new EmailRegistrationCodeRequest("recipient@example.test"), "127.0.0.1")
+                    .expiresInSeconds()).isEqualTo(300);
+            assertThatThrownBy(() -> service.requestCode(new EmailRegistrationCodeRequest("recipient@example.test"), "127.0.0.1"))
+                    .isInstanceOfSatisfying(RegistrationException.class, exception ->
+                            assertThat(exception.getReason()).isEqualTo(RegistrationException.Reason.RESEND_TOO_SOON));
+        });
+    }
+
+    @Test
+    void shouldSelectOnlyUnavailableRegistrationServiceInLocalMockProfile() {
+        registrationRunner(false).withInitializer(context -> context.getEnvironment().setActiveProfiles("local-mock"))
+                .run(context -> {
+                    assertThat(context).hasNotFailed().hasSingleBean(EmailRegistrationService.class)
+                            .hasSingleBean(RegistrationController.class);
+                    assertThat(context.getBean(EmailRegistrationService.class))
+                            .isInstanceOf(LocalMockEmailRegistrationService.class);
+                });
+    }
+
+    @Test
     void shouldSupportManualSslConfigurationWithoutAliyunProfile() {
         runner(false).withPropertyValues("EMAIL_DELIVERY_MODE=smtp", "SMTP_HOST=smtpdm.aliyun.com",
                 "SMTP_PORT=465", "SMTP_SSL_ENABLED=true", "SMTP_STARTTLS=false").run(context -> {
@@ -237,6 +292,16 @@ class RegistrationConfigurationTest {
                         throw new IllegalStateException("测试无法加载 SMTP 配置文件。", exception);
                     }
                 });
+    }
+
+    /** 真实装配 Controller/Service/Store；数据库和登录事务仅提供窄接口的模拟依赖。 */
+    private ApplicationContextRunner registrationRunner(boolean aliyun) {
+        return runner(aliyun).withUserConfiguration(RegistrationController.class, EmailRegistrationServiceImpl.class,
+                        LocalMockEmailRegistrationService.class, HybridEmailVerificationStore.class)
+                .withBean(UserIdentityMapper.class, () -> mock(UserIdentityMapper.class))
+                .withBean(AccountRegistrationGateway.class, () -> mock(AccountRegistrationGateway.class))
+                .withBean(AuthenticationService.class, () -> mock(AuthenticationService.class))
+                .withBean(PasswordEncoder.class, () -> mock(PasswordEncoder.class));
     }
 
     /** ConfigData 测试使用干净环境，避免手动加入的 YAML 覆盖 Spring Boot 自身的 profile 顺序。 */

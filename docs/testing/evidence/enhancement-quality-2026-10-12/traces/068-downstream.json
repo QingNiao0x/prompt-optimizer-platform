@@ -1,0 +1,48 @@
+{
+  "label": "candidate1-r1-Q02-pro",
+  "httpStatus": 200,
+  "elapsedMs": 1527,
+  "request": {
+    "model": "deepseek-v4-pro",
+    "messages": [
+      {
+        "role": "user",
+        "content": "需要提醒同事发送周报，语气委婉。\n\n写一封邮件，委婉提醒同事把周报发过来。\n\n一封完整的邮件正文，语气委婉，明确表达请对方发送周报。\n\n不添加未要求的说明、报告或执行步骤；不虚构截止日期、汇总职责或工作进展；不把假设写成事实。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "306cd09c-e5bd-4242-bcf7-f651563905cd",
+    "object": "chat.completion",
+    "created": 1791740874,
+    "model": "deepseek-v4-pro",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "**邮件主题：关于本周周报的提醒**\n\nXX你好，\n\n打扰了。想确认一下本周的周报是否已方便发出。如果已经发送，请忽略此邮件；如果尚未完成，麻烦抽空发我一下即可，谢谢。\n\n祝工作顺利！"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 101,
+      "completion_tokens": 56,
+      "total_tokens": 157,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 101
+    },
+    "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "status": 200,
+  "elapsedMs": 13,
+  "body": {
+    "requestId": "8d6b29bb-ea1b-4cd1-84eb-86a87a85cf25",
+    "data": {
+      "id": "9e2f5970-d5ba-495d-a99c-99169edb899f",
+      "rawPrompt": "帮我写封邮件，委婉提醒同事把周报发过来。",
+      "optimizedPrompt": "收件人是同事，需要提醒对方发送周报。\n\n写一封邮件，委婉提醒同事把周报发过来。\n\n一封语气委婉、表达清晰的提醒邮件正文。\n\n- 语气委婉，避免催促或责备。\n- 明确表达请对方发送周报。\n- 不添加未要求的说明、报告或执行步骤。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "收件人是同事，需要提醒对方发送周报。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "写一封邮件，委婉提醒同事把周报发过来。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "一封语气委婉、表达清晰的提醒邮件正文。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 语气委婉，避免催促或责备。\n- 明确表达请对方发送周报。\n- 不添加未要求的说明、报告或执行步骤。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextSummary": {
+        "warnings": [],
+        "redactions": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "analysisVersion": "v3",
+        "technologyStack": [],
+        "customDescription": ""
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "providerName": "deepseek",
+      "modelName": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "latencyMs": 2620,
+      "createdAt": "2026-10-11T18:59:59.30298Z",
+      "includePermissionBoundaries": true,
+      "includeExamples": false,
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "modelVersion": "DeepSeek-V4-Pro-0813",
+      "promptFormat": "COMPACT"
+    }
+  }
+}

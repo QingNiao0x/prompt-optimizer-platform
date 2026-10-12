@@ -34,6 +34,8 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
     public EnhancementProviderResponse enhance(EnhancementProviderRequest request) {
         var task = com.promptoptimizer.enhancement.service.impl.EffectiveTaskViewFactory.forProvider(request);
         var delivery = DraftDeliveryContract.from(task.effectivePrompt(), request.template(), task.confirmedDecisions());
+        var findings = new com.promptoptimizer.enhancement.service.impl.PlanQuestionFilter().unresolvedFindings(
+                request.ambiguities(), task.effectivePrompt(), request.context(), task.facts());
         List<PromptSection> sections = new ArrayList<>();
         sections.add(new PromptSection(PromptSectionType.BACKGROUND, "背景", buildBackground(request)));
         sections.add(new PromptSection(PromptSectionType.TASK, "任务目标", buildTask(task.effectivePrompt())));
@@ -42,11 +44,11 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
         sections.add(new PromptSection(PromptSectionType.OUTPUT, "期望输出", output));
         sections.add(new PromptSection(PromptSectionType.CONSTRAINTS, "约束条件", toMarkdownList(request.constraints())));
 
-        if (!request.ambiguities().isEmpty()) {
+        if (!findings.isEmpty()) {
             sections.add(new PromptSection(
                     PromptSectionType.CLARIFICATIONS,
                     "待确认项",
-                    toMarkdownList(request.ambiguities())
+                    toMarkdownList(findings)
             ));
         }
         sections.add(new PromptSection(
@@ -63,7 +65,7 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
             ));
         }
         return new EnhancementProviderResponse(sections, "mock", "deterministic-enhancer-v1", true,
-                request.ambiguities());
+                findings);
     }
 
     /**
@@ -95,7 +97,10 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
             parts.add("当前会话补充：" + summarizeConversation(request.conversationHistory()));
         }
         if (parts.isEmpty()) {
-            return "未提供额外上下文；不得臆造研究口径、业务规则、技术栈或现有文件。";
+            // 原始需求也是已知背景；没有附件不等于对象、地区或技术栈均未知。
+            String stated = request.rawPrompt().lines().map(String::strip).filter(line -> !line.isBlank())
+                    .findFirst().orElse("");
+            return "本次需求：" + (stated.length() <= 500 ? stated : stated.substring(0, 500));
         }
         return String.join("\n", parts);
     }
@@ -104,8 +109,8 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
      * 组装纯净的任务目标段落；待确认项由独立的 CLARIFICATIONS 段承载。
      */
     private String buildTask(String effectivePrompt) {
-        return "将以下原始需求落实为具体、可执行且可验证的任务说明：\n"
-                + effectivePrompt.trim();
+        // Mock 不模拟语义推理；直接保留可执行指令，不能再要求下游先写任务说明。
+        return effectivePrompt.trim();
     }
 
     /**

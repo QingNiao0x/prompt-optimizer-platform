@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @since 0.1.0
  */
 final class TaskBodyLengthContract {
-    private static final Pattern RANGE = Pattern.compile("(?<![0-9])([0-9]{1,6})\\s*(?:至|到|[-–—~～])\\s*([0-9]{1,6})\\s*(中文字符|汉字|字)");
+    private static final Pattern RANGE = Pattern.compile("(?<![0-9])([0-9]{1,6})\\s*(?:至|到|[-–—~～])\\s*([0-9]{1,6})\\s*((?:个)?(?:中文字符|汉字|字))");
 
     private TaskBodyLengthContract() { }
 

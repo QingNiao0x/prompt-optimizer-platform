@@ -4,6 +4,14 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ExampleContractTest {
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
+    void coordinatedNegativeFormatDoesNotBecomeAnExampleRequest(boolean enabled) {
+        assertThat(ExampleContract.from("将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n会议改到周五。", enabled).mode())
+                .isEqualTo(ExampleContract.Mode.PROHIBITED);
+        assertThat(ExampleContract.from("只输出主题和正文，不补造进展，不举例。", enabled).mode())
+                .isEqualTo(ExampleContract.Mode.PROHIBITED);
+    }
     @Test void enabledSwitchRequiresPairedExamples() {
         assertThat(ExampleContract.from("撰写分析报告。", true).guidance()).contains("输入与预期输出", "虚构演示");
     }

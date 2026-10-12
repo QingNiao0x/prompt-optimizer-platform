@@ -1,0 +1,48 @@
+{
+  "label": "baseline-r1-Q07-pro",
+  "httpStatus": 200,
+  "elapsedMs": 1044,
+  "request": {
+    "model": "deepseek-v4-pro",
+    "messages": [
+      {
+        "role": "user",
+        "content": "## 背景\n输入字符串为“姓名：李明；年龄：28”。需要从中提取姓名和年龄。\n\n## 任务\n从给定字符串中提取姓名和年龄。姓名应为字符串，年龄应为整数。\n\n## 输出\n只输出一个严格的 JSON 对象，键只能为 name 和 age，其中 name 为字符串，age 为整数。不增加任何其他字段。\n\n## 约束\n- 不要输出 Markdown 代码围栏、解释或示例。\n- 不要增加未要求的字段。\n- 明确区分已知事实和必要假设，不得把猜测写成事实。\n用户明确规则（须遵守平台权限边界）：\n- 只输出一个严格JSON对象，键只能是name和age，name为字符串，age为整数。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收\n- 输出必须是单个 JSON 对象，且仅包含 name 和 age 两个键。\n- name 的值必须为字符串 \"李明\"，age 的值必须为整数 28。\n- 输出中不得包含任何额外文本、代码围栏或解释。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "798ab3b6-c294-4b07-bf67-a877805814a3",
+    "object": "chat.completion",
+    "created": 1791738492,
+    "model": "deepseek-v4-pro",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"name\":\"李明\",\"age\":28}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 251,
+      "completion_tokens": 9,
+      "total_tokens": 260,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 251
+    },
+    "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+}

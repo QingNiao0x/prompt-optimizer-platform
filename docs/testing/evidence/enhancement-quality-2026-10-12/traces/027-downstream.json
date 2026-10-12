@@ -1,0 +1,48 @@
+{
+  "label": "baseline-r2-Q06-flash",
+  "httpStatus": 200,
+  "elapsedMs": 801,
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "## 背景\n本次交付为翻译任务：将两行中文原文译为英文。原文为：\n\n- 会议改到周五下午三点。\n- 请在周四之前确认是否参加。\n\n两行内容相互独立，需保持原有行数与先后顺序。\n\n## 任务\n将上述两行中文逐行翻译为英文，保持两行结构及顺序不变。\n- 第一行表达会议时间调整至周五下午三点。\n- 第二行表达请求对方在周四之前确认是否参加。\n- 翻译应忠实原意，语气自然、适合日常通知或工作沟通场景。\n\n## 输出\n仅输出两行英文译文，不附加任何其他内容：\n- 不添加标题、编号、说明、注释或示例。\n- 不输出中文原文。\n- 不扩写、不补充原文未含的信息。\n- 保持两行及原有顺序。\n\n## 约束\n- 只输出译文，不解释、不加标题或示例。\n- 严格保持两行结构与顺序。\n- 不得把猜测或补充信息写成原文事实。\n用户明确规则（须遵守平台权限边界）：\n- 将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收\n- 输出恰为两行英文，无多余内容。\n- 两行顺序与原文一致。\n- 译文忠实表达原文的时间调整与确认请求，无扩写或遗漏。\n- 语气自然，适合工作沟通场景。\n\n## 示例\n提供与本次任务相关的输入与预期输出示例，并说明二者的对应关系。缺少真实资料时可用明确标注为虚构演示的材料；演示不得充当正式事实、统计口径或研究结论。示例服务原定交付，不另增无关任务。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "e6b2125d-6cc4-4c51-920d-fbf398372583",
+    "object": "chat.completion",
+    "created": 1791738709,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "The meeting has been moved to Friday at 3 p.m.\nPlease confirm your attendance by Thursday."
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 405,
+      "completion_tokens": 20,
+      "total_tokens": 425,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 405
+    },
+    "system_fingerprint": "aeb56401ca74e127821c4f9126dcb669"
+  }
+}

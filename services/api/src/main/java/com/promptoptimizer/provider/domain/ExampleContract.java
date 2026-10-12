@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public record ExampleContract(Mode mode, String source, String guidance, @JsonIgnore boolean fictionalDataAllowed) {
     private static final Pattern PROHIBITION = Pattern.compile(
-            "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带).{0,16}(?:示例|示范|例子)"
+            "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带|不加|不添加).{0,16}(?:示例|示范|例子)|不举例"
                     + "|\\b(?:no|without|do not|never)\\b[^.\\r\\n]{0,60}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern STRICT_OUTPUT = Pattern.compile(
             "(?:只|仅)(?:输出|返回|交付|提供).{0,18}(?:译文|翻译结果|JSON|正文|答案|代码)"

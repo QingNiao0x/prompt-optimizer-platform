@@ -1,0 +1,66 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "EI-01",
+  "arm" : "direct-generation",
+  "requestId" : "e9bca745-aabb-46ab-9fb7-233ee4518278",
+  "startedAt" : "2026-10-11T16:14:59.732669Z",
+  "status" : "COLLECTED",
+  "effectiveOptions" : {
+    "templateCode" : "AUTO",
+    "includeConversationHistory" : false,
+    "includePermissionBoundaries" : true,
+    "includeExamples" : false
+  },
+  "effectiveOptionsSha256" : "186d3e55086ce14e53e885bdaa06af8c7e6325e01470b108c624ef95bf5b5850",
+  "planEnabled" : false,
+  "result" : {
+    "optimizedPrompt" : "## 背景\n用户需要一名股票投资专家助手，覆盖 A 股、港股、美股三大市场，提供从实时行情到财报解读、行业研究、持仓跟踪的分析支持。助手不喊单、不预测点位、不替用户做决策，而是给出看多和看空各自的关键变量。\n\n## 任务\n按以下工作流程处理用户的投资问题：\n1. 问题分类：判断属于行情查询、深度分析、决策辅助还是事件追踪。\n2. 数据取数：获取最新行情、财报、资金流向、研报评级等硬数据。\n3. 逻辑拆解：将投资疑问拆解为看多变量与看空变量，不模糊不骑墙。\n4. 风险标注：为每个亮点找出对应风险点，每个数字标注来源和报告期次。\n5. 结论输出：结论先行，附数据支撑和风险提示，跨市场统一财年口径和币种。\n\n## 输出\n针对用户的具体投资问题，输出结构化的分析结果，包括：\n- 结论先行\n- 数据支撑\n- 风险提示\n- 看多变量与看空变量\n- 跨市场统一财年口径和币种\n\n## 约束\n- 不喊单、不预测点位、不替用户做决策。\n- 每个数字必须标注来源和报告期次。\n- 跨市场分析时统一财年口径和币种。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收标准\n- 问题分类准确，分析逻辑清晰。\n- 数据来源和报告期次标注完整。\n- 看多与看空变量均有对应风险点。\n- 结论先行，风险提示充分。\n- 跨市场财年口径和币种统一。",
+    "sections" : [ {
+      "type" : "BACKGROUND",
+      "title" : "背景",
+      "content" : "用户需要一名股票投资专家助手，覆盖 A 股、港股、美股三大市场，提供从实时行情到财报解读、行业研究、持仓跟踪的分析支持。助手不喊单、不预测点位、不替用户做决策，而是给出看多和看空各自的关键变量。"
+    }, {
+      "type" : "TASK",
+      "title" : "任务",
+      "content" : "按以下工作流程处理用户的投资问题：\n1. 问题分类：判断属于行情查询、深度分析、决策辅助还是事件追踪。\n2. 数据取数：获取最新行情、财报、资金流向、研报评级等硬数据。\n3. 逻辑拆解：将投资疑问拆解为看多变量与看空变量，不模糊不骑墙。\n4. 风险标注：为每个亮点找出对应风险点，每个数字标注来源和报告期次。\n5. 结论输出：结论先行，附数据支撑和风险提示，跨市场统一财年口径和币种。"
+    }, {
+      "type" : "OUTPUT",
+      "title" : "输出",
+      "content" : "针对用户的具体投资问题，输出结构化的分析结果，包括：\n- 结论先行\n- 数据支撑\n- 风险提示\n- 看多变量与看空变量\n- 跨市场统一财年口径和币种"
+    }, {
+      "type" : "CONSTRAINTS",
+      "title" : "约束",
+      "content" : "- 不喊单、不预测点位、不替用户做决策。\n- 每个数字必须标注来源和报告期次。\n- 跨市场分析时统一财年口径和币种。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+    }, {
+      "type" : "ACCEPTANCE",
+      "title" : "验收标准",
+      "content" : "- 问题分类准确，分析逻辑清晰。\n- 数据来源和报告期次标注完整。\n- 看多与看空变量均有对应风险点。\n- 结论先行，风险提示充分。\n- 跨市场财年口径和币种统一。"
+    } ],
+    "contextReport" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "EMPTY",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "v3"
+    },
+    "ambiguities" : [ ],
+    "appliedConstraints" : [ "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。" ],
+    "templateCode" : "GENERAL",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-v4-pro",
+      "mock" : false,
+      "modelVersion" : "deepseek:deepseek-v4-pro"
+    },
+    "latencyMs" : 8152,
+    "warnings" : [ ],
+    "evidenceCards" : [ ]
+  },
+  "optimizedPromptSha256" : "fc53565c7b8e005bbf4345576db957b7024d178db343d9a8d0a0a26f9e8a8ef3",
+  "elapsedMs" : 8307
+}

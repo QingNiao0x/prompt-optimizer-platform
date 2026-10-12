@@ -1,0 +1,67 @@
+{
+  "status": 200,
+  "elapsedMs": 71,
+  "body": {
+    "requestId": "4e864430-134b-442c-881f-d1fab2892adc",
+    "data": {
+      "id": "4c0bc46a-0939-4299-a460-0a77bf79091c",
+      "rawPrompt": "请给同事小林写一封中文邮件，提醒他今天17点前把本周项目进度发给我，好汇总给团队。语气友好，正文不超过80个汉字。只输出主题和正文，不写占位符，不补造项目进展，不举例。",
+      "optimizedPrompt": "需要给同事小林写一封中文邮件，提醒他今天17点前把本周项目进度发给我，以便汇总给团队。\n\n写一封语气友好的中文邮件，提醒小林在今日17点前发送本周项目进度。\n\n只输出邮件主题和正文。正文不超过80个汉字，不写占位符，不补造项目进展，不举例。\n\n- 语气友好。\n- 正文不超过80个汉字。\n- 只输出主题和正文，不包含其他内容。\n- 不写占位符，不补造项目进展，不举例。\n- 明确区分已知事实和必要假设，不得把猜测写成事实。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n- 邮件主题和正文完整，无额外内容。\n- 正文不超过80个汉字。\n- 语气友好，提醒明确。\n- 无占位符、虚构进展或示例。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "需要给同事小林写一封中文邮件，提醒他今天17点前把本周项目进度发给我，以便汇总给团队。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "写一封语气友好的中文邮件，提醒小林在今日17点前发送本周项目进度。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出邮件主题和正文。正文不超过80个汉字，不写占位符，不补造项目进展，不举例。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 语气友好。\n- 正文不超过80个汉字。\n- 只输出主题和正文，不包含其他内容。\n- 不写占位符，不补造项目进展，不举例。\n- 明确区分已知事实和必要假设，不得把猜测写成事实。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        },
+        {
+          "type": "ACCEPTANCE",
+          "title": "验收",
+          "content": "- 邮件主题和正文完整，无额外内容。\n- 正文不超过80个汉字。\n- 语气友好，提醒明确。\n- 无占位符、虚构进展或示例。"
+        }
+      ],
+      "contextSummary": {
+        "warnings": [],
+        "redactions": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "analysisVersion": "v3",
+        "technologyStack": [],
+        "customDescription": ""
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "providerName": "deepseek",
+      "modelName": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "latencyMs": 2974,
+      "createdAt": "2026-10-11T17:48:02.407632Z",
+      "includePermissionBoundaries": true,
+      "includeExamples": false,
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "modelVersion": "DeepSeek-V4-Pro-0813",
+      "promptFormat": "COMPACT"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "status": 200,
+  "elapsedMs": 13,
+  "body": {
+    "requestId": "6b58e307-ab5d-430b-8d47-2bb7df477809",
+    "data": {
+      "id": "c563b321-2a0a-4d49-ae19-9ef140fade07",
+      "rawPrompt": "请给同事小林写一封中文邮件，提醒他今天17点前把本周项目进度发给我，好汇总给团队。语气友好，正文不超过80个汉字。只输出主题和正文，不写占位符，不补造项目进展，不举例。",
+      "optimizedPrompt": "收件人为同事小林。\n\n写一封中文邮件，提醒小林今天17点前把本周项目进度发给我，好汇总给团队。语气友好。\n\n只输出主题和正文。正文不超过80个汉字。不写占位符，不补造项目进展，不举例。\n\n不得把猜测写成事实。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "收件人为同事小林。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "写一封中文邮件，提醒小林今天17点前把本周项目进度发给我，好汇总给团队。语气友好。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出主题和正文。正文不超过80个汉字。不写占位符，不补造项目进展，不举例。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "不得把猜测写成事实。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextSummary": {
+        "warnings": [],
+        "redactions": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "analysisVersion": "v3",
+        "technologyStack": [],
+        "customDescription": ""
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "providerName": "deepseek",
+      "modelName": "deepseek:deepseek-v4-pro",
+      "mock": false,
+      "latencyMs": 2005,
+      "createdAt": "2026-10-11T18:27:49.589275Z",
+      "includePermissionBoundaries": true,
+      "includeExamples": false,
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "modelVersion": "DeepSeek-V4-Pro-0813",
+      "promptFormat": "COMPACT"
+    }
+  }
+}

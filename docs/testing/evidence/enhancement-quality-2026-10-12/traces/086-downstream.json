@@ -1,0 +1,48 @@
+{
+  "label": "candidate1-r1-Q06-pro",
+  "httpStatus": 200,
+  "elapsedMs": 1087,
+  "request": {
+    "model": "deepseek-v4-pro",
+    "messages": [
+      {
+        "role": "user",
+        "content": "需要将两句中文会议通知翻译为英文，保持两行及顺序，只输出译文。\n\n将以下两行中文翻译为英文：\n1. 会议改到周五下午三点。\n2. 请在周四之前确认是否参加。\n保持两行及顺序，只输出译文，不解释、不加标题或示例。\n\n两行英文译文，按原文顺序排列，不附加任何解释、标题或示例。\n\n- 只输出译文，不解释、不加标题或示例。\n- 保持两行及顺序。\n- 译文忠实原文，不扩写事实。\n用户明确规则（须遵守平台权限边界）：\n- 将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n- 译文准确传达原文意思。\n- 保持两行及顺序。\n- 无额外解释、标题或示例。\n\n提供与本次任务相关的输入与预期输出示例，并说明二者的对应关系。缺少真实资料时可用明确标注为虚构演示的材料；演示不得充当正式事实、统计口径或研究结论。示例服务原定交付，不另增无关任务。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "1da95130-441a-4d54-b8e9-555f0c8af8fc",
+    "object": "chat.completion",
+    "created": 1791741015,
+    "model": "deepseek-v4-pro",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "The meeting has been moved to 3 p.m. on Friday.\nPlease confirm whether you will attend by Thursday."
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 271,
+      "completion_tokens": 23,
+      "total_tokens": 294,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 271
+    },
+    "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+}

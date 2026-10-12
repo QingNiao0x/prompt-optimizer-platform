@@ -489,7 +489,8 @@ const saveEditing = (): void => {
           </ElCollapseItem>
         </ElCollapse>
 
-        <article v-if="!editing" class="section-list">
+        <article v-if="!editing && result.promptFormat === 'COMPACT'" class="compact-prompt" data-testid="compact-prompt">{{ result.optimizedPrompt }}</article>
+        <article v-else-if="!editing" class="section-list">
           <ResultCard
             v-for="(section, index) in displaySections"
             :key="section.type"
@@ -747,6 +748,18 @@ h2 {
   min-height: 0;
   flex: 1;
   flex-direction: column;
+}
+
+.compact-prompt {
+  padding: 16px;
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 12px;
+  background: var(--glass-bg-strong);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .result-content {

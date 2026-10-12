@@ -516,7 +516,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
     });
     const optimizedPrompt = normalizedSections
       .filter((section) => section.type !== 'CLARIFICATIONS')
-      .map((section) => `## ${section.title}\n${section.content}`)
+      .map((section) => result.value?.promptFormat === 'COMPACT'
+        ? section.content : `## ${section.title}\n${section.content}`)
       .join('\n\n');
     if (optimizedPrompt === result.value.optimizedPrompt) {
       resultDraft.value = undefined;

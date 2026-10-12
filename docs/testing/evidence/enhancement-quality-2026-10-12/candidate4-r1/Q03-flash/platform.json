@@ -1,0 +1,59 @@
+{
+  "status": 200,
+  "elapsedMs": 1367,
+  "body": {
+    "requestId": "6571c85f-ce62-4967-92b7-d87309238943",
+    "data": {
+      "optimizedPrompt": "收件人是同事小林，需要提醒他提交本周项目进度，以便汇总给团队。\n\n写一封中文邮件，提醒小林今天17点前把本周项目进度发给你，用于汇总给团队。语气友好。\n\n只输出邮件主题和正文，正文不超过80个汉字。\n\n- 不写占位符。\n- 不补造项目进展。\n- 不举例。\n- 不把猜测写成事实。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "收件人是同事小林，需要提醒他提交本周项目进度，以便汇总给团队。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "写一封中文邮件，提醒小林今天17点前把本周项目进度发给你，用于汇总给团队。语气友好。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出邮件主题和正文，正文不超过80个汉字。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 不写占位符。\n- 不补造项目进展。\n- 不举例。\n- 不把猜测写成事实。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 1333,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT"
+    }
+  }
+}

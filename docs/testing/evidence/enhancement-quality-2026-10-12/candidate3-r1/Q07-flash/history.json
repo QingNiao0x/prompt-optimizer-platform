@@ -1,0 +1,62 @@
+{
+  "status": 200,
+  "elapsedMs": 11,
+  "body": {
+    "requestId": "ce159d26-0fdd-409c-8ca1-568819512aad",
+    "data": {
+      "id": "d2cd3bcb-35f1-49e4-9501-074a31a5073c",
+      "rawPrompt": "从“姓名：李明；年龄：28”中提取信息。只输出一个严格JSON对象，键只能是name和age，name为字符串，age为整数。不要Markdown、解释或示例，不增加字段。",
+      "optimizedPrompt": "输入文本为“姓名：李明；年龄：28”，需要从中提取姓名和年龄两项信息。\n\n从输入文本“姓名：李明；年龄：28”中提取信息，输出一个严格 JSON 对象。\n\n只输出一个严格 JSON 对象，键只能是 name 和 age，name 为字符串，age 为整数。不要 Markdown、解释或示例，不增加字段。\n\n- 输出必须是严格 JSON 对象，不得包含 Markdown 代码围栏、解释性文字或示例。\n- 键只能为 name 和 age，不得增加其他字段。\n- name 的值必须为字符串，age 的值必须为整数。\n- 不得把猜测写成事实；若输入中某项信息缺失，按实际可提取内容处理，不虚构。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "输入文本为“姓名：李明；年龄：28”，需要从中提取姓名和年龄两项信息。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "从输入文本“姓名：李明；年龄：28”中提取信息，输出一个严格 JSON 对象。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出一个严格 JSON 对象，键只能是 name 和 age，name 为字符串，age 为整数。不要 Markdown、解释或示例，不增加字段。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 输出必须是严格 JSON 对象，不得包含 Markdown 代码围栏、解释性文字或示例。\n- 键只能为 name 和 age，不得增加其他字段。\n- name 的值必须为字符串，age 的值必须为整数。\n- 不得把猜测写成事实；若输入中某项信息缺失，按实际可提取内容处理，不虚构。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextSummary": {
+        "warnings": [],
+        "redactions": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "analysisVersion": "v3",
+        "technologyStack": [],
+        "customDescription": ""
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "providerName": "deepseek",
+      "modelName": "deepseek:deepseek-flash",
+      "mock": false,
+      "latencyMs": 1931,
+      "createdAt": "2026-10-11T18:13:28.104807Z",
+      "includePermissionBoundaries": true,
+      "includeExamples": false,
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "modelVersion": "DeepSeek-V4.1-Flash",
+      "promptFormat": "COMPACT"
+    }
+  }
+}

@@ -69,6 +69,25 @@ public final class PlanQuestionFilter {
                     "(?:业务规则|审批规则|退款规则|取消规则|规则|阈值|审批条件)\\s*[:：=]\\s*([^\\n。；;]{2,180})")
     );
 
+    /**
+     * 直接增强和 Mock 复用 Plan 的已知事实判断；只处理模型候选，不改写服务端绑定的未决决定。
+     * 调用方传入本次已过滤的事实卡，模型输出本身不能成为消除问题的证据。
+     */
+    public List<String> unresolvedFindings(List<String> findings, String rawPrompt,
+            com.promptoptimizer.context.domain.ContextSnapshot context, List<PlanningFactCard> safeFacts) {
+        if (findings.isEmpty()) return List.of();
+        var digest = new com.promptoptimizer.enhancement.domain.PlanningContextDigest(
+                context.customDescription(), context.technologyStack().stream().map(item -> item.name()).toList(),
+                List.of(), List.of(), List.of(), context.analysisStatus(), 0, List.of(), safeFacts);
+        var input = new PlanningProviderRequest(rawPrompt, context.customDescription(), List.of(), digest);
+        // 提醒没有选项和推荐元数据，只借用同一问题过滤器；不创建 Plan 会话或伪造用户回答。
+        List<PlanQuestion> candidates = java.util.stream.IntStream.range(0, findings.size())
+                .mapToObj(index -> new PlanQuestion("finding_" + index, findings.get(index), "",
+                        com.promptoptimizer.enhancement.domain.PlanQuestionType.FREE_TEXT, List.of(), List.of(), true))
+                .toList();
+        return filter(candidates, input).stream().map(PlanQuestion::question).toList();
+    }
+
     /** 去掉完全重复、已明确事实及同一对象的简单同义问法；分类相同不能代替对象相同。 */
     public List<PlanQuestion> filter(List<PlanQuestion> questions, PlanningProviderRequest input) {
         List<KnownFact> facts = collectFacts(input);
@@ -595,7 +614,10 @@ public final class PlanQuestionFilter {
             input.planningContext().technologies().forEach(value -> known.append(' ').append(value));
             input.planningContext().dependencies().forEach(value -> known.append(' ').append(value));
         }
-        String normalized = known.toString().toLowerCase(Locale.ROOT);
+        // 否定、建议和未来分支不证明已选技术；不能以词语出现消除用户仍需作出的决定。
+        String normalized = java.util.Arrays.stream(known.toString().split("[。；;，,\\r\\n]+"))
+                .filter(clause -> !clause.matches("(?is).*(?:不使用|不采用|不选|禁止|待定|尚未|未定|未知|如果|以后|候选|建议|示例|参考|\\b(?:not|if|example|suggested)\\b).*"))
+                .collect(java.util.stream.Collectors.joining(" ")).toLowerCase(Locale.ROOT);
         String[] catalog;
         if (question.contains("数据库")) {
             catalog = new String[] {"postgresql", "mysql", "mariadb", "sqlite", "mongodb", "oracle", "sql server"};

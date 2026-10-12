@@ -1,0 +1,48 @@
+{
+  "label": "candidate4-r2-Q03-flash",
+  "httpStatus": 200,
+  "elapsedMs": 717,
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "收件人是同事小林，需要向他催交本周项目进度，以便汇总给团队。\n\n写一封中文邮件给同事小林，提醒他在今天17点前把本周项目进度发给你，用于汇总给团队。语气友好。\n\n只输出邮件主题和正文两部分，不输出其他内容。正文不超过80个汉字。\n\n- 不写占位符。\n- 不补造项目进展内容。\n- 不举例。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "b14a1ee5-846e-4b12-aa4d-b92dd5a9d7b6",
+    "object": "chat.completion",
+    "created": 1791743504,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "主题：请今天17点前发本周项目进度\n\n小林，麻烦今天17点前把本周项目进度发我，方便汇总给团队。谢谢啦！"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 145,
+      "completion_tokens": 34,
+      "total_tokens": 179,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 145
+    },
+    "system_fingerprint": "aeb56401ca74e127821c4f9126dcb669"
+  }
+}

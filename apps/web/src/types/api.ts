@@ -595,6 +595,8 @@ export interface ProviderMetadata {
 
 export interface OptimizationResult {
   optimizedPrompt: string;
+  /** 提示词展示形式；旧历史缺省为分节，内部四要素继续支持校验和编辑。 */
+  promptFormat?: 'COMPACT' | 'STRUCTURED';
   sections: PromptSection[];
   contextReport: ContextSnapshot;
   ambiguities: string[];
@@ -645,6 +647,8 @@ export interface OptimizationHistoryDetail {
   id: string;
   rawPrompt: string;
   optimizedPrompt: string;
+  /** 旧历史缺省分节；保存的最终正文保持原样。 */
+  promptFormat?: 'COMPACT' | 'STRUCTURED';
   sections: PromptSection[];
   contextSummary: Record<string, unknown>;
   ambiguities: string[];

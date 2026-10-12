@@ -1,0 +1,48 @@
+{
+  "label": "candidate4-r1-Q07-pro",
+  "httpStatus": 200,
+  "elapsedMs": 1285,
+  "request": {
+    "model": "deepseek-v4-pro",
+    "messages": [
+      {
+        "role": "user",
+        "content": "输入为“姓名：李明；年龄：28”。\n\n从输入中提取姓名和年龄。\n\n只输出一个严格JSON对象，键只能是name和age，name为字符串，age为整数。不要Markdown、解释或示例，不增加字段。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "cfc6fa40-23a7-4e0c-b97a-9840add3439b",
+    "object": "chat.completion",
+    "created": 1791743424,
+    "model": "deepseek-v4-pro",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"name\": \"李明\", \"age\": 28}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 86,
+      "completion_tokens": 12,
+      "total_tokens": 98,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 86
+    },
+    "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+}

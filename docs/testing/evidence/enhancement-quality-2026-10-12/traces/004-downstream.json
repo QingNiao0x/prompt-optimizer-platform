@@ -1,0 +1,48 @@
+{
+  "label": "baseline-r1-Q02-pro",
+  "httpStatus": 200,
+  "elapsedMs": 2004,
+  "request": {
+    "model": "deepseek-v4-pro",
+    "messages": [
+      {
+        "role": "user",
+        "content": "## 背景\n用户需要写一封邮件，委婉提醒同事把周报发过来。\n\n## 任务\n撰写一封语气委婉、礼貌的提醒邮件，请同事尽快提交周报。\n\n## 输出\n直接输出邮件正文，包含合适的称呼、正文和落款。\n\n## 约束\n语气委婉、礼貌，不指责或施压；不添加未要求的说明、报告或执行步骤。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收\n邮件内容完整，语气委婉，明确提醒提交周报，无多余内容。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "69688d0c-3df7-4a15-b408-4a8119356f72",
+    "object": "chat.completion",
+    "created": 1791738438,
+    "model": "deepseek-v4-pro",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "主题：关于本周周报的提醒\n\n您好，[同事名字]：\n\n打扰了。想确认一下本周的周报是否方便发送过来，以便我这边及时汇总整理。如果已经发出，请忽略此邮件；若尚未完成，也无需着急，在您方便时发我即可。\n\n谢谢！\n\n祝好，  \n[你的名字]"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 139,
+      "completion_tokens": 73,
+      "total_tokens": 212,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 139
+    },
+    "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+}

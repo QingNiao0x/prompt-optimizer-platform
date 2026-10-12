@@ -1,0 +1,48 @@
+{
+  "label": "candidate2-r1-Q02-flash",
+  "httpStatus": 200,
+  "elapsedMs": 1046,
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "收件人为需要提交周报的同事，用户与对方为同事关系。\n\n写一封邮件，委婉提醒同事把周报发过来。邮件需明确表达请对方发送周报这一诉求，语气委婉、礼貌，符合同事间日常沟通习惯。\n\n一封可直接发送的提醒邮件，包含称呼、正文和结尾署名位置。\n\n- 语气委婉，不得写成催促或指责。\n- 必须表达请对方发送周报的请求，不得弱化为可不提交。\n- 不得虚构具体截止日期、汇报对象或工作进展等未提供的信息。\n- 称呼未知时使用自然中性的称呼，不制造姓名填空模板。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "43f23b15-545f-4072-aa13-bba7289234d4",
+    "object": "chat.completion",
+    "created": 1791741363,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "**主题：周报提交提醒**\n\n你好，\n\n打扰一下，想跟你确认一下周报的提交情况。如果方便的话，麻烦把周报发给我，谢谢。\n\n辛苦啦，有任何问题随时沟通。\n\n祝好\n[你的名字]"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 169,
+      "completion_tokens": 51,
+      "total_tokens": 220,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 169
+    },
+    "system_fingerprint": "aeb56401ca74e127821c4f9126dcb669"
+  }
+}

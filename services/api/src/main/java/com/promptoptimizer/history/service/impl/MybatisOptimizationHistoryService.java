@@ -229,7 +229,10 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 convertList(metadata.get("conversationHistory"), new TypeReference<List<ConversationMessage>>() {
                 }),
                 entity.getPermissionPolicy(),
-                stringValue(metadata.get("modelVersion"))
+                stringValue(metadata.get("modelVersion")),
+                "COMPACT".equals(metadata.get("promptFormat"))
+                        ? com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT
+                        : com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED
         );
     }
 
@@ -242,6 +245,7 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
     ) {
         Map<String, Object> metadata = new LinkedHashMap<>();
         metadata.put("sections", toList(result.sections()));
+        metadata.put("promptFormat", result.promptFormat().name());
         metadata.put("ambiguities", result.ambiguities());
         metadata.put("appliedConstraints", result.appliedConstraints());
         metadata.put("provider", result.provider().provider());

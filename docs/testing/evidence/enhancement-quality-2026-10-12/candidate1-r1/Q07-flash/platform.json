@@ -1,0 +1,64 @@
+{
+  "status": 200,
+  "elapsedMs": 1878,
+  "body": {
+    "requestId": "35bbc55e-a4fc-46e2-a8d8-fdc74fa51ad0",
+    "data": {
+      "optimizedPrompt": "输入文本为“姓名：李明；年龄：28”，需要从中提取姓名与年龄两项信息。\n\n从输入文本“姓名：李明；年龄：28”中提取信息，输出一个严格 JSON 对象。\n\n只输出一个严格 JSON 对象，键只能是 name 和 age：name 为字符串，age 为整数。不要 Markdown、解释或示例，不增加字段。\n\n- 输出必须是可直接解析的严格 JSON 对象，不得包含 Markdown 代码围栏、解释文字或示例。\n- 键只能为 name 和 age，不得增加其他字段。\n- name 的值必须为字符串，age 的值必须为整数。\n- 不得把猜测写成事实；仅使用输入文本中明确给出的信息。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n- 输出为单个严格 JSON 对象，可被 JSON 解析器解析。\n- 对象仅含 name 和 age 两个键。\n- name 为字符串且对应“李明”，age 为整数且对应 28。\n- 无 Markdown、无解释、无示例、无额外字段。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "输入文本为“姓名：李明；年龄：28”，需要从中提取姓名与年龄两项信息。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "从输入文本“姓名：李明；年龄：28”中提取信息，输出一个严格 JSON 对象。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出一个严格 JSON 对象，键只能是 name 和 age：name 为字符串，age 为整数。不要 Markdown、解释或示例，不增加字段。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 输出必须是可直接解析的严格 JSON 对象，不得包含 Markdown 代码围栏、解释文字或示例。\n- 键只能为 name 和 age，不得增加其他字段。\n- name 的值必须为字符串，age 的值必须为整数。\n- 不得把猜测写成事实；仅使用输入文本中明确给出的信息。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        },
+        {
+          "type": "ACCEPTANCE",
+          "title": "验收",
+          "content": "- 输出为单个严格 JSON 对象，可被 JSON 解析器解析。\n- 对象仅含 name 和 age 两个键。\n- name 为字符串且对应“李明”，age 为整数且对应 28。\n- 无 Markdown、无解释、无示例、无额外字段。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 1831,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT"
+    }
+  }
+}

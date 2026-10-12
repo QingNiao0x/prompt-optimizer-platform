@@ -31,7 +31,10 @@ public class HybridEmailVerificationStore implements EmailVerificationStore {
             if emailCount >= tonumber(ARGV[5]) then return 3 end
             local ipCount = tonumber(redis.call('GET', KEYS[4]) or '0')
             if ipCount >= tonumber(ARGV[6]) then return 4 end
-            redis.call('HSET', KEYS[1], 'digest', ARGV[1], 'attempts', '0', 'maxAttempts', ARGV[4])
+            -- Redis 3.2 的 HSET 只接受单字段；同一 Lua 内分次写入仍与限流检查原子执行。
+            redis.call('HSET', KEYS[1], 'digest', ARGV[1])
+            redis.call('HSET', KEYS[1], 'attempts', '0')
+            redis.call('HSET', KEYS[1], 'maxAttempts', ARGV[4])
             redis.call('EXPIRE', KEYS[1], ARGV[2])
             redis.call('SET', KEYS[2], '1', 'EX', ARGV[3])
             emailCount = redis.call('INCR', KEYS[3])
@@ -85,6 +88,9 @@ public class HybridEmailVerificationStore implements EmailVerificationStore {
         this.redisTemplate = redisTemplateProvider.getIfAvailable();
         this.properties = properties;
         this.fallback = new InMemoryEmailVerificationStore();
+        // 是否存在客户端与是否连通是不同事实；此处不探测网络、不读取验证码或改变故障策略。
+        LOGGER.info("event=email.verification.store.configured backend={} requireRedis={} redisClientPresent={}",
+                usesLocalMemoryStore() ? "MEMORY" : "REDIS", properties.isRequireRedis(), redisTemplate != null);
     }
 
     @Override
@@ -246,6 +252,9 @@ public class HybridEmailVerificationStore implements EmailVerificationStore {
     /** 多实例强制 Redis 时直接失败；仅在明确允许单机模式时执行本地降级操作。 */
     private <T> T fallbackOrFail(java.util.function.Supplier<T> operation) {
         if (properties.isRequireRedis()) {
+            if (redisTemplate == null) {
+                LOGGER.warn("event=email.verification.store.unavailable reason=REDIS_CLIENT_MISSING");
+            }
             throw unavailable();
         }
         return operation.get();

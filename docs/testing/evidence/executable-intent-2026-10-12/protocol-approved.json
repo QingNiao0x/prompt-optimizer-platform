@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-12",
+  "cases": [
+    "EI-01 screenshot role"
+  ],
+  "models": [
+    "deepseek:deepseek-flash",
+    "deepseek:deepseek-v4-pro"
+  ],
+  "generations": 2,
+  "maxAttemptsPerGeneration": 3,
+  "worksPerModel": [
+    "raw role plus same synthetic analysis question",
+    "copied optimized role plus same synthetic analysis question",
+    "copied optimized role only"
+  ],
+  "maxActualRequests": 12,
+  "maxWorks": 6,
+  "automaticDownstreamRetry": false,
+  "selection": "one generation per model; retain all failed attempts; no best-of sampling",
+  "passConditions": [
+    "direct role execution, no prompt writing deliverable",
+    "known market scope retained, no global missing-information questionnaire",
+    "with supplied figures: revenue +20%, profit -10%, cash flow -50%, margin 10% to 7.5%; actual analysis delivered",
+    "no invented market quotes or sourced claims",
+    "role only: concise activation; essential question allowed, no invented company or report"
+  ],
+  "authorization": "USER_APPROVED_NEW_SCREENSHOT_AND_SYNTHETIC_TABLE_MAX_12_REQUESTS"
+}

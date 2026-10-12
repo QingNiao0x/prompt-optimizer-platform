@@ -1,0 +1,63 @@
+{
+  "status": 200,
+  "elapsedMs": 3326,
+  "body": {
+    "requestId": "21514e47-6acf-4ca2-931b-50d14b9d2224",
+    "data": {
+      "optimizedPrompt": "## 背景\n需要给同事小林写一封中文邮件，提醒他今天17点前把本周项目进度发给你，以便汇总给团队。\n\n## 任务\n撰写一封中文邮件，语气友好，正文不超过80个汉字。只输出主题和正文，不写占位符，不补造项目进展，不举例。\n\n## 输出\n邮件主题和正文。正文需包含提醒小林在今天17点前发送本周项目进度，并说明用途是汇总给团队。\n\n## 约束\n- 语气友好。\n- 正文不超过80个汉字。\n- 只输出主题和正文，不写占位符。\n- 不补造项目进展。\n- 不举例。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收标准\n完整满足明确目标、事实和约束；未决条件保留，不把假设写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "需要给同事小林写一封中文邮件，提醒他今天17点前把本周项目进度发给你，以便汇总给团队。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "撰写一封中文邮件，语气友好，正文不超过80个汉字。只输出主题和正文，不写占位符，不补造项目进展，不举例。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "邮件主题和正文。正文需包含提醒小林在今天17点前发送本周项目进度，并说明用途是汇总给团队。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 语气友好。\n- 正文不超过80个汉字。\n- 只输出主题和正文，不写占位符。\n- 不补造项目进展。\n- 不举例。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        },
+        {
+          "type": "ACCEPTANCE",
+          "title": "验收标准",
+          "content": "完整满足明确目标、事实和约束；未决条件保留，不把假设写成事实。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 3292,
+      "warnings": [],
+      "evidenceCards": []
+    }
+  }
+}

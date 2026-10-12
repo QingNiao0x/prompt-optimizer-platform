@@ -1,0 +1,31 @@
+{
+  "scope" : "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY",
+  "caseId" : "QB-08",
+  "arm" : "direct",
+  "requestId" : "7396112f-1623-4046-b285-416b50a93624",
+  "startedAt" : "2026-10-11T15:17:52.978185Z",
+  "status" : "COMPLETE",
+  "promptSha256" : "fccc0aa1aa90f0267d7c95fc69df2309a87fa6529ce81c73101c6006b05dd81b",
+  "materialsSha256" : "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "systemSha256" : "ac3c4cad9b6afb81295ff32a30cbed4f6518f5040326a05ea247f394dd1744fc",
+  "executionUserSha256" : "2974c9a51646f66d9e975d2e1237b47f6afde95a82416ed689e4b881268e346a",
+  "settings" : {
+    "temperature" : 0.2,
+    "automaticRetry" : false,
+    "maxOutputTokens" : 8192,
+    "thinking" : "disabled"
+  },
+  "actualModel" : "deepseek-v4-pro",
+  "finishReason" : "stop",
+  "usage" : {
+    "prompt_tokens" : 613,
+    "completion_tokens" : 394,
+    "total_tokens" : 1007
+  },
+  "output" : "开发提示词\n\n一、规则描述\n\n1. 规则一  \n   - 适用年份：2024 年  \n   - 适用机构：甲机构  \n   - 金额阈值：5 万元  \n   - 触发条件：采购金额超过 5 万元  \n   - 复核角色：财务  \n\n2. 规则二  \n   - 适用年份：2025 年  \n   - 适用机构：乙机构  \n   - 金额阈值：5 万元  \n   - 触发条件：采购金额达到 5 万元  \n   - 复核角色：负责人  \n\n二、实现要求\n\n1. 按“年份 + 机构”匹配对应规则。  \n2. 金额比较方式：  \n   - 2024 年甲机构：采购金额 > 50000 元时触发财务复核。  \n   - 2025 年乙机构：采购金额 >= 50000 元时触发负责人复核。  \n3. 金额单位统一为“元”，5 万元按 50000 元处理。  \n4. 仅当满足对应年份、机构及金额条件时，才将审批任务分配给指定复核角色。  \n5. 不满足条件的采购申请不触发对应复核。  \n\n三、数据约束\n\n1. 禁止使用假设数据、虚构数据或模拟数据。  \n2. 所有测试和验证场景必须使用真实、可核实的数据。  \n3. 测试数据中的年份、机构、采购金额及复核结果均须来自可追溯的真实业务记录。  \n4. 不得以任何形式编造采购金额、机构名称或复核角色用于测试或验证。  \n\n四、范围限制\n\n1. 仅实现上述两条审批规则。  \n2. 不新增报表功能。  \n3. 不新增代码生成器。  \n4. 不扩展其他审批规则或业务逻辑。",
+  "outputSha256" : "93e71c3e171da60e836a7abca9dd0d9cd19087a630e7348c79f17c6a1886a462",
+  "nonWhitespaceChars" : 481,
+  "hanChars" : 356,
+  "businessReview" : "PENDING",
+  "singleHttpCallMs" : 6005
+}

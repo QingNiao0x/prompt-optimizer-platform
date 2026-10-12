@@ -1,0 +1,48 @@
+{
+  "label": "candidate2-r1-Q06-pro",
+  "httpStatus": 200,
+  "elapsedMs": 1216,
+  "request": {
+    "model": "deepseek-v4-pro",
+    "messages": [
+      {
+        "role": "user",
+        "content": "输入为两行中文句子，需翻译为英文。\n\n将下面两行翻译为英文，保持两行及顺序：\n会议改到周五下午三点。\n请在周四之前确认是否参加。\n\n只输出译文，不解释、不加标题或示例。\n\n译文忠实、术语一致、语气适合受众，保持要求的格式，不扩写原文事实。\n用户明确规则（须遵守平台权限边界）：\n- 将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n提供与本次任务相关的输入与预期输出示例，并说明二者的对应关系。缺少真实资料时可用明确标注为虚构演示的材料；演示不得充当正式事实、统计口径或研究结论。示例服务原定交付，不另增无关任务。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "0183498b-00e9-44e3-b7cd-5c64f1472b53",
+    "object": "chat.completion",
+    "created": 1791741517,
+    "model": "deepseek-v4-pro",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "The meeting has been moved to Friday at 3 p.m.\nPlease confirm whether you can attend by Thursday."
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 198,
+      "completion_tokens": 22,
+      "total_tokens": 220,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 198
+    },
+    "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+}

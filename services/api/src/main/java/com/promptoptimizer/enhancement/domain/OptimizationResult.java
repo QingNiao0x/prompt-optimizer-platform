@@ -20,7 +20,8 @@ public record OptimizationResult(
         ProviderMetadata provider,
         long latencyMs,
         List<String> warnings,
-        List<PlanningFactCard> evidenceCards
+        List<PlanningFactCard> evidenceCards,
+        PromptFormat promptFormat
 ) {
 
     /**
@@ -32,19 +33,28 @@ public record OptimizationResult(
         appliedConstraints = List.copyOf(appliedConstraints);
         warnings = warnings == null ? List.of() : List.copyOf(warnings);
         evidenceCards = evidenceCards == null ? List.of() : List.copyOf(evidenceCards);
+        promptFormat = promptFormat == null ? PromptFormat.STRUCTURED : promptFormat;
     }
 
     /** 保存调用开始时的平台版本名称，后续管理员改名不影响本条优化记录。 */
     public OptimizationResult withModelVersion(String modelVersion) {
         return new OptimizationResult(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints,
                 templateCode, new ProviderMetadata(provider.provider(), provider.model(), provider.mock(), modelVersion),
-                latencyMs, warnings, evidenceCards);
+                latencyMs, warnings, evidenceCards, promptFormat);
     }
 
     /** 汇总模型重试、上下文和结果组装的完整耗时；不改变优化正文或历史字段契约。 */
     public OptimizationResult withLatencyMs(long totalLatencyMs) {
         return new OptimizationResult(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints,
-                templateCode, provider, Math.max(0, totalLatencyMs), warnings, evidenceCards);
+                templateCode, provider, Math.max(0, totalLatencyMs), warnings, evidenceCards, promptFormat);
+    }
+
+    /** 旧记录缺少展示形式时按既有分节呈现；不根据正文标题猜测历史元数据。 */
+    public OptimizationResult(String optimizedPrompt, List<PromptSection> sections, ContextSnapshot contextReport,
+                              List<String> ambiguities, List<String> appliedConstraints, TemplateCode templateCode,
+                              ProviderMetadata provider, long latencyMs, List<String> warnings, List<PlanningFactCard> evidenceCards) {
+        this(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints, templateCode,
+                provider, latencyMs, warnings, evidenceCards, PromptFormat.STRUCTURED);
     }
 
     /** 旧记录没有溯源卡片时返回空列表，保留既有结果构造和历史反序列化契约。 */

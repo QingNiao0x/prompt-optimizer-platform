@@ -78,6 +78,7 @@ class MybatisOptimizationHistoryServiceTest {
         assertThat(saved.getCreatedBy()).isEqualTo(USER_ID);
         assertThat(saved.getContextSnapshot()).doesNotContainKey("fileSnippets");
         assertThat(saved.getResultMetadata()).containsEntry("modelVersion", "DeepSeek-V4-Pro-0813");
+        assertThat(saved.getResultMetadata()).containsEntry("promptFormat", "STRUCTURED");
     }
 
     @Test
@@ -88,6 +89,7 @@ class MybatisOptimizationHistoryServiceTest {
         var detail = service.get(record.getId());
         assertThat(detail.rawPrompt()).isEqualTo("给用户模块添加登录功能");
         assertThat(detail.modelVersion()).isEmpty();
+        assertThat(detail.promptFormat()).isEqualTo(com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED);
         verify(recordMapper).selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID);
     }
 

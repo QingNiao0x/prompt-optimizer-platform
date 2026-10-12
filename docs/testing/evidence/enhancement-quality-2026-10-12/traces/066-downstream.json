@@ -1,0 +1,48 @@
+{
+  "label": "candidate1-r1-Q02-flash",
+  "httpStatus": 200,
+  "elapsedMs": 1113,
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "用户需要写一封邮件，委婉提醒同事提交周报。目前没有提供同事姓名、称呼、截止时间或具体工作进展等信息。\n\n撰写一封委婉提醒同事发送周报的邮件。邮件应表达提醒之意，语气礼貌、委婉，不显得催促或指责；核心目的是请对方将周报发送过来。称呼可使用自然中性的表达（如“你好”），无需编造姓名或具体截止时间。\n\n输出一封完整的中文邮件，包含称呼、正文和结尾署名位置。正文简洁，直接表达提醒周报之意，语气委婉礼貌。\n\n- 不得编造同事姓名、具体截止日期、汇总职责或工作进展等未提供的信息。\n- 委婉语气不等于放宽要求，邮件仍须明确表达请对方发送周报。\n- 不得把猜测写成事实。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n- 邮件完整，包含称呼、正文和结尾。\n- 语气委婉礼貌，同时明确表达请对方发送周报。\n- 未出现编造的姓名、截止日期或工作进展。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "31bf9c34-e431-414d-89ed-3851e8e08dba",
+    "object": "chat.completion",
+    "created": 1791740868,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "**主题：关于周报提交的提醒**\n\n你好：\n\n打扰了，想提醒一下，如果方便的话，请将本周的周报发送给我。\n\n谢谢你的配合。\n\n祝好  \n[你的署名]"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 242,
+      "completion_tokens": 43,
+      "total_tokens": 285,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 242
+    },
+    "system_fingerprint": "aeb56401ca74e127821c4f9126dcb669"
+  }
+}

@@ -28,6 +28,40 @@ class RequirementBoundaryRegressionTest {
     private static final String TEST_SELECTION = "为研究生准备论文方法部分的写作提示词。具体检验依据未来数据分布选择，不预设必然显著。";
     private final OptimizationResultAssembler assembler = new OptimizationResultAssembler();
 
+    @Test
+    void observedPlanQuestionAnswerWorkflowCannotBecomeModelSelfPlanning() {
+        var contract = com.promptoptimizer.provider.domain.RequirementBoundaryContract.from(
+                "撰写研究设计，研究Plan问答对提示词质量的影响。", List.of(), List.of());
+        assertThatThrownBy(() -> contract.validate(
+                "Plan组为在原始提示词中先要求模型生成执行计划再据此作答；之后不能改变用户目标。", "sections.TASK"))
+                .isInstanceOf(ProviderResponseValidationException.class);
+        assertThat(contract.guidance()).contains("用户回答", "优化提示词");
+    }
+
+    @Test
+    void actualQuestionAnswerWorkflowAndExplicitSelfPlanningRemainDistinct() {
+        var questions = com.promptoptimizer.provider.domain.RequirementBoundaryContract.from(
+                "比较先让用户回答问题再增强提示词与直接增强。", List.of(), List.of());
+        org.assertj.core.api.Assertions.assertThatCode(() -> questions.validate(
+                "Plan组由增强器提问，用户回答后再增强提示词；不能改为模型先生成计划。", "sections.TASK"))
+                .doesNotThrowAnyException();
+        var plans = com.promptoptimizer.provider.domain.RequirementBoundaryContract.from(
+                "研究先让模型生成执行计划再作答是否有效。", List.of(), List.of());
+        org.assertj.core.api.Assertions.assertThatCode(() -> plans.validate(
+                "Plan组先要求模型生成执行计划再据此作答。", "sections.TASK"))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void observedNegativeAcceptanceDoesNotBecomeDataPermission() {
+        var contract = com.promptoptimizer.provider.domain.RequirementBoundaryContract.from(DATA, List.of(), List.of());
+        org.assertj.core.api.Assertions.assertThatCode(() -> contract.validate(
+                "未编造效应量、P值或结论，未使用假设数据或虚构数据。", "sections.ACCEPTANCE"))
+                .doesNotThrowAnyException();
+        assertThatThrownBy(() -> contract.validate("未使用假设数据，但可以使用虚构数据验证。", "sections.TASK"))
+                .isInstanceOf(ProviderResponseValidationException.class);
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void recordedDataExceptionInTaskIsRejectedRegardlessOfExampleSwitch(boolean examples) {
@@ -45,6 +79,11 @@ class RequirementBoundaryRegressionTest {
     void englishDataProhibitionAlsoRejectsAnException() {
         assertConflict("Prepare a development prompt. Do not use hypothetical data.",
                 "You may use clearly labeled synthetic data for validation.", List.of(), false);
+    }
+
+    @Test
+    void coordinatedDataProhibitionDoesNotLoseItsScopeOnAnotherEnhancement() {
+        assertConflict("整理开发提示词，不得使用假设、虚构或模拟数据。", "可以使用虚构数据验证。", List.of(), false);
     }
 
     @Test
@@ -132,8 +171,56 @@ class RequirementBoundaryRegressionTest {
     void equivalentBoundaryInstructionsDoNotAcquireAnotherFullCopy() {
         var view = EffectiveTaskViewFactory.create(TEST_SELECTION + "死亡率比较采用年龄标准化。不得使用假设数据。",
                 TemplateCode.GENERAL, List.of(), List.of(), false);
-        assertThat(view.requirementBoundaries().missingGuidance("不得使用假设数据。\n具体检验依据未来数据分布选择，可说明候选检验名称和适用条件。\n"
+        assertThat(view.requirementBoundaries().missingGuidance("不得使用假设数据，禁令适用于所有用途，包括测试和验证。\n具体检验依据未来数据分布选择，可说明候选检验名称和适用条件。\n"
+                + "年龄标准化仅确认方法类别，不能宣称直接或间接标准化方式也已确定；可解释候选方式和适用条件。\n"
                 + "年龄标准化所用标准人口的来源和年份未确定，不默认采用某年人口。" )).isEmpty();
+    }
+
+    @Test
+    void recordedDownstreamClaimDoesNotFollowFromTheParentMethodConfirmation() {
+        assertConflict("撰写死亡率特征分析报告。", "年龄标准化方法在本研究中已确定为直接标准化，但标准人口的年份和来源尚未选定。", ageOnly(), false);
+    }
+
+    @Test
+    void aBranchCandidateMayBeExplainedWithoutInventingConfirmation() {
+        var result = result("撰写死亡率特征分析报告。", "采用年龄标准化，可解释直接标准化和间接标准化的适用条件，不将候选写成已确认。", ageOnly(), false);
+        assertThat(result.optimizedPrompt()).contains("直接标准化和间接标准化的适用条件");
+    }
+
+    @Test
+    void theUserCanActuallyChooseTheConcreteStandardizationBranch() {
+        var answers = List.of(new PlanAnswer("method", "死亡率比较采用哪种方法？", "采用直接年龄标准化。"));
+        var result = result("撰写死亡率特征分析报告。", "本研究已确定为直接年龄标准化。", answers, false);
+        assertThat(result.optimizedPrompt()).contains("直接年龄标准化");
+    }
+
+    @Test
+    void futurePopulationSelectionIsNotAnIndependentCurrentParameterConfirmation() {
+        assertConflict("撰写报告；若以后确认采用2010年中国人口普查人口作为标准人口，再计算标化率。",
+                "本文采用2010年中国人口普查人口作为标准人口。", ageOnly(), false);
+    }
+
+    @Test
+    void futureBranchSelectionDoesNotBecomeACurrentConfirmedMethod() {
+        assertConflict("撰写报告；若以后确认采用直接年龄标准化，再执行该分支。",
+                "年龄标准化方法已确定为直接标准化。", ageOnly(), false);
+    }
+
+    @Test
+    void fictionBanDoesNotAuthorizeABanOnAllExampleData() {
+        assertConflict(DATA, "不得使用假设数据、虚构数据或示例数据。", List.of(), false);
+    }
+
+    @Test
+    void aRealExampleDataBanIsValidWhenTheUserActuallyRequiresIt() {
+        var result = result(DATA + "不得使用示例数据。", "不得使用假设数据或示例数据。", List.of(), false);
+        assertThat(result.optimizedPrompt()).contains("不得使用示例数据");
+    }
+
+    @Test
+    void copiedDataProhibitionStatesAllUsesInsteadOfOnlyNotPassingExamplesOffAsFacts() {
+        var result = result(DATA, "不得使用假设数据来替代真实业务数据。", List.of(), false);
+        assertThat(result.optimizedPrompt()).contains("所有用途", "测试和验证", "不得缩为仅禁止冒充真实业务数据");
     }
 
     private List<PlanAnswer> ageOnly() {

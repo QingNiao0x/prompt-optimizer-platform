@@ -167,6 +167,13 @@ public class OptimizationResultAssembler {
             throw invalidResponse(Reason.REQUIRED_SECTIONS_MISSING, "sections");
         }
         var requirementBoundaries = taskView.requirementBoundaries();
+        var inferenceContract = com.promptoptimizer.provider.domain.EvidenceInferenceContract.from(taskView, context);
+        var presentation = taskView.intent().deliveryProfile() == com.promptoptimizer.template.domain.TaskDeliveryProfile.TRANSLATION
+                || providerResponse.assessment() != null && providerResponse.assessment().presentation()
+                == com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Presentation.COMPACT
+                ? com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT
+                : com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED;
+        sections.forEach((type, section) -> inferenceContract.validate(section.content(), "sections." + type));
         sections.forEach((type, section) -> requirementBoundaries.validate(section.content(), "sections." + type));
 
         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planConfirmed ? planAnswers : List.of());
@@ -212,7 +219,7 @@ public class OptimizationResultAssembler {
                 finding -> identifierRelations.validate(finding, "ambiguities"));
         validateExecutionRules(sections, explicitRules, eligibleFacts, documentFacts);
         boolean minimal = MinimalPromptOrganizer.organize(sections, effectiveRawPrompt,
-                planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()));
+                planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), providerResponse.assessment());
         PlanDecisionIntegrator.integrate(sections, taskView);
         java.util.function.UnaryOperator<String> currentEvidence = value ->
                 unresolvedContract.reconcileCurrentText(resolvedState.reconcile(value));
@@ -232,6 +239,13 @@ public class OptimizationResultAssembler {
             appendPlanningFacts(sections, currentFacts, currentDocumentFacts, planConfirmed, updatedFactIds);
         }
         appendConstraints(sections, constraintBundle, rawPrompt);
+        String roleExecution = DraftDeliveryContract.roleExecutionGuidance(effectiveRawPrompt, template);
+        if (!roleExecution.isBlank()) {
+            PromptSection output = sections.get(PromptSectionType.OUTPUT);
+            // 启动条件放在格式要求之前；它与最终复制正文一致，不仅停留在优化模型的 system 指导中。
+            if (!output.content().contains(roleExecution)) sections.put(PromptSectionType.OUTPUT,
+                    new PromptSection(output.type(), output.title(), roleExecution + "\n\n" + output.content()));
+        }
         if (!sourceObjects.guidance().isBlank()) appendConstraintBlock(sections, "资料对象与版本", List.of(sourceObjects.guidance()));
         String attributionDelivery = sourceObjects.deliveryGuidance(template.deliveryProfile());
         if (!attributionDelivery.isBlank()) {
@@ -270,7 +284,8 @@ public class OptimizationResultAssembler {
             sections.put(PromptSectionType.OUTPUT, new PromptSection(output.type(), output.title(),
                     output.content() + "\n\n" + draftDelivery.guidance()));
         }
-        List<String> assessed = resolveAmbiguities(providerResponse, sections, ambiguities).stream()
+        List<String> assessed = new PlanQuestionFilter().unresolvedFindings(
+                resolveAmbiguities(providerResponse, sections, ambiguities), effectiveRawPrompt, context, eligibleFacts).stream()
                 .filter(finding -> !TaskQuestionScope.unrelatedEngineeringReminder(finding, rawPrompt))
                 .filter(finding -> !readOnlyComparison.directedReminder(finding))
                 .filter(finding -> !identifierRelations.coveredPendingStatement(finding)).toList();
@@ -351,10 +366,11 @@ public class OptimizationResultAssembler {
                     remainingAmbiguities.stream().map(value -> "- " + value).collect(Collectors.joining("\n"))
             ));
         }
-        sections.computeIfAbsent(
-                PromptSectionType.ACCEPTANCE,
-                ignored -> new PromptSection(PromptSectionType.ACCEPTANCE, "验收标准", template.acceptanceGuidance())
-        );
+        // 新适配器已按实质缺口选择验收要求；不再强制追加通用章节。旧适配器保持兼容。
+        if (providerResponse.assessment() == null && presentation == com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED) {
+            sections.computeIfAbsent(PromptSectionType.ACCEPTANCE,
+                    ignored -> new PromptSection(PromptSectionType.ACCEPTANCE, "验收标准", template.acceptanceGuidance()));
+        }
         ExampleResultIntegrator.integrate(sections, taskView.examples());
         String boundaryGuidance = requirementBoundaries.missingGuidance(sections.values().stream()
                 .map(PromptSection::content).collect(Collectors.joining("\n")));
@@ -367,10 +383,16 @@ public class OptimizationResultAssembler {
                     new PromptSection(boundarySection.type(), boundarySection.title(), boundarySection.content() + "\n" + missing));
         }
 
+        if (!inferenceContract.guidance().isBlank()) {
+            appendConstraintBlock(sections, "推断依据", List.of(inferenceContract.guidance()));
+        }
         // 平台交付契约有唯一正文责任段；仅合并完整等价句，表格、代码和独立业务章节继续保护。
         var deliveryAuthority = new java.util.LinkedHashMap<PromptSectionType, String>();
+        if (!inferenceContract.guidance().isBlank()) {
+            deliveryAuthority.put(PromptSectionType.CONSTRAINTS, inferenceContract.guidance());
+        }
         if (!merged.executionPrerequisites().isEmpty() && !pendingDeliveryGuidance.isBlank()) {
-            deliveryAuthority.put(PromptSectionType.CONSTRAINTS, pendingDeliveryGuidance);
+            deliveryAuthority.merge(PromptSectionType.CONSTRAINTS, pendingDeliveryGuidance, (existing, added) -> existing + "\n" + added);
         }
         if (unresolvedContract.hasNamedParameters()) {
             deliveryAuthority.put(PromptSectionType.OUTPUT, unresolvedContract.independentEvidenceGuidance());
@@ -398,7 +420,7 @@ public class OptimizationResultAssembler {
                 .filter(section -> section != null)
                 .toList();
         return new OptimizationResult(
-                renderPrompt(ordered),
+                renderPrompt(ordered, presentation),
                 ordered,
                 context,
                 remainingAmbiguities,
@@ -411,7 +433,8 @@ public class OptimizationResultAssembler {
                 ),
                 Math.max(0, latencyMs),
                 resultWarnings,
-                evidenceCards(eligibleFacts, documentFacts)
+                evidenceCards(eligibleFacts, documentFacts),
+                presentation
         );
     }
 
@@ -763,6 +786,10 @@ public class OptimizationResultAssembler {
                 throw invalidResponse(Reason.SENSITIVE_CONTENT, "ambiguities");
             }
         }
+        if (response.assessment() != null && response.ambiguities() != null) {
+            response.assessment().validateModelDecisions(response.ambiguities());
+        }
+        // 只校验模型自己声明的缺口，不能用其 assessment 删除服务端发现的冲突和原始未决条件。
         // 模型可能忽略二次检索发现的同名字段冲突；服务端证据优先保留。
         List<String> verifiedConflicts = candidates.stream()
                 .filter(value -> value.startsWith("资料对“"))
@@ -823,10 +850,12 @@ public class OptimizationResultAssembler {
         appendConstraintBlock(sections, "用户补充权限边界", constraints.additionalPermissions());
     }
 
-    private String renderPrompt(List<PromptSection> sections) {
+    /** 紧凑提示词只省外层章节标题，不裁剪代码、引用、条件或来源；四要素仍完整保存。 */
+    private String renderPrompt(List<PromptSection> sections, com.promptoptimizer.enhancement.domain.PromptFormat format) {
         return sections.stream()
                 .filter(section -> section.type() != PromptSectionType.CLARIFICATIONS)
-                .map(section -> "## " + section.title() + "\n" + section.content())
+                .map(section -> format == com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT
+                        ? section.content() : "## " + section.title() + "\n" + section.content())
                 .collect(Collectors.joining("\n\n"));
     }
 

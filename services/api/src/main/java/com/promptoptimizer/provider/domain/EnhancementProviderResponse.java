@@ -16,7 +16,8 @@ public record EnhancementProviderResponse(
         String model,
         boolean mock,
         List<String> ambiguities,
-        List<AmbiguityReference> ambiguityReferences
+        List<AmbiguityReference> ambiguityReferences,
+        TaskEnhancementAssessment assessment
 ) {
 
     /**
@@ -29,6 +30,12 @@ public record EnhancementProviderResponse(
                 : java.util.Collections.unmodifiableList(new java.util.ArrayList<>(ambiguities));
         ambiguityReferences = ambiguityReferences == null ? List.of()
                 : java.util.Collections.unmodifiableList(new java.util.ArrayList<>(ambiguityReferences));
+    }
+
+    /** 旧适配器没有缺口评估时保守兼容，不伪造模型已完成语义判断。 */
+    public EnhancementProviderResponse(List<PromptSection> sections, String provider, String model,
+                                       boolean mock, List<String> ambiguities, List<AmbiguityReference> references) {
+        this(sections, provider, model, mock, ambiguities, references, null);
     }
 
     /** 兼容返回纯文本提醒的 Provider；没有关联时由应用层保守匹配已有问题。 */

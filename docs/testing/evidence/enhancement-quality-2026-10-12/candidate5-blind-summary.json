@@ -1,0 +1,1785 @@
+{
+  "stage": "candidate5",
+  "reviewerType": "independent AI assisted; not human experts",
+  "pairedBaselineIsReusedAcrossRounds": true,
+  "independentTaskCount": 7,
+  "comparisonCountPerReviewer": 28,
+  "reviewers": [
+    {
+      "reviewer": "one",
+      "counts": {
+        "loss": 2,
+        "win": 10,
+        "tie": 8,
+        "both_failed": 8
+      },
+      "results": [
+        {
+          "pair": "pair-01",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q01",
+          "model": "flash",
+          "round": 1,
+          "outcome": "loss",
+          "candidateScores": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 2,
+            "executability": 2,
+            "severeErrors": [
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "违反本份提示词明确禁止未要求的额外数值演示的约束。",
+                "evidence": [
+                  "A-prompt.md：“未要求数值演示时，不虚构额外数值作解释依据。”",
+                  "A-work.md：“若市场增长30%，公司份额可能反而下降。”",
+                  "需求及附件只给100、120，未要求数值演示。"
+                ]
+              }
+            ],
+            "notes": [
+              "30%处明确使用‘若’，是数学上合理的条件示例，不是把实际市场增长写成30%；严重项是违反本提示词的明确禁令，不是捏造已发生的公司数据。",
+              "收入增加20、增长20%的计算准确；对份额、需求、汇率及盈利的主要证据边界正确。",
+              "多次重复同一事实、不能推断清单、核查清单、专业要点及总结，信息增益有限。‘数据真实完整’不是用给定合成数值进行数学计算的必要前提。",
+              "评审性质：AI辅助独立盲评，仅依据本冻结包，不代表人工或领域专家验收。"
+            ]
+          },
+          "reason": "A边界说明更细，但实际违反其明确数值演示禁令且反复堆叠。B保持主要事实、交付及约束，仍有轻度评价性措辞问题。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-02",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q01",
+          "model": "pro",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "20%的计算准确，并明确仅收入不能证明需求、销量、份额、增长原因或持续性。",
+              "汇率影响保留为需要恒定汇率或外币业务资料核查的事项；没有宣称已发生汇率贡献。",
+              "核查清单对应缺失资料及用途，无额外假设数值，完成原分析目标。事实和结论有少量重复。"
+            ]
+          },
+          "reason": "A对可推断边界、汇率条件及核查证据更准确，避免B的增幅表述和收入项目分类问题。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-03",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q02",
+          "model": "flash",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 4,
+            "severeErrors": [],
+            "notes": [
+              "“方便的时候，麻烦把本周的周报发我一下，谢谢”直接、委婉地实现发送请求，没有虚构汇总目的或催交期限。",
+              "‘本周’未经明确提供，宜删去周期限定；署名位置仍需填写。",
+              "主体用自然中性称呼，未增加说明或步骤；比多项占位邮件更容易使用。"
+            ]
+          },
+          "reason": "B更自然、直接地交付提醒邮件，且没有无依据职责陈述；‘本周’是需要修正的小范围假定，不能据此将B评满分。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-04",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q02",
+          "model": "pro",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4,
+            "severeErrors": [],
+            "notes": [
+              "明确请求“方便的话请发我一下”，语气委婉；没有擅自说明汇总职责或截止时间。",
+              "“如果已经发送，请忽略”是条件处理，不是声称对方已经发送。",
+              "‘本周’为未确认周期，署名需填写；整体仍是可用的邮件草稿。"
+            ]
+          },
+          "reason": "A保留发送请求且不编造用途；B需要删除或确认无来源的汇总职责后才能发送。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-05",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q03",
+          "model": "flash",
+          "round": 1,
+          "outcome": "tie",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "正文27个汉字，保留小林、今天17点前、本周项目进度及团队汇总。",
+              "只输出主题与正文，无占位符、虚构进展或示例。"
+            ]
+          },
+          "reason": "两封实际邮件均可直接使用，满足80汉字及全部内容约束；提示词长度没有形成实质作品差异。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-06",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q03",
+          "model": "pro",
+          "round": 1,
+          "outcome": "tie",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "正文26个汉字，正文明确‘今天17点前’，主题省略‘今天’不改变整封邮件的期限。",
+              "无额外内容、占位符或示例，直接满足原任务。"
+            ]
+          },
+          "reason": "两份作品均完整合格。B提示词更紧凑，但没有足够实质作品差异判胜。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-07",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q04",
+          "model": "flash",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 3,
+            "completeness": 3,
+            "clarity": 2,
+            "executability": 2,
+            "severeErrors": [],
+            "notes": [
+              "交付了研究设计，推荐被试间主方案，并说明用户回答、信息融入、评分及下游补充评价，未改成让模型自问自答。",
+              "1:1分配、95%区间、量表候选等均标明建议或待定；不把这些设计参数当成已收集数据，也没有已实施研究的虚假陈述。",
+              "公平对照的原则明确，但操作仍有重要缺口：数据步骤2先收集确认信息，步骤4再让A回答新问题，步骤5让B使用已提供信息；未说明新回答如何原样同步给B或如何冻结为已有信息。保真检查能发现问题，不能替代这一步操作定义。",
+              "‘双盲评分’段落仅描述评分者盲态；前文另有分析者盲法，应明确各对象，不应暗示无法隐藏问答经历的参与者已经盲化。",
+              "非正态或方差不齐就选Mann–Whitney、非随机缺失就考虑普通多重插补，方法前提写得过宽；需说明目标参数、缺失机制及敏感性模型。",
+              "评分锚点、随机化层级等仍大量待定；重复边界、替代设计和参数清单降低可执行性。此为有明显待完善项的相对优选，不代表已可直接启动正式实验。"
+            ]
+          },
+          "reason": "A恢复了研究设计并提出主方案与方法条件；仍有同信息操作、评分和统计前提需要完善。B改变原交付物并退化为待确认模板。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-08",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q04",
+          "model": "pro",
+          "round": 1,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 4,
+            "clarity": 3,
+            "executability": 1,
+            "severeErrors": [
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "只对齐初始材料，问答组获得新增回答而直接组未得到这些实际确认信息，同信息对照不成立。",
+                "evidence": [
+                  "B-prompt.md：“两组接收并可使用同一原始任务和同一份实际确认信息”。",
+                  "B-work.md第4.2节：针对信息缺口提问后，将参与者回答与原任务及已有确认信息“融合”。",
+                  "第4.3节直接组仅基于“原始任务描述和已确认信息”生成，没有传入另一组新增回答的步骤。",
+                  "第6.3节还明确编码问答组的“信息增量（新增约束数、澄清数……）”，第7.1节却将共同初始材料称为信息对等保障。"
+                ]
+              }
+            ],
+            "notes": [
+              "被试间主方案、样本与任务参数、评分锚点、流程和时间线较充分；每组40人、1–7分等是明确拟议参数，不按假数据或实际入组事实判错。",
+              "该设计可研究自然使用的总效果，但不能把其当作同信息条件下的问答方法收益；需要另设真正共享实际回答的比较。",
+              "“固定为4个（经预实验确定的最优数量，待确认）”与尚未实施、预实验未来开展的表述不清，应明确为拟验证候选，不能宣称已证实最优。",
+              "‘对六个维度分别进行LMM’与‘检验组别×维度交互’不相容，后者需要合并维度数据及相应重复结构。",
+              "缺失处理不能仅按5%或20%的比例选择完整案例或插补；还需缺失机制。Mann–Whitney敏感性分析也须保留每人两任务的相关结构。"
+            ]
+          },
+          "reason": "A未交付；B的方案虽详细，实际两组可用信息仍不相同，无法满足明确的公平对照要求。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-09",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q05",
+          "model": "flash",
+          "round": 1,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 4,
+            "clarity": 2,
+            "executability": 1,
+            "severeErrors": [
+              {
+                "stage": "提示词及下游作品",
+                "attribution": "平台引入",
+                "issue": "把‘为研究生写方法部分’这一受众和交付要求，误当成研究任务对象。",
+                "evidence": [
+                  "B-prompt.md：“研究对象为研究生撰写中文研究设计的方法部分”。",
+                  "B-work.md：“考察Plan问答对研究生撰写中文研究设计方法部分提示词质量的影响”“每类任务围绕研究设计方法部分的不同写作需求设置”。",
+                  "原需求是为研究生撰写方法部分，研究对象为Plan问答对提示词质量的影响，并未限定为方法部分写作提示词。"
+                ]
+              },
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "实际正文超出明确篇幅上限。",
+                "evidence": [
+                  "B-work.md全文1355个汉字，去掉全部Markdown标题后1351；没有实际附表。",
+                  "原需求及B-prompt.md要求800至1200个汉字。"
+                ]
+              },
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "把相同确认信息扩展到全部四组，使主比较与公平对照重复，却声称可以分离确认信息可得性的作用。",
+                "evidence": [
+                  "B-work.md：“四组均接收同一原始任务与同一份实际确认信息”。",
+                  "随后：“该设置用于区分Plan问答本身与确认信息可得性对提示词质量的影响”。",
+                  "没有给出信息可得性不同的比较条件，重复四组不能识别该信息因素。"
+                ]
+              }
+            ],
+            "notes": [
+              "问答和直接增强的区别有所保留，未编造效应量、P值或实际研究结果；5点量表属于拟议方法。",
+              "“附表1”“附表2”被引用但没有交付，降低完整性。",
+              "每名参与者完成同一任务集时，任务与参与者通常交叉，作品却直接称任务嵌套于参与者，需核对模型结构。"
+            ]
+          },
+          "reason": "A错解Plan并超长；B虽增加具体说明，却由提示词开始错置研究对象，同时超长且四组比较不能识别其声称的信息效应。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-10",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q05",
+          "model": "pro",
+          "round": 1,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 2,
+            "severeErrors": [
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "两组同信息对照均采用不提问的直接生成，未保留两种指定增强流程的公平比较。",
+                "evidence": [
+                  "A-work.md模式（3）：“不进行提问，但接收与Plan模式中用户回答相同的确认信息后生成提示词”。",
+                  "模式（4）：“同样接收该确认信息，但采用与直接增强相同的生成流程”。",
+                  "A-prompt.md要求两组共享实际信息并“保留各自指定增强流程”。"
+                ]
+              },
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "把不劣或未发现差异作为支持机制收益的依据，条件推理不成立。",
+                "evidence": [
+                  "A-work.md：“若Plan模式优于直接增强，且优于或至少不劣于同等信息对照，则可分别支持提问行为与信息增量的作用”。",
+                  "“若Plan模式与同等信息对照无差异……则提示收益主要来自信息增量而非提问过程”。",
+                  "不劣不能证明提问有额外收益，未检出差异也不等于等效；文中未设对应等效或非劣界值及判据。"
+                ]
+              }
+            ],
+            "notes": [
+              "全文含标题829个汉字，去标题808，满足800–1200要求。20×4×3=240是设计直接计算。",
+              "Plan仍包含模型向用户提问及使用用户回答；‘基于用户回答形成计划’并未替代用户作答，不能只因出现‘计划’二字就判为角色改变。",
+              "四项评分、两名独立评审、分歧处理和未来条件化统计均覆盖；维度操作定义及重复数据处理仍可更具体。",
+              "未编造实际效应量、P值、结果、参考文献或假设观测数据。"
+            ]
+          },
+          "reason": "A满足字数并保存真实用户问答，但两个对照流程重复，且机制结论条件错误；B在Plan、随机化、盲法及同信息定义上都有核心错误。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-11",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q06",
+          "model": "flash",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "两行及顺序准确，会议改到Friday at 3 p.m.，确认期限使用before Thursday。",
+              "“Please confirm whether you will attend before Thursday”把时间状语放在attend后有局部附着歧义；结合会议在周五，合理读法仍是周四前确认。宜将before Thursday移到confirm之后，不按确定的时间扩张判错。",
+              "提示词未追加示例交付。"
+            ]
+          },
+          "reason": "B保持严格早于周四的时间边界，只有可改善的状语位置；A有明确期限扩张及提示词示例冲突。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-12",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q06",
+          "model": "pro",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "实际恰为两行；3 p.m. on Friday和before Thursday分别保存会议时间与确认期限。",
+              "末尾before Thursday可能局部附着于attend，前移状语更清晰；周五会议的上下文支持其修饰确认，不据此认定已改变截止范围。",
+              "提示词明确之前与不晚于的区别，未增加示例任务。"
+            ]
+          },
+          "reason": "B实际保存时间边界和两行格式；A实际放宽期限，且提示词与禁示例要求冲突。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-13",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q07",
+          "model": "flash",
+          "round": 1,
+          "outcome": "tie",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "实际对象可严格解析，只有name、age，值为字符串李明和整数28，无额外文本。",
+              "提示词保留提取对象与类型、格式要求。"
+            ]
+          },
+          "reason": "两份实际JSON严格合格且逐值一致，提示词篇幅不能替代作品差异。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-14",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q07",
+          "model": "pro",
+          "round": 1,
+          "outcome": "tie",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "带空格的{\"name\": \"李明\", \"age\": 28}是合法严格JSON，字段及类型准确。",
+              "没有Markdown、解释、示例或多余字段。"
+            ]
+          },
+          "reason": "两个对象语义、字段、类型完全等效，合法空格差异不影响可执行性。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-01",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q01",
+          "model": "flash",
+          "round": 2,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "本文件为 AI 辅助独立盲评，不代表人工或领域专家验收。仅依据本包 rubric、需求、提示词和实际作品；未读取映射、源码或其他评审，未调用外部模型或网络。",
+              "提示词保留收入分析交付目标，并要求将候选原因与判别证据对应；收入推断边界在不同段落重复，可精简。",
+              "作品以“收入规模由100增至120”及增量20、增速20%开篇，计算正确；明确缺少市场总量、销量、价格等证据，未把份额、需求或增长原因写成事实。",
+              "“若存在外币业务或汇率折算”是有条件的核查路径，不能误判为已确认有外币业务。各项核查问题附缺口和所需证据，可直接使用。",
+              "“判断20%增量中多少来自销量”将增速与增量混称，宜改为20的增量或20%的增速；结尾重列事实与假设略重复。"
+            ]
+          },
+          "reason": "双方完成收入分析且算术正确；A 对收入事实、条件解释和核查证据的连接更清楚，B 的正面评价和二选一核查表述需要修正。胜负依据实际分析边界，不依据提示词长度。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-02",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q01",
+          "model": "pro",
+          "round": 2,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "明确指出增速高低需要行业基准；对汇率、量价、并表和一次性因素分别给出核查问题、所需证据及意义，未将候选机制当作已有事实。",
+              "“同一币种口径不等于已排除汇率影响”处理正确；“若甲公司存在外币业务”保留了适用条件。",
+              "尾句列出“分产品量价数据、恒定汇率收入、并表范围说明、毛利率及订单储备”却称为“四类证据”，按所列项目实为五项。",
+              "“同一币种口径仅保证数据可比”措辞过强，币种相同本身不能保证其他会计范围可比；“20%的收入增速在绝对数值上”也有相对量与绝对量术语混用。",
+              "提示词中的“当前执行视图”“不代表已经实现”对收入分析没有实际帮助，属于轻微的组织冗余。"
+            ]
+          },
+          "reason": "B 更明确地把市场和汇率判断限定在需要补充的证据上，并提供可执行的核查路径；其列项计数与个别口径措辞仍需修正。两方均无把候选经营原因写成已发生事实的严重错误。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-03",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q02",
+          "model": "flash",
+          "round": 2,
+          "outcome": "loss",
+          "candidateScores": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 3,
+            "executability": 2,
+            "severeErrors": [
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "把用户未提供的汇总职责写进实际邮件，发件理由无依据。",
+                "evidence": [
+                  {
+                    "file": "pair-03/requirements.json",
+                    "quote": "帮我写封邮件，委婉提醒同事把周报发过来。"
+                  },
+                  {
+                    "file": "pair-03/B-prompt.md",
+                    "quote": "不编造具体截止日期、姓名、项目进展或未提供的背景信息。"
+                  },
+                  {
+                    "file": "pair-03/B-work.md",
+                    "quote": "避免后续汇总时遗漏。"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "邮件结构完整、语气委婉，但把“周报”限定为“本周”也是未确认的范围补充，且仍保留姓名占位符。",
+              "“可能你这边也比较忙”“如果已经发了，可能是我这边没注意到”是明确的可能或条件表达，未判为既成事实。",
+              "冗长解释与假定汇总用途削弱了可直接使用性；严重问题来自实际作品，而非提示词授权了编造背景。"
+            ]
+          },
+          "reason": "A 虽需少量填写，但没有把未知工作职责当成事实；B 实际邮件加入无依据的汇总用途。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-04",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q02",
+          "model": "pro",
+          "round": 2,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4,
+            "severeErrors": [],
+            "notes": [
+              "已交付主题和完整邮件，核心请求是“麻烦你有空时发我一下”，没有加入汇总职责或虚构工作进展。",
+              "“XX你好”仍需替换；“本周”是未确认的具体周期。",
+              "“不急，等你方便的时候处理即可”把委婉进一步弱化成不急，用户并未说明紧迫性；这是提醒效果和表述精度问题，未违反已知截止时间，因为原需求没有截止时间。"
+            ]
+          },
+          "reason": "B 完成委婉提醒且未编造发件目的；A 加入用户未给出的汇总职责。B 仍应减少对周期与紧迫性的自行设定。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-05",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q03",
+          "model": "flash",
+          "round": 2,
+          "outcome": "tie",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "实际作品仅有主题与正文，称呼小林，要求今天17点前发送本周项目进度，说明用于汇总给团队；没有编造进展。",
+              "正文按汉字计为27字，低于80字；语气友好，可直接发送。",
+              "提示词没有改变既定收件人、时间、事项或输出边界。"
+            ]
+          },
+          "reason": "两份实际邮件均完整、正确并满足80汉字上限及仅主题正文的格式要求。提示词重复程度不同，不足以据此判定作品优劣。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-06",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q03",
+          "model": "pro",
+          "round": 2,
+          "outcome": "tie",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "作品只含主题和正文，正文“今天17:00前”与原要求“今天17点前”一致，并保留事项、对象和用途。",
+              "正文25个汉字；无占位符、虚构进展、解释或示例，语气自然。"
+            ]
+          },
+          "reason": "两份邮件均可直接使用，准确满足所有明确对象、时间、字数和格式要求；不因 B 提示词较短而直接判胜。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-07",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q04",
+          "model": "flash",
+          "round": 2,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 4,
+            "clarity": 3,
+            "executability": 2,
+            "severeErrors": [
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "声称采用同信息对照，实际只让问答组获得并使用新回答，没有把这些实际确认信息交给直接组，不能支持其声称的同信息方法比较。",
+                "evidence": [
+                  {
+                    "file": "pair-07/A-prompt.md",
+                    "quote": "两组接收同一原始任务和同一份实际确认信息"
+                  },
+                  {
+                    "file": "pair-07/A-work.md",
+                    "quote": "建议采用**两组同信息对照设计**"
+                  },
+                  {
+                    "file": "pair-07/A-work.md",
+                    "quote": "原始任务 + 同一份实际确认信息 + 用户对关键问题的回答"
+                  },
+                  {
+                    "file": "pair-07/A-work.md",
+                    "quote": "问题应针对增强提示词所需但尚未明确的信息。"
+                  },
+                  {
+                    "file": "pair-07/A-work.md",
+                    "quote": "问答组额外获得的用户回答，应作为该组流程的组成部分记录"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "交付的是实际拟议研究设计，保留增强器提问、用户回答、融合提示词的角色链条；并未把 Plan 改为模型自问自答。",
+              "任务及确认信息哈希一致检查只能证明初始材料一致，无法消除表格明确列出的问答组额外回答差异。该流程可以另行研究自然流程的整体收益，不能直接称为同信息对照。",
+              "开头明确定义“已定”是本设计建议固定，候选量表及评分者人数也处于拟议层面，没有伪造已招募或已实施事实。",
+              "关键量表、权重、样本及任务数量大量待定，尚需选择后才能启动；“评分者应不知道组别，或至少不知道研究假设”也把不知假设误当成分组盲法的替代。"
+            ]
+          },
+          "reason": "A 的同信息核心对照与其实际信息流矛盾；B 直接改变研究设计交付目标。A 的章节和方法覆盖较好仍不能抵消核心比较失效。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-08",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q04",
+          "model": "pro",
+          "round": 2,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 4,
+            "clarity": 3,
+            "executability": 1,
+            "severeErrors": [
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "宣称同等信息和完全相同任务，却让平行组各自提供不同真实任务，并仅问答组使用新回答；实际运行流程没有落实宣称的对照条件。",
+                "evidence": [
+                  {
+                    "file": "pair-08/B-prompt.md",
+                    "quote": "同等信息对照两组接收并可使用同一原始任务与同一份实际确认信息"
+                  },
+                  {
+                    "file": "pair-08/B-work.md",
+                    "quote": "两组接收**完全相同的原始任务描述**和**同一份用户确认信息**"
+                  },
+                  {
+                    "file": "pair-08/B-work.md",
+                    "quote": "每名被试只参与一个组"
+                  },
+                  {
+                    "file": "pair-08/B-work.md",
+                    "quote": "每名被试提交**一个自己真实需要完成的任务**"
+                  },
+                  {
+                    "file": "pair-08/B-work.md",
+                    "quote": "A组在问答环节获得的**新增信息仅来自用户本人**"
+                  },
+                  {
+                    "file": "pair-08/B-work.md",
+                    "quote": "增强器直接基于原始任务和确认信息生成增强提示词"
+                  }
+                ]
+              },
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "没有提供文献检索证据，却断言不存在支持假设的已发表数据或预注册研究；不能把当前输入没有文献推成整个领域不存在证据。",
+                "evidence": [
+                  {
+                    "file": "pair-08/B-work.md",
+                    "quote": "目前尚无已完成的预注册研究或已发表数据直接支持上述假设。"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "确实提出完整拟议主方案，样本人数、量表、权重、温度和标准化任务数量属于拟议参数，没有据此认定伪造已发生数据；方向性假设也不是报告已显著。",
+              "每组40人被写为基于d=0.5、α=0.05、功效0.80的估算，另称d=0.3每组约90人；对本方案的独立平行组、双侧正态近似，2×(1.96+0.842)^2/d^2分别约63和175人每组。候选样本量可以提出，但现有功效依据不充分；“实际以最终计算为准”不修正前面的估算理由。",
+              "交叉设计“样本量需求减半”未给出任务内相关性等依据；仅凭缺失比例选择插补或完整案例也未充分说明缺失机制。",
+              "“若无法招募到具备提示词工程经验的评分者，可改用‘下游作品质量’作为主要结局”是条件备选，并非声称已发生切换；但与本提示词要求保留提示词质量原评价、主方案的既定主要结局不一致，需明确是否保留原结局并重设研究问题。原始“更有用”未限定唯一指标，因此未将该条件建议单独判为伪造事实或已改变用户任务。",
+              "“主结局为盲评得分，不受此影响”过度排除了用户期望影响回答内容的途径；评分者盲法只能降低评分过程中的部分偏倚。",
+              "自然流程随机对照本可研究问答的整体收益，问题在于作品同时声称同一实际任务和同信息比较，而其实施步骤没有做到。"
+            ]
+          },
+          "reason": "A 没有交付；B 虽详细且包含合法候选设计，但核心同信息/同任务条件自相矛盾，并有无依据的领域证据断言。篇幅和候选参数数量不能抵消这些问题。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-09",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q05",
+          "model": "flash",
+          "round": 2,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 3,
+            "executability": 2,
+            "severeErrors": [
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "虽然保留用户回答，仍在 Plan 干预中加入生成执行计划并作答，又把盲评材料写成回答文本，与同文明确的提示词质量评价对象冲突；实际比较和评分对象不唯一。",
+                "evidence": [
+                  {
+                    "file": "pair-09/B-prompt.md",
+                    "quote": "Plan不能改为模型自行生成执行计划再作答。"
+                  },
+                  {
+                    "file": "pair-09/B-work.md",
+                    "quote": "在增强器提出关键问题、用户回答后，将有效回答融入优化提示词，并由模型生成执行计划后再作答"
+                  },
+                  {
+                    "file": "pair-09/B-work.md",
+                    "quote": "评分材料去除组别标识，仅保留任务编号与回答文本"
+                  },
+                  {
+                    "file": "pair-09/B-work.md",
+                    "quote": "评价对象为提示词质量，下游作品可作补充但不替代原评价。"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "与 A 不同，B 确实写了增强器提问和用户回答；本次错误是额外作答流程与评分材料不一致，不是完全遗漏用户问答。",
+              "全文1145个汉字，去掉方法标题1141个汉字，满足800至1200；四类、每类五个、每条件每任务三次、两名独立盲评和四维评价均出现。",
+              "前段写每种模式全部任务重复3次并称“共形成20×2×3=120次任务观测”，随后设置四组；需要说明120仅指两个主要模式，并补全四组总数240及参与者与生成单元的关系。",
+              "同信息对照保留了同一原始任务与实际确认信息原则，但第三、四组只说保留各自指定流程，尚未具体给出可复现的操作。",
+              "5点量表、分歧阈值及条件统计方法均为合法拟议选择，没有伪造观测值；“经专家审核”的任务材料在全文拟议框架内可理解为未来材料要求，未据此判为已完成审核。",
+              "尾段保留提示词评价对象，不能消除前段要求执行答案并仅呈现回答文本的实际冲突。"
+            ]
+          },
+          "reason": "A 改变 Plan 干预且明确超长；B 篇幅合格并保留用户问答，但干预流程与评分材料仍混入执行答案，核心研究对象冲突未解决。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-10",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q05",
+          "model": "pro",
+          "round": 2,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 3,
+            "clarity": 3,
+            "executability": 1,
+            "severeErrors": [
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "Plan 被写成模型先输出问答计划再作答，直接组也生成回答，评价定义随之改成回答质量，未执行增强器向用户提问并融合真实回答以评价提示词质量的研究任务。",
+                "evidence": [
+                  {
+                    "file": "pair-10/B-prompt.md",
+                    "quote": "本次问答流程由增强器提出关键问题、用户回答，再将有效回答融入优化提示词"
+                  },
+                  {
+                    "file": "pair-10/B-work.md",
+                    "quote": "直接增强模式仅使用任务原始需求与已提供的确认信息生成回答。"
+                  },
+                  {
+                    "file": "pair-10/B-work.md",
+                    "quote": "Plan模式在相同输入基础上，先输出分步问答计划再作答"
+                  },
+                  {
+                    "file": "pair-10/B-work.md",
+                    "quote": "准确性考察回答与任务要求及确认信息的一致程度"
+                  },
+                  {
+                    "file": "pair-10/B-work.md",
+                    "quote": "可执行性考察回答能否直接用于后续操作"
+                  }
+                ]
+              },
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "正文不足要求的800汉字；将标题也计入仍只有735汉字。",
+                "evidence": [
+                  {
+                    "file": "pair-10/requirements.json",
+                    "quote": "正文800至1200个汉字，附表另计。"
+                  }
+                ],
+                "verification": {
+                  "counting": "逐个统计 Unicode Script=Han 字符；没有附表。",
+                  "allHan": 735,
+                  "excludingTopTitleHan": 733,
+                  "allowedMin": 800,
+                  "allowedMax": 1200
+                }
+              }
+            ],
+            "notes": [
+              "4类×5=20任务、每模式每任务3次、两名独立盲评、四个维度名称和条件统计方法得到保留，未输出代码或虚构实际数据。",
+              "随机顺序、分歧复核和敏感性分析写得较清楚，但评分阈值和缺失处理仍待定义。",
+              "任务类型和预试验评分均位于拟议方案中，不把这些未来安排误判为已完成事实。",
+              "提示词已明文保护 Plan 的用户问答角色和800至1200字边界；这里是实际下游违约。"
+            ]
+          },
+          "reason": "A 改写 Plan、误设评分维度并未实现同信息对照；B 改成生成和评价回答，同时明显不足800汉字。二者均保留部分设计数字，但不能据此接受核心研究方法。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-11",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q06",
+          "model": "flash",
+          "round": 2,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "实际输出恰为两行英文，无标题、解释或示例。",
+              "“Friday at 3 p.m.”保留周五下午三点；“before Thursday”保留周四之前的时间边界。",
+              "提示词明确禁止把之前改成不晚于，与原任务一致，没有扩展翻译内容。"
+            ]
+          },
+          "reason": "A 的实际译文同时满足两行格式和严格时间边界；B 提示词有示例冲突，实际译文又扩大了确认截止日期。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-12",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q06",
+          "model": "pro",
+          "round": 2,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 2,
+            "severeErrors": [
+              {
+                "stage": "下游作品",
+                "attribution": "下游违约",
+                "issue": "尽管提示词专门保护时间边界，实际仍把周四之前译为 by Thursday。",
+                "evidence": [
+                  {
+                    "file": "pair-12/B-prompt.md",
+                    "quote": "“之前”与“不晚于”不能互换"
+                  },
+                  {
+                    "file": "pair-12/B-work.md",
+                    "quote": "Please confirm whether you will attend by Thursday."
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "提示词保留原交付目标和两行约束，没有要求附示例；实际作品也只有两行。",
+              "“whether you will attend”准确表达是否参加，但不能修复 by Thursday 对截止范围的扩大。"
+            ]
+          },
+          "reason": "两份实际译文均扩大了截止时间边界。B 的提示词更一致、是否参加表达更完整，仍不能抵消这项明确误译。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-13",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q07",
+          "model": "flash",
+          "round": 2,
+          "outcome": "tie",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "实际输出与 A 相同；严格 JSON 解析、键集合和值类型均通过。",
+              "提示词保留输入、仅 name/age、字符串/整数及仅输出对象的边界，无目标改变。"
+            ]
+          },
+          "reason": "两份实际作品完全相同且严格合规；提示词冗余差异没有转化为交付质量差异。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-14",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q07",
+          "model": "pro",
+          "round": 2,
+          "outcome": "tie",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "实际作品{\"name\": \"李明\", \"age\": 28}可严格解析；空格是合法 JSON 空白。",
+              "仅 name 和 age 两键，分别为正确字符串与整数；没有 Markdown、解释、示例或额外字段。"
+            ]
+          },
+          "reason": "两个对象在值、类型、键集合和严格格式上等价，均完整完成任务。",
+          "packet": "candidate5-second"
+        }
+      ]
+    },
+    {
+      "reviewer": "two",
+      "counts": {
+        "loss": 2,
+        "win": 16,
+        "both_failed": 9,
+        "tie": 1
+      },
+      "results": [
+        {
+          "pair": "pair-01",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q01",
+          "model": "flash",
+          "round": 1,
+          "outcome": "loss",
+          "candidateScores": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 2,
+            "executability": 3,
+            "severeErrors": [
+              "【下游违反提示词的额外数值禁令】提示词明确“未要求数值演示时，不虚构额外数值作解释依据”，作品仍写“若市场增长30%，公司份额可能反而下降”。30%是未提供的演示参数。该句有明确条件，不能称为伪造实际市场增长；严重项仅针对已加入的数值演示硬约束，原用户没有直接禁止合理假设例子。"
+            ],
+            "notes": [
+              "评审性质为AI辅助独立盲评，不代表人工或领域专家验收；只依据本冻结包逐对材料。",
+              "100到120、增加20、增长20%可直接复算；份额、需求、量价、汇率、利润等仍列为未知，未断言实际因果。",
+              "“若仅做数学计算…数据真实完整”为无必要假设，合成材料也可直接作所给数值计算；没有声称实际已审计或真实公司。",
+              "事实与20%在结论、已知事实、无法推断、专业要点、总结中大量重复；核查顺序虽有用，但新信息密度低，不能因长而加分。"
+            ]
+          },
+          "reason": "两者均完成经营分析，B无实际硬约束违反；A虽证据边界具体，仍使用被其提示词禁止的30%演示且重复明显。没有把合法条件句误判为已发生事实。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-02",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q01",
+          "model": "pro",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "作品“同一币种…不等于已排除汇率波动”及“判断份额需同口径的同期市场总量”明确证据边界，量价、订单、成本等核查均说明用途。",
+              "100到120增长20%正确；未另加假数值、投资决定或无依据需求/份额结论。",
+              "原材料“合成评测资料，不代表真实公司”在提示词与作品中均遗漏，背景保真扣分；作品也未断言真实公司。",
+              "提示词的“不提供投资决定或建议”比原“不替我做投资决定”更宽，但未阻碍所需经营分析。"
+            ]
+          },
+          "reason": "A的证据条件和后续资料用途更精确，避免B的会计项目混用和泛化评价；A遗漏合成属性单独扣完整性。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-03",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q02",
+          "model": "flash",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "作品“方便的时候，麻烦把本周的周报发我一下，谢谢”直接保留发送对象和委婉语气，无虚构职责/期限，也没有改成无需提交。",
+              "自然中性称呼减少填写负担，署名位置有明确用途；“本周”仍是原用户未给出的周期默认，可去掉。",
+              "提示词称发件人希望“尽快”属于轻度添加，但实际邮件没有新增硬期限或施压。"
+            ]
+          },
+          "reason": "B邮件主体直接可用且明确发给我，A把可省略的信息变成多处待填项；B的未说明周期默认扣准确性但非严重违约。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-04",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q02",
+          "model": "pro",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4,
+            "severeErrors": [],
+            "notes": [
+              "邮件明确请求发周报、语气委婉，没有虚构汇总职责或既有沟通记录。",
+              "“是否已准备好”为询问，“如果已经发送”是条件，不是把准备/发送状态写成事实。",
+              "“本周”是未说明的周期选择；重复感谢和署名占位可优化。"
+            ]
+          },
+          "reason": "A完整保留提醒目的并避免虚构职责；B的事实补写和弱化请求影响可直接发送性。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-05",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q03",
+          "model": "flash",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "提示词保留“小林”“今天17点前”“本周项目进度”“汇总给团队”及80汉字/禁占位/禁例，作品均落实。",
+              "正文仅请求、用途与感谢，没有补造进展；只输出主题和正文，内容远低80汉字。",
+              "正文实测27个汉字，满足80汉字上限。"
+            ]
+          },
+          "reason": "两封实际邮件都达标；A组织充分需求更直接，B反复重述已有规则没有改善交付。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-06",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q03",
+          "model": "pro",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "提示词集中保留原目标及全部硬约束，作品正文明确“今天17点前”，主题仅写17点不造成期限丢失。",
+              "只有主题和正文，无占位符、进展补造或示例，正文短于80汉字。",
+              "正文实测26个汉字，满足80汉字上限。"
+            ]
+          },
+          "reason": "实际邮件均满足全部条件，B提示词更集中，A多处重复无必要。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-07",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q04",
+          "model": "flash",
+          "round": 1,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 3,
+            "completeness": 3,
+            "clarity": 3,
+            "executability": 2,
+            "severeErrors": [
+              "【下游未落实同信息对照】提示词要求两组可使用“同一份实际确认信息”，作品5.2先“收集原始任务与确认信息”再随机分组，随后A“增强器提问，用户回答”，B仅“使用已提供确认信息”，未安排把A新增回答同步给B、冻结问答信息或构造同任务配对；仍在4.1宣称同一确认信息。该流程只能保证问答前相同，无法据此隔离信息增量与问答方法收益。",
+              "【平台过度冻结评价参数，下游交付不足】提示词禁止默认评分尺度，作品除推荐被试间设计外，随机化单位、任务材料、问题规则、量表、聚合、评审人数及下游指标等仍未落实；作品称评分者“仅看到增强后提示词与下游任务输出”，未提供原需求和实际确认信息作为完整性/忠实性依据。主评价缺少可执行规则，未满足可直接开展的要求。"
+            ],
+            "notes": [
+              "方案确实保留增强器提问、用户回答、融入答案，推荐了主设计并说明条件，较只有待填项有实质内容。",
+              "1:1分配、95%区间等明确为建议，其他量表范围列作未决候选，不视为伪造数据或用户已确认事实。",
+              "对有序评分应谨慎使用ICC；仅因非正态/方差不齐就选Mann–Whitney，或非随机缺失就用一般插补，适用条件不足。",
+              "相同信息与禁止改写的原则重复多次，操作缺口并未因此解决。"
+            ]
+          },
+          "reason": "A有主方案但同信息操纵和评分依据未落实；B直接改换交付为研究设计提示词并大量留空。两者仍未完成可实际开展且公平的研究设计。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-08",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q04",
+          "model": "pro",
+          "round": 1,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 3,
+            "severeErrors": [
+              "【下游违反同信息对照】提示词要求两组“同一份实际确认信息”，作品4.2让问答组针对缺口新增回答并融合，4.3直接组仅用原始任务和原有信息，7.1仍宣称信息对等，没有任何把新回答提供给直接组的步骤。6.3还专门编码“新增约束数、澄清数”，确认信息增量确实是设计差异。可研究自然流程总效果，但不能按当前写法声称完成同信息公平对照。"
+            ],
+            "notes": [
+              "真实交付主方案、随机化、评分、预试、数据分析及时间线，保留真实用户回答而非模型自行计划。",
+              "40人/组、4个问题、1–7量表、d=0.50均为拟议或功效目标，不当作已有样本、假观测值或已获效应。",
+              "关键问题先写“3–5个”，后写“固定为4个（经预实验确定的最优数量，待确认）”，需统一规则并改为拟经预试确定；结合局部待确认及未实施声明，不武断认定实际完成预试。",
+              "“对六个质量维度分别进行LMM…检验组别×维度交互”应改为含维度因素的联合模型；缺失处理只按比例区间选择，未充分说明缺失机制。"
+            ]
+          },
+          "reason": "A未交付；B有具体拟议设计，失败来自真实的信息不对齐，而非使用合理的设计参数建议。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-09",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q05",
+          "model": "flash",
+          "round": 1,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 3,
+            "clarity": 3,
+            "executability": 2,
+            "severeErrors": [
+              "【平台混淆写作受众与研究对象，下游扩大】原要求“为研究生撰写…方法部分，研究Plan问答对提示词质量的影响”；提示词却称“研究对象为研究生撰写中文研究设计的方法部分”，作品因此把四类任务均限定为“研究设计方法部分的不同写作需求”。把交付文体/受众改成研究任务范围，非用户已定事实。",
+              "【下游硬约束违反】无附表，正文含标题1355汉字，去标题1351，超过1200上限；提示词明确要求篇幅核对。",
+              "【下游对照结构不足以识别所称效应】作品让“四组均接收同一原始任务与同一份实际确认信息”，另两公平对照仍是相同流程/信息组合，却称用于“区分Plan问答本身与确认信息可得性”。未设置或界定信息可得性的不同条件，无法识别该因素效应。"
+            ],
+            "notes": [
+              "正确保留Plan问答、已提供答案可被直接组使用，不再把Plan完全等同于模型计划；具体问答的用户角色展开仍少。",
+              "声称“任务列表见附表1”“示例锚点见附表2”，实际没有附表，锚点交付缺失；用户未强制附表，未单独算整体未交付。",
+              "所有人完成同一20任务时，任务与参与者通常为交叉结构；作品一概“任务嵌套于参与者”须重新核查。5点量表是合法拟议参数，不是伪造观测。"
+            ]
+          },
+          "reason": "A改换Plan干预且超长；B虽加强问答定义，仍缩窄研究对象、重复对照不能识别信息效应且超长，真实作品未通过。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-10",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q05",
+          "model": "pro",
+          "round": 1,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 2,
+            "severeErrors": [
+              "【下游改变指定公平对照】提示词要求同信息两组保留各自指定增强流程；作品模式3“不进行提问…接收…确认信息后生成”，模式4“同样接收该确认信息，但采用与直接增强相同的生成流程”，两者实质都为无问答直接增强，未构成指定的问答/直接同信息两组对照。",
+              "【下游机制解释逻辑错误】“若Plan模式优于直接增强，且优于或至少不劣于同等信息对照，则可分别支持提问行为与信息增量的作用”不成立：仅不劣于同信息直接增强不能证明提问有额外收益；“与同等信息对照无差异”也没有等效界限/证据规则，不能直接推出收益主要来自信息增量。"
+            ],
+            "notes": [
+              "含标题829汉字，去标题808，满足800–1200；20×4×3=240是合法计划数量，末段明确研究尚未实施。",
+              "Plan主组保留模型提问与用户回答，形成计划只是中间步骤，不能将其误判成完全替换用户问答。",
+              "两名盲评、四维名称、分歧与随机化都有交付，但四维缺少操作定义，评审材料没有共享实际确认信息，完整性/准确性依据不足。"
+            ]
+          },
+          "reason": "A篇幅达标、Plan主组含用户问答，但两同信息对照重复且机制判断错误；B改换Plan含义并错设六维指标，双方均有影响核心研究的错误。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-11",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q06",
+          "model": "flash",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "提示词保存原两行及时间范围，未追加示例命令；作品“Please confirm whether you will attend before Thursday.”保留before Thursday和是否参加，会议时间与行数顺序正确。",
+              "before Thursday置于attend后有修饰附着歧义的轻微风险，结合会议在周五仍可读作确认期限；写在confirm附近更清楚，不判为明确扩大日期。"
+            ]
+          },
+          "reason": "B保留before截止范围并消除平台禁例冲突；A把之前译成by Thursday。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-12",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q06",
+          "model": "pro",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "提示词保存原两行及时间范围，未追加示例命令；作品“Please confirm whether you will attend before Thursday.”保留before Thursday和是否参加，会议时间与行数顺序正确。",
+              "before Thursday置于attend后有修饰附着歧义的轻微风险，结合会议在周五仍可读作确认期限；写在confirm附近更清楚，不判为明确扩大日期。"
+            ]
+          },
+          "reason": "B实际译文保持两行、是否参加及周四之前；A既有示例指令冲突，又在作品中扩大期限。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-13",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q07",
+          "model": "flash",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "作品为{\"name\":\"李明\",\"age\":28}，仅两键、字符串姓名和整数年龄，没有围栏/解释/示例。",
+              "提示词完整保留原信息及格式，仍重复一次键类型规则，可更集中。",
+              "已解析实际作品核对：恰有name、age；name类型String，age类型Int64且值28。"
+            ]
+          },
+          "reason": "下游JSON质量相同；A较少重复已有约束，胜出仅在提示词组织效率。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-14",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q07",
+          "model": "pro",
+          "round": 1,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "提示词直接保留输入、抽取任务及全部严格格式要求，作品{\"name\": \"李明\", \"age\": 28}类型和值正确，空格是合法JSON空白。",
+              "已解析实际作品核对：恰有name、age；name类型String，age类型Int64且值28。"
+            ]
+          },
+          "reason": "两份JSON同样通过；A保留全部条件且没有无必要扩写，空格差异不影响判断。",
+          "packet": "candidate5-first"
+        },
+        {
+          "pair": "pair-01",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q01",
+          "model": "flash",
+          "round": 2,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "本文件为AI辅助独立盲评，仅依据本冻结包，不代表人工或领域专家验收；与首轮分开记录。",
+              "20%及增加20正确；作品“同一币种不等于已排除汇率影响”与量价/需求/份额边界明确，未虚构数值、原因或投资决定。",
+              "每个核查项连接缺口、方法与判别证据，比泛列问题更可执行。",
+              "提示词保留合成属性，作品未再次说明但也未假称真实公司；结尾已知/确认/假设和多处收入结论仍可合并。"
+            ]
+          },
+          "reason": "A更清楚连接经营问题与判别证据，精确说明汇率和需求边界；两者均完成任务，A的优势来自分析精度与可执行性。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-02",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q01",
+          "model": "pro",
+          "round": 2,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 4,
+            "clarity": 3,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "作品明确增速“高低需要行业基准”，并区分销量、提价与需求/定价能力证据，汇率解释和同口径市场判断更精确。",
+              "各核查条目有问题、所需证据及条件性意义；未声称已发生份额/需求变化，也未增加假定演示数值。",
+              "提示词和作品遗漏原材料“合成评测资料，不代表真实公司”属性；作品也未进一步宣称真实公司。",
+              "结尾称补充“四类证据”，却列量价、恒定汇率、并表、毛利率和订单五项，属组织计数小错；事实/边界多次重述，清晰度扣分。"
+            ]
+          },
+          "reason": "B在增长评价和量价/需求/汇率证据上更严谨，行动路径清楚；合成属性遗漏和五项写四类单独扣分，不因其篇幅较长加分。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-03",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q02",
+          "model": "flash",
+          "round": 2,
+          "outcome": "loss",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 3,
+            "severeErrors": [
+              {
+                "attribution": "下游违背提示词，不是提示词要求补造",
+                "type": "无依据补写汇总背景",
+                "evidence": [
+                  "提示词：不编造具体截止日期、姓名、项目进展或未提供的背景信息。",
+                  "作品：我只是做个提醒，避免后续汇总时遗漏。"
+                ],
+                "reason": "原需求只要求提醒同事发周报，作品把后续汇总用途写成既定背景；这不同于显式的条件候选或未决假设。"
+              }
+            ],
+            "notes": [
+              "“可能你这边也比较忙”显式保留不确定性，不认定为忙碌已发生事实；“如果已经发了，可能…没注意到”也是条件。",
+              "中性称呼与“发我一份”更直接，但新增汇总背景需改；“本周”仍是未注明周期默认。"
+            ]
+          },
+          "reason": "B虽然正文更直接，却引入未经提供的汇总用途；A的缺点是占位符负担，未出现该严重事实错误。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-04",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q02",
+          "model": "pro",
+          "round": 2,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4,
+            "severeErrors": [],
+            "notes": [
+              "明确请求发周报，没有虚构汇总职责或历史沟通。",
+              "“不急，等你方便的时候处理即可”擅加宽松态度，提醒力度被弱化；没有原定截止日，未判成明确硬约束违反。",
+              "XX和本周仍需用户处理称呼/周期，重复表达“方便”可压缩。"
+            ]
+          },
+          "reason": "两者都偏软，B保留发送请求并避免A的汇总职责补造，仍有可改进的默认周期与松缓语气。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-05",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q03",
+          "model": "flash",
+          "round": 2,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "提示词完整保留小林、今天17点前、本周项目进度发我及团队汇总；作品只有主题正文，无进展补造、占位符或示例，正文低于80汉字。",
+              "原需求充分，提示词集中保留条件，没有额外工作。",
+              "当前作品正文机械计数27个汉字，满足不超过80个汉字。"
+            ]
+          },
+          "reason": "实际邮件都达标，A提示词减少同一硬条件的多层重复，差异不是下游内容准确性。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-06",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q03",
+          "model": "pro",
+          "round": 2,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "作品“今天17:00前”忠实表达今天17点前，不改变日期或范围；小林、本周项目进度发我和团队汇总全部保留。",
+              "提示词集中保存全部约束，作品只含主题正文，无占位符、虚构进展或示例。",
+              "当前作品正文机械计数25个汉字，满足不超过80个汉字；17:00保留17点的时间。"
+            ]
+          },
+          "reason": "两封邮件均通过硬条件，B更直接组织充分需求，没有A的多节重复。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-07",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q04",
+          "model": "flash",
+          "round": 2,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 3,
+            "clarity": 2,
+            "executability": 2,
+            "severeErrors": [
+              {
+                "attribution": "下游违背提示词",
+                "type": "同信息对照未成立",
+                "evidence": [
+                  "提示词：两组接收同一原始任务和同一份实际确认信息，直接组不追问不等于不能使用已提供答案。",
+                  "作品A组可用信息：原始任务 + 同一份实际确认信息 + 用户对关键问题的回答；B组：原始任务 + 同一份实际确认信息。",
+                  "作品：问答组额外获得的用户回答，应作为该组流程的组成部分记录；直接组不因未提问而失去使用确认信息的权利。"
+                ],
+                "reason": "新回答没有同步给直接组，却称为两组同信息对照。相同初始资料不能消除后续信息差异；该比较最多检验含信息获取在内的整个流程收益。"
+              },
+              {
+                "attribution": "提示词限制导致，且下游未补足可执行主方案",
+                "type": "关键方法留空，实际开展目标未充分交付",
+                "evidence": [
+                  "提示词：评分尺度、分母等未确认项保持未决，不默认取值。",
+                  "作品：评分尺度：未决。需在预注册中确认是 1–5、1–7、0–100 还是其他尺度。",
+                  "作品未决表：样本量；任务类型与数量；评分者人数与一致性阈值。"
+                ],
+                "reason": "已有一些有用步骤，但任务池、样本规模依据、评价量表与主设计选择均留待另定，统计方法列为配对/独立分组菜单。用户要求研究设计并可实际开展，允许明确标记为拟议的推荐参数；把这些设计工作普遍延后造成关键交付缺口。"
+              }
+            ],
+            "notes": [
+              "保留增强器提问、用户回答、再融入的流程；没有改成模型自拟执行计划。",
+              "“本文件为拟议研究设计”“已定指本设计建议固定”清楚区分设计建议与已有事实，不据此指控伪造研究状态。",
+              "同信息条件在任务、约束、流程、核查、总结中多次复述，但实际新增回答仍不对等；冗余没有解决逻辑缺口。"
+            ]
+          },
+          "reason": "A有设计内容但同信息控制自相矛盾，且关键实施决策未完成；B更直接改换交付物并退化为待确认模板。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-08",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q04",
+          "model": "pro",
+          "round": 2,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 1,
+            "completeness": 4,
+            "clarity": 3,
+            "executability": 2,
+            "severeErrors": [
+              {
+                "attribution": "下游违背提示词",
+                "type": "同信息与同任务控制不成立",
+                "evidence": [
+                  "作品：A组在问答环节获得的新增信息仅来自用户本人。",
+                  "作品：B组增强器正常使用用户已提供的全部信息。",
+                  "作品：被试（任务提供者）随机分配至A组或B组。",
+                  "作品：每名被试提交一个自己真实需要完成的任务。"
+                ],
+                "reason": "新增回答未同步直接组，而且平行分组各人提交自己的任务，未建立同一任务配对，却称两组接收完全相同原始任务和确认信息。可以另作为现实流程总体效果试验，但不满足提示词要求的同信息对照。"
+              },
+              {
+                "attribution": "下游计算与统计依据错误",
+                "type": "拟议样本量依据不支持宣称功效",
+                "evidence": [
+                  "作品：每组不少于40人，总计80人以上（基于中等效应量d=0.5、α=0.05、功效0.80的估算；实际以预注册时最终计算为准）。",
+                  "作品：显著性水平：α = 0.05（双侧）。",
+                  "作品：若预期效应量较小（如d=0.3），每组需增加至约90人。"
+                ],
+                "reason": "在其独立两组、双侧比较设定下，常用正态近似 n≈2(1.96+0.842)^2/d²，d=0.5约需每组63，d=0.3约需175；40和90不足以支持所列0.80功效。拟议参数不是假观测数据，但错误计算依据仍会误导实际开展；待预注册复核的尾注不能消除现有错误。"
+              },
+              {
+                "attribution": "下游无依据事实断言",
+                "type": "将未提供文献扩成不存在支持研究",
+                "evidence": [
+                  "作品：目前尚无已完成的预注册研究或已发表数据直接支持上述假设。"
+                ],
+                "reason": "包内没有文献检索或研究全貌证据。应说本材料未提供支持研究，不能断言目前不存在相关研究；本评审也未联网替其验证。"
+              },
+              {
+                "attribution": "下游违背提示词的条件性建议",
+                "type": "建议条件成立时改换主要评价对象",
+                "evidence": [
+                  "提示词：不把提示词质量改为只评答案质量；下游作品可作补充但不替代原评价。",
+                  "作品：若无法招募到具备提示词工程经验的评分者，可改用“下游作品质量”作为主要结局。"
+                ],
+                "reason": "这是明确的条件建议，未被误判为已经发生；但建议本身仍违背规定的评价对象，研究启动时不能按此替代主结局。"
+              }
+            ],
+            "notes": [
+              "样本量、量表1–7、权重、最多5题、温度0.3以及招募方案均是研究设计建议；不因用户未事先确认便一概视作假数据。",
+              "研究流程、记录、盲评、直接组间比较等较完整。末尾明确尚未实施，不能据表格“已定”指控已获伦理审批或已有结果。",
+              "对A组进行格式统一后再评分，可能影响本就在测量的结构清晰性；仅承诺敏感性分析不能充分保证主比较仍是原始产出。退出者直接排除也可能产生差异性缺失。"
+            ]
+          },
+          "reason": "A无交付；B有完整拟议方案，但信息/任务控制、样本量依据、无证据文献断言和条件性评价对象替换存在严重错误。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-09",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q05",
+          "model": "flash",
+          "round": 2,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 3,
+            "clarity": 2,
+            "executability": 2,
+            "severeErrors": [
+              {
+                "attribution": "下游改变流程并使评价材料与对象冲突",
+                "type": "问答增强后额外生成执行计划/答案，主评价对象不清",
+                "evidence": [
+                  "作品：在增强器提出关键问题、用户回答后，将有效回答融入优化提示词，并由模型生成执行计划后再作答。",
+                  "作品：评分材料去除组别标识，仅保留任务编号与回答文本。",
+                  "作品：评价对象为提示词质量，下游作品可作补充但不替代原评价。"
+                ],
+                "reason": "作品确实保留了用户问答，不能说它完全取消问答；问题是又把生成执行计划后作答加进Plan主流程，并向评审提供回答文本，却要求评价提示词。这不是明晰隔离的可选下游补充，评审究竟看到何种材料存在实质矛盾。"
+              },
+              {
+                "attribution": "下游数量与设计结构不一致",
+                "type": "四种条件的重复观测总数漏计",
+                "evidence": [
+                  "作品：每种模式下完成全部20个任务，每模式每任务独立重复3次，共形成20×2×3=120次任务观测。",
+                  "作品：比较条件拟设四组。"
+                ],
+                "reason": "这里把120写为每种模式安排后的总观测数，未像A那样限定为两种主要模式。按已要求的四条件每任务三次应为240，额外两组的重复工作量被遗漏或未定义。"
+              }
+            ],
+            "notes": [
+              "本包汉字计数1145，去标题1141，无附表，满足800至1200；没有按长度自动判优。",
+              "5点量表、分差阈值与第三人仲裁是明确拟议设计，可接受；不视为假结果。",
+              "第三、四组只重复“保留各自指定的增强流程”，未分别命名和给出确认答案同步步骤；同信息对照缺少可照做的操作定义。",
+              "提示词明确规定真实用户问答、提示词质量和同信息条件；这些下游错误不能反向归为提示词已要求模型自拟计划。"
+            ]
+          },
+          "reason": "A改变Plan含义且正文超长；B虽符合篇幅并保留问答字样，仍混入执行计划/答案评价且四组总量计数矛盾。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-10",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q05",
+          "model": "pro",
+          "round": 2,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 1,
+            "completeness": 2,
+            "clarity": 3,
+            "executability": 2,
+            "severeErrors": [
+              {
+                "attribution": "下游违背提示词明确流程",
+                "type": "将Plan问答改成自拟问答计划",
+                "evidence": [
+                  "提示词：本次问答流程由增强器提出关键问题、用户回答，再将有效回答融入优化提示词。",
+                  "作品：Plan模式在相同输入基础上，先输出分步问答计划再作答。"
+                ],
+                "reason": "作品没有用户实际回答和答案融入步骤，对照也仅围绕是否输出/执行计划；不再是指定的Plan问答流程。"
+              },
+              {
+                "attribution": "下游改变评价对象",
+                "type": "提示词质量研究变成答案评价",
+                "evidence": [
+                  "作品：直接增强模式仅使用任务原始需求与已提供的确认信息生成回答。",
+                  "作品：准确性考察回答与任务要求及确认信息的一致程度。",
+                  "作品：可执行性考察回答能否直接用于后续操作。"
+                ],
+                "reason": "生成材料和评分定义都转为回答；用户要求的是增强后提示词质量，没有把答案研究列作独立补充。"
+              },
+              {
+                "attribution": "下游违背提示词与用户硬性篇幅",
+                "type": "正文不足800个汉字",
+                "evidence": [
+                  "需求：正文800至1200个汉字，附表另计。",
+                  "作品开头：本研究采用受控比较设计，考察Plan问答对提示词质量的影响。"
+                ],
+                "reason": "当前作品全部汉字735，去标题733，无附表，连含标题口径也不足800。"
+              }
+            ],
+            "notes": [
+              "保留4类各5任务、每模式每任务3次、两名评审；没有捏造效应量、P值或结果。",
+              "拟议四类写作任务可作设计选择，不能仅因未获预先确认而称假数据；但研究对象与评审材料确实发生改变。",
+              "未来时态的分析和预注册说明支持其为方案，没有把“本研究采用”单独断章取义为已经实施。"
+            ]
+          },
+          "reason": "A存在Plan定义、指标归类和公平对照三类实质错误；B改变干预与评价对象，且明显短于最低正文汉字数。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-11",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q06",
+          "model": "flash",
+          "round": 2,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "实际译文“The meeting has been moved to Friday at 3 p.m.”保留会议改期和周五下午三点；“Please confirm your attendance before Thursday.”保留周四之前的截止边界。",
+              "机械核对为2行，保持原顺序，无标题、解释或示例。",
+              "“confirm your attendance”是自然通知表达，明确写成whether you will attend可更直接表达是否参加，但不把这一点扩大为已经确认参会的事实。",
+              "提示词专门指出“之前”不能变为“不晚于”，有任务相关价值；仍重复一次原始输出规则。"
+            ]
+          },
+          "reason": "A保留时间范围并严格两行；B提示词自相矛盾，作品又将before扩大为by。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-12",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q06",
+          "model": "pro",
+          "round": 2,
+          "outcome": "both_failed",
+          "candidateScores": {
+            "accuracy": 2,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 2,
+            "severeErrors": [
+              {
+                "attribution": "下游违背提示词明确提醒",
+                "type": "扩大确认截止范围",
+                "evidence": [
+                  "提示词：保持时间、否定与范围边界，例如“之前”与“不晚于”不能互换。",
+                  "作品：Please confirm whether you will attend by Thursday."
+                ],
+                "reason": "即使提示词已准确保护边界，下游仍使用by Thursday而不是before Thursday。“by Thursday”在句尾还可能附着到attend，进一步损害时间表达清晰度。"
+              }
+            ],
+            "notes": [
+              "恰为2行，顺序正确；whether you will attend明确表达是否参加。",
+              "本包实际输出仍是by Thursday，不能沿用其他轮次或相似提示词曾经正确的结果。",
+              "提示词没有附加示例命令，主要失败归因下游实际翻译。"
+            ]
+          },
+          "reason": "两侧实际译文都把周四之前扩大为by Thursday；A另有提示词禁示例冲突，B提示词正确也不能抵消本次作品违约。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-13",
+          "letter": "B",
+          "kind": "candidate",
+          "case": "Q07",
+          "model": "flash",
+          "round": 2,
+          "outcome": "tie",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "实际输出为{\"name\":\"李明\",\"age\":28}，严格JSON解析成功；值、类型、键集合均正确，无围栏、说明或新增字段。",
+              "提示词也多次重复“只输出”“键只能”“类型”和禁示例规则，原需求已经充分；未显示实质质量优势。"
+            ]
+          },
+          "reason": "两侧实际JSON完全一致且均合规；提示词均存在重复约束，不按字数差异强行区分胜负。",
+          "packet": "candidate5-second"
+        },
+        {
+          "pair": "pair-14",
+          "letter": "A",
+          "kind": "candidate",
+          "case": "Q07",
+          "model": "pro",
+          "round": 2,
+          "outcome": "win",
+          "candidateScores": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5,
+            "severeErrors": [],
+            "notes": [
+              "实际输出{\"name\": \"李明\", \"age\": 28}严格JSON解析成功，只有正确的name与age，name为字符串、age为整数；JSON空格合法。",
+              "提示词完整保留原文、提取任务和输出硬约束，没有改变已充分明确的任务。"
+            ]
+          },
+          "reason": "两侧下游对象同样正确；A对已充分需求的保留更直接，B重复规则未带来额外任务信息。差异是组织冗余而非JSON是否含空格或单纯长度。",
+          "packet": "candidate5-second"
+        }
+      ]
+    }
+  ],
+  "verdictDisagreements": [
+    {
+      "pair": "pair-05",
+      "case": "Q03",
+      "reviewerOne": "tie",
+      "reviewerTwo": "win",
+      "packet": "candidate5-first"
+    },
+    {
+      "pair": "pair-06",
+      "case": "Q03",
+      "reviewerOne": "tie",
+      "reviewerTwo": "win",
+      "packet": "candidate5-first"
+    },
+    {
+      "pair": "pair-07",
+      "case": "Q04",
+      "reviewerOne": "win",
+      "reviewerTwo": "both_failed",
+      "packet": "candidate5-first"
+    },
+    {
+      "pair": "pair-13",
+      "case": "Q07",
+      "reviewerOne": "tie",
+      "reviewerTwo": "win",
+      "packet": "candidate5-first"
+    },
+    {
+      "pair": "pair-14",
+      "case": "Q07",
+      "reviewerOne": "tie",
+      "reviewerTwo": "win",
+      "packet": "candidate5-first"
+    },
+    {
+      "pair": "pair-05",
+      "case": "Q03",
+      "reviewerOne": "tie",
+      "reviewerTwo": "win",
+      "packet": "candidate5-second"
+    },
+    {
+      "pair": "pair-06",
+      "case": "Q03",
+      "reviewerOne": "tie",
+      "reviewerTwo": "win",
+      "packet": "candidate5-second"
+    },
+    {
+      "pair": "pair-14",
+      "case": "Q07",
+      "reviewerOne": "tie",
+      "reviewerTwo": "win",
+      "packet": "candidate5-second"
+    }
+  ],
+  "releaseGate": "BLOCKED: serious failures remain; average scores cannot override them"
+}

@@ -1,0 +1,18 @@
+param([Parameter(Mandatory=$true)][string]$InputPath,[Parameter(Mandatory=$true)][string]$SourceDirectory,[Parameter(Mandatory=$true)][string]$RunDirectory,[ValidateSet('Both','EnhancedOnly','RawContractOnly')][string]$Mode='Both',[string]$ClassesPath='tmp/requirement-boundaries-20261011/baseline/target/classes')
+$ErrorActionPreference='Stop'
+$taskRepo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
+$taskClasses=(Resolve-Path -LiteralPath (Join-Path $taskRepo $ClassesPath)).ProviderPath
+$taskRun=[IO.Path]::GetFullPath((Join-Path $taskRepo $RunDirectory))
+if(-not $taskRun.StartsWith($PSScriptRoot+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Output must stay within this evaluation.'}
+$taskHarnessClasses=Join-Path $PSScriptRoot ('runner-builds/'+(Split-Path -Leaf $taskRun)+'-captured')
+$taskCp=$taskClasses+';'+(Get-Content -LiteralPath (Join-Path $taskRepo 'tmp/backend-local-managed/2026-10-08T11-36-35-858Z-31d87dcc/runtime-classpath.txt') -Raw).Trim()
+# Only configured DeepSeek credentials enter this child process; values are never printed or saved.
+$taskNames=@('MODEL_API_KEY','MODEL_DEEPSEEK_API_KEY','MODEL_DEEPSEEK_ENDPOINT','MODEL_DEEPSEEK_MODELS','MODEL_DEEPSEEK_NAME','MODEL_DEEPSEEK_PROVIDER_NAME','MODEL_MULTI_PROVIDER_ENABLED','MODEL_DEFAULT_PROVIDER')
+foreach($taskName in $taskNames){$taskValue=[Environment]::GetEnvironmentVariable($taskName,'User');if(-not [string]::IsNullOrWhiteSpace($taskValue)){[Environment]::SetEnvironmentVariable($taskName,$taskValue,'Process')}}
+Push-Location -LiteralPath $taskRepo
+try {
+    & 'E:\Delelop\Java\jdk-21\bin\javac.exe' -encoding UTF-8 --release 21 -cp $taskCp -d $taskHarnessClasses tmp/requirement-boundaries-20261011/P1CapturedWorkEvaluation.java
+    if($LASTEXITCODE -ne 0){throw 'Harness compilation failed.'}
+    & 'E:\Delelop\Java\jdk-21\bin\java.exe' '-XX:ActiveProcessorCount=2' '-Djdk.net.unixdomain.tmpdir=E:/MyProject/prompt-optimizer-platform/tmp' -cp ($taskHarnessClasses+';'+$taskCp) com.promptoptimizer.enhancement.service.impl.P1CapturedWorkEvaluation $InputPath $SourceDirectory $taskRun $taskClasses $Mode
+    if($LASTEXITCODE -ne 0){throw 'Evaluation stopped; preserved safe failure evidence.'}
+} finally {Pop-Location}

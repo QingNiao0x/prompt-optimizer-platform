@@ -117,6 +117,20 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
                 + "缺口只限制对应内容，不编造数据、引用或结论；重要未决条件集中说明一次，同一缺口不逐节重复标待确认；原要求的表格、代码及篇幅继续保留。" : "";
     }
 
+    /**
+     * 为直接角色指令区分启动与实际交付，避免空对话也套用完整报告格式。
+     * 明确写提示词、先问、禁问和严格输出的用户要求不由这一默认分支覆盖。
+     */
+    public static String roleExecutionGuidance(String rawPrompt, PromptTemplate template) {
+        if (template == null || template.code() != com.promptoptimizer.enhancement.domain.TemplateCode.GENERAL) return "";
+        String instructions = instructionText(rawPrompt).strip();
+        if (!instructions.matches("(?is)^(?:请)?(?:你是|你将(?:作为|担任)|你扮演|扮演|you are\\b|act as\\b).*")
+                || !promptDeliveryTarget(instructions).isBlank() || ASK_FIRST.matcher(instructions).find()
+                || instructions.matches("(?is).*(?:(?:只|仅)(?:输出|回复|返回)|(?:不要|不得|禁止|无需|不需要).{0,6}(?:提问|询问|问我|反问)|(?:启动|开场|首次).{0,12}(?:先|必须|需要|仅|只)|\\b(?:only output|only return|do not ask|no questions)\\b).*")
+        ) return "";
+        return "已有具体问题或待处理材料时直接完成任务，并按下列要求输出；仅收到角色设定时，简短进入角色并请用户提出问题，不列启动问卷或空分析章节。问题分类与常规组织由你完成。";
+    }
+
     /** 优化模型生成的是提示词，须将起草要求传给执行者，不能在增强阶段直接撰写作品。 */
     public String modelGuidance() {
         if (!promptTarget.isBlank()) return "\n【本次提示词交付】\n用户目标：" + promptTarget
@@ -145,6 +159,11 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
                     ProviderResponseValidationException.Reason.RULE_CONFLICT, field);
             return;
         }
+        // 平台产物是提示词，不代表执行者也应产出提示词；非写作任务和角色指令同样保护这一层级。
+        if (!promptDeliveryTarget(instructionText(content)).isBlank()) {
+            throw new ProviderResponseValidationException(
+                    ProviderResponseValidationException.Reason.DELIVERY_LEVEL_CONFLICT, field);
+        }
         if (!proseRequired || content == null || content.isBlank()) return;
         String instructions = instructionText(content);
         if (hasPreparationTarget(instructions)) {
@@ -161,11 +180,18 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
 
     /** 从肯定的当前交付动作提取目标，忽略否定、候选、引用和未来请求。 */
     static String promptDeliveryTarget(String instructions) {
+        // 研究方案可合法描述被比较的提示词生成步骤；只有明确以提示词为最终交付才跨层级。
+        boolean studyWorkflow = instructions.matches("(?is).*(?:撰写|写(?:一(?:个|份))?|设计|交付|编写|生成|一份).{0,25}研究(?:设计|方案)(?!的?(?:写作)?提示词).*" );
         for (String clause : instructions.split("[。；;，,\\r\\n]")) {
             var target = PROMPT_DELIVERY.matcher(clause);
             while (target.find()) {
                 String prefix = clause.substring(0, target.start());
-                if (prefix.matches("(?is).*(?:不需要|不要求|不要|不得|不应|无需|禁止|暂不|不|未)(?:再|只|仅|直接)?\\s*$")
+                if (studyWorkflow && !clause.strip().matches("(?is)^(?:[-*0-9.、\\s]*)(?:最终|仅|只)?(?:交付|输出|返回).{0,30}提示词(?:文本|文档)?[。.!！\\s]*$")) continue;
+                if (prefix.lastIndexOf('“') > prefix.lastIndexOf('”') || prefix.lastIndexOf('‘') > prefix.lastIndexOf('’')) continue;
+                // 研究一种增强流程时，提示词是研究对象；不是本次要求交付的作品。
+                if (prefix.matches("(?is).*(?:研究(?!生)|比较|评估|检验|study|compare|evaluate).*")
+                        && !prefix.matches("(?is).*(?:为|用于).{0,30}(?:研究|比较|评估).{0,30}(?:请|帮我|需要|要求|交付|输出|准备|编写)\\s*$")) continue;
+                if (prefix.matches("(?is).*(?:不需要|不要求|不要|不得|不应|无需|禁止|暂不|不|未)(?:再|只|仅|直接|改成|改为|转为)?\\s*$")
                         || prefix.matches("(?is).*(?:如果|假如|以后|将来|例如|示例|原文|引用).{0,30}")
                         || prefix.matches("(?is).*(?:翻译|translate)[^。；;\\r\\n]*[:：‘“\"].*")) continue;
                 return clause.strip();

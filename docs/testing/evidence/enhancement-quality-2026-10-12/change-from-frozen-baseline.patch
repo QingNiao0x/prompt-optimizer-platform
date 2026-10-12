@@ -1,0 +1,893 @@
+--- before/apps/web/src/stores/optimization.test.ts
++++ candidate5/apps/web/src/stores/optimization.test.ts
+@@ -304,6 +304,20 @@
+     expect(optimizePrompt).toHaveBeenCalledWith(expect.objectContaining({
+       enhancement: expect.objectContaining({ templateCode: 'AUTO' }), planConfirmation,
+     }));
++  });
++
++  it('keeps compact presentation through editing and undo without losing platform rules', () => {
++    const store = useOptimizationStore();
++    const original = { ...resultFixture(), promptFormat: 'COMPACT' as const };
++    store.result = original;
++    expect(store.saveEditedSections(original.sections.map(section => ({
++      ...section, content: section.type === 'TASK' ? '按新的要求完成邮件。' : section.content,
++    })))).toBe(true);
++    expect(store.result?.optimizedPrompt).not.toContain('## ');
++    expect(store.result?.optimizedPrompt).toContain('按新的要求完成邮件。');
++    expect(store.result?.optimizedPrompt).toContain('禁止读取受保护路径。');
++    expect(store.undoResult()).toBe(true);
++    expect(store.result).toEqual(original);
+   });
+ 
+   it('should restore a removed platform constraint and allow undoing the edit', () => {
+--- before/apps/web/src/stores/optimization.ts
++++ candidate5/apps/web/src/stores/optimization.ts
+@@ -516,7 +516,8 @@
+     });
+     const optimizedPrompt = normalizedSections
+       .filter((section) => section.type !== 'CLARIFICATIONS')
+-      .map((section) => `## ${section.title}\n${section.content}`)
++      .map((section) => result.value?.promptFormat === 'COMPACT'
++        ? section.content : `## ${section.title}\n${section.content}`)
+       .join('\n\n');
+     if (optimizedPrompt === result.value.optimizedPrompt) {
+       resultDraft.value = undefined;
+--- before/apps/web/src/types/api.ts
++++ candidate5/apps/web/src/types/api.ts
+@@ -595,6 +595,8 @@
+ 
+ export interface OptimizationResult {
+   optimizedPrompt: string;
++  /** 提示词展示形式；旧历史缺省为分节，内部四要素继续支持校验和编辑。 */
++  promptFormat?: 'COMPACT' | 'STRUCTURED';
+   sections: PromptSection[];
+   contextReport: ContextSnapshot;
+   ambiguities: string[];
+@@ -645,6 +647,8 @@
+   id: string;
+   rawPrompt: string;
+   optimizedPrompt: string;
++  /** 旧历史缺省分节；保存的最终正文保持原样。 */
++  promptFormat?: 'COMPACT' | 'STRUCTURED';
+   sections: PromptSection[];
+   contextSummary: Record<string, unknown>;
+   ambiguities: string[];
+--- before/apps/web/src/components/prompt/OptimizationResultPanel.vue
++++ candidate5/apps/web/src/components/prompt/OptimizationResultPanel.vue
+@@ -489,7 +489,8 @@
+           </ElCollapseItem>
+         </ElCollapse>
+ 
+-        <article v-if="!editing" class="section-list">
++        <article v-if="!editing && result.promptFormat === 'COMPACT'" class="compact-prompt" data-testid="compact-prompt">{{ result.optimizedPrompt }}</article>
++        <article v-else-if="!editing" class="section-list">
+           <ResultCard
+             v-for="(section, index) in displaySections"
+             :key="section.type"
+@@ -749,6 +750,18 @@
+   flex-direction: column;
+ }
+ 
++.compact-prompt {
++  padding: 16px;
++  border: 1px solid var(--glass-border-subtle);
++  border-radius: 12px;
++  background: var(--glass-bg-strong);
++  color: var(--text-primary);
++  font-size: 13px;
++  line-height: 1.8;
++  white-space: pre-wrap;
++  overflow-wrap: anywhere;
++}
++
+ .result-content {
+   min-width: 0;
+   min-height: 0;
+--- before/services/api/src/main/java/com/promptoptimizer/enhancement/domain/OptimizationResult.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/enhancement/domain/OptimizationResult.java
+@@ -20,7 +20,8 @@
+         ProviderMetadata provider,
+         long latencyMs,
+         List<String> warnings,
+-        List<PlanningFactCard> evidenceCards
++        List<PlanningFactCard> evidenceCards,
++        PromptFormat promptFormat
+ ) {
+ 
+     /**
+@@ -32,19 +33,28 @@
+         appliedConstraints = List.copyOf(appliedConstraints);
+         warnings = warnings == null ? List.of() : List.copyOf(warnings);
+         evidenceCards = evidenceCards == null ? List.of() : List.copyOf(evidenceCards);
++        promptFormat = promptFormat == null ? PromptFormat.STRUCTURED : promptFormat;
+     }
+ 
+     /** 保存调用开始时的平台版本名称，后续管理员改名不影响本条优化记录。 */
+     public OptimizationResult withModelVersion(String modelVersion) {
+         return new OptimizationResult(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints,
+                 templateCode, new ProviderMetadata(provider.provider(), provider.model(), provider.mock(), modelVersion),
+-                latencyMs, warnings, evidenceCards);
++                latencyMs, warnings, evidenceCards, promptFormat);
+     }
+ 
+     /** 汇总模型重试、上下文和结果组装的完整耗时；不改变优化正文或历史字段契约。 */
+     public OptimizationResult withLatencyMs(long totalLatencyMs) {
+         return new OptimizationResult(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints,
+-                templateCode, provider, Math.max(0, totalLatencyMs), warnings, evidenceCards);
++                templateCode, provider, Math.max(0, totalLatencyMs), warnings, evidenceCards, promptFormat);
++    }
++
++    /** 旧记录缺少展示形式时按既有分节呈现；不根据正文标题猜测历史元数据。 */
++    public OptimizationResult(String optimizedPrompt, List<PromptSection> sections, ContextSnapshot contextReport,
++                              List<String> ambiguities, List<String> appliedConstraints, TemplateCode templateCode,
++                              ProviderMetadata provider, long latencyMs, List<String> warnings, List<PlanningFactCard> evidenceCards) {
++        this(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints, templateCode,
++                provider, latencyMs, warnings, evidenceCards, PromptFormat.STRUCTURED);
+     }
+ 
+     /** 旧记录没有溯源卡片时返回空列表，保留既有结果构造和历史反序列化契约。 */
+--- before/services/api/src/main/java/com/promptoptimizer/enhancement/domain/PromptFormat.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/enhancement/domain/PromptFormat.java
+@@ -0,0 +1,9 @@
++package com.promptoptimizer.enhancement.domain;
++
++/**
++ * 优化提示词的展示与复制形式；内部四要素及下游作品格式保持独立。
++ *
++ * @author QingNiao
++ * @since 0.1.0
++ */
++public enum PromptFormat { COMPACT, STRUCTURED }
+--- before/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/AuthoritativeDeliveryCompactor.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/AuthoritativeDeliveryCompactor.java
+@@ -176,7 +176,7 @@
+     private static boolean metadataHeading(String heading) {
+         String value = heading.replaceFirst("^#{1,6}\\s+", "").replaceAll("[*：:]", "");
+         return value.equals("平台强制约束（不得删除或弱化）") || value.equals("未决决定的交付边界")
+-                || value.equals("任务相关约束") || value.equals("用户补充权限边界")
++                || value.equals("任务相关约束") || value.equals("用户补充权限边界") || value.equals("推断依据")
+                 || value.equals("执行前须确认（仅涉及下列未决条件的步骤需等待确认；不得自行假定答案）")
+                 || value.equals("用户明确规则（须遵守平台权限边界）")
+                 || value.equals("当前参数依据（用于生成指标表，不代替指标表）")
+--- before/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/MinimalPromptOrganizer.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/MinimalPromptOrganizer.java
+@@ -2,7 +2,6 @@
+ 
+ import com.promptoptimizer.enhancement.domain.PromptSection;
+ import com.promptoptimizer.enhancement.domain.PromptSectionType;
+-import com.promptoptimizer.provider.domain.PromptRewriteStrategy;
+ import java.util.EnumMap;
+ import java.util.List;
+ import java.util.Map;
+@@ -10,7 +9,7 @@
+ 
+ /**
+  * 信息充分且四要素已经明确分段时保留原句，避免为了改写重复扩充交付要求。
+- * 不跳过 Provider 校验、资料合并或权限红线；有新增确认选择、未识别标题时沿用模型组织。
++ * 不跳过校验、资料合并或权限红线；确认后的有效原文仍可保留，再由确认融合器写入新决定。
+  *
+  * @author QingNiao
+  * @since 0.1.0
+@@ -25,12 +24,21 @@
+     /** 仅替换四个原文完整覆盖的段落；每行必须保留，模型发现的真实歧义继续走统一归并。 */
+     static boolean organize(Map<PromptSectionType, PromptSection> sections, String raw,
+                             ConfirmedDecisionSet decisions) {
+-        if (!PromptRewriteStrategy.forPrompt(raw).mode().equals("MINIMAL_ORGANIZATION")
+-                || !decisions.knownDecisions().isEmpty()) return false;
++        return organize(sections, raw, decisions, null);
++    }
++
++    /** 有实质缺口时保留模型补全；旧适配器仅整理可完整识别的四段，不猜测未识别标题。 */
++    static boolean organize(Map<PromptSectionType, PromptSection> sections, String raw,
++                            ConfirmedDecisionSet decisions,
++                            com.promptoptimizer.provider.domain.TaskEnhancementAssessment assessment) {
++        if (raw == null || raw.isBlank() || assessment != null && !assessment.preserveWording()) return false;
++        // 旧适配器未提供有效需求评估，不能用旧原文覆盖已融入模型正文的新选择。
++        if (assessment == null && !decisions.knownDecisions().isEmpty()) return false;
++        String effectiveRaw = ResolvedPlanState.from(decisions, raw).reconcile(raw);
+         var content = new EnumMap<PromptSectionType, StringBuilder>(PromptSectionType.class);
+         PromptSectionType current = PromptSectionType.TASK;
+         boolean inCode = false;
+-        for (String line : raw.lines().toList()) {
++        for (String line : effectiveRaw.lines().toList()) {
+             if (line.strip().startsWith("```")) inCode = !inCode;
+             var heading = HEADING.matcher(line.strip());
+             if (!inCode && heading.matches()) {
+--- before/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java
+@@ -167,6 +167,13 @@
+             throw invalidResponse(Reason.REQUIRED_SECTIONS_MISSING, "sections");
+         }
+         var requirementBoundaries = taskView.requirementBoundaries();
++        var inferenceContract = com.promptoptimizer.provider.domain.EvidenceInferenceContract.from(taskView, context);
++        var presentation = taskView.intent().deliveryProfile() == com.promptoptimizer.template.domain.TaskDeliveryProfile.TRANSLATION
++                || providerResponse.assessment() != null && providerResponse.assessment().presentation()
++                == com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Presentation.COMPACT
++                ? com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT
++                : com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED;
++        sections.forEach((type, section) -> inferenceContract.validate(section.content(), "sections." + type));
+         sections.forEach((type, section) -> requirementBoundaries.validate(section.content(), "sections." + type));
+ 
+         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planConfirmed ? planAnswers : List.of());
+@@ -212,7 +219,7 @@
+                 finding -> identifierRelations.validate(finding, "ambiguities"));
+         validateExecutionRules(sections, explicitRules, eligibleFacts, documentFacts);
+         boolean minimal = MinimalPromptOrganizer.organize(sections, effectiveRawPrompt,
+-                planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()));
++                planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), providerResponse.assessment());
+         PlanDecisionIntegrator.integrate(sections, taskView);
+         java.util.function.UnaryOperator<String> currentEvidence = value ->
+                 unresolvedContract.reconcileCurrentText(resolvedState.reconcile(value));
+@@ -359,10 +366,11 @@
+                     remainingAmbiguities.stream().map(value -> "- " + value).collect(Collectors.joining("\n"))
+             ));
+         }
+-        sections.computeIfAbsent(
+-                PromptSectionType.ACCEPTANCE,
+-                ignored -> new PromptSection(PromptSectionType.ACCEPTANCE, "验收标准", template.acceptanceGuidance())
+-        );
++        // 新适配器已按实质缺口选择验收要求；不再强制追加通用章节。旧适配器保持兼容。
++        if (providerResponse.assessment() == null && presentation == com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED) {
++            sections.computeIfAbsent(PromptSectionType.ACCEPTANCE,
++                    ignored -> new PromptSection(PromptSectionType.ACCEPTANCE, "验收标准", template.acceptanceGuidance()));
++        }
+         ExampleResultIntegrator.integrate(sections, taskView.examples());
+         String boundaryGuidance = requirementBoundaries.missingGuidance(sections.values().stream()
+                 .map(PromptSection::content).collect(Collectors.joining("\n")));
+@@ -375,10 +383,16 @@
+                     new PromptSection(boundarySection.type(), boundarySection.title(), boundarySection.content() + "\n" + missing));
+         }
+ 
++        if (!inferenceContract.guidance().isBlank()) {
++            appendConstraintBlock(sections, "推断依据", List.of(inferenceContract.guidance()));
++        }
+         // 平台交付契约有唯一正文责任段；仅合并完整等价句，表格、代码和独立业务章节继续保护。
+         var deliveryAuthority = new java.util.LinkedHashMap<PromptSectionType, String>();
++        if (!inferenceContract.guidance().isBlank()) {
++            deliveryAuthority.put(PromptSectionType.CONSTRAINTS, inferenceContract.guidance());
++        }
+         if (!merged.executionPrerequisites().isEmpty() && !pendingDeliveryGuidance.isBlank()) {
+-            deliveryAuthority.put(PromptSectionType.CONSTRAINTS, pendingDeliveryGuidance);
++            deliveryAuthority.merge(PromptSectionType.CONSTRAINTS, pendingDeliveryGuidance, (existing, added) -> existing + "\n" + added);
+         }
+         if (unresolvedContract.hasNamedParameters()) {
+             deliveryAuthority.put(PromptSectionType.OUTPUT, unresolvedContract.independentEvidenceGuidance());
+@@ -406,7 +420,7 @@
+                 .filter(section -> section != null)
+                 .toList();
+         return new OptimizationResult(
+-                renderPrompt(ordered),
++                renderPrompt(ordered, presentation),
+                 ordered,
+                 context,
+                 remainingAmbiguities,
+@@ -419,7 +433,8 @@
+                 ),
+                 Math.max(0, latencyMs),
+                 resultWarnings,
+-                evidenceCards(eligibleFacts, documentFacts)
++                evidenceCards(eligibleFacts, documentFacts),
++                presentation
+         );
+     }
+ 
+@@ -771,6 +786,10 @@
+                 throw invalidResponse(Reason.SENSITIVE_CONTENT, "ambiguities");
+             }
+         }
++        if (response.assessment() != null && response.ambiguities() != null) {
++            response.assessment().validateModelDecisions(response.ambiguities());
++        }
++        // 只校验模型自己声明的缺口，不能用其 assessment 删除服务端发现的冲突和原始未决条件。
+         // 模型可能忽略二次检索发现的同名字段冲突；服务端证据优先保留。
+         List<String> verifiedConflicts = candidates.stream()
+                 .filter(value -> value.startsWith("资料对“"))
+@@ -831,10 +850,12 @@
+         appendConstraintBlock(sections, "用户补充权限边界", constraints.additionalPermissions());
+     }
+ 
+-    private String renderPrompt(List<PromptSection> sections) {
++    /** 紧凑提示词只省外层章节标题，不裁剪代码、引用、条件或来源；四要素仍完整保存。 */
++    private String renderPrompt(List<PromptSection> sections, com.promptoptimizer.enhancement.domain.PromptFormat format) {
+         return sections.stream()
+                 .filter(section -> section.type() != PromptSectionType.CLARIFICATIONS)
+-                .map(section -> "## " + section.title() + "\n" + section.content())
++                .map(section -> format == com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT
++                        ? section.content() : "## " + section.title() + "\n" + section.content())
+                 .collect(Collectors.joining("\n\n"));
+     }
+ 
+--- before/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlatformConstraintRenderer.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlatformConstraintRenderer.java
+@@ -33,7 +33,39 @@
+     /** 平台块最后落笔，避免普通规则压缩器改变固定数量、顺序或原文。 */
+     static String appendMandatory(String text, ConstraintBundle constraints) {
+         String block = PlatformConstraintRules.HEADING + "\n- " + String.join("\n- ", constraints.platformMandatory());
++        text = removeUnscopedMandatorySentences(text, Set.copyOf(constraints.platformMandatory()));
+         return text.isBlank() ? block : text.stripTrailing() + "\n\n" + block;
++    }
++
++    /** 固定规则可嵌在一行多句中；只移除完整等价句，引用、代码、表格和具名范围不参与。 */
++    private static String removeUnscopedMandatorySentences(String text, Set<String> mandatory) {
++        List<String> lines = new ArrayList<>();
++        boolean protectedScope = false;
++        String fence = null;
++        for (String line : text.lines().toList()) {
++            String value = line.strip();
++            if (value.startsWith("```") || value.startsWith("~~~")) {
++                String marker = value.substring(0, 3);
++                fence = fence == null ? marker : fence.equals(marker) ? null : fence;
++                lines.add(line);
++                continue;
++            }
++            if (fence != null || value.startsWith("|") || value.startsWith(">")) { lines.add(line); continue; }
++            if (value.startsWith("#") || value.endsWith("：") || value.endsWith(":")) {
++                protectedScope = !Set.of("任务相关约束：", "推断依据：").contains(value);
++                lines.add(line);
++                continue;
++            }
++            if (protectedScope) { lines.add(line); continue; }
++            StringBuilder kept = new StringBuilder();
++            var sentences = java.util.regex.Pattern.compile("[^。]+。?").matcher(line);
++            while (sentences.find()) {
++                String sentence = sentences.group();
++                if (!mandatory.contains(ruleText(sentence))) kept.append(sentence);
++            }
++            if (!kept.toString().isBlank()) lines.add(kept.toString());
++        }
++        return String.join("\n", lines).strip();
+     }
+ 
+     /**
+--- before/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/TaskBodyLengthContract.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/TaskBodyLengthContract.java
+@@ -13,7 +13,7 @@
+  * @since 0.1.0
+  */
+ final class TaskBodyLengthContract {
+-    private static final Pattern RANGE = Pattern.compile("(?<![0-9])([0-9]{1,6})\\s*(?:至|到|[-–—~～])\\s*([0-9]{1,6})\\s*(中文字符|汉字|字)");
++    private static final Pattern RANGE = Pattern.compile("(?<![0-9])([0-9]{1,6})\\s*(?:至|到|[-–—~～])\\s*([0-9]{1,6})\\s*((?:个)?(?:中文字符|汉字|字))");
+ 
+     private TaskBodyLengthContract() { }
+ 
+--- before/services/api/src/main/java/com/promptoptimizer/history/domain/OptimizationHistoryDetail.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/history/domain/OptimizationHistoryDetail.java
+@@ -33,7 +33,8 @@
+         boolean includeExamples,
+         List<ConversationMessage> conversationHistory,
+         Map<String, Object> permissionPolicy,
+-        String modelVersion
++        String modelVersion,
++        com.promptoptimizer.enhancement.domain.PromptFormat promptFormat
+ ) {
+ 
+     /**
+@@ -44,5 +45,18 @@
+         ambiguities = List.copyOf(ambiguities);
+         appliedConstraints = List.copyOf(appliedConstraints);
+         conversationHistory = List.copyOf(conversationHistory);
++        promptFormat = promptFormat == null ? com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED : promptFormat;
++    }
++
++    /** 旧历史没有展示形式时继续分节；保存的最终正文不重新渲染。 */
++    public OptimizationHistoryDetail(UUID id, String rawPrompt, String optimizedPrompt, List<PromptSection> sections,
++            Map<String,Object> contextSummary, List<String> ambiguities, List<String> appliedConstraints,
++            String templateCode, String providerName, String modelName, boolean mock, Integer latencyMs,
++            OffsetDateTime createdAt, boolean includePermissionBoundaries, boolean includeExamples,
++            List<ConversationMessage> conversationHistory, Map<String,Object> permissionPolicy, String modelVersion) {
++        this(id, rawPrompt, optimizedPrompt, sections, contextSummary, ambiguities, appliedConstraints,
++                templateCode, providerName, modelName, mock, latencyMs, createdAt, includePermissionBoundaries,
++                includeExamples, conversationHistory, permissionPolicy, modelVersion,
++                com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED);
+     }
+ }
+--- before/services/api/src/main/java/com/promptoptimizer/history/entity/OptimizationRecordEntity.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/history/entity/OptimizationRecordEntity.java
+@@ -42,7 +42,7 @@
+     /** 脱敏上下文 JSON 对象，含项目描述、技术栈/依赖条目、目录/警告/脱敏字符串数组和分析版本；不含文件正文。 */
+     private Map<String, Object> contextSnapshot;
+ 
+-    /** 结果 JSON 对象，保存段落、歧义/约束数组、Provider/调用 ID、modelVersion 版本快照、增强选项、会话及可选 Plan 确认；旧记录可缺少 modelVersion。 */
++    /** 结果 JSON 对象，保存段落、歧义/约束数组、Provider/调用 ID、modelVersion 版本快照、增强选项、会话及可选 Plan 确认；promptFormat 为 COMPACT/STRUCTURED，旧记录缺省按 STRUCTURED 展示。JSON 键和值域由应用校验，数据库不强制结构。 */
+     private Map<String, Object> resultMetadata = new LinkedHashMap<>();
+ 
+     /** 权限策略 JSON 对象，包含 protectedPaths 与 requireConfirmationFor 两个字符串数组；结构由请求 DTO 校验。 */
+--- before/services/api/src/main/java/com/promptoptimizer/history/service/impl/MybatisOptimizationHistoryService.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/history/service/impl/MybatisOptimizationHistoryService.java
+@@ -229,7 +229,10 @@
+                 convertList(metadata.get("conversationHistory"), new TypeReference<List<ConversationMessage>>() {
+                 }),
+                 entity.getPermissionPolicy(),
+-                stringValue(metadata.get("modelVersion"))
++                stringValue(metadata.get("modelVersion")),
++                "COMPACT".equals(metadata.get("promptFormat"))
++                        ? com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT
++                        : com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED
+         );
+     }
+ 
+@@ -242,6 +245,7 @@
+     ) {
+         Map<String, Object> metadata = new LinkedHashMap<>();
+         metadata.put("sections", toList(result.sections()));
++        metadata.put("promptFormat", result.promptFormat().name());
+         metadata.put("ambiguities", result.ambiguities());
+         metadata.put("appliedConstraints", result.appliedConstraints());
+         metadata.put("provider", result.provider().provider());
+--- before/services/api/src/main/java/com/promptoptimizer/provider/domain/DraftDeliveryContract.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/provider/domain/DraftDeliveryContract.java
+@@ -180,10 +180,17 @@
+ 
+     /** 从肯定的当前交付动作提取目标，忽略否定、候选、引用和未来请求。 */
+     static String promptDeliveryTarget(String instructions) {
++        // 研究方案可合法描述被比较的提示词生成步骤；只有明确以提示词为最终交付才跨层级。
++        boolean studyWorkflow = instructions.matches("(?is).*(?:撰写|写(?:一(?:个|份))?|设计|交付|编写|生成|一份).{0,25}研究(?:设计|方案)(?!的?(?:写作)?提示词).*" );
+         for (String clause : instructions.split("[。；;，,\\r\\n]")) {
+             var target = PROMPT_DELIVERY.matcher(clause);
+             while (target.find()) {
+                 String prefix = clause.substring(0, target.start());
++                if (studyWorkflow && !clause.strip().matches("(?is)^(?:[-*0-9.、\\s]*)(?:最终|仅|只)?(?:交付|输出|返回).{0,30}提示词(?:文本|文档)?[。.!！\\s]*$")) continue;
++                if (prefix.lastIndexOf('“') > prefix.lastIndexOf('”') || prefix.lastIndexOf('‘') > prefix.lastIndexOf('’')) continue;
++                // 研究一种增强流程时，提示词是研究对象；不是本次要求交付的作品。
++                if (prefix.matches("(?is).*(?:研究(?!生)|比较|评估|检验|study|compare|evaluate).*")
++                        && !prefix.matches("(?is).*(?:为|用于).{0,30}(?:研究|比较|评估).{0,30}(?:请|帮我|需要|要求|交付|输出|准备|编写)\\s*$")) continue;
+                 if (prefix.matches("(?is).*(?:不需要|不要求|不要|不得|不应|无需|禁止|暂不|不|未)(?:再|只|仅|直接|改成|改为|转为)?\\s*$")
+                         || prefix.matches("(?is).*(?:如果|假如|以后|将来|例如|示例|原文|引用).{0,30}")
+                         || prefix.matches("(?is).*(?:翻译|translate)[^。；;\\r\\n]*[:：‘“\"].*")) continue;
+--- before/services/api/src/main/java/com/promptoptimizer/provider/domain/EnhancementProviderResponse.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/provider/domain/EnhancementProviderResponse.java
+@@ -16,7 +16,8 @@
+         String model,
+         boolean mock,
+         List<String> ambiguities,
+-        List<AmbiguityReference> ambiguityReferences
++        List<AmbiguityReference> ambiguityReferences,
++        TaskEnhancementAssessment assessment
+ ) {
+ 
+     /**
+@@ -31,6 +32,12 @@
+                 : java.util.Collections.unmodifiableList(new java.util.ArrayList<>(ambiguityReferences));
+     }
+ 
++    /** 旧适配器没有缺口评估时保守兼容，不伪造模型已完成语义判断。 */
++    public EnhancementProviderResponse(List<PromptSection> sections, String provider, String model,
++                                       boolean mock, List<String> ambiguities, List<AmbiguityReference> references) {
++        this(sections, provider, model, mock, ambiguities, references, null);
++    }
++
+     /** 兼容返回纯文本提醒的 Provider；没有关联时由应用层保守匹配已有问题。 */
+     public EnhancementProviderResponse(List<PromptSection> sections, String provider, String model,
+                                        boolean mock, List<String> ambiguities) {
+--- before/services/api/src/main/java/com/promptoptimizer/provider/domain/EvidenceInferenceContract.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/provider/domain/EvidenceInferenceContract.java
+@@ -0,0 +1,71 @@
++package com.promptoptimizer.provider.domain;
++
++import com.promptoptimizer.context.domain.ContextSnapshot;
++import com.promptoptimizer.enhancement.domain.EffectiveTaskView;
++import com.promptoptimizer.template.domain.TaskDeliveryProfile;
++import java.util.regex.Pattern;
++import java.util.stream.Collectors;
++
++/**
++ * 把事实、直接计算与待验证解释分开；相同契约随模型输入及复制正文交付。
++ * 收入跨指标校验只覆盖已复现的高风险断言，不把词面匹配宣称为通用事实核验。
++ *
++ * @author QingNiao
++ * @since 0.1.0
++ */
++public record EvidenceInferenceContract(boolean revenueAnalysis, String evidence) {
++    public static final String MODEL_GUIDANCE = """
++            【推断依据】
++            逐项区分资料直接给出的事实、按明确公式可复算的结果、有条件的专业候选与尚不能判断的结论。
++            单一指标的变化不证明其他指标或因果机制；没有反面证据不等于已经证明其未下降。
++            每个判断只采用同一对象、期间和口径的实际依据。解释候选须在该句先写适用条件或待核查状态，列出能区分候选的证据；不能先作肯定断言，再在文末统称“存在假设”。
++            条件成立也只支持它实际蕴含的结论：销量增加不单独证明需求拉动，售价提高不单独证明定价能力；列出判别依据，不把一种可能机制说成唯一原因。没有要求数值演示时，不虚构额外数值来支撑解释。
++            没有支持时，在相应约束简要说明“无法从现有资料推断”及所需证据，仍完成已有依据支持的原定任务；不把核查清单变成开始工作前的问卷。
++            """;
++    private static final Pattern REVENUE = Pattern.compile("收入|营收|revenue", Pattern.CASE_INSENSITIVE);
++    private static final Pattern TARGET = Pattern.compile("市场份额|需求(?:端)?|market share|demand", Pattern.CASE_INSENSITIVE);
++    private static final Pattern CLAIM = Pattern.compile("(?:市场份额|需求(?:端)?)(?:或需求端)?[^。；;!?！？\\n]{0,18}(?:未出现.{0,6}萎缩|没有下降|未下降|未萎缩|提升|扩大|改善|强劲)|(?:market share|demand)[^.!?\\n]{0,24}(?:did not decline|has not declined|increased|improved)", Pattern.CASE_INSENSITIVE);
++    private static final Pattern QUALIFIER = Pattern.compile("不得|不能|无法|不代表|不意味着|并不|不要|禁止|是否|若|如果|可能|待核查|待验证|假设|例如|示例|if\\b|whether|cannot|may\\b|must not", Pattern.CASE_INSENSITIVE);
++
++    /** 只读取本次安全上下文和绑定事实；译文及纯材料转写不增加经营分析。 */
++    public static EvidenceInferenceContract from(EffectiveTaskView view, ContextSnapshot context) {
++        String facts = view.effectivePrompt() + "\n" + view.executionRequirements().stream()
++                .map(EffectiveTaskView.ExecutionRequirement::statement).collect(Collectors.joining("\n"))
++                + "\n" + view.facts().stream().map(fact -> fact.evidence()).collect(Collectors.joining("\n"));
++        if (context != null) facts += "\n" + context.customDescription() + "\n" + context.fileSnippets().stream()
++                .map(file -> file.content() + "\n" + file.summary()).collect(Collectors.joining("\n"));
++        boolean analytical = view.intent().deliveryProfile() != TaskDeliveryProfile.TRANSLATION
++                && view.effectivePrompt().matches("(?is).*(?:分析|判断|解读|投资|经营|analy[sz]|assess|interpret).*" );
++        return new EvidenceInferenceContract(analytical && REVENUE.matcher(facts).find(), facts);
++    }
++
++    /** 条件式边界不否定材料中独立存在的证据，也不新增需要用户先回答的问题。 */
++    public String guidance() {
++        return revenueAnalysis ? "收入及其增速只能直接说明收入变化。若资料只有收入，无法从现有资料推断市场份额、需求或销量走势，亦不能断定增长的原因；判断份额需同口径的同期市场总量，判断需求需销量、价格、订单等独立依据。已有独立证据时分别引用；候选解释在对应句标明条件与判别证据，不用文末免责声明替代。销量或价格变化也不单独证明需求拉动、定价能力或持续性。同一币种不等于已排除汇率影响；须有恒定汇率调整或外币业务等相应证据才能判断。未要求数值演示时，不虚构额外数值作解释依据。先完成可支持的分析。" : "";
++    }
++
++    /** 对已经复现的无证据断言拒绝交付；尾段免责声明不能抹掉前句的事实性错误。 */
++    public void validate(String text, String field) {
++        if (!revenueAnalysis || text == null) return;
++        for (String sentence : text.split("[。；;!?！？\\n]")) {
++            var claim = CLAIM.matcher(sentence);
++            while (claim.find()) {
++                String prefix = sentence.substring(0, claim.end());
++                if (QUALIFIER.matcher(prefix).find()) continue;
++                String target = TARGET.matcher(claim.group()).results().findFirst().map(match -> match.group()).orElse("");
++                if (!hasIndependentEvidence(target)) throw new ProviderResponseValidationException(
++                        ProviderResponseValidationException.Reason.UNSUPPORTED_INFERENCE, field);
++            }
++        }
++    }
++
++    /** 只允许具名指标自己的肯定资料；未提供、否定、条件、问题和另一指标不能代证。 */
++    private boolean hasIndependentEvidence(String target) {
++        for (String clause : evidence.split("[。；;!?！？\\n]")) {
++            if (!clause.contains(target) || QUALIFIER.matcher(clause).find()
++                    || clause.matches(".*(?:未提供|没有提供|未说明|缺少|未知|收入.{0,18}(?:说明|证明|推断)).*")) continue;
++            if (clause.matches(".*(?:[0-9].*(?:%|％)|调查显示|调查表明|报告显示).*")) return true;
++        }
++        return false;
++    }
++}
+--- before/services/api/src/main/java/com/promptoptimizer/provider/domain/ExampleContract.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/provider/domain/ExampleContract.java
+@@ -12,7 +12,7 @@
+  */
+ public record ExampleContract(Mode mode, String source, String guidance, @JsonIgnore boolean fictionalDataAllowed) {
+     private static final Pattern PROHIBITION = Pattern.compile(
+-            "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带).{0,16}(?:示例|示范|例子)"
++            "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带|不加|不添加).{0,16}(?:示例|示范|例子)|不举例"
+                     + "|\\b(?:no|without|do not|never)\\b[^.\\r\\n]{0,60}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
+     private static final Pattern STRICT_OUTPUT = Pattern.compile(
+             "(?:只|仅)(?:输出|返回|交付|提供).{0,18}(?:译文|翻译结果|JSON|正文|答案|代码)"
+--- before/services/api/src/main/java/com/promptoptimizer/provider/domain/PromptOptimizationGuidance.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/provider/domain/PromptOptimizationGuidance.java
+@@ -20,7 +20,7 @@
+             """;
+ 
+     /** 优化充分需求时允许少改；紧凑表达不能删除执行规则、例外或真实未决事项。 */
+-    public static final String ENHANCEMENT = EVIDENCE_BOUNDARY + """
++    public static final String ENHANCEMENT = EVIDENCE_BOUNDARY + EvidenceInferenceContract.MODEL_GUIDANCE + """
+             【优化目标】
+             生成交给下游执行者的提示词，不直接执行用户任务。原始信息已充分时少改并保留明确限制；缺失不重要的常规细节交给执行者，不为填模板扩充需求。
+             平台生成提示词与下游交付内容是两个层级：用户说“你是某助手，按以下流程回答”时，直接保留该角色的执行指令，TASK 是处理用户问题，OUTPUT 是对应结果，不能改成“编写该助手的提示词”。只有用户明确要写提示词、设计角色说明时才以此为下游交付。
+--- before/services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java
+@@ -1,29 +1,41 @@
+ package com.promptoptimizer.provider.domain;
+ 
+-import java.util.regex.Pattern;
++import com.promptoptimizer.enhancement.domain.EffectiveTaskView;
+ 
+ /**
+- * 为信息充分的需求选择最小整理策略；判断只影响改写幅度，不跳过模型、安全或保真校验。
++ * 依据有效任务视图要求模型判断实质缺口，不用标题、关键词计数或长度冒充需求充分性。
++ * 判断与增强合并在同一受控调用中，不增加独立在线裁判或重试预算。
+  *
+  * @author QingNiao
+  * @since 0.1.0
+  */
+ public record PromptRewriteStrategy(String mode, String instruction) {
+-    private static final Pattern OUTPUT = Pattern.compile("(?m)^#{1,6}\\s*(?:输出|交付)|(?:只|仅)(?:输出|交付|提供)");
+-    private static final Pattern CONTEXT = Pattern.compile("(?m)^#{1,6}\\s*(?:背景|已知|资料|现状)|已明确|已确认|当前|现有");
+-    private static final Pattern LIMIT = Pattern.compile("不得|不能|不要|必须|保持|仅当|只允许|不生成|不修改");
++    private static final String GAP_GUIDANCE = """
++            先理解本次交付物，再结合taskView的有效确认、适用资料和真正未决事项判断能否执行，不按中文标题、关键词数量或输入长短判断充分性。
++            返回assessment：sufficiency为SUFFICIENT或NEEDS_COMPLETION，gaps最多6项，presentation为COMPACT或STRUCTURED。
++            gap仅记录影响执行或作品质量的具体缺口，每项含kind、missing、completion、basis。kind可为EXECUTION_STEP、INPUT_OUTPUT、EDGE_CASE、QUALITY_CHECK、PROFESSIONAL_OPTION、USER_DECISION。
++            basis写一句与本次目标、资料或明确要求对应的依据，不输出内部推理。没有实质缺口时SUFFICIENT且gaps=[]，保留有效原句及明确限制，只整理必要位置，不为四要素和验收新增章节。
++            有缺口时只补相关内容：模糊需求给具体执行动作、候选方法、适用条件和结果检查；专业建议标明候选，不把语言、算法、口径或研究参数伪装成已选事实。仅真正需用户决定且改变结果的未知进入ambiguities，其余由执行者完成。
++            NEEDS_COMPLETION没有USER_DECISION缺口时，ambiguities必须为空。用户委托设计的常规方法属于PROFESSIONAL_OPTION，不是用户必须先回答的选择；真实授权、资料冲突及用户明确保留的未决参数继续归入USER_DECISION。
++            每个新增要求应对应真实缺口；原文已有的公平对照、方法条件、数值与格式不再次扩写。Plan新增决定只更新责任段并同步失效的旧表述；保留独立未知、对象、条件及来源。
++            对充分需求，把有效原句分别放入其责任段，不同义扩写或重述成验收列表；不要在背景盘点缺项。对仅有宽泛专业目标的需求，缺少操作化方法与比较办法属于实质缺口，不能以“下游自己设计全部细节”为由判为充分。简单沟通任务可用常规表达直接完成，不为凑gaps制造问题。
++            简单邮件、纯译文或严格格式任务优先COMPACT，四要素各写最短必要内容，不在背景、任务、输出重复同一句；复杂多目标任务按依赖和交付组织STRUCTURED。四要素是内部校验结构，不是强制下游作品章节。
++            简单沟通的补全服务行动、受众与语气，不补造截止日期、汇总职责或工作进展，不擅自放宽行动要求；委婉催交仍须表达请对方发送，不改成无需着急或可不提交。未知称呼可用自然中性称呼，不制造姓名填空模板。
++            SUFFICIENT时直接分配原文的完整句子到四个责任段，必要时仅拆分句子，不同义改写；同一完整要求只放一个段落。已有格式、长度和限制不要在ACCEPTANCE重新抄写，未要求且无独立检查价值时省略ACCEPTANCE。背景没有额外事实时只写受众或输入对象，不盘点未提供的资料。
++            对宽泛研究设计，要求下游交付一条可直接开展的推荐主方案，说明选择依据、适用条件与可调整处，必要时再列替代方法；推荐明确为拟议设计，不冒充用户确认或已实施。不能只列若干候选而将方法、评分、随机化全部退回用户。区分自然使用效果与同等信息下的方法收益；保留谁提问、谁回答及答案的用途，不把用户问答改成模型自行列计划。同信息对照两组获得并可使用同一原始任务与同一份实际确认信息；直接组不追问不等于不能使用已提供答案，不能通过修改回答、换任务或额外修订轮次伪造公平。
++            """;
+ 
+-    /** 固定判断不把字数或测试结果当作充分性；未知问题仍可随原需求保留。 */
++    /** 使用共享交付类型与确认状态；具体缺口由同次模型判断给出。 */
++    public static PromptRewriteStrategy forTask(EffectiveTaskView task) {
++        return new PromptRewriteStrategy("ASSESS_EXECUTION_GAPS", GAP_GUIDANCE
++                + "\n本次交付画像：" + task.intent().deliveryProfile()
++                + "；有效执行要求数：" + task.executionRequirements().size()
++                + "；独立未决决定数：" + task.pendingDecisions().size()
++                + "。计数只说明输入构成，不代表充分性。");
++    }
++
++    /** 兼容旧调用方；没有任务视图时不在本地猜测充分性。 */
+     public static PromptRewriteStrategy forPrompt(String raw) {
+-        String text = raw == null ? "" : raw;
+-        boolean sufficient = OUTPUT.matcher(text).find() && CONTEXT.matcher(text).find()
+-                && LIMIT.matcher(text).results().limit(2).count() >= 2;
+-        return sufficient ? new PromptRewriteStrategy("MINIMAL_ORGANIZATION",
+-                "需求已包含目标、交付和边界。只整理四要素、补充实质缺口；尽量沿用有效原句。"
+-                        + "同一规则或确认答案只出现一次，不再追加逐题问答、全套默认流程或通用验收清单。"
+-                        + "保留所有明确限制、材料未知及新增冲突；不要为显得更专业而扩大任务。")
+-                : new PromptRewriteStrategy("CLARIFY_AND_STRUCTURE",
+-                "按本次目标整理四要素，补充有证据的背景和必要边界，未知决定保持未知。"
+-                        + "常规执行细节交给执行者；禁止把建议、默认选项或示例写成已确认事实。");
++        return new PromptRewriteStrategy("ASSESS_EXECUTION_GAPS", GAP_GUIDANCE);
+     }
+ }
+--- before/services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java
+@@ -57,7 +57,12 @@
+ 
+     /** 固定修复要求不能引用或复述导致校验失败的敏感内容。 */
+     public enum Reason {
++        ASSESSMENT_INVALID("assessment使用合法sufficiency、presentation及最多6项gaps；SUFFICIENT时gaps为空，NEEDS_COMPLETION时只列影响本次交付的实质缺口。"),
++        ASSESSMENT_DECISION_CONFLICT("实质缺口判断与待确认事项须一致。NEEDS_COMPLETION中没有USER_DECISION时，ambiguities应为空；不要把专业建议、常规执行或委托设计变成用户必须先决定的问题。确有用户授权、来源冲突或明确保留的未决选择时，保留事项并将相应缺口列为USER_DECISION，不得靠删除真实未知规避校验。"),
++        INTERACTION_ACTOR_CONFLICT("保留原定问答中的主体：增强器提出关键问题、用户回答、有效确认用于生成优化提示词。不得把Plan问答改为模型或研究者先自行写执行计划再作答；直接改正错误操作化段，不在末尾追加相反要求。"),
++        UNSUPPORTED_INFERENCE("不要从收入或其他单一指标断言市场份额、需求等独立指标或因果关系；将无独立依据的结论改为明确的判断边界和有条件的候选解释，不能仅在末尾补免责声明。"),
+         RESPONSE_EMPTY("上游 choices 的第一项必须包含非空 message.content。"),
++        RESPONSE_JSON_INVALID("只返回单个合法JSON对象；assessment的sufficiency、gaps、presentation属于同一对象，sections、ambiguities与assessment同级。ambiguities为字符串数组，不能放message对象。不要额外闭合括号或输出JSON外文字。"),
+         RESPONSE_TRUNCATED("输出达到长度上限；在有限输出预算内重新生成完整 JSON，减少重复文字而保留所有实质要求。"),
+         PLAN_JSON_INVALID("只返回可解析的单个计划 JSON 对象，字段类型与计划契约一致。"),
+         METADATA_INVALID("保留所选模型的有效结果元数据。"),
+--- before/services/api/src/main/java/com/promptoptimizer/provider/domain/RequirementBoundaryContract.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/provider/domain/RequirementBoundaryContract.java
+@@ -26,7 +26,7 @@
+     private static final Pattern DATA_ACTION = Pattern.compile("(?:允许|可以|可用|可使|应使用|使用|构造|生成|编造|提供)"
+             + "|\\b(?:allow|may|can|use|generate|construct|create|provide)\\b", FLAGS);
+     private static final Pattern NEGATIVE_PREFIX = Pattern.compile("(?:不|不得|禁止|严禁|不能|不要|避免|拒绝)[^，,。；;\\r\\n]{0,8}$"
+-            + "|\\b(?:no|not|never|without|avoid)\\b[^,.;\\r\\n]{0,12}$", FLAGS);
++            + "|未(?:曾|实际)?$|\\b(?:no|not|never|without|avoid)\\b[^,.;\\r\\n]{0,12}$", FLAGS);
+     private static final Pattern TEST_SELECTION = Pattern.compile(
+             "(?:检验[^。；;\\r\\n]{0,35}(?:依据|根据|视)[^。；;\\r\\n]{0,20}(?:数据|分布)[^。；;\\r\\n]{0,20}(?:选择|确定))"
+                     + "|(?:(?:依据|根据|视)[^。；;\\r\\n]{0,25}(?:数据|分布)[^。；;\\r\\n]{0,25}(?:选择|确定)[^。；;\\r\\n]{0,10}检验)"
+@@ -49,15 +49,18 @@
+     private final List<String> populations;
+     private final List<String> selectedBranches;
+     private final boolean userBansExampleData;
++    private final boolean userQuestionAnswerWorkflow;
+ 
+     private RequirementBoundaryContract(boolean noInventedData, boolean conditionalTestSelection,
+-            boolean ageStandardization, List<String> populations, List<String> selectedBranches, boolean userBansExampleData) {
++            boolean ageStandardization, List<String> populations, List<String> selectedBranches, boolean userBansExampleData,
++            boolean userQuestionAnswerWorkflow) {
+         this.noInventedData = noInventedData;
+         this.conditionalTestSelection = conditionalTestSelection;
+         this.ageStandardization = ageStandardization;
+         this.populations = List.copyOf(populations);
+         this.selectedBranches = List.copyOf(selectedBranches);
+         this.userBansExampleData = userBansExampleData;
++        this.userQuestionAnswerWorkflow = userQuestionAnswerWorkflow;
+     }
+ 
+     /** 用户禁令只读原需求和实际回答；资料可证明参数取值，但不能替用户新增例外或禁止。 */
+@@ -72,7 +75,8 @@
+                 .flatMap(value -> selectedPopulations(value).stream()).forEach(populations::add);
+         return new RequirementBoundaryContract(prohibitsInventedData(source),
+                 TEST_SELECTION.matcher(source).find() && !NO_TEST_NAMES.matcher(source).find(),
+-                chosenAgeMethod(source, confirmed), populations.stream().distinct().toList(), selectedBranches(source, confirmed), bansAllExampleData(source));
++                chosenAgeMethod(source, confirmed), populations.stream().distinct().toList(), selectedBranches(source, confirmed), bansAllExampleData(source),
++                Pattern.compile("Plan\\s*问答|(?:让|由)用户[^。；;\\r\\n]{0,15}回答[^。；;\\r\\n]{0,35}增强提示词", FLAGS).matcher(source).find());
+     }
+ 
+     /** 与示例契约共用禁令识别，关闭示例也不意味着取消数据使用限制。 */
+@@ -83,6 +87,7 @@
+     /** 只提供本次实际相关的规则，不向其他任务灌入统计参数或长缺项清单。 */
+     public String guidance() {
+         var rules = new ArrayList<String>();
++        if (userQuestionAnswerWorkflow) rules.add("本次问答流程由增强器提出关键问题、用户回答，再将有效回答融入优化提示词；直接增强不主动发起这轮问答，但仍正常使用已经提供的需求与确认信息。Plan不能改为模型自行生成执行计划再作答。研究若要求同信息对照，两组接收并可使用同一原始任务和同一份实际确认信息，保留各自指定增强流程；不能改写其中一组的回答、另换任务或只增加某组修订轮次。");
+         if (noInventedData) rules.add("不得使用假设或虚构数据，禁令适用于所有用途，包括测试和验证；不得缩为仅禁止冒充真实业务数据。"
+                 + (userBansExampleData ? "" : "不能由这项禁令推出禁止使用可核实的真实示例资料；其他明确的数据限制和权限要求照常保留。"));
+         if (conditionalTestSelection) rules.add("具体检验依据未来数据分布和适用条件选择；可说明候选检验名称及适用前提，不预先选定，也不预设显著性。");
+@@ -95,6 +100,7 @@
+     public String missingGuidance(String content) {
+         String current = DraftDeliveryContract.instructionText(content);
+         return guidance().lines().filter(rule -> {
++            if (rule.startsWith("本次问答流程")) return !current.contains(rule);
+             if (rule.startsWith("不得使用")) return !(prohibitsInventedData(current)
+                     && current.matches("(?s).*(?:所有用途|全部用途|测试[^。；;]{0,12}验证[^。；;]{0,12}(?:不例外|均不能|不得使用)).*"));
+             if (rule.startsWith("具体检验")) return !(TEST_SELECTION.matcher(current).find()
+@@ -110,6 +116,7 @@
+     /** 在模型草稿和平台最终正文各核对一次；引用和围栏中的旧错误不算当前执行许可。 */
+     public void validate(String content, String field) {
+         String text = DraftDeliveryContract.instructionText(content);
++        if (userQuestionAnswerWorkflow) validateInteractionActors(text, field);
+         if (noInventedData && permitsInventedData(text)) reject(ProviderResponseValidationException.Reason.DATA_PROHIBITION_CONFLICT, field);
+         if (noInventedData && !userBansExampleData && bansAllExampleData(text)) {
+             reject(ProviderResponseValidationException.Reason.DATA_PROHIBITION_CONFLICT, field);
+@@ -121,6 +128,20 @@
+             }
+             for (String selected : selectedPopulations(text)) {
+                 if (!populations.contains(selected)) reject(ProviderResponseValidationException.Reason.METHOD_PARAMETER_CONFLICT, field);
++            }
++        }
++    }
++
++    /** 只拒绝本次明确用户问答被替换的断言；引文、否定说明和用户原定自规划任务不受影响。 */
++    private static void validateInteractionActors(String text, String field) {
++        Pattern changedActor = Pattern.compile("Plan(?:组|模式|步骤)?[^。；;\\r\\n]{0,50}(?:模型|研究者|撰写者)[^。；;\\r\\n]{0,20}(?:生成|撰写|制定|产出|列出)[^。；;\\r\\n]{0,8}(?:执行)?计划", FLAGS);
++        for (String clause : text.split("[。；;\\r\\n]+")) {
++            var match = changedActor.matcher(clause);
++            while (match.find()) {
++                String claim = match.group();
++                // 否定必须在这次替换动作内，其他句末的通用保真声明不能撤销前面的错误。
++                if (claim.matches(".*(?:不能|不得|不要|并非|不是|不应)[^。；;]{0,35}(?:生成|撰写|制定|产出|列出).*")) continue;
++                reject(ProviderResponseValidationException.Reason.INTERACTION_ACTOR_CONFLICT, field);
+             }
+         }
+     }
+--- before/services/api/src/main/java/com/promptoptimizer/provider/domain/TaskEnhancementAssessment.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/provider/domain/TaskEnhancementAssessment.java
+@@ -0,0 +1,51 @@
++package com.promptoptimizer.provider.domain;
++
++import java.util.List;
++
++/**
++ * 同次增强调用的实质缺口判断，用于介入幅度和展示，不授予新事实或权限。
++ * 旧适配器缺省时保守兼容，模型建议仍须通过保真、确认范围及资料校验。
++ *
++ * @author QingNiao
++ * @since 0.1.0
++ */
++public record TaskEnhancementAssessment(Sufficiency sufficiency, List<Gap> gaps, Presentation presentation) {
++    /** 充分需求不能同时声明必须补全的缺口；字段有界，避免分析元数据无界增长。 */
++    public TaskEnhancementAssessment {
++        gaps = gaps == null ? List.of() : List.copyOf(gaps);
++        if (sufficiency == null || presentation == null || gaps.size() > 6
++                || sufficiency == Sufficiency.SUFFICIENT && !gaps.isEmpty()
++                || sufficiency == Sufficiency.NEEDS_COMPLETION && gaps.isEmpty()) throw invalid();
++    }
++    /** 判断依据是本次执行条件，不是输入语言、字数或限制词计数。 */
++    public boolean preserveWording() { return sufficiency == Sufficiency.SUFFICIENT; }
++
++    /**
++     * 模型声明的专业补全不能同时成为必须由用户决定的阻塞项。
++     * 矛盾响应交给现有有限修复，不静默删问题；原文、资料及有效 Plan 的未决事项仍由组装器独立保留。
++     */
++    public void validateModelDecisions(List<String> findings) {
++        if (sufficiency == Sufficiency.NEEDS_COMPLETION && findings != null && !findings.isEmpty()
++                && gaps.stream().noneMatch(gap -> gap.kind() == Kind.USER_DECISION)) {
++            throw new ProviderResponseValidationException(
++                    ProviderResponseValidationException.Reason.ASSESSMENT_DECISION_CONFLICT, "assessment.gaps");
++        }
++    }
++
++    /** 已知目标、材料和有效确认是否足以执行。 */
++    public enum Sufficiency { SUFFICIENT, NEEDS_COMPLETION }
++    /** 提示词呈现形式，不改变下游作品的字数、格式和交付范围。 */
++    public enum Presentation { COMPACT, STRUCTURED }
++    /** 专业候选与用户决定独立，建议不等于已选事实。 */
++    public enum Kind { EXECUTION_STEP, INPUT_OUTPUT, EDGE_CASE, QUALITY_CHECK, PROFESSIONAL_OPTION, USER_DECISION }
++    /** 影响执行的缺口与补全动作；basis是一句可核对的依据，不是思维链。 */
++    public record Gap(Kind kind, String missing, String completion, String basis) {
++        public Gap {
++            if (kind == null || !valid(missing) || !valid(completion) || !valid(basis)) throw invalid();
++        }
++        private static boolean valid(String value) { return value != null && !value.isBlank() && value.length() <= 500; }
++    }
++    private static ProviderResponseValidationException invalid() {
++        return new ProviderResponseValidationException(ProviderResponseValidationException.Reason.ASSESSMENT_INVALID, "assessment");
++    }
++}
+--- before/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java
+@@ -159,7 +159,8 @@
+                 同一未决主题只列一次，把确实新增的版本、单位或适用条件合并说明，不重复原题。只有用户要求或任务必要时才额外说明依据和限制；“只输出译文”等明确交付限制必须遵守。
+ 
+             JSON 格式必须为：
+-            {"sections":[{"type":"BACKGROUND","title":"背景","content":"..."}],"ambiguities":[],"ambiguityReferences":[]}
++            {"assessment":{"sufficiency":"按实质缺口选择合法枚举","gaps":[],"presentation":"按本次任务选择合法枚举"},"sections":[{"type":"BACKGROUND","title":"背景","content":"..."}],"ambiguities":[],"ambiguityReferences":[]}
++            上述占位文字不能原样返回；按rewriteStrategy填SUFFICIENT/NEEDS_COMPLETION和COMPACT/STRUCTURED。专业多步骤任务保留有用分节；有实质缺口时写具体gaps，不能机械复制空数组。
+ 
+             必须包含且只能使用以下段落类型：BACKGROUND、TASK、OUTPUT、CONSTRAINTS、CLARIFICATIONS、ACCEPTANCE、EXAMPLES。
+             BACKGROUND、TASK、OUTPUT、CONSTRAINTS 必须存在；ACCEPTANCE 可按任务需要输出；待确认事项统一放入 ambiguities，CLARIFICATIONS 由平台组装；
+@@ -588,7 +589,7 @@
+                 request.conversationHistory(),
+                 request.options(),
+                 request.planningFacts(),
+-                com.promptoptimizer.provider.domain.PromptRewriteStrategy.forPrompt(taskView.effectivePrompt()),
++                com.promptoptimizer.provider.domain.PromptRewriteStrategy.forTask(taskView),
+                 taskView.modelInput()
+         );
+         String userMessage;
+@@ -613,7 +614,12 @@
+         return new ChatCompletionRequest(
+                 selection.model(),
+                 List.of(
+-                        new ChatMessage("system", SYSTEM_PROMPT + "\n" + JavaCodeDeliveryContract.guidance(request.rawPrompt())
++                        new ChatMessage("system", SYSTEM_PROMPT + "\n"
++                                + com.promptoptimizer.provider.domain.PromptRewriteStrategy.forTask(taskView).instruction() + "\n"
++                                + taskView.requirementBoundaries().guidance() + "\n"
++                                + com.promptoptimizer.provider.domain.EvidenceInferenceContract.from(taskView, request.context()).guidance()
++                                + "\n若上面列出了本次收入推断边界，平台会在约束中完整组装一次；生成时遵守它，不在各段复述整份边界。"
++                                + JavaCodeDeliveryContract.guidance(request.rawPrompt())
+                                 + DraftDeliveryContract.from(request.rawPrompt(), request.template(),
+                                 request.planConfirmed() ? request.confirmedDecisions() : List.of()).modelGuidance()),
+                         new ChatMessage("user", userMessage)
+@@ -750,7 +756,8 @@
+                     StructuredPromptResponse.class
+             );
+         } catch (JsonProcessingException exception) {
+-            throw invalidResponse("模型响应不是有效的结构化 JSON", exception);
++            throw new ProviderResponseValidationException(
++                    ProviderResponseValidationException.Reason.RESPONSE_JSON_INVALID, "response.json", exception);
+         }
+ 
+         List<PromptSection> sections = validateAndMapSections(structuredResponse);
+@@ -767,7 +774,8 @@
+                 responseModel,
+                 false,
+                 ambiguities,
+-                references
++                references,
++                structuredResponse.assessment()
+         );
+     }
+ 
+@@ -817,12 +825,14 @@
+             return null;
+         }
+         if (!value.isArray() || value.size() > 8) {
+-            throw invalidResponse("模型待确认事项必须是最多 8 项的字符串数组", null);
++            throw new ProviderResponseValidationException(
++                    ProviderResponseValidationException.Reason.AMBIGUITY_COUNT_INVALID, "ambiguities");
+         }
+         List<String> findings = new ArrayList<>();
+         for (JsonNode item : value) {
+             if (!item.isTextual() || item.textValue().isBlank() || item.textValue().length() > 500) {
+-                throw invalidResponse("模型待确认事项包含无效文本", null);
++                throw new ProviderResponseValidationException(
++                        ProviderResponseValidationException.Reason.AMBIGUITY_VALUE_INVALID, "ambiguities");
+             }
+             findings.add(item.textValue().trim());
+         }
+@@ -1219,7 +1229,8 @@
+      */
+     @JsonIgnoreProperties(ignoreUnknown = true)
+     private record StructuredPromptResponse(List<StructuredSection> sections, JsonNode ambiguities,
+-                                            JsonNode ambiguityReferences) {
++                                            JsonNode ambiguityReferences,
++                                            com.promptoptimizer.provider.domain.TaskEnhancementAssessment assessment) {
+     }
+ 
+     @JsonIgnoreProperties(ignoreUnknown = true)
+--- before/services/api/src/main/java/com/promptoptimizer/template/domain/TaskDeliveryProfile.java
++++ candidate5/services/api/src/main/java/com/promptoptimizer/template/domain/TaskDeliveryProfile.java
+@@ -10,7 +10,8 @@
+ public enum TaskDeliveryProfile {
+     GENERAL("围绕用户目标提供所需交付物，不增加未要求的说明、报告、代码或执行步骤。",
+             "完整满足明确目标、事实和约束；未决条件保留，不把假设写成事实。"),
+-    TRANSLATION("按指定语言、术语、语气及段落输出译文；限定只输出译文时不附解释。",
++    TRANSLATION("按指定语言、术语、语气及段落输出译文；限定只输出译文时不附解释。"
++            + "保持时间、否定与范围边界，例如之前与不晚于不能互换；不因常用说法扩大截止范围。",
+             "译文忠实、术语一致、语气适合受众，保持要求的格式，不扩写原文事实。"),
+     NEWS_RELEASE("按指定受众、篇幅和发布场景交付新闻稿；只输出用户要求的标题、正文或其他部分。"
+             + "若未指定段落组织，可围绕发布信息、主要价值、适用对象、能力边界、反馈方式安排短段；"
+@@ -24,7 +25,13 @@
+             "课时合计准确，知识与答案正确，难度适合学生，教学材料和交付范围符合要求。"),
+     INSTITUTIONAL_REPORT("根据报告用途、受众及已提供材料组织报告，区分已完成工作、问题与下一步计划。",
+             "事实和数据可核对，结论有依据，结构适合报告用途，不虚构成效或行政要求。"),
+-    ACADEMIC_METHODS("只交付指定论文部分或研究方案，明确相关对象、方法、变量与评估步骤；未决评分尺度、分母等只保留为待定，不默认取值，不补写实际结果。",
++    ACADEMIC_METHODS("只交付指定论文部分或研究方案，明确相关对象、方法、变量与评估步骤。"
++            + "用户明确留待确认的评分尺度、分母等继续保持未决，不默认取值，不补写实际结果。"
++            + "要求设计方案而未规定具体方法时，推荐一条可直接开展的主方案，说明方法、评分、分配步骤和适用条件，必要时再给替代方案，明确属于拟议设计；"
++            + "方案建议不等于已获确认或已实施，不能把所有设计工作改成需用户先决定的问卷。"
++            + "比较研究保留谁提问、谁回答及答案如何使用，问答不能改成模型自行生成计划。评价对象保持原定对象，不把提示词质量改为只评答案质量；下游作品可作补充但不替代原评价。"
++            + "同等信息对照两组接收并可使用同一原始任务与同一份实际确认信息，不追问不等于不能使用已提供答案；不以相同字数、改写某组回答或单组额外修订替代信息一致。"
++            + "方法收益由对应组间比较判断，不能用一组显著而另一组不显著直接证明两组效果不同。",
+             "方法与研究问题一致，定义和比较条件可复核；已定与未决参数分开，不编造数据、结果、文献或已完成研究状态。"),
+     ACADEMIC_WRITING("围绕指定学科、论文阶段和章节组织学术文本；遵守已给写作范围、引用格式与资料边界，不替未完成研究编造结果。",
+             "论点与证据对应，概念、引用及研究状态可核对；遵守章节、篇幅和学术诚信要求。"),
+@@ -80,7 +87,9 @@
+             case NEWS_RELEASE, INSTITUTIONAL_REPORT, MEETING_MINUTES, USER_GUIDE ->
+                     "普通标题、清单排版和段落组织由执行者处理，不制造格式问卷。未提供的名称或日期不要编造；"
+                             + "只有完成用户明确要求的成品必须具备且没有允许替代表达的事实才询问，材料缺口与业务决定分开。";
+-            case ACADEMIC_METHODS, ACADEMIC_WRITING, DATA_ANALYSIS ->
++            case ACADEMIC_METHODS -> "用户委托设计研究时，常规方法、评分、分配与分析流程由执行者提出可开展的推荐方案并说明依据，不能全部退回用户。"
++                    + "用户明确保留的参数、真实授权及来源冲突仍需确认，推荐方案不等于用户已选定或研究已实施。";
++            case ACADEMIC_WRITING, DATA_ANALYSIS ->
+                     "沿用已确定的研究问题、对象、时间、口径及交付范围。仅询问会改变研究结论或公平比较的未决参数；"
+                             + "常规章节和表格排版自行组织，不将只写方案改成实际实验、计算或结果。";
+             default -> "只确认会改变目标、范围、业务行为、数据口径或执行前提的关键缺口；已知事实和常规组织方式不要重问。";

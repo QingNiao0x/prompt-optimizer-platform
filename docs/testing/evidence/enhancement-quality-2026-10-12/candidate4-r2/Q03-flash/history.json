@@ -1,0 +1,62 @@
+{
+  "status": 200,
+  "elapsedMs": 10,
+  "body": {
+    "requestId": "ffa57928-762f-4264-9e5d-80c93076096c",
+    "data": {
+      "id": "48003ef2-2da0-44af-a20c-fe420861a51c",
+      "rawPrompt": "请给同事小林写一封中文邮件，提醒他今天17点前把本周项目进度发给我，好汇总给团队。语气友好，正文不超过80个汉字。只输出主题和正文，不写占位符，不补造项目进展，不举例。",
+      "optimizedPrompt": "收件人是同事小林，需要向他催交本周项目进度，以便汇总给团队。\n\n写一封中文邮件给同事小林，提醒他在今天17点前把本周项目进度发给你，用于汇总给团队。语气友好。\n\n只输出邮件主题和正文两部分，不输出其他内容。正文不超过80个汉字。\n\n- 不写占位符。\n- 不补造项目进展内容。\n- 不举例。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "收件人是同事小林，需要向他催交本周项目进度，以便汇总给团队。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "写一封中文邮件给同事小林，提醒他在今天17点前把本周项目进度发给你，用于汇总给团队。语气友好。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出邮件主题和正文两部分，不输出其他内容。正文不超过80个汉字。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 不写占位符。\n- 不补造项目进展内容。\n- 不举例。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextSummary": {
+        "warnings": [],
+        "redactions": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "analysisVersion": "v3",
+        "technologyStack": [],
+        "customDescription": ""
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "providerName": "deepseek",
+      "modelName": "deepseek:deepseek-flash",
+      "mock": false,
+      "latencyMs": 1261,
+      "createdAt": "2026-10-11T18:31:43.528654Z",
+      "includePermissionBoundaries": true,
+      "includeExamples": false,
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "modelVersion": "DeepSeek-V4.1-Flash",
+      "promptFormat": "COMPACT"
+    }
+  }
+}

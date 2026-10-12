@@ -1,0 +1,63 @@
+{
+  "status": 200,
+  "elapsedMs": 2760,
+  "body": {
+    "requestId": "88fb7e1d-bbac-49ad-a9c6-7f72bb7919a7",
+    "data": {
+      "optimizedPrompt": "## 背景\n用户需要写一封邮件，委婉提醒同事把周报发过来。\n\n## 任务\n撰写一封语气委婉、礼貌的提醒邮件，请同事尽快提交周报。\n\n## 输出\n直接输出邮件正文，包含合适的称呼、正文和落款。\n\n## 约束\n语气委婉、礼貌，不指责或施压；不添加未要求的说明、报告或执行步骤。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收\n邮件内容完整，语气委婉，明确提醒提交周报，无多余内容。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "用户需要写一封邮件，委婉提醒同事把周报发过来。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "撰写一封语气委婉、礼貌的提醒邮件，请同事尽快提交周报。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "直接输出邮件正文，包含合适的称呼、正文和落款。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "语气委婉、礼貌，不指责或施压；不添加未要求的说明、报告或执行步骤。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        },
+        {
+          "type": "ACCEPTANCE",
+          "title": "验收",
+          "content": "邮件内容完整，语气委婉，明确提醒提交周报，无多余内容。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 2730,
+      "warnings": [],
+      "evidenceCards": []
+    }
+  }
+}

@@ -1,0 +1,411 @@
+package com.promptoptimizer.enhancement.service.impl;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.context.dto.ContextAnalysisRequest;
+import com.promptoptimizer.context.dto.ContextFileInput;
+import com.promptoptimizer.context.service.impl.BinaryContentExtractor;
+import com.promptoptimizer.context.service.impl.DefaultContextAnalyzer;
+import com.promptoptimizer.context.service.impl.FileContentSummarizer;
+import com.promptoptimizer.enhancement.domain.TemplateCode;
+import com.promptoptimizer.enhancement.dto.EnhancementOptions;
+import com.promptoptimizer.enhancement.dto.OptimizationRequest;
+import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
+import com.promptoptimizer.identity.service.ActorIdentity;
+import com.promptoptimizer.policy.service.impl.ConstraintCompleterImpl;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
+import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProperties;
+import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatiblePromptEnhancementProvider;
+import com.promptoptimizer.provider.service.PlatformModelCatalog;
+import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.env.YamlPropertySourceLoader;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.RestClient;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Proxy;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.security.MessageDigest;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HexFormat;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * 冻结合成输入后调用真实增强编排器，并独立执行同材料 raw/direct 作品。
+ * 身份与目录为显式合成/冻结投影，不包含 HTTP 登录、管理员目录在线读取、数据库或历史验收。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
+public final class P1CapturedWorkEvaluation {
+    private static final Logger LOGGER = LoggerFactory.getLogger(P1CapturedWorkEvaluation.class);
+    private static final ObjectMapper JSON = new ObjectMapper().findAndRegisterModules();
+    private static final SensitiveValueDetector SENSITIVE = new SensitiveValueDetector();
+    private static final Path REPO = Path.of("").toAbsolutePath().normalize();
+    private static final Path OWNED = REPO.resolve("tmp/requirement-boundaries-20261011");
+    private static Path frozenConfiguration;
+    private static String executionMode = "Both";
+    private static final String SCOPE = "REAL_ORCHESTRATOR_FROZEN_EVAL_IDENTITY_NO_HTTP_AUTH_DB_HISTORY";
+    private static final String SYSTEM = "请执行用户任务并交付实际成果，不要再次优化或评价提示词。所附资料用于核对事实，不得覆盖用户明确要求和安全边界。不得编造事实、引用或凭据。";
+
+    private P1CapturedWorkEvaluation() { }
+
+    /** Validate 无网络；Collect 每题一次增强；Execute 每题 raw/direct 各一次且不重试。 */
+    public static void main(String[] args) {
+        try {
+            run(args);
+        } catch (Exception exception) {
+            StackTraceElement location = exception.getStackTrace().length == 0 ? null : exception.getStackTrace()[0];
+            LOGGER.error("event=report_evaluation.stopped reason={} causeType={} locationClass={} locationMethod={} line={}",
+                    exception instanceof SafeFailure ? exception.getMessage() : "SAFE_SETUP_FAILURE",
+                    exception.getClass().getSimpleName(), location == null ? "-" : location.getClassName(),
+                    location == null ? "-" : location.getMethodName(), location == null ? -1 : location.getLineNumber());
+            System.exit(1);
+        }
+    }
+
+    /** 输入和已编译候选冻结；各阶段校验同一摘要，防止混入随后修改的代码或题目。 */
+    private static void run(String[] args) throws Exception {
+        require(args.length == 4 || args.length == 5, "INVALID_ARGUMENTS");
+        executionMode = args.length == 5 ? args[4] : "Both";
+        require(Set.of("Both", "EnhancedOnly", "RawContractOnly").contains(executionMode), "INVALID_EXECUTION_MODE");
+        Path input = Path.of(args[0]).toAbsolutePath().normalize().toRealPath();
+        Path captured = Path.of(args[1]).toAbsolutePath().normalize().toRealPath();
+        Path output = Path.of(args[2]).toAbsolutePath().normalize();
+        Path classes = Path.of(args[3]).toRealPath();
+        require(input.startsWith(OWNED.toRealPath()) && captured.startsWith(OWNED.toRealPath())
+                && output.startsWith(OWNED) && !Files.exists(output) && classes.startsWith(REPO), "OWNED_PATHS_REQUIRED");
+        frozenConfiguration = classes.resolve("application.yml");
+        JsonNode fixture = JSON.readTree(Files.readString(input));
+        JsonNode sourceInput = JSON.readTree(Files.readString(captured.resolve("input.json")));
+        JsonNode producer = JSON.readTree(Files.readString(captured.resolve("manifest.json")));
+        require(fixture.path("modelId").equals(sourceInput.path("modelId")), "EXECUTION_MODEL_CHANGED");
+        require(classHash(classes).equals(producer.path("classesSha256").asText()), "PRODUCER_CLASSES_CHANGED");
+        require(sha(Files.readAllBytes(frozenConfiguration)).equals(producer.path("configurationSha256").asText()), "PRODUCER_CONFIG_CHANGED");
+        require(fixture.path("cases").size() >= 1 && fixture.path("cases").size() <= 8, "BOUNDED_CASES_REQUIRED");
+        var properties = bindProperties();
+        rejectSecrets(Files.readString(input), properties);
+        for (JsonNode sample : fixture.path("cases")) {
+            boolean matched = false;
+            for (JsonNode sourceCase : sourceInput.path("cases")) if (sourceCase.equals(sample)) matched = true;
+            require(matched, "CAPTURED_INPUT_CHANGED");
+        }
+        Files.createDirectory(output);
+        write(output.resolve("input.json"), fixture, properties);
+        write(output.resolve("captured-work-manifest.json"), Map.of("scope", SCOPE,
+                "sourceDirectory", REPO.relativize(captured).toString(),
+                "sourceManifestSha256", sha(Files.readAllBytes(captured.resolve("manifest.json"))),
+                "runnerSha256", sha(Files.readAllBytes(OWNED.resolve("P1CapturedWorkEvaluation.java"))),
+                "purpose", executionMode,
+                "automaticRetry", false), properties);
+        for (JsonNode sample : fixture.path("cases")) {
+            String id = sample.path("id").asText();
+            require(id.matches("[A-Z0-9-]{1,80}"), "INVALID_CASE_ID");
+            Path source = captured.resolve(id + "-generation.json");
+            var imported = (com.fasterxml.jackson.databind.node.ObjectNode) JSON.readTree(Files.readString(source));
+            require(imported.path("effectiveOptions").path("includeExamples").asBoolean() == sample.path("includeExamples").asBoolean(), "INVALID_EXAMPLE_OPTIONS");
+            imported.put("importedGeneration", true);
+            imported.put("sourceGenerationSha256", sha(Files.readAllBytes(source)));
+            write(output.resolve(id + "-generation.json"), imported, properties);
+            if (!"EnhancedOnly".equals(executionMode)) execute(sample, fixture, properties, output, "raw");
+            if (!"RawContractOnly".equals(executionMode)) execute(sample, fixture, properties, output, "direct");
+        }
+    }
+
+    /** 普通应用路由配置仅绑定环境变量，不启动 Spring、迁移、数据库或登录流程。 */
+    private static OpenAiCompatibleProperties bindProperties() throws IOException {
+        var environment = new StandardEnvironment();
+        for (var source : new YamlPropertySourceLoader().load("report-evaluation", new FileSystemResource(frozenConfiguration))) {
+            environment.getPropertySources().addLast(source);
+        }
+        var properties = Binder.get(environment).bind("app.provider.openai-compatible", OpenAiCompatibleProperties.class)
+                .orElseThrow(() -> new SafeFailure("MODEL_PROPERTIES_UNAVAILABLE"));
+        // 本批已冻结 DeepSeek 直连；环境中的旧默认供应商不能使无关的暂停路由阻塞解析。
+        // 仅改变本工具内存对象，不写配置，也不替代管理员目录在线校验。
+        properties.setDefaultProvider("deepseek");
+        return properties;
+    }
+
+    /** 使用真实编排器和上下文分析；合成身份只服务隔离组件链，不能算正常认证通过。 */
+    private static void collect(JsonNode sample, JsonNode fixture, OpenAiCompatibleProperties properties, Path output) throws Exception {
+        String id = sample.path("id").asText();
+        String model = fixture.path("modelId").asText();
+        Map<String, Object> record = base(id, "direct-generation");
+        write(output.resolve(id + "-generation.claim.json"), record, properties);
+        long started = System.nanoTime();
+        MDC.put("requestId", record.get("requestId").toString());
+        try {
+            var provider = new OpenAiCompatiblePromptEnhancementProvider(client(properties, output, id + "-generation", 3), JSON, properties);
+            var analyzer = new DefaultContextAnalyzer(JSON, new BinaryContentExtractor(), new FileContentSummarizer());
+            var identity = new ActorIdentity(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "synthetic@evaluation.invalid", "Synthetic report evaluation");
+            var session = new PlanningSessionServiceImpl(new InMemoryPlanningSessionStore(Clock.systemUTC()), analyzer, new com.promptoptimizer.policy.service.impl.ProtectedContextFilterImpl(), () -> identity, Clock.systemUTC());
+            var orchestrator = new DefaultEnhancementOrchestrator(analyzer, new AmbiguityDetector(),
+                    new PromptTemplateRegistryImpl(), new ConstraintCompleterImpl(), provider, new OptimizationResultAssembler(), new com.promptoptimizer.policy.service.impl.ProtectedContextFilterImpl(), session, Clock.systemUTC());
+            var selection = properties.resolveModel(model);
+            var entry = new PlatformModelCatalog.ModelEntry(UUID.nameUUIDFromBytes(model.getBytes(StandardCharsets.UTF_8)), model,
+                    selection.route().key(), selection.model(), fixture.path("modelDisplayName").asText(), true, true, 0);
+            // 只读冻结投影不读取或修改管理员目录；任何其他目录操作立即失败。
+            PlatformModelCatalog frozenCatalog = (PlatformModelCatalog) Proxy.newProxyInstance(PlatformModelCatalog.class.getClassLoader(),
+                    new Class<?>[]{PlatformModelCatalog.class}, (proxy, method, values) -> {
+                        if (method.getName().equals("resolve")) {
+                            require(values[0] == null || values[0].toString().isBlank() || model.equals(values[0]), "UNFROZEN_MODEL");
+                            return entry;
+                        }
+                        if (Set.of("available", "all").contains(method.getName())) return List.of(entry);
+                        throw new SafeFailure("UNSUPPORTED_FROZEN_CATALOG_OPERATION");
+                    });
+            orchestrator.setModelCatalog(frozenCatalog);
+            var files = new ArrayList<ContextFileInput>();
+            for (JsonNode file : sample.path("files")) files.add(new ContextFileInput(file.path("path").asText(), file.path("content").asText(), file.path("language").asText()));
+            var options = new EnhancementOptions(TemplateCode.AUTO, false, true, sample.path("includeExamples").asBoolean());
+            require(options.includeExamples() == sample.path("includeExamples").asBoolean() && !options.includeConversationHistory(), "EFFECTIVE_OPTIONS_MISMATCH");
+            record.put("effectiveOptions", options);
+            record.put("effectiveOptionsSha256", sha(JSON.writeValueAsBytes(options)));
+            record.put("planEnabled", "plan".equals(sample.path("mode").asText()));
+            com.promptoptimizer.enhancement.dto.PlanConfirmation confirmation = null;
+            if ("plan".equals(sample.path("mode").asText())) {
+                JsonNode reviewed = sample.path("reviewedPlan");
+                require(reviewed.path("questions").isArray() && reviewed.path("answers").isArray(), "REVIEWED_ACTUAL_PLAN_REQUIRED");
+                var questions = JSON.readerForListOf(com.promptoptimizer.enhancement.domain.PlanQuestion.class).<List<com.promptoptimizer.enhancement.domain.PlanQuestion>>readValue(reviewed.path("questions"));
+                var answers = JSON.readerForListOf(com.promptoptimizer.enhancement.dto.PlanAnswer.class).<List<com.promptoptimizer.enhancement.dto.PlanAnswer>>readValue(reviewed.path("answers"));
+                var prep = session.prepareContext(new com.promptoptimizer.context.dto.PlanningContextRequest(sample.path("rawPrompt").asText(), new ContextAnalysisRequest(sample.path("contextDescription").asText(), files), PermissionPolicyInput.empty()));
+                var reg = session.registerPlan(sample.path("rawPrompt").asText(), sample.path("contextDescription").asText(), List.of(), session.resolveForPlan(new com.promptoptimizer.enhancement.dto.PlanningContextReference(prep.contextId(), prep.version()), sample.path("rawPrompt").asText(), sample.path("contextDescription").asText()), questions, model);
+                confirmation = new com.promptoptimizer.enhancement.dto.PlanConfirmation(reg.planId(), reg.planningContext(), answers);
+                record.put("actualSubmittedAnswers", answers);
+                record.put("planSourceSha256", reviewed.path("sourceSha256").asText());
+            }
+            var request = new OptimizationRequest(sample.path("rawPrompt").asText(), new ContextAnalysisRequest(sample.path("contextDescription").asText(), files),
+                    options, List.of(), PermissionPolicyInput.empty(), confirmation, model);
+            var result = orchestrator.optimize(request);
+            require(!result.provider().mock(), "MOCK_CANNOT_COUNT_AS_REAL");
+            record.put("status", "COLLECTED");
+            record.put("result", result);
+            record.put("optimizedPromptSha256", sha(result.optimizedPrompt().getBytes(StandardCharsets.UTF_8)));
+        } catch (Exception exception) {
+            record.put("status", "FAILED");
+            record.put("failureCategory", reason(exception));
+        } finally { MDC.clear(); }
+        record.put("elapsedMs", (System.nanoTime() - started) / 1_000_000);
+        write(output.resolve(id + "-generation.json"), record, properties);
+        LOGGER.info("event=report_evaluation.direct caseId={} status={}", id, record.get("status"));
+    }
+
+    /** 先采集真实问题再由工具外逐题审核；不自动接受推荐值，也不把截图答案绑定到虚构问题。 */
+    private static void preparePlan(JsonNode sample, JsonNode fixture, OpenAiCompatibleProperties properties, Path output) throws Exception {
+        String id = sample.path("id").asText(), model = fixture.path("modelId").asText();
+        var record = base(id, "actual-plan");
+        write(output.resolve(id + "-plan.claim.json"), record, properties);
+        try {
+            var provider = new OpenAiCompatiblePromptEnhancementProvider(client(properties, output, id + "-plan", 3), JSON, properties);
+            var analyzer = new DefaultContextAnalyzer(JSON, new BinaryContentExtractor(), new FileContentSummarizer());
+            var identity = new ActorIdentity(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "synthetic@evaluation.invalid", "Synthetic P1 evaluation");
+            var session = new PlanningSessionServiceImpl(new InMemoryPlanningSessionStore(Clock.systemUTC()), analyzer, new com.promptoptimizer.policy.service.impl.ProtectedContextFilterImpl(), () -> identity, Clock.systemUTC());
+            var files = new ArrayList<ContextFileInput>();
+            for (JsonNode file : sample.path("files")) files.add(new ContextFileInput(file.path("path").asText(), file.path("content").asText(), file.path("language").asText()));
+            var prep = session.prepareContext(new com.promptoptimizer.context.dto.PlanningContextRequest(sample.path("rawPrompt").asText(), new ContextAnalysisRequest(sample.path("contextDescription").asText(), files), PermissionPolicyInput.empty()));
+            var planner = new OptimizationPlanningServiceImpl(provider, new PromptTemplateRegistryImpl(), session, Clock.systemUTC());
+            var selection = properties.resolveModel(model);
+            var entry = new PlatformModelCatalog.ModelEntry(UUID.nameUUIDFromBytes(model.getBytes(StandardCharsets.UTF_8)), model, selection.route().key(), selection.model(), fixture.path("modelDisplayName").asText(), true, true, 0);
+            PlatformModelCatalog catalog = (PlatformModelCatalog) Proxy.newProxyInstance(PlatformModelCatalog.class.getClassLoader(), new Class<?>[]{PlatformModelCatalog.class}, (proxy, method, values) -> { if (method.getName().equals("resolve")) return entry; throw new SafeFailure("UNSUPPORTED_CATALOG_OPERATION"); });
+            planner.setModelCatalog(catalog);
+            record.put("plan", planner.plan(new com.promptoptimizer.enhancement.dto.OptimizationPlanRequest(sample.path("rawPrompt").asText(), sample.path("contextDescription").asText(), List.of(), new com.promptoptimizer.enhancement.dto.PlanningContextReference(prep.contextId(), prep.version()), model)));
+            record.put("status", "COLLECTED");
+        } catch (Exception exception) { record.put("status", "FAILED"); record.put("failureCategory", reason(exception)); }
+        write(output.resolve(id + "-plan.json"), record, properties);
+        LOGGER.info("event=p1_evaluation.plan caseId={} status={}", id, record.get("status"));
+    }
+
+    /** 下游仅发任务、材料与同一个 system；不会发送评分规则或替增强结果补缺失要求。 */
+    private static void execute(JsonNode sample, JsonNode fixture, OpenAiCompatibleProperties properties, Path output, String arm) throws Exception {
+        String id = sample.path("id").asText();
+        String stem = id + "-" + arm + "-work";
+        Map<String, Object> record = base(id, arm);
+        write(output.resolve(stem + ".claim.json"), record, properties);
+        String prompt = sample.path("rawPrompt").asText();
+        if ("raw".equals(arm) && "RawContractOnly".equals(executionMode)) {
+            var contract = com.promptoptimizer.provider.domain.ExampleContract.from(prompt, sample.path("includeExamples").asBoolean());
+            require(contract.required() && "direct".equals(sample.path("mode").asText()), "RAW_EXAMPLE_CONTROL_ONLY");
+            record.put("rawOriginalSha256", sha(prompt.getBytes(StandardCharsets.UTF_8)));
+            record.put("rawContractSource", "USER_SWITCH_NO_OPTIMIZER_GENERATED_CONTENT");
+            record.put("exampleContract", contract);
+            prompt += "\n用户附加要求（来自本次已开启的示例开关）：\n" + contract.guidance();
+        }
+        if ("direct".equals(arm)) {
+            JsonNode generation = JSON.readTree(Files.readString(output.resolve(id + "-generation.json")));
+            if (!"COLLECTED".equals(generation.path("status").asText())) {
+                record.put("status", "NOT_EXECUTED"); record.put("failureCategory", "DIRECT_GENERATION_FAILED");
+                write(output.resolve(stem + ".json"), record, properties); return;
+            }
+            prompt = generation.path("result").path("optimizedPrompt").asText();
+        }
+        if ("raw".equals(arm) && "plan".equals(sample.path("mode").asText())) {
+            prompt += "\n\n本次用户实际确认回答：\n" + JSON.writeValueAsString(sample.path("reviewedPlan").path("answers"));
+        }
+        String materials = JSON.writeValueAsString(sample.path("files"));
+        String user = "任务：\n" + prompt + "\n\n共同补充描述：\n" + sample.path("contextDescription").asText()
+                + "\n\n相同资料原文：\n" + materials;
+        var selection = properties.resolveModel(fixture.path("modelId").asText());
+        record.put("promptSha256", sha(prompt.getBytes(StandardCharsets.UTF_8)));
+        record.put("materialsSha256", sha(materials.getBytes(StandardCharsets.UTF_8)));
+        record.put("systemSha256", sha(SYSTEM.getBytes(StandardCharsets.UTF_8)));
+        record.put("executionUserSha256", sha(user.getBytes(StandardCharsets.UTF_8)));
+        record.put("settings", Map.of("temperature", 0.2D, "maxOutputTokens", 8192, "thinking", "disabled", "automaticRetry", false));
+        long started = System.nanoTime();
+        try {
+            var body = Map.of("model", selection.model(), "messages", List.of(Map.of("role", "system", "content", SYSTEM),
+                    Map.of("role", "user", "content", user)), "temperature", 0.2D, "max_tokens", 8192, "stream", false,
+                    "thinking", Map.of("type", "disabled"));
+            String response = client(properties, output, stem, 1).post().uri(selection.route().endpoint())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + selection.route().apiKey()).contentType(MediaType.APPLICATION_JSON)
+                    .body(body).retrieve().body(String.class);
+            JsonNode parsed = JSON.readTree(response);
+            JsonNode choice = parsed.path("choices").path(0);
+            String content = choice.path("message").path("content").asText("");
+            String finish = choice.path("finish_reason").asText("");
+            rejectSecrets(content, properties);
+            record.put("status", content.isBlank() ? "FAILED" : "stop".equals(finish) ? "COMPLETE" : "PARTIAL");
+            if (content.isBlank()) record.put("failureCategory", "EMPTY_TASK_OUTPUT");
+            record.put("actualModel", safeMetadata(parsed.path("model").asText()));
+            record.put("finishReason", safeMetadata(finish));
+            record.put("usage", usage(parsed));
+            record.put("output", content);
+            record.put("outputSha256", sha(content.getBytes(StandardCharsets.UTF_8)));
+            record.put("nonWhitespaceChars", content.replaceAll("\\s+", "").length());
+            record.put("hanChars", content.codePoints().filter(code -> Character.UnicodeScript.of(code) == Character.UnicodeScript.HAN).count());
+            record.put("businessReview", "PENDING");
+        } catch (Exception exception) {
+            record.put("status", "FAILED"); record.put("failureCategory", reason(exception));
+        }
+        record.put("singleHttpCallMs", (System.nanoTime() - started) / 1_000_000);
+        write(output.resolve(stem + ".json"), record, properties);
+        if (record.containsKey("output")) Files.writeString(output.resolve(stem + ".md"), record.get("output").toString(), StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+        LOGGER.info("event=report_evaluation.work caseId={} arm={} status={}", id, arm, record.get("status"));
+    }
+
+    /** 每次上游尝试留安全 trace；只保留 content，不存请求头、Cookie、凭据或 reasoning 正文。 */
+    private static RestClient client(OpenAiCompatibleProperties properties, Path output, String stem, int maxCalls) {
+        var factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(Duration.ofSeconds(15)); factory.setReadTimeout(Duration.ofSeconds(120));
+        var calls = new AtomicInteger();
+        return RestClient.builder().requestFactory(factory).requestInterceptor((request, bytes, execution) -> {
+            int attempt = calls.incrementAndGet(); require(attempt <= maxCalls, "FROZEN_TRANSPORT_BUDGET_EXCEEDED");
+            Map<String, Object> trace = new LinkedHashMap<>();
+            trace.put("attempt", attempt); trace.put("startedAt", Instant.now().toString());
+            trace.put("requestBody", JSON.readTree(bytes));
+            long started = System.nanoTime();
+            try {
+                ClientHttpResponse response = execution.execute(request, bytes);
+                byte[] body = response.getBody().readNBytes(2_000_001);
+                require(body.length <= 2_000_000, "UPSTREAM_RESPONSE_TOO_LARGE");
+                trace.put("httpStatus", response.getStatusCode().value());
+                if (response.getStatusCode().is2xxSuccessful()) {
+                    JsonNode parsed = JSON.readTree(body);
+                    trace.put("actualModel", safeMetadata(parsed.path("model").asText()));
+                    trace.put("finishReason", safeMetadata(parsed.path("choices").path(0).path("finish_reason").asText()));
+                    trace.put("content", parsed.path("choices").path(0).path("message").path("content").asText(""));
+                    trace.put("usage", usage(parsed));
+                }
+                trace.put("elapsedMs", (System.nanoTime() - started) / 1_000_000);
+                write(output.resolve(stem + "-trace-" + attempt + ".json"), trace, properties);
+                return new BufferedResponse(response, body);
+            } catch (Exception exception) {
+                trace.put("failureCategory", reason(exception)); trace.put("elapsedMs", (System.nanoTime() - started) / 1_000_000);
+                Path traceFile = output.resolve(stem + "-trace-" + attempt + ".json");
+                if (!Files.exists(traceFile)) write(traceFile, trace, properties);
+                if (exception instanceof IOException io) throw io;
+                if (exception instanceof RuntimeException runtime) throw runtime;
+                throw new IOException("SAFE_TRACE_FAILURE");
+            }
+        }).build();
+    }
+
+    /** 计费字段缺失时保持 null，不将字符估算冒充真实 Token。 */
+    private static Map<String, Object> usage(JsonNode parsed) {
+        Map<String, Object> usage = new LinkedHashMap<>();
+        for (String field : List.of("prompt_tokens", "completion_tokens", "total_tokens")) {
+            JsonNode value = parsed.path("usage").path(field);
+            usage.put(field, value.isIntegralNumber() && value.canConvertToLong() ? value.longValue() : null);
+        }
+        return usage;
+    }
+
+    /** 不序列化 Throwable.message，防止上游错误拼入端点、正文或认证值。 */
+    private static String reason(Exception exception) {
+        if (exception instanceof SafeFailure) return exception.getMessage();
+        if (exception instanceof ProviderResponseValidationException validation) return validation.getReason().name();
+        return exception.getClass().getSimpleName();
+    }
+
+    private static Map<String, Object> base(String id, String arm) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("scope", SCOPE); result.put("caseId", id); result.put("arm", arm);
+        result.put("requestId", UUID.randomUUID().toString()); result.put("startedAt", Instant.now().toString());
+        result.put("status", "STARTED"); return result;
+    }
+
+    /** 每份证据独占创建，并拒绝实际路由密钥和可识别凭据。 */
+    private static void write(Path file, Object value, OpenAiCompatibleProperties properties) throws IOException {
+        String encoded = JSON.writerWithDefaultPrettyPrinter().writeValueAsString(value) + "\n";
+        rejectSecrets(encoded, properties);
+        Files.writeString(file, encoded, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+    }
+
+    private static void rejectSecrets(String text, OpenAiCompatibleProperties properties) {
+        require(!SENSITIVE.containsCredential(text), "SENSITIVE_TEXT_REJECTED");
+        for (var route : properties.getConfiguredRoutes()) if (route.apiKey() != null && route.apiKey().length() >= 8) {
+            require(!text.contains(route.apiKey()), "BOUND_CREDENTIAL_REJECTED");
+        }
+    }
+
+    /** 编译产物逐文件排序后取摘要，确认真实执行类与已冻结候选一致。 */
+    private static String classHash(Path classes) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        List<Path> paths;
+        try (var stream = Files.walk(classes)) { paths = stream.filter(path -> Files.isRegularFile(path) && path.toString().endsWith(".class")).sorted().toList(); }
+        require(!paths.isEmpty(), "COMPILED_CANDIDATE_REQUIRED");
+        for (Path path : paths) {
+            digest.update(classes.relativize(path).toString().getBytes(StandardCharsets.UTF_8)); digest.update(Files.readAllBytes(path));
+        }
+        return HexFormat.of().formatHex(digest.digest());
+    }
+
+    private static String sha(byte[] value) throws Exception { return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(value)); }
+    private static String safeMetadata(String value) { return value.matches("[A-Za-z0-9_.:/-]{0,160}") ? value : "UNSAFE_METADATA"; }
+    private static void require(boolean condition, String code) { if (!condition) throw new SafeFailure(code); }
+
+    /** 缓存响应字节供 Provider 正常解析；关闭动作继续委托原 HTTP 响应。 */
+    private record BufferedResponse(ClientHttpResponse source, byte[] bytes) implements ClientHttpResponse {
+        @Override public HttpStatusCode getStatusCode() throws IOException { return source.getStatusCode(); }
+        @Override public String getStatusText() throws IOException { return source.getStatusText(); }
+        @Override public HttpHeaders getHeaders() { return source.getHeaders(); }
+        @Override public InputStream getBody() { return new ByteArrayInputStream(bytes); }
+        @Override public void close() { source.close(); }
+    }
+
+    private static final class SafeFailure extends RuntimeException {
+        private SafeFailure(String code) { super(code); }
+    }
+}
+

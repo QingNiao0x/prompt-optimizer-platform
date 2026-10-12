@@ -1,0 +1,72 @@
+{
+  "status": 200,
+  "elapsedMs": 17,
+  "body": {
+    "requestId": "0baaa7ed-e30a-45f3-af6e-759f018b3395",
+    "data": {
+      "id": "02b6c1e1-ceea-49db-99a3-6b7978166b90",
+      "rawPrompt": "将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n会议改到周五下午三点。\n请在周四之前确认是否参加。",
+      "optimizedPrompt": "待翻译内容为两行中文，需译为英文，保持两行及原有顺序。\n\n将以下两行翻译为英文，逐行对应，保持两行及顺序不变：\n1. 会议改到周五下午三点。\n2. 请在周四之前确认是否参加。\n\n只输出英文译文，共两行，与原文两行一一对应，不加标题、解释、注释或额外内容。\n\n- 仅输出译文，不解释、不加标题或示例。\n- 保持两行结构及顺序。\n- 不扩写原文事实，不添加原文没有的信息。\n用户明确规则（须遵守平台权限边界）：\n- 将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n- 译文为英文，两行且顺序与原文一致。\n- 内容忠实于原文，无增删或事实扩写。\n- 除译文外无任何附加文字。\n\n提供与本次任务相关的输入与预期输出示例，并说明二者的对应关系。缺少真实资料时可用明确标注为虚构演示的材料；演示不得充当正式事实、统计口径或研究结论。示例服务原定交付，不另增无关任务。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "待翻译内容为两行中文，需译为英文，保持两行及原有顺序。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "将以下两行翻译为英文，逐行对应，保持两行及顺序不变：\n1. 会议改到周五下午三点。\n2. 请在周四之前确认是否参加。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出英文译文，共两行，与原文两行一一对应，不加标题、解释、注释或额外内容。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 仅输出译文，不解释、不加标题或示例。\n- 保持两行结构及顺序。\n- 不扩写原文事实，不添加原文没有的信息。\n用户明确规则（须遵守平台权限边界）：\n- 将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        },
+        {
+          "type": "ACCEPTANCE",
+          "title": "验收",
+          "content": "- 译文为英文，两行且顺序与原文一致。\n- 内容忠实于原文，无增删或事实扩写。\n- 除译文外无任何附加文字。"
+        },
+        {
+          "type": "EXAMPLES",
+          "title": "示例",
+          "content": "提供与本次任务相关的输入与预期输出示例，并说明二者的对应关系。缺少真实资料时可用明确标注为虚构演示的材料；演示不得充当正式事实、统计口径或研究结论。示例服务原定交付，不另增无关任务。"
+        }
+      ],
+      "contextSummary": {
+        "warnings": [],
+        "redactions": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "analysisVersion": "v3",
+        "technologyStack": [],
+        "customDescription": ""
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "providerName": "deepseek",
+      "modelName": "deepseek:deepseek-flash",
+      "mock": false,
+      "latencyMs": 2544,
+      "createdAt": "2026-10-11T17:50:11.968273Z",
+      "includePermissionBoundaries": true,
+      "includeExamples": false,
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "modelVersion": "DeepSeek-V4.1-Flash",
+      "promptFormat": "COMPACT"
+    }
+  }
+}

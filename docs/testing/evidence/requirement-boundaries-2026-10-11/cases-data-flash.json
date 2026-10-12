@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "dataAuthorization": "USER_PROVIDED_SCREENSHOT",
+  "modelId": "deepseek:deepseek-flash",
+  "modelDisplayName": "deepseek:deepseek-flash",
+  "maxOutputTokens": 8192,
+  "temperature": 0.2,
+  "cases": [
+    {
+      "id": "QB-08",
+      "source": "留作未参与 P0 修复的高风险规则合成对照",
+      "rawPrompt": "把下列审批规则整理为开发提示词：2024 年甲机构采购金额超过 5 万元须由财务复核；2025 年乙机构采购金额达到 5 万元须由负责人复核。不得使用假设数据。只交付规则实现，不新增报表或代码生成器。",
+      "plan": false,
+      "includeExamples": false,
+      "files": [],
+      "checks": [
+        "保留 > 与 >= 的区别",
+        "按年份和机构分开规则与审批对象",
+        "禁止假设数据不能被不确定性过滤器误删",
+        "不新增交付物"
+      ],
+      "status": "NOT_RERUN_IN_P0",
+      "dataAuthorization": "SYNTHETIC",
+      "mode": "direct",
+      "contextDescription": ""
+    }
+  ],
+  "budget": {
+    "maximumTransportAttempts": 115,
+    "maximumDownstreamExecutions": 50,
+    "downstreamRetry": false
+  },
+  "reviewPolicy": "先审核真实问题，再冻结同一份实际提交回答。Plan 正文不由脚本补回答案。",
+  "planProtocol": "Reuse actual captured Flash questions and exact reviewed answers via production session registration. Same answers across versions and execution arms. Not HTTP/DB/Redis acceptance.",
+  "protocolRevision": "revision-protocol-v2.json"
+}

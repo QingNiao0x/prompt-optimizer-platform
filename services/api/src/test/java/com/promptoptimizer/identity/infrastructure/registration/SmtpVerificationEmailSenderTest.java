@@ -18,9 +18,11 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.time.Duration;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -82,19 +84,67 @@ class SmtpVerificationEmailSenderTest {
     }
 
     @Test
-    void shouldReportUnavailableWhenMailClientIsMissing() {
+    void shouldReportUnavailableWhenMailClientIsMissing(CapturedOutput output) {
         assertDeliveryUnavailable(() -> sender(false).send("recipient@example.test", "012345", Duration.ofMinutes(5)));
         verify(mailSender, never()).send(any(MimeMessage.class));
+        assertThat(output.getAll()).contains("reason=SMTP_CLIENT_MISSING")
+                .doesNotContain("recipient@example.test", "012345");
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"   "})
-    void shouldReportUnavailableWhenFromAddressIsMissing(String address) {
+    void shouldReportUnavailableWhenFromAddressIsMissing(String address, CapturedOutput output) {
         properties.setFromAddress(address);
 
         assertDeliveryUnavailable(() -> sender(true).send("recipient@example.test", "012345", Duration.ofMinutes(5)));
         verify(mailSender, never()).send(any(MimeMessage.class));
+        assertThat(output.getAll()).contains("reason=FROM_ADDRESS_MISSING");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"HOST", "USERNAME", "PASSWORD"})
+    void shouldRejectMissingRuntimeSmtpConfigurationBeforeSending(String missing, CapturedOutput output) {
+        // 使用真实邮件客户端读取配置，但网络发送是禁止触达的切面，不访问任何 SMTP 主机。
+        JavaMailSenderImpl client = new JavaMailSenderImpl() {
+            @Override
+            public void send(MimeMessage message) {
+                throw new AssertionError("缺少 SMTP 配置时不应触达网络发送。");
+            }
+        };
+        client.setHost("HOST".equals(missing) ? "" : "smtp.example.test");
+        client.setUsername("USERNAME".equals(missing) ? "" : "noreply@example.test");
+        client.setPassword("PASSWORD".equals(missing) ? "" : "synthetic-password-not-for-deployment");
+        client.getJavaMailProperties().setProperty("mail.smtp.auth", "true");
+        var beans = new StaticListableBeanFactory();
+        beans.addBean("mailSender", client);
+        var sender = new SmtpVerificationEmailSender(beans.getBeanProvider(JavaMailSender.class), properties);
+
+        assertDeliveryUnavailable(() -> sender.send("recipient@example.test", "012345", Duration.ofMinutes(5)));
+        assertThat(output.getAll()).contains("reason=SMTP_" + missing + "_MISSING")
+                .doesNotContain("recipient@example.test", "noreply@example.test", "012345",
+                        "synthetic-password-not-for-deployment");
+    }
+
+    @Test
+    void shouldKeepExplicitMailSessionConfigurationCompatible() {
+        AtomicInteger sent = new AtomicInteger();
+        JavaMailSenderImpl client = new JavaMailSenderImpl() {
+            @Override
+            public void send(MimeMessage message) {
+                sent.incrementAndGet();
+            }
+        };
+        Properties configuredSession = new Properties();
+        configuredSession.setProperty("mail.smtp.host", "smtp.example.test");
+        // JNDI/自定义 Session 可承载主机与认证器，不要求额外把属性复制到客户端字段。
+        client.setSession(Session.getInstance(configuredSession));
+        var beans = new StaticListableBeanFactory();
+        beans.addBean("mailSender", client);
+
+        new SmtpVerificationEmailSender(beans.getBeanProvider(JavaMailSender.class), properties)
+                .send("recipient@example.test", "012345", Duration.ofMinutes(5));
+        assertThat(sent.get()).isEqualTo(1);
     }
 
     @Test

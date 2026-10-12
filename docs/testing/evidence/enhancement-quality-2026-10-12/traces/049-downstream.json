@@ -1,0 +1,48 @@
+{
+  "label": "stage2-r1-Q03-pro",
+  "httpStatus": 200,
+  "elapsedMs": 1292,
+  "request": {
+    "model": "deepseek-v4-pro",
+    "messages": [
+      {
+        "role": "user",
+        "content": "## 背景\n需要给同事小林写一封中文邮件，提醒他今天17点前把本周项目进度发给你，以便汇总给团队。\n\n## 任务\n撰写一封中文邮件，语气友好，正文不超过80个汉字。只输出主题和正文，不写占位符，不补造项目进展，不举例。\n\n## 输出\n邮件主题和正文。正文需包含提醒小林在今天17点前发送本周项目进度，并说明用途是汇总给团队。\n\n## 约束\n- 语气友好。\n- 正文不超过80个汉字。\n- 只输出主题和正文，不写占位符。\n- 不补造项目进展。\n- 不举例。\n用户明确规则（须遵守平台权限边界）：\n- 语气友好，正文不超过80个汉字。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收标准\n完整满足明确目标、事实和约束；未决条件保留，不把假设写成事实。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "562e6652-480b-4559-a699-a5f972c0ecc8",
+    "object": "chat.completion",
+    "created": 1791739644,
+    "model": "deepseek-v4-pro",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "主题：提醒：请于今天17点前发送本周项目进度\n\n小林你好，麻烦在今天17点前把本周项目进度发我，我需要汇总给团队。谢谢！"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 226,
+      "completion_tokens": 37,
+      "total_tokens": 263,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 226
+    },
+    "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+}

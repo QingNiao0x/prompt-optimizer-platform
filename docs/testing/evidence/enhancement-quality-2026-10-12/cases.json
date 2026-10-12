@@ -1,0 +1,134 @@
+[
+  {
+    "id": "Q01",
+    "kind": "revenue_only",
+    "rawPrompt": "请根据附件分析甲公司的收入变化，说明目前能得出的结论与值得进一步核查的经营问题。结论先行，用数据支持，给出有价值的专业分析。不要替我做投资决定。",
+    "context": {
+      "description": "",
+      "files": [
+        {
+          "path": "revenue.md",
+          "language": "markdown",
+          "content": "合成评测资料，不代表真实公司。甲公司同一财年口径、同一币种：上年收入100，本年收入120。材料只提供收入，未提供市场总量、销量、售价、订单或成本数据。"
+        }
+      ]
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": false
+    },
+    "conversationHistory": [],
+    "planAnswers": [],
+    "planEnabled": false
+  },
+  {
+    "id": "Q02",
+    "kind": "vague_email",
+    "rawPrompt": "帮我写封邮件，委婉提醒同事把周报发过来。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": false
+    },
+    "conversationHistory": [],
+    "planAnswers": [],
+    "planEnabled": false
+  },
+  {
+    "id": "Q03",
+    "kind": "sufficient_email",
+    "rawPrompt": "请给同事小林写一封中文邮件，提醒他今天17点前把本周项目进度发给我，好汇总给团队。语气友好，正文不超过80个汉字。只输出主题和正文，不写占位符，不补造项目进展，不举例。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": false
+    },
+    "conversationHistory": [],
+    "planAnswers": [],
+    "planEnabled": false
+  },
+  {
+    "id": "Q04",
+    "kind": "vague_research",
+    "rawPrompt": "我想研究让用户先回答几个关键问题再增强提示词，是否比直接增强更有用。帮我写研究设计，要能实际开展，也要比较公平。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": false
+    },
+    "conversationHistory": [],
+    "planAnswers": [],
+    "planEnabled": false
+  },
+  {
+    "id": "Q05",
+    "kind": "sufficient_research",
+    "rawPrompt": "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。正文800至1200个汉字，附表另计。不提供代码，不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": false
+    },
+    "conversationHistory": [],
+    "planAnswers": [],
+    "planEnabled": false
+  },
+  {
+    "id": "Q06",
+    "kind": "translation",
+    "rawPrompt": "将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n会议改到周五下午三点。\n请在周四之前确认是否参加。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": false
+    },
+    "conversationHistory": [],
+    "planAnswers": [],
+    "planEnabled": false
+  },
+  {
+    "id": "Q07",
+    "kind": "strict_json",
+    "rawPrompt": "从“姓名：李明；年龄：28”中提取信息。只输出一个严格JSON对象，键只能是name和age，name为字符串，age为整数。不要Markdown、解释或示例，不增加字段。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": false
+    },
+    "conversationHistory": [],
+    "planAnswers": [],
+    "planEnabled": false
+  }
+]

@@ -26,7 +26,8 @@ public final class ProviderResponseValidationException extends ProviderException
 
     private ProviderResponseValidationException(Reason reason, String field, Throwable cause, int modelAttempts) {
         super(ProviderFailureType.INVALID_RESPONSE, (reason == Reason.RULE_CONFLICT || reason == Reason.DATA_PROHIBITION_CONFLICT
-                || reason == Reason.METHOD_CONDITION_CONFLICT || reason == Reason.METHOD_PARAMETER_CONFLICT)
+                || reason == Reason.METHOD_CONDITION_CONFLICT || reason == Reason.METHOD_PARAMETER_CONFLICT
+                || reason == Reason.DELIVERY_LEVEL_CONFLICT)
                 ? "模型返回结果与已明确的业务规则冲突，请重试。" : "模型返回结果未通过结构与安全校验", false, cause);
         this.reason = Objects.requireNonNull(reason, "reason must not be null");
         if (field == null || !field.matches("[A-Za-z][A-Za-z0-9_.\\[\\]]{0,119}")) {
@@ -56,7 +57,12 @@ public final class ProviderResponseValidationException extends ProviderException
 
     /** 固定修复要求不能引用或复述导致校验失败的敏感内容。 */
     public enum Reason {
+        ASSESSMENT_INVALID("assessment使用合法sufficiency、presentation及最多6项gaps；SUFFICIENT时gaps为空，NEEDS_COMPLETION时只列影响本次交付的实质缺口。"),
+        ASSESSMENT_DECISION_CONFLICT("实质缺口判断与待确认事项须一致。NEEDS_COMPLETION中没有USER_DECISION时，ambiguities应为空；不要把专业建议、常规执行或委托设计变成用户必须先决定的问题。确有用户授权、来源冲突或明确保留的未决选择时，保留事项并将相应缺口列为USER_DECISION，不得靠删除真实未知规避校验。"),
+        INTERACTION_ACTOR_CONFLICT("保留原定问答中的主体：增强器提出关键问题、用户回答、有效确认用于生成优化提示词。不得把Plan问答改为模型或研究者先自行写执行计划再作答；直接改正错误操作化段，不在末尾追加相反要求。"),
+        UNSUPPORTED_INFERENCE("不要从收入或其他单一指标断言市场份额、需求等独立指标或因果关系；将无独立依据的结论改为明确的判断边界和有条件的候选解释，不能仅在末尾补免责声明。"),
         RESPONSE_EMPTY("上游 choices 的第一项必须包含非空 message.content。"),
+        RESPONSE_JSON_INVALID("只返回单个合法JSON对象；assessment的sufficiency、gaps、presentation属于同一对象，sections、ambiguities与assessment同级。ambiguities为字符串数组，不能放message对象。不要额外闭合括号或输出JSON外文字。"),
         RESPONSE_TRUNCATED("输出达到长度上限；在有限输出预算内重新生成完整 JSON，减少重复文字而保留所有实质要求。"),
         PLAN_JSON_INVALID("只返回可解析的单个计划 JSON 对象，字段类型与计划契约一致。"),
         METADATA_INVALID("保留所选模型的有效结果元数据。"),
@@ -68,9 +74,10 @@ public final class ProviderResponseValidationException extends ProviderException
         CONFIRMED_DECISION_MISSING("完整保留输入中用户已确认的答案和适用边界，不得替用户更改决定。"),
         RULE_CONFLICT("检查并改正执行要求与原始需求、明确确认答案及适用资料规则相反的内容；保留否定、条件、比较符、数值、单位和作用对象。取消保持原值不等于移除保持逻辑，向空字段补值不等于将字段清空。不得在另一段追加正确规则却保留矛盾指令。若原定交付为正文，直接改正 TASK 与 OUTPUT 中将其变为方案、提纲、问卷或等待补齐全部资料的指令；资料缺口仅限制对应内容，保留有依据的实质正文及用户明确的起草前确认要求。未决口径在正文、指标表、公式及伪代码中都保持未决，参数格写待确认，不填惯例、示例或临时默认口径；各指标分别命名参数，不套用通用分母，不把一项确认扩大到其他指标，仍须保留原定交付物。"),
         SOURCE_SCOPE_CONFLICT("资料取值与对象、属性、版本及适用条件分别核对。只写一版与另一版而未明确对应关系的资料，保持版本对应待核实；不得按出现次序绑定到具体版本或拼成统一规则。其他属性的版本证据不能证明本属性。"),
-        DATA_PROHIBITION_CONFLICT("保留用户禁止假设或虚构数据的要求，删除自行新增的测试、验证、演示或标注后可使用的例外；不能只在另一段重写禁令却保留例外。"),
+        DELIVERY_LEVEL_CONFLICT("TASK 和 OUTPUT 必须指向用户原定任务及结果。用户未要求编写提示词时，删除将任务改为生成、整理或交付另一份提示词的指令；角色设定直接指示执行者按该角色回答，不能交付角色说明书。用户明确要求写提示词时才保留该交付。改正错误段落，不靠尾注掩盖矛盾。"),
+        DATA_PROHIBITION_CONFLICT("保留用户禁止假设或虚构数据的要求，删除自行新增的测试、验证、演示或标注后可使用的例外；不能只在另一段重写禁令却保留例外。禁令覆盖所有用途，不能缩为仅不得冒充真实业务数据，也不能扩大成禁止可核实的真实示例资料；其他明确的数据限制和权限要求仍保留。"),
         METHOD_CONDITION_CONFLICT("依据未来数据分布选择检验是选择条件，不是禁止写检验名称；可说明候选名称和适用前提，不预先选定或承诺显著性。只有用户明确禁名时才保留该禁止。"),
-        METHOD_PARAMETER_CONFLICT("确认年龄标准化不等于选择标准人口；年份、来源和取值必须有独立的适用依据。无依据时只给候选与适用条件，不默认或暂按某年人口，继续交付其他原定内容。"),
+        METHOD_PARAMETER_CONFLICT("确认年龄标准化不等于确认直接或间接方式，也不等于选择标准人口；具体方式、年份、来源和取值必须有独立的适用依据。无依据时只给候选与适用条件，不写成已确认或已确定，不默认或暂按某年人口，继续交付其他原定内容。"),
         PLAN_STRUCTURE_INVALID("summary 为非空字符串且不超过五百字符，questions 数组最多八项，不展示内部实现术语。"),
         PLAN_QUESTION_INVALID("问题 ID 唯一且仅含英文字母、数字、下划线或连字符，最长六十四字符；question 非空且最长三百字符，hint 最长五百字符；type 合法；最多四个简短示例。题干和 hint 不展示 TemplateCode、模板枚举代码、选择任务模板、确认缺失维度、缺失维度等内部术语。"),
         PLAN_OPTION_INVALID("选项 ID 唯一且最长六十四字符；label 最长一百二十字符，description 和 recommendationReason 最长三百字符，answer 最长一千五百字符；选择题保留二至五项，FREE_TEXT 的 options 必须为空；多选答案合计含分隔符不能超过一千五百字符。"),
