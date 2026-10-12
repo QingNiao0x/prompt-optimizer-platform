@@ -25,7 +25,8 @@ public final class ProviderResponseValidationException extends ProviderException
     }
 
     private ProviderResponseValidationException(Reason reason, String field, Throwable cause, int modelAttempts) {
-        super(ProviderFailureType.INVALID_RESPONSE, reason == Reason.RULE_CONFLICT
+        super(ProviderFailureType.INVALID_RESPONSE, (reason == Reason.RULE_CONFLICT || reason == Reason.DATA_PROHIBITION_CONFLICT
+                || reason == Reason.METHOD_CONDITION_CONFLICT || reason == Reason.METHOD_PARAMETER_CONFLICT)
                 ? "模型返回结果与已明确的业务规则冲突，请重试。" : "模型返回结果未通过结构与安全校验", false, cause);
         this.reason = Objects.requireNonNull(reason, "reason must not be null");
         if (field == null || !field.matches("[A-Za-z][A-Za-z0-9_.\\[\\]]{0,119}")) {
@@ -67,6 +68,9 @@ public final class ProviderResponseValidationException extends ProviderException
         CONFIRMED_DECISION_MISSING("完整保留输入中用户已确认的答案和适用边界，不得替用户更改决定。"),
         RULE_CONFLICT("检查并改正执行要求与原始需求、明确确认答案及适用资料规则相反的内容；保留否定、条件、比较符、数值、单位和作用对象。取消保持原值不等于移除保持逻辑，向空字段补值不等于将字段清空。不得在另一段追加正确规则却保留矛盾指令。若原定交付为正文，直接改正 TASK 与 OUTPUT 中将其变为方案、提纲、问卷或等待补齐全部资料的指令；资料缺口仅限制对应内容，保留有依据的实质正文及用户明确的起草前确认要求。未决口径在正文、指标表、公式及伪代码中都保持未决，参数格写待确认，不填惯例、示例或临时默认口径；各指标分别命名参数，不套用通用分母，不把一项确认扩大到其他指标，仍须保留原定交付物。"),
         SOURCE_SCOPE_CONFLICT("资料取值与对象、属性、版本及适用条件分别核对。只写一版与另一版而未明确对应关系的资料，保持版本对应待核实；不得按出现次序绑定到具体版本或拼成统一规则。其他属性的版本证据不能证明本属性。"),
+        DATA_PROHIBITION_CONFLICT("保留用户禁止假设或虚构数据的要求，删除自行新增的测试、验证、演示或标注后可使用的例外；不能只在另一段重写禁令却保留例外。"),
+        METHOD_CONDITION_CONFLICT("依据未来数据分布选择检验是选择条件，不是禁止写检验名称；可说明候选名称和适用前提，不预先选定或承诺显著性。只有用户明确禁名时才保留该禁止。"),
+        METHOD_PARAMETER_CONFLICT("确认年龄标准化不等于选择标准人口；年份、来源和取值必须有独立的适用依据。无依据时只给候选与适用条件，不默认或暂按某年人口，继续交付其他原定内容。"),
         PLAN_STRUCTURE_INVALID("summary 为非空字符串且不超过五百字符，questions 数组最多八项，不展示内部实现术语。"),
         PLAN_QUESTION_INVALID("问题 ID 唯一且仅含英文字母、数字、下划线或连字符，最长六十四字符；question 非空且最长三百字符，hint 最长五百字符；type 合法；最多四个简短示例。题干和 hint 不展示 TemplateCode、模板枚举代码、选择任务模板、确认缺失维度、缺失维度等内部术语。"),
         PLAN_OPTION_INVALID("选项 ID 唯一且最长六十四字符；label 最长一百二十字符，description 和 recommendationReason 最长三百字符，answer 最长一千五百字符；选择题保留二至五项，FREE_TEXT 的 options 必须为空；多选答案合计含分隔符不能超过一千五百字符。"),

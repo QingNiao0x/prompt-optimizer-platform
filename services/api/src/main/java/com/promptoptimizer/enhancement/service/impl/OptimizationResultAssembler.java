@@ -166,6 +166,8 @@ public class OptimizationResultAssembler {
         if (!sections.keySet().containsAll(REQUIRED_TYPES)) {
             throw invalidResponse(Reason.REQUIRED_SECTIONS_MISSING, "sections");
         }
+        var requirementBoundaries = taskView.requirementBoundaries();
+        sections.forEach((type, section) -> requirementBoundaries.validate(section.content(), "sections." + type));
 
         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planConfirmed ? planAnswers : List.of());
         var resolvedState = ResolvedPlanState.from(planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), rawPrompt);
@@ -354,6 +356,16 @@ public class OptimizationResultAssembler {
                 ignored -> new PromptSection(PromptSectionType.ACCEPTANCE, "验收标准", template.acceptanceGuidance())
         );
         ExampleResultIntegrator.integrate(sections, taskView.examples());
+        String boundaryGuidance = requirementBoundaries.missingGuidance(sections.values().stream()
+                .map(PromptSection::content).collect(Collectors.joining("\n")));
+        if (!boundaryGuidance.isBlank()) {
+            PromptSection boundarySection = sections.get(PromptSectionType.CONSTRAINTS);
+            // 具体边界随复制正文保留；不增加待确认问卷，也不改换原定交付物。
+            String missing = boundaryGuidance.lines().filter(rule -> !PlanDecisionIntegrator.coveredRule(sections, rule))
+                    .collect(Collectors.joining("\n"));
+            if (!missing.isBlank()) sections.put(PromptSectionType.CONSTRAINTS,
+                    new PromptSection(boundarySection.type(), boundarySection.title(), boundarySection.content() + "\n" + missing));
+        }
 
         // 平台交付契约有唯一正文责任段；仅合并完整等价句，表格、代码和独立业务章节继续保护。
         var deliveryAuthority = new java.util.LinkedHashMap<PromptSectionType, String>();
@@ -380,6 +392,7 @@ public class OptimizationResultAssembler {
         // 平台补回后的视图仍须守住确认范围；不能只验证模型原文而漏掉自动追加的规则。
         sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
         sections.forEach((type, section) -> conditionalGuard.validate(section.content(), "sections." + type));
+        sections.forEach((type, section) -> requirementBoundaries.validate(section.content(), "sections." + type));
         List<PromptSection> ordered = List.of(PromptSectionType.values()).stream()
                 .map(sections::get)
                 .filter(section -> section != null)

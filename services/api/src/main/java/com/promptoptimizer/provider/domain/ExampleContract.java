@@ -11,10 +11,6 @@ import java.util.regex.Pattern;
  * @since 0.1.0
  */
 public record ExampleContract(Mode mode, String source, String guidance, @JsonIgnore boolean fictionalDataAllowed) {
-    private static final Pattern NO_FICTIONAL_DATA = Pattern.compile(
-            "(?:禁止|不得|不要|不允许|不能使用|不使用|拒绝).{0,12}(?:虚构|假设|模拟|编造)(?:的)?(?:数据|材料|信息|示例)"
-                    + "|\\b(?:no|do not|never)\\b[^.\\r\\n]{0,35}\\b(?:fictional|hypothetical|synthetic|made-up)\\b[^.\\r\\n]{0,20}\\b(?:data|examples?)\\b",
-            Pattern.CASE_INSENSITIVE);
     private static final Pattern PROHIBITION = Pattern.compile(
             "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带).{0,16}(?:示例|示范|例子)"
                     + "|\\b(?:no|without|do not|never)\\b[^.\\r\\n]{0,60}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
@@ -42,7 +38,7 @@ public record ExampleContract(Mode mode, String source, String guidance, @JsonIg
         if (STRICT_OUTPUT.matcher(instructions).find() && !requested) return new ExampleContract(
                 Mode.FORMAT_RESTRICTED, "STRICT_OUTPUT", "保持用户限定的输出形式，不追加示例或新增格式字段。");
         if (requested || enabled) {
-            boolean fictional = !NO_FICTIONAL_DATA.matcher(instructions).find();
+            boolean fictional = !RequirementBoundaryContract.prohibitsInventedData(instructions);
             String guidance = fictional ? REQUIRED_GUIDANCE : "提供与本次任务相关的输入与预期输出示例，并说明二者的对应关系。"
                     + "遵守用户禁止虚构的要求，不得使用虚构或假设数据；仅用可核实材料，缺少材料时提供不引入事实或数值的格式、符号示例。"
                     + "示例服务原定交付，不另增无关任务。";

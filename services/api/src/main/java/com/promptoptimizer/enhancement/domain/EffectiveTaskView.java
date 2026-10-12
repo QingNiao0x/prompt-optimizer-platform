@@ -1,6 +1,7 @@
 package com.promptoptimizer.enhancement.domain;
 
 import com.promptoptimizer.provider.domain.ExampleContract;
+import com.promptoptimizer.provider.domain.RequirementBoundaryContract;
 import com.promptoptimizer.template.domain.TaskIntent;
 import java.util.List;
 
@@ -38,12 +39,17 @@ public record EffectiveTaskView(String originalPrompt, String effectivePrompt, T
     public ModelInput modelInput() {
         return new ModelInput(intent, executionRequirements.stream().map(requirement -> new ModelRequirement(
                 requirement.questionId(), requirement.subject(), requirement.statement(), requirement.destination())).toList(),
-                pendingDecisions, examples);
+                pendingDecisions, examples, requirementBoundaries().guidance());
+    }
+
+    /** 各环节从同一有效输入取得禁止、选择条件和独立参数边界，不读取旧任务或客户端自报状态。 */
+    public RequirementBoundaryContract requirementBoundaries() {
+        return RequirementBoundaryContract.from(effectivePrompt, confirmedDecisions, facts);
     }
 
     /** 各模型适配器共用同一业务投影，不按供应商另行解释用户选择。 */
     public record ModelInput(TaskIntent intent, List<ModelRequirement> executionRequirements,
-            List<ConfirmedPlanDecision> pendingDecisions, ExampleContract examples) { }
+            List<ConfirmedPlanDecision> pendingDecisions, ExampleContract examples, String requirementBoundaryGuidance) { }
 
     /** 模型只需执行表述和责任段；已解决原题与原答案保留在服务端，不再重复灌入载荷。 */
     public record ModelRequirement(String questionId, String subject, String statement, PromptSectionType destination) { }
