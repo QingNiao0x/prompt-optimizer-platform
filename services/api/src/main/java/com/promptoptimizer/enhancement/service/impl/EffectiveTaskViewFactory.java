@@ -39,7 +39,8 @@ public final class EffectiveTaskViewFactory {
         var decisions = ConfirmedDecisionSet.from(answers);
         String current = ResolvedPlanState.from(decisions, original)
                 .reconcile(PlatformConstraintRenderer.taskInput(original));
-        var requirements = decisions.knownDecisions().stream().map(EffectiveTaskViewFactory::requirement).toList();
+        var known = decisions.knownDecisions();
+        var requirements = decisions.decisions().stream().flatMap(decision -> requirements(decision, known).stream()).toList();
         // 示例只读取用户指令及有效答案，附件中的“提供示例”不具有开关权限。
         String exampleInput = current + requirements.stream().map(ExecutionRequirement::statement)
                 .collect(java.util.stream.Collectors.joining("\n", "\n", ""));
@@ -47,6 +48,30 @@ public final class EffectiveTaskViewFactory {
                 TaskIntentResolver.resolve(template, original, decisions.knownDecisions()), decisions.decisions(),
                 requirements, decisions.pendingDecisions(), facts == null ? List.of() : facts,
                 ExampleContract.from(exampleInput, includeExamples));
+    }
+
+    /** 独立事实、委托和未确认边界按原句投影；真正裸短答仍绑定服务端问题的完整对象。 */
+    private static List<ExecutionRequirement> requirements(ConfirmedPlanDecision decision, List<ConfirmedPlanDecision> known) {
+        var independent = PlanAnswerSemantics.independentStatements(decision.answer());
+        if (!independent.isEmpty()) return independent.stream().map(statement -> {
+            PromptSectionType destination = switch (statement.kind()) {
+                case CURRENT_STATE -> PromptSectionType.BACKGROUND;
+                case DELEGATION -> PromptSectionType.TASK;
+                case NON_CONFIRMATION -> PromptSectionType.CONSTRAINTS;
+            };
+            // 原问题 ID 与文案保留来源；subject 不把回答自身的主语替换成未作答的参数名。
+            String subject = switch (statement.kind()) {
+                case CURRENT_STATE -> "用户说明";
+                case DELEGATION -> "委托要求";
+                case NON_CONFIRMATION -> "未确认边界";
+            };
+            return new ExecutionRequirement(decision.questionId(), decision.question(), subject,
+                    statement.text(), statement.text(), destination);
+        }).toList();
+        // 未进入独立句投影的回答复用原有部分确认分类，避免把已知现状改送到任务段。
+        return known.stream().filter(value -> java.util.Objects.equals(value.questionId(), decision.questionId())
+                && value.question().equals(decision.question())).findFirst().map(value -> List.of(requirement(value)))
+                .orElseGet(List::of);
     }
 
     /** 短答案补全实际问题对象；完整业务表述原样保留，避免“地区：采用年龄标准化”的错标签。 */

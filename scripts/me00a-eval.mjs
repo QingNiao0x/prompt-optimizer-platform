@@ -27,7 +27,7 @@ if (directRun) { try { await run(); process.exit(0); } catch (error) { console.e
 
 async function run() {
   const [version = 'baseline', round = '1', mode = 'direct', selected = 'all', selectedModels = 'all'] = process.argv.slice(2);
-  if (!/^(baseline|candidate[1234])$/.test(version) || !/^[12]$/.test(round)
+  if (!/^(baseline|candidate[12345])$/.test(version) || !/^[12]$/.test(round)
     || !['direct', 'plan'].includes(mode)) throw new Error('Invalid evaluation phase');
   const root = resolve('tmp/me00a-20261012');
   const phase = version === 'baseline' ? 'baseline' : 'candidateValidation';
@@ -156,7 +156,10 @@ async function run() {
           const directDir = resolve(dir, 'direct-equal-information'); await mkdir(directDir);
           const directRaw = sample.rawPrompt + (answers.length ? `\n\n本次测试实际确认信息（逐字题答）：\n${answerLog(answers)}` : '');
           const directCopy = await enhanced(sample, modelId, directDir, directRaw);
-          const directWork = await execute(directCopy, model, `${version}-${mode}-r${round}-${label}-direct-equal-information`);
+          // The direct comparator receives the same source files as R+ and P+; copied decisions remain untouched.
+          const directInput = enhancedExecutionInput(directCopy, sample);
+          await save(resolve(directDir, 'enhanced-input.md'), directInput);
+          const directWork = await execute(directInput, model, `${version}-${mode}-r${round}-${label}-direct-equal-information`);
           await save(resolve(directDir, 'work.md'), directWork.text); await save(resolve(directDir, 'execution.json'), directWork);
         }
         console.log(`DONE ${version} ${mode} ${label}`);

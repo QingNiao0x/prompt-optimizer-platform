@@ -1,0 +1,239 @@
+{
+  "status": 200,
+  "elapsedMs": 11434,
+  "body": {
+    "requestId": "1f27c134-4b36-4c5a-b0cb-bcfa9b463e4e",
+    "data": {
+      "summary": "已理解你要撰写一份尚未实施的研究设计方法部分：比较直接增强与 Plan 问答对提示词质量的影响，保留 4 类任务各 5 个共 20 个、每模式每任务重复 3 次、两名独立评审盲评、两组同信息公平对照，以及准确性、完整性、清晰度、可执行性和分歧处理等评价要求。为把方法部分写成可执行且不越界的方案，还需确认几项会改变研究口径或交付内容的决定。",
+      "questions": [
+        {
+          "id": "task_categories",
+          "question": "4 类任务分别是什么？",
+          "hint": "任务类别决定任务材料、评分维度和对照方式，需要你给出实际类别，不能由执行者代定。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：信息抽取、方案设计、文本改写、多步推理（仅为填写示例，请按你的研究实际填写）"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "plan_rounds",
+          "question": "Plan 问答的轮次与终止方式如何设定？",
+          "hint": "这直接决定 Plan 组与直接增强组的操作差异，也影响同信息对照如何提供确认信息。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "fixed_one",
+              "label": "固定一轮澄清",
+              "description": "每任务只进行一次澄清问答，取得回答后即生成。",
+              "answer": "Plan 组每任务固定进行一轮澄清问答，取得用户回答后生成结果。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "fixed_multi",
+              "label": "固定多轮澄清",
+              "description": "每任务进行固定轮数（如两轮）澄清问答后生成。",
+              "answer": "Plan 组每任务进行固定多轮澄清问答，达到预设轮数后生成结果。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "until_sufficient",
+              "label": "信息充分即止",
+              "description": "由提问方判断信息足够后终止，不预设固定轮数。",
+              "answer": "Plan 组持续澄清问答，直至信息足以生成结果时终止，不预设固定轮数。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other",
+              "label": "其他安排",
+              "description": "由你说明具体轮次或终止规则。",
+              "answer": "Plan 问答的轮次与终止方式按用户后续说明执行。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "parity_info_source",
+          "question": "公平对照两组获得的“相同确认信息”从哪里取得？",
+          "hint": "这决定同信息对照是否成立，也影响是否需要先封存实际确认答案。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "sealed_actual",
+              "label": "先封存实际答案再逐字提供",
+              "description": "先完成 Plan 问答并封存实际确认答案，再逐字提供给同信息各组。",
+              "answer": "先取得并封存 Plan 问答的实际确认答案，再逐字提供给获得相同确认信息的各组。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "researcher_written",
+              "label": "研究者预先撰写统一信息",
+              "description": "由研究者预先撰写一份统一确认信息，提供给同信息各组。",
+              "answer": "由研究者预先撰写统一确认信息，提供给获得相同确认信息的各组。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other",
+              "label": "其他来源",
+              "description": "由你说明确认信息的实际来源。",
+              "answer": "公平对照所用相同确认信息的来源按用户后续说明执行。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "parity_interaction",
+          "question": "获得相同确认信息的对照组是否仍可与系统交互？",
+          "hint": "这决定同信息对照与 Plan 组在交互上的差异，是研究设计的关键边界。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "no_interaction",
+              "label": "不再交互",
+              "description": "对照组只接收统一确认信息，不再进行澄清问答。",
+              "answer": "获得相同确认信息的对照组只接收统一确认信息，不再进行澄清问答。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "may_interact",
+              "label": "仍可交互",
+              "description": "对照组接收统一确认信息后，仍可按各自流程与系统交互。",
+              "answer": "获得相同确认信息的对照组接收统一确认信息后，仍可按各自流程与系统交互。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other",
+              "label": "其他安排",
+              "description": "由你说明对照组的交互规则。",
+              "answer": "获得相同确认信息的对照组是否交互按用户后续说明执行。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "reviewer_agreement",
+          "question": "两名评审评分不一致时如何处理？",
+          "hint": "分歧处理方式影响评分汇总和结果解释，需要你确认实际规则。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "discuss_consensus",
+              "label": "讨论达成一致",
+              "description": "两名评审讨论后形成一致评分，仍保留原始评分记录。",
+              "answer": "两名评审对不一致评分进行讨论并达成一致，同时保留原始评分记录。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "third_reviewer",
+              "label": "引入第三名评审",
+              "description": "分歧较大时由第三名评审裁定或取三人多数。",
+              "answer": "两名评审评分不一致时引入第三名评审裁定或取多数意见。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "average",
+              "label": "取平均分",
+              "description": "直接取两名评审评分的平均值，不额外裁定。",
+              "answer": "两名评审评分不一致时直接取两名评审评分的平均值。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "report_both",
+              "label": "分别报告并分析一致性",
+              "description": "不合并分歧，分别报告两名评审评分并分析评分者间一致性。",
+              "answer": "不合并分歧，分别报告两名评审评分并分析评分者间一致性。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other",
+              "label": "其他规则",
+              "description": "由你说明分歧处理规则。",
+              "answer": "评审分歧处理按用户后续说明执行。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "analysis_plan",
+          "question": "主要分析是否包含效应量、置信区间和配对比较？",
+          "hint": "这决定方法部分是否需要写明分析指标，同时仍遵守不预设显著性的要求。",
+          "type": "MULTIPLE_CHOICE",
+          "options": [
+            {
+              "id": "effect_size",
+              "label": "报告效应量",
+              "description": "在结果中报告效应量及其置信区间。",
+              "answer": "分析中报告效应量及其置信区间。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "paired_test",
+              "label": "配对比较",
+              "description": "按任务或重复的配对结构进行配对比较。",
+              "answer": "分析中按任务或重复的配对结构进行配对比较。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "descriptive",
+              "label": "描述性统计",
+              "description": "报告各条件的描述性统计量。",
+              "answer": "分析中报告各条件的描述性统计量。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "no_prespecify",
+              "label": "不预先指定",
+              "description": "仅说明依据未来数据分布和配对结构选择检验，不预先列出具体分析指标。",
+              "answer": "不预先指定具体分析指标，仅说明依据未来数据分布和配对结构选择检验。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 11394,
+      "planId": "bb3a3739-a65b-496f-a85c-b5269722716d",
+      "planningContext": {
+        "contextId": "1410fd7d-fffa-4fa2-bdbc-300f3bedf935",
+        "version": "sha256:88e9ec82ccf032927c627c2e880a44237fdd74fd45865219f12aa46427ab38d1"
+      },
+      "expiresAt": "2026-10-12T18:39:31.852514Z"
+    }
+  }
+}

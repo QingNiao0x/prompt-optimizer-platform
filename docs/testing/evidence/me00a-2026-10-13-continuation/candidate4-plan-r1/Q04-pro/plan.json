@@ -1,0 +1,170 @@
+{
+  "status": 200,
+  "elapsedMs": 10843,
+  "body": {
+    "requestId": "9f8ac9e2-7f2a-42ed-bf8c-4f7ed31909fa",
+    "data": {
+      "summary": "已理解目标是设计一项公平比较“先提问再增强”与“直接增强”的研究方案；常规方法、评分、分配与分析可由执行者提出推荐方案，但真实授权、来源冲突及用户明确保留的参数仍需确认。",
+      "questions": [
+        {
+          "id": "participant_pool",
+          "question": "研究参与者从哪里招募？",
+          "hint": "影响样本量、招募可行性和伦理申请。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "某大学本科生，通过校内平台招募",
+            "某公司产品团队内部志愿者"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "task_source",
+          "question": "用于测试的原始任务从哪里获取？",
+          "hint": "需要真实任务以保证外部效度，并避免两组任务难度差异。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "从公开数据集中抽取100个真实用户请求",
+            "由合作企业提供脱敏工单"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "outcome_metric",
+          "question": "主要结果指标是什么？",
+          "hint": "决定评分方式和统计功效。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "human_rating",
+              "label": "人工评分",
+              "description": "由评审按统一标准对生成结果打分",
+              "answer": "主要结果指标为人工评分，由评审按统一标准对生成结果打分",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "task_success",
+              "label": "任务成功率",
+              "description": "以任务是否成功完成作为二元指标",
+              "answer": "主要结果指标为任务成功率，以任务是否成功完成作为二元指标",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "efficiency",
+              "label": "效率指标",
+              "description": "如完成时间、修改次数等",
+              "answer": "主要结果指标为效率指标，如完成时间、修改次数等",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "comparison_design",
+          "question": "比较设计采用哪种方式？",
+          "hint": "影响统计模型和样本量计算。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "between_subjects",
+              "label": "被试间设计",
+              "description": "不同参与者分别使用两种增强方式",
+              "answer": "比较设计采用被试间设计，不同参与者分别使用两种增强方式",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "within_subjects",
+              "label": "被试内设计",
+              "description": "同一参与者先后使用两种增强方式，任务随机分配",
+              "answer": "比较设计采用被试内设计，同一参与者先后使用两种增强方式，任务随机分配",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "question_flow",
+          "question": "“先提问再增强”中的关键问题由谁生成？",
+          "hint": "影响实验操纵的标准化和可复制性。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "fixed_questions",
+              "label": "固定问题集",
+              "description": "对所有任务使用同一组预先设计的问题",
+              "answer": "关键问题由固定问题集生成，对所有任务使用同一组预先设计的问题",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "llm_generated",
+              "label": "LLM动态生成",
+              "description": "由大模型根据任务内容动态生成问题",
+              "answer": "关键问题由大模型根据任务内容动态生成",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "ethics_approval",
+          "question": "是否需要伦理审查批准？",
+          "hint": "涉及人类参与者研究通常需要，但具体取决于机构和数据性质。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "required",
+              "label": "需要",
+              "description": "研究开始前必须获得伦理委员会批准",
+              "answer": "研究需要伦理审查批准，开始前必须获得伦理委员会批准",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "not_required",
+              "label": "不需要",
+              "description": "根据机构规定可豁免",
+              "answer": "研究不需要伦理审查批准，根据机构规定可豁免",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "unknown",
+              "label": "尚未确定",
+              "description": "需要进一步咨询机构伦理委员会",
+              "answer": "伦理审查要求尚未确定，需要进一步咨询机构伦理委员会",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 10803,
+      "planId": "791b261c-dca8-4dcd-85e0-0d833ae220c1",
+      "planningContext": {
+        "contextId": "ed9b56fe-5359-4cc3-9a9d-b11bdb0934de",
+        "version": "sha256:475adc38217386972609f60a6d4f1835245ca3121e44b8d2e7998b8cbe0b591f"
+      },
+      "expiresAt": "2026-10-12T18:29:26.525048500Z"
+    }
+  }
+}

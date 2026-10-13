@@ -56,6 +56,23 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
         }
     }
 
+    /**
+     * 将本任务已有研究主题的来源用于评价步骤指导，不重新猜测对象或增加评分参数。
+     * 这里只指导生成；来源和传递可本地校验，模型是否正确绑定仍须真实作品验证。
+     */
+    public String evaluationGuidance() {
+        String sources = anchors.stream().filter(anchor -> anchor.role() == Role.RESEARCH_TOPIC)
+                .map(anchor -> anchor.origin() + "[" + anchor.start() + "," + anchor.end() + ")")
+                .collect(java.util.stream.Collectors.joining("、"));
+        if (sources.isEmpty()) return "";
+        return "\n本任务评价对象绑定：依据 taskView.userMeaningAnchors 中 RESEARCH_TOPIC 的来源 " + sources
+                + "，结合有效确认，仅当原任务包含比较、评审或评分时，在 TASK 原有评价步骤中落实待评对象或产物、"
+                + "评审所见材料及各项指标作用的对象。主题在背景出现不能替代步骤中的对象绑定。"
+                + "原任务要求盲法时，说明对应材料如何盲化；未要求评价时不增加评分流程。"
+                + "对象以用户任务为准，包括用户明确要求评价的下游作品；多个对象的主次关系未定时保持未决。"
+                + "已明确的表述保留并使用一次，不代填未知评分尺度、参数，不增加独立尾注。";
+    }
+
     /** 在尾注和平台条款加入之前拒绝已复现的受众移位，不假称覆盖全部语义误绑定。 */
     public void validate(String content, String field) {
         if (anchors.stream().noneMatch(anchor -> anchor.role() == Role.RESEARCH_TOPIC)) return;
@@ -66,7 +83,7 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
                 // 否定、引用和明确推荐不宣称这是用户原来指定的研究对象。
                 if (prefix.matches(".*(?:不得|不能|不是|并非|例如|引用|建议|可考虑|候选).*")) continue;
                 for (Anchor audience : anchors) {
-                    if (audience.role() != Role.AUDIENCE || !subject.group(1).contains(audience.text())) continue;
+                    if (audience.role() != Role.AUDIENCE || !namesAudienceAsSubject(subject.group(1), audience.text())) continue;
                     boolean alsoExplicitTopic = anchors.stream().anyMatch(anchor -> anchor.role() == Role.RESEARCH_TOPIC
                             && anchor.text().contains(audience.text()));
                     if (!alsoExplicitTopic && !confirmedSubjects.contains(audience.text())) throw new ProviderResponseValidationException(
@@ -74,6 +91,17 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
                 }
             }
         }
+    }
+
+    /** 只排除明确的独立写作受众子句；逗号列举的研究人群和后续对象仍参与校验。 */
+    private boolean namesAudienceAsSubject(String subject, String audience) {
+        String namedAudience = Pattern.quote(audience);
+        // 逗号本身不是对象边界：“工程师，研究生”仍是研究对象列举。
+        // 只有完整的受众谓词及其本次已知受众才豁免，避免“面向研究生开展招募”被误作写作说明。
+        String audienceClause = "[，,]\\s*(?:(?:(?:本文|本报告|本文稿|本方案|本方法正文)(?:仅)?(?:面向|供)"
+                + "|(?:本文的)?(?:写作受众|目标读者|读者)(?:为|是))\\s*" + namedAudience + "(?:读者|阅读)?"
+                + "|(?:仅)?面向\\s*" + namedAudience + "(?:读者|阅读))\\s*(?=[，,]|$)";
+        return subject.replaceAll(audienceClause, "").contains(audience);
     }
 
     /** 原文片段是依据，不是模型推理过程；角色类型防止同一词被转用于另一对象。 */

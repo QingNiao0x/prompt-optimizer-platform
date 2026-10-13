@@ -1,0 +1,793 @@
+{
+  "reviewer": "two",
+  "identity": "independent Codex AI, not human expert",
+  "results": [
+    {
+      "label": "R001",
+      "scores": {
+        "A": {
+          "accuracy": 2,
+          "completeness": 4,
+          "clarity": 3,
+          "executability": 2
+        },
+        "B": {
+          "accuracy": 2,
+          "completeness": 3,
+          "clarity": 3,
+          "executability": 2
+        },
+        "C": {
+          "accuracy": 1,
+          "completeness": 2,
+          "clarity": 3,
+          "executability": 1
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "BOTH_FAIL",
+          "reason": "A的两公平对照分别使用预制信息和各自提问回答，未封存并复用相同实际答案；B将240份下游生成文本作为评价对象，且把存在信息差的Direct与Plan解释为问答机制本身效应。二者均未落实核心比较。"
+        },
+        "AC": {
+          "verdict": "BOTH_FAIL",
+          "reason": "A未实现同一实际确认信息流；C把Plan问答改为先输出计划再作答，并仅提供等量过程提示。"
+        },
+        "BC": {
+          "verdict": "BOTH_FAIL",
+          "reason": "B替换了提示词质量的主要评价对象；C同时改变Plan干预、样本单位和同信息对照。"
+        }
+      },
+      "severe": [
+        {
+          "work": "A",
+          "reason": "公平对照A一次提供研究者整理信息，B自行提问后一次回复；后文又建议预制标准确认信息，未确保两组逐字获得同一份实际答案。正文约1102汉字，长度达标。"
+        },
+        {
+          "work": "B",
+          "reason": "明确让两名评审评240份“生成文本”，未评最终提示词，偏离提示词质量；并称Direct与Plan可检验问答机制本身效应，未排除其额外信息。正文约1037汉字达标。"
+        },
+        {
+          "work": "C",
+          "reason": "Plan变成“先输出计划，再依据计划作答”，公平对照为任务理解提示/阶段检查提示及“等量”元认知信息；引入每名参与者作答与另定样本量，非原定20任务的提示词问答实验。正文约895汉字达标。"
+        }
+      ]
+    },
+    {
+      "label": "R002",
+      "scores": {
+        "A": {
+          "accuracy": 2,
+          "completeness": 4,
+          "clarity": 3,
+          "executability": 2
+        },
+        "B": {
+          "accuracy": 2,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 2
+        },
+        "C": {
+          "accuracy": 2,
+          "completeness": 4,
+          "clarity": 3,
+          "executability": 2
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "BOTH_FAIL",
+          "reason": "A仅保证回答和信息卡覆盖同类信息，不能保证实际内容相同；B只让提问组获得答案，并把不同流程说明当作信息公平。"
+        },
+        "AC": {
+          "verdict": "BOTH_FAIL",
+          "reason": "A近似等信息而无答案复用；C更明确禁止Direct使用Q-A额外实际回答，两者均不能支持同信息下流程收益的解释。"
+        },
+        "BC": {
+          "verdict": "BOTH_FAIL",
+          "reason": "B未共享实际答案；C共享基础表后又单组追加回答且禁止另一组访问。两者公平性声明均不符合具体信息流。"
+        }
+      },
+      "severe": [
+        {
+          "work": "A",
+          "reason": "条件A获得自由回答且可跳过，B获得预制信息卡；§4.4只要求信息域“≈”，§10.2承认实际可能更多或更少，未提供严格公平的配套分析。多处“用户确认”还把真实任务和同信息细则写成已确认，实际答案未确认这些。"
+        },
+        {
+          "work": "B",
+          "reason": "§2.7只B组回答4问题，A无实际答案；公平性却以两组看到不同的系统流程说明“尽量对等”代替实际信息对等。"
+        },
+        {
+          "work": "C",
+          "reason": "§2.6明确Direct“不得看到或使用”Q-A额外回答，却声称两组逐字相同且只有流程差异，造成核心因果解释错误。"
+        }
+      ]
+    },
+    {
+      "label": "R003",
+      "scores": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "TIE",
+          "reason": "均仅输出两行译文，保留周五15点与周四之前的时间边界；confirm your attendance是自然译法。"
+        }
+      },
+      "severe": []
+    },
+    {
+      "label": "R004",
+      "scores": {
+        "A": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 3
+        },
+        "B": {
+          "accuracy": 2,
+          "completeness": 3,
+          "clarity": 3,
+          "executability": 2
+        },
+        "C": {
+          "accuracy": 4,
+          "completeness": 3,
+          "clarity": 4,
+          "executability": 3
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "A_WIN",
+          "reason": "A明确模型提问、信息提供者作答及封存逐字相同确认信息，并保持提示词评价；B将Plan定义为先规划后生成且把提答角色留待规定。"
+        },
+        "AC": {
+          "verdict": "A_WIN",
+          "reason": "A正文约1031汉字符合限长；C约1260汉字（即使扣除标题仍超1200），违反明确正文上限。A与C均有对照流程及评分终值待细化，但A满足硬性格式。"
+        },
+        "BC": {
+          "verdict": "BOTH_FAIL",
+          "reason": "B实质改写Plan为规划过程；C超过正文1200汉字硬上限。B附表剔除后约1183汉字，不能误判为超长。"
+        }
+      },
+      "severe": [
+        {
+          "work": "B",
+          "reason": "称Plan为“先规划后生成”，澄清问答只是“可包含”，改变用户研究的Plan问答机制；未给同信息两组具体增强流程。"
+        },
+        {
+          "work": "C",
+          "reason": "正文约1260汉字、无附表可扣除，超过800至1200汉字上限。"
+        }
+      ]
+    },
+    {
+      "label": "R005",
+      "scores": {
+        "A": {
+          "accuracy": 3,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 3
+        },
+        "B": {
+          "accuracy": 3,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 3
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "BOTH_FAIL",
+          "reason": "两者都把“周四之前”译为by Thursday，容许周四当天，改变明确时间边界；正确边界应before Thursday。"
+        }
+      },
+      "severe": [
+        {
+          "work": "A",
+          "reason": "“confirm by Thursday”放宽周四之前的截止边界。"
+        },
+        {
+          "work": "B",
+          "reason": "“confirm ... by Thursday”同样放宽周四之前的截止边界。"
+        }
+      ]
+    },
+    {
+      "label": "R006",
+      "scores": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "TIE",
+          "reason": "相同正文，收件人、今日17点前、本周项目进度及汇总目的完整；均少于80汉字且无占位符或多余解释。"
+        }
+      },
+      "severe": []
+    },
+    {
+      "label": "R007",
+      "scores": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 4,
+          "executability": 4
+        },
+        "B": {
+          "accuracy": 4,
+          "completeness": 5,
+          "clarity": 3,
+          "executability": 3
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "A_WIN",
+          "reason": "A可作完整委婉邮件，只有署名待填；B附额外解释、职位和联系方式等无必要占位，增加直接发送前清理成本。开放请求未禁止占位符，不能仅据占位认定严重失败。"
+        }
+      },
+      "severe": []
+    },
+    {
+      "label": "R008",
+      "scores": {
+        "A": {
+          "accuracy": 3,
+          "completeness": 2,
+          "clarity": 3,
+          "executability": 2
+        },
+        "B": {
+          "accuracy": 3,
+          "completeness": 3,
+          "clarity": 3,
+          "executability": 2
+        },
+        "C": {
+          "accuracy": 2,
+          "completeness": 3,
+          "clarity": 3,
+          "executability": 2
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "BOTH_FAIL",
+          "reason": "A正文约1433汉字超限且问答操作待定；B从20任务的每模式3次转成每名参与者都完成全部重复，参与者样本未定义，四条件又写成二模式模型，核心设计不一致。"
+        },
+        "AC": {
+          "verdict": "BOTH_FAIL",
+          "reason": "A明显超限；C将每类5任务随机分到四组与同任务每模式均重复3次相冲突。"
+        },
+        "BC": {
+          "verdict": "BOTH_FAIL",
+          "reason": "B额外引入未定义参与者层及2模式/4条件不一致；C按任务分组破坏同任务配对。双方均需重写实际运行安排。"
+        }
+      },
+      "severe": [
+        {
+          "work": "A",
+          "reason": "无附表，正文连标题约1433汉字，扣标题仍明显超过1200；以“结构化规划”表述Plan作用，未明确谁提问谁回答。"
+        },
+        {
+          "work": "B",
+          "reason": "“每名参与者在每种模式下完成每个任务”另加样本维度却无参与者人数与职责；总体2模式设计和四条件比较、统计固定效应无法对应。"
+        },
+        {
+          "work": "C",
+          "reason": "“每类5个任务内随机分配至四组条件”意味着每任务仅一组，无法同时实现随后“每任务每模式重复3次”的20任务完整配对设计。"
+        }
+      ]
+    },
+    {
+      "label": "R009",
+      "scores": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "TIE",
+          "reason": "均友好且完整保留小林、今天17点前、本周进度与汇总目的，正文远低于80汉字；少量礼貌措辞差异不构成实质优劣。"
+        }
+      },
+      "severe": []
+    },
+    {
+      "label": "R010",
+      "scores": {
+        "A": {
+          "accuracy": 1,
+          "completeness": 2,
+          "clarity": 3,
+          "executability": 1
+        },
+        "B": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "B_WIN",
+          "reason": "B明确增强器提问、用户回答及封存实际答案供两对照逐字使用，评价提示词，主体含小标题约801汉字；A把Plan变成先规划后作答，还加入未定义参与者维度，约1584汉字明显超限。B仍需固定具体对照流程、量尺与分歧阈值。"
+        }
+      },
+      "severe": [
+        {
+          "work": "A",
+          "reason": "“Plan（先规划后作答）”及“先输出简要计划”替代用户问答；每名参与者每任务3次另加未定义样本层。无附表，正文约1584汉字超1200。"
+        }
+      ]
+    },
+    {
+      "label": "R011",
+      "scores": {
+        "A": {
+          "accuracy": 3,
+          "completeness": 4,
+          "clarity": 3,
+          "executability": 2
+        },
+        "B": {
+          "accuracy": 2,
+          "completeness": 3,
+          "clarity": 4,
+          "executability": 2
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "BOTH_FAIL",
+          "reason": "A尝试封存同信息对照，但自然阶段每任务仅随机进入一流程，B任务没有R却要求每任务构造含R的信息包，且同信息A取消问答后独立操纵不清；B没有实际答案共享，反以给直接组强加30秒阅读补偿公平。"
+        }
+      },
+      "severe": [
+        {
+          "work": "A",
+          "reason": "§3.4每任务随机分配A或B，R仅A任务产生；§3.2又要求对每任务用封存R构造同等包，无B任务R来源。A-同等不再问答却仍把是否主动问答定义为自变量，待评机制未闭合。"
+        },
+        {
+          "work": "B",
+          "reason": "只有引导组获得用户回答；建议直接组强制阅读30秒“平衡总时长”，不能控制实际信息差且另加干预。又无功效依据断言30人“足够”、一周能跑完。"
+        }
+      ]
+    },
+    {
+      "label": "R012",
+      "scores": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "TIE",
+          "reason": "两作品逐字相同，都是仅含name字符串和age整数的严格JSON。"
+        }
+      },
+      "severe": []
+    },
+    {
+      "label": "R013",
+      "scores": {
+        "A": {
+          "accuracy": 4,
+          "completeness": 5,
+          "clarity": 4,
+          "executability": 4
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 4,
+          "executability": 5
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "B_WIN",
+          "reason": "均正确计算20%并区分核查方向；B更精确说明同币种不等于恒定汇率，未把20%无行业基准地定性为“中高速”“多数行业积极信号”。A的条件假设并非编造事实，但定性略越界。"
+        }
+      },
+      "severe": []
+    },
+    {
+      "label": "R014",
+      "scores": {
+        "A": {
+          "accuracy": 3,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 3
+        },
+        "B": {
+          "accuracy": 2,
+          "completeness": 3,
+          "clarity": 3,
+          "executability": 2
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "A_WIN",
+          "reason": "A给出可开展的自然使用三条件比较、任务平衡、盲评及成本指标，较B全面把关键参数交回用户更可执行。A的C3只能控制补充机会，不能保证相同实际信息，不能据此解释纯粹的信息等同下方法效应；这限制机制解释，但仍可研究原问的总体有用性。B还将新增要求冒称用户确认。"
+        }
+      },
+      "severe": [
+        {
+          "work": "B",
+          "reason": "§12.2称用户要求“评价对象为提示词质量”“区分自然使用与同等信息”“评分尺度未指定保持未决”等，原始请求没有这些且无实际题答。把建议写成用户要求，并据此不推荐评分/任务/轮次等必要参数。"
+        }
+      ]
+    },
+    {
+      "label": "R015",
+      "scores": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 4,
+          "executability": 5
+        },
+        "B": {
+          "accuracy": 4,
+          "completeness": 5,
+          "clarity": 4,
+          "executability": 5
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "TIE",
+          "reason": "均正确计算20%，明确现有资料不能解释驱动及质量，并提供有用核查步骤。A边界更严谨但重复较多；B条件量价例子帮助理解且用户未禁止假设说明，不能将这些“若”句视为真实新增数据；B“尚未剔除”可改为“无法确认是否剔除”。"
+        }
+      },
+      "severe": []
+    },
+    {
+      "label": "R016",
+      "scores": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 4,
+          "executability": 5
+        },
+        "B": {
+          "accuracy": 4,
+          "completeness": 5,
+          "clarity": 4,
+          "executability": 4
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "A_WIN",
+          "reason": "A保持列报币种与汇率影响区分，量价、市场与回款的核查证据明确；B无行业基准地定性“中高速”，并把并表和会计确认与“收入虚增”并列，倾向不必要的负面归因。条件性风险本身不算伪造事实。"
+        }
+      },
+      "severe": []
+    },
+    {
+      "label": "R017",
+      "scores": {
+        "A": {
+          "accuracy": 1,
+          "completeness": 2,
+          "clarity": 3,
+          "executability": 1
+        },
+        "B": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "C": {
+          "accuracy": 2,
+          "completeness": 3,
+          "clarity": 4,
+          "executability": 2
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "B_WIN",
+          "reason": "B保留真实提问与用户回答、提示词评价、20任务×4条件×3重复及盲评，约1103汉字；A改成操作者规划，两个对照信息来源还不同，正文超限。B“设三个”实际列四个为明显笔误，需改但不掩盖主设计。"
+        },
+        "AC": {
+          "verdict": "BOTH_FAIL",
+          "reason": "A替换Plan机制、对照信息不同且超长；C开篇和流程均改为生成回答质量，未保留提示词质量主评价。"
+        },
+        "BC": {
+          "verdict": "B_WIN",
+          "reason": "B评240条优化提示词且有明确操作；C转为回答质量，且同信息Plan组不再提问、流程差异不明确。"
+        }
+      },
+      "severe": [
+        {
+          "work": "A",
+          "reason": "Plan为操作者先写规划；对照A拿Plan信息、对照B拿直接增强信息，并非同一实际确认信息。附表剔除后约1633汉字超限，还把固定20任务3次写成可按功效调整。"
+        },
+        {
+          "work": "C",
+          "reason": "研究目标写作“四种提示词增强模式对生成回答质量的影响”，直接增强流程亦“生成回答”，把用户要求的提示词质量替换为答案质量。"
+        }
+      ]
+    },
+    {
+      "label": "R018",
+      "scores": {
+        "A": {
+          "accuracy": 2,
+          "completeness": 4,
+          "clarity": 3,
+          "executability": 2
+        },
+        "B": {
+          "accuracy": 2,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 3
+        },
+        "C": {
+          "accuracy": 2,
+          "completeness": 3,
+          "clarity": 3,
+          "executability": 2
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "BOTH_FAIL",
+          "reason": "A以相同实际确认信息作为主问题前提，却只向问答组追加2至5轮答案；B明确把可为空的自由补充组说成控制额外信息量，实际只是增加补充机会，不能完成其核心机制归因。"
+        },
+        "AC": {
+          "verdict": "BOTH_FAIL",
+          "reason": "A只共享起始信息而额外答案仅问答组得到；C进一步明示DE不得获得QAE实际回答。二者的同信息主比较都不成立。"
+        },
+        "BC": {
+          "verdict": "BOTH_FAIL",
+          "reason": "B将补充机会等同于控制实际信息量；C声称同信息却禁止直接组读取新增回答，均缺少可识别的公平机制比较。"
+        }
+      },
+      "severe": [
+        {
+          "work": "A",
+          "reason": "主假设要求相同实际确认信息；§5至§6只问答组获得新答案，直接组无复用通道。还将“本次实际确认信息逐字题答为空”写成已知事实，而task.json提供了6条实际题答。"
+        },
+        {
+          "work": "B",
+          "reason": "C可自由补充或完全不补充，B定向回答问题；文中反复断言C控制“额外信息量”，并据此识别提问本身增量，未控制实际答案内容。"
+        },
+        {
+          "work": "C",
+          "reason": "§4.4明确“若QAE组用户回答了问题，DE组不得获得这些回答”，与H1相同实际确认信息及公平性声明直接冲突。"
+        }
+      ]
+    },
+    {
+      "label": "R019",
+      "scores": {
+        "A": {
+          "accuracy": 3,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 3
+        },
+        "B": {
+          "accuracy": 1,
+          "completeness": 2,
+          "clarity": 3,
+          "executability": 1
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "A_WIN",
+          "reason": "A保留问答和提示词质量、规定240份及约1001汉字；B将Plan变为模型计划、对照仅等量不同信息、评价回答且约1288汉字超限。A仍未充分说明封存信息来源与Plan同信息流程，仲裁后仍用两原评审均值也须澄清。"
+        }
+      },
+      "severe": [
+        {
+          "work": "B",
+          "reason": "要求模型先制定回答计划；对照A给背景约束、B给格式标准，仅“等量”非同一答案；盲评240条回答替代提示词评价。正文约1288汉字，无附表，扣除标题仍超1200。"
+        }
+      ]
+    },
+    {
+      "label": "R020",
+      "scores": {
+        "A": {
+          "accuracy": 3,
+          "completeness": 4,
+          "clarity": 3,
+          "executability": 3
+        },
+        "B": {
+          "accuracy": 3,
+          "completeness": 4,
+          "clarity": 3,
+          "executability": 3
+        },
+        "C": {
+          "accuracy": 1,
+          "completeness": 3,
+          "clarity": 3,
+          "executability": 1
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "TIE",
+          "reason": "A共享初始信息后仅问答组获取新答案，B明确承认信息差是干预组成且无法分离提问与信息增益；两者可研究原问的自然使用总效应，均不能充当严格同实际答案的方法对照。A单一任务限制推广且手动/LLM主方案表述冲突；B匹配不同任务却称原始信息完全一致，须改。拟议样本与条件效应量未冒充实际观察，不以长篇或参数数量加分。"
+        },
+        "AC": {
+          "verdict": "A_WIN",
+          "reason": "A两组采用相同增强指南及一轮增强，信息差作为问答总干预可解释；C直接组由人手写、问答组由系统生成且允许编辑，AI润色仅可选，混入工具与修改机会差异。"
+        },
+        "BC": {
+          "verdict": "B_WIN",
+          "reason": "B同一批增强者交叉承担两流程、控制修订并承认信息差的解释界限；C增强主体、AI辅助和修改机会不一致，无法归因于是否先澄清。"
+        }
+      },
+      "severe": [
+        {
+          "work": "C",
+          "reason": "§2.4至2.5：直接组参与者自行撰写，问答组系统自动产草稿后再编辑；直接组仅可选AI润色。比较同时改变生成主体、工具辅助和修订机会，核心公平性失败。“理论上可达同等信息”也不保证实际答案一致。"
+        }
+      ]
+    },
+    {
+      "label": "R021",
+      "scores": {
+        "A": {
+          "accuracy": 3,
+          "completeness": 5,
+          "clarity": 3,
+          "executability": 3
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 4
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "B_WIN",
+          "reason": "B直接给出委婉邮件，保留原本未指定期限；A自行加入“今天内”截止时间、汇总团队用途及额外示例，需要用户删改。"
+        }
+      },
+      "severe": [
+        {
+          "work": "A",
+          "reason": "将用户未指定的期限写为“今天内发给我就可以”，实际邮件增加未经依据的时间承诺。"
+        }
+      ]
+    },
+    {
+      "label": "R022",
+      "scores": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "TIE",
+          "reason": "均仅输出正确JSON对象，字段名、字段数、值和类型全部一致。"
+        }
+      },
+      "severe": []
+    }
+    ,
+    {
+      "label": "R023",
+      "scores": {
+        "A": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 3
+        },
+        "B": {
+          "accuracy": 3,
+          "completeness": 2,
+          "clarity": 3,
+          "executability": 2
+        },
+        "C": {
+          "accuracy": 2,
+          "completeness": 3,
+          "clarity": 3,
+          "executability": 2
+        }
+      },
+      "comparisons": {
+        "AB": {
+          "verdict": "A_WIN",
+          "reason": "A给出增强器提问、用户作答、封存实际答案再逐字分发的流程及推荐轮次，约1061汉字；B把确认信息来源等关键步骤留待进一步确认，正文约1283汉字且无附表，超1200上限。A仍需补齐四条件随机顺序及评分合成规则。"
+        },
+        "AC": {
+          "verdict": "A_WIN",
+          "reason": "A明确评提示词且保留用户问答和同实际答案；C虽封存同一问答且正文约1029汉字，但评价定义变为“回答与任务要求”和“回答可直接用于后续操作”，对照流程也写为直接完成任务，评价对象偏离。"
+        },
+        "BC": {
+          "verdict": "BOTH_FAIL",
+          "reason": "B正文超限且未落实确认信息取得；C对照和评价操作转向回答/完成任务，未保持提示词质量评价的一致性。"
+        }
+      },
+      "severe": [
+        {
+          "work": "B",
+          "reason": "正文约1283汉字、无附表，扣除独立标题后仍超过1200；公平对照确认信息来源仅写为实施前进一步确认，未给推荐取得流程。"
+        },
+        {
+          "work": "C",
+          "reason": "开篇声称提示词质量，操作定义却以“回答与任务要求及事实依据的一致”“回答可直接用于后续操作”评分，对照组“直接使用该信息完成任务”，没有明确实际待评优化提示词，核心对象不一致。"
+        }
+      ]
+    }
+  ]
+}

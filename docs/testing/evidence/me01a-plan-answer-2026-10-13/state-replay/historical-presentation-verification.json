@@ -1,0 +1,40 @@
+{
+  "status": "HISTORICAL_96_VERIFIED_NOT_RELABELED_CURRENT",
+  "historical": {
+    "skipped": 0,
+    "tests": 96,
+    "verification": "导出公开工具事件中命令和退出码已核对；旧96只属于历史版本。",
+    "command": "mvn -o -q -f services/api/pom.xml -Dtest=MissingPresentationResponseTest,OpenAiCompatiblePromptEnhancementProviderTest,TaskMeaningRegressionTest,DelegatedResearchQuestionRegressionTest,OptimizationResultAssemblerTest,PlanningSessionServiceTest test",
+    "errors": 0,
+    "savedLog": "tmp/me00a-20261012/presentation-targeted-green.log",
+    "failures": 0,
+    "recordedWindow": "2026-10-12 23:39–23:44 +08:00",
+    "exitCode": 0,
+    "locatedLines": "2153-2156",
+    "source": "C:/Users/Administrator/Desktop/Codex会话完整导出_01a12937_20261013-160110/技术记录/历史分段全部公开工具事件.jsonl"
+  },
+  "presentationFiles": [
+    {
+      "file": "services/api/src/main/java/com/promptoptimizer/provider/domain/TaskEnhancementAssessment.java",
+      "candidate4Sha256": "326417134ed845c629cc791740102c2da6882de1553e61d1b8a11244fc21d731",
+      "verifiedSha256": "326417134ed845c629cc791740102c2da6882de1553e61d1b8a11244fc21d731"
+    },
+    {
+      "file": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java",
+      "candidate4Sha256": "d55418ba9fad2bc8e3e3e8ebcc2a1b698e333a7501585cc1dcb74cd1a32175b1",
+      "verifiedSha256": "d55418ba9fad2bc8e3e3e8ebcc2a1b698e333a7501585cc1dcb74cd1a32175b1"
+    },
+    {
+      "file": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/MissingPresentationResponseTest.java",
+      "candidate4Sha256": "121a84627d058a426fe878a114cbab1d1fb6fd1f9dfbfaec00f8b9ea2f0260c4",
+      "verifiedSha256": "121a84627d058a426fe878a114cbab1d1fb6fd1f9dfbfaec00f8b9ea2f0260c4"
+    }
+  ],
+  "currentVerification": {
+    "sourceReview": "仅缺失 presentation 字段在反序列化前补 STRUCTURED；显式非法枚举/NULL不放宽；NEEDS_COMPLETION仍要求实质补全。",
+    "historicalSuiteDrift": "此前核对六类当前数量合计101，TaskMeaningRegressionTest/DelegatedResearchQuestionRegressionTest已变动；不把当前报告当96原始报告，不重跑旧96命令。",
+    "scopedCurrentEvidence": "accepted-test-summary.json 中该类3项通过；并入 node-test-summary.json 的18类262项部分。",
+    "exactTests": "MissingPresentationResponseTest 三项：缺失字段1次模拟请求成功；非法枚举有限3次后拒绝；无实质补全拒绝。"
+  },
+  "realModelCalls": 0
+}

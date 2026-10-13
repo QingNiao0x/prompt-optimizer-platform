@@ -1,0 +1,17 @@
+{
+  "phase": "scope-red",
+  "exitCode": 1,
+  "tests": 4,
+  "failures": 2,
+  "errors": 0,
+  "failureDetails": [
+    {
+      "name": "bareChoicesAndPartialCurrentStateRemainUsableWithoutConfirmingTheOtherParameter",
+      "message": "\nExpecting any element of:\n  [ExecutionRequirement[questionId=rounds, question=Plan最多允许几轮提问？, subject=Plan最大提问轮次, value=3轮, statement=Plan最大提问轮次：3轮, destination=TASK],\n    ExecutionRequirement[questionId=stack, question=当前技术栈和版本是什么？, subject=技术栈和版本, value=使用 R。, statement=使用 R。, destination=TASK],\n    ExecutionRequirement[questionId=metrics, question=甲指标和乙指标的分母分别是什么？, subject=甲指标和乙指标分母分别, value=甲指标分母采用全部已完成事件。, statement=甲指标分母采用全部已完成事件。, destination=TASK]]\nto satisfy the given assertions requirements but none did:\n\nExecutionRequirement[questionId=rounds, question=Plan最多允许几轮提问？, subject=Plan最大提问轮次, value=3轮, statement=Plan最大提问轮次：3轮, destination=TASK]\nerror: \nexpected: \"使用 R。\"\n but was: \"Plan最大提问轮次：3轮\"\n\nExecutionRequirement[questionId=stack, question=当前技术栈和版本是什么？, subject=技术栈和版本, value=使用 R。, statement=使用 R。, destination=TASK]\nerror: \nexpected: BACKGROUND\n but was: TASK\n\nExecutionRequirement[questionId=metrics, question=甲指标和乙指标的分母分别是什么？, subject=甲指标和乙指标分母分别, value=甲指标分母采用全部已完成事件。, statement=甲指标分母采用全部已完成事件。, destination=TASK]\nerror: \nexpected: \"使用 R。\"\n but was: \"甲指标分母采用全部已完成事件。\""
+    },
+    {
+      "name": "independentStudyStatesKeepTheirOwnSubjectsAndCurrentStateScope",
+      "message": "\nExpecting all elements of:\n  [ConfirmedPlanDecision[questionId=alpha, question=甲研究采用哪种方法？, topic=本次选择, scope=CHOICE, answer=甲研究尚未实施。, source=USER_CONFIRMED],\n    ConfirmedPlanDecision[questionId=beta, question=乙研究采用哪种方法？, topic=本次选择, scope=CHOICE, answer=乙研究已经实施。, source=USER_CONFIRMED]]\nto satisfy given requirements, but these elements did not:\n\nConfirmedPlanDecision[questionId=alpha, question=甲研究采用哪种方法？, topic=本次选择, scope=CHOICE, answer=甲研究尚未实施。, source=USER_CONFIRMED]\nerror: \nexpected: CURRENT_STATE\n but was: CHOICE\n\nConfirmedPlanDecision[questionId=beta, question=乙研究采用哪种方法？, topic=本次选择, scope=CHOICE, answer=乙研究已经实施。, source=USER_CONFIRMED]\nerror: \nexpected: CURRENT_STATE\n but was: CHOICE"
+    }
+  ]
+}

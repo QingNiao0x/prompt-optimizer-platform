@@ -287,11 +287,11 @@ final class PlanningDecisionPolicy {
      * 已明确委托的拟议研究实施由执行者提出方案；不消除真实资料、授权或用户保留的选择。
      * 只用于模型候选问题，服务端来源冲突和绑定未决事项不经这条过滤。
      */
-    boolean delegatesResearchImplementation(String question, String raw) {
+    boolean delegatesResearchImplementation(PlanQuestion candidate, String raw) {
         if (!hasDecision(Kind.RESEARCH_STATUS) || !raw.contains("说明")) return false;
         if (raw.matches("(?s).*(?:由我决定|先让我确认|不要替我选择|由用户决定).*")) return false;
-        if (question.matches("(?s).*(?:实际(?:采用|数据|样本|研究地区)|现有(?:数据|样本|任务材料)"
-                + "|已(?:经)?(?:采用|获准|取得)|授权|伦理|真实(?:数据|资料|参与者|地区)|地区|机构|个人资料).*")) return false;
+        if (hasIndependentResearchDecision(candidate)) return false;
+        String question = candidate.question();
         boolean scoring = raw.matches("(?s).*说明[^。\\n]*(?:评价|评估).*" )
                 && question.matches("(?s).*(?:评分方式|评分量表|评分尺度|评分标准).*" );
         boolean disagreement = raw.contains("分歧处理") && question.matches("(?s).*分歧.*(?:处理|解决).*" );
@@ -300,6 +300,25 @@ final class PlanningDecisionPolicy {
                 && question.matches("(?s).*(?:相同|同样)[^。\\n]*确认信息.*(?:方式|如何|流程).*|"
                         + "(?s).*(?:如何|方式|流程)[^。\\n]*(?:相同|同样)[^。\\n]*确认信息.*");
         return scoring || disagreement || randomization || parity;
+    }
+
+    /** 删除整题前检查全部用户可见信息，提示或候选中的授权、资料范围不能随委托设计一起消失。 */
+    private boolean hasIndependentResearchDecision(PlanQuestion question) {
+        List<String> parts = new ArrayList<>();
+        parts.add(safe(question.question()));
+        parts.add(safe(question.hint()));
+        question.options().forEach(option -> {
+            parts.add(safe(option.label()));
+            parts.add(safe(option.description()));
+            parts.add(safe(option.answer()));
+            parts.add(safe(option.recommendationReason()));
+        });
+        parts.addAll(question.examples());
+        // 可见题干可能只写“评分方式”，独立决定却出现在选项或示例中；此时必须保留整题。
+        return parts.stream().anyMatch(part -> part.matches("(?s).*(?:实际(?:采用|数据|样本|研究地区)"
+                + "|现有(?:数据|样本|任务材料)|已(?:经)?(?:采用|获准|取得)|授权|伦理|权限|隐私"
+                + "|真实(?:数据|资料|参与者|地区)|地区|机构|个人资料|纳入|排除|剔除|分母"
+                + "|数据来源|来源冲突|来源不一致|由(?:我|用户)决定|先让(?:我|用户)确认).*"));
     }
 
     /** 未来按分布选检验的任务只允许拟候选，不把提前定案当作等价方案；否定按动作邻近核对。 */

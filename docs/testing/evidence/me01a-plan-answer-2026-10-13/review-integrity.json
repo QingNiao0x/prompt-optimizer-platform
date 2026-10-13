@@ -1,0 +1,1731 @@
+{
+  "recordedAt": "2026-10-13T16:56:14.301955+08:00",
+  "scope": "Offline independent integrity audit only; no new reviews, scores, model calls, or edits to existing evidence.",
+  "status": "PASS",
+  "packsChecked": 23,
+  "workFilesChecked": 54,
+  "anonymousRequirementsMaterialsAnswersMatchFrozenSources": true,
+  "modelMetadataLimit": "Reviewer exact model and version UNKNOWN; do not infer from Codex AI identity. This audit does not reconstruct missing historical reviewer metadata.",
+  "reviewers": [
+    {
+      "reviewer": "one",
+      "reportedIdentity": "independent Codex AI, not human expert",
+      "model": "UNKNOWN",
+      "modelVersion": "UNKNOWN",
+      "metadataLimit": "The saved reviewer file identifies an independent Codex AI but does not record model identifier or version.",
+      "packs": 23,
+      "fourDimensionScores": 216,
+      "pairComparisons": 39,
+      "severeEntries": 25,
+      "severeArrayPresentForEveryPack": true
+    },
+    {
+      "reviewer": "two",
+      "reportedIdentity": "independent Codex AI, not human expert",
+      "model": "UNKNOWN",
+      "modelVersion": "UNKNOWN",
+      "metadataLimit": "The saved reviewer file identifies an independent Codex AI but does not record model identifier or version.",
+      "packs": 23,
+      "fourDimensionScores": 216,
+      "pairComparisons": 39,
+      "severeEntries": 27,
+      "severeArrayPresentForEveryPack": true
+    }
+  ],
+  "comparisonsRecomputed": 39,
+  "disagreementsRecomputed": 9,
+  "summaryChecks": {
+    "packs": true,
+    "comparisons": true,
+    "counts": true,
+    "disagreements": true,
+    "allDecodedRows": true
+  },
+  "countsRecomputed": [
+    {
+      "candidate_plan/plan_vs_direct_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 1
+      },
+      "candidate_plan/plan_vs_raw_equal_information": {
+        "BOTH_FAIL": 1,
+        "LOSS": 1,
+        "WIN": 1
+      },
+      "candidate_plan/direct_vs_raw_equal_information": {
+        "BOTH_FAIL": 2,
+        "LOSS": 1
+      },
+      "mixed_candidate_direct/enhanced_vs_raw": {
+        "TIE": 6,
+        "BOTH_FAIL": 3,
+        "WIN": 5
+      },
+      "baseline_plan/direct_vs_raw_equal_information": {
+        "WIN": 2,
+        "BOTH_FAIL": 2
+      },
+      "baseline_plan/plan_vs_raw_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 2
+      },
+      "baseline_plan/plan_vs_direct_equal_information": {
+        "LOSS": 2,
+        "WIN": 1,
+        "BOTH_FAIL": 1
+      },
+      "risk_repeat/enhanced_vs_raw": {
+        "WIN": 1
+      },
+      "candidate5_plan/direct_vs_raw_equal_information": {
+        "WIN": 1
+      },
+      "candidate5_plan/plan_vs_direct_equal_information": {
+        "LOSS": 1
+      },
+      "candidate5_plan/plan_vs_raw_equal_information": {
+        "WIN": 1
+      }
+    },
+    {
+      "candidate_plan/plan_vs_direct_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 1
+      },
+      "candidate_plan/plan_vs_raw_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 1
+      },
+      "candidate_plan/direct_vs_raw_equal_information": {
+        "BOTH_FAIL": 3
+      },
+      "mixed_candidate_direct/enhanced_vs_raw": {
+        "TIE": 6,
+        "BOTH_FAIL": 2,
+        "WIN": 5,
+        "LOSS": 1
+      },
+      "baseline_plan/direct_vs_raw_equal_information": {
+        "BOTH_FAIL": 3,
+        "WIN": 1
+      },
+      "baseline_plan/plan_vs_raw_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 2
+      },
+      "baseline_plan/plan_vs_direct_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 1,
+        "TIE": 1
+      },
+      "risk_repeat/enhanced_vs_raw": {
+        "WIN": 1
+      },
+      "candidate5_plan/direct_vs_raw_equal_information": {
+        "WIN": 1
+      },
+      "candidate5_plan/plan_vs_direct_equal_information": {
+        "LOSS": 1
+      },
+      "candidate5_plan/plan_vs_raw_equal_information": {
+        "BOTH_FAIL": 1
+      }
+    }
+  ],
+  "disagreements": [
+    {
+      "label": "R002",
+      "pair": "AB",
+      "source": "candidate4-plan-r1/Q04-pro",
+      "group": "candidate_plan/plan_vs_raw_equal_information",
+      "outcomes": [
+        "LOSS",
+        "BOTH_FAIL"
+      ]
+    },
+    {
+      "label": "R002",
+      "pair": "BC",
+      "source": "candidate4-plan-r1/Q04-pro",
+      "group": "candidate_plan/direct_vs_raw_equal_information",
+      "outcomes": [
+        "LOSS",
+        "BOTH_FAIL"
+      ]
+    },
+    {
+      "label": "R008",
+      "pair": "AB",
+      "source": "baseline-plan-r2/Q05-flash",
+      "group": "baseline_plan/direct_vs_raw_equal_information",
+      "outcomes": [
+        "WIN",
+        "BOTH_FAIL"
+      ]
+    },
+    {
+      "label": "R008",
+      "pair": "BC",
+      "source": "baseline-plan-r2/Q05-flash",
+      "group": "baseline_plan/plan_vs_direct_equal_information",
+      "outcomes": [
+        "LOSS",
+        "BOTH_FAIL"
+      ]
+    },
+    {
+      "label": "R010",
+      "pair": "AB",
+      "source": "candidate4-direct-r1/Q05-flash",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "outcomes": [
+        "BOTH_FAIL",
+        "WIN"
+      ]
+    },
+    {
+      "label": "R011",
+      "pair": "AB",
+      "source": "candidate2-direct-r1/Q04-pro",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "outcomes": [
+        "WIN",
+        "BOTH_FAIL"
+      ]
+    },
+    {
+      "label": "R014",
+      "pair": "AB",
+      "source": "candidate2-direct-r1/Q04-flash",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "outcomes": [
+        "BOTH_FAIL",
+        "LOSS"
+      ]
+    },
+    {
+      "label": "R020",
+      "pair": "AB",
+      "source": "baseline-plan-r2/Q04-pro",
+      "group": "baseline_plan/plan_vs_direct_equal_information",
+      "outcomes": [
+        "LOSS",
+        "TIE"
+      ]
+    },
+    {
+      "label": "R023",
+      "pair": "BC",
+      "source": "candidate5-plan-r1/Q05-flash",
+      "group": "candidate5_plan/plan_vs_raw_equal_information",
+      "outcomes": [
+        "WIN",
+        "BOTH_FAIL"
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "tmp/me00a-20261012/cases.json": "c5602dddeab7309e0e843555b36e40b95ba159888d5c6db064a53a2fc406d3b4",
+    "tmp/me00a-20261012/remaining-review-mapping.private.json": "1f86df52454176efefca7f050815af5f8fdfb7c86b47359e66ed0dc2168667b7",
+    "tmp/me00a-20261012/remaining-review-summary.json": "e56a24b83a4e9c02eb06e86e9ed582e4e5255a3fffe348e3507602c17d235f8b",
+    "tmp/me00a-20261012/review-remaining/reviewer-one.json": "82ce9264427863546270d100707a4111501a46dbec928155cb2e48bb30e9faf6",
+    "tmp/me00a-20261012/review-remaining/reviewer-two.json": "5d1f90c5e45c448c205c49c2b71ea060f1ff27e8e043041c3dec671a3f6c0746",
+    "tmp/me00a-20261012/review-remaining/rubric.md": "cc72866a71e93d0a9f34c7b52f81cea4549f10bf4f2c41f32e6f94279387d6ce"
+  },
+  "packChecks": [
+    {
+      "label": "R001",
+      "source": "candidate4-plan-r1/Q05-pro",
+      "taskFileSha256": "b791fd18ad11bcbcd8cbd132d8a45ae110cc0093bca159067dc94b99abf6f7c0",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "sourceCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "9b84d005ea454fe1620f25c437344f3da48024a45770a518e9d9ac466f712ad5",
+          "sourceCanonicalSha256": "9b84d005ea454fe1620f25c437344f3da48024a45770a518e9d9ac466f712ad5",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "sourceCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 2,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "plan",
+          "source": "tmp/me00a-20261012/candidate4-plan-r1/Q05-pro/work.md",
+          "sourceSha256": "bf22ea58a46c002173917fbad87a62e5c839e4670adbb9e665fc77e1cc095a6c",
+          "blindSha256": "bf22ea58a46c002173917fbad87a62e5c839e4670adbb9e665fc77e1cc095a6c",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "direct",
+          "source": "tmp/me00a-20261012/candidate4-plan-r1/Q05-pro/direct-equal-information/work.md",
+          "sourceSha256": "21bba384e5bde26ca71b7138f9f7b665299530931edb3d7e5a1f667c7890cdf2",
+          "blindSha256": "21bba384e5bde26ca71b7138f9f7b665299530931edb3d7e5a1f667c7890cdf2",
+          "identicalBytes": true
+        },
+        {
+          "letter": "C",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate4-plan-r1/Q05-pro/raw-work.md",
+          "sourceSha256": "6432edbadeb549f5381c0cd040a03f0d315e07b1787c49c204124cbf6ba73144",
+          "blindSha256": "6432edbadeb549f5381c0cd040a03f0d315e07b1787c49c204124cbf6ba73144",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R002",
+      "source": "candidate4-plan-r1/Q04-pro",
+      "taskFileSha256": "526f09df190fd1c8bf7b04405dc5ce9da2148cce9f10fb9f849f034094148151",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "0aea7b74adf097c97341eeea10ffcc1240419c431aab2ae62baf86cfa2f5e2bc",
+          "sourceCanonicalSha256": "0aea7b74adf097c97341eeea10ffcc1240419c431aab2ae62baf86cfa2f5e2bc",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "0bdcd8ff375499710257b01be4f95198193ce3c4f9d0684801b3cf2aa12f2c04",
+          "sourceCanonicalSha256": "0bdcd8ff375499710257b01be4f95198193ce3c4f9d0684801b3cf2aa12f2c04",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "sourceCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 6,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "plan",
+          "source": "tmp/me00a-20261012/candidate4-plan-r1/Q04-pro/work.md",
+          "sourceSha256": "bb93c5c315834adb725c67840802280e016cbab4f4a373e0a5cb27d8a095e57c",
+          "blindSha256": "bb93c5c315834adb725c67840802280e016cbab4f4a373e0a5cb27d8a095e57c",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate4-plan-r1/Q04-pro/raw-work.md",
+          "sourceSha256": "6b767ea99a8abf44a788f8711d55e470d098d78578e21937b38254ab80b7bfeb",
+          "blindSha256": "6b767ea99a8abf44a788f8711d55e470d098d78578e21937b38254ab80b7bfeb",
+          "identicalBytes": true
+        },
+        {
+          "letter": "C",
+          "role": "direct",
+          "source": "tmp/me00a-20261012/candidate4-plan-r1/Q04-pro/direct-equal-information/work.md",
+          "sourceSha256": "f7bd4bbe93c839d15dfe849ed97bc02e046258e441f0f1f1423b839d4e892dc2",
+          "blindSha256": "f7bd4bbe93c839d15dfe849ed97bc02e046258e441f0f1f1423b839d4e892dc2",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R003",
+      "source": "candidate3-direct-r1/Q06-flash",
+      "taskFileSha256": "84be4befd49b4c742d12620a3d03e6288c2f5d0f51d6f0499000f0a3579a0f84",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "2ed1aae3fb1e96c84398d70e2839533750a5774b01c866aed54e9c9ab17d5752",
+          "sourceCanonicalSha256": "2ed1aae3fb1e96c84398d70e2839533750a5774b01c866aed54e9c9ab17d5752",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate3-direct-r1/Q06-flash/raw-work.md",
+          "sourceSha256": "8460e471e7bfc176ee5d3c3bbc1574fc4c5ccf39854ff712640d7fa4c2a9ab88",
+          "blindSha256": "8460e471e7bfc176ee5d3c3bbc1574fc4c5ccf39854ff712640d7fa4c2a9ab88",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate3-direct-r1/Q06-flash/work.md",
+          "sourceSha256": "5954d004fc82967a55a990f5cc891f9afd1dd348648b8b8806feeff74044ebb3",
+          "blindSha256": "5954d004fc82967a55a990f5cc891f9afd1dd348648b8b8806feeff74044ebb3",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R004",
+      "source": "candidate4-plan-r1/Q05-flash",
+      "taskFileSha256": "1645de693bb8fe916e0b80249cadc0fccdcc5ed1aa6ed39d3c4fc962cef07dc7",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "sourceCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "ee68ccbb8b7cb591196ed768cf872afb26df2faf7ee377e77dc92dcfd3de5fcd",
+          "sourceCanonicalSha256": "ee68ccbb8b7cb591196ed768cf872afb26df2faf7ee377e77dc92dcfd3de5fcd",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "sourceCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 7,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "plan",
+          "source": "tmp/me00a-20261012/candidate4-plan-r1/Q05-flash/work.md",
+          "sourceSha256": "382ceb8fc1adc493b805d51aa803432f86ebd43ff8f7d90b0e805fa0bbc2a4fe",
+          "blindSha256": "382ceb8fc1adc493b805d51aa803432f86ebd43ff8f7d90b0e805fa0bbc2a4fe",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate4-plan-r1/Q05-flash/raw-work.md",
+          "sourceSha256": "cfe5da4c4816c4ff71a67fe18a27d62634be953029e8763b7afc5caf17570603",
+          "blindSha256": "cfe5da4c4816c4ff71a67fe18a27d62634be953029e8763b7afc5caf17570603",
+          "identicalBytes": true
+        },
+        {
+          "letter": "C",
+          "role": "direct",
+          "source": "tmp/me00a-20261012/candidate4-plan-r1/Q05-flash/direct-equal-information/work.md",
+          "sourceSha256": "5c356e463f37d94dd2e59ea2b7aa658205edbed9f6a748c750f79e57a5b03cb7",
+          "blindSha256": "5c356e463f37d94dd2e59ea2b7aa658205edbed9f6a748c750f79e57a5b03cb7",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R005",
+      "source": "candidate3-direct-r1/Q06-pro",
+      "taskFileSha256": "84be4befd49b4c742d12620a3d03e6288c2f5d0f51d6f0499000f0a3579a0f84",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "2ed1aae3fb1e96c84398d70e2839533750a5774b01c866aed54e9c9ab17d5752",
+          "sourceCanonicalSha256": "2ed1aae3fb1e96c84398d70e2839533750a5774b01c866aed54e9c9ab17d5752",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate3-direct-r1/Q06-pro/work.md",
+          "sourceSha256": "f57c4cf2f753438081a64dc499704ee843cbd2f2252dafa4aabcae699656abad",
+          "blindSha256": "f57c4cf2f753438081a64dc499704ee843cbd2f2252dafa4aabcae699656abad",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate3-direct-r1/Q06-pro/raw-work.md",
+          "sourceSha256": "b833f2a9ff3dbc0989a5f813052489d72ab4308c5ce0f0b4b974187052366fae",
+          "blindSha256": "b833f2a9ff3dbc0989a5f813052489d72ab4308c5ce0f0b4b974187052366fae",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R006",
+      "source": "candidate3-direct-r1/Q03-flash",
+      "taskFileSha256": "2251d9f53834a43b19a639df3bce3aeaa1634c76e11ac8952214b28d325e2260",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "0e62669a064ee1a25e72f5d248bb7e729a3dc49afd953d6d80be15f374abc7d2",
+          "sourceCanonicalSha256": "0e62669a064ee1a25e72f5d248bb7e729a3dc49afd953d6d80be15f374abc7d2",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate3-direct-r1/Q03-flash/work.md",
+          "sourceSha256": "bd17885c5b508cf0a499d58239463b4ad4056a6d14ad3fb2aef7dcc359ab63b5",
+          "blindSha256": "bd17885c5b508cf0a499d58239463b4ad4056a6d14ad3fb2aef7dcc359ab63b5",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate3-direct-r1/Q03-flash/raw-work.md",
+          "sourceSha256": "707bfa84488ad505eabaea11bc9336518347250356c5c95f7bc4c9eb36e667de",
+          "blindSha256": "707bfa84488ad505eabaea11bc9336518347250356c5c95f7bc4c9eb36e667de",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R007",
+      "source": "candidate2-direct-r1/Q02-pro",
+      "taskFileSha256": "345a768661eaeed992d2a1d9637b149b9f7336562368476ae13155eb7d6fa901",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "661c0a30b808573e7fb44e74464c926bef8b559090a153a209486f38bb382eaa",
+          "sourceCanonicalSha256": "661c0a30b808573e7fb44e74464c926bef8b559090a153a209486f38bb382eaa",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q02-pro/work.md",
+          "sourceSha256": "ecea36afc5e389f12cf37c3258bf352f426d7e4f0de0511a8b87bc73b294249d",
+          "blindSha256": "ecea36afc5e389f12cf37c3258bf352f426d7e4f0de0511a8b87bc73b294249d",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q02-pro/raw-work.md",
+          "sourceSha256": "265dcccb72000aef54b6331f1e68cf4041fc7b126cf1975ecaf7f94015dd09d9",
+          "blindSha256": "265dcccb72000aef54b6331f1e68cf4041fc7b126cf1975ecaf7f94015dd09d9",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R008",
+      "source": "baseline-plan-r2/Q05-flash",
+      "taskFileSha256": "6f5a43440c81c4140183fd2efd329a8b09074263da7cb4477ab50ef7f0bc1e89",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "sourceCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "88f079f3ecfdce9373a990945b11e45b3cf933b6e2fdb5184868d05959818b55",
+          "sourceCanonicalSha256": "88f079f3ecfdce9373a990945b11e45b3cf933b6e2fdb5184868d05959818b55",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "sourceCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 6,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q05-flash/raw-work.md",
+          "sourceSha256": "e1c3da86f91bd35899d9298bd0a57016a8495d09b111a9727c7e4e08b6bf9d5f",
+          "blindSha256": "e1c3da86f91bd35899d9298bd0a57016a8495d09b111a9727c7e4e08b6bf9d5f",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "direct",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q05-flash/direct-equal-information/work.md",
+          "sourceSha256": "e172afabf055ea583e2c1d399ddb97eebb96d9d820dd4c1b67cb79df36ce4040",
+          "blindSha256": "e172afabf055ea583e2c1d399ddb97eebb96d9d820dd4c1b67cb79df36ce4040",
+          "identicalBytes": true
+        },
+        {
+          "letter": "C",
+          "role": "plan",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q05-flash/work.md",
+          "sourceSha256": "b86d3483f89ed97828bdb057514e9b2dd231d5b5492befb46c6df765295d13d8",
+          "blindSha256": "b86d3483f89ed97828bdb057514e9b2dd231d5b5492befb46c6df765295d13d8",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R009",
+      "source": "candidate3-direct-r1/Q03-pro",
+      "taskFileSha256": "2251d9f53834a43b19a639df3bce3aeaa1634c76e11ac8952214b28d325e2260",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "0e62669a064ee1a25e72f5d248bb7e729a3dc49afd953d6d80be15f374abc7d2",
+          "sourceCanonicalSha256": "0e62669a064ee1a25e72f5d248bb7e729a3dc49afd953d6d80be15f374abc7d2",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate3-direct-r1/Q03-pro/raw-work.md",
+          "sourceSha256": "69189b6d8901fba97e9f709ad1b0ee46ca0038bbcceac4f0d58ab85c644f66c5",
+          "blindSha256": "69189b6d8901fba97e9f709ad1b0ee46ca0038bbcceac4f0d58ab85c644f66c5",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate3-direct-r1/Q03-pro/work.md",
+          "sourceSha256": "3508e06a927a47e6617a9db312e2e34e0fba2a7ae4058431219c0148d5d132d6",
+          "blindSha256": "3508e06a927a47e6617a9db312e2e34e0fba2a7ae4058431219c0148d5d132d6",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R010",
+      "source": "candidate4-direct-r1/Q05-flash",
+      "taskFileSha256": "e85f2c89754600a80529f9e4d49f5854819fb6614d442a920961808ed04e13ec",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "sourceCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate4-direct-r1/Q05-flash/raw-work.md",
+          "sourceSha256": "a4187aca5d377003d622938f32b1bb7618f5712a8cf95a0fc655b4cd6ebb4837",
+          "blindSha256": "a4187aca5d377003d622938f32b1bb7618f5712a8cf95a0fc655b4cd6ebb4837",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate4-direct-r1/Q05-flash/work.md",
+          "sourceSha256": "ff59209fc7bc64160c7d359ab642bca11f84aa5aa3a70cb14a7f58ce71b0f71b",
+          "blindSha256": "ff59209fc7bc64160c7d359ab642bca11f84aa5aa3a70cb14a7f58ce71b0f71b",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R011",
+      "source": "candidate2-direct-r1/Q04-pro",
+      "taskFileSha256": "ec61add639df1fa4c6a9e3db59e38ee8985ca4c093653634041b5df5c0a53aeb",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "0aea7b74adf097c97341eeea10ffcc1240419c431aab2ae62baf86cfa2f5e2bc",
+          "sourceCanonicalSha256": "0aea7b74adf097c97341eeea10ffcc1240419c431aab2ae62baf86cfa2f5e2bc",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q04-pro/work.md",
+          "sourceSha256": "3a1e4e3212cb76cbe2fdf4cb775b175c53587dcbfd601d9cd2a596b6f0f967c0",
+          "blindSha256": "3a1e4e3212cb76cbe2fdf4cb775b175c53587dcbfd601d9cd2a596b6f0f967c0",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q04-pro/raw-work.md",
+          "sourceSha256": "ef5cdb2a4ee7091a2eef9f763ed4b8612c5ed4f135994995dfd24b088fabc4d5",
+          "blindSha256": "ef5cdb2a4ee7091a2eef9f763ed4b8612c5ed4f135994995dfd24b088fabc4d5",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R012",
+      "source": "candidate2-direct-r1/Q07-flash",
+      "taskFileSha256": "afb62744163a5a71e96f6615ed43dea6242f698db87643521003b03ab75a7a75",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "edbfc878a903d16c2dc9a7ea56a281c19410cfbc801959e5369b71e280237c02",
+          "sourceCanonicalSha256": "edbfc878a903d16c2dc9a7ea56a281c19410cfbc801959e5369b71e280237c02",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q07-flash/raw-work.md",
+          "sourceSha256": "aabc78f7d48da66e41b076a8e746a4d72e47a3b7b363d9deeb2e76230067072e",
+          "blindSha256": "aabc78f7d48da66e41b076a8e746a4d72e47a3b7b363d9deeb2e76230067072e",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q07-flash/work.md",
+          "sourceSha256": "aabc78f7d48da66e41b076a8e746a4d72e47a3b7b363d9deeb2e76230067072e",
+          "blindSha256": "aabc78f7d48da66e41b076a8e746a4d72e47a3b7b363d9deeb2e76230067072e",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R013",
+      "source": "candidate4-direct-r2/Q01-pro",
+      "taskFileSha256": "0b386ba0d65669d507c60f3d37691c3ca7dd60f3568eebc3438062c295d38c66",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "66588f9f268886ba54b870305891c32c05ef58cb770fa4c7e07b526fa1b7a52b",
+          "sourceCanonicalSha256": "66588f9f268886ba54b870305891c32c05ef58cb770fa4c7e07b526fa1b7a52b",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "1924bee32c6a540ad52a6a60549d6395743eb499babe621e4af3d682b23baa85",
+          "sourceCanonicalSha256": "1924bee32c6a540ad52a6a60549d6395743eb499babe621e4af3d682b23baa85",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate4-direct-r2/Q01-pro/raw-work.md",
+          "sourceSha256": "e05f46ff46fb509951bea7bbd49d853e272390bbd8f2d852f4799bc3874e647e",
+          "blindSha256": "e05f46ff46fb509951bea7bbd49d853e272390bbd8f2d852f4799bc3874e647e",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate4-direct-r2/Q01-pro/work.md",
+          "sourceSha256": "71a7ad8bb1e4d0ebf182a21720eb755481420cbe5d6c8562580ae333e0e1f1d0",
+          "blindSha256": "71a7ad8bb1e4d0ebf182a21720eb755481420cbe5d6c8562580ae333e0e1f1d0",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R014",
+      "source": "candidate2-direct-r1/Q04-flash",
+      "taskFileSha256": "ec61add639df1fa4c6a9e3db59e38ee8985ca4c093653634041b5df5c0a53aeb",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "0aea7b74adf097c97341eeea10ffcc1240419c431aab2ae62baf86cfa2f5e2bc",
+          "sourceCanonicalSha256": "0aea7b74adf097c97341eeea10ffcc1240419c431aab2ae62baf86cfa2f5e2bc",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q04-flash/raw-work.md",
+          "sourceSha256": "f5068c9575106d7b144b8528ad8a1610883aa4005dc5082fc5d83e4ee17a6707",
+          "blindSha256": "f5068c9575106d7b144b8528ad8a1610883aa4005dc5082fc5d83e4ee17a6707",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q04-flash/work.md",
+          "sourceSha256": "49b47c8eec912363fb43e11ed80f1720f8ae626f7b177d98bd0a8407e413113f",
+          "blindSha256": "49b47c8eec912363fb43e11ed80f1720f8ae626f7b177d98bd0a8407e413113f",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R015",
+      "source": "candidate2-direct-r1/Q01-flash",
+      "taskFileSha256": "0b386ba0d65669d507c60f3d37691c3ca7dd60f3568eebc3438062c295d38c66",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "66588f9f268886ba54b870305891c32c05ef58cb770fa4c7e07b526fa1b7a52b",
+          "sourceCanonicalSha256": "66588f9f268886ba54b870305891c32c05ef58cb770fa4c7e07b526fa1b7a52b",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "1924bee32c6a540ad52a6a60549d6395743eb499babe621e4af3d682b23baa85",
+          "sourceCanonicalSha256": "1924bee32c6a540ad52a6a60549d6395743eb499babe621e4af3d682b23baa85",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q01-flash/work.md",
+          "sourceSha256": "9314acfb19d6887f517611498c69c7ad49884ef2f9168d99f7c5c7da49790b40",
+          "blindSha256": "9314acfb19d6887f517611498c69c7ad49884ef2f9168d99f7c5c7da49790b40",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q01-flash/raw-work.md",
+          "sourceSha256": "efd682603855a949a7a7a80027b80fe67cf6e9396fc4ea471c718e40b396d815",
+          "blindSha256": "efd682603855a949a7a7a80027b80fe67cf6e9396fc4ea471c718e40b396d815",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R016",
+      "source": "candidate2-direct-r1/Q01-pro",
+      "taskFileSha256": "0b386ba0d65669d507c60f3d37691c3ca7dd60f3568eebc3438062c295d38c66",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "66588f9f268886ba54b870305891c32c05ef58cb770fa4c7e07b526fa1b7a52b",
+          "sourceCanonicalSha256": "66588f9f268886ba54b870305891c32c05ef58cb770fa4c7e07b526fa1b7a52b",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "1924bee32c6a540ad52a6a60549d6395743eb499babe621e4af3d682b23baa85",
+          "sourceCanonicalSha256": "1924bee32c6a540ad52a6a60549d6395743eb499babe621e4af3d682b23baa85",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q01-pro/work.md",
+          "sourceSha256": "b60526b8503f3fe2b6eef6387225ffb13b5bc4d9f1217cf8bd7e6f579c1ae63f",
+          "blindSha256": "b60526b8503f3fe2b6eef6387225ffb13b5bc4d9f1217cf8bd7e6f579c1ae63f",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q01-pro/raw-work.md",
+          "sourceSha256": "3aa18c584ddd65064ced1ae3ccda7253db0a2b1fe3d55879b09bfd6929176ef9",
+          "blindSha256": "3aa18c584ddd65064ced1ae3ccda7253db0a2b1fe3d55879b09bfd6929176ef9",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R017",
+      "source": "baseline-plan-r2/Q05-pro",
+      "taskFileSha256": "e5871c1d1031f7794dc4eb8262f8972fe8637b1442550264f463be81372dbfb6",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "sourceCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "1a1535d87262ba127ca0d38db456743a659e8ee9f802cd5a79e449efc781ab5c",
+          "sourceCanonicalSha256": "1a1535d87262ba127ca0d38db456743a659e8ee9f802cd5a79e449efc781ab5c",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "sourceCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 3,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q05-pro/raw-work.md",
+          "sourceSha256": "da7d7af104babe71bc9d40b808b9a4e184c5665d3a3ae6ae9cb9fedde33de9fc",
+          "blindSha256": "da7d7af104babe71bc9d40b808b9a4e184c5665d3a3ae6ae9cb9fedde33de9fc",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "plan",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q05-pro/work.md",
+          "sourceSha256": "ff877281601af7a5447a3ca52bf2be91b9a1452ec0add9eb83dfc5c85fce4cbe",
+          "blindSha256": "ff877281601af7a5447a3ca52bf2be91b9a1452ec0add9eb83dfc5c85fce4cbe",
+          "identicalBytes": true
+        },
+        {
+          "letter": "C",
+          "role": "direct",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q05-pro/direct-equal-information/work.md",
+          "sourceSha256": "6bf9480d43266304b4232f651c2b5c3f0232828aade493103ef6ef0e357c3163",
+          "blindSha256": "6bf9480d43266304b4232f651c2b5c3f0232828aade493103ef6ef0e357c3163",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R018",
+      "source": "baseline-plan-r2/Q04-flash",
+      "taskFileSha256": "52739b45f7f6f0abe18d7ebc1807eb7b84208b11db9f8f30261cab0ef023cf3e",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "0aea7b74adf097c97341eeea10ffcc1240419c431aab2ae62baf86cfa2f5e2bc",
+          "sourceCanonicalSha256": "0aea7b74adf097c97341eeea10ffcc1240419c431aab2ae62baf86cfa2f5e2bc",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "5b4ffc4d3852883bf6e4a03f94028cd64c322d30fe34532c24b67d2f30a22e7b",
+          "sourceCanonicalSha256": "5b4ffc4d3852883bf6e4a03f94028cd64c322d30fe34532c24b67d2f30a22e7b",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "sourceCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 6,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "direct",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q04-flash/direct-equal-information/work.md",
+          "sourceSha256": "ce989a10ff3855031ae45f044481fa98475af84b1637cebd12b8ba1430027a85",
+          "blindSha256": "ce989a10ff3855031ae45f044481fa98475af84b1637cebd12b8ba1430027a85",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q04-flash/raw-work.md",
+          "sourceSha256": "cba60d71e292cc9715bca956200cd55063323b3bfc6f680bab7bf4ca36b0b52e",
+          "blindSha256": "cba60d71e292cc9715bca956200cd55063323b3bfc6f680bab7bf4ca36b0b52e",
+          "identicalBytes": true
+        },
+        {
+          "letter": "C",
+          "role": "plan",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q04-flash/work.md",
+          "sourceSha256": "7811bc10e732700bafdd22e631dd6911699e382b51ae9c8e9f160ef26b5c24e2",
+          "blindSha256": "7811bc10e732700bafdd22e631dd6911699e382b51ae9c8e9f160ef26b5c24e2",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R019",
+      "source": "candidate3-direct-r1/Q05-pro",
+      "taskFileSha256": "e85f2c89754600a80529f9e4d49f5854819fb6614d442a920961808ed04e13ec",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "sourceCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate3-direct-r1/Q05-pro/work.md",
+          "sourceSha256": "fb35de90ea8262c79c7782d7f8da95109cac64f109d280daef38a92935ceb1fa",
+          "blindSha256": "fb35de90ea8262c79c7782d7f8da95109cac64f109d280daef38a92935ceb1fa",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate3-direct-r1/Q05-pro/raw-work.md",
+          "sourceSha256": "cc7683f8719a45c5cd75147d4c980a08c9f915fbb074662b8347662c7a89c1e1",
+          "blindSha256": "cc7683f8719a45c5cd75147d4c980a08c9f915fbb074662b8347662c7a89c1e1",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R020",
+      "source": "baseline-plan-r2/Q04-pro",
+      "taskFileSha256": "422c97e475509b33d3ab7d7fadbb935104ef83067ed890e75e27f0988d4eacec",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "0aea7b74adf097c97341eeea10ffcc1240419c431aab2ae62baf86cfa2f5e2bc",
+          "sourceCanonicalSha256": "0aea7b74adf097c97341eeea10ffcc1240419c431aab2ae62baf86cfa2f5e2bc",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "331bef82142279b3c08e0a30f50f1b7fcdefa1b29435ba53da4e5bebaf726186",
+          "sourceCanonicalSha256": "331bef82142279b3c08e0a30f50f1b7fcdefa1b29435ba53da4e5bebaf726186",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "sourceCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 6,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "plan",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q04-pro/work.md",
+          "sourceSha256": "bbaaf1b54f37f6e82d842779f9f105ed699ac22aff635f88f37ef618c40c939d",
+          "blindSha256": "bbaaf1b54f37f6e82d842779f9f105ed699ac22aff635f88f37ef618c40c939d",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "direct",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q04-pro/direct-equal-information/work.md",
+          "sourceSha256": "dac3c61098ba0d470c531f0a4afd18f8683394c39f56d8c161a6ef224d3bbb9d",
+          "blindSha256": "dac3c61098ba0d470c531f0a4afd18f8683394c39f56d8c161a6ef224d3bbb9d",
+          "identicalBytes": true
+        },
+        {
+          "letter": "C",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/baseline-plan-r2/Q04-pro/raw-work.md",
+          "sourceSha256": "4683b39a422a04688015cebffb1bedbd6fad131badbf033f7ad0b2114f61be4d",
+          "blindSha256": "4683b39a422a04688015cebffb1bedbd6fad131badbf033f7ad0b2114f61be4d",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R021",
+      "source": "candidate2-direct-r1/Q02-flash",
+      "taskFileSha256": "345a768661eaeed992d2a1d9637b149b9f7336562368476ae13155eb7d6fa901",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "661c0a30b808573e7fb44e74464c926bef8b559090a153a209486f38bb382eaa",
+          "sourceCanonicalSha256": "661c0a30b808573e7fb44e74464c926bef8b559090a153a209486f38bb382eaa",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q02-flash/raw-work.md",
+          "sourceSha256": "d3892b20234ce257a45856381ce9c28ce38997ed688bef5d121b023e50d80050",
+          "blindSha256": "d3892b20234ce257a45856381ce9c28ce38997ed688bef5d121b023e50d80050",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q02-flash/work.md",
+          "sourceSha256": "553b194c84f3feeb2be4e68bff7267f49f8f62e9fc116446826ca209da79c64a",
+          "blindSha256": "553b194c84f3feeb2be4e68bff7267f49f8f62e9fc116446826ca209da79c64a",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R022",
+      "source": "candidate2-direct-r1/Q07-pro",
+      "taskFileSha256": "afb62744163a5a71e96f6615ed43dea6242f698db87643521003b03ab75a7a75",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "edbfc878a903d16c2dc9a7ea56a281c19410cfbc801959e5369b71e280237c02",
+          "sourceCanonicalSha256": "edbfc878a903d16c2dc9a7ea56a281c19410cfbc801959e5369b71e280237c02",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "sourceCanonicalSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "sourceCanonicalSha256": "b64e3448a83a5b86466465080361c1a7e1157a27ddccd4b68069cb18caffb74a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 0,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q07-pro/raw-work.md",
+          "sourceSha256": "aabc78f7d48da66e41b076a8e746a4d72e47a3b7b363d9deeb2e76230067072e",
+          "blindSha256": "aabc78f7d48da66e41b076a8e746a4d72e47a3b7b363d9deeb2e76230067072e",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "enhanced",
+          "source": "tmp/me00a-20261012/candidate2-direct-r1/Q07-pro/work.md",
+          "sourceSha256": "aabc78f7d48da66e41b076a8e746a4d72e47a3b7b363d9deeb2e76230067072e",
+          "blindSha256": "aabc78f7d48da66e41b076a8e746a4d72e47a3b7b363d9deeb2e76230067072e",
+          "identicalBytes": true
+        }
+      ]
+    },
+    {
+      "label": "R023",
+      "source": "candidate5-plan-r1/Q05-flash",
+      "taskFileSha256": "08c72ad61444906da93953b245d768dfe6e113f8c31e210e9a2abd8e98a87718",
+      "taskFields": {
+        "rawPrompt": {
+          "packCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "sourceCanonicalSha256": "3c92ed1fff2e3931f7caf10ca5dc85c3e0945354b6ca340d67ff2ecb5778690c",
+          "equal": true
+        },
+        "materials": {
+          "packCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "sourceCanonicalSha256": "efd7d85b041f4b3e4600e1237f0ee9c40c9fc2044f770acd2ab2bb34e2baa0b2",
+          "equal": true
+        },
+        "actualAnswers": {
+          "packCanonicalSha256": "320b147040349985c766a4c57a1d52a32630539d0f0854ea73dda6b32f6cf38a",
+          "sourceCanonicalSha256": "320b147040349985c766a4c57a1d52a32630539d0f0854ea73dda6b32f6cf38a",
+          "equal": true
+        },
+        "examplesEnabled": {
+          "packCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "sourceCanonicalSha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "equal": true
+        },
+        "works": {
+          "packCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "sourceCanonicalSha256": "0a2b4ad995acc6f5a040c90e6daa08ca78405335b76027f3fd2889b714991a1a",
+          "equal": true
+        },
+        "dimensions": {
+          "packCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "sourceCanonicalSha256": "0906043dd880b95061f04c8096c6806b12f4f9ab85c8cbb47ef4a948b17f16d2",
+          "equal": true
+        }
+      },
+      "sourceInputChecks": {
+        "rawPrompt": true,
+        "context": true,
+        "examplesEnabled": true
+      },
+      "actualAnswerCount": 6,
+      "actualAnswersTransformation": "Compare question and answer verbatim; server questionId intentionally excluded from anonymous task metadata",
+      "works": [
+        {
+          "letter": "A",
+          "role": "direct",
+          "source": "tmp/me00a-20261012/candidate5-plan-r1/Q05-flash/direct-equal-information/work.md",
+          "sourceSha256": "fd7c1d1e8c2df44476409a4ada9c34aa130132546c416e17527ec67d9482bac0",
+          "blindSha256": "fd7c1d1e8c2df44476409a4ada9c34aa130132546c416e17527ec67d9482bac0",
+          "identicalBytes": true
+        },
+        {
+          "letter": "B",
+          "role": "raw",
+          "source": "tmp/me00a-20261012/candidate5-plan-r1/Q05-flash/raw-work.md",
+          "sourceSha256": "88b98ca9f2039422dcea760199863d5e426f80b9da99e0ac84e803553c14c207",
+          "blindSha256": "88b98ca9f2039422dcea760199863d5e426f80b9da99e0ac84e803553c14c207",
+          "identicalBytes": true
+        },
+        {
+          "letter": "C",
+          "role": "plan",
+          "source": "tmp/me00a-20261012/candidate5-plan-r1/Q05-flash/work.md",
+          "sourceSha256": "012efea28ae081e8a691d5d30d9811b5e8336e16ddf032f3d12e751afa6e67b2",
+          "blindSha256": "012efea28ae081e8a691d5d30d9811b5e8336e16ddf032f3d12e751afa6e67b2",
+          "identicalBytes": true
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "newModelCalls": 0,
+  "newScores": 0,
+  "qualityAcceptanceNotReassessed": true
+}

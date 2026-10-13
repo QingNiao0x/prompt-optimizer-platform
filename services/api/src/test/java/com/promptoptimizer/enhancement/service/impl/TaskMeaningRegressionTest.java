@@ -23,6 +23,22 @@ class TaskMeaningRegressionTest {
                 .doesNotThrowAnyException();
     }
 
+    @Test void independentAudienceClauseDoesNotBecomePartOfTheStudySubject() {
+        for (String background : List.of(
+                "研究对象为Plan问答对提示词质量的影响，面向研究生读者。",
+                "研究对象为Plan问答对提示词质量的影响，本文面向研究生。")) {
+            assertThatCode(() -> assemble(RESEARCH, background, RESEARCH, null)).doesNotThrowAnyException();
+        }
+    }
+
+    @Test void commaSeparatedStudyPopulationsStillCannotIncludeTheWritingAudience() {
+        for (String background : List.of("研究对象为工程师，研究生。",
+                "研究对象为工程师，研究生读者。", "研究对象为研究生，本文面向研究生。")) {
+            assertThatThrownBy(() -> assemble(RESEARCH, background, RESEARCH, null))
+                    .isInstanceOf(ProviderResponseValidationException.class);
+        }
+    }
+
     @Test void explicitSameAudienceAndStudySubjectIsLegitimate() {
         String raw = "为研究生撰写研究方案，研究对象为研究生，研究主题为学习压力。";
         assertThatCode(() -> assemble(raw, "研究对象为研究生。", raw, null)).doesNotThrowAnyException();

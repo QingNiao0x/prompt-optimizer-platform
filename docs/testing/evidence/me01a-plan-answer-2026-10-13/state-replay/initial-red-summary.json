@@ -1,0 +1,17 @@
+{
+  "phase": "initial-red",
+  "command": "mvn -o -q -f services/api/pom.xml -Dtest=DelegatedPlanAnswerProjectionTest test",
+  "exitCode": 1,
+  "tests": 1,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "failureName": "capturedResearchAnswersKeepFactsDelegationAndUnchosenParametersSeparate",
+  "assertion": "candidate5 六题实际答案均 expected UNRESOLVED but was TARGET",
+  "sourceBefore": "source-before.json",
+  "logSha256": "a24a747f2f6960ae6d31c9a01396d879840968816d29eef5e40caf411bcb4c1d",
+  "exitFileSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+  "testSourceAtInitialRedSha256": null,
+  "boundary": "初始单测源码未单独冻结，不能补造当时测试源码哈希。最终测试源码哈希见 assertion-corrected-summary.json，不能倒用于 red。",
+  "realModelCalls": 0
+}

@@ -1,0 +1,12 @@
+{
+  "phase": "state-choice-red",
+  "command": "mvn -o -q -f services/api/pom.xml -Dtest=DelegatedPlanAnswerProjectionTest test",
+  "exitCode": 1,
+  "tests": 7,
+  "failures": 1,
+  "errors": 0,
+  "failureDetails": {
+    "name": "aSelfContainedActualChoiceIsNotErasedByRefusalToConfirmOtherParameters",
+    "message": "\nExpecting actual:\n  \"整理分析要求。\n分析工具需先确认选哪一个。\"\nto contain:\n  \"这是我确定采用R的决定\" "
+  }
+}

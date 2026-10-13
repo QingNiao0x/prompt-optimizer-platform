@@ -29,7 +29,7 @@ public record PromptRewriteStrategy(String mode, String instruction) {
 
     /** 使用共享交付类型与确认状态；具体缺口由同次模型判断给出。 */
     public static PromptRewriteStrategy forTask(EffectiveTaskView task) {
-        return new PromptRewriteStrategy("ASSESS_EXECUTION_GAPS", GAP_GUIDANCE
+        return new PromptRewriteStrategy("ASSESS_EXECUTION_GAPS", GAP_GUIDANCE + task.meaning().evaluationGuidance()
                 + "\n本次交付画像：" + task.intent().deliveryProfile()
                 + "；有效执行要求数：" + task.executionRequirements().size()
                 + "；独立未决决定数：" + task.pendingDecisions().size()

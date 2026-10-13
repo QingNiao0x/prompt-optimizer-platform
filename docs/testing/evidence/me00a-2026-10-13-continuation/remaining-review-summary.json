@@ -1,0 +1,1726 @@
+{
+  "reviewers": "Two independent AI reviewers, not human experts",
+  "packs": 23,
+  "comparisons": 39,
+  "counts": [
+    {
+      "candidate_plan/plan_vs_direct_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 1
+      },
+      "candidate_plan/plan_vs_raw_equal_information": {
+        "BOTH_FAIL": 1,
+        "LOSS": 1,
+        "WIN": 1
+      },
+      "candidate_plan/direct_vs_raw_equal_information": {
+        "BOTH_FAIL": 2,
+        "LOSS": 1
+      },
+      "mixed_candidate_direct/enhanced_vs_raw": {
+        "TIE": 6,
+        "BOTH_FAIL": 3,
+        "WIN": 5
+      },
+      "baseline_plan/direct_vs_raw_equal_information": {
+        "WIN": 2,
+        "BOTH_FAIL": 2
+      },
+      "baseline_plan/plan_vs_raw_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 2
+      },
+      "baseline_plan/plan_vs_direct_equal_information": {
+        "LOSS": 2,
+        "WIN": 1,
+        "BOTH_FAIL": 1
+      },
+      "risk_repeat/enhanced_vs_raw": {
+        "WIN": 1
+      },
+      "candidate5_plan/direct_vs_raw_equal_information": {
+        "WIN": 1
+      },
+      "candidate5_plan/plan_vs_direct_equal_information": {
+        "LOSS": 1
+      },
+      "candidate5_plan/plan_vs_raw_equal_information": {
+        "WIN": 1
+      }
+    },
+    {
+      "candidate_plan/plan_vs_direct_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 1
+      },
+      "candidate_plan/plan_vs_raw_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 1
+      },
+      "candidate_plan/direct_vs_raw_equal_information": {
+        "BOTH_FAIL": 3
+      },
+      "mixed_candidate_direct/enhanced_vs_raw": {
+        "TIE": 6,
+        "BOTH_FAIL": 2,
+        "WIN": 5,
+        "LOSS": 1
+      },
+      "baseline_plan/direct_vs_raw_equal_information": {
+        "BOTH_FAIL": 3,
+        "WIN": 1
+      },
+      "baseline_plan/plan_vs_raw_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 2
+      },
+      "baseline_plan/plan_vs_direct_equal_information": {
+        "BOTH_FAIL": 2,
+        "WIN": 1,
+        "TIE": 1
+      },
+      "risk_repeat/enhanced_vs_raw": {
+        "WIN": 1
+      },
+      "candidate5_plan/direct_vs_raw_equal_information": {
+        "WIN": 1
+      },
+      "candidate5_plan/plan_vs_direct_equal_information": {
+        "LOSS": 1
+      },
+      "candidate5_plan/plan_vs_raw_equal_information": {
+        "BOTH_FAIL": 1
+      }
+    }
+  ],
+  "disagreements": 9,
+  "consensus": "Not assumed; disputed judgments retained",
+  "versionLimit": "Mixed candidate direct rows are not a full final-candidate regression",
+  "rows": [
+    {
+      "label": "R001",
+      "source": "candidate4-plan-r1/Q05-pro",
+      "mapping": {
+        "A": "plan",
+        "B": "direct",
+        "C": "raw"
+      },
+      "pair": "AB",
+      "group": "candidate_plan/plan_vs_direct_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A虽保留评价提示词，但对照A获整理信息、对照B另行提问获答，未给出封存并逐项一致的实际答案流，后文又换成预设标准包；B把主评价改为240份生成文本，偏离提示词质量。两者均未满足核心要求。正文均在汉字范围内。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "公平对照A由研究者提供整理后的确认信息，B由模型另提问题、研究者回复全部问题；推荐段又称预先标准信息仅供两个对照组。没有说明如何使不同取答路径实际包含同一份答案，无法执行原要求的同信息公平对照。"
+            },
+            {
+              "work": "B",
+              "reason": "评价程序明确“两名独立评审对全部240份生成文本进行盲评”，且研究目的写“问答对质量”，以答案质量替换用户指定的提示词质量。"
+            },
+            {
+              "work": "C",
+              "reason": "Plan组被定义为“回答前先输出计划，再依据计划作答”；对照A是任务理解确认提示、B是阶段检查提示，只要求信息量相当，既非用户问答，也非同一确认信息；评分对象也是回答。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A的两公平对照分别使用预制信息和各自提问回答，未封存并复用相同实际答案；B将240份下游生成文本作为评价对象，且把存在信息差的Direct与Plan解释为问答机制本身效应。二者均未落实核心比较。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "公平对照A一次提供研究者整理信息，B自行提问后一次回复；后文又建议预制标准确认信息，未确保两组逐字获得同一份实际答案。正文约1102汉字，长度达标。"
+            },
+            {
+              "work": "B",
+              "reason": "明确让两名评审评240份“生成文本”，未评最终提示词，偏离提示词质量；并称Direct与Plan可检验问答机制本身效应，未排除其额外信息。正文约1037汉字达标。"
+            },
+            {
+              "work": "C",
+              "reason": "Plan变成“先输出计划，再依据计划作答”，公平对照为任务理解提示/阶段检查提示及“等量”元认知信息；引入每名参与者作答与另定样本量，非原定20任务的提示词问答实验。正文约895汉字达标。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R001",
+      "source": "candidate4-plan-r1/Q05-pro",
+      "mapping": {
+        "A": "plan",
+        "B": "direct",
+        "C": "raw"
+      },
+      "pair": "AC",
+      "group": "candidate_plan/plan_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A的两组公平对照只有同信息声明，实际取答机制未闭合；C把Plan写成先输出计划再作答，并以等量元认知提示替代同一实际确认信息。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "公平对照A由研究者提供整理后的确认信息，B由模型另提问题、研究者回复全部问题；推荐段又称预先标准信息仅供两个对照组。没有说明如何使不同取答路径实际包含同一份答案，无法执行原要求的同信息公平对照。"
+            },
+            {
+              "work": "B",
+              "reason": "评价程序明确“两名独立评审对全部240份生成文本进行盲评”，且研究目的写“问答对质量”，以答案质量替换用户指定的提示词质量。"
+            },
+            {
+              "work": "C",
+              "reason": "Plan组被定义为“回答前先输出计划，再依据计划作答”；对照A是任务理解确认提示、B是阶段检查提示，只要求信息量相当，既非用户问答，也非同一确认信息；评分对象也是回答。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A未实现同一实际确认信息流；C把Plan问答改为先输出计划再作答，并仅提供等量过程提示。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "公平对照A一次提供研究者整理信息，B自行提问后一次回复；后文又建议预制标准确认信息，未确保两组逐字获得同一份实际答案。正文约1102汉字，长度达标。"
+            },
+            {
+              "work": "B",
+              "reason": "明确让两名评审评240份“生成文本”，未评最终提示词，偏离提示词质量；并称Direct与Plan可检验问答机制本身效应，未排除其额外信息。正文约1037汉字达标。"
+            },
+            {
+              "work": "C",
+              "reason": "Plan变成“先输出计划，再依据计划作答”，公平对照为任务理解提示/阶段检查提示及“等量”元认知信息；引入每名参与者作答与另定样本量，非原定20任务的提示词问答实验。正文约895汉字达标。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R001",
+      "source": "candidate4-plan-r1/Q05-pro",
+      "mapping": {
+        "A": "plan",
+        "B": "direct",
+        "C": "raw"
+      },
+      "pair": "BC",
+      "group": "candidate_plan/direct_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "B主要盲评生成答案而非提示词；C同时改变Plan的含义、评价对象和确认信息内容。不能因结构齐全判为达标。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "公平对照A由研究者提供整理后的确认信息，B由模型另提问题、研究者回复全部问题；推荐段又称预先标准信息仅供两个对照组。没有说明如何使不同取答路径实际包含同一份答案，无法执行原要求的同信息公平对照。"
+            },
+            {
+              "work": "B",
+              "reason": "评价程序明确“两名独立评审对全部240份生成文本进行盲评”，且研究目的写“问答对质量”，以答案质量替换用户指定的提示词质量。"
+            },
+            {
+              "work": "C",
+              "reason": "Plan组被定义为“回答前先输出计划，再依据计划作答”；对照A是任务理解确认提示、B是阶段检查提示，只要求信息量相当，既非用户问答，也非同一确认信息；评分对象也是回答。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "B替换了提示词质量的主要评价对象；C同时改变Plan干预、样本单位和同信息对照。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "公平对照A一次提供研究者整理信息，B自行提问后一次回复；后文又建议预制标准确认信息，未确保两组逐字获得同一份实际答案。正文约1102汉字，长度达标。"
+            },
+            {
+              "work": "B",
+              "reason": "明确让两名评审评240份“生成文本”，未评最终提示词，偏离提示词质量；并称Direct与Plan可检验问答机制本身效应，未排除其额外信息。正文约1037汉字达标。"
+            },
+            {
+              "work": "C",
+              "reason": "Plan变成“先输出计划，再依据计划作答”，公平对照为任务理解提示/阶段检查提示及“等量”元认知信息；引入每名参与者作答与另定样本量，非原定20任务的提示词问答实验。正文约895汉字达标。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R002",
+      "source": "candidate4-plan-r1/Q04-pro",
+      "mapping": {
+        "A": "plan",
+        "B": "raw",
+        "C": "direct"
+      },
+      "pair": "AB",
+      "group": "candidate_plan/plan_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "LOSS",
+          "verdict": "B_WIN",
+          "reason": "B可以作为随机比较两种自然使用流程整体效果的拟议方案：模型与任务条件统一，额外回答是干预的一部分；它未证明同信息下纯交互收益，且无显著差异的解释和样本量缩减依据不充分。A却把用户没有确认的严格信息卡要求标为用户确认，并以同类信息域近似替代实际相同答案。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "3.3、4.3将“同一份实际确认信息”等额外要求标为[用户确认]，实际题答明确不确认任何参数。实际A回答可跳过，B获完整信息卡，4.4只保证信息域约相同，不能兑现自身严格同信息声明。"
+            },
+            {
+              "work": "C",
+              "reason": "2.4先发相同基础表，Q-A再获取并使用新答案；2.6与第5节明令Direct不得访问这些回答，却把设计称为“严格的同信息对照”，主问题的实际信息条件不成立。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A仅保证回答和信息卡覆盖同类信息，不能保证实际内容相同；B只让提问组获得答案，并把不同流程说明当作信息公平。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "条件A获得自由回答且可跳过，B获得预制信息卡；§4.4只要求信息域“≈”，§10.2承认实际可能更多或更少，未提供严格公平的配套分析。多处“用户确认”还把真实任务和同信息细则写成已确认，实际答案未确认这些。"
+            },
+            {
+              "work": "B",
+              "reason": "§2.7只B组回答4问题，A无实际答案；公平性却以两组看到不同的系统流程说明“尽量对等”代替实际信息对等。"
+            },
+            {
+              "work": "C",
+              "reason": "§2.6明确Direct“不得看到或使用”Q-A额外回答，却声称两组逐字相同且只有流程差异，造成核心因果解释错误。"
+            }
+          ]
+        }
+      ],
+      "disputed": true
+    },
+    {
+      "label": "R002",
+      "source": "candidate4-plan-r1/Q04-pro",
+      "mapping": {
+        "A": "plan",
+        "B": "raw",
+        "C": "direct"
+      },
+      "pair": "AC",
+      "group": "candidate_plan/plan_vs_direct_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A声称用户确认同一实际信息，却只安排问题引出信息卡的同类内容；C更直接禁止Direct看到问答组额外回答，仍宣称严格同信息方法比较。两份均自相矛盾。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "3.3、4.3将“同一份实际确认信息”等额外要求标为[用户确认]，实际题答明确不确认任何参数。实际A回答可跳过，B获完整信息卡，4.4只保证信息域约相同，不能兑现自身严格同信息声明。"
+            },
+            {
+              "work": "C",
+              "reason": "2.4先发相同基础表，Q-A再获取并使用新答案；2.6与第5节明令Direct不得访问这些回答，却把设计称为“严格的同信息对照”，主问题的实际信息条件不成立。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A近似等信息而无答案复用；C更明确禁止Direct使用Q-A额外实际回答，两者均不能支持同信息下流程收益的解释。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "条件A获得自由回答且可跳过，B获得预制信息卡；§4.4只要求信息域“≈”，§10.2承认实际可能更多或更少，未提供严格公平的配套分析。多处“用户确认”还把真实任务和同信息细则写成已确认，实际答案未确认这些。"
+            },
+            {
+              "work": "B",
+              "reason": "§2.7只B组回答4问题，A无实际答案；公平性却以两组看到不同的系统流程说明“尽量对等”代替实际信息对等。"
+            },
+            {
+              "work": "C",
+              "reason": "§2.6明确Direct“不得看到或使用”Q-A额外回答，却声称两组逐字相同且只有流程差异，造成核心因果解释错误。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R002",
+      "source": "candidate4-plan-r1/Q04-pro",
+      "mapping": {
+        "A": "plan",
+        "B": "raw",
+        "C": "direct"
+      },
+      "pair": "BC",
+      "group": "candidate_plan/direct_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "LOSS",
+          "verdict": "B_WIN",
+          "reason": "原始需求可以研究自然使用流程是否更有用，B的随机整体效果比较基本可开展；C把主问题明确限定为相同实际确认信息，却在2.6禁止Direct访问Q-A新增回答，无法回答其自定主问题。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "3.3、4.3将“同一份实际确认信息”等额外要求标为[用户确认]，实际题答明确不确认任何参数。实际A回答可跳过，B获完整信息卡，4.4只保证信息域约相同，不能兑现自身严格同信息声明。"
+            },
+            {
+              "work": "C",
+              "reason": "2.4先发相同基础表，Q-A再获取并使用新答案；2.6与第5节明令Direct不得访问这些回答，却把设计称为“严格的同信息对照”，主问题的实际信息条件不成立。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "B未共享实际答案；C共享基础表后又单组追加回答且禁止另一组访问。两者公平性声明均不符合具体信息流。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "条件A获得自由回答且可跳过，B获得预制信息卡；§4.4只要求信息域“≈”，§10.2承认实际可能更多或更少，未提供严格公平的配套分析。多处“用户确认”还把真实任务和同信息细则写成已确认，实际答案未确认这些。"
+            },
+            {
+              "work": "B",
+              "reason": "§2.7只B组回答4问题，A无实际答案；公平性却以两组看到不同的系统流程说明“尽量对等”代替实际信息对等。"
+            },
+            {
+              "work": "C",
+              "reason": "§2.6明确Direct“不得看到或使用”Q-A额外回答，却声称两组逐字相同且只有流程差异，造成核心因果解释错误。"
+            }
+          ]
+        }
+      ],
+      "disputed": true
+    },
+    {
+      "label": "R003",
+      "source": "candidate3-direct-r1/Q06-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "均保留两行顺序、周五15点和周四之前，未附加说明。A的whether更显式，B的confirm your attendance为常见邮件表达，差异不足以改变整体可用性。",
+          "severe": []
+        },
+        {
+          "reviewer": "two",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "均仅输出两行译文，保留周五15点与周四之前的时间边界；confirm your attendance是自然译法。",
+          "severe": []
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R004",
+      "source": "candidate4-plan-r1/Q05-flash",
+      "mapping": {
+        "A": "plan",
+        "B": "raw",
+        "C": "direct"
+      },
+      "pair": "AB",
+      "group": "candidate_plan/plan_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A正确界定增强器提问、信息提供者回答、封存同一实际答案，评价对象也是提示词；B将Plan定义为先规划后生成，问答主体等核心流程仍未推荐明确。A纯正文990汉字；B附表排除后正文1118汉字，B的主要失败不是字数。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "开头将Plan解释为“先规划后生成”，条件段称规划阶段“可包含澄清问题与回答”，把必须研究的问答变为可选规划环节。"
+            },
+            {
+              "work": "C",
+              "reason": "按CJK汉字计数、剔除Markdown标题且无附表后，正文1217汉字；含标题1260汉字，均超过800至1200上限。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A明确模型提问、信息提供者作答及封存逐字相同确认信息，并保持提示词评价；B将Plan定义为先规划后生成且把提答角色留待规定。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "称Plan为“先规划后生成”，澄清问答只是“可包含”，改变用户研究的Plan问答机制；未给同信息两组具体增强流程。"
+            },
+            {
+              "work": "C",
+              "reason": "正文约1260汉字、无附表可扣除，超过800至1200汉字上限。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R004",
+      "source": "candidate4-plan-r1/Q05-flash",
+      "mapping": {
+        "A": "plan",
+        "B": "raw",
+        "C": "direct"
+      },
+      "pair": "AC",
+      "group": "candidate_plan/plan_vs_direct_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "两者都保留任务目标与提示词评价，C的评分建议更具体，但其纯正文1217汉字，连标题都不计仍超过1200；A990汉字符合硬边界。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "开头将Plan解释为“先规划后生成”，条件段称规划阶段“可包含澄清问题与回答”，把必须研究的问答变为可选规划环节。"
+            },
+            {
+              "work": "C",
+              "reason": "按CJK汉字计数、剔除Markdown标题且无附表后，正文1217汉字；含标题1260汉字，均超过800至1200上限。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A正文约1031汉字符合限长；C约1260汉字（即使扣除标题仍超1200），违反明确正文上限。A与C均有对照流程及评分终值待细化，但A满足硬性格式。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "称Plan为“先规划后生成”，澄清问答只是“可包含”，改变用户研究的Plan问答机制；未给同信息两组具体增强流程。"
+            },
+            {
+              "work": "C",
+              "reason": "正文约1260汉字、无附表可扣除，超过800至1200汉字上限。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R004",
+      "source": "candidate4-plan-r1/Q05-flash",
+      "mapping": {
+        "A": "plan",
+        "B": "raw",
+        "C": "direct"
+      },
+      "pair": "BC",
+      "group": "candidate_plan/direct_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "B改变Plan的核心干预为规划；C尽管方法含义较准确，纯正文1217汉字仍违反明确上限。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "开头将Plan解释为“先规划后生成”，条件段称规划阶段“可包含澄清问题与回答”，把必须研究的问答变为可选规划环节。"
+            },
+            {
+              "work": "C",
+              "reason": "按CJK汉字计数、剔除Markdown标题且无附表后，正文1217汉字；含标题1260汉字，均超过800至1200上限。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "B实质改写Plan为规划过程；C超过正文1200汉字硬上限。B附表剔除后约1183汉字，不能误判为超长。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "称Plan为“先规划后生成”，澄清问答只是“可包含”，改变用户研究的Plan问答机制；未给同信息两组具体增强流程。"
+            },
+            {
+              "work": "C",
+              "reason": "正文约1260汉字、无附表可扣除，超过800至1200汉字上限。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R005",
+      "source": "candidate3-direct-r1/Q06-pro",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "两份均用by Thursday替代“周四之前”，允许读者理解为周四当天截止，未忠实保留时间边界。两行与无解释格式正确，但不抵消截止时间变更。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "“Please confirm by Thursday”将原文严格的“周四之前”变为不晚于周四。"
+            },
+            {
+              "work": "B",
+              "reason": "“Please confirm whether you will attend by Thursday”同样把截止时间改成by Thursday，且时间短语靠近attend增加轻微歧义。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "两者都把“周四之前”译为by Thursday，容许周四当天，改变明确时间边界；正确边界应before Thursday。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "“confirm by Thursday”放宽周四之前的截止边界。"
+            },
+            {
+              "work": "B",
+              "reason": "“confirm ... by Thursday”同样放宽周四之前的截止边界。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R006",
+      "source": "candidate3-direct-r1/Q03-flash",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "正文相同，均明确小林、今天17点前、本周项目进度及汇总给团队；正文少于80汉字，无占位符或虚构进展。主题措辞差异不影响任务。",
+          "severe": []
+        },
+        {
+          "reviewer": "two",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "相同正文，收件人、今日17点前、本周项目进度及汇总目的完整；均少于80汉字且无占位符或多余解释。",
+          "severe": []
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R007",
+      "source": "candidate2-direct-r1/Q02-pro",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "两者都完成委婉提醒。A邮件主体更易直接使用，B附加模板说明、结语评价和职位联系方式等多个占位符，增加编辑负担。原需求未禁止模板或说明，因此不把这些判为严重格式违规；A“无需着急”也属于未确认的语气延伸。",
+          "severe": []
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A可作完整委婉邮件，只有署名待填；B附额外解释、职位和联系方式等无必要占位，增加直接发送前清理成本。开放请求未禁止占位符，不能仅据占位认定严重失败。",
+          "severe": []
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R008",
+      "source": "baseline-plan-r2/Q05-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "direct",
+        "C": "plan"
+      },
+      "pair": "AB",
+      "group": "baseline_plan/direct_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "B正确说明模型提问、用户回答并评价提示词，正文1072汉字；仍有开头2×4两模式与后文四条件、分析固定效应不含四条件的衔接缺陷。A纯正文1372汉字超过上限，交互主体和终止规则也未具体落地。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "无附表，去除标题后的正文1372汉字，含标题1433汉字，明显超过1200上限。"
+            },
+            {
+              "work": "C",
+              "reason": "随机化段写“每类5个任务内随机分配至四组条件”，同时要求“每任务每模式重复3次”。组间分配任务不能形成用户要求的全部任务跨全部模式重复与配对结构。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A正文约1433汉字超限且问答操作待定；B从20任务的每模式3次转成每名参与者都完成全部重复，参与者样本未定义，四条件又写成二模式模型，核心设计不一致。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "无附表，正文连标题约1433汉字，扣标题仍明显超过1200；以“结构化规划”表述Plan作用，未明确谁提问谁回答。"
+            },
+            {
+              "work": "B",
+              "reason": "“每名参与者在每种模式下完成每个任务”另加样本维度却无参与者人数与职责；总体2模式设计和四条件比较、统计固定效应无法对应。"
+            },
+            {
+              "work": "C",
+              "reason": "“每类5个任务内随机分配至四组条件”意味着每任务仅一组，无法同时实现随后“每任务每模式重复3次”的20任务完整配对设计。"
+            }
+          ]
+        }
+      ],
+      "disputed": true
+    },
+    {
+      "label": "R008",
+      "source": "baseline-plan-r2/Q05-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "direct",
+        "C": "plan"
+      },
+      "pair": "AC",
+      "group": "baseline_plan/plan_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A超出1200汉字；C把每类5个任务随机分到四组，与每任务须在每模式各重复3次冲突。两者未满足明确设计边界。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "无附表，去除标题后的正文1372汉字，含标题1433汉字，明显超过1200上限。"
+            },
+            {
+              "work": "C",
+              "reason": "随机化段写“每类5个任务内随机分配至四组条件”，同时要求“每任务每模式重复3次”。组间分配任务不能形成用户要求的全部任务跨全部模式重复与配对结构。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A明显超限；C将每类5任务随机分到四组与同任务每模式均重复3次相冲突。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "无附表，正文连标题约1433汉字，扣标题仍明显超过1200；以“结构化规划”表述Plan作用，未明确谁提问谁回答。"
+            },
+            {
+              "work": "B",
+              "reason": "“每名参与者在每种模式下完成每个任务”另加样本维度却无参与者人数与职责；总体2模式设计和四条件比较、统计固定效应无法对应。"
+            },
+            {
+              "work": "C",
+              "reason": "“每类5个任务内随机分配至四组条件”意味着每任务仅一组，无法同时实现随后“每任务每模式重复3次”的20任务完整配对设计。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R008",
+      "source": "baseline-plan-r2/Q05-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "direct",
+        "C": "plan"
+      },
+      "pair": "BC",
+      "group": "baseline_plan/plan_vs_direct_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "LOSS",
+          "verdict": "B_WIN",
+          "reason": "B虽需修正模型条件编码，仍明确每参与者完成每模式每任务；C明确随机将任务分组，会丢失同任务跨四模式比较，不能靠后一句每任务每模式重复消除矛盾。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "无附表，去除标题后的正文1372汉字，含标题1433汉字，明显超过1200上限。"
+            },
+            {
+              "work": "C",
+              "reason": "随机化段写“每类5个任务内随机分配至四组条件”，同时要求“每任务每模式重复3次”。组间分配任务不能形成用户要求的全部任务跨全部模式重复与配对结构。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "B额外引入未定义参与者层及2模式/4条件不一致；C按任务分组破坏同任务配对。双方均需重写实际运行安排。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "无附表，正文连标题约1433汉字，扣标题仍明显超过1200；以“结构化规划”表述Plan作用，未明确谁提问谁回答。"
+            },
+            {
+              "work": "B",
+              "reason": "“每名参与者在每种模式下完成每个任务”另加样本维度却无参与者人数与职责；总体2模式设计和四条件比较、统计固定效应无法对应。"
+            },
+            {
+              "work": "C",
+              "reason": "“每类5个任务内随机分配至四组条件”意味着每任务仅一组，无法同时实现随后“每任务每模式重复3次”的20任务完整配对设计。"
+            }
+          ]
+        }
+      ],
+      "disputed": true
+    },
+    {
+      "label": "R009",
+      "source": "candidate3-direct-r1/Q03-pro",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "两份正文均友好、简短并保留全部事实、截止时间和汇总用途；B在主题补今天、正文补你好，属于等效表达，均可直接发送。",
+          "severe": []
+        },
+        {
+          "reviewer": "two",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "均友好且完整保留小林、今天17点前、本周进度与汇总目的，正文远低于80汉字；少量礼貌措辞差异不构成实质优劣。",
+          "severe": []
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R010",
+      "source": "candidate4-direct-r1/Q05-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A将Plan问答改成先规划后作答且正文1521汉字。B方法含义、信息封存和评价对象明显更好，但纯正文750汉字；即计入分节标题、仅剔除文题“研究方法”也为797汉字，未到800。按明确正文边界，两份均不合格。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "Plan定义为“先输出简要计划，再依据计划完成作答”，并主要评分输出回答；纯正文1521汉字超过1200。"
+            },
+            {
+              "work": "B",
+              "reason": "正文最低字数未达要求：去除标题750汉字；包含四个分节标题但不含文题797汉字。全文801汉字是把文题一并计入才超过800，不能作为正文达标。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "B明确增强器提问、用户回答及封存实际答案供两对照逐字使用，评价提示词，主体含小标题约801汉字；A把Plan变成先规划后作答，还加入未定义参与者维度，约1584汉字明显超限。B仍需固定具体对照流程、量尺与分歧阈值。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "“Plan（先规划后作答）”及“先输出简要计划”替代用户问答；每名参与者每任务3次另加未定义样本层。无附表，正文约1584汉字超1200。"
+            }
+          ]
+        }
+      ],
+      "disputed": true
+    },
+    {
+      "label": "R011",
+      "source": "candidate2-direct-r1/Q04-pro",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A把自然效果与同信息回放分开，明确同等组不再新增提问、两组使用逐字同一问答记录，评价提示词及可选下游作品。其自然阶段只给A任务采集记录，后续却写每任务打包，须补齐B任务记录来源或限定第二阶段任务集。B无同信息检验且建议只给直接组加30秒等待，错误宣称30人足够，削弱公平与可行性。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "第七节建议为直接组人为加入“30秒的强制阅读时间”来平衡总时长，这会污染正在测量的效率；第四节无功效依据便断言约30人样本量足够做配对检验，结尾“一周内完全可以跑完”也无资源依据。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A尝试封存同信息对照，但自然阶段每任务仅随机进入一流程，B任务没有R却要求每任务构造含R的信息包，且同信息A取消问答后独立操纵不清；B没有实际答案共享，反以给直接组强加30秒阅读补偿公平。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "§3.4每任务随机分配A或B，R仅A任务产生；§3.2又要求对每任务用封存R构造同等包，无B任务R来源。A-同等不再问答却仍把是否主动问答定义为自变量，待评机制未闭合。"
+            },
+            {
+              "work": "B",
+              "reason": "只有引导组获得用户回答；建议直接组强制阅读30秒“平衡总时长”，不能控制实际信息差且另加干预。又无功效依据断言30人“足够”、一周能跑完。"
+            }
+          ]
+        }
+      ],
+      "disputed": true
+    },
+    {
+      "label": "R012",
+      "source": "candidate2-direct-r1/Q07-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "两份完全相同，均为严格JSON对象，仅name字符串与age整数，值为李明和28，没有Markdown或多余字段。",
+          "severe": []
+        },
+        {
+          "reviewer": "two",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "两作品逐字相同，都是仅含name字符串和age整数的严格JSON。",
+          "severe": []
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R013",
+      "source": "candidate4-direct-r2/Q01-pro",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "pair": "AB",
+      "group": "risk_repeat/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "两份都正确算出增加20、增长20%，并提出进一步经营核查。B更准确保留同币种不等于恒定汇率的边界；A无行业基准便称中高速增长、在多数行业是积极信号，评价超过证据。A的行业30%只是条件例子，并非伪造实际行业数据。",
+          "severe": []
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "均正确计算20%并区分核查方向；B更精确说明同币种不等于恒定汇率，未把20%无行业基准地定性为“中高速”“多数行业积极信号”。A的条件假设并非编造事实，但定性略越界。",
+          "severe": []
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R014",
+      "source": "candidate2-direct-r1/Q04-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A用自由补充组宣称分离提问与信息增益，但自由补充不是同一实际答案。B给出封存同信息方向，却把多项自拟限制列为用户确认、把量尺和几乎全部可开展参数留给用户；这与只有一句原始需求、没有确认题答的输入不符。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "称C3自由补充可“区分提问本身与多一轮信息输入”，但C2得到问答实际内容、C3仅自由补充且可能不同；长度控制或协变量无法保证答案相同，纯方法归因不成立。"
+            },
+            {
+              "work": "B",
+              "reason": "12.2宣称用户要求评价对象、自然与同信息双研究、评分尺度未指定必须未决等，task.json没有这些确认。以虚构的用户限制拒绝给量尺等推荐值，将大量设计工作退回用户，未满足可实际开展的交付目标。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "LOSS",
+          "verdict": "A_WIN",
+          "reason": "A给出可开展的自然使用三条件比较、任务平衡、盲评及成本指标，较B全面把关键参数交回用户更可执行。A的C3只能控制补充机会，不能保证相同实际信息，不能据此解释纯粹的信息等同下方法效应；这限制机制解释，但仍可研究原问的总体有用性。B还将新增要求冒称用户确认。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "§12.2称用户要求“评价对象为提示词质量”“区分自然使用与同等信息”“评分尺度未指定保持未决”等，原始请求没有这些且无实际题答。把建议写成用户要求，并据此不推荐评分/任务/轮次等必要参数。"
+            }
+          ]
+        }
+      ],
+      "disputed": true
+    },
+    {
+      "label": "R015",
+      "source": "candidate2-direct-r1/Q01-flash",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "A事实边界与待取数据分类更严密，但重复较多；B更直接解释量价、回款和份额核查的经营意义，30%行业、5%销量等均明确以若引入，不能当成捏造资料或因示例开关而自动判严重违规。B“积极起点”及约14%的价结构拆解表述仍应更审慎。整体各有优势。",
+          "severe": []
+        },
+        {
+          "reviewer": "two",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "均正确计算20%，明确现有资料不能解释驱动及质量，并提供有用核查步骤。A边界更严谨但重复较多；B条件量价例子帮助理解且用户未禁止假设说明，不能将这些“若”句视为真实新增数据；B“尚未剔除”可改为“无法确认是否剔除”。",
+          "severe": []
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R016",
+      "source": "candidate2-direct-r1/Q01-pro",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A清楚区分收入增长、需求销量、市场份额与汇率，并给出数据及用途。B把20%无基准地列为中高速区间，且将正常并表与收入虚增并列，容易误导经营含义；其待核查风险并非已发生事实，故不判捏造具体经营数据。",
+          "severe": []
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A保持列报币种与汇率影响区分，量价、市场与回款的核查证据明确；B无行业基准地定性“中高速”，并把并表和会计确认与“收入虚增”并列，倾向不必要的负面归因。条件性风险本身不算伪造事实。",
+          "severe": []
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R017",
+      "source": "baseline-plan-r2/Q05-pro",
+      "mapping": {
+        "A": "raw",
+        "B": "plan",
+        "C": "direct"
+      },
+      "pair": "AB",
+      "group": "baseline_plan/plan_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "B保留增强器提问、用户回答、同一确认信息以及240条提示词盲评，纯正文1070汉字。A改成操作者先写计划、两个对照获得不同信息，且正文1559汉字、可调整20任务和3次的表述突破硬设定。B“设三个”却列四个是可修正笔误。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "Plan是“操作者先写出规划”，对照A获Plan任务要素、B获直接增强问题说明，非同一确认信息；还允许预实验调整必须保留的20任务与3重复。除附表和标题后正文1559汉字。"
+            },
+            {
+              "work": "C",
+              "reason": "开头明确“比较四种提示词增强模式对生成回答质量的影响”，直接增强也写生成回答；主评价未回到用户要求的提示词质量。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "B保留真实提问与用户回答、提示词评价、20任务×4条件×3重复及盲评，约1103汉字；A改成操作者规划，两个对照信息来源还不同，正文超限。B“设三个”实际列四个为明显笔误，需改但不掩盖主设计。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "Plan为操作者先写规划；对照A拿Plan信息、对照B拿直接增强信息，并非同一实际确认信息。附表剔除后约1633汉字超限，还把固定20任务3次写成可按功效调整。"
+            },
+            {
+              "work": "C",
+              "reason": "研究目标写作“四种提示词增强模式对生成回答质量的影响”，直接增强流程亦“生成回答”，把用户要求的提示词质量替换为答案质量。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R017",
+      "source": "baseline-plan-r2/Q05-pro",
+      "mapping": {
+        "A": "raw",
+        "B": "plan",
+        "C": "direct"
+      },
+      "pair": "AC",
+      "group": "baseline_plan/direct_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A同时改变Plan、对照信息和数值边界；C虽字数合规、问答含义正确，研究目标和评分流程改成生成回答质量，未研究指定的提示词质量。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "Plan是“操作者先写出规划”，对照A获Plan任务要素、B获直接增强问题说明，非同一确认信息；还允许预实验调整必须保留的20任务与3重复。除附表和标题后正文1559汉字。"
+            },
+            {
+              "work": "C",
+              "reason": "开头明确“比较四种提示词增强模式对生成回答质量的影响”，直接增强也写生成回答；主评价未回到用户要求的提示词质量。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A替换Plan机制、对照信息不同且超长；C开篇和流程均改为生成回答质量，未保留提示词质量主评价。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "Plan为操作者先写规划；对照A拿Plan信息、对照B拿直接增强信息，并非同一实际确认信息。附表剔除后约1633汉字超限，还把固定20任务3次写成可按功效调整。"
+            },
+            {
+              "work": "C",
+              "reason": "研究目标写作“四种提示词增强模式对生成回答质量的影响”，直接增强流程亦“生成回答”，把用户要求的提示词质量替换为答案质量。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R017",
+      "source": "baseline-plan-r2/Q05-pro",
+      "mapping": {
+        "A": "raw",
+        "B": "plan",
+        "C": "direct"
+      },
+      "pair": "BC",
+      "group": "baseline_plan/plan_vs_direct_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "B明确评价优化后提示词并给出四维锚点与分歧流程；C第一句和直接增强流程均指生成回答，评价对象被替换，不能以有四维评分就认定满足原要求。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "Plan是“操作者先写出规划”，对照A获Plan任务要素、B获直接增强问题说明，非同一确认信息；还允许预实验调整必须保留的20任务与3重复。除附表和标题后正文1559汉字。"
+            },
+            {
+              "work": "C",
+              "reason": "开头明确“比较四种提示词增强模式对生成回答质量的影响”，直接增强也写生成回答；主评价未回到用户要求的提示词质量。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "B评240条优化提示词且有明确操作；C转为回答质量，且同信息Plan组不再提问、流程差异不明确。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "Plan为操作者先写规划；对照A拿Plan信息、对照B拿直接增强信息，并非同一实际确认信息。附表剔除后约1633汉字超限，还把固定20任务3次写成可按功效调整。"
+            },
+            {
+              "work": "C",
+              "reason": "研究目标写作“四种提示词增强模式对生成回答质量的影响”，直接增强流程亦“生成回答”，把用户要求的提示词质量替换为答案质量。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R018",
+      "source": "baseline-plan-r2/Q04-flash",
+      "mapping": {
+        "A": "direct",
+        "B": "raw",
+        "C": "plan"
+      },
+      "pair": "AB",
+      "group": "baseline_plan/direct_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A虽反复称同信息，实际仅问答组获取并使用2至5轮新回答；B明确三种输入不同，却宣称自由补充控制额外信息量并可判断提问本身。两者都没有兑现各自主张的机制比较。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "第5至6节只给问答组新增2至5轮回答并融入，直接组仅用初始已提供信息；主假设及结论却以相同实际确认信息解释方法收益，信息流不成立。"
+            },
+            {
+              "work": "B",
+              "reason": "第2节称C组控制额外信息量，第7节却列B输入为问答回答、C输入为可空自由补充，实际内容不相同，不能据B对C归因结构化提问本身。另将用户不确认参数转述为已确认没有任务等，表述不准确。"
+            },
+            {
+              "work": "C",
+              "reason": "4.4原文“若QAE组用户回答了问题，DE组不得获得这些回答”，直接违背同段及H1要求的相同实际确认信息。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A以相同实际确认信息作为主问题前提，却只向问答组追加2至5轮答案；B明确把可为空的自由补充组说成控制额外信息量，实际只是增加补充机会，不能完成其核心机制归因。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "主假设要求相同实际确认信息；§5至§6只问答组获得新答案，直接组无复用通道。还将“本次实际确认信息逐字题答为空”写成已知事实，而task.json提供了6条实际题答。"
+            },
+            {
+              "work": "B",
+              "reason": "C可自由补充或完全不补充，B定向回答问题；文中反复断言C控制“额外信息量”，并据此识别提问本身增量，未控制实际答案内容。"
+            },
+            {
+              "work": "C",
+              "reason": "§4.4明确“若QAE组用户回答了问题，DE组不得获得这些回答”，与H1相同实际确认信息及公平性声明直接冲突。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R018",
+      "source": "baseline-plan-r2/Q04-flash",
+      "mapping": {
+        "A": "direct",
+        "B": "raw",
+        "C": "plan"
+      },
+      "pair": "AC",
+      "group": "baseline_plan/plan_vs_direct_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A的同信息声明缺乏新增答案同步路径；C在4.4更直接规定DE不得获得QAE实际回答，与其相同实际信息主假设冲突。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "第5至6节只给问答组新增2至5轮回答并融入，直接组仅用初始已提供信息；主假设及结论却以相同实际确认信息解释方法收益，信息流不成立。"
+            },
+            {
+              "work": "B",
+              "reason": "第2节称C组控制额外信息量，第7节却列B输入为问答回答、C输入为可空自由补充，实际内容不相同，不能据B对C归因结构化提问本身。另将用户不确认参数转述为已确认没有任务等，表述不准确。"
+            },
+            {
+              "work": "C",
+              "reason": "4.4原文“若QAE组用户回答了问题，DE组不得获得这些回答”，直接违背同段及H1要求的相同实际确认信息。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "A只共享起始信息而额外答案仅问答组得到；C进一步明示DE不得获得QAE实际回答。二者的同信息主比较都不成立。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "主假设要求相同实际确认信息；§5至§6只问答组获得新答案，直接组无复用通道。还将“本次实际确认信息逐字题答为空”写成已知事实，而task.json提供了6条实际题答。"
+            },
+            {
+              "work": "B",
+              "reason": "C可自由补充或完全不补充，B定向回答问题；文中反复断言C控制“额外信息量”，并据此识别提问本身增量，未控制实际答案内容。"
+            },
+            {
+              "work": "C",
+              "reason": "§4.4明确“若QAE组用户回答了问题，DE组不得获得这些回答”，与H1相同实际确认信息及公平性声明直接冲突。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R018",
+      "source": "baseline-plan-r2/Q04-flash",
+      "mapping": {
+        "A": "direct",
+        "B": "raw",
+        "C": "plan"
+      },
+      "pair": "BC",
+      "group": "baseline_plan/plan_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "B的C组自由补充内容可能为空，不能控制问答组实际获得的信息；C明确扣留新增答案却宣称同信息方法收益。流程再长也未解决比较对象。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "第5至6节只给问答组新增2至5轮回答并融入，直接组仅用初始已提供信息；主假设及结论却以相同实际确认信息解释方法收益，信息流不成立。"
+            },
+            {
+              "work": "B",
+              "reason": "第2节称C组控制额外信息量，第7节却列B输入为问答回答、C输入为可空自由补充，实际内容不相同，不能据B对C归因结构化提问本身。另将用户不确认参数转述为已确认没有任务等，表述不准确。"
+            },
+            {
+              "work": "C",
+              "reason": "4.4原文“若QAE组用户回答了问题，DE组不得获得这些回答”，直接违背同段及H1要求的相同实际确认信息。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "B将补充机会等同于控制实际信息量；C声称同信息却禁止直接组读取新增回答，均缺少可识别的公平机制比较。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "主假设要求相同实际确认信息；§5至§6只问答组获得新答案，直接组无复用通道。还将“本次实际确认信息逐字题答为空”写成已知事实，而task.json提供了6条实际题答。"
+            },
+            {
+              "work": "B",
+              "reason": "C可自由补充或完全不补充，B定向回答问题；文中反复断言C控制“额外信息量”，并据此识别提问本身增量，未控制实际答案内容。"
+            },
+            {
+              "work": "C",
+              "reason": "§4.4明确“若QAE组用户回答了问题，DE组不得获得这些回答”，与H1相同实际确认信息及公平性声明直接冲突。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R019",
+      "source": "candidate3-direct-r1/Q05-pro",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A保留提示词评价与真实用户问答，两个同信息回放对照都使用固定材料，正文965汉字。分歧仲裁如何进入最终均值、缺失均值替代仍待改进。B把Plan变成生成计划、两个等量却不同内容的对照、只评回答，并且正文1243汉字超限。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "Plan“先制定回答计划再作答”，A对照获背景约束、B对照获输出质量说明，等量不是同一实际信息；两名评审评分240条回答而非提示词。去标题后正文1243汉字，超过1200。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A保留问答和提示词质量、规定240份及约1001汉字；B将Plan变为模型计划、对照仅等量不同信息、评价回答且约1288汉字超限。A仍未充分说明封存信息来源与Plan同信息流程，仲裁后仍用两原评审均值也须澄清。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "要求模型先制定回答计划；对照A给背景约束、B给格式标准，仅“等量”非同一答案；盲评240条回答替代提示词评价。正文约1288汉字，无附表，扣除标题仍超1200。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R020",
+      "source": "baseline-plan-r2/Q04-pro",
+      "mapping": {
+        "A": "plan",
+        "B": "direct",
+        "C": "raw"
+      },
+      "pair": "AB",
+      "group": "baseline_plan/plan_vs_direct_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "LOSS",
+          "verdict": "B_WIN",
+          "reason": "本题原需求未强制同信息纯机制实验，自然使用的整体效果比较可以成立。B明确承认新增信息与流程不能完全分离，并以匹配随机任务和增强者交叉平衡控制差异，较A更诚实界定解释范围；但相似任务称同一任务仍不准确，样本量效应量口径和评分后选权重需要修正。A手动增强主方案与前文固定同LLM相互混杂，重复叙述较多。",
+          "severe": [
+            {
+              "work": "C",
+              "reason": "2.4至2.5直接组由参与者自己撰写，问答组由系统生成后用户可修改；直接组只有可选AI润色。这样同时操纵是否问答、自动生成和修订机会，无法公平识别所问的增强流程收益。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "A共享初始信息后仅问答组获取新答案，B明确承认信息差是干预组成且无法分离提问与信息增益；两者可研究原问的自然使用总效应，均不能充当严格同实际答案的方法对照。A单一任务限制推广且手动/LLM主方案表述冲突；B匹配不同任务却称原始信息完全一致，须改。拟议样本与条件效应量未冒充实际观察，不以长篇或参数数量加分。",
+          "severe": [
+            {
+              "work": "C",
+              "reason": "§2.4至2.5：直接组参与者自行撰写，问答组系统自动产草稿后再编辑；直接组仅可选AI润色。比较同时改变生成主体、工具辅助和修订机会，核心公平性失败。“理论上可达同等信息”也不保证实际答案一致。"
+            }
+          ]
+        }
+      ],
+      "disputed": true
+    },
+    {
+      "label": "R020",
+      "source": "baseline-plan-r2/Q04-pro",
+      "mapping": {
+        "A": "plan",
+        "B": "direct",
+        "C": "raw"
+      },
+      "pair": "AC",
+      "group": "baseline_plan/plan_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A在两组使用同一增强指南和同一操作者，可评价包含额外取答在内的自然使用总效果；C直接组人工写、问答组系统生成且可编辑，可选润色无法消除工具与修订机会差异，不能归因于先问答。A也不能被解释为同信息下纯流程收益。",
+          "severe": [
+            {
+              "work": "C",
+              "reason": "2.4至2.5直接组由参与者自己撰写，问答组由系统生成后用户可修改；直接组只有可选AI润色。这样同时操纵是否问答、自动生成和修订机会，无法公平识别所问的增强流程收益。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A两组采用相同增强指南及一轮增强，信息差作为问答总干预可解释；C直接组由人手写、问答组由系统生成且允许编辑，AI润色仅可选，混入工具与修改机会差异。",
+          "severe": [
+            {
+              "work": "C",
+              "reason": "§2.4至2.5：直接组参与者自行撰写，问答组系统自动产草稿后再编辑；直接组仅可选AI润色。比较同时改变生成主体、工具辅助和修订机会，核心公平性失败。“理论上可达同等信息”也不保证实际答案一致。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R020",
+      "source": "baseline-plan-r2/Q04-pro",
+      "mapping": {
+        "A": "plan",
+        "B": "direct",
+        "C": "raw"
+      },
+      "pair": "BC",
+      "group": "baseline_plan/direct_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "B的比较目标可限定为自然使用整体效果，并明确信息量限制；C同时改变增强主体、工具辅助和编辑机会，且用理论可达同等信息量代替实际答案一致，存在更重的可辨识性问题。",
+          "severe": [
+            {
+              "work": "C",
+              "reason": "2.4至2.5直接组由参与者自己撰写，问答组由系统生成后用户可修改；直接组只有可选AI润色。这样同时操纵是否问答、自动生成和修订机会，无法公平识别所问的增强流程收益。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "B同一批增强者交叉承担两流程、控制修订并承认信息差的解释界限；C增强主体、AI辅助和修改机会不一致，无法归因于是否先澄清。",
+          "severe": [
+            {
+              "work": "C",
+              "reason": "§2.4至2.5：直接组参与者自行撰写，问答组系统自动产草稿后再编辑；直接组仅可选AI润色。比较同时改变生成主体、工具辅助和修订机会，核心公平性失败。“理论上可达同等信息”也不保证实际答案一致。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R021",
+      "source": "candidate2-direct-r1/Q02-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "B直接给出委婉提醒邮件，符合缺少日期、姓名时的合理泛化。A无依据加入今天内截止和汇总团队目的，还附第二版本，增加改动需求；不能把这些新增事实当作用户已指定。B署名占位符在本题未被禁止。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "正文擅加“不急，今天内发给我就可以”，原需求没有截止日期。直接发送会向同事传达用户未授权的时间承诺。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "B_WIN",
+          "reason": "B直接给出委婉邮件，保留原本未指定期限；A自行加入“今天内”截止时间、汇总团队用途及额外示例，需要用户删改。",
+          "severe": [
+            {
+              "work": "A",
+              "reason": "将用户未指定的期限写为“今天内发给我就可以”，实际邮件增加未经依据的时间承诺。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R022",
+      "source": "candidate2-direct-r1/Q07-pro",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "pair": "AB",
+      "group": "mixed_candidate_direct/enhanced_vs_raw",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "两份均准确输出同一个严格JSON对象，name为李明、age为整数28，键集合、值类型与无说明格式完全满足要求。",
+          "severe": []
+        },
+        {
+          "reviewer": "two",
+          "outcome": "TIE",
+          "verdict": "TIE",
+          "reason": "均仅输出正确JSON对象，字段名、字段数、值和类型全部一致。",
+          "severe": []
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R023",
+      "source": "candidate5-plan-r1/Q05-flash",
+      "mapping": {
+        "A": "direct",
+        "B": "raw",
+        "C": "plan"
+      },
+      "pair": "AB",
+      "group": "candidate5_plan/direct_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A提出任务分类、最多两轮、实际答案封存与逐字同信息，明确评价提示词而非答案，正文1053汉字。B多数核心决定仍留待确认，且纯正文1212汉字超过1200上限。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "去除全部标题后的正文1212汉字，无附表；含标题1283汉字，均超过用户800至1200汉字上限。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "WIN",
+          "verdict": "A_WIN",
+          "reason": "A给出增强器提问、用户作答、封存实际答案再逐字分发的流程及推荐轮次，约1061汉字；B把确认信息来源等关键步骤留待进一步确认，正文约1283汉字且无附表，超1200上限。A仍需补齐四条件随机顺序及评分合成规则。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "正文约1283汉字、无附表，扣除独立标题后仍超过1200；公平对照确认信息来源仅写为实施前进一步确认，未给推荐取得流程。"
+            },
+            {
+              "work": "C",
+              "reason": "开篇声称提示词质量，操作定义却以“回答与任务要求及事实依据的一致”“回答可直接用于后续操作”评分，对照组“直接使用该信息完成任务”，没有明确实际待评优化提示词，核心对象不一致。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R023",
+      "source": "candidate5-plan-r1/Q05-flash",
+      "mapping": {
+        "A": "direct",
+        "B": "raw",
+        "C": "plan"
+      },
+      "pair": "AC",
+      "group": "candidate5_plan/plan_vs_direct_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "LOSS",
+          "verdict": "A_WIN",
+          "reason": "A明确区分提示词与最终答案并给出问答角色；C也给出实际答案封存且禁止对照新增问答，信息流较清楚，但评价定义两次改用回答、对照流程称完成任务，评价对象与开头提示词质量衔接含糊。两份均未把两个公平对照具体流程差异完全展开，A整体目标保持更清晰。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "去除全部标题后的正文1212汉字，无附表；含标题1283汉字，均超过用户800至1200汉字上限。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "LOSS",
+          "verdict": "A_WIN",
+          "reason": "A明确评提示词且保留用户问答和同实际答案；C虽封存同一问答且正文约1029汉字，但评价定义变为“回答与任务要求”和“回答可直接用于后续操作”，对照流程也写为直接完成任务，评价对象偏离。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "正文约1283汉字、无附表，扣除独立标题后仍超过1200；公平对照确认信息来源仅写为实施前进一步确认，未给推荐取得流程。"
+            },
+            {
+              "work": "C",
+              "reason": "开篇声称提示词质量，操作定义却以“回答与任务要求及事实依据的一致”“回答可直接用于后续操作”评分，对照组“直接使用该信息完成任务”，没有明确实际待评优化提示词，核心对象不一致。"
+            }
+          ]
+        }
+      ],
+      "disputed": false
+    },
+    {
+      "label": "R023",
+      "source": "candidate5-plan-r1/Q05-flash",
+      "mapping": {
+        "A": "direct",
+        "B": "raw",
+        "C": "plan"
+      },
+      "pair": "BC",
+      "group": "candidate5_plan/plan_vs_raw_equal_information",
+      "reviews": [
+        {
+          "reviewer": "one",
+          "outcome": "WIN",
+          "verdict": "C_WIN",
+          "reason": "C提供最多三轮、5点评分、封存真实问答并禁止对照新增回答，正文1021汉字且附表另计；B正文1212汉字超限，关键交互规则与信息来源仍交还实施前确认。C仍需把评价回答的措辞统一成评价提示词，避免执行时替换对象。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "去除全部标题后的正文1212汉字，无附表；含标题1283汉字，均超过用户800至1200汉字上限。"
+            }
+          ]
+        },
+        {
+          "reviewer": "two",
+          "outcome": "BOTH_FAIL",
+          "verdict": "BOTH_FAIL",
+          "reason": "B正文超限且未落实确认信息取得；C对照和评价操作转向回答/完成任务，未保持提示词质量评价的一致性。",
+          "severe": [
+            {
+              "work": "B",
+              "reason": "正文约1283汉字、无附表，扣除独立标题后仍超过1200；公平对照确认信息来源仅写为实施前进一步确认，未给推荐取得流程。"
+            },
+            {
+              "work": "C",
+              "reason": "开篇声称提示词质量，操作定义却以“回答与任务要求及事实依据的一致”“回答可直接用于后续操作”评分，对照组“直接使用该信息完成任务”，没有明确实际待评优化提示词，核心对象不一致。"
+            }
+          ]
+        }
+      ],
+      "disputed": true
+    }
+  ]
+}

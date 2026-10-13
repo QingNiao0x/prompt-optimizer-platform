@@ -1,0 +1,18 @@
+{
+  "phase": "connected-choice-red",
+  "command": "mvn -o -q -f services/api/pom.xml -Dtest=DelegatedPlanAnswerProjectionTest test",
+  "exitCode": 1,
+  "tests": 10,
+  "failures": 2,
+  "errors": 0,
+  "failureDetails": [
+    {
+      "name": "aConditionalNonconfirmationRuleDoesNotAssertACurrentlyUnchosenParameter",
+      "message": "\nExpecting empty but was: [ConfirmedPlanDecision[questionId=rule, question=计算前须遵守什么规则？, topic=规则, scope=UNRESOLVED, answer=不确认时不得计算。, source=USER_CONFIRMED]]"
+    },
+    {
+      "name": "aMaterialStatementCannotHideAConnectedActualMethodChoice",
+      "message": "\nExpecting actual:\n  \"整理分析要求。\n分析工具需先确认选哪一个。\"\nto contain:\n  \"我已有数据，分析工具采用R。\" "
+    }
+  ]
+}

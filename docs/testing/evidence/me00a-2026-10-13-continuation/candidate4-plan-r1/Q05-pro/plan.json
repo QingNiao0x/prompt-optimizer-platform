@@ -1,0 +1,86 @@
+{
+  "status": 200,
+  "elapsedMs": 13397,
+  "body": {
+    "requestId": "2b61a589-0772-49f3-ad14-224ad006502b",
+    "data": {
+      "summary": "已理解研究设计目标：为尚未实施的研究撰写方法部分，比较直接增强与Plan问答对提示词质量的影响，并设置公平对照。需要确认少数影响方法描述的关键参数。",
+      "questions": [
+        {
+          "id": "plan_interaction_rounds",
+          "question": "Plan问答的交互轮次如何设定？",
+          "hint": "影响方法部分对Plan条件的操作定义。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "fixed_one_round",
+              "label": "固定一轮",
+              "description": "每个任务仅进行一轮澄清问答。",
+              "answer": "Plan问答固定为一轮：增强器提出关键问题，用户回答后生成优化提示词。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "fixed_two_rounds",
+              "label": "固定两轮",
+              "description": "每个任务进行两轮澄清问答。",
+              "answer": "Plan问答固定为两轮：增强器提出关键问题，用户回答后生成优化提示词，再根据回答补充一轮澄清。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "until_saturation",
+              "label": "直到信息饱和",
+              "description": "持续问答直到无新信息，但需定义终止标准。",
+              "answer": "Plan问答持续进行，直到增强器认为已获得足够信息（例如连续两轮无新增关键信息）后生成优化提示词。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "fair_control_info_source",
+          "question": "公平对照组获得的确认信息如何取得？",
+          "hint": "影响公平对照的实现描述。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "pre_collected_answers",
+              "label": "预先收集并封存",
+              "description": "先运行Plan问答收集答案，再提供给公平对照组。",
+              "answer": "公平对照组使用预先从Plan问答中收集并封存的实际用户回答，逐字提供相同确认信息。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "scripted_answers",
+              "label": "使用脚本化答案",
+              "description": "为公平对照组准备固定的脚本化答案，确保信息一致。",
+              "answer": "公平对照组使用预先编写的脚本化答案，内容与Plan问答中可能获得的信息一致。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 13381,
+      "planId": "1c396b7e-50b4-4199-b3d0-8345976fd42c",
+      "planningContext": {
+        "contextId": "8be6a2bd-dd87-4fe6-900e-73ba77848dda",
+        "version": "sha256:88e9ec82ccf032927c627c2e880a44237fdd74fd45865219f12aa46427ab38d1"
+      },
+      "expiresAt": "2026-10-12T16:25:18.431770900Z"
+    }
+  }
+}

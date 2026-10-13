@@ -1,0 +1,12 @@
+{
+  "phase": "conditional-then-red",
+  "command": "mvn -o -q -f services/api/pom.xml -Dtest=DelegatedPlanAnswerProjectionTest test",
+  "exitCode": 1,
+  "tests": 11,
+  "failures": 1,
+  "errors": 0,
+  "failureDetails": {
+    "name": "aConditionalNonconfirmationRuleDoesNotAssertACurrentlyUnchosenParameter",
+    "message": "\nExpecting empty but was: [ConfirmedPlanDecision[questionId=rule, question=计算前须遵守什么规则？, topic=规则, scope=UNRESOLVED, answer=不确认则不进行分析。, source=USER_CONFIRMED]]"
+  }
+}

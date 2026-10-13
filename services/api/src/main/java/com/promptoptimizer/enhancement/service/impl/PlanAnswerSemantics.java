@@ -18,6 +18,9 @@ final class PlanAnswerSemantics {
     private static final Pattern PENDING = Pattern.compile("(?i)不确定(?!性)|暂未确定|(?:仍未|尚未|未)(?:确定|确认|核实|提供|指定|决定)"
             + "|待确定|待定|不知道|不清楚|稍后确认|\\b(?:unknown|tbd)\\b");
     private static final Pattern BOUNDARY = Pattern.compile("(?<=[。；;！？!])|\\R|[,，](?=(?:但|不过|然而|现在明确|目前明确))");
+    private static final String DECLINED_CHOICE_PREFIX = "(?:(?:我|我们|用户)(?:本次|目前|现在)?|本次|目前|现在)?(?:不|暂不|尚不)(?:确认|选定)";
+    private static final Pattern DECLINED_CHOICE = Pattern.compile("^" + DECLINED_CHOICE_PREFIX + "[^，,。；;！？!?]{1,100}[。；;]?$" );
+    private static final Pattern DECLINED_CHOICE_BOUNDARY = Pattern.compile("[,，](?=" + DECLINED_CHOICE_PREFIX + ")");
     private static final Pattern CONDITIONAL_CONFIRMATION = Pattern.compile(
             "(?:若|如果|假如|假设)(?:以后|今后|将来|后续|未来|届时|日后|之后)?"
                     + "(?:用户|我们|我|您)?(?:只|仅)?(?:再)?(?:确认|确定|选定|明确)([^，,。；;！？!?]+)");
@@ -32,11 +35,57 @@ final class PlanAnswerSemantics {
     /** 待定开头的解释整体保留为未决说明；混合回答只提取明确分开的已确定部分。 */
     static String confirmedPart(String answer) {
         if (answer == null) return "";
+        // 独立事实和委托指令并未回答绑定参数，不能让其他确认消费者借此消除该题未决状态。
+        // 执行投影由任务视图保留原句；原始回答和不确认边界仍保留在服务端决定中。
+        if (independentStatements(answer).stream().anyMatch(value -> value.kind() == StatementKind.NON_CONFIRMATION)) return "";
         List<String> clauses = clauses(answer);
         if (clauses.isEmpty() || pendingClause(clauses.getFirst())) return "";
         return clauses.stream().filter(clause -> !pendingClause(clause))
                 .collect(java.util.stream.Collectors.joining(" "));
     }
+
+    /** 明确拒绝确认时保留其余独立事实与委托；不据任意事实句推断其已回答了参数题。 */
+    static List<IndependentStatement> independentStatements(String answer) {
+        List<String> clauses = clauses(answer);
+        if (clauses.isEmpty() || clauses.stream().noneMatch(PlanAnswerSemantics::declinedChoice)) return List.of();
+        var statements = new java.util.ArrayList<IndependentStatement>();
+        for (String clause : clauses) {
+            StatementKind kind = independentKind(clause);
+            if (kind == null) return List.of();
+            statements.add(new IndependentStatement(clause, kind));
+        }
+        return List.copyOf(statements);
+    }
+
+    /** 仅识别有自身主语的状态句、显式委托句和拒绝确认句，不从领域关键词猜参数取值。 */
+    private static StatementKind independentKind(String clause) {
+        if (declinedChoice(clause)) return StatementKind.NON_CONFIRMATION;
+        if (clause.matches("^(?:若|如果|假如|假设|例如|示例|引用).*")) return null;
+        if (clause.matches("^(?:这|此)(?:是|为)(?:一项|一个|一次|一份)?(?:尚未|仍未|暂未|已经|已)"
+                        + "(?:实施|开展|启动|完成)的(?:研究|项目|任务|工作|实验|调查)[。；;]?$")
+                || clause.matches("^(?:我|我们)(?:没有|已有|已提供)(?:额外|其他|相关|真实|可用|任何|本次|所需)*"
+                        + "(?:数据|资料|材料|记录|证据)[。；;]?$")
+                || clause.matches("^[^，,。；;]{1,80}?(?:尚未|仍未|暂未|已经|已)(?:实施|开展|启动|完成|采集|收集)[。；;]?$") )
+            return StatementKind.CURRENT_STATE;
+        if (clause.matches("^(?:请)?(?:根据|依据)[^。；;]{1,160}(?:提出|设计|推荐|给出|制定)[^。；;]{1,300}[。；;]?$") )
+            return StatementKind.DELEGATION;
+        return null;
+    }
+
+    /** 拒绝选值是当前状态；“不确认口径时不得计算”是完整条件规则，不能变成新的未决参数。 */
+    private static boolean declinedChoice(String clause) {
+        return DECLINED_CHOICE.matcher(clause).matches()
+                && !clause.matches("^" + DECLINED_CHOICE_PREFIX
+                    + "[^，,。；;]{0,100}(?:前|时|之前|的情况下)[，,]?(?:不得|不能|不应|禁止|应|需|先).+")
+                && !clause.matches("^" + DECLINED_CHOICE_PREFIX
+                    + "[^，,。；;]{0,100}(?:则|就)(?:不|应|需|先|再).+");
+    }
+
+    /** 分类仅服务内部执行投影，不增加公开确认枚举或允许模型自报已选状态。 */
+    enum StatementKind { CURRENT_STATE, DELEGATION, NON_CONFIRMATION }
+
+    /** text 是用户回答的完整原句；不补题干对象，不丢掉否定或条件。 */
+    record IndependentStatement(String text, StatementKind kind) { }
 
     /**
      * 分别保留完整未决子句，不把同一回答里的已定月份、工具或空值规则重新变成未知。
@@ -90,7 +139,10 @@ final class PlanAnswerSemantics {
         var historical = Pattern.compile("^(?:之前|此前|原先|过去|先前|原本)[^，,。；;]*(?:不确定|未确定)[，,。；;]((?:现在|目前|本次|现已)(?:已)?(?:明确|确认|确定|选择|采用).+)$")
                 .matcher(current);
         if (historical.matches()) current = historical.group(1);
-        return Arrays.stream(BOUNDARY.split(current)).map(String::strip)
+        // 逗号只在明确拒绝确认动作前形成独立句；其余对象、数值和条件继续整体保留。
+        return Arrays.stream(BOUNDARY.split(current)).flatMap(part -> part.strip().matches("^(?:若|如果|假如|假设|当|仅当|只有|仅在|只在).*")
+                        ? java.util.stream.Stream.of(part) : Arrays.stream(DECLINED_CHOICE_BOUNDARY.split(part)))
+                .map(String::strip)
                 .filter(value -> !value.isEmpty()).toList();
     }
 
@@ -118,6 +170,8 @@ final class PlanAnswerSemantics {
      * 裸 unknown、TBD 和同句的真实未决口径继续生效，业务状态不能掩盖后半句的未知。
      */
     private static Optional<MatchResult> pendingMarker(String clause) {
+        var declined = DECLINED_CHOICE.matcher(clause);
+        if (declinedChoice(clause) && declined.matches()) return Optional.of(declined.toMatchResult());
         var marker = PENDING.matcher(clause);
         while (marker.find()) {
             // “覆盖度未核实时，比较方式尚未决定”的主未决项是后者；前半句仅限定适用条件。

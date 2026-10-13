@@ -1,0 +1,712 @@
+--- a/scripts/me00a-eval.mjs
++++ b/scripts/me00a-eval.mjs
+@@ -156,7 +156,10 @@
+           const directDir = resolve(dir, 'direct-equal-information'); await mkdir(directDir);
+           const directRaw = sample.rawPrompt + (answers.length ? `\n\n本次测试实际确认信息（逐字题答）：\n${answerLog(answers)}` : '');
+           const directCopy = await enhanced(sample, modelId, directDir, directRaw);
+-          const directWork = await execute(directCopy, model, `${version}-${mode}-r${round}-${label}-direct-equal-information`);
++          // The direct comparator receives the same source files as R+ and P+; copied decisions remain untouched.
++          const directInput = enhancedExecutionInput(directCopy, sample);
++          await save(resolve(directDir, 'enhanced-input.md'), directInput);
++          const directWork = await execute(directInput, model, `${version}-${mode}-r${round}-${label}-direct-equal-information`);
+           await save(resolve(directDir, 'work.md'), directWork.text); await save(resolve(directDir, 'execution.json'), directWork);
+         }
+         console.log(`DONE ${version} ${mode} ${label}`);
+--- a/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/ConfirmedDecisionSet.java
++++ b/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/ConfirmedDecisionSet.java
+@@ -62,12 +62,15 @@
+                     boolean named = PlanAnswerSemantics.namesPendingSubject(part);
+                     boolean explanationOnly = PlanAnswerSemantics.confirmedPart(decision.answer()).isBlank()
+                             && PlanAnswerSemantics.pendingParts(decision.answer()).size() == 1;
++                    // 明确拒绝确认且各句已独立投影时，提醒只带未确认原句；完整来源仍在 decisions 中。
++                    // 否则会把已落实的研究状态和委托要求按每个参数题再次塞回最终正文。
++                    boolean independentlyProjected = !PlanAnswerSemantics.independentStatements(decision.answer()).isEmpty();
+                     // 裸待定后的单项核实解释仍继承原绑定题，避免新增核实识别改变旧问题的身份与范围。
+                     if (explanationOnly && decision.answer().matches("(?s)^(?:暂不确定|尚未确定|不知道|不清楚)[。.!！].*")
+                             && part.matches("(?s).*(?:尚未|仍未|未)核实.*")) named = false;
+                     return new ConfirmedPlanDecision(decision.questionId(), named ? part : decision.question(),
+                             named ? topic(part, decision.questionId()) : decision.topic(), Scope.UNRESOLVED,
+-                            named && !explanationOnly ? part : decision.answer());
++                            independentlyProjected || named && !explanationOnly ? part : decision.answer());
+                 })).toList();
+     }
+ 
+--- a/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/EffectiveTaskViewFactory.java
++++ b/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/EffectiveTaskViewFactory.java
+@@ -39,7 +39,8 @@
+         var decisions = ConfirmedDecisionSet.from(answers);
+         String current = ResolvedPlanState.from(decisions, original)
+                 .reconcile(PlatformConstraintRenderer.taskInput(original));
+-        var requirements = decisions.knownDecisions().stream().map(EffectiveTaskViewFactory::requirement).toList();
++        var known = decisions.knownDecisions();
++        var requirements = decisions.decisions().stream().flatMap(decision -> requirements(decision, known).stream()).toList();
+         // 示例只读取用户指令及有效答案，附件中的“提供示例”不具有开关权限。
+         String exampleInput = current + requirements.stream().map(ExecutionRequirement::statement)
+                 .collect(java.util.stream.Collectors.joining("\n", "\n", ""));
+@@ -47,6 +48,30 @@
+                 TaskIntentResolver.resolve(template, original, decisions.knownDecisions()), decisions.decisions(),
+                 requirements, decisions.pendingDecisions(), facts == null ? List.of() : facts,
+                 ExampleContract.from(exampleInput, includeExamples));
++    }
++
++    /** 独立事实、委托和未确认边界按原句投影；真正裸短答仍绑定服务端问题的完整对象。 */
++    private static List<ExecutionRequirement> requirements(ConfirmedPlanDecision decision, List<ConfirmedPlanDecision> known) {
++        var independent = PlanAnswerSemantics.independentStatements(decision.answer());
++        if (!independent.isEmpty()) return independent.stream().map(statement -> {
++            PromptSectionType destination = switch (statement.kind()) {
++                case CURRENT_STATE -> PromptSectionType.BACKGROUND;
++                case DELEGATION -> PromptSectionType.TASK;
++                case NON_CONFIRMATION -> PromptSectionType.CONSTRAINTS;
++            };
++            // 原问题 ID 与文案保留来源；subject 不把回答自身的主语替换成未作答的参数名。
++            String subject = switch (statement.kind()) {
++                case CURRENT_STATE -> "用户说明";
++                case DELEGATION -> "委托要求";
++                case NON_CONFIRMATION -> "未确认边界";
++            };
++            return new ExecutionRequirement(decision.questionId(), decision.question(), subject,
++                    statement.text(), statement.text(), destination);
++        }).toList();
++        // 未进入独立句投影的回答复用原有部分确认分类，避免把已知现状改送到任务段。
++        return known.stream().filter(value -> java.util.Objects.equals(value.questionId(), decision.questionId())
++                && value.question().equals(decision.question())).findFirst().map(value -> List.of(requirement(value)))
++                .orElseGet(List::of);
+     }
+ 
+     /** 短答案补全实际问题对象；完整业务表述原样保留，避免“地区：采用年龄标准化”的错标签。 */
+--- a/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAnswerSemantics.java
++++ b/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanAnswerSemantics.java
+@@ -18,6 +18,9 @@
+     private static final Pattern PENDING = Pattern.compile("(?i)不确定(?!性)|暂未确定|(?:仍未|尚未|未)(?:确定|确认|核实|提供|指定|决定)"
+             + "|待确定|待定|不知道|不清楚|稍后确认|\\b(?:unknown|tbd)\\b");
+     private static final Pattern BOUNDARY = Pattern.compile("(?<=[。；;！？!])|\\R|[,，](?=(?:但|不过|然而|现在明确|目前明确))");
++    private static final String DECLINED_CHOICE_PREFIX = "(?:(?:我|我们|用户)(?:本次|目前|现在)?|本次|目前|现在)?(?:不|暂不|尚不)(?:确认|选定)";
++    private static final Pattern DECLINED_CHOICE = Pattern.compile("^" + DECLINED_CHOICE_PREFIX + "[^，,。；;！？!?]{1,100}[。；;]?$" );
++    private static final Pattern DECLINED_CHOICE_BOUNDARY = Pattern.compile("[,，](?=" + DECLINED_CHOICE_PREFIX + ")");
+     private static final Pattern CONDITIONAL_CONFIRMATION = Pattern.compile(
+             "(?:若|如果|假如|假设)(?:以后|今后|将来|后续|未来|届时|日后|之后)?"
+                     + "(?:用户|我们|我|您)?(?:只|仅)?(?:再)?(?:确认|确定|选定|明确)([^，,。；;！？!?]+)");
+@@ -32,11 +35,57 @@
+     /** 待定开头的解释整体保留为未决说明；混合回答只提取明确分开的已确定部分。 */
+     static String confirmedPart(String answer) {
+         if (answer == null) return "";
++        // 独立事实和委托指令并未回答绑定参数，不能让其他确认消费者借此消除该题未决状态。
++        // 执行投影由任务视图保留原句；原始回答和不确认边界仍保留在服务端决定中。
++        if (independentStatements(answer).stream().anyMatch(value -> value.kind() == StatementKind.NON_CONFIRMATION)) return "";
+         List<String> clauses = clauses(answer);
+         if (clauses.isEmpty() || pendingClause(clauses.getFirst())) return "";
+         return clauses.stream().filter(clause -> !pendingClause(clause))
+                 .collect(java.util.stream.Collectors.joining(" "));
+     }
++
++    /** 明确拒绝确认时保留其余独立事实与委托；不据任意事实句推断其已回答了参数题。 */
++    static List<IndependentStatement> independentStatements(String answer) {
++        List<String> clauses = clauses(answer);
++        if (clauses.isEmpty() || clauses.stream().noneMatch(PlanAnswerSemantics::declinedChoice)) return List.of();
++        var statements = new java.util.ArrayList<IndependentStatement>();
++        for (String clause : clauses) {
++            StatementKind kind = independentKind(clause);
++            if (kind == null) return List.of();
++            statements.add(new IndependentStatement(clause, kind));
++        }
++        return List.copyOf(statements);
++    }
++
++    /** 仅识别有自身主语的状态句、显式委托句和拒绝确认句，不从领域关键词猜参数取值。 */
++    private static StatementKind independentKind(String clause) {
++        if (declinedChoice(clause)) return StatementKind.NON_CONFIRMATION;
++        if (clause.matches("^(?:若|如果|假如|假设|例如|示例|引用).*")) return null;
++        if (clause.matches("^(?:这|此)(?:是|为)(?:一项|一个|一次|一份)?(?:尚未|仍未|暂未|已经|已)"
++                        + "(?:实施|开展|启动|完成)的(?:研究|项目|任务|工作|实验|调查)[。；;]?$")
++                || clause.matches("^(?:我|我们)(?:没有|已有|已提供)(?:额外|其他|相关|真实|可用|任何|本次|所需)*"
++                        + "(?:数据|资料|材料|记录|证据)[。；;]?$")
++                || clause.matches("^[^，,。；;]{1,80}?(?:尚未|仍未|暂未|已经|已)(?:实施|开展|启动|完成|采集|收集)[。；;]?$") )
++            return StatementKind.CURRENT_STATE;
++        if (clause.matches("^(?:请)?(?:根据|依据)[^。；;]{1,160}(?:提出|设计|推荐|给出|制定)[^。；;]{1,300}[。；;]?$") )
++            return StatementKind.DELEGATION;
++        return null;
++    }
++
++    /** 拒绝选值是当前状态；“不确认口径时不得计算”是完整条件规则，不能变成新的未决参数。 */
++    private static boolean declinedChoice(String clause) {
++        return DECLINED_CHOICE.matcher(clause).matches()
++                && !clause.matches("^" + DECLINED_CHOICE_PREFIX
++                    + "[^，,。；;]{0,100}(?:前|时|之前|的情况下)[，,]?(?:不得|不能|不应|禁止|应|需|先).+")
++                && !clause.matches("^" + DECLINED_CHOICE_PREFIX
++                    + "[^，,。；;]{0,100}(?:则|就)(?:不|应|需|先|再).+");
++    }
++
++    /** 分类仅服务内部执行投影，不增加公开确认枚举或允许模型自报已选状态。 */
++    enum StatementKind { CURRENT_STATE, DELEGATION, NON_CONFIRMATION }
++
++    /** text 是用户回答的完整原句；不补题干对象，不丢掉否定或条件。 */
++    record IndependentStatement(String text, StatementKind kind) { }
+ 
+     /**
+      * 分别保留完整未决子句，不把同一回答里的已定月份、工具或空值规则重新变成未知。
+@@ -90,7 +139,10 @@
+         var historical = Pattern.compile("^(?:之前|此前|原先|过去|先前|原本)[^，,。；;]*(?:不确定|未确定)[，,。；;]((?:现在|目前|本次|现已)(?:已)?(?:明确|确认|确定|选择|采用).+)$")
+                 .matcher(current);
+         if (historical.matches()) current = historical.group(1);
+-        return Arrays.stream(BOUNDARY.split(current)).map(String::strip)
++        // 逗号只在明确拒绝确认动作前形成独立句；其余对象、数值和条件继续整体保留。
++        return Arrays.stream(BOUNDARY.split(current)).flatMap(part -> part.strip().matches("^(?:若|如果|假如|假设|当|仅当|只有|仅在|只在).*")
++                        ? java.util.stream.Stream.of(part) : Arrays.stream(DECLINED_CHOICE_BOUNDARY.split(part)))
++                .map(String::strip)
+                 .filter(value -> !value.isEmpty()).toList();
+     }
+ 
+@@ -118,6 +170,8 @@
+      * 裸 unknown、TBD 和同句的真实未决口径继续生效，业务状态不能掩盖后半句的未知。
+      */
+     private static Optional<MatchResult> pendingMarker(String clause) {
++        var declined = DECLINED_CHOICE.matcher(clause);
++        if (declinedChoice(clause) && declined.matches()) return Optional.of(declined.toMatchResult());
+         var marker = PENDING.matcher(clause);
+         while (marker.find()) {
+             // “覆盖度未核实时，比较方式尚未决定”的主未决项是后者；前半句仅限定适用条件。
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java
+@@ -29,7 +29,7 @@
+ 
+     /** 使用共享交付类型与确认状态；具体缺口由同次模型判断给出。 */
+     public static PromptRewriteStrategy forTask(EffectiveTaskView task) {
+-        return new PromptRewriteStrategy("ASSESS_EXECUTION_GAPS", GAP_GUIDANCE
++        return new PromptRewriteStrategy("ASSESS_EXECUTION_GAPS", GAP_GUIDANCE + task.meaning().evaluationGuidance()
+                 + "\n本次交付画像：" + task.intent().deliveryProfile()
+                 + "；有效执行要求数：" + task.executionRequirements().size()
+                 + "；独立未决决定数：" + task.pendingDecisions().size()
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/TaskMeaningContract.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/TaskMeaningContract.java
+@@ -56,6 +56,23 @@
+         }
+     }
+ 
++    /**
++     * 将本任务已有研究主题的来源用于评价步骤指导，不重新猜测对象或增加评分参数。
++     * 这里只指导生成；来源和传递可本地校验，模型是否正确绑定仍须真实作品验证。
++     */
++    public String evaluationGuidance() {
++        String sources = anchors.stream().filter(anchor -> anchor.role() == Role.RESEARCH_TOPIC)
++                .map(anchor -> anchor.origin() + "[" + anchor.start() + "," + anchor.end() + ")")
++                .collect(java.util.stream.Collectors.joining("、"));
++        if (sources.isEmpty()) return "";
++        return "\n本任务评价对象绑定：依据 taskView.userMeaningAnchors 中 RESEARCH_TOPIC 的来源 " + sources
++                + "，结合有效确认，仅当原任务包含比较、评审或评分时，在 TASK 原有评价步骤中落实待评对象或产物、"
++                + "评审所见材料及各项指标作用的对象。主题在背景出现不能替代步骤中的对象绑定。"
++                + "原任务要求盲法时，说明对应材料如何盲化；未要求评价时不增加评分流程。"
++                + "对象以用户任务为准，包括用户明确要求评价的下游作品；多个对象的主次关系未定时保持未决。"
++                + "已明确的表述保留并使用一次，不代填未知评分尺度、参数，不增加独立尾注。";
++    }
++
+     /** 在尾注和平台条款加入之前拒绝已复现的受众移位，不假称覆盖全部语义误绑定。 */
+     public void validate(String content, String field) {
+         if (anchors.stream().noneMatch(anchor -> anchor.role() == Role.RESEARCH_TOPIC)) return;
+--- /dev/null
++++ b/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/ResearchEvaluationGuidanceTest.java
+@@ -0,0 +1,87 @@
++package com.promptoptimizer.enhancement.service.impl;
++
++import com.promptoptimizer.enhancement.domain.TemplateCode;
++import com.promptoptimizer.provider.domain.PromptRewriteStrategy;
++import com.promptoptimizer.provider.domain.TaskMeaningContract;
++import java.util.List;
++import org.junit.jupiter.api.Test;
++import static org.assertj.core.api.Assertions.assertThat;
++
++/**
++ * 检查研究评价指导的来源和请求范围，不把策略文本检查当作模型语义或作品验收。
++ *
++ * @author QingNiao
++ * @since 0.1.0
++ */
++class ResearchEvaluationGuidanceTest {
++    private static final String RESEARCH = "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。"
++            + "当前只是拟定研究，尚未实施。两名独立评审盲评，评价准确性、完整性、清晰度与可执行性。";
++
++    @Test void capturedResearchTopicReachesTheExistingEvaluationStepWithItsSource() {
++        var task = EffectiveTaskViewFactory.create(RESEARCH, TemplateCode.AUTO, List.of(), List.of(), false);
++        var topic = task.meaning().anchors().stream()
++                .filter(anchor -> anchor.role() == TaskMeaningContract.Role.RESEARCH_TOPIC).findFirst().orElseThrow();
++
++        assertThat(RESEARCH.substring(topic.start(), topic.end())).isEqualTo("Plan问答对提示词质量的影响");
++        assertThat(topic.origin()).isEqualTo(TaskMeaningContract.Origin.EFFECTIVE_USER_INPUT);
++        assertThat(PromptRewriteStrategy.forTask(task).instruction())
++                .contains("EFFECTIVE_USER_INPUT[20,35)", "TASK 原有评价步骤", "待评对象或产物", "评审所见材料", "各项指标作用的对象")
++                .doesNotContain("EFFECTIVE_USER_INPUT[1,4)");
++    }
++
++    @Test void actualDownstreamWorkRemainsTheUserSourcedTarget() {
++        String raw = "为研究生撰写研究方案，研究Plan问答对下游代码作品质量的影响。只评价最终代码及测试，不评价提示词。";
++        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
++        var topic = task.meaning().anchors().stream()
++                .filter(anchor -> anchor.role() == TaskMeaningContract.Role.RESEARCH_TOPIC).findFirst().orElseThrow();
++
++        assertThat(topic.text()).isEqualTo("Plan问答对下游代码作品质量的影响");
++        assertThat(PromptRewriteStrategy.forTask(task).instruction())
++                .contains("EFFECTIVE_USER_INPUT[" + topic.start() + "," + topic.end() + ")", "有效确认", "下游作品")
++                .doesNotContain("评价对象固定为提示词", "默认评价提示词质量");
++        assertThat(task.effectivePrompt()).isEqualTo(raw);
++    }
++
++    @Test void independentTopicsKeepTheirOwnSourceRanges() {
++        String raw = "研究提示词清晰度。研究下游作品准确性。两类评价的主次尚未确定。";
++        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
++        var topics = task.meaning().anchors().stream()
++                .filter(anchor -> anchor.role() == TaskMeaningContract.Role.RESEARCH_TOPIC).toList();
++        assertThat(topics).hasSize(2);
++        for (var topic : topics) {
++            assertThat(raw.substring(topic.start(), topic.end())).isEqualTo(topic.text());
++            assertThat(PromptRewriteStrategy.forTask(task).instruction())
++                    .contains("EFFECTIVE_USER_INPUT[" + topic.start() + "," + topic.end() + ")");
++        }
++        assertThat(PromptRewriteStrategy.forTask(task).instruction()).contains("主次关系未定时保持未决");
++    }
++
++    @Test void aResearchTopicAloneDoesNotAuthorizeANewRatingWorkflow() {
++        var task = EffectiveTaskViewFactory.create("研究数据收集的可行路径，只提出方法建议。", TemplateCode.AUTO,
++                List.of(), List.of(), false);
++        assertThat(PromptRewriteStrategy.forTask(task).instruction())
++                .contains("仅当原任务包含比较、评审或评分", "未要求评价时不增加评分流程");
++    }
++
++    @Test void ordinaryTasksAndAnAudienceAloneReceiveNoResearchGuidance() {
++        for (String raw : List.of("给同事写一封催办邮件。", "只输出下面英文的中文译文。", "为研究生撰写一封欢迎邮件。")) {
++            var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
++            assertThat(task.meaning().anchors()).noneMatch(anchor -> anchor.role() == TaskMeaningContract.Role.RESEARCH_TOPIC);
++            assertThat(PromptRewriteStrategy.forTask(task).instruction()).doesNotContain("本任务评价对象绑定", "EFFECTIVE_USER_INPUT[");
++        }
++    }
++
++    @Test void legacyPromptEntryDoesNotInventAnchorSources() {
++        assertThat(PromptRewriteStrategy.forPrompt(RESEARCH).instruction())
++                .doesNotContain("本任务评价对象绑定", "EFFECTIVE_USER_INPUT[");
++    }
++
++    @Test void alreadyExplicitEvaluationKeepsItsScopeAndLeavesUnknownParametersOpen() {
++        String raw = "研究Plan问答对提示词质量的影响。评审只接收匿名提示词并评价其准确性；下游作品只作辅助评价。"
++                + "保留这两句，未知评分尺度待定。";
++        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
++        assertThat(task.effectivePrompt()).isEqualTo(raw);
++        assertThat(PromptRewriteStrategy.forTask(task).instruction())
++                .contains("已明确的表述保留并使用一次", "不代填未知评分尺度、参数", "原任务要求盲法时");
++    }
++}
+--- /dev/null
++++ b/services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/ResearchEvaluationRequestTest.java
+@@ -0,0 +1,77 @@
++package com.promptoptimizer.provider.infrastructure.openai;
++
++import com.fasterxml.jackson.databind.ObjectMapper;
++import com.promptoptimizer.context.domain.ContextSnapshot;
++import com.promptoptimizer.enhancement.domain.TemplateCode;
++import com.promptoptimizer.enhancement.dto.EnhancementOptions;
++import com.promptoptimizer.enhancement.dto.PlanAnswer;
++import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
++import com.promptoptimizer.template.domain.PromptTemplate;
++import java.net.URI;
++import java.util.List;
++import java.util.Map;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
++import org.springframework.http.MediaType;
++import org.springframework.mock.http.client.MockClientHttpRequest;
++import org.springframework.test.web.client.MockRestServiceServer;
++import org.springframework.web.client.RestClient;
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
++import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
++
++/**
++ * 从 Provider 的实际序列化请求核对研究主题来源与局部指导，响应由本地桩提供，不验收模型质量。
++ *
++ * @author QingNiao
++ * @since 0.1.0
++ */
++class ResearchEvaluationRequestTest {
++    @ParameterizedTest
++    @ValueSource(booleans = {false, true})
++    void bothEnhancementEntriesSendGuidanceAndTheSameSourceAnchor(boolean planned) throws Exception {
++        var json = new ObjectMapper();
++        var client = RestClient.builder();
++        var server = MockRestServiceServer.bindTo(client).build();
++        var properties = new OpenAiCompatibleProperties();
++        properties.setEndpoint(URI.create("https://model.example.com/v1/chat/completions"));
++        properties.setApiKey("synthetic-test-key");
++        properties.setModel("test-model");
++        properties.setModels(List.of("test-model"));
++        var provider = new OpenAiCompatiblePromptEnhancementProvider(client.build(), json, properties);
++        String raw = "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。评价准确性和可执行性。";
++
++        server.expect(requestTo(properties.getEndpoint())).andExpect(request -> {
++            var wire = json.readTree(((MockClientHttpRequest) request).getBodyAsString());
++            String userMessage = wire.path("messages").get(1).path("content").asText();
++            var payload = json.readTree(userMessage.substring(userMessage.indexOf('{')));
++            String instruction = payload.path("rewriteStrategy").path("instruction").asText();
++            assertThat(instruction).contains("本任务评价对象绑定", "EFFECTIVE_USER_INPUT[20,35)");
++            assertThat(wire.path("messages").get(0).path("content").asText()).contains(instruction);
++            var anchors = payload.path("taskView").path("userMeaningAnchors");
++            assertThat(anchors).hasSize(2);
++            var topic = anchors.get(1);
++            assertThat(topic.path("role").asText()).isEqualTo("RESEARCH_TOPIC");
++            assertThat(topic.path("origin").asText()).isEqualTo("EFFECTIVE_USER_INPUT");
++            assertThat(raw.substring(topic.path("start").asInt(), topic.path("end").asInt()))
++                    .isEqualTo(topic.path("text").asText());
++        }).andRespond(withSuccess(json.writeValueAsString(Map.of("model", "test-model", "choices", List.of(Map.of(
++                "message", Map.of("role", "assistant", "content", """
++                {"assessment":{"sufficiency":"SUFFICIENT","gaps":[],"presentation":"COMPACT"},
++                 "sections":[
++                 {"type":"BACKGROUND","title":"背景","content":"研究Plan问答对提示词质量的影响，面向研究生。"},
++                 {"type":"TASK","title":"任务","content":"撰写研究方法部分，评价提示词的准确性和可执行性。"},
++                 {"type":"OUTPUT","title":"输出","content":"交付方法正文。"},
++                 {"type":"CONSTRAINTS","title":"约束","content":"不编造研究事实。"}],"ambiguities":[]}
++                """))))), MediaType.APPLICATION_JSON));
++
++        var answers = planned ? List.of(new PlanAnswer("status", "研究是否已经实施？", "尚未实施。"))
++                : List.<PlanAnswer>of();
++        provider.enhance(new EnhancementProviderRequest(raw,
++                new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
++                new PromptTemplate(TemplateCode.GENERAL, "按原文交付。", "保留原意。", "遵守示例选择。"),
++                List.of(), answers, planned, List.of(), List.of(),
++                new EnhancementOptions(TemplateCode.GENERAL, false, true, false), "test-model"));
++        server.verify();
++    }
++}
+--- /dev/null
++++ b/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/DelegatedPlanAnswerProjectionTest.java
+@@ -0,0 +1,178 @@
++package com.promptoptimizer.enhancement.service.impl;
++
++import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision;
++import com.promptoptimizer.enhancement.domain.PromptSection;
++import com.promptoptimizer.enhancement.domain.PromptSectionType;
++import com.promptoptimizer.enhancement.domain.TemplateCode;
++import com.promptoptimizer.enhancement.dto.PlanAnswer;
++import java.util.EnumMap;
++import java.util.List;
++import org.junit.jupiter.api.Test;
++import static org.assertj.core.api.Assertions.assertThat;
++
++/**
++ * 回放 candidate5 实际六题回答，核对事实、委托与未确认状态不被改成方法选值。
++ *
++ * @author QingNiao
++ * @since 0.1.0
++ */
++class DelegatedPlanAnswerProjectionTest {
++    private static final String ANSWER = "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；"
++            + "我没有额外真实数据，不确认任何既有参数。";
++    private static final List<String> QUESTIONS = List.of("4 类任务分别是什么？", "Plan 问答的轮次与终止方式如何设定？",
++            "公平对照两组获得的“相同确认信息”从哪里取得？", "获得相同确认信息的对照组是否仍可与系统交互？",
++            "两名评审评分不一致时如何处理？", "主要分析是否包含效应量、置信区间和配对比较？");
++
++    @Test void capturedResearchAnswersKeepFactsDelegationAndUnchosenParametersSeparate() {
++        var answers = java.util.stream.IntStream.range(0, QUESTIONS.size())
++                .mapToObj(index -> new PlanAnswer("q" + index, QUESTIONS.get(index), ANSWER)).toList();
++        var task = EffectiveTaskViewFactory.create("为研究生撰写研究设计的方法部分；当前尚未实施。",
++                TemplateCode.AUTO, answers, List.of(), false);
++
++        assertThat(task.confirmedDecisions()).hasSize(6).allSatisfy(decision -> {
++            assertThat(decision.answer()).isEqualTo(ANSWER);
++            assertThat(decision.scope()).isEqualTo(ConfirmedPlanDecision.Scope.UNRESOLVED);
++        });
++        assertThat(task.pendingDecisions()).hasSize(6).allSatisfy(decision ->
++                assertThat(decision.answer()).contains("不确认任何既有参数"));
++        assertThat(task.executionRequirements()).allSatisfy(requirement ->
++                assertThat(requirement.statement()).doesNotContain("分别：", "设定：", "从取得：", "如何处理："));
++
++        var sections = new EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
++        for (var type : List.of(PromptSectionType.BACKGROUND, PromptSectionType.TASK,
++                PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS)) {
++            sections.put(type, new PromptSection(type, type.name(), "保留原定交付。"));
++        }
++        PlanDecisionIntegrator.integrate(sections, task);
++        String background = sections.get(PromptSectionType.BACKGROUND).content();
++        String body = sections.values().stream().map(PromptSection::content)
++                .collect(java.util.stream.Collectors.joining("\n"));
++        assertThat(background).contains("这是尚未实施的研究。", "我没有额外真实数据");
++        assertThat(body.split("这是尚未实施的研究", -1)).hasSize(2);
++        assertThat(body.split("请根据原始研究目标提出可开展的推荐设计并说明适用条件", -1)).hasSize(2);
++        assertThat(body).doesNotContain("设定：这是", "分别：这是", "处理：这是");
++    }
++
++    @Test void independentlyScopedFactsRemainSeparateWhenNeitherMethodIsConfirmed() {
++        var task = EffectiveTaskViewFactory.create("整理两项研究的设计要求。", TemplateCode.AUTO,
++                List.of(new PlanAnswer("alpha", "甲研究采用哪种方法？", "甲研究尚未实施。不确认甲研究的具体方法。"),
++                        new PlanAnswer("beta", "乙研究采用哪种方法？", "乙研究已经实施。不确认乙研究的具体方法。")), List.of(), false);
++        assertThat(task.confirmedDecisions()).allSatisfy(decision ->
++                assertThat(decision.scope()).isEqualTo(ConfirmedPlanDecision.Scope.UNRESOLVED));
++        assertThat(task.executionRequirements()).filteredOn(requirement -> requirement.destination() == PromptSectionType.BACKGROUND)
++                .extracting(value -> value.statement())
++                .containsExactly("甲研究尚未实施。", "乙研究已经实施。");
++        assertThat(task.pendingDecisions()).hasSize(2);
++    }
++
++    @Test void bareChoicesAndPartialCurrentStateRemainUsableWithoutConfirmingTheOtherParameter() {
++        var task = EffectiveTaskViewFactory.create("整理执行要求。", TemplateCode.AUTO,
++                List.of(new PlanAnswer("rounds", "Plan最多允许几轮提问？", "3轮"),
++                        new PlanAnswer("stack", "当前技术栈和版本是什么？", "使用 R。具体版本尚未确定。"),
++                        new PlanAnswer("metrics", "甲指标和乙指标的分母分别是什么？",
++                                "甲指标分母采用全部已完成事件。乙指标分母尚未确认。")), List.of(), false);
++        assertThat(task.executionRequirements()).anySatisfy(requirement ->
++                assertThat(requirement.statement()).contains("最大提问轮次：3轮"));
++        assertThat(task.executionRequirements()).anySatisfy(requirement -> {
++            assertThat(requirement.statement()).isEqualTo("使用 R。");
++            assertThat(requirement.destination()).isEqualTo(PromptSectionType.BACKGROUND);
++        });
++        assertThat(task.executionRequirements()).anySatisfy(requirement ->
++                assertThat(requirement.statement()).isEqualTo("甲指标分母采用全部已完成事件。"));
++        assertThat(task.pendingDecisions()).extracting(ConfirmedPlanDecision::answer)
++                .anyMatch(answer -> answer.contains("版本尚未确定"))
++                .anyMatch(answer -> answer.contains("乙指标分母尚未确认"));
++    }
++
++    @Test void futureConfirmationAndRefusedParametersCannotResolveBoundOldChoices() {
++        String question = "Plan轮次采用哪一个？";
++        String raw = "撰写方法正文。\nPlan轮次需先确认选哪一个。";
++        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO,
++                List.of(new PlanAnswer("rounds", question, ANSWER), new PlanAnswer("future", "乙指标分母是什么？",
++                        "如果以后确认乙指标分母采用全部事件，再计算。当前暂不确定。")), List.of(), false);
++        assertThat(task.effectivePrompt()).isEqualTo(raw);
++        assertThat(task.executionRequirements()).noneMatch(requirement -> requirement.questionId().equals("future"));
++        assertThat(task.pendingDecisions()).anySatisfy(decision ->
++                assertThat(decision.answer()).contains("如果以后确认乙指标"));
++    }
++
++    @Test void actualProviderResponseCanBeAssembledWithoutSixInventedParameterAssignments() throws Exception {
++        var json = new com.fasterxml.jackson.databind.ObjectMapper();
++        com.fasterxml.jackson.databind.JsonNode fixture;
++        try (var stream = getClass().getResourceAsStream("/enhancement/delegated-plan-answer-candidate5.json")) {
++            fixture = json.readTree(stream);
++        }
++        var provider = fixture.path("providerResponse");
++        var response = new com.promptoptimizer.provider.domain.EnhancementProviderResponse(
++                List.of(json.treeToValue(provider.path("sections"), PromptSection[].class)), "test", "test", false,
++                List.of(json.treeToValue(provider.path("ambiguities"), String[].class)), List.of(),
++                json.treeToValue(provider.path("assessment"), com.promptoptimizer.provider.domain.TaskEnhancementAssessment.class));
++        var result = new OptimizationResultAssembler().assemble(response,
++                new com.promptoptimizer.context.domain.ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
++                new com.promptoptimizer.template.domain.PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "按原文交付。", "保留原意。", "遵守示例选择。"),
++                List.of(), List.of(json.treeToValue(fixture.path("answers"), PlanAnswer[].class)), true,
++                List.of(), false, 1, fixture.path("rawPrompt").asText());
++        assertThat(result.optimizedPrompt()).contains("尚未实施", "不确认任何既有参数", "提出可开展的推荐设计")
++                .doesNotContain("分别：这是", "设定：这是", "从取得：这是", "处理：这是", "配对比较：这是");
++        assertThat(result.sections()).filteredOn(section -> section.type() == PromptSectionType.TASK).singleElement()
++                .satisfies(section -> assertThat(section.content()).doesNotContain("这是尚未实施的研究"));
++        assertThat(result.optimizedPrompt().split("这是尚未实施的研究", -1)).hasSize(2);
++        assertThat(result.optimizedPrompt().split("请根据原始研究目标提出可开展的推荐设计并说明适用条件", -1)).hasSize(2);
++    }
++
++    @Test void aConditionalRefusalKeepsItsConditionAndDoesNotBecomeAnIndependentBoundary() {
++        String answer = "如果以后确认乙指标分母，不确认时不得计算。当前暂不确定。";
++        var task = EffectiveTaskViewFactory.create("整理甲乙指标规则。", TemplateCode.AUTO,
++                List.of(new PlanAnswer("metric", "乙指标的分母是什么？", answer)), List.of(), false);
++        assertThat(task.executionRequirements()).isEmpty();
++        assertThat(task.pendingDecisions()).allSatisfy(decision ->
++                assertThat(decision.answer()).contains("如果以后确认乙指标分母，不确认时不得计算"));
++    }
++
++    @Test void aSelfContainedActualChoiceIsNotErasedByRefusalToConfirmOtherParameters() {
++        var task = EffectiveTaskViewFactory.create("整理分析要求。\n分析工具需先确认选哪一个。", TemplateCode.AUTO,
++                List.of(new PlanAnswer("tool", "分析工具采用哪个？", "这是我确定采用R的决定。不确认其他参数。")), List.of(), false);
++        assertThat(task.effectivePrompt()).contains("这是我确定采用R的决定").doesNotContain("分析工具需先确认选哪一个");
++        assertThat(task.executionRequirements()).extracting(requirement -> requirement.statement())
++                .containsExactly("这是我确定采用R的决定。");
++        assertThat(task.pendingDecisions()).anySatisfy(decision ->
++                assertThat(decision.answer()).contains("不确认其他参数"));
++    }
++
++    @Test void aSelfContainedDeliveryChoiceIsNotClassifiedAsAResearchState() {
++        var task = EffectiveTaskViewFactory.create("整理研究内容。", TemplateCode.AUTO,
++                List.of(new PlanAnswer("delivery", "本次交付内容是什么？", "这是要交付的数据表。不确认其他参数。")), List.of(), false);
++        assertThat(task.executionRequirements()).singleElement().satisfies(requirement -> {
++            assertThat(requirement.statement()).isEqualTo("这是要交付的数据表。");
++            assertThat(requirement.destination()).isEqualTo(PromptSectionType.OUTPUT);
++        });
++        assertThat(task.pendingDecisions()).isNotEmpty();
++    }
++
++    @Test void aMaterialStatementCannotHideAConnectedActualMethodChoice() {
++        for (String selected : List.of("我已有数据，分析工具采用R。", "我已有数据并采用R。")) {
++            var task = EffectiveTaskViewFactory.create("整理分析要求。\n分析工具需先确认选哪一个。", TemplateCode.AUTO,
++                    List.of(new PlanAnswer("tool", "分析工具采用哪个？", selected + "不确认其他参数。")), List.of(), false);
++            assertThat(task.effectivePrompt()).contains(selected).doesNotContain("分析工具需先确认选哪一个");
++            assertThat(task.executionRequirements()).extracting(requirement -> requirement.statement()).containsExactly(selected);
++        }
++    }
++
++    @Test void aConditionalNonconfirmationRuleDoesNotAssertACurrentlyUnchosenParameter() {
++        for (String rule : List.of("不确认时不得计算。", "不确认口径时不得计算。",
++                "不确认则不进行分析。", "不确认就不进行分析。")) {
++            var task = EffectiveTaskViewFactory.create("整理执行规则。", TemplateCode.AUTO,
++                    List.of(new PlanAnswer("rule", "计算前须遵守什么规则？", rule)), List.of(), false);
++            assertThat(task.pendingDecisions()).isEmpty();
++            assertThat(task.executionRequirements()).singleElement().satisfies(requirement ->
++                    assertThat(requirement.statement()).endsWith(rule));
++        }
++    }
++
++    @Test void aRefusedNamedParameterIsNotAConditionalRule() {
++        var task = EffectiveTaskViewFactory.create("整理就诊流程。", TemplateCode.AUTO,
++                List.of(new PlanAnswer("time", "就诊时间是什么？", "不确认就诊时间。")), List.of(), false);
++        assertThat(task.pendingDecisions()).singleElement().satisfies(decision ->
++                assertThat(decision.answer()).isEqualTo("不确认就诊时间。"));
++    }
++}
+--- /dev/null
++++ b/services/api/src/test/resources/enhancement/delegated-plan-answer-candidate5.json
+@@ -0,0 +1,109 @@
++{
++  "source": "ME-00-A candidate5 Q05-flash Plan response trace 165; synthetic test account; original answers retained",
++  "rawPrompt": "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。正文800至1200个汉字，附表另计。不提供代码，不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。",
++  "answers": [
++    {
++      "questionId": "task_categories",
++      "question": "4 类任务分别是什么？",
++      "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
++    },
++    {
++      "questionId": "plan_rounds",
++      "question": "Plan 问答的轮次与终止方式如何设定？",
++      "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
++    },
++    {
++      "questionId": "parity_info_source",
++      "question": "公平对照两组获得的“相同确认信息”从哪里取得？",
++      "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
++    },
++    {
++      "questionId": "parity_interaction",
++      "question": "获得相同确认信息的对照组是否仍可与系统交互？",
++      "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
++    },
++    {
++      "questionId": "reviewer_agreement",
++      "question": "两名评审评分不一致时如何处理？",
++      "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
++    },
++    {
++      "questionId": "analysis_plan",
++      "question": "主要分析是否包含效应量、置信区间和配对比较？",
++      "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
++    }
++  ],
++  "providerResponse": {
++    "assessment": {
++      "sufficiency": "NEEDS_COMPLETION",
++      "gaps": [
++        {
++          "kind": "PROFESSIONAL_OPTION",
++          "missing": "4类任务的具体类别划分与每类5个任务的示例性描述框架",
++          "completion": "在方法部分给出拟议的4类任务分类（如：信息提取、多步推理、创意生成、约束满足），每类说明任务特征与选取依据，并说明每类5个任务的具体化步骤由执行者按此框架完成；明确该分类为拟议设计，可调整。",
++          "basis": "用户要求保留4类任务每类5个共20个任务，但未给出类别名称，需在方法部分提供可操作的分类框架。"
++        },
++        {
++          "kind": "PROFESSIONAL_OPTION",
++          "missing": "Plan问答轮次与终止方式的具体设定",
++          "completion": "提出拟议的Plan问答轮次上限（如最多3轮）与终止条件（如信息充分或达到轮次上限），说明该设定为拟议参数，可依据预实验调整；不预设具体数值为已确认事实。",
++          "basis": "用户要求说明Plan问答轮次与终止方式，但未给出具体数值，需在方法部分提供可操作的拟议方案。"
++        },
++        {
++          "kind": "PROFESSIONAL_OPTION",
++          "missing": "公平对照两组获得相同确认信息的具体取得与封存流程",
++          "completion": "描述拟议流程：先由Plan组完成问答并获得确认信息，将问答对及答案封存；公平对照组接收同一原始任务与逐字相同的封存信息，两组均可使用该信息完成任务；说明该流程为拟议设计，实际执行时需确保信息逐字一致。",
++          "basis": "用户要求另设两组获得相同确认信息的公平对照，需在方法部分说明信息取得与封存的具体步骤。"
++        },
++        {
++          "kind": "PROFESSIONAL_OPTION",
++          "missing": "获得相同确认信息对照组是否仍可与系统交互的设定",
++          "completion": "提出拟议设定：公平对照组在获得封存信息后不再进行额外问答交互，直接使用该信息完成任务；说明该设定为拟议方案，可依据研究目的调整，但需保持两组信息一致。",
++          "basis": "用户要求说明获得相同确认信息对照组是否仍可与系统交互，需在方法部分给出拟议设定。"
++        },
++        {
++          "kind": "PROFESSIONAL_OPTION",
++          "missing": "两名评审评分不一致时的具体处理规则",
++          "completion": "提出拟议处理规则：两名评审独立盲评后，若评分差异超过预设阈值（如1分，满分5分），由第三名评审仲裁或两名评审讨论达成一致；说明该规则为拟议方案，阈值可调整。",
++          "basis": "用户要求说明分歧处理，但未给出具体规则，需在方法部分提供可操作的拟议方案。"
++        },
++        {
++          "kind": "PROFESSIONAL_OPTION",
++          "missing": "主要分析是否包含效应量置信区间和配对比较的拟议方案",
++          "completion": "提出拟议分析方案：主要分析包含效应量（如Cohen's d或Hedges' g）及其置信区间，并采用配对比较（如配对t检验或Wilcoxon符号秩检验）比较直接增强与Plan组；说明具体检验依据未来数据分布和配对结构选择，候选方法可说明适用条件，不预设必然显著。",
++          "basis": "用户要求说明主要分析是否包含效应量置信区间和配对比较，需在方法部分给出拟议分析方案。"
++        }
++      ],
++      "presentation": "STRUCTURED"
++    },
++    "sections": [
++      {
++        "type": "BACKGROUND",
++        "title": "背景",
++        "content": "本研究为研究生撰写中文研究设计的方法部分，研究主题为Plan问答对提示词质量的影响。当前仅为拟定研究，尚未实施。研究设计需保留4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。"
++      },
++      {
++        "type": "TASK",
++        "title": "任务",
++        "content": "撰写研究设计的方法部分，内容需涵盖以下方面：\n\n1. **任务设计**：说明4类任务的分类框架（拟议分类如信息提取、多步推理、创意生成、约束满足），每类5个任务，共20个任务；说明任务选取依据与具体化步骤。\n\n2. **实验条件**：比较直接增强与Plan两种模式；另设两组获得相同确认信息的公平对照。说明公平对照两组获得相同确认信息的具体取得与封存流程（拟议流程：先由Plan组完成问答并获得确认信息，将问答对及答案封存；公平对照组接收同一原始任务与逐字相同的封存信息，两组均可使用该信息完成任务）。说明获得相同确认信息对照组是否仍可与系统交互的拟议设定（拟议设定：公平对照组在获得封存信息后不再进行额外问答交互，直接使用该信息完成任务）。\n\n3. **重复与随机化**：每模式每任务独立重复3次；说明随机化分配步骤（拟议方案：任务顺序随机化，模式分配随机化）。\n\n4. **盲法**：两名独立评审盲评；说明盲法实施步骤（拟议方案：评审不知道任务所属模式，评分表匿名化）。\n\n5. **评价维度**：准确性、完整性、清晰度与可执行性；说明各维度的操作定义与评分尺度（拟议方案：5点李克特量表，1=非常差，5=非常好）。\n\n6. **分歧处理**：两名评审评分不一致时的处理规则（拟议规则：若评分差异超过预设阈值如1分，由第三名评审仲裁或两名评审讨论达成一致；阈值可调整）。\n\n7. **统计分析**：说明主要分析是否包含效应量置信区间和配对比较（拟议方案：主要分析包含效应量如Cohen's d或Hedges' g及其置信区间，并采用配对比较如配对t检验或Wilcoxon符号秩检验比较直接增强与Plan组）；具体统计检验依据未来数据分布和配对结构选择，候选方法可说明适用条件，不预设必然显著。\n\n8. **Plan问答轮次与终止方式**：提出拟议设定（如最多3轮，终止条件为信息充分或达到轮次上限），说明该设定为拟议参数，可依据预实验调整。\n\n所有拟议设计需明确标注为拟议方案，不冒充已确认或已实施；不预设具体数值为已确认事实。"
++      },
++      {
++        "type": "OUTPUT",
++        "title": "输出",
++        "content": "交付中文研究设计的方法部分正文，字数800至1200个汉字，附表另计。正文需包含上述任务中要求的全部内容，结构清晰，逻辑连贯。不提供代码。"
++      },
++      {
++        "type": "CONSTRAINTS",
++        "title": "约束",
++        "content": "- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 不得把拟定样本写成已纳入样本。\n- 不得编造效应量、P值、参考文献或显著性结论。\n- 不得使用假设数据，禁令适用于所有用途，包括测试和验证。\n- 具体统计检验依据未来数据分布和适用条件选择；可说明候选检验名称及适用前提，不预先选定，也不预设显著性。\n- 所有拟议设计需明确标注为拟议方案，不冒充已确认或已实施。\n- 不提供代码。"
++      },
++      {
++        "type": "ACCEPTANCE",
++        "title": "验收",
++        "content": "- 方法与研究问题一致，定义和比较条件可复核。\n- 已定与未决参数分开，不编造数据、结果、文献或已完成研究状态。\n- 正文汉字数在800至1200之间。\n- 包含4类任务每类5个共20个任务、每模式每任务独立重复3次、两名独立评审盲评、直接增强与Plan比较、两组公平对照、随机化、盲法、准确性/完整性/清晰度/可执行性评价、分歧处理、统计检验候选方法及适用条件、Plan问答轮次与终止方式拟议设定。\n- 所有拟议设计明确标注为拟议方案。"
++      }
++    ],
++    "ambiguities": [],
++    "ambiguityReferences": []
++  }
++}
+--- a/README.md
++++ b/README.md
+@@ -8,6 +8,8 @@
+ 
+ <a id="enhancement-plan-direction"></a>
+ ## 提示词增强与 Plan 的开发方向（所有后续会话必读）
++
++最新节点见 [2026-10-13 接续核对与 Plan 回答状态修复](./docs/testing/ME00A接续核对与Plan回答状态修复-2026-10-13.md)：七题原始基线及指定研究／Plan 组合已有真实证据，当前调用 169 次、候选阶段 99／100；新本地修复与旧候选实际作品分开记录，整体质量及上线门禁仍未通过。
+ 
+ **核心价值：理解用户原始意图，主动做有依据的实质补全，让下游更好地完成原定任务。** 产品生成优化提示词，不执行用户任务。最小必要干预不是只重排：模糊需求可重构，充分需求保留有效原句；以下是开发与验收要求，不是所有能力已通过的承诺。
+ 
+--- a/docs/README.md
++++ b/docs/README.md
+@@ -1,4 +1,6 @@
+ # 设计文档总览
++
++最新续接核对：[ME-00-A 证据对账与 Plan 回答状态修复（2026-10-13）](./testing/ME00A接续核对与Plan回答状态修复-2026-10-13.md)。已发现并追加归档候选五及后续作品，实际调用为 169 次（基线 70／候选 99），指定研究与 Plan 组合不再重复采集；新本地修复与历史真实结果分别记录，质量门禁仍开放。
+ 
+ 本目录面向产品、架构、前后端开发、运维和后续 IDE 插件开发者。文档先定义边界和契约，再进入实现。
+ 
+--- a/docs/14-提示词增强与Plan最小干预优化方案.md
++++ b/docs/14-提示词增强与Plan最小干预优化方案.md
+@@ -1,4 +1,6 @@
+ # 提示词增强与 Plan：最小必要干预、实施顺序与上线验收
++
++最新节点状态见 [2026-10-13 接续核对](./testing/ME00A接续核对与Plan回答状态修复-2026-10-13.md)：七题原始基线及指定研究／Plan 组合已有后续证据；169 次调用中候选已用 99／100。本方案以下 2026-10-12 代码评估与缺口保留其历史时间，不能据旧状态重新采集已完成组合；新增本地修复不沿用旧作品关闭门禁。
+ 
+ > 2026-10-12 综合修订；源码核对基线 `12fbf90`。本文是增强质量的统一实施方案，稳定原则在 [README](../README.md#enhancement-plan-direction)，执行状态在[待办](./待办事项.md#enhancement-review-20261012)。本次只做源码、既有真实记录评估和文档修订，没有修改业务代码、重新调用模型或关闭上线门禁。
+ >
+--- a/docs/待办事项.md
++++ b/docs/待办事项.md
+@@ -9,6 +9,13 @@
+ 上线后新增专项：[提示词模板管理、用户反馈与管理员通知](#prompt-template-management)。完整方案、数据库与 API 草案、PL-00 至 PL-09 的开发顺序及验收要求集中在第二部分第 24 节；按用户要求在项目上线后持续开发，当前仅登记待办。
+ 
+ ## 一、近期优先事项
++
++### 2026-10-13 接续：证据已补齐，本地修复与真实验收分开
++
++- [x] **ME-00-A 本批证据对账及追加归档**：接手候选五的 665 个源码与 4 个关键 class 哈希匹配；七题原始基线、Flash 研究、指定 Q04／Q05 Plan 同信息组合和 Q01 Pro 风险复验已有作品，不重复调用。保留旧 trace 142，完成响应另存；最新账目 169＝基线 70＋候选 99，阶段预算不互借。见[节点报告](./testing/ME00A接续核对与Plan回答状态修复-2026-10-13.md)。
++- [ ] **ME-01-A 回答状态与对象投影**：真实六题回答被套为六条伪方法参数的本地修复已通过对应 273 项检查；冻结模型响应的完整组装回放中，六条错误绑定消失、研究状态和委托原句各保留一次。共同未确认边界仍重复，完整任务身份与真实作品验收未完成；不能把旧候选五作品算作新修复通过。来源与命令边界见节点报告。
++- [ ] **ME-03-A 研究评价对象局部指导**：已将现有研究主题来源绑定到原评分步骤的生成指导，保留实际待评产物、材料、指标对象与未决信息；直接／带 Plan 答案的 Provider 请求传递已检查。合并状态路径和 Provider 回归共 23 类 341 项通过，另有脚本 3 项通过；新增真实请求为 0，真实作品中的评价对象一致性未验收，不关闭 ME-03-A 或 G1／G5。
++- [ ] **研究评价对象与后续质量**：候选五 Plan 对同信息直接增强两位 AI 评审均判负，对原始同信息仍有分歧；研究对象落位、重要提问、确认融合、示例全组合及 G1—G8 保持开放。候选余额 1 次不足新三臂闭环，新增真实复验须先满足预算。
+ 
+ <a id="enhancement-review-20261012"></a>
+ ### 当前增强／Plan 施工入口（2026-10-12 综合复盘，仅文档更新）
