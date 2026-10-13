@@ -1,0 +1,196 @@
+{
+  "status": 200,
+  "elapsedMs": 9509,
+  "body": {
+    "requestId": "9612bb4b-a5f1-44f8-9709-7164c331f18f",
+    "data": {
+      "summary": "您希望设计一项可实际开展、对照公平的研究，比较“先让用户回答关键问题再增强提示词”与“直接增强提示词”的效果。研究的基本交互条件已明确，但影响研究可执行性和公平比较的几个关键参数尚未确定，需要您确认。",
+      "questions": [
+        {
+          "id": "task_domain",
+          "question": "这项研究将使用哪一类任务或场景作为测试材料？",
+          "hint": "任务类型直接决定提示词增强的评估方式、评分标准和可推广范围，需要您指定实际使用的场景。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：学术写作中的文献综述提纲生成",
+            "例如：商业场景中的产品需求文档撰写",
+            "例如：编程任务中的代码生成与调试"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "participant_source",
+          "question": "参与研究的“用户”从哪里来？",
+          "hint": "参与者的来源和招募方式影响研究可行性、样本代表性和伦理审查要求。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "real_users",
+              "label": "真实目标用户",
+              "description": "从实际使用该任务场景的人群中招募参与者。",
+              "answer": "从实际使用该任务场景的真实目标用户中招募参与者。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "convenience_sample",
+              "label": "便利样本",
+              "description": "使用学生、同事或可方便接触的人群作为参与者。",
+              "answer": "使用学生、同事或可方便接触的人群作为便利样本。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "researcher_simulated",
+              "label": "研究者模拟",
+              "description": "由研究者本人或研究团队成员模拟用户回答关键问题。",
+              "answer": "由研究者本人或研究团队成员模拟用户回答关键问题。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "sample_size",
+          "question": "计划招募或模拟多少位参与者（或多少组任务实例）？",
+          "hint": "样本量影响统计检验力和研究结论的可靠性，需要您给出可执行的规模。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：30位参与者，每人完成2个任务",
+            "例如：60组任务实例，每组由不同参与者完成",
+            "例如：先做10人预实验，再根据效果决定正式样本量"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "outcome_measure",
+          "question": "用什么指标来判断“更有用”？",
+          "hint": "效果指标决定数据收集方式和统计方法，需要您明确主要和次要评价维度。",
+          "type": "MULTIPLE_CHOICE",
+          "options": [
+            {
+              "id": "output_quality",
+              "label": "输出质量评分",
+              "description": "由评分者或自动指标对最终提示词/输出质量打分。",
+              "answer": "使用输出质量评分作为效果指标。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "user_satisfaction",
+              "label": "用户满意度",
+              "description": "参与者对增强结果的主观满意程度。",
+              "answer": "使用用户满意度作为效果指标。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "task_completion",
+              "label": "任务完成度",
+              "description": "是否完成指定任务以及完成所需时间或轮次。",
+              "answer": "使用任务完成度作为效果指标。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "prompt_quality",
+              "label": "提示词质量",
+              "description": "对增强后提示词本身的结构、完整性和可执行性评分。",
+              "answer": "使用提示词质量作为效果指标。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "comparison_design",
+          "question": "两组对照采用哪种分配方式？",
+          "hint": "分配方式影响公平性和统计效力，需要您确认可执行的对照结构。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "between_subjects",
+              "label": "被试间设计",
+              "description": "不同参与者分别进入问答增强组和直接增强组。",
+              "answer": "采用被试间设计，不同参与者分别进入问答增强组和直接增强组。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "within_subjects",
+              "label": "被试内设计",
+              "description": "同一参与者先后完成两种增强条件，顺序随机或平衡。",
+              "answer": "采用被试内设计，同一参与者先后完成两种增强条件，顺序随机或平衡。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "matched_pairs",
+              "label": "匹配对设计",
+              "description": "按关键特征将参与者配对后随机分配到两组。",
+              "answer": "采用匹配对设计，按关键特征将参与者配对后随机分配到两组。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "question_rounds",
+          "question": "问答增强组中，增强器向用户提问的轮次如何安排？",
+          "hint": "轮次安排影响两组信息量是否对等以及研究可操作性，需要您确认具体流程。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "fixed_one_round",
+              "label": "固定一轮",
+              "description": "增强器只发起一轮关键问题，用户回答后即生成增强提示词。",
+              "answer": "问答增强组固定只进行一轮关键问题提问，用户回答后即生成增强提示词。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "fixed_multiple_rounds",
+              "label": "固定多轮",
+              "description": "增强器按预设轮次（如两到三轮）逐步提问，直到信息足够。",
+              "answer": "问答增强组按预设的多轮流程逐步提问，直到信息足够再生成增强提示词。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "adaptive_until_sufficient",
+              "label": "自适应直到信息足够",
+              "description": "增强器根据用户回答动态决定是否继续提问，直到信息足够。",
+              "answer": "问答增强组采用自适应方式，增强器根据用户回答动态决定是否继续提问，直到信息足够再生成增强提示词。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 9430,
+      "planId": "e5e55135-f60d-4998-8055-9a42b06f5167",
+      "planningContext": {
+        "contextId": "8e05cc3c-caa8-4fce-a6cb-52127e974cac",
+        "version": "sha256:475adc38217386972609f60a6d4f1835245ca3121e44b8d2e7998b8cbe0b591f"
+      },
+      "expiresAt": "2026-10-12T12:50:50.974848600Z"
+    }
+  }
+}

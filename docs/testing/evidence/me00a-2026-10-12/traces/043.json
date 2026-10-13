@@ -1,0 +1,49 @@
+{
+  "phase": "baseline",
+  "label": "baseline-direct-r1-Q07-pro-enhanced",
+  "httpStatus": 200,
+  "elapsedMs": 1640,
+  "request": {
+    "model": "deepseek-v4-pro",
+    "messages": [
+      {
+        "role": "user",
+        "content": "输入资料为：“姓名：李明；年龄：28”。\n\n从输入资料中提取姓名和年龄，并生成一个严格 JSON 对象。\n\n只输出一个严格 JSON 对象，键只能是 name 和 age，name 为字符串，age 为整数。不要 Markdown、解释或示例，不增加字段。\n\n- 只输出 JSON 对象，不包含任何额外文本。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "d6f94d62-6be7-4626-9e90-33a091b7a565",
+    "object": "chat.completion",
+    "created": 1791806987,
+    "model": "deepseek-v4-pro",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"name\":\"李明\",\"age\":28}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 114,
+      "completion_tokens": 9,
+      "total_tokens": 123,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 114
+    },
+    "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+}

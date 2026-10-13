@@ -1,0 +1,18 @@
+{
+  "nativeBackend": true,
+  "nativeFrontend": true,
+  "dockerUsedForCandidate": false,
+  "redis": {
+    "globalCompatibilityCertified": false,
+    "port": 6379,
+    "process": "redis-server.exe",
+    "version": "3.2"
+  },
+  "accountCreationCount": 0,
+  "events": [
+    "Baseline used local compiled API with temporary Docker Redis dependency.",
+    "Initial candidate preflight received Redis connection refusal before model calls.",
+    "User requested no Docker and started native Redis; evaluation switched to that service.",
+    "candidate1 snapshot was preflight only; scoped confirmation counterexample fixed before candidate2 model calls."
+  ]
+}

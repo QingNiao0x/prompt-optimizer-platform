@@ -283,6 +283,25 @@ final class PlanningDecisionPolicy {
         eligibilityGuard.validate(candidate, question, field);
     }
 
+    /**
+     * 已明确委托的拟议研究实施由执行者提出方案；不消除真实资料、授权或用户保留的选择。
+     * 只用于模型候选问题，服务端来源冲突和绑定未决事项不经这条过滤。
+     */
+    boolean delegatesResearchImplementation(String question, String raw) {
+        if (!hasDecision(Kind.RESEARCH_STATUS) || !raw.contains("说明")) return false;
+        if (raw.matches("(?s).*(?:由我决定|先让我确认|不要替我选择|由用户决定).*")) return false;
+        if (question.matches("(?s).*(?:实际(?:采用|数据|样本|研究地区)|现有(?:数据|样本|任务材料)"
+                + "|已(?:经)?(?:采用|获准|取得)|授权|伦理|真实(?:数据|资料|参与者|地区)|地区|机构|个人资料).*")) return false;
+        boolean scoring = raw.matches("(?s).*说明[^。\\n]*(?:评价|评估).*" )
+                && question.matches("(?s).*(?:评分方式|评分量表|评分尺度|评分标准).*" );
+        boolean disagreement = raw.contains("分歧处理") && question.matches("(?s).*分歧.*(?:处理|解决).*" );
+        boolean randomization = raw.matches("(?s).*说明[^。\\n]*随机化.*" ) && question.contains("随机化");
+        boolean parity = hasDecision(Kind.INFORMATION_PARITY)
+                && question.matches("(?s).*(?:相同|同样)[^。\\n]*确认信息.*(?:方式|如何|流程).*|"
+                        + "(?s).*(?:如何|方式|流程)[^。\\n]*(?:相同|同样)[^。\\n]*确认信息.*");
+        return scoring || disagreement || randomization || parity;
+    }
+
     /** 未来按分布选检验的任务只允许拟候选，不把提前定案当作等价方案；否定按动作邻近核对。 */
     private boolean prematureMethodSelection(String clause) {
         var preset = Pattern.compile("(?:预先|提前)(?:指定|选定|确定)(?:一个)?(?:主要|具体)检验").matcher(clause);
@@ -930,7 +949,7 @@ final class PlanningDecisionPolicy {
                 && !goal.matches(".*(?:背景|引言|综述|重新选择.{0,16}(?:交付|写作)范围).*" )) {
             addRule(target, Kind.WRITING_SECTION_SCOPE, "交付论文方法提纲",
                     "本次交付已限定为论文方法部分的提纲，按原文篇幅与附表规则执行；按已规定的研究设计组织提纲是写作职责，"
-                            + "不重新询问是否覆盖这些设计、改为整篇或加入背景意义。真实缺失的数据来源、评分尺度、检验参数和新增条件仍可提问。");
+                            + "不重新询问是否覆盖这些设计、改为整篇或加入背景意义。用户委托的评分与常规分析设计给出拟议方案及条件；真实数据来源、授权、用户明确保留的检验参数和新增条件仍提问。");
         }
         for (String clause : raw.split("[。；;\\n]")) {
             if (clause.matches(".*[？?].*")) continue;
@@ -945,12 +964,12 @@ final class PlanningDecisionPolicy {
             if (clause.matches(".*检验.*未来数据分布.*选择.*")) {
                 addRule(target, Kind.METHOD_SELECTION, "检验选择原则", clause
                         + "。可以描述候选检验，但实际采用的主要或具体检验仍须依据未来数据分布选择；"
-                        + "不能把预先定案作为另一选项。具体评分、一致性指标与呈现方式仍可澄清。");
+                        + "不能把预先定案作为另一选项。评分、一致性评估及呈现可给拟议方法和适用条件，不因未预先提供常规设计答案就阻塞交付；原文保留的关键选择继续提问。");
             }
             if (clause.matches(".*(?:同样|相同|等量)确认信息.*公平对照.*")) {
                 addRule(target, Kind.INFORMATION_PARITY, "公平对照确认信息一致", clause
                         + "。呈现方式可以不同且可以不再交互，但必须提供与 Plan 同样的完整确认信息；"
-                        + "仅使用同一个初始提示词、不补充确认信息不满足该前提。具体信息取得及呈现方式仍需决定。");
+                        + "仅使用同一个初始提示词、不补充确认信息不满足该前提。具体信息取得和呈现属于研究设计：先取得并封存实际答案，再逐字提供给同信息各组；不得将此常规流程全部退回用户。实际授权和明确保留的选择继续提问。");
             }
         }
     }

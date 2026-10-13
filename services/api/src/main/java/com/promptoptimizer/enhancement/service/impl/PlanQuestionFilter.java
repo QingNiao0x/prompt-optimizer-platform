@@ -103,6 +103,7 @@ public final class PlanQuestionFilter {
         Set<QuestionKey> seenDimensions = new HashSet<>();
         return questions.stream()
                 .map(question -> focusNewCostDenominator(question, input.rawPrompt()))
+                .filter(question -> !decisionPolicy.delegatesResearchImplementation(question.question(), input.rawPrompt()))
                 .filter(question -> seen.add(new QuestionKey(normalize(question.question()), questionDetails(question))))
                 .filter(question -> !clearlyOutsideCurrentTask(question.question(), input.rawPrompt()))
                 .filter(question -> !comparisonMaterial.delegatedPresentation(question))

@@ -1,0 +1,248 @@
+{
+  "status": 200,
+  "elapsedMs": 10733,
+  "body": {
+    "requestId": "800c5078-1d63-47ad-a612-6b6619314b63",
+    "data": {
+      "summary": "已理解你要撰写的是尚未实施的研究设计方法部分，需保留20个任务、每模式每任务3次重复、两名评审盲评、直接增强与Plan比较及两组同信息公平对照等既定约束。还需确认几项会改变方法口径或交付内容的决定：Plan问答的交互轮次与终止方式、公平对照如何取得并呈现同一确认信息、评审评分与分歧处理的具体口径、以及随机化与分配的实施层面。",
+      "questions": [
+        {
+          "id": "plan_interaction_rounds",
+          "question": "Plan 问答的交互轮次与终止方式如何设定？",
+          "hint": "这决定 Plan 条件的具体操作定义，也影响公平对照需要提供多少确认信息。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "fixed_one_round",
+              "label": "固定一轮澄清",
+              "description": "每任务仅进行一次澄清问答，用户回答后即生成结果。",
+              "answer": "Plan 条件为固定一轮澄清问答：模型提出澄清问题，用户回答后生成结果。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "fixed_multi_round",
+              "label": "固定多轮澄清",
+              "description": "每任务进行固定轮数（如两轮）的澄清问答后生成结果。",
+              "answer": "Plan 条件为固定多轮澄清问答，每任务进行相同固定轮数后生成结果。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "until_no_more",
+              "label": "直至无新问题",
+              "description": "持续澄清直到模型不再提出新问题或用户表示信息已充分，再生成结果。",
+              "answer": "Plan 条件为持续澄清问答，直至模型不再提出新问题或用户表示信息已充分，再生成结果。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other_rounds",
+              "label": "其他方式",
+              "description": "由你说明具体的轮次或终止规则。",
+              "answer": "Plan 条件的交互轮次与终止方式为：",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "parity_control_info",
+          "question": "两组公平对照如何取得与 Plan 条件相同的确认信息？",
+          "hint": "公平对照必须获得与 Plan 同样的完整确认信息，但取得和呈现方式可以不同，需要明确具体做法。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "reuse_plan_qa",
+              "label": "复用 Plan 问答记录",
+              "description": "将 Plan 条件实际产生的澄清问答内容整理后，以静态形式提供给对照组。",
+              "answer": "公平对照的确认信息来自 Plan 条件实际产生的澄清问答内容，整理后以静态形式提供给对照组，两组信息内容一致。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "predefined_script",
+              "label": "预设统一澄清脚本",
+              "description": "事先为每任务编写统一的澄清问题与回答，Plan 与对照均使用该脚本。",
+              "answer": "事先为每任务编写统一的澄清问题与回答脚本，Plan 条件与公平对照均使用同一脚本内容，仅呈现方式不同。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other_parity",
+              "label": "其他方式",
+              "description": "由你说明对照组获取同一确认信息的具体途径。",
+              "answer": "公平对照获取与 Plan 相同确认信息的方式为：",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "scoring_dimensions",
+          "question": "准确性、完整性、清晰度与可执行性四个维度采用何种评分方式？",
+          "hint": "这决定评审表结构和后续一致性分析的口径。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "likert5",
+              "label": "5点李克特量表",
+              "description": "每维度1至5分，附维度定义与评分锚点。",
+              "answer": "四个维度均采用5点李克特量表（1至5分），并提供各维度的定义与评分锚点。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "likert7",
+              "label": "7点李克特量表",
+              "description": "每维度1至7分，附维度定义与评分锚点。",
+              "answer": "四个维度均采用7点李克特量表（1至7分），并提供各维度的定义与评分锚点。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "rubric_levels",
+              "label": "等级评分",
+              "description": "每维度按优、良、中、差等等级评分，并给出等级描述。",
+              "answer": "四个维度采用等级评分，每维度按优、良、中、差等等级评定，并给出各等级的具体描述。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other_scoring",
+              "label": "其他方式",
+              "description": "由你说明评分量表或评分规则。",
+              "answer": "四个维度的评分方式为：",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "disagreement_rule",
+          "question": "两名评审评分出现分歧时如何处理？",
+          "hint": "这影响最终评分数据的形成方式和一致性报告。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "discuss_consensus",
+              "label": "讨论达成共识",
+              "description": "分歧项由两名评审讨论后给出统一评分。",
+              "answer": "两名评审对分歧项进行讨论，讨论后给出统一评分作为最终评分。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "third_arbiter",
+              "label": "第三方仲裁",
+              "description": "分歧项提交第三名评审裁定。",
+              "answer": "分歧项提交第三名独立评审裁定，以裁定结果作为最终评分。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "report_both",
+              "label": "保留双评并报告一致性",
+              "description": "不强行统一，保留两名评审各自评分并报告评分者间一致性。",
+              "answer": "不强行统一评分，保留两名评审各自评分，并报告评分者间一致性指标。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "threshold_rule",
+              "label": "按阈值规则处理",
+              "description": "设定分歧阈值，超过阈值才启动讨论或仲裁。",
+              "answer": "设定分歧阈值，未超过阈值时取均值，超过阈值时启动讨论或第三方仲裁。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other_disagreement",
+              "label": "其他方式",
+              "description": "由你说明分歧处理规则。",
+              "answer": "评审分歧的处理方式为：",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "randomization_level",
+          "question": "随机化在哪个层面实施？",
+          "hint": "这决定任务分配和重复测量的分析结构。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "within_task",
+              "label": "任务内随机",
+              "description": "每个任务内随机分配增强条件与重复次序。",
+              "answer": "在每个任务内随机分配增强条件及重复次序。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "block_random",
+              "label": "区组随机",
+              "description": "按任务类别区组，在区组内随机分配条件与次序。",
+              "answer": "按4类任务进行区组随机，在区组内随机分配增强条件与重复次序。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "fully_random",
+              "label": "完全随机",
+              "description": "对全部任务与条件组合进行完全随机分配。",
+              "answer": "对全部任务与条件组合进行完全随机分配。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other_random",
+              "label": "其他方式",
+              "description": "由你说明随机化层面与规则。",
+              "answer": "随机化的实施层面与规则为：",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "task_material_source",
+          "question": "20个任务的任务材料来自哪里？",
+          "hint": "任务来源影响研究可复现性和外部效度，需明确是自编、既有语料还是其他来源。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：由研究者根据研究生常见写作场景自编20个任务，并经两名专家审核",
+            "例如：从公开学术写作语料中选取并改编"
+          ],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 10713,
+      "planId": "d08180b2-9f7f-408f-809e-11b3bded73b0",
+      "planningContext": {
+        "contextId": "ded7034a-1da4-412e-af8c-0ffe8eec4974",
+        "version": "sha256:88e9ec82ccf032927c627c2e880a44237fdd74fd45865219f12aa46427ab38d1"
+      },
+      "expiresAt": "2026-10-12T12:57:12.480398100Z"
+    }
+  }
+}

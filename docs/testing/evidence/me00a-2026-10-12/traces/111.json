@@ -1,0 +1,49 @@
+{
+  "phase": "candidateValidation",
+  "label": "candidate2-direct-r1-Q06-pro-raw",
+  "httpStatus": 200,
+  "elapsedMs": 1377,
+  "request": {
+    "model": "deepseek-v4-pro",
+    "messages": [
+      {
+        "role": "user",
+        "content": "将下面两行翻译为英文，保持两行及顺序，只输出译文，不解释、不加标题或示例：\n会议改到周五下午三点。\n请在周四之前确认是否参加。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "9a8dfa18-b79c-4884-adad-56508a7f55fd",
+    "object": "chat.completion",
+    "created": 1791812981,
+    "model": "deepseek-v4-pro",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "The meeting has been changed to 3 p.m. on Friday.\nPlease confirm whether you will attend by Thursday."
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 44,
+      "completion_tokens": 23,
+      "total_tokens": 67,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 44
+    },
+    "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+}

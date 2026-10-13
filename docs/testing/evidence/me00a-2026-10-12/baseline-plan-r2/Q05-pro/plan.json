@@ -1,0 +1,128 @@
+{
+  "status": 200,
+  "elapsedMs": 13891,
+  "body": {
+    "requestId": "52ad57cd-32c4-4564-81a3-d289c5ff59f1",
+    "data": {
+      "summary": "已理解研究设计需保留20个任务、重复3次、盲评、公平对照及统计检验选择原则。还需确认公平对照中确认信息的取得与呈现方式、评分量表和分歧处理的具体规则。",
+      "questions": [
+        {
+          "id": "info_parity_method",
+          "question": "公平对照中，两组获得相同确认信息的具体方式是什么？",
+          "hint": "需要明确如何让直接增强组和Plan组获得相同的确认信息，以保证公平对照。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "pre_collected",
+              "label": "预先收集确认信息",
+              "description": "在实验前通过预实验或人工方式收集所有任务的确认信息，然后提供给两组。",
+              "answer": "公平对照中，确认信息在实验前预先收集，并作为输入提供给直接增强组和Plan组，确保两组获得相同信息。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "plan_first",
+              "label": "Plan组先收集再共享",
+              "description": "Plan组先进行问答收集确认信息，然后将这些信息提供给直接增强组使用。",
+              "answer": "公平对照中，先由Plan组进行问答收集确认信息，然后将相同信息提供给直接增强组，确保两组信息一致。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "simultaneous",
+              "label": "两组同时交互收集",
+              "description": "两组都进行交互问答，但确保收集到的确认信息相同。",
+              "answer": "公平对照中，两组都进行交互问答，但通过设计确保收集到的确认信息相同。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "scoring_scale",
+          "question": "准确性、完整性、清晰度与可执行性的评分量表是什么？",
+          "hint": "需要确定每个维度的评分范围，例如1-5分或1-7分，以及是否使用锚点描述。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "likert5",
+              "label": "5点李克特量表",
+              "description": "每个维度使用1-5分，1表示非常差，5表示非常好。",
+              "answer": "准确性、完整性、清晰度与可执行性均采用5点李克特量表评分，1表示非常差，5表示非常好。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "likert7",
+              "label": "7点李克特量表",
+              "description": "每个维度使用1-7分，1表示非常差，7表示非常好。",
+              "answer": "准确性、完整性、清晰度与可执行性均采用7点李克特量表评分，1表示非常差，7表示非常好。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "custom_rubric",
+              "label": "自定义评分细则",
+              "description": "为每个维度制定详细的评分标准，评审根据细则打分。",
+              "answer": "为准确性、完整性、清晰度与可执行性分别制定详细的评分细则，评审根据细则进行打分。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "disagreement_resolution",
+          "question": "两名评审评分出现分歧时如何处理？",
+          "hint": "需要明确分歧解决机制，例如讨论达成一致、取平均值或引入第三评审。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "discussion",
+              "label": "讨论达成一致",
+              "description": "两名评审讨论分歧，直到达成一致评分。",
+              "answer": "两名评审评分出现分歧时，通过讨论达成一致评分。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "average",
+              "label": "取平均值",
+              "description": "直接取两名评审评分的平均值作为最终得分。",
+              "answer": "两名评审评分出现分歧时，取两名评审评分的平均值作为最终得分。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "third_reviewer",
+              "label": "引入第三评审",
+              "description": "当分歧较大时，引入第三名评审进行仲裁。",
+              "answer": "两名评审评分出现分歧且无法达成一致时，引入第三名评审进行仲裁，以其评分为准或取三者平均值。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 13874,
+      "planId": "b5625b86-b599-47a6-b2eb-a7f54d8a6dd5",
+      "planningContext": {
+        "contextId": "e0388950-a94f-45db-9e03-fe550142ca59",
+        "version": "sha256:88e9ec82ccf032927c627c2e880a44237fdd74fd45865219f12aa46427ab38d1"
+      },
+      "expiresAt": "2026-10-12T12:58:22.543510800Z"
+    }
+  }
+}

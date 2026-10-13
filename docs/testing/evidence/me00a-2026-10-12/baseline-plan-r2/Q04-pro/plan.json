@@ -1,0 +1,153 @@
+{
+  "status": 200,
+  "elapsedMs": 11224,
+  "body": {
+    "requestId": "889a09cc-4b5d-480e-a5a9-d6f59d342b33",
+    "data": {
+      "summary": "已理解目标是设计一项比较研究：先让用户回答关键问题再增强提示词，与直接增强提示词相比是否更有效。研究需可实际开展且比较公平。由于研究设计涉及具体参数和真实数据来源，需要用户确认几个关键决策。",
+      "questions": [
+        {
+          "id": "participant_pool",
+          "question": "研究参与者从哪里招募？",
+          "hint": "需要确定参与者来源，以便设计招募流程和样本量。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：某大学计算机系学生，通过校内公告招募"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "task_domain",
+          "question": "研究中使用什么类型的提示词任务？",
+          "hint": "任务类型会影响研究的外部效度和实施难度。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "general_writing",
+              "label": "通用写作任务",
+              "description": "如撰写邮件、短文等日常写作任务",
+              "answer": "使用通用写作任务作为提示词任务",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "coding",
+              "label": "编程任务",
+              "description": "如代码生成、调试等编程相关任务",
+              "answer": "使用编程任务作为提示词任务",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "domain_specific",
+              "label": "特定领域任务",
+              "description": "如医疗、法律等专业领域任务",
+              "answer": "使用特定领域任务作为提示词任务",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "outcome_metrics",
+          "question": "研究的主要结果指标是什么？",
+          "hint": "需要明确衡量提示词增强效果的具体指标。",
+          "type": "MULTIPLE_CHOICE",
+          "options": [
+            {
+              "id": "output_quality",
+              "label": "输出质量",
+              "description": "由评审者根据预设标准评分",
+              "answer": "输出质量评分",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "user_satisfaction",
+              "label": "用户满意度",
+              "description": "参与者对生成结果的满意度自评",
+              "answer": "用户满意度评分",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "efficiency",
+              "label": "效率",
+              "description": "如完成任务所需时间或交互轮次",
+              "answer": "效率指标（时间或轮次）",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "llm_model",
+          "question": "研究中使用哪个大语言模型（LLM）？",
+          "hint": "模型选择会影响结果的可比性和推广性。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：GPT-4、Claude 3 等"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "sample_size",
+          "question": "预计的样本量是多少？",
+          "hint": "样本量影响统计功效和可行性。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：每组至少30人，共60人"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "data_collection",
+          "question": "数据收集方式是什么？",
+          "hint": "需要确定数据收集的具体形式，如在线平台、实验室等。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "online",
+              "label": "在线进行",
+              "description": "通过在线平台远程收集数据",
+              "answer": "在线进行数据收集",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "lab",
+              "label": "实验室进行",
+              "description": "在受控实验室环境中收集数据",
+              "answer": "在实验室进行数据收集",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "latencyMs": 11176,
+      "planId": "6b9e7a16-0e29-4823-9cce-bf188bb52c22",
+      "planningContext": {
+        "contextId": "0901be92-487d-4f2d-b758-9ec00c74c519",
+        "version": "sha256:475adc38217386972609f60a6d4f1835245ca3121e44b8d2e7998b8cbe0b591f"
+      },
+      "expiresAt": "2026-10-12T12:52:29.592583900Z"
+    }
+  }
+}

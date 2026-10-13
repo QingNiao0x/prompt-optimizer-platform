@@ -167,6 +167,8 @@ public class OptimizationResultAssembler {
             throw invalidResponse(Reason.REQUIRED_SECTIONS_MISSING, "sections");
         }
         var requirementBoundaries = taskView.requirementBoundaries();
+        var meaning = taskView.meaning();
+        sections.forEach((type, section) -> meaning.validate(section.content(), "sections." + type));
         var inferenceContract = com.promptoptimizer.provider.domain.EvidenceInferenceContract.from(taskView, context);
         var presentation = taskView.intent().deliveryProfile() == com.promptoptimizer.template.domain.TaskDeliveryProfile.TRANSLATION
                 || providerResponse.assessment() != null && providerResponse.assessment().presentation()

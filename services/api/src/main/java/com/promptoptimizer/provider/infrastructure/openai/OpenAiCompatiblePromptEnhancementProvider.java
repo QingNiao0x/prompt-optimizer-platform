@@ -751,10 +751,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
 
         StructuredPromptResponse structuredResponse;
         try {
-            structuredResponse = objectMapper.readValue(
-                    removeMarkdownFence(firstChoice.message().content()),
-                    StructuredPromptResponse.class
-            );
+            JsonNode payload = objectMapper.readTree(removeMarkdownFence(firstChoice.message().content()));
+            normalizeMissingPresentation(payload);
+            structuredResponse = objectMapper.treeToValue(payload, StructuredPromptResponse.class);
         } catch (JsonProcessingException exception) {
             throw new ProviderResponseValidationException(
                     ProviderResponseValidationException.Reason.RESPONSE_JSON_INVALID, "response.json", exception);
@@ -777,6 +776,18 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 references,
                 structuredResponse.assessment()
         );
+    }
+
+    /**
+     * 缺省展示元数据沿用旧适配器的分节方式，不补任务、事实、实质缺口或用户决定。
+     * 显式空值／非法枚举仍由原解析器拒绝；四要素及业务保真校验保持原有边界。
+     */
+    private void normalizeMissingPresentation(JsonNode payload) {
+        if (payload != null && payload.path("assessment") instanceof com.fasterxml.jackson.databind.node.ObjectNode assessment
+                && !assessment.has("presentation")) {
+            assessment.put("presentation", com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Presentation.STRUCTURED.name());
+            LOGGER.debug("event=model.response.presentation_defaulted presentation=STRUCTURED");
+        }
     }
 
     /**

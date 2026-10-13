@@ -1,0 +1,49 @@
+{
+  "phase": "baseline",
+  "label": "baseline-direct-r1-Q03-pro-raw",
+  "httpStatus": 200,
+  "elapsedMs": 1823,
+  "request": {
+    "model": "deepseek-v4-pro",
+    "messages": [
+      {
+        "role": "user",
+        "content": "请给同事小林写一封中文邮件，提醒他今天17点前把本周项目进度发给我，好汇总给团队。语气友好，正文不超过80个汉字。只输出主题和正文，不写占位符，不补造项目进展，不举例。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "response": {
+    "id": "8dc7ced9-ece1-4702-be6f-8ecc1f2d1289",
+    "object": "chat.completion",
+    "created": 1791806708,
+    "model": "deepseek-v4-pro",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "主题：提醒：请于17点前发送本周项目进度\n\n小林，麻烦今天17点前把本周项目进度发我，我好汇总给团队。谢谢！"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 61,
+      "completion_tokens": 35,
+      "total_tokens": 96,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 61
+    },
+    "system_fingerprint": "a307abda487cd1b463329ccb945ce396"
+  }
+}

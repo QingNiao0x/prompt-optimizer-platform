@@ -1,0 +1,38 @@
+{
+  "recordedBeforeCandidate3": true,
+  "hardBudgetUnchanged": 180,
+  "candidatePhaseLimitUnchanged": 100,
+  "callsBeforeAmendment": 118,
+  "knownCandidate2Failures": [
+    "Q03 both: literal matching rejected harmless polite prefix and section assignment.",
+    "Q05 Pro: overstrict sufficient-wording validation.",
+    "Q05 Flash/Q06 both: harness incorrectly equated normalized history preview with exact raw text."
+  ],
+  "candidate3Direct": [
+    "Q03",
+    "Q05",
+    "Q06"
+  ],
+  "candidate3Plan": [
+    {
+      "models": [
+        "deepseek-flash",
+        "deepseek-v4-pro"
+      ],
+      "case": "Q05"
+    },
+    {
+      "models": [
+        "deepseek-v4-pro"
+      ],
+      "case": "Q04"
+    }
+  ],
+  "riskRepeat": {
+    "round": 2,
+    "case": "Q01",
+    "model": "deepseek-v4-pro"
+  },
+  "allSevenSecondRound": "Deferred under unchanged hard budget; not claimed complete.",
+  "nativeServicesOnly": true
+}

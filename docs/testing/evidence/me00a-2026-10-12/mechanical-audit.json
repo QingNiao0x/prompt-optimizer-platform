@@ -1,0 +1,2604 @@
+{
+  "scope": "Mechanical checks; semantic quality is separately blind-reviewed.",
+  "frozenCasesSha256": "c5602dddeab7309e0e843555b36e40b95ba159888d5c6db064a53a2fc406d3b4",
+  "actualCalls": 142,
+  "phaseCalls": {
+    "baseline": 70,
+    "candidateValidation": 72
+  },
+  "httpStatuses": {
+    "200": 141,
+    "None": 1
+  },
+  "returnedTokens": {
+    "baseline/deepseek-flash": {
+      "prompt_tokens": 113249,
+      "completion_tokens": 41349,
+      "total_tokens": 154598
+    },
+    "baseline/deepseek-v4-pro": {
+      "prompt_tokens": 95983,
+      "completion_tokens": 39476,
+      "total_tokens": 135459
+    },
+    "candidateValidation/deepseek-flash": {
+      "prompt_tokens": 142433,
+      "completion_tokens": 27357,
+      "total_tokens": 169790
+    },
+    "candidateValidation/deepseek-v4-pro": {
+      "prompt_tokens": 114342,
+      "completion_tokens": 18369,
+      "total_tokens": 132711
+    }
+  },
+  "currencyCost": "UNKNOWN; tokens are actual provider returns, not billing.",
+  "traces": [
+    {
+      "file": "001.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q01-flash-raw",
+      "elapsedMs": 11288,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "002.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "003.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "004.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q01-flash-enhanced",
+      "elapsedMs": 15483,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "005.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q01-pro-raw",
+      "elapsedMs": 18917,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "006.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "007.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q01-pro-enhanced",
+      "elapsedMs": 25781,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "008.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q02-flash-raw",
+      "elapsedMs": 1608,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "009.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "010.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q02-flash-enhanced",
+      "elapsedMs": 1308,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "011.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q02-pro-raw",
+      "elapsedMs": 4454,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "012.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "013.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q02-pro-enhanced",
+      "elapsedMs": 3130,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "014.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q03-flash-raw",
+      "elapsedMs": 831,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "015.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "016.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q03-flash-enhanced",
+      "elapsedMs": 822,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "017.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q03-pro-raw",
+      "elapsedMs": 1823,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "018.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "019.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q03-pro-enhanced",
+      "elapsedMs": 1555,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "020.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q04-flash-raw",
+      "elapsedMs": 15415,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "021.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "022.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q04-flash-enhanced",
+      "elapsedMs": 19040,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "023.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q04-pro-raw",
+      "elapsedMs": 32090,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "024.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "025.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q04-pro-enhanced",
+      "elapsedMs": 90883,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "026.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q05-flash-raw",
+      "elapsedMs": 8646,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "027.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "028.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q05-flash-enhanced",
+      "elapsedMs": 8199,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "029.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q05-pro-raw",
+      "elapsedMs": 21865,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "030.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "031.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q05-pro-enhanced",
+      "elapsedMs": 16061,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "032.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q06-flash-raw",
+      "elapsedMs": 994,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "033.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "034.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q06-flash-enhanced",
+      "elapsedMs": 735,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "035.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q06-pro-raw",
+      "elapsedMs": 1511,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "036.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "037.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q06-pro-enhanced",
+      "elapsedMs": 1764,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "038.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q07-flash-raw",
+      "elapsedMs": 854,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "039.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "040.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q07-flash-enhanced",
+      "elapsedMs": 582,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "041.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q07-pro-raw",
+      "elapsedMs": 890,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "042.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "043.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-direct-r1-Q07-pro-enhanced",
+      "elapsedMs": 1640,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "044.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "045.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "046.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q04-flash-plan",
+      "elapsedMs": 21707,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "047.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q04-flash-raw-equal-information",
+      "elapsedMs": 22948,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "048.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "049.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q04-flash-direct-equal-information",
+      "elapsedMs": 25750,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "050.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "051.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "052.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q04-pro-plan",
+      "elapsedMs": 99739,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "053.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q04-pro-raw-equal-information",
+      "elapsedMs": 39178,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "054.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "055.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "056.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q04-pro-direct-equal-information",
+      "elapsedMs": 79312,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "057.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "058.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "059.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "060.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q05-flash-plan",
+      "elapsedMs": 6952,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "061.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q05-flash-raw-equal-information",
+      "elapsedMs": 9601,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "062.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "063.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "064.json",
+      "phase": "baseline",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q05-flash-direct-equal-information",
+      "elapsedMs": 7262,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "065.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "066.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "067.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q05-pro-plan",
+      "elapsedMs": 16316,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "068.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q05-pro-raw-equal-information",
+      "elapsedMs": 26721,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "069.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "070.json",
+      "phase": "baseline",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "baseline-plan-r2-Q05-pro-direct-equal-information",
+      "elapsedMs": 13291,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "071.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q01-flash-raw",
+      "elapsedMs": 8219,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "072.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 6321,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "073.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 5575,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "074.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q01-flash-enhanced",
+      "elapsedMs": 10509,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "075.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q01-pro-raw",
+      "elapsedMs": 16340,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "076.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 5867,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "077.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 4602,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "078.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q01-pro-enhanced",
+      "elapsedMs": 18199,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "079.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q02-flash-raw",
+      "elapsedMs": 1905,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "080.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 2937,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "081.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 1481,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "082.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q02-flash-enhanced",
+      "elapsedMs": 1688,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "083.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q02-pro-raw",
+      "elapsedMs": 3915,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "084.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 4177,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "085.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 3130,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "086.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q02-pro-enhanced",
+      "elapsedMs": 2904,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "087.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q03-flash-raw",
+      "elapsedMs": 859,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "088.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 1508,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "089.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 1181,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "090.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 1487,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "091.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q03-pro-raw",
+      "elapsedMs": 1938,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "092.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 3292,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "093.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 3084,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "094.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 3531,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "095.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q04-flash-raw",
+      "elapsedMs": 12574,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "096.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 12546,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "097.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q04-flash-enhanced",
+      "elapsedMs": 27276,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "098.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q04-pro-raw",
+      "elapsedMs": 28965,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "099.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 10825,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "100.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q04-pro-enhanced",
+      "elapsedMs": 72058,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "101.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q05-flash-raw",
+      "elapsedMs": 8971,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "102.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 9061,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "103.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 9164,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "104.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 7266,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "105.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q05-pro-raw",
+      "elapsedMs": 16721,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "106.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 9654,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "107.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 4603,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "108.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 3550,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "109.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q06-flash-raw",
+      "elapsedMs": 961,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "110.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 2109,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "111.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q06-pro-raw",
+      "elapsedMs": 1377,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "112.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 3212,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "113.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q07-flash-raw",
+      "elapsedMs": 623,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "114.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 1675,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "115.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q07-flash-enhanced",
+      "elapsedMs": 832,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "116.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q07-pro-raw",
+      "elapsedMs": 1054,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "117.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 2861,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "118.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate2-direct-r1-Q07-pro-enhanced",
+      "elapsedMs": 792,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "119.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate3-direct-r1-Q03-flash-raw",
+      "elapsedMs": 863,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "120.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 2007,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "121.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate3-direct-r1-Q03-flash-enhanced",
+      "elapsedMs": 783,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "122.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate3-direct-r1-Q03-pro-raw",
+      "elapsedMs": 1358,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "123.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 2263,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "124.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate3-direct-r1-Q03-pro-enhanced",
+      "elapsedMs": 1673,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "125.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate3-direct-r1-Q05-flash-raw",
+      "elapsedMs": 9937,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "126.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 6437,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "127.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 8457,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "128.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 6567,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "129.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate3-direct-r1-Q05-pro-raw",
+      "elapsedMs": 18196,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "130.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 7520,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "131.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate3-direct-r1-Q05-pro-enhanced",
+      "elapsedMs": 14577,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "132.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate3-direct-r1-Q06-flash-raw",
+      "elapsedMs": 999,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "133.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 2061,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "134.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate3-direct-r1-Q06-flash-enhanced",
+      "elapsedMs": 967,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "135.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate3-direct-r1-Q06-pro-raw",
+      "elapsedMs": 1376,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "136.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 2721,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "137.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "label": "candidate3-direct-r1-Q06-pro-enhanced",
+      "elapsedMs": 784,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "138.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate4-direct-r1-Q05-flash-raw",
+      "elapsedMs": 10401,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "139.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 7160,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "140.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "candidate4-direct-r1-Q05-flash-enhanced",
+      "elapsedMs": 5000,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "141.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "label": "",
+      "elapsedMs": 9011,
+      "usageKnown": true,
+      "finishReason": [
+        "stop"
+      ]
+    },
+    {
+      "file": "142.json",
+      "phase": "candidateValidation",
+      "model": "deepseek-flash",
+      "httpStatus": null,
+      "label": "",
+      "elapsedMs": null,
+      "usageKnown": false,
+      "finishReason": []
+    }
+  ],
+  "samples": [
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q01-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 13027,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1156,
+      "copiedCjk": 940,
+      "copiedSha256": "c2e044d61f7a2bc72eaa1551273584030865949bb09483294828ef039d1a87a4",
+      "historyChecked": true,
+      "workChars": 3142,
+      "workCjk": 2001,
+      "workNonTableCjk": 1611,
+      "rawWorkChars": 2549,
+      "rawWorkCjk": 1653,
+      "rawWorkNonTableCjk": 1053
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q01-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 8745,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 911,
+      "copiedCjk": 727,
+      "copiedSha256": "06f9ec70965c044bedda335e922768fcd9742209acccfd1c454eeb3385816202",
+      "historyChecked": true,
+      "workChars": 2462,
+      "workCjk": 1731,
+      "workNonTableCjk": 1418,
+      "rawWorkChars": 1754,
+      "rawWorkCjk": 1266,
+      "rawWorkNonTableCjk": 1266
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q02-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 2990,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 379,
+      "copiedCjk": 316,
+      "copiedSha256": "4fba0c3fdc54b342726bd0afeecd1cb34ec06bd78daa7ab77e04d1f0f2830033",
+      "historyChecked": true,
+      "workChars": 97,
+      "workCjk": 73,
+      "workNonTableCjk": 73,
+      "rawWorkChars": 240,
+      "rawWorkCjk": 176,
+      "rawWorkNonTableCjk": 176
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q02-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 3100,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 150,
+      "copiedCjk": 123,
+      "copiedSha256": "b71cbf8d7dcfc94797f0301519b712d6402c978ec61027a1f61697b419b35fd3",
+      "historyChecked": true,
+      "workChars": 158,
+      "workCjk": 119,
+      "workNonTableCjk": 119,
+      "rawWorkChars": 334,
+      "rawWorkCjk": 234,
+      "rawWorkNonTableCjk": 234
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q03-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 1343,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 223,
+      "copiedCjk": 170,
+      "copiedSha256": "a43e2fcf1d05acd05535973d3b028808b3c4e1c308f2cf1b4355e1c286fcef4b",
+      "historyChecked": true,
+      "workChars": 51,
+      "workCjk": 41,
+      "workNonTableCjk": 41,
+      "mailBodyCjk": 29,
+      "mailBodyLengthAtMost80": true,
+      "rawWorkChars": 49,
+      "rawWorkCjk": 39,
+      "rawWorkNonTableCjk": 39
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q03-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 2787,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 183,
+      "copiedCjk": 142,
+      "copiedSha256": "a27330b7164ddb0d872af3c2273cacf75741fa60de2f0c800dd3fe01a85d71dc",
+      "historyChecked": true,
+      "workChars": 56,
+      "workCjk": 44,
+      "workNonTableCjk": 44,
+      "mailBodyCjk": 26,
+      "mailBodyLengthAtMost80": true,
+      "rawWorkChars": 54,
+      "rawWorkCjk": 42,
+      "rawWorkNonTableCjk": 42
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q04-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 9634,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1497,
+      "copiedCjk": 1232,
+      "copiedSha256": "32d97e6c8d31bf2fbee45357f3119cb671fa0a0d06f817a72508877e26b9a586",
+      "historyChecked": true,
+      "workChars": 4457,
+      "workCjk": 2860,
+      "workNonTableCjk": 2805,
+      "rawWorkChars": 3036,
+      "rawWorkCjk": 1776,
+      "rawWorkNonTableCjk": 1531
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q04-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 12891,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1132,
+      "copiedCjk": 920,
+      "copiedSha256": "be442ea367b5fdb8d834419e356d5abf2871b29baddd970b4fb32558772ed194",
+      "historyChecked": true,
+      "workChars": 9803,
+      "workCjk": 6451,
+      "workNonTableCjk": 4779,
+      "rawWorkChars": 3223,
+      "rawWorkCjk": 1759,
+      "rawWorkNonTableCjk": 1587
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q05-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 10743,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 2273,
+      "copiedCjk": 1852,
+      "copiedSha256": "42aa8657ad6c6698a0c62d7480a64965f707c71eea9f1ca3e9462c0b47c5ddd8",
+      "historyChecked": false,
+      "workChars": 1514,
+      "workCjk": 1302,
+      "workNonTableCjk": 1302,
+      "declaredBodyLengthMechanicalCheck": false,
+      "rawWorkChars": 1730,
+      "rawWorkCjk": 1316,
+      "rawWorkNonTableCjk": 1316
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q05-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 7404,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1706,
+      "copiedCjk": 1398,
+      "copiedSha256": "5a4857fde5db97f9c8993bd58e7e7e02ebec068f8631a57ce3971a3c9b03ad68",
+      "historyChecked": false,
+      "workChars": 1126,
+      "workCjk": 968,
+      "workNonTableCjk": 968,
+      "declaredBodyLengthMechanicalCheck": true,
+      "rawWorkChars": 1970,
+      "rawWorkCjk": 1438,
+      "rawWorkNonTableCjk": 1313
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q06-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 2286,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 314,
+      "copiedCjk": 248,
+      "copiedSha256": "fc2debe2f41d88bda4839888b0f249563e94ec14c16b94ab4ee93e0098b360e9",
+      "historyChecked": false,
+      "workChars": 96,
+      "workCjk": 0,
+      "workNonTableCjk": 0,
+      "twoEnglishLines": true,
+      "rawWorkChars": 102,
+      "rawWorkCjk": 0,
+      "rawWorkNonTableCjk": 0
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q06-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 3179,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 240,
+      "copiedCjk": 192,
+      "copiedSha256": "a48b4ee41749c173d30c9ceada2fd2b9a23a9685a7f18202f69fbb3f4aee15c7",
+      "historyChecked": false,
+      "workChars": 102,
+      "workCjk": 0,
+      "workNonTableCjk": 0,
+      "twoEnglishLines": true,
+      "rawWorkChars": 101,
+      "rawWorkCjk": 0,
+      "rawWorkNonTableCjk": 0
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q07-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 1777,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 340,
+      "copiedCjk": 195,
+      "copiedSha256": "52264d54244517e645cea958d8175dae0f8bb58dd9469a9bfbad72504a0a746d",
+      "historyChecked": true,
+      "workChars": 22,
+      "workCjk": 2,
+      "workNonTableCjk": 2,
+      "strictJson": true,
+      "rawWorkChars": 22,
+      "rawWorkCjk": 2,
+      "rawWorkNonTableCjk": 2
+    },
+    {
+      "phase": "baseline-direct-r1",
+      "label": "Q07-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 4011,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 206,
+      "copiedCjk": 121,
+      "copiedSha256": "abfb75f2eaa0152e460fcffa581918e7bc49ebc2d0866060acb456e1d6e7c27d",
+      "historyChecked": true,
+      "workChars": 22,
+      "workCjk": 2,
+      "workNonTableCjk": 2,
+      "strictJson": true,
+      "rawWorkChars": 22,
+      "rawWorkCjk": 2,
+      "rawWorkNonTableCjk": 2
+    },
+    {
+      "phase": "baseline-plan-r2",
+      "label": "Q04-flash",
+      "arm": "D+",
+      "platformStatus": 200,
+      "platformElapsedMs": 10022,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1335,
+      "copiedCjk": 1129,
+      "copiedSha256": "b558274336461d1890604fbf22c5a21e6c8d287b409e8db8f9caf741608a746c",
+      "historyChecked": false,
+      "workChars": 6686,
+      "workCjk": 4367,
+      "workNonTableCjk": 4367
+    },
+    {
+      "phase": "baseline-plan-r2",
+      "label": "Q04-flash",
+      "arm": "P+",
+      "platformStatus": 200,
+      "platformElapsedMs": 7562,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1396,
+      "copiedCjk": 1168,
+      "copiedSha256": "1705be2606bef9e08fd3ea5e5fe0e2cba9bb4167281a4193df7e05c2a71c0614",
+      "historyChecked": true,
+      "workChars": 5375,
+      "workCjk": 3298,
+      "workNonTableCjk": 3075,
+      "rawWorkChars": 5285,
+      "rawWorkCjk": 3140,
+      "rawWorkNonTableCjk": 3140
+    },
+    {
+      "phase": "baseline-plan-r2",
+      "label": "Q04-pro",
+      "arm": "D+",
+      "platformStatus": 200,
+      "platformElapsedMs": 35112,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1657,
+      "copiedCjk": 1371,
+      "copiedSha256": "f3f0049defef0de8cb2f01fe30a8f7a853cba8098eec2654d21cfe4200267ea4",
+      "historyChecked": false,
+      "workChars": 8674,
+      "workCjk": 5582,
+      "workNonTableCjk": 4682
+    },
+    {
+      "phase": "baseline-plan-r2",
+      "label": "Q04-pro",
+      "arm": "P+",
+      "platformStatus": 200,
+      "platformElapsedMs": 17726,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1438,
+      "copiedCjk": 1156,
+      "copiedSha256": "73a29bde23a10fb5b48c8fe35daf4b35aa725a2a43f48281d6586b59613c0e8d",
+      "historyChecked": true,
+      "workChars": 10877,
+      "workCjk": 6558,
+      "workNonTableCjk": 5214,
+      "rawWorkChars": 4864,
+      "rawWorkCjk": 2346,
+      "rawWorkNonTableCjk": 1808
+    },
+    {
+      "phase": "baseline-plan-r2",
+      "label": "Q05-flash",
+      "arm": "D+",
+      "platformStatus": 200,
+      "platformElapsedMs": 19579,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 2072,
+      "copiedCjk": 1741,
+      "copiedSha256": "8f8b7fb09bbd7e2dbba5334a3c643697f3db4d2cc87325b425b60ca4ba9bdf21",
+      "historyChecked": false,
+      "workChars": 1312,
+      "workCjk": 1076,
+      "workNonTableCjk": 1076,
+      "declaredBodyLengthMechanicalCheck": true
+    },
+    {
+      "phase": "baseline-plan-r2",
+      "label": "Q05-flash",
+      "arm": "P+",
+      "platformStatus": 200,
+      "platformElapsedMs": 15640,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 2261,
+      "copiedCjk": 1853,
+      "copiedSha256": "3bf249278e983e6a96b394eecacafef7672ec3fc7efbf7bd6f3ffebc1afda2bf",
+      "historyChecked": false,
+      "workChars": 1489,
+      "workCjk": 1141,
+      "workNonTableCjk": 1010,
+      "declaredBodyLengthMechanicalCheck": true,
+      "rawWorkChars": 1731,
+      "rawWorkCjk": 1433,
+      "rawWorkNonTableCjk": 1433
+    },
+    {
+      "phase": "baseline-plan-r2",
+      "label": "Q05-pro",
+      "arm": "D+",
+      "platformStatus": 200,
+      "platformElapsedMs": 7751,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1625,
+      "copiedCjk": 1313,
+      "copiedSha256": "1932a3f1cde7a3ae8fde8f9b90360014b2748b479f021d4c6eae7a9f81bad006",
+      "historyChecked": false,
+      "workChars": 1000,
+      "workCjk": 878,
+      "workNonTableCjk": 878,
+      "declaredBodyLengthMechanicalCheck": true
+    },
+    {
+      "phase": "baseline-plan-r2",
+      "label": "Q05-pro",
+      "arm": "P+",
+      "platformStatus": 200,
+      "platformElapsedMs": 6511,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1349,
+      "copiedCjk": 1145,
+      "copiedSha256": "51c3751470de6a5778ece0d28088fc9c875bc16ef25cbbd3582e0fc9ca79edc3",
+      "historyChecked": false,
+      "workChars": 1350,
+      "workCjk": 1103,
+      "workNonTableCjk": 1103,
+      "declaredBodyLengthMechanicalCheck": true,
+      "rawWorkChars": 2536,
+      "rawWorkCjk": 1905,
+      "rawWorkNonTableCjk": 1646
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q01-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 12325,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 846,
+      "copiedCjk": 690,
+      "copiedSha256": "c6823375d2d94fce6ad00ed8ed641c0d6590211669aced8fd6f4ea546bc1c75b",
+      "historyChecked": true,
+      "workChars": 2330,
+      "workCjk": 1464,
+      "workNonTableCjk": 1044,
+      "rawWorkChars": 1630,
+      "rawWorkCjk": 1139,
+      "rawWorkNonTableCjk": 1120
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q01-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 10568,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 582,
+      "copiedCjk": 505,
+      "copiedSha256": "a8f0dc30c17b2f649edacb7d49dcec8cb87f5ac5d4d4ba7085b2d7d3149658b0",
+      "historyChecked": true,
+      "workChars": 1979,
+      "workCjk": 1373,
+      "workNonTableCjk": 1359,
+      "rawWorkChars": 1704,
+      "rawWorkCjk": 1248,
+      "rawWorkNonTableCjk": 1238
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q02-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 4513,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 174,
+      "copiedCjk": 143,
+      "copiedSha256": "ebae8e565971a5400c561cf5a8809cbf10f46a0d68b65f001242ebf8400f004b",
+      "historyChecked": true,
+      "workChars": 52,
+      "workCjk": 33,
+      "workNonTableCjk": 33,
+      "rawWorkChars": 256,
+      "rawWorkCjk": 181,
+      "rawWorkNonTableCjk": 181
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q02-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 7390,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 115,
+      "copiedCjk": 94,
+      "copiedSha256": "5c76be153776f4be1c9f9af037966cfce2e1dcdb164f027b3601a643022d3a2a",
+      "historyChecked": true,
+      "workChars": 187,
+      "workCjk": 142,
+      "workNonTableCjk": 142,
+      "rawWorkChars": 306,
+      "rawWorkCjk": 219,
+      "rawWorkNonTableCjk": 219
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q03-flash",
+      "arm": "enhanced",
+      "platformStatus": 502,
+      "platformElapsedMs": 4403,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q03-pro",
+      "arm": "enhanced",
+      "platformStatus": 502,
+      "platformElapsedMs": 10008,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q04-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 12611,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1622,
+      "copiedCjk": 1358,
+      "copiedSha256": "710c990c073cf45fc5eb91ee1d8b3641dec2cddec90ef487357e4fd58d4cbb29",
+      "historyChecked": true,
+      "workChars": 6419,
+      "workCjk": 4210,
+      "workNonTableCjk": 4056,
+      "rawWorkChars": 2938,
+      "rawWorkCjk": 1644,
+      "rawWorkNonTableCjk": 1359
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q04-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 10890,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 936,
+      "copiedCjk": 773,
+      "copiedSha256": "a10ee120fc9735fcada49ac9b0f2df2e436a0d3d42d3845c6ac7fae91c20c3c0",
+      "historyChecked": true,
+      "workChars": 8896,
+      "workCjk": 5333,
+      "workNonTableCjk": 4604,
+      "rawWorkChars": 3116,
+      "rawWorkCjk": 1823,
+      "rawWorkNonTableCjk": 1823
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q05-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 25678,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 2107,
+      "copiedCjk": 1729,
+      "copiedSha256": "1734d2ff45f8df7b728c8d195fbbfba58241688454754439838f583ec3da168f",
+      "historyChecked": false,
+      "rawWorkChars": 1480,
+      "rawWorkCjk": 1232,
+      "rawWorkNonTableCjk": 1232
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q05-pro",
+      "arm": "enhanced",
+      "platformStatus": 502,
+      "platformElapsedMs": 17922,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q06-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 2163,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 303,
+      "copiedCjk": 238,
+      "copiedSha256": "b63759567e6a359a4dd25c45f4a3dc793d28479ddb4234720be2ca00e5623808",
+      "historyChecked": false,
+      "rawWorkChars": 103,
+      "rawWorkCjk": 0,
+      "rawWorkNonTableCjk": 0
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q06-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 3269,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 240,
+      "copiedCjk": 192,
+      "copiedSha256": "9314ca01bb24386a877f08b57381368b8fa5641df1cc46a2f0d2783ddf5f7f63",
+      "historyChecked": false,
+      "rawWorkChars": 101,
+      "rawWorkCjk": 0,
+      "rawWorkNonTableCjk": 0
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q07-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 1734,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 333,
+      "copiedCjk": 176,
+      "copiedSha256": "8d95eac8a39aa7fc8b0b686dde83d7c8e752903936f5fff1c1231df641f8f95a",
+      "historyChecked": true,
+      "workChars": 22,
+      "workCjk": 2,
+      "workNonTableCjk": 2,
+      "strictJson": true,
+      "rawWorkChars": 22,
+      "rawWorkCjk": 2,
+      "rawWorkNonTableCjk": 2
+    },
+    {
+      "phase": "candidate2-direct-r1",
+      "label": "Q07-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 2915,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 159,
+      "copiedCjk": 94,
+      "copiedSha256": "97a5cc54f23b770011560568bdee106df0d88a8d51117403d28775716bc17391",
+      "historyChecked": true,
+      "workChars": 22,
+      "workCjk": 2,
+      "workNonTableCjk": 2,
+      "strictJson": true,
+      "rawWorkChars": 22,
+      "rawWorkCjk": 2,
+      "rawWorkNonTableCjk": 2
+    },
+    {
+      "phase": "candidate3-direct-r1",
+      "label": "Q03-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 2559,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 217,
+      "copiedCjk": 165,
+      "copiedSha256": "006322a408f24d195938aa9f5d0780ac11096cddec38c19d73ca06ecbc0038af",
+      "historyChecked": true,
+      "workChars": 48,
+      "workCjk": 39,
+      "workNonTableCjk": 39,
+      "mailBodyCjk": 27,
+      "mailBodyLengthAtMost80": true,
+      "rawWorkChars": 46,
+      "rawWorkCjk": 37,
+      "rawWorkNonTableCjk": 37
+    },
+    {
+      "phase": "candidate3-direct-r1",
+      "label": "Q03-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 2371,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 210,
+      "copiedCjk": 166,
+      "copiedSha256": "42c433d89fa6e14b087444ab478a8696e2b1a0417887c8d2dec8bf701c6b5bf1",
+      "historyChecked": true,
+      "workChars": 60,
+      "workCjk": 48,
+      "workNonTableCjk": 48,
+      "mailBodyCjk": 30,
+      "mailBodyLengthAtMost80": true,
+      "rawWorkChars": 54,
+      "rawWorkCjk": 42,
+      "rawWorkNonTableCjk": 42
+    },
+    {
+      "phase": "candidate3-direct-r1",
+      "label": "Q05-flash",
+      "arm": "enhanced",
+      "platformStatus": 502,
+      "platformElapsedMs": 21652,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false
+    },
+    {
+      "phase": "candidate3-direct-r1",
+      "label": "Q05-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 7634,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1690,
+      "copiedCjk": 1391,
+      "copiedSha256": "55c8b184ef756c7478ce3e9fd9061ba155208d9eea04922d85685df5d343f55b",
+      "historyChecked": true,
+      "workChars": 1143,
+      "workCjk": 1001,
+      "workNonTableCjk": 1001,
+      "declaredBodyLengthMechanicalCheck": true,
+      "rawWorkChars": 1560,
+      "rawWorkCjk": 1288,
+      "rawWorkNonTableCjk": 1288
+    },
+    {
+      "phase": "candidate3-direct-r1",
+      "label": "Q06-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 2172,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 303,
+      "copiedCjk": 240,
+      "copiedSha256": "0668981c3053d442de81888762ec68dfaa5277bf25e8f65eacff63a502410277",
+      "historyChecked": true,
+      "workChars": 94,
+      "workCjk": 0,
+      "workNonTableCjk": 0,
+      "twoEnglishLines": true,
+      "rawWorkChars": 102,
+      "rawWorkCjk": 0,
+      "rawWorkNonTableCjk": 0
+    },
+    {
+      "phase": "candidate3-direct-r1",
+      "label": "Q06-pro",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 2782,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 240,
+      "copiedCjk": 192,
+      "copiedSha256": "1251864e6fe6b4d392b96f62991580d87de20ceb91dd80e5b544a205fae47a83",
+      "historyChecked": true,
+      "workChars": 99,
+      "workCjk": 0,
+      "workNonTableCjk": 0,
+      "twoEnglishLines": true,
+      "rawWorkChars": 101,
+      "rawWorkCjk": 0,
+      "rawWorkNonTableCjk": 0
+    },
+    {
+      "phase": "candidate4-direct-r1",
+      "label": "Q05-flash",
+      "arm": "enhanced",
+      "platformStatus": 200,
+      "platformElapsedMs": 7521,
+      "originalCaseUnchanged": true,
+      "materialParity": true,
+      "exampleSwitch": false,
+      "copyMatchesPlatform": true,
+      "copiedChars": 1860,
+      "copiedCjk": 1540,
+      "copiedSha256": "a3a82a82b442f3c86987d11d406bd6acf6f52d742430bd078ec357eb9a434745",
+      "historyChecked": true,
+      "workChars": 950,
+      "workCjk": 801,
+      "workNonTableCjk": 801,
+      "declaredBodyLengthMechanicalCheck": true,
+      "rawWorkChars": 1907,
+      "rawWorkCjk": 1584,
+      "rawWorkNonTableCjk": 1584
+    }
+  ]
+}

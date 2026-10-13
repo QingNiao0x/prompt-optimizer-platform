@@ -1,0 +1,850 @@
+{
+  "comparison": "raw actual work vs baseline copied enhanced actual work; not old/new enhancement",
+  "reviewers": "Two independent Codex AI reviewers; not human domain experts",
+  "counts": [
+    {
+      "TIE": 9,
+      "WIN": 2,
+      "LOSS": 1,
+      "BOTH_FAIL": 2
+    },
+    {
+      "TIE": 8,
+      "WIN": 2,
+      "LOSS": 2,
+      "BOTH_FAIL": 2
+    }
+  ],
+  "pairs": 14,
+  "verdictDisagreements": 1,
+  "consensus": "Not assumed; scores/evidence retained",
+  "rows": [
+    {
+      "label": "B001",
+      "case": "Q01-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "TIE",
+          "label": "B001",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severe": [],
+          "reason": "两篇均先给出100→120、增加20、同比20%的正确结论，并明确不能据此证明增长原因、盈利改善或持续性，也未替用户作投资决定。A的核查表覆盖应收账款、经营现金流和收入确认，便于经营核查；但“若来自多产品、多客户、多地区的同步增长，则质量相对更高”和“经营现金流未同步改善，需高度警惕……渠道压货”只是过强的筛查启发，应改成待交叉验证的线索。B明确“同一币种……不等于已经排除汇率影响”，更严守证据边界，但未充分列入回款/现金转化核查，且重复边界较多。双方均没有把条件解释写成已经发生的事实；优势分布不同，无充分实质差距。人工修订：A弱化风险因果归因，B补上回款与现金转化证据并压缩重复内容。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "TIE",
+          "label": "B001",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severe": [],
+          "reason": "两份都先给出收入100→120、增加20和增长20%，没有把需求、份额或增长来源写成已知事实，也没有投资决策。A的“应收账款增速 vs 收入增速”“经营活动现金流 vs 收入”使增长质量核查更完整；B的“同一币种不等于已经排除汇率影响”更精确地解释列报口径。A把客户分散、现金同步改善与质量联系得略机械，B则重复边界说明并遗漏回款和营运资本核查；两者均满足主要任务，侧重点不同，不按篇幅判胜。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B002",
+      "case": "Q01-pro",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "TIE",
+          "label": "B002",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "B": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severe": [],
+          "reason": "双方均算对20%的收入增长，保持结论先行，区分已知收入与未知量价/需求/份额，未给投资决定。A提供应收、退货、现金流和订单的可操作核查清单；B给每个候选增长解释列出适用条件与判别证据，并提醒同币种不能排除汇率效应。A的“收入规模同比扩大20%，公司业务体量上升”宜收窄为收入规模，且“资产处置、政府补助、投资收益等计入收入”需先明确收入与其他收益口径；这些是核查问题，不能当作甲公司已存在的事实错误。B的“剔除一次性因素后的有机增长率才是可持续经营能力的真实反映”过于绝对，有机增长仍须与利润、现金和前瞻指标交叉验证。两篇都完成核心任务，没有因篇幅或章节数择优；人工修订上述口径与过强表述即可。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "TIE",
+          "label": "B002",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "B": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 5,
+            "executability": 4
+          },
+          "severe": [],
+          "reason": "双方正确计算增长20%，区分已知总量与待核查机制，均提供有用的量价、市场、订单、成本核查。A额外覆盖“经营现金流、应收账款、存货、合同负债”，但“资产处置、政府补助、投资收益等计入收入”的分类措辞易混淆营业收入与其他收益；B用“均属待验证假设，非事实判断”和判别证据表说明候选解释，更清楚，但“有机增长率才是可持续经营能力的真实反映”过强且现金质量覆盖不足。没有明确的实质优胜，也不能把用户未禁止的条件解释当作造假。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B003",
+      "case": "Q02-flash",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "WIN",
+          "label": "B003",
+          "verdict": "A_WIN",
+          "A": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severe": [],
+          "reason": "A“想麻烦你方便时把周报发我一下”“如果已经发了，可能是我没注意到”已形成友好、完整且可以直接使用的提醒邮件。B也完成提醒，未设置未经要求的截止时间，但需在模板中填写同事名字和日期，并删除前后说明；“方便后续同步给团队”还添加了原需求没有交代的用途。A也采用了常见的“汇总整理”用途，两者均需使用者确认这类写信背景，不作为真实经营事实或严重编造。A获胜依据是更少的发送前修订、更直接完成一封邮件；B的额外说明没有增加此任务的必要价值。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "WIN",
+          "label": "B003",
+          "verdict": "A_WIN",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severe": [],
+          "reason": "A的“想麻烦你方便时把周报发我一下”和“如果已经发了，可能是我没注意到”兼顾提醒与体面，主题、正文、署名完整，可直接使用。B也完成同一邮件，但前后“以下是一封…模板”“可以告诉我，我帮你再调整”等说明增加了复制清理；没有额外实质价值。原始任务未禁止占位符或适度拟定汇总目的，二者不因此扣真实性分。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B004",
+      "case": "Q02-pro",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "TIE",
+          "label": "B004",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severe": [],
+          "reason": "A“如果方便的话，麻烦你在有空时发给我”和B首封“麻烦你在方便的时候，把这周的周报发给我”均委婉完成催收，包含主题、称呼和收尾。A的“亲爱的”“此致敬礼”组合对普通同事略显程式化；B给出第二种轻松语气，但用户没有禁止多版本，也没有指定关系、期限或长度，不能因此判硬失败或奖励版本数量。两篇都需要替换姓名；B的轻松版本“刚在整理这周的汇总”须确认适用。人工修订：选择与同事关系相称的称呼/收尾，B保留选定的一封即可。没有足以影响任务完成的实质差距。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "TIE",
+          "label": "B004",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severe": [],
+          "reason": "A“如果方便的话，麻烦你在有空时发给我”与B“麻烦你在方便的时候，把这周的周报发给我”都明确请求且语气委婉，有主题和完整正文。A的“亲爱的”“此致敬礼”略显礼仪化，B增加轻松版本和选择说明；这些都是轻微适用性差异。用户没有禁止例子或多版本，不能把B的额外版本当成格式违规，也不因多版本而奖励。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B005",
+      "case": "Q03-flash",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "TIE",
+          "label": "B005",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "severe": [],
+          "reason": "两篇均仅输出主题与一段正文，明确称呼小林、今天17点前、本周项目进度、发给我及汇总给团队，语气友好，无占位符、项目进展编造或示例。剔除主题后，两篇正文各29个汉字；连数字、标点计为非空白字符也各36，均低于80。A“方便汇总给团队”与B“我好汇总给团队”语义一致。无需实质性人工修订。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "TIE",
+          "label": "B005",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "severe": [],
+          "reason": "双方都只输出主题与正文，包含“小林”“今天17点前”“本周项目进度”“汇总给团队”，语气友好，没有占位符、虚构进展或例子。独立计数两份正文各29个汉字，含标点和数字也各36个非空白字符，均低于80。差别仅为“方便汇总”与“我好汇总”，没有实质质量差异。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B006",
+      "case": "Q03-pro",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "TIE",
+          "label": "B006",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "severe": [],
+          "reason": "两篇正文完全一致：“小林，麻烦今天17点前把本周项目进度发我，我好汇总给团队。谢谢！”各26个汉字、32个非空白字符，低于80；均只给主题和正文，无占位符、示例或项目事实。B主题额外注明“今天”，A正文已清楚注明同一期限，因此主题差异不构成实质优劣。无需人工修订。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "TIE",
+          "label": "B006",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "severe": [],
+          "reason": "正文完全相同：“小林，麻烦今天17点前把本周项目进度发我，我好汇总给团队。谢谢！”两份各26个汉字、32个非空白字符，满足80字上限，格式、收件人、截止时间和用途均正确。B主题多写“今天”，A正文已明确今天，因此不形成实质优势。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B007",
+      "case": "Q04-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "TIE",
+          "label": "B007",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 3
+          },
+          "B": {
+            "accuracy": 4,
+            "completeness": 3,
+            "clarity": 4,
+            "executability": 3
+          },
+          "severe": [],
+          "reason": "A给出同模型、随机/平衡顺序、独立盲评、下游作品质量、时间和负担指标以及招募与流程建议，更接近检验完整工作流是否值得使用；但“最终增强提示长度上限相同……避免‘B只是信息更多’”并不能控制实际答案内容，等量随机信息也不是同一确认信息。若将结果限定为含信息获取在内的完整工作流总收益，问答组多获得答案本身可以是干预机制；不能进一步宣称已隔离纯交互效应。B明确“两组接收并可使用同一原始任务与同一份实际确认信息”，但没有给出问答后新答案何时、如何同步给直接组的流程，也把主指标收窄为提示词评分，未充分测用户成本；样本、量表锚点和具体执行参数仍全部待定。人工修订：先固定总收益或同信息下流程效应这一估计目标，绘制逐步信息交付表；A删除长度替代信息控制的说法，B补上答案同步、预试验规模、评分锚点与成本指标。双方有不同实质优点与待补项，不能因B声明公平或因A更具体就直接定胜。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "LOSS",
+          "label": "B007",
+          "verdict": "A_WIN",
+          "A": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 3
+          },
+          "B": {
+            "accuracy": 3,
+            "completeness": 3,
+            "clarity": 4,
+            "executability": 2
+          },
+          "severe": [],
+          "reason": "A给出可缩减为12题、两条件各6题的实施路径，固定增强器与下游模型，盲评“最终输出质量”，记录时间、认知负荷和满意度，更直接回答“更有用”和能否开展。A声称同一300 token上限可“避免B只是信息更多”，以及以“等量随机信息”作补充对照，均不能保证相同有效答案；它最多比较含信息获取的整体流程收益。B虽定义“向两组同时提供…实际确认信息”，没有交代Q-E新回答何时、怎样原样进入D-E，且样本量、任务数量、量表条目等都列为“未决”；主要只评提示词，下游作品为补充，又未测交互成本。B的同信息声明不能替代操作程序。双方都需要完善，A的具体操作与效用测量更有价值；提出研究参数本身不等于伪造研究数据。"
+        }
+      ],
+      "verdictDisagreement": true
+    },
+    {
+      "label": "B008",
+      "case": "Q04-pro",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "LOSS",
+          "label": "B008",
+          "verdict": "A_WIN",
+          "A": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 3
+          },
+          "B": {
+            "accuracy": 2,
+            "completeness": 4,
+            "clarity": 3,
+            "executability": 2
+          },
+          "severe": [
+            {
+              "arm": "B",
+              "issue": "声称控制相同信息，但实际流程仅给问答组新增答案，无法支持其预设的同信息流程效应。",
+              "evidence": "H1写“在控制信息一致的前提下”；3.2直接组输入为“原始任务描述 + 确认信息”，问答组输入后另由用户回答，再以“原始任务+确认信息+问答记录”生成；5.1把共享信息限定为“用户在提交任务时已主动提供的补充说明”，没有向直接组传递新增问答答案的步骤。"
+            },
+            {
+              "arm": "B",
+              "issue": "核心提示词忠实性评分所需的原始需求与确认依据被盲法移除，无法按其准确性锚点完成评价。",
+              "evidence": "3.4准确性要求“忠实于原始任务意图与用户确认信息”；3.5却规定评分者“不看到……原始任务描述（或仅看到脱敏后的任务摘要）、问答记录”，也未说明提供完整且相同的事实/确认依据。"
+            }
+          ],
+          "reason": "A实际操纵为问答组获得澄清答案、直接组仅有原始需求，并记录下游作品、第一版满意度、修正次数和耗时，能作为完整工作流总收益的初步实验；必须明确这不能隔离纯交互贡献。其20—30人不是已验证功效，配对单位还须定义；需统一初版或修订后的评价时间点，给盲评者完整需求/确认依据，并避免把基线设计成强制猜测。B虽然列出更多控制与评分表，实际信息流却与“控制信息一致”的主假设相矛盾；又隐藏核心评分所需证据，使主要评价难以执行，因此不可据公平标签和篇幅判优。B还需解决“无歧义”任务与研究信息缺口的关系，并保证回答人确是任务意图的知情者。A相对更贴近原用户的总效用问题，但尚不具备严格机制归因条件。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "LOSS",
+          "label": "B008",
+          "verdict": "A_WIN",
+          "A": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 3
+          },
+          "B": {
+            "accuracy": 2,
+            "completeness": 4,
+            "clarity": 3,
+            "executability": 2
+          },
+          "severe": [
+            {
+              "arm": "B",
+              "issue": "声称控制信息一致，实际流程只让问答组使用新增用户回答，不能支持它预设的等信息机制比较。",
+              "evidence": "H1写“在控制信息一致的前提下”；步骤1直接组仅输入“原始任务描述 + 确认信息”，步骤2问答组输入“原始任务+确认信息+问答记录”。第5.1节把共享确认信息限定为“用户在提交任务时已主动提供的”内容，全文没有把步骤2新答案原样交给直接组的步骤。"
+            },
+            {
+              "arm": "B",
+              "issue": "要求评准确性和需求完整性，却明确从盲评材料排除核验这些指标所需的原始任务和确认答案。",
+              "evidence": "第3.5节规定评审者“不看到…原始任务描述（或仅看到脱敏后的任务摘要）、问答记录”；第3.4.1节却要求评“忠实于原始任务意图与用户确认信息”及关键要素覆盖。摘要没有保证完整保留全部目标和约束，用户答案也没有交付给评审者。"
+            }
+          ],
+          "reason": "A明确写“实验组…包含用户的澄清答案；对照组…仅包含原始模糊指令”，这可以作为问答整体流程的实用性比较；用户并未规定必须做等信息机制实验，不能仅因问答增加信息就否定它。A提供任务例、流程、记录字段和满意度/负荷/耗时，能开展初步研究，但直接组“根据常识推断最佳实践”的规定及任务配平、盲评参照材料不够严谨。B的量表和重复记录更细，但它声称的等信息条件与实际输入相矛盾，评分保真也有明确缺口，因此未因篇幅或术语获得优势。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B009",
+      "case": "Q05-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "BOTH_FAIL",
+          "label": "B009",
+          "verdict": "BOTH_FAIL",
+          "A": {
+            "accuracy": 2,
+            "completeness": 3,
+            "clarity": 3,
+            "executability": 2
+          },
+          "B": {
+            "accuracy": 2,
+            "completeness": 3,
+            "clarity": 3,
+            "executability": 2
+          },
+          "severe": [
+            {
+              "arm": "A",
+              "issue": "正文超过用户明确规定的1200个汉字上限。",
+              "evidence": "排除Markdown章节标题后，正文含1265个汉字；原要求为“正文800至1200个汉字，附表另计”。该作品无可另计的附表。"
+            },
+            {
+              "arm": "A",
+              "issue": "把Plan问答误释为计划问答对/计划步骤结构，未明确用户澄清答案进入增强器的真实流程，公平对照也退化成结构差异。",
+              "evidence": "开篇将“Plan问答对”解释为“Plan Question-Answer Pairs”；操纵写“先以问答形式明确计划步骤，再生成最终提示词”，FC1/FC2则都“获得与PQ条件相同的确认信息，但不包含Plan问答结构”。"
+            },
+            {
+              "arm": "B",
+              "issue": "正文超过用户明确规定的1200个汉字上限。",
+              "evidence": "排除Markdown章节标题后，正文含1262个汉字；原要求上限1200，作品无独立附表可排除此超限。"
+            },
+            {
+              "arm": "B",
+              "issue": "把研究生这一文章受众未经依据改成待招募的研究对象，改变了研究单位和分析设计。",
+              "evidence": "原要求是“为研究生撰写……方法部分”；B写“研究对象为在读研究生，具体招募范围、样本量与抽样方式尚未确定”，统计部分再把“研究对象与任务”列为随机效应。"
+            }
+          ],
+          "reason": "两篇均保留4类×5个=20个任务、每模式每任务3次和两名独立盲评，并包含四维评分、随机化、分歧处理和依未来数据选择的统计候选；没有编造实际效应量、P值、参考文献或显著性结果。A按四条件算出240条的算术正确，但Plan语义与两个公平对照的区别需重写。B正确说明增强器提问、用户回答，但“确认信息由增强器实际产出”需澄清其用户来源；“四组均接收同一份确认信息”也未明确自然流程比较与另两组公平对照的不同信息时点，不能只靠该声明保证公平。两篇正文均确定超限，且各有研究定义错误，故不能判TIE。人工修订：压到800—1200汉字，明确四条件逐步输入/问答/共享答案表；保留研究生为读者而非自动招募对象；给盲评者同一原始任务与有效确认资料，保留原评分供分歧与敏感性分析。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "BOTH_FAIL",
+          "label": "B009",
+          "verdict": "BOTH_FAIL",
+          "A": {
+            "accuracy": 2,
+            "completeness": 3,
+            "clarity": 4,
+            "executability": 1
+          },
+          "B": {
+            "accuracy": 3,
+            "completeness": 3,
+            "clarity": 4,
+            "executability": 1
+          },
+          "severe": [
+            {
+              "arm": "A",
+              "issue": "正文超过用户明确的800至1200个汉字上限。",
+              "evidence": "按U+4E00至U+9FFF计数并剔除全部Markdown标题，正文仍有1265个汉字；本作品没有可另计的附表。"
+            },
+            {
+              "arm": "B",
+              "issue": "正文超过用户明确的800至1200个汉字上限。",
+              "evidence": "按U+4E00至U+9FFF计数并剔除全部Markdown标题，正文仍有1262个汉字；本作品没有可另计的附表。"
+            },
+            {
+              "arm": "A",
+              "issue": "将用户问答增强操作转成在提示词中加入规划问答结构，关键干预定义发生偏移。",
+              "evidence": "开篇定义“引入Plan问答对（Plan Question-Answer Pairs）”；操纵段写“先以问答形式明确计划步骤”，公平组则“不包含Plan问答结构”。未说明增强器向用户询问关键需求、用户作答并把实际回答融入优化提示词的过程。"
+            }
+          ],
+          "reason": "两份均保留20任务、每模式3次、两名盲评和四维指标，也没有伪造效应量、P值或已招募样本；但硬字数独立核验均失败，必须单列BOTH_FAIL。A的Plan干预定义偏移，B虽正确写用户回答，却把“为研究生撰写”的受众直接限定为“研究对象为在读研究生”，没有给出该采样选择的依据；这一句不能作为用户已确认样本。B又同时声称四组输入相同信息，两个公平对照的具体差异不够可复现。拟议方案可以提出建议，但这些建议不能替代明确条件定义。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B010",
+      "case": "Q05-pro",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "WIN",
+          "label": "B010",
+          "verdict": "A_WIN",
+          "A": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 3
+          },
+          "B": {
+            "accuracy": 1,
+            "completeness": 2,
+            "clarity": 3,
+            "executability": 1
+          },
+          "severe": [
+            {
+              "arm": "B",
+              "issue": "把用户澄清式Plan增强改成模型制定回答计划并作答，将主评价对象从提示词改成答案。",
+              "evidence": "Plan模式定义为“要求模型先制定回答计划再作答”；实验单元写成“240个回答”，评价指标逐项针对“每个回答”；直接增强也被定义为仅添加“请更准确、更完整”等一般性要求。"
+            },
+            {
+              "arm": "B",
+              "issue": "公平对照使用等量而非相同确认信息，且两个对照输入内容不同。",
+              "evidence": "对照A获得“等量的任务背景与目标说明”，对照B获得“等量的回答步骤提示”；这不符合原要求“两组获得相同确认信息”。"
+            },
+            {
+              "arm": "B",
+              "issue": "排除附表后正文仍超过1200个汉字。",
+              "evidence": "排除加粗章节标题及“附表”之后的表格，正文仍含1271个汉字，超过原要求800—1200的上限。"
+            }
+          ],
+          "reason": "A正文948个汉字，保留4类各5任务、四模式各独立3次、240条提示词和两名独立盲评；Plan明确由增强器提问、研究者以确认信息作答并生成提示词，没有把研究生当样本或报告虚构结果。任务层面合并重复后再配对的分析单位也较清楚，条件性t检验/Wilcoxon/重复测量分析不等于假设数据。A仍需在实施前说明研究者如何作为任务提供者确认资料，逐个定义两个同等信息对照的“各自指定的增强流程”，确保它们与主比较可区分；补四维锚点、向评审者提供相同任务依据并保留仲裁前评分。B有主对象和处理流程替换、实际确认信息不相同与正文超限等硬失败；其统计章节和附表不能弥补。因此A获胜，但不等于A的试验材料和所有执行细节已获验收。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "WIN",
+          "label": "B010",
+          "verdict": "A_WIN",
+          "A": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 3
+          },
+          "B": {
+            "accuracy": 1,
+            "completeness": 2,
+            "clarity": 3,
+            "executability": 1
+          },
+          "severe": [
+            {
+              "arm": "B",
+              "issue": "更换研究干预与评价对象：用户Plan问答增强变成模型先规划作答，提示词质量变成回答质量。",
+              "evidence": "开篇规定“Plan模式（要求模型先制定回答计划再作答）”；重复环节计为“240个回答”，评价指标反复规定“每个回答”，而原始任务要求研究Plan问答对提示词质量的影响。"
+            },
+            {
+              "arm": "B",
+              "issue": "公平对照只匹配信息量，没有交付相同的实际确认内容。",
+              "evidence": "对照A得到“与Plan组等量的任务背景与目标说明”，对照B得到“与Plan组等量的回答步骤提示”。背景目标与步骤提示不是同一份确认信息，“等量”不能替代相同内容。"
+            },
+            {
+              "arm": "B",
+              "issue": "正文超过1200个汉字的硬上限。",
+              "evidence": "剔除标题及全部“附表”后，按U+4E00至U+9FFF计数正文有1271个汉字；A以相同口径为948个汉字，处于800至1200范围。"
+            }
+          ],
+          "reason": "A保留4类×5任务、每模式每任务3次和240条提示词，两名独立盲评四维指标、分歧复核与仲裁均齐备；以任务内三次均值建立配对分析，并按未来差值分布说明候选检验，正文948字达标。A的“保留各自指定的增强流程”没有具体区分两个同信息对照，评分维度也缺少细化锚点，正式执行仍需补足，因此可执行性只有3分。B虽然保留数量和盲评，却改变核心研究对象、没有同内容确认信息，并超字数，A有明确实质优势。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B011",
+      "case": "Q06-flash",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "TIE",
+          "label": "B011",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 5
+          },
+          "severe": [],
+          "reason": "双方均严格保持两行及原顺序，无标题、解释或示例；第一行保留周五下午3点，第二行都用“before Thursday”保留周四之前这一截止范围。A“has been moved”比B“is moved”更自然地表达已改期，属于轻微措辞差异，未改变安排和可直接使用性，不据此判实质胜负。B可选润色为“has been moved”，其他无需修订。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "TIE",
+          "label": "B011",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "severe": [],
+          "reason": "两份均保留两行与顺序，准确表达Friday at 3 p.m.和“before Thursday”，只含译文，没有解释、标题或例子。A的“has been moved”比B的“is moved”略自然，但不改变安排或时间边界，未形成实质优胜。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B012",
+      "case": "Q06-pro",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "BOTH_FAIL",
+          "label": "B012",
+          "verdict": "BOTH_FAIL",
+          "A": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 2
+          },
+          "B": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 2
+          },
+          "severe": [
+            {
+              "arm": "A",
+              "issue": "把排除周四的截止范围改成可含周四，未忠实保留硬性时间边界。",
+              "evidence": "原文“请在周四之前确认是否参加”；A译为“Please confirm whether you will attend by Thursday.”。“by Thursday”通常允许在周四当天确认，不能精确保留“before Thursday”。"
+            },
+            {
+              "arm": "B",
+              "issue": "把排除周四的截止范围改成可含周四，未忠实保留硬性时间边界。",
+              "evidence": "原文“请在周四之前确认是否参加”；B同样译为“Please confirm whether you will attend by Thursday.”。"
+            }
+          ],
+          "reason": "两篇均仅输出两行，顺序正确，第一句分别用“changed/moved to 3 p.m. on Friday”正确保留会议改期信息。然而第二行都将“之前”译为“by Thursday”，在此明确要求保持内容的翻译任务中扩大了可参加确认的时间范围，构成共同硬失败，不能因为两篇一致而判TIE。人工修订：两篇都将“by Thursday”改为“before Thursday”；无需加说明、标题或示例。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "BOTH_FAIL",
+          "label": "B012",
+          "verdict": "BOTH_FAIL",
+          "A": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 5,
+            "executability": 2
+          },
+          "B": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 5,
+            "executability": 2
+          },
+          "severe": [
+            {
+              "arm": "A",
+              "issue": "将“周四之前”的确认期限放宽成包括周四的期限。",
+              "evidence": "原文“请在周四之前确认是否参加”；A译为“Please confirm whether you will attend by Thursday.”。“by Thursday”通常允许最迟周四确认，不等于“before Thursday”。"
+            },
+            {
+              "arm": "B",
+              "issue": "将“周四之前”的确认期限放宽成包括周四的期限。",
+              "evidence": "原文“请在周四之前确认是否参加”；B同样译为“Please confirm whether you will attend by Thursday.”，没有保留before Thursday的排除周四边界。"
+            }
+          ],
+          "reason": "两份都正确翻译会议改到周五下午三点，满足两行和只输出译文；但第二行相同地放宽了明确截止边界。时间要求是任务的核心信息，必须修改后才能直接使用，所以双方实质失败单列，不能把同样错误记为平局。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B013",
+      "case": "Q07-flash",
+      "mapping": {
+        "A": "enhanced",
+        "B": "raw"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "TIE",
+          "label": "B013",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "severe": [],
+          "reason": "两篇内容均为同一个严格JSON对象{\"name\":\"李明\",\"age\":28}；name为给定姓名字符串，age为整数28，只含name、age两个键，无Markdown、解释、示例或附加字段，完全满足提取与输出约束。无需人工修订。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "TIE",
+          "label": "B013",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "severe": [],
+          "reason": "两份内容完全相同：{\"name\":\"李明\",\"age\":28}。独立解析均为单一JSON对象，键只有name与age，姓名为字符串、年龄为整数28；没有Markdown、解释、例子或额外字段，完全满足要求。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "label": "B014",
+      "case": "Q07-pro",
+      "mapping": {
+        "A": "raw",
+        "B": "enhanced"
+      },
+      "reviews": [
+        {
+          "reviewer": "one",
+          "productVerdict": "TIE",
+          "label": "B014",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "severe": [],
+          "reason": "两篇均准确输出{\"name\":\"李明\",\"age\":28}，对象内容和类型一致，且没有围栏、说明或额外字段。姓名、年龄与原文一致，严格JSON可以直接解析；无需人工修订。"
+        },
+        {
+          "reviewer": "two",
+          "productVerdict": "TIE",
+          "label": "B014",
+          "verdict": "TIE",
+          "A": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "B": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "severe": [],
+          "reason": "两份均只输出{\"name\":\"李明\",\"age\":28}，经独立JSON解析确认对象、字段、值和类型均正确，无附加文本或字段。作品完全相同，没有优胜差异。"
+        }
+      ],
+      "verdictDisagreement": false
+    }
+  ]
+}

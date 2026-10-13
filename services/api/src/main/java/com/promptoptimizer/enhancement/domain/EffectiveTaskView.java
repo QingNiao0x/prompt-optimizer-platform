@@ -39,7 +39,12 @@ public record EffectiveTaskView(String originalPrompt, String effectivePrompt, T
     public ModelInput modelInput() {
         return new ModelInput(intent, executionRequirements.stream().map(requirement -> new ModelRequirement(
                 requirement.questionId(), requirement.subject(), requirement.statement(), requirement.destination())).toList(),
-                pendingDecisions, examples, requirementBoundaries().guidance());
+                pendingDecisions, examples, requirementBoundaries().guidance(), meaning().anchors());
+    }
+
+    /** 受众和研究主题保留各自原文来源，不让模型将写作对象升级为研究样本。 */
+    public com.promptoptimizer.provider.domain.TaskMeaningContract meaning() {
+        return com.promptoptimizer.provider.domain.TaskMeaningContract.from(effectivePrompt, confirmedDecisions);
     }
 
     /** 各环节从同一有效输入取得禁止、选择条件和独立参数边界，不读取旧任务或客户端自报状态。 */
@@ -49,7 +54,8 @@ public record EffectiveTaskView(String originalPrompt, String effectivePrompt, T
 
     /** 各模型适配器共用同一业务投影，不按供应商另行解释用户选择。 */
     public record ModelInput(TaskIntent intent, List<ModelRequirement> executionRequirements,
-            List<ConfirmedPlanDecision> pendingDecisions, ExampleContract examples, String requirementBoundaryGuidance) { }
+            List<ConfirmedPlanDecision> pendingDecisions, ExampleContract examples, String requirementBoundaryGuidance,
+            List<com.promptoptimizer.provider.domain.TaskMeaningContract.Anchor> userMeaningAnchors) { }
 
     /** 模型只需执行表述和责任段；已解决原题与原答案保留在服务端，不再重复灌入载荷。 */
     public record ModelRequirement(String questionId, String subject, String statement, PromptSectionType destination) { }

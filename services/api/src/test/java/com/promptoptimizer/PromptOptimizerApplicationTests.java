@@ -39,6 +39,10 @@ class PromptOptimizerApplicationTests {
     @MockBean
     private com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper adminAnalyticsMapper;
 
+    // 模型调用对账也依赖数据库；此无数据库装配测试须替换 Mapper，不改变生产查询逻辑。
+    @MockBean
+    private com.promptoptimizer.analytics.mapper.ModelCallAnalyticsMapper modelCallAnalyticsMapper;
+
     @MockBean
     private com.promptoptimizer.analytics.mapper.AuditEventMapper auditEventMapper;
 
