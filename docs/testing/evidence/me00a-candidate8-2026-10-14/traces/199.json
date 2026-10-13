@@ -1,0 +1,51 @@
+{
+  "phase": "candidateValidation",
+  "label": "candidate8-compliance-r1-EX03-flash-enhanced",
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "待翻译内容为一句英文：“Please send the file before Thursday.”\n\n将“Please send the file before Thursday.”译成中文。\n\n只输出中文译文，不附任何说明。\n\n- 译文须忠实原文，保持时间边界：before Thursday 表示“周四之前”，不得扩大为“不晚于周四”或“周四当天及之前”。\n- 保持原文的请求语气。\n- 不得扩写原文事实，不得添加原文没有的信息。\n用户明确规则（须遵守平台权限边界）：\n- 将“Please send the file before Thursday.”译成中文，只输出译文，不附说明。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "startedAt": "2026-10-13T19:40:07.257Z",
+  "httpStatus": 200,
+  "responseText": "{\"id\":\"c696cde4-4032-4c6f-ae15-036459987e1e\",\"object\":\"chat.completion\",\"created\":1791920407,\"model\":\"deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"请在周四之前发送文件。\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":162,\"completion_tokens\":6,\"total_tokens\":168,\"prompt_tokens_details\":{\"cached_tokens\":0},\"prompt_cache_hit_tokens\":0,\"prompt_cache_miss_tokens\":162},\"system_fingerprint\":\"aeb56401ca74e127821c4f9126dcb669\"}",
+  "response": {
+    "id": "c696cde4-4032-4c6f-ae15-036459987e1e",
+    "object": "chat.completion",
+    "created": 1791920407,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "请在周四之前发送文件。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 162,
+      "completion_tokens": 6,
+      "total_tokens": 168,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 162
+    },
+    "system_fingerprint": "aeb56401ca74e127821c4f9126dcb669"
+  },
+  "elapsedMs": 1240
+}

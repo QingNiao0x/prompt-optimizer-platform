@@ -1,0 +1,17 @@
+{
+  "modelCalls": 0,
+  "issues": [
+    {
+      "scope": "startup",
+      "symptom": "PowerShell 5 startup failed before API listened; switched to PowerShell 7",
+      "attribution": "test harness environment",
+      "productCodeChanged": false
+    },
+    {
+      "scope": "offline metrics extraction",
+      "symptom": "First script assumed effectiveTask field; actual request uses taskView",
+      "attribution": "evaluation tool",
+      "resolution": "Use actual taskView field and verify it exists; no model request or product change"
+    }
+  ]
+}

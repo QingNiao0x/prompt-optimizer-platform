@@ -1,0 +1,533 @@
+{
+  "before": {
+    "total": 185,
+    "baseline": 70,
+    "candidateValidation": 115
+  },
+  "after": {
+    "total": 203,
+    "baseline": 70,
+    "candidateValidation": 133
+  },
+  "newAttempts": 18,
+  "q05Attempts": 8,
+  "exampleAttempts": 10,
+  "failedHTTPAttempts": 0,
+  "workflowEnhancementOrPlanningRetries": 0,
+  "independentAIReviewAttempts": 2,
+  "invalidReviewJSON": 0,
+  "groupLimits": {
+    "q05": 14,
+    "examples": 20
+  },
+  "groupUnusedNotTransferable": {
+    "q05": 6,
+    "examples": 10
+  },
+  "formalLimits": {
+    "total": 229,
+    "baseline": 80,
+    "candidateValidation": 149
+  },
+  "actualAuthorizedBatchCeilingFrom185": 219,
+  "activeBatchClosed": true,
+  "newAccountsCreated": 0,
+  "exactVendorVersion": "UNKNOWN",
+  "currencyCost": "UNKNOWN; no verified invoice",
+  "totals": {
+    "elapsedMs": 86594,
+    "prompt_tokens": 67779,
+    "completion_tokens": 13308,
+    "total_tokens": 81087
+  },
+  "elapsedScope": "Sum of model HTTP durations only; excludes preparation, UI, local checks and offline analysis",
+  "qualityPassNotInferredFromHTTP": true,
+  "records": [
+    {
+      "trace": 186,
+      "label": "ENHANCEMENT_OR_PLAN",
+      "httpStatus": 200,
+      "elapsedMs": 9566,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 10000,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 3788,
+        "completion_tokens": 1735,
+        "total_tokens": 5523,
+        "prompt_tokens_details": {
+          "cached_tokens": 3584
+        },
+        "prompt_cache_hit_tokens": 3584,
+        "prompt_cache_miss_tokens": 204
+      },
+      "failure": null
+    },
+    {
+      "trace": 187,
+      "label": "ENHANCEMENT_OR_PLAN",
+      "httpStatus": 200,
+      "elapsedMs": 8668,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 10000,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 8808,
+        "completion_tokens": 1779,
+        "total_tokens": 10587,
+        "prompt_tokens_details": {
+          "cached_tokens": 2560
+        },
+        "prompt_cache_hit_tokens": 2560,
+        "prompt_cache_miss_tokens": 6248
+      },
+      "failure": null
+    },
+    {
+      "trace": 188,
+      "label": "candidate8-plan-r1-Q05-flash-plan",
+      "httpStatus": 200,
+      "elapsedMs": 8861,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 1581,
+        "completion_tokens": 1048,
+        "total_tokens": 2629,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1581
+      },
+      "failure": null
+    },
+    {
+      "trace": 189,
+      "label": "candidate8-plan-r1-Q05-flash-raw-equal-information",
+      "httpStatus": 200,
+      "elapsedMs": 8567,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 472,
+        "completion_tokens": 1093,
+        "total_tokens": 1565,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 472
+      },
+      "failure": null
+    },
+    {
+      "trace": 190,
+      "label": "ENHANCEMENT_OR_PLAN",
+      "httpStatus": 200,
+      "elapsedMs": 7833,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 10000,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 8515,
+        "completion_tokens": 1439,
+        "total_tokens": 9954,
+        "prompt_tokens_details": {
+          "cached_tokens": 5376
+        },
+        "prompt_cache_hit_tokens": 5376,
+        "prompt_cache_miss_tokens": 3139
+      },
+      "failure": null
+    },
+    {
+      "trace": 191,
+      "label": "candidate8-plan-r1-Q05-flash-direct-equal-information",
+      "httpStatus": 200,
+      "elapsedMs": 7374,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 1063,
+        "completion_tokens": 859,
+        "total_tokens": 1922,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1063
+      },
+      "failure": null
+    },
+    {
+      "trace": 192,
+      "label": "AI_ASSISTED_BLIND_REVIEW",
+      "httpStatus": 200,
+      "elapsedMs": 10527,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 4052,
+        "completion_tokens": 2133,
+        "total_tokens": 6185,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 4052
+      },
+      "failure": null
+    },
+    {
+      "trace": 193,
+      "label": "AI_ASSISTED_BLIND_REVIEW",
+      "httpStatus": 200,
+      "elapsedMs": 8946,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 4052,
+        "completion_tokens": 1794,
+        "total_tokens": 5846,
+        "prompt_tokens_details": {
+          "cached_tokens": 3840
+        },
+        "prompt_cache_hit_tokens": 3840,
+        "prompt_cache_miss_tokens": 212
+      },
+      "failure": null
+    },
+    {
+      "trace": 194,
+      "label": "ENHANCEMENT_OR_PLAN",
+      "httpStatus": 200,
+      "elapsedMs": 1966,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 10000,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 6925,
+        "completion_tokens": 241,
+        "total_tokens": 7166,
+        "prompt_tokens_details": {
+          "cached_tokens": 5120
+        },
+        "prompt_cache_hit_tokens": 5120,
+        "prompt_cache_miss_tokens": 1805
+      },
+      "failure": null
+    },
+    {
+      "trace": 195,
+      "label": "candidate8-compliance-r1-EX01-flash-enhanced",
+      "httpStatus": 200,
+      "elapsedMs": 1954,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 307,
+        "completion_tokens": 184,
+        "total_tokens": 491,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 307
+      },
+      "failure": null
+    },
+    {
+      "trace": 196,
+      "label": "ENHANCEMENT_OR_PLAN",
+      "httpStatus": 200,
+      "elapsedMs": 1795,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 10000,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 6755,
+        "completion_tokens": 147,
+        "total_tokens": 6902,
+        "prompt_tokens_details": {
+          "cached_tokens": 5120
+        },
+        "prompt_cache_hit_tokens": 5120,
+        "prompt_cache_miss_tokens": 1635
+      },
+      "failure": null
+    },
+    {
+      "trace": 197,
+      "label": "candidate8-compliance-r1-EX02-flash-enhanced",
+      "httpStatus": 200,
+      "elapsedMs": 893,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 89,
+        "completion_tokens": 21,
+        "total_tokens": 110,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 89
+      },
+      "failure": null
+    },
+    {
+      "trace": 198,
+      "label": "ENHANCEMENT_OR_PLAN",
+      "httpStatus": 200,
+      "elapsedMs": 2048,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 10000,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 6789,
+        "completion_tokens": 187,
+        "total_tokens": 6976,
+        "prompt_tokens_details": {
+          "cached_tokens": 5120
+        },
+        "prompt_cache_hit_tokens": 5120,
+        "prompt_cache_miss_tokens": 1669
+      },
+      "failure": null
+    },
+    {
+      "trace": 199,
+      "label": "candidate8-compliance-r1-EX03-flash-enhanced",
+      "httpStatus": 200,
+      "elapsedMs": 1240,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 162,
+        "completion_tokens": 6,
+        "total_tokens": 168,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 162
+      },
+      "failure": null
+    },
+    {
+      "trace": 200,
+      "label": "ENHANCEMENT_OR_PLAN",
+      "httpStatus": 200,
+      "elapsedMs": 1880,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 10000,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 6774,
+        "completion_tokens": 204,
+        "total_tokens": 6978,
+        "prompt_tokens_details": {
+          "cached_tokens": 5248
+        },
+        "prompt_cache_hit_tokens": 5248,
+        "prompt_cache_miss_tokens": 1526
+      },
+      "failure": null
+    },
+    {
+      "trace": 201,
+      "label": "candidate8-compliance-r1-EX04-flash-enhanced",
+      "httpStatus": 200,
+      "elapsedMs": 1089,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 187,
+        "completion_tokens": 5,
+        "total_tokens": 192,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 187
+      },
+      "failure": null
+    },
+    {
+      "trace": 202,
+      "label": "ENHANCEMENT_OR_PLAN",
+      "httpStatus": 200,
+      "elapsedMs": 2526,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 10000,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 6946,
+        "completion_tokens": 413,
+        "total_tokens": 7359,
+        "prompt_tokens_details": {
+          "cached_tokens": 5248
+        },
+        "prompt_cache_hit_tokens": 5248,
+        "prompt_cache_miss_tokens": 1698
+      },
+      "failure": null
+    },
+    {
+      "trace": 203,
+      "label": "candidate8-compliance-r1-EX05-flash-enhanced",
+      "httpStatus": 200,
+      "elapsedMs": 861,
+      "requestModel": "deepseek-flash",
+      "returnedModel": "deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      "usage": {
+        "prompt_tokens": 514,
+        "completion_tokens": 20,
+        "total_tokens": 534,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 514
+      },
+      "failure": null
+    }
+  ]
+}

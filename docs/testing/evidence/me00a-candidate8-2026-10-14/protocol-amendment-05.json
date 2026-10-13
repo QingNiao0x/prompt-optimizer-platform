@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-14",
+  "status": "APPROVED_BY_USER",
+  "codeCandidate": "candidate8",
+  "callsBefore": 185,
+  "phaseCallsBefore": {
+    "baseline": 70,
+    "candidateValidation": 115
+  },
+  "existingApprovedLimits": {
+    "total": 198,
+    "baseline": 80,
+    "candidateValidation": 118
+  },
+  "requestedLimits": {
+    "total": 229,
+    "baseline": 80,
+    "candidateValidation": 149
+  },
+  "maximumNewActualAttempts": 34,
+  "groups": [
+    {
+      "id": "Q05_FLASH_THREE_ARM",
+      "mode": "plan",
+      "cases": [
+        "Q05"
+      ],
+      "model": "deepseek-flash",
+      "maximumActualAttempts": 14,
+      "allocation": {
+        "planningMaximum": 3,
+        "planEnhancementMaximum": 3,
+        "rawWork": 1,
+        "directEnhancementMaximum": 3,
+        "directWork": 1,
+        "planWork": 1,
+        "independentAIReviews": 2
+      },
+      "casesFile": "cases.json",
+      "casesSha256": "c5602dddeab7309e0e843555b36e40b95ba159888d5c6db064a53a2fc406d3b4"
+    },
+    {
+      "id": "EXAMPLE_COMPLIANCE",
+      "mode": "compliance",
+      "cases": [
+        "EX01",
+        "EX02",
+        "EX03",
+        "EX04",
+        "EX05"
+      ],
+      "model": "deepseek-flash",
+      "maximumActualAttempts": 20,
+      "allocation": "each of five cases: enhancement at most 3 attempts plus one execution; no new raw baseline",
+      "casesFile": "candidate8-example-cases.json",
+      "casesSha256": "0b6560e0cbac11f9dff77ff8bc07086feed5c5edccd3c1f0ef79b28aa614007c"
+    }
+  ],
+  "rounds": 1,
+  "secondRoundAuthorized": false,
+  "accountPolicy": "REUSE_EXISTING_LOCAL_SYNTHETIC_FIXTURE; create 0; preserve existing account/history",
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "enhancementParameterPolicy": "same approved DeepSeek Flash service configuration; record actual wire parameters, do not widen token budget",
+  "reviewPolicy": "two independent AI-assisted blind reviews for the three-arm comparison; preserve invalid JSON and disagreements, no unbudgeted third review",
+  "uncovered": "one Flash round; five direct compliance cases with examples switch enabled; not full direct/Plan x on/off x all formats or held-out/generalization acceptance",
+  "costCurrency": "UNKNOWN; no verified invoice or current price used",
+  "policy": [
+    "Every actual attempt, including failed generation and paid review, counts.",
+    "Prior candidate7 remaining 3 attempts cannot be silently repurposed; approval supersedes its active batch explicitly.",
+    "Baseline allowance stays separate; group ceilings do not borrow from each other.",
+    "Stop an affected group on an unrepairable/severe failure; preserve all originals and uncovered work."
+  ],
+  "approvedAt": "2026-10-13T19:23:58.836Z",
+  "authorization": {
+    "source": "explicit async answer in this conversation",
+    "answer": "批准最多 34 次，执行 Q05 和五题组合（建议）",
+    "supersedesActiveBatch": "candidate7 Q05 plan; prior unused 3 attempts are not reused separately"
+  },
+  "maximumActualCallsAfterBatch": 219
+}

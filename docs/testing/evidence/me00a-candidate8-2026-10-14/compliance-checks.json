@@ -1,0 +1,64 @@
+{
+  "passed": 5,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "EX01",
+      "passed": true,
+      "assertions": {
+        "givenInputPreserved": true,
+        "expectedOutputPresent": true,
+        "noCode": true,
+        "manualNoInventedFactsOrExtraSample": true
+      },
+      "workSha256": "d293e2fcba5e5fc6f1598a4b325e7ee9571a505c3afbc007edecbf15aa709456",
+      "scope": "one Flash execution of actual copied prompt, examples enabled; manual evidence checks by coding agent, not human expert review"
+    },
+    {
+      "id": "EX02",
+      "passed": true,
+      "assertions": {
+        "oneChineseSentence": true,
+        "manualNoExampleOrCode": true
+      },
+      "workSha256": "d0c47420c6f7250390d25c0bf38894ba85f902a58e639d280cfc3ebf04449a13",
+      "scope": "one Flash execution of actual copied prompt, examples enabled; manual evidence checks by coding agent, not human expert review"
+    },
+    {
+      "id": "EX03",
+      "passed": true,
+      "assertions": {
+        "pureTranslation": true,
+        "manualBeforeThursdayPreserved": true
+      },
+      "workSha256": "4ad7408387dee6963bf75f52215c58b71dd17306341aa256cfa9f2ca7d280138",
+      "scope": "one Flash execution of actual copied prompt, examples enabled; manual evidence checks by coding agent, not human expert review"
+    },
+    {
+      "id": "EX04",
+      "passed": true,
+      "assertions": {
+        "strictWholeResponseJSON": true,
+        "exactKeys": true,
+        "result": true
+      },
+      "workSha256": "5b04cb780df1ea3f8dbf5ac2e0fa8a0cbf813e254f05225779164f3018ea6159",
+      "scope": "one Flash execution of actual copied prompt, examples enabled; manual evidence checks by coding agent, not human expert review"
+    },
+    {
+      "id": "EX05",
+      "passed": true,
+      "assertions": {
+        "strictWholeResponseJSON": true,
+        "exactKeys": true,
+        "result": true,
+        "exactGivenInputExample": true
+      },
+      "workSha256": "1e07128c19de765ccc63c475d2086c22f3f63cf3994ea680fe4aeba5d6bc22c1",
+      "scope": "one Flash execution of actual copied prompt, examples enabled; manual evidence checks by coding agent, not human expert review"
+    }
+  ],
+  "notQualityWinRate": true,
+  "noNewRawBaseline": true,
+  "uncovered": "Plan x on/off full matrix, alternate wording/languages, other models and repeated/heldout tasks"
+}

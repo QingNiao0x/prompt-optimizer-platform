@@ -1,0 +1,62 @@
+{
+  "status": 200,
+  "elapsedMs": 10,
+  "body": {
+    "requestId": "70042881-9475-463d-89de-3b845e5870d9",
+    "data": {
+      "id": "6019477b-9744-40cb-b93a-92adf90959f1",
+      "rawPrompt": "去除给定字符串“  Alpha  ”的首尾空白，只输出一个JSON对象，恰好为{\"result\":\"Alpha\"}，不得增加字段或说明。",
+      "optimizedPrompt": "用户提供一个待处理字符串“  Alpha  ”（前后各含两个空格），要求去除首尾空白后输出结果。\n\n对给定字符串“  Alpha  ”执行去除首尾空白操作，得到结果后按指定格式输出。\n\n只输出一个 JSON 对象，内容恰好为 {\"result\":\"Alpha\"}，不得增加字段或说明。\n\n- 仅去除首尾空白，不改变字符串内部内容。\n- 输出必须严格为 {\"result\":\"Alpha\"}，不得包含任何额外字段、注释或解释文字。\n用户明确规则（须遵守平台权限边界）：\n- 去除给定字符串“  Alpha  ”的首尾空白，只输出一个JSON对象，恰好为{\"result\":\"Alpha\"}，不得增加字段或说明。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "用户提供一个待处理字符串“  Alpha  ”（前后各含两个空格），要求去除首尾空白后输出结果。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "对给定字符串“  Alpha  ”执行去除首尾空白操作，得到结果后按指定格式输出。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出一个 JSON 对象，内容恰好为 {\"result\":\"Alpha\"}，不得增加字段或说明。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 仅去除首尾空白，不改变字符串内部内容。\n- 输出必须严格为 {\"result\":\"Alpha\"}，不得包含任何额外字段、注释或解释文字。\n用户明确规则（须遵守平台权限边界）：\n- 去除给定字符串“  Alpha  ”的首尾空白，只输出一个JSON对象，恰好为{\"result\":\"Alpha\"}，不得增加字段或说明。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextSummary": {
+        "warnings": [],
+        "redactions": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "analysisVersion": "v3",
+        "technologyStack": [],
+        "customDescription": ""
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "providerName": "deepseek",
+      "modelName": "deepseek:deepseek-flash",
+      "mock": false,
+      "latencyMs": 1950,
+      "createdAt": "2026-10-13T19:40:28.980788Z",
+      "includePermissionBoundaries": true,
+      "includeExamples": true,
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "modelVersion": "DeepSeek-V4.1-Flash",
+      "promptFormat": "COMPACT"
+    }
+  }
+}

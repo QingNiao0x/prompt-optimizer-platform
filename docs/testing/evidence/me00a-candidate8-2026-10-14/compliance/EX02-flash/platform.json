@@ -1,0 +1,59 @@
+{
+  "status": 200,
+  "elapsedMs": 1884,
+  "body": {
+    "requestId": "7562d430-e86c-4d9a-bae1-39a1c139c850",
+    "data": {
+      "optimizedPrompt": "用户需要一句中文说明，用于解释去除文本首尾空白的作用。\n\n用一句中文说明去除文本首尾空白的作用。\n\n只输出一句中文说明。\n\n- 不提供或引用任何示例。\n- 不提供代码。\n- 不得把猜测写成事实。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "用户需要一句中文说明，用于解释去除文本首尾空白的作用。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "用一句中文说明去除文本首尾空白的作用。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "只输出一句中文说明。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 不提供或引用任何示例。\n- 不提供代码。\n- 不得把猜测写成事实。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 1856,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT"
+    }
+  }
+}

@@ -1,0 +1,614 @@
+diff --git a/scripts/me00a-eval.mjs b/scripts/me00a-eval.mjs
+index 60b511b..a1983de 100644
+--- a/scripts/me00a-eval.mjs
++++ b/scripts/me00a-eval.mjs
+@@ -22,10 +22,39 @@ export function answerLog(answers) {
+   return answers.map(answer => `问题：${answer.question}\n回答：${answer.answer}`).join('\n');
+ }
+ 
++/** Reject missing/duplicate cases before opening a browser or reserving any paid request. */
++export function selectedEvaluationCases(catalogue, selected) {
++  if (!Array.isArray(catalogue) || !catalogue.length || catalogue.some(sample => !sample?.id)
++      || new Set(catalogue.map(sample => sample.id)).size !== catalogue.length) throw new Error('Invalid frozen case catalogue');
++  const ids = selected === 'all' ? catalogue.map(sample => sample.id) : selected.split(',');
++  if (!ids.length || new Set(ids).size !== ids.length || ids.some(id => !catalogue.some(sample => sample.id === id)))
++    throw new Error('Selected case missing from frozen catalogue');
++  return catalogue.filter(sample => ids.includes(sample.id));
++}
++
++/** Keep the actual body and HTTP status even when JSON parsing or execution fails. */
++export async function capturedExecutionResponse(response) {
++  const responseText = await response.text();
++  let parsed;
++  try { parsed = JSON.parse(responseText); } catch { /* The unparsed original is retained below. */ }
++  return { httpStatus: response.status, responseText, ...(parsed === undefined ? {} : { response: parsed }) };
++}
++
++/** A successful HTTP response still needs a complete, nonempty downstream work. */
++export function completedExecutionWork(record) {
++  if (record.httpStatus < 200 || record.httpStatus >= 300) throw new Error(`Execution HTTP ${record.httpStatus}`);
++  const choice = record.response?.choices?.[0];
++  if (typeof choice?.message?.content !== 'string' || !choice.message.content.trim()) throw new Error('Execution work is empty');
++  if (choice.finish_reason !== 'stop') throw new Error('Execution work did not finish normally');
++  return { text: choice.message.content, finishReason: choice.finish_reason };
++}
++
+ /** An approved batch limits both scope and attempts; unused phase allowance cannot widen it. */
+ export function batchRequestLimit(protocol, version, mode, cases, models, round = '1') {
+   const batch = protocol.activeBatch;
+   if (!batch) return protocol.maximumActualModelCalls;
++  if (version === 'candidate8' && batch.authorizationStatus !== 'APPROVED_BY_USER')
++    throw new Error('New batch budget has not been approved');
+   if (version !== batch.version || (batch.secondRoundAuthorized === false && round !== '1')
+       || mode !== batch.mode || cases.some(sample => !batch.cases.includes(sample.id))
+       || models.some(model => model !== batch.model)) throw new Error('Input outside approved batch scope');
+@@ -37,15 +66,20 @@ if (directRun) { try { await run(); process.exit(0); } catch (error) { console.e
+ 
+ async function run() {
+   const [version = 'baseline', round = '1', mode = 'direct', selected = 'all', selectedModels = 'all'] = process.argv.slice(2);
+-  if (!/^(baseline|candidate[1234567])$/.test(version) || !/^[12]$/.test(round)
+-    || !['direct', 'plan'].includes(mode)) throw new Error('Invalid evaluation phase');
++  if (!/^(baseline|candidate[12345678])$/.test(version) || !/^[12]$/.test(round)
++    || !['direct', 'plan', 'compliance'].includes(mode)
++    || mode === 'compliance' && version !== 'candidate8') throw new Error('Invalid evaluation phase');
+   const root = resolve('tmp/me00a-20261012');
+   const phase = version === 'baseline' ? 'baseline' : 'candidateValidation';
+   const protocol = JSON.parse(await readFile(resolve(root, 'protocol.json'), 'utf8'));
+   const models = protocol.models.filter(model => selectedModels === 'all' || selectedModels.split(',').includes(model));
+   if (!models.length) throw new Error('No approved model selected');
+-  const cases = JSON.parse(await readFile(resolve(root, 'cases.json'), 'utf8'))
+-    .filter(sample => selected === 'all' || selected.split(',').includes(sample.id));
++  const caseFile = protocol.activeBatch?.casesFile ?? 'cases.json';
++  if (!/^[A-Za-z0-9_-]+\.json$/.test(caseFile)) throw new Error('Frozen case file must be a runtime JSON filename');
++  const caseText = await readFile(resolve(root, caseFile), 'utf8');
++  if (version === 'candidate8' && createHash('sha256').update(caseText).digest('hex') !== protocol.activeBatch?.casesSha256)
++    throw new Error('Frozen case catalogue hash mismatch');
++  const cases = selectedEvaluationCases(JSON.parse(caseText), selected);
+   const requestLimit = batchRequestLimit(protocol, version, mode, cases, models, round);
+   const account = JSON.parse(await readFile(resolve('tmp/enhancement-quality-20261012/account.json'), 'utf8'));
+   const require = createRequire(new URL('../apps/web/package.json', import.meta.url));
+@@ -86,17 +120,24 @@ async function run() {
+     if (!trace) throw new Error('Global actual-request budget exhausted');
+     const request = { model, messages: [{ role: 'user', content: prompt }], ...protocol.executionParameters, stream: false };
+     const started = performance.now();
++    const record = { phase, label, request, startedAt: new Date().toISOString() };
+     try {
+       const response = await fetch('https://api.deepseek.com/chat/completions', { method: 'POST',
+         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.MODEL_DEEPSEEK_API_KEY || process.env.MODEL_API_KEY}` },
+         body: JSON.stringify(request), signal: AbortSignal.timeout(240000) });
+-      const output = await response.json();
++      Object.assign(record, await capturedExecutionResponse(response));
++      record.elapsedMs = Math.round(performance.now() - started);
++      const output = record.response;
++      if (output === undefined) throw new Error('Execution response is not valid JSON');
+       for (const choice of output.choices ?? []) delete choice.message?.reasoning_content;
+-      await writeFile(trace, JSON.stringify({ phase, label, httpStatus: response.status,
+-        elapsedMs: Math.round(performance.now() - started), request, response: output }, null, 2));
+-      if (!response.ok) throw new Error(`Execution HTTP ${response.status}`);
+-      return { text: output.choices?.[0]?.message?.content ?? '', finishReason: output.choices?.[0]?.finish_reason, trace };
+-    } catch (error) { await writeFile(trace, JSON.stringify({ phase, label, request, failure: error.message })); throw error; }
++      await writeFile(trace, JSON.stringify(record, null, 2));
++      return { ...completedExecutionWork(record), trace };
++    } catch (error) {
++      record.elapsedMs = Math.round(performance.now() - started);
++      record.failure = error.message;
++      await writeFile(trace, JSON.stringify(record, null, 2));
++      throw error;
++    }
+   }
+   async function enhanced(sample, modelId, dir, raw = sample.rawPrompt, confirmation) {
+     const request = { rawPrompt: raw, context: { customDescription: sample.context.description, files: sample.context.files },
+@@ -134,10 +175,12 @@ async function run() {
+       const dir = resolve(out, label); await mkdir(dir); console.log(`BEGIN ${version} ${mode} ${label} round=${round}`);
+       try {
+         const modelId = `deepseek:${model}`;
+-        if (mode === 'direct') {
+-          const raw = rawExecutionInput(sample); await save(resolve(dir, 'raw-input.md'), raw);
+-          const rawWork = await execute(raw, model, `${version}-${mode}-r${round}-${label}-raw`);
+-          await save(resolve(dir, 'raw-work.md'), rawWork.text); await save(resolve(dir, 'raw-execution.json'), rawWork);
++        if (mode === 'direct' || mode === 'compliance') {
++          if (mode === 'direct') {
++            const raw = rawExecutionInput(sample); await save(resolve(dir, 'raw-input.md'), raw);
++            const rawWork = await execute(raw, model, `${version}-${mode}-r${round}-${label}-raw`);
++            await save(resolve(dir, 'raw-work.md'), rawWork.text); await save(resolve(dir, 'raw-execution.json'), rawWork);
++          }
+           const copied = await enhanced(sample, modelId, dir);
+           // Only the platform's actual copied body is executed; same safe source evidence remains available.
+           const withEvidence = enhancedExecutionInput(copied, sample);
+diff --git a/scripts/me00a-eval.test.mjs b/scripts/me00a-eval.test.mjs
+index f0527f8..a626f5c 100644
+--- a/scripts/me00a-eval.test.mjs
++++ b/scripts/me00a-eval.test.mjs
+@@ -1,6 +1,7 @@
+ import { test } from 'node:test';
+ import assert from 'node:assert/strict';
+-import { rawExecutionInput, enhancedExecutionInput, answerLog, batchRequestLimit } from './me00a-eval.mjs';
++import { rawExecutionInput, enhancedExecutionInput, answerLog, batchRequestLimit,
++  selectedEvaluationCases, capturedExecutionResponse, completedExecutionWork } from './me00a-eval.mjs';
+ 
+ test('both works receive identical revenue evidence without adding unavailable metrics', () => {
+   const sample = { rawPrompt: '分析收入变化。', context: { files: [{ path: 'synthetic.txt', content: '收入100→120；没有销量或市场总量。' }] } };
+@@ -61,3 +62,44 @@ test('an active batch cannot be bypassed by requesting an older candidate or a n
+   }
+   assert.equal(batchRequestLimit({ maximumActualModelCalls: 180 }, 'baseline', 'direct', [], []), 180);
+ });
++
++test('missing or duplicate case selections cannot report success without executing a case', () => {
++  const catalogue = [{ id: 'Q05' }, { id: 'EX01' }];
++  assert.deepEqual(selectedEvaluationCases(catalogue, 'Q05'), [{ id: 'Q05' }]);
++  assert.deepEqual(selectedEvaluationCases(catalogue, 'all'), catalogue);
++  for (const selected of ['', 'UNKNOWN', 'Q05,UNKNOWN', 'Q05,Q05'])
++    assert.throws(() => selectedEvaluationCases(catalogue, selected), /missing/);
++  assert.throws(() => selectedEvaluationCases([], 'all'), /Invalid frozen/);
++  assert.throws(() => selectedEvaluationCases([{ id: 'Q05' }, { id: 'Q05' }], 'all'), /Invalid frozen/);
++});
++
++test('a proposed candidate-eight batch cannot spend the old remaining allowance', () => {
++  const protocol = { maximumActualModelCalls: 229, activeBatch: {
++    version: 'candidate8', mode: 'plan', cases: ['Q05'], model: 'deepseek-flash',
++    callsBefore: 185, maximumNewCalls: 14, secondRoundAuthorized: false, authorizationStatus: 'PENDING_USER_APPROVAL',
++  } };
++  assert.throws(() => batchRequestLimit(protocol, 'candidate8', 'plan', [{ id: 'Q05' }], ['deepseek-flash']), /not been approved/);
++  protocol.activeBatch.authorizationStatus = 'APPROVED_BY_USER';
++  assert.equal(batchRequestLimit(protocol, 'candidate8', 'plan', [{ id: 'Q05' }], ['deepseek-flash']), 199);
++  assert.throws(() => batchRequestLimit(protocol, 'candidate8', 'compliance', [{ id: 'EX01' }], ['deepseek-flash']), /outside approved/);
++});
++
++test('failed HTTP and non-JSON model bodies remain available for attribution', async () => {
++  const failed = await capturedExecutionResponse(new Response('{"error":{"code":"rate_limit"}}', { status: 429 }));
++  assert.equal(failed.httpStatus, 429);
++  assert.equal(failed.response.error.code, 'rate_limit');
++  assert.equal(failed.responseText, '{"error":{"code":"rate_limit"}}');
++  const nonJson = await capturedExecutionResponse(new Response('upstream unavailable', { status: 502 }));
++  assert.equal(nonJson.httpStatus, 502);
++  assert.equal(nonJson.responseText, 'upstream unavailable');
++  assert.equal('response' in nonJson, false);
++});
++
++test('HTTP 200 alone cannot make empty or truncated work count as completed', () => {
++  const complete = { httpStatus: 200, response: { choices: [{ message: { content: ' 原始作品\n' }, finish_reason: 'stop' }] } };
++  assert.deepEqual(completedExecutionWork(complete), { text: ' 原始作品\n', finishReason: 'stop' });
++  for (const record of [{ httpStatus: 200, response: { choices: [] } },
++    { httpStatus: 200, response: { choices: [{ message: { content: ' ' }, finish_reason: 'stop' }] } },
++    { httpStatus: 200, response: { choices: [{ message: { content: '未完成正文' }, finish_reason: 'length' }] } },
++    { ...complete, httpStatus: 429 }]) assert.throws(() => completedExecutionWork(record), /Execution/);
++});
+diff --git a/services/api/src/main/java/com/promptoptimizer/enhancement/domain/EffectiveTaskView.java b/services/api/src/main/java/com/promptoptimizer/enhancement/domain/EffectiveTaskView.java
+index 0da85a4..c7c7cd1 100644
+--- a/services/api/src/main/java/com/promptoptimizer/enhancement/domain/EffectiveTaskView.java
++++ b/services/api/src/main/java/com/promptoptimizer/enhancement/domain/EffectiveTaskView.java
+@@ -3,6 +3,7 @@ package com.promptoptimizer.enhancement.domain;
+ import com.promptoptimizer.provider.domain.ExampleContract;
+ import com.promptoptimizer.provider.domain.RequirementBoundaryContract;
+ import com.promptoptimizer.template.domain.TaskIntent;
++import java.util.LinkedHashMap;
+ import java.util.List;
+ 
+ /**
+@@ -37,11 +38,33 @@ public record EffectiveTaskView(String originalPrompt, String effectivePrompt, T
+ 
+     /** 模型只接收执行投影；不再重复发送原始旧提问或安全事实卡，计划阶段也不扩张资料预算。 */
+     public ModelInput modelInput() {
+-        return new ModelInput(intent, executionRequirements.stream().map(requirement -> new ModelRequirement(
+-                requirement.questionId(), requirement.subject(), requirement.statement(), requirement.destination())).toList(),
+-                pendingDecisions, examples, requirementBoundaries().guidance(), meaning().anchors());
++        return new ModelInput(intent, modelRequirements(), pendingDecisions.stream().map(decision ->
++                new ModelPendingDecision(decision.questionId(), decision.question(), decision.topic(), decision.scope(),
++                        decision.answer(), decision.source(), executionRequirements.stream().anyMatch(requirement ->
++                            java.util.Objects.equals(requirement.questionId(), decision.questionId())
++                                    && requirement.subject().equals("委托要求")))).toList(),
++                examples, requirementBoundaries().guidance(), meaning().anchors());
+     }
+ 
++    /** 仅合并自身已命名的独立事实、委托与边界；普通题答继续按原绑定问题隔离。 */
++    private List<ModelRequirement> modelRequirements() {
++        var groups = new LinkedHashMap<RequirementKey, List<ExecutionRequirement>>();
++        for (var requirement : executionRequirements) {
++            boolean selfContained = List.of("用户说明", "委托要求", "未确认边界").contains(requirement.subject());
++            var key = new RequirementKey(requirement.subject(), requirement.statement(), requirement.destination(),
++                    selfContained ? null : requirement.questionId());
++            groups.computeIfAbsent(key, ignored -> new java.util.ArrayList<>()).add(requirement);
++        }
++        return groups.values().stream().map(values -> {
++            var first = values.getFirst();
++            // 一次表达不丢来源；原始问题、全部回答及总体未决状态仍在服务端视图中。
++            var ids = values.stream().map(ExecutionRequirement::questionId).filter(java.util.Objects::nonNull).distinct().toList();
++            return new ModelRequirement(first.questionId(), first.subject(), first.statement(), first.destination(), ids);
++        }).toList();
++    }
++
++    private record RequirementKey(String subject, String statement, PromptSectionType destination, String questionId) { }
++
+     /** 受众和研究主题保留各自原文来源，不让模型将写作对象升级为研究样本。 */
+     public com.promptoptimizer.provider.domain.TaskMeaningContract meaning() {
+         return com.promptoptimizer.provider.domain.TaskMeaningContract.from(effectivePrompt, confirmedDecisions);
+@@ -54,9 +77,23 @@ public record EffectiveTaskView(String originalPrompt, String effectivePrompt, T
+ 
+     /** 各模型适配器共用同一业务投影，不按供应商另行解释用户选择。 */
+     public record ModelInput(TaskIntent intent, List<ModelRequirement> executionRequirements,
+-            List<ConfirmedPlanDecision> pendingDecisions, ExampleContract examples, String requirementBoundaryGuidance,
++            List<ModelPendingDecision> pendingDecisions, ExampleContract examples, String requirementBoundaryGuidance,
+             List<com.promptoptimizer.provider.domain.TaskMeaningContract.Anchor> userMeaningAnchors) { }
+ 
+-    /** 模型只需执行表述和责任段；已解决原题与原答案保留在服务端，不再重复灌入载荷。 */
+-    public record ModelRequirement(String questionId, String subject, String statement, PromptSectionType destination) { }
++    /** 委托拟议设计和既有参数未确认是两个独立状态；designDelegated 不确认取值或消除未决条件。 */
++    public record ModelPendingDecision(String questionId, String question, String topic, ConfirmedPlanDecision.Scope scope,
++            String answer, ConfirmedPlanDecision.Source source, boolean designDelegated) { }
++
++    /** 共同表述只发送一次，并保留全部绑定问题 ID；普通独立对象不因文字相同而归并。 */
++    public record ModelRequirement(String questionId, String subject, String statement, PromptSectionType destination,
++            List<String> sourceQuestionIds) {
++        public ModelRequirement {
++            sourceQuestionIds = List.copyOf(sourceQuestionIds);
++        }
++
++        /** 兼容内部旧构造方式；没有绑定 ID 时不伪造来源。 */
++        public ModelRequirement(String questionId, String subject, String statement, PromptSectionType destination) {
++            this(questionId, subject, statement, destination, questionId == null ? List.of() : List.of(questionId));
++        }
++    }
+ }
+diff --git a/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java b/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java
+index e4c55d8..23b5fd9 100644
+--- a/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java
++++ b/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java
+@@ -452,7 +452,7 @@ public class OptimizationResultAssembler {
+     /** 用户要求讲解某协议时保留合法代码名，其他任务不能把模型输入的内部字段当作读者操作指令。 */
+     private void validateUserFacingProtocol(String text, String rawPrompt, String field) {
+         if (text == null) return;
+-        var names = java.util.regex.Pattern.compile("(?<![A-Za-z0-9_])(?:taskView|executionRequirements|pendingDecisions|confirmedDecisions|planAnswers|questionId)(?![A-Za-z0-9_])")
++        var names = java.util.regex.Pattern.compile("(?<![A-Za-z0-9_])(?:taskView|executionRequirements|pendingDecisions|confirmedDecisions|planAnswers|questionId|sourceQuestionIds|designDelegated)(?![A-Za-z0-9_])")
+                 .matcher(text);
+         while (names.find()) {
+             if (rawPrompt == null || !rawPrompt.contains(names.group())) throw invalidResponse(Reason.RULE_CONFLICT, field);
+diff --git a/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningDecisionPolicy.java b/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningDecisionPolicy.java
+index ea3ab32..f2784fb 100644
+--- a/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningDecisionPolicy.java
++++ b/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanningDecisionPolicy.java
+@@ -313,7 +313,8 @@ final class PlanningDecisionPolicy {
+     /** 仅同一评审评分的分歧处置是已委托设计；数据冲突、纳入规则和带新条件的复合题不等价。 */
+     private boolean delegatedReviewerDisagreement(String question, String raw) {
+         return raw.matches("(?s).*说明[^。\\n]*(?:评价|评分|评审)[^。\\n]*分歧处理.*")
+-                && question.matches("^(?:(?:(?:两名|两位|多名)?(?:独立)?评审(?:者|人员)?(?:的)?)?评分)"
++                // 题干可以省略“评分”，但仍须明确同一评审对象并完整匹配，不能删除独立数据冲突或复合选择。
++                && question.matches("^(?:(?:两名|两位|多名)?(?:独立)?评审(?:者|人员)?(?:之间|间|的)?(?:评分)?|评分)"
+                         + "(?:出现|存在)?(?:分歧|不一致)(?:时|后)?(?:应|该|应当)?(?:如何|怎样|怎么)(?:处理|解决|复核|裁决)[？?]$");
+     }
+ 
+@@ -329,6 +330,9 @@ final class PlanningDecisionPolicy {
+             parts.add(safe(option.recommendationReason()));
+         });
+         parts.addAll(question.examples());
++        // 本任务的委托不覆盖另一个研究或新增指标；对象不同即保留，不能借同样的评分词汇吞掉新决定。
++        if (parts.stream().anyMatch(part -> part.matches("(?s).*(?:其他|另一(?:个|项|组)?|新增)"
++                + "(?:研究|实验|任务|指标|对象|组别).*"))) return true;
+         // 提示与选项可以提出独立条件题；不要求有“此外”等连接词才保护完整的新选择。
+         if (parts.stream().anyMatch(part -> !part.equals(safe(question.question()))
+                 && part.matches("(?s).*(?:时|则)[^。；;？?]{0,60}(?:是否|能否|应否|如何).*"))) return true;
+@@ -991,7 +995,9 @@ final class PlanningDecisionPolicy {
+         }
+         for (String clause : raw.split("[。；;\\n]")) {
+             if (clause.matches(".*[？?].*")) continue;
+-            if (clause.matches(".*(?:当前|本次).*(?:拟定|拟开展).*(?:尚未实施|尚未执行).*")) {
++            // “当前研究尚未实施”同样是明确状态；只接收完整本任务断言，条件或另一研究前缀不提供该依据。
++            if (clause.matches(".*(?:当前|本次).*(?:拟定|拟开展).*(?:尚未实施|尚未执行).*" )
++                    || clause.matches("^(?:本(?:次)?|当前|这项|该项)研究(?:仍|尚|暂)?未(?:实施|执行|开展)$")) {
+                 addRule(target, Kind.RESEARCH_STATUS, "本次研究尚未实施", clause);
+             }
+             if (clause.matches(".*(?:评审|评委).*盲评.*") && !UNKNOWN.matcher(clause).find()
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/domain/DraftDeliveryContract.java b/services/api/src/main/java/com/promptoptimizer/provider/domain/DraftDeliveryContract.java
+index 211f73b..f292b4b 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/DraftDeliveryContract.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/DraftDeliveryContract.java
+@@ -4,6 +4,7 @@ import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision;
+ import com.promptoptimizer.template.domain.PromptTemplate;
+ import com.promptoptimizer.template.domain.TaskDeliveryProfile;
+ import com.promptoptimizer.template.domain.TaskIntentResolver;
++import java.util.Arrays;
+ import java.util.List;
+ import java.util.regex.Pattern;
+ 
+@@ -203,6 +204,8 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
+     /** 只把肯定交付指令的准备材料宾语视为降级；正文附方案或方法中讨论方案仍属原目标。 */
+     private static boolean hasPreparationTarget(String instructions) {
+         boolean prosePresent = PROSE_DELIVERABLE.matcher(PROSE_AS_PREPARATION_NAME.matcher(instructions).replaceAll("")).find();
++        boolean methodBodyDelivered = Arrays.stream(instructions.split("[。；;，,\\r\\n]"))
++                .anyMatch(clause -> clause.contains("方法部分正文") && affirmativeMatch(DELIVERY_ACTION, clause));
+         boolean proseDelivered = false;
+         for (String clause : instructions.split("[。；;，,\\r\\n]")) {
+             String prose = PROSE_AS_PREPARATION_NAME.matcher(clause).replaceAll("");
+@@ -218,7 +221,14 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
+             }
+             if (bodyIncludesPreparation) continue;
+             // “另外”不能遮蔽明确的仅交准备材料限制；正文与空表并列的许可已在上面保留。
+-            if (affirmativeMatch(PREPARATION_ONLY, clause)) return true;
++            if (affirmativeMatch(PREPARATION_ONLY, clause)) {
++                // 同一方法部分已要求实质正文时，“方法与空表”是局部并列交付；仅提纲/空表或禁正文仍是降级。
++                boolean localMethodWithTables = proseDelivered && methodBodyDelivered
++                        && clause.strip().matches("(?:方法部分|方法正文)(?:仅|只)(?:交付|提供|输出)方法(?:正文)?(?:与|和|及)空表(?:模板)?")
++                        && !WRITING_PROHIBITION.matcher(instructions).find();
++                if (localMethodWithTables) continue;
++                return true;
++            }
+             if (prosePresent && ADDITIONAL_DELIVERY.matcher(clause.strip()).find()) continue;
+             boolean preparationDelivery = affirmativeMatch(PREPARATION_DELIVERY, clause);
+             // 正文先成立后，普通方案/附录可为并列交付；“只交方案”仍覆盖目标，后置正文也不能救前句降级。
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/domain/ExampleContract.java b/services/api/src/main/java/com/promptoptimizer/provider/domain/ExampleContract.java
+index 1e0093a..d37aec4 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/ExampleContract.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/ExampleContract.java
+@@ -12,14 +12,16 @@ import java.util.regex.Pattern;
+  */
+ public record ExampleContract(Mode mode, String source, String guidance, @JsonIgnore boolean fictionalDataAllowed) {
+     private static final Pattern PROHIBITION = Pattern.compile(
+-            "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带|不加|不添加).{0,16}(?:示例|示范|例子)|不举例"
+-                    + "|\\b(?:no|without|do not|never)\\b[^.\\r\\n]{0,60}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
++            "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带|不加|不添加)[^。；;，,！？!?\\r\\n]{0,16}(?:示例|示范|例子)|不举例"
++                    + "|\\b(?:no|without|do not|never)\\b[^.;,!?\\r\\n]{0,60}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
+     private static final Pattern STRICT_OUTPUT = Pattern.compile(
+             "(?:只|仅)(?:输出|返回|交付|提供).{0,18}(?:译文|翻译结果|JSON|正文|答案|代码)"
+                     + "|\\b(?:return|output|provide)\\s+only\\b|\\bonly\\s+(?:the\\s+)?translation\\b", Pattern.CASE_INSENSITIVE);
+     private static final Pattern REQUEST = Pattern.compile(
+-            "(?:提供|给出|包含|附上|附带|输出|需要|要求).{0,30}(?:示例|示范|例子)"
+-                    + "|\\b(?:include|provide|give|add)\\b[^.\\r\\n]{0,40}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
++            "(?:提供|给出|包含|附上|附带|输出|需要|要求)[^。；;，,！？!?\\r\\n]{0,30}(?:示例|示范|例子)"
++                    + "|\\b(?:include|provide|give|add)\\b[^.;,!?\\r\\n]{0,40}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
++    private static final Pattern EXAMPLE_DATA_QUALIFIER = Pattern.compile(
++            "虚构|假设|模拟|编造|合成|\\b(?:fictional|hypothetical|synthetic|made-up)\\b", Pattern.CASE_INSENSITIVE);
+     private static final String REQUIRED_GUIDANCE = "提供与本次任务相关的输入与预期输出示例，并说明二者的对应关系。"
+             + "缺少真实资料时可用明确标注为虚构演示的材料；演示不得充当正式事实、统计口径或研究结论。"
+             + "示例服务原定交付，不另增无关任务。";
+@@ -32,9 +34,9 @@ public record ExampleContract(Mode mode, String source, String guidance, @JsonIg
+     /** 同一实例供模型输入、Mock 和最终组装使用；资料中的要求不能决定用户开关。 */
+     public static ExampleContract from(String effectivePrompt, boolean enabled) {
+         String instructions = instructionText(effectivePrompt);
+-        if (PROHIBITION.matcher(instructions).find()) return new ExampleContract(
++        if (examplesProhibited(instructions)) return new ExampleContract(
+                 Mode.PROHIBITED, "USER_PROHIBITION", "遵守用户禁止示例的要求，不附带示例。");
+-        boolean requested = REQUEST.matcher(instructions).find();
++        boolean requested = examplesRequested(instructions);
+         if (STRICT_OUTPUT.matcher(instructions).find() && !requested) return new ExampleContract(
+                 Mode.FORMAT_RESTRICTED, "STRICT_OUTPUT", "保持用户限定的输出形式，不追加示例或新增格式字段。");
+         if (requested || enabled) {
+@@ -56,6 +58,25 @@ public record ExampleContract(Mode mode, String source, String guidance, @JsonIg
+     /** 是否要求下游提供示例，不能仅以模型是否返回 EXAMPLES 段判断。 */
+     public boolean required() { return mode == Mode.REQUIRED; }
+ 
++    /** 禁令只作用于同一子句中的示例对象；禁虚构示例限制资料性质，不等于禁止真实或符号示例。 */
++    private static boolean examplesProhibited(String instructions) {
++        var matcher = PROHIBITION.matcher(instructions);
++        while (matcher.find()) {
++            if (!EXAMPLE_DATA_QUALIFIER.matcher(matcher.group()).find()) return true;
++        }
++        return false;
++    }
++
++    /** 否定原文请求不成为肯定请求；开启开关仍由禁例与实际格式冲突独立决定。 */
++    private static boolean examplesRequested(String instructions) {
++        var matcher = REQUEST.matcher(instructions);
++        while (matcher.find()) {
++            String prefix = instructions.substring(Math.max(0, matcher.start() - 20), matcher.start());
++            if (!prefix.matches("(?s).*(?:不|不要|不得|禁止|无需|不需要|不要求|并未|没有)(?:再|额外)?$")) return true;
++        }
++        return false;
++    }
++
+     /** 仅移除代码和引用行；不把被引用的产品文案或资料内容当作当前用户指令。 */
+     private static String instructionText(String prompt) {
+         String value = prompt == null ? "" : prompt.replaceAll("[“‘\"].*?[”’\"]", "");
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java b/services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java
+index d609332..19f0f31 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java
+@@ -17,6 +17,7 @@ public record PromptRewriteStrategy(String mode, String instruction) {
+             basis写一句与本次目标、资料或明确要求对应的依据，不输出内部推理。没有实质缺口时SUFFICIENT且gaps=[]，保留有效原句及明确限制，只整理必要位置，不为四要素和验收新增章节。
+             有缺口时只补相关内容：模糊需求给具体执行动作、候选方法、适用条件和结果检查；专业建议标明候选，不把语言、算法、口径或研究参数伪装成已选事实。仅真正需用户决定且改变结果的未知进入ambiguities，其余由执行者完成。
+             NEEDS_COMPLETION没有USER_DECISION缺口时，ambiguities必须为空。用户委托设计的常规方法属于PROFESSIONAL_OPTION，不是用户必须先回答的选择；真实授权、资料冲突及用户明确保留的未决参数继续归入USER_DECISION。
++            pendingDecisions中designDelegated=true仅授权提出拟议设计，scope仍为UNRESOLVED，既有参数不能写成已选；对已委托的拟议方法给出可实施主建议及条件，不重复索要设计答案。实际参数、独立对象和新条件仍按各自来源与状态处理。
+             每个新增要求应对应真实缺口；原文已有的公平对照、方法条件、数值与格式不再次扩写。Plan新增决定只更新责任段并同步失效的旧表述；保留独立未知、对象、条件及来源。
+             对充分需求，把有效原句分别放入其责任段，不同义扩写或重述成验收列表；不要在背景盘点缺项。对仅有宽泛专业目标的需求，缺少操作化方法与比较办法属于实质缺口，不能以“下游自己设计全部细节”为由判为充分。简单沟通任务可用常规表达直接完成，不为凑gaps制造问题。
+             简单邮件、纯译文或严格格式任务优先COMPACT，四要素各写最短必要内容，不在背景、任务、输出重复同一句；复杂多目标任务按依赖和交付组织STRUCTURED。四要素是内部校验结构，不是强制下游作品章节。
+@@ -31,8 +32,8 @@ public record PromptRewriteStrategy(String mode, String instruction) {
+     public static PromptRewriteStrategy forTask(EffectiveTaskView task) {
+         return new PromptRewriteStrategy("ASSESS_EXECUTION_GAPS", GAP_GUIDANCE + task.meaning().evaluationGuidance()
+                 + "\n本次交付画像：" + task.intent().deliveryProfile()
+-                + "；有效执行要求数：" + task.executionRequirements().size()
+-                + "；独立未决决定数：" + task.pendingDecisions().size()
++                + "；有效执行要求来源数：" + task.executionRequirements().size()
++                + "；未决来源条数：" + task.pendingDecisions().size()
+                 + "。计数只说明输入构成，不代表充分性。");
+     }
+ 
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java b/services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java
+index ac54c10..fc52dbc 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java
+@@ -58,6 +58,7 @@ public final class ProviderResponseValidationException extends ProviderException
+     /** 固定修复要求不能引用或复述导致校验失败的敏感内容。 */
+     public enum Reason {
+         TASK_ROLE_CONFLICT("保留原文的受众与研究主题：为某人撰写不等于以该人为研究对象。直接改正误绑定段落，不在末尾补一句相反说明；用户实际指定或确认的人群继续保留。"),
++        EVALUATION_TARGET_CONFLICT("按原研究主题与同对象有效确认落实评价对象。只评价提示词时，不能改成提示词或下游产物，也不能以执行作品替换评分对象；验证材料和独立对象按用户原要求处理。直接改正评价步骤，不在末尾补相反说明。"),
+         ASSESSMENT_INVALID("assessment使用合法sufficiency、presentation及最多6项gaps；SUFFICIENT时gaps为空，NEEDS_COMPLETION时只列影响本次交付的实质缺口。"),
+         ASSESSMENT_DECISION_CONFLICT("实质缺口判断与待确认事项须一致。NEEDS_COMPLETION中没有USER_DECISION时，ambiguities应为空；不要把专业建议、常规执行或委托设计变成用户必须先决定的问题。确有用户授权、来源冲突或明确保留的未决选择时，保留事项并将相应缺口列为USER_DECISION，不得靠删除真实未知规避校验。"),
+         INTERACTION_ACTOR_CONFLICT("保留原定问答中的主体：增强器提出关键问题、用户回答、有效确认用于生成优化提示词。不得把Plan问答改为模型或研究者先自行写执行计划再作答；直接改正错误操作化段，不在末尾追加相反要求。"),
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/domain/RequirementBoundaryContract.java b/services/api/src/main/java/com/promptoptimizer/provider/domain/RequirementBoundaryContract.java
+index 93fdd73..12af2ca 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/RequirementBoundaryContract.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/RequirementBoundaryContract.java
+@@ -19,10 +19,10 @@ public final class RequirementBoundaryContract {
+     private static final Pattern NO_INVENTED_DATA = Pattern.compile(
+             "(?:禁止|不得|不要|不允许|不能|不|拒绝)(?:使用|采用|提供|生成|构造)?(?:任何|虚构的)?(?:假设|虚构|模拟|编造)"
+                     // “任何”也可位于虚构动作之后，不能漏掉“不得虚构任何数据”而授权演示例外。
+-                    + "(?:(?:或|和|及|、)(?:假设|虚构|模拟|编造))*(?:的)?(?:任何|任意)?(?:数据|材料|信息|示例)"
++                    + "(?:(?:或|和|及|、)(?:假设|虚构|模拟|编造))*(?:的)?(?:任何|任意|其他|额外|新的)?(?:数据|材料|信息|示例)"
+                     + "|(?:假设|虚构|模拟)(?:的)?数据(?:不得|禁止|不能)使用"
+-                    + "|\\b(?:no|do not|never)\\b[^.\\r\\n]{0,25}\\b(?:hypothetical|fictional|synthetic|made-up)\\s+data\\b", FLAGS);
+-    private static final Pattern DATA = Pattern.compile("(?:虚构|假设|模拟|合成|编造)(?:的|演示|示例|验证)?数据"
++                    + "|\\b(?:no|do not|never)\\b[^.\\r\\n]{0,25}\\b(?:hypothetical|fictional|synthetic|made-up)\\s+(?:data|examples?)\\b", FLAGS);
++    private static final Pattern DATA = Pattern.compile("(?:虚构|假设|模拟|合成|编造)(?:的|演示|示例|验证)?(?:任何|任意|其他|额外|新的)?数据"
+             + "|\\b(?:hypothetical|fictional|synthetic|made-up)\\s+data\\b", FLAGS);
+     private static final Pattern DATA_ACTION = Pattern.compile("(?:允许|可以|可用|可使|应使用|使用|构造|生成|编造|提供)"
+             + "|\\b(?:allow|may|can|use|generate|construct|create|provide)\\b", FLAGS);
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/domain/TaskMeaningContract.java b/services/api/src/main/java/com/promptoptimizer/provider/domain/TaskMeaningContract.java
+index b3a9195..1941872 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/TaskMeaningContract.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/TaskMeaningContract.java
+@@ -12,15 +12,25 @@ import java.util.regex.Pattern;
+  * @author QingNiao
+  * @since 0.1.0
+  */
+-public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSubjects) {
++public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSubjects, List<EvaluationTarget> evaluationTargets) {
+     private static final Pattern AUDIENCE = Pattern.compile("(?:为|面向)([^，,。；;\\n]{1,40}?)(?:撰写|编写|写一|写|设计)");
+     private static final Pattern TOPIC = Pattern.compile("(?:研究对象(?:为|是)|(?:^|[，,。；;\\n])研究)([^。；;\\n]{2,180})");
+     private static final Pattern ASSERTED_SUBJECT = Pattern.compile("研究对象(?:为|是|包括|包含|确定为|设定为)\\s*([^。；;\\n]{1,180})");
++    private static final Pattern QUALITY_TARGET = Pattern.compile("((?:原始|优化(?:后的)?)?提示词|下游(?:代码|文本|实际)?(?:作品|输出|产物)|(?:代码|文本)?(?:作品|输出|产物))(?:的)?质量");
++    private static final Pattern TARGET_NAME = Pattern.compile("(?:原始|优化(?:后的)?)?提示词|(?:下游|最终)?(?:代码|文本)?(?:作品|输出|产物)");
++    private static final Pattern PROMPT_OR_WORK = Pattern.compile("提示词(?:或|或者|/)(?:对应的?|下游|生成的)?(?:产物|作品|输出)");
++    private static final Pattern WORK_AS_RATING_TARGET = Pattern.compile("(?:评价|评分|评审)对象(?:为|是|包括|确定为|设定为|[：:])\\s*(?:下游|最终)?(?:代码|文本)?(?:产物|作品|输出)");
+ 
+     /** 锚点只在本请求中使用，不建立跨任务事实缓存。 */
+     public TaskMeaningContract {
+         anchors = List.copyOf(anchors);
+         confirmedSubjects = List.copyOf(confirmedSubjects);
++        evaluationTargets = List.copyOf(evaluationTargets);
++    }
++
++    /** 兼容只构造受众与研究主题的内部调用；没有评价来源时不补猜测对象。 */
++    public TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSubjects) {
++        this(anchors, confirmedSubjects, List.of());
+     }
+ 
+     /** 来源位置直接取有效用户输入；有效 Plan 的研究对象选择具有自己的授权范围。 */
+@@ -35,7 +45,49 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
+                 .flatMap(decision -> anchors.stream().filter(anchor -> anchor.role() == Role.AUDIENCE
+                         && positivelyNames(decision.answer(), anchor.text())).map(Anchor::text))
+                 .distinct().toList();
+-        return new TaskMeaningContract(anchors, chosen);
++        return new TaskMeaningContract(anchors, chosen, evaluationTargets(input, anchors, decisions));
++    }
++
++    /** 当前肯定研究主题与同对象绑定选择提供评价来源；多主题、示例与未来选择不被强行压成单一对象。 */
++    private static List<EvaluationTarget> evaluationTargets(String input, List<Anchor> anchors,
++            List<ConfirmedPlanDecision> decisions) {
++        var bound = new ArrayList<EvaluationTarget>();
++        for (var decision : decisions) {
++            if (decision.scope() == ConfirmedPlanDecision.Scope.UNRESOLVED
++                    || decision.scope() == ConfirmedPlanDecision.Scope.CURRENT_STATE
++                    || !decision.question().matches("(?s).*(?:评价对象|评分对象|评审对象|待评对象).*" )
++                    || decision.question().matches("(?s).*(?:授权|伦理|隐私|是否允许|新的条件|新条件).*" )) continue;
++            // 候选、未来条件和引用不是当前选择，不能反向覆盖研究主题中的对象。
++            String answer = decision.answer();
++            if (answer.matches("(?s).*(?:如果|假如|以后|未来|待确认|建议|候选|例如|示例).*")) continue;
++            var matcher = TARGET_NAME.matcher(answer);
++            while (bound.size() < 8 && matcher.find()) {
++                if (positiveTarget(answer, matcher.start())) bound.add(new EvaluationTarget(matcher.group(),
++                        decision.questionId(), matcher.start(), matcher.end()));
++            }
++        }
++        if (!bound.isEmpty()) return List.copyOf(bound);
++        var topics = anchors.stream().filter(anchor -> anchor.role() == Role.RESEARCH_TOPIC).toList();
++        if (topics.size() != 1) return List.of();
++        var topic = topics.getFirst();
++        String before = input.substring(0, topic.start());
++        int boundary = Math.max(Math.max(before.lastIndexOf('。'), before.lastIndexOf('；')), before.lastIndexOf('\n'));
++        if (!currentResearchSection(input, topic.start())
++                || before.substring(boundary + 1).matches("(?s).*(?:不研究|未研究|如果|假如|若|以后|待确认|建议|示例|例如|引用).*"))
++            return List.of();
++        var targets = new ArrayList<EvaluationTarget>();
++        var matcher = QUALITY_TARGET.matcher(topic.text());
++        while (targets.size() < 8 && matcher.find()) {
++            if (positiveTarget(topic.text(), matcher.start(1))) targets.add(new EvaluationTarget(matcher.group(1), null,
++                    topic.start() + matcher.start(1), topic.start() + matcher.end(1)));
++        }
++        return List.copyOf(targets);
++    }
++
++    /** 否定只作用于紧邻的对象动作；不能把“选择提示词、不评价作品”算成选择两个对象。 */
++    private static boolean positiveTarget(String source, int start) {
++        String prefix = source.substring(Math.max(0, start - 20), start);
++        return !prefix.matches("(?s).*(?:不是|并非|不选|不采用|不评价|不评审|不评分|排除|不要|不得|禁止|不能)(?:将|把|设为|作为)?$");
+     }
+ 
+     /** 选择只作用于实际命名的人群；仅提到、排除或推荐某对象不能放行所有受众。 */
+@@ -71,7 +123,11 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
+                 + "原任务要求盲法时，说明对应材料如何盲化；未要求评价时不增加评分流程。"
+                 + "对象以用户任务为准，包括用户明确要求评价的下游作品；多个对象的主次关系未定时保持未决。"
+                 + "已明确的表述保留并使用一次，未确认的实际选值仍保持未决；已委托设计时可提出评分尺度、参数等"
+-                + "具体拟议建议及适用条件，不冒充用户确认或既有事实，不增加独立尾注。";
++                + "具体拟议建议及适用条件，不冒充用户确认或既有事实，不增加独立尾注。"
++                + (evaluationTargets.isEmpty() ? "" : "本任务已明确的评价对象为："
++                    + evaluationTargets.stream().map(EvaluationTarget::text).distinct()
++                        .collect(java.util.stream.Collectors.joining("、"))
++                    + "；直接用于对应评价步骤，不能扩大为其他对象或写成二选一。下游作品可按原任务作为验证依据，不能替换评分对象。");
+     }
+ 
+     /**
+@@ -140,7 +196,7 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
+     }
+ 
+     /** 声明和主题共用来源段落范围；普通标题透明，非事实标记与明确另一研究标题不能被换行擦除。 */
+-    private boolean currentResearchSection(String source, int offset) {
++    private static boolean currentResearchSection(String source, int offset) {
+         boolean current = true;
+         boolean asserted = true;
+         for (String line : source.substring(0, offset).split("\\R")) {
+@@ -156,6 +212,7 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
+ 
+     /** 在尾注和平台条款加入之前拒绝已复现的受众移位，不假称覆盖全部语义误绑定。 */
+     public void validate(String content, String field) {
++        validateEvaluationTarget(content, field);
+         if (anchors.stream().noneMatch(anchor -> anchor.role() == Role.RESEARCH_TOPIC)) return;
+         for (String clause : content.split("[。；;\\n]")) {
+             var subject = ASSERTED_SUBJECT.matcher(clause);
+@@ -174,6 +231,27 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
+         }
+     }
+ 
++    /** 仅在来源明确且只评价提示词时拒绝已复现的“提示词或产物”；独立双对象和用户有效改选继续允许。 */
++    private void validateEvaluationTarget(String content, String field) {
++        if (evaluationTargets.isEmpty() || evaluationTargets.stream().anyMatch(target -> !target.text().contains("提示词"))) return;
++        for (String clause : content.split("[。；;\\n]")) {
++            for (var pattern : List.of(PROMPT_OR_WORK, WORK_AS_RATING_TARGET)) {
++                var matcher = pattern.matcher(clause);
++                while (matcher.find()) {
++                    String prefix = clause.substring(0, matcher.start());
++                    if (!positiveTarget(clause, matcher.start())
++                            || prefix.matches("(?s).*(?:不得|不能|禁止)(?:将|把|改成|写成|混为|扩大为).{0,20}$")
++                            || clause.strip().matches("^(?:如果|若|待用户另行确认).*")) continue;
++                    throw new ProviderResponseValidationException(
++                            ProviderResponseValidationException.Reason.EVALUATION_TARGET_CONFLICT, field);
++                }
++            }
++        }
++    }
++
++    /** 位置针对 effectivePrompt，或 sourceQuestionId 对应的绑定答案；不来自模型推断或其他任务资料。 */
++    public record EvaluationTarget(String text, String sourceQuestionId, int start, int end) { }
++
+     /** 只排除明确的独立写作受众子句；逗号列举的研究人群和后续对象仍参与校验。 */
+     private boolean namesAudienceAsSubject(String subject, String audience) {
+         String namedAudience = Pattern.quote(audience);
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java b/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java
+index 46330d3..70834cc 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatiblePromptEnhancementProvider.java
+@@ -120,7 +120,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
+             7. 生成前必须联合分析 rawPrompt、context.customDescription、technologyStack、dependencies、directoryTree、
+                fileSnippets 的实际 content 与 summary，以及启用的 conversationHistory。区分已知事实、冲突与真正未决的业务选择。
+                文件名或某个依赖存在不等于该业务已实现；摘要和截断片段未覆盖的内容不得断言为项目不存在。
+-            8. 在顶层 ambiguities 数组返回本次分析后仍需用户决定的问题，0 至 8 条，每条最多 500 字。
++            8. 顶层 ambiguities 是 0 至 8 个非空字符串的数组，返回本次分析后仍需用户决定的问题，每条最多 500 字；message/questionId 对象仅可放入 ambiguityReferences，不得放入 ambiguities。
+                每条必须指出本次任务中的具体对象、缺少或冲突的信息及其影响；涉及技术栈或业务规则时必须有输入证据，
+                可以引用实际文件路径或符号。不得因为没有“输入、输出、测试”等关键词就报错，不得输出三条通用占位警告。
+                原始需求、相关代码、数据字典或用户历史已经明确的信息不得重复询问；与当前任务无关的文件不构成答案。
+@@ -150,7 +150,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
+                 输出前核对 TASK、OUTPUT、CONSTRAINTS、ACCEPTANCE 之间没有相反要求；不能靠在末尾追加正确原文掩盖前面的错误指令。
+                 真正未决的问题继续放在 ambiguities；平台会将归并后的执行前提写入可复制正文，未确认不能视为授权猜测。
+                 已确认的旧选择要改写成执行要求，不得把 rawPrompt 中旧的“需要先确认选哪一个”重新列为当前待办；独立约束、新取值与新条件仍须保留。
+-            14. 面向用户的正文和提醒使用自然语言，不展示 taskView、executionRequirements、confirmedDecisions、planAnswers、questionId、scope 或 analysisStatus 等内部协议名；需要关联时仅使用 ambiguityReferences。
++            14. 面向用户的正文和提醒使用自然语言，不展示 taskView、executionRequirements、confirmedDecisions、planAnswers、questionId、sourceQuestionIds、designDelegated、scope 或 analysisStatus 等内部协议名；需要关联时仅使用 ambiguityReferences。
+                 taskView.examples.mode=REQUIRED 表示已要求下游提供与任务相关的输入和预期输出示例，不是让平台先执行用户任务；明确该要求，不再写“仅在用户要求时”或“必要时”。演示材料明确标注虚构，不作为正式事实或已确认口径。其余 mode 遵守禁例或严格格式，不主动加示例。原始需求明确要示例时，关闭开关不取消它。
+             15. 平台会将全部未决条件统一加入可复制正文；不要再在 CONSTRAINTS 或其他段落列一份同义待确认清单。
+                 用户已明确选定版本或解决某个条件时，背景、任务、约束都须同步采用该决定；原材料中的“尚未确认采用哪版”属于确认前状态，不能再作为当前执行前提。部分回答仅更新已确定的子项，其余真正缺口和二次检索的新冲突仍保留。

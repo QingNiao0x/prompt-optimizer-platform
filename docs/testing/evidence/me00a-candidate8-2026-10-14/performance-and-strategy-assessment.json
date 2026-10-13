@@ -1,0 +1,60 @@
+{
+  "q05": {
+    "raw": {
+      "httpElapsedMs": 8567,
+      "promptTokens": 472,
+      "completionTokens": 1093,
+      "totalTokens": 1565
+    },
+    "direct": {
+      "httpElapsedMs": 15207,
+      "promptTokens": 9578,
+      "completionTokens": 2298,
+      "totalTokens": 11876
+    },
+    "plan": {
+      "httpElapsedMs": 27095,
+      "promptTokens": 14177,
+      "completionTokens": 4562,
+      "totalTokens": 18739
+    },
+    "reviews": {
+      "httpElapsedMs": 19473,
+      "promptTokens": 8104,
+      "completionTokens": 3927,
+      "totalTokens": 12031
+    }
+  },
+  "examples": {
+    "httpElapsedMs": 16252,
+    "promptTokens": 35448,
+    "completionTokens": 1428,
+    "totalTokens": 36876
+  },
+  "projection": {
+    "originalRequirementSources": 24,
+    "modelStatements": 4,
+    "sourceQuestionIdsPerStatement": [
+      6,
+      6,
+      6,
+      6
+    ],
+    "pendingDecisions": 6,
+    "allPendingUnresolved": true,
+    "allDesignDelegated": true
+  },
+  "scope": "Same actual answers within candidate8. HTTP sums exclude context preparation/UI/analysis. Plan includes planning cost. Not an invoice or old/new causal estimate.",
+  "downstreamStrategy": {
+    "automaticExtraInstruction": false,
+    "automaticRetry": false,
+    "decision": "No further prompt stacking from a single failed sample; prioritize platform duplication and question relevance, preserve scope and conditional methods, require later heldout/normal-variant and latency/token checks before adopting strategies.",
+    "reasons": [
+      "Copied body already delegates proposed categories and method details; downstream still leaves them unresolved",
+      "Plan body exceeds limit despite existing long length guidance",
+      "No stable heldout or repeat evidence; extra prescriptions risk cost and rigid behavior"
+    ]
+  },
+  "exactVersion": "UNKNOWN",
+  "currencyCost": "UNKNOWN"
+}

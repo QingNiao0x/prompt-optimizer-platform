@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.311" tests="17" errors="0" skipped="0" failures="0">
+  <testcase name="shouldRespectExplicitParallelPresentationWithoutConfirmingEitherCalculationValue" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.01" />
+  <testcase name="shouldKeepTheFullBusinessObjectInAFutureConfirmation" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.001" />
+  <testcase name="shouldKeepAnExecutableConditionalBusinessRule" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.001" />
+  <testcase name="shouldKeepReportDeliveryWhenOnlyCodeIsDeclined" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.02" />
+  <testcase name="shouldKeepFutureConfirmationUnresolvedAndSeparateFromTheConfirmedMetric" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.003" />
+  <testcase name="shouldRetainANewCaseSensitiveFieldValueDuringReminderMerging" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.004" />
+  <testcase name="shouldNotResolveAnotherInstitutionYearOrNewValueWithTheBoundAnswer" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.003" />
+  <testcase name="shouldDetectConflictingCaseSensitiveOutputFieldsInMaterials" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.019" />
+  <testcase name="shouldReplayThePreservedRealResponseWithoutRejectingItsValidMetricConfirmation" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.008">
+    <system-out>03:02:36.170 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.TASK check=NARRATIVE_CONFIRMATION_SCOPE
+03:02:36.174 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.TASK check=NARRATIVE_CONFIRMATION_SCOPE
+</system-out>
+  </testcase>
+  <testcase name="shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.024" />
+  <testcase name="shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.035" />
+  <testcase name="shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.031" />
+  <testcase name="shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.034" />
+  <testcase name="shouldAcceptTheRealConfirmedMetricAndStillRejectAnUnconfirmedOtherMetric(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.029">
+    <system-out>03:02:36.342 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.TASK check=NARRATIVE_CONFIRMATION_SCOPE
+</system-out>
+  </testcase>
+  <testcase name="shouldAcceptTheRealConfirmedMetricAndStillRejectAnUnconfirmedOtherMetric(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.012">
+    <system-out>03:02:36.366 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.TASK check=NARRATIVE_CONFIRMATION_SCOPE
+</system-out>
+  </testcase>
+  <testcase name="shouldAcceptTheRealConfirmedMetricAndStillRejectAnUnconfirmedOtherMetric(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.023">
+    <system-out>03:02:36.389 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.TASK check=NARRATIVE_CONFIRMATION_SCOPE
+</system-out>
+  </testcase>
+  <testcase name="shouldNotRegisterAConditionalFutureChoiceAsConfirmed" classname="com.promptoptimizer.enhancement.service.impl.ConfirmationBoundaryRegressionTest" time="0.004" />
+</testsuite>

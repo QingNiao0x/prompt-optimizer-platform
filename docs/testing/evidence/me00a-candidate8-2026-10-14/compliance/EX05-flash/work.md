@@ -1,0 +1,1 @@
+{"result":"Alpha","examples":[{"input":"  Alpha  ","output":"Alpha"}]}

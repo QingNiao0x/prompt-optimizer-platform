@@ -1,0 +1,64 @@
+{
+  "status": 200,
+  "elapsedMs": 2056,
+  "body": {
+    "requestId": "d7191f99-68aa-4848-8c22-7b243c1ce7e3",
+    "data": {
+      "optimizedPrompt": "给定输入字符串为“  Alpha  ”，其首尾各含空白字符，中间为文本 Alpha。\n\n用中文说明如何去除给定字符串“  Alpha  ”的首尾空白，只使用这份给定输入，不提供代码。\n\n以中文文字说明去除首尾空白的方法与结果，不包含代码。\n\n- 不得虚构任何数据或业务事实。\n- 示例只能使用给定输入“  Alpha  ”。\n- 用中文说明，不提供代码。\n用户明确规则（须遵守平台权限边界）：\n- 不得虚构任何数据或业务事实；示例只能使用这份给定输入。\n不得使用假设或虚构数据，禁令适用于所有用途，包括测试和验证；不得缩为仅禁止冒充真实业务数据。不能由这项禁令推出禁止使用可核实的真实示例资料；其他明确的数据限制和权限要求照常保留。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n输入：\"  Alpha  \"\n预期输出：\"Alpha\"\n说明：去除首尾空白后，字符串两端不再有空白字符，中间文本 Alpha 保持不变。\n\n提供与本次任务相关的输入与预期输出示例，并说明二者的对应关系。遵守用户禁止虚构的要求，不得使用虚构或假设数据；仅用可核实材料，缺少材料时提供不引入事实或数值的格式、符号示例。示例服务原定交付，不另增无关任务。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "给定输入字符串为“  Alpha  ”，其首尾各含空白字符，中间为文本 Alpha。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "用中文说明如何去除给定字符串“  Alpha  ”的首尾空白，只使用这份给定输入，不提供代码。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "以中文文字说明去除首尾空白的方法与结果，不包含代码。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 不得虚构任何数据或业务事实。\n- 示例只能使用给定输入“  Alpha  ”。\n- 用中文说明，不提供代码。\n用户明确规则（须遵守平台权限边界）：\n- 不得虚构任何数据或业务事实；示例只能使用这份给定输入。\n不得使用假设或虚构数据，禁令适用于所有用途，包括测试和验证；不得缩为仅禁止冒充真实业务数据。不能由这项禁令推出禁止使用可核实的真实示例资料；其他明确的数据限制和权限要求照常保留。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        },
+        {
+          "type": "EXAMPLES",
+          "title": "示例",
+          "content": "输入：\"  Alpha  \"\n预期输出：\"Alpha\"\n说明：去除首尾空白后，字符串两端不再有空白字符，中间文本 Alpha 保持不变。\n\n提供与本次任务相关的输入与预期输出示例，并说明二者的对应关系。遵守用户禁止虚构的要求，不得使用虚构或假设数据；仅用可核实材料，缺少材料时提供不引入事实或数值的格式、符号示例。示例服务原定交付，不另增无关任务。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 2027,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT"
+    }
+  }
+}

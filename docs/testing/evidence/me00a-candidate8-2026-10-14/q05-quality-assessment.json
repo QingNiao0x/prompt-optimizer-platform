@@ -1,0 +1,117 @@
+{
+  "source": "Original works and two preserved fresh-request AI-assisted reviews; no additional model calls",
+  "aiPairs": [
+    {
+      "reviewer": 1,
+      "rawVsDirect": "TIE",
+      "rawVsPlan": "PLAN_WIN",
+      "directVsPlan": "PLAN_WIN",
+      "originalPairs": {
+        "U_V": {
+          "verdict": "FIRST_WIN",
+          "reason": "U在4类任务拟议分类、Plan交互轮次与终止条件、相同确认信息来源与封存、评审培训校准、重复汇总方式等原始任务明确要求的要素上均给出了可开展的拟议方案；V将上述要素整体列为未决参数，未提供拟议设计，属核心交付缺失。U在准确性、完整性、可执行性上均有实质收益，其他维度无实质退步。",
+          "evidence": [
+            "U：任务分类维度拟按“需求明确度×约束复杂度”划分：需求明确度高/低与约束复杂度高/低交叉形成4类，每类选取5个任务",
+            "U：Plan交互轮次拟设为最多3轮，终止条件为确认信息已完整覆盖任务约束或参与者主动结束",
+            "U：相同确认信息的来源拟为：任务委托方或模拟委托方在盲评前提供的书面澄清，经研究助理统一整理并封存",
+            "V：任务类型、难度与领域需在正式实施前由研究团队依据原始研究目标确定并固化",
+            "V：Plan问答的交互轮次与终止条件……均需在正式实施前由研究团队确认"
+          ]
+        },
+        "U_W": {
+          "verdict": "FIRST_WIN",
+          "reason": "U对4类任务、Plan交互轮次与终止条件、相同确认信息来源与封存、评审培训校准、重复汇总方式均给出拟议方案；W将4类任务界定、Plan轮次与终止条件、确认信息来源、培训校准、重复汇总方式均推给实施前确定，未提供可开展的拟议设计。U在准确性、完整性、可执行性上均有实质收益，其他维度无实质退步。",
+          "evidence": [
+            "U：任务分类维度拟按“需求明确度×约束复杂度”划分：需求明确度高/低与约束复杂度高/低交叉形成4类，每类选取5个任务",
+            "U：Plan交互轮次拟设为最多3轮，终止条件为确认信息已完整覆盖任务约束或参与者主动结束",
+            "U：相同确认信息的来源拟为：任务委托方或模拟委托方在盲评前提供的书面澄清，经研究助理统一整理并封存",
+            "W：4类任务的具体界定须依据原始研究目标确定，并在实施前形成任务说明书",
+            "W：评审前是否接受统一评分培训或校准，须在实施前依据原始研究目标确定"
+          ]
+        },
+        "V_W": {
+          "verdict": "TIE",
+          "reason": "V与W均将4类任务界定、Plan交互轮次与终止条件、相同确认信息来源、评审培训校准、重复汇总方式等原始任务明确要求的要素整体列为实施前确定，未提供可开展的拟议方案；两者在核心交付上均缺失，且均未声明字数统计口径，无法确认正文800至1200个汉字是否达标。V在统计与分歧处理上略具体，W在质量控制与附表上略具体，但均不足以构成实质优势，故判平局。",
+          "evidence": [
+            "V：任务类型、难度与领域需在正式实施前由研究团队依据原始研究目标确定并固化",
+            "V：Plan问答的交互轮次与终止条件……均需在正式实施前由研究团队确认",
+            "W：4类任务的具体界定须依据原始研究目标确定，并在实施前形成任务说明书",
+            "W：评审前是否接受统一评分培训或校准，须在实施前依据原始研究目标确定"
+          ]
+        }
+      }
+    },
+    {
+      "reviewer": 2,
+      "rawVsDirect": "TIE",
+      "rawVsPlan": "PLAN_WIN",
+      "directVsPlan": "PLAN_WIN",
+      "originalPairs": {
+        "U_V": {
+          "verdict": "FIRST_WIN",
+          "reason": "U在任务分类、公平对照信息流、评审培训、分歧处理、随机化与统计候选方法上均给出可开展拟议方案；V在4类任务、相同确认信息来源、评审培训等关键设计上仅列为待定参数，完整性明显退步。U虽有重复汇总未决和字数未核验问题，但未构成严重失败，且其他维度无实质退步。",
+          "evidence": [
+            "U：任务分类维度拟按“需求明确度×约束复杂度”划分：需求明确度高/低与约束复杂度高/低交叉形成4类，每类选取5个任务。",
+            "U：由未参与评审的研究助理针对每个任务案例，通过预设渠道取得一份实际确认信息，封存后复制为逐字相同文本",
+            "V：任务类型、难度与领域需在正式实施前由研究团队依据原始研究目标确定并固化。",
+            "V：公平对照所需相同确认信息的来源与封存方式……均需在正式实施前由研究团队确认。"
+          ]
+        },
+        "U_W": {
+          "verdict": "FIRST_WIN",
+          "reason": "U在任务分类、公平对照信息流、评审培训、分歧处理、随机化与统计候选方法上均给出可开展拟议方案；W在4类任务、相同确认信息来源、评审培训、Plan交互轮次与终止条件等关键设计上缺失或仅称实施前确定，完整性明显退步。U虽有重复汇总未决和字数未核验问题，但未构成严重失败，且其他维度无实质退步。",
+          "evidence": [
+            "U：任务分类维度拟按“需求明确度×约束复杂度”划分：需求明确度高/低与约束复杂度高/低交叉形成4类，每类选取5个任务。",
+            "U：由未参与评审的研究助理针对每个任务案例，通过预设渠道取得一份实际确认信息，封存后复制为逐字相同文本",
+            "W：4类任务的具体界定须依据原始研究目标确定，并在实施前形成任务说明书",
+            "W：公平对照所需“相同确认信息”的来源、提取规则与呈现方式，须在实施前依据原始研究目标制定标准化脚本"
+          ]
+        },
+        "V_W": {
+          "verdict": "TIE",
+          "reason": "V与W均在4类任务界定、相同确认信息来源、评审培训等关键设计上仅列为待定参数或缺失，均未形成可开展的拟议方案；两者在统计候选方法、盲法、分歧处理框架上均有基本覆盖，但关键设计缺失程度相近，无法认定一方有实质收益且另一方无实质退步。",
+          "evidence": [
+            "V：任务类型、难度与领域需在正式实施前由研究团队依据原始研究目标确定并固化。",
+            "W：4类任务的具体界定须依据原始研究目标确定，并在实施前形成任务说明书",
+            "V：公平对照所需相同确认信息的来源与封存方式……均需在正式实施前由研究团队确认。",
+            "W：公平对照所需“相同确认信息”的来源、提取规则与呈现方式，须在实施前依据原始研究目标制定标准化脚本"
+          ]
+        }
+      }
+    }
+  ],
+  "independentLength": {
+    "raw": {
+      "bodyHan": 1253,
+      "withHeadingsHan": 1313,
+      "pass": false,
+      "method": "Script=Han; remove markdown headings, leading bold subheading labels and explicit appendix; keep all substantive body"
+    },
+    "plan": {
+      "bodyHan": 1405,
+      "withHeadingsHan": 1446,
+      "pass": false,
+      "method": "Script=Han; remove markdown headings, leading bold subheading labels and explicit appendix; keep all substantive body"
+    },
+    "direct": {
+      "bodyHan": 1159,
+      "withHeadingsHan": 1206,
+      "pass": true,
+      "method": "Script=Han; remove markdown headings, leading bold subheading labels and explicit appendix; keep all substantive body"
+    }
+  },
+  "gateResults": {
+    "raw": "FAIL_LENGTH_AND_INCOMPLETE_PROPOSED_DESIGN",
+    "direct": "LENGTH_WITHIN_BODY_SCOPE_BUT_SUBSTANTIVE_DESIGN_GATE_OPEN",
+    "plan": "FAIL_LENGTH_AND_INCOMPLETE_PROPOSED_DETAILS",
+    "rawVsPlan": "BOTH_FAIL_LENGTH"
+  },
+  "severeNotOffsetByScores": true,
+  "overallWinRateComputed": false,
+  "unresolvedAttribution": [
+    "Final prompt duplication has platform additions and model repetition",
+    "Relevance of six planning questions requires bounded responsibility checks",
+    "Participant and simulated-commissioner proposals require scope/condition review; keyword alone does not prove invented data"
+  ],
+  "downstreamNoAutomaticPromptStacking": true
+}
