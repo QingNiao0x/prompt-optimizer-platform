@@ -1,0 +1,10 @@
+{
+  "requestId": "ad3876e8-ca74-4a7b-8689-5dd12deb0a20",
+  "events": [
+    "2026-10-13 22:57:11.928 [http-nio-127.0.0.1-9001-exec-6] WARN  [ad3876e8-ca74-4a7b-8689-5dd12deb0a20] c.p.p.i.o.OpenAiCompatiblePromptEnhancementProvider - event=model.response.validation_failed requestId=ad3876e8-ca74-4a7b-8689-5dd12deb0a20 operation=prompt.optimize reason=AMBIGUITY_VALUE_INVALID field=ambiguities attempt=1",
+    "2026-10-13 22:57:21.764 [http-nio-127.0.0.1-9001-exec-6] WARN  [ad3876e8-ca74-4a7b-8689-5dd12deb0a20] c.p.p.i.o.OpenAiCompatiblePromptEnhancementProvider - event=model.response.validation_failed requestId=ad3876e8-ca74-4a7b-8689-5dd12deb0a20 operation=prompt.optimize reason=RULE_CONFLICT field=sections.OUTPUT attempt=2",
+    "2026-10-13 22:57:30.561 [http-nio-127.0.0.1-9001-exec-6] WARN  [ad3876e8-ca74-4a7b-8689-5dd12deb0a20] c.p.p.i.o.OpenAiCompatiblePromptEnhancementProvider - event=model.response.validation_failed requestId=ad3876e8-ca74-4a7b-8689-5dd12deb0a20 operation=prompt.optimize reason=ASSESSMENT_DECISION_CONFLICT field=assessment.gaps attempt=3",
+    "2026-10-13 22:57:30.569 [http-nio-127.0.0.1-9001-exec-6] ERROR [ad3876e8-ca74-4a7b-8689-5dd12deb0a20] c.p.e.service.impl.DefaultEnhancementOrchestrator - event=optimization.failed requestId=ad3876e8-ca74-4a7b-8689-5dd12deb0a20 workflowId=0922abcd98fa99f065e8 failureType=INVALID_RESPONSE validationReason=ASSESSMENT_DECISION_CONFLICT validationField=assessment.gaps durationMs=30406"
+  ],
+  "scope": "Only validation metadata; full service logs excluded"
+}

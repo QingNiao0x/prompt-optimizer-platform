@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-13",
+  "status": "APPROVED_BY_USER",
+  "callsBefore": 176,
+  "phaseCallsBefore": {
+    "baseline": 70,
+    "candidateValidation": 106
+  },
+  "previousLimits": {
+    "total": 192,
+    "baseline": 80,
+    "candidateValidation": 112
+  },
+  "limits": {
+    "total": 198,
+    "baseline": 80,
+    "candidateValidation": 118
+  },
+  "batch": {
+    "version": "candidate7",
+    "mode": "plan",
+    "cases": [
+      "Q05"
+    ],
+    "model": "deepseek-flash",
+    "callsBefore": 176,
+    "maximumNewCalls": 12,
+    "authorization": "2026-10-13 user requested starting the latest-source real validation after the proposed 12-request Q05 Flash batch; reuse existing test account",
+    "secondRoundAuthorized": false
+  },
+  "accountPolicy": "REUSE_EXISTING_LOCAL_SYNTHETIC_FIXTURE; no new account is needed; preserve existing user/history",
+  "policy": "Every attempt counts. Stop this batch at 188 traces; no second round, Pro, other cases or new baseline."
+}

@@ -1,0 +1,142 @@
+{
+  "status": 200,
+  "elapsedMs": 9873,
+  "body": {
+    "requestId": "c9ebe49f-e77f-4ebf-9e4f-9af9b3895108",
+    "data": {
+      "summary": "已理解你要为研究生撰写一份中文研究设计的方法部分，研究 Plan 问答对提示词质量的影响，且当前仅为拟定研究、尚未实施。需要确认的少量问题集中在会影响方法口径与交付边界的真实决定上，其余常规设计由执行者提出可开展方案。",
+      "questions": [
+        {
+          "id": "task_categories",
+          "question": "4类任务具体指哪四类？",
+          "hint": "任务类别决定任务设计、评分维度与对照方式，属于研究口径的核心事实，资料未说明。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：事实问答、多步推理、约束满足、开放创作"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "task_source",
+          "question": "这20个任务从哪里来？",
+          "hint": "任务来源影响是否可复现、是否涉及外部材料授权，资料未说明。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "self_built",
+              "label": "研究者自行编写",
+              "description": "由研究者按四类任务自行设计20个任务",
+              "answer": "20个任务由研究者按四类任务自行编写",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "existing_benchmark",
+              "label": "取自已有基准或题库",
+              "description": "从已有公开基准或题库中选取并适配",
+              "answer": "20个任务取自已有公开基准或题库，并说明来源与适配方式",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "mixed",
+              "label": "自行编写与已有题库结合",
+              "description": "部分自行编写、部分取自已有题库",
+              "answer": "20个任务由研究者自行编写与已有题库结合，并分别说明来源",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "confirmation_info",
+          "question": "公平对照两组获得的“相同确认信息”具体指什么？",
+          "hint": "这决定同信息对照的可操作定义，资料只说明信息必须一致，未说明信息内容与取得方式。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：先由Plan流程向用户提问并取得回答，将同一份实际回答逐字提供给两组"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "disagreement_rule",
+          "question": "两名评审出现分歧时如何处理？",
+          "hint": "分歧处理规则影响评分汇总与结果解释，资料未说明。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "discuss",
+              "label": "讨论达成一致",
+              "description": "分歧项由两名评审讨论后形成一致评分",
+              "answer": "两名评审对分歧项进行讨论并达成一致评分",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "third_reviewer",
+              "label": "引入第三名评审",
+              "description": "分歧项由第三名评审裁定",
+              "answer": "分歧项引入第三名评审进行裁定",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "report_both",
+              "label": "保留双方评分并报告一致性",
+              "description": "不强行统一，报告评分者间一致性",
+              "answer": "保留两名评审各自评分，并报告评分者间一致性",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "deliverable_scope",
+          "question": "方法部分是否只交付方法与空表模板，不填入任何实际结果？",
+          "hint": "这决定交付边界，资料已说明不提供代码、不得使用假设数据，但未明确是否附空表模板。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "methods_only",
+              "label": "仅方法正文",
+              "description": "只写800至1200字方法部分，不含附表",
+              "answer": "仅交付800至1200字方法正文，不含附表",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "methods_with_templates",
+              "label": "方法正文加空表模板",
+              "description": "正文之外附评分表、任务分配表等空模板，附表另计",
+              "answer": "交付800至1200字方法正文，并附评分表、任务分配表等空表模板，附表另计",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 9771,
+      "planId": "80651447-55e6-47b2-b0e1-69cc641e05be",
+      "planningContext": {
+        "contextId": "cbc8a217-7420-4435-beb3-d2175f607ab6",
+        "version": "sha256:88e9ec82ccf032927c627c2e880a44237fdd74fd45865219f12aa46427ab38d1"
+      },
+      "expiresAt": "2026-10-13T15:26:50.012555300Z"
+    }
+  }
+}

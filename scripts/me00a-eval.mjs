@@ -37,7 +37,7 @@ if (directRun) { try { await run(); process.exit(0); } catch (error) { console.e
 
 async function run() {
   const [version = 'baseline', round = '1', mode = 'direct', selected = 'all', selectedModels = 'all'] = process.argv.slice(2);
-  if (!/^(baseline|candidate[123456])$/.test(version) || !/^[12]$/.test(round)
+  if (!/^(baseline|candidate[1234567])$/.test(version) || !/^[12]$/.test(round)
     || !['direct', 'plan'].includes(mode)) throw new Error('Invalid evaluation phase');
   const root = resolve('tmp/me00a-20261012');
   const phase = version === 'baseline' ? 'baseline' : 'candidateValidation';
@@ -113,6 +113,7 @@ async function run() {
       const detail = await api(`/api/v1/optimization-history/${row.id}`);
       if (detail.body.data?.rawPrompt === raw && detail.body.data?.optimizedPrompt === copied) { await save(resolve(dir, 'history-check.json'), {
         status: detail.status, copiedBodyMatches: true, promptFormat: detail.body.data.metadata?.promptFormat ?? detail.body.data.promptFormat });
+        await save(resolve(dir, 'history.json'), detail);
         matchedHistory = true; break; }
     }
     if (!matchedHistory) throw new Error('Actual copied body was not found in same-account history');

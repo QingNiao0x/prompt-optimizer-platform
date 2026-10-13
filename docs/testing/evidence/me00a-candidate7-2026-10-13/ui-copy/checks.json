@@ -1,0 +1,24 @@
+{
+  "frontend": "http://localhost:5173",
+  "backend": "http://127.0.0.1:9001",
+  "scope": "Read-only replay of genuine saved API results in current workbench; existing copy handler and actual clipboard; no UI generation or full edit lifecycle claimed",
+  "newModelCalls": 0,
+  "newAccountsCreated": 0,
+  "checks": [
+    {
+      "arm": "plan",
+      "status": "NO_PLATFORM_BODY_NO_CLIPBOARD_CHECK",
+      "platformStatus": 502
+    },
+    {
+      "arm": "direct",
+      "clipboardContentMatchesAfterLineEndingNormalization": true,
+      "byteForByteMatch": false,
+      "lineEndingDifference": {
+        "clipboardCRLF": 42,
+        "apiCRLF": 0
+      },
+      "sha256": "3ba961199115dffdf17b8844b2ba39d63db531895e5d16eafdf8be830300b01c"
+    }
+  ]
+}

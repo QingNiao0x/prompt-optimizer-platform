@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-12",
+  "scope": "ME-00-A baseline then ME-01-A + ME-03-A bounded repair",
+  "cases": 7,
+  "initialPlanEnabled": false,
+  "initialPlanAnswers": [],
+  "initialExamplesEnabled": false,
+  "maximumActualModelCalls": 198,
+  "phaseLimits": {
+    "baseline": 80,
+    "candidateValidation": 118
+  },
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "baselineRounds": 1,
+  "candidateRounds": 2,
+  "planSupplement": [
+    "Q04",
+    "Q05"
+  ],
+  "review": "two independent AI reviewers, not domain experts; disputed verdicts unresolved until adjudication",
+  "sameTestAccountFile": "private runtime only; reuse former synthetic user",
+  "archiveSecrets": false,
+  "accountCreationAllowed": false,
+  "priceAndCurrencyCost": "UNKNOWN until verified invoice; actual provider tokens collected",
+  "productPrimaryComparison": "raw actual work vs actual copied enhanced work",
+  "repairRegression": "current enhanced vs repaired enhanced, separately reported",
+  "planParity": "verbatim actual submitted test answers provided to raw and direct comparators, never patch Plan copied body",
+  "severeFailure": "block capability release, preserve trace; no automatic budget increase",
+  "activeBatch": {
+    "version": "candidate7",
+    "mode": "plan",
+    "cases": [
+      "Q05"
+    ],
+    "model": "deepseek-flash",
+    "callsBefore": 176,
+    "maximumNewCalls": 12,
+    "authorization": "2026-10-13 user requested starting the latest-source real validation after the proposed 12-request Q05 Flash batch; reuse existing test account",
+    "secondRoundAuthorized": false
+  }
+}
