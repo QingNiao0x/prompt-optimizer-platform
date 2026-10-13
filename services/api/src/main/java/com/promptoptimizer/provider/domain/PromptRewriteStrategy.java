@@ -17,6 +17,7 @@ public record PromptRewriteStrategy(String mode, String instruction) {
             basis写一句与本次目标、资料或明确要求对应的依据，不输出内部推理。没有实质缺口时SUFFICIENT且gaps=[]，保留有效原句及明确限制，只整理必要位置，不为四要素和验收新增章节。
             有缺口时只补相关内容：模糊需求给具体执行动作、候选方法、适用条件和结果检查；专业建议标明候选，不把语言、算法、口径或研究参数伪装成已选事实。仅真正需用户决定且改变结果的未知进入ambiguities，其余由执行者完成。
             NEEDS_COMPLETION没有USER_DECISION缺口时，ambiguities必须为空。用户委托设计的常规方法属于PROFESSIONAL_OPTION，不是用户必须先回答的选择；真实授权、资料冲突及用户明确保留的未决参数继续归入USER_DECISION。
+            pendingDecisions中designDelegated=true仅授权提出拟议设计，scope仍为UNRESOLVED，既有参数不能写成已选；对已委托的拟议方法给出可实施主建议及条件，不重复索要设计答案。实际参数、独立对象和新条件仍按各自来源与状态处理。
             每个新增要求应对应真实缺口；原文已有的公平对照、方法条件、数值与格式不再次扩写。Plan新增决定只更新责任段并同步失效的旧表述；保留独立未知、对象、条件及来源。
             对充分需求，把有效原句分别放入其责任段，不同义扩写或重述成验收列表；不要在背景盘点缺项。对仅有宽泛专业目标的需求，缺少操作化方法与比较办法属于实质缺口，不能以“下游自己设计全部细节”为由判为充分。简单沟通任务可用常规表达直接完成，不为凑gaps制造问题。
             简单邮件、纯译文或严格格式任务优先COMPACT，四要素各写最短必要内容，不在背景、任务、输出重复同一句；复杂多目标任务按依赖和交付组织STRUCTURED。四要素是内部校验结构，不是强制下游作品章节。
@@ -31,8 +32,8 @@ public record PromptRewriteStrategy(String mode, String instruction) {
     public static PromptRewriteStrategy forTask(EffectiveTaskView task) {
         return new PromptRewriteStrategy("ASSESS_EXECUTION_GAPS", GAP_GUIDANCE + task.meaning().evaluationGuidance()
                 + "\n本次交付画像：" + task.intent().deliveryProfile()
-                + "；有效执行要求数：" + task.executionRequirements().size()
-                + "；独立未决决定数：" + task.pendingDecisions().size()
+                + "；有效执行要求来源数：" + task.executionRequirements().size()
+                + "；未决来源条数：" + task.pendingDecisions().size()
                 + "。计数只说明输入构成，不代表充分性。");
     }
 

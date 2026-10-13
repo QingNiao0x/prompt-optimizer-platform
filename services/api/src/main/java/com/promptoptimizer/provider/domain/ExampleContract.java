@@ -12,14 +12,16 @@ import java.util.regex.Pattern;
  */
 public record ExampleContract(Mode mode, String source, String guidance, @JsonIgnore boolean fictionalDataAllowed) {
     private static final Pattern PROHIBITION = Pattern.compile(
-            "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带|不加|不添加).{0,16}(?:示例|示范|例子)|不举例"
-                    + "|\\b(?:no|without|do not|never)\\b[^.\\r\\n]{0,60}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
+            "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带|不加|不添加)[^。；;，,！？!?\\r\\n]{0,16}(?:示例|示范|例子)|不举例"
+                    + "|\\b(?:no|without|do not|never)\\b[^.;,!?\\r\\n]{0,60}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern STRICT_OUTPUT = Pattern.compile(
             "(?:只|仅)(?:输出|返回|交付|提供).{0,18}(?:译文|翻译结果|JSON|正文|答案|代码)"
                     + "|\\b(?:return|output|provide)\\s+only\\b|\\bonly\\s+(?:the\\s+)?translation\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern REQUEST = Pattern.compile(
-            "(?:提供|给出|包含|附上|附带|输出|需要|要求).{0,30}(?:示例|示范|例子)"
-                    + "|\\b(?:include|provide|give|add)\\b[^.\\r\\n]{0,40}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
+            "(?:提供|给出|包含|附上|附带|输出|需要|要求)[^。；;，,！？!?\\r\\n]{0,30}(?:示例|示范|例子)"
+                    + "|\\b(?:include|provide|give|add)\\b[^.;,!?\\r\\n]{0,40}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern EXAMPLE_DATA_QUALIFIER = Pattern.compile(
+            "虚构|假设|模拟|编造|合成|\\b(?:fictional|hypothetical|synthetic|made-up)\\b", Pattern.CASE_INSENSITIVE);
     private static final String REQUIRED_GUIDANCE = "提供与本次任务相关的输入与预期输出示例，并说明二者的对应关系。"
             + "缺少真实资料时可用明确标注为虚构演示的材料；演示不得充当正式事实、统计口径或研究结论。"
             + "示例服务原定交付，不另增无关任务。";
@@ -32,9 +34,9 @@ public record ExampleContract(Mode mode, String source, String guidance, @JsonIg
     /** 同一实例供模型输入、Mock 和最终组装使用；资料中的要求不能决定用户开关。 */
     public static ExampleContract from(String effectivePrompt, boolean enabled) {
         String instructions = instructionText(effectivePrompt);
-        if (PROHIBITION.matcher(instructions).find()) return new ExampleContract(
+        if (examplesProhibited(instructions)) return new ExampleContract(
                 Mode.PROHIBITED, "USER_PROHIBITION", "遵守用户禁止示例的要求，不附带示例。");
-        boolean requested = REQUEST.matcher(instructions).find();
+        boolean requested = examplesRequested(instructions);
         if (STRICT_OUTPUT.matcher(instructions).find() && !requested) return new ExampleContract(
                 Mode.FORMAT_RESTRICTED, "STRICT_OUTPUT", "保持用户限定的输出形式，不追加示例或新增格式字段。");
         if (requested || enabled) {
@@ -55,6 +57,25 @@ public record ExampleContract(Mode mode, String source, String guidance, @JsonIg
 
     /** 是否要求下游提供示例，不能仅以模型是否返回 EXAMPLES 段判断。 */
     public boolean required() { return mode == Mode.REQUIRED; }
+
+    /** 禁令只作用于同一子句中的示例对象；禁虚构示例限制资料性质，不等于禁止真实或符号示例。 */
+    private static boolean examplesProhibited(String instructions) {
+        var matcher = PROHIBITION.matcher(instructions);
+        while (matcher.find()) {
+            if (!EXAMPLE_DATA_QUALIFIER.matcher(matcher.group()).find()) return true;
+        }
+        return false;
+    }
+
+    /** 否定原文请求不成为肯定请求；开启开关仍由禁例与实际格式冲突独立决定。 */
+    private static boolean examplesRequested(String instructions) {
+        var matcher = REQUEST.matcher(instructions);
+        while (matcher.find()) {
+            String prefix = instructions.substring(Math.max(0, matcher.start() - 20), matcher.start());
+            if (!prefix.matches("(?s).*(?:不|不要|不得|禁止|无需|不需要|不要求|并未|没有)(?:再|额外)?$")) return true;
+        }
+        return false;
+    }
 
     /** 仅移除代码和引用行；不把被引用的产品文案或资料内容当作当前用户指令。 */
     private static String instructionText(String prompt) {

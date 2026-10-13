@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { rawExecutionInput, enhancedExecutionInput, answerLog, batchRequestLimit } from './me00a-eval.mjs';
+import { rawExecutionInput, enhancedExecutionInput, answerLog, batchRequestLimit,
+  selectedEvaluationCases, capturedExecutionResponse, completedExecutionWork } from './me00a-eval.mjs';
 
 test('both works receive identical revenue evidence without adding unavailable metrics', () => {
   const sample = { rawPrompt: '分析收入变化。', context: { files: [{ path: 'synthetic.txt', content: '收入100→120；没有销量或市场总量。' }] } };
@@ -60,4 +61,45 @@ test('an active batch cannot be bypassed by requesting an older candidate or a n
       /outside approved batch/);
   }
   assert.equal(batchRequestLimit({ maximumActualModelCalls: 180 }, 'baseline', 'direct', [], []), 180);
+});
+
+test('missing or duplicate case selections cannot report success without executing a case', () => {
+  const catalogue = [{ id: 'Q05' }, { id: 'EX01' }];
+  assert.deepEqual(selectedEvaluationCases(catalogue, 'Q05'), [{ id: 'Q05' }]);
+  assert.deepEqual(selectedEvaluationCases(catalogue, 'all'), catalogue);
+  for (const selected of ['', 'UNKNOWN', 'Q05,UNKNOWN', 'Q05,Q05'])
+    assert.throws(() => selectedEvaluationCases(catalogue, selected), /missing/);
+  assert.throws(() => selectedEvaluationCases([], 'all'), /Invalid frozen/);
+  assert.throws(() => selectedEvaluationCases([{ id: 'Q05' }, { id: 'Q05' }], 'all'), /Invalid frozen/);
+});
+
+test('a proposed candidate-eight batch cannot spend the old remaining allowance', () => {
+  const protocol = { maximumActualModelCalls: 229, activeBatch: {
+    version: 'candidate8', mode: 'plan', cases: ['Q05'], model: 'deepseek-flash',
+    callsBefore: 185, maximumNewCalls: 14, secondRoundAuthorized: false, authorizationStatus: 'PENDING_USER_APPROVAL',
+  } };
+  assert.throws(() => batchRequestLimit(protocol, 'candidate8', 'plan', [{ id: 'Q05' }], ['deepseek-flash']), /not been approved/);
+  protocol.activeBatch.authorizationStatus = 'APPROVED_BY_USER';
+  assert.equal(batchRequestLimit(protocol, 'candidate8', 'plan', [{ id: 'Q05' }], ['deepseek-flash']), 199);
+  assert.throws(() => batchRequestLimit(protocol, 'candidate8', 'compliance', [{ id: 'EX01' }], ['deepseek-flash']), /outside approved/);
+});
+
+test('failed HTTP and non-JSON model bodies remain available for attribution', async () => {
+  const failed = await capturedExecutionResponse(new Response('{"error":{"code":"rate_limit"}}', { status: 429 }));
+  assert.equal(failed.httpStatus, 429);
+  assert.equal(failed.response.error.code, 'rate_limit');
+  assert.equal(failed.responseText, '{"error":{"code":"rate_limit"}}');
+  const nonJson = await capturedExecutionResponse(new Response('upstream unavailable', { status: 502 }));
+  assert.equal(nonJson.httpStatus, 502);
+  assert.equal(nonJson.responseText, 'upstream unavailable');
+  assert.equal('response' in nonJson, false);
+});
+
+test('HTTP 200 alone cannot make empty or truncated work count as completed', () => {
+  const complete = { httpStatus: 200, response: { choices: [{ message: { content: ' 原始作品\n' }, finish_reason: 'stop' }] } };
+  assert.deepEqual(completedExecutionWork(complete), { text: ' 原始作品\n', finishReason: 'stop' });
+  for (const record of [{ httpStatus: 200, response: { choices: [] } },
+    { httpStatus: 200, response: { choices: [{ message: { content: ' ' }, finish_reason: 'stop' }] } },
+    { httpStatus: 200, response: { choices: [{ message: { content: '未完成正文' }, finish_reason: 'length' }] } },
+    { ...complete, httpStatus: 429 }]) assert.throws(() => completedExecutionWork(record), /Execution/);
 });

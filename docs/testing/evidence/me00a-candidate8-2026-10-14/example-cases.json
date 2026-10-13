@@ -1,0 +1,116 @@
+[
+  {
+    "id": "EX01",
+    "kind": "EXAMPLE_COMPLIANCE_ONLY",
+    "rawPrompt": "说明如何去除给定字符串“  Alpha  ”的首尾空白。不得虚构任何数据或业务事实；示例只能使用这份给定输入。用中文说明，不提供代码。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": true
+    },
+    "expectedCompliance": {
+      "exampleMode": "REQUIRED",
+      "fictionalDataAllowed": false,
+      "input": "  Alpha  ",
+      "output": "Alpha",
+      "manualFactCheckRequired": true
+    }
+  },
+  {
+    "id": "EX02",
+    "kind": "EXAMPLE_COMPLIANCE_ONLY",
+    "rawPrompt": "用一句中文说明去除文本首尾空白的作用，不提供或引用任何示例，不提供代码。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": true
+    },
+    "expectedCompliance": {
+      "exampleMode": "PROHIBITED",
+      "examplesAllowed": false,
+      "manualContentCheckRequired": true
+    }
+  },
+  {
+    "id": "EX03",
+    "kind": "EXAMPLE_COMPLIANCE_ONLY",
+    "rawPrompt": "将“Please send the file before Thursday.”译成中文，只输出译文，不附说明。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": true
+    },
+    "expectedCompliance": {
+      "exampleMode": "FORMAT_RESTRICTED",
+      "examplesAllowed": false,
+      "deadlineMeaning": "before Thursday, not by Thursday",
+      "manualTranslationCheckRequired": true
+    }
+  },
+  {
+    "id": "EX04",
+    "kind": "EXAMPLE_COMPLIANCE_ONLY",
+    "rawPrompt": "去除给定字符串“  Alpha  ”的首尾空白，只输出一个JSON对象，恰好为{\"result\":\"Alpha\"}，不得增加字段或说明。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": true
+    },
+    "expectedCompliance": {
+      "exampleMode": "FORMAT_RESTRICTED",
+      "exactJson": {
+        "result": "Alpha"
+      }
+    }
+  },
+  {
+    "id": "EX05",
+    "kind": "EXAMPLE_COMPLIANCE_ONLY",
+    "rawPrompt": "去除给定字符串“  Alpha  ”的首尾空白，仅输出JSON，字段严格为result和examples；result为处理后的字符串，examples为数组，每项只能有input和output，用给定字符串提供对应的输入与预期输出示例。不得虚构其他数据。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": true
+    },
+    "expectedCompliance": {
+      "exampleMode": "REQUIRED",
+      "fictionalDataAllowed": false,
+      "jsonKeys": [
+        "result",
+        "examples"
+      ],
+      "result": "Alpha",
+      "exampleKeys": [
+        "input",
+        "output"
+      ],
+      "exampleInput": "  Alpha  ",
+      "exampleOutput": "Alpha"
+    }
+  }
+]

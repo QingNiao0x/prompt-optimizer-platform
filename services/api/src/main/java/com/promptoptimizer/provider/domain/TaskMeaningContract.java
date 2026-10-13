@@ -12,15 +12,25 @@ import java.util.regex.Pattern;
  * @author QingNiao
  * @since 0.1.0
  */
-public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSubjects) {
+public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSubjects, List<EvaluationTarget> evaluationTargets) {
     private static final Pattern AUDIENCE = Pattern.compile("(?:为|面向)([^，,。；;\\n]{1,40}?)(?:撰写|编写|写一|写|设计)");
     private static final Pattern TOPIC = Pattern.compile("(?:研究对象(?:为|是)|(?:^|[，,。；;\\n])研究)([^。；;\\n]{2,180})");
     private static final Pattern ASSERTED_SUBJECT = Pattern.compile("研究对象(?:为|是|包括|包含|确定为|设定为)\\s*([^。；;\\n]{1,180})");
+    private static final Pattern QUALITY_TARGET = Pattern.compile("((?:原始|优化(?:后的)?)?提示词|下游(?:代码|文本|实际)?(?:作品|输出|产物)|(?:代码|文本)?(?:作品|输出|产物))(?:的)?质量");
+    private static final Pattern TARGET_NAME = Pattern.compile("(?:原始|优化(?:后的)?)?提示词|(?:下游|最终)?(?:代码|文本)?(?:作品|输出|产物)");
+    private static final Pattern PROMPT_OR_WORK = Pattern.compile("提示词(?:或|或者|/)(?:对应的?|下游|生成的)?(?:产物|作品|输出)");
+    private static final Pattern WORK_AS_RATING_TARGET = Pattern.compile("(?:评价|评分|评审)对象(?:为|是|包括|确定为|设定为|[：:])\\s*(?:下游|最终)?(?:代码|文本)?(?:产物|作品|输出)");
 
     /** 锚点只在本请求中使用，不建立跨任务事实缓存。 */
     public TaskMeaningContract {
         anchors = List.copyOf(anchors);
         confirmedSubjects = List.copyOf(confirmedSubjects);
+        evaluationTargets = List.copyOf(evaluationTargets);
+    }
+
+    /** 兼容只构造受众与研究主题的内部调用；没有评价来源时不补猜测对象。 */
+    public TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSubjects) {
+        this(anchors, confirmedSubjects, List.of());
     }
 
     /** 来源位置直接取有效用户输入；有效 Plan 的研究对象选择具有自己的授权范围。 */
@@ -35,7 +45,49 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
                 .flatMap(decision -> anchors.stream().filter(anchor -> anchor.role() == Role.AUDIENCE
                         && positivelyNames(decision.answer(), anchor.text())).map(Anchor::text))
                 .distinct().toList();
-        return new TaskMeaningContract(anchors, chosen);
+        return new TaskMeaningContract(anchors, chosen, evaluationTargets(input, anchors, decisions));
+    }
+
+    /** 当前肯定研究主题与同对象绑定选择提供评价来源；多主题、示例与未来选择不被强行压成单一对象。 */
+    private static List<EvaluationTarget> evaluationTargets(String input, List<Anchor> anchors,
+            List<ConfirmedPlanDecision> decisions) {
+        var bound = new ArrayList<EvaluationTarget>();
+        for (var decision : decisions) {
+            if (decision.scope() == ConfirmedPlanDecision.Scope.UNRESOLVED
+                    || decision.scope() == ConfirmedPlanDecision.Scope.CURRENT_STATE
+                    || !decision.question().matches("(?s).*(?:评价对象|评分对象|评审对象|待评对象).*" )
+                    || decision.question().matches("(?s).*(?:授权|伦理|隐私|是否允许|新的条件|新条件).*" )) continue;
+            // 候选、未来条件和引用不是当前选择，不能反向覆盖研究主题中的对象。
+            String answer = decision.answer();
+            if (answer.matches("(?s).*(?:如果|假如|以后|未来|待确认|建议|候选|例如|示例).*")) continue;
+            var matcher = TARGET_NAME.matcher(answer);
+            while (bound.size() < 8 && matcher.find()) {
+                if (positiveTarget(answer, matcher.start())) bound.add(new EvaluationTarget(matcher.group(),
+                        decision.questionId(), matcher.start(), matcher.end()));
+            }
+        }
+        if (!bound.isEmpty()) return List.copyOf(bound);
+        var topics = anchors.stream().filter(anchor -> anchor.role() == Role.RESEARCH_TOPIC).toList();
+        if (topics.size() != 1) return List.of();
+        var topic = topics.getFirst();
+        String before = input.substring(0, topic.start());
+        int boundary = Math.max(Math.max(before.lastIndexOf('。'), before.lastIndexOf('；')), before.lastIndexOf('\n'));
+        if (!currentResearchSection(input, topic.start())
+                || before.substring(boundary + 1).matches("(?s).*(?:不研究|未研究|如果|假如|若|以后|待确认|建议|示例|例如|引用).*"))
+            return List.of();
+        var targets = new ArrayList<EvaluationTarget>();
+        var matcher = QUALITY_TARGET.matcher(topic.text());
+        while (targets.size() < 8 && matcher.find()) {
+            if (positiveTarget(topic.text(), matcher.start(1))) targets.add(new EvaluationTarget(matcher.group(1), null,
+                    topic.start() + matcher.start(1), topic.start() + matcher.end(1)));
+        }
+        return List.copyOf(targets);
+    }
+
+    /** 否定只作用于紧邻的对象动作；不能把“选择提示词、不评价作品”算成选择两个对象。 */
+    private static boolean positiveTarget(String source, int start) {
+        String prefix = source.substring(Math.max(0, start - 20), start);
+        return !prefix.matches("(?s).*(?:不是|并非|不选|不采用|不评价|不评审|不评分|排除|不要|不得|禁止|不能)(?:将|把|设为|作为)?$");
     }
 
     /** 选择只作用于实际命名的人群；仅提到、排除或推荐某对象不能放行所有受众。 */
@@ -71,7 +123,11 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
                 + "原任务要求盲法时，说明对应材料如何盲化；未要求评价时不增加评分流程。"
                 + "对象以用户任务为准，包括用户明确要求评价的下游作品；多个对象的主次关系未定时保持未决。"
                 + "已明确的表述保留并使用一次，未确认的实际选值仍保持未决；已委托设计时可提出评分尺度、参数等"
-                + "具体拟议建议及适用条件，不冒充用户确认或既有事实，不增加独立尾注。";
+                + "具体拟议建议及适用条件，不冒充用户确认或既有事实，不增加独立尾注。"
+                + (evaluationTargets.isEmpty() ? "" : "本任务已明确的评价对象为："
+                    + evaluationTargets.stream().map(EvaluationTarget::text).distinct()
+                        .collect(java.util.stream.Collectors.joining("、"))
+                    + "；直接用于对应评价步骤，不能扩大为其他对象或写成二选一。下游作品可按原任务作为验证依据，不能替换评分对象。");
     }
 
     /**
@@ -140,7 +196,7 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
     }
 
     /** 声明和主题共用来源段落范围；普通标题透明，非事实标记与明确另一研究标题不能被换行擦除。 */
-    private boolean currentResearchSection(String source, int offset) {
+    private static boolean currentResearchSection(String source, int offset) {
         boolean current = true;
         boolean asserted = true;
         for (String line : source.substring(0, offset).split("\\R")) {
@@ -156,6 +212,7 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
 
     /** 在尾注和平台条款加入之前拒绝已复现的受众移位，不假称覆盖全部语义误绑定。 */
     public void validate(String content, String field) {
+        validateEvaluationTarget(content, field);
         if (anchors.stream().noneMatch(anchor -> anchor.role() == Role.RESEARCH_TOPIC)) return;
         for (String clause : content.split("[。；;\\n]")) {
             var subject = ASSERTED_SUBJECT.matcher(clause);
@@ -173,6 +230,27 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
             }
         }
     }
+
+    /** 仅在来源明确且只评价提示词时拒绝已复现的“提示词或产物”；独立双对象和用户有效改选继续允许。 */
+    private void validateEvaluationTarget(String content, String field) {
+        if (evaluationTargets.isEmpty() || evaluationTargets.stream().anyMatch(target -> !target.text().contains("提示词"))) return;
+        for (String clause : content.split("[。；;\\n]")) {
+            for (var pattern : List.of(PROMPT_OR_WORK, WORK_AS_RATING_TARGET)) {
+                var matcher = pattern.matcher(clause);
+                while (matcher.find()) {
+                    String prefix = clause.substring(0, matcher.start());
+                    if (!positiveTarget(clause, matcher.start())
+                            || prefix.matches("(?s).*(?:不得|不能|禁止)(?:将|把|改成|写成|混为|扩大为).{0,20}$")
+                            || clause.strip().matches("^(?:如果|若|待用户另行确认).*")) continue;
+                    throw new ProviderResponseValidationException(
+                            ProviderResponseValidationException.Reason.EVALUATION_TARGET_CONFLICT, field);
+                }
+            }
+        }
+    }
+
+    /** 位置针对 effectivePrompt，或 sourceQuestionId 对应的绑定答案；不来自模型推断或其他任务资料。 */
+    public record EvaluationTarget(String text, String sourceQuestionId, int start, int end) { }
 
     /** 只排除明确的独立写作受众子句；逗号列举的研究人群和后续对象仍参与校验。 */
     private boolean namesAudienceAsSubject(String subject, String audience) {

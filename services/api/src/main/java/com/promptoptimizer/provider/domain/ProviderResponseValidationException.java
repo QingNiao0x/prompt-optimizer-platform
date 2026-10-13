@@ -58,6 +58,7 @@ public final class ProviderResponseValidationException extends ProviderException
     /** 固定修复要求不能引用或复述导致校验失败的敏感内容。 */
     public enum Reason {
         TASK_ROLE_CONFLICT("保留原文的受众与研究主题：为某人撰写不等于以该人为研究对象。直接改正误绑定段落，不在末尾补一句相反说明；用户实际指定或确认的人群继续保留。"),
+        EVALUATION_TARGET_CONFLICT("按原研究主题与同对象有效确认落实评价对象。只评价提示词时，不能改成提示词或下游产物，也不能以执行作品替换评分对象；验证材料和独立对象按用户原要求处理。直接改正评价步骤，不在末尾补相反说明。"),
         ASSESSMENT_INVALID("assessment使用合法sufficiency、presentation及最多6项gaps；SUFFICIENT时gaps为空，NEEDS_COMPLETION时只列影响本次交付的实质缺口。"),
         ASSESSMENT_DECISION_CONFLICT("实质缺口判断与待确认事项须一致。NEEDS_COMPLETION中没有USER_DECISION时，ambiguities应为空；不要把专业建议、常规执行或委托设计变成用户必须先决定的问题。确有用户授权、来源冲突或明确保留的未决选择时，保留事项并将相应缺口列为USER_DECISION，不得靠删除真实未知规避校验。"),
         INTERACTION_ACTOR_CONFLICT("保留原定问答中的主体：增强器提出关键问题、用户回答、有效确认用于生成优化提示词。不得把Plan问答改为模型或研究者先自行写执行计划再作答；直接改正错误操作化段，不在末尾追加相反要求。"),

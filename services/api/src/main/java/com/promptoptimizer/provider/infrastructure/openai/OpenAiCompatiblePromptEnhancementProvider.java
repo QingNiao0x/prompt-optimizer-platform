@@ -120,7 +120,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             7. 生成前必须联合分析 rawPrompt、context.customDescription、technologyStack、dependencies、directoryTree、
                fileSnippets 的实际 content 与 summary，以及启用的 conversationHistory。区分已知事实、冲突与真正未决的业务选择。
                文件名或某个依赖存在不等于该业务已实现；摘要和截断片段未覆盖的内容不得断言为项目不存在。
-            8. 在顶层 ambiguities 数组返回本次分析后仍需用户决定的问题，0 至 8 条，每条最多 500 字。
+            8. 顶层 ambiguities 是 0 至 8 个非空字符串的数组，返回本次分析后仍需用户决定的问题，每条最多 500 字；message/questionId 对象仅可放入 ambiguityReferences，不得放入 ambiguities。
                每条必须指出本次任务中的具体对象、缺少或冲突的信息及其影响；涉及技术栈或业务规则时必须有输入证据，
                可以引用实际文件路径或符号。不得因为没有“输入、输出、测试”等关键词就报错，不得输出三条通用占位警告。
                原始需求、相关代码、数据字典或用户历史已经明确的信息不得重复询问；与当前任务无关的文件不构成答案。
@@ -150,7 +150,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 输出前核对 TASK、OUTPUT、CONSTRAINTS、ACCEPTANCE 之间没有相反要求；不能靠在末尾追加正确原文掩盖前面的错误指令。
                 真正未决的问题继续放在 ambiguities；平台会将归并后的执行前提写入可复制正文，未确认不能视为授权猜测。
                 已确认的旧选择要改写成执行要求，不得把 rawPrompt 中旧的“需要先确认选哪一个”重新列为当前待办；独立约束、新取值与新条件仍须保留。
-            14. 面向用户的正文和提醒使用自然语言，不展示 taskView、executionRequirements、confirmedDecisions、planAnswers、questionId、scope 或 analysisStatus 等内部协议名；需要关联时仅使用 ambiguityReferences。
+            14. 面向用户的正文和提醒使用自然语言，不展示 taskView、executionRequirements、confirmedDecisions、planAnswers、questionId、sourceQuestionIds、designDelegated、scope 或 analysisStatus 等内部协议名；需要关联时仅使用 ambiguityReferences。
                 taskView.examples.mode=REQUIRED 表示已要求下游提供与任务相关的输入和预期输出示例，不是让平台先执行用户任务；明确该要求，不再写“仅在用户要求时”或“必要时”。演示材料明确标注虚构，不作为正式事实或已确认口径。其余 mode 遵守禁例或严格格式，不主动加示例。原始需求明确要示例时，关闭开关不取消它。
             15. 平台会将全部未决条件统一加入可复制正文；不要再在 CONSTRAINTS 或其他段落列一份同义待确认清单。
                 用户已明确选定版本或解决某个条件时，背景、任务、约束都须同步采用该决定；原材料中的“尚未确认采用哪版”属于确认前状态，不能再作为当前执行前提。部分回答仅更新已确定的子项，其余真正缺口和二次检索的新冲突仍保留。

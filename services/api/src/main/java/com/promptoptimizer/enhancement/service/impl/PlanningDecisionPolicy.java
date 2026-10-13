@@ -313,7 +313,8 @@ final class PlanningDecisionPolicy {
     /** 仅同一评审评分的分歧处置是已委托设计；数据冲突、纳入规则和带新条件的复合题不等价。 */
     private boolean delegatedReviewerDisagreement(String question, String raw) {
         return raw.matches("(?s).*说明[^。\\n]*(?:评价|评分|评审)[^。\\n]*分歧处理.*")
-                && question.matches("^(?:(?:(?:两名|两位|多名)?(?:独立)?评审(?:者|人员)?(?:的)?)?评分)"
+                // 题干可以省略“评分”，但仍须明确同一评审对象并完整匹配，不能删除独立数据冲突或复合选择。
+                && question.matches("^(?:(?:两名|两位|多名)?(?:独立)?评审(?:者|人员)?(?:之间|间|的)?(?:评分)?|评分)"
                         + "(?:出现|存在)?(?:分歧|不一致)(?:时|后)?(?:应|该|应当)?(?:如何|怎样|怎么)(?:处理|解决|复核|裁决)[？?]$");
     }
 
@@ -329,6 +330,9 @@ final class PlanningDecisionPolicy {
             parts.add(safe(option.recommendationReason()));
         });
         parts.addAll(question.examples());
+        // 本任务的委托不覆盖另一个研究或新增指标；对象不同即保留，不能借同样的评分词汇吞掉新决定。
+        if (parts.stream().anyMatch(part -> part.matches("(?s).*(?:其他|另一(?:个|项|组)?|新增)"
+                + "(?:研究|实验|任务|指标|对象|组别).*"))) return true;
         // 提示与选项可以提出独立条件题；不要求有“此外”等连接词才保护完整的新选择。
         if (parts.stream().anyMatch(part -> !part.equals(safe(question.question()))
                 && part.matches("(?s).*(?:时|则)[^。；;？?]{0,60}(?:是否|能否|应否|如何).*"))) return true;
@@ -991,7 +995,9 @@ final class PlanningDecisionPolicy {
         }
         for (String clause : raw.split("[。；;\\n]")) {
             if (clause.matches(".*[？?].*")) continue;
-            if (clause.matches(".*(?:当前|本次).*(?:拟定|拟开展).*(?:尚未实施|尚未执行).*")) {
+            // “当前研究尚未实施”同样是明确状态；只接收完整本任务断言，条件或另一研究前缀不提供该依据。
+            if (clause.matches(".*(?:当前|本次).*(?:拟定|拟开展).*(?:尚未实施|尚未执行).*" )
+                    || clause.matches("^(?:本(?:次)?|当前|这项|该项)研究(?:仍|尚|暂)?未(?:实施|执行|开展)$")) {
                 addRule(target, Kind.RESEARCH_STATUS, "本次研究尚未实施", clause);
             }
             if (clause.matches(".*(?:评审|评委).*盲评.*") && !UNKNOWN.matcher(clause).find()

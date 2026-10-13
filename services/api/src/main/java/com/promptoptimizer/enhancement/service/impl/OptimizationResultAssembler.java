@@ -452,7 +452,7 @@ public class OptimizationResultAssembler {
     /** 用户要求讲解某协议时保留合法代码名，其他任务不能把模型输入的内部字段当作读者操作指令。 */
     private void validateUserFacingProtocol(String text, String rawPrompt, String field) {
         if (text == null) return;
-        var names = java.util.regex.Pattern.compile("(?<![A-Za-z0-9_])(?:taskView|executionRequirements|pendingDecisions|confirmedDecisions|planAnswers|questionId)(?![A-Za-z0-9_])")
+        var names = java.util.regex.Pattern.compile("(?<![A-Za-z0-9_])(?:taskView|executionRequirements|pendingDecisions|confirmedDecisions|planAnswers|questionId|sourceQuestionIds|designDelegated)(?![A-Za-z0-9_])")
                 .matcher(text);
         while (names.find()) {
             if (rawPrompt == null || !rawPrompt.contains(names.group())) throw invalidResponse(Reason.RULE_CONFLICT, field);

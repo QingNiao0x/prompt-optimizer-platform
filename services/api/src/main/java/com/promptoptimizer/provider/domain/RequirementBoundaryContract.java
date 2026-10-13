@@ -19,10 +19,10 @@ public final class RequirementBoundaryContract {
     private static final Pattern NO_INVENTED_DATA = Pattern.compile(
             "(?:禁止|不得|不要|不允许|不能|不|拒绝)(?:使用|采用|提供|生成|构造)?(?:任何|虚构的)?(?:假设|虚构|模拟|编造)"
                     // “任何”也可位于虚构动作之后，不能漏掉“不得虚构任何数据”而授权演示例外。
-                    + "(?:(?:或|和|及|、)(?:假设|虚构|模拟|编造))*(?:的)?(?:任何|任意)?(?:数据|材料|信息|示例)"
+                    + "(?:(?:或|和|及|、)(?:假设|虚构|模拟|编造))*(?:的)?(?:任何|任意|其他|额外|新的)?(?:数据|材料|信息|示例)"
                     + "|(?:假设|虚构|模拟)(?:的)?数据(?:不得|禁止|不能)使用"
-                    + "|\\b(?:no|do not|never)\\b[^.\\r\\n]{0,25}\\b(?:hypothetical|fictional|synthetic|made-up)\\s+data\\b", FLAGS);
-    private static final Pattern DATA = Pattern.compile("(?:虚构|假设|模拟|合成|编造)(?:的|演示|示例|验证)?数据"
+                    + "|\\b(?:no|do not|never)\\b[^.\\r\\n]{0,25}\\b(?:hypothetical|fictional|synthetic|made-up)\\s+(?:data|examples?)\\b", FLAGS);
+    private static final Pattern DATA = Pattern.compile("(?:虚构|假设|模拟|合成|编造)(?:的|演示|示例|验证)?(?:任何|任意|其他|额外|新的)?数据"
             + "|\\b(?:hypothetical|fictional|synthetic|made-up)\\s+data\\b", FLAGS);
     private static final Pattern DATA_ACTION = Pattern.compile("(?:允许|可以|可用|可使|应使用|使用|构造|生成|编造|提供)"
             + "|\\b(?:allow|may|can|use|generate|construct|create|provide)\\b", FLAGS);

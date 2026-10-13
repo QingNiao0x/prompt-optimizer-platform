@@ -4,6 +4,7 @@ import com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import com.promptoptimizer.template.domain.TaskDeliveryProfile;
 import com.promptoptimizer.template.domain.TaskIntentResolver;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -203,6 +204,8 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
     /** 只把肯定交付指令的准备材料宾语视为降级；正文附方案或方法中讨论方案仍属原目标。 */
     private static boolean hasPreparationTarget(String instructions) {
         boolean prosePresent = PROSE_DELIVERABLE.matcher(PROSE_AS_PREPARATION_NAME.matcher(instructions).replaceAll("")).find();
+        boolean methodBodyDelivered = Arrays.stream(instructions.split("[。；;，,\\r\\n]"))
+                .anyMatch(clause -> clause.contains("方法部分正文") && affirmativeMatch(DELIVERY_ACTION, clause));
         boolean proseDelivered = false;
         for (String clause : instructions.split("[。；;，,\\r\\n]")) {
             String prose = PROSE_AS_PREPARATION_NAME.matcher(clause).replaceAll("");
@@ -218,7 +221,14 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
             }
             if (bodyIncludesPreparation) continue;
             // “另外”不能遮蔽明确的仅交准备材料限制；正文与空表并列的许可已在上面保留。
-            if (affirmativeMatch(PREPARATION_ONLY, clause)) return true;
+            if (affirmativeMatch(PREPARATION_ONLY, clause)) {
+                // 同一方法部分已要求实质正文时，“方法与空表”是局部并列交付；仅提纲/空表或禁正文仍是降级。
+                boolean localMethodWithTables = proseDelivered && methodBodyDelivered
+                        && clause.strip().matches("(?:方法部分|方法正文)(?:仅|只)(?:交付|提供|输出)方法(?:正文)?(?:与|和|及)空表(?:模板)?")
+                        && !WRITING_PROHIBITION.matcher(instructions).find();
+                if (localMethodWithTables) continue;
+                return true;
+            }
             if (prosePresent && ADDITIONAL_DELIVERY.matcher(clause.strip()).find()) continue;
             boolean preparationDelivery = affirmativeMatch(PREPARATION_DELIVERY, clause);
             // 正文先成立后，普通方案/附录可为并列交付；“只交方案”仍覆盖目标，后置正文也不能救前句降级。

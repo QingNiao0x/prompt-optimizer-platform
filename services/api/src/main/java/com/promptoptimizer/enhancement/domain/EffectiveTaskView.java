@@ -3,6 +3,7 @@ package com.promptoptimizer.enhancement.domain;
 import com.promptoptimizer.provider.domain.ExampleContract;
 import com.promptoptimizer.provider.domain.RequirementBoundaryContract;
 import com.promptoptimizer.template.domain.TaskIntent;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -37,10 +38,32 @@ public record EffectiveTaskView(String originalPrompt, String effectivePrompt, T
 
     /** 模型只接收执行投影；不再重复发送原始旧提问或安全事实卡，计划阶段也不扩张资料预算。 */
     public ModelInput modelInput() {
-        return new ModelInput(intent, executionRequirements.stream().map(requirement -> new ModelRequirement(
-                requirement.questionId(), requirement.subject(), requirement.statement(), requirement.destination())).toList(),
-                pendingDecisions, examples, requirementBoundaries().guidance(), meaning().anchors());
+        return new ModelInput(intent, modelRequirements(), pendingDecisions.stream().map(decision ->
+                new ModelPendingDecision(decision.questionId(), decision.question(), decision.topic(), decision.scope(),
+                        decision.answer(), decision.source(), executionRequirements.stream().anyMatch(requirement ->
+                            java.util.Objects.equals(requirement.questionId(), decision.questionId())
+                                    && requirement.subject().equals("委托要求")))).toList(),
+                examples, requirementBoundaries().guidance(), meaning().anchors());
     }
+
+    /** 仅合并自身已命名的独立事实、委托与边界；普通题答继续按原绑定问题隔离。 */
+    private List<ModelRequirement> modelRequirements() {
+        var groups = new LinkedHashMap<RequirementKey, List<ExecutionRequirement>>();
+        for (var requirement : executionRequirements) {
+            boolean selfContained = List.of("用户说明", "委托要求", "未确认边界").contains(requirement.subject());
+            var key = new RequirementKey(requirement.subject(), requirement.statement(), requirement.destination(),
+                    selfContained ? null : requirement.questionId());
+            groups.computeIfAbsent(key, ignored -> new java.util.ArrayList<>()).add(requirement);
+        }
+        return groups.values().stream().map(values -> {
+            var first = values.getFirst();
+            // 一次表达不丢来源；原始问题、全部回答及总体未决状态仍在服务端视图中。
+            var ids = values.stream().map(ExecutionRequirement::questionId).filter(java.util.Objects::nonNull).distinct().toList();
+            return new ModelRequirement(first.questionId(), first.subject(), first.statement(), first.destination(), ids);
+        }).toList();
+    }
+
+    private record RequirementKey(String subject, String statement, PromptSectionType destination, String questionId) { }
 
     /** 受众和研究主题保留各自原文来源，不让模型将写作对象升级为研究样本。 */
     public com.promptoptimizer.provider.domain.TaskMeaningContract meaning() {
@@ -54,9 +77,23 @@ public record EffectiveTaskView(String originalPrompt, String effectivePrompt, T
 
     /** 各模型适配器共用同一业务投影，不按供应商另行解释用户选择。 */
     public record ModelInput(TaskIntent intent, List<ModelRequirement> executionRequirements,
-            List<ConfirmedPlanDecision> pendingDecisions, ExampleContract examples, String requirementBoundaryGuidance,
+            List<ModelPendingDecision> pendingDecisions, ExampleContract examples, String requirementBoundaryGuidance,
             List<com.promptoptimizer.provider.domain.TaskMeaningContract.Anchor> userMeaningAnchors) { }
 
-    /** 模型只需执行表述和责任段；已解决原题与原答案保留在服务端，不再重复灌入载荷。 */
-    public record ModelRequirement(String questionId, String subject, String statement, PromptSectionType destination) { }
+    /** 委托拟议设计和既有参数未确认是两个独立状态；designDelegated 不确认取值或消除未决条件。 */
+    public record ModelPendingDecision(String questionId, String question, String topic, ConfirmedPlanDecision.Scope scope,
+            String answer, ConfirmedPlanDecision.Source source, boolean designDelegated) { }
+
+    /** 共同表述只发送一次，并保留全部绑定问题 ID；普通独立对象不因文字相同而归并。 */
+    public record ModelRequirement(String questionId, String subject, String statement, PromptSectionType destination,
+            List<String> sourceQuestionIds) {
+        public ModelRequirement {
+            sourceQuestionIds = List.copyOf(sourceQuestionIds);
+        }
+
+        /** 兼容内部旧构造方式；没有绑定 ID 时不伪造来源。 */
+        public ModelRequirement(String questionId, String subject, String statement, PromptSectionType destination) {
+            this(questionId, subject, statement, destination, questionId == null ? List.of() : List.of(questionId));
+        }
+    }
 }
