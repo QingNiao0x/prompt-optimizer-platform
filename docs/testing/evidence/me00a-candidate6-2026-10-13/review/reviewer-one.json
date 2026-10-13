@@ -1,0 +1,203 @@
+{
+  "reviewer": "one",
+  "reviewerType": "independent AI-assisted reviewer",
+  "humanExpert": false,
+  "model": "UNKNOWN",
+  "version": "UNKNOWN",
+  "reviewedAt": "2026-10-13T18:36:15.891323+08:00",
+  "scope": "Only the original requirement, source materials, identical actual answers, rubric and anonymous A/B/C works in pack.md were read for this review. No mapping, platform prompt, implementation or other reviewer was consulted.",
+  "packSha256": "27fb8750497a4f0a78fb6d8c296d51a4b2ac775db848d3382df682f8a9ab7a9f",
+  "newModelApiCalls": 0,
+  "scores": {
+    "A": {
+      "accuracy": 4,
+      "completeness": 3,
+      "clarity": 3,
+      "executability": 3
+    },
+    "B": {
+      "accuracy": 2,
+      "completeness": 3,
+      "clarity": 3,
+      "executability": 2
+    },
+    "C": {
+      "accuracy": 2,
+      "completeness": 3,
+      "clarity": 3,
+      "executability": 2
+    }
+  },
+  "mechanicalChecks": {
+    "method": "Count CJK Unified Ideographs including extension A and compatibility ideographs. Report a conservative body count after removing Markdown heading lines and leading bold section labels. There are no tables in any work.",
+    "A": {
+      "allHan": 1072,
+      "bodyWithoutHeadingLinesHan": 1064,
+      "bodyWithoutHeadingLinesAndBoldLabelsHan": 1037,
+      "body800To1200": true
+    },
+    "B": {
+      "allHan": 895,
+      "bodyWithoutHeadingLinesHan": 887,
+      "bodyWithoutHeadingLinesAndBoldLabelsHan": 863,
+      "body800To1200": true
+    },
+    "C": {
+      "allHan": 1388,
+      "bodyWithoutHeadingLinesHan": 1380,
+      "bodyWithoutHeadingLinesAndBoldLabelsHan": 1340,
+      "body800To1200": false
+    }
+  },
+  "works": {
+    "A": {
+      "evidence": [
+        {
+          "location": "信息流与公平对照",
+          "quote": "两组先取得并封存同一案例的实际答案，再让两组获得逐字相同的信息",
+          "assessment": "明确控制实际答案内容并封存，优于只声明信息量相同；没有把用户问答替换成模型列计划。"
+        },
+        {
+          "location": "盲法与评审；评价指标与统计检验",
+          "quote": "评分依据材料包括原始任务、实际确认信息、提示词文本及评分细则",
+          "assessment": "评审能够参照原任务和实际确认信息；四维明确针对提示词质量，没有转成评价回答。"
+        },
+        {
+          "location": "任务与分配；全文",
+          "quote": "4类任务，每类5个，共20个任务",
+          "assessment": "保留任务数量、每模式每任务3次、两名盲评及分歧处理；全文为拟议设计，未编造观察值、显著性、引用或实施事实。"
+        }
+      ],
+      "weaknesses": [
+        {
+          "location": "开篇；任务与分配；评价指标",
+          "evidence": "具体类别、任务来源、答题提供者、评分尺度和等级描述多次留待实施前确定。",
+          "impact": "实际题答已委托推荐设计，仍应给出有适用条件的推荐类别、回答取得步骤和可用评分锚点；目前常规设计补全不足。"
+        },
+        {
+          "location": "信息流与公平对照；任务与分配",
+          "evidence": "两个同信息对照没有分别命名其操作流程，随机化只具体说明原两模式的6次运行。",
+          "impact": "公平原则正确，但尚需说明新增两个条件各自如何操作、是否重复3次和如何纳入随机顺序，才能稳定复现四条件比较。"
+        },
+        {
+          "location": "开篇",
+          "evidence": "把“参与研究生对象”列为待确定事项。",
+          "impact": "原文“为研究生撰写”首先界定读者；这里尚未选定研究生为样本，但用语容易继承题干中未经确认的样本假设，应保持参与者身份开放。"
+        }
+      ],
+      "severe": [],
+      "assessment": "三者中目标保持与实际同信息规则最清楚。可作为需进一步补充操作细节的方法草案；相对获胜不表示所有可执行性缺口已经通过。"
+    },
+    "B": {
+      "evidence": [
+        {
+          "location": "任务与材料；参与者与Plan问答",
+          "quote": "该部分为推荐设计",
+          "assessment": "确实给出了任务编制、招募、回答者与质量控制建议；明确拟议，因此不把推荐招募研究生本身当作捏造已确认参与者。"
+        },
+        {
+          "location": "随机化、盲法与评价",
+          "quote": "两组均接收并可使用同一原始任务与同一份实际确认信息",
+          "assessment": "保留同信息要求及提示词质量四维，但还缺实际答案封存/复用步骤和两个对照各自流程。"
+        },
+        {
+          "location": "全文",
+          "evidence": "正文保守计数863个汉字，尚未实施、4类各5个、每模式每任务3次均保留。",
+          "assessment": "字数达标，没有编造效应量、P值或研究结果。"
+        }
+      ],
+      "weaknesses": [
+        {
+          "location": "开篇",
+          "quote": "用户已确认无既有参数与真实数据",
+          "impact": "实际回答只是没有额外真实数据且不确认既有参数，不能升级为确认不存在任何参数或真实数据。"
+        },
+        {
+          "location": "任务与材料",
+          "quote": "可调整任务数量或类别，但须保持四类各5个",
+          "impact": "可调整任务数量与用户固定20个的要求自相矛盾，应明确只允许调整类别内容而非数量。"
+        },
+        {
+          "location": "随机化、盲法与评价",
+          "evidence": "仅声明同信息，两种公平对照没有独立操作定义；评分尺度和维度锚点也未给出。",
+          "impact": "虽然比A补了更多材料与招募细节，核心四条件比较仍未充分落实。"
+        }
+      ],
+      "severe": [
+        {
+          "code": "RESEARCH_TARGET_NARROWED_FROM_WRITING_REQUEST",
+          "location": "开篇；任务与材料",
+          "quote": "考察Plan问答对研究生撰写中文研究设计方法部分时提示词质量的影响",
+          "impact": "把“为研究生撰写方法部分”的写作交付要求并入研究对象/任务领域，随后四类任务全部变成研究设计写作环节。原研究目标是Plan问答对提示词质量的影响；文本没有把这一缩窄作为可选择的受限场景并保留原目标，已改变主研究范围。"
+        },
+        {
+          "code": "RATERS_LACK_REFERENCE_REQUIREMENTS",
+          "location": "随机化、盲法与评价",
+          "quote": "评审所见材料仅为生成的提示词",
+          "impact": "明确排除原始任务和实际确认信息，评审无法据此核对准确性和完整性是否保留目标、约束及答案。核心质量测量缺少参照，不能仅靠写出四维名称判为有效。"
+        }
+      ],
+      "assessment": "提供了一些可用的拟议实施细节，但研究范围误读及评审参照缺失阻断其作为原任务方法正文直接使用。"
+    },
+    "C": {
+      "evidence": [
+        {
+          "location": "任务与重复；评价指标",
+          "evidence": "保留4类各5个、每模式每任务独立3次，并分别定义提示词准确性、完整性、清晰度与可执行性。",
+          "assessment": "四维操作定义比A/B更明确，主体仍为提示词。"
+        },
+        {
+          "location": "随机化；盲法；统计分析",
+          "evidence": "提出条件顺序平衡、两名盲评与分歧仲裁，并按未来分布与结构选择分析。",
+          "assessment": "这些是拟议安排，没有把建议写成已实施事实；要求未来报告效应量不等于当前虚构效应量。"
+        }
+      ],
+      "weaknesses": [
+        {
+          "location": "研究条件与操纵；任务与重复",
+          "evidence": "直接组由参与者改写，Plan组与系统问答后形成结果；重复可同人跨时间或不同参与者完成，最终选择仍未落实。",
+          "impact": "需要明确两组提示词形成主体和修订机会相同，并确定重复单位；否则工具辅助和重复依赖可能混入比较。"
+        },
+        {
+          "location": "首段；伦理与实施前提",
+          "evidence": "首段要求所有任务、材料与参数均需经过伦理审查，后文才改为涉及参与者时处理。",
+          "impact": "把部分有条件的实施边界普遍化，建议和适用条件衔接不够一致。"
+        }
+      ],
+      "severe": [
+        {
+          "code": "SAME_INFORMATION_RULE_REVERSED",
+          "location": "研究条件与操纵",
+          "quote": "对照B获得同等数量的确认信息，但信息内容与任务无实质关联",
+          "impact": "用户要求另设两组获得相同确认信息的公平对照；该组刻意换成不相关信息，信息量相同不能替代同一实际答案，直接反转核心公平要求。"
+        },
+        {
+          "code": "BODY_LENGTH_EXCEEDS_EXPLICIT_LIMIT",
+          "location": "全文",
+          "evidence": "无附表；连独立标题和粗体小节标签都剔除后仍有1340个汉字。",
+          "impact": "超过明确的1200汉字上限，不能用附表另计解释。"
+        }
+      ],
+      "assessment": "维度定义与方法细节较多，但同信息规则被直接反转且正文超限，属于双方比较中必须单独保留的严重失败。"
+    }
+  },
+  "comparisons": {
+    "AB": {
+      "verdict": "A_WIN",
+      "reason": "A保留提示词质量这一研究目标，并给评审原任务和实际确认信息；B将写作交付要求缩为研究任务领域，且明确只让评审看生成提示词。A虽推荐设计与四条件细节仍不充分，其目标和关键测量参照更忠实。"
+    },
+    "AC": {
+      "verdict": "A_WIN",
+      "reason": "A要求封存并逐字复用同一案例实际答案且字数达标；C把一公平对照改成无实质关联的信息并且正文至少1340汉字。C较具体的维度定义不能抵消核心规则反转。"
+    },
+    "BC": {
+      "verdict": "BOTH_FAIL",
+      "reason": "B改变主研究范围且不给评审任务/确认信息参照；C直接违反两公平对照获得相同信息的要求，并超出字数上限。两者各有核心失败，不以平均分或篇幅比较判为平局或合格。"
+    }
+  },
+  "limitations": [
+    "These are AI-assisted judgments, not human expert review or professional-method certification.",
+    "The review assesses only these three saved works and does not attribute failures to enhancement, assembly or downstream stages.",
+    "An A_WIN judgment is relative; A still requires completion of control procedures, routine recommendations and scoring anchors."
+  ]
+}

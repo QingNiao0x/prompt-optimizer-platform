@@ -1,0 +1,133 @@
+{
+  "status": 200,
+  "elapsedMs": 22476,
+  "body": {
+    "requestId": "554f527e-5545-409c-912a-75e4bf930815",
+    "data": {
+      "summary": "已理解目标：为研究生撰写一份尚未实施的中文研究设计方法部分，研究 Plan 问答对提示词质量的影响，保留 4 类任务×5 个共 20 个任务、每模式每任务独立重复 3 次、两名独立评审盲评、直接增强与 Plan 比较、两组同信息公平对照、随机化与盲法、准确性/完整性/清晰度/可执行性评价、分歧处理，以及依据未来数据分布和配对结构选择统计检验的原则；正文 800–1200 汉字，附表另计，不提供代码，不编造数据、效应量、P 值、参考文献或显著性结论。仍需确认少数会改变研究口径或授权范围的关键事实。",
+      "questions": [
+        {
+          "id": "task_source",
+          "question": "20 个任务（4 类×5 个）的具体任务内容从哪里来？",
+          "hint": "任务来源决定研究可复现性和是否涉及真实业务材料；若尚未确定，可说明拟采用的来源与筛选标准。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "从公开学术写作任务库中按四类各选 5 个，并记录来源与筛选标准",
+            "由研究者根据研究生常见写作场景自行拟定，并请专家评审确认代表性",
+            "使用已获授权的真实课程作业题目，脱敏后使用"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "task_categories",
+          "question": "4 类任务分别是什么？",
+          "hint": "类别划分直接影响任务设计、评分维度和结论适用范围；若尚未最终确定，可给出拟采用的分类及依据。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "文献综述、研究问题提出、方法设计、结果讨论",
+            "摘要写作、引言写作、方法写作、讨论写作",
+            "概念解释、方案设计、论证评估、文本修改"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "participants",
+          "question": "参与生成或回答的研究生对象如何确定？",
+          "hint": "参与者来源、人数和招募方式影响研究可行性与伦理审查；若尚未确定，可说明拟采用的范围和招募计划。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "某高校在读研究生，通过公开招募，预计 20–30 人，需伦理审查",
+            "不招募真实参与者，由研究者模拟用户回答确认信息",
+            "使用已有课程学生作为便利样本，需课程教师同意"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "plan_answers",
+          "question": "Plan 问答中用户对澄清问题的回答由谁提供、如何取得？",
+          "hint": "公平对照要求两组获得相同确认信息，因此必须先取得并封存实际答案；回答来源决定同信息对照能否成立。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "real_users",
+              "label": "真实用户回答",
+              "description": "由参与研究的研究生实际回答 Plan 提出的澄清问题，回答内容封存后用于同信息对照。",
+              "answer": "由参与研究的研究生实际回答 Plan 提出的澄清问题，回答内容封存后逐字提供给同信息对照组。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "researcher_simulated",
+              "label": "研究者模拟回答",
+              "description": "由研究者根据预设脚本模拟用户回答，回答内容封存后用于同信息对照。",
+              "answer": "由研究者根据预设脚本模拟用户回答，回答内容封存后逐字提供给同信息对照组。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "expert_panel",
+              "label": "专家小组统一回答",
+              "description": "由专家小组对每个任务的澄清问题给出统一回答，封存后用于同信息对照。",
+              "answer": "由专家小组对每个任务的澄清问题给出统一回答，封存后逐字提供给同信息对照组。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "ethics_approval",
+          "question": "本研究是否涉及需要伦理审查或知情同意的事项？",
+          "hint": "涉及人类参与者、真实作业或可识别信息时，伦理审查和知情同意是必要事实；若尚未确定，可说明拟申请或豁免的计划。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "required",
+              "label": "需要伦理审查",
+              "description": "研究涉及人类参与者或可识别信息，将申请伦理审查并取得知情同意。",
+              "answer": "研究涉及人类参与者或可识别信息，将申请伦理审查并取得知情同意。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "exempt",
+              "label": "申请豁免",
+              "description": "研究使用公开任务或匿名数据，将向伦理委员会申请豁免。",
+              "answer": "研究使用公开任务或匿名数据，将向伦理委员会申请豁免。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "not_applicable",
+              "label": "不涉及",
+              "description": "研究不涉及人类参与者或可识别信息，无需伦理审查。",
+              "answer": "研究不涉及人类参与者或可识别信息，无需伦理审查。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 21056,
+      "planId": "ca8cbbbd-8670-4e16-bb91-bef83d1b7b53",
+      "planningContext": {
+        "contextId": "e9b1002a-855f-4f61-92c8-6b16dbc98246",
+        "version": "sha256:88e9ec82ccf032927c627c2e880a44237fdd74fd45865219f12aa46427ab38d1"
+      },
+      "expiresAt": "2026-10-13T10:55:48.530073100Z"
+    }
+  }
+}

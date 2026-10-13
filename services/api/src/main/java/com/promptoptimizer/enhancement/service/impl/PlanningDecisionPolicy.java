@@ -279,6 +279,14 @@ final class PlanningDecisionPolicy {
 
     /** 选项可能省略题干中的未核验条件，仍须按同一前提校验，不能靠省略关键词绕过。 */
     void validateCandidate(String candidate, String question, String field) {
+        var meaning = input.taskView() == null
+                ? com.promptoptimizer.provider.domain.TaskMeaningContract.from(safe(input.rawPrompt()), List.of())
+                : input.taskView().meaning();
+        String effective = input.taskView() == null ? safe(input.rawPrompt()) : input.taskView().effectivePrompt();
+        List<String> populationEvidence = java.util.stream.Stream.concat(
+                java.util.stream.Stream.of(safe(input.contextDescription())), sources(input).stream().map(Source::text)).toList();
+        // 本重载在每道保留问题的 hint 校验时必经，角色错误进入 Provider 现有修复预算，不默默删题。
+        meaning.validatePlanningQuestion(safe(question), effective, populationEvidence);
         validateCandidate(candidate, field);
         eligibilityGuard.validate(candidate, question, field);
     }
@@ -294,12 +302,19 @@ final class PlanningDecisionPolicy {
         String question = candidate.question();
         boolean scoring = raw.matches("(?s).*说明[^。\\n]*(?:评价|评估).*" )
                 && question.matches("(?s).*(?:评分方式|评分量表|评分尺度|评分标准).*" );
-        boolean disagreement = raw.contains("分歧处理") && question.matches("(?s).*分歧.*(?:处理|解决).*" );
+        boolean disagreement = delegatedReviewerDisagreement(question, raw);
         boolean randomization = raw.matches("(?s).*说明[^。\\n]*随机化.*" ) && question.contains("随机化");
         boolean parity = hasDecision(Kind.INFORMATION_PARITY)
                 && question.matches("(?s).*(?:相同|同样)[^。\\n]*确认信息.*(?:方式|如何|流程).*|"
                         + "(?s).*(?:如何|方式|流程)[^。\\n]*(?:相同|同样)[^。\\n]*确认信息.*");
         return scoring || disagreement || randomization || parity;
+    }
+
+    /** 仅同一评审评分的分歧处置是已委托设计；数据冲突、纳入规则和带新条件的复合题不等价。 */
+    private boolean delegatedReviewerDisagreement(String question, String raw) {
+        return raw.matches("(?s).*说明[^。\\n]*(?:评价|评分|评审)[^。\\n]*分歧处理.*")
+                && question.matches("^(?:(?:(?:两名|两位|多名)?(?:独立)?评审(?:者|人员)?(?:的)?)?评分)"
+                        + "(?:出现|存在)?(?:分歧|不一致)(?:时|后)?(?:应|该|应当)?(?:如何|怎样|怎么)(?:处理|解决|复核|裁决)[？?]$");
     }
 
     /** 删除整题前检查全部用户可见信息，提示或候选中的授权、资料范围不能随委托设计一起消失。 */
@@ -314,11 +329,15 @@ final class PlanningDecisionPolicy {
             parts.add(safe(option.recommendationReason()));
         });
         parts.addAll(question.examples());
+        // 提示与选项可以提出独立条件题；不要求有“此外”等连接词才保护完整的新选择。
+        if (parts.stream().anyMatch(part -> !part.equals(safe(question.question()))
+                && part.matches("(?s).*(?:时|则)[^。；;？?]{0,60}(?:是否|能否|应否|如何).*"))) return true;
         // 可见题干可能只写“评分方式”，独立决定却出现在选项或示例中；此时必须保留整题。
         return parts.stream().anyMatch(part -> part.matches("(?s).*(?:实际(?:采用|数据|样本|研究地区)"
                 + "|现有(?:数据|样本|任务材料)|已(?:经)?(?:采用|获准|取得)|授权|伦理|权限|隐私"
                 + "|真实(?:数据|资料|参与者|地区)|地区|机构|个人资料|纳入|排除|剔除|分母"
-                + "|数据来源|来源冲突|来源不一致|由(?:我|用户)决定|先让(?:我|用户)确认).*"));
+                + "|数据来源|来源冲突|来源不一致|由(?:我|用户)决定|先让(?:我|用户)确认"
+                + "|(?:另需|另外|此外|还需|同时还)[^。；;]{0,120}(?:确认|决定|选择|是否|如何)).*"));
     }
 
     /** 未来按分布选检验的任务只允许拟候选，不把提前定案当作等价方案；否定按动作邻近核对。 */

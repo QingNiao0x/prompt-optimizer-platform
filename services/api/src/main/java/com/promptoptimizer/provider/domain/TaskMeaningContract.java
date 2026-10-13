@@ -70,7 +70,88 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
                 + "评审所见材料及各项指标作用的对象。主题在背景出现不能替代步骤中的对象绑定。"
                 + "原任务要求盲法时，说明对应材料如何盲化；未要求评价时不增加评分流程。"
                 + "对象以用户任务为准，包括用户明确要求评价的下游作品；多个对象的主次关系未定时保持未决。"
-                + "已明确的表述保留并使用一次，不代填未知评分尺度、参数，不增加独立尾注。";
+                + "已明确的表述保留并使用一次，未确认的实际选值仍保持未决；已委托设计时可提出评分尺度、参数等"
+                + "具体拟议建议及适用条件，不冒充用户确认或既有事实，不增加独立尾注。";
+    }
+
+    /**
+     * 研究提问不能把写作受众预设为参与者；真正的人群选择问题和有本任务来源的对象声明仍允许。
+     * 资料只提供支持，不从模型候选、测试夹具或假设句反向生成用户选择。
+     */
+    public void validatePlanningQuestion(String question, String effectiveInput, List<String> researchEvidence) {
+        if (anchors.stream().noneMatch(anchor -> anchor.role() == Role.RESEARCH_TOPIC)) return;
+        for (Anchor audience : anchors) {
+            if (audience.role() != Role.AUDIENCE || !presupposesParticipant(question, audience.text())) continue;
+            boolean supported = confirmedSubjects.contains(audience.text())
+                    || explicitlyStudiesAudience(effectiveInput, audience.text())
+                    || researchEvidence.stream().anyMatch(source -> declaresCurrentPopulation(source, audience.text()));
+            if (!supported) throw new ProviderResponseValidationException(
+                    ProviderResponseValidationException.Reason.TASK_ROLE_CONFLICT, "questions.question");
+        }
+    }
+
+    /** 只拦截已复现的参与/招募身份预设；身份本身是条件或是否题时仍交用户澄清。 */
+    private boolean presupposesParticipant(String question, String audience) {
+        int named = question.indexOf(audience);
+        if (named < 0) return false;
+        String prefix = question.substring(0, named);
+        if (prefix.matches("(?s).*(?:是否|能否|要不要|需不需要|如果|假如|若|建议|可考虑|候选).*")) return false;
+        String subject = Pattern.quote(audience);
+        return question.matches("(?s).*(?:参与[^，,。；;？?]{0,40}的|招募的)" + subject + ".*")
+                || question.matches("(?s).*" + subject + "(?:对象|参与者|受试者|的招募).*");
+    }
+
+    /** 原研究主题可明确包含同一人群，但否定、未来条件及示例中的主题不提供当前选择。 */
+    private boolean explicitlyStudiesAudience(String effectiveInput, String audience) {
+        if (declaresCurrentPopulation(effectiveInput, audience)) return true;
+        for (Anchor topic : anchors) {
+            if (topic.role() != Role.RESEARCH_TOPIC || !topic.text().contains(audience)
+                    || topic.end() > effectiveInput.length()
+                    || !currentResearchSection(effectiveInput, topic.start())) continue;
+            String before = effectiveInput.substring(0, topic.start());
+            int boundary = Math.max(Math.max(before.lastIndexOf('。'), before.lastIndexOf('；')), before.lastIndexOf('\n'));
+            String prefix = before.substring(boundary + 1);
+            if (prefix.endsWith("研究") && !prefix.matches("(?s).*(?:不|未|如果|假如|若|以后|待确认|建议|示例|例如).*")) return true;
+        }
+        return false;
+    }
+
+    /** 仅本研究的完整肯定对象声明可支持角色复用，另一研究、待确认或推荐不成为支持。 */
+    private boolean declaresCurrentPopulation(String source, String audience) {
+        String subject = Pattern.quote(audience);
+        String role = "(?:(?:本(?:次)?研究(?:的)?)?(?:研究对象|招募对象|受试者人群|参与者)|本(?:次)?研究对象)";
+        String separator = "(?:[、，,]|和|及|与)";
+        var lines = Pattern.compile("(?m)^.*$").matcher(source);
+        while (lines.find()) {
+            String line = lines.group();
+            if (!currentResearchSection(source, lines.end())) continue;
+            var heading = Pattern.compile("^\\s*([^，,。；;：:]{1,60})[：:](.*)$").matcher(line);
+            if (heading.matches() && !heading.group(1).matches(role)) {
+                line = heading.group(2);
+            }
+            for (String clause : line.split("[。；;]")) {
+                if (clause.matches("(?s).*(?:尚未确定|未确定|待定|待确认|确认后|如果|假如|以后|未来|建议|可考虑|示例|例如|不是|并非|不采用|不招募|排除).*")) continue;
+                if (clause.strip().matches(role + "(?:为|是|确定为|[：:])\\s*"
+                        + "(?:[^，,、]{1,30}" + separator + ")*" + subject
+                        + "(?:" + separator + "[^，,、]{1,30})*")) return true;
+            }
+        }
+        return false;
+    }
+
+    /** 声明和主题共用来源段落范围；普通标题透明，非事实标记与明确另一研究标题不能被换行擦除。 */
+    private boolean currentResearchSection(String source, int offset) {
+        boolean current = true;
+        boolean asserted = true;
+        for (String line : source.substring(0, offset).split("\\R")) {
+            var marker = Pattern.compile("^\\s*([^，,。；;：:]{1,60})[：:].*$").matcher(line);
+            if (!marker.matches()) continue;
+            String heading = marker.group(1);
+            if (heading.matches("(?:示例|例如|假设|建议|可考虑|候选|如果|假如|若|以后|未来|待确认|尚未确定).*")) asserted = false;
+            else if (heading.matches("本研究|本次研究|当前研究")) current = true;
+            else if (heading.endsWith("研究")) current = false;
+        }
+        return current && asserted;
     }
 
     /** 在尾注和平台条款加入之前拒绝已复现的受众移位，不假称覆盖全部语义误绑定。 */

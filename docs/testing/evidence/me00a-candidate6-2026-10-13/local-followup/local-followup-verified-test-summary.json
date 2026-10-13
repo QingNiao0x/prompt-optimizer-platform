@@ -1,0 +1,2810 @@
+{
+  "startedAt": "2026-10-13T11:10:22.5334145+00:00",
+  "finishedAt": "2026-10-13T11:11:25.6749768+00:00",
+  "exitCode": 0,
+  "tests": [
+    "ResearchEvaluationGuidanceTest",
+    "ResearchEvaluationRequestTest",
+    "DelegatedPlanAnswerProjectionTest",
+    "EffectiveTaskViewTest",
+    "OptimizationResultAssemblerTest",
+    "PlanningSessionServiceTest",
+    "PlanQuestionFilterTest",
+    "BarePartialConfirmationTest",
+    "CurrentParameterConfirmationScopeTest",
+    "ConfirmationBoundaryRegressionTest",
+    "ConditionalFactAndResearchReminderRegressionTest",
+    "DecisionStateScopeRegressionTest",
+    "DerivedParameterEvidenceRegressionTest",
+    "BoundProfessionalReminderTest",
+    "CompositePendingReminderReplayRegressionTest",
+    "BoundStateReminderCompactionTest",
+    "BoundDefinitionPendingRegressionTest",
+    "ExecutionContractAssemblyTest",
+    "TaskMeaningRegressionTest",
+    "DelegatedResearchQuestionRegressionTest",
+    "MissingPresentationResponseTest",
+    "OpenAiCompatiblePromptEnhancementProviderTest",
+    "OpenAiCompatibleValidatedResponseTest",
+    "SharedPlanBoundaryReplayTest",
+    "ExampleBoundaryCombinationTest",
+    "ResearchPlanningBoundaryRegressionTest",
+    "PlanAmbiguityMergeTest",
+    "PlanReminderFinalizationTest",
+    "PlanReminderStateRegressionTest",
+    "PendingReminderIdentityRegressionTest",
+    "HospitalReminderAliasRegressionTest",
+    "FullPendingReminderCoverageTest",
+    "FidelityReminderReplayTest",
+    "NamedIdentifierReminderCoverageTest",
+    "RequirementBoundaryRegressionTest",
+    "RequirementBoundaryProviderTest",
+    "ExampleContractTest",
+    "OptimizationPlanningServiceTest"
+  ],
+  "command": "mvn -o -q -f services/api/pom.xml -Dtest=ResearchEvaluationGuidanceTest,ResearchEvaluationRequestTest,DelegatedPlanAnswerProjectionTest,EffectiveTaskViewTest,OptimizationResultAssemblerTest,PlanningSessionServiceTest,PlanQuestionFilterTest,BarePartialConfirmationTest,CurrentParameterConfirmationScopeTest,ConfirmationBoundaryRegressionTest,ConditionalFactAndResearchReminderRegressionTest,DecisionStateScopeRegressionTest,DerivedParameterEvidenceRegressionTest,BoundProfessionalReminderTest,CompositePendingReminderReplayRegressionTest,BoundStateReminderCompactionTest,BoundDefinitionPendingRegressionTest,ExecutionContractAssemblyTest,TaskMeaningRegressionTest,DelegatedResearchQuestionRegressionTest,MissingPresentationResponseTest,OpenAiCompatiblePromptEnhancementProviderTest,OpenAiCompatibleValidatedResponseTest,SharedPlanBoundaryReplayTest,ExampleBoundaryCombinationTest,ResearchPlanningBoundaryRegressionTest,PlanAmbiguityMergeTest,PlanReminderFinalizationTest,PlanReminderStateRegressionTest,PendingReminderIdentityRegressionTest,HospitalReminderAliasRegressionTest,FullPendingReminderCoverageTest,FidelityReminderReplayTest,NamedIdentifierReminderCoverageTest,RequirementBoundaryRegressionTest,RequirementBoundaryProviderTest,ExampleContractTest,OptimizationPlanningServiceTest test",
+  "javaHome": "E:\\Delelop\\Java\\jdk-21",
+  "suites": [
+    {
+      "name": "ResearchEvaluationGuidanceTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "deea9a2b5916749a881562b5997c4cad050af99693512db93b1dc564fac37afb",
+      "cases": [
+        {
+          "name": "legacyPromptEntryDoesNotInventAnchorSources",
+          "outcome": "PASS"
+        },
+        {
+          "name": "alreadyExplicitEvaluationKeepsItsScopeAndLeavesUnknownParametersOpen",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ordinaryTasksAndAnAudienceAloneReceiveNoResearchGuidance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aResearchTopicAloneDoesNotAuthorizeANewRatingWorkflow",
+          "outcome": "PASS"
+        },
+        {
+          "name": "independentTopicsKeepTheirOwnSourceRanges",
+          "outcome": "PASS"
+        },
+        {
+          "name": "actualDownstreamWorkRemainsTheUserSourcedTarget",
+          "outcome": "PASS"
+        },
+        {
+          "name": "capturedResearchTopicReachesTheExistingEvaluationStepWithItsSource",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "ResearchEvaluationRequestTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "f7b9d0cc50cf7dbf1f599a687f13a92dbe91e93941bdf086bee38736a9c11024",
+      "cases": [
+        {
+          "name": "bothEnhancementEntriesSendGuidanceAndTheSameSourceAnchor(boolean)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "bothEnhancementEntriesSendGuidanceAndTheSameSourceAnchor(boolean)[2]",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "DelegatedPlanAnswerProjectionTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "e3e7f35e486989cb7a2a43493bf10beb0308c5657c55f6325c74464d68309a76",
+      "cases": [
+        {
+          "name": "aSelfContainedActualChoiceIsNotErasedByRefusalToConfirmOtherParameters",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aRefusedNamedParameterIsNotAConditionalRule",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aConditionalNonconfirmationRuleDoesNotAssertACurrentlyUnchosenParameter",
+          "outcome": "PASS"
+        },
+        {
+          "name": "independentlyScopedFactsRemainSeparateWhenNeitherMethodIsConfirmed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aSelfContainedDeliveryChoiceIsNotClassifiedAsAResearchState",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aConditionalRefusalKeepsItsConditionAndDoesNotBecomeAnIndependentBoundary",
+          "outcome": "PASS"
+        },
+        {
+          "name": "bareChoicesAndPartialCurrentStateRemainUsableWithoutConfirmingTheOtherParameter",
+          "outcome": "PASS"
+        },
+        {
+          "name": "futureConfirmationAndRefusedParametersCannotResolveBoundOldChoices",
+          "outcome": "PASS"
+        },
+        {
+          "name": "actualProviderResponseCanBeAssembledWithoutSixInventedParameterAssignments",
+          "outcome": "PASS"
+        },
+        {
+          "name": "capturedResearchAnswersKeepFactsDelegationAndUnchosenParametersSeparate",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aMaterialStatementCannotHideAConnectedActualMethodChoice",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "EffectiveTaskViewTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "1d4654e4811fad07c03e1c268b08b3ff6d901ebb1ac29a06ef2f99fe81820bbb",
+      "cases": [
+        {
+          "name": "viewKeepsOriginalAndReplacesOnlyTheBoundOldChoice",
+          "outcome": "PASS"
+        },
+        {
+          "name": "capturedSortingInstructionsCoverTheActuallyConfirmedChoices",
+          "outcome": "PASS"
+        },
+        {
+          "name": "capturedResearchClausesAndLayoutSpacesDoNotReintroduceTheWholeAnswer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "quotedCodeAndNumericAssignmentPrefixesAreNotCoverage",
+          "outcome": "PASS"
+        },
+        {
+          "name": "quotedAndFencedOldQuestionsAreNotCurrentInstructions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aNegatedOrHypotheticalValueDoesNotCountAsImplemented",
+          "outcome": "PASS"
+        },
+        {
+          "name": "naturalEquivalentUsesOneExpressionAcrossTheFourParts",
+          "outcome": "PASS"
+        },
+        {
+          "name": "capturedProWordOrderPreservesTheSameBoundObjectAndFullValues",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oneMissingChildRestoresOnlyThatChild",
+          "outcome": "PASS"
+        },
+        {
+          "name": "sameValueOnAnotherInstitutionDoesNotCoverABoundBareAnswer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "numericOperatorAndIdentifierBoundariesRemainDistinct",
+          "outcome": "PASS"
+        },
+        {
+          "name": "futureConfirmationDoesNotSetAnyCurrentChoice",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "OptimizationResultAssemblerTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "67adb4c730448346dca2536ca07d180422a936a32ee5f38d77c77960b6a893fa",
+      "cases": [
+        {
+          "name": "shouldNotPrintTheSameConfirmedDeliveryChoiceTwice",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotDuplicateAnExplicitPendingQuestionAlreadyCoveredByTheWholeProviderReminder",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepServerDetectedContextConflictEvenIfProviderReturnsNoAmbiguity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldStillRejectSensitiveFindingsAndMissingSectionsWhenReferencesAreInvalid",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectInvalidOrSensitiveFindingsWithoutEchoingThem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepDifferentModelVersionsWhenTheirInternalSpacingChangesTheValue",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotAppendUnrelatedDocumentRuleToAnotherTask",
+          "outcome": "PASS"
+        },
+        {
+          "name": "copiesTheNewsBodyWritingPlanIntoOutputInBothDirectAndBoundPlanModes",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldProduceFinalPromptFromConfirmedAnswersAndRemoveClarifications",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldPreferModelAssessmentAndSynchronizeClarificationSection",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldReadLegacyClarificationsWithoutRestoringGenericWarnings",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldCarryTheExactPlanBoundFactCardsIntoTheFinalPrompt",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepServerDetectedPostPlanGapsEvenWhenProviderReturnsNoAmbiguities",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldExposeContextCoverageWarningsWithoutRevealingProtectedPaths",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotRepeatAnAlreadyPrintedCurrentStateOrVerifiedRule",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewUnresolvedFindingAfterPlanConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepExplicitRawPendingQuestionsWhenDirectProviderReturnsAnEmptyList",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotReappendIrrelevantBoundCardsOrBuildWarnings",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDisplayOneContextWarningWhenSourcesDifferOnlyInSpacingAndPunctuation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepDirectEnhancementIdenticalWhenOptionalReferencesAreInvalid",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldPreserveSourcedBusinessRuleWithoutPromotingDocumentInstructions",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "PlanningSessionServiceTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "96f7666d5bb7e23715bbe5ca263ec25e2929337f36ed11cc2890287b3bc86f0c",
+      "cases": [
+        {
+          "name": "shouldUseResearchFileFactsInsteadOfRepeatingRegionAndDataQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectContextAndPlanOwnedByAnotherAuthenticatedUser",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldCarryBusinessRulesFromSolutionDocumentAlongsideProjectStackIntoPlanDigest",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldExcerptUploadedAnalyticsSourceInsteadOfAskingTheUserToLocateIt",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectAChangedContextOwnerOrVersion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectExpiredContextAndPlanSessions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectIncompleteAnswersAndReuseOnlyAnIdenticalContextVersion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldBindAnswersToTheExactPlanAndRestoreServerQuestionCopy",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepUploadedTestsInReportWithoutPromotingTheirExamplesIntoPlanOrFinalFacts",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldAskQuestionsFromTheAnalyzedContextInsteadOfRepeatingKnownFacts",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepSolutionDocumentWhenManyCodeFilesAppearBeforeItInTheRequest",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldAnalyzeMixedCodeAndSolutionFilesBeforeSendingTheirSafeDigestToPlanningProvider",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldFilterProtectedFilesAndExposeOnlyAPlanningDigest",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "PlanQuestionFilterTest",
+      "tests": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "80e8bb5eb3f3f79b2371f36024aab1545f82a44be19212739e0c3534d89b8690",
+      "cases": [
+        {
+          "name": "shouldNotReaskExplicitWritingLanguageOrConfuseSourceLanguage",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDelegateOnlyTestOptionsWhoseEveryBranchIsAlreadyRequired",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMergeParaphrasesOfSingleKnownDimensionWithoutDroppingCompoundQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepIndependentBusinessDecisionsRegardlessOfQuestionOrder",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDelegateAlreadyRequestedComparisonPresentationButKeepNewLegalDecision",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepConflictsUnknownFactsAndCompoundQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotAskKnownFrameworkAndShouldKeepConflictOrUnknownFramework",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldTrustOnlyUserHistoryAndExplicitSafeDigestFacts",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotReopenAnExplicitlySelectedFieldConstantOrTrustTestArrays",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewTestRequirementsInLabelsDescriptionsAndQuestionReasons",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepOpenImplementationDetailsOfAnAlreadyDefinedInteractiveMethod",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRecognizeTheRealDetailFailureParaphraseWithoutHidingASeparateRetryChoice",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDelegateRoutineTestLayersWithoutHidingNewBusinessBranches",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldOnlyMergeTheSameScopedDecisionWithoutLosingNewConditions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepDifferentFileFormatsAndPopulationDefinitions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDiscardResearchQuestionIntroducedOnlyByAttachment",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRemoveOnlyQuestionsWhoseFactsAreExplicitAcrossDomains(String, String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRemoveOnlyQuestionsWhoseFactsAreExplicitAcrossDomains(String, String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRemoveOnlyQuestionsWhoseFactsAreExplicitAcrossDomains(String, String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRemoveOnlyQuestionsWhoseFactsAreExplicitAcrossDomains(String, String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRemoveOnlyQuestionsWhoseFactsAreExplicitAcrossDomains(String, String)[5]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRemoveOnlyQuestionsWhoseFactsAreExplicitAcrossDomains(String, String)[6]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldOnlyReuseUncontestedRealPlacementEvidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldAnalyzeAlreadyRequestedWindowTradeoffsWithoutAskingTheUserToSelectAnalysisDimensions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotAskForPathsSchemaOrToolchainVersionsAlreadyPresentInUploadedProject",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotReaskTheConfirmationPresentationAlreadyNamedByTheUser",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepQuestionsWhenFactCardsConflictOrOnlyPartiallyAddressACompoundQuestion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewMissingRegionBehaviorInsideAnOtherwiseRoutineTestLayer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDelegatePseudocodeGranularityButKeepExplicitPreferencesAndNewRequirements",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldUseSourcedFactCardsToRemoveParaphrasedKnownQuestionsButKeepDifferentBusinessDecisions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDelegateRoutineOutlineLayoutButKeepResearchDecisionsAndExplicitLayoutPreferences",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldReuseExplicitDeliveryAndGenericFailureRulesWithoutGuessingNewDetails",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewBusinessDecisionsAndExplicitUserControlInsideAWindowTradeoffQuestion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDeduplicateTextWithoutDependingOnModelQuestionIds",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "BarePartialConfirmationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "0f3c939acd0a98992ad44d45b020c812e273f1ce6d3440b5b12db345a3918f26",
+      "cases": [
+        {
+          "name": "futureProposalAndAnotherObjectCannotProvideCurrentConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "acceptsTheExactConfirmedPartInBothNarrativeAndTable",
+          "outcome": "PASS"
+        },
+        {
+          "name": "theOtherMetricRemainsUnknownEvenInsideTheSameAnswer",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "CurrentParameterConfirmationScopeTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "afe9a929413147334744a5ac9aa7dd7e8bb94a19e292e24a2953fb3578c652af",
+      "cases": [
+        {
+          "name": "anIndependentObservationWindowChoiceCannotResolveItsThreshold",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anotherYearOrBusinessObjectDoesNotResolveTheCurrentHospitalDecision",
+          "outcome": "PASS"
+        },
+        {
+          "name": "actualLimitedConfirmationUpdatesOnlyTheChosenThresholdAndAllowsTheSameTableValue",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aCurrentSelectionAfterAClosedFenceIsStillRecognized",
+          "outcome": "PASS"
+        },
+        {
+          "name": "quotationsAndFencedExamplesCannotSupplyCurrentParameterEvidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aLimitedCompletenessChoiceDoesNotConfirmConsistencyOrDerivedFormatDenominators",
+          "outcome": "PASS"
+        },
+        {
+          "name": "futureNegatedSuggestedOrUnresolvedStatementsCannotBecomeCurrentSelections",
+          "outcome": "PASS"
+        },
+        {
+          "name": "affirmativeCurrentWrappersKeepTheSameParameterIdentity",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "ConfirmationBoundaryRegressionTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "922de34887ca0bb5e85adb1c4f422189c1a4574d3161662c43908bbf7790e008",
+      "cases": [
+        {
+          "name": "shouldRespectExplicitParallelPresentationWithoutConfirmingEitherCalculationValue",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepTheFullBusinessObjectInAFutureConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepAnExecutableConditionalBusinessRule",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepReportDeliveryWhenOnlyCodeIsDeclined",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepFutureConfirmationUnresolvedAndSeparateFromTheConfirmedMetric",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRetainANewCaseSensitiveFieldValueDuringReminderMerging",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotResolveAnotherInstitutionYearOrNewValueWithTheBoundAnswer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDetectConflictingCaseSensitiveOutputFieldsInMaterials",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldReplayThePreservedRealResponseWithoutRejectingItsValidMetricConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotResolveAConflictFromAnUnresolvedParallelPresentation(String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldAcceptTheRealConfirmedMetricAndStillRejectAnUnconfirmedOtherMetric(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldAcceptTheRealConfirmedMetricAndStillRejectAnUnconfirmedOtherMetric(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldAcceptTheRealConfirmedMetricAndStillRejectAnUnconfirmedOtherMetric(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotRegisterAConditionalFutureChoiceAsConfirmed",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "ConditionalFactAndResearchReminderRegressionTest",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "3963c3a37b4e6084fafb226ff6cae4884bd85188cc253a9093f4b7e3c10938d8",
+      "cases": [
+        {
+          "name": "compactsOnlyTheExplicitBackgroundStatusTailAndPreservesMaterialAndOtherScopes",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesACompoundImputationRestatementAndUnverifiedCoverageFromActualProOutput",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesSameDenominatorReferenceAndOriginalQuestionFieldExpansionWithoutLosingNewScope",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesTheExplicitTopicPrefixAndConcreteMethodRestatementWithoutBorrowingOtherObjects",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsOtherHospitalsNewImputationConditionsAndSeparateDenominators",
+          "outcome": "PASS"
+        },
+        {
+          "name": "retainsThePartialConfirmationBoundaryAndMovesOnlyTheCoveredConsistencyTail",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesAnImputationRewriteWithoutDiscardingItsNewExplanation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "removesDemonstrativeStateRestatementsOnlyWithinTheBoundNamedItem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotInventAnUnknownDecisionFromABoundaryStatement",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotBackfillADenominatorReminderAlreadyFullyPresentInTheAuthoritativeList",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesTheKnownImputationPartAndRepeatedInstructionButKeepsItsNewImpact",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsFalseConfirmationEvenWhenTheSameReminderContainsAnotherUnknown",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesActualAdoptAndPerformImputationWordingAndOriginalDenominatorName",
+          "outcome": "PASS"
+        },
+        {
+          "name": "removesOnlyTheIndependentPendingSentenceAfterActualConfirmationAndFromOutput",
+          "outcome": "PASS"
+        },
+        {
+          "name": "compactsTheSemicolonJoinedPendingTailWithoutRemovingTheActualDenominator",
+          "outcome": "PASS"
+        },
+        {
+          "name": "compactsTheGlobalLayoutIntroAndIndependentImputationBanButPreservesOtherBusinessScope",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsConditionalInstructionsAndDoesNotRejectAnActualBoundConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesTheActualFlashRewriteUnderAReorderedImputationQuestion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "removesRepeatedDenominatorInstructionsButKeepsNewImpactAndConditionalRules",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesTheSameConsistencyDenominatorNamedByTwoBoundQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "checksConditionalAnswersEvenWhenTheOriginalRequirementDoesNotContainTheHypothesis",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsOneAuthoritativeBodyCopyAndPreservesNewConditionsFromProviderLists",
+          "outcome": "PASS"
+        },
+        {
+          "name": "alignsTheSingleRawImputationObjectButKeepsDistinctObjectsAndNovelLimitations",
+          "outcome": "PASS"
+        },
+        {
+          "name": "allowsAnExplicitActualConfirmationInTheOriginalRequirementAndKeepsNegativeQuotes",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotUseAConditionalAnswerAsProofOfAnEstablishedFact",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsAConditionalPremisePromotedToConfirmationInBackground",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "DecisionStateScopeRegressionTest",
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "9e0de4d847cd56e1daf519c7a6cd6462543646015a92a8ea970c1babb022bf3b",
+      "cases": [
+        {
+          "name": "passesTheUploadedUnknownStateToTheProviderBeforeItGeneratesAnySections",
+          "outcome": "PASS"
+        },
+        {
+          "name": "appliesAnExplicitNamedChoiceEvenWhenTheQuestionUsesStatisticalDenominatorWording",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsARecordScopeDisguisedByAPendingNoteWithoutTheCountSuffix",
+          "outcome": "PASS"
+        },
+        {
+          "name": "directEnhancementDoesNotAppendBareUnknownsAlreadyCoveredByTheSameFullExplanation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotTreatUnboundAnswersAsUserConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "neverInfersANamedChoiceFromAnUnspecifiedOrFutureAnswer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotExposeInternalPlanProtocolInUserFacingText",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotInventALoginDecisionForANotificationTaskThatPreservesLoginPermissions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotApplyCompletenessConfirmationToTheFormatMetric",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resolvesOnlyTheConfirmedPartOfACoordinatedMaterialDeclaration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsOnePendingStatementAcrossTheCopyableBodyAndItsMaterialView",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotInventConfirmationForAnotherMetricEvenWithoutAnExplicitPendingDeclaration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotLetAnotherUnknownClauseHideAnAssignedParameter",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsAConcreteDenominatorDeclaredUnknownInTheUploadedMaterial",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsOtherObjectsAndExplicitConditionalBranches",
+          "outcome": "PASS"
+        },
+        {
+          "name": "acceptsTheSameConfirmedMetricShorthandInAPartiallyConfirmedAnswer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "compactsAMarkedListWithTheExactPlatformDeliveryBoundaryButKeepsANewHospitalCondition",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesProtocolNamesWhenTheyAreTheExplicitDevelopmentTask",
+          "outcome": "PASS"
+        },
+        {
+          "name": "coversAGroupSummaryOnlyAfterBothHospitalParametersRemainIndependentlyPending",
+          "outcome": "PASS"
+        },
+        {
+          "name": "compactsOnlyTheCoveredDenominatorAndImputationRequestsAndKeepsNewYearAndMethod",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesANewConditionNextToAnAlreadyKnownPendingDeclaration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotTurnAConditionalPremiseIntoAKnownFactInThePlanHint",
+          "outcome": "PASS"
+        },
+        {
+          "name": "compactsBoundImputationExplanationsWithoutDiscardingANewMethodOrCondition",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsCoordinatedPendingParametersWithoutInventingOtherUnknowns",
+          "outcome": "PASS"
+        },
+        {
+          "name": "updatesOnlyTheActuallyConfirmedParameterAndKeepsOriginalEvidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsAnExplicitCurrentParameterChoiceButNotAHypotheticalOne",
+          "outcome": "PASS"
+        },
+        {
+          "name": "compactsIndividualDefaultProhibitionsOnlyWhenTheSameBoundCompositeAlreadyCoversThem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "validatesParameterHeaderAliasesAndTheNamedPseudoCodeAssignment",
+          "outcome": "PASS"
+        },
+        {
+          "name": "recognizesAnExampleInTheBoundQuestionButNeverUpdatesAFutureOrQuotedState",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsTheRichDenominatorDefinitionReminderWithoutAppendingItsBareMaterialAlias",
+          "outcome": "PASS"
+        },
+        {
+          "name": "updatesTheOriginalPendingChannelOnlyAfterAnActualSelection",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "DerivedParameterEvidenceRegressionTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "ed03d3eb305069c338220256f97aa0d207952be706dafc4c4ca10a37cd06984c",
+      "cases": [
+        {
+          "name": "onlyAnExplicitFormatIndicatorTaskReceivesTheMissingFormatDenominatorBoundary",
+          "outcome": "PASS"
+        },
+        {
+          "name": "allowsIndependentUserConfirmedParametersAndKeepsOtherScopesUnknown",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsTheSelectedDenominatorInclusionConditionInTheCurrentParameterRow",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotTurnFutureOrCandidateSourceValuesIntoCurrentParameterEvidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "retainsConfirmedValueAndIndependentUnknownInCopyableDeliveryGuidance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsAConcretePendingParameterUnderADenominatorStateHeader",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aBoundCurrentChoiceSupersedesAnEarlierValueForOnlyTheSameParameter",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsDerivedConfirmationWithAnAnnotatedStatusAndRenamedHeader",
+          "outcome": "PASS"
+        },
+        {
+          "name": "sourceRulesAreEvidenceButNeverManufactureUserConfirmation",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "BoundProfessionalReminderTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "0269497258bfdc0fe83bf81fa2ec2f3e932a4992c706716a7f8e07b5ce5acbe5",
+      "cases": [
+        {
+          "name": "keepsAnotherInstitutionYearNewPropertyAndNewApprovalCondition",
+          "outcome": "PASS"
+        },
+        {
+          "name": "removesOnlyTheRepeatedPureStateOfTheSameCompleteParameter",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsQuotesHypothesesAndChangedComparisonValues",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "CompositePendingReminderReplayRegressionTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "6329f959710278ca9502990b5a11cb1016b07f7c8a0cb9d2251e46bbd8c4bc57",
+      "cases": [
+        {
+          "name": "mergesTheLegacyOriginalQuestionAndCompleteAnswerWithoutSelectingItsUnknowns",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesANewGenericUnknownConditionEvenWhenTheOriginalQuestionIsRepeatedExactly",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsAnUncoveredOwnerConditionOrThirdPropertyInACompositeParaphrase(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsAnUncoveredOwnerConditionOrThirdPropertyInACompositeParaphrase(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsAnUncoveredOwnerConditionOrThirdPropertyInACompositeParaphrase(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsAnUncoveredOwnerConditionOrThirdPropertyInACompositeParaphrase(String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "retainsAllNewConditionsAndValuesWithoutInterpretingThemAsAnExplanation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "replaysActualResearchCompositeRemindersAsFourIndependentUndecidedGroups(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "replaysActualResearchCompositeRemindersAsFourIndependentUndecidedGroups(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "retainsANewConcreteExplanationAfterACompleteReplayWithoutInventingAKnownChoice",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesEveryNewObjectConditionComparatorAndAttributeAfterAnExactWholeAnswerReplay(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesEveryNewObjectConditionComparatorAndAttributeAfterAnExactWholeAnswerReplay(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesEveryNewObjectConditionComparatorAndAttributeAfterAnExactWholeAnswerReplay(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesEveryNewObjectConditionComparatorAndAttributeAfterAnExactWholeAnswerReplay(String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesEveryNewObjectConditionComparatorAndAttributeAfterAnExactWholeAnswerReplay(String)[5]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesEveryNewObjectConditionComparatorAndAttributeAfterAnExactWholeAnswerReplay(String)[6]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesEveryNewObjectConditionComparatorAndAttributeAfterAnExactWholeAnswerReplay(String)[7]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "replaysActualHospitalWholeAnswerWithoutLosingFiveDistinctUndecidedFacets(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "replaysActualHospitalWholeAnswerWithoutLosingFiveDistinctUndecidedFacets(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesAnExactBareOriginalQuestionAndCompleteAnswerAcrossEveryRegisteredSubitem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotUseAnotherObjectsIdenticalPendingAnswerToMergeANewOriginalQuestion",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "BoundStateReminderCompactionTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "0aa155dda20772d2c8d81fb297c63ee30cea13a36035fa28b9de94ba13c438d9",
+      "cases": [
+        {
+          "name": "actualBoundModelRestatementKeepsOneStateAndTheNewDependencyExplanation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aCompleteRepeatedStateCanDisappearWithoutRemovingItsBoundAnswer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "neverBorrowsStateFromAnotherOwnerYearMetricOrOperator",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anotherHospitalAndYearAreStillSeparateUnresolvedDetails",
+          "outcome": "PASS"
+        },
+        {
+          "name": "retainsTheEntireNewExplanationAndConditionalDependentDecision",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anUnrelatedItemAndDirectEnhancementRemainUntouched",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsLineBreaksAndUnchangedTextFormatting",
+          "outcome": "PASS"
+        },
+        {
+          "name": "newApprovalConditionAndValueAreRetainedAfterRepeatedState",
+          "outcome": "PASS"
+        },
+        {
+          "name": "futureAndQuotedStatementsDoNotBecomeKnownCurrentState",
+          "outcome": "PASS"
+        },
+        {
+          "name": "verificationAndUserSelectionRemainDifferentStates",
+          "outcome": "PASS"
+        },
+        {
+          "name": "quotedOrConditionalKnownTextCannotEraseCurrentMissingEvidence",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "BoundDefinitionPendingRegressionTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "0b208467ecc0fb81e50ee8b15275996d0d91c05859f0183c740959d90098832c",
+      "cases": [
+        {
+          "name": "preservesANewObjectConditionOrIndependentDecision(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesANewObjectConditionOrIndependentDecision(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesANewObjectConditionOrIndependentDecision(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesANewObjectConditionOrIndependentDecision(String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesANewObjectConditionOrIndependentDecision(String)[5]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesANewObjectConditionOrIndependentDecision(String)[6]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesANewObjectConditionOrIndependentDecision(String)[7]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "retainsTheFullKnownScopeAnnotationWhenGroupingTheSamePendingSubitem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesOnlyTheExplicitOriginalDefinitionScope(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesOnlyTheExplicitOriginalDefinitionScope(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesOnlyTheExplicitOriginalDefinitionScope(String)[3]",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "ExecutionContractAssemblyTest",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "9b94d4f0762bfab7a4d59e8b2eca5e8036d62935c63fc78c092151b926b3c5b7",
+      "cases": [
+        {
+          "name": "shouldReplaceTheResolvedRawChoiceWithoutHidingTheNewThreshold",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldPreserveExplicitRulesEvenWhenTheDraftOmitsThem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepPartialVersionEvidenceInTheOutputContract",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldTreatConfirmationUiAsAChoiceInsteadOfCurrentRegion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotCopyResolvedQuestionsOrGenericPlaceholders",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldLeaveClearDirectEnhancementFreeOfExtraQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotDismissUnprovenFactsOrMixedConflictsAsImplementationChecks",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectAChangedBoundInAnAdministrativeReport",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepExplainedUnknownAnswersPendingAndCopyTheirBoundaries",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldBindUnknownVersionContentToTheActualOutputContract",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectReversedCancellationEvenIfTheCorrectRuleAppearsElsewhere",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldPreserveImplementationChecksInTaskInsteadOfAsUserBlockers",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepTranslationOutputExclusiveInBothModes",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldCarryNewConflictAndKeepDisplayTruncationOutOfTheExecutionContract",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotTreatHistoricalOrConditionalUncertaintyAsAnUnresolvedAnswer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepBehaviorChoicesSeparateFromCurrentRegionFacts",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepRealExecutionPrerequisitesInTheCopiedConstraints",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotImposeAnAttributionTableOnTranslationOfTheMaterial",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMergeDirectConflictExplanationsWithoutInventingAPlanAnswer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRetainConfirmedPartOfAMixedAnswerWithoutResolvingItsMissingVersion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotTreatRiskRankingAsAProgrammingSortGap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectClearingValuesInsteadOfFillingEmptyFields",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectAnOppositeRuleInAResearchTask",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "TaskMeaningRegressionTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "bd806574de65579ff6401a3a5788285ba07a1a9a9ab6ec3ece814a5813b253fc",
+      "cases": [
+        {
+          "name": "preservesAudienceAndActualResearchTopic",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anExplicitlyExcludedPopulationCannotBeConfirmedByMention",
+          "outcome": "PASS"
+        },
+        {
+          "name": "independentAudienceClauseDoesNotBecomePartOfTheStudySubject",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rejectsObservedAudienceAsStudySubjectBeforeAnyTailRepair",
+          "outcome": "PASS"
+        },
+        {
+          "name": "harmlessPolitenessNormalizationAndSectionAssignmentMustNotBlockExecution",
+          "outcome": "PASS"
+        },
+        {
+          "name": "equalInformationInputIsNotARequestToRepeatTheQuestionnaire",
+          "outcome": "PASS"
+        },
+        {
+          "name": "commaSeparatedStudyPopulationsStillCannotIncludeTheWritingAudience",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aRealSubjectChoiceCanNameTheAudienceButAuthorizationCannot",
+          "outcome": "PASS"
+        },
+        {
+          "name": "choosingAnotherPopulationDoesNotAlsoConfirmTheWritingAudience",
+          "outcome": "PASS"
+        },
+        {
+          "name": "explicitSameAudienceAndStudySubjectIsLegitimate",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anUnresolvedSubjectAnswerDoesNotConfirmThePopulation",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "DelegatedResearchQuestionRegressionTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "5ec13040b64ff6e1e39c0732173020f8c5d25ddb2b9b7aca82cf4ad2a0c16c74",
+      "cases": [
+        {
+          "name": "delegatesRequestedDesignWhileKeepingRegionAndPermissionQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "checksEveryOptionFieldBeforeDiscardingADelegatedQuestion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesUserReservedScaleAndCompoundAuthorization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsAnIndependentPermissionDecisionInTheHint",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsIndependentDataScopeInExamplesButDelegatesOrdinaryScaleOptions",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "MissingPresentationResponseTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "79f366ed352c85e236f8ac7892d694b2575645256895ca350fcda3cfe45da6e0",
+      "cases": [
+        {
+          "name": "missingDecorationDoesNotTriggerASecondPaidAttempt",
+          "outcome": "PASS"
+        },
+        {
+          "name": "explicitInvalidPresentationIsStillRejected",
+          "outcome": "PASS"
+        },
+        {
+          "name": "missingDecorationCannotHideAMissingSubstantiveGap",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "OpenAiCompatiblePromptEnhancementProviderTest",
+      "tests": 48,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "70d16f675cf206cebc93dbd605056e75d4864db24b83cf607120c0628e6fa45c",
+      "cases": [
+        {
+          "name": "shouldSendCompatibleRequestAndParseStructuredResponse",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldSendPlanBoundFactEvidenceAndSourceToTheFinalProvider",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldSendTutorialPlanningGuidanceAndKeepZeroQuestionPlansValid",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectResponseWhenRequiredSectionsAreMissing",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldGenerateDomainSpecificPlanningQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldParseOptionalQuestionReferencesWithoutAnExtraModelCall",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldSendTutorialEvidenceBoundariesWithoutChangingTheResponseContract",
+          "outcome": "PASS"
+        },
+        {
+          "name": "repeatedInvalidContentPreservesEveryReportedUsageBeforeJsonParsing",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNormalizeReferenceWhitespaceAndKeepValidEntriesBesideInvalidOnes",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldAssessContextAndReturnFindingsInTheSameEnhancementCall(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldAssessContextAndReturnFindingsInTheSameEnhancementCall(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMapRateLimitResponseToRetryableProviderException",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldSendOneExecutionProjectionInsteadOfTheConfirmedQuestionnaire",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldCompleteDirectAndPlannedEnhancementDespiteMalformedReferences(boolean)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldCompleteDirectAndPlannedEnhancementDespiteMalformedReferences(boolean)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRouteAQualifiedTokenHubModelToTheTokenHubEndpoint",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDiagnoseIgnoredReferencesWithoutLoggingTheirContents",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreOversizedReferenceArrayWithoutRetry",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldSendStructuredDeepSeekV41FlashRequestsToTheDirectEndpoint",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldPreserveRecommendationReasonFromPlanningResponse",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRetryWithLargerOutputBudgetWhenModelReportsLengthLimit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldStillRejectInvalidRequiredFindingsWhenAuxiliaryReferencesAreAlsoMalformed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreAuxiliaryMessageOverTheLengthLimitWithoutRetry",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIncludeTheServerDerivedSourceViewInPlanningPayload",
+          "outcome": "PASS"
+        },
+        {
+          "name": "upstreamHttpFailureRecordsOneAttemptWithUnknownTokens(int)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "upstreamHttpFailureRecordsOneAttemptWithUnknownTokens(int)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreReferenceIdBeyondThePlanIdLimitWithoutRetry",
+          "outcome": "PASS"
+        },
+        {
+          "name": "upstreamHttpFailureKeepsExplicitUsageInsteadOfRollingBackConsumption",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreInvalidOrUnmatchedQuestionReferencesWithoutRetry(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreInvalidOrUnmatchedQuestionReferencesWithoutRetry(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreInvalidOrUnmatchedQuestionReferencesWithoutRetry(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreInvalidOrUnmatchedQuestionReferencesWithoutRetry(String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreInvalidOrUnmatchedQuestionReferencesWithoutRetry(String)[5]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreInvalidOrUnmatchedQuestionReferencesWithoutRetry(String)[6]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreInvalidOrUnmatchedQuestionReferencesWithoutRetry(String)[7]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreInvalidOrUnmatchedQuestionReferencesWithoutRetry(String)[8]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreInvalidOrUnmatchedQuestionReferencesWithoutRetry(String)[9]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldIgnoreInvalidOrUnmatchedQuestionReferencesWithoutRetry(String)[10]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairStructuredRequestWhenFirstEnhancementResponseIsInvalid",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldUseTheRequestedModelWhenItIsInTheServerAllowList",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectARequestedModelOutsideTheServerAllowList",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectMalformedAmbiguityArrayInsteadOfCoercingOrHidingIt(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectMalformedAmbiguityArrayInsteadOfCoercingOrHidingIt(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectMalformedAmbiguityArrayInsteadOfCoercingOrHidingIt(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectMalformedAmbiguityArrayInsteadOfCoercingOrHidingIt(String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectMalformedAmbiguityArrayInsteadOfCoercingOrHidingIt(String)[5]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectMalformedAmbiguityArrayInsteadOfCoercingOrHidingIt(String)[6]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectMalformedAmbiguityArrayInsteadOfCoercingOrHidingIt(String)[7]",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "OpenAiCompatibleValidatedResponseTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "0b09019de6cab9ae62707ff582fe9bbf5e0685c3b6942fa9bf579bcf80dbb9ed",
+      "cases": [
+        {
+          "name": "shouldFailClearlyWhenRuleReversalPersistsWithoutReturningASuccessfulDraft",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldExhaustThreeAttemptsWhenReportDowngradesRemainBesideCorrectTailNotes",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairAReportDowngradedToAPlanBeforeReturningTheAssembledPrompt",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectSensitiveResponsesAfterTheSharedBudgetIsExhausted",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairSensitiveLookingOutputWithoutSendingItsValueBackToTheModel",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairLegacyFindingsWithoutDroppingConditionsOrConfirmedAnswers(boolean)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairLegacyFindingsWithoutDroppingConditionsOrConfirmedAnswers(boolean)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldShareThreeAttemptsBetweenParserAndApplicationValidation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairReversedRulesAndKeepCopyPrerequisitesUsingTheSameBudget",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotRetryUnexpectedApplicationErrors",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotRetryUnchangeableServerConflictEvidence",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "SharedPlanBoundaryReplayTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "fb139045cb28f8100720d80eb5969a994beae0804982c7dd38f7f564201453b4",
+      "cases": [
+        {
+          "name": "aConditionalForAnotherObjectCannotInheritTheOriginalBinding",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aConditionalCannotReplaceAnExplicitDifferentVersion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "coveredSharedBoundaryKeepsEveryQuestionWithoutRepeatingItsExplanation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncoveredScopedAndConditionalExplanationsRemainWithTheirOwnQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aConditionalCannotReplaceAnExplicitDifferentYear",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anOmittedYearAndVersionForTheSameObjectKeepTheBoundQualifiers",
+          "outcome": "PASS"
+        },
+        {
+          "name": "currentUncertaintyForAnotherObjectKeepsItsOwnIdentity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aReversedProviderBoundaryCannotCoverTheUserExplanation",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "ExampleBoundaryCombinationTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "ab2a225cb6abc5b9f4234fbce65868aba59827851f5e82c744cacf48193dd9a1",
+      "cases": [
+        {
+          "name": "requiredExamplesCannotTurnADataBanIntoADemonstrationException(boolean)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "requiredExamplesCannotTurnADataBanIntoADemonstrationException(boolean)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aNegatedRequestCannotAddExamplesOrFieldsToStrictJson(boolean)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aNegatedRequestCannotAddExamplesOrFieldsToStrictJson(boolean)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "examplesExplicitlyInsideTheJsonFormatStillRemainRequired(boolean)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "examplesExplicitlyInsideTheJsonFormatStillRemainRequired(boolean)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "explicitProhibitionAndTranslationRemainWithoutAddedExamples(boolean)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "explicitProhibitionAndTranslationRemainWithoutAddedExamples(boolean)[2]",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "ResearchPlanningBoundaryRegressionTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "236ea99f1ec4b12550f271df306e3a36cffb0e7eb7be9d3e810db754bcf66960",
+      "cases": [
+        {
+          "name": "anExplicitUserTopicOrBoundPopulationChoiceSupportsTheSameAudience",
+          "outcome": "PASS"
+        },
+        {
+          "name": "currentQuestionIsRejectedButAnOpenPopulationChoiceIsKept",
+          "outcome": "PASS"
+        },
+        {
+          "name": "sameReviewerDisagreementCanUseTheObservedAlternativeWording",
+          "outcome": "PASS"
+        },
+        {
+          "name": "negativesFutureConditionsAnotherStudyAndExamplesDoNotConfirmPopulation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "explicitCurrentContextAndAnApplicableMaterialCanSupportPopulation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "observedAudiencePresuppositionUsesTheExistingPlanRepairPath",
+          "outcome": "PASS"
+        },
+        {
+          "name": "delegatedConcreteRecommendationsDoNotBecomeConfirmedParameterValues",
+          "outcome": "PASS"
+        },
+        {
+          "name": "otherObjectsNewConditionsAndReservedChoiceSurviveTheWholeQuestionCheck",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "PlanAmbiguityMergeTest",
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "776a779757431a3e84a2fecc01de1ffc8f7770f8df4f944def88dc8da1b9f052",
+      "cases": [
+        {
+          "name": "shouldIgnoreMalformedReferencesAndKeepNewQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMergeResearchDecisionLabelsWithBoundQuestionsWithoutDroppingNewPopulation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewConflictAfterAnExplicitAnswerAndRemoveOnlyTheOldPair",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotUseAnApprovalAnswerToResolveRefundRules",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldReplayFiveUnresolvedQuestionsAndOneNewConflictWithoutDuplicates",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldCopyOtherHospitalsAndNewYearsUnknownsAfterConfirmingOnlyOneFormat",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepLegacyAuthenticationDeduplicationWithoutSuppressingSessionQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMergeTheSameUnresolvedDenominatorAfterPartialConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldResolveAnUnlistedDimensionThroughValidatedReferenceWithoutLosingNewConditions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewConditionsEvenWhenProviderReferencesAnExistingQuestion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldReplayRealUndecidedConflictAsOneIssue",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepGenericReferencedCompoundQuestionsAndAdditionalClauses",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRemoveAbsenceDeclarationsButRetainSpecificProblemsFollowingNoIssues",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMergeARealHospitalObservationWindowParaphraseWithoutLosingItsImpact",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldCopyOneAuthoritativeReminderWithoutRemovingNewProviderConditions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewValuesScopeAndToolVersion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMergeUnlistedQuestionExplanationButKeepSeparateBusinessChoices",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldGroupOneConflictRegisteredByBothServerAndUnresolvedAnswer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotEraseOperatorsOrMergeSeparateSubjects",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMergeOnlySimpleRewordedUnknownStatesForTheSameSubject",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMergeUnresolvedExplanationWithoutLosingNewConditions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotHideAnEqualThresholdAfterConfirmingOnlyAnUnequalThreshold",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotEraseASecondQuestionAfterARepeatedReminder(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotEraseASecondQuestionAfterARepeatedReminder(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotEraseASecondQuestionAfterARepeatedReminder(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotEraseASecondQuestionAfterARepeatedReminder(String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMergeOnlyTheReminderForTheSameBusinessObject",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDeduplicateBeforeApplyingLimitAndReportOverflow",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotUseConflictingReferencesToGuessWhichQuestionWasAnswered",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNeverMergeAdditionalConditionsIntoAnAlreadyResolvedQuestion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldUseBoundIdOnlyWhenBothQuestionsCoverTheSameGenericReminder",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "PlanReminderFinalizationTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "54bd0d5cf42f3dc5317f976fbf2c1fa1661a9304a4dc4fdf5c82f02b5a164270",
+      "cases": [
+        {
+          "name": "neverDeduplicatesFencedExamplesUsingTildesOrShortNestedMarkers",
+          "outcome": "PASS"
+        },
+        {
+          "name": "sameMappingUnknownMergesButKeepsItsActualImpact",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesNewYearsAndApprovalDetailsInAnOtherwiseRepeatedSummary",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aBoundUnknownWindowDoesNotNeedTheOriginalPromptToUseOnePendingVerb",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anUnverifiedFactNeverBecomesAConfirmedChoiceOrRetrievalSelection",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anotherMappingFieldYearOrInstitutionIsNotAnOldMappingQuestion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anUncoveredPartKeepsItsWholeSummary",
+          "outcome": "PASS"
+        },
+        {
+          "name": "actualIndependentReminderCoverageDoesNotDependOnTheOriginalPendingWording",
+          "outcome": "PASS"
+        },
+        {
+          "name": "removesAPureSummaryOnlyWhenEveryIndependentPartAlreadyHasAReminder",
+          "outcome": "PASS"
+        },
+        {
+          "name": "actualMixedAnswersKeepOnlyFiveIndependentHospitalDecisions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aColonCanIntroduceAnExplanationWithoutRepeatingTheBoundState",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "PlanReminderStateRegressionTest",
+      "tests": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "09294254977bcf9daa3ff74db857658a2a92dabcf8912fbc7342e08e413c4453",
+      "cases": [
+        {
+          "name": "shouldMergeTheCapturedColumnMeaningReminderWithoutDroppingItsImpact",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDelegateTheCapturedOrganizationQuestionButKeepItsNewMetricDecision",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldUseActualSharingEvidenceFromUploadedMaterial",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotTreatANewSourceVersionAsResolvedByAnOldSelection",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepContradictoryOrTrulyUnknownAuthorizationStatus",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewAuthorizationObjectsAndFutureDecisions(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewAuthorizationObjectsAndFutureDecisions(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewAuthorizationObjectsAndFutureDecisions(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewAuthorizationObjectsAndFutureDecisions(String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewConditionsAndDifferentRegionSubjects(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewConditionsAndDifferentRegionSubjects(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewConditionsAndDifferentRegionSubjects(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewConditionsAndDifferentRegionSubjects(String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotMergeAnotherDecisionHiddenAfterTheSameCandidateHeading",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotUseAMissingValueLabelAsTheAnswerToAnUnknownFact(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotUseAMissingValueLabelAsTheAnswerToAnUnknownFact(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotUseAMissingValueLabelAsTheAnswerToAnUnknownFact(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotUseAMissingValueLabelAsTheAnswerToAnUnknownFact(String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotUseAMissingValueLabelAsTheAnswerToAnUnknownFact(String)[5]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMergeTheCapturedRemainingStateExplanationWithoutDroppingIt",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepTheCapturedFuturePermissionImpactAsAKnownConstraint",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotMoveAnAdditionalAuthorizationDecisionOutOfPending(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotMoveAnAdditionalAuthorizationDecisionOutOfPending(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotMoveAnAdditionalAuthorizationDecisionOutOfPending(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldStopReinsertingResolvedVersionStatusButRetainEveryIndependentRestriction",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMergeTheCapturedLongCandidateReminderAndKeepItsExplanation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepPendingVersionAndNewEffectiveDateAfterPartialConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectTheCapturedReopenedMappingChoices(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectTheCapturedReopenedMappingChoices(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectTheCapturedReopenedMappingChoices(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepLegalMappingChecksAndSeparateDateUses(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepLegalMappingChecksAndSeparateDateUses(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepLegalMappingChecksAndSeparateDateUses(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldClassifyTheCurrentRestrictionWithoutReaskingItsFuturePermissionPrecondition(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldClassifyTheCurrentRestrictionWithoutReaskingItsFuturePermissionPrecondition(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldClassifyTheCurrentRestrictionWithoutReaskingItsFuturePermissionPrecondition(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldInheritCurrentAuthorizationDespitePureQuestionPreambles(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldInheritCurrentAuthorizationDespitePureQuestionPreambles(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldInheritCurrentAuthorizationDespitePureQuestionPreambles(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldInheritCurrentAuthorizationDespitePureQuestionPreambles(String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldInheritCurrentAuthorizationDespitePureQuestionPreambles(String)[5]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldInheritKnownUnapprovedSharingAndKeepOtherUnknownHospitalQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepANewObjectCodeOrPeriodInRemainingStateExplanation(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepANewObjectCodeOrPeriodInRemainingStateExplanation(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepANewObjectCodeOrPeriodInRemainingStateExplanation(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewSubjectsWhenTheReminderUsesTheSameColumnMeaningGrammar(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewSubjectsWhenTheReminderUsesTheSameColumnMeaningGrammar(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepNewSubjectsWhenTheReminderUsesTheSameColumnMeaningGrammar(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldLeaveDirectEnhancementAndUnboundUnknownStatusUntouched",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotGeneralizeOneNamedHospitalsAuthorizationToAllHospitals",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldMoveTheVerifiedUnapprovedSharingReminderToConstraints",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "PendingReminderIdentityRegressionTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "3708bbd34f0ff94b4c2d9644b4becf366e49460ace343b9efe4b374fd21d95a9",
+      "cases": [
+        {
+          "name": "stillMergesTheKnownPrefixFromTheSameBoundObject",
+          "outcome": "PASS"
+        },
+        {
+          "name": "neverChangesComparatorsOrCodeCaseWhenGivingNamedSubitemsCrossQuestionKeys",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesAnUnknownDenominatorParaphraseWithoutLosingConfirmedStatusHandling",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotBorrowAnotherHospitalsKnownPrefixToHideItsNewPendingDecision",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotHideANewPendingAttributeWithoutAnAdditionalQuestionPreamble",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotMergeBareUnknownAnswersFromDifferentQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesTheSameFullyNamedPendingSubjectAcrossQuestionIdsAndRetainsBothExplanations",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsNewObjectsConditionsComparatorsAndAdditionalPendingAttributes",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsDifferentBusinessObjectsWithoutAnInstitutionSuffixSeparate",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsTheIndependentAgreementDecisionWhileMergingTheRepeatedGradeAndAnchorSubitem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesTheScoringGradeAliasButKeepsAnIndependentAgreementMetric",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesAnObservationQuestionParaphraseButRetainsItsOperationalExplanation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsAnotherChoiceInTheTailOfTheSameObservationQuestion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsInheritedNumericConditionsInTheIdentityAndTheVisibleReminder",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesTwoIndependentPendingClausesAfterALeadingUnknownAnswer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsTheSameGenericAttributeForDifferentNamedObjectsSeparate",
+          "outcome": "PASS"
+        },
+        {
+          "name": "preservesAnExplicitNewHospitalWhenThePendingPropertyIsOtherwiseIdentical",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "HospitalReminderAliasRegressionTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "9523bff6755d0606baa042c2d4117625f66690118eee7b26bc72bd21ad13c6ef",
+      "cases": [
+        {
+          "name": "retainsANewPendingApprovalConditionAfterTheSameParameterHeading",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aQuotedStateIsNotTheCurrentBoundPendingStatement",
+          "outcome": "PASS"
+        },
+        {
+          "name": "thresholdVerbVariantsDoNotEraseAnotherMetricOrAdditionalCondition",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aBareUncertainAnswerKeepsTheFullInstitutionsParameterIdentity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "directWindowCoverageDoesNotDiscardASeparateYearOrPopulation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "keepsTheDifferentInstitutionsAndNewYearsAsSeparateUnknowns",
+          "outcome": "PASS"
+        },
+        {
+          "name": "waitingWindowAliasesDoNotConsumeOtherTaskOrYearOrMetricScopes",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesTheRealPossessiveThresholdReminderIntoTheSameBoundPendingItem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "currentWaitingThresholdAllowsVerbPositionVariantsOnlyInsideTheNamedObject",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mergesTheActualWaitingStatisticsWindowQuestionWithItsCurrentParameter",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anActualCommonQuestionUsesTheExplicitPendingObjectInItsBoundAnswer",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aliasesDoNotMakeAHypotheticalOrQuotedIndependentInstructionAuthoritative",
+          "outcome": "PASS"
+        },
+        {
+          "name": "directWaitingWindowAliasesCoverTheRegisteredStateWithoutAddingShortCopies",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anUnscopedReminderDoesNotCollapseWhenOnlyOneBoundItemExists",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anAnswerNamingTwoUnknownObjectsDoesNotProvideAUniqueBindingByCategory",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anAliasUsedForCoverageCannotBypassTheUnconfirmedValueGuard",
+          "outcome": "PASS"
+        },
+        {
+          "name": "doesNotTreatACommonOrUnrelatedThresholdAsTheBoundInstitutionsParameter",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "FullPendingReminderCoverageTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "69ddd74081a6960c8b99bce7cef16a1600f6cfe18851280da2e276fde4c373c5",
+      "cases": [
+        {
+          "name": "replaysTheFirstActualCompleteReminderListWithoutFourExtraStatuses",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aCompleteExplanationCoversItsPureStateRegardlessOfOrderOrPendingWording",
+          "outcome": "PASS"
+        },
+        {
+          "name": "researchDenominatorsUseTheSameCoverageAndKeepIndependentMetrics",
+          "outcome": "PASS"
+        },
+        {
+          "name": "quotedOrFutureDescriptionsDoNotCoverTheCurrentUnknown",
+          "outcome": "PASS"
+        },
+        {
+          "name": "otherInstitutionYearMetricAndNewConditionAreNeverConsumed",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "FidelityReminderReplayTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "7934916c2a594ee51052521bca8f1375ea1ef304966499fc75158fbbdd731c0c",
+      "cases": [
+        {
+          "name": "shouldGroupRealExplanationsAndRetainAllNewDetails(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldGroupRealExplanationsAndRetainAllNewDetails(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldGroupRealExplanationsAndRetainAllNewDetails(String)[3]",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "NamedIdentifierReminderCoverageTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "4e3ad0a6a5c4c9fc60bf7c98638f0e74a7f5e41815b2be489c85675d545f5da7",
+      "cases": [
+        {
+          "name": "relationCoverageUsesTheNamedObjectsFieldAndUnknownStateInsteadOfWordOrder",
+          "outcome": "PASS"
+        },
+        {
+          "name": "actualJointCodeQuestionsAreCoveredByTwoIndependentRelationQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anExistingIndependentReminderRetainsItsExplanationWithoutAnotherShortCopy",
+          "outcome": "PASS"
+        },
+        {
+          "name": "directModelJointReminderIsRepresentedOncePerIndependentInstitution",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anInverseFieldDeclarationPreservesItsCompleteExplanationWithoutShortCopies",
+          "outcome": "PASS"
+        },
+        {
+          "name": "actualPlanningFlowReplacesPureJointQuestionButKeepsANewApprovalDecision",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aNewScopeInTheHintIsNotLostWhenTheQuestionUsesTheKnownField",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aMappingQuestionWithAnotherFieldOrConditionIsNotCovered",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aRelationReminderCannotConsumeNewApprovalYearObjectOrConditionalChoices",
+          "outcome": "PASS"
+        },
+        {
+          "name": "discardedPureMappingOptionsDoNotSpendAnAdditionalProviderRepairCall",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anInverseCodeConsequenceDoesNotConsumeAnAdditionalDecisionOrConfirmedRelation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "actualBoundCodeConsequencesDoNotAddTwoMoreHospitalDecisions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "jointCoverageKeepsAllNewConditionsAndDoesNotEraseTheOtherOwnersState",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "RequirementBoundaryRegressionTest",
+      "tests": 33,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "b409a698da3ab30a03417d25268f0c1ae750973491be3e292eea2683cc671203",
+      "cases": [
+        {
+          "name": "aBranchCandidateMayBeExplainedWithoutInventingConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "conditionalTestSelectionDoesNotAuthorizeABlanketNamingBan(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "conditionalTestSelectionDoesNotAuthorizeABlanketNamingBan(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "futureBranchSelectionDoesNotBecomeACurrentConfirmedMethod",
+          "outcome": "PASS"
+        },
+        {
+          "name": "explicitlySelectedPopulationDoesNotBecomeUnknown",
+          "outcome": "PASS"
+        },
+        {
+          "name": "labelingOrTestingDoesNotCreateADataException(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "labelingOrTestingDoesNotCreateADataException(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "labelingOrTestingDoesNotCreateADataException(String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "futurePopulationSelectionIsNotAnIndependentCurrentParameterConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "recordedDownstreamClaimDoesNotFollowFromTheParentMethodConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "fictionBanDoesNotAuthorizeABanOnAllExampleData",
+          "outcome": "PASS"
+        },
+        {
+          "name": "methodOnlyConfirmationCannotSelectTheStandardPopulation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "futureConfirmationDoesNotAllowATemporaryPopulationDefault",
+          "outcome": "PASS"
+        },
+        {
+          "name": "actualQuestionAnswerWorkflowAndExplicitSelfPlanningRemainDistinct",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mentioningAMethodOrAskingWhetherToUseItDoesNotConfirmIt",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anotherPopulationVersionCannotBorrowTheConfirmation",
+          "outcome": "PASS"
+        },
+        {
+          "name": "observedNegativeAcceptanceDoesNotBecomeDataPermission",
+          "outcome": "PASS"
+        },
+        {
+          "name": "copiedDataProhibitionStatesAllUsesInsteadOfOnlyNotPassingExamplesOffAsFacts",
+          "outcome": "PASS"
+        },
+        {
+          "name": "equivalentBoundaryInstructionsDoNotAcquireAnotherFullCopy",
+          "outcome": "PASS"
+        },
+        {
+          "name": "recordedDataExceptionInTaskIsRejectedRegardlessOfExampleSwitch(boolean)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "recordedDataExceptionInTaskIsRejectedRegardlessOfExampleSwitch(boolean)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "coordinatedDataProhibitionDoesNotLoseItsScopeOnAnotherEnhancement",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aQuestionOnlyPlanAnswerDoesNotConfirmAMethod",
+          "outcome": "PASS"
+        },
+        {
+          "name": "englishDataProhibitionAlsoRejectsAnException",
+          "outcome": "PASS"
+        },
+        {
+          "name": "standardPopulationCandidatesAreNotSilencedAndOtherReportContentContinues",
+          "outcome": "PASS"
+        },
+        {
+          "name": "conditionalCandidatesRemainUsefulAndDoNotAssertSelectionOrSignificance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "theUserCanActuallyChooseTheConcreteStandardizationBranch",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anExampleReferenceDoesNotBecomeACurrentInstructionOrDataPermission",
+          "outcome": "PASS"
+        },
+        {
+          "name": "scopedBanOnFabricatingResultsDoesNotBanLabeledDemonstration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "copiedPromptCarriesThePositiveSelectionConditionAndIndependentParameterBoundary",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aRealExampleDataBanIsValidWhenTheUserActuallyRequiresIt",
+          "outcome": "PASS"
+        },
+        {
+          "name": "anExplicitUserNamingBanIsPreserved",
+          "outcome": "PASS"
+        },
+        {
+          "name": "observedPlanQuestionAnswerWorkflowCannotBecomeModelSelfPlanning",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "RequirementBoundaryProviderTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "69200ee3557f7226740c96cb096b5dbe7319620cae5bad0fe0027b9831530a62",
+      "cases": [
+        {
+          "name": "repeatedBoundaryConflictStopsAfterThreeAttemptsAndDoesNotPretendSuccess",
+          "outcome": "PASS"
+        },
+        {
+          "name": "dataExceptionIsRepairedInsideTheExistingAttemptBudget",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "ExampleContractTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "74595b6a156ec3cfe3187892d1841ffc58eebb50eee0f7fa7646062d035c451c",
+      "cases": [
+        {
+          "name": "quotedPositiveIsNotAnExampleRequest",
+          "outcome": "PASS"
+        },
+        {
+          "name": "quoteIsNotAUserInstruction",
+          "outcome": "PASS"
+        },
+        {
+          "name": "exampleSwitchDoesNotAuthorizeProhibitedFictionalData",
+          "outcome": "PASS"
+        },
+        {
+          "name": "coordinatedNegativeFormatDoesNotBecomeAnExampleRequest(boolean)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "coordinatedNegativeFormatDoesNotBecomeAnExampleRequest(boolean)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reportExamplesSupplementRatherThanReplaceTheReport",
+          "outcome": "PASS"
+        },
+        {
+          "name": "englishProhibitionWins",
+          "outcome": "PASS"
+        },
+        {
+          "name": "aWritingPromptContainsExamplesRatherThanDelegatingTheExampleRequirementAgain",
+          "outcome": "PASS"
+        },
+        {
+          "name": "enabledSwitchRequiresPairedExamples",
+          "outcome": "PASS"
+        },
+        {
+          "name": "rawExampleRequirementSurvivesDisabledSwitch",
+          "outcome": "PASS"
+        },
+        {
+          "name": "referenceMaterialCannotOverrideTheSwitch",
+          "outcome": "PASS"
+        },
+        {
+          "name": "prohibitedExamplesWin",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strictJsonWinsUnlessExamplesAreAlreadyPartOfTheUserFormat",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "name": "OptimizationPlanningServiceTest",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "e9eb81185eb5686c709b91001417afd4731a35c423c13a3fad66670e6cbeb4ca",
+      "cases": [
+        {
+          "name": "shouldNotShowAReversedLabelEvenWhenItsStoredAnswerIsCorrect",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldPreserveARealTwoOptionDecisionAndAnUnknownFactWithoutInventingRecommendations",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldValidateFreeTextExamplesAgainstTheExplicitInteractiveProtocol(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldValidateFreeTextExamplesAgainstTheExplicitInteractiveProtocol(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldDescribeZeroQuestionsAsReadyForFinalGeneration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldClassifyCurrentSoftwareGoalBeforeResearchMaterial",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotRetryNetworkOrCredentialFailures",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotLetAnApprovalConflictSuppressRefundOrNewApprovalConditions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectMoreThanEightProviderQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldKeepResearchTaskWhenUserAsksForAnalysisCode",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldTurnVerifiedCrossFileConflictsIntoRequiredPlanQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[3]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[4]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[5]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[6]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[7]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectOversizedRecommendationReason",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairAnOptionThatContradictsTheExplicitRuleBeforeRegisteringPlan(String)[1]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRepairAnOptionThatContradictsTheExplicitRuleBeforeRegisteringPlan(String)[2]",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRetryInvalidPlanExactlyOnceAndPreserveValidQuestions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldUseUploadedStatusBoundaryToRepairAPlanCandidateWithinTheSharedBudget",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldAskReadableResearchQuestionsWithoutExposingInternalDimensions",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldUsePreparedHospitalFactsWithoutHidingTheOtherHospitalsMissingFormat",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldValidatePlanOptionsAgainstTheOwnedSourceWhenTheDigestOmitsVersionEvidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldNotUseTestMaterialsAsProofForAnOtherwiseUnboundVersion",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldStillRejectAnUnprovedOtherVersionWhenTheSourceOnlyConfirmsVersionA",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldPassPublishedModelToPlanningProvider",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectInternalImplementationTermsInProviderCopy",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldUseBackgroundDescriptionWhenInferringTheInternalStrategy",
+          "outcome": "PASS"
+        },
+        {
+          "name": "shouldRejectMultipleChoiceAnswersThatCannotFitTheConfirmationContract",
+          "outcome": "PASS"
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "tests": 593,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "sourceSha256": "ff651deb2580a7007fe87de9b41307bb98d1a95faa8fd29b652eac9ae500e783",
+  "sourceFilesUnchanged": 673,
+  "newModelCalls": 0
+}

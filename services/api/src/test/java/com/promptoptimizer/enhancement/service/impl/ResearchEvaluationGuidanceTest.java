@@ -82,6 +82,6 @@ class ResearchEvaluationGuidanceTest {
         var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
         assertThat(task.effectivePrompt()).isEqualTo(raw);
         assertThat(PromptRewriteStrategy.forTask(task).instruction())
-                .contains("已明确的表述保留并使用一次", "不代填未知评分尺度、参数", "原任务要求盲法时");
+                .contains("已明确的表述保留并使用一次", "未确认的实际选值仍保持未决", "原任务要求盲法时");
     }
 }

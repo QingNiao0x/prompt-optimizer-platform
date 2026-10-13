@@ -22,12 +22,22 @@ export function answerLog(answers) {
   return answers.map(answer => `问题：${answer.question}\n回答：${answer.answer}`).join('\n');
 }
 
+/** An approved batch limits both scope and attempts; unused phase allowance cannot widen it. */
+export function batchRequestLimit(protocol, version, mode, cases, models, round = '1') {
+  const batch = protocol.activeBatch;
+  if (!batch) return protocol.maximumActualModelCalls;
+  if (version !== batch.version || (batch.secondRoundAuthorized === false && round !== '1')
+      || mode !== batch.mode || cases.some(sample => !batch.cases.includes(sample.id))
+      || models.some(model => model !== batch.model)) throw new Error('Input outside approved batch scope');
+  return Math.min(protocol.maximumActualModelCalls, batch.callsBefore + batch.maximumNewCalls);
+}
+
 const directRun = process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
 if (directRun) { try { await run(); process.exit(0); } catch (error) { console.error(error.message); process.exit(1); } }
 
 async function run() {
   const [version = 'baseline', round = '1', mode = 'direct', selected = 'all', selectedModels = 'all'] = process.argv.slice(2);
-  if (!/^(baseline|candidate[12345])$/.test(version) || !/^[12]$/.test(round)
+  if (!/^(baseline|candidate[123456])$/.test(version) || !/^[12]$/.test(round)
     || !['direct', 'plan'].includes(mode)) throw new Error('Invalid evaluation phase');
   const root = resolve('tmp/me00a-20261012');
   const phase = version === 'baseline' ? 'baseline' : 'candidateValidation';
@@ -36,6 +46,7 @@ async function run() {
   if (!models.length) throw new Error('No approved model selected');
   const cases = JSON.parse(await readFile(resolve(root, 'cases.json'), 'utf8'))
     .filter(sample => selected === 'all' || selected.split(',').includes(sample.id));
+  const requestLimit = batchRequestLimit(protocol, version, mode, cases, models, round);
   const account = JSON.parse(await readFile(resolve('tmp/enhancement-quality-20261012/account.json'), 'utf8'));
   const require = createRequire(new URL('../apps/web/package.json', import.meta.url));
   const { chromium } = require('@playwright/test');
@@ -67,7 +78,7 @@ async function run() {
     }
     if (count >= protocol.phaseLimits[phase]) throw new Error('Phase request budget exhausted');
     let trace;
-    for (let index = 1; index <= protocol.maximumActualModelCalls; index++) {
+    for (let index = 1; index <= requestLimit; index++) {
       const path = resolve(root, 'traces', `${String(index).padStart(3, '0')}.json`);
       try { await save(path, { phase, label, startedAt: new Date().toISOString() }); trace = path; break; }
       catch (error) { if (error.code !== 'EEXIST') throw error; }

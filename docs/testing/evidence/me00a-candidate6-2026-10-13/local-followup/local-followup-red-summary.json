@@ -1,0 +1,26 @@
+{
+  "command": "mvn -o -q -f services/api/pom.xml -Dtest=SharedPlanBoundaryReplayTest,ExampleBoundaryCombinationTest test",
+  "suites": [
+    {
+      "suite": "SharedPlanBoundaryReplayTest",
+      "tests": "2",
+      "failures": "2",
+      "errors": "0",
+      "failedCases": [
+        "coveredSharedBoundaryKeepsEveryQuestionWithoutRepeatingItsExplanation",
+        "uncoveredScopedAndConditionalExplanationsRemainWithTheirOwnQuestions"
+      ]
+    },
+    {
+      "suite": "ExampleBoundaryCombinationTest",
+      "tests": "8",
+      "failures": "2",
+      "errors": "0",
+      "failedCases": [
+        "requiredExamplesCannotTurnADataBanIntoADemonstrationException(boolean)[1]",
+        "requiredExamplesCannotTurnADataBanIntoADemonstrationException(boolean)[2]"
+      ]
+    }
+  ],
+  "newModelCalls": 0
+}

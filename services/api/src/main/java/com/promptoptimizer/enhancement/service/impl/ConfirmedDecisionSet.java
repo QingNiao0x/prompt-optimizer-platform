@@ -60,6 +60,8 @@ final class ConfirmedDecisionSet {
         return decisions.stream().filter(decision -> decision.scope() == Scope.UNRESOLVED)
                 .flatMap(decision -> PlanAnswerSemantics.pendingParts(decision.answer()).stream().map(part -> {
                     boolean named = PlanAnswerSemantics.namesPendingSubject(part);
+                    // 仅同一对象省略已绑定的年份/版本时继承原题；具名另一机构或新年份仍是独立条件。
+                    if (named && inheritsConditionalSubject(decision.question(), part)) named = false;
                     boolean explanationOnly = PlanAnswerSemantics.confirmedPart(decision.answer()).isBlank()
                             && PlanAnswerSemantics.pendingParts(decision.answer()).size() == 1;
                     // 明确拒绝确认且各句已独立投影时，提醒只带未确认原句；完整来源仍在 decisions 中。
@@ -72,6 +74,22 @@ final class ConfirmedDecisionSet {
                             named ? topic(part, decision.questionId()) : decision.topic(), Scope.UNRESOLVED,
                             independentlyProjected || named && !explanationOnly ? part : decision.answer());
                 })).toList();
+    }
+
+    /**
+     * 条件答案可省略原题的显式年份或数字版本，但不能用条件前缀覆盖另一对象。
+     * 完整核心对象须相同；来源明确给出的年份/版本继续按原值比较，其他条件不做省略推断。
+     */
+    private static boolean inheritsConditionalSubject(String question, String part) {
+        if (!part.strip().matches("^(?:若|如果|假如|假设).*")) return false;
+        String sourceSubject = PlanDecisionIdentity.questionKey(PlanAnswerSemantics.pendingSubject(part));
+        String boundSubject = PlanDecisionIdentity.questionKey(question);
+        if (sourceSubject == null || boundSubject == null) return false;
+        var year = Pattern.compile("(?<!\\d)\\d{4}年");
+        var version = Pattern.compile("(?i)(?:版本)?v\\d+(?:\\.\\d+)*(?:[-_][A-Za-z0-9.]+)?|版本\\d+(?:\\.\\d+)*");
+        if (!year.matcher(sourceSubject).find()) boundSubject = year.matcher(boundSubject).replaceAll("");
+        if (!version.matcher(sourceSubject).find()) boundSubject = version.matcher(boundSubject).replaceAll("");
+        return boundSubject.equals(sourceSubject);
     }
 
     /** 仅供提醒核对的已定与未决视图，不新增外部字段，也不允许客户端指定内部状态。 */

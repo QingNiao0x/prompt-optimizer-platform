@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -47,15 +48,23 @@ final class PlanAmbiguityMerger {
     private final PendingReminderIdentity pendingIdentity;
     /** 仅用于核对本次需求命名的对象，不输出或持久化原始提示词。 */
     private final String rawPrompt;
+    private final Set<String> coveredExplanations;
 
     PlanAmbiguityMerger(ConfirmedDecisionSet decisions) {
         this(decisions, "");
     }
 
     PlanAmbiguityMerger(ConfirmedDecisionSet decisions, String rawPrompt) {
+        this(decisions, rawPrompt, Set.of());
+    }
+
+    /** 只有已在本次正文落实的完整独立边界才能省略解释，原问题仍分别登记。 */
+    PlanAmbiguityMerger(ConfirmedDecisionSet decisions, String rawPrompt, Set<String> coveredExplanations) {
         this.decisions = decisions;
         this.rawPrompt = rawPrompt == null ? "" : rawPrompt;
         this.pendingIdentity = new PendingReminderIdentity(decisions, rawPrompt);
+        this.coveredExplanations = coveredExplanations.stream().map(PlanAmbiguityMerger::explanationIdentity)
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
     }
 
     /** 新冲突优先，其次为原始未决问题；外部引用不能单独触发删除。 */
@@ -81,7 +90,8 @@ final class PlanAmbiguityMerger {
             String answerText = decision.answer().replaceFirst(
                     "(?i)^(?:暂不确定|尚未确定|待定|不知道|不清楚|unknown|tbd)[。.!！]\\s*", "");
             String explanation = answerText.isBlank() || answerText.matches("(?i)^(?:暂不确定|尚未确定|待定|不知道|不清楚|unknown|tbd)[。.!！]?$")
-                    || answerText.equals(decision.question()) ? "" : " 用户说明：" + answerText;
+                    || answerText.equals(decision.question()) || coveredExplanations.contains(explanationIdentity(answerText))
+                    ? "" : " 用户说明：" + answerText;
             // 部分回答生成的具名未决子项本身就是答案开头，不把同一句再接一遍“用户说明”。
             String value = answerText.startsWith(decision.question()) ? answerText
                     : decision.question() + explanation;
@@ -123,6 +133,12 @@ final class PlanAmbiguityMerger {
         Map<String, String> formatted = new LinkedHashMap<>();
         registered.values().forEach(value -> formatted.putIfAbsent(reminderKey(value), value));
         return MergeResult.from(pendingIdentity.withoutCoveredSummaries(List.copyOf(formatted.values())));
+    }
+
+    /** 只消除展示空白和句末标点，完整对象、年份、否定与条件参与相等比较。 */
+    private static String explanationIdentity(String value) {
+        return java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFKC)
+                .replaceAll("\\s+", "").replaceAll("[。；;]+$", "");
     }
 
     /** 仅合并相同完整主体的简单未知状态；疑问、数值条件和解释仍逐字参与比较。 */

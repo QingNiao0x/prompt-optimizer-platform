@@ -1,0 +1,44 @@
+{
+  "startedAt": "2026-10-13T11:05:33.7287023+00:00",
+  "finishedAt": "2026-10-13T11:06:18.0890648+00:00",
+  "exitCode": 1,
+  "command": "mvn -o -q -f services/api/pom.xml -Dtest=SharedPlanBoundaryReplayTest test",
+  "reportSha256": "5b2f09f89b0e5589278dc183accd6b42bec76f1e69abb785b095d7af23bdf2fa",
+  "tests": {
+    "tests": 7,
+    "failures": 4,
+    "errors": 0,
+    "skipped": 0
+  },
+  "cases": [
+    {
+      "name": "aConditionalForAnotherObjectCannotInheritTheOriginalBinding",
+      "outcome": "FAIL"
+    },
+    {
+      "name": "coveredSharedBoundaryKeepsEveryQuestionWithoutRepeatingItsExplanation",
+      "outcome": "PASS"
+    },
+    {
+      "name": "uncoveredScopedAndConditionalExplanationsRemainWithTheirOwnQuestions",
+      "outcome": "PASS"
+    },
+    {
+      "name": "aConditionalCannotReplaceAnExplicitDifferentYear",
+      "outcome": "FAIL"
+    },
+    {
+      "name": "anOmittedYearAndVersionForTheSameObjectKeepTheBoundQualifiers",
+      "outcome": "PASS"
+    },
+    {
+      "name": "currentUncertaintyForAnotherObjectKeepsItsOwnIdentity",
+      "outcome": "FAIL"
+    },
+    {
+      "name": "aReversedProviderBoundaryCannotCoverTheUserExplanation",
+      "outcome": "FAIL"
+    }
+  ],
+  "newModelCalls": 0
+}

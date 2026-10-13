@@ -321,7 +321,16 @@ public class OptimizationResultAssembler {
         List<AmbiguityReference> references = normalizeAmbiguityReferences(providerResponse);
         // 先登记新冲突和绑定的未决问题，再归并模型提醒，避免重复项挤占展示预算。
         // 直接增强也可合并相同来源和取值的冲突；仅服务端绑定的 Plan 答案可消除旧问题。
-        var merged = new PlanAmbiguityMerger(planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), rawPrompt)
+        // 共同拒绝确认已作为独立约束落实时，只省去逐题解释；未决问题的身份和条件仍全部登记。
+        var coveredExplanations = taskView.executionRequirements().stream()
+                .filter(requirement -> requirement.destination() == PromptSectionType.CONSTRAINTS)
+                .filter(requirement -> PlanAnswerSemantics.independentStatements(requirement.value()).stream()
+                        .anyMatch(statement -> statement.kind() == PlanAnswerSemantics.StatementKind.NON_CONFIRMATION))
+                // 只认完整规则的同向表述，不能因“不能不确认”包含“不确认”就省去用户说明。
+                .filter(requirement -> PlanDecisionIntegrator.coveredRule(sections, requirement.statement()))
+                .map(requirement -> requirement.statement()).collect(java.util.stream.Collectors.toSet());
+        var merged = new PlanAmbiguityMerger(planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), rawPrompt,
+                coveredExplanations)
                 .merge(assessed, ambiguities, references);
         List<String> remainingAmbiguities = merged.messages();
         merged.executionPrerequisites().forEach(value -> validateUserFacingProtocol(value, rawPrompt, "ambiguities"));

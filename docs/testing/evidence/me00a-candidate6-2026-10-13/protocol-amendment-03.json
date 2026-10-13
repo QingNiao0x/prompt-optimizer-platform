@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-13",
+  "status": "APPROVED_BY_USER",
+  "callsBefore": 169,
+  "phaseCallsBefore": {
+    "baseline": 70,
+    "candidateValidation": 99
+  },
+  "previousLimits": {
+    "total": 180,
+    "baseline": 80,
+    "candidateValidation": 100
+  },
+  "limits": {
+    "total": 192,
+    "baseline": 80,
+    "candidateValidation": 112
+  },
+  "batch": {
+    "version": "candidate6",
+    "mode": "plan",
+    "cases": [
+      "Q05"
+    ],
+    "model": "deepseek-flash",
+    "callsBefore": 169,
+    "maximumNewCalls": 12,
+    "authorization": "2026-10-13 user approved the proposed development and three-arm validation plan",
+    "secondRoundAuthorized": false
+  },
+  "policy": "Every attempt counts; stop this batch at 181 traces, even if phase/global budget remains. No new baseline or other case/model."
+}
