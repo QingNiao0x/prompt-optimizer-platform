@@ -287,7 +287,7 @@ public class OptimizationResultAssembler {
                     output.content() + "\n\n" + draftDelivery.guidance()));
         }
         List<String> assessed = new PlanQuestionFilter().unresolvedFindings(
-                resolveAmbiguities(providerResponse, sections, ambiguities), effectiveRawPrompt, context, eligibleFacts).stream()
+                resolveAmbiguities(providerResponse, sections, ambiguities), effectiveRawPrompt, context, eligibleFacts, taskView).stream()
                 .filter(finding -> !TaskQuestionScope.unrelatedEngineeringReminder(finding, rawPrompt))
                 .filter(finding -> !readOnlyComparison.directedReminder(finding))
                 .filter(finding -> !identifierRelations.coveredPendingStatement(finding)).toList();

@@ -296,9 +296,15 @@ final class PlanningDecisionPolicy {
      * 只用于模型候选问题，服务端来源冲突和绑定未决事项不经这条过滤。
      */
     boolean delegatesResearchImplementation(PlanQuestion candidate, String raw) {
-        if (!hasDecision(Kind.RESEARCH_STATUS) || !raw.contains("说明")) return false;
         if (raw.matches("(?s).*(?:由我决定|先让我确认|不要替我选择|由用户决定).*")) return false;
         if (hasIndependentResearchDecision(candidate)) return false;
+        // 已绑定回答的委托只免除同一道设计题的重问，不确认其取值，也不覆盖新对象、条件或权限选择。
+        if (input.taskView() != null && input.taskView().executionRequirements().stream().anyMatch(requirement ->
+                requirement.subject().equals("委托要求") && requirement.question().equals(candidate.question())
+                        && input.taskView().pendingDecisions().stream().anyMatch(decision ->
+                            java.util.Objects.equals(decision.questionId(), requirement.questionId())
+                                    && decision.question().equals(requirement.question())))) return true;
+        if (!hasDecision(Kind.RESEARCH_STATUS) || !raw.contains("说明")) return false;
         String question = candidate.question();
         boolean scoring = raw.matches("(?s).*说明[^。\\n]*(?:评价|评估).*" )
                 && question.matches("(?s).*(?:评分方式|评分量表|评分尺度|评分标准).*" );

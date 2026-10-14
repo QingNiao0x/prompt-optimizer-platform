@@ -103,6 +103,7 @@ final class PlanDecisionIntegrator {
     private static List<String> currentSentences(String content) {
         var body = new java.util.ArrayList<String>();
         String fence = null;
+        boolean foreignBlock = false;
         for (String line : content.lines().toList()) {
             String value = line.strip();
             if (value.startsWith("```") || value.startsWith("~~~")) {
@@ -112,7 +113,20 @@ final class PlanDecisionIntegrator {
                 continue;
             }
             if (fence != null || value.startsWith(">") || value.startsWith("|")) continue;
-            body.addAll(java.util.Arrays.asList(value.split("(?<=[。！？!?])|[；;]")));
+            String heading = value.replaceFirst("^#{1,6}\\s*", "").replaceFirst("^\\*\\*(.+?)\\*\\*$", "$1");
+            // 换行不能把另一研究、引用或示例里的声明变成本任务来源；只有明确当前任务标题恢复作用域。
+            if (heading.matches("(?s).*(?:^|[。；;])(?:另一(?:项)?研究|其他研究|甲研究|乙研究|示例|例子|引用|原文|未来方案|以后确认)[：:]?\\s*$")) {
+                foreignBlock = true;
+                continue;
+            }
+            if (heading.matches("(?:本研究|本次研究|当前研究|本任务|本次任务)[：:]?")) foreignBlock = false;
+            if (foreignBlock) continue;
+            // 条件与后面的分号子句共享作用域，不能拆掉前置条件后把后半句当成无条件要求。
+            if (value.matches("^(?:[-*•]\\s*)?(?:如果|假如|若以后|未来|以后确认|例如|示例|引用|原文)[：:,，]?.*")) {
+                body.add(value);
+            } else {
+                body.addAll(java.util.Arrays.asList(value.split("(?<=[。！？!?])|[；;]")));
+            }
         }
         return List.copyOf(body);
     }
@@ -124,11 +138,19 @@ final class PlanDecisionIntegrator {
 
     /** 复合规则只补缺少的完整独立子项；条件和非独立对象语句保持原来的整体边界。 */
     static List<String> uncoveredRuleClauses(Map<PromptSectionType, PromptSection> sections, String rule) {
+        var introduction = researchIntroductionClauses(sections, rule);
+        if (introduction.isPresent()) return introduction.get();
         List<String> body = sections.values().stream().filter(section -> section.type() != PromptSectionType.CLARIFICATIONS
                         && section.type() != PromptSectionType.EXAMPLES && section.type() != PromptSectionType.ACCEPTANCE)
                 .flatMap(section -> currentSentences(section.content()).stream()).toList();
         // 只拆完整句和明确并列子句；条件规则保持整体，避免把条件内的同值当全局要求。
-        String split = CONDITIONAL.matcher(rule).find() ? "(?!)" : "(?<=[。！？!?])|[；;]";
+        // 禁用假设数据是当前禁令，不能因“假设”二字被误识别为假设分支；其他条件仍按原句核对。
+        String conditionText = rule.replaceAll("((?:不得|禁止|不能|不允许|不要)(?:使用|编造))假设(?=数据|样本|结果)", "$1模拟");
+        boolean scoped = CONDITIONAL.matcher(conditionText).find() || rule.matches("(?s).*(?:但|除非|除外|例外|仅限).*" );
+        // 原件中的全局禁代码与后续完整禁令互相独立；只拆这些有完整动作的子句，不拆条件、例外和省略对象。
+        boolean independentProhibitions = rule.matches("^不提供代码[，,](?:不得|禁止|不能|不允许).*");
+        String split = scoped ? "(?!)" : "(?<=[。！？!?])|[；;]"
+                + (independentProhibitions ? "|[，,](?=(?:不得|禁止|不能|不允许))" : "");
         var independent = PlanAnswerSemantics.independentStatements(rule);
         List<String> clauses = independent.isEmpty() ? java.util.Arrays.stream(rule.split(split)).map(String::strip)
                 .filter(value -> !value.isBlank()).toList() : independent.stream().map(PlanAnswerSemantics.IndependentStatement::text).toList();
@@ -137,17 +159,17 @@ final class PlanDecisionIntegrator {
             if (actual.equals(expected)) return true;
             if (independentCoverage(sentence, clause, "用户说明") || independentCoverage(sentence, clause, "委托要求")) return true;
             // 同向完整子句可出现在较长执行句中；新增条件、转述和反向要求不能免除兜底。
-            if (sentence.matches("(?s).*(?:如果|假如|若|未来|例如|示例|引用|不是|并非|不必遵守|无需遵守).*")) return false;
+            if (sentence.matches("(?s).*(?:如果|假如|若|未来|例如|示例|引用|原文|另一研究|其他研究|甲研究|乙研究|不是|并非|不必遵守|无需遵守).*")) return false;
             if (CONDITIONAL.matcher(sentence).find() && !CONDITIONAL.matcher(clause).find()) return false;
             int position = actual.indexOf(expected);
-            if (position > 0 && actual.substring(0, position).matches("(?s).*(?:不得|不能|禁止|不要|不应|不允许)$")) return false;
+            if (position > 0 && actual.substring(0, position).matches("(?s).*(?:不得|不能|禁止|不要|不应(?:当)?|不允许|无需|不必|不|未)$")) return false;
             return completeValue(actual, expected);
         })).toList();
     }
 
     /** 仅接受已命名的本任务独立状态和委托；不把其他研究、条件、未来或否定动作作覆盖证据。 */
     private static boolean independentCoverage(String sentence, String statement, String subject) {
-        if (!List.of("用户说明", "委托要求").contains(subject)) return false;
+        if (!List.of("用户说明", "委托要求", "未确认边界").contains(subject)) return false;
         String actual = java.text.Normalizer.normalize(sentence, java.text.Normalizer.Form.NFKC).strip()
                 .replaceFirst("^[-*•]\\s*", "");
         statement = java.text.Normalizer.normalize(statement, java.text.Normalizer.Form.NFKC);
@@ -161,12 +183,56 @@ final class PlanDecisionIntegrator {
                     || actual.matches("^(?:本交付物|当前|本研究)[^。;]*,用户没有额外真实数据[。;]?$" )
                     || actual.matches("^(?:当前|目前)(?:只是|仅为)拟定研究,尚未实施,没有额外真实数据[。;]?$" );
         }
+        // “用户未确认任何既有参数”只覆盖同一全称未确认状态，不确认方法、年份或其他具名参数。
+        if (statement.matches("^不确认任何既有参数[。；;]?$")) {
+            return actual.matches("^用户未确认任何既有参数(?:,(?:已|并)明确委托(?:根据原始研究目标)?提出可开展的推荐设计并说明适用条件)?[。;]?$" );
+        }
         // 已委托事项是拟议设计；必须同时包含可开展主方案与适用条件，泛称“提供建议”不足以覆盖。
         if (subject.equals("委托要求") && statement.matches("^请根据原始研究目标提出可开展的推荐设计并说明适用条件[。；;]?$")) {
             return actual.matches("^对以下已委托设计的未决事项,提出可直接开展的拟议主方案并说明适用条件(?:,标注为拟议设计而非已确认事实)?[。;:]?$" )
-                    || actual.matches("^撰写研究设计的方法部分,围绕[^。;]+这一主题,提出可开展的推荐设计并说明适用条件[。;]?$" );
+                    || actual.matches("^撰写研究设计的方法部分,围绕[^。;]+这一主题,提出可开展的推荐设计并说明适用条件[。;]?$" )
+                    || actual.matches("^用户(?:未确认任何既有参数,)?已明确委托提出可开展的推荐设计并说明适用条件[。;]?$" );
         }
         return false;
+    }
+
+    /**
+     * 研究写作的动作、交付物、语言、受众和主题可分配到责任段；每一项均须有当前完整表达。
+     * 仅处理无额外条件的完整引导句，未识别的对象、条件或交付类型继续保留原句兜底。
+     */
+    private static java.util.Optional<List<String>> researchIntroductionClauses(Map<PromptSectionType, PromptSection> sections, String rule) {
+        var source = Pattern.compile("^为([^，,。；;]{1,40})撰写(中文|英文)(研究设计的?方法部分)[，,]研究([^，,。；;]{2,120})[。.]?$")
+                .matcher(Normalizer.normalize(rule, Normalizer.Form.NFKC).strip());
+        if (!source.matches()) return java.util.Optional.empty();
+        String audience = Pattern.quote(canonical(source.group(1)));
+        String language = Pattern.quote(source.group(2));
+        String delivery = Pattern.quote(canonical(source.group(3)));
+        String topic = Pattern.quote(canonical(source.group(4)));
+        var background = executionSentences(sections, List.of(PromptSectionType.BACKGROUND, PromptSectionType.TASK));
+        var execution = executionSentences(sections, List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT));
+        // 受众必须明确是读者；研究对象、同词提及、其他研究及未来计划不能提供该来源。
+        boolean reader = background.stream().anyMatch(value -> Pattern.compile("面向" + audience + "(?:读者)?[。.]?$").matcher(value).find()
+                || Pattern.compile("^(?:本交付物|本交付)?为" + audience + "(?:撰写|编写|起草)").matcher(value).find());
+        boolean researchTopic = background.stream().anyMatch(value -> Pattern.compile("(?:^|[，,])(?:本(?:次)?研究|研究)(?:主题|问题)(?:为|是|[：:])"
+                + topic + "[。.]?$").matcher(value).find());
+        boolean deliverable = execution.stream().anyMatch(value -> Pattern.compile("(?:撰写|编写|起草|交付|输出)(?:该|本)?(?:中文|英文)?"
+                + delivery + "(?:正文)?(?:需覆盖.*|正文要求.*|[，,。；;：:].*|$)").matcher(value).find());
+        boolean writtenLanguage = execution.stream().anyMatch(value -> Pattern.compile("(?:撰写|编写|起草|交付|输出)" + language
+                + delivery + "(?:正文)?(?:[，,。；;：:].*|$)").matcher(value).find());
+        if (!researchTopic || !deliverable || !writtenLanguage) return java.util.Optional.empty();
+        // 动作、主题和交付已完整覆盖但受众角色含糊时，仅补来源中缺少的读者定位，不重抄整段任务。
+        return java.util.Optional.of(reader ? List.of() : List.of("面向" + source.group(1) + "读者。"));
+    }
+
+    /** 仅当前责任段中的肯定表达可组合证明任务覆盖；不跨示例、引用、未来或否定表达拼接来源。 */
+    private static List<String> executionSentences(Map<PromptSectionType, PromptSection> sections,
+            List<PromptSectionType> types) {
+        return types.stream().filter(sections::containsKey).flatMap(type -> currentSentences(sections.get(type).content()).stream())
+                .filter(value -> !CONDITIONAL.matcher(value).find())
+                .filter(value -> !value.matches("(?s).*(?:如果|假如|未来|以后|示例|例子|例如|引用|原文|另一|其他研究|甲研究|乙研究|不得|禁止|不必|无需|不应|不能|不要|不允许|不需要|不要求|不撰写|不交付|不输出).*"))
+                .map(value -> Normalizer.normalize(value, Normalizer.Form.NFKC).strip()
+                        .replaceFirst("^(?:[-*•]\\s*|\\d+[.)、]\\s*)", "")
+                        .replaceAll("(?<=[\\p{IsHan}])\\s+|\\s+(?=[\\p{IsHan}])", "")).toList();
     }
 
     /** 完整数字、操作符和 ASCII 标识符参与边界，500 不能覆盖 5000，R 不能覆盖 RStudio。 */
@@ -191,6 +257,9 @@ final class PlanDecisionIntegrator {
     private static String canonical(String text) {
         return Normalizer.normalize(text, Normalizer.Form.NFKC).strip()
                 .replaceAll("^(?:[-*•]\\s*|\\d+[.)、]\\s*)", "")
+                .replaceFirst("^设计必须保留[：:]", "保留")
+                .replaceAll("(\\d+)\\s*类任务(?:、|[，,])每类\\s*(\\d+)\\s*个(?:、|[，,])共\\s*(\\d+)\\s*个任务", "$1类任务,每类$2个,共$3个任务")
+                .replaceAll("比较直接增强(?:和|与)\\s*Plan(?:\\s*两种模式)?", "比较直接增强与Plan")
                 .replaceFirst("^(?:本次|这次|当前|已经确认|已确认)(?=采用|使用|按|提供)", "")
                 .replaceFirst("^(?:采用|使用|按照|按)(?=\\s*(?:[A-Za-z]|升序|降序|整数值))\\s*", "")
                 .replaceAll("(?<=数据)(?:来自|来源于|取自)", "来源")

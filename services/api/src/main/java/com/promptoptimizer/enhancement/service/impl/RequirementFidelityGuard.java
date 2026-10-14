@@ -212,8 +212,14 @@ final class RequirementFidelityGuard {
     private void collect(String text, Set<String> rules) {
         if (text == null || text.isBlank()) return;
         // 保留同句中的条件与例外；“数据尚未提供，但不得编造”仍是明确要求，不能因未知词删掉整句。
-        for (String sentence : text.split("(?<=[。！？!?])|\\R")) {
+        String[] sentences = text.split("(?<=[。！？!?])|\\R");
+        for (int index = 0; index < sentences.length; index++) {
+            String sentence = sentences[index];
             String value = sentence.strip().replaceFirst("^(?:[-*•]\\s+|\\d+[.)、]\\s*)", "");
+            // 完整逐字题答封套的标题是来源元数据；只跳过有紧邻实际题答的精确标题，不吞掉用户保留标题的指令。
+            if (value.matches("^(?:本次测试)?实际确认信息[（(]逐字题答[）)][：:]$")
+                    && index + 2 < sentences.length && sentences[index + 1].strip().matches("^问题[：:].+[？?]$")
+                    && sentences[index + 2].strip().matches("^回答[：:].+")) continue;
             // 问号后的裸待定状态没有业务对象，不能在答案绑定后继续宣称已定选择尚未决定。
             // 保留禁止猜测的条件边界；具体未决问题仍由权威提醒列表及 Plan 未决答案完整交付。
             if (matches(value, "^当前(?:尚未|还未)(?:决定|确定)[，,](?:不得|不能)默认补全[。.]?$")) {

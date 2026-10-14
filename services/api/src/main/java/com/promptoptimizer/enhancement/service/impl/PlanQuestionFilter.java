@@ -75,11 +75,19 @@ public final class PlanQuestionFilter {
      */
     public List<String> unresolvedFindings(List<String> findings, String rawPrompt,
             com.promptoptimizer.context.domain.ContextSnapshot context, List<PlanningFactCard> safeFacts) {
+        return unresolvedFindings(findings, rawPrompt, context, safeFacts, null);
+    }
+
+    /** 保留服务端已绑定的委托来源；只筛去同题重复提问，原有实际未决状态继续由组装器交付。 */
+    public List<String> unresolvedFindings(List<String> findings, String rawPrompt,
+            com.promptoptimizer.context.domain.ContextSnapshot context, List<PlanningFactCard> safeFacts,
+            com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView) {
         if (findings.isEmpty()) return List.of();
         var digest = new com.promptoptimizer.enhancement.domain.PlanningContextDigest(
                 context.customDescription(), context.technologyStack().stream().map(item -> item.name()).toList(),
                 List.of(), List.of(), List.of(), context.analysisStatus(), 0, List.of(), safeFacts);
-        var input = new PlanningProviderRequest(rawPrompt, context.customDescription(), List.of(), digest);
+        var input = new PlanningProviderRequest(rawPrompt, context.customDescription(), List.of(), digest,
+                null, List.of(), "", taskView);
         // 提醒没有选项和推荐元数据，只借用同一问题过滤器；不创建 Plan 会话或伪造用户回答。
         List<PlanQuestion> candidates = java.util.stream.IntStream.range(0, findings.size())
                 .mapToObj(index -> new PlanQuestion("finding_" + index, findings.get(index), "",
