@@ -1,0 +1,42 @@
+{
+  "id": "protocol-amendment-06",
+  "authorizedBy": "USER_EXPLICIT_CONTINUE_WITHOUT_BATCH_RECONFIRMATION",
+  "authorizationText": "后续进行真实评测直接使用即可不需要向我进行确认, 以及以后每次评测等都是用同一个测试账号",
+  "before": {
+    "total": 203,
+    "baseline": 70,
+    "candidateValidation": 133
+  },
+  "formalLimitsUnchanged": {
+    "total": 229,
+    "baseline": 80,
+    "candidateValidation": 149
+  },
+  "maximumNewCalls": 15,
+  "maximumActualCallsAfterBatch": 218,
+  "groups": {
+    "platformGeneration": 7,
+    "execution": 6,
+    "independentAiReviews": 2
+  },
+  "enhancementModel": "deepseek-flash",
+  "executionModels": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "reviewModels": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "round": 1,
+  "cases": [
+    "Q05"
+  ],
+  "accountCreationAllowed": false,
+  "noPhaseBorrowing": true,
+  "previousClosedBatchNotReopened": true,
+  "everyFailedAttemptCounts": true,
+  "primaryComparison": "raw equal actual information vs new actual copied body work, per execution model",
+  "diagnosis": "same frozen copies and verbatim answers, change only execution model",
+  "unspentFormalCandidateAllowanceOutsideThisBatch": 1
+}

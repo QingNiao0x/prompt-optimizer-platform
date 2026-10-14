@@ -1,0 +1,139 @@
+{
+  "status": 200,
+  "elapsedMs": 10852,
+  "body": {
+    "requestId": "0f229084-6564-434d-8faf-9aae70d9178d",
+    "data": {
+      "summary": "已理解你要为研究生撰写一份中文研究设计的方法部分，研究 Plan 问答对提示词质量的影响，且当前仅为拟定研究、尚未实施。需要确认的只是会改变方法口径或交付边界的少量事实：任务类别与评价工具的具体内容、随机化与盲法安排、公平对照的信息取得方式，以及分歧处理规则。",
+      "questions": [
+        {
+          "id": "task_categories",
+          "question": "4类任务具体指哪四类？",
+          "hint": "任务类别决定20个任务的内容框架和评价维度，需要你给出实际类别名称。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：事实提取、多步推理、约束满足、开放写作"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "task_construction",
+          "question": "每类5个任务如何确定？是自行设计、从既有题库选取，还是其他来源？",
+          "hint": "任务来源影响方法部分对材料与抽样过程的描述，也影响能否避免使用假设数据。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "self_designed",
+              "label": "自行设计",
+              "description": "由研究者根据研究问题自行编写20个任务。",
+              "answer": "20个任务由研究者根据研究问题自行设计。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "existing_bank",
+              "label": "从既有题库选取",
+              "description": "从已有公开或内部题库中按类别选取任务。",
+              "answer": "20个任务从既有题库中按类别选取。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "mixed",
+              "label": "自行设计加既有题库",
+              "description": "部分任务自行设计，部分从既有题库选取。",
+              "answer": "20个任务由自行设计与既有题库选取相结合。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "blind_scope",
+          "question": "盲评具体对哪些信息设盲？",
+          "hint": "盲法范围决定评审能看到什么，影响方法部分对偏倚控制的描述。",
+          "type": "MULTIPLE_CHOICE",
+          "options": [
+            {
+              "id": "condition",
+              "label": "实验条件",
+              "description": "评审不知道输出属于哪个条件。",
+              "answer": "评审不获知输出对应的实验条件。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "task_identity",
+              "label": "任务身份",
+              "description": "评审不知道输出对应哪个任务。",
+              "answer": "评审不获知输出对应的具体任务。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "output_order",
+              "label": "输出顺序",
+              "description": "评审看到的输出顺序随机化。",
+              "answer": "评审看到的输出顺序随机化。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "fair_control_info",
+          "question": "公平对照组的确认信息如何取得？",
+          "hint": "两组必须获得相同确认信息，但信息从何而来会影响方法部分的可操作性。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "pre_collected",
+              "label": "预先收集并封存",
+              "description": "先对每个任务取得实际确认信息并封存，再提供给各同信息组。",
+              "answer": "先对每个任务取得实际确认信息并封存，再逐字提供给同信息各组。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "from_plan",
+              "label": "取自Plan组实际回答",
+              "description": "以Plan组实际获得的回答作为同信息组的确认信息。",
+              "answer": "以Plan组实际获得的回答作为同信息组的确认信息。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "researcher_written",
+              "label": "研究者统一撰写",
+              "description": "由研究者为每个任务统一撰写确认信息。",
+              "answer": "由研究者为每个任务统一撰写确认信息并提供给各同信息组。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 10787,
+      "planId": "9656d7d8-fec3-44cb-9363-cb8b6afcaf5d",
+      "planningContext": {
+        "contextId": "643ed27e-fc1f-4a38-9fea-797b4fd9d663",
+        "version": "sha256:88e9ec82ccf032927c627c2e880a44237fdd74fd45865219f12aa46427ab38d1"
+      },
+      "expiresAt": "2026-10-14T06:05:41.937031400Z"
+    }
+  }
+}

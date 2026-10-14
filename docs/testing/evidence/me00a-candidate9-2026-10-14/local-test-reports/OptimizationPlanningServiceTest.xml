@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="1.185" tests="32" errors="0" skipped="0" failures="0">
+  <testcase name="shouldNotShowAReversedLabelEvenWhenItsStoredAnswerIsCorrect" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.004">
+    <system-out><![CDATA[13:27:22.597 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.label ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.599 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.label ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.599 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=FAILED durationMs=1
+13:27:22.599 [main] ERROR com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.failed requestId=- workflowId=- failureType=INVALID_RESPONSE validationReason=RULE_CONFLICT validationField=questions.options.label durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldPreserveARealTwoOptionDecisionAndAnUnknownFactWithoutInventingRecommendations" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.006">
+    <system-out><![CDATA[13:27:22.601 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:27:22.606 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.606 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=2 template=RESEARCH_ANALYSIS mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldValidateFreeTextExamplesAgainstTheExplicitInteractiveProtocol(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.004">
+    <system-out><![CDATA[13:27:22.609 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.examples ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.610 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:27:22.611 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.611 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=RESEARCH_ANALYSIS mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldValidateFreeTextExamplesAgainstTheExplicitInteractiveProtocol(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.004">
+    <system-out><![CDATA[13:27:22.613 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.examples ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.614 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:27:22.615 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.615 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=RESEARCH_ANALYSIS mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldDescribeZeroQuestionsAsReadyForFinalGeneration" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.002">
+    <system-out><![CDATA[13:27:22.617 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=0
+13:27:22.618 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.618 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=0 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldClassifyCurrentSoftwareGoalBeforeResearchMaterial" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.007">
+    <system-out><![CDATA[13:27:22.621 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:27:22.623 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=deterministic-planner-v2 selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.623 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=FEATURE_DEVELOPMENT mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldNotRetryNetworkOrCredentialFailures" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.001">
+    <system-out><![CDATA[13:27:22.627 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=FAILED durationMs=0
+13:27:22.627 [main] ERROR com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.failed requestId=- workflowId=- failureType=UPSTREAM_UNAVAILABLE validationReason=- validationField=- durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldNotLetAnApprovalConflictSuppressRefundOrNewApprovalConditions" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.009">
+    <system-out><![CDATA[13:27:22.630 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=a29211d9c2908aecd3dc modelCall=false inputFiles=2 analyzedFiles=2 protectedFiles=0 inputCharacters=16 warnings=0 durationMs=0
+13:27:22.633 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=a29211d9c2908aecd3dc operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:27:22.637 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=a29211d9c2908aecd3dc operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.637 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=a29211d9c2908aecd3dc questions=3 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRejectMoreThanEightProviderQuestions" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.001">
+    <system-out><![CDATA[13:27:22.638 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=FAILED durationMs=0
+13:27:22.638 [main] ERROR com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.failed requestId=- workflowId=- failureType=INVALID_RESPONSE validationReason=PLAN_STRUCTURE_INVALID validationField=plan durationMs=1
+]]></system-out>
+  </testcase>
+  <testcase name="shouldKeepResearchTaskWhenUserAsksForAnalysisCode" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.009">
+    <system-out><![CDATA[13:27:22.641 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:27:22.646 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=deterministic-planner-v2 selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.646 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=3 template=RESEARCH_ANALYSIS mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldTurnVerifiedCrossFileConflictsIntoRequiredPlanQuestions" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.006">
+    <system-out><![CDATA[13:27:22.648 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=9428a90a9fdf597eee5b modelCall=false inputFiles=2 analyzedFiles=2 protectedFiles=0 inputCharacters=16 warnings=0 durationMs=0
+13:27:22.650 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=9428a90a9fdf597eee5b operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=0
+13:27:22.652 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=9428a90a9fdf597eee5b operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.652 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=9428a90a9fdf597eee5b questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[1]" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.004">
+    <system-out><![CDATA[13:27:22.658 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.659 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:27:22.661 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.661 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[2]" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.003">
+    <system-out><![CDATA[13:27:22.663 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.664 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:27:22.664 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.664 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[3]" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.005">
+    <system-out><![CDATA[13:27:22.668 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.670 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=3
+13:27:22.671 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.671 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[4]" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.004">
+    <system-out><![CDATA[13:27:22.674 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.675 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:27:22.676 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.676 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[5]" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.004">
+    <system-out><![CDATA[13:27:22.678 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.679 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:27:22.680 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.680 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[6]" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.004">
+    <system-out><![CDATA[13:27:22.683 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.684 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:27:22.685 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.685 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=RESEARCH_ANALYSIS mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRepairNewRealOptionReversalsWithinTheExistingBudget(String, String)[7]" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.004">
+    <system-out><![CDATA[13:27:22.689 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.690 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:27:22.691 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.691 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=RESEARCH_ANALYSIS mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRejectOversizedRecommendationReason" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.002">
+    <system-out><![CDATA[13:27:22.693 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=FAILED durationMs=0
+13:27:22.693 [main] ERROR com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.failed requestId=- workflowId=- failureType=INVALID_RESPONSE validationReason=PLAN_OPTION_INVALID validationField=questions.options durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRepairAnOptionThatContradictsTheExplicitRuleBeforeRegisteringPlan(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.006">
+    <system-out><![CDATA[13:27:22.696 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.697 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:27:22.699 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.699 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRepairAnOptionThatContradictsTheExplicitRuleBeforeRegisteringPlan(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.004">
+    <system-out><![CDATA[13:27:22.701 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+13:27:22.702 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:27:22.703 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.703 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRetryInvalidPlanExactlyOnceAndPreserveValidQuestions" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.002">
+    <system-out><![CDATA[13:27:22.705 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=0
+13:27:22.706 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.706 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=RESEARCH_ANALYSIS mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldUseUploadedStatusBoundaryToRepairAPlanCandidateWithinTheSharedBudget" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.008">
+    <system-out><![CDATA[13:27:22.708 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=dd2b731ae2327b1a2976 modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=28 warnings=0 durationMs=0
+13:27:22.712 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=dd2b731ae2327b1a2976 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:27:22.713 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=dd2b731ae2327b1a2976 operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.713 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=dd2b731ae2327b1a2976 questions=1 template=FEATURE_DEVELOPMENT mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldAskReadableResearchQuestionsWithoutExposingInternalDimensions" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.027">
+    <system-out><![CDATA[13:27:22.726 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=11
+13:27:22.739 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=deterministic-planner-v2 selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.739 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=6 template=RESEARCH_ANALYSIS mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldUsePreparedHospitalFactsWithoutHidingTheOtherHospitalsMissingFormat" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.009">
+    <system-out><![CDATA[13:27:22.742 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=8b329af0590e3a38da7a modelCall=false inputFiles=2 analyzedFiles=2 protectedFiles=0 inputCharacters=29 warnings=0 durationMs=0
+13:27:22.748 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=8b329af0590e3a38da7a operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=4
+13:27:22.749 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=8b329af0590e3a38da7a operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.749 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=8b329af0590e3a38da7a questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldValidatePlanOptionsAgainstTheOwnedSourceWhenTheDigestOmitsVersionEvidence" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.009">
+    <system-out><![CDATA[13:27:22.752 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=a9798f4f7d21425bc0a0 modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=65 warnings=0 durationMs=0
+13:27:22.756 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=a9798f4f7d21425bc0a0 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:27:22.758 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=a9798f4f7d21425bc0a0 operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:22.758 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=a9798f4f7d21425bc0a0 questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldNotUseTestMaterialsAsProofForAnOtherwiseUnboundVersion" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.006">
+    <system-out><![CDATA[13:27:22.761 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=c1c96cf5237a83640104 modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=65 warnings=0 durationMs=0
+13:27:22.766 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=c1c96cf5237a83640104 operation=plan.generate stage=provider.total model=- status=FAILED durationMs=2
+13:27:22.766 [main] ERROR com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.failed requestId=- workflowId=c1c96cf5237a83640104 failureType=INVALID_RESPONSE validationReason=SOURCE_SCOPE_CONFLICT validationField=questions.options.answer durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldStillRejectAnUnprovedOtherVersionWhenTheSourceOnlyConfirmsVersionA" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.006">
+    <system-out><![CDATA[13:27:22.767 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=81351f0a532c1bb4f9d1 modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=65 warnings=0 durationMs=0
+13:27:22.772 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=81351f0a532c1bb4f9d1 operation=plan.generate stage=provider.total model=- status=FAILED durationMs=3
+13:27:22.772 [main] ERROR com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.failed requestId=- workflowId=81351f0a532c1bb4f9d1 failureType=INVALID_RESPONSE validationReason=SOURCE_SCOPE_CONFLICT validationField=questions.options.answer durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldPassPublishedModelToPlanningProvider" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.924">
+    <system-out><![CDATA[13:27:23.692 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=tokenhub:kimi-k3 status=SUCCESS durationMs=4
+13:27:23.696 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:23.696 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=0 template=RESEARCH_ANALYSIS mock=true durationMs=0
+]]></system-out>
+    <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (E:\Delelop\localRepository\net\bytebuddy\byte-buddy-agent\1.14.19\byte-buddy-agent-1.14.19.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+  </testcase>
+  <testcase name="shouldRejectInternalImplementationTermsInProviderCopy" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.01">
+    <system-out><![CDATA[13:27:23.706 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=FAILED durationMs=0
+13:27:23.706 [main] ERROR com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.failed requestId=- workflowId=- failureType=INVALID_RESPONSE validationReason=PLAN_STRUCTURE_INVALID validationField=plan durationMs=4
+]]></system-out>
+  </testcase>
+  <testcase name="shouldUseBackgroundDescriptionWhenInferringTheInternalStrategy" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.063">
+    <system-out><![CDATA[13:27:23.739 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=26
+13:27:23.771 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=deterministic-planner-v2 selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:27:23.771 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=4 template=RESEARCH_ANALYSIS mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRejectMultipleChoiceAnswersThatCannotFitTheConfirmationContract" classname="com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceTest" time="0.005">
+    <system-out><![CDATA[13:27:23.777 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=FAILED durationMs=0
+13:27:23.777 [main] ERROR com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.failed requestId=- workflowId=- failureType=INVALID_RESPONSE validationReason=PLAN_OPTION_INVALID validationField=questions.options durationMs=2
+]]></system-out>
+  </testcase>
+</testsuite>

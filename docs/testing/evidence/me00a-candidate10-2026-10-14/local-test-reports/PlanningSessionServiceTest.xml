@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.331" tests="13" errors="0" skipped="0" failures="0">
+  <testcase name="shouldUseResearchFileFactsInsteadOfRepeatingRegionAndDataQuestions" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.054">
+    <system-out><![CDATA[13:43:39.843 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=b448eda4b3dc5c5d8a98 modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=44 warnings=0 durationMs=0
+13:43:39.869 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=b448eda4b3dc5c5d8a98 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=19
+13:43:39.881 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=b448eda4b3dc5c5d8a98 operation=plan.generate providerRoute=mock model=deterministic-planner-v2 selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:43:39.881 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=b448eda4b3dc5c5d8a98 questions=2 template=RESEARCH_ANALYSIS mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRejectContextAndPlanOwnedByAnotherAuthenticatedUser" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.015">
+    <system-out><![CDATA[13:43:39.892 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=ac0e2c3ac7013874875e modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=11 warnings=0 durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldCarryBusinessRulesFromSolutionDocumentAlongsideProjectStackIntoPlanDigest" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.026">
+    <system-out><![CDATA[13:43:39.915 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=142fc8ac850d46b30516 modelCall=false inputFiles=2 analyzedFiles=2 protectedFiles=0 inputCharacters=31 warnings=0 durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldExcerptUploadedAnalyticsSourceInsteadOfAskingTheUserToLocateIt" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.021">
+    <system-out><![CDATA[13:43:39.938 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=8515ba44e8169860b571 modelCall=false inputFiles=3 analyzedFiles=3 protectedFiles=0 inputCharacters=245 warnings=0 durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRejectAChangedContextOwnerOrVersion" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.006">
+    <system-out><![CDATA[13:43:39.954 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=5fd9e64e1b2ee6e43b3a modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=11 warnings=0 durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRejectExpiredContextAndPlanSessions" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.01">
+    <system-out><![CDATA[13:43:39.968 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=da426daa1691b6cae1d9 modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=11 warnings=0 durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRejectIncompleteAnswersAndReuseOnlyAnIdenticalContextVersion" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.01">
+    <system-out><![CDATA[13:43:39.974 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=9d7a53ce5e54418ea3bf modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=11 warnings=0 durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldBindAnswersToTheExactPlanAndRestoreServerQuestionCopy" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.006">
+    <system-out><![CDATA[13:43:39.985 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=13cf105cd59f12e7650e modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=11 warnings=0 durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldKeepUploadedTestsInReportWithoutPromotingTheirExamplesIntoPlanOrFinalFacts" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.047">
+    <system-out><![CDATA[13:43:39.992 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=804317e20c84cce0c128 modelCall=false inputFiles=3 analyzedFiles=3 protectedFiles=0 inputCharacters=58 warnings=0 durationMs=0
+13:43:40.008 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=804317e20c84cce0c128 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=12
+13:43:40.010 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=804317e20c84cce0c128 operation=plan.generate providerRoute=test model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:43:40.010 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=804317e20c84cce0c128 questions=0 template=GENERAL mock=true durationMs=0
+13:43:40.011 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=prompt.optimize stage=context.analyze model=- status=SUCCESS durationMs=0
+13:43:40.035 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=804317e20c84cce0c128 operation=prompt.optimize stage=result.assemble model=- status=SUCCESS durationMs=12
+13:43:40.035 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=804317e20c84cce0c128 operation=prompt.optimize providerRoute=mock model=deterministic-enhancer-v1 selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:43:40.035 [main] INFO com.promptoptimizer.enhancement.service.impl.DefaultEnhancementOrchestrator -- event=optimization.completed requestId=- workflowId=804317e20c84cce0c128 mock=true sections=5 ambiguities=0 durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldAskQuestionsFromTheAnalyzedContextInsteadOfRepeatingKnownFacts" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.017">
+    <system-out><![CDATA[13:43:40.039 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=5f3679c003663b4ef848 modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=11 warnings=0 durationMs=0
+13:43:40.045 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=5f3679c003663b4ef848 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=4
+13:43:40.051 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=5f3679c003663b4ef848 operation=plan.generate providerRoute=mock model=deterministic-planner-v2 selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:43:40.051 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=5f3679c003663b4ef848 questions=2 template=FEATURE_DEVELOPMENT mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldKeepSolutionDocumentWhenManyCodeFilesAppearBeforeItInTheRequest" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.044">
+    <system-out><![CDATA[13:43:40.100 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=3fcb08fc43d934ab6a88 modelCall=false inputFiles=46 analyzedFiles=46 protectedFiles=0 inputCharacters=773 warnings=1 durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldAnalyzeMixedCodeAndSolutionFilesBeforeSendingTheirSafeDigestToPlanningProvider" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.016">
+    <system-out><![CDATA[13:43:40.111 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=559bcbd11b2d876fa070 modelCall=false inputFiles=2 analyzedFiles=2 protectedFiles=0 inputCharacters=108 warnings=0 durationMs=0
+13:43:40.118 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=559bcbd11b2d876fa070 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:43:40.121 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=559bcbd11b2d876fa070 operation=plan.generate providerRoute=test model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:43:40.121 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=559bcbd11b2d876fa070 questions=0 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldFilterProtectedFilesAndExposeOnlyAPlanningDigest" classname="com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceTest" time="0.035">
+    <system-out><![CDATA[13:43:40.131 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=01619438da966f982697 modelCall=false inputFiles=2 analyzedFiles=1 protectedFiles=1 inputCharacters=66 warnings=1 durationMs=0
+]]></system-out>
+  </testcase>
+</testsuite>

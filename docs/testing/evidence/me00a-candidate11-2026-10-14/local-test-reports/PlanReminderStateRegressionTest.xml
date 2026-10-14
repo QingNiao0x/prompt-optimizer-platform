@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="1.084" tests="51" errors="0" skipped="0" failures="0">
+  <testcase name="shouldMergeTheCapturedColumnMeaningReminderWithoutDroppingItsImpact" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.019"/>
+  <testcase name="shouldDelegateTheCapturedOrganizationQuestionButKeepItsNewMetricDecision" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.03">
+    <system-out><![CDATA[13:53:06.643 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=959f2f68f9fe0474b10e modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:06.652 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=959f2f68f9fe0474b10e operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=6
+13:53:06.655 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=959f2f68f9fe0474b10e operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.656 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=959f2f68f9fe0474b10e questions=0 template=GENERAL mock=true durationMs=0
+13:53:06.657 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=203d332dc025b608921a modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:06.662 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=203d332dc025b608921a operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:53:06.667 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=203d332dc025b608921a operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.667 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=203d332dc025b608921a questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldUseActualSharingEvidenceFromUploadedMaterial" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.009">
+    <system-out><![CDATA[13:53:06.671 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=24f2cc5e0a99da95899f modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=13 warnings=0 durationMs=0
+13:53:06.676 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=24f2cc5e0a99da95899f operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:53:06.677 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=24f2cc5e0a99da95899f operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.678 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=24f2cc5e0a99da95899f questions=0 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldNotTreatANewSourceVersionAsResolvedByAnOldSelection" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.03"/>
+  <testcase name="shouldKeepContradictoryOrTrulyUnknownAuthorizationStatus" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.014">
+    <system-out><![CDATA[13:53:06.710 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=e0721d85119b5db8059e modelCall=false inputFiles=2 analyzedFiles=2 protectedFiles=0 inputCharacters=26 warnings=0 durationMs=0
+13:53:06.714 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=e0721d85119b5db8059e operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:53:06.716 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=e0721d85119b5db8059e operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.716 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=e0721d85119b5db8059e questions=1 template=GENERAL mock=true durationMs=0
+13:53:06.718 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=859e9b5c0da99c01f8c6 modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:06.720 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=859e9b5c0da99c01f8c6 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:53:06.722 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=859e9b5c0da99c01f8c6 operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.722 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=859e9b5c0da99c01f8c6 questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldKeepNewAuthorizationObjectsAndFutureDecisions(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.007">
+    <system-out><![CDATA[13:53:06.726 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=db95259c84f0a04bd938 modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:06.729 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=db95259c84f0a04bd938 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:53:06.732 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=db95259c84f0a04bd938 operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.732 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=db95259c84f0a04bd938 questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldKeepNewAuthorizationObjectsAndFutureDecisions(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.011">
+    <system-out><![CDATA[13:53:06.736 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=cc1064f5fb2100f20268 modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:06.741 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=cc1064f5fb2100f20268 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=3
+13:53:06.744 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=cc1064f5fb2100f20268 operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.744 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=cc1064f5fb2100f20268 questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldKeepNewAuthorizationObjectsAndFutureDecisions(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.012">
+    <system-out><![CDATA[13:53:06.749 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=6c7b8edfe1e80b59be83 modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:06.755 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=6c7b8edfe1e80b59be83 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=3
+13:53:06.759 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=6c7b8edfe1e80b59be83 operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.760 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=6c7b8edfe1e80b59be83 questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldKeepNewAuthorizationObjectsAndFutureDecisions(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.013">
+    <system-out><![CDATA[13:53:06.768 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=f304c9de0c751689cac9 modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:06.772 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=f304c9de0c751689cac9 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:53:06.775 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=f304c9de0c751689cac9 operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.776 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=f304c9de0c751689cac9 questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldKeepNewConditionsAndDifferentRegionSubjects(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.012"/>
+  <testcase name="shouldKeepNewConditionsAndDifferentRegionSubjects(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.01"/>
+  <testcase name="shouldKeepNewConditionsAndDifferentRegionSubjects(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.007"/>
+  <testcase name="shouldKeepNewConditionsAndDifferentRegionSubjects(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.005"/>
+  <testcase name="shouldNotMergeAnotherDecisionHiddenAfterTheSameCandidateHeading" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.004"/>
+  <testcase name="shouldNotUseAMissingValueLabelAsTheAnswerToAnUnknownFact(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.009">
+    <system-out><![CDATA[13:53:06.829 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=d54f4f7958be5283abde modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=12 warnings=0 durationMs=0
+13:53:06.833 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=d54f4f7958be5283abde operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:53:06.835 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=d54f4f7958be5283abde operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.835 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=d54f4f7958be5283abde questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldNotUseAMissingValueLabelAsTheAnswerToAnUnknownFact(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.014">
+    <system-out><![CDATA[13:53:06.841 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=6101a1bb4b9a8707c98c modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=13 warnings=0 durationMs=0
+13:53:06.847 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=6101a1bb4b9a8707c98c operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:53:06.849 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=6101a1bb4b9a8707c98c operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.849 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=6101a1bb4b9a8707c98c questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldNotUseAMissingValueLabelAsTheAnswerToAnUnknownFact(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.008">
+    <system-out><![CDATA[13:53:06.853 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=0f2e058046e253b7510f modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=13 warnings=0 durationMs=0
+13:53:06.856 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=0f2e058046e253b7510f operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:53:06.859 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=0f2e058046e253b7510f operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.859 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=0f2e058046e253b7510f questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldNotUseAMissingValueLabelAsTheAnswerToAnUnknownFact(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.044">
+    <system-out><![CDATA[13:53:06.866 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=72e2ebc47901d9003124 modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=12 warnings=0 durationMs=0
+13:53:06.875 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=72e2ebc47901d9003124 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:53:06.905 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=72e2ebc47901d9003124 operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.905 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=72e2ebc47901d9003124 questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldNotUseAMissingValueLabelAsTheAnswerToAnUnknownFact(String)[5]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.064">
+    <system-out><![CDATA[13:53:06.938 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=9e784a7b9e43f5b1de24 modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=13 warnings=0 durationMs=0
+13:53:06.953 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=9e784a7b9e43f5b1de24 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:53:06.988 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=9e784a7b9e43f5b1de24 operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:06.988 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=9e784a7b9e43f5b1de24 questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldMergeTheCapturedRemainingStateExplanationWithoutDroppingIt" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.029"/>
+  <testcase name="shouldKeepTheCapturedFuturePermissionImpactAsAKnownConstraint" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.003"/>
+  <testcase name="shouldNotMoveAnAdditionalAuthorizationDecisionOutOfPending(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.002"/>
+  <testcase name="shouldNotMoveAnAdditionalAuthorizationDecisionOutOfPending(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.001"/>
+  <testcase name="shouldNotMoveAnAdditionalAuthorizationDecisionOutOfPending(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.001"/>
+  <testcase name="shouldStopReinsertingResolvedVersionStatusButRetainEveryIndependentRestriction" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.057"/>
+  <testcase name="shouldMergeTheCapturedLongCandidateReminderAndKeepItsExplanation" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.01"/>
+  <testcase name="shouldKeepPendingVersionAndNewEffectiveDateAfterPartialConfirmation" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.151"/>
+  <testcase name="shouldRejectTheCapturedReopenedMappingChoices(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.003">
+    <system-out><![CDATA[13:53:07.265 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRejectTheCapturedReopenedMappingChoices(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.002">
+    <system-out><![CDATA[13:53:07.273 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRejectTheCapturedReopenedMappingChoices(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.004">
+    <system-out><![CDATA[13:53:07.282 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=questions.options.answer ruleIndex=1 expectedClauseIndex=0 statementIndex=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldKeepLegalMappingChecksAndSeparateDateUses(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.003"/>
+  <testcase name="shouldKeepLegalMappingChecksAndSeparateDateUses(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.002"/>
+  <testcase name="shouldKeepLegalMappingChecksAndSeparateDateUses(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.001"/>
+  <testcase name="shouldClassifyTheCurrentRestrictionWithoutReaskingItsFuturePermissionPrecondition(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.001"/>
+  <testcase name="shouldClassifyTheCurrentRestrictionWithoutReaskingItsFuturePermissionPrecondition(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.003"/>
+  <testcase name="shouldClassifyTheCurrentRestrictionWithoutReaskingItsFuturePermissionPrecondition(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.001"/>
+  <testcase name="shouldInheritCurrentAuthorizationDespitePureQuestionPreambles(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.042">
+    <system-out><![CDATA[13:53:07.309 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=5e2d2fdcb1e2f9202f80 modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:07.314 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=5e2d2fdcb1e2f9202f80 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=2
+13:53:07.333 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=5e2d2fdcb1e2f9202f80 operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:07.333 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=5e2d2fdcb1e2f9202f80 questions=0 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldInheritCurrentAuthorizationDespitePureQuestionPreambles(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.074">
+    <system-out><![CDATA[13:53:07.370 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=75dc6b9eb5fe04390715 modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:07.432 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=75dc6b9eb5fe04390715 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:53:07.434 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=75dc6b9eb5fe04390715 operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:07.434 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=75dc6b9eb5fe04390715 questions=0 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldInheritCurrentAuthorizationDespitePureQuestionPreambles(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.03">
+    <system-out><![CDATA[13:53:07.447 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=70822c8418984c9d33ea modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:07.461 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=70822c8418984c9d33ea operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=5
+13:53:07.471 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=70822c8418984c9d33ea operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:07.471 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=70822c8418984c9d33ea questions=0 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldInheritCurrentAuthorizationDespitePureQuestionPreambles(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.007">
+    <system-out><![CDATA[13:53:07.476 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=cbff219306d3aa2bee0f modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:07.479 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=cbff219306d3aa2bee0f operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:53:07.481 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=cbff219306d3aa2bee0f operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:07.481 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=cbff219306d3aa2bee0f questions=0 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldInheritCurrentAuthorizationDespitePureQuestionPreambles(String)[5]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.008">
+    <system-out><![CDATA[13:53:07.483 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=5c8630001c5c8a4a4e14 modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:07.487 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=5c8630001c5c8a4a4e14 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:53:07.489 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=5c8630001c5c8a4a4e14 operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:07.489 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=5c8630001c5c8a4a4e14 questions=0 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldInheritKnownUnapprovedSharingAndKeepOtherUnknownHospitalQuestions" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.029">
+    <system-out><![CDATA[13:53:07.500 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=9d3067c423f9df263fe2 modelCall=false inputFiles=0 analyzedFiles=0 protectedFiles=0 inputCharacters=0 warnings=0 durationMs=0
+13:53:07.511 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=9d3067c423f9df263fe2 operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=9
+13:53:07.518 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=9d3067c423f9df263fe2 operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:07.518 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=9d3067c423f9df263fe2 questions=2 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldKeepANewObjectCodeOrPeriodInRemainingStateExplanation(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.014"/>
+  <testcase name="shouldKeepANewObjectCodeOrPeriodInRemainingStateExplanation(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.035"/>
+  <testcase name="shouldKeepANewObjectCodeOrPeriodInRemainingStateExplanation(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.008"/>
+  <testcase name="shouldKeepNewSubjectsWhenTheReminderUsesTheSameColumnMeaningGrammar(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.007"/>
+  <testcase name="shouldKeepNewSubjectsWhenTheReminderUsesTheSameColumnMeaningGrammar(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.01"/>
+  <testcase name="shouldKeepNewSubjectsWhenTheReminderUsesTheSameColumnMeaningGrammar(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.019"/>
+  <testcase name="shouldLeaveDirectEnhancementAndUnboundUnknownStatusUntouched" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.028"/>
+  <testcase name="shouldNotGeneralizeOneNamedHospitalsAuthorizationToAllHospitals" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.01">
+    <system-out><![CDATA[13:53:07.662 [main] INFO com.promptoptimizer.enhancement.service.impl.PlanningSessionServiceImpl -- event=context.prepare.completed requestId=- workflowId=821ca57b364153bc61ce modelCall=false inputFiles=1 analyzedFiles=1 protectedFiles=0 inputCharacters=28 warnings=0 durationMs=0
+13:53:07.666 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=821ca57b364153bc61ce operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=1
+13:53:07.669 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=821ca57b364153bc61ce operation=plan.generate providerRoute=mock model=fixture selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=0
+13:53:07.669 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=821ca57b364153bc61ce questions=1 template=GENERAL mock=true durationMs=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldMoveTheVerifiedUnapprovedSharingReminderToConstraints" classname="com.promptoptimizer.enhancement.service.impl.PlanReminderStateRegressionTest" time="0.017"/>
+</testsuite>

@@ -1,0 +1,36 @@
+{
+  "id": "protocol-amendment-08",
+  "authorizedBy": "USER_EXPLICIT_CONTINUE_WITHOUT_BATCH_RECONFIRMATION",
+  "authorizationText": "后续进行真实评测直接使用即可不需要向我进行确认, 以及以后每次评测等都是用同一个测试账号",
+  "before": {
+    "total": 218,
+    "baseline": 70,
+    "candidateValidation": 148
+  },
+  "formalLimitsUnchanged": {
+    "total": 229,
+    "baseline": 80,
+    "candidateValidation": 149
+  },
+  "maximumNewCalls": 1,
+  "maximumActualCallsAfterBatch": 219,
+  "groups": {
+    "platformGeneration": 1,
+    "execution": 0,
+    "independentAiReviews": 0
+  },
+  "enhancementModel": "deepseek-flash",
+  "executionModels": [],
+  "reviewModels": [],
+  "round": 1,
+  "cases": [
+    "Q05"
+  ],
+  "accountCreationAllowed": false,
+  "noPhaseBorrowing": true,
+  "previousClosedBatchNotReopened": true,
+  "everyFailedAttemptCounts": true,
+  "primaryComparison": "COPY_AND_HISTORY_REGRESSION_ONLY_NO_NEW_DOWNSTREAM_WORK",
+  "diagnosis": "same frozen copies and verbatim answers, change only execution model",
+  "unspentFormalCandidateAllowanceOutsideThisBatch": 0
+}

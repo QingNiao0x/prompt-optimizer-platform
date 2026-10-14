@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.483" tests="31" errors="0" skipped="0" failures="0">
+  <testcase name="shouldIgnoreMalformedReferencesAndKeepNewQuestions" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.043">
+    <system-out><![CDATA[13:27:24.206 [main] WARN com.promptoptimizer.enhancement.service.impl.OptimizationResultAssembler -- event=model.response.optional_references_ignored requestId=- stage=assembly ignoredCount=3
+]]></system-out>
+  </testcase>
+  <testcase name="shouldMergeResearchDecisionLabelsWithBoundQuestionsWithoutDroppingNewPopulation" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.026"/>
+  <testcase name="shouldKeepNewConflictAfterAnExplicitAnswerAndRemoveOnlyTheOldPair" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.008"/>
+  <testcase name="shouldNotUseAnApprovalAnswerToResolveRefundRules" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.002"/>
+  <testcase name="shouldReplayFiveUnresolvedQuestionsAndOneNewConflictWithoutDuplicates" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.025"/>
+  <testcase name="shouldCopyOtherHospitalsAndNewYearsUnknownsAfterConfirmingOnlyOneFormat" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.007"/>
+  <testcase name="shouldKeepLegacyAuthenticationDeduplicationWithoutSuppressingSessionQuestions" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.004"/>
+  <testcase name="shouldMergeTheSameUnresolvedDenominatorAfterPartialConfirmation" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.005"/>
+  <testcase name="shouldResolveAnUnlistedDimensionThroughValidatedReferenceWithoutLosingNewConditions" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.011"/>
+  <testcase name="shouldKeepNewConditionsEvenWhenProviderReferencesAnExistingQuestion" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.061"/>
+  <testcase name="shouldReplayRealUndecidedConflictAsOneIssue" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.006"/>
+  <testcase name="shouldKeepGenericReferencedCompoundQuestionsAndAdditionalClauses" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.006"/>
+  <testcase name="shouldRemoveAbsenceDeclarationsButRetainSpecificProblemsFollowingNoIssues" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.002"/>
+  <testcase name="shouldMergeARealHospitalObservationWindowParaphraseWithoutLosingItsImpact" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.021"/>
+  <testcase name="shouldCopyOneAuthoritativeReminderWithoutRemovingNewProviderConditions" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.011"/>
+  <testcase name="shouldKeepNewValuesScopeAndToolVersion" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.042"/>
+  <testcase name="shouldMergeUnlistedQuestionExplanationButKeepSeparateBusinessChoices" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.012"/>
+  <testcase name="shouldGroupOneConflictRegisteredByBothServerAndUnresolvedAnswer" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.008"/>
+  <testcase name="shouldNotEraseOperatorsOrMergeSeparateSubjects" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.021"/>
+  <testcase name="shouldMergeOnlySimpleRewordedUnknownStatesForTheSameSubject" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.003"/>
+  <testcase name="shouldMergeUnresolvedExplanationWithoutLosingNewConditions" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.007"/>
+  <testcase name="shouldNotHideAnEqualThresholdAfterConfirmingOnlyAnUnequalThreshold" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.005"/>
+  <testcase name="shouldNotEraseASecondQuestionAfterARepeatedReminder(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.008"/>
+  <testcase name="shouldNotEraseASecondQuestionAfterARepeatedReminder(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.008"/>
+  <testcase name="shouldNotEraseASecondQuestionAfterARepeatedReminder(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.008"/>
+  <testcase name="shouldNotEraseASecondQuestionAfterARepeatedReminder(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.008"/>
+  <testcase name="shouldMergeOnlyTheReminderForTheSameBusinessObject" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.012"/>
+  <testcase name="shouldDeduplicateBeforeApplyingLimitAndReportOverflow" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.042"/>
+  <testcase name="shouldNotUseConflictingReferencesToGuessWhichQuestionWasAnswered" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.013">
+    <system-out><![CDATA[13:27:24.639 [main] WARN com.promptoptimizer.enhancement.service.impl.OptimizationResultAssembler -- event=model.response.optional_references_ignored requestId=- stage=assembly ignoredCount=2
+]]></system-out>
+  </testcase>
+  <testcase name="shouldNeverMergeAdditionalConditionsIntoAnAlreadyResolvedQuestion" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.004"/>
+  <testcase name="shouldUseBoundIdOnlyWhenBothQuestionsCoverTheSameGenericReminder" classname="com.promptoptimizer.enhancement.service.impl.PlanAmbiguityMergeTest" time="0.026"/>
+</testsuite>
