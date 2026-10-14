@@ -75,6 +75,7 @@ final class PlanDecisionIntegrator {
         String expected = canonical(statement);
         String actual = canonical(sentence);
         if (expected.isBlank()) return false;
+        if (independentCoverage(sentence, statement, requirement.subject())) return true;
         if (NON_CURRENT.matcher(sentence).find() && !actual.equals(expected)) return false;
         if (CONDITIONAL.matcher(sentence).find() && !CONDITIONAL.matcher(statement).find()) return false;
         if (completeValue(actual, expected)) return true;
@@ -118,11 +119,54 @@ final class PlanDecisionIntegrator {
 
     /** 确认与原始规则同用保守句法覆盖，避免保真兜底把已落实的完整规则再补一遍。 */
     static boolean coveredRule(Map<PromptSectionType, PromptSection> sections, String rule) {
-        String expected = canonical(rule);
-        return sections.values().stream().filter(section -> section.type() != PromptSectionType.CLARIFICATIONS
+        return uncoveredRuleClauses(sections, rule).isEmpty();
+    }
+
+    /** 复合规则只补缺少的完整独立子项；条件和非独立对象语句保持原来的整体边界。 */
+    static List<String> uncoveredRuleClauses(Map<PromptSectionType, PromptSection> sections, String rule) {
+        List<String> body = sections.values().stream().filter(section -> section.type() != PromptSectionType.CLARIFICATIONS
                         && section.type() != PromptSectionType.EXAMPLES && section.type() != PromptSectionType.ACCEPTANCE)
-                .flatMap(section -> currentSentences(section.content()).stream())
-                .anyMatch(sentence -> canonical(sentence).equals(expected));
+                .flatMap(section -> currentSentences(section.content()).stream()).toList();
+        // 只拆完整句和明确并列子句；条件规则保持整体，避免把条件内的同值当全局要求。
+        String split = CONDITIONAL.matcher(rule).find() ? "(?!)" : "(?<=[。！？!?])|[；;]";
+        var independent = PlanAnswerSemantics.independentStatements(rule);
+        List<String> clauses = independent.isEmpty() ? java.util.Arrays.stream(rule.split(split)).map(String::strip)
+                .filter(value -> !value.isBlank()).toList() : independent.stream().map(PlanAnswerSemantics.IndependentStatement::text).toList();
+        return clauses.stream().filter(clause -> body.stream().noneMatch(sentence -> {
+            String expected = canonical(clause), actual = canonical(sentence);
+            if (actual.equals(expected)) return true;
+            if (independentCoverage(sentence, clause, "用户说明") || independentCoverage(sentence, clause, "委托要求")) return true;
+            // 同向完整子句可出现在较长执行句中；新增条件、转述和反向要求不能免除兜底。
+            if (sentence.matches("(?s).*(?:如果|假如|若|未来|例如|示例|引用|不是|并非|不必遵守|无需遵守).*")) return false;
+            if (CONDITIONAL.matcher(sentence).find() && !CONDITIONAL.matcher(clause).find()) return false;
+            int position = actual.indexOf(expected);
+            if (position > 0 && actual.substring(0, position).matches("(?s).*(?:不得|不能|禁止|不要|不应|不允许)$")) return false;
+            return completeValue(actual, expected);
+        })).toList();
+    }
+
+    /** 仅接受已命名的本任务独立状态和委托；不把其他研究、条件、未来或否定动作作覆盖证据。 */
+    private static boolean independentCoverage(String sentence, String statement, String subject) {
+        if (!List.of("用户说明", "委托要求").contains(subject)) return false;
+        String actual = java.text.Normalizer.normalize(sentence, java.text.Normalizer.Form.NFKC).strip()
+                .replaceFirst("^[-*•]\\s*", "");
+        statement = java.text.Normalizer.normalize(statement, java.text.Normalizer.Form.NFKC);
+        if (actual.matches("(?s).*(?:如果|假如|若以后|未来|例如|示例|引用|另一|其他研究|其他实验|甲研究|乙研究|并非|不是|无需|不必).*")) return false;
+        if (statement.matches("^(?:这是尚未实施的研究|当前只是拟定研究,尚未实施)[。；;]?$")) {
+            return actual.matches("^(?:本研究|本次研究|当前|目前|这项研究)(?:仅|只是|仅为|为|只是拟定研究,|仅为拟定研究,)*"
+                    + "(?:尚未实施|拟定研究,尚未实施)(?:[。;,].*)?$");
+        }
+        if (statement.matches("^我没有额外真实数据[。；;]?$")) {
+            return actual.matches("^(?:用户|我|我们)没有额外真实数据[。；;]?$" )
+                    || actual.matches("^(?:本交付物|当前|本研究)[^。;]*,用户没有额外真实数据[。;]?$" )
+                    || actual.matches("^(?:当前|目前)(?:只是|仅为)拟定研究,尚未实施,没有额外真实数据[。;]?$" );
+        }
+        // 已委托事项是拟议设计；必须同时包含可开展主方案与适用条件，泛称“提供建议”不足以覆盖。
+        if (subject.equals("委托要求") && statement.matches("^请根据原始研究目标提出可开展的推荐设计并说明适用条件[。；;]?$")) {
+            return actual.matches("^对以下已委托设计的未决事项,提出可直接开展的拟议主方案并说明适用条件(?:,标注为拟议设计而非已确认事实)?[。;:]?$" )
+                    || actual.matches("^撰写研究设计的方法部分,围绕[^。;]+这一主题,提出可开展的推荐设计并说明适用条件[。;]?$" );
+        }
+        return false;
     }
 
     /** 完整数字、操作符和 ASCII 标识符参与边界，500 不能覆盖 5000，R 不能覆盖 RStudio。 */

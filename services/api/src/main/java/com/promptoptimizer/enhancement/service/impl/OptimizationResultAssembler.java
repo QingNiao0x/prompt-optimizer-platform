@@ -330,7 +330,10 @@ public class OptimizationResultAssembler {
                 .filter(requirement -> PlanDecisionIntegrator.coveredRule(sections, requirement.statement()))
                 .map(requirement -> requirement.statement()).collect(java.util.stream.Collectors.toSet());
         var merged = new PlanAmbiguityMerger(planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), rawPrompt,
-                coveredExplanations)
+                coveredExplanations, taskView.executionRequirements().stream()
+                        .filter(requirement -> requirement.subject().equals("委托要求"))
+                        .map(com.promptoptimizer.enhancement.domain.EffectiveTaskView.ExecutionRequirement::questionId)
+                        .filter(java.util.Objects::nonNull).collect(java.util.stream.Collectors.toSet()))
                 .merge(assessed, ambiguities, references);
         List<String> remainingAmbiguities = merged.messages();
         merged.executionPrerequisites().forEach(value -> validateUserFacingProtocol(value, rawPrompt, "ambiguities"));
@@ -366,7 +369,7 @@ public class OptimizationResultAssembler {
         // 未决清单也是正文中的权威规则来源；先落入正文再查缺补齐，避免同一禁止规则被追加两遍。
         appendExplicitRules(sections, ProviderPrerequisiteCompactor.uncoveredRules(explicitRules,
                 merged.executionPrerequisites(), decisions, rawPrompt).stream()
-                .filter(rule -> !PlanDecisionIntegrator.coveredRule(sections, rule)).toList());
+                .flatMap(rule -> PlanDecisionIntegrator.uncoveredRuleClauses(sections, rule).stream()).toList());
         // 补回规则也可能重述同一未知；权威执行前提所在的标题范围跳过，只检查其余完整断言。
         ProviderPrerequisiteCompactor.compact(sections, merged.executionPrerequisites(), decisions, rawPrompt);
         // 一个权威列表同时驱动 API 与段落，避免 UI 与模型返回的旧 CLARIFICATIONS 互相矛盾。

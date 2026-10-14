@@ -116,7 +116,9 @@ class DelegatedPlanAnswerProjectionTest {
                 .doesNotContain("分别：这是", "设定：这是", "从取得：这是", "处理：这是", "配对比较：这是");
         assertThat(result.sections()).filteredOn(section -> section.type() == PromptSectionType.TASK).singleElement()
                 .satisfies(section -> assertThat(section.content()).doesNotContain("这是尚未实施的研究"));
-        assertThat(result.optimizedPrompt().split("这是尚未实施的研究", -1)).hasSize(2);
+        // 原模型已经用自然状态句表达研究未实施，不再要求追加用户的同义原句。
+        assertThat(result.optimizedPrompt()).contains("当前仅为拟定研究，尚未实施。")
+                .doesNotContain("- 这是尚未实施的研究");
         assertThat(result.optimizedPrompt().split("请根据原始研究目标提出可开展的推荐设计并说明适用条件", -1)).hasSize(2);
     }
 

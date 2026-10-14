@@ -49,6 +49,7 @@ final class PlanAmbiguityMerger {
     /** 仅用于核对本次需求命名的对象，不输出或持久化原始提示词。 */
     private final String rawPrompt;
     private final Set<String> coveredExplanations;
+    private final Set<String> delegatedQuestionIds;
 
     PlanAmbiguityMerger(ConfirmedDecisionSet decisions) {
         this(decisions, "");
@@ -60,11 +61,18 @@ final class PlanAmbiguityMerger {
 
     /** 只有已在本次正文落实的完整独立边界才能省略解释，原问题仍分别登记。 */
     PlanAmbiguityMerger(ConfirmedDecisionSet decisions, String rawPrompt, Set<String> coveredExplanations) {
+        this(decisions, rawPrompt, coveredExplanations, Set.of());
+    }
+
+    /** 委托仅改变本题的执行责任表述，不清除未决身份、实际参数或新来源冲突。 */
+    PlanAmbiguityMerger(ConfirmedDecisionSet decisions, String rawPrompt, Set<String> coveredExplanations,
+            Set<String> delegatedQuestionIds) {
         this.decisions = decisions;
         this.rawPrompt = rawPrompt == null ? "" : rawPrompt;
         this.pendingIdentity = new PendingReminderIdentity(decisions, rawPrompt);
         this.coveredExplanations = coveredExplanations.stream().map(PlanAmbiguityMerger::explanationIdentity)
                 .collect(java.util.stream.Collectors.toUnmodifiableSet());
+        this.delegatedQuestionIds = Set.copyOf(delegatedQuestionIds);
     }
 
     /** 新冲突优先，其次为原始未决问题；外部引用不能单独触发删除。 */
@@ -98,7 +106,9 @@ final class PlanAmbiguityMerger {
             String owner = pendingIdentity.owner(decision);
             String scopedValue = (owner.isEmpty() ? "" : owner + "：") + value;
             if (registered.containsKey(key)) appendNovelExplanation(registered, key, scopedValue);
-            else registered.put(key, "该问题尚未确定：" + scopedValue);
+            else registered.put(key, delegatedQuestionIds.contains(decision.questionId())
+                    ? "已委托提出拟议设计，实际采用参数仍未确认：" + scopedValue
+                    : "该问题尚未确定：" + scopedValue);
         }
         for (String finding : findings) {
             String text = normalizeBoundAnswerPresentation(finding);

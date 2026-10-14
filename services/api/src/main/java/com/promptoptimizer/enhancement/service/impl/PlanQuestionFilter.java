@@ -110,6 +110,7 @@ public final class PlanQuestionFilter {
                 .filter(question -> !readOnlyComparison.directedQuestion(question))
                 .filter(question -> !RoutineGuideDecision.delegated(question, input.rawPrompt()))
                 .filter(question -> !routinePresentation(question, input.rawPrompt()))
+                .filter(question -> !routineBodyCountScope(question, input.rawPrompt()))
                 .filter(question -> !delegatedPendingPresentation(question, input.rawPrompt(), pendingParameters))
                 .filter(question -> !routineWindowTradeoffAnalysis(question, input.rawPrompt()))
                 .filter(question -> !routineExecutionPresentation(question, input.rawPrompt()))
@@ -125,6 +126,20 @@ public final class PlanQuestionFilter {
                     String dimension = questionDimension(question.question());
                     return dimension == null || seenDimensions.add(new QuestionKey(dimension, questionDetails(question)));
                 }).toList();
+    }
+
+    /** 已明确正文及附表另计时，普通计数执行不另引入摘要、参考文献；期刊规范或新条件仍需澄清。 */
+    private boolean routineBodyCountScope(PlanQuestion question, String rawPrompt) {
+        String raw = safe(rawPrompt);
+        if (!raw.contains("附表另计") || !raw.contains("方法部分") || hasAdditionalDecision(question)
+                || raw.matches("(?s).*(?:期刊|投稿|学校规范|机构规范|字数口径.{0,12}(?:确认|由我决定)|先.{0,8}确认.{0,8}字数).*")) return false;
+        var bound = Pattern.compile("正文\\s*(\\d+)\\s*(?:至|到|[-–—])\\s*(\\d+)\\s*(?:个)?汉字").matcher(raw);
+        if (!bound.find()) return false;
+        String expected = "^正文\\s*" + bound.group(1) + "\\s*(?:至|到|[-–—])\\s*" + bound.group(2)
+                + "\\s*(?:个)?汉字是否包含标题、摘要和参考文献[？?]$";
+        // 元信息携带实际投稿、机构或独立格式选择时不能因题干像计数题而整题删除。
+        return question.question().matches(expected) && questionDetails(question).stream().noneMatch(part ->
+                part.matches("(?s).*(?:期刊|投稿|学校|机构|授权|权限|另外|新增|新条件|重新选择|引用规范).*"));
     }
 
     /**

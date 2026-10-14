@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.localacceptance.LocalAcceptanceMaintenanceMapper">
+  <resultMap id="candidate" type="com.promptoptimizer.identity.maintenance.LocalAcceptanceRows$Candidate">
+    <constructor>
+      <arg column="id" javaType="string"/><arg column="tenant_id" javaType="string"/><arg column="status" javaType="string"/>
+      <arg column="records" javaType="_long"/><arg column="visible" javaType="_long"/><arg column="workspaces" javaType="_long"/>
+      <arg column="other_members" javaType="_long"/><arg column="other_users" javaType="_long"/>
+    </constructor>
+  </resultMap>
+  <resultMap id="backup" type="com.promptoptimizer.identity.maintenance.LocalAcceptanceRows$Backup">
+    <constructor><arg column="kind" javaType="string"/><arg column="data" javaType="string"/></constructor>
+  </resultMap>
+  <sql id="users"><foreach collection="users" item="id" open="(" separator="," close=")">#{id}</foreach></sql>
+  <select id="candidates" resultMap="candidate">
+    SELECT u.id::text AS id, u.tenant_id::text AS tenant_id, u.status,
+           (SELECT count(*) FROM optimization_record r WHERE r.created_by=u.id) AS records,
+           (SELECT count(*) FROM optimization_record r WHERE r.created_by=u.id AND r.deleted_at IS NULL) AS visible,
+           (SELECT count(*) FROM workspace w WHERE w.created_by=u.id AND w.tenant_id=u.tenant_id) AS workspaces,
+           (SELECT count(*) FROM workspace_member m JOIN workspace w ON w.id=m.workspace_id
+              WHERE w.tenant_id=u.tenant_id AND m.user_id != u.id) AS other_members,
+           (SELECT count(*) FROM user_account other WHERE other.tenant_id=u.tenant_id AND other.id != u.id) AS other_users
+      FROM user_account u JOIN tenant t ON t.id=u.tenant_id
+     WHERE u.display_name='本地业务验收' AND u.email IS NULL AND u.platform_role='USER'
+       AND t.name='本地业务验收租户'
+       AND EXISTS (SELECT 1 FROM user_identity i WHERE i.user_id=u.id AND i.identity_type='USERNAME'
+                     AND i.issuer='local' AND i.normalized_identifier ~ '^qa_[a-z0-9]{12,32}$')
+     ORDER BY u.created_at
+  </select>
+  <select id="snapshot" resultMap="backup">
+    SELECT 'user_account' AS kind, (to_jsonb(u)-'password_hash')::text AS data FROM user_account u WHERE id IN <include refid="users"/>
+    UNION ALL SELECT 'user_identity', (to_jsonb(i)-'identifier'-'normalized_identifier')::text FROM user_identity i WHERE user_id IN <include refid="users"/>
+    UNION ALL SELECT 'tenant', to_jsonb(t)::text FROM tenant t WHERE id IN (SELECT tenant_id FROM user_account WHERE id IN <include refid="users"/>)
+    UNION ALL SELECT 'workspace', to_jsonb(w)::text FROM workspace w WHERE created_by IN <include refid="users"/>
+    UNION ALL SELECT 'optimization_session', to_jsonb(s)::text FROM optimization_session s WHERE created_by IN <include refid="users"/>
+    UNION ALL SELECT 'optimization_record', to_jsonb(r)::text FROM optimization_record r WHERE created_by IN <include refid="users"/>
+  </select>
+  <select id="lockUsers" resultType="string">SELECT id::text FROM user_account WHERE id IN <include refid="users"/> ORDER BY id FOR UPDATE</select>
+  <update id="mergeRecords">
+    <!-- 原 ID、正文、时间和逻辑删除状态保持；原租户/工作区/用户记录为本次维护来源，避免把迁移误当原生成归属。 -->
+    UPDATE optimization_record SET result_metadata=result_metadata || jsonb_build_object('localAcceptanceConsolidation',
+      jsonb_build_object('originalUserId',created_by,'originalTenantId',tenant_id,'originalWorkspaceId',workspace_id,
+                        'canonicalUserId',#{user},'mergedAt',CURRENT_TIMESTAMP)),
+      created_by=#{user}, tenant_id=#{tenant}, workspace_id=#{workspace}
+    WHERE created_by IN <include refid="users"/>
+  </update>
+  <update id="mergeSessions">UPDATE optimization_session SET created_by=#{user}, tenant_id=#{tenant}, workspace_id=#{workspace} WHERE created_by IN <include refid="users"/></update>
+  <update id="disableUsers">UPDATE user_account SET status='DISABLED', display_name='本地业务验收（已合并）', updated_at=CURRENT_TIMESTAMP WHERE id IN <include refid="users"/></update>
+  <select id="visibleHistory" resultType="long">SELECT count(*) FROM optimization_record WHERE created_by=#{user} AND tenant_id=#{tenant} AND workspace_id=#{workspace} AND deleted_at IS NULL</select>
+</mapper>

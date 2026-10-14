@@ -52,8 +52,9 @@ export function completedExecutionWork(record) {
 /** An approved batch limits both scope and attempts; unused phase allowance cannot widen it. */
 export function batchRequestLimit(protocol, version, mode, cases, models, round = '1') {
   const batch = protocol.activeBatch;
+  if (!batch && ['candidate8', 'candidate9'].includes(version)) throw new Error('Frozen active batch required');
   if (!batch) return protocol.maximumActualModelCalls;
-  if (version === 'candidate8' && batch.authorizationStatus !== 'APPROVED_BY_USER')
+  if (['candidate8', 'candidate9'].includes(version) && batch.authorizationStatus !== 'APPROVED_BY_USER')
     throw new Error('New batch budget has not been approved');
   if (version !== batch.version || (batch.secondRoundAuthorized === false && round !== '1')
       || mode !== batch.mode || cases.some(sample => !batch.cases.includes(sample.id))
@@ -66,7 +67,7 @@ if (directRun) { try { await run(); process.exit(0); } catch (error) { console.e
 
 async function run() {
   const [version = 'baseline', round = '1', mode = 'direct', selected = 'all', selectedModels = 'all'] = process.argv.slice(2);
-  if (!/^(baseline|candidate[12345678])$/.test(version) || !/^[12]$/.test(round)
+  if (!/^(baseline|candidate[123456789])$/.test(version) || !/^[12]$/.test(round)
     || !['direct', 'plan', 'compliance'].includes(mode)
     || mode === 'compliance' && version !== 'candidate8') throw new Error('Invalid evaluation phase');
   const root = resolve('tmp/me00a-20261012');
@@ -77,11 +78,11 @@ async function run() {
   const caseFile = protocol.activeBatch?.casesFile ?? 'cases.json';
   if (!/^[A-Za-z0-9_-]+\.json$/.test(caseFile)) throw new Error('Frozen case file must be a runtime JSON filename');
   const caseText = await readFile(resolve(root, caseFile), 'utf8');
-  if (version === 'candidate8' && createHash('sha256').update(caseText).digest('hex') !== protocol.activeBatch?.casesSha256)
+  if (['candidate8', 'candidate9'].includes(version) && createHash('sha256').update(caseText).digest('hex') !== protocol.activeBatch?.casesSha256)
     throw new Error('Frozen case catalogue hash mismatch');
   const cases = selectedEvaluationCases(JSON.parse(caseText), selected);
   const requestLimit = batchRequestLimit(protocol, version, mode, cases, models, round);
-  const account = JSON.parse(await readFile(resolve('tmp/enhancement-quality-20261012/account.json'), 'utf8'));
+  const account = JSON.parse(await readFile(resolve('tmp/local-acceptance/account.json'), 'utf8'));
   const require = createRequire(new URL('../apps/web/package.json', import.meta.url));
   const { chromium } = require('@playwright/test');
   const browser = await chromium.connectOverCDP('http://127.0.0.1:9325');
