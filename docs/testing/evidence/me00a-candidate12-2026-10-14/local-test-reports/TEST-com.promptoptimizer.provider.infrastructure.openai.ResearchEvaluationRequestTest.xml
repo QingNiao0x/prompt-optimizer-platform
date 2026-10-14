@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.provider.infrastructure.openai.ResearchEvaluationRequestTest" time="0.064" tests="2" errors="0" skipped="0" failures="0">
+  <testcase name="bothEnhancementEntriesSendGuidanceAndTheSameSourceAnchor(boolean)[1]" classname="com.promptoptimizer.provider.infrastructure.openai.ResearchEvaluationRequestTest" time="0.038">
+    <system-out><![CDATA[17:41:39.413 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=prompt.optimize stage=model.upstream model=test-model status=SUCCESS durationMs=16
+17:41:39.413 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=prompt.optimize stage=model.validation model=test-model status=SUCCESS durationMs=0
+17:41:39.414 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=prompt.optimize providerRoute=legacy model=test-model selectionSource=PLATFORM_CATALOG mock=false attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=16
+]]></system-out>
+  </testcase>
+  <testcase name="bothEnhancementEntriesSendGuidanceAndTheSameSourceAnchor(boolean)[2]" classname="com.promptoptimizer.provider.infrastructure.openai.ResearchEvaluationRequestTest" time="0.019">
+    <system-out><![CDATA[17:41:39.435 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=prompt.optimize stage=model.upstream model=test-model status=SUCCESS durationMs=7
+17:41:39.435 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=prompt.optimize stage=model.validation model=test-model status=SUCCESS durationMs=0
+17:41:39.435 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=prompt.optimize providerRoute=legacy model=test-model selectionSource=PLATFORM_CATALOG mock=false attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=8
+]]></system-out>
+  </testcase>
+</testsuite>

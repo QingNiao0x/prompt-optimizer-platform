@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.432" tests="19" errors="0" skipped="0" failures="11">
+  <testcase name="exceptionsAndAdditionalConditionsAreNotRemovedByGenericDelegation" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.095"/>
+  <testcase name="completeTaskIntroductionCanBeDistributedAcrossItsResponsibilitySections" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.017">
+    <failure message="&#10;Expecting value to be true but was false" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+Expecting value to be true but was false
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest.completeTaskIntroductionCanBeDistributedAcrossItsResponsibilitySections(CandidateTwelveCoverageBoundaryTest.java:31)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="currentDelegationAndUnconfirmedParametersCanCoexist" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.013">
+    <failure message="&#10;Expecting empty but was: [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]" type="java.lang.AssertionError"><![CDATA[java.lang.AssertionError: 
+
+Expecting empty but was: ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest.currentDelegationAndUnconfirmedParametersCanCoexist(CandidateTwelveCoverageBoundaryTest.java:59)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="aBoundDelegationDoesNotReaskTheSameDesignButKeepsIndependentChoices" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.163">
+    <failure message="&#10;Expecting actual:&#10;  [PlanQuestion[id=design, question=这4类任务具体指哪四类？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true],&#10;    PlanQuestion[id=new, question=这4类任务具体指哪四类？, hint=另外确认新增指标的评分尺度。, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true],&#10;    PlanQuestion[id=permission, question=实际参与者是否授权使用其个人资料？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true],&#10;    PlanQuestion[id=parameter, question=甲指标采用哪一年的标准人口？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true]]&#10;to contain exactly (and in same order):&#10;  [PlanQuestion[id=new, question=这4类任务具体指哪四类？, hint=另外确认新增指标的评分尺度。, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true],&#10;    PlanQuestion[id=permission, question=实际参与者是否授权使用其个人资料？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true],&#10;    PlanQuestion[id=parameter, question=甲指标采用哪一年的标准人口？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true]]&#10;but some elements were not expected:&#10;  [PlanQuestion[id=design, question=这4类任务具体指哪四类？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true]]&#10;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+Expecting actual:
+  [PlanQuestion[id=design, question=这4类任务具体指哪四类？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true],
+    PlanQuestion[id=new, question=这4类任务具体指哪四类？, hint=另外确认新增指标的评分尺度。, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true],
+    PlanQuestion[id=permission, question=实际参与者是否授权使用其个人资料？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true],
+    PlanQuestion[id=parameter, question=甲指标采用哪一年的标准人口？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true]]
+to contain exactly (and in same order):
+  [PlanQuestion[id=new, question=这4类任务具体指哪四类？, hint=另外确认新增指标的评分尺度。, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true],
+    PlanQuestion[id=permission, question=实际参与者是否授权使用其个人资料？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true],
+    PlanQuestion[id=parameter, question=甲指标采用哪一年的标准人口？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true]]
+but some elements were not expected:
+  [PlanQuestion[id=design, question=这4类任务具体指哪四类？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true]]
+
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest.aBoundDelegationDoesNotReaskTheSameDesignButKeepsIndependentChoices(CandidateTwelveCoverageBoundaryTest.java:108)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="partialDifferentFutureOrExampleAnchorsCannotCoverTheTask(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.026"/>
+  <testcase name="partialDifferentFutureOrExampleAnchorsCannotCoverTheTask(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.003"/>
+  <testcase name="partialDifferentFutureOrExampleAnchorsCannotCoverTheTask(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.003"/>
+  <testcase name="partialDifferentFutureOrExampleAnchorsCannotCoverTheTask(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.001"/>
+  <testcase name="partialDifferentFutureOrExampleAnchorsCannotCoverTheTask(String)[5]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.002"/>
+  <testcase name="partialDifferentFutureOrExampleAnchorsCannotCoverTheTask(String)[6]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.001"/>
+  <testcase name="onlyCompleteCurrentTaskDelegationCoversTheSource(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.002">
+    <failure message="&#10;Expecting actual:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;to contain exactly (and in same order):&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;but some elements were not found:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;and others were not expected:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+Expecting actual:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+to contain exactly (and in same order):
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+but some elements were not found:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+and others were not expected:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest.onlyCompleteCurrentTaskDelegationCoversTheSource(CandidateTwelveCoverageBoundaryTest.java:74)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="onlyCompleteCurrentTaskDelegationCoversTheSource(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.003">
+    <failure message="&#10;Expecting actual:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;to contain exactly (and in same order):&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;but some elements were not found:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;and others were not expected:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+Expecting actual:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+to contain exactly (and in same order):
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+but some elements were not found:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+and others were not expected:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest.onlyCompleteCurrentTaskDelegationCoversTheSource(CandidateTwelveCoverageBoundaryTest.java:74)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="onlyCompleteCurrentTaskDelegationCoversTheSource(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.003">
+    <failure message="&#10;Expecting actual:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;to contain exactly (and in same order):&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;but some elements were not found:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;and others were not expected:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+Expecting actual:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+to contain exactly (and in same order):
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+but some elements were not found:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+and others were not expected:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest.onlyCompleteCurrentTaskDelegationCoversTheSource(CandidateTwelveCoverageBoundaryTest.java:74)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="onlyCompleteCurrentTaskDelegationCoversTheSource(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.003">
+    <failure message="&#10;Expecting actual:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;to contain exactly (and in same order):&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;but some elements were not found:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;and others were not expected:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+Expecting actual:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+to contain exactly (and in same order):
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+but some elements were not found:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+and others were not expected:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest.onlyCompleteCurrentTaskDelegationCoversTheSource(CandidateTwelveCoverageBoundaryTest.java:74)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="onlyCompleteCurrentTaskDelegationCoversTheSource(String)[5]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.003">
+    <failure message="&#10;Expecting actual:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;to contain exactly (and in same order):&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;but some elements were not found:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;and others were not expected:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+Expecting actual:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+to contain exactly (and in same order):
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+but some elements were not found:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+and others were not expected:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest.onlyCompleteCurrentTaskDelegationCoversTheSource(CandidateTwelveCoverageBoundaryTest.java:74)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="onlyCompleteCurrentTaskDelegationCoversTheSource(String)[6]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.002">
+    <failure message="&#10;Expecting actual:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;to contain exactly (and in same order):&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;but some elements were not found:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;and others were not expected:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+Expecting actual:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+to contain exactly (and in same order):
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+but some elements were not found:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+and others were not expected:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest.onlyCompleteCurrentTaskDelegationCoversTheSource(CandidateTwelveCoverageBoundaryTest.java:74)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="onlyCompleteCurrentTaskDelegationCoversTheSource(String)[7]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.002">
+    <failure message="&#10;Expecting actual:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;to contain exactly (and in same order):&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;but some elements were not found:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;]&#10;and others were not expected:&#10;  [&quot;请根据原始研究目标提出可开展的推荐设计并说明适用条件&quot;]&#10;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+Expecting actual:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+to contain exactly (and in same order):
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+but some elements were not found:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件；"]
+and others were not expected:
+  ["请根据原始研究目标提出可开展的推荐设计并说明适用条件"]
+
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest.onlyCompleteCurrentTaskDelegationCoversTheSource(CandidateTwelveCoverageBoundaryTest.java:74)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="languageAndDeliveryLevelMustStillBeCovered" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.002"/>
+  <testcase name="aVerbatimAnswerCaptionIsMetadataOnlyWhenFollowedByItsActualPair" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest" time="0.009">
+    <failure message="&#10;Expecting&#10;  [&quot;本次测试实际确认信息（逐字题答）：&quot;]&#10;not to contain&#10;  [&quot;本次测试实际确认信息（逐字题答）：&quot;]&#10;but found&#10;  [&quot;本次测试实际确认信息（逐字题答）：&quot;]&#10;" type="java.lang.AssertionError"><![CDATA[java.lang.AssertionError: 
+
+Expecting
+  ["本次测试实际确认信息（逐字题答）："]
+not to contain
+  ["本次测试实际确认信息（逐字题答）："]
+but found
+  ["本次测试实际确认信息（逐字题答）："]
+
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwelveCoverageBoundaryTest.aVerbatimAnswerCaptionIsMetadataOnlyWhenFollowedByItsActualPair(CandidateTwelveCoverageBoundaryTest.java:91)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+</testsuite>

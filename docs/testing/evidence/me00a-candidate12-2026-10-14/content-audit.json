@@ -1,0 +1,150 @@
+{
+  "type": "Independent source-and-work inspection by the development agent; not an additional human/AI expert review",
+  "workScope": "One Q05 sample per model/arm; no inference of stable model capability or universal strategy benefit",
+  "findings": [
+    {
+      "id": "PLATFORM-220-STATE-DUPLICATE",
+      "layer": "PLATFORM",
+      "evidence": [
+        "models/plan-response.txt",
+        "live/plan/copied.md"
+      ],
+      "source": "当前仅为拟定研究，尚未实施，没有额外真实数据，不确认任何既有参数。",
+      "extra": "- 我没有额外真实数据",
+      "status": "FAIL",
+      "reason": "同一研究的资料状态在增强背景已完整表达，平台仍补同状态；候选十二有限句法没有覆盖本轮复合句。四份旧原件修复不能证明新措辞全通过。"
+    },
+    {
+      "id": "PLATFORM-221-CAUTIOUS-APPENDS",
+      "layer": "PLATFORM_OR_UNRESOLVED_COVERAGE",
+      "evidence": [
+        "models/direct-response.txt",
+        "live/direct/copied.md"
+      ],
+      "status": "OPEN",
+      "reason": "读者表达及全局委托句仍保护性追加；部分推荐已展开，但可开展/适用条件是否全范围覆盖不能靠关键词确定。缺少真实数据与全称未确认状态在模型正文未完整表达，保留正确。"
+    },
+    {
+      "id": "RAW-PLAN-SEMANTICS",
+      "layer": "DOWNSTREAM_ORIGINAL_AMBIGUITY",
+      "evidence": [
+        "live/works/flash-raw.md",
+        "live/works/pro-raw.md"
+      ],
+      "status": "FAIL",
+      "reason": "原始两作品将Plan定义为先形成计划，Pro还把评价对象变为问答对；平台优化正文明确问答增强流程，四份优化作品保留该定义与提示词评价对象。这是本轮实际收益，不代表整体研究可用。"
+    },
+    {
+      "id": "FLASH-DIRECT-RATER-CONTRADICTION",
+      "layer": "DOWNSTREAM",
+      "evidence": [
+        "live/works/flash-direct.md",
+        "live/direct/copied.md"
+      ],
+      "status": "FAIL",
+      "source": "评审随机分配至不同组别材料，且每名评审不重复评价同一任务的同一模式。",
+      "reason": "与同篇每项任务由两名独立评审盲评的要求不一致；复制正文未要求破坏双评，确切违约始于下游作品。增强提示的评审分配随机例子是否诱发仍待最小策略对照。"
+    },
+    {
+      "id": "FLASH-PLAN-INCOMPLETE-DESIGN",
+      "layer": "ENHANCEMENT_AND_DOWNSTREAM_WITH_VALIDATION_BOUNDARY_OPEN",
+      "evidence": [
+        "models/plan-response.json",
+        "live/works/flash-plan.md",
+        "live/plan/copied.md"
+      ],
+      "status": "OPEN",
+      "source": "若某指标评分差异超过预设阈值，由第三人复核。",
+      "reason": "分类与来源已给拟议方案，但评分尺度/阈值仍未给具体建议，两公平对照的具体差异仍笼统。增强原件assessment的EXECUTION_STEP提到评分尺度建议，sections未落实，复制正文也未落实，不能全归下游；元数据不能自动当执行正文。保留当前校验，另评估声明与责任段一致性的边界，不机械追加所有gap。允许建议和参数未确认应并存。"
+    },
+    {
+      "id": "PRO-DIRECT-COMPARISON-STRUCTURE",
+      "layer": "DOWNSTREAM_WITH_UNRESOLVED_DESIGN_RISK",
+      "evidence": [
+        "live/works/pro-direct.md",
+        "live/direct/copied.md"
+      ],
+      "status": "OPEN",
+      "source": "直接增强无确认、直接增强有确认、Plan无确认、Plan有确认",
+      "reason": "2×2展开与Plan取得实际用户回答的定义之间操作关系未说清，评审对严重性意见相反；不可强判所有2×2都违法，但本作品未足以关闭原定公平对照可开展门禁。"
+    },
+    {
+      "id": "PRO-PLAN-INFORMATION-FLOW",
+      "layer": "DOWNSTREAM",
+      "evidence": [
+        "live/works/pro-plan.md",
+        "live/plan/copied.md"
+      ],
+      "status": "FAIL",
+      "source": "确认信息来源于Plan组实际问答中用户提供的回答，经整理后形成标准化确认信息文本",
+      "reason": "复制正文要求同一实际信息且不可修改回答；作品改为组后取得及整理，未保证内容/时点/使用范围一致。不能将任何自然Plan答复封存一概视为违法；当前受控同信息轨的违约单列。"
+    },
+    {
+      "id": "LENGTH",
+      "layer": "DOWNSTREAM",
+      "evidence": [
+        "independent-hard-checks.json"
+      ],
+      "status": "PARTIAL_PASS",
+      "reason": "Flash原始1477超限，其他五份在800至1200；四份优化篇幅均通过，仅关闭本题本轮篇幅子项。"
+    },
+    {
+      "id": "REVIEW-LIMITATIONS",
+      "layer": "EVALUATION",
+      "evidence": [
+        "live/reviewer-1.json",
+        "live/reviewer-2.json",
+        "live/review-pack.md"
+      ],
+      "status": "OPEN",
+      "reason": "两评审未识别原始作品将Plan解释为先自行计划，Flash Plan高分遗漏具体尺度/阈值未补全。Flash评审称Pro Plan固定任务顺序即不充分随机化，原题只要求说明随机化，不能据此新增必须随机全部层级的硬门禁。两评审原始对两份均有失败的材料仍给胜/平；独立门禁另列双方失败，不覆盖原结论。"
+    }
+  ],
+  "acceptancePairs": [
+    {
+      "left": "flash-raw",
+      "right": "flash-direct",
+      "verdict": "BOTH_FAIL",
+      "reason": "原始篇幅超限/Plan语义错误；直接作品双评结构矛盾。原评审仍保留原始胜。"
+    },
+    {
+      "left": "flash-raw",
+      "right": "flash-plan",
+      "verdict": "FAIL_VS_OPEN",
+      "reason": "Plan有具体收益但专业补全及平台重复仍开放；不是上线胜率。"
+    },
+    {
+      "left": "flash-direct",
+      "right": "flash-plan",
+      "verdict": "FAIL_VS_OPEN",
+      "reason": "两AI偏好Plan，不关闭Plan完整性缺项。"
+    },
+    {
+      "left": "pro-raw",
+      "right": "pro-direct",
+      "verdict": "FAIL_VS_OPEN",
+      "reason": "原始目标/Plan定义错误；直接设计结构分歧未解决。"
+    },
+    {
+      "left": "pro-raw",
+      "right": "pro-plan",
+      "verdict": "BOTH_FAIL",
+      "reason": "原始目标/Plan定义错误；Plan信息流程违约。"
+    },
+    {
+      "left": "pro-direct",
+      "right": "pro-plan",
+      "verdict": "OPEN_VS_FAIL",
+      "reason": "评审原始平局保留，独立受控信息流失败不能作通过。"
+    }
+  ],
+  "strategyDecision": {
+    "newComplexInstructionsAdded": false,
+    "forcedStatisticalMethodAdded": false,
+    "automaticQualityRetryUsed": false,
+    "switchEnhancementModelDuringDiagnosis": false,
+    "next": "先离线回放220/221精确补资料状态及完整委托覆盖；纯下游问题评估去除有歧义的现有提示例子/重复，未证明收益前不一定修改提示词。",
+    "stableQualityOrPerformanceImprovementProven": false,
+    "examplesAndFrontendExpansionAllowedByCurrentGates": false
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "layer": "EVALUATION_HELPER",
+  "operation": "owned-process cleanup",
+  "failure": "Browser ownership drifted; no process stopped",
+  "reason": "Initial guard expected slash separators; Windows launched the same owned file with backslash separators.",
+  "beforeAnyCleanupMutation": true,
+  "modelRequestsAdded": 0,
+  "correction": "Compare the exact absolute script path already stored in the owned-process marker, retaining PID, start-time and parent checks.",
+  "ownershipRechecked": true
+}

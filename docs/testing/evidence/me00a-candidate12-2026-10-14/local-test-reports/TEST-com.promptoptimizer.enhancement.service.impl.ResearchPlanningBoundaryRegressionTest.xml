@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.ResearchPlanningBoundaryRegressionTest" time="0.106" tests="8" errors="0" skipped="0" failures="0">
+  <testcase name="anExplicitUserTopicOrBoundPopulationChoiceSupportsTheSameAudience" classname="com.promptoptimizer.enhancement.service.impl.ResearchPlanningBoundaryRegressionTest" time="0.038"/>
+  <testcase name="currentQuestionIsRejectedButAnOpenPopulationChoiceIsKept" classname="com.promptoptimizer.enhancement.service.impl.ResearchPlanningBoundaryRegressionTest" time="0.002"/>
+  <testcase name="sameReviewerDisagreementCanUseTheObservedAlternativeWording" classname="com.promptoptimizer.enhancement.service.impl.ResearchPlanningBoundaryRegressionTest" time="0.007"/>
+  <testcase name="negativesFutureConditionsAnotherStudyAndExamplesDoNotConfirmPopulation" classname="com.promptoptimizer.enhancement.service.impl.ResearchPlanningBoundaryRegressionTest" time="0.005"/>
+  <testcase name="explicitCurrentContextAndAnApplicableMaterialCanSupportPopulation" classname="com.promptoptimizer.enhancement.service.impl.ResearchPlanningBoundaryRegressionTest" time="0.003"/>
+  <testcase name="observedAudiencePresuppositionUsesTheExistingPlanRepairPath" classname="com.promptoptimizer.enhancement.service.impl.ResearchPlanningBoundaryRegressionTest" time="0.015">
+    <system-out><![CDATA[17:41:33.252 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=plan.generate stage=provider.total model=- status=SUCCESS durationMs=7
+17:41:33.255 [main] INFO com.promptoptimizer.common.logging.ModelCallLogger -- event=model.call.completed requestId=- workflowId=- operation=plan.generate providerRoute=mock model=planner selectionSource=MOCK_PROVIDER mock=true attempt=1 inputItems=1 inputTokens=- outputTokens=- totalTokens=- durationMs=12
+17:41:33.255 [main] INFO com.promptoptimizer.enhancement.service.impl.OptimizationPlanningServiceImpl -- event=plan.completed requestId=- workflowId=- questions=1 template=RESEARCH_ANALYSIS mock=true durationMs=12
+]]></system-out>
+  </testcase>
+  <testcase name="delegatedConcreteRecommendationsDoNotBecomeConfirmedParameterValues" classname="com.promptoptimizer.enhancement.service.impl.ResearchPlanningBoundaryRegressionTest" time="0.0"/>
+  <testcase name="otherObjectsNewConditionsAndReservedChoiceSurviveTheWholeQuestionCheck" classname="com.promptoptimizer.enhancement.service.impl.ResearchPlanningBoundaryRegressionTest" time="0.029"/>
+</testsuite>

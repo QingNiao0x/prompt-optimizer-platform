@@ -1,0 +1,229 @@
+{
+  "reviewerType": "AI_ASSISTED_NOT_HUMAN_EXPERT",
+  "independentFreshCalls": true,
+  "sharedAnonymousPack": true,
+  "packSha256": "68b16607aa13d5fab29c5a33596eb3791fa1a5ae8ebae9bf9c7fb1d094e2c55e",
+  "mapping": {
+    "U": "flash-plan",
+    "V": "pro-raw",
+    "W": "pro-direct",
+    "X": "pro-plan",
+    "Y": "flash-direct",
+    "Z": "flash-raw"
+  },
+  "scores": [
+    {
+      "model": "deepseek-flash",
+      "scores": {
+        "U": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "V": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "W": {
+          "accuracy": 3,
+          "completeness": 3,
+          "clarity": 4,
+          "executability": 3
+        },
+        "X": {
+          "accuracy": 3,
+          "completeness": 3,
+          "clarity": 4,
+          "executability": 3
+        },
+        "Y": {
+          "accuracy": 2,
+          "completeness": 2,
+          "clarity": 3,
+          "executability": 2
+        },
+        "Z": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        }
+      }
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "scores": {
+        "U": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "V": {
+          "accuracy": 3,
+          "completeness": 3,
+          "clarity": 3,
+          "executability": 3
+        },
+        "W": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "X": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "Y": {
+          "accuracy": 3,
+          "completeness": 3,
+          "clarity": 3,
+          "executability": 3
+        },
+        "Z": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        }
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "left": "flash-raw",
+      "right": "flash-direct",
+      "reviewers": [
+        {
+          "model": "deepseek-flash",
+          "left": "Z",
+          "right": "Y",
+          "verdict": "LEFT_WIN",
+          "reason": "Z虽因正文超长触发硬失败，但其方法内容更完整：明确四组条件、任务待定、随机化层次、盲法、四维评价、分歧处理和候选统计方法，且反复声明未实施、不预设显著。Y存在评审分配破坏双评结构、双盲表述不清等实质问题，且统计与公平对照说明较薄弱。"
+        },
+        {
+          "model": "deepseek-v4-pro",
+          "left": "Z",
+          "right": "Y",
+          "verdict": "LEFT_WIN",
+          "reason": "Z作品虽因字数超限硬性失败，但内容在准确性、完整性、清晰度和可执行性方面均优于Y。Z详细说明了任务来源条件、公平对照的信息流、随机化与盲法的具体操作、分歧处理的两步法以及统计分析的候选方法，且明确不预设显著性。Y存在评审结构改变（每名评审不重复评价同一任务的同一模式）和确认信息获取流程不清晰等重大问题。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "left": "flash-raw",
+      "right": "flash-plan",
+      "reviewers": [
+        {
+          "model": "deepseek-flash",
+          "left": "Z",
+          "right": "U",
+          "verdict": "RIGHT_WIN",
+          "reason": "U在篇幅内完整覆盖原题要求：四类任务、20任务、每模式每任务3次、直接增强与Plan、两组同信息公平对照、随机化、盲评、四维评价、分歧处理及依据分布与配对结构选择统计方法，且未编造数据。Z内容也较完整，但正文超长硬失败，且公平对照差异表述不如U具体。"
+        },
+        {
+          "model": "deepseek-v4-pro",
+          "left": "Z",
+          "right": "U",
+          "verdict": "TIE",
+          "reason": "Z作品内容全面、结构清晰，但字数超限硬性失败。U作品在字数限制内完成了高质量的设计，任务分类框架、公平对照信息流、盲化操作和统计分析均具体可行。两者在内容质量上相当，但Z因硬性失败不能判定为胜出，U虽无硬性失败但内容略逊于Z的完整性。"
+        }
+      ],
+      "verdictDisagreement": true
+    },
+    {
+      "left": "flash-direct",
+      "right": "flash-plan",
+      "reviewers": [
+        {
+          "model": "deepseek-flash",
+          "left": "Y",
+          "right": "U",
+          "verdict": "RIGHT_WIN",
+          "reason": "U明确两名评审独立盲评全部材料，公平对照信息独立封存分发，统计候选方法说明适用条件，完整性和可执行性明显优于Y。Y的评审随机分配至不同组别材料且不重复评价同一任务同一模式，破坏原题要求的双评配对结构。"
+        },
+        {
+          "model": "deepseek-v4-pro",
+          "left": "Y",
+          "right": "U",
+          "verdict": "RIGHT_WIN",
+          "reason": "U作品在任务分类框架、公平对照信息流、盲化操作和统计分析方面均比Y更具体、更可执行。Y存在评审结构改变和确认信息获取流程不清晰等重大问题，而U在字数限制内提供了完整且可操作的设计方案。"
+        }
+      ],
+      "verdictDisagreement": false
+    },
+    {
+      "left": "pro-raw",
+      "right": "pro-direct",
+      "reviewers": [
+        {
+          "model": "deepseek-flash",
+          "left": "V",
+          "right": "W",
+          "verdict": "LEFT_WIN",
+          "reason": "V虽引入“参与者”造成单位混乱，且公平对照差异设计有混淆风险，但仍保留四条件、每模式每任务3次、两名独立评审盲评、四维评价和候选统计方法。W改为2×2设计，未清晰保留原题要求的直接增强、Plan及两组同信息公平对照，且“每名增强模式”表述不清。"
+        },
+        {
+          "model": "deepseek-v4-pro",
+          "left": "V",
+          "right": "W",
+          "verdict": "RIGHT_WIN",
+          "reason": "W作品在公平对照设计上更清晰，明确区分了'无确认信息'和'同源确认信息'两个水平，且说明了确认信息的获取与封存流程。V作品存在公平对照信息呈现方式不同但未保证信息一致性的问题，以及'参与者'概念不清晰的问题。W的设计更可执行。"
+        }
+      ],
+      "verdictDisagreement": true
+    },
+    {
+      "left": "pro-raw",
+      "right": "pro-plan",
+      "reviewers": [
+        {
+          "model": "deepseek-flash",
+          "left": "V",
+          "right": "X",
+          "verdict": "LEFT_WIN",
+          "reason": "V对公平对照的信息内容、时点与可使用范围一致性有说明，统计方法也较完整。X的公平对照信息来源于Plan组实际问答，存在信息污染与事后选择风险；任务顺序固定，随机化不足。两者均有缺陷，但V更接近原题公平对照与随机化要求。"
+        },
+        {
+          "model": "deepseek-v4-pro",
+          "left": "V",
+          "right": "X",
+          "verdict": "RIGHT_WIN",
+          "reason": "X作品在任务分类、公平对照信息流、随机化与盲法、评价指标和统计分析方面均比V更具体、更可执行。X明确了四类任务的具体类型和来源，说明了同信息对照的确认信息来源，且统计分析部分详细列出了候选方法及其适用条件。V存在公平对照信息一致性和参与者概念不清晰的问题。"
+        }
+      ],
+      "verdictDisagreement": true
+    },
+    {
+      "left": "pro-direct",
+      "right": "pro-plan",
+      "reviewers": [
+        {
+          "model": "deepseek-flash",
+          "left": "W",
+          "right": "X",
+          "verdict": "TIE",
+          "reason": "W和X均存在实质失败。W将设计改为2×2，未清晰保留两组同信息公平对照，且“每名增强模式”单位不清；X的公平对照信息来源于Plan组实际问答，任务顺序固定，随机化不足。两者在准确性、完整性和可执行性上均未达到原题要求，难以判定一方明显胜出。"
+        },
+        {
+          "model": "deepseek-v4-pro",
+          "left": "W",
+          "right": "X",
+          "verdict": "TIE",
+          "reason": "W和X作品在内容质量上相当。W采用2×2设计，清晰区分了增强模式和信息条件，但将'无确认信息'作为信息条件的一个水平，可能偏离原始研究目标。X采用四组比较设计，更贴近原始任务要求，但确认信息的'整理'过程可能影响信息一致性。两者在准确性、完整性、清晰度和可执行性方面各有优劣，难以判定明显胜出。"
+        }
+      ],
+      "verdictDisagreement": false
+    }
+  ],
+  "disputedPairs": 3,
+  "originalReviewsUnchanged": true,
+  "scoresCannotOverrideIndependentHardOrSevereFailures": true
+}
