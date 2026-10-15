@@ -44,6 +44,9 @@ const hasLargeTokens = computed(() => ranking.value?.ranking.some(row => BigInt(
 /** 表格保留精确十进制数，图表仅表达相对规模，不用浮点值回写计量。 */
 const tokens = (value: string | null): string => value === null ? '未知' : BigInt(value).toLocaleString('zh-CN');
 
+/** 零分母保持未知；修复成功率只计算实际进入修复且已结束的请求。 */
+const rate = (count: number, total: number): string => total > 0 ? `${(count / total * 100).toFixed(1)}%` : '—';
+
 /** 独立筛选模型数据，不复用主仪表盘的用户、邮箱与名称条件。 */
 const query = (): TokenRankingQuery | undefined => {
   if (!date.value || !/^\d{4}-\d{2}-\d{2}$/.test(date.value)) { ElMessage.warning('请选择模型对账日期。'); return; }
@@ -158,6 +161,15 @@ onBeforeUnmount(() => { disposed = true; callsGeneration++; resize?.disconnect()
       </ElTable>
       <p class="period-caption">排行排除 Mock 与明确未发出的请求；以下明细保留全部尝试。失败响应的有效 Token 不回滚。缓存未报告时保留未知状态。</p>
       <h3>模型调用尝试明细</h3>
+      <template v-if="calls?.outcomes && !callsError">
+        <p>增强／Plan 已结束请求 {{ calls.outcomes.completedRequestCount }} 次 ·
+          首次成功 {{ calls.outcomes.firstSuccessCount }} 次（{{ rate(calls.outcomes.firstSuccessCount, calls.outcomes.completedRequestCount) }}） ·
+          修复后成功 {{ calls.outcomes.repairedSuccessCount }} 次（修复成功率 {{ rate(calls.outcomes.repairedSuccessCount, calls.outcomes.repairedRequestCount) }}） ·
+          最终失败 {{ calls.outcomes.finalFailureCount }} 次（{{ rate(calls.outcomes.finalFailureCount, calls.outcomes.completedRequestCount) }}）</p>
+        <p>首次成功率和最终失败率以已结束请求为分母；修复成功率以实际重试且已结束的 {{ calls.outcomes.repairedRequestCount }} 次请求为分母。
+          另有 {{ calls.outcomes.incompleteRequestCount }} 次进行中或记录不完整的请求、{{ calls.outcomes.uncorrelatedAttemptCount }} 条缺关联号尝试，均不计入成功率。
+          按租户、请求关联号和操作归并；Plan 提问与最终增强分别计数，不表示作品质量已通过。</p>
+      </template>
       <ElAlert v-if="callsError" type="error" :closable="false" :title="callsError" />
       <ElButton v-if="callsError" :loading="callsLoading" @click="loadCalls(calls?.current ?? 1)">重试明细查询</ElButton>
       <!-- @vue-generic {ModelCallRecord} -->
@@ -168,6 +180,8 @@ onBeforeUnmount(() => { disposed = true; callsGeneration++; resize?.disconnect()
         <ElTableColumn prop="providerRoute" label="模型路由" min-width="150" show-overflow-tooltip />
         <ElTableColumn prop="attempt" label="尝试" width="70" />
         <ElTableColumn label="响应" min-width="160"><template #default="s"><ElTag :type="s.row.successful ? 'success' : 'danger'">{{ s.row.successful ? '成功' : s.row.failureType ?? '失败' }}</ElTag></template></ElTableColumn>
+        <ElTableColumn label="校验原因" min-width="230" show-overflow-tooltip><template #default="s">{{ s.row.validationReason ?? '未记录' }}</template></ElTableColumn>
+        <ElTableColumn label="校验位置" min-width="170" show-overflow-tooltip><template #default="s">{{ s.row.validationField ?? '未记录' }}</template></ElTableColumn>
         <ElTableColumn prop="upstreamStatus" label="上游状态" width="100" />
         <ElTableColumn label="传输" min-width="145"><template #default="s">{{ transportLabel(s.row as ModelCallRecord) }}</template></ElTableColumn>
         <ElTableColumn label="用量状态" width="100"><template #default="s">{{ usageLabel(s.row as ModelCallRecord) }}</template></ElTableColumn>

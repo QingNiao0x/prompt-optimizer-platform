@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.ModelCallView;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.TokenRank;
+import com.promptoptimizer.analytics.dto.AnalyticsViews.ModelCallOutcomes;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
@@ -31,4 +32,8 @@ public interface ModelCallAnalyticsMapper {
     /** 与明细相同过滤条件的精确计数，避免复杂投影的自动计数改写。 */
     long countModelCalls(@Param("period") AnalyticsPeriod period, @Param("tenantId") UUID tenantId,
                         @Param("operation") String operation, @Param("requestId") String requestId);
+
+    /** 与明细同一范围，按请求归并增强和 Plan；排除 Mock、未发送及不完整重试链。 */
+    ModelCallOutcomes requestOutcomes(@Param("period") AnalyticsPeriod period, @Param("tenantId") UUID tenantId,
+                                     @Param("operation") String operation, @Param("requestId") String requestId);
 }

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+import com.promptoptimizer.common.logging.ModelCallObservation;
 
 /**
  * 管理统计与运维审计接口的只读响应模型，不包含密码、令牌、原始请求头或任意 JSON 明细。
@@ -170,9 +171,25 @@ public final class AnalyticsViews {
                                 boolean successful, String failureType, Integer upstreamStatus,
                                 boolean willRetry, String transportState, String usageState, String cacheState,
                                 String inputTokens, String outputTokens, String totalTokens,
-                                String cacheHitTokens, String cacheMissTokens, long durationMs) { }
+                                String cacheHitTokens, String cacheMissTokens, long durationMs,
+                                String validationReason, String validationField) {
+        /** 历史或损坏 JSON 不能借新增诊断列回显任意文本；旧记录缺省保持 null。 */
+        public ModelCallView {
+            validationReason = !successful && "INVALID_RESPONSE".equals(failureType)
+                    ? ModelCallObservation.safeValidationReason(validationReason) : null;
+            validationField = validationReason == null ? null : ModelCallObservation.safeValidationField(validationField);
+        }
+    }
+
+    /** 增强与 Plan 的请求结果；同租户、请求号及操作归并，完整链路才进入成功率分母。
+     * repairedRequestCount 仅指已结束且实际进行了第二次调用的请求；缺号尝试不猜测请求归属。
+     */
+    public record ModelCallOutcomes(long completedRequestCount, long firstSuccessCount, long repairedSuccessCount,
+                                    long repairedRequestCount, long finalFailureCount, long incompleteRequestCount,
+                                    long uncorrelatedAttemptCount) { }
 
     /** 模型对账明细页与 MyBatis-Plus 分页契约一致。 */
     public record ModelCallPage(PeriodView period, String scope, UUID tenantId,
-                                List<ModelCallView> records, long total, long size, long current, long pages) { }
+                                List<ModelCallView> records, long total, long size, long current, long pages,
+                                ModelCallOutcomes outcomes) { }
 }

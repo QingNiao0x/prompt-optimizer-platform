@@ -1,0 +1,48 @@
+{
+  "phase": "candidateValidation",
+  "version": "candidate13",
+  "purpose": "EXECUTION",
+  "label": "doubao-web-raw",
+  "vendor": "doubao",
+  "arm": "raw",
+  "surface": "WEB",
+  "accountingUnit": "UI_SUBMISSION_ATTEMPT",
+  "request": {
+    "input": "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。正文800至1200个汉字，附表另计。不提供代码，不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。\n\n本次测试实际确认信息（逐字题答）：\n问题：4类任务具体指哪四类？\n回答：这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。\n问题：每类5个任务如何确定？是自行设计、从既有题库选取，还是其他来源？\n回答：这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。\n问题：盲评具体对哪些信息设盲？\n回答：这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。\n问题：公平对照组的确认信息如何取得？\n回答：这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。",
+    "inputSha256": "bb6242211caef303a0d4ff21c47ac8307374397a6e428c5bfd67c1f461e0c495",
+    "profile": {
+      "vendor": "doubao",
+      "surface": "WEB",
+      "origin": "https://www.doubao.com",
+      "visibleLabel": "豆包 快速",
+      "mode": "对话",
+      "search": "NOT_EXPOSED_IN_SELECTED_MODE",
+      "exactModelVersion": "NOT_EXPOSED",
+      "temperature": "NOT_EXPOSED",
+      "maxTokens": "NOT_EXPOSED",
+      "memoryAndPersonalization": "NOT_EXPOSED"
+    }
+  },
+  "startedAt": "2026-10-14T17:20:03.497Z",
+  "newChatBeforeSubmission": true,
+  "editorEqualsLiteralInput": true,
+  "hiddenBackendRequests": "UNKNOWN",
+  "tokens": "UNKNOWN",
+  "status": "UI_COMPLETED",
+  "attemptNumber": 232,
+  "submittedAt": "2026-10-14T17:20:03.629Z",
+  "literalOutgoingPayloadMatches": [
+    {
+      "path": "$.messages[0].content_block[0].content.text_block.text",
+      "sha256": "bb6242211caef303a0d4ff21c47ac8307374397a6e428c5bfd67c1f461e0c495",
+      "exact": true
+    }
+  ],
+  "conversationPath": "[private-reference-redacted]",
+  "lateAssignedConversationPath": "[private-reference-redacted]",
+  "lateRouteBinding": "ONE_PENDING_EXACT_PAYLOAD_SUBMISSION_IN_OWNED_NEW_CHAT",
+  "completionObservedAt": "2026-10-14T17:28:19.315Z",
+  "work": "# 研究方法\n本研究拟探讨研究Plan问答对提示词质量的影响，为尚未实施的试验性研究，所有方案为预设研究设计，无已采集样本与实测数据。\n\n研究设置**4类任务域**，每类任务域下设置5个任务，合计20个研究任务；全部任务分别在两种提示词模式（直接增强模式、Plan问答模式）下开展，每个模式‑每个任务独立重复3次，用于降低单次生成结果随机波动带来的干扰。为实现组间公平对比，除直接增强组、Plan问答组外，增设两组公平对照组，保证对照组与Plan问答组可获得等量、内容一致的确认信息，消除信息输入总量差异作为混淆变量，实现模式间的公平比较。\n\n本研究采用完全随机化分配，将20项任务的各次重复样本随机分配至4个试验条件，随机序列预先生成，任务与生成条件的匹配由随机序列决定，不进行人为选择性指派。评价环节采用双人独立盲评机制，两名评审员在盲态下开展评价，对提示词生成所用试验模式、分组信息实施设盲，仅展示待评价提示词文本，不暴露任务所属分组与生成路径，规避评价者主观偏倚。\n\n评价维度包含五项：提示词准确性、任务需求完整性、文本清晰度、指令可执行性，同时综合整体提示词质量。两名评审员独立完成全部样本打分，评审结束后比对两份评价结果；当二者评价出现分歧时，首先由两名评审开展讨论协商，若协商后仍无法达成统一，则引入第三名资深评审介入裁定，形成最终评价结果。\n\n统计分析将依据未来实际采集数据的分布特征、样本配对结构选择适配的检验方法。候选统计方法及适用条件如下：若数据满足正态分布且为配对设计，采用配对参数检验；若数据不满足正态性，采用对应的非参数配对检验；分类评分资料选用适配的非参数检验。本研究不预设组间差异必然具备统计学显著性，所有推断完全依托后续实测数据结果。\n\n本研究仅为拟定方案，尚未实施，无已纳入样本，不编造效应量、P值与显著性结论。任务素材来源、任务具体条目、评审详细设盲清单、对照组确认信息获取流程、评价量表细则将整理为附表，附表不计入正文字数。\n\n（正文共计1042字）",
+  "workSha256": "5dcd7d45c50bb5fbe4cbffcfce67a2422f19af68bd5fa1b6a746d42458542b8f",
+  "observedCompletionUpperBoundMs": 495686
+}

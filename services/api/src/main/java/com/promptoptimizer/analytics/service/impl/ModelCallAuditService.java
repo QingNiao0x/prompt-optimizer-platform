@@ -39,6 +39,8 @@ public class ModelCallAuditService implements ModelCallAuditContext.Sink {
         details.put("mock", call.mock());
         details.put("successful", call.successful());
         details.put("failureType", call.failureType());
+        details.put("validationReason", call.validationReason());
+        details.put("validationField", call.validationField());
         details.put("upstreamStatus", call.upstreamStatus());
         details.put("willRetry", call.willRetry());
         details.put("transportState", call.transportState());

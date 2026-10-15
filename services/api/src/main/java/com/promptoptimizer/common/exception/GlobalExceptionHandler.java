@@ -220,8 +220,12 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         ProviderErrorMapping mapping = mapProviderError(exception.getFailureType());
+        String message = mapping.message();
         Map<String, Object> details = Map.of();
         if (exception instanceof ProviderResponseValidationException invalid) {
+            if (invalid.getReason() == ProviderResponseValidationException.Reason.ASSESSMENT_DECISION_CONFLICT) {
+                message = "模型响应中的补全判断与待确认事项不一致，本次增强未完成。";
+            }
             // 仅公开代码定义的枚举、固定字段路径与实际调用次数，便于定位 502；绝不回显失败模型正文或 cause。
             var diagnostics = new LinkedHashMap<String, Object>();
             diagnostics.put("validationReason", invalid.getReason().name());
@@ -235,7 +239,7 @@ public class GlobalExceptionHandler {
                 request,
                 mapping.status(),
                 mapping.code(),
-                mapping.message(),
+                message,
                 exception.isRetryable(),
                 details
         );
@@ -481,7 +485,7 @@ public class GlobalExceptionHandler {
             case INVALID_RESPONSE -> new ProviderErrorMapping(
                     HttpStatus.BAD_GATEWAY,
                     "RESULT_INVALID",
-                    "模型返回结果格式无效，请重试。"
+                    "模型响应未通过结构、内容或安全校验，本次增强未完成。"
             );
             case REQUEST_REJECTED -> new ProviderErrorMapping(
                     HttpStatus.BAD_GATEWAY,

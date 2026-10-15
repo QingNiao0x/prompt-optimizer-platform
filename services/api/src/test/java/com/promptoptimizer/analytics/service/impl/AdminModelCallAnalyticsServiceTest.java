@@ -19,6 +19,23 @@ class AdminModelCallAnalyticsServiceTest {
     private final ModelCallAnalyticsMapper mapper = mock(ModelCallAnalyticsMapper.class);
     private final AnalyticsPeriodResolver periods = new AnalyticsPeriodResolver(ZoneId.of("Asia/Shanghai"), Clock.systemUTC());
 
+    @Test
+    void requestOutcomesUseTheSameTenantDateOperationAndCorrelationAsThePagedRows() {
+        UUID tenant = UUID.randomUUID();
+        String requestId = UUID.randomUUID().toString();
+        var page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.promptoptimizer.analytics.dto.AnalyticsViews.ModelCallView>(2, 10);
+        page.setTotal(11);
+        var outcomes = new com.promptoptimizer.analytics.dto.AnalyticsViews.ModelCallOutcomes(3, 1, 1, 2, 1, 0, 0);
+        when(mapper.selectModelCalls(any(), any(), eq(tenant), eq("prompt.optimize"), eq(requestId))).thenReturn(page);
+        when(mapper.requestOutcomes(any(), eq(tenant), eq("prompt.optimize"), eq(requestId))).thenReturn(outcomes);
+        var result = service(periods).modelCalls(new ModelCallQuery("2026-10-10", "2026-10-10", "TENANT", tenant,
+                "prompt.optimize", requestId, 2, 10));
+        assertThat(result.outcomes()).isEqualTo(outcomes);
+        assertThat(result.current()).isEqualTo(2);
+        verify(mapper).requestOutcomes(argThat(period -> period.fromDate().equals(LocalDate.of(2026, 10, 10))),
+                eq(tenant), eq("prompt.optimize"), eq(requestId));
+    }
+
     private AdminModelCallAnalyticsServiceImpl service(AnalyticsPeriodResolver resolver) {
         @SuppressWarnings("unchecked") ObjectProvider<ModelCallAnalyticsMapper> provider = mock(ObjectProvider.class);
         when(provider.getIfAvailable()).thenReturn(mapper);

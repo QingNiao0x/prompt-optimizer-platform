@@ -1,0 +1,28 @@
+{
+  "newModelResubmissions": 0,
+  "issues": [
+    {
+      "issue": "Doubao user and assistant copy buttons shared a test id",
+      "fix": "Scope the official copy action to its assistant container"
+    },
+    {
+      "issue": "Doubao assistant included three visible progress/final segments",
+      "fix": "Retain all visible segments and official copied final text separately; no quality selection"
+    },
+    {
+      "issue": "A new conversation was opened while a capture process was still pending",
+      "fix": "Require capture completion before next chat; check conversation path continuously; restore 242 from its original dialogue, preserve timeout original and correction receipt"
+    },
+    {
+      "issue": "Owned process records double escaped paths and compared UTC/local wall time",
+      "fix": "Normalize saved path and compare UTC start times; retain command ownership and ten-second threshold; first refusal stopped no process"
+    },
+    {
+      "issue": "Overall actuator health was 503 due unrelated SMTP connection failure",
+      "fix": "Record unrelated mail readiness separately; use normal auth-CSRF and history endpoints to establish evaluation API readiness without disabling mail health"
+    }
+  ],
+  "originalFailuresPreserved": true,
+  "onlyOwnedProcessesStopped": true,
+  "referencePrivacyCheck": "../me00a-candidate15-2026-10-15/privacy-check.json"
+}

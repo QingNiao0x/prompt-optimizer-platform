@@ -1,0 +1,94 @@
+{
+  "status": "PENDING_NUMERIC_AUTHORIZATION_AND_ACCESS_RESOLUTION",
+  "scopeAuthorized": true,
+  "task": "Q05_SAME_INFORMATION_THREE_ARMS_FOUR_EXECUTION_VENDORS",
+  "maximumNewCalls": 20,
+  "purposeMaximums": {
+    "PLATFORM_GENERATION": 6,
+    "EXECUTION": 12,
+    "REVIEW": 2
+  },
+  "countAllFailedAndRepairAttempts": true,
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false,
+  "actualBefore": {
+    "total": 229,
+    "baseline": 70,
+    "candidateValidation": 159
+  },
+  "formalBefore": {
+    "total": 243,
+    "baseline": 80,
+    "candidateValidation": 163
+  },
+  "proposedLimits": {
+    "total": 263,
+    "baseline": 80,
+    "candidateValidation": 183
+  },
+  "actualMaximumAfter": {
+    "total": 249,
+    "baseline": 70,
+    "candidateValidation": 179
+  },
+  "closedBatchAllowanceTransferred": 0,
+  "platformGeneration": {
+    "vendor": "deepseek",
+    "modelId": "deepseek-flash",
+    "normalCalls": 2,
+    "sharedMaximumIncludingExistingRepairs": 6,
+    "temperature": 0.2,
+    "max_tokens": 10000,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "executionProfiles": [
+    {
+      "vendor": "deepseek",
+      "route": "deepseek",
+      "modelId": "deepseek-flash",
+      "surface": "API",
+      "parameters": {
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        }
+      },
+      "status": "CONFIGURED_NOT_LIVE_VERIFIED"
+    },
+    {
+      "vendor": "kimi",
+      "route": "tokenhub",
+      "modelId": "kimi-k3",
+      "surface": "API",
+      "parametersStatus": "PENDING_CAPABILITY_CHECK",
+      "status": "CONFIGURED_NOT_LIVE_VERIFIED"
+    },
+    {
+      "vendor": "doubao",
+      "modelId": null,
+      "surface": null,
+      "status": "ACCESS_AND_MODEL_UNRESOLVED"
+    },
+    {
+      "vendor": "gpt",
+      "modelId": null,
+      "surface": null,
+      "status": "ACCESS_AND_MODEL_UNRESOLVED"
+    }
+  ],
+  "reviewProfiles": {
+    "count": 2,
+    "distinctVendorsRequired": true,
+    "choice": "PENDING_ALL_ACCESS_AND_MODEL_SETTINGS_FREEZE"
+  },
+  "copiesLockAfterNormalPlatformGenerationRequired": true,
+  "replayPackMustNotBeLabeledNewPlatformGeneration": true,
+  "webpageTurnsAndApiRequestsHaveSeparateLedgerUnits": true,
+  "sameInformationOnly": true,
+  "naturalPlanningBenefitNotEvaluated": true,
+  "noSevenCaseBaselineRerun": true,
+  "exampleAndFrontendExpansionBlocked": true
+}

@@ -1,5 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AxiosError } from 'axios';
 
 vi.mock('@/services/promptOptimizerApi', () => ({
   analyzeContext: vi.fn(),
@@ -239,6 +240,37 @@ describe('optimization store project context', () => {
       planningContext: { contextId, version },
     }));
     expect(store.contextSnapshot).toEqual(resultFixture().contextReport);
+  });
+
+  it.each(['direct', 'plan'] as const)('keeps input, result and edit draft after %s enhancement is rejected', async (mode) => {
+    const store = useOptimizationStore();
+    store.rawPrompt = '使用requests库爬取网页标题。';
+    store.customDescription = '网址作为输入参数。';
+    const original = resultFixture();
+    const draft = original.sections.map(section => ({ ...section,
+      content: section.type === 'TASK' ? '保留尚未保存的编辑。' : section.content }));
+    store.result = original;
+    store.resultDraft = draft;
+    const message = '模型响应中的补全判断与待确认事项不一致，本次增强未完成。';
+    const failure = new AxiosError('Request failed', 'ERR_BAD_RESPONSE');
+    failure.response = { status: 502, statusText: 'Bad Gateway', headers: {}, config: failure.config!, data: {
+      requestId: '8ad37fb3-4f57-48b7-9dff-1af868d638ea', error: {
+        code: 'RESULT_INVALID', message, retryable: false,
+        details: { validationReason: 'ASSESSMENT_DECISION_CONFLICT', validationField: 'assessment.gaps' },
+      },
+    } };
+    vi.mocked(optimizePrompt).mockRejectedValue(failure);
+    const planConfirmation = mode === 'plan'
+      ? { planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391', answers: [] } : undefined;
+    expect(await store.runOptimization([], { rawPrompt: store.rawPrompt, planConfirmation })).toBe(false);
+    expect(store.rawPrompt).toBe('使用requests库爬取网页标题。');
+    expect(store.customDescription).toBe('网址作为输入参数。');
+    expect(store.result).toEqual(original);
+    expect(store.resultDraft).toEqual(draft);
+    expect(store.errorMessage).toBe(message);
+    expect(store.requestId).toBe('8ad37fb3-4f57-48b7-9dff-1af868d638ea');
+    expect(store.isOptimizing).toBe(false);
+    expect(optimizePrompt).toHaveBeenCalledTimes(1);
   });
 
   it('should use AUTO instead of reusing the previous plan template for direct enhancement', async () => {

@@ -1,0 +1,54 @@
+{
+  "policy": {
+    "id": "me00a-q05-body-han-v1",
+    "unit": "Unicode Script=Han",
+    "lower": 800,
+    "upper": 1200,
+    "exclusions": [
+      "Markdown headings",
+      "leading bold subheading labels",
+      "explicit appendix"
+    ],
+    "alternative": "all text including headings, excluding the same explicit appendix"
+  },
+  "works": {
+    "deepseek-plan": {
+      "policyId": "me00a-q05-body-han-v1",
+      "bodyHan": 1035,
+      "withHeadingsHan": 1077,
+      "pass": true
+    },
+    "doubao-direct": {
+      "policyId": "me00a-q05-body-han-v1",
+      "bodyHan": 798,
+      "withHeadingsHan": 800,
+      "pass": false
+    },
+    "doubao-raw": {
+      "policyId": "me00a-q05-body-han-v1",
+      "bodyHan": 1706,
+      "withHeadingsHan": 1791,
+      "pass": false
+    },
+    "deepseek-direct": {
+      "policyId": "me00a-q05-body-han-v1",
+      "bodyHan": 1220,
+      "withHeadingsHan": 1269,
+      "pass": false
+    },
+    "doubao-plan": {
+      "policyId": "me00a-q05-body-han-v1",
+      "bodyHan": 749,
+      "withHeadingsHan": 751,
+      "pass": false
+    },
+    "deepseek-raw": {
+      "policyId": "me00a-q05-body-han-v1",
+      "bodyHan": 1071,
+      "withHeadingsHan": 1135,
+      "pass": true
+    }
+  },
+  "strictJson": "NOT_APPLICABLE",
+  "examples": "DISABLED_NOT_APPLICABLE"
+}

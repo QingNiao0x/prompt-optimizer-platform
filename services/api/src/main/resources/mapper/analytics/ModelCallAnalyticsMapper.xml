@@ -45,6 +45,19 @@
             <arg column="cache_hit_tokens" javaType="java.lang.String"/>
             <arg column="cache_miss_tokens" javaType="java.lang.String"/>
             <arg column="duration_ms" javaType="_long"/>
+            <arg column="validation_reason" javaType="java.lang.String"/>
+            <arg column="validation_field" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="requestOutcomes" type="com.promptoptimizer.analytics.dto.AnalyticsViews$ModelCallOutcomes">
+        <constructor>
+            <arg column="completed_count" javaType="_long"/>
+            <arg column="first_success_count" javaType="_long"/>
+            <arg column="repaired_success_count" javaType="_long"/>
+            <arg column="repaired_count" javaType="_long"/>
+            <arg column="final_failure_count" javaType="_long"/>
+            <arg column="incomplete_count" javaType="_long"/>
+            <arg column="uncorrelated_count" javaType="_long"/>
         </constructor>
     </resultMap>
 
@@ -89,6 +102,11 @@
                    details->>'usageState' AS reported_usage_state,
                    CASE WHEN details->>'durationMs' ~ '^[0-9]{1,18}$'
                         THEN (details->>'durationMs')::bigint ELSE 0 END AS duration_ms,
+                   <!-- 先限制历史 JSON 字段长度；DTO 再按当前原因枚举和固定协议位置白名单过滤。 -->
+                   CASE WHEN length(details->>'validationReason') &lt;= 80
+                        THEN details->>'validationReason' END AS validation_reason,
+                   CASE WHEN length(details->>'validationField') &lt;= 120
+                        THEN details->>'validationField' END AS validation_field,
             CASE WHEN jsonb_typeof(details->'inputTokens') = 'number'
                        AND details->>'inputTokens' ~ '^[0-9]{1,19}$'
                  THEN CASE WHEN (details->>'inputTokens')::numeric &lt;= 9223372036854775807
@@ -180,8 +198,39 @@
                attempt, mock, successful, failure_type, upstream_status, will_retry, transport_state, usage_state,
                CASE WHEN usage_state = 'INVALID' THEN 'UNKNOWN' ELSE cache_state END AS cache_state,
                input_tokens::text, output_tokens::text, total_tokens::text,
-               cache_hit_tokens::text, cache_miss_tokens::text, duration_ms
+               cache_hit_tokens::text, cache_miss_tokens::text, duration_ms, validation_reason, validation_field
           FROM calls WHERE <include refid="detailPredicate"/>
          ORDER BY occurred_at DESC, event_id DESC
+    </select>
+
+    <select id="requestOutcomes" resultMap="requestOutcomes">
+        <include refid="callRows"/>, eligible AS (
+            SELECT * FROM calls WHERE <include refid="detailPredicate"/>
+               AND NOT mock AND transport_state NOT IN ('NOT_SENT', 'MOCK')
+               AND operation IN ('prompt.optimize', 'plan.generate')
+        ), runs AS (
+            <!-- 摘要/Embedding 可在同请求内并行多次，不套用增强与 Plan 的顺序重试模型。
+                 租户参与归并，防止全局查询中相同请求号被跨租户合并。 -->
+            SELECT tenant_id, request_id, operation, MIN(attempt) AS first_attempt, MAX(attempt) AS last_attempt,
+                   COUNT(*) AS attempt_count, COUNT(DISTINCT attempt) AS distinct_attempt_count,
+                   COUNT(*) FILTER (WHERE successful) AS success_count,
+                   COUNT(*) FILTER (WHERE NOT successful AND will_retry) AS retrying_failure_count,
+                   (array_agg(successful ORDER BY attempt DESC, occurred_at DESC, event_id DESC))[1] AS last_success,
+                   (array_agg(will_retry ORDER BY attempt DESC, occurred_at DESC, event_id DESC))[1] AS last_will_retry
+              FROM eligible WHERE request_id IS NOT NULL GROUP BY tenant_id, request_id, operation
+        ), outcomes AS (
+            <!-- 跨日截断、缺失中间尝试、重复序号或尚在修复的请求标为不完整，不伪造最终失败。 -->
+            SELECT *, first_attempt = 1 AND attempt_count = last_attempt AND distinct_attempt_count = attempt_count
+                   AND NOT last_will_retry AND retrying_failure_count = last_attempt - 1
+                   AND success_count = CASE WHEN last_success THEN 1 ELSE 0 END AS complete FROM runs
+        )
+        SELECT COUNT(*) FILTER (WHERE complete) AS completed_count,
+               COUNT(*) FILTER (WHERE complete AND last_attempt = 1 AND last_success) AS first_success_count,
+               COUNT(*) FILTER (WHERE complete AND last_attempt &gt; 1 AND last_success) AS repaired_success_count,
+               COUNT(*) FILTER (WHERE complete AND last_attempt &gt; 1) AS repaired_count,
+               COUNT(*) FILTER (WHERE complete AND NOT last_success) AS final_failure_count,
+               COUNT(*) FILTER (WHERE NOT complete) AS incomplete_count,
+               (SELECT COUNT(*) FROM eligible WHERE request_id IS NULL) AS uncorrelated_count
+          FROM outcomes
     </select>
 </mapper>

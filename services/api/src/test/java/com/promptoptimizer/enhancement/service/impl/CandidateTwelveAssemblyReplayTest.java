@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * 将九至十一的真实原件交给生产组装器，区分模型已写内容和平台重复追加；不调用模型。
+ * 将九至十四的真实原件交给生产组装器，区分模型已写内容和平台重复追加；不调用模型。
  *
  * @author QingNiao
  * @since 0.1.0
@@ -37,7 +37,10 @@ class CandidateTwelveAssemblyReplayTest {
 
     @ParameterizedTest
     @CsvSource({"9,205,q05-flash/input.json,true", "10,215,replay/plan/input.json,true",
-            "10,217,replay/direct/input.json,false", "11,219,direct-copy/input.json,false"})
+            "10,217,replay/direct/input.json,false", "11,219,direct-copy/input.json,false",
+            "12,220,live/plan/input.json,true", "12,221,live/direct/input.json,false",
+            "13,230,live/plan/input.json,true", "13,231,live/direct/input.json,false",
+            "14,240,live/plan/replay-input.json,true", "14,241,live/direct/replay-input.json,false"})
     void shouldNotReappendCoveredDelegationTaskIntroductionOrAnswerHeading(
             int candidate, int attempt, String inputFile, boolean plan) throws Exception {
         var input = fixture(candidate, inputFile);
@@ -45,8 +48,9 @@ class CandidateTwelveAssemblyReplayTest {
         assertThat(raw).isNotBlank();
         var answers = answers(plan);
         var result = assemble(model(candidate, attempt), raw, answers);
+        if (attempt != 221 && attempt != 240) assertThat(result.optimizedPrompt()).doesNotContain(
+                "- 请根据原始研究目标提出可开展的推荐设计并说明适用条件");
         assertThat(result.optimizedPrompt()).doesNotContain(
-                "- 请根据原始研究目标提出可开展的推荐设计并说明适用条件",
                 "- 为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。",
                 "- 本次测试实际确认信息（逐字题答）：");
         assertThat(result.optimizedPrompt()).contains("研究生", "方法部分", "Plan", "拟议", "800", "1200");
@@ -57,6 +61,37 @@ class CandidateTwelveAssemblyReplayTest {
                     "- 不确认任何既有参数。");
             // 模型正文没有落实这项真实资料状态时仍补入；不能为了缩短正文抹掉缺项。
             assertThat(result.optimizedPrompt()).contains("- 我没有额外真实数据");
+        }
+        if (attempt == 220) {
+            assertThat(result.optimizedPrompt()).contains("尚未实施，没有额外真实数据，不确认任何既有参数。");
+            assertThat(result.optimizedPrompt()).doesNotContain("- 我没有额外真实数据");
+        }
+        if (attempt == 221) {
+            // 部分事项有适用条件，不能证明整个委托已覆盖；缺少的资料与全称未确认状态仍须补入。
+            assertThat(result.optimizedPrompt()).contains("- 面向研究生读者。",
+                    "- 请根据原始研究目标提出可开展的推荐设计并说明适用条件",
+                    "- 我没有额外真实数据", "- 不确认任何既有参数。");
+        }
+        if (attempt == 230) {
+            // 同对象的拟议设计要求与实际未确认边界已完整落入正文，不再复制原始问题标题。
+            assertThat(result.optimizedPrompt()).doesNotContain("- 已委托提出拟议设计，实际采用参数仍未确认：");
+            assertThat(result.ambiguities()).hasSize(4);
+            assertThat(result.optimizedPrompt()).contains("不确认任何既有参数", "拟议主方案", "适用条件");
+        }
+        if (attempt == 231) {
+            // 同句禁假设数据不应让已经完整表达的“尚未实施”被误判为条件分支。
+            assertThat(result.optimizedPrompt()).doesNotContain("- 当前只是拟定研究，尚未实施。");
+            assertThat(result.optimizedPrompt()).contains("- 我没有额外真实数据");
+        }
+        if (attempt == 240) {
+            // 已委托的字段应作为正向任务交付，未确认状态继续保存；不让题答标题替代设计。
+            var taskSection = result.sections().stream().filter(section -> section.type()
+                    == com.promptoptimizer.enhancement.domain.PromptSectionType.TASK).findFirst().orElseThrow();
+            assertThat(taskSection.content()).contains("拟议主方案", "4类任务的分类框架", "每类5个任务的构造来源",
+                    "盲评的设盲范围", "公平对照组的确认信息获取流程", "拟议评分尺度", "可操作定义");
+            assertThat(result.optimizedPrompt()).doesNotContain("- 已委托提出拟议设计，实际采用参数仍未确认：");
+            assertThat(result.ambiguities()).hasSize(4);
+            assertThat(result.optimizedPrompt()).contains("不确认任何既有参数");
         }
         if (plan) {
             var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
@@ -111,7 +146,8 @@ class CandidateTwelveAssemblyReplayTest {
     private JsonNode fixture(int candidate, String name) throws Exception {
         Path root = Path.of(System.getProperty("user.dir")).toAbsolutePath();
         while (root != null) {
-            Path file = root.resolve("docs/testing/evidence/me00a-candidate" + candidate + "-2026-10-14").resolve(name);
+            String date = candidate >= 13 ? "2026-10-15" : "2026-10-14";
+            Path file = root.resolve("docs/testing/evidence/me00a-candidate" + candidate + "-" + date).resolve(name);
             if (Files.isRegularFile(file)) return json.readTree(Files.readString(file));
             root = root.getParent();
         }
@@ -165,7 +201,11 @@ class CandidateTwelveAssemblyReplayTest {
         Path root = Path.of(System.getProperty("user.dir")).toAbsolutePath();
         while (root != null && !Files.isRegularFile(root.resolve("AGENTS.md"))) root = root.getParent();
         if (root == null) throw new IllegalStateException("缺少仓库根目录");
-        Path output = root.resolve("tmp/me00a-candidate12-20261014/replays/" + attempt);
+        // 后续回放写入本节点目录，已冻结的候选十二原件保持只读。
+        String node = System.getProperty("me00a.replayNode", "candidate12");
+        if (!node.matches("candidate(?:12|13|14|15)")) throw new IllegalStateException("非法回放节点");
+        String date = node.equals("candidate14") || node.equals("candidate15") ? "20261015" : "20261014";
+        Path output = root.resolve("tmp/me00a-" + node + "-" + date + "/replays/" + attempt);
         Files.createDirectories(output);
         Files.writeString(output.resolve("current-copy.md"), result.optimizedPrompt());
         Files.writeString(output.resolve("result.json"), json.writerWithDefaultPrettyPrinter().writeValueAsString(result));

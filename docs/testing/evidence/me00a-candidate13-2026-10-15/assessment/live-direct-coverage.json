@@ -1,0 +1,107 @@
+{
+  "schema": "me00a-assessment-coverage-v1",
+  "runtimeValidation": false,
+  "automaticSemanticVerdict": false,
+  "newModelCalls": 0,
+  "copiedSha256": "8ebd23382c8e956ec7562763b48687573b9e901e8b20056d2a338e719b32a5ca",
+  "assessmentSha256": "466e6c4a5c0e605c856841a9b6fca71d2a224f0383ec5788fff2bc94224a8bf8",
+  "responsibilitySections": [
+    {
+      "type": "BACKGROUND",
+      "title": "背景",
+      "content": "本交付物为面向研究生的中文研究设计方法部分，研究主题为Plan问答对提示词质量的影响。当前仅为拟定研究，尚未实施，不得将拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。"
+    },
+    {
+      "type": "TASK",
+      "title": "任务",
+      "content": "撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。设计须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强与Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可说明适用条件，不预设必然显著。\n\n由于用户明确表示尚未实施且不确认任何既有参数，并委托提出可开展的推荐设计，执行者应就以下未确认事项提出拟议主方案并说明适用条件，明确标注为拟议设计而非已确认或已实施：4类任务的具体类别划分、每类5个任务的来源与选取标准、盲评设盲的具体信息、公平对照组的确认信息取得与封存流程、随机化与盲法的操作步骤、四项评价维度的操作定义与评分尺度、评审分歧处理流程、候选统计检验及其适用前提。\n\n评价对象为提示词质量，不得改为只评答案质量；下游作品可作补充但不替代原评价。公平对照两组须接收并可使用同一原始任务与同一份实际确认信息，直接组不追问不等于不能使用已提供答案，不得通过修改回答、换任务或额外修订轮次伪造公平。"
+    },
+    {
+      "type": "OUTPUT",
+      "title": "输出",
+      "content": "交付中文研究设计的方法部分正文，800至1200个汉字，附表另计。不提供代码。正文须包含上述设计要素及拟议方案说明，明确区分已知事实、用户确认信息与拟议设计。"
+    },
+    {
+      "type": "CONSTRAINTS",
+      "title": "约束",
+      "content": "- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 不得使用假设或虚构数据，禁令适用于所有用途，包括测试和验证。\n- 不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论。\n- 具体统计检验依据未来数据分布和适用条件选择，可说明候选检验名称及适用前提，不预先选定，也不预设显著性。\n- 评价对象为提示词质量，不得改为只评答案质量。\n- 公平对照两组须接收并可使用同一原始任务与同一份实际确认信息，不得改写其中一组的回答、另换任务或只增加某组修订轮次。"
+    }
+  ],
+  "gaps": [
+    {
+      "gapIndex": 0,
+      "kind": "PROFESSIONAL_OPTION",
+      "missing": "4类任务的具体类别、每类5个任务的来源与选取标准、盲评设盲信息、公平对照组的确认信息取得流程均未由用户确认，需由执行者提出可开展的拟议设计。",
+      "completion": "在方法部分给出拟议的四类任务划分（如事实提取、推理、写作、多步规划等，需说明划分依据与适用条件）、任务来源与选取标准、盲评材料处理方式、公平对照组的确认信息封存与分发流程，并明确标注为拟议设计而非已确认参数。",
+      "basis": "用户逐字回答均表示尚未实施、不确认任何既有参数，并委托提出可开展的推荐设计。",
+      "defaultStatus": "UNVERIFIED",
+      "observations": []
+    },
+    {
+      "gapIndex": 1,
+      "kind": "EXECUTION_STEP",
+      "missing": "随机化、盲法、准确性/完整性/清晰度/可执行性评价、分歧处理的具体操作步骤未在原始需求中展开。",
+      "completion": "在方法部分补充：随机分配单元与分配序列生成方式、盲评材料去标识化与评审者分配、各评价维度的操作定义与评分尺度建议、评审分歧的解决流程（如讨论、第三方仲裁或重新评分），均标明为拟议方案及适用条件。",
+      "basis": "原始需求要求说明随机化、盲法、四项评价及分歧处理，但未给出具体操作细节。",
+      "defaultStatus": "UNVERIFIED",
+      "observations": [
+        {
+          "gapIndex": 1,
+          "component": "proposed-rating-scale-and-operational-definition-obligation",
+          "status": "COVERED",
+          "reason": "Unlike old candidate12 Plan 220, the new response TASK and literal copy both require a proposed primary scale and operational definitions.",
+          "evidence": [
+            {
+              "sectionType": "TASK",
+              "quote": "四项评价维度的操作定义与评分尺度"
+            }
+          ],
+          "adjudicationMethod": "OFFLINE_EVIDENCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "gapIndex": 2,
+      "kind": "QUALITY_CHECK",
+      "missing": "统计检验的候选方法及其适用条件需与配对结构、未来数据分布挂钩，且不得预设显著性。",
+      "completion": "列出候选检验（如配对t检验、Wilcoxon符号秩检验、混合效应模型等），分别说明其适用前提（正态性、配对结构、样本量等），并明确最终检验依据未来数据分布和配对结构选择，不预设必然显著。",
+      "basis": "原始需求明确要求具体统计检验依据未来数据分布和配对结构选择，候选方法可说明适用条件，不预设必然显著。",
+      "defaultStatus": "UNVERIFIED",
+      "observations": []
+    }
+  ],
+  "downstream": [
+    {
+      "id": "doubao-direct",
+      "inputSha256": "8ebd23382c8e956ec7562763b48687573b9e901e8b20056d2a338e719b32a5ca",
+      "workSha256": "cc3be2d5a6d9c206ce3e80be92d2bc022b14ffbcf00a775aa13217e587787382",
+      "findings": [
+        {
+          "component": "proposed-primary-rating-scale",
+          "status": "COVERED",
+          "quotes": [
+            "拟议采用1‑5分李克特量表"
+          ],
+          "reason": "Basic proposed range and four dimension definitions are present; anchor details and threshold remain deferred.",
+          "adjudicationMethod": "OFFLINE_EVIDENCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "id": "deepseek-direct",
+      "inputSha256": "8ebd23382c8e956ec7562763b48687573b9e901e8b20056d2a338e719b32a5ca",
+      "workSha256": "28f9a6f816bd4f6b82a4d793124820144abf82642f139a6fc30c00def918c5af",
+      "findings": [
+        {
+          "component": "proposed-primary-rating-scale",
+          "status": "PARTIAL",
+          "quotes": [
+            "评分尺度拟采用分级行为锚定量表，先由研究者依据文献与任务样例拟定锚点"
+          ],
+          "reason": "Only names the future scale construction process; does not provide a current proposed range or primary anchor scheme. The copy already requires a proposed scale.",
+          "adjudicationMethod": "OFFLINE_EVIDENCE_REVIEW"
+        }
+      ]
+    }
+  ]
+}

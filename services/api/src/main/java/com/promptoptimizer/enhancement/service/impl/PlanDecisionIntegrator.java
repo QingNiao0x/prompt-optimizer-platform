@@ -4,6 +4,7 @@ import com.promptoptimizer.enhancement.domain.EffectiveTaskView;
 import com.promptoptimizer.enhancement.domain.EffectiveTaskView.ExecutionRequirement;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
+import com.promptoptimizer.template.domain.TaskDeliveryProfile;
 import java.text.Normalizer;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,9 @@ final class PlanDecisionIntegrator {
     /** 强边界子句可分别落实；带条件或限定对象的回答保持整体，不能拆掉条件后误认覆盖。 */
     private static List<String> missingStatements(Map<PromptSectionType, PromptSection> sections,
             ExecutionRequirement requirement) {
+        if (requirement.subject().equals("委托要求")
+                && canonical(requirement.statement()).equals(canonical("请根据原始研究目标提出可开展的推荐设计并说明适用条件"))
+                && delegatedQuestionCovered(sections, requirement.question())) return List.of();
         List<String> statements = executableClauses(requirement);
         List<String> body = sections.entrySet().stream()
                 .filter(entry -> entry.getKey() == PromptSectionType.BACKGROUND || entry.getKey() == PromptSectionType.TASK
@@ -173,15 +177,18 @@ final class PlanDecisionIntegrator {
         String actual = java.text.Normalizer.normalize(sentence, java.text.Normalizer.Form.NFKC).strip()
                 .replaceFirst("^[-*•]\\s*", "");
         statement = java.text.Normalizer.normalize(statement, java.text.Normalizer.Form.NFKC);
-        if (actual.matches("(?s).*(?:如果|假如|若以后|未来|例如|示例|引用|另一|其他研究|其他实验|甲研究|乙研究|并非|不是|无需|不必).*")) return false;
+        if (CONDITIONAL.matcher(conditionText(actual)).find()
+                || actual.matches("(?s).*(?:如果|假如|若以后|未来|例如|示例|引用|另一|其他研究|其他实验|甲研究|乙研究|并非|不是|无需|不必|仅限|仅就|除非|除外|例外).*")) return false;
         if (statement.matches("^(?:这是尚未实施的研究|当前只是拟定研究,尚未实施)[。；;]?$")) {
             return actual.matches("^(?:本研究|本次研究|当前|目前|这项研究)(?:仅|只是|仅为|为|只是拟定研究,|仅为拟定研究,)*"
                     + "(?:尚未实施|拟定研究,尚未实施)(?:[。;,].*)?$");
         }
         if (statement.matches("^我没有额外真实数据[。；;]?$")) {
-            return actual.matches("^(?:用户|我|我们)没有额外真实数据[。；;]?$" )
-                    || actual.matches("^(?:本交付物|当前|本研究)[^。;]*,用户没有额外真实数据[。;]?$" )
-                    || actual.matches("^(?:当前|目前)(?:只是|仅为)拟定研究,尚未实施,没有额外真实数据[。;]?$" );
+            // 220把完整资料状态与全称未确认状态并列。只接受这两个已验证状态，不能任意拆逗号后忽略例外或局部对象。
+            String unconfirmed = "(?:,(?:不确认任何既有参数|用户未确认任何既有参数))?[。;]?$";
+            return actual.matches("^(?:用户|我|我们)没有额外真实数据" + unconfirmed)
+                    || actual.matches("^(?:本交付物|当前|本研究)[^。;]*,用户没有额外真实数据" + unconfirmed)
+                    || actual.matches("^(?:当前|目前)(?:只是|仅为)拟定研究,尚未实施,没有额外真实数据" + unconfirmed);
         }
         // “用户未确认任何既有参数”只覆盖同一全称未确认状态，不确认方法、年份或其他具名参数。
         if (statement.matches("^不确认任何既有参数[。；;]?$")) {
@@ -189,12 +196,188 @@ final class PlanDecisionIntegrator {
         }
         // 已委托事项是拟议设计；必须同时包含可开展主方案与适用条件，泛称“提供建议”不足以覆盖。
         if (subject.equals("委托要求") && statement.matches("^请根据原始研究目标提出可开展的推荐设计并说明适用条件[。；;]?$")) {
-            return actual.matches("^对以下已委托设计的未决事项,提出可直接开展的拟议主方案并说明适用条件(?:,标注为拟议设计而非已确认事实)?[。;:]?$" )
+            return delegatedDesignHeader(actual)
+                    || actual.matches("^对以下已委托设计的未决事项,提出可直接开展的拟议主方案并说明适用条件(?:,标注为拟议设计而非已确认事实)?[。;:]?$" )
                     || actual.matches("^撰写研究设计的方法部分,围绕[^。;]+这一主题,提出可开展的推荐设计并说明适用条件[。;]?$" )
                     || actual.matches("^用户(?:未确认任何既有参数,)?已明确委托提出可开展的推荐设计并说明适用条件[。;]?$" );
         }
         return false;
     }
+
+    /** 禁假设数据是独立禁令，不是前文当前状态的假设分支；真正的条件及例外保持原样。 */
+    private static String conditionText(String text) {
+        return text.replaceAll("((?:不得|禁止|不能|不允许|不要)(?:使用|编造))假设(?=数据|样本|结果)", "$1模拟");
+    }
+
+    /**
+     * 将当前完整委托落实为任务中的拟议设计义务，不把“实际参数未确认”表达成等待用户才能设计。
+     * 只转换绑定原题且无新增解释的提醒，保留完整对象及来源；未识别、条件或局部授权继续走原提醒。
+     */
+    static void promoteDelegatedPrerequisites(Map<PromptSectionType, PromptSection> sections,
+            List<String> prerequisites, EffectiveTaskView task) {
+        var fields = new java.util.LinkedHashSet<String>();
+        for (var pending : task.pendingDecisions()) {
+            if (pending.questionId() == null || !prerequisites.contains(
+                    "已委托提出拟议设计，实际采用参数仍未确认：" + pending.question())) continue;
+            boolean delegated = task.executionRequirements().stream().anyMatch(requirement ->
+                    java.util.Objects.equals(requirement.questionId(), pending.questionId())
+                            && requirement.subject().equals("委托要求")
+                            && canonical(requirement.statement()).equals("请根据原始研究目标提出可开展的推荐设计并说明适用条件"));
+            boolean unconfirmed = task.executionRequirements().stream().anyMatch(requirement ->
+                    java.util.Objects.equals(requirement.questionId(), pending.questionId())
+                            && requirement.subject().equals("未确认边界") && coveredRule(sections, requirement.statement()));
+            var field = delegatedDesignField(pending.question());
+            if (delegated && unconfirmed && field != null && !delegatedQuestionCovered(sections, pending.question())) {
+                fields.add(field.label());
+            }
+        }
+        if (fields.isEmpty()) return;
+        appendCurrentTask(sections, "对以下已委托设计的子项给出拟议主方案及适用条件，标明属于拟议设计，不冒充已确认或已实施："
+                + String.join("；", fields) + "。");
+    }
+
+    /**
+     * 只补当前研究评价中已声明但未落入正文的评分义务，不复制元数据中的具体方案或默认数值。
+     * 原要求须有全部四维评价与分歧处理、当前完整委托，并且模型声明专业补全；已选尺度或禁止推荐保持原样。
+     */
+    static void completeDeclaredEvaluation(Map<PromptSectionType, PromptSection> sections, EffectiveTaskView task,
+            com.promptoptimizer.provider.domain.TaskEnhancementAssessment assessment) {
+        if (assessment == null || task.intent().deliveryProfile() != TaskDeliveryProfile.ACADEMIC_METHODS
+                || task.executionRequirements().stream().noneMatch(requirement -> requirement.subject().equals("委托要求")
+                    && requirement.questionId() != null
+                    && canonical(requirement.statement()).equals("请根据原始研究目标提出可开展的推荐设计并说明适用条件"))) return;
+        var original = currentSentences(task.effectivePrompt());
+        boolean requested = original.stream().anyMatch(value -> value.contains("准确性") && value.contains("完整性")
+                && value.contains("清晰度") && value.contains("可执行性") && value.contains("评价") && value.contains("分歧处理")
+                && !CONDITIONAL.matcher(value).find() && !value.matches("(?s).*(?:例如|示例|引用|另一研究|其他研究).*"));
+        boolean reserved = original.stream().anyMatch(value ->
+                value.matches("(?s).*(?:不得|禁止|不要|无需|不必|不提供|不提出|不推荐|不设计)[^。;]*(?:评分|量表|操作定义).*" )
+                || value.matches("(?s).*(?:评分|量表|操作定义)[^。;]*(?:不提供|不提出|不推荐|不设计|确认后再|以后再|仅供参考).*" )
+                || value.matches("(?s).*(?:采用|使用|已确认)[^。;]*(?:量表|评分尺度|评分范围).*" )
+                || value.matches("(?s).*(?:评分尺度|量表|评分范围)[^。;]*(?:采用|使用|已确认|已确定).*" ))
+                || task.executionRequirements().stream().anyMatch(requirement -> !requirement.subject().equals("委托要求")
+                    && requirement.question().matches("(?s).*(?:评分|量表|量尺).*" )
+                    && !List.of("用户说明", "未确认边界").contains(requirement.subject()));
+        boolean declared = assessment.gaps().stream().anyMatch(gap ->
+                (gap.kind() == com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Kind.PROFESSIONAL_OPTION
+                    || gap.kind() == com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Kind.EXECUTION_STEP)
+                && (gap.missing() + gap.completion()).matches("(?s).*(?:评分尺度|评分量表|评分范围).*" )
+                && gap.completion().matches("(?s).*(?:提出|给出)[^。;]*(?:评分|评价).*"));
+        if (!requested || reserved || !declared) return;
+        boolean covered = List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT).stream()
+                .filter(sections::containsKey).flatMap(type -> currentSentences(sections.get(type).content()).stream())
+                .anyMatch(value -> value.contains("准确性") && value.contains("完整性") && value.contains("清晰度")
+                    && value.contains("可执行性") && value.matches("(?s).*(?:评分尺度|评分量表|评分范围).*" )
+                    && value.matches("(?s).*(?:操作定义|等级描述|评分锚点).*" ) && value.contains("分歧")
+                    && value.matches("(?s).*(?:提出|给出|明确|定义).*" ) && !CONDITIONAL.matcher(value).find()
+                    && !value.matches("(?s).*(?:待确认后|以后|未来|不得|禁止|不要|另一研究|其他研究|示例|引用).*"));
+        if (covered) return;
+        appendCurrentTask(sections, "针对原要求的准确性、完整性、清晰度与可执行性，提出拟议评分尺度、可操作定义和与尺度相配的分歧处理规则，并说明适用条件。");
+    }
+
+    /** 追加仍属于当前任务；已有其他研究或示例标题不能把新增执行要求收进其资料作用域。 */
+    private static void appendCurrentTask(Map<PromptSectionType, PromptSection> sections, String requirement) {
+        PromptSection current = sections.get(PromptSectionType.TASK);
+        boolean foreign = false;
+        for (String line : current.content().lines().toList()) {
+            String heading = line.strip().replaceFirst("^#{1,6}\\s*", "").replaceFirst("^\\*\\*(.+?)\\*\\*$", "$1");
+            if (heading.matches("(?:另一(?:项)?研究|其他研究|甲研究|乙研究|示例|例子|引用|原文|未来方案|以后确认)[：:]?")) foreign = true;
+            else if (heading.matches("(?:本研究|本次研究|当前研究|本任务|本次任务)[：:]?")) foreign = false;
+        }
+        sections.put(current.type(), new PromptSection(current.type(), current.title(), current.content()
+                + (foreign ? "\n本任务：\n" : "\n") + requirement));
+    }
+
+    /**
+     * 只省略已完整落入执行正文的委托提醒；原题、全部来源及实际参数未确认状态仍在任务视图和API中。
+     * 新解释、未来确认、独立对象及尚无显式未确认边界的题继续保留原提醒。
+     */
+    static List<String> uncoveredDelegatedPrerequisites(Map<PromptSectionType, PromptSection> sections,
+            List<String> prerequisites, EffectiveTaskView task) {
+        String prefix = "已委托提出拟议设计，实际采用参数仍未确认：";
+        // 复用已有执行投影里的绑定ID，不为每条提醒重建模型输入和边界契约。
+        var delegatedIds = task.executionRequirements().stream().filter(requirement -> requirement.subject().equals("委托要求"))
+                .map(ExecutionRequirement::questionId).filter(java.util.Objects::nonNull)
+                .collect(java.util.stream.Collectors.toSet());
+        return prerequisites.stream().filter(value -> task.pendingDecisions().stream().noneMatch(pending ->
+                pending.questionId() != null && delegatedIds.contains(pending.questionId()) && value.equals(prefix + pending.question())
+                        && task.executionRequirements().stream().anyMatch(requirement ->
+                            java.util.Objects.equals(requirement.questionId(), pending.questionId())
+                                    && requirement.subject().equals("未确认边界")
+                                    && coveredRule(sections, requirement.statement()))
+                        && delegatedQuestionCovered(sections, pending.question()))).toList();
+    }
+
+    /** 当前委托列表须有拟议主方案及适用条件；题目对象和属性只能从完整原题的有限名词化语法取得。 */
+    private static boolean delegatedQuestionCovered(Map<PromptSectionType, PromptSection> sections, String question) {
+        var field = delegatedField(question);
+        if (field == null) return false;
+        for (PromptSectionType type : List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT)) {
+            if (!sections.containsKey(type)) continue;
+            StringBuilder list = null;
+            for (String sentence : currentSentences(sections.get(type).content())) {
+                String text = Normalizer.normalize(sentence, Normalizer.Form.NFKC).strip()
+                        .replaceFirst("^[-*•]\\s*", "");
+                if (CONDITIONAL.matcher(conditionText(text)).find()
+                        || text.matches("(?s).*(?:未来|以后|例如|示例|引用|另一研究|其他研究|甲研究|乙研究|仅限|除非|例外).*")) {
+                    list = null;
+                    continue;
+                }
+                // 不借普通提及、否定动作或局部对象列表消除当前委托；列表头明确覆盖其后完整子项。
+                boolean header = delegatedDesignHeader(text);
+                if (header) list = new StringBuilder(text.substring(text.indexOf(':') + 1));
+                else if (list != null && !text.matches("(?s).*(?:不得|禁止|不能|不应|无需|不必|不允许|不要)(?:提出|给出|提供).*")) {
+                    list.append(';').append(text);
+                } else list = null;
+                // 先核完整列表的后续限定；第一子项命中不能忽略分号之后的新条件或例外。
+                if (text.endsWith("。") || text.endsWith(".")) {
+                    if (list != null && field.matcher(list).find()) return true;
+                    list = null;
+                }
+            }
+            if (list != null && field.matcher(list).find()) return true;
+        }
+        return false;
+    }
+
+    /** 明确的当前拟议主方案及适用条件是委托执行表达；局部对象前缀、普通建议和否定动作不匹配。 */
+    private static boolean delegatedDesignHeader(String text) {
+        return text.matches("^(?:对以下已委托设计的(?:子项|未决事项)|由于用户[^。;]+执行者应就以下未确认事项)"
+                + ".*(?:给出|提出)(?:可直接开展的|可开展的)?拟议主方案(?:并说明|及)适用条件[^:。;]*:.*$")
+                && !text.matches("(?s).*(?:不得|禁止|不能|不应|无需|不必|不允许|不要)(?:提出|给出|提供).*" );
+    }
+
+    /**
+     * 仅转换完整问句的疑问语法，不删除机构、年份、数字或限定对象；未识别问句不作覆盖判断。
+     * “如何取得”与获取流程、“对哪些信息设盲”与设盲范围是属性名词化，不是默认选择具体参数。
+     */
+    private static Pattern delegatedField(String question) {
+        var field = delegatedDesignField(question);
+        return field == null ? null : field.coverage();
+    }
+
+    /** 有限完整问句的字段名与覆盖模式共享同一解析，不能用简化对象生成宽泛的执行要求。 */
+    private static DelegatedDesignField delegatedDesignField(String question) {
+        String text = Normalizer.normalize(question, Normalizer.Form.NFKC).strip();
+        if (CONDITIONAL.matcher(conditionText(text)).find()
+                || text.matches("(?s).*(?:以后|未来|否定|除非|例外|仅限|不得|禁止|不能|不要|不允许|不应|不采用|不是|并非|无需|不必).*")) return null;
+        String object = null, attribute = null, label = null;
+        var category = Pattern.compile("^(.{2,80}?)具体指哪[^，,。;?]{1,8}类\\?$").matcher(text);
+        var source = Pattern.compile("^(.{2,100}?)如何确定\\?是[^?]+还是其他来源\\?$").matcher(text);
+        var blind = Pattern.compile("^(.{2,80}?)具体对哪些信息设盲\\?$").matcher(text);
+        var acquisition = Pattern.compile("^(.{2,100}?)如何(?:取得|获取)\\?$").matcher(text);
+        if (category.matches()) { object = category.group(1); attribute = "(?:分类框架|类别划分|具体类别)"; label = "的分类框架"; }
+        else if (source.matches()) { object = source.group(1); attribute = "(?:构造来源|来源与选取标准|来源与选取方式)"; label = "的构造来源"; }
+        else if (blind.matches()) { object = blind.group(1); attribute = "设盲范围"; label = "的设盲范围"; }
+        else if (acquisition.matches()) { object = acquisition.group(1); attribute = "(?:获取|取得)(?:与封存)?流程"; label = "获取流程"; }
+        if (object == null) return null;
+        // 左边界防止“甲院盲评”借用裸“盲评”的对象；连接词只分隔当前列表的完整并列子项。
+        return new DelegatedDesignField(object + label, Pattern.compile("(?:^|[;；，,、\\n]|与|及|和|以及)" + Pattern.quote(object)
+                + "(?:的)?" + attribute + "(?=$|[;；，,、\\n。]|与|及|和|以及)"));
+    }
+
+    /** 字段名保留来源完整对象，覆盖模式只允许同对象、同属性的句法等价。 */
+    private record DelegatedDesignField(String label, Pattern coverage) { }
 
     /**
      * 研究写作的动作、交付物、语言、受众和主题可分配到责任段；每一项均须有当前完整表达。

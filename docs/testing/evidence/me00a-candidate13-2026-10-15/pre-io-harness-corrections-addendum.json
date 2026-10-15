@@ -1,0 +1,15 @@
+{
+  "corrects": "pre-io-harness-corrections.json.actualCallsAfter",
+  "originalValue": 0,
+  "correctHistoricalValue": 229,
+  "cause": "Overescaped filename regex counted no trace files; original erroneous record preserved.",
+  "evidence": "Traces 001 through 229 existed before the pre-I/O errors; 230 and 231 belong to later successful platform generation.",
+  "actualAtAddendum": {
+    "total": 231,
+    "baseline": 70,
+    "candidateValidation": 161
+  },
+  "preIoFailuresAddedModelCalls": 0,
+  "attribution": "EVALUATION_HARNESS",
+  "budgetSource": "Canonical numeric trace files, never the erroneous addendum predecessor counter."
+}

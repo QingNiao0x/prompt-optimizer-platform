@@ -8,6 +8,10 @@ import com.promptoptimizer.common.exception.GlobalExceptionHandler;
 import com.promptoptimizer.common.web.RequestIdFilter;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
+import com.promptoptimizer.common.logging.ModelCallAuditContext;
+import com.promptoptimizer.common.logging.ModelCallObservation;
+import java.util.ArrayList;
+import java.util.UUID;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +31,19 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 /** 通过实际适配器复现无诊断的 Plan 502；错误详情和日志仅暴露代码定义的原因及位置。 */
 class PlanFailureDiagnosticsTest {
+    @org.junit.jupiter.api.Test
+    void inconsistentAssessmentExplainsTheFailureWithoutReturningAnUnvalidatedResult() {
+        var invalid = new ProviderResponseValidationException(
+                ProviderResponseValidationException.Reason.ASSESSMENT_DECISION_CONFLICT, "assessment.gaps").withModelAttempts(3);
+        var request = new MockHttpServletRequest("POST", "/api/v1/optimizations");
+        var response = new GlobalExceptionHandler().handleProviderException(invalid, request);
+        assertThat(response.getStatusCode().value()).isEqualTo(502);
+        assertThat(response.getBody().error().code()).isEqualTo("RESULT_INVALID");
+        assertThat(response.getBody().error().message()).isEqualTo("模型响应中的补全判断与待确认事项不一致，本次增强未完成。");
+        assertThat(response.getBody().error().retryable()).isFalse();
+        assertThat(response.getBody().error().details()).containsEntry("modelAttempts", 3);
+    }
+
     @ParameterizedTest
     @CsvSource({
             "json,PLAN_JSON_INVALID,plan.json",
@@ -62,7 +79,9 @@ class PlanFailureDiagnosticsTest {
         var appender = new ListAppender<ILoggingEvent>();
         appender.start();
         logger.addAppender(appender);
-        try {
+        var attempts = new ArrayList<ModelCallObservation>();
+        try (var audit = ModelCallAuditContext.bind(new ModelCallAuditContext.Snapshot(UUID.randomUUID(),
+                (tenant, fact) -> attempts.add(fact)))) {
             Throwable failure = catchThrowable(() -> provider.plan(new PlanningProviderRequest(
                     "撰写研究方法提纲，不编造结论。", "", List.of())));
             assertThat(failure).isInstanceOf(ProviderResponseValidationException.class);
@@ -86,6 +105,10 @@ class PlanFailureDiagnosticsTest {
                             && message.contains("field=" + expectedField));
             assertThat(messages).noneMatch(message -> message.contains(sensitiveMarker));
             assertThat(appender.list).allMatch(event -> event.getThrowableProxy() == null);
+            assertThat(attempts).hasSize(3).allSatisfy(fact -> {
+                assertThat(fact.validationReason()).isEqualTo(expectedReason);
+                assertThat(fact.validationField()).isEqualTo(expectedField);
+            });
             upstream.verify();
         } finally {
             logger.detachAppender(appender);

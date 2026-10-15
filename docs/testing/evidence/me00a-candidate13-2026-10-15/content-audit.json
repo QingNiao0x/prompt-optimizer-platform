@@ -1,0 +1,173 @@
+{
+  "type": "Independent source-and-work inspection by the development agent; not a third expert or external AI review",
+  "sampleScope": "One Q05 work per vendor/arm. Unknown website revision and personalization prevent a pure model-capability conclusion.",
+  "findings": [
+    {
+      "id": "CURRENT-MATERIAL-STATE",
+      "layer": "PLATFORM",
+      "status": "PASS_NARROW_SCOPE",
+      "evidence": [
+        "models/plan-response.txt",
+        "live/plan/copied.md",
+        "live/direct/copied.md"
+      ],
+      "reason": "New Plan response already states no additional real data; the copy does not append that state again. New direct response omits it, so the original-rule addition is necessary and appears once. Exact compound 220 replay remains the deterministic fix proof."
+    },
+    {
+      "id": "REMAINING-STATE-AND-PENDING-APPENDS",
+      "layer": "PLATFORM_AND_ENHANCEMENT",
+      "status": "OPEN",
+      "evidence": [
+        "models/direct-response.txt",
+        "live/direct/copied.md",
+        "live/plan/copied.md"
+      ],
+      "reason": "Direct BACKGROUND already states current proposed/unimplemented study, yet platform user-rule block appends that status. Plan still appends four delegated question titles with unconfirmed status; some requirements overlap TASK. Model also repeats rules across sections. Keep source records and do not remove pending parameter identity merely because one keyword or global method phrase matches."
+    },
+    {
+      "id": "RATING-OBLIGATION",
+      "layer": "ENHANCEMENT",
+      "status": "PASS_THIS_TWO_RESPONSES",
+      "evidence": [
+        "assessment/live-plan-coverage.json",
+        "assessment/live-direct-coverage.json"
+      ],
+      "reason": "Both new response TASK sections and copies deliver the proposed-scale obligation; prior 220 metadata/body omission did not recur. This is one sample, guidance unchanged, not proof that the prior failure is permanently solved."
+    },
+    {
+      "id": "DS-DIRECT-RATING-DELIVERY",
+      "layer": "DOWNSTREAM_WITH_INPUT_REDUNDANCY_CAUSALITY_UNRESOLVED",
+      "status": "OPEN",
+      "evidence": [
+        "live/works/deepseek-direct.md",
+        "live/direct/copied.md"
+      ],
+      "quote": "评分尺度拟采用分级行为锚定量表，先由研究者依据文献与任务样例拟定锚点",
+      "reason": "No current primary scoring range/anchor proposal despite the copy requiring it. Failure first appears in the work; the effect of redundant prompting is unknown. Does not compel added instructions."
+    },
+    {
+      "id": "DOUBAO-RAW-AND-DIRECT-ALLOCATION",
+      "layer": "DOWNSTREAM_WITH_DESIGN_AMBIGUITY",
+      "status": "NOT_PASSED",
+      "evidence": [
+        "live/works/doubao-raw.md",
+        "live/works/doubao-direct.md"
+      ],
+      "quote": "将全部20项任务‑重复单元随机打乱后分配至四组",
+      "reason": "Four-way allocation is not reconciled with every mode/every task/three repetitions. The work states both requirements but does not define a valid balanced generation scheme. Independent groups themselves are not forbidden; the unclear allocation cannot close executable-design gate."
+    },
+    {
+      "id": "DS-PLAN-STRUCTURAL-CONTRADICTION",
+      "layer": "DOWNSTREAM",
+      "status": "FAIL",
+      "evidence": [
+        "live/works/deepseek-plan.md",
+        "live/plan/copied.md"
+      ],
+      "quotes": [
+        "增强方式为组间因素",
+        "每名被试在每模式下对每任务独立重复3次"
+      ],
+      "reason": "Same work describes a between-participant factor and each participant receiving every mode. The copied prompt does not demand this conflict. Do not diagnose every 2×2 or human-participant proposal as forbidden."
+    },
+    {
+      "id": "DOUBAO-PLAN-DELEGATED-COMPLETION",
+      "layer": "DOWNSTREAM",
+      "status": "NOT_PASSED",
+      "evidence": [
+        "assessment/live-plan-coverage.json",
+        "live/works/doubao-plan.md"
+      ],
+      "quote": "4类任务分类框架、每类5项任务的构造来源为待确定参数",
+      "reason": "Current copy explicitly asks for a proposed category framework; the work supplies only source alternatives and postpones categories. Actual parameters unconfirmed is legitimate, but does not prevent a proposed primary design."
+    },
+    {
+      "id": "INFORMATION-FLOW",
+      "layer": "DOWNSTREAM_WITH_INPUT_AND_EVALUATION_AMBIGUITY_OPEN",
+      "status": "PARTIAL",
+      "evidence": [
+        "live/works/doubao-plan.md",
+        "live/works/deepseek-plan.md",
+        "live/works/deepseek-direct.md"
+      ],
+      "reason": "Enhanced works improve sealing and literal same-information use. Some fail to specify the two fairness-control identities or who asks/answers across all conditions. Doubao Plan uses an external questioner, while platform copy says enhancer asks/user answers; exact actor mapping is under-specified. No evidence that actual answers were edited in the real test: all six outgoing prompts match locked inputs. Do not equate a missing design detail with observed answer tampering."
+    },
+    {
+      "id": "BLIND-RATER-COVERAGE",
+      "layer": "DOWNSTREAM",
+      "status": "PARTIAL",
+      "evidence": [
+        "live/works/deepseek-direct.md",
+        "live/works/deepseek-plan.md",
+        "live/works/doubao-plan.md"
+      ],
+      "reason": "Two independent reviewers are retained in these works; candidate12 Flash split-rater sentence did not recur. Doubao direct/raw expose only evaluated prompt in primary blind view, leaving task/answer reference availability unclear; coverage and accurate rubric application need explicit design audit rather than universal new constraints."
+    },
+    {
+      "id": "REVIEWER-QUALITY",
+      "layer": "EVALUATION",
+      "status": "NOT_A_FINAL_GATE",
+      "evidence": [
+        "live/review-comparison.json"
+      ],
+      "reason": "Both JSON schemas valid. One verdict-direction disagreement is a Doubao label/reason contradiction. Nonliteral/misbound evidence and overgeneralized participant/paired-design assertions remain. Preserve both original reviews; no automatic majority rule or corrected raw reviews."
+    },
+    {
+      "id": "LENGTH",
+      "layer": "DOWNSTREAM_AND_EVALUATION_SCOPE",
+      "status": "PARTIAL_PASS",
+      "evidence": [
+        "independent-hard-checks.json"
+      ],
+      "reason": "Four optimized works pass frozen body-Han policy; raw Doubao723/raw DeepSeek1682 fail. DeepSeek direct1239 with headings signals counting-boundary sensitivity; neither web self-reported counts nor AI scores override fixed checks."
+    }
+  ],
+  "acceptancePairs": [
+    {
+      "left": "doubao-raw",
+      "right": "doubao-direct",
+      "verdict": "BOTH_FAIL",
+      "reason": "Raw length fails; both allocation descriptions do not close each-mode/task repetition self-consistency."
+    },
+    {
+      "left": "doubao-raw",
+      "right": "doubao-plan",
+      "verdict": "BOTH_FAIL",
+      "reason": "Raw length fails; Plan does not supply delegated four-category primary design. Relative gains retained separately."
+    },
+    {
+      "left": "doubao-direct",
+      "right": "doubao-plan",
+      "verdict": "BOTH_FAIL",
+      "reason": "Direct allocation open/failing and Plan missing primary classification; no compliant winner."
+    },
+    {
+      "left": "deepseek-raw",
+      "right": "deepseek-direct",
+      "verdict": "BOTH_FAIL",
+      "reason": "Raw length fails; direct scoring-primary design remains future work, complete delivery gate not passed."
+    },
+    {
+      "left": "deepseek-raw",
+      "right": "deepseek-plan",
+      "verdict": "BOTH_FAIL",
+      "reason": "Raw length fails; Plan between/within-mode statement contradicts itself."
+    },
+    {
+      "left": "deepseek-direct",
+      "right": "deepseek-plan",
+      "verdict": "BOTH_FAIL",
+      "reason": "Direct primary scale incomplete; Plan structure contradictory. Original AI relative rankings remain untouched."
+    }
+  ],
+  "strategyDecision": {
+    "productionOrGuidanceChangedDuringRealComparison": false,
+    "complexInstructionsAdded": false,
+    "modelSpecificTemplatesAdded": false,
+    "qualityRetryUsed": false,
+    "pureDownstreamProblemRequiresModification": false,
+    "stableBenefitOrPerformanceImprovementProven": false,
+    "next": "Offline replay 230/231 for residual same-study state and per-object pending append paths; separate target/condition/status source coverage. Evaluate simpler existing guidance only after deterministic platform issues are isolated. Keep independent hard checks and disputed reviews.",
+    "examplesAndFrontendExpansionAllowedByCurrentGates": false
+  }
+}

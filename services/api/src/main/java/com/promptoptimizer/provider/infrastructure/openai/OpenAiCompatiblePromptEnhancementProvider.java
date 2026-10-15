@@ -412,6 +412,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 return validated;
             } catch (ProviderException exception) {
                 if (exception instanceof ProviderResponseValidationException invalid) {
+                    ModelCallLogger.captureValidationFailure(invalid.getReason(), invalid.getField());
                     LOGGER.warn("event=model.response.validation_failed requestId={} operation={} reason={} field={} attempt={}",
                             LogFields.value(MDC.get("requestId")), LogFields.value(operation),
                             invalid.getReason().name(), invalid.getField(), attempt);

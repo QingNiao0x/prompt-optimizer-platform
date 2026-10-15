@@ -1,0 +1,90 @@
+diff --git a/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanDecisionIntegrator.java b/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanDecisionIntegrator.java
+index 00607a8..b8511e9 100644
+--- a/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanDecisionIntegrator.java
++++ b/services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanDecisionIntegrator.java
+@@ -173,15 +173,18 @@ final class PlanDecisionIntegrator {
+         String actual = java.text.Normalizer.normalize(sentence, java.text.Normalizer.Form.NFKC).strip()
+                 .replaceFirst("^[-*•]\\s*", "");
+         statement = java.text.Normalizer.normalize(statement, java.text.Normalizer.Form.NFKC);
+-        if (actual.matches("(?s).*(?:如果|假如|若以后|未来|例如|示例|引用|另一|其他研究|其他实验|甲研究|乙研究|并非|不是|无需|不必).*")) return false;
++        if (CONDITIONAL.matcher(actual).find()
++                || actual.matches("(?s).*(?:如果|假如|若以后|未来|例如|示例|引用|另一|其他研究|其他实验|甲研究|乙研究|并非|不是|无需|不必|仅限|仅就|除非|除外|例外).*")) return false;
+         if (statement.matches("^(?:这是尚未实施的研究|当前只是拟定研究,尚未实施)[。；;]?$")) {
+             return actual.matches("^(?:本研究|本次研究|当前|目前|这项研究)(?:仅|只是|仅为|为|只是拟定研究,|仅为拟定研究,)*"
+                     + "(?:尚未实施|拟定研究,尚未实施)(?:[。;,].*)?$");
+         }
+         if (statement.matches("^我没有额外真实数据[。；;]?$")) {
+-            return actual.matches("^(?:用户|我|我们)没有额外真实数据[。；;]?$" )
+-                    || actual.matches("^(?:本交付物|当前|本研究)[^。;]*,用户没有额外真实数据[。;]?$" )
+-                    || actual.matches("^(?:当前|目前)(?:只是|仅为)拟定研究,尚未实施,没有额外真实数据[。;]?$" );
++            // 220把完整资料状态与全称未确认状态并列。只接受这两个已验证状态，不能任意拆逗号后忽略例外或局部对象。
++            String unconfirmed = "(?:,(?:不确认任何既有参数|用户未确认任何既有参数))?[。;]?$";
++            return actual.matches("^(?:用户|我|我们)没有额外真实数据" + unconfirmed)
++                    || actual.matches("^(?:本交付物|当前|本研究)[^。;]*,用户没有额外真实数据" + unconfirmed)
++                    || actual.matches("^(?:当前|目前)(?:只是|仅为)拟定研究,尚未实施,没有额外真实数据" + unconfirmed);
+         }
+         // “用户未确认任何既有参数”只覆盖同一全称未确认状态，不确认方法、年份或其他具名参数。
+         if (statement.matches("^不确认任何既有参数[。；;]?$")) {
+diff --git a/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/CandidateTwelveAssemblyReplayTest.java b/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/CandidateTwelveAssemblyReplayTest.java
+index 2b6ed79..8d56782 100644
+--- a/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/CandidateTwelveAssemblyReplayTest.java
++++ b/services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/CandidateTwelveAssemblyReplayTest.java
+@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
+ import static org.mockito.Mockito.when;
+ 
+ /**
+- * 将九至十一的真实原件交给生产组装器，区分模型已写内容和平台重复追加；不调用模型。
++ * 将九至十二的真实原件交给生产组装器，区分模型已写内容和平台重复追加；不调用模型。
+  *
+  * @author QingNiao
+  * @since 0.1.0
+@@ -37,7 +37,8 @@ class CandidateTwelveAssemblyReplayTest {
+ 
+     @ParameterizedTest
+     @CsvSource({"9,205,q05-flash/input.json,true", "10,215,replay/plan/input.json,true",
+-            "10,217,replay/direct/input.json,false", "11,219,direct-copy/input.json,false"})
++            "10,217,replay/direct/input.json,false", "11,219,direct-copy/input.json,false",
++            "12,220,live/plan/input.json,true", "12,221,live/direct/input.json,false"})
+     void shouldNotReappendCoveredDelegationTaskIntroductionOrAnswerHeading(
+             int candidate, int attempt, String inputFile, boolean plan) throws Exception {
+         var input = fixture(candidate, inputFile);
+@@ -45,8 +46,9 @@ class CandidateTwelveAssemblyReplayTest {
+         assertThat(raw).isNotBlank();
+         var answers = answers(plan);
+         var result = assemble(model(candidate, attempt), raw, answers);
++        if (attempt != 221) assertThat(result.optimizedPrompt()).doesNotContain(
++                "- 请根据原始研究目标提出可开展的推荐设计并说明适用条件");
+         assertThat(result.optimizedPrompt()).doesNotContain(
+-                "- 请根据原始研究目标提出可开展的推荐设计并说明适用条件",
+                 "- 为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。",
+                 "- 本次测试实际确认信息（逐字题答）：");
+         assertThat(result.optimizedPrompt()).contains("研究生", "方法部分", "Plan", "拟议", "800", "1200");
+@@ -58,6 +60,16 @@ class CandidateTwelveAssemblyReplayTest {
+             // 模型正文没有落实这项真实资料状态时仍补入；不能为了缩短正文抹掉缺项。
+             assertThat(result.optimizedPrompt()).contains("- 我没有额外真实数据");
+         }
++        if (attempt == 220) {
++            assertThat(result.optimizedPrompt()).contains("尚未实施，没有额外真实数据，不确认任何既有参数。");
++            assertThat(result.optimizedPrompt()).doesNotContain("- 我没有额外真实数据");
++        }
++        if (attempt == 221) {
++            // 部分事项有适用条件，不能证明整个委托已覆盖；缺少的资料与全称未确认状态仍须补入。
++            assertThat(result.optimizedPrompt()).contains("- 面向研究生读者。",
++                    "- 请根据原始研究目标提出可开展的推荐设计并说明适用条件",
++                    "- 我没有额外真实数据", "- 不确认任何既有参数。");
++        }
+         if (plan) {
+             var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+             assertThat(task.pendingDecisions()).hasSize(4);
+@@ -165,7 +177,10 @@ class CandidateTwelveAssemblyReplayTest {
+         Path root = Path.of(System.getProperty("user.dir")).toAbsolutePath();
+         while (root != null && !Files.isRegularFile(root.resolve("AGENTS.md"))) root = root.getParent();
+         if (root == null) throw new IllegalStateException("缺少仓库根目录");
+-        Path output = root.resolve("tmp/me00a-candidate12-20261014/replays/" + attempt);
++        // 后续回放写入本节点目录，已冻结的候选十二原件保持只读。
++        String node = System.getProperty("me00a.replayNode", "candidate12");
++        if (!node.matches("candidate(?:12|13)")) throw new IllegalStateException("非法回放节点");
++        Path output = root.resolve("tmp/me00a-" + node + "-20261014/replays/" + attempt);
+         Files.createDirectories(output);
+         Files.writeString(output.resolve("current-copy.md"), result.optimizedPrompt());
+         Files.writeString(output.resolve("result.json"), json.writerWithDefaultPrettyPrinter().writeValueAsString(result));

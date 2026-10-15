@@ -1,0 +1,143 @@
+{
+  "schema": "me00a-assessment-coverage-v1",
+  "runtimeValidation": false,
+  "automaticSemanticVerdict": false,
+  "newModelCalls": 0,
+  "copiedSha256": "cbd204c9163fcda2e3b8974050c7b44c13b1e2c5dc50ecf13e28622e4e098007",
+  "assessmentSha256": "9d0b1850d7283dc50513add8d978c0c20fa2b215583b6d95261965cef3f11ea3",
+  "responsibilitySections": [
+    {
+      "type": "BACKGROUND",
+      "title": "背景",
+      "content": "本部分面向研究生撰写中文研究设计的方法部分，研究主题为Plan问答对提示词质量的影响。当前仅为拟定研究，尚未实施，没有额外真实数据。"
+    },
+    {
+      "type": "TASK",
+      "title": "任务",
+      "content": "撰写研究设计的方法部分，研究Plan问答对提示词质量的影响。设计须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强与Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，可说明候选方法及其适用条件，不预设必然显著。\n\n请根据原始研究目标提出可开展的推荐设计并说明适用条件。对以下已委托设计的子项给出拟议主方案及适用条件，标明属于拟议设计、可调整，不冒充已确认或已实施：4类任务的分类框架与每类5个任务的构造来源；盲评的设盲范围；公平对照组的确认信息获取流程；准确性、完整性、清晰度与可执行性的评分尺度与操作化定义；评审分歧处理规则；随机化的实施方式。\n\n公平对照须落实到信息流：先就同一案例取得并封存实际确认信息，再让两组获得逐字相同的信息；直接组不追问不等于不能使用已提供答案。保留谁提问、谁回答及答案的用途，问答不能改成模型自行生成计划。评价对象为提示词，不改为只评答案质量。"
+    },
+    {
+      "type": "OUTPUT",
+      "title": "输出",
+      "content": "交付中文研究设计的方法部分正文，800至1200个汉字，附表另计。不提供代码。"
+    },
+    {
+      "type": "CONSTRAINTS",
+      "title": "约束",
+      "content": "- 当前只是拟定研究，尚未实施；不得把拟定样本写成已纳入样本。\n- 不确认任何既有参数。\n- 不得编造效应量、P值、参考文献或显著性结论。\n- 不得使用假设数据或虚构数据，禁令适用于所有用途，包括测试和验证。\n- 具体统计检验依据未来数据分布和配对结构选择，可说明候选方法及其适用条件，不预先选定，也不预设显著性。\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。"
+    }
+  ],
+  "gaps": [
+    {
+      "gapIndex": 0,
+      "kind": "PROFESSIONAL_OPTION",
+      "missing": "4类任务的具体分类框架、每类5个任务的构造来源与选取标准尚未确定，但用户已委托设计。",
+      "completion": "在方法部分提出一套可直接开展的拟议任务分类框架（如按任务领域或认知复杂度划分），说明每类5个任务的构造与选取标准，并标明属于拟议设计、可调整。",
+      "basis": "用户要求保留4类任务每类5个共20个任务，但未指定分类与来源，且已委托设计。",
+      "defaultStatus": "UNVERIFIED",
+      "observations": []
+    },
+    {
+      "gapIndex": 1,
+      "kind": "PROFESSIONAL_OPTION",
+      "missing": "盲评的具体设盲范围（评审对哪些信息不知情）尚未确定，但用户已委托设计。",
+      "completion": "在方法部分提出拟议盲法方案，明确评审对分组标签、研究假设等信息的设盲方式，并说明适用条件。",
+      "basis": "用户要求两名独立评审盲评，但未指定设盲范围，且已委托设计。",
+      "defaultStatus": "UNVERIFIED",
+      "observations": []
+    },
+    {
+      "gapIndex": 2,
+      "kind": "PROFESSIONAL_OPTION",
+      "missing": "公平对照组的确认信息获取流程尚未确定，但用户已委托设计。",
+      "completion": "提出拟议流程：先就同一案例取得并封存实际确认信息，再让两组获得逐字相同的信息，说明操作步骤与适用条件。",
+      "basis": "用户要求另设两组获得相同确认信息的公平对照，但未指定信息获取方式，且已委托设计。",
+      "defaultStatus": "UNVERIFIED",
+      "observations": []
+    },
+    {
+      "gapIndex": 3,
+      "kind": "PROFESSIONAL_OPTION",
+      "missing": "准确性、完整性、清晰度与可执行性的具体评分尺度与操作化定义尚未确定，但用户已委托设计。",
+      "completion": "提出拟议评分尺度（如各维度分级描述或评分范围）及操作化定义，标明属于拟议设计、可调整。",
+      "basis": "用户要求评价准确性、完整性、清晰度与可执行性，但未指定评分尺度，且已委托设计。",
+      "defaultStatus": "UNVERIFIED",
+      "observations": [
+        {
+          "gapIndex": 3,
+          "component": "proposed-rating-scale-and-operational-definition-obligation",
+          "status": "COVERED",
+          "reason": "Unlike old candidate12 Plan 220, the new response TASK and literal copy both require a proposed primary scale and operational definitions.",
+          "evidence": [
+            {
+              "sectionType": "TASK",
+              "quote": "准确性、完整性、清晰度与可执行性的评分尺度与操作化定义"
+            }
+          ],
+          "adjudicationMethod": "OFFLINE_EVIDENCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "gapIndex": 4,
+      "kind": "PROFESSIONAL_OPTION",
+      "missing": "评审分歧的具体处理规则尚未确定，但用户已委托设计。",
+      "completion": "提出拟议分歧处理流程（如讨论协商、第三方仲裁或按预设规则合并），说明适用条件。",
+      "basis": "用户要求说明分歧处理，但未指定具体规则，且已委托设计。",
+      "defaultStatus": "UNVERIFIED",
+      "observations": []
+    },
+    {
+      "gapIndex": 5,
+      "kind": "PROFESSIONAL_OPTION",
+      "missing": "随机化的具体实施方式（如随机分配单元、随机化方法）尚未确定，但用户已委托设计。",
+      "completion": "提出拟议随机化方案，明确分配单元与随机化方法，说明适用条件。",
+      "basis": "用户要求说明随机化，但未指定具体方式，且已委托设计。",
+      "defaultStatus": "UNVERIFIED",
+      "observations": []
+    }
+  ],
+  "downstream": [
+    {
+      "id": "doubao-plan",
+      "inputSha256": "cbd204c9163fcda2e3b8974050c7b44c13b1e2c5dc50ecf13e28622e4e098007",
+      "workSha256": "e1b1f0900b787b8090b6983e7bc871cf15870f9906b1c76d8566621e795cdf14",
+      "findings": [
+        {
+          "component": "proposed-primary-rating-scale",
+          "status": "COVERED",
+          "quotes": [
+            "各维度采用李克特5级评分【拟议设计，可调整】"
+          ],
+          "reason": "Basic proposed scale and four dimension definitions are delivered; detailed anchors remain future work.",
+          "adjudicationMethod": "OFFLINE_EVIDENCE_REVIEW"
+        },
+        {
+          "component": "four-task-category-primary-design",
+          "status": "MISSING",
+          "quotes": [
+            "4类任务分类框架、每类5项任务的构造来源为待确定参数"
+          ],
+          "reason": "Copy requires a proposed classification framework, but the work leaves it undetermined and supplies only possible material-source paths.",
+          "adjudicationMethod": "OFFLINE_EVIDENCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "id": "deepseek-plan",
+      "inputSha256": "cbd204c9163fcda2e3b8974050c7b44c13b1e2c5dc50ecf13e28622e4e098007",
+      "workSha256": "33e74969386757f8ba5c424040bd2c6957a1044b4cdefd5a0d674e345fa0c8ab",
+      "findings": [
+        {
+          "component": "proposed-primary-rating-scale",
+          "status": "COVERED",
+          "quotes": [
+            "四指标均采用5点李克特量表，1=完全不符合，5=完全符合"
+          ],
+          "reason": "Provides a basic proposed range and endpoint anchors; full middle-level anchor details are still not supplied.",
+          "adjudicationMethod": "OFFLINE_EVIDENCE_REVIEW"
+        }
+      ]
+    }
+  ]
+}

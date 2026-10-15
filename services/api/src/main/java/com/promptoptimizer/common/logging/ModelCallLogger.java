@@ -3,6 +3,7 @@ package com.promptoptimizer.common.logging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -95,7 +96,8 @@ public final class ModelCallLogger {
         tokenUsage = effectiveUsage(tokenUsage);
         String message = "event=model.call.failed requestId={} workflowId={} operation={} providerRoute={} "
                 + "model={} selectionSource={} failureType={} retryable={} upstreamStatus={} willRetry={} "
-                + "attempt={} inputItems={} inputTokens={} outputTokens={} totalTokens={} durationMs={}";
+                + "attempt={} inputItems={} inputTokens={} outputTokens={} totalTokens={} durationMs={} "
+                + "validationReason={} validationField={}";
         Object[] fields = {
                 LogFields.value(MDC.get("requestId")),
                 LogFields.value(MDC.get("workflowId")),
@@ -112,7 +114,9 @@ public final class ModelCallLogger {
                 tokenCount(tokenUsage == null ? null : tokenUsage.inputTokens()),
                 tokenCount(tokenUsage == null ? null : tokenUsage.outputTokens()),
                 tokenCount(tokenUsage == null ? null : tokenUsage.totalTokens()),
-                Math.max(0, durationMs)
+                Math.max(0, durationMs),
+                LogFields.value(currentValidationReason()),
+                LogFields.value(currentValidationField())
         };
         if (willRetry) {
             LOGGER.warn(message, fields);
@@ -137,6 +141,25 @@ public final class ModelCallLogger {
             attempt.usage = usage;
             attempt.transportState = "RESPONSE_RECEIVED";
         }
+    }
+
+    /** 在失败事实发布前采集固定诊断；每次尝试独立保存，不能串入后续成功或其他请求。 */
+    public static void captureValidationFailure(Reason reason, String field) {
+        Attempt attempt = CURRENT_ATTEMPT.get();
+        if (attempt != null) {
+            attempt.validationReason = reason == null ? null : reason.name();
+            attempt.validationField = ModelCallObservation.safeValidationField(field);
+        }
+    }
+
+    private static String currentValidationReason() {
+        Attempt attempt = CURRENT_ATTEMPT.get();
+        return attempt == null ? null : attempt.validationReason;
+    }
+
+    private static String currentValidationField() {
+        Attempt attempt = CURRENT_ATTEMPT.get();
+        return attempt == null ? null : attempt.validationField;
     }
 
     /** 传输层在获取并发名额前标记未发送，区分本地限流与上游实际调用。 */
@@ -179,7 +202,8 @@ public final class ModelCallLogger {
                     MDC.get("requestId"), MDC.get("workflowId"), operation, route, model, number, mock,
                     successful, failure, status != null ? status : (attempt == null ? null : attempt.upstreamStatus),
                     willRetry, successful || status != null ? "RESPONSE_RECEIVED"
-                            : (attempt == null ? "UNKNOWN" : attempt.transportState), durationMs, usage));
+                            : (attempt == null ? "UNKNOWN" : attempt.transportState), durationMs, usage,
+                    currentValidationReason(), currentValidationField()));
         } catch (RuntimeException exception) {
             LOGGER.error("event=analytics.model_call.capture_failed requestId={} failureType={}",
                     LogFields.value(MDC.get("requestId")), exception.getClass().getSimpleName());
@@ -240,6 +264,8 @@ public final class ModelCallLogger {
         private TokenUsage usage;
         private Integer upstreamStatus;
         private String transportState = "UNKNOWN";
+        private String validationReason;
+        private String validationField;
         private boolean published;
         private boolean closed;
 

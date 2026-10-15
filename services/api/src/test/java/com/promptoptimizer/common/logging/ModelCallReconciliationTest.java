@@ -23,6 +23,9 @@ class ModelCallReconciliationTest {
         }))) {
             try (var attempt = ModelCallLogger.beginAttempt()) {
                 ModelCallLogger.captureTokenUsage(new ModelCallLogger.TokenUsage(10L, 5L, 15L, 4L, 6L));
+                ModelCallLogger.captureValidationFailure(
+                        com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason.ASSESSMENT_DECISION_CONFLICT,
+                        "assessment.gaps");
                 ModelCallLogger.failed("prompt.optimize", "primary", "test-model", "PLATFORM_CATALOG",
                         "INVALID_RESPONSE", false, null, true, 1, 1, 10);
                 // 同一终态的误重复上报不增加事实；下次修复尝试必须生成新的 UUID。
@@ -39,7 +42,31 @@ class ModelCallReconciliationTest {
         assertThat(facts.getFirst().usage().totalTokens()).isEqualTo(15);
         assertThat(facts.getFirst().usage().cacheState()).isEqualTo("MIXED");
         assertThat(facts.getFirst().successful()).isFalse();
+        assertThat(facts.getFirst().validationReason()).isEqualTo("ASSESSMENT_DECISION_CONFLICT");
+        assertThat(facts.getFirst().validationField()).isEqualTo("assessment.gaps");
+        assertThat(facts.getLast().validationReason()).isNull();
+        assertThat(facts.getLast().validationField()).isNull();
         assertThat(ModelCallAuditContext.capture()).isNull();
+    }
+
+    @Test
+    void diagnosticsRejectUnknownTextAndDoNotAttachFailureMetadataToSuccess() {
+        var now = java.time.OffsetDateTime.now();
+        var unknown = new ModelCallObservation(UUID.randomUUID(), now, null, null, "prompt.optimize", "primary", "model",
+                1, false, false, "INVALID_RESPONSE", 200, false, "RESPONSE_RECEIVED", 1, null,
+                "private-model-response", "assessment.privateData");
+        assertThat(unknown.validationReason()).isNull();
+        assertThat(unknown.validationField()).isNull();
+        var unsafeField = new ModelCallObservation(UUID.randomUUID(), now, null, null, "prompt.optimize", "primary", "model",
+                1, false, false, "INVALID_RESPONSE", 200, false, "RESPONSE_RECEIVED", 1, null,
+                "ASSESSMENT_DECISION_CONFLICT", "assessment.privateData");
+        assertThat(unsafeField.validationReason()).isEqualTo("ASSESSMENT_DECISION_CONFLICT");
+        assertThat(unsafeField.validationField()).isNull();
+        var success = new ModelCallObservation(UUID.randomUUID(), now, null, null, "prompt.optimize", "primary", "model",
+                2, false, true, null, 200, false, "RESPONSE_RECEIVED", 1, null,
+                "ASSESSMENT_DECISION_CONFLICT", "assessment.gaps");
+        assertThat(success.validationReason()).isNull();
+        assertThat(success.validationField()).isNull();
     }
 
     @Test

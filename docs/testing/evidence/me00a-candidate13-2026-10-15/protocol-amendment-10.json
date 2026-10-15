@@ -1,0 +1,96 @@
+{
+  "id": "protocol-amendment-10",
+  "authorizedAt": "2026-10-14T16:49:12.186Z",
+  "authorization": "用户明确回复：批准新增20次，执行四模型范围",
+  "userClarification": "豆包和ChatGPT只执行增强前后提示词生成作品，不作为平台增强模型。",
+  "suppliedWebEntrances": {
+    "doubao": "https://www.doubao.com/chat?channel=xiazais",
+    "gpt": "https://chatgpt.com/"
+  },
+  "previousLimits": {
+    "total": 243,
+    "baseline": 80,
+    "candidateValidation": 163
+  },
+  "approvedLimits": {
+    "total": 263,
+    "baseline": 80,
+    "candidateValidation": 183
+  },
+  "actualBefore": {
+    "total": 229,
+    "baseline": 70,
+    "candidateValidation": 159
+  },
+  "batch": {
+    "version": "candidate13",
+    "group": "Q05_FIXED_COPIES_FOUR_EXECUTION_VENDORS",
+    "mode": "same-information-replay",
+    "cases": [
+      "Q05"
+    ],
+    "model": "deepseek-flash",
+    "executionModels": [
+      "deepseek-flash",
+      "kimi-k3"
+    ],
+    "callsBefore": 229,
+    "maximumNewCalls": 20,
+    "maximumActualCallsAfterBatch": 249,
+    "maximumGenerationCalls": 6,
+    "maximumExecutionCalls": 12,
+    "maximumReviewCalls": 2,
+    "maximumPlanningCalls": 0,
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationAmendment": "protocol-amendment-10.json",
+    "secondRoundAuthorized": false,
+    "casesFile": "candidate13-q05-cases.json",
+    "casesSha256": "12a658d9fa39a58c32aa171bec79375344d08bd89f77d94330ec351194c9644f",
+    "answersFile": "candidate13-actual-answers.json",
+    "answersSha256": "ef2a532ede85493afaabd5d725ed4653c1b5a57c6cba026ff0b7f42f1e33bded",
+    "questionsFile": "candidate13-plan-questions.json",
+    "questionsSha256": "4bfa89b1f94707e419cd9b2910a6d43a8df7650ba3a12e9609605428804acdf1",
+    "planInputFile": "candidate13-plan-input.json",
+    "planInputSha256": "3e607fb9520cc3225cb960cc7678a336ea063696c7b43aa356e4cf99a2e3146f",
+    "allowedRawPromptSha256": [
+      "71de870998746bb5a0b9a049834f272f07f6ef1fae3c40a77cdb8d56a631398d",
+      "bb6242211caef303a0d4ff21c47ac8307374397a6e428c5bfd67c1f461e0c495"
+    ],
+    "accountCreationAllowed": false,
+    "noPhaseBorrowing": true,
+    "noClosedBatchAllowanceTransfer": true,
+    "status": "OPEN",
+    "candidateCallsBefore": 159,
+    "purposeMaximums": {
+      "PLATFORM_GENERATION": 6,
+      "EXECUTION": 12,
+      "REVIEW": 2
+    },
+    "qualityRetriesAllowed": false,
+    "completedSubmissionsAreNotRepeated": true,
+    "webExecution": {
+      "doubao": {
+        "url": "https://www.doubao.com/chat?channel=xiazais",
+        "status": "ACCESS_AND_VISIBLE_SETTINGS_CHECK"
+      },
+      "gpt": {
+        "url": "https://chatgpt.com/",
+        "status": "WAITING_AUTHENTICATED_ACCESS_OR_VERIFICATION"
+      }
+    },
+    "stageFreeze": {
+      "platform": "RESOLVED_FLASH_SAME_FROZEN_SOURCE",
+      "apiExecution": "WAITING_LITERAL_COPY_LOCK_AND_PARAMETERS",
+      "webExecution": "NO_SUBMISSION_BEFORE_ACCESS_AND_VISIBLE_SETTINGS_FREEZE",
+      "reviewers": "DISTINCT_VENDORS_SAME_ANONYMOUS_PACK"
+    },
+    "accounting": {
+      "apiRequestUnit": "ACTUAL_PROVIDER_REQUEST_INCLUDING_FAILURE_AND_REPAIR",
+      "webUnit": "UI_SUBMISSION_ATTEMPT_INCLUDING_FAILURE",
+      "webHiddenBackendCalls": "UNKNOWN_NOT_ASSUMED_ONE",
+      "nonGenerativeWebsiteAccessChecks": "RECORDED_SEPARATELY_NO_PROMPT_SENT"
+    }
+  },
+  "closedBatchAllowanceTransferred": 0,
+  "everyFailedAttemptCounts": true
+}

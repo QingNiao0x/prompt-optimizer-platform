@@ -1,0 +1,28 @@
+{
+  "newModelResubmissions": 0,
+  "issues": [
+    {
+      "issue": "Maven settings use a module-relative local repository",
+      "fix": "Run Maven from services/api; the root-directory invocation failed before tests or model I/O"
+    },
+    {
+      "issue": "Saved authentication did not survive the owned API restart",
+      "fix": "Complete normal CAPTCHA login with the same canonical account and existing private credential; no account or password replacement"
+    },
+    {
+      "issue": "First replay driver was called before account login completed",
+      "fix": "Pre-generation identity check stopped it; execute only after SAME_TEST_ACCOUNT_AUTHENTICATED"
+    },
+    {
+      "issue": "Snapshot display label and script evidence link were inherited incorrectly",
+      "fix": "Preserve original freeze and add explicit errata; correct generator and evidence link, with unchanged test totals and runtime hashes"
+    },
+    {
+      "issue": "Literal quote matcher treats balanced outer Chinese quote marks as text",
+      "fix": "Retain frozen strict check; separate exact one-pair citation binding supplement, never rewrite review, repair discontinuous quotes or change semantic gate"
+    }
+  ],
+  "capturedProviderResponseReplayExplicitlyNotFreshInference": true,
+  "providerUsageNotCountedTwice": true,
+  "privateProfilesNotPublished": true
+}

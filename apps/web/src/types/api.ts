@@ -338,6 +338,8 @@ export interface ModelCallRecord {
   mock: boolean;
   successful: boolean;
   failureType: string | null;
+  validationReason?: string | null;
+  validationField?: string | null;
   upstreamStatus: number | null;
   willRetry: boolean;
   transportState: 'MOCK' | 'NOT_SENT' | 'STARTED' | 'RESPONSE_RECEIVED' | 'UNKNOWN';
@@ -350,6 +352,16 @@ export interface ModelCallRecord {
   cacheMissTokens: string | null;
   durationMs: number;
 }
+/** 请求级成功率只使用完整的增强/Plan重试链；缺失或跨边界链路单列。 */
+export interface ModelCallOutcomes {
+  completedRequestCount: number;
+  firstSuccessCount: number;
+  repairedSuccessCount: number;
+  repairedRequestCount: number;
+  finalFailureCount: number;
+  incompleteRequestCount: number;
+  uncorrelatedAttemptCount: number;
+}
 export interface ModelCallPage {
   period: AnalyticsPeriodView;
   scope: ModelCallScope;
@@ -359,6 +371,7 @@ export interface ModelCallPage {
   size: number;
   current: number;
   pages: number;
+  outcomes?: ModelCallOutcomes | null;
 }
 
 export type AdminModelChange = Omit<AdminModel, 'id' | 'publicId'>;

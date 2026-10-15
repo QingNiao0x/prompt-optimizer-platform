@@ -348,7 +348,13 @@ public class OptimizationResultAssembler {
         // 普通起草不追加面向所有指标的通用长契约；具名参数、观察边界与原定交付保护仍保留。
         String pendingDeliveryGuidance = draftDelivery.active() && !unresolvedContract.hasNamedParameters()
                 ? unresolvedContract.scopedDeliveryGuidance() : unresolvedContract.baseDeliveryGuidance();
-        appendExecutionPrerequisites(sections, merged.executionPrerequisites(), pendingDeliveryGuidance,
+        // 已委托的设计在任务里要求交付，参数仍未确认；先补完整执行表达，再判断是否需要逐题追加。
+        PlanDecisionIntegrator.promoteDelegatedPrerequisites(sections, merged.executionPrerequisites(), taskView);
+        PlanDecisionIntegrator.completeDeclaredEvaluation(sections, taskView, providerResponse.assessment());
+        // 只影响复制正文的追加；权威未决清单和题答来源继续完整保存，不能借去重擅自确认参数。
+        List<String> deliveredPrerequisites = PlanDecisionIntegrator.uncoveredDelegatedPrerequisites(
+                sections, merged.executionPrerequisites(), taskView);
+        appendExecutionPrerequisites(sections, deliveredPrerequisites, pendingDeliveryGuidance,
                 draftDelivery.prerequisiteHeading());
         if (unresolvedContract.hasNamedParameters()) {
             PromptSection output = sections.get(PromptSectionType.OUTPUT);
@@ -405,7 +411,7 @@ public class OptimizationResultAssembler {
         if (!inferenceContract.guidance().isBlank()) {
             deliveryAuthority.put(PromptSectionType.CONSTRAINTS, inferenceContract.guidance());
         }
-        if (!merged.executionPrerequisites().isEmpty() && !pendingDeliveryGuidance.isBlank()) {
+        if (!deliveredPrerequisites.isEmpty() && !pendingDeliveryGuidance.isBlank()) {
             deliveryAuthority.merge(PromptSectionType.CONSTRAINTS, pendingDeliveryGuidance, (existing, added) -> existing + "\n" + added);
         }
         if (unresolvedContract.hasNamedParameters()) {
@@ -800,8 +806,13 @@ public class OptimizationResultAssembler {
                 throw invalidResponse(Reason.SENSITIVE_CONTENT, "ambiguities");
             }
         }
+        // 安全与数量检查先完成，再复用既有的精确泛化提醒过滤；不扩大词表或删除真实用户选择。
+        // 否则原本不会展示的固定兜底句会提前触发 assessment 冲突，造成可确定的误拒绝。
+        List<String> modelFindings = findings.stream().map(String::trim)
+                .filter(value -> !GENERIC_WARNINGS.contains(value.replaceAll("[。.!！]+$", "")))
+                .distinct().toList();
         if (response.assessment() != null && response.ambiguities() != null) {
-            response.assessment().validateModelDecisions(response.ambiguities());
+            response.assessment().validateModelDecisions(modelFindings);
         }
         // 只校验模型自己声明的缺口，不能用其 assessment 删除服务端发现的冲突和原始未决条件。
         // 模型可能忽略二次检索发现的同名字段冲突；服务端证据优先保留。
@@ -823,7 +834,7 @@ public class OptimizationResultAssembler {
                 .toList();
         return java.util.stream.Stream.concat(
                         verifiedConflicts.stream(),
-                        java.util.stream.Stream.concat(serverFindings.stream(), findings.stream()))
+                        java.util.stream.Stream.concat(serverFindings.stream(), modelFindings.stream()))
                 .map(String::trim)
                 .filter(value -> !GENERIC_WARNINGS.contains(value.replaceAll("[。.!！]+$", "")))
                 .distinct().toList();

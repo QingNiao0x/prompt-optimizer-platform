@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.113" tests="21" errors="0" skipped="0" failures="0">
+  <testcase name="shouldNotPrintTheSameConfirmedDeliveryChoiceTwice" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.003"/>
+  <testcase name="shouldNotDuplicateAnExplicitPendingQuestionAlreadyCoveredByTheWholeProviderReminder" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.028"/>
+  <testcase name="shouldKeepServerDetectedContextConflictEvenIfProviderReturnsNoAmbiguity" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.002"/>
+  <testcase name="shouldStillRejectSensitiveFindingsAndMissingSectionsWhenReferencesAreInvalid" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.003"/>
+  <testcase name="shouldRejectInvalidOrSensitiveFindingsWithoutEchoingThem" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.004"/>
+  <testcase name="shouldKeepDifferentModelVersionsWhenTheirInternalSpacingChangesTheValue" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.002"/>
+  <testcase name="shouldNotAppendUnrelatedDocumentRuleToAnotherTask" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.003"/>
+  <testcase name="copiesTheNewsBodyWritingPlanIntoOutputInBothDirectAndBoundPlanModes" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.006"/>
+  <testcase name="shouldProduceFinalPromptFromConfirmedAnswersAndRemoveClarifications" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.003"/>
+  <testcase name="shouldPreferModelAssessmentAndSynchronizeClarificationSection" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.002"/>
+  <testcase name="shouldReadLegacyClarificationsWithoutRestoringGenericWarnings" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.002"/>
+  <testcase name="shouldCarryTheExactPlanBoundFactCardsIntoTheFinalPrompt" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.004"/>
+  <testcase name="shouldKeepServerDetectedPostPlanGapsEvenWhenProviderReturnsNoAmbiguities" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.002"/>
+  <testcase name="shouldExposeContextCoverageWarningsWithoutRevealingProtectedPaths" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.002"/>
+  <testcase name="shouldNotRepeatAnAlreadyPrintedCurrentStateOrVerifiedRule" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.002"/>
+  <testcase name="shouldKeepNewUnresolvedFindingAfterPlanConfirmation" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.001"/>
+  <testcase name="shouldKeepExplicitRawPendingQuestionsWhenDirectProviderReturnsAnEmptyList" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.018"/>
+  <testcase name="shouldNotReappendIrrelevantBoundCardsOrBuildWarnings" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.003"/>
+  <testcase name="shouldDisplayOneContextWarningWhenSourcesDifferOnlyInSpacingAndPunctuation" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.002"/>
+  <testcase name="shouldKeepDirectEnhancementIdenticalWhenOptionalReferencesAreInvalid" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.012">
+    <system-out><![CDATA[02:58:41.960 [main] WARN com.promptoptimizer.enhancement.service.impl.OptimizationResultAssembler -- event=model.response.optional_references_ignored requestId=- stage=assembly ignoredCount=1
+02:58:41.969 [main] WARN com.promptoptimizer.enhancement.service.impl.OptimizationResultAssembler -- event=model.response.optional_references_ignored requestId=- stage=assembly ignoredCount=1
+02:58:41.969 [main] WARN com.promptoptimizer.enhancement.service.impl.OptimizationResultAssembler -- event=model.response.optional_references_ignored requestId=- stage=assembly ignoredCount=1
+02:58:41.969 [main] WARN com.promptoptimizer.enhancement.service.impl.OptimizationResultAssembler -- event=model.response.optional_references_ignored requestId=- stage=assembly ignoredCount=9
+]]></system-out>
+  </testcase>
+  <testcase name="shouldPreserveSourcedBusinessRuleWithoutPromotingDocumentInstructions" classname="com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest" time="0.007"/>
+</testsuite>

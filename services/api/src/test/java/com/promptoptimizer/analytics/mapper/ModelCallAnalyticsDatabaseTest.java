@@ -35,6 +35,90 @@ class ModelCallAnalyticsDatabaseTest {
     private static final ZoneId ZONE = ZoneId.of("Asia/Shanghai");
 
     @Test
+    void requestOutcomesSeparateRepairsFromFailuresAndExcludeIncompleteOrCrossTenantChains() throws Exception {
+        try (SqlSession session = openLocalSession()) {
+            try {
+                UUID tenant = UUID.randomUUID();
+                UUID other = UUID.randomUUID();
+                var fixtures = session.getMapper(ModelCallFixtureMapper.class);
+                fixtures.insertTenant(tenant, "response-outcome-fixture");
+                fixtures.insertTenant(other, "response-outcome-other-fixture");
+                var writer = new FixtureWriter(session.getMapper(AuditEventMapper.class));
+                var mapper = session.getMapper(ModelCallAnalyticsMapper.class);
+                var range = period(LocalDate.of(2046, 10, 11), ZONE);
+                var at = range.fromInclusive();
+                String first = UUID.randomUUID().toString();
+                String repaired = UUID.randomUUID().toString();
+                String failed = UUID.randomUUID().toString();
+                writer.insert(attemptFact(tenant, at, first, "prompt.optimize", 1, true, false));
+                writer.insert(attemptFact(tenant, at.plusSeconds(1), first, "plan.generate", 1, true, false));
+                writer.insert(attemptFact(tenant, at.plusSeconds(2), repaired, "prompt.optimize", 1, false, true));
+                writer.insert(attemptFact(tenant, at.plusSeconds(3), repaired, "prompt.optimize", 2, true, false));
+                for (int attempt = 1; attempt <= 3; attempt++) {
+                    writer.insert(attemptFact(tenant, at.plusSeconds(3 + attempt), failed, "prompt.optimize", attempt, false, attempt < 3));
+                }
+                writer.insert(attemptFact(tenant, at.plusSeconds(7), UUID.randomUUID().toString(), "prompt.optimize", 2, true, false));
+                writer.insert(attemptFact(tenant, at.plusSeconds(8), UUID.randomUUID().toString(), "prompt.optimize", 1, false, true));
+                String duplicate = UUID.randomUUID().toString();
+                writer.insert(attemptFact(tenant, at.plusSeconds(9), duplicate, "prompt.optimize", 1, true, false));
+                writer.insert(attemptFact(tenant, at.plusSeconds(10), duplicate, "prompt.optimize", 1, true, false));
+                String crossingDay = UUID.randomUUID().toString();
+                writer.insert(attemptFact(tenant, at.minusSeconds(1), crossingDay, "prompt.optimize", 1, false, true));
+                writer.insert(attemptFact(tenant, at.plusSeconds(11), crossingDay, "prompt.optimize", 2, true, false));
+                writer.insert(attemptFact(tenant, at.plusSeconds(12), null, "prompt.optimize", 1, true, false));
+                writer.insert(attemptFact(other, at.plusSeconds(13), repaired, "prompt.optimize", 1, true, false));
+                writer.insert(fact(tenant, at.plusSeconds(14), "prompt.optimize", true, "MOCK", true, null));
+                writer.insert(fact(tenant, at.plusSeconds(15), "prompt.optimize", false, "NOT_SENT", false, null));
+                writer.insert(fact(tenant, at.plusSeconds(16), "context.embedding", true, "RESPONSE_RECEIVED", false, null));
+                var summary = mapper.requestOutcomes(range, tenant, null, null);
+                assertThat(summary.completedRequestCount()).isEqualTo(4);
+                assertThat(summary.firstSuccessCount()).isEqualTo(2);
+                assertThat(summary.repairedSuccessCount()).isEqualTo(1);
+                assertThat(summary.repairedRequestCount()).isEqualTo(2);
+                assertThat(summary.finalFailureCount()).isEqualTo(1);
+                assertThat(summary.incompleteRequestCount()).isEqualTo(4);
+                assertThat(summary.uncorrelatedAttemptCount()).isEqualTo(1);
+                assertThat(mapper.requestOutcomes(range, null, null, null).completedRequestCount()).isEqualTo(5);
+                var filtered = mapper.requestOutcomes(range, tenant, "prompt.optimize", repaired);
+                assertThat(filtered.completedRequestCount()).isEqualTo(1);
+                assertThat(filtered.repairedSuccessCount()).isEqualTo(1);
+                assertThat(mapper.requestOutcomes(range, tenant, "context.embedding", null).completedRequestCount()).isZero();
+                var rows = mapper.selectModelCalls(new Page<>(1, 20), range, tenant, "prompt.optimize", repaired).getRecords();
+                assertThat(rows).filteredOn(row -> !row.successful()).singleElement().satisfies(row -> {
+                    assertThat(row.validationReason()).isEqualTo("ASSESSMENT_DECISION_CONFLICT");
+                    assertThat(row.validationField()).isEqualTo("assessment.gaps");
+                });
+                assertThat(rows).filteredOn(ModelCallView::successful).singleElement()
+                        .satisfies(row -> assertThat(row.validationReason()).isNull());
+                String unsafeRequest = UUID.randomUUID().toString();
+                var unsafeBase = attemptFact(tenant, at.plusSeconds(17), unsafeRequest, "prompt.optimize", 1, false, false);
+                var unsafeDetails = new LinkedHashMap<String, Object>(unsafeBase.details());
+                unsafeDetails.put("validationReason", "private-model-message");
+                unsafeDetails.put("validationField", "assessment.privateData");
+                writer.insert(new PendingAuditEvent(unsafeBase.id(), tenant, null, unsafeBase.eventType(), unsafeDetails, unsafeBase.occurredAt()));
+                assertThat(mapper.selectModelCalls(new Page<>(1, 20), range, tenant, null, unsafeRequest).getRecords())
+                        .singleElement().satisfies(row -> {
+                            assertThat(row.validationReason()).isNull();
+                            assertThat(row.validationField()).isNull();
+                        });
+            } finally { session.rollback(); }
+        }
+    }
+
+    /** 在现有匿名事实夹具上绑定重试链；所有数据仍由同一事务回滚，不创建持久业务账号。 */
+    private PendingAuditEvent attemptFact(UUID tenant, OffsetDateTime at, String requestId, String operation,
+                                          int attempt, boolean success, boolean willRetry) {
+        var base = fact(tenant, at, operation, success, "RESPONSE_RECEIVED", false, null);
+        var details = new LinkedHashMap<String, Object>(base.details());
+        details.put("requestId", requestId);
+        details.put("attempt", attempt);
+        details.put("willRetry", willRetry);
+        details.put("validationReason", success ? null : "ASSESSMENT_DECISION_CONFLICT");
+        details.put("validationField", success ? null : "assessment.gaps");
+        return new PendingAuditEvent(base.id(), tenant, null, base.eventType(), details, at);
+    }
+
+    @Test
     void realPostgresAggregatesAnonymousAttemptsAcrossTenantsAndPaginatesSafeProjection() throws Exception {
         try (SqlSession session = openLocalSession()) {
             try {

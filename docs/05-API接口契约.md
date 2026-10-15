@@ -223,3 +223,11 @@ Provider 错误不会透传上游响应正文、API Key 或用户源码。`PROVI
 | 503 | `MODEL_CONCURRENCY_UNAVAILABLE` | 共享计数不可用，本次拒绝新增调用。 |
 
 账号限制覆盖 `POST /api/v1/optimizations`、`POST /api/v1/optimizations/plan`、`POST /api/v1/context/analyze`、`POST /api/v1/context/planning` 和 `POST /api/v1/optimization-history/{id}/re-optimize`；登录、历史读取及健康检查不占用账号名额。100/3 为默认值，部署可统一调整。
+
+### 6.1 响应校验诊断与管理员模型明细（2026-10-16）
+
+`RESULT_INVALID` 继续返回 HTTP 502。`details.validationReason` 为代码定义的原因，`details.validationField` 为固定协议位置，已核实次数使用 `details.modelAttempts`；不返回失败模型正文。`ASSESSMENT_DECISION_CONFLICT` 的公开提示说明补全判断与待确认事项不一致、本次增强未完成。响应中的 `retryable=false` 不表示内部未执行有限修复。
+
+`GET /api/v1/admin/analytics/model-calls` 沿用管理员权限、GLOBAL／TENANT、日期、operation、requestId及分页范围。每条记录新增可空 `validationReason`、`validationField`，历史未记录或不在诊断白名单内时为 null。明细不返回原始审计 JSON、账号、IP或模型正文。
+
+页对象新增 `outcomes`：`completedRequestCount`、`firstSuccessCount`、`repairedSuccessCount`、`repairedRequestCount`、`finalFailureCount`、`incompleteRequestCount`、`uncorrelatedAttemptCount`，均为计数。它使用当前筛选的完整区间，不随明细页码缩小。首次成功率及最终失败率以完整已结束请求为分母；修复成功率以实际重试且已结束的请求为分母，零分母不表示100%或0%。分组键是租户、请求号与操作，仅计算增强／Plan，Plan提问和最终增强分别计数；Mock、明确未发送调用和不完整链路不进入成功率。详细判据与验证范围见[可靠性节点](./testing/提示词增强响应可靠性修复与离线验收-2026-10-16.md)。

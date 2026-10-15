@@ -1,0 +1,114 @@
+{
+  "date": "2026-10-12",
+  "scope": "ME-00-A baseline then ME-01-A + ME-03-A bounded repair",
+  "cases": 7,
+  "initialPlanEnabled": false,
+  "initialPlanAnswers": [],
+  "initialExamplesEnabled": false,
+  "maximumActualModelCalls": 263,
+  "phaseLimits": {
+    "baseline": 80,
+    "candidateValidation": 183
+  },
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "baselineRounds": 1,
+  "candidateRounds": 2,
+  "planSupplement": [
+    "Q04",
+    "Q05"
+  ],
+  "review": "two independent AI reviewers, not domain experts; disputed verdicts unresolved until adjudication",
+  "sameTestAccountFile": "private runtime only; reuse former synthetic user",
+  "archiveSecrets": false,
+  "accountCreationAllowed": false,
+  "priceAndCurrencyCost": "UNKNOWN until verified invoice; actual provider tokens collected",
+  "productPrimaryComparison": "raw actual work vs actual copied enhanced work",
+  "repairRegression": "current enhanced vs repaired enhanced, separately reported",
+  "planParity": "verbatim actual submitted test answers provided to raw and direct comparators, never patch Plan copied body",
+  "severeFailure": "block capability release, preserve trace; no automatic budget increase",
+  "activeBatch": {
+    "version": "candidate15",
+    "group": "Q05_ASSEMBLY_FIX_TWO_WEB_VENDORS",
+    "mode": "same-information-replay",
+    "cases": [
+      "Q05"
+    ],
+    "model": "deepseek-flash",
+    "executionModels": [
+      "deepseek-web-visible-mode",
+      "doubao-web-visible-mode"
+    ],
+    "callsBefore": 249,
+    "maximumNewCalls": 4,
+    "maximumActualCallsAfterBatch": 253,
+    "maximumGenerationCalls": 0,
+    "maximumExecutionCalls": 2,
+    "maximumReviewCalls": 2,
+    "maximumPlanningCalls": 0,
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationAmendment": "protocol-amendment-13.json",
+    "secondRoundAuthorized": false,
+    "casesFile": "candidate15-q05-cases.json",
+    "casesSha256": "12a658d9fa39a58c32aa171bec79375344d08bd89f77d94330ec351194c9644f",
+    "answersFile": "candidate15-actual-answers.json",
+    "answersSha256": "ef2a532ede85493afaabd5d725ed4653c1b5a57c6cba026ff0b7f42f1e33bded",
+    "questionsFile": "candidate15-plan-questions.json",
+    "questionsSha256": "4bfa89b1f94707e419cd9b2910a6d43a8df7650ba3a12e9609605428804acdf1",
+    "planInputFile": "candidate15-plan-input.json",
+    "planInputSha256": "3e607fb9520cc3225cb960cc7678a336ea063696c7b43aa356e4cf99a2e3146f",
+    "allowedRawPromptSha256": [
+      "71de870998746bb5a0b9a049834f272f07f6ef1fae3c40a77cdb8d56a631398d"
+    ],
+    "accountCreationAllowed": false,
+    "noPhaseBorrowing": true,
+    "noClosedBatchAllowanceTransfer": true,
+    "status": "OPEN",
+    "candidateCallsBefore": 179,
+    "purposeMaximums": {
+      "PLATFORM_GENERATION": 0,
+      "EXECUTION": 2,
+      "REVIEW": 2
+    },
+    "qualityRetriesAllowed": false,
+    "completedSubmissionsAreNotRepeated": true,
+    "webExecution": {
+      "deepseek": {
+        "url": "https://chat.deepseek.com/",
+        "status": "VISIBLE_SETTINGS_FREEZE_REQUIRED"
+      },
+      "doubao": {
+        "url": "https://www.doubao.com/chat/",
+        "status": "USER_CONFIRMED_LOGIN_VISIBLE_SETTINGS_FREEZE_REQUIRED"
+      }
+    },
+    "stageFreeze": {
+      "platform": "RESOLVED_FLASH_SAME_FROZEN_SOURCE",
+      "apiExecution": "NOT_IN_CURRENT_SCOPE",
+      "webExecution": "NO_SUBMISSION_BEFORE_ACCESS_AND_VISIBLE_SETTINGS_FREEZE",
+      "reviewers": "DOUBAO_AND_DEEPSEEK_DISTINCT_VENDORS_NEW_CHATS_SAME_ANONYMOUS_PACK"
+    },
+    "accounting": {
+      "apiRequestUnit": "ACTUAL_PROVIDER_REQUEST_INCLUDING_FAILURE_AND_REPAIR",
+      "webUnit": "UI_SUBMISSION_ATTEMPT_INCLUDING_FAILURE",
+      "webHiddenBackendCalls": "UNKNOWN_NOT_ASSUMED_ONE",
+      "nonGenerativeWebsiteAccessChecks": "RECORDED_SEPARATELY_NO_PROMPT_SENT"
+    },
+    "closedUnusedAllowanceTransfer": false,
+    "scope": "Captured Flash response 240 through current authenticated API; two fresh Plan works and two independent reviews against six unchanged candidate14 controls",
+    "capturedResponseReplay": {
+      "sourceAttempt": 240,
+      "sourceVersion": "candidate14",
+      "traceSha256": "c03c3b3f0744fd5b3cd65fbdb894d2fa14a48d86d427a54233758cb311117fe3"
+    }
+  }
+}

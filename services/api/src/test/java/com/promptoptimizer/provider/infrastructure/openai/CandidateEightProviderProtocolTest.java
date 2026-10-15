@@ -3,6 +3,8 @@ package com.promptoptimizer.provider.infrastructure.openai;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.common.logging.ModelCallAuditContext;
+import com.promptoptimizer.common.logging.ModelCallObservation;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.enhancement.dto.EnhancementOptions;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
@@ -69,13 +71,23 @@ class CandidateEightProviderProtocolTest {
         var server = MockRestServiceServer.bindTo(builder).build();
         server.expect(times(3), requestTo(ENDPOINT)).andRespond(withSuccess(
                 json.writeValueAsString(fixture("traces/180.json").path("response")), MediaType.APPLICATION_JSON));
-        assertThatThrownBy(() -> provider(builder).enhanceValidated(request(), response -> {
-            response.assessment().validateModelDecisions(response.ambiguities());
-            return response;
-        })).isInstanceOfSatisfying(ProviderResponseValidationException.class, failure -> {
-            assertThat(failure.getReason()).isEqualTo(ProviderResponseValidationException.Reason.ASSESSMENT_DECISION_CONFLICT);
-            assertThat(failure.getModelAttempts()).isEqualTo(3);
+        var attempts = new ArrayList<ModelCallObservation>();
+        try (var audit = ModelCallAuditContext.bind(new ModelCallAuditContext.Snapshot(java.util.UUID.randomUUID(),
+                (tenant, fact) -> attempts.add(fact)))) {
+            assertThatThrownBy(() -> provider(builder).enhanceValidated(request(), response -> {
+                response.assessment().validateModelDecisions(response.ambiguities());
+                return response;
+            })).isInstanceOfSatisfying(ProviderResponseValidationException.class, failure -> {
+                assertThat(failure.getReason()).isEqualTo(ProviderResponseValidationException.Reason.ASSESSMENT_DECISION_CONFLICT);
+                assertThat(failure.getModelAttempts()).isEqualTo(3);
+            });
+        }
+        assertThat(attempts).hasSize(3).allSatisfy(fact -> {
+            assertThat(fact.successful()).isFalse();
+            assertThat(fact.validationReason()).isEqualTo("ASSESSMENT_DECISION_CONFLICT");
+            assertThat(fact.validationField()).isEqualTo("assessment.gaps");
         });
+        assertThat(attempts).extracting(ModelCallObservation::willRetry).containsExactly(true, true, false);
         server.verify();
     }
 

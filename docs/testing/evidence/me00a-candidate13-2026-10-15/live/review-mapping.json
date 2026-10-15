@@ -1,0 +1,41 @@
+{
+  "mapping": {
+    "U": "deepseek-direct",
+    "V": "doubao-raw",
+    "W": "deepseek-plan",
+    "X": "deepseek-raw",
+    "Y": "doubao-plan",
+    "Z": "doubao-direct"
+  },
+  "inputMapping": {
+    "P1": "direct",
+    "P2": "raw",
+    "P3": "plan"
+  },
+  "pairs": [
+    {
+      "left": "V",
+      "right": "Z"
+    },
+    {
+      "left": "V",
+      "right": "Y"
+    },
+    {
+      "left": "Z",
+      "right": "Y"
+    },
+    {
+      "left": "X",
+      "right": "U"
+    },
+    {
+      "left": "X",
+      "right": "W"
+    },
+    {
+      "left": "U",
+      "right": "W"
+    }
+  ]
+}

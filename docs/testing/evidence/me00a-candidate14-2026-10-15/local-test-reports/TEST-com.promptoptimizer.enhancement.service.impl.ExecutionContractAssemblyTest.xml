@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.165" tests="23" errors="0" skipped="0" failures="0">
+  <testcase name="shouldReplaceTheResolvedRawChoiceWithoutHidingTheNewThreshold" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.032"/>
+  <testcase name="shouldPreserveExplicitRulesEvenWhenTheDraftOmitsThem" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.004"/>
+  <testcase name="shouldKeepPartialVersionEvidenceInTheOutputContract" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.008"/>
+  <testcase name="shouldTreatConfirmationUiAsAChoiceInsteadOfCurrentRegion" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.0"/>
+  <testcase name="shouldNotCopyResolvedQuestionsOrGenericPlaceholders" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.003"/>
+  <testcase name="shouldLeaveClearDirectEnhancementFreeOfExtraQuestions" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.0"/>
+  <testcase name="shouldNotDismissUnprovenFactsOrMixedConflictsAsImplementationChecks" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.015"/>
+  <testcase name="shouldRejectAChangedBoundInAnAdministrativeReport" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.001">
+    <system-out><![CDATA[02:58:40.619 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=sections.TASK ruleIndex=0 expectedClauseIndex=0 statementIndex=1
+]]></system-out>
+  </testcase>
+  <testcase name="shouldKeepExplainedUnknownAnswersPendingAndCopyTheirBoundaries" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.009"/>
+  <testcase name="shouldBindUnknownVersionContentToTheActualOutputContract" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.003"/>
+  <testcase name="shouldRejectReversedCancellationEvenIfTheCorrectRuleAppearsElsewhere" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.0">
+    <system-out><![CDATA[02:58:40.632 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=sections.TASK ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldPreserveImplementationChecksInTaskInsteadOfAsUserBlockers" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.0"/>
+  <testcase name="shouldKeepTranslationOutputExclusiveInBothModes" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.001"/>
+  <testcase name="shouldCarryNewConflictAndKeepDisplayTruncationOutOfTheExecutionContract" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.017"/>
+  <testcase name="shouldNotTreatHistoricalOrConditionalUncertaintyAsAnUnresolvedAnswer" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.0"/>
+  <testcase name="shouldKeepBehaviorChoicesSeparateFromCurrentRegionFacts" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.0"/>
+  <testcase name="shouldKeepRealExecutionPrerequisitesInTheCopiedConstraints" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.017"/>
+  <testcase name="shouldNotImposeAnAttributionTableOnTranslationOfTheMaterial" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.007"/>
+  <testcase name="shouldMergeDirectConflictExplanationsWithoutInventingAPlanAnswer" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.01"/>
+  <testcase name="shouldRetainConfirmedPartOfAMixedAnswerWithoutResolvingItsMissingVersion" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.009"/>
+  <testcase name="shouldNotTreatRiskRankingAsAProgrammingSortGap" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.001"/>
+  <testcase name="shouldRejectClearingValuesInsteadOfFillingEmptyFields" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.004">
+    <system-out><![CDATA[02:58:40.717 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=sections.TASK ruleIndex=0 expectedClauseIndex=0 statementIndex=0
+]]></system-out>
+  </testcase>
+  <testcase name="shouldRejectAnOppositeRuleInAResearchTask" classname="com.promptoptimizer.enhancement.service.impl.ExecutionContractAssemblyTest" time="0.003">
+    <system-out><![CDATA[02:58:40.719 [main] WARN com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuard -- event=requirement.rule_conflict field=sections.TASK ruleIndex=0 expectedClauseIndex=0 statementIndex=1
+]]></system-out>
+  </testcase>
+</testsuite>

@@ -1,0 +1,45 @@
+{
+  "closedAt": "2026-10-14T17:43:19.853Z",
+  "authorization": "protocol-amendment-10.json + protocol-amendment-11.json",
+  "totalBudgetUnits": 239,
+  "actualByPhase": {
+    "baseline": 70,
+    "candidateValidation": 169
+  },
+  "formalLimits": {
+    "total": 263,
+    "baseline": 80,
+    "candidateValidation": 183
+  },
+  "accounting": {
+    "apiRequestUnit": "Actual provider request including failure",
+    "webUnit": "UI submission attempt including failure",
+    "webHiddenBackendCalls": "UNKNOWN",
+    "aggregateIsBudgetUnitsNotBackendInferenceCount": true
+  },
+  "batch": {
+    "before": 229,
+    "after": 239,
+    "actualNewBudgetUnits": 10,
+    "maximumNewCalls": 14,
+    "purposeCounts": {
+      "PLATFORM_GENERATION": 2,
+      "EXECUTION": 6,
+      "REVIEW": 2
+    },
+    "apiGenerationRequests": 2,
+    "webExecutionSubmissions": 6,
+    "webReviewSubmissions": 2,
+    "planningCalls": 0,
+    "failedProviderOrUiSubmissions": 0,
+    "protocolRepairCalls": 0,
+    "localHarnessErrorsRecordedSeparately": true,
+    "unusedBatchAllowance": 4,
+    "unusedClosedFourVendorAllocationTransferred": 0,
+    "unusedAllowanceTransferAllowed": false,
+    "secondRoundAuthorized": false,
+    "status": "CLOSED_AFTER_USER_NARROWED_TWO_VENDOR_ONE_ROUND"
+  },
+  "noPhaseBorrowing": true,
+  "stopNewRequestsForThisBatch": true
+}

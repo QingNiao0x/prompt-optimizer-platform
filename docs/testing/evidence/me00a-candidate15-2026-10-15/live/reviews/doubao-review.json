@@ -1,0 +1,39 @@
+{
+  "vendor": "doubao",
+  "arm": "review",
+  "attemptNumber": 252,
+  "inputSha256": "74c1f8fd7a592d0a0e8f9046b0243ff69f4bd21dabf0c85763a100cd4f874b99",
+  "workSha256": "0dfe939d7deaa811077f78d82d4d1d5fe5a3ea77fc4cee196d8699f910671496",
+  "profile": {
+    "vendor": "doubao",
+    "surface": "WEB",
+    "origin": "https://www.doubao.com",
+    "visibleLabel": "豆包 快速",
+    "mode": "对话",
+    "search": "NOT_EXPOSED_IN_SELECTED_MODE",
+    "exactModelVersion": "NOT_EXPOSED",
+    "temperature": "NOT_EXPOSED",
+    "maxTokens": "NOT_EXPOSED",
+    "memoryAndPersonalization": "NOT_EXPOSED"
+  },
+  "capture": "OFFICIAL_ASSISTANT_COPY_ACTION_WITH_CLIPBOARD_WRITE_CAPTURE_NO_OS_CLIPBOARD_READ_OR_WRITE",
+  "copyMode": "CLIPBOARD_ITEM_TEXT_PLAIN",
+  "copiedAndRenderedVersionsBothRetained": true,
+  "completionObservedAt": "2026-10-14T20:04:05.322Z",
+  "visibleResponseSegments": [
+    "{\"reviewerType\":\"AI_ASSISTED\",\"scores\":{\"A\":{\"accuracy\":4,\"completeness\":4,\"clarity\":4,\"executability\":4},\"B\":{\"accuracy\":4,\"completeness\":4,\"clarity\":4,\"executability\":4},\"C\":{\"accuracy\":4,\"completeness\":3,\"clarity\":4,\"executability\":3},\"D\":{\"accuracy\":5,\"completeness\":5,\"clarity\":5,\"executability\":5},\"E\":{\"accuracy\":3,\"completeness\":4,\"clarity\":4,\"executability\":3},\"F\":{\"accuracy\":4,\"completeness\":3,\"clarity\":4,\"executability\":3},\"G\":{\"accuracy\":4,\"completeness\":4,\"clarity\":4,\"executability\":4},\"H\":{\"accuracy\":4,\"completeness\":4,\"clarity\":4,\"executability\":4}},\"issues\":[{\"work\":\"A\",\"severity\":\"MINOR\",\"evidence\":\"任务类别应依据研究目标界定，例如事实提取、多步推理、约束满足、开放生成等；具体类别与任务来源需在实施前通过专家论证或预注册明确。\",\"reason\":\"未将任务分类框架、任务来源显式标注为拟议设计，未配套说明对应适用条件，仅说明需预注册，对应输入 P1 要求依据原始目标提出可开展的推荐设计并说明适用条件\",\"origin\":\"WORK\"},{\"work\":\"C\",\"severity\":\"MAJOR\",\"evidence\":\"# 方法 \\n 本研究为拟议的提示词质量对比实验，研究对象为不同增强模式产出的提示词产物，尚未开展数据采集。\",\"reason\":\"正文字符 749，未达到 800 汉字下限，篇幅硬门禁不通过；拟议评分尺度、分歧处理缺少可操作定义，仅描述流程无尺度锚点\",\"origin\":\"WORK\"},{\"work\":\"E\",\"severity\":\"SEVERE\",\"evidence\":\"草稿汉字数 898（非空白总字符 1129），落在 800–1200 区间内。\",\"reason\":\"正文主体汉字 1706，超出 1200 汉字上限，篇幅硬门禁失败；B 组描述 “获得并确认信息，再形成显式计划后产出提示词” 存在歧义，易被解读为模型自行生成执行计划，和原题 Plan 定义存在偏差\",\"origin\":\"WORK\"},{\"work\":\"F\",\"severity\":\"MAJOR\",\"evidence\":\"两份评审结果完成后，针对评分出现分歧的样本，由两名评审开展讨论协商达成统一评分；协商仍无法取得共识的样本标记为分歧样本，后续开展敏感性分析。\",\"reason\":\"正文字符 798 未达 800 汉字下限，篇幅硬门禁；缺少评分尺度的拟议可操作定义，仅说明等级评分，无锚点说明\",\"origin\":\"WORK\"},{\"work\":\"H\",\"severity\":\"MAJOR\",\"evidence\":\"数据来源、统计口径与适用条件。 本研究当前无额外真实数据，不确认任何既有参数。\",\"reason\":\" 正文主体汉字 1220，超过 1200 汉字上限，篇幅硬门禁不通过 \",\"origin\":\"WORK\"}],\"pairs\":[{\"left\":\"E\",\"right\":\"G\",\"verdict\":\"RIGHT_WIN\",\"reason\":\"E 正文超字数硬门禁失败，Plan 流程描述存在歧义；G 篇幅合规，明确区分拟议方案与未确认参数，完整保留提问‑用户应答角色链路 \"},{\"left\":\"F\",\"right\":\"G\",\"verdict\":\"RIGHT_WIN\",\"reason\":\"F 正文未达字数下限硬门禁失败，缺少评分尺度可操作定义；G 篇幅合规，完整提供拟议李克特评分尺度与分歧处理细则 \"},{\"left\":\"C\",\"right\":\"G\",\"verdict\":\"RIGHT_WIN\",\"reason\":\"C 正文字数不足硬门禁失败，缺少评分尺度锚点；G 篇幅合规，任务框架、评分尺度、盲评、确认信息封存分发均完整阐述并标注拟议与适用约束 \"},{\"left\":\"A\",\"right\":\"D\",\"verdict\":\"RIGHT_WIN\",\"reason\":\"A 缺少任务分类、来源对应的显式拟议方案与适用条件；D 完整输出全套拟议主方案、适用条件，附表汇总待定项，全部关键约束均落实，篇幅合规 \"},{\"left\":\"H\",\"right\":\"D\",\"verdict\":\"RIGHT_WIN\",\"reason\":\"H 正文超字数硬门禁失败；D 篇幅合规，任务、盲评、确认信息封存分发、评分尺度、分歧处理全部给出拟议主方案加适用条件，区分已定 / 未决参数 \"},{\"left\":\"B\",\"right\":\"D\",\"verdict\":\"RIGHT_WIN\",\"reason\":\"B 对任务分类、任务来源仅说明预注册明确，没有输出拟议主方案与配套适用条件；D 完成全套子项拟议方案，配套适用条件并附表归集，全部输入约束完整落实 \"}]}"
+  ],
+  "visibleSegmentCount": 1,
+  "renderedScope": "ASSISTANT_CONTAINER_INCLUDING_VISIBLE_PROGRESS_AND_UI_NOT_USED_FOR_COUNT",
+  "observedCompletionUpperBoundMs": 31537,
+  "exactServerLatencyAndTokens": "UNKNOWN",
+  "noRegeneration": true,
+  "literalOutgoingPayloadMatches": [
+    {
+      "path": "$.messages[0].content_block[0].content.text_block.text",
+      "sha256": "74c1f8fd7a592d0a0e8f9046b0243ff69f4bd21dabf0c85763a100cd4f874b99",
+      "exact": true
+    }
+  ],
+  "independentLength": null
+}

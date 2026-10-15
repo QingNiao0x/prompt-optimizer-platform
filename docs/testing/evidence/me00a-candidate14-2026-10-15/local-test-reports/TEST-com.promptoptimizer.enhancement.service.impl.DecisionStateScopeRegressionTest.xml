@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.323" tests="31" errors="0" skipped="0" failures="0">
+  <testcase name="passesTheUploadedUnknownStateToTheProviderBeforeItGeneratesAnySections" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.059">
+    <system-out><![CDATA[02:58:39.451 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=prompt.optimize stage=context.analyze model=- status=SUCCESS durationMs=3
+02:58:39.499 [main] INFO com.promptoptimizer.common.logging.PipelineStageTiming -- event=pipeline.stage.completed requestId=- workflowId=- operation=prompt.optimize stage=result.assemble model=- status=SUCCESS durationMs=18
+02:58:39.499 [main] INFO com.promptoptimizer.enhancement.service.impl.DefaultEnhancementOrchestrator -- event=optimization.completed requestId=- workflowId=- mock=false sections=6 ambiguities=2 durationMs=48
+]]></system-out>
+  </testcase>
+  <testcase name="appliesAnExplicitNamedChoiceEvenWhenTheQuestionUsesStatisticalDenominatorWording" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.002"/>
+  <testcase name="rejectsARecordScopeDisguisedByAPendingNoteWithoutTheCountSuffix" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.003">
+    <system-out><![CDATA[02:58:39.505 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=PENDING_TABLE_CELL
+]]></system-out>
+  </testcase>
+  <testcase name="directEnhancementDoesNotAppendBareUnknownsAlreadyCoveredByTheSameFullExplanation" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.024"/>
+  <testcase name="doesNotTreatUnboundAnswersAsUserConfirmation" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.002"/>
+  <testcase name="neverInfersANamedChoiceFromAnUnspecifiedOrFutureAnswer" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.0"/>
+  <testcase name="doesNotExposeInternalPlanProtocolInUserFacingText" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.003"/>
+  <testcase name="doesNotInventALoginDecisionForANotificationTaskThatPreservesLoginPermissions" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.0"/>
+  <testcase name="doesNotApplyCompletenessConfirmationToTheFormatMetric" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.0">
+    <system-out><![CDATA[02:58:39.536 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=PENDING_TABLE_CELL
+]]></system-out>
+  </testcase>
+  <testcase name="resolvesOnlyTheConfirmedPartOfACoordinatedMaterialDeclaration" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.037">
+    <system-out><![CDATA[02:58:39.573 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=PENDING_TABLE_CELL
+]]></system-out>
+  </testcase>
+  <testcase name="keepsOnePendingStatementAcrossTheCopyableBodyAndItsMaterialView" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.008"/>
+  <testcase name="doesNotInventConfirmationForAnotherMetricEvenWithoutAnExplicitPendingDeclaration" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.003">
+    <system-out><![CDATA[02:58:39.585 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=TABLE_CONFIRMATION_SCOPE
+02:58:39.586 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=NARRATIVE_CONFIRMATION_SCOPE
+]]></system-out>
+  </testcase>
+  <testcase name="doesNotLetAnotherUnknownClauseHideAnAssignedParameter" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.003">
+    <system-out><![CDATA[02:58:39.589 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=PENDING_PARAMETER_ASSIGNMENT
+]]></system-out>
+  </testcase>
+  <testcase name="rejectsAConcreteDenominatorDeclaredUnknownInTheUploadedMaterial" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.002">
+    <system-out><![CDATA[02:58:39.592 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=PENDING_TABLE_CELL
+]]></system-out>
+  </testcase>
+  <testcase name="keepsOtherObjectsAndExplicitConditionalBranches" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.009"/>
+  <testcase name="acceptsTheSameConfirmedMetricShorthandInAPartiallyConfirmedAnswer" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.022">
+    <system-out><![CDATA[02:58:39.624 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=NARRATIVE_CONFIRMATION_SCOPE
+]]></system-out>
+  </testcase>
+  <testcase name="compactsAMarkedListWithTheExactPlatformDeliveryBoundaryButKeepsANewHospitalCondition" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.008"/>
+  <testcase name="preservesProtocolNamesWhenTheyAreTheExplicitDevelopmentTask" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.003"/>
+  <testcase name="coversAGroupSummaryOnlyAfterBothHospitalParametersRemainIndependentlyPending" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.064"/>
+  <testcase name="compactsOnlyTheCoveredDenominatorAndImputationRequestsAndKeepsNewYearAndMethod" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.015"/>
+  <testcase name="preservesANewConditionNextToAnAlreadyKnownPendingDeclaration" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.007"/>
+  <testcase name="doesNotTurnAConditionalPremiseIntoAKnownFactInThePlanHint" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.0"/>
+  <testcase name="compactsBoundImputationExplanationsWithoutDiscardingANewMethodOrCondition" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.006"/>
+  <testcase name="rejectsCoordinatedPendingParametersWithoutInventingOtherUnknowns" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.002">
+    <system-out><![CDATA[02:58:39.731 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=PENDING_TABLE_CELL
+]]></system-out>
+  </testcase>
+  <testcase name="updatesOnlyTheActuallyConfirmedParameterAndKeepsOriginalEvidence" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.001"/>
+  <testcase name="keepsAnExplicitCurrentParameterChoiceButNotAHypotheticalOne" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.0">
+    <system-out><![CDATA[02:58:39.732 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=TABLE_CONFIRMATION_SCOPE
+]]></system-out>
+  </testcase>
+  <testcase name="compactsIndividualDefaultProhibitionsOnlyWhenTheSameBoundCompositeAlreadyCoversThem" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.016"/>
+  <testcase name="validatesParameterHeaderAliasesAndTheNamedPseudoCodeAssignment" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.003">
+    <system-out><![CDATA[02:58:39.750 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=PENDING_TABLE_CELL
+02:58:39.751 [main] WARN com.promptoptimizer.enhancement.service.impl.UnresolvedDecisionContract -- event=decision.delivery.validation_failed field=sections.OUTPUT check=PENDING_PARAMETER_ASSIGNMENT
+]]></system-out>
+  </testcase>
+  <testcase name="recognizesAnExampleInTheBoundQuestionButNeverUpdatesAFutureOrQuotedState" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.001"/>
+  <testcase name="keepsTheRichDenominatorDefinitionReminderWithoutAppendingItsBareMaterialAlias" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.009"/>
+  <testcase name="updatesTheOriginalPendingChannelOnlyAfterAnActualSelection" classname="com.promptoptimizer.enhancement.service.impl.DecisionStateScopeRegressionTest" time="0.002"/>
+</testsuite>

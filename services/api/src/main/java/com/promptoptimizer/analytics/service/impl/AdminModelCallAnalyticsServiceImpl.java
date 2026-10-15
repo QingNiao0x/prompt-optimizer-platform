@@ -71,8 +71,10 @@ public class AdminModelCallAnalyticsServiceImpl implements AdminModelCallAnalyti
         page.setCountId("countModelCalls");
         var result = requireMapper().selectModelCalls(page, period, tenant, operation,
                 requestId == null ? null : ModelCallObservation.safeRequestId(requestId));
+        var outcomes = requireMapper().requestOutcomes(period, tenant, operation,
+                requestId == null ? null : ModelCallObservation.safeRequestId(requestId));
         return new ModelCallPage(view(period), scope, tenant, result.getRecords(), result.getTotal(), result.getSize(),
-                result.getCurrent(), result.getPages());
+                result.getCurrent(), result.getPages(), outcomes);
     }
 
     /** 全局读取只授予管理员；租户模式必须显式指定租户，避免静默忽略过滤条件。 */
