@@ -1,0 +1,64 @@
+{
+  "type": "BOUNDED_OFFLINE_DIAGNOSTIC_NOT_INDEPENDENT_REVIEW",
+  "overall": "NOT_PASSED",
+  "rows": [
+    {
+      "id": "Q05-plan",
+      "bodyHan": 818,
+      "withHeadingsHan": 822,
+      "checks": {
+        "length": "PASS",
+        "appendixDelivery": "FAIL",
+        "requestedCategoryFramework": "FAIL",
+        "fullLevelLabels": "PASS",
+        "operationalRubricSpecificity": "OPEN",
+        "promptEvaluationObject": "PASS"
+      },
+      "gate": "FAIL",
+      "appendixReferences": [
+        "附表二",
+        "附表三",
+        "附表四",
+        "附表五"
+      ],
+      "appendixTablesDelivered": 0,
+      "originalWorkSha256": "0689201012b3e663ee1f99f1ac257c684670a1cd04ed50d4972793cbf054d401"
+    },
+    {
+      "id": "Q05-plan-pro",
+      "bodyHan": 1104,
+      "withHeadingsHan": 1147,
+      "checks": {
+        "length": "PASS",
+        "appendixDelivery": "FAIL",
+        "requestedCategoryFramework": "PASS",
+        "fullLevelAnchors": "FAIL",
+        "promptEvaluationObject": "FAIL",
+        "questionRoundDefinition": "OPEN"
+      },
+      "gate": "FAIL",
+      "appendixReferences": [
+        "附表1",
+        "附表2",
+        "附表3",
+        "附表5"
+      ],
+      "appendixTablesDelivered": 0,
+      "originalWorkSha256": "219ce435ad053b8457f0648465b3952adbbe0cc584344919e065c5e6daae1d30"
+    }
+  ],
+  "independentReviews": 0,
+  "noRawOrDirectComparator": true,
+  "noWinRateOrCausalQualityClaim": true,
+  "modelCalls": 0,
+  "sources": [
+    "real/work-measurements.json",
+    "real/Q05-plan/enhanced-work.md",
+    "real/Q05-plan-pro/enhanced-work.md"
+  ],
+  "limits": [
+    "Finite task-specific observations; not a generic appendix or scientific accuracy validator",
+    "Five generic labels in Flash do not establish a fully operational rubric",
+    "Pro answer-quality wording conflicts with prompt-quality target; no sole-cause model-capability conclusion"
+  ]
+}

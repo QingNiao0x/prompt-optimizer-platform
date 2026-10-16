@@ -1,0 +1,86 @@
+{
+  "actual": {
+    "total": 324,
+    "baseline": 70,
+    "candidateValidation": 254
+  },
+  "formalLimits": {
+    "total": 338,
+    "baseline": 80,
+    "candidateValidation": 258
+  },
+  "batch": {
+    "version": "candidate23-r2",
+    "maximum": 8,
+    "actual": 4,
+    "purposes": {
+      "PLATFORM_GENERATION": 1,
+      "PLANNING": 1,
+      "EXECUTION": 2,
+      "REVIEW": 0
+    },
+    "transportOrHttpFailures": 0,
+    "qualityRetries": 0
+  },
+  "knownTokens": 20129,
+  "table": [
+    {
+      "trace": 321,
+      "purpose": "PLANNING",
+      "label": null,
+      "requestId": "bfd3d692-247b-4c42-9665-821354fe7ed2",
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 13534,
+      "inputTokens": 3757,
+      "outputTokens": 2301,
+      "totalTokens": 6058,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 322,
+      "purpose": "PLATFORM_GENERATION",
+      "label": null,
+      "requestId": "b1182327-584a-4906-a8bc-fd9b3098a62b",
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 9185,
+      "inputTokens": 8759,
+      "outputTokens": 1365,
+      "totalTokens": 10124,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 323,
+      "purpose": "EXECUTION",
+      "label": "candidate23-r2-Q05-plan-pro-enhanced",
+      "requestId": null,
+      "model": "deepseek-v4-pro",
+      "responseModel": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "elapsedMs": 15367,
+      "inputTokens": 1257,
+      "outputTokens": 825,
+      "totalTokens": 2082,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 324,
+      "purpose": "EXECUTION",
+      "label": "candidate23-r2-Q05-plan-enhanced",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 6953,
+      "inputTokens": 1257,
+      "outputTokens": 608,
+      "totalTokens": 1865,
+      "finishReason": "stop"
+    }
+  ],
+  "priceAndCurrencyCost": "UNKNOWN",
+  "source": "Frozen candidate23-r2; actual upstream response model is an alias, catalog display version is not proof of provider build"
+}

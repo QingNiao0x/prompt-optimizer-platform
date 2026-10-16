@@ -1,0 +1,203 @@
+{
+  "status": 200,
+  "requestId": "bfd3d692-247b-4c42-9665-821354fe7ed2",
+  "elapsedMs": 14738,
+  "body": {
+    "requestId": "bfd3d692-247b-4c42-9665-821354fe7ed2",
+    "data": {
+      "summary": "你要为一项尚未实施的研究撰写中文研究设计方法部分，核心是比较直接增强与 Plan 问答对提示词质量的影响，并保留 4 类×5 个任务、每模式每任务重复 3 次、两名独立评审盲评、两组同信息公平对照以及准确性/完整性/清晰度/可执行性评价。方法学常规流程可由执行者提出，但仍有几项会改变研究口径或交付内容的决定需要你确认。",
+      "questions": [
+        {
+          "id": "plan_interaction_rounds",
+          "question": "Plan 组的问答交互按什么轮次与终止方式设计？",
+          "hint": "这决定 Plan 条件的具体操作定义，也影响两组同信息对照如何取得并封存确认信息。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "fixed_rounds",
+              "label": "固定轮次",
+              "description": "预先规定每任务固定进行若干轮问答后终止。",
+              "answer": "Plan 组每任务按预先规定的固定轮次进行问答，达到轮次后终止并生成。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "until_no_new",
+              "label": "至无新增确认信息",
+              "description": "持续问答直到用户不再提供新的确认信息为止。",
+              "answer": "Plan 组持续问答，直到用户不再提供新的确认信息时终止并生成。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "until_sufficient",
+              "label": "至信息足够",
+              "description": "由预设标准判断确认信息已足够支持生成后终止。",
+              "answer": "Plan 组问答持续到预设的确认信息充分性标准满足后终止并生成。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other_rounds",
+              "label": "其他方式",
+              "description": "由你说明轮次与终止规则。",
+              "answer": "Plan 组的轮次与终止方式为：",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "task_categories",
+          "question": "4 类任务具体指哪四类？",
+          "hint": "任务类别决定 20 个任务的内容分布和评价维度如何落地，需要你给出实际类别。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "例如：信息检索、文本摘要、方案设计、数据分析"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "task_source",
+          "question": "20 个任务来自哪里？",
+          "hint": "任务来源决定研究可复现性和是否涉及真实材料，不能用假设数据替代。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "real_materials",
+              "label": "真实材料生成",
+              "description": "从可核实的真实材料或真实需求中构造任务。",
+              "answer": "20 个任务从可核实的真实材料或真实需求中构造，不使用假设数据。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "public_benchmark",
+              "label": "公开基准任务",
+              "description": "选用已有公开基准或数据集中的任务。",
+              "answer": "20 个任务选自已有公开基准或数据集，并说明来源与筛选标准。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "expert_designed",
+              "label": "专家设计任务",
+              "description": "由领域专家按研究目的设计任务并说明依据。",
+              "answer": "20 个任务由领域专家按研究目的设计，并说明设计依据与筛选标准。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other_source",
+              "label": "其他来源",
+              "description": "由你说明任务来源。",
+              "answer": "20 个任务的来源为：",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "control_group_flow",
+          "question": "两组同信息公平对照在收到同一份确认信息后，是否仍保留各自指定的增强流程？",
+          "hint": "这决定对照是否只比较“是否交互”，还是同时保留直接增强与 Plan 的流程差异。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "keep_flow",
+              "label": "保留各自流程",
+              "description": "两组收到同一确认信息后，分别按直接增强和 Plan 的指定流程生成。",
+              "answer": "两组同信息对照收到同一份实际确认信息后，分别保留直接增强与 Plan 的指定增强流程，不改写回答、不另换任务。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "same_flow",
+              "label": "统一流程",
+              "description": "两组收到同一确认信息后使用完全相同的生成流程，仅比较信息是否一致。",
+              "answer": "两组同信息对照收到同一份实际确认信息后使用完全相同的生成流程，仅比较确认信息一致性的作用。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other_control",
+              "label": "其他安排",
+              "description": "由你说明对照流程。",
+              "answer": "两组同信息对照的流程安排为：",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "deliverable_scope",
+          "question": "方法部分除正文 800–1200 汉字外，附表需要包含哪些内容？",
+          "hint": "附表另计，但需要明确附表承载哪些方法学信息，避免正文超限或遗漏关键设计。",
+          "type": "MULTIPLE_CHOICE",
+          "options": [
+            {
+              "id": "task_list",
+              "label": "任务清单",
+              "description": "列出 4 类任务及每类 5 个任务的具体内容。",
+              "answer": "附表包含 4 类任务及每类 5 个任务的具体清单。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "randomization_schedule",
+              "label": "随机化方案",
+              "description": "列出随机化单位、区组和顺序控制安排。",
+              "answer": "附表包含随机化单位、区组和顺序控制安排。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "scoring_rubric",
+              "label": "评分细则",
+              "description": "列出四个评价维度的评分标准或等级描述。",
+              "answer": "附表包含准确性、完整性、清晰度与可执行性的评分标准或等级描述。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "analysis_candidates",
+              "label": "候选检验及适用条件",
+              "description": "列出候选统计检验及其适用条件，不预先选定。",
+              "answer": "附表列出候选统计检验及其适用条件，并说明依据未来数据分布和配对结构选择，不预先选定。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "other_appendix",
+              "label": "其他内容",
+              "description": "由你补充附表需要包含的内容。",
+              "answer": "附表还需要包含：",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 14644,
+      "planId": "38271e9f-3d94-4184-a7c0-2953e85bdc70",
+      "planningContext": null,
+      "expiresAt": "2026-10-16T15:49:47.545226600Z"
+    }
+  }
+}

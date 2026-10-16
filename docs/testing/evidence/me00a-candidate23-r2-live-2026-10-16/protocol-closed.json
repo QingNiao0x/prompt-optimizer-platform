@@ -1,0 +1,112 @@
+{
+  "date": "2026-10-12",
+  "scope": "ME-00-A baseline then ME-01-A + ME-03-A bounded repair",
+  "cases": 7,
+  "initialPlanEnabled": false,
+  "initialPlanAnswers": [],
+  "initialExamplesEnabled": false,
+  "maximumActualModelCalls": 338,
+  "phaseLimits": {
+    "baseline": 80,
+    "candidateValidation": 258
+  },
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "baselineRounds": 1,
+  "candidateRounds": 2,
+  "planSupplement": [
+    "Q04",
+    "Q05"
+  ],
+  "review": "two independent AI reviewers, not domain experts; disputed verdicts unresolved until adjudication",
+  "sameTestAccountFile": "private runtime only; reuse former synthetic user",
+  "archiveSecrets": false,
+  "accountCreationAllowed": false,
+  "priceAndCurrencyCost": "UNKNOWN until verified invoice; actual provider tokens collected",
+  "productPrimaryComparison": "raw actual work vs actual copied enhanced work",
+  "repairRegression": "current enhanced vs repaired enhanced, separately reported",
+  "planParity": "verbatim actual submitted test answers provided to raw and direct comparators, never patch Plan copied body",
+  "severeFailure": "block capability release, preserve trace; no automatic budget increase",
+  "activeBatch": {
+    "version": "candidate23-r2",
+    "group": "Q05_PLAN_CHAIN_AND_FIXED_COPY_FLASH_PRO_DIAGNOSIS_ONLY",
+    "mode": "targeted",
+    "status": "CLOSED",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationAmendment": "protocol-amendment-19.json",
+    "secondRoundAuthorized": false,
+    "cases": [
+      "Q05"
+    ],
+    "casesFile": "candidate23-r2-q05-cases.json",
+    "casesSha256": "31483fbd633296b5a2188e87fb9f2600a649d2ecfa46b4c43ddd4c00ce9c083a",
+    "allowedRawPromptSha256": [
+      "71de870998746bb5a0b9a049834f272f07f6ef1fae3c40a77cdb8d56a631398d"
+    ],
+    "model": "deepseek-flash",
+    "executionModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "callsBefore": 320,
+    "candidateCallsBefore": 250,
+    "maximumNewCalls": 8,
+    "maximumActualCallsAfterBatch": 328,
+    "maximumGenerationCalls": 3,
+    "maximumPlanningCalls": 3,
+    "maximumExecutionCalls": 2,
+    "maximumReviewCalls": 0,
+    "purposeMaximums": {
+      "PLATFORM_GENERATION": 3,
+      "PLANNING": 3,
+      "EXECUTION": 2,
+      "REVIEW": 0
+    },
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "executionParameters": {
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "accountCreationAllowed": false,
+    "noPhaseBorrowing": true,
+    "closedAllowanceTransfer": "USER_EXPLICITLY_REALLOCATED_8_FROM_CANDIDATE22",
+    "qualityRetriesAllowed": false,
+    "sourceFreeze": "docs/testing/evidence/me00a-candidate23-offline-2026-10-16/candidate23-source-r2.json",
+    "executionOrder": [
+      "Q05-plan-pro/enhanced",
+      "Q05-plan/enhanced"
+    ],
+    "randomizationSeed": "f4f6f44973308270a220972d4944b1ff",
+    "notThreeArm": true,
+    "newIndependentReviews": 0,
+    "actualNewCalls": 4,
+    "actualTotalAtClose": 324,
+    "unusedClosedNotTransferable": 4,
+    "actualPurposeCounts": {
+      "PLATFORM_GENERATION": 1,
+      "PLANNING": 1,
+      "EXECUTION": 2,
+      "REVIEW": 0
+    },
+    "qualityRetries": 0,
+    "closureReason": "Approved diagnostic completed: one natural Plan, one Plan enhancement and identical native copy executed once on Flash and Pro; no quality retries"
+  }
+}

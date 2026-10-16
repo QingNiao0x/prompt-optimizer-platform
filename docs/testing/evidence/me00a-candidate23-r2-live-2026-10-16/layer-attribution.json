@@ -1,0 +1,69 @@
+{
+  "type": "BOUNDED_SOURCE_AND_WORK_DIAGNOSTIC",
+  "sourceTrace": 322,
+  "platform": [
+    {
+      "finding": "Two complete task rules occur once in model response and twice in copied prompt",
+      "status": "CONFIRMED_DEFECT",
+      "path": "OptimizationResultAssembler.appendConstraints -> TaskConstraintCoverage.uncovered -> currentStatements",
+      "mechanism": "Coverage compares canonical whole lines; a paragraph containing multiple complete sentences does not equal either individual complete rule",
+      "evidence": "assembly-attribution.json"
+    },
+    {
+      "finding": "Category-framework instruction is projected after model already requests proposed categories",
+      "status": "POSSIBLE_SEMANTIC_DUPLICATION",
+      "requiredBeforeSuppression": "Replay full object, property, condition, status and source coverage; do not suppress based on keyword overlap"
+    }
+  ],
+  "enhancementAndProjection": [
+    {
+      "finding": "Assessment recommends prompt-text review scope; final copy states prompt-quality objective but lacks an explicit operational scoring-object/material boundary",
+      "status": "MIXED_OR_UNDETERMINED",
+      "caution": "Do not blindly copy reviewers only see prompt text: necessary raw requirements and actual confirmation materials may be required for fidelity assessment. Keep review condition labels blind and evidence material scope explicit."
+    },
+    {
+      "finding": "Final copy explicitly requires proposed scale, definitions, all level anchors and scale-consistent disagreement procedure",
+      "status": "OBLIGATION_PRESENT",
+      "caution": "This is a prompt enhancement product; exact proposed task names or parameters in metadata need not be forced into confirmed user choices."
+    }
+  ],
+  "naturalPlanBoundaryReview": {
+    "supersedesPreliminaryObservation": "natural-plan-answer-scope.json: questionBoundaryObservations[0]",
+    "controlFlow": "Preserve any already assigned flows. The original Q05 does not assign the two added control flows; distinguish invariant requirements from unchosen professional design before filtering.",
+    "delegatable": "Task-category framework and appendix presentation can be proposed; actual source materials and task contents are facts not supplied.",
+    "nonblankOtherOptions": "Several other answers contain prefixes only; structural nonblank success is not complete usable option content.",
+    "actualParametersConfirmed": false
+  },
+  "downstream": [
+    {
+      "model": "deepseek-flash",
+      "finding": "No concrete four-category framework; four references to undelivered appendices; generic 1-5 labels are not a fully operational dimension-specific rubric",
+      "status": "NOT_PASSED",
+      "soleModelCapabilityCauseEstablished": false
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "finding": "Prompt-quality study is reframed as task-answer quality; missing level anchors and four undelivered appendix references",
+      "status": "NOT_PASSED",
+      "soleModelCapabilityCauseEstablished": false,
+      "possibleContributors": [
+        "Operational scoring-object binding in copied prompt is insufficiently explicit",
+        "Existing appendix guidance may add delivery burden; strategy benefit not established"
+      ]
+    }
+  ],
+  "evaluation": {
+    "method": "Existing body-Han counter plus finite source-based observations",
+    "independentAIReviews": 0,
+    "rawOrDirectComparator": false,
+    "noWinRateOrCausalQualityClaim": true,
+    "limitations": [
+      "Not a general scientific-method accuracy validator",
+      "One work per model does not isolate a unique cause or establish statistical validity",
+      "Pro round definition is ambiguous; not declared an unambiguous logical contradiction"
+    ]
+  },
+  "newProductStrategyAdopted": false,
+  "productSourceChanged": false,
+  "modelCalls": 0
+}
