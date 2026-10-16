@@ -59,7 +59,8 @@ class PlanProviderValidationBudgetTest {
 
     /** 失败路径只指出固定字段，不回显问题值；修复请求应准确定位并继续共享三次预算。 */
     @ParameterizedTest
-    @ValueSource(strings = {"id_format", "id_duplicate", "question_internal", "hint_internal", "options_count", "examples_count"})
+    @ValueSource(strings = {"id_format", "id_duplicate", "question_internal", "hint_internal", "options_count",
+            "option_label_empty", "option_answer_empty", "examples_count"})
     void shouldLocateQuestionEnvelopeFailuresWithoutLeakingValuesOrExtendingTheBudget(String scenario) throws Exception {
         var clientBuilder = RestClient.builder();
         var upstream = MockRestServiceServer.bindTo(clientBuilder).build();
@@ -76,10 +77,10 @@ class PlanProviderValidationBudgetTest {
             case "id_format", "id_duplicate" -> "questions.id";
             case "question_internal" -> "questions.question";
             case "hint_internal" -> "questions.hint";
-            case "options_count" -> "questions.options";
+            case "options_count", "option_label_empty", "option_answer_empty" -> "questions.options";
             default -> "questions.examples";
         };
-        var reason = scenario.equals("options_count") ? ProviderResponseValidationException.Reason.PLAN_OPTION_INVALID
+        var reason = scenario.startsWith("option") ? ProviderResponseValidationException.Reason.PLAN_OPTION_INVALID
                 : ProviderResponseValidationException.Reason.PLAN_QUESTION_INVALID;
         String invalid = invalidQuestionEnvelope(scenario);
         upstream.expect(requestTo(ENDPOINT)).andRespond(withSuccess(completion(invalid), MediaType.APPLICATION_JSON));
@@ -87,6 +88,9 @@ class PlanProviderValidationBudgetTest {
             upstream.expect(requestTo(ENDPOINT)).andExpect(request -> {
                 String body = ((MockClientHttpRequest) request).getBodyAsString();
                 assertThat(body).contains(reason.name(), field);
+                if (scenario.equals("option_label_empty") || scenario.equals("option_answer_empty")) {
+                    assertThat(body).contains("label与answer必须非空");
+                }
             }).andRespond(withSuccess(completion(invalid), MediaType.APPLICATION_JSON));
         }
         assertThatThrownBy(() -> service.plan(new OptimizationPlanRequest("整理社区活动方案，预算与时间尚未确认。", "", List.of())))
@@ -104,12 +108,17 @@ class PlanProviderValidationBudgetTest {
         var options = new java.util.ArrayList<PlanOption>();
         if (scenario.equals("options_count")) {
             for (int index = 0; index < 6; index++) options.add(new PlanOption("o" + index, "预算方案" + index, "", "采用预算方案" + index, false));
+        } else if (scenario.equals("option_label_empty") || scenario.equals("option_answer_empty")) {
+            options.add(new PlanOption("o1", scenario.equals("option_label_empty") ? "" : "方案甲", "",
+                    scenario.equals("option_answer_empty") ? "" : "采用方案甲", false));
+            options.add(new PlanOption("o2", "方案乙", "", "采用方案乙", false));
         }
         var examples = scenario.equals("examples_count") ? List.of("一", "二", "三", "四", "五") : List.<String>of();
         var question = new PlanQuestion(scenario.equals("id_format") ? "需确认预算" : "budget",
                 scenario.equals("question_internal") ? "请确认缺失维度？" : "活动预算是多少？",
                 scenario.equals("hint_internal") ? "先确认缺失维度。" : "预算会影响活动方案。",
-                PlanQuestionType.FREE_TEXT, options, examples, true);
+                scenario.startsWith("option_") ? PlanQuestionType.SINGLE_CHOICE : PlanQuestionType.FREE_TEXT,
+                options, examples, true);
         var questions = scenario.equals("id_duplicate") ? List.of(question, question) : List.of(question);
         return mapper.writeValueAsString(Map.of("summary", "预算仍未确定。", "questions", questions));
     }

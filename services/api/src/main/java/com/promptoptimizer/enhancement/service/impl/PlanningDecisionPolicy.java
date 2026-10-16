@@ -397,10 +397,15 @@ final class PlanningDecisionPolicy {
     /** 盲评只约束实验条件不可见；评审知道评分维度、任务文本或匿名编号不构成违约。 */
     private boolean disclosesReviewCondition(String clause) {
         if (!clause.matches(".*(?:评审|评委).*")) return false;
-        var disclosure = Pattern.compile("(?:知道|知晓|获知|看到|知悉).{0,24}(?:实验条件|实验分组|分组信息|对应的实验模式)")
+        String action = "(?:知道|知晓|获知|看到|知悉)";
+        // 动作只能绑定同一分句中的对象，不能从“知道任务，但不知道条件”跨到第二个动作。
+        var disclosure = Pattern.compile(action + "(?:(?!(?:" + action + "|但|而|却))[^，,。；;]){0,24}"
+                        + "(?:实验条件|实验分组|分组信息|对应的实验模式)")
                 .matcher(clause);
         while (disclosure.find()) {
             String prefix = clause.substring(Math.max(0, disclosure.start() - 12), disclosure.start());
+            // 前一动作或分句的否定也不能豁免后一个明确披露动作。
+            prefix = prefix.replaceFirst("(?s)^.*(?:[，,。；;]|但|而|却|" + action + ")", "");
             // 必须按动作邻近否定判断，不能把“不知道”或“禁止知道”当作正向披露。
             if (!prefix.matches(".*(?:不得|禁止|不能|不允许|不可|不应).*" )
                     && !prefix.matches(".*(?:不(?:会|曾|能|应)?|未(?:曾|能)?|无法)$")) return true;

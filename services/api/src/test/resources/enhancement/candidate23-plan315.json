@@ -1,0 +1,267 @@
+{
+  "source": "docs/testing/evidence/me00a-candidate22-live-2026-10-16/real/traces/315.json",
+  "sourceSha256": "2440c2e7084cd13d0d96521216aa8045dc7b39492cfafe2077d6a5169968bddd",
+  "rawPrompt": "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。正文800至1200个汉字，附表另计。不提供代码，不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。",
+  "response": {
+    "summary": "已理解：为研究生撰写中文研究设计的方法部分，研究 Plan 问答对提示词质量的影响；当前仅为拟定研究，须保留20个任务、每模式每任务重复3次、两名独立评审盲评、直接增强与Plan比较、两组同信息公平对照、随机化与盲法、四维评价及分歧处理、统计检验依未来数据分布与配对结构选择、正文800至1200汉字、附表另计、不提供代码、不得编造数据或结论。仍需确认少数会改变研究口径或交付内容的决定。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Plan 组在向用户澄清并获得回答后，具体以什么条件结束问答并进入生成？",
+        "hint": "这决定 Plan 条件的操作定义，也影响同信息对照如何取得并封存同一份确认信息。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "fixed_rounds",
+            "label": "固定轮次后生成",
+            "description": "预先规定澄清轮数上限，达到上限即生成，轮数对所有任务一致。",
+            "answer": "Plan 组采用固定轮次：预先规定澄清轮数上限，达到上限后即进入生成，所有任务一致。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "until_no_new",
+            "label": "无新问题即生成",
+            "description": "当用户回答不再产生新的澄清问题时结束问答并生成。",
+            "answer": "Plan 组在用户回答不再产生新的澄清问题时结束问答并进入生成。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "until_sufficient",
+            "label": "信息足够即生成",
+            "description": "由预设判断标准认定信息足够后结束问答并生成。",
+            "answer": "Plan 组在预设的信息充分性标准被满足后结束问答并进入生成。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "user_ends",
+            "label": "用户主动结束",
+            "description": "由用户表示可以开始生成时结束问答。",
+            "answer": "Plan 组由用户主动表示可以开始生成时结束问答并进入生成。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "同信息公平对照的两组，其确认信息以什么方式提供给模型？",
+        "hint": "这决定公平对照是否真正同信息，也影响盲评时评审能否区分条件。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "verbatim_once",
+            "label": "逐字一次性提供",
+            "description": "把封存的实际确认信息逐字放入一次输入，不进行多轮交互。",
+            "answer": "同信息公平对照的两组均以逐字方式一次性获得与 Plan 组相同的完整确认信息，不进行多轮交互。",
+            "recommended": true,
+            "recommendationReason": "原始需求要求两组获得相同确认信息，逐字一次性提供最直接保证信息一致，同时保留各组指定的增强流程。"
+          },
+          {
+            "id": "verbatim_multiturn",
+            "label": "逐字分轮提供",
+            "description": "把同一份确认信息按轮次逐字提供，但不进行澄清提问。",
+            "answer": "同信息公平对照的两组均以逐字方式分轮获得与 Plan 组相同的完整确认信息，但不进行澄清提问。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "summary_form",
+            "label": "以整理稿提供",
+            "description": "把确认信息整理成结构化摘要后提供。",
+            "answer": "同信息公平对照的两组均获得由同一份实际确认信息整理成的结构化摘要。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q3",
+        "question": "四类任务分别是什么？",
+        "hint": "任务类别决定20个任务的内容分布和评价维度是否可比。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：需求澄清类、约束遵循类、结构组织类、事实一致性类"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q4",
+        "question": "每类任务的5个任务如何确定，是否使用真实可核实的任务材料？",
+        "hint": "这决定任务来源是否可追溯，也关系到不得使用假设或虚构数据的禁令如何落实。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "real_materials",
+            "label": "使用真实可核实材料",
+            "description": "任务取自可核实的真实需求或公开材料，并记录来源。",
+            "answer": "每类任务的5个任务均取自真实可核实的任务材料，并记录来源，不使用假设或虚构数据。",
+            "recommended": true,
+            "recommendationReason": "原始需求明确禁止使用假设数据，真实可核实材料最符合该禁令。"
+          },
+          {
+            "id": "constructed_from_real",
+            "label": "基于真实材料构造",
+            "description": "以真实材料为基础构造任务，但任务本身为研究设计所需的新编任务。",
+            "answer": "每类任务的5个任务以真实材料为基础构造，任务本身为研究设计所需的新编任务，并说明构造依据。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "expert_designed",
+            "label": "由专家设计",
+            "description": "由领域专家按研究目的设计任务，并记录设计依据。",
+            "answer": "每类任务的5个任务由领域专家按研究目的设计，并记录设计依据。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q5",
+        "question": "两名独立评审在盲评时，是否知道每个输出属于哪一类任务？",
+        "hint": "这影响盲法强度和评价维度的一致性，也影响分歧处理。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "know_task_not_condition",
+            "label": "知道任务类别，不知道条件",
+            "description": "评审知道任务类别和任务内容，但不知道输出来自哪一实验条件。",
+            "answer": "两名独立评审知道任务类别和任务内容，但不知道输出来自哪一实验条件。",
+            "recommended": true,
+            "recommendationReason": "原始需求要求盲评，保留任务类别信息有助于按任务类型评价，同时隐藏实验条件。"
+          },
+          {
+            "id": "know_neither",
+            "label": "任务类别与条件均不知道",
+            "description": "评审既不知道任务类别，也不知道实验条件，仅按统一标准评分。",
+            "answer": "两名独立评审既不知道任务类别，也不知道实验条件，仅按统一标准评分。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "know_both",
+            "label": "任务类别与条件均知道",
+            "description": "评审知道任务类别和实验条件，但独立评分。",
+            "answer": "两名独立评审知道任务类别和实验条件，但独立评分。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q6",
+        "question": "准确性、完整性、清晰度与可执行性四个维度，是否使用统一的评分量表？",
+        "hint": "这决定评价工具是否一致，也影响评分者间一致性的评估方式。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "same_scale",
+            "label": "统一量表",
+            "description": "四个维度使用同一套等级定义和评分规则。",
+            "answer": "准确性、完整性、清晰度与可执行性四个维度使用统一的评分量表，等级定义和评分规则一致。",
+            "recommended": true,
+            "recommendationReason": "统一量表便于比较不同条件和不同任务，也便于评估评分者间一致性。"
+          },
+          {
+            "id": "per_dimension",
+            "label": "各维度单独量表",
+            "description": "每个维度有各自的等级定义和评分规则。",
+            "answer": "准确性、完整性、清晰度与可执行性四个维度各自使用单独的评分量表，分别定义等级和规则。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "rubric_plus_global",
+            "label": "分维度量表加总体评分",
+            "description": "四个维度分别评分，另加一个总体质量评分。",
+            "answer": "准确性、完整性、清晰度与可执行性四个维度分别评分，并另加一个总体质量评分。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q7",
+        "question": "两名评审出现分歧时，按什么方式处理？",
+        "hint": "这决定最终评分如何形成，也影响是否需要第三名评审。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "discuss_consensus",
+            "label": "讨论后达成一致",
+            "description": "分歧项由两名评审讨论，达成一致后记录最终分。",
+            "answer": "两名评审出现分歧时，先讨论并尝试达成一致，达成一致后记录最终分。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "third_reviewer",
+            "label": "引入第三名评审",
+            "description": "分歧项由第三名独立评审裁定或取多数意见。",
+            "answer": "两名评审出现分歧时，引入第三名独立评审裁定或取多数意见。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "report_both",
+            "label": "保留双方评分",
+            "description": "不强行统一，保留两名评审的原始评分并报告一致性。",
+            "answer": "两名评审出现分歧时，不强行统一，保留两名评审的原始评分并报告评分者间一致性。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q8",
+        "question": "正文800至1200个汉字是否包含附表标题和表注？",
+        "hint": "这决定字数统计口径，也影响方法部分能否完整呈现设计细节。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "exclude_tables",
+            "label": "不含附表",
+            "description": "字数只统计正文，附表标题、表注和表格内容不计入。",
+            "answer": "正文800至1200个汉字只统计正文，附表标题、表注和表格内容不计入。",
+            "recommended": true,
+            "recommendationReason": "原始需求已说明附表另计，正文与附表分开统计最符合该表述。"
+          },
+          {
+            "id": "include_titles",
+            "label": "含附表标题表注",
+            "description": "字数统计包含正文和附表的标题与表注，不含表格数据。",
+            "answer": "正文800至1200个汉字包含正文以及附表的标题与表注，不含表格数据。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "include_all",
+            "label": "含全部附表内容",
+            "description": "字数统计包含正文和全部附表内容。",
+            "answer": "正文800至1200个汉字包含正文和全部附表内容。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ]
+  }
+}

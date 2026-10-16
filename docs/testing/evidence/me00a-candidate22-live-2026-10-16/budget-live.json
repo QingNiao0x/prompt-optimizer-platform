@@ -1,0 +1,128 @@
+{
+  "actual": {
+    "total": 320,
+    "baseline": 70,
+    "candidateValidation": 250
+  },
+  "formalLimits": {
+    "total": 338,
+    "baseline": 80,
+    "candidateValidation": 258
+  },
+  "batch": {
+    "version": "candidate22",
+    "maximum": 15,
+    "actual": 7,
+    "purposes": {
+      "PLATFORM_GENERATION": 1,
+      "PLANNING": 2,
+      "EXECUTION": 2,
+      "REVIEW": 2
+    },
+    "transportOrHttpFailures": 0,
+    "qualityRetries": 0
+  },
+  "knownTokens": 32018,
+  "table": [
+    {
+      "trace": 314,
+      "purpose": "PLANNING",
+      "label": null,
+      "requestId": "f7d72318-a0bd-4a12-8e81-1c4aa4fe2ebb",
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 7652,
+      "inputTokens": 3757,
+      "outputTokens": 1248,
+      "totalTokens": 5005,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 315,
+      "purpose": "PLANNING",
+      "label": null,
+      "requestId": "f7d72318-a0bd-4a12-8e81-1c4aa4fe2ebb",
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 12656,
+      "inputTokens": 4134,
+      "outputTokens": 2244,
+      "totalTokens": 6378,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 316,
+      "purpose": "PLATFORM_GENERATION",
+      "label": null,
+      "requestId": "75298d2e-ac14-4931-8c6f-4bfe6ba3f538",
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 7769,
+      "inputTokens": 8211,
+      "outputTokens": 1163,
+      "totalTokens": 9374,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 317,
+      "purpose": "EXECUTION",
+      "label": "candidate22-Q05-direct-same-info-enhanced",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 8799,
+      "inputTokens": 1193,
+      "outputTokens": 900,
+      "totalTokens": 2093,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 318,
+      "purpose": "EXECUTION",
+      "label": "candidate22-Q05-raw-same-info-raw",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 12083,
+      "inputTokens": 170,
+      "outputTokens": 1191,
+      "totalTokens": 1361,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 319,
+      "purpose": "REVIEW",
+      "label": "candidate22-review-deepseek-flash",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 6534,
+      "inputTokens": 2808,
+      "outputTokens": 1147,
+      "totalTokens": 3955,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 320,
+      "purpose": "REVIEW",
+      "label": "candidate22-review-deepseek-v4-pro",
+      "requestId": null,
+      "model": "deepseek-v4-pro",
+      "responseModel": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "elapsedMs": 11098,
+      "inputTokens": 2808,
+      "outputTokens": 1044,
+      "totalTokens": 3852,
+      "finishReason": "stop"
+    }
+  ],
+  "priceAndCurrencyCost": "UNKNOWN",
+  "source": "Frozen candidate22; actual upstream response model is an alias, catalog display version is not proof of provider build"
+}

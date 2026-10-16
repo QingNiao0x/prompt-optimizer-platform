@@ -1,0 +1,130 @@
+{
+  "date": "2026-10-12",
+  "scope": "ME-00-A baseline then ME-01-A + ME-03-A bounded repair",
+  "cases": 7,
+  "initialPlanEnabled": false,
+  "initialPlanAnswers": [],
+  "initialExamplesEnabled": false,
+  "maximumActualModelCalls": 338,
+  "phaseLimits": {
+    "baseline": 80,
+    "candidateValidation": 258
+  },
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "baselineRounds": 1,
+  "candidateRounds": 2,
+  "planSupplement": [
+    "Q04",
+    "Q05"
+  ],
+  "review": "two independent AI reviewers, not domain experts; disputed verdicts unresolved until adjudication",
+  "sameTestAccountFile": "private runtime only; reuse former synthetic user",
+  "archiveSecrets": false,
+  "accountCreationAllowed": false,
+  "priceAndCurrencyCost": "UNKNOWN until verified invoice; actual provider tokens collected",
+  "productPrimaryComparison": "raw actual work vs actual copied enhanced work",
+  "repairRegression": "current enhanced vs repaired enhanced, separately reported",
+  "planParity": "verbatim actual submitted test answers provided to raw and direct comparators, never patch Plan copied body",
+  "severeFailure": "block capability release, preserve trace; no automatic budget increase",
+  "activeBatch": {
+    "version": "candidate22",
+    "group": "Q05_FROZEN_PLATFORM_REVALIDATION_AND_FIXED_COPY_FLASH_PRO_DIAGNOSIS",
+    "mode": "targeted",
+    "status": "CLOSED",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationAmendment": "protocol-amendment-18.json",
+    "secondRoundAuthorized": false,
+    "cases": [
+      "Q05"
+    ],
+    "casesFile": "candidate22-q05-cases.json",
+    "casesSha256": "31483fbd633296b5a2188e87fb9f2600a649d2ecfa46b4c43ddd4c00ce9c083a",
+    "allowedRawPromptSha256": [
+      "71de870998746bb5a0b9a049834f272f07f6ef1fae3c40a77cdb8d56a631398d"
+    ],
+    "model": "deepseek-flash",
+    "executionModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "callsBefore": 313,
+    "candidateCallsBefore": 243,
+    "maximumNewCalls": 15,
+    "maximumActualCallsAfterBatch": 328,
+    "maximumGenerationCalls": 6,
+    "maximumPlanningCalls": 2,
+    "maximumExecutionCalls": 5,
+    "maximumReviewCalls": 2,
+    "purposeMaximums": {
+      "PLATFORM_GENERATION": 6,
+      "PLANNING": 2,
+      "EXECUTION": 5,
+      "REVIEW": 2
+    },
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "executionParameters": {
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "accountCreationAllowed": false,
+    "noPhaseBorrowing": true,
+    "noClosedBatchAllowanceTransfer": true,
+    "qualityRetriesAllowed": false,
+    "sourceFreeze": "docs/testing/evidence/me00a-candidate22-offline-2026-10-16/candidate22-source.json",
+    "executionOrder": [
+      "Q05-plan-pro/enhanced",
+      "Q05-raw-pro-same-info/raw",
+      "Q05-direct-same-info/enhanced",
+      "Q05-raw-same-info/raw",
+      "Q05-plan/enhanced"
+    ],
+    "randomizationSeed": "e57dca4fe6115102d0ad59c00f6088e5",
+    "reviewEnhancedOnA": [
+      "Q05-plan",
+      "Q05-plan-pro"
+    ],
+    "dependencyOutcome": {
+      "naturalPlan": "FAILED_TWO_REAL_RESPONSES",
+      "planFinalAndPlanWorks": "NOT_RUN_NO_VALID_PLAN",
+      "fallbackTrack": "Flash original vs direct enhancement; both have zero actual confirmation information",
+      "noOldQuestionReplacement": true,
+      "noAllocationTransfer": true,
+      "maximumActualUnchanged": 328
+    },
+    "actualNewCalls": 7,
+    "actualTotalAtClose": 320,
+    "unusedClosedNotTransferable": 8,
+    "qualityRetries": 0,
+    "actualPurposeCounts": {
+      "PLATFORM_GENERATION": 1,
+      "PLANNING": 2,
+      "EXECUTION": 2,
+      "REVIEW": 2
+    },
+    "notRun": [
+      "Plan enhancement",
+      "Flash Plan work",
+      "Pro raw/Plan diagnostic"
+    ],
+    "closureReason": "Natural Plan exhausted its frozen two-call ceiling without a valid plan; only independent Flash raw/direct subset executed"
+  }
+}

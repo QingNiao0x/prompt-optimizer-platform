@@ -1,0 +1,33 @@
+{
+  "trace314": "Four empty custom selectable answers; invalid model protocol",
+  "trace315": {
+    "legalButRejected": {
+      "id": "know_task_not_condition",
+      "label": "知道任务类别，不知道条件",
+      "description": "评审知道任务类别和任务内容，但不知道输出来自哪一实验条件。",
+      "answer": "两名独立评审知道任务类别和任务内容，但不知道输出来自哪一实验条件。",
+      "recommended": true,
+      "recommendationReason": "原始需求要求盲评，保留任务类别信息有助于按任务类型评价，同时隐藏实验条件。"
+    },
+    "validNegative": {
+      "id": "know_neither",
+      "label": "任务类别与条件均不知道",
+      "description": "评审既不知道任务类别，也不知道实验条件，仅按统一标准评分。",
+      "answer": "两名独立评审既不知道任务类别，也不知道实验条件，仅按统一标准评分。",
+      "recommended": false,
+      "recommendationReason": ""
+    },
+    "genuinelyConflicting": {
+      "id": "know_both",
+      "label": "任务类别与条件均知道",
+      "description": "评审知道任务类别和实验条件，但独立评分。",
+      "answer": "两名独立评审知道任务类别和实验条件，但独立评分。",
+      "recommended": false,
+      "recommendationReason": ""
+    }
+  },
+  "wouldWholeResponsePassAfterFix": false,
+  "localThirdAttemptWasRealUpstreamCall": false,
+  "postFailureTrack": "Raw/direct only, zero actual answers",
+  "laterProductFix": "candidate23 offline only"
+}

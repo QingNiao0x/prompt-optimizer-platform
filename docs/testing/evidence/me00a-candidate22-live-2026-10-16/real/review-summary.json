@@ -1,0 +1,71 @@
+{
+  "aiAssistedNotHumanExperts": true,
+  "sameProviderDifferentModels": true,
+  "independentIdenticalPacks": true,
+  "originalReviewsUnchanged": true,
+  "summaries": [
+    {
+      "model": "deepseek-flash",
+      "originalStrictJson": true,
+      "derivedQuoteChecks": 8,
+      "quoteErrors": [],
+      "verdicts": [
+        {
+          "id": "Q05-direct",
+          "original": "A胜",
+          "preferred": "raw",
+          "scoresA": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "scoresB": {
+            "accuracy": 3,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 3
+          },
+          "severeFailures": []
+        }
+      ]
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "originalStrictJson": false,
+      "derivedQuoteChecks": 9,
+      "quoteErrors": [
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 6,
+          "work": "Q05-direct_B"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 8,
+          "work": "Q05-direct_B"
+        }
+      ],
+      "verdicts": [
+        {
+          "id": "Q05-direct",
+          "original": "平",
+          "preferred": "TIE",
+          "scoresA": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "scoresB": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severeFailures": []
+        }
+      ]
+    }
+  ]
+}

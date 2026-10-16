@@ -83,7 +83,7 @@ public final class ProviderResponseValidationException extends ProviderException
         METHOD_PARAMETER_CONFLICT("确认年龄标准化不等于确认直接或间接方式，也不等于选择标准人口；具体方式、年份、来源和取值必须有独立的适用依据。无依据时只给候选与适用条件，不写成已确认或已确定，不默认或暂按某年人口，继续交付其他原定内容。"),
         PLAN_STRUCTURE_INVALID("summary 为非空字符串且不超过五百字符，questions 数组最多八项，不展示内部实现术语。"),
         PLAN_QUESTION_INVALID("问题 ID 唯一且仅含英文字母、数字、下划线或连字符，最长六十四字符；question 非空且最长三百字符，hint 最长五百字符；type 合法；最多四个简短示例。题干和 hint 不展示 TemplateCode、模板枚举代码、选择任务模板、确认缺失维度、缺失维度等内部术语。"),
-        PLAN_OPTION_INVALID("选项 ID 唯一且最长六十四字符；label 最长一百二十字符，description 和 recommendationReason 最长三百字符，answer 最长一千五百字符；选择题保留二至五项，FREE_TEXT 的 options 必须为空；多选答案合计含分隔符不能超过一千五百字符。"),
+        PLAN_OPTION_INVALID("选项 ID 唯一且最长六十四字符；label与answer必须非空，label 最长一百二十字符，description 和 recommendationReason 最长三百字符，answer 最长一千五百字符；选择题保留二至五项，FREE_TEXT 的 options 必须为空；多选答案合计含分隔符不能超过一千五百字符。"),
         PLAN_RECOMMENDATION_INVALID("每道题至多一个 recommended=true，没有唯一依据时可以全部为 false；完整保留合法问题、选项及答案。");
 
         private final String repairInstruction;

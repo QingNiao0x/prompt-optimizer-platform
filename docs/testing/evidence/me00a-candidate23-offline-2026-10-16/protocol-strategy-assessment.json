@@ -1,0 +1,38 @@
+{
+  "scope": "Offline protocol and strategy assessment; no new real calls",
+  "confirmedMismatch": {
+    "validator": "OptimizationPlanningServiceImpl.java:414 rejects blank option.answer and blank label",
+    "repairHintBefore": "PLAN_OPTION_INVALID specified maximum lengths but omitted nonempty label/answer",
+    "adopted": "Clarify nonempty label/answer in the existing local reason hint; preserve validation, actual choices, security and maximum3 attempts"
+  },
+  "evidence": [
+    "314 empty custom answers",
+    "315 false-positive and genuine condition disclosure",
+    "CandidateTwentyThreeReplayTest",
+    "PlanProviderValidationBudgetTest empty-label and empty-answer scenarios"
+  ],
+  "notAdopted": [
+    {
+      "strategy": "Drop all questions or conflicting options",
+      "reason": "Would erase important choices or make invalid responses appear successful"
+    },
+    {
+      "strategy": "Normalize all empty Other options into free text",
+      "reason": "Risk erasing condition-bearing candidates and changing answer contracts; no positive/negative and real benefit evidence"
+    },
+    {
+      "strategy": "Increase retries or timeouts",
+      "reason": "Responses already arrived; no network fault evidence and more cost. Third local attempt stopped by purpose ceiling is not provider outage"
+    },
+    {
+      "strategy": "Add global length/scoring/structure prohibitions",
+      "reason": "Known over-optimization risk; not justified by this single downstream failure"
+    },
+    {
+      "strategy": "Silently use a stronger planning model",
+      "reason": "Would change role/model scope; separate controlled comparison needed"
+    }
+  ],
+  "realAdoptionGate": "OPEN: local correction verified, no claim of stable model improvement",
+  "followup": "Freeze candidate23-r2; new Plan validation needs a separately frozen allocation, not a quality retry or closed-balance transfer"
+}

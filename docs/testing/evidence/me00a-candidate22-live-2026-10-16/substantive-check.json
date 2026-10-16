@@ -1,0 +1,43 @@
+{
+  "status": "NOT_PASSED",
+  "findings": [
+    {
+      "case": "Q05-raw",
+      "stage": "DOWNSTREAM",
+      "finding": "Redefines Plan question/answer as planning then answering; body1633 exceeds limit; changes task surface parameters across repetitions"
+    },
+    {
+      "case": "Q05-direct",
+      "stage": "DOWNSTREAM",
+      "finding": "Copy keeps each mode each task three independent repeats; work randomly distributes only60 task-repeat units between two modes, contradicting that requirement; body1204 exceeds1200"
+    },
+    {
+      "case": "Q05-direct",
+      "stage": "MIXED_OR_UNRESOLVED",
+      "finding": "Copy asks a proposed principal scoring design but not explicit full-level anchors; work offers5 or7 point scales and postpones anchors to expert validation, rather than delivering a usable principal proposal"
+    },
+    {
+      "case": "natural-plan314",
+      "stage": "ENHANCEMENT_MODEL_PROTOCOL",
+      "finding": "Four other/custom selectable options carry empty answers; first response structurally invalid"
+    },
+    {
+      "case": "natural-plan315",
+      "stage": "MIXED_PLATFORM_AND_ENHANCEMENT_MODEL",
+      "finding": "Known task category with unknown experimental condition is falsely rejected by cross-action matching; another option truly discloses experimental conditions, so the whole response remains invalid even after fixing false rejection"
+    },
+    {
+      "case": "plan-final-and-pro-diagnostic",
+      "stage": "DEPENDENCY_NOT_MET",
+      "finding": "No valid current Plan returned within frozen two-call planning limit; no replacement with old or failed questions, no Plan copies or Pro executions"
+    },
+    {
+      "case": "reviews",
+      "stage": "EVALUATION_MODEL_AND_INPUT_BOUNDARY",
+      "finding": "Flash prefers raw, Pro ties; both severeFailures empty. Flash quotes/JSON valid but misses Plan definition reversal and length; Pro fenced JSON and two nonliteral quotes. Review pack lacked explicit product terminology definitions, a possible evaluation-input limitation"
+    }
+  ],
+  "statisticalClaim": false,
+  "actualAnswersBothArms": 0,
+  "originalWorksModified": false
+}

@@ -1,0 +1,330 @@
+{
+  "originalReviewSha256": "7022c5618709bbb17262f2249c35d6a9e3ec64ead30407e3db4a3ef79abfc061",
+  "originalStrictJson": false,
+  "fencedParseIsDiagnosticOnly": true,
+  "originalCasesAndVerdicts": {
+    "cases": [
+      {
+        "id": "Q05-direct",
+        "scoresA": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "scoresB": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "verdict": "平",
+        "severeFailures": [],
+        "evidence": [
+          {
+            "work": "A",
+            "quote": "实验条件包括四组。第一组为直接增强提示词，即在基础提示词中直接加入更明确的角色、目标、约束和质量要求，但不要求先形成计划。第二组为Plan提示词，即在基础提示词中要求先给出简要计划或步骤，再依据计划完成作答。第三组和第四组为公平对照：两组均获得相同的确认信息，例如相同的任务澄清、格式要求和确认反馈，区别仅在于是否包含Plan结构。"
+          },
+          {
+            "work": "A",
+            "quote": "每名参与者在每种模式下对每个任务独立重复3次。所有产出由两名独立评审在盲评条件下评价。"
+          },
+          {
+            "work": "A",
+            "quote": "统计分析将依据未来实际数据的分布特征和配对结构选择方法，不预设必然显著。"
+          },
+          {
+            "work": "A",
+            "quote": "若结果变量近似连续且残差分布可接受，可采用线性混合效应模型，将参与者、任务和重复次数作为随机效应，条件、任务类型及其交互作为固定效应。"
+          },
+          {
+            "work": "B",
+            "quote": "本研究拟采用2×4混合设计比较提示词质量。自变量一为增强模式，含直接增强与Plan问答两水平，组间比较；自变量二为任务类型，含4类任务，组内比较。"
+          },
+          {
+            "work": "B",
+            "quote": "同信息公平对照拟设两组：先就同一案例取得并封存实际确认信息，再让两组获得逐字相同的信息。"
+          },
+          {
+            "work": "B",
+            "quote": "拟选4类任务，每类5个，共20个任务。任务类型依据研究问题界定，例如需求澄清、约束整合、步骤规划与风险说明等，具体分类需经专家评审确认。每模式每任务独立重复3次。"
+          },
+          {
+            "work": "B",
+            "quote": "两名独立评审盲评，评审不知晓研究假设与分组。"
+          },
+          {
+            "work": "B",
+            "quote": "统计分析依据未来数据分布与配对结构选择，不预设显著性。候选方法包括：若四项指标近似连续且满足正态性，采用混合效应模型，固定效应为模式、任务类型及交互，随机效应为任务与重复。"
+          }
+        ],
+        "uncertainties": [
+          "作品A中'参与者被随机分配到条件顺序'与'每名参与者在每模式下完成每任务3次'的表述存在潜在矛盾：若参与者被随机分配到条件顺序，则可能并非每名参与者都经历所有模式；若每名参与者都经历所有模式，则随机分配的是顺序而非条件。该矛盾影响对随机化方案和执行性的判断，但未达到严重失败级别。",
+          "作品A中第三组和第四组公平对照的具体区别描述为'区别仅在于是否包含Plan结构'，但若两组均获得相同确认信息且区别仅在于Plan结构，则第三组和第四组实际上分别等同于直接增强组和Plan组，四组设计可能退化为两组。该逻辑问题影响对对照设计有效性的判断。",
+          "作品B中'组间比较'与'同一任务下两模式重复测量'的表述存在潜在矛盾：若增强模式为组间变量，则同一任务不会在同一参与者内同时接受两种模式；若同一任务下两模式重复测量，则增强模式应为组内变量。该矛盾影响对统计配对结构判断的确定性。",
+          "作品B中'先就同一案例取得并封存实际确认信息'的表述暗示研究已取得确认信息，但原始要求明确当前只是拟定研究、尚未实施，且实际确认信息为'无'。该表述可能被理解为已实施步骤，但作品B整体仍以'拟'为主，未编造具体数据或结论，故未判定为严重失败。",
+          "两份作品均未明确说明'每模式每任务独立重复3次'中'独立'的操作性定义（如是否使用不同随机种子、是否重新初始化上下文等），该细节缺失影响可执行性的精确判断。"
+        ]
+      }
+    ]
+  },
+  "derivedAudit": {
+    "rawReviewSha256": "209bcc4a57549bbe72c0a8fef0820708ed4c2e10684611f74238a96f10c40cd0",
+    "strictJsonAndSchemaValid": true,
+    "deterministicChecksPassed": false,
+    "errors": [
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 6,
+        "work": "Q05-direct_B"
+      },
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 8,
+        "work": "Q05-direct_B"
+      }
+    ],
+    "evidenceChecks": [
+      {
+        "issueIndex": 0,
+        "work": "Q05-direct_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "实验条件包括四组。第一组为直接增强提示词，即在基础提示词中直接加入更明确的角色、目标、约束和质量要求，但不要求先形成计划。第二组为Plan提示词，即在基础提示词中要求先给出简要计划或步骤，再依据计划完成作答。第三组和第四组为公平对照：两组均获得相同的确认信息，例如相同的任务澄清、格式要求和确认反馈，区别仅在于是否包含Plan结构。",
+        "matchedText": "实验条件包括四组。第一组为直接增强提示词，即在基础提示词中直接加入更明确的角色、目标、约束和质量要求，但不要求先形成计划。第二组为Plan提示词，即在基础提示词中要求先给出简要计划或步骤，再依据计划完成作答。第三组和第四组为公平对照：两组均获得相同的确认信息，例如相同的任务澄清、格式要求和确认反馈，区别仅在于是否包含Plan结构。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 482,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 1,
+        "work": "Q05-direct_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "每名参与者在每种模式下对每个任务独立重复3次。所有产出由两名独立评审在盲评条件下评价。",
+        "matchedText": "每名参与者在每种模式下对每个任务独立重复3次。所有产出由两名独立评审在盲评条件下评价。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 159,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 2,
+        "work": "Q05-direct_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "统计分析将依据未来实际数据的分布特征和配对结构选择方法，不预设必然显著。",
+        "matchedText": "统计分析将依据未来实际数据的分布特征和配对结构选择方法，不预设必然显著。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 1341,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 3,
+        "work": "Q05-direct_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "若结果变量近似连续且残差分布可接受，可采用线性混合效应模型，将参与者、任务和重复次数作为随机效应，条件、任务类型及其交互作为固定效应。",
+        "matchedText": "若结果变量近似连续且残差分布可接受，可采用线性混合效应模型，将参与者、任务和重复次数作为随机效应，条件、任务类型及其交互作为固定效应。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 1414,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 4,
+        "work": "Q05-direct_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "本研究拟采用2×4混合设计比较提示词质量。自变量一为增强模式，含直接增强与Plan问答两水平，组间比较；自变量二为任务类型，含4类任务，组内比较。",
+        "matchedText": "本研究拟采用2×4混合设计比较提示词质量。自变量一为增强模式，含直接增强与Plan问答两水平，组间比较；自变量二为任务类型，含4类任务，组内比较。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 24,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 5,
+        "work": "Q05-direct_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "同信息公平对照拟设两组：先就同一案例取得并封存实际确认信息，再让两组获得逐字相同的信息。",
+        "matchedText": "同信息公平对照拟设两组：先就同一案例取得并封存实际确认信息，再让两组获得逐字相同的信息。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 297,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 6,
+        "work": "Q05-direct_B",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "拟选4类任务，每类5个，共20个任务。任务类型依据研究问题界定，例如需求澄清、约束整合、步骤规划与风险说明等，具体分类需经专家评审确认。每模式每任务独立重复3次。",
+        "matchedText": "拟选4类任务，每类5个，共20个任务。任务类型依据研究问题界定，例如需求澄清、约束整合、步骤规划与风险说明等，具体分类需经专家评审确认。每模式每任务独立重复3次。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 7,
+        "work": "Q05-direct_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "两名独立评审盲评，评审不知晓研究假设与分组。",
+        "matchedText": "两名独立评审盲评，评审不知晓研究假设与分组。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 831,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 8,
+        "work": "Q05-direct_B",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "统计分析依据未来数据分布与配对结构选择，不预设显著性。候选方法包括：若四项指标近似连续且满足正态性，采用混合效应模型，固定效应为模式、任务类型及交互，随机效应为任务与重复。",
+        "matchedText": "统计分析依据未来数据分布与配对结构选择，不预设显著性。候选方法包括：若四项指标近似连续且满足正态性，采用混合效应模型，固定效应为模式、任务类型及交互，随机效应为任务与重复。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      }
+    ],
+    "comparisons": [
+      {
+        "left": "Q05-direct_A",
+        "right": "Q05-direct_B",
+        "originalVerdict": "TIE",
+        "originalReason": "原评审结论：平；此派生字段仅供协议映射，不新增理由。",
+        "literalReasonWinner": null,
+        "independentGate": "BOTH_FAIL",
+        "leftGate": "FAIL",
+        "rightGate": "FAIL",
+        "rankingsDoNotOverrideHardOrSevereFailure": true
+      }
+    ],
+    "originalReview": {
+      "reviewerType": "AI_ASSISTED",
+      "scores": {
+        "Q05-direct_A": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "Q05-direct_B": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        }
+      },
+      "issues": [
+        {
+          "work": "Q05-direct_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "实验条件包括四组。第一组为直接增强提示词，即在基础提示词中直接加入更明确的角色、目标、约束和质量要求，但不要求先形成计划。第二组为Plan提示词，即在基础提示词中要求先给出简要计划或步骤，再依据计划完成作答。第三组和第四组为公平对照：两组均获得相同的确认信息，例如相同的任务澄清、格式要求和确认反馈，区别仅在于是否包含Plan结构。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "每名参与者在每种模式下对每个任务独立重复3次。所有产出由两名独立评审在盲评条件下评价。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "统计分析将依据未来实际数据的分布特征和配对结构选择方法，不预设必然显著。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "若结果变量近似连续且残差分布可接受，可采用线性混合效应模型，将参与者、任务和重复次数作为随机效应，条件、任务类型及其交互作为固定效应。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "本研究拟采用2×4混合设计比较提示词质量。自变量一为增强模式，含直接增强与Plan问答两水平，组间比较；自变量二为任务类型，含4类任务，组内比较。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "同信息公平对照拟设两组：先就同一案例取得并封存实际确认信息，再让两组获得逐字相同的信息。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "拟选4类任务，每类5个，共20个任务。任务类型依据研究问题界定，例如需求澄清、约束整合、步骤规划与风险说明等，具体分类需经专家评审确认。每模式每任务独立重复3次。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "两名独立评审盲评，评审不知晓研究假设与分组。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "统计分析依据未来数据分布与配对结构选择，不预设显著性。候选方法包括：若四项指标近似连续且满足正态性，采用混合效应模型，固定效应为模式、任务类型及交互，随机效应为任务与重复。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        }
+      ],
+      "pairs": [
+        {
+          "left": "Q05-direct_A",
+          "right": "Q05-direct_B",
+          "verdict": "TIE",
+          "reason": "原评审结论：平；此派生字段仅供协议映射，不新增理由。"
+        }
+      ]
+    },
+    "originalReviewTextUnchanged": true,
+    "semanticVerdict": "REQUIRES_EVIDENCE_REVIEW",
+    "automaticSemanticJudge": false,
+    "modelCalls": 0
+  },
+  "normalization": "Only schema/ID/Chinese dimension-name mapping. Placeholder issue severity and reason are mechanical; no new semantic verdict. Raw original unchanged.",
+  "cannotValidateByItself": [
+    "Scientific accuracy",
+    "Verdict justification",
+    "Full requirement adherence",
+    "Length or code behaviour"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "candidate": "candidate22",
+  "overall": "NOT_PASSED",
+  "modelCalls": 0,
+  "rows": [
+    {
+      "id": "Q05-raw-same-info/raw",
+      "checks": {
+        "existingMeasuredGate": "FAIL"
+      },
+      "gate": "FAIL"
+    },
+    {
+      "id": "Q05-direct-same-info/enhanced",
+      "checks": {
+        "existingMeasuredGate": "FAIL",
+        "plannedRepetitionsAndAllocation": "FAIL",
+        "operationalScoringProposal": "FAIL"
+      },
+      "gate": "FAIL"
+    }
+  ],
+  "sources": [
+    "real/hard-gates.json",
+    "real/work-measurements.json",
+    "substantive-check.json"
+  ],
+  "notes": [
+    "OPEN remains unverified, never PASS",
+    "Both execution arms have zero actual confirmation information after natural Plan failed; not a fresh three-arm or natural QA benefit test",
+    "Same-information comparisons share actual answers; natural question-answer benefit is a different track",
+    "No aggregate win rate, no averaging away severe errors, no revised model works",
+    "Candidate23 offline changes are not validated by these candidate22 works"
+  ]
+}
