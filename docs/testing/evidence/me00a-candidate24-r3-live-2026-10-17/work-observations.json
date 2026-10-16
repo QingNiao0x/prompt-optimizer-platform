@@ -1,0 +1,58 @@
+{
+  "kind": "CODEX_BOUNDED_ARTIFACT_INSPECTION",
+  "modelCalls": 0,
+  "independentAiReviewers": 0,
+  "notExpertCertification": true,
+  "notNewThreeArmComparison": true,
+  "observations": [
+    {
+      "id": "rubric-delivery",
+      "status": "OPEN_MIXED",
+      "evidence": ["325 assessment EXECUTION_STEP: 四项评价指标各自的操作定义与评分尺度建议", "复制正文 TASK 同样只要求操作定义与评分尺度建议", "Flash: 四项均拟采用5点李克特量表，附操作定义与锚点", "Pro: 1为很不符合，5为很符合，并附各分值的行为锚定描述"],
+      "finding": "两作品均未实际展开四维各等级锚点。增强正文没有明确各等级交付强度；冻结currentScoringDeclaration对本次补充声明返回false，平台未投影已有评分兜底。下游又自行声称附锚点却未交付。不能单归下游。",
+      "next": "离线回放325，核对补充动作与同任务四维评分声明的完整作用域，评估定向修声明识别；不默认指定量表，不新增全局长禁令。"
+    },
+    {
+      "id": "appendix-delivery",
+      "status": "REQUIREMENT_STRENGTH_AMBIGUOUS",
+      "evidence": ["原题：正文800至1200个汉字，附表另计", "复制正文：附表建议内容；附表内容按拟议建议列出", "两作品只列附表名称，没有实际表格"],
+      "finding": "无表是可核对现象；原题计数例外不能自动升级为强制绘表，也不能凭此认定下游违约。评分锚点的实质缺口独立保留，不能用画空表替代。",
+      "next": "先澄清已有交付投影的依据和强度，复用明确要表／仅分析与有资料／无资料反例，不给普通任务强加表格。"
+    },
+    {
+      "id": "flash-allocation",
+      "status": "OPEN_DOWNSTREAM_WITH_PROMPT_REVIEW",
+      "evidence": ["复制正文：每模式每任务独立重复3次", "Flash：拟将20个任务按区组随机分配至各模式，每模式每任务独立重复3次"],
+      "finding": "分配任务至不同模式与全部任务在每模式重复之间有结构冲突。复制正文保留原定覆盖，但随机化仍写拟议分配方式，未明确区分执行顺序与任务归属；不能由单次失败推出模型能力不足。",
+      "next": "先评估局部精简和术语消歧是否必要，再以正常变体和成本验证，当前不修改提示词。"
+    },
+    {
+      "id": "flash-ethics",
+      "status": "UNSUPPORTED_PROFESSIONAL_ASSERTION",
+      "evidence": ["Flash：不涉及人类被试，故无需伦理审批", "原题、325增强响应和复制正文均无机构审查结论或批准依据"],
+      "finding": "不得将这一绝对判断认作已核实专业事实。本轮不判定该研究依法必然需要或免于审批，不认证伦理或专业方法合规。",
+      "next": "记录为下游新增的无来源专业断言；按有限专业边界策略评估，不给所有研究提示词追加免责声明。"
+    },
+    {
+      "id": "pro-information-flow",
+      "status": "OPEN_INCOMPLETE_OPERATIONALIZATION",
+      "evidence": ["Pro：先由Plan组完成问答并取得实际确认信息，将该信息逐字封存", "Pro：同一份确认信息分别提供给直接增强对照组和Plan对照组，两组仍按各自指定增强流程完成"],
+      "finding": "本次已写同一实际信息与指定流程，未见明确捏造或改写答案；Plan对照若继续获得新答案时如何同送双方仍未说明，执行顺序也需尊重先封存再对照的依赖。不能直接复用旧作品的信息流违约结论。",
+      "next": "保持本次与旧结果分开，评估现有信息流指导能否更简洁明确；无新证据不称彻底修复或模型能力不足。"
+    },
+    {
+      "id": "pro-significance-wording",
+      "status": "PROFESSIONAL_REVIEW_REQUIRED",
+      "evidence": ["原题：不预设必然显著", "Pro：不预设显著性水平"],
+      "finding": "这是不同概念，后者不是原题要求；不能把这一措辞作为合格统计预设方案。未做领域专家复核，不对全部统计方法背书。",
+      "next": "记录来源差异，进入专业核查与下游策略评估，禁止通过提示词默认参数掩盖问题。"
+    },
+    {
+      "id": "observed-preserved-elements",
+      "status": "OBSERVED_THIS_PAIR_ONLY",
+      "evidence": ["两作品均给出四类具体任务框架、来源或筛选建议、拟议轮次、两名独立评审及分歧流程", "两作品评价对象均为提示词，Pro的240份明确位于拟议研究表述中", "Flash正文886、Pro正文979汉字；两响应finish_reason均stop"],
+      "finding": "本对作品未复现旧Pro评价任务回答的偏移，且篇幅通过；不等于全局稳定性或相对原始提示词净收益已经通过。"
+    }
+  ],
+  "qualityGatesRemainOpen": true
+}

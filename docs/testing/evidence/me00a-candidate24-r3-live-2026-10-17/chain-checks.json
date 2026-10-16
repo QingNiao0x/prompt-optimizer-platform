@@ -1,0 +1,81 @@
+{
+  "kind": "SAVED_CHAIN_DETERMINISTIC_OBSERVATIONS",
+  "modelCalls": 0,
+  "freeze": {
+    "sourceFilesVerified": 860,
+    "runtimeFilesVerified": 621,
+    "sourceTreeSha256": "dffb82f8780223398747c0c3335887a205f47e12b5647fd0f41ed22bc859ba03",
+    "runtimeTreeSha256": "0413ab961b1bc674b59d8a8c780f0f936f3671acef9fe1ea9562686af1bfd6f4",
+    "executionToolsVerified": 8
+  },
+  "chain": {
+    "realEnhancementMock": false,
+    "firstAttemptOnly": true,
+    "historyPromptExact": true,
+    "historySectionsExact": true,
+    "nativeClipboardMatchesApiExceptCrLf": true,
+    "apiSha256": "30b9e5812b9721e56012b1729c909daab757854704a057ae4d84f46a7425149b",
+    "nativeClipboardSha256": "7277fc3534fcaa971daa61c95cead1d1cc372d1c078921b6477bd55741d8b902",
+    "apiCharacters": 2113,
+    "nativeClipboardCharacters": 2162,
+    "actualTaskViewMatchesFrozen": true,
+    "actualPendingDecisions": 5,
+    "apiAmbiguities": 5,
+    "allAppliedConstraints": [
+      "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+      "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+      "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。"
+    ],
+    "capturedPlanningOnly": true,
+    "newNaturalPlanCalls": 0,
+    "actualQuestions": 5,
+    "actualBoundAnswers": 5,
+    "downstreamInputs": [
+      {
+        "trace": 326,
+        "id": "Q05-plan-pro",
+        "exactNativeClipboard": true,
+        "noAdditionalAnswers": true,
+        "inputSha256": "7277fc3534fcaa971daa61c95cead1d1cc372d1c078921b6477bd55741d8b902",
+        "workSha256": "a640532a6a4c6192fa758396e81de12fb00c3a303c450d9738f4eba1b1cfa877",
+        "finishReason": "stop"
+      },
+      {
+        "trace": 327,
+        "id": "Q05-plan",
+        "exactNativeClipboard": true,
+        "noAdditionalAnswers": true,
+        "inputSha256": "7277fc3534fcaa971daa61c95cead1d1cc372d1c078921b6477bd55741d8b902",
+        "workSha256": "f31b4566a703c0d9a652974463b018690df67fefa9ee88351465349f14564764",
+        "finishReason": "stop"
+      }
+    ]
+  },
+  "rulesObserved": [
+    {
+      "rule": "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。",
+      "modelConstraintOccurrences": 1,
+      "finalConstraintOccurrences": 1
+    },
+    {
+      "rule": "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+      "modelConstraintOccurrences": 1,
+      "finalConstraintOccurrences": 1
+    }
+  ],
+  "freshFixCoverage": "325 uses separate bullet lines for the two rules; this run preserves one occurrence each but does not exercise 322 shared-paragraph splitting. The frozen offline 322 replay remains the direct branch evidence.",
+  "remainingProjection": {
+    "genericDelegationFragmentInModelTask": 1,
+    "genericDelegationFragmentInFinalTask": 2,
+    "addedDelegatedCategoryHeader": true,
+    "role": "platform projection, assess complete scopes before changing coverage"
+  },
+  "evaluationScope": {
+    "newAiReviews": 0,
+    "newThreeArmComparison": false,
+    "newRawControl": false,
+    "causalNetQualityOrWinRateClaim": false,
+    "professionalValidity": "Not certified; bounded artifact inspection only",
+    "appendixRule": "Original says 附表另计; neither that phrase alone nor absence of Markdown tables proves a downstream violation"
+  }
+}

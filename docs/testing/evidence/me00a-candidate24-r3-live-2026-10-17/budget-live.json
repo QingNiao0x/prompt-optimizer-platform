@@ -1,0 +1,72 @@
+{
+  "actual": {
+    "total": 327,
+    "baseline": 70,
+    "candidateValidation": 257
+  },
+  "formalLimits": {
+    "total": 338,
+    "baseline": 80,
+    "candidateValidation": 258
+  },
+  "batch": {
+    "version": "candidate24-r3",
+    "maximum": 4,
+    "actual": 3,
+    "purposes": {
+      "PLATFORM_GENERATION": 1,
+      "PLANNING": 0,
+      "EXECUTION": 2,
+      "REVIEW": 0
+    },
+    "transportOrHttpFailures": 0,
+    "qualityRetries": 0
+  },
+  "knownTokens": 14372,
+  "table": [
+    {
+      "trace": 325,
+      "purpose": "PLATFORM_GENERATION",
+      "label": null,
+      "requestId": "04667a5c-1044-44bb-9458-8cc4119961a8",
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 7601,
+      "inputTokens": 8759,
+      "outputTokens": 1391,
+      "totalTokens": 10150,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 326,
+      "purpose": "EXECUTION",
+      "label": "candidate24-r3-Q05-plan-pro-enhanced",
+      "requestId": null,
+      "model": "deepseek-v4-pro",
+      "responseModel": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "elapsedMs": 11400,
+      "inputTokens": 1384,
+      "outputTokens": 770,
+      "totalTokens": 2154,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 327,
+      "purpose": "EXECUTION",
+      "label": "candidate24-r3-Q05-plan-enhanced",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 5677,
+      "inputTokens": 1384,
+      "outputTokens": 684,
+      "totalTokens": 2068,
+      "finishReason": "stop"
+    }
+  ],
+  "priceAndCurrencyCost": "UNKNOWN",
+  "source": "Frozen candidate24-r3; actual upstream response model is an alias, catalog display version is not proof of provider build"
+}
