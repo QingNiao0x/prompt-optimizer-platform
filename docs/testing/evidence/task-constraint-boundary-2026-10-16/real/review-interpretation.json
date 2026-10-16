@@ -1,0 +1,125 @@
+{
+  "aiAssistedNotHumanExperts": true,
+  "independentInputsIdentical": true,
+  "sameSupplierDifferentModels": true,
+  "mapping": {
+    "requests-title": {
+      "A": "enhanced",
+      "B": "raw"
+    },
+    "mortality-2015-2025": {
+      "A": "raw",
+      "B": "enhanced"
+    }
+  },
+  "reviews": [
+    {
+      "model": "deepseek-flash",
+      "cases": [
+        {
+          "id": "requests-title",
+          "mapping": {
+            "A": "enhanced",
+            "B": "raw"
+          },
+          "rawScores": {
+            "准确性": 4,
+            "完整性": 5,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "enhancedScores": {
+            "准确性": 5,
+            "完整性": 4,
+            "清晰度": 5,
+            "可执行性": 5
+          },
+          "originalVerdict": "A胜",
+          "interpretation": "ENHANCED_PREFERRED",
+          "originalSevereFailures": []
+        },
+        {
+          "id": "mortality-2015-2025",
+          "mapping": {
+            "A": "raw",
+            "B": "enhanced"
+          },
+          "rawScores": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 3
+          },
+          "enhancedScores": {
+            "准确性": 4,
+            "完整性": 3,
+            "清晰度": 4,
+            "可执行性": 2
+          },
+          "originalVerdict": "A胜",
+          "interpretation": "RAW_PREFERRED",
+          "originalSevereFailures": [
+            "B将用户要求的年度、性别YLL和YLL率交付转化为大量“现有资料未提供”的表结构，未提供可执行计算模板或示例计算流程，属于把原交付变成空架子。"
+          ]
+        }
+      ]
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "cases": [
+        {
+          "id": "requests-title",
+          "mapping": {
+            "A": "enhanced",
+            "B": "raw"
+          },
+          "rawScores": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "enhancedScores": {
+            "准确性": 5,
+            "完整性": 5,
+            "清晰度": 5,
+            "可执行性": 5
+          },
+          "originalVerdict": "A胜",
+          "interpretation": "ENHANCED_PREFERRED",
+          "originalSevereFailures": []
+        },
+        {
+          "id": "mortality-2015-2025",
+          "mapping": {
+            "A": "raw",
+            "B": "enhanced"
+          },
+          "rawScores": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "enhancedScores": {
+            "准确性": 3,
+            "完整性": 3,
+            "清晰度": 3,
+            "可执行性": 2
+          },
+          "originalVerdict": "A胜",
+          "interpretation": "RAW_PREFERRED",
+          "originalSevereFailures": [
+            "B: 用户要求的年度YLL和性别YLL率交付被做成大量'现有资料未提供'的表格空架子，未提供可执行计算模板或代码，原交付实质被弱化为问卷式待补充结构。"
+          ]
+        }
+      ]
+    }
+  ],
+  "qualityGateOverriddenByScores": false,
+  "localCautions": [
+    "Both reviewers missed the wrong Arriaga journal citation in the raw work",
+    "Missing code, calculation examples or executable templates are not independently mandated by the original research prompt",
+    "Raw preference does not make the raw work factually qualified; no majority-vote release decision"
+  ]
+}

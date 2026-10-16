@@ -1,0 +1,230 @@
+{
+  "implementations": [
+    {
+      "file": "raw-1.py",
+      "sha256": "f4a55b0ae4eb212694bf58777c310ab8eaa23bc714cedb73f168f7ba022c15fd",
+      "compiled": true,
+      "omittedTopLevelNodeLines": [
+        27
+      ]
+    },
+    {
+      "file": "raw-2.py",
+      "sha256": "8f55f9483a6d989f30a8e830c6c358e2bc80e161951988cd72e5e0903d0f0fc7",
+      "compiled": true,
+      "omittedTopLevelNodeLines": [
+        22,
+        30
+      ]
+    },
+    {
+      "file": "raw-3.py",
+      "sha256": "57bcb7a9afae518c1beeb128315942a1c5c4db9f68dfbcfc8379b6009dbc57b1",
+      "compiled": true,
+      "omittedTopLevelNodeLines": [
+        11
+      ]
+    },
+    {
+      "file": "enhanced-1.py",
+      "sha256": "24dee59258e38a09a612403f51c39d773ae5fb3731e038f51adc1d2b39aa2123",
+      "compiled": true,
+      "omittedTopLevelNodeLines": [
+        43
+      ]
+    }
+  ],
+  "modelAuthoredTests": 0,
+  "independentTestCompiled": true,
+  "externalNetworkCallsByGeneratedCode": 0,
+  "tests": 30,
+  "failures": 4,
+  "errors": 2,
+  "observations": [
+    {
+      "test": "test_enhanced_1_absent",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_enhanced_1_empty",
+      "tier": "SUPPLEMENTAL_DIAGNOSTIC",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_enhanced_1_entity",
+      "tier": "SUPPLEMENTAL_DIAGNOSTIC",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_enhanced_1_http_error",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_enhanced_1_normal",
+      "tier": "CORE",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_enhanced_1_timeout",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_enhanced_1_utf8",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_enhanced_non_html",
+      "tier": "ENHANCED_ONLY_CONTRACT",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_enhanced_order_and_failure_isolation",
+      "tier": "ENHANCED_ONLY_CONTRACT",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_1_absent",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_1_empty",
+      "tier": "SUPPLEMENTAL_DIAGNOSTIC",
+      "status": "ERROR",
+      "detail": "AttributeError: 'NoneType' object has no attribute 'strip'"
+    },
+    {
+      "test": "test_raw_1_entity",
+      "tier": "SUPPLEMENTAL_DIAGNOSTIC",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_1_http_error",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_1_normal",
+      "tier": "CORE",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_1_timeout",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_1_utf8",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_2_absent",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_2_empty",
+      "tier": "SUPPLEMENTAL_DIAGNOSTIC",
+      "status": "FAIL",
+      "detail": "'无' not found in \"错误: 'NoneType' object has no attribute 'strip'\""
+    },
+    {
+      "test": "test_raw_2_entity",
+      "tier": "SUPPLEMENTAL_DIAGNOSTIC",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_2_http_error",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_2_normal",
+      "tier": "CORE",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_2_timeout",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_2_utf8",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_3_absent",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_3_empty",
+      "tier": "SUPPLEMENTAL_DIAGNOSTIC",
+      "status": "FAIL",
+      "detail": "'无' not found in ''"
+    },
+    {
+      "test": "test_raw_3_entity",
+      "tier": "SUPPLEMENTAL_DIAGNOSTIC",
+      "status": "FAIL",
+      "detail": "'A & B' != 'A &amp; B'\n- A & B\n+ A &amp; B\n?    ++++\n"
+    },
+    {
+      "test": "test_raw_3_http_error",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "FAIL",
+      "detail": "Regex didn't match: '失败|错误' not found in 'Upstream error'"
+    },
+    {
+      "test": "test_raw_3_normal",
+      "tier": "CORE",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "test": "test_raw_3_timeout",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "ERROR",
+      "detail": "Timeout: synthetic timeout"
+    },
+    {
+      "test": "test_raw_3_utf8",
+      "tier": "PREFROZEN_BOUNDARY_OBSERVATION",
+      "status": "PASS",
+      "detail": null
+    }
+  ],
+  "limitations": [
+    "Function definitions executed unchanged; external-site top-level demonstrations omitted",
+    "Supplemental diagnostics are not retroactive hard requirements for the raw arm",
+    "No model-authored test files were provided in either response"
+  ]
+}

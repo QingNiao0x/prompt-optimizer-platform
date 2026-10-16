@@ -1,0 +1,225 @@
+{
+  "specificPunctuationFix": {
+    "passed": true,
+    "rawModelContainsSemicolonRule": true,
+    "copyContainsOnlySemicolonVariant": true,
+    "canonicalSourcePreserved": true
+  },
+  "questionSources": {
+    "serverCandidates": [
+      "死亡率分析中的“某地区”具体指哪里？请明确研究覆盖的省、市或区域。",
+      "本次 YLL／减寿分析采用哪份参考寿命表或标准寿命？该选择会影响减寿年数及不同人群的比较。"
+    ],
+    "rawModel": [
+      "死亡率分析中的“某地区”具体指哪里？请明确研究覆盖的省、市或区域。",
+      "本次YLL／减寿分析采用哪份参考寿命表或标准寿命？该选择会影响减寿年数及不同人群的比较。",
+      "时间序列长期趋势和季节性趋势拟采用哪种统计方法？不同方法对数据长度、季节性和自相关性的要求不同。",
+      "Arriaga分解拟按哪个维度展开（年龄组、死因别或人群别）？分解维度和年龄分组会影响贡献值的解释。",
+      "数据来源、字段结构、时间粒度、人群分组和亚类定义是否已有明确材料？缺少这些信息无法生成实证数值和具体结论。"
+    ],
+    "final": [
+      "死亡率分析中的“某地区”具体指哪里？请明确研究覆盖的省、市或区域。",
+      "本次 YLL／减寿分析采用哪份参考寿命表或标准寿命？该选择会影响减寿年数及不同人群的比较。",
+      "时间序列长期趋势和季节性趋势拟采用哪种统计方法？不同方法对数据长度、季节性和自相关性的要求不同。",
+      "Arriaga分解拟按哪个维度展开（年龄组、死因别或人群别）？分解维度和年龄分组会影响贡献值的解释。",
+      "数据来源、字段结构、时间粒度、人群分组和亚类定义是否已有明确材料？缺少这些信息无法生成实证数值和具体结论。"
+    ],
+    "note": "First two were supplied as server candidates; all five are in the raw model response. Equivalent punctuation/spacing is not a new question."
+  },
+  "remainingIssues": [
+    {
+      "id": "RESEARCH_STATE_REPETITION",
+      "firstSeen": "ENHANCEMENT_MODEL",
+      "platformContribution": "Pending list appended while model background/constraint status is already repeated",
+      "downstream": "114 occurrences of the missing-material phrase, 22 blank annual rows",
+      "attribution": "MIXED",
+      "closed": false
+    },
+    {
+      "id": "TABLE_CONDITION_AMBIGUITY",
+      "modelEvidence": "- 用户明确要求的表格（如年度YLL、性别YLL率）在正文中保留表结构，数值留待数据补充；",
+      "templateGuidance": "按已给来源、字段、统计口径与比较范围交付，要求方案或表结构时只交付原定内容；要求撰写分析正文或报告时，在原定范围内完成有实质内容的正文，资料不足时交付有依据的可修订初稿，不能用方案、提纲或补充信息清单替代正文。沿用用户给定的分析问题与章节，将分析目的、指标含义、比较逻辑和解释依据写成连贯的实质段落；候选方法说明适用条件，不写成已选口径。没有实证数据时，不主动铺空结果表或逐节复读待确认，也不先回复补材料问卷；资料缺口集中说明一次，用户明确要求的表格仍须保留。缺少数据只限制依赖它的真实数值和结论，其他有依据的原定内容继续交付；一般规律和可能解释不能写成本研究已观察到的结果。专业建议不冒充已选口径，缺失和未核实不改成零值，不默认未知口径；只有要求时才提供代码。",
+      "platformPreservesModelLine": true,
+      "downstream": "Treats yearly/sex YLL tables as explicitly requested although the raw prompt did not request tables",
+      "attribution": "ENHANCEMENT_AMBIGUITY_AND_DOWNSTREAM_RULE_VIOLATION",
+      "closed": false
+    },
+    {
+      "id": "PROFESSIONAL_QUESTION_BOUNDARY",
+      "assessment": [
+        {
+          "kind": "PROFESSIONAL_OPTION",
+          "missing": "时间序列长期趋势与季节性趋势的具体分析方法未指定",
+          "completion": "在方法部分给出候选方法及适用条件：长期趋势可考虑Joinpoint回归、线性回归或Mann-Kendall趋势检验；季节性趋势可考虑季节指数、X-13ARIMA-SEATS或周期图分析。说明各方法对数据长度、季节性和自相关性的要求，并标注为拟议方法，不冒充已选口径。",
+          "basis": "原始需求要求分析时间序列的长期趋势和季节性趋势，但未指定具体统计方法，属于专业方法选择缺口。"
+        },
+        {
+          "kind": "PROFESSIONAL_OPTION",
+          "missing": "Arriaga分解方法的具体分解维度与实现步骤未指定",
+          "completion": "在方法部分说明Arriaga分解用于将死亡率变化分解为年龄别、死因别或人群别的贡献，给出拟议分解维度（如年龄组、性别、亚类）和计算步骤框架，并标注为拟议方案，实际分解维度待确认。",
+          "basis": "原始需求要求采用Arriaga分解方法，但未说明分解维度、年龄分组或死因分类，属于专业方法操作化缺口。"
+        }
+      ],
+      "status": "Methods may be proposed under conditions; region, actual denominator/reference table and decomposition target must not be fabricated or silently confirmed",
+      "attribution": "MODEL_CLASSIFICATION_AND_PLATFORM_QUESTION_POLICY_REQUIRE_FURTHER_SCOPED_REPLAY",
+      "closed": false
+    },
+    {
+      "id": "IMPLICIT_SOFTWARE_INTENT",
+      "requestsTemplate": "GENERAL",
+      "visibleConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "status": "Raw requests task resolves to GENERAL although generated task explicitly delivers Python code; investigate intent/rule applicability without treating server-side filtering as disabled",
+      "attribution": "PLATFORM_INTENT_BOUNDARY_OPEN",
+      "closed": false
+    },
+    {
+      "id": "ORIGINAL_502_ROOT_CAUSE",
+      "status": "Original failure response unavailable; fresh identical-raw-input request succeeds once, not proof of stable recovery or unique historical cause",
+      "closed": false
+    },
+    {
+      "id": "REVIEWER_OMISSIONS",
+      "status": "Both prefer requests enhanced and research raw, but miss wrong journal citation and add an expectation of code/templates absent from raw requirements",
+      "attribution": "EVALUATION_LIMITATION",
+      "closed": false
+    }
+  ],
+  "aiReviews": [
+    {
+      "model": "deepseek-flash",
+      "cases": [
+        {
+          "id": "requests-title",
+          "mapping": {
+            "A": "enhanced",
+            "B": "raw"
+          },
+          "rawScores": {
+            "准确性": 4,
+            "完整性": 5,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "enhancedScores": {
+            "准确性": 5,
+            "完整性": 4,
+            "清晰度": 5,
+            "可执行性": 5
+          },
+          "originalVerdict": "A胜",
+          "interpretation": "ENHANCED_PREFERRED",
+          "originalSevereFailures": []
+        },
+        {
+          "id": "mortality-2015-2025",
+          "mapping": {
+            "A": "raw",
+            "B": "enhanced"
+          },
+          "rawScores": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 3
+          },
+          "enhancedScores": {
+            "准确性": 4,
+            "完整性": 3,
+            "清晰度": 4,
+            "可执行性": 2
+          },
+          "originalVerdict": "A胜",
+          "interpretation": "RAW_PREFERRED",
+          "originalSevereFailures": [
+            "B将用户要求的年度、性别YLL和YLL率交付转化为大量“现有资料未提供”的表结构，未提供可执行计算模板或示例计算流程，属于把原交付变成空架子。"
+          ]
+        }
+      ]
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "cases": [
+        {
+          "id": "requests-title",
+          "mapping": {
+            "A": "enhanced",
+            "B": "raw"
+          },
+          "rawScores": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "enhancedScores": {
+            "准确性": 5,
+            "完整性": 5,
+            "清晰度": 5,
+            "可执行性": 5
+          },
+          "originalVerdict": "A胜",
+          "interpretation": "ENHANCED_PREFERRED",
+          "originalSevereFailures": []
+        },
+        {
+          "id": "mortality-2015-2025",
+          "mapping": {
+            "A": "raw",
+            "B": "enhanced"
+          },
+          "rawScores": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "enhancedScores": {
+            "准确性": 3,
+            "完整性": 3,
+            "清晰度": 3,
+            "可执行性": 2
+          },
+          "originalVerdict": "A胜",
+          "interpretation": "RAW_PREFERRED",
+          "originalSevereFailures": [
+            "B: 用户要求的年度YLL和性别YLL率交付被做成大量'现有资料未提供'的表格空架子，未提供可执行计算模板或代码，原交付实质被弱化为问卷式待补充结构。"
+          ]
+        }
+      ]
+    }
+  ],
+  "localAcceptance": {
+    "requests": "CORE_CODE_BEHAVIOUR_PASSED_FOR_THIS_SAMPLE",
+    "research": "FAILED_SUBSTANTIVE_DELIVERY_GATE",
+    "hardGateDecision": "No average-score override; preference does not certify raw research accuracy",
+    "overallG1toG8": "OPEN"
+  },
+  "sourceChecks": [
+    {
+      "topic": "Arriaga paper journal and target metric",
+      "source": "https://pubmed.ncbi.nlm.nih.gov/6714492/",
+      "verified": "1984 paper is in Demography; abstract explains life expectancy changes through age-group mortality changes",
+      "limitation": "Abstract does not verify every formula, software function or alternative mortality-rate decomposition"
+    },
+    {
+      "topic": "WHO YLL loss function",
+      "source": "https://www.who.int/docs/default-source/gho-documents/global-health-estimates/ghe2019_daly-methods.pdf",
+      "verified": "WHO describes age/sex death counts multiplied by a standard loss function. Fixed age-cutoff calculation is a different specification and cannot silently substitute a selected reference life table",
+      "limitation": "No actual reference table, denominator or numerical result was chosen or calculated for the user"
+    }
+  ],
+  "strategy": {
+    "adopted": "Narrow punctuation coverage only",
+    "promptChanges": 0,
+    "extraRuntimeValidationCalls": 0,
+    "qualityRetries": 0,
+    "next": "Replay known model/state/table and question-scope cases offline before a separate minimal candidate; preserve object/parameter distinctions and normal variants",
+    "doNotAdopt": [
+      "More prohibitions based on one downstream failure",
+      "Require unrequested code/examples",
+      "Treat unavailable empirical results as a requirement to invent data"
+    ]
+  }
+}

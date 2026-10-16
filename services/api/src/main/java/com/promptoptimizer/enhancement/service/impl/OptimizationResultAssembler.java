@@ -665,7 +665,13 @@ public class OptimizationResultAssembler {
         if (values.isEmpty()) return;
         PromptSection section = sections.get(PromptSectionType.CONSTRAINTS);
         var missing = values.stream().distinct().filter(value -> !section.content().contains(value)).toList();
+        appendMissingConstraintBlock(sections, title, missing);
+    }
+
+    /** 只写入调用方已判定未覆盖的规则，不再次用子串判断抹去条件或否定差异。 */
+    private void appendMissingConstraintBlock(Map<PromptSectionType, PromptSection> sections, String title, List<String> missing) {
         if (missing.isEmpty()) return;
+        PromptSection section = sections.get(PromptSectionType.CONSTRAINTS);
         sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(PromptSectionType.CONSTRAINTS,
                 section.title(), section.content() + "\n\n" + title + "：\n"
                 + missing.stream().map(value -> "- " + value).collect(Collectors.joining("\n"))));
@@ -871,7 +877,9 @@ public class OptimizationResultAssembler {
         PromptSection current = sections.get(PromptSectionType.CONSTRAINTS);
         sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(
                 current.type(), current.title(), PlatformConstraintRenderer.providerText(current.content(), rawPrompt, constraints)));
-        appendConstraintBlock(sections, "任务相关约束", constraints.taskSpecific());
+        // 仅任务规则采用完整断言覆盖；权限、来源、未决状态及固定平台块保留各自原有保护。
+        appendMissingConstraintBlock(sections, "任务相关约束", TaskConstraintCoverage.uncovered(
+                sections.get(PromptSectionType.CONSTRAINTS).content(), constraints.taskSpecific()));
         appendConstraintBlock(sections, "用户补充权限边界", constraints.additionalPermissions());
     }
 

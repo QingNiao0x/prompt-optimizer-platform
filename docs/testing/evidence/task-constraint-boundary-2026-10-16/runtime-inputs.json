@@ -1,0 +1,59 @@
+{
+  "cases": [
+    {
+      "id": "requests-title",
+      "rawPrompt": "使用requests库爬取网页标题。",
+      "context": {
+        "description": "",
+        "files": []
+      },
+      "enhancement": {
+        "includeContextSummary": true,
+        "includeAmbiguityAnalysis": true,
+        "includePermissionBoundaries": true,
+        "includeConversationHistory": false,
+        "includeExamples": false,
+        "templateCode": "AUTO"
+      }
+    },
+    {
+      "id": "mortality-2015-2025",
+      "rawPrompt": "我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析",
+      "context": {
+        "description": "",
+        "files": []
+      },
+      "enhancement": {
+        "includeContextSummary": true,
+        "includeAmbiguityAnalysis": true,
+        "includePermissionBoundaries": true,
+        "includeConversationHistory": false,
+        "includeExamples": false,
+        "templateCode": "AUTO"
+      }
+    }
+  ],
+  "parameters": {
+    "temperature": 0.2,
+    "max_tokens": 10000,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "reviewerModels": [
+    "deepseek-flash",
+    "deepseek-pro"
+  ],
+  "actualPlanAnswers": [],
+  "providedMaterials": [],
+  "inputTextModified": false,
+  "originalFailureSwitches": "UNKNOWN; this batch explicitly uses direct mode and examples off",
+  "modelVersions": "Verify catalogue display version and actual response identifier before conclusions"
+}

@@ -1,0 +1,53 @@
+{
+  "phase": "candidateValidation",
+  "version": "candidate16",
+  "purpose": "EXECUTION",
+  "label": "candidate16-requests-title-enhanced",
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "## 背景\r\n用户希望使用 Python 的 requests 库爬取网页标题。原始需求未给出目标网页地址、标题的交付形式，也未说明解析工具与异常处理约定。\r\n\r\n## 任务\r\n编写一段使用 requests 库爬取网页标题的 Python 代码。\r\n- 接受一个或多个网页 URL 作为输入。\r\n- 使用 requests 发起请求获取页面内容，并提取每个页面的 title 文本。\r\n- 按 URL 顺序输出抓取到的标题。\r\n- 对请求失败、页面无 title 标签、非 HTML 响应等情况作常规处理，单个 URL 失败不影响其余 URL 的抓取。\r\n- 请求头、超时、编码解析等执行细节由执行者按常规做法补全。\r\n\r\n## 输出\r\n一段可直接运行的 Python 代码，包含使用 requests 库抓取网页标题的完整逻辑，并附带最简运行说明（如何传入 URL、如何查看结果）。\r\n\r\n## 约束\r\n- 必须使用 requests 库发起请求。\r\n- 不得把猜测写成事实：目标地址、输出格式等未由用户确认的信息，按常规做法处理并说明其为默认处理方式。\r\n- 不增加用户未要求的说明、报告或额外交付物。\r\n\r\n平台强制约束（不得删除或弱化）：\r\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\r\n\r\n## 验收\r\n- 代码使用 requests 库完成页面获取，并正确提取 title 文本。\r\n- 多个 URL 时按输入顺序输出标题，单个 URL 失败不中断其余抓取。\r\n- 代码可直接运行，运行说明与代码行为一致。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "startedAt": "2026-10-15T19:35:36.791Z",
+  "httpStatus": 200,
+  "responseText": "{\"id\":\"2fcb55ba-0982-4e86-8c17-2201f4474de5\",\"object\":\"chat.completion\",\"created\":1792092936,\"model\":\"deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"以下代码按常规做法补全了请求头、超时和编码解析；目标地址、输出格式等未由你确认的信息均按默认方式处理。\\n\\n```python\\nimport sys\\nimport requests\\nfrom bs4 import BeautifulSoup\\n\\nHEADERS = {\\n    \\\"User-Agent\\\": (\\n        \\\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) \\\"\\n        \\\"AppleWebKit/537.36 (KHTML, like Gecko) \\\"\\n        \\\"Chrome/122.0.0.0 Safari/537.36\\\"\\n    )\\n}\\nTIMEOUT = 10\\n\\n\\ndef fetch_title(url: str) -> str:\\n    \\\"\\\"\\\"抓取单个 URL 的 title 文本；失败时返回带说明的字符串。\\\"\\\"\\\"\\n    try:\\n        resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)\\n        resp.raise_for_status()\\n    except requests.RequestException as e:\\n        return f\\\"[请求失败] {e}\\\"\\n\\n    content_type = resp.headers.get(\\\"Content-Type\\\", \\\"\\\")\\n    if \\\"html\\\" not in content_type.lower():\\n        return f\\\"[非 HTML 响应] Content-Type: {content_type or '未知'}\\\"\\n\\n    # 常规做法：优先使用响应声明的编码，其次使用 apparent_encoding\\n    if not resp.encoding or resp.encoding.lower() == \\\"iso-8859-1\\\":\\n        resp.encoding = resp.apparent_encoding or \\\"utf-8\\\"\\n\\n    soup = BeautifulSoup(resp.text, \\\"html.parser\\\")\\n    if soup.title and soup.title.string:\\n        return soup.title.string.strip()\\n    return \\\"[无 title 标签]\\\"\\n\\n\\ndef main(urls):\\n    for url in urls:\\n        title = fetch_title(url)\\n        print(f\\\"{url}\\\\t{title}\\\")\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    # 默认处理方式：从命令行参数读取 URL；未提供时使用示例 URL\\n    urls = sys.argv[1:]\\n    if not urls:\\n        urls = [\\\"https://www.example.com\\\"]\\n    main(urls)\\n```\\n\\n最简运行说明：\\n\\n- 传入一个或多个 URL：\\n  ```bash\\n  python script.py https://www.example.com https://www.python.org\\n  ```\\n- 不传参数时，默认抓取 `https://www.example.com`（默认处理方式）。\\n- 输出格式为每行 `URL<TAB>标题`（默认处理方式）；失败、非 HTML、无 title 的情况会以方括号说明代替标题，且不会中断后续 URL 的抓取。\\n\\n依赖安装：\\n```bash\\npip install requests beautifulsoup4\\n```\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":392,\"completion_tokens\":553,\"total_tokens\":945,\"prompt_tokens_details\":{\"cached_tokens\":0},\"prompt_cache_hit_tokens\":0,\"prompt_cache_miss_tokens\":392},\"system_fingerprint\":\"aeb56401ca74e127821c4f9126dcb669\"}",
+  "response": {
+    "id": "2fcb55ba-0982-4e86-8c17-2201f4474de5",
+    "object": "chat.completion",
+    "created": 1792092936,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "以下代码按常规做法补全了请求头、超时和编码解析；目标地址、输出格式等未由你确认的信息均按默认方式处理。\n\n```python\nimport sys\nimport requests\nfrom bs4 import BeautifulSoup\n\nHEADERS = {\n    \"User-Agent\": (\n        \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) \"\n        \"AppleWebKit/537.36 (KHTML, like Gecko) \"\n        \"Chrome/122.0.0.0 Safari/537.36\"\n    )\n}\nTIMEOUT = 10\n\n\ndef fetch_title(url: str) -> str:\n    \"\"\"抓取单个 URL 的 title 文本；失败时返回带说明的字符串。\"\"\"\n    try:\n        resp = requests.get(url, headers=HEADERS, timeout=TIMEOUT)\n        resp.raise_for_status()\n    except requests.RequestException as e:\n        return f\"[请求失败] {e}\"\n\n    content_type = resp.headers.get(\"Content-Type\", \"\")\n    if \"html\" not in content_type.lower():\n        return f\"[非 HTML 响应] Content-Type: {content_type or '未知'}\"\n\n    # 常规做法：优先使用响应声明的编码，其次使用 apparent_encoding\n    if not resp.encoding or resp.encoding.lower() == \"iso-8859-1\":\n        resp.encoding = resp.apparent_encoding or \"utf-8\"\n\n    soup = BeautifulSoup(resp.text, \"html.parser\")\n    if soup.title and soup.title.string:\n        return soup.title.string.strip()\n    return \"[无 title 标签]\"\n\n\ndef main(urls):\n    for url in urls:\n        title = fetch_title(url)\n        print(f\"{url}\\t{title}\")\n\n\nif __name__ == \"__main__\":\n    # 默认处理方式：从命令行参数读取 URL；未提供时使用示例 URL\n    urls = sys.argv[1:]\n    if not urls:\n        urls = [\"https://www.example.com\"]\n    main(urls)\n```\n\n最简运行说明：\n\n- 传入一个或多个 URL：\n  ```bash\n  python script.py https://www.example.com https://www.python.org\n  ```\n- 不传参数时，默认抓取 `https://www.example.com`（默认处理方式）。\n- 输出格式为每行 `URL<TAB>标题`（默认处理方式）；失败、非 HTML、无 title 的情况会以方括号说明代替标题，且不会中断后续 URL 的抓取。\n\n依赖安装：\n```bash\npip install requests beautifulsoup4\n```"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 392,
+      "completion_tokens": 553,
+      "total_tokens": 945,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 392
+    },
+    "system_fingerprint": "aeb56401ca74e127821c4f9126dcb669"
+  },
+  "elapsedMs": 3021
+}

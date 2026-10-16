@@ -1,0 +1,65 @@
+{
+  "status": 200,
+  "elapsedMs": 5548,
+  "requestId": "54710e22-8e93-4d40-b31f-d14da7af20ba",
+  "body": {
+    "requestId": "54710e22-8e93-4d40-b31f-d14da7af20ba",
+    "data": {
+      "optimizedPrompt": "## 背景\n用户希望使用 Python 的 requests 库爬取网页标题。原始需求未给出目标网页地址、标题的交付形式，也未说明解析工具与异常处理约定。\n\n## 任务\n编写一段使用 requests 库爬取网页标题的 Python 代码。\n- 接受一个或多个网页 URL 作为输入。\n- 使用 requests 发起请求获取页面内容，并提取每个页面的 title 文本。\n- 按 URL 顺序输出抓取到的标题。\n- 对请求失败、页面无 title 标签、非 HTML 响应等情况作常规处理，单个 URL 失败不影响其余 URL 的抓取。\n- 请求头、超时、编码解析等执行细节由执行者按常规做法补全。\n\n## 输出\n一段可直接运行的 Python 代码，包含使用 requests 库抓取网页标题的完整逻辑，并附带最简运行说明（如何传入 URL、如何查看结果）。\n\n## 约束\n- 必须使用 requests 库发起请求。\n- 不得把猜测写成事实：目标地址、输出格式等未由用户确认的信息，按常规做法处理并说明其为默认处理方式。\n- 不增加用户未要求的说明、报告或额外交付物。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收\n- 代码使用 requests 库完成页面获取，并正确提取 title 文本。\n- 多个 URL 时按输入顺序输出标题，单个 URL 失败不中断其余抓取。\n- 代码可直接运行，运行说明与代码行为一致。",
+      "sections": [
+        {
+          "type": "BACKGROUND",
+          "title": "背景",
+          "content": "用户希望使用 Python 的 requests 库爬取网页标题。原始需求未给出目标网页地址、标题的交付形式，也未说明解析工具与异常处理约定。"
+        },
+        {
+          "type": "TASK",
+          "title": "任务",
+          "content": "编写一段使用 requests 库爬取网页标题的 Python 代码。\n- 接受一个或多个网页 URL 作为输入。\n- 使用 requests 发起请求获取页面内容，并提取每个页面的 title 文本。\n- 按 URL 顺序输出抓取到的标题。\n- 对请求失败、页面无 title 标签、非 HTML 响应等情况作常规处理，单个 URL 失败不影响其余 URL 的抓取。\n- 请求头、超时、编码解析等执行细节由执行者按常规做法补全。"
+        },
+        {
+          "type": "OUTPUT",
+          "title": "输出",
+          "content": "一段可直接运行的 Python 代码，包含使用 requests 库抓取网页标题的完整逻辑，并附带最简运行说明（如何传入 URL、如何查看结果）。"
+        },
+        {
+          "type": "CONSTRAINTS",
+          "title": "约束",
+          "content": "- 必须使用 requests 库发起请求。\n- 不得把猜测写成事实：目标地址、输出格式等未由用户确认的信息，按常规做法处理并说明其为默认处理方式。\n- 不增加用户未要求的说明、报告或额外交付物。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        },
+        {
+          "type": "ACCEPTANCE",
+          "title": "验收",
+          "content": "- 代码使用 requests 库完成页面获取，并正确提取 title 文本。\n- 多个 URL 时按输入顺序输出标题，单个 URL 失败不中断其余抓取。\n- 代码可直接运行，运行说明与代码行为一致。"
+        }
+      ],
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [
+        "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      ],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 5401,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "STRUCTURED"
+    }
+  }
+}

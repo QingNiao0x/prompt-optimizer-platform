@@ -1,0 +1,96 @@
+{
+  "date": "2026-10-12",
+  "scope": "ME-00-A baseline then ME-01-A + ME-03-A bounded repair",
+  "cases": 7,
+  "initialPlanEnabled": false,
+  "initialPlanAnswers": [],
+  "initialExamplesEnabled": false,
+  "maximumActualModelCalls": 275,
+  "phaseLimits": {
+    "baseline": 80,
+    "candidateValidation": 195
+  },
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "baselineRounds": 1,
+  "candidateRounds": 2,
+  "planSupplement": [
+    "Q04",
+    "Q05"
+  ],
+  "review": "two independent AI reviewers, not domain experts; disputed verdicts unresolved until adjudication",
+  "sameTestAccountFile": "private runtime only; reuse former synthetic user",
+  "archiveSecrets": false,
+  "accountCreationAllowed": false,
+  "priceAndCurrencyCost": "UNKNOWN until verified invoice; actual provider tokens collected",
+  "productPrimaryComparison": "raw actual work vs actual copied enhanced work",
+  "repairRegression": "current enhanced vs repaired enhanced, separately reported",
+  "planParity": "verbatim actual submitted test answers provided to raw and direct comparators, never patch Plan copied body",
+  "severeFailure": "block capability release, preserve trace; no automatic budget increase",
+  "activeBatch": {
+    "version": "candidate16",
+    "group": "TWO_DIRECT_TASK_REGRESSIONS",
+    "mode": "direct",
+    "status": "OPEN",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationAmendment": "protocol-amendment-14.json",
+    "secondRoundAuthorized": false,
+    "cases": [
+      "requests-title",
+      "mortality-2015-2025"
+    ],
+    "casesFile": "candidate16-two-cases.json",
+    "casesSha256": "3680c36ba111d2c7353180853f83f7643f70e0b233e3afce83d8fb17ef5f9aa3",
+    "allowedRawPromptSha256": [
+      "ffefeb36c4b228371ac118dc21fdabd457cc657f0064a5592d8da8d5d8150a9f",
+      "9d8e8817bf76ebf7c0d9bb7f6776a623753f2d8ae56b321beaf345650596adcb"
+    ],
+    "model": "deepseek-flash",
+    "executionModels": [
+      "deepseek-flash",
+      "deepseek-pro"
+    ],
+    "callsBefore": 253,
+    "candidateCallsBefore": 183,
+    "maximumNewCalls": 12,
+    "maximumActualCallsAfterBatch": 265,
+    "maximumGenerationCalls": 6,
+    "maximumExecutionCalls": 4,
+    "maximumReviewCalls": 2,
+    "maximumPlanningCalls": 0,
+    "purposeMaximums": {
+      "PLATFORM_GENERATION": 6,
+      "EXECUTION": 4,
+      "REVIEW": 2
+    },
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "executionParameters": {
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "accountCreationAllowed": false,
+    "noPhaseBorrowing": true,
+    "noClosedBatchAllowanceTransfer": true,
+    "qualityRetriesAllowed": false,
+    "completedSubmissionsAreNotRepeated": true,
+    "sourceFreeze": "candidate16-source.json"
+  }
+}

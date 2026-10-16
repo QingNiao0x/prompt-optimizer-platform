@@ -1,0 +1,75 @@
+{
+  "candidate": "candidate16",
+  "status": "APPROVED_BY_USER",
+  "standingEvaluationAuthorization": true,
+  "sourceFreeze": "candidate16-source.json",
+  "accountReference": "tmp/local-acceptance/account.json",
+  "createAccounts": false,
+  "previousLedgerVerifiedFromNumberedLocalTraces": {
+    "total": 253,
+    "baseline": 70,
+    "candidateValidation": 183,
+    "traceFiles": 253,
+    "maximumTraceNumber": 253
+  },
+  "currentFormalLimits": {
+    "total": 263,
+    "baseline": 80,
+    "candidateValidation": 183
+  },
+  "proposedFormalLimits": {
+    "total": 275,
+    "baseline": 80,
+    "candidateValidation": 195
+  },
+  "maximumNewCalls": 12,
+  "allocation": {
+    "twoDirectEnhancementsIncludingExistingAtMostThreeAttemptsEach": 6,
+    "twoOriginalAndTwoEnhancedDownstreamWorks": 4,
+    "twoIndependentAiAssistedReviews": 2
+  },
+  "cases": [
+    {
+      "id": "requests-title",
+      "rawPrompt": "使用requests库爬取网页标题。"
+    },
+    {
+      "id": "mortality-2015-2025",
+      "inputFixture": "services/api/src/test/resources/enhancement/mortality-20261016-observed.json#rawPrompt"
+    }
+  ],
+  "controls": {
+    "mode": "direct",
+    "examplesEnabled": false,
+    "attachedMaterials": [],
+    "actualPlanAnswers": [],
+    "enhancementModel": "deepseek:deepseek-flash",
+    "downstreamModel": "deepseek:deepseek-flash",
+    "aiReviewers": [
+      "deepseek:deepseek-flash",
+      "deepseek:deepseek-pro"
+    ],
+    "parametersAndConcreteModelVersions": "Must freeze verified current runtime values before sending; do not infer absent version identifiers",
+    "executeCopiedBodyUnmodified": true,
+    "qualityRetries": 0,
+    "originalFailurePlanAndExampleFlags": "UNKNOWN; chosen settings are this batch's controls, not recovered historical settings",
+    "doNotUseResearchSuccessToCloseRequestsRegression": true,
+    "baselineBalanceNotBorrowed": true,
+    "closedAllowancesNotTransferred": true,
+    "allFailedCallsCount": true
+  },
+  "maximumActualAfter": {
+    "total": 265,
+    "baseline": 70,
+    "candidateValidation": 195
+  },
+  "stopBeforeExpansionAuthorization": false,
+  "notCoveredByThisProposal": [
+    "Fresh Plan question generation",
+    "Complete example combination matrix",
+    "Cross-vendor diagnosis",
+    "Full frontend lifecycle",
+    "G1-G8 overall acceptance"
+  ],
+  "authorizationEvidence": "用户明确回复：批准新增12次，执行两题复验"
+}

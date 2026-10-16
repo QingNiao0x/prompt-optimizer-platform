@@ -1,0 +1,168 @@
+{
+  "actual": {
+    "total": 262,
+    "baseline": 70,
+    "candidateValidation": 192
+  },
+  "formalLimits": {
+    "total": 275,
+    "baseline": 80,
+    "candidateValidation": 195
+  },
+  "batch": {
+    "version": "candidate16",
+    "maximum": 12,
+    "actual": 9,
+    "unusedClosedNotTransferable": 3,
+    "purposes": {
+      "PLATFORM_GENERATION": 2,
+      "EXECUTION": 4,
+      "REVIEW": 3
+    },
+    "http200": 8,
+    "http400": 1,
+    "status": "CLOSED",
+    "qualityRetries": 0
+  },
+  "uncountedLocalPreIoFailure": {
+    "case": "requests-title",
+    "requestId": "d3094bee-6561-4808-bd1d-5d28b4bc17e4",
+    "status": 502,
+    "actualModelCalls": 0,
+    "attribution": "Evaluation harness template whitelist rejected GENERAL before upstream reservation; preserved separately"
+  },
+  "table": [
+    {
+      "trace": 254,
+      "purpose": "PLATFORM_GENERATION",
+      "label": null,
+      "requestId": "5ab6bf75-e29a-494d-8250-6f8b148c899c",
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 10948,
+      "inputTokens": 7268,
+      "outputTokens": 1919,
+      "totalTokens": 9187,
+      "failure": null
+    },
+    {
+      "trace": 255,
+      "purpose": "PLATFORM_GENERATION",
+      "label": null,
+      "requestId": "54710e22-8e93-4d40-b31f-d14da7af20ba",
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 5038,
+      "inputTokens": 6739,
+      "outputTokens": 783,
+      "totalTokens": 7522,
+      "failure": null
+    },
+    {
+      "trace": 256,
+      "purpose": "EXECUTION",
+      "label": "candidate16-requests-title-raw",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 4014,
+      "inputTokens": 12,
+      "outputTokens": 956,
+      "totalTokens": 968,
+      "failure": null
+    },
+    {
+      "trace": 257,
+      "purpose": "EXECUTION",
+      "label": "candidate16-mortality-2015-2025-enhanced",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 34807,
+      "inputTokens": 1113,
+      "outputTokens": 5638,
+      "totalTokens": 6751,
+      "failure": null
+    },
+    {
+      "trace": 258,
+      "purpose": "EXECUTION",
+      "label": "candidate16-requests-title-enhanced",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 3021,
+      "inputTokens": 392,
+      "outputTokens": 553,
+      "totalTokens": 945,
+      "failure": null
+    },
+    {
+      "trace": 259,
+      "purpose": "EXECUTION",
+      "label": "candidate16-mortality-2015-2025-raw",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 12046,
+      "inputTokens": 85,
+      "outputTokens": 2098,
+      "totalTokens": 2183,
+      "failure": null
+    },
+    {
+      "trace": 260,
+      "purpose": "REVIEW",
+      "label": "candidate16-review-deepseek-flash",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 4235,
+      "inputTokens": 9576,
+      "outputTokens": 722,
+      "totalTokens": 10298,
+      "failure": null
+    },
+    {
+      "trace": 261,
+      "purpose": "REVIEW",
+      "label": "candidate16-review-deepseek-pro",
+      "requestId": null,
+      "model": "deepseek-pro",
+      "responseModel": null,
+      "httpStatus": 400,
+      "elapsedMs": 340,
+      "inputTokens": null,
+      "outputTokens": null,
+      "totalTokens": null,
+      "failure": "Execution HTTP 400"
+    },
+    {
+      "trace": 262,
+      "purpose": "REVIEW",
+      "label": "candidate16-review-corrected-pro-alias",
+      "requestId": null,
+      "model": "deepseek-v4-pro",
+      "responseModel": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "elapsedMs": 6773,
+      "inputTokens": 9576,
+      "outputTokens": 734,
+      "totalTokens": 10310,
+      "failure": null
+    }
+  ],
+  "knownTokens": 48164,
+  "failureTokenUsage": "Pro HTTP400 not supplied; not claimed zero billed tokens",
+  "runtimeScope": "Local source, isolated Java port9001, existing web5173/Redis/PostgreSQL, canonical account; no Docker",
+  "accountCreation": 0,
+  "newSuccessfulOptimizationHistories": 2,
+  "priceAndCurrencyCost": "UNKNOWN"
+}

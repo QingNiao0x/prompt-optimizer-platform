@@ -1,0 +1,76 @@
+{
+  "scope": "User-initiated natural use after restart; not an agent-initiated controlled evaluation",
+  "requestId": "31e42ead-c864-40f6-8574-cea1e2ab4d1e",
+  "currentHead": "b124baa069636c0854a10a91626d855769a721c6",
+  "frozenProductionSourceFilesChecked": 503,
+  "sourceDriftCount": 0,
+  "sourceJournalFile": "3514ee98-1356-4839-8d15-51872278e3a7.json",
+  "sourceAcknowledged": true,
+  "modelCall": {
+    "operation": "prompt.optimize",
+    "providerRoute": "deepseek",
+    "model": "deepseek:deepseek-flash",
+    "mock": false,
+    "attempt": 1,
+    "successful": true,
+    "upstreamStatus": 200,
+    "willRetry": false,
+    "durationMs": 12538,
+    "inputTokens": 7268,
+    "outputTokens": 1928,
+    "totalTokens": 9196,
+    "validationReason": null,
+    "validationField": null
+  },
+  "diagnosticKeysPresent": true,
+  "userProvidedLog": {
+    "completedAtAsiaShanghai": "2026-10-16 02:18:48.302 +08:00",
+    "route": "/api/v1/optimizations",
+    "httpStatus": 200,
+    "httpDurationMs": 13033,
+    "contextAnalyzeMs": 4,
+    "modelUpstreamMs": 12217,
+    "resultAssembleMs": 315,
+    "modelValidationMs": 318,
+    "optimizationMs": 12666,
+    "sections": 6,
+    "ambiguities": 4,
+    "note": "Assembly is nested inside model validation; stage durations must not be added twice"
+  },
+  "agentInitiatedRealCalls": 0,
+  "formalEvaluationLedgerUnchanged": true,
+  "limitations": [
+    "This research task differs from the original requests-library failure case",
+    "Raw enhancement-model response unavailable; model/platform contribution cannot be fully separated",
+    "Copied clipboard body and downstream research work not inspected; stored final prompt reviewed",
+    "Single success does not establish success-rate improvement or statistical-method validity"
+  ],
+  "taskIdentity": {
+    "kind": "research-analysis-report",
+    "period": "2015-2025",
+    "topic": "Regional cardiovascular and cerebrovascular disease mortality",
+    "dimensions": [
+      "Long-term and seasonal trends",
+      "Sex, region, population and subtype comparisons",
+      "Annual and sex-specific YLL and YLL rate",
+      "Arriaga decomposition"
+    ],
+    "sameInputAsPreviousRequestsLibraryFailure": false,
+    "confirmedBy": "User clarification and one matching scoped history record"
+  },
+  "historyVerification": {
+    "method": "Read-only transaction using existing UserAccountMapper and OptimizationRecordMapper XML",
+    "scope": "Tenant, default owner workspace, actor, narrow creation time window and task keyword",
+    "matchingRecords": 1,
+    "latencyMatches": 12666,
+    "ambiguityCount": 4,
+    "privateDiagnosticFile": "tmp/recovery-diagnosis-20261016/research-history-private.json",
+    "copiesFullPrivateHistoryIntoEvidence": false
+  },
+  "actualClarifications": [
+    "死亡率分析中的“某地区”具体指哪里？请明确研究覆盖的省、市或区域。",
+    "本次 YLL／减寿分析采用哪份参考寿命表或标准寿命？该选择会影响减寿年数及不同人群的比较。",
+    "死亡率计算的分母和年龄标化标准人口是什么？例如使用年平均人口还是普查人口，采用Segi世界标准人口还是某年普查人口。",
+    "Arriaga分解的分解对象和分解因素如何设定？例如分解期望寿命差异还是死亡率差异，按年龄组还是死因亚类分解。"
+  ]
+}
