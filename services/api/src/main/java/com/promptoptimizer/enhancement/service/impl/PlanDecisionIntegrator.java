@@ -22,6 +22,7 @@ final class PlanDecisionIntegrator {
             "(?:如果|假如|若以后|未来|待确认|尚未|暂不确定|建议|候选|可选|例如|不采用|不使用|不选择|未采用|未使用|未选|不能采用|不得采用|不按|不以|不是|不为|并非|不属于)|^(?:示例|例子)[：:]"
                     + "|\\b(?:if|might|not selected|do not use)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern CONDITIONAL = Pattern.compile("如果|假如|假设|(?:当|若|仅|只).*(?:时|则|才)|超过|达到|[<>=]|\\b(?:if|when|unless)\\b", Pattern.CASE_INSENSITIVE);
+    private static final String SCORING_SCALE = "(?:评分尺度|评分量表|评分范围|评分量尺)";
 
     private PlanDecisionIntegrator() { }
 
@@ -103,8 +104,8 @@ final class PlanDecisionIntegrator {
                 || completeValue(actual, value + subject);
     }
 
-    /** 引用、表格和代码中的取值不是当前执行要求，不能被用来掩盖正文缺项。 */
-    private static List<String> currentSentences(String content) {
+    /** 共享当前执行语句的作用域过滤；引用、表格、代码或其他研究不能证明覆盖或授权。 */
+    static List<String> currentSentences(String content) {
         var body = new java.util.ArrayList<String>();
         String fence = null;
         boolean foreignBlock = false;
@@ -238,41 +239,82 @@ final class PlanDecisionIntegrator {
 
     /**
      * 只补当前研究评价中已声明但未落入正文的评分义务，不复制元数据中的具体方案或默认数值。
-     * 原要求须有全部四维评价与分歧处理、当前完整委托，并且模型声明专业补全；已选尺度或禁止推荐保持原样。
+     * 原要求须有全部四维评价与分歧处理、当前完整委托，并且模型声明对应补全；已选尺度或禁止推荐保持原样。
      */
     static void completeDeclaredEvaluation(Map<PromptSectionType, PromptSection> sections, EffectiveTaskView task,
             com.promptoptimizer.provider.domain.TaskEnhancementAssessment assessment) {
-        if (assessment == null || task.intent().deliveryProfile() != TaskDeliveryProfile.ACADEMIC_METHODS
-                || task.executionRequirements().stream().noneMatch(requirement -> requirement.subject().equals("委托要求")
+        if (assessment == null || task.intent().deliveryProfile() != TaskDeliveryProfile.ACADEMIC_METHODS) return;
+        boolean boundDelegation = task.executionRequirements().stream().anyMatch(requirement -> requirement.subject().equals("委托要求")
                     && requirement.questionId() != null
-                    && canonical(requirement.statement()).equals("请根据原始研究目标提出可开展的推荐设计并说明适用条件"))) return;
+                    && canonical(requirement.statement()).equals("请根据原始研究目标提出可开展的推荐设计并说明适用条件"));
         var original = currentSentences(task.effectivePrompt());
+        // 直接增强不伪造题ID；当前原始指令中的完整设计委托也可授权，引用、未来和局部委托不算。
+        boolean originalDelegation = original.stream().map(PlanDecisionIntegrator::canonical).anyMatch(value ->
+                value.equals("请根据原始研究目标提出可开展的推荐设计并说明适用条件"));
+        if (!boundDelegation && !originalDelegation) return;
         boolean requested = original.stream().anyMatch(value -> value.contains("准确性") && value.contains("完整性")
                 && value.contains("清晰度") && value.contains("可执行性") && value.contains("评价") && value.contains("分歧处理")
                 && !CONDITIONAL.matcher(value).find() && !value.matches("(?s).*(?:例如|示例|引用|另一研究|其他研究).*"));
         boolean reserved = original.stream().anyMatch(value ->
                 value.matches("(?s).*(?:不得|禁止|不要|无需|不必|不提供|不提出|不推荐|不设计)[^。;]*(?:评分|量表|操作定义).*" )
                 || value.matches("(?s).*(?:评分|量表|操作定义)[^。;]*(?:不提供|不提出|不推荐|不设计|确认后再|以后再|仅供参考).*" )
-                || value.matches("(?s).*(?:采用|使用|已确认)[^。;]*(?:量表|评分尺度|评分范围).*" )
-                || value.matches("(?s).*(?:评分尺度|量表|评分范围)[^。;]*(?:采用|使用|已确认|已确定).*" ))
+                || selectedScoringValue(value))
+                || original.stream().anyMatch(value -> value.matches("(?s).*(?:评分|量表|量尺)[^。;]*(?:由我决定|由用户决定|以后确认|确认后再).*"))
+                || original.stream().anyMatch(value -> value.matches("(?s).*(?:以后|未来|确认后再)[^。;]*" + SCORING_SCALE + ".*"))
                 || task.executionRequirements().stream().anyMatch(requirement -> !requirement.subject().equals("委托要求")
                     && requirement.question().matches("(?s).*(?:评分|量表|量尺).*" )
                     && !List.of("用户说明", "未确认边界").contains(requirement.subject()));
-        boolean declared = assessment.gaps().stream().anyMatch(gap ->
-                (gap.kind() == com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Kind.PROFESSIONAL_OPTION
-                    || gap.kind() == com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Kind.EXECUTION_STEP)
-                && (gap.missing() + gap.completion()).matches("(?s).*(?:评分尺度|评分量表|评分范围).*" )
-                && gap.completion().matches("(?s).*(?:提出|给出)[^。;]*(?:评分|评价).*"));
+        boolean declared = assessment.gaps().stream().anyMatch(PlanDecisionIntegrator::currentScoringDeclaration);
         if (!requested || reserved || !declared) return;
         boolean covered = List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT).stream()
                 .filter(sections::containsKey).flatMap(type -> currentSentences(sections.get(type).content()).stream())
                 .anyMatch(value -> value.contains("准确性") && value.contains("完整性") && value.contains("清晰度")
-                    && value.contains("可执行性") && value.matches("(?s).*(?:评分尺度|评分量表|评分范围).*" )
-                    && value.matches("(?s).*(?:操作定义|等级描述|评分锚点).*" ) && value.contains("分歧")
+                    && value.contains("可执行性") && value.matches("(?s).*" + SCORING_SCALE + ".*" )
+                    && value.matches("(?s).*(?:等级描述|评分锚点).*" ) && value.contains("分歧")
                     && value.matches("(?s).*(?:提出|给出|明确|定义).*" ) && !CONDITIONAL.matcher(value).find()
                     && !value.matches("(?s).*(?:待确认后|以后|未来|不得|禁止|不要|另一研究|其他研究|示例|引用).*"));
         if (covered) return;
-        appendCurrentTask(sections, "针对原要求的准确性、完整性、清晰度与可执行性，提出拟议评分尺度、可操作定义和与尺度相配的分歧处理规则，并说明适用条件。");
+        appendCurrentTask(sections, "针对原要求的准确性、完整性、清晰度与可执行性，提出拟议评分尺度、可操作定义及各等级评分锚点、与尺度相配的分歧处理规则，并说明适用条件。");
+    }
+
+    /** 询问“评分采用什么量尺”不是已选量尺；只把当前陈述中的选定值作为保留依据。 */
+    private static boolean selectedScoringValue(String value) {
+        if (value.matches("(?s).*(?:什么|哪种|哪个|哪些|是否|[?？]).*")) return false;
+        if (value.strip().matches("^(?:本研究(?:的)?)?" + SCORING_SCALE + "(?:为|是)[0-9]+(?:至|到|[-–—])[0-9]+分[。.]?$")) return true;
+        return value.matches("(?s).*(?:采用|使用|已确认)[^。;]*(?:量表|量尺|评分尺度|评分范围).*" )
+                || value.matches("(?s).*(?:评分尺度|量表|量尺|评分范围)[^。;]*(?:采用|使用|已确认|已确定).*" );
+    }
+
+    /** 评分量尺与尺度是同一属性；只承接当前补全声明，不从元数据借用外部研究或未来授权。 */
+    private static boolean currentScoringDeclaration(com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Gap gap) {
+        if (gap.kind() != com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Kind.PROFESSIONAL_OPTION
+                && gap.kind() != com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Kind.EXECUTION_STEP
+                && !currentScoringQualityCheck(gap)) return false;
+        String missing = String.join("。", currentSentences(gap.missing()));
+        String completion = String.join("。", currentSentences(gap.completion()));
+        String scope = missing + completion;
+        if (!scope.matches("(?s).*" + SCORING_SCALE + ".*")
+                || scope.matches("(?s).*(?:另一(?:项)?研究|其他研究|甲研究|乙研究|示例|引用|以后确认后再|确认后再|以后再).*")) return false;
+        if (completion.matches("(?s).*(?:不得|禁止|不要|无需|不必|不提供|不提出|不推荐|不设计)[^。;]*(?:评分|量表|量尺).*")) return false;
+        if (completion.matches("(?s).*(?:提出|给出)[^。;]*(?:评分|评价).*")) return true;
+        // “上述各项”仅接当前完整四维设计清单，仍由上层核对原始委托和保留选择；不抄其候选数值。
+        return missing.contains("四个评价维度") && gap.basis().contains("委托设计而非用户保留选择")
+                && canonical(completion).equals("在方法部分以拟议设计形式给出上述各项的主方案与适用条件明确标注为推荐而非已确认或已实施");
+    }
+
+    /** 合法QUALITY_CHECK也可声明评分设计缺口；只接当前四维评价，不借普通校对、其他研究或未来授权补方案。 */
+    private static boolean currentScoringQualityCheck(com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Gap gap) {
+        if (gap.kind() != com.promptoptimizer.provider.domain.TaskEnhancementAssessment.Kind.QUALITY_CHECK) return false;
+        String completion = String.join("。", currentSentences(gap.completion()));
+        String scope = gap.missing() + completion + gap.basis();
+        // 新兼容分支比枚举标签更看重完整声明，仍由上层核对原始委托、四维目标和用户保留选择。
+        return scope.contains("准确性") && scope.contains("完整性") && scope.contains("清晰度")
+                && scope.contains("可执行性") && scope.contains("分歧")
+                && !scope.matches("(?s).*(?:另一(?:项)?研究|其他研究|甲研究|乙研究|示例|引用).*" )
+                && completion.matches("(?s).*(?:提出|给出)[^。;]*(?:评分|评价).*" )
+                && !CONDITIONAL.matcher(completion).find()
+                && !completion.matches("(?s).*(?:不得|禁止|不要|无需|不必|不提供|不提出|不推荐|不设计)[^。;]*(?:评分|量表|操作定义).*" )
+                && !completion.matches("(?s).*(?:以后确认后|确认后再|另行批准后|以后再|待[^。;]{0,20}确认后)[^。;]*(?:评分|量表|操作定义).*" );
     }
 
     /** 追加仍属于当前任务；已有其他研究或示例标题不能把新增执行要求收进其资料作用域。 */
@@ -366,10 +408,14 @@ final class PlanDecisionIntegrator {
         var source = Pattern.compile("^(.{2,100}?)如何确定\\?是[^?]+还是其他来源\\?$").matcher(text);
         var blind = Pattern.compile("^(.{2,80}?)具体对哪些信息设盲\\?$").matcher(text);
         var acquisition = Pattern.compile("^(.{2,100}?)如何(?:取得|获取)\\?$").matcher(text);
+        var termination = Pattern.compile("^(.{2,80}?)在什么条件下结束\\?$").matcher(text);
+        var scoring = Pattern.compile("^(准确性、完整性、清晰度与可执行性四个维度)[,，]评分采用什么量尺\\?$").matcher(text);
         if (category.matches()) { object = category.group(1); attribute = "(?:分类框架|类别划分|具体类别)"; label = "的分类框架"; }
         else if (source.matches()) { object = source.group(1); attribute = "(?:构造来源|来源与选取标准|来源与选取方式)"; label = "的构造来源"; }
         else if (blind.matches()) { object = blind.group(1); attribute = "设盲范围"; label = "的设盲范围"; }
         else if (acquisition.matches()) { object = acquisition.group(1); attribute = "(?:获取|取得)(?:与封存)?流程"; label = "获取流程"; }
+        else if (termination.matches()) { object = termination.group(1); attribute = "(?:终止条件|终止规则)"; label = "的终止条件"; }
+        else if (scoring.matches()) { object = scoring.group(1); attribute = "评分量尺"; label = "的评分量尺"; }
         if (object == null) return null;
         // 左边界防止“甲院盲评”借用裸“盲评”的对象；连接词只分隔当前列表的完整并列子项。
         return new DelegatedDesignField(object + label, Pattern.compile("(?:^|[;；，,、\\n]|与|及|和|以及)" + Pattern.quote(object)

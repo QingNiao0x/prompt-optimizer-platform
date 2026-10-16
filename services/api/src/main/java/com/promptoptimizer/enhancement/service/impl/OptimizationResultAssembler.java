@@ -223,6 +223,9 @@ public class OptimizationResultAssembler {
         boolean minimal = MinimalPromptOrganizer.organize(sections, effectiveRawPrompt,
                 planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), providerResponse.assessment());
         PlanDecisionIntegrator.integrate(sections, taskView);
+        // 原件已通过安全与任务校验；仅精简可证明覆盖的资料状态并澄清条件表格，不改原件与来源。
+        MaterialStatusCompactor.compact(sections);
+        ConditionalTableProjection.reconcile(sections);
         java.util.function.UnaryOperator<String> currentEvidence = value ->
                 unresolvedContract.reconcileCurrentText(resolvedState.reconcile(value));
         List<String> currentDocumentFacts = documentFacts.stream().map(value -> {

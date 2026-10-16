@@ -1,0 +1,862 @@
+{
+  "originalReviewSha256": "477c1b49304905ee3163a2f725f264cfd7ee44d07082323ef11f6860d3183b88",
+  "originalStrictJson": false,
+  "fencedParseIsDiagnosticOnly": true,
+  "originalCasesAndVerdicts": {
+    "cases": [
+      {
+        "id": "requests-title",
+        "scoresA": {
+          "准确性": 5,
+          "完整性": 5,
+          "清晰度": 5,
+          "可执行性": 5
+        },
+        "scoresB": {
+          "准确性": 4,
+          "完整性": 3,
+          "清晰度": 4,
+          "可执行性": 4
+        },
+        "verdict": "A胜",
+        "severeFailures": [],
+        "evidence": [
+          {
+            "work": "A",
+            "quote": "使用 requests.get(url, headers=..., timeout=..., allow_redirects=True) 发起 GET。"
+          },
+          {
+            "work": "A",
+            "quote": "用 html.parser 提取 <title> 文本，去除首尾空白与内部多余空白。"
+          },
+          {
+            "work": "A",
+            "quote": "网络异常 | 不抛出，写入 error 字段"
+          },
+          {
+            "work": "B",
+            "quote": "下面是一个完整的示例，演示如何使用 requests 库配合 BeautifulSoup 爬取网页标题。"
+          },
+          {
+            "work": "B",
+            "quote": "如果不想安装 BeautifulSoup，可以用正则"
+          }
+        ],
+        "uncertainties": [
+          "原始要求未指定目标 URL、输出形式、解析方式、异常处理口径，因此无法判定作品是否满足未明示的隐含需求。",
+          "作品B依赖 BeautifulSoup，但原始要求仅说使用 requests 库爬取网页标题，未明确是否允许额外依赖。",
+          "作品A包含大量拟议默认和待确认事项，若用户期望直接可运行的最小示例，可能显得过度设计；但按原要求仍属可用。"
+        ]
+      },
+      {
+        "id": "mortality-2015-2025",
+        "scoresA": {
+          "准确性": 4,
+          "完整性": 5,
+          "清晰度": 4,
+          "可执行性": 4
+        },
+        "scoresB": {
+          "准确性": 4,
+          "完整性": 4,
+          "清晰度": 5,
+          "可执行性": 3
+        },
+        "verdict": "A胜",
+        "severeFailures": [],
+        "evidence": [
+          {
+            "work": "A",
+            "quote": "Joinpoint回归 | 识别拐点、分段趋势 | 推荐首选，NCI Joinpoint软件"
+          },
+          {
+            "work": "A",
+            "quote": "YLL = \\sum_{i} d_i \\times (L - a_i)"
+          },
+          {
+            "work": "A",
+            "quote": "Arriaga分解用于量化各年龄组/死因对期望寿命差异的贡献。"
+          },
+          {
+            "work": "B",
+            "quote": "YLL = Σ_a (D_a × e_a)"
+          },
+          {
+            "work": "B",
+            "quote": "具体公式与计算流程可参考Arriaga（1984）及后续扩展方法。"
+          }
+        ],
+        "uncertainties": [
+          "原始要求未提供具体地区、数据来源、亚类定义、参考寿命表，因此无法判定作品是否满足未明示的实证分析需求。",
+          "作品A给出较多具体软件、公式和操作路径，但部分内容仍为拟议方案，未与用户确认。",
+          "作品B方法学描述较完整，但Arriaga分解未给出可操作公式或步骤，可执行性相对不足。"
+        ]
+      },
+      {
+        "id": "Q05-direct",
+        "scoresA": {
+          "准确性": 5,
+          "完整性": 5,
+          "清晰度": 5,
+          "可执行性": 5
+        },
+        "scoresB": {
+          "准确性": 4,
+          "完整性": 4,
+          "清晰度": 5,
+          "可执行性": 4
+        },
+        "verdict": "A胜",
+        "severeFailures": [],
+        "evidence": [
+          {
+            "work": "A",
+            "quote": "本部分为拟议研究设计，尚未实施，不预设任何样本、效应量或显著性结论。"
+          },
+          {
+            "work": "A",
+            "quote": "拟设4类任务：需求澄清类、约束满足类、步骤规划类与结果验证类，每类5个，共20个任务。"
+          },
+          {
+            "work": "A",
+            "quote": "Plan组问答终止规则拟定为：关键问题覆盖任务目标、约束、输出形式与验证标准，或连续两轮无新增有效信息时终止；具体阈值须预注册。"
+          },
+          {
+            "work": "A",
+            "quote": "两名独立评审盲评，评审不知分组与重复次数。"
+          },
+          {
+            "work": "A",
+            "quote": "统计检验依据未来数据分布与配对结构选择，不预先选定。"
+          },
+          {
+            "work": "B",
+            "quote": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。"
+          },
+          {
+            "work": "B",
+            "quote": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。"
+          }
+        ],
+        "uncertainties": [
+          "原始要求正文800至1200个汉字，作品A正文长度可能略超或接近上限，作品B正文长度可能不足，但未逐字统计，无法精确判定。",
+          "作品B将附表内容全部标为“略”，无法判断其是否实际提供了附表。",
+          "作品A对Plan组问答终止规则给出较具体拟定，但实际确认信息中用户未确认任何参数，因此该规则仍属拟议。"
+        ]
+      },
+      {
+        "id": "Q05-plan",
+        "scoresA": {
+          "准确性": 4,
+          "完整性": 4,
+          "清晰度": 5,
+          "可执行性": 4
+        },
+        "scoresB": {
+          "准确性": 5,
+          "完整性": 5,
+          "清晰度": 5,
+          "可执行性": 5
+        },
+        "verdict": "B胜",
+        "severeFailures": [],
+        "evidence": [
+          {
+            "work": "A",
+            "quote": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。"
+          },
+          {
+            "work": "A",
+            "quote": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。"
+          },
+          {
+            "work": "B",
+            "quote": "任务来源尚未确认，拟议主方案为：从公开、可合法使用的任务库或既有研究中筛选，按“信息检索与综合、文本生成与改写、数据分析与推理、方案设计与决策”四类各选5个"
+          },
+          {
+            "work": "B",
+            "quote": "每模式每任务独立重复3次，共形成4×20×3=240个提示词样本。"
+          },
+          {
+            "work": "B",
+            "quote": "两名评审各维度分差不超过1分时取均值；超过1分时先讨论，仍不一致则由第三名资深评审仲裁。"
+          },
+          {
+            "work": "B",
+            "quote": "所有检验均须先检查分布、离群值、缺失机制和模型假设；不预设任何组必然显著，也不编造效应量或P值。"
+          }
+        ],
+        "uncertainties": [
+          "原始要求正文800至1200个汉字，作品B正文长度可能略超或接近上限，作品A正文长度可能不足，但未逐字统计，无法精确判定。",
+          "作品A将附表内容全部标为“略”，无法判断其是否实际提供了附表。",
+          "作品B对公平对照组的区分描述较简略，未明确两组公平对照在流程上的具体差异。"
+        ]
+      }
+    ]
+  },
+  "derivedAudit": {
+    "rawReviewSha256": "2e78504de627caf5bd811cff7ad687d1d8c590faaae9bbb724697bbe12b7bfa5",
+    "strictJsonAndSchemaValid": true,
+    "deterministicChecksPassed": false,
+    "errors": [
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 0,
+        "work": "requests-title_A"
+      },
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 1,
+        "work": "requests-title_A"
+      },
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 2,
+        "work": "requests-title_A"
+      },
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 3,
+        "work": "requests-title_B"
+      },
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 4,
+        "work": "requests-title_B"
+      },
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 5,
+        "work": "mortality-2015-2025_A"
+      },
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 7,
+        "work": "mortality-2015-2025_A"
+      }
+    ],
+    "evidenceChecks": [
+      {
+        "issueIndex": 0,
+        "work": "requests-title_A",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "使用 requests.get(url, headers=..., timeout=..., allow_redirects=True) 发起 GET。",
+        "matchedText": "使用 requests.get(url, headers=..., timeout=..., allow_redirects=True) 发起 GET。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 1,
+        "work": "requests-title_A",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "用 html.parser 提取 <title> 文本，去除首尾空白与内部多余空白。",
+        "matchedText": "用 html.parser 提取 <title> 文本，去除首尾空白与内部多余空白。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 2,
+        "work": "requests-title_A",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "网络异常 | 不抛出，写入 error 字段",
+        "matchedText": "网络异常 | 不抛出，写入 error 字段",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 3,
+        "work": "requests-title_B",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "下面是一个完整的示例，演示如何使用 requests 库配合 BeautifulSoup 爬取网页标题。",
+        "matchedText": "下面是一个完整的示例，演示如何使用 requests 库配合 BeautifulSoup 爬取网页标题。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 4,
+        "work": "requests-title_B",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "如果不想安装 BeautifulSoup，可以用正则",
+        "matchedText": "如果不想安装 BeautifulSoup，可以用正则",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 5,
+        "work": "mortality-2015-2025_A",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "Joinpoint回归 | 识别拐点、分段趋势 | 推荐首选，NCI Joinpoint软件",
+        "matchedText": "Joinpoint回归 | 识别拐点、分段趋势 | 推荐首选，NCI Joinpoint软件",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 6,
+        "work": "mortality-2015-2025_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "YLL = \\sum_{i} d_i \\times (L - a_i)",
+        "matchedText": "YLL = \\sum_{i} d_i \\times (L - a_i)",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 2309,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 7,
+        "work": "mortality-2015-2025_A",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "Arriaga分解用于量化各年龄组/死因对期望寿命差异的贡献。",
+        "matchedText": "Arriaga分解用于量化各年龄组/死因对期望寿命差异的贡献。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 8,
+        "work": "mortality-2015-2025_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "YLL = Σ_a (D_a × e_a)",
+        "matchedText": "YLL = Σ_a (D_a × e_a)",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 4164,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 9,
+        "work": "mortality-2015-2025_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "具体公式与计算流程可参考Arriaga（1984）及后续扩展方法。",
+        "matchedText": "具体公式与计算流程可参考Arriaga（1984）及后续扩展方法。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 5588,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 10,
+        "work": "Q05-direct_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "本部分为拟议研究设计，尚未实施，不预设任何样本、效应量或显著性结论。",
+        "matchedText": "本部分为拟议研究设计，尚未实施，不预设任何样本、效应量或显著性结论。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 13,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 11,
+        "work": "Q05-direct_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "拟设4类任务：需求澄清类、约束满足类、步骤规划类与结果验证类，每类5个，共20个任务。",
+        "matchedText": "拟设4类任务：需求澄清类、约束满足类、步骤规划类与结果验证类，每类5个，共20个任务。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 68,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 12,
+        "work": "Q05-direct_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "Plan组问答终止规则拟定为：关键问题覆盖任务目标、约束、输出形式与验证标准，或连续两轮无新增有效信息时终止；具体阈值须预注册。",
+        "matchedText": "Plan组问答终止规则拟定为：关键问题覆盖任务目标、约束、输出形式与验证标准，或连续两轮无新增有效信息时终止；具体阈值须预注册。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 483,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 13,
+        "work": "Q05-direct_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "两名独立评审盲评，评审不知分组与重复次数。",
+        "matchedText": "两名独立评审盲评，评审不知分组与重复次数。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 645,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 14,
+        "work": "Q05-direct_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "统计检验依据未来数据分布与配对结构选择，不预先选定。",
+        "matchedText": "统计检验依据未来数据分布与配对结构选择，不预先选定。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 794,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 15,
+        "work": "Q05-direct_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。",
+        "matchedText": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 548,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 16,
+        "work": "Q05-direct_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。",
+        "matchedText": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 1631,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 17,
+        "work": "Q05-plan_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。",
+        "matchedText": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 548,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 18,
+        "work": "Q05-plan_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。",
+        "matchedText": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 1631,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 19,
+        "work": "Q05-plan_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "任务来源尚未确认，拟议主方案为：从公开、可合法使用的任务库或既有研究中筛选，按“信息检索与综合、文本生成与改写、数据分析与推理、方案设计与决策”四类各选5个",
+        "matchedText": "任务来源尚未确认，拟议主方案为：从公开、可合法使用的任务库或既有研究中筛选，按“信息检索与综合、文本生成与改写、数据分析与推理、方案设计与决策”四类各选5个",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 106,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 20,
+        "work": "Q05-plan_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "每模式每任务独立重复3次，共形成4×20×3=240个提示词样本。",
+        "matchedText": "每模式每任务独立重复3次，共形成4×20×3=240个提示词样本。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 528,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 21,
+        "work": "Q05-plan_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "两名评审各维度分差不超过1分时取均值；超过1分时先讨论，仍不一致则由第三名资深评审仲裁。",
+        "matchedText": "两名评审各维度分差不超过1分时取均值；超过1分时先讨论，仍不一致则由第三名资深评审仲裁。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 1091,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 22,
+        "work": "Q05-plan_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "所有检验均须先检查分布、离群值、缺失机制和模型假设；不预设任何组必然显著，也不编造效应量或P值。",
+        "matchedText": "所有检验均须先检查分布、离群值、缺失机制和模型假设；不预设任何组必然显著，也不编造效应量或P值。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 1400,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      }
+    ],
+    "comparisons": [
+      {
+        "left": "requests-title_A",
+        "right": "requests-title_B",
+        "originalVerdict": "LEFT_WIN",
+        "originalReason": "原评审结论：A胜；此派生字段仅供协议映射，不新增理由。",
+        "literalReasonWinner": null,
+        "independentGate": "NOT_BOTH_PASSED",
+        "leftGate": "OPEN",
+        "rightGate": "OPEN",
+        "rankingsDoNotOverrideHardOrSevereFailure": true
+      },
+      {
+        "left": "mortality-2015-2025_A",
+        "right": "mortality-2015-2025_B",
+        "originalVerdict": "LEFT_WIN",
+        "originalReason": "原评审结论：A胜；此派生字段仅供协议映射，不新增理由。",
+        "literalReasonWinner": null,
+        "independentGate": "NOT_BOTH_PASSED",
+        "leftGate": "OPEN",
+        "rightGate": "OPEN",
+        "rankingsDoNotOverrideHardOrSevereFailure": true
+      },
+      {
+        "left": "Q05-direct_A",
+        "right": "Q05-direct_B",
+        "originalVerdict": "LEFT_WIN",
+        "originalReason": "原评审结论：A胜；此派生字段仅供协议映射，不新增理由。",
+        "literalReasonWinner": null,
+        "independentGate": "NOT_BOTH_PASSED",
+        "leftGate": "OPEN",
+        "rightGate": "FAIL",
+        "rankingsDoNotOverrideHardOrSevereFailure": true
+      },
+      {
+        "left": "Q05-plan_A",
+        "right": "Q05-plan_B",
+        "originalVerdict": "RIGHT_WIN",
+        "originalReason": "原评审结论：B胜；此派生字段仅供协议映射，不新增理由。",
+        "literalReasonWinner": null,
+        "independentGate": "BOTH_FAIL",
+        "leftGate": "FAIL",
+        "rightGate": "FAIL",
+        "rankingsDoNotOverrideHardOrSevereFailure": true
+      }
+    ],
+    "originalReview": {
+      "reviewerType": "AI_ASSISTED",
+      "scores": {
+        "requests-title_A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "requests-title_B": {
+          "accuracy": 4,
+          "completeness": 3,
+          "clarity": 4,
+          "executability": 4
+        },
+        "mortality-2015-2025_A": {
+          "accuracy": 4,
+          "completeness": 5,
+          "clarity": 4,
+          "executability": 4
+        },
+        "mortality-2015-2025_B": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 3
+        },
+        "Q05-direct_A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "Q05-direct_B": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 4
+        },
+        "Q05-plan_A": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 4
+        },
+        "Q05-plan_B": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        }
+      },
+      "issues": [
+        {
+          "work": "requests-title_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "使用 requests.get(url, headers=..., timeout=..., allow_redirects=True) 发起 GET。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "requests-title_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "用 html.parser 提取 <title> 文本，去除首尾空白与内部多余空白。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "requests-title_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "网络异常 | 不抛出，写入 error 字段",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "requests-title_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "下面是一个完整的示例，演示如何使用 requests 库配合 BeautifulSoup 爬取网页标题。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "requests-title_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "如果不想安装 BeautifulSoup，可以用正则",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "mortality-2015-2025_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "Joinpoint回归 | 识别拐点、分段趋势 | 推荐首选，NCI Joinpoint软件",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "mortality-2015-2025_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "YLL = \\sum_{i} d_i \\times (L - a_i)",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "mortality-2015-2025_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "Arriaga分解用于量化各年龄组/死因对期望寿命差异的贡献。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "mortality-2015-2025_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "YLL = Σ_a (D_a × e_a)",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "mortality-2015-2025_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "具体公式与计算流程可参考Arriaga（1984）及后续扩展方法。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "本部分为拟议研究设计，尚未实施，不预设任何样本、效应量或显著性结论。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "拟设4类任务：需求澄清类、约束满足类、步骤规划类与结果验证类，每类5个，共20个任务。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "Plan组问答终止规则拟定为：关键问题覆盖任务目标、约束、输出形式与验证标准，或连续两轮无新增有效信息时终止；具体阈值须预注册。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "两名独立评审盲评，评审不知分组与重复次数。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "统计检验依据未来数据分布与配对结构选择，不预先选定。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-plan_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-plan_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-plan_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "任务来源尚未确认，拟议主方案为：从公开、可合法使用的任务库或既有研究中筛选，按“信息检索与综合、文本生成与改写、数据分析与推理、方案设计与决策”四类各选5个",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-plan_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "每模式每任务独立重复3次，共形成4×20×3=240个提示词样本。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-plan_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "两名评审各维度分差不超过1分时取均值；超过1分时先讨论，仍不一致则由第三名资深评审仲裁。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-plan_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "所有检验均须先检查分布、离群值、缺失机制和模型假设；不预设任何组必然显著，也不编造效应量或P值。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        }
+      ],
+      "pairs": [
+        {
+          "left": "requests-title_A",
+          "right": "requests-title_B",
+          "verdict": "LEFT_WIN",
+          "reason": "原评审结论：A胜；此派生字段仅供协议映射，不新增理由。"
+        },
+        {
+          "left": "mortality-2015-2025_A",
+          "right": "mortality-2015-2025_B",
+          "verdict": "LEFT_WIN",
+          "reason": "原评审结论：A胜；此派生字段仅供协议映射，不新增理由。"
+        },
+        {
+          "left": "Q05-direct_A",
+          "right": "Q05-direct_B",
+          "verdict": "LEFT_WIN",
+          "reason": "原评审结论：A胜；此派生字段仅供协议映射，不新增理由。"
+        },
+        {
+          "left": "Q05-plan_A",
+          "right": "Q05-plan_B",
+          "verdict": "RIGHT_WIN",
+          "reason": "原评审结论：B胜；此派生字段仅供协议映射，不新增理由。"
+        }
+      ]
+    },
+    "originalReviewTextUnchanged": true,
+    "semanticVerdict": "REQUIRES_EVIDENCE_REVIEW",
+    "automaticSemanticJudge": false,
+    "modelCalls": 0
+  },
+  "normalization": "Only schema/ID/Chinese dimension-name mapping. Placeholder issue severity and reason are mechanical; no new semantic verdict. Raw original unchanged.",
+  "cannotValidateByItself": [
+    "Scientific accuracy",
+    "Verdict justification",
+    "Full requirement adherence",
+    "Length or code behaviour"
+  ]
+}

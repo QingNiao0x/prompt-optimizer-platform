@@ -1,0 +1,55 @@
+{
+  "kind": "LIMITED_PRIMARY_SOURCE_FACT_CHECK_NOT_EXPERT_REVIEW",
+  "checkedDate": "2026-10-16",
+  "findings": [
+    {
+      "work": "mortality-2015-2025/enhanced",
+      "quote": "高血压性心脏病（I10—I15）",
+      "status": "CODING_SCOPE_MISMATCH",
+      "basis": "ICD-10 category I11 is hypertensive heart disease; I10-I15 is the hypertensive diseases block. WHO mortality aggregate cause list uses I11-I15 for its simplified grouping. No reviewed source supports treating I10-I15 as the same label without qualification.",
+      "sources": [
+        {
+          "title": "NHS ICD-10 Fifth Edition: I10-I15 hypertensive diseases",
+          "url": "https://classbrowser.nhs.uk/ICD-10-5TH-Edition/vol1/block-i10-i15.htm"
+        },
+        {
+          "title": "WHO Mortality Database cause lists and ICD-10 codes",
+          "url": "https://platform.who.int/mortality/about/list-of-causes-and-corresponding-icd-10-codes"
+        }
+      ],
+      "origin": "DOWNSTREAM_WORK; not present as a supplied code range in copied prompt"
+    },
+    {
+      "work": "mortality raw/enhanced",
+      "status": "TARGET_AND_METHOD_SCOPE_STILL_REQUIRE_REVIEW",
+      "basis": "Arriaga 1984 describes life expectancy differences through age-specific mortality changes; the user has not selected the actual decomposition target. This check does not validate every formula or extended method.",
+      "sources": [
+        {
+          "title": "Arriaga 1984, Measuring and explaining the change in life expectancies, Demography 21(1):83-96",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/6714492/"
+        }
+      ]
+    },
+    {
+      "work": "Q05-direct-same-info/enhanced",
+      "quote": "若比较四组独立或部分配对结构，可用Kruskal-Wallis检验",
+      "status": "INDEPENDENCE_CONDITION_INCORRECT_FOR_PARTIALLY_PAIRED_DATA",
+      "basis": "SciPy official Kruskal-Wallis documentation specifies independent samples. The proposed condition incorrectly includes partially paired observations. No universal ban on the method is implied.",
+      "sources": [
+        {
+          "title": "SciPy stats.kruskal official API reference",
+          "url": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kruskal.html"
+        }
+      ],
+      "origin": "DOWNSTREAM_WORK; copied prompt requires method choice to respect distribution and pairing"
+    }
+  ],
+  "notValidated": [
+    "Every research formula",
+    "All suggested software/packages",
+    "All references",
+    "Sampling representativeness",
+    "Full clinical or statistical expert correctness"
+  ],
+  "modelCalls": 0
+}

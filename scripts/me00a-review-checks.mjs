@@ -4,6 +4,13 @@ import { parseStrictJson } from './me00a-work-checks.mjs';
 const hash = text => createHash('sha256').update(text, 'utf8').digest('hex');
 const dimensions = ['accuracy', 'completeness', 'clarity', 'executability'];
 const verdicts = new Set(['LEFT_WIN', 'RIGHT_WIN', 'TIE', 'BOTH_FAIL']);
+const quoteCheckVersion = 'literal-or-one-outer-pair-v2';
+
+/** Remove exactly one balanced presentation wrapper; never clean inner text or accept a splice. */
+function quotedText(evidence) {
+  const pairs = new Map([['“','”'], ['「','」'], ['『','』'], ['"','"'], ["'","'"]]);
+  return evidence.length > 2 && pairs.get(evidence[0]) === evidence.at(-1) ? evidence.slice(1,-1) : evidence;
+}
 
 /** Bind evidence to its own work/input, preserve original rankings and keep independent gates separate from relative scores. */
 export function auditIndependentReview(text, { works, pairs, gates = {} }) {
@@ -28,13 +35,21 @@ export function auditIndependentReview(text, { works, pairs, gates = {} }) {
   }
   const evidenceChecks = review.issues.map((issue, index) => {
     const own = works[issue.work];
-    const inWork = own.text.includes(issue.evidence), inInput = own.input.includes(issue.evidence);
+    const exactWork = own.text.includes(issue.evidence), exactInput = own.input.includes(issue.evidence);
+    // Exact text wins; the derived match only explains a single complete outer quote pair.
+    const matchedText = exactWork || exactInput ? issue.evidence : quotedText(issue.evidence);
+    const inWork = own.text.includes(matchedText), inInput = own.input.includes(matchedText);
     const onlyElsewhere = !inWork && !inInput && ids.some(id => id !== issue.work
-      && (works[id].text.includes(issue.evidence) || works[id].input.includes(issue.evidence)));
+      && (works[id].text.includes(matchedText) || works[id].input.includes(matchedText)));
     if (!inWork && !inInput) errors.push({ code: onlyElsewhere ? 'EVIDENCE_WRONG_SOURCE' : 'EVIDENCE_NOT_LITERAL', issueIndex: index, work: issue.work });
     else if (issue.origin === 'WORK' && !inWork || issue.origin === 'INPUT' && !inInput)
       errors.push({ code: 'EVIDENCE_ORIGIN_MISMATCH', issueIndex: index, work: issue.work });
-    return { issueIndex: index, work: issue.work, exactQuoteInWork: inWork, exactQuoteInAssociatedInput: inInput, quoteOnlyInOtherSource: onlyElsewhere };
+    return { issueIndex: index, work: issue.work, exactQuoteInWork: exactWork, exactQuoteInAssociatedInput: exactInput,
+      matchVersion: quoteCheckVersion, originalEvidence: issue.evidence, matchedText,
+      matchMode: matchedText === issue.evidence ? 'EXACT' : 'ONE_OUTER_PAIR',
+      positionUnit: 'UTF16_CODE_UNIT',
+      workPosition: own.text.indexOf(matchedText), inputPosition: own.input.indexOf(matchedText),
+      quoteOnlyInOtherSource: onlyElsewhere };
   });
   const comparison = pairs.map(pair => {
     const original = review.pairs.find(item => item.left === pair.left && item.right === pair.right);

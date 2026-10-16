@@ -1,0 +1,118 @@
+{
+  "status": 200,
+  "requestId": "93d3d63a-80e5-46b1-b4dd-f320c9d8528a",
+  "elapsedMs": 9334,
+  "body": {
+    "requestId": "93d3d63a-80e5-46b1-b4dd-f320c9d8528a",
+    "data": {
+      "summary": "已理解你要撰写一份尚未实施的研究设计方法部分，核心是保留20个任务、每模式每任务3次重复、两名评审盲评、直接增强与Plan比较及两组同信息公平对照，并明确不编造数据或结论。为使方法部分可执行且不越界，还需确认几个会改变设计口径的关键事实。",
+      "questions": [
+        {
+          "id": "plan_rounds",
+          "question": "Plan组的问答交互如何终止？",
+          "hint": "这决定Plan条件的操作定义和可重复性，也影响同信息对照如何封存并传递确认信息。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "fixed_rounds",
+              "label": "固定轮次",
+              "description": "预先规定每任务最多进行固定轮数的澄清问答，达到轮数即生成。",
+              "answer": "Plan组每任务进行固定轮数的澄清问答，达到预设轮数后生成回答。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "until_no_questions",
+              "label": "直到无新问题",
+              "description": "持续问答直到增强器不再提出新的澄清问题，再生成回答。",
+              "answer": "Plan组持续进行澄清问答，直到增强器不再提出新的澄清问题，再生成回答。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "until_saturation",
+              "label": "直到信息饱和",
+              "description": "由研究者判断确认信息已饱和、不再产生实质新增信息时终止。",
+              "answer": "Plan组持续问答，直到研究者判断确认信息已饱和、不再产生实质新增信息时终止。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "task_source",
+          "question": "20个任务从哪里来？",
+          "hint": "任务来源决定研究可复现性和是否涉及真实用户数据，也影响伦理与授权说明。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "researcher_designed",
+              "label": "研究者自行设计",
+              "description": "由研究者围绕4类任务自行编写20个任务，不涉及外部参与者。",
+              "answer": "20个任务由研究者围绕4类任务自行设计，不涉及外部参与者。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "existing_benchmark",
+              "label": "采用已有公开任务集",
+              "description": "从已有公开基准或任务集中选取并适配20个任务。",
+              "answer": "20个任务从已有公开基准或任务集中选取并适配，需说明来源与适配方式。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "user_collected",
+              "label": "收集真实用户任务",
+              "description": "从真实用户或实际使用场景中收集任务，需相应授权与伦理说明。",
+              "answer": "20个任务从真实用户或实际使用场景中收集，并说明授权与伦理处理。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "output_scope",
+          "question": "方法部分是否需要包含候选统计检验的适用条件说明？",
+          "hint": "你已明确具体检验依据未来数据分布选择，但需确认方法部分是否要列出候选方法及其前提。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "include_candidates",
+              "label": "包含候选方法及条件",
+              "description": "列出候选检验名称、适用条件及选择依据，但不预先选定。",
+              "answer": "方法部分列出候选统计检验名称、适用条件及选择依据，但不预先选定具体检验。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "only_principle",
+              "label": "仅说明选择原则",
+              "description": "只说明将依据数据分布和配对结构选择检验，不列具体候选。",
+              "answer": "方法部分仅说明将依据未来数据分布和配对结构选择统计检验，不列出具体候选方法。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "RESEARCH_ANALYSIS",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 9315,
+      "planId": "2b1bce32-5c74-490a-80bf-efc331c84526",
+      "planningContext": null,
+      "expiresAt": "2026-10-16T08:51:12.725121300Z"
+    }
+  }
+}

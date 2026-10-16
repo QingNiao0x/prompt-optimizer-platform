@@ -1,0 +1,225 @@
+{
+  "aiAssistedNotHumanExperts": true,
+  "sameProviderDifferentModels": true,
+  "independentIdenticalPacks": true,
+  "originalReviewsUnchanged": true,
+  "summaries": [
+    {
+      "model": "deepseek-flash",
+      "originalStrictJson": false,
+      "derivedQuoteChecks": 23,
+      "quoteErrors": [
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 0,
+          "work": "requests-title_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 1,
+          "work": "requests-title_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 2,
+          "work": "requests-title_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 3,
+          "work": "requests-title_B"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 4,
+          "work": "requests-title_B"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 5,
+          "work": "mortality-2015-2025_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 7,
+          "work": "mortality-2015-2025_A"
+        }
+      ],
+      "verdicts": [
+        {
+          "id": "requests-title",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "准确性": 5,
+            "完整性": 5,
+            "清晰度": 5,
+            "可执行性": 5
+          },
+          "scoresB": {
+            "准确性": 4,
+            "完整性": 3,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "mortality-2015-2025",
+          "original": "A胜",
+          "preferred": "raw",
+          "scoresA": {
+            "准确性": 4,
+            "完整性": 5,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "scoresB": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 5,
+            "可执行性": 3
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "Q05-direct",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "准确性": 5,
+            "完整性": 5,
+            "清晰度": 5,
+            "可执行性": 5
+          },
+          "scoresB": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 5,
+            "可执行性": 4
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "Q05-plan",
+          "original": "B胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 5,
+            "可执行性": 4
+          },
+          "scoresB": {
+            "准确性": 5,
+            "完整性": 5,
+            "清晰度": 5,
+            "可执行性": 5
+          },
+          "severeFailures": []
+        }
+      ]
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "originalStrictJson": true,
+      "derivedQuoteChecks": 16,
+      "quoteErrors": [
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 0,
+          "work": "requests-title_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 1,
+          "work": "requests-title_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 5,
+          "work": "mortality-2015-2025_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 14,
+          "work": "Q05-plan_B"
+        }
+      ],
+      "verdicts": [
+        {
+          "id": "requests-title",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "scoresB": {
+            "准确性": 3,
+            "完整性": 3,
+            "清晰度": 4,
+            "可执行性": 3
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "mortality-2015-2025",
+          "original": "平",
+          "preferred": "TIE",
+          "scoresA": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "scoresB": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "Q05-direct",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "scoresB": {
+            "准确性": 3,
+            "完整性": 3,
+            "清晰度": 3,
+            "可执行性": 3
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "Q05-plan",
+          "original": "平",
+          "preferred": "TIE",
+          "scoresA": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "scoresB": {
+            "准确性": 4,
+            "完整性": 4,
+            "清晰度": 4,
+            "可执行性": 4
+          },
+          "severeFailures": []
+        }
+      ]
+    }
+  ]
+}

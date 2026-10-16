@@ -88,7 +88,7 @@ public final class RequirementBoundaryContract {
     /** 只提供本次实际相关的规则，不向其他任务灌入统计参数或长缺项清单。 */
     public String guidance() {
         var rules = new ArrayList<String>();
-        if (userQuestionAnswerWorkflow) rules.add("本次问答流程由增强器提出关键问题、用户回答，再将有效回答融入优化提示词；直接增强不主动发起这轮问答，但仍正常使用已经提供的需求与确认信息。Plan不能改为模型自行生成执行计划再作答。研究若要求同信息对照，两组接收并可使用同一原始任务和同一份实际确认信息，保留各自指定增强流程；不能改写其中一组的回答、另换任务或只增加某组修订轮次。");
+        if (userQuestionAnswerWorkflow) rules.addAll(workflowGuidance());
         if (noInventedData) rules.add("不得使用假设或虚构数据，禁令适用于所有用途，包括测试和验证；不得缩为仅禁止冒充真实业务数据。"
                 + (userBansExampleData ? "" : "不能由这项禁令推出禁止使用可核实的真实示例资料；其他明确的数据限制和权限要求照常保留。"));
         if (conditionalTestSelection) rules.add("具体检验依据未来数据分布和适用条件选择；可说明候选检验名称及适用前提，不预先选定，也不预设显著性。");
@@ -101,7 +101,7 @@ public final class RequirementBoundaryContract {
     public String missingGuidance(String content) {
         String current = DraftDeliveryContract.instructionText(content);
         return guidance().lines().filter(rule -> {
-            if (rule.startsWith("本次问答流程")) return !current.contains(rule);
+            if (workflowGuidance().contains(rule)) return !workflowCovered(current, rule);
             if (rule.startsWith("不得使用")) return !(prohibitsInventedData(current)
                     && current.matches("(?s).*(?:所有用途|全部用途|测试[^。；;]{0,12}验证[^。；;]{0,12}(?:不例外|均不能|不得使用)).*"));
             if (rule.startsWith("具体检验")) return !(TEST_SELECTION.matcher(current).find()
@@ -112,6 +112,38 @@ public final class RequirementBoundaryContract {
                     && clause.matches(".*(?:未选定|未确定|未指定|待确认).*" )
                     && clause.matches(".*(?:不默认|不得默认|不能默认|不得擅自|不擅自).*"));
         }).collect(java.util.stream.Collectors.joining("\n"));
+    }
+
+    /** 同信息义务各自携带适用范围；缺一项时不再补回已经落实的完整流程。 */
+    private static List<String> workflowGuidance() {
+        return List.of(
+                "本次问答流程由增强器提出关键问题、用户回答，再将有效回答融入优化提示词。",
+                "直接增强不主动发起这轮问答，但仍正常使用已经提供的需求与确认信息。",
+                "Plan不能改为模型自行生成执行计划再作答。",
+                "研究若要求同信息对照，两组接收并可使用同一原始任务和同一份实际确认信息。",
+                "研究若要求同信息对照，保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。");
+    }
+
+    /** 只认当前完整命题及有限句法等价，不从引文、其他研究、条件或相反动作借覆盖。 */
+    private static boolean workflowCovered(String current, String rule) {
+        boolean foreign = false;
+        for (String line : current.lines().toList()) {
+            String value = line.strip().replaceFirst("^#{1,6}\\s*", "").replace("**", "");
+            if (value.matches("(?:另一(?:项)?研究|其他研究|甲研究|乙研究|未来方案|以后确认)[：:]?")) foreign = true;
+            else if (value.matches("(?:本次研究|本研究|本任务)[：:]?")) foreign = false;
+            if (foreign) continue;
+            // 同一完整句先绑定两组及其输入，分号后的流程禁令才能沿用该对象；不拼接跨段落关键词。
+            if (rule.startsWith("研究若要求同信息对照，保留各组") && value.replaceFirst("^[-*•]\\s*", "").matches(
+                    "^(?:同信息对照(?:的)?两组|公平对照两组)接收并可使用同一原始任务(?:和|与)同一份实际确认信息[；;]"
+                            + "保留各组指定的增强流程，不改写(?:任一组的)?回答、不另换任务，也不只增加某组修订轮次[。.]?$")) return true;
+            for (String sentence : value.split("(?<=[。！？!?])|[；;]")) {
+                String plain = sentence.strip().replaceFirst("^[-*•]\\s*", "");
+                if (plain.equals(rule)) return true;
+                if (rule.startsWith("研究若要求同信息对照，两组") && plain.matches(
+                        "^(?:同信息对照(?:的)?两组|公平对照两组)接收并可使用同一原始任务(?:和|与)同一份实际确认信息[。.]?$")) return true;
+            }
+        }
+        return false;
     }
 
     /** 在模型草稿和平台最终正文各核对一次；引用和围栏中的旧错误不算当前执行许可。 */

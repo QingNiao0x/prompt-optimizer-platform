@@ -1,0 +1,88 @@
+{
+  "version": "candidate19",
+  "status": "PROPOSED_NOT_APPROVED",
+  "sourceTreeSha256": "0bd070912b4ad4ebeda377aa1b849d8781551fd77756d1893270832648757aa3",
+  "runtimeTreeSha256": "cc8b73db6df9cebd0fe70d27c360bfc1d62c57e90205443439767d2ceea4aa08",
+  "cases": [
+    "requests-title",
+    "mortality-2015-2025",
+    "Q05"
+  ],
+  "expectedFirstAttemptCalls": 14,
+  "maximumNewCalls": 24,
+  "purposeMaximums": {
+    "PLATFORM_GENERATION": 12,
+    "PLANNING": 3,
+    "EXECUTION": 7,
+    "REVIEW": 2
+  },
+  "generationCases": [
+    "requests direct",
+    "mortality direct",
+    "Q05 Plan final",
+    "Q05 direct with actual same information"
+  ],
+  "executionWorks": [
+    "requests raw",
+    "requests enhanced",
+    "mortality raw",
+    "mortality enhanced",
+    "Q05 raw same-information",
+    "Q05 direct same-information",
+    "Q05 Plan"
+  ],
+  "models": {
+    "generation": "deepseek-flash",
+    "planning": "deepseek-flash",
+    "execution": "deepseek-flash",
+    "independentReview": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ]
+  },
+  "generationParameters": {
+    "temperature": 0.2,
+    "max_tokens": 10000,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "formalLimitsBefore": {
+    "total": 299,
+    "baseline": 80,
+    "candidateValidation": 219
+  },
+  "formalLimitsProposed": {
+    "total": 323,
+    "baseline": 80,
+    "candidateValidation": 243
+  },
+  "actualBefore": {
+    "total": 276,
+    "baseline": 70,
+    "candidateValidation": 206
+  },
+  "actualTotalMaximumAfter": 300,
+  "sameTestAccountFile": "tmp/local-acceptance/account.json",
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "closedBatchBalanceTransferAllowed": false,
+  "allFailuresCounted": true,
+  "actualPlanAnswers": "Existing approved synthetic design delegation, no selected options or actual parameters; bind fresh server questions",
+  "copyInput": "Native platform clipboard; no repair or appended missing answers by evaluator",
+  "hardGates": [
+    "Existing body-Han policy 800-1200; do not relax 1227 failure",
+    "Actual proposed scoring range, anchors, disagreement action and complete required design",
+    "Domain source/version and independent/paired method assumptions reviewed separately",
+    "Compile implementation AND executable tests; actual HTTP-call URL retains input, outputs/errors/logs do not echo synthetic credentials"
+  ],
+  "costAdoption": "No extra self-review calls or retries; log all tokens and latency. Requests output over prior3960 tokens or extra deliverables requires rejection/review rather than silent adoption.",
+  "notClaimed": "Local reference code or old works cannot pass candidate19 product gates"
+}

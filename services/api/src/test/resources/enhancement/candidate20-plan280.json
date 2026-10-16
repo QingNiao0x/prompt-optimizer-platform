@@ -1,0 +1,201 @@
+{
+  "source": "docs/testing/evidence/me00a-candidate19-live-2026-10-16/real/Q05-plan/plan-platform.json",
+  "sourceSha256": "868a7ffd51fd02d6fb805e3f763c49db30665bd8fc9d7b79fb5e54b78c965a99",
+  "rawPrompt": "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。正文800至1200个汉字，附表另计。不提供代码，不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Plan组的问答交互在什么条件下结束？",
+      "hint": "这决定Plan条件如何操作化，也影响各任务重复3次时每次交互的一致性。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "fixed_rounds",
+          "label": "固定轮次",
+          "description": "每任务固定进行相同轮数的澄清问答后生成。",
+          "answer": "Plan组每任务固定进行相同轮数的澄清问答，轮数在正式实施前确定并写入方案。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "until_sufficient",
+          "label": "信息足够即止",
+          "description": "由提问方判断已获得足够澄清信息后结束问答并生成。",
+          "answer": "Plan组由提问方判断已获得足够澄清信息后结束问答，再生成回答；判断标准在方案中写明。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "user_ends",
+          "label": "用户主动结束",
+          "description": "由用户决定何时结束澄清问答。",
+          "answer": "Plan组由用户决定何时结束澄清问答，随后生成回答。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_rule",
+          "label": "其他规则",
+          "description": "采用上述之外的终止规则。",
+          "answer": "Plan组的问答终止规则为：____（请填写）。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q2",
+      "question": "同信息公平对照的两组，确认信息以什么形式提供给模型？",
+      "hint": "这决定对照条件与Plan条件在信息量一致的前提下如何操作，属于研究设计的关键口径。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "verbatim_qa",
+          "label": "逐字提供问答记录",
+          "description": "把Plan组实际取得的问答内容逐字提供给对照两组。",
+          "answer": "对照两组获得与Plan组相同的确认信息，以逐字问答记录形式提供。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "structured_summary",
+          "label": "结构化摘要",
+          "description": "把确认信息整理为结构化要点后提供给对照两组。",
+          "answer": "对照两组获得与Plan组相同的确认信息，以结构化要点摘要形式提供。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_form",
+          "label": "其他形式",
+          "description": "采用上述之外的一致信息提供形式。",
+          "answer": "对照两组获得相同确认信息的形式为：____（请填写）。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q4",
+      "question": "20个任务在4类中的分配与顺序如何安排？",
+      "hint": "这影响随机化与重复3次的具体实施方式，属于研究设计的关键操作细节。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "fixed_order",
+          "label": "固定顺序",
+          "description": "每类5个任务按固定顺序呈现，模式顺序随机。",
+          "answer": "每类5个任务按固定顺序呈现，各模式的呈现顺序随机化。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "random_order",
+          "label": "任务顺序随机",
+          "description": "20个任务的呈现顺序完全随机化。",
+          "answer": "20个任务的呈现顺序完全随机化，每模式每任务独立重复3次。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "counterbalance",
+          "label": "拉丁方平衡",
+          "description": "用拉丁方设计平衡任务与模式的顺序效应。",
+          "answer": "采用拉丁方设计平衡任务与模式的顺序效应，每模式每任务独立重复3次。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_rule",
+          "label": "其他安排",
+          "description": "采用上述之外的分配与顺序安排。",
+          "answer": "任务分配与顺序安排为：____（请填写）。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q5",
+      "question": "准确性、完整性、清晰度与可执行性四个维度，评分采用什么量尺？",
+      "hint": "这决定评价工具的形式，影响后续统计与一致性分析。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "likert5",
+          "label": "5点李克特量表",
+          "description": "每维度用1至5分评分。",
+          "answer": "四个维度均采用5点李克特量表评分（1至5分）。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "likert7",
+          "label": "7点李克特量表",
+          "description": "每维度用1至7分评分。",
+          "answer": "四个维度均采用7点李克特量表评分（1至7分）。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "rubric_levels",
+          "label": "等级评分细则",
+          "description": "每维度按等级描述性评分细则打分。",
+          "answer": "四个维度均采用等级评分细则，按描述性标准打分。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_scale",
+          "label": "其他量尺",
+          "description": "采用上述之外的评分量尺。",
+          "answer": "评分量尺为：____（请填写）。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q6",
+      "question": "正文800至1200个汉字是否包含标题、摘要与关键词？",
+      "hint": "这决定字数统计口径，影响方法部分篇幅安排。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "body_only",
+          "label": "仅正文",
+          "description": "字数只计方法部分正文，不含标题、摘要与关键词。",
+          "answer": "800至1200个汉字仅指方法部分正文，不含标题、摘要与关键词。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "include_all",
+          "label": "含标题摘要关键词",
+          "description": "字数包含标题、摘要与关键词。",
+          "answer": "800至1200个汉字包含标题、摘要与关键词。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_rule",
+          "label": "其他口径",
+          "description": "采用上述之外的字数统计口径。",
+          "answer": "字数统计口径为：____（请填写）。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ]
+}

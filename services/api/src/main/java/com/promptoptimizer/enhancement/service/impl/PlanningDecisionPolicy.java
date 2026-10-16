@@ -127,7 +127,7 @@ final class PlanningDecisionPolicy {
                 case PLAN_INTERACTION_DEFINITION -> planInteractionDefinition(question, text);
                 case WRITING_SECTION_SCOPE -> methodSectionScope(text) || knownMethodOutlineContents(question, text);
                 case REVIEWER_BLINDING -> reviewerVisibility(text);
-                case METHOD_SELECTION -> methodSelection(text);
+                case METHOD_SELECTION -> methodSelection(text) || permittedCandidateConditions(question, text);
                 case INFORMATION_PARITY -> informationParity(text);
                 case EXISTING_REGION_LOOKUP -> regionImplementation(text) || regionAlgorithmChoice(question, text)
                         || regionLayerSelection(question, text);
@@ -298,6 +298,9 @@ final class PlanningDecisionPolicy {
     boolean delegatesResearchImplementation(PlanQuestion candidate, String raw) {
         if (raw.matches("(?s).*(?:由我决定|先让我确认|不要替我选择|由用户决定).*")) return false;
         if (hasIndependentResearchDecision(candidate)) return false;
+        // 当前分析已委托执行时，纯趋势方法选择可由执行者提出有条件的候选；不确认实际采用方法。
+        // 带资料事实、分母、目标、预注册或用户保留选择的复合题不经这条窄过滤。
+        if (routineTrendMethod(candidate, raw)) return true;
         // 已绑定回答的委托只免除同一道设计题的重问，不确认其取值，也不覆盖新对象、条件或权限选择。
         if (input.taskView() != null && input.taskView().executionRequirements().stream().anyMatch(requirement ->
                 requirement.subject().equals("委托要求") && requirement.question().equals(candidate.question())
@@ -307,13 +310,40 @@ final class PlanningDecisionPolicy {
         if (!hasDecision(Kind.RESEARCH_STATUS) || !raw.contains("说明")) return false;
         String question = candidate.question();
         boolean scoring = raw.matches("(?s).*说明[^。\\n]*(?:评价|评估).*" )
-                && question.matches("(?s).*(?:评分方式|评分量表|评分尺度|评分标准).*" );
+                && question.matches("(?s).*(?:评分方式|评分量表|评分尺度|评分标准|量尺).*" );
         boolean disagreement = delegatedReviewerDisagreement(question, raw);
         boolean randomization = raw.matches("(?s).*说明[^。\\n]*随机化.*" ) && question.contains("随机化");
         boolean parity = hasDecision(Kind.INFORMATION_PARITY)
                 && question.matches("(?s).*(?:相同|同样)[^。\\n]*确认信息.*(?:方式|如何|流程).*|"
                         + "(?s).*(?:如何|方式|流程)[^。\\n]*(?:相同|同样)[^。\\n]*确认信息.*");
         return scoring || disagreement || randomization || parity;
+    }
+
+    /** 只免除纯趋势实施方法的反问；分解目标、数据粒度和既有方案仍是独立重要信息。 */
+    private boolean routineTrendMethod(PlanQuestion candidate, String raw) {
+        if (!raw.matches("(?s).*(?:分析|研究|撰写).*(?:长期趋势|季节性趋势).*" )
+                || raw.matches("(?s).*(?:预注册|既定方案|复现|方法[^。；;]{0,12}(?:由我|由用户|先确认)|先确认[^。；;]{0,12}方法).*")) return false;
+        String text = candidate.question();
+        if (questionDecisionParts(candidate).stream().anyMatch(value -> value.matches(
+                "(?s).*(?:数据粒度|时间粒度|月度数据|年度数据|寿命表|标准人口|分析目标|比较对象|分解目标|年龄分组|新条件|如果|若|除非|未来|阈值|机构|医院|年份|授权|预注册|既有|实际采用|已选|\\d).*"))) return false;
+        return text.matches("^(?:本次)?(?:时间序列)?(?:长期趋势(?:和|与|及))?季节性趋势(?:分析)?(?:拟|计划)?"
+                + "(?:采用|使用|选择)(?:哪种|什么|哪些)(?:统计|分析)?方法[？?]"
+                + "(?:不同方法对数据长度、季节性和自相关性的要求不同[。.]?)?$");
+    }
+
+    /** 选项和提示也可能夹带重要条件，不能只凭纯方法题干删除整道问题。 */
+    private List<String> questionDecisionParts(PlanQuestion question) {
+        var values = new ArrayList<String>();
+        values.add(question.question());
+        values.add(question.hint());
+        values.addAll(question.examples());
+        question.options().forEach(option -> {
+            values.add(option.label());
+            values.add(option.description());
+            values.add(option.answer());
+            values.add(option.recommendationReason());
+        });
+        return values.stream().map(PlanningDecisionPolicy::safe).toList();
     }
 
     /** 仅同一评审评分的分歧处置是已委托设计；数据冲突、纳入规则和带新条件的复合题不等价。 */
@@ -551,6 +581,35 @@ final class PlanningDecisionPolicy {
         return text.matches(".*(?:是否需要|是否应|要不要).*(?:说明|描述|写明).*" )
                 && text.contains("未来") && text.contains("数据") && text.contains("检验")
                 && !text.matches(".*(?:t检验|卡方|方差分析|采用哪|具体检验|样本量|阈值|效应量|分布类型).*" );
+    }
+
+    /** 已允许说明候选条件时，是否写入是普通写作执行；候选中的方法定案、资料或新条件仍须保留。 */
+    private boolean permittedCandidateConditions(PlanQuestion question, String text) {
+        if (!text.matches("^(?:方法部分)?(?:是否需要|是否应|要不要)(?:包含|列出|说明)候选(?:统计检验|方法)(?:的)?适用条件(?:说明)?[？?]$")) return false;
+        String raw = safe(input.rawPrompt());
+        boolean allowed = PlanDecisionIntegrator.currentSentences(raw).stream()
+                .map(clause -> clause.strip().replaceFirst("[。.]$", "")).anyMatch(clause -> clause.matches(
+                        "^(?:(?:具体)?统计检验(?:依据|根据)未来数据分布(?:和|与|及)配对结构选择[，,])?"
+                                + "候选(?:统计检验|方法)(?:可以|允许|可)说明适用条件(?:[，,]不预设必然显著)?$"));
+        if (!allowed || hasIndependentResearchDecision(question)
+                || raw.matches("(?s).*(?:候选方法|候选统计检验|适用条件)[^。；;\\n]*(?:由我决定|由用户决定|先确认|以后确认|另行批准).*")) return false;
+        // 用完整的有限句法证明全题仅讨论是否列候选；未识别的新内容保留，不能靠扩大排除关键词删题。
+        return questionDecisionParts(question).stream().allMatch(this::candidateConditionScopeOnly);
+    }
+
+    /** 只认候选条件的展示取舍，不把任意说明或推荐理由当成已覆盖；新对象、条件和方法名自然不匹配。 */
+    private boolean candidateConditionScopeOnly(String part) {
+        String text = normalize(part);
+        if (text.isBlank()) return true;
+        return java.util.stream.Stream.of(
+                "(?:方法部分)?(?:是否需要|是否应|要不要)(?:包含|列出|说明)候选(?:统计检验|方法)(?:的)?适用条件(?:说明)?[?？]",
+                "包含候选方法及条件|仅说明选择原则",
+                "(?:方法部分)?列出候选(?:统计)?检验名称、适用条件及选择依据,但不预先选定(?:具体检验)?[。.]?",
+                "方法部分仅说明将依据未来数据分布和配对结构选择统计检验,不列出具体候选方法[。.]?",
+                "只说明将依据数据分布和配对结构选择检验,不列具体候选[。.]?",
+                "你已明确具体检验依据未来数据分布选择,但需确认方法部分是否要列出候选方法及其前提[。.]?",
+                "原文要求[“\\\"]候选方法可以说明适用条件,不预设必然显著[”\\\"],列出候选方法及条件符合该要求且不违反不预设原则[。.]?"
+        ).anyMatch(text::matches);
     }
 
     /** 同样确认信息的公平对照已定；随机化、顺序、资源预算及评价口径继续保留。 */

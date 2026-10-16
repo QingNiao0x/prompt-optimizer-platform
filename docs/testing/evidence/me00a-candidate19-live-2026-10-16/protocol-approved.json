@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-12",
+  "scope": "ME-00-A baseline then ME-01-A + ME-03-A bounded repair",
+  "cases": 7,
+  "initialPlanEnabled": false,
+  "initialPlanAnswers": [],
+  "initialExamplesEnabled": false,
+  "maximumActualModelCalls": 323,
+  "phaseLimits": {
+    "baseline": 80,
+    "candidateValidation": 243
+  },
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "baselineRounds": 1,
+  "candidateRounds": 2,
+  "planSupplement": [
+    "Q04",
+    "Q05"
+  ],
+  "review": "two independent AI reviewers, not domain experts; disputed verdicts unresolved until adjudication",
+  "sameTestAccountFile": "private runtime only; reuse former synthetic user",
+  "archiveSecrets": false,
+  "accountCreationAllowed": false,
+  "priceAndCurrencyCost": "UNKNOWN until verified invoice; actual provider tokens collected",
+  "productPrimaryComparison": "raw actual work vs actual copied enhanced work",
+  "repairRegression": "current enhanced vs repaired enhanced, separately reported",
+  "planParity": "verbatim actual submitted test answers provided to raw and direct comparators, never patch Plan copied body",
+  "severeFailure": "block capability release, preserve trace; no automatic budget increase",
+  "activeBatch": {
+    "version": "candidate19",
+    "group": "THREE_TASK_TARGETED_REAL_REVALIDATION",
+    "mode": "targeted",
+    "status": "OPEN",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationAmendment": "protocol-amendment-16.json",
+    "secondRoundAuthorized": false,
+    "cases": [
+      "requests-title",
+      "mortality-2015-2025",
+      "Q05"
+    ],
+    "casesFile": "candidate19-three-cases.json",
+    "casesSha256": "f69932c9ced06b61984665146d60ec62e969828b4918a900921704139ec6f40c",
+    "allowedRawPromptSha256": [
+      "ffefeb36c4b228371ac118dc21fdabd457cc657f0064a5592d8da8d5d8150a9f",
+      "9d8e8817bf76ebf7c0d9bb7f6776a623753f2d8ae56b321beaf345650596adcb",
+      "71de870998746bb5a0b9a049834f272f07f6ef1fae3c40a77cdb8d56a631398d"
+    ],
+    "model": "deepseek-flash",
+    "executionModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "callsBefore": 276,
+    "candidateCallsBefore": 206,
+    "maximumNewCalls": 24,
+    "maximumActualCallsAfterBatch": 300,
+    "maximumGenerationCalls": 12,
+    "maximumPlanningCalls": 3,
+    "maximumExecutionCalls": 7,
+    "maximumReviewCalls": 2,
+    "purposeMaximums": {
+      "PLATFORM_GENERATION": 12,
+      "PLANNING": 3,
+      "EXECUTION": 7,
+      "REVIEW": 2
+    },
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "executionParameters": {
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "accountCreationAllowed": false,
+    "noPhaseBorrowing": true,
+    "noClosedBatchAllowanceTransfer": true,
+    "qualityRetriesAllowed": false,
+    "sourceFreeze": "docs/testing/evidence/me00a-candidate17-2026-10-16/candidate17-source.json",
+    "sameInformationInput": {
+      "case": "Q05",
+      "rawPromptSha256": "ee1c4e7a04c07cb6ea63ea003c770f23949e9f600d0068bf93c6f960f935c7a6",
+      "actualAnswersSha256": "7aae43776bfab5b52d7a6913efd2efd1d880c1e2866f8f1e49c254a2014ec685",
+      "actualNaturalPlanTrace": 265,
+      "noAnswersAddedToPlanCopiedText": true
+    }
+  }
+}

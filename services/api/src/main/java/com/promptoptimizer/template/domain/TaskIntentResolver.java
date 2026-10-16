@@ -116,6 +116,8 @@ public final class TaskIntentResolver {
      */
     private static List<Goal> goals(String input) {
         List<Goal> values = new ArrayList<>();
+        var implicitGoals = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<Goal, Boolean>());
+        boolean refuseImplicitCode = false;
         boolean fenced = false;
         boolean referenceSection = false;
         for (String line : (input == null ? "" : input).toLowerCase(Locale.ROOT).split("\\R")) {
@@ -138,11 +140,20 @@ public final class TaskIntentResolver {
             if (referenceSection) continue;
             for (String part : text.split("[。；;，,]")) {
                 String clause = part.replaceAll("^[-*\\d.、\\s]+", "").trim();
+                // 只约束本轮新增的隐式库调用识别；现有明确开发目标不因另一局部否定被删除。
+                if (DECLINED_CODE_DELIVERY.matcher(clause).find()
+                        || clause.matches("^(?:只|仅)(?:解释|说明|讲解|输出思路).*$")
+                        || clause.matches("^(?:only\\s+(?:explain|describe)|(?:do not|don't)\\s+"
+                            + "(?:provide|write|output|include)\\s+(?:any\\s+)?(?:code|scripts?)\\b).*$")) refuseImplicitCode = true;
                 if (clause.isBlank() || NEGATIVE.matcher(clause).find()
                         || clause.matches("^(?:原文|材料|资料|例如|示例|当前|现有|目前|已实现)[:：].*")) continue;
                 int reference = clause.indexOf("原文：");
                 if (reference >= 0) clause = clause.substring(0, reference);
                 Goal goal = classify(clause);
+                if (goal == null && implicitLibraryAction(clause)) {
+                    goal = new Goal(TemplateCode.FEATURE_DEVELOPMENT, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
+                    implicitGoals.add(goal);
+                }
                 if (goal != null) values.add(goal);
                 if (goal != null && !goal.profile().softwareTask()
                         && goal.profile() != TaskDeliveryProfile.TRANSLATION && explicitCodeDelivery(clause)) {
@@ -156,7 +167,8 @@ public final class TaskIntentResolver {
                 }
             }
         }
-        return List.copyOf(values);
+        boolean reserved = refuseImplicitCode;
+        return values.stream().filter(goal -> !reserved || !implicitGoals.contains(goal)).toList();
     }
 
     /** 肯定交付物优先于领域名词；研究的附带复现代码不会将研究目标改成开发。 */
@@ -204,6 +216,14 @@ public final class TaskIntentResolver {
 
     private static Goal general(TaskDeliveryProfile profile) { return new Goal(TemplateCode.GENERAL, profile); }
     private static Goal research(TaskDeliveryProfile profile) { return new Goal(TemplateCode.RESEARCH_ANALYSIS, profile); }
+
+    /** 肯定的库调用动作可隐含实现交付；说明性提及及纯解释不建立代码义务。 */
+    private static boolean implicitLibraryAction(String clause) {
+        return !clause.matches("(?is).*(?:介绍|解释|说明|讲解|文章|教程|原理|参考|示例|引用|是否|\\b(?:explain|describe|article|tutorial)\\b).*" )
+                && match(clause, "^(?:请|帮我|需要)?(?:使用|用)\\s*[A-Za-z][A-Za-z0-9_.-]{1,40}\\s*(?:库|包|模块)"
+                    + "(?:来|去)?(?:爬取|抓取|提取|请求|读取|解析|下载|转换|保存)[^。；;\\n]+"
+                    + "|^\\s*use\\s+[A-Za-z][A-Za-z0-9_.-]{1,40}\\s+to\\s+(?:fetch|scrape|extract|parse|download|read|convert|save)\\b.+");
+    }
 
     /** 代码交付需要肯定的动作与交付物；“用 R 分析”“参考 Python 文档”不是脚本交付。 */
     private static boolean explicitCodeDelivery(String clause) {

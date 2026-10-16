@@ -1,0 +1,668 @@
+{
+  "originalReviewSha256": "b9f21c21b494b1fd21eef2ea7337d9097b7fa07d022226cce37f434471f6f995",
+  "originalStrictJson": true,
+  "fencedParseIsDiagnosticOnly": false,
+  "originalCasesAndVerdicts": {
+    "cases": [
+      {
+        "id": "requests-title",
+        "scoresA": {
+          "准确性": 4,
+          "完整性": 4,
+          "清晰度": 4,
+          "可执行性": 4
+        },
+        "scoresB": {
+          "准确性": 3,
+          "完整性": 3,
+          "清晰度": 4,
+          "可执行性": 3
+        },
+        "verdict": "A胜",
+        "severeFailures": [],
+        "evidence": [
+          {
+            "work": "A",
+            "quote": "def fetch_title(url: str, *, timeout: tuple = DEFAULT_TIMEOUT, user_agent: str = DEFAULT_UA, session: Optional[requests.Session] = None) -> dict:"
+          },
+          {
+            "work": "A",
+            "quote": "网络与解析异常均以明确 error 字段返回，不伪造标题；调用方错误（非法入参）直接抛异常。"
+          },
+          {
+            "work": "B",
+            "quote": "title = soup.title.string.strip() if soup.title else '无标题'"
+          },
+          {
+            "work": "B",
+            "quote": "return f'请求失败: {e}'"
+          }
+        ],
+        "uncertainties": [
+          "原始要求未指定URL、输出形式、异常处理口径，因此无法判定A的扩展设计是否完全符合用户预期。",
+          "B的BeautifulSoup依赖未在原始要求中明确允许，但作为常见实现方式仍可接受。"
+        ]
+      },
+      {
+        "id": "mortality-2015-2025",
+        "scoresA": {
+          "准确性": 4,
+          "完整性": 4,
+          "清晰度": 4,
+          "可执行性": 4
+        },
+        "scoresB": {
+          "准确性": 4,
+          "完整性": 4,
+          "清晰度": 4,
+          "可执行性": 4
+        },
+        "verdict": "平",
+        "severeFailures": [],
+        "evidence": [
+          {
+            "work": "A",
+            "quote": "YLL = \\sum_{i} d_i \\times (L - a_i)"
+          },
+          {
+            "work": "A",
+            "quote": "Arriaga分解用于量化各年龄组/死因对期望寿命差异的贡献。"
+          },
+          {
+            "work": "B",
+            "quote": "YLL = Σ_a (D_a × e_a)"
+          },
+          {
+            "work": "B",
+            "quote": "Arriaga分解用于量化不同年龄组对两个人群或两个时期之间预期寿命差异的贡献。"
+          }
+        ],
+        "uncertainties": [
+          "原始要求未提供具体地区、数据来源、ICD编码范围、参考寿命表等，两份作品均以方法框架为主，无法判定实际分析可执行性。",
+          "A给出更多具体工具和公式，但部分内容如R包名称未经验证，可能影响准确性。"
+        ]
+      },
+      {
+        "id": "Q05-direct",
+        "scoresA": {
+          "准确性": 4,
+          "完整性": 4,
+          "清晰度": 4,
+          "可执行性": 4
+        },
+        "scoresB": {
+          "准确性": 3,
+          "完整性": 3,
+          "清晰度": 3,
+          "可执行性": 3
+        },
+        "verdict": "A胜",
+        "severeFailures": [],
+        "evidence": [
+          {
+            "work": "A",
+            "quote": "Plan组问答终止规则拟定为：关键问题覆盖任务目标、约束、输出形式与验证标准，或连续两轮无新增有效信息时终止；具体阈值须预注册。"
+          },
+          {
+            "work": "A",
+            "quote": "公平对照两组获得与Plan组逐字相同的实际确认信息：先取得并封存同一案例的实际确认信息，再向两组提供相同信息；保留各组指定增强流程，不改写任一回答、不另换任务、不单组增加修订轮次。"
+          },
+          {
+            "work": "B",
+            "quote": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。"
+          },
+          {
+            "work": "B",
+            "quote": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。"
+          }
+        ],
+        "uncertainties": [
+          "原始要求正文800至1200个汉字，两份作品均未提供字数统计，无法确认是否满足。",
+          "B的附表内容全部标注为略，可能不满足附表另计的要求。"
+        ]
+      },
+      {
+        "id": "Q05-plan",
+        "scoresA": {
+          "准确性": 4,
+          "完整性": 4,
+          "清晰度": 4,
+          "可执行性": 4
+        },
+        "scoresB": {
+          "准确性": 4,
+          "完整性": 4,
+          "清晰度": 4,
+          "可执行性": 4
+        },
+        "verdict": "平",
+        "severeFailures": [],
+        "evidence": [
+          {
+            "work": "A",
+            "quote": "任务类型应覆盖不同认知需求与输出形式，例如信息提取、方案生成、约束满足与多步推理等。"
+          },
+          {
+            "work": "A",
+            "quote": "若评分分歧超过预设阈值，拟由第三名评审仲裁或通过共识讨论解决。"
+          },
+          {
+            "work": "B",
+            "quote": "任务拟设4类，每类5个，共20个。任务来源尚未确认，拟议主方案为：从公开、可合法使用的任务库或既有研究中筛选。"
+          },
+          {
+            "work": "B",
+            "quote": "每模式每任务独立重复3次，共形成4×20×3=240个提示词样本。"
+          }
+        ],
+        "uncertainties": [
+          "原始要求正文800至1200个汉字，两份作品均未提供字数统计，无法确认是否满足。",
+          "两份作品对公平对照的具体实现方式描述不同，但均未违反原始要求。"
+        ]
+      }
+    ]
+  },
+  "derivedAudit": {
+    "rawReviewSha256": "41894b9c73fb325f231e52236db1444190f02b14134c6ad9aae3a35ca5ffb131",
+    "strictJsonAndSchemaValid": true,
+    "deterministicChecksPassed": false,
+    "errors": [
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 0,
+        "work": "requests-title_A"
+      },
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 1,
+        "work": "requests-title_A"
+      },
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 5,
+        "work": "mortality-2015-2025_A"
+      },
+      {
+        "code": "EVIDENCE_NOT_LITERAL",
+        "issueIndex": 14,
+        "work": "Q05-plan_B"
+      }
+    ],
+    "evidenceChecks": [
+      {
+        "issueIndex": 0,
+        "work": "requests-title_A",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "def fetch_title(url: str, *, timeout: tuple = DEFAULT_TIMEOUT, user_agent: str = DEFAULT_UA, session: Optional[requests.Session] = None) -> dict:",
+        "matchedText": "def fetch_title(url: str, *, timeout: tuple = DEFAULT_TIMEOUT, user_agent: str = DEFAULT_UA, session: Optional[requests.Session] = None) -> dict:",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 1,
+        "work": "requests-title_A",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "网络与解析异常均以明确 error 字段返回，不伪造标题；调用方错误（非法入参）直接抛异常。",
+        "matchedText": "网络与解析异常均以明确 error 字段返回，不伪造标题；调用方错误（非法入参）直接抛异常。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 2,
+        "work": "requests-title_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "title = soup.title.string.strip() if soup.title else '无标题'",
+        "matchedText": "title = soup.title.string.strip() if soup.title else '无标题'",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 737,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 3,
+        "work": "requests-title_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "return f'请求失败: {e}'",
+        "matchedText": "return f'请求失败: {e}'",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 888,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 4,
+        "work": "mortality-2015-2025_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "YLL = \\sum_{i} d_i \\times (L - a_i)",
+        "matchedText": "YLL = \\sum_{i} d_i \\times (L - a_i)",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 2309,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 5,
+        "work": "mortality-2015-2025_A",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "Arriaga分解用于量化各年龄组/死因对期望寿命差异的贡献。",
+        "matchedText": "Arriaga分解用于量化各年龄组/死因对期望寿命差异的贡献。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 6,
+        "work": "mortality-2015-2025_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "YLL = Σ_a (D_a × e_a)",
+        "matchedText": "YLL = Σ_a (D_a × e_a)",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 4164,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 7,
+        "work": "mortality-2015-2025_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "Arriaga分解用于量化不同年龄组对两个人群或两个时期之间预期寿命差异的贡献。",
+        "matchedText": "Arriaga分解用于量化不同年龄组对两个人群或两个时期之间预期寿命差异的贡献。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 5063,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 8,
+        "work": "Q05-direct_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "Plan组问答终止规则拟定为：关键问题覆盖任务目标、约束、输出形式与验证标准，或连续两轮无新增有效信息时终止；具体阈值须预注册。",
+        "matchedText": "Plan组问答终止规则拟定为：关键问题覆盖任务目标、约束、输出形式与验证标准，或连续两轮无新增有效信息时终止；具体阈值须预注册。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 483,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 9,
+        "work": "Q05-direct_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "公平对照两组获得与Plan组逐字相同的实际确认信息：先取得并封存同一案例的实际确认信息，再向两组提供相同信息；保留各组指定增强流程，不改写任一回答、不另换任务、不单组增加修订轮次。",
+        "matchedText": "公平对照两组获得与Plan组逐字相同的实际确认信息：先取得并封存同一案例的实际确认信息，再向两组提供相同信息；保留各组指定增强流程，不改写任一回答、不另换任务、不单组增加修订轮次。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 393,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 10,
+        "work": "Q05-direct_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。",
+        "matchedText": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 548,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 11,
+        "work": "Q05-direct_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。",
+        "matchedText": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 1631,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 12,
+        "work": "Q05-plan_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "任务类型应覆盖不同认知需求与输出形式，例如信息提取、方案生成、约束满足与多步推理等。",
+        "matchedText": "任务类型应覆盖不同认知需求与输出形式，例如信息提取、方案生成、约束满足与多步推理等。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 246,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 13,
+        "work": "Q05-plan_A",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "若评分分歧超过预设阈值，拟由第三名评审仲裁或通过共识讨论解决。",
+        "matchedText": "若评分分歧超过预设阈值，拟由第三名评审仲裁或通过共识讨论解决。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 1052,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 14,
+        "work": "Q05-plan_B",
+        "exactQuoteInWork": false,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "任务拟设4类，每类5个，共20个。任务来源尚未确认，拟议主方案为：从公开、可合法使用的任务库或既有研究中筛选。",
+        "matchedText": "任务拟设4类，每类5个，共20个。任务来源尚未确认，拟议主方案为：从公开、可合法使用的任务库或既有研究中筛选。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": -1,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      },
+      {
+        "issueIndex": 15,
+        "work": "Q05-plan_B",
+        "exactQuoteInWork": true,
+        "exactQuoteInAssociatedInput": false,
+        "matchVersion": "literal-or-one-outer-pair-v2",
+        "originalEvidence": "每模式每任务独立重复3次，共形成4×20×3=240个提示词样本。",
+        "matchedText": "每模式每任务独立重复3次，共形成4×20×3=240个提示词样本。",
+        "matchMode": "EXACT",
+        "positionUnit": "UTF16_CODE_UNIT",
+        "workPosition": 528,
+        "inputPosition": -1,
+        "quoteOnlyInOtherSource": false
+      }
+    ],
+    "comparisons": [
+      {
+        "left": "requests-title_A",
+        "right": "requests-title_B",
+        "originalVerdict": "LEFT_WIN",
+        "originalReason": "原评审结论：A胜；此派生字段仅供协议映射，不新增理由。",
+        "literalReasonWinner": null,
+        "independentGate": "NOT_BOTH_PASSED",
+        "leftGate": "OPEN",
+        "rightGate": "OPEN",
+        "rankingsDoNotOverrideHardOrSevereFailure": true
+      },
+      {
+        "left": "mortality-2015-2025_A",
+        "right": "mortality-2015-2025_B",
+        "originalVerdict": "TIE",
+        "originalReason": "原评审结论：平；此派生字段仅供协议映射，不新增理由。",
+        "literalReasonWinner": null,
+        "independentGate": "NOT_BOTH_PASSED",
+        "leftGate": "OPEN",
+        "rightGate": "OPEN",
+        "rankingsDoNotOverrideHardOrSevereFailure": true
+      },
+      {
+        "left": "Q05-direct_A",
+        "right": "Q05-direct_B",
+        "originalVerdict": "LEFT_WIN",
+        "originalReason": "原评审结论：A胜；此派生字段仅供协议映射，不新增理由。",
+        "literalReasonWinner": null,
+        "independentGate": "NOT_BOTH_PASSED",
+        "leftGate": "OPEN",
+        "rightGate": "FAIL",
+        "rankingsDoNotOverrideHardOrSevereFailure": true
+      },
+      {
+        "left": "Q05-plan_A",
+        "right": "Q05-plan_B",
+        "originalVerdict": "TIE",
+        "originalReason": "原评审结论：平；此派生字段仅供协议映射，不新增理由。",
+        "literalReasonWinner": null,
+        "independentGate": "BOTH_FAIL",
+        "leftGate": "FAIL",
+        "rightGate": "FAIL",
+        "rankingsDoNotOverrideHardOrSevereFailure": true
+      }
+    ],
+    "originalReview": {
+      "reviewerType": "AI_ASSISTED",
+      "scores": {
+        "requests-title_A": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "requests-title_B": {
+          "accuracy": 3,
+          "completeness": 3,
+          "clarity": 4,
+          "executability": 3
+        },
+        "mortality-2015-2025_A": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "mortality-2015-2025_B": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "Q05-direct_A": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "Q05-direct_B": {
+          "accuracy": 3,
+          "completeness": 3,
+          "clarity": 3,
+          "executability": 3
+        },
+        "Q05-plan_A": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        },
+        "Q05-plan_B": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        }
+      },
+      "issues": [
+        {
+          "work": "requests-title_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "def fetch_title(url: str, *, timeout: tuple = DEFAULT_TIMEOUT, user_agent: str = DEFAULT_UA, session: Optional[requests.Session] = None) -> dict:",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "requests-title_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "网络与解析异常均以明确 error 字段返回，不伪造标题；调用方错误（非法入参）直接抛异常。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "requests-title_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "title = soup.title.string.strip() if soup.title else '无标题'",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "requests-title_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "return f'请求失败: {e}'",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "mortality-2015-2025_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "YLL = \\sum_{i} d_i \\times (L - a_i)",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "mortality-2015-2025_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "Arriaga分解用于量化各年龄组/死因对期望寿命差异的贡献。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "mortality-2015-2025_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "YLL = Σ_a (D_a × e_a)",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "mortality-2015-2025_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "Arriaga分解用于量化不同年龄组对两个人群或两个时期之间预期寿命差异的贡献。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "Plan组问答终止规则拟定为：关键问题覆盖任务目标、约束、输出形式与验证标准，或连续两轮无新增有效信息时终止；具体阈值须预注册。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "公平对照两组获得与Plan组逐字相同的实际确认信息：先取得并封存同一案例的实际确认信息，再向两组提供相同信息；保留各组指定增强流程，不改写任一回答、不另换任务、不单组增加修订轮次。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "公平对照1组与公平对照2组在确认信息的呈现方式或交互形式上可有所区别，但确认信息内容保持一致。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-direct_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "附表1：4类任务与20个任务示例（略）。附表2：评价维度与行为锚点（略）。附表3：随机化与盲法流程（略）。附表4：候选统计检验及适用条件（略）。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-plan_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "任务类型应覆盖不同认知需求与输出形式，例如信息提取、方案生成、约束满足与多步推理等。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-plan_A",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "若评分分歧超过预设阈值，拟由第三名评审仲裁或通过共识讨论解决。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-plan_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "任务拟设4类，每类5个，共20个。任务来源尚未确认，拟议主方案为：从公开、可合法使用的任务库或既有研究中筛选。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        },
+        {
+          "work": "Q05-plan_B",
+          "origin": "WORK",
+          "severity": "MINOR",
+          "evidence": "每模式每任务独立重复3次，共形成4×20×3=240个提示词样本。",
+          "reason": "原评审引用的机械核验；严重性占位不表示质量评级。"
+        }
+      ],
+      "pairs": [
+        {
+          "left": "requests-title_A",
+          "right": "requests-title_B",
+          "verdict": "LEFT_WIN",
+          "reason": "原评审结论：A胜；此派生字段仅供协议映射，不新增理由。"
+        },
+        {
+          "left": "mortality-2015-2025_A",
+          "right": "mortality-2015-2025_B",
+          "verdict": "TIE",
+          "reason": "原评审结论：平；此派生字段仅供协议映射，不新增理由。"
+        },
+        {
+          "left": "Q05-direct_A",
+          "right": "Q05-direct_B",
+          "verdict": "LEFT_WIN",
+          "reason": "原评审结论：A胜；此派生字段仅供协议映射，不新增理由。"
+        },
+        {
+          "left": "Q05-plan_A",
+          "right": "Q05-plan_B",
+          "verdict": "TIE",
+          "reason": "原评审结论：平；此派生字段仅供协议映射，不新增理由。"
+        }
+      ]
+    },
+    "originalReviewTextUnchanged": true,
+    "semanticVerdict": "REQUIRES_EVIDENCE_REVIEW",
+    "automaticSemanticJudge": false,
+    "modelCalls": 0
+  },
+  "normalization": "Only schema/ID/Chinese dimension-name mapping. Placeholder issue severity and reason are mechanical; no new semantic verdict. Raw original unchanged.",
+  "cannotValidateByItself": [
+    "Scientific accuracy",
+    "Verdict justification",
+    "Full requirement adherence",
+    "Length or code behaviour"
+  ]
+}

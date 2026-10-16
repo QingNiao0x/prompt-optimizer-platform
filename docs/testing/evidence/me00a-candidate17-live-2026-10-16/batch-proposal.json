@@ -1,0 +1,54 @@
+{
+  "version": "candidate17-r2",
+  "status": "PREPARED_NOT_AUTHORIZED_FOR_IO",
+  "scope": "requests-title and mortality-2015-2025 direct regressions; Q05 natural Plan and same-information three-arm diagnostic",
+  "sourceManifest": "docs/testing/evidence/me00a-candidate17-2026-10-16/candidate17-source.json",
+  "callsBefore": { "total": 262, "baseline": 70, "candidateValidation": 192 },
+  "currentFormalLimits": { "total": 275, "baseline": 80, "candidateValidation": 195 },
+  "requestedFormalLimits": { "total": 299, "baseline": 80, "candidateValidation": 219 },
+  "maximumNewCalls": 24,
+  "maximumActualCallsAfterBatch": 286,
+  "purposeMaximums": { "PLATFORM_GENERATION": 12, "PLANNING": 3, "EXECUTION": 7, "REVIEW": 2 },
+  "generationAllocation": {
+    "requests-title-direct": 3,
+    "mortality-2015-2025-direct": 3,
+    "Q05-plan-final": 3,
+    "Q05-direct-same-information": 3
+  },
+  "planningAllocation": { "Q05-natural-plan": 3 },
+  "executionAllocation": {
+    "requests-title": ["raw", "direct-copied"],
+    "mortality-2015-2025": ["raw", "direct-copied"],
+    "Q05": ["raw-same-information", "direct-same-information-copied", "plan-copied"]
+  },
+  "generationModel": "deepseek:deepseek-flash",
+  "executionModel": "deepseek-flash",
+  "reviewModels": ["deepseek-flash", "deepseek-v4-pro"],
+  "reviewIndependence": "Two independent calls and anonymous identical pack; same provider, not cross-provider or human expert review",
+  "generationParameters": { "temperature": 0.2, "max_tokens": 10000, "thinking": { "type": "disabled" } },
+  "executionParameters": { "temperature": 0.2, "max_tokens": 8192, "thinking": { "type": "disabled" } },
+  "planAnswerPolicy": {
+    "source": "tmp/me00a-20261012/candidate14-actual-answers.json",
+    "scope": "Only apply unchanged actual delegation to applicable professional-design questions; preserve every actual question and answer",
+    "unknownActualFacts": "Remain unresolved; no selection of real population, data, methods, scales or unprovided parameters",
+    "sameInformation": "Raw and direct comparators receive precisely the submitted question-answer text; scripts never repair Plan copied text",
+    "zeroQuestions": "Record zero questions and no fabricated confirmation; do not invent question IDs or answers"
+  },
+  "hardChecks": [
+    "Input, raw upstream response, assembly, native clipboard and history provenance",
+    "Research original deliverable, no fabricated facts, no empty-result-table expansion, missing-material repetition",
+    "Delegated proposal coexists with unconfirmed actual parameters; scoring declarations project into executable requirements",
+    "Q05 800-1200 Han body excluding headings and tables; retain alternative count separately",
+    "Q05 task counts, independent repetitions, double-blind reviewers and same-information flow",
+    "Compile unchanged requests implementations and independent test file; execute against local synthetic HTTP fixtures",
+    "Keep original AI reviews, quote checks, severe failures and disagreements separately"
+  ],
+  "account": "Reuse tmp/local-acceptance/account.json; never create account, tenant or workspace",
+  "runtime": "Local frozen Java source/classes, existing project PostgreSQL and Redis, local web; no Docker",
+  "noClosedBatchAllowanceTransfer": true,
+  "noPhaseBorrowing": true,
+  "qualityRetriesAllowed": false,
+  "secondRoundAuthorized": false,
+  "scopeExpansion": "Examples and frontend multi-round generation remain gated on core results; model-free browser checks may proceed",
+  "stop": "Stop affected external calls on budget exhaustion, missing authorization, source drift, invalid identity or severe integrity failure; continue independent local work"
+}

@@ -1,0 +1,186 @@
+{
+  "compiledBlocks": [
+    {
+      "file": "raw-1.py",
+      "sha256": "7b2c6a3d1f35f379a98f925b3c97ee276f8ce0917721e0b1138f53d060fa9ef1",
+      "compiled": true,
+      "omittedTopLevelLines": [
+        28
+      ]
+    },
+    {
+      "file": "raw-2.py",
+      "sha256": "7b377d3bea7636d44dd031fc4f5f2db1015e53e04b11440e693beff5939375f7",
+      "compiled": true,
+      "omittedTopLevelLines": [
+        16
+      ]
+    },
+    {
+      "file": "raw-3.py",
+      "sha256": "3d9f7048fc8c28ba62c55c7b458a9e8945c68da860ccbc4f275516c67819ae33",
+      "compiled": true,
+      "omittedTopLevelLines": [
+        16,
+        18
+      ]
+    },
+    {
+      "file": "enhanced-1.py",
+      "sha256": "b6c0c68587c0ebc459ba3c1a15643f8f31ef1f3c54666f6ddaa5ecde6a1bf07b",
+      "compiled": false,
+      "role": "DOCUMENTED_INTERFACE_SIGNATURE_NOT_EXECUTABLE"
+    },
+    {
+      "file": "enhanced-2.py",
+      "sha256": "ce43c936ed6c8864d29d2341e9799bb990260768ad29e771c86cec88b6a61d05",
+      "compiled": true,
+      "role": "RETURN_SCHEMA"
+    },
+    {
+      "file": "web_title.py",
+      "sha256": "503405e138f4cf01c20f30bec9bc4ebf9621a2a35f125e5dd4086174921ab640",
+      "compiled": true,
+      "role": "IMPLEMENTATION"
+    },
+    {
+      "file": "test_web_title.py",
+      "sha256": "abf7ffe693bf0c721c7964563fdadaa54f694cb6db2c72ccf0f175d9acff52ee",
+      "compiled": true,
+      "role": "MODEL_AUTHORED_EXECUTABLE_TESTS"
+    }
+  ],
+  "modelAuthoredTests": {
+    "run": 18,
+    "failures": 0,
+    "errors": 0
+  },
+  "independentChecks": [
+    {
+      "test": "raw-1-normal",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "raw-1-utf8",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "raw-1-entity",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "raw-2-normal",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "raw-2-utf8",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "raw-2-entity",
+      "pass": false,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "raw-3-normal",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "raw-3-utf8",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "raw-3-entity",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "enhanced-normal",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "enhanced-utf8",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "enhanced-entity",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "enhanced-token-response",
+      "pass": false,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "enhanced-api-key-response",
+      "pass": false,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "enhanced-userinfo-response",
+      "pass": false,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "enhanced-invalid-url-response",
+      "pass": false,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "enhanced-timeout-output",
+      "pass": false,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "enhanced-connection-error-output",
+      "pass": false,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "enhanced-batch-map-keys",
+      "pass": false,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    },
+    {
+      "test": "enhanced-ordinary-query",
+      "pass": true,
+      "failureType": null,
+      "requestArgumentPreserved": true
+    }
+  ],
+  "networkCalls": 0,
+  "independentTestCompiled": true,
+  "scope": "Unchanged implementation and executable tests; raw external demo calls omitted. Interface signature is not a runnable file.",
+  "notAnAcceptanceShortcut": "Model tests asserting that result.url retains credentials may pass while independent security fails",
+  "securityRule": "Existing platform copied rule forbids credentials in response/error/logs; all values synthetic",
+  "caseSelection": "Fixed core/title and synthetic-credential criteria; entry-point mapping adapts to saved names, no work repair"
+}

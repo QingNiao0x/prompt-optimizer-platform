@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="1.021" tests="25" errors="0" skipped="0" failures="3"><testcase name="newExceptionAndDifferentGroupsDoNotCoverTheOriginalWorkflow" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.112"><failure message="&#10;Expecting actual:&#10;  &quot;本次问答流程由增强器提出关键问题、用户回答，再将有效回答融入优化提示词。&#10;直接增强不主动发起这轮问答，但仍正常使用已经提供的需求与确认信息。&#10;Plan不能改为模型自行生成执行计划再作答。&#10;研究若要求同信息对照，保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。&quot;&#10;not to contain:&#10;  &quot;研究若要求同信息对照，保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。&quot;&#10;" type="java.lang.AssertionError">java.lang.AssertionError: 
+
+Expecting actual:
+  "本次问答流程由增强器提出关键问题、用户回答，再将有效回答融入优化提示词。
+直接增强不主动发起这轮问答，但仍正常使用已经提供的需求与确认信息。
+Plan不能改为模型自行生成执行计划再作答。
+研究若要求同信息对照，保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。"
+not to contain:
+  "研究若要求同信息对照，保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。"
+
+	at com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest.newExceptionAndDifferentGroupsDoNotCoverTheOriginalWorkflow(CandidateEighteenReplayTest.java:130)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+</failure>
+  </testcase><testcase name="completeWorkflowCannotBeBorrowedFromSourcesOrNewConditions(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.019" /><testcase name="completeWorkflowCannotBeBorrowedFromSourcesOrNewConditions(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.002" /><testcase name="completeWorkflowCannotBeBorrowedFromSourcesOrNewConditions(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.002" /><testcase name="completeWorkflowCannotBeBorrowedFromSourcesOrNewConditions(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.001" /><testcase name="completeWorkflowCannotBeBorrowedFromSourcesOrNewConditions(String)[5]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.001" /><testcase name="completeWorkflowCannotBeBorrowedFromSourcesOrNewConditions(String)[6]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.002" /><testcase name="unrelatedKindsDoNotBecomeScoringDesign(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.157" /><testcase name="unrelatedKindsDoNotBecomeScoringDesign(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.014" /><testcase name="unrelatedKindsDoNotBecomeScoringDesign(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.01" /><testcase name="ordinaryQualityCheckDoesNotCreateScoringAndMissingDelegationDoesNotAuthorizeIt" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.022" /><testcase name="qualityCheckDoesNotOverrideCurrentOrFutureReservations(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.017" /><testcase name="qualityCheckDoesNotOverrideCurrentOrFutureReservations(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.019" /><testcase name="qualityCheckDoesNotOverrideCurrentOrFutureReservations(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.037" /><testcase name="qualityCheckDoesNotOverrideCurrentOrFutureReservations(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.012" /><testcase name="captured266CompleteScopedWorkflowIsNotProjectedAgain" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.014"><failure message="&#10;Expecting actual:&#10;  &quot;本交付面向研究生撰写中文研究设计的方法部分，研究主题为Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施；用户没有额外真实数据，不确认任何既有参数。&#10;撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。请根据原始研究目标提出可开展的推荐设计并说明适用条件；对Plan组问答交互终止规则、20个任务来源、候选统计检验适用条件说明等未确认事项，给出拟议主方案及适用条件，不冒充已确认或已实施。&#10;交付中文研究设计的方法部分正文，800至1200个汉字，附表另计。不提供代码。正文需包含：研究对象与任务、实验条件与分组、随机化与盲法、评价指标与评分流程、分歧处理、统计检验候选及适用条件、公平对照的信息流说明。不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。&#10;- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。&#10;- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。&#10;- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。&#10;- 不确认任何既有参数；未确认事项以拟议设计呈现，不冒充已确认或已实施。&#10;- 不得使用假设或虚构数据，禁令适用于所有用途，包括测试和验证。&#10;- 具体检验依据未来数据分布和适用条件选择；可说明候选检验名称及适用前提，不预先选定，也不预设显著性。&#10;- 同信息对照两组接收并可使用同一原始任务和同一份实际确认信息；保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。&#10;- 评价对象为提示词，不扩大为其他对象或写成二选一；下游作品可按原任务作为验证依据，不能替换评分对象。&#10;方法与研究问题一致，定义和比较条件可复核；已定与未决参数分开，不编造数据、结果、文献或已完成研究状态。&quot;&#10;to contain:&#10;  &quot;同信息对照两组接收并可使用同一原始任务和同一份实际确认信息；保留各组指定的增强流程，不改写回答、不另换任务，也不只增加某组修订轮次。&quot; " type="java.lang.AssertionError">java.lang.AssertionError: 
+
+Expecting actual:
+  "本交付面向研究生撰写中文研究设计的方法部分，研究主题为Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施；用户没有额外真实数据，不确认任何既有参数。
+撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。请根据原始研究目标提出可开展的推荐设计并说明适用条件；对Plan组问答交互终止规则、20个任务来源、候选统计检验适用条件说明等未确认事项，给出拟议主方案及适用条件，不冒充已确认或已实施。
+交付中文研究设计的方法部分正文，800至1200个汉字，附表另计。不提供代码。正文需包含：研究对象与任务、实验条件与分组、随机化与盲法、评价指标与评分流程、分歧处理、统计检验候选及适用条件、公平对照的信息流说明。不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。
+- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。
+- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。
+- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。
+- 不确认任何既有参数；未确认事项以拟议设计呈现，不冒充已确认或已实施。
+- 不得使用假设或虚构数据，禁令适用于所有用途，包括测试和验证。
+- 具体检验依据未来数据分布和适用条件选择；可说明候选检验名称及适用前提，不预先选定，也不预设显著性。
+- 同信息对照两组接收并可使用同一原始任务和同一份实际确认信息；保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。
+- 评价对象为提示词，不扩大为其他对象或写成二选一；下游作品可按原任务作为验证依据，不能替换评分对象。
+方法与研究问题一致，定义和比较条件可复核；已定与未决参数分开，不编造数据、结果、文献或已完成研究状态。"
+to contain:
+  "同信息对照两组接收并可使用同一原始任务和同一份实际确认信息；保留各组指定的增强流程，不改写回答、不另换任务，也不只增加某组修订轮次。" 
+	at com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest.captured266CompleteScopedWorkflowIsNotProjectedAgain(CandidateEighteenReplayTest.java:59)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+</failure>
+  </testcase><testcase name="qualityCheckCannotBorrowOtherScopesNegationOrFutureAuthorization(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.006" /><testcase name="qualityCheckCannotBorrowOtherScopesNegationOrFutureAuthorization(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.006" /><testcase name="qualityCheckCannotBorrowOtherScopesNegationOrFutureAuthorization(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.007" /><testcase name="qualityCheckCannotBorrowOtherScopesNegationOrFutureAuthorization(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.008" /><testcase name="captured267QualityCheckDeclarationReachesTheActualDirectTask" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.326"><failure message="&#10;Expecting actual:&#10;  &quot;撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。设计必须保留以下要素：&#10;- 4类任务，每类5个，共20个任务；&#10;- 每模式每任务独立重复3次；&#10;- 两名独立评审盲评；&#10;- 比较直接增强与Plan，并另设两组获得相同确认信息的公平对照；&#10;- 说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理；&#10;- 具体统计检验依据未来数据分布和配对结构选择，候选方法可说明适用条件，不预设必然显著。&#10;由于研究尚未实施且用户未确认任何既有参数，请按原始研究目标提出可开展的推荐设计并说明适用条件，明确标注为拟议设计，不冒充已确认或已实施。&#10;评价对象为提示词质量，评价步骤须落实：待评对象为提示词，评审所见材料为经盲化处理的提示词及其对应任务，准确性、完整性、清晰度与可执行性四项指标均作用于提示词质量。下游作品可作为验证依据，但不替代对提示词质量的评价。&#10;同信息公平对照须落实到信息流：先取得并封存同一案例的实际确认信息，两组获得逐字相同的信息；直接增强组不追问不等于不能使用已提供答案；不以相同字数、改写某组回答或单组额外修订替代信息一致。保留谁提问、谁回答及答案如何使用，问答不能改成模型自行生成计划。&#10;Plan组问答交互的终止规则、20个任务的具体来源与构造方式、候选统计检验的适用条件说明，请按拟议设计给出可开展的主方案及适用条件。&quot;&#10;to contain:&#10;  [&quot;提出拟议评分尺度&quot;, &quot;可操作定义&quot;, &quot;分歧处理规则&quot;]&#10;but could not find:&#10;  [&quot;提出拟议评分尺度&quot;, &quot;可操作定义&quot;, &quot;分歧处理规则&quot;]&#10; " type="java.lang.AssertionError">java.lang.AssertionError: 
+
+Expecting actual:
+  "撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。设计必须保留以下要素：
+- 4类任务，每类5个，共20个任务；
+- 每模式每任务独立重复3次；
+- 两名独立评审盲评；
+- 比较直接增强与Plan，并另设两组获得相同确认信息的公平对照；
+- 说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理；
+- 具体统计检验依据未来数据分布和配对结构选择，候选方法可说明适用条件，不预设必然显著。
+由于研究尚未实施且用户未确认任何既有参数，请按原始研究目标提出可开展的推荐设计并说明适用条件，明确标注为拟议设计，不冒充已确认或已实施。
+评价对象为提示词质量，评价步骤须落实：待评对象为提示词，评审所见材料为经盲化处理的提示词及其对应任务，准确性、完整性、清晰度与可执行性四项指标均作用于提示词质量。下游作品可作为验证依据，但不替代对提示词质量的评价。
+同信息公平对照须落实到信息流：先取得并封存同一案例的实际确认信息，两组获得逐字相同的信息；直接增强组不追问不等于不能使用已提供答案；不以相同字数、改写某组回答或单组额外修订替代信息一致。保留谁提问、谁回答及答案如何使用，问答不能改成模型自行生成计划。
+Plan组问答交互的终止规则、20个任务的具体来源与构造方式、候选统计检验的适用条件说明，请按拟议设计给出可开展的主方案及适用条件。"
+to contain:
+  ["提出拟议评分尺度", "可操作定义", "分歧处理规则"]
+but could not find:
+  ["提出拟议评分尺度", "可操作定义", "分歧处理规则"]
+ 
+	at com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest.captured267QualityCheckDeclarationReachesTheActualDirectTask(CandidateEighteenReplayTest.java:49)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+</failure>
+  </testcase><testcase name="everyIndependentWorkflowObligationStillNeedsCoverage(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.001" /><testcase name="everyIndependentWorkflowObligationStillNeedsCoverage(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.0" /><testcase name="everyIndependentWorkflowObligationStillNeedsCoverage(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.001" /><testcase name="everyIndependentWorkflowObligationStillNeedsCoverage(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.CandidateEighteenReplayTest" time="0.0" /></testsuite>

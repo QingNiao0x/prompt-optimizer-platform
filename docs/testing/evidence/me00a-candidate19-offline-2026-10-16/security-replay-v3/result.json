@@ -1,0 +1,149 @@
+{
+  "modelCalls": 0,
+  "networkCalls": 0,
+  "originalWorkSha256": "608de766d08822766e560cb6fc6c81c63834f4a6887adc2790178dc9d9da37ea",
+  "originalCodeSha256": "31422370558c4fef6cc354a268bf56d381ed3e6a4b9a8ba590ec2c45fac8bc79",
+  "referenceCodeSha256": "4ed58a382960159d2be1542db7e65196e0c184d6b16a5caba37c6ae68f19deed",
+  "observations": [
+    {
+      "arm": "ORIGINAL_WORK",
+      "case": "query-token",
+      "pass": false,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "ORIGINAL_WORK",
+      "case": "access-token",
+      "pass": false,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "ORIGINAL_WORK",
+      "case": "mixed-case-api-key",
+      "pass": false,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "ORIGINAL_WORK",
+      "case": "encoded-key",
+      "pass": false,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "ORIGINAL_WORK",
+      "case": "duplicate-query",
+      "pass": false,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "ORIGINAL_WORK",
+      "case": "userinfo",
+      "pass": false,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "ORIGINAL_WORK",
+      "case": "ordinary-query-unchanged",
+      "pass": true,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "ORIGINAL_WORK",
+      "case": "timeout-output",
+      "pass": false,
+      "originalRequestPreserved": true,
+      "errorCorrect": true
+    },
+    {
+      "arm": "ORIGINAL_WORK",
+      "case": "invalid-url-error",
+      "pass": false
+    },
+    {
+      "arm": "ORIGINAL_WORK",
+      "case": "batch-json-error",
+      "pass": false
+    },
+    {
+      "arm": "DIAGNOSTIC_REFERENCE_ONLY",
+      "case": "query-token",
+      "pass": true,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "DIAGNOSTIC_REFERENCE_ONLY",
+      "case": "access-token",
+      "pass": true,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "DIAGNOSTIC_REFERENCE_ONLY",
+      "case": "mixed-case-api-key",
+      "pass": true,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "DIAGNOSTIC_REFERENCE_ONLY",
+      "case": "encoded-key",
+      "pass": true,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "DIAGNOSTIC_REFERENCE_ONLY",
+      "case": "duplicate-query",
+      "pass": true,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "DIAGNOSTIC_REFERENCE_ONLY",
+      "case": "userinfo",
+      "pass": true,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "DIAGNOSTIC_REFERENCE_ONLY",
+      "case": "ordinary-query-unchanged",
+      "pass": true,
+      "originalRequestPreserved": true,
+      "titleCorrect": true
+    },
+    {
+      "arm": "DIAGNOSTIC_REFERENCE_ONLY",
+      "case": "timeout-output",
+      "pass": true,
+      "originalRequestPreserved": true,
+      "errorCorrect": true
+    },
+    {
+      "arm": "DIAGNOSTIC_REFERENCE_ONLY",
+      "case": "invalid-url-error",
+      "pass": true
+    },
+    {
+      "arm": "DIAGNOSTIC_REFERENCE_ONLY",
+      "case": "batch-json-error",
+      "pass": true
+    }
+  ],
+  "independentTestCompiled": true,
+  "modelAuthoredTestFiles": 0,
+  "scope": "Reference demonstrates a possible local repair, NOT a new model output or a platform quality pass",
+  "limitations": [
+    "Not an arbitrary-secret detector",
+    "No claim to sanitize secrets in HTML content or unknown query keys",
+    "Does not prove a downstream model will generate the reference repair"
+  ]
+}

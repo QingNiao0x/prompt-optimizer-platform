@@ -8,6 +8,23 @@ const work=(text,input)=>({text,input,inputSha256:hash(input)});
 const bindings={works:{U:work('交付甲报告。','写甲报告。'),V:work('交付乙报告。','写乙报告，正文800字。')},pairs:[{left:'U',right:'V'}]};
 const scores=Object.fromEntries(['U','V'].map(id=>[id,{accuracy:4,completeness:4,clarity:4,executability:4}]));
 const review=(issues=[],verdict='RIGHT_WIN',reason='V优于U')=>JSON.stringify({reviewerType:'AI_ASSISTED',scores,issues,pairs:[{left:'U',right:'V',verdict,reason}]});
+test('One complete outer quote pair is explainable without normalizing inner punctuation',()=>{
+  for(const evidence of ['“交付甲报告。”','「交付甲报告。」','"交付甲报告。"']) {
+    const raw=review([{work:'U',severity:'MINOR',origin:'WORK',evidence,reason:'外层引用包装'}]);
+    const audit=auditIndependentReview(raw,bindings);
+    assert.equal(audit.deterministicChecksPassed,true);
+    assert.equal(audit.evidenceChecks[0].exactQuoteInWork,false);
+    assert.equal(audit.evidenceChecks[0].matchedText,'交付甲报告。');
+    assert.equal(audit.evidenceChecks[0].workPosition,0);
+    assert.equal(audit.originalReview.issues[0].evidence,evidence);
+  }
+});
+test('Wrapping does not legitimize another source, a splice or changed punctuation',()=>{
+  for(const evidence of ['“交付乙报告。”','“交付，甲报告。”','“交付……报告。”','“交付甲报告。','““交付甲报告。””']) {
+    const audit=auditIndependentReview(review([{work:'U',severity:'MAJOR',origin:'WORK',evidence,reason:'需拒绝'}]),bindings);
+    assert.equal(audit.deterministicChecksPassed,false,evidence);
+  }
+});
 test('A true quote binds its own input or work without replacing the original review',()=>{
   const raw=review([{work:'U',severity:'MINOR',origin:'WORK',evidence:'交付甲报告。',reason:'可核对的原句'}]);
   const audit=auditIndependentReview(raw,bindings);assert.equal(audit.deterministicChecksPassed,true);assert.deepEqual(audit.originalReview,JSON.parse(raw));

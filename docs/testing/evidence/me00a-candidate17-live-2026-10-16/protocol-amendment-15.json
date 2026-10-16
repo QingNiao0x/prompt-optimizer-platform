@@ -1,0 +1,90 @@
+{
+  "id": "15",
+  "approvedAt": "2026-10-16T08:17:31.023711+00:00",
+  "authorizationStatus": "APPROVED_BY_USER",
+  "authorization": "批准新增24次，执行冻结范围",
+  "previousLimits": {
+    "total": 275,
+    "baseline": 80,
+    "candidateValidation": 195
+  },
+  "formalLimits": {
+    "total": 299,
+    "baseline": 80,
+    "candidateValidation": 219
+  },
+  "actualBefore": {
+    "total": 262,
+    "baseline": 70,
+    "candidateValidation": 192
+  },
+  "maximumNewCalls": 24,
+  "purposeMaximums": {
+    "PLATFORM_GENERATION": 12,
+    "PLANNING": 3,
+    "EXECUTION": 7,
+    "REVIEW": 2
+  },
+  "batch": {
+    "version": "candidate17-r2",
+    "group": "THREE_TASK_TARGETED_REAL_REVALIDATION",
+    "mode": "targeted",
+    "status": "OPEN",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationAmendment": "protocol-amendment-15.json",
+    "secondRoundAuthorized": false,
+    "cases": [
+      "requests-title",
+      "mortality-2015-2025",
+      "Q05"
+    ],
+    "casesFile": "candidate17-three-cases.json",
+    "casesSha256": "f69932c9ced06b61984665146d60ec62e969828b4918a900921704139ec6f40c",
+    "allowedRawPromptSha256": [
+      "ffefeb36c4b228371ac118dc21fdabd457cc657f0064a5592d8da8d5d8150a9f",
+      "9d8e8817bf76ebf7c0d9bb7f6776a623753f2d8ae56b321beaf345650596adcb",
+      "71de870998746bb5a0b9a049834f272f07f6ef1fae3c40a77cdb8d56a631398d"
+    ],
+    "model": "deepseek-flash",
+    "executionModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "callsBefore": 262,
+    "candidateCallsBefore": 192,
+    "maximumNewCalls": 24,
+    "maximumActualCallsAfterBatch": 286,
+    "maximumGenerationCalls": 12,
+    "maximumPlanningCalls": 3,
+    "maximumExecutionCalls": 7,
+    "maximumReviewCalls": 2,
+    "purposeMaximums": {
+      "PLATFORM_GENERATION": 12,
+      "PLANNING": 3,
+      "EXECUTION": 7,
+      "REVIEW": 2
+    },
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "executionParameters": {
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "accountCreationAllowed": false,
+    "noPhaseBorrowing": true,
+    "noClosedBatchAllowanceTransfer": true,
+    "qualityRetriesAllowed": false,
+    "completedSubmissionsAreNotRepeated": true,
+    "sourceFreeze": "docs/testing/evidence/me00a-candidate17-2026-10-16/candidate17-source.json"
+  },
+  "proposalSha256": "3e92f4fea82172e41e55c11d7f42cdc341df7df09c99ffddc27df7f6808ee65b",
+  "oldClosedBatchRemainderTransferred": false
+}

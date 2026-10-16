@@ -1,0 +1,230 @@
+{
+  "cases": [
+    {
+      "id": "requests-title",
+      "scoresA": {
+        "accuracy": 5,
+        "completeness": 5,
+        "clarity": 5,
+        "executability": 5
+      },
+      "scoresB": {
+        "accuracy": 4,
+        "completeness": 4,
+        "clarity": 4,
+        "executability": 4
+      },
+      "verdict": "A胜",
+      "severeFailures": [],
+      "evidence": [
+        {
+          "work": "A",
+          "quote": "使用 requests 抓取网页标题的最小实现。"
+        },
+        {
+          "work": "A",
+          "quote": "def fetch_title(url: str, timeout: float = DEFAULT_TIMEOUT) -> dict:"
+        },
+        {
+          "work": "A",
+          "quote": "resp = requests.get("
+        },
+        {
+          "work": "A",
+          "quote": "found, title = _extract_title(text)"
+        },
+        {
+          "work": "B",
+          "quote": "下面是一个完整的示例，演示如何使用 `requests` 库配合 `BeautifulSoup` 爬取网页标题。"
+        },
+        {
+          "work": "B",
+          "quote": "soup = BeautifulSoup(response.text, 'html.parser')"
+        },
+        {
+          "work": "B",
+          "quote": "pip install requests beautifulsoup4"
+        }
+      ],
+      "uncertainties": [
+        "原始要求仅说明“使用requests库爬取网页标题”，未明确是否允许额外依赖、是否需要批量、异常处理、编码处理或命令行入口。",
+        "作品B的基础版本和批量版本依赖BeautifulSoup，虽另给正则版本，但主方案并非仅requests；该点是否构成偏离取决于对“使用requests库”的严格程度。",
+        "未实际运行代码，无法验证两作品在真实网页上的行为。"
+      ]
+    },
+    {
+      "id": "mortality-2015-2025",
+      "scoresA": {
+        "accuracy": 4,
+        "completeness": 5,
+        "clarity": 4,
+        "executability": 4
+      },
+      "scoresB": {
+        "accuracy": 4,
+        "completeness": 4,
+        "clarity": 4,
+        "executability": 3
+      },
+      "verdict": "A胜",
+      "severeFailures": [],
+      "evidence": [
+        {
+          "work": "A",
+          "quote": "Joinpoint回归（推荐）：识别死亡率变化的转折点，计算APC（年度变化百分比）和AAPC"
+        },
+        {
+          "work": "A",
+          "quote": "YLL（Years of Life Lost，早死损失寿命年）："
+        },
+        {
+          "work": "A",
+          "quote": "Arriaga分解用于分解期望寿命差异，将两组（如城乡、男女、两个年份）之间的期望寿命差分解为："
+        },
+        {
+          "work": "A",
+          "quote": "R：DemoDecomp包（Arriaga方法）、ungroup包"
+        },
+        {
+          "work": "B",
+          "quote": "本分析拟围绕2015—2025年某地区心脑血管疾病死亡数据，依次开展时间序列分析、分组比较、减寿分析（YLL与YLL率）和Arriaga分解。"
+        },
+        {
+          "work": "B",
+          "quote": "本分析拟采用的参考寿命表待确认。在未确认前，无法计算具体YLL数值。"
+        },
+        {
+          "work": "B",
+          "quote": "具体数值待数据与参考寿命表确认后补充。"
+        }
+      ],
+      "uncertainties": [
+        "实际确认信息为空，无法判断用户是否已有地区、数据来源、时间粒度、参考寿命表等参数。",
+        "作品A给出了较完整的方法框架和工具建议，但部分公式为简版，未展开完整Arriaga分解计算。",
+        "作品B大量内容以“待确认”方式保留，方法框架完整但可执行性较低；是否满足科研写作需求取决于用户期望的是框架还是可操作方案。"
+      ]
+    },
+    {
+      "id": "Q05-direct",
+      "scoresA": {
+        "accuracy": 5,
+        "completeness": 5,
+        "clarity": 4,
+        "executability": 4
+      },
+      "scoresB": {
+        "accuracy": 4,
+        "completeness": 4,
+        "clarity": 4,
+        "executability": 4
+      },
+      "verdict": "A胜",
+      "severeFailures": [],
+      "evidence": [
+        {
+          "work": "A",
+          "quote": "本研究拟考察Plan问答对提示词质量的影响，并设置直接增强与Plan两组核心比较，另设两组获得相同确认信息的公平对照。"
+        },
+        {
+          "work": "A",
+          "quote": "任务材料拟覆盖4类任务，每类5个，共20个任务；"
+        },
+        {
+          "work": "A",
+          "quote": "每名参与者在每一模式下对每个任务独立重复3次"
+        },
+        {
+          "work": "A",
+          "quote": "每份提示词由两名独立评审盲评"
+        },
+        {
+          "work": "A",
+          "quote": "同信息公平对照须落实到信息流：先针对同一案例取得并封存实际确认信息，再让直接增强组与Plan组获得逐字相同的信息，且两组均可使用该信息。"
+        },
+        {
+          "work": "A",
+          "quote": "统计分析将依据未来数据分布与配对结构选择候选方法，不预设显著性。"
+        },
+        {
+          "work": "B",
+          "quote": "本研究拟采用实验研究设计，考察Plan问答对提示词质量的影响。"
+        },
+        {
+          "work": "B",
+          "quote": "研究保留4类任务，每类5个，共20个任务；每种模式对每个任务独立重复3次；由两名独立评审盲评。"
+        },
+        {
+          "work": "B",
+          "quote": "实验拟设四组。第一组为直接增强组，仅提供任务与基本指令。第二组为Plan组，在直接增强基础上加入Plan问答交互。第三组与第四组为公平对照：两组获得相同的确认信息，但一组以直接增强形式呈现，另一组以Plan形式呈现。"
+        }
+      ],
+      "uncertainties": [
+        "实际确认信息均未提供具体参数，两作品均只能提出拟议设计。",
+        "作品A对同信息公平对照的信息流说明更具体，并明确直接增强组也可使用确认信息；作品B也提到公平对照，但对信息提供形式和公平性操作细节较少。",
+        "两作品均未提供代码，符合要求；均未编造效应量、P值或显著性结论。",
+        "正文汉字数无法精确核验，但两作品均声称在800至1200字范围内。"
+      ]
+    },
+    {
+      "id": "Q05-plan",
+      "scoresA": {
+        "accuracy": 4,
+        "completeness": 4,
+        "clarity": 4,
+        "executability": 4
+      },
+      "scoresB": {
+        "accuracy": 5,
+        "completeness": 5,
+        "clarity": 4,
+        "executability": 4
+      },
+      "verdict": "B胜",
+      "severeFailures": [],
+      "evidence": [
+        {
+          "work": "A",
+          "quote": "本研究拟采用实验研究设计，考察Plan问答对提示词质量的影响。"
+        },
+        {
+          "work": "A",
+          "quote": "研究保留4类任务，每类5个，共20个任务；每种模式对每个任务独立重复3次；由两名独立评审盲评。"
+        },
+        {
+          "work": "A",
+          "quote": "实验拟设四组。第一组为直接增强组，仅提供任务与基本指令。第二组为Plan组，在直接增强基础上加入Plan问答交互。第三组与第四组为公平对照：两组获得相同的确认信息，但一组以直接增强形式呈现，另一组以Plan形式呈现。"
+        },
+        {
+          "work": "A",
+          "quote": "统计分析将依据未来数据分布与配对结构选择。"
+        },
+        {
+          "work": "B",
+          "quote": "研究对象为提示词本身，评审所见材料亦为提示词；下游作品仅作为原任务验证依据，不替代评分对象。"
+        },
+        {
+          "work": "B",
+          "quote": "条件A为直接增强：不主动发起问答，但正常使用已提供的需求与确认信息。条件B为Plan：由增强器提出关键问题，用户回答后，将有效回答融入优化提示词。Plan不得改为模型自行生成执行计划再作答。"
+        },
+        {
+          "work": "B",
+          "quote": "条件C与条件D为同信息公平对照：两组接收并可使用同一原始任务和同一份实际确认信息，保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。"
+        },
+        {
+          "work": "B",
+          "quote": "四个维度均针对提示词评价，不针对下游作品。"
+        },
+        {
+          "work": "B",
+          "quote": "已定参数与未决参数须分开记录；未决参数包括Plan终止条件、同信息对照确认信息形式、任务分配与顺序、评分量尺及字数统计口径。"
+        }
+      ],
+      "uncertainties": [
+        "实际确认信息均未提供具体参数，两作品均只能提出拟议设计。",
+        "作品B更明确区分了提示词评分对象与下游作品验证依据，并更具体说明Plan组不得改为模型自行生成执行计划。",
+        "作品B对未决参数的集中记录更清晰，但两作品均未编造效应量、P值或显著性结论。",
+        "正文汉字数无法精确核验，但两作品均声称在800至1200字范围内。"
+      ]
+    }
+  ]
+}

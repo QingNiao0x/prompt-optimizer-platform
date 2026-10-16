@@ -144,7 +144,7 @@ public final class PlanQuestionFilter {
         var bound = Pattern.compile("正文\\s*(\\d+)\\s*(?:至|到|[-–—])\\s*(\\d+)\\s*(?:个)?汉字").matcher(raw);
         if (!bound.find()) return false;
         String expected = "^正文\\s*" + bound.group(1) + "\\s*(?:至|到|[-–—])\\s*" + bound.group(2)
-                + "\\s*(?:个)?汉字是否包含标题、摘要和参考文献[？?]$";
+                + "\\s*(?:个)?汉字是否包含标题、摘要(?:和参考文献|与关键词)[？?]$";
         // 元信息携带实际投稿、机构或独立格式选择时不能因题干像计数题而整题删除。
         return question.question().matches(expected) && questionDetails(question).stream().noneMatch(part ->
                 part.matches("(?s).*(?:期刊|投稿|学校|机构|授权|权限|另外|新增|新条件|重新选择|引用规范).*"));

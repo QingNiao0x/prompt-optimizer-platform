@@ -25,7 +25,7 @@ class CandidateFifteenDelegatedDeliveryTest {
     private static final String QUESTION = "公平对照组的确认信息如何取得？";
     private static final String PREFIX = "已委托提出拟议设计，实际采用参数仍未确认：";
     private static final String HEADER = "对以下已委托设计的子项给出拟议主方案及适用条件，标明属于拟议设计，不冒充已确认或已实施：";
-    private static final String SCALE = "针对原要求的准确性、完整性、清晰度与可执行性，提出拟议评分尺度、可操作定义和与尺度相配的分歧处理规则，并说明适用条件。";
+    private static final String SCALE = "针对原要求的准确性、完整性、清晰度与可执行性，提出拟议评分尺度、可操作定义及各等级评分锚点、与尺度相配的分歧处理规则，并说明适用条件。";
 
     @Test
     void boundDelegationBecomesAnExecutionObligationAndKeepsAllSourcesAndPendingState() {

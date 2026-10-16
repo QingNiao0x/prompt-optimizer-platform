@@ -1,0 +1,73 @@
+{
+  "frozenBeforeDownstreamExecution": true,
+  "cases": {
+    "requests-title": {
+      "core": [
+        "交付使用requests获取网页标题的Python实现",
+        "原文无目标URL，允许作为函数或命令行输入，不需要真实外部网站",
+        "代码与使用说明一致"
+      ],
+      "independentCodeChecks": [
+        "提取并保留实现和模型附带测试文件原文，一起编译",
+        "在隔离本机HTML响应上执行正常标题提取",
+        "分别观察无title、请求异常和编码处理，不把新增评测用例冒称用户逐字要求"
+      ],
+      "conditionalRequirements": [
+        "优化正文新增的多URL顺序、单个失败隔离和非HTML处理单独核对并归因，不回加为原始组的新增硬要求"
+      ],
+      "noExternalNetworkOrCredentialUseByGeneratedCode": true
+    },
+    "mortality-2015-2025": {
+      "core": [
+        "保留2015—2025年及地区心脑血管疾病分析目标",
+        "保留长期与季节趋势、性别/地区/人群/亚类比较、年度/性别YLL及YLL率、Arriaga四个方向",
+        "无资料时继续交付有依据的原定正文，不编造实证数据或已确认参数"
+      ],
+      "professionalChecks": [
+        "方法、指标和前提的一致性，方法建议与实际选值分开",
+        "未知分母、寿命表、标化选择和具体标准人口分别记录",
+        "所列方法适用性缺乏核实时记未验证，不因格式或AI自报正确而通过"
+      ],
+      "length": {
+        "userLimit": null,
+        "handling": "只记录汉字数和非空白字符数，不套用历史Q05的800—1200门槛"
+      }
+    },
+    "Q05": {
+      "source": "Frozen original Q05, actual natural questions/answers and three literal execution inputs",
+      "bodyLength": "Reuse me00a-q05-body-han-v1 unchanged; report all-text alternative; tables explicitly separate",
+      "core": [
+        "4 categories, 5 tasks each, 20 total",
+        "3 independent repetitions per mode/task",
+        "two independent blind reviewers; no extra double-blind trial requirement",
+        "scoring scale, operational definitions and disagreement handling",
+        "same actual confirmation information with specified flows preserved",
+        "proposed design coexists with unconfirmed actual parameters",
+        "no invented effect sizes, P values, references, data or completed recruitment"
+      ],
+      "naturalPlan": "Record actual questions and necessity, no artificial restoration of old question IDs"
+    }
+  },
+  "review": {
+    "dimensions": [
+      "准确性",
+      "完整性",
+      "清晰度",
+      "可执行性"
+    ],
+    "scale": "1—5",
+    "verdicts": [
+      "胜",
+      "平",
+      "负",
+      "双方失败"
+    ],
+    "preserveDisagreements": true,
+    "aiAssistedNotHumanExperts": true
+  },
+  "hardFailuresAreIndependent": true,
+  "noScriptPromptRepair": true,
+  "qualityRetries": 0,
+  "terminologyCorrectionBeforeExecution": "The proposal phrase double-blind reviewers means the original two independent blind reviewers only; no additional double-blind design is imposed.",
+  "sourceCandidate": "candidate19"
+}

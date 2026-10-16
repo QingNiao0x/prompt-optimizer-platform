@@ -1,0 +1,34 @@
+{
+  "kind": "LIMITED_SOURCE_AND_DESIGN_CHECK",
+  "modelCalls": 0,
+  "findings": [
+    {
+      "case": "Q05-plan",
+      "quotedWork": "评分量尺尚待确认，须在实施前固定",
+      "scoringAndDesign": "No complete per-level anchors delivered; Plan defers delegated choices. Direct adds participant-level repetition and does not independently define C/D flows.",
+      "platformScope": "Plan281 metadata declares measure but projection did not recognize 量尺; direct283 metadata uses a bounded above-items reference. These are platform gaps, not pure downstream.",
+      "copyHasScoringAnchors": false,
+      "workUnchanged": true
+    },
+    {
+      "case": "Q05-direct-same-info",
+      "quotedWork": "每名参与者在每一模式下对每个任务独立重复3次",
+      "scoringAndDesign": "No complete per-level anchors delivered; Plan defers delegated choices. Direct adds participant-level repetition and does not independently define C/D flows.",
+      "platformScope": "Plan281 metadata declares measure but projection did not recognize 量尺; direct283 metadata uses a bounded above-items reference. These are platform gaps, not pure downstream.",
+      "copyHasScoringAnchors": false,
+      "workUnchanged": true
+    },
+    {
+      "case": "mortality-2015-2025",
+      "quote": "对每一死亡案例，计算其死亡年龄与参考寿命表中对应期望寿命之差",
+      "origin": "First in downstream work; original/copy do not supply this formula",
+      "status": "REMAINING_LIFE_EXPECTANCY_AND_ATTAINED_AGE_THRESHOLD_CONFUSED_OR_UNSPECIFIED",
+      "basis": "WHO YLL uses deaths multiplied by standard remaining life expectancy at the age of death. Subtracting age from that remaining expectancy is incompatible; a fixed-age PYLL variant would need its own definition and authorization.",
+      "sources": [
+        "https://www.who.int/docs/default-source/gho-documents/global-health-estimates/ghe2019_daly-methods.pdf?sfvrsn=31b250097",
+        "https://www.who.int/data/gho/indicator-metadata-registry/imr-details/2977"
+      ],
+      "notClaimed": "Not a full medical/statistical expert audit; no standard table selected for the user"
+    }
+  ]
+}

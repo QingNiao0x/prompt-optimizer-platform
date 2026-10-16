@@ -1,0 +1,8 @@
+{
+  "classification": "LOCAL_TEST_ENVIRONMENT",
+  "reason": "Mockito inline mock maker waited in ByteBuddyAgent.installExternal -> ProcessImpl.waitFor; not product history code. Two owned test sessions were interrupted; their partial results are not passes.",
+  "diagnosticSha256": "1b4576def349891857ce5338f4c5911ad19e97f69e50b184b30021866b2a4233",
+  "resolution": "Preload existing ByteBuddy agent for the test JVM through -DargLine; no production or pom changes.",
+  "temporaryInstrumentationRemoved": true,
+  "modelCalls": 0
+}
