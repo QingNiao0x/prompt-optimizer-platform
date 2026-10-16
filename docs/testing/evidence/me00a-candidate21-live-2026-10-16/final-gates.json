@@ -1,0 +1,98 @@
+{
+  "candidate": "candidate21",
+  "overall": "NOT_PASSED",
+  "modelCalls": 0,
+  "rows": [
+    {
+      "id": "requests-title/raw",
+      "checks": {
+        "existingMeasuredGate": "OPEN"
+      },
+      "gate": "OPEN"
+    },
+    {
+      "id": "requests-title/enhanced",
+      "checks": {
+        "existingMeasuredGate": "FAIL",
+        "syntheticCredentialPrivacy": "FAIL"
+      },
+      "gate": "FAIL"
+    },
+    {
+      "id": "mortality-2015-2025/raw",
+      "checks": {
+        "existingMeasuredGate": "OPEN"
+      },
+      "gate": "OPEN"
+    },
+    {
+      "id": "mortality-2015-2025/enhanced",
+      "checks": {
+        "existingMeasuredGate": "OPEN",
+        "remainingLifeYllDefinition": "FAIL"
+      },
+      "gate": "FAIL"
+    },
+    {
+      "id": "Q05-raw-same-info/raw",
+      "checks": {
+        "existingMeasuredGate": "FAIL"
+      },
+      "gate": "FAIL"
+    },
+    {
+      "id": "Q05-direct-same-info/enhanced",
+      "checks": {
+        "existingMeasuredGate": "OPEN",
+        "allLevelOperationalAnchors": "FAIL"
+      },
+      "gate": "FAIL"
+    },
+    {
+      "id": "Q05-plan/enhanced",
+      "checks": {
+        "existingMeasuredGate": "FAIL",
+        "scoringProjection": "FAIL",
+        "operationalDesign": "FAIL"
+      },
+      "gate": "FAIL"
+    },
+    {
+      "id": "requests-title-pro/enhanced",
+      "checks": {
+        "existingMeasuredGate": "FAIL",
+        "syntheticCredentialPrivacy": "FAIL"
+      },
+      "gate": "FAIL"
+    },
+    {
+      "id": "Q05-raw-pro-same-info/raw",
+      "checks": {
+        "existingMeasuredGate": "OPEN"
+      },
+      "gate": "OPEN"
+    },
+    {
+      "id": "Q05-plan-pro/enhanced",
+      "checks": {
+        "existingMeasuredGate": "FAIL",
+        "scoringProjection": "FAIL",
+        "operationalDesign": "FAIL"
+      },
+      "gate": "FAIL"
+    }
+  ],
+  "sources": [
+    "real/hard-gates.json",
+    "real/work-measurements.json",
+    "real/code-check/result.json",
+    "substantive-check.json"
+  ],
+  "notes": [
+    "OPEN remains unverified, never PASS",
+    "Raw code privacy is a supplementary diagnosis, not an added original user hard requirement",
+    "Same-information comparisons share actual answers; natural question-answer benefit is a different track",
+    "No aggregate win rate, no averaging away severe errors, no revised model works",
+    "Candidate22 offline changes are not validated by these candidate21 works"
+  ]
+}

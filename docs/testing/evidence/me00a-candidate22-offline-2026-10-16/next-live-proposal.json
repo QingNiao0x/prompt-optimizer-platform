@@ -1,0 +1,68 @@
+{
+  "status": "AWAITING_EXPLICIT_NUMERIC_EXTENSION",
+  "currentFormalLimits": {
+    "total": 323,
+    "baseline": 80,
+    "candidateValidation": 243
+  },
+  "currentActual": {
+    "total": 313,
+    "baseline": 70,
+    "candidateValidation": 243
+  },
+  "proposedFormalLimits": {
+    "total": 338,
+    "baseline": 80,
+    "candidateValidation": 258
+  },
+  "maximumNewCalls": 15,
+  "maximumActualAfterBatch": 328,
+  "allocation": {
+    "PLATFORM_GENERATION": 6,
+    "PLANNING": 2,
+    "EXECUTION": 5,
+    "REVIEW": 2
+  },
+  "cases": [
+    "Q05"
+  ],
+  "models": {
+    "enhancement": "deepseek-flash",
+    "planning": "deepseek-flash",
+    "execution": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "independentAiReview": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ]
+  },
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "candidateSourceTreeSha256": "8d863f31ebef79fd4f54aab141a235d167b6e1bd607b06cad49bc07d41c876d7",
+  "candidateRuntimeTreeSha256": "edf7d8d4fd2c5c0c48252a66922b9be85a8ba20c8ffa05c8e0f0cbf474ecf0b3",
+  "sameAccountReference": "tmp/local-acceptance/account.json",
+  "createAccount": false,
+  "qualityRetries": 0,
+  "closedBalanceTransfer": false,
+  "noCallsBeforeNumericApproval": true,
+  "primaryComparison": "Flash raw+same actual answers / direct copy / Plan copy",
+  "diagnosis": "Pro raw+same actual answers / identical Plan copy; not full Pro three-arm",
+  "stopConditions": [
+    "Any per-purpose, phase or total limit reached",
+    "Source/runtime or frozen input drift",
+    "No safe current account or service ownership proof"
+  ],
+  "notCovered": [
+    "requests downstream credential safety closure",
+    "Medical domain accuracy closure",
+    "Generalization across unseen tasks",
+    "Full frontend/example closure"
+  ]
+}

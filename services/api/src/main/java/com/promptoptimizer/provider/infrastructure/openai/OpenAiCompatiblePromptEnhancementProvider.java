@@ -371,7 +371,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
 
     /**
      * 模型偶尔会返回可解析但不满足平台结构约束的内容。仅对此类无效响应进行有限次数的修复重试；
-     * 重试时追加明确的结构约束，并逐步提高输出预算，以覆盖模型随机格式偏差和输出截断两类常见原因。
+     * 重试时替换明确的结构修复说明；仅确证截断时评估增加输出预算，并在发送前重算容量。
      * 鉴权、限流、超时和连接错误保留原始失败语义，避免放大上游压力。
      */
     private <T, R> R retryWhenResponseIsInvalid(
@@ -392,7 +392,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             var auditAttempt = ModelCallLogger.beginAttempt();
             try {
                 // 固定本次请求，分别计量上游等待与本地校验，不把重试总耗时当成一次模型推理。
-                var attemptRequest = currentRequest;
+                var attemptRequest = withCapacityBudget(currentRequest);
+                currentRequest = attemptRequest;
                 ProviderCallResult<T> callResult = com.promptoptimizer.common.logging.PipelineStageTiming.measure(
                         operation, "model.upstream", resolvedModelId, () -> request.apply(attemptRequest));
                 knownUsage = callResult.tokenUsage();
@@ -451,7 +452,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                         exception.getFailureType().name()
                 );
                 currentRequest = withRepairInstruction(currentRequest,
-                        repairInstruction + validationRepairInstruction(exception));
+                        repairInstruction + validationRepairInstruction(exception),
+                        exception instanceof ProviderResponseValidationException invalid
+                                && invalid.getReason() == ProviderResponseValidationException.Reason.RESPONSE_TRUNCATED);
             } catch (RuntimeException exception) {
                 ModelCallLogger.failed(
                         operation,
@@ -517,7 +520,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
      */
     private ChatCompletionRequest withRepairInstruction(
             ChatCompletionRequest request,
-            String repairInstruction
+            String repairInstruction,
+            boolean increaseOutputBudget
     ) {
         List<ChatMessage> messages = new ArrayList<>(request.messages());
         if (!messages.isEmpty()) {
@@ -529,7 +533,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             }
         }
         messages.add(new ChatMessage("user", repairInstruction));
-        int nextOutputLimit = nextRetryMaxTokens(request.outputTokenLimit());
+        int nextOutputLimit = increaseOutputBudget ? nextRetryMaxTokens(request.outputTokenLimit()) : request.outputTokenLimit();
         return new ChatCompletionRequest(
                 request.model(),
                 List.copyOf(messages),
@@ -541,6 +545,16 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 false,
                 request.route()
         );
+    }
+
+    /** 每次上游发送前重新核算完整消息；普通协议矛盾不再无条件扩大输出额度。 */
+    private ChatCompletionRequest withCapacityBudget(ChatCompletionRequest request) {
+        int output = new RequestCapacityPolicy().outputLimit(properties.publicModelId(request.route(), request.model()),
+                request.messages().stream().map(message -> message.role() + "\n" + message.content()).toList(),
+                request.outputTokenLimit(), properties.getCapacityLimits());
+        return new ChatCompletionRequest(request.model(), request.messages(), request.temperature(),
+                request.maxTokens() == null ? null : output, request.maxCompletionTokens() == null ? null : output,
+                request.responseFormat(), request.thinking(), request.stream(), request.route());
     }
 
     private int nextRetryMaxTokens(int currentMaxTokens) {

@@ -212,6 +212,21 @@ app:
       # 输出最大TOKEN
       max-tokens: ${MODEL_MAX_TOKENS:10000}
       connect-timeout: ${MODEL_CONNECT_TIMEOUT:3s}
+      # 来源：https://api-docs.deepseek.com/quick_start/pricing，2026-10-16核对。
+      # 1M按十进制保守边界；输出仍受平台max-tokens约束。其他路由容量未验收。
+      capacity-limits:
+        "[deepseek:deepseek-flash]":
+          context-tokens: 1000000
+          max-output-tokens: 32768
+          safety-margin-tokens: 2048
+          source: https://api-docs.deepseek.com/quick_start/pricing
+          verified-at: "2026-10-16"
+        "[deepseek:deepseek-v4-pro]":
+          context-tokens: 1000000
+          max-output-tokens: 32768
+          safety-margin-tokens: 2048
+          source: https://api-docs.deepseek.com/quick_start/pricing
+          verified-at: "2026-10-16"
       # 结构化提示词生成偶尔会超过 30 秒；浏览器端等待 70 秒，必须留出错误响应返回的时间。
       read-timeout: ${MODEL_READ_TIMEOUT:60s}
       json-response-format-enabled: ${MODEL_JSON_RESPONSE_FORMAT_ENABLED:true}

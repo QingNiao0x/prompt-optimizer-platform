@@ -219,6 +219,10 @@ public class GlobalExceptionHandler {
             ProviderException exception,
             HttpServletRequest request
     ) {
+        if (exception instanceof com.promptoptimizer.provider.domain.ProviderCapacityException) {
+            return buildResponse(request, HttpStatus.BAD_REQUEST, "MODEL_CAPACITY_EXCEEDED",
+                    exception.getMessage(), false, Map.of("upstreamCalled", false, "countMethod", "UTF8_BYTES_ESTIMATE_V1"));
+        }
         ProviderErrorMapping mapping = mapProviderError(exception.getFailureType());
         String message = mapping.message();
         Map<String, Object> details = Map.of();

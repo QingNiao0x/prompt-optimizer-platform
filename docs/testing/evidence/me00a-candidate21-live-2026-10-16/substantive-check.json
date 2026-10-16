@@ -1,0 +1,49 @@
+{
+  "status": "NOT_PASSED",
+  "findings": [
+    {
+      "case": "Q05-direct",
+      "stage": "DOWNSTREAM",
+      "finding": "5-point labels supplied, operational anchors only 1/3/5; 2/4 and per-dimension full anchors incomplete"
+    },
+    {
+      "case": "Q05-plan",
+      "stage": "MIXED",
+      "finding": "Copy requests scoring form but no full-level anchors; 7-point work leaves discrepancy range preset but unspecified"
+    },
+    {
+      "case": "Q05-plan-pro",
+      "stage": "DOWNSTREAM_AND_INPUT_COMPLETENESS",
+      "finding": "7-point proposal without full level anchors; length1259; same Plan copy as Flash"
+    },
+    {
+      "case": "mortality-enhanced",
+      "stage": "DOWNSTREAM",
+      "finding": "Explicitly subtracts age from age-specific expected remaining lifespan; incompatible with standard remaining-life YLL definition",
+      "source": "https://www.who.int/docs/default-source/gho-documents/global-health-estimates/ghe2019_daly-methods.pdf?sfvrsn=31b250097",
+      "sourceScope": "Section2, standard remaining-life loss; no default lifetime table selected"
+    },
+    {
+      "case": "requests-enhanced-flash",
+      "stage": "DOWNSTREAM",
+      "finding": "Five synthetic credential exposures in invalid URL and exception paths"
+    },
+    {
+      "case": "requests-enhanced-pro",
+      "stage": "DOWNSTREAM",
+      "finding": "Four synthetic credential exposures; authored test21 includes one erroneous Mock-as-property setup, unchanged"
+    },
+    {
+      "case": "plan-copy",
+      "stage": "PLATFORM",
+      "finding": "Seven repeated delegated/unconfirmed prefixes despite a common current delegation; new scoring-form metadata not projected into full anchors requirement"
+    },
+    {
+      "case": "reviews",
+      "stage": "EVALUATION_MODEL",
+      "finding": "Both fenced JSON; 25/100 literal quotes fail; severeFailures empty despite independently established length/security failures"
+    }
+  ],
+  "notAProfessionalExpertAudit": true,
+  "rawPrivacySupplementNotAddedAsOriginalHardRequirement": true
+}

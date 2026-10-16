@@ -1,0 +1,90 @@
+{
+  "modelCalls": 0,
+  "tools": [
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/account-browser.mjs",
+      "sha256": "623bd86126e8639f31e425b3f20c0f01e901cdba70479ce6e606b8fa836a342b",
+      "initialSha256": "623bd86126e8639f31e425b3f20c0f01e901cdba70479ce6e606b8fa836a342b",
+      "changedAfterInitialRegistry": false
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/archive-real.mjs",
+      "sha256": "89d315cf249a87486666ce8224694f381b4ddfaa84652e8d2062d3db93a070c9",
+      "initialSha256": "c97995b78ed1c083ea0b8c97df7620a7ff4a241cd1aa3db58b1c534ec61fe2bf",
+      "changedAfterInitialRegistry": true
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/Candidate21EvaluationServer.java",
+      "sha256": "649094023dcdc7f9aef9fecb680545f533bde123bffabe6f5dd55d239f237bba",
+      "initialSha256": "649094023dcdc7f9aef9fecb680545f533bde123bffabe6f5dd55d239f237bba",
+      "changedAfterInitialRegistry": false
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/check-capacity-browser.mjs",
+      "sha256": "9b1dda0ee8ac4e8820df605f373eef5650cb61f541c0d7ea75364341716e6d31",
+      "initialSha256": null,
+      "changedAfterInitialRegistry": null
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/check-code.py",
+      "sha256": "74bd56e69f8b003c6810209f15c1cfc2c99e8ac106f14d6040647eff179b739c",
+      "initialSha256": null,
+      "changedAfterInitialRegistry": null
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/check-reviews.mjs",
+      "sha256": "0a0cb3bc77026ac8992b85c6940c70c9bcde6faefa15f80d1f0e5d594199bbfe",
+      "initialSha256": "0a0cb3bc77026ac8992b85c6940c70c9bcde6faefa15f80d1f0e5d594199bbfe",
+      "changedAfterInitialRegistry": false
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/check-works.mjs",
+      "sha256": "18363ee480326e26ab2cb718403d93ddcd5e6e0e149dc77bd0f01f6fc00eec02",
+      "initialSha256": "18363ee480326e26ab2cb718403d93ddcd5e6e0e149dc77bd0f01f6fc00eec02",
+      "changedAfterInitialRegistry": false
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/finalize-evaluation.mjs",
+      "sha256": "c91fa29bad57daebe89d222890cb341cde447002dc1f2c49f143d3163554201e",
+      "initialSha256": null,
+      "changedAfterInitialRegistry": null
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/HarnessScopeTest.java",
+      "sha256": "d677d7165b64cebab8e4dce6e99ce3e3ca684febb79444a2f817733a908a60cf",
+      "initialSha256": "d677d7165b64cebab8e4dce6e99ce3e3ca684febb79444a2f817733a908a60cf",
+      "changedAfterInitialRegistry": false
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/independent-code-check.py",
+      "sha256": "2208961b8b02cb4809894985c3419ea1069571d43f3db9446a07cceb12d9b51c",
+      "initialSha256": "2208961b8b02cb4809894985c3419ea1069571d43f3db9446a07cceb12d9b51c",
+      "changedAfterInitialRegistry": false
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/run-stage.ps1",
+      "sha256": "1ad91f95ff94447e3825c9a681cdae851d5898641c2dafdef282c1e76b869053",
+      "initialSha256": "1ad91f95ff94447e3825c9a681cdae851d5898641c2dafdef282c1e76b869053",
+      "changedAfterInitialRegistry": false
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/run.mjs",
+      "sha256": "6e87dbc29816ed6c1f82f7dd7aa4896f28ee2805e3e96f0aba76efa9b1a67f01",
+      "initialSha256": "6e87dbc29816ed6c1f82f7dd7aa4896f28ee2805e3e96f0aba76efa9b1a67f01",
+      "changedAfterInitialRegistry": false
+    },
+    {
+      "path": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/start-candidate21.ps1",
+      "sha256": "413e7817a2de5650fd6f4772a1b058d177c1ca973ed56620c67ecc7543e71cb3",
+      "initialSha256": "413e7817a2de5650fd6f4772a1b058d177c1ca973ed56620c67ecc7543e71cb3",
+      "changedAfterInitialRegistry": false
+    }
+  ],
+  "explanations": [
+    "check-code.py adapts to actual Flash package and Pro authored-test filenames, without repairing generated code",
+    "check-works.mjs covers all ten frozen works instead of the former seven",
+    "check-reviews.mjs accepts five actual pairs, uses independent measured gates, preserves strict-JSON and literal-quote failures",
+    "archive-real.mjs accepts already archived files only after byte equality, originals stay unchanged",
+    "run.mjs follows frozen execution order, actual seven question-answer pairs and the approved ten-work allocation"
+  ]
+}

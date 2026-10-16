@@ -398,7 +398,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         server.expect(once(), requestTo(ENDPOINT))
                 .andRespond(withSuccess(invalidResponse, MediaType.APPLICATION_JSON));
         server.expect(once(), requestTo(ENDPOINT))
-                .andExpect(jsonPath("$.max_tokens").value(6000))
+                .andExpect(jsonPath("$.max_tokens").value(3000))
                 .andExpect(jsonPath("$.messages[2].content")
                         .value(org.hamcrest.Matchers.containsString("平台结构化输出修复要求")))
                 .andRespond(withSuccess(validResponse, MediaType.APPLICATION_JSON));
@@ -408,6 +408,16 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         assertThat(response.sections()).extracting("type")
                 .contains(PromptSectionType.BACKGROUND, PromptSectionType.TASK,
                         PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS);
+        server.verify();
+    }
+
+    @Test
+    void localCapacityRejectionDoesNotSendAnyUpstreamRequest() {
+        String id = properties.publicModelId(properties.getConfiguredRoutes().getFirst(), MODEL);
+        properties.setCapacityLimits(Map.of(id,
+                new RequestCapacityPolicy.Limit(512, 100, 100, "test-fixture", "2026-10-16")));
+        assertThatThrownBy(() -> provider.enhance(createRequest()))
+                .isInstanceOf(com.promptoptimizer.provider.domain.ProviderCapacityException.class);
         server.verify();
     }
 

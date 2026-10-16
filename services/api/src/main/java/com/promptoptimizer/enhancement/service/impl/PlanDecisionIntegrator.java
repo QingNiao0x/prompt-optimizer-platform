@@ -22,7 +22,7 @@ final class PlanDecisionIntegrator {
             "(?:如果|假如|若以后|未来|待确认|尚未|暂不确定|建议|候选|可选|例如|不采用|不使用|不选择|未采用|未使用|未选|不能采用|不得采用|不按|不以|不是|不为|并非|不属于)|^(?:示例|例子)[：:]"
                     + "|\\b(?:if|might|not selected|do not use)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern CONDITIONAL = Pattern.compile("如果|假如|假设|(?:当|若|仅|只).*(?:时|则|才)|超过|达到|[<>=]|\\b(?:if|when|unless)\\b", Pattern.CASE_INSENSITIVE);
-    private static final String SCORING_SCALE = "(?:评分尺度|评分量表|评分范围|评分量尺)";
+    private static final String SCORING_SCALE = "(?:评分尺度|评分量表|评分范围|评分量尺|评分形式)";
 
     private PlanDecisionIntegrator() { }
 
@@ -37,6 +37,61 @@ final class PlanDecisionIntegrator {
                     current.content() + missing.stream().map(value -> "\n- " + value)
                             .collect(java.util.stream.Collectors.joining())));
         }
+    }
+
+    /**
+     * 修正已完整委托且模型自身要求提出拟议方案的清单标签。
+     * 清单必须逐项绑定当前实际题答；部分授权、未来许可或用户保留选择不作整段替换。
+     */
+    static void reconcileDelegatedStatus(Map<PromptSectionType, PromptSection> sections, EffectiveTaskView task) {
+        String raw = task.effectivePrompt();
+        if (currentSentences(raw).stream().anyMatch(value -> value.matches(
+                "(?s).*(?:由我决定|由用户决定|先让我确认|确认后再|以后确认|以后批准|仅限|不允许推荐|不得提出).*")
+                || selectedScoringValue(value))) return;
+        List<String> questions = new java.util.ArrayList<>();
+        task.executionRequirements().stream().filter(requirement -> requirement.subject().equals("委托要求")
+                && canonical(requirement.statement()).equals("请根据原始研究目标提出可开展的推荐设计并说明适用条件"))
+                .map(ExecutionRequirement::question).forEach(questions::add);
+        var pairs = Pattern.compile("(?m)^问题[：:]([^\\r\\n]+)\\r?\\n回答[：:]([^\\r\\n]+)").matcher(raw);
+        while (pairs.find()) {
+            if (currentSentences(pairs.group(2)).stream().anyMatch(value ->
+                    canonical(value).equals("请根据原始研究目标提出可开展的推荐设计并说明适用条件"))) {
+                questions.add(pairs.group(1));
+            }
+        }
+        if (questions.isEmpty()) return;
+        List<String> labels = questions.stream().flatMap(question -> delegatedStatusLabels(question).stream())
+                .distinct().sorted(java.util.Comparator.comparingInt(String::length).reversed()).toList();
+        var statement = Pattern.compile("用户已明确保留的设计参数包括[：:]([^。\\n]+)[；;]这些均未确认，需在方法部分以拟议设计形式提出并说明适用条件。");
+        sections.replaceAll((type, section) -> {
+            var matcher = statement.matcher(section.content());
+            StringBuilder replaced = new StringBuilder();
+            while (matcher.find()) {
+                String remaining = canonical(matcher.group(1));
+                for (String label : labels) remaining = remaining.replace(label, "");
+                String replacement = remaining.replaceAll("[、\\s]+", "").isEmpty()
+                        ? matcher.group().replace("用户已明确保留的设计参数包括", "已委托提出拟议设计、实际采用参数尚未确认的事项包括")
+                        : matcher.group();
+                matcher.appendReplacement(replaced, java.util.regex.Matcher.quoteReplacement(replacement));
+            }
+            matcher.appendTail(replaced);
+            return new PromptSection(type, section.title(), replaced.toString());
+        });
+    }
+
+    /** 标签只来自完整原题的有限同属性别名，不放宽独立对象、数值或条件。 */
+    private static List<String> delegatedStatusLabels(String question) {
+        var field = delegatedDesignField(question);
+        List<String> labels = new java.util.ArrayList<>();
+        if (field != null) labels.add(canonical(field.label()));
+        if (question.equals("Plan组的问答交互在什么条件下结束？")) labels.add(canonical("Plan组问答交互的终止条件"));
+        if (question.equals("同信息公平对照的两组，确认信息以什么形式提供给模型？"))
+            labels.add(canonical("同信息对照中确认信息的提供形式"));
+        if (question.equals("准确性、完整性、清晰度与可执行性四个维度，评分采用什么量尺？"))
+            labels.add(canonical("四个评价维度的评分量尺"));
+        if (question.matches("^正文[0-9]+至[0-9]+个汉字是否包含标题、摘要与关键词[？?]$"))
+            labels.add(canonical(question));
+        return labels;
     }
 
     /** 完整答案子句可自然加入正文；裸取值另需完整对象，避免把甲机构的同值当成乙机构确认。 */
@@ -281,8 +336,8 @@ final class PlanDecisionIntegrator {
     private static boolean selectedScoringValue(String value) {
         if (value.matches("(?s).*(?:什么|哪种|哪个|哪些|是否|[?？]).*")) return false;
         if (value.strip().matches("^(?:本研究(?:的)?)?" + SCORING_SCALE + "(?:为|是)[0-9]+(?:至|到|[-–—])[0-9]+分[。.]?$")) return true;
-        return value.matches("(?s).*(?:采用|使用|已确认)[^。;]*(?:量表|量尺|评分尺度|评分范围).*" )
-                || value.matches("(?s).*(?:评分尺度|量表|量尺|评分范围)[^。;]*(?:采用|使用|已确认|已确定).*" );
+        return value.matches("(?s).*(?:采用|使用|已确认)[^。;]*(?:量表|量尺|" + SCORING_SCALE + ").*" )
+                || value.matches("(?s).*(?:" + SCORING_SCALE + "|量表|量尺)[^。;]*(?:采用|使用|已确认|已确定).*" );
     }
 
     /** 评分量尺与尺度是同一属性；只承接当前补全声明，不从元数据借用外部研究或未来授权。 */
@@ -296,7 +351,10 @@ final class PlanDecisionIntegrator {
         if (!scope.matches("(?s).*" + SCORING_SCALE + ".*")
                 || scope.matches("(?s).*(?:另一(?:项)?研究|其他研究|甲研究|乙研究|示例|引用|以后确认后再|确认后再|以后再).*")) return false;
         if (completion.matches("(?s).*(?:不得|禁止|不要|无需|不必|不提供|不提出|不推荐|不设计)[^。;]*(?:评分|量表|量尺).*")) return false;
+        // 保留既有声明路径：量表锚点中的“1=…”不是新增的条件授权，也不会被复制成默认参数。
         if (completion.matches("(?s).*(?:提出|给出)[^。;]*(?:评分|评价).*")) return true;
+        if (!CONDITIONAL.matcher(completion).find()
+                && declaredScoringCompletion(missing, completion)) return true;
         // “上述各项”仅接当前完整四维设计清单，仍由上层核对原始委托和保留选择；不抄其候选数值。
         return missing.contains("四个评价维度") && gap.basis().contains("委托设计而非用户保留选择")
                 && canonical(completion).equals("在方法部分以拟议设计形式给出上述各项的主方案与适用条件明确标注为推荐而非已确认或已实施");
@@ -309,12 +367,48 @@ final class PlanDecisionIntegrator {
         String scope = gap.missing() + completion + gap.basis();
         // 新兼容分支比枚举标签更看重完整声明，仍由上层核对原始委托、四维目标和用户保留选择。
         return scope.contains("准确性") && scope.contains("完整性") && scope.contains("清晰度")
-                && scope.contains("可执行性") && scope.contains("分歧")
+                && scope.contains("可执行性")
                 && !scope.matches("(?s).*(?:另一(?:项)?研究|其他研究|甲研究|乙研究|示例|引用).*" )
-                && completion.matches("(?s).*(?:提出|给出)[^。;]*(?:评分|评价).*" )
+                && declaredScoringCompletion(gap.missing(), completion)
                 && !CONDITIONAL.matcher(completion).find()
                 && !completion.matches("(?s).*(?:不得|禁止|不要|无需|不必|不提供|不提出|不推荐|不设计)[^。;]*(?:评分|量表|操作定义).*" )
                 && !completion.matches("(?s).*(?:以后确认后|确认后再|另行批准后|以后再|待[^。;]{0,20}确认后)[^。;]*(?:评分|量表|操作定义).*" );
+    }
+
+    /** 评分属性可位于动作之前；列表的拟议主方案只承接已具名评分项，不抄元数据的候选数值。 */
+    private static boolean declaredScoringCompletion(String missing, String completion) {
+        return completion.matches("(?s).*(?:提出|给出)[^。;]*(?:评分|评价).*")
+                || completion.matches("(?s).*(?:评分|评价)[^。;]*(?:提出|给出).*")
+                || missing.matches("(?s).*" + SCORING_SCALE + ".*")
+                    && completion.matches("(?s).*(?:提出|给出)[^。;]*拟议主方案.*")
+                    && completion.contains("适用条件");
+    }
+
+    /**
+     * 全部追加项具有相同且已绑定的当前委托状态时，仅把共同前缀移到标题。
+     * 每个原题逐字保留；局部、未来、混合状态及无来源提醒不参与合并。
+     */
+    static java.util.Optional<List<String>> commonDelegatedQuestions(List<String> prerequisites, EffectiveTaskView task) {
+        String prefix = "已委托提出拟议设计，实际采用参数仍未确认：";
+        if (prerequisites.size() < 2) return java.util.Optional.empty();
+        var questions = new java.util.ArrayList<String>();
+        for (String value : prerequisites) {
+            if (!value.startsWith(prefix)) return java.util.Optional.empty();
+            String question = value.substring(prefix.length());
+            boolean bound = task.pendingDecisions().stream().anyMatch(pending ->
+                    pending.questionId() != null && pending.question().equals(question)
+                            && task.executionRequirements().stream().anyMatch(requirement ->
+                                pending.questionId().equals(requirement.questionId())
+                                    && requirement.subject().equals("委托要求")
+                                    && canonical(requirement.statement()).equals("请根据原始研究目标提出可开展的推荐设计并说明适用条件"))
+                            && task.executionRequirements().stream().anyMatch(requirement ->
+                                pending.questionId().equals(requirement.questionId())
+                                    && requirement.subject().equals("未确认边界")
+                                    && canonical(requirement.statement()).equals("不确认任何既有参数")));
+            if (!bound) return java.util.Optional.empty();
+            questions.add(question);
+        }
+        return java.util.Optional.of(List.copyOf(questions));
     }
 
     /** 追加仍属于当前任务；已有其他研究或示例标题不能把新增执行要求收进其资料作用域。 */
@@ -410,12 +504,16 @@ final class PlanDecisionIntegrator {
         var acquisition = Pattern.compile("^(.{2,100}?)如何(?:取得|获取)\\?$").matcher(text);
         var termination = Pattern.compile("^(.{2,80}?)在什么条件下结束\\?$").matcher(text);
         var scoring = Pattern.compile("^(准确性、完整性、清晰度与可执行性四个维度)[,，]评分采用什么量尺\\?$").matcher(text);
+        var information = Pattern.compile("^(同信息公平对照的两组)[,，]确认信息以什么形式提供给模型\\?$").matcher(text);
+        var allocation = Pattern.compile("^([0-9]+个任务在[0-9]+类中)的分配与顺序如何安排\\?$").matcher(text);
         if (category.matches()) { object = category.group(1); attribute = "(?:分类框架|类别划分|具体类别)"; label = "的分类框架"; }
         else if (source.matches()) { object = source.group(1); attribute = "(?:构造来源|来源与选取标准|来源与选取方式)"; label = "的构造来源"; }
         else if (blind.matches()) { object = blind.group(1); attribute = "设盲范围"; label = "的设盲范围"; }
         else if (acquisition.matches()) { object = acquisition.group(1); attribute = "(?:获取|取得)(?:与封存)?流程"; label = "获取流程"; }
         else if (termination.matches()) { object = termination.group(1); attribute = "(?:终止条件|终止规则)"; label = "的终止条件"; }
         else if (scoring.matches()) { object = scoring.group(1); attribute = "评分量尺"; label = "的评分量尺"; }
+        else if (information.matches()) { object = information.group(1); attribute = "确认信息提供形式"; label = "的确认信息提供形式"; }
+        else if (allocation.matches()) { object = allocation.group(1); attribute = "分配与顺序"; label = "的分配与顺序"; }
         if (object == null) return null;
         // 左边界防止“甲院盲评”借用裸“盲评”的对象；连接词只分隔当前列表的完整并列子项。
         return new DelegatedDesignField(object + label, Pattern.compile("(?:^|[;；，,、\\n]|与|及|和|以及)" + Pattern.quote(object)

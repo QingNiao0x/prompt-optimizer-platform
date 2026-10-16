@@ -1,0 +1,616 @@
+{
+  "compiledBlocks": [
+    {
+      "file": "raw\\raw-1.py",
+      "role": "ORIGINAL_IMPLEMENTATION_WITH_DEMO",
+      "sha256": "03790697b925042aa94006663eddb1602fce311f18a7a40d83e835698fdaa0b8",
+      "compiled": true
+    },
+    {
+      "file": "raw\\raw-2.py",
+      "role": "ORIGINAL_IMPLEMENTATION_WITH_DEMO",
+      "sha256": "43ba24f1cad8469b84db0de6188ee0803aab24012bb0671cfc93a194f355f827",
+      "compiled": true
+    },
+    {
+      "file": "raw\\raw-3.py",
+      "role": "ORIGINAL_IMPLEMENTATION_WITH_DEMO",
+      "sha256": "57bcb7a9afae518c1beeb128315942a1c5c4db9f68dfbcfc8379b6009dbc57b1",
+      "compiled": true
+    },
+    {
+      "file": "flash_pkg\\exceptions.py",
+      "role": "IMPLEMENTATION",
+      "sha256": "fa16fae7867f1c4ae8e4639b724d8fa2653c4e9f9c12bc94d6f1e8dbafa06682",
+      "compiled": true
+    },
+    {
+      "file": "flash_pkg\\parser.py",
+      "role": "IMPLEMENTATION",
+      "sha256": "2e626422bc6fff1e55fbb727ba8a40d36fb4786f36544a76bf51234fcd1cab83",
+      "compiled": true
+    },
+    {
+      "file": "flash_pkg\\fetcher.py",
+      "role": "IMPLEMENTATION",
+      "sha256": "5042631e7e21e4c395fc8832ae25027c2f025e94722a17046d0ba807f8cf97bd",
+      "compiled": true
+    },
+    {
+      "file": "flash_pkg\\cli.py",
+      "role": "IMPLEMENTATION",
+      "sha256": "80b9b30c00267edfeb8665fe7e15987bb31926f6fb2b36f657f3fde23ae5bce2",
+      "compiled": true
+    },
+    {
+      "file": "flash_pkg\\signature-5.py",
+      "role": "DOCUMENTED_SIGNATURE",
+      "sha256": "eb10018b3edaa6b13feb787fd8f3e4dc23c8710a337b6acc9cade32668209923",
+      "compiled": false
+    },
+    {
+      "file": "flash_pkg\\signature-6.py",
+      "role": "DOCUMENTED_SIGNATURE",
+      "sha256": "ad4939592e200bff314d6614f5ee894a2484f7ce440ac6127e565ce7aee9a6bf",
+      "compiled": false
+    },
+    {
+      "file": "flash_pkg\\signature-7.py",
+      "role": "DOCUMENTED_SIGNATURE",
+      "sha256": "b4273b1eff322027c84a17bbd01e1e3e82bf7afe473c40fe38666f0295552e98",
+      "compiled": false
+    },
+    {
+      "file": "pro\\title_fetcher.py",
+      "role": "IMPLEMENTATION",
+      "sha256": "834f5960d14940b2506645a2194eed65f3b961984321dbf0c035053971ebecec",
+      "compiled": true
+    },
+    {
+      "file": "pro\\block-2.py",
+      "role": "DOCUMENTED_SIGNATURE",
+      "sha256": "6af0ad4383d2c9f57313547fd6efb0d292acb544323dd2b26bc6f10c8cc80aed",
+      "compiled": false
+    },
+    {
+      "file": "pro\\test_title_fetcher.py",
+      "role": "MODEL_AUTHORED_TESTS",
+      "sha256": "15b76a8add1dca662608cb7c6360e0b6f568ccdb620ec48733eca9af6c98ef58",
+      "compiled": true
+    },
+    {
+      "file": "pro\\block-4.py",
+      "role": "EXAMPLE_OR_OPTIONAL_CLI",
+      "sha256": "626f89818e0d953bc126c53249bb4b9e8d4acafaf0c93fe24f7b18f9fb8d0d83",
+      "compiled": true
+    },
+    {
+      "file": "pro\\block-5.py",
+      "role": "EXAMPLE_OR_OPTIONAL_CLI",
+      "sha256": "7d8e1c09fe214b040c644e227617ddde6592e2d8bfa6be9767a8db97b3df256f",
+      "compiled": true
+    }
+  ],
+  "independent": {
+    "total": 50,
+    "passed": 34,
+    "failed": 16
+  },
+  "checks": [
+    {
+      "entry": "raw-1",
+      "case": "NORMAL",
+      "scope": "TITLE_AND_ENTITY_DIAGNOSTIC",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-1",
+      "case": "UTF8",
+      "scope": "CORE_TITLE_BEHAVIOR",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'中文标题'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-1",
+      "case": "TOKEN_RETURN",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-1",
+      "case": "API_KEY_RETURN",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-1",
+      "case": "USERINFO_RETURN",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-1",
+      "case": "INVALID_URL",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-1",
+      "case": "TIMEOUT",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'请求失败: synthetic timeout: https://example.org/page?token=SyntheticCanary_21_Z9q'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-1",
+      "case": "CONNECTION_ERROR",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'请求失败: synthetic connection: https://example.org/page?token=SyntheticCanary_21_Z9q'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-1",
+      "case": "HTTP_ERROR",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'请求失败: synthetic HTTP failure'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-1",
+      "case": "MISSING_TITLE",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'无标题'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-2",
+      "case": "NORMAL",
+      "scope": "TITLE_AND_ENTITY_DIAGNOSTIC",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-2",
+      "case": "UTF8",
+      "scope": "CORE_TITLE_BEHAVIOR",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'中文标题'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-2",
+      "case": "TOKEN_RETURN",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-2",
+      "case": "API_KEY_RETURN",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-2",
+      "case": "USERINFO_RETURN",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-2",
+      "case": "INVALID_URL",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-2",
+      "case": "TIMEOUT",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'错误: synthetic timeout: https://example.org/page?token=SyntheticCanary_21_Z9q'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-2",
+      "case": "CONNECTION_ERROR",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'错误: synthetic connection: https://example.org/page?token=SyntheticCanary_21_Z9q'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-2",
+      "case": "HTTP_ERROR",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'错误: synthetic HTTP failure'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-2",
+      "case": "MISSING_TITLE",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'无标题'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-3",
+      "case": "NORMAL",
+      "scope": "TITLE_AND_ENTITY_DIAGNOSTIC",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha &amp; Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-3",
+      "case": "UTF8",
+      "scope": "CORE_TITLE_BEHAVIOR",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'中文标题'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-3",
+      "case": "TOKEN_RETURN",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha &amp; Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-3",
+      "case": "API_KEY_RETURN",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha &amp; Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-3",
+      "case": "USERINFO_RETURN",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha &amp; Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-3",
+      "case": "INVALID_URL",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha &amp; Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-3",
+      "case": "TIMEOUT",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "Timeout: synthetic timeout: https://example.org/page?token=SyntheticCanary_21_Z9q\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-3",
+      "case": "CONNECTION_ERROR",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "ConnectionError: synthetic connection: https://example.org/page?token=SyntheticCanary_21_Z9q\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-3",
+      "case": "HTTP_ERROR",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha &amp; Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "raw-3",
+      "case": "MISSING_TITLE",
+      "scope": "SUPPLEMENTARY_RAW_PRIVACY",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'无标题'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "flash-enhanced",
+      "case": "NORMAL",
+      "scope": "TITLE_AND_ENTITY_DIAGNOSTIC",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "flash-enhanced",
+      "case": "UTF8",
+      "scope": "CORE_TITLE_BEHAVIOR",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'中文标题'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "flash-enhanced",
+      "case": "TOKEN_RETURN",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "flash-enhanced",
+      "case": "API_KEY_RETURN",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "flash-enhanced",
+      "case": "USERINFO_RETURN",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "flash-enhanced",
+      "case": "INVALID_URL",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 0,
+      "observed": "InvalidURLError: URL 缺少主机名: 'https:///page?token=SyntheticCanary_21_Z9q'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "flash-enhanced",
+      "case": "TIMEOUT",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "RequestTimeoutError: 请求超时: https://example.org/page?token=SyntheticCanary_21_Z9q\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "flash-enhanced",
+      "case": "CONNECTION_ERROR",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "ConnectionFailedError: 连接失败: https://example.org/page?token=SyntheticCanary_21_Z9q\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "flash-enhanced",
+      "case": "HTTP_ERROR",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "HTTPStatusError: HTTP 503 for https://example.org/page?token=SyntheticCanary_21_Z9q\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "flash-enhanced",
+      "case": "MISSING_TITLE",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "TitleNotFoundError: 未找到 <title>: https://example.org/page?token=SyntheticCanary_21_Z9q\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "pro-enhanced",
+      "case": "NORMAL",
+      "scope": "TITLE_AND_ENTITY_DIAGNOSTIC",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "pro-enhanced",
+      "case": "UTF8",
+      "scope": "CORE_TITLE_BEHAVIOR",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'中文标题'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "pro-enhanced",
+      "case": "TOKEN_RETURN",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "pro-enhanced",
+      "case": "API_KEY_RETURN",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "pro-enhanced",
+      "case": "USERINFO_RETURN",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "'Alpha & Beta'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "pro-enhanced",
+      "case": "INVALID_URL",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 0,
+      "observed": "InvalidURLError: URL 格式非法: 'https:///page?token=SyntheticCanary_21_Z9q'\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "pro-enhanced",
+      "case": "TIMEOUT",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "RequestTimeoutError: 请求超时（10.0 秒）: https://example.org/page?token=SyntheticCanary_21_Z9q\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "pro-enhanced",
+      "case": "CONNECTION_ERROR",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "ConnectionFailedError: 连接失败: https://example.org/page?token=SyntheticCanary_21_Z9q - synthetic connection: https://example.org/page?token=SyntheticCanary_21_Z9q\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "pro-enhanced",
+      "case": "HTTP_ERROR",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": true,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "HTTPStatusError: HTTP 请求失败，状态码: 503\n",
+      "syntheticOnly": true
+    },
+    {
+      "entry": "pro-enhanced",
+      "case": "MISSING_TITLE",
+      "scope": "ENHANCED_PRIVACY_RULE",
+      "pass_": false,
+      "requestArgumentsUnchanged": true,
+      "requestCalls": 1,
+      "observed": "TitleNotFoundError: 未在响应中找到 <title> 标签: https://example.org/page?token=SyntheticCanary_21_Z9q\n",
+      "syntheticOnly": true
+    }
+  ],
+  "modelAuthoredTests": {
+    "flash": {
+      "state": "TEST_PLAN_ONLY_NO_EXECUTABLE_TEST_FILE"
+    },
+    "pro": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 1,
+      "output": "....E................\n======================================================================\nERROR: test_unicode_decode_error (test_title_fetcher.TestFetchTitleBoundary.test_unicode_decode_error)\n解码失败应抛出 EncodingError。\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"E:\\Delelop\\Python312\\Lib\\unittest\\mock.py\", line 1396, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\MyProject\\prompt-optimizer-platform\\tmp\\me00a-candidate21-live-20261016\\real\\code-check\\pro\\test_title_fetcher.py\", line 224, in test_unicode_decode_error\n    fetch_title(\"https://example.com\")\n  File \"E:\\MyProject\\prompt-optimizer-platform\\tmp\\me00a-candidate21-live-20261016\\real\\code-check\\pro\\title_fetcher.py\", line 202, in fetch_title\n    title = _extract_title(html_content)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\MyProject\\prompt-optimizer-platform\\tmp\\me00a-candidate21-live-20261016\\real\\code-check\\pro\\title_fetcher.py\", line 131, in _extract_title\n    parser.feed(html_content)\n  File \"E:\\Delelop\\Python312\\Lib\\html\\parser.py\", line 110, in feed\n    self.rawdata = self.rawdata + data\n                   ~~~~~~~~~~~~~^~~~~~\nTypeError: can only concatenate str (not \"Mock\") to str\n\n----------------------------------------------------------------------\nRan 21 tests in 0.008s\n\nFAILED (errors=1)\n"
+    }
+  },
+  "batchKeyChecks": "NOT_APPLICABLE_NO_BATCH_RETURN_INTERFACE",
+  "realNetworkRequests": 0,
+  "originalWorksChanged": false,
+  "adaptation": "Original files compiled unchanged. Raw top-level demonstrations not executed; original literal constants retained. Flash package namespace supplied by harness; no algorithm repair."
+}

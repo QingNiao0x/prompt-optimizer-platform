@@ -73,7 +73,7 @@ class CandidateTwentyReplayTest {
         PlanDecisionIntegrator.promoteDelegatedPrerequisites(sections, reminders, task);
         assertThat(sections.get(PromptSectionType.TASK).content()).contains("Plan组的问答交互的终止条件", "四个维度的评分量尺");
         var remaining = PlanDecisionIntegrator.uncoveredDelegatedPrerequisites(sections, reminders, task);
-        assertThat(remaining).hasSize(3).noneMatch(s -> s.contains("在什么条件下结束") || s.contains("评分采用什么量尺"));
+        assertThat(remaining).hasSize(1).noneMatch(s -> s.contains("在什么条件下结束") || s.contains("评分采用什么量尺"));
         assertThat(task.pendingDecisions()).hasSize(5);
         assertThat(task.modelInput()).isEqualTo(before);
     }

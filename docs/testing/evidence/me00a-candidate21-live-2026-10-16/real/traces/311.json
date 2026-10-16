@@ -1,0 +1,53 @@
+{
+  "version": "candidate21",
+  "phase": "candidateValidation",
+  "purpose": "EXECUTION",
+  "label": "candidate21-requests-title-raw",
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "使用requests库爬取网页标题。"
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "startedAt": "2026-10-16T13:53:48.442Z",
+  "httpStatus": 200,
+  "responseText": "{\"id\":\"502f1bc8-e806-4400-b27d-5b5d9aed8b79\",\"object\":\"chat.completion\",\"created\":1792158828,\"model\":\"deepseek-flash\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"# 使用 requests 库爬取网页标题\\n\\n下面是一个完整的示例，演示如何使用 `requests` 库配合 `BeautifulSoup` 爬取网页标题。\\n\\n## 基础版本\\n\\n```python\\nimport requests\\nfrom bs4 import BeautifulSoup\\n\\ndef get_page_title(url):\\n    \\\"\\\"\\\"获取网页标题\\\"\\\"\\\"\\n    try:\\n        # 发送 GET 请求\\n        headers = {\\n            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '\\n                          'AppleWebKit/537.36 (KHTML, like Gecko) '\\n                          'Chrome/120.0.0.0 Safari/537.36'\\n        }\\n        response = requests.get(url, headers=headers, timeout=10)\\n        response.raise_for_status()  # 检查 HTTP 错误\\n        \\n        # 自动识别编码（避免中文乱码）\\n        response.encoding = response.apparent_encoding\\n        \\n        # 解析 HTML\\n        soup = BeautifulSoup(response.text, 'html.parser')\\n        title = soup.title.string.strip() if soup.title else '无标题'\\n        return title\\n    \\n    except requests.exceptions.RequestException as e:\\n        return f'请求失败: {e}'\\n\\n\\nif __name__ == '__main__':\\n    url = 'https://www.python.org'\\n    print(f'网页标题: {get_page_title(url)}')\\n```\\n\\n## 批量爬取多个网页\\n\\n```python\\nimport requests\\nfrom bs4 import BeautifulSoup\\nfrom urllib.parse import urlparse\\n\\ndef get_title(url, timeout=10):\\n    headers = {\\n        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '\\n                      'AppleWebKit/537.36 (KHTML, like Gecko) '\\n                      'Chrome/120.0.0.0 Safari/537.36'\\n    }\\n    try:\\n        resp = requests.get(url, headers=headers, timeout=timeout)\\n        resp.raise_for_status()\\n        resp.encoding = resp.apparent_encoding\\n        soup = BeautifulSoup(resp.text, 'html.parser')\\n        return soup.title.string.strip() if soup.title else '无标题'\\n    except Exception as e:\\n        return f'错误: {e}'\\n\\n\\nurls = [\\n    'https://www.python.org',\\n    'https://www.baidu.com',\\n    'https://github.com',\\n]\\n\\nfor url in urls:\\n    print(f'{url} -> {get_title(url)}')\\n```\\n\\n## 关键点说明\\n\\n| 要点 | 说明 |\\n|------|------|\\n| **User-Agent** | 伪装成浏览器，避免被网站拒绝（403） |\\n| **timeout** | 设置超时，防止程序卡死 |\\n| **raise_for_status()** | 遇到 4xx/5xx 状态码抛出异常 |\\n| **apparent_encoding** | 自动检测编码，解决中文乱码 |\\n| **BeautifulSoup** | 解析 HTML，`soup.title.string` 获取标题文本 |\\n\\n## 不依赖 BeautifulSoup 的纯 requests 版本\\n\\n如果不想安装 `bs4`，可以用正则表达式：\\n\\n```python\\nimport re\\nimport requests\\n\\ndef get_title_regex(url):\\n    headers = {'User-Agent': 'Mozilla/5.0'}\\n    resp = requests.get(url, headers=headers, timeout=10)\\n    resp.encoding = resp.apparent_encoding\\n    match = re.search(r'<title[^>]*>(.*?)</title>', resp.text, re.S | re.I)\\n    return match.group(1).strip() if match else '无标题'\\n\\nprint(get_title_regex('https://www.python.org'))\\n```\\n\\n## 安装依赖\\n\\n```bash\\npip install requests beautifulsoup4\\n```\\n\\n## 注意事项\\n\\n1. **遵守 robots.txt**：爬取前查看目标网站的爬虫协议\\n2. **控制频率**：批量爬取时加 `time.sleep()` 避免给服务器造成压力\\n3. **异常处理**：网络请求可能失败，务必用 `try/except` 包裹\\n4. **编码问题**：中文网站建议用 `apparent_encoding` 或手动指定 `encoding='utf-8'`\\n\\n需要我扩展成**多线程爬取**或**保存到文件**的版本吗？\"},\"logprobs\":null,\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":12,\"completion_tokens\":922,\"total_tokens\":934,\"prompt_tokens_details\":{\"cached_tokens\":0},\"prompt_cache_hit_tokens\":0,\"prompt_cache_miss_tokens\":12},\"system_fingerprint\":\"aeb56401ca74e127821c4f9126dcb669\"}",
+  "response": {
+    "id": "502f1bc8-e806-4400-b27d-5b5d9aed8b79",
+    "object": "chat.completion",
+    "created": 1792158828,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "# 使用 requests 库爬取网页标题\n\n下面是一个完整的示例，演示如何使用 `requests` 库配合 `BeautifulSoup` 爬取网页标题。\n\n## 基础版本\n\n```python\nimport requests\nfrom bs4 import BeautifulSoup\n\ndef get_page_title(url):\n    \"\"\"获取网页标题\"\"\"\n    try:\n        # 发送 GET 请求\n        headers = {\n            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '\n                          'AppleWebKit/537.36 (KHTML, like Gecko) '\n                          'Chrome/120.0.0.0 Safari/537.36'\n        }\n        response = requests.get(url, headers=headers, timeout=10)\n        response.raise_for_status()  # 检查 HTTP 错误\n        \n        # 自动识别编码（避免中文乱码）\n        response.encoding = response.apparent_encoding\n        \n        # 解析 HTML\n        soup = BeautifulSoup(response.text, 'html.parser')\n        title = soup.title.string.strip() if soup.title else '无标题'\n        return title\n    \n    except requests.exceptions.RequestException as e:\n        return f'请求失败: {e}'\n\n\nif __name__ == '__main__':\n    url = 'https://www.python.org'\n    print(f'网页标题: {get_page_title(url)}')\n```\n\n## 批量爬取多个网页\n\n```python\nimport requests\nfrom bs4 import BeautifulSoup\nfrom urllib.parse import urlparse\n\ndef get_title(url, timeout=10):\n    headers = {\n        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '\n                      'AppleWebKit/537.36 (KHTML, like Gecko) '\n                      'Chrome/120.0.0.0 Safari/537.36'\n    }\n    try:\n        resp = requests.get(url, headers=headers, timeout=timeout)\n        resp.raise_for_status()\n        resp.encoding = resp.apparent_encoding\n        soup = BeautifulSoup(resp.text, 'html.parser')\n        return soup.title.string.strip() if soup.title else '无标题'\n    except Exception as e:\n        return f'错误: {e}'\n\n\nurls = [\n    'https://www.python.org',\n    'https://www.baidu.com',\n    'https://github.com',\n]\n\nfor url in urls:\n    print(f'{url} -> {get_title(url)}')\n```\n\n## 关键点说明\n\n| 要点 | 说明 |\n|------|------|\n| **User-Agent** | 伪装成浏览器，避免被网站拒绝（403） |\n| **timeout** | 设置超时，防止程序卡死 |\n| **raise_for_status()** | 遇到 4xx/5xx 状态码抛出异常 |\n| **apparent_encoding** | 自动检测编码，解决中文乱码 |\n| **BeautifulSoup** | 解析 HTML，`soup.title.string` 获取标题文本 |\n\n## 不依赖 BeautifulSoup 的纯 requests 版本\n\n如果不想安装 `bs4`，可以用正则表达式：\n\n```python\nimport re\nimport requests\n\ndef get_title_regex(url):\n    headers = {'User-Agent': 'Mozilla/5.0'}\n    resp = requests.get(url, headers=headers, timeout=10)\n    resp.encoding = resp.apparent_encoding\n    match = re.search(r'<title[^>]*>(.*?)</title>', resp.text, re.S | re.I)\n    return match.group(1).strip() if match else '无标题'\n\nprint(get_title_regex('https://www.python.org'))\n```\n\n## 安装依赖\n\n```bash\npip install requests beautifulsoup4\n```\n\n## 注意事项\n\n1. **遵守 robots.txt**：爬取前查看目标网站的爬虫协议\n2. **控制频率**：批量爬取时加 `time.sleep()` 避免给服务器造成压力\n3. **异常处理**：网络请求可能失败，务必用 `try/except` 包裹\n4. **编码问题**：中文网站建议用 `apparent_encoding` 或手动指定 `encoding='utf-8'`\n\n需要我扩展成**多线程爬取**或**保存到文件**的版本吗？"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 12,
+      "completion_tokens": 922,
+      "total_tokens": 934,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 12
+    },
+    "system_fingerprint": "aeb56401ca74e127821c4f9126dcb669"
+  },
+  "elapsedMs": 3938
+}

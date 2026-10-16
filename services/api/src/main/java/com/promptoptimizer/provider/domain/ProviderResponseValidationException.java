@@ -57,6 +57,7 @@ public final class ProviderResponseValidationException extends ProviderException
 
     /** 固定修复要求不能引用或复述导致校验失败的敏感内容。 */
     public enum Reason {
+        PROFESSIONAL_REVIEW_UNSUPPORTED("当前系统没有实际专家复核记录。不得新增本结果已通过专家认证、专业审核或临床验证的声明；保留原定交付、适用来源与尚未核实状态，引用和翻译仍须忠实。"),
         TASK_ROLE_CONFLICT("保留原文的受众与研究主题：为某人撰写不等于以该人为研究对象。直接改正误绑定段落，不在末尾补一句相反说明；用户实际指定或确认的人群继续保留。"),
         EVALUATION_TARGET_CONFLICT("按原研究主题与同对象有效确认落实评价对象。只评价提示词时，不能改成提示词或下游产物，也不能以执行作品替换评分对象；验证材料和独立对象按用户原要求处理。直接改正评价步骤，不在末尾补相反说明。"),
         ASSESSMENT_INVALID("assessment使用合法sufficiency、presentation及最多6项gaps；SUFFICIENT时gaps为空，NEEDS_COMPLETION时只列影响本次交付的实质缺口。"),

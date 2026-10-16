@@ -1,0 +1,331 @@
+{
+  "aiAssistedNotHumanExperts": true,
+  "sameProviderDifferentModels": true,
+  "independentIdenticalPacks": true,
+  "originalReviewsUnchanged": true,
+  "summaries": [
+    {
+      "model": "deepseek-flash",
+      "originalStrictJson": false,
+      "derivedQuoteChecks": 23,
+      "quoteErrors": [
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 8,
+          "work": "Q05-direct_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 21,
+          "work": "Q05-plan-pro_B"
+        }
+      ],
+      "verdicts": [
+        {
+          "id": "requests-title",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "scoresB": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "mortality-2015-2025",
+          "original": "平",
+          "preferred": "TIE",
+          "scoresA": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 3
+          },
+          "scoresB": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 5,
+            "executability": 3
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "Q05-direct",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "scoresB": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "Q05-plan",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "scoresB": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "Q05-plan-pro",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "scoresB": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severeFailures": []
+        }
+      ]
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "originalStrictJson": false,
+      "derivedQuoteChecks": 77,
+      "quoteErrors": [
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 0,
+          "work": "requests-title_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 1,
+          "work": "requests-title_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 2,
+          "work": "requests-title_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 4,
+          "work": "requests-title_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 5,
+          "work": "requests-title_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 8,
+          "work": "requests-title_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 10,
+          "work": "requests-title_B"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 11,
+          "work": "requests-title_B"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 12,
+          "work": "requests-title_B"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 14,
+          "work": "mortality-2015-2025_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 15,
+          "work": "mortality-2015-2025_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 16,
+          "work": "mortality-2015-2025_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 17,
+          "work": "mortality-2015-2025_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 19,
+          "work": "mortality-2015-2025_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 20,
+          "work": "mortality-2015-2025_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 21,
+          "work": "mortality-2015-2025_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 30,
+          "work": "Q05-direct_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 34,
+          "work": "Q05-direct_A"
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 38,
+          "work": "Q05-direct_A"
+        },
+        {
+          "code": "EVIDENCE_WRONG_SOURCE",
+          "issueIndex": 73,
+          "work": "Q05-plan-pro_B"
+        },
+        {
+          "code": "EVIDENCE_WRONG_SOURCE",
+          "issueIndex": 74,
+          "work": "Q05-plan-pro_B"
+        },
+        {
+          "code": "EVIDENCE_WRONG_SOURCE",
+          "issueIndex": 75,
+          "work": "Q05-plan-pro_B"
+        },
+        {
+          "code": "EVIDENCE_WRONG_SOURCE",
+          "issueIndex": 76,
+          "work": "Q05-plan-pro_B"
+        }
+      ],
+      "verdicts": [
+        {
+          "id": "requests-title",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "scoresB": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "mortality-2015-2025",
+          "original": "A胜",
+          "preferred": "raw",
+          "scoresA": {
+            "accuracy": 4,
+            "completeness": 5,
+            "clarity": 4,
+            "executability": 4
+          },
+          "scoresB": {
+            "accuracy": 5,
+            "completeness": 4,
+            "clarity": 5,
+            "executability": 4
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "Q05-direct",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "scoresB": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "Q05-plan",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "scoresB": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severeFailures": []
+        },
+        {
+          "id": "Q05-plan-pro",
+          "original": "A胜",
+          "preferred": "enhanced",
+          "scoresA": {
+            "accuracy": 5,
+            "completeness": 5,
+            "clarity": 5,
+            "executability": 5
+          },
+          "scoresB": {
+            "accuracy": 4,
+            "completeness": 4,
+            "clarity": 4,
+            "executability": 4
+          },
+          "severeFailures": []
+        }
+      ]
+    }
+  ]
+}

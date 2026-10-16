@@ -1,0 +1,129 @@
+{
+  "date": "2026-10-12",
+  "scope": "ME-00-A baseline then ME-01-A + ME-03-A bounded repair",
+  "cases": 7,
+  "initialPlanEnabled": false,
+  "initialPlanAnswers": [],
+  "initialExamplesEnabled": false,
+  "maximumActualModelCalls": 323,
+  "phaseLimits": {
+    "baseline": 80,
+    "candidateValidation": 243
+  },
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "baselineRounds": 1,
+  "candidateRounds": 2,
+  "planSupplement": [
+    "Q04",
+    "Q05"
+  ],
+  "review": "two independent AI reviewers, not domain experts; disputed verdicts unresolved until adjudication",
+  "sameTestAccountFile": "private runtime only; reuse former synthetic user",
+  "archiveSecrets": false,
+  "accountCreationAllowed": false,
+  "priceAndCurrencyCost": "UNKNOWN until verified invoice; actual provider tokens collected",
+  "productPrimaryComparison": "raw actual work vs actual copied enhanced work",
+  "repairRegression": "current enhanced vs repaired enhanced, separately reported",
+  "planParity": "verbatim actual submitted test answers provided to raw and direct comparators, never patch Plan copied body",
+  "severeFailure": "block capability release, preserve trace; no automatic budget increase",
+  "activeBatch": {
+    "version": "candidate21",
+    "group": "THREE_TASK_PLATFORM_REVALIDATION_AND_FIXED_COPY_FLASH_PRO_DIAGNOSIS",
+    "mode": "targeted",
+    "status": "CLOSED",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationAmendment": "protocol-amendment-17.json",
+    "secondRoundAuthorized": false,
+    "cases": [
+      "requests-title",
+      "mortality-2015-2025",
+      "Q05"
+    ],
+    "casesFile": "candidate21-three-cases.json",
+    "casesSha256": "642877d367619eb8c81dae73e5e61f24c1a735faa913b4d9b4bcfe795b717f2d",
+    "allowedRawPromptSha256": [
+      "ffefeb36c4b228371ac118dc21fdabd457cc657f0064a5592d8da8d5d8150a9f",
+      "9d8e8817bf76ebf7c0d9bb7f6776a623753f2d8ae56b321beaf345650596adcb",
+      "71de870998746bb5a0b9a049834f272f07f6ef1fae3c40a77cdb8d56a631398d",
+      "4768291328c62784ce0ce222f9a28b872bdfed93b88405a28176bac8e83a79d0"
+    ],
+    "model": "deepseek-flash",
+    "executionModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "callsBefore": 292,
+    "candidateCallsBefore": 222,
+    "maximumNewCalls": 21,
+    "maximumActualCallsAfterBatch": 313,
+    "maximumGenerationCalls": 7,
+    "maximumPlanningCalls": 2,
+    "maximumExecutionCalls": 10,
+    "maximumReviewCalls": 2,
+    "purposeMaximums": {
+      "PLATFORM_GENERATION": 7,
+      "PLANNING": 2,
+      "EXECUTION": 10,
+      "REVIEW": 2
+    },
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "executionParameters": {
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "accountCreationAllowed": false,
+    "noPhaseBorrowing": true,
+    "noClosedBatchAllowanceTransfer": true,
+    "qualityRetriesAllowed": false,
+    "sourceFreeze": "docs/testing/evidence/me00a-candidate21-offline-2026-10-16/candidate21-source.json",
+    "actualNewCalls": 21,
+    "actualTotalAtClose": 292,
+    "unusedClosedNotTransferable": 0,
+    "qualityRetries": 0,
+    "authorizationBasis": "Standing evaluation authorization plus current four-batch implementation request; allocation within unchanged formal caps",
+    "executionOrder": [
+      "mortality-2015-2025/raw",
+      "Q05-raw-pro-same-info/raw",
+      "Q05-raw-same-info/raw",
+      "mortality-2015-2025/enhanced",
+      "Q05-direct-same-info/enhanced",
+      "Q05-plan-pro/enhanced",
+      "Q05-plan/enhanced",
+      "requests-title/enhanced",
+      "requests-title-pro/enhanced",
+      "requests-title/raw"
+    ],
+    "randomizationSeed": "f8638d4395f78005f7d18c6895a2e966",
+    "reviewEnhancedOnA": [
+      "requests-title",
+      "Q05-direct",
+      "Q05-plan",
+      "Q05-plan-pro"
+    ],
+    "sameInformationInput": {
+      "case": "Q05",
+      "source": "Actual candidate21 questions and verbatim approved fixture delegation",
+      "sha256": "4768291328c62784ce0ce222f9a28b872bdfed93b88405a28176bac8e83a79d0",
+      "noScriptRepairOfPlanBody": true
+    }
+  }
+}

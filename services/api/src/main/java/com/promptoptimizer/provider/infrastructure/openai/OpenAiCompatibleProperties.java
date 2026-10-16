@@ -90,6 +90,19 @@ public class OpenAiCompatibleProperties {
 
     private boolean jsonResponseFormatEnabled = true;
 
+    /** 按公开路由ID维护容量快照；无配置的路由不能冒充已完成容量适配。 */
+    private Map<String, RequestCapacityPolicy.Limit> capacityLimits = new LinkedHashMap<>();
+
+    /** 容量配置仅在服务端维护，不接受客户端自报。 */
+    public Map<String, RequestCapacityPolicy.Limit> getCapacityLimits() {
+        return Map.copyOf(capacityLimits);
+    }
+
+    /** 复制配置，避免请求期间外部修改预算。 */
+    public void setCapacityLimits(Map<String, RequestCapacityPolicy.Limit> limits) {
+        capacityLimits = limits == null ? new LinkedHashMap<>() : new LinkedHashMap<>(limits);
+    }
+
     public String getProviderName() {
         return providerName;
     }

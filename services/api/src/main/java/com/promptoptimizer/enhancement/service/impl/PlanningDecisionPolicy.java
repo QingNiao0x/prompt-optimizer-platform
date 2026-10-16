@@ -310,7 +310,7 @@ final class PlanningDecisionPolicy {
         if (!hasDecision(Kind.RESEARCH_STATUS) || !raw.contains("说明")) return false;
         String question = candidate.question();
         boolean scoring = raw.matches("(?s).*说明[^。\\n]*(?:评价|评估).*" )
-                && question.matches("(?s).*(?:评分方式|评分量表|评分尺度|评分标准|量尺).*" );
+                && question.matches("(?s).*(?:评分方式|评分形式|评分量表|评分尺度|评分标准|量尺).*" );
         boolean disagreement = delegatedReviewerDisagreement(question, raw);
         boolean randomization = raw.matches("(?s).*说明[^。\\n]*随机化.*" ) && question.contains("随机化");
         boolean parity = hasDecision(Kind.INFORMATION_PARITY)

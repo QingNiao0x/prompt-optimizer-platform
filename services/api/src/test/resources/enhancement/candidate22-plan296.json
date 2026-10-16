@@ -1,0 +1,261 @@
+{
+  "source": "docs/testing/evidence/me00a-candidate21-live-2026-10-16/real/Q05-plan/plan-platform.json",
+  "sourceSha256": "de84384aa45c4f53a15d7005d1818f234cafc9bc59944b131eaf4276da85de47",
+  "rawPrompt": "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。正文800至1200个汉字，附表另计。不提供代码，不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Plan组问答的轮次与终止方式如何设定？",
+      "hint": "这决定Plan条件的操作定义和可重复性，也影响同信息对照如何提供确认信息。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "o1",
+          "label": "固定单轮澄清",
+          "description": "每任务仅进行一轮提问与回答，随后生成。",
+          "answer": "Plan组每任务固定进行一轮澄清问答，用户回答后即生成结果。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o2",
+          "label": "固定多轮澄清",
+          "description": "每任务固定进行两轮或以上提问与回答，再生成。",
+          "answer": "Plan组每任务固定进行多轮澄清问答（轮次在方法中写明），用户回答后生成结果。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o3",
+          "label": "至信息充分为止",
+          "description": "由增强器判断确认信息已足够后终止，轮次不固定。",
+          "answer": "Plan组持续提问直至确认信息充分，由增强器判断终止，轮次不固定。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o4",
+          "label": "由用户逐任务指定",
+          "description": "每个任务单独规定轮次与终止条件。",
+          "answer": "Plan组每个任务的轮次与终止条件由用户逐任务指定。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q2",
+      "question": "同信息对照的两组分别采用什么增强流程？",
+      "hint": "需明确两组在获得相同确认信息后各自如何作答，才能保证对照公平且可复现。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "o1",
+          "label": "直接增强+Plan各一组",
+          "description": "一组用直接增强流程，另一组用Plan流程，均接收同一份确认信息。",
+          "answer": "同信息对照两组分别采用直接增强流程和Plan流程，均接收并使用同一份实际确认信息。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o2",
+          "label": "两组均为直接增强",
+          "description": "两组都使用直接增强流程，仅接收同一份确认信息。",
+          "answer": "同信息对照两组均采用直接增强流程，接收并使用同一份实际确认信息。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o3",
+          "label": "两组均为Plan流程",
+          "description": "两组都使用Plan流程，仅接收同一份确认信息。",
+          "answer": "同信息对照两组均采用Plan流程，接收并使用同一份实际确认信息。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o4",
+          "label": "其他组合",
+          "description": "两组采用其他增强流程组合，需在方法中写明。",
+          "answer": "同信息对照两组采用其他增强流程组合，具体组合在方法中写明。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q3",
+      "question": "确认信息如何取得并封存后提供给同信息各组？",
+      "hint": "这决定公平对照的信息一致性是否可核查，以及是否引入额外偏差。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "o1",
+          "label": "先封存再逐字提供",
+          "description": "先取得并封存实际答案，再逐字提供给同信息各组。",
+          "answer": "先取得并封存实际确认答案，再逐字提供给同信息各组使用。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o2",
+          "label": "先封存再摘要提供",
+          "description": "先取得并封存实际答案，再以统一摘要形式提供给各组。",
+          "answer": "先取得并封存实际确认答案，再以统一摘要形式提供给同信息各组。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o3",
+          "label": "各组分别取得",
+          "description": "各组分别向用户提问并取得确认信息，不统一封存。",
+          "answer": "同信息各组分别向用户提问并取得确认信息，不统一封存。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q4",
+      "question": "每模式每任务独立重复3次时，任务与重复的呈现顺序如何安排？",
+      "hint": "随机化方式影响配对结构和统计检验选择，需在方法中写明。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "o1",
+          "label": "完全随机",
+          "description": "所有任务与重复的呈现顺序完全随机。",
+          "answer": "所有任务与重复的呈现顺序完全随机。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o2",
+          "label": "按任务区组随机",
+          "description": "以任务为区组，在区组内随机安排模式与重复顺序。",
+          "answer": "以任务为区组，在区组内随机安排模式与重复的呈现顺序。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o3",
+          "label": "固定顺序",
+          "description": "按固定顺序呈现，不进行随机化。",
+          "answer": "任务与重复按固定顺序呈现，不进行随机化。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q5",
+      "question": "两名评审盲评时，评审是否对同一任务的所有模式结果都评分？",
+      "hint": "这决定评分设计是交叉还是独立，影响一致性评估与分歧处理。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "o1",
+          "label": "全部交叉评分",
+          "description": "两名评审对每个任务的所有模式结果均评分。",
+          "answer": "两名评审对每个任务的所有模式结果均进行评分。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o2",
+          "label": "分工独立评分",
+          "description": "两名评审各自负责一部分任务，不交叉。",
+          "answer": "两名评审各自负责一部分任务，独立评分，不交叉。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o3",
+          "label": "混合安排",
+          "description": "部分任务交叉评分，部分任务独立评分。",
+          "answer": "部分任务由两名评审交叉评分，部分任务独立评分。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q7",
+      "question": "准确性、完整性、清晰度与可执行性四项评价采用什么评分形式？",
+      "hint": "评分形式决定后续统计检验的适用条件，需在方法中写明。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "o1",
+          "label": "李克特量表",
+          "description": "每项采用有序等级评分，如1至5分。",
+          "answer": "准确性、完整性、清晰度与可执行性四项均采用有序等级评分（如1至5分李克特量表）。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o2",
+          "label": "连续百分制",
+          "description": "每项采用0至100连续评分。",
+          "answer": "准确性、完整性、清晰度与可执行性四项均采用0至100连续评分。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o3",
+          "label": "等级加评语",
+          "description": "每项既有等级评分，也附文字评语。",
+          "answer": "准确性、完整性、清晰度与可执行性四项均采用等级评分并附文字评语。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "q8",
+      "question": "正文800至1200个汉字是否包含标题、摘要或关键词？",
+      "hint": "字数口径影响方法部分的篇幅安排和交付验收。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "o1",
+          "label": "仅正文",
+          "description": "800至1200字仅指方法部分正文，不含标题、摘要、关键词。",
+          "answer": "800至1200个汉字仅指方法部分正文，不含标题、摘要、关键词。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o2",
+          "label": "含标题与摘要",
+          "description": "字数包含标题、摘要、关键词。",
+          "answer": "800至1200个汉字包含标题、摘要、关键词。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "o3",
+          "label": "含标题不含摘要",
+          "description": "字数包含标题，但不含摘要、关键词。",
+          "answer": "800至1200个汉字包含标题，但不含摘要、关键词。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ]
+}

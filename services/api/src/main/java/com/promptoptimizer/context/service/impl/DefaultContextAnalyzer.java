@@ -72,11 +72,8 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
     private static final Pattern GO_MODULE = Pattern.compile(
             "^\\s*([A-Za-z0-9_./-]+)\\s+v([A-Za-z0-9.+-]+)\\s*$"
     );
-    private static final Pattern SECRET_VALUE = Pattern.compile(
-            "(?i)(api[_-]?key|secret|password|token)\\s*[:=]\\s*[\\\"']?([A-Za-z0-9_./+=-]{8,})"
-    );
-    private static final Pattern PRIVATE_KEY = Pattern.compile("-----BEGIN .* PRIVATE KEY-----");
-    private static final Pattern OPENAI_STYLE_KEY = Pattern.compile("sk-[A-Za-z0-9_-]{10,}");
+    private static final com.promptoptimizer.common.security.SensitiveValueScanner SENSITIVE_VALUES =
+            new com.promptoptimizer.common.security.SensitiveValueScanner();
     private static final Pattern INDEX_CHUNK_SUFFIX = Pattern.compile("#chunk-\\d+$", Pattern.CASE_INSENSITIVE);
     private static final Pattern PRODUCTION_CONFIG_PATH = Pattern.compile(
             "(?i)(?:^|/)(?:application[-.](?:prod|production)|config/(?:prod|production))"
@@ -625,7 +622,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             }
             int remaining = MAX_SNIPPET_TOTAL_CHARS - totalCharacters;
             if (remaining <= 0) {
-                warnings.add("文件内容摘要已达到 Token 预算");
+                warnings.add("文件内容摘要已达到字符预算");
                 break;
             }
             int allowance = Math.min(MAX_SNIPPET_CHARS, remaining);
@@ -655,7 +652,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
     }
 
     /**
-     * 清理项目描述，命中敏感规则时整段脱敏。
+     * 清理项目描述，只替换凭据值，保留与任务有关的其余事实。
      */
     private String sanitizeDescription(String description, List<String> warnings, List<String> redactions) {
         if (description == null || description.isBlank()) {
@@ -665,7 +662,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
         if (containsSecret(normalized)) {
             warnings.add("项目描述疑似包含敏感信息，已脱敏");
             redactions.add("customDescription");
-            return "[DESCRIPTION REDACTED: sensitive material detected]";
+            return SENSITIVE_VALUES.redact(normalized);
         }
         return normalized;
     }
@@ -737,9 +734,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
      * 判断内容是否包含常见密钥、私钥或 API Key 形态的敏感信息。
      */
     private boolean containsSecret(String content) {
-        return SECRET_VALUE.matcher(content).find()
-                || PRIVATE_KEY.matcher(content).find()
-                || OPENAI_STYLE_KEY.matcher(content).find();
+        return SENSITIVE_VALUES.containsCredential(content);
     }
 
     /**

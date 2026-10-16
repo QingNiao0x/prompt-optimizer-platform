@@ -163,6 +163,7 @@ public class OptimizationResultAssembler {
             throw invalidResponse(Reason.METADATA_INVALID, "provider");
         }
         Map<PromptSectionType, PromptSection> sections = collectSections(providerResponse.sections());
+        sections.values().forEach(section -> ProfessionalReviewBoundary.validate(section.content(), taskView));
         if (!sections.keySet().containsAll(REQUIRED_TYPES)) {
             throw invalidResponse(Reason.REQUIRED_SECTIONS_MISSING, "sections");
         }
@@ -223,6 +224,7 @@ public class OptimizationResultAssembler {
         boolean minimal = MinimalPromptOrganizer.organize(sections, effectiveRawPrompt,
                 planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), providerResponse.assessment());
         PlanDecisionIntegrator.integrate(sections, taskView);
+        PlanDecisionIntegrator.reconcileDelegatedStatus(sections, taskView);
         // 原件已通过安全与任务校验；仅精简可证明覆盖的资料状态并澄清条件表格，不改原件与来源。
         MaterialStatusCompactor.compact(sections);
         ConditionalTableProjection.reconcile(sections);
@@ -341,6 +343,7 @@ public class OptimizationResultAssembler {
         List<String> remainingAmbiguities = merged.messages();
         merged.executionPrerequisites().forEach(value -> validateUserFacingProtocol(value, rawPrompt, "ambiguities"));
         List<String> resultWarnings = new ArrayList<>(collectWarnings(context, planningWarnings));
+        resultWarnings.addAll(ProfessionalReviewBoundary.warnings(taskView));
         if (merged.omittedCount() > 0) {
             resultWarnings.add("待确认事项已去重，本次展示前 8 项，另有 " + merged.omittedCount()
                     + " 项未展示；所有未决条件已完整保留在约束部分，仅限制依赖它们的内容。");
@@ -358,7 +361,7 @@ public class OptimizationResultAssembler {
         List<String> deliveredPrerequisites = PlanDecisionIntegrator.uncoveredDelegatedPrerequisites(
                 sections, merged.executionPrerequisites(), taskView);
         appendExecutionPrerequisites(sections, deliveredPrerequisites, pendingDeliveryGuidance,
-                draftDelivery.prerequisiteHeading());
+                draftDelivery.prerequisiteHeading(), taskView);
         if (unresolvedContract.hasNamedParameters()) {
             PromptSection output = sections.get(PromptSectionType.OUTPUT);
             String parameterEvidence = unresolvedContract.independentEvidenceGuidance();
@@ -442,7 +445,7 @@ public class OptimizationResultAssembler {
                 .map(sections::get)
                 .filter(section -> section != null)
                 .toList();
-        return new OptimizationResult(
+        var result = new OptimizationResult(
                 renderPrompt(ordered, presentation),
                 ordered,
                 context,
@@ -459,6 +462,12 @@ public class OptimizationResultAssembler {
                 evidenceCards(eligibleFacts, documentFacts),
                 presentation
         );
+        // 统一校验最终结果的全部文本投影，避免段落安全但警告、来源或追加内容仍回显凭据。
+        // 此投影只在本次调用中检查，禁止写入日志或额外持久化。
+        if (sensitiveValueDetector.containsCredential(result.toString())) {
+            throw invalidResponse(Reason.SENSITIVE_CONTENT, "result");
+        }
+        return result;
     }
 
     /** 用户要求讲解某协议时保留合法代码名，其他任务不能把模型输入的内部字段当作读者操作指令。 */
@@ -607,8 +616,12 @@ public class OptimizationResultAssembler {
 
     /** 未决与冲突必须随可复制正文交付；不把暂不确定转换成模型自行选择的许可。 */
     private void appendExecutionPrerequisites(Map<PromptSectionType, PromptSection> sections, List<String> prerequisites,
-                                              String deliveryGuidance, String heading) {
-        appendConstraintBlock(sections, heading, prerequisites);
+                                              String deliveryGuidance, String heading,
+                                              com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView) {
+        var common = PlanDecisionIntegrator.commonDelegatedQuestions(prerequisites, taskView);
+        appendConstraintBlock(sections, common.isPresent()
+                ? heading + "（已委托提出拟议设计，实际采用参数仍未确认）" : heading,
+                common.orElse(prerequisites));
         if (!prerequisites.isEmpty() && !deliveryGuidance.isBlank()) {
             appendConstraintBlock(sections, "未决决定的交付边界", List.of(deliveryGuidance));
         }

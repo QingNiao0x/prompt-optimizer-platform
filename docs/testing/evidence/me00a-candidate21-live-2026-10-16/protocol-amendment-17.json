@@ -1,0 +1,104 @@
+{
+  "number": 17,
+  "at": "2026-10-16T13:38:48.352237+00:00",
+  "formalLimitsUnchanged": {
+    "total": 323,
+    "baseline": 80,
+    "candidateValidation": 243
+  },
+  "newAllocation": {
+    "version": "candidate21",
+    "group": "THREE_TASK_PLATFORM_REVALIDATION_AND_FIXED_COPY_FLASH_PRO_DIAGNOSIS",
+    "mode": "targeted",
+    "status": "OPEN",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationAmendment": "protocol-amendment-17.json",
+    "secondRoundAuthorized": false,
+    "cases": [
+      "requests-title",
+      "mortality-2015-2025",
+      "Q05"
+    ],
+    "casesFile": "candidate21-three-cases.json",
+    "casesSha256": "642877d367619eb8c81dae73e5e61f24c1a735faa913b4d9b4bcfe795b717f2d",
+    "allowedRawPromptSha256": [
+      "ffefeb36c4b228371ac118dc21fdabd457cc657f0064a5592d8da8d5d8150a9f",
+      "9d8e8817bf76ebf7c0d9bb7f6776a623753f2d8ae56b321beaf345650596adcb",
+      "71de870998746bb5a0b9a049834f272f07f6ef1fae3c40a77cdb8d56a631398d"
+    ],
+    "model": "deepseek-flash",
+    "executionModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "callsBefore": 292,
+    "candidateCallsBefore": 222,
+    "maximumNewCalls": 21,
+    "maximumActualCallsAfterBatch": 313,
+    "maximumGenerationCalls": 7,
+    "maximumPlanningCalls": 2,
+    "maximumExecutionCalls": 10,
+    "maximumReviewCalls": 2,
+    "purposeMaximums": {
+      "PLATFORM_GENERATION": 7,
+      "PLANNING": 2,
+      "EXECUTION": 10,
+      "REVIEW": 2
+    },
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "executionParameters": {
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "accountCreationAllowed": false,
+    "noPhaseBorrowing": true,
+    "noClosedBatchAllowanceTransfer": true,
+    "qualityRetriesAllowed": false,
+    "sourceFreeze": "docs/testing/evidence/me00a-candidate21-offline-2026-10-16/candidate21-source.json",
+    "actualNewCalls": 16,
+    "actualTotalAtClose": 292,
+    "unusedClosedNotTransferable": 8,
+    "qualityRetries": 0,
+    "authorizationBasis": "Standing evaluation authorization plus current four-batch implementation request; allocation within unchanged formal caps",
+    "executionOrder": [
+      "mortality-2015-2025/raw",
+      "Q05-raw-pro-same-info/raw",
+      "Q05-raw-same-info/raw",
+      "mortality-2015-2025/enhanced",
+      "Q05-direct-same-info/enhanced",
+      "Q05-plan-pro/enhanced",
+      "Q05-plan/enhanced",
+      "requests-title/enhanced",
+      "requests-title-pro/enhanced",
+      "requests-title/raw"
+    ],
+    "randomizationSeed": "f8638d4395f78005f7d18c6895a2e966",
+    "reviewEnhancedOnA": [
+      "requests-title",
+      "Q05-direct",
+      "Q05-plan",
+      "Q05-plan-pro"
+    ]
+  },
+  "actualBefore": {
+    "total": 292,
+    "baseline": 70,
+    "candidateValidation": 222
+  },
+  "closedUnusedAllowanceTransferred": 0,
+  "expectedFirstAttemptCalls": 17,
+  "maximumNewCalls": 21,
+  "noQualityRetry": true,
+  "sameAccount": true,
+  "executionRoles": "Flash seven primary works; Pro requests fixed-copy diagnosis plus Q05 same-information raw/Plan comparison; no claim of Pro direct three-arm comparison",
+  "priceAndCurrencyCost": "UNKNOWN"
+}
