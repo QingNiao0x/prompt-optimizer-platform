@@ -1,0 +1,36 @@
+{
+  "phase": "BEFORE_PRODUCT_FIX",
+  "tests": 33,
+  "failures": 6,
+  "errors": 0,
+  "skipped": 0,
+  "originalXmlSha256": "67c9fbacc31156f89f31dd3fe6e702d15845d9d204102a51cce9d8318d54551c",
+  "failedCases": [
+    {
+      "name": "independentCompleteSentencesMayShareAParagraphWithoutBeingAppendedAgain(String)[1]",
+      "message": "\nExpecting empty but was: [\"明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\", \"说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\"]"
+    },
+    {
+      "name": "independentCompleteSentencesMayShareAParagraphWithoutBeingAppendedAgain(String)[2]",
+      "message": "\nExpecting empty but was: [\"明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\", \"说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\"]"
+    },
+    {
+      "name": "independentCompleteSentencesMayShareAParagraphWithoutBeingAppendedAgain(String)[3]",
+      "message": "\nExpecting empty but was: [\"明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\", \"说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\"]"
+    },
+    {
+      "name": "independentCompleteSentencesMayShareAParagraphWithoutBeingAppendedAgain(String)[5]",
+      "message": "\nExpecting empty but was: [\"明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\", \"说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\"]"
+    },
+    {
+      "name": "completeSentencesDoNotCoverPartialRulesNewObjectsOrChangedLiteralValues",
+      "message": "\nExpecting actual:\n  [\"明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\",\n    \"说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\",\n    \"乙研究明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\",\n    \"明确数据来源、研究对象、指标定义和统计口径，获准后无法核实的数据与引用不得编造。\"]\nto contain exactly (and in same order):\n  [\"乙研究明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\",\n    \"明确数据来源、研究对象、指标定义和统计口径，获准后无法核实的数据与引用不得编造。\"]\nbut some elements were not expected:\n  [\"明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\", \"说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\"]\n"
+    },
+    {
+      "name": "captured322KeepsEachCompleteTaskRuleOnceAndRetainsEverySource",
+      "message": "\nexpected: 1\n but was: 2"
+    }
+  ],
+  "productFileSha256": "202928341d336c1012543e33380d15886045fdaabe26e9d37f2b67f07ab32465",
+  "modelCalls": 0
+}

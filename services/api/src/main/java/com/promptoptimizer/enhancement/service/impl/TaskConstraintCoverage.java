@@ -14,6 +14,14 @@ import java.util.regex.Pattern;
 final class TaskConstraintCoverage {
     private static final Pattern CONDITIONAL_SCOPE = Pattern.compile("如果|若|除非|假如|假设|仅当|只要|只有|否则|例外|除外|但是");
     private static final Pattern LEADING_SCOPE = Pattern.compile("不|未|无|禁止|仅|只|待|但|未来|以后");
+    // 只扩展完整句覆盖；同段的作用域、例外或引用可能影响后续句子，不能拆掉后借作当前全局要求。
+    private static final Pattern PARAGRAPH_SCOPE = Pattern.compile(
+            "如果|假如|若|除非|仅当|只要|只有|否则|但|例外|除外|仅适用|仅针对|仅就|只对|只在"
+                    + "|另一|其他(?:研究|任务|项目)|[甲乙丙丁](?:研究|任务)|(?:研究|任务)[甲乙丙丁]"
+                    + "|以后|未来方案|未来确认|待确认|示例|例如|例子"
+                    + "|不必遵守|无需遵守|不得要求|不要求|不是要求|并非要求|[：:“”‘’\"'`?？<>]"
+                    + "|(?:^|[。！？])\\s*(?:请)?(?:引用|原文|假设)"
+                    + "|(?:时|前|后|条件下)[，,]");
 
     private TaskConstraintCoverage() { }
 
@@ -25,7 +33,7 @@ final class TaskConstraintCoverage {
                 ? !content.contains(rule) : !statements.contains(canonical(rule))).toList();
     }
 
-    /** 按完整行保存作用域；无法确定标题是否属于当前任务时，宁可保留原规则。 */
+    /** 保留整行覆盖，并接收当前段落中可独立核对的完整句；不确定作用域时仍保留原规则。 */
     private static Set<String> currentStatements(String content) {
         Set<String> statements = new HashSet<>();
         String fence = null;
@@ -47,9 +55,20 @@ final class TaskConstraintCoverage {
                         || currentScope && heading.matches("(?:约束|约束条件|任务相关约束)[：:]?");
                 continue;
             }
-            if (currentScope && !value.isBlank()) statements.add(canonical(value));
+            if (currentScope && !value.isBlank()) {
+                statements.add(canonical(value));
+                addIndependentSentences(statements, value);
+            }
         }
         return statements;
+    }
+
+    /** 只按中文句号识别完整句，不拆分分号、数值、路径或跨行残句，也不裁剪原段落及其来源。 */
+    private static void addIndependentSentences(Set<String> statements, String paragraph) {
+        if (PARAGRAPH_SCOPE.matcher(paragraph).find()) return;
+        for (String sentence : paragraph.split("(?<=。)")) {
+            if (sentence.endsWith("。")) statements.add(canonical(sentence));
+        }
     }
 
     /** 只合并纯中文自然语言的逗号／分号；标识、引号、数值、比较符及路径逐字比较。 */

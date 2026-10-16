@@ -1,0 +1,450 @@
+{
+  "provenance": {
+    "trace321Sha256": "fa250f3ca65eba8c9f29b2621a504c97b07fe5dca89ad1d54dac046baf9beb9d",
+    "trace322Sha256": "6168262ff0e71dc19ce9a36a79fb4d187af54102b3f91d83ba815a4cdf68b578",
+    "sourceDirectory": "docs/testing/evidence/me00a-candidate23-r2-live-2026-10-16/real",
+    "type": "OFFLINE_REPLAY_NOT_NEW_MODEL_OUTPUT"
+  },
+  "rawPrompt": "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。正文800至1200个汉字，附表另计。不提供代码，不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。",
+  "questions": [
+    {
+      "id": "plan_interaction_rounds",
+      "question": "Plan 组的问答交互按什么轮次与终止方式设计？",
+      "hint": "这决定 Plan 条件的具体操作定义，也影响两组同信息对照如何取得并封存确认信息。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "fixed_rounds",
+          "label": "固定轮次",
+          "description": "预先规定每任务固定进行若干轮问答后终止。",
+          "answer": "Plan 组每任务按预先规定的固定轮次进行问答，达到轮次后终止并生成。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "until_no_new",
+          "label": "至无新增确认信息",
+          "description": "持续问答直到用户不再提供新的确认信息为止。",
+          "answer": "Plan 组持续问答，直到用户不再提供新的确认信息时终止并生成。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "until_sufficient",
+          "label": "至信息足够",
+          "description": "由预设标准判断确认信息已足够支持生成后终止。",
+          "answer": "Plan 组问答持续到预设的确认信息充分性标准满足后终止并生成。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_rounds",
+          "label": "其他方式",
+          "description": "由你说明轮次与终止规则。",
+          "answer": "Plan 组的轮次与终止方式为：",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "task_categories",
+      "question": "4 类任务具体指哪四类？",
+      "hint": "任务类别决定 20 个任务的内容分布和评价维度如何落地，需要你给出实际类别。",
+      "type": "FREE_TEXT",
+      "options": [],
+      "examples": [
+        "例如：信息检索、文本摘要、方案设计、数据分析"
+      ],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "task_source",
+      "question": "20 个任务来自哪里？",
+      "hint": "任务来源决定研究可复现性和是否涉及真实材料，不能用假设数据替代。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "real_materials",
+          "label": "真实材料生成",
+          "description": "从可核实的真实材料或真实需求中构造任务。",
+          "answer": "20 个任务从可核实的真实材料或真实需求中构造，不使用假设数据。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "public_benchmark",
+          "label": "公开基准任务",
+          "description": "选用已有公开基准或数据集中的任务。",
+          "answer": "20 个任务选自已有公开基准或数据集，并说明来源与筛选标准。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "expert_designed",
+          "label": "专家设计任务",
+          "description": "由领域专家按研究目的设计任务并说明依据。",
+          "answer": "20 个任务由领域专家按研究目的设计，并说明设计依据与筛选标准。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_source",
+          "label": "其他来源",
+          "description": "由你说明任务来源。",
+          "answer": "20 个任务的来源为：",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "control_group_flow",
+      "question": "两组同信息公平对照在收到同一份确认信息后，是否仍保留各自指定的增强流程？",
+      "hint": "这决定对照是否只比较“是否交互”，还是同时保留直接增强与 Plan 的流程差异。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "keep_flow",
+          "label": "保留各自流程",
+          "description": "两组收到同一确认信息后，分别按直接增强和 Plan 的指定流程生成。",
+          "answer": "两组同信息对照收到同一份实际确认信息后，分别保留直接增强与 Plan 的指定增强流程，不改写回答、不另换任务。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "same_flow",
+          "label": "统一流程",
+          "description": "两组收到同一确认信息后使用完全相同的生成流程，仅比较信息是否一致。",
+          "answer": "两组同信息对照收到同一份实际确认信息后使用完全相同的生成流程，仅比较确认信息一致性的作用。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_control",
+          "label": "其他安排",
+          "description": "由你说明对照流程。",
+          "answer": "两组同信息对照的流程安排为：",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "randomization_unit",
+      "question": "随机化的对象和方式是什么？",
+      "hint": "随机化单位影响配对结构和后续统计检验的适用条件。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "task_level",
+          "label": "按任务随机",
+          "description": "以任务为单位随机分配模式或顺序。",
+          "answer": "随机化以任务为单位进行，并说明分配与顺序控制方式。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "repetition_level",
+          "label": "按重复随机",
+          "description": "以每任务每次重复为单位随机分配模式或顺序。",
+          "answer": "随机化以每任务每次重复为单位进行，并说明分配与顺序控制方式。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "blocked",
+          "label": "区组随机",
+          "description": "按任务类别或任务进行区组随机化。",
+          "answer": "随机化按任务类别或任务进行区组随机，并说明区组大小与顺序控制方式。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_random",
+          "label": "其他方式",
+          "description": "由你说明随机化单位与方式。",
+          "answer": "随机化的对象和方式为：",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "scoring_scale",
+      "question": "准确性、完整性、清晰度与可执行性采用什么评分尺度？",
+      "hint": "评分尺度决定评审如何打分以及后续一致性评估和统计检验的可用形式。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "likert5",
+          "label": "5 级李克特",
+          "description": "每维度采用 1–5 分评分。",
+          "answer": "准确性、完整性、清晰度与可执行性均采用 1–5 分李克特量表评分。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "likert7",
+          "label": "7 级李克特",
+          "description": "每维度采用 1–7 分评分。",
+          "answer": "准确性、完整性、清晰度与可执行性均采用 1–7 分李克特量表评分。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "rubric_levels",
+          "label": "分等级评分细则",
+          "description": "每维度按预设等级描述评分，而非连续量表。",
+          "answer": "准确性、完整性、清晰度与可执行性按预设等级评分细则评分，并说明各等级标准。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_scale",
+          "label": "其他尺度",
+          "description": "由你说明评分尺度。",
+          "answer": "四个评价维度的评分尺度为：",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "disagreement_rule",
+      "question": "两名评审出现分歧时如何处理？",
+      "hint": "分歧处理规则影响评分汇总方式和一致性评估，需要你确认。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "discuss_consensus",
+          "label": "讨论达成共识",
+          "description": "分歧时两名评审讨论后给出统一评分。",
+          "answer": "两名评审出现分歧时进行讨论并达成共识评分。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "third_reviewer",
+          "label": "第三评审裁决",
+          "description": "分歧时由第三名评审独立评分并裁决。",
+          "answer": "两名评审出现分歧时由第三名评审独立评分并裁决。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "average_scores",
+          "label": "取平均分",
+          "description": "分歧时不讨论，直接取两名评审的平均分。",
+          "answer": "两名评审出现分歧时不讨论，直接取两名评审评分的平均值。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "report_both",
+          "label": "保留并报告分歧",
+          "description": "不强行统一，保留两名评审各自评分并报告一致性。",
+          "answer": "两名评审出现分歧时保留各自评分，并报告评分者间一致性。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "deliverable_scope",
+      "question": "方法部分除正文 800–1200 汉字外，附表需要包含哪些内容？",
+      "hint": "附表另计，但需要明确附表承载哪些方法学信息，避免正文超限或遗漏关键设计。",
+      "type": "MULTIPLE_CHOICE",
+      "options": [
+        {
+          "id": "task_list",
+          "label": "任务清单",
+          "description": "列出 4 类任务及每类 5 个任务的具体内容。",
+          "answer": "附表包含 4 类任务及每类 5 个任务的具体清单。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "randomization_schedule",
+          "label": "随机化方案",
+          "description": "列出随机化单位、区组和顺序控制安排。",
+          "answer": "附表包含随机化单位、区组和顺序控制安排。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "scoring_rubric",
+          "label": "评分细则",
+          "description": "列出四个评价维度的评分标准或等级描述。",
+          "answer": "附表包含准确性、完整性、清晰度与可执行性的评分标准或等级描述。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "analysis_candidates",
+          "label": "候选检验及适用条件",
+          "description": "列出候选统计检验及其适用条件，不预先选定。",
+          "answer": "附表列出候选统计检验及其适用条件，并说明依据未来数据分布和配对结构选择，不预先选定。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "other_appendix",
+          "label": "其他内容",
+          "description": "由你补充附表需要包含的内容。",
+          "answer": "附表还需要包含：",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "actualAnswers": [
+    {
+      "questionId": "plan_interaction_rounds",
+      "question": "Plan 组的问答交互按什么轮次与终止方式设计？",
+      "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
+    },
+    {
+      "questionId": "task_categories",
+      "question": "4 类任务具体指哪四类？",
+      "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
+    },
+    {
+      "questionId": "task_source",
+      "question": "20 个任务来自哪里？",
+      "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
+    },
+    {
+      "questionId": "control_group_flow",
+      "question": "两组同信息公平对照在收到同一份确认信息后，是否仍保留各自指定的增强流程？",
+      "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
+    },
+    {
+      "questionId": "deliverable_scope",
+      "question": "方法部分除正文 800–1200 汉字外，附表需要包含哪些内容？",
+      "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
+    }
+  ],
+  "response": {
+    "assessment": {
+      "sufficiency": "NEEDS_COMPLETION",
+      "gaps": [
+        {
+          "kind": "PROFESSIONAL_OPTION",
+          "missing": "4类任务的具体类别、20个任务的来源与抽样方式、Plan组问答交互的轮次与终止规则、同信息对照两组在收到同一份确认信息后是否保留各自增强流程，以及附表应包含的内容均未确定。",
+          "completion": "在方法部分给出可直接开展的拟议主方案：建议4类任务按任务复杂度或提示词类型划分（如简单描述、多约束、多步骤推理、开放创意），20个任务从公开提示词数据集或研究者自建任务库中按类别分层抽取，Plan组问答交互设为固定轮次上限并说明终止条件，同信息对照两组在收到同一份封存的确认信息后保留各自增强流程，附表列出任务清单、随机化方案、评分表与分歧处理记录表。所有拟议设计明确标注为建议，不冒充已确认或已实施。",
+          "basis": "用户明确委托设计且未确认任何既有参数，属于专业设计缺口，需给出可实施主方案及适用条件。"
+        },
+        {
+          "kind": "EXECUTION_STEP",
+          "missing": "随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理的具体操作步骤未展开。",
+          "completion": "在方法部分补充：随机化采用区组随机或简单随机将任务分配至各条件，说明分配隐藏方式；盲法说明评审者仅见提示词文本、不见分组标签与来源；准确性、完整性、清晰度与可执行性分别给出操作性定义与评分尺度（如1–5分），并说明评分者间一致性检验与分歧处理流程（如讨论协商或第三方仲裁）。",
+          "basis": "用户要求说明随机化、盲法、评价维度与分歧处理，但未给出具体操作细节。"
+        },
+        {
+          "kind": "QUALITY_CHECK",
+          "missing": "统计检验的候选方法及其适用条件未具体化。",
+          "completion": "在方法部分说明：依据未来数据分布与配对结构，候选方法可包括配对t检验或Wilcoxon符号秩检验（连续或有序评分、配对设计）、混合效应模型（重复测量与任务嵌套）、非参数检验（分布偏态或样本量小）；明确不预设显著性，检验选择以数据分布和配对结构为依据。",
+          "basis": "用户要求具体统计检验依据未来数据分布和配对结构选择，候选方法可说明适用条件，不预设必然显著。"
+        },
+        {
+          "kind": "INPUT_OUTPUT",
+          "missing": "附表应包含哪些内容未确定。",
+          "completion": "在输出部分说明附表可包括：任务清单与类别、随机化分配表、评分量表、评分者间一致性结果记录表、分歧处理记录表；附表不计入正文800–1200汉字。",
+          "basis": "用户要求正文800–1200汉字、附表另计，但未说明附表内容。"
+        }
+      ],
+      "presentation": "STRUCTURED"
+    },
+    "sections": [
+      {
+        "type": "BACKGROUND",
+        "title": "背景",
+        "content": "本研究为研究生撰写中文研究设计的方法部分，研究主题为Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施，没有额外真实数据。"
+      },
+      {
+        "type": "TASK",
+        "title": "任务",
+        "content": "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。请根据原始研究目标提出可开展的推荐设计并说明适用条件；对未确认的4类任务具体类别、20个任务来源、Plan组问答交互轮次与终止方式、同信息对照两组是否保留各自增强流程、附表内容，给出拟议主方案并标注为建议，不冒充已确认或已实施。"
+      },
+      {
+        "type": "OUTPUT",
+        "title": "输出",
+        "content": "交付中文研究设计的方法部分正文，800至1200个汉字，附表另计。正文应包含：研究设计概述、任务与材料、条件与随机化、盲法与评审、评价指标与评分尺度、分歧处理、统计分析计划。附表可包括任务清单与类别、随机化分配表、评分量表、评分者间一致性记录表、分歧处理记录表。不提供代码。"
+      },
+      {
+        "type": "CONSTRAINTS",
+        "title": "约束",
+        "content": "不确认任何既有参数。不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。同信息对照两组接收并可使用同一原始任务和同一份实际确认信息；保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。具体检验依据未来数据分布和适用条件选择；可说明候选检验名称及适用前提，不预先选定，也不预设显著性。"
+      },
+      {
+        "type": "ACCEPTANCE",
+        "title": "验收",
+        "content": "方法与研究问题一致，定义和比较条件可复核；已定与未决参数分开，不编造数据、结果、文献或已完成研究状态；正文汉字数在800至1200之间，附表另计；未确认参数以拟议建议形式呈现并标注适用条件。"
+      }
+    ],
+    "ambiguities": [],
+    "ambiguityReferences": []
+  },
+  "actualRequest": {
+    "rawPrompt": "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。正文800至1200个汉字，附表另计。不提供代码，不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": false
+    },
+    "conversationHistory": [],
+    "modelId": "deepseek:deepseek-flash",
+    "planConfirmation": {
+      "planId": "38271e9f-3d94-4184-a7c0-2953e85bdc70",
+      "planningContext": null,
+      "answers": [
+        {
+          "questionId": "plan_interaction_rounds",
+          "question": "Plan 组的问答交互按什么轮次与终止方式设计？",
+          "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
+        },
+        {
+          "questionId": "task_categories",
+          "question": "4 类任务具体指哪四类？",
+          "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
+        },
+        {
+          "questionId": "task_source",
+          "question": "20 个任务来自哪里？",
+          "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
+        },
+        {
+          "questionId": "control_group_flow",
+          "question": "两组同信息公平对照在收到同一份确认信息后，是否仍保留各自指定的增强流程？",
+          "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
+        },
+        {
+          "questionId": "deliverable_scope",
+          "question": "方法部分除正文 800–1200 汉字外，附表需要包含哪些内容？",
+          "answer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
+        }
+      ]
+    }
+  }
+}

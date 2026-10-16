@@ -1,0 +1,25 @@
+{
+  "phase": "FIRST_FIX_CHECK_NOT_ACCEPTED",
+  "reports": [
+    {
+      "class": "com.promptoptimizer.enhancement.service.impl.CandidateTwentyFourReplayTest",
+      "tests": 33,
+      "failures": 6,
+      "errors": 0,
+      "sha256": "3b1b16cb0f54f30a96d0338eed83731dbcd0df18f4ad4aae45019ec0a4d01083"
+    },
+    {
+      "class": "com.promptoptimizer.enhancement.service.impl.TaskConstraintAssemblyReplayTest",
+      "tests": 32,
+      "failures": 0,
+      "errors": 1,
+      "sha256": "e75ffef7b22fc074904b809c8c5303dc468e9d48a8f52552343ef50a20f46128"
+    }
+  ],
+  "causes": [
+    "The new paragraph scope guard incorrectly treated the word citation in the rule itself as a quotation-scope marker",
+    "An older replay test writes target/relative-artifact; isolated test working directory needed its own target directory"
+  ],
+  "rawModelArtifactsChanged": false,
+  "modelCalls": 0
+}
