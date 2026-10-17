@@ -1,0 +1,69 @@
+{
+  "version": "candidate26-r2-live",
+  "status": "AWAITING_EXPLICIT_NUMERICAL_AUTHORIZATION",
+  "sourceCandidate": "candidate26-r2",
+  "head": "b3889a61",
+  "sourceManifest": "docs/testing/evidence/me00a-candidate26-r2-offline-2026-10-17/candidate26-r2-source.json",
+  "sourceManifestSha256": "9c6990ce8ca1bf2c9b37c0e2f889c00373da7355880ac0efa52cff81109a239b",
+  "sourceTreeSha256": "119fd1d063e13118b1d5e8589b88473240c9a907400c28b843dc21f920944d19",
+  "runtimeTreeSha256": "52c9f4fd998f4899a308d97d33481abb5ad80fcb34f08ece8f9411f3dee171f2",
+  "casesFile": "candidate26-r2-q05-cases.json",
+  "casesSha256": "ff5f73c8b6dec8b3c1c9411b903400bef19d3463ffae8ada35cf5690e0967960",
+  "cases": [
+    "Q05-NATURAL",
+    "Q05-PARTIAL-SCORING"
+  ],
+  "actualCallsBefore": 327,
+  "candidateCallsBefore": 257,
+  "oldFormalLimits": {
+    "total": 338,
+    "baseline": 80,
+    "candidateValidation": 258
+  },
+  "requestedMaximumNewCalls": 15,
+  "proposedFormalLimits": {
+    "total": 353,
+    "baseline": 80,
+    "candidateValidation": 273
+  },
+  "maximumActualCallsAfterBatch": 342,
+  "purposeMaximums": {
+    "PLANNING": 3,
+    "PLATFORM_GENERATION": 6,
+    "EXECUTION": 4,
+    "REVIEW": 2
+  },
+  "planningAndEnhancementModel": "deepseek-flash",
+  "executionModels": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "independentAiReviewModels": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "sameVendorReviewLimitation": true,
+  "generationParameters": {
+    "temperature": 0.2,
+    "max_tokens": 10000,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "existingProtocolRepairAttemptsMaximum": 3,
+  "qualityRetries": false,
+  "sameCanonicalAccount": true,
+  "newAccountCreationAllowed": false,
+  "closedBalanceTransferred": false,
+  "newExternalCallsBeforeNumericalAuthorization": 0,
+  "executionScope": "Partial delegation case only: raw plus identical actual question/answer information and exact native copied Plan prompt, each on Flash and Pro",
+  "reviews": "Two separate independent blinded AI-assisted reviews of those four works, not domain experts",
+  "notClaimed": "No new seven-case baseline, full three-arm evaluation, all future answer variants or complete release acceptance"
+}

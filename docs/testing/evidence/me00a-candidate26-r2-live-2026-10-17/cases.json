@@ -1,0 +1,68 @@
+[
+  {
+    "id": "Q05-NATURAL",
+    "kind": "sufficient_research",
+    "rawPrompt": "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。正文800至1200个汉字，附表另计。不提供代码，不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": false
+    },
+    "conversationHistory": [],
+    "planEnabled": true,
+    "purpose": "Fresh natural Plan, actual question binding, current complete-delegation enhancement regression",
+    "answerPolicy": "For every actual retained question use the one frozen existing delegation answer; no actual parameter is selected",
+    "frozenAnswer": "这是尚未实施的研究。请根据原始研究目标提出可开展的推荐设计并说明适用条件；我没有额外真实数据，不确认任何既有参数。"
+  },
+  {
+    "id": "Q05-PARTIAL-SCORING",
+    "kind": "sufficient_research",
+    "rawPrompt": "为研究生撰写中文研究设计的方法部分，研究Plan问答对提示词质量的影响。当前只是拟定研究，尚未实施。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。正文800至1200个汉字，附表另计。不提供代码，不得把拟定样本写成已纳入样本，不得编造效应量、P值、参考文献或显著性结论，不得使用假设数据。",
+    "context": {
+      "description": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "includeExamples": false
+    },
+    "conversationHistory": [],
+    "planAnswers": [
+      {
+        "questionId": "plan_interaction_rounds",
+        "question": "Plan 组的问答交互按什么轮次与终止方式设计？",
+        "answer": "暂不确定。"
+      },
+      {
+        "questionId": "task_categories",
+        "question": "4 类任务具体指哪四类？",
+        "answer": "只委托评分设计，分类由我决定。"
+      },
+      {
+        "questionId": "task_source",
+        "question": "20 个任务来自哪里？",
+        "answer": "暂不确定。"
+      },
+      {
+        "questionId": "control_group_flow",
+        "question": "两组同信息公平对照在收到同一份确认信息后，是否仍保留各自指定的增强流程？",
+        "answer": "暂不确定。"
+      },
+      {
+        "questionId": "deliverable_scope",
+        "question": "方法部分除正文 800–1200 汉字外，附表需要包含哪些内容？",
+        "answer": "暂不确定。"
+      }
+    ],
+    "planEnabled": true,
+    "purpose": "Current partial delegation state; paired raw same-information vs native Plan copy work on Flash and Pro",
+    "planningSource": "CAPTURED_ACTUAL_321_REPLAY_NOT_NEW_NATURAL_PLAN"
+  }
+]
