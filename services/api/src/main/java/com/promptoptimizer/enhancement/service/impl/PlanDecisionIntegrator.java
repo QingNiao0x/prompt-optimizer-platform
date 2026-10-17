@@ -23,6 +23,7 @@ final class PlanDecisionIntegrator {
                     + "|\\b(?:if|might|not selected|do not use)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern CONDITIONAL = Pattern.compile("如果|假如|假设|(?:当|若|仅|只).*(?:时|则|才)|超过|达到|[<>=]|\\b(?:if|when|unless)\\b", Pattern.CASE_INSENSITIVE);
     private static final String SCORING_SCALE = "(?:评分尺度|评分量表|评分范围|评分量尺|评分形式)";
+    private static final String DELEGATION_STATEMENT = "请根据原始研究目标提出可开展的推荐设计并说明适用条件";
 
     private PlanDecisionIntegrator() { }
 
@@ -102,14 +103,14 @@ final class PlanDecisionIntegrator {
     /** 强边界子句可分别落实；带条件或限定对象的回答保持整体，不能拆掉条件后误认覆盖。 */
     private static List<String> missingStatements(Map<PromptSectionType, PromptSection> sections,
             ExecutionRequirement requirement) {
-        if (requirement.subject().equals("委托要求")
-                && canonical(requirement.statement()).equals(canonical("请根据原始研究目标提出可开展的推荐设计并说明适用条件"))
+        if (genericDelegation(requirement)
                 && delegatedQuestionCovered(sections, requirement.question())) return List.of();
         List<String> statements = executableClauses(requirement);
         List<String> body = sections.entrySet().stream()
                 .filter(entry -> entry.getKey() == PromptSectionType.BACKGROUND || entry.getKey() == PromptSectionType.TASK
                         || entry.getKey() == PromptSectionType.OUTPUT || entry.getKey() == PromptSectionType.CONSTRAINTS)
-                .flatMap(entry -> currentSentences(entry.getValue().content()).stream())
+                .flatMap(entry -> (genericDelegation(requirement)
+                        ? delegationSentences(entry.getValue().content()) : currentSentences(entry.getValue().content())).stream())
                 .toList();
         return statements.stream().filter(statement -> body.stream().noneMatch(sentence -> covers(sentence, statement, requirement)))
                 .toList();
@@ -136,6 +137,9 @@ final class PlanDecisionIntegrator {
         String actual = canonical(sentence);
         if (expected.isBlank()) return false;
         if (independentCoverage(sentence, statement, requirement.subject())) return true;
+        // 不能靠子串把“仅限甲院／以后再做”或引用抹成全称委托；正常肯定任务前缀仍沿用完整值覆盖。
+        if (genericDelegation(requirement) && sentence.matches(
+                "(?s).*(?:仅限|以后|未来|但|例外|除外|除非|引用|原文|示例|例如|另一研究|其他研究|不必|无需|[<>`\"“”‘’]).*")) return false;
         if (NON_CURRENT.matcher(sentence).find() && !actual.equals(expected)) return false;
         if (CONDITIONAL.matcher(sentence).find() && !CONDITIONAL.matcher(statement).find()) return false;
         if (completeValue(actual, expected)) return true;
@@ -252,7 +256,7 @@ final class PlanDecisionIntegrator {
         }
         // 已委托事项是拟议设计；必须同时包含可开展主方案与适用条件，泛称“提供建议”不足以覆盖。
         if (subject.equals("委托要求") && statement.matches("^请根据原始研究目标提出可开展的推荐设计并说明适用条件[。；;]?$")) {
-            return delegatedDesignHeader(actual)
+            return currentDelegationDirective(actual) || delegatedDesignHeader(actual)
                     || actual.matches("^对以下已委托设计的未决事项,提出可直接开展的拟议主方案并说明适用条件(?:,标注为拟议设计而非已确认事实)?[。;:]?$" )
                     || actual.matches("^撰写研究设计的方法部分,围绕[^。;]+这一主题,提出可开展的推荐设计并说明适用条件[。;]?$" )
                     || actual.matches("^用户(?:未确认任何既有参数,)?已明确委托提出可开展的推荐设计并说明适用条件[。;]?$" );
@@ -381,7 +385,20 @@ final class PlanDecisionIntegrator {
                 || completion.matches("(?s).*(?:评分|评价)[^。;]*(?:提出|给出).*")
                 || missing.matches("(?s).*" + SCORING_SCALE + ".*")
                     && completion.matches("(?s).*(?:提出|给出)[^。;]*拟议主方案.*")
-                    && completion.contains("适用条件");
+                    && completion.contains("适用条件")
+                || declaredScoringSupplement(missing, completion);
+    }
+
+    /** 只承接当前四维设计清单中的“补充”动作；元数据不产生量表取值、用户许可或未来授权。 */
+    private static boolean declaredScoringSupplement(String missing, String completion) {
+        if (!List.of("准确性", "完整性", "清晰度", "可执行性", "分歧").stream().allMatch(missing::contains)) return false;
+        String text = Normalizer.normalize(completion, Normalizer.Form.NFKC).strip();
+        if (!text.matches("(?s)^在(?:TASK|任务段落|任务部分)中补充:.*")
+                || CONDITIONAL.matcher(text).find()
+                || text.matches("(?s).*(?:如果|假如|若|未来|以后|但|仅限|除非|例外|除外|由用户决定|由我决定|待确认|尚未确定|[<>`\"“”‘’]).*")) return false;
+        String items = text.replaceFirst("^在(?:TASK|任务段落|任务部分)中补充:", "");
+        return currentSentences(items).stream().map(String::strip).anyMatch(value -> value.matches(
+                "^四(?:项|个)(?:评价)?指标各自的操作定义(?:与|及)" + SCORING_SCALE + "建议[。;]?$"));
     }
 
     /**
@@ -450,6 +467,8 @@ final class PlanDecisionIntegrator {
         if (field == null) return false;
         for (PromptSectionType type : List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT)) {
             if (!sections.containsKey(type)) continue;
+            var design = delegatedDesignField(question);
+            if (design != null && naturalDelegatedRequirementCovered(sections.get(type).content(), design)) return true;
             StringBuilder list = null;
             for (String sentence : currentSentences(sections.get(type).content())) {
                 String text = Normalizer.normalize(sentence, Normalizer.Form.NFKC).strip()
@@ -474,6 +493,73 @@ final class PlanDecisionIntegrator {
             if (list != null && field.matcher(list).find()) return true;
         }
         return false;
+    }
+
+    /** 只有同一完整委托可共用这条覆盖路径，具名参数、部分委托和其他执行要求仍按原规则核对。 */
+    private static boolean genericDelegation(ExecutionRequirement requirement) {
+        return requirement.subject().equals("委托要求")
+                && canonical(requirement.statement()).equals(canonical(DELEGATION_STATEMENT));
+    }
+
+    /** 325把当前委托与拟议状态写在同一句；只接完整肯定指令及等价状态说明，不接任意后缀。 */
+    private static boolean currentDelegationDirective(String text) {
+        String directive = Normalizer.normalize(text, Normalizer.Form.NFKC).strip().replaceFirst("^[-*•]\\s*", "");
+        return directive.matches("^" + DELEGATION_STATEMENT
+                + "(?:,所有建议(?:均)?(?:标明|标注)为拟议设计,不冒充已确认或已实施)?[。;]?$" );
+    }
+
+    /**
+     * 委托覆盖不借缩进代码；同一句内分号后的局部限制仍与前文保持同一分析范围。
+     * 仅改变覆盖判断的临时视图，不修改正文、字面量或来源记录。
+     */
+    private static List<String> delegationSentences(String content) {
+        var lines = content.lines().filter(line -> !line.startsWith("    ") && !line.startsWith("\t")).toList();
+        if (lines.stream().map(String::strip).anyMatch(line -> line.matches(
+                "^(?:但|仅限|除非|例外|除外|以后|未来|如果|假如|若).*"))) return List.of();
+        // 先按完整句隔离：未来数据分布等独立统计条件不能使前面的当前委托重新变成缺项。
+        return currentSentences(lines.stream().map(line -> java.util.Arrays.stream(line.split("(?<=。)"))
+                .map(sentence -> sentence.matches("(?s).*" + DELEGATION_STATEMENT
+                        + "[^。]*[；;](?:但|仅限|除非|例外|除外|以后|未来).*" )
+                        ? sentence.replace('；', '，').replace(';', ',') : sentence)
+                .collect(java.util.stream.Collectors.joining()))
+                .collect(java.util.stream.Collectors.joining("\n")));
+    }
+
+    /**
+     * 当前完整委托下的自然执行清单也可覆盖具名子项；不要求模型复述平台固定标题。
+     * 按完整列表项检查条件与否定，避免只取分号前半句，或借用其他对象、引用与示例。
+     */
+    private static boolean naturalDelegatedRequirementCovered(String content, DelegatedDesignField field) {
+        var sentences = delegationSentences(content);
+        if (sentences.stream().map(value -> Normalizer.normalize(value, Normalizer.Form.NFKC).strip())
+                .noneMatch(PlanDecisionIntegrator::currentDelegationDirective)) return false;
+        boolean inList = false;
+        StringBuilder item = null;
+        List<String> items = new java.util.ArrayList<>();
+        for (String sentence : sentences) {
+            String text = Normalizer.normalize(sentence, Normalizer.Form.NFKC).strip();
+            if (text.matches("^(?:需|须|应)在方法部分中落实以下内容:$")) {
+                inList = true;
+                continue;
+            }
+            if (!inList || text.isBlank()) continue;
+            if (text.matches("^[-*•]\\s+.*")) {
+                if (item != null) items.add(item.toString());
+                item = new StringBuilder(text.replaceFirst("^[-*•]\\s+", ""));
+            } else if (item != null) item.append(';').append(text);
+        }
+        if (item != null) items.add(item.toString());
+        return items.stream().map(PlanDecisionIntegrator::designSpacing).anyMatch(text ->
+                !CONDITIONAL.matcher(text).find()
+                && !text.matches("(?s).*(?:如果|假如|若|未来|以后|但|仅限|除非|例外|除外|引用|示例|例如|另一研究|其他研究|待确认|尚未确定|未确认"
+                    + "|不得|禁止|不能|不应|无需|不必|不允许|不要|不提供|不提出|[<>`\"“”‘’]).*")
+                && field.listItemCoverage().matcher(text).find());
+    }
+
+    /** 仅规范数字与汉字之间的排版空白；数字之间及ASCII标识符内部的空格继续逐字区分。 */
+    private static String designSpacing(String text) {
+        return Normalizer.normalize(text, Normalizer.Form.NFKC)
+                .replaceAll("(?<=\\d)\\s+(?=\\p{IsHan})|(?<=\\p{IsHan})\\s+(?=\\d)", "");
     }
 
     /** 明确的当前拟议主方案及适用条件是委托执行表达；局部对象前缀、普通建议和否定动作不匹配。 */
@@ -517,11 +603,13 @@ final class PlanDecisionIntegrator {
         if (object == null) return null;
         // 左边界防止“甲院盲评”借用裸“盲评”的对象；连接词只分隔当前列表的完整并列子项。
         return new DelegatedDesignField(object + label, Pattern.compile("(?:^|[;；，,、\\n]|与|及|和|以及)" + Pattern.quote(object)
-                + "(?:的)?" + attribute + "(?=$|[;；，,、\\n。]|与|及|和|以及)"));
+                + "(?:的)?" + attribute + "(?=$|[;；，,、\\n。]|与|及|和|以及)"),
+                Pattern.compile("^" + Pattern.quote(designSpacing(object)) + "(?:的)?" + attribute
+                        + "(?:建议)?(?=$|[;；，,、\\n。:：]|[（(]|与|及|和|以及)"));
     }
 
     /** 字段名保留来源完整对象，覆盖模式只允许同对象、同属性的句法等价。 */
-    private record DelegatedDesignField(String label, Pattern coverage) { }
+    private record DelegatedDesignField(String label, Pattern coverage, Pattern listItemCoverage) { }
 
     /**
      * 研究写作的动作、交付物、语言、受众和主题可分配到责任段；每一项均须有当前完整表达。

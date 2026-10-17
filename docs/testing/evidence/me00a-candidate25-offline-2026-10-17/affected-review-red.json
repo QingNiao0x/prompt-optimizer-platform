@@ -1,0 +1,31 @@
+{
+  "classes": 35,
+  "tests": 709,
+  "failures": 4,
+  "errors": 0,
+  "skipped": 0,
+  "details": [
+    {
+      "class": "CandidateTenNaturalCoverageTest",
+      "name": "shouldKeepTheActualNaturalBackgroundAndTaskWithoutAddingSynonymousAnswerLines",
+      "message": "\nexpected: \"撰写研究设计的方法部分，围绕Plan问答对提示词质量的影响这一主题，提出可开展的推荐设计并说明适用条件。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。\n\n在方法部分中落实以下设计要素：\n- 任务分类与构造：提出一套可直接开展的任务分类方案，说明每类5个任务的构造原则与来源，并给出替代分类方案及适用条件。\n- 盲评操作：提出盲评的具体设盲对象、材料呈现方式与揭盲时点，并说明适用条件。\n- 公平对照信息流：提出同信息对照两组获得同一原始任务与同一份实际确认信息的取得、封存与逐字一致分发流程，并说明适用条件。\n- 评价维度操作化：提出随机化、准确性、完整性、清晰度与可执行性的拟议操作定义、评分尺度与分歧处理流程，并说明适用条件；不预设实际取值。\n- 统计检验候选：列出与配对结构及未来数据分布相适应的候选检验名称及适用前提，不预先选定，不预设显著性。\n\n评价对象为提示词，评审所见材料应围绕提示词质量，准确性、完整性、清晰度与可执行性等指标均作用于提示词。下游作品可按原任务作为验证依据，但不能替换评分对象。\"\n but was: \"撰写研究设计的方法部分，围绕Plan问答对提示词质量的影响这一主题，提出可开展的推荐设计并说明适用条件。设计必须保留：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。比较直接增强和Plan，并另设两组获得相同确认信息的公平对照。说明随机化、盲法、准确性、完整性、清晰度与可执行性评价以及分歧处理。具体统计检验依据未来数据分布和配对结构选择，候选方法可以说明适用条件，不预设必然显著。\n\n在方法部分中落实以下设计要素：\n- 任务分类与构造：提出一套可直接开展的任务分类方案，说明每类5个任务的构造原则与来源，并给出替代分类方案及适用条件。\n- 盲评操作：提出盲评的具体设盲对象、材料呈现方式与揭盲时点，并说明适用条件。\n- 公平对照信息流：提出同信息对照两组获得同一原始任务与同一份实际确认信息的取得、封存与逐字一致分发流程，并说明适用条件。\n- 评价维度操作化：提出随机化、准确性、完整性、清晰度与可执行性的拟议操作定义、评分尺度与分歧处理流程，并说明适用条件；不预设实际取值。\n- 统计检验候选：列出与配对结构及未来数据分布相适应的候选检验名称及适用前提，不预先选定，不预设显著性。\n\n评价对象为提示词，评审所见材料应围绕提示词质量，准确性、完整性、清晰度与可执行性等指标均作用于提示词。下游作品可按原任务作为验证依据，但不能替换评分对象。\n- "
+    },
+    {
+      "class": "CandidateTwentyFiveReplayTest",
+      "name": "modelDeclarationsCannotTurnFutureOrPartialAnswersIntoCurrentFullDelegation(String)[1]",
+      "message": "\nExpecting all elements of:\n  [ConfirmedPlanDecision[questionId=q, question=4 类任务具体指哪四类？, topic=本次选择, scope=CHOICE, answer=如果以后批准，再提出拟议设计。, source=USER_CONFIRMED]]\nto match given predicate but this element did not:\n  ConfirmedPlanDecision[questionId=q, question=4 类任务具体指哪四类？, topic=本次选择, scope=CHOICE, answer=如果以后批准，再提出拟议设计。, source=USER_CONFIRMED]"
+    },
+    {
+      "class": "CandidateTwentyFiveReplayTest",
+      "name": "modelDeclarationsCannotTurnFutureOrPartialAnswersIntoCurrentFullDelegation(String)[2]",
+      "message": "\nExpecting all elements of:\n  [ConfirmedPlanDecision[questionId=q, question=4 类任务具体指哪四类？, topic=本次选择, scope=CHOICE, answer=只委托评分设计，分类由我决定。, source=USER_CONFIRMED]]\nto match given predicate but this element did not:\n  ConfirmedPlanDecision[questionId=q, question=4 类任务具体指哪四类？, topic=本次选择, scope=CHOICE, answer=只委托评分设计，分类由我决定。, source=USER_CONFIRMED]"
+    },
+    {
+      "class": "CandidateTwentyFiveReplayTest",
+      "name": "modelDeclarationsCannotTurnFutureOrPartialAnswersIntoCurrentFullDelegation(String)[3]",
+      "message": "\nExpecting all elements of:\n  [ConfirmedPlanDecision[questionId=q, question=4 类任务具体指哪四类？, topic=本次选择, scope=CHOICE, answer=评分量尺以后确认。, source=USER_CONFIRMED]]\nto match given predicate but this element did not:\n  ConfirmedPlanDecision[questionId=q, question=4 类任务具体指哪四类？, topic=本次选择, scope=CHOICE, answer=评分量尺以后确认。, source=USER_CONFIRMED]"
+    }
+  ],
+  "wrapperFailureSeparate": "Windows PowerShell native stderr warning handling; actual XML reports show all selected classes ran",
+  "realModelCalls": 0
+}
