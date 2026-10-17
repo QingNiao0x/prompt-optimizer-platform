@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-12",
+  "scope": "ME-00-A baseline then ME-01-A + ME-03-A bounded repair",
+  "cases": 7,
+  "initialPlanEnabled": false,
+  "initialPlanAnswers": [],
+  "initialExamplesEnabled": false,
+  "maximumActualModelCalls": 371,
+  "phaseLimits": {
+    "baseline": 80,
+    "candidateValidation": 291
+  },
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "baselineRounds": 1,
+  "candidateRounds": 2,
+  "planSupplement": [
+    "Q04",
+    "Q05"
+  ],
+  "review": "two independent AI reviewers, not domain experts; disputed verdicts unresolved until adjudication",
+  "sameTestAccountFile": "private runtime only; reuse former synthetic user",
+  "archiveSecrets": false,
+  "accountCreationAllowed": false,
+  "priceAndCurrencyCost": "UNKNOWN until verified invoice; actual provider tokens collected",
+  "productPrimaryComparison": "raw actual work vs actual copied enhanced work",
+  "repairRegression": "current enhanced vs repaired enhanced, separately reported",
+  "planParity": "verbatim actual submitted test answers provided to raw and direct comparators, never patch Plan copied body",
+  "severeFailure": "block capability release, preserve trace; no automatic budget increase",
+  "activeBatch": {
+    "version": "candidate27-live",
+    "sourceCandidate": "candidate27-r2",
+    "group": "candidate27-Q05",
+    "mode": "FROZEN_TWO_PARTIAL_GENERATION_ROUNDS",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationAmendment": "protocol-amendment-22.json",
+    "authorizationBasis": "批准新增18次，执行冻结多轮范围",
+    "secondRoundAuthorized": true,
+    "cases": [
+      "Q05-NATURAL",
+      "Q05-PARTIAL-SCORING",
+      "Q05-PARTIAL-SCORING-R2"
+    ],
+    "casesFile": "candidate27-q05-cases.json",
+    "casesSha256": "7cf759e45bfa93c05fadb5de03f0fdad48294afa006c1412f4c15800cb50a334",
+    "allowedRawPromptSha256": [
+      "71de870998746bb5a0b9a049834f272f07f6ef1fae3c40a77cdb8d56a631398d"
+    ],
+    "model": "deepseek-flash",
+    "executionModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "reviewModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "callsBefore": 332,
+    "candidateCallsBefore": 262,
+    "maximumNewCalls": 18,
+    "maximumActualCallsAfterBatch": 350,
+    "maximumGenerationCalls": 9,
+    "maximumPlanningCalls": 3,
+    "maximumExecutionCalls": 4,
+    "maximumReviewCalls": 2,
+    "purposeMaximums": {
+      "PLANNING": 3,
+      "PLATFORM_GENERATION": 9,
+      "EXECUTION": 4,
+      "REVIEW": 2
+    },
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "executionParameters": {
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "accountCreationAllowed": false,
+    "sameTestAccountFile": "tmp/local-acceptance/account.json",
+    "noPhaseBorrowing": true,
+    "closedAllowanceTransfer": false,
+    "qualityRetriesAllowed": false,
+    "qualityRetries": 0,
+    "sourceFreeze": "docs/testing/evidence/me00a-candidate27-r2-offline-2026-10-17/candidate27-r2-source.json",
+    "sourceTreeSha256": "1eb8ea0388e42b631aef09c7c5d7952aea0b6e01baf4776bf822f3f0590a7b97",
+    "runtimeTreeSha256": "68798142e54bd02ba8ccc0766e652e81c543eb60fdcce194886e1df959dc926e",
+    "evaluationToolFreeze": "docs/testing/evidence/me00a-candidate27-live-2026-10-17/tools-frozen.json",
+    "evaluationToolFreezeSha256": "e32e875a2cca7777cbd73c54de331700523c57780e584835dc1976796d39292f",
+    "capturedPlanningReplay": true,
+    "capturedPlanningTraceFile": "321.json",
+    "capturedPlanningTraceSha256": "fa250f3ca65eba8c9f29b2621a504c97b07fe5dca89ad1d54dac046baf9beb9d",
+    "expectedTaskViews": [],
+    "executionOrder": [
+      "F1/raw/Flash",
+      "P2/Plan/Pro",
+      "F2/Plan/Flash",
+      "P1/raw/Pro"
+    ],
+    "reviewMapping": {
+      "U": "F2",
+      "V": "F1",
+      "X": "P1",
+      "Y": "P2"
+    },
+    "workOnlyBlinding": true,
+    "sameVendorReviewLimitation": true,
+    "downstreamInputSelection": "Always round 1 native clipboard; never select successful/better round 2",
+    "status": "OPEN",
+    "openedAt": "2026-10-17T07:31:33.931247+00:00"
+  }
+}

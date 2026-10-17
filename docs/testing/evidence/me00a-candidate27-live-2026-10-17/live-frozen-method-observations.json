@@ -1,0 +1,329 @@
+{
+  "modelCalls" : 0,
+  "integratorChanges" : [ {
+    "trace" : 334,
+    "taskView" : {
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "executionRequirements" : [ {
+        "questionId" : "plan_rounds",
+        "subject" : "用户说明",
+        "statement" : "这是尚未实施的研究。",
+        "destination" : "BACKGROUND",
+        "sourceQuestionIds" : [ "plan_rounds", "confirm_source", "task_domains" ]
+      }, {
+        "questionId" : "plan_rounds",
+        "subject" : "委托要求",
+        "statement" : "请根据原始研究目标提出可开展的推荐设计并说明适用条件；",
+        "destination" : "TASK",
+        "sourceQuestionIds" : [ "plan_rounds", "confirm_source", "task_domains" ]
+      }, {
+        "questionId" : "plan_rounds",
+        "subject" : "用户说明",
+        "statement" : "我没有额外真实数据",
+        "destination" : "BACKGROUND",
+        "sourceQuestionIds" : [ "plan_rounds", "confirm_source", "task_domains" ]
+      }, {
+        "questionId" : "plan_rounds",
+        "subject" : "未确认边界",
+        "statement" : "不确认任何既有参数。",
+        "destination" : "CONSTRAINTS",
+        "sourceQuestionIds" : [ "plan_rounds", "confirm_source", "task_domains" ]
+      } ],
+      "pendingDecisions" : [ {
+        "questionId" : "plan_rounds",
+        "question" : "Plan 问答中，澄清与回答的轮次如何设定？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "不确认任何既有参数。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : true
+      }, {
+        "questionId" : "confirm_source",
+        "question" : "公平对照所需的“相同确认信息”从哪里取得？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "不确认任何既有参数。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : true
+      }, {
+        "questionId" : "task_domains",
+        "question" : "4类任务分别是什么？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "不确认任何既有参数。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : true
+      } ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      },
+      "requirementBoundaryGuidance" : "本次问答流程由增强器提出关键问题、用户回答，再将有效回答融入优化提示词。\n直接增强不主动发起这轮问答，但仍正常使用已经提供的需求与确认信息。\nPlan不能改为模型自行生成执行计划再作答。\n研究若要求同信息对照，两组接收并可使用同一原始任务和同一份实际确认信息。\n研究若要求同信息对照，保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。\n不得使用假设或虚构数据，禁令适用于所有用途，包括测试和验证；不得缩为仅禁止冒充真实业务数据。不能由这项禁令推出禁止使用可核实的真实示例资料；其他明确的数据限制和权限要求照常保留。\n具体检验依据未来数据分布和适用条件选择；可说明候选检验名称及适用前提，不预先选定，也不预设显著性。",
+      "userMeaningAnchors" : [ {
+        "role" : "AUDIENCE",
+        "text" : "研究生",
+        "start" : 1,
+        "end" : 4,
+        "origin" : "EFFECTIVE_USER_INPUT"
+      }, {
+        "role" : "RESEARCH_TOPIC",
+        "text" : "Plan问答对提示词质量的影响",
+        "start" : 20,
+        "end" : 35,
+        "origin" : "EFFECTIVE_USER_INPUT"
+      } ]
+    },
+    "caseId" : "Q05-NATURAL",
+    "changes" : [ {
+      "section" : "BACKGROUND",
+      "before" : "本任务为研究生撰写中文研究设计的方法部分，研究主题为 Plan 问答对提示词质量的影响。当前只是拟定研究，尚未实施；没有额外真实数据，不确认任何既有参数。评价对象为提示词质量，下游作品可作为验证依据但不替代该评价对象。",
+      "appended" : "\n- 我没有额外真实数据",
+      "after" : "本任务为研究生撰写中文研究设计的方法部分，研究主题为 Plan 问答对提示词质量的影响。当前只是拟定研究，尚未实施；没有额外真实数据，不确认任何既有参数。评价对象为提示词质量，下游作品可作为验证依据但不替代该评价对象。\n- 我没有额外真实数据"
+    }, {
+      "section" : "TASK",
+      "before" : "撰写该研究设计的方法部分正文，围绕 Plan 问答对提示词质量的影响，提出可直接开展的推荐设计并说明适用条件，明确属于拟议设计而非已实施。\n\n需覆盖并保留以下要素：\n- 任务集：4类任务，每类5个，共20个任务；提出拟议的任务类别框架及每类任务的构造与难度匹配原则，标明可调整。\n- 重复与分配：每模式每任务独立重复3次；说明重复单位、随机化单位与分配记录步骤。\n- 组别比较：比较直接增强与 Plan 两种模式；另设两组获得相同确认信息的公平对照，说明该相同确认信息如何取得、封存并逐字一致地提供给两组，保留各组指定流程，不改写任一组的回答、不另换任务、不只增加某组修订轮次。\n- 盲评：两名独立评审盲评，说明材料如何盲化（去除组别标识、统一编号等拟议方式）。\n- 评价维度：准确性、完整性、清晰度与可执行性的操作化定义与评分方式（拟议尺度，标明未确认）。\n- 分歧处理：两名评审意见不一致时的拟议处理规则及适用条件。\n- 统计：具体检验依据未来数据分布和配对结构选择，可说明候选方法及适用前提，不预设必然显著；方法收益由对应组间比较判断，不以一组显著而另一组不显著直接证明两组效果不同。\n\n区分自然使用效果与同等信息下的方法收益；保留谁提问、谁回答及答案如何使用，不把问答改成模型自行生成计划。",
+      "appended" : "\n- 请根据原始研究目标提出可开展的推荐设计并说明适用条件",
+      "after" : "撰写该研究设计的方法部分正文，围绕 Plan 问答对提示词质量的影响，提出可直接开展的推荐设计并说明适用条件，明确属于拟议设计而非已实施。\n\n需覆盖并保留以下要素：\n- 任务集：4类任务，每类5个，共20个任务；提出拟议的任务类别框架及每类任务的构造与难度匹配原则，标明可调整。\n- 重复与分配：每模式每任务独立重复3次；说明重复单位、随机化单位与分配记录步骤。\n- 组别比较：比较直接增强与 Plan 两种模式；另设两组获得相同确认信息的公平对照，说明该相同确认信息如何取得、封存并逐字一致地提供给两组，保留各组指定流程，不改写任一组的回答、不另换任务、不只增加某组修订轮次。\n- 盲评：两名独立评审盲评，说明材料如何盲化（去除组别标识、统一编号等拟议方式）。\n- 评价维度：准确性、完整性、清晰度与可执行性的操作化定义与评分方式（拟议尺度，标明未确认）。\n- 分歧处理：两名评审意见不一致时的拟议处理规则及适用条件。\n- 统计：具体检验依据未来数据分布和配对结构选择，可说明候选方法及适用前提，不预设必然显著；方法收益由对应组间比较判断，不以一组显著而另一组不显著直接证明两组效果不同。\n\n区分自然使用效果与同等信息下的方法收益；保留谁提问、谁回答及答案如何使用，不把问答改成模型自行生成计划。\n- 请根据原始研究目标提出可开展的推荐设计并说明适用条件"
+    } ]
+  }, {
+    "trace" : 337,
+    "taskView" : {
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "executionRequirements" : [ {
+        "questionId" : "task_categories",
+        "subject" : "局部委托要求",
+        "statement" : "只委托评分设计",
+        "destination" : "TASK",
+        "sourceQuestionIds" : [ "task_categories" ]
+      }, {
+        "questionId" : "task_categories",
+        "subject" : "未确认边界",
+        "statement" : "分类由我决定。",
+        "destination" : "CONSTRAINTS",
+        "sourceQuestionIds" : [ "task_categories" ]
+      } ],
+      "pendingDecisions" : [ {
+        "questionId" : "plan_interaction_rounds",
+        "question" : "Plan 组的问答交互按什么轮次与终止方式设计？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "暂不确定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      }, {
+        "questionId" : "task_categories",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "分类由我决定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      }, {
+        "questionId" : "task_source",
+        "question" : "20 个任务来自哪里？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "暂不确定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      }, {
+        "questionId" : "control_group_flow",
+        "question" : "两组同信息公平对照在收到同一份确认信息后，是否仍保留各自指定的增强流程？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "暂不确定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      }, {
+        "questionId" : "deliverable_scope",
+        "question" : "方法部分除正文 800–1200 汉字外，附表需要包含哪些内容？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "暂不确定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      } ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      },
+      "requirementBoundaryGuidance" : "本次问答流程由增强器提出关键问题、用户回答，再将有效回答融入优化提示词。\n直接增强不主动发起这轮问答，但仍正常使用已经提供的需求与确认信息。\nPlan不能改为模型自行生成执行计划再作答。\n研究若要求同信息对照，两组接收并可使用同一原始任务和同一份实际确认信息。\n研究若要求同信息对照，保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。\n不得使用假设或虚构数据，禁令适用于所有用途，包括测试和验证；不得缩为仅禁止冒充真实业务数据。不能由这项禁令推出禁止使用可核实的真实示例资料；其他明确的数据限制和权限要求照常保留。\n具体检验依据未来数据分布和适用条件选择；可说明候选检验名称及适用前提，不预先选定，也不预设显著性。",
+      "userMeaningAnchors" : [ {
+        "role" : "AUDIENCE",
+        "text" : "研究生",
+        "start" : 1,
+        "end" : 4,
+        "origin" : "EFFECTIVE_USER_INPUT"
+      }, {
+        "role" : "RESEARCH_TOPIC",
+        "text" : "Plan问答对提示词质量的影响",
+        "start" : 20,
+        "end" : 35,
+        "origin" : "EFFECTIVE_USER_INPUT"
+      } ]
+    },
+    "caseId" : "Q05-PARTIAL-SCORING",
+    "changes" : [ {
+      "section" : "TASK",
+      "before" : "撰写中文研究设计的方法部分，说明以下内容：\n- 任务材料：保留4类任务、每类5个、共20个任务的结构；4类任务的具体分类由用户决定，方法部分只说明分类维度与构造原则，不代定类别名称；20个任务的来源待定，给出拟议的选取与筛选原则并标注为拟议设计。\n- 重复与分配：每模式每任务独立重复3次；说明随机化安排。\n- 比较条件：比较直接增强与Plan两种模式；另设两组获得相同确认信息的公平对照。同信息对照须先取得并封存同一案例的实际确认信息，两组获得逐字相同的信息并各自保留其指定的增强流程，不改写任一组的回答、不另换任务、不只增加某组修订轮次。Plan组的问答交互轮次与终止方式尚未确定，提出拟议规则并说明适用条件，标注为拟议设计。\n- 评价：两名独立评审盲评；评价对象为提示词质量，下游作品仅作验证依据，不替代对提示词的评分；说明盲化材料如何去除组别标识，以及准确性、完整性、清晰度、可执行性各指标分别评价的对象；说明评审分歧的处理流程。\n- 统计：具体统计检验依据未来数据分布与配对结构选择，可说明候选检验名称及适用前提，不预先选定，不预设显著性；方法收益由对应组间比较判断，不以一组显著、另一组不显著直接证明两组效果不同。\n- 附表：附表内容尚未确定，提出拟议附表项目并标注为拟议设计。",
+      "appended" : "\n- 只委托评分设计",
+      "after" : "撰写中文研究设计的方法部分，说明以下内容：\n- 任务材料：保留4类任务、每类5个、共20个任务的结构；4类任务的具体分类由用户决定，方法部分只说明分类维度与构造原则，不代定类别名称；20个任务的来源待定，给出拟议的选取与筛选原则并标注为拟议设计。\n- 重复与分配：每模式每任务独立重复3次；说明随机化安排。\n- 比较条件：比较直接增强与Plan两种模式；另设两组获得相同确认信息的公平对照。同信息对照须先取得并封存同一案例的实际确认信息，两组获得逐字相同的信息并各自保留其指定的增强流程，不改写任一组的回答、不另换任务、不只增加某组修订轮次。Plan组的问答交互轮次与终止方式尚未确定，提出拟议规则并说明适用条件，标注为拟议设计。\n- 评价：两名独立评审盲评；评价对象为提示词质量，下游作品仅作验证依据，不替代对提示词的评分；说明盲化材料如何去除组别标识，以及准确性、完整性、清晰度、可执行性各指标分别评价的对象；说明评审分歧的处理流程。\n- 统计：具体统计检验依据未来数据分布与配对结构选择，可说明候选检验名称及适用前提，不预先选定，不预设显著性；方法收益由对应组间比较判断，不以一组显著、另一组不显著直接证明两组效果不同。\n- 附表：附表内容尚未确定，提出拟议附表项目并标注为拟议设计。\n- 只委托评分设计"
+    }, {
+      "section" : "CONSTRAINTS",
+      "before" : "- 当前只是拟定研究，尚未实施；不得把拟定样本写成已纳入样本，不得声称研究已完成。\n- 不得编造效应量、P值、参考文献或显著性结论。\n- 不得使用假设或虚构数据，该禁令适用于所有用途，包括测试和验证。\n- 4类任务的具体分类由用户决定，方法部分不得代定类别。\n- 具体统计检验依据未来数据分布和配对结构选择，不预设必然显著。\n- 评价对象为提示词质量，不得改为只评答案质量。\n- 同信息对照两组接收并可使用同一原始任务与同一份实际确认信息；直接组不追问不等于不能使用已提供答案。\n- 明确区分已知事实、用户确认信息与拟议设计，不得把猜测写成事实；说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。",
+      "appended" : "\n- 分类由我决定。",
+      "after" : "- 当前只是拟定研究，尚未实施；不得把拟定样本写成已纳入样本，不得声称研究已完成。\n- 不得编造效应量、P值、参考文献或显著性结论。\n- 不得使用假设或虚构数据，该禁令适用于所有用途，包括测试和验证。\n- 4类任务的具体分类由用户决定，方法部分不得代定类别。\n- 具体统计检验依据未来数据分布和配对结构选择，不预设必然显著。\n- 评价对象为提示词质量，不得改为只评答案质量。\n- 同信息对照两组接收并可使用同一原始任务与同一份实际确认信息；直接组不追问不等于不能使用已提供答案。\n- 明确区分已知事实、用户确认信息与拟议设计，不得把猜测写成事实；说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n- 分类由我决定。"
+    } ]
+  }, {
+    "trace" : 339,
+    "taskView" : {
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "executionRequirements" : [ {
+        "questionId" : "task_categories",
+        "subject" : "局部委托要求",
+        "statement" : "只委托评分设计",
+        "destination" : "TASK",
+        "sourceQuestionIds" : [ "task_categories" ]
+      }, {
+        "questionId" : "task_categories",
+        "subject" : "未确认边界",
+        "statement" : "分类由我决定。",
+        "destination" : "CONSTRAINTS",
+        "sourceQuestionIds" : [ "task_categories" ]
+      } ],
+      "pendingDecisions" : [ {
+        "questionId" : "plan_interaction_rounds",
+        "question" : "Plan 组的问答交互按什么轮次与终止方式设计？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "暂不确定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      }, {
+        "questionId" : "task_categories",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "分类由我决定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      }, {
+        "questionId" : "task_source",
+        "question" : "20 个任务来自哪里？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "暂不确定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      }, {
+        "questionId" : "control_group_flow",
+        "question" : "两组同信息公平对照在收到同一份确认信息后，是否仍保留各自指定的增强流程？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "暂不确定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      }, {
+        "questionId" : "deliverable_scope",
+        "question" : "方法部分除正文 800–1200 汉字外，附表需要包含哪些内容？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "暂不确定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      } ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      },
+      "requirementBoundaryGuidance" : "本次问答流程由增强器提出关键问题、用户回答，再将有效回答融入优化提示词。\n直接增强不主动发起这轮问答，但仍正常使用已经提供的需求与确认信息。\nPlan不能改为模型自行生成执行计划再作答。\n研究若要求同信息对照，两组接收并可使用同一原始任务和同一份实际确认信息。\n研究若要求同信息对照，保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。\n不得使用假设或虚构数据，禁令适用于所有用途，包括测试和验证；不得缩为仅禁止冒充真实业务数据。不能由这项禁令推出禁止使用可核实的真实示例资料；其他明确的数据限制和权限要求照常保留。\n具体检验依据未来数据分布和适用条件选择；可说明候选检验名称及适用前提，不预先选定，也不预设显著性。",
+      "userMeaningAnchors" : [ {
+        "role" : "AUDIENCE",
+        "text" : "研究生",
+        "start" : 1,
+        "end" : 4,
+        "origin" : "EFFECTIVE_USER_INPUT"
+      }, {
+        "role" : "RESEARCH_TOPIC",
+        "text" : "Plan问答对提示词质量的影响",
+        "start" : 20,
+        "end" : 35,
+        "origin" : "EFFECTIVE_USER_INPUT"
+      } ]
+    },
+    "caseId" : "Q05-PARTIAL-SCORING-R2",
+    "changes" : [ {
+      "section" : "TASK",
+      "before" : "撰写中文研究设计的方法部分，说明以下内容：\n- 任务构成：保留4类任务、每类5个、共20个任务；四类任务的划分维度与每类任务的选取原则、纳入与排除标准以拟议设计形式给出，并注明最终分类由研究者决定。\n- 重复与分配：每模式每任务独立重复3次；说明随机化安排（如任务与模式的分配顺序、重复次序的随机化方式）及其实施步骤。\n- 比较条件：比较直接增强与Plan两种模式；另设两组获得相同确认信息的公平对照，两组接收并可使用同一原始任务与同一份逐字相同的实际确认信息，直接组不追问不等于不能使用已提供答案；不得通过改写某组回答、更换任务或只给某组增加修订轮次来制造信息一致。Plan组的问答交互轮次与终止方式、对照组是否保留各自增强流程，以拟议流程给出并说明适用条件与可调整处。\n- 盲评：两名独立评审盲评；说明送评材料的盲化方式（去除组别标识与可识别信息、统一编号）及评审所见材料范围。\n- 评价指标：准确性、完整性、清晰度与可执行性四项指标，逐项给出拟议的操作化定义、评分尺度与评分依据，并说明分歧处理流程（如独立评分后比对、分歧协商、必要时第三方裁定）。\n- 评价对象：评价对象为提示词质量，评审针对各组产出的提示词评分；下游作品可作为验证依据，但不替代提示词作为评分对象。\n- 统计分析：具体统计检验依据未来数据分布与配对结构选择，可说明候选检验名称及适用前提，不预先选定检验，不预设显著性。",
+      "appended" : "\n- 只委托评分设计",
+      "after" : "撰写中文研究设计的方法部分，说明以下内容：\n- 任务构成：保留4类任务、每类5个、共20个任务；四类任务的划分维度与每类任务的选取原则、纳入与排除标准以拟议设计形式给出，并注明最终分类由研究者决定。\n- 重复与分配：每模式每任务独立重复3次；说明随机化安排（如任务与模式的分配顺序、重复次序的随机化方式）及其实施步骤。\n- 比较条件：比较直接增强与Plan两种模式；另设两组获得相同确认信息的公平对照，两组接收并可使用同一原始任务与同一份逐字相同的实际确认信息，直接组不追问不等于不能使用已提供答案；不得通过改写某组回答、更换任务或只给某组增加修订轮次来制造信息一致。Plan组的问答交互轮次与终止方式、对照组是否保留各自增强流程，以拟议流程给出并说明适用条件与可调整处。\n- 盲评：两名独立评审盲评；说明送评材料的盲化方式（去除组别标识与可识别信息、统一编号）及评审所见材料范围。\n- 评价指标：准确性、完整性、清晰度与可执行性四项指标，逐项给出拟议的操作化定义、评分尺度与评分依据，并说明分歧处理流程（如独立评分后比对、分歧协商、必要时第三方裁定）。\n- 评价对象：评价对象为提示词质量，评审针对各组产出的提示词评分；下游作品可作为验证依据，但不替代提示词作为评分对象。\n- 统计分析：具体统计检验依据未来数据分布与配对结构选择，可说明候选检验名称及适用前提，不预先选定检验，不预设显著性。\n- 只委托评分设计"
+    }, {
+      "section" : "CONSTRAINTS",
+      "before" : "- 当前只是拟定研究，尚未实施；不得把拟定样本写成已纳入样本，不得写成研究已完成或已获得结果。\n- 不得编造效应量、P值、参考文献或显著性结论。\n- 不得使用假设或虚构数据，该禁令适用于所有用途，包括测试与验证。\n- 四类任务的具体分类由研究者决定，正文只能给出拟议划分并注明待定。\n- 评分尺度、交互轮次、附表内容等未确认参数保持未决，不得写成已选定口径。\n- 统计检验不预先选定，不预设必然显著；候选方法须说明适用条件。\n- 明确区分已知事实、用户确认信息与拟议设计，不得把猜测写成事实。",
+      "appended" : "\n- 分类由我决定。",
+      "after" : "- 当前只是拟定研究，尚未实施；不得把拟定样本写成已纳入样本，不得写成研究已完成或已获得结果。\n- 不得编造效应量、P值、参考文献或显著性结论。\n- 不得使用假设或虚构数据，该禁令适用于所有用途，包括测试与验证。\n- 四类任务的具体分类由研究者决定，正文只能给出拟议划分并注明待定。\n- 评分尺度、交互轮次、附表内容等未确认参数保持未决，不得写成已选定口径。\n- 统计检验不预先选定，不预设必然显著；候选方法须说明适用条件。\n- 明确区分已知事实、用户确认信息与拟议设计，不得把猜测写成事实。\n- 分类由我决定。"
+    } ]
+  } ],
+  "validationReplays" : [ {
+    "field" : "sections.TASK",
+    "independentAssessmentCheck" : "ASSESSMENT_DECISION_CONFLICT",
+    "result" : "RULE_CONFLICT",
+    "failureSite" : "com.promptoptimizer.provider.domain.DraftDeliveryContract.validateDelivery(DraftDeliveryContract.java:171)\ncom.promptoptimizer.enhancement.service.impl.OptimizationResultAssembler.assemble(OptimizationResultAssembler.java:207)\nLiveFailureInspection.main(LiveFailureInspection.java:86)",
+    "originalModelUnchanged" : true,
+    "kind" : "ASSEMBLER_REPLAY",
+    "trace" : 335,
+    "missingPresentationNormalizedByProduction" : false
+  }, {
+    "field" : "sections.CONSTRAINTS",
+    "trace" : 336,
+    "source" : "- 4类任务的具体分类由用户决定，不得代为设定。\n- 当前仅为拟定研究，不得写成已实施或已纳入样本。\n- 不得编造效应量、P值、参考文献、显著性结论或使用假设数据。\n- 统计检验不预先选定，不预设必然显著。\n- 评分尺度、问答轮次、任务来源、对照流程与附表内容保持未决，不默认取值。\n- 评价对象为提示词，不改为只评答案质量。",
+    "kind" : "INDEPENDENT_BOUNDARY_REPLAY",
+    "reason" : "DATA_PROHIBITION_CONFLICT"
+  }, {
+    "field" : "sections.CONSTRAINTS",
+    "independentAssessmentCheck" : "ACCEPTED_BY_THIS_CHECK",
+    "result" : "DATA_PROHIBITION_CONFLICT",
+    "failureSite" : "com.promptoptimizer.provider.domain.RequirementBoundaryContract.reject(RequirementBoundaryContract.java:279)\ncom.promptoptimizer.provider.domain.RequirementBoundaryContract.validate(RequirementBoundaryContract.java:153)\ncom.promptoptimizer.enhancement.service.impl.OptimizationResultAssembler.lambda$assemble$3(OptimizationResultAssembler.java:180)\njava.base/java.util.Map.forEach(Map.java:733)",
+    "originalModelUnchanged" : true,
+    "kind" : "ASSEMBLER_REPLAY",
+    "trace" : 336,
+    "missingPresentationNormalizedByProduction" : true
+  }, {
+    "field" : "sections.ACCEPTANCE",
+    "trace" : 338,
+    "source" : "- 方法与研究问题一致，任务框架、重复次数、比较条件与盲评安排可复核。\n- 已定参数与未决参数分开表述，拟议设计明确标注，未把拟定样本写成已纳入样本。\n- 未出现编造的效应量、P值、参考文献、显著性结论或假设数据。\n- 正文汉字数在800至1200之间，附表另计且未虚构未确认条目。",
+    "kind" : "INDEPENDENT_BOUNDARY_REPLAY",
+    "reason" : "DATA_PROHIBITION_CONFLICT"
+  }, {
+    "field" : "sections.ACCEPTANCE",
+    "independentAssessmentCheck" : "ASSESSMENT_DECISION_CONFLICT",
+    "result" : "DATA_PROHIBITION_CONFLICT",
+    "failureSite" : "com.promptoptimizer.provider.domain.RequirementBoundaryContract.reject(RequirementBoundaryContract.java:279)\ncom.promptoptimizer.provider.domain.RequirementBoundaryContract.validate(RequirementBoundaryContract.java:153)\ncom.promptoptimizer.enhancement.service.impl.OptimizationResultAssembler.lambda$assemble$3(OptimizationResultAssembler.java:180)\njava.base/java.util.Map.forEach(Map.java:733)",
+    "originalModelUnchanged" : true,
+    "kind" : "ASSEMBLER_REPLAY",
+    "trace" : 338,
+    "missingPresentationNormalizedByProduction" : false
+  } ],
+  "kind" : "POST_BATCH_OFFLINE_FROZEN_PRODUCTION_REPLAY"
+}

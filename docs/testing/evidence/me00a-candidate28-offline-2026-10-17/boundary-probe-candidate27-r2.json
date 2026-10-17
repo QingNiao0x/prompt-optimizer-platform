@@ -1,0 +1,50 @@
+{
+  "classOrigin" : "file:/E:/MyProject/prompt-optimizer-platform/tmp/me00a-candidate27-r2-20261017/frozen/classes/",
+  "candidate" : "candidate27-r2",
+  "newModelCalls" : 0,
+  "sourceResponsesUnchanged" : true,
+  "checks" : [ {
+    "reason" : "DATA_PROHIBITION_CONFLICT",
+    "text" : "- 4类任务的具体分类由用户决定，不得代为设定。\n- 当前仅为拟定研究，不得写成已实施或已纳入样本。\n- 不得编造效应量、P值、参考文献、显著性结论或使用假设数据。\n- 统计检验不预先选定，不预设必然显著。\n- 评分尺度、问答轮次、任务来源、对照流程与附表内容保持未决，不默认取值。\n- 评价对象为提示词，不改为只评答案质量。",
+    "gatePass" : false,
+    "id" : "actual336",
+    "expectedAccepted" : true,
+    "accepted" : false
+  }, {
+    "reason" : "DATA_PROHIBITION_CONFLICT",
+    "text" : "- 方法与研究问题一致，任务框架、重复次数、比较条件与盲评安排可复核。\n- 已定参数与未决参数分开表述，拟议设计明确标注，未把拟定样本写成已纳入样本。\n- 未出现编造的效应量、P值、参考文献、显著性结论或假设数据。\n- 正文汉字数在800至1200之间，附表另计且未虚构未确认条目。",
+    "gatePass" : false,
+    "id" : "actual338",
+    "expectedAccepted" : true,
+    "accepted" : false
+  }, {
+    "reason" : "",
+    "text" : "不得编造P值但允许使用假设数据。",
+    "gatePass" : false,
+    "id" : "explicitPermissionAfterBan",
+    "expectedAccepted" : false,
+    "accepted" : true
+  }, {
+    "reason" : "",
+    "text" : "禁止编造P值但可以使用虚构数据。",
+    "gatePass" : false,
+    "id" : "explicitPermissionAfterBan2",
+    "expectedAccepted" : false,
+    "accepted" : true
+  }, {
+    "reason" : "DATA_PROHIBITION_CONFLICT",
+    "text" : "允许但马县采集的假设数据。",
+    "gatePass" : true,
+    "id" : "properNameIsNotContrast",
+    "expectedAccepted" : false,
+    "accepted" : false
+  }, {
+    "reason" : "DATA_PROHIBITION_CONFLICT",
+    "text" : "允许使用模拟数据但禁止使用假设数据。",
+    "gatePass" : true,
+    "id" : "laterBanDoesNotCancelPermission",
+    "expectedAccepted" : false,
+    "accepted" : false
+  } ],
+  "actual338AssessmentStillRejected" : "ASSESSMENT_DECISION_CONFLICT"
+}

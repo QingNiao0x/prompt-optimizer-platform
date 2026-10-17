@@ -22,12 +22,19 @@ public final class RequirementBoundaryContract {
                     + "(?:(?:或|和|及|、)(?:假设|虚构|模拟|编造))*(?:的)?(?:任何|任意|其他|额外|新的)?(?:数据|材料|信息|示例)"
                     + "|(?:假设|虚构|模拟)(?:的)?数据(?:不得|禁止|不能)使用"
                     + "|\\b(?:no|do not|never)\\b[^.\\r\\n]{0,25}\\b(?:hypothetical|fictional|synthetic|made-up)\\s+(?:data|examples?)\\b", FLAGS);
-    private static final Pattern DATA = Pattern.compile("(?:虚构|假设|模拟|合成|编造)(?:的|演示|示例|验证)?(?:任何|任意|其他|额外|新的)?数据"
+    private static final Pattern DATA = Pattern.compile("(?:虚构|假设|模拟|合成|编造)(?:(?:或|和|及|、)(?:虚构|假设|模拟|合成|编造))*(?:的|演示|示例|验证)?(?:任何|任意|其他|额外|新的)?数据"
             + "|\\b(?:hypothetical|fictional|synthetic|made-up)\\s+data\\b", FLAGS);
     private static final Pattern DATA_ACTION = Pattern.compile("(?:允许|可以|可用|可使|应使用|使用|构造|生成|编造|提供)"
             + "|\\b(?:allow|may|can|use|generate|construct|create|provide)\\b", FLAGS);
     private static final Pattern NEGATIVE_PREFIX = Pattern.compile("(?:不|不得|禁止|严禁|不能|不要|避免|拒绝)[^，,。；;\\r\\n]{0,8}$"
             + "|未(?:曾|实际)?$|\\b(?:no|not|never|without|avoid)\\b[^,.;\\r\\n]{0,12}$", FLAGS);
+    private static final Pattern CONTRAST_DATA_ACTION = Pattern.compile("(?:但是|但)(?=(?:允许|可以|不得|不能|不允许|禁止|严禁|不要))", FLAGS);
+    // 只接纳已验证的科研结果并列项；整句匹配避免前一禁令吞掉后面的明确使用许可。
+    private static final String RESULT_ITEMS = "(?:效应量|P\\s*值|参考文献|显著性结论)(?:、(?:效应量|P\\s*值|参考文献|显著性结论))*";
+    private static final Pattern COORDINATED_DATA_BAN = Pattern.compile(
+            "(?:不得|禁止|不能|不要)(?:编造|虚构)" + RESULT_ITEMS + "(?:或|以及|和|及)(?:使用|采用)(?:" + DATA.pattern() + ")", FLAGS);
+    private static final Pattern NEGATIVE_DATA_OBSERVATION = Pattern.compile(
+            "(?:未出现|没有出现)(?:编造的)?" + RESULT_ITEMS + "(?:或|以及|和|及)(?:" + DATA.pattern() + ")", FLAGS);
     private static final Pattern TEST_SELECTION = Pattern.compile(
             "(?:检验[^。；;\\r\\n]{0,35}(?:依据|根据|视)[^。；;\\r\\n]{0,20}(?:数据|分布)[^。；;\\r\\n]{0,20}(?:选择|确定))"
                     + "|(?:(?:依据|根据|视)[^。；;\\r\\n]{0,25}(?:数据|分布)[^。；;\\r\\n]{0,25}(?:选择|确定)[^。；;\\r\\n]{0,10}检验)"
@@ -82,7 +89,9 @@ public final class RequirementBoundaryContract {
 
     /** 与示例契约共用禁令识别，关闭示例也不意味着取消数据使用限制。 */
     public static boolean prohibitsInventedData(String instructions) {
-        return NO_INVENTED_DATA.matcher(DraftDeliveryContract.instructionText(instructions)).find();
+        String current = DraftDeliveryContract.instructionText(instructions);
+        return NO_INVENTED_DATA.matcher(current).find() || java.util.Arrays.stream(current.split("[。；;\\r\\n]+"))
+                .anyMatch(clause -> COORDINATED_DATA_BAN.matcher(negativeClauseText(clause)).matches());
     }
 
     /** 只提供本次实际相关的规则，不向其他任务灌入统计参数或长缺项清单。 */
@@ -246,13 +255,19 @@ public final class RequirementBoundaryContract {
     /** 对每个数据动作单独判否定，另一子句的“不得作为正式依据”不能掩盖实际使用许可。 */
     private static boolean permitsInventedData(String text) {
         for (String clause : text.split("[。；;\\r\\n]+")) {
+            String negative = negativeClauseText(clause);
+            // 并列动作继承同一“不得”；“未出现”是当前否定陈述，不是许可，也不能反向成为用户禁令。
+            if (COORDINATED_DATA_BAN.matcher(negative).matches() || NEGATIVE_DATA_OBSERVATION.matcher(negative).matches()) continue;
             var data = DATA.matcher(clause);
             while (data.find()) {
                 String prefix = clause.substring(0, data.start());
-                int comma = Math.max(prefix.lastIndexOf('，'), prefix.lastIndexOf(','));
-                var actions = DATA_ACTION.matcher(prefix.substring(comma + 1));
+                int actionStart = Math.max(prefix.lastIndexOf('，'), prefix.lastIndexOf(',')) + 1;
+                // “但允许”开启新的动作作用域；专名“但马县”等不构成转折，后面的禁令也不取消前面的许可。
+                var contrast = CONTRAST_DATA_ACTION.matcher(prefix);
+                while (contrast.find()) actionStart = Math.max(actionStart, contrast.end());
+                var actions = DATA_ACTION.matcher(prefix.substring(actionStart));
                 while (actions.find()) {
-                    String before = prefix.substring(comma + 1, comma + 1 + actions.start());
+                    String before = prefix.substring(actionStart, actionStart + actions.start());
                     if (!NEGATIVE_PREFIX.matcher(before).find()) return true;
                 }
                 String after = clause.substring(data.end());
@@ -260,6 +275,11 @@ public final class RequirementBoundaryContract {
             }
         }
         return false;
+    }
+
+    /** 仅移除列表标记及兼容宽字符，不删除条件、逗号或许可动作。 */
+    private static String negativeClauseText(String clause) {
+        return Normalizer.normalize(clause, Normalizer.Form.NFKC).strip().replaceFirst("^[-*•]\\s*", "");
     }
 
     /** 只识别无用途限定的全面禁例数据；“虚构示例”仍属于虚构禁令，不等于禁用真实样本。 */

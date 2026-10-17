@@ -1,0 +1,88 @@
+{
+  "kind": "NEW_NATURAL_PLAN",
+  "newNaturalPlanningAcceptance": true,
+  "answersAreControlledSyntheticFixture": true,
+  "actualRetainedQuestions": [
+    {
+      "id": "plan_rounds",
+      "question": "Plan 问答中，澄清与回答的轮次如何设定？",
+      "hint": "轮次和终止方式会改变 Plan 条件的操作定义与两组对照的信息量，需在方法中写明。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "single_round",
+          "label": "固定一轮问答",
+          "description": "每个任务只进行一次澄清提问并取得回答，随后生成。",
+          "answer": "Plan 条件固定为每个任务一轮澄清问答：先提问，取得回答后生成。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "multi_round_cap",
+          "label": "多轮但设上限",
+          "description": "允许连续澄清，达到预设轮次上限或用户表示无更多信息时终止。",
+          "answer": "Plan 条件允许多轮澄清问答，达到预设轮次上限或用户表示无更多信息时终止。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "until_no_more",
+          "label": "直到无新信息",
+          "description": "持续澄清直至用户表示没有更多可补充信息，不设固定轮数。",
+          "answer": "Plan 条件持续澄清问答，直至用户表示没有更多可补充信息为止。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "confirm_source",
+      "question": "公平对照所需的“相同确认信息”从哪里取得？",
+      "hint": "这决定对照是否真正同信息，也涉及是否使用真实用户回答及相应授权。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "real_answers_sealed",
+          "label": "真实回答先封存再提供",
+          "description": "先取得 Plan 组实际获得的澄清回答并封存，再逐字提供给同信息各组。",
+          "answer": "先取得并封存 Plan 组实际获得的澄清回答，再逐字提供给同信息各组。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "researcher_authored",
+          "label": "研究者预先撰写",
+          "description": "由研究者为每个任务预先撰写统一的确认信息，各组共用。",
+          "answer": "由研究者为每个任务预先撰写统一的确认信息，各组共用。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "not_decided",
+          "label": "尚未确定",
+          "description": "方法部分暂不写明确认信息来源，仅说明两组信息一致。",
+          "answer": "确认信息来源尚未确定，方法部分仅说明两组获得相同确认信息。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "task_domains",
+      "question": "4类任务分别是什么？",
+      "hint": "任务类别决定材料构造与准确性、完整性等评价的适用口径，需具体写明。",
+      "type": "FREE_TEXT",
+      "options": [],
+      "examples": [
+        "例如：信息检索、文本摘要、方案规划、事实核查"
+      ],
+      "allowCustomAnswer": true
+    }
+  ],
+  "noSelectedRealParameters": true,
+  "notAnAutomaticFallback": true
+}

@@ -1,0 +1,127 @@
+{
+  "kind": "POST_REVIEW_OFFLINE_EVIDENCE_AUDIT_NOT_THIRD_INDEPENDENT_REVIEW",
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "sameVendorLimitation": true,
+  "originalReviewHashes": {
+    "deepseek-flash": "fce0efd75b4e3a7604051a044812e432e8b42c4ca39e66b92b9165cc9c3c121e",
+    "deepseek-v4-pro": "db9fe6a7b18fd0979ec3cea63b556ffaf3340981a412b0be71e945764118a569"
+  },
+  "originalReviewsAndDeterministicAuditsUnchanged": true,
+  "formattingOnlyCitationDiscrepancies": [
+    {
+      "model": "deepseek-flash",
+      "issueIndex": 14,
+      "work": "X",
+      "id": "P1",
+      "originalEvidence": "附表：研究设计要素一览表（另附）",
+      "sourceLine": "**附表**：研究设计要素一览表（另附）",
+      "renderedLine": "附表：研究设计要素一览表（另附）",
+      "rawLiteral": false,
+      "visibleTextExact": true,
+      "existingAuditResultUnchanged": true,
+      "notAProductFactFailure": true
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "issueIndex": 16,
+      "work": "X",
+      "id": "P1",
+      "originalEvidence": "附表：研究设计要素一览表（另附）",
+      "sourceLine": "**附表**：研究设计要素一览表（另附）",
+      "renderedLine": "附表：研究设计要素一览表（另附）",
+      "rawLiteral": false,
+      "visibleTextExact": true,
+      "existingAuditResultUnchanged": true,
+      "notAProductFactFailure": true
+    }
+  ],
+  "nonzeroScoreDeltas": [
+    {
+      "work": "V",
+      "dimension": "accuracy",
+      "flash": 3,
+      "pro": 4
+    },
+    {
+      "work": "V",
+      "dimension": "completeness",
+      "flash": 3,
+      "pro": 4
+    },
+    {
+      "work": "X",
+      "dimension": "accuracy",
+      "flash": 2,
+      "pro": 3
+    },
+    {
+      "work": "X",
+      "dimension": "completeness",
+      "flash": 2,
+      "pro": 3
+    }
+  ],
+  "rawPairs": {
+    "flash": [
+      {
+        "left": "U",
+        "right": "V",
+        "verdict": "LEFT_WIN",
+        "reason": "两作均如实标注任务分类与轮次待定。V自行设定对照A/B分别对应直接增强与Plan，属对未确认对照流程的实质性假设；U对对照流程暂按保留处理并标注待定，更贴近题答'暂不确定'状态。U在未确认设计上假设更少，故U略优。"
+      },
+      {
+        "left": "X",
+        "right": "Y",
+        "verdict": "RIGHT_WIN",
+        "reason": "X自行定义Plan模式操作、引入'每名参与者'改变重复单位、自行提出任务分类维度，且附表仅写'另附'未落实；Y如实标注分类与轮次待定，给出拟议规则并标注，附表列出拟议项目。Y在未确认状态处理与完整性上明显优于X。"
+      }
+    ],
+    "pro": [
+      {
+        "left": "U",
+        "right": "V",
+        "verdict": "TIE",
+        "reason": "两份作品均基本覆盖原始要求，但均存在实质性缺陷。U遗漏两个公平对照条件的重复次数计算，V对两组公平对照是否获得相同确认信息的表述存在歧义。U将公平对照是否保留增强流程暂按保留处理，V明确标注为尚未确定。两者在准确性、完整性、清晰度、可执行性上均未达到5分，且均存在需修改的实质问题，无法判定一方明显优于另一方。"
+      },
+      {
+        "left": "X",
+        "right": "Y",
+        "verdict": "LEFT_WIN",
+        "reason": "X存在多处实质性偏离：引入参与者概念但未说明参与者设计，自行定义确认信息内容，将未确定的Plan轮次与终止方式未作说明，附表内容缺失严重，统计模型引入参与者随机效应但缺乏依据。Y虽将Plan轮次具体化为3轮并规定终止条件，超出原始要求中“暂不确定”的范围，但整体设计更贴近原始要求，正确计算了4个条件的运行单元数，明确两组对照获得同一份确认信息，且对盲评、指标、分歧处理、统计检验选择原则的说明更完整。Y的主要问题在于将未确定事项具体化，但X的问题更多且更严重，因此X明显劣于Y。"
+      }
+    ]
+  },
+  "proContradictoryPair": {
+    "left": "X",
+    "right": "Y",
+    "verdict": "LEFT_WIN",
+    "reason": "X存在多处实质性偏离：引入参与者概念但未说明参与者设计，自行定义确认信息内容，将未确定的Plan轮次与终止方式未作说明，附表内容缺失严重，统计模型引入参与者随机效应但缺乏依据。Y虽将Plan轮次具体化为3轮并规定终止条件，超出原始要求中“暂不确定”的范围，但整体设计更贴近原始要求，正确计算了4个条件的运行单元数，明确两组对照获得同一份确认信息，且对盲评、指标、分歧处理、统计检验选择原则的说明更完整。Y的主要问题在于将未确定事项具体化，但X的问题更多且更严重，因此X明显劣于Y。",
+    "reasonSupports": "Y",
+    "fieldSupports": "X",
+    "adoptedVerdict": "UNRESOLVED",
+    "autoReversed": false
+  },
+  "proAppendixIssue": {
+    "index": 4,
+    "issue": {
+      "work": "U",
+      "evidence": "附表内容尚未确定，拟议包括：任务清单与类别归属表、随机化分配表、盲评评分表、评审分歧记录表、统计检验适用条件核对表",
+      "reason": "作品将附表内容列为拟议项目，但原始要求中实际题答“附表需要包含哪些内容？”答案为“暂不确定”，作品未将这一不确定性明确标注为“暂不确定”，而是给出了拟议清单。虽然标注为拟议，但未说明附表内容本身尚未确定，可能被理解为已确定附表框架。",
+      "origin": "MIXED",
+      "severity": "MINOR"
+    },
+    "counterEvidence": "附表内容尚未确定，拟议包括：",
+    "counterEvidenceInWork": true,
+    "adopted": false
+  },
+  "scopeNotes": [
+    "A marked proposed design is not an already confirmed parameter.",
+    "Proposed 240 planned runs is not fabricated observed data.",
+    "Exact quotes alone do not validate an AI claim; compliant observations were also listed as issues.",
+    "No aggregate win rate or statistical efficacy is accepted."
+  ],
+  "newModelCalls": 0
+}
