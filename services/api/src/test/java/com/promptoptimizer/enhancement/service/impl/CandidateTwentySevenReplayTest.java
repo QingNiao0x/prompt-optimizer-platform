@@ -111,7 +111,9 @@ class CandidateTwentySevenReplayTest {
         STATE + "但仅限甲院2025年样本。", "本研究已实施，也没有额外真实数据。",
         "研究主题为" + TOPIC + "，当前仅为拟定研究，尚未实施，但有额外真实数据。",
         STATE + "\n但上述仅适用于甲院2025年。",
-        "研究主题为睡眠质量；当前仅为拟定研究，尚未实施，也没有额外真实数据。"
+        "研究主题为睡眠质量；当前仅为拟定研究，尚未实施，也没有额外真实数据。",
+        "研究主题为" + TOPIC + "；研究主题为睡眠质量；当前仅为拟定研究，尚未实施，也没有额外真实数据。",
+        "研究主题为睡眠质量。\n当前仅为拟定研究，尚未实施，也没有额外真实数据。"
     })
     void otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String background) {
         var sections = sections(background, "写方法正文。");

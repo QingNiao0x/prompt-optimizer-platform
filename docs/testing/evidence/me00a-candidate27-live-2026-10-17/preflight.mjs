@@ -8,7 +8,7 @@ const evidence=resolve('docs/testing/evidence/me00a-candidate27-live-2026-10-17'
 const output=resolve('tmp/me00a-candidate27-live-20261017');
 const read=async file=>JSON.parse(await readFile(file,'utf8'));
 const hash=value=>createHash('sha256').update(value).digest('hex');
-const manifest=await read('docs/testing/evidence/me00a-candidate27-offline-2026-10-17/candidate27-source.json');
+const manifest=await read('docs/testing/evidence/me00a-candidate27-r2-offline-2026-10-17/candidate27-r2-source.json');
 for(const [items,roots] of [[manifest.sourceFiles,['.',manifest.sourceSnapshot]],
   [manifest.runtimeFiles,[manifest.runtimeSnapshot]]]){
   for(const root of roots)for(const file of items){
@@ -40,7 +40,7 @@ try{
     sourceFilesVerified:manifest.sourceFiles.length,runtimeFilesVerified:manifest.runtimeFiles.length,
     sourceAndRuntimeMatch:true,historyReadable:true,historyBefore:historyData.total,
     workbenchVisible:true,isolatedBackend:9001,isolatedFrontend:5174,modelCalls:0,actualCallsBefore:before,actualCallsAfter:after};
-  await writeFile(resolve(evidence,'preflight.json'),JSON.stringify(report,null,2)+'\n',{flag:'wx'});
+  await writeFile(resolve(evidence,'preflight-r2.json'),JSON.stringify(report,null,2)+'\n',{flag:'wx'});
   console.log(JSON.stringify(report));
   await page.close();
 }finally{await browser.close();}

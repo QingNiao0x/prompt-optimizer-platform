@@ -17,7 +17,7 @@ const save=async(path,value)=>{await mkdir(resolve(path,'..'),{recursive:true});
 const cases=await load(resolve(evidence,'cases.json'));
 const tools=await load(resolve(evidence,'tools-frozen.json'));
 for(const item of tools.tools)if(hash(await readFile(resolve(item.path)))!==item.sha256)throw new Error('Frozen evaluation tool drift');
-const manifest=await load('docs/testing/evidence/me00a-candidate27-offline-2026-10-17/candidate27-source.json');
+const manifest=await load('docs/testing/evidence/me00a-candidate27-r2-offline-2026-10-17/candidate27-r2-source.json');
 for(const item of manifest.sourceFiles)if(hash(await readFile(resolve(item.path)))!==item.sha256)throw new Error('Frozen source drift');
 for(const item of manifest.runtimeFiles)if(hash(await readFile(resolve(manifest.runtimeSnapshot,item.path)))!==item.sha256)throw new Error('Frozen runtime drift');
 async function approvedProtocol(){

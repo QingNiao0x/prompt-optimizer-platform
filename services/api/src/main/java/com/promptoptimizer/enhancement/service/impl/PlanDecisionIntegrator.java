@@ -145,6 +145,12 @@ final class PlanDecisionIntegrator {
             String content = entry.getValue().content();
             if (content.lines().anyMatch(line -> line.strip().matches(
                     "^(?:[-*•]\\s*)?(?:但|仅限|仅就|除非|除外|例外|以上仅|上述仅).*"))) continue;
+            // 后续主题声明可能改变跨句／跨行的“当前”指代；有另一主题时不借用整段状态。
+            var declarations = Pattern.compile("(?:本研究主题为|研究主题为)([^,;。\\r\\n]+)")
+                    .matcher(Normalizer.normalize(String.join("\n", currentSentences(content)), Normalizer.Form.NFKC));
+            boolean foreignTopic = false;
+            while (declarations.find()) if (!declarations.group(1).strip().equals(topics.getFirst())) foreignTopic = true;
+            if (foreignTopic) continue;
             // 原行必须无引用、条件、否定或例外；当前语句过滤继续负责围栏、表格与跨行外部作用域。
             var eligible = content.lines().filter(line -> !line.startsWith("    ") && !line.startsWith("\t"))
                     .map(line -> Normalizer.normalize(line, Normalizer.Form.NFKC))

@@ -1,0 +1,27 @@
+{
+  "kind": "OFFLINE_SCOPE_COUNTEREXAMPLES",
+  "modelCalls": 0,
+  "rows": [
+    {
+      "class": "com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest",
+      "tests": 30,
+      "failures": [
+        {
+          "test": "otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String)[12]",
+          "message": "\nExpecting actual:\n  \"研究主题为Plan问答对提示词质量的影响；研究主题为睡眠质量；当前仅为拟定研究，尚未实施，也没有额外真实数据。\"\nto contain:\n  \"\n- 我没有额外真实数据\" "
+        },
+        {
+          "test": "otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String)[13]",
+          "message": "\nExpecting actual:\n  \"研究主题为睡眠质量。\n当前仅为拟定研究，尚未实施，也没有额外真实数据。\"\nto contain:\n  \"\n- 我没有额外真实数据\" "
+        }
+      ],
+      "sha256": "dbe8b34d334219ab2c02580b579783c64cd183bec2a2c7c686b6283066506929"
+    },
+    {
+      "class": "com.promptoptimizer.provider.infrastructure.openai.CandidateTwentySevenRepairProtocolTest",
+      "tests": 3,
+      "failures": [],
+      "sha256": "e82da8cdafb4c7077b9992facda9d3660c127e4dd4795c26fca16260ecb6f3cc"
+    }
+  ]
+}

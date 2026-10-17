@@ -16,7 +16,7 @@ foreach($evaluationName in ($evaluationNames | Select-Object -Unique)) {
 $evaluationCpFile=Get-ChildItem -LiteralPath 'tmp/backend-local-managed' -Filter runtime-classpath.txt -Recurse | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 $evaluationDependencies=[IO.File]::ReadAllText($evaluationCpFile.FullName).Trim()
 if($evaluationDependencies -match 'target[\\/]classes'){throw 'Mutable classes in dependency list'}
-$evaluationClasses=Join-Path $evaluationRepo 'tmp/me00a-candidate27-20261017/frozen/classes'
+$evaluationClasses=Join-Path $evaluationRepo 'tmp/me00a-candidate27-r2-20261017/frozen/classes'
 $evaluationRunner=Join-Path $evaluationRepo 'tmp/me00a-candidate27-live-20261017/runner'
 New-Item -ItemType Directory -Path $evaluationRunner -Force | Out-Null
 $evaluationCp=$evaluationClasses+';'+$evaluationDependencies
