@@ -50,7 +50,7 @@ public record EffectiveTaskView(String originalPrompt, String effectivePrompt, T
     private List<ModelRequirement> modelRequirements() {
         var groups = new LinkedHashMap<RequirementKey, List<ExecutionRequirement>>();
         for (var requirement : executionRequirements) {
-            boolean selfContained = List.of("用户说明", "委托要求", "未确认边界").contains(requirement.subject());
+            boolean selfContained = List.of("用户说明", "委托要求", "局部委托要求", "未确认边界").contains(requirement.subject());
             var key = new RequirementKey(requirement.subject(), requirement.statement(), requirement.destination(),
                     selfContained ? null : requirement.questionId());
             groups.computeIfAbsent(key, ignored -> new java.util.ArrayList<>()).add(requirement);

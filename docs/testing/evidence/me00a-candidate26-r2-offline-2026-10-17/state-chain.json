@@ -1,0 +1,376 @@
+{
+  "realModelCalls" : 0,
+  "observations" : [ {
+    "result" : {
+      "optimizedPrompt" : "## 背景\n本次交付研究方法正文。\n\n## 任务\n撰写研究方法部分，保留原定评价目标。\n\n## 输出\n交付中文方法正文。\n按原定范围和格式直接交付正文，不先发补材料问卷；材料充分时直接成稿，不足时完成有依据的可修订初稿，不以大片填空模板替代正文。缺口只限制对应内容，不编造数据、引用或结论；重要未决条件集中说明一次，同一缺口不逐节重复标待确认；原要求的表格、代码及篇幅继续保留。\n\n## 约束\n不虚构事实。\n任务相关约束：\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n资料缺口与待定选择（仅影响对应内容；其余正文先完成）：\n- 该问题尚未确定：4 类任务具体指哪四类？ 用户说明：如果以后批准，再提出拟议设计。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收标准\n方法与研究问题一致，定义和比较条件可复核；已定与未决参数分开，不编造数据、结果、文献或已完成研究状态。",
+      "sections" : [ {
+        "type" : "BACKGROUND",
+        "title" : "背景",
+        "content" : "本次交付研究方法正文。"
+      }, {
+        "type" : "TASK",
+        "title" : "任务",
+        "content" : "撰写研究方法部分，保留原定评价目标。"
+      }, {
+        "type" : "OUTPUT",
+        "title" : "输出",
+        "content" : "交付中文方法正文。\n按原定范围和格式直接交付正文，不先发补材料问卷；材料充分时直接成稿，不足时完成有依据的可修订初稿，不以大片填空模板替代正文。缺口只限制对应内容，不编造数据、引用或结论；重要未决条件集中说明一次，同一缺口不逐节重复标待确认；原要求的表格、代码及篇幅继续保留。"
+      }, {
+        "type" : "CONSTRAINTS",
+        "title" : "约束",
+        "content" : "不虚构事实。\n任务相关约束：\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n资料缺口与待定选择（仅影响对应内容；其余正文先完成）：\n- 该问题尚未确定：4 类任务具体指哪四类？ 用户说明：如果以后批准，再提出拟议设计。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }, {
+        "type" : "CLARIFICATIONS",
+        "title" : "待确认事项",
+        "content" : "- 该问题尚未确定：4 类任务具体指哪四类？ 用户说明：如果以后批准，再提出拟议设计。"
+      }, {
+        "type" : "ACCEPTANCE",
+        "title" : "验收标准",
+        "content" : "方法与研究问题一致，定义和比较条件可复核；已定与未决参数分开，不编造数据、结果、文献或已完成研究状态。"
+      } ],
+      "contextReport" : {
+        "customDescription" : "",
+        "technologyStack" : [ ],
+        "dependencies" : [ ],
+        "directoryTree" : [ ],
+        "fileSnippets" : [ ],
+        "analysisStatus" : "COMPLETE",
+        "fileCoverage" : [ ],
+        "warnings" : [ ],
+        "redactions" : [ ],
+        "analysisVersion" : "EMPTY"
+      },
+      "ambiguities" : [ "该问题尚未确定：4 类任务具体指哪四类？ 用户说明：如果以后批准，再提出拟议设计。" ],
+      "appliedConstraints" : [ "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。", "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。", "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。" ],
+      "templateCode" : "RESEARCH_ANALYSIS",
+      "provider" : {
+        "provider" : "offline-state-replay",
+        "model" : "offline",
+        "mock" : true,
+        "modelVersion" : ""
+      },
+      "latencyMs" : 0,
+      "warnings" : [ ],
+      "evidenceCards" : [ ],
+      "promptFormat" : "STRUCTURED"
+    },
+    "answer" : "如果以后批准，再提出拟议设计。",
+    "task" : {
+      "originalPrompt" : "撰写中文研究设计的方法部分，说明准确性、完整性、清晰度与可执行性评价以及分歧处理。\n4 类任务具体指哪四类？",
+      "effectivePrompt" : "撰写中文研究设计的方法部分，说明准确性、完整性、清晰度与可执行性评价以及分歧处理。\n4 类任务具体指哪四类？",
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "confirmedDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "如果以后批准，再提出拟议设计。",
+        "source" : "USER_CONFIRMED"
+      } ],
+      "executionRequirements" : [ ],
+      "pendingDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "如果以后批准，再提出拟议设计。",
+        "source" : "USER_CONFIRMED"
+      } ],
+      "facts" : [ ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      }
+    },
+    "modelInput" : {
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "executionRequirements" : [ ],
+      "pendingDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "如果以后批准，再提出拟议设计。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      } ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      },
+      "requirementBoundaryGuidance" : "",
+      "userMeaningAnchors" : [ ]
+    }
+  }, {
+    "result" : {
+      "optimizedPrompt" : "## 背景\n本次交付研究方法正文。\n\n## 任务\n撰写研究方法部分，保留原定评价目标。\n- 只委托评分设计\n\n## 输出\n交付中文方法正文。\n按原定范围和格式直接交付正文，不先发补材料问卷；材料充分时直接成稿，不足时完成有依据的可修订初稿，不以大片填空模板替代正文。缺口只限制对应内容，不编造数据、引用或结论；重要未决条件集中说明一次，同一缺口不逐节重复标待确认；原要求的表格、代码及篇幅继续保留。\n\n## 约束\n不虚构事实。\n- 分类由我决定。\n任务相关约束：\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n资料缺口与待定选择（仅影响对应内容；其余正文先完成）：\n- 该问题尚未确定：4 类任务具体指哪四类？\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收标准\n方法与研究问题一致，定义和比较条件可复核；已定与未决参数分开，不编造数据、结果、文献或已完成研究状态。",
+      "sections" : [ {
+        "type" : "BACKGROUND",
+        "title" : "背景",
+        "content" : "本次交付研究方法正文。"
+      }, {
+        "type" : "TASK",
+        "title" : "任务",
+        "content" : "撰写研究方法部分，保留原定评价目标。\n- 只委托评分设计"
+      }, {
+        "type" : "OUTPUT",
+        "title" : "输出",
+        "content" : "交付中文方法正文。\n按原定范围和格式直接交付正文，不先发补材料问卷；材料充分时直接成稿，不足时完成有依据的可修订初稿，不以大片填空模板替代正文。缺口只限制对应内容，不编造数据、引用或结论；重要未决条件集中说明一次，同一缺口不逐节重复标待确认；原要求的表格、代码及篇幅继续保留。"
+      }, {
+        "type" : "CONSTRAINTS",
+        "title" : "约束",
+        "content" : "不虚构事实。\n- 分类由我决定。\n任务相关约束：\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n资料缺口与待定选择（仅影响对应内容；其余正文先完成）：\n- 该问题尚未确定：4 类任务具体指哪四类？\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }, {
+        "type" : "CLARIFICATIONS",
+        "title" : "待确认事项",
+        "content" : "- 该问题尚未确定：4 类任务具体指哪四类？"
+      }, {
+        "type" : "ACCEPTANCE",
+        "title" : "验收标准",
+        "content" : "方法与研究问题一致，定义和比较条件可复核；已定与未决参数分开，不编造数据、结果、文献或已完成研究状态。"
+      } ],
+      "contextReport" : {
+        "customDescription" : "",
+        "technologyStack" : [ ],
+        "dependencies" : [ ],
+        "directoryTree" : [ ],
+        "fileSnippets" : [ ],
+        "analysisStatus" : "COMPLETE",
+        "fileCoverage" : [ ],
+        "warnings" : [ ],
+        "redactions" : [ ],
+        "analysisVersion" : "EMPTY"
+      },
+      "ambiguities" : [ "该问题尚未确定：4 类任务具体指哪四类？" ],
+      "appliedConstraints" : [ "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。", "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。", "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。" ],
+      "templateCode" : "RESEARCH_ANALYSIS",
+      "provider" : {
+        "provider" : "offline-state-replay",
+        "model" : "offline",
+        "mock" : true,
+        "modelVersion" : ""
+      },
+      "latencyMs" : 0,
+      "warnings" : [ ],
+      "evidenceCards" : [ ],
+      "promptFormat" : "STRUCTURED"
+    },
+    "answer" : "只委托评分设计，分类由我决定。",
+    "task" : {
+      "originalPrompt" : "撰写中文研究设计的方法部分，说明准确性、完整性、清晰度与可执行性评价以及分歧处理。\n4 类任务具体指哪四类？",
+      "effectivePrompt" : "撰写中文研究设计的方法部分，说明准确性、完整性、清晰度与可执行性评价以及分歧处理。\n4 类任务具体指哪四类？",
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "confirmedDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "只委托评分设计，分类由我决定。",
+        "source" : "USER_CONFIRMED"
+      } ],
+      "executionRequirements" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "subject" : "局部委托要求",
+        "value" : "只委托评分设计",
+        "statement" : "只委托评分设计",
+        "destination" : "TASK"
+      }, {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "subject" : "未确认边界",
+        "value" : "分类由我决定。",
+        "statement" : "分类由我决定。",
+        "destination" : "CONSTRAINTS"
+      } ],
+      "pendingDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "分类由我决定。",
+        "source" : "USER_CONFIRMED"
+      } ],
+      "facts" : [ ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      }
+    },
+    "modelInput" : {
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "executionRequirements" : [ {
+        "questionId" : "q",
+        "subject" : "局部委托要求",
+        "statement" : "只委托评分设计",
+        "destination" : "TASK",
+        "sourceQuestionIds" : [ "q" ]
+      }, {
+        "questionId" : "q",
+        "subject" : "未确认边界",
+        "statement" : "分类由我决定。",
+        "destination" : "CONSTRAINTS",
+        "sourceQuestionIds" : [ "q" ]
+      } ],
+      "pendingDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "分类由我决定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      } ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      },
+      "requirementBoundaryGuidance" : "",
+      "userMeaningAnchors" : [ ]
+    }
+  }, {
+    "result" : {
+      "optimizedPrompt" : "## 背景\n本次交付研究方法正文。\n\n## 任务\n撰写研究方法部分，保留原定评价目标。\n\n## 输出\n交付中文方法正文。\n按原定范围和格式直接交付正文，不先发补材料问卷；材料充分时直接成稿，不足时完成有依据的可修订初稿，不以大片填空模板替代正文。缺口只限制对应内容，不编造数据、引用或结论；重要未决条件集中说明一次，同一缺口不逐节重复标待确认；原要求的表格、代码及篇幅继续保留。\n\n## 约束\n不虚构事实。\n任务相关约束：\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n资料缺口与待定选择（仅影响对应内容；其余正文先完成）：\n- 该问题尚未确定：4 类任务具体指哪四类？ 用户说明：评分量尺以后确认。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收标准\n方法与研究问题一致，定义和比较条件可复核；已定与未决参数分开，不编造数据、结果、文献或已完成研究状态。",
+      "sections" : [ {
+        "type" : "BACKGROUND",
+        "title" : "背景",
+        "content" : "本次交付研究方法正文。"
+      }, {
+        "type" : "TASK",
+        "title" : "任务",
+        "content" : "撰写研究方法部分，保留原定评价目标。"
+      }, {
+        "type" : "OUTPUT",
+        "title" : "输出",
+        "content" : "交付中文方法正文。\n按原定范围和格式直接交付正文，不先发补材料问卷；材料充分时直接成稿，不足时完成有依据的可修订初稿，不以大片填空模板替代正文。缺口只限制对应内容，不编造数据、引用或结论；重要未决条件集中说明一次，同一缺口不逐节重复标待确认；原要求的表格、代码及篇幅继续保留。"
+      }, {
+        "type" : "CONSTRAINTS",
+        "title" : "约束",
+        "content" : "不虚构事实。\n任务相关约束：\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。\n资料缺口与待定选择（仅影响对应内容；其余正文先完成）：\n- 该问题尚未确定：4 类任务具体指哪四类？ 用户说明：评分量尺以后确认。\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }, {
+        "type" : "CLARIFICATIONS",
+        "title" : "待确认事项",
+        "content" : "- 该问题尚未确定：4 类任务具体指哪四类？ 用户说明：评分量尺以后确认。"
+      }, {
+        "type" : "ACCEPTANCE",
+        "title" : "验收标准",
+        "content" : "方法与研究问题一致，定义和比较条件可复核；已定与未决参数分开，不编造数据、结果、文献或已完成研究状态。"
+      } ],
+      "contextReport" : {
+        "customDescription" : "",
+        "technologyStack" : [ ],
+        "dependencies" : [ ],
+        "directoryTree" : [ ],
+        "fileSnippets" : [ ],
+        "analysisStatus" : "COMPLETE",
+        "fileCoverage" : [ ],
+        "warnings" : [ ],
+        "redactions" : [ ],
+        "analysisVersion" : "EMPTY"
+      },
+      "ambiguities" : [ "该问题尚未确定：4 类任务具体指哪四类？ 用户说明：评分量尺以后确认。" ],
+      "appliedConstraints" : [ "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。", "明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。", "说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。" ],
+      "templateCode" : "RESEARCH_ANALYSIS",
+      "provider" : {
+        "provider" : "offline-state-replay",
+        "model" : "offline",
+        "mock" : true,
+        "modelVersion" : ""
+      },
+      "latencyMs" : 0,
+      "warnings" : [ ],
+      "evidenceCards" : [ ],
+      "promptFormat" : "STRUCTURED"
+    },
+    "answer" : "评分量尺以后确认。",
+    "task" : {
+      "originalPrompt" : "撰写中文研究设计的方法部分，说明准确性、完整性、清晰度与可执行性评价以及分歧处理。\n4 类任务具体指哪四类？",
+      "effectivePrompt" : "撰写中文研究设计的方法部分，说明准确性、完整性、清晰度与可执行性评价以及分歧处理。\n4 类任务具体指哪四类？",
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "confirmedDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "评分量尺以后确认。",
+        "source" : "USER_CONFIRMED"
+      } ],
+      "executionRequirements" : [ ],
+      "pendingDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "评分量尺以后确认。",
+        "source" : "USER_CONFIRMED"
+      } ],
+      "facts" : [ ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      }
+    },
+    "modelInput" : {
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "executionRequirements" : [ ],
+      "pendingDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "评分量尺以后确认。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      } ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      },
+      "requirementBoundaryGuidance" : "",
+      "userMeaningAnchors" : [ ]
+    }
+  } ],
+  "kind" : "OFFLINE_SYNTHETIC_STATE_REPLAY_NOT_NEW_MODEL_INFERENCE"
+}

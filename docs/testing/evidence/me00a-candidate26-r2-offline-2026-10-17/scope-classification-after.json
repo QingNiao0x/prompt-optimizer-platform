@@ -1,0 +1,111 @@
+{
+  "observations" : [ {
+    "modelInput" : {
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "executionRequirements" : [ ],
+      "pendingDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "如果以后批准，再提出拟议设计。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      } ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      },
+      "requirementBoundaryGuidance" : "",
+      "userMeaningAnchors" : [ ]
+    },
+    "pendingCount" : 1,
+    "scopes" : [ "UNRESOLVED" ],
+    "independentStateGatePass" : true,
+    "answer" : "如果以后批准，再提出拟议设计。"
+  }, {
+    "modelInput" : {
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "executionRequirements" : [ {
+        "questionId" : "q",
+        "subject" : "局部委托要求",
+        "statement" : "只委托评分设计",
+        "destination" : "TASK",
+        "sourceQuestionIds" : [ "q" ]
+      }, {
+        "questionId" : "q",
+        "subject" : "未确认边界",
+        "statement" : "分类由我决定。",
+        "destination" : "CONSTRAINTS",
+        "sourceQuestionIds" : [ "q" ]
+      } ],
+      "pendingDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "分类由我决定。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      } ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      },
+      "requirementBoundaryGuidance" : "",
+      "userMeaningAnchors" : [ ]
+    },
+    "pendingCount" : 1,
+    "scopes" : [ "UNRESOLVED" ],
+    "independentStateGatePass" : true,
+    "answer" : "只委托评分设计，分类由我决定。"
+  }, {
+    "modelInput" : {
+      "intent" : {
+        "templateCode" : "RESEARCH_ANALYSIS",
+        "deliveryProfile" : "ACADEMIC_METHODS",
+        "status" : "RAW_GOAL",
+        "auxiliaryProfiles" : [ ],
+        "engineeringConstraints" : false
+      },
+      "executionRequirements" : [ ],
+      "pendingDecisions" : [ {
+        "questionId" : "q",
+        "question" : "4 类任务具体指哪四类？",
+        "topic" : "本次选择",
+        "scope" : "UNRESOLVED",
+        "answer" : "评分量尺以后确认。",
+        "source" : "USER_CONFIRMED",
+        "designDelegated" : false
+      } ],
+      "examples" : {
+        "mode" : "DISABLED",
+        "source" : "SWITCH_OFF",
+        "guidance" : "未要求示例，不主动追加示例段。"
+      },
+      "requirementBoundaryGuidance" : "",
+      "userMeaningAnchors" : [ ]
+    },
+    "pendingCount" : 1,
+    "scopes" : [ "UNRESOLVED" ],
+    "independentStateGatePass" : true,
+    "answer" : "评分量尺以后确认。"
+  } ],
+  "kind" : "SAME_PROBE_FROZEN_RUNTIME_COMPARISON",
+  "phase" : "after",
+  "realModelCalls" : 0
+}

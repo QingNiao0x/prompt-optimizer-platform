@@ -24,6 +24,16 @@ final class PlanAnswerSemantics {
     private static final Pattern CONDITIONAL_CONFIRMATION = Pattern.compile(
             "(?:若|如果|假如|假设)(?:以后|今后|将来|后续|未来|届时|日后|之后)?"
                     + "(?:用户|我们|我|您)?(?:只|仅)?(?:再)?(?:确认|确定|选定|明确)([^，,。；;！？!?]+)");
+    private static final String FUTURE = "(?:以后|今后|将来|后续|未来|届时|日后|之后)";
+    // 只认完整的延后选值断言；“以后确认新类别时保留旧分类”仍是可执行条件规则。
+    private static final Pattern DEFERRED_CHOICE = Pattern.compile(FUTURE
+            + "(?:再|另行)?(?:确认|确定|决定|选择|选定)[。.;；]?$");
+    private static final String RESERVED_SUFFIX = "由(?:我|我们|用户)(?:" + FUTURE
+            + ")?(?:来|自行|再)?(?:决定|确认|选择|选定)[。.;；]?$";
+    private static final Pattern RESERVED_CHOICE = Pattern.compile("^([^，,。；;！？!?]{1,80}?)" + RESERVED_SUFFIX);
+    private static final Pattern RESERVED_BOUNDARY = Pattern.compile("[,，](?=[^，,。；;！？!?]{1,80}?" + RESERVED_SUFFIX + ")");
+    private static final Pattern FUTURE_DESIGN_PERMISSION = Pattern.compile("^(?:若|如果|假如|假设)" + FUTURE
+            + "(?:用户|我们|我|您)?(?:批准|授权|同意)[，,](?:再|才)(?:提出|给出|开展|进行)(?:拟议|推荐)?设计[。.;；]?$");
 
     private PlanAnswerSemantics() { }
 
@@ -39,7 +49,14 @@ final class PlanAnswerSemantics {
         // 执行投影由任务视图保留原句；原始回答和不确认边界仍保留在服务端决定中。
         if (independentStatements(answer).stream().anyMatch(value -> value.kind() == StatementKind.NON_CONFIRMATION)) return "";
         List<String> clauses = clauses(answer);
-        if (clauses.isEmpty() || pendingClause(clauses.getFirst())) return "";
+        if (clauses.isEmpty()) return "";
+        if (pendingClause(clauses.getFirst())) {
+            // 新识别的未来／保留选择不吞掉后句明确的当前确认；普通待定后的建议仍不升格为已选。
+            if (!postponedDecision(clauses.getFirst())) return "";
+            return clauses.stream().filter(clause -> !pendingClause(clause) && clause.matches(
+                    "^(?:现在|目前|本次|现已)(?:已)?(?:明确|确认|确定|选择|选定|采用).+"))
+                    .collect(java.util.stream.Collectors.joining(" "));
+        }
         return clauses.stream().filter(clause -> !pendingClause(clause))
                 .collect(java.util.stream.Collectors.joining(" "));
     }
@@ -47,7 +64,8 @@ final class PlanAnswerSemantics {
     /** 明确拒绝确认时保留其余独立事实与委托；不据任意事实句推断其已回答了参数题。 */
     static List<IndependentStatement> independentStatements(String answer) {
         List<String> clauses = clauses(answer);
-        if (clauses.isEmpty() || clauses.stream().noneMatch(PlanAnswerSemantics::declinedChoice)) return List.of();
+        if (clauses.isEmpty() || clauses.stream().noneMatch(clause -> declinedChoice(clause)
+                || reservedChoice(clause))) return List.of();
         var statements = new java.util.ArrayList<IndependentStatement>();
         for (String clause : clauses) {
             StatementKind kind = independentKind(clause);
@@ -59,7 +77,7 @@ final class PlanAnswerSemantics {
 
     /** 仅识别有自身主语的状态句、显式委托句和拒绝确认句，不从领域关键词猜参数取值。 */
     private static StatementKind independentKind(String clause) {
-        if (declinedChoice(clause)) return StatementKind.NON_CONFIRMATION;
+        if (declinedChoice(clause) || reservedChoice(clause)) return StatementKind.NON_CONFIRMATION;
         if (clause.matches("^(?:若|如果|假如|假设|例如|示例|引用).*")) return null;
         if (clause.matches("^(?:这|此)(?:是|为)(?:一项|一个|一次|一份)?(?:尚未|仍未|暂未|已经|已)"
                         + "(?:实施|开展|启动|完成)的(?:研究|项目|任务|工作|实验|调查)[。；;]?$")
@@ -69,6 +87,11 @@ final class PlanAnswerSemantics {
             return StatementKind.CURRENT_STATE;
         if (clause.matches("^(?:请)?(?:根据|依据)[^。；;]{1,160}(?:提出|设计|推荐|给出|制定)[^。；;]{1,300}[。；;]?$") )
             return StatementKind.DELEGATION;
+        // 局部委托只保留该执行指令，不能因“评分设计”获得分类或全部方法的当前设计权限。
+        if (clause.matches("^(?:当前|目前|本次)?(?:请)?(?:只|仅)?委托[^，,。；;]{1,80}设计[。；;]?$")) return StatementKind.LIMITED_DELEGATION;
+        // 同一局部委托后的完整禁令与例外保留为边界；不把它们拼进绑定参数的已选值。
+        if (clause.matches("^(?:不得|禁止|不要)(?:为|对)[^，,。；;]{1,80}(?:推荐|设计)[^，,。；;]{1,80}[，,。；;]?$")
+                || clause.matches("^(?:但|不过|然而)[^，,。；;]{1,80}例外[。；;]?$")) return StatementKind.NON_CONFIRMATION;
         return null;
     }
 
@@ -82,7 +105,7 @@ final class PlanAnswerSemantics {
     }
 
     /** 分类仅服务内部执行投影，不增加公开确认枚举或允许模型自报已选状态。 */
-    enum StatementKind { CURRENT_STATE, DELEGATION, NON_CONFIRMATION }
+    enum StatementKind { CURRENT_STATE, DELEGATION, LIMITED_DELEGATION, NON_CONFIRMATION }
 
     /** text 是用户回答的完整原句；不补题干对象，不丢掉否定或条件。 */
     record IndependentStatement(String text, StatementKind kind) { }
@@ -96,7 +119,8 @@ final class PlanAnswerSemantics {
                 .map(PlanAnswerSemantics::namedContinuation).distinct().toList();
         boolean named = pending.stream().anyMatch(PlanAnswerSemantics::namesPendingSubject);
         // “暂不确定。寿命表尚未提供”是一个缺口的总括与展开；不再把总括登记为第二个业务问题。
-        return named ? pending.stream().filter(PlanAnswerSemantics::namesPendingSubject).toList() : pending;
+        // 未来设计许可不是“暂不确定”总括；即使另一子项具名，也不能丢掉独立的授权条件。
+        return named ? pending.stream().filter(part -> namesPendingSubject(part) || postponedDecision(part)).toList() : pending;
     }
 
     /**
@@ -112,6 +136,7 @@ final class PlanAnswerSemantics {
     /** 有明确业务主语的未决子句可独立展示；裸“暂不确定”仍需继承服务端原题才能保持含义。 */
     static boolean namesPendingSubject(String clause) {
         if (CONDITIONAL_CONFIRMATION.matcher(clause).find()) return !pendingSubject(clause).isBlank();
+        if (reservedChoice(clause)) return true;
         var pending = pendingMarker(clause);
         if (pending.isEmpty()) return false;
         String subject = clause.substring(0, pending.get().start()).replaceFirst("^(?:但|不过|然而)", "")
@@ -122,6 +147,8 @@ final class PlanAnswerSemantics {
 
     /** 未决断言前的完整对象与属性；只移除紧邻状态词的程度副词，不删业务名、数值或条件。 */
     static String pendingSubject(String clause) {
+        var reserved = RESERVED_CHOICE.matcher(clause);
+        if (reservedChoice(clause) && reserved.matches()) return reserved.group(1).strip();
         var conditional = CONDITIONAL_CONFIRMATION.matcher(clause);
         if (conditional.find()) {
             // 单字“为”可能属于“行为指标”等对象名，只在明确参数属性后将它识别为赋值动作。
@@ -139,9 +166,11 @@ final class PlanAnswerSemantics {
         var historical = Pattern.compile("^(?:之前|此前|原先|过去|先前|原本)[^，,。；;]*(?:不确定|未确定)[，,。；;]((?:现在|目前|本次|现已)(?:已)?(?:明确|确认|确定|选择|采用).+)$")
                 .matcher(current);
         if (historical.matches()) current = historical.group(1);
-        // 逗号只在明确拒绝确认动作前形成独立句；其余对象、数值和条件继续整体保留。
-        return Arrays.stream(BOUNDARY.split(current)).flatMap(part -> part.strip().matches("^(?:若|如果|假如|假设|当|仅当|只有|仅在|只在).*")
+        // 逗号只在完整的拒绝／保留选择前形成独立句；其余对象、数值和条件继续整体保留。
+        return Arrays.stream(BOUNDARY.split(current)).flatMap(part -> part.strip().matches("^(?:若|如果|假如|假设|当(?!前)|仅当|只有|仅在|只在).*")
                         ? java.util.stream.Stream.of(part) : Arrays.stream(DECLINED_CHOICE_BOUNDARY.split(part)))
+                .flatMap(part -> part.strip().matches("^(?:若|如果|假如|假设|当(?!前)|仅当|只有|仅在|只在).*")
+                        ? java.util.stream.Stream.of(part) : Arrays.stream(RESERVED_BOUNDARY.split(part)))
                 .map(String::strip)
                 .filter(value -> !value.isEmpty()).toList();
     }
@@ -151,6 +180,7 @@ final class PlanAnswerSemantics {
         // “如果以后确认乙指标”只登记未来选择，不得借确认甲指标的回答升级为乙指标已选定。
         // 普通“若取消则保留原值”不含条件化确认动作，仍是可执行的业务规则。
         if (CONDITIONAL_CONFIRMATION.matcher(clause).find()) return true;
+        if (FUTURE_DESIGN_PERMISSION.matcher(clause).matches()) return true;
         if (pendingMarker(clause).isEmpty()) return false;
         // “未提供的工程细节先核查”是对未展示实现的核查指令，不是撤销前面已选定的业务值。
         // 只接受这个明确的条件化工程表达；具体版本、生效时间或业务口径未定仍属于未决部分。
@@ -170,6 +200,10 @@ final class PlanAnswerSemantics {
      * 裸 unknown、TBD 和同句的真实未决口径继续生效，业务状态不能掩盖后半句的未知。
      */
     private static Optional<MatchResult> pendingMarker(String clause) {
+        var reserved = RESERVED_CHOICE.matcher(clause);
+        if (reservedChoice(clause) && reserved.matches()) return Optional.of(reserved.toMatchResult());
+        var deferred = DEFERRED_CHOICE.matcher(clause);
+        if (deferredChoice(clause) && deferred.find()) return Optional.of(deferred.toMatchResult());
         var declined = DECLINED_CHOICE.matcher(clause);
         if (declinedChoice(clause) && declined.matches()) return Optional.of(declined.toMatchResult());
         var marker = PENDING.matcher(clause);
@@ -189,5 +223,30 @@ final class PlanAnswerSemantics {
             return Optional.of(marker.toMatchResult());
         }
         return Optional.empty();
+    }
+
+    /** 未真正作答的延后／保留声明仍绑定原题；具名的其他参数不能替原题取得确认。 */
+    static boolean postponedDecision(String clause) {
+        return FUTURE_DESIGN_PERMISSION.matcher(clause).matches()
+                || reservedChoice(clause) || deferredChoice(clause);
+    }
+
+    /** 保留选择须为当前完整断言；条件、引用、示例和否认延后本身不新增未决状态。 */
+    private static boolean reservedChoice(String clause) {
+        var reserved = RESERVED_CHOICE.matcher(clause);
+        return currentDecisionAssertion(clause) && reserved.matches()
+                && !reserved.group(1).matches(".*(?:不是|并非|不|无需|不用|不必|不得|不能)$");
+    }
+
+    /** 仅把位于句末的未来确认动作当作待定；保留原先普通业务条件的判断顺序。 */
+    private static boolean deferredChoice(String clause) {
+        return currentDecisionAssertion(clause) && DEFERRED_CHOICE.matcher(clause).find();
+    }
+
+    /** 排除明确的引用／条件引导和紧邻状态谓词的否定，不根据对象名中的单字“不”作删除。 */
+    private static boolean currentDecisionAssertion(String clause) {
+        return !clause.matches("^(?:若|如果|假如|假设|当(?!前)|仅当|只有|仅在|只在|例如|示例|引用|[>‘’“”\\\"'`]).*")
+                && !clause.matches(".*(?:不是|并非|不必|无需|不用|不得|不应)(?:以后|今后|将来|后续|未来|届时|日后|之后)?"
+                    + "(?:再|另行)?(?:确认|确定|决定|选择|选定)[。.;；]?$");
     }
 }

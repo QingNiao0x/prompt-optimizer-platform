@@ -64,6 +64,8 @@ final class ConfirmedDecisionSet {
                     if (named && inheritsConditionalSubject(decision.question(), part)) named = false;
                     boolean explanationOnly = PlanAnswerSemantics.confirmedPart(decision.answer()).isBlank()
                             && PlanAnswerSemantics.pendingParts(decision.answer()).size() == 1;
+                    // 单独说明“另一参数以后确认”并未回答服务端原题；提醒保留原绑定，不把原题换成另一个属性。
+                    if (explanationOnly && PlanAnswerSemantics.postponedDecision(part)) named = false;
                     // 明确拒绝确认且各句已独立投影时，提醒只带未确认原句；完整来源仍在 decisions 中。
                     // 否则会把已落实的研究状态和委托要求按每个参数题再次塞回最终正文。
                     boolean independentlyProjected = !PlanAnswerSemantics.independentStatements(decision.answer()).isEmpty();
@@ -72,7 +74,8 @@ final class ConfirmedDecisionSet {
                             && part.matches("(?s).*(?:尚未|仍未|未)核实.*")) named = false;
                     return new ConfirmedPlanDecision(decision.questionId(), named ? part : decision.question(),
                             named ? topic(part, decision.questionId()) : decision.topic(), Scope.UNRESOLVED,
-                            independentlyProjected || named && !explanationOnly ? part : decision.answer());
+                            independentlyProjected || PlanAnswerSemantics.postponedDecision(part)
+                                    || named && !explanationOnly ? part : decision.answer());
                 })).toList();
     }
 

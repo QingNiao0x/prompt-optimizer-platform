@@ -56,13 +56,15 @@ public final class EffectiveTaskViewFactory {
         if (!independent.isEmpty()) return independent.stream().map(statement -> {
             PromptSectionType destination = switch (statement.kind()) {
                 case CURRENT_STATE -> PromptSectionType.BACKGROUND;
-                case DELEGATION -> PromptSectionType.TASK;
+                case DELEGATION, LIMITED_DELEGATION -> PromptSectionType.TASK;
                 case NON_CONFIRMATION -> PromptSectionType.CONSTRAINTS;
             };
             // 原问题 ID 与文案保留来源；subject 不把回答自身的主语替换成未作答的参数名。
             String subject = switch (statement.kind()) {
                 case CURRENT_STATE -> "用户说明";
                 case DELEGATION -> "委托要求";
+                // 局部指令照常执行，但不能据同一个来源题ID授权另一个尚未选择的参数。
+                case LIMITED_DELEGATION -> "局部委托要求";
                 case NON_CONFIRMATION -> "未确认边界";
             };
             return new ExecutionRequirement(decision.questionId(), decision.question(), subject,
