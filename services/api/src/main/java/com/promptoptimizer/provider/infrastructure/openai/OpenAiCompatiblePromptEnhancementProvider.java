@@ -83,6 +83,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     private static final String ENHANCEMENT_REPAIR_INSTRUCTION = """
             平台结构化输出修复要求：上一次响应未通过校验。请基于前面的原始输入重新生成，且只返回一个 JSON 对象，不要 Markdown 代码围栏、解释或额外字段。
             顶层必须包含 sections 和 ambiguities：sections 必须包含且各出现一次 BACKGROUND、TASK、OUTPUT、CONSTRAINTS；每个段落的 title 与 content 都必须是非空字符串；ambiguities 必须是 0 至 8 个字符串的数组。
+            同一顶层还必须包含 assessment 对象，其内部包含 sufficiency、gaps、presentation，不能把 presentation 移到顶层。sufficiency 只能为 SUFFICIENT 或 NEEDS_COMPLETION，presentation 只能为 COMPACT 或 STRUCTURED。
+            SUFFICIENT 的 gaps 为空；NEEDS_COMPLETION 的 gaps 为 1 至 6 项，每项包含 kind、missing、completion、basis，后三项是说明实质缺口、补全及输入依据的非空字符串。kind 只能为 EXECUTION_STEP、INPUT_OUTPUT、EDGE_CASE、QUALITY_CHECK、PROFESSIONAL_OPTION、USER_DECISION。
+            ambiguities 只列本次新增且确需用户决定的问题；已有 pendingDecisions 由平台保留。仍有实质补全缺口并输出 ambiguities 时，assessment.gaps 应如实包含对应 USER_DECISION，不把它归为普通专业建议；不能靠清空重要问题或伪造用户选择通过校验。
             """;
     private static final String PLANNING_REPAIR_INSTRUCTION = """
             平台结构化输出修复要求：上一次响应未通过校验。请基于前面的原始输入重新生成，且只返回一个 JSON 对象，不要 Markdown 代码围栏、解释或额外字段。
@@ -148,7 +151,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             13. 改写不得改变明确规则的否定、适用对象、触发条件、例外、数值、比较符和单位。保留取消时原值不等于取消保留逻辑，
                 只向空字段补值不等于把字段清空，0 和 false 不得被当成空值。报告字数、研究范围、证据要求同样必须保真。
                 输出前核对 TASK、OUTPUT、CONSTRAINTS、ACCEPTANCE 之间没有相反要求；不能靠在末尾追加正确原文掩盖前面的错误指令。
-                真正未决的问题继续放在 ambiguities；平台会将归并后的执行前提写入可复制正文，未确认不能视为授权猜测。
+                新发现且尚未由 pendingDecisions 覆盖的真正未决问题放在 ambiguities；平台会将归并后的执行前提写入可复制正文，未确认不能视为授权猜测。
                 已确认的旧选择要改写成执行要求，不得把 rawPrompt 中旧的“需要先确认选哪一个”重新列为当前待办；独立约束、新取值与新条件仍须保留。
             14. 面向用户的正文和提醒使用自然语言，不展示 taskView、executionRequirements、confirmedDecisions、planAnswers、questionId、sourceQuestionIds、designDelegated、scope 或 analysisStatus 等内部协议名；需要关联时仅使用 ambiguityReferences。
                 taskView.examples.mode=REQUIRED 表示已要求下游提供与任务相关的输入和预期输出示例，不是让平台先执行用户任务；明确该要求，不再写“仅在用户要求时”或“必要时”。演示材料明确标注虚构，不作为正式事实或已确认口径。其余 mode 遵守禁例或严格格式，不主动加示例。原始需求明确要示例时，关闭开关不取消它。

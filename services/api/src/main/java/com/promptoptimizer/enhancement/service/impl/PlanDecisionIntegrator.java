@@ -29,8 +29,9 @@ final class PlanDecisionIntegrator {
 
     /** 同一确认在四要素正文内有权威表达即视为覆盖；示例和验收提及不能代替执行要求。 */
     static void integrate(Map<PromptSectionType, PromptSection> sections, EffectiveTaskView task) {
+        List<String> boundStatements = taskBoundResearchStatements(sections, task);
         for (ExecutionRequirement requirement : task.executionRequirements()) {
-            List<String> missing = missingStatements(sections, requirement);
+            List<String> missing = missingStatements(sections, requirement, boundStatements);
             if (missing.isEmpty()) continue;
             PromptSection current = sections.get(requirement.destination());
             // 多项回答分别核对；只补缺项，不因一个子项缺失就复制整份答案和已落实的要求。
@@ -103,6 +104,12 @@ final class PlanDecisionIntegrator {
     /** 强边界子句可分别落实；带条件或限定对象的回答保持整体，不能拆掉条件后误认覆盖。 */
     private static List<String> missingStatements(Map<PromptSectionType, PromptSection> sections,
             ExecutionRequirement requirement) {
+        return missingStatements(sections, requirement, List.of());
+    }
+
+    /** 绑定来源的等价句仅用于本次覆盖检查，不写回正文、不修改题答或来源记录。 */
+    private static List<String> missingStatements(Map<PromptSectionType, PromptSection> sections,
+            ExecutionRequirement requirement, List<String> boundStatements) {
         if (genericDelegation(requirement)
                 && delegatedQuestionCovered(sections, requirement.question())) return List.of();
         List<String> statements = executableClauses(requirement);
@@ -112,8 +119,55 @@ final class PlanDecisionIntegrator {
                 .flatMap(entry -> (genericDelegation(requirement)
                         ? delegationSentences(entry.getValue().content()) : currentSentences(entry.getValue().content())).stream())
                 .toList();
-        return statements.stream().filter(statement -> body.stream().noneMatch(sentence -> covers(sentence, statement, requirement)))
+        return statements.stream().filter(statement -> java.util.stream.Stream.concat(body.stream(), boundStatements.stream())
+                        .noneMatch(sentence -> covers(sentence, statement, requirement)))
                 .toList();
+    }
+
+    /**
+     * 仅在唯一用户研究主题逐字相同、状态与完整委托均有适用表达时识别已知等价句。
+     * 整行限定先于分句过滤，避免分号、句号把后置例外或其他研究的作用域擦掉。
+     */
+    private static List<String> taskBoundResearchStatements(Map<PromptSectionType, PromptSection> sections,
+            EffectiveTaskView task) {
+        var topics = task.meaning().anchors().stream()
+                .filter(anchor -> anchor.role() == com.promptoptimizer.provider.domain.TaskMeaningContract.Role.RESEARCH_TOPIC)
+                .map(anchor -> Normalizer.normalize(anchor.text(), Normalizer.Form.NFKC)).distinct().toList();
+        if (topics.size() != 1) return List.of();
+        String topic = Pattern.quote(topics.getFirst());
+        String introduction = "^(?:本研究主题为|研究主题为)" + topic + "[,;]";
+        String directive = "^撰写(?:中文)?研究设计的方法部分,围绕" + topic
+                + "(?:这一主题,)?提出可开展的推荐设计,?并说明适用条件[。;]?$";
+        var proofs = new java.util.LinkedHashSet<String>();
+        for (var entry : sections.entrySet()) {
+            if (!List.of(PromptSectionType.BACKGROUND, PromptSectionType.TASK,
+                    PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS).contains(entry.getKey())) continue;
+            String content = entry.getValue().content();
+            if (content.lines().anyMatch(line -> line.strip().matches(
+                    "^(?:[-*•]\\s*)?(?:但|仅限|仅就|除非|除外|例外|以上仅|上述仅).*"))) continue;
+            // 原行必须无引用、条件、否定或例外；当前语句过滤继续负责围栏、表格与跨行外部作用域。
+            var eligible = content.lines().filter(line -> !line.startsWith("    ") && !line.startsWith("\t"))
+                    .map(line -> Normalizer.normalize(line, Normalizer.Form.NFKC))
+                    .filter(line -> !line.matches("(?s).*(?:如果|假如|若以后|未来|以后|仅限|仅就|但|除非|除外|例外|例如|示例|引用|原文|不是|并非|无需|不必|[<>`\"“”‘’]).*"))
+                    .filter(line -> !line.contains("研究主题为") || Pattern.compile(introduction).matcher(
+                            line.strip().replaceFirst("^[-*•]\\s*", "")).find()
+                            || currentSentences(line).stream().anyMatch(sentence -> Pattern.compile(introduction)
+                                .matcher(sentence.strip()).find()))
+                    .flatMap(line -> currentSentences(line).stream())
+                    .map(sentence -> sentence.strip().replaceFirst("^[-*•]\\s*", ""))
+                    .collect(java.util.stream.Collectors.toSet());
+            for (String sentence : currentSentences(content)) {
+                String value = Normalizer.normalize(sentence, Normalizer.Form.NFKC).strip().replaceFirst("^[-*•]\\s*", "");
+                if (!eligible.contains(value)) continue;
+                String state = value.replaceFirst(introduction, "");
+                if (state.matches("^(?:当前|目前)(?:仅为|只是)拟定研究,尚未实施,(?:也)?没有额外真实数据[。;]?$")) {
+                    proofs.add("当前只是拟定研究,尚未实施");
+                    proofs.add("我没有额外真实数据");
+                }
+                if (value.matches(directive)) proofs.add(DELEGATION_STATEMENT);
+            }
+        }
+        return List.copyOf(proofs);
     }
 
     /** 保留原句条件与数值，只拆明确并列的完整指令；短答的对象由 statement 保留。 */

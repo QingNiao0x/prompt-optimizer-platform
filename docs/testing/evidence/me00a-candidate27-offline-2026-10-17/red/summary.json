@@ -1,0 +1,62 @@
+[
+  {
+    "report": "TEST-com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest.xml",
+    "counts": {
+      "{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation": "https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd",
+      "version": "3.0",
+      "name": "com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest",
+      "time": "0.82",
+      "tests": "24",
+      "errors": "0",
+      "skipped": "0",
+      "failures": "6"
+    },
+    "sha256": "4676a0766a25a62ce0dbf2709e859d1bbb5d97b6cd6cbf9bfb75521a1e1e6570",
+    "failures": [
+      {
+        "name": "completeSameTopicDirectiveDoesNotNeedTheLiteralDelegationSentence(String)[1]",
+        "message": "\nexpected: \"撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。\"\n but was: \"撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。\n- 请根据原始研究目标提出可开展的推荐设计并说明适用条件；\""
+      },
+      {
+        "name": "completeSameTopicDirectiveDoesNotNeedTheLiteralDelegationSentence(String)[3]",
+        "message": "\nexpected: \"- 撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。\"\n but was: \"- 撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。\n- 请根据原始研究目标提出可开展的推荐设计并说明适用条件；\""
+      },
+      {
+        "name": "completeCurrentStateDoesNotAppendAnotherStatusOrDataDeclaration(String)[1]",
+        "message": "\nexpected: \"研究主题为Plan问答对提示词质量的影响，当前仅为拟定研究，尚未实施，也没有额外真实数据。\"\n but was: \"研究主题为Plan问答对提示词质量的影响，当前仅为拟定研究，尚未实施，也没有额外真实数据。\n- 这是尚未实施的研究。\n- 我没有额外真实数据\""
+      },
+      {
+        "name": "completeCurrentStateDoesNotAppendAnotherStatusOrDataDeclaration(String)[2]",
+        "message": "\nexpected: \"本研究主题为Plan问答对提示词质量的影响；当前仅为拟定研究，尚未实施，也没有额外真实数据。\"\n but was: \"本研究主题为Plan问答对提示词质量的影响；当前仅为拟定研究，尚未实施，也没有额外真实数据。\n- 我没有额外真实数据\""
+      },
+      {
+        "name": "completeCurrentStateDoesNotAppendAnotherStatusOrDataDeclaration(String)[3]",
+        "message": "\nexpected: \"研究主题为Plan问答对提示词质量的影响,目前只是拟定研究,尚未实施,也没有额外真实数据。\"\n but was: \"研究主题为Plan问答对提示词质量的影响,目前只是拟定研究,尚未实施,也没有额外真实数据。\n- 这是尚未实施的研究。\n- 我没有额外真实数据\""
+      },
+      {
+        "name": "captured329AddsNoneOfTheThreeAlreadyExpressedRequirementsAndKeepsAllSources",
+        "message": "\nexpected: {BACKGROUND=PromptSection[type=BACKGROUND, title=背景, content=本部分面向研究生学位研究的方法章节。研究主题为Plan问答对提示词质量的影响，当前仅为拟定研究，尚未实施，也没有额外真实数据。方法部分需说明研究设计、任务与重复安排、比较条件、随机化与盲法、评价指标与分歧处理，以及统计分析计划。], TASK=PromptSection[type=TASK, title=任务, content=撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。\n\n- 保留既定设计要素：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。\n- 比较直接增强与Plan两种模式，并另设两组获得相同确认信息的公平对照。\n- 说明随机化、盲法、准确性、完整性、清晰度与可执行性的评价，以及评审分歧处理。\n- 对尚未确定的参数给出拟议主方案并标明为拟议设计及适用条件，包括：4类任务的具体类别与20个任务的来源和确定方式；Plan交互的轮次与终止条件；两组公平对照的具体条件；两名评审的分工与分歧处理规则；伦理审查与知情同意安排。\n- 公平对照须落实到信息流：两组接收并可使用同一原始任务与同一份实际确认信息；直接组不追问不等于不能使用已提供答案；不改写任一组的回答、不另换任务、不只增加某组修订轮次。\n- 评价步骤中以提示词为评价对象，准确性、完整性、清晰度与可执行性均针对提示词质量评分；说明评审所见材料及盲化方式。\n- 具体统计检验依据未来数据分布和配对结构选择，可列出候选方法及适用前提，不预设必然显著；方法收益由对应组间比较判断，不以一组显著而另一组不显著直接证明两组效果不同。\n- 说明缺失数据、偏倚与不确定性的处理及方法适用条件，保证分析过程可复现。], OUTPUT=PromptSection[type=OUTPUT, title=输出, content=交付中文研究设计的方法部分正文，800至1200个汉字，附表另计。正文按方法章节组织，覆盖任务与样本安排、比较条件与公平对照、随机化与盲法、评价指标与评审分歧处理、统计分析计划及适用条件。不提供代码。], CONSTRAINTS=PromptSection[type=CONSTRAINTS, title=约束, content=- 当前为拟定研究，不得把拟定样本写成已纳入样本，不得写成研究已完成或已实施。\n- 不得编造效应量、P值、参考文献或显著性结论，不得使用假设或虚构数据，包括测试与验证用途。\n- 不确认任何既有参数：任务类别与来源、Plan轮次与终止条件、公平对照条件、评审分工与分歧规则、伦理审查安排均保持未决，正文只能以拟议设计表述并说明适用条件，不得写成已选定事实。\n- 明确区分已知事实、用户确认信息与拟议设计，不得把猜测写成事实。\n- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。\n- 不提供代码。], ACCEPTANCE=PromptSection[type=ACCEPTANCE, title=验收, content=- 方法与研究问题一致，定义和比较条件可复核。\n- 已定要素与拟议设计、未决参数分开表述，不编造数据、结果、文献或已完成研究状态。\n- 正文汉字数在800至1200之间，附表另计。]}\n but was: {BACKGROUND=PromptSection[type=BACKGROUND, title=背景, con"
+      }
+    ]
+  },
+  {
+    "report": "TEST-com.promptoptimizer.provider.infrastructure.openai.CandidateTwentySevenRepairProtocolTest.xml",
+    "counts": {
+      "{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation": "https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd",
+      "version": "3.0",
+      "name": "com.promptoptimizer.provider.infrastructure.openai.CandidateTwentySevenRepairProtocolTest",
+      "time": "0.438",
+      "tests": "3",
+      "errors": "0",
+      "skipped": "0",
+      "failures": "1"
+    },
+    "sha256": "e67901a8bd3e7ab11c11fadd778fca79fbb1f76d94097189b73ab4652709248f",
+    "failures": [
+      {
+        "name": "aJsonFailureStillGetsTheWholeAssessmentContractOnTheFinalRepair",
+        "message": "\nExpecting actual:\n  \"平台结构化输出修复要求：上一次响应未通过校验。请基于前面的原始输入重新生成，且只返回一个 JSON 对象，不要 Markdown 代码围栏、解释或额外字段。\n顶层必须包含 sections 和 ambiguities：sections 必须包含且各出现一次 BACKGROUND、TASK、OUTPUT、CONSTRAINTS；每个段落的 title 与 content 都必须是非空字符串；ambiguities 必须是 0 至 8 个字符串的数组。\n\"\nto contain:\n  [\"assessment\",\n    \"sufficiency\",\n    \"gaps\",\n    \"presentation\",\n    \"USER_DECISION\",\n    \"SUFFICIENT\",\n    \"NEEDS_COMPLETION\",\n    \"COMPACT\",\n    \"STRUCTURED\",\n    \"missing\",\n    \"completion\",\n    \"basis\"]\nbut could not find:\n  [\"assessment\",\n    \"sufficiency\",\n    \"gaps\",\n    \"presentation\",\n    \"USER_DECISION\",\n    \"SUFFICIENT\",\n    \"NEEDS_COMPLETION\",\n    \"COMPACT\",\n    \"STRUCTURED\",\n    \"missing\",\n    \"completion\",\n    \"basis\"]\n "
+      }
+    ]
+  }
+]

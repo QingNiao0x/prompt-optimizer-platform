@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.82" tests="24" errors="0" skipped="0" failures="6">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="GBK"/>
+    <property name="java.class.path" value="E:\MyProject\prompt-optimizer-platform\tmp\me00a-candidate27-20261017\build\test-classes;E:\MyProject\prompt-optimizer-platform\tmp\me00a-candidate27-20261017\build\classes;E:\Delelop\localRepository\com\aliyun\dypnsapi20170525\2.0.0\dypnsapi20170525-2.0.0.jar;E:\Delelop\localRepository\com\aliyun\tea-util\0.2.23\tea-util-0.2.23.jar;E:\Delelop\localRepository\com\aliyun\tea-openapi\0.3.10\tea-openapi-0.3.10.jar;E:\Delelop\localRepository\com\aliyun\credentials-java\1.0.1\credentials-java-1.0.1.jar;E:\Delelop\localRepository\com\aliyun\credentials-api\1.0.0\credentials-api-1.0.0.jar;E:\Delelop\localRepository\com\aliyun\alibabacloud-gateway-spi\0.0.2\alibabacloud-gateway-spi-0.0.2.jar;E:\Delelop\localRepository\com\aliyun\tea-xml\0.1.6\tea-xml-0.1.6.jar;E:\Delelop\localRepository\org\dom4j\dom4j\2.0.3\dom4j-2.0.3.jar;E:\Delelop\localRepository\org\jacoco\org.jacoco.agent\0.8.4\org.jacoco.agent-0.8.4-runtime.jar;E:\Delelop\localRepository\com\aliyun\endpoint-util\0.0.8\endpoint-util-0.0.8.jar;E:\Delelop\localRepository\com\aliyun\tea\1.3.1\tea-1.3.1.jar;E:\Delelop\localRepository\com\squareup\okhttp3\okhttp\4.12.0\okhttp-4.12.0.jar;E:\Delelop\localRepository\com\squareup\okio\okio\3.6.0\okio-3.6.0.jar;E:\Delelop\localRepository\com\squareup\okio\okio-jvm\3.6.0\okio-jvm-3.6.0.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-common\1.9.25\kotlin-stdlib-common-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-jdk8\1.9.25\kotlin-stdlib-jdk8-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib\1.9.25\kotlin-stdlib-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\annotations\13.0\annotations-13.0.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-jdk7\1.9.25\kotlin-stdlib-jdk7-1.9.25.jar;E:\Delelop\localRepository\org\slf4j\slf4j-api\2.0.17\slf4j-api-2.0.17.jar;E:\Delelop\localRepository\com\aliyun\openapiutil\0.2.2\openapiutil-0.2.2.jar;E:\Delelop\localRepository\org\bouncycastle\bcprov-jdk18on\1.78.1\bcprov-jdk18on-1.78.1.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-web\3.3.13\spring-boot-starter-web-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter\3.3.13\spring-boot-starter-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot\3.3.13\spring-boot-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-logging\3.3.13\spring-boot-starter-logging-3.3.13.jar;E:\Delelop\localRepository\ch\qos\logback\logback-classic\1.5.18\logback-classic-1.5.18.jar;E:\Delelop\localRepository\ch\qos\logback\logback-core\1.5.18\logback-core-1.5.18.jar;E:\Delelop\localRepository\org\apache\logging\log4j\log4j-to-slf4j\2.23.1\log4j-to-slf4j-2.23.1.jar;E:\Delelop\localRepository\org\slf4j\jul-to-slf4j\2.0.17\jul-to-slf4j-2.0.17.jar;E:\Delelop\localRepository\jakarta\annotation\jakarta.annotation-api\2.1.1\jakarta.annotation-api-2.1.1.jar;E:\Delelop\localRepository\org\yaml\snakeyaml\2.2\snakeyaml-2.2.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-json\3.3.13\spring-boot-starter-json-3.3.13.jar;E:\Delelop\localRepository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.17.3\jackson-datatype-jdk8-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.17.3\jackson-module-parameter-names-2.17.3.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-tomcat\3.3.13\spring-boot-starter-tomcat-3.3.13.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-core\10.1.42\tomcat-embed-core-10.1.42.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-websocket\10.1.42\tomcat-embed-websocket-10.1.42.jar;E:\Delelop\localRepository\org\springframework\spring-web\6.1.21\spring-web-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-beans\6.1.21\spring-beans-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-webmvc\6.1.21\spring-webmvc-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-context\6.1.21\spring-context-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-expression\6.1.21\spring-expression-6.1.21.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-validation\3.3.13\spring-boot-starter-validation-3.3.13.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-el\10.1.42\tomcat-embed-el-10.1.42.jar;E:\Delelop\localRepository\org\hibernate\validator\hibernate-validator\8.0.2.Final\hibernate-validator-8.0.2.Final.jar;E:\Delelop\localRepository\jakarta\validation\jakarta.validation-api\3.0.2\jakarta.validation-api-3.0.2.jar;E:\Delelop\localRepository\org\jboss\logging\jboss-logging\3.5.3.Final\jboss-logging-3.5.3.Final.jar;E:\Delelop\localRepository\com\fasterxml\classmate\1.7.0\classmate-1.7.0.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-security\3.3.13\spring-boot-starter-security-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-aop\6.1.21\spring-aop-6.1.21.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-config\6.3.10\spring-security-config-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-web\6.3.10\spring-security-web-6.3.10.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-actuator\3.3.13\spring-boot-starter-actuator-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-actuator-autoconfigure\3.3.13\spring-boot-actuator-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-actuator\3.3.13\spring-boot-actuator-3.3.13.jar;E:\Delelop\localRepository\io\micrometer\micrometer-observation\1.13.15\micrometer-observation-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-commons\1.13.15\micrometer-commons-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-jakarta9\1.13.15\micrometer-jakarta9-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-core\1.13.15\micrometer-core-1.13.15.jar;E:\Delelop\localRepository\org\hdrhistogram\HdrHistogram\2.2.2\HdrHistogram-2.2.2.jar;E:\Delelop\localRepository\org\latencyutils\LatencyUtils\2.0.3\LatencyUtils-2.0.3.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot3-starter\3.5.17\mybatis-plus-spring-boot3-starter-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus\3.5.17\mybatis-plus-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-core\3.5.17\mybatis-plus-core-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-annotation\3.5.17\mybatis-plus-annotation-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring\3.5.17\mybatis-plus-spring-3.5.17.jar;E:\Delelop\localRepository\org\mybatis\mybatis\3.5.19\mybatis-3.5.19.jar;E:\Delelop\localRepository\org\mybatis\mybatis-spring\3.0.5\mybatis-spring-3.0.5.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot-autoconfigure\3.5.17\mybatis-plus-spring-boot-autoconfigure-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot-native-image\3.5.17\mybatis-plus-spring-boot-native-image-3.5.17.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-autoconfigure\3.3.13\spring-boot-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-jdbc\3.3.13\spring-boot-starter-jdbc-3.3.13.jar;E:\Delelop\localRepository\com\zaxxer\HikariCP\5.1.0\HikariCP-5.1.0.jar;E:\Delelop\localRepository\org\springframework\spring-jdbc\6.1.21\spring-jdbc-6.1.21.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-jsqlparser\3.5.17\mybatis-plus-jsqlparser-3.5.17.jar;E:\Delelop\localRepository\com\github\jsqlparser\jsqlparser\5.2\jsqlparser-5.2.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-jsqlparser-common\3.5.17\mybatis-plus-jsqlparser-common-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-extension\3.5.17\mybatis-plus-extension-3.5.17.jar;E:\Delelop\localRepository\com\github\gavlyukovskiy\p6spy-spring-boot-starter\1.12.1\p6spy-spring-boot-starter-1.12.1.jar;E:\Delelop\localRepository\com\github\gavlyukovskiy\datasource-decorator-spring-boot-autoconfigure\1.12.1\datasource-decorator-spring-boot-autoconfigure-1.12.1.jar;E:\Delelop\localRepository\p6spy\p6spy\3.9.1\p6spy-3.9.1.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-data-redis\3.3.13\spring-boot-starter-data-redis-3.3.13.jar;E:\Delelop\localRepository\io\lettuce\lettuce-core\6.3.2.RELEASE\lettuce-core-6.3.2.RELEASE.jar;E:\Delelop\localRepository\io\netty\netty-common\4.1.122.Final\netty-common-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-handler\4.1.122.Final\netty-handler-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-resolver\4.1.122.Final\netty-resolver-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-buffer\4.1.122.Final\netty-buffer-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-transport-native-unix-common\4.1.122.Final\netty-transport-native-unix-common-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-codec\4.1.122.Final\netty-codec-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-transport\4.1.122.Final\netty-transport-4.1.122.Final.jar;E:\Delelop\localRepository\io\projectreactor\reactor-core\3.6.18\reactor-core-3.6.18.jar;E:\Delelop\localRepository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-redis\3.3.13\spring-data-redis-3.3.13.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-keyvalue\3.3.13\spring-data-keyvalue-3.3.13.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-commons\3.3.13\spring-data-commons-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-tx\6.1.21\spring-tx-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-oxm\6.1.21\spring-oxm-6.1.21.jar;E:\Delelop\localRepository\org\springframework\session\spring-session-data-redis\3.3.7\spring-session-data-redis-3.3.7.jar;E:\Delelop\localRepository\org\springframework\session\spring-session-core\3.3.7\spring-session-core-3.3.7.jar;E:\Delelop\localRepository\org\springframework\spring-jcl\6.1.21\spring-jcl-6.1.21.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-mail\3.3.13\spring-boot-starter-mail-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-context-support\6.1.21\spring-context-support-6.1.21.jar;E:\Delelop\localRepository\org\eclipse\angus\jakarta.mail\2.0.3\jakarta.mail-2.0.3.jar;E:\Delelop\localRepository\jakarta\activation\jakarta.activation-api\2.1.3\jakarta.activation-api-2.1.3.jar;E:\Delelop\localRepository\org\eclipse\angus\angus-activation\2.0.2\angus-activation-2.0.2.jar;E:\Delelop\localRepository\org\postgresql\postgresql\42.7.7\postgresql-42.7.7.jar;E:\Delelop\localRepository\org\checkerframework\checker-qual\3.49.3\checker-qual-3.49.3.jar;E:\Delelop\localRepository\com\maxmind\geoip2\geoip2\5.2.0\geoip2-5.2.0.jar;E:\Delelop\localRepository\com\maxmind\db\maxmind-db\4.1.0\maxmind-db-4.1.0.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-databind\2.17.3\jackson-databind-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.17.3\jackson-datatype-jsr310-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-core\2.17.3\jackson-core-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-annotations\2.17.3\jackson-annotations-2.17.3.jar;E:\Delelop\localRepository\org\flywaydb\flyway-core\10.10.0\flyway-core-10.10.0.jar;E:\Delelop\localRepository\com\fasterxml\jackson\dataformat\jackson-dataformat-toml\2.17.3\jackson-dataformat-toml-2.17.3.jar;E:\Delelop\localRepository\com\google\code\gson\gson\2.10.1\gson-2.10.1.jar;E:\Delelop\localRepository\org\flywaydb\flyway-database-postgresql\10.10.0\flyway-database-postgresql-10.10.0.jar;E:\Delelop\localRepository\org\apache\poi\poi-ooxml\5.3.0\poi-ooxml-5.3.0.jar;E:\Delelop\localRepository\org\apache\poi\poi\5.3.0\poi-5.3.0.jar;E:\Delelop\localRepository\com\zaxxer\SparseBitSet\1.3\SparseBitSet-1.3.jar;E:\Delelop\localRepository\org\apache\poi\poi-ooxml-lite\5.3.0\poi-ooxml-lite-5.3.0.jar;E:\Delelop\localRepository\org\apache\xmlbeans\xmlbeans\5.2.1\xmlbeans-5.2.1.jar;E:\Delelop\localRepository\org\apache\commons\commons-compress\1.26.2\commons-compress-1.26.2.jar;E:\Delelop\localRepository\org\apache\commons\commons-lang3\3.14.0\commons-lang3-3.14.0.jar;E:\Delelop\localRepository\commons-io\commons-io\2.16.1\commons-io-2.16.1.jar;E:\Delelop\localRepository\com\github\virtuald\curvesapi\1.08\curvesapi-1.08.jar;E:\Delelop\localRepository\org\apache\logging\log4j\log4j-api\2.23.1\log4j-api-2.23.1.jar;E:\Delelop\localRepository\org\apache\commons\commons-collections4\4.4\commons-collections4-4.4.jar;E:\Delelop\localRepository\org\apache\poi\poi-scratchpad\5.3.0\poi-scratchpad-5.3.0.jar;E:\Delelop\localRepository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;E:\Delelop\localRepository\commons-codec\commons-codec\1.16.1\commons-codec-1.16.1.jar;E:\Delelop\localRepository\org\apache\pdfbox\pdfbox\3.0.6\pdfbox-3.0.6.jar;E:\Delelop\localRepository\org\apache\pdfbox\pdfbox-io\3.0.6\pdfbox-io-3.0.6.jar;E:\Delelop\localRepository\org\apache\pdfbox\fontbox\3.0.6\fontbox-3.0.6.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-test\3.3.13\spring-boot-starter-test-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-test\3.3.13\spring-boot-test-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-test-autoconfigure\3.3.13\spring-boot-test-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\com\jayway\jsonpath\json-path\2.9.0\json-path-2.9.0.jar;E:\Delelop\localRepository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.2\jakarta.xml.bind-api-4.0.2.jar;E:\Delelop\localRepository\net\minidev\json-smart\2.5.2\json-smart-2.5.2.jar;E:\Delelop\localRepository\net\minidev\accessors-smart\2.5.2\accessors-smart-2.5.2.jar;E:\Delelop\localRepository\org\ow2\asm\asm\9.7.1\asm-9.7.1.jar;E:\Delelop\localRepository\org\assertj\assertj-core\3.25.3\assertj-core-3.25.3.jar;E:\Delelop\localRepository\net\bytebuddy\byte-buddy\1.14.19\byte-buddy-1.14.19.jar;E:\Delelop\localRepository\org\awaitility\awaitility\4.2.2\awaitility-4.2.2.jar;E:\Delelop\localRepository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter\5.10.5\junit-jupiter-5.10.5.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-api\5.10.5\junit-jupiter-api-5.10.5.jar;E:\Delelop\localRepository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;E:\Delelop\localRepository\org\junit\platform\junit-platform-commons\1.10.5\junit-platform-commons-1.10.5.jar;E:\Delelop\localRepository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-params\5.10.5\junit-jupiter-params-5.10.5.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-engine\5.10.5\junit-jupiter-engine-5.10.5.jar;E:\Delelop\localRepository\org\junit\platform\junit-platform-engine\1.10.5\junit-platform-engine-1.10.5.jar;E:\Delelop\localRepository\org\mockito\mockito-core\5.11.0\mockito-core-5.11.0.jar;E:\Delelop\localRepository\net\bytebuddy\byte-buddy-agent\1.14.19\byte-buddy-agent-1.14.19.jar;E:\Delelop\localRepository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;E:\Delelop\localRepository\org\mockito\mockito-junit-jupiter\5.11.0\mockito-junit-jupiter-5.11.0.jar;E:\Delelop\localRepository\org\skyscreamer\jsonassert\1.5.3\jsonassert-1.5.3.jar;E:\Delelop\localRepository\com\vaadin\external\google\android-json\0.0.20131108.vaadin1\android-json-0.0.20131108.vaadin1.jar;E:\Delelop\localRepository\org\springframework\spring-core\6.1.21\spring-core-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-test\6.1.21\spring-test-6.1.21.jar;E:\Delelop\localRepository\org\xmlunit\xmlunit-core\2.9.1\xmlunit-core-2.9.1.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-test\6.3.10\spring-security-test-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-core\6.3.10\spring-security-core-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-crypto\6.3.10\spring-security-crypto-6.3.10.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Asia/Shanghai"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="CN"/>
+    <property name="sun.boot.library.path" value="E:\Delelop\Java\jdk-21\bin"/>
+    <property name="jvm" value="E:/Delelop/Java/jdk-21/bin/java.exe"/>
+    <property name="sun.java.command" value="C:\Users\Administrator\AppData\Local\Packages\sandbox.{abdb2dba-c8f7-410c-b9ed-1900255922f6}\AC\Temp\surefire13670797489072073109\surefirebooter-20261017144346919_3.jar C:\Users\Administrator\AppData\Local\Packages\sandbox.{abdb2dba-c8f7-410c-b9ed-1900255922f6}\AC\Temp\surefire13670797489072073109 2026-10-17T14-43-46_740-jvmRun1 surefire-20261017144346919_1tmp surefire_0-20261017144346919_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="CandidateTwentySevenRepairProtocolTest,CandidateTwentySevenReplayTest"/>
+    <property name="surefire.test.class.path" value="E:\MyProject\prompt-optimizer-platform\tmp\me00a-candidate27-20261017\build\test-classes;E:\MyProject\prompt-optimizer-platform\tmp\me00a-candidate27-20261017\build\classes;E:\Delelop\localRepository\com\aliyun\dypnsapi20170525\2.0.0\dypnsapi20170525-2.0.0.jar;E:\Delelop\localRepository\com\aliyun\tea-util\0.2.23\tea-util-0.2.23.jar;E:\Delelop\localRepository\com\aliyun\tea-openapi\0.3.10\tea-openapi-0.3.10.jar;E:\Delelop\localRepository\com\aliyun\credentials-java\1.0.1\credentials-java-1.0.1.jar;E:\Delelop\localRepository\com\aliyun\credentials-api\1.0.0\credentials-api-1.0.0.jar;E:\Delelop\localRepository\com\aliyun\alibabacloud-gateway-spi\0.0.2\alibabacloud-gateway-spi-0.0.2.jar;E:\Delelop\localRepository\com\aliyun\tea-xml\0.1.6\tea-xml-0.1.6.jar;E:\Delelop\localRepository\org\dom4j\dom4j\2.0.3\dom4j-2.0.3.jar;E:\Delelop\localRepository\org\jacoco\org.jacoco.agent\0.8.4\org.jacoco.agent-0.8.4-runtime.jar;E:\Delelop\localRepository\com\aliyun\endpoint-util\0.0.8\endpoint-util-0.0.8.jar;E:\Delelop\localRepository\com\aliyun\tea\1.3.1\tea-1.3.1.jar;E:\Delelop\localRepository\com\squareup\okhttp3\okhttp\4.12.0\okhttp-4.12.0.jar;E:\Delelop\localRepository\com\squareup\okio\okio\3.6.0\okio-3.6.0.jar;E:\Delelop\localRepository\com\squareup\okio\okio-jvm\3.6.0\okio-jvm-3.6.0.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-common\1.9.25\kotlin-stdlib-common-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-jdk8\1.9.25\kotlin-stdlib-jdk8-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib\1.9.25\kotlin-stdlib-1.9.25.jar;E:\Delelop\localRepository\org\jetbrains\annotations\13.0\annotations-13.0.jar;E:\Delelop\localRepository\org\jetbrains\kotlin\kotlin-stdlib-jdk7\1.9.25\kotlin-stdlib-jdk7-1.9.25.jar;E:\Delelop\localRepository\org\slf4j\slf4j-api\2.0.17\slf4j-api-2.0.17.jar;E:\Delelop\localRepository\com\aliyun\openapiutil\0.2.2\openapiutil-0.2.2.jar;E:\Delelop\localRepository\org\bouncycastle\bcprov-jdk18on\1.78.1\bcprov-jdk18on-1.78.1.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-web\3.3.13\spring-boot-starter-web-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter\3.3.13\spring-boot-starter-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot\3.3.13\spring-boot-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-logging\3.3.13\spring-boot-starter-logging-3.3.13.jar;E:\Delelop\localRepository\ch\qos\logback\logback-classic\1.5.18\logback-classic-1.5.18.jar;E:\Delelop\localRepository\ch\qos\logback\logback-core\1.5.18\logback-core-1.5.18.jar;E:\Delelop\localRepository\org\apache\logging\log4j\log4j-to-slf4j\2.23.1\log4j-to-slf4j-2.23.1.jar;E:\Delelop\localRepository\org\slf4j\jul-to-slf4j\2.0.17\jul-to-slf4j-2.0.17.jar;E:\Delelop\localRepository\jakarta\annotation\jakarta.annotation-api\2.1.1\jakarta.annotation-api-2.1.1.jar;E:\Delelop\localRepository\org\yaml\snakeyaml\2.2\snakeyaml-2.2.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-json\3.3.13\spring-boot-starter-json-3.3.13.jar;E:\Delelop\localRepository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.17.3\jackson-datatype-jdk8-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.17.3\jackson-module-parameter-names-2.17.3.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-tomcat\3.3.13\spring-boot-starter-tomcat-3.3.13.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-core\10.1.42\tomcat-embed-core-10.1.42.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-websocket\10.1.42\tomcat-embed-websocket-10.1.42.jar;E:\Delelop\localRepository\org\springframework\spring-web\6.1.21\spring-web-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-beans\6.1.21\spring-beans-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-webmvc\6.1.21\spring-webmvc-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-context\6.1.21\spring-context-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-expression\6.1.21\spring-expression-6.1.21.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-validation\3.3.13\spring-boot-starter-validation-3.3.13.jar;E:\Delelop\localRepository\org\apache\tomcat\embed\tomcat-embed-el\10.1.42\tomcat-embed-el-10.1.42.jar;E:\Delelop\localRepository\org\hibernate\validator\hibernate-validator\8.0.2.Final\hibernate-validator-8.0.2.Final.jar;E:\Delelop\localRepository\jakarta\validation\jakarta.validation-api\3.0.2\jakarta.validation-api-3.0.2.jar;E:\Delelop\localRepository\org\jboss\logging\jboss-logging\3.5.3.Final\jboss-logging-3.5.3.Final.jar;E:\Delelop\localRepository\com\fasterxml\classmate\1.7.0\classmate-1.7.0.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-security\3.3.13\spring-boot-starter-security-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-aop\6.1.21\spring-aop-6.1.21.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-config\6.3.10\spring-security-config-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-web\6.3.10\spring-security-web-6.3.10.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-actuator\3.3.13\spring-boot-starter-actuator-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-actuator-autoconfigure\3.3.13\spring-boot-actuator-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-actuator\3.3.13\spring-boot-actuator-3.3.13.jar;E:\Delelop\localRepository\io\micrometer\micrometer-observation\1.13.15\micrometer-observation-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-commons\1.13.15\micrometer-commons-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-jakarta9\1.13.15\micrometer-jakarta9-1.13.15.jar;E:\Delelop\localRepository\io\micrometer\micrometer-core\1.13.15\micrometer-core-1.13.15.jar;E:\Delelop\localRepository\org\hdrhistogram\HdrHistogram\2.2.2\HdrHistogram-2.2.2.jar;E:\Delelop\localRepository\org\latencyutils\LatencyUtils\2.0.3\LatencyUtils-2.0.3.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot3-starter\3.5.17\mybatis-plus-spring-boot3-starter-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus\3.5.17\mybatis-plus-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-core\3.5.17\mybatis-plus-core-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-annotation\3.5.17\mybatis-plus-annotation-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring\3.5.17\mybatis-plus-spring-3.5.17.jar;E:\Delelop\localRepository\org\mybatis\mybatis\3.5.19\mybatis-3.5.19.jar;E:\Delelop\localRepository\org\mybatis\mybatis-spring\3.0.5\mybatis-spring-3.0.5.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot-autoconfigure\3.5.17\mybatis-plus-spring-boot-autoconfigure-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-spring-boot-native-image\3.5.17\mybatis-plus-spring-boot-native-image-3.5.17.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-autoconfigure\3.3.13\spring-boot-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-jdbc\3.3.13\spring-boot-starter-jdbc-3.3.13.jar;E:\Delelop\localRepository\com\zaxxer\HikariCP\5.1.0\HikariCP-5.1.0.jar;E:\Delelop\localRepository\org\springframework\spring-jdbc\6.1.21\spring-jdbc-6.1.21.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-jsqlparser\3.5.17\mybatis-plus-jsqlparser-3.5.17.jar;E:\Delelop\localRepository\com\github\jsqlparser\jsqlparser\5.2\jsqlparser-5.2.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-jsqlparser-common\3.5.17\mybatis-plus-jsqlparser-common-3.5.17.jar;E:\Delelop\localRepository\com\baomidou\mybatis-plus-extension\3.5.17\mybatis-plus-extension-3.5.17.jar;E:\Delelop\localRepository\com\github\gavlyukovskiy\p6spy-spring-boot-starter\1.12.1\p6spy-spring-boot-starter-1.12.1.jar;E:\Delelop\localRepository\com\github\gavlyukovskiy\datasource-decorator-spring-boot-autoconfigure\1.12.1\datasource-decorator-spring-boot-autoconfigure-1.12.1.jar;E:\Delelop\localRepository\p6spy\p6spy\3.9.1\p6spy-3.9.1.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-data-redis\3.3.13\spring-boot-starter-data-redis-3.3.13.jar;E:\Delelop\localRepository\io\lettuce\lettuce-core\6.3.2.RELEASE\lettuce-core-6.3.2.RELEASE.jar;E:\Delelop\localRepository\io\netty\netty-common\4.1.122.Final\netty-common-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-handler\4.1.122.Final\netty-handler-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-resolver\4.1.122.Final\netty-resolver-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-buffer\4.1.122.Final\netty-buffer-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-transport-native-unix-common\4.1.122.Final\netty-transport-native-unix-common-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-codec\4.1.122.Final\netty-codec-4.1.122.Final.jar;E:\Delelop\localRepository\io\netty\netty-transport\4.1.122.Final\netty-transport-4.1.122.Final.jar;E:\Delelop\localRepository\io\projectreactor\reactor-core\3.6.18\reactor-core-3.6.18.jar;E:\Delelop\localRepository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-redis\3.3.13\spring-data-redis-3.3.13.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-keyvalue\3.3.13\spring-data-keyvalue-3.3.13.jar;E:\Delelop\localRepository\org\springframework\data\spring-data-commons\3.3.13\spring-data-commons-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-tx\6.1.21\spring-tx-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-oxm\6.1.21\spring-oxm-6.1.21.jar;E:\Delelop\localRepository\org\springframework\session\spring-session-data-redis\3.3.7\spring-session-data-redis-3.3.7.jar;E:\Delelop\localRepository\org\springframework\session\spring-session-core\3.3.7\spring-session-core-3.3.7.jar;E:\Delelop\localRepository\org\springframework\spring-jcl\6.1.21\spring-jcl-6.1.21.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-mail\3.3.13\spring-boot-starter-mail-3.3.13.jar;E:\Delelop\localRepository\org\springframework\spring-context-support\6.1.21\spring-context-support-6.1.21.jar;E:\Delelop\localRepository\org\eclipse\angus\jakarta.mail\2.0.3\jakarta.mail-2.0.3.jar;E:\Delelop\localRepository\jakarta\activation\jakarta.activation-api\2.1.3\jakarta.activation-api-2.1.3.jar;E:\Delelop\localRepository\org\eclipse\angus\angus-activation\2.0.2\angus-activation-2.0.2.jar;E:\Delelop\localRepository\org\postgresql\postgresql\42.7.7\postgresql-42.7.7.jar;E:\Delelop\localRepository\org\checkerframework\checker-qual\3.49.3\checker-qual-3.49.3.jar;E:\Delelop\localRepository\com\maxmind\geoip2\geoip2\5.2.0\geoip2-5.2.0.jar;E:\Delelop\localRepository\com\maxmind\db\maxmind-db\4.1.0\maxmind-db-4.1.0.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-databind\2.17.3\jackson-databind-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.17.3\jackson-datatype-jsr310-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-core\2.17.3\jackson-core-2.17.3.jar;E:\Delelop\localRepository\com\fasterxml\jackson\core\jackson-annotations\2.17.3\jackson-annotations-2.17.3.jar;E:\Delelop\localRepository\org\flywaydb\flyway-core\10.10.0\flyway-core-10.10.0.jar;E:\Delelop\localRepository\com\fasterxml\jackson\dataformat\jackson-dataformat-toml\2.17.3\jackson-dataformat-toml-2.17.3.jar;E:\Delelop\localRepository\com\google\code\gson\gson\2.10.1\gson-2.10.1.jar;E:\Delelop\localRepository\org\flywaydb\flyway-database-postgresql\10.10.0\flyway-database-postgresql-10.10.0.jar;E:\Delelop\localRepository\org\apache\poi\poi-ooxml\5.3.0\poi-ooxml-5.3.0.jar;E:\Delelop\localRepository\org\apache\poi\poi\5.3.0\poi-5.3.0.jar;E:\Delelop\localRepository\com\zaxxer\SparseBitSet\1.3\SparseBitSet-1.3.jar;E:\Delelop\localRepository\org\apache\poi\poi-ooxml-lite\5.3.0\poi-ooxml-lite-5.3.0.jar;E:\Delelop\localRepository\org\apache\xmlbeans\xmlbeans\5.2.1\xmlbeans-5.2.1.jar;E:\Delelop\localRepository\org\apache\commons\commons-compress\1.26.2\commons-compress-1.26.2.jar;E:\Delelop\localRepository\org\apache\commons\commons-lang3\3.14.0\commons-lang3-3.14.0.jar;E:\Delelop\localRepository\commons-io\commons-io\2.16.1\commons-io-2.16.1.jar;E:\Delelop\localRepository\com\github\virtuald\curvesapi\1.08\curvesapi-1.08.jar;E:\Delelop\localRepository\org\apache\logging\log4j\log4j-api\2.23.1\log4j-api-2.23.1.jar;E:\Delelop\localRepository\org\apache\commons\commons-collections4\4.4\commons-collections4-4.4.jar;E:\Delelop\localRepository\org\apache\poi\poi-scratchpad\5.3.0\poi-scratchpad-5.3.0.jar;E:\Delelop\localRepository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;E:\Delelop\localRepository\commons-codec\commons-codec\1.16.1\commons-codec-1.16.1.jar;E:\Delelop\localRepository\org\apache\pdfbox\pdfbox\3.0.6\pdfbox-3.0.6.jar;E:\Delelop\localRepository\org\apache\pdfbox\pdfbox-io\3.0.6\pdfbox-io-3.0.6.jar;E:\Delelop\localRepository\org\apache\pdfbox\fontbox\3.0.6\fontbox-3.0.6.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-starter-test\3.3.13\spring-boot-starter-test-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-test\3.3.13\spring-boot-test-3.3.13.jar;E:\Delelop\localRepository\org\springframework\boot\spring-boot-test-autoconfigure\3.3.13\spring-boot-test-autoconfigure-3.3.13.jar;E:\Delelop\localRepository\com\jayway\jsonpath\json-path\2.9.0\json-path-2.9.0.jar;E:\Delelop\localRepository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.2\jakarta.xml.bind-api-4.0.2.jar;E:\Delelop\localRepository\net\minidev\json-smart\2.5.2\json-smart-2.5.2.jar;E:\Delelop\localRepository\net\minidev\accessors-smart\2.5.2\accessors-smart-2.5.2.jar;E:\Delelop\localRepository\org\ow2\asm\asm\9.7.1\asm-9.7.1.jar;E:\Delelop\localRepository\org\assertj\assertj-core\3.25.3\assertj-core-3.25.3.jar;E:\Delelop\localRepository\net\bytebuddy\byte-buddy\1.14.19\byte-buddy-1.14.19.jar;E:\Delelop\localRepository\org\awaitility\awaitility\4.2.2\awaitility-4.2.2.jar;E:\Delelop\localRepository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter\5.10.5\junit-jupiter-5.10.5.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-api\5.10.5\junit-jupiter-api-5.10.5.jar;E:\Delelop\localRepository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;E:\Delelop\localRepository\org\junit\platform\junit-platform-commons\1.10.5\junit-platform-commons-1.10.5.jar;E:\Delelop\localRepository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-params\5.10.5\junit-jupiter-params-5.10.5.jar;E:\Delelop\localRepository\org\junit\jupiter\junit-jupiter-engine\5.10.5\junit-jupiter-engine-5.10.5.jar;E:\Delelop\localRepository\org\junit\platform\junit-platform-engine\1.10.5\junit-platform-engine-1.10.5.jar;E:\Delelop\localRepository\org\mockito\mockito-core\5.11.0\mockito-core-5.11.0.jar;E:\Delelop\localRepository\net\bytebuddy\byte-buddy-agent\1.14.19\byte-buddy-agent-1.14.19.jar;E:\Delelop\localRepository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;E:\Delelop\localRepository\org\mockito\mockito-junit-jupiter\5.11.0\mockito-junit-jupiter-5.11.0.jar;E:\Delelop\localRepository\org\skyscreamer\jsonassert\1.5.3\jsonassert-1.5.3.jar;E:\Delelop\localRepository\com\vaadin\external\google\android-json\0.0.20131108.vaadin1\android-json-0.0.20131108.vaadin1.jar;E:\Delelop\localRepository\org\springframework\spring-core\6.1.21\spring-core-6.1.21.jar;E:\Delelop\localRepository\org\springframework\spring-test\6.1.21\spring-test-6.1.21.jar;E:\Delelop\localRepository\org\xmlunit\xmlunit-core\2.9.1\xmlunit-core-2.9.1.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-test\6.3.10\spring-security-test-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-core\6.3.10\spring-security-core-6.3.10.jar;E:\Delelop\localRepository\org\springframework\security\spring-security-crypto\6.3.10\spring-security-crypto-6.3.10.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\Administrator"/>
+    <property name="user.language" value="zh"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="maven.compiler.fork" value="true"/>
+    <property name="java.version.date" value="2026-07-21"/>
+    <property name="java.home" value="E:\Delelop\Java\jdk-21"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="E:\MyProject\prompt-optimizer-platform\tmp\me00a-candidate27-20261017"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\Administrator\AppData\Local\Packages\sandbox.{abdb2dba-c8f7-410c-b9ed-1900255922f6}\AC\Temp\surefire13670797489072073109\surefirebooter-20261017144346919_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="jdk.net.unixdomain.tmpdir" value="E:/MyProject/prompt-optimizer-platform/tmp"/>
+    <property name="java.runtime.version" value="21.0.12+7-LTS-205"/>
+    <property name="user.name" value="Administrator"/>
+    <property name="stdout.encoding" value="GBK"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="E:\Delelop\localRepository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\Administrator\AppData\Local\Packages\sandbox.{abdb2dba-c8f7-410c-b9ed-1900255922f6}\AC\Temp\"/>
+    <property name="java.version" value="21.0.12"/>
+    <property name="user.dir" value="E:\MyProject\prompt-optimizer-platform\tmp\me00a-candidate27-20261017"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="maven.compiler.executable" value="E:/Delelop/Java/jdk-21/bin/javac.exe"/>
+    <property name="native.encoding" value="GBK"/>
+    <property name="java.library.path" value="E:\Delelop\Java\jdk-21\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell;C:\Users\Administrator\.codex\tmp\arg0-windows\codex-arg0esql7B;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\libheif\libheif\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\jxrlib\jxrlib\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\poppler\Library\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\override;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;E:\Delelop\Java\jdk-21\bin;E:\Delelop\apache-maven-3.9.14\bin;E:\Delelop\nodejs\;E:\Delelop\SVN\bin;E:\Delelop\Git\cmd;D:\software\7-Zip;E:\Delelop\nodejs\node_global;E:\Delelop\MySQL\MySQL Server 8.4\bin;C:\Program Files\Docker\Docker\resources\bin;E:\Delelop\Qoder IDE\bin;C:\Users\Administrator\.local\bin;E:\Delelop\Python312\Scripts\;E:\Delelop\Python312\;C:\Users\Administrator\AppData\Local\Programs\Python\Launcher\;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\AppData\Roaming\npm;C:\Users\Administrator\.local\bin;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\.qoder\bin\qodercli;C:\Users\Administrator\AppData\Local\Programs\Ollama;E:\Delelop\cursor\resources\app\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd;C:\Users\Administrator\AppData\Local\OpenAI\Codex\bin\d6efb6feb729707e;C:\Users\Administrator\AppData\Local\OpenAI\Codex\bin\e78bad9887fa50cf;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="GBK"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="21.0.12+7-LTS-205"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
+    <property name="argLine" value="-XX:ActiveProcessorCount=2 -Dfile.encoding=UTF-8 -Djdk.net.unixdomain.tmpdir=E:/MyProject/prompt-optimizer-platform/tmp"/>
+  </properties>
+  <testcase name="otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.162"/>
+  <testcase name="otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.011"/>
+  <testcase name="otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.015"/>
+  <testcase name="otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.011"/>
+  <testcase name="otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String)[5]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.011"/>
+  <testcase name="otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String)[6]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.011"/>
+  <testcase name="otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String)[7]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.009"/>
+  <testcase name="otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String)[8]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.013"/>
+  <testcase name="otherObjectsConditionsNegationsAndQuotedStatesDoNotSuppressTheOriginalFacts(String)[9]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.012"/>
+  <testcase name="completeSameTopicDirectiveDoesNotNeedTheLiteralDelegationSentence(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.024">
+    <failure message="&#10;expected: &quot;撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。&quot;&#10; but was: &quot;撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。&#10;- 请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+expected: "撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。"
+ but was: "撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。
+- 请根据原始研究目标提出可开展的推荐设计并说明适用条件；"
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest.completeSameTopicDirectiveDoesNotNeedTheLiteralDelegationSentence(CandidateTwentySevenReplayTest.java:68)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="completeSameTopicDirectiveDoesNotNeedTheLiteralDelegationSentence(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.011"/>
+  <testcase name="completeSameTopicDirectiveDoesNotNeedTheLiteralDelegationSentence(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.015">
+    <failure message="&#10;expected: &quot;- 撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。&quot;&#10; but was: &quot;- 撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。&#10;- 请根据原始研究目标提出可开展的推荐设计并说明适用条件；&quot;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+expected: "- 撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。"
+ but was: "- 撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。
+- 请根据原始研究目标提出可开展的推荐设计并说明适用条件；"
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest.completeSameTopicDirectiveDoesNotNeedTheLiteralDelegationSentence(CandidateTwentySevenReplayTest.java:68)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="completeCurrentStateDoesNotAppendAnotherStatusOrDataDeclaration(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.013">
+    <failure message="&#10;expected: &quot;研究主题为Plan问答对提示词质量的影响，当前仅为拟定研究，尚未实施，也没有额外真实数据。&quot;&#10; but was: &quot;研究主题为Plan问答对提示词质量的影响，当前仅为拟定研究，尚未实施，也没有额外真实数据。&#10;- 这是尚未实施的研究。&#10;- 我没有额外真实数据&quot;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+expected: "研究主题为Plan问答对提示词质量的影响，当前仅为拟定研究，尚未实施，也没有额外真实数据。"
+ but was: "研究主题为Plan问答对提示词质量的影响，当前仅为拟定研究，尚未实施，也没有额外真实数据。
+- 这是尚未实施的研究。
+- 我没有额外真实数据"
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest.completeCurrentStateDoesNotAppendAnotherStatusOrDataDeclaration(CandidateTwentySevenReplayTest.java:57)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="completeCurrentStateDoesNotAppendAnotherStatusOrDataDeclaration(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.015">
+    <failure message="&#10;expected: &quot;本研究主题为Plan问答对提示词质量的影响；当前仅为拟定研究，尚未实施，也没有额外真实数据。&quot;&#10; but was: &quot;本研究主题为Plan问答对提示词质量的影响；当前仅为拟定研究，尚未实施，也没有额外真实数据。&#10;- 我没有额外真实数据&quot;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+expected: "本研究主题为Plan问答对提示词质量的影响；当前仅为拟定研究，尚未实施，也没有额外真实数据。"
+ but was: "本研究主题为Plan问答对提示词质量的影响；当前仅为拟定研究，尚未实施，也没有额外真实数据。
+- 我没有额外真实数据"
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest.completeCurrentStateDoesNotAppendAnotherStatusOrDataDeclaration(CandidateTwentySevenReplayTest.java:57)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="completeCurrentStateDoesNotAppendAnotherStatusOrDataDeclaration(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.01">
+    <failure message="&#10;expected: &quot;研究主题为Plan问答对提示词质量的影响,目前只是拟定研究,尚未实施,也没有额外真实数据。&quot;&#10; but was: &quot;研究主题为Plan问答对提示词质量的影响,目前只是拟定研究,尚未实施,也没有额外真实数据。&#10;- 这是尚未实施的研究。&#10;- 我没有额外真实数据&quot;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+expected: "研究主题为Plan问答对提示词质量的影响,目前只是拟定研究,尚未实施,也没有额外真实数据。"
+ but was: "研究主题为Plan问答对提示词质量的影响,目前只是拟定研究,尚未实施,也没有额外真实数据。
+- 这是尚未实施的研究。
+- 我没有额外真实数据"
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest.completeCurrentStateDoesNotAppendAnotherStatusOrDataDeclaration(CandidateTwentySevenReplayTest.java:57)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="captured329AddsNoneOfTheThreeAlreadyExpressedRequirementsAndKeepsAllSources" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.224">
+    <failure message="&#10;expected: {BACKGROUND=PromptSection[type=BACKGROUND, title=背景, content=本部分面向研究生学位研究的方法章节。研究主题为Plan问答对提示词质量的影响，当前仅为拟定研究，尚未实施，也没有额外真实数据。方法部分需说明研究设计、任务与重复安排、比较条件、随机化与盲法、评价指标与分歧处理，以及统计分析计划。], TASK=PromptSection[type=TASK, title=任务, content=撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。&#10;&#10;- 保留既定设计要素：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。&#10;- 比较直接增强与Plan两种模式，并另设两组获得相同确认信息的公平对照。&#10;- 说明随机化、盲法、准确性、完整性、清晰度与可执行性的评价，以及评审分歧处理。&#10;- 对尚未确定的参数给出拟议主方案并标明为拟议设计及适用条件，包括：4类任务的具体类别与20个任务的来源和确定方式；Plan交互的轮次与终止条件；两组公平对照的具体条件；两名评审的分工与分歧处理规则；伦理审查与知情同意安排。&#10;- 公平对照须落实到信息流：两组接收并可使用同一原始任务与同一份实际确认信息；直接组不追问不等于不能使用已提供答案；不改写任一组的回答、不另换任务、不只增加某组修订轮次。&#10;- 评价步骤中以提示词为评价对象，准确性、完整性、清晰度与可执行性均针对提示词质量评分；说明评审所见材料及盲化方式。&#10;- 具体统计检验依据未来数据分布和配对结构选择，可列出候选方法及适用前提，不预设必然显著；方法收益由对应组间比较判断，不以一组显著而另一组不显著直接证明两组效果不同。&#10;- 说明缺失数据、偏倚与不确定性的处理及方法适用条件，保证分析过程可复现。], OUTPUT=PromptSection[type=OUTPUT, title=输出, content=交付中文研究设计的方法部分正文，800至1200个汉字，附表另计。正文按方法章节组织，覆盖任务与样本安排、比较条件与公平对照、随机化与盲法、评价指标与评审分歧处理、统计分析计划及适用条件。不提供代码。], CONSTRAINTS=PromptSection[type=CONSTRAINTS, title=约束, content=- 当前为拟定研究，不得把拟定样本写成已纳入样本，不得写成研究已完成或已实施。&#10;- 不得编造效应量、P值、参考文献或显著性结论，不得使用假设或虚构数据，包括测试与验证用途。&#10;- 不确认任何既有参数：任务类别与来源、Plan轮次与终止条件、公平对照条件、评审分工与分歧规则、伦理审查安排均保持未决，正文只能以拟议设计表述并说明适用条件，不得写成已选定事实。&#10;- 明确区分已知事实、用户确认信息与拟议设计，不得把猜测写成事实。&#10;- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。&#10;- 不提供代码。], ACCEPTANCE=PromptSection[type=ACCEPTANCE, title=验收, content=- 方法与研究问题一致，定义和比较条件可复核。&#10;- 已定要素与拟议设计、未决参数分开表述，不编造数据、结果、文献或已完成研究状态。&#10;- 正文汉字数在800至1200之间，附表另计。]}&#10; but was: {BACKGROUND=PromptSection[type=BACKGROUND, title=背景, content=本部分面向研究生学位研究的方法章节。研究主题为Plan问答对提示词质量的影响，当前仅为拟定研究，尚未实施，也没有额外真实数据。方法部分需说明研究设计、任务与重复安排、比较条件、随机化与盲法、评价指标与分歧处理，以及统计分析计划。&#10;- 这是尚未实施的研究。&#10;- 我没有额外真实数据], TASK=PromptSection[type=TASK, title=任务, content=撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。&#10;&#10;- 保留既定设计要素：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。&#10;- 比较直接增强与Plan两种模式，并另设两组获得相同确认信息的公平对照。&#10;- 说明随机化、盲法、准确性、完整性、清晰度与可执行性的评价，以及评审分歧处理。&#10;- 对尚未确定的参数给出拟议主方案并标明为拟议设计及适用条件，包括：4类任务的具体类别与20个任务的来源和确定方式；Plan交互的轮次与终止条件；两组公平对照的具体条件；两名评审的分工与分歧处理规则；伦理审查与知情同意安排。&#10;- 公平对照须落实到信息流：两组接收并可使用同一原始任务与同一份实际确认信息；直接组不追问不等于不能使用已提供答案；不改写任一组的回答、不另换任务、不只增加某组修订轮次。&#10;- 评价步骤中以提示词为评价对象，准确性、完整性、清晰度与可执行性均针对提示词质量评分；说明评审所见材料及盲化方式。&#10;- 具体统计检验依据未来数据分布和配对结构选择，可列出候选方法及适用前提，不预设必然显著；方法收益由对应组间比较判断，不以一组显著而另一组不显著直接证明两组效果不同。&#10;- 说明缺失数据、偏倚与不确定性的处理及方法适用条件，保证分析过程可复现。&#10;- 请根据原始研究目标提出可开展的推荐设计并说明适用条件；], OUTPUT=PromptSection[type=OUTPUT, title=输出, content=交付中文研究设计的方法部分正文，800至1200个汉字，附表另计。正文按方法章节组织，覆盖任务与样本安排、比较条件与公平对照、随机化与盲法、评价指标与评审分歧处理、统计分析计划及适用条件。不提供代码。], CONSTRAINTS=PromptSection[type=CONSTRAINTS, title=约束, content=- 当前为拟定研究，不得把拟定样本写成已纳入样本，不得写成研究已完成或已实施。&#10;- 不得编造效应量、P值、参考文献或显著性结论，不得使用假设或虚构数据，包括测试与验证用途。&#10;- 不确认任何既有参数：任务类别与来源、Plan轮次与终止条件、公平对照条件、评审分工与分歧规则、伦理审查安排均保持未决，正文只能以拟议设计表述并说明适用条件，不得写成已选定事实。&#10;- 明确区分已知事实、用户确认信息与拟议设计，不得把猜测写成事实。&#10;- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。&#10;- 不提供代码。], ACCEPTANCE=PromptSection[type=ACCEPTANCE, title=验收, content=- 方法与研究问题一致，定义和比较条件可复核。&#10;- 已定要素与拟议设计、未决参数分开表述，不编造数据、结果、文献或已完成研究状态。&#10;- 正文汉字数在800至1200之间，附表另计。]}" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+expected: {BACKGROUND=PromptSection[type=BACKGROUND, title=背景, content=本部分面向研究生学位研究的方法章节。研究主题为Plan问答对提示词质量的影响，当前仅为拟定研究，尚未实施，也没有额外真实数据。方法部分需说明研究设计、任务与重复安排、比较条件、随机化与盲法、评价指标与分歧处理，以及统计分析计划。], TASK=PromptSection[type=TASK, title=任务, content=撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。
+
+- 保留既定设计要素：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。
+- 比较直接增强与Plan两种模式，并另设两组获得相同确认信息的公平对照。
+- 说明随机化、盲法、准确性、完整性、清晰度与可执行性的评价，以及评审分歧处理。
+- 对尚未确定的参数给出拟议主方案并标明为拟议设计及适用条件，包括：4类任务的具体类别与20个任务的来源和确定方式；Plan交互的轮次与终止条件；两组公平对照的具体条件；两名评审的分工与分歧处理规则；伦理审查与知情同意安排。
+- 公平对照须落实到信息流：两组接收并可使用同一原始任务与同一份实际确认信息；直接组不追问不等于不能使用已提供答案；不改写任一组的回答、不另换任务、不只增加某组修订轮次。
+- 评价步骤中以提示词为评价对象，准确性、完整性、清晰度与可执行性均针对提示词质量评分；说明评审所见材料及盲化方式。
+- 具体统计检验依据未来数据分布和配对结构选择，可列出候选方法及适用前提，不预设必然显著；方法收益由对应组间比较判断，不以一组显著而另一组不显著直接证明两组效果不同。
+- 说明缺失数据、偏倚与不确定性的处理及方法适用条件，保证分析过程可复现。], OUTPUT=PromptSection[type=OUTPUT, title=输出, content=交付中文研究设计的方法部分正文，800至1200个汉字，附表另计。正文按方法章节组织，覆盖任务与样本安排、比较条件与公平对照、随机化与盲法、评价指标与评审分歧处理、统计分析计划及适用条件。不提供代码。], CONSTRAINTS=PromptSection[type=CONSTRAINTS, title=约束, content=- 当前为拟定研究，不得把拟定样本写成已纳入样本，不得写成研究已完成或已实施。
+- 不得编造效应量、P值、参考文献或显著性结论，不得使用假设或虚构数据，包括测试与验证用途。
+- 不确认任何既有参数：任务类别与来源、Plan轮次与终止条件、公平对照条件、评审分工与分歧规则、伦理审查安排均保持未决，正文只能以拟议设计表述并说明适用条件，不得写成已选定事实。
+- 明确区分已知事实、用户确认信息与拟议设计，不得把猜测写成事实。
+- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。
+- 不提供代码。], ACCEPTANCE=PromptSection[type=ACCEPTANCE, title=验收, content=- 方法与研究问题一致，定义和比较条件可复核。
+- 已定要素与拟议设计、未决参数分开表述，不编造数据、结果、文献或已完成研究状态。
+- 正文汉字数在800至1200之间，附表另计。]}
+ but was: {BACKGROUND=PromptSection[type=BACKGROUND, title=背景, content=本部分面向研究生学位研究的方法章节。研究主题为Plan问答对提示词质量的影响，当前仅为拟定研究，尚未实施，也没有额外真实数据。方法部分需说明研究设计、任务与重复安排、比较条件、随机化与盲法、评价指标与分歧处理，以及统计分析计划。
+- 这是尚未实施的研究。
+- 我没有额外真实数据], TASK=PromptSection[type=TASK, title=任务, content=撰写中文研究设计的方法部分，围绕Plan问答对提示词质量的影响提出可开展的推荐设计，并说明适用条件。
+
+- 保留既定设计要素：4类任务，每类5个，共20个任务；每模式每任务独立重复3次；两名独立评审盲评。
+- 比较直接增强与Plan两种模式，并另设两组获得相同确认信息的公平对照。
+- 说明随机化、盲法、准确性、完整性、清晰度与可执行性的评价，以及评审分歧处理。
+- 对尚未确定的参数给出拟议主方案并标明为拟议设计及适用条件，包括：4类任务的具体类别与20个任务的来源和确定方式；Plan交互的轮次与终止条件；两组公平对照的具体条件；两名评审的分工与分歧处理规则；伦理审查与知情同意安排。
+- 公平对照须落实到信息流：两组接收并可使用同一原始任务与同一份实际确认信息；直接组不追问不等于不能使用已提供答案；不改写任一组的回答、不另换任务、不只增加某组修订轮次。
+- 评价步骤中以提示词为评价对象，准确性、完整性、清晰度与可执行性均针对提示词质量评分；说明评审所见材料及盲化方式。
+- 具体统计检验依据未来数据分布和配对结构选择，可列出候选方法及适用前提，不预设必然显著；方法收益由对应组间比较判断，不以一组显著而另一组不显著直接证明两组效果不同。
+- 说明缺失数据、偏倚与不确定性的处理及方法适用条件，保证分析过程可复现。
+- 请根据原始研究目标提出可开展的推荐设计并说明适用条件；], OUTPUT=PromptSection[type=OUTPUT, title=输出, content=交付中文研究设计的方法部分正文，800至1200个汉字，附表另计。正文按方法章节组织，覆盖任务与样本安排、比较条件与公平对照、随机化与盲法、评价指标与评审分歧处理、统计分析计划及适用条件。不提供代码。], CONSTRAINTS=PromptSection[type=CONSTRAINTS, title=约束, content=- 当前为拟定研究，不得把拟定样本写成已纳入样本，不得写成研究已完成或已实施。
+- 不得编造效应量、P值、参考文献或显著性结论，不得使用假设或虚构数据，包括测试与验证用途。
+- 不确认任何既有参数：任务类别与来源、Plan轮次与终止条件、公平对照条件、评审分工与分歧规则、伦理审查安排均保持未决，正文只能以拟议设计表述并说明适用条件，不得写成已选定事实。
+- 明确区分已知事实、用户确认信息与拟议设计，不得把猜测写成事实。
+- 明确数据来源、研究对象、指标定义和统计口径，无法核实的数据与引用不得编造。
+- 不提供代码。], ACCEPTANCE=PromptSection[type=ACCEPTANCE, title=验收, content=- 方法与研究问题一致，定义和比较条件可复核。
+- 已定要素与拟议设计、未决参数分开表述，不编造数据、结果、文献或已完成研究状态。
+- 正文汉字数在800至1200之间，附表另计。]}
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest.captured329AddsNoneOfTheThreeAlreadyExpressedRequirementsAndKeepsAllSources(CandidateTwentySevenReplayTest.java:42)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+  </testcase>
+  <testcase name="partialScoringAndFuturePermissionRetainTheirOwnUnresolvedObjects" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.022"/>
+  <testcase name="anUnrelatedTopicOrLimitedDirectiveCannotCoverTheFullCurrentDelegation(String)[1]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.005"/>
+  <testcase name="anUnrelatedTopicOrLimitedDirectiveCannotCoverTheFullCurrentDelegation(String)[2]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.005"/>
+  <testcase name="anUnrelatedTopicOrLimitedDirectiveCannotCoverTheFullCurrentDelegation(String)[3]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.008"/>
+  <testcase name="anUnrelatedTopicOrLimitedDirectiveCannotCoverTheFullCurrentDelegation(String)[4]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.008"/>
+  <testcase name="anUnrelatedTopicOrLimitedDirectiveCannotCoverTheFullCurrentDelegation(String)[5]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.005"/>
+  <testcase name="anUnrelatedTopicOrLimitedDirectiveCannotCoverTheFullCurrentDelegation(String)[6]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.003"/>
+  <testcase name="anUnrelatedTopicOrLimitedDirectiveCannotCoverTheFullCurrentDelegation(String)[7]" classname="com.promptoptimizer.enhancement.service.impl.CandidateTwentySevenReplayTest" time="0.0"/>
+</testsuite>
