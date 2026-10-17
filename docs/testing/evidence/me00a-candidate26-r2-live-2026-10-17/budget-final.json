@@ -1,0 +1,103 @@
+{
+  "actual": {
+    "total": 332,
+    "baseline": 70,
+    "candidateValidation": 262
+  },
+  "formalLimits": {
+    "total": 353,
+    "baseline": 80,
+    "candidateValidation": 273
+  },
+  "batch": {
+    "version": "candidate26-r2-live",
+    "maximum": 15,
+    "actual": 5,
+    "purposes": {
+      "PLANNING": 1,
+      "PLATFORM_GENERATION": 4,
+      "EXECUTION": 0,
+      "REVIEW": 0
+    },
+    "platformRequests": {
+      "successfulEnhancements": 1,
+      "failedEnhancements": 1
+    },
+    "transportOrHttpFailures": 0,
+    "protocolOrParseRejectedResponses": 3,
+    "unusedClosedNotTransferable": 10,
+    "downstreamWorksNotRun": 4,
+    "independentReviewsNotRun": 2,
+    "qualityRetries": 0
+  },
+  "knownTotalTokens": 45342,
+  "table": [
+    {
+      "trace": 328,
+      "purpose": "PLANNING",
+      "requestId": "63e124f4-8e34-4398-afae-7f6b083fe35c",
+      "requestModel": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 8546,
+      "inputTokens": 3757,
+      "outputTokens": 1481,
+      "totalTokens": 5238,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 329,
+      "purpose": "PLATFORM_GENERATION",
+      "requestId": "e7075a19-52ab-4e76-855c-48c23881da63",
+      "requestModel": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 7301,
+      "inputTokens": 8874,
+      "outputTokens": 1139,
+      "totalTokens": 10013,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 330,
+      "purpose": "PLATFORM_GENERATION",
+      "requestId": "355d4e05-2bda-4e82-b0e8-d15adaa4950b",
+      "requestModel": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 6698,
+      "inputTokens": 8572,
+      "outputTokens": 1152,
+      "totalTokens": 9724,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 331,
+      "purpose": "PLATFORM_GENERATION",
+      "requestId": "355d4e05-2bda-4e82-b0e8-d15adaa4950b",
+      "requestModel": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 7254,
+      "inputTokens": 8792,
+      "outputTokens": 1384,
+      "totalTokens": 10176,
+      "finishReason": "stop"
+    },
+    {
+      "trace": 332,
+      "purpose": "PLATFORM_GENERATION",
+      "requestId": "355d4e05-2bda-4e82-b0e8-d15adaa4950b",
+      "requestModel": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 8050,
+      "inputTokens": 8673,
+      "outputTokens": 1518,
+      "totalTokens": 10191,
+      "finishReason": "stop"
+    }
+  ],
+  "priceAndCurrencyCost": "UNKNOWN",
+  "scope": "HTTP200 does not mean application validation passed; no downstream quality conclusion from this batch"
+}

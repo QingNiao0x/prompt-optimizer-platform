@@ -1,5 +1,5 @@
 {
-  "status": "PREPARED_AWAITING_NUMERICAL_AUTHORIZATION",
+  "status": "APPROVED_SCOPE_TOOLS_V2_BEFORE_FIRST_MODEL_CALL",
   "version": "candidate26-r2-live",
   "tools": [
     {
@@ -24,7 +24,7 @@
     },
     {
       "path": "docs/testing/evidence/me00a-candidate26-r2-live-2026-10-17/run.mjs",
-      "sha256": "d55eb128dc96754e2dd3195a375e0a02af973528d3b7ba04d3a1faa9a8d626b3"
+      "sha256": "17e00a39a62d08c94985b7f4ee160dc07ebe1317a4933471aa0f850bfb0e9516"
     },
     {
       "path": "docs/testing/evidence/me00a-candidate26-r2-live-2026-10-17/start-candidate26-r2.ps1",
@@ -56,5 +56,7 @@
     }
   ],
   "productionSourceAndRuntimeUnchanged": true,
-  "newModelCalls": 0
+  "newModelCalls": 0,
+  "previousToolManifest": "tools-frozen-v1.json",
+  "toolOnlyCorrection": "Hide execution prompts during first independent work reviews; root unblinds after both reviews; no additional calls or retries"
 }

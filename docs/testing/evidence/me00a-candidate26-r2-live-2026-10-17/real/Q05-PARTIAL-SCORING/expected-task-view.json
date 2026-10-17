@@ -1,0 +1,82 @@
+{
+  "intent" : {
+    "templateCode" : "RESEARCH_ANALYSIS",
+    "deliveryProfile" : "ACADEMIC_METHODS",
+    "status" : "RAW_GOAL",
+    "auxiliaryProfiles" : [ ],
+    "engineeringConstraints" : false
+  },
+  "executionRequirements" : [ {
+    "questionId" : "task_categories",
+    "subject" : "局部委托要求",
+    "statement" : "只委托评分设计",
+    "destination" : "TASK",
+    "sourceQuestionIds" : [ "task_categories" ]
+  }, {
+    "questionId" : "task_categories",
+    "subject" : "未确认边界",
+    "statement" : "分类由我决定。",
+    "destination" : "CONSTRAINTS",
+    "sourceQuestionIds" : [ "task_categories" ]
+  } ],
+  "pendingDecisions" : [ {
+    "questionId" : "plan_interaction_rounds",
+    "question" : "Plan 组的问答交互按什么轮次与终止方式设计？",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "暂不确定。",
+    "source" : "USER_CONFIRMED",
+    "designDelegated" : false
+  }, {
+    "questionId" : "task_categories",
+    "question" : "4 类任务具体指哪四类？",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "分类由我决定。",
+    "source" : "USER_CONFIRMED",
+    "designDelegated" : false
+  }, {
+    "questionId" : "task_source",
+    "question" : "20 个任务来自哪里？",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "暂不确定。",
+    "source" : "USER_CONFIRMED",
+    "designDelegated" : false
+  }, {
+    "questionId" : "control_group_flow",
+    "question" : "两组同信息公平对照在收到同一份确认信息后，是否仍保留各自指定的增强流程？",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "暂不确定。",
+    "source" : "USER_CONFIRMED",
+    "designDelegated" : false
+  }, {
+    "questionId" : "deliverable_scope",
+    "question" : "方法部分除正文 800–1200 汉字外，附表需要包含哪些内容？",
+    "topic" : "本次选择",
+    "scope" : "UNRESOLVED",
+    "answer" : "暂不确定。",
+    "source" : "USER_CONFIRMED",
+    "designDelegated" : false
+  } ],
+  "examples" : {
+    "mode" : "DISABLED",
+    "source" : "SWITCH_OFF",
+    "guidance" : "未要求示例，不主动追加示例段。"
+  },
+  "requirementBoundaryGuidance" : "本次问答流程由增强器提出关键问题、用户回答，再将有效回答融入优化提示词。\n直接增强不主动发起这轮问答，但仍正常使用已经提供的需求与确认信息。\nPlan不能改为模型自行生成执行计划再作答。\n研究若要求同信息对照，两组接收并可使用同一原始任务和同一份实际确认信息。\n研究若要求同信息对照，保留各组指定的增强流程，不改写任一组的回答、不另换任务，也不只增加某组修订轮次。\n不得使用假设或虚构数据，禁令适用于所有用途，包括测试和验证；不得缩为仅禁止冒充真实业务数据。不能由这项禁令推出禁止使用可核实的真实示例资料；其他明确的数据限制和权限要求照常保留。\n具体检验依据未来数据分布和适用条件选择；可说明候选检验名称及适用前提，不预先选定，也不预设显著性。",
+  "userMeaningAnchors" : [ {
+    "role" : "AUDIENCE",
+    "text" : "研究生",
+    "start" : 1,
+    "end" : 4,
+    "origin" : "EFFECTIVE_USER_INPUT"
+  }, {
+    "role" : "RESEARCH_TOPIC",
+    "text" : "Plan问答对提示词质量的影响",
+    "start" : 20,
+    "end" : 35,
+    "origin" : "EFFECTIVE_USER_INPUT"
+  } ]
+}

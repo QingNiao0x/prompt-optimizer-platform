@@ -1,0 +1,170 @@
+{
+  "kind": "NEW_NATURAL_PLAN",
+  "newNaturalPlanningAcceptance": true,
+  "answersAreControlledSyntheticFixture": true,
+  "actualRetainedQuestions": [
+    {
+      "id": "task_source",
+      "question": "20个任务（4类×每类5个）的题目来源和确定方式是什么？",
+      "hint": "这决定任务是否可复现、是否需说明预注册或专家审定，也影响公平对照的可比性。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "expert_developed",
+          "label": "研究者按类别自行编写并经专家审定",
+          "description": "由研究者依据4类任务各编写5个，再经独立专家审核定稿。",
+          "answer": "20个任务由研究者按4类各编写5个，并经独立专家审定后定稿。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "from_existing_corpus",
+          "label": "从已有任务库或语料中筛选",
+          "description": "从公开或已有任务集中按类别筛选，并说明筛选标准。",
+          "answer": "20个任务从已有任务库或语料中按类别筛选，并说明筛选标准。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "pilot_calibrated",
+          "label": "先小规模试用再定稿",
+          "description": "先编写候选任务，经小规模试用后按预设标准筛选定稿。",
+          "answer": "20个任务先编写候选，经小规模试用后按预设标准筛选定稿。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "task_category",
+      "question": "4类任务分别指哪四类？",
+      "hint": "类别定义直接决定任务构成、评分维度和结果解释，需在方法部分写明。",
+      "type": "FREE_TEXT",
+      "options": [],
+      "examples": [
+        "例如：事实查询、多步推理、约束满足、开放写作"
+      ],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "plan_rounds",
+      "question": "Plan交互的轮次与终止条件如何设定？",
+      "hint": "已知Plan是先澄清并取得回答后生成，但具体轮次和终止方式尚未确定，会影响两组可比性。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "fixed_max_rounds",
+          "label": "设定固定最大轮次",
+          "description": "预先规定最多澄清轮次，达到上限或信息足够即终止。",
+          "answer": "Plan交互设定预先规定的最大澄清轮次，达到上限或信息足够即终止。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "until_sufficient",
+          "label": "以信息充分为终止标准",
+          "description": "不固定轮次，由预设的充分性标准判断何时终止。",
+          "answer": "Plan交互不固定轮次，以预设的信息充分性标准判断终止。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "single_round",
+          "label": "仅一轮澄清",
+          "description": "只进行一次澄清问答，随后生成。",
+          "answer": "Plan交互仅进行一轮澄清问答，随后生成。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "fair_control_groups",
+      "question": "两组公平对照分别对应什么条件？",
+      "hint": "需明确两组对照各自接收何种增强流程，才能说明与直接增强、Plan的对应关系。",
+      "type": "FREE_TEXT",
+      "options": [],
+      "examples": [
+        "例如：一组为直接增强加同信息，另一组为Plan加同信息"
+      ],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "reviewer_workload",
+      "question": "两名评审如何分工评分全部输出？",
+      "hint": "影响盲评可行性和一致性分析口径，需说明是全部双评还是部分双评。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "all_double",
+          "label": "全部输出双评",
+          "description": "两名评审独立评分全部输出。",
+          "answer": "两名评审独立评分全部输出。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "split_overlap",
+          "label": "分工评分并设重叠样本",
+          "description": "各自评分一部分，另设重叠样本用于一致性评估。",
+          "answer": "两名评审分工评分，并设重叠样本用于一致性评估。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "disagreement_rule",
+      "question": "两名评审评分分歧的处理规则是什么？",
+      "hint": "需写明阈值、讨论或第三方裁决方式，否则分歧处理无法落地。",
+      "type": "FREE_TEXT",
+      "options": [],
+      "examples": [
+        "例如：分差超过1分时讨论，仍不一致由第三名评审裁决"
+      ],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "ethics_approval",
+      "question": "本研究是否已获得或需要伦理审查/知情同意？",
+      "hint": "涉及人类评审与用户问答，授权状态会影响方法部分能否声明合规。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "approved",
+          "label": "已获伦理批准",
+          "description": "已取得伦理审查批准，可在方法中说明。",
+          "answer": "本研究已获得伦理审查批准。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "exempt",
+          "label": "经判定豁免",
+          "description": "经机构判定无需伦理审查，可在方法中说明。",
+          "answer": "本研究经机构判定豁免伦理审查。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "pending",
+          "label": "尚未申请或待批",
+          "description": "目前尚未申请或仍在审批中，方法部分按未获批表述。",
+          "answer": "本研究尚未申请或仍在伦理审批中，方法部分按未获批表述。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "noSelectedRealParameters": true,
+  "notAnAutomaticFallback": true
+}

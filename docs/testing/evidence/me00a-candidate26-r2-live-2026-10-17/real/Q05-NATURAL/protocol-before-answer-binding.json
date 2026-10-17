@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-12",
+  "scope": "ME-00-A baseline then ME-01-A + ME-03-A bounded repair",
+  "cases": 7,
+  "initialPlanEnabled": false,
+  "initialPlanAnswers": [],
+  "initialExamplesEnabled": false,
+  "maximumActualModelCalls": 353,
+  "phaseLimits": {
+    "baseline": 80,
+    "candidateValidation": 273
+  },
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "baselineRounds": 1,
+  "candidateRounds": 2,
+  "planSupplement": [
+    "Q04",
+    "Q05"
+  ],
+  "review": "two independent AI reviewers, not domain experts; disputed verdicts unresolved until adjudication",
+  "sameTestAccountFile": "private runtime only; reuse former synthetic user",
+  "archiveSecrets": false,
+  "accountCreationAllowed": false,
+  "priceAndCurrencyCost": "UNKNOWN until verified invoice; actual provider tokens collected",
+  "productPrimaryComparison": "raw actual work vs actual copied enhanced work",
+  "repairRegression": "current enhanced vs repaired enhanced, separately reported",
+  "planParity": "verbatim actual submitted test answers provided to raw and direct comparators, never patch Plan copied body",
+  "severeFailure": "block capability release, preserve trace; no automatic budget increase",
+  "activeBatch": {
+    "version": "candidate26-r2-live",
+    "group": "candidate26-r2-Q05",
+    "mode": "FROZEN_ONE_ROUND",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationAmendment": "protocol-amendment-21.json",
+    "authorizationBasis": "批准新增15次，执行冻结Q05范围（建议）",
+    "secondRoundAuthorized": false,
+    "cases": [
+      "Q05-NATURAL",
+      "Q05-PARTIAL-SCORING"
+    ],
+    "casesFile": "candidate26-r2-q05-cases.json",
+    "casesSha256": "ff5f73c8b6dec8b3c1c9411b903400bef19d3463ffae8ada35cf5690e0967960",
+    "allowedRawPromptSha256": [
+      "71de870998746bb5a0b9a049834f272f07f6ef1fae3c40a77cdb8d56a631398d"
+    ],
+    "model": "deepseek-flash",
+    "executionModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "reviewModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "callsBefore": 327,
+    "candidateCallsBefore": 257,
+    "maximumNewCalls": 15,
+    "maximumActualCallsAfterBatch": 342,
+    "maximumGenerationCalls": 6,
+    "maximumPlanningCalls": 3,
+    "maximumExecutionCalls": 4,
+    "maximumReviewCalls": 2,
+    "purposeMaximums": {
+      "PLANNING": 3,
+      "PLATFORM_GENERATION": 6,
+      "EXECUTION": 4,
+      "REVIEW": 2
+    },
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "executionParameters": {
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "accountCreationAllowed": false,
+    "sameTestAccountFile": "tmp/local-acceptance/account.json",
+    "noPhaseBorrowing": true,
+    "closedAllowanceTransfer": false,
+    "qualityRetriesAllowed": false,
+    "qualityRetries": false,
+    "sourceFreeze": "docs/testing/evidence/me00a-candidate26-r2-offline-2026-10-17/candidate26-r2-source.json",
+    "sourceTreeSha256": "119fd1d063e13118b1d5e8589b88473240c9a907400c28b843dc21f920944d19",
+    "runtimeTreeSha256": "52c9f4fd998f4899a308d97d33481abb5ad80fcb34f08ece8f9411f3dee171f2",
+    "evaluationToolFreeze": "docs/testing/evidence/me00a-candidate26-r2-live-2026-10-17/tools-frozen.json",
+    "evaluationToolFreezeSha256": "5ee1a452bb8b9a4716256e8227ae32dfbe22e455aed1933713ee2ff4614f0eb6",
+    "capturedPlanningReplay": true,
+    "capturedPlanningTraceFile": "321.json",
+    "capturedPlanningTraceSha256": "fa250f3ca65eba8c9f29b2621a504c97b07fe5dca89ad1d54dac046baf9beb9d",
+    "expectedTaskViews": [],
+    "executionOrder": [
+      "F1/raw/Flash",
+      "P2/Plan/Pro",
+      "F2/Plan/Flash",
+      "P1/raw/Pro"
+    ],
+    "reviewMapping": {
+      "U": "F2",
+      "V": "F1",
+      "X": "P1",
+      "Y": "P2"
+    },
+    "workOnlyBlinding": true,
+    "sameVendorReviewLimitation": true,
+    "actualNewCalls": 0,
+    "status": "OPEN",
+    "openedAt": "2026-10-17T06:09:45.696564+00:00"
+  }
+}

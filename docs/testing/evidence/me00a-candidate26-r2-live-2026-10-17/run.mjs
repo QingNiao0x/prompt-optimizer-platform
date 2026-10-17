@@ -201,17 +201,17 @@ if(stage==='execute'){
 
 if(stage==='review'){
   const sample=cases.find(item=>item.id==='Q05-PARTIAL-SCORING'),answers=await load(resolve(output,sample.id,'actual-answers.json'));
-  let text=rubricInstruction()+'\n你是独立AI辅助评审，不是人工领域专家。评价匿名作品，不推测模型或来源。准确性、完整性、清晰度、可执行性分别评分。不要奖励篇幅或标题；原目标、未确认类别、局部评分委托、研究未实施状态、双评及同信息公平流程分别核对。不要把建议当已确认事实，不要求用户禁止的假设数据。篇幅由独立工具判断，模型自报不是合规证据。每个问题必须引用该作品或对应输入的连续原句，说明来源及严重性；分歧和不确定性保留，不补写作品。只输出严格JSON：{"reviewerType":"AI_ASSISTED","scores":{"U":{"accuracy":1,"completeness":1,"clarity":1,"executability":1},"V":{},"X":{},"Y":{}},"issues":[{"work":"U","evidence":"原句","reason":"原因","origin":"INPUT|WORK|MIXED|UNDETERMINED","severity":"SEVERE|MAJOR|MINOR"}],"pairs":[{"left":"U","right":"V","verdict":"LEFT_WIN|RIGHT_WIN|TIE|BOTH_FAIL","reason":"依据"},{"left":"X","right":"Y","verdict":"LEFT_WIN|RIGHT_WIN|TIE|BOTH_FAIL","reason":"依据"}]}。四份作品均需完整四维整数1—5评分。严重错误独立阻断，不以均分抵消。\n';
+  let text=rubricInstruction()+'\n你是独立AI辅助评审，不是人工领域专家。只看原始要求、相同实际题答及匿名作品，不查看优化提示词或其他评审结果，不推测模型或来源。准确性、完整性、清晰度、可执行性分别评分。不要奖励篇幅或标题；原目标、未确认类别、局部评分委托、研究未实施状态、双评及同信息公平流程分别核对。不要把建议当已确认事实，不要求用户禁止的假设数据。篇幅由独立工具判断，模型自报不是合规证据。每个问题必须引用该作品的连续原句，说明来源及严重性；分歧和不确定性保留，不补写作品。只输出严格JSON：{"reviewerType":"AI_ASSISTED","scores":{"U":{"accuracy":1,"completeness":1,"clarity":1,"executability":1},"V":{},"X":{},"Y":{}},"issues":[{"work":"U","evidence":"原句","reason":"原因","origin":"INPUT|WORK|MIXED|UNDETERMINED","severity":"SEVERE|MAJOR|MINOR"}],"pairs":[{"left":"U","right":"V","verdict":"LEFT_WIN|RIGHT_WIN|TIE|BOTH_FAIL","reason":"依据"},{"left":"X","right":"Y","verdict":"LEFT_WIN|RIGHT_WIN|TIE|BOTH_FAIL","reason":"依据"}]}。四份作品均需完整四维整数1—5评分。严重错误独立阻断，不以均分抵消。\n';
   text+=`原始要求：\n${sample.rawPrompt}\n实际题答（两组相同）：\n${JSON.stringify(answers)}\n`;
   const mapping={U:'F2',V:'F1',X:'P1',Y:'P2'};
   for(const[label,id]of Object.entries(mapping)){
-    const input=await readFile(resolve(output,'works',id,'input.md'),'utf8'),work=await readFile(resolve(output,'works',id,'work.md'),'utf8');
-    text+=`\n作品${label}的对应执行输入：\n${input}\n作品${label}：\n${work}\n`;
+    const work=await readFile(resolve(output,'works',id,'work.md'),'utf8');
+    text+=`\n作品${label}：\n${work}\n`;
   }
   await save(resolve(output,'review-input.md'),text);
   await save(resolve(output,'review-mapping.private.json'),mapping);
   await save(resolve(output,'review-lock.json'),{sha256:hash(text),models:['deepseek-flash','deepseek-v4-pro'],independentCalls:true,sameProvider:true,
-    promptAndWorkAudit:true,workOnlyBlinding:false,armLabelsHidden:true,priorReviewerResultsSupplied:false});
+    promptAndWorkAudit:false,workOnlyBlinding:true,armLabelsHidden:true,priorReviewerResultsSupplied:false});
   for(const model of ['deepseek-flash','deepseek-v4-pro']){
     try{const review=await upstream(model,text,'REVIEW',`${version}-review-${model}`);await save(resolve(output,`review-${model}.md`),review.text);await save(resolve(output,`review-${model}-execution.json`),review);console.log(`DONE independent AI review ${model}`);}
     catch(error){await save(resolve(output,`review-${model}-failure.json`),{failureType:error.name});console.log(`FAILED review ${model}; counted, no retry`);}
