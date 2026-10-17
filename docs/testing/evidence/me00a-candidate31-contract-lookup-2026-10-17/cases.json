@@ -1,0 +1,30 @@
+[
+  {
+    "id": "PROJECT-MIXED-EXISTING",
+    "rawPrompt": "请先熟悉订单项目，再为现有用户模块实现登录接口。前端Vue3和TypeScript，后端Spring Boot3、PostgreSQL、Redis。沿用现有用户表、密码校验和JWT认证契约，实际接口与权限规则先查现有源码；不新增用户表或迁移数据，不改变其他登录入口。返回与现有项目一致的实现及受影响测试。",
+    "includeExamples": false,
+    "contextFiles": [],
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "includeExamples": false
+    }
+  },
+  {
+    "id": "PROJECT-MIXED-USER-CHOICE",
+    "rawPrompt": "先熟悉项目，再实现登录接口。后端Spring Boot3，前端Vue3与TypeScript。现有登录入口保持不变，新入口的登录方式由我决定，尚未在邮箱密码和手机号验证码之间选择；请先确认这项业务选择，不要默认。返回实现及受影响测试。",
+    "includeExamples": false,
+    "contextFiles": [],
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "includeExamples": false
+    }
+  }
+]

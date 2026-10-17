@@ -12,7 +12,7 @@ const props = defineProps<Props>();
 const stages = [
   { id: 'context', label: '项目事实' },
   { id: 'clarify', label: '需求明确化' },
-  { id: 'result', label: '结构化输出' },
+  { id: 'result', label: '优化结果' },
 ] as const;
 
 const activeIndex = computed(() => stages.findIndex((stage) => stage.id === props.stage));

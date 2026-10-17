@@ -1,0 +1,61 @@
+{
+  "candidate": "candidate32",
+  "status": "CLOSED",
+  "actualBefore": 359,
+  "candidateBefore": 289,
+  "formalLimits": {
+    "total": 389,
+    "baseline": 80,
+    "candidate": 309
+  },
+  "maximumNewCalls": 18,
+  "purposeMaximums": {
+    "PLANNING": 3,
+    "PLATFORM_GENERATION": 9,
+    "EXECUTION": 4,
+    "REVIEW": 2
+  },
+  "requests": {
+    "naturalPlan": 1,
+    "planEnhancement": 1,
+    "directEnhancement": 2,
+    "pairedWorks": 4,
+    "independentAiReviews": 2
+  },
+  "models": {
+    "enhancement": "deepseek-flash",
+    "execution": "deepseek-flash",
+    "review": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ]
+  },
+  "parameters": {
+    "temperature": 0.2,
+    "enhancementMaxTokens": 10000,
+    "executionMaxTokens": 10000,
+    "thinking": "disabled"
+  },
+  "reallocationRequested": {
+    "candidate31ClosedUnused": 8,
+    "candidate26ClosedUnused": 10
+  },
+  "maximumActualAfter": 377,
+  "maximumCandidateAfter": 307,
+  "casesFile": "live-cases.json",
+  "sameCanonicalAccountFile": "tmp/local-acceptance/account.json",
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "failureCallsCounted": true,
+  "executionParity": "Same raw task and safe source evidence; enhanced arms execute unchanged native clipboard with no omitted answers repaired by scripts.",
+  "notCovered": [
+    "New complex code execution",
+    "Cross-supplier or statistical generalization",
+    "Existing requests credential-echo, scoring and YLL gates",
+    "Full example combinations and G1-G8"
+  ],
+  "authorizationAmendment": "protocol-amendment-25.json",
+  "actualNewCalls": 10,
+  "actualAfter": 369,
+  "unusedClosed": 8
+}

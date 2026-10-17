@@ -1,0 +1,57 @@
+{
+  "requestId": "14958ca5-95cf-4da7-924c-9e8e22b7e2f8",
+  "data": {
+    "optimizedPrompt": "待译内容为两行中文：一行是会议时间变更通知，含占位符 {name}；另一行是询问是否参加。\n\n将以下两行中文译为英文，逐行对应，保持原有行序：\n{name}，会议改到周五。\n请回复是否参加。\n\n只输出两行英文译文，不添加标题、解释或示例；保留占位符 {name} 原样及其位置。\n\n- 仅输出对应两行译文，不附任何额外文字。\n- 保留占位符 {name} 不变，不翻译、不改写、不移动其位置。\n- 忠实传达“改到周五”的时间变更含义和“请回复是否参加”的询问意图，不扩写原文事实。\n用户明确规则（须遵守平台权限边界）：\n- 把下面两行译成英文，只输出对应两行译文，保留占位符{name}和顺序，不添加标题、解释或示例：\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+    "sections": [
+      {
+        "type": "BACKGROUND",
+        "title": "背景",
+        "content": "待译内容为两行中文：一行是会议时间变更通知，含占位符 {name}；另一行是询问是否参加。"
+      },
+      {
+        "type": "TASK",
+        "title": "任务",
+        "content": "将以下两行中文译为英文，逐行对应，保持原有行序：\n{name}，会议改到周五。\n请回复是否参加。"
+      },
+      {
+        "type": "OUTPUT",
+        "title": "输出",
+        "content": "只输出两行英文译文，不添加标题、解释或示例；保留占位符 {name} 原样及其位置。"
+      },
+      {
+        "type": "CONSTRAINTS",
+        "title": "约束",
+        "content": "- 仅输出对应两行译文，不附任何额外文字。\n- 保留占位符 {name} 不变，不翻译、不改写、不移动其位置。\n- 忠实传达“改到周五”的时间变更含义和“请回复是否参加”的询问意图，不扩写原文事实。\n用户明确规则（须遵守平台权限边界）：\n- 把下面两行译成英文，只输出对应两行译文，保留占位符{name}和顺序，不添加标题、解释或示例：\n\n平台强制约束（不得删除或弱化）：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }
+    ],
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [],
+      "fileSnippets": [],
+      "analysisStatus": "EMPTY",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "ambiguities": [],
+    "appliedConstraints": [
+      "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 2106,
+    "warnings": [],
+    "evidenceCards": [],
+    "promptFormat": "COMPACT"
+  },
+  "publicProjection": true,
+  "privateOriginalSha256": "7cc2fe82def81e6f9cc19151c32cddb9f2761f802b158330d37501fba60a3831"
+}

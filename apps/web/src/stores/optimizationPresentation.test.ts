@@ -1,0 +1,211 @@
+import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AxiosError } from 'axios';
+
+vi.mock('@/services/promptOptimizerApi', () => ({
+  analyzeContext: vi.fn(), createOptimizationPlan: vi.fn(), optimizePrompt: vi.fn(),
+  preparePlanningContext: vi.fn(), listAvailableModels: vi.fn(),
+}));
+
+import { renderPromptSections } from '@/features/optimization/promptPresentation';
+import { optimizePrompt } from '@/services/promptOptimizerApi';
+import type { OptimizationHistoryDetail, OptimizationResult, PromptFormat } from '@/types/api';
+import { useOptimizationStore } from './optimization';
+
+const fixture = (format: PromptFormat = 'COMPACT'): OptimizationResult => {
+  const sections: OptimizationResult['sections'] = [
+    { type: 'BACKGROUND', title: '背景', content: '面向已有项目。' },
+    { type: 'TASK', title: '任务', content: '实现约定接口。\n```md\n## 代码中的标题\n```' },
+    { type: 'OUTPUT', title: '输出', content: '交付实现和测试；只返回约定 JSON。' },
+    { type: 'CONSTRAINTS', title: '约束', content: '平台强制约束（不得删除或弱化）：\n- 不得泄露凭据。\n\n新账号需复核；旧账号例外。' },
+    { type: 'CLARIFICATIONS', title: '待确认', content: '尚未确定的事实。' },
+  ];
+  return { promptFormat: format, sections, optimizedPrompt: renderPromptSections(sections, format),
+    contextReport: { customDescription: '', technologyStack: [], dependencies: [], directoryTree: [],
+      fileSnippets: [], warnings: [], redactions: [], analysisVersion: 'test' },
+    ambiguities: ['尚未确定的事实。'], appliedConstraints: ['不得泄露凭据。'], templateCode: 'GENERAL',
+    provider: { provider: 'mock', model: 'fixture', mock: true }, latencyMs: 1 };
+};
+const history = (format?: PromptFormat): OptimizationHistoryDetail => ({
+  id: 'existing-record', rawPrompt: '历史任务', ...fixture(format), contextSummary: {},
+  ...(format ? { promptFormat: format } : { promptFormat: undefined }),
+  providerName: 'mock', modelName: 'fixture', mock: true, latencyMs: 1,
+  createdAt: '2026-10-18T00:00:00Z', includePermissionBoundaries: true, includeExamples: false,
+  conversationHistory: [], permissionPolicy: {},
+});
+
+describe('explicit prompt presentation', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    setActivePinia(createPinia());
+    vi.stubGlobal('window', { localStorage: { getItem: () => null, setItem: () => undefined, removeItem: () => undefined } });
+  });
+
+  it.each(['COMPACT', 'STRUCTURED'] as const)('sends %s for direct and confirmed Plan enhancement', async format => {
+    const store = useOptimizationStore();
+    store.rawPrompt = '实现约定接口';
+    store.setPromptFormat(format);
+    vi.mocked(optimizePrompt).mockResolvedValue({ requestId: 'direct', data: fixture(format) });
+    expect(await store.runOptimization([])).toBe(true);
+    const planConfirmation = { planId: 'existing-plan', answers: [
+      { questionId: 'auth', question: '认证方式？', answer: '沿用现有认证' },
+    ] };
+    expect(await store.runOptimization([], { planConfirmation })).toBe(true);
+    expect(vi.mocked(optimizePrompt).mock.calls.map(([request]) => request.enhancement.promptFormat))
+      .toEqual([format, format]);
+    expect(vi.mocked(optimizePrompt).mock.lastCall?.[0].planConfirmation).toEqual(planConfirmation);
+  });
+
+  it('changes only the next generation preference, retaining current result, Plan and draft', () => {
+    const store = useOptimizationStore();
+    const original = fixture();
+    store.result = original;
+    store.plan = { summary: '已确认', questions: [], templateCode: 'GENERAL', provider: original.provider, latencyMs: 1 };
+    store.resultDraft = original.sections.map(section => ({ ...section, content: `${section.content}编辑草稿` }));
+    const draft = store.resultDraft;
+    const plan = store.plan;
+    const context = store.captureContext();
+    expect(store.setPromptFormat('STRUCTURED')).toBe(true);
+    expect(store.result?.optimizedPrompt).toBe(original.optimizedPrompt);
+    expect(store.result?.promptFormat).toBe('COMPACT');
+    expect(store.hasPendingPromptFormat).toBe(true);
+    expect(store.result?.sections).toEqual(original.sections);
+    expect(store.result?.appliedConstraints).toEqual(original.appliedConstraints);
+    expect(store.resultDraft).toBe(draft);
+    expect(store.plan).toBe(plan);
+    expect(store.captureContext()).toEqual(context);
+    expect(store.setPromptFormat('COMPACT')).toBe(true);
+    expect(store.hasPendingPromptFormat).toBe(false);
+    expect(store.result?.optimizedPrompt).toBe(original.optimizedPrompt);
+    expect(store.result?.optimizedPrompt).toContain('```md\n## 代码中的标题\n```');
+    expect(store.result?.optimizedPrompt).toContain('新账号需复核；旧账号例外。');
+    expect(store.result?.optimizedPrompt).not.toContain('## 待确认');
+    expect(optimizePrompt).not.toHaveBeenCalled();
+    expect(store.undoResult()).toBe(false);
+    expect(store.resultDraft).toBe(draft);
+  });
+
+  it('retains selected form while editing, restoring protected rules and undoing content', () => {
+    const store = useOptimizationStore();
+    store.result = fixture();
+    store.setPromptFormat('STRUCTURED');
+    const sections = store.result!.sections.map(section => ({ ...section, content: section.type === 'CONSTRAINTS'
+      ? '保留新条件。' : section.type === 'TASK' ? '编辑后的任务。' : section.content }));
+    expect(store.saveEditedSections(sections)).toBe(true);
+    expect(store.result?.optimizedPrompt).toContain('编辑后的任务。');
+    expect(store.result?.optimizedPrompt).not.toContain('## 任务');
+    expect(store.result?.optimizedPrompt).toContain('不得泄露凭据。');
+    expect(store.undoResult()).toBe(true);
+    expect(store.promptFormat).toBe('COMPACT');
+    expect(store.result?.optimizedPrompt).toContain('实现约定接口。');
+  });
+
+  it('explicitly regenerates with only format changed, preserves exact source and confirmed Plan, and supports undo', async () => {
+    const store = useOptimizationStore();
+    store.rawPrompt = '原始需求：实现登录';
+    const confirmation = { planId: 'same-plan', answers: [
+      { questionId: 'login', question: '新入口登录方式？', answer: '邮箱密码' },
+    ] };
+    const sourceFile = { path: 'rules.md', language: 'markdown', content: '原始资料。' };
+    vi.mocked(optimizePrompt).mockResolvedValueOnce({ requestId: 'first', data: fixture() })
+      .mockResolvedValueOnce({ requestId: 'second', data: fixture('STRUCTURED') });
+    expect(await store.runOptimization([sourceFile], { planConfirmation: confirmation })).toBe(true);
+    const firstRequest = JSON.parse(JSON.stringify(vi.mocked(optimizePrompt).mock.calls[0]![0]));
+    // 外部对象后续变化不能改写已经成功发送的来源快照。
+    sourceFile.content = '不得混入的后续对象变化';
+    confirmation.answers[0]!.answer = '不得混入的未提交选择';
+    store.setPromptFormat('STRUCTURED');
+    expect(store.hasPendingPromptFormat).toBe(true);
+    expect(await store.regenerateWithPromptFormat()).toBe(true);
+    const second = vi.mocked(optimizePrompt).mock.calls[1]![0];
+    expect(second).toEqual({ ...firstRequest, enhancement: { ...firstRequest.enhancement, promptFormat: 'STRUCTURED' } });
+    expect(store.result?.promptFormat).toBe('STRUCTURED');
+    expect(store.hasPendingPromptFormat).toBe(false);
+    expect(store.undoResult()).toBe(true);
+    expect(store.result?.promptFormat).toBe('COMPACT');
+    expect(store.promptFormat).toBe('COMPACT');
+    expect(store.canReuseGenerationSource).toBe(true);
+  });
+
+  it.each(['raw', 'context', 'examples', 'model', 'task'] as const)('does not reuse a source after %s changes', async change => {
+    const store = useOptimizationStore();
+    store.rawPrompt = '旧需求';
+    vi.mocked(optimizePrompt).mockResolvedValue({ requestId: 'first', data: fixture() });
+    await store.runOptimization([], { planConfirmation: { planId: 'old-plan', answers: [] } });
+    if (change === 'raw') store.rawPrompt = '新需求';
+    else if (change === 'context') store.addFile({ path: 'new.md', content: '新资料', language: 'text' });
+    else if (change === 'examples') store.includeExamples = true;
+    else if (change === 'model') store.selectedModelId = 'new-model';
+    else store.resetTask();
+    store.setPromptFormat('STRUCTURED');
+    expect(await store.regenerateWithPromptFormat()).toBe(false);
+    expect(optimizePrompt).toHaveBeenCalledTimes(1);
+    expect(store.canReuseGenerationSource).toBe(false);
+  });
+
+  it('blocks unsaved edits and keeps saved edits available through undo after regeneration', async () => {
+    const store = useOptimizationStore();
+    store.rawPrompt = '需求';
+    vi.mocked(optimizePrompt).mockResolvedValueOnce({ requestId: 'first', data: fixture() })
+      .mockResolvedValueOnce({ requestId: 'second', data: fixture('STRUCTURED') });
+    await store.runOptimization([]);
+    const draft = store.result!.sections.filter(section => section.type !== 'CLARIFICATIONS')
+      .map(section => ({ ...section, content: section.type === 'TASK' ? '手工修改保留。' : section.content }));
+    store.resultDraft = draft;
+    store.setPromptFormat('STRUCTURED');
+    expect(await store.regenerateWithPromptFormat()).toBe(false);
+    expect(store.resultDraft).toEqual(draft);
+    expect(optimizePrompt).toHaveBeenCalledTimes(1);
+    expect(store.saveEditedSections(draft)).toBe(true);
+    expect(await store.regenerateWithPromptFormat()).toBe(true);
+    expect(store.undoResult()).toBe(true);
+    expect(store.result?.optimizedPrompt).toContain('手工修改保留。');
+  });
+
+  it.each(['failure', 'expired'] as const)('keeps previous result and selected mode after %s', async kind => {
+    const store = useOptimizationStore();
+    store.rawPrompt = '需求';
+    vi.mocked(optimizePrompt).mockResolvedValueOnce({ requestId: 'first', data: fixture() });
+    await store.runOptimization([], { planConfirmation: { planId: 'kept-plan', answers: [] } });
+    const original = store.result;
+    const failure = new AxiosError('Request failed', 'ERR_BAD_RESPONSE');
+    failure.response = { status: kind === 'expired' ? 409 : 502, statusText: 'Failure', headers: {}, config: failure.config!,
+      data: { requestId: 'failed', error: { code: kind === 'expired' ? 'PLANNING_SESSION_EXPIRED' : 'RESULT_INVALID',
+        message: '本次增强未完成。', retryable: false } } };
+    vi.mocked(optimizePrompt).mockRejectedValueOnce(failure);
+    store.setPromptFormat('STRUCTURED');
+    expect(await store.regenerateWithPromptFormat()).toBe(false);
+    expect(store.result).toBe(original);
+    expect(store.promptFormat).toBe('STRUCTURED');
+    expect(store.hasPendingPromptFormat).toBe(true);
+    expect(store.planningSessionExpired).toBe(kind === 'expired');
+    expect(store.modeRegenerationRawPrompt).toBe('需求');
+    expect(store.isOptimizing).toBe(false);
+  });
+
+  it.each(['COMPACT', 'STRUCTURED', undefined] as const)('restores %s historical form and resets a new task to compact', format => {
+    const store = useOptimizationStore();
+    const original = history(format);
+    store.loadFromHistory(original);
+    expect(store.promptFormat).toBe(format ?? 'STRUCTURED');
+    expect(original.promptFormat).toBe(format);
+    store.resetTask();
+    expect(store.promptFormat).toBe('COMPACT');
+  });
+
+  it('locks format during pending work and applies the returned recorded format', async () => {
+    const store = useOptimizationStore();
+    store.rawPrompt = '任务';
+    let complete!: (value: { requestId: string; data: OptimizationResult }) => void;
+    vi.mocked(optimizePrompt).mockImplementation(() => new Promise(resolve => { complete = resolve; }));
+    const pending = store.runOptimization([]);
+    await vi.waitFor(() => expect(optimizePrompt).toHaveBeenCalledOnce());
+    expect(store.setPromptFormat('STRUCTURED')).toBe(false);
+    expect(store.promptFormat).toBe('COMPACT');
+    complete({ requestId: 'completed', data: fixture() });
+    expect(await pending).toBe(true);
+    expect(store.promptFormat).toBe('COMPACT');
+    store.applyReoptimized({ recordId: 'another', result: fixture('STRUCTURED') });
+    expect(store.promptFormat).toBe('STRUCTURED');
+  });
+});

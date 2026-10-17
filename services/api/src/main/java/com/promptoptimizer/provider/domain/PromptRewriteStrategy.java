@@ -1,6 +1,8 @@
 package com.promptoptimizer.provider.domain;
 
 import com.promptoptimizer.enhancement.domain.EffectiveTaskView;
+import com.promptoptimizer.enhancement.domain.PromptFormat;
+import com.promptoptimizer.template.domain.PromptFrameworkSelector;
 
 /**
  * 依据有效任务视图要求模型判断实质缺口，不用标题、关键词计数或长度冒充需求充分性。
@@ -20,7 +22,7 @@ public record PromptRewriteStrategy(String mode, String instruction) {
             pendingDecisions中designDelegated=true仅授权提出拟议设计，scope仍为UNRESOLVED，既有参数不能写成已选；对已委托的拟议方法给出可实施主建议及条件，不重复索要设计答案。实际参数、独立对象和新条件仍按各自来源与状态处理。
             每个新增要求应对应真实缺口；原文已有的公平对照、方法条件、数值与格式不再次扩写。Plan新增决定只更新责任段并同步失效的旧表述；保留独立未知、对象、条件及来源。
             对充分需求，把有效原句分别放入其责任段，不同义扩写或重述成验收列表；不要在背景盘点缺项。对仅有宽泛专业目标的需求，缺少操作化方法与比较办法属于实质缺口，不能以“下游自己设计全部细节”为由判为充分。简单沟通任务可用常规表达直接完成，不为凑gaps制造问题。
-            简单邮件、纯译文或严格格式任务优先COMPACT，四要素各写最短必要内容，不在背景、任务、输出重复同一句；复杂多目标任务按依赖和交付组织STRUCTURED。四要素是内部校验结构，不是强制下游作品章节。
+            四要素用于内部覆盖校验，每项只承载自己的必要信息，不重复同一句，也不是强制下游作品章节；按照本次生成策略组织表达。
             简单沟通的补全服务行动、受众与语气，不补造截止日期、汇总职责或工作进展，不擅自放宽行动要求；委婉催交仍须表达请对方发送，不改成无需着急或可不提交。未知称呼可用自然中性称呼，不制造姓名填空模板。
             SUFFICIENT时直接分配原文的完整句子到四个责任段，必要时仅拆分句子，不同义改写；同一完整要求只放一个段落。已有格式、长度和限制不要在ACCEPTANCE重新抄写，未要求且无独立检查价值时省略ACCEPTANCE。背景没有额外事实时只写受众或输入对象，不盘点未提供的资料。
             对宽泛研究目标，在用户原定交付物中给出可直接开展的推荐执行路径，说明选择依据、适用条件与可调整处，必要时再列替代方法；保留原定报告、方法正文、方案或模板的类型，不把建议独立改成另一交付物。推荐明确为拟议设计，不冒充用户确认或已实施。不能只列若干候选而将方法、评分、随机化全部退回用户。区分自然使用效果与同等信息下的方法收益；保留谁提问、谁回答及答案的用途，不把用户问答改成模型自行列计划。同信息对照两组获得并可使用同一原始任务与同一份实际确认信息；直接组不追问不等于不能使用已提供答案，不能通过修改回答、换任务或额外修订轮次伪造公平。
@@ -30,11 +32,36 @@ public record PromptRewriteStrategy(String mode, String instruction) {
 
     /** 使用共享交付类型与确认状态；具体缺口由同次模型判断给出。 */
     public static PromptRewriteStrategy forTask(EffectiveTaskView task) {
-        return new PromptRewriteStrategy("ASSESS_EXECUTION_GAPS", GAP_GUIDANCE + task.meaning().evaluationGuidance()
+        return forTask(task, null);
+    }
+
+    /**
+     * 显式模式参与同一次增强的写作规划，不另起模型链路；缺省模式继续兼容旧客户端的自动判断。
+     * 两种表达共用任务、确认、实质补全与安全边界，不以删规则或扩大交付制造差异。
+     */
+    public static PromptRewriteStrategy forTask(EffectiveTaskView task, PromptFormat format) {
+        String common = GAP_GUIDANCE + task.meaning().evaluationGuidance()
                 + "\n本次交付画像：" + task.intent().deliveryProfile()
                 + "；有效执行要求来源数：" + task.executionRequirements().size()
                 + "；未决来源条数：" + task.pendingDecisions().size()
-                + "。计数只说明输入构成，不代表充分性。");
+                + "。计数只说明输入构成，不代表充分性。";
+        if (format == PromptFormat.COMPACT) {
+            var selection = PromptFrameworkSelector.select(task);
+            return new PromptRewriteStrategy("NATURAL_FRAMEWORK", common + "\n" + selection.instruction() + "\n" + """
+                    本次采用自然表达，assessment.presentation=COMPACT。先依据主框架确定当前任务的动作、必要规则和交付重点，再写紧凑、可直接交给执行者的提示词；不是先写模块正文再去掉标题。
+                    sections仍返回内部四要素，但content应是连贯的指令片段，不写“背景：”“任务：”“输出：”等模块标签，不逐项展示框架字母或框架名称。每项要求只放一处；允许有助执行的短列表、原有代码与必要引用。
+                    优先保留充分需求的有效原句；只在有缺口时补相关动作和条件。不给简单任务扩写角色背景、流程或验收，不把复杂任务缩成空架子。未决事项仍由平台统一保留，不能压缩掉否定、例外、对象、参数状态和来源。
+                    """);
+        }
+        if (format == PromptFormat.STRUCTURED) {
+            return new PromptRewriteStrategy("FOCUSED_MODULES", common + "\n" + """
+                    本次采用结构化表达，assessment.presentation=STRUCTURED。先划清模块职责再生成正文：背景只留影响执行的事实，任务集中表达目标与动作，输出明确交付，约束集中表达业务边界；有独立检查价值时才加验收。
+                    有依赖的步骤按顺序组织；业务规则明确对象、触发条件、动作与例外，必要的正反场景用于说明适用与不适用，不能自动编造案例或增加示例要求。不要从自然段落机械拆标题，也不要在各节重复同一要求。
+                    简单且充分的任务保持短小，复杂多目标才展开。与自然模式保持同一事实、有效确认、未决状态和原定交付；原文严格格式与禁例继续约束下游作品，不把提示词章节强加给作品。
+                    """);
+        }
+        return new PromptRewriteStrategy("ASSESS_EXECUTION_GAPS", common
+                + "\n未指定生成模式时，简单邮件、纯译文或严格格式任务优先COMPACT；复杂多目标任务按依赖和交付组织STRUCTURED。");
     }
 
     /** 兼容旧调用方；没有任务视图时不在本地猜测充分性。 */

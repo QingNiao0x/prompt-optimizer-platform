@@ -1,6 +1,7 @@
 package com.promptoptimizer.enhancement.dto;
 
 import com.promptoptimizer.enhancement.domain.TemplateCode;
+import com.promptoptimizer.enhancement.domain.PromptFormat;
 
 /**
  * 用户可调整的提示词增强选项。
@@ -12,7 +13,9 @@ public record EnhancementOptions(
         TemplateCode templateCode,
         Boolean includeConversationHistory,
         Boolean includePermissionBoundaries,
-        Boolean includeExamples
+        Boolean includeExamples,
+        @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+        PromptFormat promptFormat
 ) {
 
     /**
@@ -23,6 +26,12 @@ public record EnhancementOptions(
         includeConversationHistory = includeConversationHistory == null || includeConversationHistory;
         includePermissionBoundaries = includePermissionBoundaries == null || includePermissionBoundaries;
         includeExamples = includeExamples != null && includeExamples;
+    }
+
+    /** 缺省生成模式沿用旧请求的自动判断，不将未设置误当作用户已选择分节。 */
+    public EnhancementOptions(TemplateCode templateCode, Boolean includeConversationHistory,
+                              Boolean includePermissionBoundaries, Boolean includeExamples) {
+        this(templateCode, includeConversationHistory, includePermissionBoundaries, includeExamples, null);
     }
 
     /**

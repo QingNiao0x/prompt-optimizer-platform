@@ -1,0 +1,54 @@
+{
+  "version": "candidate32-live",
+  "phase": "candidateValidation",
+  "purpose": "EXECUTION",
+  "operation": "MAIL-RAW",
+  "sourceCandidate": "candidate32",
+  "startedAt": "2026-10-17T16:47:54.680Z",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 10000,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "user",
+        "content": "给合作方写一封简短中文邮件，礼貌询问原定周五的交付能否按时完成，如有困难请回复预计时间。只输出邮件正文，正文不超过120个汉字，不编造姓名、进度或新的日期，不添加示例。"
+      }
+    ]
+  },
+  "httpStatus": 200,
+  "responseRawSha256": "b1df2e275a1ccb3544d12ea779523dad36c83d00899176ac4e0adc7e71bb56cd",
+  "response": {
+    "id": "672be0cd-2648-4732-885e-8698b5940432",
+    "object": "chat.completion",
+    "created": 1792255674,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "您好，想确认原定周五的交付能否按时完成。如有困难，请回复预计完成时间。谢谢！"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 56,
+      "completion_tokens": 24,
+      "total_tokens": 80,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 56
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "elapsedMs": 1192
+}

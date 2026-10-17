@@ -597,6 +597,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
      */
     private ChatCompletionRequest buildRequest(EnhancementProviderRequest request) {
         var taskView = com.promptoptimizer.enhancement.service.impl.EffectiveTaskViewFactory.forProvider(request);
+        var rewriteStrategy = com.promptoptimizer.provider.domain.PromptRewriteStrategy.forTask(
+                taskView, request.options().promptFormat());
         ProviderPromptPayload payload = new ProviderPromptPayload(
                 taskView.effectivePrompt(),
                 modelContext(request.context()),
@@ -605,9 +607,10 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 request.planConfirmed(),
                 request.constraints(),
                 request.conversationHistory(),
+                // 模式决定同次生成的组织策略；任务、上下文及确认仍使用同一个有效视图。
                 request.options(),
                 request.planningFacts(),
-                com.promptoptimizer.provider.domain.PromptRewriteStrategy.forTask(taskView),
+                rewriteStrategy,
                 taskView.modelInput()
         );
         String userMessage;
@@ -633,7 +636,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 selection.model(),
                 List.of(
                         new ChatMessage("system", SYSTEM_PROMPT + "\n"
-                                + com.promptoptimizer.provider.domain.PromptRewriteStrategy.forTask(taskView).instruction() + "\n"
+                                + rewriteStrategy.instruction() + "\n"
                                 + taskView.requirementBoundaries().guidance() + "\n"
                                 + com.promptoptimizer.provider.domain.EvidenceInferenceContract.from(taskView, request.context()).guidance()
                                 + "\n若上面列出了本次收入推断边界，平台会在约束中完整组装一次；生成时遵守它，不在各段复述整份边界。"

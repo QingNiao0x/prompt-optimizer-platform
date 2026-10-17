@@ -1,0 +1,45 @@
+{
+  "mainPid": 12888,
+  "isolatedPortsClosed": [
+    9001,
+    5174,
+    9325
+  ],
+  "frontendPort": 5173,
+  "mainCallsAreOutsideFrozenIsolatedBatch": true,
+  "aggregateDownReason": "MailHealthIndicator connects to localhost:587; connection refused",
+  "modelCallsByThisReadOnlyCheck": 0,
+  "databaseAndRedisPreserved": true,
+  "mainPort": 9000,
+  "health": [
+    {
+      "httpStatus": 503,
+      "path": "/actuator/health",
+      "body": {
+        "status": "DOWN",
+        "groups": [
+          "liveness",
+          "readiness"
+        ]
+      }
+    },
+    {
+      "httpStatus": 200,
+      "path": "/actuator/health/liveness",
+      "body": {
+        "status": "UP"
+      }
+    },
+    {
+      "httpStatus": 200,
+      "path": "/actuator/health/readiness",
+      "body": {
+        "status": "UP"
+      }
+    }
+  ],
+  "concurrentMainServiceCallMetadata": [
+    "2026-10-18 00:40:23.629 [http-nio-9000-exec-8] INFO  [507dcf07-27dc-46d0-8858-89a7a4b6b5b8] c.promptoptimizer.common.logging.ModelCallLogger - event=model.call.completed requestId=507dcf07-27dc-46d0-8858-89a7a4b6b5b8 workflowId=- operation=prompt.optimize providerRoute=deepseek model=deepseek:deepseek-flash selectionSource=PLATFORM_CATALOG mock=false attempt=1 inputItems=1 inputTokens=6915 outputTokens=1077 totalTokens=7992 durationMs=7404",
+    "2026-10-18 00:47:34.423 [http-nio-9000-exec-9] INFO  [72940b31-92bb-4810-a4c0-d6e07fbeddd5] c.promptoptimizer.common.logging.ModelCallLogger - event=model.call.completed requestId=72940b31-92bb-4810-a4c0-d6e07fbeddd5 workflowId=- operation=prompt.optimize providerRoute=deepseek model=deepseek:deepseek-flash selectionSource=PLATFORM_CATALOG mock=false attempt=1 inputItems=1 inputTokens=6915 outputTokens=1127 totalTokens=8042 durationMs=6297"
+  ]
+}

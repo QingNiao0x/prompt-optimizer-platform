@@ -17,6 +17,7 @@ import type { AvailableModel } from '@/types/api';
 interface Props {
   rawPrompt: string;
   includeExamples: boolean;
+  structuredPrompt: boolean;
   isAnalyzing: boolean;
   isPlanning: boolean;
   isOptimizing: boolean;
@@ -30,6 +31,7 @@ interface Props {
 interface Emits {
   (event: 'update:raw-prompt', value: string): void;
   (event: 'update:include-examples', value: boolean): void;
+  (event: 'update:structured-prompt', value: boolean): void;
   (event: 'update:selected-model-id', value: string): void;
   (event: 'optimize'): void;
 }
@@ -46,6 +48,11 @@ const rawPromptModel = computed({
 const examplesModel = computed({
   get: (): boolean => props.includeExamples,
   set: (value: boolean): void => emit('update:include-examples', value),
+});
+
+const structuredPromptModel = computed({
+  get: (): boolean => props.structuredPrompt,
+  set: (value: boolean): void => emit('update:structured-prompt', value),
 });
 
 const planModeModel = computed({
@@ -131,6 +138,19 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
             <label class="switch-control">
               <span>示例参考</span>
               <ElSwitch v-model="examplesModel" aria-label="要求回答包含示例" :disabled="isBusy" />
+            </label>
+          </ElTooltip>
+          <!-- 纯文字帮助不接收指针；开关保持焦点时浮层也不能遮挡生成按钮。 -->
+          <ElTooltip
+            content="选择下一次增强方式：开启时按模块组织，关闭时自然表达。已有结果需点击重新增强后更新。"
+            placement="top"
+            :enterable="false"
+            :hide-after="0"
+            :popper-style="{ pointerEvents: 'none', maxWidth: '280px' }"
+          >
+            <label class="switch-control">
+              <span>结构化提示词</span>
+              <ElSwitch v-model="structuredPromptModel" aria-label="结构化提示词" :disabled="isBusy" />
             </label>
           </ElTooltip>
         </div>

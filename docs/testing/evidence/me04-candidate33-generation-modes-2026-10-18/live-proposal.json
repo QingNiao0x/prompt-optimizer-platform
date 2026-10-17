@@ -1,0 +1,64 @@
+{
+  "candidate": "candidate33",
+  "status": "APPROVED_PENDING_PROTOCOL_RECORD",
+  "automaticCallsBefore": 369,
+  "candidateCallsBefore": 299,
+  "formalLimitsBefore": {
+    "total": 389,
+    "baseline": 80,
+    "candidate": 309
+  },
+  "maximumNewCalls": 20,
+  "purposeMaximums": {
+    "PLATFORM_GENERATION": 12,
+    "EXECUTION": 6,
+    "REVIEW": 2
+  },
+  "requests": {
+    "directEnhancement": 4,
+    "works": 6,
+    "independentAiReviews": 2
+  },
+  "reallocationRequested": {
+    "candidate32ClosedUnused": 8,
+    "candidate27ClosedUnused": 1,
+    "candidate24r3ClosedUnused": 1
+  },
+  "additionalAllowanceRequested": 10,
+  "formalLimitsProposed": {
+    "total": 399,
+    "baseline": 80,
+    "candidate": 319
+  },
+  "maximumActualAfter": 389,
+  "maximumCandidateAfter": 319,
+  "models": {
+    "enhancement": "deepseek-flash",
+    "execution": "deepseek-flash",
+    "review": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ]
+  },
+  "parameters": {
+    "temperature": 0.2,
+    "max_tokens": 10000,
+    "thinking": "disabled"
+  },
+  "retryBoundary": "Existing protocol repair only, at most three provider attempts per enhancement; no execution/review quality retry",
+  "casesFile": "live-cases.json",
+  "sameTestAccountFile": "tmp/local-acceptance/account.json",
+  "accountCreationAllowed": false,
+  "failureCallsCounted": true,
+  "automaticReallocationAllowed": false,
+  "excluded": [
+    "New full seven-case baseline",
+    "New natural Plan questions",
+    "Candidate32 trace363 repair",
+    "Cross-supplier generalization",
+    "Existing credential-echo/scoring/YLL acceptance gates"
+  ],
+  "casesSha256": "e1d356dbb7d69ec06dc7a59a799c20b78cfa4a114c5a69b8ace5ad679009ef17",
+  "sourceManifestSha256": "43204a1e9bbfbb457d6f3cb23ba59de8802f2902337ae8cbfeed4cf3df06272b",
+  "sourceRevision": "r1"
+}

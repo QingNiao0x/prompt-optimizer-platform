@@ -1,0 +1,54 @@
+{
+  "version": "candidate32-live",
+  "phase": "candidateValidation",
+  "purpose": "EXECUTION",
+  "operation": "TRANSLATION-RAW",
+  "sourceCandidate": "candidate32",
+  "startedAt": "2026-10-17T16:48:21.165Z",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 10000,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "user",
+        "content": "把下面两行译成英文，只输出对应两行译文，保留占位符{name}和顺序，不添加标题、解释或示例：\n{name}，会议改到周五。\n请回复是否参加。"
+      }
+    ]
+  },
+  "httpStatus": 200,
+  "responseRawSha256": "be562b9151e77d264a4727cb230a583b2deae075c0c32536cbce412a22e08194",
+  "response": {
+    "id": "8b725805-8767-4be1-801c-0e54dc8ba065",
+    "object": "chat.completion",
+    "created": 1792255701,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{name}, the meeting has been moved to Friday.\nPlease reply whether you will attend."
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 51,
+      "completion_tokens": 18,
+      "total_tokens": 69,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 51
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "elapsedMs": 996
+}

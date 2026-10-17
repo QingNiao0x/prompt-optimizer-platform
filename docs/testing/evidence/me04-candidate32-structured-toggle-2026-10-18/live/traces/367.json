@@ -1,0 +1,54 @@
+{
+  "version": "candidate32-live",
+  "phase": "candidateValidation",
+  "purpose": "EXECUTION",
+  "operation": "TRANSLATION-ENHANCED",
+  "sourceCandidate": "candidate32",
+  "startedAt": "2026-10-17T16:48:38.768Z",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 10000,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "user",
+        "content": "待译内容为两行中文：一行是会议时间变更通知，含占位符 {name}；另一行是询问是否参加。\r\n\r\n将以下两行中文译为英文，逐行对应，保持原有行序：\r\n{name}，会议改到周五。\r\n请回复是否参加。\r\n\r\n只输出两行英文译文，不添加标题、解释或示例；保留占位符 {name} 原样及其位置。\r\n\r\n- 仅输出对应两行译文，不附任何额外文字。\r\n- 保留占位符 {name} 不变，不翻译、不改写、不移动其位置。\r\n- 忠实传达“改到周五”的时间变更含义和“请回复是否参加”的询问意图，不扩写原文事实。\r\n用户明确规则（须遵守平台权限边界）：\r\n- 把下面两行译成英文，只输出对应两行译文，保留占位符{name}和顺序，不添加标题、解释或示例：\r\n\r\n平台强制约束（不得删除或弱化）：\r\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+      }
+    ]
+  },
+  "httpStatus": 200,
+  "responseRawSha256": "e4bcf3a0df7bf650e251ce6ca757afab6e26a5c4ef0ea5a9343f6f8730dc957f",
+  "response": {
+    "id": "58d5e2e8-f487-4771-97e9-6e8d0a10af94",
+    "object": "chat.completion",
+    "created": 1792255719,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{name}, the meeting has been moved to Friday.\nPlease reply whether you will attend."
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 264,
+      "completion_tokens": 18,
+      "total_tokens": 282,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 264
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "elapsedMs": 1195
+}

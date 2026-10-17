@@ -3,6 +3,7 @@ package com.promptoptimizer.enhancement.service.impl;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.template.domain.TaskDeliveryProfile;
 import com.promptoptimizer.template.domain.TaskIntentResolver;
+import com.promptoptimizer.template.domain.TaskIntent;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -59,6 +60,18 @@ final class TaskQuestionScope {
         String value = safe(text);
         return value.matches("(?s).*(?:排序.{0,16}(?:字段|数据类型|比较规则)|(?:哪个|什么)字段.{0,16}排序|对哪类数据排序).*" )
                 && !value.matches("(?s).*(?:风险|争议|审批|退款|临床|优先级|阈值|授权|权限|新增|另需).*" );
+    }
+
+    /**
+     * 仅在当前明确为项目理解且没有实现交付时，消除要求另给开发目标的题目。
+     * 题干之外的提示、候选和示例也核对，避免复合题中的授权或独立条件被一并删除。
+     */
+    static boolean unrelatedImplementationGoal(String question, String details, TaskIntent intent) {
+        if (intent.deliveryProfile() != TaskDeliveryProfile.PROJECT_UNDERSTANDING || intent.engineeringConstraints()) return false;
+        String all = safe(question) + " " + safe(details);
+        if (all.matches("(?is).*(?:权限|授权|允许|删除|脱敏|隐私|生产数据|生产环境|冲突|工作区|哪个项目|哪份|阈值|时延|迁移|另需|还需|新条件|例外|permission|authorization|conflict).*")) return false;
+        return safe(question).matches("(?is).*(?:本次|这次|此次|当前).{0,30}(?:实现|修改|开发|新增|改动).{0,25}(?:功能|需求|目标|内容|范围).{0,20}(?:什么|哪些|哪项|哪种|如何|怎么|？|\\?).*")
+                || safe(question).matches("(?is).*(?:具体|什么|哪些).{0,16}(?:功能|需求|改动).{0,16}(?:实现|修改|开发).*" );
     }
 
     private static String safe(String value) { return value == null ? "" : value; }

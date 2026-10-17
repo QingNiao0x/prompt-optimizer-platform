@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "sourceCandidate": "candidate33",
+  "rubricId": "me00a-four-dimension-rubric-v1",
+  "modelCalls": 0,
+  "independentTaskCount": 2,
+  "works": 6,
+  "primaryComparisons": 4,
+  "blindPairsPerReviewer": 6,
+  "sameSupplier": true,
+  "reviewsAreNotHumanExperts": true,
+  "auditInputHashes": {
+    "cases": "e1d356dbb7d69ec06dc7a59a799c20b78cfa4a114c5a69b8ace5ad679009ef17",
+    "mapping": "aea037b60789444c81f4d57d8a41f0e629345078ea63e7ff73ddda4a1f98a30d",
+    "reviewInputLock": "0d9e8a1ee157a7e47ae826df75c650c28d99309a45484d98817d5c1db342482d",
+    "hardChecks": "322c01557b919a0f63f242a74209e8f98032975a19193c1f21b0c621cc944340"
+  },
+  "reviewers": {
+    "R1": {
+      "requestedModel": "deepseek-flash",
+      "providerReportedModel": "deepseek-flash",
+      "requestSha256": "16ff2ed1035fb67f779706a807f712c95d9846cbfaec724b94d57bbf9d9d94c4",
+      "responseRawSha256": "6c4154fd10a6f58a4ab879f38d89cd7016218c6cdc586302693e6faec2c9320c",
+      "reviewTextSha256": "511f2b03b708954e6c503ec59bf5caa879c1f998de1230e9cb94101154099559",
+      "strictJsonAndSchemaValid": true,
+      "deterministicChecksPassed": false,
+      "issueCount": 10,
+      "reportedSevereIssueCount": 0,
+      "auditErrors": [
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 1,
+          "pairIndex": null
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 2,
+          "pairIndex": null
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 3,
+          "pairIndex": null
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 4,
+          "pairIndex": null
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 5,
+          "pairIndex": null
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 6,
+          "pairIndex": null
+        }
+      ]
+    },
+    "R2": {
+      "requestedModel": "deepseek-v4-pro",
+      "providerReportedModel": "deepseek-v4-pro",
+      "requestSha256": "91be8fc4276b523695f3c64d64ccecee070ad294edbccc2b4d2ad9d8c2796bee",
+      "responseRawSha256": "9c759c67ab0e10cc53ff43042056c467d2356648cdb5160483c1e3d43614e747",
+      "reviewTextSha256": "6cb231b358f21c9782bae40c601a8cd4783e2b62e4f95e4dcbe65ac4623929fa",
+      "strictJsonAndSchemaValid": true,
+      "deterministicChecksPassed": true,
+      "issueCount": 0,
+      "reportedSevereIssueCount": 0,
+      "auditErrors": []
+    }
+  },
+  "comparisons": [
+    {
+      "group": "PATCH",
+      "enhancedArm": "COMPACT",
+      "originalVerdicts": {
+        "R1": "TIE",
+        "R2": "TIE"
+      },
+      "allDeterministicReviewChecksPassed": false,
+      "originalVerdictsDisagree": false,
+      "severeReportsDisagree": false,
+      "hardGate": "OPEN",
+      "baselineHardGate": "OPEN",
+      "enhancedHardGate": "OPEN",
+      "baselineSevereReported": false,
+      "enhancedSevereReported": false,
+      "severeIssueState": "NONE_REPORTED",
+      "acceptanceGate": "OPEN",
+      "acceptanceBlocked": true
+    },
+    {
+      "group": "PATCH",
+      "enhancedArm": "STRUCTURED",
+      "originalVerdicts": {
+        "R1": "LOSS",
+        "R2": "TIE"
+      },
+      "allDeterministicReviewChecksPassed": false,
+      "originalVerdictsDisagree": true,
+      "severeReportsDisagree": false,
+      "hardGate": "OPEN",
+      "baselineHardGate": "OPEN",
+      "enhancedHardGate": "OPEN",
+      "baselineSevereReported": false,
+      "enhancedSevereReported": false,
+      "severeIssueState": "NONE_REPORTED",
+      "acceptanceGate": "OPEN",
+      "acceptanceBlocked": true
+    },
+    {
+      "group": "MAIL",
+      "enhancedArm": "COMPACT",
+      "originalVerdicts": {
+        "R1": "TIE",
+        "R2": "TIE"
+      },
+      "allDeterministicReviewChecksPassed": false,
+      "originalVerdictsDisagree": false,
+      "severeReportsDisagree": false,
+      "hardGate": "OPEN",
+      "baselineHardGate": "OPEN",
+      "enhancedHardGate": "OPEN",
+      "baselineSevereReported": false,
+      "enhancedSevereReported": false,
+      "severeIssueState": "NONE_REPORTED",
+      "acceptanceGate": "OPEN",
+      "acceptanceBlocked": true
+    },
+    {
+      "group": "MAIL",
+      "enhancedArm": "STRUCTURED",
+      "originalVerdicts": {
+        "R1": "TIE",
+        "R2": "TIE"
+      },
+      "allDeterministicReviewChecksPassed": false,
+      "originalVerdictsDisagree": false,
+      "severeReportsDisagree": false,
+      "hardGate": "OPEN",
+      "baselineHardGate": "OPEN",
+      "enhancedHardGate": "OPEN",
+      "baselineSevereReported": false,
+      "enhancedSevereReported": false,
+      "severeIssueState": "NONE_REPORTED",
+      "acceptanceGate": "OPEN",
+      "acceptanceBlocked": true
+    }
+  ],
+  "disagreements": {
+    "verdictComparisons": 1,
+    "severeReportComparisons": 0,
+    "scoreGapsAtLeastTwo": [],
+    "scoreComparisonAvailable": true
+  },
+  "finalAcceptanceGate": "OPEN",
+  "scoresCannotOverrideHardOrSevereFailure": true,
+  "semanticJudgmentAutomaticallyPassed": false,
+  "limitation": "Two tasks and one work per arm are diagnostic only; no statistical win-rate or global quality claim is established."
+}

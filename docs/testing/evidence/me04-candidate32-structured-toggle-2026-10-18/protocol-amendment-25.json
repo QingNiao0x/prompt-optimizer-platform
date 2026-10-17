@@ -1,0 +1,68 @@
+{
+  "id": 25,
+  "approvedAtRecorded": "2026-10-17T16:41:28.552291+00:00",
+  "formalLimitsUnchanged": {
+    "total": 389,
+    "baseline": 80,
+    "candidate": 309
+  },
+  "actualBefore": 359,
+  "activeBatch": {
+    "version": "candidate32-live",
+    "sourceCandidate": "candidate32",
+    "group": "me04-structured-presentation",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationBasis": "批准重分配18次，执行冻结范围",
+    "authorizationAmendment": "protocol-amendment-25.json",
+    "status": "OPEN",
+    "secondRoundAuthorized": true,
+    "maximumNewCalls": 18,
+    "callsBefore": 359,
+    "candidateCallsBefore": 289,
+    "maximumActualCallsAfterBatch": 377,
+    "purposeMaximums": {
+      "PLANNING": 3,
+      "PLATFORM_GENERATION": 9,
+      "EXECUTION": 4,
+      "REVIEW": 2
+    },
+    "model": "deepseek-flash",
+    "executionModel": "deepseek-flash",
+    "reviewModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "cases": [
+      "MAIL-COMPACT",
+      "TRANSLATION-COMPACT",
+      "PROJECT-CHOICE-STRUCTURED"
+    ],
+    "casesFile": "candidate32-structured-cases.json",
+    "casesSha256": "8494b09ae9b3a4f42cc4d4a0a69d11e09e27310b946f5ff363035456ee710a38",
+    "allowedRawPromptSha256": [
+      "efdc435f41ad1795a8d929768e66d5daab454b2d8a8503a1112a612b2237edb8",
+      "8e9d6e45a2f4fb58c80d8dc14cbfbeda185f65ecc1b24ef5ba52a98893b338b1",
+      "8cc53e207294b93d96df1dda3e6ab0e6c1a537f01c66c681f49b037f7b5d4961"
+    ],
+    "expectedEnhancementInputs": [],
+    "expectedTaskViews": [],
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "sameTestAccountFile": "tmp/local-acceptance/account.json",
+    "accountCreationAllowed": false,
+    "qualityRetriesAllowed": false,
+    "closedAllowanceTransfer": "EXPLICIT_USER_REALLOCATION_ONLY",
+    "reallocation": {
+      "candidate31ClosedUnused": 8,
+      "candidate26ClosedUnused": 10
+    },
+    "sourceManifestSha256": "aeeacfc746fa99f228b2fc056077011bbe67e776b5976e5d75810cc1b18755e7",
+    "executionParity": "Raw versus actual unchanged native copy; same source evidence, no evaluator answer repair",
+    "reviewScope": "Two independent AI-assisted reviews, same supplier, not human/domain experts"
+  }
+}

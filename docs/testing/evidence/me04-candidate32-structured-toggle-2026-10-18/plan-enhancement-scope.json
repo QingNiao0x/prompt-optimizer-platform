@@ -1,0 +1,29 @@
+{
+  "caseId" : "PROJECT-CHOICE-STRUCTURED",
+  "rawPrompt" : "先熟悉项目，再实现登录接口。后端Spring Boot3，前端Vue3与TypeScript。现有登录入口保持不变，新入口的登录方式由我决定，尚未在邮箱密码和手机号验证码之间选择；请先确认这项业务选择，不要默认。返回实现及受影响测试。",
+  "planConfirmed" : true,
+  "taskView" : {
+    "intent" : {
+      "templateCode" : "FEATURE_DEVELOPMENT",
+      "deliveryProfile" : "SOFTWARE_IMPLEMENTATION",
+      "status" : "RAW_GOAL",
+      "auxiliaryProfiles" : [ "PROJECT_UNDERSTANDING" ],
+      "engineeringConstraints" : true
+    },
+    "executionRequirements" : [ {
+      "questionId" : "new_login_method",
+      "subject" : "新登录入口登录方式",
+      "statement" : "新入口采用邮箱和密码登录；现有登录入口保持不变。",
+      "destination" : "TASK",
+      "sourceQuestionIds" : [ "new_login_method" ]
+    } ],
+    "pendingDecisions" : [ ],
+    "examples" : {
+      "mode" : "DISABLED",
+      "source" : "SWITCH_OFF",
+      "guidance" : "未要求示例，不主动追加示例段。"
+    },
+    "requirementBoundaryGuidance" : "",
+    "userMeaningAnchors" : [ ]
+  }
+}

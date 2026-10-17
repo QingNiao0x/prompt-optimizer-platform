@@ -1,0 +1,33 @@
+{
+  "candidate": "candidate33",
+  "scope": "Two task goals, each generated in COMPACT and STRUCTURED; no Plan questions or invented answers",
+  "cases": [
+    {
+      "id": "PATCH",
+      "rawPrompt": "用Java 21实现PatchMerger类的public static Map<String,Object> merge(Map<String,Object> current, Map<String,Object> patch)方法，把补丁应用到现有配置：只用patch中非null的值覆盖；0、false和空字符串都是有效值。返回新Map，不修改任一输入。空输入、空Map及嵌套数据的处理由你合理设计并说明，不把设计建议写成已有项目规则。不使用第三方依赖，也不记录或打印输入数据。交付完整PatchMerger.java和可直接运行的PatchMergerTest.java，自测须实际检查正常、边界和异常行为，不依赖JVM的-ea开关。",
+      "files": [],
+      "includeExamples": false,
+      "planConfirmation": null,
+      "formats": ["COMPACT", "STRUCTURED"],
+      "hardChecks": ["Compile implementation and generated tests together with Java 21", "Run generated tests", "Run independent checker for null patch values, zero, false, empty string, new map and input immutability", "No third-party imports or input logging"],
+      "semanticChecks": ["Retain implementation and runnable tests as deliverables", "Design choices remain recommendations, not user confirmations", "Do not replace work with a questionnaire or empty template", "Evaluate natural organization and focused module roles without requiring arbitrary text distance"]
+    },
+    {
+      "id": "MAIL",
+      "rawPrompt": "给合作方写一封简短中文邮件，请对方核对附件中的报价并回复是否有异议。语气礼貌，但明确要求对方回复；不编造金额、姓名或截止日期。只输出邮件正文，不超过100个汉字，不添加示例。",
+      "files": [],
+      "includeExamples": false,
+      "planConfirmation": null,
+      "formats": ["COMPACT", "STRUCTURED"],
+      "hardChecks": ["Count Han characters in the complete email body, maximum 100", "No outer headings, explanation or samples in the downstream work"],
+      "semanticChecks": ["Ask the recipient to check the quotation and reply about objections", "Do not invent amount, identity or deadline", "Sufficient short task may stay close to original; no mandatory difference quota"]
+    }
+  ],
+  "executionArms": ["RAW", "COMPACT_NATIVE_COPY", "STRUCTURED_NATIVE_COPY"],
+  "primaryComparison": "RAW work versus each unchanged native-copy work under the same model and original information",
+  "independentAiReviews": 2,
+  "reviewsAreNotHumanExperts": true,
+  "qualityRetriesAllowed": false,
+  "sameTestAccountFile": "tmp/local-acceptance/account.json",
+  "accountCreationAllowed": false
+}

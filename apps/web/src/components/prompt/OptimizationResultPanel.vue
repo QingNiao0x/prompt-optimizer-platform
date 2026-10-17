@@ -6,6 +6,7 @@ import {
   DataAnalysis,
   EditPen,
   RefreshRight,
+  RefreshLeft,
   Right,
   TopRight,
   WarningFilled,
@@ -17,19 +18,24 @@ import { computed, nextTick, onBeforeUnmount, ref, toRefs, watch } from 'vue';
 import ResultCard from '@/components/prompt/ResultCard.vue';
 import ResultMetaBar from '@/components/prompt/ResultMetaBar.vue';
 import { reportClientAnalyticsEventBestEffort } from '@/services/adminAnalyticsApi';
-import type { OptimizationResult, PromptSection, PromptSectionType } from '@/types/api';
+import type { OptimizationResult, PromptFormat, PromptSection, PromptSectionType } from '@/types/api';
 
 interface Props {
   result?: OptimizationResult;
   busy: boolean;
   planModeEnabled: boolean;
   editDraft?: PromptSection[];
+  canUndo?: boolean;
+  selectedPromptFormat?: PromptFormat;
+  canRegenerateWithFormat?: boolean;
 }
 
 interface Emits {
   (event: 'save', sections: PromptSection[], complete: (saved: boolean, message?: string) => void): void;
   (event: 'update:edit-draft', sections: PromptSection[] | undefined): void;
   (event: 're-enhance'): void;
+  (event: 'undo'): void;
+  (event: 'regenerate-with-format'): void;
 }
 
 // 平台地址只来自固定名单；跳转不携带提示词，也不尝试自动填写或发送。
@@ -76,6 +82,9 @@ const canOpenPlatform = computed(() =>
 const displaySections = computed(() =>
   result.value?.sections.filter((section) => section.type !== 'CLARIFICATIONS') ?? [],
 );
+const pendingFormat = computed(() => Boolean(result.value) && props.selectedPromptFormat !== undefined
+  && props.selectedPromptFormat !== (result.value?.promptFormat ?? 'STRUCTURED'));
+const selectedFormatLabel = computed(() => props.selectedPromptFormat === 'STRUCTURED' ? '结构化' : '自然表达');
 
 const ambiguityPreview = computed(() => result.value?.ambiguities[0] ?? '');
 const warningPreview = computed(() => result.value?.warnings?.[0] ?? '');
@@ -301,7 +310,7 @@ const saveEditing = (): void => {
 <template>
   <section class="result-panel">
     <div class="result-heading">
-      <span class="step-label">03 / Structured prompt</span>
+      <span class="step-label">03 / Optimized prompt</span>
       <div v-if="result" class="result-actions">
         <template v-if="editing">
           <ElButton size="small" :disabled="busy" @click="cancelEditing">取消</ElButton>
@@ -310,6 +319,9 @@ const saveEditing = (): void => {
           </ElButton>
         </template>
         <template v-else>
+          <ElButton v-if="canUndo" size="small" :icon="RefreshLeft" :disabled="busy" @click="emit('undo')">
+            撤销
+          </ElButton>
           <div class="copy-control" role="group" aria-label="复制提示词">
             <ElButton
               class="copy-main-button"
@@ -360,6 +372,16 @@ const saveEditing = (): void => {
 
     <h2>增强结果</h2>
 
+    <div v-if="pendingFormat" class="mode-change-note" role="status" data-testid="mode-change-note">
+      <strong>模式已更改，按所选模式重新增强</strong>
+      <p>当前结果保持原样。将基于本次生成时的原始需求和有效确认，按{{ selectedFormatLabel }}模式重新生成。</p>
+      <p v-if="editing">请先保存或取消编辑；已保存修改可在重新生成后通过撤销找回。</p>
+      <p v-else-if="!canRegenerateWithFormat">原始需求或选项已变化，请从原始提示词重新增强。</p>
+      <p v-else>点击将重新调用模型。已保存的手工修改不作为此次输入，可通过撤销找回。</p>
+      <ElButton type="primary" size="small" :disabled="busy || editing || !canRegenerateWithFormat"
+        @click="emit('regenerate-with-format')">基于原始需求按所选模式重新增强</ElButton>
+    </div>
+
     <ElButton
       v-if="result && !editing"
       class="re-enhance-button"
@@ -372,6 +394,7 @@ const saveEditing = (): void => {
     </ElButton>
 
     <div v-if="result && !editing" class="export-guidance">
+      <p class="platform-copy-hint">当前结果：{{ result.promptFormat === 'COMPACT' ? '自然表达' : '结构化' }}。复制内容与当前结果一致。</p>
       <p class="platform-copy-hint">点击复制后，请将内容粘贴至您使用的 AI 软件或网页版。</p>
       <div v-if="canOpenPlatform && blockedPlatform" class="export-followup" role="status">
         <span class="platform-copy-hint">已复制，但未能打开平台，请点击链接后粘贴。</span>
@@ -587,6 +610,25 @@ const saveEditing = (): void => {
   height: 100%;
   flex-direction: column;
   padding: 22px 20px 18px;
+}
+
+.mode-change-note {
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  background: var(--accent-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.mode-change-note p { margin: 6px 0; }
+.mode-change-note :deep(.el-button) {
+  max-width: 100%;
+  white-space: normal;
+  height: auto;
+  min-height: 32px;
 }
 
 .result-heading {

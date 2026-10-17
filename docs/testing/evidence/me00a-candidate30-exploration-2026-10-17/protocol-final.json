@@ -1,0 +1,141 @@
+{
+  "date": "2026-10-12",
+  "scope": "ME-00-A baseline then ME-01-A + ME-03-A bounded repair",
+  "cases": 7,
+  "initialPlanEnabled": false,
+  "initialPlanAnswers": [],
+  "initialExamplesEnabled": false,
+  "maximumActualModelCalls": 389,
+  "phaseLimits": {
+    "baseline": 80,
+    "candidateValidation": 309
+  },
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "baselineRounds": 1,
+  "candidateRounds": 2,
+  "planSupplement": [
+    "Q04",
+    "Q05"
+  ],
+  "review": "two independent AI reviewers, not domain experts; disputed verdicts unresolved until adjudication",
+  "sameTestAccountFile": "private runtime only; reuse former synthetic user",
+  "archiveSecrets": false,
+  "accountCreationAllowed": false,
+  "priceAndCurrencyCost": "UNKNOWN until verified invoice; actual provider tokens collected",
+  "productPrimaryComparison": "raw actual work vs actual copied enhanced work",
+  "repairRegression": "current enhanced vs repaired enhanced, separately reported",
+  "planParity": "verbatim actual submitted test answers provided to raw and direct comparators, never patch Plan copied body",
+  "severeFailure": "block capability release, preserve trace; no automatic budget increase",
+  "activeBatch": {
+    "version": "candidate30-live",
+    "sourceCandidate": "candidate30",
+    "group": "candidate30-project-understanding",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationBasis": "批准新增18次，执行冻结范围（建议）",
+    "authorizationAmendment": "protocol-amendment-23.json",
+    "status": "CLOSED",
+    "secondRoundAuthorized": true,
+    "maximumNewCalls": 18,
+    "callsBefore": 345,
+    "candidateCallsBefore": 275,
+    "maximumActualCallsAfterBatch": 363,
+    "purposeMaximums": {
+      "PLANNING": 9,
+      "PLATFORM_GENERATION": 9,
+      "EXECUTION": 0,
+      "REVIEW": 0
+    },
+    "model": "deepseek-flash",
+    "cases": [
+      "PROJECT-READ",
+      "PROJECT-READ-AND-DEVELOP"
+    ],
+    "casesFile": "candidate30-project-cases.json",
+    "casesSha256": "c9f202e4f3f3e7077ea1f711ec501fc7cd25b9eb4e4a0e5813d5ba26cbf55fbd",
+    "allowedRawPromptSha256": [
+      "4cf0b2b9dad4478324462d08c5775582fd3872c0f5ec07a9249e198a0e1e8327",
+      "3337f1fd6b3c4e4e4040dd22f72cdc3e585226303808659cef9903c6a96ca3a8"
+    ],
+    "expectedTaskViews": [
+      {
+        "intent": {
+          "templateCode": "GENERAL",
+          "deliveryProfile": "PROJECT_UNDERSTANDING",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": false
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动追加示例段。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      {
+        "intent": {
+          "templateCode": "FEATURE_DEVELOPMENT",
+          "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [
+            "PROJECT_UNDERSTANDING"
+          ],
+          "engineeringConstraints": true
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动追加示例段。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      }
+    ],
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "accountCreationAllowed": false,
+    "sameTestAccountFile": "tmp/local-acceptance/account.json",
+    "qualityRetriesAllowed": false,
+    "closedAllowanceTransfer": false,
+    "operations": [
+      "PROJECT-READ-PLAN-R1",
+      "PROJECT-READ-PLAN-ENHANCE",
+      "PROJECT-READ-PLAN-R2",
+      "PROJECT-READ-DIRECT",
+      "PROJECT-READ-AND-DEVELOP-PLAN",
+      "PROJECT-READ-AND-DEVELOP-ENHANCE"
+    ],
+    "mixedEnhancementPath": "DIRECT_WITHOUT_PLAN_ANSWERS",
+    "mixedPathReason": "Natural Plan returned credential/response questions; no original answers available. Diagnose independently authorized enhancement on the same raw prompt with no fabricated confirmation; do not claim mixed Plan completion.",
+    "actualNewCalls": 6,
+    "actualCallsAfterBatch": 351,
+    "actualCandidateCallsAfterBatch": 281,
+    "actualPurposeCounts": {
+      "PLANNING": 3,
+      "PLATFORM_GENERATION": 3
+    },
+    "unusedAllowance": 12,
+    "unusedAllowanceStatus": "CLOSED_NOT_TRANSFERABLE",
+    "outcome": "Original exploratory prompt: two natural zero-question Plans, real UI auto-generation, direct generation and copy/history verified. Mixed Plan needs boundary assessment; mixed direct timed out; no overall quality pass."
+  }
+}

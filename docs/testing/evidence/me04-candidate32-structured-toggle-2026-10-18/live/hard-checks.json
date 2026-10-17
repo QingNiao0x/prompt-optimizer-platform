@@ -1,0 +1,181 @@
+{
+  "candidate": "candidate32",
+  "casesSha256": "8494b09ae9b3a4f42cc4d4a0a69d11e09e27310b946f5ff363035456ee710a38",
+  "realModelCalls": 0,
+  "reviewRubric": "me00a-four-dimension-rubric-v1",
+  "note": "Mechanical PASS is not semantic PASS. Direct reading and AI reviews remain separate evidence; no self-reported word counts are used.",
+  "results": {
+    "MAIL": {
+      "RAW": {
+        "workSha256": "905c5b8ccc69af3711c2de0baa9453338d1a10a8c21a002635e0ac567192dda7",
+        "requestFileSha256": "60096a818d93a56bf3f5398d641d061974cd4125f4a39646e60ef217b84f20cf",
+        "policyId": "candidate32-mail-body-han-v1",
+        "mechanical": {
+          "nonempty": {
+            "state": "PASS"
+          },
+          "maximumHan": {
+            "state": "PASS",
+            "han": 33,
+            "upper": 120,
+            "unit": "Unicode Script=Han",
+            "scope": "Complete returned text; no exclusions"
+          },
+          "noObviousExtraWrapper": {
+            "state": "PASS"
+          }
+        },
+        "semantic": {
+          "agreedFridayAndPoliteInquiry": {
+            "state": "OPEN",
+            "requirement": "Write in Chinese and politely ask whether the originally agreed Friday delivery can be completed on time.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          },
+          "difficultyReply": {
+            "state": "OPEN",
+            "requirement": "If there is difficulty, request the estimated time without asserting that difficulty already exists.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          },
+          "noInventedFacts": {
+            "state": "OPEN",
+            "requirement": "Do not invent names, progress, new dates, commitments or reasons.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          },
+          "bodyOnlyWithoutExamples": {
+            "state": "OPEN",
+            "requirement": "Only an email body; no extra explanation, headings or examples. Salutation and closing are judged as email body, not automatically rejected.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          }
+        },
+        "mechanicalGate": "PASS",
+        "completeHardGate": "OPEN"
+      },
+      "ENHANCED": {
+        "workSha256": "3cb62ad2c6febe767cabda0fdf6eefefa5d3ac429d9fbc94377343f1fbeaa3f1",
+        "requestFileSha256": "3a8e96a01b4cec7766c59a2755bc0560ade0f83a8e9ba0a439147050794af63e",
+        "policyId": "candidate32-mail-body-han-v1",
+        "mechanical": {
+          "nonempty": {
+            "state": "PASS"
+          },
+          "maximumHan": {
+            "state": "PASS",
+            "han": 33,
+            "upper": 120,
+            "unit": "Unicode Script=Han",
+            "scope": "Complete returned text; no exclusions"
+          },
+          "noObviousExtraWrapper": {
+            "state": "PASS"
+          }
+        },
+        "semantic": {
+          "agreedFridayAndPoliteInquiry": {
+            "state": "OPEN",
+            "requirement": "Write in Chinese and politely ask whether the originally agreed Friday delivery can be completed on time.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          },
+          "difficultyReply": {
+            "state": "OPEN",
+            "requirement": "If there is difficulty, request the estimated time without asserting that difficulty already exists.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          },
+          "noInventedFacts": {
+            "state": "OPEN",
+            "requirement": "Do not invent names, progress, new dates, commitments or reasons.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          },
+          "bodyOnlyWithoutExamples": {
+            "state": "OPEN",
+            "requirement": "Only an email body; no extra explanation, headings or examples. Salutation and closing are judged as email body, not automatically rejected.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          }
+        },
+        "mechanicalGate": "PASS",
+        "completeHardGate": "OPEN"
+      }
+    },
+    "TRANSLATION": {
+      "RAW": {
+        "workSha256": "8a6afe4b2dc17bcfa752fe71a114b22b3922a6c98c32fc8a327ed088a4209c95",
+        "requestFileSha256": "bb2fb026c1b10d8785c27ce5ead51595a6ef35b743f08cb2fd87ff39dab90ace",
+        "policyId": "candidate32-two-line-translation-v1",
+        "mechanical": {
+          "exactlyTwoNonemptyLines": {
+            "state": "PASS",
+            "nonemptyLines": 2,
+            "blankLines": 0
+          },
+          "literalPlaceholderFirstLineOnly": {
+            "state": "PASS"
+          },
+          "latinTextOnBothLinesAndNoHan": {
+            "state": "PASS"
+          },
+          "noObviousExtraWrapper": {
+            "state": "PASS"
+          }
+        },
+        "semantic": {
+          "firstLineMeetingMovedToFriday": {
+            "state": "OPEN",
+            "requirement": "First line translates that the meeting has been moved to Friday; preserve Friday, the change of date and {name}.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          },
+          "secondLineParticipationReply": {
+            "state": "OPEN",
+            "requirement": "Second line asks the recipient to reply whether they will attend; preserve order.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          },
+          "noAddedMeaningOrWrapper": {
+            "state": "OPEN",
+            "requirement": "Exactly the requested English translations; no invented time/location/person, headings, explanations or examples.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          }
+        },
+        "mechanicalGate": "PASS",
+        "completeHardGate": "OPEN"
+      },
+      "ENHANCED": {
+        "workSha256": "8a6afe4b2dc17bcfa752fe71a114b22b3922a6c98c32fc8a327ed088a4209c95",
+        "requestFileSha256": "864f4e0e2799d0aa86b4d867eb327e52631f63e1c086a7c1725e3dc91ce4086f",
+        "policyId": "candidate32-two-line-translation-v1",
+        "mechanical": {
+          "exactlyTwoNonemptyLines": {
+            "state": "PASS",
+            "nonemptyLines": 2,
+            "blankLines": 0
+          },
+          "literalPlaceholderFirstLineOnly": {
+            "state": "PASS"
+          },
+          "latinTextOnBothLinesAndNoHan": {
+            "state": "PASS"
+          },
+          "noObviousExtraWrapper": {
+            "state": "PASS"
+          }
+        },
+        "semantic": {
+          "firstLineMeetingMovedToFriday": {
+            "state": "OPEN",
+            "requirement": "First line translates that the meeting has been moved to Friday; preserve Friday, the change of date and {name}.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          },
+          "secondLineParticipationReply": {
+            "state": "OPEN",
+            "requirement": "Second line asks the recipient to reply whether they will attend; preserve order.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          },
+          "noAddedMeaningOrWrapper": {
+            "state": "OPEN",
+            "requirement": "Exactly the requested English translations; no invented time/location/person, headings, explanations or examples.",
+            "reason": "Requires direct semantic reading; regular expressions do not prove meaning or absence of invented facts."
+          }
+        },
+        "mechanicalGate": "PASS",
+        "completeHardGate": "OPEN"
+      }
+    }
+  }
+}

@@ -504,11 +504,15 @@ export type TemplateCode =
   | 'REFACTORING'
   | 'TESTING';
 
+export type PromptFormat = 'COMPACT' | 'STRUCTURED';
+
 export interface EnhancementOptions {
   templateCode: TemplateCode;
   includeConversationHistory: boolean;
   includePermissionBoundaries: boolean;
   includeExamples: boolean;
+  /** 本次真实增强的生成模式；缺省保留旧 API 的自动选择兼容。 */
+  promptFormat?: PromptFormat;
 }
 
 export interface ConversationMessage {
@@ -609,7 +613,7 @@ export interface ProviderMetadata {
 export interface OptimizationResult {
   optimizedPrompt: string;
   /** 提示词展示形式；旧历史缺省为分节，内部四要素继续支持校验和编辑。 */
-  promptFormat?: 'COMPACT' | 'STRUCTURED';
+  promptFormat?: PromptFormat;
   sections: PromptSection[];
   contextReport: ContextSnapshot;
   ambiguities: string[];
@@ -661,7 +665,7 @@ export interface OptimizationHistoryDetail {
   rawPrompt: string;
   optimizedPrompt: string;
   /** 旧历史缺省分节；保存的最终正文保持原样。 */
-  promptFormat?: 'COMPACT' | 'STRUCTURED';
+  promptFormat?: PromptFormat;
   sections: PromptSection[];
   contextSummary: Record<string, unknown>;
   ambiguities: string[];

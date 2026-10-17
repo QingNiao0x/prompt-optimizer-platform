@@ -166,6 +166,8 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         + identifierRelations.requiredQuestions().size(), questions.size());
                 String summary = questions.isEmpty()
                         ? "当前需求及已提供材料足以进入最终增强，无需额外确认。"
+                        : validated.questions().stream().anyMatch(question -> questionFilter.outsideExplorationTask(question, providerRequest))
+                        ? "本次先熟悉项目；以下仅确认影响当前阅读范围、授权或材料核对的未决事项。"
                         : validated.questions().isEmpty() && !identifierRelations.requiredQuestions().isEmpty()
                         ? "医院名称与数据代码的对应关系还需独立确认，请补充以下信息。"
                         : validated.summary();

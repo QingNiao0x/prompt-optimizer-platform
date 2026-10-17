@@ -1,0 +1,105 @@
+{
+  "id": 24,
+  "approvedAtRecorded": "2026-10-17T14:10:33.804522+00:00",
+  "formalLimitsUnchanged": {
+    "total": 389,
+    "baseline": 80,
+    "candidate": 309
+  },
+  "actualBefore": 351,
+  "activeBatch": {
+    "version": "candidate31-live",
+    "sourceCandidate": "candidate31r2",
+    "group": "candidate31-existing-contract-lookup",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationBasis": "批准重分配16次，执行冻结范围",
+    "authorizationAmendment": "protocol-amendment-24.json",
+    "status": "OPEN",
+    "secondRoundAuthorized": true,
+    "maximumNewCalls": 16,
+    "callsBefore": 351,
+    "candidateCallsBefore": 281,
+    "maximumActualCallsAfterBatch": 367,
+    "purposeMaximums": {
+      "PLANNING": 6,
+      "PLATFORM_GENERATION": 6,
+      "EXECUTION": 2,
+      "REVIEW": 2
+    },
+    "model": "deepseek-flash",
+    "executionModel": "deepseek-flash",
+    "reviewModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "cases": [
+      "PROJECT-MIXED-EXISTING",
+      "PROJECT-MIXED-USER-CHOICE"
+    ],
+    "casesFile": "candidate31-project-cases.json",
+    "casesSha256": "515cb9d62633ae371691cff1770d2057bf0d31e158c9cac1613f6bd67352b05a",
+    "allowedRawPromptSha256": [
+      "3337f1fd6b3c4e4e4040dd22f72cdc3e585226303808659cef9903c6a96ca3a8",
+      "8cc53e207294b93d96df1dda3e6ab0e6c1a537f01c66c681f49b037f7b5d4961"
+    ],
+    "expectedTaskViews": [
+      {
+        "intent": {
+          "templateCode": "FEATURE_DEVELOPMENT",
+          "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [
+            "PROJECT_UNDERSTANDING"
+          ],
+          "engineeringConstraints": true
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动追加示例段。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      {
+        "intent": {
+          "templateCode": "FEATURE_DEVELOPMENT",
+          "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [
+            "PROJECT_UNDERSTANDING"
+          ],
+          "engineeringConstraints": true
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动追加示例段。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      }
+    ],
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "accountCreationAllowed": false,
+    "sameTestAccountFile": "tmp/local-acceptance/account.json",
+    "qualityRetriesAllowed": false,
+    "closedAllowanceTransfer": "EXPLICIT_USER_REALLOCATION_ONLY",
+    "reallocation": {
+      "candidate30ClosedUnused": 12,
+      "candidate27ClosedUnused": 4
+    },
+    "executionParity": "Identical frozen synthetic project; raw vs actual native Plan copy; no fabricated answers",
+    "reviewScope": "Two independent AI-assisted reviewers; same supplier; not human or domain experts"
+  }
+}

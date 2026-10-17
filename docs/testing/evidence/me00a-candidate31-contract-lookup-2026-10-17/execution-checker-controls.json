@@ -1,0 +1,55 @@
+{
+  "purpose": "TOOL_CONTROLS_NOT_MODEL_WORKS",
+  "good": {
+    "arm": "CONTROL_GOOD",
+    "passed": true,
+    "mavenExit": 0,
+    "reports": [
+      {
+        "class": "sample.orders.user.IndependentLoginAcceptanceTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "implementationAndModelTestsCompiledTogether": true,
+    "sourceFiles": [
+      {
+        "path": "src/main/java/sample/orders/user/LoginController.java",
+        "sha256": "486cc75c689046e890c1a392a73db886ac59dd5f3b805cc9ddf63ce742c75b31"
+      }
+    ],
+    "modelAlgorithmRepaired": false,
+    "realModelCalls": 0,
+    "databaseIntegrationCovered": false
+  },
+  "bad": {
+    "arm": "CONTROL_BAD",
+    "passed": false,
+    "mavenExit": 1,
+    "reports": [
+      {
+        "class": "sample.orders.user.IndependentLoginAcceptanceTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 6,
+        "skipped": 0
+      }
+    ],
+    "implementationAndModelTestsCompiledTogether": true,
+    "sourceFiles": [
+      {
+        "path": "src/main/java/sample/orders/user/LoginController.java",
+        "sha256": "7fe301c3fec3fdd8e64190180954299f5f74cebeefb1d32e9b06756db87eb34f"
+      }
+    ],
+    "modelAlgorithmRepaired": false,
+    "realModelCalls": 0,
+    "databaseIntegrationCovered": false
+  },
+  "pathGuardsRejected": 3,
+  "realModelCalls": 0,
+  "realNetworkRequests": 0,
+  "priceAndCurrencyCost": "NOT_APPLICABLE_LOCAL_CHECKS"
+}

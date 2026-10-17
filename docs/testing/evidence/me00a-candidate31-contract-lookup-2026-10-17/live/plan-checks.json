@@ -1,0 +1,42 @@
+{
+  "existingContractNaturalPlanQuestions": 0,
+  "existingContractModelRawQuestions": 0,
+  "actualUiAutoGeneration": true,
+  "actualAnswers": [],
+  "planIdSent": true,
+  "userChoiceNaturalPlanQuestions": [
+    {
+      "id": "login_method",
+      "question": "新登录入口采用哪种登录方式？",
+      "hint": "这决定新接口的凭证字段、校验流程、依赖组件和受影响测试；现有登录入口保持不变。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "email_password",
+          "label": "邮箱密码",
+          "description": "新入口使用邮箱与密码登录，需明确邮箱格式校验和密码校验规则。",
+          "answer": "新登录入口采用邮箱密码登录。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "phone_code",
+          "label": "手机号验证码",
+          "description": "新入口使用手机号与验证码登录，需明确验证码的发送、校验和有效期规则。",
+          "answer": "新登录入口采用手机号验证码登录。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "userChoiceNotAnsweredOrEnhanced": true,
+  "copyAndHistoryBothFlowsMatch": true,
+  "sameCanonicalAccount": true,
+  "historyBefore": 1486,
+  "historyAfter": 1488,
+  "newAccountsCreated": 0,
+  "priorPureReadingEvidenceReused": "candidate30 traces 346-349; not regenerated"
+}

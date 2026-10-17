@@ -1,0 +1,48 @@
+[
+  {
+    "caseId": "MAIL-COMPACT",
+    "rawPrompt": "给合作方写一封简短中文邮件，礼貌询问原定周五的交付能否按时完成，如有困难请回复预计时间。只输出邮件正文，正文不超过120个汉字，不编造姓名、进度或新的日期，不添加示例。",
+    "planConfirmed": false,
+    "taskView": {
+      "intent": {
+        "templateCode": "GENERAL",
+        "deliveryProfile": "GENERAL",
+        "status": "DEFAULT",
+        "auxiliaryProfiles": [],
+        "engineeringConstraints": false
+      },
+      "executionRequirements": [],
+      "pendingDecisions": [],
+      "examples": {
+        "mode": "PROHIBITED",
+        "source": "USER_PROHIBITION",
+        "guidance": "遵守用户禁止示例的要求，不附带示例。"
+      },
+      "requirementBoundaryGuidance": "",
+      "userMeaningAnchors": []
+    }
+  },
+  {
+    "caseId": "TRANSLATION-COMPACT",
+    "rawPrompt": "把下面两行译成英文，只输出对应两行译文，保留占位符{name}和顺序，不添加标题、解释或示例：\n{name}，会议改到周五。\n请回复是否参加。",
+    "planConfirmed": false,
+    "taskView": {
+      "intent": {
+        "templateCode": "GENERAL",
+        "deliveryProfile": "TRANSLATION",
+        "status": "RAW_GOAL",
+        "auxiliaryProfiles": [],
+        "engineeringConstraints": false
+      },
+      "executionRequirements": [],
+      "pendingDecisions": [],
+      "examples": {
+        "mode": "PROHIBITED",
+        "source": "USER_PROHIBITION",
+        "guidance": "遵守用户禁止示例的要求，不附带示例。"
+      },
+      "requirementBoundaryGuidance": "",
+      "userMeaningAnchors": []
+    }
+  }
+]

@@ -242,7 +242,9 @@ describe('optimization store project context', () => {
     expect(store.contextSnapshot).toEqual(resultFixture().contextReport);
   });
 
-  it.each(['direct', 'plan'] as const)('keeps input, result and edit draft after %s enhancement is rejected', async (mode) => {
+  it.each([
+    ['direct', 502], ['plan', 502], ['direct', 504], ['plan', 504],
+  ] as const)('keeps input, result and edit draft after %s enhancement fails with %i', async (mode, status) => {
     const store = useOptimizationStore();
     store.rawPrompt = '使用requests库爬取网页标题。';
     store.customDescription = '网址作为输入参数。';
@@ -251,12 +253,13 @@ describe('optimization store project context', () => {
       content: section.type === 'TASK' ? '保留尚未保存的编辑。' : section.content }));
     store.result = original;
     store.resultDraft = draft;
-    const message = '模型响应中的补全判断与待确认事项不一致，本次增强未完成。';
+    const message = status === 504 ? '模型服务响应超时，请稍后重试。'
+      : '模型响应中的补全判断与待确认事项不一致，本次增强未完成。';
     const failure = new AxiosError('Request failed', 'ERR_BAD_RESPONSE');
-    failure.response = { status: 502, statusText: 'Bad Gateway', headers: {}, config: failure.config!, data: {
+    failure.response = { status, statusText: status === 504 ? 'Gateway Timeout' : 'Bad Gateway', headers: {}, config: failure.config!, data: {
       requestId: '8ad37fb3-4f57-48b7-9dff-1af868d638ea', error: {
-        code: 'RESULT_INVALID', message, retryable: false,
-        details: { validationReason: 'ASSESSMENT_DECISION_CONFLICT', validationField: 'assessment.gaps' },
+        code: status === 504 ? 'PROVIDER_TIMEOUT' : 'RESULT_INVALID', message, retryable: status === 504,
+        details: status === 504 ? {} : { validationReason: 'ASSESSMENT_DECISION_CONFLICT', validationField: 'assessment.gaps' },
       },
     } };
     vi.mocked(optimizePrompt).mockRejectedValue(failure);

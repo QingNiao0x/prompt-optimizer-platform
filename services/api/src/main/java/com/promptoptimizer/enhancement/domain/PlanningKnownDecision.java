@@ -39,6 +39,8 @@ public record PlanningKnownDecision(Kind kind, String subject, String evidence, 
         METHOD_SELECTION,
         INFORMATION_PARITY,
         EXISTING_REGION_LOOKUP,
+        /** 本次明确委托核查并沿用现有接口契约；输入、输出实际值仍未核实。 */
+        EXISTING_CONTRACT_LOOKUP,
         TEST_LAYER_LOOKUP,
         TEST_TARGET_LOOKUP
     }

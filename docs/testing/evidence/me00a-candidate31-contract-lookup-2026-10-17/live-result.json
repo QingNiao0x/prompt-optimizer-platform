@@ -1,0 +1,284 @@
+{
+  "candidate": "candidate31r2",
+  "phase": "REAL_VERIFICATION",
+  "recordedAt": "2026-10-17T14:23:03.389292+00:00",
+  "realCalls": 8,
+  "failedActualCalls": 0,
+  "protocolRepairCalls": 0,
+  "qualityRetries": 0,
+  "actualBefore": 351,
+  "actualAfter": 359,
+  "baseline": 70,
+  "candidateValidation": 289,
+  "formalLimits": {
+    "total": 389,
+    "baseline": 80,
+    "candidateValidation": 309
+  },
+  "approvedMaximum": 16,
+  "purposeActuals": {
+    "PLANNING": 2,
+    "PLATFORM_GENERATION": 2,
+    "EXECUTION": 2,
+    "REVIEW": 2
+  },
+  "unusedClosed": 8,
+  "calls": [
+    {
+      "trace": 352,
+      "purpose": "PLANNING",
+      "operation": null,
+      "requestId": "debbeabd-471e-43f1-8be2-b0ea1d94e343",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 1617,
+      "usage": {
+        "prompt_tokens": 3131,
+        "completion_tokens": 86,
+        "total_tokens": 3217,
+        "prompt_tokens_details": {
+          "cached_tokens": 2688
+        },
+        "prompt_cache_hit_tokens": 2688,
+        "prompt_cache_miss_tokens": 443
+      },
+      "finishReason": "stop"
+    },
+    {
+      "trace": 353,
+      "purpose": "PLATFORM_GENERATION",
+      "operation": null,
+      "requestId": "418f23ef-93f7-4c10-87fa-cfa166514fb5",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 6633,
+      "usage": {
+        "prompt_tokens": 6995,
+        "completion_tokens": 1255,
+        "total_tokens": 8250,
+        "prompt_tokens_details": {
+          "cached_tokens": 5376
+        },
+        "prompt_cache_hit_tokens": 5376,
+        "prompt_cache_miss_tokens": 1619
+      },
+      "finishReason": "stop"
+    },
+    {
+      "trace": 354,
+      "purpose": "PLANNING",
+      "operation": null,
+      "requestId": "5a63fe90-35e9-4643-8b75-b6d447eca6b7",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 1965,
+      "usage": {
+        "prompt_tokens": 3019,
+        "completion_tokens": 257,
+        "total_tokens": 3276,
+        "prompt_tokens_details": {
+          "cached_tokens": 2560
+        },
+        "prompt_cache_hit_tokens": 2560,
+        "prompt_cache_miss_tokens": 459
+      },
+      "finishReason": "stop"
+    },
+    {
+      "trace": 355,
+      "purpose": "PLATFORM_GENERATION",
+      "operation": null,
+      "requestId": "5c724e2b-efff-4ba5-9539-6d862dbaf216",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 6150,
+      "usage": {
+        "prompt_tokens": 6995,
+        "completion_tokens": 1217,
+        "total_tokens": 8212,
+        "prompt_tokens_details": {
+          "cached_tokens": 6784
+        },
+        "prompt_cache_hit_tokens": 6784,
+        "prompt_cache_miss_tokens": 211
+      },
+      "finishReason": "stop"
+    },
+    {
+      "trace": 356,
+      "purpose": "EXECUTION",
+      "operation": "RAW",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 5587,
+      "usage": {
+        "prompt_tokens": 917,
+        "completion_tokens": 1892,
+        "total_tokens": 2809,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 917
+      },
+      "finishReason": "stop"
+    },
+    {
+      "trace": 357,
+      "purpose": "EXECUTION",
+      "operation": "PLAN",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 14455,
+      "usage": {
+        "prompt_tokens": 1813,
+        "completion_tokens": 4304,
+        "total_tokens": 6117,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1813
+      },
+      "finishReason": "stop"
+    },
+    {
+      "trace": 358,
+      "purpose": "REVIEW",
+      "operation": "R1",
+      "requestId": null,
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 3910,
+      "usage": {
+        "prompt_tokens": 11536,
+        "completion_tokens": 563,
+        "total_tokens": 12099,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 11536
+      },
+      "finishReason": "stop"
+    },
+    {
+      "trace": 359,
+      "purpose": "REVIEW",
+      "operation": "R2",
+      "requestId": null,
+      "model": "deepseek-v4-pro",
+      "httpStatus": 200,
+      "elapsedMs": 5583,
+      "usage": {
+        "prompt_tokens": 11533,
+        "completion_tokens": 393,
+        "total_tokens": 11926,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 11533
+      },
+      "finishReason": "stop"
+    }
+  ],
+  "tokensTotal": 55906,
+  "executionCost": {
+    "rawTotalTokens": 2809,
+    "planTotalTokens": 6117,
+    "tokenRatio": 2.178,
+    "rawElapsedMs": 5587,
+    "planElapsedMs": 14455,
+    "elapsedRatio": 2.587,
+    "singlePairNotPerformanceDistribution": true,
+    "currencyCost": "UNKNOWN"
+  },
+  "passedScopedGates": [
+    "Exact trace350 mixed task: natural model zero-question Plan; actual UI automatic enhancement",
+    "Explicit user-owned login-method choice retained, not defaulted",
+    "Plan and independent direct both succeed on first attempt, no ambiguities",
+    "Native clipboard, assembled sections, constraints and canonical history agree",
+    "Both implementations and model tests compile together; independent8 each plus authored8/12 pass"
+  ],
+  "reviewVotes": {
+    "R1": {
+      "verdict": "WIN_A",
+      "scores": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 5
+        }
+      }
+    },
+    "R2": {
+      "verdict": "WIN_A",
+      "scores": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 5
+        }
+      }
+    }
+  },
+  "reviewScope": "Independent AI-assisted reviews by Flash and Pro, same supplier, not human experts",
+  "reviewScoreDisagreement": false,
+  "sourceAuditOverride": {
+    "state": "OPEN",
+    "finding": "PLAN work first lists Bearer as a known source fact, then lists tokenType exact case as an unconfirmed assumption. Both reviewers miss this factual contradiction.",
+    "attribution": "Downstream explanatory text error; the final copied prompt does not claim Bearer is unknown. Possible guidance interaction is unproven.",
+    "reviewPolicy": "Keep both raw reviews unchanged; do not declare a global quality win based on their scores."
+  },
+  "remainingFindings": [
+    {
+      "issue": "Composite original rules and task-related constraints are still repeated in copied bodies",
+      "attribution": "Platform append paths plus upstream cross-section repetition; compare traces353/355 to native copies",
+      "next": "Offline scope-preserving replay before deciding any minimal correction; no global semantic deletion"
+    },
+    {
+      "issue": "Plan explanatory text adds redundant uncertainty and false unconfirmed Bearer case",
+      "attribution": "Downstream first occurrence; possible prompt influence remains unproven",
+      "next": "Evaluate simplifying existing guidance; do not pile on new instructions"
+    },
+    {
+      "issue": "Prior requests credential echo, Q05 scoring and scientific correctness gates",
+      "attribution": "Previous blocker-audit.json and saved-code-replay.json; not covered by this software pair",
+      "next": "Keep open; no claim that these are fixed by this batch"
+    }
+  ],
+  "notCovered": [
+    "Statistical win rate",
+    "Repeated generation stability",
+    "Real DB/Redis/JWT implementation integration",
+    "User-choice answered Plan completion",
+    "Live upstream timeout repeat or production failure rate",
+    "Cross-provider generalization",
+    "Examples combinations",
+    "Full ME/G1-G8 release gates"
+  ],
+  "sourceDrift": false,
+  "runtimeDrift": false,
+  "newAccountsCreated": 0,
+  "productSourceModifiedDuringLive": false,
+  "committed": false,
+  "pushed": false,
+  "published": false
+}

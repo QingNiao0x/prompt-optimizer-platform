@@ -78,7 +78,12 @@ public final class TaskIntentResolver {
         } else if (Boolean.FALSE.equals(auxiliaryCode) && !goals.isEmpty() && !goals.getFirst().profile().softwareTask()) {
             goals = goals.stream().filter(goal -> !goal.profile().softwareTask()).toList();
         }
+        // “先熟悉再实现”仍有明确的软件交付；单独熟悉项目则是完整目标，不能被背景中的构建状态取代。
         Goal primary = goals.isEmpty() ? new Goal(TemplateCode.GENERAL, TaskDeliveryProfile.GENERAL) : goals.getFirst();
+        for (Goal goal : goals) {
+            if (goal.profile() != TaskDeliveryProfile.PROJECT_UNDERSTANDING) { primary = goal; break; }
+        }
+        Goal primaryGoal = primary;
         TemplateCode code = primary.code();
         TaskDeliveryProfile profile = primary.profile();
         if (requested != null && requested != TemplateCode.AUTO) {
@@ -86,7 +91,7 @@ public final class TaskIntentResolver {
             status = TaskIntent.ResolutionStatus.EXPLICIT;
             if (software(code) && !profile.softwareTask()) profile = TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION;
         }
-        List<TaskDeliveryProfile> auxiliary = goals.stream().map(Goal::profile).filter(value -> value != primary.profile())
+        List<TaskDeliveryProfile> auxiliary = goals.stream().map(Goal::profile).filter(value -> value != primaryGoal.profile())
                 .distinct().toList();
         boolean engineering = software(code) || profile.softwareTask()
                 || auxiliary.stream().anyMatch(TaskDeliveryProfile::softwareTask);
@@ -191,24 +196,27 @@ public final class TaskIntentResolver {
             return research(TaskDeliveryProfile.DATA_ANALYSIS);
         if (match(clause, "(?:总结|摘要|概括|整理|归纳|提取|对照).{0,60}(?:材料|资料|文件|文本|文档|记录|报告|规则)|(?:生成|输出|撰写).{0,30}(?:摘要|对照表)"))
             return general(TaskDeliveryProfile.MATERIAL_SYNTHESIS);
-        if (match(clause, "(?:修复|排查|定位).{0,50}(?:bug|报错|故障|缺陷|异常|接口|页面|代码)|^(?:请|帮我|需要)?修复(?:问题|bug)"))
+        if (engineeringMatch(clause, "(?:修复|排查|定位).{0,50}(?:bug|报错|故障|缺陷|异常|接口|页面|代码)|^(?:请|帮我|需要)?修复(?:问题|bug)"))
             return new Goal(TemplateCode.BUG_FIX, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
-        if (match(clause, "\\b(?:fix|debug|diagnose|troubleshoot)\\b.{0,60}\\b(?:bug|error|failure|exception|endpoint|code)\\b"))
+        if (engineeringMatch(clause, "\\b(?:fix|debug|diagnose|troubleshoot)\\b.{0,60}\\b(?:bug|error|failure|exception|endpoint|code)\\b"))
             return new Goal(TemplateCode.BUG_FIX, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
-        if (match(clause, "(?:重构|refactor|整理代码|拆分模块|迁移).{0,70}(?:代码|模块|接口|前端|后端|react|vue|jpa|mybatis)|^(?:请|帮我)?重构"))
+        if (engineeringMatch(clause, "(?:重构|refactor|整理代码|拆分模块|迁移).{0,70}(?:代码|模块|接口|前端|后端|react|vue|jpa|mybatis)|^(?:请|帮我)?重构"))
             return new Goal(TemplateCode.REFACTORING, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
-        if (match(clause, "\\b(?:refactor|migrate)\\b.{0,60}\\b(?:code|module|api|frontend|backend|react|vue|repository)\\b"))
+        if (engineeringMatch(clause, "\\b(?:refactor|migrate)\\b.{0,60}\\b(?:code|module|api|frontend|backend|react|vue|repository)\\b"))
             return new Goal(TemplateCode.REFACTORING, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
-        if (match(clause, "(?:编写|补充|完善|执行|运行|设计|测试).{0,35}(?:单元测试|接口测试|集成测试|回归测试|自动化测试|性能测试|测试用例)|^测试.{0,25}(?:接口|代码|功能|模块)"))
+        if (engineeringMatch(clause, "(?:编写|补充|完善|执行|运行|设计|测试).{0,35}(?:单元测试|接口测试|集成测试|回归测试|自动化测试|性能测试|测试用例)|^测试.{0,25}(?:接口|代码|功能|模块)"))
             return new Goal(TemplateCode.TESTING, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
-        if (match(clause, "\\b(?:write|add|implement|run|design)\\b.{0,40}\\b(?:unit|integration|regression|performance|automated) tests?\\b"))
+        if (engineeringMatch(clause, "\\b(?:write|add|implement|run|design)\\b.{0,40}\\b(?:unit|integration|regression|performance|automated) tests?\\b"))
             return new Goal(TemplateCode.TESTING, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
-        if (match(clause, "(?:开发|实现|新增|添加|增加|编写|构建).{0,60}(?:接口|功能|模块|系统|服务|程序|代码|算法|函数|页面|缓存|认证|登录)|(?:设计|制定|提供|给出).{0,60}(?:实现方案|开发方案|功能方案)"))
+        if (engineeringMatch(clause, "(?:开发|实现|新增|添加|增加|编写|构建).{0,60}(?:接口|功能|模块|系统|服务|程序|代码|算法|函数|页面|缓存|认证|登录)|(?:设计|制定|提供|给出).{0,60}(?:实现方案|开发方案|功能方案)"))
             return new Goal(TemplateCode.FEATURE_DEVELOPMENT, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
         if (explicitCodeDelivery(clause))
             return new Goal(TemplateCode.FEATURE_DEVELOPMENT, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
-        if (match(clause, "\\b(?:implement|add|create|build|develop)\\b.{0,60}\\b(?:api|endpoint|function|feature|service|module|authentication|login|algorithm|program|cache)\\b"))
+        if (engineeringMatch(clause, "\\b(?:implement|add|create|build|develop)\\b.{0,60}\\b(?:api|endpoint|function|feature|service|module|authentication|login|algorithm|program|cache)\\b"))
             return new Goal(TemplateCode.FEATURE_DEVELOPMENT, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
+        if (match(clause, "(?:熟悉|了解|阅读|梳理|理解|审阅|浏览|查看|摸清).{0,45}(?:项目|工程|仓库|代码库|前后端|源码|代码|模块|架构|目录|依赖)"
+                + "|\\b(?:read|explore|understand|review|familiarize)\\b.{0,50}\\b(?:project|repository|codebase|architecture|source code)\\b"))
+            return general(TaskDeliveryProfile.PROJECT_UNDERSTANDING);
         if (match(clause, "(?:研究|分析|计算|评估|比较|撰写).{0,80}(?:数据|死亡率|发病率|时间序列|回归|统计|yll|arriaga|股票|风险|分布|趋势)|完成这项分析"))
             return research(TaskDeliveryProfile.DATA_ANALYSIS);
         return null;
@@ -227,9 +235,23 @@ public final class TaskIntentResolver {
 
     /** 代码交付需要肯定的动作与交付物；“用 R 分析”“参考 Python 文档”不是脚本交付。 */
     private static boolean explicitCodeDelivery(String clause) {
-        return !PENDING.matcher(clause).find() && !DECLINED_CODE_DELIVERY.matcher(clause.strip()).find() && match(clause,
+        return !PENDING.matcher(clause).find() && !DECLINED_CODE_DELIVERY.matcher(clause.strip()).find() && (engineeringMatch(clause,
                 "(?:提供|交付|给出|编写|输出|生成|附上|附带|包含|实现|需要|要求).{0,32}(?:(?<!伪)代码|脚本|程序)"
-                        + "|\\b(?:provide|deliver|write|generate|include)\\b.{0,40}\\b(?:code|scripts?|programs?)\\b");
+                        + "|\\b(?:provide|deliver|write|generate|include)\\b.{0,40}\\b(?:code|scripts?|programs?)\\b")
+                || explicitJavaSourceDelivery(clause));
+    }
+
+    /** 明确交付 Java 源文件也属于代码交付；仅提到文件、介绍签名或根据源码写文档不建立工程义务。 */
+    private static boolean explicitJavaSourceDelivery(String clause) {
+        // 只接受句首肯定交付动作及有限修饰，防止“解释‘交付 Foo.java’”或“提供 Foo.java 的说明”被误认。
+        String artifact = "[`\"“‘]?[a-z_$][a-z0-9_$]*\\.java[`\"”’]?"
+                + "(?=$|[.!?]$|\\s*(?:(?:源文件|文件|源码)(?:和|及|、|$)|和|及|、|and\\b|files?\\b(?:[.!?]|$)))";
+        return engineeringMatch(clause,
+                "^(?:(?:请|帮我|本次|本轮|此次|这次|现在|立即|需要|要求|但|仍|同时|并)\\s*)*"
+                        + "(?:交付|输出|提供|给出|生成|编写|附上|附带)\\s*"
+                        + "(?:(?:完整|可直接运行|可运行|最终|一个|一份|名为|java|源码|源文件|文件)(?:的)?\\s*)*" + artifact
+                        + "|^(?:please\\s+)?(?:provide|deliver|output|generate|write|include)\\s+"
+                        + "(?:(?:the|a|complete|runnable|final)\\s+)*" + artifact);
     }
 
     /** 只识别是否交付代码的选择题，不把语言偏好或资料中的现状题提升为交付承诺。 */
@@ -245,13 +267,34 @@ public final class TaskIntentResolver {
 
     /** 复用固定规则表达式，并拒绝位于否定、候选或资料引文中的交付动词命中。 */
     private static boolean match(String clause, String expression) {
+        return match(clause, expression, false);
+    }
+
+    /** 工程动作额外核对既成状态与未来条件；不删除原句，也不影响同句后续真正的执行命令。 */
+    private static boolean engineeringMatch(String clause, String expression) {
+        return match(clause, expression, true);
+    }
+
+    /** 逐个动作核对；拒绝一个描述性命中后继续检查重叠位置，避免吞掉后面的新增命令。 */
+    private static boolean match(String clause, String expression, boolean engineering) {
         var matcher = PATTERNS.computeIfAbsent(expression,
                 value -> Pattern.compile(value, Pattern.CASE_INSENSITIVE)).matcher(clause);
-        while (matcher.find()) {
+        int from = 0;
+        while (from < clause.length() && matcher.find(from)) {
+            from = matcher.start() + 1;
             String prefix = clause.substring(0, matcher.start());
+            if (engineering && describedOrConditionalAction(clause.substring(matcher.start()), prefix)) continue;
             if (!prefix.matches(".*(?:不要求|不需要|不要|不得|不提供|不附|请勿|未要求|无需|禁止|无须|是否|例如|示例|原文|材料中|资料中)[^，。；;]{0,80}$")
                     && !prefix.matches(".*(?:不|未|勿)$")) return true;
         }
         return false;
+    }
+
+    /** “构建的系统／重构后的模块”是事实；条件动作只有在本次明确启动时才成为软件目标。 */
+    private static boolean describedOrConditionalAction(String suffix, String prefix) {
+        if (suffix.matches("^(?:开发|实现|新增|添加|增加|编写|构建|重构|迁移|修复|测试)(?:后的?|过的|完成的|完的|好的|的|了的).*")) return true;
+        if (prefix.matches(".*(?:已经|已|曾经|此前已)$")) return true;
+        return prefix.matches(".*(?:以后|今后|后续|将来|未来|如果|假如|一旦|每次|每当|若(?:需要|要|涉及|发生))[^。；;]{0,80}$")
+                && !prefix.matches(".*(?:本次|现在|立即|这次)[^。；;]{0,25}$");
     }
 }

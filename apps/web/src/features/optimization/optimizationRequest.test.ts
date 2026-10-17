@@ -8,6 +8,13 @@ import {
 } from './optimizationRequest';
 
 describe('buildOptimizationRequest', () => {
+  it.each(['COMPACT', 'STRUCTURED'] as const)('preserves the explicit %s preference in the existing request', promptFormat => {
+    const request = buildOptimizationRequest({ rawPrompt: '写邮件', customDescription: '', files: [],
+      templateCode: 'AUTO', includePermissionBoundaries: true, includeExamples: true, promptFormat });
+    expect(request.enhancement.promptFormat).toBe(promptFormat);
+    expect(request.enhancement.includeExamples).toBe(true);
+  });
+
   it('should normalize editable text without changing source content', () => {
     const request = buildOptimizationRequest({
       rawPrompt: '  增加登录功能  ',

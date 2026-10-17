@@ -26,6 +26,10 @@ target/
 # 本地临时目录
 tmp/
 
+# 离线评测脚本的 Python 编译缓存不属于源码或验收原件。
+__pycache__/
+*.py[cod]
+
 # Local environment and secrets
 # 审计原始事件包含用户/IP 元数据，只存于运行期持久卷，不提交到代码仓库。
 **/data/analytics-journal/

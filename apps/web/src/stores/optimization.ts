@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref, shallowRef, watch } from 'vue';
 import { restoreAppliedConstraints } from '@/features/optimization/constraintEditing';
+import { renderPromptSections } from '@/features/optimization/promptPresentation';
 import { completeContextTransmission, createContextTransmission, failContextTransmission,
   type ContextTransmissionReport, type TransmissionPhase } from '@/features/context-analysis/contextTransmission';
 import { useAuthStore } from '@/stores/auth';
@@ -37,15 +38,25 @@ import type {
   OptimizationHistoryDetail,
   OptimizationPlan,
   OptimizationResult,
+  OptimizationRequest,
   PlanConfirmation,
   PlanningContextPreparation,
   PromptSection,
+  PromptFormat,
   ReoptimizationResult,
   TemplateCode,
 } from '@/types/api';
 
 /** 任务切换和资料变化均会使异步操作失效，普通偏好不参与资料归属。 */
 export interface OptimizationContextLease { task: number; context: number }
+
+interface SuccessfulGenerationSource {
+  requestJson: string;
+  lease: OptimizationContextLease;
+  modelId: string | null;
+  includeExamples: boolean;
+  rawPrompt: string;
+}
 
 export const useOptimizationStore = defineStore('optimization', () => {
   const rawPrompt = ref('');
@@ -56,6 +67,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const templateCode = ref<TemplateCode>('AUTO');
   const includePermissionBoundaries = ref(true);
   const includeExamples = ref(false);
+  // 仅随当前任务保留，不写入全局偏好；恢复历史时再采用该记录的实际形式。
+  const promptFormat = ref<PromptFormat>('COMPACT');
   const availableModels = ref<AvailableModel[]>([]);
   const selectedModelId = ref('');
   const planModelId = ref('');
@@ -70,6 +83,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const plan = ref<OptimizationPlan>();
   const result = ref<OptimizationResult>();
   const resultUndoStack = ref<OptimizationResult[]>([]);
+  // 请求快照只存在当前任务内存中；不写浏览器存储或历史，不从优化正文重建 Plan 题答。
+  const generationSource = shallowRef<SuccessfulGenerationSource>();
+  let resultUndoSources: Array<SuccessfulGenerationSource | undefined> = [];
   const requestId = ref('');
   const errorMessage = ref('');
   const planningSessionExpired = ref(false);
@@ -96,6 +112,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
   /** 修改资料或输入后，旧请求的成功、失败和 finally 都不得改变新操作状态。 */
   const invalidateContext = (): void => {
     contextRevision.value += 1;
+    generationSource.value = undefined;
+    resultUndoSources = resultUndoSources.map(() => undefined);
     contextRetrieval.value = undefined;
     contextSnapshot.value = undefined;
     planningContext.value = undefined;
@@ -132,9 +150,11 @@ export const useOptimizationStore = defineStore('optimization', () => {
     result.value = undefined;
     resultDraft.value = undefined;
     resultUndoStack.value = [];
+    resultUndoSources = [];
     rawPrompt.value = '';
     customDescription.value = '';
     templateCode.value = 'AUTO';
+    promptFormat.value = 'COMPACT';
     requestId.value = '';
     errorMessage.value = '';
     cleanupReferences(previous, []);
@@ -169,6 +189,13 @@ export const useOptimizationStore = defineStore('optimization', () => {
     && !isPlanning.value
     && !isOptimizing.value);
   const canUndoResult = computed(() => resultUndoStack.value.length > 0);
+  const hasPendingPromptFormat = computed(() => Boolean(result.value)
+    && promptFormat.value !== (result.value?.promptFormat ?? 'STRUCTURED'));
+  const canReuseGenerationSource = computed(() => Boolean(generationSource.value
+    && isCurrentContext(generationSource.value.lease)
+    && generationSource.value.modelId === (selectedModelId.value || null)
+    && generationSource.value.includeExamples === includeExamples.value));
+  const modeRegenerationRawPrompt = computed(() => generationSource.value?.rawPrompt ?? '');
 
   /** 更新模型目录时保留仍可用的用户选择，否则回到平台默认模型。 */
   const refreshAvailableModels = async (): Promise<void> => {
@@ -429,6 +456,27 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
   };
 
+  /** 保存实际发送的 JSON 快照；成功前不替换当前结果及其可撤销来源。 */
+  const submitOptimization = async (request: OptimizationRequest, lease: OptimizationContextLease): Promise<boolean> => {
+    const requestJson = JSON.stringify(request);
+    const response = await optimizePrompt(request);
+    if (!isCurrentContext(lease)) return false;
+    finishTransmission(response.data.contextReport, response.requestId);
+    if (contextTransmission.value) contextTransmission.value = {
+      ...contextTransmission.value, mock: response.data.provider.mock,
+    };
+    rememberCurrentResult();
+    resultDraft.value = undefined;
+    result.value = response.data;
+    generationSource.value = { requestJson, lease, modelId: request.modelId ?? null,
+      includeExamples: request.enhancement.includeExamples, rawPrompt: request.rawPrompt };
+    promptFormat.value = response.data.promptFormat ?? 'STRUCTURED';
+    contextSnapshot.value = response.data.contextReport;
+    templateCode.value = response.data.templateCode;
+    requestId.value = response.requestId;
+    return true;
+  };
+
   const runOptimization = async (
     preparedFiles?: ContextFileInput[],
     options: {
@@ -448,6 +496,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
 
     const planConfirmed = options.planConfirmation !== undefined;
+    const requestedFormat = promptFormat.value;
     const lease = captureContext();
     if (!planConfirmed) {
       // 直接增强必须让服务端重新推断策略，不能沿用上一次 Plan 或历史记录留下的模板。
@@ -462,7 +511,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
       const contextFiles = preparedFiles ?? await resolveContextFiles(sourcePrompt);
       if (!isCurrentContext(lease)) return false;
       beginTransmission(contextFiles, 'ENHANCEMENT');
-      const response = await optimizePrompt(buildOptimizationRequest({
+      return await submitOptimization(buildOptimizationRequest({
         rawPrompt: sourcePrompt,
         modelId: planConfirmed ? planModelId.value : selectedModelId.value,
         customDescription: customDescription.value,
@@ -471,21 +520,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
         templateCode: 'AUTO',
         includePermissionBoundaries: true,
         includeExamples: includeExamples.value,
+        promptFormat: requestedFormat,
         planConfirmation: options.planConfirmation,
-      }));
-      if (!isCurrentContext(lease)) return false;
-      finishTransmission(response.data.contextReport, response.requestId);
-      if (contextTransmission.value) contextTransmission.value = {
-        ...contextTransmission.value, mock: response.data.provider.mock,
-      };
-      // 直接展示增强结果；用户输入的原始提示词保持不变，不做覆盖。
-      rememberCurrentResult();
-      resultDraft.value = undefined;
-      result.value = response.data;
-      contextSnapshot.value = response.data.contextReport;
-      templateCode.value = response.data.templateCode;
-      requestId.value = response.requestId;
-      return true;
+      }), lease);
     } catch (error: unknown) {
       if (!isCurrentContext(lease)) return false;
       failTransmission();
@@ -495,6 +532,40 @@ export const useOptimizationStore = defineStore('optimization', () => {
       return false;
     } finally {
       if (isCurrentContext(lease)) isOptimizing.value = false;
+    }
+  };
+
+  /** 用户显式操作后，仅改变上次成功请求的增强模式；原始需求、资料和真实 Plan 确认逐字复用。 */
+  const regenerateWithPromptFormat = async (): Promise<boolean> => {
+    if (isAnalyzing.value || isPlanning.value || isOptimizing.value || isPreparingContext.value) return false;
+    if (resultDraft.value !== undefined && !equalSections(resultDraft.value,
+      result.value?.sections.filter(section => section.type !== 'CLARIFICATIONS') ?? [])) {
+      errorMessage.value = '请先保存或取消结果中的修改，再按所选模式重新增强。';
+      return false;
+    }
+    const source = generationSource.value;
+    if (!source || !canReuseGenerationSource.value || !hasPendingPromptFormat.value) {
+      errorMessage.value = '原始需求或选项已变化，请从原始提示词重新增强；原结果已保留。';
+      return false;
+    }
+    // 快照来自本页面已成功发送的 JSON 协议，不接受优化正文或历史文字伪造确认。
+    const request = JSON.parse(source.requestJson) as OptimizationRequest;
+    request.enhancement.promptFormat = promptFormat.value;
+    planningSessionExpired.value = false;
+    isOptimizing.value = true;
+    errorMessage.value = '';
+    try {
+      beginTransmission(request.context.files, 'ENHANCEMENT');
+      return await submitOptimization(request, source.lease);
+    } catch (error: unknown) {
+      if (!isCurrentContext(source.lease)) return false;
+      failTransmission();
+      planningSessionExpired.value = getApiErrorCode(error) === 'PLANNING_SESSION_EXPIRED';
+      errorMessage.value = getApiErrorMessage(error);
+      requestId.value = getApiErrorRequestId(error);
+      return false;
+    } finally {
+      if (isCurrentContext(source.lease)) isOptimizing.value = false;
     }
   };
 
@@ -514,11 +585,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
           result.value?.appliedConstraints ?? []),
       };
     });
-    const optimizedPrompt = normalizedSections
-      .filter((section) => section.type !== 'CLARIFICATIONS')
-      .map((section) => result.value?.promptFormat === 'COMPACT'
-        ? section.content : `## ${section.title}\n${section.content}`)
-      .join('\n\n');
+    const optimizedPrompt = renderPromptSections(normalizedSections, result.value.promptFormat ?? 'STRUCTURED');
     if (optimizedPrompt === result.value.optimizedPrompt) {
       resultDraft.value = undefined;
       errorMessage.value = '';
@@ -537,10 +604,13 @@ export const useOptimizationStore = defineStore('optimization', () => {
       return false;
     }
     result.value = previous;
+    generationSource.value = resultUndoSources.at(-1);
+    promptFormat.value = previous.promptFormat ?? 'STRUCTURED';
     resultDraft.value = undefined;
     contextSnapshot.value = previous.contextReport;
     templateCode.value = previous.templateCode;
     resultUndoStack.value = resultUndoStack.value.slice(0, -1);
+    resultUndoSources = resultUndoSources.slice(0, -1);
     errorMessage.value = '';
     return true;
   };
@@ -548,7 +618,15 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const rememberCurrentResult = (): void => {
     if (result.value) {
       resultUndoStack.value = [...resultUndoStack.value, result.value].slice(-20);
+      resultUndoSources = [...resultUndoSources, generationSource.value].slice(-20);
     }
+  };
+
+  /** 开关只选择下次真实增强的模式；当前正文、手工稿和 Plan 状态不受偏好切换影响。 */
+  const setPromptFormat = (format: PromptFormat): boolean => {
+    if (isAnalyzing.value || isPlanning.value || isOptimizing.value || isPreparingContext.value) return false;
+    promptFormat.value = format;
+    return true;
   };
 
   // 从历史详情恢复工作台输入，让用户能在原需求基础上继续修改。
@@ -563,6 +641,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     templateCode.value = detail.templateCode;
     includePermissionBoundaries.value = detail.includePermissionBoundaries;
     includeExamples.value = detail.includeExamples;
+    promptFormat.value = detail.promptFormat ?? 'STRUCTURED';
   };
 
   // 服务端重新优化完成后，直接把新结果放回工作台结果区。
@@ -570,6 +649,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
     rememberCurrentResult();
     resultDraft.value = undefined;
     result.value = payload.result;
+    generationSource.value = undefined;
+    promptFormat.value = payload.result.promptFormat ?? 'STRUCTURED';
     contextSnapshot.value = payload.result.contextReport;
     requestId.value = '';
     errorMessage.value = '';
@@ -582,6 +663,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     templateCode,
     includePermissionBoundaries,
     includeExamples,
+    promptFormat,
     availableModels,
     selectedModelId,
     isLoadingModels,
@@ -602,6 +684,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
     isPreparingContext,
     canOptimize,
     canUndoResult,
+    hasPendingPromptFormat,
+    canReuseGenerationSource,
+    modeRegenerationRawPrompt,
     taskRevision,
     contextTransmission,
     contextCleanupWarning,
@@ -622,14 +707,18 @@ export const useOptimizationStore = defineStore('optimization', () => {
     preparePlanningContext,
     createOptimizationPlan,
     runOptimization,
+    regenerateWithPromptFormat,
     saveEditedSections,
     undoResult,
+    setPromptFormat,
     loadFromHistory,
     applyReoptimized,
   };
 });
 
 const normalizePath = (path: string): string => path.replace(/\\/g, '/').toLowerCase();
+const equalSections = (left: readonly PromptSection[], right: readonly PromptSection[]): boolean =>
+  JSON.stringify(left) === JSON.stringify(right);
 
 const BINARY_CONTEXT_LANGUAGES = new Set([
   'bmp', 'doc', 'docx', 'dps', 'et', 'gif', 'jpeg', 'jpg', 'odt', 'ods', 'odp', 'pdf',

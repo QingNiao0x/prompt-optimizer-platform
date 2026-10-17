@@ -83,6 +83,66 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         );
     }
 
+    /** 351同类读取超时只发送一次；保留TIMEOUT和原cause，不进入无效响应修复循环。 */
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void socketTimeoutDoesNotRetryOrMasqueradeAsInvalidResponse(boolean planning) {
+        server.expect(once(), requestTo(ENDPOINT)).andRespond(request -> {
+            throw new java.net.SocketTimeoutException("offline read timeout");
+        });
+        assertThatThrownBy(() -> {
+            if (planning) provider.plan(new PlanningProviderRequest("实现登录接口", "", List.of(), null, null));
+            else provider.enhance(createRequest());
+        }).isInstanceOfSatisfying(ProviderException.class, error -> {
+            assertThat(error.getFailureType()).isEqualTo(ProviderFailureType.TIMEOUT);
+            assertThat(error.isRetryable()).isTrue();
+            assertThat(error).hasRootCauseInstanceOf(java.net.SocketTimeoutException.class);
+        });
+        server.verify();
+    }
+
+    @Test
+    void generationModeChangesStrategyWithoutChangingTaskOrAddingCalls() throws Exception {
+        var actualBodies = new java.util.ArrayList<com.fasterxml.jackson.databind.JsonNode>();
+        for (int index = 0; index < 3; index++) {
+            server.expect(once(), requestTo(ENDPOINT)).andExpect(request -> {
+                var mockRequest = (org.springframework.mock.http.client.MockClientHttpRequest) request;
+                var body = objectMapper.readTree(mockRequest.getBodyAsString());
+                actualBodies.add(body);
+            }).andRespond(withSuccess(completionWithFindings("[]"), MediaType.APPLICATION_JSON));
+        }
+        var base = createRequest();
+        for (var format : new com.promptoptimizer.enhancement.domain.PromptFormat[]{null,
+                com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT,
+                com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED}) {
+            provider.enhance(new EnhancementProviderRequest(base.rawPrompt(), base.context(), base.template(),
+                    base.ambiguities(), base.planAnswers(), base.planConfirmed(), base.constraints(), base.conversationHistory(),
+                    new EnhancementOptions(base.options().templateCode(), base.options().includeConversationHistory(),
+                            base.options().includePermissionBoundaries(), base.options().includeExamples(), format),
+                    base.model(), base.planningFacts(), base.confirmedDecisions(), base.taskView()));
+        }
+        assertThat(actualBodies).hasSize(3);
+        var payloads = new java.util.ArrayList<com.fasterxml.jackson.databind.JsonNode>();
+        for (var body : actualBodies) {
+            var user = body.path("messages").get(1).path("content").asText();
+            payloads.add(objectMapper.readTree(user.substring(user.indexOf('{'))));
+        }
+        assertThat(payloads.get(0).path("options").has("promptFormat")).isFalse();
+        assertThat(payloads.get(1).path("options").path("promptFormat").asText()).isEqualTo("COMPACT");
+        assertThat(payloads.get(2).path("options").path("promptFormat").asText()).isEqualTo("STRUCTURED");
+        assertThat(payloads.get(1).path("rewriteStrategy").path("mode").asText()).isEqualTo("NATURAL_FRAMEWORK");
+        assertThat(payloads.get(2).path("rewriteStrategy").path("mode").asText()).isEqualTo("FOCUSED_MODULES");
+        for (var field : List.of("rawPrompt", "context", "taskView", "planningFacts", "constraints", "planConfirmed")) {
+            assertThat(payloads).allSatisfy(payload -> assertThat(payload.path(field))
+                    .as("模式变化不得改写任务或确认：%s", field).isEqualTo(payloads.getFirst().path(field)));
+        }
+        assertThat(actualBodies.get(1).path("messages").get(0).path("content").asText())
+                .contains("主框架", "自然表达", "不是先写模块正文再去掉标题");
+        assertThat(actualBodies.get(2).path("messages").get(0).path("content").asText())
+                .contains("模块职责", "触发条件", "正反场景");
+        server.verify();
+    }
+
     @Test
     void shouldSendCompatibleRequestAndParseStructuredResponse() throws Exception {
         String structuredContent = """

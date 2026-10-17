@@ -43,6 +43,7 @@ const {
   customDescription,
   files,
   includeExamples,
+  promptFormat,
   availableModels,
   selectedModelId,
   isLoadingModels,
@@ -62,6 +63,8 @@ const {
   isOptimizing,
   isPreparingContext,
   canOptimize,
+  canUndoResult,
+  canReuseGenerationSource,
 } = storeToRefs(store);
 
 const {
@@ -397,6 +400,22 @@ const handleReEnhance = async (): Promise<void> => {
     return;
   }
   await continueEnhancement();
+};
+
+/** 模式变更须显式重新生成；保留原请求绑定，不能把已优化正文当作新 raw 复用旧 Plan。 */
+const handleRegenerateWithFormat = async (): Promise<void> => {
+  if (isPreparingContext.value || isRecoveringPlan.value || planDialogVisible.value) return;
+  if (hasUnsavedResultDraft.value) {
+    ElMessage.warning('请先保存或取消结果中的修改，再按所选模式重新增强。');
+    return;
+  }
+  const sourcePrompt = store.modeRegenerationRawPrompt;
+  if (await store.regenerateWithPromptFormat()) {
+    ElMessage.success('已按所选模式重新生成；原结果可通过撤销找回。');
+  } else if (store.planningSessionExpired && sourcePrompt) {
+    pendingPrompt.value = sourcePrompt;
+    await recoverExpiredPlan();
+  }
 };
 
 const beginEnhancement = (intent: 'optimize' | 'reenhance'): boolean => {
@@ -771,6 +790,7 @@ onBeforeUnmount(() => {
         class="glass-panel intent-column"
         :raw-prompt="rawPrompt"
         :include-examples="includeExamples"
+        :structured-prompt="promptFormat === 'STRUCTURED'"
         :available-models="availableModels"
         :selected-model-id="selectedModelId"
         :is-loading-models="isLoadingModels"
@@ -781,6 +801,7 @@ onBeforeUnmount(() => {
         :can-optimize="canOptimize"
         @update:raw-prompt="rawPrompt = $event"
         @update:include-examples="includeExamples = $event"
+        @update:structured-prompt="store.setPromptFormat($event ? 'STRUCTURED' : 'COMPACT')"
         @update:selected-model-id="selectedModelId = $event"
         @optimize="handleOptimize"
       />
@@ -789,11 +810,16 @@ onBeforeUnmount(() => {
         class="glass-panel result-column"
         :result="result"
         :edit-draft="resultDraft"
+        :can-undo="canUndoResult"
+        :selected-prompt-format="promptFormat"
+        :can-regenerate-with-format="canReuseGenerationSource"
         :busy="isAnalyzing || isPlanning || isOptimizing || isPreparingContext"
         :plan-mode-enabled="planModeEnabled"
         @save="handleSaveResult"
         @update:edit-draft="resultDraft = $event"
         @re-enhance="handleReEnhance"
+        @undo="store.undoResult()"
+        @regenerate-with-format="handleRegenerateWithFormat"
       />
     </div>
 

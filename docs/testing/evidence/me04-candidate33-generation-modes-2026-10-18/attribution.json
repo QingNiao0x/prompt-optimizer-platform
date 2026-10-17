@@ -1,0 +1,199 @@
+{
+  "candidate": "candidate33",
+  "kind": "OFFLINE_AI_AGENT_ATTRIBUTION_AUDIT",
+  "humanOrExpertReview": false,
+  "scope": "Four enhancement originals versus platform sections and unchanged native clipboard copies; no downstream work assessment",
+  "newModelCalls": 0,
+  "productionChanged": false,
+  "originalsChanged": false,
+  "sourceManifestSha256": "43204a1e9bbfbb457d6f3cb23ba59de8802f2902337ae8cbfeed4cf3df06272b",
+  "citedSourceMatchesFrozenManifest": true,
+  "inputs": [
+    {
+      "trace": 370,
+      "case": "PATCH",
+      "format": "COMPACT",
+      "httpStatus": 200,
+      "generationMode": "NATURAL_FRAMEWORK",
+      "traceSha256": "df32662ec5ebe6521a3aa3cd0e973243d0d5fa93456119720c6cad10dd4d13ef",
+      "nativeCopySha256": "823cd5e5574fbb537415319944aea7500aaf450ff96a299377d82d05a4a4d7c5",
+      "planningFacts": 0,
+      "planConfirmed": false
+    },
+    {
+      "trace": 371,
+      "case": "PATCH",
+      "format": "STRUCTURED",
+      "httpStatus": 200,
+      "generationMode": "FOCUSED_MODULES",
+      "traceSha256": "f6cc4dda436defbfae80253f066c54ee72d8620174a3817853b7a8adf498fa36",
+      "nativeCopySha256": "abb442276acb1f642dea2cc948f43a4ec290c43b772c38f42ffecea173bf0866",
+      "planningFacts": 0,
+      "planConfirmed": false
+    },
+    {
+      "trace": 372,
+      "case": "MAIL",
+      "format": "COMPACT",
+      "httpStatus": 200,
+      "generationMode": "NATURAL_FRAMEWORK",
+      "traceSha256": "9955cd3a46f67dc3d856b101286c45a1453eb580bb622190fb27c146d98699ed",
+      "nativeCopySha256": "1e8440fc622c547fa28318046b13c83c4d037a5582990a57701c4a8ab2f30994",
+      "planningFacts": 0,
+      "planConfirmed": false
+    },
+    {
+      "trace": 373,
+      "case": "MAIL",
+      "format": "STRUCTURED",
+      "httpStatus": 200,
+      "generationMode": "FOCUSED_MODULES",
+      "traceSha256": "c1ea03aaf61e902d4de0baa28d3ba4724b4cb20612eca90ceb534b61209b44c1",
+      "nativeCopySha256": "d69bffe83fc0e5c6c8eb5a78f80acfd50105558816d84a71cc2e8b2b5ae2c7b9",
+      "planningFacts": 0,
+      "planConfirmed": false
+    }
+  ],
+  "findings": [
+    {
+      "id": "C33-ENH-UNSUPPORTED-ABSENCE",
+      "traces": [
+        370
+      ],
+      "firstOccurrence": "ENHANCEMENT_MODEL",
+      "status": "FAIL_UNSUPPORTED_FACT",
+      "evidence": {
+        "modelSection": "BACKGROUND",
+        "quote": "项目中没有既有实现或既有规则可沿用",
+        "nativeCopyLines": [
+          1
+        ],
+        "requestContainsThisAssertion": false,
+        "sourceFactsSupportAbsence": false
+      },
+      "analysis": "未提供源码或既有规则，不等于已证明项目不存在既有实现。平台未产生该断言，但保留到了复制正文；不能归为下游执行错误。",
+      "code": [
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java:20",
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java:27",
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java:51",
+        "services/api/src/main/java/com/promptoptimizer/template/domain/PromptFramework.java:48",
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java:183"
+      ],
+      "strategyAttribution": "原有事实边界与新自然/RACE指导均未授权断言不存在；单个样本不能证明模式指导是唯一诱因。",
+      "disposition": "本批记未通过并执行原样诊断，不补造事实、不热修改复制正文、不质量重试。后续优先评估减少无依据背景扩写，不新增全局领域否定校验。"
+    },
+    {
+      "id": "C33-ENH-MERGE-CONTRADICTION",
+      "traces": [
+        371
+      ],
+      "firstOccurrence": "ENHANCEMENT_MODEL",
+      "status": "FAIL_PROMPT_CONSISTENCY",
+      "evidence": {
+        "modelSection": "TASK",
+        "quote": "嵌套 Map 采用浅合并：当 current 与 patch 在同一键上的值均为 Map 时，递归合并生成新 Map",
+        "nativeCopyLines": [
+          11
+        ]
+      },
+      "analysis": "浅合并与递归合并混用，后文又允许整体替换，拟议方案不够一致。用户确已委托嵌套处理设计；提出方案本身合法，不能把委托重新推回用户。",
+      "code": [
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java:20",
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java:58",
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/PromptRewriteStrategy.java:59",
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java:183"
+      ],
+      "strategyAttribution": "结构化指导使条件表达实际发生，但未规定浅合并/递归算法。错误首先在增强正文，尚非下游能力证据；当前没有可泛化的确定性Java语义纠错器。",
+      "disposition": "本批保留矛盾并记未通过；比较固定正文作品如何执行。后续先评估简化重复设计表达；不为一个题强制全局合并算法或再加一套复杂禁令。"
+    },
+    {
+      "id": "C33-PLATFORM-EXPLICIT-RULE-DUPLICATION",
+      "traces": [
+        370,
+        371,
+        372,
+        373
+      ],
+      "firstOccurrence": "PLATFORM_ASSEMBLY",
+      "status": "FAIL_REDUNDANCY_TARGET_NO_PROVEN_TASK_CHANGE",
+      "evidence": {
+        "mailCopyLines": {
+          "COMPACT": [
+            5,
+            7,
+            9
+          ],
+          "STRUCTURED": [
+            8,
+            13,
+            16
+          ]
+        },
+        "patchCopyLines": {
+          "COMPACT": [
+            3,
+            19,
+            20
+          ],
+          "STRUCTURED": [
+            6,
+            7,
+            34,
+            35,
+            36
+          ]
+        },
+        "addedHeading": "用户明确规则（须遵守平台权限边界）"
+      },
+      "analysis": "MAIL的完整“正文/100汉字/禁例”原句跨两个责任段表达，仍被整句补回；PATCH的签名、覆盖、不可变与测试交付已在模型正文表达，仍因改写及复合范围不能证明等价而补回。来源保留有依据，重复投影属于平台质量缺口。",
+      "code": [
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java:401",
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanDecisionIntegrator.java:264",
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/PlanDecisionIntegrator.java:276",
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/RequirementFidelityGuard.java:202",
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java:633"
+      ],
+      "strategyAttribution": "这些追加和覆盖方法已存在于当前HEAD；新模式末尾排序与标题不创造这些规则。跨段和改写暴露既有保守覆盖局限，非纯新模式逻辑。",
+      "disposition": "存在可审查的后续小修方向：同对象/属性/条件/状态的独立要求生成覆盖见证，完整证明后仅省正文投影，保留来源；先以本四原件回放。不可全局按逗号拆句、放宽关键词删除或关闭保真兜底。本批冻结，不改生产。"
+    },
+    {
+      "id": "C33-PLATFORM-JAVA-GUIDANCE-DUPLICATION",
+      "traces": [
+        370,
+        371
+      ],
+      "firstOccurrence": "PLATFORM_ASSEMBLY",
+      "status": "PARTIAL_DUPLICATION_UNIQUE_SAFETY_MUST_REMAIN",
+      "evidence": {
+        "platformAddedPrefix": "Java21交付：保留已定类名、方法签名",
+        "modelCoverage": [
+          "Java21标准库API",
+          "完整文件与必要import",
+          "不以省略代替实现",
+          "实际执行后才能报告通过/未执行标明未验证"
+        ]
+      },
+      "analysis": "JavaCodeDeliveryContract整体追加没有先检查已有正文；AuthoritativeDeliveryCompactor只按登记完整句归一匹配，不能识别分散在多个责任段的改写。平台指导大部分已由模型覆盖，仍不可直接删除整个包，须保留尚未证明覆盖的签名、异常类型及无关模块边界。",
+      "code": [
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java:300",
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/JavaCodeDeliveryContract.java:42",
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java:448",
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java:454",
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/AuthoritativeDeliveryCompactor.java:39",
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/AuthoritativeDeliveryCompactor.java:87",
+        "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/AuthoritativeDeliveryCompactor.java:195"
+      ],
+      "strategyAttribution": "契约与无条件追加已存在于当前HEAD。新模式共用该路径；未发现开关绕过安全或另建追加链路。",
+      "disposition": "后续可将该服务端契约拆成有稳定来源的独立交付要求，仅在全部条件完整覆盖时省投影；未证明部分继续补回。先定向离线正反例，不能删整个指导或安全块。本批不改生产。"
+    }
+  ],
+  "acceptance": {
+    "transport": "FOUR_GENERATIONS_HTTP_200_ONLY",
+    "originalTaskAndCodeDelivery": "Retained in observed copies; downstream correctness pending",
+    "enhancedPromptFactAndConsistency": "PATCH_COMPACT_AND_PATCH_STRUCTURED_NOT_PASSED",
+    "redundancy": "FOUR_COPIES_NOT_PASSED",
+    "modeReachesModel": "Observed NATURAL_FRAMEWORK/FOCUSED_MODULES in actual requests",
+    "causationLimits": "No brand/capability conclusion or new-mode-only causal claim from four samples; no downstream or review conclusions included"
+  },
+  "nextAction": "Keep frozen inputs and all failures; conduct only authorized fixed-copy downstream diagnostic. Aggregate original/model/platform/work/reviewer evidence before deciding next minimal candidate. Do not close quality gates on HTTP 200."
+}

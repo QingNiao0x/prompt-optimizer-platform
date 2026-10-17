@@ -5,6 +5,7 @@ import type {
   PlanConfirmation,
   PlanningContextReference,
   PlanningContextRequest,
+  PromptFormat,
   TemplateCode,
 } from '@/types/api';
 
@@ -16,6 +17,7 @@ export interface OptimizationDraft {
   templateCode: TemplateCode;
   includePermissionBoundaries: boolean;
   includeExamples: boolean;
+  promptFormat?: PromptFormat;
   planConfirmation?: PlanConfirmation;
 }
 
@@ -42,6 +44,7 @@ export const buildOptimizationRequest = (
     includeConversationHistory: false,
     includePermissionBoundaries: draft.includePermissionBoundaries,
     includeExamples: draft.includeExamples,
+    ...(draft.promptFormat ? { promptFormat: draft.promptFormat } : {}),
   },
   conversationHistory: [],
   permissionPolicy: {

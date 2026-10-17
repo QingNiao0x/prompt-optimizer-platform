@@ -523,7 +523,11 @@ test('Plan 过期后重新提问并保留仍相同的问题答案', async ({ pag
   expect(finalCalls).toBe(2);
 });
 
-test('最终生成失败时在计划弹窗内显示可读错误并保留回答', async ({ page }) => {
+for (const failure of [
+  { status: 503, code: 'PROVIDER_RATE_LIMITED', message: '模型服务当前请求繁忙，请稍后重试。' },
+  { status: 504, code: 'PROVIDER_TIMEOUT', message: '模型服务响应超时，请稍后重试。' },
+]) {
+test(`最终生成失败 ${failure.status} 保留输入和回答，允许手动重试`, async ({ page }) => {
   await configurePlanMode(page, { enabled: true, introSeen: true });
   const oneQuestionPlan: ApiResponse<OptimizationPlan> = {
     requestId: 'error-plan',
@@ -535,14 +539,20 @@ test('最终生成失败时在计划弹窗内显示可读错误并保留回答',
   await page.route('**/api/v1/optimizations/plan', async (route) => {
     await route.fulfill({ status: 200, json: oneQuestionPlan });
   });
+  let generationCalls = 0;
   await page.route('**/api/v1/optimizations', async (route) => {
+    generationCalls += 1;
+    if (generationCalls > 1) {
+      await route.fulfill({ status: 200, json: optimizationResponse });
+      return;
+    }
     await route.fulfill({
-      status: 503,
+      status: failure.status,
       json: {
         requestId: 'failed-final-request',
         error: {
-          code: 'PROVIDER_RATE_LIMITED',
-          message: '模型服务当前请求繁忙，请稍后重试。',
+          code: failure.code,
+          message: failure.message,
           retryable: true,
           details: {},
         },
@@ -559,9 +569,16 @@ test('最终生成失败时在计划弹窗内显示可读错误并保留回答',
   await answer.fill('正常和异常登录场景都有自动化测试。');
   await dialog.getByRole('button', { name: '生成最终提示词' }).click();
 
-  await expect(dialog.getByRole('alert')).toContainText('模型服务当前请求繁忙，请稍后重试。');
+  await expect(dialog.getByRole('alert')).toContainText(failure.message);
   await expect(answer).toHaveValue('正常和异常登录场景都有自动化测试。');
+  await expect(page.getByLabel('原始提示词')).toHaveValue('给用户模块增加登录功能');
+  expect(generationCalls).toBe(1);
+  await dialog.getByRole('button', { name: '生成最终提示词' }).click();
+  await expect(dialog).not.toBeVisible();
+  await expect(page.locator('.section-list')).toBeVisible();
+  expect(generationCalls).toBe(2);
 });
+}
 
 test('计划会话过期后可以重新生成问题并完成增强', async ({ page }) => {
   await configurePlanMode(page, { enabled: true, introSeen: true });

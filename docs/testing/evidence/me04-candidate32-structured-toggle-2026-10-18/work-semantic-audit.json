@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "candidate": "candidate32",
+  "recordedAt": "2026-10-17T16:52:52.554516+00:00",
+  "auditType": "AI_AGENT_OFFLINE_EVIDENCE_REVIEW",
+  "reviewerScope": "AI代理对原题、模型原件、复制正文和既有评审作离线证据审查；非人类评审、非领域专家复核，未新增模型请求。",
+  "realModelCalls": 0,
+  "mechanicalChecksOriginalUnchanged": true,
+  "reviewsOriginalUnchanged": true,
+  "inputs": {
+    "casesSha256": "8494b09ae9b3a4f42cc4d4a0a69d11e09e27310b946f5ff363035456ee710a38",
+    "hardChecksSha256": "e35a404a9e0911ecbed051453eb719ffde607fb7c81044903b0a682d77751c86",
+    "reviewMappingSha256": "2c3a0efa808d32804bf796b4574d361c636a9bacfb27405578cca78eb8410e81",
+    "reviewSupplierScope": "两次独立DeepSeek调用：Flash与Pro；同供应商。"
+  },
+  "results": {
+    "MAIL": {
+      "originalTask": "给合作方写一封简短中文邮件，礼貌询问原定周五的交付能否按时完成，如有困难请回复预计时间。只输出邮件正文，正文不超过120个汉字，不编造姓名、进度或新的日期，不添加示例。",
+      "arms": {
+        "RAW": {
+          "workSha256": "905c5b8ccc69af3711c2de0baa9453338d1a10a8c21a002635e0ac567192dda7",
+          "state": "PASS",
+          "semanticFindings": [
+            {
+              "requirement": "中文、礼貌询问原定周五交付能否按时完成",
+              "state": "PASS",
+              "quote": "您好，想确认原定周五的交付能否按时完成。",
+              "explanation": "保留原定日期及询问语气，没有把按时交付写成已确认事实。"
+            },
+            {
+              "requirement": "如有困难请回复预计时间",
+              "state": "PASS",
+              "quote": "如有困难，请回复预计完成时间",
+              "explanation": "条件式表达，不声称困难已经发生。"
+            },
+            {
+              "requirement": "不编造姓名、进度、新日期，不添加示例或额外解释",
+              "state": "PASS",
+              "quote": "您好，想确认原定周五的交付能否按时完成。如有困难，请回复预计完成时间。谢谢！",
+              "explanation": "全文仅问候、原定周五询问、条件式回复请求和致谢；未出现新增人名、进度事实、日期、理由、示例或解释。"
+            },
+            {
+              "requirement": "正文不超过120汉字",
+              "state": "PASS",
+              "quote": "您好，想确认原定周五的交付能否按时完成。如有困难，请回复预计完成时间。谢谢！",
+              "explanation": "独立字符检查为33个Unicode Script=Han字符，完整返回文本计数，无剔除范围。"
+            }
+          ],
+          "combinedMechanicalAndSemanticGate": "PASS"
+        },
+        "ENHANCED": {
+          "workSha256": "3cb62ad2c6febe767cabda0fdf6eefefa5d3ac429d9fbc94377343f1fbeaa3f1",
+          "state": "PASS",
+          "semanticFindings": [
+            {
+              "requirement": "中文、礼貌询问原定周五交付能否按时完成",
+              "state": "PASS",
+              "quote": "您好，想确认原定周五的交付能否按时完成。",
+              "explanation": "保留原定日期及询问语气，没有把按时交付写成已确认事实。"
+            },
+            {
+              "requirement": "如有困难请回复预计时间",
+              "state": "PASS",
+              "quote": "如有困难，请回复预计完成时间",
+              "explanation": "条件式表达，不声称困难已经发生。"
+            },
+            {
+              "requirement": "不编造姓名、进度、新日期，不添加示例或额外解释",
+              "state": "PASS",
+              "quote": "您好，想确认原定周五的交付能否按时完成。如有困难，请回复预计完成时间，谢谢。",
+              "explanation": "全文仅问候、原定周五询问、条件式回复请求和致谢；未出现新增人名、进度事实、日期、理由、示例或解释。"
+            },
+            {
+              "requirement": "正文不超过120汉字",
+              "state": "PASS",
+              "quote": "您好，想确认原定周五的交付能否按时完成。如有困难，请回复预计完成时间，谢谢。",
+              "explanation": "独立字符检查为33个Unicode Script=Han字符，完整返回文本计数，无剔除范围。"
+            }
+          ],
+          "combinedMechanicalAndSemanticGate": "PASS"
+        }
+      },
+      "pairedVerdict": "TIE",
+      "comparison": "仅末句标点差异，无实质质量差别。"
+    },
+    "TRANSLATION": {
+      "originalTask": "把下面两行译成英文，只输出对应两行译文，保留占位符{name}和顺序，不添加标题、解释或示例：\n{name}，会议改到周五。\n请回复是否参加。",
+      "arms": {
+        "RAW": {
+          "workSha256": "8a6afe4b2dc17bcfa752fe71a114b22b3922a6c98c32fc8a327ed088a4209c95",
+          "state": "PASS",
+          "semanticFindings": [
+            {
+              "requirement": "首行保留{name}并翻译会议改到周五",
+              "state": "PASS",
+              "quote": "{name}, the meeting has been moved to Friday.",
+              "explanation": "占位符未改；has been moved to Friday保留改期动作及周五，不新增具体日期、时间或地点。"
+            },
+            {
+              "requirement": "第二行请求回复是否参加，保持原顺序",
+              "state": "PASS",
+              "quote": "Please reply whether you will attend.",
+              "explanation": "是否参加的回复要求保留，位于会议改期之后。"
+            },
+            {
+              "requirement": "只有两行英文译文，无标题、解释或示例",
+              "state": "PASS",
+              "quote": "{name}, the meeting has been moved to Friday.\nPlease reply whether you will attend.",
+              "explanation": "直接阅读完整两行，与机械两非空行、占位符和无汉字检查一致，未发现额外内容。"
+            }
+          ],
+          "combinedMechanicalAndSemanticGate": "PASS"
+        },
+        "ENHANCED": {
+          "workSha256": "8a6afe4b2dc17bcfa752fe71a114b22b3922a6c98c32fc8a327ed088a4209c95",
+          "state": "PASS",
+          "semanticFindings": [
+            {
+              "requirement": "首行保留{name}并翻译会议改到周五",
+              "state": "PASS",
+              "quote": "{name}, the meeting has been moved to Friday.",
+              "explanation": "占位符未改；has been moved to Friday保留改期动作及周五，不新增具体日期、时间或地点。"
+            },
+            {
+              "requirement": "第二行请求回复是否参加，保持原顺序",
+              "state": "PASS",
+              "quote": "Please reply whether you will attend.",
+              "explanation": "是否参加的回复要求保留，位于会议改期之后。"
+            },
+            {
+              "requirement": "只有两行英文译文，无标题、解释或示例",
+              "state": "PASS",
+              "quote": "{name}, the meeting has been moved to Friday.\nPlease reply whether you will attend.",
+              "explanation": "直接阅读完整两行，与机械两非空行、占位符和无汉字检查一致，未发现额外内容。"
+            }
+          ],
+          "combinedMechanicalAndSemanticGate": "PASS"
+        }
+      },
+      "pairedVerdict": "TIE",
+      "comparison": "两份作品逐字节一致。"
+    }
+  },
+  "reviewAudit": {
+    "R1": {
+      "reviewSha256": "76d3fc64bd3a6a4d1ad4fb57134fb1c1362e786ec687546041828f74c3df17fa",
+      "schema": "PASS",
+      "quotedEvidenceSupport": "PASS",
+      "scopedJudgment": "本AI代理逐项对照匿名映射、完整作品及33汉字/两行检查，所引原句和结论相符；未以长短或标题数量加分。",
+      "caseVerdicts": {
+        "MAIL": "TIE",
+        "TRANSLATION": "TIE"
+      },
+      "scoreInterpretation": "5分只代表本题给定输入的核验范围；不是全平台、跨模型或统计效力结论。"
+    },
+    "R2": {
+      "reviewSha256": "00376a77158921aa17c536613ae6199ad6b4509587cfc115749241e5f59cba3f",
+      "schema": "PASS",
+      "quotedEvidenceSupport": "PASS",
+      "scopedJudgment": "本AI代理逐项对照匿名映射、完整作品及33汉字/两行检查，所引原句和结论相符；未以长短或标题数量加分。",
+      "caseVerdicts": {
+        "MAIL": "TIE",
+        "TRANSLATION": "TIE"
+      },
+      "scoreInterpretation": "5分只代表本题给定输入的核验范围；不是全平台、跨模型或统计效力结论。"
+    }
+  },
+  "pairedSummary": {
+    "independentTasks": 2,
+    "works": 4,
+    "wins": 0,
+    "ties": 2,
+    "losses": 0,
+    "bothFail": 0,
+    "scope": "短邮件与两行译文的两道充分需求筛查；通过表示此范围无退步，未证明增强具有实质质量提升。",
+    "notProven": [
+      "统计胜率或统计显著性",
+      "跨供应商泛化",
+      "复杂多目标作品质量",
+      "重复生成稳定性",
+      "Plan确认融合正确性",
+      "全示例组合",
+      "旧凭据回显、评分、YLL门禁"
+    ]
+  },
+  "planBlockingAudit": {
+    "caseId": "PROJECT-CHOICE-STRUCTURED",
+    "state": "FAIL",
+    "copySha256": "137f8fb0efaa7402bfbdd167a30a38f373930f07c3664c963d232de0749e83c5",
+    "modelTrace363Sha256": "ae99e1220ed2b93158c5388e5b8bf81d2f2835a582ff2d7ca6f4802d61108b5d",
+    "modelOriginal": {
+      "ambiguities": [],
+      "confirmedChoiceQuote": "新入口采用邮箱和密码登录；现有登录入口保持不变。",
+      "sourceLookupQuote": "确认现有登录入口的实现方式、认证与会话机制、用户数据与密码存储方式；未在资料中体现的内容按实际代码核查结果为准，不臆测。"
+    },
+    "findings": [
+      {
+        "issue": "已确认的登录方式被旧未选状态反向覆盖",
+        "confirmedQuote": "新入口采用邮箱和密码登录；现有登录入口保持不变。",
+        "conflictingQuote": "现有登录入口保持不变，新入口的登录方式由我决定，尚未在邮箱密码和手机号验证码之间选择",
+        "firstOccurrence": "PLATFORM_ASSEMBLY",
+        "evidence": "增强模型363原件没有旧未选状态；最终复制正文的用户明确规则重新附入。",
+        "releaseImpact": "阻断本题Plan答案融合门禁。不能把复制/历史相等、HTTP200或答案出现一次视为融合正确。"
+      },
+      {
+        "issue": "应查源码的现有认证和会话信息被追加为用户执行前确认",
+        "quote": "当前任务的登录功能应采用哪种认证与会话方式？已提供的登录相关资料尚不足以确定现有机制。",
+        "firstOccurrence": "PLATFORM_ASSEMBLY",
+        "evidence": "363增强模型原件ambiguities为空，并已要求执行者阅读源码确认认证与会话机制；最终正文新增执行前须确认及未决边界。",
+        "releaseImpact": "保留用户真正的新增业务选择；不要将既有工程事实的核查转成默认阻塞整个实现。需后端定向定位与正反例。"
+      }
+    ],
+    "attributionBoundary": "本题未生成下游代码作品；两个问题已在平台复制正文首次出现，不能归为下游执行模型能力不足。具体代码根因由后端调查，离线审查不替代修复后真实复验。",
+    "scopedFlowChecks": "自然Plan实际提问、提交答案、增强、复制、历史和本地格式切换已走通，但语义融合失败；流程通过与语义门禁分开。"
+  }
+}

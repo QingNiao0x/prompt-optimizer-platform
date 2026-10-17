@@ -22,6 +22,9 @@ import com.promptoptimizer.identity.service.ActorIdentity;
 import com.promptoptimizer.identity.service.CurrentActor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 
 import java.time.OffsetDateTime;
@@ -91,6 +94,67 @@ class MybatisOptimizationHistoryServiceTest {
         assertThat(detail.modelVersion()).isEmpty();
         assertThat(detail.promptFormat()).isEqualTo(com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED);
         verify(recordMapper).selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID);
+    }
+
+    @ParameterizedTest
+    @EnumSource(com.promptoptimizer.enhancement.domain.PromptFormat.class)
+    void savesAndReusesExplicitFormatWhenReoptimizing(com.promptoptimizer.enhancement.domain.PromptFormat format) {
+        var base = request();
+        var explicit = new OptimizationRequest(base.rawPrompt(), base.context(),
+                new EnhancementOptions(TemplateCode.AUTO, false, true, false, format), base.conversationHistory(),
+                base.permissionPolicy());
+        var baseResult = resultWithFileContent();
+        var result = new OptimizationResult(baseResult.optimizedPrompt(), baseResult.sections(), baseResult.contextReport(),
+                baseResult.ambiguities(), baseResult.appliedConstraints(), baseResult.templateCode(), baseResult.provider(),
+                baseResult.latencyMs(), baseResult.warnings(), baseResult.evidenceCards(), format);
+        service.save(explicit, result);
+        var savedCaptor = ArgumentCaptor.forClass(OptimizationRecordEntity.class);
+        verify(persistenceService).persist(savedCaptor.capture(), eq(ACTOR));
+        var saved = savedCaptor.getValue();
+        assertThat(((Map<?, ?>) saved.getResultMetadata().get("enhancementOptions")).get("promptFormat"))
+                .isEqualTo(format.name());
+        assertThat(saved.getResultMetadata().get("promptFormat")).isEqualTo(format.name());
+        when(recordMapper.selectByIdAndScope(saved.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(saved);
+        when(orchestrator.optimize(any())).thenReturn(result);
+        service.reoptimize(saved.getId());
+        var requestCaptor = ArgumentCaptor.forClass(OptimizationRequest.class);
+        verify(orchestrator).optimize(requestCaptor.capture());
+        assertThat(requestCaptor.getValue().enhancement().promptFormat()).isEqualTo(format);
+        assertThat(requestCaptor.getValue().rawPrompt()).isEqualTo(explicit.rawPrompt());
+        verify(recordMapper).selectByIdAndScope(saved.getId(), TENANT_ID, WORKSPACE_ID);
+    }
+
+    @ParameterizedTest
+    @EnumSource(com.promptoptimizer.enhancement.domain.PromptFormat.class)
+    void oldResultFormatDoesNotBecomeAnExplicitPreference(com.promptoptimizer.enhancement.domain.PromptFormat format) {
+        var saved = recordEntity();
+        saved.getResultMetadata().put("promptFormat", format.name());
+        when(recordMapper.selectByIdAndScope(saved.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(saved);
+        when(orchestrator.optimize(any())).thenReturn(resultWithFileContent());
+        service.reoptimize(saved.getId());
+        var requestCaptor = ArgumentCaptor.forClass(OptimizationRequest.class);
+        verify(orchestrator).optimize(requestCaptor.capture());
+        assertThat(requestCaptor.getValue().enhancement().promptFormat()).isNull();
+        var resavedCaptor = ArgumentCaptor.forClass(OptimizationRecordEntity.class);
+        verify(persistenceService).persist(resavedCaptor.capture(), eq(ACTOR));
+        assertThat(((Map<?, ?>) resavedCaptor.getValue().getResultMetadata().get("enhancementOptions"))
+                .containsKey("promptFormat")).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"UNKNOWN", "compact", ""})
+    void invalidSavedPreferenceDoesNotGetUpgradedFromTheResult(String invalid) {
+        var saved = recordEntity();
+        var options = new java.util.LinkedHashMap<String, Object>(Map.of("templateCode", "FEATURE_DEVELOPMENT"));
+        options.put("promptFormat", invalid);
+        saved.getResultMetadata().put("enhancementOptions", options);
+        saved.getResultMetadata().put("promptFormat", "STRUCTURED");
+        when(recordMapper.selectByIdAndScope(saved.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(saved);
+        when(orchestrator.optimize(any())).thenReturn(resultWithFileContent());
+        service.reoptimize(saved.getId());
+        var requestCaptor = ArgumentCaptor.forClass(OptimizationRequest.class);
+        verify(orchestrator).optimize(requestCaptor.capture());
+        assertThat(requestCaptor.getValue().enhancement().promptFormat()).isNull();
     }
 
     @Test

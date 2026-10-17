@@ -1,0 +1,34 @@
+[
+  {
+    "id": "MAIL-COMPACT",
+    "rawPrompt": "给合作方写一封简短中文邮件，礼貌询问原定周五的交付能否按时完成，如有困难请回复预计时间。只输出邮件正文，正文不超过120个汉字，不编造姓名、进度或新的日期，不添加示例。",
+    "context": {"customDescription": "", "files": []},
+    "promptFormat": "COMPACT",
+    "includeExamples": false,
+    "mode": "direct",
+    "downstreamComparison": "raw versus unchanged native copied prompt",
+    "hardChecks": ["At most 120 Han characters", "Friday remains the agreed delivery date", "No invented names, progress or new dates", "No extra explanation or examples"]
+  },
+  {
+    "id": "TRANSLATION-COMPACT",
+    "rawPrompt": "把下面两行译成英文，只输出对应两行译文，保留占位符{name}和顺序，不添加标题、解释或示例：\n{name}，会议改到周五。\n请回复是否参加。",
+    "context": {"customDescription": "", "files": []},
+    "promptFormat": "COMPACT",
+    "includeExamples": false,
+    "mode": "direct",
+    "downstreamComparison": "raw versus unchanged native copied prompt",
+    "hardChecks": ["Exactly two nonempty output lines", "Literal {name} preserved on the first line", "English translation preserves Friday and participation reply", "No headings, explanation or examples"]
+  },
+  {
+    "id": "PROJECT-CHOICE-STRUCTURED",
+    "rawPrompt": "先熟悉项目，再实现登录接口。后端Spring Boot3，前端Vue3与TypeScript。现有登录入口保持不变，新入口的登录方式由我决定，尚未在邮箱密码和手机号验证码之间选择；请先确认这项业务选择，不要默认。返回实现及受影响测试。",
+    "context": {"customDescription": "", "files": []},
+    "promptFormat": "STRUCTURED",
+    "includeExamples": false,
+    "mode": "natural-plan",
+    "plannedAnswer": "新入口采用邮箱和密码登录；现有登录入口保持不变。",
+    "answerBoundary": "Only submit this answer to the actual login-method question. Preserve the actual question, option and answer; do not invent answers for additional unknowns.",
+    "downstreamComparison": "flow only; no new code work in this batch",
+    "hardChecks": ["Actual Plan asks the user-reserved business choice", "Actual submitted answer is integrated in copy", "Local format switch makes no new Plan or model request", "Generated copy and saved history agree; local edits do not rewrite old history"]
+  }
+]

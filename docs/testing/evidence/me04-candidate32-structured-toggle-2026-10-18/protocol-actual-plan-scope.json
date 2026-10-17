@@ -1,0 +1,246 @@
+{
+  "date": "2026-10-12",
+  "scope": "ME-00-A baseline then ME-01-A + ME-03-A bounded repair",
+  "cases": 7,
+  "initialPlanEnabled": false,
+  "initialPlanAnswers": [],
+  "initialExamplesEnabled": false,
+  "maximumActualModelCalls": 389,
+  "phaseLimits": {
+    "baseline": 80,
+    "candidateValidation": 309
+  },
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "executionParameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "baselineRounds": 1,
+  "candidateRounds": 2,
+  "planSupplement": [
+    "Q04",
+    "Q05"
+  ],
+  "review": "two independent AI reviewers, not domain experts; disputed verdicts unresolved until adjudication",
+  "sameTestAccountFile": "private runtime only; reuse former synthetic user",
+  "archiveSecrets": false,
+  "accountCreationAllowed": false,
+  "priceAndCurrencyCost": "UNKNOWN until verified invoice; actual provider tokens collected",
+  "productPrimaryComparison": "raw actual work vs actual copied enhanced work",
+  "repairRegression": "current enhanced vs repaired enhanced, separately reported",
+  "planParity": "verbatim actual submitted test answers provided to raw and direct comparators, never patch Plan copied body",
+  "severeFailure": "block capability release, preserve trace; no automatic budget increase",
+  "activeBatch": {
+    "version": "candidate32-live",
+    "sourceCandidate": "candidate32",
+    "group": "me04-structured-presentation",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "authorizationBasis": "批准重分配18次，执行冻结范围",
+    "authorizationAmendment": "protocol-amendment-25.json",
+    "status": "OPEN",
+    "secondRoundAuthorized": true,
+    "maximumNewCalls": 18,
+    "callsBefore": 359,
+    "candidateCallsBefore": 289,
+    "maximumActualCallsAfterBatch": 377,
+    "purposeMaximums": {
+      "PLANNING": 3,
+      "PLATFORM_GENERATION": 9,
+      "EXECUTION": 4,
+      "REVIEW": 2
+    },
+    "model": "deepseek-flash",
+    "executionModel": "deepseek-flash",
+    "reviewModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "cases": [
+      "MAIL-COMPACT",
+      "TRANSLATION-COMPACT",
+      "PROJECT-CHOICE-STRUCTURED"
+    ],
+    "casesFile": "candidate32-structured-cases.json",
+    "casesSha256": "8494b09ae9b3a4f42cc4d4a0a69d11e09e27310b946f5ff363035456ee710a38",
+    "allowedRawPromptSha256": [
+      "efdc435f41ad1795a8d929768e66d5daab454b2d8a8503a1112a612b2237edb8",
+      "8e9d6e45a2f4fb58c80d8dc14cbfbeda185f65ecc1b24ef5ba52a98893b338b1",
+      "8cc53e207294b93d96df1dda3e6ab0e6c1a537f01c66c681f49b037f7b5d4961"
+    ],
+    "expectedEnhancementInputs": [
+      {
+        "caseId": "MAIL-COMPACT",
+        "rawPrompt": "给合作方写一封简短中文邮件，礼貌询问原定周五的交付能否按时完成，如有困难请回复预计时间。只输出邮件正文，正文不超过120个汉字，不编造姓名、进度或新的日期，不添加示例。",
+        "planConfirmed": false,
+        "taskView": {
+          "intent": {
+            "templateCode": "GENERAL",
+            "deliveryProfile": "GENERAL",
+            "status": "DEFAULT",
+            "auxiliaryProfiles": [],
+            "engineeringConstraints": false
+          },
+          "executionRequirements": [],
+          "pendingDecisions": [],
+          "examples": {
+            "mode": "PROHIBITED",
+            "source": "USER_PROHIBITION",
+            "guidance": "遵守用户禁止示例的要求，不附带示例。"
+          },
+          "requirementBoundaryGuidance": "",
+          "userMeaningAnchors": []
+        }
+      },
+      {
+        "caseId": "TRANSLATION-COMPACT",
+        "rawPrompt": "把下面两行译成英文，只输出对应两行译文，保留占位符{name}和顺序，不添加标题、解释或示例：\n{name}，会议改到周五。\n请回复是否参加。",
+        "planConfirmed": false,
+        "taskView": {
+          "intent": {
+            "templateCode": "GENERAL",
+            "deliveryProfile": "TRANSLATION",
+            "status": "RAW_GOAL",
+            "auxiliaryProfiles": [],
+            "engineeringConstraints": false
+          },
+          "executionRequirements": [],
+          "pendingDecisions": [],
+          "examples": {
+            "mode": "PROHIBITED",
+            "source": "USER_PROHIBITION",
+            "guidance": "遵守用户禁止示例的要求，不附带示例。"
+          },
+          "requirementBoundaryGuidance": "",
+          "userMeaningAnchors": []
+        }
+      },
+      {
+        "caseId": "PROJECT-CHOICE-STRUCTURED",
+        "rawPrompt": "先熟悉项目，再实现登录接口。后端Spring Boot3，前端Vue3与TypeScript。现有登录入口保持不变，新入口的登录方式由我决定，尚未在邮箱密码和手机号验证码之间选择；请先确认这项业务选择，不要默认。返回实现及受影响测试。",
+        "planConfirmed": true,
+        "taskView": {
+          "intent": {
+            "templateCode": "FEATURE_DEVELOPMENT",
+            "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+            "status": "RAW_GOAL",
+            "auxiliaryProfiles": [
+              "PROJECT_UNDERSTANDING"
+            ],
+            "engineeringConstraints": true
+          },
+          "executionRequirements": [
+            {
+              "questionId": "new_login_method",
+              "subject": "新登录入口登录方式",
+              "statement": "新入口采用邮箱和密码登录；现有登录入口保持不变。",
+              "destination": "TASK",
+              "sourceQuestionIds": [
+                "new_login_method"
+              ]
+            }
+          ],
+          "pendingDecisions": [],
+          "examples": {
+            "mode": "DISABLED",
+            "source": "SWITCH_OFF",
+            "guidance": "未要求示例，不主动追加示例段。"
+          },
+          "requirementBoundaryGuidance": "",
+          "userMeaningAnchors": []
+        }
+      }
+    ],
+    "expectedTaskViews": [
+      {
+        "intent": {
+          "templateCode": "GENERAL",
+          "deliveryProfile": "GENERAL",
+          "status": "DEFAULT",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": false
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "PROHIBITED",
+          "source": "USER_PROHIBITION",
+          "guidance": "遵守用户禁止示例的要求，不附带示例。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      {
+        "intent": {
+          "templateCode": "GENERAL",
+          "deliveryProfile": "TRANSLATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": false
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "PROHIBITED",
+          "source": "USER_PROHIBITION",
+          "guidance": "遵守用户禁止示例的要求，不附带示例。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      {
+        "intent": {
+          "templateCode": "FEATURE_DEVELOPMENT",
+          "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [
+            "PROJECT_UNDERSTANDING"
+          ],
+          "engineeringConstraints": true
+        },
+        "executionRequirements": [
+          {
+            "questionId": "new_login_method",
+            "subject": "新登录入口登录方式",
+            "statement": "新入口采用邮箱和密码登录；现有登录入口保持不变。",
+            "destination": "TASK",
+            "sourceQuestionIds": [
+              "new_login_method"
+            ]
+          }
+        ],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动追加示例段。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      }
+    ],
+    "generationParameters": {
+      "temperature": 0.2,
+      "max_tokens": 10000,
+      "thinking": {
+        "type": "disabled"
+      }
+    },
+    "sameTestAccountFile": "tmp/local-acceptance/account.json",
+    "accountCreationAllowed": false,
+    "qualityRetriesAllowed": false,
+    "closedAllowanceTransfer": "EXPLICIT_USER_REALLOCATION_ONLY",
+    "reallocation": {
+      "candidate31ClosedUnused": 8,
+      "candidate26ClosedUnused": 10
+    },
+    "sourceManifestSha256": "aeeacfc746fa99f228b2fc056077011bbe67e776b5976e5d75810cc1b18755e7",
+    "executionParity": "Raw versus actual unchanged native copy; same source evidence, no evaluator answer repair",
+    "reviewScope": "Two independent AI-assisted reviews, same supplier, not human/domain experts"
+  }
+}

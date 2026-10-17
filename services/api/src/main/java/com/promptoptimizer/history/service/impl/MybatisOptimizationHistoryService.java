@@ -16,6 +16,7 @@ import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
 import com.promptoptimizer.enhancement.dto.PlanConfirmation;
 import com.promptoptimizer.enhancement.service.EnhancementOrchestrator;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
+import com.promptoptimizer.enhancement.domain.PromptFormat;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.history.domain.OptimizationHistoryDetail;
@@ -253,12 +254,17 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         // 版本名称在调用时固化；不能通过关联当前目录让历史随管理员改名而变化。
         metadata.put("modelVersion", result.provider().modelVersion());
         metadata.put("mock", result.provider().mock());
-        metadata.put("enhancementOptions", Map.of(
+        Map<String, Object> enhancementOptions = new LinkedHashMap<>(Map.of(
                 "templateCode", result.templateCode().name(),
                 "includeConversationHistory", Boolean.TRUE.equals(request.enhancement().includeConversationHistory()),
                 "includePermissionBoundaries", Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()),
                 "includeExamples", Boolean.TRUE.equals(request.enhancement().includeExamples())
         ));
+        // 请求偏好与最终呈现分开保存；自动选择的结果不能升级为用户的显式排版选择。
+        if (request.enhancement().promptFormat() != null) {
+            enhancementOptions.put("promptFormat", request.enhancement().promptFormat().name());
+        }
+        metadata.put("enhancementOptions", enhancementOptions);
         metadata.put(
                 "conversationHistory",
                 Boolean.TRUE.equals(request.enhancement().includeConversationHistory())
@@ -301,7 +307,8 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 templateCode,
                 Boolean.TRUE.equals(options.get("includeConversationHistory")),
                 Boolean.TRUE.equals(options.get("includePermissionBoundaries")),
-                Boolean.TRUE.equals(options.get("includeExamples"))
+                Boolean.TRUE.equals(options.get("includeExamples")),
+                requestedPromptFormat(options.get("promptFormat"))
         );
         List<ConversationMessage> conversation = convertList(
                 metadata.get("conversationHistory"),
@@ -335,6 +342,13 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 policy == null ? PermissionPolicyInput.empty() : policy,
                 null
         );
+    }
+
+    /** 只恢复已保存的有效请求偏好；旧记录或非枚举值继续使用自动模式，不借用结果的展示值。 */
+    private PromptFormat requestedPromptFormat(Object value) {
+        if (PromptFormat.COMPACT.name().equals(value)) return PromptFormat.COMPACT;
+        if (PromptFormat.STRUCTURED.name().equals(value)) return PromptFormat.STRUCTURED;
+        return null;
     }
 
     /**

@@ -1,0 +1,38 @@
+{
+  "questions": [
+    {
+      "id": "new_login_method",
+      "question": "新登录入口采用哪种登录方式？",
+      "hint": "该选择决定新接口的凭证字段、校验逻辑、依赖服务（邮件或短信验证码）以及受影响的测试范围；现有登录入口保持不变。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "email_password",
+          "label": "邮箱密码",
+          "description": "新入口使用邮箱与密码进行登录，不涉及验证码发送与校验。",
+          "answer": "新登录入口采用邮箱密码登录。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "phone_code",
+          "label": "手机号验证码",
+          "description": "新入口使用手机号与短信验证码进行登录，需要验证码发送与校验流程。",
+          "answer": "新登录入口采用手机号验证码登录。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "answers": [
+    {
+      "questionId": "new_login_method",
+      "question": "新登录入口采用哪种登录方式？",
+      "answer": "新入口采用邮箱和密码登录；现有登录入口保持不变。"
+    }
+  ],
+  "originalResponsePrivateSha256": "9b3bb88c038754c0a453f358743165de95eee218f970e416b92b38080be97ead"
+}

@@ -4,6 +4,7 @@ import com.promptoptimizer.enhancement.domain.PlanQuestion;
 import com.promptoptimizer.enhancement.domain.PlanningFactCard;
 import com.promptoptimizer.enhancement.domain.PlanningFactCategory;
 import com.promptoptimizer.enhancement.domain.PlanningFactOrigin;
+import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.provider.domain.PlanningProviderRequest;
 import com.promptoptimizer.template.domain.TaskDeliveryProfile;
 import java.util.ArrayList;
@@ -83,17 +84,38 @@ public final class PlanQuestionFilter {
             com.promptoptimizer.context.domain.ContextSnapshot context, List<PlanningFactCard> safeFacts,
             com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView) {
         if (findings.isEmpty()) return List.of();
-        var digest = new com.promptoptimizer.enhancement.domain.PlanningContextDigest(
-                context.customDescription(), context.technologyStack().stream().map(item -> item.name()).toList(),
-                List.of(), List.of(), List.of(), context.analysisStatus(), 0, List.of(), safeFacts);
-        var input = new PlanningProviderRequest(rawPrompt, context.customDescription(), List.of(), digest,
-                null, List.of(), "", taskView);
+        var input = findingsInput(rawPrompt, context, safeFacts, taskView);
         // 提醒没有选项和推荐元数据，只借用同一问题过滤器；不创建 Plan 会话或伪造用户回答。
         List<PlanQuestion> candidates = java.util.stream.IntStream.range(0, findings.size())
                 .mapToObj(index -> new PlanQuestion("finding_" + index, findings.get(index), "",
                         com.promptoptimizer.enhancement.domain.PlanQuestionType.FREE_TEXT, List.of(), List.of(), true))
                 .toList();
         return filter(candidates, input).stream().map(PlanQuestion::question).toList();
+    }
+
+    /** 分类一致性检查先排除已知或确定不属于当前阅读任务的问题，不借委托设计消除真实分类矛盾。 */
+    List<String> unresolvedKnownFindings(List<String> findings, String rawPrompt,
+            com.promptoptimizer.context.domain.ContextSnapshot context, List<PlanningFactCard> safeFacts,
+            com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView) {
+        if (findings.isEmpty()) return List.of();
+        var input = findingsInput(rawPrompt, context, safeFacts, taskView);
+        List<KnownFact> facts = collectFacts(input);
+        var lookup = ExistingContractLookup.from(input);
+        return findings.stream().filter(finding -> !outsideExplorationTask(finding, "", input))
+                .filter(finding -> lookup == null || !lookup.covers(new PlanQuestion("lookup", finding, "",
+                        com.promptoptimizer.enhancement.domain.PlanQuestionType.FREE_TEXT, List.of(), List.of(), true)))
+                .filter(finding -> !resolved(finding, facts, input)).toList();
+    }
+
+    /** 两个阶段复用同一安全资料及任务视图，不查询旧任务、外部文件或模型返回的自报事实。 */
+    private PlanningProviderRequest findingsInput(String rawPrompt,
+            com.promptoptimizer.context.domain.ContextSnapshot context, List<PlanningFactCard> safeFacts,
+            com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView) {
+        var digest = new com.promptoptimizer.enhancement.domain.PlanningContextDigest(
+                context.customDescription(), context.technologyStack().stream().map(item -> item.name()).toList(),
+                List.of(), List.of(), List.of(), context.analysisStatus(), 0, List.of(), safeFacts);
+        return new PlanningProviderRequest(rawPrompt, context.customDescription(), List.of(), digest,
+                null, List.of(), "", taskView);
     }
 
     /** 去掉完全重复、已明确事实及同一对象的简单同义问法；分类相同不能代替对象相同。 */
@@ -110,6 +132,7 @@ public final class PlanQuestionFilter {
         Set<QuestionKey> seen = new HashSet<>();
         Set<QuestionKey> seenDimensions = new HashSet<>();
         return questions.stream()
+                .filter(question -> !outsideExplorationTask(question, input))
                 .map(question -> focusNewCostDenominator(question, input.rawPrompt()))
                 .filter(question -> !decisionPolicy.delegatesResearchImplementation(question, input.rawPrompt()))
                 .filter(question -> seen.add(new QuestionKey(normalize(question.question()), questionDetails(question))))
@@ -134,6 +157,19 @@ public final class PlanQuestionFilter {
                     String dimension = questionDimension(question.question());
                     return dimension == null || seenDimensions.add(new QuestionKey(dimension, questionDetails(question)));
                 }).toList();
+    }
+
+    /** 共享任务视图限定提问范围；不读取历史任务或依靠模型自报的项目事实删问题。 */
+    boolean outsideExplorationTask(PlanQuestion question, PlanningProviderRequest input) {
+        return outsideExplorationTask(question.question(), String.join(" ", questionDetails(question)), input);
+    }
+
+    /** Plan 题目与直接增强提醒共用当前意图，只有完整问题不含独立决定时才移除。 */
+    private boolean outsideExplorationTask(String question, String details, PlanningProviderRequest input) {
+        var intent = input.taskView() == null
+                ? com.promptoptimizer.template.domain.TaskIntentResolver.resolve(TemplateCode.AUTO, input.rawPrompt())
+                : input.taskView().intent();
+        return TaskQuestionScope.unrelatedImplementationGoal(question, details, intent);
     }
 
     /** 已明确正文及附表另计时，普通计数执行不另引入摘要、参考文献；期刊规范或新条件仍需澄清。 */

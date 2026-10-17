@@ -1,0 +1,49 @@
+{
+  "candidate": "candidate31r2",
+  "status": "PREPARED_NOT_AUTHORIZED",
+  "actualBefore": 351,
+  "candidateBefore": 281,
+  "formalLimits": {
+    "total": 389,
+    "baseline": 80,
+    "candidate": 309
+  },
+  "maximumNewCalls": 16,
+  "purposeMaximums": {
+    "PLANNING": 6,
+    "PLATFORM_GENERATION": 6,
+    "EXECUTION": 2,
+    "REVIEW": 2
+  },
+  "requests": {
+    "naturalPlan": 2,
+    "planEnhancement": 1,
+    "directEnhancement": 1,
+    "rawAndPlanWorks": 2,
+    "independentAiReviews": 2
+  },
+  "models": {
+    "enhancement": "deepseek-flash",
+    "execution": "deepseek-flash",
+    "review": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ]
+  },
+  "parameters": {
+    "temperature": 0.2,
+    "enhancementMaxTokens": 10000,
+    "executionMaxTokens": 10000,
+    "thinking": "disabled"
+  },
+  "reallocationRequested": {
+    "candidate30ClosedUnused": 12,
+    "candidate27ClosedUnused": 4
+  },
+  "maximumActualAfter": 367,
+  "noQualityRetries": true,
+  "sameCanonicalAccount": true,
+  "noBaselineRecollection": true,
+  "executionInputs": "Identical synthetic project files, actual raw vs unchanged native Plan copy; no fabricated answers",
+  "initialCandidateSupersededBeforeRealCalls": true
+}

@@ -1,0 +1,70 @@
+{
+  "kind": "EXISTING_ARTIFACT_AUDIT_NOT_NEW_LIVE_ACCEPTANCE",
+  "scoring": [
+    {
+      "platformArtifact": "docs/testing/evidence/me00a-candidate27-live-2026-10-17/real/Q05-PARTIAL-SCORING/platform.json",
+      "platformSha256": "5ad5cf19592ab4a65d6d65bb0fd0212b5ca987c638791ee3828edd469f193ca7",
+      "requestId": "7345944e-e2fb-49be-9f41-f0694ebc8c48",
+      "acceptedTrace": "docs/testing/evidence/me00a-candidate27-live-2026-10-17/real/traces/337.json",
+      "acceptedTraceSha256": "565edd7538c70044ee92a0b12b7deba784059d0158c27a27b8bcc7ec1cebd6d3",
+      "modelScoringLines": [
+        "- 评价：两名独立评审盲评；评价对象为提示词质量，下游作品仅作验证依据，不替代对提示词的评分；说明盲化材料如何去除组别标识，以及准确性、完整性、清晰度、可执行性各指标分别评价的对象；说明评审分歧的处理流程。"
+      ],
+      "copiedScoringLines": [
+        "- 评价：两名独立评审盲评；评价对象为提示词质量，下游作品仅作验证依据，不替代对提示词的评分；说明盲化材料如何去除组别标识，以及准确性、完整性、清晰度、可执行性各指标分别评价的对象；说明评审分歧的处理流程。",
+        "- 只委托评分设计"
+      ],
+      "earlierRejectedAttemptsAreNotAcceptedInput": true
+    },
+    {
+      "platformArtifact": "docs/testing/evidence/me00a-candidate27-live-2026-10-17/real/Q05-PARTIAL-SCORING-R2/platform.json",
+      "platformSha256": "fabf33e197c185d8c74510c2d8a71d371639006fbc995e382564a1c35b803a51",
+      "requestId": "8459c302-8ce6-4926-bc8f-8593032a071a",
+      "acceptedTrace": "docs/testing/evidence/me00a-candidate27-live-2026-10-17/real/traces/339.json",
+      "acceptedTraceSha256": "77ab286ba5ea9246adebce05ab47782f00447e4a51cccadfa96d0d9d4bf4e04c",
+      "modelScoringLines": [
+        "- 评价指标：准确性、完整性、清晰度与可执行性四项指标，逐项给出拟议的操作化定义、评分尺度与评分依据，并说明分歧处理流程（如独立评分后比对、分歧协商、必要时第三方裁定）。",
+        "- 评价对象：评价对象为提示词质量，评审针对各组产出的提示词评分；下游作品可作为验证依据，但不替代提示词作为评分对象。",
+        "- 评分尺度、交互轮次、附表内容等未确认参数保持未决，不得写成已选定口径。"
+      ],
+      "copiedScoringLines": [
+        "- 评价指标：准确性、完整性、清晰度与可执行性四项指标，逐项给出拟议的操作化定义、评分尺度与评分依据，并说明分歧处理流程（如独立评分后比对、分歧协商、必要时第三方裁定）。",
+        "- 评价对象：评价对象为提示词质量，评审针对各组产出的提示词评分；下游作品可作为验证依据，但不替代提示词作为评分对象。",
+        "- 只委托评分设计",
+        "- 评分尺度、交互轮次、附表内容等未确认参数保持未决，不得写成已选定口径。"
+      ],
+      "earlierRejectedAttemptsAreNotAcceptedInput": true
+    }
+  ],
+  "findings": [
+    "337 accepted enhancement already omits actionable score anchors; do not use rejected336 metadata as proof of assembler loss",
+    "339 accepted enhancement asks proposed definitions and scales but does not fully specify grade-anchor delivery; downstream P2 still says scale undecided",
+    "Existing undecided-parameter clauses may affect execution; mixed cause remains, no universal rubric or extra global ban adopted"
+  ],
+  "credentialReplay": "saved-code-replay.json",
+  "professional": {
+    "sourceTitle": "WHO methods and data sources for global burden of disease estimates 2000-2019",
+    "sourceVersion": "WHO/DDI/DNA GHE/2020.3, December 2020",
+    "url": "https://www.who.int/docs/default-source/gho-documents/global-health-estimates/ghe2019_daly-methods.pdf?sfvrsn=31b250097",
+    "checkedOn": "2026-10-17",
+    "location": "Section 2, PDF page6; standard loss function by age, N x L",
+    "finding": "Earlier downstream statement subtracting death age from age-specific remaining life expectancy is not this definition",
+    "userReferenceLifeTableNotChosen": true,
+    "comprehensiveProfessionalReview": false
+  },
+  "strategy": {
+    "adopted": "Scoped engineering lookup fix only",
+    "notAdopted": [
+      "Global mandatory scale",
+      "Universal medical disclaimer in copied body",
+      "More global sensitive-string regexes to repair external program data flow",
+      "Blindly increased timeouts or retries"
+    ],
+    "open": [
+      "Downstream credential echo",
+      "Scoring design completeness and framing ambiguity",
+      "YLL and broader professional correctness"
+    ]
+  },
+  "realModelCalls": 0
+}

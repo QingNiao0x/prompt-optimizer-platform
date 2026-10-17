@@ -159,6 +159,24 @@ public class OptimizationResultAssembler {
             List<PlanningFactCard> planningFacts, List<String> planningWarnings,
             com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView
     ) {
+        return assemble(providerResponse, context, template, ambiguities, planAnswers, planConfirmed,
+                constraintBundle, includeExamples, latencyMs, rawPrompt, planningFacts, planningWarnings,
+                taskView, null);
+    }
+
+    /**
+     * 模型已按显式模式生成正文；本层保留主框架次序与展示形式，不用重排代替增强。
+     * 任务校验、确认绑定、示例和平台固定条款均共用原有组装路径。
+     * 缺省偏好继续使用模型与任务的自动呈现，兼容旧客户端和已保存记录。
+     */
+    public OptimizationResult assemble(
+            EnhancementProviderResponse providerResponse, ContextSnapshot context, PromptTemplate template,
+            List<String> ambiguities, List<PlanAnswer> planAnswers, boolean planConfirmed,
+            ConstraintBundle constraintBundle, boolean includeExamples, long latencyMs, String rawPrompt,
+            List<PlanningFactCard> planningFacts, List<String> planningWarnings,
+            com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView,
+            com.promptoptimizer.enhancement.domain.PromptFormat requestedFormat
+    ) {
         if (providerResponse == null || isBlank(providerResponse.provider()) || isBlank(providerResponse.model())) {
             throw invalidResponse(Reason.METADATA_INVALID, "provider");
         }
@@ -292,7 +310,8 @@ public class OptimizationResultAssembler {
                     output.content() + "\n\n" + draftDelivery.guidance()));
         }
         List<String> assessed = new PlanQuestionFilter().unresolvedFindings(
-                resolveAmbiguities(providerResponse, sections, ambiguities), effectiveRawPrompt, context, eligibleFacts, taskView).stream()
+                resolveAmbiguities(providerResponse, sections, ambiguities, effectiveRawPrompt, context, eligibleFacts, taskView),
+                effectiveRawPrompt, context, eligibleFacts, taskView).stream()
                 .filter(finding -> !TaskQuestionScope.unrelatedEngineeringReminder(finding, rawPrompt))
                 .filter(finding -> !readOnlyComparison.directedReminder(finding))
                 .filter(finding -> !identifierRelations.coveredPendingStatement(finding)).toList();
@@ -441,12 +460,18 @@ public class OptimizationResultAssembler {
         sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
         sections.forEach((type, section) -> conditionalGuard.validate(section.content(), "sections." + type));
         sections.forEach((type, section) -> requirementBoundaries.validate(section.content(), "sections." + type));
-        List<PromptSection> ordered = List.of(PromptSectionType.values()).stream()
+        // 自然模式按同一有效任务选中的主框架展开，绝不据框架补造段落或省去平台保护。
+        var sectionOrder = requestedFormat == com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT
+                ? com.promptoptimizer.template.domain.PromptFrameworkSelector.select(taskView).sectionOrder()
+                : List.of(PromptSectionType.values());
+        List<PromptSection> ordered = sectionOrder.stream()
                 .map(sections::get)
                 .filter(section -> section != null)
                 .toList();
+        // 显式开关覆盖模型及翻译的展示偏好，但不改变验收要求等已完成的语义组装。
+        var resultFormat = requestedFormat == null ? presentation : requestedFormat;
         var result = new OptimizationResult(
-                renderPrompt(ordered, presentation),
+                renderPrompt(ordered, resultFormat),
                 ordered,
                 context,
                 remainingAmbiguities,
@@ -460,7 +485,7 @@ public class OptimizationResultAssembler {
                 Math.max(0, latencyMs),
                 resultWarnings,
                 evidenceCards(eligibleFacts, documentFacts),
-                presentation
+                resultFormat
         );
         // 统一校验最终结果的全部文本投影，避免段落安全但警告、来源或追加内容仍回显凭据。
         // 此投影只在本次调用中检查，禁止写入日志或额外持久化。
@@ -808,7 +833,9 @@ public class OptimizationResultAssembler {
     /** 兼容旧版待确认段落，同时过滤泛化提示和疑似凭据。 */
     private List<String> resolveAmbiguities(EnhancementProviderResponse response,
                                            Map<PromptSectionType, PromptSection> sections,
-                                           List<String> candidates) {
+                                            List<String> candidates, String effectiveRawPrompt,
+                                            ContextSnapshot context, List<PlanningFactCard> safeFacts,
+                                            com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView) {
         List<String> findings = response.ambiguities();
         if (findings == null) {
             PromptSection legacy = sections.get(PromptSectionType.CLARIFICATIONS);
@@ -834,7 +861,11 @@ public class OptimizationResultAssembler {
                 .filter(value -> !GENERIC_WARNINGS.contains(value.replaceAll("[。.!！]+$", "")))
                 .distinct().toList();
         if (response.assessment() != null && response.ambiguities() != null) {
-            response.assessment().validateModelDecisions(modelFindings);
+            // 已有事实能确定解决的问题不应先触发分类冲突；只复用已知事实判断，委托设计不据此静默删题。
+            // 服务端冲突尚未合入，不能被模型 assessment 反向否定；敏感值及数量校验仍在筛选之前。
+            List<String> unresolvedModelFindings = new PlanQuestionFilter().unresolvedKnownFindings(
+                    modelFindings, effectiveRawPrompt, context, safeFacts, taskView);
+            response.assessment().validateModelDecisions(unresolvedModelFindings);
         }
         // 只校验模型自己声明的缺口，不能用其 assessment 删除服务端发现的冲突和原始未决条件。
         // 模型可能忽略二次检索发现的同名字段冲突；服务端证据优先保留。
@@ -899,7 +930,7 @@ public class OptimizationResultAssembler {
         appendConstraintBlock(sections, "用户补充权限边界", constraints.additionalPermissions());
     }
 
-    /** 紧凑提示词只省外层章节标题，不裁剪代码、引用、条件或来源；四要素仍完整保存。 */
+    /** 输出已由生成策略组织；呈现只决定外层标题，不裁剪代码、引用、条件或来源。 */
     private String renderPrompt(List<PromptSection> sections, com.promptoptimizer.enhancement.domain.PromptFormat format) {
         return sections.stream()
                 .filter(section -> section.type() != PromptSectionType.CLARIFICATIONS)

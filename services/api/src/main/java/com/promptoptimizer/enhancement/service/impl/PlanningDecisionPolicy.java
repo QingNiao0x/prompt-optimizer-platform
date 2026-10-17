@@ -65,6 +65,7 @@ final class PlanningDecisionPolicy {
     private final boolean separateUnverifiableRegionStates;
     private final PlanEligibilityGuard eligibilityGuard;
     private final PlanningAuthorizationState authorizationState;
+    private final ExistingContractLookup contractLookup;
 
     private PlanningDecisionPolicy(PlanningProviderRequest input) {
         this.eligibilityGuard = PlanEligibilityGuard.from(java.util.stream.Stream.concat(
@@ -72,6 +73,7 @@ final class PlanningDecisionPolicy {
         this.authorizationState = PlanningAuthorizationState.from(java.util.stream.Stream.concat(
                 java.util.stream.Stream.of(safe(input.rawPrompt())), sources(input).stream().map(Source::text)).toList());
         this.input = input;
+        this.contractLookup = ExistingContractLookup.from(input);
         this.moduleScope = declaredModuleScope(safe(input.rawPrompt()), sources(input));
         this.decisions = build(input);
         this.separateUnverifiableRegionStates = sources(input).stream().anyMatch(source -> normalize(source.text())
@@ -106,6 +108,8 @@ final class PlanningDecisionPolicy {
         // 已绑定的接口动作先解析作用范围，“先查询详情时若详情接口失败”不是另一个接口名。
         if (hasDecision(Kind.ERROR_UI_LOOKUP) && errorUi(text, question)) return true;
         if (hasDecision(Kind.ERROR_UI_LOOKUP) && existingErrorPresentation(question, text)) return true;
+        // “登录成功后”是同一接口的结果阶段；先用完整契约对象判断，再做通用业务名检查。
+        if (hasDecision(Kind.EXISTING_CONTRACT_LOOKUP) && delegatedExistingContract(question)) return true;
         if (mentionsDifferentSubject(text)) return false;
         for (PlanningKnownDecision decision : decisions) {
             boolean matched = switch (decision.kind()) {
@@ -129,6 +133,7 @@ final class PlanningDecisionPolicy {
                 case REVIEWER_BLINDING -> reviewerVisibility(text);
                 case METHOD_SELECTION -> methodSelection(text) || permittedCandidateConditions(question, text);
                 case INFORMATION_PARITY -> informationParity(text);
+                case EXISTING_CONTRACT_LOOKUP -> delegatedExistingContract(question);
                 case EXISTING_REGION_LOOKUP -> regionImplementation(text) || regionAlgorithmChoice(question, text)
                         || regionLayerSelection(question, text);
                 case TEST_LAYER_LOOKUP -> testLayerSelection(question, text) || existingBehaviorCoverage(question, text)
@@ -138,6 +143,11 @@ final class PlanningDecisionPolicy {
             if (matched) return true;
         }
         return false;
+    }
+
+    /** 仅核对已有契约的查证职责，不能作为用户已选择实际参数的证明。 */
+    boolean delegatedExistingContract(PlanQuestion question) {
+        return contractLookup != null && contractLookup.covers(question);
     }
 
     /** 字段集合与空值/权限等处理规则是不同维度；选项中的字段常量不能给无关题干背书。 */
@@ -942,6 +952,8 @@ final class PlanningDecisionPolicy {
         collectTrigger(raw, decisions);
         collectExecutionRules(raw, decisions);
         collectResearchRules(raw, decisions);
+        var contractLookup = ExistingContractLookup.from(input);
+        if (contractLookup != null) decisions.add(contractLookup.decision());
         PlanningAuthorizationState.from(java.util.stream.Stream.concat(java.util.stream.Stream.of(raw),
                 sources.stream().map(Source::text)).toList()).knownRestrictions().forEach(restriction ->
                 decisions.add(new PlanningKnownDecision(Kind.AUTHORIZATION_STATE, "当前资料授权状态", restriction,

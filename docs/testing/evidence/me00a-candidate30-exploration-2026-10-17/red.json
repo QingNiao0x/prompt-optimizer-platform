@@ -1,0 +1,82 @@
+{
+  "name": "com.promptoptimizer.enhancement.service.impl.ProjectExplorationPlanningTest",
+  "tests": "27",
+  "failures": "18",
+  "errors": "0",
+  "skipped": "0",
+  "scope": "constructed responses and exact raw task, not captured model replay",
+  "failedCases": [
+    {
+      "name": "planWithOrWithoutPreparedContextCanProceedWithoutRedundantQuestions(boolean)[1]",
+      "failure": "\nExpecting empty but was: [PlanQuestion[id=feature, question=本次需要实现或修改的具体功能是什么？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true]]"
+    },
+    {
+      "name": "planWithOrWithoutPreparedContextCanProceedWithoutRedundantQuestions(boolean)[2]",
+      "failure": "\nExpecting empty but was: [PlanQuestion[id=feature, question=本次需要实现或修改的具体功能是什么？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true]]"
+    },
+    {
+      "name": "factsAndFutureConditionsDoNotBecomeCurrentDevelopment(String)[1]",
+      "failure": "\nexpected: GENERAL\n but was: FEATURE_DEVELOPMENT"
+    },
+    {
+      "name": "factsAndFutureConditionsDoNotBecomeCurrentDevelopment(String)[2]",
+      "failure": "\nexpected: GENERAL\n but was: REFACTORING"
+    },
+    {
+      "name": "factsAndFutureConditionsDoNotBecomeCurrentDevelopment(String)[3]",
+      "failure": "\nexpected: GENERAL\n but was: FEATURE_DEVELOPMENT"
+    },
+    {
+      "name": "factsAndFutureConditionsDoNotBecomeCurrentDevelopment(String)[4]",
+      "failure": "\nexpected: GENERAL\n but was: FEATURE_DEVELOPMENT"
+    },
+    {
+      "name": "recognizesExplorationAsAnExplicitCurrentGoal(String)[1]",
+      "failure": "\nexpected: GENERAL\n but was: FEATURE_DEVELOPMENT"
+    },
+    {
+      "name": "recognizesExplorationAsAnExplicitCurrentGoal(String)[2]",
+      "failure": "\nexpected: GENERAL\n but was: REFACTORING"
+    },
+    {
+      "name": "recognizesExplorationAsAnExplicitCurrentGoal(String)[3]",
+      "failure": "\nexpected: GENERAL\n but was: REFACTORING"
+    },
+    {
+      "name": "recognizesExplorationAsAnExplicitCurrentGoal(String)[4]",
+      "failure": "\nexpected: \"PROJECT_UNDERSTANDING\"\n but was: \"GENERAL\""
+    },
+    {
+      "name": "recognizesExplorationAsAnExplicitCurrentGoal(String)[5]",
+      "failure": "\nexpected: GENERAL\n but was: FEATURE_DEVELOPMENT"
+    },
+    {
+      "name": "recognizesExplorationAsAnExplicitCurrentGoal(String)[6]",
+      "failure": "\nexpected: \"PROJECT_UNDERSTANDING\"\n but was: \"GENERAL\""
+    },
+    {
+      "name": "importantScopeAuthorizationAndCompoundQuestionsRemain(String)[1]",
+      "failure": "\nExpecting actual:\n  [\"本次需要实现或修改的具体功能是什么？\", \"是否允许读取生产患者资料？\"]\nto contain exactly (and in same order):\n  [\"是否允许读取生产患者资料？\"]\nbut some elements were not expected:\n  [\"本次需要实现或修改的具体功能是什么？\"]\n"
+    },
+    {
+      "name": "importantScopeAuthorizationAndCompoundQuestionsRemain(String)[2]",
+      "failure": "\nExpecting actual:\n  [\"本次需要实现或修改的具体功能是什么？\", \"本次需要阅读哪一个工作区的项目？\"]\nto contain exactly (and in same order):\n  [\"本次需要阅读哪一个工作区的项目？\"]\nbut some elements were not expected:\n  [\"本次需要实现或修改的具体功能是什么？\"]\n"
+    },
+    {
+      "name": "importantScopeAuthorizationAndCompoundQuestionsRemain(String)[3]",
+      "failure": "\nExpecting actual:\n  [\"本次需要实现或修改的具体功能是什么？\", \"本次需要实现或修改什么功能，以及是否允许删除旧模块？\"]\nto contain exactly (and in same order):\n  [\"本次需要实现或修改什么功能，以及是否允许删除旧模块？\"]\nbut some elements were not expected:\n  [\"本次需要实现或修改的具体功能是什么？\"]\n"
+    },
+    {
+      "name": "importantScopeAuthorizationAndCompoundQuestionsRemain(String)[4]",
+      "failure": "\nExpecting actual:\n  [\"本次需要实现或修改的具体功能是什么？\", \"两个目录的模块归属相互冲突，本次以哪份材料为准？\"]\nto contain exactly (and in same order):\n  [\"两个目录的模块归属相互冲突，本次以哪份材料为准？\"]\nbut some elements were not expected:\n  [\"本次需要实现或修改的具体功能是什么？\"]\n"
+    },
+    {
+      "name": "pureOutOfScopeFindingDoesNotCauseAssessmentConflictButAuthorizationIsKept",
+      "failure": "\nExpecting empty but was: [PlanQuestion[id=goal, question=本次需要实现或修改的具体功能是什么？, hint=, type=FREE_TEXT, options=[], examples=[], allowCustomAnswer=true]]"
+    },
+    {
+      "name": "fullUserPromptKeepsTheExplorationGoalAndDoesNotInferCodeDelivery",
+      "failure": "\nexpected: \"PROJECT_UNDERSTANDING\"\n but was: \"SOFTWARE_IMPLEMENTATION\""
+    }
+  ]
+}
