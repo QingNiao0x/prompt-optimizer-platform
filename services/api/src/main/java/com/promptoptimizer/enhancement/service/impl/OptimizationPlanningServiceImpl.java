@@ -164,13 +164,8 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                         .toList();
                 metrics.generated(validated.questions().size() + requiredConflicts.size()
                         + identifierRelations.requiredQuestions().size(), questions.size());
-                String summary = questions.isEmpty()
-                        ? "当前需求及已提供材料足以进入最终增强，无需额外确认。"
-                        : validated.questions().stream().anyMatch(question -> questionFilter.outsideExplorationTask(question, providerRequest))
-                        ? "本次先熟悉项目；以下仅确认影响当前阅读范围、授权或材料核对的未决事项。"
-                        : validated.questions().isEmpty() && !identifierRelations.requiredQuestions().isEmpty()
-                        ? "医院名称与数据代码的对应关系还需独立确认，请补充以下信息。"
-                        : validated.summary();
+                String summary = finalPlanSummary(validated, questions, providerRequest,
+                        !identifierRelations.requiredQuestions().isEmpty());
                 // 当前需求决定任务类型；附件只提供事实，不能把代码任务误判为附件的研究主题。
                 var inferredTemplate = templateRegistry.infer(request.rawPrompt());
                 // GENERAL 也可能是明确的写作目标；背景材料不能替本次目标重新分类。
@@ -314,7 +309,14 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                     List.of(request.rawPrompt(), request.contextDescription()), List.of());
             // 包括非推荐选项；不能让用户通过候选答案无意放弃原始需求中的明确规则。
             // 格式和安全仍校验所有项；已被明确事实消除的问题不因无关候选触发额外模型重试。
-            questionFilter.filter(validated.questions(), request).stream()
+            List<PlanQuestion> currentQuestions = questionFilter.filter(validated.questions(), request);
+            String summary = finalPlanSummary(validated, currentQuestions, request, false);
+            // 敏感/协议已校验原摘要；业务解释须与最终题集一致，不能遗漏摘要中的规则反转。
+            ruleValidation.validate(summary, "summary");
+            conditionalGuard.validate(summary, "summary");
+            sourceObjects.validate(summary, "summary");
+            identifierRelations.validate(summary, "summary");
+            currentQuestions.stream()
                     // 纯对应题由服务端自由回答题替换；格式和安全已检查，丢弃的候选不增加业务修复调用。
                     .filter(question -> !identifierRelations.coveredQuestion(question)).forEach(question -> {
                 identifierRelations.validate(question.question(), "questions.question");
@@ -323,6 +325,7 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                 sourceObjects.validate(question.hint(), "questions.hint");
                 identifierRelations.validate(question.hint(), "questions.hint");
                 decisionPolicy.validateCandidate(question.hint(), question.question(), "questions.hint");
+                ruleValidation.validateProposal(question.hint(), "questions.hint");
                 question.examples().forEach(example -> {
                     conditionalGuard.validate(example, "questions.examples");
                     sourceObjects.validate(example, "questions.examples");
@@ -331,6 +334,8 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                     ruleValidation.validateProposal(example, "questions.examples");
                 });
                 question.options().forEach(option -> {
+                    conditionalGuard.validate(option.label(), "questions.options.label");
+                    conditionalGuard.validate(option.description(), "questions.options.description");
                     conditionalGuard.validate(option.answer(), "questions.options.answer");
                     conditionalGuard.validate(option.recommendationReason(), "questions.options.recommendationReason");
                     sourceObjects.validate(option.answer(), "questions.options.answer");
@@ -351,8 +356,28 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                     ruleValidation.validate(option.recommendationReason(), "questions.options.recommendationReason");
                 });
             });
-            return validated;
+            return new PlanningProviderResponse(summary, validated.questions(), validated.provider(), validated.model(), validated.mock());
         });
+    }
+
+    /**
+     * 过滤、聚焦或推荐校准后从最终题集给出中性摘要，避免旧解释继续宣称被消除的缺口。
+     * 不生成新事实、确认或参数；原模型响应保留在调用原件中，返回与服务端注册使用同一题集。
+     */
+    private String finalPlanSummary(PlanningProviderResponse response, List<PlanQuestion> questions,
+                                    PlanningProviderRequest request, boolean namedIdentifiersRequired) {
+        if (questions.isEmpty()) return "当前需求及已提供材料足以进入最终增强，无需额外确认。";
+        if (response.questions().stream().anyMatch(question -> questionFilter.outsideExplorationTask(question, request))) {
+            return "本次先熟悉项目；以下仅确认影响当前阅读范围、授权或材料核对的未决事项。";
+        }
+        if (response.questions().isEmpty() && namedIdentifiersRequired) {
+            return "医院名称与数据代码的对应关系还需独立确认，请补充以下信息。";
+        }
+        if (!questions.equals(response.questions())) {
+            String contextBasis = request.planningContext() == null ? "" : "结合现有项目资料，";
+            return contextBasis + "以下确认影响本次交付的 " + questions.size() + " 项未决事项。已明确的要求与已委托的设计继续保留。";
+        }
+        return response.summary();
     }
 
     /**

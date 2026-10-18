@@ -134,6 +134,7 @@ public final class PlanQuestionFilter {
         return questions.stream()
                 .filter(question -> !outsideExplorationTask(question, input))
                 .map(question -> focusNewCostDenominator(question, input.rawPrompt()))
+                .map(question -> focusDelegatedSubquestions(question, input, decisionPolicy))
                 .filter(question -> !decisionPolicy.delegatesResearchImplementation(question, input.rawPrompt()))
                 .filter(question -> seen.add(new QuestionKey(normalize(question.question()), questionDetails(question))))
                 .filter(question -> !clearlyOutsideCurrentTask(question.question(), input.rawPrompt()))
@@ -249,7 +250,7 @@ public final class PlanQuestionFilter {
         List<String> details = new ArrayList<>();
         details.add(question.type().name());
         details.add(Boolean.toString(question.allowCustomAnswer()));
-        details.add(normalize(safe(question.hint())));
+        details.add(normalize(presentationHint(question.hint())));
         question.options().forEach(option -> {
             details.add(normalize(safe(option.label())));
             details.add(normalize(safe(option.description())));
@@ -258,6 +259,35 @@ public final class PlanQuestionFilter {
         });
         question.examples().forEach(example -> details.add(normalize(example)));
         return List.copyOf(details);
+    }
+
+    /**
+     * 纯“请选择/请确认”不引入决定属性；仅对白名单中的空泛交互提示归一化身份。
+     * 带对象、条件、数值或其他解释的提示仍逐字参与比较，原题和提示内容不改写。
+     */
+    private String presentationHint(String hint) {
+        String value = safe(hint).strip();
+        return value.matches("^(?:请)?(?:选择|确认)(?:一下)?[。.!！]?$" ) ? "" : value;
+    }
+
+    /**
+     * 无选项、说明和示例的自由回答题，只有以独立问号明确分开时才投影剩余问题。
+     * 委托判断复用原策略；共享条件、引用或用户保留的选择不拆分，注册仍使用同一服务端题ID。
+     */
+    private PlanQuestion focusDelegatedSubquestions(PlanQuestion question, PlanningProviderRequest input,
+                                                   PlanningDecisionPolicy policy) {
+        if (question.type() != com.promptoptimizer.enhancement.domain.PlanQuestionType.FREE_TEXT
+                || !safe(question.hint()).isBlank() || !question.options().isEmpty() || !question.examples().isEmpty()
+                || question.question().matches("(?s).*(?:如果|假如|若|除非|仅|未来|以后|引用|原文|[：:“”‘’\\\"`()]).*")) return question;
+        List<String> parts = java.util.Arrays.stream(question.question().split("(?<=[？?])"))
+                .map(String::strip).filter(part -> !part.isEmpty()).toList();
+        if (parts.size() < 2 || parts.stream().anyMatch(part -> !part.matches("[^？?]+[？?]"))) return question;
+        List<String> remaining = parts.stream().filter(part -> !policy.delegatesResearchImplementation(
+                new PlanQuestion(question.id(), part, "", question.type(), List.of(), List.of(), question.allowCustomAnswer()),
+                input.rawPrompt())).toList();
+        if (remaining.isEmpty() || remaining.size() == parts.size()) return question;
+        return new PlanQuestion(question.id(), String.join("", remaining), question.hint(), question.type(),
+                question.options(), question.examples(), question.allowCustomAnswer());
     }
 
     /** 额外说明显式引入另一选择时保留；“新增/修改代码”“不新增业务”等交付描述不能绕过已有决定校验。 */

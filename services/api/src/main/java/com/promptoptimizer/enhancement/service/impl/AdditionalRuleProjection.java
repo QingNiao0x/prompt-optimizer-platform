@@ -23,9 +23,12 @@ final class AdditionalRuleProjection {
                     + "|示例|例如|例子|引用|原文|" + FOREIGN_TASK_SCOPE
                     + "|不必遵守|无需遵守|不得要求|不要求|不是要求|并非要求|[\"“”‘’`?？]"
                     + "|\\b(?:if|when|unless|not selected)\\b", Pattern.CASE_INSENSITIVE);
+    private static final String ACTION = "(?:输出|交付|提供|返回|保留|记录|打印|泄露|编造|添加|使用|修改|删除|读取|生成|说明|校验|处理|运行|执行|采用|补充|给出|包含)";
+    private static final String ACTION_PREFIX = "(?:请|必须|务必|应|须|需)?(?:只|仅)?(?:不(?:得|要|应|允许|可)?|禁止)?"
+            + "(?:为[^，,；;。！？!?]{1,40})?";
+    private static final Pattern COORDINATOR = Pattern.compile("^(?:并且|并|同时|以及)(?=" + ACTION_PREFIX + ACTION + ")");
     private static final Pattern COMPLETE_ACTION = Pattern.compile(
-            "^(?:请|必须|务必|应|须|需)?(?:只|仅)?(?:不(?:得|要|应|允许|可)?|禁止)?"
-                    + "(?:输出|交付|提供|返回|保留|记录|打印|泄露|编造|添加|使用|修改|删除|读取|生成|说明|校验|处理|运行|执行|采用)"
+            "^" + ACTION_PREFIX + ACTION
                     + "[^，,；;。！？!?]+[。！？!?]?$" );
     private static final Pattern NEGATED_PREFIX = Pattern.compile(
             "^(?:请|必须|务必|应|须|需)?(?:只|仅)?(?:不(?:得|要|应|允许|可)?|禁止)" );
@@ -33,6 +36,8 @@ final class AdditionalRuleProjection {
             "(?:本任务|本次任务|当前任务|本研究|本次研究|当前研究|任务|输出|交付|交付以下内容|约束|约束条件|任务相关约束|Java21交付)[：:]?" );
     // 无属性的小写标签只是行内数据标识；数字比较、泛型或紧邻英文变量的运算式继续保守处理。
     private static final Pattern INLINE_TAG = Pattern.compile("(?<![A-Za-z0-9_])</?[a-z][a-z0-9-]*>(?![A-Za-z0-9_])");
+    // 这些标签只描述要求的呈现职责；文件名、模块名和业务对象标题不能借此省略。
+    private static final Pattern ASPECT_LABEL = Pattern.compile("^(?:不可变性|任务要求|输出要求|交付要求|验证状态说明)[：:]\\s*");
 
     private AdditionalRuleProjection() { }
 
@@ -103,13 +108,17 @@ final class AdditionalRuleProjection {
         if (rule == null || rule.isBlank() || rule.lines().count() != 1 || scoped(rule)) return false;
         String expected = completeStatement(rule);
         return currentEvidence(sections, false).values().stream()
-                .flatMap(section -> section.content().lines()).anyMatch(line -> completeStatement(line).equals(expected));
+                .flatMap(section -> section.content().lines())
+                // 整句逐字覆盖继续有效；独立动作只是补充证据，不能替换原有完整契约。
+                .flatMap(line -> java.util.stream.Stream.concat(java.util.stream.Stream.of(line), independentClauses(line).stream()))
+                .anyMatch(line -> completeStatement(line).equals(expected));
     }
 
     /** 只去除列表排版及末尾断句号，不删内部逗号或把并列否定变成两个独立动作。 */
     private static String completeStatement(String text) {
-        return java.text.Normalizer.normalize(text, java.text.Normalizer.Form.NFKC).strip()
-                .replaceFirst("^(?:[-*•]\\s*|\\d+[.)、]\\s*)", "")
+        String statement = java.text.Normalizer.normalize(text, java.text.Normalizer.Form.NFKC).strip()
+                .replaceFirst("^(?:[-*•]\\s*|\\d+[.)、]\\s*)", "");
+        return COORDINATOR.matcher(statement).replaceFirst("")
                 .replaceAll("(?<=[\\p{IsHan}])\\s+|\\s+(?=[\\p{IsHan}])", "")
                 .replaceFirst("[。；;]$", "").strip()
                 // 仅接收同一完整工程测试要求的语法助词差异，带对象修饰、条件或例外的句子不命中。
@@ -133,9 +142,11 @@ final class AdditionalRuleProjection {
         List<String> clauses = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         boolean negatedScope = false;
-        for (String fragment : rule.split("(?<=[，,；;])", -1)) {
+        String assertion = ASPECT_LABEL.matcher(rule.strip().replaceFirst("^(?:[-*•]\\s*|\\d+[.)、]\\s*)", "")).replaceFirst("");
+        for (String fragment : assertion.split("(?<=[，,；;])", -1)) {
             String action = fragment.strip().replaceFirst("^(?:[-*•]\\s*|\\d+[.)、]\\s*)", "")
                     .replaceFirst("[，,；;]$", "");
+            action = COORDINATOR.matcher(action).replaceFirst("");
             boolean negated = NEGATED_PREFIX.matcher(action).find();
             if (!current.isEmpty() && COMPLETE_ACTION.matcher(action).matches()) {
                 // 前置否定可能同时约束后项；省略否定的动作不能投影成新的正向义务。
@@ -153,7 +164,9 @@ final class AdditionalRuleProjection {
     /** 禁止添加示例是当前要求；ASCII行内标识符是排版，不是包含中文执行指令的引用。 */
     private static boolean scoped(String text) {
         String value = text.replaceAll("((?:不(?:得|要|应|允许)?|禁止)(?:输出|提供|生成|添加))(?:示例|例子)", "$1演示内容")
-                .replaceAll("`([A-Za-z0-9_.$<>(),\\[\\]:\\s=/-]+)`", "$1");
+                .replaceAll("`([A-Za-z0-9_.$<>(),\\[\\]:\\s=/-]+)`", "$1")
+                // 工程对象/方法/函数的引用是执行对象，不是引文来源；其他“引用”及引号仍保护。
+                .replaceAll("(?:对象|方法|函数)引用", "程序指向关系");
         // 只在作用域判断副本中忽略标签尖括号，正文与覆盖比较保留原值；条件、否定、引用及例外仍参与保护。
         value = INLINE_TAG.matcher(value).replaceAll("行内标签");
         return SCOPED.matcher(value).find();
