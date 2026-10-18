@@ -1,0 +1,267 @@
+{
+  "comparisons": [
+    {
+      "pair": "REQUESTS_RAW vs REQUESTS_COMPACT",
+      "verdict": "WIN",
+      "dimensions": {
+        "accuracy": {
+          "REQUESTS_RAW": 3,
+          "REQUESTS_COMPACT": 4
+        },
+        "completeness": {
+          "REQUESTS_RAW": 2,
+          "REQUESTS_COMPACT": 5
+        },
+        "clarity": {
+          "REQUESTS_RAW": 4,
+          "REQUESTS_COMPACT": 5
+        },
+        "executability": {
+          "REQUESTS_RAW": 3,
+          "REQUESTS_COMPACT": 5
+        }
+      },
+      "evidence": [
+        {
+          "workId": "REQUESTS_RAW",
+          "quote": "def get_page_title(url): ... return f\"请求失败: {e}\"",
+          "reason": "错误信息包含原始异常，可能泄露敏感信息；安全测试失败。"
+        },
+        {
+          "workId": "REQUESTS_RAW",
+          "quote": "if __name__ == '__main__': urls = [...]",
+          "reason": "写死示例URL，违反'URL作为函数参数，不虚构已有实现或执行记录'。"
+        },
+        {
+          "workId": "REQUESTS_RAW",
+          "quote": "## 基础示例",
+          "reason": "未提供测试代码，完整性不足。"
+        },
+        {
+          "workId": "REQUESTS_COMPACT",
+          "quote": "def fetch_titles(urls: Union[str, List[str]], timeout: float = DEFAULT_TIMEOUT) -> List[Dict[str, Any]]:",
+          "reason": "支持单个URL和URL列表，符合要求。"
+        },
+        {
+          "workId": "REQUESTS_COMPACT",
+          "quote": "class TestFetchTitles(unittest.TestCase): ...",
+          "reason": "提供完整测试代码，覆盖正常、异常和边界场景。"
+        },
+        {
+          "workId": "REQUESTS_COMPACT",
+          "quote": "result[\"error\"] = f\"请求异常：{type(exc).__name__}\"",
+          "reason": "错误信息仅包含异常类型，避免泄露敏感信息。"
+        }
+      ],
+      "severeFailures": [
+        {
+          "workId": "REQUESTS_RAW",
+          "type": "SECURITY_LEAK",
+          "detail": "错误信息包含原始异常，可能泄露敏感URL参数。"
+        },
+        {
+          "workId": "REQUESTS_RAW",
+          "type": "MISSING_TESTS",
+          "detail": "未提供测试代码，违反'交付可运行实现与必要测试'。"
+        }
+      ]
+    },
+    {
+      "pair": "REQUESTS_RAW vs REQUESTS_STRUCTURED",
+      "verdict": "WIN",
+      "dimensions": {
+        "accuracy": {
+          "REQUESTS_RAW": 3,
+          "REQUESTS_STRUCTURED": 4
+        },
+        "completeness": {
+          "REQUESTS_RAW": 2,
+          "REQUESTS_STRUCTURED": 5
+        },
+        "clarity": {
+          "REQUESTS_RAW": 4,
+          "REQUESTS_STRUCTURED": 5
+        },
+        "executability": {
+          "REQUESTS_RAW": 3,
+          "REQUESTS_STRUCTURED": 5
+        }
+      },
+      "evidence": [
+        {
+          "workId": "REQUESTS_RAW",
+          "quote": "def get_page_title(url): ... return f\"请求失败: {e}\"",
+          "reason": "错误信息包含原始异常，可能泄露敏感信息；安全测试失败。"
+        },
+        {
+          "workId": "REQUESTS_RAW",
+          "quote": "if __name__ == '__main__': urls = [...]",
+          "reason": "写死示例URL，违反'URL作为函数参数，不虚构已有实现或执行记录'。"
+        },
+        {
+          "workId": "REQUESTS_RAW",
+          "quote": "## 基础示例",
+          "reason": "未提供测试代码，完整性不足。"
+        },
+        {
+          "workId": "REQUESTS_STRUCTURED",
+          "quote": "def fetch_title(url: str, timeout: float = DEFAULT_TIMEOUT) -> str:",
+          "reason": "函数接受URL参数，符合要求。"
+        },
+        {
+          "workId": "REQUESTS_STRUCTURED",
+          "quote": "class TestFetchTitle(unittest.TestCase): ...",
+          "reason": "提供完整测试代码，覆盖正常、异常和边界场景。"
+        },
+        {
+          "workId": "REQUESTS_STRUCTURED",
+          "quote": "raise ValueError(f\"请求异常（{type(exc).__name__}）: {url}\")",
+          "reason": "错误信息仅包含异常类型和URL，避免泄露敏感信息。"
+        }
+      ],
+      "severeFailures": [
+        {
+          "workId": "REQUESTS_RAW",
+          "type": "SECURITY_LEAK",
+          "detail": "错误信息包含原始异常，可能泄露敏感URL参数。"
+        },
+        {
+          "workId": "REQUESTS_RAW",
+          "type": "MISSING_TESTS",
+          "detail": "未提供测试代码，违反'交付可运行实现与必要测试'。"
+        }
+      ]
+    },
+    {
+      "pair": "REQUESTS_COMPACT vs REQUESTS_STRUCTURED",
+      "verdict": "TIE",
+      "dimensions": {
+        "accuracy": {
+          "REQUESTS_COMPACT": 4,
+          "REQUESTS_STRUCTURED": 4
+        },
+        "completeness": {
+          "REQUESTS_COMPACT": 5,
+          "REQUESTS_STRUCTURED": 5
+        },
+        "clarity": {
+          "REQUESTS_COMPACT": 5,
+          "REQUESTS_STRUCTURED": 5
+        },
+        "executability": {
+          "REQUESTS_COMPACT": 5,
+          "REQUESTS_STRUCTURED": 5
+        }
+      },
+      "evidence": [
+        {
+          "workId": "REQUESTS_COMPACT",
+          "quote": "def fetch_titles(urls: Union[str, List[str]], timeout: float = DEFAULT_TIMEOUT) -> List[Dict[str, Any]]:",
+          "reason": "支持单个URL和URL列表，符合要求。"
+        },
+        {
+          "workId": "REQUESTS_COMPACT",
+          "quote": "class TestFetchTitles(unittest.TestCase): ...",
+          "reason": "提供完整测试代码，覆盖正常、异常和边界场景。"
+        },
+        {
+          "workId": "REQUESTS_STRUCTURED",
+          "quote": "def fetch_title(url: str, timeout: float = DEFAULT_TIMEOUT) -> str:",
+          "reason": "函数接受URL参数，符合要求。"
+        },
+        {
+          "workId": "REQUESTS_STRUCTURED",
+          "quote": "class TestFetchTitle(unittest.TestCase): ...",
+          "reason": "提供完整测试代码，覆盖正常、异常和边界场景。"
+        }
+      ],
+      "severeFailures": []
+    },
+    {
+      "pair": "REFUND_RAW vs REFUND_PLAN",
+      "verdict": "WIN",
+      "dimensions": {
+        "accuracy": {
+          "REFUND_RAW": 4,
+          "REFUND_PLAN": 5
+        },
+        "completeness": {
+          "REFUND_RAW": 4,
+          "REFUND_PLAN": 5
+        },
+        "clarity": {
+          "REFUND_RAW": 4,
+          "REFUND_PLAN": 5
+        },
+        "executability": {
+          "REFUND_RAW": 4,
+          "REFUND_PLAN": 5
+        }
+      },
+      "evidence": [
+        {
+          "workId": "REFUND_RAW",
+          "quote": "退款将按原支付渠道退回，具体到账时间以支付平台处理进度为准",
+          "reason": "未明确说明到账日期尚未确定，可能被误解为已确定。"
+        },
+        {
+          "workId": "REFUND_RAW",
+          "quote": "[联系电话] [联系邮箱]",
+          "reason": "包含占位符，邮件不可直接发送。"
+        },
+        {
+          "workId": "REFUND_PLAN",
+          "quote": "退款将按原付款渠道退回，具体到账时间尚未确定",
+          "reason": "明确说明到账日期尚未确定，符合要求。"
+        },
+        {
+          "workId": "REFUND_PLAN",
+          "quote": "青禾工作坊\n2026年11月8日",
+          "reason": "包含落款和日期，邮件可直接发送。"
+        }
+      ],
+      "severeFailures": [
+        {
+          "workId": "REFUND_RAW",
+          "type": "PLACEHOLDER",
+          "detail": "包含占位符，邮件不可直接发送。"
+        }
+      ]
+    },
+    {
+      "pair": "JSON_STRUCTURED vs JSON_STRUCTURED",
+      "verdict": "TIE",
+      "dimensions": {
+        "accuracy": {
+          "JSON_STRUCTURED": 5,
+          "JSON_STRUCTURED": 5
+        },
+        "completeness": {
+          "JSON_STRUCTURED": 5,
+          "JSON_STRUCTURED": 5
+        },
+        "clarity": {
+          "JSON_STRUCTURED": 5,
+          "JSON_STRUCTURED": 5
+        },
+        "executability": {
+          "JSON_STRUCTURED": 5,
+          "JSON_STRUCTURED": 5
+        }
+      },
+      "evidence": [
+        {
+          "workId": "JSON_STRUCTURED",
+          "quote": "{\"title\":\"城市绿化观察\"}",
+          "reason": "严格符合JSON格式，仅包含title字段，值为城市绿化观察。"
+        }
+      ],
+      "severeFailures": []
+    }
+  ],
+  "limitations": [
+    "独立检查中未实际运行代码，仅根据提供的硬检查结果和文本分析。",
+    "对于REFUND_RAW和REFUND_PLAN，未验证邮件是否包含所有必要信息，仅根据文本判断。",
+    "JSON_STRUCTURED仅有一个作品，无法进行对比，因此标记为TIE。"
+  ]
+}

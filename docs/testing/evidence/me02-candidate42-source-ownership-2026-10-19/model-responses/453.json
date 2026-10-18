@@ -1,0 +1,23 @@
+{
+  "trace": 453,
+  "version": "candidate42r2-source-ownership",
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "PURE-TRANSLATION",
+  "operation": null,
+  "httpStatus": 200,
+  "failure": null,
+  "elapsedMs": 1829,
+  "usage": {
+    "prompt_tokens": 6391,
+    "completion_tokens": 236,
+    "total_tokens": 6627,
+    "prompt_tokens_details": {
+      "cached_tokens": 5760
+    },
+    "prompt_cache_hit_tokens": 5760,
+    "prompt_cache_miss_tokens": 631
+  },
+  "responseModel": "deepseek-flash",
+  "modelResponseRaw": "{\"assessment\":{\"sufficiency\":\"SUFFICIENT\",\"gaps\":[],\"presentation\":\"COMPACT\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"用户提供了一句中文会议时间变更通知，要求译为英文。译文需忠实保留原文的时间信息与变更含义，不扩写、不补充原文没有的事实。\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"将句子“会议改至周五上午九点。”翻译成英文。只输出译文本身，不附解释、不举例、不添加原文没有的信息。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"仅输出一句英文译文，不加引号、标题、说明或任何附加内容。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"- 保持原文的时间、对象和变更含义，不改变“改至”所表达的调整关系，不扩大或缩小时间范围。\\n- 不输出解释、注释、示例或备选译法。\\n- 不得把猜测写成事实，不添加原文未提及的会议地点、参会人等细节。\"}],\"ambiguities\":[]}",
+  "modelResponseSha256": "483aa3fcb9c7d3ec6540b19109bc7a0a9fedf7afcc87d0c9b2f7c1e77a3c98ad"
+}

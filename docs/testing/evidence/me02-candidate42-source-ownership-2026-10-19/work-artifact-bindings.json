@@ -1,0 +1,80 @@
+{
+  "REQUESTS_RAW": {
+    "workSha256": "e96c4497e430cdcb34dc5aaed7174a1c03e780b739dd596373b7449db7f7f541",
+    "binding": {
+      "implementation": 1,
+      "tests": null,
+      "module": "title_raw",
+      "entry": "get_page_title",
+      "cli": null
+    },
+    "files": [
+      {
+        "block": 1,
+        "file": "title_raw.py",
+        "sha256": "db2f1efb9cd1e959e0a70566e128a53be40f5eece7a391e4c9add9b8c2dc2f96",
+        "role": "implementation"
+      },
+      {
+        "block": 3,
+        "file": "unexecuted_snippet_3.py",
+        "sha256": "8264f1d249b708b4bde20a76c06059b124e454e4f60feef4cf67c9b63855fc85",
+        "role": "syntax-only alternative/usage"
+      }
+    ]
+  },
+  "REQUESTS_COMPACT": {
+    "workSha256": "7d4aca78db45131b8c1212c1144c0bb6aaaa992ba102607cb6ac6bcdd92b6e78",
+    "binding": {
+      "implementation": 1,
+      "tests": 4,
+      "module": "fetch_titles",
+      "entry": "fetch_titles",
+      "cli": null
+    },
+    "files": [
+      {
+        "block": 1,
+        "file": "fetch_titles.py",
+        "sha256": "2684f93cd53bb89435dd63a10697a25d0702ae189a45aefe61463a94ee530640",
+        "role": "implementation"
+      },
+      {
+        "block": 2,
+        "file": "unexecuted_snippet_2.py",
+        "sha256": "e11877ef30c468d781ea23a73071940846022519ff8fc4ee38d9d26d0d7f3071",
+        "role": "syntax-only alternative/usage"
+      },
+      {
+        "block": 4,
+        "file": "test_fetch_titles.py",
+        "sha256": "0eed324f08d2dc1b23ce03964318219516df95567773feefc530ec73a68e5c0e",
+        "role": "test"
+      }
+    ]
+  },
+  "REQUESTS_STRUCTURED": {
+    "workSha256": "055fa894db7c570feae801e9c23d440264b38105e66f3166c9cabd78faa2bb09",
+    "binding": {
+      "implementation": 1,
+      "tests": 2,
+      "module": "fetch_titles",
+      "entry": "fetch_title",
+      "cli": "main"
+    },
+    "files": [
+      {
+        "block": 1,
+        "file": "fetch_titles.py",
+        "sha256": "ef5ee9a688e1d09cb3071221e63805d1dcd4cb594549e4a2f060efc00bb6d9e5",
+        "role": "implementation"
+      },
+      {
+        "block": 2,
+        "file": "test_fetch_titles.py",
+        "sha256": "5de59e75a4f547723a4818a6428200238ed53aee2109fc312ce805a5f9c1c6ef",
+        "role": "test"
+      }
+    ]
+  }
+}

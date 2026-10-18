@@ -1,0 +1,49 @@
+{
+  "version": "candidate42-source-ownership",
+  "sourceCandidate": "candidate42",
+  "maximumNewCalls": 38,
+  "purposeMaximums": {
+    "PLANNING": 6,
+    "PLATFORM_GENERATION": 24,
+    "EXECUTION": 6,
+    "REVIEW": 2
+  },
+  "normalRequests": {
+    "plan": 2,
+    "enhancement": 8,
+    "works": 6,
+    "reviews": 2
+  },
+  "authorizationBasis": "用户明确要求实现增强与Plan待完成问题，任何需批准的决定由代理自行决定，并允许真实评测和测试。本批由代理选择明确数值额度，不转移已关闭余额。",
+  "formalLimitsBefore": {
+    "total": 462,
+    "baseline": 80,
+    "candidateValidation": 382
+  },
+  "formalLimitsAfter": {
+    "total": 500,
+    "baseline": 80,
+    "candidateValidation": 420
+  },
+  "actualCallsBefore": 440,
+  "maximumActualCallsAfterBatch": 478,
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false,
+  "models": {
+    "enhancement": "deepseek-flash",
+    "execution": "deepseek-flash",
+    "review": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ]
+  },
+  "parameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "scope": "原文/任务/确认/未决来源呈现；受众身份；两态同实际Plan答案重新生成；禁例/纯译文/严格JSON/禁虚构；固定复制正文作品与独立检查。"
+}

@@ -1,0 +1,23 @@
+{
+  "trace": 463,
+  "version": "candidate42r3-source-ownership",
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "STRICT-JSON",
+  "operation": null,
+  "httpStatus": 200,
+  "failure": null,
+  "elapsedMs": 1578,
+  "usage": {
+    "prompt_tokens": 5864,
+    "completion_tokens": 196,
+    "total_tokens": 6060,
+    "prompt_tokens_details": {
+      "cached_tokens": 5632
+    },
+    "prompt_cache_hit_tokens": 5632,
+    "prompt_cache_miss_tokens": 232
+  },
+  "responseModel": "deepseek-flash",
+  "modelResponseRaw": "{\"assessment\":{\"sufficiency\":\"SUFFICIENT\",\"gaps\":[],\"presentation\":\"STRUCTURED\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"输入文本为“报告标题：城市绿化观察”，需要从中提取标题，并按指定 JSON 结构返回。\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"从输入文本“报告标题：城市绿化观察”中提取标题，提取结果为“城市绿化观察”。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"只返回一个符合 {\\\"title\\\": string} 的 JSON 对象，其中 title 的值为提取出的标题。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"{{REQ_df06ee7e6c38ee0c}}\\n- 不添加任何额外字段、说明文字、Markdown 代码围栏或示例。\"}],\"ambiguities\":[],\"ambiguityReferences\":[]}",
+  "modelResponseSha256": "e60d3bf6348cc7098148066702aff47e8645a7862a0346cbeeaf560764d5e048"
+}

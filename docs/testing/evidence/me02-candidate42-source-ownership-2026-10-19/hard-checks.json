@@ -1,0 +1,577 @@
+{
+  "sourceCandidate": "candidate42r2",
+  "code": {
+    "REQUESTS_RAW": {
+      "jointCompileExitCode": 0,
+      "workSha256": "e96c4497e430cdcb34dc5aaed7174a1c03e780b739dd596373b7449db7f7f541",
+      "files": [
+        {
+          "block": 1,
+          "file": "title_raw.py",
+          "sha256": "db2f1efb9cd1e959e0a70566e128a53be40f5eece7a391e4c9add9b8c2dc2f96",
+          "role": "implementation"
+        },
+        {
+          "block": 3,
+          "file": "unexecuted_snippet_3.py",
+          "sha256": "8264f1d249b708b4bde20a76c06059b124e454e4f60feef4cf67c9b63855fc85",
+          "role": "syntax-only alternative/usage"
+        }
+      ],
+      "scope": "合成HTTP响应；实现与作者测试均未修改；不访问真实网站。",
+      "checkerExitCode": 0,
+      "common": [
+        {
+          "name": "normal",
+          "passed": true,
+          "observed": {
+            "value": "Hello",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "entity",
+          "passed": true,
+          "observed": {
+            "value": "A & B",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "missing",
+          "passed": true,
+          "observed": {
+            "value": "无标题",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "timeout",
+          "passed": true,
+          "observed": {
+            "value": "请求失败: timeout for https://example.invalid/page",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "connection",
+          "passed": true,
+          "observed": {
+            "value": "请求失败: connection failed for https://example.invalid/page",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "http404",
+          "passed": true,
+          "observed": {
+            "value": "请求失败: 404 Client Error: None for url: https://example.invalid/page",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        }
+      ],
+      "security": [
+        {
+          "name": "normal",
+          "passed": true,
+          "observed": {
+            "value": "Hello",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "timeout",
+          "passed": false,
+          "observed": {
+            "value": "请求失败: timeout for https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "connection",
+          "passed": false,
+          "observed": {
+            "value": "请求失败: connection failed for https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "http404",
+          "passed": false,
+          "observed": {
+            "value": "请求失败: 404 Client Error: None for url: https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "invalid",
+          "passed": false,
+          "observed": {
+            "value": "请求失败: invalid URL ftp://example.invalid/?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        }
+      ],
+      "authoredTests": {
+        "state": "NOT_PROVIDED",
+        "notRequiredByOriginal": true
+      },
+      "realNetworkAccess": false,
+      "implementationRepaired": false,
+      "executionClaims": []
+    },
+    "REQUESTS_COMPACT": {
+      "jointCompileExitCode": 0,
+      "workSha256": "7d4aca78db45131b8c1212c1144c0bb6aaaa992ba102607cb6ac6bcdd92b6e78",
+      "files": [
+        {
+          "block": 1,
+          "file": "fetch_titles.py",
+          "sha256": "2684f93cd53bb89435dd63a10697a25d0702ae189a45aefe61463a94ee530640",
+          "role": "implementation"
+        },
+        {
+          "block": 2,
+          "file": "unexecuted_snippet_2.py",
+          "sha256": "e11877ef30c468d781ea23a73071940846022519ff8fc4ee38d9d26d0d7f3071",
+          "role": "syntax-only alternative/usage"
+        },
+        {
+          "block": 4,
+          "file": "test_fetch_titles.py",
+          "sha256": "0eed324f08d2dc1b23ce03964318219516df95567773feefc530ec73a68e5c0e",
+          "role": "test"
+        }
+      ],
+      "scope": "合成HTTP响应；实现与作者测试均未修改；不访问真实网站。",
+      "checkerExitCode": 0,
+      "common": [
+        {
+          "name": "normal",
+          "passed": true,
+          "observed": {
+            "value": [
+              {
+                "url": "https://example.invalid/page",
+                "ok": true,
+                "title": "Hello",
+                "error": null
+              }
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "entity",
+          "passed": true,
+          "observed": {
+            "value": [
+              {
+                "url": "https://example.invalid/page",
+                "ok": true,
+                "title": "A & B",
+                "error": null
+              }
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "missing",
+          "passed": true,
+          "observed": {
+            "value": [
+              {
+                "url": "https://example.invalid/page",
+                "ok": false,
+                "title": null,
+                "error": "页面中未找到 <title> 或标题为空"
+              }
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "timeout",
+          "passed": true,
+          "observed": {
+            "value": [
+              {
+                "url": "https://example.invalid/page",
+                "ok": false,
+                "title": null,
+                "error": "请求超时（>10s）"
+              }
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "connection",
+          "passed": true,
+          "observed": {
+            "value": [
+              {
+                "url": "https://example.invalid/page",
+                "ok": false,
+                "title": null,
+                "error": "连接失败（DNS/网络不可达）"
+              }
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "http404",
+          "passed": true,
+          "observed": {
+            "value": [
+              {
+                "url": "https://example.invalid/page",
+                "ok": false,
+                "title": null,
+                "error": "HTTP 状态码非 200：404"
+              }
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        }
+      ],
+      "security": [
+        {
+          "name": "normal",
+          "passed": false,
+          "observed": {
+            "value": [
+              {
+                "url": "https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+                "ok": true,
+                "title": "Hello",
+                "error": null
+              }
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "timeout",
+          "passed": false,
+          "observed": {
+            "value": [
+              {
+                "url": "https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+                "ok": false,
+                "title": null,
+                "error": "请求超时（>10s）"
+              }
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "connection",
+          "passed": false,
+          "observed": {
+            "value": [
+              {
+                "url": "https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+                "ok": false,
+                "title": null,
+                "error": "连接失败（DNS/网络不可达）"
+              }
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "http404",
+          "passed": false,
+          "observed": {
+            "value": [
+              {
+                "url": "https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+                "ok": false,
+                "title": null,
+                "error": "HTTP 状态码非 200：404"
+              }
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "invalid",
+          "passed": false,
+          "observed": {
+            "value": [
+              {
+                "url": "ftp://example.invalid/?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+                "ok": false,
+                "title": null,
+                "error": "URL 必须以 http:// 或 https:// 开头"
+              }
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        }
+      ],
+      "authoredTests": {
+        "state": "PASS",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "realNetworkAccess": false,
+      "implementationRepaired": false,
+      "executionClaims": [
+        {
+          "quote": "> **说明**：以上测试代码已编写，但**本次未实际执行**，因此不声称\"测试通过\"。请在本地运行确认。",
+          "status": "REVIEW_REQUIRED"
+        }
+      ]
+    },
+    "REQUESTS_STRUCTURED": {
+      "jointCompileExitCode": 0,
+      "workSha256": "055fa894db7c570feae801e9c23d440264b38105e66f3166c9cabd78faa2bb09",
+      "files": [
+        {
+          "block": 1,
+          "file": "fetch_titles.py",
+          "sha256": "ef5ee9a688e1d09cb3071221e63805d1dcd4cb594549e4a2f060efc00bb6d9e5",
+          "role": "implementation"
+        },
+        {
+          "block": 2,
+          "file": "test_fetch_titles.py",
+          "sha256": "5de59e75a4f547723a4818a6428200238ed53aee2109fc312ce805a5f9c1c6ef",
+          "role": "test"
+        }
+      ],
+      "scope": "合成HTTP响应；实现与作者测试均未修改；不访问真实网站。",
+      "checkerExitCode": 0,
+      "common": [
+        {
+          "name": "normal",
+          "passed": true,
+          "observed": {
+            "value": "Hello",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "entity",
+          "passed": true,
+          "observed": {
+            "value": "A & B",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "missing",
+          "passed": true,
+          "observed": {
+            "value": null,
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": [
+              "未找到 <title> 标签或标题为空: https://example.invalid/page"
+            ]
+          }
+        },
+        {
+          "name": "timeout",
+          "passed": true,
+          "observed": {
+            "value": null,
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": [
+              "请求超时（>10.0s）: https://example.invalid/page",
+              "timeout for https://example.invalid/page"
+            ]
+          }
+        },
+        {
+          "name": "connection",
+          "passed": true,
+          "observed": {
+            "value": null,
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": [
+              "连接失败: https://example.invalid/page",
+              "connection failed for https://example.invalid/page"
+            ]
+          }
+        },
+        {
+          "name": "http404",
+          "passed": true,
+          "observed": {
+            "value": null,
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": [
+              "HTTP 错误 404: https://example.invalid/page"
+            ]
+          }
+        }
+      ],
+      "security": [
+        {
+          "name": "normal",
+          "passed": true,
+          "observed": {
+            "value": "Hello",
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        },
+        {
+          "name": "timeout",
+          "passed": false,
+          "observed": {
+            "value": null,
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": [
+              "请求超时（>10.0s）: https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+              "timeout for https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93"
+            ]
+          }
+        },
+        {
+          "name": "connection",
+          "passed": false,
+          "observed": {
+            "value": null,
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": [
+              "连接失败: https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+              "connection failed for https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93"
+            ]
+          }
+        },
+        {
+          "name": "http404",
+          "passed": false,
+          "observed": {
+            "value": null,
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": [
+              "HTTP 错误 404: https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93"
+            ]
+          }
+        },
+        {
+          "name": "invalid",
+          "passed": false,
+          "observed": {
+            "value": null,
+            "stdout": "",
+            "stderr": "",
+            "exceptionChain": [
+              "URL 必须以 http:// 或 https:// 开头: ftp://example.invalid/?token=SYNTHETIC_ONLY_CANDIDATE42_7f93"
+            ]
+          }
+        },
+        {
+          "name": "cli-success",
+          "passed": false,
+          "observed": {
+            "value": 0,
+            "stdout": "https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93\tHello\n",
+            "stderr": "",
+            "exceptionChain": []
+          }
+        }
+      ],
+      "authoredTests": {
+        "state": "PASS",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "realNetworkAccess": false,
+      "implementationRepaired": false,
+      "executionClaims": []
+    }
+  },
+  "text": {
+    "REFUND_RAW": {
+      "workSha256": "3b79a5ee47c721b5d02cc5de5d5c7b1839c8621561900accadd2a710c6cfea80",
+      "hanCharacters": 207,
+      "preservesEventTime": true,
+      "fullRefund": true,
+      "noRescheduling": true,
+      "unsupportedRefundChannel": true,
+      "unconfirmedSignatureDate": false
+    },
+    "REFUND_PLAN": {
+      "workSha256": "c071b4bd0e5ff9ec050298c740dbf60dfabeb119557b06200e4521948fb9b9d8",
+      "hanCharacters": 200,
+      "preservesEventTime": true,
+      "fullRefund": true,
+      "noRescheduling": true,
+      "unsupportedRefundChannel": true,
+      "unconfirmedSignatureDate": true
+    },
+    "JSON_STRUCTURED": {
+      "strictJson": true,
+      "workSha256": "435fdc0b114f8c362ff3bf7fbeee6f1c0b88fceddd7e21e42b6a20871b1ef26b"
+    }
+  },
+  "reviewScoresUsedForRelease": false
+}

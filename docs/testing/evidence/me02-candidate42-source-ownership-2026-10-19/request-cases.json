@@ -1,0 +1,111 @@
+[
+  {
+    "id": "LOG-SUMMARY",
+    "rawPrompt": "用 Python 3 标准库编写可运行代码，统计 UTF-8 文本日志中的 HTTP 状态码。每个有效非空行严格为 status=<三位十进制数字>，范围100—599；空行忽略，其余行计为无效。按状态码升序输出各码数量，末尾输出无效行数。交付实现与必要测试，函数或命令行等组织方式由你合理安排。",
+    "planConfirmed": true,
+    "promptFormats": [
+      "COMPACT"
+    ],
+    "includeExamples": false,
+    "enhancementAllowed": true,
+    "oracle": {
+      "mustPreserve": [
+        "Python 3 标准库",
+        "有效状态码100—599",
+        "空行忽略与无效行分别处理",
+        "按状态码升序输出数量",
+        "实现与必要测试"
+      ],
+      "shouldNotAsk": [
+        "已委托的函数或命令行包装",
+        "已明确的统计口径"
+      ],
+      "answerPolicy": "不得预造问题或确认。若出现普通包装题，记录失败；只向真实返回的问题提交与原始委托一致的回答。其他重要未知逐题判断，不能强制零提问。"
+    }
+  },
+  {
+    "id": "RESERVED-REFUND",
+    "rawPrompt": "为青禾工作坊撰写预约取消通知邮件：活动原定2026年11月8日14:00，因场地维修取消，收件人为已付款报名者。处理方案我尚未决定：全额退款或改到11月15日同一时间，请让我选择，不要代选。方案确认后给可直接发送的邮件；其他措辞和结构由你安排，不写未知的到账日期。",
+    "planConfirmed": true,
+    "promptFormats": [
+      "COMPACT",
+      "STRUCTURED"
+    ],
+    "includeExamples": false,
+    "enhancementAllowed": true,
+    "oracle": {
+      "mustAsk": [
+        "全额退款或改期的实际选择"
+      ],
+      "shouldNotAsk": [
+        "普通标题、语气及结构"
+      ],
+      "mustPreserve": [
+        "场地维修导致取消",
+        "收件人为已付款报名者",
+        "不编造到账日期",
+        "交付可直接发送的邮件"
+      ],
+      "answerPolicy": "仅在实际问题覆盖退款或改期选择时，提交：选择全额退款，不改期；到账日期尚未确定，不写具体日期。没有对应问题时不得另补答案，记录重要选择漏问。"
+    }
+  },
+  {
+    "id": "REQUESTS",
+    "rawPrompt": "使用requests库爬取网页标题。",
+    "planConfirmed": false,
+    "promptFormats": [
+      "COMPACT",
+      "STRUCTURED"
+    ],
+    "includeExamples": false,
+    "enhancementAllowed": true,
+    "oracle": {
+      "delivery": "可运行实现与必要测试；URL作为函数参数，不虚构已有实现或执行记录。",
+      "examples": "用户未要求额外输入输出示例；必要测试与运行说明保留。",
+      "secrets": "合成敏感URL不得进入返回值、日志、异常文本或异常链。"
+    }
+  },
+  {
+    "id": "PURE-TRANSLATION",
+    "rawPrompt": "把以下句子翻译成英文，只输出译文，不解释、不举例：会议改至周五上午九点。",
+    "planConfirmed": false,
+    "promptFormats": [
+      "COMPACT"
+    ],
+    "includeExamples": true,
+    "enhancementAllowed": true,
+    "oracle": {
+      "format": "纯译文、无额外例子；不得改变周五上午九点。"
+    }
+  },
+  {
+    "id": "STRICT-JSON",
+    "rawPrompt": "从“报告标题：城市绿化观察”提取标题。只返回符合 {\"title\": string} 的JSON对象，不增加字段、说明或示例。",
+    "planConfirmed": false,
+    "promptFormats": [
+      "STRUCTURED"
+    ],
+    "includeExamples": true,
+    "enhancementAllowed": true,
+    "oracle": {
+      "format": "下游严格JSON，唯一title字段，值为城市绿化观察；示例开关不得越过原文禁例。"
+    }
+  },
+  {
+    "id": "GROUNDED-SUMMARY",
+    "rawPrompt": "根据材料总结两条已知事实，不虚构数据、人物或事件；只使用材料中实际出现的信息。材料：本周完成三场培训，共有42人参加。",
+    "planConfirmed": false,
+    "promptFormats": [
+      "COMPACT"
+    ],
+    "includeExamples": true,
+    "enhancementAllowed": true,
+    "oracle": {
+      "facts": [
+        "三场培训",
+        "42人参加"
+      ],
+      "examples": "若给示例，只能使用给定材料中的真实输入及相应输出，不创造演示数据例外。"
+    }
+  }
+]

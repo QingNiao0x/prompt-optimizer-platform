@@ -1,0 +1,122 @@
+{
+  "common": [
+    {
+      "name": "normal",
+      "passed": true,
+      "observed": {
+        "value": "Hello",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "entity",
+      "passed": true,
+      "observed": {
+        "value": "A & B",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "missing",
+      "passed": true,
+      "observed": {
+        "value": "无标题",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "timeout",
+      "passed": true,
+      "observed": {
+        "value": "请求失败: timeout for https://example.invalid/page",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "connection",
+      "passed": true,
+      "observed": {
+        "value": "请求失败: connection failed for https://example.invalid/page",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "http404",
+      "passed": true,
+      "observed": {
+        "value": "请求失败: 404 Client Error: None for url: https://example.invalid/page",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    }
+  ],
+  "security": [
+    {
+      "name": "normal",
+      "passed": true,
+      "observed": {
+        "value": "Hello",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "timeout",
+      "passed": false,
+      "observed": {
+        "value": "请求失败: timeout for https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "connection",
+      "passed": false,
+      "observed": {
+        "value": "请求失败: connection failed for https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "http404",
+      "passed": false,
+      "observed": {
+        "value": "请求失败: 404 Client Error: None for url: https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "invalid",
+      "passed": false,
+      "observed": {
+        "value": "请求失败: invalid URL ftp://example.invalid/?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    }
+  ],
+  "authoredTests": {
+    "state": "NOT_PROVIDED",
+    "notRequiredByOriginal": true
+  },
+  "realNetworkAccess": false,
+  "implementationRepaired": false
+}

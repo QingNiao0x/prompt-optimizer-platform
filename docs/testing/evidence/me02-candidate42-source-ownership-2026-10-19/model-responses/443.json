@@ -1,0 +1,23 @@
+{
+  "trace": 443,
+  "version": "candidate42r2-source-ownership",
+  "purpose": "PLANNING",
+  "caseId": "RESERVED-REFUND",
+  "operation": null,
+  "httpStatus": 200,
+  "failure": null,
+  "elapsedMs": 2018,
+  "usage": {
+    "prompt_tokens": 3132,
+    "completion_tokens": 318,
+    "total_tokens": 3450,
+    "prompt_tokens_details": {
+      "cached_tokens": 2944
+    },
+    "prompt_cache_hit_tokens": 2944,
+    "prompt_cache_miss_tokens": 188
+  },
+  "responseModel": "deepseek-flash",
+  "modelResponseRaw": "{\"summary\":\"目标是撰写青禾工作坊活动取消通知邮件，但用户明确表示处理方案尚未决定，并要求由自己选择全额退款或改期至11月15日同一时间；这是决定邮件核心内容的必要业务决定，必须先确认。\",\"questions\":[{\"id\":\"cancellation_resolution\",\"question\":\"本次取消后，对已付款报名者采用哪种处理方案？\",\"hint\":\"该选择决定邮件正文的核心安排，用户已明确要求自行选择，不能代为决定。\",\"type\":\"SINGLE_CHOICE\",\"options\":[{\"id\":\"full_refund\",\"label\":\"全额退款\",\"description\":\"通知活动取消，并为已付款报名者办理全额退款；不写未知的到账日期。\",\"answer\":\"采用全额退款方案：告知已付款报名者活动因场地维修取消，将为其办理全额退款，不写具体到账日期。\",\"recommended\":false,\"recommendationReason\":\"\"},{\"id\":\"reschedule_nov15\",\"label\":\"改期至11月15日同一时间\",\"description\":\"通知原11月8日14:00活动因场地维修取消，改至2026年11月15日14:00举行。\",\"answer\":\"采用改期方案：告知已付款报名者原定2026年11月8日14:00的活动因场地维修取消，改至2026年11月15日14:00同一时间举行。\",\"recommended\":false,\"recommendationReason\":\"\"}],\"examples\":[],\"allowCustomAnswer\":true}]}",
+  "modelResponseSha256": "25f810dca632192713f0019abd5af163c4811d036d5c71489ae49cff57d5c831"
+}

@@ -1,0 +1,1 @@
+The meeting has been moved to Friday at 9 a.m.

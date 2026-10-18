@@ -1,0 +1,202 @@
+{
+  "common": [
+    {
+      "name": "normal",
+      "passed": true,
+      "observed": {
+        "value": [
+          {
+            "url": "https://example.invalid/page",
+            "ok": true,
+            "title": "Hello",
+            "error": null
+          }
+        ],
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "entity",
+      "passed": true,
+      "observed": {
+        "value": [
+          {
+            "url": "https://example.invalid/page",
+            "ok": true,
+            "title": "A & B",
+            "error": null
+          }
+        ],
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "missing",
+      "passed": true,
+      "observed": {
+        "value": [
+          {
+            "url": "https://example.invalid/page",
+            "ok": false,
+            "title": null,
+            "error": "页面中未找到 <title> 或标题为空"
+          }
+        ],
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "timeout",
+      "passed": true,
+      "observed": {
+        "value": [
+          {
+            "url": "https://example.invalid/page",
+            "ok": false,
+            "title": null,
+            "error": "请求超时（>10s）"
+          }
+        ],
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "connection",
+      "passed": true,
+      "observed": {
+        "value": [
+          {
+            "url": "https://example.invalid/page",
+            "ok": false,
+            "title": null,
+            "error": "连接失败（DNS/网络不可达）"
+          }
+        ],
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "http404",
+      "passed": true,
+      "observed": {
+        "value": [
+          {
+            "url": "https://example.invalid/page",
+            "ok": false,
+            "title": null,
+            "error": "HTTP 状态码非 200：404"
+          }
+        ],
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    }
+  ],
+  "security": [
+    {
+      "name": "normal",
+      "passed": false,
+      "observed": {
+        "value": [
+          {
+            "url": "https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+            "ok": true,
+            "title": "Hello",
+            "error": null
+          }
+        ],
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "timeout",
+      "passed": false,
+      "observed": {
+        "value": [
+          {
+            "url": "https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+            "ok": false,
+            "title": null,
+            "error": "请求超时（>10s）"
+          }
+        ],
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "connection",
+      "passed": false,
+      "observed": {
+        "value": [
+          {
+            "url": "https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+            "ok": false,
+            "title": null,
+            "error": "连接失败（DNS/网络不可达）"
+          }
+        ],
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "http404",
+      "passed": false,
+      "observed": {
+        "value": [
+          {
+            "url": "https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+            "ok": false,
+            "title": null,
+            "error": "HTTP 状态码非 200：404"
+          }
+        ],
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "invalid",
+      "passed": false,
+      "observed": {
+        "value": [
+          {
+            "url": "ftp://example.invalid/?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+            "ok": false,
+            "title": null,
+            "error": "URL 必须以 http:// 或 https:// 开头"
+          }
+        ],
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    }
+  ],
+  "authoredTests": {
+    "state": "PASS",
+    "tests": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "realNetworkAccess": false,
+  "implementationRepaired": false
+}

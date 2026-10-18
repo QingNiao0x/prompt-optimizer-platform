@@ -1,0 +1,23 @@
+{
+  "trace": 451,
+  "version": "candidate42r2-source-ownership",
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "GROUNDED-SUMMARY",
+  "operation": null,
+  "httpStatus": 200,
+  "failure": null,
+  "elapsedMs": 2098,
+  "usage": {
+    "prompt_tokens": 6047,
+    "completion_tokens": 330,
+    "total_tokens": 6377,
+    "prompt_tokens_details": {
+      "cached_tokens": 4864
+    },
+    "prompt_cache_hit_tokens": 4864,
+    "prompt_cache_miss_tokens": 1183
+  },
+  "responseModel": "deepseek-flash",
+  "modelResponseRaw": "{\"assessment\":{\"sufficiency\":\"SUFFICIENT\",\"gaps\":[],\"presentation\":\"COMPACT\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"材料为：本周完成三场培训，共有42人参加。任务是从中提炼两条已知事实，只使用材料中实际出现的信息。\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"阅读材料，从中总结两条已知事实，每条事实都能在材料中找到对应表述。不虚构数据、人物或事件，不补充材料未出现的背景、原因或评价。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"以两条事实的形式输出，逐条列出，每条一句，简洁明确。只呈现材料支持的内容，不添加推测或额外说明。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"{{REQ_e1f7df6f5a4bd281}}\\n- 不得使用假设或虚构数据，该禁令适用于所有用途，包括示例和验证。\\n- 不得由该禁令推出禁止使用可核实的真实材料；其他明确的数据限制照常保留。\"},{\"type\":\"EXAMPLES\",\"title\":\"示例\",\"content\":\"示例仅说明输出形式，不引入新事实：\\n- 输入：材料原文。\\n- 预期输出：两条逐条列出的事实句，每句均可在材料原文中找到依据。\\n- 对应关系：输出中的每条事实对应材料中的一处实际表述，不添加材料外的数据、人物或事件。\"}],\"ambiguities\":[],\"ambiguityReferences\":[]}",
+  "modelResponseSha256": "36e2057abc9a59b713899cc5835047632d0339cb645736f14b4bf7f37ec2a843"
+}

@@ -1,0 +1,23 @@
+{
+  "trace": 454,
+  "version": "candidate42r2-source-ownership",
+  "purpose": "EXECUTION",
+  "caseId": null,
+  "operation": "REQUESTS_RAW",
+  "httpStatus": 200,
+  "failure": null,
+  "elapsedMs": 3776,
+  "usage": {
+    "prompt_tokens": 12,
+    "completion_tokens": 844,
+    "total_tokens": 856,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 12
+  },
+  "responseModel": "deepseek-flash",
+  "modelResponseRaw": "# 使用 requests 库爬取网页标题\n\n下面是一个完整的示例，演示如何使用 `requests` 库配合 `BeautifulSoup` 爬取网页标题。\n\n## 安装依赖\n\n```bash\npip install requests beautifulsoup4\n```\n\n## 基础示例\n\n```python\nimport requests\nfrom bs4 import BeautifulSoup\n\ndef get_page_title(url):\n    \"\"\"爬取网页标题\"\"\"\n    try:\n        # 设置请求头，模拟浏览器访问\n        headers = {\n            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '\n                          'AppleWebKit/537.36 (KHTML, like Gecko) '\n                          'Chrome/120.0.0.0 Safari/537.36'\n        }\n        \n        # 发送 GET 请求\n        response = requests.get(url, headers=headers, timeout=10)\n        response.raise_for_status()  # 检查 HTTP 状态码\n        \n        # 自动识别编码（避免中文乱码）\n        response.encoding = response.apparent_encoding\n        \n        # 解析 HTML\n        soup = BeautifulSoup(response.text, 'html.parser')\n        \n        # 获取 <title> 标签内容\n        title = soup.title.string.strip() if soup.title else \"无标题\"\n        return title\n        \n    except requests.exceptions.RequestException as e:\n        return f\"请求失败: {e}\"\n\n\nif __name__ == '__main__':\n    urls = [\n        'https://www.python.org',\n        'https://www.baidu.com',\n        'https://www.github.com',\n    ]\n    \n    for url in urls:\n        title = get_page_title(url)\n        print(f\"{url} -> {title}\")\n```\n\n## 输出示例\n\n```\nhttps://www.python.org -> Welcome to Python.org\nhttps://www.baidu.com -> 百度一下，你就知道\nhttps://www.github.com -> GitHub · Build and ship software on a single, collaborative platform\n```\n\n## 关键点说明\n\n| 要点 | 说明 |\n|------|------|\n| **User-Agent** | 不加会被很多网站拒绝（返回 403） |\n| **timeout** | 防止请求卡死，建议设置 5~10 秒 |\n| **raise_for_status()** | 主动抛出 4xx/5xx 异常，便于排查 |\n| **apparent_encoding** | 自动检测编码，避免中文乱码 |\n| **soup.title.string** | 获取 `<title>` 标签内的文本 |\n\n## 进阶：使用正则表达式（不依赖 BeautifulSoup）\n\n如果不想安装额外库，也可以用正则提取：\n\n```python\nimport re\nimport requests\n\ndef get_title_by_regex(url):\n    headers = {'User-Agent': 'Mozilla/5.0'}\n    try:\n        r = requests.get(url, headers=headers, timeout=10)\n        r.encoding = r.apparent_encoding\n        match = re.search(r'<title[^>]*>(.*?)</title>', r.text, re.S | re.I)\n        return match.group(1).strip() if match else \"无标题\"\n    except Exception as e:\n        return f\"错误: {e}\"\n\nprint(get_title_by_regex('https://www.python.org'))\n```\n\n## 注意事项\n\n1. **遵守 robots.txt**：爬取前查看目标网站的爬虫协议。\n2. **控制频率**：批量爬取时加 `time.sleep(1)` 避免给对方服务器造成压力。\n3. **动态网页**：如果标题由 JavaScript 渲染（如 SPA 应用），`requests` 拿不到，需要改用 `Selenium` 或 `Playwright`。\n4. **反爬机制**：部分网站会检测 UA、Cookie、IP 等，必要时需配合代理或会话（`requests.Session()`）。\n\n如果需要爬取**动态渲染页面**或**批量并发爬取**的版本，可以告诉我，我再补充示例。",
+  "modelResponseSha256": "e96c4497e430cdcb34dc5aaed7174a1c03e780b739dd596373b7449db7f7f541"
+}

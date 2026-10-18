@@ -1,0 +1,37 @@
+{
+  "optimizedPrompt": "## 背景\n输入文本为“报告标题：城市绿化观察”，需要从中提取标题，并按指定 JSON 结构返回。\n\n## 任务\n从输入文本“报告标题：城市绿化观察”中提取标题，并构造只含 title 字段的 JSON 对象。\n\n## 输出\n只返回一个符合 {\"title\": string} 的 JSON 对象，其中 title 为提取到的标题。\n\n## 约束\n只返回符合 {\"title\": string} 的JSON对象，不增加字段、说明或示例。\n- 不添加任何额外字段、解释性文字、Markdown 代码围栏或示例。\n\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。",
+  "sections": [
+    {
+      "type": "BACKGROUND",
+      "title": "背景",
+      "content": "输入文本为“报告标题：城市绿化观察”，需要从中提取标题，并按指定 JSON 结构返回。"
+    },
+    {
+      "type": "TASK",
+      "title": "任务",
+      "content": "从输入文本“报告标题：城市绿化观察”中提取标题，并构造只含 title 字段的 JSON 对象。"
+    },
+    {
+      "type": "OUTPUT",
+      "title": "输出",
+      "content": "只返回一个符合 {\"title\": string} 的 JSON 对象，其中 title 为提取到的标题。"
+    },
+    {
+      "type": "CONSTRAINTS",
+      "title": "约束",
+      "content": "只返回符合 {\"title\": string} 的JSON对象，不增加字段、说明或示例。\n- 不添加任何额外字段、解释性文字、Markdown 代码围栏或示例。\n\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+    }
+  ],
+  "promptFormat": "STRUCTURED",
+  "ambiguities": [],
+  "appliedConstraints": [
+    "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+  ],
+  "constraintGroups": {
+    "platformMandatory": [
+      "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+    ],
+    "taskSpecific": [],
+    "additionalPermissions": []
+  }
+}

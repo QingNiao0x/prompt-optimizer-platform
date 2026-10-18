@@ -1,0 +1,155 @@
+{
+  "common": [
+    {
+      "name": "normal",
+      "passed": true,
+      "observed": {
+        "value": "Hello",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "entity",
+      "passed": true,
+      "observed": {
+        "value": "A & B",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "missing",
+      "passed": true,
+      "observed": {
+        "value": null,
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": [
+          "未找到 <title> 标签或标题为空: https://example.invalid/page"
+        ]
+      }
+    },
+    {
+      "name": "timeout",
+      "passed": true,
+      "observed": {
+        "value": null,
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": [
+          "请求超时（>10.0s）: https://example.invalid/page",
+          "timeout for https://example.invalid/page"
+        ]
+      }
+    },
+    {
+      "name": "connection",
+      "passed": true,
+      "observed": {
+        "value": null,
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": [
+          "连接失败: https://example.invalid/page",
+          "connection failed for https://example.invalid/page"
+        ]
+      }
+    },
+    {
+      "name": "http404",
+      "passed": true,
+      "observed": {
+        "value": null,
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": [
+          "HTTP 错误 404: https://example.invalid/page"
+        ]
+      }
+    }
+  ],
+  "security": [
+    {
+      "name": "normal",
+      "passed": true,
+      "observed": {
+        "value": "Hello",
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    },
+    {
+      "name": "timeout",
+      "passed": false,
+      "observed": {
+        "value": null,
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": [
+          "请求超时（>10.0s）: https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+          "timeout for https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93"
+        ]
+      }
+    },
+    {
+      "name": "connection",
+      "passed": false,
+      "observed": {
+        "value": null,
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": [
+          "连接失败: https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93",
+          "connection failed for https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93"
+        ]
+      }
+    },
+    {
+      "name": "http404",
+      "passed": false,
+      "observed": {
+        "value": null,
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": [
+          "HTTP 错误 404: https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93"
+        ]
+      }
+    },
+    {
+      "name": "invalid",
+      "passed": false,
+      "observed": {
+        "value": null,
+        "stdout": "",
+        "stderr": "",
+        "exceptionChain": [
+          "URL 必须以 http:// 或 https:// 开头: ftp://example.invalid/?token=SYNTHETIC_ONLY_CANDIDATE42_7f93"
+        ]
+      }
+    },
+    {
+      "name": "cli-success",
+      "passed": false,
+      "observed": {
+        "value": 0,
+        "stdout": "https://example.invalid/page?token=SYNTHETIC_ONLY_CANDIDATE42_7f93\tHello\n",
+        "stderr": "",
+        "exceptionChain": []
+      }
+    }
+  ],
+  "authoredTests": {
+    "state": "PASS",
+    "tests": 15,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "realNetworkAccess": false,
+  "implementationRepaired": false
+}
