@@ -1,0 +1,96 @@
+{
+  "works": [
+    {
+      "id": "A",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 5,
+        "clarity": 5,
+        "executability": 4
+      },
+      "evidence": {
+        "accuracy": {
+          "quotes": [
+            "// 统一换行：先 CRLF -> LF，再处理孤立 CR（视为换行，避免残留 \\r 影响比较）",
+            "const normalized = input.replace(/\\r\\n/g, \"\\n\").replace(/\\r/g, \"\\n\");"
+          ],
+          "reason": "核心规则（整行逐字符、区分大小写、保留首次顺序、LF/CRLF、输出LF、保留首次空行）均正确落实。但把孤立CR也当作换行属于题目未要求的额外归一化，改变了行边界语义，构成局部适用性偏差，故扣至4。"
+        },
+        "completeness": {
+          "quotes": [
+            "export function dedupeLines(input: string): string {",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "交付了接受字符串返回字符串的通用TypeScript实现，无第三方运行依赖，必需项齐全；测试与说明为增项但不构成未授权增项问题。"
+        },
+        "clarity": {
+          "quotes": [
+            "// 空字符串直接返回空字符串（无行可去重）",
+            "// 尾随换行：\"a\\n\" 切分为 [\"a\", \"\"]，末尾空行会被保留（首次出现）。"
+          ],
+          "reason": "对象、条件、状态和步骤清楚一致，边界语义有明确说明，仅少量冗余说明。"
+        },
+        "executability": {
+          "quotes": [
+            "node --test --experimental-strip-types dedupe.test.ts",
+            "**如实声明**：本次回答在文本环境中生成，**未实际执行上述测试代码**，因此不能声称测试\"已通过\"。"
+          ],
+          "reason": "实现本身可直接使用；但作者自述测试未实际执行，且独立检查显示其自撰测试存在1个失败，说明随附测试并非全部可用，需小幅修正后方可整体使用，故4。"
+        }
+      },
+      "severeFailures": [],
+      "uncertainties": [
+        "孤立CR视为换行是否被允许，题目未明确；独立检查显示自撰测试有1项失败，具体失败用例未在作品文本中体现。"
+      ]
+    },
+    {
+      "id": "B",
+      "scores": {
+        "accuracy": 5,
+        "completeness": 4,
+        "clarity": 5,
+        "executability": 5
+      },
+      "evidence": {
+        "accuracy": {
+          "quotes": [
+            "const normalized = text.replace(/\\r\\n/g, \"\\n\");",
+            "// \"apple\\nbanana\\n\\nOrange\\norange\""
+          ],
+          "reason": "整行逐字符比较、区分大小写、保留首次顺序、LF/CRLF处理、输出LF、保留首次空行均与题目一致，示例输出与规则吻合，未引入额外归一化。"
+        },
+        "completeness": {
+          "quotes": [
+            "export function dedupeLines(text: string): string {",
+            "不引入任何第三方运行依赖。"
+          ],
+          "reason": "核心实现与无第三方依赖要求已落实；但题目要求“包装由实现者合理处理”，作品未提供任何包装/导出组织或运行说明，属少量非关键细节待完善，故4。"
+        },
+        "clarity": {
+          "quotes": [
+            "// 统一换行符为 LF，便于按行处理",
+            "- `Orange` 与 `orange` 被视为不同行；"
+          ],
+          "reason": "对象、条件、状态和步骤清楚一致，示例与说明对应明确。"
+        },
+        "executability": {
+          "quotes": [
+            "const output = dedupeLines(input);",
+            "console.log(JSON.stringify(output));"
+          ],
+          "reason": "在给定输入和边界内可直接使用，示例可复现，无额外依赖。"
+        }
+      },
+      "severeFailures": [],
+      "uncertainties": [
+        "作品未提供包装/模块组织说明，是否满足“包装由实现者合理处理”存在解释空间。"
+      ]
+    }
+  ],
+  "preferred": "B",
+  "reason": "B严格按题目规则实现，未引入题目未要求的孤立CR归一化，准确性与可执行性更稳；A虽更完整并附测试，但额外将孤立CR视为换行改变了行边界语义，且自撰测试存在失败项。综合B更优。",
+  "limitations": [
+    "未实际运行两份代码；A的测试失败细节未在作品文本中呈现。",
+    "孤立CR处理是否允许题目未明确，属专业判断未核实项。"
+  ]
+}

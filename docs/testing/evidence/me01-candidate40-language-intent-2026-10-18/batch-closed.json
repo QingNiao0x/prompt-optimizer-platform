@@ -1,0 +1,50 @@
+{
+  "version": "candidate40-live",
+  "sourceCandidate": "candidate40",
+  "status": "CLOSED",
+  "authorizationStatus": "APPROVED_BY_USER",
+  "authorizationAmendment": 33,
+  "authorizationBasis": "用户明确答复：批准新增13次，执行冻结范围。候选、用例自行选择；不转移闭批余额、不做作品质量重试。",
+  "callsBefore": 415,
+  "candidateCallsBefore": 345,
+  "maximumNewCalls": 13,
+  "maximumActualCallsAfterBatch": 428,
+  "purposeMaximums": {
+    "PLANNING": 6,
+    "PLATFORM_GENERATION": 3,
+    "EXECUTION": 2,
+    "REVIEW": 2
+  },
+  "qualityRetriesAllowed": false,
+  "secondQualityRoundAllowed": false,
+  "sourceManifestSha256": "e3176ca5949d7c02b0421f935117c470e917910ab848560ddd4aec5964dfcde6",
+  "casesFile": "candidate40-request-cases.json",
+  "casesSha256": "1beafdad95fc71c717c368f6deac3f64603c27d95868a30a662da524c6c8b39b",
+  "model": "deepseek-flash",
+  "executionModel": "deepseek-flash",
+  "reviewModels": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "accountCreationAllowed": false,
+  "dependencyFailurePolicy": "Answer only the actual bound questions under the frozen synthetic answer policy. Unknown questions stop dependent work. Native copy is never patched.",
+  "reviewScope": "Two independent AI reviews with the same supplier; preserve disagreements and exact-quote checks; hard gates independent.",
+  "actualNewCalls": 7,
+  "actualCallsAfterBatch": 422,
+  "actualPurposeCounts": {
+    "PLANNING": 2,
+    "PLATFORM_GENERATION": 1,
+    "EXECUTION": 2,
+    "REVIEW": 2
+  },
+  "phases": {
+    "baseline": 70,
+    "candidateValidation": 352
+  },
+  "failedOrIncompleteModelCallsCounted": 0,
+  "localToolFailuresPreserved": true,
+  "unusedAllowance": 6,
+  "unusedAllowanceStatus": "CLOSED_NOT_TRANSFERABLE",
+  "qualityRetriesPerformed": 0,
+  "closedAt": "2026-10-18T12:53:31.154359+00:00"
+}

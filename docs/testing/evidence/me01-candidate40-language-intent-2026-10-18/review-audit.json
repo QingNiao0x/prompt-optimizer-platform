@@ -1,0 +1,131 @@
+{
+  "sameSupplierIndependentAiReviews": true,
+  "humanExpertReview": false,
+  "blinding": "Work identities hidden; same task and submitted answers; no access to the other review",
+  "mappingForPostReviewAudit": {
+    "A": "PLAN",
+    "B": "RAW"
+  },
+  "reviews": {
+    "R1": {
+      "preferredOriginal": "B",
+      "preferredArm": "RAW",
+      "nonVerbatimOccurrences": 1,
+      "nonVerbatimQuotes": [
+        {
+          "work": "A",
+          "dimension": "clarity",
+          "quote": "// 尾随换行：\"a\\n\" 切分为 [\"a\", \"\"]，末尾空行会被保留（首次出现）。"
+        }
+      ],
+      "distinctNonVerbatimQuotes": 1,
+      "scoresOriginal": {
+        "A": {
+          "accuracy": 4,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 4
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 5
+        }
+      },
+      "notReleaseApproval": true
+    },
+    "R2": {
+      "preferredOriginal": "A",
+      "preferredArm": "PLAN",
+      "nonVerbatimOccurrences": 12,
+      "nonVerbatimQuotes": [
+        {
+          "work": "A",
+          "dimension": "accuracy",
+          "quote": "按整行逐字符完全一致（区分大小写）视为重复，保留首次出现的行及其顺序；支持 LF / CRLF，输出统一 LF；保留首次出现的空行。"
+        },
+        {
+          "work": "A",
+          "dimension": "accuracy",
+          "quote": "if (!seen.has(line)) { seen.add(line); result.push(line); }"
+        },
+        {
+          "work": "A",
+          "dimension": "completeness",
+          "quote": "if (typeof input !== \"string\") { throw new TypeError(...); }"
+        },
+        {
+          "work": "A",
+          "dimension": "completeness",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "A",
+          "dimension": "clarity",
+          "quote": "按整行逐字符完全一致（区分大小写）视为重复，保留首次出现的行及其顺序；支持 LF / CRLF，输出统一 LF；保留首次出现的空行。"
+        },
+        {
+          "work": "A",
+          "dimension": "clarity",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "A",
+          "dimension": "executability",
+          "quote": "if (typeof input !== \"string\") { throw new TypeError(...); }"
+        },
+        {
+          "work": "A",
+          "dimension": "executability",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "B",
+          "dimension": "accuracy",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "B",
+          "dimension": "completeness",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "B",
+          "dimension": "clarity",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "B",
+          "dimension": "executability",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        }
+      ],
+      "distinctNonVerbatimQuotes": 4,
+      "scoresOriginal": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 5
+        }
+      },
+      "notReleaseApproval": true
+    }
+  },
+  "preferenceDisagreement": true,
+  "adjudication": [
+    "R1 says the RAW work supplied no export/packaging although it contains export function dedupeLines; that factual criticism is unsupported.",
+    "R2 gives enhanced executability 5 despite the supplied failed author test and does not resolve the recorded compiler-profile failure.",
+    "The RAW input did not request authored tests; do not apply the enhanced prompt extra test promise to RAW.",
+    "Lone CR normalization is an explicit downstream assumption outside the frozen LF/CRLF checks; preserve uncertainty instead of adding a post-hoc common hard test."
+  ],
+  "meanScoreOrWinRateUsedForRelease": false,
+  "overallQualityGate": "FAIL_ENHANCED_TEST_DELIVERY"
+}

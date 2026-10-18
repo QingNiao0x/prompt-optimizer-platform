@@ -1,0 +1,54 @@
+{
+  "version": "candidate40-live",
+  "phase": "candidateValidation",
+  "purpose": "EXECUTION",
+  "operation": "TS-RAW",
+  "sourceCandidate": "candidate40",
+  "startedAt": "2026-10-18T12:43:46.864Z",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "user",
+        "content": "用TypeScript实现文本去重。\n\n本次测试实际确认信息（逐字题答）：\n问题：这里的“文本去重”是按什么单位判断重复？\n回答：按整行完全相同去重。\n问题：判断“重复”时采用哪种比较规则？\n回答：按整行逐字符完全一致比较，区分大小写，保留原行内容；支持LF与CRLF，输出统一LF，保留首次出现的空行。\n问题：这次需要交付什么形态的 TypeScript 实现？\n回答：包装由实现者合理处理；提供接受文本字符串并返回去重后字符串的通用TypeScript实现，不引入第三方运行依赖。\n问题：去重后结果需要保持什么顺序？\n回答：保留第一次出现的顺序。"
+      }
+    ]
+  },
+  "httpStatus": 200,
+  "responseRawSha256": "454f13f50fcb82c135d8006c6b60c175f7065600f27b1a6a81e71ba2de19a40e",
+  "response": {
+    "id": "262012bc-5f7b-49a0-a685-9e968bb8ed22",
+    "object": "chat.completion",
+    "created": 1792327427,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "根据你的确认，下面是按“整行完全相同”去重、区分大小写、保留首次出现顺序、统一输出 LF 的 TypeScript 实现。\n\n```ts\n/**\n * 文本按整行去重。\n *\n * 规则：\n * - 按整行逐字符完全一致比较（区分大小写）\n * - 保留第一次出现的顺序\n * - 支持 LF 与 CRLF 输入\n * - 输出统一使用 LF\n * - 保留首次出现的空行\n */\nexport function dedupeLines(text: string): string {\n  // 统一换行符为 LF，便于按行处理\n  const normalized = text.replace(/\\r\\n/g, \"\\n\");\n\n  // 按 LF 拆分为行\n  const lines = normalized.split(\"\\n\");\n\n  const seen = new Set<string>();\n  const result: string[] = [];\n\n  for (const line of lines) {\n    if (!seen.has(line)) {\n      seen.add(line);\n      result.push(line);\n    }\n  }\n\n  return result.join(\"\\n\");\n}\n```\n\n使用示例：\n\n```ts\nconst input = \"apple\\r\\nbanana\\napple\\n\\nbanana\\n\\nOrange\\norange\";\n\nconst output = dedupeLines(input);\n\nconsole.log(JSON.stringify(output));\n// \"apple\\nbanana\\n\\nOrange\\norange\"\n```\n\n说明：\n\n- `apple` 第二次出现被去掉；\n- 空行第一次出现被保留，第二次出现被去掉；\n- `Orange` 与 `orange` 被视为不同行；\n- 输入中的 `\\r\\n` 被统一处理，输出只包含 `\\n`；\n- 不引入任何第三方运行依赖。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 157,
+      "completion_tokens": 349,
+      "total_tokens": 506,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 157
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "elapsedMs": 2263
+}

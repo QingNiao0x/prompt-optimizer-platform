@@ -1,0 +1,204 @@
+{
+  "case": "TS-IMPLICIT",
+  "node": "v22.23.1",
+  "criteriaFrozenBeforeReadingWorks": true,
+  "works": {
+    "RAW": {
+      "workSha256": "34b7fc6cf1fbd942bfb92c86ffaae0a7866b3be088a04bd5084c8f466dcddab6",
+      "sourceRepaired": false,
+      "specSha256": "7d79dce0db3446472ad6bf92e64dc61af2577dc4201c37f90ee8c807558a822e",
+      "implementationSha256": "3e8d750a3208342d83c6421699d794db8d102accfe59b8e784ab070534c182f3",
+      "extractedTypeScriptBlocks": 2,
+      "usageFragmentCompiledAsTest": false,
+      "providedCompilerFlagsExitCode": 0,
+      "controlledInteropProfileUsed": false,
+      "jointCompileExitCode": 0,
+      "independent": {
+        "tests": 12,
+        "passed": 12,
+        "rows": [
+          {
+            "index": 1,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 2,
+            "state": "PASS",
+            "expected": "a\nA",
+            "actual": "a\nA"
+          },
+          {
+            "index": 3,
+            "state": "PASS",
+            "expected": " a\na",
+            "actual": " a\na"
+          },
+          {
+            "index": 4,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 5,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 6,
+            "state": "PASS",
+            "expected": "a\n\nb",
+            "actual": "a\n\nb"
+          },
+          {
+            "index": 7,
+            "state": "PASS",
+            "expected": "",
+            "actual": ""
+          },
+          {
+            "index": 8,
+            "state": "PASS",
+            "expected": "你好\nHello",
+            "actual": "你好\nHello"
+          },
+          {
+            "index": 9,
+            "state": "PASS",
+            "expected": "b\na",
+            "actual": "b\na"
+          },
+          {
+            "index": 10,
+            "state": "PASS",
+            "expected": "a\nb\n",
+            "actual": "a\nb\n"
+          },
+          {
+            "index": 11,
+            "state": "PASS",
+            "expected": "\na",
+            "actual": "\na"
+          },
+          {
+            "index": 12,
+            "state": "PASS",
+            "expected": "\t\n ",
+            "actual": "\t\n "
+          }
+        ]
+      },
+      "authoredTests": {
+        "state": "NOT_REQUIRED_BY_RAW_INPUT"
+      },
+      "commonContractState": "PASS",
+      "declaredTestCommitmentState": "NOT_REQUIRED_BY_RAW_INPUT"
+    },
+    "PLAN": {
+      "workSha256": "9c9fc0a77d289b302886119dcc81f6ee6185f404e6522d13179c5410bca5b68d",
+      "sourceRepaired": false,
+      "specSha256": "7d79dce0db3446472ad6bf92e64dc61af2577dc4201c37f90ee8c807558a822e",
+      "implementationSha256": "16574673559784665f35ae133b759b11d7d4133c05ca4908614fbddc7a9a4b7e",
+      "extractedTypeScriptBlocks": 3,
+      "usageFragmentCompiledAsTest": false,
+      "providedCompilerFlagsExitCode": 1,
+      "controlledInteropProfileUsed": true,
+      "jointCompileExitCode": 0,
+      "authoredTestSha256": "307b758dca7ddd56858b3ed365a7c103cfdd2a7ee94a47b263dbe0ac9e06ef24",
+      "independent": {
+        "tests": 12,
+        "passed": 12,
+        "rows": [
+          {
+            "index": 1,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 2,
+            "state": "PASS",
+            "expected": "a\nA",
+            "actual": "a\nA"
+          },
+          {
+            "index": 3,
+            "state": "PASS",
+            "expected": " a\na",
+            "actual": " a\na"
+          },
+          {
+            "index": 4,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 5,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 6,
+            "state": "PASS",
+            "expected": "a\n\nb",
+            "actual": "a\n\nb"
+          },
+          {
+            "index": 7,
+            "state": "PASS",
+            "expected": "",
+            "actual": ""
+          },
+          {
+            "index": 8,
+            "state": "PASS",
+            "expected": "你好\nHello",
+            "actual": "你好\nHello"
+          },
+          {
+            "index": 9,
+            "state": "PASS",
+            "expected": "b\na",
+            "actual": "b\na"
+          },
+          {
+            "index": 10,
+            "state": "PASS",
+            "expected": "a\nb\n",
+            "actual": "a\nb\n"
+          },
+          {
+            "index": 11,
+            "state": "PASS",
+            "expected": "\na",
+            "actual": "\na"
+          },
+          {
+            "index": 12,
+            "state": "PASS",
+            "expected": "\t\n ",
+            "actual": "\t\n "
+          }
+        ]
+      },
+      "authoredTests": {
+        "exitCode": 1,
+        "tests": 18,
+        "pass": 17,
+        "fail": 1,
+        "skipped": 0,
+        "state": "FAIL"
+      },
+      "commonContractState": "PASS",
+      "declaredTestCommitmentState": "FAIL"
+    }
+  },
+  "sourceRepaired": false,
+  "oldCredentialAndProfessionalGates": "OPEN_NOT_COVERED",
+  "externalModelCalls": 0
+}

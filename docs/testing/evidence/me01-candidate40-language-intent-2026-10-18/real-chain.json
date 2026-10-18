@@ -1,0 +1,297 @@
+{
+  "candidate": "candidate40",
+  "sourceCommit": "00bdf04a",
+  "sourceManifestSha256": "e3176ca5949d7c02b0421f935117c470e917910ab848560ddd4aec5964dfcde6",
+  "sameAccount": true,
+  "accountsCreated": 0,
+  "isolatedLocalPorts": [
+    9001,
+    5174,
+    9325
+  ],
+  "dailyBackendReplacedDuringEvaluation": false,
+  "nativeCopyMatches": true,
+  "storeMatches": true,
+  "historyMatches": true,
+  "newHistoryRecords": 1,
+  "copySha256": "c6879ffbb07ae8f770c6b3016e1cab2bf018bc9efeb3b8b5de728a3967d07041",
+  "actualAnswers": [
+    {
+      "questionId": "dedup_unit",
+      "question": "这里的“文本去重”是按什么单位判断重复？",
+      "answer": "按整行完全相同去重。"
+    },
+    {
+      "questionId": "match_rule",
+      "question": "判断“重复”时采用哪种比较规则？",
+      "answer": "按整行逐字符完全一致比较，区分大小写，保留原行内容；支持LF与CRLF，输出统一LF，保留首次出现的空行。"
+    },
+    {
+      "questionId": "delivery_form",
+      "question": "这次需要交付什么形态的 TypeScript 实现？",
+      "answer": "包装由实现者合理处理；提供接受文本字符串并返回去重后字符串的通用TypeScript实现，不引入第三方运行依赖。"
+    },
+    {
+      "questionId": "output_order",
+      "question": "去重后结果需要保持什么顺序？",
+      "answer": "保留第一次出现的顺序。"
+    }
+  ],
+  "normalTaskQuestionCount": 4,
+  "userReservedChoiceQuestionCount": 4,
+  "taskIdentityGate": "PASS",
+  "userReservedChoiceGate": "PASS",
+  "ordinaryPackagingGate": "FAIL",
+  "enhancementModelAttempts": 1,
+  "newExtraExampleRequirement": false,
+  "sameInformationExecution": true,
+  "copiedBodyPatched": false,
+  "commonFunctionComparison": "TIE_12_OF_12_EACH",
+  "completeEnhancedDelivery": "FAIL",
+  "reviews": {
+    "R1": {
+      "preferredOriginal": "B",
+      "preferredArm": "RAW",
+      "nonVerbatimOccurrences": 1,
+      "nonVerbatimQuotes": [
+        {
+          "work": "A",
+          "dimension": "clarity",
+          "quote": "// 尾随换行：\"a\\n\" 切分为 [\"a\", \"\"]，末尾空行会被保留（首次出现）。"
+        }
+      ],
+      "distinctNonVerbatimQuotes": 1,
+      "scoresOriginal": {
+        "A": {
+          "accuracy": 4,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 4
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 5
+        }
+      },
+      "notReleaseApproval": true
+    },
+    "R2": {
+      "preferredOriginal": "A",
+      "preferredArm": "PLAN",
+      "nonVerbatimOccurrences": 12,
+      "nonVerbatimQuotes": [
+        {
+          "work": "A",
+          "dimension": "accuracy",
+          "quote": "按整行逐字符完全一致（区分大小写）视为重复，保留首次出现的行及其顺序；支持 LF / CRLF，输出统一 LF；保留首次出现的空行。"
+        },
+        {
+          "work": "A",
+          "dimension": "accuracy",
+          "quote": "if (!seen.has(line)) { seen.add(line); result.push(line); }"
+        },
+        {
+          "work": "A",
+          "dimension": "completeness",
+          "quote": "if (typeof input !== \"string\") { throw new TypeError(...); }"
+        },
+        {
+          "work": "A",
+          "dimension": "completeness",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "A",
+          "dimension": "clarity",
+          "quote": "按整行逐字符完全一致（区分大小写）视为重复，保留首次出现的行及其顺序；支持 LF / CRLF，输出统一 LF；保留首次出现的空行。"
+        },
+        {
+          "work": "A",
+          "dimension": "clarity",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "A",
+          "dimension": "executability",
+          "quote": "if (typeof input !== \"string\") { throw new TypeError(...); }"
+        },
+        {
+          "work": "A",
+          "dimension": "executability",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "B",
+          "dimension": "accuracy",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "B",
+          "dimension": "completeness",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "B",
+          "dimension": "clarity",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "B",
+          "dimension": "executability",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        }
+      ],
+      "distinctNonVerbatimQuotes": 4,
+      "scoresOriginal": {
+        "A": {
+          "accuracy": 5,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 5
+        },
+        "B": {
+          "accuracy": 5,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 5
+        }
+      },
+      "notReleaseApproval": true
+    }
+  },
+  "calls": [
+    {
+      "trace": 416,
+      "purpose": "PLANNING",
+      "model": "deepseek-flash",
+      "status": 200,
+      "elapsedMs": 4777,
+      "usage": {
+        "prompt_tokens": 2970,
+        "completion_tokens": 932,
+        "total_tokens": 3902,
+        "prompt_tokens_details": {
+          "cached_tokens": 2560
+        },
+        "prompt_cache_hit_tokens": 2560,
+        "prompt_cache_miss_tokens": 410
+      },
+      "rawRecordSha256": "a2cf55d75598b610d54f37ff95d6c033d27f8e6687ea3ca2b09b1d30d27051cd"
+    },
+    {
+      "trace": 417,
+      "purpose": "PLANNING",
+      "model": "deepseek-flash",
+      "status": 200,
+      "elapsedMs": 4275,
+      "usage": {
+        "prompt_tokens": 2985,
+        "completion_tokens": 870,
+        "total_tokens": 3855,
+        "prompt_tokens_details": {
+          "cached_tokens": 2560
+        },
+        "prompt_cache_hit_tokens": 2560,
+        "prompt_cache_miss_tokens": 425
+      },
+      "rawRecordSha256": "726286382e3ccae65ed475bcd08e040e896cb784d689a7ea045d8c1de3c65014"
+    },
+    {
+      "trace": 418,
+      "purpose": "PLATFORM_GENERATION",
+      "model": "deepseek-flash",
+      "status": 200,
+      "elapsedMs": 2892,
+      "usage": {
+        "prompt_tokens": 6432,
+        "completion_tokens": 360,
+        "total_tokens": 6792,
+        "prompt_tokens_details": {
+          "cached_tokens": 5120
+        },
+        "prompt_cache_hit_tokens": 5120,
+        "prompt_cache_miss_tokens": 1312
+      },
+      "rawRecordSha256": "7d5c2e35257428879c79fe4a3f752e45232a4ce824e02387991bb0e40f4307f0"
+    },
+    {
+      "trace": 419,
+      "purpose": "EXECUTION",
+      "model": "deepseek-flash",
+      "status": 200,
+      "elapsedMs": 2263,
+      "usage": {
+        "prompt_tokens": 157,
+        "completion_tokens": 349,
+        "total_tokens": 506,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 157
+      },
+      "rawRecordSha256": "9da230708e79796afe70a3470f24de5cc16f24e71c0395443b8840bf7c6fa4d2"
+    },
+    {
+      "trace": 420,
+      "purpose": "EXECUTION",
+      "model": "deepseek-flash",
+      "status": 200,
+      "elapsedMs": 7405,
+      "usage": {
+        "prompt_tokens": 489,
+        "completion_tokens": 1729,
+        "total_tokens": 2218,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 489
+      },
+      "rawRecordSha256": "739a2f7bbf2fdc86e6726ef8d9f64ee9358bf2a35a335dbebafbc507e355eec5"
+    },
+    {
+      "trace": 421,
+      "purpose": "REVIEW",
+      "model": "deepseek-flash",
+      "status": 200,
+      "elapsedMs": 4931,
+      "usage": {
+        "prompt_tokens": 3525,
+        "completion_tokens": 925,
+        "total_tokens": 4450,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 3525
+      },
+      "rawRecordSha256": "b22daff9e1893f13b4a43b545680c1c5551b33d2511d78a5897cff8781996934"
+    },
+    {
+      "trace": 422,
+      "purpose": "REVIEW",
+      "model": "deepseek-v4-pro",
+      "status": 200,
+      "elapsedMs": 14546,
+      "usage": {
+        "prompt_tokens": 3522,
+        "completion_tokens": 1846,
+        "total_tokens": 5368,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 3522
+      },
+      "rawRecordSha256": "7f6411ad8889487a06e5b519acd57b990c52108fbe4b4cf927c38e2d80fd8ec4"
+    }
+  ],
+  "totalTokens": 27091,
+  "upstreamElapsedMsSum": 41089,
+  "notAnEndToEndDuration": true,
+  "qualityRetries": 0,
+  "overallQualityGate": "OPEN_OR_FAIL_NOT_RELEASED"
+}

@@ -1,0 +1,136 @@
+{
+  "caseId": "TS-IMPLICIT",
+  "questionCount": 4,
+  "summary": "目标是使用 TypeScript 实现文本去重，但“文本”的粒度、去重判定口径和交付形态会直接改变实现与验收结果，需要先确认。",
+  "questions": [
+    {
+      "id": "dedup_unit",
+      "question": "这里的“文本去重”是按什么单位判断重复？",
+      "hint": "按行、按整段还是按记录去重，会决定解析方式和输出结构。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "line",
+          "label": "按行去重",
+          "description": "以每一行文本为一条记录，重复行只保留一条。",
+          "answer": "按行去重：以每一行文本为一条记录，重复行只保留一条。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "record",
+          "label": "按记录去重",
+          "description": "输入为多条记录（如数组或文件中的条目），按整条记录内容判重。",
+          "answer": "按记录去重：输入为多条记录，按整条记录内容判重。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "whole",
+          "label": "整段文本判重",
+          "description": "把整段文本作为一个整体，只判断是否与已有文本完全相同。",
+          "answer": "整段文本判重：把整段文本作为一个整体，判断是否与已有文本完全相同。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "match_rule",
+      "question": "判断“重复”时采用哪种比较规则？",
+      "hint": "是否忽略大小写、首尾空白或内部空白，会改变去重结果。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "exact",
+          "label": "完全一致",
+          "description": "仅当文本逐字符完全相同时视为重复。",
+          "answer": "完全一致：仅当文本逐字符完全相同时视为重复。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "trim",
+          "label": "忽略首尾空白",
+          "description": "去除首尾空白后比较，其余字符需完全一致。",
+          "answer": "忽略首尾空白：去除首尾空白后比较，其余字符需完全一致。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "case_trim",
+          "label": "忽略大小写和首尾空白",
+          "description": "去除首尾空白并统一大小写后比较。",
+          "answer": "忽略大小写和首尾空白：去除首尾空白并统一大小写后比较。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "delivery_form",
+      "question": "这次需要交付什么形态的 TypeScript 实现？",
+      "hint": "是可直接调用的函数库还是命令行工具，会影响入口、参数和运行说明。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "lib",
+          "label": "可复用函数/模块",
+          "description": "提供导出函数或类，供其他代码调用。",
+          "answer": "交付可复用的 TypeScript 函数/模块，供其他代码调用。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "cli",
+          "label": "命令行工具",
+          "description": "提供命令行入口，读取输入并输出去重结果。",
+          "answer": "交付命令行工具，读取输入并输出去重结果。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "both",
+          "label": "函数库加命令行",
+          "description": "既提供可复用模块，也提供命令行入口。",
+          "answer": "同时交付可复用模块和命令行入口。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "output_order",
+      "question": "去重后结果需要保持什么顺序？",
+      "hint": "保留首次出现顺序还是排序输出，会影响结果的可预期性。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "first",
+          "label": "保留首次出现顺序",
+          "description": "按输入中第一次出现的顺序输出去重结果。",
+          "answer": "保留首次出现顺序：按输入中第一次出现的顺序输出去重结果。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "sorted",
+          "label": "排序后输出",
+          "description": "去重后按统一排序规则输出。",
+          "answer": "排序后输出：去重后按统一排序规则输出。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "actualAnswersSubmitted": false
+}

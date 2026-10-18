@@ -1,0 +1,54 @@
+{
+  "version": "candidate40-live",
+  "phase": "candidateValidation",
+  "purpose": "EXECUTION",
+  "operation": "TS-PLAN",
+  "sourceCandidate": "candidate40",
+  "startedAt": "2026-10-18T12:43:50.038Z",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "user",
+        "content": "需要交付一个可直接使用的 TypeScript 文本去重实现，去重口径与输出形态已明确。\r\n\r\n实现按整行去重的 TypeScript 逻辑：判断重复时按整行逐字符完全一致比较，区分大小写，保留原行内容；支持 LF 与 CRLF 换行，输出统一使用 LF；保留首次出现的空行；去重后结果保持各行第一次出现的顺序。\r\n- 按整行完全相同去重。\r\n- 支持LF与CRLF，输出统一LF，保留首次出现的空行。\r\n- 保留第一次出现的顺序。\r\n\r\n提供接受文本字符串并返回去重后字符串的通用 TypeScript 实现，不引入第三方运行依赖；包装方式由实现者合理处理。同时给出必要的运行说明，以及覆盖正常、异常和边界场景的测试。\r\n- 包装由实现者合理处理\r\n\r\n- 校验外部输入，明确处理空字符串、空值、非法值等边界情况。\r\n- 未实际运行的验证不得写成通过。\r\n任务相关约束：\r\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。\r\n- 处理可预期异常，返回清晰且不含敏感值的错误信息，不吞掉或伪造错误。\r\n- 为核心逻辑补充正常、异常和边界场景测试。\r\n\r\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\r\n- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\r\n- 输出应直接回应用户目标，遵守已明确的交付范围和格式；仅在任务需要且未限制额外说明时，说明关键依据、适用范围和限制条件。\r\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\r\n- 以下操作必须先获得人工确认：删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署。\r\n\r\n核对整行完全一致、大小写区分、LF 与 CRLF 混合输入、空行保留、首次出现顺序等场景；测试覆盖正常、异常与边界情况，并如实说明实际运行结果。"
+      }
+    ]
+  },
+  "httpStatus": 200,
+  "responseRawSha256": "67d31b2b23c0251118e3b50a8f003c51e9199002c754beb7e77cae299eb15295",
+  "response": {
+    "id": "618362de-da9e-413f-b1f3-bc836eb2a707",
+    "object": "chat.completion",
+    "created": 1792327430,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "# 整行去重 TypeScript 实现\n\n## 实现代码\n\n```typescript\n/**\n * 按整行去重：整行逐字符完全一致（区分大小写）视为重复，\n * 保留首次出现的行及其顺序；支持 LF / CRLF，输出统一 LF；\n * 保留首次出现的空行。\n *\n * @param input 待去重文本\n * @returns 去重后的文本（LF 换行）\n * @throws TypeError 当 input 不是字符串时\n */\nexport function dedupeLines(input: string): string {\n  if (typeof input !== \"string\") {\n    throw new TypeError(\n      `dedupeLines: expected a string, received ${input === null ? \"null\" : typeof input}`\n    );\n  }\n\n  // 空字符串直接返回空字符串（无行可去重）\n  if (input.length === 0) {\n    return \"\";\n  }\n\n  // 统一换行：先 CRLF -> LF，再处理孤立 CR（视为换行，避免残留 \\r 影响比较）\n  const normalized = input.replace(/\\r\\n/g, \"\\n\").replace(/\\r/g, \"\\n\");\n\n  const lines = normalized.split(\"\\n\");\n  const seen = new Set<string>();\n  const result: string[] = [];\n\n  for (const line of lines) {\n    if (!seen.has(line)) {\n      seen.add(line);\n      result.push(line);\n    }\n  }\n\n  return result.join(\"\\n\");\n}\n```\n\n### 设计说明\n\n- **换行归一化**：`\\r\\n` → `\\n`，孤立 `\\r` 也视为换行（避免 Windows 老式换行残留 `\\r` 造成误判）。归一化后按 `\\n` 切分。\n- **整行比较**：使用 `Set<string>` 做精确字符串匹配，天然区分大小写、保留原字符。\n- **空行**：空字符串 `\"\"` 作为合法行参与去重，首次出现的空行被保留，后续空行被去除。\n- **顺序**：按遍历顺序 push，天然保留首次出现顺序。\n- **尾随换行**：`\"a\\n\"` 切分为 `[\"a\", \"\"]`，末尾空行会被保留（首次出现）。这是\"按行\"语义的自然结果；若业务上不希望保留末尾空行，需在调用方 trim 或另行约定——此处按\"保留首次出现的空行\"规则处理。\n- **异常**：非字符串输入抛 `TypeError`，错误信息不含输入内容（避免泄露敏感值）。\n\n## 运行说明\n\n- 无第三方运行依赖，仅用标准库。\n- 目标环境需支持 `Set`（ES2015+）。\n- 编译：`tsc dedupe.ts --target es2019 --module commonjs`，或直接在支持 TS 的运行时（如 ts-node / Deno / Bun）中运行。\n- 调用示例：\n\n```typescript\nimport { dedupeLines } from \"./dedupe\";\n\ndedupeLines(\"a\\r\\nb\\na\\nb\"); // \"a\\nb\"\n```\n\n## 测试\n\n使用 Node 内置 `node:test` + `node:assert`（无第三方依赖）。文件 `dedupe.test.ts`：\n\n```typescript\nimport { test } from \"node:test\";\nimport assert from \"node:assert/strict\";\nimport { dedupeLines } from \"./dedupe\";\n\n// ---------- 正常场景 ----------\ntest(\"整行完全一致去重，保留首次顺序\", () => {\n  assert.equal(dedupeLines(\"a\\nb\\na\\nc\\nb\"), \"a\\nb\\nc\");\n});\n\ntest(\"区分大小写\", () => {\n  assert.equal(dedupeLines(\"A\\na\\nA\"), \"A\\na\");\n});\n\ntest(\"LF 与 CRLF 混合输入，输出统一 LF\", () => {\n  assert.equal(dedupeLines(\"a\\r\\nb\\na\\nb\\r\\nc\"), \"a\\nb\\nc\");\n});\n\ntest(\"保留首次出现的空行\", () => {\n  assert.equal(dedupeLines(\"a\\n\\nb\\n\\nc\"), \"a\\n\\nb\\nc\");\n});\n\ntest(\"仅空行输入\", () => {\n  assert.equal(dedupeLines(\"\\n\\n\\n\"), \"\\n\");\n});\n\ntest(\"前导空行保留\", () => {\n  assert.equal(dedupeLines(\"\\na\\n\\na\"), \"\\na\");\n});\n\ntest(\"行内空格差异视为不同行\", () => {\n  assert.equal(dedupeLines(\"a b\\na  b\\na b\"), \"a b\\na  b\");\n});\n\ntest(\"行内容原样保留（含制表符、Unicode）\", () => {\n  assert.equal(dedupeLines(\"x\\ty\\nx\\ty\\n中文\\n中文\"), \"x\\ty\\n中文\");\n});\n\n// ---------- 边界场景 ----------\ntest(\"空字符串返回空字符串\", () => {\n  assert.equal(dedupeLines(\"\"), \"\");\n});\n\ntest(\"单行无换行\", () => {\n  assert.equal(dedupeLines(\"only\"), \"only\");\n});\n\ntest(\"单行带尾随换行\", () => {\n  assert.equal(dedupeLines(\"only\\n\"), \"only\\n\");\n});\n\ntest(\"全部重复行\", () => {\n  assert.equal(dedupeLines(\"a\\na\\na\"), \"a\");\n});\n\ntest(\"孤立 CR 视为换行\", () => {\n  assert.equal(dedupeLines(\"a\\rb\\ra\"), \"a\\nb\");\n});\n\n// ---------- 异常场景 ----------\ntest(\"null 抛 TypeError\", () => {\n  assert.throws(() => dedupeLines(null as unknown as string), TypeError);\n});\n\ntest(\"undefined 抛 TypeError\", () => {\n  assert.throws(() => dedupeLines(undefined as unknown as string), TypeError);\n});\n\ntest(\"数字抛 TypeError\", () => {\n  assert.throws(() => dedupeLines(123 as unknown as string), TypeError);\n});\n\ntest(\"对象抛 TypeError\", () => {\n  assert.throws(() => dedupeLines({} as unknown as string), TypeError);\n});\n\ntest(\"错误信息不含输入内容\", () => {\n  try {\n    dedupeLines({ secret: \"token-abc\" } as unknown as string);\n    assert.fail(\"should have thrown\");\n  } catch (e) {\n    assert.ok(e instanceof TypeError);\n    assert.ok(!String((e as Error).message).includes(\"token-abc\"));\n  }\n});\n```\n\n运行：\n\n```bash\nnode --test --experimental-strip-types dedupe.test.ts\n# 或先编译再运行\ntsc dedupe.ts dedupe.test.ts --target es2019 --module commonjs\nnode --test dedupe.test.js\n```\n\n## 实际运行结果说明\n\n**如实声明**：本次回答在文本环境中生成，**未实际执行上述测试代码**，因此不能声称测试\"已通过\"。上述测试为可运行的用例设计，覆盖了：\n\n- 正常：整行去重、大小写区分、LF/CRLF 混合、空行保留、顺序保持、行内空格差异、Unicode/制表符原样保留。\n- 边界：空字符串、单行、尾随换行、全重复、孤立 CR。\n- 异常：`null` / `undefined` / 数字 / 对象输入抛 `TypeError`，且错误信息不含输入内容。\n\n请在本地按上述命令运行以确认结果。\n\n## 已知事实 / 假设 / 限制\n\n- **已知事实**：实现仅用标准库；按整行精确匹配；输出 LF；保留首次出现顺序与首次空行。\n- **假设**：孤立 `\\r` 视为换行（常见文本语义）；末尾换行产生的空行按\"首次出现空行\"规则保留。若业务要求去除末尾空行，需在调用方处理或调整实现。\n- **限制**：未做超长文本的内存优化（`split` 会整体驻留内存）；对超大文件建议流式处理，本实现面向字符串入参。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 489,
+      "completion_tokens": 1729,
+      "total_tokens": 2218,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 489
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "elapsedMs": 7405
+}

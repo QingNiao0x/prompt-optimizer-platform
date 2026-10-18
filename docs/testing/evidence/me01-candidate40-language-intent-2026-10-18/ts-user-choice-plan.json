@@ -1,0 +1,136 @@
+{
+  "caseId": "TS-USER-CHOICE",
+  "questionCount": 4,
+  "summary": "目标是使用 TypeScript 实现文本去重，用户已明确要求先确认交付形态是脚本还是函数。还需确认去重口径等会改变实现结果的关键业务规则。",
+  "questions": [
+    {
+      "id": "delivery_form",
+      "question": "这次文本去重希望交付为哪种形态？",
+      "hint": "你已说明交付方式由你决定，需要先确认是可直接运行的脚本还是可复用的函数。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "script",
+          "label": "可运行脚本",
+          "description": "交付一个可直接执行的 TypeScript 脚本，读取输入并输出去重结果。",
+          "answer": "交付可运行的 TypeScript 脚本",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "function",
+          "label": "可复用函数",
+          "description": "交付一个可被其他代码调用的 TypeScript 去重函数。",
+          "answer": "交付可复用的 TypeScript 去重函数",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "both",
+          "label": "函数加脚本入口",
+          "description": "以可复用函数为核心，并附带一个可运行的脚本入口。",
+          "answer": "交付可复用函数，并附带可运行的脚本入口",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "dedup_unit",
+      "question": "文本去重以什么为比较单位？",
+      "hint": "按行、按整段还是按其他单位去重，会直接改变实现和输出结果。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "line",
+          "label": "按行去重",
+          "description": "逐行比较，删除重复行，保留首次出现的行。",
+          "answer": "按行去重，删除重复行并保留首次出现的行",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "whole_text",
+          "label": "整段文本去重",
+          "description": "把每段完整文本作为一个整体比较，删除完全相同的段落。",
+          "answer": "按整段文本去重，删除完全相同的段落",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "custom_unit",
+          "label": "其他单位",
+          "description": "按自定义的分隔或比较单位去重。",
+          "answer": "按自定义单位去重",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "match_rule",
+      "question": "判断两条文本是否重复时采用什么规则？",
+      "hint": "是否区分大小写、是否忽略首尾空白，会影响哪些内容被视为重复。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "exact",
+          "label": "完全一致",
+          "description": "仅当文本逐字符完全相同时才视为重复。",
+          "answer": "仅当文本逐字符完全相同时视为重复",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "trim",
+          "label": "忽略首尾空白",
+          "description": "去除首尾空白后比较，其余字符需完全一致。",
+          "answer": "去除首尾空白后比较，其余字符需完全一致",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "trim_case",
+          "label": "忽略首尾空白和大小写",
+          "description": "去除首尾空白并统一大小写后比较。",
+          "answer": "去除首尾空白并统一大小写后比较",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "keep_order",
+      "question": "去重后输出是否需要保持原有顺序？",
+      "hint": "保留首次出现顺序与允许重排会影响输出结果和实现方式。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "keep_first",
+          "label": "保留首次出现顺序",
+          "description": "按原文本中首次出现的顺序输出去重结果。",
+          "answer": "保留首次出现的顺序输出去重结果",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "no_order",
+          "label": "不要求顺序",
+          "description": "只保证去重，输出顺序不作要求。",
+          "answer": "只保证去重，输出顺序不作要求",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "actualAnswersSubmitted": false
+}

@@ -1,0 +1,142 @@
+{
+  "works": [
+    {
+      "id": "A",
+      "scores": {
+        "accuracy": 5,
+        "completeness": 5,
+        "clarity": 5,
+        "executability": 5
+      },
+      "evidence": {
+        "accuracy": {
+          "quotes": [
+            "按整行逐字符完全一致（区分大小写）视为重复，保留首次出现的行及其顺序；支持 LF / CRLF，输出统一 LF；保留首次出现的空行。",
+            "const normalized = input.replace(/\\r\\n/g, \"\\n\").replace(/\\r/g, \"\\n\");",
+            "const seen = new Set<string>();",
+            "if (!seen.has(line)) { seen.add(line); result.push(line); }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "实现与需求一致：整行精确匹配、区分大小写、保留首次顺序、支持LF/CRLF并输出LF、保留首次空行。代码逻辑正确，无事实错误。"
+        },
+        "completeness": {
+          "quotes": [
+            "export function dedupeLines(input: string): string {",
+            "if (typeof input !== \"string\") { throw new TypeError(...); }",
+            "const normalized = input.replace(/\\r\\n/g, \"\\n\").replace(/\\r/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "const seen = new Set<string>();",
+            "const result: string[] = [];",
+            "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "提供了完整的通用TypeScript函数，包含输入验证、换行归一化、去重逻辑和返回。还提供了设计说明、运行说明、测试用例和限制说明，覆盖了所有要求。"
+        },
+        "clarity": {
+          "quotes": [
+            "按整行逐字符完全一致（区分大小写）视为重复，保留首次出现的行及其顺序；支持 LF / CRLF，输出统一 LF；保留首次出现的空行。",
+            "const normalized = input.replace(/\\r\\n/g, \"\\n\").replace(/\\r/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "const seen = new Set<string>();",
+            "const result: string[] = [];",
+            "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "代码注释清晰，变量命名合理，逻辑步骤明确。设计说明和限制部分进一步澄清了边界情况，如孤立CR处理和尾随换行。整体易于理解。"
+        },
+        "executability": {
+          "quotes": [
+            "export function dedupeLines(input: string): string {",
+            "if (typeof input !== \"string\") { throw new TypeError(...); }",
+            "const normalized = input.replace(/\\r\\n/g, \"\\n\").replace(/\\r/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "const seen = new Set<string>();",
+            "const result: string[] = [];",
+            "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "代码可直接使用，无第三方依赖，仅需ES2015+环境。提供了编译和运行命令。独立检查显示12个独立测试全部通过，但作者自测有1个失败（可能是测试用例问题），不影响核心功能。"
+        }
+      },
+      "severeFailures": [],
+      "uncertainties": [
+        "作者自测有1个失败，但未说明具体失败用例，可能影响对边界情况的信心。"
+      ]
+    },
+    {
+      "id": "B",
+      "scores": {
+        "accuracy": 5,
+        "completeness": 4,
+        "clarity": 5,
+        "executability": 5
+      },
+      "evidence": {
+        "accuracy": {
+          "quotes": [
+            "按整行逐字符完全一致比较（区分大小写）",
+            "保留第一次出现的顺序",
+            "支持 LF 与 CRLF 输入",
+            "输出统一使用 LF",
+            "保留首次出现的空行",
+            "const normalized = text.replace(/\\r\\n/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "const seen = new Set<string>();",
+            "const result: string[] = [];",
+            "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "实现与需求一致：整行精确匹配、区分大小写、保留首次顺序、支持LF/CRLF并输出LF、保留首次空行。代码逻辑正确，无事实错误。"
+        },
+        "completeness": {
+          "quotes": [
+            "export function dedupeLines(text: string): string {",
+            "const normalized = text.replace(/\\r\\n/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "const seen = new Set<string>();",
+            "const result: string[] = [];",
+            "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "提供了核心函数，但缺少输入类型检查（如非字符串输入的处理），且未提供测试用例或运行说明。虽然需求未明确要求测试，但作为完整交付，缺少这些可能影响可用性。"
+        },
+        "clarity": {
+          "quotes": [
+            "按整行逐字符完全一致比较（区分大小写）",
+            "保留第一次出现的顺序",
+            "支持 LF 与 CRLF 输入",
+            "输出统一使用 LF",
+            "保留首次出现的空行",
+            "const normalized = text.replace(/\\r\\n/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "const seen = new Set<string>();",
+            "const result: string[] = [];",
+            "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "代码简洁，注释清晰，变量命名合理，逻辑步骤明确。使用示例进一步说明了行为。整体易于理解。"
+        },
+        "executability": {
+          "quotes": [
+            "export function dedupeLines(text: string): string {",
+            "const normalized = text.replace(/\\r\\n/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "const seen = new Set<string>();",
+            "const result: string[] = [];",
+            "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "代码可直接使用，无第三方依赖，仅需ES2015+环境。独立检查显示12个独立测试全部通过。"
+        }
+      },
+      "severeFailures": [],
+      "uncertainties": []
+    }
+  ],
+  "preferred": "A",
+  "reason": "作品A和B在核心功能上均正确且可执行，但A提供了更完整的交付，包括输入验证、设计说明、测试用例和限制说明，而B缺少输入验证和测试。因此A在完整性和健壮性上更优。",
+  "limitations": [
+    "独立检查显示两份作品的12个独立测试均通过，但作者自测中A有1个失败，未明确失败原因。",
+    "作品B未提供输入类型检查，可能在非字符串输入时产生意外行为。"
+  ]
+}
