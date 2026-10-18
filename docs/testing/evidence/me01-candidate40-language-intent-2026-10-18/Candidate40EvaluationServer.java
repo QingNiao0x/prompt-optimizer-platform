@@ -178,6 +178,13 @@ public class Candidate40EvaluationServer {
                             throw new IOException("Only authorized official DeepSeek endpoint allowed");
                         JsonNode input = JSON.readTree(body);
                         JsonNode batch = approvedBatch(JSON.readTree(ROOT.resolve("protocol.json").toFile()));
+                        // 拒绝前保留已绑定合成增强的序列化原件；不记录请求头或凭据，便于离线核对工具误判。
+                        if ("PLATFORM_GENERATION".equals(inputPurpose(input))) {
+                            actualConfirmation();
+                            Path capture = LIVE.resolve("serialization-captures"); Files.createDirectories(capture);
+                            Files.writeString(capture.resolve(UUID.randomUUID() + ".json"),
+                                    JSON.writerWithDefaultPrettyPrinter().writeValueAsString(input));
+                        }
                         if (!input.path("model").asText().equals(batch.path("model").asText())
                                 || !inputAllowed(input, frozenCases(batch), batch))
                             throw new IOException("Input or model outside frozen approved scope");
