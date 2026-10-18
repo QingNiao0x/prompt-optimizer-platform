@@ -1,0 +1,88 @@
+{
+  "candidate": "candidate35",
+  "codeCommit": "91d4bacf",
+  "evidenceType": "ONE_REAL_BROWSER_GENERATION_NATIVE_COPY_AND_DATABASE_HISTORY",
+  "trace": 389,
+  "requestId": "72ccc6ff-4c4b-4a8f-b78b-7b59d76ce739",
+  "httpStatus": 200,
+  "model": "deepseek-flash",
+  "mock": false,
+  "actualNewCalls": 1,
+  "protocolRepairCalls": 0,
+  "qualityRetries": 0,
+  "newDownstreamWorks": 0,
+  "newAIReviews": 0,
+  "upstreamDurationMs": 5670,
+  "platformLatencyMs": 7227,
+  "usage": {
+    "prompt_tokens": 7639,
+    "completion_tokens": 788,
+    "total_tokens": 8427,
+    "prompt_tokens_details": {
+      "cached_tokens": 2048
+    },
+    "prompt_cache_hit_tokens": 2048,
+    "prompt_cache_miss_tokens": 5591
+  },
+  "sameAccount": true,
+  "newAccountsCreated": 0,
+  "nativeCopyMatchesResponse": true,
+  "history": {
+    "bodyMatches": true,
+    "formatMatches": true,
+    "sectionsMatch": true,
+    "ambiguitiesMatch": true,
+    "constraintsMatch": true,
+    "constraintGroupsMatch": true,
+    "newRecordFound": true,
+    "totalDelta": 1
+  },
+  "mandatoryRuleCount": 5,
+  "exactMandatoryOccurrences": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "legacyPlatformHeadingOccurrences": 0,
+  "ambiguityCount": 0,
+  "bodyCodePointLength": 1048,
+  "bodyHanCount": 719,
+  "bodySha256": "c90060d68178d1bd7822c31acd0288b99c0b74a7aca3b8d04350d54230fc67bd",
+  "traceSha256": "1d15cdd1a467c10375e616b23ef4245b37a3336aa1ee02e086f8a63a07aba3ae",
+  "sourceManifestSha256": "3b962474593fd393b1a5a69ed78a0d6cf9b92aca32878b9c8f5e4001ae845506",
+  "rawModelResponseSha256": "e285b22836593f861ee7e340c998e909cec146d534c68e447d13c343afe464f8",
+  "platformResponseSha256": "c26281331fd6da22e3707b10ad927e9540c07d3056101f94b8d8dcc4ee066868",
+  "hardGate": "PASS_FOR_THIS_PRESENTATION_COPY_HISTORY_CASE",
+  "qualityGate": "OPEN_WITH_PRIOR_FAILURES_AND_NO_NEW_DOWNSTREAM_WORKS",
+  "observations": [
+    "Original code delivery is preserved; no model execution work was requested by the product.",
+    "Action/error/test obligations remain repeated across model sections. Conservative platform projection retains differently worded requirements.",
+    "Model constraint wording overlaps canonical credential and protected-path rules; exact rules remain authoritative and complete.",
+    "No new example obligation was observed in this response; one observation does not close the prior OFF-switch failure.",
+    "No new generated program exists here, so prior URL canary echo and missing-test gates remain open."
+  ],
+  "budget": {
+    "candidate": "candidate35",
+    "status": "CLOSED",
+    "actualNewCalls": 1,
+    "actualCallsAfterBatch": 389,
+    "phases": {
+      "baseline": 70,
+      "candidateValidation": 319
+    },
+    "formalLimits": {
+      "total": 399,
+      "baseline": 80,
+      "candidate": 319
+    },
+    "failedOrUnresolvedCallsCounted": 0,
+    "unusedAllowance": 0,
+    "qualityRetriesPerformed": 0,
+    "newDownstreamWorks": 0,
+    "newAIReviews": 0,
+    "qualityGate": "OPEN_WITH_PRIOR_WORK_FAILURES_AND_LIMITED_NEW_COVERAGE",
+    "closedAt": "2026-10-18T04:50:54.039733+00:00"
+  }
+}

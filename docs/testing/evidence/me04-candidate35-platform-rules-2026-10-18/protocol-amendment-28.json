@@ -1,0 +1,63 @@
+{
+  "amendment": 28,
+  "status": "APPLIED_BY_EXPLICIT_ROOT_EXECUTION",
+  "candidate": "candidate35",
+  "authorizationBasis": "User authorized autonomous selection and reallocation within current formal numerical limits; root must record an explicit amendment after source/tool freeze before any live action.",
+  "formalLimitsBefore": {
+    "total": 399,
+    "baseline": 80,
+    "candidate": 319
+  },
+  "formalLimitsAfter": {
+    "total": 399,
+    "baseline": 80,
+    "candidate": 319
+  },
+  "maximumNewCalls": 1,
+  "purposeMaximums": {
+    "PLATFORM_GENERATION": 1,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "reallocation": {
+    "from": "candidate34-live",
+    "closedUnused": 1,
+    "allocated": 1
+  },
+  "additionalCalls": 0,
+  "callsBefore": 388,
+  "candidateCallsBefore": 318,
+  "sourceManifestSha256": "3b962474593fd393b1a5a69ed78a0d6cf9b92aca32878b9c8f5e4001ae845506",
+  "casesSha256": "071417081f1bd60d5b962ef1ece0ac886f15ad3c6cb2bf591f6b1b1432ba4cb7",
+  "expectedEnhancementInputs": [
+    {
+      "caseId": "REQUESTS-COMPACT",
+      "rawPrompt": "使用requests库爬取网页标题。",
+      "planConfirmed": false,
+      "promptFormat": "COMPACT",
+      "taskView": {
+        "intent": {
+          "templateCode": "FEATURE_DEVELOPMENT",
+          "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": true
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动追加示例段。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      "rewriteStrategy": {
+        "mode": "NATURAL_FRAMEWORK",
+        "instruction": "先理解本次交付物，再结合taskView的有效确认、适用资料和真正未决事项判断能否执行，不按中文标题、关键词数量或输入长短判断充分性。\n返回assessment：sufficiency为SUFFICIENT或NEEDS_COMPLETION，gaps最多6项，presentation为COMPACT或STRUCTURED。\ngap仅记录影响执行或作品质量的具体缺口，每项含kind、missing、completion、basis。kind可为EXECUTION_STEP、INPUT_OUTPUT、EDGE_CASE、QUALITY_CHECK、PROFESSIONAL_OPTION、USER_DECISION。\nbasis写一句与本次目标、资料或明确要求对应的依据，不输出内部推理。没有实质缺口时SUFFICIENT且gaps=[]，保留有效原句及明确限制，只整理必要位置，不为四要素和验收新增章节。\n有缺口时只补相关内容：模糊需求给具体执行动作、候选方法、适用条件和结果检查；专业建议标明候选，不把语言、算法、口径或研究参数伪装成已选事实。仅真正需用户决定且改变结果的未知进入ambiguities，其余由执行者完成。\nNEEDS_COMPLETION没有USER_DECISION缺口时，ambiguities必须为空。用户委托设计的常规方法属于PROFESSIONAL_OPTION，不是用户必须先回答的选择；真实授权、资料冲突及用户明确保留的未决参数继续归入USER_DECISION。\npendingDecisions中designDelegated=true仅授权提出拟议设计，scope仍为UNRESOLVED，既有参数不能写成已选；对已委托的拟议方法给出可实施主建议及条件，不重复索要设计答案。实际参数、独立对象和新条件仍按各自来源与状态处理。\n每个新增要求应对应真实缺口；原文已有的公平对照、方法条件、数值与格式不再次扩写。Plan新增决定只更新责任段并同步失效的旧表述；保留独立未知、对象、条件及来源。\n对充分需求，把有效原句分别放入其责任段，不同义扩写或重述成验收列表；不要在背景盘点缺项。对仅有宽泛专业目标的需求，缺少操作化方法与比较办法属于实质缺口，不能以“下游自己设计全部细节”为由判为充分。简单沟通任务可用常规表达直接完成，不为凑gaps制造问题。\n四要素用于内部覆盖校验，每项只承载自己的必要信息，不重复同一句，也不是强制下游作品章节；按照本次生成策略组织表达。\n简单沟通的补全服务行动、受众与语气，不补造截止日期、汇总职责或工作进展，不擅自放宽行动要求；委婉催交仍须表达请对方发送，不改成无需着急或可不提交。未知称呼可用自然中性称呼，不制造姓名填空模板。\nSUFFICIENT时直接分配原文的完整句子到四个责任段，必要时仅拆分句子，不同义改写；同一完整要求只放一个段落。已有格式、长度和限制不要在ACCEPTANCE重新抄写，未要求且无独立检查价值时省略ACCEPTANCE。背景没有额外事实时只写受众或输入对象，不盘点未提供的资料。\n对宽泛研究目标，在用户原定交付物中给出可直接开展的推荐执行路径，说明选择依据、适用条件与可调整处，必要时再列替代方法；保留原定报告、方法正文、方案或模板的类型，不把建议独立改成另一交付物。推荐明确为拟议设计，不冒充用户确认或已实施。不能只列若干候选而将方法、评分、随机化全部退回用户。区分自然使用效果与同等信息下的方法收益；保留谁提问、谁回答及答案的用途，不把用户问答改成模型自行列计划。同信息对照两组获得并可使用同一原始任务与同一份实际确认信息；直接组不追问不等于不能使用已提供答案，不能通过修改回答、换任务或额外修订轮次伪造公平。\ntaskView.userMeaningAnchors把受众和研究主题按有效输入分别定位：为某人撰写不是以该人为研究对象，不从受众推定受试者。沿用明确研究主题，实际招募建议另标为建议。\n研究设计中的“比较公平”须落实到信息流：自然使用比较可以测提问获取信息的收益；同信息比较先取得并封存同一案例的实际答案，再让各组获得逐字相同的信息。不要让某组实际得到新答案而另一组没有，却仅用一句“信息相同”代替流程；委托的评分、随机化与记录流程给出拟议主方案及条件，实际授权和用户保留选择仍提问。\n\n本次交付画像：SOFTWARE_IMPLEMENTATION；有效执行要求来源数：0；未决来源条数：0。计数只说明输入构成，不代表充分性。\n本次主框架：RACE；框架职责：适用视角、动作、上下文、交付结果；选择依据：理解、实现或分析需把行动与适用上下文和交付相连。把原定行动与适用工程或业务事实相连，明确交付物与可检查要求，角色视角确有需要时再使用。不把拟实现能力写成已完成，不以专业身份或背景技术词增加代码任务。只采用该主框架的适用要素，框架名称不写入可复制正文。按原任务及已有信息填入具体动作、必要规则和交付，重叠职责合并表达；无依据的角色、背景、示例或实验不凑字段。四要素仍用于内部覆盖校验；保留交付层级、有效确认、否定、例外与未决状态，充分需求保留有效原句。当前示例契约未授权附加示例，不因框架名称增加示例。\n本次采用自然表达，assessment.presentation=COMPACT。先依据主框架确定当前任务的动作、必要规则和交付重点，再写紧凑、可直接交给执行者的提示词；不是先写模块正文再去掉标题。\nsections仍返回内部四要素，但content应是可连读的具体指令；把规则紧邻其适用动作或交付表达，不写“背景：”“任务：”“输出：”等模块标签，不逐项展示框架字母或框架名称。每项要求只放一处；允许有助执行的短列表、原有代码与必要引用。\n优先保留充分需求的有效原句；只在有缺口时补相关动作和条件。不给简单任务扩写角色背景、流程或验收，不把复杂任务缩成空架子。未决事项仍由平台统一保留，不能压缩掉否定、例外、对象、参数状态和来源。\n"
+      }
+    }
+  ],
+  "qualityRetriesAllowed": false
+}

@@ -1,6 +1,6 @@
 {
   "candidate": "candidate35",
-  "status": "PREPARED_NOT_ACTIVATED",
+  "status": "CLOSED",
   "automaticCallsBefore": 388,
   "candidateCallsBefore": 318,
   "formalLimitsBefore": {
@@ -27,7 +27,7 @@
   "maximumCandidateAfter": 319,
   "casesFile": "live-cases.json",
   "casesSha256": "919e81effcf0b86dda03c0a37098abcdb7d1a927e7d91f29f3813ec365966de2",
-  "sourceManifestSha256": null,
+  "sourceManifestSha256": "3b962474593fd393b1a5a69ed78a0d6cf9b92aca32878b9c8f5e4001ae845506",
   "models": {
     "enhancement": "deepseek-flash"
   },
@@ -38,5 +38,8 @@
   },
   "authorizationBasis": "User authorized autonomous selection and reallocation within current formal numerical limits; root must record an explicit amendment after source/tool freeze before any live action.",
   "dependencyFailurePolicy": "At most one actual upstream call; any provider failure or invalid response ends the live branch. No repair request, downstream work, AI review or quality retry is funded.",
-  "preparationModelCalls": 0
+  "preparationModelCalls": 0,
+  "sourceRevision": "frozen",
+  "actualNewCalls": 1,
+  "actualCallsAfterBatch": 389
 }
