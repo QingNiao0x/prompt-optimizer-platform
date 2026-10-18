@@ -1,0 +1,17 @@
+{
+  "stage": "BEFORE_FIRST_MODEL_CALL",
+  "attribution": "EVALUATION_TOOL",
+  "originalFailure": "Unexpected Plan request",
+  "cause": "The reused browser guard incorrectly required a prepared context reference for an empty-context task; the current workbench deliberately sends planningContext=null when there is no context source.",
+  "codeEvidence": "PromptWorkbenchPage.prepareContextForPlan returns true without preparation when hasContextSource=false; buildOptimizationPlanRequest serializes the absent reference as null.",
+  "fix": "Require the exact native no-context Plan body, compare missing/null confirmation references using the same DTO semantics, and retain real planId/question/answer binding.",
+  "preservedPrivateFailure": "tmp/me01-candidate40-live-20261018/tool-failure-before-model-1",
+  "modelCallsBeforeAndAfter": 415,
+  "paidRequestsInFailedAttempt": 0,
+  "qualityRetry": false,
+  "productCodeChanged": false,
+  "capsOrScopeChanged": false,
+  "correctedScopeChecks": 25,
+  "captchaAttempts": 2,
+  "newAccountsCreated": 0
+}

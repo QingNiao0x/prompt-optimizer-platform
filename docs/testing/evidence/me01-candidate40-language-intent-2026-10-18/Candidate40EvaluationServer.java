@@ -65,8 +65,12 @@ public class Candidate40EvaluationServer {
     static JsonNode actualConfirmation() throws IOException {
         JsonNode plan = JSON.readTree(LIVE.resolve("flow/TS-IMPLICIT/plan.private.json").toFile());
         JsonNode submitted = JSON.readTree(LIVE.resolve("flow/TS-IMPLICIT/actual-confirmation.private.json").toFile());
+        JsonNode reference = plan.path("body").path("data").path("planningContext");
+        JsonNode submittedReference = submitted.path("planningContext");
+        boolean sameReference = reference.isMissingNode() || reference.isNull()
+                ? submittedReference.isMissingNode() || submittedReference.isNull() : reference.equals(submittedReference);
         if (plan.path("status").asInt() != 200 || !plan.path("body").path("data").path("planId").equals(submitted.path("planId"))
-                || !plan.path("body").path("data").path("planningContext").equals(submitted.path("planningContext")))
+                || !sameReference)
             throw new IOException("Real bound Plan required");
         JsonNode questions = plan.path("body").path("data").path("questions");
         if (submitted.path("answers").size() != questions.size()) throw new IOException("Incomplete bound answers");
@@ -88,7 +92,8 @@ public class Candidate40EvaluationServer {
                     && request.enhancement().promptFormat() != null
                     && request.enhancement().promptFormat().name().equals(sample.path("promptFormat").asText())
                     && Boolean.TRUE.equals(request.enhancement().includeExamples()) == sample.path("includeExamples").asBoolean()
-                    && JSON.valueToTree(request.planConfirmation()).equals(actualConfirmation())) return true;
+                    && request.planConfirmation().equals(JSON.convertValue(actualConfirmation(),
+                        com.promptoptimizer.enhancement.dto.PlanConfirmation.class))) return true;
         }
         return false;
     }

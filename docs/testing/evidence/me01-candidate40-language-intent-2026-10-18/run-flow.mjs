@@ -83,6 +83,9 @@ async function verifyChain(before) {
 
 try {
   if (command === 'plan') {
+    for (const previous of context.pages()) {
+      if (await previous.evaluate(() => window.name).catch(() => '') === pageName) await previous.close();
+    }
     page = await context.newPage(); await page.goto(`${origin}/workbench`, { waitUntil: 'domcontentloaded' });
     await page.evaluate(name => { window.name = name; localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify({ enabled: true, introSeen: true })); }, pageName);
     await page.reload({ waitUntil: 'domcontentloaded' });
@@ -112,7 +115,10 @@ try {
       await preflight(); const body = request.postDataJSON();
       if (body.rawPrompt !== frozen.sample.rawPrompt || body.modelId !== 'deepseek:deepseek-flash' || body.conversationHistory.length) throw Error('Task/model drift');
       if (path.endsWith('/plan')) {
-        if (command !== 'plan' || ++counts.plan !== 1 || body.contextDescription || !body.planningContext?.contextId) throw Error('Unexpected Plan request');
+        const expectedPlan = { rawPrompt: frozen.sample.rawPrompt, modelId: 'deepseek:deepseek-flash',
+          contextDescription: '', conversationHistory: [], planningContext: null };
+        // 无资料的真实页面不准备空上下文；只接受原生 null，不能由脚本伪造引用。
+        if (command !== 'plan' || ++counts.plan !== 1 || !equal(body, expectedPlan)) throw Error('Unexpected Plan request');
         await save('plan-request.private.json', body);
       } else {
         if (planCapture) await planCapture;

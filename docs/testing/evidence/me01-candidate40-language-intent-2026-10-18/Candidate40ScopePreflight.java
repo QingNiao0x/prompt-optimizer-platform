@@ -42,6 +42,11 @@ public final class Candidate40ScopePreflight {
         payload.set("taskView", JSON.valueToTree(view.modelInput()));
         payload.putObject("rewriteStrategy").put("mode", PromptRewriteStrategy.forTask(view, PromptFormat.COMPACT).mode());
         check(allowed(payload, cases, answers), "bound input view");
+        var noReference = JSON.createObjectNode().put("planId", "actual-plan"); noReference.putArray("answers");
+        var explicitNull = noReference.deepCopy(); explicitNull.putNull("planningContext");
+        check(JSON.convertValue(noReference, com.promptoptimizer.enhancement.dto.PlanConfirmation.class)
+                .equals(JSON.convertValue(explicitNull, com.promptoptimizer.enhancement.dto.PlanConfirmation.class)),
+                "native missing/null reference has the same DTO meaning");
         var changed = payload.deepCopy(); changed.putArray("planAnswers"); check(!allowed(changed, cases, answers), "omitted answer");
         changed = payload.deepCopy(); changed.set("taskView", JSON.createObjectNode()); check(!allowed(changed, cases, answers), "view drift");
         changed = payload.deepCopy(); changed.put("planConfirmed", false); check(!allowed(changed, cases, answers), "not Plan");
