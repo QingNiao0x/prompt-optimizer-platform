@@ -42,8 +42,10 @@ public class PromptTemplateRegistryImpl implements PromptTemplateRegistry {
         ));
         values.put(TemplateCode.FEATURE_DEVELOPMENT, new PromptTemplate(
                 TemplateCode.FEATURE_DEVELOPMENT,
-                "给出实现方案、需要新增或修改的模块、关键代码、接口契约和测试方案。",
-                "功能满足正常流程、异常流程和边界场景，并且现有功能保持兼容。",
+                // 同一兼容模板也承接仅需方案的请求；先守住交付层级，再按任务需要补充工程细节。
+                "实现任务交付可直接使用的代码及必要运行说明，不以方案文档代替；"
+                        + "仅要求方案、文档或解释时保持相应范围。模块、接口和验证内容按本次需要组织。",
+                "按原定交付核对正常、异常与边界场景；涉及修改时保持现有功能兼容，未实际运行的验证不得写成通过。",
                 "提供一个最小输入示例和对应的预期输出。"
         ));
         values.put(TemplateCode.BUG_FIX, new PromptTemplate(

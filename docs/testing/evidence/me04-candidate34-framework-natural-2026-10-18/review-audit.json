@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "sourceCandidate": "candidate34",
+  "rubricId": "me00a-four-dimension-rubric-v1",
+  "modelCalls": 0,
+  "independentTaskCount": 1,
+  "works": 3,
+  "primaryComparisons": 2,
+  "blindPairsPerReviewer": 3,
+  "sameSupplier": true,
+  "reviewsAreNotHumanExperts": true,
+  "auditInputHashes": {
+    "cases": "1ce1b50340ef8e3eedfac5009284f4e58a60fee0798559bfa490d6854415e0f2",
+    "mapping": "0a6f57dcc899ae7893968d5751be9ad5b000db56e1121d53f89720700d1df16e",
+    "reviewInputLock": "4a2546e29203406c6d944a02f2fa2eb5fa94a7503858d9c90bace647f8ba4457",
+    "hardChecks": "4e4bf73e23a9c5e1c4a4936debe5b682476792c8b11d9eefe85520df2552e1e7"
+  },
+  "reviewers": {
+    "R1": {
+      "requestedModel": "deepseek-flash",
+      "providerReportedModel": "deepseek-flash",
+      "requestSha256": "3f54f4fca4dba8baee8d542091ccc0a30550a4f538d7384ed6b8b321926ac5bd",
+      "responseRawSha256": "e5cb1fbe929f286462d761e86506809c41065e02e7a40cb4522e9f28da529fa6",
+      "reviewTextSha256": "712b9a14ba506b9a95a1ec29cea81ae1b05a19f6cedf4cde174bb68b09136e03",
+      "strictJsonAndSchemaValid": true,
+      "deterministicChecksPassed": false,
+      "issueCount": 7,
+      "reportedSevereIssueCount": 0,
+      "auditErrors": [
+        {
+          "code": "EVIDENCE_WRONG_SOURCE",
+          "issueIndex": 5,
+          "pairIndex": null
+        }
+      ]
+    },
+    "R2": {
+      "requestedModel": "deepseek-v4-pro",
+      "providerReportedModel": "deepseek-v4-pro",
+      "requestSha256": "164ccca7389587235400a6eed38c18686ca390aeab8509e08df431c9e145d353",
+      "responseRawSha256": "36067c21368fd284130d6a6352abfcd7b28563aaa7ec4ea3fdbbd1459b5518b6",
+      "reviewTextSha256": "9043afe88bd325e7b196c14c51e5ba04653d31d21f05d2e321927d6c3aacaf02",
+      "strictJsonAndSchemaValid": true,
+      "deterministicChecksPassed": true,
+      "issueCount": 3,
+      "reportedSevereIssueCount": 0,
+      "auditErrors": []
+    }
+  },
+  "comparisons": [
+    {
+      "group": "REQUESTS",
+      "enhancedArm": "COMPACT",
+      "originalVerdicts": {
+        "R1": "WIN",
+        "R2": "WIN"
+      },
+      "allDeterministicReviewChecksPassed": false,
+      "originalVerdictsDisagree": false,
+      "severeReportsDisagree": false,
+      "hardGate": "FAIL",
+      "baselineHardGate": "OPEN",
+      "enhancedHardGate": "FAIL",
+      "baselineSevereReported": false,
+      "enhancedSevereReported": false,
+      "severeIssueState": "NONE_REPORTED",
+      "acceptanceGate": "FAIL",
+      "acceptanceBlocked": true
+    },
+    {
+      "group": "REQUESTS",
+      "enhancedArm": "STRUCTURED",
+      "originalVerdicts": {
+        "R1": "WIN",
+        "R2": "WIN"
+      },
+      "allDeterministicReviewChecksPassed": false,
+      "originalVerdictsDisagree": false,
+      "severeReportsDisagree": false,
+      "hardGate": "FAIL",
+      "baselineHardGate": "OPEN",
+      "enhancedHardGate": "FAIL",
+      "baselineSevereReported": false,
+      "enhancedSevereReported": false,
+      "severeIssueState": "NONE_REPORTED",
+      "acceptanceGate": "FAIL",
+      "acceptanceBlocked": true
+    }
+  ],
+  "disagreements": {
+    "verdictComparisons": 0,
+    "severeReportComparisons": 0,
+    "scoreGapsAtLeastTwo": [],
+    "scoreComparisonAvailable": true
+  },
+  "finalAcceptanceGate": "FAIL",
+  "scoresCannotOverrideHardOrSevereFailure": true,
+  "semanticJudgmentAutomaticallyPassed": false,
+  "limitation": "1 task and one work per arm are diagnostic only; no statistical win-rate or global quality claim is established."
+}

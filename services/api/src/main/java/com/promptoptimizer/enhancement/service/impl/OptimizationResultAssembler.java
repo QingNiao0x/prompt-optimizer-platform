@@ -300,8 +300,10 @@ public class OptimizationResultAssembler {
         String codeDelivery = JavaCodeDeliveryContract.guidance(effectiveRawPrompt);
         if (!codeDelivery.isBlank()) {
             PromptSection output = sections.get(PromptSectionType.OUTPUT);
-            sections.put(PromptSectionType.OUTPUT, new PromptSection(output.type(), output.title(),
-                    output.content() + "\n\n" + codeDelivery));
+            // 同一完整义务可能已落入任务/输出/约束；只补缺项，原契约和来源不随投影精简而丢失。
+            List<String> missingDelivery = AdditionalRuleProjection.uncoveredJavaDelivery(sections, codeDelivery);
+            if (!missingDelivery.isEmpty()) sections.put(PromptSectionType.OUTPUT, new PromptSection(output.type(), output.title(),
+                    output.content() + "\n\nJava21交付：\n- " + String.join("\n- ", missingDelivery)));
         }
         if (draftDelivery.active()) {
             PromptSection output = sections.get(PromptSectionType.OUTPUT);
@@ -631,12 +633,10 @@ public class OptimizationResultAssembler {
 
     /** 只补未完整覆盖的明确原句，条件、例外与否定一起保留；权限红线继续独立强制追加。 */
     private void appendExplicitRules(Map<PromptSectionType, PromptSection> sections, List<String> rules) {
-        String executionText = List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT,
-                        PromptSectionType.CONSTRAINTS, PromptSectionType.ACCEPTANCE).stream()
-                .filter(sections::containsKey).map(type -> sections.get(type).content())
-                .collect(Collectors.joining("\n"));
-        List<String> missing = rules.stream().filter(rule -> !fidelityGuard.containsRule(executionText, rule)).toList();
-        appendConstraintBlock(sections, "用户明确规则（须遵守平台权限边界）", missing);
+        List<String> missing = rules.stream().flatMap(rule -> AdditionalRuleProjection.uncovered(sections, rule).stream())
+                .distinct().toList();
+        // missing已排除条件/引用等非当前证据，不能再用裸全文相等或子串把缺项过滤掉。
+        appendMissingConstraintBlock(sections, "用户明确规则（须遵守平台权限边界）", missing);
     }
 
     /** 未决与冲突必须随可复制正文交付；不把暂不确定转换成模型自行选择的许可。 */
@@ -926,7 +926,7 @@ public class OptimizationResultAssembler {
                 current.type(), current.title(), PlatformConstraintRenderer.providerText(current.content(), rawPrompt, constraints)));
         // 仅任务规则采用完整断言覆盖；权限、来源、未决状态及固定平台块保留各自原有保护。
         appendMissingConstraintBlock(sections, "任务相关约束", TaskConstraintCoverage.uncovered(
-                sections.get(PromptSectionType.CONSTRAINTS).content(), constraints.taskSpecific()));
+                sections, constraints.taskSpecific()));
         appendConstraintBlock(sections, "用户补充权限边界", constraints.additionalPermissions());
     }
 

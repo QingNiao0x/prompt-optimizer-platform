@@ -1,0 +1,22 @@
+{
+  "kind": "POST_CALL_OFFLINE_TOOL_CORRIGENDUM",
+  "modelCalls": 0,
+  "reason": "Audit limitation copied from a two-task batch; current frozen input contains one task. Metadata wording now derives from GROUPS.length. AI review originals and verdicts unchanged.",
+  "initialAuditSha256": "00c6025c2e9e6ed4beec7874f728dbc4de6cf09bf09c604ad542e89b443f58d1",
+  "correctedAuditSha256": "aae42610144b05ace93faa3d15f237886ad8d933fcb684fe3ee3ad750e8059ea",
+  "tools": [
+    {
+      "path": "audit-reviews.mjs",
+      "sha256": "b359b3ddeadea0a5b3c643d148e9f3eb35057c1e2072af1c24ddeb93dc4510a2"
+    },
+    {
+      "path": "close-batch.py",
+      "sha256": "2a22131f61fd7f845168b93780ce832b4405d18543262671e30f7ee1f1b19c41"
+    },
+    {
+      "path": "freeze-r1.py",
+      "sha256": "c8e1fecbe28b4a0fee32a4702ac5857000e0a3147aaac1c89c9e6f55f5c212ec"
+    }
+  ],
+  "r1FreezeToolUpdate": "Final affected-build path and six-file source delta include the reviewed inherited-negation safeguard; no model calls."
+}

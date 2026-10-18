@@ -36,8 +36,9 @@ class PromptFrameworkSelectorTest {
                 Arguments.of("把会议通知翻译成英文，只输出译文。", PromptFramework.ICIO),
                 Arguments.of("为咖啡馆创作三条不同风格的宣传文案。", PromptFramework.CRISPE),
                 Arguments.of("先熟悉项目结构，阅读现有源码并核对模块职责。", PromptFramework.RACE),
-                Arguments.of("给合作方写一封简短邮件，礼貌询问交付进度。", PromptFramework.TASTE),
-                Arguments.of("为六年级设计分数比较教案。", PromptFramework.ALIGN));
+                Arguments.of("给合作方写一封简短邮件，礼貌询问交付进度。", PromptFramework.APE),
+                Arguments.of("为六年级设计分数比较教案。", PromptFramework.RISE),
+                Arguments.of("使用requests库爬取网页标题。", PromptFramework.RACE));
     }
 
     @ParameterizedTest
@@ -48,7 +49,9 @@ class PromptFrameworkSelectorTest {
         assertThat(selected.framework()).isEqualTo(expected);
         assertThat(selected.reason()).isNotBlank();
         assertThat(selected.instruction()).contains(expected.guidance(), expected.boundary());
-        assertThat(selected.instruction()).contains("本次主框架：" + expected.name(), "选择依据：", "自然段落顺序：");
+        assertThat(selected.instruction()).contains("本次主框架：" + expected.name(), "选择依据：", "框架职责：" + expected.focus());
+        assertThat(selected.instruction()).doesNotContain("自然段落顺序：", "BACKGROUND→", "CLARIFICATIONS→");
+        assertThat(selected.framework()).isNotIn(PromptFramework.TASTE, PromptFramework.ALIGN);
         assertThat(selected.sectionOrder()).containsExactlyInAnyOrder(PromptSectionType.values());
         assertThat(task.effectivePrompt()).isEqualTo(raw);
     }
@@ -71,7 +74,7 @@ class PromptFrameworkSelectorTest {
     })
     void writingAboutCodeOrReferencesDoesNotBecomeADevelopmentFramework(String raw) {
         var result = PromptFrameworkSelector.select(task(raw));
-        assertThat(result.framework()).isEqualTo(PromptFramework.TASTE);
+        assertThat(result.framework()).isEqualTo(PromptFramework.RACE);
     }
 
     @ParameterizedTest
@@ -121,7 +124,7 @@ class PromptFrameworkSelectorTest {
     @Test
     void explicitTaskHeadingResumesAfterAReferenceSection() {
         var raw = "## Source\nCreate an improvement plan.\n## Task\nWrite an email to a colleague about the meeting.";
-        assertThat(PromptFrameworkSelector.select(task(raw)).framework()).isEqualTo(PromptFramework.TASTE);
+        assertThat(PromptFrameworkSelector.select(task(raw)).framework()).isEqualTo(PromptFramework.APE);
     }
 
     @Test

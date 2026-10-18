@@ -45,16 +45,16 @@ public record PromptRewriteStrategy(String mode, String instruction) {
                 + "；有效执行要求来源数：" + task.executionRequirements().size()
                 + "；未决来源条数：" + task.pendingDecisions().size()
                 + "。计数只说明输入构成，不代表充分性。";
+        var selection = PromptFrameworkSelector.select(task);
         if (format == PromptFormat.COMPACT) {
-            var selection = PromptFrameworkSelector.select(task);
             return new PromptRewriteStrategy("NATURAL_FRAMEWORK", common + "\n" + selection.instruction() + "\n" + """
                     本次采用自然表达，assessment.presentation=COMPACT。先依据主框架确定当前任务的动作、必要规则和交付重点，再写紧凑、可直接交给执行者的提示词；不是先写模块正文再去掉标题。
-                    sections仍返回内部四要素，但content应是连贯的指令片段，不写“背景：”“任务：”“输出：”等模块标签，不逐项展示框架字母或框架名称。每项要求只放一处；允许有助执行的短列表、原有代码与必要引用。
+                    sections仍返回内部四要素，但content应是可连读的具体指令；把规则紧邻其适用动作或交付表达，不写“背景：”“任务：”“输出：”等模块标签，不逐项展示框架字母或框架名称。每项要求只放一处；允许有助执行的短列表、原有代码与必要引用。
                     优先保留充分需求的有效原句；只在有缺口时补相关动作和条件。不给简单任务扩写角色背景、流程或验收，不把复杂任务缩成空架子。未决事项仍由平台统一保留，不能压缩掉否定、例外、对象、参数状态和来源。
                     """);
         }
         if (format == PromptFormat.STRUCTURED) {
-            return new PromptRewriteStrategy("FOCUSED_MODULES", common + "\n" + """
+            return new PromptRewriteStrategy("FOCUSED_MODULES", common + "\n" + selection.instruction() + "\n" + """
                     本次采用结构化表达，assessment.presentation=STRUCTURED。先划清模块职责再生成正文：背景只留影响执行的事实，任务集中表达目标与动作，输出明确交付，约束集中表达业务边界；有独立检查价值时才加验收。
                     有依赖的步骤按顺序组织；业务规则明确对象、触发条件、动作与例外，必要的正反场景用于说明适用与不适用，不能自动编造案例或增加示例要求。不要从自然段落机械拆标题，也不要在各节重复同一要求。
                     简单且充分的任务保持短小，复杂多目标才展开。与自然模式保持同一事实、有效确认、未决状态和原定交付；原文严格格式与禁例继续约束下游作品，不把提示词章节强加给作品。

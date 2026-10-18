@@ -1,0 +1,67 @@
+{
+  "candidate": "candidate34",
+  "status": "APPROVED_OPEN",
+  "automaticCallsBefore": 381,
+  "candidateCallsBefore": 311,
+  "formalLimitsBefore": {
+    "total": 399,
+    "baseline": 80,
+    "candidate": 319
+  },
+  "maximumNewCalls": 8,
+  "purposeMaximums": {
+    "PLATFORM_GENERATION": 3,
+    "EXECUTION": 3,
+    "REVIEW": 2
+  },
+  "requests": {
+    "directEnhancement": 2,
+    "works": 3,
+    "independentAiReviews": 2
+  },
+  "reallocationProposed": {
+    "candidate33ClosedUnused": 8
+  },
+  "additionalAllowanceRequested": 0,
+  "formalLimitsProposed": {
+    "total": 399,
+    "baseline": 80,
+    "candidate": 319
+  },
+  "maximumActualAfter": 389,
+  "maximumCandidateAfter": 319,
+  "models": {
+    "enhancement": "deepseek-flash",
+    "execution": "deepseek-flash",
+    "review": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ]
+  },
+  "parameters": {
+    "temperature": 0.2,
+    "max_tokens": 10000,
+    "thinking": "disabled"
+  },
+  "retryBoundary": "Existing protocol repair only. Both generation requests SHARE three upstream calls total; no execution/review quality retry.",
+  "casesFile": "live-cases.json",
+  "casesSha256": "1ce1b50340ef8e3eedfac5009284f4e58a60fee0798559bfa490d6854415e0f2",
+  "sourceManifestSha256": "e6a0493cb5ec396e2fca994ade11fe9502b574d5472660de0fe5243dd28e9822",
+  "sourceRevision": "initial",
+  "sameTestAccountFile": "tmp/local-acceptance/account.json",
+  "credentialStorage": "tmp/local-acceptance/credential.dpapi",
+  "accountCreationAllowed": false,
+  "failureCallsCounted": true,
+  "automaticReallocationAllowed": false,
+  "authorizationBasis": "User authorized autonomous choice of this candidate and explicit reallocation within existing formal limits; not effective until recorded.",
+  "dependencyFailurePolicy": "If either generation fails, has no valid native copy/history, or the shared generation quota is exhausted, skip dependent works/reviews. Do not replenish the sub-budget, recreate missing prompts or retry for quality.",
+  "excluded": [
+    "Natural Plan calls",
+    "New seven-case baseline",
+    "Additional model matrix",
+    "Transfer of baseline allowance",
+    "Quality retry",
+    "New accounts or plaintext credential copies"
+  ],
+  "preparationModelCalls": 0
+}

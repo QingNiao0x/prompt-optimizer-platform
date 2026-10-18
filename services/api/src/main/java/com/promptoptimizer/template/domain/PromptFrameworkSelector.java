@@ -34,8 +34,8 @@ public final class PromptFrameworkSelector {
     private static final Pattern EXCLUDED = pattern("^(?:请)?(?:不要|不得|禁止|不能|无需|不必|不需要|不要求|尚未|尚待|未决定|如果|若|假如|以后|未来|后续|候选|例如|示例|参考资料|资料|材料|原文)|^(?:do not|don't|never|if|later|example|reference|source(?: text)?|materials?|next (?:time|stage|phase))\\b");
     private static final Pattern NON_CURRENT_PREFIX = pattern("(?:不|不要|不得|禁止|无需|不必|不需要|不要求|尚未|未决定|以后|未来|后续|如果|假如|是否|暂不|后再|再考虑"
             + "|\\b(?:do not|don't|never|not|later|if|whether|next (?:time|stage|phase))\\b)[^。；;，,\\n.!?]{0,35}$");
-    private static final String COMMON = "仅以该主框架组织当前优化提示词，框架名称不写入可复制正文。保留原任务、交付层级、有效确认及全部重要条件；"
-            + "四要素仍完整覆盖，自然正文不强制模块标题。充分需求保留有效原句，建议、事实与未决状态分开，不为框架补造角色、背景、步骤、量表或验收段。";
+    private static final String COMMON = "只采用该主框架的适用要素，框架名称不写入可复制正文。按原任务及已有信息填入具体动作、必要规则和交付，重叠职责合并表达；"
+            + "无依据的角色、背景、示例或实验不凑字段。四要素仍用于内部覆盖校验；保留交付层级、有效确认、否定、例外与未决状态，充分需求保留有效原句。";
 
     private PromptFrameworkSelector() { }
 
@@ -64,9 +64,9 @@ public final class PromptFrameworkSelector {
         if (intent.templateCode() == TemplateCode.REFACTORING || profile == TaskDeliveryProfile.ACADEMIC_METHODS
                 || matches(PLAN, active) && (profile == TaskDeliveryProfile.GENERAL || profile == TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION))
             return selection(task, PromptFramework.ROSES, "规划或研究方案需区分现状、目标状态、条件和步骤");
-        if (profile == TaskDeliveryProfile.TEACHING || profile == TaskDeliveryProfile.DATA_ANALYSIS
+        if (profile == TaskDeliveryProfile.TEACHING
                 || profile == TaskDeliveryProfile.GENERAL && matches(LEARNING, active))
-            return selection(task, PromptFramework.ALIGN, "学习或分析目标需要匹配理解深度、材料与规则");
+            return selection(task, PromptFramework.RISE, "教学需依据已知受众与输入安排学习步骤和预期结果");
         if (profile == TaskDeliveryProfile.MATERIAL_SYNTHESIS || profile == TaskDeliveryProfile.MEETING_MINUTES
                 || profile == TaskDeliveryProfile.GENERAL && matches(MATERIAL, active) && matches(MATERIAL_ACTION, active))
             return selection(task, PromptFramework.CARE, "以材料为依据整理交付，区分来源和期望结果");
@@ -75,9 +75,11 @@ public final class PromptFrameworkSelector {
         if (profile == TaskDeliveryProfile.NEWS_RELEASE || profile == TaskDeliveryProfile.INSTITUTIONAL_REPORT
                 || profile == TaskDeliveryProfile.ACADEMIC_WRITING || profile == TaskDeliveryProfile.USER_GUIDE
                 || profile == TaskDeliveryProfile.GENERAL && matches(WRITING, active))
-            return selection(task, PromptFramework.TASTE, "写作交付以目标受众、组织和语气为重点");
-        if (profile == TaskDeliveryProfile.PROJECT_UNDERSTANDING || profile == TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION)
-            return selection(task, PromptFramework.RACE, "工程理解或实现需把行动与适用上下文和交付相连");
+            return selection(task, profile == TaskDeliveryProfile.GENERAL ? PromptFramework.APE : PromptFramework.RACE,
+                    "写作行动对应已知受众、用途和交付期望，沿用原有语气与格式");
+        if (profile == TaskDeliveryProfile.PROJECT_UNDERSTANDING || profile == TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION
+                || profile == TaskDeliveryProfile.DATA_ANALYSIS)
+            return selection(task, PromptFramework.RACE, "理解、实现或分析需把行动与适用上下文和交付相连");
         if (matches(EXPLANATION, active)) return selection(task, PromptFramework.ERA, "简明解释或改写先限定交付期望");
         if (matches(TASK_LIST, active)) return selection(task, PromptFramework.TAG, "单一任务清单突出动作与目标");
         if (matches(MATERIAL, active)) return selection(task, PromptFramework.ICIO, "有明确输入材料时分清指令、输入和输出");
@@ -90,9 +92,9 @@ public final class PromptFrameworkSelector {
                 ? "示例按既有示例契约提供，不把演示升级为事实。" : "当前示例契约未授权附加示例，不因框架名称增加示例。";
         if (task != null && !task.pendingDecisions().isEmpty())
             boundary += "重要未决参数继续保持原状态，仅限制依赖内容，不能为满足框架自行选值。";
-        String audit = "本次主框架：" + framework.name() + "（" + framework.focus() + "）；选择依据：" + reason
-                + "；自然段落顺序：" + framework.sectionOrder().stream().map(Enum::name)
-                .collect(java.util.stream.Collectors.joining("→")) + "。";
+        // 内部分段类型用于协议校验，不作为模型必须逐节填满的正文大纲。
+        String audit = "本次主框架：" + framework.name() + "；框架职责：" + framework.focus()
+                + "；选择依据：" + reason + "。";
         return new PromptFrameworkSelection(framework, reason,
                 audit + framework.guidance() + framework.boundary() + COMMON + boundary, framework.sectionOrder());
     }

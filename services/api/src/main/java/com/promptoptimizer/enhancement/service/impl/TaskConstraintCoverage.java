@@ -1,5 +1,8 @@
 package com.promptoptimizer.enhancement.service.impl;
 
+import com.promptoptimizer.enhancement.domain.PromptSection;
+import com.promptoptimizer.enhancement.domain.PromptSectionType;
+import java.util.Map;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +34,13 @@ final class TaskConstraintCoverage {
         return rules.stream().distinct().filter(rule -> rule.lines().count() > 1
                 // 多行来源契约沿用既有逐字覆盖，不将完整来源块拆成可互相借用的单句。
                 ? !content.contains(rule) : !statements.contains(canonical(rule))).toList();
+    }
+
+    /** 跨执行段落只接受完整同向断言；多行来源继续保留原有整体边界，不拆出可互相借用的部分。 */
+    static List<String> uncovered(Map<PromptSectionType, PromptSection> sections, List<String> rules) {
+        String constraints = AdditionalRuleProjection.currentConstraintText(sections);
+        return uncovered(constraints, rules).stream().filter(rule -> rule.lines().count() > 1
+                || !AdditionalRuleProjection.coveredCompleteRule(sections, rule)).toList();
     }
 
     /** 保留整行覆盖，并接收当前段落中可独立核对的完整句；不确定作用域时仍保留原规则。 */

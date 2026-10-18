@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "candidate": "candidate34",
+  "sourceRevision": "initial",
+  "date": "2026-10-18",
+  "reviewer": "AI coding agent offline evidence audit; not human or domain-expert review",
+  "newModelCalls": 0,
+  "sourceManifestSha256": "e6a0493cb5ec396e2fca994ade11fe9502b574d5472660de0fe5243dd28e9822",
+  "inputEvidence": {
+    "real-chain.json": "1ae1769369e9508073adc7f432539818dfd0eb5f51ed8fa45a790671bb0cbc2e",
+    "review-audit.json": "aae42610144b05ace93faa3d15f237886ad8d933fcb684fe3ee3ad750e8059ea",
+    "batch-close-summary.json": "677722b31db6360a315d6fdfe004aeb4e3edb95161a382fbed1818bc813a57a9"
+  },
+  "frozenSource": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java",
+      "sha256": "6ce4120d351ce867a262a39e762b138c24491ab64868001096939ca83ca584c9",
+      "relevantLines": [
+        266,
+        919,
+        928,
+        929
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "C34-TEMPLATE-DELIVERY",
+      "layer": "PLATFORM_TEMPLATE",
+      "state": "FIXED_WITH_BOUNDED_REAL_CONFIRMATION",
+      "evidence": "Plan-oriented implementation template reproduced offline; red 15 tests/8 failures, green 59 tests. Initial REQUESTS copies and three works preserve code delivery.",
+      "limit": "Original screenshot request full model response is unavailable; do not infer the unique cause or all wording variants are fixed."
+    },
+    {
+      "id": "C34-TASK-CONSTRAINT-PROJECTION",
+      "layer": "PLATFORM_ASSEMBLY",
+      "state": "OPEN_AT_INITIAL_FREEZE",
+      "firstObserved": "Platform final assembly appends requirements already present in applicable TASK/OUTPUT execution text.",
+      "path": "OptimizationResultAssembler.appendConstraints -> TaskConstraintCoverage.uncovered(CONSTRAINTS.content, taskSpecific)",
+      "sourceLines": [
+        919,
+        928,
+        929
+      ],
+      "minimalAction": "Evaluate complete scoped requirements across applicable execution sections; retain conditions, negation, exceptions, independent objects, sources and fixed security blocks. Add punctuation and counterexamples.",
+      "limit": "r1 implementation, tests, freeze and real verification are recorded separately; this record claims no r1 success."
+    },
+    {
+      "id": "C34-COMPACT-REDUNDANCY",
+      "layer": [
+        "ENHANCEMENT_MODEL",
+        "PLATFORM_ASSEMBLY"
+      ],
+      "state": "OPEN",
+      "firstObserved": "Enhancement responses 382/383 already repeat related execution/error/verification requirements across sections; platform adds further task constraints.",
+      "action": "Remove proven platform duplicate projection first; evaluate concise guidance only with benefit/cost and normal-variant evidence.",
+      "limit": "A longer prompt or one model response does not alone prove harmfulness or a unique causal factor."
+    },
+    {
+      "id": "C34-EXAMPLE-OFF",
+      "layer": "ENHANCEMENT_MODEL",
+      "state": "OPEN",
+      "trace": 382,
+      "section": "OUTPUT",
+      "evidence": "Model asks for normal/abnormal output-example explanation although includeExamples=false and the frozen contract says not to append unsolicited examples; copied body retains it.",
+      "limit": "Switch off is not an explicit user prohibition of examples; do not describe this as reversing a user-specified no-example rule."
+    },
+    {
+      "id": "C34-DOWNSTREAM-COMMITMENTS",
+      "layer": "DOWNSTREAM_EXECUTION",
+      "state": "HARD_FAIL",
+      "coreOriginalTask": {
+        "RAW": "6/6 PASS",
+        "COMPACT": "4/4 PASS",
+        "STRUCTURED": "4/4 PASS"
+      },
+      "addedCommitments": {
+        "COMPACT": {
+          "automaticTests": "FAIL_MISSING",
+          "syntheticEchoCases": 12,
+          "hardGate": "FAIL"
+        },
+        "STRUCTURED": {
+          "authoredTests": "16 PASS, 0 failures/errors/skips",
+          "syntheticEchoCases": 8,
+          "hardGate": "FAIL"
+        }
+      },
+      "rawSupplementaryEchoCases": 5,
+      "safetyScope": "Synthetic URL credentials echoed by generated programs in results, output or exceptions; no real website network and no evidence of platform API-key leakage.",
+      "action": "Keep failed gates; evaluate minimal strategies before changing prompts. No automatic instruction stacking or quality retries.",
+      "limit": "Copied instructions require the added duties; whether verbosity or redundancy induced violation remains unproven. Raw core title checks do not inherit new test/privacy promises."
+    },
+    {
+      "id": "C34-REVIEW-LIMITS",
+      "layer": "EVALUATION",
+      "state": "BLOCKS_QUALITY_CLAIM",
+      "originalVerdicts": {
+        "RAW_vs_COMPACT": {
+          "R1": "WIN",
+          "R2": "WIN"
+        },
+        "RAW_vs_STRUCTURED": {
+          "R1": "WIN",
+          "R2": "WIN"
+        }
+      },
+      "evidenceProblems": [
+        {
+          "reviewer": "R1",
+          "kind": "WRONG_SOURCE",
+          "issueIndex": 5,
+          "detail": "COMPACT statement attributed to RAW; original review preserved."
+        },
+        {
+          "reviewer": "R1_AND_R2",
+          "kind": "WRONG_REQUIREMENT_SCOPE",
+          "detail": "Some reasons call the enhanced prompt automatic-test duty an original-task requirement."
+        },
+        {
+          "reviewer": "R1_AND_R2",
+          "kind": "INCOMPLETE_WORK_READING",
+          "detail": "RAW has a complete practical version, main entry, timeout and HTTP status checking; claims it only contains snippets are unsupported."
+        },
+        {
+          "reviewer": "R1",
+          "kind": "KNOWN_CHECK_DISCOUNTED",
+          "detail": "Downgrades executed synthetic echo failures to unverified; lack of a reported severe issue cannot override independent checks."
+        },
+        {
+          "reviewer": "R2",
+          "kind": "SAFETY_FAILURE_OMITTED",
+          "detail": "Does not report the independent enhanced-work credential echo failures."
+        },
+        {
+          "reviewer": "R1",
+          "kind": "GENERATION_EXECUTION_TIMING",
+          "detail": "Later independent execution does not contradict an author saying tests were not run during generation."
+        }
+      ],
+      "action": "Retain original verdicts, correct evaluator scope and preserve hard FAIL. Machine schema/quote validation does not certify semantic review correctness."
+    }
+  ],
+  "comparisonLimitations": {
+    "independentTasks": 1,
+    "rounds": 1,
+    "worksPerArm": 1,
+    "modelsForWorks": [
+      "deepseek-flash"
+    ],
+    "reviewModels": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "reviewersSameSupplier": true,
+    "newNaturalPlanTested": false,
+    "realWebsiteBehaviorTested": false,
+    "noStatisticalWinRate": true,
+    "noTwelveFrameworkGeneralizationClaim": true
+  },
+  "qualityPassed": false,
+  "qualityGate": "OPEN_WITH_KNOWN_FAILURES"
+}

@@ -1,0 +1,110 @@
+{
+  "candidate": "candidate34-r1",
+  "java": {
+    "tests": 258,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.AdditionalRuleProjectionTest",
+        "reportSha256": "c8c99080f98690ab56c7ca6edc7bdcbb4a378a04969a84ae3476aeb43a3d8290",
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.AssemblyProjectionReplayTest",
+        "reportSha256": "830b20d6fceaa36cab26c07bca7ace850f0c556f29985e78a3e4635eaacb930a",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ExecutionRuleCompactorTest",
+        "reportSha256": "86b1d362b2ce9956b4fecffc4a50fdd7d4a1ddf3ee2ee54ef53dfea2af3d3eb2",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest",
+        "reportSha256": "21b47f2dc4a6a081ad78cbd5c258c62190e1dd7b7206f7795171e20883d337ef",
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanDecisionIntegrityRegressionTest",
+        "reportSha256": "c85c41eb9e94877aa2d42495a4b8c1e147780ea828b6f0b5bfe5e8fbf4e27ce2",
+        "tests": 35,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PromptPresentationRegressionTest",
+        "reportSha256": "e7c9d73b35749367652f2b8725344605666960460a30091ecf75f82494c7ea00",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuardTest",
+        "reportSha256": "ee29735a610310b6aa8957bf28e66ab3eac5dcd2db49c2c9565c6c1569c14092",
+        "tests": 65,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.TaskConstraintAssemblyReplayTest",
+        "reportSha256": "691538b2569bbd2bc441c6ee422e58e13ea60ac3e10567bf4f50e52df4bbc9fb",
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.TaskConstraintWholeProjectionTest",
+        "reportSha256": "32c4a77bf60a59fd797f4ccff7d025d9ebf5523bdfa22917481a5184a9a109ff",
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.promptoptimizer.history.service.impl.MybatisOptimizationHistoryServiceTest",
+        "reportSha256": "514386d028c7f92f2da7436f2dcb7bd618e569432d1c3939a6c3389466168bdc",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "parentVerification": "verification.json",
+  "parentCountsNotAddedToCurrentCounts": true,
+  "sourceDelta": [
+    "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/AdditionalRuleProjection.java",
+    "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/OptimizationResultAssembler.java",
+    "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/TaskConstraintCoverage.java",
+    "services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/AdditionalRuleProjectionTest.java",
+    "services/api/src/test/java/com/promptoptimizer/enhancement/service/impl/TaskConstraintWholeProjectionTest.java",
+    "services/api/src/test/resources/fixtures/candidate34-task-constraint-replay.json"
+  ],
+  "frontendSourceUnchangedFromInitialCandidate34": true,
+  "rawModelResponsesReplayed": [
+    382,
+    383
+  ],
+  "newModelCalls": 0,
+  "newRealBrowserOrDownstreamWorks": false,
+  "qualityGate": "OPEN_WITH_INITIAL_REAL_WORK_FAILURES",
+  "limitation": "Initial candidate34 works and browser checks remain bound to the initial source; this revision has deterministic replay and affected tests only."
+}
