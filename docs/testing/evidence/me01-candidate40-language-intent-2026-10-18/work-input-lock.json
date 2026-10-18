@@ -1,0 +1,56 @@
+{
+  "sourceCandidate": "candidate40",
+  "sourceManifestSha256": "e3176ca5949d7c02b0421f935117c470e917910ab848560ddd4aec5964dfcde6",
+  "casesSha256": "1beafdad95fc71c717c368f6deac3f64603c27d95868a30a662da524c6c8b39b",
+  "model": "deepseek-flash",
+  "parameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "actualConfirmations": [
+    {
+      "questionId": "dedup_unit",
+      "question": "这里的“文本去重”是按什么单位判断重复？",
+      "answer": "按整行完全相同去重。"
+    },
+    {
+      "questionId": "match_rule",
+      "question": "判断“重复”时采用哪种比较规则？",
+      "answer": "按整行逐字符完全一致比较，区分大小写，保留原行内容；支持LF与CRLF，输出统一LF，保留首次出现的空行。"
+    },
+    {
+      "questionId": "delivery_form",
+      "question": "这次需要交付什么形态的 TypeScript 实现？",
+      "answer": "包装由实现者合理处理；提供接受文本字符串并返回去重后字符串的通用TypeScript实现，不引入第三方运行依赖。"
+    },
+    {
+      "questionId": "output_order",
+      "question": "去重后结果需要保持什么顺序？",
+      "answer": "保留第一次出现的顺序。"
+    }
+  ],
+  "systemTaskInstructionAdded": false,
+  "sharedMaterials": [],
+  "groups": {
+    "TS": {
+      "caseId": "TS-IMPLICIT",
+      "nativeCopyHashes": {
+        "PLAN": "c6879ffbb07ae8f770c6b3016e1cab2bf018bc9efeb3b8b5de728a3967d07041"
+      },
+      "arms": {
+        "RAW": {
+          "requestSha256": "9853abb46e0ca7492e59d7471e32cb181100a9c6e408eda29d21aa2e34f7f17d",
+          "promptSha256": "73eed87595ab24fb8e1ab7aa1e0eca1d54c93d11f4af85f2a847176b3723e152"
+        },
+        "PLAN": {
+          "requestSha256": "d9f6448e1ce416200098ac88e7d5faba7117ccf20a85c7114b4a5cce0ab15c41",
+          "promptSha256": "c6879ffbb07ae8f770c6b3016e1cab2bf018bc9efeb3b8b5de728a3967d07041"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "frozenBeforeReadingWorks": true,
+  "case": "TS-IMPLICIT",
+  "source": "Original prompt plus the four actual submitted synthetic-user answers",
+  "commonRequirements": ["TypeScript implementation", "accept text string and return text string", "deduplicate exact whole lines", "case sensitive", "preserve line content", "support LF and CRLF", "output LF", "retain first empty line", "preserve first occurrence order", "no third-party runtime dependency"],
+  "commonInputsAndExpectedOutputs": [
+    ["a\nb\na", "a\nb"],
+    ["a\nA\na", "a\nA"],
+    [" a\na\n a", " a\na"],
+    ["a\r\nb\r\na", "a\nb"],
+    ["a\r\nb\na", "a\nb"],
+    ["a\n\nb\n\n", "a\n\nb"],
+    ["", ""],
+    ["你好\n你好\nHello", "你好\nHello"],
+    ["b\na\nb", "b\na"],
+    ["a\nb\n", "a\nb\n"],
+    ["\na\n\n", "\na"],
+    ["\t\n \n\t", "\t\n "]
+  ],
+  "compilation": "Compile the supplied implementation together with any authored test files, without editing generated source. Execute the authored tests and an independent common-contract harness.",
+  "enhancedOnlyCommitments": ["Executable normal, exception and boundary tests", "Necessary run instructions", "No unsupported claim of executed or passed tests"],
+  "hardCheckScope": "No output-length or strict-JSON requirement in this task. Do not reuse credential-echo tests on ordinary user text; old requests credential and professional gates remain open.",
+  "executionClaimPolicy": "Use the existing independent audit; later execution cannot prove generation-time execution. Semantic completeness remains open.",
+  "noModelCall": true
+}
