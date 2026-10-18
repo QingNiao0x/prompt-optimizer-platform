@@ -1,0 +1,157 @@
+// Response-wait correction is syntax-checked only; the paid Plan chain was not rerun after the cap.
+// One real UI Plan -> zero-answer enhancement -> native copy/history. Never invent an answer or retry quality.
+import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
+import { resolve, dirname } from 'node:path';
+import { createRequire } from 'node:module';
+import { createHash } from 'node:crypto';
+
+const pub = resolve('docs/testing/evidence/me04-candidate38-coverage-plan-2026-10-18');
+const root = resolve('tmp/me04-candidate38-live-20261018');
+const output = resolve(root, 'flow');
+const ledger = resolve('tmp/me00a-20261012');
+const origin = 'http://127.0.0.1:5174';
+const hash = value => createHash('sha256').update(value).digest('hex');
+const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const newline = value => value.replace(/\r\n/g, '\n');
+const json = async path => JSON.parse(await readFile(path, 'utf8'));
+const save = async (name, value) => {
+  const path = resolve(output, name); await mkdir(dirname(path), { recursive: true });
+  await writeFile(path, typeof value === 'string' || Buffer.isBuffer(value) ? value : `${JSON.stringify(value, null, 2)}\n`, { flag: 'wx' });
+};
+
+/** Immutable current/frozen bytes and formal/purpose ceilings are checked before every actual UI submission. */
+async function preflight() {
+  const manifestBytes = await readFile(resolve(pub, 'candidate38-source.json'));
+  const manifest = JSON.parse(manifestBytes.toString('utf8'));
+  const protocol = await json(resolve(ledger, 'protocol.json'));
+  const batch = protocol.activeBatch;
+  if (manifest.version !== 'candidate38' || batch.version !== 'candidate38-live' || batch.status !== 'OPEN'
+      || batch.authorizationStatus !== 'APPROVED_BY_USER' || batch.maximumNewCalls !== 3 || batch.callsBefore !== 412
+      || batch.sourceManifestSha256 !== hash(manifestBytes) || batch.qualityRetriesAllowed !== false
+      || protocol.maximumActualModelCalls !== 425 || protocol.phaseLimits.baseline !== 80 || protocol.phaseLimits.candidateValidation !== 345
+      || !equal(batch.purposeMaximums, { PLANNING: 1, PLATFORM_GENERATION: 1, EXECUTION: 1, REVIEW: 0 })) throw Error('Frozen batch mismatch');
+  if (hash(await readFile(resolve(pub, 'request-cases.json'))) !== batch.casesSha256
+      || hash(await readFile(resolve(ledger, batch.casesFile))) !== batch.casesSha256) throw Error('Frozen input mismatch');
+  for (const row of manifest.sourceFiles) if (hash(await readFile(resolve(row.path))) !== row.sha256) throw Error('Source drift');
+  for (const row of manifest.runtimeFiles) if (hash(await readFile(resolve(manifest.runtimeSnapshot, row.path))) !== row.sha256) throw Error('Runtime drift');
+  const traces = (await readdir(resolve(ledger, 'traces'))).filter(name => /^\d+\.json$/.test(name));
+  let candidate = 0;
+  for (const file of traces) { try { if ((await json(resolve(ledger, 'traces', file))).phase === 'candidateValidation') candidate++; } catch { candidate++; } }
+  if (traces.length > 415 || candidate > 345) throw Error('Budget exhausted');
+  return { sample: (await json(resolve(pub, 'request-cases.json')))[0], batch, sourceManifestSha256: hash(manifestBytes) };
+}
+
+const frozen = await preflight();
+await save('once-only.json', { startedAt: new Date().toISOString(), candidate: 'candidate38', qualityRetriesAllowed: false });
+const require = createRequire(resolve('apps/web/package.json'));
+const browser = await require('@playwright/test').chromium.connectOverCDP('http://127.0.0.1:9325');
+const context = browser.contexts()[0];
+const account = await json('tmp/local-acceptance/account.json');
+let page, plan, platform, guardFailure;
+let planCapture, platformCapture;
+const counts = { plan: 0, enhancement: 0 };
+const pending = [];
+const api = path => page.evaluate(async path => { const response = await fetch(path); return { status: response.status, body: await response.json() }; }, path);
+const snapshot = () => page.evaluate(async () => { const { useOptimizationStore } = await import('/src/stores/optimization.ts');
+  const store = useOptimizationStore(); return JSON.parse(JSON.stringify({ rawPrompt: store.rawPrompt, promptFormat: store.promptFormat,
+    result: store.result, draft: store.resultDraft ?? null, plan: store.plan, errorMessage: store.errorMessage,
+    isPlanning: store.isPlanning, isOptimizing: store.isOptimizing })); });
+try {
+  page = await context.newPage(); page.setDefaultTimeout(20_000);
+  await page.goto(`${origin}/workbench`, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify({ enabled: true, introSeen: true })));
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  const me = await api('/api/v1/auth/me');
+  if (me.status !== 200 || me.body.data.userId !== account.userId || me.body.data.tenantId !== account.tenantId
+      || (account.workspaceId && me.body.data.workspaceId !== account.workspaceId)) throw Error('Canonical account mismatch');
+  const before = await api('/api/v1/optimization-history?current=1&size=20');
+  if (before.status !== 200) throw Error('History unavailable');
+  await save('history-before.private.json', before);
+  page.on('response', response => {
+    const path = new URL(response.url()).pathname;
+    if (response.request().method() !== 'POST' || !['/api/v1/optimizations/plan', '/api/v1/optimizations'].includes(path)) return;
+    const capture = (async () => { const bytes = await response.body(); const captured = { status: response.status(), body: JSON.parse(bytes.toString('utf8')) };
+      if (path.endsWith('/plan')) { plan = captured; await save('plan.private.json', captured); }
+      else { platform = captured; await save('platform.private.json', captured); }
+    })();
+    if (path.endsWith('/plan')) planCapture = capture; else platformCapture = capture;
+    pending.push(capture);
+  });
+  await page.route(/\/api\/v1\/optimizations(?:\/plan)?(?:\?.*)?$/, async route => {
+    const request = route.request(); const path = new URL(request.url()).pathname;
+    if (request.method() !== 'POST' || !['/api/v1/optimizations/plan', '/api/v1/optimizations'].includes(path)) return route.continue();
+    try {
+      await preflight(); const body = request.postDataJSON();
+      if (body.rawPrompt !== frozen.sample.rawPrompt || body.modelId !== 'deepseek:deepseek-flash' || body.conversationHistory.length) throw Error('Task/model drift');
+      if (path.endsWith('/plan')) {
+        if (++counts.plan !== 1 || counts.enhancement || body.contextDescription || !body.planningContext?.contextId) throw Error('Unexpected Plan request');
+        await save('plan-request.private.json', body);
+      } else {
+        await planCapture;
+        if (++counts.enhancement !== 1 || counts.plan !== 1 || plan?.status !== 200 || plan.body.data.questions.length) throw Error('Zero-question Plan dependency required');
+        const expected = { rawPrompt: frozen.sample.rawPrompt, modelId: 'deepseek:deepseek-flash',
+          context: { customDescription: '', files: [] }, enhancement: { templateCode: frozen.batch.expectedEnhancementInputs[0].templateCode,
+            includeConversationHistory: false, includePermissionBoundaries: true, includeExamples: false, promptFormat: 'COMPACT' },
+          conversationHistory: [], permissionPolicy: { protectedPaths: [], requireConfirmationFor: [] },
+          planConfirmation: { planId: plan.body.data.planId, planningContext: plan.body.data.planningContext, answers: [] } };
+        if (!equal(body, expected)) throw Error('Bound enhancement request drift');
+        await save('enhancement-request.private.json', body);
+      }
+      await route.continue();
+    } catch (error) { guardFailure = error.message; await save('guard-failure.json', { reason: error.message }); await route.abort('blockedbyclient'); }
+  });
+  await page.waitForFunction(() => document.querySelector('#workbench-model') !== null);
+  await page.evaluate(async () => { const { useOptimizationStore } = await import('/src/stores/optimization.ts'); const store = useOptimizationStore();
+    if (store.isLoadingModels || !store.availableModels.length) await store.refreshAvailableModels();
+    if (!store.availableModels.some(model => model.id === 'deepseek:deepseek-flash')) throw Error('Frozen model not published');
+    store.selectedModelId = 'deepseek:deepseek-flash'; });
+  await page.getByLabel('原始提示词', { exact: true }).fill(frozen.sample.rawPrompt);
+  const initial = await snapshot(); if (initial.promptFormat !== 'COMPACT' || initial.result) throw Error('Fresh natural task required');
+  // Corrected after call413: bind actual responses before clicking; do not treat an async poll as completed work.
+  const plannedResponse = page.waitForResponse(response => response.request().method() === 'POST'
+    && new URL(response.url()).pathname === '/api/v1/optimizations/plan', { timeout: 150_000 });
+  const enhancedResponse = page.waitForResponse(response => response.request().method() === 'POST'
+    && new URL(response.url()).pathname === '/api/v1/optimizations', { timeout: 150_000 });
+  void enhancedResponse.catch(() => undefined);
+  await page.getByRole('button', { name: '先确认并增强', exact: true }).click();
+  await plannedResponse;
+  await planCapture;
+  if (plan?.status === 200 && plan.body.data.questions.length === 0) { await enhancedResponse; await platformCapture; }
+  await Promise.all(pending);
+  if (guardFailure) throw Error(guardFailure);
+  if (plan?.status !== 200) throw Error(`Plan failed ${plan?.status}`);
+  if (plan.body.data.questions.length) {
+    await save('dependency-skipped.json', { reason: 'Natural Plan retained questions; no answers invented and no dependent work executed', questionCount: plan.body.data.questions.length });
+    throw Error('Natural Plan retained questions');
+  }
+  if (platform?.status !== 200 || platform.body.data.provider.mock !== false || platform.body.data.promptFormat !== 'COMPACT') throw Error('Verified real natural enhancement required');
+  const current = await snapshot(); await save('current-store.private.json', current);
+  if (!equal(current.result, platform.body.data)) throw Error('Store/result drift');
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin });
+  await page.bringToFront(); await page.getByRole('button', { name: '复制提示词', exact: true }).click();
+  await page.waitForFunction(() => document.querySelector('.copy-main-button')?.textContent?.includes('已复制'));
+  const copied = await page.evaluate(() => navigator.clipboard.readText()); await save('native-copy.md', copied);
+  if (newline(copied) !== newline(platform.body.data.optimizedPrompt)) throw Error('Native clipboard drift');
+  const after = await api('/api/v1/optimization-history?current=1&size=20');
+  const ids = before.body.data.records.map(row => row.id); let matching;
+  for (const record of after.body.data.records) {
+    if (ids.includes(record.id)) continue;
+    const detail = await api(`/api/v1/optimization-history/${record.id}`); const value = detail.body.data;
+    if (detail.status !== 200 || value.rawPrompt !== frozen.sample.rawPrompt || value.optimizedPrompt !== platform.body.data.optimizedPrompt) continue;
+    for (const key of ['sections', 'promptFormat', 'ambiguities', 'appliedConstraints', 'constraintGroups']) if (!equal(value[key], platform.body.data[key])) throw Error(`History drift ${key}`);
+    matching = detail; break;
+  }
+  if (!matching) throw Error('New matching history missing');
+  await save('history.private.json', matching);
+  const check = { candidate: 'candidate38', success: true, naturalPlanQuestions: 0, boundPlanUsed: true, actualUserAnswers: [],
+    accountReused: true, newAccountsCreated: 0, naturalMode: true, nativeCopyMatches: true, storeMatches: true, historyMatches: true,
+    historyTotalDelta: after.body.data.total - before.body.data.total, copySha256: hash(copied), sourceManifestSha256: frozen.sourceManifestSha256,
+    qualityRetriesAllowed: false, requests: counts, finishedAt: new Date().toISOString() };
+  await save('check.json', check); await page.screenshot({ path: resolve(output, 'result.private.png'), fullPage: true });
+  console.log(JSON.stringify(check));
+} catch (error) {
+  await Promise.allSettled(pending);
+  await save('failure.json', { reason: error.message, guardFailure, requests: counts, finishedAt: new Date().toISOString() });
+  if (page) { await save('failure-store.private.json', await snapshot()); await page.screenshot({ path: resolve(output, 'failure.private.png'), fullPage: true }).catch(() => undefined); }
+  console.log(JSON.stringify({ success: false, reason: error.message, requests: counts })); process.exitCode = 1;
+} finally { await browser.close(); }

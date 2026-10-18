@@ -1,5 +1,4 @@
 {
-  "sourceCandidate": "candidate37",
   "samples": [
     {
       "trace": 404,
@@ -24,6 +23,19 @@
       "modelResponseRaw": "{\"assessment\":{\"sufficiency\":\"NEEDS_COMPLETION\",\"gaps\":[{\"kind\":\"INPUT_OUTPUT\",\"missing\":\"目标网页地址、标题提取的判定口径（如多个标题或缺失标题时如何处理）以及输出形式（打印、返回、写入文件）未说明\",\"completion\":\"由执行者实现可接收单个 URL 的函数或命令行入口，默认打印标题；多标题取首个 h1 或 title 标签的文本并去除空白，缺失时返回空值并给出提示；具体 URL 由调用方传入，不预设站点\",\"basis\":\"原始需求仅说明使用 requests 爬取网页标题，未给出目标地址与输出形式\"},{\"kind\":\"EDGE_CASE\",\"missing\":\"网络异常、非 2xx 响应、非 HTML 内容、编码错误、超时等边界处理未说明\",\"completion\":\"设置超时，检查状态码，按响应声明的编码解码并回退到 apparent_encoding，非 HTML 或解析失败时返回明确错误信息，不吞掉异常\",\"basis\":\"约束要求处理可预期异常与边界条件\"},{\"kind\":\"PROFESSIONAL_OPTION\",\"missing\":\"HTML 解析方式未选定（正则、html.parser、BeautifulSoup 等）\",\"completion\":\"拟议主方案使用标准库 html.parser 解析 title 标签，避免新增第三方依赖；如项目已使用 BeautifulSoup 可替换，需说明适用条件\",\"basis\":\"requests 仅负责获取内容，标题提取需解析 HTML，原需求未指定解析库\"},{\"kind\":\"QUALITY_CHECK\",\"missing\":\"测试与运行说明的具体范围未说明\",\"completion\":\"补充正常页面、缺失标题、非 2xx 响应、超时等场景的测试，并给出安装与运行命令；未实际运行的验证不得写成通过\",\"basis\":\"约束要求为核心逻辑补充正常、异常和边界场景测试\"}]},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"需求为使用 Python 的 requests 库获取网页并提取页面标题。requests 只负责发起 HTTP 请求，标题提取需另行解析 HTML；原需求未指定目标站点、解析库和输出形式。\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"实现一个可直接运行的网页标题爬取功能：\\n- 提供接收 URL 的函数或命令行入口，使用 requests 发起 GET 请求，设置合理超时。\\n- 解析响应 HTML，提取页面标题：优先取 title 标签文本，去除首尾空白与多余空白；存在多个标题时取第一个。\\n- 输出形式默认打印标题；也可返回字符串供调用方使用，二者择一实现并说明。\\n- 处理边界与异常：非 2xx 状态码、超时、连接错误、非 HTML 内容、标题缺失、编码异常时给出清晰且不含敏感信息的错误或空值提示，不吞掉异常。\\n- 编码处理：优先使用响应声明的编码，缺失或错误时回退到 apparent_encoding。\\n- 为核心逻辑补充正常、异常和边界场景测试，并给出安装与运行说明。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"交付可直接使用的代码及必要运行说明，包括：\\n- 实现文件（含函数或命令行入口）及依赖说明（requests，解析库按所选方案）。\\n- 测试文件，覆盖正常页面、标题缺失、非 2xx 响应、超时等场景。\\n- 运行说明：安装命令、调用方式与预期输出描述。\\n不以方案文档代替代码。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"- 不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。\\n- 禁止读取或输出受保护路径：.env、**/*.pem、**/*.key、生产环境配置。\\n- 删除或覆盖文件、数据库结构迁移、升级核心依赖、生产环境部署须先获得人工确认。\\n- 校验外部输入（URL 格式），明确处理空值、非法值和边界条件。\\n- 处理可预期异常，返回清晰且不含敏感值的错误信息，不吞掉或伪造错误。\\n- 未实际运行的验证不得写成通过。\"},{\"type\":\"ACCEPTANCE\",\"title\":\"验收\",\"content\":\"- 对有效 URL 能正确输出页面标题。\\n- 标题缺失、非 2xx 响应、超时、非法 URL 等场景有明确处理，不崩溃、不泄露敏感信息。\\n- 测试覆盖正常、异常与边界场景，运行说明可复现。\"}],\"ambiguities\":[]}",
       "modelResponseSha256": "b89878c8f09d4382ce41332a04d314ca02cc8c08e82b31f45f2e04e0f13cd4dc",
       "traceSha256": "843446bf57154fab04cbaed9dec8485551ce657074398225894d797b05f4bae3"
+    },
+    {
+      "trace": 414,
+      "sourceCandidate": "candidate38",
+      "rawPrompt": "使用requests库爬取网页标题。",
+      "promptFormat": "COMPACT",
+      "modelResponseRaw": "{\"assessment\":{\"sufficiency\":\"NEEDS_COMPLETION\",\"gaps\":[{\"kind\":\"INPUT_OUTPUT\",\"missing\":\"未说明目标网页地址、标题提取口径（如 <title> 标签、多个标题如何取舍）及输出形式（打印、返回列表或写入文件）\",\"completion\":\"在任务中给出可执行主方案：接受一个或多个 URL 作为输入，解析 HTML 的 <title> 标签并去除首尾空白，按 URL 输出标题；同时说明可调整处\",\"basis\":\"原始需求仅说明“使用requests库爬取网页标题”，未给出输入与输出形式\"},{\"kind\":\"EDGE_CASE\",\"missing\":\"未说明请求失败、超时、非 HTML 内容、无标题或编码异常时的处理方式\",\"completion\":\"补充超时设置、状态码检查、异常捕获与无标题时的返回约定\",\"basis\":\"爬取网页涉及网络请求与外部内容，需明确异常与边界处理\"},{\"kind\":\"PROFESSIONAL_OPTION\",\"missing\":\"未说明 HTML 解析方式（正则、BeautifulSoup 或标准库解析器）\",\"completion\":\"给出拟议主方案及适用条件，标明为建议而非用户已确认\",\"basis\":\"requests 仅负责获取响应内容，标题提取需额外的解析方式\"}],\"presentation\":\"COMPACT\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"需求为使用 Python 的 requests 库爬取网页标题，属于可直接实现的小型功能开发任务。requests 负责发起 HTTP 请求获取响应内容，标题提取需在响应文本上另行解析。\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"实现一个使用 requests 库爬取网页标题的 Python 功能，交付可直接运行的代码及必要运行说明。\\n\\n- 输入：接受一个或多个网页 URL；URL 由调用方传入，不在代码中硬编码具体站点。\\n- 请求：使用 requests 发起 GET 请求，设置合理的超时时间，检查响应状态码；对非成功状态给出明确错误。\\n- 标题提取：从响应内容中解析 HTML 的 <title> 标签，去除首尾空白；页面无标题时返回明确的空值约定而非报错吞掉。\\n- 解析方式（拟议主方案，非用户已确认）：优先使用标准库 html.parser 或 BeautifulSoup 解析 <title>，避免用正则处理完整 HTML；若环境中已安装 BeautifulSoup 可直接采用，否则用标准库方案，并在运行说明中注明依赖。\\n- 异常处理：对连接失败、超时、非法 URL、非 HTML 内容、编码异常分别捕获并返回清晰且不含敏感信息的错误信息，不吞掉或伪造错误。\\n- 输出：按 URL 输出对应标题，形式可为打印或返回字典/列表，保持调用方可直接使用。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"交付以下内容：\\n\\n1. 完整可运行的 Python 代码（含请求、解析、异常处理与入口调用示例）。\\n2. 必要运行说明：依赖安装（requests 及所选解析库）、运行命令、输入参数说明。\\n3. 针对核心逻辑的测试：覆盖正常页面、无标题页面、请求失败或超时、非法 URL 等场景；未实际运行的验证不得写成通过。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"- 不得在代码、日志或错误信息中泄露密码、Token、API Key 或私钥。\\n- 不得读取或输出 .env、**/*.pem、**/*.key 及生产环境配置等受保护路径。\\n- 校验外部输入（URL 格式、空值），明确处理空值与非法值。\\n- 处理可预期异常，返回清晰且不含敏感值的错误信息。\\n- 保持代码可直接运行，不引入未说明的重型依赖；解析库选择须在运行说明中注明。\\n- 删除或覆盖文件、升级核心依赖、生产环境部署等操作需先获得人工确认，本次不涉及。\"},{\"type\":\"ACCEPTANCE\",\"title\":\"验收\",\"content\":\"- 对有效 URL 能正确返回页面 <title> 内容，去除首尾空白。\\n- 页面无标题、请求超时、连接失败、非法 URL 等场景有明确处理，不崩溃、不泄露敏感信息。\\n- 代码可直接运行，运行说明与实际依赖一致。\\n- 测试覆盖正常、异常与边界场景，且仅将实际运行通过的验证标记为通过。\"}],\"ambiguities\":[],\"ambiguityReferences\":[]}",
+      "modelResponseSha256": "35b1510e17ba083530c7cede7a814f7db32991abfa16421d103faeaf69cb81f4",
+      "traceSha256": "0ac2e67154a183ae32d1d9c8aa11c375a15802b9f854af020c172480fa7f0132"
     }
+  ],
+  "sourceCandidates": [
+    "candidate37",
+    "candidate38"
   ]
 }

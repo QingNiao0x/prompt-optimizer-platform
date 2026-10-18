@@ -1,0 +1,108 @@
+{
+  "version": "candidate38-live",
+  "sourceCandidate": "candidate38",
+  "status": "CLOSED",
+  "authorizationStatus": "APPROVED_BY_USER",
+  "authorizationAmendment": 31,
+  "authorizationBasis": "User explicitly delegated subsequent candidate/reallocation choices and now authorized the reviewed remediation. Reallocate candidate37 closed unused3; no formal cap increase, no baseline borrowing.",
+  "callsBefore": 412,
+  "candidateCallsBefore": 342,
+  "maximumNewCalls": 3,
+  "maximumActualCallsAfterBatch": 415,
+  "purposeMaximums": {
+    "PLANNING": 1,
+    "PLATFORM_GENERATION": 1,
+    "EXECUTION": 1,
+    "REVIEW": 0
+  },
+  "qualityRetriesAllowed": false,
+  "secondQualityRoundAllowed": false,
+  "sourceManifestSha256": "0e97a441ac6411ea9d9ce628d89ea0ce7f78977191811c4037d90e5092da2cbf",
+  "casesFile": "candidate38-direct-request-cases.json",
+  "casesSha256": "d03d37664c366c2dbde453c8a96c39045a510daef3f66a63c4c7cdcfbf6e4afd",
+  "expectedEnhancementInputs": [
+    {
+      "caseId": "REQUESTS-COMPACT",
+      "rawPrompt": "使用requests库爬取网页标题。",
+      "planConfirmed": false,
+      "promptFormat": "COMPACT",
+      "templateCode": "AUTO",
+      "taskView": {
+        "intent": {
+          "templateCode": "FEATURE_DEVELOPMENT",
+          "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": true
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动新增示例交付要求，包括其他段落中的调用或输入输出示例；原任务所需源码、测试及运行说明继续交付。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      "planningTaskView": {
+        "intent": {
+          "templateCode": "FEATURE_DEVELOPMENT",
+          "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": true
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动新增示例交付要求，包括其他段落中的调用或输入输出示例；原任务所需源码、测试及运行说明继续交付。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      "taskIntent": {
+        "templateCode": "FEATURE_DEVELOPMENT",
+        "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+        "status": "RAW_GOAL",
+        "auxiliaryProfiles": [],
+        "engineeringConstraints": true
+      },
+      "rewriteStrategy": {
+        "mode": "NATURAL_FRAMEWORK"
+      }
+    }
+  ],
+  "model": "deepseek-flash",
+  "executionModel": "deepseek-flash",
+  "reviewModels": [],
+  "accountCreationAllowed": false,
+  "dependencyFailurePolicy": "Prior zero-question Plan chain stopped. Independently run direct natural enhancement once; only its verified native copy may execute once. No answers, replacements or quality retries.",
+  "reviewScope": "No new reviews or paired baseline; diagnostic only, overall gates remain open.",
+  "scopeAmendment": 32,
+  "candidate": "candidate38",
+  "actualNewCalls": 3,
+  "actualCallsAfterBatch": 415,
+  "phases": {
+    "baseline": 70,
+    "candidateValidation": 345
+  },
+  "formalLimits": {
+    "total": 425,
+    "baseline": 80,
+    "candidate": 345
+  },
+  "actualPurposeCounts": {
+    "PLANNING": 1,
+    "PLATFORM_GENERATION": 1,
+    "EXECUTION": 1,
+    "REVIEW": 0
+  },
+  "failedOrIncompleteCallsCounted": 0,
+  "unusedAllowance": 0,
+  "unusedAllowanceStatus": "CLOSED_NOT_TRANSFERABLE",
+  "qualityRetriesPerformed": 0,
+  "closedAt": "2026-10-18T10:20:42.617872+00:00"
+}

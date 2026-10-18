@@ -68,7 +68,8 @@ public class Candidate38EvaluationServer {
                     && request.enhancement().promptFormat() != null
                     && request.enhancement().promptFormat().name().equals(sample.path("promptFormat").asText())
                     && Boolean.TRUE.equals(request.enhancement().includeExamples()) == sample.path("includeExamples").asBoolean()
-                    && request.planConfirmation() != null && request.planConfirmation().answers().isEmpty()) return true;
+                    && (request.planConfirmation() != null) == sample.path("planConfirmed").asBoolean(true)
+                    && (request.planConfirmation() == null || request.planConfirmation().answers().isEmpty())) return true;
         }
         return false;
     }

@@ -70,7 +70,7 @@ final class ExampleResultIntegrator {
      * 无法可靠归属的表达保守保留；同一既有协议修复预算处理明确冲突，不增加重试次数。
      */
     private static boolean hasUnrequestedInstruction(String content) {
-        var directive = Pattern.compile("(?:交付|提供|给出|附上|附带|包含|补充|添加|展示|输出|需要|要求)"
+        var directive = Pattern.compile("(?:交付|提供|给出|附上|附带|包含|包括|含(?!有|义|量|税)|补充|添加|展示|输出|需要|要求)"
                 + "[^。；;！？!?\\r\\n]{0,100}(?:示例|示范|例子)"
                 + "|\\b(?:include|provide|give|add|show)\\b[^.;!?\\r\\n]{0,100}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
         String fence = null;
@@ -100,14 +100,36 @@ final class ExampleResultIntegrator {
             while (found.find()) {
                 String prefix = text.substring(0, found.start());
                 String phrase = found.group();
-                if (phrase.matches("(?s).*(?:测试|验证)(?:用例)?(?:示例|示范|例子)$")
+                // “代码（含调用示例）”是当前交付；裸“含”只认列表/括注起点，不把叙述词升级为指令。
+                if (phrase.startsWith("含") && !prefix.isBlank() && !prefix.matches("(?s).*[（(，,：:]\\s*$")) {
+                    found.region(found.start() + 1, text.length());
+                    continue;
+                }
+                if (insideNegatedDelivery(prefix)
+                        || phrase.matches("(?s).*(?:测试|验证)(?:用例)?(?:示例|示范|例子)$")
                         || prefix.matches("(?is).*(?:不|不要|不得|禁止|无需|不需要|不要求|不提供|不包含)(?:再|额外)?$")
+                            && !prefix.matches("(?s).*(?:不得不|不能不|不可不)$")
                         || prefix.matches("(?is).*\\b(?:no|not|never|without|do not)\\s*$")
-                        || phrase.matches("(?s).*(?:不(?:要|得)?(?:提供|输出|附带|包含|需要|要求|添加|增加|新增)|不加|无需|禁止)[^，,。；;]{0,16}(?:示例|示范|例子)$")) continue;
+                        || phrase.matches("(?s).*(?:不(?:要|得)?(?:提供|输出|附带|包含|包括|含|需要|要求|添加|增加|新增)|不加|无需|禁止)[^，,。；;]{0,16}(?:示例|示范|例子)$")) {
+                    // 被否定的前半句不能让同一行后面的独立肯定要求一起跳过。
+                    found.region(found.start() + 1, text.length());
+                    continue;
+                }
                 return true;
             }
         }
         return false;
+    }
+
+    /** 括注继承父句的交付否定；先前独立否定不跨逗号扩展，“不得不”仍是肯定要求。 */
+    private static boolean insideNegatedDelivery(String prefix) {
+        int opening = Math.max(prefix.lastIndexOf('（'), prefix.lastIndexOf('('));
+        int closing = Math.max(prefix.lastIndexOf('）'), prefix.lastIndexOf(')'));
+        if (opening < 0 || opening < closing) return false;
+        String parent = prefix.substring(0, opening);
+        if (parent.matches("(?s).*(?:不得不|不能不|不可不)(?:交付|提供|输出|生成)[^。；;，,]*$")) return false;
+        return parent.matches("(?s).*(?:不|不要|不得|禁止|无需|不需要|不要求)(?:再|额外)?"
+                + "(?:交付|提供|给出|附上|附带|包含|包括|输出|生成)[^。；;，,]*$");
     }
 
     /** 排除示例标签、引用和代码内的祈使句；配对标签与真实交付指令必须同时存在。 */

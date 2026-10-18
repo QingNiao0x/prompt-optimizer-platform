@@ -13,7 +13,7 @@ import java.security.MessageDigest;
 import java.util.*;
 
 /**
- * 对三份已保存合成响应执行相同组装入口；不联网、不启动Spring、不修改原件或创建账号。
+ * 对已保存合成响应执行相同组装入口；不联网、不启动Spring、不修改原件或创建账号。
  * @author QingNiao
  * @since 0.1.0
  */

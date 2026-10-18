@@ -21,14 +21,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * 404—406未改写模型原件的两态组装回归；来源和序列化检查不冒充新剪贴板/数据库验证。
+ * 404—406完整要求与414括注示例原件的两态回放；不冒充新剪贴板/数据库验证。
  *
  * @author QingNiao
  * @since 0.1.0
  */
 class Candidate38AssemblyReplayTest {
     @ParameterizedTest
-    @ValueSource(ints = {404, 405, 406})
+    @ValueSource(ints = {404, 405, 406, 414})
     void savedProviderBodyKeepsSourcesWhileCompleteRequirementsAreNotProjectedAgain(int trace) throws Exception {
         var mapper = new ObjectMapper();
         try (var input = getClass().getResourceAsStream("/fixtures/candidate38-existing-model-replay.json")) {
@@ -60,9 +60,18 @@ class Candidate38AssemblyReplayTest {
             server.verify();
             for (var format : PromptFormat.values()) {
                 var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
-                var result = new OptimizationResultAssembler().assemble(response, context,
+                var assembly = (java.util.function.Supplier<OptimizationResult>) () -> new OptimizationResultAssembler().assemble(response, context,
                         template,
                         List.of(), List.of(), false, groups, false, 1, raw, List.of(), List.of(), task, format);
+                if (trace == 414) {
+                    org.assertj.core.api.Assertions.assertThatThrownBy(assembly::get)
+                            .isInstanceOfSatisfying(ProviderResponseValidationException.class, error -> {
+                                assertThat(error.getReason()).isEqualTo(ProviderResponseValidationException.Reason.RULE_CONFLICT);
+                                assertThat(error.getField()).isEqualTo("sections.OUTPUT");
+                            });
+                    continue;
+                }
+                var result = assembly.get();
                 var constraints = result.sections().stream().filter(section -> section.type() == PromptSectionType.CONSTRAINTS)
                         .findFirst().orElseThrow().content();
                 assertThat(result.constraintGroups()).isEqualTo(groups);
