@@ -35,10 +35,10 @@ public final class Candidate40ScopePreflight {
         var sample = cases.get(0);
         List<PlanAnswer> answers = List.of(new PlanAnswer("bound-question", "文本按什么粒度去重？", "按整行完全相同去重，区分大小写，保留第一次出现的顺序"));
         var template = new com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl().infer(sample.path("rawPrompt").asText());
-        var view = EffectiveTaskViewFactory.create(sample.path("rawPrompt").asText(), template, answers, List.of(), false);
+        var view = EffectiveTaskViewFactory.create(sample.path("rawPrompt").asText(), TemplateCode.AUTO, answers, List.of(), false);
         var payload = JSON.createObjectNode().put("rawPrompt", sample.path("rawPrompt").asText()).put("planConfirmed", true);
         payload.putObject("template"); payload.putArray("conversationHistory");
-        payload.putObject("options").put("promptFormat", "COMPACT").put("includeExamples", false);
+        payload.putObject("options").put("templateCode", "AUTO").put("promptFormat", "COMPACT").put("includeExamples", false);
         payload.set("taskView", JSON.valueToTree(view.modelInput()));
         payload.putObject("rewriteStrategy").put("mode", PromptRewriteStrategy.forTask(view, PromptFormat.COMPACT).mode());
         check(allowed(payload, cases, answers), "bound input view");

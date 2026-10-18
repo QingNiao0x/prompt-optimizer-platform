@@ -108,15 +108,17 @@ public class Candidate40EvaluationServer {
                 for (JsonNode sample : cases) {
                     if (!sample.path("rawPrompt").asText().equals(payload.path("rawPrompt").asText())
                             || !payload.path("conversationHistory").isEmpty()) continue;
-                    var template = new com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl().infer(sample.path("rawPrompt").asText());
                     if (payload.has("template")) {
+                        String requestedTemplate = payload.path("options").path("templateCode").asText();
+                        if (!java.util.Set.of("AUTO", "FEATURE_DEVELOPMENT").contains(requestedTemplate)) return false;
                         if (!sample.path("enhancementAllowed").asBoolean() || !payload.path("planConfirmed").asBoolean()
                                 || !payload.path("options").path("promptFormat").equals(sample.path("promptFormat"))
                                 || payload.path("options").path("includeExamples").asBoolean()
                                 || payload.has("planAnswers") || payload.has("confirmedDecisions")) return false;
                         // 当前协议只通过taskView发送题答语义；完整视图必须由实际提交重新构建且逐项相等。
                         var view = com.promptoptimizer.enhancement.service.impl.EffectiveTaskViewFactory.create(
-                                sample.path("rawPrompt").asText(), template, answers, java.util.List.of(), false);
+                                sample.path("rawPrompt").asText(), com.promptoptimizer.enhancement.domain.TemplateCode.valueOf(requestedTemplate),
+                                answers, java.util.List.of(), false);
                         var mode = com.promptoptimizer.provider.domain.PromptRewriteStrategy.forTask(view,
                                 com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT).mode();
                         return payload.path("taskView").equals(JSON.valueToTree(view.modelInput()))
