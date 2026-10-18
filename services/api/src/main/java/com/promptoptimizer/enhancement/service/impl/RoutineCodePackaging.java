@@ -33,6 +33,14 @@ final class RoutineCodePackaging {
                     + "还是|或者|的|可|并|或|带|是");
     private static final Pattern OUTPUT_OBJECT = Pattern.compile("(?:输出|返回|打印)([\\p{IsHan}]{2,20})(?=$|[，,。；;])");
     private static final Pattern INPUT_ARGUMENT = Pattern.compile("(?:传入|输入)(?:URL|网址|地址|参数)");
+    // 责任建议不能吞掉业务行为、真实取值、授权、条件或依赖选择；检查题干及全部候选元信息。
+    private static final Pattern INDEPENDENT_EFFECT = Pattern.compile(
+            "新增|另外|另需|同时还|权限|授权|共享|公开|发布|部署|生产|兼容|对接|集成|数据库|网络|服务端|"
+                    + "阈值|时延|超时|重试|吞吐|性能|内存|收费|分母|纳入|排除|排序|顺序|大小写|空白|比较规则|"
+                    + "按|逐|比较|去除|忽略|正则|模糊|加密|脱敏|日志|敏感|返回网址|输出网址|第三方|依赖|"
+                    + "字段|分组|格式|编码|类型|路径|数组|文件|"
+                    + "如果|假如|若|除非|例外|未来|以后|尚未|待定|未确定|不|未|禁止|仅|只|[<>!=]|\\d",
+            Pattern.CASE_INSENSITIVE);
 
     private RoutineCodePackaging() { }
 
@@ -42,7 +50,7 @@ final class RoutineCodePackaging {
         if (TaskDeliveryProfile.identify(raw) != TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION
                 || RESERVED_SCOPE.matcher(raw).find() || hasOtherEvidence(input)
                 || question.type() != PlanQuestionType.SINGLE_CHOICE || question.options().size() < 2
-                || !QUESTION.matcher(question.question()).matches() || !question.examples().isEmpty()
+                || !question.examples().isEmpty()
                 || question.options().stream().anyMatch(option -> !FORM.matcher(option.label()).find())) return false;
         List<String> details = Stream.concat(Stream.of(question.hint()), question.options().stream()
                 .flatMap(option -> Stream.of(option.label(), option.description(), option.answer(), option.recommendationReason())))
@@ -50,7 +58,23 @@ final class RoutineCodePackaging {
         Set<String> languages = languages(String.join(" ", details));
         Set<String> specified = languages(raw);
         if (languages.size() > 1 || !specified.isEmpty() && !specified.containsAll(languages)) return false;
-        return details.stream().allMatch(value -> purePackaging(value, raw));
+        // 新路径按完整责任和影响核对，不依赖问题标题的字面模板；建议本身不构成确认。
+        if (boundExecutorResponsibility(question, input, details)) return true;
+        // 缺省或不可信建议继续保守兼容旧有限路径，不能为了少提问直接接纳未知语义。
+        return QUESTION.matcher(question.question()).matches() && details.stream().allMatch(value -> purePackaging(value, raw));
+    }
+
+    /** 只接受本次原目标、原题与全部候选共同绑定的纯包装建议，任何独立影响继续保留。 */
+    private static boolean boundExecutorResponsibility(PlanQuestion question, PlanningProviderRequest input,
+            List<String> details) {
+        var advice = question.responsibility();
+        if (advice == null || !"EXECUTOR".equals(advice.owner()) || !"CODE_PACKAGING_ONLY".equals(advice.impact())
+                || !input.rawPrompt().equals(advice.rawGoal()) || !question.question().equals(advice.question())) return false;
+        var ids = question.options().stream().map(option -> option.id()).toList();
+        if (ids.stream().anyMatch(java.util.Objects::isNull) || ids.stream().distinct().count() != ids.size()
+                || advice.optionIds().size() != ids.size() || !Set.copyOf(ids).equals(Set.copyOf(advice.optionIds()))) return false;
+        return !INDEPENDENT_EFFECT.matcher(question.question()).find()
+                && details.stream().noneMatch(value -> INDEPENDENT_EFFECT.matcher(LANGUAGE.matcher(value).replaceAll("")).find());
     }
 
     /** 有材料、历史、已绑定决定或待决来源时沿用既有查证路径，本规则不猜测它们的交付契约。 */

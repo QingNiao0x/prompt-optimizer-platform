@@ -41,6 +41,21 @@ final class AdditionalRuleProjection {
 
     private AdditionalRuleProjection() { }
 
+    /** 绑定引用须独占当前责任段的一行；未知标题、条件、代码和引用块不能承载实际确认。 */
+    static boolean permitsSourceReference(PromptSection section, String reference, int offset) {
+        String content = section.content();
+        int start = content.lastIndexOf('\n', offset) + 1;
+        int end = content.indexOf('\n', offset);
+        if (end < 0) end = content.length();
+        String line = content.substring(start, end);
+        if (line.startsWith("    ") || line.startsWith("\t") || !line.strip()
+                .replaceFirst("^(?:[-*•]\\s*|\\d+[.)、]\\s*)", "").equals(reference)) return false;
+        // 只检查该次出现前的作用域；同一引用的另一合法出现不能给条件/引用块背书。
+        String boundary = "__SOURCE_REFERENCE_BOUNDARY__";
+        var prefix = new PromptSection(section.type(), section.title(), content.substring(0, end) + "\n" + boundary);
+        return currentTaskScope(prefix).endsWith(boundary);
+    }
+
     /** 只补来源中尚未落实的完整后项；无法证明独立时继续保留完整原句。 */
     static List<String> uncovered(Map<PromptSectionType, PromptSection> sections, String rule) {
         if (rule == null || rule.isBlank()) return List.of();

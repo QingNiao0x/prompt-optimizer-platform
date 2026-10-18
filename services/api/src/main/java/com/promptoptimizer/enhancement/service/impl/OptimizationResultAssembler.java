@@ -181,6 +181,8 @@ public class OptimizationResultAssembler {
             throw invalidResponse(Reason.METADATA_INVALID, "provider");
         }
         Map<PromptSectionType, PromptSection> sections = collectSections(providerResponse.sections());
+        // 本次服务端来源先展开，再经过原有事实、未决、敏感及业务校验；模型引用不绕过保护。
+        var projectedRequirements = BoundRequirementProjection.expand(sections, taskView, constraintBundle);
         sections.values().forEach(section -> ProfessionalReviewBoundary.validate(section.content(), taskView));
         if (!sections.keySet().containsAll(REQUIRED_TYPES)) {
             throw invalidResponse(Reason.REQUIRED_SECTIONS_MISSING, "sections");
@@ -241,7 +243,7 @@ public class OptimizationResultAssembler {
         validateExecutionRules(sections, explicitRules, eligibleFacts, documentFacts);
         boolean minimal = MinimalPromptOrganizer.organize(sections, effectiveRawPrompt,
                 planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), providerResponse.assessment());
-        PlanDecisionIntegrator.integrate(sections, taskView);
+        PlanDecisionIntegrator.integrate(sections, taskView, projectedRequirements);
         PlanDecisionIntegrator.reconcileDelegatedStatus(sections, taskView);
         // 原件已通过安全与任务校验；仅精简可证明覆盖的资料状态并澄清条件表格，不改原件与来源。
         MaterialStatusCompactor.compact(sections);

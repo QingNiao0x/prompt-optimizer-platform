@@ -29,8 +29,15 @@ final class PlanDecisionIntegrator {
 
     /** 同一确认在四要素正文内有权威表达即视为覆盖；示例和验收提及不能代替执行要求。 */
     static void integrate(Map<PromptSectionType, PromptSection> sections, EffectiveTaskView task) {
+        integrate(sections, task, java.util.Set.of());
+    }
+
+    /** 已由本次服务端引用展开的完整要求复用呈现记录；旧无引用响应继续按原覆盖校验。 */
+    static void integrate(Map<PromptSectionType, PromptSection> sections, EffectiveTaskView task,
+            java.util.Set<ExecutionRequirement> delivered) {
         List<String> boundStatements = taskBoundResearchStatements(sections, task);
         for (ExecutionRequirement requirement : task.executionRequirements()) {
+            if (delivered.contains(requirement)) continue;
             List<String> missing = missingStatements(sections, requirement, boundStatements);
             if (missing.isEmpty()) continue;
             PromptSection current = sections.get(requirement.destination());
