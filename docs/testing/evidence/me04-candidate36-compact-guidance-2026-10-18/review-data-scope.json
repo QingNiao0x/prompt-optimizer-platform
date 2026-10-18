@@ -1,0 +1,64 @@
+{
+  "sourceCandidate": "candidate36",
+  "authorizedPurpose": "Two independent Flash/Pro AI-assisted reviews within the user-approved 26-call batch",
+  "destination": "https://api.deepseek.com/chat/completions",
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "dataScope": "Only complete synthetic benchmark works from two public frozen tasks. No attachments, project source, private history, account identity or actual credentials. The same official provider already produced the works.",
+  "sourceBindings": [
+    {
+      "task": "PATCH",
+      "arm": "RAW",
+      "sha256": "671d58160cac09bb3d0bf0c6a2669e846d67a6714271a8de5afacb697b3dd867",
+      "inputOrigin": "PUBLIC_SYNTHETIC_TASK_AND_NO_ATTACHMENTS",
+      "workOrigin": "EXTERNAL_MODEL_RESPONSE_TO_FROZEN_SYNTHETIC_INPUT"
+    },
+    {
+      "task": "PATCH",
+      "arm": "COMPACT",
+      "sha256": "9aae58d5b21fa64c21d0e85c2c497842933b59d8224582366bcd996b1dcbb12a",
+      "inputOrigin": "PUBLIC_SYNTHETIC_TASK_AND_NO_ATTACHMENTS",
+      "workOrigin": "EXTERNAL_MODEL_RESPONSE_TO_FROZEN_SYNTHETIC_INPUT"
+    },
+    {
+      "task": "PATCH",
+      "arm": "STRUCTURED",
+      "sha256": "9e3a21aad151d58b385b291cf60ac41faac9d4e28e07f2924b90e0aa068fb045",
+      "inputOrigin": "PUBLIC_SYNTHETIC_TASK_AND_NO_ATTACHMENTS",
+      "workOrigin": "EXTERNAL_MODEL_RESPONSE_TO_FROZEN_SYNTHETIC_INPUT"
+    },
+    {
+      "task": "REQUESTS",
+      "arm": "RAW",
+      "sha256": "9cf701793a5aa38d92020b84489910ab5d6d053cde0ef75de2cf7ae3658b9ec2",
+      "inputOrigin": "PUBLIC_SYNTHETIC_TASK_AND_NO_ATTACHMENTS",
+      "workOrigin": "EXTERNAL_MODEL_RESPONSE_TO_FROZEN_SYNTHETIC_INPUT"
+    },
+    {
+      "task": "REQUESTS",
+      "arm": "COMPACT",
+      "sha256": "0e86b738fa79be43125d828cc9c727775d03fb497ef9f2a53ab21cb489aceef1",
+      "inputOrigin": "PUBLIC_SYNTHETIC_TASK_AND_NO_ATTACHMENTS",
+      "workOrigin": "EXTERNAL_MODEL_RESPONSE_TO_FROZEN_SYNTHETIC_INPUT"
+    },
+    {
+      "task": "REQUESTS",
+      "arm": "STRUCTURED",
+      "sha256": "6e2a914c1388b37aeb63e05efe3419dc63b099459d638b232cde5f4c495cca12",
+      "inputOrigin": "PUBLIC_SYNTHETIC_TASK_AND_NO_ATTACHMENTS",
+      "workOrigin": "EXTERNAL_MODEL_RESPONSE_TO_FROZEN_SYNTHETIC_INPUT"
+    }
+  ],
+  "packetSha256": "e2fdd7922bce62e835577b9fe397b7be6be8b38e627b284106497dff62012e3a",
+  "redFlags": {
+    "privateKeyMarker": false,
+    "credentialLiteral": false,
+    "canonicalAccountIdentity": false,
+    "privateFilesystemPath": false
+  },
+  "actualCallsBeforeReview": 401,
+  "newModelCalls": 0,
+  "autoReviewRejection": "Initial launch rejected before execution/reservation because data scope was not demonstrated. This read-only source/hash audit supplies missing low-risk evidence. No alternate destination or runner."
+}

@@ -1,0 +1,224 @@
+{
+  "version": "candidate36-live",
+  "sourceCandidate": "candidate36",
+  "authorizationStatus": "APPROVED_BY_USER",
+  "authorizationBasis": "用户明确答复：批准新增26次，执行冻结范围。6次增强请求含协议修复最多18次、作品6次、独立AI辅助评审2次；不转闭批余额。",
+  "authorizationAmendment": "protocol-amendment-29.json",
+  "status": "CLOSED",
+  "qualityRetriesAllowed": false,
+  "secondQualityRoundAllowed": false,
+  "callsBefore": 389,
+  "candidateCallsBefore": 319,
+  "maximumNewCalls": 26,
+  "maximumActualCallsAfterBatch": 415,
+  "purposeMaximums": {
+    "PLATFORM_GENERATION": 18,
+    "EXECUTION": 6,
+    "REVIEW": 2
+  },
+  "sourceManifestSha256": "60840bccbdeee43c9e78112ba38aba8055d1ab308f4de16aa2d7541f3cdc0a99",
+  "model": "deepseek-flash",
+  "executionModel": "deepseek-flash",
+  "reviewModels": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "cases": [
+    "PATCH-COMPACT",
+    "PATCH-STRUCTURED",
+    "REQUESTS-COMPACT",
+    "REQUESTS-STRUCTURED",
+    "HOLDOUT-MAIL-COMPACT",
+    "HOLDOUT-MATERIAL-STRUCTURED"
+  ],
+  "casesFile": "candidate36-compact-guidance-cases.json",
+  "casesSha256": "adaeae070c9051a822df98fea1240a53176eba82a1c95889e8135ebf00e98bdc",
+  "expectedEnhancementInputs": [
+    {
+      "caseId": "PATCH-COMPACT",
+      "rawPrompt": "用Java 21实现PatchMerger类的public static Map<String,Object> merge(Map<String,Object> current, Map<String,Object> patch)方法，把补丁应用到现有配置：只用patch中非null的值覆盖；0、false和空字符串都是有效值。返回新Map，不修改任一输入。空输入、空Map及嵌套数据的处理由你合理设计并说明，不把设计建议写成已有项目规则。不使用第三方依赖，也不记录或打印输入数据。交付完整PatchMerger.java和可直接运行的PatchMergerTest.java，自测须实际检查正常、边界和异常行为，不依赖JVM的-ea开关。",
+      "planConfirmed": false,
+      "promptFormat": "COMPACT",
+      "taskView": {
+        "intent": {
+          "templateCode": "FEATURE_DEVELOPMENT",
+          "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": true
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动追加示例段。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      "rewriteStrategy": {
+        "mode": "NATURAL_FRAMEWORK"
+      }
+    },
+    {
+      "caseId": "PATCH-STRUCTURED",
+      "rawPrompt": "用Java 21实现PatchMerger类的public static Map<String,Object> merge(Map<String,Object> current, Map<String,Object> patch)方法，把补丁应用到现有配置：只用patch中非null的值覆盖；0、false和空字符串都是有效值。返回新Map，不修改任一输入。空输入、空Map及嵌套数据的处理由你合理设计并说明，不把设计建议写成已有项目规则。不使用第三方依赖，也不记录或打印输入数据。交付完整PatchMerger.java和可直接运行的PatchMergerTest.java，自测须实际检查正常、边界和异常行为，不依赖JVM的-ea开关。",
+      "planConfirmed": false,
+      "promptFormat": "STRUCTURED",
+      "taskView": {
+        "intent": {
+          "templateCode": "FEATURE_DEVELOPMENT",
+          "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": true
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动追加示例段。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      "rewriteStrategy": {
+        "mode": "FOCUSED_MODULES"
+      }
+    },
+    {
+      "caseId": "REQUESTS-COMPACT",
+      "rawPrompt": "使用requests库爬取网页标题。",
+      "planConfirmed": false,
+      "promptFormat": "COMPACT",
+      "taskView": {
+        "intent": {
+          "templateCode": "FEATURE_DEVELOPMENT",
+          "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": true
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动追加示例段。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      "rewriteStrategy": {
+        "mode": "NATURAL_FRAMEWORK"
+      }
+    },
+    {
+      "caseId": "REQUESTS-STRUCTURED",
+      "rawPrompt": "使用requests库爬取网页标题。",
+      "planConfirmed": false,
+      "promptFormat": "STRUCTURED",
+      "taskView": {
+        "intent": {
+          "templateCode": "FEATURE_DEVELOPMENT",
+          "deliveryProfile": "SOFTWARE_IMPLEMENTATION",
+          "status": "RAW_GOAL",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": true
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "DISABLED",
+          "source": "SWITCH_OFF",
+          "guidance": "未要求示例，不主动追加示例段。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      "rewriteStrategy": {
+        "mode": "FOCUSED_MODULES"
+      }
+    },
+    {
+      "caseId": "HOLDOUT-MAIL-COMPACT",
+      "rawPrompt": "给同事写一封简短邮件，提醒对方发送本周会议纪要，语气礼貌但保留发送请求。只输出邮件正文，不超过80个汉字，不添加示例；不知道姓名时使用中性称呼，不编造截止日期或工作进展。",
+      "planConfirmed": false,
+      "promptFormat": "COMPACT",
+      "taskView": {
+        "intent": {
+          "templateCode": "GENERAL",
+          "deliveryProfile": "GENERAL",
+          "status": "DEFAULT",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": false
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "PROHIBITED",
+          "source": "USER_PROHIBITION",
+          "guidance": "遵守用户禁止示例的要求，不附带示例。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      "rewriteStrategy": {
+        "mode": "NATURAL_FRAMEWORK"
+      }
+    },
+    {
+      "caseId": "HOLDOUT-MATERIAL-STRUCTURED",
+      "rawPrompt": "根据以下会议记录整理行动清单，用Markdown表格输出事项、负责人、期限、状态四列。未明确的信息写“未明确”，不推断负责人或日期，不添加解释或示例。记录：已决定核对报表中的重复项，由小林负责，周五前完成；是否更换图表样式尚未决定，负责人和期限均未明确。",
+      "planConfirmed": false,
+      "promptFormat": "STRUCTURED",
+      "taskView": {
+        "intent": {
+          "templateCode": "GENERAL",
+          "deliveryProfile": "GENERAL",
+          "status": "DEFAULT",
+          "auxiliaryProfiles": [],
+          "engineeringConstraints": false
+        },
+        "executionRequirements": [],
+        "pendingDecisions": [],
+        "examples": {
+          "mode": "PROHIBITED",
+          "source": "USER_PROHIBITION",
+          "guidance": "遵守用户禁止示例的要求，不附带示例。"
+        },
+        "requirementBoundaryGuidance": "",
+        "userMeaningAnchors": []
+      },
+      "rewriteStrategy": {
+        "mode": "FOCUSED_MODULES"
+      }
+    }
+  ],
+  "accountCreationAllowed": false,
+  "dependencyFailurePolicy": "No verified native copy means dependent work is skipped. Every actual send counts; no reconstructed prompt, quality retry or allowance transfer.",
+  "candidate": "candidate36",
+  "actualNewCalls": 14,
+  "actualCallsAfterBatch": 403,
+  "phases": {
+    "baseline": 70,
+    "candidateValidation": 333
+  },
+  "formalLimits": {
+    "total": 425,
+    "baseline": 80,
+    "candidate": 345
+  },
+  "actualPurposeCounts": {
+    "PLATFORM_GENERATION": 6,
+    "EXECUTION": 6,
+    "REVIEW": 2
+  },
+  "failedOrIncompleteCallsCounted": 0,
+  "unusedAllowance": 12,
+  "unusedAllowanceStatus": "CLOSED_NOT_TRANSFERABLE",
+  "qualityRetriesPerformed": 0,
+  "closedAt": "2026-10-18T06:15:59.760033+00:00"
+}

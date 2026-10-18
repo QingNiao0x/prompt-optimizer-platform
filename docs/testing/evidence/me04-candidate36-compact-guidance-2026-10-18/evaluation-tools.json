@@ -1,6 +1,8 @@
 {
   "candidate": "candidate36",
-  "frozenBeforeAnyNewModelCall": true,
+  "frozenBeforeAnyNewModelCall": false,
+  "originalPreCallInventory": "evaluation-tools-before-external-cap-correction.json",
+  "scope": "Initial tool inventory with one explicitly recorded external-call guard correction after the six generation calls. Later offline analysis tool hashes are in post-call-analysis-tools.json; product source freeze is unchanged.",
   "tools": [
     {
       "path": "account-browser.mjs",
@@ -48,7 +50,7 @@
     },
     {
       "path": "external-calls.mjs",
-      "sha256": "83c8701c9f1f4baec5a37c2ba00317fbf185e6e6a0f3059804c71a9670b92d53"
+      "sha256": "a431bc52c507b99f1ca9bd6fd08833d8b41eedb977740a33fa8990c1121ab967"
     },
     {
       "path": "live-cases.json",
@@ -102,5 +104,7 @@
       "path": "test-check-requests-work.py",
       "sha256": "6c1d38818f8877e5736183b8f86a05130f546a30985356745afd8dac19570d7e"
     }
-  ]
+  ],
+  "correction": "Node outer baseline guard corrected to 80 before any execution/review request; Java reservation guard remained 80. No product source or frozen inputs changed.",
+  "actualLedgerAtCorrection": 395
 }

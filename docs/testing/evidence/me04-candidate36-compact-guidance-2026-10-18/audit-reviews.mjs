@@ -12,10 +12,10 @@ import { REVIEW_RUBRIC, combineHardGates, scoreDisagreements } from '../../../..
 const PUBLIC = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(PUBLIC, '../../../..');
 const WORK = resolve(ROOT, 'tmp/me04-candidate36-live-20261018');
-const GROUPS = ['REQUESTS'];
+const GROUPS = ['PATCH', 'REQUESTS'];
 const ARMS = ['RAW', 'COMPACT', 'STRUCTURED'];
 const REVIEWERS = { R1: 'deepseek-flash', R2: 'deepseek-v4-pro' };
-const PARAMETERS = { temperature: 0.2, max_tokens: 10000, thinking: { type: 'disabled' }, stream: false };
+const PARAMETERS = { temperature: 0.2, max_tokens: 8192, thinking: { type: 'disabled' }, stream: false };
 const hash = value => createHash('sha256').update(value).digest('hex');
 const same = (left, right) => JSON.stringify(left) === JSON.stringify(right);
 const relativeVerdicts = { LEFT_WIN: 'WIN', RIGHT_WIN: 'LOSS', TIE: 'TIE', BOTH_FAIL: 'BOTH_FAIL' };

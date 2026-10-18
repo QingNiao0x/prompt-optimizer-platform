@@ -78,7 +78,7 @@ async function approvedBatch() {
       || batch.status !== 'OPEN' || batch.authorizationStatus !== 'APPROVED_BY_USER'
       || batch.qualityRetriesAllowed !== false || batch.callsBefore !== 389 || batch.maximumNewCalls !== 26
       || batch.purposeMaximums?.EXECUTION !== 6 || batch.purposeMaximums?.REVIEW !== 2
-      || protocol.maximumActualModelCalls !== 425 || protocol.phaseLimits?.baseline !== 260
+      || protocol.maximumActualModelCalls !== 425 || protocol.phaseLimits?.baseline !== 80
       || protocol.phaseLimits?.candidateValidation !== 345) throw Error('Incorrect or closed approved candidate36 batch');
   return batch;
 }
