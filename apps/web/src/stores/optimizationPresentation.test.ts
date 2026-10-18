@@ -41,6 +41,45 @@ describe('explicit prompt presentation', () => {
     vi.stubGlobal('window', { localStorage: { getItem: () => null, setItem: () => undefined, removeItem: () => undefined } });
   });
 
+  it.each(['COMPACT', 'STRUCTURED'] as const)('edits %s rules using server ownership and keeps original Plan source on regeneration', async format => {
+    const store = useOptimizationStore();
+    store.rawPrompt = '实现登录，沿用既有认证。';
+    store.setPromptFormat(format);
+    const source = fixture(format);
+    const permission = '导出真实用户数据前须人工确认。';
+    const taskRule = '保留已有认证接口。';
+    source.constraintGroups = { platformMandatory: ['不得泄露凭据。'],
+      taskSpecific: [taskRule], additionalPermissions: [permission] };
+    source.appliedConstraints = ['不得泄露凭据。', taskRule, permission];
+    source.sections = source.sections.map(section => ({ ...section,
+      content: section.type === 'CONSTRAINTS' ? `- 不得泄露凭据。\n- ${permission}`
+        : section.type === 'TASK' ? `实现登录。\n${taskRule}` : section.content }));
+    source.optimizedPrompt = renderPromptSections(source.sections, format);
+    vi.mocked(optimizePrompt).mockResolvedValue({ requestId: 'grouped', data: source });
+    const confirmation = { planId: 'same-plan', answers: [
+      { questionId: 'permission', question: '是否允许导出？', answer: '仅经过人工批准' },
+    ] };
+    expect(await store.runOptimization([], { planConfirmation: confirmation })).toBe(true);
+    const firstRequest = JSON.parse(JSON.stringify(vi.mocked(optimizePrompt).mock.calls[0]![0]));
+    expect(store.saveEditedSections(store.result!.sections.map(section => ({ ...section,
+      content: section.type === 'CONSTRAINTS' ? '新用户需复核，存量用户例外。' : section.content })))).toBe(true);
+    expect(store.result?.optimizedPrompt).not.toContain('平台强制约束');
+    expect(store.result?.optimizedPrompt.split(taskRule)).toHaveLength(2);
+    expect(store.result?.optimizedPrompt).toContain(permission);
+    expect(store.result?.optimizedPrompt).toContain('不得泄露凭据。');
+    expect(store.result?.constraintGroups).toEqual(source.constraintGroups);
+    const edited = store.result!.optimizedPrompt;
+    const changedFormat = format === 'COMPACT' ? 'STRUCTURED' : 'COMPACT';
+    store.setPromptFormat(changedFormat);
+    expect(await store.regenerateWithPromptFormat()).toBe(true);
+    expect(vi.mocked(optimizePrompt).mock.calls[1]![0]).toEqual({ ...firstRequest,
+      enhancement: { ...firstRequest.enhancement, promptFormat: changedFormat } });
+    expect(vi.mocked(optimizePrompt).mock.calls[1]![0]).not.toHaveProperty('constraintGroups');
+    expect(store.undoResult()).toBe(true);
+    expect(store.result?.optimizedPrompt).toBe(edited);
+    expect(store.result?.constraintGroups).toEqual(source.constraintGroups);
+  });
+
   it.each(['COMPACT', 'STRUCTURED'] as const)('sends %s for direct and confirmed Plan enhancement', async format => {
     const store = useOptimizationStore();
     store.rawPrompt = '实现约定接口';
@@ -54,6 +93,74 @@ describe('explicit prompt presentation', () => {
     expect(vi.mocked(optimizePrompt).mock.calls.map(([request]) => request.enhancement.promptFormat))
       .toEqual([format, format]);
     expect(vi.mocked(optimizePrompt).mock.lastCall?.[0].planConfirmation).toEqual(planConfirmation);
+  });
+
+  it('loads new history as original input and keeps server rule ownership after re-enhancing and editing', async () => {
+    const store = useOptimizationStore();
+    const source = fixture('COMPACT');
+    source.constraintGroups = { platformMandatory: ['不得泄露凭据。'], taskSpecific: [], additionalPermissions: [] };
+    source.sections = source.sections.map(section => section.type === 'CONSTRAINTS'
+      ? { ...section, content: '不得泄露凭据。' } : section);
+    source.optimizedPrompt = renderPromptSections(source.sections, 'COMPACT');
+    const record = { ...history('COMPACT'), constraintGroups: source.constraintGroups,
+      sections: source.sections, optimizedPrompt: source.optimizedPrompt };
+    const recorded = JSON.stringify(record);
+    store.loadFromHistory(record);
+    expect(store.result).toBeUndefined();
+    expect(store.rawPrompt).toBe(record.rawPrompt);
+    vi.mocked(optimizePrompt).mockResolvedValue({ requestId: 'history-regeneration', data: source });
+    expect(await store.runOptimization([])).toBe(true);
+    expect(store.saveEditedSections(source.sections.map(section => section.type === 'CONSTRAINTS'
+      ? { ...section, content: '新编辑保留。' } : section))).toBe(true);
+    expect(store.result?.constraintGroups).toEqual(source.constraintGroups);
+    expect(store.result?.optimizedPrompt).toContain('不得泄露凭据。');
+    expect(store.result?.optimizedPrompt).not.toContain('平台强制约束');
+    expect(JSON.stringify(record)).toBe(recorded);
+  });
+
+  it('retains the complete edit draft and current result when an unclosed constraint fence would swallow required rules', () => {
+    const store = useOptimizationStore();
+    const source = fixture('COMPACT');
+    source.constraintGroups = { platformMandatory: ['不得泄露凭据。'], taskSpecific: [], additionalPermissions: [] };
+    store.result = source;
+    const draft = source.sections.filter(section => section.type !== 'CLARIFICATIONS').map(section => ({ ...section,
+      content: section.type === 'CONSTRAINTS' ? '```text\n尚未闭合' : section.content }));
+    store.resultDraft = draft;
+    expect(store.saveEditedSections(draft)).toBe(false);
+    expect(store.errorMessage).toContain('必要规则无法安全恢复');
+    expect(store.result?.optimizedPrompt).toBe(source.optimizedPrompt);
+    expect(store.resultDraft).toEqual(draft);
+    expect(store.canUndoResult).toBe(false);
+    const repaired = draft.map(section => section.type === 'CONSTRAINTS'
+      ? { ...section, content: `${section.content}\n\`\`\`` } : section);
+    expect(store.saveEditedSections(repaired)).toBe(true);
+    expect(store.result?.optimizedPrompt).toContain('不得泄露凭据。');
+    expect(store.result?.optimizedPrompt).not.toContain('平台强制约束');
+  });
+
+  it.each(['COMPACT', 'STRUCTURED'] as const)('protects required rules from preceding task and output fences in %s', format => {
+    const store = useOptimizationStore();
+    const source = fixture(format);
+    source.constraintGroups = { platformMandatory: ['不得泄露凭据。'], taskSpecific: [], additionalPermissions: [] };
+    store.result = source;
+    for (const type of ['TASK', 'OUTPUT'] as const) {
+      const draft = source.sections.filter(section => section.type !== 'CLARIFICATIONS').map(section => ({ ...section,
+        content: section.type === type ? '````text\n```\n外层尚未闭合' : section.content }));
+      store.resultDraft = draft;
+      expect(store.saveEditedSections(draft)).toBe(false);
+      expect(store.errorMessage).toContain('后续必要规则可能被包入代码块');
+      expect(store.resultDraft).toEqual(draft);
+      expect(store.result?.optimizedPrompt).toBe(source.optimizedPrompt);
+      const fixed = draft.map(section => section.type === type
+        ? { ...section, content: `${section.content}\n\`\`\`\`` } : section);
+      expect(store.saveEditedSections(fixed)).toBe(true);
+      expect(store.result?.optimizedPrompt).toContain('不得泄露凭据。');
+      store.undoResult();
+    }
+    const after = source.sections.filter(section => section.type !== 'CLARIFICATIONS');
+    after.push({ type: 'EXAMPLES', title: '示例', content: '```text\n规则之后的未闭合片段' });
+    expect(store.saveEditedSections(after)).toBe(true);
+    expect(store.result?.optimizedPrompt).toContain('不得泄露凭据。');
   });
 
   it('changes only the next generation preference, retaining current result, Plan and draft', () => {

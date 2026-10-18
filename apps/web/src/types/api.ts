@@ -610,6 +610,13 @@ export interface ProviderMetadata {
   modelVersion?: string;
 }
 
+/** 服务端计算的只读规则归属；缺省或 null 表示旧记录来源未知，不能由客户端声明权限。 */
+export interface ConstraintGroups {
+  readonly platformMandatory: readonly string[];
+  readonly taskSpecific: readonly string[];
+  readonly additionalPermissions: readonly string[];
+}
+
 export interface OptimizationResult {
   optimizedPrompt: string;
   /** 提示词展示形式；旧历史缺省为分节，内部四要素继续支持校验和编辑。 */
@@ -618,6 +625,7 @@ export interface OptimizationResult {
   contextReport: ContextSnapshot;
   ambiguities: string[];
   appliedConstraints: string[];
+  constraintGroups?: ConstraintGroups | null;
   templateCode: TemplateCode;
   provider: ProviderMetadata;
   latencyMs: number;
@@ -670,6 +678,7 @@ export interface OptimizationHistoryDetail {
   contextSummary: Record<string, unknown>;
   ambiguities: string[];
   appliedConstraints: string[];
+  constraintGroups?: ConstraintGroups | null;
   templateCode: TemplateCode;
   providerName: string;
   modelName: string;

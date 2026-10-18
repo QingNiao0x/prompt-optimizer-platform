@@ -71,7 +71,7 @@ class ReportDraftDeliveryAssemblyTest {
         assertThat(constraints).contains("资料缺口与待定选择").doesNotContain("执行前须确认", "同一未决决定在用户已要求的交付形式中保持一致");
         assertThat(result.optimizedPrompt()).contains(output, "研究地区尚未提供", "参考寿命表尚未确定");
         assertThat(result.optimizedPrompt().split("研究地区尚未提供", -1)).hasSize(2);
-        assertThat(constraints.lines().filter(line -> line.startsWith("平台强制约束"))).hasSize(1);
+        assertThat(constraints).doesNotContain("平台强制约束").contains("明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。");
         assertThat(result.appliedConstraints()).hasSize(1);
     }
 

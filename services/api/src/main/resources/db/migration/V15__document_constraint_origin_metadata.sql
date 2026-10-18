@@ -1,0 +1,2 @@
+-- 仅补充已知 JSON 键说明，不改变列结构、旧历史或数据库校验范围。
+COMMENT ON COLUMN optimization_record.result_metadata IS '优化结果 JSON 对象，NOT NULL，数据库默认 {}，数据库不强制键结构或枚举：sections 为结构化段落数组；ambiguities、appliedConstraints 为字符串数组；provider、model 为字符串，modelVersion 为可选版本名称字符串；mock 为布尔值；enhancementOptions 为模板及开关对象；conversationHistory 为消息对象数组；planConfirmation 为可选确认对象；promptFormat 为应用层展示代码字符串，COMPACT=紧凑正文，STRUCTURED=分节正文，旧记录缺少此键时应用默认 STRUCTURED；constraintGroups 为可选的服务端约束来源对象，platformMandatory、taskSpecific、additionalPermissions 均为字符串数组，分别记录平台固定规则、任务规则和用户补充权限；旧记录缺少 constraintGroups 时来源未知，不从正文猜测，不用于关闭平台过滤。';

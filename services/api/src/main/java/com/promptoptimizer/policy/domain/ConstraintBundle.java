@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * 本次生成的约束来源分组。仅内部传递，公共接口继续返回扁平的 appliedConstraints。
+ * 本次生成的约束来源分组；服务端生成后以只读结果元数据返回，保留扁平 appliedConstraints 兼容。
+ * 结果与历史中的分组用于编辑恢复，不接受客户端借此关闭平台规则或权限过滤器。
  *
  * @param platformMandatory 由平台按任务选择的固定条款
  * @param taskSpecific 任务、工程及资料对象规则

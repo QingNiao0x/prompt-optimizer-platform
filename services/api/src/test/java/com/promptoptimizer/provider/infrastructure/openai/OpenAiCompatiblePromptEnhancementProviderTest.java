@@ -760,7 +760,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         assertThat(result.ambiguities()).containsExactly(finding);
         assertThat(result.sections()).extracting("type").contains(PromptSectionType.BACKGROUND,
                 PromptSectionType.TASK, PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS);
-        assertThat(result.optimizedPrompt()).contains("平台强制约束", "不得读取生产环境密钥");
+        assertThat(result.optimizedPrompt()).contains("明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。", "不得读取生产环境密钥");
         if (confirmed) assertThat(result.optimizedPrompt()).contains("用户名密码");
         server.verify();
     }

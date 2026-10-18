@@ -93,7 +93,37 @@ class MybatisOptimizationHistoryServiceTest {
         assertThat(detail.rawPrompt()).isEqualTo("给用户模块添加登录功能");
         assertThat(detail.modelVersion()).isEmpty();
         assertThat(detail.promptFormat()).isEqualTo(com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED);
+        assertThat(detail.constraintGroups()).isNull();
         verify(recordMapper).selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID);
+    }
+
+    @ParameterizedTest
+    @EnumSource(com.promptoptimizer.enhancement.domain.PromptFormat.class)
+    void retainsServerConstraintOriginsInHistoryAndReoptimizesTheOriginalTask(
+            com.promptoptimizer.enhancement.domain.PromptFormat format) {
+        var bundle = new com.promptoptimizer.policy.domain.ConstraintBundle(
+                com.promptoptimizer.policy.domain.PlatformConstraintRules.forTask(true),
+                List.of("保持接口兼容。"), List.of("禁止读取或输出受保护路径：private/**。"));
+        var base = resultWithFileContent();
+        var grouped = new OptimizationResult(base.optimizedPrompt(), base.sections(), base.contextReport(),
+                base.ambiguities(), bundle.visibleConstraints(), base.templateCode(), base.provider(), base.latencyMs(),
+                base.warnings(), base.evidenceCards(), format, bundle).withLatencyMs(53).withModelVersion("test-version");
+        service.save(request(), grouped);
+        var savedCaptor = ArgumentCaptor.forClass(OptimizationRecordEntity.class);
+        verify(persistenceService).persist(savedCaptor.capture(), eq(ACTOR));
+        var saved = savedCaptor.getValue();
+        when(recordMapper.selectByIdAndScope(saved.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(saved);
+        var detail = service.get(saved.getId());
+        assertThat(detail.constraintGroups()).isEqualTo(bundle);
+        assertThat(detail.appliedConstraints()).containsExactlyElementsOf(bundle.visibleConstraints());
+        assertThat(detail.optimizedPrompt()).isEqualTo(grouped.optimizedPrompt());
+        assertThat(detail.sections()).isEqualTo(grouped.sections());
+        when(orchestrator.optimize(any())).thenReturn(grouped);
+        service.reoptimize(saved.getId());
+        var requestCaptor = ArgumentCaptor.forClass(OptimizationRequest.class);
+        verify(orchestrator).optimize(requestCaptor.capture());
+        assertThat(requestCaptor.getValue().rawPrompt()).isEqualTo(request().rawPrompt());
+        assertThat(requestCaptor.getValue().rawPrompt()).doesNotContain("private/**", "平台强制约束");
     }
 
     @ParameterizedTest

@@ -487,7 +487,8 @@ public class OptimizationResultAssembler {
                 Math.max(0, latencyMs),
                 resultWarnings,
                 evidenceCards(eligibleFacts, documentFacts),
-                resultFormat
+                resultFormat,
+                constraintBundle
         );
         // 统一校验最终结果的全部文本投影，避免段落安全但警告、来源或追加内容仍回显凭据。
         // 此投影只在本次调用中检查，禁止写入日志或额外持久化。

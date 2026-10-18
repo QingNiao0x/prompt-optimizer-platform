@@ -1,0 +1,200 @@
+{
+  "candidate": "candidate35",
+  "kind": "READ_ONLY_PRIOR_EVIDENCE_AUDIT_AND_PREPARATION",
+  "recordedAt": "2026-10-18T04:34:36.738987+00:00",
+  "newModelCalls": 0,
+  "canonicalProtocolModified": false,
+  "priorEvidenceModified": false,
+  "ledger": {
+    "actual": 388,
+    "baseline": 70,
+    "candidate": 318,
+    "formalLimits": {
+      "total": 399,
+      "baseline": 80,
+      "candidate": 319
+    },
+    "contiguousTraceRange": [
+      1,
+      388
+    ],
+    "non200TraceCount": 22,
+    "activeBatch": "candidate34-live",
+    "activeBatchStatus": "CLOSED",
+    "closedUnused": 1,
+    "candidateStageRemaining": 1,
+    "baselineAllowanceMayNotBeTransferred": true,
+    "additionalRecordedCallsFound": false,
+    "unloggedCallsClaim": "Only canonical trace files were reconciled; no claim is made about unknown user requests outside this controlled ledger."
+  },
+  "evidenceBindings": [
+    {
+      "path": "tmp/me00a-20261012/protocol.json",
+      "sha256": "ed54c4630bbc636c027d682807042a12f529cabbbfb2caa57d540627ffb669a3"
+    },
+    {
+      "path": "docs/testing/evidence/me04-candidate34-framework-natural-2026-10-18/batch-close-summary.json",
+      "sha256": "677722b31db6360a315d6fdfe004aeb4e3edb95161a382fbed1818bc813a57a9"
+    },
+    {
+      "path": "docs/testing/evidence/me04-candidate34-framework-natural-2026-10-18/candidate34-r1-source.json",
+      "sha256": "b47364de17149a0f103e2d04398b69c8d8c7db9973f19181ac1b35fa53267c52"
+    },
+    {
+      "path": "docs/testing/evidence/me04-candidate34-framework-natural-2026-10-18/attribution.json",
+      "sha256": "11166d74a7c785cd30532067d898c15529c2b02ddda06e5f4f01c81aea28b053"
+    },
+    {
+      "path": "docs/testing/evidence/me04-candidate34-framework-natural-2026-10-18/review-audit.json",
+      "sha256": "aae42610144b05ace93faa3d15f237886ad8d933fcb684fe3ee3ad750e8059ea"
+    },
+    {
+      "path": "tmp/me00a-20261012/traces/382.json",
+      "sha256": "594cdeea701bf7691ac9707c14a009afbc6ae105f98efe6018b7c6bd4f18bcff"
+    },
+    {
+      "path": "tmp/me00a-20261012/traces/383.json",
+      "sha256": "498add160b35b38b6679891a3f390951fee662aaf16e9b90803bc802770d8546"
+    },
+    {
+      "path": "tmp/me00a-20261012/traces/384.json",
+      "sha256": "0814b88f3eff9c27fa3cd429662b7de3d57ef98f8a78111b4710033efe17a25c"
+    },
+    {
+      "path": "tmp/me00a-20261012/traces/385.json",
+      "sha256": "05c4d181a9be2cdc591d75daf9f4403fedfc86bb0eb49e74eb0530a310ccab60"
+    },
+    {
+      "path": "tmp/me00a-20261012/traces/386.json",
+      "sha256": "3b9b690bddce6d14c206ec401755c6b502260fa52afae25c4c765b653da61782"
+    },
+    {
+      "path": "tmp/me00a-20261012/traces/387.json",
+      "sha256": "18acafababdc6d6e0187dd0316af0efc153ce8f34d2bd75d1b9276a200d515d0"
+    },
+    {
+      "path": "tmp/me00a-20261012/traces/388.json",
+      "sha256": "1190759935811ac74b279232cf4c958d493c46a71ae3587a9bfe8d269178ab40"
+    },
+    {
+      "path": "tmp/me04-candidate34-live-20261018/requests-checks/RAW/result.json",
+      "sha256": "3d4dc5b30bcd3ff092ffc35f07d21277b901cd85f21ce900d182b087fe4faebe"
+    },
+    {
+      "path": "tmp/me04-candidate34-live-20261018/requests-checks/COMPACT/result.json",
+      "sha256": "47bc244b05543465847fed63e7a364d005fedd0e66f685a81cee5759b237bdc7"
+    },
+    {
+      "path": "tmp/me04-candidate34-live-20261018/requests-checks/STRUCTURED/result.json",
+      "sha256": "812b5b7ea447f75d7bcaeb3c3c2e1ccd15d1c7c8b509c7bb47645ea176b6b956"
+    }
+  ],
+  "attribution": [
+    {
+      "issue": "Natural wording remains repetitive",
+      "firstConfirmedLayer": "Enhancement model sections 382/383 already repeat action/output/error/acceptance; initial platform repeated task constraints too",
+      "disposition": "Candidate34-r1 fixes proven platform projection only; no new r1 work proves model repetition or compactness solved. Candidate35 changes presentation/provenance only unless separately verified."
+    },
+    {
+      "issue": "Example request present when switch is OFF",
+      "firstConfirmedLayer": "382 model OUTPUT includes normal/error output example explanation despite taskView DISABLED/SWITCH_OFF",
+      "disposition": "OFF means no proactive extra example request, distinct from explicit ban. Do not delete all occurrences of example/test fixtures or weaken required examples. Assess existing guidance consistency before any prompt change."
+    },
+    {
+      "issue": "Generated programs echo synthetic URL credentials",
+      "firstConfirmedLayer": "385 COMPACT and 386 STRUCTURED future execution return/stdout/errors echo complete URL or raw exception text",
+      "disposition": "Downstream explicit commitment violation: 12 and 8 exercised canary scenarios; RAW5 supplementary. Not evidence of platform API-key leak. Platform SensitiveValueDetector cannot prove arbitrary future generated-code data flow."
+    },
+    {
+      "issue": "Missing executable tests in natural work",
+      "firstConfirmedLayer": "385 complete work lacks copied-prompt promised test files; 386 supplies 16 passing tests",
+      "disposition": "Downstream completeness failure. Do not retroactively impose enhanced obligations on RAW, rewrite works, or use authored tests as privacy proof."
+    },
+    {
+      "issue": "AI reviewers preferred enhancements despite failed hard checks",
+      "firstConfirmedLayer": "387/388 review evidence and requirement-origin confusion",
+      "disposition": "Preserve raw opinions and disagreement. Deterministic safety/format/test checks independently gate acceptance, rubric1-5 per current master protocol; no statistical win rate from one task."
+    }
+  ],
+  "minimalIntervention": {
+    "recommended": "Implement deterministic presentation/provenance and edit/history consistency first; reuse saved 382/383 for no-call replay. Do not append global prohibitions, mandate a new method, or add quality retries.",
+    "expectedBenefit": "Less visible platform scaffolding while complete mandatory rules retain server ownership; avoids old-heading restoration and rule-origin confusion.",
+    "limits": "Removing a heading alone cannot prove stronger downstream compliance or compact wording. Existing generated-code, example and test failures remain OPEN.",
+    "stopCondition": "If same hypothesis yields the same serious failure in two candidates, stop broader sampling and reassess responsibility/tool/evidence; if candidate single upstream slot fails, no repair call is funded."
+  },
+  "suggestedLiveAllocation": {
+    "maximumNewCalls": 1,
+    "purposeMaximums": {
+      "PLATFORM_GENERATION": 1,
+      "EXECUTION": 0,
+      "REVIEW": 0
+    },
+    "closedSource": "candidate34-live unused1",
+    "formalLimitsUnchanged": true,
+    "case": "使用requests库爬取网页标题。",
+    "format": "COMPACT",
+    "examples": false,
+    "plan": false,
+    "materials": [],
+    "firstFailureStops": true,
+    "canVerify": [
+      "Actual enhancement request/model response/platform response",
+      "Native clipboard/current store/new history and constraintGroups",
+      "New result excludes legacy platform heading; five code platform rules retained"
+    ],
+    "cannotVerify": [
+      "New RAW/enhanced work comparison",
+      "Downstream credential/test fixes",
+      "Independent AI reviews",
+      "STRUCTURED/Plan new native model behavior",
+      "Multiple real rounds or broad generalization"
+    ]
+  },
+  "offlineMatrix": [
+    {
+      "scope": "Renderer and assembler",
+      "cases": [
+        "Code five rules/noncode truth one; structured and compact",
+        "Exact model duplication versus user scope/new condition/negation/exception",
+        "Protected heading text inside quote/code/table preserved",
+        "Existing 382/383 reassembled with raw source/hash retained"
+      ]
+    },
+    {
+      "scope": "Edit/copy/history/regenerate",
+      "cases": [
+        "Delete one mandatory line then restore via trusted groups without old heading",
+        "Complete five/one rules not duplicated after no-op edit",
+        "Legacy history no groups retains legacy behavior; history source not mutated",
+        "Current task object/state and additional permissions survive clone/history/re-enhance",
+        "Pure translation and strict JSON downstream requests keep original format contract"
+      ]
+    },
+    {
+      "scope": "Security and ownership",
+      "cases": [
+        "Backend recalculates rules instead of trusting client mandatory claims",
+        "Workspace/user/history ownership and logical deletion remain enforced",
+        "Sensitive detector/protected path filters remain active",
+        "Untrusted copied text is not treated as signed platform provenance"
+      ]
+    }
+  ],
+  "preparedToolCheck": {
+    "javaScopeChecks": 20,
+    "runtimeUsedForToolCheck": "candidate34-r1 frozen classes (preparation only, not candidate35 validation)",
+    "springStarted": false,
+    "budgetReservationAttempted": false,
+    "mustRerunAgainstFinalCandidate35Freeze": true,
+    "toolCorrectionsBeforeGreen": [
+      "PowerShell JVM -D option was quoted after command-line parse failure; no Java business test ran on that attempt",
+      "Preparation substitution accidentally changed baseline guard80 to10; corrected before green scope run; no protocol/service/model action occurred"
+    ]
+  },
+  "staleDocumentationFound": [
+    {
+      "file": "docs/testing/evidence/me04-candidate34-framework-natural-2026-10-18/README.md",
+      "finding": "Still says preparation and proposal not effective; actual candidate34 closed. Kept original historical bytes unchanged; current status uses canonical ledger/closure report."
+    }
+  ]
+}

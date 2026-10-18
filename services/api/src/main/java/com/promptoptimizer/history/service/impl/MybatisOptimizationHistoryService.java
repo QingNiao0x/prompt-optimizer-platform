@@ -19,6 +19,7 @@ import com.promptoptimizer.enhancement.domain.OptimizationResult;
 import com.promptoptimizer.enhancement.domain.PromptFormat;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
+import com.promptoptimizer.policy.domain.ConstraintBundle;
 import com.promptoptimizer.history.domain.OptimizationHistoryDetail;
 import com.promptoptimizer.history.domain.OptimizationHistoryPage;
 import com.promptoptimizer.history.domain.OptimizationHistorySummary;
@@ -233,7 +234,9 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 stringValue(metadata.get("modelVersion")),
                 "COMPACT".equals(metadata.get("promptFormat"))
                         ? com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT
-                        : com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED
+                        : com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED,
+                metadata.get("constraintGroups") == null ? null
+                        : objectMapper.convertValue(metadata.get("constraintGroups"), ConstraintBundle.class)
         );
     }
 
@@ -249,6 +252,8 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         metadata.put("promptFormat", result.promptFormat().name());
         metadata.put("ambiguities", result.ambiguities());
         metadata.put("appliedConstraints", result.appliedConstraints());
+        // 来源归属只来自本次服务端组装；旧历史留空，不从扁平规则反推或回写正文。
+        if (result.constraintGroups() != null) metadata.put("constraintGroups", toMap(result.constraintGroups()));
         metadata.put("provider", result.provider().provider());
         metadata.put("model", result.provider().model());
         // 版本名称在调用时固化；不能通过关联当前目录让历史随管理员改名而变化。

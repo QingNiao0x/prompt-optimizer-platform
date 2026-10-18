@@ -1,11 +1,12 @@
 package com.promptoptimizer.enhancement.domain;
 
 import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.policy.domain.ConstraintBundle;
 
 import java.util.List;
 
 /**
- * 一次提示词增强的完整结果。
+ * 一次提示词增强的完整结果；constraintGroups 为服务端只读来源，旧结果可为空，不能据正文反推归属。
  *
  * @author QingNiao
  * @since 0.1.0
@@ -21,7 +22,8 @@ public record OptimizationResult(
         long latencyMs,
         List<String> warnings,
         List<PlanningFactCard> evidenceCards,
-        PromptFormat promptFormat
+        PromptFormat promptFormat,
+        ConstraintBundle constraintGroups
 ) {
 
     /**
@@ -40,13 +42,22 @@ public record OptimizationResult(
     public OptimizationResult withModelVersion(String modelVersion) {
         return new OptimizationResult(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints,
                 templateCode, new ProviderMetadata(provider.provider(), provider.model(), provider.mock(), modelVersion),
-                latencyMs, warnings, evidenceCards, promptFormat);
+                latencyMs, warnings, evidenceCards, promptFormat, constraintGroups);
     }
 
     /** 汇总模型重试、上下文和结果组装的完整耗时；不改变优化正文或历史字段契约。 */
     public OptimizationResult withLatencyMs(long totalLatencyMs) {
         return new OptimizationResult(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints,
-                templateCode, provider, Math.max(0, totalLatencyMs), warnings, evidenceCards, promptFormat);
+                templateCode, provider, Math.max(0, totalLatencyMs), warnings, evidenceCards, promptFormat, constraintGroups);
+    }
+
+    /** 旧结果缺少来源分组时保留未知状态；不能从正文或扁平规则猜测平台归属。 */
+    public OptimizationResult(String optimizedPrompt, List<PromptSection> sections, ContextSnapshot contextReport,
+                              List<String> ambiguities, List<String> appliedConstraints, TemplateCode templateCode,
+                              ProviderMetadata provider, long latencyMs, List<String> warnings,
+                              List<PlanningFactCard> evidenceCards, PromptFormat promptFormat) {
+        this(optimizedPrompt, sections, contextReport, ambiguities, appliedConstraints, templateCode,
+                provider, latencyMs, warnings, evidenceCards, promptFormat, null);
     }
 
     /** 旧记录缺少展示形式时按既有分节呈现；不根据正文标题猜测历史元数据。 */

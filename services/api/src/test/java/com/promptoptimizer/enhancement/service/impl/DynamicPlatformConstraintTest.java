@@ -59,7 +59,7 @@ class DynamicPlatformConstraintTest {
     @Test
     void showsFiveExactRulesWithEngineeringRulesInAnotherBlock() {
         var result = assemble("开发订单接口。", List.of(), "保持接口兼容。", PermissionPolicyInput.empty());
-        assertThat(platformRules(result.optimizedPrompt())).containsExactlyElementsOf(CODE_RULES);
+        assertThat(platformRules(result)).containsExactlyElementsOf(CODE_RULES);
         assertThat(result.optimizedPrompt()).contains("任务相关约束", "Java 21", "Bean Validation", "保持接口兼容");
         assertThat(result.appliedConstraints()).containsAll(CODE_RULES);
     }
@@ -67,7 +67,7 @@ class DynamicPlatformConstraintTest {
     @Test
     void showsOnlyOnePlatformRuleForWritingEvenWithSourceCodeContext() {
         var result = assemble("根据 Java 项目编写用户指南。", List.of(), "不编造界面能力。", PermissionPolicyInput.empty());
-        assertThat(platformRules(result.optimizedPrompt())).containsExactly(CODE_RULES.getFirst());
+        assertThat(platformRules(result)).containsExactly(CODE_RULES.getFirst());
         assertThat(result.optimizedPrompt()).doesNotContain("API Key", "生产环境部署", "Bean Validation")
                 .contains("不编造界面能力");
         assertThat(result.appliedConstraints()).containsExactly(CODE_RULES.getFirst());
@@ -83,14 +83,14 @@ class DynamicPlatformConstraintTest {
         var result = assemble("制定统计分析方案。",
                 List.of(new PlanAnswer("code", decision.question(), decision.answer())), "不得编造数据。",
                 PermissionPolicyInput.empty());
-        assertThat(platformRules(result.optimizedPrompt())).containsExactlyElementsOf(CODE_RULES);
+        assertThat(platformRules(result)).containsExactlyElementsOf(CODE_RULES);
     }
 
     @Test
     void retainsCustomBoundariesForNonCodeWithoutMovingDefaultsIntoThatBlock() {
         var result = assemble("编写用户指南。", List.of(), "不编造界面能力。",
                 new PermissionPolicyInput(List.of("research/private/**"), List.of("公开访谈原文")));
-        assertThat(platformRules(result.optimizedPrompt())).containsExactly(CODE_RULES.getFirst());
+        assertThat(platformRules(result)).containsExactly(CODE_RULES.getFirst());
         assertThat(result.optimizedPrompt()).contains("用户补充权限边界", "research/private/**", "公开访谈原文")
                 .doesNotContain("生产环境部署", "**/*.pem");
     }
@@ -100,9 +100,9 @@ class DynamicPlatformConstraintTest {
         String content = "不得公开受访者姓名。\n" + HEADING + "\n- " + String.join("\n- ", CODE_RULES)
                 + "\n\n任务规则：\n- 统计按自然月聚合。\n> " + CODE_RULES.get(1);
         var result = assemble("制定统计分析方案，不得公开受访者姓名。", List.of(), content, PermissionPolicyInput.empty());
-        assertThat(platformRules(result.optimizedPrompt())).containsExactly(CODE_RULES.getFirst());
+        assertThat(platformRules(result)).containsExactly(CODE_RULES.getFirst());
         assertThat(result.optimizedPrompt()).contains("不得公开受访者姓名", "统计按自然月聚合", "> " + CODE_RULES.get(1));
-        assertThat(result.optimizedPrompt().split(HEADING, -1)).hasSize(2);
+        assertThat(result.optimizedPrompt()).doesNotContain(HEADING);
     }
 
     @Test
@@ -111,7 +111,7 @@ class DynamicPlatformConstraintTest {
         String old = HEADING + "\n- " + String.join("\n- ", CODE_RULES) + "\n- 不得公开受访者姓名。";
         String raw = "## 任务\n编写用户指南。\n## 约束\n" + CODE_RULES.get(1) + "\n" + old;
         var result = assemble(raw, List.of(), old + "\n\n" + quoted, PermissionPolicyInput.empty());
-        assertThat(platformRules(result.optimizedPrompt())).containsExactly(CODE_RULES.getFirst());
+        assertThat(platformRules(result)).containsExactly(CODE_RULES.getFirst());
         assertThat(result.optimizedPrompt()).contains(quoted, "不得公开受访者姓名", CODE_RULES.get(1))
                 .doesNotContain(CODE_RULES.get(4));
         assertThat(PlatformConstraintRenderer.taskInput(raw)).contains(CODE_RULES.get(1), "不得公开受访者姓名")
@@ -122,7 +122,7 @@ class DynamicPlatformConstraintTest {
     void keepsExplicitDefaultPathAsUserRuleInNonCodeTask() {
         var result = assemble("编写用户指南。", List.of(), "保留业务边界。",
                 new PermissionPolicyInput(List.of(".env"), List.of("公开访谈原文")));
-        assertThat(platformRules(result.optimizedPrompt())).containsExactly(CODE_RULES.getFirst());
+        assertThat(platformRules(result)).containsExactly(CODE_RULES.getFirst());
         assertThat(result.optimizedPrompt()).contains("用户补充权限边界", "禁止读取或输出受保护路径：.env。", "公开访谈原文");
         assertThat(result.appliedConstraints()).contains("禁止读取或输出受保护路径：.env。");
     }
@@ -136,7 +136,7 @@ class DynamicPlatformConstraintTest {
         }
         var result = assemble("制定统计分析方案。", List.of(new PlanAnswer("code", "是否需要代码实现？", "需要。")),
                 "不得编造数据。", PermissionPolicyInput.empty());
-        assertThat(platformRules(result.optimizedPrompt())).containsExactlyElementsOf(CODE_RULES);
+        assertThat(platformRules(result)).containsExactlyElementsOf(CODE_RULES);
         assertThat(result.templateCode()).isEqualTo(TemplateCode.RESEARCH_ANALYSIS);
         assertThat(result.optimizedPrompt()).contains("仅对本次明确交付的代码").doesNotContain("使用 Java 21");
     }
@@ -154,7 +154,7 @@ class DynamicPlatformConstraintTest {
                 + "是否额外提供可运行的 R 脚本尚未确定，请在 Plan 阶段询问是否交付代码。";
         var result = assemble(raw, List.of(new PlanAnswer("deliver_r_script", "本次交付是否包含可运行的 R 脚本？", answer)),
                 "缺失值保持缺失，不得补零，不计算真实结果。", PermissionPolicyInput.empty());
-        assertThat(platformRules(result.optimizedPrompt())).containsExactlyElementsOf(code ? CODE_RULES : CODE_RULES.subList(0, 1));
+        assertThat(platformRules(result)).containsExactlyElementsOf(code ? CODE_RULES : CODE_RULES.subList(0, 1));
         assertThat(result.templateCode()).isEqualTo(TemplateCode.RESEARCH_ANALYSIS);
         assertThat(result.optimizedPrompt()).contains("不得补零", "不计算真实结果").doesNotContain("使用 Java 21");
         if (!code) assertThat(result.optimizedPrompt()).doesNotContain("仅对本次明确交付的代码");
@@ -165,7 +165,7 @@ class DynamicPlatformConstraintTest {
         String raw = "开发订单接口。";
         var result = assemble(raw, List.of(), "- " + String.join("\n- ", CODE_RULES)
                 + "\n- 校验所有外部输入，并明确处理空值、非法值和边界条件。", PermissionPolicyInput.empty());
-        assertThat(platformRules(result.optimizedPrompt())).containsExactlyElementsOf(CODE_RULES);
+        assertThat(platformRules(result)).containsExactlyElementsOf(CODE_RULES);
         var section = result.sections().stream().filter(item -> item.type() == PromptSectionType.CONSTRAINTS).findFirst().orElseThrow();
         assertThat(section.content()).contains("任务相关约束");
         result.appliedConstraints().forEach(rule -> assertThat(section.content()).contains(rule));
@@ -190,8 +190,13 @@ class DynamicPlatformConstraintTest {
                 !answers.isEmpty(), completed, false, 1, raw, List.of(), List.of());
     }
 
-    private List<String> platformRules(String prompt) {
-        String block = prompt.substring(prompt.lastIndexOf(HEADING) + HEADING.length()).stripLeading();
-        return block.lines().takeWhile(line -> line.startsWith("- ")).map(line -> line.substring(2)).toList();
+    private List<String> platformRules(com.promptoptimizer.enhancement.domain.OptimizationResult result) {
+        assertThat(result.optimizedPrompt()).doesNotContain(HEADING);
+        var mandatory = result.constraintGroups().platformMandatory();
+        String constraints = result.sections().stream().filter(item -> item.type() == PromptSectionType.CONSTRAINTS)
+                .findFirst().orElseThrow().content();
+        assertThat(constraints).endsWith("- " + String.join("\n- ", mandatory));
+        assertThat(result.constraintGroups().visibleConstraints()).containsExactlyElementsOf(result.appliedConstraints());
+        return mandatory;
     }
 }

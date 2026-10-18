@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, ref, shallowRef, watch } from 'vue';
-import { restoreAppliedConstraints } from '@/features/optimization/constraintEditing';
+import { assertConstraintPlacement, ConstraintRestorationError, restoreAppliedConstraints } from '@/features/optimization/constraintEditing';
 import { renderPromptSections } from '@/features/optimization/promptPresentation';
 import { completeContextTransmission, createContextTransmission, failContextTransmission,
   type ContextTransmissionReport, type TransmissionPhase } from '@/features/context-analysis/contextTransmission';
@@ -574,17 +574,30 @@ export const useOptimizationStore = defineStore('optimization', () => {
       errorMessage.value = '结构段落的标题和内容不能为空。';
       return false;
     }
-    const normalizedSections = sections.map((section) => {
-      if (section.type !== 'CONSTRAINTS') {
-        return { ...section };
-      }
-      return {
-        ...section,
-        content: restoreAppliedConstraints(section.content,
-          result.value?.sections.find(item => item.type === 'CONSTRAINTS')?.content ?? '',
-          result.value?.appliedConstraints ?? []),
-      };
-    });
+    let normalizedSections: PromptSection[];
+    try {
+      assertConstraintPlacement(sections, result.value.appliedConstraints.length > 0
+        || Boolean(result.value.constraintGroups?.platformMandatory.length)
+        || Boolean(result.value.constraintGroups?.additionalPermissions.length));
+      normalizedSections = sections.map((section) => {
+        if (section.type !== 'CONSTRAINTS') {
+          return { ...section };
+        }
+        return {
+          ...section,
+          content: restoreAppliedConstraints(section.content,
+            result.value?.sections.find(item => item.type === 'CONSTRAINTS')?.content ?? '',
+            result.value?.appliedConstraints ?? [], result.value?.constraintGroups,
+            result.value?.promptFormat ?? 'STRUCTURED',
+            sections.filter(item => item.type !== 'CONSTRAINTS' && item.type !== 'CLARIFICATIONS')
+              .map(item => item.content)),
+        };
+      });
+    } catch (error: unknown) {
+      if (!(error instanceof ConstraintRestorationError)) throw error;
+      errorMessage.value = error.message;
+      return false;
+    }
     const optimizedPrompt = renderPromptSections(normalizedSections, result.value.promptFormat ?? 'STRUCTURED');
     if (optimizedPrompt === result.value.optimizedPrompt) {
       resultDraft.value = undefined;

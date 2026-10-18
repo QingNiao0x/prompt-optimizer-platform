@@ -129,7 +129,7 @@ class TaskConstraintAssemblyReplayTest {
         var result = assemble("状态必须为`ready;done`。\n阈值必须>=1.5；保留原值。\n保护路径为data/a;b/**。",
                 bundle(rules), false);
         assertThat(result.optimizedPrompt()).contains("任务相关约束：", rules.get(0), rules.get(1), rules.get(2),
-                "用户补充权限边界", "research/private/**", "平台强制约束");
+                "用户补充权限边界", "research/private/**", "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。");
         assertThat(result.appliedConstraints()).containsAll(rules);
     }
 

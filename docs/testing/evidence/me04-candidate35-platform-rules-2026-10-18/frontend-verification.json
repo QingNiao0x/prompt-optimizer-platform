@@ -1,0 +1,63 @@
+{
+  "kind": "AFFECTED_FRONTEND_VALIDATION",
+  "createdAt": "2026-10-18T12:44:29.3066978+08:00",
+  "modelCalls": 0,
+  "newAccounts": 0,
+  "unit": {
+    "failed": 0,
+    "total": 80,
+    "command": "npm run test -- src/features/optimization/constraintEditing.test.ts src/stores/optimization.test.ts src/stores/optimizationPresentation.test.ts src/stores/optimizationLifecycle.test.ts",
+    "passed": 80
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "command": "npm run typecheck"
+  },
+  "browser": {
+    "skipped": 0,
+    "passed": 14,
+    "command": "npm run test:e2e -- e2e/structured-prompt.spec.ts --project=desktop-chrome --project=mobile-chrome",
+    "flaky": 0,
+    "failed": 0
+  },
+  "reports": [
+    {
+      "path": "tmp/candidate35-frontend-unit.json",
+      "sha256": "da4873dfb2e2577a6095439b622a6dff24f7a8afaaa0709565937244bfd2afd8"
+    },
+    {
+      "path": "tmp/candidate35-frontend-typecheck.log",
+      "sha256": "68325ce79557e6cf8720aaa24fc1214d6902b32c9ee76aea32fc481e8a2b741c"
+    },
+    {
+      "path": "tmp/candidate35-frontend-e2e.json",
+      "sha256": "c7286a1f1d57d0fc4ce780582ed6e6187f8bbc58a1e394f31f52a8b601af4738"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/types/api.ts",
+      "sha256": "e79cb6cf4a9ff2f62f9bb8e500b072abf618f8722ad4c7a9e573ee97e1c612f1"
+    },
+    {
+      "path": "apps/web/src/features/optimization/constraintEditing.ts",
+      "sha256": "bc0a8c48b84cc27be199bd027c1d932312ddec99c38be176bdfc7ce9dc7a160a"
+    },
+    {
+      "path": "apps/web/src/features/optimization/constraintEditing.test.ts",
+      "sha256": "106ee17529326efbe7490e49ba95090fa8869324507ee04a95e7208c03308e4a"
+    },
+    {
+      "path": "apps/web/src/stores/optimization.ts",
+      "sha256": "7d66e7dd1ee7fd1a35e8665d13815bbc6b5d0f8ca95a1beb5c16978cff4196f4"
+    },
+    {
+      "path": "apps/web/src/stores/optimizationPresentation.test.ts",
+      "sha256": "72d7628ca630f1d7f0fd7bc2829f9b499e7be0adbb4a4e96f9c86954192c6961"
+    },
+    {
+      "path": "apps/web/e2e/structured-prompt.spec.ts",
+      "sha256": "aa3ea11d3933b542305570dd7d806c14265b98e16d22500fd7cbb66025beb79e"
+    }
+  ]
+}

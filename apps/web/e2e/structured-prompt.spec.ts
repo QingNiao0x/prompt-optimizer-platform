@@ -4,7 +4,7 @@ import { mockAuthentication } from './authFixture';
 import { openWorkbenchPane } from './workbenchPanes';
 
 const rawPrompt = '给合作方写一封简短邮件，请确认周五能否交付；日期不能擅自更改。';
-const rule = '不得泄露凭据。';
+const rule = '明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。';
 const regenerateButton = '基于原始需求按所选模式重新增强';
 const resultFor = (format: PromptFormat, answer = ''): OptimizationResult => {
   const sections: OptimizationResult['sections'] = [
@@ -13,13 +13,14 @@ const resultFor = (format: PromptFormat, answer = ''): OptimizationResult => {
       ? '围绕原定周五交付组织邮件，分别表达按时交付与遇到困难时回复预计时间的要求。'
       : '写一封简短邮件，请确认周五能否交付。'}${answer}` },
     { type: 'OUTPUT', title: '输出', content: '只交付邮件正文。' },
-    { type: 'CONSTRAINTS', title: '约束', content: `日期不能擅自更改。\n平台强制约束（不得删除或弱化）：\n- ${rule}` },
+    { type: 'CONSTRAINTS', title: '约束', content: `日期不能擅自更改。\n\n${format === 'STRUCTURED' ? '- ' : ''}${rule}` },
   ];
   return { promptFormat: format, sections, optimizedPrompt: sections.map(section => format === 'COMPACT'
     ? section.content : `## ${section.title}\n${section.content}`).join('\n\n'),
     contextReport: { customDescription: '', technologyStack: [], dependencies: [], directoryTree: [],
       fileSnippets: [], warnings: [], redactions: [], analysisVersion: 'controlled-fixture' },
-    ambiguities: [], appliedConstraints: [rule], templateCode: 'GENERAL',
+    ambiguities: [], appliedConstraints: [rule],
+    constraintGroups: { platformMandatory: [rule], taskSpecific: [], additionalPermissions: [] }, templateCode: 'GENERAL',
     provider: { provider: 'mock', model: 'controlled-fixture', mock: true }, latencyMs: 1 };
 };
 
@@ -77,6 +78,7 @@ test('开关只选择下次增强模式；显式重新生成失败保旧稿、�
   expect(requests).toHaveLength(1);
   await page.getByRole('button', { name: '编辑', exact: true }).click();
   await page.locator('#section-TASK').fill('写简短邮件；保留周五，并请对方回复可行时间。');
+  await page.locator('#section-CONSTRAINTS').fill('日期不能擅自更改。新客户需复核；旧客户例外。');
   await expect(page.getByRole('button', { name: regenerateButton, exact: true })).toBeDisabled();
   await switchFormat(page);
   await switchFormat(page);
@@ -86,6 +88,8 @@ test('开关只选择下次增强模式；显式重新生成失败保旧稿、�
   const copied = await copiedText(page);
   expect(copied).toContain('保留周五，并请对方回复可行时间。');
   expect(copied).toContain(rule);
+  expect(copied).toContain('新客户需复核；旧客户例外。');
+  expect(copied).not.toContain('平台强制约束');
   expect(copied).not.toContain('## 任务');
   expect(requests).toHaveLength(1);
 
@@ -229,8 +233,12 @@ test('模式重新增强遇到Plan过期时保留原结果及回答，恢复真�
 test('旧记录缺省恢复分节，生成中禁止切换避免迟到响应覆盖', async ({ page }) => {
   await prepare(page);
   const old = resultFor('STRUCTURED');
-  const { promptFormat: ignored, ...legacy } = old;
+  const { promptFormat: ignored, constraintGroups: oldGroups, ...legacy } = old;
   void ignored;
+  void oldGroups;
+  legacy.sections = old.sections.map(section => section.type === 'CONSTRAINTS' ? { ...section,
+    content: `日期不能擅自更改。\n平台强制约束（不得删除或弱化）：\n- ${rule}` } : section);
+  legacy.optimizedPrompt = legacy.sections.map(section => `## ${section.title}\n${section.content}`).join('\n\n');
   await page.route('**/api/v1/optimization-history**', route => route.fulfill({ json: { data:
     new URL(route.request().url()).pathname.endsWith('/old')
       ? { id: 'old', rawPrompt, ...legacy, contextSummary: {}, providerName: 'mock', modelName: 'old',
@@ -258,3 +266,47 @@ test('旧记录缺省恢复分节，生成中禁止切换避免迟到响应覆�
   await openWorkbenchPane(page, 'result');
   await expect(page.locator('.section-list')).toBeVisible();
 });
+
+for (const format of ['COMPACT', 'STRUCTURED'] as const) {
+test(`${format}代码规则依服务端来源恢复；未闭合围栏保留草稿，修正后复制五条完整规则`, async ({ page }) => {
+  await prepare(page);
+  const rules = [rule, '不得泄露密码、Token或API Key。', '保留原定交付格式。', '不得读取受保护路径。', '高风险操作必须人工确认。'];
+  const permission = '导出真实用户数据前须人工确认。';
+  const generated = resultFor(format);
+  generated.appliedConstraints = [...rules, permission];
+  generated.constraintGroups = { platformMandatory: rules, taskSpecific: [], additionalPermissions: [permission] };
+  generated.sections = generated.sections.map(section => section.type === 'CONSTRAINTS'
+    ? { ...section, content: [...rules, permission].map(rule => `- ${rule}`).join('\n') } : section);
+  generated.optimizedPrompt = generated.sections.map(section => format === 'COMPACT'
+    ? section.content : `## ${section.title}\n${section.content}`).join('\n\n');
+  let calls = 0;
+  await page.route('**/api/v1/optimizations', route => {
+    calls++;
+    return route.fulfill({ json: { data: generated } });
+  });
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
+  if (format === 'STRUCTURED') await switchFormat(page);
+  await page.getByLabel('原始提示词', { exact: true }).fill('使用requests库爬取网页标题。');
+  await page.getByRole('button', { name: '直接增强提示词', exact: true }).click();
+  expect(await copiedText(page)).toBe(generated.optimizedPrompt);
+  await page.getByRole('button', { name: '编辑', exact: true }).click();
+  await page.locator('#section-TASK').fill('实现可运行代码并保留新的任务要求。');
+  await page.locator('#section-CONSTRAINTS').fill('```text\n未闭合的用户草稿');
+  await page.getByRole('button', { name: '保存修改', exact: true }).click();
+  await expect(page.locator('.edit-error')).toHaveText('约束条件中的代码围栏尚未闭合，必要规则无法安全恢复。请补齐围栏后保存，其他修改已保留。');
+  await expect(page.locator('#section-TASK')).toHaveValue('实现可运行代码并保留新的任务要求。');
+  await expect(page.locator('#section-CONSTRAINTS')).toHaveValue('```text\n未闭合的用户草稿');
+  await page.locator('#section-CONSTRAINTS').fill('仅调试时：\n- 不得泄露密码、Token或API Key。');
+  await page.getByRole('button', { name: '保存修改', exact: true }).click();
+  const copied = await copiedText(page);
+  expect(copied).not.toContain('平台强制约束');
+  expect(copied).toContain('约束条件：');
+  expect(copied).toContain('仅调试时：\n- 不得泄露密码、Token或API Key。');
+  for (const rule of [...rules, permission]) expect(copied).toContain(rule);
+  await page.getByRole('button', { name: '编辑', exact: true }).click();
+  await page.getByRole('button', { name: '保存修改', exact: true }).click();
+  expect(await copiedText(page)).toBe(copied);
+  expect(calls).toBe(1);
+});
+}

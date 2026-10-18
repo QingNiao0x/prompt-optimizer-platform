@@ -9,6 +9,7 @@ import java.util.List;
  * @since 0.1.0
  */
 public final class PlatformConstraintRules {
+    /** 仅用于识别旧平台结果；新正文不再依靠可见标题表达规则归属。 */
     public static final String HEADING = "平台强制约束（不得删除或弱化）：";
     public static final String TRUTH = "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。";
     public static final String PATH_PREFIX = "禁止读取或输出受保护路径：";

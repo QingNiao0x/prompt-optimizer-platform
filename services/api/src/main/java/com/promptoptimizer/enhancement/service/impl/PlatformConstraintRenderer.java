@@ -30,11 +30,16 @@ final class PlatformConstraintRenderer {
         return strip(text, explicit, owned, false);
     }
 
-    /** 平台块最后落笔，避免普通规则压缩器改变固定数量、顺序或原文。 */
+    /** 固定规则最后落笔，以独立短列表融入约束正文，避免普通压缩器改变数量、顺序或原文。 */
     static String appendMandatory(String text, ConstraintBundle constraints) {
-        String block = PlatformConstraintRules.HEADING + "\n- " + String.join("\n- ", constraints.platformMandatory());
+        String block = "- " + String.join("\n- ", constraints.platformMandatory());
         text = removeUnscopedMandatorySentences(text, Set.copyOf(constraints.platformMandatory()));
-        return text.isBlank() ? block : text.stripTrailing() + "\n\n" + block;
+        if (text.isBlank()) return block;
+        // 末尾条件或具名章节不能让全局规则继承局部范围；仅此时用普通约束标题重置。
+        boolean scoped = hasTrailingScopedBlock(text);
+        String last = text.lines().filter(line -> !line.isBlank()).reduce((left, right) -> right).orElse("");
+        String separator = isHeading(last.strip()) && isGeneralConstraintHeading(last) ? "\n" : "\n\n";
+        return text.stripTrailing() + separator + (scoped ? "约束条件：\n" : "") + block;
     }
 
     /** 固定规则可嵌在一行多句中；只移除完整等价句，引用、代码、表格和具名范围不参与。 */
@@ -51,8 +56,8 @@ final class PlatformConstraintRenderer {
                 continue;
             }
             if (fence != null || value.startsWith("|") || value.startsWith(">")) { lines.add(line); continue; }
-            if (value.startsWith("#") || value.endsWith("：") || value.endsWith(":")) {
-                protectedScope = !Set.of("任务相关约束：", "推断依据：").contains(value);
+            if (isHeading(value)) {
+                protectedScope = !isGeneralConstraintHeading(value);
                 lines.add(line);
                 continue;
             }
@@ -76,6 +81,7 @@ final class PlatformConstraintRenderer {
         List<String> output = new ArrayList<>();
         String fence = null;
         boolean platform = false;
+        boolean protectedScope = false;
         boolean needsTaskHeading = false;
         for (String line : (text == null ? "" : text).split("\\R", -1)) {
             String trimmed = line.trim();
@@ -93,15 +99,18 @@ final class PlatformConstraintRenderer {
             String rule = ruleText(line);
             if (rule.equals(PlatformConstraintRules.HEADING)) {
                 platform = true;
+                protectedScope = false;
                 needsTaskHeading = true;
                 continue;
             }
-            boolean heading = trimmed.startsWith("#") || rule.endsWith("：") || rule.endsWith(":");
+            boolean heading = isHeading(trimmed);
             if (heading) {
                 platform = false;
+                // 具名业务或条件章节内的完整同句仍有独立作用域，不能当成平台复读清除。
+                protectedScope = !isGeneralConstraintHeading(rule);
                 needsTaskHeading = false;
             }
-            if ((!onlyPlatformBlock || platform) && owned.contains(rule)
+            if ((!onlyPlatformBlock || platform) && !protectedScope && owned.contains(rule)
                     && !preserve.contains(rule)) continue;
             if (platform && needsTaskHeading && !trimmed.isBlank()) {
                 output.add("任务相关约束：");
@@ -117,5 +126,34 @@ final class PlatformConstraintRenderer {
         String value = line.trim().replaceFirst("^(?:#{1,6}\\s+|[-*+]\\s+|\\d+[.)、]\\s*)", "");
         if (value.startsWith("**") && value.endsWith("**") && value.length() > 4) value = value.substring(2, value.length() - 2);
         return value.trim();
+    }
+
+    /** 仅识别明确分节标记；正文中的条件原句不会被当作平台来源标识。 */
+    private static boolean isHeading(String value) {
+        String rule = ruleText(value);
+        return value.startsWith("#") || rule.endsWith("：") || rule.endsWith(":");
+    }
+
+    /** 普通约束标题只界定全局呈现范围，不授予删除其他规则或访问文件的权限。 */
+    private static boolean isGeneralConstraintHeading(String value) {
+        return Set.of("约束", "约束条件", "任务相关约束", "推断依据")
+                .contains(ruleText(value).replaceFirst("[：:]$", ""));
+    }
+
+    /** 追踪最后一个明确章节的范围，引用、代码和表格内的排版不改变正文范围。 */
+    private static boolean hasTrailingScopedBlock(String text) {
+        boolean scoped = false;
+        String fence = null;
+        for (String line : text.lines().toList()) {
+            String value = line.strip();
+            if (value.startsWith("```") || value.startsWith("~~~")) {
+                String marker = value.substring(0, 3);
+                fence = fence == null ? marker : fence.equals(marker) ? null : fence;
+                continue;
+            }
+            if (fence != null || value.startsWith(">") || value.startsWith("|")) continue;
+            if (isHeading(value)) scoped = !isGeneralConstraintHeading(value);
+        }
+        return scoped;
     }
 }

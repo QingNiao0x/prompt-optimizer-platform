@@ -50,7 +50,7 @@ class AssemblyProjectionReplayTest {
         String output = result.sections().stream().filter(section -> section.type() == PromptSectionType.OUTPUT)
                 .findFirst().orElseThrow().content();
         assertThat(output).doesNotContain("Java21交付：保留已定类名、方法签名、业务对象及异常类型，使用Java21确实存在的标准库API；");
-        assertThat(result.optimizedPrompt()).contains("PatchMerger.java", "PatchMergerTest.java", "未验证", "平台强制约束");
+        assertThat(result.optimizedPrompt()).contains("PatchMerger.java", "PatchMergerTest.java", "未验证", "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。");
         assertThat(result.appliedConstraints()).anyMatch(rule -> rule.contains("密码、Token、API Key 或私钥"));
     }
 

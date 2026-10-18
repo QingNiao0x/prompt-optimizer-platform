@@ -1,0 +1,42 @@
+{
+  "candidate": "candidate35",
+  "status": "PREPARED_NOT_ACTIVATED",
+  "automaticCallsBefore": 388,
+  "candidateCallsBefore": 318,
+  "formalLimitsBefore": {
+    "total": 399,
+    "baseline": 80,
+    "candidate": 319
+  },
+  "formalLimitsProposed": {
+    "total": 399,
+    "baseline": 80,
+    "candidate": 319
+  },
+  "maximumNewCalls": 1,
+  "purposeMaximums": {
+    "PLATFORM_GENERATION": 1,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "reallocationProposed": {
+    "candidate34ClosedUnused": 1
+  },
+  "additionalAllowanceRequested": 0,
+  "maximumActualAfter": 389,
+  "maximumCandidateAfter": 319,
+  "casesFile": "live-cases.json",
+  "casesSha256": "919e81effcf0b86dda03c0a37098abcdb7d1a927e7d91f29f3813ec365966de2",
+  "sourceManifestSha256": null,
+  "models": {
+    "enhancement": "deepseek-flash"
+  },
+  "parameters": {
+    "temperature": 0.2,
+    "max_tokens": 10000,
+    "thinking": "disabled"
+  },
+  "authorizationBasis": "User authorized autonomous selection and reallocation within current formal numerical limits; root must record an explicit amendment after source/tool freeze before any live action.",
+  "dependencyFailurePolicy": "At most one actual upstream call; any provider failure or invalid response ends the live branch. No repair request, downstream work, AI review or quality retry is funded.",
+  "preparationModelCalls": 0
+}

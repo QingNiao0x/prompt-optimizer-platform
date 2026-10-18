@@ -188,6 +188,16 @@ class StructuredPromptPreferenceTest {
         assertThat(restored.promptFormat()).isEqualTo(format);
         assertThat(restored.optimizedPrompt()).isEqualTo(original.optimizedPrompt());
         assertThat(restored.sections()).isEqualTo(original.sections());
+        assertThat(restored.constraintGroups()).isEqualTo(original.constraintGroups());
+        assertThat(restored.constraintGroups().platformMandatory()).containsExactlyElementsOf(
+                original.constraintGroups().platformMandatory());
+        var legacyJson = mapper.valueToTree(original);
+        ((com.fasterxml.jackson.databind.node.ObjectNode) legacyJson).remove("constraintGroups");
+        var legacy = mapper.treeToValue(legacyJson, OptimizationResult.class);
+        assertThat(legacy.constraintGroups()).isNull();
+        assertThat(legacy.optimizedPrompt()).isEqualTo(original.optimizedPrompt());
+        assertThat(legacy.sections()).isEqualTo(original.sections());
+        assertThat(legacy.appliedConstraints()).isEqualTo(original.appliedConstraints());
     }
 
     private OptimizationResult assemble(String raw, EnhancementProviderResponse response, PromptFormat format) {

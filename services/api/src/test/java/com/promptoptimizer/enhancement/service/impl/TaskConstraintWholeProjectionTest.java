@@ -114,7 +114,7 @@ class TaskConstraintWholeProjectionTest {
         assertThat(constraints).contains("任务相关约束：\n- " + INPUT)
                 .doesNotContain("\n- " + ERROR, "\n- " + TEST);
         assertThat(result.appliedConstraints()).contains(INPUT, ERROR, TEST);
-        assertThat(result.optimizedPrompt()).contains("平台强制约束", "生产环境配置", "人工确认");
+        assertThat(result.optimizedPrompt()).contains("明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。", "生产环境配置", "人工确认");
     }
 
     @Test

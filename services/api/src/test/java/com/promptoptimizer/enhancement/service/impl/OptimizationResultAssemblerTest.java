@@ -84,7 +84,7 @@ class OptimizationResultAssemblerTest {
                 .doesNotContain(PromptSectionType.CLARIFICATIONS)
                 .contains(PromptSectionType.ACCEPTANCE);
         assertThat(result.optimizedPrompt())
-                .contains("研究地区范围：广东省", "平台强制约束", "说明数据来源")
+                .contains("研究地区范围：广东省", "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。", "说明数据来源")
                 .doesNotContain("用户已确认的信息")
                 .doesNotContain("待确认", "地区范围未知");
     }
@@ -156,7 +156,7 @@ class OptimizationResultAssemblerTest {
         assertThat(result.ambiguities()).containsExactly("订单取消后已支付款项应立即退款还是等待审核？");
         assertThat(result.sections()).filteredOn(item -> item.type() == PromptSectionType.CLARIFICATIONS)
                 .singleElement().satisfies(item -> assertThat(item.content()).isEqualTo("- " + result.ambiguities().getFirst()));
-        assertThat(result.optimizedPrompt()).contains("平台强制约束", "不得削弱现有功能");
+        assertThat(result.optimizedPrompt()).contains("明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。", "不得削弱现有功能");
     }
 
     @Test
