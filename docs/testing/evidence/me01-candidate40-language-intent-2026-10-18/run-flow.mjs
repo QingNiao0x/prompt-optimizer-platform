@@ -154,10 +154,6 @@ try {
     const planned = page.waitForResponse(r => r.request().method() === 'POST' && new URL(r.url()).pathname === '/api/v1/optimizations/plan', { timeout: 150000 });
     const enhanced = page.waitForResponse(r => r.request().method() === 'POST' && new URL(r.url()).pathname === '/api/v1/optimizations', { timeout: 150000 });
     void enhanced.catch(() => undefined);
-    // 工具在上游调用前失败时，原对话框和答案仍在；回到首题核查同一原稿，不重新生成Plan。
-    const originalDialog = page.locator('.el-dialog:visible').filter({ hasText: '生成前确认' });
-    for (let back = 0; back < answers.length && await originalDialog.getByRole('button', { name: '上一题', exact: true }).count(); back++)
-      await originalDialog.getByRole('button', { name: '上一题', exact: true }).click();
     await page.getByRole('button', { name: '先确认并增强', exact: true }).click(); await planned; await planCapture;
     if (plan.status !== 200) throw Error(`Plan failed ${plan.status}`);
     if (!plan.body.data.questions.length && frozen.sample.enhancementAllowed) { await enhanced; await platformCapture; }
@@ -168,6 +164,15 @@ try {
   } else {
     const answers = await json(resolve(out, 'prepared-answers.json'));
     if (answers.length !== plan.body.data.questions.length) throw Error('Complete actual answers required');
+    // 原对话框和答案在失败后保留；按真实当前题回退，并等待每次渲染，不重新生成Plan。
+    const originalDialog = page.locator('.el-dialog:visible').filter({ hasText: '生成前确认' });
+    const currentQuestion = (await originalDialog.locator('h3:visible').innerText()).trim();
+    let currentIndex = plan.body.data.questions.findIndex(q => q.question === currentQuestion);
+    if (currentIndex < 0) throw Error('Original active question does not belong to bound Plan');
+    while (currentIndex > 0) {
+      await originalDialog.getByRole('button', { name: '上一题', exact: true }).click(); currentIndex--;
+      await originalDialog.getByRole('heading', { name: plan.body.data.questions[currentIndex].question, exact: true }).waitFor();
+    }
     const enhanced = page.waitForResponse(r => r.request().method() === 'POST' && new URL(r.url()).pathname === '/api/v1/optimizations', { timeout: 150000 });
     void enhanced.catch(() => undefined);
     for (let i = 0; i < answers.length; i++) {
