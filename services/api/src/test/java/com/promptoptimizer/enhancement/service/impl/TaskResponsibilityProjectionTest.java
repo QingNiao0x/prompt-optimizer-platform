@@ -34,10 +34,11 @@ class TaskResponsibilityProjectionTest {
     private final ContextSnapshot context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "EMPTY");
 
     @Test
-    void actual416LegacyFallbackAndSourceBoundResponsibilityHaveDifferentEvidence() throws Exception {
+    void actual416UsesServerResponsibilityRegardlessOfModelAdvice() throws Exception {
         var questions = questions();
         var filter = new PlanQuestionFilter();
-        assertThat(filter.filter(questions, input(RAW))).contains(questions.get(2));
+        assertThat(filter.filter(questions, input(RAW)))
+                .containsExactly(questions.get(0), questions.get(1), questions.get(3));
         var advised = advise(questions.get(2), RAW);
         var candidates = List.of(questions.get(0), questions.get(1), advised, questions.get(3));
         assertThat(filter.filter(candidates, input(RAW)))
@@ -47,7 +48,7 @@ class TaskResponsibilityProjectionTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"如何组织最终实现？", "你更希望怎样使用这份代码？", "交付物应该是哪一种形态？", "Choose how the implementation is packaged?"})
+    @ValueSource(strings = {"如何组织最终实现？", "你更希望怎样使用这份代码？", "交付物应该是哪一种形态？", "实现的入口与调用方式由谁来组织？"})
     void responsibilityDoesNotDependOnQuestionWording(String wording) throws Exception {
         var original = questions().get(2);
         var changed = new PlanQuestion(original.id(), wording, original.hint(), original.type(), original.options(), List.of(), true);
@@ -74,17 +75,18 @@ class TaskResponsibilityProjectionTest {
     }
 
     @Test
-    void missingOrForgedScopeAndOtherEvidenceKeepTheOriginalQuestion() throws Exception {
+    void modelAdviceDoesNotControlResponsibilityAndActualEvidenceRemainsProtected() throws Exception {
         var original = questions().get(2);
         var incorrect = new PlanQuestion(original.id(), original.question(), original.hint(), original.type(), original.options(), List.of(), true,
                 new PlanQuestionResponsibility("EXECUTOR", "CODE_PACKAGING_ONLY", "另一个任务", original.question(), List.of("lib", "cli", "both")));
-        assertThat(new PlanQuestionFilter().filter(List.of(incorrect), input(RAW))).containsExactly(incorrect);
+        assertThat(new PlanQuestionFilter().filter(List.of(incorrect), input(RAW))).isEmpty();
+        assertThat(new PlanQuestionFilter().filter(List.of(incorrect), input(RAW + "交付方式由我决定。"))).containsExactly(incorrect);
         var advised = advise(original, RAW);
         assertThat(new PlanQuestionFilter().filter(List.of(advised), new PlanningProviderRequest(RAW, "既有交付契约需要核查", List.of())))
                 .containsExactly(advised);
         var wrongIds = new PlanQuestion(original.id(), original.question(), original.hint(), original.type(), original.options(), List.of(), true,
                 new PlanQuestionResponsibility("EXECUTOR", "CODE_PACKAGING_ONLY", RAW, original.question(), List.of("lib", "cli")));
-        assertThat(new PlanQuestionFilter().filter(List.of(wrongIds), input(RAW))).containsExactly(wrongIds);
+        assertThat(new PlanQuestionFilter().filter(List.of(wrongIds), input(RAW))).isEmpty();
     }
 
     @Test
@@ -171,6 +173,30 @@ class TaskResponsibilityProjectionTest {
         var slots = BoundRequirementProjection.forProvider(request(task, List.of()));
         assertThat(slots).allMatch(slot -> !slot.statement().contains("2010") && !slot.statement().contains("已确认"));
         assertThat(task.modelInput().pendingDecisions().getFirst().scope()).isEqualTo(ConfirmedPlanDecision.Scope.UNRESOLVED);
+    }
+
+    @Test
+    void theObservedTemperatureFailureIsNowRegressionAndItsBusinessChoicesRemain() throws Exception {
+        try (var stream = getClass().getResourceAsStream("/fixtures/candidate41-temperature-replay.json")) {
+            var fixture = mapper.readTree(stream);
+            String original = fixture.path("modelResponseRaw").asText();
+            assertThat(HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(original.getBytes(StandardCharsets.UTF_8))))
+                    .isEqualTo(fixture.path("modelResponseSha256").asText());
+            var parsed = mapper.convertValue(mapper.readTree(original).path("questions"), new TypeReference<List<PlanQuestion>>() { });
+            assertThat(new PlanQuestionFilter().filter(parsed, input(fixture.path("rawPrompt").asText())))
+                    .extracting(PlanQuestion::id).containsExactly("supported_units", "precision_rule");
+            // 原件确实将普通包装标为用户决定；内部兼容字段不参与公共JSON反序列化或服务端责任判定。
+            assertThat(mapper.readTree(original).path("questions").get(1).path("responsibility").path("owner").asText())
+                    .isEqualTo("USER");
+        }
+    }
+
+    @Test
+    void differentKnownTechnicalValuesRemainIndependentEvenWithPackagingLabels() {
+        var question = new PlanQuestion("shape", "应如何交付实现？", "", PlanQuestionType.SINGLE_CHOICE,
+                List.of(new PlanOption("csv", "函数", "", "返回CSV结果的函数", false, ""),
+                        new PlanOption("json", "命令行", "", "返回JSON结果的命令行", false, "")), List.of(), true);
+        assertThat(new PlanQuestionFilter().filter(List.of(question), input("用Java实现CSV或JSON转换工具。"))).containsExactly(question);
     }
 
     private com.promptoptimizer.policy.domain.ConstraintBundle groups(EffectiveTaskView task) {

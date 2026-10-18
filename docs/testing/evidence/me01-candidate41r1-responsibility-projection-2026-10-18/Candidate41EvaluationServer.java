@@ -30,23 +30,27 @@ public class Candidate41EvaluationServer {
     }
     static JsonNode approvedBatch(JsonNode protocol) throws IOException {
         JsonNode batch = protocol.path("activeBatch");
+        JsonNode caps = batch.path("purposeMaximums");
+        boolean small = batch.path("maximumNewCalls").asInt() == 4
+                && ((caps.path("PLANNING").asInt() == 2 && caps.path("PLATFORM_GENERATION").asInt() == 2)
+                    || (caps.path("PLANNING").asInt() == 3 && caps.path("PLATFORM_GENERATION").asInt() == 1))
+                && caps.path("EXECUTION").asInt() == 0 && caps.path("REVIEW").asInt() == 0
+                && protocol.path("maximumActualModelCalls").asInt() == 438
+                && protocol.path("phaseLimits").path("candidateValidation").asInt() == 358;
+        boolean full = batch.path("maximumNewCalls").asInt() == 10
+                && caps.path("PLANNING").asInt() == 3 && caps.path("PLATFORM_GENERATION").asInt() == 3
+                && caps.path("EXECUTION").asInt() == 2 && caps.path("REVIEW").asInt() == 2
+                && protocol.path("maximumActualModelCalls").asInt() == 444
+                && protocol.path("phaseLimits").path("candidateValidation").asInt() == 364;
         if (!version.equals(batch.path("version").asText())
                 || !"candidate41r1".equals(batch.path("sourceCandidate").asText())
                 || !"APPROVED_BY_USER".equals(batch.path("authorizationStatus").asText())
                 || batch.path("qualityRetriesAllowed").asBoolean(true) || !"OPEN".equals(batch.path("status").asText())
                 || batch.path("callsBefore").asInt() != 424 || batch.path("candidateCallsBefore").asInt() != 354
-                || batch.path("maximumNewCalls").asInt() != 10
-                || batch.path("purposeMaximums").path("PLATFORM_GENERATION").asInt() != 3
-                || batch.path("purposeMaximums").path("EXECUTION").asInt() != 2
-                || batch.path("purposeMaximums").path("REVIEW").asInt() != 2
-                || batch.path("purposeMaximums").path("PLANNING").asInt() != 3
-                || protocol.path("maximumActualModelCalls").asInt() != 444
-                || protocol.path("phaseLimits").path("baseline").asInt() != 80
-                || protocol.path("phaseLimits").path("candidateValidation").asInt() != 364)
-            throw new IOException("Batch not authorized for this frozen candidate and round");
+                || protocol.path("phaseLimits").path("baseline").asInt() != 80 || !(small || full))
+            throw new IOException("Batch not authorized for this frozen candidate and allocation");
         return batch;
     }
-
     /** 白名单文件只允许本评测目录内的 JSON 文件名，并逐字节验证已批准输入。 */
     static JsonNode frozenCases(JsonNode batch) throws IOException {
         String name = batch.path("casesFile").asText();

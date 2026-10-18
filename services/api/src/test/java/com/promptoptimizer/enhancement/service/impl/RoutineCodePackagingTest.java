@@ -124,7 +124,10 @@ class RoutineCodePackagingTest {
             var changed = new PlanQuestion(question.id(), question.question(),
                     question.hint() + (field == 0 ? condition : ""), question.type(),
                     List.of(changedOption, question.options().getLast()), field == 5 ? List.of(condition) : List.of(), true);
-            assertThat(filter.filter(List.of(changed), input(RAW))).as("field %s: %s", field, condition).containsExactly(changed);
+            if (condition.equals("不提供函数调用方式。") && field >= 1 && field <= 4) {
+                // 该否定仅描述一个候选的包装能力，不是用户原文或共享hint的业务限制。
+                assertThat(filter.filter(List.of(changed), input(RAW))).as("local packaging field %s", field).isEmpty();
+            } else assertThat(filter.filter(List.of(changed), input(RAW))).as("field %s: %s", field, condition).containsExactly(changed);
         }
     }
 

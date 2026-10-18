@@ -3,8 +3,8 @@ package com.promptoptimizer.enhancement.domain;
 import java.util.List;
 
 /**
- * 同次模型给出的可选执行责任建议；只用于服务端复核，不是用户选择或权限来源。
- * 原题、原目标及全部候选ID绑定不匹配时继续保留问题；旧响应不要求此字段。
+ * 兼容已采集模型响应的内部建议；当前责任策略不以模型标签决定删题。
+ * 不构成用户选择或权限，不向客户端公开；新响应无需再生成此字段。
  *
  * @author QingNiao
  * @since 0.1.0

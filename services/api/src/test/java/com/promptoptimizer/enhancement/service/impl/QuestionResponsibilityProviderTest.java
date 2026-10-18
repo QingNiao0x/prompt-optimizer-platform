@@ -17,7 +17,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
- * 责任建议为可选内部字段；畸形／缺省建议降级保留原题，不使合法旧响应变成502。
+ * 旧责任建议不再作为删题依据；畸形／缺省标签不改变公共协议或新增502。
  *
  * @author QingNiao
  * @since 0.1.0
@@ -59,8 +59,7 @@ class QuestionResponsibilityProviderTest {
         server.verify();
         PlanQuestion parsed = result.questions().getFirst();
         var filtered = new PlanQuestionFilter().filter(result.questions(), input);
-        if (variant.equals("valid")) assertThat(filtered).isEmpty();
-        else assertThat(filtered).containsExactly(parsed);
+        assertThat(filtered).isEmpty();
         assertThat(mapper.writeValueAsString(result)).doesNotContain("responsibility", "rawGoal", "CODE_PACKAGING_ONLY");
         assertThat(parsed.options()).hasSize(2);
     }

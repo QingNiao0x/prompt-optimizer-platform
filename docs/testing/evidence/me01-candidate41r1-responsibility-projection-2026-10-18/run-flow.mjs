@@ -3,6 +3,7 @@ import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
+import { equalJson } from './semantic-json.mjs';
 
 const [command, caseId] = process.argv.slice(2);
 if (!['plan', 'finish'].includes(command) || !['TS-IMPLICIT', 'TS-USER-CHOICE', 'HOLDOUT-TEMPERATURE'].includes(caseId)
@@ -14,28 +15,40 @@ const ledger = resolve('tmp/me00a-20261012');
 const origin = 'http://127.0.0.1:5174';
 const pageName = `candidate41r1-${caseId}`;
 const hash = value => createHash('sha256').update(value).digest('hex');
-const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const equal = equalJson;
 const newline = value => value.replace(/\r\n/g, '\n');
 const json = async path => JSON.parse(await readFile(path, 'utf8'));
 const save = async (name, value) => { const path = resolve(out, name); await mkdir(dirname(path), { recursive: true });
-  await writeFile(path, typeof value === 'string' || Buffer.isBuffer(value) ? value : `${JSON.stringify(value, null, 2)}\n`, { flag: 'wx' }); };
+  try {
+    await writeFile(path, typeof value === 'string' || Buffer.isBuffer(value) ? value : `${JSON.stringify(value, null, 2)}\n`, { flag: 'wx' });
+  } catch (error) {
+    // A pre-model tool failure may already have locked this exact native submission; never overwrite or change it.
+    if (error.code === 'EEXIST' && ['enhancement-request.private.json', 'actual-confirmation.private.json'].includes(name)
+        && equal(await json(path), value)) return;
+    throw error;
+  }
+};
 
 /** All source/runtime bytes, scope and formal ceilings are checked before every actual UI request. */
 async function preflight() {
   const bytes = await readFile(resolve(pub, 'candidate41r1-source.json')); const manifest = JSON.parse(bytes.toString('utf8'));
   const protocol = await json(resolve(ledger, 'protocol.json')); const batch = protocol.activeBatch;
+  const small = batch.maximumNewCalls === 4 && protocol.maximumActualModelCalls === 438 && protocol.phaseLimits.candidateValidation === 358
+    && (equal(batch.purposeMaximums, { PLANNING: 2, PLATFORM_GENERATION: 2, EXECUTION: 0, REVIEW: 0 })
+      || equal(batch.purposeMaximums, { PLANNING: 3, PLATFORM_GENERATION: 1, EXECUTION: 0, REVIEW: 0 }));
+  const full = batch.maximumNewCalls === 10 && protocol.maximumActualModelCalls === 444 && protocol.phaseLimits.candidateValidation === 364
+    && equal(batch.purposeMaximums, { PLANNING: 3, PLATFORM_GENERATION: 3, EXECUTION: 2, REVIEW: 2 });
   if (manifest.version !== 'candidate41r1' || batch.version !== 'candidate41r1-live' || batch.status !== 'OPEN'
-      || batch.authorizationStatus !== 'APPROVED_BY_USER' || batch.maximumNewCalls !== 10 || batch.callsBefore !== 424
+      || batch.authorizationStatus !== 'APPROVED_BY_USER' || batch.callsBefore !== 424
       || batch.sourceManifestSha256 !== hash(bytes) || batch.qualityRetriesAllowed !== false
-      || protocol.maximumActualModelCalls !== 444 || protocol.phaseLimits.baseline !== 80 || protocol.phaseLimits.candidateValidation !== 364
-      || !equal(batch.purposeMaximums, { PLANNING: 3, PLATFORM_GENERATION: 3, EXECUTION: 2, REVIEW: 2 })) throw Error('Frozen batch mismatch');
+      || protocol.phaseLimits.baseline !== 80 || !(small || full)) throw Error('Frozen batch mismatch');
   if (!/^[A-Za-z0-9_-]+\.json$/.test(batch.casesFile) || hash(await readFile(resolve(pub, 'request-cases.json'))) !== batch.casesSha256
       || hash(await readFile(resolve(ledger, batch.casesFile))) !== batch.casesSha256) throw Error('Input/path drift');
   for (const row of manifest.sourceFiles) if (hash(await readFile(resolve(row.path))) !== row.sha256) throw Error('Source drift');
   for (const row of manifest.runtimeFiles) if (hash(await readFile(resolve(manifest.runtimeSnapshot, row.path))) !== row.sha256) throw Error('Runtime drift');
   const files = (await readdir(resolve(ledger, 'traces'))).filter(name => /^\d+\.json$/.test(name));
   let candidate = 0; for (const name of files) if ((await json(resolve(ledger, 'traces', name))).phase === 'candidateValidation') candidate++;
-  if (files.length >= 434 || candidate >= 364) throw Error('Frozen budget exhausted');
+  if (files.length >= batch.callsBefore + batch.maximumNewCalls || candidate >= protocol.phaseLimits.candidateValidation) throw Error('Frozen budget exhausted');
   return { sample: (await json(resolve(pub, 'request-cases.json'))).find(row => row.id === caseId), batch };
 }
 
@@ -46,6 +59,9 @@ const browser = await require('@playwright/test').chromium.connectOverCDP('http:
 const context = browser.contexts()[0];
 const account = await json('tmp/local-acceptance/account.json');
 let page, plan, platform, planCapture, platformCapture, guardFailure;
+let rejectGuard;
+const guardStopped = new Promise((_, reject) => { rejectGuard = reject; });
+void guardStopped.catch(() => undefined);
 const pending = []; const counts = { plan: 0, enhancement: 0 };
 const api = path => page.evaluate(async path => { const response = await fetch(path); return { status: response.status, body: await response.json() }; }, path);
 const snapshot = () => page.evaluate(async () => { const { useOptimizationStore } = await import('/src/stores/optimization.ts'); const store = useOptimizationStore();
@@ -141,7 +157,7 @@ try {
         await save('enhancement-request.private.json', body);
       }
       await route.continue();
-    } catch (error) { guardFailure = error.message; await save('guard-failure.json', { reason: error.message }); await route.abort('blockedbyclient'); }
+    } catch (error) { guardFailure = error.message; await save('guard-failure.json', { reason: error.message }); await route.abort('blockedbyclient'); rejectGuard(error); }
   });
   if (command === 'plan') {
     await page.waitForFunction(() => document.querySelector('#workbench-model') !== null);
@@ -185,7 +201,7 @@ try {
       await input.fill(answer.answer);
       await dialog.getByRole('button', { name: i === answers.length - 1 ? '生成最终提示词' : '下一题', exact: true }).click();
     }
-    await enhanced; await platformCapture; console.log(JSON.stringify(await verifyChain(before)));
+    await Promise.race([enhanced, guardStopped]); await platformCapture; console.log(JSON.stringify(await verifyChain(before)));
   }
   await Promise.all(pending); if (guardFailure) throw Error(guardFailure);
   await page.screenshot({ path: resolve(out, `${command}.private.png`), fullPage: true });

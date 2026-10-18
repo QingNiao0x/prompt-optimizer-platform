@@ -61,6 +61,14 @@ public final class Candidate41ScopePreflight {
         var protocol = JSON.createObjectNode().put("maximumActualModelCalls", 444);
         protocol.putObject("phaseLimits").put("baseline", 80).put("candidateValidation", 364); protocol.set("activeBatch", batch);
         check(Candidate41EvaluationServer.approvedBatch(protocol).equals(batch), "approved scope");
+        var small = protocol.deepCopy();
+        ((ObjectNode) small).put("maximumActualModelCalls", 438);
+        ((ObjectNode) small.path("phaseLimits")).put("candidateValidation", 358);
+        ((ObjectNode) small.path("activeBatch")).put("maximumNewCalls", 4);
+        ((ObjectNode) small.path("activeBatch").path("purposeMaximums")).put("PLANNING", 2).put("PLATFORM_GENERATION", 2).put("EXECUTION", 0).put("REVIEW", 0);
+        check(!rejected(small), "existing four-call reallocation without numeric expansion");
+        ((ObjectNode) small.path("activeBatch").path("purposeMaximums")).put("PLANNING", 3).put("PLATFORM_GENERATION", 1);
+        check(!rejected(small), "explicit unused repair-to-heldout reallocation within four calls");
         batch.put("status", "CLOSED"); check(rejected(protocol), "closed batch"); batch.put("status", "OPEN");
         batch.put("maximumNewCalls", 11); check(rejected(protocol), "batch cap"); batch.put("maximumNewCalls", 10);
         ((ObjectNode) batch.path("purposeMaximums")).put("PLANNING", 4); check(rejected(protocol), "purpose cap");

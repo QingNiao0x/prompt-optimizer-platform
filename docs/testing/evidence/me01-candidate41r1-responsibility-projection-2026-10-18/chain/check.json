@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "candidate": "candidate41r1",
+  "caseId": "TS-IMPLICIT",
+  "sameAccount": true,
+  "newAccountsCreated": 0,
+  "boundPlanUsed": true,
+  "nativeCopyMatches": true,
+  "storeMatches": true,
+  "historyMatches": true,
+  "historyTotalDelta": 1,
+  "copySha256": "581735335e8d88792ae2e8eaeff80ef8b6f8b7cdfa6d3dfa0949679ab667c05a",
+  "actualAnswers": [
+    {
+      "questionId": "input_shape",
+      "question": "这个去重功能处理的“文本”具体以什么形态输入？",
+      "answer": "输入为文本字符串；包装由实现者合理处理，提供接受文本字符串并返回去重后字符串的通用TypeScript实现，不引入第三方运行依赖。"
+    },
+    {
+      "questionId": "dedup_rule",
+      "question": "判断两条文本“重复”的口径是什么？",
+      "answer": "按整行逐字符完全一致比较，区分大小写，保留原行内容；支持LF与CRLF，输出统一LF，保留首次出现的空行。"
+    },
+    {
+      "questionId": "output_order",
+      "question": "去重后结果的顺序应如何处理？",
+      "answer": "保留第一次出现的顺序。"
+    }
+  ],
+  "sourceManifestSha256": "18b1d697807c00808997e8ce0c17dcf2382ad473a5d98636a256fd60291d9bf2",
+  "qualityRetriesAllowed": false
+}
