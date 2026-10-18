@@ -145,6 +145,7 @@ public final class PlanQuestionFilter {
                 .filter(question -> !routineBodyCountScope(question, input.rawPrompt()))
                 .filter(question -> !delegatedPendingPresentation(question, input.rawPrompt(), pendingParameters))
                 .filter(question -> !routineWindowTradeoffAnalysis(question, input.rawPrompt()))
+                .filter(question -> !RoutineCodePackaging.delegated(question, input))
                 .filter(question -> !routineExecutionPresentation(question, input.rawPrompt()))
                 .filter(question -> !routineFailureCoverage(question, input.rawPrompt()))
                 .filter(question -> !knownNegativeCostPresentation(question, input.rawPrompt()))

@@ -1,0 +1,123 @@
+{
+  "observations": [
+    {
+      "preparedEmptyContext": false,
+      "realModelCalls": 0,
+      "questions": [
+        {
+          "id": "target_pages",
+          "question": "需要爬取哪些网页的标题？",
+          "hint": "目标网址范围决定请求方式、是否需要批量处理以及异常处理策略。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "爬取用户提供的单个 URL 列表",
+            "爬取某个站点首页下的若干固定页面"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "title_definition",
+          "question": "“网页标题”按什么口径提取？",
+          "hint": "不同口径会改变解析逻辑和结果判定。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "html_title",
+              "label": "HTML 的 <title> 标签",
+              "description": "解析返回 HTML 中的 title 元素文本",
+              "answer": "提取 HTML 中 <title> 标签的文本内容",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "og_title",
+              "label": "页面元信息标题",
+              "description": "优先取 og:title 等元信息，缺失时回退到 <title>",
+              "answer": "优先提取页面元信息中的标题（如 og:title），缺失时回退到 <title> 标签",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "custom_rule",
+              "label": "其他自定义规则",
+              "description": "由用户说明具体提取规则",
+              "answer": "按用户指定的自定义规则提取网页标题",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "providerFixtureInvocations": 1,
+      "planRegistered": true,
+      "template": "FEATURE_DEVELOPMENT",
+      "contextReferenceMatches": true,
+      "summary": "以下确认影响本次交付的 2 项未决事项。已明确的要求与已委托的设计继续保留。"
+    },
+    {
+      "preparedEmptyContext": true,
+      "realModelCalls": 0,
+      "questions": [
+        {
+          "id": "target_pages",
+          "question": "需要爬取哪些网页的标题？",
+          "hint": "目标网址范围决定请求方式、是否需要批量处理以及异常处理策略。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "爬取用户提供的单个 URL 列表",
+            "爬取某个站点首页下的若干固定页面"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "title_definition",
+          "question": "“网页标题”按什么口径提取？",
+          "hint": "不同口径会改变解析逻辑和结果判定。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "html_title",
+              "label": "HTML 的 <title> 标签",
+              "description": "解析返回 HTML 中的 title 元素文本",
+              "answer": "提取 HTML 中 <title> 标签的文本内容",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "og_title",
+              "label": "页面元信息标题",
+              "description": "优先取 og:title 等元信息，缺失时回退到 <title>",
+              "answer": "优先提取页面元信息中的标题（如 og:title），缺失时回退到 <title> 标签",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "custom_rule",
+              "label": "其他自定义规则",
+              "description": "由用户说明具体提取规则",
+              "answer": "按用户指定的自定义规则提取网页标题",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "providerFixtureInvocations": 1,
+      "planRegistered": true,
+      "template": "FEATURE_DEVELOPMENT",
+      "contextReferenceMatches": true,
+      "summary": "结合现有项目资料，以下确认影响本次交付的 2 项未决事项。已明确的要求与已委托的设计继续保留。"
+    }
+  ],
+  "sourceResponseSha256": "88845fc1f0af71fd574c19029a77c8e700d05ce7f67bfdb019f7db2856135e9b",
+  "realModelCalls": 0,
+  "sourceTrace": 413,
+  "runtime": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\me04-candidate39-20261018\\frozen\\classes",
+  "persistentAccountsCreated": 0
+}
