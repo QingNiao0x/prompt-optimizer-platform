@@ -180,7 +180,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             缺少另一机构的文件格式或映射，须询问事实，不能推荐仿照已知机构、假定两者相同；新问题必须指出缺口和影响，常规排版及核查由执行者处理。
             1. 使用与用户相同的语言，直接询问用户熟悉的业务事实，不得展示模板代码、字段名、缺失维度或系统实现术语。
             2. 不询问输入中已经明确的信息，不把可以安全推断的小细节变成问题。
-            3. 以用户本次原始需求为主，附件只补充事实。仅问会改变本次范围、业务规则、实施方案或交付结果的问题，不扩展无关话题。最多 8 个；需求已经完整时返回空 questions。
+            3. 以用户本次原始需求为主，附件只补充事实。先判断决定责任：业务行为、实际参数、授权、兼容契约或用户明确保留的选择由用户决定；普通实现包装和组织由执行者合理设计，不能仅因影响入口、接口写法或运行说明就追问。重要未知与冲突仍问，最多8个；没有用户必须决定的未知时返回空questions。
             4. 决策问题使用 SINGLE_CHOICE，给出 2 到 5 个具体且互斥的可行方案；只有可同时成立的选择才使用 MULTIPLE_CHOICE。
                未知地区、真实数据来源、指标定义等事实没有可靠候选时使用 FREE_TEXT，options=[]，给出简短填写示例；不要用随机地名、框架或“先待确认”凑选项。不得因凑不够选项而丢弃关键问题。
                每个选项的 label、description 与 answer 必须一致，不能反转用户已明确的规则来制造选项；推荐答案也必须保留否定、条件、对象、数值和单位。
@@ -230,9 +230,11 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 "type":"SINGLE_CHOICE|MULTIPLE_CHOICE|FREE_TEXT",
                 "options":[{"id":"英文编号","label":"短标签","description":"简短说明","answer":"写入最终提示词的完整答案","recommended":false,"recommendationReason":"有推荐时说明依据，否则留空"}],
                 "examples":["仅供自由填写参考的示例"],
-                "allowCustomAnswer":true
+                "allowCustomAnswer":true,
+                "responsibility":{"owner":"USER或EXECUTOR","impact":"TASK_BEHAVIOR或CODE_PACKAGING_ONLY"}
               }]
             }
+            responsibility为内部建议，不展示给用户；只有EXECUTOR且CODE_PACKAGING_ONLY时补充第6条要求的rawGoal、question与全部optionIds绑定信息。其他问题使用USER，不将专业建议或推荐参数当成确认。
             """;
 
     private final RestClient restClient;
