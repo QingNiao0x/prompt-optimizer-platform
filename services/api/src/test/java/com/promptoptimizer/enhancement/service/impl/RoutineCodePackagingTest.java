@@ -173,12 +173,13 @@ class RoutineCodePackagingTest {
     }
 
     @Test
-    void anUnclassifiedTaskKeepsTheQuestionInsteadOfGuessingItsDeliveryProfile() {
+    void aLanguageImplementationGoalCanUseTheExistingPackagingBoundaryAfterIntentRepair() {
         String raw = "用TypeScript实现文本去重。";
-        // 这是父版本已存在的识别边界；本次包装规则不能借语言名自造代码交付身份。
+        // 候选四十已修正共同任务身份；包装规则本身不变，仍不能仅凭语言名删除问题。
         assertThat(com.promptoptimizer.template.domain.TaskDeliveryProfile.identify(raw))
-                .isEqualTo(com.promptoptimizer.template.domain.TaskDeliveryProfile.GENERAL);
-        assertThat(filter.filter(List.of(packaging()), input(raw))).containsExactly(packaging());
+                .isEqualTo(com.promptoptimizer.template.domain.TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
+        assertThat(filter.filter(List.of(packaging()), input(raw))).isEmpty();
+        assertThat(filter.filter(List.of(packaging()), input("介绍TypeScript文本去重原理。"))).containsExactly(packaging());
     }
 
     private PlanningProviderRequest input(String raw) {

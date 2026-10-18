@@ -98,8 +98,10 @@ class CandidateNineteenBoundaryTest {
         var registry = new PromptTemplateRegistryImpl();
         var code = registry.resolve(TemplateCode.AUTO, "使用requests库爬取网页标题。");
         assertThat(code.code()).isEqualTo(TemplateCode.FEATURE_DEVELOPMENT);
-        assertThat(code.outputGuidance()).contains("关键代码", "接口契约").doesNotContain("批处理、CLI");
-        assertThat(code.acceptanceGuidance()).contains("正常流程", "异常流程", "现有功能保持兼容");
+        // 候选三十四已撤回强制方案化交付；核对当前实质代码契约，不恢复旧模板来满足旧措辞。
+        assertThat(code.outputGuidance()).contains("可直接使用的代码", "必要运行说明", "不以方案文档代替")
+                .doesNotContain("批处理、CLI");
+        assertThat(code.acceptanceGuidance()).contains("正常、异常与边界场景", "保持现有功能兼容", "未实际运行的验证不得写成通过");
         var methods = TaskDeliveryProfile.ACADEMIC_METHODS;
         assertThat(methods.outputGuidance()).contains("拟议设计", "评分", "适用条件");
         assertThat(methods.acceptanceGuidance()).contains("已定与未决参数分开");

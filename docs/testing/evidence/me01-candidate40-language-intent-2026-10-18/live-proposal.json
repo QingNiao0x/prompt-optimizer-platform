@@ -1,0 +1,57 @@
+{
+  "candidate": "candidate40",
+  "status": "PROPOSED_NUMERIC_EXPANSION_NOT_YET_APPROVED",
+  "maximumNewCalls": 13,
+  "purposeMaximums": {
+    "PLANNING": 6,
+    "PLATFORM_GENERATION": 3,
+    "EXECUTION": 2,
+    "REVIEW": 2
+  },
+  "currentFormalLimits": { "total": 425, "baseline": 80, "candidate": 345 },
+  "proposedFormalLimits": { "total": 438, "baseline": 80, "candidate": 358 },
+  "actualCallsBefore": 415,
+  "maximumActualCallsAfter": 428,
+  "model": "deepseek-flash",
+  "executionModel": "deepseek-flash",
+  "reviewModels": ["deepseek-flash", "deepseek-v4-pro"],
+  "parameters": { "temperature": 0.2, "max_tokens": 8192, "thinking": { "type": "disabled" } },
+  "cases": [
+    {
+      "caseId": "TS-IMPLICIT",
+      "rawPrompt": "用TypeScript实现文本去重。",
+      "mode": "COMPACT",
+      "examplesEnabled": false,
+      "materials": [],
+      "naturalPlan": true,
+      "enhanceAfterActualConfirmation": true,
+      "syntheticUserAnswerPolicy": {
+        "granularity": "按整行完全相同去重，区分大小写，保留第一次出现的顺序",
+        "inputOutput": "接受文本字符串并返回去重后的字符串",
+        "lineBreaks": "支持LF与CRLF，输出统一LF，保留首次出现的空行",
+        "runtime": "通用TypeScript实现，不引入第三方运行依赖",
+        "packaging": "由实现者合理处理，不虚构用户选定形式"
+      },
+      "unsupportedQuestions": "STOP_DEPENDENT_STEPS_DO_NOT_INVENT_ANSWERS",
+      "workComparison": "Original raw plus exact actual submitted question answers versus unchanged native Plan copy; same Flash model, one work each"
+    },
+    {
+      "caseId": "TS-USER-CHOICE",
+      "rawPrompt": "用TypeScript实现文本去重。交付方式由我决定，请先询问我是要脚本还是函数。",
+      "mode": "COMPACT",
+      "examplesEnabled": false,
+      "materials": [],
+      "naturalPlan": true,
+      "enhancementAndWorks": false,
+      "gate": "User-reserved packaging choice remains; semantic independent choices also remain"
+    }
+  ],
+  "account": "REUSE_CANONICAL_LOCAL_ACCEPTANCE_ACCOUNT",
+  "newAccountsAllowed": false,
+  "qualityRetriesAllowed": false,
+  "closedBatchAllowanceTransfer": false,
+  "sameInformationAnswers": "Only actually submitted server-bound question and answer pairs may enter the original comparator; no patching Plan copy",
+  "reviewersAreIndependentAi": true,
+  "reviewersSameSupplier": true,
+  "previousCredentialAndProfessionalGates": "REMAIN_OPEN_NOT_COVERED_BY_A_TEXT_DEDUPLICATION_WORK"
+}

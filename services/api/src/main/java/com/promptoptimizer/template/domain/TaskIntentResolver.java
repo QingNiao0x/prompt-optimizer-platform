@@ -30,6 +30,14 @@ public final class TaskIntentResolver {
                     + "(?:不包含|不含|不提供|不交付|不输出|不附带|不附上|不需要|不编写|无需|无须)"
                     + "[^。；;，,\\r\\n]{0,32}(?:代码|脚本|程序)", Pattern.CASE_INSENSITIVE);
     private static final String WRITE = "(?:撰写|编写|起草|写|生成|输出|提供|交付|拟定|制作|设计|制定|\\bwrite\\b|\\bdraft\\b|\\bcreate\\b|\\bproduce\\b)";
+    // 语言名仅是工具证据，须与句首肯定的实现动作及非空对象同时出现；未知工具继续保守回退。
+    private static final Pattern LANGUAGE_IMPLEMENTATION = Pattern.compile(
+            "^(?:(?:请|帮我|需要|本次|现在|立即|这次)\\s*)*(?:使用|用)\\s*"
+                    + "(?:typescript|javascript|python|java|kotlin|rust|go|c\\+\\+|c#|c|r)\\s*"
+                    + "(?:来|去)?\\s*(?:实现|开发)(?!后的?|过的|完成的|完的|好的|的|了)\\s*[^。；;，,]{1,100}$",
+            Pattern.CASE_INSENSITIVE);
+    private static final Pattern NON_CODE_LANGUAGE_ARTIFACT = Pattern.compile(
+            "思路|原理|说明|方案|报告|文章|教程|研究|统计分析|数据分析");
     // 表达式仅来自下面的固定规则，按固定数量缓存，避免每个子句重新编译同一规则。
     private static final Map<String, Pattern> PATTERNS = new ConcurrentHashMap<>();
 
@@ -125,6 +133,7 @@ public final class TaskIntentResolver {
         boolean refuseImplicitCode = false;
         boolean fenced = false;
         boolean referenceSection = false;
+        boolean languageImplementationScope = true;
         for (String line : (input == null ? "" : input).toLowerCase(Locale.ROOT).split("\\R")) {
             String text = line.trim();
             if (text.startsWith("```") || text.startsWith("~~~")) { fenced = !fenced; continue; }
@@ -136,6 +145,7 @@ public final class TaskIntentResolver {
             }
             if (heading.matches("(?:任务|任务目标|目标|需求|输出|交付|输出要求|期望输出)[:：]?")) {
                 referenceSection = false;
+                languageImplementationScope = true;
                 continue;
             }
             if (text.matches("^(?:原文|待译文本|source text)[:：].*")) {
@@ -143,10 +153,16 @@ public final class TaskIntentResolver {
                 continue;
             }
             if (referenceSection) continue;
+            // 未知/未来标题不能把其后省略交付名词的句子提升为当前代码任务；显式任务标题可恢复。
+            if ((text.startsWith("#") || heading.endsWith("：") || heading.endsWith(":"))
+                    && !implicitLanguageAction(heading, "")) languageImplementationScope = false;
+            int partOffset = 0;
             for (String part : text.split("[。；;，,]")) {
+                String priorClauses = text.substring(0, partOffset);
+                partOffset += part.length() + 1;
                 String clause = part.replaceAll("^[-*\\d.、\\s]+", "").trim();
-                // 只约束本轮新增的隐式库调用识别；现有明确开发目标不因另一局部否定被删除。
-                if (DECLINED_CODE_DELIVERY.matcher(clause).find()
+                // 仅撤回隐含的库调用/语言实现判断；原有明确开发目标不因另一局部否定被删除。
+                if (declinesWholeCodeDelivery(clause)
                         || clause.matches("^(?:只|仅)(?:解释|说明|讲解|输出思路).*$")
                         || clause.matches("^(?:only\\s+(?:explain|describe)|(?:do not|don't)\\s+"
                             + "(?:provide|write|output|include)\\s+(?:any\\s+)?(?:code|scripts?)\\b).*$")) refuseImplicitCode = true;
@@ -155,7 +171,8 @@ public final class TaskIntentResolver {
                 int reference = clause.indexOf("原文：");
                 if (reference >= 0) clause = clause.substring(0, reference);
                 Goal goal = classify(clause);
-                if (goal == null && implicitLibraryAction(clause)) {
+                if (goal == null && (implicitLibraryAction(clause)
+                        || languageImplementationScope && implicitLanguageAction(clause, priorClauses))) {
                     goal = new Goal(TemplateCode.FEATURE_DEVELOPMENT, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
                     implicitGoals.add(goal);
                 }
@@ -231,6 +248,21 @@ public final class TaskIntentResolver {
                 && match(clause, "^(?:请|帮我|需要)?(?:使用|用)\\s*[A-Za-z][A-Za-z0-9_.-]{1,40}\\s*(?:库|包|模块)"
                     + "(?:来|去)?(?:爬取|抓取|提取|请求|读取|解析|下载|转换|保存)[^。；;\\n]+"
                     + "|^\\s*use\\s+[A-Za-z][A-Za-z0-9_.-]{1,40}\\s+to\\s+(?:fetch|scrape|extract|parse|download|read|convert|save)\\b.+");
+    }
+
+    /** 只新增当前肯定的语言实现义务；前置条件、资料和说明性成果不借语言名建立代码交付。 */
+    private static boolean implicitLanguageAction(String clause, String priorClauses) {
+        if (!LANGUAGE_IMPLEMENTATION.matcher(clause).matches() || NON_CODE_LANGUAGE_ARTIFACT.matcher(clause).find()) return false;
+        if (describedOrConditionalAction("", priorClauses)
+                && !clause.matches("^(?:请)?(?:本次|现在|立即|这次).*")) return false;
+        return !priorClauses.matches(".*(?:例如|示例|引用|原文|材料中|资料中|[“‘\\\"`]).*");
+    }
+
+    /** 禁整个代码交付才撤回隐含判断；禁示例代码等局部附加物不能取消核心实现。 */
+    private static boolean declinesWholeCodeDelivery(String clause) {
+        String scope = clause.replaceAll("(?:示例|样例|演示|参考|测试)(?:的)?(?:代码|脚本|程序)", "局部附加物")
+                .replaceFirst("^(?:(?:请|本次|这次)\\s*)*(?:不要|不得|请勿|禁止|勿)", "不");
+        return DECLINED_CODE_DELIVERY.matcher(scope).find();
     }
 
     /** 代码交付需要肯定的动作与交付物；“用 R 分析”“参考 Python 文档”不是脚本交付。 */

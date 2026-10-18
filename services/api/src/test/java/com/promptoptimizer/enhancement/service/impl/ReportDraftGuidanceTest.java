@@ -133,7 +133,7 @@ class ReportDraftGuidanceTest {
         assertThat(registry.resolve(TemplateCode.AUTO, "制定研究方案，只输出方法提纲和空表。").outputGuidance())
                 .contains("只交付指定论文部分或研究方案", "不补写实际结果");
         assertThat(registry.resolve(TemplateCode.FEATURE_DEVELOPMENT, "开发登录接口。").outputGuidance())
-                .contains("关键代码", "接口契约").doesNotContain("报告初稿");
+                .contains("可直接使用的代码", "必要运行说明", "不以方案文档代替").doesNotContain("报告初稿");
         assertThat(PromptOptimizationGuidance.ENHANCEMENT).contains("仅要求方案、提纲、只输出译文、只读比较或代码",
                 "不新增报告或附录", "禁止占位", "明确的执行前确认仍须遵守");
     }
