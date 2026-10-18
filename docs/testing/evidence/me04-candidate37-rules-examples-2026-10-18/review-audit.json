@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "sourceCandidate": "candidate37",
+  "rubricId": "me00a-four-dimension-rubric-v1",
+  "modelCalls": 0,
+  "independentTaskCount": 1,
+  "works": 3,
+  "primaryComparisons": 2,
+  "blindPairsPerReviewer": 3,
+  "sameSupplier": true,
+  "reviewsAreNotHumanExperts": true,
+  "auditInputHashes": {
+    "cases": "f1e7a1cfaba9c2ab9b26b0e86404ef76f70f0855a1db6a4e5bda4582b4c124ed",
+    "mapping": "0a6f57dcc899ae7893968d5751be9ad5b000db56e1121d53f89720700d1df16e",
+    "reviewInputLock": "211710b5ea9a21309bd4cd842272e6f74d68d91e251a3a1d977bfdc00c245b01",
+    "hardChecks": "8af2a3403d4c84ef0a5f7ab01f77c86e31e6b0e0a615e0b66718c72f4786b917"
+  },
+  "reviewers": {
+    "R1": {
+      "requestedModel": "deepseek-flash",
+      "providerReportedModel": "deepseek-flash",
+      "requestSha256": "fe2f58b4330379357db49651157dd3516c7f37539e0435d4f35819823dfc9905",
+      "responseRawSha256": "b89cb664547d8922547d2e4009a0f133793082f61480fb5a69cd5ad5562f5cce",
+      "reviewTextSha256": "f9d7866c98090517833849014b2f32b85be66d099950f659bb3a9e638b2d1cb2",
+      "strictJsonAndSchemaValid": true,
+      "deterministicChecksPassed": false,
+      "issueCount": 7,
+      "reportedSevereIssueCount": 0,
+      "auditErrors": [
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 1,
+          "pairIndex": null
+        }
+      ]
+    },
+    "R2": {
+      "requestedModel": "deepseek-v4-pro",
+      "providerReportedModel": "deepseek-v4-pro",
+      "requestSha256": "2ba7b0352e6e629df1fabfae21f778c80a89cc1f700f60bf7f78b8a096700645",
+      "responseRawSha256": "9caf40649d7add87925a1b8f011918a597573aa55d4f09ec05a15660b5b24625",
+      "reviewTextSha256": "c72534aa97201583e4c0de53e1c7f1e06dee36fed1fd279add22aa9afb07b6e0",
+      "strictJsonAndSchemaValid": true,
+      "deterministicChecksPassed": false,
+      "issueCount": 7,
+      "reportedSevereIssueCount": 0,
+      "auditErrors": [
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 0,
+          "pairIndex": null
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 1,
+          "pairIndex": null
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 5,
+          "pairIndex": null
+        },
+        {
+          "code": "EVIDENCE_NOT_LITERAL",
+          "issueIndex": 6,
+          "pairIndex": null
+        }
+      ]
+    }
+  },
+  "comparisons": [
+    {
+      "group": "REQUESTS",
+      "enhancedArm": "COMPACT",
+      "originalVerdicts": {
+        "R1": "WIN",
+        "R2": "WIN"
+      },
+      "allDeterministicReviewChecksPassed": false,
+      "originalVerdictsDisagree": false,
+      "severeReportsDisagree": false,
+      "hardGate": "FAIL",
+      "baselineHardGate": "OPEN",
+      "enhancedHardGate": "FAIL",
+      "baselineSevereReported": false,
+      "enhancedSevereReported": false,
+      "severeIssueState": "NONE_REPORTED",
+      "acceptanceGate": "FAIL",
+      "acceptanceBlocked": true
+    },
+    {
+      "group": "REQUESTS",
+      "enhancedArm": "STRUCTURED",
+      "originalVerdicts": {
+        "R1": "WIN",
+        "R2": "WIN"
+      },
+      "allDeterministicReviewChecksPassed": false,
+      "originalVerdictsDisagree": false,
+      "severeReportsDisagree": false,
+      "hardGate": "FAIL",
+      "baselineHardGate": "OPEN",
+      "enhancedHardGate": "FAIL",
+      "baselineSevereReported": false,
+      "enhancedSevereReported": false,
+      "severeIssueState": "NONE_REPORTED",
+      "acceptanceGate": "FAIL",
+      "acceptanceBlocked": true
+    }
+  ],
+  "disagreements": {
+    "verdictComparisons": 0,
+    "severeReportComparisons": 0,
+    "scoreGapsAtLeastTwo": [],
+    "scoreComparisonAvailable": true
+  },
+  "finalAcceptanceGate": "FAIL",
+  "scoresCannotOverrideHardOrSevereFailure": true,
+  "semanticJudgmentAutomaticallyPassed": false,
+  "limitation": "1 task and one work per arm are diagnostic only; no statistical win-rate or global quality claim is established."
+}

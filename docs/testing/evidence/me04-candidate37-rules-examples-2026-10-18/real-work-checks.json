@@ -1,0 +1,299 @@
+{
+  "candidate": "candidate37",
+  "works": [
+    {
+      "task": "REQUESTS",
+      "arm": "RAW",
+      "workSha256": "117b7db3eaf34607a28434b6ba7501acd4144b910ae67b42059dd707a71f930e",
+      "reportSha256": "189f1cdaf3a49830a65aa391c4f27c3a513d2ab0c799c2d26a730d09f27b6622",
+      "sourceRepaired": false,
+      "actualNetworkRequests": 0,
+      "syntax": "PASS",
+      "coreChecksPassed": 4,
+      "coreChecksTotal": 4,
+      "authoredTests": [],
+      "unselectedPythonBlocks": [
+        3,
+        4
+      ],
+      "directCredentialEchoCases": [
+        {
+          "entry": 1,
+          "mode": "http"
+        },
+        {
+          "entry": 1,
+          "mode": "timeout"
+        },
+        {
+          "entry": 1,
+          "mode": "connection"
+        }
+      ],
+      "standardTracebackCredentialEchoCases": [],
+      "declaredCommitments": "NOT_APPLICABLE_TO_ORIGINAL_TASK",
+      "completeHardGate": "OPEN",
+      "executionClaimsState": "NOT_CLAIMED"
+    },
+    {
+      "task": "REQUESTS",
+      "arm": "COMPACT",
+      "workSha256": "453e022ca66453a410d373ba48198b66c94e5988577d34f385d000023e2cc672",
+      "reportSha256": "34f81f572f34fe226a6fb81c7ae3ff912fa92b9c088538ae4a1df50ae1a72f8f",
+      "sourceRepaired": false,
+      "actualNetworkRequests": 0,
+      "syntax": "PASS",
+      "coreChecksPassed": 2,
+      "coreChecksTotal": 2,
+      "authoredTests": [
+        {
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ],
+      "unselectedPythonBlocks": [
+        4
+      ],
+      "directCredentialEchoCases": [
+        {
+          "entry": 1,
+          "mode": "token-success"
+        },
+        {
+          "entry": 1,
+          "mode": "userinfo-success"
+        },
+        {
+          "entry": 1,
+          "mode": "missing"
+        },
+        {
+          "entry": 1,
+          "mode": "http"
+        },
+        {
+          "entry": 1,
+          "mode": "timeout"
+        },
+        {
+          "entry": 1,
+          "mode": "connection"
+        }
+      ],
+      "standardTracebackCredentialEchoCases": [],
+      "declaredCommitments": "FAIL",
+      "completeHardGate": "FAIL",
+      "executionClaimsState": "NOT_CLAIMED"
+    },
+    {
+      "task": "REQUESTS",
+      "arm": "STRUCTURED",
+      "workSha256": "b12a12ee12e29d9e1eee713c50b1457169763b4ded78a8eb45da921685be0834",
+      "reportSha256": "213d661a8d12a9c1acc9cbd6f6226a4180577f6b056d1f89d895cc73de50533e",
+      "sourceRepaired": false,
+      "actualNetworkRequests": 0,
+      "syntax": "PASS",
+      "coreChecksPassed": 2,
+      "coreChecksTotal": 2,
+      "authoredTests": [
+        {
+          "tests": 17,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ],
+      "unselectedPythonBlocks": [
+        5
+      ],
+      "directCredentialEchoCases": [],
+      "standardTracebackCredentialEchoCases": [
+        {
+          "entry": 1,
+          "mode": "timeout"
+        },
+        {
+          "entry": 1,
+          "mode": "connection"
+        }
+      ],
+      "declaredCommitments": "FAIL",
+      "completeHardGate": "FAIL",
+      "executionClaimsState": "NOT_CLAIMED"
+    },
+    {
+      "task": "PATCH",
+      "arm": "STRUCTURED",
+      "workSha256": "05fccf603aef4317eb16a71529137906e634a265b01c8f1bd957fd4b25409b1e",
+      "reportSha256": "35810947c9ee95f9d16c2774b81c7610272dc9b9cdde86a60eb03a51e5d2ad1c",
+      "sourceRepaired": false,
+      "compilation": "PASS",
+      "generatedTests": {
+        "status": "PASS",
+        "exitCode": 0,
+        "stdout": "Passed: 27, Failed: 0\r\n",
+        "stderr": "",
+        "eaEnabled": false
+      },
+      "independentChecks": {
+        "coreChecks": [
+          {
+            "name": "public_static_map_signature",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "non_null_override_and_unpatched_values",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "null_patch_values_do_not_overwrite_or_add",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "zero_is_a_valid_value",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "false_is_a_valid_value",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "empty_string_is_a_valid_value",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "result_is_a_distinct_map",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "unmodifiable_inputs_are_not_mutated",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "input_keys_and_values_are_not_printed",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "all_invocations_preserve_both_inputs",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "all_invocations_avoid_input_logging",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "declarationChecks": [
+          {
+            "name": "nullCurrent_EMPTY_MAP",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "nullPatch_EMPTY_MAP",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "emptyCurrent_ALLOW",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "emptyPatch_ALLOW",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "name": "nested_SHALLOW_REPLACE",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "observations": {
+          "nullCurrent": "RETURNS_MAP_SIZE_1",
+          "nullPatch": "RETURNS_MAP_SIZE_1",
+          "emptyCurrent": "RETURNS_MAP_SIZE_1",
+          "emptyPatch": "RETURNS_MAP_SIZE_1",
+          "nested": "RETURNS_MAP_SIZE_1"
+        },
+        "corePassed": 11,
+        "coreFailed": 0,
+        "declarationFailed": 0
+      },
+      "requiredCodeGatesPassed": true,
+      "scope": "Single fixed-copy diagnosis; no fresh paired RAW baseline or PATCH AI review in this batch."
+    }
+  ],
+  "executionClaimsAudit": {
+    "sourceCandidate": "candidate37",
+    "modelCalls": 0,
+    "works": [
+      {
+        "task": "REQUESTS",
+        "arm": "RAW",
+        "workSha256": "117b7db3eaf34607a28434b6ba7501acd4144b910ae67b42059dd707a71f930e",
+        "state": "NOT_CLAIMED",
+        "claims": [],
+        "executionToolsProvided": false,
+        "verifiedExecutionBeforeResponse": false,
+        "laterIndependentExecutionCannotValidateEarlierClaim": true,
+        "semanticCompleteness": "OPEN"
+      },
+      {
+        "task": "REQUESTS",
+        "arm": "COMPACT",
+        "workSha256": "453e022ca66453a410d373ba48198b66c94e5988577d34f385d000023e2cc672",
+        "state": "NOT_CLAIMED",
+        "claims": [],
+        "executionToolsProvided": false,
+        "verifiedExecutionBeforeResponse": false,
+        "laterIndependentExecutionCannotValidateEarlierClaim": true,
+        "semanticCompleteness": "OPEN"
+      },
+      {
+        "task": "REQUESTS",
+        "arm": "STRUCTURED",
+        "workSha256": "b12a12ee12e29d9e1eee713c50b1457169763b4ded78a8eb45da921685be0834",
+        "state": "NOT_CLAIMED",
+        "claims": [],
+        "executionToolsProvided": false,
+        "verifiedExecutionBeforeResponse": false,
+        "laterIndependentExecutionCannotValidateEarlierClaim": true,
+        "semanticCompleteness": "OPEN"
+      },
+      {
+        "task": "PATCH",
+        "arm": "STRUCTURED",
+        "workSha256": "05fccf603aef4317eb16a71529137906e634a265b01c8f1bd957fd4b25409b1e",
+        "state": "NOT_CLAIMED",
+        "claims": [],
+        "executionToolsProvided": false,
+        "verifiedExecutionBeforeResponse": false,
+        "laterIndependentExecutionCannotValidateEarlierClaim": true,
+        "semanticCompleteness": "OPEN"
+      }
+    ]
+  },
+  "allWorkHashesUnchanged": true,
+  "noWorksRepaired": true,
+  "realModelQualityGate": "FAIL",
+  "limitations": [
+    "Unselected invocation/batch code was not fully executed; whole-work gates remain OPEN or FAIL.",
+    "RAW task did not require authored tests or a credential rule; no added rule is silently applied to it.",
+    "No positive execution claim found is not proof of all possible truthfulness properties.",
+    "New generated tests pass in this sample; old failed tests and false claims remain unchanged."
+  ]
+}

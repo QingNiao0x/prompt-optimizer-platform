@@ -1,0 +1,62 @@
+{
+  "candidate": "candidate37",
+  "modelCalls": 0,
+  "workOrCopyRewritten": false,
+  "evidenceType": "BOUND_LITERAL_FRAGMENTS_WITH_MANUAL_SCOPE_ASSESSMENT",
+  "rows": [
+    {
+      "task": "PATCH",
+      "arm": "STRUCTURED",
+      "trace": 404,
+      "sourceSection": "OUTPUT",
+      "modelQuote": "包含必要 import 和完整类体，保留上述方法签名，不使用省略号或片段代替实现。",
+      "copyProjectionQuote": "文件包含必要import和完整类体，不以省略号、片段或口头说明代替实现。",
+      "currentPath": "JavaCodeDeliveryContract → AdditionalRuleProjection.uncoveredJavaDelivery → OptimizationResultAssembler:300",
+      "manualEvidenceAssessment": "The platform reprojects overlapping complete-file delivery; the compound object scope still requires proof before suppressing a requirement.",
+      "traceSha256": "69ad2aa2e17db14ab0974d99bdbcd9596e225029380e8336bf2c18bda60b8017",
+      "copySha256": "3decb0b0ab61552e81a7613a2e25bc745e05c83ed50941d2b4aba693c3881eb6",
+      "automaticDeletionAuthorizedByThisRecord": false
+    },
+    {
+      "task": "PATCH",
+      "arm": "STRUCTURED",
+      "trace": 404,
+      "sourceSection": "TASK",
+      "modelQuote": "返回新 Map，不修改 current 与 patch；不修改输入中的嵌套对象引用所指向的内容。",
+      "copyProjectionQuote": "- 返回新Map",
+      "currentPath": "RequirementFidelityGuard → AdditionalRuleProjection → user-rule projection",
+      "manualEvidenceAssessment": "Explicit-user rule projection overlaps the model task; not evidence that independent nested-object conditions can be deleted.",
+      "traceSha256": "69ad2aa2e17db14ab0974d99bdbcd9596e225029380e8336bf2c18bda60b8017",
+      "copySha256": "3decb0b0ab61552e81a7613a2e25bc745e05c83ed50941d2b4aba693c3881eb6",
+      "automaticDeletionAuthorizedByThisRecord": false
+    },
+    {
+      "task": "REQUESTS",
+      "arm": "COMPACT",
+      "trace": 405,
+      "sourceSection": "CONSTRAINTS",
+      "modelQuote": "不得在代码、日志或输出中泄露密码、Token、API Key 或私钥。",
+      "copyProjectionQuote": "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
+      "currentPath": "PlatformConstraintRenderer.appendMandatory",
+      "manualEvidenceAssessment": "Near-equivalent model wording is retained before the authoritative canonical rule; keyword-only deletion would be unsafe.",
+      "traceSha256": "bbf36ecff2d8475b13e647b0d508b275c2cbb24a660c09408ab32817f727abac",
+      "copySha256": "0d860afe9b5798cf1be141aa91337dc3762eef1459617a6590b5899d61029372",
+      "automaticDeletionAuthorizedByThisRecord": false
+    },
+    {
+      "task": "REQUESTS",
+      "arm": "STRUCTURED",
+      "trace": 406,
+      "sourceSection": "TASK",
+      "modelQuote": "为核心逻辑补充正常、异常和边界场景测试，并给出安装与运行说明。",
+      "copyProjectionQuote": "为核心逻辑补充正常、异常和边界场景测试。",
+      "currentPath": "TaskConstraintCoverage.uncovered → OptimizationResultAssembler.appendConstraints:929",
+      "manualEvidenceAssessment": "A complete testing obligation is embedded in a compound delivery sentence; exact coverage did not suppress a second task projection.",
+      "traceSha256": "843446bf57154fab04cbaed9dec8485551ce657074398225894d797b05f4bae3",
+      "copySha256": "15529115288dc8309b593dcedd2fcaf05ac95b63dd8f329da9b33fa1f215b199",
+      "automaticDeletionAuthorizedByThisRecord": false
+    }
+  ],
+  "remainingStatus": "OPEN_NOT_FIXED",
+  "nextStep": "Reuse these sources offline, prove complete object/property/condition/status coverage before suppressing a projection; preserve all provenance."
+}

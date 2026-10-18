@@ -1,6 +1,6 @@
 {
   "candidate": "candidate37",
-  "frozenBeforeAnyRealCall": true,
+  "frozenBeforeAnyRealCall": false,
   "tools": [
     {
       "path": "account-browser.mjs",
@@ -12,7 +12,7 @@
     },
     {
       "path": "annotate-requests-promises.py",
-      "sha256": "32106de9f40f60e32cdbbbd3f3df52d6da039c77a01ae1b88305cff55d6f323a"
+      "sha256": "66bf854f68da029db9b5abc05ed6e241c38465178c2973fbfeec67bdc90a9794"
     },
     {
       "path": "audit-reviews.mjs",
@@ -40,7 +40,7 @@
     },
     {
       "path": "check-requests-work.py",
-      "sha256": "0c371dac0baf60e098a6f83350440fcce05332295ee4aa2f1d09e2bade82a37a"
+      "sha256": "022dc739bad8049727a7ad8bc60308a19e5689961f4f12fe7b97ab96d38e49cc"
     },
     {
       "path": "close-batch.py",
@@ -68,7 +68,7 @@
     },
     {
       "path": "prepare-reviews.mjs",
-      "sha256": "9b626b6ebbb2dee3847675b6db628642a892976b4928fd1fba5041d0be111112"
+      "sha256": "67f439e59a6d7832d2fa8df77f2a8917598b3a1df5c62598f3824072436e1c43"
     },
     {
       "path": "request-cases.json",
@@ -84,7 +84,7 @@
     },
     {
       "path": "run-live.mjs",
-      "sha256": "5499614c8425e9f4778aa97ab49e6c9f63b372cd977102441d36ac7dd2b9c5d6"
+      "sha256": "8f790c4a4e1b14ca2829263f0149a07acc69f3f900219e7f91c5875fce400fab"
     },
     {
       "path": "scope-preflight.json",
@@ -97,6 +97,51 @@
     {
       "path": "start-live-services.ps1",
       "sha256": "26c8bee326e9dd349dd6ea185cc699f5a44c0b452173eedaec246c1c17b3b12d"
+    },
+    {
+      "path": "test-check-requests-work.py",
+      "sha256": "8b37689427e850e87892c3452e7a93ef06ff63ee055fb345855f3428e6baec8f"
+    },
+    {
+      "path": "record-real-results.py",
+      "sha256": "3af1d27b714fe5220c604b99d1f3e7d2374ab3d705dd1eea8189755196b7e051"
+    },
+    {
+      "path": "test-review-packet.mjs",
+      "sha256": "f16b319a7a0dc3ea1d8d95428ec14779895e8e0ad5b8beff4a639e9f821b0ec3"
     }
-  ]
+  ],
+  "preCallCorrection": "Generic authored-test failure reason replaces previous-work-specific diagnosis; execution-claim reports are now bound by full-work hash. No real calls have occurred. Browser counter now reads the already validated batch generation limit 6, instead of a retained prior-batch literal; server reservation limit was always 6. All corrections preceded the first real call.",
+  "actualLedgerAtCorrection": 403,
+  "initialFreezeBeforeAnyRealCall": true,
+  "postWorkCorrection": {
+    "actualLedgerAtCorrection": 410,
+    "reviewCallsAtCorrection": 0,
+    "reason": [
+      "COMPACT returns a dict: declare existing titlePath mapping; preserve initial false failure report.",
+      "Observe Python standard exception traceback separately from existing direct-echo metric; do not repair works or change frozen execution inputs.",
+      "Bind traceback observations to the existing explicit copied safety requirement; the RAW arm receives no added hard requirement."
+    ],
+    "preservedInitialChecker": "check-requests-work-initial.py",
+    "checkerFixtureChecks": 10,
+    "checkerFixtureChecksPassed": 10,
+    "actualNetworkRequestsInChecker": 0,
+    "frozenProductSourceChanged": false,
+    "workBytesChanged": false
+  },
+  "postReviewAnalysis": {
+    "actualLedger": 412,
+    "newOfflineTools": [
+      "record-real-results.py",
+      "test-review-packet.mjs"
+    ],
+    "restoredOriginalCrLfFiles": [],
+    "modelRequests": 0,
+    "frozenReviewInputsChanged": false,
+    "frozenProductSourceChanged": false,
+    "restoredOriginalLineEndingsFiles": [
+      "annotate-requests-promises.py",
+      "check-requests-work.py"
+    ]
+  }
 }

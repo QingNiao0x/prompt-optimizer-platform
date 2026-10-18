@@ -1,0 +1,104 @@
+{
+  "candidate": "candidate37",
+  "frozenBeforeAnyRealCall": true,
+  "tools": [
+    {
+      "path": "account-browser.mjs",
+      "sha256": "1968c093a758c28dcdb889faa367a899070366c2a43b6d10b48fe60069b566f2"
+    },
+    {
+      "path": "activate-batch.py",
+      "sha256": "1e3359d5cdc76f6b2da20b7e82dd756ee7dcc31fe3f24b6877a4b397b586732c"
+    },
+    {
+      "path": "annotate-requests-promises.py",
+      "sha256": "f7df96865677a9c03a73065fe869e59e2ee782fef4548e591ed2236ef56e9f6a"
+    },
+    {
+      "path": "audit-reviews.mjs",
+      "sha256": "e17ecc78d72f228bae034c105acb3fb34eae010d9fe05addafd6c2d2a7b6b1e6"
+    },
+    {
+      "path": "Candidate37EvaluationServer.java",
+      "sha256": "05895823fa623e13c4d2097d9354f0f5e2d45a6cff52e8785d312c941a0f5a03"
+    },
+    {
+      "path": "Candidate37Replay.java",
+      "sha256": "9b2beac15d4abb9edd8d73eac6125fbc9f3015719a92c35be635694e94b58d26"
+    },
+    {
+      "path": "Candidate37ScopePreflight.java",
+      "sha256": "fcb2b9149875ecc5c234a2d613ac82641691a1d7e9dda03061151abde6a87c0a"
+    },
+    {
+      "path": "check-execution-claims.mjs",
+      "sha256": "58a31e1e103934b03bd5b9b6a95af759f352ea0f97a95e04f316f625e50b78dd"
+    },
+    {
+      "path": "check-patch-work.py",
+      "sha256": "28a1809fe4e36cdf8feb8b8a119e2658fe7a6078ad65321c48536b8e30d35f9d"
+    },
+    {
+      "path": "check-requests-work.py",
+      "sha256": "0c371dac0baf60e098a6f83350440fcce05332295ee4aa2f1d09e2bade82a37a"
+    },
+    {
+      "path": "close-batch.py",
+      "sha256": "36aba38395ef34f79f20d669c302db0bc732846573353b999fcf8fe7b2e14978"
+    },
+    {
+      "path": "expected-inputs.json",
+      "sha256": "6629f462ca7a2da113c3cc0cc4648c7a47a3a939ea256af65f92c7b182750bda"
+    },
+    {
+      "path": "external-calls.mjs",
+      "sha256": "fac95be5c31464506a82d1ec3a1e99a6da336deba69c8e215f2a526e388f78ce"
+    },
+    {
+      "path": "freeze-candidate.py",
+      "sha256": "851824029111dd4eea8e4fc04f7461c215e4d13236593b4b01392e435797eae3"
+    },
+    {
+      "path": "live-cases.json",
+      "sha256": "f1e7a1cfaba9c2ab9b26b0e86404ef76f70f0855a1db6a4e5bda4582b4c124ed"
+    },
+    {
+      "path": "PatchIndependentChecks.java",
+      "sha256": "a9cecd31dfb4d4cfa3c68d94b4b92007d63d1ee6225aeee51c733c3ce2d4da6a"
+    },
+    {
+      "path": "prepare-reviews.mjs",
+      "sha256": "9b626b6ebbb2dee3847675b6db628642a892976b4928fd1fba5041d0be111112"
+    },
+    {
+      "path": "request-cases.json",
+      "sha256": "7a6229bf7d13f77aae5814c8163f9876f389fa70283b38b53fad5906f350afae"
+    },
+    {
+      "path": "ReserveEvaluationCall.java",
+      "sha256": "953e5905d118f0386a8aed8b093038c59e56beaece1608cdf3d72297a2d1af6a"
+    },
+    {
+      "path": "run-external.ps1",
+      "sha256": "5690c5df963d080bbad94ff161cb46397914f172c02566aa253195c6d7dc24ac"
+    },
+    {
+      "path": "run-live.mjs",
+      "sha256": "8f790c4a4e1b14ca2829263f0149a07acc69f3f900219e7f91c5875fce400fab"
+    },
+    {
+      "path": "scope-preflight.json",
+      "sha256": "e17f0f730265cedb6500b8f501c7cd480b99c9716179883c9d5b9089d0107577"
+    },
+    {
+      "path": "start-candidate37.ps1",
+      "sha256": "1c62087f522aef019a114ecf6b749e6bddbfe2f5f607335edc3dc9b6f5ab103b"
+    },
+    {
+      "path": "start-live-services.ps1",
+      "sha256": "26c8bee326e9dd349dd6ea185cc699f5a44c0b452173eedaec246c1c17b3b12d"
+    }
+  ],
+  "preCallCorrection": "Generic authored-test failure reason replaces previous-work-specific diagnosis; execution-claim reports are now bound by full-work hash. No real calls have occurred. Browser counter now reads the already validated batch generation limit 6, instead of a retained prior-batch literal; server reservation limit was always 6. All corrections preceded the first real call.",
+  "actualLedgerAtCorrection": 403
+}

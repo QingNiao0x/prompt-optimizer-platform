@@ -80,8 +80,9 @@ async function preflight(needsModelCall = false) {
   }
   const maximumActual = Math.min(protocol.maximumActualModelCalls, batch.callsBefore + batch.maximumNewCalls,
     batch.maximumActualCallsAfterBatch ?? batch.callsBefore + batch.maximumNewCalls);
-  if (traceFiles.length > maximumActual || candidateCount > 345 || generationCount > 18
-      || (needsModelCall && (traceFiles.length >= maximumActual || candidateCount >= 345 || generationCount >= 18)))
+  const generationLimit = batch.purposeMaximums.PLATFORM_GENERATION; // 上方已核对固定为6，计数不另藏旧批次常量。
+  if (traceFiles.length > maximumActual || candidateCount > 345 || generationCount > generationLimit
+      || (needsModelCall && (traceFiles.length >= maximumActual || candidateCount >= 345 || generationCount >= generationLimit)))
     throw Error('Approved actual/stage/purpose allowance exhausted');
   return { sample, caseSha256: hash(caseBytes), sourceManifestSha256: hash(manifestBytes),
     observedCounts: { actual: traceFiles.length, candidate: candidateCount, platformGeneration: generationCount } };

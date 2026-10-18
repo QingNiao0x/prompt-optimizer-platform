@@ -1,0 +1,41 @@
+{
+  "candidate": "candidate37",
+  "actualLedgerAtCorrection": 410,
+  "beforeReviewCalls": true,
+  "workOrExecutionRequestChanged": false,
+  "rawMetricPreserved": true,
+  "corrections": [
+    "COMPACT mapping selects existing dict titlePath; initial two title failures were evaluator mapping errors.",
+    "Keep direct-echo count; add standard traceback canary observation to all three arms.",
+    "Only explicit enhanced safety promises produce a hard failure; RAW diagnostics remain supplementary."
+  ],
+  "arms": [
+    {
+      "arm": "RAW",
+      "workSha256": "117b7db3eaf34607a28434b6ba7501acd4144b910ae67b42059dd707a71f930e",
+      "initialReportSha256": "95aa5b01c68e0b31cd727b20e8259608c1644592df8621f0f2baeb3df986e8ab",
+      "finalReportSha256": "189f1cdaf3a49830a65aa391c4f27c3a513d2ab0c799c2d26a730d09f27b6622",
+      "initialCorePassed": 4,
+      "finalCorePassed": 4,
+      "finalCoreTotal": 4
+    },
+    {
+      "arm": "COMPACT",
+      "workSha256": "453e022ca66453a410d373ba48198b66c94e5988577d34f385d000023e2cc672",
+      "initialReportSha256": "a8db512554beebee84763145130f0a866f72cdc35865afd973881aab7b8d2bca",
+      "finalReportSha256": "34f81f572f34fe226a6fb81c7ae3ff912fa92b9c088538ae4a1df50ae1a72f8f",
+      "initialCorePassed": 0,
+      "finalCorePassed": 2,
+      "finalCoreTotal": 2
+    },
+    {
+      "arm": "STRUCTURED",
+      "workSha256": "b12a12ee12e29d9e1eee713c50b1457169763b4ded78a8eb45da921685be0834",
+      "initialReportSha256": "6bd4ba1c355800a8db26669bc172d5af381deda7a77c633ae8b62eff550b63a7",
+      "finalReportSha256": "213d661a8d12a9c1acc9cbd6f6226a4180577f6b056d1f89d895cc73de50533e",
+      "initialCorePassed": 2,
+      "finalCorePassed": 2,
+      "finalCoreTotal": 2
+    }
+  ]
+}

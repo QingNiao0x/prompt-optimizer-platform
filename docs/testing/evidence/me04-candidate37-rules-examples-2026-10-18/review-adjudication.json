@@ -1,0 +1,45 @@
+{
+  "candidate": "candidate37",
+  "modelCalls": 0,
+  "sameSupplierIndependentAiReviews": true,
+  "allBlindPairs": [
+    {
+      "left": "TASK_1_A",
+      "right": "TASK_1_B",
+      "R1": "LEFT_WIN",
+      "R2": "TIE",
+      "disagree": true,
+      "independentGate": "BOTH_FAIL"
+    },
+    {
+      "left": "TASK_1_A",
+      "right": "TASK_1_C",
+      "R1": "LEFT_WIN",
+      "R2": "LEFT_WIN",
+      "disagree": false,
+      "independentGate": "NOT_BOTH_PASSED"
+    },
+    {
+      "left": "TASK_1_B",
+      "right": "TASK_1_C",
+      "R1": "LEFT_WIN",
+      "R2": "LEFT_WIN",
+      "disagree": false,
+      "independentGate": "NOT_BOTH_PASSED"
+    }
+  ],
+  "literalQuoteErrors": {
+    "R1": 1,
+    "R2": 4
+  },
+  "scoresAndVerdictsUnchanged": true,
+  "acceptanceGate": "FAIL",
+  "evidenceAssessment": [
+    "Both reviewers noticed credential observations, but minimized enhanced-input hard failures; neither score is a release gate.",
+    "R1 has one non-literal quotation; R2 has four. Original quotations are not silently repaired.",
+    "STRUCTURED versus COMPACT differs between reviewers (win versus tie); both independently fail a safety commitment.",
+    "Claims about empty/nested title parsing or apparent_encoding remain unverified semantic hypotheses in the reviews.",
+    "Absence of authored tests was not a RAW-task violation; added tests are not proof that enhanced code meets all promises.",
+    "Legitimate not-run declarations are not execution defects; subsequent independent tests establish only their own later execution."
+  ]
+}

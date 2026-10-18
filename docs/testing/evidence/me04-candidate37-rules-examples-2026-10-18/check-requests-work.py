@@ -21,6 +21,7 @@ import runpy
 import subprocess
 import sys
 import unittest
+import traceback
 import uuid
 
 FENCE = re.compile(r"^[ \t]*(`{3,}|~{3,})([^\r\n]*)\r?\n(.*?)^[ \t]*\1[ \t]*\r?$", re.M | re.S)
@@ -156,11 +157,13 @@ def worker(config_path: Path) -> None:
     except BaseException as error:
         result["exceptionType"] = type(error).__name__
         result["exceptionMessage"] = str(error)
+        result["standardExceptionTraceback"] = "".join(traceback.format_exception(error))
     finally:
         logger.removeHandler(handler)
     result.update(stdout=output.getvalue(), stderr=errors.getvalue(), logs=logs.getvalue())
     result["canaryObserved"] = CANARY in "\n".join(str(result.get(key, "")) for key in
         ["returnRepresentation", "result", "importStdout", "stdout", "stderr", "logs", "exceptionMessage"])
+    result["canaryObservedInStandardTraceback"] = CANARY in result.get("standardExceptionTraceback", "")
     result["canarySentToTransport"] = any(CANARY in str(item["url"]) for item in sent)
     Path(config["output"]).write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 

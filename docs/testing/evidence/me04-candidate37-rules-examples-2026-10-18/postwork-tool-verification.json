@@ -1,0 +1,82 @@
+{
+  "candidate": "candidate37",
+  "actualLedger": 412,
+  "modelCallsFromTheseChecks": 0,
+  "actualNetworkRequestsInCodeChecks": 0,
+  "checkerFixtures": {
+    "syntheticFixtures": 8,
+    "checks": [
+      {
+        "name": "actual_function_and_authored_tests_pass",
+        "passed": true
+      },
+      {
+        "name": "wrong_title_fails",
+        "passed": true
+      },
+      {
+        "name": "privacy_not_silently_added_to_original_task",
+        "passed": true
+      },
+      {
+        "name": "original_script_and_labelled_output_supported",
+        "passed": true
+      },
+      {
+        "name": "fixed_script_does_not_fake_canary_url_input",
+        "passed": true
+      },
+      {
+        "name": "syntax_failure_not_repaired",
+        "passed": true
+      },
+      {
+        "name": "declared_dict_title_path_is_respected",
+        "passed": true
+      },
+      {
+        "name": "wrapped_cause_is_observed_separately",
+        "passed": true
+      },
+      {
+        "name": "suppressed_context_is_not_false_echo",
+        "passed": true
+      },
+      {
+        "name": "review_report_gate_is_present",
+        "passed": true
+      }
+    ],
+    "passed": 10,
+    "failed": 0,
+    "externalModelCalls": 0,
+    "actualNetworkRequests": 0,
+    "businessAcceptance": false
+  },
+  "checkerSourceSha256": "022dc739bad8049727a7ad8bc60308a19e5689961f4f12fe7b97ab96d38e49cc",
+  "checkerTestsSourceSha256": "8b37689427e850e87892c3452e7a93ef06ff63ee055fb345855f3428e6baec8f",
+  "reviewPacketTests": {
+    "tests": 6,
+    "passed": 6,
+    "failed": 0,
+    "logSha256": "af5920d5844c443b62a415ef69e9bc4219dfe64b53d2ce8890625d2c0b8e6e9a",
+    "sourceSha256": "f16b319a7a0dc3ea1d8d95428ec14779895e8e0ad5b8beff4a639e9f821b0ec3"
+  },
+  "existingReviewAuditTests": {
+    "tests": 8,
+    "passed": 8,
+    "failed": 0,
+    "source": "scripts/me00a-review-checks.test.mjs",
+    "sourceSha256": "0ab425fe273bc7d915b53311a0c362dbe1829df5f4fa47d7fb1004e64b8d1ea9"
+  },
+  "initialFixtureFailurePreserved": {
+    "privateFile": "tmp/me04-candidate37-traceback-checker-20261018/verification-initial.json",
+    "reason": "An overbroad test expectation treated from-None on the HTTP branch as suppressing exceptions thrown before that branch. Corrected only the fixture expectation."
+  },
+  "checkerTestedSourceSha256": "5614b740fbe00cf09acaed477d5f86798a737d3e30a2e2309ea0f55044528e0e",
+  "lineEndingOnlyFinalization": {
+    "finalSourceMatchesTestedWithLfNormalized": true,
+    "testRerunNeeded": false,
+    "reason": "Restored original committed LF; parsed Python AST is unchanged."
+  }
+}

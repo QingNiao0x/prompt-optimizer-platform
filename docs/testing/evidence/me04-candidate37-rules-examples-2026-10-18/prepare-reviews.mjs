@@ -37,6 +37,10 @@ export function summarizeRequestsReport(report) {
       requirement: 'An explicit execution-input requirement prohibited credential disclosure in code, logs or returned output.',
       failureReason: 'Synthetic credential values appeared in returned values, exception messages or output; confirmed transport counts are reported separately.',
     },
+    standard_traceback_credential_non_echo: {
+      requirement: 'An explicit execution-input requirement prohibited credential disclosure in code, logs or returned output, including displayed exception chains.',
+      failureReason: 'The standard Python traceback displayed synthetic credentials retained in an exception cause/context after the supplied URL reached the mocked transport; a safe outer message did not suppress it.',
+    },
     supplied_executable_core_tests: {
       requirement: 'An explicit execution-input requirement requested executable normal, exception and boundary tests.',
       failureReason: 'Required executable authored tests were missing or did not pass; a proposed test-scenario table is not executable test code.',
@@ -80,6 +84,7 @@ export function summarizeRequestsReport(report) {
     syntheticCredentialDiagnostics: { observedCases: diagnostics.filter(item => ['ECHO_OBSERVED', 'NO_ECHO_IN_THIS_CASE', 'NOT_EXERCISED_NO_DECLARED_URL_INPUT'].includes(item?.syntheticCredentialDiagnostic)).length,
       echoObservations: echoes.length,
       echoCasesWithCanarySentToMockTransport: echoes.filter(item => item?.observation?.canarySentToTransport === true).length,
+      standardTracebackEchoObservations: diagnostics.filter(item => item?.observation?.canaryObservedInStandardTraceback === true).length,
       unexercisedCases: diagnostics.filter(item => item?.syntheticCredentialDiagnostic === 'NOT_EXERCISED_NO_DECLARED_URL_INPUT').length,
       scope: 'Supplementary observations are not original-task hard failures; explicit execution-input promises are evaluated separately.' },
     declaredRequirements: { state: notApplicable ? 'NOT_APPLICABLE' : declaredGate, checks: declaredChecks,
