@@ -131,7 +131,14 @@ try {
         // The production UI may submit its inferred template; AUTO is verified separately through the frozen task identity.
         if (['AUTO', 'FEATURE_DEVELOPMENT'].includes(body.enhancement?.templateCode)) expected.enhancement.templateCode = body.enhancement.templateCode;
         if (!equal(body, expected)) throw Error('Bound enhancement request mismatch');
-        await save('actual-confirmation.private.json', body.planConfirmation); await save('enhancement-request.private.json', body);
+        try {
+          const locked = await json(resolve(out, 'actual-confirmation.private.json'));
+          if (!equal(locked, body.planConfirmation)) throw Error('Actual submitted confirmation changed');
+        } catch (error) {
+          if (error.code !== 'ENOENT') throw error;
+          await save('actual-confirmation.private.json', body.planConfirmation);
+        }
+        await save('enhancement-request.private.json', body);
       }
       await route.continue();
     } catch (error) { guardFailure = error.message; await save('guard-failure.json', { reason: error.message }); await route.abort('blockedbyclient'); }
@@ -147,6 +154,10 @@ try {
     const planned = page.waitForResponse(r => r.request().method() === 'POST' && new URL(r.url()).pathname === '/api/v1/optimizations/plan', { timeout: 150000 });
     const enhanced = page.waitForResponse(r => r.request().method() === 'POST' && new URL(r.url()).pathname === '/api/v1/optimizations', { timeout: 150000 });
     void enhanced.catch(() => undefined);
+    // 工具在上游调用前失败时，原对话框和答案仍在；回到首题核查同一原稿，不重新生成Plan。
+    const originalDialog = page.locator('.el-dialog:visible').filter({ hasText: '生成前确认' });
+    for (let back = 0; back < answers.length && await originalDialog.getByRole('button', { name: '上一题', exact: true }).count(); back++)
+      await originalDialog.getByRole('button', { name: '上一题', exact: true }).click();
     await page.getByRole('button', { name: '先确认并增强', exact: true }).click(); await planned; await planCapture;
     if (plan.status !== 200) throw Error(`Plan failed ${plan.status}`);
     if (!plan.body.data.questions.length && frozen.sample.enhancementAllowed) { await enhanced; await platformCapture; }

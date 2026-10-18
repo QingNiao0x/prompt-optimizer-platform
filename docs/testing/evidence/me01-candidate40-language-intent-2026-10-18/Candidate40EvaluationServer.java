@@ -113,7 +113,8 @@ public class Candidate40EvaluationServer {
                         if (!sample.path("enhancementAllowed").asBoolean() || !payload.path("planConfirmed").asBoolean()
                                 || !payload.path("options").path("promptFormat").equals(sample.path("promptFormat"))
                                 || payload.path("options").path("includeExamples").asBoolean()
-                                || !payload.path("planAnswers").equals(JSON.valueToTree(answers))) return false;
+                                || payload.has("planAnswers") || payload.has("confirmedDecisions")) return false;
+                        // 当前协议只通过taskView发送题答语义；完整视图必须由实际提交重新构建且逐项相等。
                         var view = com.promptoptimizer.enhancement.service.impl.EffectiveTaskViewFactory.create(
                                 sample.path("rawPrompt").asText(), template, answers, java.util.List.of(), false);
                         var mode = com.promptoptimizer.provider.domain.PromptRewriteStrategy.forTask(view,

@@ -1,0 +1,14 @@
+{
+  "stage": "AFTER_TWO_PLANS_BEFORE_ENHANCEMENT_MODEL_CALL",
+  "attribution": "EVALUATION_TOOL",
+  "observedHttpStatus": 502,
+  "cause": "The guard expected the retired top-level planAnswers payload field. The current ProviderPromptPayload sends actual answer semantics through taskView; the guard rejected locally before reserving or sending an upstream request.",
+  "codeEvidence": "OpenAiCompatiblePromptEnhancementProvider.buildRequest and ProviderPromptPayload; DefaultEnhancementOrchestrator passes the task view constructed from the normalized, server-bound answers.",
+  "fix": "Rebuild the entire expected taskView from the locked actual submission and compare it exactly; reject retired duplicate fields. Keep planId/question/answer, source hash, endpoint, purpose, phase and call-cap protections.",
+  "actualLedgerBeforeAndAfterToolFailure": 417,
+  "modelCallsForFailedEnhancement": 0,
+  "realHttpFailurePreserved": true,
+  "productCodeChanged": false,
+  "originalPlanAndAnswersReused": true,
+  "qualityRetry": false
+}

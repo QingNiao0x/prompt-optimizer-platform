@@ -37,7 +37,7 @@ public final class Candidate40ScopePreflight {
         var template = new com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl().infer(sample.path("rawPrompt").asText());
         var view = EffectiveTaskViewFactory.create(sample.path("rawPrompt").asText(), template, answers, List.of(), false);
         var payload = JSON.createObjectNode().put("rawPrompt", sample.path("rawPrompt").asText()).put("planConfirmed", true);
-        payload.putObject("template"); payload.putArray("conversationHistory"); payload.set("planAnswers", JSON.valueToTree(answers));
+        payload.putObject("template"); payload.putArray("conversationHistory");
         payload.putObject("options").put("promptFormat", "COMPACT").put("includeExamples", false);
         payload.set("taskView", JSON.valueToTree(view.modelInput()));
         payload.putObject("rewriteStrategy").put("mode", PromptRewriteStrategy.forTask(view, PromptFormat.COMPACT).mode());
@@ -47,7 +47,8 @@ public final class Candidate40ScopePreflight {
         check(JSON.convertValue(noReference, com.promptoptimizer.enhancement.dto.PlanConfirmation.class)
                 .equals(JSON.convertValue(explicitNull, com.promptoptimizer.enhancement.dto.PlanConfirmation.class)),
                 "native missing/null reference has the same DTO meaning");
-        var changed = payload.deepCopy(); changed.putArray("planAnswers"); check(!allowed(changed, cases, answers), "omitted answer");
+        var changed = payload.deepCopy(); changed.set("planAnswers", JSON.valueToTree(answers)); check(!allowed(changed, cases, answers), "retired duplicated answer field");
+        check(!allowed(payload, cases, List.of()), "view must contain actual submitted answers");
         changed = payload.deepCopy(); changed.set("taskView", JSON.createObjectNode()); check(!allowed(changed, cases, answers), "view drift");
         changed = payload.deepCopy(); changed.put("planConfirmed", false); check(!allowed(changed, cases, answers), "not Plan");
         changed = payload.deepCopy(); ((ObjectNode) changed.path("options")).put("includeExamples", true); check(!allowed(changed, cases, answers), "example drift");
