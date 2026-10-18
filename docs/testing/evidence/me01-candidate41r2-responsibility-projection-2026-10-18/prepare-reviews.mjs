@@ -22,6 +22,7 @@ const packet={task:common,scope:'Only this one independent task; no statistical 
   commonContract:hard.works[arm].commonContractState,independentTests:hard.works[arm].independent.tests,independentPassed:hard.works[arm].independent.passed,
   authoredTests:hard.works[arm].authoredTests,declaredTestCommitment:hard.works[arm].declaredTestCommitmentState,
   executionClaims:claims[arm].state,compilerProfile:hard.works[arm].compilerProfile,
+  authorRunInstructions:hard.works[arm].authorRunInstructionsChecked,
   noNewLengthOrJsonConstraint:true}}))};
 const system=`你是独立AI辅助评审，不是人工专家。两份匿名作品对应相同原题和实际题答，不知道哪份来自增强。不要看另一评审。
 ${rubricInstruction()}

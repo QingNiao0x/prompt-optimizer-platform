@@ -1,0 +1,97 @@
+{
+  "works": [
+    {
+      "id": "A",
+      "scores": {
+        "accuracy": 3,
+        "completeness": 4,
+        "clarity": 4,
+        "executability": 3
+      },
+      "evidence": {
+        "accuracy": {
+          "quotes": [
+            "// 统一换行符：先 CRLF -> LF，再处理孤立 CR（视为换行）",
+            "const normalized = input.replace(/\\r\\n/g, \"\\n\").replace(/\\r/g, \"\\n\");"
+          ],
+          "reason": "核心按行去重、区分大小写、保留首次顺序、CRLF→LF 均正确。但将孤立 CR 视为换行属于题目未要求的额外归一化，改变了“整行逐字符完全一致”的适用条件，构成局部实质偏差；作者在限制中已声明该假设，降低但不消除影响。"
+        },
+        "completeness": {
+          "quotes": [
+            "export function dedupeLines(input: string): string {",
+            "使用 Node 内置 `node:test` 与 `node:assert`，无第三方依赖。"
+          ],
+          "reason": "核心实现、测试、配置、运行说明齐全，满足输入输出字符串、无第三方运行依赖等要求。但额外引入孤立 CR 处理与类型校验异常路径，属于未授权增项，故未达满分。"
+        },
+        "clarity": {
+          "quotes": [
+            "| 末尾换行 | `\"a\\nb\\n\"` 拆分为 `[\"a\",\"b\",\"\"]`，末尾空行作为首次出现保留，输出 `\"a\\nb\\n\"` |"
+          ],
+          "reason": "对象、条件、状态和步骤总体清楚一致，设计说明表明确。少量冗余（大量测试与运行输出）但不影响理解。"
+        },
+        "executability": {
+          "quotes": [
+            "**21 个测试全部通过，0 失败。**",
+            "\"test\": \"tsc && node --test dist/test/\""
+          ],
+          "reason": "独立检查显示作者测试实际 20 通过 1 失败，且执行声明不被支持，与文中“21 个测试全部通过”矛盾；按给定输入仍可编译运行核心函数，但需修正测试与声明，属小幅修改即可使用。"
+        }
+      },
+      "severeFailures": [
+        "执行声明与独立检查不符：声称 21 项全部通过，实际作者测试 1 项失败"
+      ],
+      "uncertainties": [
+        "孤立 CR 归一化是否被允许未在题目中明确，按“整行逐字符完全一致”判断为额外行为"
+      ]
+    },
+    {
+      "id": "B",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "clarity": 4,
+        "executability": 4
+      },
+      "evidence": {
+        "accuracy": {
+          "quotes": [
+            "const normalized = text.replace(/\\r\\n/g, \"\\n\");",
+            "// 不 trim：带空格的行视为不同"
+          ],
+          "reason": "按行去重、区分大小写、不 trim、保留首次顺序、CRLF→LF、保留首次空行均与题目一致。仅未处理孤立 CR，但题目只要求支持 LF 与 CRLF，故属非关键瑕疵。"
+        },
+        "completeness": {
+          "quotes": [
+            "export function dedupeLines(text: string): string {",
+            "以上实现完全满足题目确认的全部约束，且无任何第三方运行依赖。"
+          ],
+          "reason": "核心实现、使用示例、边界说明齐全，满足输入输出字符串与无第三方运行依赖。额外提供可选流式版本属增项，但标注为可选，影响有限。"
+        },
+        "clarity": {
+          "quotes": [
+            "| `\"a\\n\"` | `\"a\\n\"` | 末尾换行保留（split 产生的尾部空串参与去重，但只保留一次） |"
+          ],
+          "reason": "规则、示例、边界表清楚一致，对象与条件明确。少量冗余说明但不构成歧义。"
+        },
+        "executability": {
+          "quotes": [
+            "export function dedupeLines(text: string): string {",
+            "以上实现完全满足题目确认的全部约束，且无任何第三方运行依赖。"
+          ],
+          "reason": "独立检查显示实现块在受控配置下编译通过，12 项独立测试全部通过；核心函数可直接使用，仅需按需补充测试或构建脚本。"
+        }
+      },
+      "severeFailures": [],
+      "uncertainties": [
+        "未提供作者自测，但题目未要求测试交付，不构成义务"
+      ]
+    }
+  ],
+  "preferred": "B",
+  "reason": "B 与题目约束一致，独立测试全部通过且无虚假执行声明；A 核心逻辑正确但额外将孤立 CR 视为换行，且声称 21 项测试全部通过而独立检查显示 1 项失败，执行声明不可信。",
+  "limitations": [
+    "仅比较共同任务，未评估额外流式版本的实际运行",
+    "孤立 CR 处理是否可接受依赖对“整行逐字符完全一致”的解释",
+    "独立检查结果作为外部证据引用，未重新运行全部测试"
+  ]
+}

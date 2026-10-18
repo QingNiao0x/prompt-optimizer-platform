@@ -1,0 +1,157 @@
+{
+  "candidate": "candidate41r2",
+  "sourceCommit": "adaa60f6",
+  "sourceManifestSha256": "ab553dacf43189ca49d3b63668a208e8c1d2411abbfa4f73d2a787a65aadd3bd",
+  "sameAccount": true,
+  "newAccountsCreated": 0,
+  "actualPlanQuestions": 2,
+  "ordinaryPackagingQuestionObserved": false,
+  "importantChoicesObserved": [
+    "Deduplication unit",
+    "Case and whitespace comparison"
+  ],
+  "modelAlsoAskedNoPackaging": true,
+  "serverFilteringCausality": "Not established by 429 alone; regression 416/428 independently tests filtering.",
+  "nativeCopyMatches": true,
+  "storeMatches": true,
+  "historyMatches": true,
+  "newHistoryRecords": 1,
+  "copySha256": "6ae59e3284cf74ff8a4fb7d03d3c94e50f9e9226de7818f3510a3f839b903be8",
+  "sameInformationExecution": true,
+  "copiedBodyPatched": false,
+  "actualAnswers": [
+    {
+      "questionId": "dedup_unit",
+      "question": "去重的基本单位是什么？",
+      "answer": "按行去重。输入和返回均为文本字符串；包装由实现者合理处理，不引入第三方运行依赖。"
+    },
+    {
+      "questionId": "match_rule",
+      "question": "判断“重复”时是否忽略大小写和首尾空白？",
+      "answer": "按整行逐字符完全一致比较，区分大小写，保留原行内容和第一次出现的顺序；支持LF与CRLF，输出统一LF，保留首次出现的空行。"
+    }
+  ],
+  "ordinaryQuestionGate": "PASS_FOR_THIS_TASK",
+  "sourceProjectionGate": "PASS_FOR_THIS_BOUND_COPY",
+  "fullGeneralizationGate": "OPEN",
+  "commonFunctionComparison": "TIE_12_OF_12_EACH",
+  "enhancedAuthoredTests": "FAIL_20_OF_21",
+  "unsupportedExecutionClaims": "FAIL",
+  "noNewExtraExampleRequirementInCopy": true,
+  "calls": [
+    {
+      "trace": 429,
+      "purpose": "PLANNING",
+      "model": "deepseek-flash",
+      "status": 200,
+      "elapsedMs": 2991,
+      "usage": {
+        "prompt_tokens": 3004,
+        "completion_tokens": 563,
+        "total_tokens": 3567,
+        "prompt_tokens_details": {
+          "cached_tokens": 1408
+        },
+        "prompt_cache_hit_tokens": 1408,
+        "prompt_cache_miss_tokens": 1596
+      },
+      "recordSha256": "76a3f050d56ea0daf391e2f97eb0f38ae85bd27812a87160f12d6e215bcffe55"
+    },
+    {
+      "trace": 430,
+      "purpose": "PLATFORM_GENERATION",
+      "model": "deepseek-flash",
+      "status": 200,
+      "elapsedMs": 3096,
+      "usage": {
+        "prompt_tokens": 6675,
+        "completion_tokens": 423,
+        "total_tokens": 7098,
+        "prompt_tokens_details": {
+          "cached_tokens": 5120
+        },
+        "prompt_cache_hit_tokens": 5120,
+        "prompt_cache_miss_tokens": 1555
+      },
+      "recordSha256": "be5731add7d6435cdedf61bcc975a5abfc65a61e65b0430ed2d775cf7f870936"
+    },
+    {
+      "trace": 431,
+      "purpose": "EXECUTION",
+      "model": "deepseek-flash",
+      "status": 200,
+      "elapsedMs": 4527,
+      "usage": {
+        "prompt_tokens": 114,
+        "completion_tokens": 1061,
+        "total_tokens": 1175,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 114
+      },
+      "recordSha256": "3a3ef66a6aea472378eeea9b9f8a43c99ed3866b7060e3e606ed9527da689748"
+    },
+    {
+      "trace": 432,
+      "purpose": "EXECUTION",
+      "model": "deepseek-flash",
+      "status": 200,
+      "elapsedMs": 8975,
+      "usage": {
+        "prompt_tokens": 513,
+        "completion_tokens": 2746,
+        "total_tokens": 3259,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 513
+      },
+      "recordSha256": "833234bb8b2d316db3245237214a105bae79186bd1dfd449f498dd3dc55f47c5"
+    },
+    {
+      "trace": 433,
+      "purpose": "REVIEW",
+      "model": "deepseek-flash",
+      "status": 200,
+      "elapsedMs": 5159,
+      "usage": {
+        "prompt_tokens": 5644,
+        "completion_tokens": 1019,
+        "total_tokens": 6663,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 5260
+      },
+      "recordSha256": "88b340a4fd978a3f0e184b0c90e944ff27cb1b16763974b007536dc45ae6e71e"
+    },
+    {
+      "trace": 434,
+      "purpose": "REVIEW",
+      "model": "deepseek-v4-pro",
+      "status": 200,
+      "elapsedMs": 16252,
+      "usage": {
+        "prompt_tokens": 5641,
+        "completion_tokens": 1857,
+        "total_tokens": 7498,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 5641
+      },
+      "recordSha256": "3d47fae7022214f29ca875632396ff41d9a9c93f7c8fb44abb864397df78834b"
+    }
+  ],
+  "totalTokens": 29260,
+  "upstreamElapsedMsSum": 41000,
+  "notAnEndToEndDuration": true,
+  "qualityRetries": 0,
+  "overallQualityGate": "FAIL_NOT_RELEASED",
+  "oldCredentialScoringProfessionalGates": "OPEN_NOT_RETESTED"
+}

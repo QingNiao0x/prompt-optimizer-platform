@@ -1,0 +1,37 @@
+{
+  "sourceTrace": 430,
+  "modelOriginalPreserved": true,
+  "sourceOccurrenceCounts": [
+    {
+      "statement": "按行去重。输入和返回均为文本字符串；包装由实现者合理处理，不引入第三方运行依赖。",
+      "completeOccurrenceCount": 1
+    },
+    {
+      "statement": "按整行逐字符完全一致比较，区分大小写，保留原行内容和第一次出现的顺序；支持LF与CRLF，输出统一LF，保留首次出现的空行。",
+      "completeOccurrenceCount": 1
+    },
+    {
+      "statement": "校验所有外部输入，并明确处理空值、非法值和边界条件。",
+      "completeOccurrenceCount": 1
+    },
+    {
+      "statement": "处理可预期异常，返回清晰且不含敏感值的错误信息，不吞掉或伪造错误。",
+      "completeOccurrenceCount": 1
+    },
+    {
+      "statement": "为核心逻辑补充正常、异常和边界场景测试。",
+      "completeOccurrenceCount": 1
+    }
+  ],
+  "sourceProjectionGate": "PASS_FOR_THE_BOUND_SOURCES",
+  "allProvenanceKept": true,
+  "internalReferencesInCopy": 0,
+  "remainingModelRepetition": [
+    "BACKGROUND repeats the line-dedup goal and string input/output.",
+    "TASK restates delegated packaging and no runtime dependency after the source reference.",
+    "TASK independently restates tests; CONSTRAINTS contains the requested source reference.",
+    "ACCEPTANCE repeats operation rules and asks actual execution."
+  ],
+  "attribution": "The duplicate paraphrases already exist in the enhancement response. Five source references are expanded once; no extra confirmed statement is appended by PlanDecisionIntegrator.",
+  "notClaimed": "No universal semantic deduplication or all-model compactness pass. Legacy no-reference responses still use conservative fallback."
+}

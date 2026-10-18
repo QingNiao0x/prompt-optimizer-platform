@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "candidate": "candidate41r2",
+  "caseId": "TS-IMPLICIT",
+  "sameAccount": true,
+  "newAccountsCreated": 0,
+  "boundPlanUsed": true,
+  "nativeCopyMatches": true,
+  "storeMatches": true,
+  "historyMatches": true,
+  "historyTotalDelta": 1,
+  "copySha256": "6ae59e3284cf74ff8a4fb7d03d3c94e50f9e9226de7818f3510a3f839b903be8",
+  "actualAnswers": [
+    {
+      "questionId": "dedup_unit",
+      "question": "去重的基本单位是什么？",
+      "answer": "按行去重。输入和返回均为文本字符串；包装由实现者合理处理，不引入第三方运行依赖。"
+    },
+    {
+      "questionId": "match_rule",
+      "question": "判断“重复”时是否忽略大小写和首尾空白？",
+      "answer": "按整行逐字符完全一致比较，区分大小写，保留原行内容和第一次出现的顺序；支持LF与CRLF，输出统一LF，保留首次出现的空行。"
+    }
+  ],
+  "sourceManifestSha256": "ab553dacf43189ca49d3b63668a208e8c1d2411abbfa4f73d2a787a65aadd3bd",
+  "qualityRetriesAllowed": false
+}

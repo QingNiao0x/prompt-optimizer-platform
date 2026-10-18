@@ -1,0 +1,135 @@
+{
+  "works": [
+    {
+      "id": "A",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 5,
+        "clarity": 5,
+        "executability": 4
+      },
+      "evidence": {
+        "accuracy": {
+          "quotes": [
+            "const normalized = input.replace(/\\r\\n/g, \"\\n\").replace(/\\r/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "if (!seen.has(line)) { seen.add(line); result.push(line); }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "核心逻辑正确：先统一换行符（CRLF→LF，孤立CR→LF），再按LF切分，用Set去重并保留首次出现顺序。但独立检查显示authoredTests中有一个测试失败（21个测试中20通过1失败），说明存在一个未指明的边界情况与实现不符。由于未提供失败测试的具体内容，无法确定是哪个边界条件，因此准确性扣分。"
+        },
+        "completeness": {
+          "quotes": [
+            "export function dedupeLines(input: string): string {",
+            "const normalized = input.replace(/\\r\\n/g, \"\\n\").replace(/\\r/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "const seen = new Set<string>();",
+            "const result: string[] = [];",
+            "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "完整实现了题目要求：按行去重、整行完全一致比较、区分大小写、保留原行内容和首次出现顺序、支持LF与CRLF、输出统一LF、保留首次出现的空行。还提供了测试、配置文件和运行说明，覆盖了正常、边界和异常场景。"
+        },
+        "clarity": {
+          "quotes": [
+            "规则：",
+            "- 整行逐字符完全一致比较，区分大小写。",
+            "- 保留原行内容与首次出现顺序。",
+            "- 支持 LF 与 CRLF 输入，输出统一为 LF。",
+            "- 首次出现的空行保留（后续重复空行去除）。",
+            "@param input 待去重文本。必须为字符串。",
+            "@returns 去重后的文本，行分隔符统一为 LF。",
+            "@throws TypeError 当 input 不是字符串时。"
+          ],
+          "reason": "文档清晰，注释详细，明确说明了输入输出、异常行为和边界处理。代码结构清晰，变量命名合理，逻辑易于理解。"
+        },
+        "executability": {
+          "quotes": [
+            "export function dedupeLines(input: string): string {",
+            "if (typeof input !== \"string\") { throw new TypeError(...); }",
+            "if (input.length === 0) { return \"\"; }",
+            "const normalized = input.replace(/\\r\\n/g, \"\\n\").replace(/\\r/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "const seen = new Set<string>();",
+            "const result: string[] = [];",
+            "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "代码可以直接使用，但独立检查显示authoredTests中有一个测试失败，说明在某个边界条件下实现与预期不符。由于未提供失败测试的具体内容，无法确定具体问题，因此可执行性扣分。"
+        }
+      },
+      "severeFailures": [],
+      "uncertainties": [
+        "独立检查显示authoredTests中有一个测试失败（21个测试中20通过1失败），但未提供失败测试的具体内容，无法确定是哪个边界条件与实现不符。"
+      ]
+    },
+    {
+      "id": "B",
+      "scores": {
+        "accuracy": 4,
+        "completeness": 4,
+        "clarity": 5,
+        "executability": 4
+      },
+      "evidence": {
+        "accuracy": {
+          "quotes": [
+            "const normalized = text.replace(/\\r\\n/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "if (!seen.has(line)) { seen.add(line); result.push(line); }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "核心逻辑正确：统一CRLF为LF，按LF切分，用Set去重并保留首次出现顺序。但未处理孤立CR（\\r），题目要求支持LF与CRLF，未明确要求处理孤立CR，因此不算错误，但可能在某些输入下产生意外结果。独立检查显示commonContract PASS，12个独立测试全部通过，但未提供authoredTests，因此无法验证其自测情况。"
+        },
+        "completeness": {
+          "quotes": [
+            "export function dedupeLines(text: string): string {",
+            "const normalized = text.replace(/\\r\\n/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "const seen = new Set<string>();",
+            "const result: string[] = [];",
+            "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "实现了核心功能，但缺少对孤立CR的处理（题目未明确要求，但A作品处理了）。提供了使用示例和边界情况说明，但未提供测试代码或配置文件，因此完整性略逊于A。"
+        },
+        "clarity": {
+          "quotes": [
+            "根据确认的需求，实现要点如下：",
+            "- 去重单位：按行",
+            "- 比较规则：整行逐字符完全一致，区分大小写，不 trim",
+            "- 顺序：保留首次出现顺序",
+            "- 换行：支持 LF 与 CRLF，输出统一为 LF",
+            "- 空行：保留首次出现的空行",
+            "- 接口：输入字符串，返回字符串，无第三方依赖"
+          ],
+          "reason": "文档清晰，明确列出了需求要点，代码注释详细，使用示例和边界情况说明有助于理解。"
+        },
+        "executability": {
+          "quotes": [
+            "export function dedupeLines(text: string): string {",
+            "const normalized = text.replace(/\\r\\n/g, \"\\n\");",
+            "const lines = normalized.split(\"\\n\");",
+            "const seen = new Set<string>();",
+            "const result: string[] = [];",
+            "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }",
+            "return result.join(\"\\n\");"
+          ],
+          "reason": "代码可以直接使用，但未处理孤立CR，可能在某些输入下产生意外结果。独立检查显示12个独立测试全部通过，但未提供authoredTests，因此无法验证其自测情况。"
+        }
+      },
+      "severeFailures": [],
+      "uncertainties": [
+        "未提供authoredTests，无法验证其自测情况。",
+        "未处理孤立CR，题目未明确要求，但可能在某些输入下产生意外结果。"
+      ]
+    }
+  ],
+  "preferred": "A",
+  "reason": "A作品提供了完整的测试和配置文件，且独立检查显示其12个独立测试全部通过，但authoredTests中有一个测试失败，说明存在一个未指明的边界情况。B作品核心逻辑正确，但未处理孤立CR，且未提供测试代码。综合考虑，A作品在完整性和可验证性上略优于B，因此首选A。",
+  "limitations": [
+    "独立检查未提供A作品失败测试的具体内容，无法确定具体问题。",
+    "B作品未提供authoredTests，无法验证其自测情况。",
+    "题目未明确要求处理孤立CR，因此B作品未处理不算错误，但可能在某些输入下产生意外结果。"
+  ]
+}

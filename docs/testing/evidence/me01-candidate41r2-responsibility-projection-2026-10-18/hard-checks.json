@@ -1,0 +1,244 @@
+{
+  "case": "TS-IMPLICIT",
+  "criteriaFrozenBeforeReadingWorks": true,
+  "sourceRepaired": false,
+  "works": {
+    "RAW": {
+      "workSha256": "9c17e05c5e78d31c1a0e13e93dd905635a6fa0cd8ec640135a5440138eb59d53",
+      "specSha256": "67279e9a1a9f12a54d5dfc432c363ba82a1e0bf814ed7253a6a7bbc3d993cb56",
+      "sourceRepaired": false,
+      "extractedFiles": [
+        {
+          "name": "dedupeLines.ts",
+          "block": 0,
+          "kind": "implementation",
+          "sha256": "0aa2450b7a7def252fe261c0de27f885930b15963641358d58ba899ee0ab6d6a"
+        },
+        {
+          "name": "dedupeLinesIter.ts",
+          "block": 2,
+          "kind": "implementation",
+          "sha256": "4da67439b4b2d6153dc3c17127d640231922d372f6b44fb8114adbd214b4ae8c"
+        }
+      ],
+      "unselectedCodeBlocks": [
+        {
+          "block": 1,
+          "reason": "Usage demonstration, not authored tests."
+        }
+      ],
+      "jointCompileExitCode": 0,
+      "compilerProfile": "ES2019/CommonJS/esModuleInterop using installed Node types",
+      "authorRunInstructionsChecked": "No authored build/test command; all implementation blocks compiled under controlled profile.",
+      "commonContractState": "PASS",
+      "independent": {
+        "tests": 12,
+        "passed": 12,
+        "rows": [
+          {
+            "index": 1,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 2,
+            "state": "PASS",
+            "expected": "a\nA",
+            "actual": "a\nA"
+          },
+          {
+            "index": 3,
+            "state": "PASS",
+            "expected": " a\na",
+            "actual": " a\na"
+          },
+          {
+            "index": 4,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 5,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 6,
+            "state": "PASS",
+            "expected": "a\n\nb",
+            "actual": "a\n\nb"
+          },
+          {
+            "index": 7,
+            "state": "PASS",
+            "expected": "",
+            "actual": ""
+          },
+          {
+            "index": 8,
+            "state": "PASS",
+            "expected": "你好\nHello",
+            "actual": "你好\nHello"
+          },
+          {
+            "index": 9,
+            "state": "PASS",
+            "expected": "b\na",
+            "actual": "b\na"
+          },
+          {
+            "index": 10,
+            "state": "PASS",
+            "expected": "a\nb\n",
+            "actual": "a\nb\n"
+          },
+          {
+            "index": 11,
+            "state": "PASS",
+            "expected": "\na",
+            "actual": "\na"
+          },
+          {
+            "index": 12,
+            "state": "PASS",
+            "expected": "\t\n ",
+            "actual": "\t\n "
+          }
+        ]
+      },
+      "authoredTests": {
+        "state": "NOT_REQUIRED_BY_RAW_INPUT"
+      },
+      "declaredTestCommitmentState": "NOT_REQUIRED_BY_RAW_INPUT",
+      "completeImplementationCompileExitCode": 0,
+      "toolCorrection": "Additional optional implementation initially unbound; now compiled jointly. No source repaired or common test result changed. Initial GBK read failure had no compilation or model call."
+    },
+    "PLAN": {
+      "workSha256": "b0e159ccc1056074418746d52cd3cffce89ba7e5278e86d5114f7aba817a3535",
+      "specSha256": "67279e9a1a9f12a54d5dfc432c363ba82a1e0bf814ed7253a6a7bbc3d993cb56",
+      "sourceRepaired": false,
+      "extractedFiles": [
+        {
+          "name": "src/dedupe.ts",
+          "block": 0,
+          "kind": "implementation",
+          "sha256": "d0765b68cdad3979725bf556192dab2d22fc29602fdcc45a5f68f3978c383a62"
+        },
+        {
+          "name": "test/dedupe.test.ts",
+          "block": 1,
+          "kind": "test",
+          "sha256": "8ca6e2b39165909d0d5745468f619dda8f977784a303ff2ab50c085c7fd3b084"
+        }
+      ],
+      "unselectedCodeBlocks": [],
+      "jointCompileExitCode": 0,
+      "compilerProfile": "ES2019/CommonJS/esModuleInterop using installed Node types",
+      "authorRunInstructionsChecked": {
+        "configurationUnchanged": true,
+        "sourceRepaired": false,
+        "networkInstallPerformed": false,
+        "dependencyBootstrap": "Existing TypeScript and Node typings from apps/web. Explicit types/typeRoots only; authored target/module/strict config retained.",
+        "nodeVersion": "v22.23.1",
+        "typescriptVersion": "5.7.3",
+        "compileExitCode": 0,
+        "authorTestCommand": "node --test dist/test/",
+        "authorTestCommandExitCode": 1,
+        "state": "FAIL"
+      },
+      "commonContractState": "PASS",
+      "independent": {
+        "tests": 12,
+        "passed": 12,
+        "rows": [
+          {
+            "index": 1,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 2,
+            "state": "PASS",
+            "expected": "a\nA",
+            "actual": "a\nA"
+          },
+          {
+            "index": 3,
+            "state": "PASS",
+            "expected": " a\na",
+            "actual": " a\na"
+          },
+          {
+            "index": 4,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 5,
+            "state": "PASS",
+            "expected": "a\nb",
+            "actual": "a\nb"
+          },
+          {
+            "index": 6,
+            "state": "PASS",
+            "expected": "a\n\nb",
+            "actual": "a\n\nb"
+          },
+          {
+            "index": 7,
+            "state": "PASS",
+            "expected": "",
+            "actual": ""
+          },
+          {
+            "index": 8,
+            "state": "PASS",
+            "expected": "你好\nHello",
+            "actual": "你好\nHello"
+          },
+          {
+            "index": 9,
+            "state": "PASS",
+            "expected": "b\na",
+            "actual": "b\na"
+          },
+          {
+            "index": 10,
+            "state": "PASS",
+            "expected": "a\nb\n",
+            "actual": "a\nb\n"
+          },
+          {
+            "index": 11,
+            "state": "PASS",
+            "expected": "\na",
+            "actual": "\na"
+          },
+          {
+            "index": 12,
+            "state": "PASS",
+            "expected": "\t\n ",
+            "actual": "\t\n "
+          }
+        ]
+      },
+      "authoredTests": {
+        "state": "FAIL",
+        "exitCode": 1,
+        "tests": 21,
+        "pass": 20,
+        "fail": 1,
+        "skipped": 0
+      },
+      "declaredTestCommitmentState": "FAIL"
+    }
+  },
+  "externalModelCalls": 0,
+  "oldCredentialAndProfessionalGates": "OPEN_NOT_COVERED"
+}

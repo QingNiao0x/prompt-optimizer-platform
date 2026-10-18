@@ -1,0 +1,156 @@
+TAP version 13
+# Subtest: 正常：基本去重，保留首次出现顺序
+ok 1 - 正常：基本去重，保留首次出现顺序
+  ---
+  duration_ms: 1.4511
+  type: 'test'
+  ...
+# Subtest: 正常：区分大小写
+ok 2 - 正常：区分大小写
+  ---
+  duration_ms: 1.0934
+  type: 'test'
+  ...
+# Subtest: 正常：保留原行内容（含前后空格）
+ok 3 - 正常：保留原行内容（含前后空格）
+  ---
+  duration_ms: 0.1858
+  type: 'test'
+  ...
+# Subtest: 正常：CRLF 输入，输出统一 LF
+ok 4 - 正常：CRLF 输入，输出统一 LF
+  ---
+  duration_ms: 0.1864
+  type: 'test'
+  ...
+# Subtest: 正常：混合 LF 与 CRLF
+ok 5 - 正常：混合 LF 与 CRLF
+  ---
+  duration_ms: 0.1193
+  type: 'test'
+  ...
+# Subtest: 正常：孤立 CR 视为换行
+ok 6 - 正常：孤立 CR 视为换行
+  ---
+  duration_ms: 0.252
+  type: 'test'
+  ...
+# Subtest: 边界：空字符串返回空字符串
+ok 7 - 边界：空字符串返回空字符串
+  ---
+  duration_ms: 0.1866
+  type: 'test'
+  ...
+# Subtest: 边界：单行无换行
+ok 8 - 边界：单行无换行
+  ---
+  duration_ms: 0.0929
+  type: 'test'
+  ...
+# Subtest: 边界：单行重复内容（无换行）
+ok 9 - 边界：单行重复内容（无换行）
+  ---
+  duration_ms: 0.2934
+  type: 'test'
+  ...
+# Subtest: 边界：首次出现的空行保留，后续空行去除
+ok 10 - 边界：首次出现的空行保留，后续空行去除
+  ---
+  duration_ms: 0.3489
+  type: 'test'
+  ...
+# Subtest: 边界：仅一个空行
+ok 11 - 边界：仅一个空行
+  ---
+  duration_ms: 0.1492
+  type: 'test'
+  ...
+# Subtest: 边界：多个连续空行只保留一个
+ok 12 - 边界：多个连续空行只保留一个
+  ---
+  duration_ms: 0.0772
+  type: 'test'
+  ...
+# Subtest: 边界：末尾换行不产生额外空行
+ok 13 - 边界：末尾换行不产生额外空行
+  ---
+  duration_ms: 0.0696
+  type: 'test'
+  ...
+# Subtest: 边界：CRLF 末尾换行
+ok 14 - 边界：CRLF 末尾换行
+  ---
+  duration_ms: 0.0611
+  type: 'test'
+  ...
+# Subtest: 边界：全为重复行
+ok 15 - 边界：全为重复行
+  ---
+  duration_ms: 0.067
+  type: 'test'
+  ...
+# Subtest: 边界：含 Unicode 与 emoji
+ok 16 - 边界：含 Unicode 与 emoji
+  ---
+  duration_ms: 0.0619
+  type: 'test'
+  ...
+# Subtest: 异常：null 输入抛出 TypeError
+ok 17 - 异常：null 输入抛出 TypeError
+  ---
+  duration_ms: 0.3638
+  type: 'test'
+  ...
+# Subtest: 异常：undefined 输入抛出 TypeError
+ok 18 - 异常：undefined 输入抛出 TypeError
+  ---
+  duration_ms: 0.0938
+  type: 'test'
+  ...
+# Subtest: 异常：数字输入抛出 TypeError
+ok 19 - 异常：数字输入抛出 TypeError
+  ---
+  duration_ms: 0.0667
+  type: 'test'
+  ...
+# Subtest: 异常：对象输入抛出 TypeError
+ok 20 - 异常：对象输入抛出 TypeError
+  ---
+  duration_ms: 0.057
+  type: 'test'
+  ...
+# Subtest: 异常：错误信息不含输入内容
+not ok 21 - 异常：错误信息不含输入内容
+  ---
+  duration_ms: 9.8117
+  type: 'test'
+  location: 'E:\\MyProject\\prompt-optimizer-platform\\tmp\\me01-candidate41r2-live-20261018\\works\\TS\\PLAN\\independent-artifact-check\\out\\test\\dedupe.test.js:87:22'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      ok(err instanceof TypeError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (E:\MyProject\prompt-optimizer-platform\tmp\me01-candidate41r2-live-20261018\works\TS\PLAN\independent-artifact-check\out\test\dedupe.test.js:94:26)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 20
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 125.343

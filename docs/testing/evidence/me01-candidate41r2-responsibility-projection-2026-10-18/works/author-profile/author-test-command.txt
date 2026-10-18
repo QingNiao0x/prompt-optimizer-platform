@@ -1,0 +1,37 @@
+TAP version 13
+# node:internal/modules/cjs/loader:1433
+#   throw err;
+#   ^
+# Error: Cannot find module 'E:\\MyProject\\prompt-optimizer-platform\\tmp\\me01-candidate41r2-live-20261018\\works\\TS\\PLAN\\author-original-profile\\dist\\test'
+#     at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+#     at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+#     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+#     at Function._load (node:internal/modules/cjs/loader:1216:25)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+#     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+#     at node:internal/main/run_main_module:36:49 {
+#   code: 'MODULE_NOT_FOUND',
+#   requireStack: []
+# }
+# Node.js v22.23.1
+# Subtest: dist\\test
+not ok 1 - dist\\test
+  ---
+  duration_ms: 81.9265
+  type: 'test'
+  location: 'E:\\MyProject\\prompt-optimizer-platform\\tmp\\me01-candidate41r2-live-20261018\\works\\TS\\PLAN\\author-original-profile\\dist\\test:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 90.0252

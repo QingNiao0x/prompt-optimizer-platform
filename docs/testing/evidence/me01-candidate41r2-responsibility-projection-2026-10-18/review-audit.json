@@ -1,0 +1,134 @@
+{
+  "sameSupplierIndependentAiReviews": true,
+  "humanExpertReview": false,
+  "mappingForPostReviewAudit": {
+    "A": "PLAN",
+    "B": "RAW"
+  },
+  "reviews": {
+    "R1": {
+      "preferredOriginal": "B",
+      "preferredArm": "RAW",
+      "quoteOccurrences": 14,
+      "nonVerbatimOccurrences": 0,
+      "nonVerbatimQuotes": [],
+      "scoresOriginal": {
+        "A": {
+          "accuracy": 3,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 3
+        },
+        "B": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 4,
+          "executability": 4
+        }
+      },
+      "notReleaseApproval": true
+    },
+    "R2": {
+      "preferredOriginal": "A",
+      "preferredArm": "PLAN",
+      "quoteOccurrences": 53,
+      "nonVerbatimOccurrences": 14,
+      "nonVerbatimQuotes": [
+        {
+          "work": "A",
+          "dimension": "accuracy",
+          "quote": "if (!seen.has(line)) { seen.add(line); result.push(line); }"
+        },
+        {
+          "work": "A",
+          "dimension": "completeness",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "A",
+          "dimension": "executability",
+          "quote": "if (typeof input !== \"string\") { throw new TypeError(...); }"
+        },
+        {
+          "work": "A",
+          "dimension": "executability",
+          "quote": "if (input.length === 0) { return \"\"; }"
+        },
+        {
+          "work": "A",
+          "dimension": "executability",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "B",
+          "dimension": "accuracy",
+          "quote": "if (!seen.has(line)) { seen.add(line); result.push(line); }"
+        },
+        {
+          "work": "B",
+          "dimension": "completeness",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        },
+        {
+          "work": "B",
+          "dimension": "clarity",
+          "quote": "- 去重单位：按行"
+        },
+        {
+          "work": "B",
+          "dimension": "clarity",
+          "quote": "- 比较规则：整行逐字符完全一致，区分大小写，不 trim"
+        },
+        {
+          "work": "B",
+          "dimension": "clarity",
+          "quote": "- 顺序：保留首次出现顺序"
+        },
+        {
+          "work": "B",
+          "dimension": "clarity",
+          "quote": "- 换行：支持 LF 与 CRLF，输出统一为 LF"
+        },
+        {
+          "work": "B",
+          "dimension": "clarity",
+          "quote": "- 空行：保留首次出现的空行"
+        },
+        {
+          "work": "B",
+          "dimension": "clarity",
+          "quote": "- 接口：输入字符串，返回字符串，无第三方依赖"
+        },
+        {
+          "work": "B",
+          "dimension": "executability",
+          "quote": "for (const line of lines) { if (!seen.has(line)) { seen.add(line); result.push(line); } }"
+        }
+      ],
+      "scoresOriginal": {
+        "A": {
+          "accuracy": 4,
+          "completeness": 5,
+          "clarity": 5,
+          "executability": 4
+        },
+        "B": {
+          "accuracy": 4,
+          "completeness": 4,
+          "clarity": 5,
+          "executability": 4
+        }
+      },
+      "notReleaseApproval": true
+    }
+  },
+  "preferenceDisagreement": true,
+  "adjudication": [
+    "R2 prefers PLAN despite a known failed authored test and unsupported execution claims; its severeFailures omission cannot release the work.",
+    "Raw was not required to supply authored tests. Extra configuration, tests or lone-CR handling do not by themselves prove higher common-task quality.",
+    "Lone CR was not a frozen common hard test. Preserve the competing interpretations; do not add a post-hoc failure to the common 12-case score.",
+    "The packet supplied failed counts and full works, but not the exact failing-test output. Reviewers did not independently execute the code. This evidence gap is retained, not repaired by a new review call."
+  ],
+  "meanScoreOrWinRateUsedForRelease": false,
+  "overallQualityGate": "FAIL_AUTHORED_TEST_AND_UNSUPPORTED_CLAIMS"
+}

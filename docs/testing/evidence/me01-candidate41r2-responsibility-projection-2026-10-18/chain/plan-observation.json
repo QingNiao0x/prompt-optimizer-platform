@@ -1,0 +1,76 @@
+{
+  "caseId": "TS-IMPLICIT",
+  "questionCount": 2,
+  "summary": "以下确认影响本次交付的 2 项未决事项。已明确的要求与已委托的设计继续保留。",
+  "questions": [
+    {
+      "id": "dedup_unit",
+      "question": "去重的基本单位是什么？",
+      "hint": "决定按行、按段落还是按整条文本比较，直接影响实现和输出。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "line",
+          "label": "按行去重",
+          "description": "逐行比较，保留首次出现的行，删除重复行。",
+          "answer": "按行去重：逐行比较，保留首次出现的行，删除重复行。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "paragraph",
+          "label": "按段落去重",
+          "description": "以空行分隔的段落为单位比较，删除重复段落。",
+          "answer": "按段落去重：以空行分隔的段落为单位比较，删除重复段落。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "whole",
+          "label": "整条文本去重",
+          "description": "把整个输入视为一条记录，仅判断是否与已有记录完全相同。",
+          "answer": "整条文本去重：把整个输入视为一条记录，仅判断是否与已有记录完全相同。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "match_rule",
+      "question": "判断“重复”时是否忽略大小写和首尾空白？",
+      "hint": "影响哪些行会被视为相同，进而影响保留与删除的结果。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "exact",
+          "label": "完全一致才算重复",
+          "description": "区分大小写，首尾空白也参与比较。",
+          "answer": "完全一致才算重复：区分大小写，首尾空白也参与比较。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "trim",
+          "label": "忽略首尾空白",
+          "description": "去除每行首尾空白后比较，仍区分大小写。",
+          "answer": "忽略首尾空白：去除每行首尾空白后比较，仍区分大小写。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "trim_case",
+          "label": "忽略首尾空白和大小写",
+          "description": "去除首尾空白并统一大小写后比较。",
+          "answer": "忽略首尾空白和大小写：去除首尾空白并统一大小写后比较。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "actualAnswersSubmitted": false
+}

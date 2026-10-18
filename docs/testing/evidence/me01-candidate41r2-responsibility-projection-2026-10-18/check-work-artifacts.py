@@ -22,15 +22,20 @@ def main():
         folder=LIVE/'works/TS'/arm;body=(folder/'work.md').read_bytes();binding=bindings[arm]
         assert binding['workSha256']==sha(body),'Artifact binding drift'
         blocks=list(re.finditer(r'^```(?:ts|typescript)\s*\n(.*?)^```',body.decode('utf-8'),re.M|re.S))
+        classified=[item['block'] for item in binding['files']]+[item['block'] for item in binding.get('unselectedCodeBlocks',[])]
+        assert sorted(classified)==list(range(len(blocks))),'Every TypeScript block needs an explicit artifact or exclusion reason'
         work=folder/'independent-artifact-check';work.mkdir(exist_ok=False)
         extracted=[];files=[]
         for item in binding['files']:
-            assert re.fullmatch(r'[A-Za-z0-9_-]+(?:\.test|\.spec)?\.ts',item['name']),'Local TS filename required'
+            assert re.fullmatch(r'(?:[A-Za-z0-9_-]+/)*[A-Za-z0-9_-]+(?:\.test|\.spec)?\.ts',item['name']),'Local TS path required'
             assert item['kind'] in ['implementation','test'] and 0<=item['block']<len(blocks)
             text=blocks[item['block']].group(1)
             if re.search(r'child_process|process\.env|https?://|fetch\(',text):
                 raise RuntimeError('Artifact needs manual execution-scope review; source not repaired')
-            (work/item['name']).write_text(text,encoding='utf-8',newline='')
+            target=work/item['name']
+            assert target.resolve().is_relative_to(work.resolve()),'Artifact path escaped local directory'
+            target.parent.mkdir(parents=True,exist_ok=True)
+            target.write_text(text,encoding='utf-8',newline='')
             extracted.append({**item,'sha256':sha(text.encode())});files.append(item['name'])
         assert len(files)==len(set(files)) and re.fullmatch(r'[A-Za-z_$][A-Za-z0-9_$]*',binding['entryExport'])
         assert binding['entryFile'] in files

@@ -1,0 +1,43 @@
+{
+  "version": "candidate41r2-live",
+  "sourceCandidate": "candidate41r2",
+  "status": "CLOSED",
+  "authorizationStatus": "APPROVED_BY_USER",
+  "authorizationAmendment": 37,
+  "authorizationBasis": "用户明确批准新增6次和重分配4次；4次已在425—428计入，本批仅使用新增6次。按持续授权自行冻结r2及分配，任务未扩大。",
+  "callsBefore": 428,
+  "candidateCallsBefore": 358,
+  "maximumNewCalls": 6,
+  "maximumActualCallsAfterBatch": 434,
+  "purposeMaximums": {
+    "PLANNING": 1,
+    "PLATFORM_GENERATION": 1,
+    "EXECUTION": 2,
+    "REVIEW": 2
+  },
+  "qualityRetriesAllowed": false,
+  "secondQualityRoundAllowed": false,
+  "sourceManifestSha256": "ab553dacf43189ca49d3b63668a208e8c1d2411abbfa4f73d2a787a65aadd3bd",
+  "casesFile": "candidate41r2-request-cases.json",
+  "casesSha256": "19fcb679a7bd96d1840c1adc823aef8aec05707a336384271e620496b013c68e",
+  "model": "deepseek-flash",
+  "accountCreationAllowed": false,
+  "dependencyFailurePolicy": "Only fresh actual bound answers; no quality retry; each platform purpose has one upstream call. Unmet prerequisites stop dependent requests.",
+  "actualNewCalls": 6,
+  "actualCallsAfterBatch": 434,
+  "actualPurposeCounts": {
+    "PLANNING": 1,
+    "PLATFORM_GENERATION": 1,
+    "EXECUTION": 2,
+    "REVIEW": 2
+  },
+  "unusedCalls": 0,
+  "qualityRetriesPerformed": 0,
+  "closedAt": "2026-10-18T15:40:15.474926+00:00",
+  "phases": {
+    "baseline": 70,
+    "candidateValidation": 364
+  },
+  "localToolFailuresPreserved": true,
+  "closureReason": "All six allocated calls used. Platform path bounded pass; authored tests and truthfulness fail; no new calls allowed."
+}

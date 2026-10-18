@@ -1,0 +1,54 @@
+{
+  "version": "candidate41r2-live",
+  "phase": "candidateValidation",
+  "purpose": "EXECUTION",
+  "operation": "TS-RAW",
+  "sourceCandidate": "candidate41r2",
+  "startedAt": "2026-10-18T15:33:14.271Z",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "user",
+        "content": "用TypeScript实现文本去重。\n\n本次测试实际确认信息（逐字题答）：\n问题：去重的基本单位是什么？\n回答：按行去重。输入和返回均为文本字符串；包装由实现者合理处理，不引入第三方运行依赖。\n问题：判断“重复”时是否忽略大小写和首尾空白？\n回答：按整行逐字符完全一致比较，区分大小写，保留原行内容和第一次出现的顺序；支持LF与CRLF，输出统一LF，保留首次出现的空行。"
+      }
+    ]
+  },
+  "httpStatus": 200,
+  "responseRawSha256": "8a5042d94da71c2dcf2a48efbd56a65c225dd5cd0ef1dd2dc460eedcabd71f45",
+  "response": {
+    "id": "4da5e4f3-435f-4f7a-8c53-84ea70fa26bc",
+    "object": "chat.completion",
+    "created": 1792337594,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "# TypeScript 文本按行去重实现\n\n根据确认的需求，实现要点如下：\n\n- **去重单位**：按行\n- **比较规则**：整行逐字符完全一致，区分大小写，不 trim\n- **顺序**：保留首次出现顺序\n- **换行**：支持 LF 与 CRLF，输出统一为 LF\n- **空行**：保留首次出现的空行\n- **接口**：输入字符串，返回字符串，无第三方依赖\n\n## 实现代码\n\n```typescript\n/**\n * 按行对文本去重。\n *\n * 规则：\n * - 按行去重，整行逐字符完全一致比较（区分大小写，不 trim）。\n * - 保留每行首次出现的顺序。\n * - 支持 LF 与 CRLF 输入，输出统一使用 LF。\n * - 保留首次出现的空行。\n *\n * @param text 输入文本\n * @returns 去重后的文本\n */\nexport function dedupeLines(text: string): string {\n  // 统一换行符为 LF，便于按行切分\n  const normalized = text.replace(/\\r\\n/g, \"\\n\");\n\n  // 按 LF 切分；注意末尾换行会产生一个空字符串元素，\n  // 这里通过 split 后处理保留原始行结构语义。\n  const lines = normalized.split(\"\\n\");\n\n  const seen = new Set<string>();\n  const result: string[] = [];\n\n  for (const line of lines) {\n    if (!seen.has(line)) {\n      seen.add(line);\n      result.push(line);\n    }\n  }\n\n  return result.join(\"\\n\");\n}\n```\n\n## 使用示例\n\n```typescript\nimport { dedupeLines } from \"./dedupeLines\";\n\n// 基本去重 + 保留首次顺序\nconsole.log(dedupeLines(\"a\\nb\\na\\nc\\nb\"));\n// 输出:\n// a\n// b\n// c\n\n// 区分大小写\nconsole.log(dedupeLines(\"Hello\\nhello\\nHello\"));\n// 输出:\n// Hello\n// hello\n\n// 不 trim：带空格的行视为不同\nconsole.log(dedupeLines(\"x\\n x\\nx \"));\n// 输出:\n// x\n//  x\n// x \n\n// CRLF 输入，输出统一 LF\nconst crlf = \"a\\r\\nb\\r\\na\\r\\n\";\nconsole.log(JSON.stringify(dedupeLines(crlf)));\n// 输出: \"a\\nb\\n\"\n\n// 保留首次出现的空行\nconsole.log(JSON.stringify(dedupeLines(\"a\\n\\nb\\n\\na\")));\n// 输出: \"a\\n\\nb\"\n```\n\n## 边界情况说明\n\n| 输入 | 输出 | 说明 |\n|------|------|------|\n| `\"\"` | `\"\"` | 空字符串原样返回 |\n| `\"a\"` | `\"a\"` | 单行无换行 |\n| `\"a\\n\"` | `\"a\\n\"` | 末尾换行保留（split 产生的尾部空串参与去重，但只保留一次） |\n| `\"a\\n\\na\"` | `\"a\\n\"` | 空行保留首次出现，重复的 `a` 被去掉 |\n| `\"a\\r\\nb\"` | `\"a\\nb\"` | CRLF 归一化为 LF |\n\n## 关于末尾换行的细节\n\n`\"a\\n\"` 经 `split(\"\\n\")` 得到 `[\"a\", \"\"]`，去重后仍为 `[\"a\", \"\"]`，`join(\"\\n\")` 得到 `\"a\\n\"`，行为符合\"保留首次出现的空行\"语义——末尾的空串代表文件末尾换行，只保留一次。\n\n如果希望**严格区分**\"末尾换行\"与\"中间空行\"的语义（例如 `\"a\\n\"` 与 `\"a\"` 视为不同），当前实现已经天然满足：前者输出 `\"a\\n\"`，后者输出 `\"a\"`。\n\n## 复杂度\n\n- 时间：O(n)，n 为文本长度（Set 查找均摊 O(1)）\n- 空间：O(n)，存储去重后的行与 Set\n\n## 可选：流式/大文件版本\n\n若需处理超大文本，可改为生成器逐行产出，避免一次性构建大数组：\n\n```typescript\nexport function* dedupeLinesIter(text: string): Generator<string> {\n  const normalized = text.replace(/\\r\\n/g, \"\\n\");\n  const seen = new Set<string>();\n  for (const line of normalized.split(\"\\n\")) {\n    if (!seen.has(line)) {\n      seen.add(line);\n      yield line;\n    }\n  }\n}\n\nexport function dedupeLinesStream(text: string): string {\n  return Array.from(dedupeLinesIter(text)).join(\"\\n\");\n}\n```\n\n以上实现完全满足题目确认的全部约束，且无任何第三方运行依赖。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 114,
+      "completion_tokens": 1061,
+      "total_tokens": 1175,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 114
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "elapsedMs": 4527
+}
