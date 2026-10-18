@@ -121,11 +121,15 @@ final class PlatformConstraintRenderer {
         return String.join("\n", output).trim();
     }
 
-    /** 仅移除行首列表和包围整行的排版标记，不移除路径中的星号或规则内部符号。 */
+    /** 只归一排版与完整固定规则的句末断句号；内部标点、路径、条件与未知规则保留原值。 */
     private static String ruleText(String line) {
         String value = line.trim().replaceFirst("^(?:#{1,6}\\s+|[-*+]\\s+|\\d+[.)、]\\s*)", "");
         if (value.startsWith("**") && value.endsWith("**") && value.length() > 4) value = value.substring(2, value.length() - 2);
-        return value.trim();
+        value = value.trim();
+        String statement = value.replaceFirst("[。；;]$", "");
+        // 仅白名单中逐字完整的固定条款允许句末差异；同义改写、独立对象、新条件和例外不参与。
+        return PlatformConstraintRules.CODE_RULES.stream()
+                .filter(rule -> rule.replaceFirst("。$", "").equals(statement)).findFirst().orElse(value);
     }
 
     /** 仅识别明确分节标记；正文中的条件原句不会被当作平台来源标识。 */

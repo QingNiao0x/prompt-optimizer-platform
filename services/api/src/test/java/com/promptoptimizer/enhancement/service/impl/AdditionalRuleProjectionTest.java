@@ -143,6 +143,32 @@ class AdditionalRuleProjectionTest {
                 .isEmpty();
     }
 
+    @Test
+    void inlineMarkupDoesNotHideAnIndependentCompleteTestRequirementLaterInTheParagraph() {
+        String paragraph = "提取页面<title>文本。为核心逻辑补充正常、异常和边界场景的测试。";
+        assertThat(AdditionalRuleProjection.coveredCompleteRule(sections(paragraph, ""),
+                "为核心逻辑补充正常、异常和边界场景测试。")).isTrue();
+        assertThat(AdditionalRuleProjection.coveredCompleteRule(sections(paragraph, ""),
+                "为其他逻辑补充正常、异常和边界场景测试。")).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "如果获批，提取页面<title>文本。为核心逻辑补充正常、异常和边界场景的测试。",
+            "另一任务提取页面<title>文本。为核心逻辑补充正常、异常和边界场景的测试。",
+            "提取页面<title>文本。为核心逻辑补充正常、异常和边界场景的测试，但试验模块除外。",
+            "提取页面<title>文本。仅为支付接口的核心逻辑补充正常、异常和边界场景的测试。",
+            "如果以后确认，提取页面<title>文本。为核心逻辑补充正常、异常和边界场景的测试。",
+            "阈值必须>=1.5。为核心逻辑补充正常、异常和边界场景的测试。",
+            "```html\n<title>为核心逻辑补充正常、异常和边界场景的测试。</title>\n```",
+            "原文：\n提取页面<title>文本。为核心逻辑补充正常、异常和边界场景的测试。",
+            "提取页面<title>文本。不要求为核心逻辑补充正常、异常和边界场景的测试。"
+    })
+    void markupDoesNotEraseConditionsObjectsExceptionsFutureNegationOrLiteralComparisons(String paragraph) {
+        assertThat(AdditionalRuleProjection.coveredCompleteRule(sections(paragraph, ""),
+                "为核心逻辑补充正常、异常和边界场景测试。")).isFalse();
+    }
+
     private Map<PromptSectionType, PromptSection> sections(String output, String constraints) {
         Map<PromptSectionType, PromptSection> sections = new EnumMap<>(PromptSectionType.class);
         sections.put(PromptSectionType.OUTPUT, new PromptSection(PromptSectionType.OUTPUT, "输出", output));

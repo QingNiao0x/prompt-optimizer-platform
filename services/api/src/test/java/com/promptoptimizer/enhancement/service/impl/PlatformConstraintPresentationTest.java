@@ -62,6 +62,28 @@ class PlatformConstraintPresentationTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"；", ";"})
+    void aDifferentStatementTerminatorDoesNotDuplicateTheCompleteCanonicalRule(String ending) {
+        var bundle = new ConstraintBundle(List.of(TRUTH), List.of(), List.of());
+        String variant = TRUTH.substring(0, TRUTH.length() - 1) + ending;
+        assertThat(PlatformConstraintRenderer.providerText("- " + variant, "整理资料。", bundle)).isEmpty();
+        assertThat(PlatformConstraintRenderer.appendMandatory("- " + variant, bundle)).isEqualTo("- " + TRUTH);
+        // 原始需求中直接指定的同一条款仍是用户要求；来源清理不能借句末归一化删除该输入。
+        assertThat(PlatformConstraintRenderer.providerText(variant, "整理资料。\n" + variant, bundle)).isEqualTo(variant);
+        assertThat(PlatformConstraintRenderer.taskInput(variant)).isEqualTo(variant);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "如果获批：\n- ", "甲部门：\n- ", "以后确认：\n- ", "例外：\n- ", "> ", "```text\n"
+    })
+    void punctuationDoesNotAuthorizeRemovingAnIndependentOrQuotedCanonicalRule(String prefix) {
+        var bundle = new ConstraintBundle(List.of(TRUTH), List.of(), List.of());
+        String text = prefix + TRUTH.replace('。', '；');
+        assertThat(PlatformConstraintRenderer.providerText(text, "整理资料。", bundle)).isEqualTo(text);
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"仅调试时：", "甲部门：", "以后用户确认后：", "例外：", "## 甲部门限制"})
     void resetsOnlyTheVisibleScopeBeforeAppendingGlobalRules(String heading) {
         var bundle = new ConstraintBundle(List.of(TRUTH), List.of(), List.of());

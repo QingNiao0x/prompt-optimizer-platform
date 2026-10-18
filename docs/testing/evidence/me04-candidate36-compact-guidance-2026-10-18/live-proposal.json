@@ -1,0 +1,63 @@
+{
+  "candidate": "candidate36",
+  "status": "APPROVED_OPEN",
+  "sourceManifestSha256": "60840bccbdeee43c9e78112ba38aba8055d1ab308f4de16aa2d7541f3cdc0a99",
+  "casesSha256": "3b3430201a487e7b9490f00f1870905187d9ad56e986b09086747fb95324995f",
+  "formalBefore": {
+    "total": 399,
+    "baseline": 80,
+    "candidate": 319
+  },
+  "formalProposed": {
+    "total": 425,
+    "baseline": 80,
+    "candidate": 345
+  },
+  "actualCallsBefore": 389,
+  "actualCandidateBefore": 319,
+  "maximumNewCalls": 26,
+  "maximumActualCallsAfter": 415,
+  "purposeMaximums": {
+    "PLATFORM_GENERATION": 18,
+    "EXECUTION": 6,
+    "REVIEW": 2
+  },
+  "enhancementModel": "deepseek-flash",
+  "executionModel": "deepseek-flash",
+  "reviewModels": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "parameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "executionCases": [
+    "PATCH-RAW",
+    "PATCH-COMPACT",
+    "PATCH-STRUCTURED",
+    "REQUESTS-RAW",
+    "REQUESTS-COMPACT",
+    "REQUESTS-STRUCTURED"
+  ],
+  "sameTestAccountFile": "tmp/local-acceptance/account.json",
+  "accountCreationAllowed": false,
+  "failedAttemptsCount": true,
+  "qualityRetriesAllowed": false,
+  "closedAllowanceTransferAllowed": false,
+  "planScope": "No new natural Plan request is funded in this batch; existing effective-confirmation regression is offline only.",
+  "acceptance": "Exact native platform copy used as downstream input; no scripted answer or rule supplementation. Code implementation and tests compile together; independent format, privacy, requirements and quotation audit. Separate original obligations from enhancement-added promises. Preserve reviewer disagreement and any severe failure.",
+  "authorizationBasis": "用户明确答复：批准新增26次，执行冻结范围。6次增强请求含协议修复最多18次、作品6次、独立AI辅助评审2次；不转闭批余额。",
+  "models": {
+    "enhancement": "deepseek-flash",
+    "execution": "deepseek-flash",
+    "reviews": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ]
+  },
+  "plannedCasesSha256": "8671bf9b9f1d1d9754bb5253b7c9b3488b7652478de529d441420d2461950bfa"
+}

@@ -132,6 +132,18 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         assertThat(payloads.get(2).path("options").path("promptFormat").asText()).isEqualTo("STRUCTURED");
         assertThat(payloads.get(1).path("rewriteStrategy").path("mode").asText()).isEqualTo("NATURAL_FRAMEWORK");
         assertThat(payloads.get(2).path("rewriteStrategy").path("mode").asText()).isEqualTo("FOCUSED_MODULES");
+        for (int index = 0; index < actualBodies.size(); index++) {
+            // 同一完整策略只作为system指令发送一次；用户载荷保留模式标识，不复制策略正文。
+            assertThat(payloads.get(index).path("rewriteStrategy").has("instruction")).isFalse();
+            var format = index == 0 ? null : index == 1
+                    ? com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT
+                    : com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED;
+            String instruction = com.promptoptimizer.provider.domain.PromptRewriteStrategy.forTask(
+                    com.promptoptimizer.enhancement.service.impl.EffectiveTaskViewFactory.forProvider(base), format).instruction();
+            String messages = java.util.stream.StreamSupport.stream(actualBodies.get(index).path("messages").spliterator(), false)
+                    .map(message -> message.path("content").asText()).collect(java.util.stream.Collectors.joining("\n"));
+            assertThat(messages.split(java.util.regex.Pattern.quote(instruction), -1)).hasSize(2);
+        }
         for (var field : List.of("rawPrompt", "context", "taskView", "planningFacts", "constraints", "planConfirmed")) {
             assertThat(payloads).allSatisfy(payload -> assertThat(payload.path(field))
                     .as("模式变化不得改写任务或确认：%s", field).isEqualTo(payloads.getFirst().path(field)));

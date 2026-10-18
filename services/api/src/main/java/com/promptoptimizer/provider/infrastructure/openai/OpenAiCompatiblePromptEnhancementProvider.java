@@ -1153,7 +1153,8 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             @JsonInclude(JsonInclude.Include.NON_EMPTY) List<ConversationMessage> conversationHistory,
             EnhancementOptions options,
             List<com.promptoptimizer.enhancement.domain.PlanningFactCard> planningFacts,
-            com.promptoptimizer.provider.domain.PromptRewriteStrategy rewriteStrategy,
+            // 完整指导只在system中发送一次；载荷保留模式元数据供归因，不重复占用模型输入。
+            @JsonIgnoreProperties("instruction") com.promptoptimizer.provider.domain.PromptRewriteStrategy rewriteStrategy,
             com.promptoptimizer.enhancement.domain.EffectiveTaskView.ModelInput taskView
     ) {
     }

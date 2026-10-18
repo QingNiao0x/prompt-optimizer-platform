@@ -31,6 +31,8 @@ final class AdditionalRuleProjection {
             "^(?:请|必须|务必|应|须|需)?(?:只|仅)?(?:不(?:得|要|应|允许|可)?|禁止)" );
     private static final Pattern CURRENT_HEADING = Pattern.compile(
             "(?:本任务|本次任务|当前任务|本研究|本次研究|当前研究|任务|输出|交付|交付以下内容|约束|约束条件|任务相关约束|Java21交付)[：:]?" );
+    // 无属性的小写标签只是行内数据标识；数字比较、泛型或紧邻英文变量的运算式继续保守处理。
+    private static final Pattern INLINE_TAG = Pattern.compile("(?<![A-Za-z0-9_])</?[a-z][a-z0-9-]*>(?![A-Za-z0-9_])");
 
     private AdditionalRuleProjection() { }
 
@@ -109,7 +111,9 @@ final class AdditionalRuleProjection {
         return java.text.Normalizer.normalize(text, java.text.Normalizer.Form.NFKC).strip()
                 .replaceFirst("^(?:[-*•]\\s*|\\d+[.)、]\\s*)", "")
                 .replaceAll("(?<=[\\p{IsHan}])\\s+|\\s+(?=[\\p{IsHan}])", "")
-                .replaceFirst("[。；;]$", "").strip();
+                .replaceFirst("[。；;]$", "").strip()
+                // 仅接收同一完整工程测试要求的语法助词差异，带对象修饰、条件或例外的句子不命中。
+                .replaceFirst("^(为核心逻辑补充正常、异常和边界场景)的测试$", "$1测试");
     }
 
     /**
@@ -150,6 +154,8 @@ final class AdditionalRuleProjection {
     private static boolean scoped(String text) {
         String value = text.replaceAll("((?:不(?:得|要|应|允许)?|禁止)(?:输出|提供|生成|添加))(?:示例|例子)", "$1演示内容")
                 .replaceAll("`([A-Za-z0-9_.$<>(),\\[\\]:\\s=/-]+)`", "$1");
+        // 只在作用域判断副本中忽略标签尖括号，正文与覆盖比较保留原值；条件、否定、引用及例外仍参与保护。
+        value = INLINE_TAG.matcher(value).replaceAll("行内标签");
         return SCOPED.matcher(value).find();
     }
 

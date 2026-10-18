@@ -115,6 +115,9 @@ class TaskConstraintWholeProjectionTest {
                 .doesNotContain("\n- " + ERROR, "\n- " + TEST);
         assertThat(result.appliedConstraints()).contains(INPUT, ERROR, TEST);
         assertThat(result.optimizedPrompt()).contains("明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。", "生产环境配置", "人工确认");
+        for (String rule : com.promptoptimizer.policy.domain.PlatformConstraintRules.CODE_RULES) {
+            assertThat(constraints).doesNotContain(rule.replace('。', '；'));
+        }
     }
 
     @Test
