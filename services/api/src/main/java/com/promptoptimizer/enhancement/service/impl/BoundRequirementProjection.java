@@ -31,7 +31,47 @@ public final class BoundRequirementProjection {
 
     /** 模型只用reference安排独立行；statement来自服务端有效来源，不由模型返回。 */
     public record Slot(String reference, String statement, PromptSectionType destination) { }
-    private record Entry(Slot slot, ExecutionRequirement requirement) { }
+    private record Entry(Slot slot, ExecutionRequirement requirement, boolean pending) {
+        Entry(Slot slot, ExecutionRequirement requirement) { this(slot, requirement, false); }
+    }
+
+    /**
+     * 同一次组装的来源呈现记录。只有服务端完整展开的原句才登记；模型的近义改写不取得覆盖证明。
+     * 后续协调步骤可能改动段落，消费记录前仍须确认原句留在原责任段的当前执行位置。
+     */
+    record Expansion(Set<ExecutionRequirement> delivered, List<Slot> ruleSlots, List<Slot> pendingSlots) {
+        Expansion {
+            delivered = Set.copyOf(delivered);
+            ruleSlots = List.copyOf(ruleSlots);
+            pendingSlots = List.copyOf(pendingSlots);
+        }
+
+        /** 条件、否定与例外作为完整来源保留，不按主题词或标识本身省去其他要求。 */
+        Set<String> coveredRules(Map<PromptSectionType, PromptSection> sections) {
+            return ruleSlots.stream().filter(slot -> stillPresent(sections.get(slot.destination()), slot))
+                    .map(Slot::statement).collect(java.util.stream.Collectors.toUnmodifiableSet());
+        }
+
+        /** 已呈现未决状态只省去正文复写；API待决清单、问题身份和原始题答不变。 */
+        Set<String> coveredPending(Map<PromptSectionType, PromptSection> sections) {
+            return pendingSlots.stream().filter(slot -> stillPresent(sections.get(slot.destination()), slot))
+                    .map(Slot::statement).collect(java.util.stream.Collectors.toUnmodifiableSet());
+        }
+
+        /** 用原引用检查当前位置的外部作用域；来源句内部的条件不应被误当成引用外部条件。 */
+        private boolean stillPresent(PromptSection section, Slot slot) {
+            if (section == null) return false;
+            int offset = section.content().indexOf(slot.statement());
+            while (offset >= 0) {
+                String substituted = section.content().substring(0, offset) + slot.reference()
+                        + section.content().substring(offset + slot.statement().length());
+                if (AdditionalRuleProjection.permitsSourceReference(
+                        new PromptSection(section.type(), section.title(), substituted), slot.reference(), offset)) return true;
+                offset = section.content().indexOf(slot.statement(), offset + slot.statement().length());
+            }
+            return false;
+        }
+    }
 
     private BoundRequirementProjection() { }
 
@@ -47,6 +87,12 @@ public final class BoundRequirementProjection {
      * 返回已落实的原始执行要求供确认融合复用，避免再次依赖模型改写后的句法。
      */
     static Set<ExecutionRequirement> expand(Map<PromptSectionType, PromptSection> sections,
+            EffectiveTaskView task, ConstraintBundle constraints) {
+        return expandTracked(sections, task, constraints).delivered();
+    }
+
+    /** 原文规则、任务规则与Plan执行要求共用登记；无引用的旧响应仍保守核对完整表达。 */
+    static Expansion expandTracked(Map<PromptSectionType, PromptSection> sections,
             EffectiveTaskView task, ConstraintBundle constraints) {
         var entries = entries(task, constraints.taskSpecific());
         var byReference = new java.util.LinkedHashMap<String, Entry>();
@@ -78,7 +124,10 @@ public final class BoundRequirementProjection {
             matcher.appendTail(text);
             return new PromptSection(type, section.title(), text.toString());
         });
-        return Set.copyOf(delivered);
+        return new Expansion(delivered, entries.stream().filter(entry -> entry.requirement() == null && !entry.pending()
+                && rendered.contains(entry.slot().reference())).map(Entry::slot).toList(),
+                entries.stream().filter(entry -> entry.pending() && rendered.contains(entry.slot().reference()))
+                        .map(Entry::slot).toList());
     }
 
     /** 引用绑定完整来源、对象和责任段；同值的不同题目继续使用不同标识。 */
@@ -91,6 +140,21 @@ public final class BoundRequirementProjection {
         }
         for (String rule : rules.stream().distinct().toList()) {
             entries.add(new Entry(new Slot(reference("task-rule\n" + rule), rule, PromptSectionType.CONSTRAINTS), null));
+        }
+        // 原文明确规则沿用已确认状态协调后的现有提取器，不再让另一条追加路径独立猜测覆盖。
+        // 相同完整规则可共用呈现；原始输入、题答及权限分组继续保留全部来源。
+        var knownRules = new HashSet<>(rules);
+        for (String rule : new RequirementFidelityGuard().explicitRules(task.effectivePrompt(), task.confirmedDecisions())) {
+            if (knownRules.add(rule)) entries.add(new Entry(new Slot(reference("user-rule\n" + rule), rule,
+                    PromptSectionType.CONSTRAINTS), null));
+        }
+        // 已绑定的未决条件使用归并器的同一完整表述；引用不能把UNRESOLVED升级成已选参数。
+        if (!task.pendingDecisions().isEmpty()) {
+            var decisions = ConfirmedDecisionSet.fromBoundDecisions(task.confirmedDecisions());
+            var pending = new PlanAmbiguityMerger(decisions, task.originalPrompt())
+                    .merge(List.of(), List.of(), List.of()).executionPrerequisites();
+            for (String statement : pending) entries.add(new Entry(new Slot(reference("pending\n" + statement),
+                    statement, PromptSectionType.CONSTRAINTS), null, true));
         }
         return List.copyOf(entries);
     }

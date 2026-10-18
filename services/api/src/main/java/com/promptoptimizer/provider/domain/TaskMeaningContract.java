@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
  */
 public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSubjects, List<EvaluationTarget> evaluationTargets) {
     private static final Pattern AUDIENCE = Pattern.compile("(?:为|面向)([^，,。；;\\n]{1,40}?)(?:撰写|编写|写一|写|设计)");
+    private static final Pattern EXPLICIT_AUDIENCE = Pattern.compile(
+            "(?:面向|(?:目标读者|目标受众|受众|收件人|读者)(?:为|是|[：:]))([^，,。；;：:\\n]{1,40})");
     private static final Pattern TOPIC = Pattern.compile("(?:研究对象(?:为|是)|(?:^|[，,。；;\\n])研究)([^。；;\\n]{2,180})");
     private static final Pattern ASSERTED_SUBJECT = Pattern.compile("研究对象(?:为|是|包括|包含|确定为|设定为)\\s*([^。；;\\n]{1,180})");
     private static final Pattern QUALITY_TARGET = Pattern.compile("((?:原始|优化(?:后的)?)?提示词|下游(?:代码|文本|实际)?(?:作品|输出|产物)|(?:代码|文本)?(?:作品|输出|产物))(?:的)?质量");
@@ -37,7 +39,23 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
     public static TaskMeaningContract from(String raw, List<ConfirmedPlanDecision> decisions) {
         String input = raw == null ? "" : raw;
         var anchors = new ArrayList<Anchor>();
-        collect(input, AUDIENCE, Role.AUDIENCE, anchors);
+        collectAudience(input, EXPLICIT_AUDIENCE, anchors);
+        var indirect = new ArrayList<Anchor>();
+        collectAudience(input, AUDIENCE, indirect);
+        // “为甲撰写、面向乙”分别是受益/委托关系与读者；不凭机构名称或职业词猜测身份。
+        // 未显式指定读者时保留旧的有限“为某人撰写”解释，未知身份不新增强制提问。
+        for (var anchor : indirect) {
+            int sameStart = -1;
+            for (int index = 0; index < anchors.size(); index++) {
+                if (anchors.get(index).start() == anchor.start()) { sameStart = index; break; }
+            }
+            // “面向某人撰写”中的行动不是读者名称；沿用已有宾语边界，避免显式角色收集吞入任务。
+            if (sameStart >= 0) { anchors.set(sameStart, anchor); continue; }
+            boolean otherRecipient = anchors.stream().anyMatch(existing -> existing.role() == Role.AUDIENCE
+                    && !existing.text().equals(anchor.text()));
+            anchors.add(new Anchor(otherRecipient ? Role.BENEFICIARY : Role.AUDIENCE,
+                    anchor.text(), anchor.start(), anchor.end(), anchor.origin()));
+        }
         collect(input, TOPIC, Role.RESEARCH_TOPIC, anchors);
         var chosen = decisions.stream().filter(decision -> decision.scope() != ConfirmedPlanDecision.Scope.UNRESOLVED
                 && decision.question().matches("(?s).*(?:研究对象|招募对象|招募人群|样本人群|受试者人群).*")
@@ -105,6 +123,33 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
         var match = pattern.matcher(raw);
         while (target.size() < 8 && match.find()) {
             target.add(new Anchor(role, match.group(1), match.start(1), match.end(1), Origin.EFFECTIVE_USER_INPUT));
+        }
+    }
+
+    /** 角色来源仍须是当前指令；引文、代码、否定及未来候选不覆盖本次明确读者。 */
+    private static void collectAudience(String raw, Pattern pattern, List<Anchor> target) {
+        var match = pattern.matcher(raw);
+        while (target.size() < 8 && match.find()) {
+            String prefix = raw.substring(0, match.start());
+            int boundary = Math.max(Math.max(prefix.lastIndexOf('。'), prefix.lastIndexOf('；')), prefix.lastIndexOf('\n'));
+            String clause = prefix.substring(boundary + 1);
+            if (clause.matches("(?s).*(?:如果|假如|以后|未来|示例|例如|引用|候选|建议|不是|并非|不面向|不以).*" )
+                    || clause.lastIndexOf('“') > clause.lastIndexOf('”')
+                    || clause.lastIndexOf('‘') > clause.lastIndexOf('’')
+                    || clause.chars().filter(value -> value == '\"').count() % 2 != 0) continue;
+            String linePrefix = prefix.substring(prefix.lastIndexOf('\n') + 1);
+            if (linePrefix.stripLeading().startsWith(">") || linePrefix.stripLeading().startsWith("|")
+                    || linePrefix.startsWith("    ") || linePrefix.startsWith("\t")) continue;
+            String fence = null;
+            for (String line : prefix.lines().toList()) {
+                String value = line.strip();
+                if (value.startsWith("```") || value.startsWith("~~~")) {
+                    String marker = value.substring(0, 3);
+                    if (fence == null) fence = marker; else if (fence.equals(marker)) fence = null;
+                }
+            }
+            if (fence == null) target.add(new Anchor(Role.AUDIENCE, match.group(1), match.start(1),
+                    match.end(1), Origin.EFFECTIVE_USER_INPUT));
         }
     }
 
@@ -266,7 +311,12 @@ public record TaskMeaningContract(List<Anchor> anchors, List<String> confirmedSu
     /** 原文片段是依据，不是模型推理过程；角色类型防止同一词被转用于另一对象。 */
     public record Anchor(Role role, String text, int start, int end, Origin origin) { }
     /** 写作受众与研究主题是不同角色，不能从一个角色推定另一个。 */
-    public enum Role { AUDIENCE, RESEARCH_TOPIC }
+    public enum Role {
+        AUDIENCE,
+        RESEARCH_TOPIC,
+        /** “为某方撰写”且另有明确读者；仅标记受益关系，不推断委托授权或研究对象。 */
+        BENEFICIARY
+    }
     /** 有效输入由原始需求与服务端绑定决定组成；位置针对 effectivePrompt，不冒充附件摘录。 */
     public enum Origin { EFFECTIVE_USER_INPUT }
 }

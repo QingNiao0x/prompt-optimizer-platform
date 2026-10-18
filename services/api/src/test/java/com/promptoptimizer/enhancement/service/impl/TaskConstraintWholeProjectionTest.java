@@ -108,12 +108,12 @@ class TaskConstraintWholeProjectionTest {
     }
 
     @Test
-    void real383AssemblySkipsOnlyTheTwoProvenCompleteObligationsAndPreservesSources() throws Exception {
+    void real383AssemblySkipsTheNowProvenInputObligationAndPreservesSources() throws Exception {
         var result = replay("REQUESTS-STRUCTURED");
         String constraints = result.sections().stream().filter(section -> section.type() == PromptSectionType.CONSTRAINTS)
                 .findFirst().orElseThrow().content();
-        assertThat(constraints).contains("任务相关约束：\n- " + INPUT)
-                .doesNotContain("\n- " + ERROR, "\n- " + TEST);
+        assertThat(constraints).contains("校验所有外部输入，明确处理空值、非法值和边界条件")
+                .doesNotContain("\n- " + INPUT, "\n- " + ERROR, "\n- " + TEST);
         assertThat(result.appliedConstraints()).contains(INPUT,
                 "处理可预期异常，返回清晰且不含敏感值的错误信息，不吞掉或伪造错误。", TEST);
         assertThat(result.optimizedPrompt()).contains("明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。", "生产环境配置", "人工确认");

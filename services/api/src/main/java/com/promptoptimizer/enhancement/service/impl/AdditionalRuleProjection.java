@@ -24,7 +24,7 @@ final class AdditionalRuleProjection {
                     + "|不必遵守|无需遵守|不得要求|不要求|不是要求|并非要求|[\"“”‘’`?？]"
                     + "|\\b(?:if|when|unless|not selected)\\b", Pattern.CASE_INSENSITIVE);
     private static final String ACTION = "(?:输出|交付|提供|返回|保留|记录|打印|泄露|编造|添加|使用|修改|删除|读取|生成|说明|校验|处理|运行|执行|采用|补充|给出|包含)";
-    private static final String ACTION_PREFIX = "(?:请|必须|务必|应|须|需)?(?:只|仅)?(?:不(?:得|要|应|允许|可)?|禁止)?"
+    private static final String ACTION_PREFIX = "(?:请|必须|务必|应|须|需)?(?:只|仅)?(?:不(?:得|要|应|允许|可)?|禁止)?(?:明确)?"
             + "(?:为[^，,；;。！？!?]{1,40})?";
     private static final Pattern COORDINATOR = Pattern.compile("^(?:并且|并|同时|以及)(?=" + ACTION_PREFIX + ACTION + ")");
     private static final Pattern COMPLETE_ACTION = Pattern.compile(
@@ -32,6 +32,8 @@ final class AdditionalRuleProjection {
                     + "[^，,；;。！？!?]+[。！？!?]?$" );
     private static final Pattern NEGATED_PREFIX = Pattern.compile(
             "^(?:请|必须|务必|应|须|需)?(?:只|仅)?(?:不(?:得|要|应|允许|可)?|禁止)" );
+    // 分号后的完整主语+义务可独立成句；逗号下的省略主语和共享否定仍不得拆开。
+    private static final Pattern SUBJECT_OBLIGATION = Pattern.compile("^[^，,；;。！？!?]{1,60}(?:不得|必须|应当|须)[^，,；;。！？!?]+[。！？!?]?$");
     private static final Pattern CURRENT_HEADING = Pattern.compile(
             "(?:本任务|本次任务|当前任务|本研究|本次研究|当前研究|任务|输出|交付|交付以下内容|约束|约束条件|任务相关约束|Java21交付)[：:]?" );
     // 无属性的小写标签只是行内数据标识；数字比较、泛型或紧邻英文变量的运算式继续保守处理。
@@ -121,6 +123,8 @@ final class AdditionalRuleProjection {
      */
     static boolean coveredCompleteRule(Map<PromptSectionType, PromptSection> sections, String rule) {
         if (rule == null || rule.isBlank() || rule.lines().count() != 1 || scoped(rule)) return false;
+        // 与补写入口共用完整独立子句判据；复合要求的每个对象与方向都必须有执行证据。
+        if (uncovered(sections, rule).isEmpty()) return true;
         String expected = completeStatement(rule);
         return currentEvidence(sections, false).values().stream()
                 .flatMap(section -> section.content().lines())
@@ -163,7 +167,10 @@ final class AdditionalRuleProjection {
                     .replaceFirst("[，,；;]$", "");
             action = COORDINATOR.matcher(action).replaceFirst("");
             boolean negated = NEGATED_PREFIX.matcher(action).find();
-            if (!current.isEmpty() && COMPLETE_ACTION.matcher(action).matches()) {
+            boolean independentSubject = current.toString().stripTrailing().endsWith("；")
+                    || current.toString().stripTrailing().endsWith(";");
+            independentSubject &= SUBJECT_OBLIGATION.matcher(action).matches();
+            if (!current.isEmpty() && (COMPLETE_ACTION.matcher(action).matches() || independentSubject)) {
                 // 前置否定可能同时约束后项；省略否定的动作不能投影成新的正向义务。
                 if (negatedScope && !negated) return List.of(rule);
                 clauses.add(current.toString().replaceFirst("[，,；;]$", "").strip());

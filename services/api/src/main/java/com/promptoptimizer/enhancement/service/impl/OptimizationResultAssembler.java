@@ -182,7 +182,7 @@ public class OptimizationResultAssembler {
         }
         Map<PromptSectionType, PromptSection> sections = collectSections(providerResponse.sections());
         // 本次服务端来源先展开，再经过原有事实、未决、敏感及业务校验；模型引用不绕过保护。
-        var projectedRequirements = BoundRequirementProjection.expand(sections, taskView, constraintBundle);
+        var sourceProjection = BoundRequirementProjection.expandTracked(sections, taskView, constraintBundle);
         sections.values().forEach(section -> ProfessionalReviewBoundary.validate(section.content(), taskView));
         if (!sections.keySet().containsAll(REQUIRED_TYPES)) {
             throw invalidResponse(Reason.REQUIRED_SECTIONS_MISSING, "sections");
@@ -243,7 +243,7 @@ public class OptimizationResultAssembler {
         validateExecutionRules(sections, explicitRules, eligibleFacts, documentFacts);
         boolean minimal = MinimalPromptOrganizer.organize(sections, effectiveRawPrompt,
                 planConfirmed ? decisions : ConfirmedDecisionSet.from(List.of()), providerResponse.assessment());
-        PlanDecisionIntegrator.integrate(sections, taskView, projectedRequirements);
+        PlanDecisionIntegrator.integrate(sections, taskView, sourceProjection.delivered());
         PlanDecisionIntegrator.reconcileDelegatedStatus(sections, taskView);
         // 原件已通过安全与任务校验；仅精简可证明覆盖的资料状态并澄清条件表格，不改原件与来源。
         MaterialStatusCompactor.compact(sections);
@@ -265,7 +265,7 @@ public class OptimizationResultAssembler {
         } else {
             appendPlanningFacts(sections, currentFacts, currentDocumentFacts, planConfirmed, updatedFactIds);
         }
-        appendConstraints(sections, constraintBundle, rawPrompt);
+        appendConstraints(sections, constraintBundle, rawPrompt, sourceProjection);
         String roleExecution = DraftDeliveryContract.roleExecutionGuidance(effectiveRawPrompt, template);
         if (!roleExecution.isBlank()) {
             PromptSection output = sections.get(PromptSectionType.OUTPUT);
@@ -382,7 +382,8 @@ public class OptimizationResultAssembler {
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections, taskView, providerResponse.assessment());
         // 只影响复制正文的追加；权威未决清单和题答来源继续完整保存，不能借去重擅自确认参数。
         List<String> deliveredPrerequisites = PlanDecisionIntegrator.uncoveredDelegatedPrerequisites(
-                sections, merged.executionPrerequisites(), taskView);
+                sections, merged.executionPrerequisites(), taskView).stream()
+                .filter(value -> !sourceProjection.coveredPending(sections).contains(value)).toList();
         appendExecutionPrerequisites(sections, deliveredPrerequisites, pendingDeliveryGuidance,
                 draftDelivery.prerequisiteHeading(), taskView);
         if (unresolvedContract.hasNamedParameters()) {
@@ -402,7 +403,9 @@ public class OptimizationResultAssembler {
             }
         }
         // 未决清单也是正文中的权威规则来源；先落入正文再查缺补齐，避免同一禁止规则被追加两遍。
-        appendExplicitRules(sections, ProviderPrerequisiteCompactor.uncoveredRules(explicitRules,
+        var coveredSourceRules = sourceProjection.coveredRules(sections);
+        appendExplicitRules(sections, ProviderPrerequisiteCompactor.uncoveredRules(explicitRules.stream()
+                        .filter(rule -> !coveredSourceRules.contains(rule)).toList(),
                 merged.executionPrerequisites(), decisions, rawPrompt).stream()
                 .flatMap(rule -> PlanDecisionIntegrator.uncoveredRuleClauses(sections, rule).stream()).toList());
         // 补回规则也可能重述同一未知；权威执行前提所在的标题范围跳过，只检查其余完整断言。
@@ -922,14 +925,16 @@ public class OptimizationResultAssembler {
     private void appendConstraints(
             Map<PromptSectionType, PromptSection> sections,
             ConstraintBundle constraints,
-            String rawPrompt
+            String rawPrompt, BoundRequirementProjection.Expansion sourceProjection
     ) {
         PromptSection current = sections.get(PromptSectionType.CONSTRAINTS);
         sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(
                 current.type(), current.title(), PlatformConstraintRenderer.providerText(current.content(), rawPrompt, constraints)));
+        // 固定平台规则协调可能移除旧呈现，必须在协调后核对来源仍然存在，不能沿用协调前的覆盖集合。
+        var coveredSourceRules = sourceProjection.coveredRules(sections);
         // 仅任务规则采用完整断言覆盖；权限、来源、未决状态及固定平台块保留各自原有保护。
         appendMissingConstraintBlock(sections, "任务相关约束", TaskConstraintCoverage.uncovered(
-                sections, constraints.taskSpecific()));
+                sections, constraints.taskSpecific().stream().filter(rule -> !coveredSourceRules.contains(rule)).toList()));
         appendConstraintBlock(sections, "用户补充权限边界", constraints.additionalPermissions());
     }
 

@@ -45,6 +45,11 @@ final class ConfirmedDecisionSet {
 
     List<ConfirmedPlanDecision> decisions() { return decisions; }
 
+    /** 仅复用服务端任务视图中已绑定的决定，保留原作用范围与来源，不重新解释为客户端确认。 */
+    static ConfirmedDecisionSet fromBoundDecisions(List<ConfirmedPlanDecision> decisions) {
+        return new ConfirmedDecisionSet(decisions);
+    }
+
     /** 原始回答及其总体状态不变；下游核对已知事实时只使用可明确分开的已确认内容。 */
     List<ConfirmedPlanDecision> knownDecisions() {
         return decisions.stream().map(decision -> {
