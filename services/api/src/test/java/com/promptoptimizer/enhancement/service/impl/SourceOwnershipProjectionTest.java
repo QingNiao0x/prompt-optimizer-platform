@@ -129,6 +129,22 @@ class SourceOwnershipProjectionTest {
         assertThat(ConfirmedDecisionSet.fromBoundDecisions(task.confirmedDecisions()).decisions()).isEqualTo(task.confirmedDecisions());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"为科研工作者写一封会议提醒邮件。", "把研究方案摘要翻译成英文，只输出译文。", "用Python统计日志状态码。"})
+    void unrelatedTasksDoNotReceiveResearchExperimentInstructions(String raw) {
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
+        var instruction = PromptRewriteStrategy.forTask(task, PromptFormat.COMPACT).instruction();
+        assertThat(instruction).doesNotContain("同信息比较先取得并封存", "不能只列若干候选而将方法、评分、随机化全部退回用户");
+        assertThat(instruction).contains("真正需用户决定", "不能压缩掉否定、例外");
+    }
+
+    @Test
+    void researchGuidanceRetainsConcreteDesignAndInformationFlowBoundaries() {
+        var task = EffectiveTaskViewFactory.create("撰写研究设计的方法部分，研究Plan问答对提示词质量的影响。", TemplateCode.AUTO, List.of(), List.of(), false);
+        assertThat(PromptRewriteStrategy.forTask(task, PromptFormat.COMPACT).instruction())
+                .contains("不能只列若干候选而将方法、评分、随机化全部退回用户", "同信息比较先取得并封存");
+    }
+
     @Test
     void actual436438440ReplayTheAssemblerWithoutInventingSourceReferences() throws Exception {
         var mapper = new ObjectMapper();

@@ -45,9 +45,11 @@ class ResearchEvaluationRequestTest {
             var wire = json.readTree(((MockClientHttpRequest) request).getBodyAsString());
             String userMessage = wire.path("messages").get(1).path("content").asText();
             var payload = json.readTree(userMessage.substring(userMessage.indexOf('{')));
-            String instruction = payload.path("rewriteStrategy").path("instruction").asText();
+            // 指导已统一只注入system；请求载荷仅保留模式，不能用旧的重复注入断言误报缺失。
+            String instruction = wire.path("messages").get(0).path("content").asText();
             assertThat(instruction).contains("本任务评价对象绑定", "EFFECTIVE_USER_INPUT[20,35)");
-            assertThat(wire.path("messages").get(0).path("content").asText()).contains(instruction);
+            assertThat(payload.path("rewriteStrategy").has("instruction")).isFalse();
+            assertThat(org.springframework.util.StringUtils.countOccurrencesOf(instruction, "本任务评价对象绑定")).isEqualTo(1);
             var anchors = payload.path("taskView").path("userMeaningAnchors");
             assertThat(anchors).hasSize(2);
             var topic = anchors.get(1);
