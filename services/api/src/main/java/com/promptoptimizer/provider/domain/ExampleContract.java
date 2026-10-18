@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public record ExampleContract(Mode mode, String source, String guidance, @JsonIgnore boolean fictionalDataAllowed) {
     private static final Pattern PROHIBITION = Pattern.compile(
-            "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带|不加|不添加)[^。；;，,！？!?\\r\\n]{0,16}(?:示例|示范|例子)|不举例"
+            "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带|不附|不加|不添加)[^。；;，,！？!?\\r\\n]{0,16}(?:示例|示范|例子)|不举例"
                     + "|\\b(?:no|without|do not|never)\\b[^.;,!?\\r\\n]{0,60}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern STRICT_OUTPUT = Pattern.compile(
             "(?:只|仅)(?:输出|返回|交付|提供).{0,18}(?:译文|翻译结果|JSON|正文|答案|代码)"
@@ -58,11 +58,24 @@ public record ExampleContract(Mode mode, String source, String guidance, @JsonIg
     /** 是否要求下游提供示例，不能仅以模型是否返回 EXAMPLES 段判断。 */
     public boolean required() { return mode == Mode.REQUIRED; }
 
+    /**
+     * 判断示例交付动词的否定方向，供响应校验与输入契约共用语法。
+     * “禁止虚构示例”在此仍是否定表达，不代表禁止真实示例；是否整体禁例由下面的资料性质判断决定。
+     */
+    public static boolean negatesExampleDelivery(String expression) {
+        if (expression == null) return false;
+        var matcher = PROHIBITION.matcher(expression);
+        while (matcher.find()) {
+            if (!doubleNegative(matcher.group())) return true;
+        }
+        return false;
+    }
+
     /** 禁令只作用于同一子句中的示例对象；禁虚构示例限制资料性质，不等于禁止真实或符号示例。 */
     private static boolean examplesProhibited(String instructions) {
         var matcher = PROHIBITION.matcher(instructions);
         while (matcher.find()) {
-            if (!EXAMPLE_DATA_QUALIFIER.matcher(matcher.group()).find()) return true;
+            if (!doubleNegative(matcher.group()) && !EXAMPLE_DATA_QUALIFIER.matcher(matcher.group()).find()) return true;
         }
         return false;
     }
@@ -72,9 +85,15 @@ public record ExampleContract(Mode mode, String source, String guidance, @JsonIg
         var matcher = REQUEST.matcher(instructions);
         while (matcher.find()) {
             String prefix = instructions.substring(Math.max(0, matcher.start() - 20), matcher.start());
+            if (prefix.matches("(?s).*(?:不得不|不能不|不可不)(?:再|额外)?$")) return true;
             if (!prefix.matches("(?s).*(?:不|不要|不得|禁止|无需|不需要|不要求|并未|没有)(?:再|额外)?$")) return true;
         }
         return false;
+    }
+
+    /** 双重否定是肯定义务；不能作为省去示例要求或拒绝合法响应的证据。 */
+    private static boolean doubleNegative(String expression) {
+        return expression.matches("(?s)^(?:不得不|不能不|不可不).*");
     }
 
     /** 仅移除代码和引用行；不把被引用的产品文案或资料内容当作当前用户指令。 */

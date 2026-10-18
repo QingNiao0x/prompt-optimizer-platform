@@ -70,7 +70,7 @@ final class ExampleResultIntegrator {
      * 无法可靠归属的表达保守保留；同一既有协议修复预算处理明确冲突，不增加重试次数。
      */
     private static boolean hasUnrequestedInstruction(String content) {
-        var directive = Pattern.compile("(?:交付|提供|给出|附上|附带|包含|包括|含(?!有|义|量|税)|补充|添加|展示|输出|需要|要求)"
+        var directive = Pattern.compile("(?:交付|提供|给出|附上|附带|附(?!件|近|属)|包含|包括|含(?!有|义|量|税)|补充|添加|展示|输出|需要|要求)"
                 + "[^。；;！？!?\\r\\n]{0,100}(?:示例|示范|例子)"
                 + "|\\b(?:include|provide|give|add|show)\\b[^.;!?\\r\\n]{0,100}\\bexamples?\\b", Pattern.CASE_INSENSITIVE);
         String fence = null;
@@ -106,6 +106,8 @@ final class ExampleResultIntegrator {
                     continue;
                 }
                 if (insideNegatedDelivery(prefix)
+                        // 外层“输出”不能跨过后面的否定交付，误把并列宾语中的示例变成肯定义务。
+                        || ExampleContract.negatesExampleDelivery(phrase)
                         || phrase.matches("(?s).*(?:测试|验证)(?:用例)?(?:示例|示范|例子)$")
                         || prefix.matches("(?is).*(?:不|不要|不得|禁止|无需|不需要|不要求|不提供|不包含)(?:再|额外)?$")
                             && !prefix.matches("(?s).*(?:不得不|不能不|不可不)$")
