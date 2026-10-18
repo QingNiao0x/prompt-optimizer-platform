@@ -24,6 +24,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * 整句覆盖只缩减任务规则的追加，不修改来源、固定条款或模型原件。
@@ -113,7 +114,8 @@ class TaskConstraintWholeProjectionTest {
                 .findFirst().orElseThrow().content();
         assertThat(constraints).contains("任务相关约束：\n- " + INPUT)
                 .doesNotContain("\n- " + ERROR, "\n- " + TEST);
-        assertThat(result.appliedConstraints()).contains(INPUT, ERROR, TEST);
+        assertThat(result.appliedConstraints()).contains(INPUT,
+                "处理可预期异常，返回清晰且不含敏感值的错误信息，不吞掉或伪造错误。", TEST);
         assertThat(result.optimizedPrompt()).contains("明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。", "生产环境配置", "人工确认");
         for (String rule : com.promptoptimizer.policy.domain.PlatformConstraintRules.CODE_RULES) {
             assertThat(constraints).doesNotContain(rule.replace('。', '；'));
@@ -121,10 +123,16 @@ class TaskConstraintWholeProjectionTest {
     }
 
     @Test
-    void real382AssemblyRetainsTheWholeInputRuleWhenOnlyUrlChecksAreProvided() throws Exception {
-        var result = replay("REQUESTS-COMPACT");
-        assertThat(result.optimizedPrompt()).contains("任务相关约束：\n- " + INPUT);
-        assertThat(result.appliedConstraints()).contains(INPUT, ERROR, TEST);
+    void real382IsNowRejectedForItsUnrequestedInlineExampleWithoutChangingTheOriginal() {
+        // 原件本就另含“调用示例”；新示例契约先阻断它，不能为保留旧成功断言绕过新保护。
+        // 同类URL局部覆盖不能抵消完整输入规则的正反例仍由本类其他用例和389回放验证。
+        assertThatThrownBy(() -> replay("REQUESTS-COMPACT"))
+                .isInstanceOf(com.promptoptimizer.provider.domain.ProviderResponseValidationException.class)
+                .satisfies(error -> {
+                    var validation = (com.promptoptimizer.provider.domain.ProviderResponseValidationException) error;
+                    assertThat(validation.getReason()).isEqualTo(com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason.RULE_CONFLICT);
+                    assertThat(validation.getField()).isEqualTo("sections.OUTPUT");
+                });
     }
 
     /** 原始字符串保持原样；缺省presentation只沿用Provider已有兼容口径，不补实质信息。 */

@@ -65,7 +65,7 @@ class CompactGuidanceReplayTest {
                 .findFirst().orElseThrow().content();
         assertThat(body).doesNotContain("\n- 为核心逻辑补充正常、异常和边界场景测试。");
         assertThat(body).contains("校验所有外部输入，并明确处理空值、非法值和边界条件。",
-                "处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。");
+                "处理可预期异常，返回清晰且不含敏感值的错误信息，不吞掉或伪造错误。");
         assertThat(result.optimizedPrompt()).contains("为核心逻辑补充正常、异常和边界场景的测试。");
         assertThat(result.appliedConstraints()).containsAll(constraints.visibleConstraints());
         assertThat(result.constraintGroups()).isEqualTo(constraints);

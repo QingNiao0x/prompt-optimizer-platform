@@ -15,6 +15,48 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ExecutionRuleCompactorTest {
     @Test
+    void knownProjectionHeadingsDoNotInventNewObjectsAndShortCompleteRulesRemainOnce() {
+        var sections = new EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
+        String rule = "不使用第三方依赖。";
+        sections.put(PromptSectionType.TASK, new PromptSection(PromptSectionType.TASK, "任务", rule + "交付完整源码。"));
+        sections.put(PromptSectionType.OUTPUT, new PromptSection(PromptSectionType.OUTPUT, "输出",
+                "交付可运行测试。\nJava21交付：\n- " + rule));
+        sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(PromptSectionType.CONSTRAINTS, "约束",
+                "任务相关约束：\n- " + rule + "\n保留新增的异常处理要求。"));
+        ExecutionRuleCompactor.compact(sections);
+        assertThat(sections.get(PromptSectionType.TASK).content()).contains(rule);
+        assertThat(sections.get(PromptSectionType.OUTPUT).content()).doesNotContain(rule, "Java21交付");
+        assertThat(sections.get(PromptSectionType.CONSTRAINTS).content()).doesNotContain(rule)
+                .contains("保留新增的异常处理要求。");
+    }
+
+    @Test
+    void metadataDoesNotResetABusinessObjectAndOptionalFullyRepeatedAcceptanceIsRemoved() {
+        var sections = new EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
+        String rule = "校验所有外部输入，并明确处理空值、非法值和边界条件。";
+        sections.put(PromptSectionType.TASK, new PromptSection(PromptSectionType.TASK, "任务", "实现接口。" + rule));
+        sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(PromptSectionType.CONSTRAINTS, "约束",
+                "### 支付接口\n任务相关约束：\n" + rule + "\n### 查询接口\n任务相关约束：\n" + rule));
+        sections.put(PromptSectionType.ACCEPTANCE, new PromptSection(PromptSectionType.ACCEPTANCE, "验收", rule));
+        ExecutionRuleCompactor.compact(sections);
+        assertThat(sections.get(PromptSectionType.CONSTRAINTS).content().split(rule, -1)).hasSize(3);
+        assertThat(sections).doesNotContainKey(PromptSectionType.ACCEPTANCE);
+    }
+
+    @Test
+    void literalQuotedAndIndentedCodeAreNotCrossSectionExecutionEvidence() {
+        var sections = new EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
+        String rule = "不得在日志中打印用户输入数据。";
+        sections.put(PromptSectionType.TASK, new PromptSection(PromptSectionType.TASK, "任务",
+                "只比较原文。\n    " + rule + "\n> " + rule + "\n“" + rule + "”"));
+        sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(PromptSectionType.CONSTRAINTS, "约束",
+                rule + "\n保留另一项独立的安全要求。"));
+        ExecutionRuleCompactor.compact(sections);
+        assertThat(sections.get(PromptSectionType.CONSTRAINTS).content()).contains(rule);
+        assertThat(sections.get(PromptSectionType.TASK).content()).contains("    " + rule, "> " + rule, "“" + rule + "”");
+    }
+
+    @Test
     void compactsCompleteSentencesAcrossMetadataBlocksButPreservesBusinessAndDependentScopes() {
         String rule = "数据核查时保留合法零值，避免将其视为缺失。";
         var sections = new EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);

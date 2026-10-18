@@ -52,7 +52,7 @@ public record ExampleContract(Mode mode, String source, String guidance, @JsonIg
             }
             return new ExampleContract(Mode.REQUIRED, requested ? "USER_REQUIREMENT" : "USER_SWITCH", guidance, fictional);
         }
-        return new ExampleContract(Mode.DISABLED, "SWITCH_OFF", "未要求示例，不主动追加示例段。");
+        return new ExampleContract(Mode.DISABLED, "SWITCH_OFF", "未要求示例，不主动新增示例交付要求，包括其他段落中的调用或输入输出示例；原任务所需源码、测试及运行说明继续交付。");
     }
 
     /** 是否要求下游提供示例，不能仅以模型是否返回 EXAMPLES 段判断。 */

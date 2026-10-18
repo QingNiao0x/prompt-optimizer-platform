@@ -43,16 +43,17 @@ final class ExecutionRuleCompactor {
                     retained.add(line);
                     continue;
                 }
-                if (fence != null || line.strip().startsWith("|") || line.strip().startsWith(">")) {
+                if (fence != null || line.strip().startsWith("|") || line.strip().startsWith(">")
+                        || line.startsWith("    ") || line.startsWith("\t")
+                        || line.matches(".*[\"“”‘’].*") || dependentLine(key(line))) {
                     retained.add(line);
                     continue;
                 }
                 String value = key(line);
                 // 章节和冒号标题承载隐含业务对象；同一句话放在审批／退款下不能跨范围合并。
                 if (line.strip().matches("^(?:#{1,6}\\s+.+|\\*\\*.+\\*\\*)$") || value.endsWith("：") || value.endsWith(":")) {
-                    // 平台补回的同一份用户规则不产生新业务对象；真实业务章节继续单独保留。
-                    scope = value.equals("用户明确规则(不得反转或遗漏):")
-                            || value.equals("用户明确规则(须遵守平台权限边界):") ? "" : value;
+                    // 固定投影标题不建立新对象，也不能解除已经进入的支付／查询等业务范围。
+                    if (!projectionHeading(value)) scope = value;
                     retained.add(line);
                     continue;
                 }
@@ -60,17 +61,20 @@ final class ExecutionRuleCompactor {
                 if (line.isBlank()) continue;
                 value = key(line);
                 String scoped = scope + '\u0000' + value;
-                if (value.length() < 12 || !seen.contains(scoped) && !pending.contains(scoped)) {
+                if (!independentRule(value) || !seen.contains(scoped) && !pending.contains(scoped)) {
                     retained.add(line);
-                    if (value.length() >= 12) pending.add(scoped);
+                    if (independentRule(value)) pending.add(scoped);
                 }
             }
-            String cleaned = String.join("\n", retained).strip();
+            String cleaned = String.join("\n", removeEmptyProjectionHeadings(retained)).strip();
             // 完全重复的必需段落仍保留，不用占位句冒充有效四要素。
             if (!cleaned.isBlank()) {
                 sections.put(type, new PromptSection(type, section.title(), cleaned));
                 seen.addAll(pending);
                 seenSentences.addAll(pendingSentences);
+            } else if (type == PromptSectionType.ACCEPTANCE) {
+                // 可选验收已全部由执行正文承担时直接省去；必需四要素仍保留实质原文。
+                sections.remove(type);
             }
         }
     }
@@ -91,13 +95,51 @@ final class ExecutionRuleCompactor {
             boolean dependent = identity.matches("^(?:其中|其|该|此|上述|以下|否则|但|若|如果|假如|当|仅当|只有).*" );
             String scoped = scope + '\u0000' + identity;
             boolean complete = sentence.endsWith("。");
-            if (identity.length() < 12 || dependent || (!complete || !seen.contains(scoped)
+            if (!independentRule(identity) || dependent || (!complete || !seen.contains(scoped)
                     && !pending.contains(scoped)) && retained.add(identity)) {
                 result.append(sentence);
-                if (complete && identity.length() >= 12 && !dependent) pending.add(scoped);
+                if (complete && independentRule(identity) && !dependent) pending.add(scoped);
             }
         }
         return result.toString();
+    }
+
+    /** 短句必须带完整动作和对象；不再因字符少而重复“不使用第三方依赖”等完整要求。 */
+    private static boolean independentRule(String text) {
+        return text.length() >= 12 || text.replaceFirst("。$", "").matches(
+                "^(?:请|必须|应|须|需|务必)?(?:不得|不要|禁止|不|只|仅)?"
+                        + "(?:提供|交付|输出|返回|保留|记录|打印|泄露|编造|添加|使用|修改|删除|读取|生成|说明|校验|处理|运行|执行|采用)"
+                        + "[^。；;，,]{2,}$");
+    }
+
+    /** 只接收本组装器的固定来源标题；具名业务章节和未知标题不参与范围归并。 */
+    private static boolean projectionHeading(String value) {
+        return java.util.Set.of("Java21交付:", "任务相关约束:",
+                "用户明确规则(不得反转或遗漏):", "用户明确规则(须遵守平台权限边界):").contains(value);
+    }
+
+    /** 后置转折可限制前一句；整行保留，不把例外前的原句登记成无条件覆盖证据。 */
+    private static boolean dependentLine(String value) {
+        return value.matches("^(?:其中|其|该|此|上述|以下|否则|但|若|如果|假如|当|仅当|只有|未来|以后|待确认).*" )
+                || value.matches(".*。(?:否则|但|然而|不过|除非).*" )
+                || value.matches(".*[；;，,](?:但|然而|不过|除非).*" )
+                || value.contains("除外") || value.contains("例外") || value.contains("除非");
+    }
+
+    /** 去掉已无任何正文的固定投影标题，避免规则去重后留下空架子。 */
+    private static java.util.List<String> removeEmptyProjectionHeadings(java.util.List<String> lines) {
+        var result = new ArrayList<String>();
+        for (int index = 0; index < lines.size(); index++) {
+            if (projectionHeading(key(lines.get(index)))) {
+                int next = index + 1;
+                while (next < lines.size() && lines.get(next).isBlank()) next++;
+                if (next == lines.size() || projectionHeading(key(lines.get(next)))
+                        || lines.get(next).strip().matches("^(?:#{1,6}\\s+.+|\\*\\*.+\\*\\*)$")
+                        || key(lines.get(next)).endsWith(":")) continue;
+            }
+            result.add(lines.get(index));
+        }
+        return result;
     }
 
     private static String key(String value) {

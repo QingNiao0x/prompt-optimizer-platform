@@ -51,7 +51,8 @@ public class ConstraintCompleterImpl implements ConstraintCompleter {
             constraints.add("说明缺失数据、偏倚、不确定性和方法适用条件，保证分析过程可复现。");
         } else if (TaskIntentResolver.software(templateCode)) {
             constraints.add("校验所有外部输入，并明确处理空值、非法值和边界条件。");
-            constraints.add("处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。");
+            // 错误处理与既有保密边界在同一动作中表达，不能将“清晰”理解为原样回传含凭据的异常。
+            constraints.add("处理可预期异常，返回清晰且不含敏感值的错误信息，不吞掉或伪造错误。");
             constraints.add("为核心逻辑补充正常、异常和边界场景测试。");
         }
 
@@ -79,7 +80,7 @@ public class ConstraintCompleterImpl implements ConstraintCompleter {
 
         if (engineering && !TaskIntentResolver.software(templateCode)) {
             constraints.add("仅对本次明确交付的代码：校验输入并处理空值、非法值和边界条件。");
-            constraints.add("仅对本次明确交付的代码：处理可预期异常，返回清晰错误信息，不吞掉或伪造错误。");
+            constraints.add("仅对本次明确交付的代码：处理可预期异常，返回清晰且不含敏感值的错误信息，不吞掉或伪造错误。");
             constraints.add("仅对本次明确交付的代码：补充必要的正常、异常和边界验证，不把软件测试要求扩展到报告正文。");
         }
         PermissionPolicyInput policy = permissionPolicy == null ? PermissionPolicyInput.empty() : permissionPolicy;

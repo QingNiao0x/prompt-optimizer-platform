@@ -1,0 +1,30 @@
+{
+  "candidate": "candidate37",
+  "cases": [
+    {
+      "id": "PATCH",
+      "rawPrompt": "用Java 21实现PatchMerger类的public static Map<String,Object> merge(Map<String,Object> current, Map<String,Object> patch)方法，把补丁应用到现有配置：只用patch中非null的值覆盖；0、false和空字符串都是有效值。返回新Map，不修改任一输入。空输入、空Map及嵌套数据的处理由你合理设计并说明，不把设计建议写成已有项目规则。不使用第三方依赖，也不记录或打印输入数据。交付完整PatchMerger.java和可直接运行的PatchMergerTest.java，自测须实际检查正常、边界和异常行为，不依赖JVM的-ea开关。",
+      "files": [],
+      "includeExamples": false,
+      "planConfirmation": null,
+      "formats": [
+        "STRUCTURED"
+      ]
+    },
+    {
+      "id": "REQUESTS",
+      "rawPrompt": "使用requests库爬取网页标题。",
+      "files": [],
+      "includeExamples": false,
+      "planConfirmation": null,
+      "formats": [
+        "COMPACT",
+        "STRUCTURED"
+      ]
+    }
+  ],
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false,
+  "sameTestAccountFile": "tmp/local-acceptance/account.json",
+  "reviewsAreNotHumanExperts": true
+}

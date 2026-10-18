@@ -1,0 +1,84 @@
+{
+  "candidate": "candidate37",
+  "state": "PROPOSED_NOT_ACTIVE",
+  "authorization": "User explicitly authorized autonomous candidate and subsequent real-test allocation in this turn. Reallocate the closed candidate36 12 unused calls; do not increase formal limits.",
+  "formalLimits": {
+    "total": 425,
+    "baseline": 80,
+    "candidate": 345
+  },
+  "actualBefore": 403,
+  "candidateActualBefore": 333,
+  "maximumNewCalls": 12,
+  "maximumActualAfter": 415,
+  "purposeMaximums": {
+    "PLATFORM_GENERATION": 6,
+    "EXECUTION": 4,
+    "REVIEW": 2
+  },
+  "generationRequests": [
+    {
+      "case": "PATCH",
+      "format": "STRUCTURED"
+    },
+    {
+      "case": "REQUESTS",
+      "format": "COMPACT"
+    },
+    {
+      "case": "REQUESTS",
+      "format": "STRUCTURED"
+    }
+  ],
+  "generationPolicy": "Three requests, existing per-request repair limit 3, batch shared maximum 6; skip dependent works if earlier repairs exhaust the allocation. No quality retry.",
+  "works": [
+    "REQUESTS RAW",
+    "REQUESTS COMPACT native copy",
+    "REQUESTS STRUCTURED native copy",
+    "PATCH STRUCTURED native copy"
+  ],
+  "reviewScope": "Only three REQUESTS works, two independent Flash/Pro AI-assisted reviews; PATCH work gets independent compilation/tests/claim audit, no new pair or expert-review claim.",
+  "parameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false
+  },
+  "models": {
+    "enhancement": "deepseek-flash",
+    "execution": "deepseek-flash",
+    "reviews": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "review": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ]
+  },
+  "sameTestAccountFile": "tmp/local-acceptance/account.json",
+  "newAccountsAllowed": false,
+  "naturalPlanRequests": 0,
+  "oldRawPatchWork": "Historical reference only; not a new controlled baseline",
+  "failedCallsCount": true,
+  "closedBalanceMayNotTransferAgainAutomatically": true,
+  "activationRequiresSourceFreezeAndOfflinePass": true,
+  "status": "APPROVED_READY_FOR_FROZEN_ACTIVATION",
+  "sourceManifestSha256": "d0b41b2da0a1cbf044352d4805d4573526d14c2c00d913db9b0db28347e2b358",
+  "casesSha256": "f1e7a1cfaba9c2ab9b26b0e86404ef76f70f0855a1db6a4e5bda4582b4c124ed",
+  "actualCallsBefore": 403,
+  "actualCandidateBefore": 333,
+  "maximumActualCallsAfter": 415,
+  "formalBefore": {
+    "total": 425,
+    "baseline": 80,
+    "candidate": 345
+  },
+  "formalProposed": {
+    "total": 425,
+    "baseline": 80,
+    "candidate": 345
+  }
+}
