@@ -1,0 +1,34 @@
+{
+  "caseId": "RESERVED-REFUND",
+  "questionCount": 1,
+  "summary": "目标是撰写青禾工作坊的预约取消通知邮件，活动因场地维修取消，收件人为已付款报名者；用户明确要求先由本人选择全额退款或改期至11月15日同一时间，不能代选。因此需要确认该处理方案，其余措辞结构由执行者安排。",
+  "questions": [
+    {
+      "id": "cancellation_resolution",
+      "question": "本次取消后对已付款报名者采用哪种处理方案？",
+      "hint": "用户明确表示尚未决定，并要求由本人选择；该选择决定邮件核心内容，不能代为决定。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "full_refund",
+          "label": "全额退款",
+          "description": "通知已付款报名者将获得全额退款，不写未知的到账日期。",
+          "answer": "采用全额退款方案：告知已付款报名者将全额退款，不写具体到账日期。",
+          "recommended": false,
+          "recommendationReason": ""
+        },
+        {
+          "id": "reschedule_nov15",
+          "label": "改期至11月15日同一时间",
+          "description": "通知活动改至2026年11月15日同一时间举行。",
+          "answer": "采用改期方案：告知已付款报名者活动改至2026年11月15日同一时间举行。",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "actualAnswersSubmitted": false
+}

@@ -1,0 +1,22 @@
+{
+  "trace": 439,
+  "caseId": "HOURS-CONFLICT",
+  "purpose": "PLANNING",
+  "requestedModel": "deepseek-flash",
+  "responseModel": "deepseek-flash",
+  "httpStatus": 200,
+  "failure": null,
+  "elapsedMs": 1899,
+  "usage": {
+    "prompt_tokens": 3101,
+    "completion_tokens": 330,
+    "total_tokens": 3431,
+    "prompt_tokens_details": {
+      "cached_tokens": 2560
+    },
+    "prompt_cache_hit_tokens": 2560,
+    "prompt_cache_miss_tokens": 541
+  },
+  "rawResponseSha256": "8dd2044ebd07c5acfc77a18cadebb6e643cbd190a637c8c28e993e9a3540d9d0",
+  "originalResponse": "{\"summary\":\"目标是撰写青禾服务中心2026年11月1日起的营业时间调整公告，面向到访顾客，正文不超过180字。两份材料对同一地点、同一生效期的营业时段存在实质冲突，且无优先级依据，需先由您确认采用哪一时段。\",\"questions\":[{\"id\":\"business_hours_conflict\",\"question\":\"公告中应采用的营业时段是哪一组？\",\"hint\":\"前台登记为周二至周日9:00—17:00，运营备忘为周二至周日10:00—18:00，两者针对同一地点和生效期且无优先级依据，需您确认后才能写入公告。\",\"type\":\"SINGLE_CHOICE\",\"options\":[{\"id\":\"front_desk\",\"label\":\"9:00—17:00\",\"description\":\"采用前台登记摘录的时段：周二至周日9:00—17:00，周一休息。\",\"answer\":\"采用前台登记摘录：2026年11月1日起，周二至周日9:00—17:00营业，周一休息。\",\"recommended\":false,\"recommendationReason\":\"\"},{\"id\":\"ops_memo\",\"label\":\"10:00—18:00\",\"description\":\"采用运营备忘摘录的时段：周二至周日10:00—18:00，周一休息。\",\"answer\":\"采用运营备忘摘录：2026年11月1日起，周二至周日10:00—18:00营业，周一休息。\",\"recommended\":false,\"recommendationReason\":\"\"}],\"examples\":[],\"allowCustomAnswer\":true}]}"
+}

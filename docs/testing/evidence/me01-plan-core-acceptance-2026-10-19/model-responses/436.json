@@ -1,0 +1,22 @@
+{
+  "trace": 436,
+  "caseId": "LOG-SUMMARY",
+  "purpose": "PLATFORM_GENERATION",
+  "requestedModel": "deepseek-flash",
+  "responseModel": "deepseek-flash",
+  "httpStatus": 200,
+  "failure": null,
+  "elapsedMs": 3538,
+  "usage": {
+    "prompt_tokens": 6505,
+    "completion_tokens": 620,
+    "total_tokens": 7125,
+    "prompt_tokens_details": {
+      "cached_tokens": 5120
+    },
+    "prompt_cache_hit_tokens": 5120,
+    "prompt_cache_miss_tokens": 1385
+  },
+  "rawResponseSha256": "ad10c34916a8734fd6ae7a0e27d7bec13630656ab2e48b21498eb08e23898646",
+  "originalResponse": "{\"assessment\":{\"sufficiency\":\"SUFFICIENT\",\"gaps\":[],\"presentation\":\"COMPACT\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"需要一段可直接运行的 Python 3 标准库实现，用于统计 UTF-8 文本日志中的 HTTP 状态码。每行格式规则明确：有效非空行严格为 `status=<三位十进制数字>`，数字范围 100—599；空行忽略；其余行计为无效。函数或命令行等组织方式由实现者合理安排。\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"用 Python 3 标准库实现状态码统计，并交付实现代码、必要测试和运行说明。\\n\\n- 逐行读取 UTF-8 文本日志；空行忽略，不计数。\\n- 仅当非空行严格匹配 `status=<三位十进制数字>` 且数值在 100—599 范围内时，计为对应状态码的一次出现；不满足该格式或范围的行计为无效行。\\n- 按状态码升序输出各状态码及其出现次数，末尾输出无效行总数。\\n- 组织方式可自行选择函数或命令行入口，但统计逻辑应可被测试直接调用。\\n- 测试覆盖正常统计、空行忽略、格式非法、数值越界、空输入及边界值 100 和 599。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"交付可直接使用的 Python 3 实现代码、必要测试代码和简短运行说明。运行说明写明如何以 UTF-8 文本日志作为输入执行，以及输出中状态码计数与末尾无效行数的呈现方式。测试需可实际运行，并说明运行命令。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"- 仅使用 Python 3 标准库，不引入第三方依赖。\\n- 输入按 UTF-8 文本处理；读取失败或编码错误等可预期异常应给出清晰且不含敏感值的错误信息，不得吞掉或伪造错误。\\n- 校验所有外部输入，明确处理空值、非法值和边界条件。\\n- 为核心逻辑补充正常、异常和边界场景测试；未实际运行的验证不得写成通过。\\n- 不得在代码、日志或输出中泄露密码、Token、API Key 或私钥。\"},{\"type\":\"ACCEPTANCE\",\"title\":\"验收\",\"content\":\"- 对有效行、空行、格式非法行和越界数值行分别核对统计结果与无效行计数。\\n- 核对输出按状态码升序排列，且末尾给出无效行总数。\\n- 核对 100 和 599 被接受，99 和 600 被计为无效。\\n- 实际运行测试并确认结果；运行说明中的命令可复现执行。\"}],\"ambiguities\":[],\"ambiguityReferences\":[]}"
+}

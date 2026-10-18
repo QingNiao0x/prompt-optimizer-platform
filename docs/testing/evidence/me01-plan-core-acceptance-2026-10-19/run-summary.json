@@ -1,0 +1,218 @@
+{
+  "candidate": "candidate41r2",
+  "sourceCommit": "adaa60f6",
+  "currentHeadAtStart": "d40fb696",
+  "sourceFilesMatched": 920,
+  "runtimeFilesMatched": 632,
+  "sourceDrift": [],
+  "newProductionChanges": false,
+  "offlineHarnessChecks": 57,
+  "freshFullProductRegressionRun": false,
+  "priorProductTestsReused": 1882,
+  "cases": [
+    {
+      "caseId": "LOG-SUMMARY",
+      "planTrace": 435,
+      "enhancementTrace": 436,
+      "questionCount": 0,
+      "necessity": "PASS_WITHIN_CASE",
+      "intentPreserved": true,
+      "boundConfirmation": true,
+      "copyMatchesAfterLineEndingNormalization": true,
+      "historyBodyExactMatch": true,
+      "historyRuleGroupsExactMatch": true,
+      "newHistoryCount": 1,
+      "internalReferenceLeaks": 0,
+      "platformCompleteRequirementDeduplication": "FAIL",
+      "rawCopySha256": "65744799599c63f69d5ba6d8b5c290c340881c7548e5aa2418b54da2a20a5439",
+      "rawCopyBytes": 2964
+    },
+    {
+      "caseId": "RESERVED-REFUND",
+      "planTrace": 437,
+      "enhancementTrace": 438,
+      "questionCount": 1,
+      "necessity": "PASS_WITHIN_CASE",
+      "intentPreserved": true,
+      "boundConfirmation": true,
+      "copyMatchesAfterLineEndingNormalization": true,
+      "historyBodyExactMatch": true,
+      "historyRuleGroupsExactMatch": true,
+      "newHistoryCount": 1,
+      "internalReferenceLeaks": 0,
+      "platformCompleteRequirementDeduplication": "FAIL",
+      "rawCopySha256": "a8ccd7571a8291da03a9af22a2465306afd4a750c0a85a6a8429ea18d6d22878",
+      "rawCopyBytes": 2534
+    },
+    {
+      "caseId": "HOURS-CONFLICT",
+      "planTrace": 439,
+      "enhancementTrace": 440,
+      "questionCount": 1,
+      "necessity": "PASS_WITHIN_CASE",
+      "intentPreserved": true,
+      "boundConfirmation": true,
+      "copyMatchesAfterLineEndingNormalization": true,
+      "historyBodyExactMatch": true,
+      "historyRuleGroupsExactMatch": true,
+      "newHistoryCount": 1,
+      "internalReferenceLeaks": 0,
+      "platformCompleteRequirementDeduplication": "FAIL",
+      "rawCopySha256": "4fbde015c557090f823a2b856a220a5c664ae9d4e0e0d7a20e934042618c0325",
+      "rawCopyBytes": 1425
+    }
+  ],
+  "actualNewCalls": 6,
+  "actualTotal": 440,
+  "phases": {
+    "baseline": 70,
+    "candidateValidation": 370
+  },
+  "formal": [
+    462,
+    80,
+    382
+  ],
+  "maximumAllocated": 18,
+  "unusedClosed": 12,
+  "failedModelCalls": 0,
+  "protocolRepairCalls": 0,
+  "qualityRetries": 0,
+  "tokens": 30733,
+  "upstreamDurationSumMs": 14459,
+  "newAccountsCreated": 0,
+  "historyAdded": 3,
+  "downstreamWorks": 0,
+  "formalIndependentAiReviews": 0,
+  "reviewMethod": "Direct source/response/clipboard/history comparison; local coding-agent cross-check is not a downstream AI jury",
+  "overallDeduplicationPass": false,
+  "wholeReleaseGateClosed": false,
+  "calls": [
+    {
+      "trace": 435,
+      "caseId": "LOG-SUMMARY",
+      "purpose": "PLANNING",
+      "requestedModel": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "failure": null,
+      "elapsedMs": 1484,
+      "usage": {
+        "prompt_tokens": 3082,
+        "completion_tokens": 96,
+        "total_tokens": 3178,
+        "prompt_tokens_details": {
+          "cached_tokens": 2560
+        },
+        "prompt_cache_hit_tokens": 2560,
+        "prompt_cache_miss_tokens": 522
+      },
+      "rawResponseSha256": "cad462e3bc95c093c38b072707aa4f17a319a85a1d2b402fac91600a2886f169"
+    },
+    {
+      "trace": 436,
+      "caseId": "LOG-SUMMARY",
+      "purpose": "PLATFORM_GENERATION",
+      "requestedModel": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "failure": null,
+      "elapsedMs": 3538,
+      "usage": {
+        "prompt_tokens": 6505,
+        "completion_tokens": 620,
+        "total_tokens": 7125,
+        "prompt_tokens_details": {
+          "cached_tokens": 5120
+        },
+        "prompt_cache_hit_tokens": 5120,
+        "prompt_cache_miss_tokens": 1385
+      },
+      "rawResponseSha256": "ad10c34916a8734fd6ae7a0e27d7bec13630656ab2e48b21498eb08e23898646"
+    },
+    {
+      "trace": 437,
+      "caseId": "RESERVED-REFUND",
+      "purpose": "PLANNING",
+      "requestedModel": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "failure": null,
+      "elapsedMs": 2269,
+      "usage": {
+        "prompt_tokens": 3099,
+        "completion_tokens": 292,
+        "total_tokens": 3391,
+        "prompt_tokens_details": {
+          "cached_tokens": 2560
+        },
+        "prompt_cache_hit_tokens": 2560,
+        "prompt_cache_miss_tokens": 539
+      },
+      "rawResponseSha256": "5c4dae62925e39725cdb42e408938b2416d076d1f49a639abd717cbec195b58f"
+    },
+    {
+      "trace": 438,
+      "caseId": "RESERVED-REFUND",
+      "purpose": "PLATFORM_GENERATION",
+      "requestedModel": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "failure": null,
+      "elapsedMs": 3239,
+      "usage": {
+        "prompt_tokens": 6517,
+        "completion_tokens": 454,
+        "total_tokens": 6971,
+        "prompt_tokens_details": {
+          "cached_tokens": 5120
+        },
+        "prompt_cache_hit_tokens": 5120,
+        "prompt_cache_miss_tokens": 1397
+      },
+      "rawResponseSha256": "2b76c2a608b87fd6e9d57b24294d22e4b20b3c496918f2d46d18218296d3a344"
+    },
+    {
+      "trace": 439,
+      "caseId": "HOURS-CONFLICT",
+      "purpose": "PLANNING",
+      "requestedModel": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "failure": null,
+      "elapsedMs": 1899,
+      "usage": {
+        "prompt_tokens": 3101,
+        "completion_tokens": 330,
+        "total_tokens": 3431,
+        "prompt_tokens_details": {
+          "cached_tokens": 2560
+        },
+        "prompt_cache_hit_tokens": 2560,
+        "prompt_cache_miss_tokens": 541
+      },
+      "rawResponseSha256": "8dd2044ebd07c5acfc77a18cadebb6e643cbd190a637c8c28e993e9a3540d9d0"
+    },
+    {
+      "trace": 440,
+      "caseId": "HOURS-CONFLICT",
+      "purpose": "PLATFORM_GENERATION",
+      "requestedModel": "deepseek-flash",
+      "responseModel": "deepseek-flash",
+      "httpStatus": 200,
+      "failure": null,
+      "elapsedMs": 2030,
+      "usage": {
+        "prompt_tokens": 6326,
+        "completion_tokens": 311,
+        "total_tokens": 6637,
+        "prompt_tokens_details": {
+          "cached_tokens": 5120
+        },
+        "prompt_cache_hit_tokens": 5120,
+        "prompt_cache_miss_tokens": 1206
+      },
+      "rawResponseSha256": "416fa00154b841549288d6f1d355021fc314dbea2027caf037832a35ec5cf6bf"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "amendment": 38,
+  "authorization": "用户批准新增18次，执行三题限定验收；不转关闭余额，不做质量重试。",
+  "formalBefore": [
+    444,
+    80,
+    364
+  ],
+  "formalAfter": [
+    462,
+    80,
+    382
+  ],
+  "actualBefore": 434,
+  "baselineActual": 70,
+  "candidateActual": 364,
+  "newMaximum": 18,
+  "maximumActualAfter": 452,
+  "closedTransfers": 0,
+  "batch": {
+    "version": "candidate41r2-core-acceptance",
+    "sourceCandidate": "candidate41r2",
+    "authorizationStatus": "APPROVED_BY_USER",
+    "callsBefore": 434,
+    "candidateCallsBefore": 364,
+    "maximumNewCalls": 18,
+    "maximumActualCallsAfterBatch": 452,
+    "purposeMaximums": {
+      "PLANNING": 9,
+      "PLATFORM_GENERATION": 9,
+      "EXECUTION": 0,
+      "REVIEW": 0
+    },
+    "qualityRetriesAllowed": false,
+    "accountCreationAllowed": false,
+    "model": "deepseek-flash",
+    "sourceManifestSha256": "ab553dacf43189ca49d3b63668a208e8c1d2411abbfa4f73d2a787a65aadd3bd",
+    "casesSha256": "cc4c2a97867ee83a633a894facaeda695c082166edeae64674ba7737b7c8643f",
+    "dependencyFailurePolicy": "失败调用全部计数；保留协议修复原件。当前题的必要条件未满足时停止其依赖步骤，不用工具补答案、不重试到质量成功；其他独立题仍可继续。",
+    "status": "OPEN",
+    "casesFile": "plan-core-acceptance-20261019-cases.json",
+    "authorizationAmendment": 38,
+    "authorizationBasis": "用户批准新增18次，执行三题限定验收；不转关闭余额，不做质量重试。"
+  },
+  "modelCallsAtActivation": 0
+}

@@ -1,0 +1,59 @@
+{
+  "version": "candidate41r2-core-acceptance",
+  "sourceCandidate": "candidate41r2",
+  "authorizationStatus": "APPROVED_BY_USER",
+  "sourceManifest": "docs/testing/evidence/me01-candidate41r2-responsibility-projection-2026-10-18/candidate41r2-source.json",
+  "sourceManifestSha256": "ab553dacf43189ca49d3b63668a208e8c1d2411abbfa4f73d2a787a65aadd3bd",
+  "callsBefore": 434,
+  "candidateCallsBefore": 364,
+  "formalBefore": {
+    "total": 444,
+    "baseline": 80,
+    "candidateValidation": 364
+  },
+  "formalAfterProposed": {
+    "total": 462,
+    "baseline": 80,
+    "candidateValidation": 382
+  },
+  "maximumNewCalls": 18,
+  "maximumActualCallsAfterBatch": 452,
+  "purposeMaximums": {
+    "PLANNING": 9,
+    "PLATFORM_GENERATION": 9,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "normalRequestCount": 6,
+  "maximumAttemptsPerRequest": 3,
+  "qualityRetriesAllowed": false,
+  "closedBudgetTransferred": 0,
+  "accountFile": "tmp/local-acceptance/account.json",
+  "accountCreationAllowed": false,
+  "model": "deepseek-flash",
+  "parameters": {
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "casesFile": "request-cases.json",
+  "coverage": [
+    "必要问题与已委托事项边界",
+    "实际确认的对象、条件及状态",
+    "平台来源要求的完整覆盖与重复追加",
+    "原生复制与历史一致"
+  ],
+  "notCovered": [
+    "下游作品质量",
+    "两位AI辅助评审",
+    "上传文件上下文链",
+    "全场景泛化",
+    "全部上线门禁"
+  ],
+  "dependencyFailurePolicy": "失败调用全部计数；保留协议修复原件。当前题的必要条件未满足时停止其依赖步骤，不用工具补答案、不重试到质量成功；其他独立题仍可继续。",
+  "casesSha256": "cc4c2a97867ee83a633a894facaeda695c082166edeae64674ba7737b7c8643f",
+  "authorizationBasis": "用户批准新增18次，执行三题限定验收；不转关闭余额，不做质量重试。",
+  "authorizedAt": "2026-10-18T16:57:27.813719+00:00"
+}
