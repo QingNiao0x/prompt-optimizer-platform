@@ -38,7 +38,8 @@ class PromptFrameworkGenerationContractTest {
         assertThat(natural.mode()).isEqualTo("NATURAL_FRAMEWORK");
         assertThat(structured.mode()).isEqualTo("FOCUSED_MODULES");
         assertThat(natural.instruction()).contains(selected.instruction(), "完整自然正文集中写入TASK",
-                "放在适用动作附近", "BACKGROUND与OUTPUT保留空字符串", "引用目的段与平台保护不变");
+                "放在适用动作附近", "BACKGROUND、OUTPUT与CONSTRAINTS仅在requirementReferences指定该destination时保留独立引用行",
+                "否则保留空字符串", "引用目的段与平台保护不变");
         assertThat(structured.instruction()).contains(selected.instruction(), "模块职责", "约束集中表达业务边界");
         assertThat(natural.instruction()).isNotEqualTo(structured.instruction());
         assertThat(selected.instruction()).doesNotContain("自然段落顺序", "TASTE", "ALIGN");

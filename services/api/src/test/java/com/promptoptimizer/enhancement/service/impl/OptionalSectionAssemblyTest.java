@@ -9,10 +9,13 @@ import com.promptoptimizer.enhancement.domain.PromptFormat;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
+import com.promptoptimizer.enhancement.dto.EnhancementOptions;
 import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.policy.service.impl.ConstraintCompleterImpl;
 import com.promptoptimizer.provider.domain.EnhancementProviderResponse;
+import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
+import com.promptoptimizer.provider.domain.PromptRewriteStrategy;
 import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import com.promptoptimizer.provider.domain.TaskEnhancementAssessment;
 import com.promptoptimizer.template.service.impl.PromptTemplateRegistryImpl;
@@ -100,6 +103,45 @@ class OptionalSectionAssemblyTest {
 
         assertThat(result.optimizedPrompt()).contains("退款到账日期", "尚未确定", "不得默认具体日期");
         assertThat(result.sections()).allMatch(section -> !section.content().isBlank());
+    }
+
+    @Test
+    void naturalBodyKeepsConfirmedStateAndDeliveryReferencesInTheirAssignedSlots() {
+        String raw = "整理交接记录。";
+        var answers = List.of(
+                new PlanAnswer("existing-records", "当前有哪些交接记录？", "当前已有预算和采购清单的交接记录。"),
+                new PlanAnswer("delivery-format", "输出格式是什么？", "交付带先后依赖的待办清单。"));
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+        var template = new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw);
+        var bundle = new ConstraintCompleterImpl().completeForTask(emptyContext, PermissionPolicyInput.empty(), true, task.intent());
+        var request = new EnhancementProviderRequest(raw, emptyContext, template, List.of(), answers, true,
+                bundle.visibleConstraints(), List.of(), EnhancementOptions.defaults(), null,
+                List.of(), task.confirmedDecisions(), task);
+        var references = BoundRequirementProjection.forProvider(request);
+        assertThat(references).extracting(BoundRequirementProjection.Slot::destination)
+                .contains(PromptSectionType.BACKGROUND, PromptSectionType.OUTPUT);
+        assertThat(PromptRewriteStrategy.forTask(task, PromptFormat.COMPACT).instruction())
+                .contains("BACKGROUND、OUTPUT与CONSTRAINTS仅在requirementReferences指定该destination时保留独立引用行",
+                        "否则保留空字符串", "引用目的段与平台保护不变");
+
+        // 自然正文集中在 TASK 不改变确认的责任段；辅助槽仅承接其本身绑定的来源引用。
+        var sections = slots("依据已有交接记录整理待办，并保留每项的先后依赖。").stream().map(section -> {
+            String refs = references.stream().filter(reference -> reference.destination() == section.type())
+                    .map(BoundRequirementProjection.Slot::reference).collect(java.util.stream.Collectors.joining("\n"));
+            return new PromptSection(section.type(), section.title(),
+                    section.content().isEmpty() ? refs : section.content() + (refs.isEmpty() ? "" : "\n" + refs));
+        }).toList();
+        var result = assemble(raw, sections, PromptFormat.COMPACT, emptyContext, List.of(), answers, true);
+
+        for (var reference : references) {
+            assertThat(result.sections()).filteredOn(section -> section.type() == reference.destination())
+                    .singleElement().satisfies(section -> assertThat(section.content()).contains(reference.statement()));
+            assertThat(org.springframework.util.StringUtils.countOccurrencesOf(result.optimizedPrompt(), reference.statement()))
+                    .as("source rendered once: %s", reference.destination()).isEqualTo(1);
+        }
+        assertThat(result.optimizedPrompt()).doesNotContain("{{REQ_", "## 背景", "## 输出");
+        assertThat(result.constraintGroups()).isEqualTo(bundle);
+        assertThat(task.confirmedDecisions()).hasSize(2);
     }
 
     @Test

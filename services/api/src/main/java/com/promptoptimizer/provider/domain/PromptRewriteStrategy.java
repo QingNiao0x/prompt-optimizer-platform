@@ -54,7 +54,7 @@ public record PromptRewriteStrategy(String mode, String instruction) {
         if (format == PromptFormat.COMPACT) {
             return new PromptRewriteStrategy("NATURAL_FRAMEWORK", common + "\n" + selection.instruction() + "\n" + """
                     本次采用自然表达，assessment.presentation=COMPACT。先依据主框架确定当前任务的动作、必要规则和交付重点，再写紧凑、可直接交给执行者的提示词；不是先写模块正文再去掉标题。
-                    将完整自然正文集中写入TASK：先写用户要完成的内容，再将必要事实、规则与交付方式放在适用动作附近，允许短段落、列表、原有代码和必要引用。BACKGROUND与OUTPUT保留空字符串，不再将同一正文拆成背景介绍和输出清单；CONSTRAINTS仅保留指定在此处独立一行交付的来源引用，其余必要条件融入TASK。四类类型仍齐全，引用目的段与平台保护不变。
+                    将完整自然正文集中写入TASK：先写用户要完成的内容，再将必要事实、规则与交付方式放在适用动作附近，允许短段落、列表、原有代码和必要引用。BACKGROUND、OUTPUT与CONSTRAINTS仅在requirementReferences指定该destination时保留独立引用行，否则保留空字符串；不另写重复背景和输出清单，其余必要条件融入TASK。四类类型仍齐全，引用目的段与平台保护不变。
                     内容展开回答“具体需要了解或完成什么”，依据任务补充对象、相关作用或比较维度；证据要求贴近相关结论，不能让口径枚举和资料局限成为正文主体。不展示框架字母或背景／任务／输出等标签。
                     优先保留充分需求的有效原句；只在有缺口时补相关动作和条件。不给简单任务扩写角色背景、流程或验收，不把复杂任务缩成空架子。未决事项仍由平台统一保留，不能压缩掉否定、例外、对象、参数状态和来源。
                     """);
