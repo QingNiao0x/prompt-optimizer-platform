@@ -278,9 +278,10 @@ class MybatisOptimizationHistoryServiceTest {
         assertThat(metadata.getValue()).containsEntry("editRevision", 1L);
     }
 
-    @Test
-    void naturalHistoryPersistsAllFiveRulesAndRejectsRemovingAnyDuringEditing() {
-        var groups = new ConstraintBundle(PlatformConstraintRules.forNaturalMode(), List.of(),
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void naturalHistoryPreservesSavedBodyButAllowsEditingOutOldFixedClauses(boolean hasOldFixedClauses) {
+        var groups = new ConstraintBundle(hasOldFixedClauses ? PlatformConstraintRules.CODE_RULES : List.of(), List.of(),
                 List.of("禁止读取或输出受保护路径：private/**。"));
         String boundaries = String.join("\n", groups.visibleConstraints());
         String body = "保留原定任务正文。\n\n" + boundaries;
@@ -298,28 +299,46 @@ class MybatisOptimizationHistoryServiceTest {
         assertThat(service.getDocument(id).optimizedPrompt()).isEqualTo(body);
         assertThat(service.getDocument(id).constraintGroups()).isEqualTo(groups);
 
-        for (String rule : groups.visibleConstraints()) {
-            assertThatThrownBy(() -> service.editText(id,
-                    new com.promptoptimizer.history.dto.PromptTextEditRequest(body.replace(rule, ""), 0)))
-                    .isInstanceOf(com.promptoptimizer.common.exception.InvalidOptimizationRequestException.class);
-        }
+        assertThatThrownBy(() -> service.editText(id,
+                new com.promptoptimizer.history.dto.PromptTextEditRequest("修改后的任务正文。", 0)))
+                .isInstanceOf(com.promptoptimizer.common.exception.InvalidOptimizationRequestException.class);
         verify(recordMapper, never()).updateNaturalText(any(), any(), any(), org.mockito.ArgumentMatchers.anyLong(), any(), any());
-        String edited = "修改后的任务正文。\n\n" + boundaries;
+        String edited = "修改后的任务正文。\n\n" + String.join("\n", groups.additionalPermissions());
         when(recordMapper.updateNaturalText(eq(id), eq(TENANT_ID), eq(WORKSPACE_ID), eq(0L), eq(edited), any())).thenReturn(1);
         assertThat(service.editText(id, new com.promptoptimizer.history.dto.PromptTextEditRequest(edited, 0)).optimizedPrompt())
                 .isEqualTo(edited);
+        var metadata = ArgumentCaptor.forClass(Map.class);
+        verify(recordMapper).updateNaturalText(eq(id), eq(TENANT_ID), eq(WORKSPACE_ID), eq(0L), eq(edited), metadata.capture());
+        assertThat(metadata.getValue()).containsEntry("generatedPrompt", body);
+        var updatedGroups = objectMapper.convertValue(metadata.getValue().get("constraintGroups"), ConstraintBundle.class);
+        assertThat(updatedGroups.platformMandatory()).isEmpty();
+        assertThat(updatedGroups.additionalPermissions()).isEqualTo(groups.additionalPermissions());
+        assertThat(metadata.getValue().get("appliedConstraints")).isEqualTo(groups.additionalPermissions());
     }
 
     @Test
-    void naturalEditCannotDropMandatoryRulesOrOverwriteDeletedOrNewerRecords() {
+    void naturalHistoryWithoutPermissionRulesCanSaveEditedBodyWithoutRestoringFixedClauses() {
         var record = naturalRecord();
+        record.getResultMetadata().put("constraintGroups", Map.of("platformMandatory", List.of(),
+                "taskSpecific", List.of(), "additionalPermissions", List.of()));
+        when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);
+        when(recordMapper.updateNaturalText(eq(record.getId()), eq(TENANT_ID), eq(WORKSPACE_ID), eq(0L), any(), any())).thenReturn(1);
+        assertThat(service.editText(record.getId(), new com.promptoptimizer.history.dto.PromptTextEditRequest("修改后的任务正文。", 0))
+                .optimizedPrompt()).isEqualTo("修改后的任务正文。");
+    }
+
+    @Test
+    void naturalEditCannotDropExplicitPermissionsOrOverwriteDeletedOrNewerRecords() {
+        var record = naturalRecord();
+        record.getResultMetadata().put("constraintGroups", Map.of("platformMandatory", List.of("事实边界。"),
+                "taskSpecific", List.of(), "additionalPermissions", List.of("删除前确认。")));
         when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);
         assertThatThrownBy(() -> service.editText(record.getId(),
                 new com.promptoptimizer.history.dto.PromptTextEditRequest("删除了边界", 0)))
                 .isInstanceOf(com.promptoptimizer.common.exception.InvalidOptimizationRequestException.class);
         verify(recordMapper, never()).updateNaturalText(any(), any(), any(), org.mockito.ArgumentMatchers.anyLong(), any(), any());
         assertThatThrownBy(() -> service.editText(record.getId(),
-                new com.promptoptimizer.history.dto.PromptTextEditRequest("新正文。事实边界。", 0)))
+                new com.promptoptimizer.history.dto.PromptTextEditRequest("新正文。删除前确认。", 0)))
                 .isInstanceOf(com.promptoptimizer.common.exception.InvalidOptimizationRequestException.class);
     }
 

@@ -94,10 +94,10 @@ public class NaturalEnhancementService {
                         request.context().customDescription()).snapshot(), request.permissionPolicy());
         List<ConversationMessage> conversation = Boolean.TRUE.equals(request.enhancement().includeConversationHistory())
                 ? request.conversationHistory() : List.of();
-        // 自然模式的五条固定边界适用于所有任务及 Plan 最终生成，不再按工程交付选择数量。
-        // 安全条款独立于生成策略版本；再次增强采用当前条款，读取旧历史仍保留原保存正文。
+        // 自然模式不自动追加平台固定条款；仅组装用户明确设置的权限边界。
+        // 原始需求和正文中的具体要求仍完整保留，敏感扫描与资料过滤独立执行。
         List<String> permissions = additionalPermissions(request.permissionPolicy());
-        var groups = new ConstraintBundle(PlatformConstraintRules.forNaturalMode(), List.of(), permissions);
+        var groups = new ConstraintBundle(List.of(), List.of(), permissions);
         var input = new NaturalPromptInput(request.rawPrompt(), context, confirmed.answers(), conversation,
                 Boolean.TRUE.equals(request.enhancement().includeExamples()), groups.visibleConstraints(),
                 model.publicId(), planningContext).withStrategyVersion(strategyVersion);
@@ -149,7 +149,7 @@ public class NaturalEnhancementService {
                 Math.max(0, clock.millis() - start), registration.planId(), registration.planningContext(), registration.expiresAt());
     }
 
-    /** 平台固定边界只补确实缺失的原句，不经过旧任务规则追加器，不删除模型或用户的重要条件。 */
+    /** 只补明确设置的权限原句，不追加平台固定条款，不删除模型或用户的重要条件。 */
     private String validateBody(NaturalPromptDraft draft, List<String> required, String strategyVersion) {
         if (draft == null || draft.framework() == null || draft.provider() == null
                 || draft.optimizedPrompt() == null || draft.optimizedPrompt().isBlank()) throw invalid("自然正文不完整");
@@ -165,7 +165,7 @@ public class NaturalEnhancementService {
     }
 
     /**
-     * 第二版统一组装固定边界，仅归并独占一行的完整平台原句；不对自由正文做近义删除。
+     * 第二版起统一组装用户追加权限，仅归并独占一行的完整权限原句；不对自由正文做近义删除。
      * 代码围栏、引用、条件句和附带业务内容保留原样，不能为消除重复而丢失独立条件。
      */
     private String assembleBoundaries(String body, List<String> required) {
@@ -260,7 +260,7 @@ public class NaturalEnhancementService {
                 List.of(), snapshot.analysisVersion());
     }
 
-    /** 用户只能追加路径和操作边界，不能替换平台强制条款。 */
+    /** 将用户明确设置的路径和操作转成权限原句，不注入默认平台条款。 */
     private List<String> additionalPermissions(PermissionPolicyInput policy) {
         List<String> rules = new ArrayList<>();
         policy.protectedPaths().forEach(this::rejectInput);

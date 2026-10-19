@@ -3,7 +3,7 @@ package com.promptoptimizer.policy.domain;
 import java.util.List;
 
 /**
- * 用户可复制的平台条款；自然模式固定五条，旧分节链路按任务选择，不承担服务端安全校验。
+ * 供分节链路按任务选择的固定平台条款；自然模式不自动追加，不承担服务端安全校验。
  *
  * @author QingNiao
  * @since 0.1.0
@@ -14,7 +14,7 @@ public final class PlatformConstraintRules {
     public static final String TRUTH = "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。";
     public static final String PATH_PREFIX = "禁止读取或输出受保护路径：";
     public static final String ACTION_PREFIX = "以下操作必须先获得人工确认：";
-    /** 五条固定原句；保留既有名称供分节链路兼容，自然模式同样完整采用。 */
+    /** 分节链路用于含肯定代码交付任务的五条固定原句。 */
     public static final List<String> CODE_RULES = List.of(
             TRUTH,
             "不得在代码、日志或响应中泄露密码、Token、API Key 或私钥。",
@@ -24,11 +24,6 @@ public final class PlatformConstraintRules {
     );
 
     private PlatformConstraintRules() { }
-
-    /** 自然模式统一采用五条，不依赖任务、模板或 Plan 答案；旧历史读取仍以保存内容为准。 */
-    public static List<String> forNaturalMode() {
-        return CODE_RULES;
-    }
 
     /** 旧分节链路含肯定代码交付时输出五条，其他任务仅输出事实边界；自然模式不走此分支。 */
     public static List<String> forTask(boolean engineering) {

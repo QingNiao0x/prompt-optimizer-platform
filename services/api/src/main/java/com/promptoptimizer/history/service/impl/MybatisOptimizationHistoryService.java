@@ -232,7 +232,7 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         return new DocumentReoptimizationResult(recordId, result.withRecordId(recordId));
     }
 
-    /** 自然编辑保持原生成快照，校验固定权限后以CAS保存，不调用模型或重建四要素。 */
+    /** 自然编辑保留生成快照，仅校验明确追加权限后以CAS保存，不调用模型或重建四要素。 */
     @Override
     @Transactional
     public com.promptoptimizer.history.domain.PromptTextEditResult editText(UUID id,
@@ -247,11 +247,15 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         }
         ConstraintBundle groups = metadata.get("constraintGroups") == null ? null
                 : objectMapper.convertValue(metadata.get("constraintGroups"), ConstraintBundle.class);
-        if (groups == null || java.util.stream.Stream.concat(groups.platformMandatory().stream(), groups.additionalPermissions().stream())
-                .anyMatch(rule -> !request.optimizedPrompt().contains(rule))) {
-            throw new InvalidOptimizationRequestException("请保留本次结果的事实和权限边界，修改稿已保留。");
+        if (groups == null || groups.additionalPermissions().stream().anyMatch(rule -> !request.optimizedPrompt().contains(rule))) {
+            throw new InvalidOptimizationRequestException("请保留本次明确设置的权限边界，修改稿已保留。");
         }
         metadata.putIfAbsent("generatedPrompt", source.getOptimizedPrompt());
+        // 自然模式取消固定条款锁定，旧记录只有在用户显式编辑时才更新归属；读取不改原文。
+        // 追加权限仍来自该记录的服务端分组，不能用客户端提交内容关闭；保留原生成快照供撤销。
+        var currentGroups = new ConstraintBundle(List.of(), groups.taskSpecific(), groups.additionalPermissions());
+        metadata.put("constraintGroups", toMap(currentGroups));
+        metadata.put("appliedConstraints", currentGroups.visibleConstraints());
         long revision = request.expectedRevision() + 1;
         metadata.put("editRevision", revision);
         metadata.put("editedAt", OffsetDateTime.now(ZoneOffset.UTC).toString());
