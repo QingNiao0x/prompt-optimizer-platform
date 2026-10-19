@@ -186,7 +186,8 @@ class NaturalEnhancementServiceTest {
         String rule = com.promptoptimizer.policy.domain.PlatformConstraintRules.TRUTH;
         provider.body = rule + "\n" + rule;
         var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"));
-        assertThat(result.optimizedPrompt()).isEqualTo(rule);
+        assertThat(result.optimizedPrompt()).endsWith(rule).contains("按原定交付的格式和篇幅", "不另加分类说明或自检清单");
+        assertThat(result.optimizedPrompt().indexOf(rule)).isEqualTo(result.optimizedPrompt().lastIndexOf(rule));
     }
 
     @Test

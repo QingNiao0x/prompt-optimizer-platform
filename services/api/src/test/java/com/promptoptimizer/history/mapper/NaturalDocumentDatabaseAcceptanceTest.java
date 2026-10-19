@@ -81,6 +81,8 @@ class NaturalDocumentDatabaseAcceptanceTest {
         // COMMENT也在当前事务内验证并回滚，既有Flyway历史不被修改。
         ScriptUtils.executeSqlScript(DataSourceUtils.getConnection(dataSource),
                 new ClassPathResource("db/migration/V16__natural_prompt_document_metadata.sql"));
+        ScriptUtils.executeSqlScript(DataSourceUtils.getConnection(dataSource),
+                new ClassPathResource("db/migration/V17__natural_task_strategy_version_comment.sql"));
         String marker = "natural-acceptance-" + UUID.randomUUID();
         var input = new OptimizationRequest(marker, new com.promptoptimizer.context.dto.ContextAnalysisRequest("", List.of()),
                 new EnhancementOptions(TemplateCode.AUTO, false, true, false, PromptFormat.COMPACT),
@@ -101,6 +103,10 @@ class NaturalDocumentDatabaseAcceptanceTest {
         assertThat(history.listAll(1, 10, marker, null, null).records()).extracting(r -> r.id()).containsExactlyInAnyOrder(natural, legacy);
         assertThat(history.getDocument(natural).sections()).isEmpty();
         assertThat(history.getDocument(natural).optimizedPrompt()).isEqualTo(document.optimizedPrompt());
+        var reoptimized = history.reoptimizeDocument(natural);
+        created.add(reoptimized.recordId());
+        assertThat(reoptimized.result().chainVersion()).isEqualTo("1");
+        history.delete(reoptimized.recordId());
 
         PromptTextEditResult edited = history.editText(natural, new PromptTextEditRequest("有效修改。事实边界。", 0));
         assertThat(edited.editRevision()).isEqualTo(1);
@@ -150,6 +156,8 @@ class NaturalDocumentDatabaseAcceptanceTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.data.resultKind").value("TEXT"))
                 .andExpect(jsonPath("$.data.sections").doesNotExist())
                 .andExpect(jsonPath("$.data.confirmedPlanAnswers").doesNotExist())
+                .andExpect(jsonPath("$.data.taskUnderstanding").doesNotExist())
+                .andExpect(jsonPath("$.data.chainVersion").value("2"))
                 .andReturn().getResponse().getContentAsString(java.nio.charset.StandardCharsets.UTF_8);
         var result = json.readTree(response).path("data");
         UUID id = UUID.fromString(result.path("recordId").asText());
