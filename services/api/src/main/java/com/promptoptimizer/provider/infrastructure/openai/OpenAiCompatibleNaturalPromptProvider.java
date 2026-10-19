@@ -57,8 +57,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     @Override
     public <T> T enhance(NaturalPromptInput input, Function<NaturalPromptDraft, T> validation) {
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
-        String instruction = NaturalPromptInstructionsV1.VERSION.equals(input.strategyVersion())
-                ? NaturalPromptInstructionsV1.ENHANCE : NaturalPromptInstructions.ENHANCE;
+        String instruction = NaturalPromptInstructions.enhancementInstruction(input.strategyVersion());
         return invoke(input, instruction, "prompt.optimize", (body, metadata) -> {
             try {
                 return validation.apply(new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
@@ -73,8 +72,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     @Override
     public <T> T plan(NaturalPromptInput input, Function<PlanningProviderResponse, T> validation) {
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
-        String instruction = NaturalPromptInstructionsV1.VERSION.equals(input.strategyVersion())
-                ? NaturalPromptInstructionsV1.PLAN : NaturalPromptInstructions.PLAN;
+        String instruction = NaturalPromptInstructions.planningInstruction(input.strategyVersion());
         return invoke(input, instruction, "plan.generate", (body, metadata) -> {
             if (!body.path("questions").isArray()) throw invalid("Plan问题列表无效");
             try {
@@ -227,10 +225,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         return body.path(name).asText().strip();
     }
 
-    /** 新记录只核对当前输入出处；缺省兼容第一版，不将模型自报类别当作用户确认。 */
+    /** 第二、三版核对当前输入出处；兼容第一版无任务记录，不将模型自报类别当作用户确认。 */
     private NaturalTaskUnderstanding understanding(JsonNode body, NaturalPromptInput input) {
         if (!body.hasNonNull("taskUnderstanding")) {
-            if (NaturalPromptInstructions.VERSION.equals(input.strategyVersion())) throw invalid("自然链路缺少任务理解记录");
+            if (NaturalPromptInstructions.requiresTaskUnderstanding(input.strategyVersion())) throw invalid("自然链路缺少任务理解记录");
             return null;
         }
         try {

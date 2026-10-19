@@ -7,10 +7,38 @@ package com.promptoptimizer.provider.domain;
  * @since 0.1.0
  */
 public final class NaturalPromptInstructions {
-    public static final String VERSION = "2";
+    public static final String VERSION = "3";
 
-    /** 已保存的第一版自然记录继续使用冻结指导，不静默改换再次增强策略。 */
-    public static boolean supports(String version) { return VERSION.equals(version) || NaturalPromptInstructionsV1.VERSION.equals(version); }
+    /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
+    public static boolean supports(String version) {
+        return VERSION.equals(version) || NaturalPromptInstructionsV2.VERSION.equals(version)
+                || NaturalPromptInstructionsV1.VERSION.equals(version);
+    }
+
+    /** 第二版起均保留来源与任务理解协议；升级写作策略不能放松旧版本的协议保护。 */
+    public static boolean requiresTaskUnderstanding(String version) {
+        return supports(version) && !NaturalPromptInstructionsV1.VERSION.equals(version);
+    }
+
+    /** 以保存的版本选择原生成指导；正文写法更新不静默改写旧历史的再次增强策略。 */
+    public static String enhancementInstruction(String version) {
+        return switch (version) {
+            case "1" -> NaturalPromptInstructionsV1.ENHANCE;
+            case "2" -> NaturalPromptInstructionsV2.ENHANCE;
+            case VERSION -> ENHANCE;
+            default -> throw new IllegalArgumentException("自然增强版本不受支持");
+        };
+    }
+
+    /** Plan采用同版本的任务责任边界；旧版对照不复用新版提问指导。 */
+    public static String planningInstruction(String version) {
+        return switch (version) {
+            case "1" -> NaturalPromptInstructionsV1.PLAN;
+            case "2" -> NaturalPromptInstructionsV2.PLAN;
+            case VERSION -> PLAN;
+            default -> throw new IllegalArgumentException("自然增强版本不受支持");
+        };
+    }
     public static final String COMMON = """
             你是提示词优化器，只交付指导下游完成用户原定任务的提示词，不执行原任务。
             原始提示词决定目标和交付物；actualAnswers 是经服务端绑定的真实题答，
@@ -31,34 +59,30 @@ public final class NaturalPromptInstructions {
             原有要求与拟议补充分开；资料、助手建议、未知回答不升级为用户确认。内部分类标签不机械写进最终提示词。
             """;
     public static final String ENHANCE = COMMON + """
-            生成自然、紧凑、可以直接执行的优化提示词。理解目标、对象和原定交付后，
-            识别真正影响完成任务的缺口，补足能直接改善结果的内容，再组织正文。
-            先把原任务的主要内容展开到足以交付，再补必要的来源与约束；避免正文主体只剩通用核查说明。
-            每项补充都应服务原定交付，并有原文、适用资料或合理设计依据；保持否定、例外、并列要求和适用条件。
-            比较依据须对应用户关心的属性，间接线索应说明适用限度，不能据此替换原比较目标。
-            需要比较时明确比较依据和要呈现的发现；有顺序依赖时交代必要步骤；材料参与任务时说明材料用途；
-            缺少交付要求时补清成品应包含什么。这些是按当前语义选用的能力，不是每次都要填满的槽位。
-            对简短模糊需求做有价值的任务展开；充分需求保留有效表达，只补必要缺口；
-            原句已充分且可执行时直接保留原句，避免在其后再逐项同义复写；执行所需的材料、否定和独立条件仍完整保留。
-            用户委托的设计直接落实为拟议交付要求，保留合理探索空间；不要为显得专业扩成额外任务。
-            首先说清要完成什么、交付什么，再把必要依据、条件和检查要求放在对应动作附近。
-            简单任务自然成段，多个独立交付可以列点；只有执行顺序重要才写步骤。遵守用户指定的字数与格式。
-            对结果有重大影响且不能确定的选择，在直接增强中保留适用条件或交给下游澄清，不擅定为用户选择，
-            其余可执行部分继续交付。不要把任务改成补材料问卷或空白表单。
-            mandatoryRules由平台统一组装。理解并遵守其中边界，正文重点写当前任务，不复述这些通用条款或其近义口号，
-            不削弱用户原有的具体条件，也不把内部“事实/确认/假设”管理标签机械变成每次的写作要求。
-            includeExamples仅控制下游是否提供有助任务的相关示例；原文禁例、事实边界和严格格式优先。
-            framework仅是正文写成后的组织参考标记：APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE；
-            根据实际表达择一，无法可靠匹配用APE，不因选择框架新增内容或追问。
-            只返回JSON：{"taskUnderstanding":上述记录,"optimizedPrompt":"完整自然正文","framework":"参考标记"}。
-            最终正文不展示内部记录、框架名、优化过程、评分或多份候选，不强制五模块标题；用户指定的下游格式仍应保留。
+            将用户的原始提示词完善成一份自然、紧凑、可直接交给执行者的请求，目标作品仍由执行者完成。
+            先确定用户要完成的动作、处理的对象和目标作品，再沿用其范围、格式、篇幅、受众及明确限制。
+            把已提供的具体信息直接用于相应动作与交付要求；背景只用影响任务的真实上下文，不编造角色、经历或数据。
+            信息已经充分时保留有效原句，只补影响交付的缺口。补充写成具体可执行的要求，
+            不把“明确背景、任务、输出、约束”等栏目留给用户填写，也不将原任务改成分析方案或收集需求的任务。
+            开放任务补充有帮助的内容重点、对象的主要特点、实际做法和预期发现；让这些内容构成正文主体。
+            常规的组织方式、检索路径、方法设计与表达选择，由执行者结合任务合理完成；拟议设计不冒充实际事实或用户确认。
+            仅在任务确实依赖统计计算、数据排名或研究判断时，补充必要的比较定义与证据要求，
+            简要放在相关判断附近；资料不足时说明受影响的结论，仍完成其余内容。不要将口径定义变成整份交付的主体。
+            用户独有的实际参数、明确保留的取舍、权限和来源冲突继续保持未决；只限制依赖它的部分，
+            不因尚未提供普通执行细节而要求用户先决定全部方法。保持全部否定、例外、并列要求和条件。
+            首句说明要完成什么和交付什么；简单任务自然成段，独立内容需要时列点，有依赖才列步骤。
+            mandatoryRules由平台统一组装，正文集中写当前任务，不复写通用核查规则或内部分类标签。
+            includeExamples仅控制原定任务中的适用示例；用户禁例、严格格式和事实边界优先。
+            framework只是正文形成后的组织参考：APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE，
+            无法可靠匹配用APE；不因框架补字段、增加任务或追问，不展示框架名或强制五模块标题。
+            只返回JSON：{"optimizedPrompt":"完整自然正文","framework":"参考标记","taskUnderstanding":上述记录}。
             """ + TASK_RECORD;
     public static final String PLAN = COMMON + """
             当前只生成Plan问题及简短任务理解，不生成最终提示词。
-            使用与直接增强相同的原定目标、交付物、完整来源和信息状态，先判断缺口是否真的需要用户决定。
-            仅在不同答案会实质改变结果或授权、现有输入无法确定、且用户未委托执行者合理设计时提问。
-            可以在最终交付中说明统计口径、适用条件或证据范围的问题，不因其出现便强制追问；
-            需要用户作出重要取舍时仍须问，不能为减少题数擅选口径、范围、方法或新增限制。
+            使用与直接增强相同的原定目标、交付物、完整来源和信息状态，判断哪些重要决定确实属于用户。
+            用户独有的实际信息、明确保留的选择、授权和无法消解的来源冲突，若不同答案会实质改变结果，必须提问。
+            常规组织、检索及用户已委托的方法设计由执行者完成；能在原定交付内说明的比较依据与资料局限，
+            不单独制造前置问题，也不因用户没给出全部执行细节便认定无法开展任务。
             已知信息、已委托的设计、通常可由执行者完成的组织表达和执行细节不追问。
             充分需求允许questions为空；模糊需求也不等于全部字段都需补齐，不按身份、场景或框架凑题。
             每个问题在taskUnderstanding.openDecisions中记录同一questionId及其交付影响；

@@ -105,7 +105,7 @@ public class NaturalEnhancementService {
         String workflowId = request.planConfirmation() == null ? null : request.planConfirmation().planId();
         try (var scope = LogCorrelation.bindWorkflow("planning-plan", workflowId)) {
             return provider.enhance(input, draft -> {
-                if (NaturalPromptInstructions.VERSION.equals(strategyVersion)) {
+                if (NaturalPromptInstructions.requiresTaskUnderstanding(strategyVersion)) {
                     if (draft == null || draft.taskUnderstanding() == null) throw invalid("自然链路缺少任务理解记录");
                     draft.taskUnderstanding().resolve(input);
                 }
@@ -156,7 +156,7 @@ public class NaturalEnhancementService {
                 || draft.optimizedPrompt() == null || draft.optimizedPrompt().isBlank()) throw invalid("自然正文不完整");
         String body = draft.optimizedPrompt().strip();
         if (sensitive.containsCredential(body)) throw invalid("自然正文包含疑似敏感凭据");
-        if (NaturalPromptInstructions.VERSION.equals(strategyVersion)) return assembleBoundaries(body, required);
+        if (NaturalPromptInstructions.requiresTaskUnderstanding(strategyVersion)) return assembleBoundaries(body, required);
         for (String rule : required) {
             int first = body.indexOf(rule);
             if (first >= 0 && body.indexOf(rule, first + rule.length()) >= 0) throw invalid("平台边界重复");

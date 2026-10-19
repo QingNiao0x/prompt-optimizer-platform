@@ -147,6 +147,44 @@ class OpenAiCompatibleNaturalPromptProviderTest {
         assertThat(json.writeValueAsString(result)).doesNotContain("taskUnderstanding");
         server.verify();
     }
+    @Test
+    void thirdVersionUsesDeliverableGuidanceWithTheSameSourceProtocol() throws Exception {
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(body.path("messages").get(0).path("content").asText()).contains("目标作品", "已提供的具体信息");
+            var payload = json.readTree(body.path("messages").get(1).path("content").asText().split("\n", 2)[1]);
+            assertThat(payload.path("strategyVersion").asText()).isEqualTo("3");
+            assertThat(payload.has("template")).isFalse();
+            assertThat(payload.path("taskSources").get(0).path("id").asText()).isEqualTo("rawPrompt");
+        }).andRespond(withSuccess(response("{\"optimizedPrompt\":\"写一封符合原意的邮件。\",\"framework\":\"APE\","
+                + "\"taskUnderstanding\":{\"goal\":\"写邮件\",\"deliverable\":\"邮件\",\"requirements\":[],\"additions\":[],\"openDecisions\":[]}}"),
+                MediaType.APPLICATION_JSON));
+        assertThat(provider.enhance(input().withStrategyVersion("3"), Function.identity()).optimizedPrompt()).contains("邮件");
+        server.verify();
+    }
+
+    @Test
+    void thirdVersionPlanUsesUserOwnedDecisionsAndKeepsItsTaskRecord() throws Exception {
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(body.path("messages").get(0).path("content").asText()).contains("重要决定确实属于用户");
+        }).andRespond(withSuccess(response("{\"summary\":\"原定任务可以执行\",\"questions\":[],"
+                + "\"taskUnderstanding\":{\"goal\":\"写邮件\",\"requirements\":[],\"additions\":[],\"openDecisions\":[]}}"),
+                MediaType.APPLICATION_JSON));
+        assertThat(provider.plan(input().withStrategyVersion("3"), Function.identity()).questions()).isEmpty();
+        server.verify();
+    }
+
+    @Test
+    void thirdVersionCannotDropTheExistingTaskRecordProtection() throws Exception {
+        String old = response("{\"optimizedPrompt\":\"邮件正文\",\"framework\":\"APE\"}");
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(old, MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(old, MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(input().withStrategyVersion("3"), Function.identity()))
+                .isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
     private NaturalPromptInput input() {
         return new NaturalPromptInput("写邮件", new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
                 List.of(), List.of(), false, List.of(), null).withStrategyVersion("1");
