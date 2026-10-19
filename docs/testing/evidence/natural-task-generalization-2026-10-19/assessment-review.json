@@ -1,0 +1,30 @@
+{
+  "reviewType": "POST_RUN_EVIDENCE_CORRECTION",
+  "originalSummaryGitHead": "ad54fb72",
+  "newModelCalls": 0,
+  "copySelection": {
+    "jobId": "COPY_BRIEF_R2_EXEC",
+    "bodyQuote": "11月1日，青禾路8号，“拾页”要和大家见面了。这是一家开在社区里的书店，想成为邻里间可以常来坐坐的地方。开业当天，欢迎来逛逛、翻翻书，感受一下属于我们这条街的小小书香。期待在“拾页”遇见你。",
+    "requirement": {
+      "quote": "80至120字",
+      "min": 80,
+      "max": 120,
+      "metric": null
+    },
+    "selectionBasis": "人工选取直接用于朋友圈发布的文案段落，不包括模型字数声明及后附分类说明。原始题目未指定非空白字符或纯汉字口径，不事后选择一种口径判定整体失败。",
+    "formatReview": {
+      "id": "COPY_BRIEF_R2_NO_EXTRA_CLASSIFICATION",
+      "status": "FAILED",
+      "promptQuote": "不另加分类说明或自检清单",
+      "responseQuote": "说明：已知事实为店名“拾页”、11月1日开业、地址青禾路8号",
+      "reason": "该候选提示词明确要求不追加分类说明，实际回复仍追加说明；此判定限于候选的格式遵从，不等同原始文案正文超长或所有任务失败。"
+    }
+  },
+  "comparativeChecks": [
+    {
+      "id": "GENERAL_QUALITY_GAIN",
+      "status": "UNVERIFIED",
+      "reason": "有限题集和存在误判的辅助评审不足以证明跨任务稳定增益；终版调整没有新增实际作品。记录未证实，不判为所有场景失败。"
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { assessTextArtifact, summarizeEvidence } from './evidence-assessment.mjs';
 
 const root = resolve('tmp/natural-task-eval-20261019');
 const target = resolve('docs/testing/evidence/natural-task-generalization-2026-10-19');
@@ -90,29 +91,53 @@ const finalCopy = await generated('COPY_BRIEF_R2_EXEC');
 const finalPlan = await generated('PROCUREMENT_UNKNOWN_R2_PLAN');
 const codeLog = await readFile(resolve(root, 'java/R2/run.log'), 'utf8');
 assert(codeLog.includes('PASS cases=16'), 'Actual revised Java artifact failed');
-const quality = { overall: 'NOT_PASSED', rawAuxiliaryPreferences: { initialNatural: 2, tie: 6, scope: '原始辅助意见，存在误判，不当作业务胜负。' },
-  initialJava: await read(resolve(target, 'java-acceptance-initial.json')),
+const review = await read(resolve(target, 'assessment-review.json'));
+const selection = review.copySelection;
+assert(cases.find(row => row.id === 'COPY_BRIEF').rawPrompt.includes(selection.requirement.quote), 'Length requirement quote mismatch');
+assert(selection.jobId === 'COPY_BRIEF_R2_EXEC', 'Artifact selection mismatch');
+const revisedCopy = assessTextArtifact(finalCopy.body.data.content, selection.bodyQuote, selection.requirement);
+const copyPrompt = (await generated('COPY_BRIEF_R2_GEN')).body.data.optimizedPrompt;
+assert(copyPrompt.includes(selection.formatReview.promptQuote)
+  && finalCopy.body.data.content.includes(selection.formatReview.responseQuote), 'Recorded format review is not supported by the actual prompt and response');
+const initialJava = await read(resolve(target, 'java-acceptance-initial.json'));
+const sampleChecks = initialJava.map(row => ({
+  id: 'INITIAL_JAVA_' + row.arm, status: row.compiled && row.behaviorPassed ? 'PASSED' : 'FAILED',
+  evidence: 'java-acceptance-initial.json', scope: '初轮对应作品，后续成功不覆盖此前失败'
+}));
+sampleChecks.push({ id: 'REVISED_JAVA', status: 'PASSED', evidence: 'quality-observations.json#revisedJava' },
+  selection.formatReview);
+const quality = { sampleEvidence: summarizeEvidence(sampleChecks), comparativeEvidence: summarizeEvidence(review.comparativeChecks),
+  assessmentReview: 'assessment-review.json',
+  rawAuxiliaryPreferences: { initialNatural: 2, tie: 6, scope: '原始辅助意见，存在误判，不当作业务胜负。' },
+  initialJava,
   revisedJava: { compiled: true, behaviorCases: 16, passed: true, source: finalCode.body.data.content },
-  revisedCopy: { nonWhitespaceCharacters: finalCopy.body.data.content.replace(/\s/g, '').length,
-    hanCharacters: (finalCopy.body.data.content.match(/\p{Script=Han}/gu) ?? []).length,
-    hasExtraExplanation: true, passed: false, content: finalCopy.body.data.content },
+  revisedCopy: { ...revisedCopy, nonWhitespaceCharacters: revisedCopy.completeResponse.nonWhitespace,
+    hanCharacters: revisedCopy.completeResponse.han, hasExtraContent: revisedCopy.outsideSelectedBody.nonWhitespace > 0,
+    formatReview: selection.formatReview },
   revisedPlan: { questions: finalPlan.body.data.questions.length,
     recommendedOptions: finalPlan.body.data.questions.flatMap(row => row.options).filter(row => row.recommended).length,
     questionsPreserved: finalPlan.body.data.questions },
   finalAssemblyReplay: { frozenDrafts: 3, liveModelCalls: 0, note: '仅验证最终组装保留正文、出处及固定边界；不等于终版真实作品通过。' },
-  openItems: ['短文案两个候选仍追加说明及超长，按停止条件停止采样。', '查询类内容展开、口径与覆盖稳定性仍待质量验收。', '没有Qoder API对照、专业人员验收或全模型矩阵。'],
+  openItems: ['短文案候选仍有额外分类说明；正文与整份回复分别计数，原题未冻结具体字数口径，不据整份回复长度判正文超长。', '跨任务内容展开、紧凑度及稳定收益尚未证实。', '没有Qoder API对照；专业人员及全模型矩阵不作为本轮方案实现的新增门槛。'],
   withdrawn: '未证明收益的附加交付范围说明，保留所有原始模型响应与失败作品。' };
 await save('quality-observations.json', quality);
 
-const gitHead = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+// 离线更正评测不改写已冻结的产品版本；新候选应另行登记，不能把当前文档提交冒充被测源码。
+const productManifest = await read(resolve(target, 'final-source-manifest.json'));
+const gitHead = productManifest.gitHead;
 const tracked = execFileSync('git', ['ls-files', 'services/api/src/main'], { encoding: 'utf8' }).trim().split(/\r?\n/);
-const files = [];
-for (const path of tracked) files.push({ path, sha256: createHash('sha256').update(await readFile(resolve(path))).digest('hex') });
-await save('final-source-manifest.json', { gitHead, afterEvaluationChange: '撤回未证实收益的范围说明，三份原始响应已离线回放；严格核对自然历史版本的持久化类型，历史服务21项测试通过。两项终版修正均新增真实调用0。', files });
+assert(tracked.length === productManifest.files.length, 'Product source file set changed after the frozen evaluation');
+for (const file of productManifest.files) {
+  assert(tracked.includes(file.path)
+    && createHash('sha256').update(await readFile(resolve(file.path))).digest('hex') === file.sha256,
+  'Product source changed after the frozen evaluation: ' + file.path);
+}
 await save('validation-summary.json', { date: '2026-10-19', finalProductGitHead: gitHead, actualCalls: closure,
   java: { uniqueAffectedTests: 350, suites: results, note: '多批受影响验证的最后报告去重合并，并非一次命令或全仓库回归；首次失败另存。' },
-  frontend: { files: 4, tests: 13, passed: true }, offlineBudgetChecks: 5, qualityStatus: 'NOT_PASSED',
+  frontend: { files: 4, tests: 13, passed: true }, offlineBudgetChecks: 5,
+  qualityStatus: quality.comparativeEvidence.status, sampleStatus: quality.sampleEvidence.status,
   runtime: { modelId: protocol.modelId, observedUpstreamModels: [...new Set(traces.map(row => row.response.model))],
     localPostgres: true, localRedisVersion: '3.2.100', redis7Acceptance: false, dockerUsed: false,
     newAccounts: 0, newTenants: 0, newWorkspaces: 0, browserFullAcceptance: false, flywayApplied: false } });
-console.log(JSON.stringify({ actualCalls: traces.length, phaseCounts, affectedJava: 350, frontend: 13, quality: 'NOT_PASSED', cost }));
+console.log(JSON.stringify({ actualCalls: traces.length, phaseCounts, affectedJava: 350, frontend: 13,
+  quality: quality.comparativeEvidence.status, samples: quality.sampleEvidence.status, cost }));
