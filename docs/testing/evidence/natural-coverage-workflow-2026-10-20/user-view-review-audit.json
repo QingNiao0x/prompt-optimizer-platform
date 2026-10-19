@@ -1,0 +1,557 @@
+{
+  "supersedesInterpretationOf": "user-view-reviews.json",
+  "cause": "首次汇总将报告preferredLabels=[]误判为非法结构；冻结评审允许并列，未要求必须推荐作品。离线更正工具解释，不修改模型响应、产品策略或预算。",
+  "actualModelCallsAdded": 0,
+  "reviews": [
+    {
+      "jobId": "USER_VIEW_REVIEW_A",
+      "structureValidAfterToolCorrection": true,
+      "invalidQuotes": [],
+      "caseAssessments": [
+        {
+          "caseId": "MESSAGE",
+          "artifacts": [
+            {
+              "label": "A",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "完整保留收件人、行动、今天下班前期限和礼貌语气，且仅有消息正文",
+                  "quote": "麻烦你今天下班前把会议纪要发我，谢谢！"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V3",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "B",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "完整保留收件人、行动、今天下班前期限和礼貌语气，且仅有消息正文",
+                  "quote": "你好，麻烦今天下班前把会议纪要发我，谢谢！"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V4",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "C",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "完整保留收件人、行动、今天下班前期限和礼貌语气，且仅有消息正文",
+                  "quote": "你好，麻烦今天下班前把会议纪要发我一下，谢谢！"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "RAW",
+              "exactQuotesValid": true
+            }
+          ],
+          "preferredLabels": [
+            "A",
+            "B",
+            "C"
+          ],
+          "reason": "三条均为可直接发送的消息正文，未添加姓名、项目背景或未确认安排，非空白字符均远低于50，满足原始任务。",
+          "preferredArms": [
+            "V3",
+            "V4",
+            "RAW"
+          ]
+        },
+        {
+          "caseId": "JAVA_COMPLETE",
+          "artifacts": [
+            {
+              "label": "A",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "提供可编译的完整单文件源码，包含空值和负数校验、会员满100打九折、HALF_UP保留两位，且不改变传入值",
+                  "quote": "public static BigDecimal payable(BigDecimal amount, boolean member) {"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V4",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "B",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "提供可编译的完整单文件源码，包含空值和负数校验、会员满100打九折、HALF_UP保留两位，且不改变传入值",
+                  "quote": "public static BigDecimal payable(BigDecimal amount, boolean member) {"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "RAW",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "C",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "提供可编译的完整单文件源码，包含空值和负数校验、会员满100打九折、HALF_UP保留两位，且不改变传入值",
+                  "quote": "public static BigDecimal payable(BigDecimal amount, boolean member) {"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V3",
+              "exactQuotesValid": true
+            }
+          ],
+          "preferredLabels": [
+            "A",
+            "B",
+            "C"
+          ],
+          "reason": "三条均为可直接编译使用的完整源码，未使用Markdown围栏，分支、边界和舍入行为一致，满足原始任务。",
+          "preferredArms": [
+            "V4",
+            "RAW",
+            "V3"
+          ]
+        },
+        {
+          "caseId": "JSON_EXTRACT",
+          "artifacts": [
+            {
+              "label": "A",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "输出可直接解析的JSON对象，已确认者含name和date，未提供日期为null，未确认者仅姓名进入pending，明确不参加者未进入任一数组",
+                  "quote": "{\"members\":[{\"name\":\"陈禾\",\"date\":\"2026-10-25\"},{\"name\":\"周宁\",\"date\":null}],\"pending\":[\"李岚\"]}"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "RAW",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "B",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "输出可直接解析的JSON对象，已确认者含name和date，未提供日期为null，未确认者仅姓名进入pending，明确不参加者未进入任一数组",
+                  "quote": "{\"members\":[{\"name\":\"陈禾\",\"date\":\"2026-10-25\"},{\"name\":\"周宁\",\"date\":null}],\"pending\":[\"李岚\"]}"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V3",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "C",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "输出可直接解析的JSON对象，已确认者含name和date，未提供日期为null，未确认者仅姓名进入pending，明确不参加者未进入任一数组",
+                  "quote": "{\"members\":[{\"name\":\"陈禾\",\"date\":\"2026-10-25\"},{\"name\":\"周宁\",\"date\":null}],\"pending\":[\"李岚\"]}"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V4",
+              "exactQuotesValid": true
+            }
+          ],
+          "preferredLabels": [
+            "A",
+            "B",
+            "C"
+          ],
+          "reason": "三条内容一致，均为可直接解析的JSON对象，键、字段和人员分类正确，无解释或Markdown，满足原始任务。",
+          "preferredArms": [
+            "RAW",
+            "V3",
+            "V4"
+          ]
+        },
+        {
+          "caseId": "SOURCE_REPORT",
+          "artifacts": [
+            {
+              "label": "A",
+              "directlyUsable": false,
+              "hardRequirementFailures": [
+                {
+                  "claim": "超过400个非空白字符限制，不能按原格式直接交付",
+                  "quote": "**改进建议**"
+                }
+              ],
+              "usefulContent": [
+                {
+                  "claim": "概括了试用中的实际问题并明确缺失信息，未把建议写成已验证结论",
+                  "quote": "记录未包含导出耗时、设备分布及改动后效果，也未记录反馈人群是否重叠，相关推断均需补充数据验证。"
+                },
+                {
+                  "claim": "给出三项按优先级排序的改进动作及对应有效性判断方法",
+                  "quote": "**1. 提升导出入口可发现性（最高优先级）**"
+                }
+              ],
+              "unnecessaryWork": [
+                {
+                  "claim": "篇幅超出限制，用户需自行删减才能满足400字要求",
+                  "quote": "**3. 建立导出流程埋点与试用记录规范（第三优先）**"
+                }
+              ],
+              "arm": "V3",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "B",
+              "directlyUsable": false,
+              "hardRequirementFailures": [
+                {
+                  "claim": "超过400个非空白字符限制，不能按原格式直接交付",
+                  "quote": "本轮6名用户试用中，4名表示找不到导出入口，其中2名经提示后完成导出、另2名未继续；2名表示手机表格显示拥挤。"
+                }
+              ],
+              "usefulContent": [
+                {
+                  "claim": "概括实际问题并明确以下均为建议或待验证假设",
+                  "quote": "因此以下均为建议或待验证假设。"
+                },
+                {
+                  "claim": "给出三项按优先级排序的改进动作及有效性判断方法",
+                  "quote": "**1. 优先改善导出入口的可发现性（最高优先级）**"
+                }
+              ],
+              "unnecessaryWork": [
+                {
+                  "claim": "篇幅超出限制，用户需自行删减才能满足400字要求",
+                  "quote": "**3. 验证手机表格拥挤的改善方案（第三优先）**"
+                }
+              ],
+              "arm": "V4",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "C",
+              "directlyUsable": false,
+              "hardRequirementFailures": [
+                {
+                  "claim": "超过400个非空白字符限制，不能按原格式直接交付",
+                  "quote": "**试用反馈改进建议**"
+                }
+              ],
+              "usefulContent": [
+                {
+                  "claim": "概括实际问题并明确缺失信息，未把问题信号写成已验证根因",
+                  "quote": "因此上述只是试用中的问题信号，尚不能判断根因或整体影响。"
+                },
+                {
+                  "claim": "给出三项按优先级排序的改进动作及有效性判断方法",
+                  "quote": "1. **提升导出入口可发现性**"
+                }
+              ],
+              "unnecessaryWork": [
+                {
+                  "claim": "篇幅超出限制，用户需自行删减才能满足400字要求",
+                  "quote": "以上为待验证的行动建议，效果需以下一轮试用数据判断。"
+                }
+              ],
+              "arm": "RAW",
+              "exactQuotesValid": true
+            }
+          ],
+          "preferredLabels": [],
+          "reason": "三条均包含可读的问题概括、三项有优先级的动作和验证方法，且未虚构耗时、设备统计或已验证收益；但三条均超过400个非空白字符的硬性限制，用户收到后需二次删减，不能直接按原格式使用，因此均不满足原始任务。",
+          "preferredArms": []
+        }
+      ],
+      "usableAsUnqualifiedAcceptance": false,
+      "limitation": "逐字引文核对通过，但两次均为同供应商AI辅助评审，仍漏看RAW报告的基线分子混淆，不能代替实际作品核对或专业人员验收。"
+    },
+    {
+      "jobId": "USER_VIEW_REVIEW_B",
+      "structureValidAfterToolCorrection": true,
+      "invalidQuotes": [],
+      "caseAssessments": [
+        {
+          "caseId": "MESSAGE",
+          "artifacts": [
+            {
+              "label": "A",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "包含礼貌称呼、明确行动、今天下班前期限和致谢，且仅有消息正文",
+                  "quote": "你好，麻烦今天下班前把会议纪要发我，谢谢！"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V4",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "B",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "包含礼貌称呼、明确行动、今天下班前期限和致谢，且仅有消息正文",
+                  "quote": "你好，麻烦今天下班前把会议纪要发我一下，谢谢！"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "RAW",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "C",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "包含明确行动、今天下班前期限和致谢，且仅有消息正文",
+                  "quote": "麻烦你今天下班前把会议纪要发我，谢谢！"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V3",
+              "exactQuotesValid": true
+            }
+          ],
+          "preferredLabels": [
+            "A",
+            "B",
+            "C"
+          ],
+          "reason": "三条均为可直接发送的消息正文，保留收件人指向、行动、今天下班前期限和礼貌语气，非空白字符均远低于50，未添加姓名、项目背景或未确认安排。A、B带称呼更完整，C虽无称呼但用“你”指向收件人，仍满足任务。",
+          "preferredArms": [
+            "V4",
+            "RAW",
+            "V3"
+          ]
+        },
+        {
+          "caseId": "JAVA_COMPLETE",
+          "artifacts": [
+            {
+              "label": "A",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "完整可编译源码，实现空值和负数校验、会员满100打九折、HALF_UP保留两位，且不改变传入值",
+                  "quote": "public static BigDecimal payable(BigDecimal amount, boolean member) {"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "RAW",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "B",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "完整可编译源码，实现空值和负数校验、会员满100打九折、HALF_UP保留两位，且不改变传入值",
+                  "quote": "public static BigDecimal payable(BigDecimal amount, boolean member) {"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V3",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "C",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "完整可编译源码，实现空值和负数校验、会员满100打九折、HALF_UP保留两位，且不改变传入值",
+                  "quote": "public static BigDecimal payable(BigDecimal amount, boolean member) {"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V4",
+              "exactQuotesValid": true
+            }
+          ],
+          "preferredLabels": [
+            "A",
+            "B",
+            "C"
+          ],
+          "reason": "三份均为可直接编译使用的完整单文件源码，无Markdown围栏，独立分支、边界和输出格式均保留，未把源码换成方案或教程。B与C内容相同，A仅异常消息措辞不同，不影响需求。",
+          "preferredArms": [
+            "RAW",
+            "V3",
+            "V4"
+          ]
+        },
+        {
+          "caseId": "JSON_EXTRACT",
+          "artifacts": [
+            {
+              "label": "A",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "可直接解析的JSON，已确认参加者含姓名和日期，周宁缺失日期为null，未确认者仅姓名进入pending，明确不参加者未收录",
+                  "quote": "{\"members\":[{\"name\":\"陈禾\",\"date\":\"2026-10-25\"},{\"name\":\"周宁\",\"date\":null}],\"pending\":[\"李岚\"]}"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V3",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "B",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "可直接解析的JSON，已确认参加者含姓名和日期，周宁缺失日期为null，未确认者仅姓名进入pending，明确不参加者未收录",
+                  "quote": "{\"members\":[{\"name\":\"陈禾\",\"date\":\"2026-10-25\"},{\"name\":\"周宁\",\"date\":null}],\"pending\":[\"李岚\"]}"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "V4",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "C",
+              "directlyUsable": true,
+              "hardRequirementFailures": [],
+              "usefulContent": [
+                {
+                  "claim": "可直接解析的JSON，已确认参加者含姓名和日期，周宁缺失日期为null，未确认者仅姓名进入pending，明确不参加者未收录",
+                  "quote": "{\"members\":[{\"name\":\"陈禾\",\"date\":\"2026-10-25\"},{\"name\":\"周宁\",\"date\":null}],\"pending\":[\"李岚\"]}"
+                }
+              ],
+              "unnecessaryWork": [],
+              "arm": "RAW",
+              "exactQuotesValid": true
+            }
+          ],
+          "preferredLabels": [
+            "A",
+            "B",
+            "C"
+          ],
+          "reason": "三份内容完全一致，均为可直接解析的JSON对象，键和字段准确，否定参加与尚未确认分开，缺失日期为null，无额外解释或代码围栏。",
+          "preferredArms": [
+            "V3",
+            "V4",
+            "RAW"
+          ]
+        },
+        {
+          "caseId": "SOURCE_REPORT",
+          "artifacts": [
+            {
+              "label": "A",
+              "directlyUsable": false,
+              "hardRequirementFailures": [
+                {
+                  "claim": "超过400个非空白字符的硬性字数限制",
+                  "quote": "本轮6名用户试用中，4名表示找不到导出入口，其中2名经提示后完成导出、另2名未继续；2名表示手机表格显示拥挤。记录未包含导出耗时、设备分布、改动后效果，也未记录不同反馈人群是否重叠，因此以下均为建议或待验证假设。"
+                }
+              ],
+              "usefulContent": [
+                {
+                  "claim": "先概括实际问题并明确标注建议或待验证假设，未把单次反馈写成已验证结论",
+                  "quote": "因此以下均为建议或待验证假设。"
+                },
+                {
+                  "claim": "给出三项按优先级排序的动作及对应有效性判断方法",
+                  "quote": "**1. 优先改善导出入口的可发现性（最高优先级）**"
+                }
+              ],
+              "unnecessaryWork": [
+                {
+                  "claim": "篇幅超出限制，用户需自行删减才能满足400字以内要求",
+                  "quote": "**3. 验证手机表格拥挤的改善方案（第三优先）**"
+                }
+              ],
+              "arm": "V4",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "B",
+              "directlyUsable": false,
+              "hardRequirementFailures": [
+                {
+                  "claim": "超过400个非空白字符的硬性字数限制",
+                  "quote": "本轮6名用户试用中，4名找不到导出入口，其中2名经提示后完成导出、2名未继续；2名反映手机表格显示拥挤。需注意：导出耗时、设备分布、改动后效果均未记录，反馈人群是否重叠也不清楚，因此上述只是试用中的问题信号，尚不能判断根因或整体影响。"
+                }
+              ],
+              "usefulContent": [
+                {
+                  "claim": "先概括实际问题并明确区分问题信号与已验证结论",
+                  "quote": "因此上述只是试用中的问题信号，尚不能判断根因或整体影响。"
+                },
+                {
+                  "claim": "给出三项按优先级排序的动作及判断方法",
+                  "quote": "**改进动作（按优先级）**"
+                }
+              ],
+              "unnecessaryWork": [
+                {
+                  "claim": "篇幅超出限制，用户需自行删减才能满足400字以内要求",
+                  "quote": "以上为待验证的行动建议，效果需以下一轮试用数据判断。"
+                }
+              ],
+              "arm": "RAW",
+              "exactQuotesValid": true
+            },
+            {
+              "label": "C",
+              "directlyUsable": false,
+              "hardRequirementFailures": [
+                {
+                  "claim": "超过400个非空白字符的硬性字数限制",
+                  "quote": "本轮6名用户试用中，4名表示找不到导出入口；提示后仅2名完成导出，另2名未继续。2名表示手机表格显示拥挤。记录未包含导出耗时、设备分布及改动后效果，也未记录反馈人群是否重叠，相关推断均需补充数据验证。"
+                }
+              ],
+              "usefulContent": [
+                {
+                  "claim": "先概括实际问题并说明相关推断需补充数据验证",
+                  "quote": "相关推断均需补充数据验证。"
+                },
+                {
+                  "claim": "给出三项按优先级排序的动作及有效性判断方法",
+                  "quote": "**1. 提升导出入口可发现性（最高优先级）**"
+                }
+              ],
+              "unnecessaryWork": [
+                {
+                  "claim": "篇幅超出限制，用户需自行删减才能满足400字以内要求",
+                  "quote": "**3. 建立导出流程埋点与试用记录规范（第三优先）**"
+                }
+              ],
+              "arm": "V3",
+              "exactQuotesValid": true
+            }
+          ],
+          "preferredLabels": [],
+          "reason": "三份都提供了可读的改进建议、三项有优先级的动作和验证方法，且未虚构耗时、已验证收益或设备统计，内容方向符合任务。但三份均超过400个非空白字符的硬性限制，用户收到后不能直接作为合规交付使用，需自行删减；因此没有可直接使用的作品，也不宜并列推荐。",
+          "preferredArms": []
+        }
+      ],
+      "usableAsUnqualifiedAcceptance": false,
+      "limitation": "逐字引文核对通过，但两次均为同供应商AI辅助评审，仍漏看RAW报告的基线分子混淆，不能代替实际作品核对或专业人员验收。"
+    }
+  ]
+}

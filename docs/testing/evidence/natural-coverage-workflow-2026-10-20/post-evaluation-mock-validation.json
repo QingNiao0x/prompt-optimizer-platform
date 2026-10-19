@@ -1,0 +1,122 @@
+{
+  "parentValidation": "validation-summary.json",
+  "reason": "Final review found Mock first-line anchors used String.lines(), inconsistent with the internal Unicode line-break protocol. Align only Mock anchors; generation guidance and real-provider source unchanged.",
+  "actualModelCallsAdded": 0,
+  "realCallsRemainClosedAt": 43,
+  "postEvaluationProductSourceChanges": [
+    "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/MockNaturalPromptProvider.java"
+  ],
+  "finalJavaTests": 137,
+  "targetedRerunTests": 43,
+  "targetedRerunSuites": [
+    "MockNaturalPromptProviderTest",
+    "NaturalTaskReviewTest",
+    "NaturalEnhancementServiceTest"
+  ],
+  "command": "mvn.cmd -Dtest=MockNaturalPromptProviderTest,NaturalTaskReviewTest,NaturalEnhancementServiceTest test",
+  "suites": [
+    {
+      "name": "NaturalTaskReviewTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "7141c62ddb0edaf918a2ab992923560667daf039be151050f9b5a4a19cb12b41",
+      "updatedAt": "2026-10-19T17:58:14.255Z"
+    },
+    {
+      "name": "NaturalTaskUnderstandingTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "63e79f4debb1fd786f0b095adc979ccbae80eaee89451673cb188858f0cb1a4d",
+      "updatedAt": "2026-10-19T17:00:43.298Z"
+    },
+    {
+      "name": "NaturalEnhancementServiceTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "602f17bf10edac27b6382a10de0cc1dff44d46bf7e31452f5ebd242e75a888e3",
+      "updatedAt": "2026-10-19T17:58:14.231Z"
+    },
+    {
+      "name": "OpenAiCompatibleNaturalPromptProviderTest",
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "125b278ad4dff28f96def7dd2a50006844a5f4fbb066d63b9ad512a836765bb1",
+      "updatedAt": "2026-10-19T17:30:12.544Z"
+    },
+    {
+      "name": "MybatisOptimizationHistoryServiceTest",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "cbe8a4c7198ceb48da56fd59276bf497a1ad6e7e3222bcd1da90ed2a9f136761",
+      "updatedAt": "2026-10-19T17:00:41.942Z"
+    },
+    {
+      "name": "DocumentOptimizationControllerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "b34c67b33ddc87150f9ac49e0b92af6eda64c1f3224e3072ff014a446311f89b",
+      "updatedAt": "2026-10-19T17:00:36.158Z"
+    },
+    {
+      "name": "DynamicPlatformConstraintTest",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "7ceeae3631f6d8cf5c873d4630836591dbda2331b8d540d137a6ef2e2b44ba0e",
+      "updatedAt": "2026-10-19T17:00:37.531Z"
+    },
+    {
+      "name": "PromptDocumentTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "eff632b105850821112216409c8595c380416262c72b11b44e94144af4b8eda4",
+      "updatedAt": "2026-10-19T17:03:41.936Z"
+    },
+    {
+      "name": "MockNaturalPromptProviderTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportSha256": "1417e893fd48d1eb96ef1e15c3d381666891687d740f5f3c5223bdd6f834d3ef",
+      "updatedAt": "2026-10-19T18:03:16.534Z"
+    }
+  ],
+  "finalSourceHashes": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/MockNaturalPromptProvider.java",
+      "sha256": "0080c01f66c1e84addabf5d138478bfcb8785b7c70315dd3624779ca189134de"
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/MockNaturalPromptProviderTest.java",
+      "sha256": "1257b1df91d028e84fda16728cb9b1a5f83694eba0e5607fce2c3eec1f532991"
+    }
+  ],
+  "scope": "Merged latest reports without double counting; not a full-repository or browser acceptance.",
+  "priorMockRerun": {
+    "reportSha256": "c0293c6fc76fdc428bb787578020789a8b6781e53f67d2c09e45269f23692e6e",
+    "updatedAt": "2026-10-19T17:58:14.308Z",
+    "tests": 8
+  },
+  "finalMockBoundaryVerification": {
+    "tests": 8,
+    "command": "mvn.cmd -Dtest=MockNaturalPromptProviderTest test",
+    "includesLeadingUnicodeBlankLine": true,
+    "realModelCalls": 0
+  }
+}

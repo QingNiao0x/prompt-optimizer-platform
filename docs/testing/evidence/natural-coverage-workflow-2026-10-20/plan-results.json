@@ -1,0 +1,250 @@
+[
+  {
+    "caseId": "JAVA_COMPLETE",
+    "version": "3",
+    "status": 200,
+    "questionCount": 0,
+    "summary": "任务明确：用 Java 21 编写单文件 PriceCalculator.java，实现含空值与负值校验、会员满 100 打九折、HALF_UP 保留两位小数的 payable 方法，仅用 JDK 且不修改入参，只输出完整源码。需求已充分，无需澄清。",
+    "questions": []
+  },
+  {
+    "caseId": "JAVA_COMPLETE",
+    "version": "4",
+    "status": 200,
+    "questionCount": 0,
+    "summary": "原任务要求生成一个符合指定校验、折扣与舍入规则的 Java 21 单文件源码，需求已足够明确，无需向用户追加提问。",
+    "questions": []
+  },
+  {
+    "caseId": "PPT_DESIGN",
+    "version": "3",
+    "status": 200,
+    "questionCount": 0,
+    "summary": "原定任务是为大一学生设计一场10分钟、8页的“AI辅助学习”分享内容稿，每页含标题、三个要点和讲者提示，叙事与示例由执行者设计，且不得虚构数据或效果、不生成PPT文件。用户已明确交付形式与约束，执行者可在原定交付内完成叙事组织与示例设计，无需额外前置提问。",
+    "questions": []
+  },
+  {
+    "caseId": "PPT_DESIGN",
+    "version": "4",
+    "status": 200,
+    "questionCount": 0,
+    "summary": "原定任务清晰：为大一学生设计10分钟“AI辅助学习”分享的8页PPT内容稿，每页含标题、三个核心要点和简短讲者提示，叙事与示例由执行者设计，语言易懂，不虚构数据或效果，不生成PPT文件。现有输入已足够开展，无需向用户前置提问。",
+    "questions": []
+  },
+  {
+    "caseId": "PROCUREMENT_UNKNOWN",
+    "version": "3",
+    "status": 200,
+    "questionCount": 3,
+    "summary": "用户要求比较两份云存储报价并给出采购建议，并明确实际用量、数据驻留要求和年度预算尚未确定、涉及这些取舍时需先问清楚，其余比较可继续。因此本轮就这三项用户独有信息提问，比较与建议本身仍按原定交付推进。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "贵方预计的实际存储用量大致处于什么范围？",
+        "hint": "用量决定两份报价的性价比与超额风险，是采购建议的核心依据。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "under50",
+            "label": "50GB以内",
+            "description": "用量不超过报价A的包含额度",
+            "answer": "预计实际存储用量在50GB以内",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "50to200",
+            "label": "50GB至200GB之间",
+            "description": "超出报价A额度但不超过报价B额度",
+            "answer": "预计实际存储用量在50GB至200GB之间",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "over200",
+            "label": "超过200GB",
+            "description": "超出两份报价的包含额度",
+            "answer": "预计实际存储用量超过200GB",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "unknown",
+            "label": "暂无法估计",
+            "description": "保留未知，建议中按区间分别说明",
+            "answer": "实际用量暂无法估计，需按不同区间分别比较",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "贵方对数据驻留是否有明确要求（如数据必须存放在特定国家或地区）？",
+        "hint": "两份报价均未说明数据所在地区，驻留要求可能直接决定方案是否可用。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "required",
+            "label": "有明确驻留要求",
+            "description": "数据必须存放在指定地区，需进一步确认供应商是否满足",
+            "answer": "存在明确的数据驻留要求，需确认供应商数据所在地区是否合规",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "none",
+            "label": "无特殊驻留要求",
+            "description": "不限制数据存放地区",
+            "answer": "无特殊数据驻留要求",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "undecided",
+            "label": "尚未确定",
+            "description": "保留未知，建议中标注为待确认前提",
+            "answer": "数据驻留要求尚未确定，建议中作为待确认前提处理",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q3",
+        "question": "贵方的年度预算上限大致是多少？",
+        "hint": "预算决定建议方案是否可承受，也影响是否需就价格或用量做取舍。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "例如：每年不超过2000元"
+        ],
+        "allowCustomAnswer": true
+      }
+    ]
+  },
+  {
+    "caseId": "PROCUREMENT_UNKNOWN",
+    "version": "4",
+    "status": 200,
+    "questionCount": 3,
+    "summary": "原定任务是比较两份合成云存储报价并给出采购建议；报价的价格与容量已知，但超额费用、数据地区和服务等级均缺失。用户明确要求在实际用量、数据驻留要求和年度预算这三项取舍上先征询其决定，其余比较可继续，因此就这三项提问。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "贵方当前及未来一年预计需要的云存储容量大约是多少（含增长预期）？",
+        "hint": "决定50GB与200GB两档容量哪份更匹配，以及是否需考虑超额费用风险，直接影响推荐结论。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "当前约30GB，年增长约20%",
+          "当前已超过100GB"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "贵方对数据存放地区是否有驻留或合规要求？",
+        "hint": "两份报价均未说明数据所在地区；若存在硬性驻留要求，可能使某份报价不可选或需列为待确认前提。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "strict",
+            "label": "有硬性驻留要求",
+            "description": "数据必须存放在指定国家或地区，需在建议中作为前提条件核实。",
+            "answer": "有硬性驻留要求，需在建议中列为必须核实的前提。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "prefer",
+            "label": "有偏好但可协商",
+            "description": "倾向特定地区，但可作为谈判或确认项。",
+            "answer": "有地区偏好但可协商，建议中提示向供应商确认。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "none",
+            "label": "无驻留要求",
+            "description": "不限制数据存放地区，可按价格与容量直接比较。",
+            "answer": "无数据驻留要求，可按价格与容量直接比较。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "unknown",
+            "label": "暂不确定",
+            "description": "保留为未知，建议中标注需后续确认。",
+            "answer": "数据驻留要求暂不确定，建议中标注为待确认事项。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q3",
+        "question": "贵方云存储的年度预算上限大约是多少？",
+        "hint": "决定199元/月（约2388元/年）方案是否在预算内，改变可推荐方案范围。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "每年不超过1500元",
+          "每年3000元以内"
+        ],
+        "allowCustomAnswer": true
+      }
+    ]
+  },
+  {
+    "caseId": "PROCUREMENT_UNKNOWN",
+    "version": "4",
+    "status": 200,
+    "questionCount": 3,
+    "summary": "原定任务是比较两份云存储报价并给出采购建议，同时先问清由用户决定的实际用量、数据驻留要求和年度预算，其余比较继续。报价仅给出月费与容量，未说明超额费用、数据地区和服务等级，需在建议中说明该局限。",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "您的实际存储用量大约是多少，未来一年是否有明显增长预期？",
+        "hint": "用量决定50GB与200GB哪份更匹配，以及是否可能触发未说明的超额费用，直接影响推荐结论。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "当前约30GB，一年内可能增至80GB",
+          "当前约150GB，增长缓慢"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q2",
+        "question": "您对数据存放地区或合规驻留是否有明确要求？",
+        "hint": "两份报价均未说明数据所在地区；若有驻留要求，可能使某份报价不可选或需列为待核实风险。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "数据必须存放在境内",
+          "暂无硬性要求，但希望了解地区"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q3",
+        "question": "您的年度预算上限大约是多少？",
+        "hint": "预算决定两份报价的年度支出是否可接受，并影响建议中的取舍依据。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "每年不超过1500元",
+          "每年不超过3000元"
+        ],
+        "allowCustomAnswer": true
+      }
+    ]
+  }
+]

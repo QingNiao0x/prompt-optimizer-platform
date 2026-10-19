@@ -55,15 +55,21 @@ public class MockNaturalPromptProvider implements NaturalPromptProvider {
         requirements.add(new NaturalTaskUnderstanding.Requirement(input.rawPrompt(),
                 List.of(new NaturalTaskUnderstanding.Evidence("rawPrompt", input.rawPrompt().strip())),
                 List.of(NaturalTaskUnderstanding.Dimension.GOAL)));
-        if (body != null) coverage.add(new NaturalTaskReview.Coverage(0, List.of(input.rawPrompt().strip().lines().findFirst().orElseThrow())));
+        if (body != null) coverage.add(new NaturalTaskReview.Coverage(0, List.of(coverageQuote(input.rawPrompt()))));
         for (int i = 0; i < input.actualAnswers().size(); i++) {
             var answer = input.actualAnswers().get(i);
             requirements.add(new NaturalTaskUnderstanding.Requirement(answer.answer(),
                     List.of(new NaturalTaskUnderstanding.Evidence("actualAnswers." + i, answer.answer())),
                     List.of(NaturalTaskUnderstanding.Dimension.USER_CONFIRMATION)));
-            if (body != null) coverage.add(new NaturalTaskReview.Coverage(i + 1, List.of(answer.answer().strip().lines().findFirst().orElseThrow())));
+            if (body != null) coverage.add(new NaturalTaskReview.Coverage(i + 1, List.of(coverageQuote(answer.answer()))));
         }
         return new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", requirements, List.of(), List.of(),
                 new NaturalTaskReview(NaturalTaskReview.InputReadiness.SUFFICIENT, coverage, List.of(), List.of()));
+    }
+
+    /** 内部锚点采用与校验相同的换行边界；跳过空行，正文及真实来源不做替换或删减。 */
+    private String coverageQuote(String text) {
+        return java.util.Arrays.stream(text.split("\\R")).map(String::strip)
+                .filter(line -> !line.isBlank()).findFirst().orElseThrow();
     }
 }

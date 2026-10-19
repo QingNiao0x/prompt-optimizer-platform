@@ -1,0 +1,104 @@
+[
+  {
+    "caseId": "MESSAGE",
+    "rawPrompt": "给同事写一条礼貌的提醒，请他今天下班前把会议纪要发给我。50字以内，只输出消息正文。",
+    "status": [
+      200,
+      200
+    ],
+    "sameInformation": true,
+    "originalCandidateStatus": 200,
+    "candidateJobId": "MESSAGE_V4_GEN",
+    "baselinePrompt": "请帮我写一条给同事的礼貌提醒消息，内容是请他今天下班前把会议纪要发给我。要求：50字以内，只输出消息正文，不要加称呼说明、标题或任何额外解释。",
+    "candidatePrompt": "请帮我给同事写一条礼貌的提醒消息，请他今天下班前把会议纪要发给我。要求50字以内，只输出消息正文，不要加任何说明或标题。",
+    "promptCharacters": [
+      71,
+      60
+    ]
+  },
+  {
+    "caseId": "JAVA_COMPLETE",
+    "rawPrompt": "用Java 21编写单文件PriceCalculator.java，提供public static BigDecimal payable(BigDecimal amount, boolean member)。amount为空或小于0时抛IllegalArgumentException；会员且amount大于等于100时打九折，否则原价；最终按HALF_UP保留两位小数。仅用JDK，不改变传入值。只输出可编译的完整源码，不使用Markdown代码围栏。",
+    "status": [
+      200,
+      200
+    ],
+    "sameInformation": true,
+    "originalCandidateStatus": 200,
+    "candidateJobId": "JAVA_COMPLETE_V4_GEN",
+    "baselinePrompt": "用 Java 21 编写单文件 PriceCalculator.java，提供 public static BigDecimal payable(BigDecimal amount, boolean member) 方法。amount 为 null 或小于 0 时抛出 IllegalArgumentException；当 member 为 true 且 amount 大于等于 100 时按九折计算，否则按原价；最终结果使用 RoundingMode.HALF_UP 保留两位小数。仅使用 JDK，不修改传入的 amount 对象。只输出可编译的完整源码，不要使用 Markdown 代码围栏，也不要附加任何解释文字。",
+    "candidatePrompt": "用 Java 21 编写单文件 PriceCalculator.java，提供 public static BigDecimal payable(BigDecimal amount, boolean member) 方法。amount 为 null 或小于 0 时抛出 IllegalArgumentException；当 member 为 true 且 amount 大于等于 100 时按九折计算，否则按原价。最终结果使用 RoundingMode.HALF_UP 保留两位小数。仅使用 JDK，不修改传入的 amount 对象。只输出可编译的完整源码，不要使用 Markdown 代码围栏，也不要附加任何解释文字。",
+    "promptCharacters": [
+      310,
+      310
+    ]
+  },
+  {
+    "caseId": "JSON_EXTRACT",
+    "rawPrompt": "从所附登记表提取信息，只输出一个JSON对象，键固定为members（数组）和pending（数组）。members仅收录已确认参加者，每项包含name和date；日期保持原文字符串，未提供日期用null。未确认者只把姓名放进pending，明确不参加者不进入任一数组。不推断是否参加，不输出解释或Markdown。",
+    "status": [
+      200,
+      200
+    ],
+    "sameInformation": true,
+    "originalCandidateStatus": 200,
+    "candidateJobId": "JSON_EXTRACT_V4_GEN",
+    "baselinePrompt": "请从所附登记表 registration.txt 中提取参加信息，只输出一个 JSON 对象，不要输出解释或 Markdown。该对象键固定为 members（数组）和 pending（数组）。members 仅收录已确认参加者，每项包含 name 和 date；date 保持登记表中的原文字符串，未提供日期时用 null。pending 只收录未确认者的姓名。明确不参加者不进入任一数组。不要推断任何人的参加状态。",
+    "candidatePrompt": "从所附登记表 registration.txt 中提取参加信息，只输出一个 JSON 对象，不要输出解释或 Markdown。该对象键固定为 members 和 pending，二者均为数组。members 仅收录已确认参加者，每项包含 name 和 date；date 保持登记表中的原文字符串，未提供日期时用 null。pending 只收录未确认者的姓名。明确不参加者不进入 members 或 pending 任一数组。不得推断任何人的参加状态。",
+    "promptCharacters": [
+      209,
+      227
+    ]
+  },
+  {
+    "caseId": "SOURCE_REPORT",
+    "rawPrompt": "根据所附试用记录，写一份给产品负责人的改进建议，400字以内。先概括实际问题，再给出三项按优先级排序的改进动作和判断是否有效的方法。可以设计行动，但不能把建议、缺失信息或单次反馈写成已经验证的结论。",
+    "status": [
+      200,
+      200
+    ],
+    "sameInformation": true,
+    "originalCandidateStatus": 502,
+    "candidateJobId": "SOURCE_REPORT_V4_C2_GEN",
+    "baselinePrompt": "请根据所附试用记录（trial-notes.txt），写一份给产品负责人的改进建议，400字以内。先概括记录中反映的实际问题，再给出三项按优先级排序的改进动作，并说明判断每项动作是否有效的方法。\n\n写作时请遵守以下要求：\n- 只把记录中明确写出的内容当作已观察到的事实：本轮6名用户试用，4名表示找不到导出入口，其中2名在提示后完成导出、另2名未继续；2名表示手机表格显示拥挤。\n- 记录未包含导出实际耗时、设备分布、改动后效果，也未记录不同反馈人群是否重叠。凡依赖这些缺失信息的推断，须明确标注为待验证或需补充数据，不得写成已确认的结论。\n- 改进动作可以是拟议设计，但须与上述事实对应，并说明其优先级理由；有效性判断方法应给出可观察的指标或验证方式，而非断言效果。\n- 语言简洁、面向产品负责人，直接给出建议，不写成问卷或索要材料的清单。",
+    "candidatePrompt": "请根据所附试用记录（trial-notes.txt），写一份给产品负责人的改进建议，400字以内。先用一段概括记录中反映的实际问题，再给出三项按优先级排序的改进动作，并为每项动作说明判断是否有效的方法。\n\n写作时请以记录中的事实为限：本轮6名用户试用，4名表示找不到导出入口，其中2名在提示后完成导出、另2名未继续；2名表示手机表格显示拥挤。记录未包含导出实际耗时、设备分布、改动后效果，也未记录不同反馈人群是否重叠，这些内容不要当作已知事实或已验证结论。\n\n可以提出改进设计或行动建议，但须明确写成建议或待验证的假设，不得把建议、缺失信息或单次反馈表述为已经验证的结论；涉及人数时按记录原样表述，不推断比例或因果关系。三项改进动作应结合上述问题合理排序，并简要说明排序理由；有效性判断方法要具体可执行，例如后续试用中观察什么、记录什么，但不要编造记录中没有的数据或结果。",
+    "promptCharacters": [
+      371,
+      386
+    ]
+  },
+  {
+    "caseId": "PPT_DESIGN",
+    "rawPrompt": "为大一学生策划一次10分钟的“AI辅助学习”分享，交付8页PPT的内容稿。每页给标题、三个核心要点和简短讲者提示。具体叙事与示例请你设计，语言易懂，不虚构研究数据或学习效果，不生成PPT文件。",
+    "status": [
+      200,
+      200
+    ],
+    "sameInformation": true,
+    "originalCandidateStatus": 200,
+    "candidateJobId": "PPT_DESIGN_V4_GEN",
+    "baselinePrompt": "请为大一学生策划一次10分钟的“AI辅助学习”分享，并交付一份8页PPT的内容稿。每页需包含：页面标题、三个核心要点、一段简短的讲者提示。叙事线索和具体示例由你设计，语言要通俗易懂，适合刚入学的大一学生理解。内容可围绕以下方向展开：AI在学习中的常见用途（如理解概念、整理笔记、练习自测、修改表达）、如何提出清晰的问题以获得有用回答、如何核对AI给出的信息、哪些环节应保留自己的思考与动手过程，以及使用中的学术诚信与隐私注意事项。示例请用贴近大一课程与日常学习的情境，不虚构研究数据或学习效果，不生成PPT文件，只交付内容稿。",
+    "candidatePrompt": "为大一学生策划一次10分钟的“AI辅助学习”分享，交付一份8页PPT的内容稿。每页给出标题、三个核心要点和简短的讲者提示；叙事结构与示例由你设计，语言要通俗易懂，面向刚入学、对AI工具既好奇又容易误用的新生。\n\n内容上请围绕新生真实可用的学习场景展开，例如：用AI帮助理解概念、梳理知识框架、生成自测题、辅助修改写作或检查代码思路，同时说明AI可能出错、需要自己核对，以及不能代替独立思考、不能直接提交AI生成内容等边界。示例可用日常学习情境说明，但不要虚构研究数据或学习效果，也不要声称某种用法已被证明能提升成绩。\n\n整体按10分钟节奏安排，8页内容要连贯：开头说明分享目的，中间讲具体用法与注意事项，结尾给出可立即尝试的做法或提醒。讲者提示写成简短的口头引导语或提醒，便于照着讲。只交付内容稿文字，不生成PPT文件，也不输出版式设计说明。",
+    "promptCharacters": [
+      263,
+      371
+    ]
+  },
+  {
+    "caseId": "HANDOFF_GUIDE",
+    "rawPrompt": "把交接资料整理成给接班同事的一页操作说明，按实际操作顺序写。不要补造按钮或承诺；资料缺失只标明对应一步待核实，不把整份说明改成待补材料清单。",
+    "status": [
+      200,
+      200
+    ],
+    "sameInformation": true,
+    "originalCandidateStatus": 502,
+    "candidateJobId": "HANDOFF_GUIDE_V4_C2_GEN",
+    "baselinePrompt": "请把交接资料整理成一份给接班同事看的一页操作说明，按实际操作顺序写。说明要覆盖这些步骤：接班先查看当日待办清单；对状态为“待确认”的条目逐条人工复核；已经通过的条目不得重复提交；资料不完整时保留待确认状态并联系原经办人，不能直接标记通过；收班时汇总未完成条目交给下一班。清单入口在系统中何处尚未记录，请在对应步骤中直接标明“待核实”，不要补造按钮名称、系统路径或任何承诺；其余步骤照常写完整，不要把整份说明改成待补材料清单。篇幅控制在一页内，语言简洁、可直接照着操作。",
+    "candidatePrompt": "请把 handoff.txt 中的交接资料整理成一份给接班同事的一页操作说明，按实际操作顺序编排。内容以资料为准：接班先查看当日待办清单；状态为“待确认”的条目须人工复核；已经通过的条目不得重复提交；资料不完整时保留待确认状态并联系原经办人，不能直接标记通过；收班时汇总未完成条目交给下一班。清单入口在系统中何处尚未记录，请只在“查看当日待办清单”这一步标注“入口待核实”，不要补造按钮名称、系统路径或任何承诺，也不要因此把整份说明改成待补材料清单，其余步骤照常写完整。篇幅控制在一页内，语言简洁、可直接照着操作。",
+    "promptCharacters": [
+      234,
+      257
+    ]
+  }
+]

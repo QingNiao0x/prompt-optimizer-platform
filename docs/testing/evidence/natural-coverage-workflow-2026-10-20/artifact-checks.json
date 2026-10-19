@@ -1,0 +1,151 @@
+{
+  "results": [
+    {
+      "caseId": "MESSAGE",
+      "arm": "RAW",
+      "selectedJobId": "MESSAGE_RAW_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 23,
+      "semanticReviewRequired": true,
+      "lengthLimit": 50,
+      "lengthPassed": true
+    },
+    {
+      "caseId": "MESSAGE",
+      "arm": "V3",
+      "selectedJobId": "MESSAGE_V3_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 19,
+      "semanticReviewRequired": true,
+      "lengthLimit": 50,
+      "lengthPassed": true
+    },
+    {
+      "caseId": "MESSAGE",
+      "arm": "V4",
+      "selectedJobId": "MESSAGE_V4_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 21,
+      "semanticReviewRequired": true,
+      "lengthLimit": 50,
+      "lengthPassed": true
+    },
+    {
+      "caseId": "JAVA_COMPLETE",
+      "arm": "RAW",
+      "selectedJobId": "JAVA_COMPLETE_RAW_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 444,
+      "semanticReviewRequired": true,
+      "compilePassed": true,
+      "compilerOutput": "",
+      "strictSourceFormatPassed": true,
+      "behaviorTests": 16,
+      "behaviorPassed": true,
+      "executionOutput": "PASS 16\n"
+    },
+    {
+      "caseId": "JAVA_COMPLETE",
+      "arm": "V3",
+      "selectedJobId": "JAVA_COMPLETE_V3_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 438,
+      "semanticReviewRequired": true,
+      "compilePassed": true,
+      "compilerOutput": "",
+      "strictSourceFormatPassed": true,
+      "behaviorTests": 16,
+      "behaviorPassed": true,
+      "executionOutput": "PASS 16\n"
+    },
+    {
+      "caseId": "JAVA_COMPLETE",
+      "arm": "V4",
+      "selectedJobId": "JAVA_COMPLETE_V4_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 438,
+      "semanticReviewRequired": true,
+      "compilePassed": true,
+      "compilerOutput": "",
+      "strictSourceFormatPassed": true,
+      "behaviorTests": 16,
+      "behaviorPassed": true,
+      "executionOutput": "PASS 16\n"
+    },
+    {
+      "caseId": "JSON_EXTRACT",
+      "arm": "RAW",
+      "selectedJobId": "JSON_EXTRACT_RAW_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 90,
+      "semanticReviewRequired": true,
+      "parsePassed": true,
+      "exactDataAndFieldsPassed": true
+    },
+    {
+      "caseId": "JSON_EXTRACT",
+      "arm": "V3",
+      "selectedJobId": "JSON_EXTRACT_V3_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 90,
+      "semanticReviewRequired": true,
+      "parsePassed": true,
+      "exactDataAndFieldsPassed": true
+    },
+    {
+      "caseId": "JSON_EXTRACT",
+      "arm": "V4",
+      "selectedJobId": "JSON_EXTRACT_V4_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 90,
+      "semanticReviewRequired": true,
+      "parsePassed": true,
+      "exactDataAndFieldsPassed": true
+    },
+    {
+      "caseId": "SOURCE_REPORT",
+      "arm": "RAW",
+      "selectedJobId": "SOURCE_REPORT_RAW_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 450,
+      "semanticReviewRequired": true,
+      "lengthLimit": 400,
+      "lengthPassed": false
+    },
+    {
+      "caseId": "SOURCE_REPORT",
+      "arm": "V3",
+      "selectedJobId": "SOURCE_REPORT_V3_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 504,
+      "semanticReviewRequired": true,
+      "lengthLimit": 400,
+      "lengthPassed": false
+    },
+    {
+      "caseId": "SOURCE_REPORT",
+      "arm": "V4",
+      "selectedJobId": "SOURCE_REPORT_V4_C2_EXEC",
+      "httpStatus": 200,
+      "completeResponse": true,
+      "nonWhitespaceCharacters": 523,
+      "semanticReviewRequired": true,
+      "lengthLimit": 400,
+      "lengthPassed": false
+    }
+  ],
+  "realModelCallsAdded": 0,
+  "sourceRepaired": false,
+  "scope": "仅核对冻结原任务的格式、字数、数据与16项Java行为；语义及实用性另行审阅。"
+}

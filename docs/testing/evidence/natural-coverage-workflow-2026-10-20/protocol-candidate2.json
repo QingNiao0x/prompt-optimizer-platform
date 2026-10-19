@@ -1,0 +1,134 @@
+{
+  "batch": "natural-coverage-workflow-2026-10-20",
+  "authorization": "USER_DELEGATED_CHOICE_OF_REAL_EVALUATION_CALL_COUNT",
+  "authorizationQuote": "可以进行真实评测次数自行选择",
+  "previousClosedActualCalls": 564,
+  "maximumNewActualCalls": 48,
+  "status": "FROZEN",
+  "baselineCommit": "1c7b5e69",
+  "baselineVersion": "3",
+  "candidateVersion": "4",
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 4096,
+    "thinking": "disabled"
+  },
+  "phaseLimits": {
+    "GENERATION": 22,
+    "PLAN": 10,
+    "EXECUTION": 12,
+    "REVIEW": 4
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 14,
+    "PLAN": 6,
+    "EXECUTION": 12,
+    "REVIEW": 2
+  },
+  "generation": [
+    "MESSAGE",
+    "JAVA_COMPLETE",
+    "JSON_EXTRACT",
+    "SOURCE_REPORT",
+    "PPT_DESIGN",
+    "HANDOFF_GUIDE"
+  ],
+  "plan": [
+    "PPT_DESIGN",
+    "JAVA_COMPLETE",
+    "PROCUREMENT_UNKNOWN"
+  ],
+  "confirmedPlanGeneration": [
+    "PROCUREMENT_UNKNOWN"
+  ],
+  "execution": [
+    "MESSAGE",
+    "JAVA_COMPLETE",
+    "JSON_EXTRACT",
+    "SOURCE_REPORT"
+  ],
+  "reviewJobs": [
+    "USER_VIEW_REVIEW_A",
+    "USER_VIEW_REVIEW_B"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "criteria": [
+    "保留原任务、对象、交付形式、篇幅、独立条件和真实用户回答",
+    "补充对交付有帮助，充分需求保留有效表达，不机械套六个槽位",
+    "Plan仅问会实质影响结果的重要未知，已委托设计由执行者完成",
+    "原始与增强执行使用完全相同材料、有效信息、模型和参数",
+    "从用户能否直接使用作品评估，客观校验源码/JSON/篇幅并审查事实与无谓加工",
+    "记录调用、Token、耗时和实际失败，不以正文增长、框架命中或模型自报分数代替收益"
+  ],
+  "stopConditions": [
+    "达到总或阶段上限立即停止相应请求，所有失败和协议修复计数",
+    "不按作品质量重试，不追加题目或模型采样到成功",
+    "同一假设两个候选仍有同类严重失败时停止扩大采样，重审共同机制",
+    "所有首次原件、工具错误和未定归因保留，延期不算通过"
+  ],
+  "allowedJobs": [
+    "MESSAGE_V3_GEN",
+    "MESSAGE_V4_GEN",
+    "JAVA_COMPLETE_V3_GEN",
+    "JAVA_COMPLETE_V4_GEN",
+    "JSON_EXTRACT_V3_GEN",
+    "JSON_EXTRACT_V4_GEN",
+    "SOURCE_REPORT_V3_GEN",
+    "SOURCE_REPORT_V4_GEN",
+    "PPT_DESIGN_V3_GEN",
+    "PPT_DESIGN_V4_GEN",
+    "HANDOFF_GUIDE_V3_GEN",
+    "HANDOFF_GUIDE_V4_GEN",
+    "PPT_DESIGN_V3_PLAN",
+    "PPT_DESIGN_V4_PLAN",
+    "JAVA_COMPLETE_V3_PLAN",
+    "JAVA_COMPLETE_V4_PLAN",
+    "PROCUREMENT_UNKNOWN_V3_PLAN",
+    "PROCUREMENT_UNKNOWN_V4_PLAN",
+    "PROCUREMENT_UNKNOWN_V3_PLAN_GEN",
+    "PROCUREMENT_UNKNOWN_V4_PLAN_GEN",
+    "MESSAGE_RAW_EXEC",
+    "MESSAGE_V3_EXEC",
+    "MESSAGE_V4_EXEC",
+    "JAVA_COMPLETE_RAW_EXEC",
+    "JAVA_COMPLETE_V3_EXEC",
+    "JAVA_COMPLETE_V4_EXEC",
+    "JSON_EXTRACT_RAW_EXEC",
+    "JSON_EXTRACT_V3_EXEC",
+    "JSON_EXTRACT_V4_EXEC",
+    "SOURCE_REPORT_RAW_EXEC",
+    "SOURCE_REPORT_V3_EXEC",
+    "SOURCE_REPORT_V4_EXEC",
+    "USER_VIEW_REVIEW_A",
+    "USER_VIEW_REVIEW_B",
+    "SOURCE_REPORT_V4_C2_GEN",
+    "HANDOFF_GUIDE_V4_C2_GEN",
+    "PROCUREMENT_UNKNOWN_V4_C2_PLAN",
+    "PROCUREMENT_UNKNOWN_V4_C2_PLAN_GEN",
+    "SOURCE_REPORT_V4_C2_EXEC"
+  ],
+  "revision": 2,
+  "previousRoundActualCalls": 35,
+  "correctionScope": [
+    "SOURCE_REPORT",
+    "HANDOFF_GUIDE",
+    "PROCUREMENT_UNKNOWN"
+  ],
+  "correctionHypothesis": "仅兼容stop响应少一个根对象闭合符，并在既有有界修复中指出缺失来源编号；不改生成指导或合并同值题答。",
+  "currentJobs": {
+    "SOURCE_REPORT_V4_GEN": "SOURCE_REPORT_V4_C2_GEN",
+    "HANDOFF_GUIDE_V4_GEN": "HANDOFF_GUIDE_V4_C2_GEN",
+    "PROCUREMENT_UNKNOWN_V4_PLAN": "PROCUREMENT_UNKNOWN_V4_C2_PLAN",
+    "PROCUREMENT_UNKNOWN_V4_PLAN_GEN": "PROCUREMENT_UNKNOWN_V4_C2_PLAN_GEN",
+    "SOURCE_REPORT_V4_EXEC": "SOURCE_REPORT_V4_C2_EXEC"
+  },
+  "supersededUnexecutedJobs": {
+    "SOURCE_REPORT_V4_EXEC": "SOURCE_REPORT_V4_C2_EXEC"
+  }
+}

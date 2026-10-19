@@ -1,0 +1,203 @@
+{
+  "productGitHead": "2c8bb6e71d5e4788dc3daab1bdf9e44f9b19c740",
+  "actualCalls": {
+    "status": "CLOSED",
+    "actualNewCalls": 43,
+    "maximumNewCalls": 48,
+    "unusedCalls": 5,
+    "previousClosedActualCalls": 564,
+    "cumulativeActualCalls": 607,
+    "phaseCounts": {
+      "GENERATION": 21,
+      "PLAN": 8,
+      "EXECUTION": 12,
+      "REVIEW": 2
+    },
+    "protocolRetries": 5,
+    "qualityRetries": 0,
+    "missingJobs": [],
+    "closedAt": "2026-10-19T17:46:06.436Z",
+    "reason": "全部冻结作业已记录，余额关闭不转移。"
+  },
+  "costs": {
+    "GENERATION_V3": {
+      "calls": 7,
+      "usageMissing": 0,
+      "inputTokens": 8921,
+      "outputTokens": 3631,
+      "elapsedMs": 21498
+    },
+    "GENERATION_V4": {
+      "calls": 14,
+      "usageMissing": 0,
+      "inputTokens": 25130,
+      "outputTokens": 13942,
+      "elapsedMs": 64326
+    },
+    "PLAN_V4": {
+      "calls": 5,
+      "usageMissing": 0,
+      "inputTokens": 8021,
+      "outputTokens": 4691,
+      "elapsedMs": 25421
+    },
+    "PLAN_V3": {
+      "calls": 3,
+      "usageMissing": 0,
+      "inputTokens": 3469,
+      "outputTokens": 1924,
+      "elapsedMs": 11287
+    },
+    "EXECUTION_RAW": {
+      "calls": 4,
+      "usageMissing": 0,
+      "inputTokens": 542,
+      "outputTokens": 461,
+      "elapsedMs": 5331
+    },
+    "EXECUTION_V3": {
+      "calls": 4,
+      "usageMissing": 0,
+      "inputTokens": 773,
+      "outputTokens": 490,
+      "elapsedMs": 5680
+    },
+    "EXECUTION_V4": {
+      "calls": 4,
+      "usageMissing": 0,
+      "inputTokens": 777,
+      "outputTokens": 505,
+      "elapsedMs": 6052
+    },
+    "REVIEW_BLINDED": {
+      "calls": 2,
+      "usageMissing": 0,
+      "inputTokens": 6082,
+      "outputTokens": 3423,
+      "elapsedMs": 12495
+    }
+  },
+  "initialProductGitHead": "280618bb6c824403afa6a7bf99bfb86fce7749a3",
+  "initialSourceChanges": [
+    "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+    "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java"
+  ],
+  "java": {
+    "tests": 129,
+    "suites": [
+      {
+        "name": "NaturalTaskReviewTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T17:30:10.902Z"
+      },
+      {
+        "name": "NaturalTaskUnderstandingTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T17:00:43.298Z"
+      },
+      {
+        "name": "NaturalEnhancementServiceTest",
+        "tests": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T17:30:10.196Z"
+      },
+      {
+        "name": "OpenAiCompatibleNaturalPromptProviderTest",
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T17:30:12.544Z"
+      },
+      {
+        "name": "MybatisOptimizationHistoryServiceTest",
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T17:00:41.942Z"
+      },
+      {
+        "name": "DocumentOptimizationControllerTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T17:00:36.158Z"
+      },
+      {
+        "name": "DynamicPlatformConstraintTest",
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T17:00:37.531Z"
+      },
+      {
+        "name": "PromptDocumentTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T17:03:41.936Z"
+      }
+    ],
+    "scope": "受影响测试报告去重合并，非全仓库验收。"
+  },
+  "toolChecks": {
+    "checks": {
+      "json_order_not_an_extra_requirement": true,
+      "json_markdown_rejected": true,
+      "json_unknown_date_not_invented": true,
+      "correct_java_and_independent_cases_pass": true,
+      "missing_import_not_repaired": true,
+      "changed_boundary_is_caught": true
+    },
+    "passed": 6,
+    "failed": 0,
+    "realModelCalls": 0
+  },
+  "originalComparisons": [
+    {
+      "caseId": "MESSAGE",
+      "sameInformation": true
+    },
+    {
+      "caseId": "JAVA_COMPLETE",
+      "sameInformation": true
+    },
+    {
+      "caseId": "JSON_EXTRACT",
+      "sameInformation": true
+    },
+    {
+      "caseId": "SOURCE_REPORT",
+      "sameInformation": true
+    },
+    {
+      "caseId": "PPT_DESIGN",
+      "sameInformation": true
+    },
+    {
+      "caseId": "HANDOFF_GUIDE",
+      "sameInformation": true
+    }
+  ],
+  "newAccounts": 0,
+  "newTenants": 0,
+  "newWorkspaces": 0,
+  "flywayApplied": false,
+  "browserAcceptance": false,
+  "productFrontendChanged": false,
+  "downstreamChecks": "artifact-checks.json",
+  "userReviewAudit": "user-view-reviews.json",
+  "limitations": "单一公开模型别名、少量冻结任务；覆盖锚点与辅助评审不证明任意语义等价、全场景收益或专业验收。"
+}
