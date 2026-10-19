@@ -18,6 +18,9 @@ import java.util.Map;
  */
 public final class TaskIntentResolver {
     private record Goal(TemplateCode code, TaskDeliveryProfile profile) { }
+    // 同一交付物规则供肯定、整体否定和局部附加物共用；“源码的说明”交付的是文档，不是源码。
+    private static final String CODE_ARTIFACT = "(?<!伪)(?:代码|源码|脚本|程序)(?!\\s*(?:的)?(?:说明|文档|介绍|摘要|清单|签名|引用|作用|原理))";
+    private static final Pattern QUOTED_TEXT = Pattern.compile("“[^”]*”|‘[^’]*’|\"[^\"]*\"");
     private static final Pattern NEGATIVE = Pattern.compile(
             "^(?:(?:请|也|并|且|亦|同时|本次)\\s*)*(?:不(?:要求|需要|要|得|应|会)?|勿|无需|禁止|不得|避免|不要|未要求|无须|not\\b|do not\\b)");
     private static final Pattern DELIVERY_ANSWER = Pattern.compile(
@@ -28,7 +31,7 @@ public final class TaskIntentResolver {
             "^(?:(?:本次|本轮|此次|这次|最终)(?:的)?\\s*)?"
                     + "(?:(?:交付|输出)(?:物|内容|范围)?\\s*)?"
                     + "(?:不包含|不含|不提供|不交付|不输出|不附带|不附上|不需要|不编写|无需|无须)"
-                    + "[^。；;，,\\r\\n]{0,32}(?:代码|脚本|程序)", Pattern.CASE_INSENSITIVE);
+                    + "[^。；;，,\\r\\n]{0,32}" + CODE_ARTIFACT, Pattern.CASE_INSENSITIVE);
     private static final String WRITE = "(?:撰写|编写|起草|写|生成|输出|提供|交付|拟定|制作|设计|制定|\\bwrite\\b|\\bdraft\\b|\\bcreate\\b|\\bproduce\\b)";
     // 语言名仅是工具证据，须与句首肯定的实现动作及非空对象同时出现；未知工具继续保守回退。
     private static final Pattern LANGUAGE_IMPLEMENTATION = Pattern.compile(
@@ -260,7 +263,7 @@ public final class TaskIntentResolver {
 
     /** 禁整个代码交付才撤回隐含判断；禁示例代码等局部附加物不能取消核心实现。 */
     private static boolean declinesWholeCodeDelivery(String clause) {
-        String scope = clause.replaceAll("(?:示例|样例|演示|参考|测试)(?:的)?(?:代码|脚本|程序)", "局部附加物")
+        String scope = clause.replaceAll("(?:示例|样例|演示|参考|测试)(?:的)?" + CODE_ARTIFACT, "局部附加物")
                 .replaceFirst("^(?:(?:请|本次|这次)\\s*)*(?:不要|不得|请勿|禁止|勿)", "不");
         return DECLINED_CODE_DELIVERY.matcher(scope).find();
     }
@@ -268,7 +271,7 @@ public final class TaskIntentResolver {
     /** 代码交付需要肯定的动作与交付物；“用 R 分析”“参考 Python 文档”不是脚本交付。 */
     private static boolean explicitCodeDelivery(String clause) {
         return !PENDING.matcher(clause).find() && !DECLINED_CODE_DELIVERY.matcher(clause.strip()).find() && (engineeringMatch(clause,
-                "(?:提供|交付|给出|编写|输出|生成|附上|附带|包含|实现|需要|要求).{0,32}(?:(?<!伪)代码|脚本|程序)"
+                "(?:提供|交付|给出|编写|输出|生成|附上|附带|包含|实现|需要|要求).{0,32}" + CODE_ARTIFACT
                         + "|\\b(?:provide|deliver|write|generate|include)\\b.{0,40}\\b(?:code|scripts?|programs?)\\b")
                 || explicitJavaSourceDelivery(clause));
     }
@@ -315,10 +318,18 @@ public final class TaskIntentResolver {
         while (from < clause.length() && matcher.find(from)) {
             from = matcher.start() + 1;
             String prefix = clause.substring(0, matcher.start());
-            if (engineering && describedOrConditionalAction(clause.substring(matcher.start()), prefix)) continue;
+            if (engineering && (quotedAction(clause, matcher.start())
+                    || describedOrConditionalAction(clause.substring(matcher.start()), prefix))) continue;
             if (!prefix.matches(".*(?:不要求|不需要|不要|不得|不提供|不附|请勿|未要求|无需|禁止|无须|是否|例如|示例|原文|材料中|资料中)[^，。；;]{0,80}$")
                     && !prefix.matches(".*(?:不|未|勿)$")) return true;
         }
+        return false;
+    }
+
+    /** 被解释或引用的动作仍是材料；真正位于引号外的肯定交付动作继续参与判断。 */
+    private static boolean quotedAction(String clause, int position) {
+        var ranges = QUOTED_TEXT.matcher(clause);
+        while (ranges.find()) if (position > ranges.start() && position < ranges.end()) return true;
         return false;
     }
 

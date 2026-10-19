@@ -40,6 +40,9 @@ class CodeArtifactTaskIntentTest {
                 "提供 `PatchMerger.java` 文件。",
                 "本次给出完整的PatchMerger.java文件。",
                 "Please deliver the complete PatchMerger.java.",
+                "只输出可编译的完整源码，不使用Markdown代码围栏。",
+                "用Java 21编写单文件PriceCalculator.java，只输出完整源码。",
+                "请提供完整源码及其说明。",
                 "不提供Legacy.java，但交付PatchMerger.java。");
     }
 
@@ -71,6 +74,11 @@ class CodeArtifactTaskIntentTest {
                 Arguments.of("请提供PatchMerger.java的说明。", TaskDeliveryProfile.GENERAL),
                 Arguments.of("Please provide PatchMerger.java documentation.", TaskDeliveryProfile.GENERAL),
                 Arguments.of("Do not provide PatchMerger.java.", TaskDeliveryProfile.GENERAL),
+                Arguments.of("只提供源码的说明，不交付源码。", TaskDeliveryProfile.GENERAL),
+                Arguments.of("请提供完整源码的说明。", TaskDeliveryProfile.GENERAL),
+                Arguments.of("请解释“提供完整源码”这句话。", TaskDeliveryProfile.GENERAL),
+                Arguments.of("资料中写着：输出完整源码。", TaskDeliveryProfile.GENERAL),
+                Arguments.of("如果需要，以后提供完整源码。", TaskDeliveryProfile.GENERAL),
                 Arguments.of("只分析PatchMerger.java的方法签名，不编写代码。", TaskDeliveryProfile.GENERAL),
                 Arguments.of("根据Java源码编写用户指南，附件为PatchMerger.java。", TaskDeliveryProfile.USER_GUIDE),
                 Arguments.of("制定研究方案，设计Arriaga分解方法，不交付PatchMerger.java。", TaskDeliveryProfile.ACADEMIC_METHODS));
