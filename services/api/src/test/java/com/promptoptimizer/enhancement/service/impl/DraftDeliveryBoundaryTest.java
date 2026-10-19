@@ -194,10 +194,12 @@ class DraftDeliveryBoundaryTest {
         var draft = contract("请撰写分析报告。", List.of());
         assertThat(draft.guidance()).contains("材料充分时直接成稿", "可修订初稿", "直接交付正文，不先发补材料问卷",
                 "重要未决条件集中说明一次", "同一缺口不逐节重复标待确认", "原要求的表格、代码及篇幅继续保留");
-        assertThat(draft.modelGuidance()).contains("TASK 只保留用户要完成的正文目标", "OUTPUT 只说明本次具体交付内容",
+        // 四要素仍核对交付；正文目标必须明确，辅助输出槽只补独有信息，不要求重复写一份目标。
+        assertThat(draft.modelGuidance()).contains("TASK 明确原定正文目标", "OUTPUT 仅补尚未表达的交付内容、范围和格式",
+                "无新增信息可留空", "不把正文改成方案或问卷",
                 "平台统一追加", "不要复制通用起草段落或待补机制", "由执行者自行完成", "实证数值和结论",
                 "不新增用户未要求的空表、附录或指标", "用户明确要求的表格继续交付", "不能冒充已确认事实")
-                .doesNotContain(draft.guidance(), "[待补：具体内容]");
+                .doesNotContain(draft.guidance(), "[待补：具体内容]", "TASK 与 OUTPUT 均须");
     }
 
     @Test

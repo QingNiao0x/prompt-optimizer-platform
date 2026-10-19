@@ -82,7 +82,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     private static final String STRUCTURED_REPAIR_MARKER = "平台结构化输出修复要求：";
     private static final String ENHANCEMENT_REPAIR_INSTRUCTION = """
             平台结构化输出修复要求：上一次响应未通过校验。请基于前面的原始输入重新生成，且只返回一个 JSON 对象，不要 Markdown 代码围栏、解释或额外字段。
-            顶层必须包含 sections 和 ambiguities：sections 必须包含且各出现一次 BACKGROUND、TASK、OUTPUT、CONSTRAINTS；每个段落的 title 与 content 都必须是非空字符串；ambiguities 必须是 0 至 8 个字符串的数组。
+            顶层必须包含 sections 和 ambiguities：sections 必须包含且各出现一次 BACKGROUND、TASK、OUTPUT、CONSTRAINTS；title 为非空字符串，content 必须是字符串。TASK 必须有可执行内容；BACKGROUND、OUTPUT、CONSTRAINTS 没有独立新增信息时使用空字符串，不填占位说明或复述其他段落。其他已输出段落的 content 仍须非空；ambiguities 必须是 0 至 8 个字符串的数组。
             同一顶层还必须包含 assessment 对象，其内部包含 sufficiency、gaps、presentation，不能把 presentation 移到顶层。sufficiency 只能为 SUFFICIENT 或 NEEDS_COMPLETION，presentation 只能为 COMPACT 或 STRUCTURED。
             SUFFICIENT 的 gaps 为空；NEEDS_COMPLETION 的 gaps 为 1 至 6 项，每项包含 kind、missing、completion、basis，后三项是说明实质缺口、补全及输入依据的非空字符串。kind 只能为 EXECUTION_STEP、INPUT_OUTPUT、EDGE_CASE、QUALITY_CHECK、PROFESSIONAL_OPTION、USER_DECISION。
             ambiguities 只列本次新增且确需用户决定的问题；已有 pendingDecisions 由平台保留。仍有实质补全缺口并输出 ambiguities 时，assessment.gaps 应如实包含对应 USER_DECISION，不把它归为普通专业建议；不能靠清空重要问题或伪造用户选择通过校验。
@@ -102,7 +102,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             本次任务适配：template.deliveryProfile 与 template.outputGuidance/acceptanceGuidance 是同一服务端策略。
             先按用户肯定的交付目标组织结果，再使用相关材料，不因材料含代码而改成开发，不因“不要求测试”改成测试。
             具体受众、范围、篇幅、语言、交付物和已选方法仅采用输入中的要求；可说明有依据的候选方法及适用条件，不冒充已选方法，不改变用户原有分析框架。模板默认指导不能覆盖用户只输出、只设计、不要代码等限制。
-            背景只放执行需要的事实；任务明确做什么，输出明确交付什么，约束保留禁止事项和适用条件，验收检查本次作品，不复述完整需求。
+            内部四要素用于核对覆盖，不要求四个正文模块都展开；执行目标、输出要求或约束已集中写在 TASK 时，其余类型可无新增正文，但不能遗漏明确要求。
             taskView.requirementBoundaryGuidance 是本次要求的强度和范围：禁止、方法选择条件和独立参数分别处理。将这些边界自然融入相应执行要求，不复制内部字段名或答卷。用户禁止假设数据时，测试、验证和示例标注不授权例外；根据未来数据选择检验仍可解释候选名称，不能改成禁止列名称；方法的确认不连带确认年份、来源或参数取值。
             引用和检查步骤服务本次交付；不在译文、新闻稿、操作指南和材料整理中追加接口实现、代码测试或无关专业章节。
             输出可检查的步骤或必要依据，不展示内部推理过程。不为所有任务固定加角色、示例数量或扩展范围。
@@ -168,7 +168,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
 
             必须包含且只能使用以下段落类型：BACKGROUND、TASK、OUTPUT、CONSTRAINTS、CLARIFICATIONS、ACCEPTANCE、EXAMPLES。
             BACKGROUND、TASK、OUTPUT、CONSTRAINTS 必须存在；ACCEPTANCE 可按任务需要输出；待确认事项统一放入 ambiguities，CLARIFICATIONS 由平台组装；
-            仅在输入要求示例时输出 EXAMPLES。title 和 content 必须为非空字符串，content 可使用 Markdown 列表。
+            仅在输入要求示例时输出 EXAMPLES。title 为非空字符串，content 必须是字符串，可使用 Markdown 列表。TASK 必须有可执行内容；BACKGROUND、OUTPUT、CONSTRAINTS 没有独立新增信息时使用空字符串，不填占位说明或复述其他段落。其他已输出段落的 content 仍须非空。
             """;
     private static final String PLAN_SYSTEM_PROMPT = PromptOptimizationGuidance.PLANNING + """
             你负责在生成最终提示词前，找出少量真正影响结果的未决问题。用户可能来自科研、教育、写作、商业、产品或软件开发领域。
@@ -1027,10 +1027,11 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     }
 
     /**
-     * 映射单个段落，并拒绝重复或不支持的段落类型。
+     * 映射内部四要素；无独有信息的辅助槽位可留空，任务、类型和来源保护仍由后续校验共同保证。
+     * 空字符串只免除填充正文，不等于允许缺失字段、空任务或重复类型。
      */
     private PromptSection mapSection(StructuredSection section, EnumSet<PromptSectionType> foundTypes) {
-        if (section == null || isBlank(section.type()) || isBlank(section.title()) || isBlank(section.content())) {
+        if (section == null || isBlank(section.type()) || isBlank(section.title()) || section.content() == null) {
             throw invalidResponse("模型响应包含不完整的提示词段落", null);
         }
 
@@ -1039,6 +1040,10 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             sectionType = PromptSectionType.valueOf(section.type().trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException exception) {
             throw invalidResponse("模型响应包含不支持的提示词段落类型", exception);
+        }
+        // 只允许没有独立信息的辅助槽位留空；其他显式交付段落不能用空内容通过协议检查。
+        if (section.content().isBlank() && !sectionType.allowsEmptyContent()) {
+            throw invalidResponse("模型响应包含不完整的提示词段落", null);
         }
         if (!foundTypes.add(sectionType)) {
             throw invalidResponse("模型响应包含重复的提示词段落类型", null);

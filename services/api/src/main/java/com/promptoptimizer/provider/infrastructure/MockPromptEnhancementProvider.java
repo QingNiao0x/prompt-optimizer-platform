@@ -69,7 +69,7 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
     }
 
     /**
-     * 从项目描述、技术栈、目录和会话历史组装背景段落。
+     * 从项目描述、技术栈、目录和已启用会话历史组装独立背景；无资料时保留空内部槽位。
      */
     private String buildBackground(EnhancementProviderRequest request) {
         ContextSnapshot context = request.context();
@@ -96,12 +96,7 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
                 && !request.conversationHistory().isEmpty()) {
             parts.add("当前会话补充：" + summarizeConversation(request.conversationHistory()));
         }
-        if (parts.isEmpty()) {
-            // 原始需求也是已知背景；没有附件不等于对象、地区或技术栈均未知。
-            String stated = request.rawPrompt().lines().map(String::strip).filter(line -> !line.isBlank())
-                    .findFirst().orElse("");
-            return "本次需求：" + (stated.length() <= 500 ? stated : stated.substring(0, 500));
-        }
+        // 原文已由 TASK 完整承载；没有独立上下文时不复制原题、不虚构“背景缺失”。
         return String.join("\n", parts);
     }
 

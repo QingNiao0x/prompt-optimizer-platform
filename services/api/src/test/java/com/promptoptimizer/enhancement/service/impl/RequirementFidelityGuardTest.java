@@ -21,6 +21,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class RequirementFidelityGuardTest {
     private final RequirementFidelityGuard guard = new RequirementFidelityGuard();
 
+    /** 符号、关系与时间上限也属于真实规则，不能为减少原题重复而退化为有限数字单位表。 */
+    @Test
+    void shouldPreserveSymbolicRelationalAndTemporalUpperBounds() {
+        for (String rule : List.of("最多列出5个行业。", "邮件失败后最多重试三次。", "摘要最多200字。",
+                "最多提交limit份报告。", "最多提交MAX_ITEMS项。", "最多消耗剩余额度的一半。",
+                "最多运行到用户指定的截止时间。", "最多返回三条，但有效记录不足时全部返回。",
+                "找出销量最多的产品，但不得包含退货订单。")) {
+            assertThat(guard.explicitRules(rule, List.of())).as(rule).containsExactly(rule);
+        }
+    }
+
     /** 明确的正向分支也是规则；退款金额条件不能被审批中的相同阈值冒充已保留。 */
     @Test
     void shouldPreserveAffirmativeRulesWithTheirDiscriminatedBusinessObject() {

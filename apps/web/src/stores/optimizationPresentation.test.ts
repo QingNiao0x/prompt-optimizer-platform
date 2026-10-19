@@ -41,6 +41,27 @@ describe('explicit prompt presentation', () => {
     vi.stubGlobal('window', { localStorage: { getItem: () => null, setItem: () => undefined, removeItem: () => undefined } });
   });
 
+  it.each(['COMPACT', 'STRUCTURED'] as const)('edits and undoes a %s two-section result without recreating empty sections', format => {
+    const store = useOptimizationStore();
+    const source = fixture(format);
+    source.sections = source.sections.filter(section => section.type === 'TASK' || section.type === 'CONSTRAINTS');
+    source.constraintGroups = { platformMandatory: ['不得泄露凭据。'], taskSpecific: [], additionalPermissions: [] };
+    source.optimizedPrompt = renderPromptSections(source.sections, format);
+    store.applyReoptimized({ recordId: 'two-sections', result: source });
+
+    const edited = source.sections.map(section => ({ ...section,
+      content: section.type === 'TASK' ? '实现约定接口，兼容当前调用方。' : '保留已有约定。' }));
+    expect(store.saveEditedSections(edited)).toBe(true);
+    expect(store.result!.sections.map(section => section.type)).toEqual(['TASK', 'CONSTRAINTS']);
+    expect(store.result!.sections.every(section => section.content.trim())).toBe(true);
+    expect(store.result!.optimizedPrompt).toBe(renderPromptSections(store.result!.sections, format));
+    expect(store.result!.optimizedPrompt).toContain('不得泄露凭据。');
+    expect(store.result!.optimizedPrompt).not.toMatch(/## (背景|输出)/);
+    expect(store.undoResult()).toBe(true);
+    expect(store.result!.optimizedPrompt).toBe(source.optimizedPrompt);
+    expect(store.result!.sections).toEqual(source.sections);
+  });
+
   it.each(['COMPACT', 'STRUCTURED'] as const)('edits %s rules using server ownership and keeps original Plan source on regeneration', async format => {
     const store = useOptimizationStore();
     store.rawPrompt = '实现登录，沿用既有认证。';

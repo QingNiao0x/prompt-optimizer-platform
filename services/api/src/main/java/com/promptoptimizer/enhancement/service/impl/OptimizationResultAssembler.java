@@ -224,7 +224,9 @@ public class OptimizationResultAssembler {
         sections.forEach((type, section) -> validateUserFacingProtocol(section.content(), rawPrompt, "sections." + type));
         // 在追加平台交付条款前校验模型的主目标；正确尾注不能掩盖前文把正文改成方案的矛盾。
         for (PromptSectionType type : List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT)) {
-            draftDelivery.validateDelivery(sections.get(type).content(), "sections." + type);
+            // 辅助槽可为空，表示交付已在 TASK 完整说明；非空 OUTPUT 仍不能与主任务冲突。
+            String content = sections.get(type).content();
+            if (!content.isBlank()) draftDelivery.validateDelivery(content, "sections." + type);
         }
         if (providerResponse.ambiguities() != null) {
             for (int index = 0; index < providerResponse.ambiguities().size(); index++) {
@@ -473,7 +475,8 @@ public class OptimizationResultAssembler {
                 : List.of(PromptSectionType.values());
         List<PromptSection> ordered = sectionOrder.stream()
                 .map(sections::get)
-                .filter(section -> section != null)
+                // 内部四槽直到规则补全和安全复查后才去空；正文、复制与历史共用同一投影。
+                .filter(section -> section != null && !section.content().isBlank())
                 .toList();
         // 显式开关覆盖模型及翻译的展示偏好，但不改变验收要求等已完成的语义组装。
         var resultFormat = requestedFormat == null ? presentation : requestedFormat;
@@ -899,14 +902,15 @@ public class OptimizationResultAssembler {
                 .distinct().toList();
     }
 
-    /** 拒绝重复、空白和疑似含凭据的模型段落，再转换为按类型索引的结果。 */
+    /** 保留四要素槽位；辅助槽可空，空任务、缺内容、重复类型及疑似凭据仍拒绝。 */
     private Map<PromptSectionType, PromptSection> collectSections(List<PromptSection> values) {
         if (values == null || values.isEmpty()) {
             throw invalidResponse(Reason.REQUIRED_SECTIONS_MISSING, "sections");
         }
         Map<PromptSectionType, PromptSection> sections = new EnumMap<>(PromptSectionType.class);
         for (PromptSection section : values) {
-            if (section == null || section.type() == null || isBlank(section.title()) || isBlank(section.content())) {
+            if (section == null || section.type() == null || isBlank(section.title()) || section.content() == null
+                    || (section.content().isBlank() && !section.type().allowsEmptyContent())) {
                 throw invalidResponse(Reason.SECTION_INVALID, "sections");
             }
             if (sensitiveValueDetector.containsCredential(section.title())

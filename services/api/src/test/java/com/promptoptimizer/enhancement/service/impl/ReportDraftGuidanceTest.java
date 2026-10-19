@@ -91,7 +91,7 @@ class ReportDraftGuidanceTest {
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("先完成现有依据支持的有用初稿")))
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("不能只交提纲或先发问卷等待补齐")))
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("缺口只限制依赖它的内容")))
-                .andExpect(jsonPath("$.messages[0].content").value(containsString("背景不盘点未上传的项目文件")))
+                .andExpect(jsonPath("$.messages[0].content").value(containsString("重要缺口进入统一未决清单，不盘点未上传的材料")))
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("候选方法及适用条件")))
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("用户明确要求先提问")))
                 .andExpect(jsonPath("$.messages[0].content").value(containsString("只输出译文、只读比较或代码")))
