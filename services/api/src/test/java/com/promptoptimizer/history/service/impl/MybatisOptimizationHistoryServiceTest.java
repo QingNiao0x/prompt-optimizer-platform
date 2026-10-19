@@ -11,6 +11,8 @@ import com.promptoptimizer.enhancement.dto.OptimizationRequest;
 import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
 import com.promptoptimizer.enhancement.service.EnhancementOrchestrator;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
+import com.promptoptimizer.enhancement.domain.PromptDocument;
+import com.promptoptimizer.enhancement.domain.PromptFormat;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.ProviderMetadata;
@@ -20,6 +22,8 @@ import com.promptoptimizer.history.entity.OptimizationRecordEntity;
 import com.promptoptimizer.history.mapper.OptimizationRecordMapper;
 import com.promptoptimizer.identity.service.ActorIdentity;
 import com.promptoptimizer.identity.service.CurrentActor;
+import com.promptoptimizer.policy.domain.ConstraintBundle;
+import com.promptoptimizer.policy.domain.PlatformConstraintRules;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -272,6 +276,38 @@ class MybatisOptimizationHistoryServiceTest {
                 eq(0L), eq("新正文。事实边界。"), metadata.capture());
         assertThat(metadata.getValue()).containsEntry("generatedPrompt", record.getOptimizedPrompt());
         assertThat(metadata.getValue()).containsEntry("editRevision", 1L);
+    }
+
+    @Test
+    void naturalHistoryPersistsAllFiveRulesAndRejectsRemovingAnyDuringEditing() {
+        var groups = new ConstraintBundle(PlatformConstraintRules.forNaturalMode(), List.of(),
+                List.of("禁止读取或输出受保护路径：private/**。"));
+        String boundaries = String.join("\n", groups.visibleConstraints());
+        String body = "保留原定任务正文。\n\n" + boundaries;
+        var document = new PromptDocument(body, PromptDocument.ResultKind.TEXT, null, resultWithFileContent().contextReport(),
+                List.of(), groups.visibleConstraints(), TemplateCode.GENERAL, new ProviderMetadata("mock", "fixture", true),
+                0, List.of(), List.of(), PromptFormat.COMPACT, groups, PromptDocument.NATURAL_PIPELINE, "3", "APE", null, 0);
+        UUID id = service.saveDocument(request(), document);
+        var saved = ArgumentCaptor.forClass(OptimizationRecordEntity.class);
+        verify(persistenceService).persist(saved.capture(), eq(ACTOR));
+        var record = saved.getValue();
+        assertThat(record.getOptimizedPrompt()).isEqualTo(body);
+        assertThat(objectMapper.convertValue(record.getResultMetadata().get("constraintGroups"), ConstraintBundle.class))
+                .isEqualTo(groups);
+        when(recordMapper.selectByIdAndScope(id, TENANT_ID, WORKSPACE_ID)).thenReturn(record);
+        assertThat(service.getDocument(id).optimizedPrompt()).isEqualTo(body);
+        assertThat(service.getDocument(id).constraintGroups()).isEqualTo(groups);
+
+        for (String rule : groups.visibleConstraints()) {
+            assertThatThrownBy(() -> service.editText(id,
+                    new com.promptoptimizer.history.dto.PromptTextEditRequest(body.replace(rule, ""), 0)))
+                    .isInstanceOf(com.promptoptimizer.common.exception.InvalidOptimizationRequestException.class);
+        }
+        verify(recordMapper, never()).updateNaturalText(any(), any(), any(), org.mockito.ArgumentMatchers.anyLong(), any(), any());
+        String edited = "修改后的任务正文。\n\n" + boundaries;
+        when(recordMapper.updateNaturalText(eq(id), eq(TENANT_ID), eq(WORKSPACE_ID), eq(0L), eq(edited), any())).thenReturn(1);
+        assertThat(service.editText(id, new com.promptoptimizer.history.dto.PromptTextEditRequest(edited, 0)).optimizedPrompt())
+                .isEqualTo(edited);
     }
 
     @Test

@@ -10,11 +10,14 @@ import com.promptoptimizer.enhancement.dto.*;
 import com.promptoptimizer.enhancement.service.PlanningSessionExpiredException;
 import com.promptoptimizer.identity.service.ActorIdentity;
 import com.promptoptimizer.identity.service.CurrentActor;
+import com.promptoptimizer.policy.domain.PlatformConstraintRules;
 import com.promptoptimizer.policy.service.impl.ProtectedContextFilterImpl;
 import com.promptoptimizer.provider.domain.*;
 import com.promptoptimizer.provider.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -55,6 +58,10 @@ class NaturalEnhancementServiceTest {
         assertThat(result.optimizedPrompt()).startsWith("自然任务正文");
         assertThat(result.generationPipeline()).isEqualTo("NATURAL");
         assertThat(result.framework()).isEqualTo("ICIO");
+        assertThat(result.constraintGroups().platformMandatory()).containsExactlyElementsOf(PlatformConstraintRules.CODE_RULES);
+        assertThat(result.appliedConstraints()).containsExactlyElementsOf(PlatformConstraintRules.CODE_RULES);
+        assertThat(result.optimizedPrompt()).isEqualTo(provider.body + "\n\n" + String.join("\n", PlatformConstraintRules.CODE_RULES));
+        assertThat(provider.last.mandatoryRules()).containsExactlyElementsOf(PlatformConstraintRules.CODE_RULES);
         assertThat(provider.planCalls).isZero();
         assertThat(provider.last.rawPrompt()).isEqualTo("写一封邮件");
     }
@@ -68,6 +75,8 @@ class NaturalEnhancementServiceTest {
                 List.of(), "fixture:model"));
         assertThat(result.sections()).isNull();
         assertThat(provider.last.actualAnswers()).isEmpty();
+        assertThat(result.constraintGroups().platformMandatory()).containsExactlyElementsOf(PlatformConstraintRules.CODE_RULES);
+        assertThat(result.optimizedPrompt()).endsWith(String.join("\n", PlatformConstraintRules.CODE_RULES));
     }
 
     @Test
@@ -75,10 +84,26 @@ class NaturalEnhancementServiceTest {
         provider.questions = IntStream.range(0, 12).mapToObj(i -> question("q" + i)).toList();
         var plan = service.plan(planRequest());
         var answers = plan.questions().stream().map(q -> new PlanAnswer(q.id(), "伪造的问题文案", "保留未知，不默认确认")).toList();
-        service.optimize(request("写一封邮件", new PlanConfirmation(plan.planId(), null, answers), List.of(), "fixture:model"));
+        var result = service.optimize(request("写一封邮件", new PlanConfirmation(plan.planId(), null, answers), List.of(), "fixture:model"));
         assertThat(provider.last.actualAnswers()).hasSize(12);
         assertThat(provider.last.actualAnswers()).allMatch(a -> a.question().equals("收件对象仍需明确？"));
         assertThat(provider.last.actualAnswers()).allMatch(a -> a.answer().equals("保留未知，不默认确认"));
+        assertThat(result.constraintGroups().platformMandatory()).containsExactlyElementsOf(PlatformConstraintRules.CODE_RULES);
+        assertThat(provider.last.mandatoryRules()).containsExactlyElementsOf(PlatformConstraintRules.CODE_RULES);
+    }
+
+    @Test
+    void fixedNaturalRulesKeepAdditionalPermissionsWithoutDependingOnOptionalEnhancementFlags() {
+        var request = new OptimizationRequest("写一封邮件", new ContextAnalysisRequest("", List.of()),
+                new EnhancementOptions(TemplateCode.AUTO, false, false, false, PromptFormat.COMPACT), List.of(),
+                new PermissionPolicyInput(List.of("private/**"), List.of("发送邮件")), null, "fixture:model");
+        var result = service.optimize(request);
+        var extra = List.of("禁止读取或输出受保护路径：private/**。", "以下操作必须先获得人工确认：发送邮件。");
+        assertThat(result.constraintGroups().platformMandatory()).containsExactlyElementsOf(PlatformConstraintRules.CODE_RULES);
+        assertThat(result.constraintGroups().additionalPermissions()).containsExactlyElementsOf(extra);
+        assertThat(result.optimizedPrompt()).isEqualTo(provider.body + "\n\n"
+                + String.join("\n", PlatformConstraintRules.CODE_RULES) + "\n" + String.join("\n", extra));
+        assertThat(provider.last.mandatoryRules()).containsExactlyElementsOf(result.appliedConstraints());
     }
 
     @Test
@@ -183,27 +208,29 @@ class NaturalEnhancementServiceTest {
 
     @Test
     void ownedStandaloneBoundariesAreAssembledOnceWithoutRejectingTheValidTask() {
-        String rule = com.promptoptimizer.policy.domain.PlatformConstraintRules.TRUTH;
-        provider.body = rule + "\n" + rule;
+        String block = String.join("\n", PlatformConstraintRules.CODE_RULES);
+        provider.body = block + "\n" + block;
         var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"));
-        assertThat(result.optimizedPrompt()).isEqualTo(rule);
-        assertThat(result.optimizedPrompt().indexOf(rule)).isEqualTo(result.optimizedPrompt().lastIndexOf(rule));
+        assertThat(result.optimizedPrompt()).isEqualTo(block);
     }
 
     @Test
     void quotedPlatformSentencesAndIndependentConditionsRemainIntact() {
-        String rule = com.promptoptimizer.policy.domain.PlatformConstraintRules.TRUTH;
+        String rule = PlatformConstraintRules.TRUTH;
         provider.body = "保留原定交付。\n```text\n" + rule + "\n```\n若材料含冲突，保留两份来源，不扩大确认。";
         var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"));
         assertThat(result.optimizedPrompt()).startsWith(provider.body);
-        assertThat(result.optimizedPrompt()).endsWith(rule);
+        assertThat(result.optimizedPrompt()).endsWith(String.join("\n", PlatformConstraintRules.CODE_RULES));
     }
 
-    @Test
-    void legacyNaturalVersionKeepsItsOriginalProtocolAndUnknownVersionNeverCallsTheProvider() {
-        var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"), "1");
-        assertThat(result.chainVersion()).isEqualTo("1");
-        assertThat(provider.last.strategyVersion()).isEqualTo("1");
+    @ParameterizedTest
+    @ValueSource(strings = {"1", "2"})
+    void legacyNaturalVersionKeepsItsProtocolWithCurrentFixedRulesAndUnknownVersionNeverCallsTheProvider(String version) {
+        var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"), version);
+        assertThat(result.chainVersion()).isEqualTo(version);
+        assertThat(provider.last.strategyVersion()).isEqualTo(version);
+        assertThat(result.constraintGroups().platformMandatory()).containsExactlyElementsOf(PlatformConstraintRules.CODE_RULES);
+        assertThat(result.appliedConstraints()).allSatisfy(rule -> assertThat(result.optimizedPrompt()).contains(rule));
         int calls = provider.enhanceCalls;
         assertThatThrownBy(() -> service.optimize(request("写一封邮件", null, List.of(), "fixture:model"), "999"))
                 .isInstanceOf(com.promptoptimizer.common.exception.UnsupportedResultVersionException.class);
@@ -266,7 +293,7 @@ class NaturalEnhancementServiceTest {
             assertThat(result.optimizedPrompt()).startsWith(provider.body)
                     .doesNotContain("按原定交付的格式和篇幅落实以下边界");
             assertThat(result.appliedConstraints()).allSatisfy(rule -> assertThat(result.optimizedPrompt()).contains(rule));
-            assertThat(result.constraintGroups().platformMandatory()).hasSize(trace.path("caseId").asText().equals("JAVA_COMPLETE") ? 5 : 1);
+            assertThat(result.constraintGroups().platformMandatory()).containsExactlyElementsOf(PlatformConstraintRules.CODE_RULES);
             replayed++;
         }
         assertThat(replayed).isEqualTo(3);

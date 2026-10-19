@@ -17,7 +17,7 @@
 | V1 优化接口 | 原实现 | 不切换现有调用方的生成逻辑 |
 | V2 Plan | 独立自然 Plan 策略 | 两种最终排版共用真实题答；排版偏好不构成事实或授权 |
 
-自然链不调用 PromptEnhancementProvider、旧任务模板、EffectiveTaskView、PlanDecisionIntegrator、OptimizationResultAssembler 或旧业务规则追加器。复用的能力限于服务端身份、模型目录与路由、并发和审计、敏感扫描、上下文分析与过滤、Plan 所有权和期限以及历史持久化。TaskIntentResolver 只判断固定工程安全条款是否适用，不参与新正文的模板或内容生成。
+自然链不调用 PromptEnhancementProvider、旧任务模板、EffectiveTaskView、PlanDecisionIntegrator、OptimizationResultAssembler 或旧业务规则追加器。复用的能力限于服务端身份、模型目录与路由、并发和审计、敏感扫描、上下文分析与过滤、Plan 所有权和期限以及历史持久化。自2026-10-20起，自然模式统一采用五条固定平台约束，不再调用TaskIntentResolver判定条款数量；结构化及旧分节链路保留原有任务判定行为。
 
 独立生成协议见 [NaturalPromptInstructions](../../services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java)，应用入口见 [NaturalEnhancementService](../../services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementService.java)。
 
@@ -30,6 +30,8 @@
 正文先表达目标与交付，必要规则放在适用动作附近。充分需求保留有效表达，模糊需求补充有依据的步骤、输入用途、条件和可检查交付要求；不强制角色、字数、段数或通用验收长段。缺材料只限制依赖它的部分，不能把原定报告、代码、方案改为补材料问卷。
 
 第二、三版在同次生成响应中返回taskUnderstanding、optimizedPrompt和framework；第一版仍使用原协议。第三版没有新增协议字段、模板或裁判调用。固定平台条款与追加权限由平台统一组装，模型正文集中描述当前任务。只归并独占一行的完整平台原句，代码围栏、引用、条件句和附带业务内容保留，不按相似度删除自由正文。协议、引用原句和敏感值校验不能证明语义等价、任务完整覆盖或实际增强质量。
+
+未开启“结构化提示词”的最终生成统一携带[PlatformConstraintRules](../../services/api/src/main/java/com/promptoptimizer/policy/domain/PlatformConstraintRules.java)中的五条原文：事实与假设边界、敏感凭据保护、交付范围及格式、受保护路径、危险操作人工确认。直接增强、零问题Plan及完成题答后的增强采用相同规则，不受示例或可选权限增强开关影响；用户追加的路径和操作边界单独保留。再次增强仍按保存的生成策略版本处理任务内容，但采用当前五条固定安全条款；已保存历史的读取和编辑不批量补写，新结果的五条分组随正文保存并用于编辑恢复与服务端校验。此调整不新增模型指导、场景分支或生成版本。
 
 充分需求优先保留可执行原句，避免紧接着逐项同义复写；开放任务先补足有用交付内容，再补必要核查要求。比较依据仍须对应原问题的属性，间接线索不能替代原比较目标。真实复验中，附加的交付范围说明未改善短文案追加分类说明的问题，已撤回该说明；固定原句和安全强度保留，不继续叠加通用指令。三份冻结真实响应通过最终组装离线回放，不能替代新版本实际作品质量验收。
 

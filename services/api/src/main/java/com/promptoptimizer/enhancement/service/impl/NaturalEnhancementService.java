@@ -16,7 +16,6 @@ import com.promptoptimizer.policy.service.ProtectedContextFilter;
 import com.promptoptimizer.provider.domain.*;
 import com.promptoptimizer.provider.service.NaturalPromptProvider;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
-import com.promptoptimizer.template.domain.TaskIntentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.Clock;
@@ -95,10 +94,10 @@ public class NaturalEnhancementService {
                         request.context().customDescription()).snapshot(), request.permissionPolicy());
         List<ConversationMessage> conversation = Boolean.TRUE.equals(request.enhancement().includeConversationHistory())
                 ? request.conversationHistory() : List.of();
-        // 共享识别器仅用于既有平台安全条款的适用范围，不向新生成器传入旧模板或旧生成指导。
-        boolean engineering = TaskIntentResolver.resolve(TemplateCode.AUTO, query).engineeringConstraints();
+        // 自然模式的五条固定边界适用于所有任务及 Plan 最终生成，不再按工程交付选择数量。
+        // 安全条款独立于生成策略版本；再次增强采用当前条款，读取旧历史仍保留原保存正文。
         List<String> permissions = additionalPermissions(request.permissionPolicy());
-        var groups = new ConstraintBundle(PlatformConstraintRules.forTask(engineering), List.of(), permissions);
+        var groups = new ConstraintBundle(PlatformConstraintRules.forNaturalMode(), List.of(), permissions);
         var input = new NaturalPromptInput(request.rawPrompt(), context, confirmed.answers(), conversation,
                 Boolean.TRUE.equals(request.enhancement().includeExamples()), groups.visibleConstraints(),
                 model.publicId(), planningContext).withStrategyVersion(strategyVersion);
