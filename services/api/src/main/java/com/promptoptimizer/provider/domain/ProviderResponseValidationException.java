@@ -49,7 +49,7 @@ public final class ProviderResponseValidationException extends ProviderException
         return new ProviderResponseValidationException(reason, field, getCause(), attempts);
     }
 
-    /** 固定服务端事实或元数据不能由模型重写；失败仍被拦截，但不为它重复付费调用。 */
+    /** 固定服务端事实或元数据不能由模型重写；模型引用格式错误则使用既有有限协议修复预算。 */
     public boolean isModelRepairable() {
         return !field.startsWith("context.") && reason != Reason.METADATA_INVALID
                 && reason != Reason.CONFIRMED_DECISION_MISSING;
@@ -74,6 +74,8 @@ public final class ProviderResponseValidationException extends ProviderException
         AMBIGUITY_COUNT_INVALID("待确认事项使用顶层 ambiguities 字符串数组，最多八项；合并重复项但保留所有不同的实质未决条件。"),
         AMBIGUITY_VALUE_INVALID("每条待确认事项必须为非空字符串，最多五百字符，不得删除实质未决条件。"),
         SENSITIVE_CONTENT("使用不含凭据值的业务表述；隐私要求写成完整句子，避免 password: 或 apiKey= 等赋值形式；不得输出真实或伪造的密钥、密码、认证头或私钥。"),
+        // 引用位置由模型安排，来源正文由服务端拥有；修复格式不能改写来源或放宽其作用域。
+        REQUIREMENT_REFERENCE_INVALID("仅使用本次 requirementReferences 提供的 reference，在其 destination 对应段落中占独立一行；不得与正文、条件或否定语句拼接，也不得置于引用、示例或未来假设范围内。不得发明引用或更改来源要求；需要补充的独立说明另起一行。"),
         CONFIRMED_DECISION_MISSING("完整保留输入中用户已确认的答案和适用边界，不得替用户更改决定。"),
         RULE_CONFLICT("检查并改正执行要求与原始需求、明确确认答案及适用资料规则相反的内容；保留否定、条件、比较符、数值、单位和作用对象。取消保持原值不等于移除保持逻辑，向空字段补值不等于将字段清空。不得在另一段追加正确规则却保留矛盾指令。若原定交付为正文，直接改正 TASK 与 OUTPUT 中将其变为方案、提纲、问卷或等待补齐全部资料的指令；资料缺口仅限制对应内容，保留有依据的实质正文及用户明确的起草前确认要求。未决口径在正文、指标表、公式及伪代码中都保持未决，参数格写待确认，不填惯例、示例或临时默认口径；各指标分别命名参数，不套用通用分母，不把一项确认扩大到其他指标，仍须保留原定交付物。"),
         SOURCE_SCOPE_CONFLICT("资料取值与对象、属性、版本及适用条件分别核对。只写一版与另一版而未明确对应关系的资料，保持版本对应待核实；不得按出现次序绑定到具体版本或拼成统一规则。其他属性的版本证据不能证明本属性。"),

@@ -104,8 +104,10 @@ public final class BoundRequirementProjection {
                 var entry = byReference.get(reference);
                 if (entry == null || entry.slot().destination() != section.type()
                         || !AdditionalRuleProjection.permitsSourceReference(section, reference, matcher.start())) {
+                    // 来源未丢失：失败来自模型安排的引用位置或格式，应进入已有协议修复而不伪装确认丢失。
+                    // 仍先拒绝全部响应，不自动拆行或展开条件／否定中的引用，以免改变来源的适用范围。
                     throw new ProviderResponseValidationException(
-                            ProviderResponseValidationException.Reason.CONFIRMED_DECISION_MISSING,
+                            ProviderResponseValidationException.Reason.REQUIREMENT_REFERENCE_INVALID,
                             "sections." + section.type() + ".requirementReference");
                 }
             }
