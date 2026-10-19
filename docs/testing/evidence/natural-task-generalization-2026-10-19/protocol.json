@@ -1,0 +1,90 @@
+{
+  "batch": "natural-task-generalization-2026-10-19",
+  "authorization": "USER_APPROVED_NEW_MAXIMUM_60_ACTUAL_CALLS",
+  "previousClosedActualCalls": 490,
+  "previousCandidateCalls": 420,
+  "maximumNewActualCalls": 60,
+  "status": "FROZEN",
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 4096,
+    "thinking": "disabled"
+  },
+  "phaseLimits": {
+    "BASELINE": 10,
+    "CANDIDATE": 22,
+    "EXECUTION": 18,
+    "REVIEW": 10
+  },
+  "plannedCalls": {
+    "BASELINE": 8,
+    "CANDIDATE": 18,
+    "EXECUTION": 16,
+    "REVIEW": 8
+  },
+  "stopConditions": [
+    "No call above total or phase limit",
+    "No quality retry of the same frozen job",
+    "Protocol repairs count as actual attempts",
+    "Stop expanding samples after the same severe failure in two candidate versions",
+    "Keep first failures and all raw responses"
+  ],
+  "comparison": "Frozen NATURAL/1 versus NATURAL/2; supplied Qoder text is a style reference, not a Qoder API benchmark",
+  "candidateDirect": [
+    "AI_GLOBAL",
+    "AI_PARAPHRASE",
+    "TRANSLATE",
+    "JAVA_COMPLETE",
+    "REPORT_MATERIAL",
+    "PPT_DESIGN",
+    "COPY_BRIEF",
+    "PROCUREMENT_UNKNOWN"
+  ],
+  "baselineDirect": [
+    "AI_GLOBAL",
+    "AI_PARAPHRASE",
+    "TRANSLATE",
+    "JAVA_COMPLETE",
+    "REPORT_MATERIAL",
+    "PPT_DESIGN",
+    "COPY_BRIEF",
+    "PROCUREMENT_UNKNOWN"
+  ],
+  "plan": [
+    "AI_GLOBAL",
+    "JAVA_COMPLETE",
+    "PPT_DESIGN",
+    "PROCUREMENT_UNKNOWN"
+  ],
+  "structured": [
+    "JAVA_COMPLETE",
+    "PPT_DESIGN"
+  ],
+  "execution": [
+    "TRANSLATE",
+    "JAVA_COMPLETE",
+    "REPORT_MATERIAL",
+    "COPY_BRIEF"
+  ],
+  "planExecution": [
+    "JAVA_COMPLETE",
+    "PPT_DESIGN"
+  ],
+  "review": [
+    "AI_GLOBAL",
+    "AI_PARAPHRASE",
+    "TRANSLATE",
+    "JAVA_COMPLETE",
+    "REPORT_MATERIAL",
+    "PPT_DESIGN",
+    "COPY_BRIEF",
+    "PROCUREMENT_UNKNOWN"
+  ]
+}
