@@ -1,0 +1,52 @@
+{
+  "batch": "structured-quality-2026-10-20",
+  "status": "FROZEN",
+  "authorization": "USER_DELEGATED_CHOICE_OF_REAL_EVALUATION_CALL_COUNT",
+  "authorizationQuote": "后续开发请不要偏离方向，请执行以下自动化开发流程一次性修改完成(可以进行真实评测次数自行选择)",
+  "scope": "Only explicit STRUCTURED generation, assembly and projection; do not change NATURAL or COMPACT behavior",
+  "previousClosedActualCalls": 607,
+  "maximumNewActualCalls": 26,
+  "maximumCumulativeActualCalls": 633,
+  "phaseLimits": {
+    "GENERATION": 12,
+    "PLAN": 3,
+    "EXECUTION": 9,
+    "REVIEW": 2
+  },
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 4096,
+    "thinking": "disabled"
+  },
+  "allowedModels": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "allowedJobs": [
+    "AI_USAGE_C2_GEN",
+    "JSON_REGISTRATION_C2_GEN",
+    "EVENT_PLAN_C2_GEN",
+    "AI_USAGE_C2_STRUCTURED_EXEC",
+    "JSON_REGISTRATION_C2_STRUCTURED_EXEC",
+    "EVENT_PLAN_C2_STRUCTURED_EXEC",
+    "REVIEW_FLASH",
+    "REVIEW_PRO"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "closedBalanceTransferAllowed": false,
+  "stopConditions": [
+    "Stop at total or phase limit; count failures and protocol repairs",
+    "One frozen candidate and one work per arm; no quality retries or new scene-specific product rules",
+    "Do not fill missing Plan answers in enhanced execution; execute the actual native copied body",
+    "Any semantic loss, factual inversion, safety failure or incomplete output blocks its matching acceptance"
+  ],
+  "baselineCommit": "e95f99f38ba551683e7a3891cb60c92a02965542",
+  "candidate": "C2",
+  "amendmentReason": "C1 raw payload still carried default acceptanceGuidance and exampleGuidance alongside effective task and example rules. C2 suppresses only these defaults for explicit STRUCTURED; original criteria and effective example mode remain. Reuse all original RAW works and actual Plan information; no quality retry."
+}

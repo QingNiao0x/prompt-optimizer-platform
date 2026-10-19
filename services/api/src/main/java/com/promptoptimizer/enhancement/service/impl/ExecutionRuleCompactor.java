@@ -19,13 +19,19 @@ final class ExecutionRuleCompactor {
     private static final java.util.regex.Pattern FENCE = java.util.regex.Pattern.compile("^(`{3,}|~{3,})(.*)$");
     private ExecutionRuleCompactor() { }
 
-    /** 只在另一执行段已完整保留同一规则时删除重复行；四要素不能为空。 */
+    /** 旧调用方保持原非空兼容行为；仅显式结构化组装启用可空辅助槽。 */
     static void compact(Map<PromptSectionType, PromptSection> sections) {
         compact(sections, Set.of());
     }
 
     /** 完整输出来源只作保护范围，不作删除字典；常规去重不能拆碎权威块后再触发补回。 */
     static void compact(Map<PromptSectionType, PromptSection> sections, Set<String> outputSources) {
+        compact(sections, outputSources, false);
+    }
+
+    /** 仅在完整规则已由另一段承担时清空辅助槽；TASK、独立条件及受保护输出来源不清空。 */
+    static void compact(Map<PromptSectionType, PromptSection> sections, Set<String> outputSources,
+            boolean allowEmptyAuxiliary) {
         Set<String> seen = new LinkedHashSet<>();
         Set<String> seenSentences = new LinkedHashSet<>();
         for (PromptSectionType type : java.util.List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT,
@@ -79,14 +85,15 @@ final class ExecutionRuleCompactor {
                 }
             }
             String cleaned = String.join("\n", removeEmptyProjectionHeadings(retained)).strip();
-            // 完全重复的必需段落仍保留，不用占位句冒充有效四要素。
+            // 新结构化协议允许辅助槽为空；保留槽位供最终保真和安全补全，不恢复重复原段。
             if (!cleaned.isBlank()) {
                 sections.put(type, new PromptSection(type, section.title(), cleaned));
                 seen.addAll(pending);
                 seenSentences.addAll(pendingSentences);
             } else if (type == PromptSectionType.ACCEPTANCE) {
-                // 可选验收已全部由执行正文承担时直接省去；必需四要素仍保留实质原文。
                 sections.remove(type);
+            } else if (allowEmptyAuxiliary && type.allowsEmptyContent()) {
+                sections.put(type, new PromptSection(type, section.title(), ""));
             }
         }
     }

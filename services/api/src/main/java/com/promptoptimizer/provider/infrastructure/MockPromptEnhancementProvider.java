@@ -51,7 +51,8 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
                     toMarkdownList(findings)
             ));
         }
-        sections.add(new PromptSection(
+        // 结构化不靠模板默认验收填模块；原文要求仍在TASK，旧调用方继续保留原确定性夹具。
+        if (request.options().promptFormat() != com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED) sections.add(new PromptSection(
                 PromptSectionType.ACCEPTANCE,
                 "验收标准",
                 request.template().acceptanceGuidance()

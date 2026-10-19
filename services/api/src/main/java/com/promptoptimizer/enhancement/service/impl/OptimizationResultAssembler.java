@@ -422,8 +422,9 @@ public class OptimizationResultAssembler {
                     remainingAmbiguities.stream().map(value -> "- " + value).collect(Collectors.joining("\n"))
             ));
         }
-        // 新适配器已按实质缺口选择验收要求；不再强制追加通用章节。旧适配器保持兼容。
-        if (providerResponse.assessment() == null && presentation == com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED) {
+        // 显式结构化只保留模型或原文实际给出的验收，不为Mock和旧响应补通用模块；旧模式兼容不变。
+        if (requestedFormat != com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED
+                && providerResponse.assessment() == null && presentation == com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED) {
             sections.computeIfAbsent(PromptSectionType.ACCEPTANCE,
                     ignored -> new PromptSection(PromptSectionType.ACCEPTANCE, "验收标准", template.acceptanceGuidance()));
         }
@@ -462,9 +463,11 @@ public class OptimizationResultAssembler {
         if (draftDelivery.active()) {
             deliveryAuthority.merge(PromptSectionType.OUTPUT, draftDelivery.guidance(), (existing, added) -> existing + "\n" + added);
         }
-        AuthoritativeDeliveryCompactor.compact(sections, deliveryAuthority);
+        // 显式结构化采用可空辅助槽；旧COMPACT和自动模式不改变其既有组装行为。
+        boolean structured = requestedFormat == com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED;
+        AuthoritativeDeliveryCompactor.compact(sections, deliveryAuthority, structured);
         ExecutionRuleCompactor.compact(sections, deliveredOutputs.stream()
-                .map(ExplicitOutputRequirements::bodyOf).collect(Collectors.toUnmodifiableSet()));
+                .map(ExplicitOutputRequirements::bodyOf).collect(Collectors.toUnmodifiableSet()), structured);
         // 显式输出块是用户交付契约；模型遗漏时从同一来源补回，不依赖评估声明或改写后的字段相似度。
         Set<String> finalOutputSources = new java.util.HashSet<>(sourceProjection.coveredRules(sections));
         finalOutputSources.addAll(deliveredOutputs);
@@ -472,6 +475,7 @@ public class OptimizationResultAssembler {
         PromptSection constraintSection = sections.get(PromptSectionType.CONSTRAINTS);
         sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(constraintSection.type(), constraintSection.title(),
                 PlatformConstraintRenderer.appendMandatory(constraintSection.content(), constraintBundle)));
+        if (structured) presentCompletedConfirmations(sections, taskView);
         // 平台补回后的视图仍须守住确认范围；不能只验证模型原文而漏掉自动追加的规则。
         sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
         sections.forEach((type, section) -> conditionalGuard.validate(section.content(), "sections." + type));
@@ -715,6 +719,35 @@ public class OptimizationResultAssembler {
                     + "\n\n执行时核查现有实现（不据此臆造实现或更改业务规则）：\n- " + String.join("\n- ", checks)));
         }
         return List.copyOf(pending);
+    }
+
+    /**
+     * 只标明服务端已完整绑定的确认状态，不把题干标签重新呈现成当前择一请求。
+     * 整体未决、部分回答及未来条件不标为完成；原始题答、权限及独立规则均保留。
+     */
+    private void presentCompletedConfirmations(Map<PromptSectionType, PromptSection> sections,
+            com.promptoptimizer.enhancement.domain.EffectiveTaskView task) {
+        Set<String> completedIds = task.confirmedDecisions().stream()
+                .filter(decision -> decision.scope() != Scope.UNRESOLVED)
+                .map(ConfirmedPlanDecision::questionId).filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet());
+        for (var requirement : task.executionRequirements()) {
+            if (!completedIds.contains(requirement.questionId())) continue;
+            PromptSection section = sections.get(requirement.destination());
+            if (section == null) continue;
+            boolean fenced = false;
+            List<String> lines = new ArrayList<>();
+            for (String line : section.content().lines().toList()) {
+                String stripped = line.strip();
+                if (stripped.startsWith("```") || stripped.startsWith("~~~")) fenced = !fenced;
+                // 只有本次完整执行原句的独立行参与呈现，不从引文、代码或子串猜测语义相等。
+                String statement = stripped.replaceFirst("^-\\s+", "");
+                boolean boundLine = !fenced && !line.startsWith("    ") && !line.startsWith("\t")
+                        && statement.equals(requirement.statement());
+                lines.add(boundLine ? line.replace(requirement.statement(), "本次已完成确认：" + requirement.statement()) : line);
+            }
+            sections.put(section.type(), new PromptSection(section.type(), section.title(), String.join("\n", lines)));
+        }
     }
 
     /** 修改同一份结构化约束，保证正文、编辑、复制、历史与再次增强使用一致的内容。 */

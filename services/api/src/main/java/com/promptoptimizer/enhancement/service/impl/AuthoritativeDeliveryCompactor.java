@@ -29,6 +29,12 @@ final class AuthoritativeDeliveryCompactor {
 
     /** 契约已写入权威段落后再归并；只接收服务端本次生成的说明，不使用用户材料作为删除字典。 */
     static void compact(Map<PromptSectionType, PromptSection> sections, Map<PromptSectionType, String> guidance) {
+        compact(sections, guidance, false);
+    }
+
+    /** 显式结构化可清空已完整转入权威段落的辅助槽；旧调用方的非空兼容保持不变。 */
+    static void compact(Map<PromptSectionType, PromptSection> sections, Map<PromptSectionType, String> guidance,
+            boolean allowEmptyAuxiliary) {
         guidance.forEach((type, text) -> {
             PromptSection section = sections.get(type);
             if (section == null) return;
@@ -96,8 +102,12 @@ final class AuthoritativeDeliveryCompactor {
                 }
             }
             String compacted = String.join("\n", lines).strip();
-            // 无法精简为空的必需段落，继续保留原文；不生成占位句假装交付完整。
-            if (!compacted.isBlank()) sections.put(type, new PromptSection(type, section.title(), compacted));
+            // 仅清空有确定权威归属的重复辅助内容；任务目标及具名业务范围仍由上面的保护保留。
+            if (!compacted.isBlank() || allowEmptyAuxiliary && type.allowsEmptyContent()) {
+                sections.put(type, new PromptSection(type, section.title(), compacted));
+            } else if (allowEmptyAuxiliary && type == PromptSectionType.ACCEPTANCE) {
+                sections.remove(type);
+            }
         }
     }
 

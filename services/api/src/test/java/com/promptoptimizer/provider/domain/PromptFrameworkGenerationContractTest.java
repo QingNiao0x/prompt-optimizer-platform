@@ -13,7 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * 验证两种表达在同一任务及主框架上生成；不将策略文本断言当作真实作品质量验收。
+ * 验证自然框架与结构化模块分别负责布局，共用任务与边界；不将策略断言当作实际质量验收。
  *
  * @author QingNiao
  * @since 0.1.0
@@ -29,7 +29,7 @@ class PromptFrameworkGenerationContractTest {
             "先熟悉项目，核对现有模块职责，不修改代码。",
             "制定研究方案，方法可以推荐，实际评分参数由我确认。"
     })
-    void presentationUsesSameFrameworkAndPreservesInput(String raw) {
+    void presentationUsesOneLayoutStrategyAndPreservesInput(String raw) {
         var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
         var selected = PromptFrameworkSelector.select(task);
         var natural = PromptRewriteStrategy.forTask(task, PromptFormat.COMPACT);
@@ -38,7 +38,8 @@ class PromptFrameworkGenerationContractTest {
         assertThat(natural.mode()).isEqualTo("NATURAL_FRAMEWORK");
         assertThat(structured.mode()).isEqualTo("FOCUSED_MODULES");
         assertThat(natural.instruction()).contains(selected.instruction(), "可连读的具体指令", "规则紧邻其适用动作");
-        assertThat(structured.instruction()).contains(selected.instruction(), "模块职责", "约束集中表达业务边界");
+        assertThat(structured.instruction()).doesNotContain(selected.instruction())
+                .contains("模块职责", "约束集中表达业务边界");
         assertThat(natural.instruction()).isNotEqualTo(structured.instruction());
         assertThat(selected.instruction()).doesNotContain("自然段落顺序", "TASTE", "ALIGN");
         assertThat(task.effectivePrompt()).isEqualTo(raw);

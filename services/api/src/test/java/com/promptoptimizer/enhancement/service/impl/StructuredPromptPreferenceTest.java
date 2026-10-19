@@ -72,10 +72,15 @@ class StructuredPromptPreferenceTest {
 
     @ParameterizedTest
     @EnumSource(PromptFormat.class)
-    void legacyAssessmentDoesNotChangeAcceptanceWhenPresentationChanges(PromptFormat format) {
+    void legacyModesKeepAcceptanceWhileExplicitStructuredAvoidsGenericFallback(PromptFormat format) {
         var legacy = response(null, false);
         var automatic = assemble(RAW, legacy, null);
         var requested = assemble(RAW, legacy, format);
+        if (format == PromptFormat.STRUCTURED) {
+            assertThat(requested.sections()).extracting(PromptSection::type).doesNotContain(PromptSectionType.ACCEPTANCE);
+            assertThat(automatic.sections()).extracting(PromptSection::type).contains(PromptSectionType.ACCEPTANCE);
+            return;
+        }
         assertThat(requested.sections()).containsExactlyInAnyOrderElementsOf(automatic.sections());
         assertThat(requested.sections()).anySatisfy(section -> {
             assertThat(section.type()).isEqualTo(PromptSectionType.ACCEPTANCE);

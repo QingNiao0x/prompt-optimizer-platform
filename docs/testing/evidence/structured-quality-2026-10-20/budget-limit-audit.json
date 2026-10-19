@@ -1,0 +1,25 @@
+{
+  "recordKind": "POST_CLOSURE_ARITHMETIC_AUDIT",
+  "priorFormal": {
+    "total": 624,
+    "baseline": 80,
+    "candidate": 544
+  },
+  "newBatchMaximum": 26,
+  "formalAfter": {
+    "total": 650,
+    "baseline": 80,
+    "candidate": 570
+  },
+  "derivation": "500 original formal + 60 + 16 + 48 prior independent authorizations + 26 current delegated batch; 80 baseline stays fixed",
+  "actualAfter": {
+    "total": 630,
+    "baseline": 70,
+    "candidate": 560
+  },
+  "currentBatchActual": 23,
+  "currentBatchUnusedClosed": 3,
+  "maximumCumulativeActualForThisBatch": 633,
+  "closedBalanceTransferred": 0,
+  "note": "Arithmetic reconciliation added after closure; actual transport guards used the pre-call frozen 20, then 26 batch caps and phase allocations."
+}

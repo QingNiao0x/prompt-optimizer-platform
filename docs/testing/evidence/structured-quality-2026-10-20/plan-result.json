@@ -1,0 +1,51 @@
+{
+  "status": 200,
+  "body": {
+    "requestId": "8b5a31b4-e7a7-4033-a08d-16491c60873a",
+    "data": {
+      "summary": "原定任务是起草一份120字以内的中文研讨会变更通知，告知合作方原定2026年11月6日14:00的线下研讨会变更，且不得承诺退款。用户明确保留“改线上还是顺延一周”的决定权并要求先确认，因此需先询问该选择，再据此起草通知。",
+      "questions": [
+        {
+          "id": "change_plan",
+          "question": "研讨会变更采用哪种方案：改为线上举行，还是顺延一周？",
+          "hint": "用户明确要求先确认该选择，且不得自行确定；不同方案会直接改变通知正文的变更内容与日期表述。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "online",
+              "label": "改为线上举行",
+              "description": "保留原定2026年11月6日14:00时间，形式由线下改为线上。",
+              "answer": "改为线上举行，时间仍为2026年11月6日14:00。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "postpone_one_week",
+              "label": "顺延一周",
+              "description": "研讨会整体延期一周举行，具体形式与时间按延期后安排。",
+              "answer": "顺延一周举行，具体日期在原定2026年11月6日基础上推迟一周。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "AUTO",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 3374,
+      "planId": "ea500357-db4d-4694-9d84-056252f72183",
+      "planningContext": {
+        "contextId": "f5415136-67be-47d3-99e9-d89fe0a60915",
+        "version": "sha256:e2876d82660b72248e1065e39c86d2dbb79f5ecfd026a934e680b4f965b5baee"
+      },
+      "expiresAt": "2026-10-19T19:47:47.510361900Z"
+    }
+  }
+}

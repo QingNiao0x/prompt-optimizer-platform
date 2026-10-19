@@ -51,7 +51,9 @@ class DocumentOptimizationControllerTest {
         mvc.perform(post("/api/v2/optimizations").contentType(APPLICATION_JSON)
                         .content("{\"rawPrompt\":\"写邮件\",\"enhancement\":{\"promptFormat\":\"STRUCTURED\"}}"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.data.resultKind").value("SECTIONS"))
-                .andExpect(jsonPath("$.data.sections.length()").value(5));
+                .andExpect(jsonPath("$.data.sections.length()").value(1))
+                .andExpect(jsonPath("$.data.sections[0].type").value("TASK"))
+                .andExpect(jsonPath("$.data.optimizedPrompt").value("## 任务\n任务内容"));
         verifyNoInteractions(natural);
     }
     @Test

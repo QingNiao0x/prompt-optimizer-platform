@@ -41,6 +41,28 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @since 0.1.0
  */
 class OptionalSectionContentContractTest {
+    @Test
+    void onlyStructuredSuppressesTemplateDefaultsWhilePreservingTheOriginalTaskAndEffectiveExampleMode() throws Exception {
+        for (var format : PromptFormat.values()) {
+            server.expect(once(), requestTo(ENDPOINT)).andExpect(request -> {
+                var body = json.readTree(((MockClientHttpRequest) request).getBodyAsString());
+                String user = body.path("messages").get(1).path("content").asText();
+                var payload = json.readTree(user.substring(user.indexOf('{')));
+                assertThat(payload.path("rawPrompt").asText()).isEqualTo(request(format, "").rawPrompt());
+                assertThat(payload.path("template").path("outputGuidance").asText()).isNotBlank();
+                if (format == PromptFormat.STRUCTURED) {
+                    assertThat(payload.path("template").path("acceptanceGuidance").asText()).isEmpty();
+                    assertThat(payload.path("template").path("exampleGuidance").asText()).isEmpty();
+                } else {
+                    assertThat(payload.path("template").path("acceptanceGuidance").asText()).isNotBlank();
+                }
+                assertThat(payload.path("taskView").path("examples").path("mode").asText()).isNotBlank();
+            }).andRespond(withSuccess(response(content()), MediaType.APPLICATION_JSON));
+        }
+        for (var format : PromptFormat.values()) provider.enhance(request(format, ""));
+        server.verify();
+    }
+
     private static final String ENDPOINT = "https://model.example.test/v1/chat/completions";
     private final ObjectMapper json = new ObjectMapper();
     private MockRestServiceServer server;

@@ -50,6 +50,32 @@ const copiedText = async (page: Page): Promise<string> => {
   return (await page.evaluate(() => navigator.clipboard.readText())).replace(/\r\n/g, '\n');
 };
 
+test('结构化省去无独立内容的辅助模块后仍可编辑、复制和撤销', async ({ page }) => {
+  await prepare(page);
+  const response = resultFor('STRUCTURED');
+  response.sections = response.sections.filter(section => section.type === 'TASK' || section.type === 'CONSTRAINTS');
+  response.optimizedPrompt = response.sections.map(section => `## ${section.title}\n${section.content}`).join('\n\n');
+  await page.route('**/api/v2/optimizations', route => route.fulfill({ json: { data: response } }));
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
+  await page.getByLabel('原始提示词', { exact: true }).fill(rawPrompt);
+  await switchFormat(page);
+  await page.getByRole('button', { name: '直接增强提示词', exact: true }).click();
+  expect(await copiedText(page)).toBe(response.optimizedPrompt);
+  await page.getByRole('button', { name: '编辑', exact: true }).click();
+  await expect(page.locator('#section-BACKGROUND')).toHaveCount(0);
+  await expect(page.locator('#section-OUTPUT')).toHaveCount(0);
+  await expect(page.locator('#section-ACCEPTANCE')).toHaveCount(0);
+  await page.locator('#section-TASK').fill('写邮件，请对方确认原定周五能否交付，不添加未经确认的安排。');
+  await page.getByRole('button', { name: '保存修改', exact: true }).click();
+  const edited = await copiedText(page);
+  expect(edited).toContain('请对方确认原定周五能否交付');
+  expect(edited).toContain(rule);
+  for (const heading of ['## 背景', '## 输出', '## 验收']) expect(edited).not.toContain(heading);
+  await page.getByRole('button', { name: '撤销', exact: true }).click();
+  expect(await copiedText(page)).toBe(response.optimizedPrompt);
+});
+
 test('开关只选择下次增强模式；显式重新生成失败保旧稿、成功可撤销，真实复制当前结果', async ({ page }) => {
   await prepare(page);
   const requests: OptimizationRequest[] = [];

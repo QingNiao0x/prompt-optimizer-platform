@@ -1,0 +1,54 @@
+{
+  "batch": "structured-quality-2026-10-20",
+  "status": "FROZEN",
+  "authorization": "USER_DELEGATED_CHOICE_OF_REAL_EVALUATION_CALL_COUNT",
+  "authorizationQuote": "后续开发请不要偏离方向，请执行以下自动化开发流程一次性修改完成(可以进行真实评测次数自行选择)",
+  "scope": "Only explicit STRUCTURED generation, assembly and projection; do not change NATURAL or COMPACT behavior",
+  "previousClosedActualCalls": 607,
+  "maximumNewActualCalls": 20,
+  "maximumCumulativeActualCalls": 627,
+  "phaseLimits": {
+    "GENERATION": 9,
+    "PLAN": 3,
+    "EXECUTION": 6,
+    "REVIEW": 2
+  },
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 4096,
+    "thinking": "disabled"
+  },
+  "allowedModels": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "allowedJobs": [
+    "AI_USAGE_GEN",
+    "JSON_REGISTRATION_GEN",
+    "EVENT_PLAN_PLAN",
+    "EVENT_PLAN_GEN",
+    "AI_USAGE_RAW_EXEC",
+    "AI_USAGE_STRUCTURED_EXEC",
+    "JSON_REGISTRATION_RAW_EXEC",
+    "JSON_REGISTRATION_STRUCTURED_EXEC",
+    "EVENT_PLAN_RAW_EXEC",
+    "EVENT_PLAN_STRUCTURED_EXEC",
+    "REVIEW_FLASH",
+    "REVIEW_PRO"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "closedBalanceTransferAllowed": false,
+  "stopConditions": [
+    "Stop at total or phase limit; count failures and protocol repairs",
+    "One frozen candidate and one work per arm; no quality retries or new scene-specific product rules",
+    "Do not fill missing Plan answers in enhanced execution; execute the actual native copied body",
+    "Any semantic loss, factual inversion, safety failure or incomplete output blocks its matching acceptance"
+  ],
+  "baselineCommit": "e95f99f38ba551683e7a3891cb60c92a02965542"
+}

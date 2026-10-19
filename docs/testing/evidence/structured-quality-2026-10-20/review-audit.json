@@ -1,0 +1,685 @@
+[
+  {
+    "id": "REVIEW_FLASH",
+    "status": 200,
+    "parsed": true,
+    "quotes": [
+      {
+        "caseId": "AI_USAGE",
+        "label": "A",
+        "claim": "无实质问题；明确区分员工使用率、企业采用率与招聘需求，并说明不能外推全球排名。",
+        "quote": "S1 与 S2 不能直接合并排名",
+        "exactQuote": true
+      },
+      {
+        "caseId": "AI_USAGE",
+        "label": "B",
+        "claim": "无实质问题；分口径整理并明确合成资料属性与不可合并。",
+        "quote": "三者不能相互替代或跨口径合并",
+        "exactQuote": true
+      },
+      {
+        "caseId": "AI_USAGE",
+        "label": "C",
+        "claim": "无实质问题；分口径说明并标注未核实内容，未虚构。",
+        "quote": "现有资料不能得出“全球使用AI最多的职业/行业”的确定结论",
+        "exactQuote": true
+      },
+      {
+        "caseId": "JSON_REGISTRATION",
+        "label": "A",
+        "claim": "无问题；严格JSON且值完全正确。",
+        "quote": "[{\"name\":\"李梅\",\"date\":\"2026-09-01\"},{\"name\":\"周安\",\"date\":null}]",
+        "exactQuote": true
+      },
+      {
+        "caseId": "JSON_REGISTRATION",
+        "label": "B",
+        "claim": "无问题；严格JSON且值完全正确。",
+        "quote": "[{\"name\":\"李梅\",\"date\":\"2026-09-01\"},{\"name\":\"周安\",\"date\":null}]",
+        "exactQuote": true
+      },
+      {
+        "caseId": "JSON_REGISTRATION",
+        "label": "C",
+        "claim": "无问题；严格JSON且值完全正确。",
+        "quote": "[{\"name\":\"李梅\",\"date\":\"2026-09-01\"},{\"name\":\"周安\",\"date\":null}]",
+        "exactQuote": true
+      },
+      {
+        "caseId": "EVENT_PLAN",
+        "label": "A",
+        "claim": "仍停留在询问变更方式，未按已确认信息落实顺延一周、仍线下、其他安排不变，核心交付缺失。",
+        "quote": "请确认变更方案：顺延一周（2026年11月13日14:00）仍线下举行，还是改为线上？确认后我再起草通知。",
+        "exactQuote": true
+      },
+      {
+        "caseId": "EVENT_PLAN",
+        "label": "B",
+        "claim": "无实质问题；已确认顺延一周、仍线下、其他安排不变，未承诺退款，正文在120汉字内。",
+        "quote": "原定2026年11月6日14:00线下举行的研讨会，现顺延一周，仍线下举行，其他原安排不变。",
+        "exactQuote": true
+      },
+      {
+        "caseId": "EVENT_PLAN",
+        "label": "C",
+        "claim": "正文出现“不承诺退款”，虽未承诺退款，但属于用户明确要求不要承诺退款之外的额外表述，可能造成不必要强调；其余内容正确。",
+        "quote": "本次变更不承诺退款。",
+        "exactQuote": true
+      }
+    ],
+    "review": {
+      "cases": [
+        {
+          "caseId": "AI_USAGE",
+          "works": [
+            {
+              "label": "A",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [
+                {
+                  "claim": "无实质问题；明确区分员工使用率、企业采用率与招聘需求，并说明不能外推全球排名。",
+                  "quote": "S1 与 S2 不能直接合并排名"
+                }
+              ],
+              "directlyUsable": true
+            },
+            {
+              "label": "B",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [
+                {
+                  "claim": "无实质问题；分口径整理并明确合成资料属性与不可合并。",
+                  "quote": "三者不能相互替代或跨口径合并"
+                }
+              ],
+              "directlyUsable": true
+            },
+            {
+              "label": "C",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [
+                {
+                  "claim": "无实质问题；分口径说明并标注未核实内容，未虚构。",
+                  "quote": "现有资料不能得出“全球使用AI最多的职业/行业”的确定结论"
+                }
+              ],
+              "directlyUsable": true
+            }
+          ],
+          "preferredLabels": [
+            "A",
+            "B",
+            "C"
+          ],
+          "reason": "三份作品均正确保留原查询，分别给出职业与行业内容及来源、时间、地域、样本范围，未混用三种口径，未虚构资料外数字，也未把资料没给写成全球不存在；均明确无法得出全球统一排名。A更简洁，B、C更详尽，但均满足要求。"
+        },
+        {
+          "caseId": "JSON_REGISTRATION",
+          "works": [
+            {
+              "label": "A",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [
+                {
+                  "claim": "无问题；严格JSON且值完全正确。",
+                  "quote": "[{\"name\":\"李梅\",\"date\":\"2026-09-01\"},{\"name\":\"周安\",\"date\":null}]"
+                }
+              ],
+              "directlyUsable": true
+            },
+            {
+              "label": "B",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [
+                {
+                  "claim": "无问题；严格JSON且值完全正确。",
+                  "quote": "[{\"name\":\"李梅\",\"date\":\"2026-09-01\"},{\"name\":\"周安\",\"date\":null}]"
+                }
+              ],
+              "directlyUsable": true
+            },
+            {
+              "label": "C",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [
+                {
+                  "claim": "无问题；严格JSON且值完全正确。",
+                  "quote": "[{\"name\":\"李梅\",\"date\":\"2026-09-01\"},{\"name\":\"周安\",\"date\":null}]"
+                }
+              ],
+              "directlyUsable": true
+            }
+          ],
+          "preferredLabels": [
+            "A",
+            "B",
+            "C"
+          ],
+          "reason": "三份作品均为严格JSON数组，恰好两个对象且仅含name和date，顺序正确，未提供日期时date为null，无Markdown、解释或示例。"
+        },
+        {
+          "caseId": "EVENT_PLAN",
+          "works": [
+            {
+              "label": "A",
+              "scores": {
+                "accuracy": 4,
+                "completeness": 3,
+                "clarity": 5,
+                "executability": 3
+              },
+              "issues": [
+                {
+                  "claim": "仍停留在询问变更方式，未按已确认信息落实顺延一周、仍线下、其他安排不变，核心交付缺失。",
+                  "quote": "请确认变更方案：顺延一周（2026年11月13日14:00）仍线下举行，还是改为线上？确认后我再起草通知。"
+                }
+              ],
+              "directlyUsable": false
+            },
+            {
+              "label": "B",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [
+                {
+                  "claim": "无实质问题；已确认顺延一周、仍线下、其他安排不变，未承诺退款，正文在120汉字内。",
+                  "quote": "原定2026年11月6日14:00线下举行的研讨会，现顺延一周，仍线下举行，其他原安排不变。"
+                }
+              ],
+              "directlyUsable": true
+            },
+            {
+              "label": "C",
+              "scores": {
+                "accuracy": 4,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 4
+              },
+              "issues": [
+                {
+                  "claim": "正文出现“不承诺退款”，虽未承诺退款，但属于用户明确要求不要承诺退款之外的额外表述，可能造成不必要强调；其余内容正确。",
+                  "quote": "本次变更不承诺退款。"
+                }
+              ],
+              "directlyUsable": true
+            }
+          ],
+          "preferredLabels": [
+            "B"
+          ],
+          "reason": "B完整落实已确认的顺延一周、仍线下、其他安排不变，未承诺退款，正文简洁且在120汉字内。A仍要求用户确认变更方式，未完成通知起草，核心交付缺失。C内容基本正确，但额外写入“不承诺退款”，虽非承诺退款，仍属不必要增项，略逊于B。"
+        }
+      ]
+    }
+  },
+  {
+    "id": "REVIEW_PRO",
+    "status": 200,
+    "parsed": true,
+    "quotes": [
+      {
+        "caseId": "AI_USAGE",
+        "label": "C",
+        "claim": "未明确列出S2样本量、地区、时间等限制说明，也未说明S2虽称全球但样本仅2000家、抽样框未说明，完整性略弱于A、B",
+        "quote": "S2为2000家企业的全球调查",
+        "exactQuote": true
+      },
+      {
+        "caseId": "EVENT_PLAN",
+        "label": "A",
+        "claim": "未明确写出顺延后的具体日期，但已按确认信息表述为顺延一周且仍线下，不构成事实错误，仅细节可更明确",
+        "quote": "现顺延一周，仍线下举行，其他原安排不变",
+        "exactQuote": true
+      },
+      {
+        "caseId": "EVENT_PLAN",
+        "label": "C",
+        "claim": "未按已确认信息执行，仍将线上作为待选方案，违反不得自行确定变更方式且已确认顺延一周的要求",
+        "quote": "请确认变更方案：顺延一周（2026年11月13日14:00）仍线下举行，还是改为线上？",
+        "exactQuote": true
+      },
+      {
+        "caseId": "EVENT_PLAN",
+        "label": "C",
+        "claim": "未交付通知正文，而是再次询问，核心交付缺失",
+        "quote": "确认后我再起草通知。",
+        "exactQuote": true
+      }
+    ],
+    "review": {
+      "cases": [
+        {
+          "caseId": "AI_USAGE",
+          "works": [
+            {
+              "label": "A",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            },
+            {
+              "label": "B",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            },
+            {
+              "label": "C",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 4,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [
+                {
+                  "claim": "未明确列出S2样本量、地区、时间等限制说明，也未说明S2虽称全球但样本仅2000家、抽样框未说明，完整性略弱于A、B",
+                  "quote": "S2为2000家企业的全球调查"
+                }
+              ],
+              "directlyUsable": true
+            }
+          ],
+          "preferredLabels": [
+            "A",
+            "B"
+          ],
+          "reason": "A和B均完整区分三种口径、明确地区与样本限制、不跨口径合并，且未虚构资料外数字；C核心正确但限制说明较简略，完整性略低。"
+        },
+        {
+          "caseId": "JSON_REGISTRATION",
+          "works": [
+            {
+              "label": "A",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            },
+            {
+              "label": "B",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            },
+            {
+              "label": "C",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            }
+          ],
+          "preferredLabels": [
+            "A",
+            "B",
+            "C"
+          ],
+          "reason": "三份作品均严格输出JSON数组，键和值完全符合要求，无Markdown、解释或示例，可直接使用。"
+        },
+        {
+          "caseId": "EVENT_PLAN",
+          "works": [
+            {
+              "label": "A",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 4,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [
+                {
+                  "claim": "未明确写出顺延后的具体日期，但已按确认信息表述为顺延一周且仍线下，不构成事实错误，仅细节可更明确",
+                  "quote": "现顺延一周，仍线下举行，其他原安排不变"
+                }
+              ],
+              "directlyUsable": true
+            },
+            {
+              "label": "B",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            },
+            {
+              "label": "C",
+              "scores": {
+                "accuracy": 1,
+                "completeness": 1,
+                "clarity": 3,
+                "executability": 1
+              },
+              "issues": [
+                {
+                  "claim": "未按已确认信息执行，仍将线上作为待选方案，违反不得自行确定变更方式且已确认顺延一周的要求",
+                  "quote": "请确认变更方案：顺延一周（2026年11月13日14:00）仍线下举行，还是改为线上？"
+                },
+                {
+                  "claim": "未交付通知正文，而是再次询问，核心交付缺失",
+                  "quote": "确认后我再起草通知。"
+                }
+              ],
+              "directlyUsable": false
+            }
+          ],
+          "preferredLabels": [
+            "B"
+          ],
+          "reason": "B完整执行已确认的顺延一周、仍线下、不承诺退款要求，且字数合规；A未写具体日期但核心正确；C未按确认信息执行且未交付通知正文。"
+        }
+      ]
+    }
+  },
+  {
+    "id": "FINAL_REVIEW_FLASH",
+    "status": 200,
+    "parsed": true,
+    "quotes": [
+      {
+        "caseId": "AI_USAGE",
+        "label": "A",
+        "claim": "未按原任务要求分别给出职业与行业的实际内容；仅说明无法给出全球真实排名并整理合成材料，未提供任何可核验的实际职业/行业使用AI数据，核心查询交付不完整。",
+        "quote": "我无法联网查询，也没有可用的外部统计数据库，因此不能给出“全球使用AI最多的职业/行业”的真实排名。",
+        "exactQuote": true
+      },
+      {
+        "caseId": "AI_USAGE",
+        "label": "A",
+        "claim": "结论将软件岗位与技术行业并列为各自口径最高，虽已限定口径，但未明确回答职业与行业分别是什么，用户仍需自行判断。",
+        "quote": "在你提供的材料范围内，**软件岗位/技术行业在各自口径下表现最高**",
+        "exactQuote": true
+      },
+      {
+        "caseId": "AI_USAGE",
+        "label": "B",
+        "claim": "同样未提供职业与行业的实际全球内容，仅说明材料不能回答，核心查询未落实。",
+        "quote": "现有材料**不能**直接回答“全球使用AI最多的职业或行业”，也不能据此形成统一的全球职业/行业排名。",
+        "exactQuote": true
+      },
+      {
+        "caseId": "AI_USAGE",
+        "label": "B",
+        "claim": "虽分口径整理清楚，但未给出任何超出合成材料的实际职业/行业信息，用户无法获得原任务所问的实际内容。",
+        "quote": "以上均为合成评测资料，仅用于验证组织与比较，不得表述为真实行业统计或全球实际情况。",
+        "exactQuote": true
+      },
+      {
+        "caseId": "AI_USAGE",
+        "label": "C",
+        "claim": "未提供职业与行业的实际全球内容，仅说明资料不能得出结论，核心查询交付不完整。",
+        "quote": "**现有资料不能得出“全球使用AI最多的职业/行业”的确定结论。**",
+        "exactQuote": true
+      },
+      {
+        "caseId": "AI_USAGE",
+        "label": "C",
+        "claim": "补充证据部分列出所需数据类型，但未实际查询或给出任何实际职业/行业结果，仍属未完成原任务。",
+        "quote": "要回答“全球使用AI最多的职业/行业”，至少需要：\n\n1. **覆盖多国的统一口径调查**",
+        "exactQuote": true
+      },
+      {
+        "caseId": "EVENT_PLAN",
+        "label": "A",
+        "claim": "已确认信息为顺延一周仍线下，作品仍将“改为线上”作为待确认选项，未落实已确认的变更方式，且把决定权重新抛回用户，不符合已确认信息。",
+        "quote": "请确认变更方案：顺延一周（2026年11月13日14:00）仍线下举行，还是改为线上？确认后我再起草通知。",
+        "exactQuote": true
+      },
+      {
+        "caseId": "EVENT_PLAN",
+        "label": "A",
+        "claim": "未实际起草给合作方的变更通知，仅请求确认，核心交付缺失。",
+        "quote": "确认后我再起草通知。",
+        "exactQuote": true
+      }
+    ],
+    "review": {
+      "cases": [
+        {
+          "caseId": "AI_USAGE",
+          "works": [
+            {
+              "label": "A",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 4,
+                "clarity": 5,
+                "executability": 4
+              },
+              "issues": [
+                {
+                  "claim": "未按原任务要求分别给出职业与行业的实际内容；仅说明无法给出全球真实排名并整理合成材料，未提供任何可核验的实际职业/行业使用AI数据，核心查询交付不完整。",
+                  "quote": "我无法联网查询，也没有可用的外部统计数据库，因此不能给出“全球使用AI最多的职业/行业”的真实排名。"
+                },
+                {
+                  "claim": "结论将软件岗位与技术行业并列为各自口径最高，虽已限定口径，但未明确回答职业与行业分别是什么，用户仍需自行判断。",
+                  "quote": "在你提供的材料范围内，**软件岗位/技术行业在各自口径下表现最高**"
+                }
+              ],
+              "directlyUsable": false
+            },
+            {
+              "label": "B",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 4,
+                "clarity": 5,
+                "executability": 4
+              },
+              "issues": [
+                {
+                  "claim": "同样未提供职业与行业的实际全球内容，仅说明材料不能回答，核心查询未落实。",
+                  "quote": "现有材料**不能**直接回答“全球使用AI最多的职业或行业”，也不能据此形成统一的全球职业/行业排名。"
+                },
+                {
+                  "claim": "虽分口径整理清楚，但未给出任何超出合成材料的实际职业/行业信息，用户无法获得原任务所问的实际内容。",
+                  "quote": "以上均为合成评测资料，仅用于验证组织与比较，不得表述为真实行业统计或全球实际情况。"
+                }
+              ],
+              "directlyUsable": false
+            },
+            {
+              "label": "C",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 4,
+                "clarity": 5,
+                "executability": 4
+              },
+              "issues": [
+                {
+                  "claim": "未提供职业与行业的实际全球内容，仅说明资料不能得出结论，核心查询交付不完整。",
+                  "quote": "**现有资料不能得出“全球使用AI最多的职业/行业”的确定结论。**"
+                },
+                {
+                  "claim": "补充证据部分列出所需数据类型，但未实际查询或给出任何实际职业/行业结果，仍属未完成原任务。",
+                  "quote": "要回答“全球使用AI最多的职业/行业”，至少需要：\n\n1. **覆盖多国的统一口径调查**"
+                }
+              ],
+              "directlyUsable": false
+            }
+          ],
+          "preferredLabels": [],
+          "reason": "三份作品均准确识别合成材料不能代表全球实际统计，并正确区分员工使用率、企业采用率与招聘需求，未虚构数字，口径说明清楚。但原任务要求查询全球使用AI最多的职业/行业，三份均未提供任何实际职业/行业内容，仅整理合成材料或说明无法回答，核心交付缺失，故完整性与可执行性均不能给高分；三份表现接近，无可并列优先者。"
+        },
+        {
+          "caseId": "JSON_REGISTRATION",
+          "works": [
+            {
+              "label": "A",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            },
+            {
+              "label": "B",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            },
+            {
+              "label": "C",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            }
+          ],
+          "preferredLabels": [
+            "A",
+            "B",
+            "C"
+          ],
+          "reason": "三份作品均为严格JSON数组，恰好两个对象，仅含name和date键，李梅日期正确，周安日期为null，无Markdown、解释或示例，完全符合原任务与验收标准。"
+        },
+        {
+          "caseId": "EVENT_PLAN",
+          "works": [
+            {
+              "label": "A",
+              "scores": {
+                "accuracy": 3,
+                "completeness": 2,
+                "clarity": 4,
+                "executability": 2
+              },
+              "issues": [
+                {
+                  "claim": "已确认信息为顺延一周仍线下，作品仍将“改为线上”作为待确认选项，未落实已确认的变更方式，且把决定权重新抛回用户，不符合已确认信息。",
+                  "quote": "请确认变更方案：顺延一周（2026年11月13日14:00）仍线下举行，还是改为线上？确认后我再起草通知。"
+                },
+                {
+                  "claim": "未实际起草给合作方的变更通知，仅请求确认，核心交付缺失。",
+                  "quote": "确认后我再起草通知。"
+                }
+              ],
+              "directlyUsable": false
+            },
+            {
+              "label": "B",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            },
+            {
+              "label": "C",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            },
+            {
+              "label": "D",
+              "scores": {
+                "accuracy": 5,
+                "completeness": 5,
+                "clarity": 5,
+                "executability": 5
+              },
+              "issues": [],
+              "directlyUsable": true
+            }
+          ],
+          "preferredLabels": [
+            "B",
+            "C",
+            "D"
+          ],
+          "reason": "B、C、D均落实顺延一周、仍线下、其他安排不变，未承诺退款，正文在120汉字内，无示例，可直接使用；D额外写明新日期，仍属合理。A仍将线上作为待确认选项，与已确认信息冲突，且未实际起草通知，核心交付缺失。"
+        }
+      ]
+    }
+  },
+  {
+    "id": "FINAL_REVIEW_PRO",
+    "status": 200,
+    "parsed": false
+  }
+]

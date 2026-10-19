@@ -1,0 +1,59 @@
+{
+  "policy": "Full response strict JSON; event <=120 Han; facts independently reviewed",
+  "works": [
+    {
+      "caseId": "AI_USAGE",
+      "arm": "RAW",
+      "completeResponse": true,
+      "han": 532,
+      "nonWhitespaceCharacters": 843
+    },
+    {
+      "caseId": "AI_USAGE",
+      "arm": "STRUCTURED",
+      "completeResponse": true,
+      "han": 976,
+      "nonWhitespaceCharacters": 1461
+    },
+    {
+      "caseId": "JSON_REGISTRATION",
+      "arm": "RAW",
+      "completeResponse": true,
+      "han": 4,
+      "nonWhitespaceCharacters": 61,
+      "strictJsonAndExactValues": true
+    },
+    {
+      "caseId": "JSON_REGISTRATION",
+      "arm": "STRUCTURED",
+      "completeResponse": true,
+      "han": 4,
+      "nonWhitespaceCharacters": 61,
+      "strictJsonAndExactValues": true
+    },
+    {
+      "caseId": "EVENT_PLAN",
+      "arm": "RAW",
+      "completeResponse": true,
+      "han": 49,
+      "nonWhitespaceCharacters": 68,
+      "hanLimit": 120,
+      "lengthPassed": true,
+      "datePreserved": false,
+      "inPersonPreserved": true,
+      "inventedSpecificLocation": false
+    },
+    {
+      "caseId": "EVENT_PLAN",
+      "arm": "STRUCTURED",
+      "completeResponse": true,
+      "han": 51,
+      "nonWhitespaceCharacters": 79,
+      "hanLimit": 120,
+      "lengthPassed": true,
+      "datePreserved": true,
+      "inPersonPreserved": true,
+      "inventedSpecificLocation": false
+    }
+  ]
+}

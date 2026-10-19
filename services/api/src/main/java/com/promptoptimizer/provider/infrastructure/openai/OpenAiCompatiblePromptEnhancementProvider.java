@@ -603,7 +603,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         ProviderPromptPayload payload = new ProviderPromptPayload(
                 taskView.effectivePrompt(),
                 modelContext(request.context()),
-                request.template(),
+                generationTemplate(request),
                 request.ambiguities(),
                 request.planConfirmed(),
                 request.constraints(),
@@ -655,6 +655,16 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 false,
                 selection.route()
         );
+    }
+
+    /**
+     * 显式结构化仅传递场景交付线索，不再把模板默认验收和可选示例作为第二份生成要求。
+     * 原文明示验收仍在rawPrompt与来源中，示例开关由taskView.examples负责；旧模式原样兼容。
+     */
+    private PromptTemplate generationTemplate(EnhancementProviderRequest request) {
+        PromptTemplate template = request.template();
+        if (request.options().promptFormat() != com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED) return template;
+        return new PromptTemplate(template.code(), template.outputGuidance(), "", "", template.deliveryProfile());
     }
 
     /**
