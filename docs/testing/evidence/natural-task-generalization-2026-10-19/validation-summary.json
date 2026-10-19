@@ -1,0 +1,177 @@
+{
+  "date": "2026-10-19",
+  "finalProductGitHead": "eac817d6f877c2c90acebbc02ee495b5c18a43d4",
+  "actualCalls": {
+    "status": "CLOSED",
+    "actualNewCalls": 58,
+    "maximumNewCalls": 60,
+    "unusedCalls": 2,
+    "previousClosedActualCalls": 490,
+    "cumulativeActualCalls": 548,
+    "phaseCounts": {
+      "REVIEW": 10,
+      "BASELINE": 8,
+      "EXECUTION": 18,
+      "CANDIDATE": 22
+    },
+    "qualityRetries": 0,
+    "closedBecause": "完成冻结50次初轮与8次定向复验；短文案附加说明在两个候选中仍失败，停止扩大采样与叠加指令。",
+    "closedAt": "2026-10-19T22:34:55.6647889+08:00"
+  },
+  "java": {
+    "uniqueAffectedTests": 350,
+    "suites": [
+      {
+        "name": "NaturalTaskUnderstandingTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:20:47.560Z"
+      },
+      {
+        "name": "OpenAiCompatibleNaturalPromptProviderTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:36:49.633Z"
+      },
+      {
+        "name": "NaturalEnhancementServiceTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:36:46.019Z"
+      },
+      {
+        "name": "MybatisOptimizationHistoryServiceTest",
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:47:56.424Z"
+      },
+      {
+        "name": "DocumentOptimizationControllerTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:20:32.215Z"
+      },
+      {
+        "name": "OptimizationPlanningServiceTest",
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:14:05.573Z"
+      },
+      {
+        "name": "PlanningSessionServiceTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:14:07.254Z"
+      },
+      {
+        "name": "OpenAiCompatiblePromptEnhancementProviderTest",
+        "tests": 52,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T13:35:37.432Z"
+      },
+      {
+        "name": "NaturalDocumentDatabaseAcceptanceTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:20:44.427Z"
+      },
+      {
+        "name": "ModelConcurrencyHttpIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T13:45:39.925Z"
+      },
+      {
+        "name": "CodeArtifactTaskIntentTest",
+        "tests": 35,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:18:17.843Z"
+      },
+      {
+        "name": "DynamicPlatformConstraintTest",
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:18:09.366Z"
+      },
+      {
+        "name": "TaskTemplateAdaptationTest",
+        "tests": 40,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:18:17.074Z"
+      },
+      {
+        "name": "TaskCompletionRegressionTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:18:12.310Z"
+      },
+      {
+        "name": "TaskConstraintAssemblyReplayTest",
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:18:15.008Z"
+      },
+      {
+        "name": "TaskConstraintWholeProjectionTest",
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "updatedAt": "2026-10-19T14:18:16.242Z"
+      }
+    ],
+    "note": "多批受影响验证的最后报告去重合并，并非一次命令或全仓库回归；首次失败另存。"
+  },
+  "frontend": {
+    "files": 4,
+    "tests": 13,
+    "passed": true
+  },
+  "offlineBudgetChecks": 5,
+  "qualityStatus": "NOT_PASSED",
+  "runtime": {
+    "modelId": "deepseek:deepseek-flash",
+    "observedUpstreamModels": [
+      "deepseek-flash"
+    ],
+    "localPostgres": true,
+    "localRedisVersion": "3.2.100",
+    "redis7Acceptance": false,
+    "dockerUsed": false,
+    "newAccounts": 0,
+    "newTenants": 0,
+    "newWorkspaces": 0,
+    "browserFullAcceptance": false,
+    "flywayApplied": false
+  }
+}

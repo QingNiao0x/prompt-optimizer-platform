@@ -9,7 +9,7 @@ const origin = 'http://127.0.0.1:9002';
 const json = async file => JSON.parse(await readFile(file, 'utf8'));
 const encode = value => JSON.stringify(value, null, 2) + '\n';
 const cases = (await json(resolve(evidence, 'cases.json'))).cases;
-const protocol = await json(resolve(evidence, 'protocol.json'));
+const protocol = await json(resolve(evidence, process.argv[2] === 'corrections' ? 'protocol-candidate2.json' : 'protocol.json'));
 const account = await json(resolve('tmp/local-acceptance/account.json'));
 const cookies = new Map();
 let csrf;
@@ -193,6 +193,47 @@ async function reviewAll() {
   }
 }
 
+/** 有证据的第二候选只复验共同机制；新旧作业ID分开，初轮失败不覆盖且总账继续累计。 */
+async function corrections() {
+  for (const id of protocol.candidateDirect) {
+    const sample = cases.find(item => item.id === id);
+    await job(id + '_R2_GEN', 'CANDIDATE', sample, '/api/v2/optimizations', input(sample));
+  }
+  const sample = cases.find(item => item.id === protocol.plan[0]);
+  const prepared = await api('/api/v2/context/planning', { rawPrompt: sample.rawPrompt,
+    context: input(sample).context, permissionPolicy: input(sample).permissionPolicy });
+  if (prepared.status !== 200) throw Error('Correction context preparation failed');
+  await job(sample.id + '_R2_PLAN', 'CANDIDATE', sample, '/api/v2/optimizations/plan', {
+    rawPrompt: sample.rawPrompt, contextDescription: '', conversationHistory: [], modelId: protocol.modelId,
+    planningContext: { contextId: prepared.body.data.contextId, version: prepared.body.data.version }
+  });
+  for (const id of protocol.execution) {
+    const sample = cases.find(item => item.id === id);
+    const generated = await json(resolve(root, 'results', id + '_R2_GEN.json'));
+    if (generated.status !== 200) continue;
+    const request = modelRequest(executeSystem, generated.body.data.optimizedPrompt + '\n\n本次合成材料：\n' + JSON.stringify(sample.files));
+    await job(id + '_R2_EXEC', 'EXECUTION', sample, '/api/v2/evaluation/execute', request, request);
+  }
+  for (let index = 0; index < protocol.review.length; index++) {
+    const id = protocol.review[index];
+    const sample = cases.find(item => item.id === id);
+    const initial = await json(resolve(root, 'results', id + '_V2.json'));
+    const revised = await json(resolve(root, 'results', id + '_R2_GEN.json'));
+    if (initial.status !== 200 || revised.status !== 200) continue;
+    const pair = [initial.body.data.optimizedPrompt, revised.body.data.optimizedPrompt];
+    if (index % 2) pair.reverse();
+    const material = { rawPrompt: sample.rawPrompt, materials: sample.files, criteria: sample.checks,
+      candidates: [{ label: 'A', prompt: pair[0] }, { label: 'B', prompt: pair[1] }] };
+    if (sample.execution) {
+      material.actualWorks = { initial: (await json(resolve(root, 'results', id + '_EXEC_V2.json'))).body.data.content,
+        revised: (await json(resolve(root, 'results', id + '_R2_EXEC.json'))).body.data.content };
+    }
+    const request = modelRequest('请辅助评审优化提示词及所附实际作品。提示词负责指导下游，不因其未执行原任务或把设计委托下游而扣分。固定事实和权限边界是产品要求，核对其是否在原定交付内落实，不建议删除安全要求。候选顺序不代表质量。返回JSON：{winner:"A/B/TIE/INSUFFICIENT",criticalIssues:[],usefulImprovements:[],redundancy:[],limits:[]}。以原意保留、有效任务内容、无依据限制、紧凑度和实际格式交付判断，不以篇幅或条款更多加分。', JSON.stringify(material), true);
+    await save(resolve(root, 'review-mapping', id + '_R2.json'), index % 2 ? { A: 'revised', B: 'initial' } : { A: 'initial', B: 'revised' });
+    await job(id + '_R2_REVIEW', 'REVIEW', sample, '/api/v2/evaluation/execute', request, request);
+  }
+}
+
 async function dispatch(command, caseId) {
   const sample = cases.find(item => item.id === caseId);
   if (command === 'count') log(await count());
@@ -204,6 +245,7 @@ async function dispatch(command, caseId) {
       await job(item.id + '_STRUCTURED', 'CANDIDATE', item, '/api/v2/optimizations', input(item, 'STRUCTURED'));
   } else if (command === 'execute') await executeAll();
   else if (command === 'review') await reviewAll();
+  else if (command === 'corrections') await corrections();
   else throw Error('Unknown frozen operation');
 }
 

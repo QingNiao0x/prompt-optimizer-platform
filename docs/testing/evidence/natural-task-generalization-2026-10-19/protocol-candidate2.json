@@ -1,0 +1,86 @@
+{
+  "batch": "natural-task-generalization-2026-10-19",
+  "authorization": "USER_APPROVED_NEW_MAXIMUM_60_ACTUAL_CALLS",
+  "previousClosedActualCalls": 490,
+  "previousCandidateCalls": 420,
+  "maximumNewActualCalls": 60,
+  "status": "FROZEN",
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 4096,
+    "thinking": "disabled"
+  },
+  "phaseLimits": {
+    "BASELINE": 10,
+    "CANDIDATE": 22,
+    "EXECUTION": 18,
+    "REVIEW": 10
+  },
+  "plannedCalls": {
+    "CANDIDATE": 4,
+    "EXECUTION": 2,
+    "REVIEW": 2
+  },
+  "stopConditions": [
+    "No call above total or phase limit",
+    "No quality retry of the same frozen job",
+    "Protocol repairs count as actual attempts",
+    "Stop expanding samples after the same severe failure in two candidate versions",
+    "Keep first failures and all raw responses"
+  ],
+  "comparison": "Frozen NATURAL/1 versus NATURAL/2; supplied Qoder text is a style reference, not a Qoder API benchmark",
+  "candidateDirect": [
+    "AI_GLOBAL",
+    "JAVA_COMPLETE",
+    "COPY_BRIEF"
+  ],
+  "baselineDirect": [
+    "AI_GLOBAL",
+    "AI_PARAPHRASE",
+    "TRANSLATE",
+    "JAVA_COMPLETE",
+    "REPORT_MATERIAL",
+    "PPT_DESIGN",
+    "COPY_BRIEF",
+    "PROCUREMENT_UNKNOWN"
+  ],
+  "plan": [
+    "PROCUREMENT_UNKNOWN"
+  ],
+  "structured": [
+    "JAVA_COMPLETE",
+    "PPT_DESIGN"
+  ],
+  "execution": [
+    "JAVA_COMPLETE",
+    "COPY_BRIEF"
+  ],
+  "planExecution": [
+    "JAVA_COMPLETE",
+    "PPT_DESIGN"
+  ],
+  "review": [
+    "AI_GLOBAL",
+    "COPY_BRIEF"
+  ],
+  "candidate": "correction1",
+  "callsBefore": 50,
+  "amendmentReason": "共同修复未知用户信息误推荐、源码交付漏认及固定边界的交付范围；保留初轮，新增最多8次定向调用，不扩大原60次或阶段上限",
+  "allowedJobs": [
+    "AI_GLOBAL_R2_GEN",
+    "JAVA_COMPLETE_R2_GEN",
+    "COPY_BRIEF_R2_GEN",
+    "PROCUREMENT_UNKNOWN_R2_PLAN",
+    "JAVA_COMPLETE_R2_EXEC",
+    "COPY_BRIEF_R2_EXEC",
+    "AI_GLOBAL_R2_REVIEW",
+    "COPY_BRIEF_R2_REVIEW"
+  ]
+}

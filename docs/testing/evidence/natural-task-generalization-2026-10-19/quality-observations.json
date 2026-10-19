@@ -1,0 +1,106 @@
+{
+  "overall": "NOT_PASSED",
+  "rawAuxiliaryPreferences": {
+    "initialNatural": 2,
+    "tie": 6,
+    "scope": "原始辅助意见，存在误判，不当作业务胜负。"
+  },
+  "initialJava": [
+    {
+      "arm": "RAW",
+      "compiled": true,
+      "behaviorPassed": true,
+      "cases": 16
+    },
+    {
+      "arm": "V1",
+      "compiled": true,
+      "behaviorPassed": true,
+      "cases": 16
+    },
+    {
+      "arm": "V2",
+      "compiled": false,
+      "behaviorPassed": false,
+      "cases": 0
+    },
+    {
+      "arm": "MATCHED_RAW",
+      "compiled": true,
+      "behaviorPassed": true,
+      "cases": 16
+    },
+    {
+      "arm": "PLAN",
+      "compiled": true,
+      "behaviorPassed": true,
+      "cases": 16
+    }
+  ],
+  "revisedJava": {
+    "compiled": true,
+    "behaviorCases": 16,
+    "passed": true,
+    "source": "import java.math.BigDecimal;\nimport java.math.RoundingMode;\n\npublic class PriceCalculator {\n\n    private static final BigDecimal DISCOUNT_THRESHOLD = new BigDecimal(\"100\");\n    private static final BigDecimal DISCOUNT_RATE = new BigDecimal(\"0.9\");\n    private static final int SCALE = 2;\n\n    public static BigDecimal payable(BigDecimal amount, boolean member) {\n        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {\n            throw new IllegalArgumentException(\"amount must not be null or negative\");\n        }\n\n        BigDecimal result;\n        if (member && amount.compareTo(DISCOUNT_THRESHOLD) >= 0) {\n            result = amount.multiply(DISCOUNT_RATE);\n        } else {\n            result = amount;\n        }\n\n        return result.setScale(SCALE, RoundingMode.HALF_UP);\n    }\n}"
+  },
+  "revisedCopy": {
+    "nonWhitespaceCharacters": 216,
+    "hanCharacters": 174,
+    "hasExtraExplanation": true,
+    "passed": false,
+    "content": "11月1日，青禾路8号，“拾页”要和大家见面了。这是一家开在社区里的书店，想成为邻里间可以常来坐坐的地方。开业当天，欢迎来逛逛、翻翻书，感受一下属于我们这条街的小小书香。期待在“拾页”遇见你。（92字）\n\n说明：已知事实为店名“拾页”、11月1日开业、地址青禾路8号；用户确认信息为社区书店定位及邀请邻里来看看；必要假设仅为“开业当天可进店逛逛、翻书”这一常规到店场景，未涉及折扣、赠品、抽奖、营业时间、店主故事或书籍品类等未提供内容。"
+  },
+  "revisedPlan": {
+    "questions": 3,
+    "recommendedOptions": 0,
+    "questionsPreserved": [
+      {
+        "id": "q_usage",
+        "question": "贵方预计的实际存储用量大约是多少，未来一年是否有明显增长？",
+        "hint": "用量决定50GB与200GB两档容量的适配性，也影响是否需关注未披露的超额费用。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "当前约30GB，预计一年内增长到80GB",
+          "当前约150GB，基本稳定"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_residency",
+        "question": "贵方对数据存储地区或数据驻留是否有明确要求？",
+        "hint": "两份报价均未说明数据所在地区，驻留要求可能直接决定某方案是否可用。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "数据必须存放在境内",
+          "无特殊地区要求"
+        ],
+        "allowCustomAnswer": true
+      },
+      {
+        "id": "q_budget",
+        "question": "贵方年度云存储预算上限大约是多少？",
+        "hint": "年度预算决定两份报价的年化成本是否可接受，从而影响采购建议方向。",
+        "type": "FREE_TEXT",
+        "options": [],
+        "examples": [
+          "每年不超过1500元",
+          "每年不超过2500元"
+        ],
+        "allowCustomAnswer": true
+      }
+    ]
+  },
+  "finalAssemblyReplay": {
+    "frozenDrafts": 3,
+    "liveModelCalls": 0,
+    "note": "仅验证最终组装保留正文、出处及固定边界；不等于终版真实作品通过。"
+  },
+  "openItems": [
+    "短文案两个候选仍追加说明及超长，按停止条件停止采样。",
+    "查询类内容展开、口径与覆盖稳定性仍待质量验收。",
+    "没有Qoder API对照、专业人员验收或全模型矩阵。"
+  ],
+  "withdrawn": "未证明收益的附加交付范围说明，保留所有原始模型响应与失败作品。"
+}

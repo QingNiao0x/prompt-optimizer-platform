@@ -1,10 +1,10 @@
 [CmdletBinding()]
-param()
+param([switch] $Correction)
 $ErrorActionPreference = 'Stop'
 $repoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../../..'))
 $evaluationRoot = Join-Path $repoRoot 'tmp/natural-task-eval-20261019'
-$runtimeClasses = Join-Path $evaluationRoot 'runtime/classes'
-$runnerClasses = Join-Path $evaluationRoot 'runner'
+$runtimeClasses = Join-Path $evaluationRoot $(if ($Correction) { 'runtime-candidate2/classes' } else { 'runtime/classes' })
+$runnerClasses = Join-Path $evaluationRoot $(if ($Correction) { 'runner-candidate2' } else { 'runner' })
 if (Get-NetTCPConnection -State Listen -LocalPort 9002 -ErrorAction SilentlyContinue) { throw '评测端口已占用，未接管任何进程。' }
 if (Test-Path -LiteralPath $runtimeClasses) { throw '运行副本已存在，禁止静默覆盖冻结版本。' }
 New-Item -ItemType Directory -Path $runtimeClasses,$runnerClasses,(Join-Path $evaluationRoot 'traces') -Force | Out-Null
@@ -13,7 +13,7 @@ $classpathFile = Get-ChildItem -LiteralPath (Join-Path $repoRoot 'tmp/backend-lo
     Sort-Object LastWriteTime -Descending | Select-Object -First 1
 if (-not $classpathFile) { throw '缺少既有运行依赖清单。' }
 $classpath = $runtimeClasses + ';' + [IO.File]::ReadAllText($classpathFile.FullName).Trim()
-[IO.File]::WriteAllText((Join-Path $evaluationRoot 'runtime-classpath.txt'), $classpath, [Text.UTF8Encoding]::new($false))
+[IO.File]::WriteAllText((Join-Path $evaluationRoot $(if ($Correction) { 'runtime-classpath-candidate2.txt' } else { 'runtime-classpath.txt' })), $classpath, [Text.UTF8Encoding]::new($false))
 & 'E:\Delelop\Java\jdk-21\bin\javac.exe' -encoding UTF-8 --release 21 -cp $classpath -d $runnerClasses (Join-Path $PSScriptRoot 'NaturalTaskEvaluationServer.java')
 if ($LASTEXITCODE -ne 0) { throw '评测入口编译失败，未启动进程或调用模型。' }
 
@@ -44,12 +44,12 @@ foreach ($relative in $tracked) {
     $absolute = Join-Path $repoRoot $relative
     $files += [pscustomobject]@{path=$relative; sha256=(Get-FileHash -LiteralPath $absolute -Algorithm SHA256).Hash.ToLowerInvariant()}
 }
-foreach ($name in @('cases.json','protocol.json','NaturalTaskEvaluationServer.java','run-evaluation.mjs','start-evaluation.ps1')) {
+foreach ($name in @('cases.json',$(if ($Correction) { 'protocol-candidate2.json' } else { 'protocol.json' }),'NaturalTaskEvaluationServer.java','run-evaluation.mjs','start-evaluation.ps1','invoke-evaluation.ps1')) {
     $relative = 'docs/testing/evidence/natural-task-generalization-2026-10-19/' + $name
     $files += [pscustomobject]@{path=$relative; sha256=(Get-FileHash -LiteralPath (Join-Path $repoRoot $relative) -Algorithm SHA256).Hash.ToLowerInvariant()}
 }
 $manifest = [ordered]@{gitHead=(& git -C $repoRoot rev-parse HEAD); date='2026-10-19'; files=$files}
-$manifestPath = Join-Path $PSScriptRoot 'source-manifest.json'
+$manifestPath = Join-Path $PSScriptRoot $(if ($Correction) { 'source-manifest-candidate2.json' } else { 'source-manifest.json' })
 if (Test-Path -LiteralPath $manifestPath) { throw '源码清单已冻结，禁止静默覆盖。' }
 [IO.File]::WriteAllText($manifestPath, ($manifest | ConvertTo-Json -Depth 5), [Text.UTF8Encoding]::new($false))
 
@@ -58,9 +58,10 @@ $socketPath = Join-Path $evaluationRoot 'jdk-sockets'
 if (Test-Path -LiteralPath $socketPath) { throw '测试socket回退目录必须不存在。' }
 $arguments = @('-XX:ActiveProcessorCount=2', ('-Djdk.net.unixdomain.tmpdir=' + $socketPath),
     '-cp', ('"' + $runnerClasses + ';' + $classpath + '"'), 'NaturalTaskEvaluationServer')
-$process = Start-Process -FilePath 'E:\Delelop\Java\jdk-21\bin\java.exe' -ArgumentList $arguments -WorkingDirectory $repoRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $evaluationRoot 'server.out.log') -RedirectStandardError (Join-Path $evaluationRoot 'server.err.log')
+if ($Correction) { $arguments += 'candidate2' }
+$process = Start-Process -FilePath 'E:\Delelop\Java\jdk-21\bin\java.exe' -ArgumentList $arguments -WorkingDirectory $repoRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $evaluationRoot $(if ($Correction) { 'server-candidate2.out.log' } else { 'server.out.log' })) -RedirectStandardError (Join-Path $evaluationRoot $(if ($Correction) { 'server-candidate2.err.log' } else { 'server.err.log' }))
 $ownership = [ordered]@{pid=$process.Id; port=9002; process='NaturalTaskEvaluationServer'; workspace=$repoRoot; startedAt=(Get-Date).ToString('o')}
-[IO.File]::WriteAllText((Join-Path $evaluationRoot 'process.json'), ($ownership | ConvertTo-Json), [Text.UTF8Encoding]::new($false))
+[IO.File]::WriteAllText((Join-Path $evaluationRoot $(if ($Correction) { 'process-candidate2.json' } else { 'process.json' })), ($ownership | ConvertTo-Json), [Text.UTF8Encoding]::new($false))
 $ready = $false
 for ($attempt = 0; $attempt -lt 30; $attempt++) {
     try {

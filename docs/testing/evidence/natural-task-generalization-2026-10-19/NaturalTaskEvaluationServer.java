@@ -32,12 +32,19 @@ import java.util.*;
  * @since 0.1.0
  */
 public class NaturalTaskEvaluationServer {
-    static final Path ROOT = Path.of("tmp/natural-task-eval-20261019").toAbsolutePath();
+    static final Path ROOT = Path.of(System.getProperty("natural.eval.root", "tmp/natural-task-eval-20261019")).toAbsolutePath();
     static final Path EVIDENCE = Path.of("docs/testing/evidence/natural-task-generalization-2026-10-19").toAbsolutePath();
     static final ObjectMapper JSON = new ObjectMapper().findAndRegisterModules();
+    static String protocolName = "protocol.json";
+    static String manifestName = "source-manifest.json";
 
     /** 启动单独的本机进程；不执行Flyway，不创建任何账号、租户或工作区。 */
     public static void main(String[] args) throws Exception {
+        if (args.length > 0) {
+            if (!args[0].equals("candidate2")) throw new IllegalArgumentException("Unknown frozen candidate");
+            protocolName = "protocol-candidate2.json";
+            manifestName = "source-manifest-candidate2.json";
+        }
         Files.createDirectories(ROOT.resolve("traces"));
         new SpringApplication(PromptOptimizerApplication.class, EvaluationConfiguration.class).run(
                 "--server.address=127.0.0.1", "--server.port=9002", "--spring.flyway.enabled=false",
@@ -65,8 +72,13 @@ public class NaturalTaskEvaluationServer {
                 public Object postProcessAfterInitialization(Object bean, String name) {
                     if (!name.equals("openAiCompatibleRestClient")) return bean;
                     return ((RestClient) bean).mutate().requestInterceptor((request, body, execution) -> {
-                        JsonNode protocol = JSON.readTree(EVIDENCE.resolve("protocol.json").toFile());
+                        JsonNode protocol = JSON.readTree(EVIDENCE.resolve(protocolName).toFile());
                         JsonNode job = JSON.readTree(ROOT.resolve("active-job.json").toFile());
+                        if (protocol.has("allowedJobs")) {
+                            boolean allowed = false;
+                            for (JsonNode id : protocol.path("allowedJobs")) if (id.asText().equals(job.path("id").asText())) allowed = true;
+                            if (!allowed) throw new IOException("Job outside frozen correction scope");
+                        }
                         if (!request.getURI().toString().equals(protocol.path("endpoint").asText())) throw new IOException("Endpoint outside frozen batch");
                         JsonNode payload = JSON.readTree(body);
                         if (!payload.path("model").asText().equals(protocol.path("upstreamModel").asText())
@@ -187,13 +199,18 @@ public class NaturalTaskEvaluationServer {
 
     /** 新批次独立预留，不转移旧闭批余额；未完成预留也占预算，禁止并发超限。 */
     static synchronized Path reserve(JsonNode job, JsonNode protocol) throws IOException {
+        if (!protocol.path("status").asText().equals("FROZEN") || Files.exists(ROOT.resolve("closure.json")))
+            throw new IOException("Evaluation batch is closed");
         String phase = job.path("phase").asText();
         if (!job.path("id").asText().matches("[A-Z0-9_-]+") || !protocol.path("phaseLimits").has(phase)) throw new IOException("Invalid frozen job");
         List<Path> traces;
         try (var files = Files.list(ROOT.resolve("traces"))) { traces = files.filter(p -> p.toString().endsWith(".json")).toList(); }
         long count = 0;
         for (Path file : traces) {
-            try { if (JSON.readTree(file.toFile()).path("phase").asText().equals(phase)) count++; }
+            try {
+                JsonNode trace = JSON.readTree(file.toFile());
+                if (trace == null || trace.path("phase").asText().isBlank() || trace.path("phase").asText().equals(phase)) count++;
+            }
             catch (IOException failure) { count++; }
         }
         if (traces.size() >= protocol.path("maximumNewActualCalls").asInt()
@@ -207,7 +224,7 @@ public class NaturalTaskEvaluationServer {
 
     /** 冻结题目、生产源码及运行副本；后续编译或改文件不能静默改变正在评测的候选。 */
     static void verifyFrozenSources() throws IOException {
-        JsonNode manifest = JSON.readTree(EVIDENCE.resolve("source-manifest.json").toFile());
+        JsonNode manifest = JSON.readTree(EVIDENCE.resolve(manifestName).toFile());
         for (JsonNode file : manifest.path("files")) {
             byte[] bytes = Files.readAllBytes(Path.of(file.path("path").asText()));
             try {

@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('generate','plan-one','confirm','structured','execute','review','count','console')]
+    [ValidateSet('generate','plan-one','confirm','structured','execute','review','count','console','corrections')]
     [string] $Command,
     [ValidatePattern('^[A-Z0-9_]*$')]
     [string] $CaseId = ''
