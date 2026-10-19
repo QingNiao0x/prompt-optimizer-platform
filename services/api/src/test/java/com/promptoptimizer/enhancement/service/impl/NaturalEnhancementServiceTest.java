@@ -182,11 +182,31 @@ class NaturalEnhancementServiceTest {
     }
 
     @Test
-    void repeatedPlatformRulesAreRejectedInsteadOfAppendedAgain() {
+    void ownedStandaloneBoundariesAreAssembledOnceWithoutRejectingTheValidTask() {
         String rule = com.promptoptimizer.policy.domain.PlatformConstraintRules.TRUTH;
         provider.body = rule + "\n" + rule;
-        assertThatThrownBy(() -> service.optimize(request("写一封邮件", null, List.of(), "fixture:model")))
-                .isInstanceOf(ProviderException.class);
+        var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"));
+        assertThat(result.optimizedPrompt()).isEqualTo(rule);
+    }
+
+    @Test
+    void quotedPlatformSentencesAndIndependentConditionsRemainIntact() {
+        String rule = com.promptoptimizer.policy.domain.PlatformConstraintRules.TRUTH;
+        provider.body = "保留原定交付。\n```text\n" + rule + "\n```\n若材料含冲突，保留两份来源，不扩大确认。";
+        var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"));
+        assertThat(result.optimizedPrompt()).startsWith(provider.body);
+        assertThat(result.optimizedPrompt()).endsWith(rule);
+    }
+
+    @Test
+    void legacyNaturalVersionKeepsItsOriginalProtocolAndUnknownVersionNeverCallsTheProvider() {
+        var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"), "1");
+        assertThat(result.chainVersion()).isEqualTo("1");
+        assertThat(provider.last.strategyVersion()).isEqualTo("1");
+        int calls = provider.enhanceCalls;
+        assertThatThrownBy(() -> service.optimize(request("写一封邮件", null, List.of(), "fixture:model"), "999"))
+                .isInstanceOf(com.promptoptimizer.common.exception.UnsupportedResultVersionException.class);
+        assertThat(provider.enhanceCalls).isEqualTo(calls);
     }
 
     private OptimizationRequest request(String raw, PlanConfirmation confirmation, List<ContextFileInput> files, String model) {
@@ -207,7 +227,8 @@ class NaturalEnhancementServiceTest {
         public <T> T enhance(NaturalPromptInput input, Function<NaturalPromptDraft, T> validation) {
             enhanceCalls++;
             last = input;
-            return validation.apply(new NaturalPromptDraft(body, NaturalPromptDraft.Framework.ICIO, new ProviderMetadata("mock", "fixture:model", true)));
+            return validation.apply(new NaturalPromptDraft(body, NaturalPromptDraft.Framework.ICIO, new ProviderMetadata("mock", "fixture:model", true),
+                    new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(), List.of())));
         }
         public <T> T plan(NaturalPromptInput input, Function<PlanningProviderResponse, T> validation) {
             planCalls++;

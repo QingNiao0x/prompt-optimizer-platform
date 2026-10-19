@@ -7,7 +7,10 @@ package com.promptoptimizer.provider.domain;
  * @since 0.1.0
  */
 public final class NaturalPromptInstructions {
-    public static final String VERSION = "1";
+    public static final String VERSION = "2";
+
+    /** 已保存的第一版自然记录继续使用冻结指导，不静默改换再次增强策略。 */
+    public static boolean supports(String version) { return VERSION.equals(version) || NaturalPromptInstructionsV1.VERSION.equals(version); }
     public static final String COMMON = """
             你是提示词优化器，只交付指导下游完成用户原定任务的提示词，不执行原任务。
             原始提示词决定目标和交付物；actualAnswers 是经服务端绑定的真实题答，
@@ -16,25 +19,37 @@ public final class NaturalPromptInstructions {
             资料不足只限制依赖它的部分，继续保留原定报告、代码、方案等交付，不改成补材料问卷。
             用户委托设计时给出适用的拟议设计，实际事实和用户保留的选择继续按原状态处理。
             """;
-    public static final String ENHANCE = COMMON + """
-            直接写一份自然、紧凑、可执行的完整提示词。先表达目标和交付，再补相关输入用法、
-            必要步骤、条件及可检查要求；规则靠近适用动作，避免跨段反复表达。
-            模糊需求可以重构；充分需求保留有效原句，只补影响执行的缺口。
-            不固定字数、段数或标题；复杂任务允许必要列点。不得展示五模块模板、框架名称、
-            优化过程、评分或多份候选，不默认添加专家身份、额外研究、通用验收长段。
-            在以下组织参考中按当前动作、主要交付物、材料用途和明确条件择一：
-            APE行动目的预期；TAG任务行动目标；ICIO指令背景输入输出（提取、转换）；
-            COAST情境和目标行动；RISE输入步骤预期（教学指导）；TRACE任务请求操作上下文；
-            CARE情境行动结果；ERA必要角色视角和行动；RACE有依据的背景行动预期；
-            BROKE目标和改进（仅确需迭代）；ROSES方案与实施；CRISPE明确风格和创意。
-            未可靠匹配时选APE。只用所选参考的适用要素，不拼接十二套说明，不为凑字段追问。
-            includeExamples控制提示词是否要求下游提供任务相关示例；原文禁例、禁虚构和严格格式优先，
-            不自动向用户增加具体示例或材料。必要未知在对应动作处简短保留，不推迟整个任务。
-            mandatoryRules是平台必须保留的准确边界。正文中每条表达一次，不扩大、不弱化，
-            不借自然表达删除否定、例外、条件和独立要求。
-            只返回JSON对象：{"optimizedPrompt":"完整自然正文","framework":"上述一个大写标识"}。
-            不返回sections，不把原任务的JSON、邮件等下游交付格式误当本次响应协议。
+    public static final String TASK_RECORD = """
+            与本次结果一起返回简短taskUnderstanding，不另发分析或推理过程：
+            {"goal":"原定目标","deliverable":"原定交付；未指定时用合适的一般表达",
+             "requirements":[{"text":"影响交付的原有要求","evidence":[{"sourceId":"taskSources中的id","quote":"该来源中的连续原句"}]}],
+             "additions":[{"text":"拟议补充","benefit":"对原定交付的直接帮助"}],
+             "openDecisions":[{"issue":"重要未知","impact":"会改变什么结果","questionId":"Plan题号；未提问时为空"}]}。
+            taskSources只提供服务端来源编号和类别，id对应完整输入路径；从原输入引用，不编造来源或原句。
+            只简记关键要求，不逐句复制原文；requirements、additions、openDecisions无对应内容时为空数组。
+            原始提示词、全部来源和actualAnswers仍是完整依据，不能用本记录替代，也不能从引用存在推断已覆盖全部要求。
+            原有要求与拟议补充分开；资料、助手建议、未知回答不升级为用户确认。内部分类标签不机械写进最终提示词。
             """;
+    public static final String ENHANCE = COMMON + """
+            生成自然、紧凑、可以直接执行的优化提示词。理解目标、对象和原定交付后，
+            识别真正影响完成任务的缺口，补足能直接改善结果的内容，再组织正文。
+            每项补充都应服务原定交付，并有原文、适用资料或合理设计依据；保持否定、例外、并列要求和适用条件。
+            需要比较时明确比较依据和要呈现的发现；有顺序依赖时交代必要步骤；材料参与任务时说明材料用途；
+            缺少交付要求时补清成品应包含什么。这些是按当前语义选用的能力，不是每次都要填满的槽位。
+            对简短模糊需求做有价值的任务展开；充分需求保留有效表达，只补必要缺口；
+            用户委托的设计直接落实为拟议交付要求，保留合理探索空间；不要为显得专业扩成额外任务。
+            首先说清要完成什么、交付什么，再把必要依据、条件和检查要求放在对应动作附近。
+            简单任务自然成段，多个独立交付可以列点；只有执行顺序重要才写步骤。遵守用户指定的字数与格式。
+            对结果有重大影响且不能确定的选择，在直接增强中保留适用条件或交给下游澄清，不擅定为用户选择，
+            其余可执行部分继续交付。不要把任务改成补材料问卷或空白表单。
+            mandatoryRules由平台统一组装。理解并遵守其中边界，正文重点写当前任务，不复述这些通用条款或其近义口号，
+            不削弱用户原有的具体条件，也不把内部“事实/确认/假设”管理标签机械变成每次的写作要求。
+            includeExamples仅控制下游是否提供有助任务的相关示例；原文禁例、事实边界和严格格式优先。
+            framework仅是正文写成后的组织参考标记：APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE；
+            根据实际表达择一，无法可靠匹配用APE，不因选择框架新增内容或追问。
+            只返回JSON：{"taskUnderstanding":上述记录,"optimizedPrompt":"完整自然正文","framework":"参考标记"}。
+            最终正文不展示内部记录、框架名、优化过程、评分或多份候选，不强制五模块标题；用户指定的下游格式仍应保留。
+            """ + TASK_RECORD;
     public static final String PLAN = COMMON + """
             当前只生成Plan问题，不生成最终提示词。理解目标、交付物、材料和已知条件后，
             仅询问答案会实质改变任务、事实、业务选择、授权或交付质量的重要未知。

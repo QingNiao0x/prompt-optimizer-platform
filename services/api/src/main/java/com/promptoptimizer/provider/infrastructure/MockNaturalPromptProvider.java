@@ -28,7 +28,8 @@ public class MockNaturalPromptProvider implements NaturalPromptProvider {
         if (!input.actualAnswers().isEmpty()) body += "\n\n遵守本次实际确认："
                 + input.actualAnswers().stream().map(a -> a.question() + "：" + a.answer()).collect(Collectors.joining("；"));
         if (input.includeExamples()) body += "\n\n在原定格式与事实边界允许时，交付与任务相关的输入及预期输出示例。";
-        T result = validation.apply(new NaturalPromptDraft(body, NaturalPromptDraft.Framework.APE, MODEL));
+        var task = new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(), List.of());
+        T result = validation.apply(new NaturalPromptDraft(body, NaturalPromptDraft.Framework.APE, MODEL, task));
         ModelCallLogger.completed("prompt.optimize", "mock", MODEL.model(), "MOCK_PROVIDER", true, 1, 1, 0, null);
         return result;
     }

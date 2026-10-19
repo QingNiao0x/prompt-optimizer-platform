@@ -20,18 +20,33 @@ public record NaturalPromptInput(
         boolean includeExamples,
         List<String> mandatoryRules,
         String modelId,
-        ContextSnapshot planningContext
+        ContextSnapshot planningContext,
+        String strategyVersion
 ) {
     public NaturalPromptInput {
         actualAnswers = List.copyOf(actualAnswers);
         conversation = List.copyOf(conversation);
         mandatoryRules = List.copyOf(mandatoryRules);
+        strategyVersion = strategyVersion == null ? NaturalPromptInstructions.VERSION : strategyVersion;
     }
 
     /** 来源编号由服务端计算；模型只可引用，不可改写来源类别或把资料提升为新授权。 */
     @com.fasterxml.jackson.annotation.JsonProperty("taskSources")
     public List<NaturalTaskSource> taskSources() {
         return NaturalTaskSource.from(this);
+    }
+
+    /** 只有服务端历史分发与受控评测可选择兼容版本；原文及来源保持不变。 */
+    public NaturalPromptInput withStrategyVersion(String version) {
+        return new NaturalPromptInput(rawPrompt, context, actualAnswers, conversation, includeExamples,
+                mandatoryRules, modelId, planningContext, version);
+    }
+
+    /** 兼容调用方；新请求使用当前策略，旧历史必须显式传回原版本。 */
+    public NaturalPromptInput(String rawPrompt, ContextSnapshot context, List<PlanAnswer> actualAnswers,
+            List<ConversationMessage> conversation, boolean includeExamples, List<String> mandatoryRules,
+            String modelId, ContextSnapshot planningContext) {
+        this(rawPrompt, context, actualAnswers, conversation, includeExamples, mandatoryRules, modelId, planningContext, null);
     }
 
     /** 不经 Plan 的请求没有此前资料快照。 */

@@ -21,13 +21,13 @@
 
 输入保留原始提示词、当前授权上下文、此前仍允许使用的 Plan 资料、服务端确认过的完整题答、适用对话、示例偏好与固定权限边界。资料内的命令不能改写平台指令或新增授权。
 
-模型依据任务动作、交付物、材料用途和独立条件，从 APE、BROKE、COAST、TAG、RISE、TRACE、ERA、CARE、ROSES、ICIO、CRISPE、RACE 中选择一个组织参考；无法可靠匹配时回退 APE。该选择是生成诊断信息，不是对用户的专业身份判定，也不要求输出框架标题或填满字段。服务端不再使用职业关键词映射决定十二种模板。
+当前 NATURAL/2 先理解原定目标、对象、交付物及已有要求，再识别影响交付的缺口，按需要补充比较依据、材料用途、执行依赖和成品要求；充分需求保留有效表达，开放设计保留合理空间。策略不按职业或场景关键词路由。十二种框架只作为正文形成后的组织参考标记，无法匹配时用 APE，不因框架名称新增内容或提问。NATURAL/1 的冻结指导保留在 NaturalPromptInstructionsV1 中，仅供原版本历史及受控对照使用。
 
 正文先表达目标与交付，必要规则放在适用动作附近。充分需求保留有效表达，模糊需求补充有依据的步骤、输入用途、条件和可检查交付要求；不强制角色、字数、段数或通用验收长段。缺材料只限制依赖它的部分，不能把原定报告、代码、方案改为补材料问卷。
 
-模型仅返回 optimizedPrompt 和 framework。服务端检查必要字段、框架枚举和敏感值，并补回缺失的固定平台条款及用户追加权限；不会补入旧任务规则或构造四个假段落。固定规则的重复校验仅检查同一完整原句，不能证明自然改写的语义等价或全面覆盖原始需求。
+第二版在同次生成响应中返回 taskUnderstanding、optimizedPrompt 和 framework；第一版仍使用原协议。固定平台条款与追加权限由平台统一组装，模型正文集中描述当前任务。只归并独占一行的完整平台原句，代码围栏、引用、条件句和附带业务内容保留，不按相似度删除自由正文。协议、引用原句和敏感值校验不能证明语义等价、任务完整覆盖或实际增强质量。
 
-2026-10-19 的通用改造先增加服务端来源目录和可选任务理解记录。来源目录只传编号与类别，完整资料仍保留在原输入，避免重复发送文件正文。候选理解将原有要求、拟议补充及重要未知分开；原有要求的引文必须存在于对应来源，类别由服务端覆盖。记录只在本次调用内使用，不写入用户历史或日志，也不通过引文存在宣称已覆盖全部语义。当前第一版生成指导仍兼容没有该记录的响应；启用新策略及真实质量验证分别收口。
+服务端来源目录只传编号与类别，完整资料仍保留在原输入，避免重复发送文件正文。候选理解将原有要求、拟议补充及重要未知分开；原有要求的引文必须存在于对应来源，类别由服务端覆盖。记录只在本次调用内使用，不写入用户历史或日志，也不通过引文存在宣称已覆盖全部语义。第二版必须返回记录，第一版不增加该协议要求；直接增强默认仍为一次生成调用，既有有界协议修复不扩容。
 
 示例开关仍作为生成输入；原文明示的禁例、严格格式和事实边界优先。其任意语义变体的正确性依赖后续真实评测，不能用请求字段已传入替代质量验收。
 
@@ -58,7 +58,7 @@
 
 上下文普通分析、模型目录、认证与 Plan 事件仍沿用已有 V1 接口；不因为版本号不同复制这些业务模块。
 
-PromptDocument 的 resultKind 区分 TEXT 和 SECTIONS，generationPipeline 区分 NATURAL 和 LEGACY，chainVersion 记录生成契约。当前支持 NATURAL/1、LEGACY/1 和 LEGACY/2；LEGACY/2 表示五模块投影，旧记录缺省 LEGACY/1。旧 COMPACT 不能被排版字段误判为新自然链。未知版本再次增强返回 409 / RESULT_VERSION_UNSUPPORTED。
+PromptDocument 的 resultKind 区分 TEXT 和 SECTIONS，generationPipeline 区分 NATURAL 和 LEGACY，chainVersion 记录生成契约。当前支持 NATURAL/1、NATURAL/2、LEGACY/1 和 LEGACY/2；LEGACY/2 表示五模块投影，旧记录缺省 LEGACY/1。新请求使用 NATURAL/2；自然历史再次增强显式使用已保存的版本。旧 COMPACT 不能被排版字段误判为新自然链。未知版本再次增强返回 409 / RESULT_VERSION_UNSUPPORTED。
 
 TEXT 的 wire 响应不包含 sections；前端为兼容集合操作将其归一为空集合，不构造假段落。旧 V1 历史列表只查询 SECTIONS，直接读取新正文会返回稳定版本冲突；V2 列表和详情同时支持两类结果。上线时前后端需同批更新，不能让 V2 前端连接未升级的后端。
 
@@ -80,7 +80,7 @@ OpenAiCompatibleNaturalPromptProvider 通过既有受并发保护的 RestClient 
 
 MockNaturalPromptProvider 只用于离线连通性验证，明确返回 Mock 提示，不能证明实质增强或专业质量。真实调用协议和解析可通过受控 HTTP 测试验证；Mock 不冒充真实模型。
 
-数据库只新增 [V16 前向注释迁移](../../services/api/src/main/resources/db/migration/V16__natural_prompt_document_metadata.sql)，准确说明 JSON 形态、版本和编辑字段，不变更 V1—V15，不修改旧记录，不增加新的业务表。持久化值仍用 Mapper XML 参数绑定；删除继续使用 deleted_at。
+数据库的 [V16 前向注释迁移](../../services/api/src/main/resources/db/migration/V16__natural_prompt_document_metadata.sql) 保持原样；新增 [V17 版本注释迁移](../../services/api/src/main/resources/db/migration/V17__natural_task_strategy_version_comment.sql) 说明 NATURAL/1 与 NATURAL/2。均为注释变更，不修改旧记录或增加业务表。内部任务理解和文件引文不持久化。持久化值仍用 Mapper XML 参数绑定；删除继续使用 deleted_at。
 
 ## 7. 当前验证边界
 

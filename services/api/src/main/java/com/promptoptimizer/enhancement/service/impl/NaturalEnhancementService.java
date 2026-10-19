@@ -63,6 +63,14 @@ public class NaturalEnhancementService {
 
     /** 生成完整自然正文；零问题 Plan 与有回答 Plan 均通过同一服务端绑定入口。 */
     public PromptDocument optimize(OptimizationRequest request) {
+        return optimize(request, NaturalPromptInstructions.VERSION);
+    }
+
+    /** 旧历史显式选择已知版本；新请求使用当前版本，未知版本在模型调用前拒绝。 */
+    public PromptDocument optimize(OptimizationRequest request, String strategyVersion) {
+        if (!NaturalPromptInstructions.supports(strategyVersion)) {
+            throw new com.promptoptimizer.common.exception.UnsupportedResultVersionException("自然增强版本暂不支持，请恢复原始需求重新增强。");
+        }
         long start = clock.millis();
         actor.require();
         rejectInput(request.rawPrompt());
@@ -93,11 +101,15 @@ public class NaturalEnhancementService {
         var groups = new ConstraintBundle(PlatformConstraintRules.forTask(engineering), List.of(), permissions);
         var input = new NaturalPromptInput(request.rawPrompt(), context, confirmed.answers(), conversation,
                 Boolean.TRUE.equals(request.enhancement().includeExamples()), groups.visibleConstraints(),
-                model.publicId(), planningContext);
+                model.publicId(), planningContext).withStrategyVersion(strategyVersion);
         String workflowId = request.planConfirmation() == null ? null : request.planConfirmation().planId();
         try (var scope = LogCorrelation.bindWorkflow("planning-plan", workflowId)) {
             return provider.enhance(input, draft -> {
-                String body = validateBody(draft, groups.visibleConstraints());
+                if (NaturalPromptInstructions.VERSION.equals(strategyVersion)) {
+                    if (draft == null || draft.taskUnderstanding() == null) throw invalid("自然链路缺少任务理解记录");
+                    draft.taskUnderstanding().resolve(input);
+                }
+                String body = validateBody(draft, groups.visibleConstraints(), strategyVersion);
                 List<String> warnings = new ArrayList<>(context.warnings());
                 if (planningContext != null) warnings.addAll(planningContext.warnings());
                 if (draft.provider().mock()) warnings.add("当前为离线Mock示例，不代表真实模型增强质量。");
@@ -106,7 +118,7 @@ public class NaturalEnhancementService {
                         new ProviderMetadata(draft.provider().provider(), draft.provider().model(), draft.provider().mock(),
                                 draft.provider().mock() ? "" : model.displayName()),
                         Math.max(0, clock.millis() - start), warnings.stream().distinct().toList(), List.of(),
-                        PromptFormat.COMPACT, groups, PromptDocument.NATURAL_PIPELINE, NaturalPromptInstructions.VERSION, draft.framework().name(), null, 0,
+                        PromptFormat.COMPACT, groups, PromptDocument.NATURAL_PIPELINE, strategyVersion, draft.framework().name(), null, 0,
                         confirmed.bound() ? confirmed.answers() : null);
             });
         }
@@ -139,17 +151,44 @@ public class NaturalEnhancementService {
     }
 
     /** 平台固定边界只补确实缺失的原句，不经过旧任务规则追加器，不删除模型或用户的重要条件。 */
-    private String validateBody(NaturalPromptDraft draft, List<String> required) {
+    private String validateBody(NaturalPromptDraft draft, List<String> required, String strategyVersion) {
         if (draft == null || draft.framework() == null || draft.provider() == null
                 || draft.optimizedPrompt() == null || draft.optimizedPrompt().isBlank()) throw invalid("自然正文不完整");
         String body = draft.optimizedPrompt().strip();
         if (sensitive.containsCredential(body)) throw invalid("自然正文包含疑似敏感凭据");
+        if (NaturalPromptInstructions.VERSION.equals(strategyVersion)) return assembleBoundaries(body, required);
         for (String rule : required) {
             int first = body.indexOf(rule);
             if (first >= 0 && body.indexOf(rule, first + rule.length()) >= 0) throw invalid("平台边界重复");
         }
         List<String> missing = required.stream().filter(rule -> !body.contains(rule)).toList();
         return body + (missing.isEmpty() ? "" : "\n\n" + String.join(" ", missing));
+    }
+
+    /**
+     * 第二版统一组装固定边界，仅归并独占一行的完整平台原句；不对自由正文做近义删除。
+     * 代码围栏、引用、条件句和附带业务内容保留原样，不能为消除重复而丢失独立条件。
+     */
+    private String assembleBoundaries(String body, List<String> required) {
+        Set<String> owned = new HashSet<>();
+        List<String> lines = new ArrayList<>();
+        String fence = null;
+        for (String line : body.split("\\R", -1)) {
+            String trimmed = line.strip();
+            if (trimmed.startsWith("```") || trimmed.startsWith("~~~")) {
+                String marker = trimmed.substring(0, 3);
+                if (fence == null) fence = marker;
+                else if (fence.equals(marker)) fence = null;
+                lines.add(line);
+                continue;
+            }
+            // 缩进代码同样不参与平台句归并；其它自由句即使含原句也不据此判定等价覆盖。
+            boolean standalone = fence == null && !line.startsWith("    ") && !line.startsWith("\t") && required.contains(trimmed);
+            if (!standalone || owned.add(trimmed)) lines.add(line);
+        }
+        List<String> missing = required.stream().filter(rule -> !owned.contains(rule)).toList();
+        String content = String.join("\n", lines).strip();
+        return content + (missing.isEmpty() ? "" : "\n\n" + String.join("\n", missing));
     }
 
     /** 校验协议容量和引用完整性；不截取问题、不用推荐项填答，也不凭题号证明语义等价。 */

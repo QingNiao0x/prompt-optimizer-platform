@@ -45,6 +45,7 @@ public class OptimizationRecordEntity {
     /** 结果 JSON 对象，保存段落、歧义/约束数组、Provider/调用 ID、modelVersion 版本快照、增强选项、会话及可选 Plan 确认；顶层 promptFormat 为 COMPACT/STRUCTURED，旧记录缺省按 STRUCTURED 展示。enhancementOptions.promptFormat 仅在用户显式选择时保存同一枚举，缺省表示重新增强时自动选择。可选 constraintGroups 对象含 platformMandatory、taskSpecific、additionalPermissions 三个字符串数组，来源于服务端；旧记录缺省表示来源未知，不用于关闭安全过滤。JSON 键和值域由应用校验，数据库不强制结构。 */
     // V2可选resultKind(TEXT/SECTIONS)、generationPipeline(NATURAL/LEGACY)、chainVersion及framework；
     // TEXT没有伪造sections，缺少链路字段的旧COMPACT仍按LEGACY读取。数据库不强制JSON键结构。
+    // NATURAL/1保留冻结初版，NATURAL/2为通用任务理解策略；再次增强按保存版本分发，不保存内部引文记录。
     // 可选selectedModelId为服务端公开模型标识；editRevision缺省0，generatedPrompt保留首次编辑前正文，editedAt为UTC时间。
     private Map<String, Object> resultMetadata = new LinkedHashMap<>();
 

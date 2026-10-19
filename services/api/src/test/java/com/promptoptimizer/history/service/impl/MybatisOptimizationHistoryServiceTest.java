@@ -287,20 +287,22 @@ class MybatisOptimizationHistoryServiceTest {
                 .isInstanceOf(com.promptoptimizer.common.exception.InvalidOptimizationRequestException.class);
     }
 
-    @Test
-    void naturalReoptimizationUsesSavedPipelineInsteadOfLegacyOrchestrator() {
+    @ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"1", "2"})
+    void naturalReoptimizationUsesSavedPipelineAndVersionInsteadOfLegacyOrchestrator(String version) {
         var record = naturalRecord();
+        record.getResultMetadata().put("chainVersion", version);
         when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);
         var natural = mock(com.promptoptimizer.enhancement.service.impl.NaturalEnhancementService.class);
         var result = new com.promptoptimizer.enhancement.domain.PromptDocument(record.getOptimizedPrompt(),
                 com.promptoptimizer.enhancement.domain.PromptDocument.ResultKind.TEXT, null, resultWithFileContent().contextReport(),
                 List.of(), List.of("事实边界。"), TemplateCode.GENERAL, new ProviderMetadata("mock", "fixture", true), 0,
-                List.of(), List.of(), com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT, null, "NATURAL", "1", "APE", null, 0);
-        when(natural.optimize(any())).thenReturn(result);
+                List.of(), List.of(), com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT, null, "NATURAL", version, "APE", null, 0);
+        when(natural.optimize(any(), eq(version))).thenReturn(result);
         service.setNaturalEnhancement(natural);
         assertThat(service.reoptimizeDocument(record.getId()).result().resultKind())
                 .isEqualTo(com.promptoptimizer.enhancement.domain.PromptDocument.ResultKind.TEXT);
-        verify(natural).optimize(any());
+        verify(natural).optimize(any(), eq(version));
         verify(orchestrator, never()).optimize(any());
     }
 

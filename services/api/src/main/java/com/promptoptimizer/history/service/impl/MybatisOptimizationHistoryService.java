@@ -211,7 +211,8 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         boolean natural = PromptDocument.ResultKind.TEXT.name().equals(source.getResultMetadata().get("resultKind"));
         boolean supportedNatural = natural
                 && PromptDocument.NATURAL_PIPELINE.equals(source.getResultMetadata().get("generationPipeline"))
-                && com.promptoptimizer.provider.domain.NaturalPromptInstructions.VERSION.equals(source.getResultMetadata().get("chainVersion"));
+                && com.promptoptimizer.provider.domain.NaturalPromptInstructions.supports(
+                        String.valueOf(source.getResultMetadata().get("chainVersion")));
         // 只分发明确支持的协议组合。缺字段的旧记录按旧版本处理，显式未知版本绝不猜测。
         if (!supportedNatural && !supportedLegacy(source)) {
             throw new com.promptoptimizer.common.exception.UnsupportedResultVersionException("该记录的生成版本暂不支持再次增强，请恢复并编辑原始需求。");
@@ -219,7 +220,7 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         OptimizationRequest request = rebuildRequest(source);
         if (natural && naturalEnhancement == null) throw new IllegalStateException("自然增强服务未装配");
         PromptDocument result;
-        if (natural) result = naturalEnhancement.optimize(request);
+        if (natural) result = naturalEnhancement.optimize(request, String.valueOf(source.getResultMetadata().get("chainVersion")));
         else {
             OptimizationResult generated = orchestrator.optimize(request);
             result = PromptDocument.STRUCTURED_VERSION.equals(source.getResultMetadata().get("chainVersion"))
