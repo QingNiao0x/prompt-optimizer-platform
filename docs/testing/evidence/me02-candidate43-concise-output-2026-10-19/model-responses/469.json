@@ -1,0 +1,57 @@
+{
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "AI-USAGE",
+  "version": "candidate43-concise-output",
+  "phase": "candidateValidation",
+  "requestId": "88235bf4-3c09-4f3f-ba35-c3db684fd9c4",
+  "startedAt": "2026-10-19T03:31:13.021318Z",
+  "httpStatus": 200,
+  "elapsedMs": 5250,
+  "sequence": 469,
+  "sourceTraceSha256": "d5ab56ae386aa3e4ed0fc6f901f21ee2a403705482de18b612eb6db68798a315",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "requestCanonicalSha256": "d52ef6f5a46fb26499e61a7a13bfe7d7d90a5f9e585baea2f32b62b33272569b",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "response": {
+    "id": "5a24dfe9-c60f-4d7c-b427-4cce15e8a6cb",
+    "object": "chat.completion",
+    "created": 1792380672,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"assessment\":{\"sufficiency\":\"NEEDS_COMPLETION\",\"gaps\":[{\"kind\":\"INPUT_OUTPUT\",\"missing\":\"“使用AI最多”的衡量口径未定：是按职业/行业从业者中使用AI工具的人数或比例、AI工具调用量，还是按AI相关岗位数量或投资规模。\",\"completion\":\"在交付中先说明采用的口径与统计单位，并据此给出排名；若多种口径结论不同，分别列出并注明来源。\",\"basis\":\"用户只给出“使用AI最多”，未指定统计维度，不同口径会得出不同排名。\"},{\"kind\":\"QUALITY_CHECK\",\"missing\":\"缺少数据来源与时间范围要求，无法保证排名可核查、可比较。\",\"completion\":\"要求每个排名条目附来源机构、发布时间、统计范围和链接，并标注数据截止时间。\",\"basis\":\"全球职业/行业AI使用排名依赖第三方统计，来源与时间范围决定可比性。\"},{\"kind\":\"EDGE_CASE\",\"missing\":\"“职业”与“行业”是两类不同对象，未说明是否分别排名。\",\"completion\":\"分别给出按职业和按行业的排名，并说明两者口径差异。\",\"basis\":\"职业（如软件开发、客服）与行业（如金融、制造业）分类层级不同，不能混为一谈。\"}],\"presentation\":\"STRUCTURED\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"用户希望了解全球范围内使用AI最多的职业或行业，用于了解AI在各职业/行业中的渗透情况。该问题涉及全球范围统计，需依赖公开研究或调查数据。\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"查询并整理全球使用AI最多的职业和行业排名。\\n\\n1. 先明确“使用AI最多”的衡量口径，例如：从业者中使用AI工具的人数或比例、AI工具使用频次/调用量、AI相关岗位数量、行业AI投资或采用率等。优先采用可公开核查的权威调查或研究报告口径。\\n2. 按职业维度给出排名，列出排名靠前的职业及依据。\\n3. 按行业维度给出排名，列出排名靠前的行业及依据。\\n4. 说明职业与行业两类口径的差异，避免混用。\\n5. 若不同来源或口径结论不一致，分别列出并说明差异原因，不强行合并为单一结论。\"},{\"type\":\"OUTPUT\",\"title\":\"输出要求\",\"content\":\"以中文交付，包含：\\n- 口径说明：所采用的衡量指标、统计单位、数据截止时间；\\n- 职业排名：按使用AI程度排序的职业列表，每项附简要依据；\\n- 行业排名：按使用AI程度排序的行业列表，每项附简要依据；\\n- 来源清单：每个数据点标注来源机构、报告名称、发布时间和链接；\\n- 局限说明：数据覆盖范围、样本限制及不同口径间的可比性问题。\\n\\n若无法获得全球范围的权威数据，明确说明数据覆盖的地区范围，不将局部数据表述为全球结论。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"{{REQ_7dc01a9ae8d8f70b}}\\n\\n- 不得把推测、印象或单一来源的结论写成已证实的全球事实；无可靠数据支持时明确标注“未找到可靠数据”。\\n- 区分职业与行业两个维度，不将行业排名直接等同于职业排名。\\n- 引用数据须注明来源与时间，不使用无法追溯出处的数字。\"}],\"ambiguities\":[\"“使用AI最多”按什么口径衡量（如从业者使用AI工具的比例、AI工具调用量、AI相关岗位数量、行业AI采用率或投资规模）？不同口径会得出不同排名，需确认优先采用哪一种，或是否并列呈现多种口径。\",\"是否需要限定数据时间范围（如近一年、近三年）和地区范围（严格全球，还是可接受主要经济体数据）？这会影响可获得的权威来源和结论可比性。\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5903,
+      "completion_tokens": 854,
+      "total_tokens": 6757,
+      "prompt_tokens_details": {
+        "cached_tokens": 5120
+      },
+      "prompt_cache_hit_tokens": 5120,
+      "prompt_cache_miss_tokens": 783
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "modelContentSha256": "0b0f37e3a43e19f703776eba4a46231b7d6b1d3e78e20485e67fcd28b4cb80f6",
+  "upstream200DoesNotMeanPlatformAccepted": true
+}

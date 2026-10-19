@@ -1,0 +1,57 @@
+{
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "COURSE-CHOICE",
+  "version": "candidate43-concise-output",
+  "phase": "candidateValidation",
+  "requestId": "f1092ee9-9a86-433a-b619-c262b1cac31c",
+  "startedAt": "2026-10-19T03:33:50.605444600Z",
+  "httpStatus": 200,
+  "elapsedMs": 1772,
+  "sequence": 475,
+  "sourceTraceSha256": "2c88483201fb41350cc77aaa2c6c2046a71bfe4c54c13ac8161f8af3f72e7926",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "requestCanonicalSha256": "5022dc3121ab2f05c9e5c981df2153705525154c8e5c239beab79f42a337effd",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "response": {
+    "id": "72a5c79a-fb43-4835-9e5b-0b4a6675a8db",
+    "object": "chat.completion",
+    "created": 1792380830,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"assessment\":{\"sufficiency\":\"SUFFICIENT\",\"gaps\":[],\"presentation\":\"COMPACT\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"已报名学员原定周六上课，因场地临时关闭需要变更安排。已确定改为顺延一周，不改为线上；具体上课时刻没有提供，不得编造。\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"给已报名学员写课程变更通知：说明原定周六课程因场地临时关闭调整，课程顺延一周，不改为线上。具体上课时刻未提供，通知中不要写具体时刻，也不要编造其他未确认信息。措辞由你安排，语气礼貌、清楚，便于学员及时了解变更。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"直接输出一份可直接发送给学员的课程变更通知正文。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"只写已确认的信息：场地临时关闭、原定周六、顺延一周、不改为线上。不得编造具体日期、时刻、地点或补偿安排；不得把顺延一周写成改为线上。\"}],\"ambiguities\":[],\"ambiguityReferences\":[]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6379,
+      "completion_tokens": 249,
+      "total_tokens": 6628,
+      "prompt_tokens_details": {
+        "cached_tokens": 5888
+      },
+      "prompt_cache_hit_tokens": 5888,
+      "prompt_cache_miss_tokens": 491
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "modelContentSha256": "615313435decc6f47f833bafe37a5095913c31b2f999bf76e810860e0940c9cf",
+  "upstream200DoesNotMeanPlatformAccepted": true
+}

@@ -1,0 +1,57 @@
+{
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "AI-USAGE",
+  "version": "candidate43-concise-output",
+  "phase": "candidateValidation",
+  "requestId": "88235bf4-3c09-4f3f-ba35-c3db684fd9c4",
+  "startedAt": "2026-10-19T03:31:18.875833100Z",
+  "httpStatus": 200,
+  "elapsedMs": 4331,
+  "sequence": 470,
+  "sourceTraceSha256": "2d22d3bcca667208285fb0006d3b7cb8b5f11600b753cd01bb92e89e8c9235d7",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "requestCanonicalSha256": "0198f6204a20f40c0245c1bf58e7449010c77057bc010f36989d67821d8e9efb",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "response": {
+    "id": "cb80f8af-db3a-47bf-a0c8-20f297507b0e",
+    "object": "chat.completion",
+    "created": 1792380678,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"assessment\":{\"sufficiency\":\"NEEDS_COMPLETION\",\"gaps\":[{\"kind\":\"PROFESSIONAL_OPTION\",\"missing\":\"“使用AI最多”缺少可核查的衡量口径，例如职业从业者中使用AI工具的比例、AI相关岗位数量、AI工具调用量或行业AI采用率，不同口径会得出不同结论。\",\"completion\":\"由执行者提出一个主口径（如各职业从业者中经常使用AI工具的比例）并说明适用前提，同时列出可替代口径及其可能导致的结论差异；如无权威全球统计，明确说明数据受限并给出可获得的近似证据。\",\"basis\":\"用户仅要求“全球使用AI最多的职业/行业”，未指定衡量指标、时间范围或数据来源，需明确口径才能给出可比较的结论。\"},{\"kind\":\"QUALITY_CHECK\",\"missing\":\"缺少对数据来源权威性、统计年份和覆盖范围的核验要求，可能导致把单一调查或厂商报告当作全球结论。\",\"completion\":\"要求标注每项数据的来源机构、发布时间、样本范围与统计口径，并区分全球性统计与区域性、行业性调查；对无法核实的排名明确标注为未核实。\",\"basis\":\"“全球”范围与“最多”排名需要可追溯的统计依据，否则结论不可检验。\"}]},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"用户希望了解全球范围内使用AI最多的职业或行业，用于获得一个可比较的排名或结论。该问题涉及“使用AI”的衡量方式、统计范围和时间口径，现有输入未指定这些条件。\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"查询并整理全球使用AI最多的职业或行业。执行时：\\n- 先明确“使用AI最多”的衡量口径，提出一个主口径并说明其适用前提，同时列出可替代口径及其可能带来的结论差异。\\n- 按主口径检索可获得的全球性统计或调查，给出排名或代表性结论，并说明各数据对应的统计年份、覆盖范围和样本对象。\\n- 区分职业维度与行业维度分别呈现，不把行业结论直接套用到具体职业。\\n- 对缺乏权威全球统计的部分，如实说明数据受限，给出可获得的近似证据，不编造排名或数值。\"},{\"type\":\"OUTPUT\",\"title\":\"输出要求\",\"content\":\"以简洁的书面说明呈现：\\n- 衡量口径说明（主口径及适用前提、替代口径及差异）。\\n- 职业维度的使用AI情况排名或代表性结论。\\n- 行业维度的使用AI情况排名或代表性结论。\\n- 每项结论标注来源机构、发布时间、覆盖范围与统计口径。\\n- 明确列出无法核实或数据不足的部分。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"{{REQ_7dc01a9ae8d8f70b}}\\n- 不得把推测、单一调查或厂商宣传材料写成全球已证实的结论。\\n- 无法获得权威全球统计时，说明受限范围，仍交付已有依据支持的内容。\"}],\"ambiguities\":[]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6390,
+      "completion_tokens": 659,
+      "total_tokens": 7049,
+      "prompt_tokens_details": {
+        "cached_tokens": 5888
+      },
+      "prompt_cache_hit_tokens": 5888,
+      "prompt_cache_miss_tokens": 502
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "modelContentSha256": "291b33504096590d38722a217a42052c03eb2ce5d31f1f03f4e7c28e57d33ae6",
+  "upstream200DoesNotMeanPlatformAccepted": true
+}

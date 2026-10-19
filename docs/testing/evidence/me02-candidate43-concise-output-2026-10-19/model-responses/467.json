@@ -1,0 +1,57 @@
+{
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "AI-USAGE",
+  "version": "candidate43-concise-output",
+  "phase": "candidateValidation",
+  "requestId": "e00e6fa4-592e-4681-af77-f15460b16d10",
+  "startedAt": "2026-10-19T03:30:39.280304600Z",
+  "httpStatus": 200,
+  "elapsedMs": 3988,
+  "sequence": 467,
+  "sourceTraceSha256": "f83bf07bdc94e02664239c4b7f581859955c7c9b0fad9defca88e55986f80725",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "requestCanonicalSha256": "955b676cf0f20f09729a2733bf799f9d0c970f234b146eaae98ecbab8d022a24",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "response": {
+    "id": "d9b07969-00d3-46ca-b5dd-026b062c22af",
+    "object": "chat.completion",
+    "created": 1792380638,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"assessment\":{\"sufficiency\":\"NEEDS_COMPLETION\",\"gaps\":[{\"kind\":\"INPUT_OUTPUT\",\"missing\":\"未明确“使用AI最多”的衡量口径（如AI工具使用率、岗位AI技能需求占比、企业采用率等）及所需时间范围、地域细分和交付形式。\",\"completion\":\"在TASK中说明按可获得的权威统计口径组织答案，明确所用指标、期间、来源与覆盖范围；无法统一口径时并列不同口径的结果并标注差异。\",\"basis\":\"原需求仅要求查询“全球使用AI最多的职业/行业”，未指定衡量指标、时间与形式，直接影响可比较结果。\"},{\"kind\":\"QUALITY_CHECK\",\"missing\":\"未要求标注数据来源、统计年份与口径限制，易把不同调查结果混为同一排名。\",\"completion\":\"在OUTPUT与CONSTRAINTS中要求逐项注明来源、统计期间、样本或覆盖范围，并说明口径不可直接比较之处。\",\"basis\":\"职业/行业AI使用排名依赖具体调查口径，缺少来源与期间会使结论不可核查。\"}],\"presentation\":\"COMPACT\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"查询全球范围内使用AI最多的职业或行业，给出可核查的排名或代表性结论。围绕“使用AI最多”的可获得统计口径组织内容，例如AI工具使用率、岗位中AI技能需求占比或企业AI采用率；说明所采用指标、统计期间、地域覆盖和数据来源。不同来源口径不一致时分别呈现，不合并为单一排名，也不把某一指标的结果当作其他指标已证实。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"以简洁的结论加要点列表呈现：先给出主要结论，再列出排名靠前的职业或行业及对应数值或占比；每项注明来源、统计年份和口径。若不同口径结论不同，分口径列出并说明差异原因。资料不足或无法核实之处明确标注，不编造数值。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"{{REQ_7dc01a9ae8d8f70b}}\\n明确区分已核实的数据事实、来源推断和无法确认的信息，不得把猜测写成事实；不虚构统计数值、排名或来源。\"}],\"ambiguities\":[\"“使用AI最多”按哪种口径衡量：AI工具使用率、岗位AI技能需求占比、企业AI采用率，还是其他指标？不同口径会得出不同排名。\",\"需要覆盖的时间范围和数据地域范围是什么（如近一年全球、特定国家或地区）？这会影响可引用的统计结果。\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6290,
+      "completion_tokens": 561,
+      "total_tokens": 6851,
+      "prompt_tokens_details": {
+        "cached_tokens": 5888
+      },
+      "prompt_cache_hit_tokens": 5888,
+      "prompt_cache_miss_tokens": 402
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "modelContentSha256": "defe8074c9fbe825b993abb11eb86306fb0ed874878214a55fe9ba7cd1591eb0",
+  "upstream200DoesNotMeanPlatformAccepted": true
+}

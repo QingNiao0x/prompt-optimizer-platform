@@ -1,0 +1,57 @@
+{
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "HANDOVER",
+  "version": "candidate43r1-concise-output",
+  "phase": "candidateValidation",
+  "requestId": "f65f26c5-72d1-42d5-b8b0-ba0f83006620",
+  "startedAt": "2026-10-19T04:02:31.065311100Z",
+  "httpStatus": 200,
+  "elapsedMs": 1442,
+  "response": {
+    "id": "ac6f73b4-7e5f-4472-b632-dd1d60df3448",
+    "object": "chat.completion",
+    "created": 1792382550,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"assessment\":{\"sufficiency\":\"SUFFICIENT\",\"gaps\":[],\"presentation\":\"COMPACT\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"把下面这段交接记录整理成一份简短待办：\\n\\n- 小陈周三提交预算；\\n- 小李拿到预算后核对采购清单；\\n- 发货时间还没确定。\\n\\n整理时保留各项之间的先后依赖，不补造负责人或日期。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"{{REQ_d8a507dc55e147ff}}\"},{\"type\":\"ACCEPTANCE\",\"title\":\"验收\",\"content\":\"待办简短，按依赖顺序呈现：小陈周三提交预算在前，小李拿到预算后核对采购清单在后；发货时间明确标为未确定，不添加原记录中没有的负责人或日期。\"}],\"ambiguities\":[],\"ambiguityReferences\":[]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6026,
+      "completion_tokens": 222,
+      "total_tokens": 6248,
+      "prompt_tokens_details": {
+        "cached_tokens": 5120
+      },
+      "prompt_cache_hit_tokens": 5120,
+      "prompt_cache_miss_tokens": 906
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "sequence": 484,
+  "sourceTraceSha256": "0f7f4bae08386539fae20a96f3746f5efc1bbf862dedb994bad0380bdf53c0a0",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "requestCanonicalSha256": "8b8388a5710eb0283f02bb2b791e31aedb4fe234c2bd359073b9c685963a6ab2",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "upstream200DoesNotMeanPlatformAccepted": true,
+  "modelContentSha256": "d95ab14f16896f83c7ad4ffda5e7d3620c8f19e163a94596ebd4dd12f0510475"
+}

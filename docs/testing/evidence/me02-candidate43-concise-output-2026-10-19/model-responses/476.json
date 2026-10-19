@@ -1,0 +1,54 @@
+{
+  "purpose": "EXECUTION",
+  "version": "candidate43-concise-output",
+  "phase": "candidateValidation",
+  "operation": "RAW",
+  "sourceCandidate": "candidate43",
+  "startedAt": "2026-10-19T03:34:14.913Z",
+  "httpStatus": 200,
+  "elapsedMs": 3432,
+  "sequence": 476,
+  "sourceTraceSha256": "c45590469f5bb61720a955823c4e60f6752b2835be26930d836752a6fa729942",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192
+  },
+  "requestCanonicalSha256": "567b664b960a236666b2fef9c423216020436c03f874625b8145f8b9b77ffecb",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "response": {
+    "id": "4dd1691a-a09e-48bd-8db6-a7cb4cc0a22b",
+    "object": "chat.completion",
+    "created": 1792380854,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "根据你提供的三份资料，**无法得出一个“全球使用AI最多的职业/行业”的完整排名**，因为三份来源的口径、范围和统计期都不同，且都不是全球全行业员工调查。但可以按资料分别说明目前可确认的领先行业/任务领域：\n\n## 1. 美国员工自报“工作中使用AI”比例最高的行业\n来源：Gallup（2025年8月调查，美国雇员，自报每年至少几次在工作中使用AI）\n\n- **科技/信息系统：76%**，最高\n- **金融：58%**\n- **专业服务：57%**\n- 零售：33%\n- 医疗：37%\n- 制造：38%\n\n这是美国员工层面的自报使用率，**不是全球职业比例**，也不能与欧盟企业数据合并排名。\n\n## 2. 欧盟企业“使用至少一种AI技术”比例最高的行业\n来源：Eurostat（2025年，欧盟至少10名雇员的企业）\n\n- **信息与通信：62.52%**，最高\n- **专业/科学/技术服务：40.43%**\n- 其余纳入活动均低于25%\n- 欧盟企业整体：19.95%\n\n这是**企业使用AI的比例**，不是员工使用频率，也不是全球数据。\n\n## 3. 单一AI产品中任务分布最集中的领域\n来源：Anthropic经济指数报告（2025年11月样本，Claude.ai对话与API记录，非从业者调查）\n\n- **计算机/数学相关任务**：Claude.ai对话占34%，API记录占46%，多为编码相关；**修正软件错误是最常见任务**\n- 教育教学及图书馆任务：Claude.ai对话占15%\n- 办公行政支持：API记录占13%\n- 艺术设计媒体相关任务：涉及编辑校对、虚构作品撰写及修改\n\n这反映的是**单一产品上的任务分布**，不能证明全球员工使用AI的比例，也未直接测量职业依赖程度。\n\n## 结论\n综合现有资料，最稳妥的表述是：\n\n- **若看美国员工自报使用率**：科技/信息系统行业最高（76%），其次金融（58%）和专业服务（57%）。\n- **若看欧盟企业采用率**：信息与通信行业最高（62.52%），其次专业/科学/技术服务（40.43%）。\n- **若看AI产品实际任务分布**：计算机/数学相关任务，尤其是编码和软件纠错，占比最突出。\n\n因此，**不能宣称“全球使用AI最多的职业/行业”已有完整排名**；现有证据只支持上述分口径的领先领域。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 634,
+      "completion_tokens": 553,
+      "total_tokens": 1187,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 634
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "modelContentSha256": "0ee4ae42984464e07efa1c26320a5c4a9dd0d7f4081671867d1199a686a7f5c5",
+  "upstream200DoesNotMeanPlatformAccepted": true
+}

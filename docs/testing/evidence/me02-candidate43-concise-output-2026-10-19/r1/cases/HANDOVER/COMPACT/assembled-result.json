@@ -1,0 +1,42 @@
+{
+  "optimizedPrompt": "把下面这段交接记录整理成一份简短待办：\n- 小陈周三提交预算；\n- 小李拿到预算后核对采购清单；\n- 发货时间还没确定。\n整理时保留各项之间的先后依赖，不补造负责人或日期。\n\n保留先后依赖，不补造负责人或日期。\n\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n待办简短，按依赖顺序呈现：小陈周三提交预算在前，小李拿到预算后核对采购清单在后；发货时间明确标为未确定，不添加原记录中没有的负责人或日期。",
+  "sections": [
+    {
+      "type": "TASK",
+      "title": "任务",
+      "content": "把下面这段交接记录整理成一份简短待办：\n- 小陈周三提交预算；\n- 小李拿到预算后核对采购清单；\n- 发货时间还没确定。\n整理时保留各项之间的先后依赖，不补造负责人或日期。"
+    },
+    {
+      "type": "CONSTRAINTS",
+      "title": "约束",
+      "content": "保留先后依赖，不补造负责人或日期。\n\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+    },
+    {
+      "type": "ACCEPTANCE",
+      "title": "验收",
+      "content": "待办简短，按依赖顺序呈现：小陈周三提交预算在前，小李拿到预算后核对采购清单在后；发货时间明确标为未确定，不添加原记录中没有的负责人或日期。"
+    }
+  ],
+  "ambiguities": [],
+  "appliedConstraints": [
+    "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+  ],
+  "templateCode": "GENERAL",
+  "provider": {
+    "provider": "deepseek",
+    "model": "deepseek:deepseek-flash",
+    "mock": false,
+    "modelVersion": "DeepSeek-V4.1-Flash"
+  },
+  "latencyMs": 1792,
+  "warnings": [],
+  "evidenceCards": [],
+  "promptFormat": "COMPACT",
+  "constraintGroups": {
+    "platformMandatory": [
+      "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+    ],
+    "taskSpecific": [],
+    "additionalPermissions": []
+  }
+}

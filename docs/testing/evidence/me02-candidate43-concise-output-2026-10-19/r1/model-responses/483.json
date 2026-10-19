@@ -1,0 +1,57 @@
+{
+  "purpose": "PLANNING",
+  "caseId": "HANDOVER",
+  "version": "candidate43r1-concise-output",
+  "phase": "candidateValidation",
+  "requestId": "da25b45e-6d86-46c1-9fa5-0f4954defc0c",
+  "startedAt": "2026-10-19T04:02:29.689582300Z",
+  "httpStatus": 200,
+  "elapsedMs": 772,
+  "response": {
+    "id": "b056f0a6-eedf-4412-91b1-63da2808c606",
+    "object": "chat.completion",
+    "created": 1792382549,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"summary\":\"目标是把交接记录整理成保留先后依赖、不补造负责人或日期的简短待办。记录中的依赖和未定项已明确，没有需要用户再决定的关键缺口。\",\"questions\":[]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3018,
+      "completion_tokens": 47,
+      "total_tokens": 3065,
+      "prompt_tokens_details": {
+        "cached_tokens": 2816
+      },
+      "prompt_cache_hit_tokens": 2816,
+      "prompt_cache_miss_tokens": 202
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "sequence": 483,
+  "sourceTraceSha256": "981ea2b1b5ebb409c00c1776d8ddc318ff14e027d064c1f99d83079aade24bd8",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "requestCanonicalSha256": "95703baa54dcbd92f4ae8d4d6ae4b23a38f837c848990510e3987ebe7230ebeb",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "upstream200DoesNotMeanPlatformAccepted": true,
+  "modelContentSha256": "110ff2b171d401624385037864fc4b90e77eae705f46f078d5b8e0a34a9a55b9"
+}

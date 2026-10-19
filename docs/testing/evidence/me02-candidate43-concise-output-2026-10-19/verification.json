@@ -1,0 +1,144 @@
+{
+  "candidate": "candidate43-original-batch-466-481",
+  "java": {
+    "tests": 494,
+    "passed": 494,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "selectedSuites": 22,
+    "aggregation": "Initial selected run 494/1 failure, then only failing DraftDeliveryBoundaryTest (77 tests) rerun passed. Sum distinct selected tests, not 494+77. Later r1 report files are excluded.",
+    "initialRun": {
+      "tests": 494,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "reason": "An existing assertion expected the earlier TASK/OUTPUT instruction wording; assertion updated to the accepted optional-section contract.",
+      "fullLocalLogSha256": "759f12e9c7542a9519e217056551c143ad1ae19dcb187c5ee0ff95d31b186b6b",
+      "summaryArtifact": "local-verification/java-initial-summary.txt"
+    },
+    "rerunArtifact": "local-verification/draft-delivery-rerun.json",
+    "suites": [
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.DraftDeliveryBoundaryTest",
+        "tests": 77
+      },
+      {
+        "name": "com.promptoptimizer.template.domain.PromptFrameworkSelectorTest",
+        "tests": 43
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.ResearchEvaluationRequestTest",
+        "tests": 2
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OptionalSectionContentContractTest",
+        "tests": 12
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatiblePromptEnhancementProviderTest",
+        "tests": 52
+      },
+      {
+        "name": "com.promptoptimizer.provider.infrastructure.openai.MissingPresentationResponseTest",
+        "tests": 3
+      },
+      {
+        "name": "com.promptoptimizer.provider.domain.PromptFrameworkGenerationContractTest",
+        "tests": 8
+      },
+      {
+        "name": "com.promptoptimizer.history.service.impl.MybatisOptimizationHistoryServiceTest",
+        "tests": 14
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.TemplateGuidanceBoundaryTest",
+        "tests": 4
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.SourceOwnershipProjectionTest",
+        "tests": 21
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ResearchEvaluationGuidanceTest",
+        "tests": 7
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.RequirementFidelityWorkloadTest",
+        "tests": 1
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.RequirementFidelityGuardTest",
+        "tests": 66
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ReportDraftGuidanceTest",
+        "tests": 6
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.ReportDraftDeliveryAssemblyTest",
+        "tests": 11
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlatformConstraintPresentationTest",
+        "tests": 26
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanScopeSafetyRegressionTest",
+        "tests": 31
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.PlanQuestionFilterTest",
+        "tests": 34
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.OptionalSectionAssemblyTest",
+        "tests": 11
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.OptimizationResultAssemblerTest",
+        "tests": 21
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.EffectiveTaskViewTest",
+        "tests": 12
+      },
+      {
+        "name": "com.promptoptimizer.enhancement.service.impl.DynamicPlatformConstraintTest",
+        "tests": 32
+      }
+    ],
+    "scope": "Affected selected suites only; not a complete repository regression."
+  },
+  "frontend": {
+    "files": 3,
+    "tests": 61,
+    "passed": 61,
+    "failed": 0,
+    "suites": {
+      "constraintEditing.test.ts": 26,
+      "optimizationLifecycle.test.ts": 12,
+      "optimizationPresentation.test.ts": 23
+    },
+    "logSha256": "291d0ab6c3d0ac8e23cefae6ade5d38c4b38b23febe7cdce889397dcac7af977",
+    "artifact": "local-verification/frontend-tests.log"
+  },
+  "scopeChecks": {
+    "checks": 21,
+    "passed": 21,
+    "modelCalls": 0,
+    "safetyBypassed": false
+  },
+  "realFlow": {
+    "completed": 3,
+    "failed": 1,
+    "completedCopiesAndHistoryIndependentlyMatched": 3,
+    "failedCase": "HANDOVER 472; CONFIRMED_DECISION_MISSING at sections.CONSTRAINTS.requirementReference"
+  },
+  "overallQualityGate": "NOT_PASSED",
+  "limitations": [
+    "Local checks do not prove downstream quality or business release readiness.",
+    "No live calls were made by this archive script.",
+    "No claim that all code-generation, examples, Plan or historical failures are closed."
+  ]
+}

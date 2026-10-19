@@ -1,0 +1,75 @@
+{
+  "checker": "literal quote assertions + agent source/number review; not human expert review",
+  "rows": [
+    {
+      "id": "RAW",
+      "sha256": "0ee4ae42984464e07efa1c26320a5c4a9dd0d7f4081671867d1199a686a7f5c5",
+      "characters": 990,
+      "hanCharacters": 576,
+      "explicitLengthLimit": null,
+      "lengthGate": "NOT_APPLICABLE",
+      "observations": []
+    },
+    {
+      "id": "COMPACT",
+      "sha256": "d6cb24824ee0dea3b9298301ed83b291aecb9d368271b69918cb03c7f1d53ea0",
+      "characters": 2216,
+      "hanCharacters": 1139,
+      "explicitLengthLimit": null,
+      "lengthGate": "NOT_APPLICABLE",
+      "observations": [
+        {
+          "severity": "QUALITY",
+          "quote": "## 三、未核实与口径差异单独注明",
+          "finding": "Already repeated in introduction, tables and conclusions; large separate caveat list adds reading burden."
+        },
+        {
+          "severity": "FACT_SCOPE",
+          "quote": "| 3 | 办公行政支持 | API记录13% | 同上 | 同上 | S3 |",
+          "finding": "Ordinal 2 uses Claude.ai 15%, ordinal 3 uses API 13%; samples differ, so shared ranking/同上口径 is not established."
+        }
+      ]
+    },
+    {
+      "id": "STRUCTURED",
+      "sha256": "6e36bd71a9dacaf95c2b79a6e7f4c2314b82b5bc4f2a1c8c286802c243001d27",
+      "characters": 3013,
+      "hanCharacters": 1788,
+      "explicitLengthLimit": null,
+      "lengthGate": "NOT_APPLICABLE",
+      "observations": [
+        {
+          "severity": "FACT_ERROR",
+          "quote": "数值（62.52%）明显高于员工自报口径",
+          "finding": "Different denominators cannot be compared; supplied technology employee rate is 76%, not lower than 62.52%."
+        },
+        {
+          "severity": "FACT_SCOPE",
+          "quote": "目前只有美国有较完整的行业/职业分层数据（S1）",
+          "finding": "S1 supplies industry data only; incomplete packet cannot establish only US has such data."
+        },
+        {
+          "severity": "FACT_SCOPE",
+          "quote": "无全球代表性雇员调查",
+          "finding": "Absence from a three-source packet does not prove nonexistence globally."
+        }
+      ]
+    },
+    {
+      "id": "QODER_REFERENCE",
+      "sha256": "ff8dbbe844ef7327d82eb98339d5cefdbe26c99963730edb972174b07aa7e125",
+      "characters": 3013,
+      "hanCharacters": 1500,
+      "explicitLengthLimit": null,
+      "lengthGate": "NOT_APPLICABLE",
+      "observations": [
+        {
+          "severity": "INFERENCE_STRENGTH",
+          "quote": "表明编码助手是这类岗位的核心工具",
+          "finding": "Single-product task distribution does not establish centrality/dependence of entire occupations; caveat elsewhere does not establish this claim."
+        }
+      ]
+    }
+  ],
+  "scope": "Same supplied sources, no browser tools. Do not assign score advantage from word count. No global completeness proof. Raw lacks specific job/application detail; classification of quality remains reviewable."
+}

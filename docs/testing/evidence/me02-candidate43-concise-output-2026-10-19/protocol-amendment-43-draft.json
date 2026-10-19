@@ -1,0 +1,88 @@
+{
+  "formalLimitsUnchanged": {
+    "total": 500,
+    "baseline": 80,
+    "candidateValidation": 420
+  },
+  "actualBefore": {
+    "total": 465,
+    "baseline": 70,
+    "candidateValidation": 395
+  },
+  "maximumActualAfter": {
+    "total": 489,
+    "candidateValidation": 419
+  },
+  "activeBatch": {
+    "version": "candidate43-concise-output",
+    "sourceCandidate": "candidate43",
+    "authorizationStatus": "DRAFT_NOT_ACTIVE",
+    "authorizationBasis": "用户已授权本轮增强与Plan修复并由代理自行决定需批准事项；代理明确拟将candidate42r2关闭且扣除r3后余11次、candidate42r3关闭余2次、candidate41r2-core-acceptance关闭余12次中的11次重分配至本批24次，后者1次仍关闭；正式500/80/420不变。",
+    "authorizationAmendment": 43,
+    "callsBefore": 465,
+    "candidateCallsBefore": 395,
+    "maximumNewCalls": 24,
+    "maximumActualCallsAfterBatch": 489,
+    "purposeMaximums": {
+      "PLANNING": 6,
+      "PLATFORM_GENERATION": 12,
+      "EXECUTION": 4,
+      "REVIEW": 2
+    },
+    "qualityRetriesAllowed": false,
+    "accountCreationAllowed": false,
+    "model": "deepseek-flash",
+    "casesFile": "candidate43-cases.json",
+    "casesSha256": "7cbc19e8b3595eac3c0bb13d8027ba75d977e0c23900c160506ec3b6885a9196",
+    "sourceManifestSha256": "60cb70be1bb0fc58dd7739b7e2b4025e2bd345cf88db8e1744eed3adcab7a733",
+    "commonSourcesSha256": "faa0b99632699236ab62251306644efd8155a5a752c37f521cdd6a69f06271bc",
+    "qoderReferenceSha256": "08b871760fdbf359c48a3982df8c08127af73d5f9566a2b2c2c40dac49d30c88",
+    "status": "DRAFT"
+  },
+  "closedBalancesTransferred": 24,
+  "closedBalanceSources": [
+    {
+      "version": "candidate42r2-source-ownership",
+      "closed": 17,
+      "previouslyTransferredToR3": 6,
+      "available": 11,
+      "transfer": 11,
+      "stillClosed": 0
+    },
+    {
+      "version": "candidate42r3-source-ownership",
+      "closed": 2,
+      "transfer": 2,
+      "stillClosed": 0
+    },
+    {
+      "version": "candidate41r2-core-acceptance",
+      "closed": 12,
+      "transfer": 11,
+      "stillClosed": 1
+    }
+  ],
+  "sourceEvidence": [
+    {
+      "path": "docs/testing/evidence/me02-candidate42-source-ownership-2026-10-19/batch-close-r2.json",
+      "sha256": "0b7ef1fe8239786d0d5028d99c51cc2f5acf261beb79c2aa04ac70f7ff31ec5e"
+    },
+    {
+      "path": "docs/testing/evidence/me02-candidate42-source-ownership-2026-10-19/protocol-amendment-41.json",
+      "sha256": "573a62a654cee1e9fe6e622bcda2783983d5ba2fa7dfbf1a63159b49f117be62"
+    },
+    {
+      "path": "docs/testing/evidence/me02-candidate42-source-ownership-2026-10-19/batch-close-r3.json",
+      "sha256": "5b6eb561ac2a47858e71ea54bf7c3712aef9b5d3ada9b0e4ad42425e38dda9f9"
+    },
+    {
+      "path": "docs/testing/evidence/me01-plan-core-acceptance-2026-10-19/batch-close-summary.json",
+      "sha256": "6fcbe8129eceff04c51914c44f0c228260d6dab8649072f1f965f0ce123ac212"
+    },
+    {
+      "path": "docs/testing/evidence/me01-plan-core-acceptance-2026-10-19/protocol-amendment-38.json",
+      "sha256": "f0a5265c0acbfe77b5ea8a4650e0fefa1828da3ec5e182ed17f901fde33be379"
+    }
+  ],
+  "canonicalLedgerWritten": false
+}

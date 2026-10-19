@@ -1,0 +1,57 @@
+{
+  "purpose": "PLANNING",
+  "caseId": "HANDOVER",
+  "version": "candidate43-concise-output",
+  "phase": "candidateValidation",
+  "requestId": "c6291a06-27b7-4a2c-993e-0b7dc4dcc9ef",
+  "startedAt": "2026-10-19T03:31:58.186021900Z",
+  "httpStatus": 200,
+  "elapsedMs": 947,
+  "sequence": 471,
+  "sourceTraceSha256": "f3357af279270a28a3964235e4e2411ee0a34ebc5b511680242fcc0a862aac34",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "requestCanonicalSha256": "95703baa54dcbd92f4ae8d4d6ae4b23a38f837c848990510e3987ebe7230ebeb",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "response": {
+    "id": "30636b35-8160-4cd3-9530-aec538068f48",
+    "object": "chat.completion",
+    "created": 1792380717,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"summary\":\"目标是把交接记录整理成保留先后依赖的简短待办，不补造负责人或日期。记录中“发货时间还没确定”已明确为未知，无需再问；其余信息足以直接整理，没有必须由用户决定的关键缺口。\",\"questions\":[]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3018,
+      "completion_tokens": 60,
+      "total_tokens": 3078,
+      "prompt_tokens_details": {
+        "cached_tokens": 2560
+      },
+      "prompt_cache_hit_tokens": 2560,
+      "prompt_cache_miss_tokens": 458
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "modelContentSha256": "7567fd156bf09f87d25323086eeb03d04b39c3a3085e2b42ffb0ca8bd9c352ac",
+  "upstream200DoesNotMeanPlatformAccepted": true
+}

@@ -1,0 +1,57 @@
+{
+  "purpose": "PLANNING",
+  "caseId": "COURSE-CHOICE",
+  "version": "candidate43-concise-output",
+  "phase": "candidateValidation",
+  "requestId": "b82dcd28-69fb-49c8-a1c2-dd0aad6f8f00",
+  "startedAt": "2026-10-19T03:32:51.442112Z",
+  "httpStatus": 200,
+  "elapsedMs": 1750,
+  "sequence": 473,
+  "sourceTraceSha256": "90dad7d6dd58c445056d4aae1699c69c06b022ca4cdd048628ca9ae50cd9efa9",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "requestCanonicalSha256": "d936a9f4760d688e11dc94e9f59ad12231599aefda0613366b579d28fe3377e2",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "response": {
+    "id": "c55e4136-5c69-4015-a6f8-7542382a0160",
+    "object": "chat.completion",
+    "created": 1792380771,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"summary\":\"目标是给已报名学员写课程变更通知，用户已明确要求先由本人选择改为线上还是顺延一周，其他措辞由执行者安排。因此只需确认这一项业务决定。\",\"questions\":[{\"id\":\"change_option\",\"question\":\"本次课程变更采用哪种安排？\",\"hint\":\"这决定通知中告知学员的具体变更内容，用户已说明尚未决定，需要先选定。\",\"type\":\"SINGLE_CHOICE\",\"options\":[{\"id\":\"online\",\"label\":\"改为线上\",\"description\":\"课程时间不变，改为线上授课，通知中说明线上参与方式待定或按实际安排告知。\",\"answer\":\"采用改为线上的方案：课程仍在原定周六进行，改为线上授课。\",\"recommended\":false,\"recommendationReason\":\"\"},{\"id\":\"postpone\",\"label\":\"顺延一周\",\"description\":\"课程整体顺延一周，通知中告知新的上课时间。\",\"answer\":\"采用顺延一周的方案：课程整体推迟一周进行。\",\"recommended\":false,\"recommendationReason\":\"\"}],\"examples\":[],\"allowCustomAnswer\":true}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3024,
+      "completion_tokens": 230,
+      "total_tokens": 3254,
+      "prompt_tokens_details": {
+        "cached_tokens": 2560
+      },
+      "prompt_cache_hit_tokens": 2560,
+      "prompt_cache_miss_tokens": 464
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "modelContentSha256": "769328e40bc5a905abbefd6f0f32ec6ad98a1637b0d67181a10a61e803185faa",
+  "upstream200DoesNotMeanPlatformAccepted": true
+}

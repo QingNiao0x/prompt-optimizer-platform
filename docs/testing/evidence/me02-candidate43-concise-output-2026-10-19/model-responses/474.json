@@ -1,0 +1,57 @@
+{
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "COURSE-CHOICE",
+  "version": "candidate43-concise-output",
+  "phase": "candidateValidation",
+  "requestId": "f1092ee9-9a86-433a-b619-c262b1cac31c",
+  "startedAt": "2026-10-19T03:33:47.803830500Z",
+  "httpStatus": 200,
+  "elapsedMs": 2061,
+  "sequence": 474,
+  "sourceTraceSha256": "275e9bc9e87efcb769d7ad9ceaf0affce2026590759996907b2fbf47e3c5876c",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "requestCanonicalSha256": "9f20a3c42917aa80a4371c40afbf3bed155abd5032ae0cfc84832a8bdae6e0b7",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "response": {
+    "id": "4b3817f7-87ce-413b-8ca8-f223af1aa12c",
+    "object": "chat.completion",
+    "created": 1792380827,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"assessment\":{\"sufficiency\":\"SUFFICIENT\",\"gaps\":[],\"presentation\":\"COMPACT\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"\",\"content\":\"课程原定周六，场地临时关闭。\"},{\"type\":\"TASK\",\"title\":\"\",\"content\":\"给已报名的学员写课程变更通知。\\n\\n{{REQ_511db22d0d99cf67}}\\n\\n通知中说明场地临时关闭导致课程调整，告知课程顺延一周，不改为线上；具体上课时刻没有提供，不要编造。措辞由你安排，语气清楚、礼貌，便于学员了解安排。\"},{\"type\":\"OUTPUT\",\"title\":\"\",\"content\":\"直接给出可发送给学员的课程变更通知正文。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"\",\"content\":\"- 只写通知正文，不附加方案比较、选择问卷或额外说明。\\n- 不编造具体上课时刻、场地名称、补课细节等未提供的信息。\"}],\"ambiguities\":[],\"ambiguityReferences\":[]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6011,
+      "completion_tokens": 220,
+      "total_tokens": 6231,
+      "prompt_tokens_details": {
+        "cached_tokens": 4864
+      },
+      "prompt_cache_hit_tokens": 4864,
+      "prompt_cache_miss_tokens": 1147
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "modelContentSha256": "5b3387a384074f25f6105a889bd3412467885ac679edd3356952643f8cb91245",
+  "upstream200DoesNotMeanPlatformAccepted": true
+}

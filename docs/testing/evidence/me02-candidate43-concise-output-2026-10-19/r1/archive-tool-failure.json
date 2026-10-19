@@ -1,0 +1,29 @@
+{
+  "stage": "archive_work",
+  "originalError": "ValueError: Copy or sources patched",
+  "attribution": "ARCHIVE_TOOL_FALSE_POSITIVE",
+  "cause": "Python Path.read_text applies universal newline conversion. The native copy and the actual execution request both contain 12 CRLF sequences, but the archive comparison converted the native copy to LF. The source packet contains LF only and was already equal.",
+  "evidence": {
+    "nativeCopy": {
+      "requestEqualsRawUtf8Decoded": true,
+      "requestEqualsDefaultReadText": false,
+      "requestCRLF": 12,
+      "fileCRLF": 12,
+      "defaultReadTextCRLF": 0,
+      "requestUtf8Sha256": "fb0ddb1ab722a00c39ea8f20a01d9791f32be84afc6b96b5bd27381c8035421e",
+      "fileBytesSha256": "fb0ddb1ab722a00c39ea8f20a01d9791f32be84afc6b96b5bd27381c8035421e"
+    },
+    "sourcePacket": {
+      "requestEqualsRawUtf8Decoded": true,
+      "requestEqualsDefaultReadText": true,
+      "requestCRLF": 0,
+      "fileCRLF": 0,
+      "requestUtf8Sha256": "faa0b99632699236ab62251306644efd8155a5a752c37f521cdd6a69f06271bc",
+      "fileBytesSha256": "faa0b99632699236ab62251306644efd8155a5a752c37f521cdd6a69f06271bc"
+    }
+  },
+  "correction": "Decode file bytes as UTF-8 before exact comparison; no whitespace or newline normalization is used for execution-request equality.",
+  "modelCallsAdded": 0,
+  "productCodeChanged": false,
+  "qualityConclusionChangedByToolCorrection": false
+}

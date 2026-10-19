@@ -1,0 +1,23 @@
+{
+  "traceSequence": 472,
+  "status": 502,
+  "requestId": "c3a18909-b675-4fd5-9147-917bc5e7ea90",
+  "error": {
+    "code": "RESULT_INVALID",
+    "message": "模型响应未通过结构、内容或安全校验，本次增强未完成。",
+    "retryable": false,
+    "details": {
+      "validationField": "sections.CONSTRAINTS.requirementReference",
+      "validationReason": "CONFIRMED_DECISION_MISSING"
+    }
+  },
+  "flowFailure": {
+    "reason": "Enhancement failed 502",
+    "counts": {
+      "plan": 1,
+      "enhancement": 1
+    }
+  },
+  "classification": "PLATFORM_VALIDATION_FAILURE_AFTER_UPSTREAM_200",
+  "nativeCopyAndHistoryAvailable": false
+}

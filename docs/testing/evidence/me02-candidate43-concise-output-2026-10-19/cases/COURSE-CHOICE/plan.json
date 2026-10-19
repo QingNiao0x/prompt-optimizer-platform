@@ -1,0 +1,51 @@
+{
+  "status": 200,
+  "requestId": "b82dcd28-69fb-49c8-a1c2-dd0aad6f8f00",
+  "data": {
+    "summary": "目标是给已报名学员写课程变更通知，用户已明确要求先由本人选择改为线上还是顺延一周，其他措辞由执行者安排。因此只需确认这一项业务决定。",
+    "questions": [
+      {
+        "id": "change_option",
+        "question": "本次课程变更采用哪种安排？",
+        "hint": "这决定通知中告知学员的具体变更内容，用户已说明尚未决定，需要先选定。",
+        "type": "SINGLE_CHOICE",
+        "options": [
+          {
+            "id": "online",
+            "label": "改为线上",
+            "description": "课程时间不变，改为线上授课，通知中说明线上参与方式待定或按实际安排告知。",
+            "answer": "采用改为线上的方案：课程仍在原定周六进行，改为线上授课。",
+            "recommended": false,
+            "recommendationReason": ""
+          },
+          {
+            "id": "postpone",
+            "label": "顺延一周",
+            "description": "课程整体顺延一周，通知中告知新的上课时间。",
+            "answer": "采用顺延一周的方案：课程整体推迟一周进行。",
+            "recommended": false,
+            "recommendationReason": ""
+          }
+        ],
+        "examples": [],
+        "allowCustomAnswer": true
+      }
+    ],
+    "templateCode": "GENERAL",
+    "provider": {
+      "provider": "deepseek",
+      "model": "deepseek:deepseek-flash",
+      "mock": false,
+      "modelVersion": "DeepSeek-V4.1-Flash"
+    },
+    "latencyMs": 2340
+  },
+  "actualAnswers": [
+    {
+      "questionId": "change_option",
+      "question": "本次课程变更采用哪种安排？",
+      "answer": "选择顺延一周，不改为线上；具体时刻没有提供，不编造。"
+    }
+  ],
+  "sessionIdentifiersOmitted": true
+}

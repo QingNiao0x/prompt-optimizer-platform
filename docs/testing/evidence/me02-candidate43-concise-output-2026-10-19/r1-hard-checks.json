@@ -1,0 +1,80 @@
+{
+  "checker": "verbatim quote assertions plus agent source review, not a human expert",
+  "newReviewers": 0,
+  "oldReviewsNotApplied": true,
+  "metrics": [
+    {
+      "version": "RAW",
+      "characters": 990,
+      "hanCharacters": 576,
+      "sha256": "0ee4ae42984464e07efa1c26320a5c4a9dd0d7f4081671867d1199a686a7f5c5",
+      "explicitLengthLimit": null,
+      "lengthGate": "NOT_APPLICABLE"
+    },
+    {
+      "version": "COMPACT43",
+      "characters": 2216,
+      "hanCharacters": 1139,
+      "sha256": "d6cb24824ee0dea3b9298301ed83b291aecb9d368271b69918cb03c7f1d53ea0",
+      "explicitLengthLimit": null,
+      "lengthGate": "NOT_APPLICABLE"
+    },
+    {
+      "version": "COMPACT43r1",
+      "characters": 2377,
+      "hanCharacters": 1160,
+      "sha256": "2faa5526c7dfc66aba6e0ba07ffb4db04318aef959448f8f568f6849a0165369",
+      "explicitLengthLimit": null,
+      "lengthGate": "NOT_APPLICABLE"
+    }
+  ],
+  "issues": [
+    {
+      "severity": "FACT_SCOPE",
+      "quote": "科技/信息系统类职业最高（76%）",
+      "finding": "S1 is industry grouping of surveyed employees, not an occupation percentage. The prompt correctly distinguishes the two objects; detailed occupation guidance is still missing. Mixed attribution; no proof that layout caused it."
+    },
+    {
+      "severity": "QUALITY",
+      "quote": "## 四、明确标注为\"未核实/推断\"的内容",
+      "finding": "Repeats limitations already in opening, methodology and preceding conclusions. Content focus still fails."
+    }
+  ],
+  "verdict": "FAIL",
+  "attribution": "No reliable quality gain shown. Source object confusion is downstream despite explicit differentiation, but missing helpful content dimensions in enhancement and repeated acceptance are additional causes; not all assigned to model capability.",
+  "calls": [
+    {
+      "version": "candidate43-concise-output",
+      "calls": 16,
+      "purposeCounts": {
+        "PLATFORM_GENERATION": 8,
+        "PLANNING": 2,
+        "EXECUTION": 4,
+        "REVIEW": 2
+      },
+      "reportedTokens": {
+        "prompt_tokens": 73258,
+        "completion_tokens": 11769,
+        "total_tokens": 85027
+      },
+      "elapsedMs": 77704,
+      "priceCurrencyCost": "UNKNOWN"
+    },
+    {
+      "version": "candidate43r1-concise-output",
+      "calls": 4,
+      "purposeCounts": {
+        "PLATFORM_GENERATION": 2,
+        "PLANNING": 1,
+        "EXECUTION": 1
+      },
+      "reportedTokens": {
+        "prompt_tokens": 15905,
+        "completion_tokens": 2249,
+        "total_tokens": 18154
+      },
+      "elapsedMs": 12697,
+      "priceCurrencyCost": "UNKNOWN"
+    }
+  ]
+}

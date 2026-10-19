@@ -1,0 +1,57 @@
+{
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "HANDOVER",
+  "version": "candidate43-concise-output",
+  "phase": "candidateValidation",
+  "requestId": "c3a18909-b675-4fd5-9147-917bc5e7ea90",
+  "startedAt": "2026-10-19T03:32:00.508914200Z",
+  "httpStatus": 200,
+  "elapsedMs": 1649,
+  "sequence": 472,
+  "sourceTraceSha256": "9d43c775b01a1a900bc622ac70f90ae1500939ca4de9dae046d35338d5e9dab1",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "requestCanonicalSha256": "fe44a51a4ab24860592e9e10ad244897ceb1e70a7053d220af204c9dc2d8c4ba",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "response": {
+    "id": "dbdc3cac-2520-4c25-b234-c591175ad848",
+    "object": "chat.completion",
+    "created": 1792380720,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"assessment\":{\"sufficiency\":\"SUFFICIENT\",\"gaps\":[],\"presentation\":\"COMPACT\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"以下是一段交接记录：小陈周三提交预算；小李拿到预算后核对采购清单；发货时间还没确定。\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"把这段交接记录整理成简短待办，保留先后依赖，不补造负责人或日期。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"输出一份简短待办清单，按依赖顺序排列，每项写明负责人、事项及已知时间；发货时间未确定，在对应位置如实标注未定，不填写具体日期。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"{{REQ_d8a507dc55e147ff}}只使用记录中已有的负责人、事项和时间信息，不添加记录中未出现的负责人、日期或完成状态。\"}],\"ambiguities\":[],\"ambiguityReferences\":[]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5952,
+      "completion_tokens": 211,
+      "total_tokens": 6163,
+      "prompt_tokens_details": {
+        "cached_tokens": 4992
+      },
+      "prompt_cache_hit_tokens": 4992,
+      "prompt_cache_miss_tokens": 960
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "modelContentSha256": "6ccef742a0291db4f0aa7ff4218ee89f95fb874dbd7a1a7e7ac2b3faa1871bae",
+  "upstream200DoesNotMeanPlatformAccepted": true
+}

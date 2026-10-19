@@ -1,0 +1,57 @@
+{
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "AI-USAGE",
+  "version": "candidate43-concise-output",
+  "phase": "candidateValidation",
+  "requestId": "e00e6fa4-592e-4681-af77-f15460b16d10",
+  "startedAt": "2026-10-19T03:30:43.895889200Z",
+  "httpStatus": 200,
+  "elapsedMs": 2799,
+  "sequence": 468,
+  "sourceTraceSha256": "be1d82a87adc328bc8606ec49f0884efa8eea805926da3595fb4e6a7284fe79b",
+  "requestParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "requestCanonicalSha256": "89caf35d311e60edd3bcacb9d9c53d950acecd2e96dc493ed6b6f8e60e8e2060",
+  "requestHashEncoding": "UTF-8 JSON, ensure_ascii=false, sort_keys=true, separators=(',', ':')",
+  "requestMessagesPublished": false,
+  "response": {
+    "id": "e4391995-e75c-411e-aa0e-a44a8e07089a",
+    "object": "chat.completion",
+    "created": 1792380643,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"assessment\":{\"sufficiency\":\"NEEDS_COMPLETION\",\"gaps\":[{\"kind\":\"INPUT_OUTPUT\",\"missing\":\"未明确“使用AI最多”的衡量口径（如从业人数、使用渗透率、使用时长、工具调用量或岗位需求占比）及统计时间范围。\",\"completion\":\"在交付中说明所采用口径与时间范围，并区分不同口径下结论可能不同；若无法取得权威数据，明确标注未核实。\",\"basis\":\"原需求仅要求查询全球使用AI最多的职业/行业，未指定衡量指标与时间范围。\"},{\"kind\":\"QUALITY_CHECK\",\"missing\":\"未明确数据来源与可信度要求，以及是否需要区分“职业”与“行业”两个对象。\",\"completion\":\"要求优先采用可追溯的权威来源并注明出处与统计年份，分别呈现职业与行业两个维度。\",\"basis\":\"“职业/行业”为两个不同对象，且全球范围数据需来源支撑。\"}],\"presentation\":\"COMPACT\"},\"sections\":[{\"type\":\"BACKGROUND\",\"title\":\"背景\",\"content\":\"\"},{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"查询全球范围内使用AI最多的职业和行业。分别按“职业”和“行业”两个维度给出结果，说明所依据的衡量口径（如从业人数、使用渗透率、使用时长或工具调用量等）与统计时间范围；不同口径下结论可能不同，需注明所采用口径。优先采用可追溯的权威来源，并标注来源与统计年份。若某项数据无法取得或无法核实，明确标注为未核实，不得以推测代替事实。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"以简洁的条目或短表形式呈现：职业维度结果、行业维度结果，各自附衡量口径、统计时间范围与来源；对未核实或存在口径差异的部分单独注明。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"{{REQ_7dc01a9ae8d8f70b}}\\n明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\"}],\"ambiguities\":[]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6409,
+      "completion_tokens": 442,
+      "total_tokens": 6851,
+      "prompt_tokens_details": {
+        "cached_tokens": 6272
+      },
+      "prompt_cache_hit_tokens": 6272,
+      "prompt_cache_miss_tokens": 137
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  },
+  "modelContentSha256": "e9fba29a46cb5a44a86ced031f811af8f98b69e204dd2733788f37c7e3a22537",
+  "upstream200DoesNotMeanPlatformAccepted": true
+}
