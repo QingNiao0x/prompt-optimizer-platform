@@ -225,7 +225,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         return body.path(name).asText().strip();
     }
 
-    /** 第二、三版核对当前输入出处；兼容第一版无任务记录，不将模型自报类别当作用户确认。 */
+    /** 第二版起核对出处，第四版还要求覆盖记录；旧版兼容不补造证据，不信任自报来源类别。 */
     private NaturalTaskUnderstanding understanding(JsonNode body, NaturalPromptInput input) {
         if (!body.hasNonNull("taskUnderstanding")) {
             if (NaturalPromptInstructions.requiresTaskUnderstanding(input.strategyVersion())) throw invalid("自然链路缺少任务理解记录");

@@ -6,6 +6,7 @@ import com.promptoptimizer.provider.domain.*;
 import com.promptoptimizer.provider.service.NaturalPromptProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public class MockNaturalPromptProvider implements NaturalPromptProvider {
         if (!input.actualAnswers().isEmpty()) body += "\n\n遵守本次实际确认："
                 + input.actualAnswers().stream().map(a -> a.question() + "：" + a.answer()).collect(Collectors.joining("；"));
         if (input.includeExamples()) body += "\n\n在原定格式与事实边界允许时，交付与任务相关的输入及预期输出示例。";
-        var task = new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(), List.of());
+        var task = understanding(input, body);
         T result = validation.apply(new NaturalPromptDraft(body, NaturalPromptDraft.Framework.APE, MODEL, task));
         ModelCallLogger.completed("prompt.optimize", "mock", MODEL.model(), "MOCK_PROVIDER", true, 1, 1, 0, null);
         return result;
@@ -39,8 +40,30 @@ public class MockNaturalPromptProvider implements NaturalPromptProvider {
         // 离线示例不凭关键词编造未知；真实提问由独立模型策略负责。
         T result = validation.apply(new PlanningProviderResponse("将按原定目标和交付要求生成自然提示词。", List.of(),
                 MODEL.provider(), MODEL.model(), true,
-                new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(), List.of())));
+                understanding(input, null)));
         ModelCallLogger.completed("plan.generate", "mock", MODEL.model(), "MOCK_PROVIDER", true, 1, 1, 0, null);
         return result;
+    }
+
+    /** 离线夹具只提供可验证的原句锚点，不凭确定性文本宣称已完成真实语义增强。 */
+    private NaturalTaskUnderstanding understanding(NaturalPromptInput input, String body) {
+        if (!NaturalPromptInstructions.requiresTaskReview(input.strategyVersion())) {
+            return new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(), List.of());
+        }
+        var requirements = new ArrayList<NaturalTaskUnderstanding.Requirement>();
+        var coverage = new ArrayList<NaturalTaskReview.Coverage>();
+        requirements.add(new NaturalTaskUnderstanding.Requirement(input.rawPrompt(),
+                List.of(new NaturalTaskUnderstanding.Evidence("rawPrompt", input.rawPrompt().strip())),
+                List.of(NaturalTaskUnderstanding.Dimension.GOAL)));
+        if (body != null) coverage.add(new NaturalTaskReview.Coverage(0, List.of(input.rawPrompt().strip().lines().findFirst().orElseThrow())));
+        for (int i = 0; i < input.actualAnswers().size(); i++) {
+            var answer = input.actualAnswers().get(i);
+            requirements.add(new NaturalTaskUnderstanding.Requirement(answer.answer(),
+                    List.of(new NaturalTaskUnderstanding.Evidence("actualAnswers." + i, answer.answer())),
+                    List.of(NaturalTaskUnderstanding.Dimension.USER_CONFIRMATION)));
+            if (body != null) coverage.add(new NaturalTaskReview.Coverage(i + 1, List.of(answer.answer().strip().lines().findFirst().orElseThrow())));
+        }
+        return new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", requirements, List.of(), List.of(),
+                new NaturalTaskReview(NaturalTaskReview.InputReadiness.SUFFICIENT, coverage, List.of(), List.of()));
     }
 }

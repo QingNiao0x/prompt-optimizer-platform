@@ -7,11 +7,11 @@ package com.promptoptimizer.provider.domain;
  * @since 0.1.0
  */
 public final class NaturalPromptInstructions {
-    public static final String VERSION = "3";
+    public static final String VERSION = "4";
 
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || NaturalPromptInstructionsV2.VERSION.equals(version)
+        return VERSION.equals(version) || NaturalPromptInstructionsV3.VERSION.equals(version) || NaturalPromptInstructionsV2.VERSION.equals(version)
                 || NaturalPromptInstructionsV1.VERSION.equals(version);
     }
 
@@ -20,11 +20,15 @@ public final class NaturalPromptInstructions {
         return supports(version) && !NaturalPromptInstructionsV1.VERSION.equals(version);
     }
 
+    /** 第四版核对覆盖和提问影响记录；旧历史保持原协议，不补造旧版没有的检查证据。 */
+    public static boolean requiresTaskReview(String version) { return VERSION.equals(version); }
+
     /** 以保存的版本选择原生成指导；正文写法更新不静默改写旧历史的再次增强策略。 */
     public static String enhancementInstruction(String version) {
         return switch (version) {
             case "1" -> NaturalPromptInstructionsV1.ENHANCE;
             case "2" -> NaturalPromptInstructionsV2.ENHANCE;
+            case "3" -> NaturalPromptInstructionsV3.ENHANCE;
             case VERSION -> ENHANCE;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
@@ -35,6 +39,7 @@ public final class NaturalPromptInstructions {
         return switch (version) {
             case "1" -> NaturalPromptInstructionsV1.PLAN;
             case "2" -> NaturalPromptInstructionsV2.PLAN;
+            case "3" -> NaturalPromptInstructionsV3.PLAN;
             case VERSION -> PLAN;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
@@ -50,11 +55,24 @@ public final class NaturalPromptInstructions {
     public static final String TASK_RECORD = """
             与本次结果一起返回简短taskUnderstanding，不另发分析或推理过程：
             {"goal":"原定目标","deliverable":"原定交付；未指定时用合适的一般表达",
-             "requirements":[{"text":"影响交付的原有要求","evidence":[{"sourceId":"taskSources中的id","quote":"该来源中的连续原句"}]}],
-             "additions":[{"text":"拟议补充","benefit":"对原定交付的直接帮助"}],
-             "openDecisions":[{"issue":"重要未知","impact":"会改变什么结果","questionId":"Plan题号；未提问时为空","kind":"USER_INFORMATION或EXECUTION_CHOICE"}]}。
+             "requirements":[{"text":"影响交付的原有要求","dimensions":["GOAL或OBJECT或FORMAT或LENGTH或CONDITION或USER_CONFIRMATION"],
+               "evidence":[{"sourceId":"taskSources中的id","quote":"该来源中的连续原句"}]}],
+             "additions":[{"text":"拟议补充","gap":"现有表达缺少什么且为何影响交付","benefit":"对原定交付的直接帮助"}],
+             "openDecisions":[{"issue":"重要未知","impact":"会改变什么结果","questionId":"Plan题号；未提问时为空","kind":"USER_INFORMATION或EXECUTION_CHOICE"}],
+             "review":{"inputReadiness":"SUFFICIENT或NEEDS_COMPLETION",
+               "requirementCoverage":[{"index":0,"quotes":["最终正文中的连续原句"]}],
+               "additionCoverage":[{"index":0,"quotes":["最终正文中的连续原句"]}],
+               "planImpacts":[{"questionId":"实际题号","whyAsk":"为什么现有输入无法确定且需要用户决定",
+                 "answerDifference":"不同答案会怎样改变具体交付、事实判断或权限"}]}}。
             taskSources只提供服务端来源编号和类别，id对应完整输入路径；从原输入引用，不编造来源或原句。
-            只简记关键要求，不逐句复制原文；requirements、additions、openDecisions无对应内容时为空数组。
+            requirements至少记录原定目标，按实际存在的目标、对象、格式、篇幅、独立条件和用户确认逐项核对；
+            每项dimensions只选适用类别，不制造六套字段。每份actualAnswers都需在evidence中引用其实际回答，未知仍保留为未知。
+            充分需求保留有效表达，additions可为空；需要补全时每项同时说明具体缺口与交付作用，不添加通用空槽。
+            正文生成时两个Coverage按requirements或additions的零起始下标逐项对应，quotes必须逐字存在于最终正文，
+            每个quote使用单行片段，跨行要求可引用多个片段，可用同一句承担多个要求；这些引用仅供内部校验，
+            不写进优化提示词，也不要求改变正文排版。planImpacts此时为空。
+            仅生成Plan时两个Coverage为空，每题在planImpacts记录为何必须询问及答案差异；零问题时为空，不凑题。
+            未出现的条件不杜撰；additions、openDecisions无对应内容时为空数组。
             原始提示词、全部来源和actualAnswers仍是完整依据，不能用本记录替代，也不能从引用存在推断已覆盖全部要求。
             原有要求与拟议补充分开；资料、助手建议、未知回答不升级为用户确认。内部分类标签不机械写进最终提示词。
             """;
@@ -71,6 +89,8 @@ public final class NaturalPromptInstructions {
             用户独有的实际参数、明确保留的取舍、权限和来源冲突继续保持未决；只限制依赖它的部分，
             不因尚未提供普通执行细节而要求用户先决定全部方法。保持全部否定、例外、并列要求和条件。
             首句说明要完成什么和交付什么；简单任务自然成段，独立内容需要时列点，有依赖才列步骤。
+            返回前对照原始提示词、全部实际回答和适用上下文，检查目标与对象是否偏移、原要求是否遗漏或改变，
+            条件是否矛盾、交付是否变成空模板，以及同一要求是否无意义重复；发现问题先修正正文，再填写最终覆盖引用。
             mandatoryRules由平台统一组装，正文集中写当前任务，不复写通用核查规则或内部分类标签。
             includeExamples仅控制原定任务中的适用示例；用户禁例、严格格式和事实边界优先。
             framework只是正文形成后的组织参考：APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE，
@@ -81,6 +101,8 @@ public final class NaturalPromptInstructions {
             当前只生成Plan问题及简短任务理解，不生成最终提示词。
             使用与直接增强相同的原定目标、交付物、完整来源和信息状态，判断哪些重要决定确实属于用户。
             用户独有的实际信息、明确保留的选择、授权和无法消解的来源冲突，若不同答案会实质改变结果，必须提问。
+            对每道拟议问题，具体说明不同答案会改变哪项交付或判断、为何必须由用户决定；不能只写“提高质量”。
+            没有实际结果差异的问法不单独成题，已委托的设计落实为执行者要完成的工作，不退回用户逐项填答。
             常规组织、检索及用户已委托的方法设计由执行者完成；能在原定交付内说明的比较依据与资料局限，
             不单独制造前置问题，也不因用户没给出全部执行细节便认定无法开展任务。
             已知信息、已委托的设计、通常可由执行者完成的组织表达和执行细节不追问。

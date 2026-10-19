@@ -25,7 +25,7 @@
 
 输入保留原始提示词、当前授权上下文、此前仍允许使用的 Plan 资料、服务端确认过的完整题答、适用对话、示例偏好与用户明确追加的权限边界。资料内的命令不能改写平台指令或新增授权。
 
-当前NATURAL/3先确定动作、对象和目标作品，将已有上下文用于具体内容，沿用范围、格式、篇幅及独立限制，再补真正需要的内容与证据。普通组织、检索及已委托的方法设计由执行者完成；统计定义只服务确实依赖它的判断，重要用户取舍继续保持未决。策略不按职业或场景关键词路由。十二框架仅作正文形成后的组织参考，无法匹配用APE，不因框架新增内容或提问。NATURAL/1与NATURAL/2分别冻结在NaturalPromptInstructionsV1/V2，旧历史及受控对照按保存版本调用。
+当前NATURAL/4沿用第三版的动作、对象和目标作品方向，将已有上下文用于具体内容，保留范围、格式、篇幅及独立限制；同次生成补充要求覆盖、实际缺口和提问影响检查，见[实现说明](./自然增强要求覆盖与缺口检查.md)。普通组织、检索及已委托的方法设计由执行者完成；统计定义只服务确实依赖它的判断，重要用户取舍继续保持未决。策略不按职业或场景关键词路由。十二框架仅作正文形成后的组织参考，无法匹配用APE，不因框架新增内容或提问。NATURAL/1、2、3分别冻结在NaturalPromptInstructionsV1/V2/V3，旧历史及受控对照按保存版本调用。
 
 正文先表达目标与交付，必要规则放在适用动作附近。充分需求保留有效表达，模糊需求补充有依据的步骤、输入用途、条件和可检查交付要求；不强制角色、字数、段数或通用验收长段。缺材料只限制依赖它的部分，不能把原定报告、代码、方案改为补材料问卷。
 
@@ -67,7 +67,7 @@
 
 上下文普通分析、模型目录、认证与 Plan 事件仍沿用已有 V1 接口；不因为版本号不同复制这些业务模块。
 
-PromptDocument的resultKind区分TEXT和SECTIONS，generationPipeline区分NATURAL和LEGACY，chainVersion记录生成契约。当前支持NATURAL/1、NATURAL/2、NATURAL/3、LEGACY/1和LEGACY/2；LEGACY/2表示五模块投影，旧记录缺省LEGACY/1。新请求使用NATURAL/3，自然历史再次增强显式使用保存版本。旧COMPACT不能被排版字段误判为新自然链。未知版本再次增强返回409 / RESULT_VERSION_UNSUPPORTED。
+PromptDocument的resultKind区分TEXT和SECTIONS，generationPipeline区分NATURAL和LEGACY，chainVersion记录生成契约。当前支持NATURAL/1、NATURAL/2、NATURAL/3、NATURAL/4、LEGACY/1和LEGACY/2；LEGACY/2表示五模块投影，旧记录缺省LEGACY/1。新请求使用NATURAL/4，自然历史再次增强显式使用保存版本。旧COMPACT不能被排版字段误判为新自然链。未知版本再次增强返回409 / RESULT_VERSION_UNSUPPORTED。
 
 TEXT 的 wire 响应不包含 sections；前端为兼容集合操作将其归一为空集合，不构造假段落。旧 V1 历史列表只查询 SECTIONS，直接读取新正文会返回稳定版本冲突；V2 列表和详情同时支持两类结果。上线时前后端需同批更新，不能让 V2 前端连接未升级的后端。
 
@@ -92,6 +92,8 @@ MockNaturalPromptProvider 只用于离线连通性验证，明确返回 Mock 提
 数据库的 [V16 前向注释迁移](../../services/api/src/main/resources/db/migration/V16__natural_prompt_document_metadata.sql) 保持原样；新增 [V17 版本注释迁移](../../services/api/src/main/resources/db/migration/V17__natural_task_strategy_version_comment.sql) 说明 NATURAL/1 与 NATURAL/2。均为注释变更，不修改旧记录或增加业务表。内部任务理解和文件引文不持久化。持久化值仍用 Mapper XML 参数绑定；删除继续使用 deleted_at。
 
 [V18前向注释迁移](../../services/api/src/main/resources/db/migration/V18__natural_deliverable_strategy_version_comment.sql)补充NATURAL/3及旧版本冻结说明，V1—V17不回改；本轮没有应用Flyway或修改历史记录。
+
+[V19前向注释迁移](../../services/api/src/main/resources/db/migration/V19__natural_requirement_review_version_comment.sql)补充NATURAL/4及自然模式无固定条款的归属说明，不持久化内部覆盖记录；V1—V18不回改，本轮未应用迁移。
 
 ## 7. 当前验证边界
 

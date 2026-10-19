@@ -185,6 +185,66 @@ class OpenAiCompatibleNaturalPromptProviderTest {
         server.verify();
     }
 
+    @Test
+    void fourthVersionReturnsCoverageInTheSameCallWithoutDefaultRulesOrExtraReviewer() throws Exception {
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(body.path("messages").get(0).path("content").asText()).contains("返回前对照", "requirementCoverage", "缺口");
+            var payload = json.readTree(body.path("messages").get(1).path("content").asText().split("\n", 2)[1]);
+            assertThat(payload.path("strategyVersion").asText()).isEqualTo("4");
+            assertThat(payload.path("mandatoryRules").isEmpty()).isTrue();
+        }).andRespond(withSuccess(response(reviewResponse("请写邮件。", false)), MediaType.APPLICATION_JSON));
+        var result = provider.enhance(input().withStrategyVersion("4"), draft -> {
+            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+            return draft;
+        });
+        assertThat(result.optimizedPrompt()).isEqualTo("请写邮件。");
+        server.verify();
+    }
+
+    @Test
+    void fourthVersionDoesNotAcceptAnOlderTaskRecordWithoutCoverage() throws Exception {
+        String old = response("{\"optimizedPrompt\":\"写邮件\",\"framework\":\"APE\",\"taskUnderstanding\":{\"goal\":\"写邮件\"}}");
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(old, MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(old, MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(input().withStrategyVersion("4"), Function.identity())).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    @Test
+    void absentBodyEvidenceUsesOnlyTheExistingBoundedProtocolRepair() throws Exception {
+        String wrong = response(reviewResponse("正文并未包含声明中的目标片段。", false));
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(wrong, MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(wrong, MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(input().withStrategyVersion("4"), draft -> {
+            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+            return draft;
+        })).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    @Test
+    void fourthVersionPlanKeepsZeroQuestionsAndItsInternalReviewOffTheWire() throws Exception {
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(reviewResponse("", true)), MediaType.APPLICATION_JSON));
+        var result = provider.plan(input().withStrategyVersion("4"), draft -> {
+            draft.taskUnderstanding().review().validatePlan(Set.of());
+            return draft;
+        });
+        assertThat(result.questions()).isEmpty();
+        assertThat(json.writeValueAsString(result)).doesNotContain("taskUnderstanding", "requirementCoverage");
+        server.verify();
+    }
+
+    private String reviewResponse(String body, boolean planning) throws Exception {
+        var requirement = new NaturalTaskUnderstanding.Requirement("写邮件", List.of(new NaturalTaskUnderstanding.Evidence("rawPrompt", "写邮件")),
+                List.of(NaturalTaskUnderstanding.Dimension.GOAL));
+        var coverage = planning ? List.<NaturalTaskReview.Coverage>of() : List.of(new NaturalTaskReview.Coverage(0, List.of("写邮件")));
+        var task = new NaturalTaskUnderstanding("写邮件", "邮件", List.of(requirement), List.of(), List.of(),
+                new NaturalTaskReview(NaturalTaskReview.InputReadiness.SUFFICIENT, coverage, List.of(), List.of()));
+        return json.writeValueAsString(planning ? Map.of("summary", "任务充分，继续交付", "questions", List.of(), "taskUnderstanding", task)
+                : Map.of("optimizedPrompt", body, "framework", "APE", "taskUnderstanding", task));
+    }
+
     private NaturalPromptInput input() {
         return new NaturalPromptInput("写邮件", new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
                 List.of(), List.of(), false, List.of(), null).withStrategyVersion("1");

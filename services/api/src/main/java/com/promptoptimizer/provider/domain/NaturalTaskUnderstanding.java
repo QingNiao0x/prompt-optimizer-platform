@@ -14,16 +14,37 @@ import java.util.stream.Collectors;
  * @since 0.1.0
  */
 public record NaturalTaskUnderstanding(String goal, String deliverable, List<Requirement> requirements,
-        List<Addition> additions, List<OpenDecision> openDecisions) {
+        List<Addition> additions, List<OpenDecision> openDecisions, NaturalTaskReview review) {
     public NaturalTaskUnderstanding {
         requirements = requirements == null ? List.of() : List.copyOf(requirements);
         additions = additions == null ? List.of() : List.copyOf(additions);
         openDecisions = openDecisions == null ? List.of() : List.copyOf(openDecisions);
     }
 
+    /** 第一至三版不携带覆盖记录；保留旧协议及离线夹具，不伪造已完成检查。 */
+    public NaturalTaskUnderstanding(String goal, String deliverable, List<Requirement> requirements,
+            List<Addition> additions, List<OpenDecision> openDecisions) {
+        this(goal, deliverable, requirements, additions, openDecisions, null);
+    }
+
     /** 原有要求的候选理解，必须能在服务端来源目录中找到原句；来源不等于事实真实性证明。 */
-    public record Requirement(String text, List<Evidence> evidence) {
-        public Requirement { evidence = evidence == null ? List.of() : List.copyOf(evidence); }
+    public record Requirement(String text, List<Evidence> evidence, List<Dimension> dimensions) {
+        public Requirement {
+            evidence = evidence == null ? List.of() : List.copyOf(evidence);
+            dimensions = dimensions == null ? List.of() : List.copyOf(dimensions);
+        }
+        /** 旧版要求未分类，仍完整保留其出处，不从词表反推类别。 */
+        public Requirement(String text, List<Evidence> evidence) { this(text, evidence, List.of()); }
+    }
+
+    /** 原有要求的核对维度；只组织实际存在的信息，不为分类新增用户要求。 */
+    public enum Dimension {
+        /** 任务动作及目标作品。 */ GOAL,
+        /** 处理对象、受众及适用范围。 */ OBJECT,
+        /** 交付形式与输出格式。 */ FORMAT,
+        /** 用户明确的篇幅、数量或时长。 */ LENGTH,
+        /** 独立前提、否定、例外及业务边界。 */ CONDITION,
+        /** 用户实际确认的信息，仍以服务端来源为准。 */ USER_CONFIRMATION
     }
 
     /** 模型只能提供来源编号及原句；实际类别在校验后由服务端覆盖，不能自报用户确认。 */
@@ -32,7 +53,10 @@ public record NaturalTaskUnderstanding(String goal, String deliverable, List<Req
     }
 
     /** 对原定交付有直接帮助的拟议补充；benefit仅记录用途，不要求输出模型推理过程。 */
-    public record Addition(String text, String benefit) { }
+    public record Addition(String text, String benefit, String gap) {
+        /** 旧版补充没有缺口字段，不追加虚构依据。 */
+        public Addition(String text, String benefit) { this(text, benefit, null); }
+    }
 
     /** 重要未知及其交付影响；Plan提问时关联真实题号，其余情况questionId可为空。 */
     public record OpenDecision(String issue, String impact, String questionId, DecisionKind kind) {
@@ -71,7 +95,7 @@ public record NaturalTaskUnderstanding(String goal, String deliverable, List<Req
                 check(evidence.quote(), true);
                 if (source == null || !source.text().contains(evidence.quote())) throw invalid("任务理解引用不属于当前可用来源");
                 return new Evidence(source.id(), evidence.quote(), source.kind());
-            }).toList());
+            }).toList(), requirement.dimensions());
         }).toList();
         additions.forEach(addition -> {
             if (addition == null) throw invalid("任务补充为空");
@@ -81,7 +105,12 @@ public record NaturalTaskUnderstanding(String goal, String deliverable, List<Req
             if (decision == null) throw invalid("重要未知为空");
             check(decision.issue(), true); check(decision.impact(), true); check(decision.questionId(), false);
         });
-        return new NaturalTaskUnderstanding(goal, deliverable, resolved, additions, openDecisions);
+        var result = new NaturalTaskUnderstanding(goal, deliverable, resolved, additions, openDecisions, review);
+        if (NaturalPromptInstructions.requiresTaskReview(input.strategyVersion())) {
+            if (review == null) throw invalid("自然链路缺少覆盖检查记录");
+            review.validateUnderstanding(result, input);
+        }
+        return result;
     }
 
     /** 统一检查内部生成字段，避免敏感值通过诊断记录绕过正文扫描；不做场景关键词判断。 */

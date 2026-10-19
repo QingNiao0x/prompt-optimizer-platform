@@ -104,11 +104,17 @@ public class NaturalEnhancementService {
         String workflowId = request.planConfirmation() == null ? null : request.planConfirmation().planId();
         try (var scope = LogCorrelation.bindWorkflow("planning-plan", workflowId)) {
             return provider.enhance(input, draft -> {
+                NaturalTaskUnderstanding task = null;
                 if (NaturalPromptInstructions.requiresTaskUnderstanding(strategyVersion)) {
                     if (draft == null || draft.taskUnderstanding() == null) throw invalid("自然链路缺少任务理解记录");
-                    draft.taskUnderstanding().resolve(input);
+                    task = draft.taskUnderstanding().resolve(input);
                 }
                 String body = validateBody(draft, groups.visibleConstraints(), strategyVersion);
+                if (NaturalPromptInstructions.requiresTaskReview(strategyVersion)) {
+                    // 只核对真实模型正文与最终组装正文的引用，不用追加原文掩盖模型漏写。
+                    task.review().validateEnhancement(task, draft.optimizedPrompt().strip());
+                    task.review().validateEnhancement(task, body);
+                }
                 List<String> warnings = new ArrayList<>(context.warnings());
                 if (planningContext != null) warnings.addAll(planningContext.warnings());
                 if (draft.provider().mock()) warnings.add("当前为离线Mock示例，不代表真实模型增强质量。");
@@ -125,6 +131,14 @@ public class NaturalEnhancementService {
 
     /** 新提问策略完整保留重要未知，逐题展示；注册问题后最终回答仍受服务端所有权和TTL约束。 */
     public OptimizationPlan plan(OptimizationPlanRequest request) {
+        return plan(request, NaturalPromptInstructions.VERSION);
+    }
+
+    /** 服务端兼容分发与受控对照可显式选择已知策略，浏览器请求不能自报版本。 */
+    public OptimizationPlan plan(OptimizationPlanRequest request, String strategyVersion) {
+        if (!NaturalPromptInstructions.supports(strategyVersion)) {
+            throw new com.promptoptimizer.common.exception.UnsupportedResultVersionException("自然Plan版本暂不支持，请重新生成确认问题。");
+        }
         long start = clock.millis();
         actor.require();
         rejectInput(request.rawPrompt());
@@ -136,10 +150,11 @@ public class NaturalEnhancementService {
                 ? analyzer.analyze(new ContextAnalysisRequest(request.contextDescription(), List.of()), request.rawPrompt())
                 : resolved.snapshot();
         var input = new NaturalPromptInput(request.rawPrompt(), context, List.of(), request.conversationHistory(),
-                false, List.of(), model.publicId());
+                false, List.of(), model.publicId()).withStrategyVersion(strategyVersion);
         PlanningProviderResponse response = provider.plan(input, candidate -> {
             validateQuestions(candidate);
-            return validatePlanningUnderstanding(candidate, input);
+            return NaturalPromptInstructions.requiresTaskUnderstanding(strategyVersion)
+                    ? validatePlanningUnderstanding(candidate, input) : candidate;
         });
         // 注册会话是副作用，必须位于全部模型校验及修复完成后，失败尝试不保存伪计划。
         var registration = sessions.registerPlan(request.rawPrompt(), request.contextDescription(),
@@ -222,6 +237,7 @@ public class NaturalEnhancementService {
         if (response.taskUnderstanding() == null) throw invalid("Plan缺少任务理解记录");
         var task = response.taskUnderstanding().resolve(input);
         Set<String> questions = response.questions().stream().map(PlanQuestion::id).collect(Collectors.toSet());
+        if (NaturalPromptInstructions.requiresTaskReview(input.strategyVersion())) task.review().validatePlan(questions);
         Set<String> linked = new HashSet<>();
         for (var decision : task.openDecisions()) {
             if (decision.questionId() == null || decision.questionId().isBlank()) continue;

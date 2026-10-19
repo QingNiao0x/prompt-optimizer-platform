@@ -69,6 +69,6 @@ class NaturalTaskUnderstandingTest {
                 List.of(new FileSnippet("notes.md", "markdown", "仅供讨论的方案", "材料摘要", false)), List.of(), List.of(), "test"),
                 List.of(new PlanAnswer("q1", "选择唯一指标吗？", "不知道，保留综合比较")),
                 List.of(new ConversationMessage("user", "尽量使用官方数据"), new ConversationMessage("assistant", "建议表格呈现")),
-                false, List.of(), "fixture:model");
+                false, List.of(), "fixture:model").withStrategyVersion("3");
     }
 }

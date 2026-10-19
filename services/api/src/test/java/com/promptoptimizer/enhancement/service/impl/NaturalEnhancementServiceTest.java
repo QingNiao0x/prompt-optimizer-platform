@@ -247,7 +247,7 @@ class NaturalEnhancementServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"1", "2"})
+    @ValueSource(strings = {"1", "2", "3"})
     void legacyNaturalVersionKeepsItsProtocolWithoutFixedClausesAndUnknownVersionNeverCallsTheProvider(String version) {
         var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"), version);
         assertThat(result.chainVersion()).isEqualTo(version);
@@ -313,7 +313,7 @@ class NaturalEnhancementServiceTest {
             var body = mapper.readTree(trace.path("response").path("choices").get(0).path("message").path("content").asText());
             provider.body = body.path("optimizedPrompt").asText();
             provider.understanding = mapper.treeToValue(body.path("taskUnderstanding"), NaturalTaskUnderstanding.class);
-            var result = service.optimize(request(raw, null, List.of(), "fixture:model"));
+            var result = service.optimize(request(raw, null, List.of(), "fixture:model"), "3");
             assertThat(result.optimizedPrompt()).isEqualTo(provider.body)
                     .doesNotContain("按原定交付的格式和篇幅落实以下边界");
             assertThat(result.appliedConstraints()).isEmpty();
@@ -344,14 +344,33 @@ class NaturalEnhancementServiceTest {
             enhanceCalls++;
             last = input;
             return validation.apply(new NaturalPromptDraft(body, NaturalPromptDraft.Framework.ICIO, new ProviderMetadata("mock", "fixture:model", true),
-                    understanding == null ? new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(), List.of()) : understanding));
+                    understanding == null ? task(input, false) : understanding));
         }
         public <T> T plan(NaturalPromptInput input, Function<PlanningProviderResponse, T> validation) {
             planCalls++;
             return validation.apply(new PlanningProviderResponse("按原目标交付", questions, "mock", "fixture:model", true,
-                    new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(),
-                            decisions == null ? questions.stream().map(q -> new NaturalTaskUnderstanding.OpenDecision(q.question(), "影响交付", q.id())).toList()
-                                    : decisions)));
+                    task(input, true)));
+        }
+
+        /** 会话与组装夹具只提供合法协议，不能以同一通用正文锚点证明原任务语义已实现。 */
+        private NaturalTaskUnderstanding task(NaturalPromptInput input, boolean planning) {
+            var open = planning ? (decisions == null
+                    ? questions.stream().map(q -> new NaturalTaskUnderstanding.OpenDecision(q.question(), "影响交付", q.id())).toList()
+                    : decisions) : List.<NaturalTaskUnderstanding.OpenDecision>of();
+            if (!NaturalPromptInstructions.requiresTaskReview(input.strategyVersion())) {
+                return new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(), open);
+            }
+            var requirements = input.taskSources().stream()
+                    .filter(source -> source.kind() == NaturalTaskSource.Kind.ORIGINAL_REQUEST || source.kind() == NaturalTaskSource.Kind.BOUND_PLAN_ANSWER)
+                    .map(source -> new NaturalTaskUnderstanding.Requirement(source.text(),
+                            List.of(new NaturalTaskUnderstanding.Evidence(source.id(), source.text())),
+                            List.of(NaturalTaskUnderstanding.Dimension.GOAL))).toList();
+            var coverage = planning ? List.<NaturalTaskReview.Coverage>of() : IntStream.range(0, requirements.size())
+                    .mapToObj(i -> new NaturalTaskReview.Coverage(i, List.of(body.strip().lines().findFirst().orElseThrow()))).toList();
+            var impacts = planning ? questions.stream().map(q -> new NaturalTaskReview.PlanImpact(q.id(),
+                    "现有输入未说明用户保留的信息", "不同实际回答影响该题所指的交付范围")).toList() : List.<NaturalTaskReview.PlanImpact>of();
+            return new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", requirements, List.of(), open,
+                    new NaturalTaskReview(NaturalTaskReview.InputReadiness.SUFFICIENT, coverage, List.of(), impacts));
         }
     }
 }
