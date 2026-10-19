@@ -186,7 +186,7 @@ class NaturalEnhancementServiceTest {
         String rule = com.promptoptimizer.policy.domain.PlatformConstraintRules.TRUTH;
         provider.body = rule + "\n" + rule;
         var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"));
-        assertThat(result.optimizedPrompt()).endsWith(rule).contains("按原定交付的格式和篇幅", "不另加分类说明或自检清单");
+        assertThat(result.optimizedPrompt()).isEqualTo(rule);
         assertThat(result.optimizedPrompt().indexOf(rule)).isEqualTo(result.optimizedPrompt().lastIndexOf(rule));
     }
 
@@ -249,6 +249,29 @@ class NaturalEnhancementServiceTest {
         assertThat(plan.questions().getFirst().options()).extracting(PlanOption::answer).containsExactly("选择方式A", "选择方式B");
     }
 
+    @Test
+    void replaysFrozenActualDraftsWithoutChangingBodyOrAddingUnprovenScopeInstructions() throws Exception {
+        var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        var path = java.nio.file.Path.of("../../docs/testing/evidence/natural-task-generalization-2026-10-19/candidate2-transports.jsonl");
+        int replayed = 0;
+        for (String line : java.nio.file.Files.readAllLines(path)) {
+            var trace = mapper.readTree(line);
+            if (!trace.path("jobId").asText().endsWith("_R2_GEN")) continue;
+            String user = trace.path("request").path("messages").get(1).path("content").asText();
+            String raw = mapper.readTree(user.substring(user.indexOf('{'))).path("rawPrompt").asText();
+            var body = mapper.readTree(trace.path("response").path("choices").get(0).path("message").path("content").asText());
+            provider.body = body.path("optimizedPrompt").asText();
+            provider.understanding = mapper.treeToValue(body.path("taskUnderstanding"), NaturalTaskUnderstanding.class);
+            var result = service.optimize(request(raw, null, List.of(), "fixture:model"));
+            assertThat(result.optimizedPrompt()).startsWith(provider.body)
+                    .doesNotContain("按原定交付的格式和篇幅落实以下边界");
+            assertThat(result.appliedConstraints()).allSatisfy(rule -> assertThat(result.optimizedPrompt()).contains(rule));
+            assertThat(result.constraintGroups().platformMandatory()).hasSize(trace.path("caseId").asText().equals("JAVA_COMPLETE") ? 5 : 1);
+            replayed++;
+        }
+        assertThat(replayed).isEqualTo(3);
+    }
+
     private OptimizationRequest request(String raw, PlanConfirmation confirmation, List<ContextFileInput> files, String model) {
         return new OptimizationRequest(raw, new ContextAnalysisRequest("", files),
                 new EnhancementOptions(TemplateCode.AUTO, false, true, false, PromptFormat.COMPACT),
@@ -261,6 +284,7 @@ class NaturalEnhancementServiceTest {
     private static class StubProvider implements NaturalPromptProvider {
         List<PlanQuestion> questions = List.of();
         List<NaturalTaskUnderstanding.OpenDecision> decisions;
+        NaturalTaskUnderstanding understanding;
         String body = "自然任务正文，保留独立条件、范围和原定交付物。";
         int planCalls;
         int enhanceCalls;
@@ -269,7 +293,7 @@ class NaturalEnhancementServiceTest {
             enhanceCalls++;
             last = input;
             return validation.apply(new NaturalPromptDraft(body, NaturalPromptDraft.Framework.ICIO, new ProviderMetadata("mock", "fixture:model", true),
-                    new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(), List.of())));
+                    understanding == null ? new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(), List.of()) : understanding));
         }
         public <T> T plan(NaturalPromptInput input, Function<PlanningProviderResponse, T> validation) {
             planCalls++;

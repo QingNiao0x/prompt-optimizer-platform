@@ -166,11 +166,12 @@ public class NaturalEnhancementService {
     }
 
     /**
-     * 第二版统一组装固定边界，仅归组独占一行的完整平台原句；不对自由正文做近义删除。
+     * 第二版统一组装固定边界，仅归并独占一行的完整平台原句；不对自由正文做近义删除。
      * 代码围栏、引用、条件句和附带业务内容保留原样，不能为消除重复而丢失独立条件。
      */
     private String assembleBoundaries(String body, List<String> required) {
         if (required.isEmpty()) return body;
+        Set<String> owned = new HashSet<>();
         List<String> lines = new ArrayList<>();
         String fence = null;
         for (String line : body.split("\\R", -1)) {
@@ -184,13 +185,12 @@ public class NaturalEnhancementService {
             }
             // 缩进代码同样不参与平台句归并；其它自由句即使含原句也不据此判定等价覆盖。
             boolean standalone = fence == null && !line.startsWith("    ") && !line.startsWith("\t") && required.contains(trimmed);
-            if (!standalone) lines.add(line);
+            if (!standalone || owned.add(trimmed)) lines.add(line);
         }
         String content = String.join("\n", lines).strip();
-        // 事实边界不要求额外交付分类说明。范围说明限定规则的表达方式，完整固定原句和安全强度不变。
-        String boundary = "按原定交付的格式和篇幅落实以下边界，不另加分类说明或自检清单：\n"
-                + String.join("\n", required.stream().distinct().toList());
-        return content.isBlank() ? boundary : content + "\n\n" + boundary;
+        List<String> missing = required.stream().distinct().filter(rule -> !owned.contains(rule)).toList();
+        // 两次真实候选未证明附加范围说明能改善短文案交付，撤回该说明，不叠加新的通用指令。
+        return content + (missing.isEmpty() ? "" : "\n\n" + String.join("\n", missing));
     }
 
     /** 校验协议容量和引用完整性；不截取问题、不用推荐项填答，也不凭题号证明语义等价。 */
