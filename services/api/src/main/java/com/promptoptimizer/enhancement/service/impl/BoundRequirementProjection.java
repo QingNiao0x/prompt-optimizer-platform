@@ -49,7 +49,11 @@ public final class BoundRequirementProjection {
         /** 条件、否定与例外作为完整来源保留，不按主题词或标识本身省去其他要求。 */
         Set<String> coveredRules(Map<PromptSectionType, PromptSection> sections) {
             return ruleSlots.stream().filter(slot -> stillPresent(sections.get(slot.destination()), slot))
-                    .map(Slot::statement).collect(java.util.stream.Collectors.toUnmodifiableSet());
+                    .flatMap(slot -> java.util.stream.Stream.concat(java.util.stream.Stream.of(slot.statement()),
+                            slot.destination() == PromptSectionType.OUTPUT
+                                    ? ExplicitOutputRequirements.rulesOf(List.of(slot.statement())).stream()
+                                    : java.util.stream.Stream.empty()))
+                    .collect(java.util.stream.Collectors.toUnmodifiableSet());
         }
 
         /** 已呈现未决状态只省去正文复写；API待决清单、问题身份和原始题答不变。 */
@@ -135,6 +139,10 @@ public final class BoundRequirementProjection {
     /** 引用绑定完整来源、对象和责任段；同值的不同题目继续使用不同标识。 */
     private static List<Entry> entries(EffectiveTaskView task, List<String> rules) {
         var entries = new ArrayList<Entry>();
+        var outputs = ExplicitOutputRequirements.declarations(task.effectivePrompt());
+        // 整块输出声明含字段、条件和格式；仍由同一引用机制保真，但不进入约束责任段。
+        for (String output : outputs) entries.add(new Entry(new Slot(reference("user-output\n" + output), output,
+                PromptSectionType.OUTPUT), null));
         for (var requirement : task.executionRequirements()) {
             String identity = "answer\n" + requirement.questionId() + "\n" + requirement.question()
                     + "\n" + requirement.subject() + "\n" + requirement.destination() + "\n" + requirement.statement();
@@ -146,6 +154,7 @@ public final class BoundRequirementProjection {
         // 原文明确规则沿用已确认状态协调后的现有提取器，不再让另一条追加路径独立猜测覆盖。
         // 相同完整规则可共用呈现；原始输入、题答及权限分组继续保留全部来源。
         var knownRules = new HashSet<>(rules);
+        knownRules.addAll(ExplicitOutputRequirements.rulesOf(outputs));
         for (String rule : new RequirementFidelityGuard().explicitRules(task.effectivePrompt(), task.confirmedDecisions())) {
             if (knownRules.add(rule)) entries.add(new Entry(new Slot(reference("user-rule\n" + rule), rule,
                     PromptSectionType.CONSTRAINTS), null));

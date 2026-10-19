@@ -405,7 +405,9 @@ public class OptimizationResultAssembler {
             }
         }
         // 未决清单也是正文中的权威规则来源；先落入正文再查缺补齐，避免同一禁止规则被追加两遍。
-        var coveredSourceRules = sourceProjection.coveredRules(sections);
+        var deliveredOutputs = ExplicitOutputRequirements.complete(sections, taskView.effectivePrompt(), sourceProjection.coveredRules(sections));
+        Set<String> coveredSourceRules = new java.util.HashSet<>(sourceProjection.coveredRules(sections));
+        coveredSourceRules.addAll(ExplicitOutputRequirements.rulesOf(deliveredOutputs));
         appendExplicitRules(sections, ProviderPrerequisiteCompactor.uncoveredRules(explicitRules.stream()
                         .filter(rule -> !coveredSourceRules.contains(rule)).toList(),
                 merged.executionPrerequisites(), decisions, rawPrompt).stream()
@@ -462,6 +464,10 @@ public class OptimizationResultAssembler {
         }
         AuthoritativeDeliveryCompactor.compact(sections, deliveryAuthority);
         ExecutionRuleCompactor.compact(sections);
+        // 显式输出块是用户交付契约；模型遗漏时从同一来源补回，不依赖评估声明或改写后的字段相似度。
+        Set<String> finalOutputSources = new java.util.HashSet<>(sourceProjection.coveredRules(sections));
+        finalOutputSources.addAll(deliveredOutputs);
+        ExplicitOutputRequirements.complete(sections, taskView.effectivePrompt(), finalOutputSources);
         PromptSection constraintSection = sections.get(PromptSectionType.CONSTRAINTS);
         sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(constraintSection.type(), constraintSection.title(),
                 PlatformConstraintRenderer.appendMandatory(constraintSection.content(), constraintBundle)));

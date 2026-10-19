@@ -29,10 +29,14 @@ final class RequirementFidelityGuard {
     // 仅缓存本类固定的正则表达式，不缓存用户正文或跨请求的事实判断。
     private static final Map<String, Pattern> PATTERNS = new ConcurrentHashMap<>();
     private static final Pattern REQUIREMENT = pattern(
-            "(?i)(必须|须|不得|禁止|不能|不允许|不超过|不少于|不低于|不高于|至少|最多|仅|只|"
+            "(?i)(必须|须|不得|禁止|不能|不允许|不超过|不少于|不低于|不高于|至少|仅|只|"
                     + "保持|保留|排除|确认|取消|不填|不覆盖|不修改|不改变|不阻断|不回滚|附表另计|plan\\s*问答|按.+(?:降序|升序).*(?:选|取)|"
                     + "研究范围[：:]|时间范围[：:]|统计口径[：:]|格式要求[：:]|"
                     + "\\bmust\\b|\\bshall\\b|\\bonly\\b|\\bnever\\b|\\bdo not\\b)");
+    // “最多的对象”是比较目标；“最多提交limit份”等仍是上限，不依赖有限的数字或单位表。
+    // 名词形式的上限赋值（最多的请求次数为MAX）继续保留；其他义务词仍独立触发整句保护。
+    private static final Pattern UPPER_BOUND = pattern(
+            "最多(?!\\s*的)|最多\\s*的[^，,；;。！？!?\\r\\n]{1,60}?(?:为|是|[=≤<：:])[^，,；;。！？!?\\r\\n]+");
     private static final Pattern INSTRUCTION_OVERRIDE = pattern(
             "(?i)(忽略|覆盖|绕过|删除|削弱).{0,16}(系统指令|平台约束|权限红线|安全规则)|"
                     + "ignore.{0,20}(system|platform).{0,12}(instruction|constraint)");
@@ -225,12 +229,18 @@ final class RequirementFidelityGuard {
             if (matches(value, "^当前(?:尚未|还未)(?:决定|确定)[，,](?:不得|不能)默认补全[。.]?$")) {
                 value = "对于仍未明确的条件，不得默认补全。";
             }
-            if (!value.isBlank() && (REQUIREMENT.matcher(value).find() || AFFIRMATIVE_BRANCH.matcher(value).matches())
+            if (!value.isBlank() && (REQUIREMENT.matcher(value).find() || UPPER_BOUND.matcher(value).find()
+                    || AFFIRMATIVE_BRANCH.matcher(value).matches())
                     && !uncertainRule(value)
-                    && !INSTRUCTION_OVERRIDE.matcher(value).find() && !sensitiveValueDetector.containsCredential(value)) {
+                    && mayProjectUserRequirement(value)) {
                 rules.add(value);
             }
         }
+    }
+
+    /** 原文作为权威执行要求投影时共用隐私及指令越权保护，不给新来源路径另开例外。 */
+    boolean mayProjectUserRequirement(String value) {
+        return !INSTRUCTION_OVERRIDE.matcher(value).find() && !sensitiveValueDetector.containsCredential(value);
     }
 
     /** 否定的是“使用假设数据”时仍为硬约束；真正假设、举例和问句继续排除。 */
