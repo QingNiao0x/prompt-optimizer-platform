@@ -59,7 +59,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         return invoke(input, NaturalPromptInstructions.ENHANCE, "prompt.optimize", (body, metadata) -> {
             try {
                 return validation.apply(new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
-                        NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata));
+                        NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata,
+                        understanding(body, input)));
             } catch (IllegalArgumentException failure) {
                 throw invalid("自然正文或框架标识无效");
             }
@@ -213,6 +214,16 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     private String requiredText(JsonNode body, String name) {
         if (!body.path(name).isTextual() || body.path(name).asText().isBlank()) throw invalid("自然链路缺少必要字段");
         return body.path(name).asText().strip();
+    }
+
+    /** 新记录只核对当前输入出处；缺省兼容第一版，不将模型自报类别当作用户确认。 */
+    private NaturalTaskUnderstanding understanding(JsonNode body, NaturalPromptInput input) {
+        if (!body.hasNonNull("taskUnderstanding")) return null;
+        try {
+            return json.treeToValue(body.get("taskUnderstanding"), NaturalTaskUnderstanding.class).resolve(input);
+        } catch (JsonProcessingException | IllegalArgumentException failure) {
+            throw invalid("任务理解记录协议无效");
+        }
     }
 
     private void fail(String operation, OpenAiCompatibleProperties.ModelSelection model, ProviderException failure,

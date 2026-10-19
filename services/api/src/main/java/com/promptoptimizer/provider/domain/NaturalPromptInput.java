@@ -28,6 +28,12 @@ public record NaturalPromptInput(
         mandatoryRules = List.copyOf(mandatoryRules);
     }
 
+    /** 来源编号由服务端计算；模型只可引用，不可改写来源类别或把资料提升为新授权。 */
+    @com.fasterxml.jackson.annotation.JsonProperty("taskSources")
+    public List<NaturalTaskSource> taskSources() {
+        return NaturalTaskSource.from(this);
+    }
+
     /** 不经 Plan 的请求没有此前资料快照。 */
     public NaturalPromptInput(String rawPrompt, ContextSnapshot context, List<PlanAnswer> actualAnswers,
             List<ConversationMessage> conversation, boolean includeExamples, List<String> mandatoryRules, String modelId) {

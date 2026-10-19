@@ -87,6 +87,28 @@ class OpenAiCompatibleNaturalPromptProviderTest {
         assertThat(provider.plan(input(), Function.identity()).questions()).isEmpty();
         server.verify();
     }
+
+    @Test
+    void understandingReferencesAreResolvedFromServerSourcesAndKeptInternalToTheDraft() throws Exception {
+        String task = "{\"goal\":\"写邮件\",\"deliverable\":\"邮件\",\"requirements\":[{\"text\":\"写邮件\","
+                + "\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"写邮件\",\"origin\":\"BOUND_PLAN_ANSWER\"}]}]}";
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response("{\"optimizedPrompt\":\"完整邮件要求\",\"framework\":\"APE\","
+                + "\"taskUnderstanding\":" + task + "}"), MediaType.APPLICATION_JSON));
+        var result = provider.enhance(input(), Function.identity());
+        assertThat(result.taskUnderstanding().requirements().getFirst().evidence().getFirst().origin())
+                .isEqualTo(com.promptoptimizer.provider.domain.NaturalTaskSource.Kind.ORIGINAL_REQUEST);
+        server.verify();
+    }
+
+    @Test
+    void absentEvidenceConsumesTheExistingRepairBudgetAndNeverBecomesASuccessfulDraft() throws Exception {
+        String content = "{\"optimizedPrompt\":\"邮件要求\",\"framework\":\"APE\",\"taskUnderstanding\":{\"goal\":\"写邮件\","
+                + "\"requirements\":[{\"text\":\"虚构确认\",\"evidence\":[{\"sourceId\":\"actualAnswers.0\",\"quote\":\"用户已确认\"}]}]}}";
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(content), MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(content), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(input(), Function.identity())).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
     private NaturalPromptInput input() {
         return new NaturalPromptInput("写邮件", new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
                 List.of(), List.of(), false, List.of(), null);

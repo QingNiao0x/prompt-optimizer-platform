@@ -8,7 +8,12 @@ import com.promptoptimizer.enhancement.domain.ProviderMetadata;
  * @author QingNiao
  * @since 0.1.0
  */
-public record NaturalPromptDraft(String optimizedPrompt, Framework framework, ProviderMetadata provider) {
+public record NaturalPromptDraft(String optimizedPrompt, Framework framework, ProviderMetadata provider,
+        NaturalTaskUnderstanding taskUnderstanding) {
+    /** 兼容自然链第一版和离线夹具；旧协议没有任务理解记录。 */
+    public NaturalPromptDraft(String optimizedPrompt, Framework framework, ProviderMetadata provider) {
+        this(optimizedPrompt, framework, provider, null);
+    }
     /** 截图中的十二种组织参考；每次择一，不要求补齐角色、步骤或示例槽位。 */
     public enum Framework {
         /** 动作、目的与预期；无法可靠匹配特定组织参考时回退。 */
