@@ -21,6 +21,11 @@ final class ExecutionRuleCompactor {
 
     /** 只在另一执行段已完整保留同一规则时删除重复行；四要素不能为空。 */
     static void compact(Map<PromptSectionType, PromptSection> sections) {
+        compact(sections, Set.of());
+    }
+
+    /** 完整输出来源只作保护范围，不作删除字典；常规去重不能拆碎权威块后再触发补回。 */
+    static void compact(Map<PromptSectionType, PromptSection> sections, Set<String> outputSources) {
         Set<String> seen = new LinkedHashSet<>();
         Set<String> seenSentences = new LinkedHashSet<>();
         for (PromptSectionType type : java.util.List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT,
@@ -32,7 +37,10 @@ final class ExecutionRuleCompactor {
             var retained = new ArrayList<String>();
             String scope = "";
             String fence = null;
+            int sourceOffset = 0;
             for (String line : section.content().lines().toList()) {
+                int lineOffset = section.content().indexOf(line, sourceOffset);
+                sourceOffset = lineOffset + line.length();
                 // 重复代码可能属于不同分支；表格行靠列和相邻行定位，不能当作独立规则删去。
                 var marker = FENCE.matcher(line.strip());
                 if (marker.matches()) {
@@ -57,6 +65,10 @@ final class ExecutionRuleCompactor {
                     retained.add(line);
                     continue;
                 }
+                if (type == PromptSectionType.OUTPUT && protectedOutputLine(section.content(), outputSources, lineOffset, line.length())) {
+                    retained.add(line);
+                    continue;
+                }
                 line = compactRepeatedSentences(line, scope, seenSentences, pendingSentences);
                 if (line.isBlank()) continue;
                 value = key(line);
@@ -77,6 +89,19 @@ final class ExecutionRuleCompactor {
                 sections.remove(type);
             }
         }
+    }
+
+    /** 原句必须完整存在才保护其相交行；保守保留整行，绝不裁剪对象、标识符或相邻条件。 */
+    private static boolean protectedOutputLine(String content, Set<String> sources, int lineStart, int lineLength) {
+        for (String source : sources) {
+            if (source.isBlank()) continue;
+            int start = content.indexOf(source);
+            while (start >= 0) {
+                if (lineStart < start + source.length() && lineStart + lineLength > start) return true;
+                start = content.indexOf(source, start + source.length());
+            }
+        }
+        return false;
     }
 
     /**

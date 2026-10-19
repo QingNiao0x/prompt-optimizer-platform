@@ -88,7 +88,7 @@ class DirectEnhancementRequirementTest {
         var result = assemble(request, sections("查询相关职业和行业。", "给出查询结果。"), PromptFormat.COMPACT);
         assertThat(result.sections()).filteredOn(section -> section.type() == PromptSectionType.CONSTRAINTS)
                 .noneMatch(section -> section.content().contains("必须给出排名表") || section.content().contains("仅使用提供的资料"));
-        assertThat(org.springframework.util.StringUtils.countOccurrencesOf(result.optimizedPrompt(), output)).isEqualTo(1);
+        assertThat(org.springframework.util.StringUtils.countOccurrencesOf(result.optimizedPrompt(), ExplicitOutputRequirements.bodyOf(output))).isEqualTo(1);
     }
 
     @Test
@@ -98,18 +98,34 @@ class DirectEnhancementRequirementTest {
         var slots = BoundRequirementProjection.forProvider(request);
         assertThat(slots).singleElement().satisfies(slot -> {
             assertThat(slot.destination()).isEqualTo(PromptSectionType.OUTPUT);
-            assertThat(slot.statement()).isEqualTo(declaration);
+            assertThat(slot.statement()).isEqualTo(ExplicitOutputRequirements.bodyOf(declaration));
         });
         String reference = slots.getFirst().reference();
         var result = assemble(request, sections("查询相关职业和行业。", reference), PromptFormat.COMPACT);
-        assertThat(result.optimizedPrompt()).contains(declaration).doesNotContain("{{REQ_");
-        assertThat(org.springframework.util.StringUtils.countOccurrencesOf(result.optimizedPrompt(), declaration)).isEqualTo(1);
+        assertThat(result.optimizedPrompt()).contains(ExplicitOutputRequirements.bodyOf(declaration)).doesNotContain("{{REQ_");
+        assertThat(org.springframework.util.StringUtils.countOccurrencesOf(result.optimizedPrompt(), ExplicitOutputRequirements.bodyOf(declaration))).isEqualTo(1);
         var misplaced = sections("查询相关职业和行业。", "查询结果。").stream().map(section ->
                 section.type() == PromptSectionType.CONSTRAINTS ? new PromptSection(section.type(), section.title(), reference) : section).toList();
         assertThatThrownBy(() -> assemble(request, misplaced, PromptFormat.COMPACT))
                 .isInstanceOf(com.promptoptimizer.provider.domain.ProviderResponseValidationException.class);
         assertThatThrownBy(() -> assemble(request, sections("查询相关职业和行业。", "如果以后确认：\n" + reference), PromptFormat.COMPACT))
                 .isInstanceOf(com.promptoptimizer.provider.domain.ProviderResponseValidationException.class);
+    }
+
+    @Test
+    void real488DoesNotRepeatAnOutputStatementJustBecauseItsHeadingWasOmitted() throws Exception {
+        var json = new com.fasterxml.jackson.databind.ObjectMapper();
+        try (var input = getClass().getResourceAsStream("/fixtures/direct-output-488.json")) {
+            var response = json.readTree(input);
+            var modelSections = new java.util.ArrayList<PromptSection>();
+            for (var section : response.path("sections")) modelSections.add(new PromptSection(
+                    PromptSectionType.valueOf(section.path("type").asText()), section.path("title").asText(), section.path("content").asText()));
+            String body = "用排名表呈现，列出排名、职业或行业、AI应用场景、统计口径、数据来源和统计时间。不同口径不能直接合并排名，无法可靠确定名次时说明依据与范围。";
+            var result = assemble(request(RAW + "。\n输出要求：" + body), modelSections, PromptFormat.COMPACT);
+            var output = result.sections().stream().filter(section -> section.type() == PromptSectionType.OUTPUT).findFirst().orElseThrow().content();
+            assertThat(output).containsOnlyOnce("用排名表呈现");
+            assertThat(output).contains(body);
+        }
     }
 
     private EnhancementProviderRequest request(String raw) {

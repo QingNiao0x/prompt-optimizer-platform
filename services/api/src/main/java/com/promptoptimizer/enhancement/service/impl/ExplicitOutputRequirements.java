@@ -94,18 +94,33 @@ final class ExplicitOutputRequirements {
         block.clear();
     }
 
+    /** 标签只表示来源的段落职责；正文投影移除该标签，保留其后的所有字段、条件、代码与顺序。 */
+    static String bodyOf(String declaration) {
+        int newline = declaration.indexOf('\n');
+        String first = newline < 0 ? declaration : declaration.substring(0, newline);
+        var heading = OUTPUT.matcher(first.strip());
+        if (!heading.matches()) return declaration;
+        String inline = heading.group(1) == null ? "" : heading.group(1);
+        String rest = newline < 0 ? "" : declaration.substring(newline + 1);
+        return (inline + (inline.isBlank() || rest.isBlank() ? "" : "\n") + rest).strip();
+    }
+
     /** 来源引用或完整当前执行表述已覆盖时不补写；遗漏只补回输出，不将交付格式降为约束。 */
     static Set<String> complete(Map<PromptSectionType, PromptSection> sections, String raw, Set<String> deliveredSources) {
         List<String> outputs = declarations(raw);
         // 记录仅在同一责任段原句仍存在时有效；最终压缩若移除了块，必须重新补回。
-        List<String> missing = outputs.stream().filter(value -> !deliveredSources.contains(value)
-                        || !sections.get(PromptSectionType.OUTPUT).content().contains(value))
-                .filter(value -> !TaskConstraintCoverage.uncovered(sections, List.of(value)).isEmpty()).toList();
+        List<String> missing = outputs.stream().filter(value -> (!deliveredSources.contains(value)
+                        && !deliveredSources.contains(bodyOf(value)))
+                        || !sections.get(PromptSectionType.OUTPUT).content().contains(bodyOf(value)))
+                .map(ExplicitOutputRequirements::bodyOf)
+                // 整块职责不同于逐句规则覆盖；将完整正文替换为独立引用后复用同一作用域校验。
+                .filter(value -> !BoundRequirementProjection.Expansion.stillPresent(sections.get(PromptSectionType.OUTPUT),
+                        new BoundRequirementProjection.Slot("__OUTPUT_SOURCE__", value, PromptSectionType.OUTPUT))).toList();
         if (!missing.isEmpty()) {
             var output = sections.get(PromptSectionType.OUTPUT);
             String separator = output.content().isBlank() ? "" : "\n\n";
             sections.put(output.type(), new PromptSection(output.type(), output.title(),
-                    output.content() + separator + String.join("\n\n", missing)));
+                    String.join("\n\n", missing) + separator + output.content()));
         }
         return Set.copyOf(outputs);
     }

@@ -63,7 +63,7 @@ public final class BoundRequirementProjection {
         }
 
         /** 用原引用检查当前位置的外部作用域；来源句内部的条件不应被误当成引用外部条件。 */
-        private boolean stillPresent(PromptSection section, Slot slot) {
+        static boolean stillPresent(PromptSection section, Slot slot) {
             if (section == null) return false;
             int offset = section.content().indexOf(slot.statement());
             while (offset >= 0) {
@@ -141,7 +141,7 @@ public final class BoundRequirementProjection {
         var entries = new ArrayList<Entry>();
         var outputs = ExplicitOutputRequirements.declarations(task.effectivePrompt());
         // 整块输出声明含字段、条件和格式；仍由同一引用机制保真，但不进入约束责任段。
-        for (String output : outputs) entries.add(new Entry(new Slot(reference("user-output\n" + output), output,
+        for (String output : outputs) entries.add(new Entry(new Slot(reference("user-output\n" + output), ExplicitOutputRequirements.bodyOf(output),
                 PromptSectionType.OUTPUT), null));
         for (var requirement : task.executionRequirements()) {
             String identity = "answer\n" + requirement.questionId() + "\n" + requirement.question()

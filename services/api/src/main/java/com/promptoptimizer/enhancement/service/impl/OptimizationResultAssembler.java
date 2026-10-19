@@ -463,7 +463,8 @@ public class OptimizationResultAssembler {
             deliveryAuthority.merge(PromptSectionType.OUTPUT, draftDelivery.guidance(), (existing, added) -> existing + "\n" + added);
         }
         AuthoritativeDeliveryCompactor.compact(sections, deliveryAuthority);
-        ExecutionRuleCompactor.compact(sections);
+        ExecutionRuleCompactor.compact(sections, deliveredOutputs.stream()
+                .map(ExplicitOutputRequirements::bodyOf).collect(Collectors.toUnmodifiableSet()));
         // 显式输出块是用户交付契约；模型遗漏时从同一来源补回，不依赖评估声明或改写后的字段相似度。
         Set<String> finalOutputSources = new java.util.HashSet<>(sourceProjection.coveredRules(sections));
         finalOutputSources.addAll(deliveredOutputs);
