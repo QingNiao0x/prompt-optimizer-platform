@@ -1,0 +1,71 @@
+{
+  "batch": "natural-output-focus-2026-10-19",
+  "authorization": "USER_APPROVED_NEW_MAXIMUM_16_ACTUAL_CALLS",
+  "previousClosedActualCalls": 548,
+  "maximumNewActualCalls": 16,
+  "status": "FROZEN",
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "thinking": "disabled"
+  },
+  "phaseLimits": {
+    "GENERATION": 8,
+    "PLAN": 4,
+    "EXECUTION": 4
+  },
+  "generation": [
+    "AI_GLOBAL",
+    "MESSAGE",
+    "JAVA_COMPLETE",
+    "PPT_DESIGN"
+  ],
+  "plan": [
+    "PPT_DESIGN",
+    "PROCUREMENT_UNKNOWN"
+  ],
+  "execution": [
+    "MESSAGE",
+    "JAVA_COMPLETE"
+  ],
+  "baselineVersion": "2",
+  "candidateVersion": "3",
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "criteria": [
+    "原定任务、目标作品、格式、篇幅和全部独立要求保留",
+    "正文以具体内容和交付为主，统计定义仅按任务相关性使用，不以口径词频评分",
+    "已知上下文用于任务，资料与建议不变为用户事实",
+    "充分PPT委托不制造前置选择；采购保留用户独有的重要未知，不猜测推荐",
+    "源码实际编译及既有16项独立行为；消息完整回复按原题非空白字符口径核对",
+    "比较范围限于冻结题集和同一公开模型别名，不推断所有模型或所有场景胜率"
+  ],
+  "stopConditions": [
+    "达到总量或任一阶段上限即停止相关请求",
+    "失败及协议修复均计数，不按质量重试，不新增题目或模型",
+    "保留所有首次结果、失败及未定归因",
+    "终版不满足目标时记录局限，不叠加同题指导追到成功"
+  ],
+  "allowedJobs": [
+    "AI_GLOBAL_V2_GEN",
+    "AI_GLOBAL_V3_GEN",
+    "MESSAGE_V2_GEN",
+    "MESSAGE_V3_GEN",
+    "JAVA_COMPLETE_V2_GEN",
+    "JAVA_COMPLETE_V3_GEN",
+    "PPT_DESIGN_V2_GEN",
+    "PPT_DESIGN_V3_GEN",
+    "PPT_DESIGN_V2_PLAN",
+    "PPT_DESIGN_V3_PLAN",
+    "PROCUREMENT_UNKNOWN_V2_PLAN",
+    "PROCUREMENT_UNKNOWN_V3_PLAN",
+    "MESSAGE_V2_EXEC",
+    "MESSAGE_V3_EXEC",
+    "JAVA_COMPLETE_V2_EXEC",
+    "JAVA_COMPLETE_V3_EXEC"
+  ]
+}

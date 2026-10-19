@@ -6,6 +6,8 @@
 
 本会话按已确认的通用设计实现及验收，逐项状态见[方案验收表](../testing/通用自然增强与Plan改造及真实评测-2026-10-19.md#6-本会话按已确认设计验收)。机制及受影响功能已完成验证；跨任务稳定收益仍待证实，样例问题保留。正式发布门禁不代替本轮局部实现的完成条件，事实、权限与兼容边界继续生效。
 
+最新反馈修订为[目标作品优先与通用策略复验](../testing/自然增强目标作品优先与通用策略复验-2026-10-19.md)：新请求使用NATURAL/3，先落实具体作品与已有上下文，再按实际需要说明比较定义和证据。没有新增按职业、题目或场景命中的生成分支；NATURAL/1、NATURAL/2冻结保留。新增16/16次实际对照有内容与Plan收益，也保留源码编译失败，不作跨任务稳定通过结论。
+
 ## 1. 模式与职责
 
 | 入口 / 偏好 | 生成策略 | 返回及兼容 |
@@ -23,11 +25,11 @@
 
 输入保留原始提示词、当前授权上下文、此前仍允许使用的 Plan 资料、服务端确认过的完整题答、适用对话、示例偏好与固定权限边界。资料内的命令不能改写平台指令或新增授权。
 
-当前 NATURAL/2 先理解原定目标、对象、交付物及已有要求，再识别影响交付的缺口，按需要补充比较依据、材料用途、执行依赖和成品要求；充分需求保留有效表达，开放设计保留合理空间。策略不按职业或场景关键词路由。十二种框架只作为正文形成后的组织参考标记，无法匹配时用 APE，不因框架名称新增内容或提问。NATURAL/1 的冻结指导保留在 NaturalPromptInstructionsV1 中，仅供原版本历史及受控对照使用。
+当前NATURAL/3先确定动作、对象和目标作品，将已有上下文用于具体内容，沿用范围、格式、篇幅及独立限制，再补真正需要的内容与证据。普通组织、检索及已委托的方法设计由执行者完成；统计定义只服务确实依赖它的判断，重要用户取舍继续保持未决。策略不按职业或场景关键词路由。十二框架仅作正文形成后的组织参考，无法匹配用APE，不因框架新增内容或提问。NATURAL/1与NATURAL/2分别冻结在NaturalPromptInstructionsV1/V2，旧历史及受控对照按保存版本调用。
 
 正文先表达目标与交付，必要规则放在适用动作附近。充分需求保留有效表达，模糊需求补充有依据的步骤、输入用途、条件和可检查交付要求；不强制角色、字数、段数或通用验收长段。缺材料只限制依赖它的部分，不能把原定报告、代码、方案改为补材料问卷。
 
-第二版在同次生成响应中返回 taskUnderstanding、optimizedPrompt 和 framework；第一版仍使用原协议。固定平台条款与追加权限由平台统一组装，模型正文集中描述当前任务。只归并独占一行的完整平台原句，代码围栏、引用、条件句和附带业务内容保留，不按相似度删除自由正文。协议、引用原句和敏感值校验不能证明语义等价、任务完整覆盖或实际增强质量。
+第二、三版在同次生成响应中返回taskUnderstanding、optimizedPrompt和framework；第一版仍使用原协议。第三版没有新增协议字段、模板或裁判调用。固定平台条款与追加权限由平台统一组装，模型正文集中描述当前任务。只归并独占一行的完整平台原句，代码围栏、引用、条件句和附带业务内容保留，不按相似度删除自由正文。协议、引用原句和敏感值校验不能证明语义等价、任务完整覆盖或实际增强质量。
 
 充分需求优先保留可执行原句，避免紧接着逐项同义复写；开放任务先补足有用交付内容，再补必要核查要求。比较依据仍须对应原问题的属性，间接线索不能替代原比较目标。真实复验中，附加的交付范围说明未改善短文案追加分类说明的问题，已撤回该说明；固定原句和安全强度保留，不继续叠加通用指令。三份冻结真实响应通过最终组装离线回放，不能替代新版本实际作品质量验收。
 
@@ -63,7 +65,7 @@
 
 上下文普通分析、模型目录、认证与 Plan 事件仍沿用已有 V1 接口；不因为版本号不同复制这些业务模块。
 
-PromptDocument 的 resultKind 区分 TEXT 和 SECTIONS，generationPipeline 区分 NATURAL 和 LEGACY，chainVersion 记录生成契约。当前支持 NATURAL/1、NATURAL/2、LEGACY/1 和 LEGACY/2；LEGACY/2 表示五模块投影，旧记录缺省 LEGACY/1。新请求使用 NATURAL/2；自然历史再次增强显式使用已保存的版本。旧 COMPACT 不能被排版字段误判为新自然链。未知版本再次增强返回 409 / RESULT_VERSION_UNSUPPORTED。
+PromptDocument的resultKind区分TEXT和SECTIONS，generationPipeline区分NATURAL和LEGACY，chainVersion记录生成契约。当前支持NATURAL/1、NATURAL/2、NATURAL/3、LEGACY/1和LEGACY/2；LEGACY/2表示五模块投影，旧记录缺省LEGACY/1。新请求使用NATURAL/3，自然历史再次增强显式使用保存版本。旧COMPACT不能被排版字段误判为新自然链。未知版本再次增强返回409 / RESULT_VERSION_UNSUPPORTED。
 
 TEXT 的 wire 响应不包含 sections；前端为兼容集合操作将其归一为空集合，不构造假段落。旧 V1 历史列表只查询 SECTIONS，直接读取新正文会返回稳定版本冲突；V2 列表和详情同时支持两类结果。上线时前后端需同批更新，不能让 V2 前端连接未升级的后端。
 
@@ -86,6 +88,8 @@ OpenAiCompatibleNaturalPromptProvider 通过既有受并发保护的 RestClient 
 MockNaturalPromptProvider 只用于离线连通性验证，明确返回 Mock 提示，不能证明实质增强或专业质量。真实调用协议和解析可通过受控 HTTP 测试验证；Mock 不冒充真实模型。
 
 数据库的 [V16 前向注释迁移](../../services/api/src/main/resources/db/migration/V16__natural_prompt_document_metadata.sql) 保持原样；新增 [V17 版本注释迁移](../../services/api/src/main/resources/db/migration/V17__natural_task_strategy_version_comment.sql) 说明 NATURAL/1 与 NATURAL/2。均为注释变更，不修改旧记录或增加业务表。内部任务理解和文件引文不持久化。持久化值仍用 Mapper XML 参数绑定；删除继续使用 deleted_at。
+
+[V18前向注释迁移](../../services/api/src/main/resources/db/migration/V18__natural_deliverable_strategy_version_comment.sql)补充NATURAL/3及旧版本冻结说明，V1—V17不回改；本轮没有应用Flyway或修改历史记录。
 
 ## 7. 当前验证边界
 
