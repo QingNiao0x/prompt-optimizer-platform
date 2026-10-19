@@ -1,0 +1,38 @@
+{
+  "purpose": "PLATFORM_GENERATION",
+  "caseId": "AI-USAGE",
+  "version": "candidate44-direct-contract",
+  "phase": "candidateValidation",
+  "requestId": "e3e8a113-2479-45f5-8d9d-d08bca276a35",
+  "startedAt": "2026-10-19T05:27:14.096709700Z",
+  "httpStatus": 200,
+  "elapsedMs": 4888,
+  "response": {
+    "id": "2bb8171b-c925-486c-97b1-04719b7e21c5",
+    "object": "chat.completion",
+    "created": 1792387634,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"assessment\":{\"sufficiency\":\"NEEDS_COMPLETION\",\"gaps\":[{\"kind\":\"INPUT_OUTPUT\",\"missing\":\"“使用AI最多的职业/行业”缺少统计口径：按使用人数、使用频率、使用时长、渗透率还是投资/采用规模衡量，以及时间范围与地域范围。\",\"completion\":\"在提示词中要求执行者先明确所采用的衡量口径与时间、地域范围，并说明不同口径会得出不同结论；若无法取得统一权威数据，则按口径分列结果。\",\"basis\":\"原需求只给出“使用最多”，未指定指标、期间和地域，直接影响查询结果与可比性。\"},{\"kind\":\"QUALITY_CHECK\",\"missing\":\"缺少数据来源与证据要求，无法判断“最多”的结论是否可靠。\",\"completion\":\"要求优先引用可核查的权威调查、行业报告或统计数据，标注来源、发布时间、样本与统计口径，并区分全球整体结论与分地区差异。\",\"basis\":\"“全球使用AI最多”属于需要数据支撑的比较性结论，来源与口径决定结论可信度。\"},{\"kind\":\"EDGE_CASE\",\"missing\":\"“AI”范围未界定，可能指生成式AI、机器学习、自动化工具等，不同定义下职业/行业排名不同。\",\"completion\":\"要求执行者说明所采用的AI定义（如生成式AI工具、AI技术应用、AI相关岗位），并在结果中注明定义对排名的影响。\",\"basis\":\"AI概念范围宽泛，未界定会导致职业/行业归类不一致。\"}]},\"sections\":[{\"type\":\"TASK\",\"title\":\"任务\",\"content\":\"请查询并整理全球范围内使用AI最多的职业或行业。先明确并说明所采用的衡量口径（如使用人数、使用频率、使用时长、渗透率或采用规模）、AI的定义范围（如生成式AI工具、AI技术应用或AI相关岗位）以及时间与地域范围，再给出结论。由于不同口径可能得出不同排名，请按口径分列结果，避免把单一来源的结论当作唯一事实。优先引用可核查的权威调查、行业报告或统计数据，标注来源、发布时间、样本与统计口径；区分全球整体结论与地区差异。若某项数据无法核实，请明确标注为未核实，不要用推测填补。\"},{\"type\":\"OUTPUT\",\"title\":\"输出\",\"content\":\"以简洁的查询结果形式交付：说明所采用的口径、AI定义、时间与地域范围；列出使用AI最多的职业/行业及对应依据（来源、发布时间、关键数据）；对不同口径或来源之间的差异作简要说明；对无法核实或存在争议的内容明确标注。\"},{\"type\":\"CONSTRAINTS\",\"title\":\"约束\",\"content\":\"明确区分已知事实、来源数据与必要推断，不得把猜测写成事实；不得虚构统计数据或来源；结论须与所标注的口径和来源一致。\"}],\"ambiguities\":[\"“使用AI最多”按什么指标衡量（使用人数、使用频率、使用时长、渗透率或采用规模）？不同指标会得出不同排名。\",\"“AI”指生成式AI工具、AI技术应用，还是AI相关岗位？范围不同会影响职业/行业归类。\",\"需要覆盖的时间范围和地域范围是什么？是否要求全球整体结论，还是需分地区列出？\"]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5874,
+      "completion_tokens": 682,
+      "total_tokens": 6556,
+      "prompt_tokens_details": {
+        "cached_tokens": 5632
+      },
+      "prompt_cache_hit_tokens": 5632,
+      "prompt_cache_miss_tokens": 242
+    },
+    "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+  }
+}
