@@ -324,11 +324,14 @@ class MybatisOptimizationHistoryServiceTest {
     @Test
     void unknownGenerationVersionIsNotSilentlySentToEitherGenerator() {
         var record = naturalRecord();
-        record.getResultMetadata().put("chainVersion", "unreleased");
         record.getResultMetadata().put("planConfirmation", Map.of("futureSchema", "不可按旧DTO解析"));
         when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);
-        assertThatThrownBy(() -> service.reoptimizeDocument(record.getId()))
-                .isInstanceOf(com.promptoptimizer.common.exception.UnsupportedResultVersionException.class);
+        for (Object version : List.of("unreleased", 1)) {
+            record.getResultMetadata().put("chainVersion", version);
+            assertThatThrownBy(() -> service.reoptimizeDocument(record.getId()))
+                    .isInstanceOf(com.promptoptimizer.common.exception.UnsupportedResultVersionException.class);
+        }
+        record.getResultMetadata().put("chainVersion", "unreleased");
         record.getResultMetadata().put("resultKind", "SECTIONS");
         record.getResultMetadata().put("generationPipeline", "LEGACY");
         assertThatThrownBy(() -> service.reoptimizeDocument(record.getId()))
