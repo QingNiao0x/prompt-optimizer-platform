@@ -1,0 +1,32 @@
+{
+  "capturedAt": "2026-10-20T04:12:41.0914544+08:00",
+  "pid": 28144,
+  "port": 9000,
+  "businessProbe": {
+    "path": "/api/v1/health",
+    "status": "UP",
+    "providerMode": "openai-compatible",
+    "checksDependencies": false
+  },
+  "liveness": {
+    "path": "/actuator/health/liveness",
+    "httpStatus": 200,
+    "status": "UP"
+  },
+  "readiness": {
+    "path": "/actuator/health/readiness",
+    "httpStatus": 200,
+    "status": "UP"
+  },
+  "aggregate": {
+    "path": "/actuator/health",
+    "httpStatus": 503,
+    "status": "DOWN",
+    "observedFailure": "MailHealthIndicator",
+    "diagnostic": "SMTP connection to localhost:587 refused",
+    "source": "tmp/backend-local-managed/2026-10-19T20-00-38-222Z-33058298/stdout.log",
+    "lastObservedAt": "2026-10-20T04:10:49+08:00"
+  },
+  "changes": "No product or mail configuration changes during final health recheck",
+  "newModelCalls": 0
+}
