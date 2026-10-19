@@ -121,10 +121,9 @@ class OptionalSectionAssemblyTest {
         assertThat(references).extracting(BoundRequirementProjection.Slot::destination)
                 .contains(PromptSectionType.BACKGROUND, PromptSectionType.OUTPUT);
         assertThat(PromptRewriteStrategy.forTask(task, PromptFormat.COMPACT).instruction())
-                .contains("BACKGROUND、OUTPUT与CONSTRAINTS仅在requirementReferences指定该destination时保留独立引用行",
-                        "否则保留空字符串", "引用目的段与平台保护不变");
+                .contains("可连读的具体指令", "原有代码与必要引用");
 
-        // 自然正文集中在 TASK 不改变确认的责任段；辅助槽仅承接其本身绑定的来源引用。
+        // 单 TASK 正文是合法布局而非强制格式；确认仍按其责任段展开，不因辅助正文为空而丢失。
         var sections = slots("依据已有交接记录整理待办，并保留每项的先后依赖。").stream().map(section -> {
             String refs = references.stream().filter(reference -> reference.destination() == section.type())
                     .map(BoundRequirementProjection.Slot::reference).collect(java.util.stream.Collectors.joining("\n"));
