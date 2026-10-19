@@ -3,6 +3,7 @@ package com.promptoptimizer.provider.infrastructure.openai;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.io.JsonEOFException;
 import com.promptoptimizer.common.logging.ModelCallLogger;
 import com.promptoptimizer.common.logging.ModelTokenUsageReader;
 import com.promptoptimizer.enhancement.domain.PlanQuestion;
@@ -102,12 +103,13 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         } catch (JsonProcessingException failure) {
             throw new ProviderException(ProviderFailureType.INTERNAL, "自然链路输入序列化失败", false, failure);
         }
+        String repairHint = "";
         for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
             long started = System.nanoTime();
             try (var audit = ModelCallLogger.beginAttempt()) {
                 try {
                     String system = instruction + (attempt > 1
-                            ? "\n上次响应未满足协议或必要保护。请重新按完整输入生成合法JSON并保留全部要求；不添加额外内容。" : "");
+                            ? "\n上次响应未满足协议或必要保护。请重新按完整输入生成合法JSON并保留全部要求；不添加额外内容。" + repairHint : "");
                     JsonNode response = client.post().uri(route.endpoint())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + route.apiKey())
                             .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
@@ -123,7 +125,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     if (!message.path("refusal").asText("").isBlank()) {
                         throw new ProviderException(ProviderFailureType.REQUEST_REJECTED, "模型拒绝了本次请求", false);
                     }
-                    JsonNode body = json.readTree(unwrap(message.path("content").asText("")));
+                    JsonNode body = readResponse(unwrap(message.path("content").asText("")));
                     if (body == null || !body.isObject()) throw invalid("自然链路响应不是JSON对象");
                     T result = reader.read(body, new ProviderMetadata(route.key(), selection.publicModelId(), false, modelVersion));
                     ModelCallLogger.completed(operation, route.key(), selection.publicModelId(), "PLATFORM_CATALOG",
@@ -156,6 +158,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     if (attempt == MAX_ATTEMPTS) throw mapped;
                 } catch (ProviderException failure) {
                     boolean retry = failure.getFailureType() == ProviderFailureType.INVALID_RESPONSE && attempt < MAX_ATTEMPTS;
+                    // 仅追加服务端生成的编号提示，不能把异常原文、上游响应或用户答案拼回system。
+                    repairHint = retry && failure instanceof NaturalTaskReview.MissingSources missing
+                            ? missing.repairInstruction() : "";
                     fail(operation, selection, failure, null, retry, attempt, started);
                     if (!retry) throw failure;
                 } catch (RestClientException failure) {
@@ -170,6 +175,22 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             }
         }
         throw new IllegalStateException("自然链路未返回结果");
+    }
+
+    /**
+     * 兼容stop响应仅缺一个末尾根对象闭合符的情况；不补字段、数值、字符串或数组，不循环猜修JSON。
+     * finish_reason在调用此方法前已校验，截断响应不能走该兼容；恢复后仍须通过全部原有协议及业务校验。
+     */
+    private JsonNode readResponse(String content) throws JsonProcessingException {
+        try {
+            return json.readTree(content);
+        } catch (JsonEOFException incomplete) {
+            // 末尾必须已完成一个容器，避免把尚未完成的标量、字符串或空根对象当成完整交付。
+            if (content.startsWith("{") && (content.endsWith("}") || content.endsWith("]"))) {
+                return json.readTree(content + "}");
+            }
+            throw incomplete;
+        }
     }
 
     /** 兼容现有服务端路由参数，不从用户输入或模型文本推测接口能力。 */

@@ -7,6 +7,8 @@ import com.promptoptimizer.provider.domain.*;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
@@ -233,6 +235,77 @@ class OpenAiCompatibleNaturalPromptProviderTest {
         assertThat(result.questions()).isEmpty();
         assertThat(json.writeValueAsString(result)).doesNotContain("taskUnderstanding", "requirementCoverage");
         server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {7, 8, 12, 13})
+    void replaysActualMissingRootClosureWithoutChangingAnyContentValues(int traceIndex) throws Exception {
+        var lines = java.nio.file.Files.readAllLines(java.nio.file.Path.of(
+                "../../docs/testing/evidence/natural-coverage-workflow-2026-10-20/transports-candidate1.jsonl"));
+        var trace = json.readTree(lines.get(traceIndex - 1));
+        String content = trace.path("response").path("choices").get(0).path("message").path("content").asText();
+        String wire = trace.path("request").path("messages").get(1).path("content").asText();
+        var payload = (com.fasterxml.jackson.databind.node.ObjectNode) json.readTree(wire.substring(wire.indexOf('{')));
+        payload.remove("taskSources");
+        payload.putNull("modelId");
+        json.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        var actualInput = json.treeToValue(payload, NaturalPromptInput.class);
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(json.writeValueAsString(trace.get("response")), MediaType.APPLICATION_JSON));
+        var result = provider.enhance(actualInput, draft -> {
+            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+            return draft;
+        });
+        assertThat(result.optimizedPrompt()).isEqualTo(json.readTree(content + "}").path("optimizedPrompt").asText());
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"{\"optimizedPrompt\":\"正文", "{\"optimizedPrompt\":123", "{\"outer\":{\"nested\":[]", "{\"optimizedPrompt\":\"正文\",,}"})
+    void doesNotGuessStringsScalarsArraysMultipleClosuresOrOtherSyntax(String content) throws Exception {
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(content), MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(content), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(input(), Function.identity())).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    @Test
+    void boundedRepairNamesMissingSourcesWithoutMergingSameTextAcrossDifferentQuestions() throws Exception {
+        var answers = List.of(new com.promptoptimizer.enhancement.dto.PlanAnswer("q1", "甲对象的称呼？", "使用内部称呼"),
+                new com.promptoptimizer.enhancement.dto.PlanAnswer("q2", "乙对象的称呼？", "使用内部称呼"),
+                new com.promptoptimizer.enhancement.dto.PlanAnswer("q3", "丙对象的称呼？", "使用内部称呼"));
+        var actualInput = new NaturalPromptInput("写邮件", input().context(), answers, List.of(), false, List.of(), null);
+        String partial = sourceResponse(1);
+        String complete = sourceResponse(3);
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(partial), MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var payload = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(payload.path("messages").get(0).path("content").asText())
+                    .contains("actualAnswers.1", "actualAnswers.2").doesNotContain("使用内部称呼", "甲对象", "乙对象");
+        }).andRespond(withSuccess(response(complete), MediaType.APPLICATION_JSON));
+        var result = provider.enhance(actualInput, draft -> {
+            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+            return draft;
+        });
+        assertThat(result.taskUnderstanding().requirements()).hasSize(4);
+        assertThat(actualInput.actualAnswers()).isEqualTo(answers);
+        server.verify();
+    }
+
+    private String sourceResponse(int answerSources) throws Exception {
+        var requirements = new ArrayList<NaturalTaskUnderstanding.Requirement>();
+        var coverage = new ArrayList<NaturalTaskReview.Coverage>();
+        requirements.add(new NaturalTaskUnderstanding.Requirement("写邮件", List.of(new NaturalTaskUnderstanding.Evidence("rawPrompt", "写邮件")),
+                List.of(NaturalTaskUnderstanding.Dimension.GOAL)));
+        coverage.add(new NaturalTaskReview.Coverage(0, List.of("写邮件")));
+        for (int i = 0; i < answerSources; i++) {
+            requirements.add(new NaturalTaskUnderstanding.Requirement("保留对象" + i + "的实际回答",
+                    List.of(new NaturalTaskUnderstanding.Evidence("actualAnswers." + i, "使用内部称呼")),
+                    List.of(NaturalTaskUnderstanding.Dimension.USER_CONFIRMATION)));
+            coverage.add(new NaturalTaskReview.Coverage(i + 1, List.of("使用内部称呼")));
+        }
+        var task = new NaturalTaskUnderstanding("写邮件", "邮件", requirements, List.of(), List.of(),
+                new NaturalTaskReview(NaturalTaskReview.InputReadiness.SUFFICIENT, coverage, List.of(), List.of()));
+        return json.writeValueAsString(Map.of("optimizedPrompt", "请写邮件，使用内部称呼。", "framework", "APE", "taskUnderstanding", task));
     }
 
     private String reviewResponse(String body, boolean planning) throws Exception {

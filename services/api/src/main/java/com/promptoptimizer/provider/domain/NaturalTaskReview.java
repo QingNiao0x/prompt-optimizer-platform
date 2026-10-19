@@ -58,7 +58,11 @@ public record NaturalTaskReview(InputReadiness inputReadiness, List<Coverage> re
                 .filter(source -> source.kind() == NaturalTaskSource.Kind.ORIGINAL_REQUEST
                         || source.kind() == NaturalTaskSource.Kind.BOUND_PLAN_ANSWER)
                 .map(NaturalTaskSource::id).collect(Collectors.toSet());
-        if (!referenced.containsAll(userSources)) throw invalid("覆盖记录遗漏原始需求或实际题答来源");
+        if (!referenced.containsAll(userSources)) {
+            var missing = new java.util.TreeSet<>(userSources);
+            missing.removeAll(referenced);
+            throw new MissingSources(missing);
+        }
         for (var addition : task.additions()) check(addition.gap());
         requirementCoverage.forEach(NaturalTaskReview::checkCoverage);
         additionCoverage.forEach(NaturalTaskReview::checkCoverage);
@@ -120,5 +124,22 @@ public record NaturalTaskReview(InputReadiness inputReadiness, List<Coverage> re
 
     private static ProviderException invalid(String message) {
         return new ProviderException(ProviderFailureType.INVALID_RESPONSE, message, false);
+    }
+
+    /** 只携带服务端来源编号，供既有有界协议修复使用；不携带答案、题干、文件路径或用户原文。 */
+    public static final class MissingSources extends ProviderException {
+        private final Set<String> sourceIds;
+
+        /** 来源集合由服务端必需来源与已核对引用的差集产生，不接受模型自报缺失项。 */
+        private MissingSources(Set<String> sourceIds) {
+            super(ProviderFailureType.INVALID_RESPONSE, "覆盖记录遗漏原始需求或实际题答来源", false);
+            this.sourceIds = Set.copyOf(sourceIds);
+        }
+
+        /** 精确指出待核对的编号，不把引用缺失当成不同题答语义等价，也不要求扩写已充分正文。 */
+        public String repairInstruction() {
+            return "\n任务理解的evidence尚未关联这些现有来源编号：" + String.join("、", new java.util.TreeSet<>(sourceIds))
+                    + "。请核对这些原始题答并补齐出处及对应正文锚点；已有正文确实覆盖时保留有效表达，不新增事实或确认。";
+        }
     }
 }
