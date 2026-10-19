@@ -569,10 +569,10 @@ const createPlanConfirmation = (answers: PlanConfirmation['answers']): PlanConfi
   answers,
 });
 
-const handleSaveResult = (
-  sections: PromptSection[], complete: (saved: boolean, message?: string) => void,
-): void => {
-  const saved = store.saveEditedSections(sections);
+const handleSaveResult = async (
+  draft: PromptSection[] | string, complete: (saved: boolean, message?: string) => void,
+): Promise<void> => {
+  const saved = typeof draft === 'string' ? await store.saveEditedText(draft) : store.saveEditedSections(draft);
   complete(saved, saved ? undefined : store.errorMessage);
   if (saved) {
     recordPlanningEvent(plan.value?.planId, 'RESULT_EDITED');
@@ -664,9 +664,7 @@ const handlePageHide = (): void => {
   store.clearFiles();
 };
 
-const hasUnsavedResultDraft = computed(() => resultDraft.value !== undefined
-  && JSON.stringify(resultDraft.value) !== JSON.stringify(
-    result.value?.sections.filter(section => section.type !== 'CLARIFICATIONS') ?? []));
+const hasUnsavedResultDraft = computed(() => store.hasUnsavedResultDraft);
 
 onBeforeRouteLeave(async () => {
   if (!hasUnsavedResultDraft.value) return true;
@@ -818,7 +816,7 @@ onBeforeUnmount(() => {
         @save="handleSaveResult"
         @update:edit-draft="resultDraft = $event"
         @re-enhance="handleReEnhance"
-        @undo="store.undoResult()"
+        @undo="store.undoResultAndPersist()"
         @regenerate-with-format="handleRegenerateWithFormat"
       />
     </div>

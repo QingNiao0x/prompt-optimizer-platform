@@ -68,7 +68,7 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
   await page.route('**/api/v1/optimizations/plan-events', async (route) => {
     await route.fulfill({ status: 204 });
   });
-  await page.route('**/api/v1/context/planning', async (route) => {
+  await page.route('**/api/v2/context/planning', async (route) => {
     requestOrder.push('context');
     const body = route.request().postDataJSON() as {
       rawPrompt: string;
@@ -105,7 +105,7 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
       },
     } });
   });
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     requestOrder.push('plan');
     const body = route.request().postDataJSON() as Record<string, unknown>;
     expect(body.planningContext).toEqual(reference);
@@ -130,7 +130,7 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
       },
     } });
   });
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     requestOrder.push('final');
     const body = route.request().postDataJSON() as {
       context: { files: Array<{ path: string }> };

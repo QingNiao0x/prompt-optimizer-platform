@@ -16,7 +16,7 @@ const historyItem = {
 test('历史列表默认第一页 10 条，翻页和每页条数各只请求一次', async ({ page }) => {
   await mockAuthentication(page);
   const historyRequests: URL[] = [];
-  await page.route('**/api/v1/optimization-history**', async route => {
+  await page.route('**/api/v2/optimization-history**', async route => {
     if (route.request().method() !== 'GET' || route.request().url().includes('/optimization-history/')) {
       await route.continue();
       return;
@@ -76,7 +76,7 @@ test('历史列表默认第一页 10 条，翻页和每页条数各只请求一�
 
 test('历史模型显示短名且保留其他模型名称中的数字', async ({ page }) => {
   await mockAuthentication(page);
-  await page.route('**/api/v1/optimization-history**', route => route.fulfill({
+  await page.route('**/api/v2/optimization-history**', route => route.fulfill({
     status: 200,
     json: { requestId: 'history-model-version', data: {
       records: [
@@ -93,7 +93,7 @@ test('历史模型显示短名且保留其他模型名称中的数字', async ({
 test('日期范围选择时结束日高亮跟随指针，且选择过程不发起搜索', async ({ page }) => {
   await mockAuthentication(page);
   const historyRequests: URL[] = [];
-  await page.route('**/api/v1/optimization-history**', async route => {
+  await page.route('**/api/v2/optimization-history**', async route => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -164,7 +164,7 @@ test('接口一次返回全部历史时页面仍只显示当前页 10 条', asyn
     id: `history-${index}`,
     rawPromptPreview: `历史记录 ${index}`,
   }));
-  await page.route('**/api/v1/optimization-history**', async route => {
+  await page.route('**/api/v2/optimization-history**', async route => {
     if (route.request().method() !== 'GET' || route.request().url().includes('/optimization-history/')) {
       await route.continue();
       return;

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 0.1.0
  */
 @RestController
-@RequestMapping("/api/v1/context/planning")
+@RequestMapping({"/api/v1/context/planning", "/api/v2/context/planning"})
 public class PlanningContextController {
 
     private final PlanningSessionService planningSessionService;

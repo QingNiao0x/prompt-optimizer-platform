@@ -37,7 +37,11 @@ public record OptimizationHistoryDetail(
         Map<String, Object> permissionPolicy,
         String modelVersion,
         com.promptoptimizer.enhancement.domain.PromptFormat promptFormat,
-        ConstraintBundle constraintGroups
+        ConstraintBundle constraintGroups,
+        String resultKind,
+        String generationPipeline,
+        String chainVersion,
+        String framework
 ) {
 
     /**
@@ -49,6 +53,18 @@ public record OptimizationHistoryDetail(
         appliedConstraints = List.copyOf(appliedConstraints);
         conversationHistory = List.copyOf(conversationHistory);
         promptFormat = promptFormat == null ? com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED : promptFormat;
+    }
+
+    /** 兼容旧构造与旧历史；缺少链路信息的COMPACT依然属于旧链。 */
+    public OptimizationHistoryDetail(UUID id, String rawPrompt, String optimizedPrompt, List<PromptSection> sections,
+            Map<String,Object> contextSummary, List<String> ambiguities, List<String> appliedConstraints,
+            String templateCode, String providerName, String modelName, boolean mock, Integer latencyMs,
+            OffsetDateTime createdAt, boolean includePermissionBoundaries, boolean includeExamples,
+            List<ConversationMessage> conversationHistory, Map<String,Object> permissionPolicy, String modelVersion,
+            com.promptoptimizer.enhancement.domain.PromptFormat promptFormat, ConstraintBundle constraintGroups) {
+        this(id, rawPrompt, optimizedPrompt, sections, contextSummary, ambiguities, appliedConstraints, templateCode,
+                providerName, modelName, mock, latencyMs, createdAt, includePermissionBoundaries, includeExamples,
+                conversationHistory, permissionPolicy, modelVersion, promptFormat, constraintGroups, "SECTIONS", "LEGACY", "1", null);
     }
 
     /** 旧历史未保存来源分组时保持未知；不修改保存的正文，也不猜测规则来源。 */

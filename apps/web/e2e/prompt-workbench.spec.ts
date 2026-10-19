@@ -268,7 +268,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
     await route.fulfill({ status: 200, json: contextResponse });
   });
 
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     optimizationRequestOrder.push('plan');
     const requestBody: unknown = route.request().postDataJSON();
     expect(requestBody).toMatchObject({
@@ -292,7 +292,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
     });
   });
 
-  await page.route('**/api/v1/context/planning', async (route) => {
+  await page.route('**/api/v2/context/planning', async (route) => {
     optimizationRequestOrder.push('context');
     const requestBody: unknown = route.request().postDataJSON();
     expect(requestBody).toMatchObject({
@@ -305,7 +305,7 @@ test('用户可以分析项目上下文并生成结构化提示词', async ({ pa
     await route.fulfill({ status: 200, json: planningContextResponse });
   });
 
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     optimizationRequestOrder.push('final');
     const requestBody: unknown = route.request().postDataJSON();
     expect(requestBody).toMatchObject({
@@ -440,10 +440,10 @@ test('科研需求会逐项询问业务细节并在全部回答后生成结果',
     templateCode: 'RESEARCH_ANALYSIS',
   };
 
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     await route.fulfill({ status: 200, json: researchPlan });
   });
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     const requestBody = route.request().postDataJSON() as {
       planConfirmation?: { answers?: Array<{ questionId: string; answer: string }> };
     };
@@ -477,7 +477,7 @@ test('Plan 过期后重新提问并保留仍相同的问题答案', async ({ pag
   });
   let planCalls = 0;
   let finalCalls = 0;
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     planCalls += 1;
     await route.fulfill({ status: 200, json: {
       ...loginPlanResponse,
@@ -490,7 +490,7 @@ test('Plan 过期后重新提问并保留仍相同的问题答案', async ({ pag
       },
     } });
   });
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     finalCalls += 1;
     const confirmation = route.request().postDataJSON() as {
       planConfirmation?: { planId?: string; answers?: Array<{ answer: string }> };
@@ -536,11 +536,11 @@ test(`最终生成失败 ${failure.status} 保留输入和回答，允许手动�
       questions: [loginPlanResponse.data.questions[1]!],
     },
   };
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     await route.fulfill({ status: 200, json: oneQuestionPlan });
   });
   let generationCalls = 0;
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     generationCalls += 1;
     if (generationCalls > 1) {
       await route.fulfill({ status: 200, json: optimizationResponse });
@@ -584,7 +584,7 @@ test('计划会话过期后可以重新生成问题并完成增强', async ({ pa
   await configurePlanMode(page, { enabled: true, introSeen: true });
   let planCalls = 0;
   let finalCalls = 0;
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     planCalls += 1;
     await route.fulfill({
       status: 200,
@@ -602,7 +602,7 @@ test('计划会话过期后可以重新生成问题并完成增强', async ({ pa
       } satisfies ApiResponse<OptimizationPlan>,
     });
   });
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     finalCalls += 1;
     const requestBody = route.request().postDataJSON() as {
       planConfirmation?: { planId?: string };
@@ -688,7 +688,7 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
     contextAnalyzeCalls += 1;
     await route.fulfill({ status: 200, json: contextResponse });
   });
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     const requestBody: unknown = route.request().postDataJSON();
     expect(requestBody).toMatchObject({ planningContext: planningContextReference });
     await route.fulfill({
@@ -704,11 +704,11 @@ test('未单独分析上下文时，一键增强仍返回并展示项目分析�
       },
     });
   });
-  await page.route('**/api/v1/context/planning', async (route) => {
+  await page.route('**/api/v2/context/planning', async (route) => {
     planningContextCalls += 1;
     await route.fulfill({ status: 200, json: planningContextResponse });
   });
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     const requestBody: unknown = route.request().postDataJSON();
     expect(requestBody).toMatchObject({
       rawPrompt: '为示例项目补充健康检查接口',
@@ -747,7 +747,7 @@ test('项目代码与单独上传的方案文件一起进入 Plan 上下文准�
     await route.fulfill({ status: 204 });
   });
   let mixedPreparationCalls = 0;
-  await page.route('**/api/v1/context/planning', async (route) => {
+  await page.route('**/api/v2/context/planning', async (route) => {
     const body = route.request().postDataJSON() as {
       context?: { files?: Array<{ path: string; content: string }> };
     };
@@ -759,7 +759,7 @@ test('项目代码与单独上传的方案文件一起进入 Plan 上下文准�
     mixedPreparationCalls += 1;
     await route.fulfill({ status: 200, json: planningContextResponse });
   });
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     await route.fulfill({
       status: 200,
       json: { ...directPlanResponse, data: {
@@ -769,7 +769,7 @@ test('项目代码与单独上传的方案文件一起进入 Plan 上下文准�
       } },
     });
   });
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     const body = route.request().postDataJSON() as {
       context?: { files?: Array<{ path: string }> };
     };
@@ -803,7 +803,7 @@ test('项目代码与单独上传的方案文件一起进入 Plan 上下文准�
 
 test('用户可以通过 File System Access API 建立本地项目索引', async ({ page }) => {
   await configurePlanMode(page, { enabled: true, introSeen: true });
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     await route.fulfill({
       status: 200,
       json: {
@@ -817,14 +817,14 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
       },
     });
   });
-  await page.route('**/api/v1/context/planning', async (route) => {
+  await page.route('**/api/v2/context/planning', async (route) => {
     const requestBody = route.request().postDataJSON() as {
       context?: { files?: Array<{ path: string }> };
     };
     expect(requestBody.context?.files?.some((file) => file.path.includes('src/main.ts'))).toBe(true);
     await route.fulfill({ status: 200, json: planningContextResponse });
   });
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     const requestBody = route.request().postDataJSON() as {
       context?: { files?: Array<{ path: string }> };
     };
@@ -1047,15 +1047,15 @@ test('重新打开页面后不保留之前上传的单个文件', async ({ page 
 test('关闭 Plan 确认后直接生成，不进入方案确认', async ({ page }) => {
   let planCalls = 0;
   let planningContextCalls = 0;
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     planCalls += 1;
     await route.abort();
   });
-  await page.route('**/api/v1/context/planning', async (route) => {
+  await page.route('**/api/v2/context/planning', async (route) => {
     planningContextCalls += 1;
     await route.abort();
   });
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     const requestBody = route.request().postDataJSON() as {
       context?: { files?: Array<{ path: string }> };
       enhancement?: { templateCode?: string };
@@ -1105,7 +1105,7 @@ test('关闭 Plan 确认后直接生成，不进入方案确认', async ({ page 
 test('首次主动开启 Plan 后显示说明并记住选择', async ({ page }) => {
   let planCalls = 0;
   let finalCalls = 0;
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     planCalls += 1;
     await route.fulfill({
       status: 200,
@@ -1120,7 +1120,7 @@ test('首次主动开启 Plan 后显示说明并记住选择', async ({ page }) 
       } satisfies ApiResponse<OptimizationPlan>,
     });
   });
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     finalCalls += 1;
     const requestBody = route.request().postDataJSON() as {
       enhancement?: { templateCode?: string };
@@ -1164,11 +1164,11 @@ test('首次主动开启 Plan 后显示说明并记住选择', async ({ page }) 
 
 test('首次说明中拒绝 Plan 后立即直接增强并记住选择', async ({ page }) => {
   let planCalls = 0;
-  await page.route('**/api/v1/optimizations/plan', async (route) => {
+  await page.route('**/api/v2/optimizations/plan', async (route) => {
     planCalls += 1;
     await route.abort();
   });
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     const requestBody = route.request().postDataJSON() as {
       enhancement?: { templateCode?: string };
       planConfirmation?: unknown;
@@ -1199,7 +1199,7 @@ test('未开启 Plan 时待确认事项折叠，增强结果保持在视口内',
   const ambiguities = Array.from({ length: 8 }, (_, index) =>
     `待确认事项 ${index + 1}：需要核对登录、权限、错误处理和验收口径，这段说明故意写长以便占满结果列。`,
   );
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     await route.fulfill({
       status: 200,
       json: {
@@ -1264,12 +1264,12 @@ test('未开启 Plan 时待确认事项折叠，增强结果保持在视口内',
 
 test('Plan 展示推荐依据、支持回看修改并在生成时锁定答案', async ({ page }, testInfo) => {
   await configurePlanMode(page, { enabled: true, introSeen: true });
-  await page.route('**/api/v1/optimizations/plan', (route) =>
+  await page.route('**/api/v2/optimizations/plan', (route) =>
     route.fulfill({ status: 200, json: loginPlanResponse }));
   let releaseGeneration: () => void = () => undefined;
   const generationGate = new Promise<void>((resolve) => { releaseGeneration = resolve; });
   let calls = 0;
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     calls += 1;
     expect(route.request().postDataJSON().planConfirmation.answers).toEqual([
       expect.objectContaining({ answer: '沿用 Session，保持原有 Cookie 安全属性' }),
@@ -1313,7 +1313,7 @@ test('上下文分析提醒默认折叠，增强结果保持在视口内', async
   const warnings = Array.from({ length: 6 }, (_, index) =>
     `文件已完整解析，本次上下文仅选取相关片段：apps/web/playwright-report/chunk-${index}.html`,
   );
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     await route.fulfill({
       status: 200,
       json: {

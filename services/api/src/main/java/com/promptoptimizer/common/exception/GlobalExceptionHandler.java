@@ -73,6 +73,14 @@ public class GlobalExceptionHandler {
                 exception.getMessage(), false, Map.of());
     }
 
+    /** 新正文和未知生成版本不能被旧客户端猜测解析，返回稳定的版本冲突错误。 */
+    @ExceptionHandler(UnsupportedResultVersionException.class)
+    public ResponseEntity<ApiErrorResponse> handleUnsupportedResultVersion(
+            UnsupportedResultVersionException exception, HttpServletRequest request) {
+        return buildResponse(request, HttpStatus.CONFLICT, "RESULT_VERSION_UNSUPPORTED",
+                exception.getMessage(), false, Map.of());
+    }
+
     /** 共享计划存储不可用时返回可重试错误，避免创建无法跨实例读取的会话。 */
     @ExceptionHandler(com.promptoptimizer.enhancement.service.PlanningStoreUnavailableException.class)
     public ResponseEntity<ApiErrorResponse> handlePlanningStoreUnavailable(

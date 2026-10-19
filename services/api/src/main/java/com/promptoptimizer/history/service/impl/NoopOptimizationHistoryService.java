@@ -23,6 +23,12 @@ import java.util.UUID;
 @ConditionalOnProperty(prefix = "app.history", name = "enabled", havingValue = "false")
 public class NoopOptimizationHistoryService implements OptimizationHistoryService {
 
+    /** 历史关闭时自然增强仍可用，返回空ID并保持无持久化语义。 */
+    @Override
+    public UUID saveDocument(OptimizationRequest request, com.promptoptimizer.enhancement.domain.PromptDocument result) {
+        return null;
+    }
+
     /**
      * 空实现不保存记录。
      */

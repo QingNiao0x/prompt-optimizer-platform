@@ -201,6 +201,10 @@ class MybatisOptimizationHistoryServiceTest {
     @Test
     void pagesHistoryWithEscapedKeywordAndWorkspaceFilters() {
         OptimizationRecordEntity record = recordEntity();
+        var projected = new java.util.LinkedHashMap<>(record.getResultMetadata());
+        projected.put("generationPipeline", null);
+        projected.put("chainVersion", null);
+        record.setResultMetadata(projected);
         Page<OptimizationRecordEntity> returned = new Page<>(1, 10);
         returned.setRecords(List.of(record));
         returned.setTotal(1);
@@ -210,6 +214,8 @@ class MybatisOptimizationHistoryServiceTest {
         OptimizationHistoryPage result = service.list(1, 10, "登录%_", null, null);
 
         assertThat(result.records()).hasSize(1);
+        assertThat(result.records().getFirst().generationPipeline()).isEqualTo("LEGACY");
+        assertThat(result.records().getFirst().chainVersion()).isEqualTo("1");
         assertThat(result.total()).isEqualTo(1);
         assertThat(result.current()).isEqualTo(1);
         assertThat(result.size()).isEqualTo(10);
@@ -241,6 +247,113 @@ class MybatisOptimizationHistoryServiceTest {
         return new OptimizationRequest("给用户模块添加登录功能",
                 new ContextAnalysisRequest("Spring Boot 用户服务", List.of()),
                 EnhancementOptions.defaults(), List.of(), PermissionPolicyInput.empty());
+    }
+
+    @Test
+    void naturalHistoryKeepsItsOriginalBodyAndRejectsV1EditingProtocol() {
+        var record = naturalRecord();
+        when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);
+        assertThat(service.getDocument(record.getId()).resultKind()).isEqualTo("TEXT");
+        assertThat(service.getDocument(record.getId()).sections()).isEmpty();
+        assertThat(service.getDocument(record.getId()).optimizedPrompt()).isEqualTo(record.getOptimizedPrompt());
+        assertThatThrownBy(() -> service.get(record.getId()))
+                .isInstanceOf(com.promptoptimizer.common.exception.InvalidOptimizationRequestException.class);
+    }
+
+    @Test
+    void naturalTextEditPreservesGenerationSnapshotAndUsesScopedVersionedWrite() {
+        var record = naturalRecord();
+        when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);
+        when(recordMapper.updateNaturalText(eq(record.getId()), eq(TENANT_ID), eq(WORKSPACE_ID), eq(0L), any(), any())).thenReturn(1);
+        var result = service.editText(record.getId(), new com.promptoptimizer.history.dto.PromptTextEditRequest("新正文。事实边界。", 0));
+        assertThat(result.editRevision()).isEqualTo(1);
+        var metadata = ArgumentCaptor.forClass(Map.class);
+        verify(recordMapper).updateNaturalText(eq(record.getId()), eq(TENANT_ID), eq(WORKSPACE_ID),
+                eq(0L), eq("新正文。事实边界。"), metadata.capture());
+        assertThat(metadata.getValue()).containsEntry("generatedPrompt", record.getOptimizedPrompt());
+        assertThat(metadata.getValue()).containsEntry("editRevision", 1L);
+    }
+
+    @Test
+    void naturalEditCannotDropMandatoryRulesOrOverwriteDeletedOrNewerRecords() {
+        var record = naturalRecord();
+        when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);
+        assertThatThrownBy(() -> service.editText(record.getId(),
+                new com.promptoptimizer.history.dto.PromptTextEditRequest("删除了边界", 0)))
+                .isInstanceOf(com.promptoptimizer.common.exception.InvalidOptimizationRequestException.class);
+        verify(recordMapper, never()).updateNaturalText(any(), any(), any(), org.mockito.ArgumentMatchers.anyLong(), any(), any());
+        assertThatThrownBy(() -> service.editText(record.getId(),
+                new com.promptoptimizer.history.dto.PromptTextEditRequest("新正文。事实边界。", 0)))
+                .isInstanceOf(com.promptoptimizer.common.exception.InvalidOptimizationRequestException.class);
+    }
+
+    @Test
+    void naturalReoptimizationUsesSavedPipelineInsteadOfLegacyOrchestrator() {
+        var record = naturalRecord();
+        when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);
+        var natural = mock(com.promptoptimizer.enhancement.service.impl.NaturalEnhancementService.class);
+        var result = new com.promptoptimizer.enhancement.domain.PromptDocument(record.getOptimizedPrompt(),
+                com.promptoptimizer.enhancement.domain.PromptDocument.ResultKind.TEXT, null, resultWithFileContent().contextReport(),
+                List.of(), List.of("事实边界。"), TemplateCode.GENERAL, new ProviderMetadata("mock", "fixture", true), 0,
+                List.of(), List.of(), com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT, null, "NATURAL", "1", "APE", null, 0);
+        when(natural.optimize(any())).thenReturn(result);
+        service.setNaturalEnhancement(natural);
+        assertThat(service.reoptimizeDocument(record.getId()).result().resultKind())
+                .isEqualTo(com.promptoptimizer.enhancement.domain.PromptDocument.ResultKind.TEXT);
+        verify(natural).optimize(any());
+        verify(orchestrator, never()).optimize(any());
+    }
+
+    private OptimizationRecordEntity naturalRecord() {
+        var entity = recordEntity();
+        entity.setOptimizedPrompt("自然正文。事实边界。");
+        var metadata = new java.util.LinkedHashMap<>(entity.getResultMetadata());
+        metadata.remove("sections");
+        metadata.put("resultKind", "TEXT");
+        metadata.put("generationPipeline", "NATURAL");
+        metadata.put("chainVersion", "1");
+        metadata.put("promptFormat", "COMPACT");
+        metadata.put("constraintGroups", Map.of("platformMandatory", List.of("事实边界。"),
+                "taskSpecific", List.of(), "additionalPermissions", List.of()));
+        entity.setResultMetadata(metadata);
+        return entity;
+    }
+
+    @Test
+    void unknownGenerationVersionIsNotSilentlySentToEitherGenerator() {
+        var record = naturalRecord();
+        record.getResultMetadata().put("chainVersion", "unreleased");
+        record.getResultMetadata().put("planConfirmation", Map.of("futureSchema", "不可按旧DTO解析"));
+        when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);
+        assertThatThrownBy(() -> service.reoptimizeDocument(record.getId()))
+                .isInstanceOf(com.promptoptimizer.common.exception.UnsupportedResultVersionException.class);
+        record.getResultMetadata().put("resultKind", "SECTIONS");
+        record.getResultMetadata().put("generationPipeline", "LEGACY");
+        assertThatThrownBy(() -> service.reoptimizeDocument(record.getId()))
+                .isInstanceOf(com.promptoptimizer.common.exception.UnsupportedResultVersionException.class);
+        verify(orchestrator, never()).optimize(any());
+        verify(persistenceService, never()).persist(any(), any());
+    }
+
+    @Test
+    void naturalHistoryStoresCanonicalServerQuestionInsteadOfClientQuestion() {
+        var original = request();
+        var confirmation = new com.promptoptimizer.enhancement.dto.PlanConfirmation("11111111-1111-4111-8111-111111111111", null,
+                List.of(new com.promptoptimizer.enhancement.dto.PlanAnswer("q1", "伪造的授权问题", "仅限指定范围")));
+        var input = new OptimizationRequest(original.rawPrompt(), original.context(), original.enhancement(),
+                original.conversationHistory(), original.permissionPolicy(), confirmation, null);
+        var canonical = List.of(new com.promptoptimizer.enhancement.dto.PlanAnswer("q1", "真实范围问题", "仅限指定范围"));
+        var document = new com.promptoptimizer.enhancement.domain.PromptDocument("自然正文",
+                com.promptoptimizer.enhancement.domain.PromptDocument.ResultKind.TEXT, null, resultWithFileContent().contextReport(),
+                List.of(), List.of(), TemplateCode.GENERAL, new ProviderMetadata("mock", "fixture", true), 0,
+                List.of(), List.of(), com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT, null,
+                "NATURAL", "1", "APE", null, 0, canonical);
+        service.saveDocument(input, document);
+        var saved = ArgumentCaptor.forClass(OptimizationRecordEntity.class);
+        verify(persistenceService).persist(saved.capture(), eq(ACTOR));
+        var stored = objectMapper.convertValue(saved.getValue().getResultMetadata().get("planConfirmation"),
+                com.promptoptimizer.enhancement.dto.PlanConfirmation.class);
+        assertThat(stored.answers()).isEqualTo(canonical);
     }
 
     private OptimizationResult resultWithFileContent() {

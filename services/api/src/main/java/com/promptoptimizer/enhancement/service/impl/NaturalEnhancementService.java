@@ -1,0 +1,212 @@
+package com.promptoptimizer.enhancement.service.impl;
+
+import com.promptoptimizer.common.exception.InvalidOptimizationRequestException;
+import com.promptoptimizer.common.logging.LogCorrelation;
+import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.context.dto.ContextAnalysisRequest;
+import com.promptoptimizer.context.dto.ContextFileInput;
+import com.promptoptimizer.context.service.ContextAnalyzer;
+import com.promptoptimizer.enhancement.domain.*;
+import com.promptoptimizer.enhancement.dto.*;
+import com.promptoptimizer.enhancement.service.PlanningSessionService;
+import com.promptoptimizer.identity.service.CurrentActor;
+import com.promptoptimizer.policy.domain.ConstraintBundle;
+import com.promptoptimizer.policy.domain.PlatformConstraintRules;
+import com.promptoptimizer.policy.service.ProtectedContextFilter;
+import com.promptoptimizer.provider.domain.*;
+import com.promptoptimizer.provider.service.NaturalPromptProvider;
+import com.promptoptimizer.provider.service.PlatformModelCatalog;
+import com.promptoptimizer.template.domain.TaskIntentResolver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.time.Clock;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * 自然增强及其 Plan 的应用入口。只复用身份、资料安全和会话校验，不使用旧任务模板、
+ * 业务约束补全、段落生成或组装器；原始题答完整进入新的生成协议。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
+@Service
+public class NaturalEnhancementService {
+    private final ContextAnalyzer analyzer;
+    private final ProtectedContextFilter filter;
+    private final PlanningSessionService sessions;
+    private final CurrentActor actor;
+    private final PlatformModelCatalog catalog;
+    private final NaturalPromptProvider provider;
+    private final SensitiveValueDetector sensitive = new SensitiveValueDetector();
+    private final Clock clock;
+
+    /** 复用基础安全与会话服务，独立Provider负责新生成和新提问协议。 */
+    @Autowired
+    public NaturalEnhancementService(ContextAnalyzer analyzer, ProtectedContextFilter filter,
+            PlanningSessionService sessions, CurrentActor actor, PlatformModelCatalog catalog, NaturalPromptProvider provider) {
+        this(analyzer, filter, sessions, actor, catalog, provider, Clock.systemUTC());
+    }
+
+    /** 受控测试可注入时钟，生产使用服务端UTC时间，不信任客户端时间与所有者。 */
+    public NaturalEnhancementService(ContextAnalyzer analyzer, ProtectedContextFilter filter,
+            PlanningSessionService sessions, CurrentActor actor, PlatformModelCatalog catalog,
+            NaturalPromptProvider provider, Clock clock) {
+        this.analyzer = analyzer;
+        this.filter = filter;
+        this.sessions = sessions;
+        this.actor = actor;
+        this.catalog = catalog;
+        this.provider = provider;
+        this.clock = clock;
+    }
+
+    /** 生成完整自然正文；零问题 Plan 与有回答 Plan 均通过同一服务端绑定入口。 */
+    public PromptDocument optimize(OptimizationRequest request) {
+        long start = clock.millis();
+        actor.require();
+        rejectInput(request.rawPrompt());
+        rejectInput(request.context().customDescription());
+        request.conversationHistory().forEach(message -> rejectInput(message.content()));
+        var confirmed = sessions.confirm(request.rawPrompt(), request.context().customDescription(),
+                request.conversationHistory(), request.planConfirmation());
+        confirmed.answers().forEach(answer -> rejectInput(answer.answer()));
+        if (confirmed.bound() && request.modelId() != null && !request.modelId().isBlank()
+                && !Objects.equals(request.modelId().trim(), confirmed.modelId())) {
+            throw new InvalidOptimizationRequestException("所选模型与已确认的计划不一致，请重新生成确认问题。");
+        }
+        var model = catalog.resolve(confirmed.bound() ? confirmed.modelId() : request.modelId());
+        var filtered = filter.filter(request.context(), request.permissionPolicy());
+        String query = request.rawPrompt() + confirmed.answers().stream()
+                .map(answer -> "\n" + answer.question() + "：" + answer.answer()).collect(Collectors.joining());
+        ContextSnapshot context = sessions.reusableContext(confirmed, filtered.request(), query)
+                .orElseGet(() -> filter.attachReport(analyzer.analyze(filtered.request(), query), filtered));
+        // 再次检索不能覆盖首次资料。此前快照仍按当前权限重新过滤，冲突由模型保持来源而非选定一方。
+        ContextSnapshot planningContext = confirmed.planningContext() == null ? null : permittedSnapshot(
+                sessions.resolveForPlan(confirmed.planningContext(), request.rawPrompt(),
+                        request.context().customDescription()).snapshot(), request.permissionPolicy());
+        List<ConversationMessage> conversation = Boolean.TRUE.equals(request.enhancement().includeConversationHistory())
+                ? request.conversationHistory() : List.of();
+        // 共享识别器仅用于既有平台安全条款的适用范围，不向新生成器传入旧模板或旧生成指导。
+        boolean engineering = TaskIntentResolver.resolve(TemplateCode.AUTO, query).engineeringConstraints();
+        List<String> permissions = additionalPermissions(request.permissionPolicy());
+        var groups = new ConstraintBundle(PlatformConstraintRules.forTask(engineering), List.of(), permissions);
+        var input = new NaturalPromptInput(request.rawPrompt(), context, confirmed.answers(), conversation,
+                Boolean.TRUE.equals(request.enhancement().includeExamples()), groups.visibleConstraints(),
+                model.publicId(), planningContext);
+        String workflowId = request.planConfirmation() == null ? null : request.planConfirmation().planId();
+        try (var scope = LogCorrelation.bindWorkflow("planning-plan", workflowId)) {
+            return provider.enhance(input, draft -> {
+                String body = validateBody(draft, groups.visibleConstraints());
+                List<String> warnings = new ArrayList<>(context.warnings());
+                if (planningContext != null) warnings.addAll(planningContext.warnings());
+                if (draft.provider().mock()) warnings.add("当前为离线Mock示例，不代表真实模型增强质量。");
+                return new PromptDocument(body, PromptDocument.ResultKind.TEXT, null, context, List.of(),
+                        groups.visibleConstraints(), TemplateCode.GENERAL,
+                        new ProviderMetadata(draft.provider().provider(), draft.provider().model(), draft.provider().mock(),
+                                draft.provider().mock() ? "" : model.displayName()),
+                        Math.max(0, clock.millis() - start), warnings.stream().distinct().toList(), List.of(),
+                        PromptFormat.COMPACT, groups, PromptDocument.NATURAL_PIPELINE, NaturalPromptInstructions.VERSION, draft.framework().name(), null, 0,
+                        confirmed.bound() ? confirmed.answers() : null);
+            });
+        }
+    }
+
+    /** 新提问策略完整保留重要未知，逐题展示；注册问题后最终回答仍受服务端所有权和TTL约束。 */
+    public OptimizationPlan plan(OptimizationPlanRequest request) {
+        long start = clock.millis();
+        actor.require();
+        rejectInput(request.rawPrompt());
+        rejectInput(request.contextDescription());
+        request.conversationHistory().forEach(message -> rejectInput(message.content()));
+        var model = catalog.resolve(request.modelId());
+        var resolved = sessions.resolveForPlan(request.planningContext(), request.rawPrompt(), request.contextDescription());
+        ContextSnapshot context = resolved.snapshot() == null
+                ? analyzer.analyze(new ContextAnalysisRequest(request.contextDescription(), List.of()), request.rawPrompt())
+                : resolved.snapshot();
+        var input = new NaturalPromptInput(request.rawPrompt(), context, List.of(), request.conversationHistory(),
+                false, List.of(), model.publicId());
+        PlanningProviderResponse response = provider.plan(input, candidate -> {
+            validateQuestions(candidate);
+            return candidate;
+        });
+        // 注册会话是副作用，必须位于全部模型校验及修复完成后，失败尝试不保存伪计划。
+        var registration = sessions.registerPlan(request.rawPrompt(), request.contextDescription(),
+                request.conversationHistory(), resolved, response.questions(), model.publicId());
+        return new OptimizationPlan(response.summary(), response.questions(), TemplateCode.AUTO,
+                new ProviderMetadata(response.provider(), response.model(), response.mock(), response.mock() ? "" : model.displayName()),
+                Math.max(0, clock.millis() - start), registration.planId(), registration.planningContext(), registration.expiresAt());
+    }
+
+    /** 平台固定边界只补确实缺失的原句，不经过旧任务规则追加器，不删除模型或用户的重要条件。 */
+    private String validateBody(NaturalPromptDraft draft, List<String> required) {
+        if (draft == null || draft.framework() == null || draft.provider() == null
+                || draft.optimizedPrompt() == null || draft.optimizedPrompt().isBlank()) throw invalid("自然正文不完整");
+        String body = draft.optimizedPrompt().strip();
+        if (sensitive.containsCredential(body)) throw invalid("自然正文包含疑似敏感凭据");
+        for (String rule : required) {
+            int first = body.indexOf(rule);
+            if (first >= 0 && body.indexOf(rule, first + rule.length()) >= 0) throw invalid("平台边界重复");
+        }
+        List<String> missing = required.stream().filter(rule -> !body.contains(rule)).toList();
+        return body + (missing.isEmpty() ? "" : "\n\n" + String.join(" ", missing));
+    }
+
+    /** 校验协议容量和引用完整性；不截取问题、不用推荐项填答，也不凭题号证明语义等价。 */
+    private void validateQuestions(PlanningProviderResponse response) {
+        if (response == null || response.summary() == null || response.summary().isBlank()
+                || response.questions() == null || response.questions().size() > 64) throw invalid("Plan响应不完整或超出容量");
+        if (sensitive.containsCredential(response.summary())) throw invalid("Plan包含疑似凭据");
+        Set<String> ids = new HashSet<>();
+        for (PlanQuestion question : response.questions()) {
+            if (question == null || !validId(question.id()) || !ids.add(question.id()) || question.type() == null
+                    || !validText(question.question(), 300) || !safeOptionalText(question.hint(), 1500)
+                    || question.options().size() > 12 || question.examples().size() > 8) throw invalid("Plan问题协议无效");
+            if (question.type() != PlanQuestionType.FREE_TEXT && question.options().size() < 2) throw invalid("Plan选项不完整");
+            Set<String> optionIds = new HashSet<>();
+            for (PlanOption option : question.options()) {
+                if (option == null || !validId(option.id()) || !optionIds.add(option.id())
+                        || !validText(option.label(), 300) || !validText(option.answer(), 1500)
+                        || !safeOptionalText(option.description(), 1500) || !safeText(option.recommendationReason(), 1500)
+                        || (option.recommended() && option.recommendationReason().isBlank())) throw invalid("Plan选项协议无效");
+            }
+            if (question.examples().stream().anyMatch(value -> !safeText(value, 1500))) throw invalid("Plan示例协议无效");
+        }
+    }
+
+    /** 旧快照内容只在当前权限仍允许时传给模型，不能用历史资料绕过本次路径排除。 */
+    private ContextSnapshot permittedSnapshot(ContextSnapshot snapshot, PermissionPolicyInput policy) {
+        if (snapshot == null) return null;
+        var files = snapshot.fileSnippets().stream()
+                .map(file -> new ContextFileInput(file.path(), file.content(), file.language())).toList();
+        var allowed = filter.filter(new ContextAnalysisRequest("", files), policy).request().files().stream()
+                .map(ContextFileInput::path).collect(Collectors.toSet());
+        var snippets = snapshot.fileSnippets().stream().filter(file -> allowed.contains(file.path())).toList();
+        if (snippets.size() == snapshot.fileSnippets().size()) return snapshot;
+        // 聚合技术栈、目录等没有逐字段来源，不能证明未引用新排除资料；仅保留仍允许的原片段与用户描述。
+        // 不重新调用摘要模型，以免权限收紧导致额外推理或产生第二套资料事实。
+        return new ContextSnapshot(snapshot.customDescription(), List.of(), List.of(), List.of(), snippets,
+                "PARTIAL", List.of(), List.of("此前资料已按当前权限筛选，技术栈和目录等聚合摘要未复用。"),
+                List.of(), snapshot.analysisVersion());
+    }
+
+    /** 用户只能追加路径和操作边界，不能替换平台强制条款。 */
+    private List<String> additionalPermissions(PermissionPolicyInput policy) {
+        List<String> rules = new ArrayList<>();
+        policy.protectedPaths().forEach(this::rejectInput);
+        policy.requireConfirmationFor().forEach(this::rejectInput);
+        if (!policy.protectedPaths().isEmpty()) rules.add(PlatformConstraintRules.PATH_PREFIX + String.join("、", policy.protectedPaths()) + "。");
+        if (!policy.requireConfirmationFor().isEmpty()) rules.add(PlatformConstraintRules.ACTION_PREFIX + String.join("、", policy.requireConfirmationFor()) + "。");
+        return List.copyOf(rules);
+    }
+
+    private void rejectInput(String text) {
+        if (sensitive.containsCredential(text)) throw new InvalidOptimizationRequestException("输入包含疑似敏感凭据，请脱敏后重试。");
+    }
+    private boolean validId(String value) { return value != null && value.matches("[A-Za-z0-9_-]{1,64}"); }
+    private boolean validText(String value, int maximum) { return value != null && !value.isBlank() && safeText(value, maximum); }
+    private boolean safeText(String value, int maximum) { return value != null && value.length() <= maximum && !sensitive.containsCredential(value); }
+    /** 提示说明是可选协议字段，缺省不拒绝合法问题；存在时仍校验容量和凭据。 */
+    private boolean safeOptionalText(String value, int maximum) { return value == null || safeText(value, maximum); }
+    private ProviderException invalid(String message) { return new ProviderException(ProviderFailureType.INVALID_RESPONSE, message, false); }
+}

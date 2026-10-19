@@ -19,9 +19,9 @@ test('真实 Session、CSRF Cookie、登录、刷新与退出', async ({ page, c
   expect(cookies.find(cookie => cookie.name === 'JSESSIONID')).toMatchObject({ httpOnly: true, sameSite: 'Lax' });
   const csrf = cookies.find(cookie => cookie.name === 'XSRF-TOKEN');
   expect(csrf).toMatchObject({ httpOnly: false, sameSite: 'Lax' });
-  const denied = await page.request.post('/api/v1/optimizations/plan', { data: { rawPrompt: '写一份功能说明' } });
+  const denied = await page.request.post('/api/v2/optimizations/plan', { data: { rawPrompt: '写一份功能说明' } });
   expect(denied.status()).toBe(403);
-  const allowed = await page.request.post('/api/v1/optimizations/plan', {
+  const allowed = await page.request.post('/api/v2/optimizations/plan', {
     headers: { 'X-XSRF-TOKEN': csrf?.value ?? '' }, data: { rawPrompt: '写一份功能说明' },
   });
   expect(allowed.status()).toBe(200);

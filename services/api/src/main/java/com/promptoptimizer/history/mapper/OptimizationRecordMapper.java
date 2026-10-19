@@ -32,6 +32,15 @@ public interface OptimizationRecordMapper {
             @Param("createdToExclusive") OffsetDateTime createdToExclusive
     );
 
+    /** V2在SQL分页前统一读取新旧形态，仍使用相同租户、工作区、删除状态及筛选范围。 */
+    IPage<OptimizationRecordEntity> selectAllPageByScope(
+            @Param("page") IPage<OptimizationRecordEntity> page,
+            @Param("tenantId") UUID tenantId,
+            @Param("workspaceId") UUID workspaceId,
+            @Param("keyword") String keyword,
+            @Param("createdFrom") OffsetDateTime createdFrom,
+            @Param("createdToExclusive") OffsetDateTime createdToExclusive);
+
     /**
      * 按记录、租户和工作区共同定位未删除记录。
      */
@@ -55,4 +64,9 @@ public interface OptimizationRecordMapper {
      * 插入调用方已填充身份、作用域和创建时间的优化记录。
      */
     int insertRecord(@Param("record") OptimizationRecordEntity record);
+
+    /** 带作用域、逻辑删除与编辑版本条件更新自然正文；返回0表示并发冲突或不可访问。 */
+    int updateNaturalText(@Param("id") UUID id, @Param("tenantId") UUID tenantId,
+            @Param("workspaceId") UUID workspaceId, @Param("expectedRevision") long expectedRevision,
+            @Param("optimizedPrompt") String optimizedPrompt, @Param("metadata") java.util.Map<String, Object> metadata);
 }

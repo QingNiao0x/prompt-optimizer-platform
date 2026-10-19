@@ -57,7 +57,9 @@ public class ModelConcurrencyConfiguration {
                         "/api/v1/optimizations/plan",
                         "/api/v1/context/analyze",
                         "/api/v1/context/planning",
-                        "/api/v1/optimization-history/*/re-optimize"
+                        "/api/v1/optimization-history/*/re-optimize",
+                        "/api/v2/optimizations", "/api/v2/optimizations/plan",
+                        "/api/v2/context/planning", "/api/v2/optimization-history/*/re-optimize"
                 );
             }
         };

@@ -58,7 +58,7 @@ test('历史记录仅在点击搜索或按回车后加载对应查询结果', as
     }
   });
   const historyRequests: URL[] = [];
-  await page.route('**/api/v1/optimization-history**', async route => {
+  await page.route('**/api/v2/optimization-history**', async route => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -132,7 +132,7 @@ test('业务接口返回登录失效时清空工作台并跳转，不重放提�
     localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify({ enabled: false, introSeen: true }));
   });
   let calls = 0;
-  await page.route('**/api/v1/optimizations', async route => {
+  await page.route('**/api/v2/optimizations', async route => {
     calls += 1;
     await route.fulfill({ status: 401, json: { error: { code: 'AUTHENTICATION_REQUIRED' } } });
   });

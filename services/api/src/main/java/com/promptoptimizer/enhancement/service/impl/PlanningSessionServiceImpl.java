@@ -310,6 +310,13 @@ public class PlanningSessionServiceImpl implements PlanningSessionService {
         if (!submitted.keySet().equals(expectedIds)) {
             throw new InvalidOptimizationRequestException("请回答本次计划中的全部问题后再生成提示词。");
         }
+        // 题目禁用自由回答时，值也必须来自该题真实选项，不能只凭合法题号伪造选择或授权。
+        for (PlanQuestion question : plan.questions()) {
+            if (!question.allowCustomAnswer() && question.type() != com.promptoptimizer.enhancement.domain.PlanQuestionType.FREE_TEXT
+                    && !matchesOptions(question, submitted.get(question.id()).answer().trim())) {
+                throw new InvalidOptimizationRequestException("回答不属于本次问题的有效选项，请重新选择。");
+            }
+        }
         List<PlanAnswer> canonical = plan.questions().stream()
                 .map(question -> new PlanAnswer(
                         question.id(),
@@ -382,6 +389,22 @@ public class PlanningSessionServiceImpl implements PlanningSessionService {
             }
         }
         return List.copyOf(unique.values());
+    }
+
+    /** 多选沿用界面的选项顺序与分号拼接，最多12项仅枚举4096种协议组合，不拆坏选项内部的分号。 */
+    private boolean matchesOptions(PlanQuestion question, String answer) {
+        if (question.type() == com.promptoptimizer.enhancement.domain.PlanQuestionType.SINGLE_CHOICE) {
+            return question.options().stream().anyMatch(option -> Objects.equals(option.answer().trim(), answer));
+        }
+        if (question.options().size() > 12) return false;
+        Set<String> combinations = new java.util.HashSet<>();
+        combinations.add("");
+        for (var option : question.options()) {
+            Set<String> next = new java.util.HashSet<>(combinations);
+            for (String previous : combinations) next.add(previous.isEmpty() ? option.answer().trim() : previous + "；" + option.answer().trim());
+            combinations = next;
+        }
+        return !answer.isBlank() && combinations.contains(answer);
     }
 
     /**

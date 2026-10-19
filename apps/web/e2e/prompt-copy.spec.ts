@@ -88,7 +88,7 @@ const openCopyWorkbench = async (page: Page, dark = false, response: Optimizatio
   await page.route('**/api/v1/models', (route) => route.fulfill({ json: { data: [
     { id: 'mock', displayName: 'Mock', provider: 'Mock', defaultModel: true },
   ] } }));
-  await page.route('**/api/v1/optimizations', (route) => route.fulfill({ json: { data: response } }));
+  await page.route('**/api/v2/optimizations', (route) => route.fulfill({ json: { data: response } }));
   await page.route('**/api/v1/analytics/events', (route) => {
     const event = route.request().postDataJSON() as AnalyticsClientEvent;
     if (event.eventType === 'RESULT_EXPORTED') exports.push(event);
@@ -170,7 +170,7 @@ for (const scenario of [
     await dialog.getByRole('button', { name: '关闭', exact: true }).click();
 
     let submitted = '';
-    await page.route('**/api/v1/optimizations', async (route) => {
+    await page.route('**/api/v2/optimizations', async (route) => {
       const request = route.request().postDataJSON() as { rawPrompt: string };
       submitted = request.rawPrompt;
       await route.fulfill({ json: { data: response } });
@@ -328,7 +328,7 @@ test('重新生成期间关闭旧预留页且不把旧复制状态标到新结�
   const tab = await pendingCopy(page);
   let release = (): void => undefined;
   const generation = new Promise<void>((resolve) => { release = resolve; });
-  await page.route('**/api/v1/optimizations', async (route) => {
+  await page.route('**/api/v2/optimizations', async (route) => {
     await generation;
     await route.fulfill({ json: { data: { ...result, optimizedPrompt: prompt + '\n本轮重新生成。' } } });
   });

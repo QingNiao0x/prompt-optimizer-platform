@@ -617,7 +617,17 @@ export interface ConstraintGroups {
   readonly additionalPermissions: readonly string[];
 }
 
-export interface OptimizationResult {
+/** 服务端保存的结果形态和生成身份；旧COMPACT缺省仍属于旧链，不能据格式推断。 */
+export interface PromptDocumentMetadata {
+  resultKind?: 'TEXT' | 'SECTIONS';
+  generationPipeline?: 'NATURAL' | 'LEGACY';
+  chainVersion?: string;
+  framework?: string | null;
+  recordId?: string | null;
+  editRevision?: number;
+}
+
+export interface OptimizationResult extends PromptDocumentMetadata {
   optimizedPrompt: string;
   /** 提示词展示形式；旧历史缺省为分节，内部四要素继续支持校验和编辑。 */
   promptFormat?: PromptFormat;
@@ -642,7 +652,7 @@ export interface PlanningFactEvidence {
   evidence: string;
 }
 
-export interface OptimizationHistorySummary {
+export interface OptimizationHistorySummary extends PromptDocumentMetadata {
   id: string;
   templateCode: TemplateCode;
   rawPromptPreview: string;
@@ -668,7 +678,7 @@ export interface OptimizationHistoryFilters {
   dateRange?: readonly [string, string] | null;
 }
 
-export interface OptimizationHistoryDetail {
+export interface OptimizationHistoryDetail extends PromptDocumentMetadata {
   id: string;
   rawPrompt: string;
   optimizedPrompt: string;
@@ -694,7 +704,7 @@ export interface OptimizationHistoryDetail {
 }
 
 export interface ReoptimizationResult {
-  recordId: string;
+  recordId: string | null;
   result: OptimizationResult;
 }
 

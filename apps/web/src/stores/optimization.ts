@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, ref, shallowRef, watch } from 'vue';
 import { assertConstraintPlacement, ConstraintRestorationError, restoreAppliedConstraints } from '@/features/optimization/constraintEditing';
 import { renderPromptSections } from '@/features/optimization/promptPresentation';
+import { restoreNaturalBoundaries } from '@/features/optimization/naturalTextEditing';
 import { completeContextTransmission, createContextTransmission, failContextTransmission,
   type ContextTransmissionReport, type TransmissionPhase } from '@/features/context-analysis/contextTransmission';
 import { useAuthStore } from '@/stores/auth';
@@ -29,6 +30,7 @@ import {
   optimizePrompt,
   preparePlanningContext as requestPlanningContext,
   listAvailableModels,
+  saveNaturalPrompt,
 } from '@/services/promptOptimizerApi';
 import { MAX_FILES } from '@/workers/fileReaderCore';
 import type {
@@ -99,7 +101,11 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const contextTransmission = shallowRef<ContextTransmissionReport>();
   const contextCleanupWarning = ref('');
   // 草稿仅在当前 Pinia 实例内保留；不写浏览器存储或覆盖后端历史。
-  const resultDraft = ref<PromptSection[]>();
+  const resultDraft = ref<PromptSection[] | string>();
+  const hasUnsavedResultDraft = computed(() => typeof resultDraft.value === 'string'
+    ? resultDraft.value !== result.value?.optimizedPrompt
+    : resultDraft.value !== undefined && !equalSections(resultDraft.value,
+      result.value?.sections.filter(section => section.type !== 'CLARIFICATIONS') ?? []));
   let preparedCandidates: ContextFileInput[] = [];
   const preparedLeases = new WeakMap<ContextFileInput[], OptimizationContextLease>();
 
@@ -538,8 +544,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   /** 用户显式操作后，仅改变上次成功请求的增强模式；原始需求、资料和真实 Plan 确认逐字复用。 */
   const regenerateWithPromptFormat = async (): Promise<boolean> => {
     if (isAnalyzing.value || isPlanning.value || isOptimizing.value || isPreparingContext.value) return false;
-    if (resultDraft.value !== undefined && !equalSections(resultDraft.value,
-      result.value?.sections.filter(section => section.type !== 'CLARIFICATIONS') ?? [])) {
+    if (hasUnsavedResultDraft.value) {
       errorMessage.value = '请先保存或取消结果中的修改，再按所选模式重新增强。';
       return false;
     }
@@ -609,6 +614,59 @@ export const useOptimizationStore = defineStore('optimization', () => {
     resultDraft.value = undefined;
     errorMessage.value = '';
     return true;
+  };
+
+  /** TEXT以完整字符串编辑；保存失败继续保留草稿，晚到响应不能覆盖别的任务或结果。 */
+  const saveEditedText = async (text: string): Promise<boolean> => {
+    const source = result.value;
+    if (!source || source.resultKind !== 'TEXT' || !text.trim()) {
+      errorMessage.value = '自然正文不能为空，修改稿已保留。';
+      return false;
+    }
+    const body = restoreNaturalBoundaries(text, source.constraintGroups);
+    if (body === source.optimizedPrompt) {
+      resultDraft.value = undefined;
+      return true;
+    }
+    const lease = captureContext();
+    isOptimizing.value = true;
+    try {
+      const saved = source.recordId
+        ? (await saveNaturalPrompt(source.recordId, body, source.editRevision ?? 0)).data
+        : { optimizedPrompt: body, editRevision: source.editRevision ?? 0 };
+      if (!isCurrentContext(lease) || result.value !== source) return false;
+      rememberCurrentResult();
+      result.value = { ...source, ...saved };
+      resultDraft.value = undefined;
+      errorMessage.value = '';
+      return true;
+    } catch (error: unknown) {
+      if (isCurrentContext(lease) && result.value === source) errorMessage.value = getApiErrorMessage(error);
+      return false;
+    } finally {
+      if (isCurrentContext(lease)) isOptimizing.value = false;
+    }
+  };
+
+  /** 同一记录的编辑撤销也落库；不同生成结果之间的撤销仅切换查看，不重写其他历史。 */
+  const undoResultAndPersist = async (): Promise<boolean> => {
+    const current = result.value;
+    const previous = resultUndoStack.value.at(-1);
+    if (!current || !previous) return false;
+    if (current.resultKind !== 'TEXT' || !current.recordId || current.recordId !== previous.recordId) return undoResult();
+    const lease = captureContext();
+    isOptimizing.value = true;
+    try {
+      const saved = await saveNaturalPrompt(current.recordId, previous.optimizedPrompt, current.editRevision ?? 0);
+      if (!isCurrentContext(lease) || result.value !== current) return false;
+      resultUndoStack.value = [...resultUndoStack.value.slice(0, -1), { ...previous, ...saved.data }];
+      return undoResult();
+    } catch (error: unknown) {
+      if (isCurrentContext(lease)) errorMessage.value = getApiErrorMessage(error);
+      return false;
+    } finally {
+      if (isCurrentContext(lease)) isOptimizing.value = false;
+    }
   };
 
   const undoResult = (): boolean => {
@@ -704,6 +762,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     contextTransmission,
     contextCleanupWarning,
     resultDraft,
+    hasUnsavedResultDraft,
     captureContext,
     isCurrentContext,
     resetTask,
@@ -722,7 +781,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
     runOptimization,
     regenerateWithPromptFormat,
     saveEditedSections,
+    saveEditedText,
     undoResult,
+    undoResultAndPersist,
     setPromptFormat,
     loadFromHistory,
     applyReoptimized,

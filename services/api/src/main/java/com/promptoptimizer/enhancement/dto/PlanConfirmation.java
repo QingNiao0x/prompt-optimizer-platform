@@ -23,7 +23,7 @@ public record PlanConfirmation(
         )
         String planId,
         @Valid PlanningContextReference planningContext,
-        @Size(max = 8, message = "单次最多回答 8 个确认问题")
+        @Size(max = 64, message = "单次最多回答 64 个确认问题")
         List<@NotNull(message = "确认回答不能为空") @Valid PlanAnswer> answers
 ) {
 

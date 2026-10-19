@@ -172,7 +172,8 @@ class ModelConcurrencyHttpIntegrationTest {
             }
             assertThat(UPSTREAM.entered.await(5, TimeUnit.SECONDS)).isTrue();
             for (String path : List.of("/api/v1/optimizations", "/api/v1/optimizations/plan",
-                    "/api/v1/context/analyze", "/api/v1/context/planning")) {
+                    "/api/v1/context/analyze", "/api/v1/context/planning", "/api/v2/optimizations",
+                    "/api/v2/optimizations/plan", "/api/v2/context/planning")) {
                 mvc.perform(request(account, path, "generate").header("X-User-Id", UUID.randomUUID()))
                         .andExpect(status().isTooManyRequests())
                         .andExpect(jsonPath("$.error.code").value("USER_MODEL_CONCURRENCY_LIMIT"))
@@ -214,6 +215,12 @@ class ModelConcurrencyHttpIntegrationTest {
         mvc.perform(post("/api/v1/optimizations").with(user(principal(UUID.randomUUID())))
                         .contentType(APPLICATION_JSON).content("{\"rawPrompt\":\"generate\"}"))
                 .andExpect(status().isForbidden());
+        for (String path : List.of("/api/v2/optimizations", "/api/v2/optimizations/plan")) {
+            mvc.perform(post(path).with(csrf()).header("X-User-Id", UUID.randomUUID())
+                    .contentType(APPLICATION_JSON).content("{\"rawPrompt\":\"generate\"}")).andExpect(status().isUnauthorized());
+            mvc.perform(post(path).with(user(principal(UUID.randomUUID())))
+                    .contentType(APPLICATION_JSON).content("{\"rawPrompt\":\"generate\"}")).andExpect(status().isForbidden());
+        }
         assertThat(UPSTREAM.received.get()).isZero();
     }
 

@@ -53,7 +53,7 @@ const copiedText = async (page: Page): Promise<string> => {
 test('开关只选择下次增强模式；显式重新生成失败保旧稿、成功可撤销，真实复制当前结果', async ({ page }) => {
   await prepare(page);
   const requests: OptimizationRequest[] = [];
-  await page.route('**/api/v1/optimizations', route => {
+  await page.route('**/api/v2/optimizations', route => {
     const request = route.request().postDataJSON() as OptimizationRequest;
     requests.push(request);
     if (requests.length === 2) return route.fulfill({ status: 502, json: { requestId: 'controlled-failure',
@@ -122,7 +122,7 @@ test(`Plan用户选择${format}生成后，显式模式重新增强复用同一�
   let recorded = resultFor(format);
   const planRawPrompt = `${rawPrompt}是否在邮件中承诺延期赔偿，由我确认。`;
   const answer = '不承诺延期赔偿，仅询问交付时间';
-  await page.route('**/api/v1/optimizations/plan', route => {
+  await page.route('**/api/v2/optimizations/plan', route => {
     planCalls++;
     return route.fulfill({ json: { data: { summary: '确认沟通要求', templateCode: 'GENERAL',
       planId: 'existing-controlled-plan', latencyMs: 1, provider: recorded.provider,
@@ -130,7 +130,7 @@ test(`Plan用户选择${format}生成后，显式模式重新增强复用同一�
       questions: [{ id: 'compensation', question: '是否在邮件中承诺延期赔偿？', hint: '该业务承诺由你决定。', type: 'FREE_TEXT',
         options: [], examples: [], allowCustomAnswer: true }] } } });
   });
-  await page.route('**/api/v1/optimizations', route => {
+  await page.route('**/api/v2/optimizations', route => {
     const request = route.request().postDataJSON() as OptimizationRequest;
     requests.push(request);
     recorded = resultFor(request.enhancement.promptFormat!, request.planConfirmation?.answers[0]?.answer ?? '');
@@ -140,7 +140,7 @@ test(`Plan用户选择${format}生成后，显式模式重新增强复用同一�
     contextSummary: {}, providerName: 'mock', modelName: 'controlled-fixture', mock: true, latencyMs: 1,
     createdAt: '2026-10-18T00:00:00Z', includePermissionBoundaries: true, includeExamples: false,
     conversationHistory: [], permissionPolicy: {} });
-  await page.route('**/api/v1/optimization-history**', route => {
+  await page.route('**/api/v2/optimization-history**', route => {
     const isDetail = new URL(route.request().url()).pathname.endsWith('/existing-record');
     return route.fulfill({ json: { data: isDetail ? history() : { current: 1, size: 10, total: requests.length, pages: 1,
       records: [{ id: 'existing-record', templateCode: 'GENERAL', rawPromptPreview: planRawPrompt,
@@ -191,14 +191,14 @@ test('模式重新增强遇到Plan过期时保留原结果及回答，恢复真�
   const answer = '不承诺赔偿，只询问时间';
   let planCalls = 0;
   const requests: OptimizationRequest[] = [];
-  await page.route('**/api/v1/optimizations/plan', route => {
+  await page.route('**/api/v2/optimizations/plan', route => {
     planCalls++;
     return route.fulfill({ json: { data: { summary: '确认业务承诺', templateCode: 'GENERAL',
       planId: `plan-${planCalls}`, latencyMs: 1, provider: resultFor('COMPACT').provider,
       questions: [{ id: 'compensation', question: '是否承诺延期赔偿？', hint: '由用户决定', type: 'FREE_TEXT',
         options: [], examples: [], allowCustomAnswer: true }] } } });
   });
-  await page.route('**/api/v1/optimizations', route => {
+  await page.route('**/api/v2/optimizations', route => {
     const request = route.request().postDataJSON() as OptimizationRequest;
     requests.push(request);
     if (requests.length === 2) return route.fulfill({ status: 409, json: { requestId: 'expired',
@@ -239,7 +239,7 @@ test('旧记录缺省恢复分节，生成中禁止切换避免迟到响应覆�
   legacy.sections = old.sections.map(section => section.type === 'CONSTRAINTS' ? { ...section,
     content: `日期不能擅自更改。\n平台强制约束（不得删除或弱化）：\n- ${rule}` } : section);
   legacy.optimizedPrompt = legacy.sections.map(section => `## ${section.title}\n${section.content}`).join('\n\n');
-  await page.route('**/api/v1/optimization-history**', route => route.fulfill({ json: { data:
+  await page.route('**/api/v2/optimization-history**', route => route.fulfill({ json: { data:
     new URL(route.request().url()).pathname.endsWith('/old')
       ? { id: 'old', rawPrompt, ...legacy, contextSummary: {}, providerName: 'mock', modelName: 'old',
         createdAt: '2026-10-17T00:00:00Z', includePermissionBoundaries: true, includeExamples: false,
@@ -249,7 +249,7 @@ test('旧记录缺省恢复分节，生成中禁止切换避免迟到响应覆�
   let release!: () => void;
   const pending = new Promise<void>(resolve => { release = resolve; });
   let requested: OptimizationRequest | undefined;
-  await page.route('**/api/v1/optimizations', async route => {
+  await page.route('**/api/v2/optimizations', async route => {
     requested = route.request().postDataJSON() as OptimizationRequest;
     await pending;
     await route.fulfill({ json: { data: old } });
@@ -280,7 +280,7 @@ test(`${format}代码规则依服务端来源恢复；未闭合围栏保留草�
   generated.optimizedPrompt = generated.sections.map(section => format === 'COMPACT'
     ? section.content : `## ${section.title}\n${section.content}`).join('\n\n');
   let calls = 0;
-  await page.route('**/api/v1/optimizations', route => {
+  await page.route('**/api/v2/optimizations', route => {
     calls++;
     return route.fulfill({ json: { data: generated } });
   });

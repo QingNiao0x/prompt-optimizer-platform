@@ -36,13 +36,16 @@ public class OptimizationRecordEntity {
     /** 用户提交的原始提示词；仅用户保存历史时持久化。 */
     private String rawPrompt;
 
-    /** 本次增强生成的最终结构化提示词。 */
+    /** 本次增强的最终自然或分节正文；读取时不重新组装，不表示已执行下游任务。 */
     private String optimizedPrompt;
 
     /** 脱敏上下文 JSON 对象，含项目描述、技术栈/依赖条目、目录/警告/脱敏字符串数组和分析版本；不含文件正文。 */
     private Map<String, Object> contextSnapshot;
 
     /** 结果 JSON 对象，保存段落、歧义/约束数组、Provider/调用 ID、modelVersion 版本快照、增强选项、会话及可选 Plan 确认；顶层 promptFormat 为 COMPACT/STRUCTURED，旧记录缺省按 STRUCTURED 展示。enhancementOptions.promptFormat 仅在用户显式选择时保存同一枚举，缺省表示重新增强时自动选择。可选 constraintGroups 对象含 platformMandatory、taskSpecific、additionalPermissions 三个字符串数组，来源于服务端；旧记录缺省表示来源未知，不用于关闭安全过滤。JSON 键和值域由应用校验，数据库不强制结构。 */
+    // V2可选resultKind(TEXT/SECTIONS)、generationPipeline(NATURAL/LEGACY)、chainVersion及framework；
+    // TEXT没有伪造sections，缺少链路字段的旧COMPACT仍按LEGACY读取。数据库不强制JSON键结构。
+    // 可选selectedModelId为服务端公开模型标识；editRevision缺省0，generatedPrompt保留首次编辑前正文，editedAt为UTC时间。
     private Map<String, Object> resultMetadata = new LinkedHashMap<>();
 
     /** 权限策略 JSON 对象，包含 protectedPaths 与 requireConfirmationFor 两个字符串数组；结构由请求 DTO 校验。 */

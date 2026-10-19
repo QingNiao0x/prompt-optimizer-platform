@@ -27,7 +27,7 @@ describe('listHistory', () => {
     });
 
     expect(httpClient.get).toHaveBeenCalledWith(
-      '/api/v1/optimization-history',
+      '/api/v2/optimization-history',
       expect.objectContaining({
         params: {
           current: 1,
@@ -65,7 +65,7 @@ describe('optimizePrompt', () => {
     });
 
     expect(httpClient.post).toHaveBeenCalledWith(
-      '/api/v1/optimizations',
+      '/api/v2/optimizations',
       expect.any(Object),
     );
   });
@@ -84,7 +84,7 @@ describe('createOptimizationPlan', () => {
     });
 
     expect(httpClient.post).toHaveBeenCalledWith(
-      '/api/v1/optimizations/plan',
+      '/api/v2/optimizations/plan',
       expect.objectContaining({ rawPrompt: '分析某地区心脑血管疾病死亡率' }),
     );
   });
@@ -109,7 +109,7 @@ describe('preparePlanningContext', () => {
     });
 
     expect(httpClient.post).toHaveBeenCalledWith(
-      '/api/v1/context/planning',
+      '/api/v2/context/planning',
       expect.objectContaining({ rawPrompt: '给用户模块添加登录功能' }),
     );
   });

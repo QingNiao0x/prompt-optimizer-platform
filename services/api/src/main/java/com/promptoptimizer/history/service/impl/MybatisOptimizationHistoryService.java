@@ -16,6 +16,9 @@ import com.promptoptimizer.enhancement.dto.PermissionPolicyInput;
 import com.promptoptimizer.enhancement.dto.PlanConfirmation;
 import com.promptoptimizer.enhancement.service.EnhancementOrchestrator;
 import com.promptoptimizer.enhancement.domain.OptimizationResult;
+import com.promptoptimizer.enhancement.domain.PromptDocument;
+import com.promptoptimizer.enhancement.service.impl.NaturalEnhancementService;
+import com.promptoptimizer.history.domain.DocumentReoptimizationResult;
 import com.promptoptimizer.enhancement.domain.PromptFormat;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
@@ -58,6 +61,13 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
     private final EnhancementOrchestrator orchestrator;
     private final CurrentActor currentActor;
     private final ObjectMapper objectMapper;
+    private NaturalEnhancementService naturalEnhancement;
+
+    /** 独立生成器不依赖历史服务，避免持久化与模型调用形成循环。 */
+    @org.springframework.beans.factory.annotation.Autowired
+    public void setNaturalEnhancement(NaturalEnhancementService naturalEnhancement) {
+        this.naturalEnhancement = naturalEnhancement;
+    }
 
     /**
      * 注入历史仓库、增强编排器和当前认证主体。
@@ -88,6 +98,20 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
             OffsetDateTime createdFrom,
             OffsetDateTime createdToExclusive
     ) {
+        return listRecords(current, size, keyword, createdFrom, createdToExclusive, false);
+    }
+
+    /** V2页面在同一列表中管理自然与旧段落记录，不拆库、不重写旧历史。 */
+    @Override
+    @Transactional(readOnly = true)
+    public OptimizationHistoryPage listAll(int current, int size, String keyword,
+            OffsetDateTime createdFrom, OffsetDateTime createdToExclusive) {
+        return listRecords(current, size, keyword, createdFrom, createdToExclusive, true);
+    }
+
+    /** 在SQL分页前选择协议范围，查询、计数及租户隔离使用同一条件。 */
+    private OptimizationHistoryPage listRecords(int current, int size, String keyword,
+            OffsetDateTime createdFrom, OffsetDateTime createdToExclusive, boolean includeNatural) {
         ActorIdentity context = currentActor.require();
         boolean hasKeyword = keyword != null && !keyword.isBlank();
         boolean hasDateRange = createdFrom != null && createdToExclusive != null;
@@ -97,14 +121,9 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         Page<OptimizationRecordEntity> page = new Page<>(current, size);
         // 摘要 SQL 含 left 与 jsonb_build_object，计数优化会把 total 改成 0。
         page.setOptimizeCountSql(false);
-        IPage<OptimizationRecordEntity> result = recordMapper.selectPageByScope(
-                page,
-                context.tenantId(),
-                context.workspaceId(),
-                escapedKeyword,
-                rangeStart,
-                rangeEnd
-        );
+        IPage<OptimizationRecordEntity> result = includeNatural
+                ? recordMapper.selectAllPageByScope(page, context.tenantId(), context.workspaceId(), escapedKeyword, rangeStart, rangeEnd)
+                : recordMapper.selectPageByScope(page, context.tenantId(), context.workspaceId(), escapedKeyword, rangeStart, rangeEnd);
         List<OptimizationHistorySummary> records = result.getRecords().stream().map(this::toSummary).toList();
         return new OptimizationHistoryPage(
                 records, result.getTotal(), result.getSize(), result.getCurrent(), result.getPages());
@@ -116,8 +135,14 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
     @Override
     @Transactional(readOnly = true)
     public OptimizationHistoryDetail get(UUID id) {
-        return toDetail(findRecord(id));
+        OptimizationRecordEntity record = findRecord(id);
+        requireLegacy(record);
+        return toDetail(record);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OptimizationHistoryDetail getDocument(UUID id) { return toDetail(findRecord(id)); }
 
     /** 在当前租户和工作区内逻辑删除历史记录；已删除或越权记录统一按不存在处理。 */
     @Override
@@ -141,6 +166,13 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
     @Override
     @Transactional
     public UUID save(OptimizationRequest request, OptimizationResult result) {
+        return saveDocument(request, PromptDocument.legacy(result));
+    }
+
+    /** 同一事务保存原生正文及链路身份，TEXT不保存伪造段落。 */
+    @Override
+    @Transactional
+    public UUID saveDocument(OptimizationRequest request, PromptDocument result) {
         ActorIdentity context = currentActor.require();
 
         OptimizationRecordEntity entity = new OptimizationRecordEntity();
@@ -165,10 +197,82 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
     @Override
     public ReoptimizationResult reoptimize(UUID id) {
         OptimizationRecordEntity source = findRecord(id);
+        requireLegacy(source);
         OptimizationRequest request = rebuildRequest(source);
         OptimizationResult result = orchestrator.optimize(request);
         UUID newRecordId = save(request, result);
         return new ReoptimizationResult(newRecordId, result);
+    }
+
+    /** 历史依据持久化链路分发；旧COMPACT仍走旧链，不从展示样式猜测。 */
+    @Override
+    public DocumentReoptimizationResult reoptimizeDocument(UUID id) {
+        OptimizationRecordEntity source = findRecord(id);
+        boolean natural = PromptDocument.ResultKind.TEXT.name().equals(source.getResultMetadata().get("resultKind"));
+        boolean supportedNatural = natural
+                && PromptDocument.NATURAL_PIPELINE.equals(source.getResultMetadata().get("generationPipeline"))
+                && com.promptoptimizer.provider.domain.NaturalPromptInstructions.VERSION.equals(source.getResultMetadata().get("chainVersion"));
+        // 只分发明确支持的协议组合。缺字段的旧记录按旧版本处理，显式未知版本绝不猜测。
+        if (!supportedNatural && !supportedLegacy(source)) {
+            throw new com.promptoptimizer.common.exception.UnsupportedResultVersionException("该记录的生成版本暂不支持再次增强，请恢复并编辑原始需求。");
+        }
+        OptimizationRequest request = rebuildRequest(source);
+        if (natural && naturalEnhancement == null) throw new IllegalStateException("自然增强服务未装配");
+        PromptDocument result;
+        if (natural) result = naturalEnhancement.optimize(request);
+        else {
+            OptimizationResult generated = orchestrator.optimize(request);
+            result = PromptDocument.STRUCTURED_VERSION.equals(source.getResultMetadata().get("chainVersion"))
+                    ? PromptDocument.structured(generated) : PromptDocument.legacy(generated);
+        }
+        UUID recordId = saveDocument(request, result);
+        return new DocumentReoptimizationResult(recordId, result.withRecordId(recordId));
+    }
+
+    /** 自然编辑保持原生成快照，校验固定权限后以CAS保存，不调用模型或重建四要素。 */
+    @Override
+    @Transactional
+    public com.promptoptimizer.history.domain.PromptTextEditResult editText(UUID id,
+            com.promptoptimizer.history.dto.PromptTextEditRequest request) {
+        OptimizationRecordEntity source = findRecord(id);
+        Map<String, Object> metadata = new LinkedHashMap<>(source.getResultMetadata());
+        if (!PromptDocument.ResultKind.TEXT.name().equals(metadata.get("resultKind"))) {
+            throw new InvalidOptimizationRequestException("该记录不支持自然正文编辑。");
+        }
+        if (new com.promptoptimizer.common.security.SensitiveValueScanner().containsCredential(request.optimizedPrompt())) {
+            throw new InvalidOptimizationRequestException("编辑正文包含疑似敏感凭据，请脱敏后保存。");
+        }
+        ConstraintBundle groups = metadata.get("constraintGroups") == null ? null
+                : objectMapper.convertValue(metadata.get("constraintGroups"), ConstraintBundle.class);
+        if (groups == null || java.util.stream.Stream.concat(groups.platformMandatory().stream(), groups.additionalPermissions().stream())
+                .anyMatch(rule -> !request.optimizedPrompt().contains(rule))) {
+            throw new InvalidOptimizationRequestException("请保留本次结果的事实和权限边界，修改稿已保留。");
+        }
+        metadata.putIfAbsent("generatedPrompt", source.getOptimizedPrompt());
+        long revision = request.expectedRevision() + 1;
+        metadata.put("editRevision", revision);
+        metadata.put("editedAt", OffsetDateTime.now(ZoneOffset.UTC).toString());
+        ActorIdentity context = currentActor.require();
+        int updated = recordMapper.updateNaturalText(id, context.tenantId(), context.workspaceId(),
+                request.expectedRevision(), request.optimizedPrompt(), metadata);
+        if (updated == 0) throw new InvalidOptimizationRequestException("记录已变化或被删除，请刷新后核对；本地修改稿已保留。");
+        return new com.promptoptimizer.history.domain.PromptTextEditResult(request.optimizedPrompt(), revision);
+    }
+
+    /** 旧客户端必须显式升级协议，不能把新正文放入旧四段编辑流程而丢稿。 */
+    private void requireLegacy(OptimizationRecordEntity record) {
+        if (!supportedLegacy(record)) {
+            throw new com.promptoptimizer.common.exception.UnsupportedResultVersionException("当前V1接口不支持此结果版本，请使用V2接口。");
+        }
+    }
+
+    /** 兼容缺省旧元数据及已知五模块版本，不将未知形态或链路降级成旧结果。 */
+    private boolean supportedLegacy(OptimizationRecordEntity record) {
+        var metadata = record.getResultMetadata();
+        return PromptDocument.ResultKind.SECTIONS.name().equals(metadataValue(metadata, "resultKind", "SECTIONS"))
+                && PromptDocument.LEGACY_PIPELINE.equals(metadataValue(metadata, "generationPipeline", PromptDocument.LEGACY_PIPELINE))
+                && (PromptDocument.LEGACY_VERSION.equals(metadataValue(metadata, "chainVersion", PromptDocument.LEGACY_VERSION))
+                        || PromptDocument.STRUCTURED_VERSION.equals(metadata.get("chainVersion")));
     }
 
     /**
@@ -198,7 +302,11 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 Boolean.TRUE.equals(metadata.get("mock")),
                 entity.getLatencyMs(),
                 entity.getCreatedAt(),
-                stringValue(metadata.get("modelVersion"))
+                stringValue(metadata.get("modelVersion")),
+                metadataValue(metadata, "resultKind", PromptDocument.ResultKind.SECTIONS.name()),
+                metadataValue(metadata, "generationPipeline", PromptDocument.LEGACY_PIPELINE),
+                metadataValue(metadata, "chainVersion", PromptDocument.LEGACY_VERSION),
+                stringValue(metadata.get("framework"))
         );
     }
 
@@ -236,7 +344,11 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                         ? com.promptoptimizer.enhancement.domain.PromptFormat.COMPACT
                         : com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED,
                 metadata.get("constraintGroups") == null ? null
-                        : objectMapper.convertValue(metadata.get("constraintGroups"), ConstraintBundle.class)
+                        : objectMapper.convertValue(metadata.get("constraintGroups"), ConstraintBundle.class),
+                metadataValue(metadata, "resultKind", PromptDocument.ResultKind.SECTIONS.name()),
+                metadataValue(metadata, "generationPipeline", PromptDocument.LEGACY_PIPELINE),
+                metadataValue(metadata, "chainVersion", PromptDocument.LEGACY_VERSION),
+                stringValue(metadata.get("framework"))
         );
     }
 
@@ -245,10 +357,15 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
      */
     private Map<String, Object> buildResultMetadata(
             OptimizationRequest request,
-            OptimizationResult result
+            PromptDocument result
     ) {
         Map<String, Object> metadata = new LinkedHashMap<>();
-        metadata.put("sections", toList(result.sections()));
+        if (result.resultKind() == PromptDocument.ResultKind.SECTIONS) metadata.put("sections", toList(result.sections()));
+        metadata.put("resultKind", result.resultKind().name());
+        metadata.put("generationPipeline", result.generationPipeline());
+        metadata.put("chainVersion", result.chainVersion());
+        metadata.put("selectedModelId", result.provider().mock() ? request.modelId() : result.provider().model());
+        if (result.framework() != null) metadata.put("framework", result.framework());
         metadata.put("promptFormat", result.promptFormat().name());
         metadata.put("ambiguities", result.ambiguities());
         metadata.put("appliedConstraints", result.appliedConstraints());
@@ -277,7 +394,12 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                         : List.of()
         );
         if (request.planConfirmation() != null) {
-            metadata.put("planConfirmation", toMap(request.planConfirmation()));
+            PlanConfirmation confirmation = request.planConfirmation();
+            // 自然链题干由会话服务恢复，历史必须保存同一权威题答，不能把客户端伪题干带入再次增强。
+            if (result.confirmedPlanAnswers() != null) {
+                confirmation = new PlanConfirmation(confirmation.planId(), confirmation.planningContext(), result.confirmedPlanAnswers());
+            }
+            metadata.put("planConfirmation", toMap(confirmation));
         }
         return metadata;
     }
@@ -345,7 +467,8 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 enhancement,
                 conversation,
                 policy == null ? PermissionPolicyInput.empty() : policy,
-                null
+                null,
+                PromptDocument.NATURAL_PIPELINE.equals(metadata.get("generationPipeline")) ? stringValue(metadata.get("selectedModelId")) : null
         );
     }
 
@@ -377,6 +500,12 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
      */
     private String stringValue(Object value) {
         return value == null ? "" : String.valueOf(value);
+    }
+
+    /** SQL列表投影会把旧记录的缺失键变成JSON null，两种情形都回退旧协议；显式未知值仍原样保留。 */
+    private String metadataValue(Map<String, Object> metadata, String key, String fallback) {
+        String value = stringValue(metadata.get(key));
+        return value.isBlank() ? fallback : value;
     }
 
     /**

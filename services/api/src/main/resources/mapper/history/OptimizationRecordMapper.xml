@@ -43,7 +43,7 @@
         </if>
     </sql>
 
-    <select id="selectPageByScope" resultMap="optimizationRecord">
+    <sql id="summaryColumns">
         <!-- 列表只取预览所需字段：原始提示词截到 161 个字符，模型版本来自当次 JSON 快照。 -->
         SELECT id, template_code,
                left(btrim(replace(replace(raw_prompt, chr(13), ' '), chr(10), ' ')), 161) AS raw_prompt,
@@ -51,10 +51,26 @@
                    'provider', result_metadata -&gt; 'provider',
                    'model', result_metadata -&gt; 'model',
                    'modelVersion', result_metadata -&gt; 'modelVersion',
-                   'mock', result_metadata -&gt; 'mock'
+                   'mock', result_metadata -&gt; 'mock',
+                   'resultKind', result_metadata -&gt; 'resultKind',
+                   'generationPipeline', result_metadata -&gt; 'generationPipeline',
+                   'chainVersion', result_metadata -&gt; 'chainVersion',
+                   'framework', result_metadata -&gt; 'framework'
                ) AS result_metadata,
                latency_ms, created_at
           FROM optimization_record
+    </sql>
+
+    <select id="selectPageByScope" resultMap="optimizationRecord">
+        <include refid="summaryColumns"/>
+        <include refid="scopeWhere"/>
+           <!-- 旧编辑器不能处理TEXT；在分页与count之前过滤，避免空页及总数不一致。 -->
+           AND COALESCE(result_metadata -&gt;&gt; 'resultKind', 'SECTIONS') = 'SECTIONS'
+         ORDER BY created_at DESC
+    </select>
+
+    <select id="selectAllPageByScope" resultMap="optimizationRecord">
+        <include refid="summaryColumns"/>
         <include refid="scopeWhere"/>
          ORDER BY created_at DESC
     </select>
@@ -91,4 +107,13 @@
             #{record.latencyMs}, #{record.retentionUntil}, #{record.deletedAt}, #{record.createdAt}
         )
     </insert>
+    <update id="updateNaturalText">
+        <!-- 当前身份、删除状态与版本都在写入时复核，读取后被删除或修改的记录不能被旧页面覆盖。 -->
+        UPDATE optimization_record
+           SET optimized_prompt = #{optimizedPrompt},
+               result_metadata = CAST(#{metadata,typeHandler=com.promptoptimizer.common.persistence.JsonbObjectTypeHandler,jdbcType=VARCHAR} AS jsonb)
+         WHERE id = #{id} AND tenant_id = #{tenantId} AND workspace_id = #{workspaceId}
+           AND deleted_at IS NULL AND result_metadata -&gt;&gt; 'resultKind' = 'TEXT'
+           AND COALESCE((result_metadata -&gt;&gt; 'editRevision')::bigint, 0) = #{expectedRevision}
+    </update>
 </mapper>

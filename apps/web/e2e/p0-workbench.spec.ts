@@ -25,7 +25,7 @@ test.beforeEach(async ({ page }) => {
     { id: 'mock:p0', displayName: 'P0 交互测试', provider: 'mock', defaultModel: true },
   ] } }));
   await page.route('**/api/v1/optimizations/plan-events', route => route.fulfill({ status: 204 }));
-  await page.route('**/api/v1/optimizations', route => route.fulfill({ json: { requestId: 'p0', data: result } }));
+  await page.route('**/api/v2/optimizations', route => route.fulfill({ json: { requestId: 'p0', data: result } }));
 });
 
 const historyB: OptimizationHistoryDetail = { id: 'history-b', rawPrompt: '任务 B：写邮件',
@@ -35,7 +35,7 @@ const historyB: OptimizationHistoryDetail = { id: 'history-b', rawPrompt: '任�
   conversationHistory: [], permissionPolicy: {} };
 
 const mockHistoryB = async (page: Page): Promise<void> => {
-  await page.route('**/api/v1/optimization-history**', route => route.fulfill({ json: {
+  await page.route('**/api/v2/optimization-history**', route => route.fulfill({ json: {
     data: new URL(route.request().url()).pathname.endsWith('/history-b') ? historyB : {
       records: [{ ...historyB, rawPromptPreview: historyB.rawPrompt }], current: 1, size: 10, total: 1, pages: 1,
     },
@@ -99,7 +99,7 @@ test('P0 历史任务 B 添加资料后，最终请求不含 A 的资料', async
   await addMaterial(page, 'B.txt', 'B_ONLY_MARKER');
   await expect(page.locator('.file-list')).not.toContainText('A.txt');
   await openWorkbenchPane(page, 'intent');
-  const request = page.waitForRequest(req => req.url().endsWith('/api/v1/optimizations') && req.method() === 'POST');
+  const request = page.waitForRequest(req => req.url().endsWith('/api/v2/optimizations') && req.method() === 'POST');
   await page.getByRole('button', { name: '直接增强提示词', exact: true }).click();
   const payload = (await request).postDataJSON() as { context: { files: ContextFileInput[] } };
   expect(payload.context.files.map(file => file.path)).toEqual(['B.txt']);
@@ -111,7 +111,7 @@ test('P0 A 的增强响应迟到，不能覆盖 B 的结果', async ({ page }) =
   let respondA!: () => void;
   let aStarted = false;
   const waitA = new Promise<void>(resolve => { respondA = resolve; });
-  await page.route('**/api/v1/optimizations', async route => {
+  await page.route('**/api/v2/optimizations', async route => {
     const input = route.request().postDataJSON();
     if (input.rawPrompt === '任务 A') {
       aStarted = true;
@@ -130,7 +130,7 @@ test('P0 A 的增强响应迟到，不能覆盖 B 的结果', async ({ page }) =
   await page.getByRole('button', { name: '直接增强提示词', exact: true }).click();
   await openWorkbenchPane(page, 'result');
   await expect(page.locator('.section-list')).toContainText('NEW_B_RESULT');
-  const aResponse = page.waitForResponse(response => response.url().endsWith('/api/v1/optimizations')
+  const aResponse = page.waitForResponse(response => response.url().endsWith('/api/v2/optimizations')
     && response.request().postDataJSON().rawPrompt === '任务 A');
   respondA();
   await (await aResponse).finished();
@@ -147,7 +147,7 @@ test('P0 未保存修改阻止再次增强和离开，取消离开后仍保留�
   await page.locator('#section-TASK').fill('保留导航中的未保存修改');
   await openWorkbenchPane(page, 'intent');
   let extraRequests = 0;
-  page.on('request', request => { if (request.url().endsWith('/api/v1/optimizations')) extraRequests++; });
+  page.on('request', request => { if (request.url().endsWith('/api/v2/optimizations')) extraRequests++; });
   await page.getByRole('button', { name: '直接增强提示词', exact: true }).click();
   await expect(page.getByText('请先保存或取消结果中的修改，再进行增强。')).toBeVisible();
   expect(extraRequests).toBe(0);
@@ -160,7 +160,7 @@ test('P0 未保存修改阻止再次增强和离开，取消离开后仍保留�
 });
 
 test('P0 显示完整、部分与未发送正文，并只预览本次安全片段', async ({ page }, testInfo) => {
-  await page.route('**/api/v1/optimizations', route => route.fulfill({ json: { requestId: 'p0-receipt', data: {
+  await page.route('**/api/v2/optimizations', route => route.fulfill({ json: { requestId: 'p0-receipt', data: {
     ...result, provider: { provider: 'synthetic', model: 'fixture', mock: false }, contextReport: { ...context,
       fileSnippets: [{ path: 'full.txt', language: 'text', content: '完整正文', summary: '', truncated: false },
         { path: 'partial.txt', language: 'text', content: '选取部分', summary: '', truncated: true }],
@@ -190,7 +190,7 @@ test('P0 显示完整、部分与未发送正文，并只预览本次安全片�
 
 test('P0 前端预算截断仍列出未发送文件，实际请求不含省略正文', async ({ page }) => {
   let sentFiles: ContextFileInput[] = [];
-  await page.route('**/api/v1/optimizations', async route => {
+  await page.route('**/api/v2/optimizations', async route => {
     sentFiles = route.request().postDataJSON().context.files;
     await route.fulfill({ json: { requestId: 'p0-front-budget', data: {
       ...result, provider: { provider: 'synthetic', model: 'fixture', mock: false }, contextReport: { ...context,

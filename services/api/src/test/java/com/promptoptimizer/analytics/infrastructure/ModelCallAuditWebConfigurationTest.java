@@ -33,12 +33,13 @@ class ModelCallAuditWebConfigurationTest {
     @MockBean private CurrentActor actor;
     @MockBean private ModelCallAuditService audit;
 
-    @Test
-    void callerCannotOverrideTenantAndRequestScopeIsRestored() throws Exception {
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"/api/v1/optimizations/ledger-test", "/api/v2/optimizations/ledger-test"})
+    void callerCannotOverrideTenantAndRequestScopeIsRestored(String path) throws Exception {
         UUID tenant = UUID.randomUUID();
         when(actor.require()).thenReturn(new ActorIdentity(UUID.randomUUID(), tenant, UUID.randomUUID(), "fixture@example.test", "fixture"));
         String request = UUID.randomUUID().toString();
-        mvc.perform(post("/api/v1/optimizations/ledger-test").header("X-Request-Id", request)
+        mvc.perform(post(path).header("X-Request-Id", request)
                         .param("tenantId", UUID.randomUUID().toString()).with(user("fixture").roles("USER")).with(csrf()))
                 .andExpect(status().isOk());
         var fact = ArgumentCaptor.forClass(ModelCallObservation.class);
@@ -51,7 +52,7 @@ class ModelCallAuditWebConfigurationTest {
     /** 测试控制器仅输出固定响应，模拟 Provider 完成日志的真实采集入口。 */
     @RestController
     public static class CallController {
-        @PostMapping("/api/v1/optimizations/ledger-test")
+        @PostMapping({"/api/v1/optimizations/ledger-test", "/api/v2/optimizations/ledger-test"})
         public String call() {
             try (var attempt = ModelCallLogger.beginAttempt()) {
                 ModelCallLogger.completed("prompt.optimize", "fixture-provider", "fixture-model", "PLATFORM_DEFAULT",

@@ -24,15 +24,15 @@ interface Props {
   result?: OptimizationResult;
   busy: boolean;
   planModeEnabled: boolean;
-  editDraft?: PromptSection[];
+  editDraft?: PromptSection[] | string;
   canUndo?: boolean;
   selectedPromptFormat?: PromptFormat;
   canRegenerateWithFormat?: boolean;
 }
 
 interface Emits {
-  (event: 'save', sections: PromptSection[], complete: (saved: boolean, message?: string) => void): void;
-  (event: 'update:edit-draft', sections: PromptSection[] | undefined): void;
+  (event: 'save', draft: PromptSection[] | string, complete: (saved: boolean, message?: string) => void): void;
+  (event: 'update:edit-draft', draft: PromptSection[] | string | undefined): void;
   (event: 're-enhance'): void;
   (event: 'undo'): void;
   (event: 'regenerate-with-format'): void;
@@ -51,7 +51,7 @@ type CopyPlatform = typeof COPY_PLATFORMS[number];
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 const { result } = toRefs(props);
-const editing = ref(Boolean(props.editDraft));
+const editing = ref(props.editDraft !== undefined);
 const copying = ref(false);
 const copied = ref(false);
 const lastCopiedPrompt = ref<string>();
@@ -64,13 +64,18 @@ let pendingPlatformTab: Window | null = null;
 let disposed = false;
 const ambiguitiesOpen = ref(false);
 const warningsOpen = ref(false);
-const draftSections = ref<PromptSection[]>(props.editDraft?.map(section => ({ ...section })) ?? []);
+const isTextResult = computed(() => result.value?.resultKind === 'TEXT');
+const draftSections = ref<PromptSection[]>(Array.isArray(props.editDraft) ? props.editDraft.map(section => ({ ...section })) : []);
+const draftText = ref(typeof props.editDraft === 'string' ? props.editDraft : '');
 const editError = ref('');
 const editValidationVisible = ref(false);
 const invalidDraft = (section: PromptSection): boolean => !section.title.trim() || !section.content.trim();
 watch(draftSections, sections => {
-  if (editing.value) emit('update:edit-draft', sections.map(section => ({ ...section })));
+  if (editing.value && !isTextResult.value) emit('update:edit-draft', sections.map(section => ({ ...section })));
 }, { deep: true });
+watch(draftText, text => {
+  if (editing.value && isTextResult.value) emit('update:edit-draft', text);
+});
 const copyDisabled = computed(() =>
   props.busy || editing.value || copying.value || !result.value?.optimizedPrompt.trim(),
 );
@@ -243,6 +248,7 @@ watch(result, () => {
   ambiguitiesOpen.value = false;
   warningsOpen.value = false;
   draftSections.value = [];
+  draftText.value = '';
   editError.value = '';
   editValidationVisible.value = false;
   emit('update:edit-draft', undefined);
@@ -266,6 +272,7 @@ const startEditing = (): void => {
   if (!result.value) {
     return;
   }
+  draftText.value = result.value.optimizedPrompt;
   draftSections.value = result.value.sections
     .filter((section) => section.type !== 'CLARIFICATIONS')
     .map((section) => ({ ...section }));
@@ -274,12 +281,13 @@ const startEditing = (): void => {
   editing.value = true;
   editError.value = '';
   editValidationVisible.value = false;
-  emit('update:edit-draft', draftSections.value.map(section => ({ ...section })));
+  emit('update:edit-draft', isTextResult.value ? draftText.value : draftSections.value.map(section => ({ ...section })));
 };
 
 const cancelEditing = (): void => {
   editing.value = false;
   draftSections.value = [];
+  draftText.value = '';
   editError.value = '';
   editValidationVisible.value = false;
   emit('update:edit-draft', undefined);
@@ -287,6 +295,20 @@ const cancelEditing = (): void => {
 
 const saveEditing = (): void => {
   editValidationVisible.value = true;
+  if (isTextResult.value) {
+    if (!draftText.value.trim()) {
+      editError.value = '自然正文不能为空，修改稿已保留。';
+      return;
+    }
+    emit('save', draftText.value, (saved, message) => {
+      if (!saved) { editError.value = message || '保存失败，修改稿已保留。'; return; }
+      editing.value = false;
+      editError.value = '';
+      draftText.value = '';
+      emit('update:edit-draft', undefined);
+    });
+    return;
+  }
   const invalid = draftSections.value.find(invalidDraft);
   if (invalid) {
     editError.value = `“${invalid.title || SECTION_LABELS[invalid.type]}”的标题和内容不能为空，其他修改已保留。`;
@@ -523,6 +545,12 @@ const saveEditing = (): void => {
           />
         </article>
 
+        <div v-else-if="isTextResult" class="edit-section-list">
+          <p v-if="editError" class="edit-error" role="alert">{{ editError }}</p>
+          <label for="natural-prompt-editor">完整自然提示词</label>
+          <ElInput id="natural-prompt-editor" v-model="draftText" type="textarea" :rows="18"
+            resize="vertical" :disabled="busy" aria-label="编辑完整自然提示词" data-testid="natural-prompt-editor" />
+        </div>
         <div v-else class="edit-section-list">
           <p v-if="editError" class="edit-error" role="alert">{{ editError }}</p>
           <section v-for="section in draftSections" :key="section.type" class="edit-section">

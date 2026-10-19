@@ -18,6 +18,16 @@ public record OptimizationHistorySummary(
         boolean mock,
         Integer latencyMs,
         OffsetDateTime createdAt,
-        String modelVersion
+        String modelVersion,
+        String resultKind,
+        String generationPipeline,
+        String chainVersion,
+        String framework
 ) {
+    /** 旧记录缺少链路元数据时不根据COMPACT推断为新链路。 */
+    public OptimizationHistorySummary(UUID id, String templateCode, String rawPromptPreview, String providerName,
+            String modelName, boolean mock, Integer latencyMs, OffsetDateTime createdAt, String modelVersion) {
+        this(id, templateCode, rawPromptPreview, providerName, modelName, mock, latencyMs, createdAt, modelVersion,
+                "SECTIONS", "LEGACY", "1", null);
+    }
 }
