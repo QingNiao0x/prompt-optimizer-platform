@@ -140,8 +140,7 @@ public class NaturalEnhancementService {
                 false, List.of(), model.publicId());
         PlanningProviderResponse response = provider.plan(input, candidate -> {
             validateQuestions(candidate);
-            validatePlanningUnderstanding(candidate, input);
-            return candidate;
+            return validatePlanningUnderstanding(candidate, input);
         });
         // 注册会话是副作用，必须位于全部模型校验及修复完成后，失败尝试不保存伪计划。
         var registration = sessions.registerPlan(request.rawPrompt(), request.contextDescription(),
@@ -218,7 +217,7 @@ public class NaturalEnhancementService {
      * Plan与正文共用任务理解和来源校验；题号仅验证问题与重要未知的关联，不证明提问必要性。
      * 不根据职业、词表或模型自报置信度删除问题，真实题答和原始要求仍完整进入最终生成。
      */
-    private void validatePlanningUnderstanding(PlanningProviderResponse response, NaturalPromptInput input) {
+    private PlanningProviderResponse validatePlanningUnderstanding(PlanningProviderResponse response, NaturalPromptInput input) {
         if (response.taskUnderstanding() == null) throw invalid("Plan缺少任务理解记录");
         var task = response.taskUnderstanding().resolve(input);
         Set<String> questions = response.questions().stream().map(PlanQuestion::id).collect(Collectors.toSet());
@@ -229,6 +228,19 @@ public class NaturalEnhancementService {
             linked.add(decision.questionId());
         }
         if (!linked.equals(questions)) throw invalid("Plan问题缺少对应的交付影响说明");
+        // 推荐只是一种UI建议。用户保留信息不能靠“常见值”填补；不删题、选项或答案，也不代用户作答。
+        // 同一问题关联多个未知时，只要其中包含用户信息就保守取消推荐；未分类记录同样保守处理。
+        Set<String> userInformation = task.openDecisions().stream()
+                .filter(decision -> decision.kind() == NaturalTaskUnderstanding.DecisionKind.USER_INFORMATION)
+                .map(NaturalTaskUnderstanding.OpenDecision::questionId).collect(Collectors.toSet());
+        List<PlanQuestion> normalized = response.questions().stream().map(question -> {
+            if (!userInformation.contains(question.id())) return question;
+            List<PlanOption> options = question.options().stream().map(option -> new PlanOption(option.id(), option.label(),
+                    option.description(), option.answer(), false, "")).toList();
+            return new PlanQuestion(question.id(), question.question(), question.hint(), question.type(), options,
+                    question.examples(), question.allowCustomAnswer());
+        }).toList();
+        return new PlanningProviderResponse(response.summary(), normalized, response.provider(), response.model(), response.mock(), task);
     }
 
     /** 旧快照内容只在当前权限仍允许时传给模型，不能用历史资料绕过本次路径排除。 */

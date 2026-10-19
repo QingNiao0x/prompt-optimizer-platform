@@ -35,7 +35,19 @@ public record NaturalTaskUnderstanding(String goal, String deliverable, List<Req
     public record Addition(String text, String benefit) { }
 
     /** 重要未知及其交付影响；Plan提问时关联真实题号，其余情况questionId可为空。 */
-    public record OpenDecision(String issue, String impact, String questionId) { }
+    public record OpenDecision(String issue, String impact, String questionId, DecisionKind kind) {
+        public OpenDecision { kind = kind == null ? DecisionKind.USER_INFORMATION : kind; }
+        /** 旧记录或未分类的未知保守视作用户保留信息，仅影响推荐显示，不建立事实。 */
+        public OpenDecision(String issue, String impact, String questionId) { this(issue, impact, questionId, DecisionKind.USER_INFORMATION); }
+    }
+
+    /** 模型候选的未知类型只用于收紧推荐能力，不能用于建立用户确认、事实或授权。 */
+    public enum DecisionKind {
+        /** 用户独有的现状、数值、资源边界或保留参数，不能推荐一个猜测值。 */
+        USER_INFORMATION,
+        /** 可讨论的执行方式或偏好，允许给出有依据且可拒绝的建议。 */
+        EXECUTION_CHOICE
+    }
 
     /**
      * 验证引用原句并补上服务端来源类别，不凭模型自报状态建立用户确认。

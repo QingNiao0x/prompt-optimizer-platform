@@ -24,7 +24,7 @@ public final class NaturalPromptInstructions {
             {"goal":"原定目标","deliverable":"原定交付；未指定时用合适的一般表达",
              "requirements":[{"text":"影响交付的原有要求","evidence":[{"sourceId":"taskSources中的id","quote":"该来源中的连续原句"}]}],
              "additions":[{"text":"拟议补充","benefit":"对原定交付的直接帮助"}],
-             "openDecisions":[{"issue":"重要未知","impact":"会改变什么结果","questionId":"Plan题号；未提问时为空"}]}。
+             "openDecisions":[{"issue":"重要未知","impact":"会改变什么结果","questionId":"Plan题号；未提问时为空","kind":"USER_INFORMATION或EXECUTION_CHOICE"}]}。
             taskSources只提供服务端来源编号和类别，id对应完整输入路径；从原输入引用，不编造来源或原句。
             只简记关键要求，不逐句复制原文；requirements、additions、openDecisions无对应内容时为空数组。
             原始提示词、全部来源和actualAnswers仍是完整依据，不能用本记录替代，也不能从引用存在推断已覆盖全部要求。
@@ -60,6 +60,8 @@ public final class NaturalPromptInstructions {
             充分需求允许questions为空；模糊需求也不等于全部字段都需补齐，不按身份、场景或框架凑题。
             每个问题在taskUnderstanding.openDecisions中记录同一questionId及其交付影响；
             没有需要本轮提问的未知可保留空questionId，不把建议或推荐写成实际用户答案。
+            用户独有的实际情况、数值、资源边界或保留参数属于USER_INFORMATION：保留选项和未知回答，不推荐猜测值。
+            可讨论的执行方式或偏好属于EXECUTION_CHOICE，才允许根据当前任务给建议；已委托的设计仍由执行者完成。
             保留全部独立重要未知，不通过截取前几题遗漏；最多64题是本次协议容量，
             超出容量应明确失败，不声称提问完整。界面分批展示，不设全局三题限制。
             选项须互斥且有真实选择价值；推荐仅是建议，给出与当前材料一致的推荐依据。

@@ -225,6 +225,29 @@ class NaturalEnhancementServiceTest {
                 .endsWith("不知道，请保留可选择范围");
     }
 
+    @Test
+    void unknownUserOwnedInformationMustNotRecommendAnInventedActualValue() {
+        provider.questions = List.of(new PlanQuestion("q1", "实际需要支持的并发量是多少？", "影响容量判断", PlanQuestionType.SINGLE_CHOICE,
+                List.of(new PlanOption("n100", "100", "尚未提供的实际量", "实际并发量为100", true, "该数值常见"),
+                        new PlanOption("unknown", "暂不确定", "保留未知", "实际并发量尚未确定", false)), List.of(), true));
+        assertThat(service.plan(planRequest()).questions().getFirst().options()).noneMatch(PlanOption::recommended);
+    }
+
+    @Test
+    void suggestedExecutionChoiceRemainsAvailableWithoutPromotingOtherUnknownUserInformation() {
+        var options = List.of(new PlanOption("a", "方式A", "依据任务推荐", "选择方式A", true, "便于当前交付"),
+                new PlanOption("b", "方式B", "另一种方式", "选择方式B", false));
+        provider.questions = List.of(new PlanQuestion("fact", "实际规模是多少？", "影响范围", PlanQuestionType.SINGLE_CHOICE, options, List.of(), true),
+                new PlanQuestion("choice", "倾向哪种呈现方式？", "影响表达", PlanQuestionType.SINGLE_CHOICE, options, List.of(), true));
+        provider.decisions = List.of(new NaturalTaskUnderstanding.OpenDecision("实际规模", "影响范围", "fact"),
+                new NaturalTaskUnderstanding.OpenDecision("呈现偏好", "影响表达", "choice", NaturalTaskUnderstanding.DecisionKind.EXECUTION_CHOICE));
+        var plan = service.plan(planRequest());
+        assertThat(plan.questions()).hasSize(2);
+        assertThat(plan.questions().getFirst().options()).noneMatch(PlanOption::recommended);
+        assertThat(plan.questions().get(1).options().getFirst().recommended()).isTrue();
+        assertThat(plan.questions().getFirst().options()).extracting(PlanOption::answer).containsExactly("选择方式A", "选择方式B");
+    }
+
     private OptimizationRequest request(String raw, PlanConfirmation confirmation, List<ContextFileInput> files, String model) {
         return new OptimizationRequest(raw, new ContextAnalysisRequest("", files),
                 new EnhancementOptions(TemplateCode.AUTO, false, true, false, PromptFormat.COMPACT),
