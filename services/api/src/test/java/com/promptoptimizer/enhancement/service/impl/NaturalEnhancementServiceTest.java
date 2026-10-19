@@ -209,6 +209,22 @@ class NaturalEnhancementServiceTest {
         assertThat(provider.enhanceCalls).isEqualTo(calls);
     }
 
+    @Test
+    void questionsMustLinkToTheirActualDecisionWithoutInventingAConfirmation() {
+        provider.questions = List.of(question("q1"));
+        provider.decisions = List.of();
+        assertThatThrownBy(() -> service.plan(planRequest())).isInstanceOf(ProviderException.class);
+        provider.decisions = List.of(new NaturalTaskUnderstanding.OpenDecision("收件对象", "影响交付", "absent"));
+        assertThatThrownBy(() -> service.plan(planRequest())).isInstanceOf(ProviderException.class);
+        provider.decisions = null;
+        var plan = service.plan(planRequest());
+        service.optimize(request("写一封邮件", new PlanConfirmation(plan.planId(), null,
+                List.of(new PlanAnswer("q1", "伪题干", "不知道，请保留可选择范围"))), List.of(), "fixture:model"));
+        assertThat(provider.last.actualAnswers().getFirst().answer()).isEqualTo("不知道，请保留可选择范围");
+        assertThat(provider.last.taskSources().stream().filter(s -> s.id().equals("actualAnswers.0")).findFirst().orElseThrow().text())
+                .endsWith("不知道，请保留可选择范围");
+    }
+
     private OptimizationRequest request(String raw, PlanConfirmation confirmation, List<ContextFileInput> files, String model) {
         return new OptimizationRequest(raw, new ContextAnalysisRequest("", files),
                 new EnhancementOptions(TemplateCode.AUTO, false, true, false, PromptFormat.COMPACT),
@@ -220,6 +236,7 @@ class NaturalEnhancementServiceTest {
 
     private static class StubProvider implements NaturalPromptProvider {
         List<PlanQuestion> questions = List.of();
+        List<NaturalTaskUnderstanding.OpenDecision> decisions;
         String body = "自然任务正文，保留独立条件、范围和原定交付物。";
         int planCalls;
         int enhanceCalls;
@@ -232,7 +249,10 @@ class NaturalEnhancementServiceTest {
         }
         public <T> T plan(NaturalPromptInput input, Function<PlanningProviderResponse, T> validation) {
             planCalls++;
-            return validation.apply(new PlanningProviderResponse("按原目标交付", questions, "mock", "fixture:model", true));
+            return validation.apply(new PlanningProviderResponse("按原目标交付", questions, "mock", "fixture:model", true,
+                    new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(),
+                            decisions == null ? questions.stream().map(q -> new NaturalTaskUnderstanding.OpenDecision(q.question(), "影响交付", q.id())).toList()
+                                    : decisions)));
         }
     }
 }

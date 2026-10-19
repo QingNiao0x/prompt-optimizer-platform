@@ -38,7 +38,8 @@ public class MockNaturalPromptProvider implements NaturalPromptProvider {
     public <T> T plan(NaturalPromptInput input, Function<PlanningProviderResponse, T> validation) {
         // 离线示例不凭关键词编造未知；真实提问由独立模型策略负责。
         T result = validation.apply(new PlanningProviderResponse("将按原定目标和交付要求生成自然提示词。", List.of(),
-                MODEL.provider(), MODEL.model(), true));
+                MODEL.provider(), MODEL.model(), true,
+                new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", List.of(), List.of(), List.of())));
         ModelCallLogger.completed("plan.generate", "mock", MODEL.model(), "MOCK_PROVIDER", true, 1, 1, 0, null);
         return result;
     }

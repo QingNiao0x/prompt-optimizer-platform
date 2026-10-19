@@ -133,6 +133,20 @@ class OpenAiCompatibleNaturalPromptProviderTest {
         assertThatThrownBy(() -> provider.enhance(input().withStrategyVersion("2"), Function.identity())).isInstanceOf(ProviderException.class);
         server.verify();
     }
+
+    @Test
+    void secondVersionPlanSharesTheSourceProtocolAndCanKeepZeroQuestions() throws Exception {
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(body.path("messages").get(0).path("content").asText()).contains("用户未委托执行者合理设计", "交付影响");
+        }).andRespond(withSuccess(response("{\"summary\":\"任务已有明确目标，直接交付邮件\",\"questions\":[],"
+                + "\"taskUnderstanding\":{\"goal\":\"写邮件\",\"requirements\":[],\"additions\":[],\"openDecisions\":[]}}"), MediaType.APPLICATION_JSON));
+        var result = provider.plan(input().withStrategyVersion("2"), Function.identity());
+        assertThat(result.questions()).isEmpty();
+        assertThat(result.taskUnderstanding().goal()).isEqualTo("写邮件");
+        assertThat(json.writeValueAsString(result)).doesNotContain("taskUnderstanding");
+        server.verify();
+    }
     private NaturalPromptInput input() {
         return new NaturalPromptInput("写邮件", new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
                 List.of(), List.of(), false, List.of(), null).withStrategyVersion("1");

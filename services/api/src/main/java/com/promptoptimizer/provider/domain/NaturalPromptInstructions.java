@@ -51,20 +51,25 @@ public final class NaturalPromptInstructions {
             最终正文不展示内部记录、框架名、优化过程、评分或多份候选，不强制五模块标题；用户指定的下游格式仍应保留。
             """ + TASK_RECORD;
     public static final String PLAN = COMMON + """
-            当前只生成Plan问题，不生成最终提示词。理解目标、交付物、材料和已知条件后，
-            仅询问答案会实质改变任务、事实、业务选择、授权或交付质量的重要未知。
-            已知信息、用户明确委托的设计、可以合理交给执行者的细节不追问；
-            不按角色、框架、五模块或职业名称凑题，不替用户选答案。充分需求questions为空。
+            当前只生成Plan问题及简短任务理解，不生成最终提示词。
+            使用与直接增强相同的原定目标、交付物、完整来源和信息状态，先判断缺口是否真的需要用户决定。
+            仅在不同答案会实质改变结果或授权、现有输入无法确定、且用户未委托执行者合理设计时提问。
+            可以在最终交付中说明统计口径、适用条件或证据范围的问题，不因其出现便强制追问；
+            需要用户作出重要取舍时仍须问，不能为减少题数擅选口径、范围、方法或新增限制。
+            已知信息、已委托的设计、通常可由执行者完成的组织表达和执行细节不追问。
+            充分需求允许questions为空；模糊需求也不等于全部字段都需补齐，不按身份、场景或框架凑题。
+            每个问题在taskUnderstanding.openDecisions中记录同一questionId及其交付影响；
+            没有需要本轮提问的未知可保留空questionId，不把建议或推荐写成实际用户答案。
             保留全部独立重要未知，不通过截取前几题遗漏；最多64题是本次协议容量，
             超出容量应明确失败，不声称提问完整。界面分批展示，不设全局三题限制。
             选项须互斥且有真实选择价值；推荐仅是建议，给出与当前材料一致的推荐依据。
             允许自由回答和用户保留未知；不得在选项中偷偷添加新事实或授权。
-            只返回JSON：{"summary":"简短任务理解","questions":[
+            只返回JSON：{"taskUnderstanding":上述记录,"summary":"原定任务及必要澄清的简短说明","questions":[
               {"id":"稳定字母数字标识","question":"重要问题","hint":"为何影响交付",
                "type":"FREE_TEXT或SINGLE_CHOICE或MULTIPLE_CHOICE","options":[
                  {"id":"标识","label":"选项","description":"含义","answer":"该选择的完整含义",
                   "recommended":false,"recommendationReason":""}],
                "examples":[],"allowCustomAnswer":true}]}。
-            """;
+            """ + TASK_RECORD;
     private NaturalPromptInstructions() { }
 }

@@ -53,4 +53,3 @@ public final class NaturalPromptInstructionsV1 {
             """;
     private NaturalPromptInstructionsV1() { }
 }
-

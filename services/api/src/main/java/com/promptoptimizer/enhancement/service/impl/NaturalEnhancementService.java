@@ -140,6 +140,7 @@ public class NaturalEnhancementService {
                 false, List.of(), model.publicId());
         PlanningProviderResponse response = provider.plan(input, candidate -> {
             validateQuestions(candidate);
+            validatePlanningUnderstanding(candidate, input);
             return candidate;
         });
         // 注册会话是副作用，必须位于全部模型校验及修复完成后，失败尝试不保存伪计划。
@@ -211,6 +212,23 @@ public class NaturalEnhancementService {
             }
             if (question.examples().stream().anyMatch(value -> !safeText(value, 1500))) throw invalid("Plan示例协议无效");
         }
+    }
+
+    /**
+     * Plan与正文共用任务理解和来源校验；题号仅验证问题与重要未知的关联，不证明提问必要性。
+     * 不根据职业、词表或模型自报置信度删除问题，真实题答和原始要求仍完整进入最终生成。
+     */
+    private void validatePlanningUnderstanding(PlanningProviderResponse response, NaturalPromptInput input) {
+        if (response.taskUnderstanding() == null) throw invalid("Plan缺少任务理解记录");
+        var task = response.taskUnderstanding().resolve(input);
+        Set<String> questions = response.questions().stream().map(PlanQuestion::id).collect(Collectors.toSet());
+        Set<String> linked = new HashSet<>();
+        for (var decision : task.openDecisions()) {
+            if (decision.questionId() == null || decision.questionId().isBlank()) continue;
+            if (!questions.contains(decision.questionId())) throw invalid("重要未知引用了不存在的Plan题号");
+            linked.add(decision.questionId());
+        }
+        if (!linked.equals(questions)) throw invalid("Plan问题缺少对应的交付影响说明");
     }
 
     /** 旧快照内容只在当前权限仍允许时传给模型，不能用历史资料绕过本次路径排除。 */

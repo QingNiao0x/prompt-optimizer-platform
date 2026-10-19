@@ -72,13 +72,16 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     @Override
     public <T> T plan(NaturalPromptInput input, Function<PlanningProviderResponse, T> validation) {
-        return invoke(input, NaturalPromptInstructions.PLAN, "plan.generate", (body, metadata) -> {
+        if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
+        String instruction = NaturalPromptInstructionsV1.VERSION.equals(input.strategyVersion())
+                ? NaturalPromptInstructionsV1.PLAN : NaturalPromptInstructions.PLAN;
+        return invoke(input, instruction, "plan.generate", (body, metadata) -> {
             if (!body.path("questions").isArray()) throw invalid("Plan问题列表无效");
             try {
                 List<PlanQuestion> questions = json.convertValue(body.get("questions"),
                         json.getTypeFactory().constructCollectionType(List.class, PlanQuestion.class));
                 return validation.apply(new PlanningProviderResponse(requiredText(body, "summary"),
-                        questions, metadata.provider(), metadata.model(), false));
+                        questions, metadata.provider(), metadata.model(), false, understanding(body, input)));
             } catch (IllegalArgumentException failure) {
                 throw invalid("Plan问题协议无效");
             }
