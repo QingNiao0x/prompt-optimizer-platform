@@ -7,7 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
-/** 完整示范必须满足与真实增强相同的来源、全部题答和正文锚点协议，不能降低保护以便示范通过。 */
+/**
+ * 完整示范必须满足与真实增强相同的来源、全部题答和正文锚点协议，不能降低保护以便示范通过。
+ *
+ * @author QingNiao
+ * @since 0.1.0
+ */
 class NaturalPromptDemonstrationsTest {
     private final ObjectMapper json = new ObjectMapper();
 
@@ -37,12 +42,13 @@ class NaturalPromptDemonstrationsTest {
     }
 
     @Test
-    void matchingAnswerTextCannotHideAnOmittedIndependentAnswerSource() throws Exception {
+    void otherValidEvidenceCannotHideAnOmittedIndependentAnswerSource() throws Exception {
         var examples = examples();
         ((ArrayNode) examples.get(1).path("output").path("taskUnderstanding").path("requirements")).remove(2);
         assertThatThrownBy(() -> NaturalPromptDemonstrations.render(examples)).isInstanceOf(NaturalTaskReview.MissingSources.class);
     }
 
+    /** 每次读取独立副本供反例修改，避免破坏生产缓存的固定示范。 */
     private ArrayNode examples() throws Exception {
         try (var input = getClass().getResourceAsStream("/prompts/natural/rewrite-demonstrations.json")) {
             return (ArrayNode) json.readTree(input);

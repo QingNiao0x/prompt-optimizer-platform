@@ -1,0 +1,408 @@
+{
+  "modelCodeModified": false,
+  "scope": "给定合成数据实际运行；不同表头的已说明策略不自动当作失败，结果与额外加工负担另外核对",
+  "checks": [
+    {
+      "arm": "RAW",
+      "variant": "BASIC",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": true,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ],
+        [
+          "3",
+          "丙",
+          "多行\n内容"
+        ]
+      ],
+      "stdout": "[*] 找到 2 个 CSV 文件：\n    - a.csv\n    - b.csv\n[+] 已处理 a.csv（编码 utf-8-sig，2 行数据）\n[+] 已处理 b.csv（编码 utf-8-sig，2 行数据）\n\n===== 完成 =====\n输出文件：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\RAW\\BASIC\\result.csv\n总数据行：4\n保留行数：3\n去重行数：1\n",
+      "stderr": ""
+    },
+    {
+      "arm": "RAW",
+      "variant": "UTF8_BOM",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": true,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ],
+        [
+          "3",
+          "丙",
+          "多行\n内容"
+        ]
+      ],
+      "stdout": "[*] 找到 2 个 CSV 文件：\n    - a.csv\n    - b.csv\n[+] 已处理 a.csv（编码 utf-8-sig，2 行数据）\n[+] 已处理 b.csv（编码 utf-8-sig，2 行数据）\n\n===== 完成 =====\n输出文件：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\RAW\\UTF8_BOM\\result.csv\n总数据行：4\n保留行数：3\n去重行数：1\n",
+      "stderr": ""
+    },
+    {
+      "arm": "RAW",
+      "variant": "REORDERED_COLUMNS",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": null,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ],
+        [
+          "他说“好”",
+          "乙",
+          "2"
+        ],
+        [
+          "多行\n内容",
+          "丙",
+          "3"
+        ]
+      ],
+      "stdout": "[*] 找到 2 个 CSV 文件：\n    - a.csv\n    - b.csv\n[+] 已处理 a.csv（编码 utf-8-sig，2 行数据）\n[!] 警告：b.csv 的表头与其他文件不一致，仍按列位置合并。\n[+] 已处理 b.csv（编码 utf-8-sig，2 行数据）\n\n===== 完成 =====\n输出文件：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\RAW\\REORDERED_COLUMNS\\result.csv\n总数据行：4\n保留行数：4\n去重行数：0\n",
+      "stderr": ""
+    },
+    {
+      "arm": "RAW",
+      "variant": "ORIGINAL_COLLISION",
+      "exitCode": 0,
+      "originalFilesUnchanged": false,
+      "expectedRowsExact": null,
+      "rows": [],
+      "stdout": "[*] 找到 1 个 CSV 文件：\n    - b.csv\n[+] 已处理 b.csv（编码 utf-8-sig，2 行数据）\n\n===== 完成 =====\n输出文件：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\RAW\\ORIGINAL_COLLISION\\input\\a.csv\n总数据行：2\n保留行数：2\n去重行数：0\n",
+      "stderr": ""
+    },
+    {
+      "arm": "V4",
+      "variant": "BASIC",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": true,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ],
+        [
+          "3",
+          "丙",
+          "多行\n内容"
+        ]
+      ],
+      "stdout": "找到 2 个 CSV 文件:\n  - E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\BASIC\\input\\a.csv\n  - E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\BASIC\\input\\b.csv\n\n基准表头取自: E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\BASIC\\input\\a.csv\n表头: ['id', 'name', 'note']\n\n===== 合并完成 =====\n输出文件      : E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\BASIC\\result.csv\n读取数据行数  : 4\n去重后写入行数: 3\n去重掉的行数  : 1\n",
+      "stderr": ""
+    },
+    {
+      "arm": "V4",
+      "variant": "UTF8_BOM",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": false,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ]
+      ],
+      "stdout": "找到 2 个 CSV 文件:\n  - E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\UTF8_BOM\\input\\a.csv\n  - E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\UTF8_BOM\\input\\b.csv\n\n基准表头取自: E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\UTF8_BOM\\input\\a.csv\n表头: ['\\ufeffid', 'name', 'note']\n[警告] 表头不一致，已跳过: E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\UTF8_BOM\\input\\b.csv\n        该文件表头: ['id', 'name', 'note']\n\n===== 合并完成 =====\n输出文件      : E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\UTF8_BOM\\result.csv\n读取数据行数  : 2\n去重后写入行数: 2\n去重掉的行数  : 0\n因表头不一致被跳过的文件(1): ['E:\\\\MyProject\\\\prompt-optimizer-platform\\\\tmp\\\\natural-prepared-exemplars-20261022\\\\artifact-checks\\\\V4\\\\UTF8_BOM\\\\input\\\\b.csv']\n",
+      "stderr": ""
+    },
+    {
+      "arm": "V4",
+      "variant": "REORDERED_COLUMNS",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": null,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ]
+      ],
+      "stdout": "找到 2 个 CSV 文件:\n  - E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\REORDERED_COLUMNS\\input\\a.csv\n  - E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\REORDERED_COLUMNS\\input\\b.csv\n\n基准表头取自: E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\REORDERED_COLUMNS\\input\\a.csv\n表头: ['id', 'name', 'note']\n[警告] 表头不一致，已跳过: E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\REORDERED_COLUMNS\\input\\b.csv\n        该文件表头: ['note', 'name', 'id']\n\n===== 合并完成 =====\n输出文件      : E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\REORDERED_COLUMNS\\result.csv\n读取数据行数  : 2\n去重后写入行数: 2\n去重掉的行数  : 0\n因表头不一致被跳过的文件(1): ['E:\\\\MyProject\\\\prompt-optimizer-platform\\\\tmp\\\\natural-prepared-exemplars-20261022\\\\artifact-checks\\\\V4\\\\REORDERED_COLUMNS\\\\input\\\\b.csv']\n",
+      "stderr": ""
+    },
+    {
+      "arm": "V4",
+      "variant": "ORIGINAL_COLLISION",
+      "exitCode": 1,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": null,
+      "rows": [],
+      "stdout": "[错误] 输出文件与原始 CSV 同名，拒绝覆盖: E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V4\\ORIGINAL_COLLISION\\input\\a.csv\n",
+      "stderr": ""
+    },
+    {
+      "arm": "V11",
+      "variant": "BASIC",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": true,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ],
+        [
+          "3",
+          "丙",
+          "多行\n内容"
+        ]
+      ],
+      "stdout": "[信息] 基准表头来自：a.csv\n[信息] 表头：['id', 'name', 'note']\n\n===== 合并完成 =====\n合并文件数：2 个\n写入数据行：3 行（不含表头）\n去除重复行：1 行\n输出文件：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V11\\BASIC\\result.csv\n",
+      "stderr": ""
+    },
+    {
+      "arm": "V11",
+      "variant": "UTF8_BOM",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": true,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ],
+        [
+          "3",
+          "丙",
+          "多行\n内容"
+        ]
+      ],
+      "stdout": "[信息] 基准表头来自：a.csv\n[信息] 表头：['id', 'name', 'note']\n\n===== 合并完成 =====\n合并文件数：2 个\n写入数据行：3 行（不含表头）\n去除重复行：1 行\n输出文件：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V11\\UTF8_BOM\\result.csv\n",
+      "stderr": ""
+    },
+    {
+      "arm": "V11",
+      "variant": "REORDERED_COLUMNS",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": null,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ]
+      ],
+      "stdout": "[信息] 基准表头来自：a.csv\n[信息] 表头：['id', 'name', 'note']\n\n===== 合并完成 =====\n合并文件数：1 个\n写入数据行：2 行（不含表头）\n去除重复行：0 行\n跳过文件数：1 个（表头不一致）\n  - b.csv\n输出文件：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V11\\REORDERED_COLUMNS\\result.csv\n",
+      "stderr": "[警告] 表头不一致，跳过文件：b.csv\n        该文件表头：['note', 'name', 'id']\n        基准表头  ：['id', 'name', 'note']\n"
+    },
+    {
+      "arm": "V11",
+      "variant": "ORIGINAL_COLLISION",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": null,
+      "rows": [],
+      "stdout": "[信息] 基准表头来自：a.csv\n[信息] 表头：['id', 'name', 'note']\n\n===== 合并完成 =====\n合并文件数：2 个\n写入数据行：3 行（不含表头）\n去除重复行：1 行\n输出文件：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V11\\ORIGINAL_COLLISION\\input\\a(1).csv\n",
+      "stderr": ""
+    },
+    {
+      "arm": "V12",
+      "variant": "BASIC",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": true,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ],
+        [
+          "3",
+          "丙",
+          "多行\n内容"
+        ]
+      ],
+      "stdout": "[信息] 找到 2 个 CSV 文件，按文件名顺序处理：\n       - a.csv\n       - b.csv\n\n[完成] 输出文件：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V12\\BASIC\\result.csv\n       读取数据行：4\n       保留唯一行：3\n       去除重复行：1\n       输出列数：3\n",
+      "stderr": ""
+    },
+    {
+      "arm": "V12",
+      "variant": "UTF8_BOM",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": true,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ],
+        [
+          "3",
+          "丙",
+          "多行\n内容"
+        ]
+      ],
+      "stdout": "[信息] 找到 2 个 CSV 文件，按文件名顺序处理：\n       - a.csv\n       - b.csv\n\n[完成] 输出文件：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V12\\UTF8_BOM\\result.csv\n       读取数据行：4\n       保留唯一行：3\n       去除重复行：1\n       输出列数：3\n",
+      "stderr": ""
+    },
+    {
+      "arm": "V12",
+      "variant": "REORDERED_COLUMNS",
+      "exitCode": 0,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": null,
+      "rows": [
+        [
+          "id",
+          "name",
+          "note"
+        ],
+        [
+          "1",
+          "甲",
+          "含,逗号"
+        ],
+        [
+          "2",
+          "乙",
+          "他说“好”"
+        ],
+        [
+          "3",
+          "丙",
+          "多行\n内容"
+        ]
+      ],
+      "stdout": "[信息] 找到 2 个 CSV 文件，按文件名顺序处理：\n       - a.csv\n       - b.csv\n[警告] 以下文件的列结构与第一个文件不一致：\n       - b.csv\n[信息] 将按列名并集对齐，缺失列填空字符串。\n\n[完成] 输出文件：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V12\\REORDERED_COLUMNS\\result.csv\n       读取数据行：4\n       保留唯一行：3\n       去除重复行：1\n       输出列数：3\n",
+      "stderr": ""
+    },
+    {
+      "arm": "V12",
+      "variant": "ORIGINAL_COLLISION",
+      "exitCode": 1,
+      "originalFilesUnchanged": true,
+      "expectedRowsExact": null,
+      "rows": [],
+      "stdout": "",
+      "stderr": "[错误] 输出文件已存在：E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-prepared-exemplars-20261022\\artifact-checks\\V12\\ORIGINAL_COLLISION\\input\\a.csv\n       为避免覆盖，请换一个输出名，或加 --force 明确覆盖。\n"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "stageAudits": [
+    {
+      "batch": "natural-completion-exemplars",
+      "actualCalls": 57,
+      "counts": {
+        "GENERATION": 21,
+        "PLAN": 6,
+        "EXECUTION": 24,
+        "REVIEW": 6
+      },
+      "allCallsWithinFrozenScope": true
+    },
+    {
+      "batch": "natural-action-exemplars",
+      "actualCalls": 56,
+      "counts": {
+        "GENERATION": 23,
+        "PLAN": 6,
+        "EXECUTION": 27
+      },
+      "allCallsWithinFrozenScope": true
+    },
+    {
+      "batch": "natural-prepared-exemplars",
+      "actualCalls": 95,
+      "counts": {
+        "GENERATION": 36,
+        "PLAN": 10,
+        "EXECUTION": 39,
+        "REVIEW": 10
+      },
+      "allCallsWithinFrozenScope": true
+    }
+  ],
+  "totalActualCalls": 208,
+  "totalTokens": 500215,
+  "qualityRetries": 0,
+  "previousClosedActual": 686,
+  "cumulativeActual": 894,
+  "formalLimits": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "actualAfter": {
+    "total": 894,
+    "baseline": 70,
+    "candidate": 824
+  },
+  "currentTaskAuthorization": 1024,
+  "allocatedToClosedStages": 272,
+  "actualWithinTask": 208,
+  "closedAllocatedUnused": 64,
+  "freshUnallocatedForSameTask": 752,
+  "historicalBalancesTransferred": 0,
+  "noCallsAfterStageClosure": true,
+  "noNewAccounts": true
+}

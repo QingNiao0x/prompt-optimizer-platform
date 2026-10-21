@@ -67,7 +67,7 @@
 
 上下文普通分析、模型目录、认证与 Plan 事件仍沿用已有 V1 接口；不因为版本号不同复制这些业务模块。
 
-PromptDocument的resultKind区分TEXT和SECTIONS，generationPipeline区分NATURAL和LEGACY，chainVersion记录生成契约。当前支持NATURAL/1、NATURAL/2、NATURAL/3、NATURAL/4、LEGACY/1和LEGACY/2；LEGACY/2表示五模块投影，旧记录缺省LEGACY/1。新请求使用NATURAL/4，自然历史再次增强显式使用保存版本。旧COMPACT不能被排版字段误判为新自然链。未知版本再次增强返回409 / RESULT_VERSION_UNSUPPORTED。
+PromptDocument的resultKind区分TEXT和SECTIONS，generationPipeline区分NATURAL和LEGACY，chainVersion记录生成契约。正式新请求仍使用NATURAL/4，兼容NATURAL/1—3及LEGACY/1、2；LEGACY/2表示五模块投影，旧记录缺省LEGACY/1。2026-10-22的[内部示范对照](../testing/自然增强实质补全与内部示范对照验收-2026-10-22.md)还保留NATURAL/7—12，仅供已保存的合成评测历史按原策略重放，未采用为默认，浏览器没有版本或示范开关。自然历史再次增强显式使用保存版本，候选兼容不表示质量通过。旧COMPACT不能被排版字段误判为新自然链。未知版本再次增强返回409 / RESULT_VERSION_UNSUPPORTED。
 
 TEXT 的 wire 响应不包含 sections；前端为兼容集合操作将其归一为空集合，不构造假段落。旧 V1 历史列表只查询 SECTIONS，直接读取新正文会返回稳定版本冲突；V2 列表和详情同时支持两类结果。上线时前后端需同批更新，不能让 V2 前端连接未升级的后端。
 

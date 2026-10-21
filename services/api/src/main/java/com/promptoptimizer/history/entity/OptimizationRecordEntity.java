@@ -52,7 +52,8 @@ public class OptimizationRecordEntity {
      */
     // V2可选resultKind(TEXT/SECTIONS)、generationPipeline(NATURAL/LEGACY)、chainVersion及framework；
     // TEXT没有伪造sections，缺少链路字段的旧COMPACT仍按LEGACY读取。数据库不强制JSON键结构。
-    // NATURAL/1与NATURAL/2冻结旧指导，NATURAL/3优先落实目标作品与适用上下文；再次增强按保存版本分发，不保存内部引文记录。
+    // NATURAL/1—3冻结旧指导，默认NATURAL/4包含同次覆盖检查；7—12仅保留受控评测记录的版本重放，未采用为默认策略。
+    // 再次增强按保存版本分发；内部任务理解、覆盖、示范引用均不持久化，不把候选版本存在视为质量通过。
     // 可选selectedModelId为服务端公开模型标识；editRevision缺省0，generatedPrompt保留首次编辑前正文，editedAt为UTC时间。
     private Map<String, Object> resultMetadata = new LinkedHashMap<>();
 

@@ -1,0 +1,77 @@
+{
+  "method": "本批实际使用的Markdown标题、强调、列表及表格分隔符去除后计非空白可见字符，标点和数字计入；另报告原始字符及汉字，未据模型自报通过。",
+  "checks": [
+    {
+      "caseId": "PROGRESS_MESSAGE",
+      "arm": "RAW",
+      "limit": 300,
+      "rawCharacters": 108,
+      "hanCharacters": 95,
+      "visibleNonWhitespaceCharacters": 108,
+      "withinFrozenLimit": true
+    },
+    {
+      "caseId": "PROGRESS_MESSAGE",
+      "arm": "V4",
+      "limit": 300,
+      "rawCharacters": 219,
+      "hanCharacters": 153,
+      "visibleNonWhitespaceCharacters": 179,
+      "withinFrozenLimit": true
+    },
+    {
+      "caseId": "PROGRESS_MESSAGE",
+      "arm": "V11",
+      "limit": 300,
+      "rawCharacters": 124,
+      "hanCharacters": 77,
+      "visibleNonWhitespaceCharacters": 87,
+      "withinFrozenLimit": true
+    },
+    {
+      "caseId": "PROGRESS_MESSAGE",
+      "arm": "V12",
+      "limit": 300,
+      "rawCharacters": 166,
+      "hanCharacters": 117,
+      "visibleNonWhitespaceCharacters": 150,
+      "withinFrozenLimit": true
+    },
+    {
+      "caseId": "SUPPORT_WEEKLY",
+      "arm": "RAW",
+      "limit": 500,
+      "rawCharacters": 622,
+      "hanCharacters": 426,
+      "visibleNonWhitespaceCharacters": 576,
+      "withinFrozenLimit": false
+    },
+    {
+      "caseId": "SUPPORT_WEEKLY",
+      "arm": "V4",
+      "limit": 500,
+      "rawCharacters": 779,
+      "hanCharacters": 423,
+      "visibleNonWhitespaceCharacters": 588,
+      "withinFrozenLimit": false
+    },
+    {
+      "caseId": "SUPPORT_WEEKLY",
+      "arm": "V11",
+      "limit": 500,
+      "rawCharacters": 700,
+      "hanCharacters": 446,
+      "visibleNonWhitespaceCharacters": 547,
+      "withinFrozenLimit": false
+    },
+    {
+      "caseId": "SUPPORT_WEEKLY",
+      "arm": "V12",
+      "limit": 500,
+      "rawCharacters": 491,
+      "hanCharacters": 311,
+      "visibleNonWhitespaceCharacters": 411,
+      "withinFrozenLimit": true
+    }
+  ]
+}
