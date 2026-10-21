@@ -3,17 +3,16 @@ import type { OptimizationRequest, OptimizationResult } from '../src/types/api';
 import { mockAuthentication } from './authFixture';
 import { openWorkbenchPane } from './workbenchPanes';
 
-const rule = '明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。';
 const raw = '写一封发给客户的项目延期邮件，新日期由我确认，不承诺额外赔偿。';
 const fixture = (): OptimizationResult => ({
   resultKind: 'TEXT', generationPipeline: 'NATURAL', chainVersion: '1', framework: 'ICIO',
   recordId: '11111111-1111-4111-8111-111111111111', editRevision: 0,
-  optimizedPrompt: '请写一封诚恳的客户延期邮件，保留新日期未定的状态，不承诺赔偿。\n\n' + rule,
+  optimizedPrompt: '请写一封诚恳的客户延期邮件，保留新日期未定的状态，不承诺赔偿。',
   sections: [], promptFormat: 'COMPACT', templateCode: 'GENERAL',
   contextReport: { customDescription: '', technologyStack: [], dependencies: [], directoryTree: [],
     fileSnippets: [], warnings: [], redactions: [], analysisVersion: 'fixture' },
-  ambiguities: [], appliedConstraints: [rule],
-  constraintGroups: { platformMandatory: [rule], taskSpecific: [], additionalPermissions: [] },
+  ambiguities: [], appliedConstraints: [],
+  constraintGroups: { platformMandatory: [], taskSpecific: [], additionalPermissions: [] },
   provider: { provider: 'mock', model: 'fixture', mock: true }, latencyMs: 1,
 });
 
@@ -64,7 +63,7 @@ const setup = async (page: Page, planning: 'off' | 'zero' | 'question') => {
     }
     if (path.startsWith('/api/v2/optimization-history/')) {
       return route.fulfill({ json: { data: { ...state.current, id: state.current.recordId, rawPrompt: raw,
-        contextSummary: {}, includeExamples: false, includePermissionBoundaries: true, conversationHistory: [],
+        contextSummary: {}, includePermissionBoundaries: true, conversationHistory: [],
         permissionPolicy: {}, providerName: 'mock', modelName: 'fixture', mock: true,
         latencyMs: 1, createdAt: '2026-10-19T00:00:00Z' } } });
     }
@@ -79,6 +78,21 @@ const generate = async (page: Page, plan = false) => {
   await page.getByLabel('原始提示词', { exact: true }).fill(raw);
   await page.getByRole('button', { name: plan ? '先确认并增强' : '直接增强提示词', exact: true }).click();
 };
+
+test('移除示例参考开关，原文中的示例要求随直接增强请求保留', async ({ page }) => {
+  const state = await setup(page, 'off');
+  const request = '解释排序方法，提供输入与预期输出示例，不虚构业务数据。';
+  await page.goto('/workbench');
+  await openWorkbenchPane(page, 'intent');
+  await expect(page.getByRole('switch', { name: /示例/ })).toHaveCount(0);
+  await expect(page.getByText('示例参考', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('switch', { name: 'Plan 确认', exact: true })).toHaveCount(1);
+  await page.getByLabel('原始提示词', { exact: true }).fill(request);
+  await page.getByRole('button', { name: '直接增强提示词', exact: true }).click();
+  await expect.poll(() => state.requests.length).toBe(1);
+  expect(state.requests[0]!.rawPrompt).toBe(request);
+  expect(state.requests[0]!.enhancement).not.toHaveProperty('includeExamples');
+});
 
 test('自然正文编辑、失败保稿、保存复制和持久化撤销保持同一有效内容', async ({ page }) => {
   const state = await setup(page, 'off');
@@ -97,7 +111,7 @@ test('自然正文编辑、失败保稿、保存复制和持久化撤销保持�
   await expect(page.locator('.edit-error')).toHaveText('记录版本已变化，请保留修改稿后核对。');
   state.failSave = false;
   await page.getByRole('button', { name: '保存修改', exact: true }).click();
-  await expect(page.getByTestId('compact-prompt')).toHaveText(edit + '\n\n' + rule);
+  await expect(page.getByTestId('compact-prompt')).toHaveText(edit);
   await page.bringToFront();
   await page.locator('.copy-main-button').click();
   await expect(page.locator('.copy-main-button')).toContainText('已复制');

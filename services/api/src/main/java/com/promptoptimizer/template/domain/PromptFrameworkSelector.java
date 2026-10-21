@@ -86,10 +86,9 @@ public final class PromptFrameworkSelector {
         return selection(task, PromptFramework.APE, "未识别专门组织需求，保守明确行动、目的与期望");
     }
 
-    /** 当前框架指导进入同次生成；示例权限与重要未知仍由共享契约决定。 */
+    /** 当前框架指导进入同次生成；重要未知仍由共享任务视图保留，不因框架自行选值。 */
     private static PromptFrameworkSelection selection(EffectiveTaskView task, PromptFramework framework, String reason) {
-        String boundary = task == null ? "" : task.examples().required()
-                ? "示例按既有示例契约提供，不把演示升级为事实。" : "当前示例契约未授权附加示例，不因框架名称增加示例。";
+        String boundary = "";
         if (task != null && !task.pendingDecisions().isEmpty())
             boundary += "重要未决参数继续保持原状态，仅限制依赖内容，不能为满足框架自行选值。";
         // 内部分段类型用于协议校验，不作为模型必须逐节填满的正文大纲。

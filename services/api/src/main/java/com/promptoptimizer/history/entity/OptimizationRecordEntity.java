@@ -42,7 +42,14 @@ public class OptimizationRecordEntity {
     /** 脱敏上下文 JSON 对象，含项目描述、技术栈/依赖条目、目录/警告/脱敏字符串数组和分析版本；不含文件正文。 */
     private Map<String, Object> contextSnapshot;
 
-    /** 结果 JSON 对象，保存段落、歧义/约束数组、Provider/调用 ID、modelVersion 版本快照、增强选项、会话及可选 Plan 确认；顶层 promptFormat 为 COMPACT/STRUCTURED，旧记录缺省按 STRUCTURED 展示。enhancementOptions.promptFormat 仅在用户显式选择时保存同一枚举，缺省表示重新增强时自动选择。可选 constraintGroups 对象含 platformMandatory、taskSpecific、additionalPermissions 三个字符串数组，来源于服务端；旧记录缺省表示来源未知，不用于关闭安全过滤。JSON 键和值域由应用校验，数据库不强制结构。 */
+    /**
+     * 结果 JSON 对象，保存段落、歧义/约束数组、Provider/调用 ID、modelVersion、增强选项、会话及可选 Plan 确认。
+     * enhancementOptions 当前包含 templateCode、includeConversationHistory、includePermissionBoundaries；
+     * 可选 promptFormat 仅保存显式排版选择，旧 includeExamples 键不再读写，历史正文及原有 JSON 不回改。
+     * 顶层 promptFormat 为 COMPACT/STRUCTURED，旧记录缺省按 STRUCTURED 展示；请求缺省表示再次增强时自动选择。
+     * 可选 constraintGroups 含 platformMandatory、taskSpecific、additionalPermissions 三个字符串数组，均来自服务端；
+     * 旧记录缺省表示来源未知，不用于关闭安全过滤。JSON 键和值域由应用校验，数据库不强制结构。
+     */
     // V2可选resultKind(TEXT/SECTIONS)、generationPipeline(NATURAL/LEGACY)、chainVersion及framework；
     // TEXT没有伪造sections，缺少链路字段的旧COMPACT仍按LEGACY读取。数据库不强制JSON键结构。
     // NATURAL/1与NATURAL/2冻结旧指导，NATURAL/3优先落实目标作品与适用上下文；再次增强按保存版本分发，不保存内部引文记录。

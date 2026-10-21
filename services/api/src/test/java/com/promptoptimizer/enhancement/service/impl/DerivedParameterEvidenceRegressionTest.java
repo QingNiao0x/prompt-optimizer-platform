@@ -125,7 +125,7 @@ class DerivedParameterEvidenceRegressionTest {
                 PlanningFactCategory.BUSINESS_RULE, "docs/独立口径.md", value)).toList();
         return new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法方案和指标表。", "核对口径。", "示例"),
-                List.of(), ANSWERS, true, List.of("不得编造数据。"), false, 1, RAW, facts, List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法方案和指标表。", "核对口径。"),
+                List.of(), ANSWERS, true, List.of("不得编造数据。"), 1, RAW, facts, List.of());
     }
 }

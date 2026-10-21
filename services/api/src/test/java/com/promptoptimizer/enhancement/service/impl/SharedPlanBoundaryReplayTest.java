@@ -29,15 +29,15 @@ class SharedPlanBoundaryReplayTest {
                 json.treeToValue(source.path("assessment"), TaskEnhancementAssessment.class));
         var result = new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "按原文交付。", "保留原意。", "遵守示例选择。"),
-                List.of(), answers, true, List.of(), false, 1, fixture.path("rawPrompt").asText());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "按原文交付。", "保留原意。"),
+                List.of(), answers, true, List.of(), 1, fixture.path("rawPrompt").asText());
         var bound = result.ambiguities().stream().filter(value -> value.startsWith("已委托提出拟议设计，实际采用参数仍未确认：")).toList();
         assertThat(bound).hasSize(answers.size()).allSatisfy(value ->
                 assertThat(value).doesNotContain("用户说明：不确认任何既有参数"));
         for (var answer : answers) assertThat(String.join("\n", bound)).contains(answer.question());
         assertThat(result.optimizedPrompt()).contains("不确认任何既有参数");
         assertThat(EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO,
-                answers, List.of(), false).confirmedDecisions()).extracting(value -> value.answer())
+                answers, List.of()).confirmedDecisions()).extracting(value -> value.answer())
                 .containsExactlyElementsOf(answers.stream().map(PlanAnswer::answer).toList());
     }
 
@@ -62,8 +62,8 @@ class SharedPlanBoundaryReplayTest {
                 List.of(), List.of(), json.treeToValue(source.path("assessment"), TaskEnhancementAssessment.class));
         var result = new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "按原文交付。", "保留原意。", "遵守示例选择。"),
-                List.of(), answers, true, List.of(), false, 1, fixture.path("rawPrompt").asText());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "按原文交付。", "保留原意。"),
+                List.of(), answers, true, List.of(), 1, fixture.path("rawPrompt").asText());
         assertThat(result.ambiguities().stream().filter(value -> value.startsWith("已委托提出拟议设计，实际采用参数仍未确认：")))
                 .hasSize(answers.size()).allSatisfy(value ->
                         assertThat(value).contains("用户说明：不确认任何既有参数"));

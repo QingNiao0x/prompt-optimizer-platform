@@ -43,7 +43,7 @@ class CandidateTwentySevenReplayTest {
         }
         var input = JSON.readTree(evidence.resolve("real/Q05-NATURAL/input.json").toFile());
         List<PlanAnswer> answers = JSON.readerForListOf(PlanAnswer.class).readValue(input.path("planConfirmation").path("answers"));
-        var task = EffectiveTaskViewFactory.create(input.path("rawPrompt").asText(), TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(input.path("rawPrompt").asText(), TemplateCode.AUTO, answers, List.of());
         var before = new EnumMap<>(sections); var originalView = task.modelInput();
         PlanDecisionIntegrator.integrate(sections, task);
         assertThat(sections).isEqualTo(before);
@@ -66,11 +66,11 @@ class CandidateTwentySevenReplayTest {
                 JSON.readerForListOf(String.class).readValue(model.path("ambiguities")), List.of(),
                 JSON.treeToValue(model.path("assessment"), TaskEnhancementAssessment.class));
         var empty = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "EMPTY");
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
         var result = new OptimizationResultAssembler().assemble(response, empty,
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw), List.of(), answers, true,
                 new ConstraintCompleterImpl().completeForTask(empty, PermissionPolicyInput.empty(), true,
-                        TaskIntentResolver.resolve(TemplateCode.AUTO, raw)), false, 0, raw, List.of(), List.of(), task);
+                        TaskIntentResolver.resolve(TemplateCode.AUTO, raw)), 0, raw, List.of(), List.of(), task);
         assertThat(result.optimizedPrompt()).doesNotContain("\n- 这是尚未实施的研究。", "\n- 我没有额外真实数据",
                 "\n- " + DELEGATION);
         assertThat(result.sections()).filteredOn(section -> section.type() == PromptSectionType.BACKGROUND)
@@ -150,7 +150,7 @@ class CandidateTwentySevenReplayTest {
     /** 每个反例绑定实际类别问题，局部指令不能被另一主题升级为整体委托。 */
     private EffectiveTaskView task(String answer) {
         return EffectiveTaskViewFactory.create(RAW, TemplateCode.AUTO,
-                List.of(new PlanAnswer("category", "4 类任务具体指哪四类？", answer)), List.of(), false);
+                List.of(new PlanAnswer("category", "4 类任务具体指哪四类？", answer)), List.of());
     }
 
     /** 使用四个正常责任段，覆盖判断走生产组装方法而非测试专用去重器。 */

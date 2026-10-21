@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @since 0.1.0
  */
 class PromptDeliverableBoundaryTest {
-    private final PromptTemplate template = new PromptTemplate(TemplateCode.GENERAL, "原定交付。", "保留要求。", "示例。");
+    private final PromptTemplate template = new PromptTemplate(TemplateCode.GENERAL, "原定交付。", "保留要求。");
 
     @ParameterizedTest
     @ValueSource(strings = {"撰写研究生论文方法部分，说明研究 Plan 问答对提示词质量的影响。",

@@ -42,7 +42,6 @@ const {
   rawPrompt,
   customDescription,
   files,
-  includeExamples,
   promptFormat,
   availableModels,
   selectedModelId,
@@ -787,7 +786,6 @@ onBeforeUnmount(() => {
         v-show="showIntentPane"
         class="glass-panel intent-column"
         :raw-prompt="rawPrompt"
-        :include-examples="includeExamples"
         :structured-prompt="promptFormat === 'STRUCTURED'"
         :available-models="availableModels"
         :selected-model-id="selectedModelId"
@@ -798,7 +796,6 @@ onBeforeUnmount(() => {
         :is-optimizing="isOptimizing || isPreparingContext"
         :can-optimize="canOptimize"
         @update:raw-prompt="rawPrompt = $event"
-        @update:include-examples="includeExamples = $event"
         @update:structured-prompt="store.setPromptFormat($event ? 'STRUCTURED' : 'COMPACT')"
         @update:selected-model-id="selectedModelId = $event"
         @optimize="handleOptimize"

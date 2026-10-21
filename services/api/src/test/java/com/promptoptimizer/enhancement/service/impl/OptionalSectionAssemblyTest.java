@@ -111,7 +111,7 @@ class OptionalSectionAssemblyTest {
         var answers = List.of(
                 new PlanAnswer("existing-records", "当前有哪些交接记录？", "当前已有预算和采购清单的交接记录。"),
                 new PlanAnswer("delivery-format", "输出格式是什么？", "交付带先后依赖的待办清单。"));
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
         var template = new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw);
         var bundle = new ConstraintCompleterImpl().completeForTask(emptyContext, PermissionPolicyInput.empty(), true, task.intent());
         var request = new EnhancementProviderRequest(raw, emptyContext, template, List.of(), answers, true,
@@ -214,7 +214,7 @@ class OptionalSectionAssemblyTest {
     /** 复用生产任务视图、动态规则及完整组装，检查最终正文而非只测试格式解析器。 */
     private OptimizationResult assemble(String raw, List<PromptSection> sections, PromptFormat format,
             ContextSnapshot context, List<PlanningFactCard> facts, List<PlanAnswer> answers, boolean confirmed) {
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, facts, false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, facts);
         var bundle = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), true, task.intent());
         var assessment = new TaskEnhancementAssessment(TaskEnhancementAssessment.Sufficiency.SUFFICIENT,
                 List.of(), TaskEnhancementAssessment.Presentation.valueOf(format.name()));
@@ -222,6 +222,6 @@ class OptionalSectionAssemblyTest {
                 List.of(), List.of(), assessment);
         return new OptimizationResultAssembler().assemble(response, context,
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw), List.of(), answers, confirmed,
-                bundle, false, 1, raw, facts, List.of(), task, format);
+                bundle, 1, raw, facts, List.of(), task, format);
     }
 }

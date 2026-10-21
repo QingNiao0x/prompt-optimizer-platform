@@ -25,7 +25,7 @@ class MockNaturalPromptProviderTest {
         String answer = "\u0085接收对象为接班同事。" + lineBreak + "具体期限仍待确认。";
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "EMPTY");
         var input = new NaturalPromptInput(raw, context, List.of(new PlanAnswer("q1", "对象与期限？", answer)),
-                List.of(), false, List.of(), "mock:local");
+                List.of(), List.of(), "mock:local");
         var provider = new MockNaturalPromptProvider();
 
         var result = provider.enhance(input, draft -> {
@@ -38,7 +38,7 @@ class MockNaturalPromptProviderTest {
         assertThat(result.taskUnderstanding().review().requirementCoverage())
                 .allSatisfy(coverage -> assertThat(coverage.quotes()).allMatch(quote -> !quote.matches("(?s).*\\R.*")));
 
-        var planInput = new NaturalPromptInput(raw, context, List.of(), List.of(), false, List.of(), "mock:local");
+        var planInput = new NaturalPromptInput(raw, context, List.of(), List.of(), List.of(), "mock:local");
         var plan = provider.plan(planInput, response -> {
             var task = response.taskUnderstanding().resolve(planInput);
             task.review().validatePlan(java.util.Set.of());

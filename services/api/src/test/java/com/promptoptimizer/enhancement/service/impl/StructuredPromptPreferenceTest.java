@@ -134,7 +134,7 @@ class StructuredPromptPreferenceTest {
     void absentOptionsRemainAutomaticAndIllegalEnumIsRejected() throws Exception {
         var mapper = new ObjectMapper();
         assertThat(EnhancementOptions.defaults().promptFormat()).isNull();
-        assertThat(new EnhancementOptions(TemplateCode.AUTO, false, true, false).promptFormat()).isNull();
+        assertThat(new EnhancementOptions(TemplateCode.AUTO, false, true).promptFormat()).isNull();
         assertThat(mapper.readValue("{}", EnhancementOptions.class).promptFormat()).isNull();
         assertThat(mapper.readValue("{\"promptFormat\":\"COMPACT\"}", EnhancementOptions.class).promptFormat())
                 .isEqualTo(PromptFormat.COMPACT);
@@ -149,7 +149,7 @@ class StructuredPromptPreferenceTest {
                 new PromptTemplateRegistryImpl(), new ConstraintCompleterImpl(), new MockPromptEnhancementProvider(),
                 TestActors.currentActor(), Clock.systemUTC());
         var result = orchestrator.optimize(new OptimizationRequest("撰写一封简短邮件，请同事确认会议时间。", null,
-                new EnhancementOptions(TemplateCode.AUTO, false, true, false, format), List.of(),
+                new EnhancementOptions(TemplateCode.AUTO, false, true, format), List.of(),
                 PermissionPolicyInput.empty()));
         assertThat(result.promptFormat()).isEqualTo(format);
         assertThat(result.optimizedPrompt()).contains("会议时间");
@@ -175,7 +175,7 @@ class StructuredPromptPreferenceTest {
                 new PromptTemplateRegistryImpl(), new ConstraintCompleterImpl(), new MockPromptEnhancementProvider(),
                 new OptimizationResultAssembler(), filter, sessions, clock);
         var result = orchestrator.optimize(new OptimizationRequest(raw, null,
-                new EnhancementOptions(TemplateCode.AUTO, false, true, false, format), List.of(),
+                new EnhancementOptions(TemplateCode.AUTO, false, true, format), List.of(),
                 PermissionPolicyInput.empty(), confirmation));
         assertThat(result.promptFormat()).isEqualTo(format);
         assertThat(result.provider().mock()).isTrue();
@@ -206,10 +206,10 @@ class StructuredPromptPreferenceTest {
     }
 
     private OptimizationResult assemble(String raw, EnhancementProviderResponse response, PromptFormat format) {
-        var taskView = EffectiveTaskViewFactory.create(raw, TemplateCode.GENERAL, List.of(), List.of(), false);
+        var taskView = EffectiveTaskViewFactory.create(raw, TemplateCode.GENERAL, List.of(), List.of());
         return new OptimizationResultAssembler().assemble(response, CONTEXT,
-                new PromptTemplate(TemplateCode.GENERAL, "保留原定交付。", "原兼容验收规则。", "示例。"),
-                List.of(), List.of(), false, ConstraintBundle.fromLegacy(List.of(), false), false, 1, raw,
+                new PromptTemplate(TemplateCode.GENERAL, "保留原定交付。", "原兼容验收规则。"),
+                List.of(), List.of(), false, ConstraintBundle.fromLegacy(List.of(), false), 1, raw,
                 List.of(), List.of(), taskView, format);
     }
 

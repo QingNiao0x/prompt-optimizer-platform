@@ -176,7 +176,7 @@ class DeliveryCompactnessRegressionTest {
                 "test", "test", false, List.of());
         return new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法方案。", "核对口径。", "示例"),
-                List.of(), List.of(), false, List.of("不得泄露凭据。"), false, 1, raw, List.of(), List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法方案。", "核对口径。"),
+                List.of(), List.of(), false, List.of("不得泄露凭据。"), 1, raw, List.of(), List.of());
     }
 }

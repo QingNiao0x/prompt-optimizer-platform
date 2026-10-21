@@ -1,6 +1,5 @@
 package com.promptoptimizer.enhancement.domain;
 
-import com.promptoptimizer.provider.domain.ExampleContract;
 import com.promptoptimizer.provider.domain.RequirementBoundaryContract;
 import com.promptoptimizer.template.domain.TaskIntent;
 import java.util.LinkedHashMap;
@@ -17,13 +16,12 @@ import java.util.List;
  * @param executionRequirements 已确认子项的执行表述，不能复制未选候选或整份答卷
  * @param pendingDecisions 真正未定的子项，不被相似主题的确认覆盖
  * @param facts 安全且与本次任务相关的事实卡，来源用途仍须核对
- * @param examples 下游示例要求及禁例、严格格式的优先级
  * @author QingNiao
  * @since 0.1.0
  */
 public record EffectiveTaskView(String originalPrompt, String effectivePrompt, TaskIntent intent,
         List<ConfirmedPlanDecision> confirmedDecisions, List<ExecutionRequirement> executionRequirements,
-        List<ConfirmedPlanDecision> pendingDecisions, List<PlanningFactCard> facts, ExampleContract examples) {
+        List<ConfirmedPlanDecision> pendingDecisions, List<PlanningFactCard> facts) {
     /** 防御性复制；视图只存在于一次服务端请求，不跨任务缓存。 */
     public EffectiveTaskView {
         confirmedDecisions = List.copyOf(confirmedDecisions);
@@ -43,7 +41,7 @@ public record EffectiveTaskView(String originalPrompt, String effectivePrompt, T
                         decision.answer(), decision.source(), executionRequirements.stream().anyMatch(requirement ->
                             java.util.Objects.equals(requirement.questionId(), decision.questionId())
                                     && requirement.subject().equals("委托要求")))).toList(),
-                examples, requirementBoundaries().guidance(), meaning().anchors());
+                requirementBoundaries().guidance(), meaning().anchors());
     }
 
     /** 仅合并自身已命名的独立事实、委托与边界；普通题答继续按原绑定问题隔离。 */
@@ -77,7 +75,7 @@ public record EffectiveTaskView(String originalPrompt, String effectivePrompt, T
 
     /** 各模型适配器共用同一业务投影，不按供应商另行解释用户选择。 */
     public record ModelInput(TaskIntent intent, List<ModelRequirement> executionRequirements,
-            List<ModelPendingDecision> pendingDecisions, ExampleContract examples, String requirementBoundaryGuidance,
+            List<ModelPendingDecision> pendingDecisions, String requirementBoundaryGuidance,
             List<com.promptoptimizer.provider.domain.TaskMeaningContract.Anchor> userMeaningAnchors) { }
 
     /** 委托拟议设计和既有参数未确认是两个独立状态；designDelegated 不确认取值或消除未决条件。 */

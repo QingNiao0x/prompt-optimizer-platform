@@ -39,7 +39,7 @@ class EvidenceInferenceRegressionTest {
                 new PromptSection(PromptSectionType.OUTPUT,"输出",output),
                 new PromptSection(PromptSectionType.CONSTRAINTS,"约束","不编造事实。")),"test","test",false,List.of());
         return new OptimizationResultAssembler().assemble(response,context,
-                new PromptTemplate(TemplateCode.GENERAL,"交付所需结果。","结果有依据。","相关示例。"),
-                List.of(),List.of(),false,List.of(),false,1,raw);
+                new PromptTemplate(TemplateCode.GENERAL,"交付所需结果。","结果有依据。"),
+                List.of(),List.of(),false,List.of(),1,raw);
     }
 }

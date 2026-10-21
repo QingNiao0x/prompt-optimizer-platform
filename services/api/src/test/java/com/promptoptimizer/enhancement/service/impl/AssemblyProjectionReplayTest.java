@@ -102,7 +102,7 @@ class AssemblyProjectionReplayTest {
         var constraints = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), false,
                 TaskIntentResolver.resolve(TemplateCode.AUTO, raw));
         return new OptimizationResultAssembler().assemble(response, context,
-                new PromptTemplate(TemplateCode.AUTO, "保留原定交付。", "遵守原要求。", "不添加未授权示例。"),
-                List.of(), List.of(), false, constraints, false, 1, raw, List.of(), List.of());
+                new PromptTemplate(TemplateCode.AUTO, "保留原定交付。", "遵守原要求。"),
+                List.of(), List.of(), false, constraints, 1, raw, List.of(), List.of());
     }
 }

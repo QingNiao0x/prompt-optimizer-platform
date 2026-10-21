@@ -51,7 +51,7 @@ class OpenAiCompatibleValidatedResponseTest {
     private final ObjectMapper mapper = new ObjectMapper();
     private final ContextSnapshot context = new ContextSnapshot("", List.of(), List.of(), List.of(),
             List.of(), List.of(), List.of(), "v1");
-    private final PromptTemplate template = new PromptTemplate(TemplateCode.GENERAL, "明确交付", "逐项核对", "示例");
+    private final PromptTemplate template = new PromptTemplate(TemplateCode.GENERAL, "明确交付", "逐项核对");
     private MockRestServiceServer server;
     private OpenAiCompatiblePromptEnhancementProvider provider;
 
@@ -155,7 +155,7 @@ class OpenAiCompatibleValidatedResponseTest {
                         MediaType.APPLICATION_JSON));
         var result = provider.enhanceValidated(request(), response -> new OptimizationResultAssembler().assemble(
                 response, context, template, List.of(), List.of(), false,
-                List.of("不得读取生产密钥"), false, 1, "取消时保持原值。"));
+                List.of("不得读取生产密钥"), 1, "取消时保持原值。"));
         assertThat(result.optimizedPrompt()).contains("取消时保持原值", "执行前须确认", "匹配存在多条记录")
                 .doesNotContain("移除保持原值");
         server.verify();
@@ -166,7 +166,7 @@ class OpenAiCompatibleValidatedResponseTest {
         server.expect(times(3), requestTo(ENDPOINT)).andRespond(withSuccess(
                 completion(content("可以编造参考文献。", List.of())), MediaType.APPLICATION_JSON));
         assertThatThrownBy(() -> provider.enhanceValidated(request(), response -> new OptimizationResultAssembler().assemble(
-                response, context, template, List.of(), List.of(), false, List.of(), false, 1, "不得编造参考文献。")))
+                response, context, template, List.of(), List.of(), false, List.of(), 1, "不得编造参考文献。")))
                 .isInstanceOfSatisfying(ProviderResponseValidationException.class,
                         failure -> assertThat(failure.getReason()).isEqualTo(ProviderResponseValidationException.Reason.RULE_CONFLICT));
         server.verify();
@@ -232,7 +232,7 @@ class OpenAiCompatibleValidatedResponseTest {
     private OptimizationResult assembleReport(EnhancementProviderResponse response) {
         return new OptimizationResultAssembler().assemble(response, context,
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, REPORT_REQUEST),
-                List.of(), List.of(), false, List.of(), false, 1, REPORT_REQUEST);
+                List.of(), List.of(), false, List.of(), 1, REPORT_REQUEST);
     }
 
     /** 只替换模型的任务与输出；真实缺口继续保留，证明修复没有靠删除未知换取通过。 */
@@ -248,7 +248,7 @@ class OpenAiCompatibleValidatedResponseTest {
     private OptimizationResult assemble(EnhancementProviderResponse response, boolean confirmed) {
         return new OptimizationResultAssembler().assemble(response, context, template, List.of(),
                 confirmed ? List.of(new PlanAnswer("q1", "输出格式是什么？", "只交付 Markdown 表格和验收清单")) : List.of(),
-                confirmed, List.of("不得读取生产密钥"), false, 1);
+                confirmed, List.of("不得读取生产密钥"), 1);
     }
 
     private void expect(Map<String, Object> content) throws Exception {

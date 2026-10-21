@@ -340,7 +340,7 @@ class PlanDecisionIntegrityRegressionTest {
                 new PromptSection(PromptSectionType.OUTPUT, "输出", "交付用户要求的结果。"),
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "保留明确要求，不编造事实。")), "test", "fixture", false, findings);
         return new OptimizationResultAssembler().assemble(response, context(List.of()),
-                new PromptTemplate(TemplateCode.GENERAL, "交付结果", "符合已确认要求", "示例"),
-                List.of(), answers, !answers.isEmpty(), List.of("不得泄露凭据"), false, 1, raw);
+                new PromptTemplate(TemplateCode.GENERAL, "交付结果", "符合已确认要求"),
+                List.of(), answers, !answers.isEmpty(), List.of("不得泄露凭据"), 1, raw);
     }
 }

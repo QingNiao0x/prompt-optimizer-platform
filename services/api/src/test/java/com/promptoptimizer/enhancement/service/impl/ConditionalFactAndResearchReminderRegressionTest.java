@@ -225,8 +225,8 @@ class ConditionalFactAndResearchReminderRegressionTest {
                 + IMPUTATION.replaceFirst("。$", "") + "；" + coverage, "忠于资料。");
         var assembled = new OptimizationResultAssembler().assemble(compound,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可核对", "示例"),
-                List.of(), answers, true, List.of("不得泄露记录标识。"), false, 1, RAW);
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可核对"),
+                List.of(), answers, true, List.of("不得泄露记录标识。"), 1, RAW);
         assertThat(occurrences(assembled.optimizedPrompt(), "本次保持缺失状态并说明不同处理的影响")).isEqualTo(1);
         assertThat(assembled.optimizedPrompt()).contains("保持可见", "不默认统一处理");
         var conditional = assemble("病案方法方案。", "若采用MICE，必须保留合法零值。\n"
@@ -294,8 +294,8 @@ class ConditionalFactAndResearchReminderRegressionTest {
                 "test", "test", false, List.of());
         var result = new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可核对", "示例"),
-                List.of(), answers, true, List.of("不得编造数据"), false, 1, RAW);
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可核对"),
+                List.of(), answers, true, List.of("不得编造数据"), 1, RAW);
         assertThat(occurrences(result.optimizedPrompt(), "本次保持缺失状态并说明不同处理的影响")).isEqualTo(1);
         assertThat(result.optimizedPrompt()).contains("已确认决定：完整性指标分母采用所有有效出院记录",
                 "仅确认完整性分母，一致性指标分母仍未决定", "交付指标表和方法步骤");
@@ -309,15 +309,15 @@ class ConditionalFactAndResearchReminderRegressionTest {
         var answers = List.of(new PlanAnswer("imputation", "是否对缺失病例使用插补？", "暂不确定。" + IMPUTATION));
         var result = new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可核对", "示例"),
-                List.of(), answers, true, List.of("不得编造数据"), false, 1, RAW);
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可核对"),
+                List.of(), answers, true, List.of("不得编造数据"), 1, RAW);
         assertThat(occurrences(result.optimizedPrompt(), "本次保持缺失状态并说明不同处理的影响")).isEqualTo(1);
         assertThat(result.optimizedPrompt()).contains("不得默认统一插补");
         var scoped = providerWithTask("制定A医院的方案，按以下部分组织：\n" + IMPUTATION, "忠于资料。");
         var scopedResult = new OptimizationResultAssembler().assemble(scoped,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可核对", "示例"),
-                List.of(), answers, true, List.of("不得编造数据"), false, 1, RAW);
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可核对"),
+                List.of(), answers, true, List.of("不得编造数据"), 1, RAW);
         assertThat(occurrences(scopedResult.optimizedPrompt(), "本次保持缺失状态并说明不同处理的影响")).isEqualTo(2);
     }
 
@@ -435,8 +435,8 @@ class ConditionalFactAndResearchReminderRegressionTest {
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", constraints)), "test", "test", false, findings);
         return new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可核对", "示例"),
-                List.of(), answers, confirmed, List.of("不得编造数据"), false, 1, raw);
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可核对"),
+                List.of(), answers, confirmed, List.of("不得编造数据"), 1, raw);
     }
 
     private long occurrences(String text, String part) {

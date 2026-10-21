@@ -113,7 +113,7 @@ class TaskMeaningRegressionTest {
                 "test","test",false,List.of(),List.of(),assessment);
         return new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("",List.of(),List.of(),List.of(),List.of(),List.of(),List.of(),"test"),
-                new PromptTemplate(TemplateCode.GENERAL,"按原文交付。","符合原文。","相关示例。"),
-                List.of(),List.of(),false,List.of(),false,1,raw);
+                new PromptTemplate(TemplateCode.GENERAL,"按原文交付。","符合原文。"),
+                List.of(),List.of(),false,List.of(),1,raw);
     }
 }

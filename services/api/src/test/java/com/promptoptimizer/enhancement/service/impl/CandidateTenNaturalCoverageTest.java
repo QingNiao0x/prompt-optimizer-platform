@@ -35,7 +35,7 @@ class CandidateTenNaturalCoverageTest {
         var answers = new ArrayList<PlanAnswer>();
         for (var answer : json.readTree(evidence.resolve("q05-flash/actual-answers.json").toFile()).path("answers"))
             answers.add(json.treeToValue(answer, PlanAnswer.class));
-        var task = EffectiveTaskViewFactory.create(input.path("rawPrompt").asText(), TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(input.path("rawPrompt").asText(), TemplateCode.AUTO, answers, List.of());
         String background = sections.get(PromptSectionType.BACKGROUND).content(), body = sections.get(PromptSectionType.TASK).content();
         PlanDecisionIntegrator.integrate(sections, task);
         assertThat(sections.get(PromptSectionType.BACKGROUND).content()).isEqualTo(background);
@@ -46,7 +46,7 @@ class CandidateTenNaturalCoverageTest {
     @Test
     void anotherResearchOrFutureProposalCannotCoverThisTasksDelegation() {
         var task = EffectiveTaskViewFactory.create("撰写研究设计的方法部分。", TemplateCode.AUTO,
-                List.of(new PlanAnswer("design", "本研究的任务分类是什么？", "请根据原始研究目标提出可开展的推荐设计并说明适用条件；不确认任何既有参数。")), List.of(), false);
+                List.of(new PlanAnswer("design", "本研究的任务分类是什么？", "请根据原始研究目标提出可开展的推荐设计并说明适用条件；不确认任何既有参数。")), List.of());
         for (String prefix : List.of("如果以后确认，", "引用：", "另一研究：")) {
             var sections = new EnumMap<PromptSectionType, PromptSection>(PromptSectionType.class);
             for (var type : List.of(PromptSectionType.BACKGROUND, PromptSectionType.TASK, PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS))

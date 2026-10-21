@@ -44,8 +44,8 @@ class NewsBodyFactContractTest {
         for (boolean confirmed : List.of(false, true)) {
             var result = new OptimizationResultAssembler().assemble(response,
                     new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                    new PromptTemplate(TemplateCode.GENERAL, "输出", "满足实际交付", "示例"),
-                    List.of(), List.of(), confirmed, List.of("不得虚构事实"), false, 1, raw);
+                    new PromptTemplate(TemplateCode.GENERAL, "输出", "满足实际交付"),
+                    List.of(), List.of(), confirmed, List.of("不得虚构事实"), 1, raw);
             assertThat(result.sections()).filteredOn(s -> s.type() == PromptSectionType.OUTPUT)
                     .allSatisfy(s -> assertThat(s.content()).contains("正文必须交代", "清笺尚处于本地MVP阶段"));
             assertThat(result.optimizedPrompt()).contains("正文必须交代");

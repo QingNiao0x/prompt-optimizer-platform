@@ -67,8 +67,8 @@ class JavaImplementationRequestTest {
     private EnhancementProviderRequest request(String raw) {
         return new EnhancementProviderRequest(raw,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.GENERAL, "交付本次要求。", "核对原范围。", "示例"),
-                List.of(), List.of(), List.of(), new EnhancementOptions(TemplateCode.AUTO, false, false, false), "synthetic-model");
+                new PromptTemplate(TemplateCode.GENERAL, "交付本次要求。", "核对原范围。"),
+                List.of(), List.of(), List.of(), new EnhancementOptions(TemplateCode.AUTO, false, false), "synthetic-model");
     }
 
     private String response() throws Exception {

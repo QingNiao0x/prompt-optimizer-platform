@@ -56,7 +56,7 @@ class CandidateTwentyReplayTest {
         var fixture = fixture("trace283");
         var sections = sections(fixture);
         var task = EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText() + boundary,
-                TemplateCode.AUTO, List.of(), List.of(), false);
+                TemplateCode.AUTO, List.of(), List.of());
         String before = sections.get(PromptSectionType.TASK).content();
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections, task, assessment(fixture));
         assertThat(sections.get(PromptSectionType.TASK).content()).isEqualTo(before);
@@ -113,7 +113,7 @@ class CandidateTwentyReplayTest {
         var original = JSON.readerForListOf(PlanAnswer.class).<List<PlanAnswer>>readValue(fixture.path("actualAnswers"));
         var answers = original.stream().map(a -> a.questionId().equals("q1")
                 ? new PlanAnswer(a.questionId(), a.question(), "如果以后批准，再提出设计。") : a).toList();
-        var task = EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, answers, List.of());
         var sections = sections(fixture);
         sections.put(PromptSectionType.CONSTRAINTS, new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不确认任何既有参数。"));
         // 未来许可可能登记在条件视图；显式传入原题提醒，独立检查本投影器不能借另一题的当前委托删去它。
@@ -135,7 +135,7 @@ class CandidateTwentyReplayTest {
     private com.promptoptimizer.enhancement.domain.EffectiveTaskView task(JsonNode fixture) throws Exception {
         List<PlanAnswer> answers = fixture.has("actualAnswers")
                 ? JSON.readerForListOf(PlanAnswer.class).readValue(fixture.path("actualAnswers")) : List.of();
-        return EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, answers, List.of(), false);
+        return EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, answers, List.of());
     }
 
     /** 派生内部呈现视图沿用生产研究归一化，原始gap及候选取值均不变。 */

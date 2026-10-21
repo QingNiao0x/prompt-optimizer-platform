@@ -153,7 +153,7 @@ class CandidateTwelveCoverageBoundaryTest {
         var permission = question("permission", "实际参与者是否授权使用其个人资料？", "");
         var parameter = question("parameter", "甲指标采用哪一年的标准人口？", "");
         var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO,
-                List.of(new PlanAnswer(design.id(), design.question(), DELEGATION + "不确认任何既有参数。")), List.of(), false);
+                List.of(new PlanAnswer(design.id(), design.question(), DELEGATION + "不确认任何既有参数。")), List.of());
         var input = new PlanningProviderRequest(raw, "", List.of(), null, null, List.of(), "", task);
         assertThat(new PlanQuestionFilter().filter(List.of(design, newCondition, permission, parameter), input))
                 .containsExactly(newCondition, permission, parameter);
@@ -164,7 +164,7 @@ class CandidateTwelveCoverageBoundaryTest {
         assertThat(new PlanQuestionFilter().unresolvedFindings(List.of(design.question(), parameter.question()), raw,
                 context, List.of(), task)).containsExactly(parameter.question());
         var future = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO,
-                List.of(new PlanAnswer(design.id(), design.question(), "如果以后确认，再委托设计。")), List.of(), false);
+                List.of(new PlanAnswer(design.id(), design.question(), "如果以后确认，再委托设计。")), List.of());
         assertThat(new PlanQuestionFilter().filter(List.of(design), new PlanningProviderRequest(raw, "", List.of(), null,
                 null, List.of(), "", future))).containsExactly(design);
     }

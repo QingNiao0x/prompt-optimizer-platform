@@ -47,7 +47,7 @@ public final class NaturalPromptInstructionsV2 {
             其余可执行部分继续交付。不要把任务改成补材料问卷或空白表单。
             mandatoryRules由平台统一组装。理解并遵守其中边界，正文重点写当前任务，不复述这些通用条款或其近义口号，
             不削弱用户原有的具体条件，也不把内部“事实/确认/假设”管理标签机械变成每次的写作要求。
-            includeExamples仅控制下游是否提供有助任务的相关示例；原文禁例、事实边界和严格格式优先。
+            示例需求按原始提示词及实际题答处理，遵守用户明确的禁例、事实边界与严格输出格式。
             framework仅是正文写成后的组织参考标记：APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE；
             根据实际表达择一，无法可靠匹配用APE，不因选择框架新增内容或追问。
             只返回JSON：{"taskUnderstanding":上述记录,"optimizedPrompt":"完整自然正文","framework":"参考标记"}。

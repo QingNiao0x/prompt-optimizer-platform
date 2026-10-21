@@ -166,7 +166,7 @@ class ConfirmationBoundaryRegressionTest {
                 "fixture", "frozen-response", false, List.of());
         var result = new OptimizationResultAssembler().assemble(response, context(List.of()),
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw), List.of(), answers,
-                true, List.of(), false, 1, raw);
+                true, List.of(), 1, raw);
         assertThat(result.optimizedPrompt()).contains("报告正文", "指标表", "不需要代码")
                 .doesNotContain("仅交付分析方案", "只交付方案", "实现文件与测试文件");
         assertThat(JavaCodeDeliveryContract.guidance(raw)).isEmpty();

@@ -76,11 +76,11 @@ class StructuredAssemblyQualityTest {
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不得虚构数据或来源。"));
         var assessment = new TaskEnhancementAssessment(TaskEnhancementAssessment.Sufficiency.SUFFICIENT,
                 List.of(), TaskEnhancementAssessment.Presentation.STRUCTURED);
-        var task = EffectiveTaskViewFactory.create(RAW, TemplateCode.GENERAL, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(RAW, TemplateCode.GENERAL, List.of(), List.of());
         return new OptimizationResultAssembler().assemble(new EnhancementProviderResponse(sections, "offline", "fixture",
                         true, List.of(), List.of(), assessment), CONTEXT,
-                new PromptTemplate(TemplateCode.GENERAL, "保持原定交付。", "核查实际交付。", ""),
-                List.of(), List.of(), false, ConstraintBundle.fromLegacy(List.of(), false), false, 1, RAW,
+                new PromptTemplate(TemplateCode.GENERAL, "保持原定交付。", "核查实际交付。"),
+                List.of(), List.of(), false, ConstraintBundle.fromLegacy(List.of(), false), 1, RAW,
                 List.of(), List.of(), task, format);
     }
 
@@ -90,7 +90,7 @@ class StructuredAssemblyQualityTest {
                 "使用R，版本尚未确定。", "如果以后确认顺延一周，再更新；目前尚未确认。")) {
             String raw = "起草研讨会变更通知，方案需先由用户确认，不承诺退款。";
             var answers = List.of(new com.promptoptimizer.enhancement.dto.PlanAnswer("change", "会议变更方案是什么？", answer));
-            var task = EffectiveTaskViewFactory.create(raw, TemplateCode.GENERAL, answers, List.of(), true);
+            var task = EffectiveTaskViewFactory.create(raw, TemplateCode.GENERAL, answers, List.of());
             var response = new EnhancementProviderResponse(List.of(
                     new PromptSection(PromptSectionType.BACKGROUND, "背景", ""),
                     new PromptSection(PromptSectionType.TASK, "任务", "起草变更通知。"),
@@ -98,10 +98,10 @@ class StructuredAssemblyQualityTest {
                     new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不得承诺退款。")), "offline", "fixture", true,
                     List.of(), List.of(), new TaskEnhancementAssessment(TaskEnhancementAssessment.Sufficiency.SUFFICIENT,
                     List.of(), TaskEnhancementAssessment.Presentation.STRUCTURED));
-            var template = new PromptTemplate(TemplateCode.GENERAL, "交付通知正文。", "", "");
+            var template = new PromptTemplate(TemplateCode.GENERAL, "交付通知正文。", "");
             for (var format : PromptFormat.values()) {
                 var result = new OptimizationResultAssembler().assemble(response, CONTEXT, template, List.of(), answers, true,
-                        ConstraintBundle.fromLegacy(List.of(), false), false, 1, raw, List.of(), List.of(), task, format);
+                        ConstraintBundle.fromLegacy(List.of(), false), 1, raw, List.of(), List.of(), task, format);
                 if (format == PromptFormat.STRUCTURED && answer.equals("顺延一周，仍线下举行。"))
                     assertThat(result.optimizedPrompt()).contains("本次已完成确认：").contains(answer);
                 else assertThat(result.optimizedPrompt()).doesNotContain("本次已完成确认：");

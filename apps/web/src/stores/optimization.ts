@@ -56,7 +56,6 @@ interface SuccessfulGenerationSource {
   requestJson: string;
   lease: OptimizationContextLease;
   modelId: string | null;
-  includeExamples: boolean;
   rawPrompt: string;
 }
 
@@ -68,7 +67,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const supplementalFiles = ref<ContextFileInput[]>([]);
   const templateCode = ref<TemplateCode>('AUTO');
   const includePermissionBoundaries = ref(true);
-  const includeExamples = ref(false);
   // 仅随当前任务保留，不写入全局偏好；恢复历史时再采用该记录的实际形式。
   const promptFormat = ref<PromptFormat>('COMPACT');
   const availableModels = ref<AvailableModel[]>([]);
@@ -199,8 +197,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     && promptFormat.value !== (result.value?.promptFormat ?? 'STRUCTURED'));
   const canReuseGenerationSource = computed(() => Boolean(generationSource.value
     && isCurrentContext(generationSource.value.lease)
-    && generationSource.value.modelId === (selectedModelId.value || null)
-    && generationSource.value.includeExamples === includeExamples.value));
+    && generationSource.value.modelId === (selectedModelId.value || null)));
   const modeRegenerationRawPrompt = computed(() => generationSource.value?.rawPrompt ?? '');
 
   /** 更新模型目录时保留仍可用的用户选择，否则回到平台默认模型。 */
@@ -474,8 +471,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     rememberCurrentResult();
     resultDraft.value = undefined;
     result.value = response.data;
-    generationSource.value = { requestJson, lease, modelId: request.modelId ?? null,
-      includeExamples: request.enhancement.includeExamples, rawPrompt: request.rawPrompt };
+    generationSource.value = { requestJson, lease, modelId: request.modelId ?? null, rawPrompt: request.rawPrompt };
     promptFormat.value = response.data.promptFormat ?? 'STRUCTURED';
     contextSnapshot.value = response.data.contextReport;
     templateCode.value = response.data.templateCode;
@@ -525,7 +521,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
         // 工作台没有显式模板选择器；Plan 返回的是解析结果，不能当成用户指定而锁定最终分类。
         templateCode: 'AUTO',
         includePermissionBoundaries: true,
-        includeExamples: includeExamples.value,
         promptFormat: requestedFormat,
         planConfirmation: options.planConfirmation,
       }), lease);
@@ -711,7 +706,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
         : '';
     templateCode.value = detail.templateCode;
     includePermissionBoundaries.value = detail.includePermissionBoundaries;
-    includeExamples.value = detail.includeExamples;
     promptFormat.value = detail.promptFormat ?? 'STRUCTURED';
   };
 
@@ -733,7 +727,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
     files,
     templateCode,
     includePermissionBoundaries,
-    includeExamples,
     promptFormat,
     availableModels,
     selectedModelId,

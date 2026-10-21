@@ -386,7 +386,7 @@ class DecisionStateScopeRegressionTest {
         var result = orchestrator.optimize(new com.promptoptimizer.enhancement.dto.OptimizationRequest(RAW,
                 new com.promptoptimizer.context.dto.ContextAnalysisRequest("", List.of(new com.promptoptimizer.context.dto.ContextFileInput(
                         "docs/病案质量方案.md", "完整性指标分母与一致性指标分母尚需分别确定。", "markdown"))),
-                new com.promptoptimizer.enhancement.dto.EnhancementOptions(TemplateCode.AUTO, false, true, false),
+                new com.promptoptimizer.enhancement.dto.EnhancementOptions(TemplateCode.AUTO, false, true),
                 List.of(), new com.promptoptimizer.enhancement.dto.PermissionPolicyInput(List.of(), List.of())));
         assertThat(captured).hasSize(1);
         assertThat(captured.getFirst().template().outputGuidance()).contains("完整性指标的分母：待确认", "跨字段一致性指标的分母：待确认");
@@ -415,7 +415,7 @@ class DecisionStateScopeRegressionTest {
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不得编造数据。")), "test", "test", false, findings);
         return new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "方法及指标表", "忠于资料", "示例"),
-                List.of(), answers, confirmed, List.of("不得编造数据"), false, 1, raw, facts, List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "方法及指标表", "忠于资料"),
+                List.of(), answers, confirmed, List.of("不得编造数据"), 1, raw, facts, List.of());
     }
 }

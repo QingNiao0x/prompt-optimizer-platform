@@ -32,7 +32,7 @@ class SourceOwnershipProjectionTest {
     @ValueSource(strings = {"不得添加示例。", "仅当用户批准时才修改原文件；否则只交付代码。", "禁止输出密码；异常信息也不得包含密码。"})
     void originalRulesReceiveServerOwnedSlotsAndKeepTheirFullScope(String rule) {
         String raw = "用Python实现日志统计。" + rule;
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of());
         var bundle = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), false, task.intent());
         var request = new EnhancementProviderRequest(raw, context,
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw), List.of(), List.of(), false,
@@ -111,7 +111,7 @@ class SourceOwnershipProjectionTest {
         var answers = List.of(new com.promptoptimizer.enhancement.dto.PlanAnswer("population", "标准人口采用哪一年？",
                 "暂不确定，不得默认任何年份；请提出拟议方案并说明条件。"));
         String raw = "撰写死亡率分析的研究方案。";
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
         var bundle = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), false, task.intent());
         var request = new EnhancementProviderRequest(raw, context,
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw), List.of(), answers, true,
@@ -132,7 +132,7 @@ class SourceOwnershipProjectionTest {
     @ParameterizedTest
     @ValueSource(strings = {"为科研工作者写一封会议提醒邮件。", "把研究方案摘要翻译成英文，只输出译文。", "用Python统计日志状态码。"})
     void unrelatedTasksDoNotReceiveResearchExperimentInstructions(String raw) {
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of());
         var instruction = PromptRewriteStrategy.forTask(task, PromptFormat.COMPACT).instruction();
         assertThat(instruction).doesNotContain("同信息比较先取得并封存", "不能只列若干候选而将方法、评分、随机化全部退回用户");
         assertThat(instruction).contains("真正需用户决定", "不能压缩掉否定、例外");
@@ -140,9 +140,9 @@ class SourceOwnershipProjectionTest {
 
     @Test
     void researchGuidanceRetainsConcreteDesignAndInformationFlowBoundaries() {
-        var task = EffectiveTaskViewFactory.create("撰写研究设计的方法部分，研究Plan问答对提示词质量的影响。", TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create("撰写研究设计的方法部分，研究Plan问答对提示词质量的影响。", TemplateCode.AUTO, List.of(), List.of());
         assertThat(PromptRewriteStrategy.forTask(task, PromptFormat.COMPACT).instruction())
-                .contains("不能只列若干候选而将方法、评分、随机化全部退回用户", "同信息比较先取得并封存");
+                .contains("用户要求研究设计时提出适用的拟议方法与执行路径", "方法建议不冒充已实施", "taskView.userMeaningAnchors");
     }
 
     @Test
@@ -157,13 +157,13 @@ class SourceOwnershipProjectionTest {
                         .isEqualTo(sample.path("modelResponseSha256").asText());
                 var body = mapper.readTree(original);
                 var answers = mapper.convertValue(sample.path("answers"), new TypeReference<List<com.promptoptimizer.enhancement.dto.PlanAnswer>>() { });
-                var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+                var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
                 var bundle = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), false, task.intent());
                 var response = new EnhancementProviderResponse(mapper.convertValue(body.path("sections"), new TypeReference<List<PromptSection>>() { }),
                         "fixture", "fixture", true, List.of(), List.of(), mapper.treeToValue(body.path("assessment"), TaskEnhancementAssessment.class));
                 var result = new OptimizationResultAssembler().assemble(response, context,
                         new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw), List.of(), answers, true,
-                        bundle, false, 1, raw, List.of(), List.of(), task, PromptFormat.COMPACT);
+                        bundle, 1, raw, List.of(), List.of(), task, PromptFormat.COMPACT);
                 assertThat(result.optimizedPrompt()).doesNotContain("{{REQ_");
                 assertThat(result.appliedConstraints()).containsAll(bundle.visibleConstraints());
                 assertThat(result.constraintGroups()).isEqualTo(bundle);

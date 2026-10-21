@@ -45,6 +45,7 @@ class OpenAiCompatibleNaturalPromptProviderTest {
             assertThat(input.has("sections")).isFalse();
             assertThat(input.has("taskSources")).isFalse();
             assertThat(input.has("strategyVersion")).isFalse();
+            assertThat(input.has("includeExamples")).isFalse();
             assertThat(input.path("rawPrompt").asText()).isEqualTo("写邮件");
         }).andRespond(withSuccess(response("{\"optimizedPrompt\":\"完整自然正文\",\"framework\":\"APE\"}"), MediaType.APPLICATION_JSON));
         var result = provider.enhance(input(), Function.identity());
@@ -278,7 +279,7 @@ class OpenAiCompatibleNaturalPromptProviderTest {
         var answers = List.of(new com.promptoptimizer.enhancement.dto.PlanAnswer("q1", "甲对象的称呼？", "使用内部称呼"),
                 new com.promptoptimizer.enhancement.dto.PlanAnswer("q2", "乙对象的称呼？", "使用内部称呼"),
                 new com.promptoptimizer.enhancement.dto.PlanAnswer("q3", "丙对象的称呼？", "使用内部称呼"));
-        var actualInput = new NaturalPromptInput("写邮件", input().context(), answers, List.of(), false, List.of(), null);
+        var actualInput = new NaturalPromptInput("写邮件", input().context(), answers, List.of(), List.of(), null);
         String partial = sourceResponse(1);
         String complete = sourceResponse(3);
         server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(partial), MediaType.APPLICATION_JSON));
@@ -325,7 +326,7 @@ class OpenAiCompatibleNaturalPromptProviderTest {
 
     private NaturalPromptInput input() {
         return new NaturalPromptInput("写邮件", new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
-                List.of(), List.of(), false, List.of(), null).withStrategyVersion("1");
+                List.of(), List.of(), List.of(), null).withStrategyVersion("1");
     }
     private String response(String content) throws Exception {
         return json.writeValueAsString(Map.of("choices", List.of(Map.of("finish_reason", "stop",

@@ -74,8 +74,7 @@
   "enhancement": {
     "templateCode": "RESEARCH_ANALYSIS",
     "includeConversationHistory": false,
-    "includePermissionBoundaries": true,
-    "includeExamples": false
+    "includePermissionBoundaries": true
   },
   "conversationHistory": [],
   "permissionPolicy": {"protectedPaths": [], "requireConfirmationFor": []},

@@ -38,7 +38,7 @@ class ExecutableIntentRegressionTest {
             结论输出：结论先行+数据支撑+风险提示，跨市场统一财年口径和币种
             """;
     private final PromptTemplate template = new PromptTemplate(TemplateCode.GENERAL,
-            "按原定任务交付可使用的结果。", "内容完整、规则保持。", "提供相关示例。");
+            "按原定任务交付可使用的结果。", "内容完整、规则保持。");
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -78,11 +78,10 @@ class ExecutableIntentRegressionTest {
     }
 
     @Test
-    void mockPreservesExecutableInstructionsAndUsesTheAvailableBackground() {
+    void mockPreservesExecutableInstructionsWithoutDuplicatingThemAsBackground() {
         var response = mock(ROLE, List.of(), "");
         assertThat(content(response, PromptSectionType.TASK)).isEqualTo(ROLE.trim());
-        assertThat(content(response, PromptSectionType.BACKGROUND)).contains("A 股", "港股", "美股")
-                .doesNotContain("未提供额外上下文");
+        assertThat(content(response, PromptSectionType.BACKGROUND)).isEmpty();
         assertThat(content(response, PromptSectionType.OUTPUT)).doesNotContain("交付提示词");
     }
 
@@ -161,7 +160,7 @@ class ExecutableIntentRegressionTest {
                 new PromptSection(PromptSectionType.TASK, "任务", task), new PromptSection(PromptSectionType.OUTPUT, "输出", output),
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "保留明确限制，不编造事实。"));
         return new OptimizationResultAssembler().assemble(new EnhancementProviderResponse(sections, "test", "test", false, findings),
-                context(description), template, List.of(), List.of(), false, List.of(), false, 1, raw);
+                context(description), template, List.of(), List.of(), false, List.of(), 1, raw);
     }
 
     private ContextSnapshot context(String description) {

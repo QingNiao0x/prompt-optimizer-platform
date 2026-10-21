@@ -92,7 +92,7 @@ public final class NaturalPromptInstructions {
             返回前对照原始提示词、全部实际回答和适用上下文，检查目标与对象是否偏移、原要求是否遗漏或改变，
             条件是否矛盾、交付是否变成空模板，以及同一要求是否无意义重复；发现问题先修正正文，再填写最终覆盖引用。
             mandatoryRules由平台统一组装，正文集中写当前任务，不复写通用核查规则或内部分类标签。
-            includeExamples仅控制原定任务中的适用示例；用户禁例、严格格式和事实边界优先。
+            示例需求按原始提示词及实际题答处理，遵守用户明确的禁例、事实边界与严格输出格式。
             framework只是正文形成后的组织参考：APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE，
             无法可靠匹配用APE；不因框架补字段、增加任务或追问，不展示框架名或强制五模块标题。
             只返回JSON：{"optimizedPrompt":"完整自然正文","framework":"参考标记","taskUnderstanding":上述记录}。

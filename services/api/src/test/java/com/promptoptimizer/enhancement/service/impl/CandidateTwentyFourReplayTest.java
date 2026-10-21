@@ -194,7 +194,7 @@ class CandidateTwentyFourReplayTest {
         assertThat(remaining).extracting(PlanQuestion::id).containsExactly("plan_interaction_rounds", "task_categories",
                 "task_source", "control_group_flow", "deliverable_scope");
         var answers = answers(fixture);
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
         assertThat(task.pendingDecisions()).hasSize(5);
         assertThat(task.confirmedDecisions()).allMatch(decision -> decision.scope() == ConfirmedPlanDecision.Scope.UNRESOLVED);
         var result = assemble(fixture);
@@ -210,7 +210,7 @@ class CandidateTwentyFourReplayTest {
         var original = answers.getFirst();
         answers.set(0, new PlanAnswer(original.questionId(), original.question(), answer));
         String raw = fixture.path("rawPrompt").asText();
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
         var input = new PlanningProviderRequest(raw, "", List.of(), null, null, List.of(), "", task);
         var question = new PlanQuestion(original.questionId(), original.question(), "", PlanQuestionType.FREE_TEXT,
                 List.of(), List.of(), true);
@@ -221,7 +221,7 @@ class CandidateTwentyFourReplayTest {
     void sameQuestionIdCannotDelegateANewObjectOrNewCondition() throws Exception {
         var fixture = fixture();
         String raw = fixture.path("rawPrompt").asText();
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers(fixture), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers(fixture), List.of());
         var input = new PlanningProviderRequest(raw, "", List.of(), null, null, List.of(), "", task);
         var question = new PlanQuestion("plan_interaction_rounds", "另一研究的Plan轮次如何确定？",
                 "若新增医院样本，是否需要伦理授权？", PlanQuestionType.FREE_TEXT, List.of(), List.of(), true);
@@ -244,11 +244,11 @@ class CandidateTwentyFourReplayTest {
     private OptimizationResult assemble(JsonNode fixture) throws Exception {
         String raw = fixture.path("rawPrompt").asText();
         var answers = answers(fixture);
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
         return new OptimizationResultAssembler().assemble(response(fixture), EMPTY,
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw), List.of(), answers, true,
                 new ConstraintCompleterImpl().completeForTask(EMPTY, PermissionPolicyInput.empty(), true,
-                        TaskIntentResolver.resolve(TemplateCode.AUTO, raw)), false, 0, raw, List.of(), List.of(), task);
+                        TaskIntentResolver.resolve(TemplateCode.AUTO, raw)), 0, raw, List.of(), List.of(), task);
     }
 
     /** 实际响应只换离线来源标签；不改正文、assessment或提醒。 */

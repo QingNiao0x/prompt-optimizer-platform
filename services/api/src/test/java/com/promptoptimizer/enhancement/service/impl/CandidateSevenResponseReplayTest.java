@@ -47,7 +47,7 @@ class CandidateSevenResponseReplayTest {
         String raw = fixture("q05-flash/input.json").path("rawPrompt").asText();
         String output = section(model(179), "OUTPUT");
         var contract = DraftDeliveryContract.from(raw,
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法正文。", "保持研究目标。", "遵守原文。"), List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法正文。", "保持研究目标。"), List.of());
         assertThat(output).contains("方法部分正文", "方法部分只交付方法与空表模板");
         assertThatCode(() -> contract.validateDelivery(output, "sections.OUTPUT")).doesNotThrowAnyException();
     }
@@ -58,7 +58,7 @@ class CandidateSevenResponseReplayTest {
     void shouldStillRejectPreparationThatReplacesTheRequestedProse(String restriction) throws Exception {
         String raw = fixture("q05-flash/input.json").path("rawPrompt").asText();
         var contract = DraftDeliveryContract.from(raw,
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法正文。", "保持研究目标。", "遵守原文。"), List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法正文。", "保持研究目标。"), List.of());
         assertThatThrownBy(() -> contract.validateDelivery("交付中文研究设计的方法部分正文。" + restriction,
                 "sections.OUTPUT")).isInstanceOf(ProviderResponseValidationException.class);
     }
@@ -67,7 +67,7 @@ class CandidateSevenResponseReplayTest {
     void shouldRejectTheActualPromptOrWorkEvaluationSubstitution() throws Exception {
         var input = fixture("q05-flash/input.json");
         var task = EffectiveTaskViewFactory.create(input.path("rawPrompt").asText(), TemplateCode.AUTO,
-                List.of(), List.of(), false);
+                List.of(), List.of());
         String content = section(model(182), "TASK");
         assertThat(content).contains("提示词或对应产物");
         assertThatThrownBy(() -> task.meaning().validate(content, "sections.TASK"))
@@ -92,7 +92,7 @@ class CandidateSevenResponseReplayTest {
         for (var answer : input.path("planConfirmation").path("answers"))
             answers.add(json.treeToValue(answer, PlanAnswer.class));
         var task = EffectiveTaskViewFactory.create(input.path("rawPrompt").asText(), TemplateCode.AUTO,
-                answers, List.of(), false);
+                answers, List.of());
         var payload = json.valueToTree(task.modelInput());
         assertThat(task.confirmedDecisions()).hasSize(5).allSatisfy(decision ->
                 assertThat(decision.scope()).isEqualTo(com.promptoptimizer.enhancement.domain.ConfirmedPlanDecision.Scope.UNRESOLVED));

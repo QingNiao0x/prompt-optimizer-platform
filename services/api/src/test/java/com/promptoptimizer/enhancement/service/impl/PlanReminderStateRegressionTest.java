@@ -208,8 +208,8 @@ class PlanReminderStateRegressionTest {
                 new PromptSection(PromptSectionType.OUTPUT, "输出", "交付整理步骤。"),
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不能凭技术可合并认定已授权。")), "test", "fixture", false, List.of(reminder));
         var result = new OptimizationResultAssembler().assemble(response, context(List.of()),
-                new PromptTemplate(TemplateCode.GENERAL, "交付结果", "符合要求", "示例"),
-                List.of(), List.of(), false, List.of("不得泄露凭据"), false, 1, raw);
+                new PromptTemplate(TemplateCode.GENERAL, "交付结果", "符合要求"),
+                List.of(), List.of(), false, List.of("不得泄露凭据"), 1, raw);
         assertThat(result.ambiguities()).isEmpty();
         assertThat(section(result, PromptSectionType.CONSTRAINTS)).contains(reminder);
     }
@@ -300,8 +300,8 @@ class PlanReminderStateRegressionTest {
                 new PromptSection(PromptSectionType.OUTPUT, "输出", "交付中文核查方案。"),
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", constraints)), "test", "fixture", false, List.of());
         return new OptimizationResultAssembler().assemble(response, context(List.of()),
-                new PromptTemplate(TemplateCode.GENERAL, "交付结果", "符合已确认要求", "示例"),
-                List.of(), answers, !answers.isEmpty(), List.of("不得泄露凭据"), false, 1, raw);
+                new PromptTemplate(TemplateCode.GENERAL, "交付结果", "符合已确认要求"),
+                List.of(), answers, !answers.isEmpty(), List.of("不得泄露凭据"), 1, raw);
     }
 
     private String section(OptimizationResult result, PromptSectionType type) {

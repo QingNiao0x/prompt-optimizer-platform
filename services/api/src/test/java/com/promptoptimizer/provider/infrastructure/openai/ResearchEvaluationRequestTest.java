@@ -71,9 +71,9 @@ class ResearchEvaluationRequestTest {
                 : List.<PlanAnswer>of();
         provider.enhance(new EnhancementProviderRequest(raw,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
-                new PromptTemplate(TemplateCode.GENERAL, "按原文交付。", "保留原意。", "遵守示例选择。"),
+                new PromptTemplate(TemplateCode.GENERAL, "按原文交付。", "保留原意。"),
                 List.of(), answers, planned, List.of(), List.of(),
-                new EnhancementOptions(TemplateCode.GENERAL, false, true, false), "test-model"));
+                new EnhancementOptions(TemplateCode.GENERAL, false, true), "test-model"));
         server.verify();
     }
 }

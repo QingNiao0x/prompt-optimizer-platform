@@ -56,10 +56,10 @@ class CompactGuidanceReplayTest {
         String raw = sample.path("rawPrompt").asText();
         var constraints = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), false,
                 TaskIntentResolver.resolve(TemplateCode.AUTO, raw));
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of());
         var result = new OptimizationResultAssembler().assemble(response, context,
-                new PromptTemplate(TemplateCode.AUTO, "保留交付。", "遵守原要求。", "不添加未授权示例。"),
-                List.of(), List.of(), false, constraints, false, 1, raw, List.of(), List.of(), task, format);
+                new PromptTemplate(TemplateCode.AUTO, "保留交付。", "遵守原要求。"),
+                List.of(), List.of(), false, constraints, 1, raw, List.of(), List.of(), task, format);
 
         String body = result.sections().stream().filter(section -> section.type() == PromptSectionType.CONSTRAINTS)
                 .findFirst().orElseThrow().content();

@@ -510,7 +510,6 @@ export interface EnhancementOptions {
   templateCode: TemplateCode;
   includeConversationHistory: boolean;
   includePermissionBoundaries: boolean;
-  includeExamples: boolean;
   /** 本次真实增强的生成模式；缺省保留旧 API 的自动选择兼容。 */
   promptFormat?: PromptFormat;
 }
@@ -698,7 +697,6 @@ export interface OptimizationHistoryDetail extends PromptDocumentMetadata {
   latencyMs: number | null;
   createdAt: string;
   includePermissionBoundaries: boolean;
-  includeExamples: boolean;
   conversationHistory: ConversationMessage[];
   permissionPolicy: Record<string, unknown>;
 }

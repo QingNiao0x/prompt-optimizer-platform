@@ -53,24 +53,20 @@ class Candidate37AssemblyReplayTest {
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "EMPTY");
         var groups = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), false,
                 TaskIntentResolver.resolve(TemplateCode.AUTO, raw));
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of());
         for (var format : PromptFormat.values()) {
             var assemble = (java.util.function.Supplier<com.promptoptimizer.enhancement.domain.OptimizationResult>) () ->
                     new OptimizationResultAssembler().assemble(response, context,
-                            new PromptTemplate(TemplateCode.AUTO, "保留交付。", "遵守原要求。", "不新增示例。"),
-                            List.of(), List.of(), false, groups, false, 1, raw, List.of(), List.of(), task, format);
-            if (trace == 393) {
-                assertThatThrownBy(assemble::get).isInstanceOf(ProviderResponseValidationException.class);
-            } else {
-                var result = assemble.get();
-                assertThat(result.constraintGroups()).isEqualTo(groups);
-                assertThat(result.appliedConstraints()).containsAll(groups.visibleConstraints());
-                for (String rule : groups.platformMandatory()) assertThat(result.optimizedPrompt()).contains(rule);
-                assertThat(result.promptFormat()).isEqualTo(format);
-                var serialized = mapper.readTree(mapper.writeValueAsString(result));
-                assertThat(serialized.path("optimizedPrompt").asText()).isEqualTo(result.optimizedPrompt());
-                assertThat(serialized.path("constraintGroups")).isEqualTo(mapper.valueToTree(groups));
-            }
+                            new PromptTemplate(TemplateCode.AUTO, "保留交付。", "遵守原要求。"),
+                            List.of(), List.of(), false, groups, 1, raw, List.of(), List.of(), task, format);
+            var result = assemble.get();
+            assertThat(result.constraintGroups()).isEqualTo(groups);
+            assertThat(result.appliedConstraints()).containsAll(groups.visibleConstraints());
+            for (String rule : groups.platformMandatory()) assertThat(result.optimizedPrompt()).contains(rule);
+            assertThat(result.promptFormat()).isEqualTo(format);
+            var serialized = mapper.readTree(mapper.writeValueAsString(result));
+            assertThat(serialized.path("optimizedPrompt").asText()).isEqualTo(result.optimizedPrompt());
+            assertThat(serialized.path("constraintGroups")).isEqualTo(mapper.valueToTree(groups));
         }
         assertThat(sample.path("modelResponseRaw").asText()).isEqualTo(original);
     }

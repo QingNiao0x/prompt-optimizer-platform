@@ -69,8 +69,8 @@ class MissingPresentationResponseTest {
     private EnhancementProviderRequest request() {
         return new EnhancementProviderRequest("为研究生撰写研究设计的方法部分，说明评价方式。",
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
-                new PromptTemplate(TemplateCode.GENERAL, "按原文交付。", "保留原意。", "遵守示例选择。"),
-                List.of(), List.of(), List.of(), new EnhancementOptions(TemplateCode.GENERAL, false, true, false), "test-model");
+                new PromptTemplate(TemplateCode.GENERAL, "按原文交付。", "保留原意。"),
+                List.of(), List.of(), List.of(), new EnhancementOptions(TemplateCode.GENERAL, false, true), "test-model");
     }
 
     /** 不含展示字段的已复现结构，保留真正的专业补全而非虚构用户确认。 */

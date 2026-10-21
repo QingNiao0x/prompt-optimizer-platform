@@ -44,7 +44,7 @@ class ExecutableIntentProviderTest {
         content.set("ambiguities", mapper.valueToTree(List.of(Map.of("message", "研究对象是什么？"))));
         ((com.fasterxml.jackson.databind.node.ObjectNode) good.path("choices").get(0).path("message"))
                 .put("content", mapper.writeValueAsString(content));
-        server.expect(jsonPath("$.messages[0].content").value(containsString("先理解本次交付物")))
+        server.expect(jsonPath("$.messages[1].content").value(containsString("撰写一份研究设计。")))
                 .andRespond(withSuccess(mapper.writeValueAsString(good), MediaType.APPLICATION_JSON));
         server.expect(jsonPath("$.messages[2].content").value(containsString("AMBIGUITY_VALUE_INVALID")))
                 .andRespond(withSuccess(completion("撰写一份研究设计。", "交付完整的研究设计。"), MediaType.APPLICATION_JSON));
@@ -55,7 +55,7 @@ class ExecutableIntentProviderTest {
         properties.setModels(List.of("test-model"));
         var request = new EnhancementProviderRequest("撰写一份研究设计。",
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
-                new PromptTemplate(TemplateCode.GENERAL, "研究设计。", "比较公平。", "示例。"),
+                new PromptTemplate(TemplateCode.GENERAL, "研究设计。", "比较公平。"),
                 List.of(), List.of(), List.of(), EnhancementOptions.defaults(), "test-model");
         assertThat(new OpenAiCompatiblePromptEnhancementProvider(builder.build(), mapper, properties)
                 .enhance(request).ambiguities()).isEmpty();
@@ -91,7 +91,7 @@ class ExecutableIntentProviderTest {
                 List.of(), List.of(), List.of(), List.of(),
                 scenario.equals("warning") ? List.of("已选资料解析失败") : List.of(), List.of(), "test");
         var request = new EnhancementProviderRequest("你是一名数据分析搭档。", context,
-                new PromptTemplate(TemplateCode.GENERAL, "交付分析结果。", "依据可核查。", "示例。"),
+                new PromptTemplate(TemplateCode.GENERAL, "交付分析结果。", "依据可核查。"),
                 List.of(), List.of(), List.of(), EnhancementOptions.defaults(), "test-model");
         new OpenAiCompatiblePromptEnhancementProvider(builder.build(), mapper, properties).enhance(request);
         server.verify();
@@ -112,11 +112,11 @@ class ExecutableIntentProviderTest {
         properties.setModels(List.of("test-model"));
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test");
         var request = new EnhancementProviderRequest("你是一名投资分析搭档。结论先行，不预测点位。", context,
-                new PromptTemplate(TemplateCode.GENERAL, "交付分析结果。", "依据可核查。", "示例。"),
+                new PromptTemplate(TemplateCode.GENERAL, "交付分析结果。", "依据可核查。"),
                 List.of(), List.of(), List.of(), EnhancementOptions.defaults(), "test-model");
         var provider = new OpenAiCompatiblePromptEnhancementProvider(builder.build(), mapper, properties);
         var result = provider.enhanceValidated(request, response -> new OptimizationResultAssembler().assemble(response,
-                context, request.template(), List.of(), List.of(), false, List.of(), false, 1, request.rawPrompt()));
+                context, request.template(), List.of(), List.of(), false, List.of(), 1, request.rawPrompt()));
         assertThat(result.optimizedPrompt()).contains("输出结论、数据支撑和风险").doesNotContain("编写股票分析助手提示词");
         server.verify();
     }

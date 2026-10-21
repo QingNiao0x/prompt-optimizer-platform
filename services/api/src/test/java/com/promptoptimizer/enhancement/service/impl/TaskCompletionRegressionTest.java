@@ -72,8 +72,8 @@ class TaskCompletionRegressionTest {
                 "fixture", "fixture", false, List.of("尚未明确输入来源、参数格式或调用方式。"), List.of(), assessment);
         var result = new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "EMPTY"),
-                new PromptTemplate(TemplateCode.FEATURE_DEVELOPMENT, "交付代码。", "处理错误。", "遵守原文。"),
-                List.of(), List.of(), false, List.of(), false, 1, "使用requests库爬取网页标题。");
+                new PromptTemplate(TemplateCode.FEATURE_DEVELOPMENT, "交付代码。", "处理错误。"),
+                List.of(), List.of(), false, List.of(), 1, "使用requests库爬取网页标题。");
         assertThat(result.ambiguities()).isEmpty();
         assertThat(result.optimizedPrompt()).contains("requests", "网址作为输入参数", "可运行代码")
                 .doesNotContain("尚未明确输入来源");
@@ -116,8 +116,8 @@ class TaskCompletionRegressionTest {
                 "test", "test", false, findings, List.of(), assessment);
         return new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付研究设计。", "比较公平。", "示例。"),
-                candidates, List.of(), false, List.of(), false, 1, "撰写一个提示词质量的研究设计，要能实际开展。");
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付研究设计。", "比较公平。"),
+                candidates, List.of(), false, List.of(), 1, "撰写一个提示词质量的研究设计，要能实际开展。");
     }
 
     @Test void equivalentLanguageOrHeadingsDoNotPreclassifyRewriteDepth() {
@@ -126,22 +126,22 @@ class TaskCompletionRegressionTest {
     }
     @Test void studyingAnEnhancementWorkflowDoesNotMeanDeliveringAnotherPrompt() {
         var contract = DraftDeliveryContract.from("我想研究让用户先回答几个关键问题再增强提示词，是否比直接增强更有用。帮我写研究设计，要能实际开展，也要比较公平。",
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS,"交付研究设计。","比较公平。","示例。"),List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS,"交付研究设计。","比较公平。"),List.of());
         assertThat(contract.promptTarget()).isEmpty();
         assertThatCode(() -> contract.validateDelivery("交付研究设计，说明比较条件与评价办法。","sections.OUTPUT"))
                 .doesNotThrowAnyException();
     }
     @Test void writingAStudyAboutPromptQualityIsNotWritingAPrompt() {
         var contract = DraftDeliveryContract.from("帮我写一个提示词质量的研究设计，要能实际开展。",
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付研究设计。", "比较公平。", "示例。"), List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付研究设计。", "比较公平。"), List.of());
         assertThat(contract.promptTarget()).isEmpty();
         var actualPrompt = DraftDeliveryContract.from("帮我写一个研究设计的写作提示词。",
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付提示词。", "比较公平。", "示例。"), List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付提示词。", "比较公平。"), List.of());
         assertThat(actualPrompt.promptTarget()).isNotBlank();
     }
     @Test void researchStepsMayDescribeEnhancementButCannotReplaceTheFinalDeliverable() {
         var contract = DraftDeliveryContract.from("帮我写研究设计，比较先问答再增强提示词与直接增强。",
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS,"交付研究设计。","比较公平。","示例。"),List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS,"交付研究设计。","比较公平。"),List.of());
         assertThatCode(() -> contract.validateDelivery("设计一项研究方案，比较两种提示词增强流程：\n1. 先让用户回答关键问题，再基于回答增强提示词；\n2. 不询问用户，直接增强提示词。","sections.TASK"))
                 .doesNotThrowAnyException();
         assertThatThrownBy(() -> contract.validateDelivery("交付一份提示词。","sections.OUTPUT"))

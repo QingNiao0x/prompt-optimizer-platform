@@ -187,7 +187,7 @@ class DynamicPlatformConstraintTest {
                 new PromptSection(PromptSectionType.OUTPUT, "输出", "按用户要求交付。"),
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", constraints)), "mock", "model", true, List.of());
         return new OptimizationResultAssembler().assemble(response, context, template, List.of(), answers,
-                !answers.isEmpty(), completed, false, 1, raw, List.of(), List.of());
+                !answers.isEmpty(), completed, 1, raw, List.of(), List.of());
     }
 
     private List<String> platformRules(com.promptoptimizer.enhancement.domain.OptimizationResult result) {

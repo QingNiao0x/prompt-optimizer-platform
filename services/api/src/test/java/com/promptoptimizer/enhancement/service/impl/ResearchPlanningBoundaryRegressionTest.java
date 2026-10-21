@@ -68,7 +68,7 @@ class ResearchPlanningBoundaryRegressionTest {
                     .validateCandidate("", OBSERVED, "questions.hint")).doesNotThrowAnyException();
         }
         var view = EffectiveTaskViewFactory.create(RAW, TemplateCode.AUTO,
-                List.of(new PlanAnswer("population", "研究对象选择哪些人群？", "本次选择研究生。")), List.of(), false);
+                List.of(new PlanAnswer("population", "研究对象选择哪些人群？", "本次选择研究生。")), List.of());
         var request = new PlanningProviderRequest(RAW, "", List.of(), null, null, List.of(), "", view);
         assertThatCode(() -> PlanningDecisionPolicy.from(request).validateCandidate("", OBSERVED, "questions.hint"))
                 .doesNotThrowAnyException();

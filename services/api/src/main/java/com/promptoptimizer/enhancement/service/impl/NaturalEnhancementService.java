@@ -98,8 +98,7 @@ public class NaturalEnhancementService {
         // 原始需求和正文中的具体要求仍完整保留，敏感扫描与资料过滤独立执行。
         List<String> permissions = additionalPermissions(request.permissionPolicy());
         var groups = new ConstraintBundle(List.of(), List.of(), permissions);
-        var input = new NaturalPromptInput(request.rawPrompt(), context, confirmed.answers(), conversation,
-                Boolean.TRUE.equals(request.enhancement().includeExamples()), groups.visibleConstraints(),
+        var input = new NaturalPromptInput(request.rawPrompt(), context, confirmed.answers(), conversation, groups.visibleConstraints(),
                 model.publicId(), planningContext).withStrategyVersion(strategyVersion);
         String workflowId = request.planConfirmation() == null ? null : request.planConfirmation().planId();
         try (var scope = LogCorrelation.bindWorkflow("planning-plan", workflowId)) {
@@ -129,7 +128,7 @@ public class NaturalEnhancementService {
         }
     }
 
-    /** 第四版最多提问 3 个，其余未决留在摘要；注册后最终回答仍受服务端所有权和 TTL 约束。 */
+    /** 第四版指导最多八题，协议容量仍为64且不截断；注册后最终回答受服务端所有权和TTL约束。 */
     public OptimizationPlan plan(OptimizationPlanRequest request) {
         return plan(request, NaturalPromptInstructions.VERSION);
     }
@@ -149,8 +148,7 @@ public class NaturalEnhancementService {
         ContextSnapshot context = resolved.snapshot() == null
                 ? analyzer.analyze(new ContextAnalysisRequest(request.contextDescription(), List.of()), request.rawPrompt())
                 : resolved.snapshot();
-        var input = new NaturalPromptInput(request.rawPrompt(), context, List.of(), request.conversationHistory(),
-                false, List.of(), model.publicId()).withStrategyVersion(strategyVersion);
+        var input = new NaturalPromptInput(request.rawPrompt(), context, List.of(), request.conversationHistory(), List.of(), model.publicId()).withStrategyVersion(strategyVersion);
         PlanningProviderResponse response = provider.plan(input, candidate -> {
             validateQuestions(candidate);
             return NaturalPromptInstructions.requiresTaskUnderstanding(strategyVersion)

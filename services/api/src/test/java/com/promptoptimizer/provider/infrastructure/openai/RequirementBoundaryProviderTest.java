@@ -45,7 +45,7 @@ class RequirementBoundaryProviderTest {
                 .andExpect(jsonPath("$.messages[2].content").value(containsString("删除自行新增")))
                 .andRespond(withSuccess(completion("不得使用假设数据，测试也不例外。"), MediaType.APPLICATION_JSON));
         var result = provider(builder).enhanceValidated(request, response -> assembler.assemble(response,
-                request.context(), request.template(), List.of(), List.of(), false, List.of(), false, 1, request.rawPrompt()));
+                request.context(), request.template(), List.of(), List.of(), false, List.of(), 1, request.rawPrompt()));
         assertThat(result.optimizedPrompt()).contains("不得使用假设数据").doesNotContain("可以使用明确标注为虚构");
         server.verify();
     }
@@ -58,7 +58,7 @@ class RequirementBoundaryProviderTest {
                 .andRespond(withSuccess(completion("可以使用虚构数据验证。"), MediaType.APPLICATION_JSON));
         var request = request();
         assertThatThrownBy(() -> provider(builder).enhanceValidated(request, response -> assembler.assemble(response,
-                request.context(), request.template(), List.of(), List.of(), false, List.of(), false, 1, request.rawPrompt())))
+                request.context(), request.template(), List.of(), List.of(), false, List.of(), 1, request.rawPrompt())))
                 .isInstanceOfSatisfying(ProviderResponseValidationException.class, failure -> {
                     assertThat(failure.getReason()).isEqualTo(ProviderResponseValidationException.Reason.DATA_PROHIBITION_CONFLICT);
                     assertThat(failure.getModelAttempts()).isEqualTo(3);
@@ -69,8 +69,8 @@ class RequirementBoundaryProviderTest {
     private EnhancementProviderRequest request() {
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), "SUCCESS", List.of(), List.of(), List.of(), "v1");
         return new EnhancementProviderRequest("整理审批规则为开发提示词，不得使用假设数据。", context,
-                new PromptTemplate(TemplateCode.GENERAL, "交付提示词。", "符合规则。", "示例。"), List.of(), List.of(), false,
-                List.of(), List.of(), new EnhancementOptions(TemplateCode.GENERAL, false, true, false), "test-model");
+                new PromptTemplate(TemplateCode.GENERAL, "交付提示词。", "符合规则。"), List.of(), List.of(), false,
+                List.of(), List.of(), new EnhancementOptions(TemplateCode.GENERAL, false, true), "test-model");
     }
 
     private OpenAiCompatiblePromptEnhancementProvider provider(RestClient.Builder builder) {

@@ -75,12 +75,12 @@ class RequirementReferenceRecoveryTest {
                 .isEqualTo(fixture.path("modelResponseSha256").asText());
         originalResponse = (ObjectNode) json.readTree(modelResponse);
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "EMPTY");
-        task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
+        task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of());
         constraints = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), false, task.intent());
         request = new EnhancementProviderRequest(raw, context,
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw), List.of(), List.of(),
                 fixture.path("planConfirmed").asBoolean(), constraints.visibleConstraints(), List.of(),
-                new EnhancementOptions(TemplateCode.AUTO, false, true, false, PromptFormat.COMPACT), "test-model",
+                new EnhancementOptions(TemplateCode.AUTO, false, true, PromptFormat.COMPACT), "test-model",
                 List.of(), List.of(), task);
         var references = BoundRequirementProjection.forProvider(request);
         JsonNode serializedReferences = json.valueToTree(references);

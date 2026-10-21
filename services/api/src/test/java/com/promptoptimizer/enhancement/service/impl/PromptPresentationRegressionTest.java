@@ -39,6 +39,6 @@ class PromptPresentationRegressionTest {
                 new PromptSection(PromptSectionType.CONSTRAINTS,"约束","甲机构：保留原值。\n乙机构：保留原值。")),
                 "test","test",false,List.of(),List.of(),new TaskEnhancementAssessment(TaskEnhancementAssessment.Sufficiency.SUFFICIENT,List.of(),presentation));
         return new OptimizationResultAssembler().assemble(response,new ContextSnapshot("",List.of(),List.of(),List.of(),List.of(),List.of(),List.of(),"test"),
-                new PromptTemplate(TemplateCode.GENERAL,"原定交付。","通用验收指导。","示例。"),List.of(),List.of(),false,List.of(),false,1,raw);
+                new PromptTemplate(TemplateCode.GENERAL,"原定交付。","通用验收指导。"),List.of(),List.of(),false,List.of(),1,raw);
     }
 }

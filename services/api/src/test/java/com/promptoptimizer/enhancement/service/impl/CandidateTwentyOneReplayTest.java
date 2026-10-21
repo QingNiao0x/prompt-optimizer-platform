@@ -42,7 +42,7 @@ class CandidateTwentyOneReplayTest {
         var sections = sections(fixture);
         String before = sections.get(PromptSectionType.BACKGROUND).content();
         var task = EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText() + boundary,
-                TemplateCode.AUTO, List.of(), List.of(), false);
+                TemplateCode.AUTO, List.of(), List.of());
         PlanDecisionIntegrator.reconcileDelegatedStatus(sections, task);
         assertThat(sections.get(PromptSectionType.BACKGROUND).content()).isEqualTo(before);
     }
@@ -55,7 +55,7 @@ class CandidateTwentyOneReplayTest {
         sections.put(background.type(), new PromptSection(background.type(), background.title(),
                 background.content().replace("这些均未确认", "另一研究的评分量尺；这些均未确认")));
         String before = sections.get(PromptSectionType.BACKGROUND).content();
-        var task = EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of());
         PlanDecisionIntegrator.reconcileDelegatedStatus(sections, task);
         assertThat(sections.get(PromptSectionType.BACKGROUND).content()).isEqualTo(before);
     }
@@ -71,14 +71,14 @@ class CandidateTwentyOneReplayTest {
     @Test
     void professionalWarningsStayOutsideCopiedPromptAndFalseCertificationIsRejected() {
         var task = EffectiveTaskViewFactory.create("分析心脑血管疾病死亡率和YLL，拟定研究，尚未实施。", TemplateCode.AUTO,
-                List.of(), List.of(), false);
+                List.of(), List.of());
         assertThat(ProfessionalReviewBoundary.warnings(task)).singleElement().asString().contains("尚未复核");
         assertThatThrownBy(() -> ProfessionalReviewBoundary.validate("本结果已通过专家复核。", task))
                 .isInstanceOf(ProviderResponseValidationException.class);
         ProfessionalReviewBoundary.validate("不得宣称本结果已通过专家复核。", task);
         ProfessionalReviewBoundary.validate("“本结果已通过专家复核。”是待核实的引用。", task);
         var translation = EffectiveTaskViewFactory.create("只输出英文译文：本结果已通过专家复核。", TemplateCode.AUTO,
-                List.of(), List.of(), false);
+                List.of(), List.of());
         ProfessionalReviewBoundary.validate("本结果已通过专家复核。", translation);
     }
 
@@ -106,7 +106,7 @@ class CandidateTwentyOneReplayTest {
         var bundle = new ConstraintCompleterImpl().completeForTask(EMPTY, PermissionPolicyInput.empty(), true, intent);
         return new OptimizationResultAssembler().assemble(response, EMPTY,
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw), List.of(), List.of(), false,
-                bundle, false, 0, raw, List.of(), List.of());
+                bundle, 0, raw, List.of(), List.of());
     }
 
     /** 副本上的字段检查不改写夹具及来源。 */

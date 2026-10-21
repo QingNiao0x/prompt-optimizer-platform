@@ -92,8 +92,8 @@ class EnumeratedEvidenceStateTest {
                 "test", "test", false, List.of());
         var result = new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付指标表。", "核对资料。", "示例"),
-                List.of(), answers(), true, List.of("不得编造数据。"), false, 1,
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付指标表。", "核对资料。"),
+                List.of(), answers(), true, List.of("不得编造数据。"), 1,
                 "制定病案质量分析方案，完整性指标分母与一致性指标分母尚需分别确定。",
                 List.of(sourceCard), List.of());
         String background = result.sections().stream().filter(section -> section.type() == PromptSectionType.BACKGROUND)

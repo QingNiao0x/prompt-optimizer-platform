@@ -128,7 +128,7 @@ public class OptimizationPlanningServiceImpl implements OptimizationPlanningServ
                 var identifierRelations = NamedIdentifierContract.from(request.rawPrompt(), planningContext.snapshot(),
                         planningContext.digest() == null ? List.of() : planningContext.digest().factCards(), List.of());
                 var taskView = EffectiveTaskViewFactory.create(request.rawPrompt(), TemplateCode.AUTO, List.of(),
-                        planningContext.digest() == null ? List.of() : planningContext.digest().factCards(), false);
+                        planningContext.digest() == null ? List.of() : planningContext.digest().factCards());
                 var deliveryProfile = taskView.intent().deliveryProfile();
                 PlanningProviderRequest providerRequest = PlanningDecisionPolicy.enrich(new PlanningProviderRequest(
                         request.rawPrompt().trim(),

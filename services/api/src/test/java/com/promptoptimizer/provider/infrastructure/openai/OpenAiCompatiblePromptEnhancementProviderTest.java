@@ -118,7 +118,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
             provider.enhance(new EnhancementProviderRequest(base.rawPrompt(), base.context(), base.template(),
                     base.ambiguities(), base.planAnswers(), base.planConfirmed(), base.constraints(), base.conversationHistory(),
                     new EnhancementOptions(base.options().templateCode(), base.options().includeConversationHistory(),
-                            base.options().includePermissionBoundaries(), base.options().includeExamples(), format),
+                            base.options().includePermissionBoundaries(), format),
                     base.model(), base.planningFacts(), base.confirmedDecisions(), base.taskView()));
         }
         assertThat(actualBodies).hasSize(3);
@@ -606,9 +606,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
         PromptTemplate template = new PromptTemplate(
                 TemplateCode.FEATURE_DEVELOPMENT,
                 "说明接口输入输出",
-                "提供自动化测试",
-                "提供调用示例"
-        );
+                "提供自动化测试");
         return new EnhancementProviderRequest(
                 "给用户模块增加登录功能",
                 context,
@@ -768,7 +766,7 @@ class OpenAiCompatiblePromptEnhancementProviderTest {
                 answers, confirmed, base.constraints(), base.conversationHistory(), base.options(), base.model());
         var response = provider.enhance(request);
         var result = new OptimizationResultAssembler().assemble(response, request.context(), request.template(),
-                List.of(), answers, confirmed, request.constraints(), false, 1);
+                List.of(), answers, confirmed, request.constraints(), 1);
         assertThat(result.ambiguities()).containsExactly(finding);
         assertThat(result.sections()).extracting("type").contains(PromptSectionType.BACKGROUND,
                 PromptSectionType.TASK, PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS);

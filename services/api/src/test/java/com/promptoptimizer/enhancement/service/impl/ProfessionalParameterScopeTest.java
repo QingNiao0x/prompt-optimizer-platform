@@ -98,7 +98,7 @@ class ProfessionalParameterScopeTest {
                 "mock", "scope-test", true, List.of());
         return new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.GENERAL, "按原定形式交付。", "核对参数来源。", ""),
-                List.of(), answers, plan, List.of(), false, 1, raw, List.of());
+                new PromptTemplate(TemplateCode.GENERAL, "按原定形式交付。", "核对参数来源。"),
+                List.of(), answers, plan, List.of(), 1, raw, List.of());
     }
 }

@@ -143,6 +143,6 @@ class ReportDraftGuidanceTest {
         var context = new ContextSnapshot("仅有原始需求，未提供实际统计数据。", List.of(), List.of(), List.of(),
                 List.of(), List.of(), List.of(), "report-guidance-test");
         return new EnhancementProviderRequest(raw, context, registry.resolve(TemplateCode.AUTO, raw), List.of(),
-                List.of(), List.of(), new EnhancementOptions(TemplateCode.AUTO, false, true, false), null);
+                List.of(), List.of(), new EnhancementOptions(TemplateCode.AUTO, false, true), null);
     }
 }

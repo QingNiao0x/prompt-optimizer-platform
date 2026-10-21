@@ -84,7 +84,7 @@ class CandidateSeventeenReplayTest {
     @Test
     void directOriginalDelegationAllowsOnlyTheDeclaredScoringObligation() {
         var sections = sections("说明评价与分歧处理。");
-        var task = EffectiveTaskViewFactory.create(SCALE_RAW, TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(SCALE_RAW, TemplateCode.AUTO, List.of(), List.of());
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections, task, assessment());
         assertThat(sections.get(PromptSectionType.TASK).content()).contains("提出拟议评分尺度", "可操作定义", "分歧处理规则")
                 .doesNotContain("1至5", "阈值为");
@@ -190,7 +190,7 @@ class CandidateSeventeenReplayTest {
     @ValueSource(strings = {"评分尺度由我决定。", "不得推荐评分尺度。", "评分尺度采用1至5分。", "以后确认后再推荐评分尺度。"})
     void originalDelegationDoesNotOverrideScaleReservation(String boundary) {
         var sections = sections("保留原要求。");
-        var task = EffectiveTaskViewFactory.create(SCALE_RAW + boundary, TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(SCALE_RAW + boundary, TemplateCode.AUTO, List.of(), List.of());
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections, task, assessment());
         assertThat(sections.get(PromptSectionType.TASK).content()).isEqualTo("保留原要求。");
     }
@@ -233,8 +233,8 @@ class CandidateSeventeenReplayTest {
         var intent = TaskIntentResolver.resolve(TemplateCode.AUTO, raw);
         var bundle = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), true, intent);
         return new OptimizationResultAssembler().assemble(response, context,
-                new PromptTemplate(intent.templateCode(), "交付原定正文。", "不虚构事实。", "遵守原要求。", intent.deliveryProfile()),
-                List.of(), List.of(), false, bundle, false, 1, raw, List.of(), List.of());
+                new PromptTemplate(intent.templateCode(), "交付原定正文。", "不虚构事实。", intent.deliveryProfile()),
+                List.of(), List.of(), false, bundle, 1, raw, List.of(), List.of());
     }
 
     private EnhancementProviderResponse response(String background, String output, String constraints) {

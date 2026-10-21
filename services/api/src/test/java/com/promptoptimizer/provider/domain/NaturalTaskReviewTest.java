@@ -115,7 +115,7 @@ class NaturalTaskReviewTest {
     @Test
     void multilineOutputUsesSeveralSingleLineAnchorsWithoutChangingItsLayout() {
         var requirements = List.of(requirement("目标与格式", "rawPrompt", "请写一条通知", NaturalTaskUnderstanding.Dimension.GOAL));
-        var input = new NaturalPromptInput(RAW, input().context(), List.of(), List.of(), false, List.of(), "fixture:model");
+        var input = new NaturalPromptInput(RAW, input().context(), List.of(), List.of(), List.of(), "fixture:model");
         var valid = new NaturalTaskReview(NaturalTaskReview.InputReadiness.SUFFICIENT,
                 List.of(new NaturalTaskReview.Coverage(0, List.of("请写一条通知", "只输出正文"))), List.of(), List.of());
         var task = new NaturalTaskUnderstanding("通知", "正文", requirements, List.of(), List.of(), valid).resolve(input);
@@ -130,7 +130,7 @@ class NaturalTaskReviewTest {
 
     private NaturalPromptInput input() {
         return new NaturalPromptInput(RAW, new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
-                List.of(new PlanAnswer("q1", "活动时间？", "时间未定，保留待定")), List.of(), false, List.of(), "fixture:model");
+                List.of(new PlanAnswer("q1", "活动时间？", "时间未定，保留待定")), List.of(), List.of(), "fixture:model");
     }
 
     private NaturalTaskUnderstanding task(NaturalTaskReview review) {

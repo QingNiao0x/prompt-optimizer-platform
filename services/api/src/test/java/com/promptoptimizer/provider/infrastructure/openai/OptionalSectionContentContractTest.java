@@ -42,7 +42,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  */
 class OptionalSectionContentContractTest {
     @Test
-    void onlyStructuredSuppressesTemplateDefaultsWhilePreservingTheOriginalTaskAndEffectiveExampleMode() throws Exception {
+    void onlyStructuredSuppressesAcceptanceDefaultsWithoutSendingRetiredExampleGuidance() throws Exception {
         for (var format : PromptFormat.values()) {
             server.expect(once(), requestTo(ENDPOINT)).andExpect(request -> {
                 var body = json.readTree(((MockClientHttpRequest) request).getBodyAsString());
@@ -52,11 +52,13 @@ class OptionalSectionContentContractTest {
                 assertThat(payload.path("template").path("outputGuidance").asText()).isNotBlank();
                 if (format == PromptFormat.STRUCTURED) {
                     assertThat(payload.path("template").path("acceptanceGuidance").asText()).isEmpty();
-                    assertThat(payload.path("template").path("exampleGuidance").asText()).isEmpty();
+                    assertThat(payload.path("template").has("exampleGuidance")).isFalse();
                 } else {
                     assertThat(payload.path("template").path("acceptanceGuidance").asText()).isNotBlank();
                 }
-                assertThat(payload.path("taskView").path("examples").path("mode").asText()).isNotBlank();
+                assertThat(payload.path("taskView").has("examples")).isFalse();
+                assertThat(payload.path("options").has("includeExamples")).isFalse();
+                assertThat(payload.path("template").has("exampleGuidance")).isFalse();
             }).andRespond(withSuccess(response(content()), MediaType.APPLICATION_JSON));
         }
         for (var format : PromptFormat.values()) provider.enhance(request(format, ""));
@@ -181,8 +183,8 @@ class OptionalSectionContentContractTest {
     private EnhancementProviderRequest request(PromptFormat format, String context) {
         return new EnhancementProviderRequest("把“会议改到周五上午九点”译成英文，只输出英文译文，不要解释和示例。",
                 new ContextSnapshot(context, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
-                new PromptTemplate(TemplateCode.GENERAL, "只交付原定译文。", "保留原意。", "遵守示例选择。"),
-                List.of(), List.of(), List.of(), new EnhancementOptions(TemplateCode.GENERAL, false, true, false, format),
+                new PromptTemplate(TemplateCode.GENERAL, "只交付原定译文。", "保留原意。"),
+                List.of(), List.of(), List.of(), new EnhancementOptions(TemplateCode.GENERAL, false, true, format),
                 "test-model");
     }
 

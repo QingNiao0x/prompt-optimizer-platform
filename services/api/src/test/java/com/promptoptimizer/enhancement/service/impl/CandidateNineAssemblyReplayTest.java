@@ -38,7 +38,7 @@ class CandidateNineAssemblyReplayTest {
         assertThat(result.optimizedPrompt()).contains("尚未实施", "没有额外真实数据", "拟议", "800", "1200");
         // 委托允许提出方案，未决实际参数仍要保留，不能靠丢掉问题身份消除提醒。
         assertThat(result.optimizedPrompt()).doesNotContain("该问题尚未确定：这 4 类任务分别是什么？");
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
         assertThat(task.pendingDecisions()).hasSize(6);
         assertThat(task.modelInput().pendingDecisions()).allMatch(value -> value.designDelegated());
     }
@@ -62,9 +62,9 @@ class CandidateNineAssemblyReplayTest {
         var response = new EnhancementProviderResponse(sections, "deepseek", "deepseek-flash", false, ambiguities,
                 List.of(), json.treeToValue(model.path("assessment"), TaskEnhancementAssessment.class));
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1");
-        var template = new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法正文。", "保持研究目标。", "遵守原文。");
+        var template = new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法正文。", "保持研究目标。");
         return new OptimizationResultAssembler().assemble(response, context, template, List.of(), answers,
-                !answers.isEmpty(), List.of(), false, 1, raw);
+                !answers.isEmpty(), List.of(), 1, raw);
     }
 
     /** 只读已提交原件，不访问凭据文件或另行补入平台遗漏的答案。 */

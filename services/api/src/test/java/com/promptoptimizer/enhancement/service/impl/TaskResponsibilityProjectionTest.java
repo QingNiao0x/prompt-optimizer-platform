@@ -121,7 +121,7 @@ class TaskResponsibilityProjectionTest {
         var response = new EnhancementProviderResponse(List.copyOf(generated.values()), "fixture", "fixture", true, List.of());
         var template = new PromptTemplateRegistryImpl().resolve(TemplateCode.FEATURE_DEVELOPMENT, RAW);
         var result = new OptimizationResultAssembler().assemble(response, context, template, List.of(), answers(), true,
-                constraints, false, 1, RAW, List.of(), List.of(), task,
+                constraints, 1, RAW, List.of(), List.of(), task,
                 structured ? PromptFormat.STRUCTURED : PromptFormat.COMPACT);
         assertThat(result.optimizedPrompt()).doesNotContain("{{REQ_");
         for (var requirement : task.executionRequirements()) {
@@ -168,7 +168,7 @@ class TaskResponsibilityProjectionTest {
     @Test
     void unresolvedParameterNeverBecomesAnExecutableConfirmedValue() {
         var task = EffectiveTaskViewFactory.create("撰写研究方案。", TemplateCode.AUTO,
-                List.of(new PlanAnswer("population", "标准人口采用哪一年？", "暂不确定，不得默认任何年份。")), List.of(), false);
+                List.of(new PlanAnswer("population", "标准人口采用哪一年？", "暂不确定，不得默认任何年份。")), List.of());
         assertThat(task.pendingDecisions()).hasSize(1);
         var slots = BoundRequirementProjection.forProvider(request(task, List.of()));
         assertThat(slots).allMatch(slot -> !slot.statement().contains("2010") && !slot.statement().contains("已确认"));
@@ -214,7 +214,7 @@ class TaskResponsibilityProjectionTest {
     }
 
     private EffectiveTaskView task() throws Exception {
-        return EffectiveTaskViewFactory.create(RAW, TemplateCode.AUTO, answers(), List.of(), false);
+        return EffectiveTaskViewFactory.create(RAW, TemplateCode.AUTO, answers(), List.of());
     }
 
     private List<PlanAnswer> answers() throws Exception {

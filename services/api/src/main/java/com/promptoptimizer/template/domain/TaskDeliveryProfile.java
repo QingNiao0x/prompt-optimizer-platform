@@ -102,14 +102,4 @@ public enum TaskDeliveryProfile {
             default -> "只确认会改变目标、范围、业务行为、数据口径或执行前提的关键缺口；已知事实和常规组织方式不要重问。";
         };
     }
-
-    /** 示例仅在既有开关启用时交付，不为研究和写作虚构真实结果。 */
-    public String exampleGuidance() {
-        return switch (this) {
-            case TRANSLATION -> "需要示例时仅提供与原文相关的术语或格式示例，遵守只输出译文的限制。";
-            case ACADEMIC_METHODS, ACADEMIC_WRITING, DATA_ANALYSIS, MEDICAL_MATERIAL, LEGAL_MATERIAL ->
-                    "仅在用户要求且资料允许时提供空表、格式或计算步骤示例，示例不得冒充真实数据或结论。";
-            default -> "只有示例有助于当前交付且不违反输出限制时，提供一个相关最小示例。";
-        };
-    }
 }

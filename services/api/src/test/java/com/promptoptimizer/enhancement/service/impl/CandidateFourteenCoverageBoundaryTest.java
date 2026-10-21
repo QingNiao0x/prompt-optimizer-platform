@@ -143,7 +143,7 @@ class CandidateFourteenCoverageBoundaryTest {
     /** 保留实际题目ID及原回答，不用短答案或自造确认取代未决状态。 */
     private com.promptoptimizer.enhancement.domain.EffectiveTaskView task(String question, String answer) {
         return EffectiveTaskViewFactory.create("撰写中文研究设计的方法部分。", TemplateCode.AUTO,
-                List.of(new PlanAnswer("q-current", question, answer)), List.of(), false);
+                List.of(new PlanAnswer("q-current", question, answer)), List.of());
     }
 
     /** 示例和验收没有权威覆盖来源，所有判断都经过当前四要素段落。 */

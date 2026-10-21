@@ -233,7 +233,7 @@ class CandidateTwentySixStateReplayTest {
     void deduplicatedPartialInstructionRetainsEverySourceWithoutDelegatingEitherUnchosenObject() {
         var task = EffectiveTaskViewFactory.create(RAW, TemplateCode.AUTO,
                 List.of(new PlanAnswer("categories", QUESTION, "只委托评分设计，分类由我决定。"),
-                        new PlanAnswer("rounds", "Plan轮次是什么？", "只委托评分设计，轮次由我决定。")), List.of(), false);
+                        new PlanAnswer("rounds", "Plan轮次是什么？", "只委托评分设计，轮次由我决定。")), List.of());
         assertThat(task.modelInput().executionRequirements()).filteredOn(value -> value.subject().equals("局部委托要求"))
                 .singleElement().satisfies(value -> assertThat(value.sourceQuestionIds()).containsExactly("categories", "rounds"));
         assertThat(task.pendingDecisions()).hasSize(2);
@@ -264,13 +264,12 @@ class CandidateTwentySixStateReplayTest {
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, RAW), List.of(), answers(answer), true,
                 new com.promptoptimizer.policy.service.impl.ConstraintCompleterImpl().completeForTask(EMPTY,
                         com.promptoptimizer.enhancement.dto.PermissionPolicyInput.empty(), true,
-                        com.promptoptimizer.template.domain.TaskIntentResolver.resolve(TemplateCode.AUTO, RAW)),
-                false, 0, RAW, List.of(), List.of(), task(answer));
+                        com.promptoptimizer.template.domain.TaskIntentResolver.resolve(TemplateCode.AUTO, RAW)), 0, RAW, List.of(), List.of(), task(answer));
     }
 
     private static List<PlanAnswer> answers(String answer) { return List.of(new PlanAnswer("q", QUESTION, answer)); }
 
     private static EffectiveTaskView task(String answer) {
-        return EffectiveTaskViewFactory.create(RAW, TemplateCode.AUTO, answers(answer), List.of(), false);
+        return EffectiveTaskViewFactory.create(RAW, TemplateCode.AUTO, answers(answer), List.of());
     }
 }

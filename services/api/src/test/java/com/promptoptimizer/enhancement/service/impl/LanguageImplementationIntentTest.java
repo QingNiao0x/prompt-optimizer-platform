@@ -67,7 +67,7 @@ class LanguageImplementationIntentTest {
     void sharedTaskViewAndSafetyRulesReceiveTheSameRepairedIdentity() {
         String raw = "用TypeScript实现文本去重。";
         var intent = TaskIntentResolver.resolve(TemplateCode.AUTO, raw);
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, java.util.List.of(), java.util.List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, java.util.List.of(), java.util.List.of());
         assertThat(task.intent()).isEqualTo(intent);
         var context = new com.promptoptimizer.context.domain.ContextSnapshot("", java.util.List.of(), java.util.List.of(),
                 java.util.List.of(), java.util.List.of(), java.util.List.of(), java.util.List.of(), "EMPTY");

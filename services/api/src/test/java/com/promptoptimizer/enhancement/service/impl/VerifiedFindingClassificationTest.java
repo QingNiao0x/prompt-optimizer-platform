@@ -36,8 +36,8 @@ class VerifiedFindingClassificationTest {
                     List.of(new FileSnippet(path, "markdown", "服务端负责地区范围过滤。开票请求由客户端实现。", "基线匹配资料", false)),
                     List.of(), List.of(), "test");
             var result = new OptimizationResultAssembler().assemble(response, context,
-                    new PromptTemplate(TemplateCode.FEATURE_DEVELOPMENT, "实现", "符合需求", ""),
-                    List.of(), List.of(), false, List.of("不得泄露凭据"), false, 1,
+                    new PromptTemplate(TemplateCode.FEATURE_DEVELOPMENT, "实现", "符合需求"),
+                    List.of(), List.of(), false, List.of("不得泄露凭据"), 1,
                     "完善按当前用户所属地区匹配患者基线的实现。");
             assertThat(result.ambiguities()).contains(irrelevant);
             if (path.startsWith("docs/")) assertThat(result.ambiguities()).doesNotContain(finding);

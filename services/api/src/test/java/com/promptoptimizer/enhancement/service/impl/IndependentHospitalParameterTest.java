@@ -113,8 +113,8 @@ class IndependentHospitalParameterTest {
                 List.of("两院比较观察窗口尚未确定。", "异常等待阈值尚未确定。"));
         var result = new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付指标表。", "核对独立范围。", "示例"),
-                List.of(), List.of(), false, List.of(), false, 1, RAW,
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付指标表。", "核对独立范围。"),
+                List.of(), List.of(), false, List.of(), 1, RAW,
                 List.of(new PlanningFactCard("hospital-source", PlanningFactCategory.BUSINESS_RULE,
                         "docs/两院说明.txt", MATERIAL)), List.of());
         assertThat(result.ambiguities()).containsExactlyInAnyOrder("甲院的观察窗口尚未确定。", "乙院的观察窗口尚未确定。",

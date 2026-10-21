@@ -164,7 +164,7 @@ test(`Plan用户选择${format}生成后，显式模式重新增强复用同一�
   });
   const history = (): OptimizationHistoryDetail => ({ id: 'existing-record', rawPrompt: planRawPrompt, ...recorded,
     contextSummary: {}, providerName: 'mock', modelName: 'controlled-fixture', mock: true, latencyMs: 1,
-    createdAt: '2026-10-18T00:00:00Z', includePermissionBoundaries: true, includeExamples: false,
+    createdAt: '2026-10-18T00:00:00Z', includePermissionBoundaries: true,
     conversationHistory: [], permissionPolicy: {} });
   await page.route('**/api/v2/optimization-history**', route => {
     const isDetail = new URL(route.request().url()).pathname.endsWith('/existing-record');
@@ -268,7 +268,7 @@ test('旧记录缺省恢复分节，生成中禁止切换避免迟到响应覆�
   await page.route('**/api/v2/optimization-history**', route => route.fulfill({ json: { data:
     new URL(route.request().url()).pathname.endsWith('/old')
       ? { id: 'old', rawPrompt, ...legacy, contextSummary: {}, providerName: 'mock', modelName: 'old',
-        createdAt: '2026-10-17T00:00:00Z', includePermissionBoundaries: true, includeExamples: false,
+        createdAt: '2026-10-17T00:00:00Z', includePermissionBoundaries: true,
         conversationHistory: [], permissionPolicy: {} }
       : { records: [{ id: 'old', templateCode: 'GENERAL', rawPromptPreview: rawPrompt,
         providerName: 'mock', modelName: 'old', mock: true, createdAt: '2026-10-17T00:00:00Z' }], total: 1, size: 10, current: 1, pages: 1 } } }));

@@ -17,7 +17,6 @@ public record NaturalPromptInput(
         ContextSnapshot context,
         List<PlanAnswer> actualAnswers,
         List<ConversationMessage> conversation,
-        boolean includeExamples,
         List<String> mandatoryRules,
         String modelId,
         ContextSnapshot planningContext,
@@ -38,20 +37,20 @@ public record NaturalPromptInput(
 
     /** 只有服务端历史分发与受控评测可选择兼容版本；原文及来源保持不变。 */
     public NaturalPromptInput withStrategyVersion(String version) {
-        return new NaturalPromptInput(rawPrompt, context, actualAnswers, conversation, includeExamples,
+        return new NaturalPromptInput(rawPrompt, context, actualAnswers, conversation,
                 mandatoryRules, modelId, planningContext, version);
     }
 
     /** 兼容调用方；新请求使用当前策略，旧历史必须显式传回原版本。 */
     public NaturalPromptInput(String rawPrompt, ContextSnapshot context, List<PlanAnswer> actualAnswers,
-            List<ConversationMessage> conversation, boolean includeExamples, List<String> mandatoryRules,
+            List<ConversationMessage> conversation, List<String> mandatoryRules,
             String modelId, ContextSnapshot planningContext) {
-        this(rawPrompt, context, actualAnswers, conversation, includeExamples, mandatoryRules, modelId, planningContext, null);
+        this(rawPrompt, context, actualAnswers, conversation, mandatoryRules, modelId, planningContext, null);
     }
 
     /** 不经 Plan 的请求没有此前资料快照。 */
     public NaturalPromptInput(String rawPrompt, ContextSnapshot context, List<PlanAnswer> actualAnswers,
-            List<ConversationMessage> conversation, boolean includeExamples, List<String> mandatoryRules, String modelId) {
-        this(rawPrompt, context, actualAnswers, conversation, includeExamples, mandatoryRules, modelId, null);
+            List<ConversationMessage> conversation, List<String> mandatoryRules, String modelId) {
+        this(rawPrompt, context, actualAnswers, conversation, mandatoryRules, modelId, null);
     }
 }

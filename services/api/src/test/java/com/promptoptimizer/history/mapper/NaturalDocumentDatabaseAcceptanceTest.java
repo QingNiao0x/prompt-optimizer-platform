@@ -85,7 +85,7 @@ class NaturalDocumentDatabaseAcceptanceTest {
                 new ClassPathResource("db/migration/V17__natural_task_strategy_version_comment.sql"));
         String marker = "natural-acceptance-" + UUID.randomUUID();
         var input = new OptimizationRequest(marker, new com.promptoptimizer.context.dto.ContextAnalysisRequest("", List.of()),
-                new EnhancementOptions(TemplateCode.AUTO, false, true, false, PromptFormat.COMPACT),
+                new EnhancementOptions(TemplateCode.AUTO, false, true, PromptFormat.COMPACT),
                 List.of(), PermissionPolicyInput.empty(), null, null);
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test");
         var groups = new ConstraintBundle(List.of("事实边界。"), List.of(), List.of());

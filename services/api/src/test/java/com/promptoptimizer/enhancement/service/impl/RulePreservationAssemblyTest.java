@@ -189,8 +189,8 @@ class RulePreservationAssemblyTest {
         for (boolean confirmed : List.of(false, true)) {
             var facts = confirmed ? extractor.extract(context, query).cards() : List.<PlanningFactCard>of();
             var result = assembler.assemble(omittedResponse, context,
-                    new PromptTemplate(TemplateCode.GENERAL, "输出执行方案", "步骤有明确输入、操作与预期结果", "活动场景"),
-                    List.of(), List.of(), confirmed, CONSTRAINTS, false, 12, query, facts);
+                    new PromptTemplate(TemplateCode.GENERAL, "输出执行方案", "步骤有明确输入、操作与预期结果"),
+                    List.of(), List.of(), confirmed, CONSTRAINTS, 12, query, facts);
 
             assertThat(result.optimizedPrompt()).as("planConfirmed=%s", confirmed)
                     .contains("activity-20.docx", sourceRule, "预算和具体日期尚未确定", "标为待确认")
@@ -221,8 +221,8 @@ class RulePreservationAssemblyTest {
                                         List<PlanningFactCard> facts, List<PlanAnswer> answers,
                                         List<String> conflicts, EnhancementProviderResponse response) {
         return assembler.assemble(response, context,
-                new PromptTemplate(TemplateCode.BUG_FIX, "输出修复步骤", "正常与重复预约场景均有可验证结果", "场景示例"),
-                conflicts, answers, confirmed, CONSTRAINTS, false, 12, query, facts);
+                new PromptTemplate(TemplateCode.BUG_FIX, "输出修复步骤", "正常与重复预约场景均有可验证结果"),
+                conflicts, answers, confirmed, CONSTRAINTS, 12, query, facts);
     }
 
     /** 事实补回不能改变四要素、平台约束、供应商标识或额外触发待确认问题。 */

@@ -208,7 +208,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         List<PlanAnswer> planAnswers = confirmedPlan.answers();
         ConfirmedDecisionSet decisions = ConfirmedDecisionSet.from(planAnswers);
         var initialTaskView = EffectiveTaskViewFactory.create(request.rawPrompt(), request.enhancement().templateCode(),
-                planConfirmed ? planAnswers : List.of(), List.of(), Boolean.TRUE.equals(request.enhancement().includeExamples()));
+                planConfirmed ? planAnswers : List.of(), List.of());
         String contextQuery = decisions.retrievalQuery(initialTaskView.effectivePrompt());
         ContextSnapshot context = com.promptoptimizer.common.logging.PipelineStageTiming.measure(
                 "prompt.optimize", "context.analyze", selectedModelId, () -> planningSessionService.reusableContext(
@@ -251,7 +251,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         );
         var taskView = new com.promptoptimizer.enhancement.domain.EffectiveTaskView(initialTaskView.originalPrompt(),
                 initialTaskView.effectivePrompt(), initialTaskView.intent(), initialTaskView.confirmedDecisions(),
-                initialTaskView.executionRequirements(), initialTaskView.pendingDecisions(), planningFacts, initialTaskView.examples());
+                initialTaskView.executionRequirements(), initialTaskView.pendingDecisions(), planningFacts);
         var taskIntent = taskView.intent();
         // 只有肯定交付目标包含辅助代码才加代码检查，材料中的技术栈不改变报告的职责。
         var constraints = constraintCompleter.completeForTask(context, request.permissionPolicy(),
@@ -291,7 +291,7 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         }
         PromptTemplate executionTemplate = deliveryGuidance.isBlank() ? template : new PromptTemplate(
                 template.code(), template.outputGuidance() + "\n\n" + deliveryGuidance,
-                template.acceptanceGuidance(), template.exampleGuidance(), template.deliveryProfile());
+                template.acceptanceGuidance(), template.deliveryProfile());
         var executionConstraints = constraints.withTaskRule(objectGuidance);
         List<String> finalAmbiguities = ambiguities;
         try (LogCorrelation.Scope ignored = LogCorrelation.bindWorkflow(workflowNamespace, workflowResourceId)) {
@@ -322,7 +322,6 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                                 planAnswers,
                                 planConfirmed,
                                 executionConstraints,
-                                Boolean.TRUE.equals(request.enhancement().includeExamples()),
                                 Math.max(0, clock.millis() - startedAt),
                                 request.rawPrompt(),
                                 planningFacts,

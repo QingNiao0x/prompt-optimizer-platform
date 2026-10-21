@@ -24,7 +24,7 @@ class TemplateGuidanceBoundaryTest {
         var context = new ContextSnapshot("已核实复制功能，其他能力未说明。", List.of(), List.of(), List.of(),
                 List.of(), List.of(), List.of(), "test");
         var result = new MockPromptEnhancementProvider().enhance(new EnhancementProviderRequest(raw, context, template,
-                List.of(), List.of("不得编造事实。"), List.of(), new EnhancementOptions(TemplateCode.AUTO, false, true, false), null));
+                List.of(), List.of("不得编造事实。"), List.of(), new EnhancementOptions(TemplateCode.AUTO, false, true), null));
         assertThat(result.sections()).extracting("type").contains(PromptSectionType.BACKGROUND, PromptSectionType.TASK,
                 PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS).doesNotContain(PromptSectionType.EXAMPLES);
         assertThat(result.sections().stream().filter(section -> section.type() == PromptSectionType.OUTPUT)
@@ -38,7 +38,7 @@ class TemplateGuidanceBoundaryTest {
         var template = registry.resolve(TemplateCode.RESEARCH_ANALYSIS, "对给定观点提出简明意见，只讨论用户给定的问题。");
         assertThat(template.code()).isEqualTo(TemplateCode.RESEARCH_ANALYSIS);
         assertThat(template.outputGuidance()).contains("交付范围", "相关", "未决");
-        assertThat(template.exampleGuidance()).contains("需要", "真实结果");
+        assertThat(template.acceptanceGuidance()).contains("资料可追溯", "已定与未知分开");
     }
 
     @Test
@@ -55,11 +55,12 @@ class TemplateGuidanceBoundaryTest {
         var template = registry.resolve(TemplateCode.AUTO, raw);
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test");
         var response = new MockPromptEnhancementProvider().enhance(new EnhancementProviderRequest(raw, context, template,
-                List.of(), List.of("不得编造事实。"), List.of(), new EnhancementOptions(TemplateCode.AUTO, false, true, true), null));
+                List.of(), List.of("不得编造事实。"), List.of(), new EnhancementOptions(TemplateCode.AUTO, false, true), null));
         var result = new OptimizationResultAssembler().assemble(response, context, template, List.of(), List.of(), false,
-                List.of("不得编造事实。"), true, 1, raw);
+                List.of("不得编造事实。"), 1, raw);
         assertThat(result.sections()).filteredOn(s -> s.type() == PromptSectionType.OUTPUT).singleElement()
                 .satisfies(s -> assertThat(s.content()).contains("交付可直接使用的提示词"));
-        assertThat(result.optimizedPrompt()).contains("不超过1200字", "附表另计", "输入与预期输出示例");
+        assertThat(result.optimizedPrompt()).contains("不超过1200字", "附表另计");
+        assertThat(result.sections()).noneMatch(section -> section.type() == PromptSectionType.EXAMPLES);
     }
 }

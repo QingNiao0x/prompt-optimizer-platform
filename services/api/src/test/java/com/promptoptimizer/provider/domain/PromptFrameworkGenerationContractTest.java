@@ -30,7 +30,7 @@ class PromptFrameworkGenerationContractTest {
             "制定研究方案，方法可以推荐，实际评分参数由我确认。"
     })
     void presentationUsesOneLayoutStrategyAndPreservesInput(String raw) {
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of());
         var selected = PromptFrameworkSelector.select(task);
         var natural = PromptRewriteStrategy.forTask(task, PromptFormat.COMPACT);
         var structured = PromptRewriteStrategy.forTask(task, PromptFormat.STRUCTURED);
@@ -43,20 +43,20 @@ class PromptFrameworkGenerationContractTest {
         assertThat(natural.instruction()).isNotEqualTo(structured.instruction());
         assertThat(selected.instruction()).doesNotContain("自然段落顺序", "TASTE", "ALIGN");
         assertThat(task.effectivePrompt()).isEqualTo(raw);
-        assertThat(task.examples().required()).isFalse();
     }
 
     @Test
     void authorizedExamplesAndUnresolvedParametersRemainIndependentOfFramework() {
         var task = EffectiveTaskViewFactory.create("制定研究方案，允许提供相关输入输出示例，但不编造研究数据。",
                 TemplateCode.AUTO, List.of(new PlanAnswer("scale", "本研究采用什么实际评分尺度？", "尚未确定，由我确认。")),
-                List.of(), true);
+                List.of());
         var pending = task.pendingDecisions();
         for (var format : PromptFormat.values()) {
             var instruction = PromptRewriteStrategy.forTask(task, format).instruction();
-            assertThat(instruction).contains("重要未决参数继续保持原状态", "示例按既有示例契约提供");
+            assertThat(instruction).contains("重要未决参数继续保持原状态");
             assertThat(instruction).doesNotContain("默认五点", "Likert", "自然段落顺序：");
         }
         assertThat(task.pendingDecisions()).isEqualTo(pending).isNotEmpty();
+        assertThat(task.effectivePrompt()).contains("允许提供相关输入输出示例", "不编造研究数据");
     }
 }

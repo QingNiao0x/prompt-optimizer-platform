@@ -16,7 +16,6 @@ export interface OptimizationDraft {
   files: ContextFileInput[];
   templateCode: TemplateCode;
   includePermissionBoundaries: boolean;
-  includeExamples: boolean;
   promptFormat?: PromptFormat;
   planConfirmation?: PlanConfirmation;
 }
@@ -43,7 +42,6 @@ export const buildOptimizationRequest = (
     templateCode: draft.templateCode,
     includeConversationHistory: false,
     includePermissionBoundaries: draft.includePermissionBoundaries,
-    includeExamples: draft.includeExamples,
     ...(draft.promptFormat ? { promptFormat: draft.promptFormat } : {}),
   },
   conversationHistory: [],

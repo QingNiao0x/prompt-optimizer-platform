@@ -326,8 +326,8 @@ class NamedIdentifierContractTest {
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不虚构数据，不输出诊疗建议。")),
                 "test", "test", false, List.of());
         return new OptimizationResultAssembler().assemble(response, context(MATERIAL),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付指标表。", "范围一致。", "示例"),
-                List.of(), List.of(), false, List.of(), false, 1, RAW, List.of(), List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付指标表。", "范围一致。"),
+                List.of(), List.of(), false, List.of(), 1, RAW, List.of(), List.of());
     }
 
     private static ContextSnapshot context(String material) {

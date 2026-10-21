@@ -56,8 +56,8 @@ class RequestedDecisionDeliveryTest {
                 "test", "test", false, List.of());
         var result = new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.GENERAL, "交付观察方案。", "核对观察边界。", "示例"),
-                List.of(), List.of(), false, List.of(), false, 1, RAW, List.of());
+                new PromptTemplate(TemplateCode.GENERAL, "交付观察方案。", "核对观察边界。"),
+                List.of(), List.of(), false, List.of(), 1, RAW, List.of());
         assertThat(result.optimizedPrompt()).contains("甲院2025年异常等待", "待确认", "独立未决条件")
                 .doesNotContain("原定指标表与必要伪代码仍须交付", "合入最终指标表", "用于生成指标表");
     }

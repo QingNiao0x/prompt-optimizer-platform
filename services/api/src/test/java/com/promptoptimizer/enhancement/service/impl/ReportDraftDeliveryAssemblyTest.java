@@ -158,7 +158,7 @@ class ReportDraftDeliveryAssemblyTest {
         return new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw),
-                findings, List.of(), false, List.of(), false, 1, raw);
+                findings, List.of(), false, List.of(), 1, raw);
     }
 
     private String section(OptimizationResult result, PromptSectionType type) {

@@ -87,7 +87,7 @@ class JavaCodeDeliveryRegressionTest {
                 "test", "test", false, List.of());
         return new OptimizationResultAssembler().assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.GENERAL, "交付原定文件。", "核对原定范围。", "示例"),
-                List.of(), List.of(), false, List.of("不得泄露凭据。"), false, 1, raw, List.of(), List.of());
+                new PromptTemplate(TemplateCode.GENERAL, "交付原定文件。", "核对原定范围。"),
+                List.of(), List.of(), false, List.of("不得泄露凭据。"), 1, raw, List.of(), List.of());
     }
 }

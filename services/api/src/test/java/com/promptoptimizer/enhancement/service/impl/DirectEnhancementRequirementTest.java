@@ -129,7 +129,7 @@ class DirectEnhancementRequirementTest {
     }
 
     private EnhancementProviderRequest request(String raw) {
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of());
         var template = new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw);
         var bundle = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), false, task.intent());
         return new EnhancementProviderRequest(raw, context, template, List.of(), List.of(), false,
@@ -148,7 +148,7 @@ class DirectEnhancementRequirementTest {
             List<PromptSection> sections, PromptFormat format) {
         var bundle = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), false, request.taskView().intent());
         return new OptimizationResultAssembler().assemble(new EnhancementProviderResponse(sections, "fixture", "local", false, List.of()),
-                context, request.template(), List.of(), List.of(), false, bundle, false, 1L, request.rawPrompt(),
+                context, request.template(), List.of(), List.of(), false, bundle, 1L, request.rawPrompt(),
                 List.of(), List.of(), request.taskView(), format);
     }
 }

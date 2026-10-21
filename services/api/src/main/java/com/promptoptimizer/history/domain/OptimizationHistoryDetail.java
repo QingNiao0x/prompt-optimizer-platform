@@ -32,7 +32,6 @@ public record OptimizationHistoryDetail(
         Integer latencyMs,
         OffsetDateTime createdAt,
         boolean includePermissionBoundaries,
-        boolean includeExamples,
         List<ConversationMessage> conversationHistory,
         Map<String, Object> permissionPolicy,
         String modelVersion,
@@ -59,11 +58,11 @@ public record OptimizationHistoryDetail(
     public OptimizationHistoryDetail(UUID id, String rawPrompt, String optimizedPrompt, List<PromptSection> sections,
             Map<String,Object> contextSummary, List<String> ambiguities, List<String> appliedConstraints,
             String templateCode, String providerName, String modelName, boolean mock, Integer latencyMs,
-            OffsetDateTime createdAt, boolean includePermissionBoundaries, boolean includeExamples,
+            OffsetDateTime createdAt, boolean includePermissionBoundaries,
             List<ConversationMessage> conversationHistory, Map<String,Object> permissionPolicy, String modelVersion,
             com.promptoptimizer.enhancement.domain.PromptFormat promptFormat, ConstraintBundle constraintGroups) {
         this(id, rawPrompt, optimizedPrompt, sections, contextSummary, ambiguities, appliedConstraints, templateCode,
-                providerName, modelName, mock, latencyMs, createdAt, includePermissionBoundaries, includeExamples,
+                providerName, modelName, mock, latencyMs, createdAt, includePermissionBoundaries,
                 conversationHistory, permissionPolicy, modelVersion, promptFormat, constraintGroups, "SECTIONS", "LEGACY", "1", null);
     }
 
@@ -71,23 +70,23 @@ public record OptimizationHistoryDetail(
     public OptimizationHistoryDetail(UUID id, String rawPrompt, String optimizedPrompt, List<PromptSection> sections,
             Map<String,Object> contextSummary, List<String> ambiguities, List<String> appliedConstraints,
             String templateCode, String providerName, String modelName, boolean mock, Integer latencyMs,
-            OffsetDateTime createdAt, boolean includePermissionBoundaries, boolean includeExamples,
+            OffsetDateTime createdAt, boolean includePermissionBoundaries,
             List<ConversationMessage> conversationHistory, Map<String,Object> permissionPolicy, String modelVersion,
             com.promptoptimizer.enhancement.domain.PromptFormat promptFormat) {
         this(id, rawPrompt, optimizedPrompt, sections, contextSummary, ambiguities, appliedConstraints,
                 templateCode, providerName, modelName, mock, latencyMs, createdAt, includePermissionBoundaries,
-                includeExamples, conversationHistory, permissionPolicy, modelVersion, promptFormat, null);
+                conversationHistory, permissionPolicy, modelVersion, promptFormat, null);
     }
 
     /** 旧历史没有展示形式时继续分节；保存的最终正文不重新渲染。 */
     public OptimizationHistoryDetail(UUID id, String rawPrompt, String optimizedPrompt, List<PromptSection> sections,
             Map<String,Object> contextSummary, List<String> ambiguities, List<String> appliedConstraints,
             String templateCode, String providerName, String modelName, boolean mock, Integer latencyMs,
-            OffsetDateTime createdAt, boolean includePermissionBoundaries, boolean includeExamples,
+            OffsetDateTime createdAt, boolean includePermissionBoundaries,
             List<ConversationMessage> conversationHistory, Map<String,Object> permissionPolicy, String modelVersion) {
         this(id, rawPrompt, optimizedPrompt, sections, contextSummary, ambiguities, appliedConstraints,
                 templateCode, providerName, modelName, mock, latencyMs, createdAt, includePermissionBoundaries,
-                includeExamples, conversationHistory, permissionPolicy, modelVersion,
+                conversationHistory, permissionPolicy, modelVersion,
                 com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED);
     }
 }

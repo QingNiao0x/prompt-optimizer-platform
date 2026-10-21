@@ -123,16 +123,11 @@ class TaskConstraintWholeProjectionTest {
     }
 
     @Test
-    void real382IsNowRejectedForItsUnrequestedInlineExampleWithoutChangingTheOriginal() {
-        // 原件本就另含“调用示例”；新示例契约先阻断它，不能为保留旧成功断言绕过新保护。
-        // 同类URL局部覆盖不能抵消完整输入规则的正反例仍由本类其他用例和389回放验证。
-        assertThatThrownBy(() -> replay("REQUESTS-COMPACT"))
-                .isInstanceOf(com.promptoptimizer.provider.domain.ProviderResponseValidationException.class)
-                .satisfies(error -> {
-                    var validation = (com.promptoptimizer.provider.domain.ProviderResponseValidationException) error;
-                    assertThat(validation.getReason()).isEqualTo(com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason.RULE_CONFLICT);
-                    assertThat(validation.getField()).isEqualTo("sections.OUTPUT");
-                });
+    void real382KeepsItsOriginalResponseWithoutRetiredSwitchValidation() throws Exception {
+        // 原件保持不变；退役的示例开关不再拒绝正文，输入规则与安全保护仍经过完整组装路径。
+        var result = replay("REQUESTS-COMPACT");
+        assertThat(result.optimizedPrompt()).contains("输出示例说明");
+        assertThat(result.appliedConstraints()).contains(INPUT, TEST);
     }
 
     /** 原始字符串保持原样；缺省presentation只沿用Provider已有兼容口径，不补实质信息。 */
@@ -157,8 +152,8 @@ class TaskConstraintWholeProjectionTest {
         var bundle = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), false,
                 TaskIntentResolver.resolve(TemplateCode.AUTO, raw));
         return new OptimizationResultAssembler().assemble(response, context,
-                new PromptTemplate(TemplateCode.AUTO, "保留交付。", "遵守原要求。", "不添加未授权示例。"),
-                List.of(), List.of(), false, bundle, false, 1, raw, List.of(), List.of());
+                new PromptTemplate(TemplateCode.AUTO, "保留交付。", "遵守原要求。"),
+                List.of(), List.of(), false, bundle, 1, raw, List.of(), List.of());
     }
 
     private Map<PromptSectionType, PromptSection> sections(String output, String constraints) {

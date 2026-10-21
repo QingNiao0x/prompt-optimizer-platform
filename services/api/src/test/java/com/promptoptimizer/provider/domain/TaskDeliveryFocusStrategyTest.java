@@ -23,7 +23,7 @@ class TaskDeliveryFocusStrategyTest {
     @Test
     void researchLookupDoesNotBecomeAnAiPromptEvaluationExperiment() {
         String raw = "请帮我查询全球使用AI最多的职业/行业";
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of());
         var strategy = PromptRewriteStrategy.forTask(task, PromptFormat.STRUCTURED);
         assertThat(strategy.instruction()).doesNotContain("同信息对照两组", "随机化", "同一案例的实际答案");
         assertThat(task.originalPrompt()).isEqualTo(raw);

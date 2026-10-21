@@ -68,12 +68,17 @@ class NaturalEnhancementServiceTest {
     }
 
     @Test
-    void currentPlanAcceptsThreeQuestionsAndRejectsAFourthWithoutTruncating() {
-        provider.questions = List.of(question("q1"), question("q2"), question("q3"));
-        assertThat(service.plan(planRequest()).questions()).hasSize(3);
-        provider.questions = List.of(question("q1"), question("q2"), question("q3"), question("q4"));
+    void currentPlanKeepsEveryQuestionWithinTheExistingProtocolCapacity() {
+        provider.questions = java.util.stream.IntStream.rangeClosed(1, 8).mapToObj(i -> question("q" + i)).toList();
+        assertThat(service.plan(planRequest()).questions()).hasSize(8);
+        provider.questions = java.util.stream.IntStream.rangeClosed(1, 9).mapToObj(i -> question("q" + i)).toList();
+        assertThat(service.plan(planRequest()).questions()).hasSize(9);
+        assertThat(service.plan(planRequest(), "3").questions()).hasSize(9);
+        // 八题是模型指导，协议容量仍为64；超容量必须失败，不能截断后伪装成完整Plan。
+        provider.questions = java.util.stream.IntStream.rangeClosed(1, 64).mapToObj(i -> question("q" + i)).toList();
+        assertThat(service.plan(planRequest()).questions()).hasSize(64);
+        provider.questions = java.util.stream.IntStream.rangeClosed(1, 65).mapToObj(i -> question("q" + i)).toList();
         assertThatThrownBy(() -> service.plan(planRequest())).isInstanceOf(ProviderException.class);
-        assertThat(service.plan(planRequest(), "3").questions()).hasSize(4);
     }
 
     @Test
@@ -106,7 +111,7 @@ class NaturalEnhancementServiceTest {
     @Test
     void naturalModeKeepsOnlyExplicitAdditionalPermissionsWithoutDependingOnOptionalEnhancementFlags() {
         var request = new OptimizationRequest("写一封邮件", new ContextAnalysisRequest("", List.of()),
-                new EnhancementOptions(TemplateCode.AUTO, false, false, false, PromptFormat.COMPACT), List.of(),
+                new EnhancementOptions(TemplateCode.AUTO, false, false, PromptFormat.COMPACT), List.of(),
                 new PermissionPolicyInput(List.of("private/**"), List.of("发送邮件")), null, "fixture:model");
         var result = service.optimize(request);
         var extra = List.of("禁止读取或输出受保护路径：private/**。", "以下操作必须先获得人工确认：发送邮件。");
@@ -158,7 +163,7 @@ class NaturalEnhancementServiceTest {
         assertThat(provider.last.context().fileSnippets()).isEmpty();
         assertThat(provider.last.planningContext().fileSnippets()).extracting(f -> f.content()).containsExactly("首次材料事实");
         var protectedRequest = new OptimizationRequest("写一封邮件", new ContextAnalysisRequest("", List.of()),
-                new EnhancementOptions(TemplateCode.AUTO, false, true, false, PromptFormat.COMPACT), List.of(),
+                new EnhancementOptions(TemplateCode.AUTO, false, true, PromptFormat.COMPACT), List.of(),
                 new PermissionPolicyInput(List.of("notes.md"), List.of()), confirmation, "fixture:model");
         service.optimize(protectedRequest);
         assertThat(provider.last.planningContext().fileSnippets()).isEmpty();
@@ -231,7 +236,7 @@ class NaturalEnhancementServiceTest {
         String rule = "以下操作必须先获得人工确认：发送邮件。";
         provider.body = rule + "\n" + rule;
         var request = new OptimizationRequest("写一封邮件", new ContextAnalysisRequest("", List.of()),
-                new EnhancementOptions(TemplateCode.AUTO, false, true, false, PromptFormat.COMPACT), List.of(),
+                new EnhancementOptions(TemplateCode.AUTO, false, true, PromptFormat.COMPACT), List.of(),
                 new PermissionPolicyInput(List.of(), List.of("发送邮件")), null, "fixture:model");
         var result = service.optimize(request);
         assertThat(result.optimizedPrompt()).isEqualTo(rule);
@@ -334,7 +339,7 @@ class NaturalEnhancementServiceTest {
 
     private OptimizationRequest request(String raw, PlanConfirmation confirmation, List<ContextFileInput> files, String model) {
         return new OptimizationRequest(raw, new ContextAnalysisRequest("", files),
-                new EnhancementOptions(TemplateCode.AUTO, false, true, false, PromptFormat.COMPACT),
+                new EnhancementOptions(TemplateCode.AUTO, false, true, PromptFormat.COMPACT),
                 List.of(), PermissionPolicyInput.empty(), confirmation, model);
     }
     private OptimizationPlanRequest planRequest() { return new OptimizationPlanRequest("写一封邮件", "", List.of(), null, "fixture:model"); }

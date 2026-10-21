@@ -89,7 +89,7 @@ class CurrentParameterExecutionViewTest {
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不编造患者数据。")), "test", "test", false, List.of());
         return new OptimizationResultAssembler().assemble(response,
                 context,
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "指标表", "核对范围", "示例"), List.of(),
-                answers, !answers.isEmpty(), List.of(), false, 1, RAW, facts, List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "指标表", "核对范围"), List.of(),
+                answers, !answers.isEmpty(), List.of(), 1, RAW, facts, List.of());
     }
 }

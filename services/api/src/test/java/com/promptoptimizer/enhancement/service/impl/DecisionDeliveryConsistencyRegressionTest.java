@@ -371,7 +371,7 @@ class DecisionDeliveryConsistencyRegressionTest {
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不得编造数据。")), "test", "test", false, List.of());
         return new OptimizationResultAssembler().assemble(provider,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "忠于资料", "示例"),
-                List.of(), answers, confirmed, List.of("不得编造数据"), false, 1, raw);
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "忠于资料"),
+                List.of(), answers, confirmed, List.of("不得编造数据"), 1, raw);
     }
 }

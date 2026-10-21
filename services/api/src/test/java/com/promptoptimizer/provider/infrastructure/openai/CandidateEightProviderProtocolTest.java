@@ -106,9 +106,9 @@ class CandidateEightProviderProtocolTest {
         for (var answer : input.path("planConfirmation").path("answers")) answers.add(json.treeToValue(answer, PlanAnswer.class));
         return new EnhancementProviderRequest(input.path("rawPrompt").asText(),
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "EMPTY"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法正文。", "保留原研究范围。", "遵守原文。"),
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付方法正文。", "保留原研究范围。"),
                 List.of(), answers, true, List.of(), List.of(),
-                new EnhancementOptions(TemplateCode.RESEARCH_ANALYSIS, false, true, false), "test-model");
+                new EnhancementOptions(TemplateCode.RESEARCH_ANALYSIS, false, true), "test-model");
     }
 
     private JsonNode fixture(String name) throws Exception {

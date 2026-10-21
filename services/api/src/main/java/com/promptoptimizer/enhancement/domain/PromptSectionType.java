@@ -19,7 +19,7 @@ public enum PromptSectionType {
     CLARIFICATIONS,
     /** 具有独立检查价值的验收；没有内容时不生成该可选段落。 */
     ACCEPTANCE,
-    /** 仅按适用示例契约生成的交付要求，显式生成后不能用空文本代替。 */
+    /** 保留用户明示的示例内容和旧历史段落；不由开关或平台自动补入。 */
     EXAMPLES;
 
     /**

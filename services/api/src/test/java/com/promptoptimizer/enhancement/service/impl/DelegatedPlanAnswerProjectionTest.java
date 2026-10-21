@@ -27,7 +27,7 @@ class DelegatedPlanAnswerProjectionTest {
         var answers = java.util.stream.IntStream.range(0, QUESTIONS.size())
                 .mapToObj(index -> new PlanAnswer("q" + index, QUESTIONS.get(index), ANSWER)).toList();
         var task = EffectiveTaskViewFactory.create("为研究生撰写研究设计的方法部分；当前尚未实施。",
-                TemplateCode.AUTO, answers, List.of(), false);
+                TemplateCode.AUTO, answers, List.of());
 
         assertThat(task.confirmedDecisions()).hasSize(6).allSatisfy(decision -> {
             assertThat(decision.answer()).isEqualTo(ANSWER);
@@ -56,7 +56,7 @@ class DelegatedPlanAnswerProjectionTest {
     @Test void independentlyScopedFactsRemainSeparateWhenNeitherMethodIsConfirmed() {
         var task = EffectiveTaskViewFactory.create("整理两项研究的设计要求。", TemplateCode.AUTO,
                 List.of(new PlanAnswer("alpha", "甲研究采用哪种方法？", "甲研究尚未实施。不确认甲研究的具体方法。"),
-                        new PlanAnswer("beta", "乙研究采用哪种方法？", "乙研究已经实施。不确认乙研究的具体方法。")), List.of(), false);
+                        new PlanAnswer("beta", "乙研究采用哪种方法？", "乙研究已经实施。不确认乙研究的具体方法。")), List.of());
         assertThat(task.confirmedDecisions()).allSatisfy(decision ->
                 assertThat(decision.scope()).isEqualTo(ConfirmedPlanDecision.Scope.UNRESOLVED));
         assertThat(task.executionRequirements()).filteredOn(requirement -> requirement.destination() == PromptSectionType.BACKGROUND)
@@ -70,7 +70,7 @@ class DelegatedPlanAnswerProjectionTest {
                 List.of(new PlanAnswer("rounds", "Plan最多允许几轮提问？", "3轮"),
                         new PlanAnswer("stack", "当前技术栈和版本是什么？", "使用 R。具体版本尚未确定。"),
                         new PlanAnswer("metrics", "甲指标和乙指标的分母分别是什么？",
-                                "甲指标分母采用全部已完成事件。乙指标分母尚未确认。")), List.of(), false);
+                                "甲指标分母采用全部已完成事件。乙指标分母尚未确认。")), List.of());
         assertThat(task.executionRequirements()).anySatisfy(requirement ->
                 assertThat(requirement.statement()).contains("最大提问轮次：3轮"));
         assertThat(task.executionRequirements()).anySatisfy(requirement -> {
@@ -89,7 +89,7 @@ class DelegatedPlanAnswerProjectionTest {
         String raw = "撰写方法正文。\nPlan轮次需先确认选哪一个。";
         var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO,
                 List.of(new PlanAnswer("rounds", question, ANSWER), new PlanAnswer("future", "乙指标分母是什么？",
-                        "如果以后确认乙指标分母采用全部事件，再计算。当前暂不确定。")), List.of(), false);
+                        "如果以后确认乙指标分母采用全部事件，再计算。当前暂不确定。")), List.of());
         assertThat(task.effectivePrompt()).isEqualTo(raw);
         assertThat(task.executionRequirements()).noneMatch(requirement -> requirement.questionId().equals("future"));
         assertThat(task.pendingDecisions()).anySatisfy(decision ->
@@ -109,9 +109,9 @@ class DelegatedPlanAnswerProjectionTest {
                 json.treeToValue(provider.path("assessment"), com.promptoptimizer.provider.domain.TaskEnhancementAssessment.class));
         var result = new OptimizationResultAssembler().assemble(response,
                 new com.promptoptimizer.context.domain.ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
-                new com.promptoptimizer.template.domain.PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "按原文交付。", "保留原意。", "遵守示例选择。"),
+                new com.promptoptimizer.template.domain.PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "按原文交付。", "保留原意。"),
                 List.of(), List.of(json.treeToValue(fixture.path("answers"), PlanAnswer[].class)), true,
-                List.of(), false, 1, fixture.path("rawPrompt").asText());
+                List.of(), 1, fixture.path("rawPrompt").asText());
         assertThat(result.optimizedPrompt()).contains("尚未实施", "不确认任何既有参数", "提出可开展的推荐设计")
                 .doesNotContain("分别：这是", "设定：这是", "从取得：这是", "处理：这是", "配对比较：这是");
         assertThat(result.sections()).filteredOn(section -> section.type() == PromptSectionType.TASK).singleElement()
@@ -125,7 +125,7 @@ class DelegatedPlanAnswerProjectionTest {
     @Test void aConditionalRefusalKeepsItsConditionAndDoesNotBecomeAnIndependentBoundary() {
         String answer = "如果以后确认乙指标分母，不确认时不得计算。当前暂不确定。";
         var task = EffectiveTaskViewFactory.create("整理甲乙指标规则。", TemplateCode.AUTO,
-                List.of(new PlanAnswer("metric", "乙指标的分母是什么？", answer)), List.of(), false);
+                List.of(new PlanAnswer("metric", "乙指标的分母是什么？", answer)), List.of());
         assertThat(task.executionRequirements()).isEmpty();
         assertThat(task.pendingDecisions()).allSatisfy(decision ->
                 assertThat(decision.answer()).contains("如果以后确认乙指标分母，不确认时不得计算"));
@@ -133,7 +133,7 @@ class DelegatedPlanAnswerProjectionTest {
 
     @Test void aSelfContainedActualChoiceIsNotErasedByRefusalToConfirmOtherParameters() {
         var task = EffectiveTaskViewFactory.create("整理分析要求。\n分析工具需先确认选哪一个。", TemplateCode.AUTO,
-                List.of(new PlanAnswer("tool", "分析工具采用哪个？", "这是我确定采用R的决定。不确认其他参数。")), List.of(), false);
+                List.of(new PlanAnswer("tool", "分析工具采用哪个？", "这是我确定采用R的决定。不确认其他参数。")), List.of());
         assertThat(task.effectivePrompt()).contains("这是我确定采用R的决定").doesNotContain("分析工具需先确认选哪一个");
         assertThat(task.executionRequirements()).extracting(requirement -> requirement.statement())
                 .containsExactly("这是我确定采用R的决定。");
@@ -143,7 +143,7 @@ class DelegatedPlanAnswerProjectionTest {
 
     @Test void aSelfContainedDeliveryChoiceIsNotClassifiedAsAResearchState() {
         var task = EffectiveTaskViewFactory.create("整理研究内容。", TemplateCode.AUTO,
-                List.of(new PlanAnswer("delivery", "本次交付内容是什么？", "这是要交付的数据表。不确认其他参数。")), List.of(), false);
+                List.of(new PlanAnswer("delivery", "本次交付内容是什么？", "这是要交付的数据表。不确认其他参数。")), List.of());
         assertThat(task.executionRequirements()).singleElement().satisfies(requirement -> {
             assertThat(requirement.statement()).isEqualTo("这是要交付的数据表。");
             assertThat(requirement.destination()).isEqualTo(PromptSectionType.OUTPUT);
@@ -154,7 +154,7 @@ class DelegatedPlanAnswerProjectionTest {
     @Test void aMaterialStatementCannotHideAConnectedActualMethodChoice() {
         for (String selected : List.of("我已有数据，分析工具采用R。", "我已有数据并采用R。")) {
             var task = EffectiveTaskViewFactory.create("整理分析要求。\n分析工具需先确认选哪一个。", TemplateCode.AUTO,
-                    List.of(new PlanAnswer("tool", "分析工具采用哪个？", selected + "不确认其他参数。")), List.of(), false);
+                    List.of(new PlanAnswer("tool", "分析工具采用哪个？", selected + "不确认其他参数。")), List.of());
             assertThat(task.effectivePrompt()).contains(selected).doesNotContain("分析工具需先确认选哪一个");
             assertThat(task.executionRequirements()).extracting(requirement -> requirement.statement()).containsExactly(selected);
         }
@@ -164,7 +164,7 @@ class DelegatedPlanAnswerProjectionTest {
         for (String rule : List.of("不确认时不得计算。", "不确认口径时不得计算。",
                 "不确认则不进行分析。", "不确认就不进行分析。")) {
             var task = EffectiveTaskViewFactory.create("整理执行规则。", TemplateCode.AUTO,
-                    List.of(new PlanAnswer("rule", "计算前须遵守什么规则？", rule)), List.of(), false);
+                    List.of(new PlanAnswer("rule", "计算前须遵守什么规则？", rule)), List.of());
             assertThat(task.pendingDecisions()).isEmpty();
             assertThat(task.executionRequirements()).singleElement().satisfies(requirement ->
                     assertThat(requirement.statement()).endsWith(rule));
@@ -173,7 +173,7 @@ class DelegatedPlanAnswerProjectionTest {
 
     @Test void aRefusedNamedParameterIsNotAConditionalRule() {
         var task = EffectiveTaskViewFactory.create("整理就诊流程。", TemplateCode.AUTO,
-                List.of(new PlanAnswer("time", "就诊时间是什么？", "不确认就诊时间。")), List.of(), false);
+                List.of(new PlanAnswer("time", "就诊时间是什么？", "不确认就诊时间。")), List.of());
         assertThat(task.pendingDecisions()).singleElement().satisfies(decision ->
                 assertThat(decision.answer()).isEqualTo("不确认就诊时间。"));
     }

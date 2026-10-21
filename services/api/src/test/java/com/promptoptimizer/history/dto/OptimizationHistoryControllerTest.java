@@ -141,7 +141,6 @@ class OptimizationHistoryControllerTest {
                 12,
                 OffsetDateTime.now(ZoneOffset.UTC),
                 true,
-                false,
                 List.of(),
                 Map.of(),
                 "验收版本-20261001"

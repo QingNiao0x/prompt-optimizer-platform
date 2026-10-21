@@ -156,21 +156,21 @@ class RequirementBoundaryRegressionTest {
 
     @Test
     void mentioningAMethodOrAskingWhetherToUseItDoesNotConfirmIt() {
-        var view = EffectiveTaskViewFactory.create("解释年龄标准化，是否采用年龄标准化仍待确认？", TemplateCode.GENERAL, List.of(), List.of(), false);
+        var view = EffectiveTaskViewFactory.create("解释年龄标准化，是否采用年龄标准化仍待确认？", TemplateCode.GENERAL, List.of(), List.of());
         assertThat(view.requirementBoundaries().guidance()).doesNotContain("方法已确定");
     }
 
     @Test
     void aQuestionOnlyPlanAnswerDoesNotConfirmAMethod() {
         var view = EffectiveTaskViewFactory.create("撰写报告。", TemplateCode.GENERAL,
-                List.of(new PlanAnswer("method", "死亡率比较采用哪种方法？", "是否采用年龄标准化仍待确认？")), List.of(), false);
+                List.of(new PlanAnswer("method", "死亡率比较采用哪种方法？", "是否采用年龄标准化仍待确认？")), List.of());
         assertThat(view.requirementBoundaries().guidance()).doesNotContain("方法已确定");
     }
 
     @Test
     void equivalentBoundaryInstructionsDoNotAcquireAnotherFullCopy() {
         var view = EffectiveTaskViewFactory.create(TEST_SELECTION + "死亡率比较采用年龄标准化。不得使用假设数据。",
-                TemplateCode.GENERAL, List.of(), List.of(), false);
+                TemplateCode.GENERAL, List.of(), List.of());
         assertThat(view.requirementBoundaries().missingGuidance("不得使用假设数据，禁令适用于所有用途，包括测试和验证。\n具体检验依据未来数据分布选择，可说明候选检验名称和适用条件。\n"
                 + "年龄标准化仅确认方法类别，不能宣称直接或间接标准化方式也已确定；可解释候选方式和适用条件。\n"
                 + "年龄标准化所用标准人口的来源和年份未确定，不默认采用某年人口。" )).isEmpty();
@@ -241,7 +241,7 @@ class RequirementBoundaryRegressionTest {
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "保留原始需求的限制。"));
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), "SUCCESS", List.of(), List.of(), List.of(), "v1");
         return assembler.assemble(new EnhancementProviderResponse(sections, "test", "test-model", false, List.of()),
-                context, new PromptTemplate(TemplateCode.GENERAL, "交付原定内容。", "符合原定要求。", "示例。"),
-                List.of(), answers, !answers.isEmpty(), List.of(), examples, 1, raw);
+                context, new PromptTemplate(TemplateCode.GENERAL, "交付原定内容。", "符合原定要求。"),
+                List.of(), answers, !answers.isEmpty(), List.of(), 1, raw);
     }
 }

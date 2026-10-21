@@ -41,7 +41,7 @@ public final class NaturalPromptInstructionsV3 {
             不因尚未提供普通执行细节而要求用户先决定全部方法。保持全部否定、例外、并列要求和条件。
             首句说明要完成什么和交付什么；简单任务自然成段，独立内容需要时列点，有依赖才列步骤。
             mandatoryRules由平台统一组装，正文集中写当前任务，不复写通用核查规则或内部分类标签。
-            includeExamples仅控制原定任务中的适用示例；用户禁例、严格格式和事实边界优先。
+            示例需求按原始提示词及实际题答处理，遵守用户明确的禁例、事实边界与严格输出格式。
             framework只是正文形成后的组织参考：APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE，
             无法可靠匹配用APE；不因框架补字段、增加任务或追问，不展示框架名或强制五模块标题。
             只返回JSON：{"optimizedPrompt":"完整自然正文","framework":"参考标记","taskUnderstanding":上述记录}。

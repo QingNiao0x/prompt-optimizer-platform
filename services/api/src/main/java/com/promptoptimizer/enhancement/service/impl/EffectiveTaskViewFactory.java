@@ -7,7 +7,6 @@ import com.promptoptimizer.enhancement.domain.PlanningFactCard;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
-import com.promptoptimizer.provider.domain.ExampleContract;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
 import com.promptoptimizer.template.domain.TaskIntentResolver;
 import java.util.List;
@@ -28,26 +27,21 @@ public final class EffectiveTaskViewFactory {
         List<PlanAnswer> answers = !request.planConfirmed() ? List.of() : !request.planAnswers().isEmpty()
                 ? request.planAnswers() : request.confirmedDecisions().stream()
                     .map(decision -> new PlanAnswer(decision.questionId(), decision.question(), decision.answer())).toList();
-        return create(request.rawPrompt(), request.template().code(), answers, request.planningFacts(),
-                Boolean.TRUE.equals(request.options().includeExamples()));
+        return create(request.rawPrompt(), request.template().code(), answers, request.planningFacts());
     }
 
     /** 直接增强的答案列表必须为空；答案已由调用方通过服务端会话规范化。 */
     public static EffectiveTaskView create(String raw, TemplateCode template, List<PlanAnswer> answers,
-            List<PlanningFactCard> facts, boolean includeExamples) {
+            List<PlanningFactCard> facts) {
         String original = raw == null ? "" : raw;
         var decisions = ConfirmedDecisionSet.from(answers);
         String current = ResolvedPlanState.from(decisions, original)
                 .reconcile(PlatformConstraintRenderer.taskInput(original));
         var known = decisions.knownDecisions();
         var requirements = decisions.decisions().stream().flatMap(decision -> requirements(decision, known).stream()).toList();
-        // 示例只读取用户指令及有效答案，附件中的“提供示例”不具有开关权限。
-        String exampleInput = current + requirements.stream().map(ExecutionRequirement::statement)
-                .collect(java.util.stream.Collectors.joining("\n", "\n", ""));
         return new EffectiveTaskView(original, current,
                 TaskIntentResolver.resolve(template, original, decisions.knownDecisions()), decisions.decisions(),
-                requirements, decisions.pendingDecisions(), facts == null ? List.of() : facts,
-                ExampleContract.from(exampleInput, includeExamples));
+                requirements, decisions.pendingDecisions(), facts == null ? List.of() : facts);
     }
 
     /** 独立事实、委托和未确认边界按原句投影；真正裸短答仍绑定服务端问题的完整对象。 */

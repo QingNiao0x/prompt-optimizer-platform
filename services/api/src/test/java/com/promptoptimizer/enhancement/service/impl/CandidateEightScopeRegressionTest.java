@@ -112,7 +112,7 @@ class CandidateEightScopeRegressionTest {
     void shouldKeepEqualTextForIndependentBoundObjectsSeparate() {
         var task = EffectiveTaskViewFactory.create("分别明确甲指标和乙指标的计算要求。", TemplateCode.AUTO,
                 List.of(new PlanAnswer("a", "甲指标采用哪个工具？", "使用R。"),
-                        new PlanAnswer("b", "乙指标采用哪个工具？", "使用R。")), List.of(), false);
+                        new PlanAnswer("b", "乙指标采用哪个工具？", "使用R。")), List.of());
         assertThat(task.modelInput().executionRequirements()).hasSize(2);
         for (var requirement : task.modelInput().executionRequirements()) assertThat(requirement.sourceQuestionIds()).hasSize(1);
     }
@@ -121,7 +121,7 @@ class CandidateEightScopeRegressionTest {
     void shouldKeepNonDelegatedUnknownsAndNewConditionsIndependent() {
         var task = EffectiveTaskViewFactory.create(RAW, TemplateCode.AUTO,
                 List.of(new PlanAnswer("year", "标准人口年份是什么？", "尚未确定。"),
-                        new PlanAnswer("threshold", "真实业务阈值是什么？", "如果以后确认阈值为2，再执行。")), List.of(), false);
+                        new PlanAnswer("threshold", "真实业务阈值是什么？", "如果以后确认阈值为2，再执行。")), List.of());
         var payload = new ObjectMapper().valueToTree(task.modelInput());
         assertThat(payload.path("pendingDecisions")).hasSize(2);
         for (var value : payload.path("pendingDecisions")) assertThat(value.path("designDelegated").asBoolean()).isFalse();

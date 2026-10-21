@@ -94,7 +94,7 @@ class CandidateTwelveAssemblyReplayTest {
             assertThat(result.optimizedPrompt()).contains("不确认任何既有参数");
         }
         if (plan) {
-            var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+            var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
             assertThat(task.pendingDecisions()).hasSize(4);
             assertThat(task.modelInput().pendingDecisions()).allMatch(value -> value.designDelegated());
             assertThat(task.modelInput().executionRequirements().stream()
@@ -130,7 +130,7 @@ class CandidateTwelveAssemblyReplayTest {
         var template = new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw,
                 ConfirmedDecisionSet.from(answers).knownDecisions());
         return new OptimizationResultAssembler().assemble(response, context, template, List.of(), answers,
-                !answers.isEmpty(), List.of(), false, 1, raw);
+                !answers.isEmpty(), List.of(), 1, raw);
     }
 
     /** 实际四题逐字回答只从九的原件读取，不补充或修复平台遗漏的信息。 */

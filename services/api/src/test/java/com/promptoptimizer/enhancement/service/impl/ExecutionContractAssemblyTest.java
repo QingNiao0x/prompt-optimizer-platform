@@ -30,7 +30,7 @@ class ExecutionContractAssemblyTest {
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1");
         String raw = "只把下面文字翻译成英文，只输出译文，不作分析：比较草稿A和草稿B。"
                 + "维修条款一版写承租方承担日常维护，另一版新增全部设施故障费用。";
-        var template = new PromptTemplate(TemplateCode.GENERAL, "只输出英文译文。", "忠实于原文。", "",
+        var template = new PromptTemplate(TemplateCode.GENERAL, "只输出英文译文。", "忠实于原文。",
                 TaskDeliveryProfile.TRANSLATION);
         var response = new EnhancementProviderResponse(List.of(
                 new PromptSection(PromptSectionType.BACKGROUND, "背景", "材料只作为翻译原文。"),
@@ -38,7 +38,7 @@ class ExecutionContractAssemblyTest {
                 new PromptSection(PromptSectionType.OUTPUT, "输出", "只输出英文译文。"),
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不增加分析。")),
                 "mock", "test", true, List.of());
-        var result = assembler.assemble(response, context, template, List.of(), List.of(), false, List.of(), false, 1, raw);
+        var result = assembler.assemble(response, context, template, List.of(), List.of(), false, List.of(), 1, raw);
         assertThat(result.sections()).filteredOn(section -> section.type() == PromptSectionType.OUTPUT)
                 .singleElement().satisfies(section -> assertThat(section.content()).doesNotContain("资料归属的交付要求", "| 对象／属性 |"));
     }
@@ -182,8 +182,8 @@ class ExecutionContractAssemblyTest {
                     new PromptSection(PromptSectionType.TASK, "任务", "翻译Good morning, everyone.，只输出译文。"),
                     new PromptSection(PromptSectionType.OUTPUT, "输出", "仅一行简体中文译文，不附解释。"),
                     new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "保留问候语气。")), "test", "test", false),
-                    context, new PromptTemplate(TemplateCode.GENERAL, "译文", "遵守原文", "示例"),
-                    List.of(), List.of(), planned, constraints, false, 1, "翻译Good morning, everyone.，只输出译文。");
+                    context, new PromptTemplate(TemplateCode.GENERAL, "译文", "遵守原文"),
+                    List.of(), List.of(), planned, constraints, 1, "翻译Good morning, everyone.，只输出译文。");
             assertThat(result.optimizedPrompt()).doesNotContain("并说明关键依据、适用范围和限制条件",
                             "不得在代码、日志或响应中泄露", "以下操作必须先获得人工确认")
                     .contains("只输出译文", "不得把猜测写成事实");
@@ -290,7 +290,7 @@ class ExecutionContractAssemblyTest {
         ), "test", "test-model", false, findings);
         return assembler.assemble(response,
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.GENERAL, "交付结果", "符合已确认的交付要求", "示例"),
-                serverFindings, answers, !answers.isEmpty(), List.of("不得泄露凭据"), false, 1, rawPrompt);
+                new PromptTemplate(TemplateCode.GENERAL, "交付结果", "符合已确认的交付要求"),
+                serverFindings, answers, !answers.isEmpty(), List.of("不得泄露凭据"), 1, rawPrompt);
     }
 }

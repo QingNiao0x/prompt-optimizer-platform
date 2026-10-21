@@ -166,11 +166,11 @@ class DefaultEnhancementOrchestratorTest {
         var history = List.of(new ConversationMessage("user", "登录采用 JWT"));
         var policy = new PermissionPolicyInput(List.of("private/auth.md"), List.of());
         var withoutHistory = orchestrator.optimize(new OptimizationRequest("添加登录功能", input,
-                new EnhancementOptions(TemplateCode.AUTO, false, true, false), history, policy));
+                new EnhancementOptions(TemplateCode.AUTO, false, true), history, policy));
         assertThat(withoutHistory.ambiguities()).hasSize(1);
         assertThat(withoutHistory.contextReport().fileSnippets()).isEmpty();
         var withHistory = orchestrator.optimize(new OptimizationRequest("添加登录功能", input,
-                new EnhancementOptions(TemplateCode.AUTO, true, true, false), history, policy));
+                new EnhancementOptions(TemplateCode.AUTO, true, true), history, policy));
         assertThat(withHistory.ambiguities()).isEmpty();
     }
 
@@ -216,7 +216,7 @@ class DefaultEnhancementOrchestratorTest {
                                 </project>
                                 """, "xml"))
                 ),
-                new EnhancementOptions(TemplateCode.AUTO, true, true, true),
+                new EnhancementOptions(TemplateCode.AUTO, true, true),
                 List.of(),
                 new PermissionPolicyInput(List.of("config/prod.yml"), List.of("修改认证策略"))
         );
@@ -232,9 +232,8 @@ class DefaultEnhancementOrchestratorTest {
                         PromptSectionType.OUTPUT,
                         PromptSectionType.CONSTRAINTS,
                         PromptSectionType.CLARIFICATIONS,
-                        PromptSectionType.ACCEPTANCE,
-                        PromptSectionType.EXAMPLES
-                );
+                        PromptSectionType.ACCEPTANCE
+                ).doesNotContain(PromptSectionType.EXAMPLES);
         assertThat(result.optimizedPrompt())
                 .contains("Spring Boot", "Bean Validation", "SQL 注入", "config/prod.yml")
                 .doesNotContain("待确认项", "确认下方待确认项");

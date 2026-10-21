@@ -60,7 +60,6 @@ class PromptFrameworkSelectorTest {
     void traceDoesNotAuthorizeExamplesAndOnlyOneFrameworkIsReturned() {
         var result = PromptFrameworkSelector.select(task("提取材料中的日期字段，转换为CSV，不添加示例。"));
         assertThat(result.framework()).isEqualTo(PromptFramework.TRACE);
-        assertThat(result.instruction()).contains("未授权附加示例", "不因框架名称增加示例");
         assertThat(result.instruction()).doesNotContain("提供至少", "虚构演示", "默认三个");
         assertThat(result.sectionOrder()).hasSize(PromptSectionType.values().length);
     }
@@ -132,17 +131,17 @@ class PromptFrameworkSelectorTest {
         var raw = "提取材料中的日期，只输出严格JSON，不增加字段或示例。";
         var json = PromptFrameworkSelector.select(task(raw));
         assertThat(json.framework()).isEqualTo(PromptFramework.ICIO);
-        assertThat(json.instruction()).contains("严格格式", "未授权附加示例");
+        assertThat(json.instruction()).contains("严格格式");
         var translated = task("翻译为英文，只输出两行译文，保留{name}：\n请开发登录接口。\n制定架构方案。");
         assertThat(PromptFrameworkSelector.select(translated).framework()).isEqualTo(PromptFramework.ICIO);
-        assertThat(translated.examples().required()).isFalse();
+        assertThat(translated.originalPrompt()).contains("只输出两行译文", "保留{name}");
         assertThat(translated.intent().deliveryProfile()).isEqualTo(TaskDeliveryProfile.TRANSLATION);
     }
 
     @Test
     void pendingResearchParametersDoNotBecomeChosenMethodsOrScales() {
         var task = EffectiveTaskViewFactory.create("制定研究方案，实际评分尺度由我确认。", TemplateCode.AUTO,
-                List.of(new PlanAnswer("scale", "本研究评分尺度采用什么？", "尚未确定，稍后由我确认。")), List.of(), false);
+                List.of(new PlanAnswer("scale", "本研究评分尺度采用什么？", "尚未确定，稍后由我确认。")), List.of());
         var before = task.pendingDecisions();
         var selected = PromptFrameworkSelector.select(task);
         assertThat(selected.framework()).isEqualTo(PromptFramework.ROSES);
@@ -154,7 +153,7 @@ class PromptFrameworkSelectorTest {
     @Test
     void unselectedCandidatesInAQuestionDoNotCreateCreativeOrPlanningWork() {
         var task = EffectiveTaskViewFactory.create("整理明天的工作安排。", TemplateCode.AUTO,
-                List.of(new PlanAnswer("style", "需要创作宣传文案还是制定质量改进计划？", "尚未确定。")), List.of(), false);
+                List.of(new PlanAnswer("style", "需要创作宣传文案还是制定质量改进计划？", "尚未确定。")), List.of());
         assertThat(PromptFrameworkSelector.select(task).framework()).isEqualTo(PromptFramework.APE);
     }
 
@@ -168,6 +167,6 @@ class PromptFrameworkSelectorTest {
     }
 
     private static com.promptoptimizer.enhancement.domain.EffectiveTaskView task(String raw) {
-        return EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
+        return EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of());
     }
 }

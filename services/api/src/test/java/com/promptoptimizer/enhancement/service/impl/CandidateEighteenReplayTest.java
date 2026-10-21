@@ -43,8 +43,8 @@ class CandidateEighteenReplayTest {
         var intent = TaskIntentResolver.resolve(TemplateCode.AUTO, raw);
         var bundle = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), true, intent);
         var result = new OptimizationResultAssembler().assemble(response, context,
-                new PromptTemplate(intent.templateCode(), "交付原定正文。", "不虚构事实。", "遵守原要求。", intent.deliveryProfile()),
-                List.of(), List.of(), false, bundle, false, 1, raw, List.of(), List.of());
+                new PromptTemplate(intent.templateCode(), "交付原定正文。", "不虚构事实。", intent.deliveryProfile()),
+                List.of(), List.of(), false, bundle, 1, raw, List.of(), List.of());
         assertThat(result.sections().stream().filter(s -> s.type() == PromptSectionType.TASK).findFirst().orElseThrow().content())
                 .contains("提出拟议评分尺度", "可操作定义", "分歧处理规则").doesNotContain("阈值为");
         assertThat(result.optimizedPrompt()).contains("800", "1200", "不提供代码");
@@ -68,7 +68,7 @@ class CandidateEighteenReplayTest {
         String raw = fixture.path("rawPrompt").asText() + boundary;
         var sections = taskSections();
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections,
-                EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false), assessment(fixture));
+                EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of()), assessment(fixture));
         assertThat(sections.get(PromptSectionType.TASK).content()).isEqualTo("保留当前研究要求。");
     }
 
@@ -79,7 +79,7 @@ class CandidateEighteenReplayTest {
         var gap = scoringGap(assessment(fixture));
         var sections = taskSections();
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections,
-                EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of(), false),
+                EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of()),
                 singleGap(TaskEnhancementAssessment.Kind.valueOf(kind), gap.missing(), gap.completion(), gap.basis()));
         assertThat(sections.get(PromptSectionType.TASK).content()).isEqualTo("保留当前研究要求。");
     }
@@ -91,7 +91,7 @@ class CandidateEighteenReplayTest {
         var gap = scoringGap(assessment(fixture));
         var sections = taskSections();
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections,
-                EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of(), false),
+                EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of()),
                 singleGap(TaskEnhancementAssessment.Kind.QUALITY_CHECK, gap.missing(), completion, gap.basis()));
         assertThat(sections.get(PromptSectionType.TASK).content()).isEqualTo("保留当前研究要求。");
     }
@@ -101,12 +101,12 @@ class CandidateEighteenReplayTest {
         var fixture = fixture(267);
         var sections = taskSections();
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections,
-                EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of(), false),
+                EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of()),
                 singleGap(TaskEnhancementAssessment.Kind.QUALITY_CHECK, "正文应检查长度。", "给出篇幅校对要求。", "原定篇幅。"));
         assertThat(sections.get(PromptSectionType.TASK).content()).isEqualTo("保留当前研究要求。");
         String withoutDelegation = fixture.path("rawPrompt").asText().replace("请根据原始研究目标提出可开展的推荐设计并说明适用条件", "仅记录未知事项");
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections,
-                EffectiveTaskViewFactory.create(withoutDelegation, TemplateCode.AUTO, List.of(), List.of(), false), assessment(fixture));
+                EffectiveTaskViewFactory.create(withoutDelegation, TemplateCode.AUTO, List.of(), List.of()), assessment(fixture));
         assertThat(sections.get(PromptSectionType.TASK).content()).isEqualTo("保留当前研究要求。");
     }
 
@@ -117,7 +117,7 @@ class CandidateEighteenReplayTest {
         var gap = scoringGap(assessment(fixture));
         var sections = taskSections();
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections,
-                EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of(), false),
+                EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of()),
                 singleGap(TaskEnhancementAssessment.Kind.QUALITY_CHECK, gap.missing(), completion, gap.basis()));
         assertThat(sections.get(PromptSectionType.TASK).content()).isEqualTo("保留当前研究要求。");
     }
@@ -128,7 +128,7 @@ class CandidateEighteenReplayTest {
         var gap = scoringGap(assessment(fixture));
         var sections = taskSections();
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections,
-                EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of(), false),
+                EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of()),
                 singleGap(TaskEnhancementAssessment.Kind.QUALITY_CHECK, gap.missing(),
                         "给出拟议评分尺度与操作定义，未来数据仅用于评估适用性。", gap.basis()));
         assertThat(sections.get(PromptSectionType.TASK).content()).contains("提出拟议评分尺度");

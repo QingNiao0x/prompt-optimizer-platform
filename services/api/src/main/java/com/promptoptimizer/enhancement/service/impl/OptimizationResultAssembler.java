@@ -74,11 +74,10 @@ public class OptimizationResultAssembler {
             List<PlanAnswer> planAnswers,
             boolean planConfirmed,
             List<String> constraints,
-            boolean includeExamples,
             long latencyMs
     ) {
         return assemble(providerResponse, context, template, ambiguities, planAnswers, planConfirmed,
-                constraints, includeExamples, latencyMs, "", List.of());
+                constraints, latencyMs, "", List.of());
     }
 
     /** 在最终结果中保留本次需求相关的短规则及来源；上传文档不能覆盖平台约束。 */
@@ -90,12 +89,11 @@ public class OptimizationResultAssembler {
             List<PlanAnswer> planAnswers,
             boolean planConfirmed,
             List<String> constraints,
-            boolean includeExamples,
             long latencyMs,
             String rawPrompt
     ) {
         return assemble(providerResponse, context, template, ambiguities, planAnswers, planConfirmed,
-                constraints, includeExamples, latencyMs, rawPrompt, List.of(), List.of());
+                constraints, latencyMs, rawPrompt, List.of(), List.of());
     }
 
     /** 使用与 Plan 阶段绑定的事实卡片组装结果，避免二次检索改变已核对的业务证据。 */
@@ -107,13 +105,12 @@ public class OptimizationResultAssembler {
             List<PlanAnswer> planAnswers,
             boolean planConfirmed,
             List<String> constraints,
-            boolean includeExamples,
             long latencyMs,
             String rawPrompt,
             List<PlanningFactCard> planningFacts
     ) {
         return assemble(providerResponse, context, template, ambiguities, planAnswers, planConfirmed,
-                constraints, includeExamples, latencyMs, rawPrompt, planningFacts, List.of());
+                constraints, latencyMs, rawPrompt, planningFacts, List.of());
     }
 
     /** 同时返回计划摘要的覆盖提醒，保证二次检索的新缺口不会被 Plan 确认流程隐藏。 */
@@ -125,7 +122,6 @@ public class OptimizationResultAssembler {
             List<PlanAnswer> planAnswers,
             boolean planConfirmed,
             List<String> constraints,
-            boolean includeExamples,
             long latencyMs,
             String rawPrompt,
             List<PlanningFactCard> planningFacts,
@@ -134,7 +130,7 @@ public class OptimizationResultAssembler {
         var decisions = ConfirmedDecisionSet.from(planConfirmed ? planAnswers : List.of());
         var intent = TaskIntentResolver.resolve(template.code(), rawPrompt, decisions.knownDecisions());
         return assemble(providerResponse, context, template, ambiguities, planAnswers, planConfirmed,
-                ConstraintBundle.fromLegacy(constraints, intent.engineeringConstraints()), includeExamples,
+                ConstraintBundle.fromLegacy(constraints, intent.engineeringConstraints()),
                 latencyMs, rawPrompt, planningFacts, planningWarnings);
     }
 
@@ -142,37 +138,37 @@ public class OptimizationResultAssembler {
     public OptimizationResult assemble(
             EnhancementProviderResponse providerResponse, ContextSnapshot context, PromptTemplate template,
             List<String> ambiguities, List<PlanAnswer> planAnswers, boolean planConfirmed,
-            ConstraintBundle constraintBundle, boolean includeExamples, long latencyMs, String rawPrompt,
+            ConstraintBundle constraintBundle, long latencyMs, String rawPrompt,
             List<PlanningFactCard> planningFacts, List<String> planningWarnings
     ) {
         var taskView = EffectiveTaskViewFactory.create(rawPrompt, template.code(),
-                planConfirmed ? planAnswers : List.of(), planningFacts, includeExamples);
+                planConfirmed ? planAnswers : List.of(), planningFacts);
         return assemble(providerResponse, context, template, ambiguities, planAnswers, planConfirmed,
-                constraintBundle, includeExamples, latencyMs, rawPrompt, planningFacts, planningWarnings, taskView);
+                constraintBundle, latencyMs, rawPrompt, planningFacts, planningWarnings, taskView);
     }
 
     /** 生产路径使用编排器冻结的同一任务视图；兼容入口仅在此之前构建一次。 */
     public OptimizationResult assemble(
             EnhancementProviderResponse providerResponse, ContextSnapshot context, PromptTemplate template,
             List<String> ambiguities, List<PlanAnswer> planAnswers, boolean planConfirmed,
-            ConstraintBundle constraintBundle, boolean includeExamples, long latencyMs, String rawPrompt,
+            ConstraintBundle constraintBundle, long latencyMs, String rawPrompt,
             List<PlanningFactCard> planningFacts, List<String> planningWarnings,
             com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView
     ) {
         return assemble(providerResponse, context, template, ambiguities, planAnswers, planConfirmed,
-                constraintBundle, includeExamples, latencyMs, rawPrompt, planningFacts, planningWarnings,
+                constraintBundle, latencyMs, rawPrompt, planningFacts, planningWarnings,
                 taskView, null);
     }
 
     /**
      * 模型已按显式模式生成正文；本层保留主框架次序与展示形式，不用重排代替增强。
-     * 任务校验、确认绑定、示例和平台固定条款均共用原有组装路径。
+     * 任务校验、确认绑定和平台固定条款均共用原有组装路径。
      * 缺省偏好继续使用模型与任务的自动呈现，兼容旧客户端和已保存记录。
      */
     public OptimizationResult assemble(
             EnhancementProviderResponse providerResponse, ContextSnapshot context, PromptTemplate template,
             List<String> ambiguities, List<PlanAnswer> planAnswers, boolean planConfirmed,
-            ConstraintBundle constraintBundle, boolean includeExamples, long latencyMs, String rawPrompt,
+            ConstraintBundle constraintBundle, long latencyMs, String rawPrompt,
             List<PlanningFactCard> planningFacts, List<String> planningWarnings,
             com.promptoptimizer.enhancement.domain.EffectiveTaskView taskView,
             com.promptoptimizer.enhancement.domain.PromptFormat requestedFormat
@@ -428,7 +424,6 @@ public class OptimizationResultAssembler {
             sections.computeIfAbsent(PromptSectionType.ACCEPTANCE,
                     ignored -> new PromptSection(PromptSectionType.ACCEPTANCE, "验收标准", template.acceptanceGuidance()));
         }
-        ExampleResultIntegrator.integrate(sections, taskView.examples());
         String boundaryGuidance = requirementBoundaries.missingGuidance(sections.values().stream()
                 .map(PromptSection::content).collect(Collectors.joining("\n")));
         if (!boundaryGuidance.isBlank()) {

@@ -121,7 +121,7 @@ class CandidateNineteenBoundaryTest {
             sections.put(value.type(), value);
         }
         var assessment = JSON.treeToValue(captured.path("response").path("assessment"), TaskEnhancementAssessment.class);
-        var task = EffectiveTaskViewFactory.create(captured.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(captured.path("rawPrompt").asText(), TemplateCode.AUTO, List.of(), List.of());
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections, task, assessment);
         String first = sections.get(PromptSectionType.TASK).content();
         assertThat(first).contains("各等级评分锚点", "可操作定义", "分歧处理规则").doesNotContain("1至5分", "阈值为");

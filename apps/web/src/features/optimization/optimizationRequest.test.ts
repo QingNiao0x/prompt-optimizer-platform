@@ -8,11 +8,18 @@ import {
 } from './optimizationRequest';
 
 describe('buildOptimizationRequest', () => {
+  it('preserves an explicit example request without sending the retired option', () => {
+    const rawPrompt = '解释排序方法，提供一组输入和预期输出示例，不得编造业务数据。';
+    const request = buildOptimizationRequest({ rawPrompt, customDescription: '', files: [],
+      templateCode: 'AUTO', includePermissionBoundaries: true });
+    expect(request.rawPrompt).toBe(rawPrompt);
+    expect(request.enhancement).not.toHaveProperty('includeExamples');
+  });
+
   it.each(['COMPACT', 'STRUCTURED'] as const)('preserves the explicit %s preference in the existing request', promptFormat => {
     const request = buildOptimizationRequest({ rawPrompt: '写邮件', customDescription: '', files: [],
-      templateCode: 'AUTO', includePermissionBoundaries: true, includeExamples: true, promptFormat });
+      templateCode: 'AUTO', includePermissionBoundaries: true, promptFormat });
     expect(request.enhancement.promptFormat).toBe(promptFormat);
-    expect(request.enhancement.includeExamples).toBe(true);
   });
 
   it('should normalize editable text without changing source content', () => {
@@ -28,7 +35,6 @@ describe('buildOptimizationRequest', () => {
       ],
       templateCode: 'FEATURE_DEVELOPMENT',
       includePermissionBoundaries: true,
-      includeExamples: false,
     });
 
     expect(request.rawPrompt).toBe('增加登录功能');
@@ -42,7 +48,6 @@ describe('buildOptimizationRequest', () => {
       templateCode: 'FEATURE_DEVELOPMENT',
       includeConversationHistory: false,
       includePermissionBoundaries: true,
-      includeExamples: false,
     });
   });
 
@@ -53,7 +58,6 @@ describe('buildOptimizationRequest', () => {
       files: [],
       templateCode: 'AUTO',
       includePermissionBoundaries: false,
-      includeExamples: true,
     });
 
     expect(request.conversationHistory).toEqual([]);
@@ -74,7 +78,6 @@ describe('buildOptimizationRequest', () => {
       }],
       templateCode: 'AUTO',
       includePermissionBoundaries: false,
-      includeExamples: false,
     });
 
     expect(request.context.files[0]).toEqual({
@@ -94,7 +97,6 @@ describe('buildOptimizationRequest', () => {
       files: [],
       templateCode: 'AUTO',
       includePermissionBoundaries: true,
-      includeExamples: false,
     });
 
     expect(request).not.toHaveProperty('model');
@@ -109,7 +111,6 @@ describe('buildOptimizationRequest', () => {
       files: [],
       templateCode: 'RESEARCH_ANALYSIS',
       includePermissionBoundaries: true,
-      includeExamples: false,
       planConfirmation: {
         planId: 'd53d3b67-62b2-4505-89dd-4ca88f837391',
         planningContext: {

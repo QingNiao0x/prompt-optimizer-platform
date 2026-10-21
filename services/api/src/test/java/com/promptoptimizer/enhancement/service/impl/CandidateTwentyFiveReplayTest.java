@@ -269,7 +269,7 @@ class CandidateTwentyFiveReplayTest {
         return new OptimizationResultAssembler().assemble(response, EMPTY,
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw), List.of(), answers, true,
                 new ConstraintCompleterImpl().completeForTask(EMPTY, PermissionPolicyInput.empty(), true,
-                        TaskIntentResolver.resolve(TemplateCode.AUTO, raw)), false, 0, raw, List.of(), List.of(), task(raw, answers));
+                        TaskIntentResolver.resolve(TemplateCode.AUTO, raw)), 0, raw, List.of(), List.of(), task(raw, answers));
     }
 
     /** 实际题答保持原始五个ID和原文；测试不创造实际参数确认。 */
@@ -302,7 +302,7 @@ class CandidateTwentyFiveReplayTest {
 
     /** 用真实任务视图保证作用范围及未决状态参与测试。 */
     private EffectiveTaskView task(String raw, List<PlanAnswer> answers) {
-        return EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+        return EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
     }
 
     /** 责任段和全称未确认边界共同决定能否省去委托提醒。 */

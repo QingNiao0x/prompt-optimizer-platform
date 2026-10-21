@@ -155,7 +155,6 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                 新发现且尚未由 pendingDecisions 覆盖的真正未决问题放在 ambiguities；平台会将归并后的执行前提写入可复制正文，未确认不能视为授权猜测。
                 已确认的旧选择要改写成执行要求，不得把 rawPrompt 中旧的“需要先确认选哪一个”重新列为当前待办；独立约束、新取值与新条件仍须保留。
             14. 面向用户的正文和提醒使用自然语言，不展示 taskView、executionRequirements、confirmedDecisions、planAnswers、questionId、sourceQuestionIds、designDelegated、scope 或 analysisStatus 等内部协议名；需要关联时仅使用 ambiguityReferences。
-                taskView.examples.mode=REQUIRED 表示已要求下游提供与任务相关的输入和预期输出示例，不是让平台先执行用户任务；明确该要求，不再写“仅在用户要求时”或“必要时”。演示材料明确标注虚构，不作为正式事实或已确认口径。其余 mode 遵守禁例或严格格式，不主动加示例。原始需求明确要示例时，关闭开关不取消它。
             15. 平台会将全部未决条件统一加入可复制正文；不要再在 CONSTRAINTS 或其他段落列一份同义待确认清单。
                 用户已明确选定版本或解决某个条件时，背景、任务、约束都须同步采用该决定；原材料中的“尚未确认采用哪版”属于确认前状态，不能再作为当前执行前提。部分回答仅更新已确定的子项，其余真正缺口和二次检索的新冲突仍保留。
                 提示词以目标、必要事实、决定和交付要求为中心；相同确认答案和资料规则只表述一次。
@@ -658,13 +657,13 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     }
 
     /**
-     * 显式结构化仅传递场景交付线索，不再把模板默认验收和可选示例作为第二份生成要求。
-     * 原文明示验收仍在rawPrompt与来源中，示例开关由taskView.examples负责；旧模式原样兼容。
+     * 显式结构化仅传递场景交付线索，不再把模板默认验收作为第二份生成要求。
+     * 原文明示的验收和示例需求仍由rawPrompt与来源表达；旧模式原样兼容。
      */
     private PromptTemplate generationTemplate(EnhancementProviderRequest request) {
         PromptTemplate template = request.template();
         if (request.options().promptFormat() != com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED) return template;
-        return new PromptTemplate(template.code(), template.outputGuidance(), "", "", template.deliveryProfile());
+        return new PromptTemplate(template.code(), template.outputGuidance(), "", template.deliveryProfile());
     }
 
     /**
@@ -674,7 +673,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
         var taskView = request.taskView() != null ? request.taskView()
                 : com.promptoptimizer.enhancement.service.impl.EffectiveTaskViewFactory.create(request.rawPrompt(),
                         com.promptoptimizer.enhancement.domain.TemplateCode.AUTO, List.of(),
-                        request.planningContext() == null ? List.of() : request.planningContext().factCards(), false);
+                        request.planningContext() == null ? List.of() : request.planningContext().factCards());
         var taskIntent = taskView.intent();
         PlanningPromptPayload payload = new PlanningPromptPayload(
                 request.rawPrompt(),

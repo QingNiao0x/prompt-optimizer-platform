@@ -342,7 +342,6 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 entity.getLatencyMs(),
                 entity.getCreatedAt(),
                 Boolean.TRUE.equals(options.get("includePermissionBoundaries")),
-                Boolean.TRUE.equals(options.get("includeExamples")),
                 convertList(metadata.get("conversationHistory"), new TypeReference<List<ConversationMessage>>() {
                 }),
                 entity.getPermissionPolicy(),
@@ -386,8 +385,7 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         Map<String, Object> enhancementOptions = new LinkedHashMap<>(Map.of(
                 "templateCode", result.templateCode().name(),
                 "includeConversationHistory", Boolean.TRUE.equals(request.enhancement().includeConversationHistory()),
-                "includePermissionBoundaries", Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries()),
-                "includeExamples", Boolean.TRUE.equals(request.enhancement().includeExamples())
+                "includePermissionBoundaries", Boolean.TRUE.equals(request.enhancement().includePermissionBoundaries())
         ));
         // 请求偏好与最终呈现分开保存；自动选择的结果不能升级为用户的显式排版选择。
         if (request.enhancement().promptFormat() != null) {
@@ -441,7 +439,6 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 templateCode,
                 Boolean.TRUE.equals(options.get("includeConversationHistory")),
                 Boolean.TRUE.equals(options.get("includePermissionBoundaries")),
-                Boolean.TRUE.equals(options.get("includeExamples")),
                 requestedPromptFormat(options.get("promptFormat"))
         );
         List<ConversationMessage> conversation = convertList(

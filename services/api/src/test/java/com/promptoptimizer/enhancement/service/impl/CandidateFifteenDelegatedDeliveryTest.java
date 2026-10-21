@@ -136,7 +136,7 @@ class CandidateFifteenDelegatedDeliveryTest {
 
     /** 所有权限都来自绑定题答；评分声明本身不产生确认或参数。 */
     private EffectiveTaskView task(String raw, String question, String answer) {
-        return EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(new PlanAnswer("q-current", question, answer)), List.of(), false);
+        return EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(new PlanAnswer("q-current", question, answer)), List.of());
     }
 
     /** 模型声明仅作为缺项信号，数值例子不会抄进执行义务。 */

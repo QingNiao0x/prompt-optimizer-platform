@@ -108,7 +108,7 @@ class CandidateTwentySevenRepairProtocolTest {
         var input = JSON.readTree(repo().resolve("docs/testing/evidence/me00a-candidate26-r2-live-2026-10-17/real/Q05-PARTIAL-SCORING/input.json").toFile());
         return new EnhancementProviderRequest(input.path("rawPrompt").asText(),
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.AUTO, "保持研究目标", "保留真实未决选择", "不使用虚构数据"),
+                new PromptTemplate(TemplateCode.AUTO, "保持研究目标", "保留真实未决选择"),
                 List.of(), List.of(), List.of(), EnhancementOptions.defaults(), "test-model");
     }
 

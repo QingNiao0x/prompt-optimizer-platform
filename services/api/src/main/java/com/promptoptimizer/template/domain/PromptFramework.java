@@ -36,7 +36,7 @@ public enum PromptFramework {
             PromptSectionType.TASK, PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS)),
     /** 使用场景：字段提取、数据转换与接口说明；框架中的示例要素不额外授权生成示例。 */
     TRACE("任务、请求、行动、上下文、示例", "先明确处理请求，再把输入、转换或提取动作对应到输出字段与行为；有依据的格式差异和异常边界分别说明。",
-            "框架名不授权示例；只有既有示例契约允许时才纳入示例，样例不升级为业务事实。", order(PromptSectionType.TASK,
+            "框架名不增加示例交付要求；原文中的示例需求及事实边界继续保留。", order(PromptSectionType.TASK,
             PromptSectionType.BACKGROUND, PromptSectionType.OUTPUT, PromptSectionType.CONSTRAINTS)),
     /** 使用场景：简明解释、改写，先明确期望结果及适用读者。 */
     ERA("交付期望、适用视角、行动", "先限定需要的一段解释或改写结果，再按已知读者和用途明确表达动作，少用空泛角色标签。",

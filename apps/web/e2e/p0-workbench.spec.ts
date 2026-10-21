@@ -31,7 +31,7 @@ test.beforeEach(async ({ page }) => {
 const historyB: OptimizationHistoryDetail = { id: 'history-b', rawPrompt: '任务 B：写邮件',
   optimizedPrompt: '', sections: [], contextSummary: {}, ambiguities: [], appliedConstraints: [],
   templateCode: 'GENERAL', providerName: 'mock', modelName: 'p0', mock: true, latencyMs: 1,
-  createdAt: '2026-10-11T00:00:00Z', includePermissionBoundaries: true, includeExamples: false,
+  createdAt: '2026-10-11T00:00:00Z', includePermissionBoundaries: true,
   conversationHistory: [], permissionPolicy: {} };
 
 const mockHistoryB = async (page: Page): Promise<void> => {

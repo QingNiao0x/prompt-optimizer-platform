@@ -86,6 +86,34 @@ class MybatisOptimizationHistoryServiceTest {
         assertThat(saved.getContextSnapshot()).doesNotContainKey("fileSnippets");
         assertThat(saved.getResultMetadata()).containsEntry("modelVersion", "DeepSeek-V4-Pro-0813");
         assertThat(saved.getResultMetadata()).containsEntry("promptFormat", "STRUCTURED");
+        assertThat(((Map<?, ?>) saved.getResultMetadata().get("enhancementOptions")).containsKey("includeExamples"))
+                .isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void retiredExampleOptionDoesNotReappearWhenReadingOrReoptimizingHistory(boolean oldValue) throws Exception {
+        var record = recordEntity();
+        var metadata = new java.util.LinkedHashMap<>(record.getResultMetadata());
+        var options = Map.of("templateCode", "FEATURE_DEVELOPMENT", "includeConversationHistory", false,
+                "includePermissionBoundaries", false, "includeExamples", oldValue);
+        metadata.put("enhancementOptions", options);
+        record.setResultMetadata(metadata);
+        String savedBody = record.getOptimizedPrompt();
+        when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);
+
+        var detail = service.get(record.getId());
+        assertThat(detail.optimizedPrompt()).isEqualTo(savedBody);
+        assertThat(objectMapper.writeValueAsString(detail)).doesNotContain("includeExamples");
+
+        when(orchestrator.optimize(any())).thenReturn(resultWithFileContent());
+        service.reoptimize(record.getId());
+        var captured = ArgumentCaptor.forClass(OptimizationRequest.class);
+        verify(orchestrator).optimize(captured.capture());
+        assertThat(captured.getValue().rawPrompt()).isEqualTo(record.getRawPrompt());
+        assertThat(objectMapper.writeValueAsString(captured.getValue().enhancement()))
+                .doesNotContain("includeExamples");
+        assertThat(record.getOptimizedPrompt()).isEqualTo(savedBody);
     }
 
     @Test
@@ -135,7 +163,7 @@ class MybatisOptimizationHistoryServiceTest {
     void savesAndReusesExplicitFormatWhenReoptimizing(com.promptoptimizer.enhancement.domain.PromptFormat format) {
         var base = request();
         var explicit = new OptimizationRequest(base.rawPrompt(), base.context(),
-                new EnhancementOptions(TemplateCode.AUTO, false, true, false, format), base.conversationHistory(),
+                new EnhancementOptions(TemplateCode.AUTO, false, true, format), base.conversationHistory(),
                 base.permissionPolicy());
         var baseResult = resultWithFileContent();
         var result = new OptimizationResult(baseResult.optimizedPrompt(), baseResult.sections(), baseResult.contextReport(),

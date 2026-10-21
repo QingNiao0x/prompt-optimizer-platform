@@ -143,7 +143,7 @@ class ExistingContractPlanningTest {
 
     private static PlanningProviderRequest input(String raw) {
         return new PlanningProviderRequest(raw, "", List.of(), null, null, List.of(), "",
-                EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false));
+                EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of()));
     }
 
     private static PlanQuestion question(String text) {

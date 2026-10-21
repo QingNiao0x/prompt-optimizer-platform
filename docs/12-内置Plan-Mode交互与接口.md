@@ -387,8 +387,7 @@ Plan 路径中用户完成全部问题后的请求：
   "enhancement": {
     "templateCode": "RESEARCH_ANALYSIS",
     "includeConversationHistory": false,
-    "includePermissionBoundaries": true,
-    "includeExamples": false
+    "includePermissionBoundaries": true
   },
   "conversationHistory": [],
   "permissionPolicy": {
@@ -426,8 +425,7 @@ Plan 路径中用户完成全部问题后的请求：
   "enhancement": {
     "templateCode": "AUTO",
     "includeConversationHistory": false,
-    "includePermissionBoundaries": true,
-    "includeExamples": false
+    "includePermissionBoundaries": true
   },
   "conversationHistory": [],
   "permissionPolicy": {"protectedPaths": [], "requireConfirmationFor": []},

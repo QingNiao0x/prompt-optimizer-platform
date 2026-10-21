@@ -57,14 +57,6 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
                 "验收标准",
                 request.template().acceptanceGuidance()
         ));
-        var examples = task.examples();
-        if (examples.required()) {
-            sections.add(new PromptSection(
-                    PromptSectionType.EXAMPLES,
-                    "示例参考",
-                    examples.guidance()
-            ));
-        }
         return new EnhancementProviderResponse(sections, "mock", "deterministic-enhancer-v1", true,
                 findings);
     }

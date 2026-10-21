@@ -31,13 +31,12 @@ class CandidateTwentyTwoReplayTest {
         var answers = answers(fixture);
         String raw = fixture.path("rawPrompt").asText();
         String original = fixture.toString();
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
         var originalInput = task.modelInput();
         var result = new OptimizationResultAssembler().assemble(response(fixture), EMPTY,
                 new PromptTemplateRegistryImpl().resolve(TemplateCode.AUTO, raw), List.of(), answers, true,
                 new ConstraintCompleterImpl().completeForTask(EMPTY, PermissionPolicyInput.empty(), true,
-                        TaskIntentResolver.resolve(TemplateCode.AUTO, raw)),
-                false, 0, raw, List.of(), List.of(), task);
+                        TaskIntentResolver.resolve(TemplateCode.AUTO, raw)), 0, raw, List.of(), List.of(), task);
         assertThat(result.optimizedPrompt()).contains("各等级评分锚点", "分歧处理规则");
         assertThat(count(result.optimizedPrompt(), STATUS)).isEqualTo(1);
         for (var answer : answers) assertThat(result.optimizedPrompt()).contains(answer.question());
@@ -63,7 +62,7 @@ class CandidateTwentyTwoReplayTest {
                 && value.missing().contains("四项评价")).findFirst().orElseThrow();
         var assessment = new TaskEnhancementAssessment(original.sufficiency(), List.of(gap), original.presentation());
         var task = EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO,
-                answers(fixture), List.of(), false);
+                answers(fixture), List.of());
         var sections = sections(fixture);
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections, task, assessment);
         String first = sections.get(PromptSectionType.TASK).content();
@@ -77,7 +76,7 @@ class CandidateTwentyTwoReplayTest {
         var fixture = fixture("trace298");
         var answers = answers(fixture);
         String raw = fixture.path("rawPrompt").asText();
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers, List.of());
         var messages = answers.stream().map(value -> STATUS + "：" + value.question()).toList();
         assertThat(PlanDecisionIntegrator.commonDelegatedQuestions(messages, task)).hasValue(
                 answers.stream().map(PlanAnswer::question).toList());
@@ -89,7 +88,7 @@ class CandidateTwentyTwoReplayTest {
         var futureAnswers = new java.util.ArrayList<>(answers);
         futureAnswers.set(0, new PlanAnswer(answers.getFirst().questionId(), answers.getFirst().question(),
                 "如果以后批准，再提出设计。"));
-        var future = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, futureAnswers, List.of(), false);
+        var future = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, futureAnswers, List.of());
         assertThat(PlanDecisionIntegrator.commonDelegatedQuestions(messages, future)).isEmpty();
     }
 
@@ -113,7 +112,7 @@ class CandidateTwentyTwoReplayTest {
         var fixture = fixture("trace298");
         var sections = sections(fixture);
         String raw = fixture.path("rawPrompt").asText() + boundary;
-        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers(fixture), List.of(), false);
+        var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, answers(fixture), List.of());
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections, task, response(fixture).assessment());
         assertThat(sections.get(PromptSectionType.TASK).content()).doesNotContain("各等级评分锚点");
     }
@@ -139,7 +138,7 @@ class CandidateTwentyTwoReplayTest {
         var assessment = response(fixture).assessment();
         var changed = new TaskEnhancementAssessment(assessment.sufficiency(), List.of(declared), assessment.presentation());
         var task = EffectiveTaskViewFactory.create(fixture.path("rawPrompt").asText(), TemplateCode.AUTO,
-                answers(fixture), List.of(), false);
+                answers(fixture), List.of());
         PlanDecisionIntegrator.completeDeclaredEvaluation(sections, task, changed);
         assertThat(sections.get(PromptSectionType.TASK).content()).doesNotContain("各等级评分锚点");
     }

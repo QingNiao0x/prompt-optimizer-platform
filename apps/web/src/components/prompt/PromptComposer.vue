@@ -16,7 +16,6 @@ import type { AvailableModel } from '@/types/api';
 
 interface Props {
   rawPrompt: string;
-  includeExamples: boolean;
   structuredPrompt: boolean;
   isAnalyzing: boolean;
   isPlanning: boolean;
@@ -30,7 +29,6 @@ interface Props {
 
 interface Emits {
   (event: 'update:raw-prompt', value: string): void;
-  (event: 'update:include-examples', value: boolean): void;
   (event: 'update:structured-prompt', value: boolean): void;
   (event: 'update:selected-model-id', value: string): void;
   (event: 'optimize'): void;
@@ -43,11 +41,6 @@ const { enabled: planModeEnabled, setEnabled: setPlanModeEnabled } = usePlanMode
 const rawPromptModel = computed({
   get: (): string => props.rawPrompt,
   set: (value: string): void => emit('update:raw-prompt', value),
-});
-
-const examplesModel = computed({
-  get: (): boolean => props.includeExamples,
-  set: (value: boolean): void => emit('update:include-examples', value),
 });
 
 const structuredPromptModel = computed({
@@ -132,12 +125,6 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
               <span>Plan 确认</span>
               <em v-if="planModeEnabled" class="plan-badge" aria-hidden="true">Plan</em>
               <ElSwitch v-model="planModeModel" aria-label="Plan 确认" :disabled="isBusy" />
-            </label>
-          </ElTooltip>
-          <ElTooltip content="要求下游回答包含相关输入与预期输出示例；用户明确禁例或严格输出格式优先" placement="top">
-            <label class="switch-control">
-              <span>示例参考</span>
-              <ElSwitch v-model="examplesModel" aria-label="要求回答包含示例" :disabled="isBusy" />
             </label>
           </ElTooltip>
           <!-- 纯文字帮助不接收指针；开关保持焦点时浮层也不能遮挡生成按钮。 -->

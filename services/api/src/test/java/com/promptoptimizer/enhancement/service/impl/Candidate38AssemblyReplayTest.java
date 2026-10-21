@@ -41,7 +41,7 @@ class Candidate38AssemblyReplayTest {
             var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "EMPTY");
             var groups = new ConstraintCompleterImpl().completeForTask(context, PermissionPolicyInput.empty(), false,
                     TaskIntentResolver.resolve(TemplateCode.AUTO, raw));
-            var template = new PromptTemplate(TemplateCode.AUTO, "保留交付。", "遵守原要求。", "不新增示例。");
+            var template = new PromptTemplate(TemplateCode.AUTO, "保留交付。", "遵守原要求。");
             // 使用真实适配器解析边界，含既有 presentation 缺省归一化；原件及正文不手工补字段。
             var builder = org.springframework.web.client.RestClient.builder();
             var server = org.springframework.test.web.client.MockRestServiceServer.bindTo(builder).build();
@@ -59,18 +59,10 @@ class Candidate38AssemblyReplayTest {
                             groups.visibleConstraints(), List.of(), EnhancementOptions.defaults()));
             server.verify();
             for (var format : PromptFormat.values()) {
-                var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of(), false);
+                var task = EffectiveTaskViewFactory.create(raw, TemplateCode.AUTO, List.of(), List.of());
                 var assembly = (java.util.function.Supplier<OptimizationResult>) () -> new OptimizationResultAssembler().assemble(response, context,
                         template,
-                        List.of(), List.of(), false, groups, false, 1, raw, List.of(), List.of(), task, format);
-                if (trace == 414) {
-                    org.assertj.core.api.Assertions.assertThatThrownBy(assembly::get)
-                            .isInstanceOfSatisfying(ProviderResponseValidationException.class, error -> {
-                                assertThat(error.getReason()).isEqualTo(ProviderResponseValidationException.Reason.RULE_CONFLICT);
-                                assertThat(error.getField()).isEqualTo("sections.OUTPUT");
-                            });
-                    continue;
-                }
+                        List.of(), List.of(), false, groups, 1, raw, List.of(), List.of(), task, format);
                 var result = assembly.get();
                 var constraints = result.sections().stream().filter(section -> section.type() == PromptSectionType.CONSTRAINTS)
                         .findFirst().orElseThrow().content();

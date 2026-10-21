@@ -98,7 +98,7 @@ class ModelFindingConsistencyOrderTest {
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "后端brucellosis与oldbrucellosis、前端brucellosis与brucella的患者治疗修改须同步；未读源码前不声称已经完成。")),
                 "offline-fixture", "offline-fixture", false, findings, List.of(), assessment);
         return new OptimizationResultAssembler().assemble(response, EMPTY,
-                new PromptTemplate(TemplateCode.AUTO, "核对当前任务的交付。", "保留原始要求。", "按需提供示例。"),
-                serverFindings, List.of(), false, List.of(), examples, 1, raw);
+                new PromptTemplate(TemplateCode.AUTO, "核对当前任务的交付。", "保留原始要求。"),
+                serverFindings, List.of(), false, List.of(), 1, raw);
     }
 }

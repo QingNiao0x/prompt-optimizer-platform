@@ -34,7 +34,7 @@ provider: { provider: 'mock', model: 'p0', mock: true }, latencyMs: 1 });
 const history = (): OptimizationHistoryDetail => ({ id: 'history-b', rawPrompt: '任务 B：写邮件',
   optimizedPrompt: '', sections: [], contextSummary: {}, ambiguities: [], appliedConstraints: [],
   templateCode: 'GENERAL', providerName: 'mock', modelName: 'p0', mock: true, latencyMs: 1,
-  createdAt: '2026-10-11T00:00:00Z', includePermissionBoundaries: true, includeExamples: false,
+  createdAt: '2026-10-11T00:00:00Z', includePermissionBoundaries: true,
   conversationHistory: [], permissionPolicy: {} });
 const deferred = <T>() => {
   let resolve!: (value: T) => void;
@@ -188,7 +188,6 @@ describe('P0 task lifecycle regressions', () => {
       email: 'synthetic-a@example.test', displayName: 'A', platformAdmin: false };
     const store = useOptimizationStore();
     store.rawPrompt = 'A';
-    store.includeExamples = true;
     store.selectedModelId = 'chosen';
     store.addFile({ path: 'A.txt', language: 'text', content: 'A' });
     store.resultDraft = result('A draft').sections;
@@ -203,6 +202,5 @@ describe('P0 task lifecycle regressions', () => {
     expect(store.files).toEqual([]);
     expect(store.rawPrompt).toBe('');
     expect(store.selectedModelId).toBe('chosen');
-    expect(store.includeExamples).toBe(true);
   });
 });

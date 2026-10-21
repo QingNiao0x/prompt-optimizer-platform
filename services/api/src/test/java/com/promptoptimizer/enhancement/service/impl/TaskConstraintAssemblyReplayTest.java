@@ -197,8 +197,8 @@ class TaskConstraintAssemblyReplayTest {
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", content)),
                 "offline-fixture", "offline-fixture", false, findings);
         return new OptimizationResultAssembler().assemble(response, emptyContext(),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付正文。", "不编造数据。", "遵守原要求。"),
-                List.of(), List.of(), plan, constraints, false, 1, raw, List.of(), List.of());
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "交付正文。", "不编造数据。"),
+                List.of(), List.of(), plan, constraints, 1, raw, List.of(), List.of());
     }
 
     private ContextSnapshot emptyContext() {

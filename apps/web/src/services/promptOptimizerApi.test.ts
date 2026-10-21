@@ -55,7 +55,6 @@ describe('optimizePrompt', () => {
         templateCode: 'AUTO',
         includeConversationHistory: false,
         includePermissionBoundaries: true,
-        includeExamples: false,
       },
       conversationHistory: [],
       permissionPolicy: {

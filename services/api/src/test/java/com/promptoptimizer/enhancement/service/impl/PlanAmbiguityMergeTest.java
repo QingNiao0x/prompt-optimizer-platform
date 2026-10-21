@@ -94,9 +94,9 @@ class PlanAmbiguityMergeTest {
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "- 审批标准尚未明确。\n- 紧急订单审批标准尚未明确。")),
                 "test", "test", false, List.of("审批标准尚未明确。", "紧急订单审批标准尚未明确。")),
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.GENERAL, "输出", "结果可核对", "示例"), List.of(),
+                new PromptTemplate(TemplateCode.GENERAL, "输出", "结果可核对"), List.of(),
                 List.of(new PlanAnswer("approval", "审批标准是什么？", "暂不确定")), true,
-                List.of("不得削弱现有功能"), false, 1);
+                List.of("不得削弱现有功能"), 1);
         assertThat(result.optimizedPrompt()).doesNotContain("- 审批标准尚未明确。")
                 .contains("该问题尚未确定：审批标准是什么？");
         assertThat(result.optimizedPrompt().split("紧急订单审批标准尚未明确", -1)).hasSize(2);
@@ -354,8 +354,8 @@ class PlanAmbiguityMergeTest {
                 new PromptSection(PromptSectionType.OUTPUT, "输出", "说明过程和结果。"),
                 new PromptSection(PromptSectionType.CONSTRAINTS, "约束", "不得编造事实。")), "test", "test", false, findings, references),
                 new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "v1"),
-                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可验证", "示例"),
-                server, answers, true, List.of("不得削弱现有功能"), false, 1);
+                new PromptTemplate(TemplateCode.RESEARCH_ANALYSIS, "输出", "结果可验证"),
+                server, answers, true, List.of("不得削弱现有功能"), 1);
     }
 
     private void assertSynchronized(OptimizationResult result) {

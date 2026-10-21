@@ -30,7 +30,7 @@ const history = (format?: PromptFormat): OptimizationHistoryDetail => ({
   id: 'existing-record', rawPrompt: '历史任务', ...fixture(format), contextSummary: {},
   ...(format ? { promptFormat: format } : { promptFormat: undefined }),
   providerName: 'mock', modelName: 'fixture', mock: true, latencyMs: 1,
-  createdAt: '2026-10-18T00:00:00Z', includePermissionBoundaries: true, includeExamples: false,
+  createdAt: '2026-10-18T00:00:00Z', includePermissionBoundaries: true,
   conversationHistory: [], permissionPolicy: {},
 });
 
@@ -255,14 +255,13 @@ describe('explicit prompt presentation', () => {
     expect(store.canReuseGenerationSource).toBe(true);
   });
 
-  it.each(['raw', 'context', 'examples', 'model', 'task'] as const)('does not reuse a source after %s changes', async change => {
+  it.each(['raw', 'context', 'model', 'task'] as const)('does not reuse a source after %s changes', async change => {
     const store = useOptimizationStore();
     store.rawPrompt = '旧需求';
     vi.mocked(optimizePrompt).mockResolvedValue({ requestId: 'first', data: fixture() });
     await store.runOptimization([], { planConfirmation: { planId: 'old-plan', answers: [] } });
     if (change === 'raw') store.rawPrompt = '新需求';
     else if (change === 'context') store.addFile({ path: 'new.md', content: '新资料', language: 'text' });
-    else if (change === 'examples') store.includeExamples = true;
     else if (change === 'model') store.selectedModelId = 'new-model';
     else store.resetTask();
     store.setPromptFormat('STRUCTURED');

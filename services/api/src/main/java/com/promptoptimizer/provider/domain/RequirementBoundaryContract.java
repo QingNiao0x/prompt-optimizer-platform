@@ -51,6 +51,18 @@ public final class RequirementBoundaryContract {
     private static final Pattern CANDIDATE_PREFIX = Pattern.compile(
             "(?:建议|可考虑|可以考虑|可选|候选|例如|比如|若|如果|假如|假设|仅当|只有|待确认后|确认后可)[^。；;\\r\\n]{0,65}$", FLAGS);
     private static final Pattern NOT_SELECTED = Pattern.compile("^(?:待确认|待核实|未知|未定|尚未|未提供|未指定|待定|\\[|【)", FLAGS);
+    // 从已退役的示例组装器保留用户明示的输出边界；不再依据开关或缺省偏好限制普通任务。
+    private static final Pattern EXAMPLE_PROHIBITION = Pattern.compile(
+            "(?:不要|不得|禁止|无需|不需要|不提供|不包含|不输出|不附带|不附|不加|不添加)[^。；;，,！？!?\\r\\n]{0,16}(?:示例|示范|例子)|不举例"
+                    + "|\\b(?:no|without|do not|never)\\b[^.;,!?\\r\\n]{0,60}\\bexamples?\\b", FLAGS);
+    private static final Pattern STRICT_OUTPUT = Pattern.compile(
+            "(?:只|仅)(?:输出|返回|交付|提供).{0,18}(?:译文|翻译结果|JSON|正文|答案|代码)"
+                    + "|\\b(?:return|output|provide)\\s+only\\b|\\bonly\\s+(?:the\\s+)?translation\\b", FLAGS);
+    private static final Pattern EXAMPLE_REQUEST = Pattern.compile(
+            "(?:提供|给出|包含|附上|附带|输出|需要|要求)[^。；;，,！？!?\\r\\n]{0,30}(?:示例|示范|例子)"
+                    + "|\\b(?:include|provide|give|add)\\b[^.;,!?\\r\\n]{0,40}\\bexamples?\\b", FLAGS);
+    private static final Pattern FICTIONAL_MATERIAL = Pattern.compile(
+            "虚构|假设|模拟|编造|\\b(?:fictional|hypothetical|synthetic|made-up)\\b", FLAGS);
     private final boolean noInventedData;
     private final boolean conditionalTestSelection;
     private final boolean ageStandardization;
@@ -58,10 +70,11 @@ public final class RequirementBoundaryContract {
     private final List<String> selectedBranches;
     private final boolean userBansExampleData;
     private final boolean userQuestionAnswerWorkflow;
+    private final boolean supplementaryExamplesExcluded;
 
     private RequirementBoundaryContract(boolean noInventedData, boolean conditionalTestSelection,
             boolean ageStandardization, List<String> populations, List<String> selectedBranches, boolean userBansExampleData,
-            boolean userQuestionAnswerWorkflow) {
+            boolean userQuestionAnswerWorkflow, boolean supplementaryExamplesExcluded) {
         this.noInventedData = noInventedData;
         this.conditionalTestSelection = conditionalTestSelection;
         this.ageStandardization = ageStandardization;
@@ -69,6 +82,7 @@ public final class RequirementBoundaryContract {
         this.selectedBranches = List.copyOf(selectedBranches);
         this.userBansExampleData = userBansExampleData;
         this.userQuestionAnswerWorkflow = userQuestionAnswerWorkflow;
+        this.supplementaryExamplesExcluded = supplementaryExamplesExcluded;
     }
 
     /** 用户禁令只读原需求和实际回答；资料可证明参数取值，但不能替用户新增例外或禁止。 */
@@ -84,10 +98,11 @@ public final class RequirementBoundaryContract {
         return new RequirementBoundaryContract(prohibitsInventedData(source),
                 TEST_SELECTION.matcher(source).find() && !NO_TEST_NAMES.matcher(source).find(),
                 chosenAgeMethod(source, confirmed), populations.stream().distinct().toList(), selectedBranches(source, confirmed), bansAllExampleData(source),
-                Pattern.compile("Plan\\s*问答|(?:让|由)用户[^。；;\\r\\n]{0,15}回答[^。；;\\r\\n]{0,35}增强提示词", FLAGS).matcher(source).find());
+                Pattern.compile("Plan\\s*问答|(?:让|由)用户[^。；;\\r\\n]{0,15}回答[^。；;\\r\\n]{0,35}增强提示词", FLAGS).matcher(source).find(),
+                excludesSupplementaryExamples(source));
     }
 
-    /** 与示例契约共用禁令识别，关闭示例也不意味着取消数据使用限制。 */
+    /** 识别用户明示的数据禁令，演示或样例不能绕过其适用范围。 */
     public static boolean prohibitsInventedData(String instructions) {
         String current = DraftDeliveryContract.instructionText(instructions);
         return NO_INVENTED_DATA.matcher(current).find() || java.util.Arrays.stream(current.split("[。；;\\r\\n]+"))
@@ -158,6 +173,11 @@ public final class RequirementBoundaryContract {
     /** 在模型草稿和平台最终正文各核对一次；引用和围栏中的旧错误不算当前执行许可。 */
     public void validate(String content, String field) {
         String text = DraftDeliveryContract.instructionText(content);
+        // 旧历史仍可读取EXAMPLES；新生成的辅助段必须遵守用户明确限制，不静默删除后伪装成合格响应。
+        if ("sections.EXAMPLES".equals(field)) {
+            if (supplementaryExamplesExcluded) reject(ProviderResponseValidationException.Reason.RULE_CONFLICT, field);
+            if (noInventedData) validateMaterialNature(text, field);
+        }
         if (userQuestionAnswerWorkflow) validateInteractionActors(text, field);
         if (noInventedData && permitsInventedData(text)) reject(ProviderResponseValidationException.Reason.DATA_PROHIBITION_CONFLICT, field);
         if (noInventedData && !userBansExampleData && bansAllExampleData(text)) {
@@ -170,6 +190,35 @@ public final class RequirementBoundaryContract {
             }
             for (String selected : selectedPopulations(text)) {
                 if (!populations.contains(selected)) reject(ProviderResponseValidationException.Reason.METHOD_PARAMETER_CONFLICT, field);
+            }
+        }
+    }
+
+    /** 沿用原有禁例、严格格式及明确示例请求的优先级；被引用材料不能建立本次输出要求。 */
+    private static boolean excludesSupplementaryExamples(String source) {
+        String instructions = DraftDeliveryContract.instructionText(source.replaceAll("[“‘\"].*?[”’\"]", ""));
+        var prohibition = EXAMPLE_PROHIBITION.matcher(instructions);
+        while (prohibition.find()) {
+            String phrase = prohibition.group();
+            if (!phrase.matches("(?s)^(?:不得不|不能不|不可不).*") && !FICTIONAL_MATERIAL.matcher(phrase).find()) return true;
+        }
+        var request = EXAMPLE_REQUEST.matcher(instructions);
+        while (request.find()) {
+            String prefix = instructions.substring(Math.max(0, request.start() - 20), request.start());
+            if (prefix.matches("(?s).*(?:不得不|不能不|不可不)(?:再|额外)?$")
+                    || !prefix.matches("(?s).*(?:不|不要|不得|禁止|无需|不需要|不要求|并未|没有)(?:再|额外)?$")) return false;
+        }
+        return STRICT_OUTPUT.matcher(instructions).find();
+    }
+
+    /** 虚构标签不能绕过用户禁用假设数据的要求；沿用退役组装器的否定保护，不追加任何示例。 */
+    private static void validateMaterialNature(String content, String field) {
+        var fiction = Pattern.compile("虚构|假设数据|\\b(?:fictional|hypothetical|synthetic)\\b", FLAGS).matcher(content);
+        while (fiction.find()) {
+            String prefix = content.substring(0, fiction.start());
+            if (!prefix.matches("(?s).*(?:不|不得|禁止|严禁|避免)[^。；;\\r\\n]{0,30}$")
+                    && !prefix.matches("(?is).*\\b(?:no|not|never|without)\\b[^.;\\r\\n]{0,30}$")) {
+                reject(ProviderResponseValidationException.Reason.DATA_PROHIBITION_CONFLICT, field);
             }
         }
     }
