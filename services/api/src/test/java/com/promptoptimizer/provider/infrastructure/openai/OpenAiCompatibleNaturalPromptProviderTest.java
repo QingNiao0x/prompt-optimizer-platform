@@ -227,7 +227,12 @@ class OpenAiCompatibleNaturalPromptProviderTest {
 
     @Test
     void fourthVersionPlanKeepsZeroQuestionsAndItsInternalReviewOffTheWire() throws Exception {
-        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(reviewResponse("", true)), MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(body.path("messages").get(0).path("content").asText())
+                    .contains("一次最多提出 8 个问题，每题都必须贴合用户原始提示词")
+                    .doesNotContain("一次最多提出 3 个问题");
+        }).andRespond(withSuccess(response(reviewResponse("", true)), MediaType.APPLICATION_JSON));
         var result = provider.plan(input().withStrategyVersion("4"), draft -> {
             draft.taskUnderstanding().review().validatePlan(Set.of());
             return draft;

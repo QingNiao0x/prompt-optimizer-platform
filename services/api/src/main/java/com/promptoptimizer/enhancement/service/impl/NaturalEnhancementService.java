@@ -129,7 +129,7 @@ public class NaturalEnhancementService {
         }
     }
 
-    /** 新提问策略完整保留重要未知，逐题展示；注册问题后最终回答仍受服务端所有权和TTL约束。 */
+    /** 第四版最多提问 3 个，其余未决留在摘要；注册后最终回答仍受服务端所有权和 TTL 约束。 */
     public OptimizationPlan plan(OptimizationPlanRequest request) {
         return plan(request, NaturalPromptInstructions.VERSION);
     }
@@ -207,7 +207,11 @@ public class NaturalEnhancementService {
         return content + (missing.isEmpty() ? "" : "\n\n" + String.join("\n", missing));
     }
 
-    /** 校验协议容量和引用完整性；不截取问题、不用推荐项填答，也不凭题号证明语义等价。 */
+    /**
+     * 校验协议容量和引用完整性；不截取问题、不用推荐项填答，也不凭题号证明语义等价。
+     * 提问指导要求最多八题，且每题贴合用户原始提示词；该八题是出题范围，不在这里另设拒绝阈值。
+     * 超过 64 题才视为协议容量失败。第一至第四版共用这一容量，已保存确认的回答条数不在这里收紧。
+     */
     private void validateQuestions(PlanningProviderResponse response) {
         if (response == null || response.summary() == null || response.summary().isBlank()
                 || response.questions() == null || response.questions().size() > 64) throw invalid("Plan响应不完整或超出容量");

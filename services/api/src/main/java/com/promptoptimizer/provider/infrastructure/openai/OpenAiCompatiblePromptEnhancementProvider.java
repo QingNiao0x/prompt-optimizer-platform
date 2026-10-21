@@ -90,7 +90,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     private static final String PLANNING_REPAIR_INSTRUCTION = """
             平台结构化输出修复要求：上一次响应未通过校验。请基于前面的原始输入重新生成，且只返回一个 JSON 对象，不要 Markdown 代码围栏、解释或额外字段。
             顶层必须包含 summary（字符串）和 questions（数组）；每个问题必须包含 id、question、hint、type、options、examples、allowCustomAnswer，type 只能是 SINGLE_CHOICE、MULTIPLE_CHOICE 或 FREE_TEXT。
-            summary 非空且最多五百字符，questions 最多八题，问题 ID 唯一且使用英文编号；question 非空且最多三百字符，hint 最多五百字符，examples 最多四项，options 最多五项。
+            summary 非空且最多五百字符，questions 最多八题，且每题贴合用户原始提示词里尚未确定并会改变本次交付的需求；问题 ID 唯一且使用英文编号；question 非空且最多三百字符，hint 最多五百字符，examples 最多四项，options 最多五项。
             用户可见的题干、hint 和选项不得展示 TemplateCode、模板枚举代码、选择任务模板、确认缺失维度、缺失维度等内部术语；只用自然业务语言表述，不能因此删除真正未决的问题。
             若原始需求禁止混同缺失、未完成和零值，所有候选必须保持缺失状态；“是否计入分母”是可确认的统计口径，不等于把缺失改称未完成或补零。
             若交付已限定方法与空表模板，候选只能定义计算方式或模板，不执行分析、不填实际结果；保留未知口径供用户确认，不能删除关键问题来避开校验。
@@ -180,7 +180,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
             缺少另一机构的文件格式或映射，须询问事实，不能推荐仿照已知机构、假定两者相同；新问题必须指出缺口和影响，常规排版及核查由执行者处理。
             1. 使用与用户相同的语言，直接询问用户熟悉的业务事实，不得展示模板代码、字段名、缺失维度或系统实现术语。
             2. 不询问输入中已经明确的信息，不把可以安全推断的小细节变成问题。
-            3. 以用户本次原始需求为主，附件只补充事实。先判断决定责任：业务行为、实际参数、授权、兼容契约或用户明确保留的选择由用户决定；普通实现包装和组织由执行者合理设计，不能仅因影响入口、接口写法或运行说明就追问。重要未知与冲突仍问，最多8个；没有用户必须决定的未知时返回空questions。
+            3. 以用户本次原始需求为主，附件只补充事实。先判断决定责任：业务行为、实际参数、授权、兼容契约或用户明确保留的选择由用户决定；普通实现包装和组织由执行者合理设计，不能仅因影响入口、接口写法或运行说明就追问。重要未知与冲突仍问，最多8个，且每题都要贴合用户原始提示词中尚未确定并会改变本次交付的需求；不把通用模板、附件主题或执行细节凑满八题。没有用户必须决定的未知时返回空questions。
             4. 决策问题使用 SINGLE_CHOICE，给出 2 到 5 个具体且互斥的可行方案；只有可同时成立的选择才使用 MULTIPLE_CHOICE。
                未知地区、真实数据来源、指标定义等事实没有可靠候选时使用 FREE_TEXT，options=[]，给出简短填写示例；不要用随机地名、框架或“先待确认”凑选项。不得因凑不够选项而丢弃关键问题。
                每个选项的 label、description 与 answer 必须一致，不能反转用户已明确的规则来制造选项；推荐答案也必须保留否定、条件、对象、数值和单位。

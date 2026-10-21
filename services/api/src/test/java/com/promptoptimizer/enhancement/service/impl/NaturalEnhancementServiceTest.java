@@ -68,6 +68,15 @@ class NaturalEnhancementServiceTest {
     }
 
     @Test
+    void currentPlanAcceptsThreeQuestionsAndRejectsAFourthWithoutTruncating() {
+        provider.questions = List.of(question("q1"), question("q2"), question("q3"));
+        assertThat(service.plan(planRequest()).questions()).hasSize(3);
+        provider.questions = List.of(question("q1"), question("q2"), question("q3"), question("q4"));
+        assertThatThrownBy(() -> service.plan(planRequest())).isInstanceOf(ProviderException.class);
+        assertThat(service.plan(planRequest(), "3").questions()).hasSize(4);
+    }
+
+    @Test
     void zeroQuestionPlanRemainsBoundAndGeneratesWithoutInventingAnswers() {
         var plan = service.plan(planRequest());
         assertThat(plan.questions()).isEmpty();
