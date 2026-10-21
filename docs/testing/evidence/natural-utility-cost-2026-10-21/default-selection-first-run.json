@@ -1,0 +1,16 @@
+{
+  "name": "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementServiceTest",
+  "tests": "28",
+  "failures": "0",
+  "errors": "1",
+  "skipped": "0",
+  "reportSha256": "6508329ceafd54114c0a6b1f2504faaab973de4ea1c9c0ed4c17e4fb1faf04c8",
+  "failuresDetail": [
+    {
+      "test": "zeroQuestionPlanRemainsBoundAndGeneratesWithoutInventingAnswers",
+      "type": "java.lang.NullPointerException",
+      "message": "Cannot invoke \"com.promptoptimizer.provider.domain.NaturalPromptInput.strategyVersion()\" because \"this.provider.last\" is null"
+    }
+  ],
+  "cause": "New version-selection assertion inspected the enhancement-only last field before any enhancement; test fixture had no stored Plan input. Product default dispatch did not fail."
+}

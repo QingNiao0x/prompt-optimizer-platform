@@ -229,7 +229,7 @@ class NaturalCompactCoverageProtocolTest {
             assertThat(json.readTree(user.substring(user.indexOf('{'))).has("requiredSourceIds")).isFalse();
             assertThat(envelope.path("messages").get(0).path("content").asText()).isEqualTo(NaturalPromptInstructions.ENHANCE);
         }).andRespond(withSuccess(response(body), MediaType.APPLICATION_JSON));
-        provider.enhance(new NaturalPromptInput("写交接说明", context(), List.of(), List.of(), false, List.of(), null), draft -> {
+        provider.enhance(new NaturalPromptInput("写交接说明", context(), List.of(), List.of(), false, List.of(), null).withStrategyVersion("5"), draft -> {
             draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
             return draft;
         });

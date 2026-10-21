@@ -1,0 +1,129 @@
+{
+  "reviewer": "当前开发代理按冻结原始要求逐份核对；不是独立双人、专业用户或模型盲评。",
+  "criteriaFrozenBeforeCalls": true,
+  "numericScoresUsed": false,
+  "modelReviewCalls": 0,
+  "findings": [
+    {
+      "caseId": "SUFFICIENT_JSON",
+      "versions": [
+        "RAW",
+        "V4",
+        "V5"
+      ],
+      "decision": "TIE_USABLE",
+      "evidence": "三份完整响应均可直接解析，只有members/pending，陈禾日期正确、周宁null、李岚待确认、吴海排除。原文未规定顺序，不另加顺序判定。",
+      "scope": "单一夹具的交付正确，不证明所有JSON任务稳定通过。"
+    },
+    {
+      "caseId": "VAGUE_REPORT",
+      "version": "RAW",
+      "decision": "NEEDS_REVISION",
+      "evidenceQuotes": [
+        "另2人放弃",
+        "**负责人：**"
+      ],
+      "reason": "原件只有未继续，不能断言放弃；空负责人标签增加加工负担。建议与两项反馈对应，仍交付了原定建议。"
+    },
+    {
+      "caseId": "VAGUE_REPORT",
+      "version": "V4",
+      "decision": "USEFUL_BUT_NEEDS_REVIEW",
+      "evidenceQuotes": [
+        "且直接影响用户能否完成任务",
+        "且与具体设备相关"
+      ],
+      "reason": "提出具体方案并保留多数数据缺口；部分原因或影响表述比材料确定。903字符、八项建议加后续安排，相比原始臂更长；原任务没有数字篇幅上限，不能套用上批400字符规则判失败。"
+    },
+    {
+      "caseId": "VAGUE_REPORT",
+      "version": "V5",
+      "decision": "NEEDS_REVISION_NO_STABLE_GAIN",
+      "evidenceQuotes": [
+        "说明入口位置与用户预期不符",
+        "主要障碍是“看不见/想不到”，提示有效",
+        "2名用户经提示仍未继续"
+      ],
+      "reason": "把观察升级为原因和有效性结论，还给未继续者附加已获提示状态。优化提示词及传入材料没有这些断言，首次出现在下游作品；平台指导是否间接促成不能凭单次确定，保留混合归因。853字符，较V4仅少5.5%，不得称大幅精简。"
+    },
+    {
+      "caseId": "DELEGATED_PPT",
+      "versions": [
+        "RAW",
+        "V4",
+        "V5"
+      ],
+      "decision": "CORE_DELIVERY_PRESENT",
+      "evidence": "均有六页、每页两项核心要点与讲者提示；叙事和示例由AI设计，没有退回问卷，没有生成PPT文件。"
+    },
+    {
+      "caseId": "DELEGATED_PPT",
+      "version": "RAW",
+      "decision": "NEEDS_LIGHT_REVISION",
+      "evidenceQuotes": [
+        "早报告不会被责怪",
+        "绝大多数风险卡在这一步就能拦住"
+      ],
+      "reason": "包含未获组织政策或数据支持的保证。1699字符，节奏30+6×70+30=480秒仅为建议。"
+    },
+    {
+      "caseId": "DELEGATED_PPT",
+      "version": "V4",
+      "decision": "NEEDS_LIGHT_REVISION",
+      "evidenceQuotes": [
+        "报告不会被责怪",
+        "你连上去后所有流量都可能被看到"
+      ],
+      "reason": "有组织保证及过度概括，讲者提示和示例更长。2184字符；30+5×80+30=460秒留有余量，不据此认定违反8分钟。"
+    },
+    {
+      "caseId": "DELEGATED_PPT",
+      "version": "V5",
+      "decision": "MORE_COMPACT_WITH_LIMITATIONS",
+      "evidenceQuotes": [
+        "时间建议：约1分20秒",
+        "他们更常利用“新人不好意思多问”“怕麻烦”的心理下手"
+      ],
+      "reason": "1653字符，较V4少24.3%，六页依次服务受众、风险、识别、防护、求助和收尾。第5页同一时间提示重复一次，属低影响冗余；攻击者偏好缺来源应更审慎，未作专业网络安全核验。总时长建议470秒加10秒缓冲，未做实际讲述计时。"
+    },
+    {
+      "caseId": "PLAN_PURCHASE",
+      "versions": [
+        "V4",
+        "V5",
+        "V5_C2"
+      ],
+      "decision": "GUIDANCE_UNCHANGED_BURDEN_REMAINS",
+      "evidence": "三份均问用量、预算、驻留及SLA/超额相关的第四题；前三项是用户要求确认。第四题把供应商未知和用户偏好放一起，可能增加负担，本轮未按采购场景追加或删除问题。三次Plan题干并不相同。"
+    },
+    {
+      "caseId": "PLAN_PURCHASE",
+      "version": "V4",
+      "decision": "COMPARISON_PROMPT_MORE_ACTIONABLE",
+      "evidence": "保留120GB、年度基础费用3000元及境内要求；明确比较A容量缺口、B基础费用2388元/年与条件性建议，驻留和超额等供应商未知只限制相应采购决定。"
+    },
+    {
+      "caseId": "PLAN_PURCHASE",
+      "version": "V5_C2",
+      "decision": "PROTOCOL_PASSED_AFTER_RETRY_SEMANTIC_RISK_NOT_ACCEPTED",
+      "evidenceQuotes": [
+        "请先确认这些影响选择的信息"
+      ],
+      "reason": "029完整引用四份真实题答，HTTP及历史成功；但在用户已确认用量/预算/驻留后仍保留先确认措辞，未限定为供应商未知，也未清晰要求其余比较继续交付。028曾漏引题答，既有有界重试后才通过。不能以200或来源ID齐全判为实用性通过。"
+    },
+    {
+      "caseId": "SUFFICIENT_MESSAGE",
+      "version": "V5",
+      "decision": "VALID_EXPRESSION_RETAINED_NO_NEW_UTILITY_CLAIM",
+      "evidence": "优化正文与充分原始提示词逐字相同；保留50字、仅消息正文及两个独立提交要求，本轮没有下游消息作品，不冒充作品验收。"
+    },
+    {
+      "caseId": "MATERIAL_HANDOFF",
+      "version": "V5",
+      "decision": "PROMPT_REQUIREMENTS_RETAINED",
+      "evidence": "保留一页、接班同事、真实顺序、人工复核、通过不重提、资料不完整保留待确认并联系原经办人及收班交接；未知入口仅标在对应步骤。本轮没有该题下游作品。"
+    }
+  ],
+  "adoption": "第五版候选不采用为默认；默认第四版，历史/受控评测仍可显式分发第五版。",
+  "whyNoMorePromptRules": "未证明共同平台缺陷的下游推断、局部文风和轻微重复不触发新全局指令、职业模板或质量重试。确认后协议及语义风险尚存，按停止条件结束本轮。"
+}

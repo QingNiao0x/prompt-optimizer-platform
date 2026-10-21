@@ -1,0 +1,27 @@
+{
+  "recordKind": "POST_CLOSURE_ARITHMETIC_AUDIT",
+  "previousAudit": "docs/testing/evidence/structured-quality-2026-10-20/budget-limit-audit.json",
+  "previousAuditSha256": "b3de82106c90ebe91bdbf57af2f610bd719b85fa596d439c987b9f6835aa926e",
+  "priorFormal": {
+    "total": 650,
+    "baseline": 80,
+    "candidate": 570
+  },
+  "authorizationQuote": "授权新增最多 32 次实际调用",
+  "newBatchMaximum": 32,
+  "formalAfter": {
+    "total": 682,
+    "baseline": 80,
+    "candidate": 602
+  },
+  "actualAfter": {
+    "total": 659,
+    "baseline": 70,
+    "candidate": 589
+  },
+  "currentBatchActual": 29,
+  "currentBatchUnusedClosed": 3,
+  "closedBalanceTransferred": 0,
+  "derivation": "Prior formal 650 + explicit32 = 682; baseline80 fixed; candidate570+32=602. Prior actual630 +29 =659, baseline actual70 fixed, candidate actual560+29=589.",
+  "guards": "One original32 batch, 16 generation/6 Plan/10 execution/0 review limits, 29 actual transport reservations, private closure blocks further calls."
+}

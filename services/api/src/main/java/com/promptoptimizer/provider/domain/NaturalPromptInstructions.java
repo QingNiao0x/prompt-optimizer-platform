@@ -7,6 +7,9 @@ package com.promptoptimizer.provider.domain;
  * @since 0.1.0
  */
 public final class NaturalPromptInstructions {
+    /** 第五版保留为已评测候选；确认后质量与重试收益未通过，普通请求继续使用第四版。 */
+    public static final String DEFAULT_VERSION = NaturalPromptInstructionsV4.VERSION;
+    /** 最新可兼容的候选协议版本，不代表已采用为默认。 */
     public static final String VERSION = "5";
 
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */

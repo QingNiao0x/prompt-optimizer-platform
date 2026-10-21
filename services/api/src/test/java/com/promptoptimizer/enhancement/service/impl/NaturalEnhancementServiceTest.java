@@ -58,6 +58,8 @@ class NaturalEnhancementServiceTest {
         assertThat(result.sections()).isNull();
         assertThat(result.optimizedPrompt()).startsWith("自然任务正文");
         assertThat(result.generationPipeline()).isEqualTo("NATURAL");
+        assertThat(result.chainVersion()).isEqualTo("4");
+        assertThat(provider.last.strategyVersion()).isEqualTo("4");
         assertThat(result.framework()).isEqualTo("ICIO");
         assertThat(result.constraintGroups().platformMandatory()).isEmpty();
         assertThat(result.appliedConstraints()).isEmpty();
@@ -83,10 +85,12 @@ class NaturalEnhancementServiceTest {
     void zeroQuestionPlanRemainsBoundAndGeneratesWithoutInventingAnswers() {
         var plan = service.plan(planRequest());
         assertThat(plan.questions()).isEmpty();
+        assertThat(provider.lastPlan.strategyVersion()).isEqualTo("4");
         assertThat(plan.planId()).isNotBlank();
         var result = service.optimize(request("写一封邮件", new PlanConfirmation(plan.planId(), null, List.of()),
                 List.of(), "fixture:model"));
         assertThat(result.sections()).isNull();
+        assertThat(result.chainVersion()).isEqualTo("4");
         assertThat(provider.last.actualAnswers()).isEmpty();
         assertThat(result.constraintGroups().platformMandatory()).isEmpty();
         assertThat(result.optimizedPrompt()).isEqualTo(provider.body);
@@ -259,7 +263,7 @@ class NaturalEnhancementServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"1", "2", "3"})
+    @ValueSource(strings = {"1", "2", "3", "4", "5"})
     void legacyNaturalVersionKeepsItsProtocolWithoutFixedClausesAndUnknownVersionNeverCallsTheProvider(String version) {
         var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"), version);
         assertThat(result.chainVersion()).isEqualTo(version);
@@ -352,6 +356,7 @@ class NaturalEnhancementServiceTest {
         int planCalls;
         int enhanceCalls;
         NaturalPromptInput last;
+        NaturalPromptInput lastPlan;
         public <T> T enhance(NaturalPromptInput input, Function<NaturalPromptDraft, T> validation) {
             enhanceCalls++;
             last = input;
@@ -360,6 +365,7 @@ class NaturalEnhancementServiceTest {
         }
         public <T> T plan(NaturalPromptInput input, Function<PlanningProviderResponse, T> validation) {
             planCalls++;
+            lastPlan = input;
             return validation.apply(new PlanningProviderResponse("按原目标交付", questions, "mock", "fixture:model", true,
                     task(input, true)));
         }

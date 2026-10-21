@@ -62,10 +62,10 @@ public class NaturalEnhancementService {
 
     /** 生成完整自然正文；零问题 Plan 与有回答 Plan 均通过同一服务端绑定入口。 */
     public PromptDocument optimize(OptimizationRequest request) {
-        return optimize(request, NaturalPromptInstructions.VERSION);
+        return optimize(request, NaturalPromptInstructions.DEFAULT_VERSION);
     }
 
-    /** 旧历史显式选择已知版本；新请求使用当前版本，未知版本在模型调用前拒绝。 */
+    /** 旧历史和受控候选显式选择已知版本；普通请求使用已采用版本，未知版本在模型调用前拒绝。 */
     public PromptDocument optimize(OptimizationRequest request, String strategyVersion) {
         if (!NaturalPromptInstructions.supports(strategyVersion)) {
             throw new com.promptoptimizer.common.exception.UnsupportedResultVersionException("自然增强版本暂不支持，请恢复原始需求重新增强。");
@@ -129,9 +129,9 @@ public class NaturalEnhancementService {
         }
     }
 
-    /** 第四版最多提问 3 个，其余未决留在摘要；注册后最终回答仍受服务端所有权和 TTL 约束。 */
+    /** 默认沿用第四版、最多八题的生成指导；真实回答仍受服务端所有权和TTL约束，协议容量另行校验。 */
     public OptimizationPlan plan(OptimizationPlanRequest request) {
-        return plan(request, NaturalPromptInstructions.VERSION);
+        return plan(request, NaturalPromptInstructions.DEFAULT_VERSION);
     }
 
     /** 服务端兼容分发与受控对照可显式选择已知策略，浏览器请求不能自报版本。 */

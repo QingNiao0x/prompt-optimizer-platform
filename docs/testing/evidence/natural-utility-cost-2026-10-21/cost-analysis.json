@@ -1,0 +1,248 @@
+{
+  "allActualCallsIncludingFailures": {
+    "calls": 29,
+    "promptTokens": 34093,
+    "completionTokens": 21497,
+    "totalTokens": 55590,
+    "cacheHitTokens": 18688,
+    "cacheMissTokens": 15405,
+    "upstreamElapsedMs": 126067
+  },
+  "byPhase": {
+    "GENERATION": {
+      "calls": 15,
+      "promptTokens": 24403,
+      "completionTokens": 11500,
+      "totalTokens": 35903,
+      "cacheHitTokens": 13056,
+      "cacheMissTokens": 11347,
+      "upstreamElapsedMs": 60385
+    },
+    "PLAN": {
+      "calls": 5,
+      "promptTokens": 8112,
+      "completionTokens": 5244,
+      "totalTokens": 13356,
+      "cacheHitTokens": 5632,
+      "cacheMissTokens": 2480,
+      "upstreamElapsedMs": 26772
+    },
+    "EXECUTION": {
+      "calls": 9,
+      "promptTokens": 1578,
+      "completionTokens": 4753,
+      "totalTokens": 6331,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 1578,
+      "upstreamElapsedMs": 38910
+    }
+  },
+  "direct": {
+    "v4": {
+      "calls": 5,
+      "promptTokens": 7947,
+      "completionTokens": 3621,
+      "totalTokens": 11568,
+      "cacheHitTokens": 5760,
+      "cacheMissTokens": 2187,
+      "upstreamElapsedMs": 18590
+    },
+    "v5": {
+      "calls": 5,
+      "promptTokens": 6322,
+      "completionTokens": 2372,
+      "totalTokens": 8694,
+      "cacheHitTokens": 3072,
+      "cacheMissTokens": 3250,
+      "upstreamElapsedMs": 18291
+    },
+    "changePercent": {
+      "promptTokens": -20.448,
+      "completionTokens": -34.493,
+      "totalTokens": -24.844,
+      "upstreamElapsedMs": -1.608
+    }
+  },
+  "directPerCase": [
+    {
+      "caseId": "SUFFICIENT_MESSAGE",
+      "v4": {
+        "calls": 1,
+        "promptTokens": 1457,
+        "completionTokens": 393,
+        "totalTokens": 1850,
+        "cacheHitTokens": 1152,
+        "cacheMissTokens": 305,
+        "upstreamElapsedMs": 2457
+      },
+      "v5": {
+        "calls": 1,
+        "promptTokens": 1132,
+        "completionTokens": 223,
+        "totalTokens": 1355,
+        "cacheHitTokens": 0,
+        "cacheMissTokens": 1132,
+        "upstreamElapsedMs": 1936
+      },
+      "changePercent": {
+        "promptTokens": -22.306,
+        "completionTokens": -43.257,
+        "totalTokens": -26.757,
+        "upstreamElapsedMs": -21.205
+      },
+      "bodyCharactersV4": 70,
+      "bodyCharactersV5": 52
+    },
+    {
+      "caseId": "SUFFICIENT_JSON",
+      "v4": {
+        "calls": 1,
+        "promptTokens": 1671,
+        "completionTokens": 637,
+        "totalTokens": 2308,
+        "cacheHitTokens": 1152,
+        "cacheMissTokens": 519,
+        "upstreamElapsedMs": 2937
+      },
+      "v5": {
+        "calls": 1,
+        "promptTokens": 1346,
+        "completionTokens": 417,
+        "totalTokens": 1763,
+        "cacheHitTokens": 768,
+        "cacheMissTokens": 578,
+        "upstreamElapsedMs": 2077
+      },
+      "changePercent": {
+        "promptTokens": -19.449,
+        "completionTokens": -34.537,
+        "totalTokens": -23.614,
+        "upstreamElapsedMs": -29.282
+      },
+      "bodyCharactersV4": 141,
+      "bodyCharactersV5": 135
+    },
+    {
+      "caseId": "VAGUE_REPORT",
+      "v4": {
+        "calls": 1,
+        "promptTokens": 1654,
+        "completionTokens": 842,
+        "totalTokens": 2496,
+        "cacheHitTokens": 1152,
+        "cacheMissTokens": 502,
+        "upstreamElapsedMs": 4529
+      },
+      "v5": {
+        "calls": 1,
+        "promptTokens": 1329,
+        "completionTokens": 596,
+        "totalTokens": 1925,
+        "cacheHitTokens": 768,
+        "cacheMissTokens": 561,
+        "upstreamElapsedMs": 3129
+      },
+      "changePercent": {
+        "promptTokens": -19.649,
+        "completionTokens": -29.216,
+        "totalTokens": -22.877,
+        "upstreamElapsedMs": -30.912
+      },
+      "bodyCharactersV4": 261,
+      "bodyCharactersV5": 240
+    },
+    {
+      "caseId": "DELEGATED_PPT",
+      "v4": {
+        "calls": 1,
+        "promptTokens": 1484,
+        "completionTokens": 797,
+        "totalTokens": 2281,
+        "cacheHitTokens": 1152,
+        "cacheMissTokens": 332,
+        "upstreamElapsedMs": 4518
+      },
+      "v5": {
+        "calls": 1,
+        "promptTokens": 1159,
+        "completionTokens": 639,
+        "totalTokens": 1798,
+        "cacheHitTokens": 768,
+        "cacheMissTokens": 391,
+        "upstreamElapsedMs": 8242
+      },
+      "changePercent": {
+        "promptTokens": -21.9,
+        "completionTokens": -19.824,
+        "totalTokens": -21.175,
+        "upstreamElapsedMs": 82.426
+      },
+      "bodyCharactersV4": 235,
+      "bodyCharactersV5": 262
+    },
+    {
+      "caseId": "MATERIAL_HANDOFF",
+      "v4": {
+        "calls": 1,
+        "promptTokens": 1681,
+        "completionTokens": 952,
+        "totalTokens": 2633,
+        "cacheHitTokens": 1152,
+        "cacheMissTokens": 529,
+        "upstreamElapsedMs": 4149
+      },
+      "v5": {
+        "calls": 1,
+        "promptTokens": 1356,
+        "completionTokens": 497,
+        "totalTokens": 1853,
+        "cacheHitTokens": 768,
+        "cacheMissTokens": 588,
+        "upstreamElapsedMs": 2907
+      },
+      "changePercent": {
+        "promptTokens": -19.334,
+        "completionTokens": -47.794,
+        "totalTokens": -29.624,
+        "upstreamElapsedMs": -29.935
+      },
+      "bodyCharactersV4": 232,
+      "bodyCharactersV5": 177
+    }
+  ],
+  "confirmedPlan": {
+    "v4": {
+      "calls": 2,
+      "promptTokens": 3903,
+      "completionTokens": 3659,
+      "totalTokens": 7562,
+      "cacheHitTokens": 2560,
+      "cacheMissTokens": 1343,
+      "upstreamElapsedMs": 15370
+    },
+    "v5Correction": {
+      "calls": 3,
+      "promptTokens": 5676,
+      "completionTokens": 2937,
+      "totalTokens": 8613,
+      "cacheHitTokens": 3072,
+      "cacheMissTokens": 2604,
+      "upstreamElapsedMs": 14062
+    },
+    "changePercent": {
+      "promptTokens": 45.427,
+      "completionTokens": -19.732,
+      "totalTokens": 13.898,
+      "upstreamElapsedMs": -8.51
+    },
+    "freshPlanAndQuestionsDiffer": true,
+    "failedCandidate1GenerationCallsAlsoInWholeBatch": 2
+  },
+  "moneyEstimated": false,
+  "cacheNotControlled": true,
+  "notes": [
+    "Single samples and public model alias; no weight snapshot or stable latency inference.",
+    "Candidate2 only changes answered generation; fresh Plan is required after in-memory context restart, not an identical-question causal experiment.",
+    "Direct v5 has identical request bytes across C1 and C2; source contract correction does not touch direct generation or old versions."
+  ]
+}

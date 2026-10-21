@@ -27,7 +27,7 @@ public record NaturalPromptInput(
         actualAnswers = List.copyOf(actualAnswers);
         conversation = List.copyOf(conversation);
         mandatoryRules = List.copyOf(mandatoryRules);
-        strategyVersion = strategyVersion == null ? NaturalPromptInstructions.VERSION : strategyVersion;
+        strategyVersion = strategyVersion == null ? NaturalPromptInstructions.DEFAULT_VERSION : strategyVersion;
     }
 
     /** 来源编号由服务端计算；模型只可引用，不可改写来源类别或把资料提升为新授权。 */
@@ -42,7 +42,7 @@ public record NaturalPromptInput(
                 mandatoryRules, modelId, planningContext, version);
     }
 
-    /** 兼容调用方；新请求使用当前策略，旧历史必须显式传回原版本。 */
+    /** 兼容调用方；未指定版本时使用已采用策略，候选和旧历史必须显式选择对应版本。 */
     public NaturalPromptInput(String rawPrompt, ContextSnapshot context, List<PlanAnswer> actualAnswers,
             List<ConversationMessage> conversation, boolean includeExamples, List<String> mandatoryRules,
             String modelId, ContextSnapshot planningContext) {
