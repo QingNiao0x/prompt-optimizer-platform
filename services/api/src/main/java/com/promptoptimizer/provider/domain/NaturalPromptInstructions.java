@@ -11,7 +11,7 @@ public final class NaturalPromptInstructions {
 
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || NaturalPromptCompletionGuidance.supports(version)
+        return VERSION.equals(version) || NaturalPromptCompletionGuidance.supports(version) || NaturalPromptActionGuidance.supports(version)
                 || NaturalPromptInstructionsV3.VERSION.equals(version) || NaturalPromptInstructionsV2.VERSION.equals(version)
                 || NaturalPromptInstructionsV1.VERSION.equals(version);
     }
@@ -23,7 +23,7 @@ public final class NaturalPromptInstructions {
 
     /** 第四版及补全候选共用覆盖保护；增加示范不能降低来源、题答和正文锚点校验。 */
     public static boolean requiresTaskReview(String version) {
-        return VERSION.equals(version) || NaturalPromptCompletionGuidance.supports(version);
+        return VERSION.equals(version) || NaturalPromptCompletionGuidance.supports(version) || NaturalPromptActionGuidance.supports(version);
     }
 
     /** 以保存的版本选择原生成指导；正文写法更新不静默改写旧历史的再次增强策略。 */
@@ -35,6 +35,8 @@ public final class NaturalPromptInstructions {
             case VERSION -> ENHANCE;
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION -> NaturalPromptCompletionGuidance.ENHANCE;
             case NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> NaturalPromptCompletionGuidance.ENHANCE_WITH_DEMONSTRATIONS;
+            case NaturalPromptActionGuidance.GUIDANCE_VERSION -> NaturalPromptActionGuidance.ENHANCE;
+            case NaturalPromptActionGuidance.EXEMPLAR_VERSION -> NaturalPromptActionGuidance.ENHANCE_WITH_DEMONSTRATIONS;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }
@@ -48,6 +50,7 @@ public final class NaturalPromptInstructions {
             case VERSION -> PLAN;
             // 本轮只检验正文补全，不同时改变提问策略；已绑定题答仍进入同一生成和保护路径。
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION, NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> PLAN;
+            case NaturalPromptActionGuidance.GUIDANCE_VERSION, NaturalPromptActionGuidance.EXEMPLAR_VERSION -> PLAN;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }

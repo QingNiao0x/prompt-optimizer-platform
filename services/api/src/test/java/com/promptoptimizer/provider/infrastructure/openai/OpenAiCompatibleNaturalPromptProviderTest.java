@@ -315,18 +315,18 @@ class OpenAiCompatibleNaturalPromptProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"7", "8"})
+    @ValueSource(strings = {"7", "8", "9", "10"})
     void completionCandidatesKeepDemonstrationsOutsideCurrentTaskAndUseTheExistingCoverage(String version) throws Exception {
         server.expect(requestTo(ENDPOINT)).andExpect(request -> {
             var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
             String system = body.path("messages").get(0).path("content").asText();
             var payload = json.readTree(body.path("messages").get(1).path("content").asText().split("\n", 2)[1]);
             assertThat(body.path("messages")).hasSize(2);
-            assertThat(system.contains("<internal_rewrite_demonstrations>")).isEqualTo("8".equals(version));
+            assertThat(system.contains("<internal_rewrite_demonstrations>")).isEqualTo(Set.of("8", "10").contains(version));
             assertThat(payload.path("rawPrompt").asText()).isEqualTo("写邮件");
             assertThat(payload.path("taskSources")).hasSize(1);
             assertThat(payload.path("taskSources").get(0).path("id").asText()).isEqualTo("rawPrompt");
-            assertThat(payload.toString()).doesNotContain("includeExamples", "demonstrations", "新成员", "18次", "Your draft");
+            assertThat(payload.toString()).doesNotContain("includeExamples", "demonstrations", "新成员", "18次", "读书会", "报名40人", "Your draft");
             assertThat(payload.path("actualAnswers").isEmpty()).isTrue();
             assertThat(payload.path("mandatoryRules").isEmpty()).isTrue();
         }).andRespond(withSuccess(response(reviewResponse("请写邮件。", false)), MediaType.APPLICATION_JSON));
@@ -339,7 +339,7 @@ class OpenAiCompatibleNaturalPromptProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"7", "8"})
+    @ValueSource(strings = {"7", "8", "9", "10"})
     void completionCandidatesCannotTreatADemonstrationAsCurrentEvidenceOrDropCoverage(String version) throws Exception {
         var tree = (com.fasterxml.jackson.databind.node.ObjectNode) json.readTree(reviewResponse("请写邮件。", false));
         ((com.fasterxml.jackson.databind.node.ObjectNode) tree.path("taskUnderstanding").path("requirements").get(0)
@@ -354,7 +354,7 @@ class OpenAiCompatibleNaturalPromptProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"7", "8"})
+    @ValueSource(strings = {"7", "8", "9", "10"})
     void completionCandidatesPreserveThePlanProtocolAndDoNotAddRewriteDemonstrationsToQuestions(String version) throws Exception {
         server.expect(requestTo(ENDPOINT)).andExpect(request -> {
             var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
