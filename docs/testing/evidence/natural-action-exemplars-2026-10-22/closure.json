@@ -1,0 +1,50 @@
+{
+  "status": "CLOSED",
+  "actualCalls": 56,
+  "phaseCounts": {
+    "GENERATION": 23,
+    "PLAN": 6,
+    "EXECUTION": 27
+  },
+  "protocolRetries": 2,
+  "qualityRetries": 0,
+  "stageMaximum": 80,
+  "unusedStageCallsClosed": 24,
+  "taskMaximum": 1024,
+  "taskCallsSoFar": 113,
+  "previousClosedActual": 743,
+  "cumulativeActual": 799,
+  "formalLimits": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "actualAfter": {
+    "total": 799,
+    "baseline": 70,
+    "candidate": 729
+  },
+  "taskFreshUnallocated": 880,
+  "historicalBalanceTransferred": 0,
+  "adoption": "NOT_ADOPTED",
+  "failures": [
+    {
+      "job": "OFFLINE_TODO_V10_EXEC",
+      "status": 200,
+      "finishReason": "length"
+    },
+    {
+      "job": "PLAN_KICKOFF_V10_PLAN_GEN",
+      "status": 502,
+      "finishReason": null
+    }
+  ],
+  "reviewCalls": 0,
+  "runnerStop": "已截断作品不进入匿名评审；首次作品容量失败保留，未补采或质量重试。",
+  "diagnosis": [
+    "V10首次正文真实信息基本保留，但coverage2少一个“这”字，被现有锚点检查拒绝；第二次正文锚点合法，却把已回答Plan的planImpacts填入增强响应，仍拒绝。",
+    "原纯文本示范没有展示完整任务理解、全部来源及增强阶段空planImpacts的协议关系；下一次先用现有校验器离线验证完整示范，再检验来源与拟议补充在正文前输出的同次生成方式。",
+    "V10页面作品finish_reason=length，为下游输出容量失败，不能据此认定增强提示词语义缺陷，也不重试到成功。",
+    "题目单文件便捷假定不是用户硬要求，不据此拒绝合法多文件作品；匿名评审未运行，不伪造评分。"
+  ]
+}

@@ -1,0 +1,231 @@
+[
+  {
+    "input": {
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "actualAnswers": []
+    },
+    "output": {
+      "taskUnderstanding": {
+        "goal": "查询全球使用AI最多的职业和行业",
+        "deliverable": "可比较的职业行业查询结果",
+        "requirements": [
+          {
+            "text": "全球职业行业AI使用情况",
+            "dimensions": [
+              "GOAL",
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请帮我查询全球使用AI最多的职业/行业"
+              }
+            ]
+          }
+        ],
+        "additions": [
+          {
+            "text": "行业、岗位、使用场景分开梳理",
+            "gap": "原文只有主题，未说明从哪些具体方面呈现使用情况",
+            "benefit": "让查询结果既能定位行业也能了解岗位实际工作"
+          },
+          {
+            "text": "用可获得的证据说明使用程度与趋势",
+            "gap": "最多需要比较依据，不能只列印象中的常见行业",
+            "benefit": "结果有可核查依据，同时保留不同资料的适用范围"
+          }
+        ],
+        "openDecisions": [],
+        "review": {
+          "inputReadiness": "NEEDS_COMPLETION",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "请查询并分析全球使用AI最多的职业和行业"
+              ]
+            }
+          ],
+          "additionCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "重点说明哪些行业使用较广泛，其中哪些具体岗位把AI当作核心工具或辅助手段，以及它们主要用AI完成什么工作"
+              ]
+            },
+            {
+              "index": 1,
+              "quotes": [
+                "结合能获得的可靠数据或报告，说明使用程度和近期趋势，简要注明来源与年份"
+              ]
+            }
+          ],
+          "planImpacts": []
+        }
+      },
+      "optimizedPrompt": "请查询并分析全球使用AI最多的职业和行业，整理成便于阅读和比较的结果。\n\n重点说明哪些行业使用较广泛，其中哪些具体岗位把AI当作核心工具或辅助手段，以及它们主要用AI完成什么工作，例如内容生成、代码编写、自动处理或决策支持。结合能获得的可靠数据或报告，说明使用程度和近期趋势，简要注明来源与年份；覆盖范围或比较方式不同的资料分别说明，避免拼成没有依据的统一排名。",
+      "framework": "RACE"
+    }
+  },
+  {
+    "input": {
+      "rawPrompt": "为志愿者交流活动写一则招募通知，实际安排由我确认，其他内容你设计。",
+      "actualAnswers": [
+        {
+          "questionId": "time",
+          "question": "时间、形式和对象是什么？",
+          "answer": "周六10:00至11:00，线上进行，面向园区志愿者。"
+        },
+        {
+          "questionId": "signup",
+          "question": "怎样报名，名额是多少？",
+          "answer": "回复通知报名；名额还没确定，不写具体名额。"
+        }
+      ]
+    },
+    "output": {
+      "taskUnderstanding": {
+        "goal": "写志愿者交流活动招募通知",
+        "deliverable": "可发布的招募通知",
+        "requirements": [
+          {
+            "text": "通知目标与设计委托",
+            "dimensions": [
+              "GOAL",
+              "FORMAT",
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "为志愿者交流活动写一则招募通知，实际安排由我确认，其他内容你设计。"
+              }
+            ]
+          },
+          {
+            "text": "已确认时间形式对象",
+            "dimensions": [
+              "OBJECT",
+              "CONDITION",
+              "USER_CONFIRMATION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "actualAnswers.0",
+                "quote": "周六10:00至11:00，线上进行，面向园区志愿者。"
+              }
+            ]
+          },
+          {
+            "text": "报名方式与未定名额",
+            "dimensions": [
+              "CONDITION",
+              "USER_CONFIRMATION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "actualAnswers.1",
+                "quote": "回复通知报名；名额还没确定，不写具体名额。"
+              }
+            ]
+          }
+        ],
+        "additions": [
+          {
+            "text": "写清交流价值与报名行动",
+            "gap": "实际安排已明确，招募通知还需要让读者理解参与价值并能采取行动",
+            "benefit": "通知能直接用于招募，而非仅罗列活动字段"
+          }
+        ],
+        "openDecisions": [
+          {
+            "issue": "活动名额未定",
+            "impact": "通知不能写出具体名额，不影响交付其他内容",
+            "questionId": "",
+            "kind": "USER_INFORMATION"
+          }
+        ],
+        "review": {
+          "inputReadiness": "NEEDS_COMPLETION",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "请为志愿者交流活动写一则可直接发布的招募通知"
+              ]
+            },
+            {
+              "index": 1,
+              "quotes": [
+                "活动面向园区志愿者，周六10:00至11:00线上进行"
+              ]
+            },
+            {
+              "index": 2,
+              "quotes": [
+                "回复通知报名；名额未定，不写具体名额"
+              ]
+            }
+          ],
+          "additionCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "围绕交流志愿经验写清参与价值，让读者能迅速找到活动信息并知道怎样报名"
+              ]
+            }
+          ],
+          "planImpacts": []
+        }
+      },
+      "optimizedPrompt": "请为志愿者交流活动写一则可直接发布的招募通知。活动面向园区志愿者，周六10:00至11:00线上进行，回复通知报名；名额未定，不写具体名额。围绕交流志愿经验写清参与价值，让读者能迅速找到活动信息并知道怎样报名；语气和组织方式由你设计，不把未确定的活动环节写成已确认安排。",
+      "framework": "APE"
+    }
+  },
+  {
+    "input": {
+      "rawPrompt": "将“Your draft is saved.”译成自然中文，只输出译文，保留句末句号。",
+      "actualAnswers": []
+    },
+    "output": {
+      "taskUnderstanding": {
+        "goal": "翻译指定句子",
+        "deliverable": "仅中文译文",
+        "requirements": [
+          {
+            "text": "译文、输出范围和标点",
+            "dimensions": [
+              "GOAL",
+              "OBJECT",
+              "FORMAT",
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "将“Your draft is saved.”译成自然中文，只输出译文，保留句末句号。"
+              }
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": [],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "将“Your draft is saved.”译成自然中文，只输出译文，保留句末句号。"
+              ]
+            }
+          ],
+          "additionCoverage": [],
+          "planImpacts": []
+        }
+      },
+      "optimizedPrompt": "将“Your draft is saved.”译成自然中文，只输出译文，保留句末句号。",
+      "framework": "ICIO"
+    }
+  }
+]
