@@ -68,12 +68,15 @@ class NaturalEnhancementServiceTest {
     }
 
     @Test
-    void currentPlanAcceptsThreeQuestionsAndRejectsAFourthWithoutTruncating() {
+    void questionGuidanceDoesNotRejectValidResponsesBelowProtocolCapacity() {
         provider.questions = List.of(question("q1"), question("q2"), question("q3"));
         assertThat(service.plan(planRequest()).questions()).hasSize(3);
         provider.questions = List.of(question("q1"), question("q2"), question("q3"), question("q4"));
-        assertThatThrownBy(() -> service.plan(planRequest())).isInstanceOf(ProviderException.class);
+        assertThat(service.plan(planRequest()).questions()).hasSize(4);
+        assertThat(service.plan(planRequest(), "4").questions()).hasSize(4);
         assertThat(service.plan(planRequest(), "3").questions()).hasSize(4);
+        provider.questions = IntStream.range(0, 65).mapToObj(index -> question("q" + index)).toList();
+        assertThatThrownBy(() -> service.plan(planRequest())).isInstanceOf(ProviderException.class);
     }
 
     @Test

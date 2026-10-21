@@ -343,7 +343,7 @@ class MybatisOptimizationHistoryServiceTest {
     }
 
     @ParameterizedTest
-    @org.junit.jupiter.params.provider.ValueSource(strings = {"1", "2", "3", "4"})
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"1", "2", "3", "4", "5"})
     void naturalReoptimizationUsesSavedPipelineAndVersionInsteadOfLegacyOrchestrator(String version) {
         var record = naturalRecord();
         record.getResultMetadata().put("chainVersion", version);

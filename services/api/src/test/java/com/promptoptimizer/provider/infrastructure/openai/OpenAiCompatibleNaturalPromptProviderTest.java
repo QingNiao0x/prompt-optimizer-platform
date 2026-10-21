@@ -278,7 +278,7 @@ class OpenAiCompatibleNaturalPromptProviderTest {
         var answers = List.of(new com.promptoptimizer.enhancement.dto.PlanAnswer("q1", "甲对象的称呼？", "使用内部称呼"),
                 new com.promptoptimizer.enhancement.dto.PlanAnswer("q2", "乙对象的称呼？", "使用内部称呼"),
                 new com.promptoptimizer.enhancement.dto.PlanAnswer("q3", "丙对象的称呼？", "使用内部称呼"));
-        var actualInput = new NaturalPromptInput("写邮件", input().context(), answers, List.of(), false, List.of(), null);
+        var actualInput = new NaturalPromptInput("写邮件", input().context(), answers, List.of(), false, List.of(), null).withStrategyVersion("4");
         String partial = sourceResponse(1);
         String complete = sourceResponse(3);
         server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(partial), MediaType.APPLICATION_JSON));

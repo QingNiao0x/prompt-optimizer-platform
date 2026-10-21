@@ -210,7 +210,7 @@ public class NaturalEnhancementService {
     /**
      * 校验协议容量和引用完整性；不截取问题、不用推荐项填答，也不凭题号证明语义等价。
      * 提问指导要求最多八题，且每题贴合用户原始提示词；该八题是出题范围，不在这里另设拒绝阈值。
-     * 超过 64 题才视为协议容量失败。第一至第四版共用这一容量，已保存确认的回答条数不在这里收紧。
+     * 超过 64 题才视为协议容量失败。第一至第五版共用这一容量，已保存确认的回答条数不在这里收紧。
      */
     private void validateQuestions(PlanningProviderResponse response) {
         if (response == null || response.summary() == null || response.summary().isBlank()

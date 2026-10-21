@@ -1,0 +1,109 @@
+{
+  "batch": "natural-utility-cost-2026-10-21",
+  "authorization": "USER_EXPLICIT_MAXIMUM_32_NEW_ACTUAL_CALLS",
+  "authorizationQuote": "授权新增最多 32 次实际调用",
+  "previousClosedActualCalls": 630,
+  "previousFormalLimits": {
+    "total": 650,
+    "baseline": 80,
+    "candidate": 570
+  },
+  "formalLimitsAfterAuthorization": {
+    "total": 682,
+    "baseline": 80,
+    "candidate": 602
+  },
+  "maximumNewActualCalls": 32,
+  "maximumCumulativeActualForThisBatch": 662,
+  "closedBalanceTransferred": 0,
+  "baselineCommit": "d65558d24e585ff10b4677815fbd29541b15a2fb",
+  "baselineVersion": "4",
+  "candidateVersion": "5",
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 16,
+    "PLAN": 6,
+    "EXECUTION": 10,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 12,
+    "PLAN": 4,
+    "EXECUTION": 9,
+    "REVIEW": 0
+  },
+  "generation": [
+    "SUFFICIENT_MESSAGE",
+    "SUFFICIENT_JSON",
+    "VAGUE_REPORT",
+    "DELEGATED_PPT",
+    "MATERIAL_HANDOFF"
+  ],
+  "plan": [
+    "DELEGATED_PPT",
+    "PLAN_PURCHASE"
+  ],
+  "confirmedPlanGeneration": [
+    "PLAN_PURCHASE"
+  ],
+  "execution": [
+    "SUFFICIENT_JSON",
+    "VAGUE_REPORT",
+    "DELEGATED_PPT"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "reviewJobs": [],
+  "criteria": [
+    "保持原任务、对象、范围、格式、篇幅、独立条件及真实用户确认；自然模式无自动固定条款",
+    "充分需求允许并列，不为了体现增强新增义务；模糊需求补适用内容，不改成空模板或补材料问卷",
+    "原始与两个增强版本的下游执行使用相同有效信息、文件、模型及参数",
+    "紧凑记录保留完整来源原句、维度、补充缺口与作用及正文锚点，组装前后保护不减少",
+    "从可直接使用、事实和条件正确、加工负担评价作品，不用更长、更正式或自评分代替收益",
+    "统计每次实际传输、失败、协议修复、输入输出Token及耗时，区分缓存和非缓存；不直接换算货币",
+    "采用要求为限定任务无实质退步且有可核实成本下降；不能将本轮小样本判为所有任务稳定增益"
+  ],
+  "stopConditions": [
+    "总或阶段额度到达即停止，所有失败与重试计数，剩余次数闭批不转移",
+    "不按作品质量重试，不新增问法或模型采样到成功",
+    "相同严重失败若在同一假设两个候选持续出现，停止扩大采样并审查机制与证据",
+    "仅修改自然增强，本条完成后停止，不展开其他待办或发布操作"
+  ],
+  "status": "FROZEN",
+  "allowedJobs": [
+    "SUFFICIENT_MESSAGE_V4_GEN",
+    "SUFFICIENT_MESSAGE_V5_GEN",
+    "SUFFICIENT_JSON_V4_GEN",
+    "SUFFICIENT_JSON_V5_GEN",
+    "VAGUE_REPORT_V4_GEN",
+    "VAGUE_REPORT_V5_GEN",
+    "DELEGATED_PPT_V4_GEN",
+    "DELEGATED_PPT_V5_GEN",
+    "MATERIAL_HANDOFF_V4_GEN",
+    "MATERIAL_HANDOFF_V5_GEN",
+    "DELEGATED_PPT_V4_PLAN",
+    "DELEGATED_PPT_V5_PLAN",
+    "PLAN_PURCHASE_V4_PLAN",
+    "PLAN_PURCHASE_V5_PLAN",
+    "PLAN_PURCHASE_V4_PLAN_GEN",
+    "PLAN_PURCHASE_V5_PLAN_GEN",
+    "SUFFICIENT_JSON_RAW_EXEC",
+    "SUFFICIENT_JSON_V4_EXEC",
+    "SUFFICIENT_JSON_V5_EXEC",
+    "VAGUE_REPORT_RAW_EXEC",
+    "VAGUE_REPORT_V4_EXEC",
+    "VAGUE_REPORT_V5_EXEC",
+    "DELEGATED_PPT_RAW_EXEC",
+    "DELEGATED_PPT_V4_EXEC",
+    "DELEGATED_PPT_V5_EXEC"
+  ],
+  "endpoint": "https://api.deepseek.com/chat/completions"
+}

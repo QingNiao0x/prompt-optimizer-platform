@@ -63,7 +63,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             try {
                 return validation.apply(new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
                         NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata,
-                        understanding(body, input)));
+                        understanding(body, input, true)));
             } catch (IllegalArgumentException failure) {
                 throw invalid("自然正文或框架标识无效");
             }
@@ -80,7 +80,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 List<PlanQuestion> questions = json.convertValue(body.get("questions"),
                         json.getTypeFactory().constructCollectionType(List.class, PlanQuestion.class));
                 return validation.apply(new PlanningProviderResponse(requiredText(body, "summary"),
-                        questions, metadata.provider(), metadata.model(), false, understanding(body, input)));
+                        questions, metadata.provider(), metadata.model(), false, understanding(body, input, false)));
             } catch (IllegalArgumentException failure) {
                 throw invalid("Plan问题协议无效");
             }
@@ -246,16 +246,61 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         return body.path(name).asText().strip();
     }
 
-    /** 第二版起核对出处，第四版还要求覆盖记录；旧版兼容不补造证据，不信任自报来源类别。 */
-    private NaturalTaskUnderstanding understanding(JsonNode body, NaturalPromptInput input) {
+    /** 第二版起核对出处，第四版起核对覆盖；第五版只调整生成记录布局，Plan与旧版按原协议解析。 */
+    private NaturalTaskUnderstanding understanding(JsonNode body, NaturalPromptInput input, boolean enhancement) {
         if (!body.hasNonNull("taskUnderstanding")) {
             if (NaturalPromptInstructions.requiresTaskUnderstanding(input.strategyVersion())) throw invalid("自然链路缺少任务理解记录");
             return null;
         }
         try {
-            return json.treeToValue(body.get("taskUnderstanding"), NaturalTaskUnderstanding.class).resolve(input);
+            JsonNode task = enhancement && NaturalPromptInstructions.VERSION.equals(input.strategyVersion())
+                    ? expandCompactCoverage(body.get("taskUnderstanding")) : body.get("taskUnderstanding");
+            return json.treeToValue(task, NaturalTaskUnderstanding.class).resolve(input);
         } catch (JsonProcessingException | IllegalArgumentException failure) {
             throw invalid("任务理解记录协议无效");
+        }
+    }
+
+    /**
+     * 将同一条目中的出处和正文锚点还原到既有领域记录，不做语义归并、删条件或自动补写正文。
+     * 条目顺序只生成内部下标；原句、维度、缺口、作用以及所有锚点仍交原校验，不能据此证明改写等价。
+     */
+    private JsonNode expandCompactCoverage(JsonNode value) {
+        if (!(value instanceof com.fasterxml.jackson.databind.node.ObjectNode original)) throw invalid("任务理解记录无效");
+        var task = original.deepCopy();
+        if (!(task.get("review") instanceof com.fasterxml.jackson.databind.node.ObjectNode review)
+                || review.has("requirementCoverage") || review.has("additionCoverage")) {
+            throw invalid("紧凑覆盖记录缺失或混入其他版本布局");
+        }
+        projectCoverage(task, review, "requirements", "requirementCoverage", true);
+        projectCoverage(task, review, "additions", "additionCoverage", false);
+        return task;
+    }
+
+    /**
+     * 仅省略重复诊断标签：要求标签取首条来源原句，补充标签取首条正文片段，全部其他引用仍完整保留。
+     * 空集合可省略；非空条目缺少引用、字段类型错误或混合覆盖声明时明确失败，不从正文猜取证据。
+     */
+    private void projectCoverage(com.fasterxml.jackson.databind.node.ObjectNode task,
+            com.fasterxml.jackson.databind.node.ObjectNode review, String entriesName, String coverageName, boolean requirement) {
+        var coverage = review.putArray(coverageName);
+        JsonNode entries = task.get(entriesName);
+        if (entries == null || entries.isNull()) return;
+        if (!entries.isArray() || entries.size() > 256) throw invalid("紧凑覆盖条目无效或超出容量");
+        for (int index = 0; index < entries.size(); index++) {
+            if (!(entries.get(index) instanceof com.fasterxml.jackson.databind.node.ObjectNode entry)) {
+                throw invalid("紧凑覆盖条目无效");
+            }
+            JsonNode quotes = entry.remove("quotes");
+            if (quotes == null || !quotes.isArray() || quotes.isEmpty()) throw invalid("紧凑覆盖缺少正文锚点");
+            if (!entry.has("text")) {
+                JsonNode label = requirement ? entry.path("evidence").path(0).path("quote") : quotes.path(0);
+                if (!label.isTextual()) throw invalid("紧凑覆盖缺少有效引用");
+                entry.set("text", label);
+            }
+            var item = coverage.addObject();
+            item.put("index", index);
+            item.set("quotes", quotes);
         }
     }
 
