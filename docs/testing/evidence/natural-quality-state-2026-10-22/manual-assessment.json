@@ -1,0 +1,120 @@
+{
+  "reviewer": "当前开发代理逐份核对，非独立双人或专业验收，无模型裁判调用。",
+  "frozenCriteria": "protocol.json",
+  "adoption": "NOT_ADOPTED_KEEP_DEFAULT_4",
+  "qualityOverCost": true,
+  "findings": [
+    {
+      "caseId": "SUFFICIENT_JSON",
+      "versions": [
+        "RAW",
+        "V4",
+        "V6"
+      ],
+      "decision": "TIE_USABLE",
+      "evidence": "三份90字符全文均直接解析为正确JSON；两名确认参加、未知日期null、未确认名单及明确不参加者排除均正确，不额外要求数组顺序。"
+    },
+    {
+      "caseId": "VAGUE_REPORT",
+      "version": "RAW",
+      "decision": "NEEDS_REVISION",
+      "quotes": [
+        "另2名直接放弃",
+        "先补数据，再定方案"
+      ],
+      "reason": "把未继续改成直接放弃；资料先补齐的表达增加用户负担，虽末尾安排并行且仍给建议，不能说完全未交付。"
+    },
+    {
+      "caseId": "VAGUE_REPORT",
+      "version": "V4",
+      "decision": "NEEDS_REVISION",
+      "quotes": [
+        "说明入口本身可用",
+        "提示成本已影响任务完成"
+      ],
+      "reason": "从两名经提示完成导出推断功能普遍可用，并把另两名未继续归因于提示成本，材料不足。715字符，动作具体但需事实修订。"
+    },
+    {
+      "caseId": "VAGUE_REPORT",
+      "version": "V6",
+      "decision": "QUALITY_GAIN_IN_THIS_SAMPLE",
+      "reason": "579字符，围绕导出入口与手机表格提出动作及复测，没有上述未证实原因/效果断言，也未把未继续写成放弃。相比V4少19.0%，没有数字篇幅门槛；仍有补充记录段落，不能宣称所有任务稳定提升。"
+    },
+    {
+      "caseId": "DELEGATED_PPT",
+      "versions": [
+        "RAW",
+        "V4",
+        "V6"
+      ],
+      "decision": "CORE_DELIVERY_PRESENT_WITH_REVIEW",
+      "reason": "均六页，每页两个核心要点及讲者提示；叙事和假设示例由执行者设计，未生成PPT文件。"
+    },
+    {
+      "caseId": "DELEGATED_PPT",
+      "version": "RAW",
+      "decision": "NEEDS_LIGHT_REVISION",
+      "quotes": [
+        "误报没有惩罚"
+      ],
+      "reason": "组织处罚保证没有材料依据，需按真实制度调整。每页75–80秒及开场/收尾是否计入的表达也需统一。"
+    },
+    {
+      "caseId": "DELEGATED_PPT",
+      "version": "V4",
+      "decision": "NEEDS_LIGHT_REVISION",
+      "reason": "1964字符，展开例子与讲者提示；开场30秒/收尾30秒是否已包含六页各80秒不够清晰，存在一般化受众描述。原任务允许假设示例，不把假设场景当虚构真实事故。"
+    },
+    {
+      "caseId": "DELEGATED_PPT",
+      "version": "V6",
+      "decision": "MORE_COMPACT_BUT_TIMING_NEEDS_EDIT",
+      "reason": "1573字符，比V4少19.9%，六页核心要求保留。开头6×80秒=480秒，末尾60+4×80+80=460秒却称约8分钟，且第6页提示1分钟回顾加30秒答疑与80秒分配需统一。时长是估计，不凭20秒差异认定整份作品不可用；仍增加实际讲述准备负担。"
+    },
+    {
+      "caseId": "PLAN_PURCHASE",
+      "version": "RAW",
+      "decision": "PRELIMINARY_DELIVERY_WITH_FOLLOWUP_BURDEN",
+      "reason": "在相同用户答复下算出1188/2388元，给B初步倾向，但再次要求增长信息及供应商材料后才给最终建议，后续加工/往返负担较高。未把它说成完全没有采购建议。"
+    },
+    {
+      "caseId": "PLAN_PURCHASE",
+      "version": "V4",
+      "decision": "CORE_COMPARISON_PRESENT_NEEDS_SCOPE_REVIEW",
+      "reason": "容量、年度基础费和驻留未知均保留；2139字符，核实清单扩展到付款/退订/续费等，建议需简化。表中年度预算是简写，不能仅凭简写判其整个预算已失真。"
+    },
+    {
+      "caseId": "PLAN_PURCHASE",
+      "version": "V6",
+      "decision": "FAIL_BUDGET_SCOPE",
+      "quotes": [
+        "总费用仍低于3,000元",
+        "重新测算年度总费用是否仍不超过3,000元"
+      ],
+      "reason": "1425字符且继续完成比较/条件性建议，主表费用与容量正确，但把用户年度基础费用预算扩为总费用上限，新增更严格条件。增强提示词015明确写年度基础费用预算3000元，没有声明总费用上限，错误首次在下游作品。不能用篇幅减少或前半段正确抵消范围漂移。"
+    },
+    {
+      "caseId": "PLAN_PURCHASE",
+      "version": "V6_GENERATION",
+      "decision": "CURRENT_STATE_PROGRESS_VERIFIED_WITH_SOURCE_RETRY",
+      "reason": "与V4复用同一份真实Plan、题干、完整答案及所有请求字段；015正文按已提供120GB/基础预算3000/境内要求继续比较，只向供应商核实尚未知信息，没有重问用户已给条件。014漏引actualAnswers.1/2/3被拒绝，015有界协议修复后通过，不声称消除来源重试。"
+    },
+    {
+      "caseId": "PLAN",
+      "versions": [
+        "V4",
+        "V6"
+      ],
+      "decision": "DELEGATION_RETAINED_QUESTION_BURDEN_REMAINS",
+      "reason": "PPT两版零问；采购两版均4题，前三项按用户要求询问，第四题涉及缺失SLA/超额信息下如何给建议，是否值得询问仍需评估。没有据此增加采购专用过滤。"
+    },
+    {
+      "caseId": "MATERIAL_HANDOFF",
+      "version": "V6_GENERATION",
+      "decision": "PROMPT_CONDITIONS_RETAINED_NOT_EXECUTED",
+      "reason": "检查增强正文保留一页、接班对象、实际顺序、人工复核、通过不重提、缺资料保留待确认并联系原经办人及收班交接；入口未知只放对应一步。本题没有下游作品，不能冒充实际作品通过。"
+    }
+  ],
+  "causeAttribution": "服务端已校验完整题答，但旧模型输入未单独声明回答后的操作阶段；第六版显式阶段和候选状态在本轮生成中有正向证据。下游预算范围漂移与时间安排错误，不能仅凭首次出现位置排除增强指导的间接影响，也不直接认定模型普遍能力不足。",
+  "whyNoMoreRulesOrCalls": "不因这次下游失误盲目叠加预算/时长专用模板、全局禁令或质量重试。27次已闭批，候选保留但未采用，未将延期写成通过。"
+}

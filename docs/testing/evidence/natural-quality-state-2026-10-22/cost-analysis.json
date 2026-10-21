@@ -1,0 +1,166 @@
+{
+  "allCallsIncludingRejectedResponse": {
+    "calls": 27,
+    "inputTokens": 31769,
+    "outputTokens": 21153,
+    "totalTokens": 52922,
+    "cacheHitTokens": 18432,
+    "cacheMissTokens": 13337,
+    "upstreamElapsedMs": 108180
+  },
+  "byPhase": {
+    "GENERATION": {
+      "calls": 11,
+      "inputTokens": 22074,
+      "outputTokens": 10247,
+      "totalTokens": 32321,
+      "cacheHitTokens": 14080,
+      "cacheMissTokens": 7994,
+      "upstreamElapsedMs": 42954
+    },
+    "PLAN": {
+      "calls": 4,
+      "inputTokens": 7170,
+      "outputTokens": 3950,
+      "totalTokens": 11120,
+      "cacheHitTokens": 4352,
+      "cacheMissTokens": 2818,
+      "upstreamElapsedMs": 17205
+    },
+    "EXECUTION": {
+      "calls": 12,
+      "inputTokens": 2525,
+      "outputTokens": 6956,
+      "totalTokens": 9481,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 2525,
+      "upstreamElapsedMs": 48021
+    }
+  },
+  "generationPairs": [
+    {
+      "caseId": "SUFFICIENT_JSON",
+      "v4": {
+        "calls": 1,
+        "inputTokens": 1671,
+        "outputTokens": 588,
+        "totalTokens": 2259,
+        "cacheHitTokens": 1536,
+        "cacheMissTokens": 135,
+        "upstreamElapsedMs": 2904,
+        "promptCharacters": 174
+      },
+      "v6": {
+        "calls": 1,
+        "inputTokens": 2042,
+        "outputTokens": 788,
+        "totalTokens": 2830,
+        "cacheHitTokens": 0,
+        "cacheMissTokens": 2042,
+        "upstreamElapsedMs": 2915,
+        "promptCharacters": 141
+      },
+      "totalTokenChangePercent": 25.277
+    },
+    {
+      "caseId": "VAGUE_REPORT",
+      "v4": {
+        "calls": 1,
+        "inputTokens": 1654,
+        "outputTokens": 650,
+        "totalTokens": 2304,
+        "cacheHitTokens": 1408,
+        "cacheMissTokens": 246,
+        "upstreamElapsedMs": 3368,
+        "promptCharacters": 291
+      },
+      "v6": {
+        "calls": 1,
+        "inputTokens": 2025,
+        "outputTokens": 784,
+        "totalTokens": 2809,
+        "cacheHitTokens": 1408,
+        "cacheMissTokens": 617,
+        "upstreamElapsedMs": 3429,
+        "promptCharacters": 295
+      },
+      "totalTokenChangePercent": 21.918
+    },
+    {
+      "caseId": "DELEGATED_PPT",
+      "v4": {
+        "calls": 1,
+        "inputTokens": 1484,
+        "outputTokens": 778,
+        "totalTokens": 2262,
+        "cacheHitTokens": 1280,
+        "cacheMissTokens": 204,
+        "upstreamElapsedMs": 3733,
+        "promptCharacters": 228
+      },
+      "v6": {
+        "calls": 1,
+        "inputTokens": 1855,
+        "outputTokens": 603,
+        "totalTokens": 2458,
+        "cacheHitTokens": 1408,
+        "cacheMissTokens": 447,
+        "upstreamElapsedMs": 2333,
+        "promptCharacters": 136
+      },
+      "totalTokenChangePercent": 8.665
+    },
+    {
+      "caseId": "MATERIAL_HANDOFF",
+      "v4": {
+        "calls": 1,
+        "inputTokens": 1681,
+        "outputTokens": 903,
+        "totalTokens": 2584,
+        "cacheHitTokens": 1536,
+        "cacheMissTokens": 145,
+        "upstreamElapsedMs": 3670,
+        "promptCharacters": 215
+      },
+      "v6": {
+        "calls": 1,
+        "inputTokens": 2052,
+        "outputTokens": 772,
+        "totalTokens": 2824,
+        "cacheHitTokens": 1408,
+        "cacheMissTokens": 644,
+        "upstreamElapsedMs": 3042,
+        "promptCharacters": 228
+      },
+      "totalTokenChangePercent": 9.288
+    },
+    {
+      "caseId": "PLAN_PURCHASE",
+      "v4": {
+        "calls": 1,
+        "inputTokens": 2246,
+        "outputTokens": 1852,
+        "totalTokens": 4098,
+        "cacheHitTokens": 1280,
+        "cacheMissTokens": 966,
+        "upstreamElapsedMs": 6572,
+        "promptCharacters": 452
+      },
+      "v6": {
+        "calls": 2,
+        "inputTokens": 5364,
+        "outputTokens": 2529,
+        "totalTokens": 7893,
+        "cacheHitTokens": 2816,
+        "cacheMissTokens": 2548,
+        "upstreamElapsedMs": 10988,
+        "promptCharacters": 378
+      },
+      "totalTokenChangePercent": 92.606
+    }
+  ],
+  "moneyEstimated": false,
+  "cacheNotControlled": true,
+  "sameActualPlanAndAnswersForConfirmedGeneration": true,
+  "qualityCannotBeInferredFromTokens": true
+}

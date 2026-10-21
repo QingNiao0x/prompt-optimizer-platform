@@ -162,6 +162,38 @@ class NaturalTaskStateProtocolTest {
         server.verify();
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void actualV6ResponsesKeepMissingAnswerProtectionAndAcceptTheCompleteRepair(boolean completeRepair) throws Exception {
+        var path = java.nio.file.Path.of("../../docs/testing/evidence/natural-quality-state-2026-10-22/transports.jsonl");
+        var traces = new java.util.ArrayList<com.fasterxml.jackson.databind.JsonNode>();
+        for (String line : java.nio.file.Files.readAllLines(path)) {
+            var row = json.readTree(line);
+            if (row.path("jobId").asText().equals("PLAN_PURCHASE_V6_PLAN_GEN")) traces.add(row);
+        }
+        assertThat(traces).hasSize(2);
+        String user = traces.getFirst().path("request").path("messages").get(1).path("content").asText();
+        var payload = (ObjectNode) json.readTree(user.substring(user.indexOf('{')));
+        payload.remove(List.of("taskSources", "executionContext")); payload.putNull("modelId");
+        var actualInput = json.treeToValue(payload, NaturalPromptInput.class);
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(json.writeValueAsString(traces.getFirst().path("response")), MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(json.writeValueAsString(traces.get(completeRepair ? 1 : 0).path("response")), MediaType.APPLICATION_JSON));
+        java.util.concurrent.Callable<NaturalPromptDraft> action = () -> provider.enhance(actualInput, draft -> {
+            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+            return draft;
+        });
+        if (completeRepair) {
+            var draft = action.call();
+            var sources = draft.taskUnderstanding().requirements().stream().flatMap(requirement -> requirement.evidence().stream())
+                    .map(NaturalTaskUnderstanding.Evidence::sourceId).collect(java.util.stream.Collectors.toSet());
+            assertThat(sources).contains("actualAnswers.0", "actualAnswers.1", "actualAnswers.2", "actualAnswers.3");
+            assertThat(actualInput.actualAnswers()).hasSize(4);
+        } else {
+            assertThatThrownBy(action::call).isInstanceOf(NaturalTaskReview.MissingSources.class);
+        }
+        server.verify();
+    }
+
     private NaturalPromptInput input(String version) {
         return new NaturalPromptInput("比较两个方案并给出建议，先确认预算和地区", context(), List.of(
                 new PlanAnswer("q1", "预算是多少？", "预算1000元；地区未知"),
