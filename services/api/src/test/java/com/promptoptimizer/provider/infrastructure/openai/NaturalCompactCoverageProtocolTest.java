@@ -51,7 +51,12 @@ class NaturalCompactCoverageProtocolTest {
     void compactEntriesKeepAllSourcesAndQuotesWithoutRepeatingDiagnosticText() throws Exception {
         var input = input();
         String content = response(compact());
-        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(content, MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var envelope = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            String user = envelope.path("messages").get(1).path("content").asText();
+            var payload = json.readTree(user.substring(user.indexOf('{')));
+            assertThat(payload.path("requiredSourceIds")).isEqualTo(json.valueToTree(List.of("rawPrompt", "actualAnswers.0", "actualAnswers.1")));
+        }).andRespond(withSuccess(content, MediaType.APPLICATION_JSON));
         var result = provider.enhance(input, draft -> {
             var task = draft.taskUnderstanding();
             task.review().validateEnhancement(task, draft.optimizedPrompt());
@@ -116,15 +121,27 @@ class NaturalCompactCoverageProtocolTest {
         server.verify();
     }
 
-    @Test
-    void planKeepsItsCompleteImpactProtocolAndDoesNotClaimBodyCoverage() throws Exception {
-        var task = new NaturalTaskUnderstanding("写交接说明", "交接说明", List.of(
-                new NaturalTaskUnderstanding.Requirement("写交接说明", List.of(new NaturalTaskUnderstanding.Evidence("rawPrompt", "写交接说明")),
-                        List.of(NaturalTaskUnderstanding.Dimension.GOAL))), List.of(), List.of(),
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void planKeepsItsCompleteImpactProtocolAndDoesNotClaimBodyCoverage(boolean boundAnswers) throws Exception {
+        var requirements = new java.util.ArrayList<NaturalTaskUnderstanding.Requirement>();
+        requirements.add(new NaturalTaskUnderstanding.Requirement("写交接说明", List.of(new NaturalTaskUnderstanding.Evidence("rawPrompt", "写交接说明")),
+                List.of(NaturalTaskUnderstanding.Dimension.GOAL)));
+        if (boundAnswers) {
+            for (int index = 0; index < 2; index++) requirements.add(new NaturalTaskUnderstanding.Requirement("接班同事",
+                    List.of(new NaturalTaskUnderstanding.Evidence("actualAnswers." + index, "接班同事")),
+                    List.of(NaturalTaskUnderstanding.Dimension.USER_CONFIRMATION)));
+        }
+        var task = new NaturalTaskUnderstanding("写交接说明", "交接说明", List.copyOf(requirements), List.of(), List.of(),
                 new NaturalTaskReview(NaturalTaskReview.InputReadiness.SUFFICIENT, List.of(), List.of(), List.of()));
         var body = json.valueToTree(Map.of("summary", "已有信息足以继续交付", "questions", List.of(), "taskUnderstanding", task));
-        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(body), MediaType.APPLICATION_JSON));
-        var input = new NaturalPromptInput("写交接说明", context(), List.of(), List.of(), false, List.of(), null).withStrategyVersion("5");
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var envelope = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            String user = envelope.path("messages").get(1).path("content").asText();
+            assertThat(json.readTree(user.substring(user.indexOf('{'))).has("requiredSourceIds")).isFalse();
+            assertThat(envelope.path("messages").get(0).path("content").asText()).isEqualTo(NaturalPromptInstructions.PLAN);
+        }).andRespond(withSuccess(response(body), MediaType.APPLICATION_JSON));
+        var input = boundAnswers ? input() : new NaturalPromptInput("写交接说明", context(), List.of(), List.of(), false, List.of(), null).withStrategyVersion("5");
         var result = provider.plan(input, draft -> {
             draft.taskUnderstanding().review().validatePlan(Set.of());
             return draft;
@@ -199,6 +216,45 @@ class NaturalCompactCoverageProtocolTest {
         assertThat(NaturalPromptInstructions.enhancementInstruction("4")).contains("requirementCoverage", "additionCoverage");
         assertThat(NaturalPromptInstructions.enhancementInstruction("5")).doesNotContain("requirementCoverage", "additionCoverage");
         assertThat(NaturalPromptInstructions.requiresTaskReview("4")).isTrue();
+    }
+
+    @Test
+    void directGenerationKeepsTheOriginalRequestWithoutTheBoundAnswerChecklist() throws Exception {
+        var body = compact();
+        var requirements = (com.fasterxml.jackson.databind.node.ArrayNode) body.path("taskUnderstanding").path("requirements");
+        requirements.remove(2); requirements.remove(1);
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var envelope = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            String user = envelope.path("messages").get(1).path("content").asText();
+            assertThat(json.readTree(user.substring(user.indexOf('{'))).has("requiredSourceIds")).isFalse();
+            assertThat(envelope.path("messages").get(0).path("content").asText()).isEqualTo(NaturalPromptInstructions.ENHANCE);
+        }).andRespond(withSuccess(response(body), MediaType.APPLICATION_JSON));
+        provider.enhance(new NaturalPromptInput("写交接说明", context(), List.of(), List.of(), false, List.of(), null), draft -> {
+            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+            return draft;
+        });
+        server.verify();
+    }
+
+    @Test
+    void actualFailedAnswerRecordsRemainRejectedRatherThanAutoFilled() throws Exception {
+        var path = java.nio.file.Path.of("../../docs/testing/evidence/natural-utility-cost-2026-10-21/transports-candidate1.jsonl");
+        var traces = new java.util.ArrayList<com.fasterxml.jackson.databind.JsonNode>();
+        for (String line : java.nio.file.Files.readAllLines(path)) {
+            var trace = json.readTree(line);
+            if (trace.path("jobId").asText().equals("PLAN_PURCHASE_V5_PLAN_GEN")) traces.add(trace);
+        }
+        assertThat(traces).hasSize(2);
+        String user = traces.getFirst().path("request").path("messages").get(1).path("content").asText();
+        var payload = (ObjectNode) json.readTree(user.substring(user.indexOf('{')));
+        payload.remove("taskSources"); payload.putNull("modelId");
+        var input = json.treeToValue(payload, NaturalPromptInput.class);
+        for (var trace : traces) server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(json.writeValueAsString(trace.path("response")), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(input, draft -> {
+            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+            return draft;
+        })).isInstanceOf(NaturalTaskReview.MissingSources.class);
+        server.verify();
     }
 
     private NaturalPromptInput input() {
