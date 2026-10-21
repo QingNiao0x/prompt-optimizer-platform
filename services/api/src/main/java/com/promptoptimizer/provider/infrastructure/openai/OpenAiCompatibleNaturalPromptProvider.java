@@ -100,7 +100,12 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode legacy) {
                 legacy.remove(List.of("strategyVersion", "taskSources"));
             }
-            if ("prompt.optimize".equals(operation) && NaturalPromptInstructions.VERSION.equals(input.strategyVersion())
+            if (NaturalPromptInstructions.requiresTaskState(input.strategyVersion())
+                    && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode current) {
+                // 阶段由服务端调用路径给出；它只说明回答已收到，不把未知变成事实或替代实际授权。
+                current.set("executionContext", json.valueToTree(NaturalExecutionContext.from(input, "plan.generate".equals(operation))));
+            }
+            if ("prompt.optimize".equals(operation) && NaturalPromptInstructionsV5.VERSION.equals(input.strategyVersion())
                     && !input.actualAnswers().isEmpty()
                     && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode current) {
                 // 确认题答可能含相同文字，但仍属于不同题干；显式传递既有必需来源集合，不复制答案或补造出处。
@@ -264,7 +269,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             return null;
         }
         try {
-            JsonNode task = enhancement && NaturalPromptInstructions.VERSION.equals(input.strategyVersion())
+            JsonNode task = enhancement && NaturalPromptInstructionsV5.VERSION.equals(input.strategyVersion())
                     ? expandCompactCoverage(body.get("taskUnderstanding")) : body.get("taskUnderstanding");
             return json.treeToValue(task, NaturalTaskUnderstanding.class).resolve(input);
         } catch (JsonProcessingException | IllegalArgumentException failure) {

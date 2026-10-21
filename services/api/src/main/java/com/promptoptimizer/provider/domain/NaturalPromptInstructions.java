@@ -7,14 +7,14 @@ package com.promptoptimizer.provider.domain;
  * @since 0.1.0
  */
 public final class NaturalPromptInstructions {
-    /** 第五版保留为已评测候选；确认后质量与重试收益未通过，普通请求继续使用第四版。 */
+    /** 质量候选须经过作品对照再采用；普通请求暂时继续使用第四版。 */
     public static final String DEFAULT_VERSION = NaturalPromptInstructionsV4.VERSION;
     /** 最新可兼容的候选协议版本，不代表已采用为默认。 */
-    public static final String VERSION = "5";
+    public static final String VERSION = "6";
 
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || NaturalPromptInstructionsV4.VERSION.equals(version) || NaturalPromptInstructionsV3.VERSION.equals(version) || NaturalPromptInstructionsV2.VERSION.equals(version)
+        return VERSION.equals(version) || NaturalPromptInstructionsV5.VERSION.equals(version) || NaturalPromptInstructionsV4.VERSION.equals(version) || NaturalPromptInstructionsV3.VERSION.equals(version) || NaturalPromptInstructionsV2.VERSION.equals(version)
                 || NaturalPromptInstructionsV1.VERSION.equals(version);
     }
 
@@ -25,8 +25,11 @@ public final class NaturalPromptInstructions {
 
     /** 第四版起核对覆盖和提问影响记录；旧历史保持原协议，不补造旧版没有的检查证据。 */
     public static boolean requiresTaskReview(String version) {
-        return VERSION.equals(version) || NaturalPromptInstructionsV4.VERSION.equals(version);
+        return VERSION.equals(version) || NaturalPromptInstructionsV5.VERSION.equals(version) || NaturalPromptInstructionsV4.VERSION.equals(version);
     }
+
+    /** 逐项执行状态只属于第六版；历史记录不能凭新分类补造原来没有的状态。 */
+    public static boolean requiresTaskState(String version) { return VERSION.equals(version); }
 
     /** 以保存的版本选择原生成指导；正文写法更新不静默改写旧历史的再次增强策略。 */
     public static String enhancementInstruction(String version) {
@@ -35,6 +38,7 @@ public final class NaturalPromptInstructions {
             case "2" -> NaturalPromptInstructionsV2.ENHANCE;
             case "3" -> NaturalPromptInstructionsV3.ENHANCE;
             case "4" -> NaturalPromptInstructionsV4.ENHANCE;
+            case "5" -> NaturalPromptInstructionsV5.ENHANCE;
             case VERSION -> ENHANCE;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
@@ -47,47 +51,55 @@ public final class NaturalPromptInstructions {
             case "2" -> NaturalPromptInstructionsV2.PLAN;
             case "3" -> NaturalPromptInstructionsV3.PLAN;
             case "4" -> NaturalPromptInstructionsV4.PLAN;
+            case "5" -> NaturalPromptInstructionsV5.PLAN;
             case VERSION -> PLAN;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }
-    public static final String COMMON = NaturalPromptInstructionsV4.COMMON;
+    public static final String COMMON = NaturalPromptInstructionsV4.COMMON + """
+            executionContext由服务端给出当前操作阶段，不来自附件或模型自报。
+            GENERATE_AFTER_ANSWERS表示本次Plan回答已收齐；收到回答不等于每项未知已确定，更不等于获得权限。
+            按完整题干、回答及其对象、属性和条件理解当前状态，原始提示词仍保留作目标和来源依据。
+            """;
 
-    /** 只改变同次生成记录的组织；来源原句、缺口作用及全部正文锚点仍由原校验核对。 */
-    public static final String TASK_RECORD = """
-            同次返回简短taskUnderstanding，不返回推理过程：
-            {"goal":"原定目标","deliverable":"原定交付",
-             "requirements":[{"dimensions":["GOAL或OBJECT或FORMAT或LENGTH或CONDITION或USER_CONFIRMATION"],
-               "evidence":[{"sourceId":"taskSources中的id","quote":"该来源中的连续原句"}],"quotes":["最终正文中的单行连续片段"]}],
-             "additions":[{"gap":"具体交付缺口","benefit":"补充对原定作品的直接帮助","quotes":["最终正文中的单行连续片段"]}],
-             "openDecisions":[{"issue":"重要未知","impact":"会改变什么结果","questionId":"","kind":"USER_INFORMATION或EXECUTION_CHOICE"}],
-             "review":{"inputReadiness":"SUFFICIENT或NEEDS_COMPLETION"}}。
-            requirements至少记录目标，逐项核对实际存在的对象、格式、篇幅、独立条件和用户确认，不强填六类。
-            evidence逐字引用原始输入，taskSources仅为服务端编号与类别索引；每份actualAnswers均须关联其实际回答。
-            每项quotes须逐字出现在最终正文，不跨行；跨行要求用多个片段。同一句可承担多个要求，但不合并独立条件。
-            原始输入、全部资料及题答仍是完整依据；引文存在不证明语义穷尽或改写等价。
-            不另抄要求摘要或覆盖下标；未发生的补充和未知可省略空数组。已有表达不是新的缺口，补充写清gap与benefit。
-            原有要求、拟议补充和未知分开，资料与建议不升级为用户确认；内部字段不写入优化提示词。
+    /** 复用完整覆盖协议，只增加逐项状态，不减少出处、独立条件、补充作用或最终正文锚点。 */
+    public static final String TASK_RECORD = NaturalPromptInstructionsV4.TASK_RECORD.replace(
+            "{\"text\":\"影响交付的原有要求\"",
+            "{\"state\":\"ACTIVE_REQUIREMENT或PROVIDED_INFORMATION或UNRESOLVED_INFORMATION或DELEGATED_WORK或UPDATED_BY_ANSWER\",\"text\":\"影响交付的原有要求\"") + """
+            每项requirement选一个当前state，先分清责任和状态再组织正文，不将分类标签写进优化提示词：
+            ACTIVE_REQUIREMENT：仍有效的目标、对象、格式、篇幅、否定、例外和独立条件，必须落实。
+            PROVIDED_INFORMATION：输入已提供的内容，仅在其来源和适用范围内使用，不代表已经外部核实。
+            UNRESOLVED_INFORMATION：仍未知、拒答、暂不选择或尚未满足的条件，仅限制依赖它的部分。
+            DELEGATED_WORK：由执行者完成的设计或工作，转为具体拟议工作要求，不交回用户填空。
+            UPDATED_BY_ANSWER：实际题答已更新原来的澄清阶段，必须引用对应actualAnswers；正文使用当前有效信息。
+            同一题答包含已知与未知时分别登记；只更新题目涉及的对象、属性和条件，不撤销其他要求或权限红线。
+            相同回答文字也保留每份来源编号；可以共用已有正文句子，不为出处完整而重复正文。
+            state只是候选理解，不能用编号、状态或一段引文证明所有语义正确；原文和全部题答仍完整核对。
             """;
 
     public static final String ENHANCE = COMMON + """
-            完善原始提示词，交付自然、紧凑、可直接使用的执行请求；保持原动作、对象、作品、范围、格式、篇幅和受众。
-            充分需求保留有效原句，只修影响交付的缺口；不为体现增强而扩写，不把已有要求或同义重述登记为补充。
-            模糊需求在原定作品内补有依据的内容重点、必要做法和可检查要求；每项补充都应解决具体交付缺口。
-            补充不能另增用户未委托的交付物、通用说明或自证清单；需要的步骤、理由和检查点融入它实际服务的内容。
-            用已有具体上下文组织动作与交付，不编造角色、受众特征、参数、经历、来源或结果，不留空表单让用户重写需求。
-            普通组织、检索和已委托的方法设计由执行者完成，拟议方案不冒充已确认事实；保留合理探索空间。
-            仅对确实依赖统计、排名或研究判断的部分补必要定义与证据，简要置于相应判断附近，不让口径覆盖原任务。
-            用户独有的事实、保留选择、授权和来源冲突继续未决；资料不足只限制依赖它的部分，其余原定交付继续完成。
-            完整保留否定、例外、并列要求及条件；不额外强加篇幅、段数或格式。简单任务自然成段，必要时列点或步骤。
-            返回前对照全部输入，修正意图偏移、要求遗漏或改变、矛盾、空模板及无意义重复，再登记来源与最终正文锚点。
-            mandatoryRules由平台组装，正文不复写通用条款。includeExamples只影响原任务适用示例，用户禁例、格式和事实边界优先。
-            framework仅作正文形成后的组织参考：APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE；不确定用APE。
-            不因框架新增任务、栏目或追问，不展示框架名或强制模块标题。
+            交付能直接交给执行者的自然优化提示词，保持原动作、对象、目标作品、范围、格式、篇幅与受众。
+            用当前有效任务组织正文：目标和交付要求继续执行；已提供信息直接用于相应工作；未知只影响相关判断或步骤。
+            在GENERATE_AFTER_ANSWERS阶段，原文要求先询问的事项要结合实际回答推进，不能把已完成的澄清重新设为整项任务的门槛。
+            回答仍未知时保留该项未知，不猜值、不假装满足；用户明示的人工批准和独立条件不因Plan已回答而解除。
+            用户交给AI的设计落实为具体工作内容或拟议设计要求；常规组织、方法和表达由执行者完成，不退回需求问卷。
+            需求充分时沿用有效表达，只补影响交付的实际缺口，不为体现增强而重写或扩充义务。
+            需求开放时，围绕原定作品补适用的内容重点、关键动作和可检查结果，使执行者知道具体处理什么、怎么完成及交出什么。
+            每项补充必须对该作品有直接帮助；原有要求、同义改写、泛泛要求完整准确、额外说明或新的作品不算补全收益。
+            背景和材料用于形成具体内容；资料不足不把整项任务改成补材料或研究流程，仍交付能完成的原定部分。
+            不将原因、效果、资源条件或用户保留的选择补造成事实；拟议方法和方案保持可选择，保留合理探索空间。
+            需要依据、口径、步骤或检查时，简要融入它实际服务的内容，不固定要求逐项输出内部状态或通用核查清单。
+            保留全部并列、否定、例外和依赖条件，不额外固定篇幅、段数或栏目；简单任务自然成段，确有帮助时列点或步骤。
+            返回前用全部输入核对当前状态、意图偏移、要求遗漏、矛盾、空模板与无意义重复，先修正文再登记来源和覆盖片段。
+            mandatoryRules由平台组装，正文不复写通用条款；includeExamples服从原任务格式、禁例及事实边界。
+            framework仅为正文后的组织参考APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE；不可靠时用APE。
+            不因框架新增任务、栏目或追问，不展示框架名或强制五模块。
             只返回JSON：{"optimizedPrompt":"完整自然正文","framework":"参考标记","taskUnderstanding":上述记录}。
             """ + TASK_RECORD;
 
-    /** 提问沿用当前完整协议与八题约定；本轮仅收敛最终自然生成，不改变用户决定的归属。 */
-    public static final String PLAN = NaturalPromptInstructionsV4.PLAN;
+    /** 保留第四版的问题归属、八题指导和64题容量，仅加入同源逐项状态记录。 */
+    public static final String PLAN = NaturalPromptInstructionsV4.PLAN
+            .replace(NaturalPromptInstructionsV4.COMMON, COMMON)
+            .replace(NaturalPromptInstructionsV4.TASK_RECORD, TASK_RECORD);
     private NaturalPromptInstructions() { }
 }

@@ -28,13 +28,28 @@ public record NaturalTaskUnderstanding(String goal, String deliverable, List<Req
     }
 
     /** 原有要求的候选理解，必须能在服务端来源目录中找到原句；来源不等于事实真实性证明。 */
-    public record Requirement(String text, List<Evidence> evidence, List<Dimension> dimensions) {
+    public record Requirement(String text, List<Evidence> evidence, List<Dimension> dimensions,
+            @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) RequirementState state) {
         public Requirement {
             evidence = evidence == null ? List.of() : List.copyOf(evidence);
             dimensions = dimensions == null ? List.of() : List.copyOf(dimensions);
         }
         /** 旧版要求未分类，仍完整保留其出处，不从词表反推类别。 */
-        public Requirement(String text, List<Evidence> evidence) { this(text, evidence, List.of()); }
+        public Requirement(String text, List<Evidence> evidence) { this(text, evidence, List.of(), null); }
+        /** 第一至第五版没有逐项状态，不能从已收到回答或来源存在反推旧状态。 */
+        public Requirement(String text, List<Evidence> evidence, List<Dimension> dimensions) { this(text, evidence, dimensions, null); }
+    }
+
+    /**
+     * 第六版的候选执行状态；逐项区分原定工作、已提供信息、未知及委托，不作为事实或授权证明。
+     * 同一回答中不同对象、属性或条件可以有不同状态，完整原文与出处始终保留。
+     */
+    public enum RequirementState {
+        /** 仍需执行的目标、格式、篇幅、否定或条件。 */ ACTIVE_REQUIREMENT,
+        /** 输入已提供的信息；来源真实性与适用范围仍由原文决定。 */ PROVIDED_INFORMATION,
+        /** 尚未确定的事实或选择，只限制依赖它的部分。 */ UNRESOLVED_INFORMATION,
+        /** 用户交给执行者完成的设计或工作，不能转为用户补填任务。 */ DELEGATED_WORK,
+        /** 实际题答已更新原先澄清阶段；不代表其他条件消失或权限已授予。 */ UPDATED_BY_ANSWER
     }
 
     /** 原有要求的核对维度；只组织实际存在的信息，不为分类新增用户要求。 */
@@ -89,13 +104,15 @@ public record NaturalTaskUnderstanding(String goal, String deliverable, List<Req
             if (requirement == null) throw invalid("任务要求为空");
             check(requirement.text(), true);
             if (requirement.evidence().isEmpty() || requirement.evidence().size() > 64) throw invalid("任务要求缺少有效出处");
-            return new Requirement(requirement.text(), requirement.evidence().stream().map(evidence -> {
+            var resolvedRequirement = new Requirement(requirement.text(), requirement.evidence().stream().map(evidence -> {
                 if (evidence == null) throw invalid("任务出处为空");
                 NaturalTaskSource source = sources.get(evidence.sourceId());
                 check(evidence.quote(), true);
                 if (source == null || !source.text().contains(evidence.quote())) throw invalid("任务理解引用不属于当前可用来源");
                 return new Evidence(source.id(), evidence.quote(), source.kind());
-            }).toList(), requirement.dimensions());
+            }).toList(), requirement.dimensions(), requirement.state());
+            if (NaturalPromptInstructions.requiresTaskState(input.strategyVersion())) validateState(resolvedRequirement);
+            return resolvedRequirement;
         }).toList();
         additions.forEach(addition -> {
             if (addition == null) throw invalid("任务补充为空");
@@ -111,6 +128,19 @@ public record NaturalTaskUnderstanding(String goal, String deliverable, List<Req
             review.validateUnderstanding(result, input);
         }
         return result;
+    }
+
+    /** 状态必须有相符的来源权限；状态标签不能替代原句、独立题答或最终正文锚点校验。 */
+    private static void validateState(Requirement requirement) {
+        if (requirement.state() == null) throw invalid("任务要求缺少执行状态");
+        boolean actualAnswer = requirement.evidence().stream().anyMatch(e -> e.origin() == NaturalTaskSource.Kind.BOUND_PLAN_ANSWER);
+        if (requirement.state() == RequirementState.UPDATED_BY_ANSWER && !actualAnswer) {
+            throw invalid("任务状态更新缺少实际题答来源");
+        }
+        boolean userRequest = requirement.evidence().stream().anyMatch(e -> e.origin() == NaturalTaskSource.Kind.ORIGINAL_REQUEST
+                || e.origin() == NaturalTaskSource.Kind.USER_CONVERSATION || e.origin() == NaturalTaskSource.Kind.BOUND_PLAN_ANSWER);
+        // 附件或助手建议不能自行建立新委托；有用户来源也只是出处校验，不证明所有语义正确。
+        if (requirement.state() == RequirementState.DELEGATED_WORK && !userRequest) throw invalid("任务委托缺少用户来源");
     }
 
     /** 统一检查内部生成字段，避免敏感值通过诊断记录绕过正文扫描；不做场景关键词判断。 */

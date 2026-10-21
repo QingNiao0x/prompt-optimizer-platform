@@ -96,12 +96,13 @@ class NaturalEnhancementServiceTest {
         assertThat(result.optimizedPrompt()).isEqualTo(provider.body);
     }
 
-    @Test
-    void realQuestionTextComesFromServerAndAllAnswersReachGeneration() {
+    @ParameterizedTest
+    @ValueSource(strings = {"4", "6"})
+    void realQuestionTextComesFromServerAndAllAnswersReachGeneration(String version) {
         provider.questions = IntStream.range(0, 12).mapToObj(i -> question("q" + i)).toList();
-        var plan = service.plan(planRequest());
+        var plan = service.plan(planRequest(), version);
         var answers = plan.questions().stream().map(q -> new PlanAnswer(q.id(), "伪造的问题文案", "保留未知，不默认确认")).toList();
-        var result = service.optimize(request("写一封邮件", new PlanConfirmation(plan.planId(), null, answers), List.of(), "fixture:model"));
+        var result = service.optimize(request("写一封邮件", new PlanConfirmation(plan.planId(), null, answers), List.of(), "fixture:model"), version);
         assertThat(provider.last.actualAnswers()).hasSize(12);
         assertThat(provider.last.actualAnswers()).allMatch(a -> a.question().equals("收件对象仍需明确？"));
         assertThat(provider.last.actualAnswers()).allMatch(a -> a.answer().equals("保留未知，不默认确认"));
@@ -263,7 +264,7 @@ class NaturalEnhancementServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"1", "2", "3", "4", "5"})
+    @ValueSource(strings = {"1", "2", "3", "4", "5", "6"})
     void legacyNaturalVersionKeepsItsProtocolWithoutFixedClausesAndUnknownVersionNeverCallsTheProvider(String version) {
         var result = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"), version);
         assertThat(result.chainVersion()).isEqualTo(version);
@@ -382,7 +383,8 @@ class NaturalEnhancementServiceTest {
                     .filter(source -> source.kind() == NaturalTaskSource.Kind.ORIGINAL_REQUEST || source.kind() == NaturalTaskSource.Kind.BOUND_PLAN_ANSWER)
                     .map(source -> new NaturalTaskUnderstanding.Requirement(source.text(),
                             List.of(new NaturalTaskUnderstanding.Evidence(source.id(), source.text())),
-                            List.of(NaturalTaskUnderstanding.Dimension.GOAL))).toList();
+                            List.of(NaturalTaskUnderstanding.Dimension.GOAL), NaturalPromptInstructions.requiresTaskState(input.strategyVersion())
+                                    ? NaturalTaskUnderstanding.RequirementState.ACTIVE_REQUIREMENT : null)).toList();
             var coverage = planning ? List.<NaturalTaskReview.Coverage>of() : IntStream.range(0, requirements.size())
                     .mapToObj(i -> new NaturalTaskReview.Coverage(i, List.of(body.strip().lines().findFirst().orElseThrow()))).toList();
             var impacts = planning ? questions.stream().map(q -> new NaturalTaskReview.PlanImpact(q.id(),

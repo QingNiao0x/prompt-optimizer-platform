@@ -54,17 +54,23 @@ public class MockNaturalPromptProvider implements NaturalPromptProvider {
         var coverage = new ArrayList<NaturalTaskReview.Coverage>();
         requirements.add(new NaturalTaskUnderstanding.Requirement(input.rawPrompt(),
                 List.of(new NaturalTaskUnderstanding.Evidence("rawPrompt", input.rawPrompt().strip())),
-                List.of(NaturalTaskUnderstanding.Dimension.GOAL)));
+                List.of(NaturalTaskUnderstanding.Dimension.GOAL), mockState(input)));
         if (body != null) coverage.add(new NaturalTaskReview.Coverage(0, List.of(coverageQuote(input.rawPrompt()))));
         for (int i = 0; i < input.actualAnswers().size(); i++) {
             var answer = input.actualAnswers().get(i);
             requirements.add(new NaturalTaskUnderstanding.Requirement(answer.answer(),
                     List.of(new NaturalTaskUnderstanding.Evidence("actualAnswers." + i, answer.answer())),
-                    List.of(NaturalTaskUnderstanding.Dimension.USER_CONFIRMATION)));
+                    List.of(NaturalTaskUnderstanding.Dimension.USER_CONFIRMATION), mockState(input)));
             if (body != null) coverage.add(new NaturalTaskReview.Coverage(i + 1, List.of(coverageQuote(answer.answer()))));
         }
         return new NaturalTaskUnderstanding(input.rawPrompt(), "原定交付", requirements, List.of(), List.of(),
                 new NaturalTaskReview(NaturalTaskReview.InputReadiness.SUFFICIENT, coverage, List.of(), List.of()));
+    }
+
+    /** Mock只回显已有处理要求，不凭规则猜测答案是否解决未知；状态不代表真实语义增强验收。 */
+    private NaturalTaskUnderstanding.RequirementState mockState(NaturalPromptInput input) {
+        return NaturalPromptInstructions.requiresTaskState(input.strategyVersion())
+                ? NaturalTaskUnderstanding.RequirementState.ACTIVE_REQUIREMENT : null;
     }
 
     /** 内部锚点采用与校验相同的换行边界；跳过空行，正文及真实来源不做替换或删减。 */

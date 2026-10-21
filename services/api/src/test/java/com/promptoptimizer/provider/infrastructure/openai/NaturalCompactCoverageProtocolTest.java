@@ -139,7 +139,7 @@ class NaturalCompactCoverageProtocolTest {
             var envelope = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
             String user = envelope.path("messages").get(1).path("content").asText();
             assertThat(json.readTree(user.substring(user.indexOf('{'))).has("requiredSourceIds")).isFalse();
-            assertThat(envelope.path("messages").get(0).path("content").asText()).isEqualTo(NaturalPromptInstructions.PLAN);
+            assertThat(envelope.path("messages").get(0).path("content").asText()).isEqualTo(NaturalPromptInstructionsV5.PLAN);
         }).andRespond(withSuccess(response(body), MediaType.APPLICATION_JSON));
         var input = boundAnswers ? input() : new NaturalPromptInput("写交接说明", context(), List.of(), List.of(), false, List.of(), null).withStrategyVersion("5");
         var result = provider.plan(input, draft -> {
@@ -227,7 +227,7 @@ class NaturalCompactCoverageProtocolTest {
             var envelope = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
             String user = envelope.path("messages").get(1).path("content").asText();
             assertThat(json.readTree(user.substring(user.indexOf('{'))).has("requiredSourceIds")).isFalse();
-            assertThat(envelope.path("messages").get(0).path("content").asText()).isEqualTo(NaturalPromptInstructions.ENHANCE);
+            assertThat(envelope.path("messages").get(0).path("content").asText()).isEqualTo(NaturalPromptInstructionsV5.ENHANCE);
         }).andRespond(withSuccess(response(body), MediaType.APPLICATION_JSON));
         provider.enhance(new NaturalPromptInput("写交接说明", context(), List.of(), List.of(), false, List.of(), null).withStrategyVersion("5"), draft -> {
             draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
