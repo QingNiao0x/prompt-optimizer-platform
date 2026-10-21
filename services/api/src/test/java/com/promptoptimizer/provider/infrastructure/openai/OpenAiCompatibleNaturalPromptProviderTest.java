@@ -314,6 +314,62 @@ class OpenAiCompatibleNaturalPromptProviderTest {
         return json.writeValueAsString(Map.of("optimizedPrompt", "请写邮件，使用内部称呼。", "framework", "APE", "taskUnderstanding", task));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"7", "8"})
+    void completionCandidatesKeepDemonstrationsOutsideCurrentTaskAndUseTheExistingCoverage(String version) throws Exception {
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            String system = body.path("messages").get(0).path("content").asText();
+            var payload = json.readTree(body.path("messages").get(1).path("content").asText().split("\n", 2)[1]);
+            assertThat(body.path("messages")).hasSize(2);
+            assertThat(system.contains("<internal_rewrite_demonstrations>")).isEqualTo("8".equals(version));
+            assertThat(payload.path("rawPrompt").asText()).isEqualTo("写邮件");
+            assertThat(payload.path("taskSources")).hasSize(1);
+            assertThat(payload.path("taskSources").get(0).path("id").asText()).isEqualTo("rawPrompt");
+            assertThat(payload.toString()).doesNotContain("includeExamples", "demonstrations", "新成员", "18次", "Your draft");
+            assertThat(payload.path("actualAnswers").isEmpty()).isTrue();
+            assertThat(payload.path("mandatoryRules").isEmpty()).isTrue();
+        }).andRespond(withSuccess(response(reviewResponse("请写邮件。", false)), MediaType.APPLICATION_JSON));
+        var result = provider.enhance(input().withStrategyVersion(version), draft -> {
+            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+            return draft;
+        });
+        assertThat(result.optimizedPrompt()).isEqualTo("请写邮件。");
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"7", "8"})
+    void completionCandidatesCannotTreatADemonstrationAsCurrentEvidenceOrDropCoverage(String version) throws Exception {
+        var tree = (com.fasterxml.jackson.databind.node.ObjectNode) json.readTree(reviewResponse("请写邮件。", false));
+        ((com.fasterxml.jackson.databind.node.ObjectNode) tree.path("taskUnderstanding").path("requirements").get(0)
+                .path("evidence").get(0)).put("quote", "帮我拟个新成员入组第一周的安排");
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(tree.toString()), MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response(tree.toString()), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.enhance(input().withStrategyVersion(version), Function.identity()))
+                .isInstanceOf(ProviderException.class);
+        server.verify();
+        assertThat(NaturalPromptInstructions.requiresTaskUnderstanding(version)).isTrue();
+        assertThat(NaturalPromptInstructions.requiresTaskReview(version)).isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"7", "8"})
+    void completionCandidatesPreserveThePlanProtocolAndDoNotAddRewriteDemonstrationsToQuestions(String version) throws Exception {
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(body.path("messages").get(0).path("content").asText())
+                    .isEqualTo(NaturalPromptInstructions.planningInstruction("4"));
+        }).andRespond(withSuccess(response(reviewResponse("", true)), MediaType.APPLICATION_JSON));
+        var plan = provider.plan(input().withStrategyVersion(version), draft -> {
+            draft.taskUnderstanding().review().validatePlan(Set.of());
+            return draft;
+        });
+        assertThat(plan.questions()).isEmpty();
+        assertThat(json.writeValueAsString(plan)).doesNotContain("taskUnderstanding", "internal_rewrite_demonstrations");
+        server.verify();
+    }
+
     private String reviewResponse(String body, boolean planning) throws Exception {
         var requirement = new NaturalTaskUnderstanding.Requirement("写邮件", List.of(new NaturalTaskUnderstanding.Evidence("rawPrompt", "写邮件")),
                 List.of(NaturalTaskUnderstanding.Dimension.GOAL));

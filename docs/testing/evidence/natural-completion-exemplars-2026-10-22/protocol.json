@@ -1,0 +1,142 @@
+{
+  "batch": "natural-completion-exemplars-2026-10-22",
+  "authorizationQuote": "授权新增最多1024次实际调用, 以增强生成的提示词质量为主要目标",
+  "taskMaximumNewActualCalls": 1024,
+  "maximumNewActualCalls": 64,
+  "previousClosedActualCalls": 686,
+  "previousFormalLimits": {
+    "total": 714,
+    "baseline": 80,
+    "candidate": 634
+  },
+  "formalLimitsAfterAuthorization": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "maximumCumulativeActualForTask": 1710,
+  "closedBalanceTransferred": 0,
+  "baselineCommit": "73fb3541",
+  "baselineVersion": "4",
+  "guidanceVersion": "7",
+  "candidateVersion": "8",
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 4096,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 26,
+    "PLAN": 8,
+    "EXECUTION": 24,
+    "REVIEW": 6
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 18,
+    "PLAN": 6,
+    "EXECUTION": 24,
+    "REVIEW": 6
+  },
+  "generation": [
+    "LOCAL_MARKDOWN",
+    "API_EXPLANATION",
+    "SUPPORT_WEEKLY",
+    "DELEGATED_WORKSHOP",
+    "SUFFICIENT_JSON"
+  ],
+  "plan": [
+    "DELEGATED_WORKSHOP",
+    "PLAN_INVITATION"
+  ],
+  "confirmedPlanGeneration": [
+    "PLAN_INVITATION"
+  ],
+  "execution": [
+    "LOCAL_MARKDOWN",
+    "API_EXPLANATION",
+    "SUPPORT_WEEKLY",
+    "DELEGATED_WORKSHOP",
+    "SUFFICIENT_JSON",
+    "PLAN_INVITATION"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "commonPlanAnchorVersion": "4",
+  "criteria": [
+    "优化提示词及作品分别评估；原始、第四版、第七版及第八版执行获得相同材料和实际确认信息。",
+    "严重失败包括原定交付降级、重要要求遗漏或改变、假事实或确认、格式或篇幅违约、安全越界及不可用作品；少量文风差异不是严重失败。",
+    "采用候选需在至少3/6个作品中比第四版有明确的内容、正确性或可执行性收益，无新增严重退步；同时至少3/6个优化提示词有可指认的实质改进，其他题不增加明显负担。",
+    "第八版优于第七版须在至少2题存在可指认的额外内容或交付收益且无严重退步；否则不把示范收益视为已证实。",
+    "充分需求应保留，明确禁例、范围、格式、数值条件和实际题答不改变；无固定条款、职业路由、额外调用或用户示例开关。",
+    "盲化辅助评审先按原任务逐件判断，再比较；评分、篇幅和模型自报覆盖不代替开发者逐项核对。",
+    "单一模型、合成小样本只能证明定向收益，不代表专业用户或整体G1-G8通过。"
+  ],
+  "stopConditions": [
+    "阶段或总上限达到即停止；失败、协议修复与评审计数；不做质量重试。",
+    "同一假设两候选出现相同严重失败时停止扩采并审查职责、工具和证据，不堆指令。",
+    "不因历史报告下一步扩大任务；评测原件保留，闭批余额不转移。"
+  ],
+  "status": "FROZEN",
+  "allowedJobs": [
+    "LOCAL_MARKDOWN_V4_GEN",
+    "LOCAL_MARKDOWN_V7_GEN",
+    "LOCAL_MARKDOWN_V8_GEN",
+    "API_EXPLANATION_V4_GEN",
+    "API_EXPLANATION_V7_GEN",
+    "API_EXPLANATION_V8_GEN",
+    "SUPPORT_WEEKLY_V4_GEN",
+    "SUPPORT_WEEKLY_V7_GEN",
+    "SUPPORT_WEEKLY_V8_GEN",
+    "DELEGATED_WORKSHOP_V4_GEN",
+    "DELEGATED_WORKSHOP_V7_GEN",
+    "DELEGATED_WORKSHOP_V8_GEN",
+    "SUFFICIENT_JSON_V4_GEN",
+    "SUFFICIENT_JSON_V7_GEN",
+    "SUFFICIENT_JSON_V8_GEN",
+    "DELEGATED_WORKSHOP_V4_PLAN",
+    "DELEGATED_WORKSHOP_V7_PLAN",
+    "DELEGATED_WORKSHOP_V8_PLAN",
+    "PLAN_INVITATION_V4_PLAN",
+    "PLAN_INVITATION_V7_PLAN",
+    "PLAN_INVITATION_V8_PLAN",
+    "PLAN_INVITATION_V4_PLAN_GEN",
+    "PLAN_INVITATION_V7_PLAN_GEN",
+    "PLAN_INVITATION_V8_PLAN_GEN",
+    "LOCAL_MARKDOWN_RAW_EXEC",
+    "LOCAL_MARKDOWN_V4_EXEC",
+    "LOCAL_MARKDOWN_V7_EXEC",
+    "LOCAL_MARKDOWN_V8_EXEC",
+    "LOCAL_MARKDOWN_BLIND_REVIEW",
+    "API_EXPLANATION_RAW_EXEC",
+    "API_EXPLANATION_V4_EXEC",
+    "API_EXPLANATION_V7_EXEC",
+    "API_EXPLANATION_V8_EXEC",
+    "API_EXPLANATION_BLIND_REVIEW",
+    "SUPPORT_WEEKLY_RAW_EXEC",
+    "SUPPORT_WEEKLY_V4_EXEC",
+    "SUPPORT_WEEKLY_V7_EXEC",
+    "SUPPORT_WEEKLY_V8_EXEC",
+    "SUPPORT_WEEKLY_BLIND_REVIEW",
+    "DELEGATED_WORKSHOP_RAW_EXEC",
+    "DELEGATED_WORKSHOP_V4_EXEC",
+    "DELEGATED_WORKSHOP_V7_EXEC",
+    "DELEGATED_WORKSHOP_V8_EXEC",
+    "DELEGATED_WORKSHOP_BLIND_REVIEW",
+    "SUFFICIENT_JSON_RAW_EXEC",
+    "SUFFICIENT_JSON_V4_EXEC",
+    "SUFFICIENT_JSON_V7_EXEC",
+    "SUFFICIENT_JSON_V8_EXEC",
+    "SUFFICIENT_JSON_BLIND_REVIEW",
+    "PLAN_INVITATION_RAW_EXEC",
+    "PLAN_INVITATION_V4_EXEC",
+    "PLAN_INVITATION_V7_EXEC",
+    "PLAN_INVITATION_V8_EXEC",
+    "PLAN_INVITATION_BLIND_REVIEW"
+  ]
+}

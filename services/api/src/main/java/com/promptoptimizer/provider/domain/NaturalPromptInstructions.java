@@ -11,7 +11,8 @@ public final class NaturalPromptInstructions {
 
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || NaturalPromptInstructionsV3.VERSION.equals(version) || NaturalPromptInstructionsV2.VERSION.equals(version)
+        return VERSION.equals(version) || NaturalPromptCompletionGuidance.supports(version)
+                || NaturalPromptInstructionsV3.VERSION.equals(version) || NaturalPromptInstructionsV2.VERSION.equals(version)
                 || NaturalPromptInstructionsV1.VERSION.equals(version);
     }
 
@@ -20,8 +21,10 @@ public final class NaturalPromptInstructions {
         return supports(version) && !NaturalPromptInstructionsV1.VERSION.equals(version);
     }
 
-    /** 第四版核对覆盖和提问影响记录；旧历史保持原协议，不补造旧版没有的检查证据。 */
-    public static boolean requiresTaskReview(String version) { return VERSION.equals(version); }
+    /** 第四版及补全候选共用覆盖保护；增加示范不能降低来源、题答和正文锚点校验。 */
+    public static boolean requiresTaskReview(String version) {
+        return VERSION.equals(version) || NaturalPromptCompletionGuidance.supports(version);
+    }
 
     /** 以保存的版本选择原生成指导；正文写法更新不静默改写旧历史的再次增强策略。 */
     public static String enhancementInstruction(String version) {
@@ -30,6 +33,8 @@ public final class NaturalPromptInstructions {
             case "2" -> NaturalPromptInstructionsV2.ENHANCE;
             case "3" -> NaturalPromptInstructionsV3.ENHANCE;
             case VERSION -> ENHANCE;
+            case NaturalPromptCompletionGuidance.GUIDANCE_VERSION -> NaturalPromptCompletionGuidance.ENHANCE;
+            case NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> NaturalPromptCompletionGuidance.ENHANCE_WITH_DEMONSTRATIONS;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }
@@ -41,6 +46,8 @@ public final class NaturalPromptInstructions {
             case "2" -> NaturalPromptInstructionsV2.PLAN;
             case "3" -> NaturalPromptInstructionsV3.PLAN;
             case VERSION -> PLAN;
+            // 本轮只检验正文补全，不同时改变提问策略；已绑定题答仍进入同一生成和保护路径。
+            case NaturalPromptCompletionGuidance.GUIDANCE_VERSION, NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> PLAN;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }
