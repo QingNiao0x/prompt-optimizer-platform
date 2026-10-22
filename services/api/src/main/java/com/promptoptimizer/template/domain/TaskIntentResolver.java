@@ -18,6 +18,8 @@ import java.util.Map;
  */
 public final class TaskIntentResolver {
     private record Goal(TemplateCode code, TaskDeliveryProfile profile) { }
+    /** 模板画像和正文动作分别记录；阅读目标不隐含作品，复合请求仍可明确要求写作。 */
+    private record ActionResolution(List<Goal> goals, boolean writingRequested) { }
     // 同一交付物规则供肯定、整体否定和局部附加物共用；“源码的说明”交付的是文档，不是源码。
     private static final String CODE_ARTIFACT = "(?<!伪)(?:代码|源码|脚本|程序)(?!\\s*(?:的)?(?:说明|文档|介绍|摘要|清单|签名|引用|作用|原理))";
     private static final Pattern QUOTED_TEXT = Pattern.compile("“[^”]*”|‘[^’]*’|\"[^\"]*\"");
@@ -33,6 +35,10 @@ public final class TaskIntentResolver {
                     + "(?:不包含|不含|不提供|不交付|不输出|不附带|不附上|不需要|不编写|无需|无须)"
                     + "[^。；;，,\\r\\n]{0,32}" + CODE_ARTIFACT, Pattern.CASE_INSENSITIVE);
     private static final String WRITE = "(?:撰写|编写|起草|写|生成|输出|提供|交付|拟定|制作|设计|制定|\\bwrite\\b|\\bdraft\\b|\\bcreate\\b|\\bproduce\\b)";
+    private static final Pattern WRITING_VERB = Pattern.compile(WRITE, Pattern.CASE_INSENSITIVE);
+    // 沿用写作动词范围，但要求存在动作宾语；背景中的孤立“进行编写”不能建立正文交付。
+    private static final String WRITING_ACTION = "(?:撰写|起草|编写|写出|写一(?:份|篇)|写份|写篇|写(?=.{0,8}报告)|生成(?=.{0,12}(?:报告|正文|稿件)))"
+            + "\\s*[^\\s。；;，,]+|\\b(?:write|draft)\\b\\s+[^\\s.;,]+";
     // 语言名仅是工具证据，须与句首肯定的实现动作及非空对象同时出现；未知工具继续保守回退。
     private static final Pattern LANGUAGE_IMPLEMENTATION = Pattern.compile(
             "^(?:(?:请|帮我|需要|本次|现在|立即|这次)\\s*)*(?:使用|用)\\s*"
@@ -120,6 +126,14 @@ public final class TaskIntentResolver {
         return resolve(TemplateCode.AUTO, rawPrompt).deliveryProfile();
     }
 
+    /**
+     * 提供与模板识别同源的当前写作动作证据，供交付契约使用，而非依据所选模板反推用户要作品。
+     * 这是旧链的保守确定性识别；未识别的表达仍完整交给模型，不据此新增作品或删减原始要求。
+     */
+    public static boolean requestsWriting(String rawPrompt) {
+        return actions(rawPrompt).writingRequested();
+    }
+
     /** 整体交付答案可更新目标；附表、字段、下一阶段等局部选择不能替代主任务。 */
     public static boolean overallDeliveryQuestion(String question) {
         return question != null && DELIVERY_ANSWER.matcher(question).find()
@@ -131,7 +145,13 @@ public final class TaskIntentResolver {
      * 仍保留完整原始需求供模型执行，多目标不在此删减为一项任务。
      */
     private static List<Goal> goals(String input) {
+        return actions(input).goals();
+    }
+
+    /** 一次遍历同一指令范围，同时提取模板参考和独立写作动作，避免下游重新按动词猜测。 */
+    private static ActionResolution actions(String input) {
         List<Goal> values = new ArrayList<>();
+        boolean writingRequested = false;
         var implicitGoals = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<Goal, Boolean>());
         boolean refuseImplicitCode = false;
         boolean fenced = false;
@@ -174,6 +194,11 @@ public final class TaskIntentResolver {
                 int reference = clause.indexOf("原文：");
                 if (reference >= 0) clause = clause.substring(0, reference);
                 Goal goal = classify(clause);
+                // 翻译的宾语是待译文本；其中的写作动词不能建立另一个正文任务。
+                if (goal == null || goal.profile() != TaskDeliveryProfile.TRANSLATION) {
+                    writingRequested |= engineeringMatch(clause, WRITING_ACTION)
+                            || goal != null && proseProfile(goal.profile());
+                }
                 if (goal == null && (implicitLibraryAction(clause)
                         || languageImplementationScope && implicitLanguageAction(clause, priorClauses))) {
                     goal = new Goal(TemplateCode.FEATURE_DEVELOPMENT, TaskDeliveryProfile.SOFTWARE_IMPLEMENTATION);
@@ -193,7 +218,16 @@ public final class TaskIntentResolver {
             }
         }
         boolean reserved = refuseImplicitCode;
-        return values.stream().filter(goal -> !reserved || !implicitGoals.contains(goal)).toList();
+        return new ActionResolution(values.stream().filter(goal -> !reserved || !implicitGoals.contains(goal)).toList(),
+                writingRequested);
+    }
+
+    /** 肯定的作品目标也可通过“交付/提供”表达；只有本轮解析出的动作可采用该画像。 */
+    private static boolean proseProfile(TaskDeliveryProfile profile) {
+        return switch (profile) {
+            case NEWS_RELEASE, INSTITUTIONAL_REPORT, ACADEMIC_WRITING, USER_GUIDE, TEACHING -> true;
+            default -> false;
+        };
     }
 
     /** 肯定交付物优先于领域名词；研究的附带复现代码不会将研究目标改成开发。 */
@@ -297,7 +331,7 @@ public final class TaskIntentResolver {
 
     /** 否定后出现的交付动词不匹配，例如“不要求编写代码测试”；不跨过完整子句边界。 */
     private static boolean deliver(String clause, String object) {
-        return match(clause, WRITE + "[^。；;\\n]{0,64}(?:" + object + ")");
+        return engineeringMatch(clause, WRITE + "[^。；;\\n]{0,64}(?:" + object + ")");
     }
 
     /** 复用固定规则表达式，并拒绝位于否定、候选或资料引文中的交付动词命中。 */
@@ -305,7 +339,7 @@ public final class TaskIntentResolver {
         return match(clause, expression, false);
     }
 
-    /** 工程动作额外核对既成状态与未来条件；不删除原句，也不影响同句后续真正的执行命令。 */
+    /** 有交付后果的动作共同核对既成状态与未来条件；原句及同句后续真正的命令继续保留。 */
     private static boolean engineeringMatch(String clause, String expression) {
         return match(clause, expression, true);
     }
@@ -317,6 +351,9 @@ public final class TaskIntentResolver {
         int from = 0;
         while (from < clause.length() && matcher.find(from)) {
             from = matcher.start() + 1;
+            // 同一动词被否定或判为背景后，不把它内部的“写”重新解释成另一个命令；后续独立动作仍继续检查。
+            var verb = WRITING_VERB.matcher(clause).region(matcher.start(), clause.length());
+            if (verb.lookingAt()) from = verb.end();
             String prefix = clause.substring(0, matcher.start());
             if (engineering && (quotedAction(clause, matcher.start())
                     || describedOrConditionalAction(clause.substring(matcher.start()), prefix))) continue;
@@ -333,9 +370,9 @@ public final class TaskIntentResolver {
         return false;
     }
 
-    /** “构建的系统／重构后的模块”是事实；条件动作只有在本次明确启动时才成为软件目标。 */
+    /** 动作的既成状态和未来条件不是当前交付授权；写作与工程使用相同边界。 */
     private static boolean describedOrConditionalAction(String suffix, String prefix) {
-        if (suffix.matches("^(?:开发|实现|新增|添加|增加|编写|构建|重构|迁移|修复|测试)(?:后的?|过的|完成的|完的|好的|的|了的).*")) return true;
+        if (suffix.matches("^(?:开发|实现|新增|添加|增加|编写|构建|重构|迁移|修复|测试|撰写|起草|写出|写|生成|输出|提供|交付)(?:后的?|过的|完成的|完的|好的|的|了的).*")) return true;
         if (prefix.matches(".*(?:已经|已|曾经|此前已)$")) return true;
         return prefix.matches(".*(?:以后|今后|后续|将来|未来|如果|假如|一旦|每次|每当|若(?:需要|要|涉及|发生))[^。；;]{0,80}$")
                 && !prefix.matches(".*(?:本次|现在|立即|这次)[^。；;]{0,25}$");

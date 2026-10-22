@@ -24,9 +24,6 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
                     + "[^。；;，,\\r\\n]{0,80}提示词"
                     + "|\\b(?:write|create|prepare|provide|generate|deliver|output|improve|enhance)\\b"
                     + "[^.;,\\r\\n]{0,100}\\bprompt\\b", Pattern.CASE_INSENSITIVE);
-    private static final Pattern WRITING = Pattern.compile(
-            "(?:撰写|起草|编写|写出|写一(?:份|篇)|写份|写篇|写.{0,8}报告|生成.{0,12}(?:报告|正文|稿件))|\\b(?:write|draft)\\b",
-            Pattern.CASE_INSENSITIVE);
     private static final Pattern PREPARATION_ONLY = Pattern.compile(
             "(?:仅|只)(?:需要|要求|提供|交付|输出|给出|写|要).{0,16}(?:方案|提纲|大纲|目录|问题清单|空表|模板)"
                     + "|\\boutline only\\b",
@@ -96,19 +93,18 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
                 || template.deliveryProfile() == TaskDeliveryProfile.TRANSLATION) return new DraftDeliveryContract(false);
         boolean preparationLimit = hasPreparationLimit(instructions);
         boolean preparationTarget = preparationIsMainTarget(instructions);
+        boolean writingRequested = TaskIntentResolver.requestsWriting(instructions);
         for (var decision : decisions == null ? List.<ConfirmedPlanDecision>of() : decisions) {
             if ((decision.scope() == ConfirmedPlanDecision.Scope.TARGET || decision.scope() == ConfirmedPlanDecision.Scope.CHOICE)
                     && TaskIntentResolver.overallDeliveryQuestion(decision.question())) {
                 String answer = instructionText(decision.answer());
                 preparationLimit |= hasPreparationLimit(answer);
                 preparationTarget |= preparationIsMainTarget(answer);
+                writingRequested |= TaskIntentResolver.requestsWriting(answer);
             }
         }
-        boolean proseProfile = switch (template.deliveryProfile()) {
-            case NEWS_RELEASE, INSTITUTIONAL_REPORT, ACADEMIC_WRITING, USER_GUIDE, TEACHING -> true;
-            default -> false;
-        };
-        boolean proseRequired = !preparationTarget && (proseProfile || hasAffirmativeWriting(instructions));
+        // 模板用于组织表达，不能成为写作授权；动作证据复用上游解析，背景事实不再被独立动词扫描推翻。
+        boolean proseRequired = !preparationTarget && writingRequested;
         return new DraftDeliveryContract(proseRequired && !preparationLimit, proseRequired);
     }
 
@@ -278,14 +274,9 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
         return false;
     }
 
-    /** 只接受肯定的写作动作；不能从未来、示例或明确否定的正文要求激活契约。 */
+    /** 起草与提示词层级保护共用上游动作解析，不能各自维护一套正文授权规则。 */
     private static boolean hasAffirmativeWriting(String instructions) {
-        for (String clause : instructions.split("[。；;，,\\r\\n]")) {
-            var matcher = WRITING.matcher(clause);
-            if (matcher.find() && !clause.substring(0, matcher.start())
-                    .matches(".*(?:不需要|不要|不得|无需|暂不|如果|以后|将来|例如|示例|原文|引用).{0,20}")) return true;
-        }
-        return false;
+        return TaskIntentResolver.requestsWriting(instructions);
     }
 
     /** 资料标题后的多行仍属引用；任务与约束标题恢复当前指令，不修改原始输入或归档材料。 */
