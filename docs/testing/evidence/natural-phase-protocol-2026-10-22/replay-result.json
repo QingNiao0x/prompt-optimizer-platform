@@ -1,0 +1,182 @@
+{
+  "scope" : "离线回放8份原件；零模型调用；冻结产品与原件不变；通过协议不代表语义或实际作品合格",
+  "results" : [ {
+    "trace" : "tmp/natural-phase-protocol-20261022/traces/017.json",
+    "sha256" : "b6fa6bc690a2f5a718728a2f6313a72fa030327b2a1994a32c36e8a7bd7019b0",
+    "jobId" : "HOLDOUT_OFFICE_20261022_V4_GEN",
+    "strategyVersion" : "4",
+    "rootClosingBraceRecovered" : false,
+    "frozenValidation" : {
+      "valid" : false,
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "message" : "正文覆盖记录越界、重复或缺少对应原句"
+    },
+    "optimizedPrompt" : "请根据 notes/资料柜讨论速记.md 的内容，写一条可以直接发到部门群的跟进消息，不超过220个字符（含标点和空格）。只输出消息正文，不要加标题、说明或额外解释。消息中要保留谁负责什么、何时完成，以及事项生效的条件；不要替任何人作出新的承诺。速记中的关键信息包括：陈柯负责核对现有资料类别，周三17点前把清单发给大家；林悦负责出两套标贴排版供选择，周四中午前发预览图；仅当大家在周五12点前确认其中一套排版，才在当天下午更换标贴，否则下周一继续确认，原标贴先保留；本次只更换标贴，不挪动资料，不丢弃旧文件；讨论没有决定由谁购买或打印标贴，消息中不要写成已有人负责购买或打印。",
+    "independentChecks" : {
+      "planImpacts" : [ ],
+      "missingRequiredSources" : [ ],
+      "bodyQuoteMismatches" : [ {
+        "quote" : "消息中不要写成已有人负责购买或打印标贴",
+        "group" : "additions",
+        "index" : 0
+      } ]
+    }
+  }, {
+    "trace" : "tmp/natural-phase-protocol-20261022/traces/018.json",
+    "sha256" : "4c09881412283686ff07f088c0b25098eadf0215aa9ea9700c8d599850160890",
+    "jobId" : "HOLDOUT_OFFICE_20261022_V4_GEN",
+    "strategyVersion" : "4",
+    "rootClosingBraceRecovered" : false,
+    "frozenValidation" : {
+      "valid" : true
+    },
+    "optimizedPrompt" : "请根据附件速记（notes/资料柜讨论速记.md），写一条可以直接发到部门群的跟进消息，不超过220个字符（含标点和空格）。只输出消息正文，保留谁负责什么、何时完成，以及事项生效的条件；不要替任何人作出新的承诺。\n\n消息中需体现：陈柯负责核对现有资料类别，周三17点前把清单发给大家；林悦负责出两套标贴排版供选择，周四中午前发预览图；仅当大家在周五12点前确认其中一套排版，才在当天下午更换标贴，否则下周一继续确认，原标贴先保留。可简要说明本次只更换标贴，不挪动资料，不丢弃旧文件。速记未确定由谁购买或打印标贴，消息中不要指定负责人，也不要添加其他承诺或安排。",
+    "independentChecks" : {
+      "planImpacts" : [ ],
+      "missingRequiredSources" : [ ],
+      "bodyQuoteMismatches" : [ ]
+    }
+  }, {
+    "trace" : "tmp/natural-phase-protocol-20261022/traces/022.json",
+    "sha256" : "fa90cbe286b8d3e3a26946dc4023eb4bb95da5be137454e05427fe313e2530b9",
+    "jobId" : "HOLDOUT_LIFE_20261022_V21_GEN",
+    "strategyVersion" : "21",
+    "rootClosingBraceRecovered" : false,
+    "frozenValidation" : {
+      "valid" : false,
+      "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+      "message" : "Unrecognized field \"task\" (class com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$EnhancementTask), not marked as ignorable (6 known properties: \"inputReadiness\", \"goal\", \"additions\", \"openDecisions\", \"deliverable\", \"requirements\"])\n at [Source: UNKNOWN; byte offset: #UNKNOWN] (through reference chain: com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$Enhancement[\"task\"]->com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$EnhancementTask[\"task\"])",
+      "unknownProperty" : "task",
+      "path" : "com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$Enhancement[\"task\"]->com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$EnhancementTask[\"task\"]"
+    },
+    "optimizedPrompt" : "我住校，想把周日晚整理书包这件事做得省心一点。请帮我设计一个30分钟内能完成的流程，整理用品只用我现在的书包和普通纸张，不买新东西。细节由你来安排，不要让我先回答一堆问题。最后给我一页明晚就能照着做的清单，内容要具体到能直接执行，比如先做什么、每步大概花多久、按什么顺序检查哪些物品、纸张怎么用来记录或分类、最后怎么确认没有遗漏。",
+    "diagnosticProjection" : {
+      "validation" : {
+        "valid" : true
+      },
+      "removedType" : "STRING",
+      "removedPath" : "task.task",
+      "scope" : "仅隔离额外字段的影响；未改产品、原件或正式交付状态",
+      "removedValue" : "设计一个30分钟内完成的周日晚整理书包流程，并交付一页可直接照做的清单"
+    },
+    "independentChecks" : {
+      "planImpacts" : null,
+      "missingRequiredSources" : [ ],
+      "bodyQuoteMismatches" : [ ]
+    }
+  }, {
+    "trace" : "tmp/natural-phase-protocol-20261022/traces/023.json",
+    "sha256" : "60a101b8efe3b00ef5ef42dee0c39e2dfdc7b85660da661baa4000c2038fb532",
+    "jobId" : "HOLDOUT_LIFE_20261022_V21_GEN",
+    "strategyVersion" : "21",
+    "rootClosingBraceRecovered" : false,
+    "frozenValidation" : {
+      "valid" : true
+    },
+    "optimizedPrompt" : "我住校，想把周日晚整理书包这件事做得省心一点。请帮我设计一个30分钟内能完成的整理流程，整理用品只用我现在的书包和普通纸张，不买新东西。细节你来安排，不要让我先回答一堆问题。最后给我一页明晚就能照做的清单，内容要具体到每一步做什么、按什么顺序做、每步大概花多久，并说明怎么用普通纸张做简单的分类标记或临时收纳；清单要能直接照着执行，篇幅控制在一页以内。",
+    "independentChecks" : {
+      "planImpacts" : null,
+      "missingRequiredSources" : [ ],
+      "bodyQuoteMismatches" : [ ]
+    }
+  }, {
+    "trace" : "tmp/natural-phase-protocol-20261022/traces/030.json",
+    "sha256" : "236a80965b94117861aefc05ba45f4f4eb39718f7bc5035ceee960ffe3167211",
+    "jobId" : "HOLDOUT_TOOL_20261022_V21_GEN",
+    "strategyVersion" : "21",
+    "rootClosingBraceRecovered" : false,
+    "frozenValidation" : {
+      "valid" : false,
+      "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+      "message" : "Unrecognized field \"kind\" (class com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$EnhancementTask), not marked as ignorable (6 known properties: \"inputReadiness\", \"goal\", \"additions\", \"openDecisions\", \"deliverable\", \"requirements\"])\n at [Source: UNKNOWN; byte offset: #UNKNOWN] (through reference chain: com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$Enhancement[\"task\"]->com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$EnhancementTask[\"kind\"])",
+      "unknownProperty" : "kind",
+      "path" : "com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$Enhancement[\"task\"]->com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$EnhancementTask[\"kind\"]"
+    },
+    "optimizedPrompt" : "请帮我做一个可在浏览器中离线使用的小工具，交付一个完整的 HTML 文件。功能是：把粘贴进来的多行文字去掉空行，只含空格或制表符的行也算空行；非空行的首尾空格、行内字符和原有顺序都要保留。界面我不确定怎么做，请你来设计，做成打开即可用的单页工具。要求不使用任何外部依赖，不上传内容，也不自动保存输入。",
+    "diagnosticProjection" : {
+      "validation" : {
+        "valid" : true
+      },
+      "removedType" : "STRING",
+      "removedPath" : "task.kind",
+      "scope" : "仅隔离额外字段的影响；未改产品、原件或正式交付状态",
+      "removedValue" : "USER_INFORMATION"
+    },
+    "independentChecks" : {
+      "planImpacts" : null,
+      "missingRequiredSources" : [ ],
+      "bodyQuoteMismatches" : [ ]
+    }
+  }, {
+    "trace" : "tmp/natural-phase-protocol-20261022/traces/031.json",
+    "sha256" : "91a197fb4fbc5148716e1ea23618f6e6cef302b729d0eb5f63e7d0cae0ffcb50",
+    "jobId" : "HOLDOUT_TOOL_20261022_V21_GEN",
+    "strategyVersion" : "21",
+    "rootClosingBraceRecovered" : false,
+    "frozenValidation" : {
+      "valid" : false,
+      "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+      "message" : "Unrecognized field \"kind\" (class com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$EnhancementTask), not marked as ignorable (6 known properties: \"inputReadiness\", \"goal\", \"additions\", \"openDecisions\", \"deliverable\", \"requirements\"])\n at [Source: UNKNOWN; byte offset: #UNKNOWN] (through reference chain: com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$Enhancement[\"task\"]->com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$EnhancementTask[\"kind\"])",
+      "unknownProperty" : "kind",
+      "path" : "com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$Enhancement[\"task\"]->com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$EnhancementTask[\"kind\"]"
+    },
+    "optimizedPrompt" : "帮我做一个浏览器离线使用的小工具：把粘贴的多行文字去掉空行，只含空格或制表符的行也算空行。非空行的首尾空格、行内字符和原有顺序都要保留。界面我不确定怎么做，由你来设计，请给出一个简洁易用的方案。只交付一个完整HTML文件，不使用外部依赖，不上传内容，也不自动保存输入。",
+    "diagnosticProjection" : {
+      "validation" : {
+        "valid" : true
+      },
+      "removedType" : "STRING",
+      "removedPath" : "task.kind",
+      "scope" : "仅隔离额外字段的影响；未改产品、原件或正式交付状态",
+      "removedValue" : "USER_INFORMATION"
+    },
+    "independentChecks" : {
+      "planImpacts" : null,
+      "missingRequiredSources" : [ ],
+      "bodyQuoteMismatches" : [ ]
+    }
+  }, {
+    "trace" : "tmp/natural-phase-protocol-20261022/traces/034.json",
+    "sha256" : "3ee2db3bee311cec6ab476902b3321f74fa50e0488e8cd085f6332dffed4940a",
+    "jobId" : "PLAN_MAINTENANCE_V4_PLAN_GEN",
+    "strategyVersion" : "4",
+    "rootClosingBraceRecovered" : false,
+    "frozenValidation" : {
+      "valid" : false,
+      "exception" : "com.promptoptimizer.provider.domain.NaturalTaskReview$MissingSources",
+      "message" : "覆盖记录遗漏原始需求或实际题答来源",
+      "sourceRepairInstruction" : "\n任务理解的evidence尚未关联这些现有来源编号：actualAnswers.1、actualAnswers.2。请核对这些原始题答并补齐出处及对应正文锚点；已有正文确实覆盖时保留有效表达，不新增事实或确认。"
+    },
+    "optimizedPrompt" : "帮我写一则发给同事的网络维护通知，措辞和排版由你设计，语气保持适合内部同事沟通。\n\n维护安排与影响范围以以下已确认信息为准：维护时间为2026年10月30日18:30至20:00；维护期间办公区无线网络会中断，有线网络正常，远程访问不受影响。\n\n通知中不要承诺维护结束后无线网络会自动恢复连接，因为这一点尚不确定；可以提醒同事届时手动检查或重新连接无线网络。除上述内容外没有其他已确定的安排，不要编造额外的维护事项、影响范围、联系人、报修渠道或补偿措施。\n\n请输出一份可直接发送的通知正文，包含维护时间、受影响范围、不受影响的范围，以及维护结束后的连接提示。",
+    "independentChecks" : {
+      "planImpacts" : [ ],
+      "missingRequiredSources" : [ "actualAnswers.1", "actualAnswers.2" ],
+      "bodyQuoteMismatches" : [ ]
+    }
+  }, {
+    "trace" : "tmp/natural-phase-protocol-20261022/traces/035.json",
+    "sha256" : "ea41f00501ea89f96ce439e4ad70e50cdff4c9e17fe9fc42b0db8db3df258f0a",
+    "jobId" : "PLAN_MAINTENANCE_V4_PLAN_GEN",
+    "strategyVersion" : "4",
+    "rootClosingBraceRecovered" : true,
+    "frozenValidation" : {
+      "valid" : false,
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "message" : "正文检查混入了新的Plan提问"
+    },
+    "optimizedPrompt" : "帮我写一则发给同事的网络维护通知。维护安排与影响范围以我确认的信息为准，其他措辞你来定。\n\n请按以下已确认信息撰写：维护时间为2026年10月30日18:30至20:00；维护期间办公区无线网络会中断，有线网络正常，远程访问不受影响。通知中不要承诺维护结束后会自动恢复连接，因为这一点尚不确定。没有其他已确定的安排。\n\n通知的语气与排版由你设计，做到清楚、简洁、便于同事快速了解时间、影响范围和注意事项。",
+    "independentChecks" : {
+      "planImpacts" : [ {
+        "questionId" : "maintenance_schedule",
+        "whyAsk" : "用户尚未确认维护结束后是否自动重连，现有输入无法确定该事实。",
+        "answerDifference" : "若确认会自动重连，通知可写明恢复方式；若不确定或不会，通知须避免任何自动恢复承诺。"
+      }, {
+        "questionId" : "colleague_actions",
+        "whyAsk" : "用户未提供需要同事配合的事项或问题联系人。",
+        "answerDifference" : "若提供，通知可加入配合要求与联系方式；若不提供，通知不编造联系人或操作要求。"
+      } ],
+      "missingRequiredSources" : [ ],
+      "bodyQuoteMismatches" : [ ]
+    }
+  } ]
+}

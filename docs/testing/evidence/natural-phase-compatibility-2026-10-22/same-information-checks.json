@@ -1,0 +1,44 @@
+{
+  "checks": [
+    {
+      "caseId": "DEV_NOTICE",
+      "stage": "GENERATION",
+      "equal": true
+    },
+    {
+      "caseId": "DEV_MISSING_STATUS",
+      "stage": "GENERATION",
+      "equal": true
+    },
+    {
+      "caseId": "HOLDOUT_TOOL_20261022",
+      "stage": "GENERATION",
+      "equal": true
+    },
+    {
+      "caseId": "HOLDOUT_LIFE_20261022",
+      "stage": "GENERATION",
+      "equal": true
+    },
+    {
+      "caseId": "PLAN_MAINTENANCE",
+      "stage": "PLAN",
+      "equal": true,
+      "excludedTransportFields": [
+        "planningContext.contextId"
+      ],
+      "contextVersionEqual": true
+    },
+    {
+      "caseId": "PLAN_SUFFICIENT",
+      "stage": "PLAN",
+      "equal": true,
+      "excludedTransportFields": [
+        "planningContext.contextId"
+      ],
+      "contextVersionEqual": true
+    }
+  ],
+  "historyPassed": 5,
+  "disclosure": "直接增强请求逐字相同；Plan仅排除新分配上下文ID，内容摘要及业务字段相同。确认后使用本批真实Plan题号绑定同一答复，因此不宣称题目及题号相同。均为已见回归，不是新的独立留出。"
+}

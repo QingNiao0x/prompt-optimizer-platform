@@ -1,0 +1,327 @@
+{
+  "schemaVersion": 1,
+  "reviewType": "INTERNAL_VERSION_VISIBLE_SEEN_REGRESSION_WORK_REVIEW",
+  "reviewedAt": "2026-10-22",
+  "disclosure": {
+    "reviewer": "同开发团队AI辅助复核，非人工专家或独立第三方。",
+    "versionVisible": true,
+    "version": "24",
+    "previouslySeenCases": true,
+    "independentBlindReview": false,
+    "evidenceRole": "SEEN_PROTOCOL_REGRESSION",
+    "explanation": "本批题目和前批失败已被查看。本次只核对四份实际作品的要求保真、可用性和编辑负担，不作为新的独立留出、策略整体质量提升或模型能力上限证明。",
+    "additionalModelCalls": 0,
+    "browserExecutionByReviewer": false,
+    "productOrFrozenInputChanges": false
+  },
+  "sources": {
+    "cases": {
+      "path": "cases.json",
+      "sha256": "e9db10f60879e3249b31a27af8edfef418d158cc958b1c60b871e47034fb46b1"
+    },
+    "httpResults": {
+      "path": "http-results.json",
+      "sha256": "701ed3f38a5a988bcd8bde3ad4b4eb351ef88f687e6df9820d22792131b3f216"
+    },
+    "exactWorkToHttpContentMatch": true
+  },
+  "methodology": {
+    "verdicts": {
+      "USABLE": "按已确认信息可直接使用，不以可选润色扣为失败。",
+      "NEEDS_EDIT": "主体有用，但发送或使用前必须局部删改；格式负担与实质风险分别记录。",
+      "SERIOUS_ERROR": "将未提供资料升级为具体业务状态；不能原样对外发送。可用一句话修复也不消除原作品的信息风险。"
+    },
+    "priorities": [
+      "保留原定交付物及明确约束",
+      "不把信息缺失升级为事实不存在",
+      "落实用户授权的设计",
+      "说明必要编辑量及其原因"
+    ],
+    "limits": [
+      "不以篇幅、条目数或UI视觉效果判定胜负。",
+      "合理条件性建议不等同于新事实、既有学校规定或恢复保证。",
+      "未测实际打印分页和真人操作时间。",
+      "工具仅审交付范围；真实离线Edge功能验证由主代理另行负责。",
+      "本报告不重新评价Plan问题数量与影响，也不把成功交付通知等同于Plan全部质量通过。"
+    ]
+  },
+  "works": [
+    {
+      "id": "DEV_MISSING_STATUS_V24_EXEC",
+      "caseId": "DEV_MISSING_STATUS",
+      "path": "works/DEV_MISSING_STATUS_V24_EXEC.md",
+      "sha256": "62df5a5290a7578bd98e62eee5bb0c6d39e1874f06964ac9ea24e69bac0c10b0",
+      "verdict": "SERIOUS_ERROR",
+      "practicalUse": "正文简短礼貌、保留联调进行中和完成时间不确定，但必须删除或限定无依据的记录不存在表述后才能发给合作方。",
+      "strengths": [
+        "请求格式已确认、接口联调进行中、完成日期无法确定均保留。",
+        "没有将进度说明降级为补资料问卷，也没有承诺完成时间。"
+      ],
+      "issues": [
+        {
+          "severity": "HIGH",
+          "dimension": "information_state",
+          "evidence": [
+            {
+              "source": "cases.files.content",
+              "text": "本次资料没有提供压测记录或验收记录"
+            },
+            {
+              "source": "enhancedPrompt",
+              "text": "资料中没有压测记录或验收记录"
+            },
+            {
+              "source": "work",
+              "text": "目前暂无压测及验收相关记录"
+            }
+          ],
+          "finding": "原附件与增强要求保留了资料范围；最终消息去掉该范围，变成当前业务不存在相关记录的断言。未提供记录不能证明记录不存在。",
+          "necessaryEdit": "最小修改为删除“目前暂无压测及验收相关记录，”；如确需说明证据范围，写成本次提供资料中未包含相关记录。",
+          "editingBurden": "一处短句删除或改写；编辑量小，事实风险仍须单独标记。"
+        }
+      ],
+      "attribution": {
+        "observed": "无范围限定的不存在断言首次明确出现在下游作品；增强正文仍有“资料中”范围限定，且执行时附带了原始记录。",
+        "limitation": "这是本次链路的事实保真失败，不能只凭首次出现位置认定唯一根因，也不能据一次输出认定下游模型能力不足。",
+        "implication": "本次协议兼容成功不能视为已解决信息状态语义质量。"
+      },
+      "tokenUsage": {
+        "prompt": 189,
+        "completion": 57,
+        "total": 246
+      }
+    },
+    {
+      "id": "PLAN_MAINTENANCE_V24_EXEC",
+      "caseId": "PLAN_MAINTENANCE",
+      "path": "works/PLAN_MAINTENANCE_V24_EXEC.md",
+      "sha256": "63500f665f214b34e8adfe52307203dc2b388552cdc5fd185c6d8658675b390b",
+      "verdict": "USABLE",
+      "practicalUse": "可直接发给同事。所有确认后的维护事实保留，自动重连未知没有变成恢复保证，也没有编造发文团队、联系人或发文日期。",
+      "strengths": [
+        "完整列出2026年10月30日18:30—20:00、办公区无线中断、有线正常和远程不受影响。",
+        "自动重连保持不确定，通知仍然完成交付。",
+        "未添加前批作品中出现的未经确认的团队落款和发文日期。"
+      ],
+      "evidence": [
+        {
+          "source": "work",
+          "text": "维护结束后，设备是否会自动重新连接尚不确定。"
+        },
+        {
+          "source": "work",
+          "text": "如届时无线网络未恢复，请留意设备网络设置，必要时手动连接。"
+        },
+        {
+          "source": "enhancedPrompt",
+          "text": "紧急支持联系人及反馈方式我尚未提供，通知中不要编造联系人或反馈渠道。"
+        }
+      ],
+      "issues": [],
+      "nonIssues": [
+        "手动连接是带条件的使用建议，没有保证网络恢复。",
+        "星期五是日期对应的日历事实，不是新增维护安排。",
+        "标题与条列由用户委托设计，非额外交付物。"
+      ],
+      "necessaryEdit": "无必须修改；如希望更精确，可将无线网络未恢复润色为设备尚未重新连接，但不把这一措辞偏好计为硬性失败。",
+      "comparisonLimit": "相对于已见前批两份通知，当前样本没有未经确认的落款，属于本次作品改善；单份样本不能证明稳定版本收益。",
+      "tokenUsage": {
+        "prompt": 271,
+        "completion": 129,
+        "total": 400
+      }
+    },
+    {
+      "id": "HOLDOUT_LIFE_20261022_V24_EXEC",
+      "caseId": "HOLDOUT_LIFE_20261022",
+      "path": "works/HOLDOUT_LIFE_20261022_V24_EXEC.md",
+      "sha256": "3fb169559c4f19e34b243f4ffa064e5a2ac8b0ba97a502ad2b7ae3b1df848f24",
+      "verdict": "NEEDS_EDIT",
+      "practicalUse": "分类、装包和纸面提醒可直接帮助执行，没有先问问卷。仍需移除手机计时要求并明确不确定物品如何收尾，统一两套时间分配后更易照做。",
+      "strengths": [
+        "给出可启动的具体流程及紧凑清单，主要采用现有书包与纸。",
+        "没有硬编码语数英等未确认课程，也没有新增购买要求。",
+        "按时限进行动作分配，没有证据证明明示总时长超过30分钟。"
+      ],
+      "issues": [
+        {
+          "severity": "MEDIUM",
+          "dimension": "resource_constraint",
+          "evidence": [
+            {
+              "source": "enhancedPrompt",
+              "text": "整理用品只用我现在的书包和普通纸张，不买新东西。"
+            },
+            {
+              "source": "work",
+              "text": "手机计时30分钟，避免拖长。"
+            }
+          ],
+          "finding": "手机计时被写成固定步骤，违反仅使用书包和纸张、不引入额外应用前置条件的冻结要求。",
+          "necessaryEdit": "移除必须使用手机计时及依赖计时响起的结束语，按纸上阶段预算执行；不要通过再引入另一种新工具修补。",
+          "editingBurden": "删除或改写开场及结尾两处计时依赖。"
+        },
+        {
+          "severity": "LOW",
+          "dimension": "execution_completion",
+          "evidence": [
+            {
+              "source": "work",
+              "text": "**不确定**：先放一边，最后3分钟决定，不反复纠结。"
+            },
+            {
+              "source": "work",
+              "text": "### 28–30分钟：收尾"
+            },
+            {
+              "source": "work",
+              "text": "计时结束，不再追加任务。"
+            }
+          ],
+          "finding": "前文承诺在最后3分钟处理不确定堆，但最后阶段仅标2分钟且列出的收尾动作没有处理该堆；清单也没有补上去向。未决物品可能留在流程之外。",
+          "necessaryEdit": "在既有收尾预算内明确按实际次日需要决定带或留；仍不能确定的写进纸质待确认提醒，不阻断其他装包动作。",
+          "editingBurden": "补一条收尾动作并统一相应阶段标时，不追加问卷。"
+        },
+        {
+          "severity": "LOW",
+          "dimension": "schedule_consistency",
+          "evidence": [
+            {
+              "source": "work",
+              "text": "### 3–10分钟：全部倒出，快速分堆"
+            },
+            {
+              "source": "work",
+              "text": "**第1步 3分钟**：全部掏出，分四堆"
+            },
+            {
+              "source": "work",
+              "text": "### 10–18分钟：处理“今晚必须处理”堆"
+            },
+            {
+              "source": "work",
+              "text": "**第2步 7分钟**：处理“今晚处理”堆"
+            }
+          ],
+          "finding": "详细版分堆7分钟、处理8分钟，简表对应3分钟和7分钟；两份执行依据不一致，但都没有明示超时。",
+          "necessaryEdit": "保留一份清单作为执行依据，时长与详细说明统一；不需要人为用满30分钟。",
+          "editingBurden": "两处时长统一，或去掉重复详细版。"
+        }
+      ],
+      "timing": {
+        "detailedStagesMinutes": [
+          3,
+          7,
+          8,
+          6,
+          4,
+          2
+        ],
+        "detailedCalculation": "(3-0)+(10-3)+(18-10)+(24-18)+(28-24)+(30-28)=3+7+8+6+4+2=30分钟",
+        "checklistExplicitStepsMinutes": [
+          3,
+          7,
+          6,
+          4,
+          2
+        ],
+        "checklistCalculation": "3+7+6+4+2=22分钟，开始前准备未另标时；若沿用详细版开场3分钟，则为25分钟。",
+        "result": "未发现明示总时长超过30分钟。真实执行耗时未测，不将标时当成实际完成保证。"
+      },
+      "nonIssues": [
+        "需要家长签字的纸是条件性分类，不据此推断作品编造用户年级或学校规定。",
+        "普通纸写三行实际待办是落实用户委托的提醒设计，非要求先填大量空表。",
+        "一页清单实际打印分页未验证，不仅因另有说明段落就宣称超页。"
+      ],
+      "attribution": {
+        "observed": "增强正文保留了资源和30分钟限制；手机前置与收尾遗漏出现在下游作品。增强文本整体接近原文，未展示新增可检查交付指引的明显收益。",
+        "limitation": "本批只改协议读取边界，不是正文指导对照试验；不能凭该样本将问题归因于24兼容规则或证明增强整体无益。"
+      },
+      "tokenUsage": {
+        "prompt": 97,
+        "completion": 884,
+        "total": 981
+      }
+    },
+    {
+      "id": "HOLDOUT_TOOL_20261022_V24_EXEC",
+      "caseId": "HOLDOUT_TOOL_20261022",
+      "path": "works/HOLDOUT_TOOL_20261022_V24_EXEC.md",
+      "sha256": "d74a1ce33abaf11f3698a6e0ea8bbc1303e6138c02a2ebb237f1484716ac7ef3",
+      "verdict": "NEEDS_EDIT",
+      "reviewScope": "交付范围与外部说明；功能、离线性和存储行为由主代理进行真实离线Edge检查。",
+      "practicalUse": "已提供一个完整HTML代码围栏。需要删除围栏外介绍、功能说明及优化建议，保留唯一文件；本复核不据源码或标题宣称功能已通过。",
+      "strengths": [
+        "只有一个完整HTML文件围栏，没有要求拆分项目、安装依赖或另交多个文件。",
+        "输入区、处理按钮、结果区和复制入口对应增强要求中委托的界面设计。"
+      ],
+      "issues": [
+        {
+          "severity": "LOW",
+          "dimension": "delivery_format",
+          "evidence": [
+            {
+              "source": "enhancedPrompt",
+              "text": "只交付一个完整HTML文件"
+            },
+            {
+              "source": "work",
+              "text": "这是您需要的离线小工具HTML文件。"
+            },
+            {
+              "source": "work",
+              "text": "### 核心功能与操作说明"
+            },
+            {
+              "source": "work",
+              "text": "**优化建议：** 您可以根据需要调整输入框的默认提示文字"
+            }
+          ],
+          "finding": "唯一HTML围栏前后附加了实质性介绍、使用说明和优化建议，不符合只交付HTML的范围。代码围栏本身由答案卡允许。",
+          "necessaryEdit": "删除围栏外文字；保留完整HTML内容，围栏可保留。",
+          "editingBurden": "一次选择保留唯一代码块即可，无需为此重写核心实现。"
+        }
+      ],
+      "runtimeValidation": {
+        "status": "DELEGATED_TO_PARENT",
+        "reviewerDidNotExecute": true,
+        "claim": "本文件不提供浏览器功能通过结论；应联合主代理独立的Edge证据解释。"
+      },
+      "attribution": {
+        "observed": "增强要求明确保持只交付HTML，额外说明来自下游作品。",
+        "limitation": "格式越界不是解析兼容失败，也不能由它推断工具核心功能失效。"
+      },
+      "tokenUsage": {
+        "prompt": 135,
+        "completion": 3542,
+        "total": 3677
+      }
+    }
+  ],
+  "summary": {
+    "observedWorkVerdicts": {
+      "USABLE": 1,
+      "NEEDS_EDIT": 2,
+      "SERIOUS_ERROR": 1
+    },
+    "seriousIssue": "进度作品把本次未提供记录升级为当前不存在记录。",
+    "usefulButNeedsEditing": [
+      "生活流程需移除手机前置、补收尾并统一时间分配。",
+      "HTML需去除围栏外说明，功能另看Edge验证。"
+    ],
+    "successfulWork": "Plan确认后的网络维护通知可直接使用。",
+    "interpretation": [
+      "四份作品的协议成功与语义质量必须分开：本批不能宣称实际作品全面改善。",
+      "进度信息状态、生活资源边界和HTML只交文件均是既有明确要求，不需要为这些题新增职业场景模板。",
+      "不因单份成功或失败追加质量重试；保留原件和本次限定结论。",
+      "必要编辑量与错误严重性不是同一量纲：一句不存在记录可造成事实误报，删除大段HTML外说明则主要是格式负担。",
+      "本次复核没有新增调用、改变冻结题目或启动后续开发。"
+    ],
+    "executionTokenTotals": {
+      "prompt": 692,
+      "completion": 4612,
+      "total": 5304,
+      "scope": "仅上述四份下游作品，不包含增强、Plan或批次其余调用，不用于推算整个方案成本。"
+    }
+  }
+}

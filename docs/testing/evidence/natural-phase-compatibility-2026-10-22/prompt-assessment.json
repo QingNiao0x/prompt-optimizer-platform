@@ -1,0 +1,447 @@
+{
+  "schemaVersion": 1,
+  "batch": "natural-phase-compatibility-2026-10-22",
+  "reviewedAt": "2026-10-22",
+  "assessmentKind": "INTERNAL_AI_SEEN_REGRESSION_PROMPT_AND_PLAN_REVIEW",
+  "reviewer": {
+    "agent": "enhancement_agents_diagnosis",
+    "versionVisible": true,
+    "disclosure": "内部 AI 只读复核，评审时可见版本、前批结果及本批全部已见题目。评审者参与前批留出题编写、工程审阅和提示词复核；本批不是匿名人工评审、外部专业盲测或独立留出验证。未调用评审模型。"
+  },
+  "evidence": {
+    "cases": "docs/testing/evidence/natural-phase-compatibility-2026-10-22/cases.json",
+    "protocol": "docs/testing/evidence/natural-phase-compatibility-2026-10-22/protocol.json",
+    "currentResults": "tmp/natural-phase-compatibility-20261022/results",
+    "previousResults": "tmp/natural-phase-protocol-20261022/results",
+    "previousAssessment": "docs/testing/evidence/natural-phase-protocol-2026-10-22/prompt-assessment.json",
+    "reviewedJobs": [
+      "DEV_NOTICE_V24_GEN",
+      "DEV_MISSING_STATUS_V24_GEN",
+      "HOLDOUT_TOOL_20261022_V24_GEN",
+      "HOLDOUT_LIFE_20261022_V24_GEN",
+      "PLAN_MAINTENANCE_V24_PLAN",
+      "PLAN_SUFFICIENT_V24_PLAN",
+      "PLAN_MAINTENANCE_V24_PLAN_GEN"
+    ],
+    "excluded": "不执行下游作品，不运行脚本或模型，不重新评价未纳入本批的办公题、交接题，也不改写前批失败记录。",
+    "evidenceRole": "全部为 SEEN_PROTOCOL_REGRESSION；名称中保留 HOLDOUT 只是历史案例 ID，本批不再是未见留出。",
+    "comparisonControl": "本批 V24 只改变无权威诊断字段的读取兼容，指导与 V21 逐字相同。直接增强沿用前批原文和资料；Plan 使用本批新生成的实际问题绑定，同一 answerBundle 提供相同事实，但题目与题号集合并非前批完全相同。",
+    "interpretationRules": [
+      "200 表示最终接口交付，不代表首轮无重试或质量合格。",
+      "前批失败臂没有最终正文，只能作交付对照，不给其虚构语义分数。",
+      "单轮措辞与设计差异不证明诊断兼容改变了模型能力。",
+      "每个题答的语义可用同一正文集中覆盖，不要求把重复答案机械复制三次。",
+      "本文件只核查公开输入、题答与最终正文；内部逐来源覆盖映射由工程检查和实际调用原件补充，不能从公开结果反推完整内部记录。"
+    ]
+  },
+  "summary": {
+    "reviewed": 7,
+    "finalHttp200": 7,
+    "finalFailed": 0,
+    "directGenerationReturned": "4/4",
+    "planningReturned": "2/2",
+    "confirmedPlanGenerationReturned": "1/1",
+    "firstAttemptUsability": "本文件未审计逐次调用账本，不能从最终 7/7 交付声称全部首稿成功或零协议重试。",
+    "semanticResult": "本批成功正文保留了冻结任务的核心范围、对象和信息状态，未发现可据这些正文确认的新增严重事实捏造、任务替换或重要条件丢失。",
+    "substantiveCompletion": "工具题有合理界面设计指引；生活题主要重述原需求，较前批 V21 的动作、顺序和耗时指引更少。没有证据支持整体增强质量明显提升。",
+    "planResult": "核心时间与影响范围值得询问；已委托措辞/排版没有重问，充分翻译正确零问。联系人第三问仍未证明是核心结果的重要未知，且必要性措辞较前批更强；这一已见限制未解决。",
+    "adoptionBoundary": "可为诊断兼容的交付回归验证提供支持，不能凭本文件宣布 V24 通用质量优于第四版、Plan 提问优化完成或产品整体发布通过。",
+    "repeatedFailure": "本批没有最终协议失败或已确认新严重语义失败；前批低价值联系人问题再次出现，属于持续质量限制，不等同同一假设连续严重失败。不得为追求质量通过继续重采同题。"
+  },
+  "directCases": [
+    {
+      "id": "DEV_NOTICE",
+      "job": "DEV_NOTICE_V24_GEN",
+      "status": 200,
+      "evidenceRole": "SEEN_PROTOCOL_REGRESSION",
+      "requirements": [
+        {
+          "requirement": "群消息仅正文",
+          "quote": "只输出能直接发出的正文，不要附加解释、标题或备注。",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "一般成员和新成员分别对应截止时间",
+          "quote": "一般成员周五前回复；新成员周四前回复",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "线上免到场时间与现场材料包姓名例外同时保留",
+          "quote": "线上参加的人不用填到场时间，不过选择现场材料包的仍要填领取人姓名",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "场务志愿者独立免回复截止时间",
+          "quote": "场务志愿者不适用上述回复截止时间，另按负责人通知。",
+          "assessment": "RETAINED"
+        }
+      ],
+      "informationState": "没有新增实际日期、负责人姓名或确认状态。措辞重排没有改变对象与例外。",
+      "substantiveCompletion": "原始任务已充分；维持规则可视为非退化，不要求强行扩写。",
+      "comparisons": [
+        {
+          "against": "DEV_NOTICE_V21_GEN",
+          "outcome": "TIE",
+          "quote": "适用对象和例外必须原样保留，不得改动或省略",
+          "reason": "V24 的必须保留全部适用对象和例外与前批21含义相同。"
+        },
+        {
+          "against": "DEV_NOTICE_V4_GEN",
+          "outcome": "TIE",
+          "quote": "保留适用对象和例外，不要改动规则含义。",
+          "reason": "第四版与24均保留全部规则，无明确实质质量差异。"
+        },
+        {
+          "against": "DEV_NOTICE_V22_GEN",
+          "outcome": "LESS_REPETITION_WITH_CORE_REQUIREMENTS_RETAINED",
+          "quote": "一般成员与新成员的回复截止时间要分别对应清楚",
+          "reason": "24 不再重复解释已列规则；只是表达成本差异，不能单独宣称质量提升。"
+        }
+      ]
+    },
+    {
+      "id": "DEV_MISSING_STATUS",
+      "job": "DEV_MISSING_STATUS_V24_GEN",
+      "status": 200,
+      "evidenceRole": "SEEN_PROTOCOL_REGRESSION",
+      "sourceQuote": "本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。",
+      "requirements": [
+        {
+          "requirement": "交付可发给合作方的进度说明",
+          "quote": "帮我写一段可以直接发给合作方的进度说明。",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "请求格式已确认、联调仍进行中",
+          "quote": "请求格式已确认，接口联调仍在进行",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "记录缺失仅限提供的资料",
+          "quote": "资料中没有压测记录或验收记录",
+          "assessment": "SOURCE_SCOPE_RETAINED"
+        },
+        {
+          "requirement": "用户确实不知道完成时间",
+          "quote": "接口联调什么时候完成我现在也拿不准",
+          "assessment": "CONFIRMED_UNKNOWN_RETAINED"
+        },
+        {
+          "requirement": "不写死完成时间",
+          "quote": "不要给出具体完成时间，也不要把话说死",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "原材料无其他对外承诺",
+          "quote": "也没有已确认的完成日期或其他对外承诺",
+          "assessment": "INFORMATION_STATE_RETAINED"
+        }
+      ],
+      "informationState": "资料中限定证据范围，未写成尚未压测、未验收或客观不存在记录；没有新增完成日期、联系人或保证。",
+      "substantiveCompletion": "把现有事实整合到可发送正文指导，增加礼貌、专业、简短表达；没有实际新增的执行步骤，也没有要求先补记录。",
+      "residualRisk": "V24 不像前批22/23那样显式禁止所有新增对外承诺，但原材料状态与别把话说死仍保留；不能只凭措辞差异判定已新增承诺，实际作品仍应核对。",
+      "comparisons": [
+        {
+          "against": "DEV_MISSING_STATUS_V4_GEN",
+          "outcome": "LOCAL_INFORMATION_STATE_IMPROVEMENT",
+          "quote": "目前没有压测记录或验收记录",
+          "reason": "第四版将资料未提供扩大为目前不存在；24恢复资料范围。这是已见单题局部差异，不能归因于解析兼容提升了生成能力。"
+        },
+        {
+          "against": "DEV_MISSING_STATUS_V21_GEN",
+          "outcome": "LOCAL_REDUCTION_OF_FUTURE_COMMITMENT_SUGGESTION",
+          "quote": "可以说明当前进展和后续会继续推进",
+          "reason": "24 不再建议后续继续推进；二者都保留资料范围，不据此认定全局收益。"
+        },
+        {
+          "against": "DEV_MISSING_STATUS_V22_GEN",
+          "outcome": "BROADLY_TIED_WITH_DIFFERENT_EXPLICITNESS",
+          "quote": "不要给出确定日期或完成承诺",
+          "reason": "22对新增承诺的限制更明确，24的实际信息状态仍正确；仅凭提示词不能证明谁的实际作品更好。"
+        }
+      ]
+    },
+    {
+      "id": "HOLDOUT_TOOL_20261022",
+      "job": "HOLDOUT_TOOL_20261022_V24_GEN",
+      "status": 200,
+      "evidenceRole": "SEEN_PROTOCOL_REGRESSION",
+      "requirements": [
+        {
+          "requirement": "浏览器离线，完整单 HTML",
+          "quote": "帮我做一个浏览器离线使用的小工具",
+          "supportingQuote": "只交付一个完整HTML文件",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "删除空行及只含空格/制表符行",
+          "quote": "把粘贴的多行文字去掉空行，只含空格或制表符的行也算空行。",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "保留非空行首尾空格、行内字符和顺序",
+          "quote": "非空行的首尾空格、行内字符和原有顺序都要保留。",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "界面委托 AI 设计",
+          "quote": "界面由你设计",
+          "assessment": "DELEGATION_RETAINED"
+        },
+        {
+          "requirement": "无外部依赖、上传和自动保存",
+          "quote": "不使用外部依赖，不上传内容，也不自动保存输入。",
+          "assessment": "RETAINED"
+        }
+      ],
+      "informationState": "未把界面设计委托扩大为清理规则变更，没有用户已选框架、服务器、账号或存储的断言。",
+      "substantiveCompletion": {
+        "quote": "包含输入区、处理按钮和结果区，并让用户能方便地复制处理结果。",
+        "assessment": "合理落实委托设计，比只说界面直观更具体；复制便利是允许的次要设计，不作为主要质量胜负。"
+      },
+      "comparisons": [
+        {
+          "against": "HOLDOUT_TOOL_20261022_V21_GEN",
+          "previousStatus": 502,
+          "outcome": "DELIVERY_RECOVERY_SEMANTIC_COMPARISON_UNAVAILABLE",
+          "reason": "前批21最终 RESULT_INVALID 没有最终提示词；24成功且保留核心要求，只能确认本作业交付恢复。"
+        },
+        {
+          "against": "HOLDOUT_TOOL_20261022_V4_GEN",
+          "outcome": "CORE_REQUIREMENTS_TIED_WITH_MORE_UI_GUIDANCE",
+          "quote": "界面我不确定怎么做，请你来设计，做到打开即用、操作直观。",
+          "reason": "24增加正常界面构成，未改变核心功能。不能据此认定作品更正确。"
+        },
+        {
+          "against": "HOLDOUT_TOOL_20261022_V22_GEN",
+          "outcome": "TIE_ON_CORE_REQUIREMENTS",
+          "quote": "一个用于粘贴和查看文本的输入区域、一个明确的处理按钮，以及处理结果的展示区域",
+          "reason": "两者都给出合理界面构成，22对外部依赖举例更细；没有重大语义胜负。"
+        }
+      ],
+      "boundary": "本文件未运行 HTML，不能从提示词保真推定字符保留、离线和不保存的实际实现已通过。"
+    },
+    {
+      "id": "HOLDOUT_LIFE_20261022",
+      "job": "HOLDOUT_LIFE_20261022_V24_GEN",
+      "status": 200,
+      "evidenceRole": "SEEN_PROTOCOL_REGRESSION",
+      "requirements": [
+        {
+          "requirement": "30 分钟以内",
+          "quote": "设计一个30分钟内能完成的整理流程",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "只用现有书包和普通纸张，不买新东西",
+          "quote": "整理用品只用我现在的书包和普通纸张，不买新东西。",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "一页、明晚能照做",
+          "quote": "最后给我一页明晚就能照着做的清单",
+          "assessment": "RETAINED"
+        },
+        {
+          "requirement": "细节由 AI 完成，不先问卷",
+          "quote": "细节由你来安排，不要让我先回答一堆问题。",
+          "assessment": "DELEGATION_RETAINED"
+        }
+      ],
+      "informationState": "没有虚构年级、课程表、现有物品、学校规则或用户习惯。",
+      "substantiveCompletion": "基本重述原需求，没有增加具体动作、顺序、时间分配或完成检查。用户已经提供关键范围，非扩写本身不是失败；但不能将这份正文认作实质补全明显提升。",
+      "comparisons": [
+        {
+          "against": "HOLDOUT_LIFE_20261022_V21_GEN",
+          "outcome": "LESS_CONCRETE_EXECUTION_GUIDANCE",
+          "quote": "每一步做什么、按什么顺序做、每步大概花多久",
+          "additionalQuote": "说明怎么用普通纸张做简单的分类标记或临时收纳",
+          "reason": "前批21有帮助执行的具体指导，24未保留。硬要求未遗漏，作品收益仍需实际对照。"
+        },
+        {
+          "against": "HOLDOUT_LIFE_20261022_V4_GEN",
+          "outcome": "TIE_ON_CORE_REQUIREMENTS",
+          "quote": "请给我一份一页纸的清单，明晚就能直接照着做。",
+          "reason": "两者保留要求，主要重新表达。"
+        },
+        {
+          "against": "HOLDOUT_LIFE_20261022_V22_GEN / HOLDOUT_LIFE_20261022_V23_GEN",
+          "outcome": "TIE",
+          "quote": "细节你来安排，不要让我先回答一堆问题。",
+          "reason": "与22/23同样主要重述，缺少可稳定识别的新增补全收益。"
+        }
+      ]
+    }
+  ],
+  "planCases": [
+    {
+      "id": "PLAN_MAINTENANCE",
+      "job": "PLAN_MAINTENANCE_V24_PLAN",
+      "status": 200,
+      "evidenceRole": "SEEN_PROTOCOL_REGRESSION",
+      "questionCount": 3,
+      "questions": [
+        {
+          "id": "maintenanceSchedule",
+          "quote": "本次网络维护的具体时间安排是什么（开始时间、结束时间、日期）？",
+          "assessment": "IMPORTANT_UNKNOWN",
+          "reason": "实际日期与起止时间尚未提供，直接决定通知核心事实；不能由模型编造。"
+        },
+        {
+          "id": "impactScope",
+          "quote": "维护期间会影响哪些网络服务或范围（如全公司断网、仅某楼层、仅内网/外网、仅某系统）？",
+          "assessment": "IMPORTANT_UNKNOWN",
+          "reason": "不同影响范围实质改变接收者需要知道的内容。括号和 examples 是问题举例，没有自动当作实际影响写入最终正文。"
+        },
+        {
+          "id": "contactAndFallback",
+          "quote": "维护期间如需紧急支持，同事应联系谁或通过什么方式反馈？",
+          "hintQuote": "通知通常需要给出应急联系方式，缺失会使通知不完整；不同联系人改变通知落款与指引。",
+          "assessment": "OPTIONAL_INFORMATION_NOT_ESTABLISHED_AS_IMPORTANT_UNKNOWN",
+          "severity": "QUALITY_LIMITATION",
+          "reason": "用户只保留维护安排和影响事实，没有要求支持渠道。联系方式存在时有用，但“缺失会使通知不完整”把常见模板内容提升为必需，并未证明不能完成核心通知。不能据题号中 Fallback 推定系统提出了额外应急方案。"
+        }
+      ],
+      "delegation": {
+        "quote": "措辞由助手拟定",
+        "assessment": "没有追问已委托的措辞、语气和排版。"
+      },
+      "comparisons": [
+        {
+          "against": "PLAN_MAINTENANCE_V21_PLAN",
+          "outcome": "NO_QUESTION_VALUE_IMPROVEMENT",
+          "quote": "通知通常需要提供联系渠道，是否提供及具体对象由用户决定。",
+          "reason": "两者均三题且第三题为联系人；24进一步声称缺失使通知不完整，必要性论证比前批更绝对，但实际最终生成没有被阻塞。"
+        },
+        {
+          "against": "PLAN_MAINTENANCE_V4_PLAN",
+          "outcome": "NO_CLEAR_GAIN",
+          "quote": "维护期间需要同事配合做什么，或遇到问题联系谁？",
+          "reason": "第四版第三题含可能重要的配合事项，24聚焦可选联系人；不能把少一个子问题或措辞差异自动算提问改善。"
+        }
+      ]
+    },
+    {
+      "id": "PLAN_SUFFICIENT",
+      "job": "PLAN_SUFFICIENT_V24_PLAN",
+      "status": 200,
+      "evidenceRole": "SEEN_PROTOCOL_REGRESSION",
+      "questionCount": 0,
+      "quote": "没有需要用户补充决定的重要未知信息。",
+      "assessment": "PASS_NONDEGRADATION",
+      "reason": "保留简体中文、一句、无解释/日期/时区新增的充分任务，没有追问时间背景或翻译风格。",
+      "comparison": "与前批第四版和21的零问题结果相持；这不是24独有收益。"
+    }
+  ],
+  "confirmedPlanGeneration": {
+    "id": "PLAN_MAINTENANCE",
+    "job": "PLAN_MAINTENANCE_V24_PLAN_GEN",
+    "status": 200,
+    "evidenceRole": "SEEN_PROTOCOL_REGRESSION",
+    "binding": {
+      "planIdMatches": true,
+      "questionIds": [
+        "maintenanceSchedule",
+        "impactScope",
+        "contactAndFallback"
+      ],
+      "description": "请求使用本批 Plan 返回的 planId、规划上下文及三个实际题目；每项答案均为冻结的完整 answerBundle。未用前批题号冒充本批已确认问题。",
+      "repeatedAnswerLimitation": "三个回答内容相同，因此本批可核对三项实际提交与正文共同覆盖，却不能单凭该例证明不同内容的三个答案均被独立正确解释；内部来源独立性仍需工程测试。"
+    },
+    "actualAnswers": [
+      {
+        "questionId": "maintenanceSchedule",
+        "question": "本次网络维护的具体时间安排是什么（开始时间、结束时间、日期）？",
+        "answerScope": "完整 answerBundle，包含全部日期、网络范围、重连未知与委托信息",
+        "landing": "全部通过下方共同覆盖表落入正文，正文不需重复三遍。"
+      },
+      {
+        "questionId": "impactScope",
+        "question": "维护期间会影响哪些网络服务或范围（如全公司断网、仅某楼层、仅内网/外网、仅某系统）？",
+        "answerScope": "完整 answerBundle，与第一项文字相同但为独立实际题答",
+        "landing": "办公区无线中断、有线正常、远程不受影响分别保留，没有采用问题举例里的全公司断网。"
+      },
+      {
+        "questionId": "contactAndFallback",
+        "question": "维护期间如需紧急支持，同事应联系谁或通过什么方式反馈？",
+        "answerScope": "完整 answerBundle；没有实际联系人/反馈渠道；明确无其他已确定安排",
+        "landing": "未编造联系方式，说明尚未提供并继续生成通知；没有把未提供改写为不存在联系人。"
+      }
+    ],
+    "coverage": [
+      {
+        "source": "维护时间是2026年10月30日18:30到20:00。",
+        "quote": "维护时间为2026年10月30日18:30到20:00",
+        "assessment": "RETAINED"
+      },
+      {
+        "source": "办公区无线网络会中断",
+        "quote": "维护期间办公区无线网络会中断",
+        "assessment": "OBJECT_AND_CONDITION_RETAINED"
+      },
+      {
+        "source": "有线网络正常",
+        "quote": "有线网络正常",
+        "assessment": "INDEPENDENT_UNAFFECTED_SCOPE_RETAINED"
+      },
+      {
+        "source": "远程访问不受影响",
+        "quote": "远程访问不受影响",
+        "assessment": "INDEPENDENT_UNAFFECTED_SCOPE_RETAINED"
+      },
+      {
+        "source": "结束后是否自动重连还不确定",
+        "quote": "结束后是否自动重连尚不确定",
+        "assessment": "CONFIRMED_UNKNOWN_RETAINED"
+      },
+      {
+        "source": "不要承诺自动恢复连接",
+        "quote": "通知中不要承诺维护结束后会自动恢复连接",
+        "assessment": "PROHIBITION_RETAINED"
+      },
+      {
+        "source": "没有其他已确定安排",
+        "quote": "除上述内容外没有其他已确定的安排。",
+        "assessment": "CONFIRMATION_SCOPE_RETAINED"
+      },
+      {
+        "source": "通知语气与排版由AI设计",
+        "quote": "其他措辞、语气与排版由你设计。",
+        "assessment": "DELEGATION_RETAINED"
+      }
+    ],
+    "missingInformation": {
+      "quote": "紧急支持联系人及反馈方式我尚未提供，通知中不要编造联系人或反馈渠道。",
+      "assessment": "未提供状态正确，非客观不存在；没有要求先补联系人再起草整个通知。"
+    },
+    "substantiveCompletion": "将已确认信息整合为可直接执行的通知要求；后段再次复述时间/网络影响/重连未知，属于轻度重复而非新增实质内容。",
+    "formatting": "JSON 解码后为真实换行，没有字面量反斜杠+n；不能把工具展示的转义形式误判为产品文案缺陷。",
+    "comparison": {
+      "against": "PLAN_MAINTENANCE_V21_PLAN_GEN",
+      "outcome": "TIE_ON_CORE_REQUIREMENTS_AND_INFORMATION_STATE",
+      "quote": "维护结束后是否会自动重连尚不确定，通知中不要承诺自动恢复连接。",
+      "reason": "前批21也完整保留核心信息；24在新实际题目绑定下同样成功。前批4最终失败只构成交付对照，不能因此将24判为语义胜利。"
+    }
+  },
+  "qualityLimits": [
+    {
+      "id": "LOW_VALUE_CONTACT_QUESTION",
+      "scope": "维护 Plan",
+      "evidence": "缺失会使通知不完整",
+      "recommendation": "后续如用户授权优化 Plan，以结果影响评估可选联系渠道，不增加针对通知场景的新固定禁令；本批不修改指导。"
+    },
+    {
+      "id": "SUBSTANTIVE_COMPLETION_NOT_STABLE",
+      "scope": "生活流程题",
+      "evidence": "最后给我一页明晚就能照着做的清单，细节由你来安排",
+      "recommendation": "报告为保真但补全收益未证实；不要靠篇幅、更换框架名或重复采样宣称提升。"
+    },
+    {
+      "id": "DELIVERY_IS_NOT_QUALITY",
+      "scope": "V24 整体",
+      "evidence": "7 个 API 作业最终均返回200",
+      "recommendation": "与协议逐次原件、工程反向用例及实际作品结果分开报告，保留前批21失败和本批已见题属性。"
+    }
+  ],
+  "overallConclusion": "本批 V24 七份最终结果可用，提示词静态检查未见新增严重要求或事实状态退步；工具题恢复交付是有价值的可靠性信号。实际补全和 Plan 提问价值仍不稳定，不能据单轮已见题结果宣称通用质量提升。"
+}

@@ -1,0 +1,125 @@
+{
+  "scope": "只读诊断本批两次有界协议重试；读取四份传输原件、结果及日志。未修改生产代码、冻结输入或脚本；零模型调用。",
+  "method": "按当前冻结Java检查顺序核对原句包含关系、必需来源集合和HTTP结果；不是新增JVM回放或完整质量验收。日志未输出具体validationReason，不把可定位的直接拒绝条件表述为生成偏差的唯一根因。",
+  "conclusion": "两次首稿失败均在既有来源/覆盖保护范围内，不是24未知诊断字段兼容失败。两次修复均HTTP 200；工具题修复稿含task.kind仍成功，提供24兼容生效的真实证据。单批样本不能证明24语义优于第四版或判断回退概率。",
+  "diagnoses": [
+    {
+      "jobId": "HOLDOUT_TOOL_20261022_V24_GEN",
+      "first": {
+        "trace": "tmp/natural-phase-compatibility-20261022/traces/003.json",
+        "sha256": "7dc492a534bec809fa240df00189054b6ed39d120ab29382a99e665c0b419e71",
+        "jobId": "HOLDOUT_TOOL_20261022_V24_GEN",
+        "finishReason": "stop",
+        "invalidEvidence": [],
+        "missingRequiredSources": [],
+        "bodyQuoteMismatches": [
+          {
+            "path": "task.requirements[1].bodyQuotes[0]",
+            "quote": "非空空行的首尾空格、行内字符和原有顺序都要保留"
+          }
+        ],
+        "extraTaskFields": {}
+      },
+      "repair": {
+        "trace": "tmp/natural-phase-compatibility-20261022/traces/004.json",
+        "sha256": "ac6d6cdf1928df5f0882f664106dfb29507bc10278f4c939edca41a40445002e",
+        "jobId": "HOLDOUT_TOOL_20261022_V24_GEN",
+        "finishReason": "stop",
+        "invalidEvidence": [],
+        "missingRequiredSources": [],
+        "bodyQuoteMismatches": [],
+        "extraTaskFields": {
+          "kind": "EXECUTION_CHOICE"
+        }
+      },
+      "result": {
+        "status": 200,
+        "chainVersion": "24",
+        "framework": "APE"
+      },
+      "directFailure": {
+        "kind": "已知正文覆盖字段逐字不匹配",
+        "field": "task.requirements[1].bodyQuotes[0]",
+        "actualQuote": "非空空行的首尾空格、行内字符和原有顺序都要保留",
+        "bodySentence": "非空行的首尾空格、行内字符和原有顺序都要保留。",
+        "detail": "内部锚点重复一个“空”，正文和原始要求均正确，所有引用来源可匹配且无缺失必需来源。NaturalTaskReview.validateCoverage按body.contains拒绝此锚点；不涉及未知字段兼容。",
+        "code": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java:102"
+      },
+      "repairOutcome": "004修正锚点，并在用户委托的界面设计范围内增加输入区、处理按钮、结果区和复制结果。额外task.kind=\"EXECUTION_CHOICE\"是无权威标量，24正确忽略；结果正常交付。",
+      "attribution": "模型内部引用协议错误与既有逐字保护共同造成一次重试；未发现此样本正文有对应字符保留语义缺失。不能据单次采样认定24新增语义退步或将所有近似引用放行。"
+    },
+    {
+      "jobId": "PLAN_MAINTENANCE_V24_PLAN_GEN",
+      "first": {
+        "trace": "tmp/natural-phase-compatibility-20261022/traces/007.json",
+        "sha256": "74c897cf92f952df830a8de98510916430b5de3cfbede8e245f00a772333e8e4",
+        "jobId": "PLAN_MAINTENANCE_V24_PLAN_GEN",
+        "finishReason": "stop",
+        "invalidEvidence": [],
+        "missingRequiredSources": [
+          "actualAnswers.1",
+          "actualAnswers.2"
+        ],
+        "bodyQuoteMismatches": [],
+        "extraTaskFields": {}
+      },
+      "repair": {
+        "trace": "tmp/natural-phase-compatibility-20261022/traces/008.json",
+        "sha256": "27714d4ea5995cc08d208852bd66a5f2706be8fddc8e8413d3e19781378bed85",
+        "jobId": "PLAN_MAINTENANCE_V24_PLAN_GEN",
+        "finishReason": "stop",
+        "invalidEvidence": [],
+        "missingRequiredSources": [],
+        "bodyQuoteMismatches": [],
+        "extraTaskFields": {}
+      },
+      "result": {
+        "status": 200,
+        "chainVersion": "24",
+        "framework": "APE"
+      },
+      "directFailure": {
+        "kind": "全部实际题答来源未关联",
+        "field": "task.requirements[*].evidence[*].sourceId",
+        "missing": [
+          "actualAnswers.1",
+          "actualAnswers.2"
+        ],
+        "detail": "三道真实题答回答文本相同，首稿仅引用actualAnswers.0；服务端要求每个实际题答来源均保留，不能按同文合并。008的系统修复提示明确列出了缺失编号，和MissingSources一致。",
+        "code": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java:64"
+      },
+      "repairOutcome": "008在各条要求evidence中关联全部actualAnswers.0/.1/.2，正文锚点均可匹配，没有混入planImpacts，最终HTTP 200。",
+      "semanticObservations": [
+        {
+          "before": "紧急支持的联系人或反馈方式尚未确定",
+          "after": "紧急支持联系人及反馈方式我尚未提供",
+          "assessment": "首稿把资料未提供表述为安排未确定，存在信息状态泛化风险；修复稿改为未提供，更贴合可证据化状态。用户还说没有其他已确定安排，故此处保留风险判断，不武断认定唯一语义根因。"
+        },
+        {
+          "before": "可留出待补充的位置或省略该部分",
+          "after": "通知中不要编造联系人或反馈渠道",
+          "assessment": "首稿允许留待填位置，与同稿可直接发送目标有张力；修复稿移除该选项。该语义问题不是本次直接协议拒绝条件。"
+        }
+      ],
+      "attribution": "与第四版同文多题答漏引用是同一既有来源关联机制；24并未放宽它。直接失败可定位为MissingSources，正文多数确认事实已表达不等于可丢失不同题答来源。"
+    }
+  ],
+  "logs": {
+    "file": "tmp/natural-phase-compatibility-20261022/server.out.log",
+    "firstFailures": [
+      {
+        "line": 63,
+        "requestId": "6f10acc5-04da-47ca-b6f7-44c4ca5ce805",
+        "failureType": "INVALID_RESPONSE",
+        "willRetry": true
+      },
+      {
+        "line": 74,
+        "requestId": "ee5015cb-0e04-4fd6-b8f5-e2be00dc9bd7",
+        "failureType": "INVALID_RESPONSE",
+        "willRetry": true
+      }
+    ]
+  },
+  "followupBoundary": "本记录不授权再改冻结候选。将协议交付与语义/作品质量分别验收；不为锚点错字或同文题答合并追加场景模板，也不关闭来源/覆盖保护。"
+}

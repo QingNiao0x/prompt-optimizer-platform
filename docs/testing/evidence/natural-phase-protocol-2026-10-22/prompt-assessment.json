@@ -1,0 +1,796 @@
+{
+  "schemaVersion": 1,
+  "batch": "natural-phase-protocol-2026-10-22",
+  "reviewedAt": "2026-10-22",
+  "assessmentKind": "INTERNAL_AI_PROMPT_AND_PLAN_REVIEW",
+  "reviewer": {
+    "agent": "enhancement_agents_diagnosis",
+    "disclosure": "内部 AI 复核；评审者知道版本标识，曾参与本批三道留出题的编写，并参与候选工程审阅。因此不是匿名人工评审、外部专业盲测，也不是与出题独立的评审。",
+    "candidateAuthorWithholding": "三道留出题在候选源码冻结前未向候选编写者公开；这不等于评审者盲评。",
+    "modelCallsMadeByReviewer": 0
+  },
+  "scope": {
+    "cases": "docs/testing/evidence/natural-phase-protocol-2026-10-22/cases.json",
+    "protocol": "docs/testing/evidence/natural-phase-protocol-2026-10-22/protocol.json",
+    "resultDirectory": "tmp/natural-phase-protocol-20261022/results",
+    "reviewedJobs": 34,
+    "directGenerationJobs": 28,
+    "planningJobs": 4,
+    "confirmedPlanGenerationJobs": 2,
+    "excluded": "本文件不评判下游作品的实际正确性，不运行生成的 HTML，不复算完整调用总账，也不替代工程或发布验收。",
+    "rules": [
+      "先按冻结要求检查，再比较同信息候选；正常措辞、步骤或界面设计差异不判错。",
+      "HTTP 200 只说明交付成功，不等于质量通过；RESULT_INVALID 记为协议/校验交付失败，原件未给出细分原因时不猜测。",
+      "没有最终提示词的臂不参加语义胜负，不把成功对手记为质量胜利。",
+      "充分需求允许基本不改写；篇幅增加、删短或框架名称都不单独构成实质质量收益。",
+      "引用附件仍能让下游访问原资料，但显式摘要漏掉关键范围属于覆盖风险；不能直接据此声称最终作品已遗漏。",
+      "220 字符、一页、20/30 分钟等是下游交付物要求，不是优化提示词自身的长度或执行时间上限。"
+    ]
+  },
+  "summary": {
+    "directGeneration": {
+      "4": {
+        "returned": 7,
+        "total": 7
+      },
+      "21": {
+        "returned": 6,
+        "total": 7
+      },
+      "22": {
+        "returned": 7,
+        "total": 7
+      },
+      "23": {
+        "returned": 7,
+        "total": 7
+      }
+    },
+    "planning": {
+      "4": {
+        "returned": 2,
+        "total": 2
+      },
+      "21": {
+        "returned": 2,
+        "total": 2
+      }
+    },
+    "confirmedPlanGeneration": {
+      "4": {
+        "returned": 0,
+        "total": 1
+      },
+      "21": {
+        "returned": 1,
+        "total": 1
+      }
+    },
+    "overallReturned": 32,
+    "overallJobs": 34,
+    "centralFinding": "协议候选存在局部成功与局部失败，提示词质量呈混合结果，不能认定 21/22/23 整体优于第四版。21 的 Plan 确认后交付成功与第四版失败只证明该原件的交付差异。22/23 没有稳定、独立的语义收益。",
+    "newSevereSemanticRegression": "成功返回的候选中未发现足以仅凭提示词原件确认的新增严重事实捏造或任务替换；V23 办公题有重要范围显式覆盖退步，需要结合实际作品判定影响。V21 工具题最终无交付是已确认的新严重可用性失败，归入协议/校验而非语义判负。",
+    "repeatedHypothesisFailure": "本次只读原件不能证明同一假设连续两个候选发生相同严重失败：V21 工具生成与 V4 Plan 后生成属于不同版本/阶段；V22、V23 的低补全收益是收益未证实，不等同严重失败。不得据两次 RESULT_INVALID 的同一错误码断言同根因。",
+    "defaultConstraintTail": "本次成功返回的自然提示词未观察到统一默认安全尾巴，返回 appliedConstraints 均为空；不据此宣称全部展示/复制/历史路径已验证。",
+    "deploymentOrReleaseDecision": "本评审不授权切换默认版本，不宣称全场景或正式发布通过。"
+  },
+  "cases": [
+    {
+      "id": "DEV_NOTICE",
+      "evidenceRole": "DEVELOPMENT_MECHANISM",
+      "requirement": "群消息正文；一般成员周五前、新成员周四前；线上免到场时间但选现场材料包仍填领取人；场务志愿者独立免截止时间。",
+      "arms": [
+        {
+          "version": 4,
+          "job": "DEV_NOTICE_V4_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "未新增日期、负责人或确认状态",
+          "substantiveCompletion": "原输入已充分，简短重组可相持",
+          "quotes": [
+            "场务志愿者不适用上述回复截止时间，另按负责人通知。"
+          ]
+        },
+        {
+          "version": 21,
+          "job": "DEV_NOTICE_V21_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "无状态提升",
+          "substantiveCompletion": "要求原样保留适用对象和例外；无新增执行缺口收益，未造成任务降级",
+          "quotes": [
+            "适用对象和例外必须原样保留，不得改动或省略"
+          ]
+        },
+        {
+          "version": 22,
+          "job": "DEV_NOTICE_V22_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "无状态提升",
+          "substantiveCompletion": "再次解释已给规则，增加重复但未形成冲突或额外任务",
+          "quotes": [
+            "一般成员与新成员的回复截止时间要分别对应清楚",
+            "场务志愿者不适用上述回复截止时间，要保留“另按负责人通知”的说明"
+          ]
+        },
+        {
+          "version": 23,
+          "job": "DEV_NOTICE_V23_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "无状态提升",
+          "substantiveCompletion": "简洁重述，充分需求不需要强行扩写",
+          "quotes": [
+            "线上参加的人不用填到场时间，不过选择现场材料包的仍要填领取人姓名"
+          ]
+        }
+      ],
+      "comparisons": [
+        {
+          "candidate": 21,
+          "baseline": 4,
+          "outcome": "TIE",
+          "reason": "要求和独立例外等价保留。"
+        },
+        {
+          "candidate": 22,
+          "baseline": 21,
+          "outcome": "TIE_WITH_EXTRA_REPETITION",
+          "reason": "重复核对规则，不据更长正文判收益；属于文风成本，不是严重失败。"
+        },
+        {
+          "candidate": 23,
+          "baseline": 22,
+          "outcome": "TIE_WITH_LESS_REPETITION",
+          "reason": "减少重复且要求未丢；充分需求只作非退化守护。"
+        }
+      ]
+    },
+    {
+      "id": "DEV_MISSING_STATUS",
+      "evidenceRole": "SEEN_REGRESSION",
+      "requirement": "直接写合作方进度说明；请求格式已确认、联调进行中、用户不确定完成时间；本次资料未提供记录不等于记录不存在；不新增承诺。",
+      "sourceQuote": "本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。",
+      "arms": [
+        {
+          "version": 4,
+          "job": "DEV_MISSING_STATUS_V4_GEN",
+          "delivery": "RETURNED",
+          "requirements": "保留交付物、两项进展与完成时间未知",
+          "informationState": "明确缺陷：把本次资料未提供记录改为目前没有记录",
+          "substantiveCompletion": "给出简短专业措辞，但附带未来同步承诺风险",
+          "quotes": [
+            "目前没有压测记录或验收记录",
+            "比如说明联调正在推进、后续进展会及时同步"
+          ],
+          "findings": [
+            {
+              "severity": "IMPORTANT",
+              "type": "INPUT_GAP_PROMOTED_TO_ABSENCE",
+              "scope": "仅压测/验收记录状态；不推定其余事实都错误",
+              "reason": "去掉资料范围，使下游易将未提供证据表述为客观不存在。"
+            },
+            {
+              "severity": "CAUTION",
+              "type": "UNCONFIRMED_COMMITMENT_SUGGESTION",
+              "scope": "后续同步例句",
+              "reason": "及时同步是额外未来行动建议，原材料没有此承诺；并非已写成完成事实。"
+            }
+          ]
+        },
+        {
+          "version": 21,
+          "job": "DEV_MISSING_STATUS_V21_GEN",
+          "delivery": "RETURNED",
+          "requirements": "主要要求保留",
+          "informationState": "用资料里限定未提供范围，未称尚未压测或验收",
+          "substantiveCompletion": "约束日期承诺同时保留可发送正文，仍允许继续推进表述",
+          "quotes": [
+            "资料里也没有压测记录、验收记录或已确认的完成日期",
+            "可以说明当前进展和后续会继续推进"
+          ],
+          "findings": [
+            {
+              "severity": "CAUTION",
+              "type": "FUTURE_ACTION_WORDING",
+              "scope": "后续会继续推进",
+              "reason": "与联调进行中的事实相邻，通常是合理表述，但会把当前状态延伸为未来行动。不能仅凭该句认定严重事实捏造；作品应检查是否产生未确认保证。"
+            }
+          ]
+        },
+        {
+          "version": 22,
+          "job": "DEV_MISSING_STATUS_V22_GEN",
+          "delivery": "RETURNED",
+          "requirements": "保留事实、未知状态和由 AI 安排措辞",
+          "informationState": "资料中没有限定在现有材料，不将未提供等同未进行",
+          "substantiveCompletion": "直接交付正文，未新增同步/时间承诺",
+          "quotes": [
+            "资料中没有压测记录或验收记录",
+            "不要给出确定日期或完成承诺",
+            "直接给出可用的正文"
+          ]
+        },
+        {
+          "version": 23,
+          "job": "DEV_MISSING_STATUS_V23_GEN",
+          "delivery": "RETURNED",
+          "requirements": "保留事实、用户时间未知与可发送目标",
+          "informationState": "资料范围明确，无新增已完成判断",
+          "substantiveCompletion": "给出专业简洁表达目标；避免任何对外承诺较宽但与本题材料一致",
+          "quotes": [
+            "资料中没有压测记录或验收记录",
+            "接口联调什么时候完成我现在也拿不准",
+            "避免形成任何对外承诺"
+          ]
+        }
+      ],
+      "comparisons": [
+        {
+          "candidate": 21,
+          "baseline": 4,
+          "outcome": "LOCAL_INFORMATION_STATE_IMPROVEMENT",
+          "reason": "在这一已见回归题修复记录不存在的范围扩大；仍有未来行动措辞风险，不能外推一般收益。"
+        },
+        {
+          "candidate": 22,
+          "baseline": 21,
+          "outcome": "LOCAL_REDUCTION_OF_COMMITMENT_RISK",
+          "reason": "不再建议后续继续推进，不增加新承诺；单题文本差异不证明框架标签变化的因果收益。"
+        },
+        {
+          "candidate": 23,
+          "baseline": 22,
+          "outcome": "TIE",
+          "reason": "事实、未知和原交付物基本等价。"
+        }
+      ]
+    },
+    {
+      "id": "DEV_DELEGATED_GUIDE",
+      "evidenceRole": "DEVELOPMENT_MECHANISM",
+      "requirement": "20 分钟介绍安排和一页可复用交接清单；具体设计由 AI 完成，不虚构现有小组制度。",
+      "arms": [
+        {
+          "version": 4,
+          "job": "DEV_DELEGATED_GUIDE_V4_GEN",
+          "delivery": "RETURNED",
+          "requirements": "两项交付物、时长、篇幅与委托均保留",
+          "informationState": "小组特有规则作为未提供内容处理",
+          "substantiveCompletion": "补入交接触发、发起人、材料、顺序、完成条件，以及前中后三段清单；是本题四臂中较充分的执行内容",
+          "quotes": [
+            "交接在什么时候发生、由谁发起、需要哪些材料、按什么顺序完成、怎样算交接完成",
+            "不要编造具体制度、系统名称或时限"
+          ],
+          "boundary": "示例和三阶段设计属于授权设计空间；不能因没有逐字来源就判越权。"
+        },
+        {
+          "version": 21,
+          "job": "DEV_DELEGATED_GUIDE_V21_GEN",
+          "delivery": "RETURNED",
+          "requirements": "保留两项交付、20 分钟、一页和 AI 设计",
+          "informationState": "未直接编造制度或工具；“我们小组基本做法”仍需下游按拟议设计处理",
+          "substantiveCompletion": "补入时间分配和可勾填条目，但关键内容只说关键事项，较第四版缺少具体接手要素",
+          "quotes": [
+            "给出各环节的时间分配和先后顺序",
+            "覆盖交接时该确认的关键事项"
+          ],
+          "finding": "实质补全密度下降，尚不能只凭提示词断言最终作品不可用。"
+        },
+        {
+          "version": 22,
+          "job": "DEV_DELEGATED_GUIDE_V22_GEN",
+          "delivery": "RETURNED",
+          "requirements": "主要交付要求保留",
+          "informationState": "未编造具体事实，但“实际做法”缺少现有制度来源，存在下游误当既有流程的风险",
+          "substantiveCompletion": "流程、关键节点、注意事项仍较泛；过渡方式是合理设计，不构成越权",
+          "quotes": [
+            "交接的流程、关键节点和常见注意事项",
+            "内容请围绕小组日常交接工作的实际做法来组织"
+          ],
+          "finding": "与 21 相比没有确定补全收益；不是因正常设计不同判失败。"
+        },
+        {
+          "version": 23,
+          "job": "DEV_DELEGATED_GUIDE_V23_GEN",
+          "delivery": "RETURNED",
+          "requirements": "两项交付物、时间、篇幅与设计委托保留",
+          "informationState": "明确不编造岗位、项目、制度，用通用设计完成交付",
+          "substantiveCompletion": "补入准备、交接顺序、接住确认、留痕和常见遗漏；相对 22 更具体，同时不要求先补材料",
+          "quotes": [
+            "交接后如何确认对方已接住、哪些信息必须留痕",
+            "不要编造这些细节，用通用但可落地的表述完成上述交付"
+          ],
+          "boundary": "需要按实际替换的提醒本身不是空模板；必须结合实际作品是否被大量占位符替代来判断。"
+        }
+      ],
+      "comparisons": [
+        {
+          "candidate": 21,
+          "baseline": 4,
+          "outcome": "LESS_CONCRETE_GUIDANCE",
+          "reason": "缩短并保留范围，但删除了交接材料/完成条件等具体指引；成本变化不能当质量增益。"
+        },
+        {
+          "candidate": 22,
+          "baseline": 21,
+          "outcome": "NO_CLEAR_GAIN",
+          "reason": "均能委托设计，但主要补充仍抽象。"
+        },
+        {
+          "candidate": 23,
+          "baseline": 22,
+          "outcome": "LOCAL_SUBSTANTIVE_GAIN",
+          "reason": "增加具体接手动作和缺事实边界；不表示 23 全局优于第四版。"
+        }
+      ]
+    },
+    {
+      "id": "DEV_JSON",
+      "evidenceRole": "SUFFICIENT_CONTROL",
+      "requirement": "升序，重复项和 0 保留；下游只输出 JSON 数组，无围栏/说明/其他字段。",
+      "arms": [
+        {
+          "version": 4,
+          "job": "DEV_JSON_V4_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "无新增事实或假设",
+          "substantiveCompletion": "原输入充分，不增加新任务属于正确结果",
+          "quotes": [
+            "按数值升序排列，保留重复项和 0",
+            "只输出排序后的 JSON 数组"
+          ]
+        },
+        {
+          "version": 21,
+          "job": "DEV_JSON_V21_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "无新增事实或假设",
+          "substantiveCompletion": "原输入充分，不增加新任务属于正确结果",
+          "quotes": [
+            "按数值升序排列，保留重复项和 0",
+            "只输出排序后的 JSON 数组"
+          ]
+        },
+        {
+          "version": 22,
+          "job": "DEV_JSON_V22_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "无新增事实或假设",
+          "substantiveCompletion": "原输入充分，不增加新任务属于正确结果",
+          "quotes": [
+            "按数值升序排列，保留重复项和 0",
+            "只输出排序后的 JSON 数组"
+          ]
+        },
+        {
+          "version": 23,
+          "job": "DEV_JSON_V23_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "无新增事实或假设",
+          "substantiveCompletion": "原输入充分，不增加新任务属于正确结果",
+          "quotes": [
+            "按数值升序排列，保留重复项和 0",
+            "只输出排序后的 JSON 数组"
+          ]
+        }
+      ],
+      "comparisons": [
+        {
+          "candidate": 21,
+          "baseline": 4,
+          "outcome": "TIE"
+        },
+        {
+          "candidate": 22,
+          "baseline": 21,
+          "outcome": "TIE"
+        },
+        {
+          "candidate": 23,
+          "baseline": 22,
+          "outcome": "TIE"
+        }
+      ],
+      "boundary": "优化提示词本身不是排序结果；[-2,0,3,3] 是下游输出要求。本文件不把优化提示词不是 JSON 数组误判为失败。"
+    },
+    {
+      "id": "HOLDOUT_OFFICE_20261022",
+      "evidenceRole": "WITHHELD_FROM_CANDIDATE_AUTHOR",
+      "requirement": "正文最多 220 字符；两个负责人/职责/时间；周五确认才下午更换，否则周一确认且保留原标贴；只换标贴、不挪资料、不丢旧文件；不安排未定采购打印职责。",
+      "sourceQuote": "本次只更换标贴，不挪动资料，不丢弃旧文件。",
+      "arms": [
+        {
+          "version": 4,
+          "job": "HOLDOUT_OFFICE_20261022_V4_GEN",
+          "delivery": "RETURNED",
+          "requirements": "责任、时间、条件和字符上限保留；将更换范围降为可选说明",
+          "informationState": "未指派未定打印/采购职责，未将有条件更换写为确定承诺",
+          "substantiveCompletion": "摘要带入材料，便于下游写消息",
+          "quotes": [
+            "可简要说明本次只更换标贴，不挪动资料，不丢弃旧文件"
+          ],
+          "findings": [
+            {
+              "severity": "IMPORTANT_COVERAGE_RISK",
+              "type": "REQUIRED_SCOPE_WEAKENED_TO_OPTIONAL",
+              "scope": "下游通知是否明确交代只换标贴范围",
+              "reason": "冻结要求要求保留该范围；“可”让内容成为可省略项。附件仍提供原文，不能直接推定下游一定遗漏。"
+            }
+          ]
+        },
+        {
+          "version": 21,
+          "job": "HOLDOUT_OFFICE_20261022_V21_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部关键范围和条件显式保留",
+          "informationState": "保留打印/采购责任未决定，不作新增安排",
+          "substantiveCompletion": "把附件事实纳入可用提示词，无空模板",
+          "quotes": [
+            "本次只更换标贴，不挪动资料，不丢弃旧文件",
+            "讨论没有决定由谁购买或打印标贴，消息中不要写成已有人负责购买或打印"
+          ]
+        },
+        {
+          "version": 22,
+          "job": "HOLDOUT_OFFICE_20261022_V22_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部关键范围和条件显式保留",
+          "informationState": "未提升未决责任为确认分工",
+          "substantiveCompletion": "实质摘要与 21 相当",
+          "quotes": [
+            "本次只更换标贴，不挪动资料，不丢弃旧文件",
+            "消息中不要指派购买或打印的负责人"
+          ]
+        },
+        {
+          "version": 23,
+          "job": "HOLDOUT_OFFICE_20261022_V23_GEN",
+          "delivery": "RETURNED",
+          "requirements": "责任、日期条件和 220 上限保留；正文摘要未写只换标贴/不挪资料/不丢旧文件",
+          "informationState": "未指派采购打印，未把确认条件写为无条件承诺",
+          "substantiveCompletion": "保留大部分摘要但丢掉重要范围的显式约束",
+          "quotes": [
+            "速记中的分工与时间点按原文写入",
+            "否则下周一继续确认、原标贴先保留"
+          ],
+          "findings": [
+            {
+              "severity": "IMPORTANT_COVERAGE_REGRESSION",
+              "type": "EXPLICIT_SCOPE_OMISSION",
+              "scope": "相对 V22 的优化提示词正文；完整附件仍可访问",
+              "reason": "没有原来明确保留的范围句。属于值得阻止直接采用的覆盖退步信号，但不是已证明最终作品误删文件或移动资料。"
+            }
+          ]
+        }
+      ],
+      "comparisons": [
+        {
+          "candidate": 21,
+          "baseline": 4,
+          "outcome": "LOCAL_REQUIREMENT_COVERAGE_IMPROVEMENT",
+          "reason": "范围从可选说明恢复为明确事实要求。"
+        },
+        {
+          "candidate": 22,
+          "baseline": 21,
+          "outcome": "TIE",
+          "reason": "关键条件和范围等价保留。"
+        },
+        {
+          "candidate": 23,
+          "baseline": 22,
+          "outcome": "IMPORTANT_EXPLICIT_COVERAGE_REGRESSION",
+          "reason": "丢失范围句，不能用篇幅或其他题收益抵消；需核对作品影响。"
+        }
+      ],
+      "boundary": "优化提示词超过 220 字符并非失败；限制作用于最终群消息。引用完整附件为下游提供恢复信息的可能，不等于优化正文覆盖完整。"
+    },
+    {
+      "id": "HOLDOUT_LIFE_20261022",
+      "evidenceRole": "WITHHELD_FROM_CANDIDATE_AUTHOR",
+      "requirement": "30 分钟内、一页、明晚照做；仅现有书包与普通纸张，不购买，不先答问卷；AI 负责流程细节。",
+      "arms": [
+        {
+          "version": 4,
+          "job": "HOLDOUT_LIFE_20261022_V4_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "未虚构课程、学校规定或个人状态",
+          "substantiveCompletion": "主要重述目标，增加每周可复用目标与原意相容；未补具体执行检查",
+          "quotes": [
+            "目标是在30分钟内完成",
+            "细节由你来安排，不需要先问我问题"
+          ]
+        },
+        {
+          "version": 21,
+          "job": "HOLDOUT_LIFE_20261022_V21_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "分类标记/临时收纳作为拟议方法，没有称用户已有习惯",
+          "substantiveCompletion": "增加动作、顺序、每步耗时及普通纸张使用办法，是具体执行指导",
+          "quotes": [
+            "每一步做什么、按什么顺序做、每步大概花多久",
+            "说明怎么用普通纸张做简单的分类标记或临时收纳"
+          ],
+          "boundary": "纸张分类标记属于用户委托的设计空间，不因原文没有点名就判新增未授权需求；实际作品仍需不引入额外用品。"
+        },
+        {
+          "version": 22,
+          "job": "HOLDOUT_LIFE_20261022_V22_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "无新增事实",
+          "substantiveCompletion": "基本重述原始要求，未保留 21 的动作/时间/纸张操作指导",
+          "quotes": [
+            "细节你来安排，不要让我先回答一堆问题",
+            "最后给我一页明晚就能照着做的清单"
+          ]
+        },
+        {
+          "version": 23,
+          "job": "HOLDOUT_LIFE_20261022_V23_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "无新增事实",
+          "substantiveCompletion": "与 22 同样主要重述；不能因更短判收益，也不因未扩写直接判失败",
+          "quotes": [
+            "用品只用我现在的书包和普通纸张，不买新东西",
+            "细节由你来安排，不要让我先回答一堆问题"
+          ]
+        }
+      ],
+      "comparisons": [
+        {
+          "candidate": 21,
+          "baseline": 4,
+          "outcome": "LOCAL_EXECUTION_GUIDANCE_GAIN",
+          "reason": "补充可执行步骤及耗时要求，同时守住材料限制。"
+        },
+        {
+          "candidate": 22,
+          "baseline": 21,
+          "outcome": "LESS_CONCRETE_GUIDANCE",
+          "reason": "删除了有助于直接执行的具体提示，未出现硬要求丢失。"
+        },
+        {
+          "candidate": 23,
+          "baseline": 22,
+          "outcome": "TIE",
+          "reason": "两者保真，实质新增均很少。"
+        }
+      ]
+    },
+    {
+      "id": "HOLDOUT_TOOL_20261022",
+      "evidenceRole": "WITHHELD_FROM_CANDIDATE_AUTHOR",
+      "requirement": "离线单 HTML；仅删除空行/空格制表符行；其他字符和顺序保留；AI 设计界面；无外部依赖、上传、自动保存。",
+      "arms": [
+        {
+          "version": 4,
+          "job": "HOLDOUT_TOOL_20261022_V4_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "不指定未确认框架、网络服务或存储",
+          "substantiveCompletion": "主要重述，少量强调打开即用",
+          "quotes": [
+            "非空行的首尾空格、行内字符和原有顺序都要保留",
+            "不使用任何外部依赖，不上传内容，也不自动保存输入"
+          ]
+        },
+        {
+          "version": 21,
+          "job": "HOLDOUT_TOOL_20261022_V21_GEN",
+          "delivery": "PROTOCOL_OR_VALIDATION_FAILURE",
+          "httpStatus": 502,
+          "errorCode": "RESULT_INVALID",
+          "requirements": "无最终优化提示词，无法评判",
+          "informationState": "不评判未交付正文",
+          "substantiveCompletion": "未完成交付",
+          "quotes": [
+            "模型响应未通过结构、内容或安全校验，本次增强未完成。"
+          ],
+          "findings": [
+            {
+              "severity": "SERIOUS_DELIVERY_FAILURE",
+              "type": "FINAL_RESPONSE_REJECTED",
+              "scope": "该冻结工具题的 V21 作业",
+              "reason": "相对 V4/22/23，本作业最终不能给用户提示词。公开原件没有细分失败原因，不据此判定是语义遗漏或 JSON 解析。"
+            }
+          ]
+        },
+        {
+          "version": 22,
+          "job": "HOLDOUT_TOOL_20261022_V22_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "界面元素作为拟议设计而非用户已确认事实",
+          "substantiveCompletion": "补入输入区、处理按钮和结果区，细化外部依赖的含义；合理设计，非核心语义提升",
+          "quotes": [
+            "一个用于粘贴和查看文本的输入区域、一个明确的处理按钮，以及处理结果的展示区域",
+            "不引用外部脚本、样式、字体或网络资源"
+          ],
+          "boundary": "可复制结果的便利性不是冻结主要胜负标准；本文件不声称实际 HTML 已通过功能检查。"
+        },
+        {
+          "version": 23,
+          "job": "HOLDOUT_TOOL_20261022_V23_GEN",
+          "delivery": "RETURNED",
+          "requirements": "全部保留",
+          "informationState": "未越过界面设计委托改变文本清理规则",
+          "substantiveCompletion": "主要重述，操作直观/结果可见与任务相容",
+          "quotes": [
+            "非空行的首尾空格、行内字符和原有顺序都要保留",
+            "要求操作直观、结果清晰可见"
+          ]
+        }
+      ],
+      "comparisons": [
+        {
+          "candidate": 21,
+          "baseline": 4,
+          "outcome": "DELIVERY_REGRESSION_SEMANTIC_COMPARISON_UNAVAILABLE",
+          "reason": "V21 最终失败，不给它编造质量分数。"
+        },
+        {
+          "candidate": 22,
+          "baseline": 21,
+          "outcome": "DELIVERY_RECOVERY_ONLY",
+          "reason": "22 有输出且主要要求保留；21 无正文，不能判 22 在语义上战胜 21。"
+        },
+        {
+          "candidate": 23,
+          "baseline": 22,
+          "outcome": "TIE_ON_CORE_REQUIREMENTS",
+          "reason": "22 界面更具体但属于正常设计选择；不能以 23 没有按钮细节判退步。"
+        }
+      ]
+    }
+  ],
+  "planCases": [
+    {
+      "id": "PLAN_MAINTENANCE",
+      "evidenceRole": "SEEN_REGRESSION",
+      "requirement": "询问真实维护安排和影响；措辞排版已委托，不追问；答复后保留全部范围和自动重连未知。",
+      "planning": [
+        {
+          "version": 4,
+          "job": "PLAN_MAINTENANCE_V4_PLAN",
+          "delivery": "RETURNED",
+          "questionCount": 3,
+          "questions": [
+            {
+              "id": "maintenance_schedule",
+              "quote": "本次网络维护的具体时间安排是什么（日期、起止时间、时区）？",
+              "assessment": "IMPORTANT_UNKNOWN",
+              "reason": "时间直接决定通知事实；时区不是单独追加问卷，存在跨地使用时也合理，不因附带时区判失败。"
+            },
+            {
+              "id": "impact_scope",
+              "quote": "维护期间哪些系统、服务、网络区域或办公地点会受影响？",
+              "assessment": "IMPORTANT_UNKNOWN",
+              "reason": "直接决定告知范围和影响。"
+            },
+            {
+              "id": "colleague_actions",
+              "quote": "维护期间需要同事配合做什么，或遇到问题联系谁？",
+              "assessment": "CONDITIONAL_IMPORTANCE",
+              "reason": "实际配合动作存在时会改变通知；联系人为可选安排，不应让未提供联系人阻塞整份通知。"
+            }
+          ],
+          "delegation": "没有追问措辞或排版。"
+        },
+        {
+          "version": 21,
+          "job": "PLAN_MAINTENANCE_V21_PLAN",
+          "delivery": "RETURNED",
+          "questionCount": 3,
+          "questions": [
+            {
+              "id": "maintenanceSchedule",
+              "quote": "本次网络维护的具体时间安排是什么（开始时间、结束时间，是否含日期）？",
+              "assessment": "IMPORTANT_UNKNOWN",
+              "reason": "日期与起止时间是核心用户事实。"
+            },
+            {
+              "id": "impactScope",
+              "quote": "维护期间受影响的网络范围与具体影响是什么（如哪些系统、区域、服务会中断或降速）？",
+              "assessment": "IMPORTANT_UNKNOWN",
+              "reason": "直接决定通知正文。"
+            },
+            {
+              "id": "contactChannel",
+              "quote": "维护期间同事如有问题应向谁、通过什么方式反馈？",
+              "assessment": "OPTIONAL_LOW_IMPACT_UNLESS_REQUIRED",
+              "reason": "能增加一行联系信息，但用户没有要求该内容；仅以通知通常需要为依据，尚未说明为何这项未知会实质改变核心结果。应允许不提供，不能据缺少渠道暂停通知。"
+            }
+          ],
+          "delegation": "没有追问措辞或排版。"
+        }
+      ],
+      "confirmedGeneration": {
+        "inputControl": "两臂均使用 V4 Plan 的同一组实际问题，三个题答逐项保留同一完整 answerBundle。V21 自身 contactChannel 题没有独立走回答后路径，不能宣称该路径已验收。",
+        "arms": [
+          {
+            "version": 4,
+            "job": "PLAN_MAINTENANCE_V4_PLAN_GEN",
+            "delivery": "PROTOCOL_OR_VALIDATION_FAILURE",
+            "httpStatus": 502,
+            "errorCode": "RESULT_INVALID",
+            "finding": "没有最终正文，不能判断它是否保持全部维护要求，也不能把对手成功写成语义胜利。"
+          },
+          {
+            "version": 21,
+            "job": "PLAN_MAINTENANCE_V21_PLAN_GEN",
+            "delivery": "RETURNED",
+            "requirements": "日期、18:30–20:00、办公区无线中断、有线正常、远程不受影响、重连未知、无其他安排和 AI 设计均保留",
+            "informationState": "未知重连未改成已恢复或一定不恢复；没有发明联系人",
+            "substantiveCompletion": "将实际题答整合为完整通知要求；有少量重复",
+            "quotes": [
+              "维护结束后是否会自动重连尚不确定，通知中不要承诺自动恢复连接",
+              "通知中不要添加我未确认的其他维护安排、影响范围或联系人信息"
+            ],
+            "boundary": "提醒同事提前做好相应安排是笼统建议，不等于虚构具体操作承诺；不据该句判严重越界。"
+          }
+        ],
+        "comparison": "V21 相对 V4 是本作业交付恢复；V21 正文静态检查保真，但无两份成功正文可比较实质补全收益。"
+      },
+      "planValueConclusion": "两版本都识别两项核心未知，充分性未退步；都问三题，V21 将第三题收窄为较低影响的联系人，不构成提问价值提升。"
+    },
+    {
+      "id": "PLAN_SUFFICIENT",
+      "evidenceRole": "DEVELOPMENT_MECHANISM",
+      "requirement": "翻译给定短句，简体中文，一句，无解释，无日期/时区新增；不需问用户。",
+      "arms": [
+        {
+          "version": 4,
+          "job": "PLAN_SUFFICIENT_V4_PLAN",
+          "delivery": "RETURNED",
+          "questionCount": 0,
+          "quote": "需求明确，无需澄清。",
+          "assessment": "PASS_NONDEGRADATION"
+        },
+        {
+          "version": 21,
+          "job": "PLAN_SUFFICIENT_V21_PLAN",
+          "delivery": "RETURNED",
+          "questionCount": 0,
+          "quote": "没有需要用户额外决定的重要缺口。",
+          "assessment": "PASS_NONDEGRADATION"
+        }
+      ],
+      "comparison": "相持；两者均正确不提问。不因此推定所有充分需求都已覆盖。"
+    }
+  ],
+  "adoptionNotes": [
+    {
+      "version": 21,
+      "assessment": "NOT_ESTABLISHED_AS_OVERALL_QUALITY_UPGRADE",
+      "reason": "进度事实边界、办公范围和生活执行指导有局部好处；交接题更泛，工具题最终失败。Plan 后一次恢复证明交付差异，不能抵消另一路最终失败或自动建立语义优势。"
+    },
+    {
+      "version": 22,
+      "assessment": "NO_CLEAR_INDEPENDENT_SEMANTIC_GAIN",
+      "reason": "较 21 有工具交付恢复和较少承诺措辞，但生活题补全减少，通知重复更多。未证明取消必填标签是收益原因。"
+    },
+    {
+      "version": 23,
+      "assessment": "DO_NOT_ADOPT_ON_THIS_REVIEW_ALONE",
+      "reason": "交接题补全较 22 更具体，但办公范围覆盖退步，其他多题相持；没有足够证据支持移除框架指导带来总体净收益。"
+    }
+  ],
+  "recommendations": [
+    "将两个 RESULT_INVALID 与实际协议原件/失败码结合归因；保留失败，不为了本批通过追加模型调用或改题。",
+    "候选采用应先核对同信息实际作品，尤其办公范围、进度承诺和交接清单；本文件不把提示词长短当作品质量代理。",
+    "范围遗漏按共同机制评估：摘要后的正文是否仍明确保留来源中的重要范围和条件；不得为本留出题追加专用标贴规则。",
+    "Plan 保留两项核心未知，联系人作为可选实际信息处理；不把所有通知都强制变成联系方式问卷。",
+    "充分输入允许相持，模糊委托只补有用动作和交付检查；现有结果未证明需要新增场景模板或全局禁令。",
+    "在本批冻结条件下如实收口；不要由本内部小样本评审宣称专业用户验收、全场景泛化或正式发布通过。"
+  ]
+}

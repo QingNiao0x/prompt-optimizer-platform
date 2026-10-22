@@ -1,0 +1,777 @@
+{
+  "schemaVersion": 1,
+  "reviewType": "INTERNAL_ANONYMOUS_DOWNSTREAM_WORK_ASSESSMENT",
+  "reviewedAt": "2026-10-22",
+  "disclosure": {
+    "reviewer": "同一开发团队的AI辅助复核；不是人工专家验收，也不是独立第三方评审。",
+    "anonymity": "只读取匿名包中的原始需求、允许信息、冻结答案卡及A—E作品。未读取版本映射、增强提示词、results或works文件；不推测标签对应版本。",
+    "externalNotice": "其他代理的开发消息可能送达，但没有用于识别匿名标签或判定版本胜负。",
+    "additionalModelCalls": 0,
+    "browserExecutionByReviewer": false,
+    "evidenceBoundary": "本报告只评价这31份实际作品，不评价未展示的增强提示词、Plan问题质量或总体泛化率。"
+  },
+  "inputPacket": {
+    "path": "tmp/natural-phase-protocol-20261022/anonymous-work-packet.json",
+    "sha256": "8e520a928aa46bb06fa4627020e520ffe6ce8b45ad72f783858007d6c0a2ad90",
+    "caseCount": 7,
+    "artifactCount": 31
+  },
+  "methodology": {
+    "priorities": [
+      "原始目标与明确要求保真",
+      "事实、未提供信息和用户确认状态不混淆",
+      "允许AI完成委托设计",
+      "能直接使用及必要编辑量"
+    ],
+    "verdictDefinitions": {
+      "USABLE": "核心要求满足，可以使用；允许列出非阻断的版式验证或改进建议。",
+      "NEEDS_EDIT": "交付前需要局部修改、去除额外说明或压缩整理；不因此认定整份作品无价值。",
+      "SERIOUS_ERROR": "作品将资料缺失改成具体业务状态，不能未经事实修正直接对外发送；严重指信息保真风险，不代表修复工作量大。"
+    },
+    "safeguards": [
+      "不以篇幅长、条目多、UI精美或附带可选功能作为质量优势。",
+      "合理的流程、时间安排、假想示例及可复用表单字段属于用户授权设计，不当作编造既有事实。",
+      "仅引用冻结要求可以支持的问题；不把未观察的打印页数、现实耗时或Unicode边界当成已失败。",
+      "全部标签按同一标准审阅，存在取舍时不给强行单一排名。",
+      "纯格式负担与事实错误分开记录；容易删改不等于无需修正。"
+    ],
+    "unverified": [
+      "一页清单的实际打印分页、字号和可读性",
+      "真人按流程操作所需时间",
+      "HTML可选复制功能的所有浏览器权限变体",
+      "模型调用成本及版本归属"
+    ]
+  },
+  "browserEvidence": {
+    "provenance": "主代理在匿名评审期间提供的验证结果；本复核未重新运行浏览器，也未打开其映射或运行结果文件。",
+    "caseId": "HOLDOUT_TOOL_20261022",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "coreChecksPassed": 20,
+    "coreChecksTotal": 20,
+    "checksDescription": "每份冻结的3个核心输入，加空输入与非空字符保留两项补充检查。",
+    "observed": "主代理报告无页面错误、网络请求或检测到的存储尝试。",
+    "limitation": "只支持被检查的核心行为，不证明所有可选交互或所有Unicode空白边界正确；也不抵消HTML文件以外附带说明造成的交付格式偏差。"
+  },
+  "cases": [
+    {
+      "caseId": "DEV_NOTICE",
+      "conclusion": "五份均保留对象、期限及两个独立例外，直接可发群；没有证据支持因文风或标点差异选出胜者。",
+      "preferredLabels": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ],
+      "ranking": "并列",
+      "artifacts": [
+        {
+          "label": "A",
+          "verdict": "USABLE",
+          "strengths": [
+            "正文简短，保留一般成员周五、新成员周四、线上免填到场时间但材料包仍填领取人、志愿者另按通知。"
+          ],
+          "issues": [],
+          "evidenceQuotes": [
+            "线上参加不用填到场时间，但选现场材料包的仍要填领取人姓名",
+            "场务志愿者不适用上述回复截止时间，另按负责人通知。"
+          ]
+        },
+        {
+          "label": "B",
+          "verdict": "USABLE",
+          "strengths": [
+            "所有责任对象和独立例外完整，未添加具体日期或人员。"
+          ],
+          "issues": [],
+          "evidenceQuotes": [
+            "新成员请于周四前回复。",
+            "场务志愿者不适用上述回复截止时间，另按负责人通知执行。"
+          ]
+        },
+        {
+          "label": "C",
+          "verdict": "USABLE",
+          "strengths": [
+            "完整保留各对象及适用条件，仅调整自然措辞。"
+          ],
+          "issues": [],
+          "evidenceQuotes": [
+            "线上参加的人不用填到场时间，不过选择现场材料包的仍要填领取人姓名"
+          ]
+        },
+        {
+          "label": "D",
+          "verdict": "USABLE",
+          "strengths": [
+            "各句作用对象明确，正文可直接发送。"
+          ],
+          "issues": [],
+          "evidenceQuotes": [
+            "一般成员周五前回复；新成员周四前回复。",
+            "场务志愿者不适用上述回复截止时间，另按负责人通知。"
+          ]
+        },
+        {
+          "label": "E",
+          "verdict": "USABLE",
+          "strengths": [
+            "所有条件保留，无额外交付或填空。"
+          ],
+          "issues": [],
+          "evidenceQuotes": [
+            "线上参加不用填到场时间，但选现场材料包的仍要填领取人姓名"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "DEV_MISSING_STATUS",
+      "conclusion": "D可直接发送；B删掉了用户明确提供的完成时间未知。A/C/E将没有提供记录写成不存在记录或尚未开展，属于实质信息状态错误。",
+      "preferredLabels": [
+        "D"
+      ],
+      "ranking": "D优于其余；B只需补回时间未知，A/E须修正无依据的记录不存在断言，C进一步误写为活动尚未开展。",
+      "artifacts": [
+        {
+          "label": "A",
+          "verdict": "SERIOUS_ERROR",
+          "strengths": [
+            "保留格式已确认、联调进行中和完成时间未知。"
+          ],
+          "issues": [
+            {
+              "severity": "HIGH",
+              "dimension": "information_state",
+              "evidenceQuote": "目前尚无压测记录或验收记录",
+              "reason": "附件只说明本次资料未提供记录，不能据此断言业务中不存在记录。",
+              "minimalEdit": "删掉该句或限定为本次所提供资料没有相关记录；对外短消息可直接省略。"
+            },
+            {
+              "severity": "MEDIUM",
+              "dimension": "information_state",
+              "evidenceQuote": "我方也未作出相关对外承诺",
+              "reason": "附件没有已确认的对外承诺，不足以证明从未作出任何承诺。",
+              "minimalEdit": "删除无必要的全称断言。"
+            }
+          ]
+        },
+        {
+          "label": "B",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "保留格式已确认和联调进行中，没有编造完成日期。"
+          ],
+          "issues": [
+            {
+              "severity": "MEDIUM",
+              "dimension": "requirement_coverage",
+              "evidenceQuote": "接口联调仍在进行中，相关细节正在持续沟通和验证。",
+              "reason": "整份作品未传达用户已明确提供的无法确定完成时间，合作方无法据此得知时间状态。",
+              "minimalEdit": "补一句具体完成日期暂无法确定。"
+            }
+          ]
+        },
+        {
+          "label": "C",
+          "verdict": "SERIOUS_ERROR",
+          "strengths": [
+            "交付完整对外消息，联调状态和时间不确定表述保留。"
+          ],
+          "issues": [
+            {
+              "severity": "HIGH",
+              "dimension": "information_state",
+              "evidenceQuote": "目前尚未开展压测和验收",
+              "reason": "没有提供记录被升级为两项活动均未开展，改变业务进度事实。",
+              "minimalEdit": "移除活动未开展断言；保留联调进行中、完成时间未定。"
+            }
+          ]
+        },
+        {
+          "label": "D",
+          "verdict": "USABLE",
+          "strengths": [
+            "以三项已提供信息完成可发送正文，无记录缺失推断或日期保证。"
+          ],
+          "issues": [],
+          "evidenceQuotes": [
+            "接口联调这块目前还在推进中，具体完成时间暂时没法给到确定日期。",
+            "请求格式已经确认，后续进展我会及时同步。"
+          ],
+          "nonIssue": "及时同步是常规沟通安排，不将其等同于用户禁止的完成日期保证。"
+        },
+        {
+          "label": "E",
+          "verdict": "SERIOUS_ERROR",
+          "strengths": [
+            "已确认格式、进行中联调和完成时间未知均保留。"
+          ],
+          "issues": [
+            {
+              "severity": "HIGH",
+              "dimension": "information_state",
+              "evidenceQuote": "目前尚无压测记录和验收记录",
+              "reason": "把本次未提供记录升级为记录不存在。",
+              "minimalEdit": "删除该无依据信息，不要求合作方补齐材料后才能使用消息。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "DEV_DELEGATED_GUIDE",
+      "conclusion": "五份均交付20分钟安排和可复用清单，核心交接内容有实质价值。B更便于压缩复用，D的假想示例和现有制度边界更清楚；没有足够依据判定所有场合单一胜者。所有一页排版均未做打印验收。",
+      "preferredLabels": [
+        "B",
+        "D"
+      ],
+      "ranking": "B与D各有优势；A存在明确的时长自相矛盾，C较多技术岗位默认内容，E重复表格带来更大压缩负担。",
+      "artifacts": [
+        {
+          "label": "A",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "两类交付齐全，清单覆盖任务、资料、权限、联系人、风险和接手确认。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "internal_consistency",
+              "evidenceQuote": "每个环节不超过4分钟",
+              "reason": "表格6—11分钟环节实际5分钟，与这句组织建议矛盾；整体仍是20分钟。",
+              "minimalEdit": "改为每环节按表中时间控制，或调整局部安排。"
+            },
+            {
+              "severity": "LOW",
+              "dimension": "editing_burden",
+              "evidenceQuote": "遗留问题清单已附后，每条有责任人和期限",
+              "reason": "一页清单又要求附后清单，并有多处重复确认和签字；能复用但需要压缩成用户要求的一页。",
+              "minimalEdit": "合并重复确认，保留一个简短遗留事项栏；验证打印分页。"
+            }
+          ],
+          "scheduleCalculation": "2+4+5+4+3+2=20分钟",
+          "pageVerification": "未排版验证，不将条目数直接等同于实际超页。",
+          "nonIssue": "提前2个工作日、签字等可视为拟议流程设计；仅凭这些建议不判为编造既有制度。"
+        },
+        {
+          "label": "B",
+          "verdict": "USABLE",
+          "strengths": [
+            "8类交接项各有具体接手验证动作，两个交付物对应，表格相对集中。"
+          ],
+          "issues": [],
+          "evidenceQuotes": [
+            "接收人独立找到并打开最新版",
+            "接收人复述进度与下一步"
+          ],
+          "scheduleCalculation": "2+4+5+4+3+2=20分钟",
+          "limitations": [
+            "演示依赖使用者准备本组真实脱敏交接单，尚非全部讲稿即拿即讲。",
+            "一周回访等是可调整的流程设计，不是已确认组规；正式使用宜按现有制度替换。",
+            "一页打印仍未验证，结尾提出再压缩为打印版表格，不算已交付印刷文件。"
+          ]
+        },
+        {
+          "label": "C",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "清单允许已确认、待补和不适用，避免把未知填成既定事实。"
+          ],
+          "issues": [
+            {
+              "severity": "MEDIUM",
+              "dimension": "design_fit",
+              "evidenceQuote": "定时任务/脚本清单及位置",
+              "reason": "未提供小组岗位类型，却给定时任务、告警、runbook、代码配置较大篇幅；普通小组需删改多个栏位后才适用。",
+              "minimalEdit": "保留通用任务、材料、权限、联系人和未决项，把技术专用栏并入按需补充项。"
+            },
+            {
+              "severity": "LOW",
+              "dimension": "editing_burden",
+              "evidenceQuote": "待补项汇总",
+              "reason": "8组检查项后另附汇总，与一页直接复用的要求存在压缩负担；实际超页未验证。",
+              "minimalEdit": "把待补内容合并到对应事项行，验证一页排版。"
+            }
+          ],
+          "scheduleCalculation": "2+3+7+4+3+1=20分钟",
+          "nonIssue": "模板留空以及按实际系统替换符合可复用清单的交付性质，不因留空本身判为空模板。"
+        },
+        {
+          "label": "D",
+          "verdict": "USABLE",
+          "strengths": [
+            "提供明确标为例子的贯穿示范，流程和清单对应；具体系统、审批与时限保留实际条件边界。"
+          ],
+          "issues": [],
+          "evidenceQuotes": [
+            "例：同事A休假3天，把“周报汇总”任务交给B。",
+            "小组特有的工具、系统、审批时限请以组内实际规定为准"
+          ],
+          "scheduleCalculation": "2+4+3+4+3+3+1=20分钟",
+          "limitations": [
+            "18条清单多行设置签字，填报负担较高；建议合并为阶段确认，但不能仅据此判为错误流程。",
+            "一页打印和字号可读性尚未验证。"
+          ]
+        },
+        {
+          "label": "E",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "明确可用标注的虚构示例，区分通用模板与实际小组制度，核心交接内容完整。"
+          ],
+          "issues": [
+            {
+              "severity": "MEDIUM",
+              "dimension": "editing_burden",
+              "evidenceQuote": "D. 常见遗漏自查（交接结束前快速过一遍）",
+              "reason": "此前A/B/C已覆盖资料、风险、复述、负责人和跟进，再列7条同类自查；形成6条基本信息、28条检查、自查和3条签字共37个表格数据行，用户仍需明显压缩。",
+              "minimalEdit": "合并重复自查至原事项，保留一张紧凑清单，并做一页排版。"
+            }
+          ],
+          "scheduleCalculation": "2+3+6+3+3+2+1=20分钟",
+          "tableRowCalculation": "基本信息6+A6+B8+C7+D7+签字3=37个表格数据行；不含表头及分隔线。",
+          "pageVerification": "37行仅用于解释编辑负担，不宣称实际打印页数。"
+        }
+      ]
+    },
+    {
+      "caseId": "PLAN_MAINTENANCE",
+      "conclusion": "A/B均完整保留确认后的时间、影响范围和自动重连未知，没有停止交付或保证自动恢复。共同需要删改未经确认的落款团队及以维护日期充当发文日期；作品层面基本并列。",
+      "preferredLabels": [
+        "A",
+        "B"
+      ],
+      "ranking": "并列，均需小幅编辑后发送。",
+      "scopeLimit": "匿名包未提供Plan题目与出题过程，不能据这两份作品验收Plan提问价值或问题数量。",
+      "artifacts": [
+        {
+          "label": "A",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "维护时间、办公区无线中断、有线正常和远程不受影响均保留；明确自动恢复未知。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "unconfirmed_identity",
+              "evidenceQuote": "IT支持  \n2026年10月30日",
+              "reason": "用户没有确认发文主体或发文日期；维护日期不能直接用作落款日期。",
+              "minimalEdit": "删除落款，或仅使用用户明确给出的发文主体和日期。"
+            }
+          ],
+          "evidenceQuotes": [
+            "维护结束后，无线网络连接是否会自动恢复尚不确定。"
+          ],
+          "nonIssue": "尝试手动重连为条件性建议，不是自动恢复保证；本报告不把无具体号码的通用支持建议等同于伪造联系方式。"
+        },
+        {
+          "label": "B",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "所有实际确认信息完整，手动重连写为届时条件性操作。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "unconfirmed_identity",
+              "evidenceQuote": "网络维护团队  \n2026年10月30日",
+              "reason": "未确认的团队名与发文日期被写成正式落款。",
+              "minimalEdit": "删除未经确认的落款。"
+            }
+          ],
+          "evidenceQuotes": [
+            "维护结束后，无线网络能否自动重连尚不确定。"
+          ],
+          "nonIssue": "星期五属于可核对的日历事实，非新维护安排；排版和语气差异不参与胜负。"
+        }
+      ]
+    },
+    {
+      "caseId": "HOLDOUT_OFFICE_20261022",
+      "conclusion": "全部在220字符内，并保留条件更换、否则延期及不挪资料不丢文件。差异集中于压缩后是否仍明确核对职责、未定信息的对象。均只需极小文字调整，不能与事实严重错误等量评价。",
+      "preferredLabels": [
+        "B",
+        "D"
+      ],
+      "ranking": "D最明确保留核对职责，B准确说明未定的是负责人；两者各有局部文字问题，没有无条件胜者。",
+      "characterCounting": "去除传输首尾空白，正文标点、空格、换行均计入；本题无补充平面字符，UTF-16长度与字符数一致。",
+      "artifacts": [
+        {
+          "label": "A",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "两人期限及有条件更换完整，103字符，无新增人员分配。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "requirement_precision",
+              "evidenceQuote": "陈柯周三17:00前发资料类别清单",
+              "reason": "保留发送清单，但核对现有类别职责只剩隐含；冻结要求单列这项动作。",
+              "minimalEdit": "在发清单前保留核对现有类别。"
+            },
+            {
+              "severity": "LOW",
+              "dimension": "information_state_precision",
+              "evidenceQuote": "购买打印未定",
+              "reason": "附件未定的是由谁购买或打印，省略对象后可能被理解为是否购买打印尚未决定。",
+              "minimalEdit": "改为购买打印负责人未定，或省略该非必需信息。"
+            }
+          ],
+          "characterCount": 103
+        },
+        {
+          "label": "B",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "时间条件、范围和未定责任人的状态准确，101字符。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "requirement_precision",
+              "evidenceQuote": "陈柯周三17点前发资料类别清单",
+              "reason": "已保留交付清单，但核对现有类别这一独立动作没有明确传达；发送清单不必然说明已核对。",
+              "minimalEdit": "补上核对现有类别后发清单，仍可满足220字符。"
+            }
+          ],
+          "characterCount": 101,
+          "evidenceQuotes": [
+            "购买或打印标贴尚未定人。"
+          ]
+        },
+        {
+          "label": "C",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "不强加采购待办，条件、期限和范围完整，99字符。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "requirement_precision",
+              "evidenceQuote": "陈柯周三17点前发资料类别清单",
+              "reason": "明确职责中的核对现有类别被压缩成隐含。",
+              "minimalEdit": "增加核对类别动作。"
+            }
+          ],
+          "characterCount": 99,
+          "nonIssue": "采购打印负责人未定属于允许省略项，其省略不算遗漏。"
+        },
+        {
+          "label": "D",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "两人的完整动作、时点、条件及范围均清楚，139字符。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "information_state_precision",
+              "evidenceQuote": "购买或打印标贴尚未决定。",
+              "reason": "未定的是负责人，当前语句把未定对象扩展到采购或打印事项本身；没有证据说明操作是否尚未决定。",
+              "minimalEdit": "改为购买或打印负责人尚未决定，或删去这句。"
+            }
+          ],
+          "characterCount": 139,
+          "evidenceQuotes": [
+            "陈柯负责核对现有资料类别，周三17点前把清单发给大家"
+          ]
+        },
+        {
+          "label": "E",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "紧凑责任人式消息，所有时间条件与不挪不丢范围保留，102字符。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "requirement_precision",
+              "evidenceQuote": "陈柯：周三17点前发资料类别清单",
+              "reason": "核对现有类别未明确表达，只保留发清单。",
+              "minimalEdit": "补上核对类别动作。"
+            }
+          ],
+          "characterCount": 102,
+          "nonIssue": "省略采购打印负责人未知符合冻结允许范围。"
+        }
+      ]
+    },
+    {
+      "caseId": "HOLDOUT_LIFE_20261022",
+      "conclusion": "各版本明示的主流程均合计30分钟，不存在此前心算所疑的31分钟超时。D最接近只用书包和纸即可执行；A/C引入手机提醒前置，B/C在课表未知时猜科目，E把未完成作业直接交出且扩展较多整理外动作。",
+      "preferredLabels": [
+        "D"
+      ],
+      "ranking": "D相对最好；其余需修正具体资源、未知课程或流程问题，不以长短本身判优劣。",
+      "artifacts": [
+        {
+          "label": "A",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "清空、分类、装包、纸质核对和收尾动作明确；主流程合计30分钟。"
+          ],
+          "issues": [
+            {
+              "severity": "MEDIUM",
+              "dimension": "resource_constraint",
+              "evidenceQuote": "手机设一个周日 20:30 的 5 分钟提醒",
+              "reason": "用户限定书包和普通纸张，手机应用被写成固定步骤，结尾清单也重复要求。",
+              "minimalEdit": "改用已设计的纸质提醒，移除必须设置手机提醒的步骤。"
+            }
+          ],
+          "scheduleCalculation": "3+5+5+7+5+5=30分钟；一页清单3+5+5+7+3+2+5=30分钟，第5步已注明包含在第4步，第9步未另计。",
+          "timingLimit": "提醒设置与真人操作耗时未验证，不能据此宣称必定超时。"
+        },
+        {
+          "label": "B",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "纸折夹页替代文件袋，不强制购买；实际动作与检查较充分。"
+          ],
+          "issues": [
+            {
+              "severity": "MEDIUM",
+              "dimension": "unsupported_task_assumption",
+              "evidenceQuote": "如果课表记不清，就按“语数英+明天最可能查的科目”带",
+              "reason": "用户未提供年级和课程，猜定科目可能导致漏带真实次日课程，偏离按实际需要核对。",
+              "minimalEdit": "保留按现有课表或已有记录核对；不能确认的列纸条待确认，不以固定科目替代。"
+            }
+          ],
+          "scheduleCalculation": "主流程3+5+5+5+5+4+3=30分钟；末尾简表3+5+5+5+4+3=25分钟，另有30秒自检。",
+          "timingLimit": "两套分配不一致但均未超过30分钟，不判为超时；建议统一为一份执行清单。"
+        },
+        {
+          "label": "C",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "用纸记录未解决事项，不要求用户先回答问卷；明示时间合计30分钟。"
+          ],
+          "issues": [
+            {
+              "severity": "MEDIUM",
+              "dimension": "unsupported_task_assumption",
+              "evidenceQuote": "看一眼周一课表（没有就按“语数英+当天主科”估）。",
+              "reason": "未确认课程被固定科目替代，实际装包可能遗漏。",
+              "minimalEdit": "按实际已有课程信息执行，待确认项记纸上。"
+            },
+            {
+              "severity": "MEDIUM",
+              "dimension": "resource_constraint",
+              "evidenceQuote": "手机设周一早的闹钟，备注“看侧袋纸条”。",
+              "reason": "额外手机应用被写成固定要求，不符合仅书包和纸的约束。",
+              "minimalEdit": "直接把提醒纸置于可见位置。"
+            }
+          ],
+          "scheduleCalculation": "1+8+8+5+5+3=30分钟。",
+          "nonIssue": "撕下或拍照提供纸张路径，单独提到拍照不构成强制额外工具；真正问题是必做的手机闹钟。"
+        },
+        {
+          "label": "D",
+          "verdict": "USABLE",
+          "strengths": [
+            "按真实课表与作业记录逐项装包，用纸保留待办，流程能启动，无手机应用或购买前置。"
+          ],
+          "issues": [],
+          "evidenceQuotes": [
+            "看周一课表，逐科把课本、练习册、笔记本放进书包。",
+            "把这张纸**放在书包最外层**，明早一眼能看到。"
+          ],
+          "scheduleCalculation": "1+3+8+7+5+3+3=30分钟；20:00至20:30时间表一致。",
+          "limitations": [
+            "校服、橡皮尺子等通用检查例宜注明按实际需要，不把它们误读为用户已拥有的事实。",
+            "末尾时间表重复步骤，可删去以便一页呈现；未验证实际打印页数和真人耗时。"
+          ],
+          "nonIssue": "建议周日20:00开始属于用户已委托的流程安排；缺的现在补并未明确要求购买，不据此追加购买违规。"
+        },
+        {
+          "label": "E",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "纸折边提供无胶带替代方案，不强制购买；总分配30分钟。"
+          ],
+          "issues": [
+            {
+              "severity": "MEDIUM",
+              "dimension": "execution_quality",
+              "evidenceQuote": "做不完的放进“待交/待签”纸袋或夹在课本第一页，明早到校先交",
+              "reason": "将尚未完成或尚未签字的事项直接安排提交，没有核对是否已满足提交条件。",
+              "minimalEdit": "把未完成事项记入纸上待办，成品或已确认可提交的才放待交区。"
+            },
+            {
+              "severity": "LOW",
+              "dimension": "internal_consistency",
+              "evidenceQuote": "饭盒/水杯：拿去洗，倒扣晾干；明早装回。",
+              "reason": "后文又在当晚装包步骤要求水杯入侧袋，未说明晾干物品如何保留到早晨的提醒。",
+              "minimalEdit": "明确当晚未干物品留出纸质晨间提醒，不在两步中要求相反动作。"
+            }
+          ],
+          "scheduleCalculation": "2+8+8+5+5+2=30分钟。",
+          "nonIssue": "胶带/订书钉有折边替代，不判成必须购买；科目名写为例如，也不按编造既有课表处理。",
+          "limitations": [
+            "写作业、洗饭盒等超出书包装整的附加操作会增加执行负担，但未实测，不能断言必定超过30分钟。"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HOLDOUT_TOOL_20261022",
+      "conclusion": "四份完整HTML核心行为均通过主代理浏览器验证，静态源码未发现外部依赖、上传或持久化输入。四份都在唯一完整HTML围栏之外额外附了操作说明，需删除后才能满足只交付HTML；代码围栏本身不算问题。",
+      "preferredLabels": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "ranking": "已测核心行为并列。A/C判空范围更直接对应空格与制表符；B/D较宽的Unicode空白判定只作边界观察，不在未冻结输入上追加严重失败或重排胜负。",
+      "staticAudit": {
+        "reviewed": "匿名作品中的HTML源码，未执行生成代码。",
+        "findings": "未发现http(s)外部依赖、fetch/XHR/WebSocket/sendBeacon网络调用、localStorage/sessionStorage/IndexedDB/Cookie或自动文件写入路径。",
+        "sourceBoundary": "静态未发现与主代理浏览器未观察分别记录，不扩张成所有环境绝对无副作用的保证。",
+        "optionalFeatures": "复制、清空、快捷键、自动统计和视觉样式不决定核心胜负；未补做剪贴板兼容性实验。"
+      },
+      "artifacts": [
+        {
+          "label": "A",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "判空精确限定空格和制表符，保留的是原行字符串。",
+            "主代理报告对应HTML的5项核心浏览器检查均通过，无页面错误、网络或存储尝试。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "delivery_format",
+              "evidenceQuote": "### 核心功能与操作流程",
+              "reason": "此标题及其下说明位于唯一完整HTML代码围栏外，且作品前还有介绍句；用户只要求HTML文件。",
+              "minimalEdit": "只保留完整HTML文件内容，代码围栏允许保留，不要求改动已验证的核心实现。"
+            }
+          ],
+          "evidenceQuotes": [
+            "if (/^[ \\t]*$/.test(line)) return false;"
+          ],
+          "browserCoreChecks": {
+            "passed": 5,
+            "total": 5,
+            "provenance": "主代理提供"
+          }
+        },
+        {
+          "label": "B",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "trim只用于判空，未把trim后的内容用作输出，非空行前后字符保留。",
+            "主代理报告对应HTML的5项核心浏览器检查均通过，无页面错误、网络或存储尝试。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "delivery_format",
+              "evidenceQuote": "### 功能与操作说明",
+              "reason": "此标题及其下说明位于唯一完整HTML代码围栏外，且作品前还有介绍句；用户只要求HTML文件。",
+              "minimalEdit": "只保留完整HTML文件内容，代码围栏允许保留，不要求改动已验证的核心实现。"
+            }
+          ],
+          "evidenceQuotes": [
+            "const nonEmptyLines = lines.filter(line => line.trim() !== '');"
+          ],
+          "browserCoreChecks": {
+            "passed": 5,
+            "total": 5,
+            "provenance": "主代理提供"
+          },
+          "boundaryObservation": "trim也将某些Unicode空白字符行判空，比空格/制表符的显式规则更宽。冻结核心输入未覆盖此区别，按边界待确认记录，不当成本次已验证失败。"
+        },
+        {
+          "label": "C",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "明确判空函数限定空格和制表符；实时处理不等于自动持久化。",
+            "主代理报告对应HTML的5项核心浏览器检查均通过，无页面错误、网络或存储尝试。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "delivery_format",
+              "evidenceQuote": "### 核心功能与操作说明",
+              "reason": "此标题及其下说明位于唯一完整HTML代码围栏外，且作品前还有介绍句；用户只要求HTML文件。",
+              "minimalEdit": "只保留完整HTML文件内容，代码围栏允许保留，不要求改动已验证的核心实现。"
+            }
+          ],
+          "evidenceQuotes": [
+            "return /^[ \\t]*$/.test(line);"
+          ],
+          "browserCoreChecks": {
+            "passed": 5,
+            "total": 5,
+            "provenance": "主代理提供"
+          }
+        },
+        {
+          "label": "D",
+          "verdict": "NEEDS_EDIT",
+          "strengths": [
+            "trim只用于筛选，输出仍是原始非空行。",
+            "主代理报告对应HTML的5项核心浏览器检查均通过，无页面错误、网络或存储尝试。"
+          ],
+          "issues": [
+            {
+              "severity": "LOW",
+              "dimension": "delivery_format",
+              "evidenceQuote": "### 核心功能与操作说明",
+              "reason": "此标题及其下说明位于唯一完整HTML代码围栏外，且作品前还有介绍句；用户只要求HTML文件。",
+              "minimalEdit": "只保留完整HTML文件内容，代码围栏允许保留，不要求改动已验证的核心实现。"
+            }
+          ],
+          "evidenceQuotes": [
+            "const nonEmptyLines = lines.filter(line => line.trim() !== '');"
+          ],
+          "browserCoreChecks": {
+            "passed": 5,
+            "total": 5,
+            "provenance": "主代理提供"
+          },
+          "boundaryObservation": "trim也将某些Unicode空白字符行判空，比空格/制表符的显式规则更宽。冻结核心输入未覆盖此区别，按边界待确认记录，不当成本次已验证失败。"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "directlyUsableByCase": {
+      "DEV_NOTICE": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ],
+      "DEV_MISSING_STATUS": [
+        "D"
+      ],
+      "DEV_DELEGATED_GUIDE": [
+        "B",
+        "D"
+      ],
+      "PLAN_MAINTENANCE": [],
+      "HOLDOUT_OFFICE_20261022": [],
+      "HOLDOUT_LIFE_20261022": [
+        "D"
+      ],
+      "HOLDOUT_TOOL_20261022": []
+    },
+    "interpretation": [
+      "直接可用为空不等于无功能价值：办公室题是几字的职责或未定对象校正，HTML题是删除围栏外说明；两者不能与进度题事实状态错误相加后声称同等失败。",
+      "最明确的质量分化在进度状态题和有限用品整理题：既有信息保持、缺失状态不升级以及不新增资源前置条件直接影响使用。",
+      "通知规则题全部合格、HTML核心实现全部通过；这些结果反对将整个增强功能简单归为无效。",
+      "开放设计题已产生实质可用内容，后续应减少重复检查和不适用默认项，不能以禁止合理设计或强加更多追问解决。",
+      "本报告不包含版本映射、成本或增强提示词，不能独立得出某候选优于第四版、策略整体采用或泛化充分的结论。"
+    ]
+  }
+}

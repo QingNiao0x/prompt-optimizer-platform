@@ -1,0 +1,84 @@
+{
+  "batch": "natural-phase-compatibility-2026-10-22",
+  "authorizationQuote": "授权新增最多96次实际调用",
+  "taskMaximumNewActualCalls": 96,
+  "taskPreviouslyActual": 69,
+  "maximumNewActualCalls": 20,
+  "remainingUnreserved": 7,
+  "previousClosedActualCalls": 1241,
+  "oldClosedBalanceTransferred": 0,
+  "baselineCommit": "2b6aa98a",
+  "baselineVersion": "21",
+  "candidateVersions": [
+    "24"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 16384,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 12,
+    "PLAN": 4,
+    "EXECUTION": 4,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 5,
+    "PLAN": 2,
+    "EXECUTION": 4,
+    "REVIEW": 0
+  },
+  "generation": [
+    "DEV_NOTICE",
+    "DEV_MISSING_STATUS",
+    "HOLDOUT_TOOL_20261022",
+    "HOLDOUT_LIFE_20261022"
+  ],
+  "plan": [
+    "PLAN_MAINTENANCE",
+    "PLAN_SUFFICIENT"
+  ],
+  "confirmedPlanGeneration": [
+    "PLAN_MAINTENANCE"
+  ],
+  "execution": [
+    "DEV_MISSING_STATUS",
+    "HOLDOUT_TOOL_20261022",
+    "HOLDOUT_LIFE_20261022",
+    "PLAN_MAINTENANCE"
+  ],
+  "commonPlanAnchorVersion": "24",
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "status": "FROZEN",
+  "allowedJobs": [
+    "DEV_NOTICE_V24_GEN",
+    "DEV_MISSING_STATUS_V24_GEN",
+    "HOLDOUT_TOOL_20261022_V24_GEN",
+    "HOLDOUT_LIFE_20261022_V24_GEN",
+    "PLAN_MAINTENANCE_V24_PLAN",
+    "PLAN_SUFFICIENT_V24_PLAN",
+    "PLAN_MAINTENANCE_V24_PLAN_GEN",
+    "DEV_MISSING_STATUS_V24_EXEC",
+    "HOLDOUT_TOOL_20261022_V24_EXEC",
+    "HOLDOUT_LIFE_20261022_V24_EXEC",
+    "PLAN_MAINTENANCE_V24_EXEC"
+  ],
+  "criteria": [
+    "24指导逐字等于21，仅修复未知非权威字段引起的形式误拒；不是质量重试，不补场景禁令。",
+    "旧022/030/031原件在24中通过且正文、来源、覆盖不变，旧21仍保持旧失败；非法跨阶段、伪报服务端归属、错类型、缺实际题答/正文引用继续拒绝。",
+    "四题直接增强、重要未知和充分Plan及实际确认后生成，真实首稿和失败均留存；不重采已完成的4/21/22/23基线，结果与前批按相同信息对照，Plan为新真实题目绑定而非相同题号。",
+    "实际作品沿用冻结验收；恢复可用交付不等于语义质量提升。已见资料状态/Plan低价值追问等限制另列，不以协议改进替代。",
+    "出现新严重平台回归不采用；严格安全和全部来源保护不得削弱，未知诊断不用于任何权限/分类/正文决策，不回显持久化。"
+  ],
+  "stopConditions": [
+    "20次阶段上限或本授权累计96次即停；失败、协议修复计数，不质量重试。",
+    "本批源码和指导冻结后不改动；发生误拒/错误放行以原件定位，不扩大题目凑通过。"
+  ]
+}

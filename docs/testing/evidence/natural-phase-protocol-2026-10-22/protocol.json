@@ -1,0 +1,174 @@
+{
+  "batch": "natural-phase-protocol-2026-10-22",
+  "authorizationQuote": "授权新增最多96次实际调用",
+  "taskMaximumNewActualCalls": 96,
+  "maximumNewActualCalls": 96,
+  "previousClosedActualCalls": 1172,
+  "previousAuthorizationUnallocatedExcluded": 8,
+  "closedBalanceTransferred": 0,
+  "allNewActualCallsBudgetCategory": "candidate",
+  "baselineCommit": "b11f1e63",
+  "baselineVersion": "4",
+  "candidateVersions": [
+    "21",
+    "22",
+    "23"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 16384,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 54,
+    "PLAN": 8,
+    "EXECUTION": 34,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 30,
+    "PLAN": 4,
+    "EXECUTION": 33,
+    "REVIEW": 0
+  },
+  "generation": [
+    "DEV_NOTICE",
+    "DEV_MISSING_STATUS",
+    "DEV_DELEGATED_GUIDE",
+    "DEV_JSON",
+    "HOLDOUT_OFFICE_20261022",
+    "HOLDOUT_LIFE_20261022",
+    "HOLDOUT_TOOL_20261022"
+  ],
+  "plan": [
+    "PLAN_MAINTENANCE",
+    "PLAN_SUFFICIENT"
+  ],
+  "confirmedPlanGeneration": [
+    "PLAN_MAINTENANCE"
+  ],
+  "execution": [
+    "DEV_NOTICE",
+    "DEV_MISSING_STATUS",
+    "DEV_DELEGATED_GUIDE",
+    "PLAN_MAINTENANCE",
+    "HOLDOUT_OFFICE_20261022",
+    "HOLDOUT_LIFE_20261022",
+    "HOLDOUT_TOOL_20261022"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "commonPlanAnchorVersion": "4",
+  "holdout": {
+    "path": "tmp\\phase-protocol-holdout-20261022.json",
+    "sha256": "bd99d7926389aed50c19c5cd2ed00f83bc191457f51e0a5176a4ae066be4c76f",
+    "disclosure": "候选编写者未见三份保留输入；同一团队合成，非外部专业盲测。候选源码先冻结，随后才合并题目。不得据结果修改本批候选。"
+  },
+  "comparisons": [
+    {
+      "candidate": "21",
+      "baseline": "4",
+      "change": "仅阶段协议与确定性适配"
+    },
+    {
+      "candidate": "22",
+      "baseline": "21",
+      "change": "仅取消必填框架标签"
+    },
+    {
+      "candidate": "23",
+      "baseline": "22",
+      "change": "仅移除十二框架映射指导"
+    }
+  ],
+  "criteria": [
+    "工程完成、候选采用、整体发布分别报告；第四版保持默认，测试通过或响应成功不等于实质补全质量提升。",
+    "所有来源、完整实际题答、独立条件、信息状态、委托和原定交付物均保留；严格格式任务保持相持可通过，不要求人为扩写。",
+    "21验收阶段协议简化及语义不退步：按首轮可用率、最终交付率、协议重试、输入输出tokens与延迟报告；不得以恢复协议失败当作语义收益。",
+    "22与21、23与22独立比较。没有确定收益或出现新严重退步就不采用；单次速度或自然波动不证明普遍收益。",
+    "提示词及同信息实际作品按冻结要求、能否直接使用、错误、遗漏和必要修改量评价，允许正常不同设计；更长或更漂亮不自动判胜。",
+    "原始与所有增强臂使用同一模型、材料、实际答复及执行系统要求；失败臂记录失败，不按未产出作品判质量胜利。",
+    "三份保留输入不用于本批开发调整；已见故障回归、充分需求守护、保留题分别统计，不混成泛化结论。",
+    "历史复制正文与版本一致，无自然模式默认安全尾巴，未实现路径标未验证；不宣称整体发布或全场景质量通过。"
+  ],
+  "stopConditions": [
+    "总96或阶段54/8/34/0到限停止，失败和一次协议修复计数，不质量重试。",
+    "同一假设连续两个候选严重同类失败，停止该假设的扩大采样并审查根因；不调整本批题目、判据或源码凑通过。",
+    "每个冻结作业最多执行一次，断点恢复只复用完全一致原件，关闭后不再调用。"
+  ],
+  "status": "FROZEN",
+  "allowedJobs": [
+    "DEV_NOTICE_V4_GEN",
+    "DEV_NOTICE_V21_GEN",
+    "DEV_NOTICE_V22_GEN",
+    "DEV_NOTICE_V23_GEN",
+    "DEV_MISSING_STATUS_V4_GEN",
+    "DEV_MISSING_STATUS_V21_GEN",
+    "DEV_MISSING_STATUS_V22_GEN",
+    "DEV_MISSING_STATUS_V23_GEN",
+    "DEV_DELEGATED_GUIDE_V4_GEN",
+    "DEV_DELEGATED_GUIDE_V21_GEN",
+    "DEV_DELEGATED_GUIDE_V22_GEN",
+    "DEV_DELEGATED_GUIDE_V23_GEN",
+    "DEV_JSON_V4_GEN",
+    "DEV_JSON_V21_GEN",
+    "DEV_JSON_V22_GEN",
+    "DEV_JSON_V23_GEN",
+    "HOLDOUT_OFFICE_20261022_V4_GEN",
+    "HOLDOUT_OFFICE_20261022_V21_GEN",
+    "HOLDOUT_OFFICE_20261022_V22_GEN",
+    "HOLDOUT_OFFICE_20261022_V23_GEN",
+    "HOLDOUT_LIFE_20261022_V4_GEN",
+    "HOLDOUT_LIFE_20261022_V21_GEN",
+    "HOLDOUT_LIFE_20261022_V22_GEN",
+    "HOLDOUT_LIFE_20261022_V23_GEN",
+    "HOLDOUT_TOOL_20261022_V4_GEN",
+    "HOLDOUT_TOOL_20261022_V21_GEN",
+    "HOLDOUT_TOOL_20261022_V22_GEN",
+    "HOLDOUT_TOOL_20261022_V23_GEN",
+    "PLAN_MAINTENANCE_V4_PLAN",
+    "PLAN_MAINTENANCE_V21_PLAN",
+    "PLAN_SUFFICIENT_V4_PLAN",
+    "PLAN_SUFFICIENT_V21_PLAN",
+    "PLAN_MAINTENANCE_V4_PLAN_GEN",
+    "PLAN_MAINTENANCE_V21_PLAN_GEN",
+    "DEV_NOTICE_RAW_EXEC",
+    "DEV_NOTICE_V4_EXEC",
+    "DEV_NOTICE_V21_EXEC",
+    "DEV_NOTICE_V22_EXEC",
+    "DEV_NOTICE_V23_EXEC",
+    "DEV_MISSING_STATUS_RAW_EXEC",
+    "DEV_MISSING_STATUS_V4_EXEC",
+    "DEV_MISSING_STATUS_V21_EXEC",
+    "DEV_MISSING_STATUS_V22_EXEC",
+    "DEV_MISSING_STATUS_V23_EXEC",
+    "DEV_DELEGATED_GUIDE_RAW_EXEC",
+    "DEV_DELEGATED_GUIDE_V4_EXEC",
+    "DEV_DELEGATED_GUIDE_V21_EXEC",
+    "DEV_DELEGATED_GUIDE_V22_EXEC",
+    "DEV_DELEGATED_GUIDE_V23_EXEC",
+    "PLAN_MAINTENANCE_RAW_EXEC",
+    "PLAN_MAINTENANCE_V4_EXEC",
+    "PLAN_MAINTENANCE_V21_EXEC",
+    "HOLDOUT_OFFICE_20261022_RAW_EXEC",
+    "HOLDOUT_OFFICE_20261022_V4_EXEC",
+    "HOLDOUT_OFFICE_20261022_V21_EXEC",
+    "HOLDOUT_OFFICE_20261022_V22_EXEC",
+    "HOLDOUT_OFFICE_20261022_V23_EXEC",
+    "HOLDOUT_LIFE_20261022_RAW_EXEC",
+    "HOLDOUT_LIFE_20261022_V4_EXEC",
+    "HOLDOUT_LIFE_20261022_V21_EXEC",
+    "HOLDOUT_LIFE_20261022_V22_EXEC",
+    "HOLDOUT_LIFE_20261022_V23_EXEC",
+    "HOLDOUT_TOOL_20261022_RAW_EXEC",
+    "HOLDOUT_TOOL_20261022_V4_EXEC",
+    "HOLDOUT_TOOL_20261022_V21_EXEC",
+    "HOLDOUT_TOOL_20261022_V22_EXEC",
+    "HOLDOUT_TOOL_20261022_V23_EXEC"
+  ]
+}
