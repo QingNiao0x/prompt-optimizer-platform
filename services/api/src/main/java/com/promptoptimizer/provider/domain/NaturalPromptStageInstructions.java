@@ -2,7 +2,8 @@ package com.promptoptimizer.provider.domain;
 
 /**
  * 按增强与Plan阶段减少重复协议字段的受控候选。沿用第四版业务指导，不增加生成阶段。
- * 21只改变协议，22仅取消框架标记必填，23再移除十二框架组织参考；默认版本仍由原入口管理。
+ * 21只改变协议，22仅取消框架标记必填，23再移除十二框架组织参考；24沿用21指导，仅兼容无权威诊断字段。
+ * 默认版本仍由原入口管理，候选存在不表示质量通过。
  *
  * @author QingNiao
  * @since 0.1.0
@@ -11,6 +12,7 @@ public final class NaturalPromptStageInstructions {
     public static final String VERSION = "21";
     public static final String OPTIONAL_FRAMEWORK_VERSION = "22";
     public static final String NO_FRAMEWORK_VERSION = "23";
+    public static final String DIAGNOSTIC_COMPATIBILITY_VERSION = "24";
 
     private static final String FRAMEWORK_START = "framework只是正文形成后的组织参考：";
     // 从冻结的第四版截取原业务指导，找不到唯一协议边界即失败，不默默更改旧版或猜测新边界。
@@ -69,15 +71,16 @@ public final class NaturalPromptStageInstructions {
 
     /** 仅服务端显式选择的候选采用新协议，旧历史继续使用原指导。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || OPTIONAL_FRAMEWORK_VERSION.equals(version) || NO_FRAMEWORK_VERSION.equals(version);
+        return VERSION.equals(version) || OPTIONAL_FRAMEWORK_VERSION.equals(version) || NO_FRAMEWORK_VERSION.equals(version)
+                || DIAGNOSTIC_COMPATIBILITY_VERSION.equals(version);
     }
 
-    /** 21仍校验原十二框架标记，22/23将其降为不影响正文交付的可选诊断。 */
+    /** 21/24仍校验原十二框架标记，22/23将其降为不影响正文交付的可选诊断。 */
     public static boolean requiresFramework(String version) {
-        return VERSION.equals(version);
+        return VERSION.equals(version) || DIAGNOSTIC_COMPATIBILITY_VERSION.equals(version);
     }
 
-    /** 保持正文业务指导不变，三个候选逐一消融协议、框架必填及框架指导。 */
+    /** 21—23逐一消融协议、框架必填及框架指导；24必须逐字复用21，兼容处理仅发生在读取端。 */
     public static String enhancementInstruction(String version) {
         if (!supports(version)) throw new IllegalArgumentException("分阶段自然增强版本不受支持");
         String framework = NO_FRAMEWORK_VERSION.equals(version) ? "" : FRAMEWORK_GUIDANCE;
@@ -87,7 +90,7 @@ public final class NaturalPromptStageInstructions {
         return ENHANCEMENT_GUIDANCE + framework + envelope + ENHANCEMENT_PROTOCOL;
     }
 
-    /** 三个候选使用同一Plan协议，框架消融不改变提问要求或真实题答绑定。 */
+    /** 阶段候选使用同一Plan协议，解析兼容和框架消融不改变提问要求或真实题答绑定。 */
     public static String planningInstruction(String version) {
         if (!supports(version)) throw new IllegalArgumentException("分阶段自然Plan版本不受支持");
         return PLANNING_GUIDANCE + PLANNING_PROTOCOL;

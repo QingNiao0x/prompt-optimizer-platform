@@ -43,6 +43,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     private final ObjectMapper json;
     private final ObjectReader enhancementPhaseReader;
     private final ObjectReader planningPhaseReader;
+    private final ObjectReader diagnosticEnhancementReader;
+    private final ObjectReader diagnosticPlanningReader;
     private final OpenAiCompatibleProperties properties;
     private final PlatformModelCatalog catalog;
 
@@ -59,7 +61,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             OpenAiCompatibleProperties properties, PlatformModelCatalog catalog) {
         this.client = client;
         this.json = json;
-        // 候选阶段DTO拒绝未知字段和标量类型猜换；局部副本不改变第四版及其它业务的Jackson兼容行为。
+        // 阶段DTO默认拒绝未知字段和标量类型猜换；局部副本不改变第四版及其它业务的Jackson兼容行为。
         ObjectMapper phases = json.copy().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
                 DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
                 .disable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY,
@@ -76,6 +78,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         phases.coercionConfigFor(LogicalType.Boolean).setCoercion(CoercionInputShape.String, CoercionAction.Fail);
         this.enhancementPhaseReader = phases.readerFor(NaturalPromptPhasePayloads.Enhancement.class);
         this.planningPhaseReader = phases.readerFor(NaturalPromptPhasePayloads.Planning.class);
+        // 24只改变无权威标量诊断的处理；复制后注册局部handler，不修改已冻结候选或全局Jackson行为。
+        ObjectMapper diagnostics = phases.copy().addHandler(new NaturalPromptDiagnosticFieldHandler());
+        this.diagnosticEnhancementReader = diagnostics.readerFor(NaturalPromptPhasePayloads.Enhancement.class);
+        this.diagnosticPlanningReader = diagnostics.readerFor(NaturalPromptPhasePayloads.Planning.class);
         this.properties = properties;
         this.catalog = catalog;
     }
@@ -203,10 +209,12 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         });
     }
 
-    /** 严格读取增强专用字段后生成内部覆盖记录，不靠删除非法Plan字段放行旧失败。 */
+    /** 严格读取增强专用语义字段后生成内部覆盖记录，24仅忽略无权威诊断，不删除非法Plan字段放行。 */
     private NaturalPromptDraft readEnhancementPhase(JsonNode body, NaturalPromptInput input, ProviderMetadata metadata) {
         try {
-            NaturalPromptPhasePayloads.Enhancement payload = enhancementPhaseReader.readValue(body);
+            ObjectReader reader = NaturalPromptStageInstructions.DIAGNOSTIC_COMPATIBILITY_VERSION.equals(input.strategyVersion())
+                    ? diagnosticEnhancementReader : enhancementPhaseReader;
+            NaturalPromptPhasePayloads.Enhancement payload = reader.readValue(body);
             return payload.toDraft(input, metadata);
         } catch (IOException | IllegalArgumentException failure) {
             throw invalid("自然增强阶段协议无效");
@@ -216,7 +224,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     /** Plan的依据与题目就地绑定；注册、实际回答确认与历史保存仍由现有应用服务负责。 */
     private PlanningProviderResponse readPlanningPhase(JsonNode body, NaturalPromptInput input, ProviderMetadata metadata) {
         try {
-            NaturalPromptPhasePayloads.Planning payload = planningPhaseReader.readValue(body);
+            ObjectReader reader = NaturalPromptStageInstructions.DIAGNOSTIC_COMPATIBILITY_VERSION.equals(input.strategyVersion())
+                    ? diagnosticPlanningReader : planningPhaseReader;
+            NaturalPromptPhasePayloads.Planning payload = reader.readValue(body);
             return payload.toResponse(input, metadata);
         } catch (IOException | IllegalArgumentException failure) {
             throw invalid("自然Plan阶段协议无效");

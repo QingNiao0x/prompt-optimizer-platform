@@ -1,0 +1,33 @@
+{
+  "provenance": "natural-phase-protocol-2026-10-22 trace 030; synthetic task; response content only; no reasoning or credentials",
+  "traceSha256": "236a80965b94117861aefc05ba45f4f4eb39718f7bc5035ceee960ffe3167211",
+  "responseContentSha256": "0f4671190ecfe8a38135324b368049709c1e84f1c648fc993e22782886123996",
+  "input": {
+    "rawPrompt": "帮我做一个浏览器离线用的小工具：把粘贴的多行文字去掉空行，只含空格或制表符的行也算空行。非空行的首尾空格、行内字符和原有顺序都要保留。我不确定界面怎么做，你来设计。只交付一个完整HTML文件，不使用外部依赖，不上传内容，也不自动保存输入。",
+    "context": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [],
+      "fileSnippets": [],
+      "analysisStatus": "EMPTY",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "actualAnswers": [],
+    "conversation": [],
+    "mandatoryRules": [],
+    "modelId": "deepseek:deepseek-flash",
+    "planningContext": null,
+    "strategyVersion": "21",
+    "taskSources": [
+      {
+        "id": "rawPrompt",
+        "kind": "ORIGINAL_REQUEST"
+      }
+    ]
+  },
+  "responseContent": "{\"optimizedPrompt\":\"请帮我做一个可在浏览器中离线使用的小工具，交付一个完整的 HTML 文件。功能是：把粘贴进来的多行文字去掉空行，只含空格或制表符的行也算空行；非空行的首尾空格、行内字符和原有顺序都要保留。界面我不确定怎么做，请你来设计，做成打开即可用的单页工具。要求不使用任何外部依赖，不上传内容，也不自动保存输入。\",\"framework\":\"APE\",\"task\":{\"goal\":\"制作一个浏览器离线使用的多行文字去空行小工具\",\"deliverable\":\"一个完整、无外部依赖的 HTML 文件\",\"inputReadiness\":\"SUFFICIENT\",\"requirements\":[{\"text\":\"把粘贴的多行文字去掉空行，只含空格或制表符的行也算空行\",\"dimensions\":[\"GOAL\",\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"把粘贴的多行文字去掉空行，只含空格或制表符的行也算空行\"}],\"bodyQuotes\":[\"把粘贴进来的多行文字去掉空行，只含空格或制表符的行也算空行\"]},{\"text\":\"非空行的首尾空格、行内字符和原有顺序都要保留\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"非空行的首尾空格、行内字符和原有顺序都要保留\"}],\"bodyQuotes\":[\"非空行的首尾空格、行内字符和原有顺序都要保留\"]},{\"text\":\"界面由执行者设计\",\"dimensions\":[\"USER_CONFIRMATION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"我不确定界面怎么做，你来设计\"}],\"bodyQuotes\":[\"界面我不确定怎么做，请你来设计\"]},{\"text\":\"只交付一个完整HTML文件\",\"dimensions\":[\"FORMAT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"只交付一个完整HTML文件\"}],\"bodyQuotes\":[\"交付一个完整的 HTML 文件\"]},{\"text\":\"不使用外部依赖\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"不使用外部依赖\"}],\"bodyQuotes\":[\"不使用任何外部依赖\"]},{\"text\":\"不上传内容，也不自动保存输入\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"不上传内容，也不自动保存输入\"}],\"bodyQuotes\":[\"不上传内容，也不自动保存输入\"]}],\"additions\":[{\"text\":\"补充打开即可用的单页工具定位\",\"gap\":\"原文只说明浏览器离线使用，未明确交付形态为单页即用工具\",\"benefit\":\"帮助执行者确定界面与交互范围，避免引入多余页面或流程\",\"bodyQuotes\":[\"做成打开即可用的单页工具\"]}],\"openDecisions\":[],\"kind\":\"USER_INFORMATION\"}}"
+}

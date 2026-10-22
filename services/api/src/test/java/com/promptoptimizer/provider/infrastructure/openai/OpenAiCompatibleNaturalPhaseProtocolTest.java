@@ -12,7 +12,10 @@ import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.provider.domain.*;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -57,7 +60,7 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"21", "22", "23"})
+    @ValueSource(strings = {"21", "22", "23", "24"})
     void validEnhancementUsesOneCallAndNormalizesAllOriginalEvidence(String version) throws Exception {
         expect(1, enhancement(), input(version));
         var observations = new ArrayList<ModelCallObservation>();
@@ -155,7 +158,7 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"21", "22", "23"})
+    @ValueSource(strings = {"21", "22", "23", "24"})
     void planGroupsMultipleReasonsUnderOneQuestionAndRetainsUnaskedUnknown(String version) throws Exception {
         expect(1, planning(true), input(version));
         var result = provider.plan(input(version), this::checkPlan);
@@ -255,7 +258,7 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"21:missing", "21:unknown", "22:number", "23:number"})
+    @ValueSource(strings = {"21:missing", "21:unknown", "22:number", "23:number", "24:missing", "24:unknown", "24:number"})
     void frameworkCompatibilityNeverCoercesNonTextMetadata(String example) throws Exception {
         String[] parts = example.split(":");
         var body = enhancement();
@@ -291,6 +294,176 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
         server.verify();
     }
 
+    /** 冻结原件只裁掉认证和隐藏推理，不改正文、来源或覆盖；控制组只在测试中移除已知额外诊断。 */
+    @ParameterizedTest
+    @ValueSource(strings = {"022", "030", "031"})
+    void diagnosticCandidateAcceptsFrozenResponsesWithoutChangingAnyKnownContent(String traceId) throws Exception {
+        var fixture = frozenResponse(traceId);
+        String raw = fixture.path("responseContent").asText();
+        var actualInput = frozenInput(fixture, "24");
+        var control = (ObjectNode) json.readTree(raw);
+        ((ObjectNode) control.path("task")).remove("022".equals(traceId) ? "task" : "kind");
+        expectRaw(1, raw, actualInput, system -> { });
+        expect(1, control, frozenInput(fixture, "21"));
+
+        var observations = new ArrayList<ModelCallObservation>();
+        NaturalPromptDraft actual;
+        NaturalPromptDraft expected;
+        try (var ignored = audit(observations)) {
+            actual = provider.enhance(actualInput, this::checkDraft);
+            expected = provider.enhance(frozenInput(fixture, "21"), this::checkDraft);
+        }
+        assertThat(actual.optimizedPrompt()).isEqualTo(json.readTree(raw).path("optimizedPrompt").asText());
+        assertThat(actual.optimizedPrompt()).isEqualTo(expected.optimizedPrompt());
+        assertThat(actual.framework()).isEqualTo(expected.framework());
+        assertThat(actual.taskUnderstanding()).isEqualTo(expected.taskUnderstanding());
+        assertThat(actualInput.taskSources()).isEqualTo(frozenInput(fixture, "21").taskSources());
+        assertThat(observations).extracting(ModelCallObservation::attempt).containsExactly(1, 1);
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"022", "030", "031"})
+    void originalPhaseCandidateStillRejectsThoseSameFrozenUnknownFields(String traceId) throws Exception {
+        var fixture = frozenResponse(traceId);
+        var actualInput = frozenInput(fixture, "21");
+        expectRaw(2, fixture.path("responseContent").asText(), actualInput, system -> { });
+        assertThatThrownBy(() -> provider.enhance(actualInput, this::checkDraft)).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    /** 使用与三个原件不同的字段名和标量类型，证明兼容依据是职责边界而非逐题白名单。 */
+    @Test
+    void harmlessScalarDiagnosticsAreDiscardedInBothPhasesWithoutEnteringReturnedRecords() throws Exception {
+        var enhanced = enhancement();
+        enhanced.put("diagnosticNote", "ONLY_DIAGNOSTIC_ENHANCE");
+        ((ObjectNode) enhanced.path("task")).put("confidence", 0.8);
+        ((ObjectNode) enhanced.path("task").path("requirements").get(0)).put("hasContext", false);
+        var planned = planning(true);
+        planned.put("diagnosticNote", "ONLY_DIAGNOSTIC_PLAN");
+        ((ObjectNode) planned.path("task")).put("confidence", 0.7);
+        ((ObjectNode) planned.path("questions").get(0)).putNull("reviewerNote");
+        expect(1, enhanced, input("24"));
+        expect(1, planned, input("24"));
+        var draft = provider.enhance(input("24"), this::checkDraft);
+        var plan = provider.plan(input("24"), this::checkPlan);
+        assertThat(draft.optimizedPrompt()).isEqualTo(BODY);
+        assertThat(draft.taskUnderstanding().requirements()).hasSize(4);
+        assertThat(plan.taskUnderstanding().requirements()).hasSize(4);
+        assertThat(plan.taskUnderstanding().review().planImpacts()).hasSize(1);
+        assertThat(json.writeValueAsString(draft) + json.writeValueAsString(plan))
+                .doesNotContain("ONLY_DIAGNOSTIC", "diagnosticNote", "confidence", "hasContext", "reviewerNote");
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"21", "22", "23"})
+    void existingStageReadersRemainStrictForUnrelatedDiagnostics(String version) throws Exception {
+        var bad = enhancement();
+        bad.put("diagnosticNote", "unrelated");
+        expect(2, bad, input(version));
+        assertThatThrownBy(() -> provider.enhance(input(version), this::checkDraft)).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    /** 即使值只是标量，阶段职责和服务端归属字段也不能当作无权威诊断吞掉。 */
+    @ParameterizedTest
+    @ValueSource(strings = {"review", "coverage", "requirementCoverage", "additionCoverage", "planImpacts",
+            "questions", "origin", "index", "questionId", "taskSources", "actualAnswers", "strategyVersion",
+            "generationStage", "phase", "sourceKind"})
+    void diagnosticCompatibilityStillRejectsAuthorityAndStageFields(String field) throws Exception {
+        var bad = enhancement();
+        ((ObjectNode) bad.path("task")).put(field, "not-authorized");
+        expect(2, bad, input("24"));
+        assertThatThrownBy(() -> provider.enhance(input("24"), this::checkDraft)).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"unknownObject", "unknownArray", "knownType", "knownEnum", "knownMissing",
+            "forgedSource", "missingAnswer", "missingBodyQuote", "foreignBodyQuote", "sourceKind", "sourceOrigin"})
+    void diagnosticCompatibilityCannotRepairInvalidKnownSemanticsOrInventAuthority(String defect) throws Exception {
+        var bad = enhancement();
+        var task = (ObjectNode) bad.path("task");
+        var requirements = (ArrayNode) task.path("requirements");
+        var first = (ObjectNode) requirements.get(0);
+        var evidence = (ObjectNode) first.path("evidence").get(0);
+        switch (defect) {
+            case "unknownObject" -> task.putObject("diagnosticNote").put("value", "not-scalar");
+            case "unknownArray" -> task.putArray("diagnosticNote").add("not-scalar");
+            case "knownType" -> task.put("goal", 7);
+            case "knownEnum" -> ((ObjectNode) task.path("openDecisions").get(0)).put("kind", "GUESSED");
+            case "knownMissing" -> task.remove("requirements");
+            case "forgedSource" -> evidence.put("sourceId", "actualAnswers.9");
+            case "missingAnswer" -> requirements.remove(3);
+            case "missingBodyQuote" -> first.remove("bodyQuotes");
+            case "foreignBodyQuote" -> first.putArray("bodyQuotes").add("正文未出现的内容");
+            case "sourceKind" -> evidence.put("kind", "USER_CONFIRMATION");
+            case "sourceOrigin" -> evidence.put("origin", "USER_CONFIRMATION");
+            default -> throw new IllegalArgumentException(defect);
+        }
+        expect(2, bad, input("24"));
+        var observations = new ArrayList<ModelCallObservation>();
+        try (var ignored = audit(observations)) {
+            assertThatThrownBy(() -> provider.enhance(input("24"), this::checkDraft))
+                    .isInstanceOfSatisfying(ProviderException.class,
+                            failure -> assertThat(failure.getFailureType()).isEqualTo(ProviderFailureType.INVALID_RESPONSE));
+        }
+        assertThat(observations).extracting(ModelCallObservation::attempt).containsExactly(1, 2);
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"bodyQuotes", "planImpacts", "missingAnswer", "knownBoolean"})
+    void planningDiagnosticsDoNotWeakenPhaseOrActualAnswerRequirements(String defect) throws Exception {
+        var bad = planning(true);
+        var task = (ObjectNode) bad.path("task");
+        switch (defect) {
+            case "bodyQuotes" -> ((ObjectNode) task.path("requirements").get(0)).put("bodyQuotes", "not-generated");
+            case "planImpacts" -> task.putArray("planImpacts").addObject().put("questionId", "q_audience");
+            case "missingAnswer" -> ((ArrayNode) task.path("requirements")).remove(3);
+            case "knownBoolean" -> ((ObjectNode) bad.path("questions").get(0)).put("allowCustomAnswer", "true");
+            default -> throw new IllegalArgumentException(defect);
+        }
+        expect(2, bad, input("24"));
+        assertThatThrownBy(() -> provider.plan(input("24"), this::checkPlan)).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    @Test
+    void diagnosticCandidateKeepsExactlyTheSameGuidanceAsRequiredFrameworkPhaseCandidate() {
+        assertThat(NaturalPromptInstructions.enhancementInstruction("24"))
+                .isEqualTo(NaturalPromptInstructions.enhancementInstruction("21"));
+        assertThat(NaturalPromptInstructions.planningInstruction("24"))
+                .isEqualTo(NaturalPromptInstructions.planningInstruction("21"));
+    }
+
+    /** 三份原响应按UTF-8内容哈希冻结，运行期不依赖本机tmp或评测目录。 */
+    private JsonNode frozenResponse(String traceId) throws Exception {
+        var expected = Map.of("022", "4528460670d70177e20d58de2e554feb18c1c273264047b4b1cdda21d014f1a6",
+                "030", "0f4671190ecfe8a38135324b368049709c1e84f1c648fc993e22782886123996",
+                "031", "e0c0300c234e48ba96504318931613973e36e37bd1734e30472c1ba21690e604");
+        try (var resource = getClass().getResourceAsStream("/provider/natural-phase/trace-" + traceId + ".json")) {
+            assertThat(resource).isNotNull();
+            var fixture = json.readTree(resource);
+            var digest = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                    .digest(fixture.path("responseContent").asText().getBytes(StandardCharsets.UTF_8)));
+            assertThat(digest).isEqualTo(expected.get(traceId)).isEqualTo(fixture.path("responseContentSha256").asText());
+            return fixture;
+        }
+    }
+
+    /** 复用完整合成任务；来源目录重新由服务端计算，模型选择仅替换为本地HTTP夹具。 */
+    private NaturalPromptInput frozenInput(JsonNode fixture, String version) throws Exception {
+        var original = (ObjectNode) fixture.path("input").deepCopy();
+        original.remove("taskSources");
+        original.putNull("modelId");
+        var input = json.treeToValue(original, NaturalPromptInput.class).withStrategyVersion(version);
+        JsonNode actualSources = json.valueToTree(input.taskSources());
+        assertThat(actualSources).isEqualTo(fixture.path("input").path("taskSources"));
+        return input;
+    }
+
     /** 同样的答案来自不同实际题干；不能去重为一个确认，助手建议也不能改成确认来源。 */
     private NaturalPromptInput input(String version) {
         return new NaturalPromptInput(RAW,
@@ -318,8 +491,13 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
 
     /** 除完整输入外可核对本次system增量，避免修复提示跨阶段或泄露实际题答。 */
     private void expect(int count, ObjectNode content, NaturalPromptInput input, Consumer<String> checkSystem) throws Exception {
+        expectRaw(count, json.writeValueAsString(content), input, checkSystem);
+    }
+
+    /** 原件字符串直接放入模拟上游信封，不通过重序列化修正原响应。 */
+    private void expectRaw(int count, String content, NaturalPromptInput input, Consumer<String> checkSystem) throws Exception {
         String response = json.writeValueAsString(Map.of("choices", List.of(Map.of("finish_reason", "stop", "message",
-                Map.of("content", json.writeValueAsString(content)))), "usage", Map.of("prompt_tokens", 10, "completion_tokens", 5, "total_tokens", 15)));
+                Map.of("content", content))), "usage", Map.of("prompt_tokens", 10, "completion_tokens", 5, "total_tokens", 15)));
         server.expect(ExpectedCount.times(count), requestTo(ENDPOINT)).andExpect(request -> {
             var sent = json.readTree(((MockClientHttpRequest) request).getBodyAsString());
             checkSystem.accept(sent.path("messages").get(0).path("content").asText());
